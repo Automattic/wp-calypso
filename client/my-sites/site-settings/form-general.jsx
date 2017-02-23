@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import page from 'page';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,7 +34,7 @@ import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { phpToMomentDatetimeFormat } from 'lib/formatting';
-import { getNow } from './date-time-format/utils'
+import { getNow } from './date-time-format/utils';
 
 class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
