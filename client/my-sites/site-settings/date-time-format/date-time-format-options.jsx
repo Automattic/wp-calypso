@@ -24,8 +24,18 @@ import wrapSettingsForm from '../wrap-settings-form';
 /**
  * Module constants
  */
-const defaultDateFormats = [ 'F j, Y', 'Y-m-d', 'm/d/Y', 'd/m/Y' ];
-const defaultTimeFormats = [ 'g:i a', 'g:i A', 'H:i' ];
+const defaultDateFormats = [
+	'F j, Y',
+	'Y-m-d',
+	'm/d/Y',
+	'd/m/Y',
+];
+
+const defaultTimeFormats = [
+	'g:i a',
+	'g:i A',
+	'H:i',
+];
 
 export class DateTimeFormatOptions extends Component {
 	state = {
@@ -115,8 +125,8 @@ export class DateTimeFormatOptions extends Component {
 				<FormLabel>
 					{ translate( 'Date Format' ) }
 				</FormLabel>
-				{ defaultDateFormats.map( ( format, key ) =>
-					<FormLabel key={ key }>
+				{ defaultDateFormats.map( ( format, index ) =>
+					<FormLabel key={ index }>
 						<FormRadio
 							checked={ ! isCustomFormat && format === dateFormat }
 							disabled={ isRequestingSettings }
@@ -174,8 +184,8 @@ export class DateTimeFormatOptions extends Component {
 				<FormLabel>
 					{ translate( 'Time Format' ) }
 				</FormLabel>
-				{ defaultTimeFormats.map( ( format, key ) =>
-					<FormLabel key={ key }>
+				{ defaultTimeFormats.map( ( format, index ) =>
+					<FormLabel key={ index }>
 						<FormRadio
 							checked={ ! isCustomFormat && format === timeFormat }
 							disabled={ isRequestingSettings }
