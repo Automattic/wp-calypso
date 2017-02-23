@@ -33,7 +33,8 @@
 }
 
 .editor-sharing__publicize-disabled {
-	text-align: center;
+	color: $gray-text-min;
+	font-size: 13px;
 	span {
 		display: block;
 	}

@@ -307,7 +307,7 @@ export default React.createClass( {
 			<Tooltip
 				context={ this.refs && this.refs.schedulePost }
 				isVisible={ this.state.showDateTooltip }
-				position="top"
+				position="left"
 				onClose={ noop }
 			>
 				{ this.translate( 'Set date and time' ) }
