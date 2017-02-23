@@ -47,18 +47,21 @@ export default React.createClass( {
 				</div>
 				<div style={ { marginBottom: 16 } }>
 					<PlanStorageBar
+						siteSlug={ primarySite.slug }
 						sitePlanName={ plans.free }
 						mediaStorage={ mediaStorage.green }
 					/>
 				</div>
 				<div style={ { marginBottom: 16 } }>
 					<PlanStorageBar
+						siteSlug={ primarySite.slug }
 						sitePlanName={ plans.free }
 						mediaStorage={ mediaStorage.yellow }
 					/>
 				</div>
 				<div style={ { marginBottom: 16 } }>
 					<PlanStorageBar
+						siteSlug={ primarySite.slug }
 						sitePlanName={ plans.premium }
 						mediaStorage={ mediaStorage.red }
 					/>
