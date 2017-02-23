@@ -225,7 +225,6 @@ const LoggedInForm = React.createClass( {
 
 	componentWillReceiveProps( props ) {
 		const {
-			authorizationCode,
 			siteReceived,
 			isActivating,
 			queryObject,
@@ -267,10 +266,6 @@ const LoggedInForm = React.createClass( {
 			this.retryingAuth = true;
 			return this.props.retryAuth( queryObject.site, attempts + 1 );
 		}
-		if ( props.isAlreadyOnSitesList && ! queryObject.already_authorized && ! props.isFetchingSites && ! this.retryingAuth ) {
-			this.retryingAuth = true;
-			return this.props.goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode );
-		}
 	},
 
 	renderFormHeader( isConnected ) {
@@ -300,6 +295,7 @@ const LoggedInForm = React.createClass( {
 		debug( 'Activating Manage module and calculating redirection', queryObject );
 		this.props.activateManage( queryObject.client_id, queryObject.state, activateManageSecret );
 		if ( 'jpo' === queryObject.from || this.props.isSSO ) {
+			debug( 'Going back to WP Admin.', 'Connection initiated via: ', queryObject.from, 'SSO found:', this.props.isSSO );
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 		} else {
 			page.redirect( this.getRedirectionTarget() );
