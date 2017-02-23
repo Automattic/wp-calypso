@@ -1,12 +1,13 @@
 .draft.card.is-compact {
 	padding: 16px;
+	text-align: left;
 }
 
 .draft__title {
 	display: inline-block;
 	font-family: $serif;
 	font-weight: 400;
-	font-size: 14px;
+	font-size: 13px;
 	white-space: nowrap;
 	overflow: hidden;
 	width: 95%;
@@ -19,6 +20,7 @@
 
 	a {
 		color: $gray-dark;
+		text-decoration: none;
 	}
 
 	&::after {

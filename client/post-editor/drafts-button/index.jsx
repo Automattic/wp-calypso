@@ -27,7 +27,7 @@ function EditorDraftsButton( { count, onClick, jetpack, siteId, hideText } ) {
 			{ siteId && (
 				<QueryPostCounts siteId={ siteId } type="post" />
 			) }
-			{ ! hideText && <span>{ translate( 'Drafts' ) }</span> }
+			{ ! hideText && <span className="drafts-button__label">{ translate( 'Drafts' ) }</span> }
 			{ count && ! jetpack ? <Count count={ count } /> : null }
 		</Button>
 	);
