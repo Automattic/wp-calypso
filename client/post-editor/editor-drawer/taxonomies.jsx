@@ -74,7 +74,7 @@ function EditorDrawerTaxonomies( { translate, siteId, postType, isSupported, tax
 						icon={ <Gridicon icon={ hierarchical ? 'folder' : 'tag' } /> }
 					>
 					{ hierarchical
-						? <TermSelector taxonomyName={ name } />
+						? <TermSelector compact taxonomyName={ name } />
 						: <TermTokenField taxonomyName={ name } />
 					}
 					</Accordion>

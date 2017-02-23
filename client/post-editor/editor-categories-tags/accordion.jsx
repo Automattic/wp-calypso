@@ -62,7 +62,7 @@ export class EditorCategoriesTagsAccordion extends Component {
 					helpText={ translate( 'Use categories to group your posts by topic.' ) }
 					labelText={ translate( 'Categories' ) } />
 				{ isTermsSupported
-					? <TermSelector taxonomyName="category" />
+					? <TermSelector compact taxonomyName="category" />
 					: this.renderJetpackNotice()
 				}
 			</AccordionSection>
