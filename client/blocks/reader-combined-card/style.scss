@@ -1,5 +1,16 @@
 .reader-combined-card__header {
 	font-size: 13px;
+	display: flex;
+}
+
+.reader-combined-card__header-details {
+	flex-grow: 1;
+	margin-top: -5px;
+	margin-left: 8px;
+}
+
+.reader-combined-card__header-post-count {
+	color: $gray;
 }
 
 .reader-combined-card__post-title-link {
@@ -15,8 +26,10 @@
 	margin-left: 0;
 }
 
-li.reader-combined-card__post {
+.reader-combined-card__post {
 	list-style-type: none;
+	display: flex;
+	flex-direction: row;
 }
 
 .reader-combined-card__post-author-and-time {

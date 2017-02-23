@@ -26,20 +26,22 @@ const ReaderCombinedCard = ( { posts, site, feed, translate } ) => {
 	return (
 		<Card className="reader-combined-card">
 			<header className="reader-combined-card__header">
+				<ReaderAvatar
+					siteIcon={ siteIcon }
+					feedIcon={ feedIcon }
+					author={ null }
+					preferGravatar={ true }
+					siteUrl={ streamUrl }
+					siteIconSize={ 32 } />
 				<div className="reader-combined-card__header-details">
-					<ReaderAvatar
-						siteIcon={ siteIcon }
-						feedIcon={ feedIcon }
-						author={ null }
-						preferGravatar={ true }
-						siteUrl={ streamUrl } />
 					<ReaderSiteStreamLink
 						className="reader-combined-card__site-link"
 						feedId={ feedId }
 						siteId={ siteId }>
 						{ siteName }
 					</ReaderSiteStreamLink>
-					<p>{ translate( '%(count)d posts', {
+					<p className="reader-combined-card__header-post-count">
+						{ translate( '%(count)d posts', {
 							args: {
 								count: posts.length
 							}
