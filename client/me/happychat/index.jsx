@@ -1,13 +1,13 @@
-/**
- * External Dependencies
- */
+/*
+	External Deps
+*/
 import React from 'react';
 import page from 'page';
 import { translate } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
+/*
+	Internal deps
+*/
 import { renderWithReduxStore } from 'lib/react-helpers';
 import controller from 'me/controller';
 import Happychat from './main';
