@@ -18,7 +18,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { canUserDeleteItem } from 'lib/media/utils';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import PlanStorage from 'my-sites/plan-storage';
+import PlanStorage from 'blocks/plan-storage';
 import { getMediaModalView } from 'state/ui/media-modal/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
