@@ -271,15 +271,14 @@ class Upload extends React.Component {
 	renderNotAvailable() {
 		return (
 			<EmptyContent
-				title={ this.props.translate( 'Sorry, themes upload is not yet available for multi-site installations.' ) }
-				line={ this.props.translate( 'Open your site:' ) }
-				action={ this.props.translate( '[WP Admin]' ) }
+				title={ this.props.translate( 'Not available for multi site' ) }
+				line={ this.props.translate( 'Use the WP Admin interface instead' ) }
+				action={ this.props.translate( 'Open WP Admin' ) }
 				actionURL={ this.props.selectedSite.options.admin_url }
 				illustration={ '/calypso/images/drake/drake-jetpack.svg' }
 			/>
 			);
 	}
-
 	render() {
 		const {
 			translate,
