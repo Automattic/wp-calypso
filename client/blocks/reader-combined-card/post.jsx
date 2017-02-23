@@ -28,34 +28,36 @@ const ReaderCombinedCardPost = ( { post, streamUrl /*, site, feed*/ } ) => {
 	return (
 		<li className="reader-combined-card__post">
 			{ featuredAsset }
-			<AutoDirection>
-				<h1 className="reader-combined-card__post-title">
-					<a className="reader-combined-card__post-title-link" href={ post.URL }>{ post.title }</a>
-				</h1>
-			</AutoDirection>
-			<ReaderExcerpt post={ post } isDiscover={ false } />
-			<div className="reader-combined-card__post-author-and-time">
-				<ReaderVisitLink visitUrl={ post.URL } iconSize={ 12 } />
-				{ hasAuthorName &&
-					<ReaderAuthorLink
-						className="reader-combined-card__author-link"
-						author={ post.author }
-						siteUrl={ streamUrl }
-						post={ post }>
-						{ post.author.name }
-					</ReaderAuthorLink>
-				}
-				{ post.date && post.URL &&
-					<span className="reader-combined-card__timestamp">
-						<a className="reader-combined-card__timestamp-link"
-							onClick={ recordDateClick }
-							href={ post.URL }
-							target="_blank"
-							rel="noopener noreferrer">
-							<PostTime date={ post.date } />
-						</a>
-					</span>
-				}
+			<div className="reader-combined-card__post-details">
+				<AutoDirection>
+					<h1 className="reader-combined-card__post-title">
+						<a className="reader-combined-card__post-title-link" href={ post.URL }>{ post.title }</a>
+					</h1>
+				</AutoDirection>
+				<ReaderExcerpt post={ post } isDiscover={ false } />
+				<div className="reader-combined-card__post-author-and-time">
+					<ReaderVisitLink visitUrl={ post.URL } iconSize={ 12 } />
+					{ hasAuthorName &&
+						<ReaderAuthorLink
+							className="reader-combined-card__author-link"
+							author={ post.author }
+							siteUrl={ streamUrl }
+							post={ post }>
+							{ post.author.name }
+						</ReaderAuthorLink>
+					}
+					{ post.date && post.URL &&
+						<span className="reader-combined-card__timestamp">
+							<a className="reader-combined-card__timestamp-link"
+								onClick={ recordDateClick }
+								href={ post.URL }
+								target="_blank"
+								rel="noopener noreferrer">
+								<PostTime date={ post.date } />
+							</a>
+						</span>
+					}
+				</div>
 			</div>
 		</li>
 	);

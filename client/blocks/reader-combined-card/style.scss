@@ -1,3 +1,4 @@
+/* Header */
 .reader-combined-card__header {
 	font-size: 13px;
 	display: flex;
@@ -13,13 +14,34 @@
 	color: $gray;
 }
 
-.reader-combined-card__post-title-link {
+/* Posts */
+.reader-combined-card__post-details {
+	margin-left: 10px;
+	font-family: $serif;
+
+}
+
+.reader-combined-card__post-title-link,
+.reader-combined-card__post-title-link:visited {
+	color: $gray-dark;
 	cursor: pointer;
+	font-size: 18px;
+	font-weight: 700;
+	display: block;
+
+	&:hover {
+		color: $gray-dark;
+	}
+
+	@include breakpoint( ">480px" ) {
+		font-size: 21px;
+	}
 }
 
 .reader-combined-card .reader-featured-image {
 	display: block;
-	min-height: 100px;
+	min-width: 100px;
+	max-height: 100px;
 }
 
 .reader-combined-card__post-list {
