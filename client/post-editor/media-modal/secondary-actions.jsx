@@ -5,13 +5,11 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { values, noop, some, every, flow, partial } from 'lodash';
-import page from 'page';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
@@ -56,14 +54,6 @@ const MediaModalSecondaryActions = React.createClass( {
 		this.setState( {
 			mobilePopoverContext: component
 		} );
-	},
-
-	navigateToPlans() {
-		analytics.ga.recordEvent( 'Media', 'Clicked Plan Storage Button' );
-		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', {
-			cta_name: 'plan-media-storage'
-		} );
-		page( `/plans/${ this.props.siteSlug }` );
 	},
 
 	getButtons() {
@@ -173,7 +163,6 @@ const MediaModalSecondaryActions = React.createClass( {
 			return (
 				<PlanStorage
 					className="editor-media-modal__plan-storage"
-					onClick={ this.navigateToPlans }
 					siteId={ this.props.site.ID } >
 					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
 				</PlanStorage>
