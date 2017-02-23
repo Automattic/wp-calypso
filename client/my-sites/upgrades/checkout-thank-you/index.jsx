@@ -142,7 +142,7 @@ const CheckoutThankYou = React.createClass( {
 			return true;
 		}
 
-		return this.props.sitePlans.hasLoadedFromServer && this.props.receipt.hasLoadedFromServer;
+		return ( ! this.props.selectedSite || this.props.sitePlans.hasLoadedFromServer ) && this.props.receipt.hasLoadedFromServer;
 	},
 
 	isGenericReceipt() {
@@ -165,6 +165,10 @@ const CheckoutThankYou = React.createClass( {
 			const purchases = getPurchases( this.props );
 			const site = this.props.selectedSite.slug;
 
+			if ( ! site && getFailedPurchases( this.props ).length > 0 ) {
+				return page( '/start/domain-first' );
+			}
+
 			if ( purchases.some( isPlan ) ) {
 				return page( `/plans/my-plan/${ site }` );
 			} else if (
@@ -184,19 +188,22 @@ const CheckoutThankYou = React.createClass( {
 
 	render() {
 		let purchases = null,
+			failedPurchases = null,
 			wasJetpackPlanPurchased = false,
 			wasDotcomPlanPurchased = false;
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
+			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasDotcomPlanPurchased = purchases.some( isDotComPlan );
 		}
 
-		const userCreatedMoment = moment( this.props.userDate );
-		const isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) );
+		const userCreatedMoment = moment( this.props.userDate ),
+			isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) ),
+			goBackText = this.props.selectedSite ? this.translate( 'Back to my site' ) : this.translate( 'Register domain' );
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
-		if ( ! purchases && ! this.isGenericReceipt() ) {
+		if ( ! purchases && ! failedPurchases && ! this.isGenericReceipt() ) {
 			// disabled because we use global loader icon
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
@@ -221,7 +228,7 @@ const CheckoutThankYou = React.createClass( {
 				<HeaderCake
 					onClick={ this.goBack }
 					isCompact
-					backText={ this.translate( 'Back to my site' ) } />
+					backText={ goBackText } />
 
 				<Card className="checkout-thank-you__content">
 					{ this.productRelatedMessages() }
@@ -352,10 +359,14 @@ export default connect(
 				dispatch( fetchReceipt( receiptId ) );
 			},
 			fetchSitePlans( site ) {
-				dispatch( fetchSitePlans( site.ID ) );
+				if ( site ) {
+					dispatch( fetchSitePlans( site.ID ) );
+				}
 			},
 			refreshSitePlans( site ) {
-				dispatch( refreshSitePlans( site.ID ) );
+				if ( site ) {
+					dispatch( refreshSitePlans( site.ID ) );
+				}
 			},
 		};
 	}

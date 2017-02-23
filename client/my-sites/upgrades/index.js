@@ -257,6 +257,11 @@ module.exports = function() {
 		);
 
 		page(
+			'/checkout/no-site/:receiptId',
+			upgradesController.checkoutThankYou
+		);
+
+		page(
 			'/checkout/:domain/:product?',
 			controller.siteSelection,
 			upgradesController.checkout

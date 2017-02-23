@@ -46,7 +46,7 @@ function getDomainNameFromReceiptOrCart( receipt, cart ) {
 		domainRegistration = cartItems.getDomainRegistrations( cart )[ 0 ];
 	}
 
-	if ( domainRegistration ) {
+	if ( domainRegistration && isEmpty( receipt.failed_purchases ) ) {
 		return domainRegistration.meta;
 	}
 
