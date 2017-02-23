@@ -62,7 +62,7 @@ function checkDomainAvailability( domainName, onComplete ) {
 			errorCode = 'no_availability_but_mappable';
 		} else if ( isAvailable === false && isMappable ) {
 			errorCode = 'not_available_but_mappable';
-		} else if ( isAvailable === true && ! isRegistrable ) {
+		} else if ( isAvailable && ! isRegistrable ) {
 			errorCode = 'available_but_not_registrable';
 		}
 
