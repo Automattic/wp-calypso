@@ -31,7 +31,7 @@ const Plans = React.createClass( {
 	getDefaultProps() {
 		return {
 			intervalType: 'yearly',
-			displayJetpackPlans: true
+			displayJetpackPlans: false
 		};
 	},
 
