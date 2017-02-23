@@ -341,7 +341,7 @@ class PlansFeaturesMain extends Component {
 	}
 }
 
-PlansFeaturesMain.PropTypes = {
+PlansFeaturesMain.propTypes = {
 	site: PropTypes.object,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
@@ -351,7 +351,7 @@ PlansFeaturesMain.PropTypes = {
 	hideFreePlan: PropTypes.bool,
 	showFAQ: PropTypes.bool,
 	selectedFeature: PropTypes.string,
-	displayJetpackPlans: PropTypes.bool
+	displayJetpackPlans: PropTypes.bool.isRequired
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -359,8 +359,7 @@ PlansFeaturesMain.defaultProps = {
 	intervalType: 'yearly',
 	hideFreePlan: false,
 	site: {},
-	showFAQ: true,
-	displayJetpackPlans: false
+	showFAQ: true
 };
 
 export default localize( PlansFeaturesMain );
