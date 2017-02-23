@@ -9,13 +9,15 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import PulsingDot from 'components/pulsing-dot';
 import QueryTheme from 'components/data/query-theme';
 import { connectOptions } from './theme-options';
 import {
 	getThemePreviewThemeOptions,
 	getCanonicalTheme,
 	themePreviewVisibility,
-	isThemeActive
+	isThemeActive,
+	isInstallingTheme
 } from 'state/themes/selectors';
 import { getPreviewUrl } from 'my-sites/themes/helpers';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -36,13 +38,13 @@ const ThemePreview = React.createClass( {
 	onPrimaryButtonClick() {
 		const option = this.getPrimaryOption();
 		option.action && option.action( this.props.theme );
-		this.props.hideThemePreview();
+		//this.props.hideThemePreview();
 	},
 
 	onSecondaryButtonClick() {
 		const secondary = this.getSecondaryOption();
 		secondary.action && secondary.action( this.props.theme );
-		this.props.hideThemePreview();
+		//this.props.hideThemePreview();
 	},
 
 	getPrimaryOption() {
@@ -52,6 +54,17 @@ const ThemePreview = React.createClass( {
 	getSecondaryOption() {
 		const { isActive } = this.props;
 		return isActive ? null : this.props.themeOptions.secondary;
+	},
+
+	renderPrimaryButton() {
+		const primaryOption = this.getPrimaryOption();
+		const buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.theme ) : null;
+
+		return (
+			<Button primary onClick={ this.onPrimaryButtonClick } href={ buttonHref } >
+				{ primaryOption.extendedLabel }
+			</Button>
+		);
 	},
 
 	renderSecondaryButton() {
@@ -68,13 +81,10 @@ const ThemePreview = React.createClass( {
 	},
 
 	render() {
-		const { themeId } = this.props;
+		const { themeId, isInstalling } = this.props;
 		if ( ! themeId ) {
 			return null;
 		}
-
-		const primaryOption = this.getPrimaryOption();
-		const buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.theme ) : null;
 
 		return (
 			<div>
@@ -86,10 +96,9 @@ const ThemePreview = React.createClass( {
 					onClose={ this.props.hideThemePreview }
 					previewUrl={ this.props.previewUrl }
 					externalUrl={ this.props.theme.demo_uri } >
-					{ this.renderSecondaryButton() }
-					<Button primary onClick={ this.onPrimaryButtonClick } href={ buttonHref } >
-						{ primaryOption.extendedLabel }
-					</Button>
+					<PulsingDot active={ isInstalling } />
+					{ ! isInstalling && this.renderSecondaryButton() }
+					{ ! isInstalling && this.renderPrimaryButton() }
 				</WebPreview> }
 			</div>
 		);
@@ -109,7 +118,6 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
 		const theme = getCanonicalTheme( state, siteId, themeId );
-
 		const themeOptions = getThemePreviewThemeOptions( state );
 		return {
 			themeId,
@@ -117,6 +125,7 @@ export default connect(
 			siteId,
 			isJetpack,
 			themeOptions,
+			isInstalling: isInstallingTheme( state, themeId, siteId ),
 			isActive: isThemeActive( state, themeId, siteId ),
 			previewUrl: theme && theme.demo_uri ? getPreviewUrl( theme ) : null,
 			options: [
