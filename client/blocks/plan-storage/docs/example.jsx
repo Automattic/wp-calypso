@@ -8,7 +8,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  * Internal dependencies
  */
 import PlanStorage from '../index';
-import PlanStorageButton from '../button';
+import PlanStorageBar from '../bar';
 import sitesList from 'lib/sites-list';
 
 const sites = sitesList();
@@ -46,19 +46,19 @@ export default React.createClass( {
 					<PlanStorage siteId={ siteId } />
 				</div>
 				<div style={ { marginBottom: 16 } }>
-					<PlanStorageButton
+					<PlanStorageBar
 						sitePlanName={ plans.free }
 						mediaStorage={ mediaStorage.green }
 					/>
 				</div>
 				<div style={ { marginBottom: 16 } }>
-					<PlanStorageButton
+					<PlanStorageBar
 						sitePlanName={ plans.free }
 						mediaStorage={ mediaStorage.yellow }
 					/>
 				</div>
 				<div style={ { marginBottom: 16 } }>
-					<PlanStorageButton
+					<PlanStorageBar
 						sitePlanName={ plans.premium }
 						mediaStorage={ mediaStorage.red }
 					/>
