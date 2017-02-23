@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { capitalize, includes, startsWith } from 'lodash';
+import { capitalize, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,6 +19,7 @@ import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SectionHeader from 'components/section-header';
 import { phpToMomentDatetimeFormat } from 'lib/formatting';
+import { getNow } from './utils';
 import wrapSettingsForm from '../wrap-settings-form';
 
 /**
@@ -87,38 +88,18 @@ export class DateTimeFormatOptions extends Component {
 
 	setCustomTimeFormat = this.setCustomFormat( 'time' );
 
-	/**
-	 * Adjust the current date and time to the site settings timezone.
-	 * The timezone can be formatted either as an UTC offset ("UTC+0"),
-	 * or as a timezone identifier ("Europe/London").
-	 * In the first case, the date-time must be adjusted by the UTC offset converted in minutes;
-	 * in the latter, it's enough to use the tz() method provided by Moment.js.
-	 *
-	 * @see http://momentjs.com/docs/#/manipulating/utc-offset/
-	 * @see http://momentjs.com/timezone/docs/#/using-timezones/parsing-in-zone/
-	 *
-	 * @return {Object} The timezone-adjusted Moment.js object of the current date and time.
-	 */
-	getNow = () => {
-		const {
-			fields: { timezone_string: timezoneString },
-			moment,
-		} = this.props;
-
-		return startsWith( timezoneString, 'UTC' )
-			? moment().utcOffset( timezoneString.substring( 3 ) * 60 )
-			: moment.tz( timezoneString );
-	}
-
 	dateFormatOption() {
 		const {
-			fields: { date_format: dateFormat },
+			fields: {
+				date_format: dateFormat,
+				timezone_string: timezoneString,
+			},
 			isRequestingSettings,
 			translate,
 		} = this.props;
 		const { customDateFormat: isCustomFormat } = this.state;
 
-		const now = this.getNow();
+		const now = getNow( timezoneString );
 
 		return (
 			<FormFieldset>
@@ -171,13 +152,16 @@ export class DateTimeFormatOptions extends Component {
 
 	timeFormatOption() {
 		const {
-			fields: { time_format: timeFormat },
+			fields: {
+				time_format: timeFormat,
+				timezone_string: timezoneString,
+			},
 			isRequestingSettings,
 			translate,
 		} = this.props;
 		const { customTimeFormat: isCustomFormat } = this.state;
 
-		const now = this.getNow();
+		const now = getNow( timezoneString );
 
 		return (
 			<FormFieldset>
@@ -242,18 +226,9 @@ export class DateTimeFormatOptions extends Component {
 			fields: { start_of_week: startOfWeek },
 			handleSelect,
 			isRequestingSettings,
+			moment,
 			translate,
 		} = this.props;
-
-		const daysOfWeek = [
-			translate( 'Sunday' ),
-			translate( 'Monday' ),
-			translate( 'Tuesday' ),
-			translate( 'Wednesday' ),
-			translate( 'Thursday' ),
-			translate( 'Friday' ),
-			translate( 'Saturday' ),
-		];
 
 		return (
 			<FormFieldset>
@@ -266,7 +241,7 @@ export class DateTimeFormatOptions extends Component {
 					onChange={ handleSelect }
 					value={ startOfWeek || 0 }
 				>
-					{ daysOfWeek.map( ( day, index ) =>
+					{ moment.weekdays().map( ( day, index ) =>
 						<option key={ index } value={ index }>
 							{ day }
 						</option>
