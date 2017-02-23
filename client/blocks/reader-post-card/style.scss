@@ -393,7 +393,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 }
 
-.reader-post-card__excerpt {
+.reader-post-card .reader-excerpt {
 	font-size: 15px;
 	line-height: 1.6;
 	font-weight: 100;
@@ -404,26 +404,12 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	p {
 		margin: 0;
 	}
-
-	sup, sub {
-		vertical-align: baseline;
-		position: relative;
-		font-size: 0.83em;
-	}
-
-	sup {
-		top: -0.4em;
-	}
-
-	sub {
-		bottom: -0.2em;
-	}
 }
 
 // If it's not a discover card, clamp lines
 .reader-post-card.card:not(.is-discover) {
 
-	.reader-post-card__excerpt {
+	.reader-excerpt {
 		overflow: hidden;
 		max-height: 15px * 1.6 * 3;
 
@@ -440,7 +426,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		}
 	}
 
-	.reader-post-card__excerpt[direction=rtl] {
+	.reader-excerpt[direction=rtl] {
 		&::before {
 			@include long-content-fade( $direction: left, $size: 15px * 1.6 * 5 );
 			top: inherit;
@@ -448,7 +434,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		}
 	}
 
-	.reader-post-card__excerpt[direction=ltr] {
+	.reader-excerpt[direction=ltr] {
 		&::before {
 			@include long-content-fade( $direction: right, $size: 15px * 1.6 * 5 );
 			top: inherit;
@@ -460,7 +446,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 // 3 line excerpt for thumbnail cards
 .reader-post-card.card.has-thumbnail:not(.is-gallery):not(.is-discover) {
 
-	.reader-post-card__excerpt {
+	.reader-excerpt {
 		max-height: 15px * 1.6 * 3;
 		overflow: hidden;
 	}
