@@ -2,16 +2,17 @@
  * External dependencies
  */
 import { assert } from 'chai';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 import {
-	requestResetOptions,
 	fromApi,
+	onSuccess,
+	onError,
 } from '../';
 
 import {
@@ -19,61 +20,46 @@ import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 } from 'state/action-types';
 
-describe( '#requestResetOptions', () => {
+const next = identity;
+
+describe( 'onSuccess()', () => {
 	let dispatch;
 
 	useSandbox( sandbox => ( dispatch = sandbox.spy() ) );
 
-	const apiBaseUrl = 'https://public-api.wordpress.com:443';
-	const endpoint = '/wpcom/v2/account-recovery/lookup';
-	const response = {
-		primary_email: 'a****@example.com',
-		secondary_email: 'b*****@example.com',
-		primary_sms: '+1******456',
-		secondary_sms: '+8*******456',
-	};
-	const userData = {
-		user: 'foo',
-	};
+	it( 'should dispatch the receiving action.', () => {
+		const response = {
+			primary_email: 'a****@example.com',
+			secondary_email: 'b*****@example.com',
+			primary_sms: '+1******456',
+			secondary_sms: '+8*******456',
+		};
 
-	describe( 'success', () => {
-		useNock( nock => (
-			nock( apiBaseUrl )
-				.get( endpoint )
-				.reply( 200, response )
-		) );
+		onSuccess( { dispatch }, {}, next, response );
 
-		it( 'should dispatch RECEIVE action on success', () => {
-			return requestResetOptions( { dispatch }, { userData } )
-				.then( () =>
-					assert.isTrue( dispatch.calledWith( {
-						type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
-						options: fromApi( response ),
-					} ) )
-				);
-		} );
+		assert.isTrue( dispatch.calledWith( {
+			type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
+			items: fromApi( response ),
+		} ) );
 	} );
+} );
 
-	const errorResponse = {
-		status: 400,
-		message: 'Something wrong!',
-	};
+describe( 'onError()', () => {
+	let dispatch;
 
-	describe( 'failure', () => {
-		useNock( nock => (
-			nock( apiBaseUrl )
-				.get( endpoint )
-				.reply( errorResponse.status, errorResponse )
-		) );
+	useSandbox( sandbox => ( dispatch = sandbox.spy() ) );
 
-		it( 'should dispatch ERROR action on failure', () => {
-			return requestResetOptions( { dispatch }, { userData } )
-				.then( () =>
-					assert.isTrue( dispatch.calledWithMatch( {
-						type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
-						error: errorResponse,
-					} ) )
-				);
-		} );
+	it( 'should dispatch the error action', () => {
+		const error = {
+			message: 'Something wrong!',
+			status: 404,
+		};
+
+		onError( { dispatch }, {}, next, error );
+
+		assert.isTrue( dispatch.calledWith( {
+			type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
+			error,
+		} ) );
 	} );
 } );
