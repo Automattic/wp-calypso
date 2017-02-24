@@ -76,16 +76,16 @@ var DomainSearchResults = React.createClass( {
 		} else if ( suggestions.length !== 0 && includes( [ MAPPABLE, UNKNOWN ], lastDomainStatus ) && this.props.products.domain_map ) {
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
-			if ( this.props.domainsWithPlansOnly ) {
+			if ( isNextDomainFree( this.props.cart ) ) {
+				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for ' +
+					'free.{{/small}}', { args: { domain }, components } );
+			} else if ( ! this.props.domainsWithPlansOnly ) {
+				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for ' +
+					'%(cost)s.{{/small}}', { args: { domain, cost: this.props.products.domain_map.cost_display }, components } );
+			} else {
 				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}}' +
 					' with WordPress.com Premium.{{/small}}', { args: { domain }, components }
 				);
-			} else if ( isNextDomainFree( this.props.cart ) ) {
-				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for ' +
-					'free.{{/small}}', { args: { domain }, components } );
-			} else {
-				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for ' +
-					'%(cost)s.{{/small}}', { args: { domain, cost: this.props.products.domain_map.cost_display }, components } );
 			}
 
 			const domainUnavailableMessage = lastDomainStatus === UNKNOWN
