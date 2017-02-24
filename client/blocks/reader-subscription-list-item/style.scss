@@ -1,1 +1,46 @@
 
+.reader-subscription-list-item__by-text {
+	color: $gray;
+}
+
+.reader-subscription-list-item {
+	font-size: 14px;
+}
+// copy and pasted from follow button for reader-post-card
+// TODO: combing to reusable refreshed-reader component?
+// are the old follow buttons in use anywhere?
+.reader-subscription-list-item .follow-button {
+	border: 0;
+	border-radius: 0;
+	float: right;
+	padding: 0;
+
+	.gridicon {
+		fill: $blue-medium;
+	}
+
+	.follow-button__label {
+		color: $blue-medium;
+	}
+
+	&.is-following {
+
+		.gridicon {
+			fill: $alert-green;
+		}
+
+		.follow-button__label {
+			color: $alert-green;
+		}
+	}
+}
+
+.reader-subscription-list-item__settings-menu {
+	color: $gray;
+	float: right;
+}
+
+/*
+.reader-subscription-list-item__settings-menu .gridicon {
+	margin-top: 10px;
+} */
