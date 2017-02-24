@@ -13,7 +13,7 @@ import MediaLibraryScale from './scale';
 import UploadButton from './upload-button';
 import MediaLibraryUploadUrl from './upload-url';
 import { userCan } from 'lib/site/utils';
-import Button from 'components/button';
+import MediaModalSecondaryActions from 'post-editor/media-modal/secondary-actions';
 
 export default React.createClass( {
 	displayName: 'MediaLibraryHeader',
@@ -61,22 +61,6 @@ export default React.createClass( {
 		this.setState( {
 			isMoreOptionsVisible: state
 		} );
-	},
-
-	renderSecondaryActionButtons() {
-		const buttons = [];
-		if ( this.props.selectedItems && this.props.selectedItems.length > 0 ) {
-			buttons.push( <Button
-				compact
-				primary
-				onClick={ this.props.onViewDetails }
-			>{ "Edit" }</Button> );
-			buttons.push( <Button
-				compact
-				onClick={ this.props.onDeleteItem }
-			>{ "Delete" }</Button> );
-		}
-		return buttons;
 	},
 
 	renderUploadButtons() {
@@ -140,7 +124,14 @@ export default React.createClass( {
 			<header className="media-library__header">
 				<h2 className="media-library__heading">{ this.translate( 'Media Library' ) }</h2>
 				{ this.renderUploadButtons() }
-				{ this.renderSecondaryActionButtons() }
+				<MediaModalSecondaryActions
+					selectedItems={ this.props.selectedItems }
+					onViewDetails={ this.props.onViewDetails }
+					onDelete={ this.props.onDeleteItem }
+					renderStorage={ false }
+					site={ this.props.site }
+					view={ 'LIST' }
+				/>
 				<MediaLibraryScale
 					onChange={ this.props.onMediaScaleChange } />
 			</header>
