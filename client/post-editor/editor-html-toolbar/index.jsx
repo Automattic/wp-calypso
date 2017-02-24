@@ -4,7 +4,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import {
-	every,
 	get,
 	map,
 	reduce,
@@ -35,6 +34,12 @@ import EditorMediaModal from 'post-editor/editor-media-modal';
  * Module constants
  */
 const TOOLBAR_HEIGHT = 39;
+const isIE11Detected = (
+	window &&
+	window.MSInputMethodContext &&
+	document &&
+	document.documentMode
+);
 
 export class EditorHtmlToolbar extends Component {
 
@@ -75,13 +80,6 @@ export class EditorHtmlToolbar extends Component {
 		document.addEventListener( 'click', this.clickOutsideInsertContentMenu );
 
 		this.toggleToolbarScrollableOnResize();
-
-		this.isIE11Detected = every( [
-			window,
-			document,
-			window.MSInputMethodContext,
-			document.documentMode,
-		] );
 	}
 
 	componentWillUnmount() {
@@ -171,7 +169,7 @@ export class EditorHtmlToolbar extends Component {
 
 	// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11.
 	// Using the previous version of replacing the entire content value instead.
-	updateEditorContent = this.isIE11Detected
+	updateEditorContent = isIE11Detected
 		? this.updateEditorContentIE11
 		: this.insertEditorContent;
 
@@ -246,9 +244,10 @@ export class EditorHtmlToolbar extends Component {
 
 	insertCustomContent( content, options = {} ) {
 		const { before, inner, after } = this.splitEditorContent();
+		const paragraph = options.paragraph ? '\n' : '';
 		this.updateEditorContent(
 			before,
-			inner + ( options.paragraph ? '\n' : '' ) + content + ( options.paragraph ? '\n\n' : '' ),
+			inner + paragraph + content + paragraph + paragraph,
 			after
 		);
 	}
