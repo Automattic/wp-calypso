@@ -1,4 +1,14 @@
 /**
+ * Returns the poster URL of the video.
+ *
+ * @param  {Object}  state Global state tree
+ * @return {String}  URL of the poster.
+ */
+export function getVideoEditorPoster( state ) {
+	return state.ui.editor.videoEditor.poster;
+}
+
+/**
  * Returns true if the video has been loaded.
  *
  * @param  {Object}  state Global state tree

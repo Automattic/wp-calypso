@@ -251,7 +251,22 @@ export class EditorMediaModal extends Component {
 		this.props.setView( ModalViews.DETAIL );
 	};
 
-	handleUpdatePoster = () => this.props.setView( ModalViews.DETAIL );
+	handleUpdatePoster = ( { ID, poster } ) => {
+		const { site } = this.props;
+
+		if ( site ) {
+			MediaActions.edit( site.ID, {
+				ID,
+				thumbnails: {
+					fmt_hd: poster,
+					fmt_dvd: poster,
+					fmt_std: poster,
+				}
+			} );
+		}
+
+		this.props.setView( ModalViews.DETAIL );
+	}
 
 	handleCancel = () => {
 		const { mediaLibrarySelectedItems } = this.props;

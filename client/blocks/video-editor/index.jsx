@@ -20,6 +20,7 @@ import {
 	updateVideoEditorPoster,
 } from 'state/ui/editor/video-editor/actions';
 import {
+	getVideoEditorPoster,
 	isVideoEditorPosterUpdated,
 	isVideoEditorPosterUpdating,
 	isVideoEditorVideoLoaded,
@@ -45,6 +46,7 @@ class VideoEditor extends Component {
 		isPosterUpdated: PropTypes.bool,
 		isPosterUpdating: PropTypes.bool,
 		isVideoLoaded: PropTypes.bool,
+		poster: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -63,7 +65,7 @@ class VideoEditor extends Component {
 
 	shouldComponentUpdate( nextProps ) {
 		if ( nextProps.isPosterUpdated && ! nextProps.hasPosterUpdateError ) {
-			this.props.onUpdatePoster();
+			this.props.onUpdatePoster( this.getVideoEditorProps( nextProps.poster ) );
 		}
 
 		return true;
@@ -119,6 +121,17 @@ class VideoEditor extends Component {
 			this.props.resetPosterState();
 			updatePoster( guid, { file } );
 		}
+	}
+
+	getVideoEditorProps( poster ) {
+		const { media } = this.props;
+		const videoProperties = { poster };
+
+		if ( media && media.ID ) {
+			videoProperties.ID = media.ID;
+		}
+
+		return videoProperties;
 	}
 
 	renderError() {
@@ -199,6 +212,7 @@ export default connect(
 			isPosterUpdated: isVideoEditorPosterUpdated( state ),
 			isPosterUpdating: isVideoEditorPosterUpdating( state ),
 			isVideoLoaded: isVideoEditorVideoLoaded( state ),
+			poster: getVideoEditorPoster( state ),
 		};
 	},
 	{
