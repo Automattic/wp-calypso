@@ -10,6 +10,7 @@ import filesize from 'filesize';
  * Internal dependencies
  */
 import ProgressBar from 'components/progress-bar';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
 
 const ALERT_PERCENT = 80;
 const WARN_PERCENT = 60;
@@ -19,7 +20,7 @@ class PlanStorageBar extends Component {
 		className: PropTypes.string,
 		mediaStorage: PropTypes.object,
 		siteSlug: PropTypes.string.isRequired,
-		sitePlanName: PropTypes.string.isRequired,
+		sitePlanSlug: PropTypes.string.isRequired,
 	};
 
 	static defaultProps = {
@@ -30,12 +31,12 @@ class PlanStorageBar extends Component {
 		const {
 			className,
 			mediaStorage,
-			sitePlanName,
+			sitePlanSlug,
 			siteSlug,
 			translate,
 		} = this.props;
 
-		if ( sitePlanName === 'Business' ) {
+		if ( sitePlanSlug === PLAN_BUSINESS ) {
 			return null;
 		}
 

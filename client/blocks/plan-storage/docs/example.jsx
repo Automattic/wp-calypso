@@ -10,6 +10,12 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import PlanStorage from '../index';
 import PlanStorageBar from '../bar';
 import sitesList from 'lib/sites-list';
+import {
+	PLAN_BUSINESS,
+	PLAN_PREMIUM,
+	PLAN_PERSONAL,
+	PLAN_FREE,
+} from 'lib/plans/constants';
 
 const sites = sitesList();
 
@@ -20,12 +26,6 @@ export default React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render() {
-		const plans = {
-			free: 'Free',
-			premium: 'Premium',
-			business: 'Business',
-		};
-
 		const mediaStorage = {
 			red: {
 				storage_used_bytes: 11362335981,
@@ -51,14 +51,14 @@ export default React.createClass( {
 				<div style={ { marginBottom: 16 } }>
 					<PlanStorageBar
 						siteSlug={ primarySite.slug }
-						sitePlanName={ plans.free }
+						sitePlanSlug={ PLAN_FREE }
 						mediaStorage={ mediaStorage.green }
 					/>
 				</div>
 				<div style={ { marginBottom: 16, maxWidth: '400' } }>
 					<PlanStorageBar
 						siteSlug={ primarySite.slug }
-						sitePlanName={ plans.free }
+						sitePlanSlug={ PLAN_PERSONAL }
 						mediaStorage={ mediaStorage.yellow }
 					/>
 				</div>
@@ -66,7 +66,7 @@ export default React.createClass( {
 				<div style={ { marginBottom: 16, maxWidth: '300' } }>
 					<PlanStorageBar
 						siteSlug={ primarySite.slug }
-						sitePlanName={ plans.premium }
+						sitePlanSlug={ PLAN_PREMIUM }
 						mediaStorage={ mediaStorage.red }
 					/>
 				</div>
@@ -77,7 +77,7 @@ export default React.createClass( {
 					</span>
 					<PlanStorageBar
 						siteSlug={ primarySite.slug }
-						sitePlanName={ plans.business }
+						sitePlanSlug={ PLAN_BUSINESS }
 						mediaStorage={ mediaStorage.red }
 					/>
 				</div>
