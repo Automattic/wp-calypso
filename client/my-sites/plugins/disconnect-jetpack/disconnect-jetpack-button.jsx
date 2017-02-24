@@ -11,6 +11,7 @@ import { translate } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import DisconnectJetpackDialog from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-dialog';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class DisconnectJetpackButton extends Component {
@@ -28,9 +29,13 @@ class DisconnectJetpackButton extends Component {
 	};
 
 	render() {
+		if ( this.props.hideOnAutomatedTransfer ) {
+			return null;
+		}
+
 		const { site, redirect, linkDisplay } = this.props;
 
-		const omitProps = [ 'site', 'redirect', 'isMock', 'linkDisplay', 'text', 'recordGoogleEvent' ];
+		const omitProps = [ 'hideOnAutomatedTransfer', 'site', 'redirect', 'isMock', 'linkDisplay', 'text', 'recordGoogleEvent' ];
 		const buttonProps = {
 			...omit( this.props, omitProps ),
 			id: `disconnect-jetpack-${ site.ID }`,
@@ -58,6 +63,7 @@ class DisconnectJetpackButton extends Component {
 }
 
 DisconnectJetpackButton.propTypes = {
+	hideOnAutomatedTransfer: PropTypes.bool,
 	site: PropTypes.object.isRequired,
 	redirect: PropTypes.string.isRequired,
 	disabled: PropTypes.bool,
@@ -67,10 +73,13 @@ DisconnectJetpackButton.propTypes = {
 };
 
 DisconnectJetpackButton.defaultProps = {
+	hideOnAutomatedTransfer: false,
 	linkDisplay: true
 };
 
 export default connect(
-	null,
+	( state, { site } ) => ( {
+		hideOnAutomatedTransfer: isSiteAutomatedTransfer( state, site.ID ),
+	} ),
 	{ recordGoogleEvent }
 )( DisconnectJetpackButton );
