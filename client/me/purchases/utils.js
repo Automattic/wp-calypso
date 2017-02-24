@@ -69,21 +69,19 @@ function enrichedSurveyData( surveyData, moment, site, purchase ) {
 	const purchaseId = get( purchase, 'id', null );
 	const productSlug = get( purchase, 'productSlug', null );
 
-	const enrichment = {
-		purchase: productSlug,
-		purchaseId
-	};
-
-	if ( purchaseStartDate ) {
-		enrichment.daysSincePurchase = moment.diff( purchaseStartDate, 'days', true );
-		enrichment.newOrRenewal = moment.diff( purchaseStartDate, 'years', true ) > 1.0 ? 'renewal' : 'new purchase';
-	}
-
-	if ( siteStartDate ) {
-		enrichment.daysSinceSiteCreation = moment.diff( siteStartDate, 'days', true );
-	}
-
-	return { ...surveyData, ...enrichment };
+	return Object.assign(
+		{
+			purchase: productSlug,
+			purchaseId,
+		},
+		purchaseStartDate && {
+			daysSincePurchase: moment.diff( purchaseStartDate, 'days', true ),
+			newOrRenewal: moment.diff( purchaseStartDate, 'years', true ) > 1.0 ? 'renewal' : 'new purchase',
+		},
+		siteStartDate && {
+			daysSinceSiteCreation: moment.diff( siteStartDate, 'days', true ),
+		}
+	);
 }
 
 export {
