@@ -200,6 +200,9 @@ export class Mentions extends Component {
 
 		let nextIndex;
 
+		// Cancel the cursor move.
+		preventDefault();
+
 		if ( keyCode === VK.DOWN ) {
 			nextIndex = ( selectedIndex + 1 ) % this.matchingSuggestions.length;
 		} else {
@@ -209,9 +212,6 @@ export class Mentions extends Component {
 				nextIndex = this.matchingSuggestions.length - 1;
 			}
 		}
-
-		// Cancel the cursor move.
-		preventDefault();
 
 		this.setState( { selectedSuggestionId: this.matchingSuggestions[ nextIndex ].ID } );
 	};
