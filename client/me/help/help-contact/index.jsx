@@ -130,9 +130,12 @@ const HelpContact = React.createClass( {
 		const { message, siteId } = contactForm;
 		const site = sites.getSite( siteId );
 
-		let messages = [
-			message
-		];
+		const userAgent = `User Agent: ${ navigator.userAgent }`;
+		const screenRes = `Screen Resolution: ${ screen.width }x${ screen.height }\n`;
+		const browserSize = `Browser Size: ${ window.innerWidth }x${ window.innerHeight }\n`;
+		const browserInfoMsg = [ `Information to assist troubleshooting.\n ${ screenRes } ${ browserSize } ${ userAgent }` ];
+
+		let messages = browserInfoMsg.concat( message );
 
 		if ( site ) {
 			messages = [ `Site I need help with: ${ site.URL }` ].concat( messages );
