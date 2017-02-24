@@ -15,6 +15,13 @@
 	}
 }
 
+.editor-ground-control .site,
+.editor-ground-control .editor-ground-control__status,
+.editor-ground-control .editor-ground-control__action-buttons {
+	height: 46px;
+	line-height: 46px;
+}
+
 .editor-ground-control .site {
 	margin: 0;
 	margin-bottom: 0;
@@ -24,8 +31,16 @@
 	}
 }
 
+.editor-ground-control .site .site__domain {
+	display: none;
+}
+
 .editor-ground-control .site .site__content {
-	padding: 12px 16px;
+	padding: 0 16px;
+}
+
+.editor-ground-control .site .site__title {
+	line-height: 46px;
 }
 
 .editor-ground-control__separator {
@@ -45,21 +60,22 @@
 	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
-	padding: 6px 12px;
+	padding: 0 12px;
+	line-height: 32px;
 }
 
 .editor-ground-control__action-buttons .button.is-borderless {
-	padding: 2px 6px 9px;
+	padding: 0 12px;
+	line-height: 46px;
 }
 
 .editor-ground-control__preview-button {
 	display: block;
 	flex-grow: 1;
-	margin: 0 8px;
 }
 
 .editor-ground-control__toggle-sidebar {
-	margin: 0 16px 0 8px;
+	margin-right: 8px;
 }
 
 .editor-ground-control__toggle-sidebar.button.is-borderless,
@@ -205,8 +221,8 @@
 
 .editor-ground-control__back.button.is-borderless {
 	border-right: 1px solid #dce5ec;
-	padding: 12px 16px;
-	height: 57px;
+	padding: 6px 10px;
+	height: 46px;
 
 	.gridicon {
 		top: 4px;

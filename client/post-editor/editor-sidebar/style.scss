@@ -1,16 +1,16 @@
 .post-editor__sidebar {
 	@extend .sidebar;
-	background: $white;
+	background: lighten( $gray, 30% );
 	left: auto;
-	right: -272px;
+	right: -273px;
 	border-left: 1px solid darken( $sidebar-bg-color, 5% );
 	border-top: 1px solid darken( $sidebar-bg-color, 5% );
 	border-right: none;
-	top: 104px;
+	top: 93px;
 	transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
 
 	.focus-sidebar & {
-		transform: translateX(-272px);
+		transform: translateX(-273px);
 	}
 
 	@include breakpoint( "<660px" ) {
@@ -40,7 +40,7 @@
 		justify-content: space-between;
 		align-items: center;
 		flex-shrink: 0;
-		padding: 8px 16px;
+		padding: 11px 16px;
 	}
 
 	// Fix this
