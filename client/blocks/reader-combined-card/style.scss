@@ -59,12 +59,7 @@
 	color: $gray;
 }
 
-.reader-visit-link,
-.reader-combined-card__author-link,
+.reader-combined-card .reader-visit-link,
 .reader-combined-card__timestamp-link {
 	color: $gray;
-}
-
-.reader-combined-card .reader-excerpt {
-	max-height: 15px * 1.6; // 1 line only
 }

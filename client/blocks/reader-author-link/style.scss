@@ -1,0 +1,9 @@
+a.reader-author-link {
+	color: $gray;
+}
+
+.reader-author-link:hover,
+.reader-author-link:focus,
+.reader-author-link:active {
+	color: $blue-medium;
+}
