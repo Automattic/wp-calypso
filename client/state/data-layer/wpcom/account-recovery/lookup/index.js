@@ -6,7 +6,8 @@ import { isString } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
@@ -34,27 +35,29 @@ export const fromApi = data => ( [
 	},
 ] );
 
-export const requestResetOptions = ( { dispatch }, { userData } ) => (
-	wpcom.req.get( {
-		body: userData,
-		apiNamespace: 'wpcom/v2',
-		path: '/account-recovery/lookup',
-	} ).then( data => {
-		if ( validate( data ) ) {
-			dispatch( {
-				type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
-				options: fromApi( data ),
-			} );
-		} else {
-			throw Error( 'Unexpected response format' );
-		}
-	} )
-	.catch( error => dispatch( {
-		type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
-		error: error,
-	} ) )
-);
+export const onSuccess = ( { dispatch }, action, next, data ) => {
+	if ( validate( data ) ) {
+		dispatch( {
+			type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
+			items: fromApi( data ),
+		} );
+	} else {
+		throw Error( 'Unexpected response format' );
+	}
+};
+
+export const onError = ( { dispatch }, action, next, error ) => dispatch( {
+	type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
+	error: error,
+} );
+
+export const requestResetOptions = ( { dispatch }, action ) => dispatch( http( {
+	method: 'GET',
+	path: '/account-recovery/lookup',
+	apiNamespace: 'wpcom/v2',
+	body: action.userData,
+}, action ) );
 
 export default {
-	[ ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST ]: [ requestResetOptions ],
+	[ ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST ]: [ dispatchRequest( requestResetOptions, onSuccess, onError ) ],
 };
