@@ -73,7 +73,7 @@ export default React.createClass( {
 			>{ "Edit" }</Button> );
 			buttons.push( <Button
 				compact
-				onClick={ this.onDeleteItem }
+				onClick={ this.props.onDeleteItem }
 			>{ "Delete" }</Button> );
 		}
 		return buttons;

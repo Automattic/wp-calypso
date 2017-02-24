@@ -17,6 +17,7 @@ import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+import accept from 'lib/accept';
 
 export default React.createClass( {
 	displayName: 'Media',
@@ -127,7 +128,27 @@ export default React.createClass( {
 	setDetailSelectedIndex: function( index ) {
 		this.setState( { currentDetail: index } );
 	},
+	confirmDeleteMedia: function ( accepted ) {
+		const site = this.props.sites.getSelectedSite();
+		if ( ! site || ! accepted ) {
+			return;
+		}
+		const selected = MediaLibrarySelectedStore.getAll( site.ID );
+		MediaActions.delete( site.ID, selected );
+	},
 
+	deleteMedia: function() {
+		const site = this.props.sites.getSelectedSite();
+		const selected = MediaLibrarySelectedStore.getAll( site.ID );
+		const selectedCount = selected.length;
+		const confirmMessage = this.translate(
+			'Are you sure you want to permanently delete this item?',
+			'Are you sure you want to permanently delete these items?',
+			{ count: selectedCount }
+		);
+
+		accept( confirmMessage, this.confirmDeleteMedia );
+	},
 	render: function() {
 		const site = this.props.sites.getSelectedSite();
 		return (
@@ -168,7 +189,7 @@ export default React.createClass( {
 						single={ false }
 						onEditItem={ this.openDetailsModalForASingleImage }
 						onViewDetails={ this.openDetailsModalForAllSelected }
-						onDeleteItem={ () => {} }
+						onDeleteItem={ this.deleteMedia }
 						containerWidth={ this.state.containerWidth } />
 				</MediaLibrarySelectedData>
 			</div>
