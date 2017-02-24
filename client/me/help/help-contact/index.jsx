@@ -54,7 +54,7 @@ const SUPPORT_FORUM = 'SUPPORT_FORUM';
 const HelpContact = React.createClass( {
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.olarkTimedOut && this.olarkTimedOut !== nextProps.olarkTimedOut ) {
+		if ( nextProps.olarkTimedOut && this.olarkTimedOut !== nextProps.olarkTimedOut && ! this.shouldUseHappychat() ) {
 			this.onOlarkUnavailable();
 		}
 	},
@@ -571,7 +571,7 @@ const HelpContact = React.createClass( {
 		const { olark, sitesInitialized } = this.state;
 		const { ticketSupportConfigurationReady, ticketSupportRequestError } = this.props;
 
-		const olarkReadyOrTimedOut = olark.isOlarkReady && ! this.props.olarkTimedOut;
+		const olarkReadyOrTimedOut = olark.isOlarkReady || this.props.olarkTimedOut;
 		const ticketReadyOrError = ticketSupportConfigurationReady || null != ticketSupportRequestError;
 
 		return ! sitesInitialized || ! ticketReadyOrError || ! olarkReadyOrTimedOut;
