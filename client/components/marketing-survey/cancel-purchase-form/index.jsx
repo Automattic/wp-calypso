@@ -198,7 +198,7 @@ const CancelPurchaseForm = React.createClass( {
 					value="onlyNeedFree"
 					checked={ 'onlyNeedFree' === this.state.questionOneRadio }
 					onChange={ this.onRadioOneChange } />
-				<span>{ this.translate( 'All I need is the free plan.' ) }</span>
+				<span>{ this.translate( 'The plan was too expensive.' ) }</span>
 				{ 'onlyNeedFree' === this.state.questionOneRadio && onlyNeedFreeInput }
 			</FormLabel>
 		);
