@@ -47,4 +47,22 @@ describe( 'enrichedSurveyData', function() {
 			enrichedSurveyData( { key: 'value' }, moment(), site, purchase ).purchase
 		).to.equal( 'product slug' );
 	} );
+
+	it( 'should add daysSincePurchase to survey data when purchase.subscribedDate is provided', function() {
+		const site = null;
+		const purchase = { subscribedDate: '2017-01-09T03:00:00+00:00' };
+		expect(
+			enrichedSurveyData( { key: 'value' }, moment( '2017-01-19T03:00:00+00:00' ), site, purchase ).daysSincePurchase
+		).to.equal( 10 );
+	} );
+
+	it( 'should add daysSinceSiteCreation to survey data when site.options.created_at is provided', function() {
+		const site = {
+			options: { created_at: '2017-01-09T03:00:00+00:00' }
+		};
+		const purchase = null;
+		expect(
+			enrichedSurveyData( { key: 'value' }, moment( '2017-01-19T03:00:00+00:00' ), site, purchase ).daysSinceSiteCreation
+		).to.equal( 10 );
+	} );
 } );
