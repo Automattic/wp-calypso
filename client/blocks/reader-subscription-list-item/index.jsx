@@ -12,6 +12,8 @@ import Gravatar from 'components/gravatar';
 import FollowButton from 'reader/follow-button';
 import Gridicon from 'gridicons';
 
+const stripUrl = url => url.replace( 'https://', '' ).replace( 'http://', '' ).replace( '/', '' );
+
 function SettingsMenu() {
 	return (
 		<span className="reader-subscription-list-item__settings-menu">
@@ -33,23 +35,34 @@ function ReaderSubscriptionListItem( {
 	className = '',
 	onSiteClick = () => {},
 	followSource = 'reader-subscriptions-list-item',
+	lastUpdated,
 } ) {
 	const authorName = trim( `${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }` );
+
 	return (
 		<div className={ classnames( 'reader-subscription-list-item', className ) }>
-			<a href={ siteUrl } onClick={ onSiteClick }>
-				<Gravatar user={ siteAuthor } />
-			</a>
-			<span>{ <a href={ siteUrl }> { siteTitle } </a> }</span>
-			{ ! isEmpty( authorName ) &&
-				<span>
-					<span className="reader-subscription-list-item__by-text"> by </span>
-					<span><a href={ siteUrl }> { authorName } </a></span>
-				</span>
-			}
-			<FollowButton siteUrl={ siteUrl } followSource={ followSource } />
-			{ isFollowing && <SettingsMenu /> }
-			<p>{ siteExcerpt }</p>
+			<div>
+				<a href={ siteUrl } onClick={ onSiteClick }>
+					<Gravatar user={ siteAuthor } />
+				</a>
+			</div>
+			<div className="reader-subscription-list-item__byline">
+				<span className="reader-subscription-list-item__site-title">{ <a href={ siteUrl }> { siteTitle } </a> }</span>
+				{ ! isEmpty( authorName ) &&
+					<span>
+						<span className="reader-subscription-list-item__by-text"> by </span>
+						<span><a href={ siteUrl }> { authorName } </a></span>
+					</span>
+				}
+				<div>{ siteExcerpt }</div>
+				<div className="reader-subscription-list-item__site-url">
+					<a href={ siteUrl }> { stripUrl( siteUrl ) } </a> { lastUpdated }
+				</div>
+			</div>
+			<div className="reader-subscription-list-item__options">
+				<FollowButton siteUrl={ siteUrl } followSource={ followSource } />
+				{ isFollowing && <SettingsMenu /> }
+			</div>
 		</div>
 	);
 }

@@ -3,8 +3,19 @@
 	color: $gray;
 }
 
+.reader-subscription-list-item .gravatar {
+	float: left;
+	margin: 2px 6px 0 0;
+	height: 32px;
+	min-height: 32px;
+	width: 32px;
+	min-width: 32px;
+}
+
 .reader-subscription-list-item {
 	font-size: 14px;
+	padding-bottom: 20px;
+	display: flex;
 }
 // copy and pasted from follow button for reader-post-card
 // TODO: combing to reusable refreshed-reader component?
@@ -39,8 +50,15 @@
 	color: $gray;
 	float: right;
 }
+.reader-subscription-list-item__site-url, .reader-subscription-list-item__site-url a {
+	color: $gray;
+}
+.reader-subscription-list-item__site-title {
+	font-weight: 600;
+}
 
-/*
-.reader-subscription-list-item__settings-menu .gridicon {
-	margin-top: 10px;
-} */
+.reader-subscription-list-item__options {
+	display: flex;
+	flex-direction: column;
+	margin-left: auto;
+}
