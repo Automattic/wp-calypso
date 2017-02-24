@@ -48,6 +48,8 @@ import { connectOptions } from 'my-sites/themes/theme-options';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import {
 	getEligibility,
@@ -362,7 +364,9 @@ export default connect(
 		);
 		return {
 			siteId,
+			isBusiness: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 			selectedSite: getSelectedSite( state ),
+			isJetpack,
 			inProgress: isUploadInProgress( state, siteId ),
 			complete: isUploadComplete( state, siteId ),
 			failed: hasUploadFailed( state, siteId ),
