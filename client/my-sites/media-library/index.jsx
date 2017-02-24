@@ -130,6 +130,7 @@ module.exports = React.createClass( {
 				onMediaScaleChange={ this.props.onScaleChange }
 				selectedItems={ this.props.mediaLibrarySelectedItems }
 				onDeleteItem={ this.props.onDeleteItem }
+				onEditItem={ this.props.onEditItem }
 				onViewDetails={ this.props.onViewDetails } />
 		);
 

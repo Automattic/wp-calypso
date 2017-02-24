@@ -31,6 +31,7 @@ export default React.createClass( {
 		return {
 			editedItem: null,
 			currentDetail: null,
+			selectedImages: []
 		};
 	},
 
@@ -54,12 +55,27 @@ export default React.createClass( {
 		page( redirect );
 	},
 
-	openDetailsModal() {
-		this.setState( { currentDetail: 0 } );
+	openDetailsModalForASingleImage( image ) {
+		const selected = [ image ];
+
+		this.setState( {
+			currentDetail: 0,
+			selectedImages: selected
+		} );
+	},
+
+	openDetailsModalForAllSelected() {
+		const site = this.props.sites.getSelectedSite();
+		const selected = MediaLibrarySelectedStore.getAll( site.ID );
+
+		this.setState( {
+			currentDetail: 0,
+			selectedImages: selected
+		} );
 	},
 
 	closeDetailsModal() {
-		this.setState( { editedItem: null, currentDetail: null } );
+		this.setState( { editedItem: null, currentDetail: null, selectedImages: [] } );
 	},
 
 	editImage() {
@@ -99,14 +115,14 @@ export default React.createClass( {
 
 		MediaActions.update( site.ID, item, true );
 		resetAllImageEditorState();
-		this.setState( { currentDetail: null, editedItem: null } );
+		this.setState( { currentDetail: null, editedItem: null, selectedImages: [] } );
 	},
 	restoreOriginalMedia: function( siteId, item ) {
 		if ( ! siteId || ! item ) {
 			return;
 		}
 		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
-		this.setState( { currentDetail: null, editedItem: null } );
+		this.setState( { currentDetail: null, editedItem: null, selectedImages: [] } );
 	},
 	setDetailSelectedIndex: function( index ) {
 		this.setState( { currentDetail: index } );
@@ -126,7 +142,7 @@ export default React.createClass( {
 					{ this.state.currentDetail !== null &&
 						<EditorMediaModalDetail
 							site={ site }
-							items={ MediaLibrarySelectedStore.getAll( site.ID ) }
+							items={ this.state.selectedImages }
 							selectedIndex={ this.state.currentDetail }
 							onReturnToList={ this.closeDetailsModal }
 							onEditItem={ this.editImage }
@@ -137,7 +153,7 @@ export default React.createClass( {
 					{ this.state.editedItem !== null &&
 						<ImageEditor
 							siteId={ site && site.ID }
-							media={ MediaLibrarySelectedStore.getAll( site.ID )[ this.state.editedItem ] }
+							media={ this.state.selectedImages[ this.state.editedItem ] }
 							onDone={ this.onImageEditorDone }
 							onCancel={ this.onImageEditorCancel }
 						/>
@@ -150,8 +166,8 @@ export default React.createClass( {
 						onFilterChange={ this.onFilterChange }
 						site={ site || false }
 						single={ false }
-						onEditItem={ this.openDetailsModal }
-						onViewDetails={ this.openDetailsModal }
+						onEditItem={ this.openDetailsModalForASingleImage }
+						onViewDetails={ this.openDetailsModalForAllSelected }
 						onDeleteItem={ () => {} }
 						containerWidth={ this.state.containerWidth } />
 				</MediaLibrarySelectedData>
