@@ -3,6 +3,7 @@
 * {
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
 }
+
 body {
 	color: #2E4453;
 	-webkit-font-smoothing: subpixel-antialiased;
@@ -15,6 +16,7 @@ textarea {
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
 }
 
+// Main button
 .btn {
 	background: #00aadc;
 	border: 1px solid #008ab3;
@@ -47,6 +49,8 @@ textarea {
 		box-shadow: 0 0 0 2px #78dcfa;
 	}
 }
+
+// Form inputs
 input[type="text"],
 input[type="password"],
 input[type="email"],
@@ -97,10 +101,12 @@ textarea {
 .maximized-view.is-ask-view {
 	top: 0 !important;
 }
-
 .message-list-transition-wrapper {
 	background: #F2F6F8;
 }
+
+
+/* HEADER */
 
 .header-container {
 	border-bottom: 1px solid #E9EFF3;
@@ -114,6 +120,8 @@ textarea {
 		font-weight: 700;
 		color: #87A6BC;
 	}
+
+	// Left hamburger button
 	.menu {
 		border-right: none;
 		flex: 0 0 40px;
@@ -127,6 +135,8 @@ textarea {
 			}
 		}
 	}
+
+	// Right minimize button
 	.minimize-container {
 		border-left: none;
 		flex: 0 0 40px;
@@ -134,12 +144,16 @@ textarea {
 			color: #87A6BC;
 		}
 	}
+
 	.thread-view-title-container {
 		&.has-notification {
 			border-bottom-color: #14ACDD;
 		}
 	}
 }
+
+
+/* CHAT LIST (opens with the hamburguer button on header) */
 
 .chat-list-view-container {
 	.chat-list-container {
@@ -164,186 +178,25 @@ textarea {
 	.chat-list-item-meta {
 		color: #87A6BC;
 	}
-}
-
-.message-container {
-	font-size: 14px;
-	border-radius: 8px;
-
-	&.is-poster {
-		background: #14ACDD;
-		margin-left: inherit;
-		margin-right: 20px;
-		border-top-right-radius: 0px;
-		position: relative;
-		&:after {
-			position: absolute;
-			content: "";
-			display: block;
-			width: 0;
-			height: 0;
-			border-style: solid;
-			border-width: 10px 10px 0 0;
-			border-color: #14abdd transparent transparent transparent;
-			top: 0;
-			right: -10px;
-		}
-	}
-
-	&.is-expert {
-		border: none;
-		border-radius: 8px;
-		border-top-left-radius: 0;
-		margin-right: inherit;
-		margin-left: 20px;
-		position: relative;
-		&:after {
-			position: absolute;
-			content: "";
-			display: block;
-			width: 0;
-			height: 0;
-			border-style: solid;
-			border-width: 0 10px 10px 0;
-			border-color: transparent #fff transparent transparent;
-			top: 0;
-			left: -10px;
-		}
-		.author .img {
-			width: 32px !important;
-			height: 32px !important;
-		}
-	}
-}
-
-.author {
-	.name-wrapper {
-		font-size: 12px;
-		font-weight: 500;
-	}
-	.profile {
-		.reputation {
-			color: #A8BECE;
-		}
-	}
-}
-.avatar {
-	background: #D9E3EA;
-}
-
-.system-message {
-	border: 1px solid #D9E3EA;
-	background: #e9eff3;
-	font-size: 14px;
-	margin-right: 0;
-	border-radius: 8px;
-	&.has-sibling + .system-message {
-		border-top: 1px solid #D9E3EA;
-	}
-
-	&.success {
-		border-color: #4ab866;
-		background: #DCEEE5;
-	}
-
-	&.success.inverted {
-		border-color: transparent;
+	.unread-message-dot {
 		background: #4ab866;
-		color: #fff;
-		a {
-			color: #fff;
-		}
-	}
-
-	&.warning {
-		background: #f0b849;
-		border-color: transparent;
-		color: #fff;
-		a {
-			color: #fff;
-		}
-	}
-
-	&.alerting-experts {
-		.expert-name {
-			&:empty {
-				background: #D9E3EA;
-			}
-		}
-		.expert-last-active-date {
-			color: #87a6bc;
-			&:empty {
-				background: #D9E3EA;
-			}
-		}
-	}
-	.icon-avatar {
-		background: #D9E3EA;
-	}
-	.icon {
-		margin-top: 0;
-		&.icon-primary {
-			background-color: #14ACDD;
-		}
-		&.icon-success {
-			background-color: #fff;
-			color: #4ab866;
-		}
-		&.icon-warning {
-			background-color: #fff;
-			color: #f0b849;
-		}
-	}
-	&.inverted {
-		.icon {
-			.icon-success {
-				background-color: #fff;
-				color: #4ab866;
-			}
-		}
-	}
-}
-.expert-carousel {
-	box-shadow: none;
-}
-
-.thread-view-footer {
-	border-top: 1px solid #E9EFF3;
-	box-shadow: none;
-	background: #fff;
-}
-
-.thread-view-container {
-	.expert-response-time {
-		color: #87A6BC;
+		left: 10px;
+		top: 25px;
 	}
 }
 
-.chat-view-minimized {
-	.alerting {
-		color: #87A6BC;
-		.beacon {
-			background: #0087BE;
-			margin: 5px auto;
-			&:after {
-				background: #0087BE;
-			}
-		}
+// Bubble when the chat list is minimized
+.chat-list-view-minimized {
+	.chat-list-status {
+		margin-top: 2px;
 	}
-	.chatting img {
-		height: 64px;
-		width: 64px;
-	}
-	.notification {
-		background: #00AADC;
-		font-size: 12px;
-		font-weight: 500;
-		min-width: 24px;
-		line-height: 24px;
-		margin-top: -3px;
-		margin-left: -3px;
+	.svg-icon {
+		color: #00aadc;
 	}
 }
+
+
+/* ASK QUESTION (opens from chat list) */
 
 .ask-question-form-container {
 	.input-group {
@@ -372,9 +225,211 @@ textarea {
 	}
 }
 
+
+/* THREAD */
+
+.thread-view-container {
+	.expert-response-time {
+		color: #87A6BC;
+	}
+}
+
+// Message bubbles
+.message-container {
+	font-size: 14px;
+	border-radius: 8px;
+
+	&.is-poster {
+		background: #14ACDD;
+		margin-left: inherit;
+		margin-right: 20px;
+		border-top-right-radius: 0px;
+		position: relative;
+		&:after {
+			// Triangle for the corner
+			position: absolute;
+			content: "";
+			display: block;
+			width: 0;
+			height: 0;
+			border-style: solid;
+			border-width: 10px 10px 0 0;
+			border-color: #14abdd transparent transparent transparent;
+			top: 0;
+			right: -10px;
+		}
+	}
+
+	&.is-expert {
+		border: none;
+		border-radius: 8px;
+		border-top-left-radius: 0;
+		margin-right: inherit;
+		margin-left: 20px;
+		position: relative;
+		&:after {
+			// Triangle for the corner
+			position: absolute;
+			content: "";
+			display: block;
+			width: 0;
+			height: 0;
+			border-style: solid;
+			border-width: 0 10px 10px 0;
+			border-color: transparent #fff transparent transparent;
+			top: 0;
+			left: -10px;
+		}
+		.author .img {
+			width: 32px !important;
+			height: 32px !important;
+		}
+	}
+}
+
+// Avatar + name + reputation, used inside .message-container.is-expert
+.author {
+	.name-wrapper {
+		font-size: 12px;
+		font-weight: 500;
+	}
+	.profile {
+		.reputation {
+			color: #A8BECE;
+		}
+	}
+}
+.avatar {
+	background: #D9E3EA;
+}
+
+.system-message {
+	border: 1px solid #D9E3EA;
+	background: #e9eff3;
+	font-size: 14px;
+	margin-right: 0;
+	border-radius: 8px;
+	&.has-sibling + .system-message {
+		border-top: 1px solid #D9E3EA;
+	}
+
+	// Green border for success messages
+	&.success {
+		border-color: #4ab866;
+		background: #DCEEE5;
+	}
+
+	// Green background for highlighted success messages
+	&.success.inverted {
+		border-color: transparent;
+		background: #4ab866;
+		color: #fff;
+		a {
+			color: #fff;
+		}
+	}
+
+	// Yellow borders for warnings
+	&.warning {
+		background: #f0b849;
+		border-color: transparent;
+		color: #fff;
+		a {
+			color: #fff;
+		}
+	}
+
+	// Placeholder displayed when the experts info is loading
+	&.alerting-experts {
+		.expert-name {
+			&:empty {
+				background: #D9E3EA;
+			}
+		}
+		.expert-last-active-date {
+			color: #87a6bc;
+			&:empty {
+				background: #D9E3EA;
+			}
+		}
+	}
+
+	.icon-avatar {
+		background: #D9E3EA;
+	}
+
+	// Icons inside system messages
+	.icon {
+		margin-top: 0;
+		&.icon-primary {
+			background-color: #14ACDD;
+		}
+		&.icon-success {
+			background-color: #fff;
+			color: #4ab866;
+		}
+		&.icon-warning {
+			background-color: #fff;
+			color: #f0b849;
+		}
+	}
+	&.inverted {
+		.icon {
+			.icon-success {
+				background-color: #fff;
+				color: #4ab866;
+			}
+		}
+	}
+}
+
+// When nobody has answered a question yet, a carousel of last available experts is shown
+.expert-carousel {
+	box-shadow: none;
+}
+
+// Reply box and other tools in the thread view footer
+.thread-view-footer {
+	border-top: 1px solid #E9EFF3;
+	box-shadow: none;
+	background: #fff;
+}
+
+// Bubble when the thread view is minimized
+.chat-view-minimized {
+	// When no expert has replied yet
+	.alerting {
+		color: #87A6BC;
+		.beacon {
+			background: #0087BE;
+			margin: 5px auto;
+			&:after {
+				background: #0087BE;
+			}
+		}
+	}
+
+	// When there's a chat going on
+	.chatting img {
+		height: 64px;
+		width: 64px;
+	}
+	.notification {
+		background: #00AADC;
+		font-size: 12px;
+		font-weight: 500;
+		min-width: 24px;
+		line-height: 24px;
+		margin-top: -3px;
+		margin-left: -3px;
+	}
+}
+
+// Chat box
 .message-form-container {
 	.message-input {
 		padding-right: 10px;
+		align-self: center;
 	}
 	textarea:focus {
 		box-shadow: none;
@@ -385,6 +440,7 @@ textarea {
 	}
 }
 
+// Tools inside chat box
 .toolbar-accepted-container,
 .toolbar-default-container,
 .toolbar-rate-container {
@@ -416,6 +472,7 @@ textarea {
 	}
 }
 
+// Displays when the user wants to accept the answer
 .ActionBar {
 	background: #fff;
 }
