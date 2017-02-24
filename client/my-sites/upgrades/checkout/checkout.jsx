@@ -237,8 +237,7 @@ const Checkout = React.createClass( {
 				}
 			}
 		} = this.props;
-		const redirectPath = this.getCheckoutCompleteRedirectPath(),
-			{ receipt_id: receiptId } = receipt;
+		const redirectPath = this.getCheckoutCompleteRedirectPath();
 
 		this.props.clearPurchases();
 
@@ -288,7 +287,9 @@ const Checkout = React.createClass( {
 			this.props.clearSitePlans( selectedSiteId );
 		}
 
-		if ( receiptId ) {
+		if ( receipt && receipt.receipt_id ) {
+			const receiptId = receipt.receipt_id;
+
 			this.props.fetchReceiptCompleted( receiptId, {
 				receiptId,
 				purchases: this.flattenPurchases( this.props.transaction.step.data.purchases ),

@@ -86,14 +86,21 @@ const CheckoutThankYou = React.createClass( {
 	componentDidMount() {
 		this.redirectIfThemePurchased();
 
-		if ( this.props.receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
-			this.props.refreshSitePlans( this.props.selectedSite );
-		} else if ( shouldFetchSitePlans( this.props.sitePlans, this.props.selectedSite ) ) {
-			this.props.fetchSitePlans( this.props.selectedSite );
+		const {
+			receipt,
+			receiptId,
+			selectedSite,
+			sitePlans
+		} = this.props;
+
+		if ( selectedSite && receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
+			this.props.refreshSitePlans( selectedSite );
+		} else if ( shouldFetchSitePlans( sitePlans, selectedSite ) ) {
+			this.props.fetchSitePlans( selectedSite );
 		}
 
-		if ( this.props.receiptId && ! this.props.receipt.hasLoadedFromServer && ! this.props.receipt.isRequesting ) {
-			this.props.fetchReceipt( this.props.receiptId );
+		if ( receiptId && ! receipt.hasLoadedFromServer && ! receipt.isRequesting ) {
+			this.props.fetchReceipt( receiptId );
 		}
 
 		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
@@ -287,7 +294,9 @@ const CheckoutThankYou = React.createClass( {
 			failedPurchases = getFailedPurchases( this.props ),
 			hasFailedPurchases = failedPurchases.length > 0,
 			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain(),
-			registrarSupportUrl = ( ! ComponentClass || this.isGenericReceipt() || hasFailedPurchases ) ? null : primaryPurchase.registrarSupportUrl;
+			registrarSupportUrl = ( ! ComponentClass || this.isGenericReceipt() || hasFailedPurchases )
+				? null
+				: primaryPurchase.registrarSupportUrl;
 
 		if ( ! this.isDataLoaded() ) {
 			return (
@@ -359,14 +368,10 @@ export default connect(
 				dispatch( fetchReceipt( receiptId ) );
 			},
 			fetchSitePlans( site ) {
-				if ( site ) {
-					dispatch( fetchSitePlans( site.ID ) );
-				}
+				dispatch( fetchSitePlans( site.ID ) );
 			},
 			refreshSitePlans( site ) {
-				if ( site ) {
-					dispatch( refreshSitePlans( site.ID ) );
-				}
+				dispatch( refreshSitePlans( site.ID ) );
 			},
 		};
 	}
