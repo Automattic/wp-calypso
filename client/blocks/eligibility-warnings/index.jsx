@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, noop } from 'lodash';
+import { difference, filter, get, includes, noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -31,11 +31,16 @@ export const EligibilityWarnings = ( {
 	isPlaceholder,
 	onProceed,
 	siteId,
+	siteSlug,
 	translate,
 } ) => {
 	const context = -1 !== backUrl.indexOf( 'plugins' ) ? 'plugins' : 'themes';
-	const holds = get( eligibilityData, 'eligibilityHolds', [ 'PLACEHOLDER', 'PLACEHOLDER' ] );
+
 	const warnings = get( eligibilityData, 'eligibilityWarnings', [] );
+
+	let holds = get( eligibilityData, 'eligibilityHolds', [ 'PLACEHOLDER', 'PLACEHOLDER' ] );
+	const bannerHolds = filter( holds, hold => -1 !== [ 'NO_BUSINESS_PLAN', 'NOT_USING_CUSTOM_DOMAIN' ].indexOf( hold ) );
+	holds = difference( holds, bannerHolds );
 
 	const classes = classNames(
 		'eligibility-warnings',
@@ -60,6 +65,15 @@ export const EligibilityWarnings = ( {
 					feature={ FEATURE_UPLOAD_THEMES }
 					plan={ PLAN_BUSINESS }
 					title={ translate( 'To upload themes, upgrade to Business Plan' ) }
+				/>
+			}
+			{ hasBusinessPlan && ! isJetpack && includes( bannerHolds, 'NOT_USING_CUSTOM_DOMAIN' ) &&
+				<Banner
+					className="eligibility-warnings__banner"
+					description={ translate( 'Add a free custom domain to install this plugin.' ) }
+					href={ `/domains/add/${ siteSlug }` }
+					icon="domains"
+					title={ translate( 'Custom domain required' ) }
 				/>
 			}
 
@@ -107,7 +121,11 @@ EligibilityWarnings.defaultProps = {
 };
 
 const mapStateToProps = state => {
-	const { ID: siteId, plan } = getSelectedSite( state );
+	const {
+		ID: siteId,
+		plan,
+		slug: siteSlug,
+	} = getSelectedSite( state );
 	const eligibilityData = getEligibility( state, siteId );
 	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
 	const hasBusinessPlan = isBusiness( plan ) || isEnterprise( plan );
@@ -121,6 +139,7 @@ const mapStateToProps = state => {
 		isJetpack,
 		isPlaceholder: ! dataLoaded,
 		siteId,
+		siteSlug,
 	};
 };
 

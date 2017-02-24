@@ -27,6 +27,10 @@
 }
 .eligibility-warnings .banner {
 	margin-bottom: 16px;
+	.banner__icon-circle {
+		padding: 4px;
+	}
+
 }
 
 .eligibility-warnings__hold,
@@ -46,7 +50,8 @@
 	}
 }
 
-.eligibility-warnings .gridicon {
+.eligibility-warnings__hold .gridicon,
+.eligibility-warnings__warning > .gridicon {
 	color: $alert-red;
 	flex-shrink: 0;
 }
