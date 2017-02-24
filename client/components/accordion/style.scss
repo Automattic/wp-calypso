@@ -33,7 +33,7 @@ $accordion-background-expanded: $white;
 	.accordion__arrow {
 		position: absolute;
 			top: 50%;
-			right: $accordion-padding;
+			right: ( $accordion-padding - 4px );
 		transform: translateY( -50% );
 		color: darken( $gray, 10% );
 		.gridicon {
