@@ -24,7 +24,7 @@ var EmailFollowersActions = {
 				fetchOptions: fetchOptions
 			} );
 		}
-		wpcom.site( fetchOptions.siteId ).statsFollowers( fetchOptions, function( error, data ) {
+		wpcom.undocumented().site( fetchOptions.siteId ).fetchFollowers( fetchOptions, function( error, data ) {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_EMAIL_FOLLOWERS',
 				fetchOptions: fetchOptions,
