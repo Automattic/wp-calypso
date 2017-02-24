@@ -28,7 +28,7 @@ import {
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 
-function createCart( callback, dependencies, data ) {
+function createCart( callback, dependencies, data, reduxStore ) {
 	const { designType } = dependencies;
 	const { domainItem, themeItem } = data;
 
@@ -43,7 +43,7 @@ function createCart( callback, dependencies, data ) {
 
 		SignupCart.addToCart( cartKey, [ domainItem ], error => callback( error, providedDependencies ) );
 	} else {
-		createSiteWithCart( callback, dependencies, data );
+		createSiteWithCart( callback, dependencies, data, reduxStore );
 	}
 }
 
@@ -55,9 +55,9 @@ function createSiteWithCart( callback, dependencies, {
 	siteUrl,
 	themeSlugWithRepo,
 	themeItem
-} ) {
-	const siteTitle = getSiteTitle( this._reduxStore.getState() ).trim();
-	const surveyVertical = getSurveyVertical( this._reduxStore.getState() ).trim();
+}, reduxStore ) {
+	const siteTitle = getSiteTitle( reduxStore.getState() ).trim();
+	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 
 	wpcom.undocumented().sitesNew( {
 		blog_name: siteUrl,
@@ -109,7 +109,7 @@ function createSiteWithCart( callback, dependencies, {
 		if ( ! user.get() && isFreeThemePreselected ) {
 			setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
 		} else if ( user.get() && isFreeThemePreselected ) {
-			fetchSitesAndUser( siteSlug, setThemeOnSite.bind( this, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ) );
+			fetchSitesAndUser( siteSlug, setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ) );
 		} else if ( user.get() ) {
 			fetchSitesAndUser( siteSlug, addToCartAndProceed );
 		} else {
@@ -266,9 +266,9 @@ module.exports = {
 		SignupCart.addToCart( siteId, newCartItems, callback );
 	},
 
-	createAccount( callback, dependencies, { userData, flowName, queryArgs } ) {
-		const surveyVertical = getSurveyVertical( this._reduxStore.getState() ).trim();
-		const surveySiteType = getSurveySiteType( this._reduxStore.getState() ).trim();
+	createAccount( callback, dependencies, { userData, flowName, queryArgs }, reduxStore ) {
+		const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
+		const surveySiteType = getSurveySiteType( reduxStore.getState() ).trim();
 
 		wpcom.undocumented().usersNew( assign(
 			{}, userData, {
