@@ -39,16 +39,17 @@ const ThemePreview = React.createClass( {
 
 	getInitialState() {
 		return {
-			isInstalling: false
+			showActionIndicator: false
 		};
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! this.props.isActivatingTheme && nextProps.isActivatingTheme ) {
+		if ( this.props.isActivating && ! nextProps.isActivating ) {
+			this.setState( { showActionIndicator: false } );
 			this.props.hideThemePreview();
 		}
 		if ( ! this.props.isInstalling && nextProps.isInstalling ) {
-			this.setState( { isInstalling: true } );
+			this.setState( { showActionIndicator: true } );
 		}
 	},
 
@@ -99,7 +100,7 @@ const ThemePreview = React.createClass( {
 
 	render() {
 		const { themeId } = this.props;
-		const { isInstalling } = this.state;
+		const { showActionIndicator } = this.state;
 		if ( ! themeId ) {
 			return null;
 		}
@@ -114,9 +115,9 @@ const ThemePreview = React.createClass( {
 					onClose={ this.props.hideThemePreview }
 					previewUrl={ this.props.previewUrl }
 					externalUrl={ this.props.theme.demo_uri } >
-					<PulsingDot active={ isInstalling } />
-					{ ! isInstalling && this.renderSecondaryButton() }
-					{ ! isInstalling && this.renderPrimaryButton() }
+					{ showActionIndicator && <PulsingDot active={ true } /> }
+					{ ! showActionIndicator && this.renderSecondaryButton() }
+					{ ! showActionIndicator && this.renderPrimaryButton() }
 				</WebPreview> }
 			</div>
 		);
