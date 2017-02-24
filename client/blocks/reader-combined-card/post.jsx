@@ -76,7 +76,7 @@ export default class ReaderCombinedCardPost extends React.Component {
 		const hasAuthorName = has( post, 'author.name' );
 		let featuredAsset = null;
 		if ( post.canonical_media ) {
-			featuredAsset = <ReaderFeaturedImage imageUrl={ post.canonical_media.src } href={ post.URL } />;
+			featuredAsset = <ReaderFeaturedImage imageWidth={ 100 } imageUrl={ post.canonical_media.src } href={ post.URL } />;
 		}
 		const recordDateClick = () => {
 			recordPermalinkClick( 'timestamp_combined_card', post );
