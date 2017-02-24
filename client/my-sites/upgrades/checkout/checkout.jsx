@@ -207,7 +207,7 @@ const Checkout = React.createClass( {
 				: '/checkout/thank-you/plans';
 		} else if ( cart.create_new_blog ) {
 			const domainName = getDomainNameFromReceiptOrCart( receipt, cart );
-			if ( domainName ) {
+			if ( domainName && receipt && isEmpty( receipt.failed_purchases ) ) {
 				return domainManagementList( domainName );
 			}
 
@@ -297,7 +297,7 @@ const Checkout = React.createClass( {
 			} );
 		}
 
-		if ( cart.create_new_blog ) {
+		if ( cart.create_new_blog && receipt && isEmpty( receipt.failed_purchases ) ) {
 			notices.info(
 				this.translate( 'Almost done…' )
 			);
