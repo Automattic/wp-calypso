@@ -17,6 +17,15 @@ class Transfer extends React.Component {
 	render() {
 		const slug = this.props.selectedSite.slug,
 			domainName = this.props.selectedDomainName;
+
+		let transferToAnotherUser = null;
+		if ( ! this.props.selectedSite.options.is_automated_transfer ) {
+			transferToAnotherUser =
+				<VerticalNavItem path={ paths.domainManagementTransferToAnotherUser( slug, domainName ) }>
+					{ this.props.translate( 'Transfer to another user' ) }
+				</VerticalNavItem>;
+		}
+
 		return (
 		<Main className="domain-management-transfer">
 			<Header
@@ -30,11 +39,7 @@ class Transfer extends React.Component {
 				}>
 					{ this.props.translate( 'Transfer to another registrar' ) }
 				</VerticalNavItem>
-				<VerticalNavItem path={
-					paths.domainManagementTransferToAnotherUser( slug, domainName )
-				}>
-					{ this.props.translate( 'Transfer to another user' ) }
-				</VerticalNavItem>
+				{ transferToAnotherUser }
 			</VerticalNav>
 		</Main>
 		);
