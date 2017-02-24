@@ -133,7 +133,7 @@ const HelpContact = React.createClass( {
 		const userAgent = `User Agent: ${ navigator.userAgent }`;
 		const screenRes = `Screen Resolution: ${ screen.width }x${ screen.height }\n`;
 		const browserSize = `Browser Size: ${ window.innerWidth }x${ window.innerHeight }\n`;
-		const browserInfoMsg = [ `Information to assist trouble shooting.\n ${ screenRes } ${ browserSize } ${ userAgent }` ];
+		const browserInfoMsg = [ `Information to assist troubleshooting.\n ${ screenRes } ${ browserSize } ${ userAgent }` ];
 
 		let messages = browserInfoMsg.concat( message );
 
