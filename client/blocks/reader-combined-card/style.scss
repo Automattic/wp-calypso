@@ -64,3 +64,7 @@
 .reader-combined-card__timestamp-link {
 	color: $gray;
 }
+
+.reader-combined-card .reader-excerpt {
+	max-height: 15px * 1.6; // 1 line only
+}
