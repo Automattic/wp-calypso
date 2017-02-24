@@ -221,6 +221,15 @@ export function writeComment( commentText, siteId, postId, parentCommentId ) {
 				skipSort
 			} );
 
+			const requestId = createRequestId( siteId, postId, {} );
+
+			wpcom.site( siteId )
+				.post( postId )
+				.comment()
+				.replies()
+				.then( ( { found: totalCommentsCount } ) =>	dispatch( { type: COMMENTS_COUNT_RECEIVE, siteId, postId, totalCommentsCount } ) )
+				.catch( ( err ) => commentsRequestFailure( dispatch, requestId, err ) );
+
 			return comment;
 		} )
 		.catch( ( error ) => {

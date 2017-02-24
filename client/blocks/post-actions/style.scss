@@ -1,0 +1,10 @@
+.post-actions {
+	box-sizing: border-box;
+	display: flex;
+	font-family: $sans;
+	flex-direction: row;
+	height: auto;
+	justify-content: flex-end;
+	list-style-type: none;
+	margin: 10px 0 0;
+}

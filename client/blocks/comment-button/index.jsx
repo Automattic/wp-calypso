@@ -2,8 +2,17 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import noop from 'lodash/noop';
+
+/**
+ * Internal dependencies
+ */
 import Gridicon from 'gridicons';
+import { getPostTotalCommentsCount } from 'state/comments/selectors';
+
+const CommentCount = ( { commentCount } ) => <span className="comment-button__label-count">{ commentCount }</span>
 
 const CommentButton = React.createClass( {
 
@@ -25,23 +34,25 @@ const CommentButton = React.createClass( {
 	},
 
 	render() {
-		let label;
-		const containerTag = this.props.tagName,
-			commentCount = this.props.commentCount,
-			commentCountComponent = <span className="comment-button__label-count">
-				{ commentCount }
-			</span>;
+		const {
+			translate,
+			commentCount,
+			onClick,
+			showLabel,
+			tagName: containerTag,
+		} = this.props;
 
+		let label;
 		if ( commentCount === 0 ) {
 			label = <span className="comment-button__label-status">
-				{ this.translate( 'Comment', { context: 'verb' } ) }
+				{ translate( 'Comment', { context: 'verb' } ) }
 			</span>;
 		} else {
-			label = this.translate(
+			label = translate(
 				'{{count/}}{{span}}Comment{{/span}}',
 				'{{count/}}{{span}}Comments{{/span}}', {
 					components: {
-						count: commentCountComponent,
+						count: <CommentCount { ...{ commentCount } }/>,
 						span: <span className="comment-button__label-status" />
 					},
 					count: commentCount,
@@ -52,17 +63,33 @@ const CommentButton = React.createClass( {
 		// If the label is to be shown, output the label from above,
 		// otherwise just show the count if it's > 0.
 		const labelElement = ( <span className="comment-button__label">
-			{ this.props.showLabel ? label : commentCount > 0 && commentCountComponent }
+			{ showLabel ? label : commentCount > 0 && <CommentCount { ...{ commentCount } }/> }
 		</span> );
 
 		return React.createElement(
 			containerTag, {
 				className: 'comment-button',
-				onClick: this.props.onClick
+				onClick
 			},
 			<Gridicon icon="comment" size={ this.props.size } className="comment-button__icon" />, labelElement
 		);
 	}
 } );
 
-export default CommentButton;
+const mapStateToProps = ( state, ownProps ) => {
+	const {
+		post: {
+			site_ID: siteId,
+			ID: postId,
+		},
+		commentCount,
+	} = ownProps;
+
+	// console.log( siteId, postId, getPostTotalCommentsCount( state, siteId, postId ) );
+
+	return {
+		commentCount: getPostTotalCommentsCount( state, siteId, postId ) || commentCount
+	};
+};
+
+export default connect( mapStateToProps )( localize( CommentButton ) );

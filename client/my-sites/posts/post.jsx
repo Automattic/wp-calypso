@@ -11,12 +11,13 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Card from 'components/card';
-import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
+// import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import PostControls from './post-controls';
 import PostHeader from './post-header';
 import PostImage from '../post/post-image';
 import PostExcerpt from 'components/post-excerpt';
 import PostTotalViews from 'my-sites/posts/post-total-views';
+// import PostMeta from './post-meta';
 import utils from 'lib/posts/utils';
 import updatePostStatus from 'lib/mixins/update-post-status';
 import analytics from 'lib/analytics';
@@ -28,6 +29,8 @@ import { isSitePreviewable } from 'state/sites/selectors';
 
 import Comments from 'blocks/comments';
 import PostShare from './post-share';
+
+import PostActions from 'blocks/post-actions';
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Posts', eventAction );
@@ -392,19 +395,25 @@ const Post = React.createClass( {
 	render() {
 		const site = this.getSite();
 
+/*
+<footer className="post__info">
+	<PostRelativeTimeStatus post={ this.props.post } link={ this.getContentLinkURL() } target={ this.getContentLinkTarget() } onClick={ this.analyticsEvents.dateClick }/>
+	{
+		// Only show meta items for non-drafts
+		( this.props.post.status === 'draft' ) ? null : this.getMeta()
+	}
+	<PostMeta post={ this.props.post } />
+</footer>
+
+*/
+
 		return (
 			<Card tagName="article" className={ this.getPostClass() }>
 				<div className="post__body">
 					{ this.getHeader() }
 					{ this.getPostImage() }
 					{ this.getContent() }
-					<footer className="post__info">
-						<PostRelativeTimeStatus post={ this.props.post } link={ this.getContentLinkURL() } target={ this.getContentLinkTarget() } onClick={ this.analyticsEvents.dateClick } />
-						{
-							// Only show meta items for non-drafts
-							( this.props.post.status === 'draft' ) ? null : this.getMeta()
-						}
-					</footer>
+					<PostActions { ...{ site, post: this.props.post } } />
 				</div>
 				<PostControls
 					post={ this.props.post }
