@@ -61,14 +61,17 @@ Site.prototype.attributes = function( attributes ) {
 };
 
 Site.prototype.set = function( attributes ) {
-	var changed = false;
+	let changed = false;
+	const computedAttributes = Object.assign( {}, attributes, getAttributes( attributes ) );
 
-	for ( var prop in attributes ) {
-		if ( attributes.hasOwnProperty( prop ) && ! isEqual( attributes[ prop ], this[ prop ] ) ) {
-			if ( undefined === attributes[ prop ] ) {
+	// `attributes` may only contain the attributes we're updating here, so we
+	// only check if the new computed properties match the existing ones.
+	for ( const prop in attributes ) {
+		if ( computedAttributes.hasOwnProperty( prop ) && ! isEqual( computedAttributes[ prop ], this[ prop ] ) ) {
+			if ( undefined === computedAttributes[ prop ] ) {
 				delete this[ prop ];
 			} else {
-				this[ prop ] = attributes[ prop ];
+				this[ prop ] = computedAttributes[ prop ];
 			}
 
 			changed = true;
@@ -82,7 +85,6 @@ Site.prototype.set = function( attributes ) {
 	}
 
 	return changed;
-
 };
 
 /**
