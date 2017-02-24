@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDomServer from 'react-dom/server';
 import { connect } from 'react-redux';
-import { get, head, includes, last, pick } from 'lodash';
+import { findIndex, get, head, includes, last, pick } from 'lodash';
 import tinymce from 'tinymce/tinymce';
 
 /**
@@ -139,39 +139,17 @@ export class Mentions extends Component {
 	}
 
 	getSelectedSuggestionIndex() {
-		if ( ! this.matchingSuggestions ) {
-			return null;
-		}
-
 		if ( ! this.state.selectedSuggestionId ) {
 			return 0;
 		}
 
-		for ( let i = 0; i < this.matchingSuggestions.length; i++ ) {
-			if ( this.matchingSuggestions[ i ].ID === this.state.selectedSuggestionId ) {
-				return i;
-			}
-		}
-
-		return null;
+		return findIndex( this.matchingSuggestions, ( { ID: id } ) => id === this.state.selectedSuggestionId );
 	}
 
 	getSuggestion() {
-		if ( ! this.matchingSuggestions ) {
-			return null;
-		}
+		const index = this.getSelectedSuggestionIndex();
 
-		if ( ! this.state.selectedSuggestionId && this.matchingSuggestions.length > 0 ) {
-			return this.matchingSuggestions[ 0 ];
-		}
-
-		for ( let i = 0; i < this.matchingSuggestions.length; i++ ) {
-			if ( this.matchingSuggestions[ i ].ID === this.state.selectedSuggestionId ) {
-				return this.matchingSuggestions[ i ];
-			}
-		}
-
-		return null;
+		return index > -1 ? this.matchingSuggestions[ index ] : null;
 	}
 
 	insertSuggestion = ( { user_login: userLogin } ) => {
@@ -198,7 +176,7 @@ export class Mentions extends Component {
 	onKeyDown = ( { keyCode, preventDefault } ) => {
 		const selectedIndex = this.getSelectedSuggestionIndex();
 
-		if ( ! includes( [ VK.DOWN, VK.UP ], keyCode ) || null === selectedIndex ) {
+		if ( ! includes( [ VK.DOWN, VK.UP ], keyCode ) || -1 === selectedIndex ) {
 			return;
 		}
 
