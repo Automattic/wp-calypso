@@ -23,24 +23,12 @@
 }
 
 .editor-ground-control .site {
-	margin: 0;
-	margin-bottom: 0;
+	margin: 0 auto 0 0;
+	max-width: 300px;
 
 	@include breakpoint( "<660px" ) {
 		display: none;
 	}
-}
-
-.editor-ground-control .site .site__domain {
-	display: none;
-}
-
-.editor-ground-control .site .site__content {
-	padding: 0 16px;
-}
-
-.editor-ground-control .site .site__title {
-	line-height: 46px;
 }
 
 .editor-ground-control__separator {

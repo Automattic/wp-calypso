@@ -336,6 +336,7 @@ export default React.createClass( {
 					<Gridicon icon="arrow-left" />
 				</Button>
 				<Site
+					compact
 					site={ this.props.site }
 					indicator={ false }
 					homeLink={ true }
