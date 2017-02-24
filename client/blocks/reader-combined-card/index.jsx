@@ -15,7 +15,7 @@ import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import { siteNameFromSiteAndPost } from 'reader/utils';
 import ReaderCombinedCardPost from './post';
 
-const ReaderCombinedCard = ( { posts, site, feed, translate } ) => {
+const ReaderCombinedCard = ( { posts, site, feed, onClickPost, translate } ) => {
 	const feedId = get( feed, 'ID' );
 	const siteId = get( site, 'ID' );
 	const siteIcon = get( site, 'icon.img' );
@@ -51,7 +51,11 @@ const ReaderCombinedCard = ( { posts, site, feed, translate } ) => {
 			</header>
 			<ul className="reader-combined-card__post-list">
 				{ posts.map( post => (
-					<ReaderCombinedCardPost key={ `post-${ post.ID }` } post={ post } streamUrl={ streamUrl } />
+					<ReaderCombinedCardPost
+						key={ `post-${ post.ID }` }
+						post={ post }
+						streamUrl={ streamUrl }
+						onClick={ onClickPost } />
 				) ) }
 			</ul>
 		</Card>
@@ -62,6 +66,7 @@ ReaderCombinedCard.propTypes = {
 	posts: React.PropTypes.array.isRequired,
 	site: React.PropTypes.object,
 	feed: React.PropTypes.object,
+	onClickPost: React.PropTypes.func,
 };
 
 export default localize( ReaderCombinedCard );
