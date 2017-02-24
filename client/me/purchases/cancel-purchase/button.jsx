@@ -238,7 +238,11 @@ const CancelPurchaseButton = React.createClass( {
 				type: 'refund'
 			};
 
-			submitSurvey( 'calypso-remove-purchase', this.props.selectedSite.ID, enrichedSurveyData( surveyData, moment(), selectedSite, purchase ) );
+			submitSurvey(
+				'calypso-remove-purchase',
+				this.props.selectedSite.ID,
+				enrichedSurveyData( surveyData, moment(), selectedSite, purchase )
+			);
 		}
 
 		cancelAndRefundPurchase( this.props.purchase.id, { product_id: this.props.purchase.productId }, this.handleSubmit );
