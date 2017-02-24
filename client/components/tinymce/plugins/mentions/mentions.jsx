@@ -175,6 +175,10 @@ export class Mentions extends Component {
 	}
 
 	insertSuggestion = ( { user_login: userLogin } ) => {
+		if ( ! userLogin ) {
+			return;
+		}
+
 		const { selection } = this.props.editor;
 		const markup = <EditorMention username={ userLogin } />;
 		const range = selection.getRng();
