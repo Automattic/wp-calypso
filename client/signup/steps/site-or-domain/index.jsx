@@ -10,7 +10,7 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import Card from 'components/card';
 // TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
-import BlogImage from 'signup/steps/design-type-with-store/blog-image';
+import DomainImage from 'signup/steps/design-type-with-store/domain-image';
 import PageImage from 'signup/steps/design-type-with-store/page-image';
 
 export default class SiteOrDomain extends Component {
@@ -19,12 +19,12 @@ export default class SiteOrDomain extends Component {
 			{
 				type: 'page',
 				label: 'Start a new site',
-				image: <BlogImage />
+				image: <PageImage />
 			},
 			{
 				type: 'domain',
 				label: 'Just buy a domain',
-				image: <PageImage />
+				image: <DomainImage />
 			},
 		];
 	}
