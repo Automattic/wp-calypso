@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -30,6 +31,7 @@ const ResetOptionSet = ( props ) => {
 		email,
 		sms,
 		name,
+		disabled,
 		translate,
 		onOptionChanged,
 		selectedResetOption,
@@ -44,9 +46,10 @@ const ResetOptionSet = ( props ) => {
 			{ email && (
 				<FormLabel>
 					<FormRadio
-						className="reset-password-form__email-option"
+						className={ classnames( 'reset-password-form__email-option', name ) }
 						value={ emailFieldValue }
 						checked={ emailFieldValue === selectedResetOption }
+						disabled={ disabled }
 						onChange={ onOptionChanged } />
 					<span>
 						{ translate(
@@ -63,9 +66,10 @@ const ResetOptionSet = ( props ) => {
 			{ sms && (
 				<FormLabel>
 					<FormRadio
-						className="reset-password-form__sms-option"
+						className={ classnames( 'reset-password-form__sms-option', name ) }
 						value={ smsFieldValue }
 						checked={ smsFieldValue === selectedResetOption }
+						disabled={ disabled }
 						onChange={ onOptionChanged } />
 					<span>
 						{ translate(

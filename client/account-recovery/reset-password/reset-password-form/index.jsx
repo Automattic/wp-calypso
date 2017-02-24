@@ -73,6 +73,7 @@ export class ResetPasswordFormComponent extends Component {
 								email={ email }
 								sms={ sms }
 								name={ name }
+								disabled={ isSubmitting }
 								onOptionChanged={ this.onResetOptionChanged }
 								selectedResetOption={ selectedResetOption }
 							/>
