@@ -8,7 +8,8 @@ import throttle from 'lodash/throttle';
 /**
  * Internal dependencies
  */
-import { createReduxStore, getCombinedReducer } from 'state';
+import { combineReducers } from 'redux';
+import { createReduxStore, initialReducers } from 'state';
 import {
 	SERIALIZE,
 	DESERIALIZE,
@@ -30,7 +31,7 @@ export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
 function getInitialServerState() {
 	// Bootstrapped state from a server-render
 	if ( typeof window === 'object' && window.initialReduxState && ! isSupportUserSession() ) {
-		const reducer = getCombinedReducer();
+		const reducer = combineReducers( initialReducers );
 		const serverState = reducer( window.initialReduxState, { type: DESERIALIZE } );
 
 		return pick( serverState, Object.keys( window.initialReduxState ) );
@@ -39,14 +40,14 @@ function getInitialServerState() {
 }
 
 function serialize( state ) {
-	const reducer = getCombinedReducer();
+	const reducer = combineReducers( initialReducers );
 	const serializedState = reducer( state, { type: SERIALIZE } );
 
 	return Object.assign( serializedState, { _timestamp: Date.now() } );
 }
 
 function deserialize( state ) {
-	const reducer = getCombinedReducer();
+	const reducer = combineReducers( initialReducers );
 
 	delete state._timestamp;
 	return reducer( state, { type: DESERIALIZE } );

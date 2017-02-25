@@ -30,13 +30,11 @@ export default withReducer( 'myModule', myReducerFunction )( MyMainReactComponen
 Alternatively, you can use a more manual approach by adding and removing the reducer yourself. Just make sure you remove the reducer when your code becomes inactive within the system.
 
 ```js
-import { addReducer, removeReducer } from 'state';
-
 // Call this when your code becomes active.
-addReducer( 'myModule', myReducerFunction );
+store.addReducer( 'myModule', myReducerFunction );
 
 // Call this when your code becomes inactive.
-removeReducer( 'myModule' );
+store.removeReducer( 'myModule' );
 ```
 
 ## Utilities

@@ -1,12 +1,11 @@
 /**
  * External dependencies
  */
-import { createElement, Component } from 'react';
+import { createElement, Component, PropTypes } from 'react';
 
 /**
  * Internal dependencies
  */
-import { addReducer, removeReducer } from 'state';
 
 /**
  * Higher Order Component to add a reducer to the store's reducer list.
@@ -18,24 +17,45 @@ import { addReducer, removeReducer } from 'state';
  */
 export default function withReducer( reducerName, reducerFunc ) {
 	return function wrapWithWithReducer( WrappedComponent ) {
+		const wrappedComponentName = WrappedComponent.displayName || WrappedComponent.name || 'Component';
+		const displayName = `WithReducer${ wrappedComponentName }[${ reducerName }]`;
+
 		class WithReducer extends Component {
+			static contextTypes = {
+				store: PropTypes.object,
+			}
+
 			constructor( props, context ) {
 				super( props, context );
-				this.reducerName = reducerName;
-				this.reducerFunc = reducerFunc;
+				this.store = props.store || context.store;
+				this.propsMode = Boolean( props.store );
+
+				if ( ! this.store ) {
+					throw new Error(
+						'Could not find \'store\' in either context or props of ' +
+						`'${ displayName }'. Either wrap the root component in a <Provider>, ` +
+						`or explicitly pass 'store' as a prop to '${ displayName }'.`
+					);
+				}
+				if ( ! this.store.addReducer ) {
+					throw new Error(
+						'\'store\' provided cannot add/remove reducers dynamically. ' +
+						`Ensure that the store was created using 'createReduxStore()'.`
+					);
+				}
 			}
 
 			componentDidMount() {
-				addReducer( reducerName, reducerFunc );
+				this.store.addReducer( reducerName, reducerFunc );
 			}
 
 			componentWillUnmount() {
-				removeReducer( reducerName );
+				this.store.removeReducer( reducerName );
+				this.store = null;
 			}
 
 			render() {
-				const result = createElement( WrappedComponent, this.props );
-				return result;
+				return createElement( WrappedComponent, this.props );
 			}
 		}
 

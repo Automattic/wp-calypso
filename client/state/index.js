@@ -66,7 +66,7 @@ const debug = debugFactory( 'calypso:state:reducers' );
  * Module variables
  */
 
-const initialReducers = {
+export const initialReducers = {
 	application,
 	accountRecovery,
 	automatedTransfer,
@@ -118,110 +118,100 @@ const initialReducers = {
 };
 
 /**
- * Creates and holds the Redux Store and its dependencies.
- * @param { object } reducers: The named set of reducers for the store.
+ * Create a default set of middleware/enhancers.
+ *
+ * The enhancers included depend on the runtime environment of this code.
+ *
+ * @return { array } The array of enhancers to be configured in a redux store.
  */
-export class CalypsoStore {
-	constructor() {
-		this.reducers = { ...initialReducers };
-		this.reduxStore = null;
-	}
+export function createEnhancers() {
+	const isBrowser = typeof window === 'object';
+	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
 
-	createReduxStore( initialState = {} ) {
-		const isBrowser = typeof window === 'object';
-		const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
+	const middlewares = [
+		thunkMiddleware,
+		noticesMiddleware,
+		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
+		isBrowser && require( './data-layer/wpcom-api-middleware.js' ).default,
+		isAudioSupported && require( './audio/middleware.js' ).default,
+	].filter( Boolean );
 
-		const middlewares = [
-			thunkMiddleware,
-			noticesMiddleware,
-			isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
-			isBrowser && require( './data-layer/wpcom-api-middleware.js' ).default,
-			isAudioSupported && require( './audio/middleware.js' ).default,
-		].filter( Boolean );
+	const enhancers = [
+		isBrowser && window.app && window.app.isDebug && consoleDispatcher,
+		applyMiddleware( ...middlewares ),
+		isBrowser && sitesSync,
+		isBrowser && window.devToolsExtension && window.devToolsExtension()
+	].filter( Boolean );
 
-		const enhancers = [
-			isBrowser && window.app && window.app.isDebug && consoleDispatcher,
-			applyMiddleware( ...middlewares ),
-			isBrowser && sitesSync,
-			isBrowser && window.devToolsExtension && window.devToolsExtension()
-		].filter( Boolean );
-
-		const reducer = this.getCombinedReducer();
-		this.reduxStore = compose( ...enhancers )( createStore )( reducer, initialState );
-		return this.reduxStore;
-	}
-
-	addReducer( name, reducerFunc ) {
-		if ( this.reducers[ name ] !== undefined ) {
-			throw new Error( `addReducer(): name ${ name } already in use` );
-		}
-
-		this.setReducers( { ...this.reducers, [ name ]: reducerFunc } );
-	}
-
-	removeReducer( name ) {
-		const { [ name ]: removedReducer, ...remainingReducers } = this.reducers;
-
-		if ( ! removedReducer ) {
-			debug( 'removeReducer(): name not found' );
-			return;
-		}
-
-		this.setReducers( remainingReducers );
-	}
-
-	getCombinedReducer() {
-		const reducers = this.reducers;
-		return combineReducers( reducers );
-	}
-
-	setReducers( reducers ) {
-		this.reducers = reducers;
-
-		if ( this.reduxStore ) {
-			this.reduxStore.replaceReducer( this.getCombinedReducer() );
-		}
-	}
+	return enhancers;
 }
-
-const calypsoStore = new CalypsoStore();
 
 /**
  * Named export function for creating a redux store.
  * This creates a new redux store within the calypsoStore instance.
  *
  * @param { object } initialState Redux state with which to initialize (optional).
+ * @param { array } startingReducers Initial list of reducers to start with.
+ * @param { array } enhancers Assembled list of enhancers for the store.
  * @return { object } The redux store that was created.
  */
-export function createReduxStore( initialState ) {
-	return calypsoStore.createReduxStore( initialState );
-}
+export function createReduxStore( initialState, startingReducers = initialReducers, enhancers = createEnhancers() ) {
+	// This creates a normal redux store, but it adds our list of original reducers.
+	// This is so we can modify that list of reducers later on and regenerate it.
+	const reduxStore = compose( ...enhancers )( createStore )( combineReducers( startingReducers ), initialState );
+	reduxStore.reducers = startingReducers;
 
-/**
- * Named export for adding a reducer dynamically to the store.
- *
- * @param { string } name The top-level context name for the reducer.
- * @param { function } func The reducer function, in the format of ( state, action ), returning state.
- */
-export function addReducer( name, func ) {
-	calypsoStore.addReducer( name, func );
-}
+	/**
+	 * Adds a reducer dynamically to the store.
+	 *
+	 * @param { string } name The top-level context name for the reducer.
+	 * @param { function } func The reducer function, in the format of ( state, action ), returning state.
+	 */
+	function addReducer( name, func ) {
+		if ( reduxStore.reducers[ name ] !== undefined ) {
+			throw new Error( `addReducer(): Reducer by name "${ name }" already in use` );
+		}
+		const newReducerList = { ...reduxStore.reducers, [ name ]: func };
 
-/**
- * Named export for adding a reducer dynamically to the store.
- *
- * @param { string } name The top-level context name for the reducer.
- */
-export function removeReducer( name ) {
-	calypsoStore.removeReducer( name );
-}
+		reduxStore.replaceReducer( combineReducers( newReducerList ) );
+		reduxStore.reducers = newReducerList;
+	}
 
-/**
- * Named export for getting the combined reducer from the store.
- *
- * @return { function } The currently configured reducer chain.
- */
-export function getCombinedReducer() {
-	return calypsoStore.getCombinedReducer();
+	/**
+	 * Removes a reducer dynamically from the store.
+	 *
+	 * @param { string } name The top-level context name for the reducer.
+	 */
+	function removeReducer( name ) {
+		const { [ name ]: removedReducer, ...remainingReducers } = reduxStore.reducers;
+
+		if ( ! removedReducer ) {
+			debug( `removeReducer(): Reducer not found by name "${ name }".` );
+			return;
+		}
+
+		reduxStore.replaceReducer( combineReducers( remainingReducers ) );
+		reduxStore.reducers = remainingReducers;
+	}
+
+	/**
+	 * Gets the current list of reducers.
+	 *
+	 * @return { object } The mapping of top-level reducers that are running within the store.
+	 */
+	function getReducers() {
+		return reduxStore.reducers;
+	}
+
+	// Here we return a wrapped redux store.
+	// We omit `replaceReducer` and add `addReducer`, `removeReducer` and `getReducers`.
+	const { replaceReducer, reducers, ...reduxStoreInterface } = reduxStore; // eslint-disable-line no-unused-vars
+
+	return {
+		...reduxStoreInterface,
+		addReducer,
+		removeReducer,
+		getReducers,
+	};
 }
 
