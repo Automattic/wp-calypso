@@ -1,30 +1,23 @@
 /**
  * Internal dependencies
  */
-import lyrics from './lyrics';
 import {
-	HELLO_DOLLY_NEXT_LYRIC,
-} from './action-types';
+	ROUTE_SET,
+	SECTION_SET,
+	SITE_SETTINGS_SAVE,
+} from 'state/action-types.js';
 
-const initialState = {
-	lyricIndex: 0
-};
-
-export default function( state = initialState, action ) {
+export default function( state = 0, action ) {
 	switch ( action.type ) {
-		case HELLO_DOLLY_NEXT_LYRIC:
+		case ROUTE_SET:
+		case SECTION_SET:
+		case SITE_SETTINGS_SAVE:
 			return advanceToNextLyric( state );
 		default:
 			return state;
 	}
 }
 
-function advanceToNextLyric( state ) {
-	const { lyricIndex } = state;
-	const newIndex = ( lyricIndex + 1 ) % lyrics.length;
-
-	return {
-		...state,
-		lyricIndex: newIndex,
-	};
+function advanceToNextLyric( index ) {
+	return index + 1;
 }

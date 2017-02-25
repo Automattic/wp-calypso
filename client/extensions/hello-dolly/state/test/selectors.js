@@ -1,25 +1,34 @@
 /**
  * External dependencies
  */
-import chai from 'chai';
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import lyrics from '../lyrics';
+import { translate } from 'i18n-calypso';
 import { getCurrentLyric } from '../selectors';
 
-const should = chai.should();
-
 describe( 'selectors', () => {
-	it( 'should retrieve the current lyric', () => {
-		const last = lyrics.length - 1;
+	describe( '#getCurrentLyric', () => {
+		const threeLines = [ 'one', 'two', 'three' ];
+		const dollyState = ( state ) => ( { helloDolly: state } );
 
-		should.equal( getCurrentLyric( { helloDolly: { lyricIndex: 0 } } ), lyrics[ 0 ] );
-		should.equal( getCurrentLyric( { helloDolly: { lyricIndex: 3 } } ), lyrics[ 3 ] );
-		should.equal( getCurrentLyric( { helloDolly: { lyricIndex: last } } ), lyrics[ last ] );
-		should.equal( getCurrentLyric( { helloDolly: { lyricIndex: -1 } } ), undefined );
-		should.equal( getCurrentLyric( { helloDolly: { lyricIndex: lyrics.length } } ), undefined );
+		it( 'should return the first line if no state exists', () => {
+			expect( getCurrentLyric( threeLines )( dollyState( undefined ) ) ).to.equal( 'one' );
+		} );
+
+		it( 'should wrap-around in the list if given out-of-bounds indices', () => {
+			expect( getCurrentLyric( threeLines )( dollyState( 2 ) ) ).to.equal( 'three' );
+			expect( getCurrentLyric( threeLines )( dollyState( 3 ) ) ).to.equal( 'one' );
+			expect( getCurrentLyric( threeLines )( dollyState( 4 ) ) ).to.equal( 'two' );
+		} );
+
+		it( 'should handle an empty lyrics array', () => {
+			expect( getCurrentLyric( [] )( dollyState( 8 ) ) ).to.equal(
+				translate( 'I can\'t think of a song to sing.' )
+			);
+		} );
 	} );
 } );
 

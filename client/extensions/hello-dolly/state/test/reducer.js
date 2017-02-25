@@ -8,21 +8,20 @@ import { expect } from 'chai';
  */
 import reducer from '../reducer';
 import {
-	HELLO_DOLLY_NEXT_LYRIC,
-} from '../action-types';
+	ROUTE_SET,
+	SECTION_SET,
+	SITE_SETTINGS_SAVE,
+} from 'state/action-types.js';
 
 describe( 'reducer', () => {
-	it( 'should have initial state', () => {
-		const state = reducer( undefined, { type: undefined } );
-
-		expect( state.lyricIndex ).to.be.a( 'number' );
+	it( 'should initialize to the first index', () => {
+		expect( reducer( undefined, { type: '@@test/INIT' } ) ).to.equal( 0 );
 	} );
 
-	it( 'should advance lyric index', () => {
-		const initialState = { lyricIndex: 3 };
-		const state = reducer( initialState, { type: HELLO_DOLLY_NEXT_LYRIC } );
-
-		expect( state.lyricIndex ).to.equal( 4 );
+	it( 'should advance in response to system actions', () => {
+		expect( reducer( 11, { type: ROUTE_SET } ) ).to.equal( 12 );
+		expect( reducer( 12, { type: SECTION_SET } ) ).to.equal( 13 );
+		expect( reducer( 13, { type: SITE_SETTINGS_SAVE } ) ).to.equal( 14 );
 	} );
 } );
 

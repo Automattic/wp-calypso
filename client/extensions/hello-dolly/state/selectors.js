@@ -1,11 +1,9 @@
-/**
- * Internal Dependencies
- */
-import lyrics from './lyrics';
 
-export function getCurrentLyric( reduxState ) {
-	const state = reduxState.helloDolly;
+import { translate } from 'i18n-calypso';
 
-	return lyrics[ state.lyricIndex ];
-}
+export const getCurrentLyric = ( lyrics ) => ( reduxState ) => {
+	const index = reduxState.helloDolly || 0;
+
+	return lyrics[ index % lyrics.length ] || translate( 'I can\'t think of a song to sing.' );
+};
 
