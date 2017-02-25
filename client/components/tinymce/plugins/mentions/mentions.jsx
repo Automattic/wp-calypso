@@ -108,7 +108,7 @@ export class Mentions extends Component {
 
 	updatePosition( state, { left, top } = this.getPosition( state ) ) {
 		const { editor, node } = this.props;
-		const mceToolbar = tinymce.$( '.mce-toolbar-grp', editor.getContainer() )[ 0 ];
+		const mceToolbarOffsetHeight = get( tinymce.$( '.mce-toolbar-grp', editor.getContainer() )[ 0 ], 'offsetHeight', 0 );
 		const range = editor.selection.getRng();
 		const rectList = range.getClientRects();
 		let height;
@@ -124,7 +124,7 @@ export class Mentions extends Component {
 
 		node.style.left = `${ this.left }px`;
 		// 10 is the top position of .mentions__suggestions .popover__inner, which hasn't rendered yet.
-		node.style.top = `${ mceToolbar.offsetHeight + this.top + height - 10 }px`;
+		node.style.top = `${ mceToolbarOffsetHeight + this.top + height - 10 }px`;
 	}
 
 	getQueryText() {
