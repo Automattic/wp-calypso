@@ -2,22 +2,26 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
 import Main from 'components/main';
+import Button from 'components/button';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
 import { getCurrentLyric } from './state/selectors';
 import lyrics from './state/lyrics';
+import { nextLyric } from './state/actions';
 
 class HelloDollyPage extends Component {
 	static propTypes = {
 		currentLyric: PropTypes.string.isRequired,
+		nextLyric: PropTypes.func.isRequired,
 	};
 
 	render() {
@@ -31,8 +35,9 @@ class HelloDollyPage extends Component {
 						This is not just an extension, it symbolizes the hope and enthusiasm of an entire generation
 						summed up in two words sung most famously by Louis Armstrong.
 					</p>
-					<p style={ { fontSize: 24, fontWeight: 500, textAlign: 'center' } }>
+					<p style={ { fontSize: 24, fontWeight: 500, textAlign: 'center', margin: '0 auto' } }>
 						{ currentLyric }
+						<Button primary style={ { [ 'float' ]: 'right' } } onClick={ this.props.nextLyric } >Next</Button>
 					</p>
 					<hr />
 					<p>This section is the home for the <strong>Hello Dolly</strong> extension.</p>
@@ -83,5 +88,14 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps )( HelloDollyPage );
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			nextLyric,
+		},
+		dispatch
+	);
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( HelloDollyPage );
 
