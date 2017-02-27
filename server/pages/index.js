@@ -37,7 +37,7 @@ const staticFiles = [
 	{ path: 'vendor.js' }
 ];
 
-let sections = sectionsModule.get();
+const sections = sectionsModule.get();
 
 /**
  * Generates a hash of a files contents to be used as a version parameter on asset requests.
@@ -349,11 +349,8 @@ module.exports = function() {
 	app.get( '/theme', ( req, res ) => res.redirect( '/design' ) );
 
 	sections
+		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {
-			if ( section.envId && section.envId.indexOf( config( 'env_id' ) ) === -1 ) {
-				return;
-			}
-
 			section.paths.forEach( path => {
 				const pathRegex = utils.pathToRegExp( path );
 
