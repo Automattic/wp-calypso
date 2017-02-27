@@ -77,7 +77,7 @@ textarea {
 
 .minimized-view,
 .maximized-view {
-	background: #F2F6F8;	//#
+	background: #F2F6F8;
 }
 .minimized-view {
 	background: $white;
@@ -88,7 +88,7 @@ textarea {
 	top: 0 !important;
 }
 .message-list-transition-wrapper {
-	background: #F2F6F8;	//#
+	background: #F2F6F8;
 }
 
 
@@ -133,7 +133,7 @@ textarea {
 
 	.thread-view-title-container {
 		&.has-notification {
-			border-bottom-color: #14abdd;	//#
+			border-bottom-color: #14abdd;
 		}
 	}
 }
@@ -226,7 +226,7 @@ textarea {
 	border-radius: 8px;
 
 	&.is-poster {
-		background: #14abdd;			//#
+		background: #14abdd;
 		margin-left: inherit;
 		margin-right: 20px;
 		border-top-right-radius: 0px;
@@ -240,7 +240,7 @@ textarea {
 			height: 0;
 			border-style: solid;
 			border-width: 10px 10px 0 0;
-			border-color: #14abdd transparent transparent transparent;		//#
+			border-color: #14abdd transparent transparent transparent;
 			top: 0;
 			right: -10px;
 		}
@@ -302,7 +302,7 @@ textarea {
 	// Green border for success messages
 	&.success {
 		border-color: $alert-green;
-		background: #DCEEE5;	//#
+		background: #DCEEE5;
 	}
 
 	// Green background for highlighted success messages
@@ -348,7 +348,7 @@ textarea {
 	.icon {
 		margin-top: 0;
 		&.icon-primary {
-			background-color: #14abdd;	//#
+			background-color: #14abdd;
 		}
 		&.icon-success {
 			background-color: $white;
