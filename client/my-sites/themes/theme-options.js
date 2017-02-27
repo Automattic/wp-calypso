@@ -17,6 +17,7 @@ import {
 	showThemePreview as themePreview,
 } from 'state/themes/actions';
 import {
+	getTheme,
 	getThemeSignupUrl,
 	getThemePurchaseUrl,
 	getThemeCustomizeUrl,
@@ -26,8 +27,9 @@ import {
 	isThemeActive,
 	isThemePremium,
 	isPremiumThemeAvailable,
+	isWpcomTheme
 } from 'state/themes/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { hasJetpackSiteJetpackThemesExtendedFeatures, isJetpackSite } from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { canCurrentUser } from 'state/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
@@ -59,7 +61,10 @@ const activate = {
 	action: activateAction,
 	hideForTheme: ( state, theme, siteId ) => (
 		isThemeActive( state, theme.id, siteId ) ||
-		( isThemePremium( state, theme.id ) && ! isPremiumThemeAvailable( state, theme.id, siteId ) )
+		( isThemePremium( state, theme.id ) && ! isPremiumThemeAvailable( state, theme.id, siteId ) ) ||
+		// Are we trying to install and activate a (previously not-installed) WP.com theme on a Jetpack site?
+		isJetpackSite( state, siteId ) && isWpcomTheme( state, theme.id ) && ! getTheme( state, siteId, theme.id ) &&
+			! ( config.isEnabled( 'manage/themes/upload' ) && hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) )
 	)
 };
 
