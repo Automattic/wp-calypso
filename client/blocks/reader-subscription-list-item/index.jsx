@@ -34,7 +34,7 @@ function ReaderSubscriptionListItem( {
 	siteExcerpt,
 	className = '',
 	onSiteClick = () => {},
-	followSource = 'reader-subscriptions-list-item',
+	followSource,
 	lastUpdated,
 } ) {
 	const authorName = trim( `${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }` );
