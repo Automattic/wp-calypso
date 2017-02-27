@@ -135,7 +135,7 @@ class EditContactInfoFormCard extends React.Component {
 		return this.props.translate( '%(currentEmail)s (additionally to %(wpcomEmail)s)',
 			{
 				args: { currentEmail, wpcomEmail },
-				context: 'List of emails the WHOIS confirmation email is sent to'
+				comment: 'List of emails the WHOIS confirmation email is sent to'
 			}
 		);
 	}
