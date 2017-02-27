@@ -1,4 +1,26 @@
-// TODO — Add notes & instructions about how CSS is wired up and how to do dev —mattwondra
+// Directly is an on-demand customer support tool (https://www.directly.com/). Read more
+// about Directly and how it's used in Calypso in lib/directly/README.md.
+//
+// The Directly widget loads in an iframe, so we can't adjust the widget's internal styles
+// with the primary Calypso stylesheet. This file is bundled as a separate CSS file to be
+// linked from inside the Directly iframe.
+//
+// We have two Directly builds — Production and Sandbox. Directly requires all custom
+// CSS files to exist at a public web address, and these can't change on-the-fly based
+// on the Calypso environment. So the CSS files Directly uses are hard-set to:
+//
+// Sandbox:    https://wpcalypso.wordpress.com/calypso/directly.css
+// Production: https://wordpress.com/calypso/directly.css
+//
+// ## DEVELOPMENT INSTRUCTIONS:
+// Calypso's development environment uses the Sandbox Directly build, which uses CSS
+// from the wpcalypso server. This means that to see local CSS changes you'll need to
+// make your browser rewrite CSS URLs:
+//
+// https://wpcalypso.wordpress.com/calypso/directly.css -> http://calypso.localhost:3000/calypso/directly.css
+//
+// You can accomplish this using a browser extension such as Switcharoo Redirector
+// for Chrome: https://chrome.google.com/webstore/detail/switcheroo-redirector/cnmciclhnghalnpfhhleggldniplelbg
 
 @import 'shared/mixins/mixins';
 @import 'shared/colors';
