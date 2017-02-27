@@ -132,13 +132,13 @@ const ThemeShowcase = React.createClass( {
 	render() {
 		const {
 			site,
+			siteId,
 			options,
 			getScreenshotOption,
 			search,
 			filter,
 			translate
 		} = this.props;
-
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
 		const metas = [
@@ -195,7 +195,7 @@ const ThemeShowcase = React.createClass( {
 					getOptions={ function( theme ) {
 						return pickBy(
 							addTracking( options ),
-							option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
+							option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
 						); } }
 					trackScrollPage={ this.props.trackScrollPage }
 					emptyContent={ this.props.emptyContent }
