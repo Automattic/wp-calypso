@@ -310,28 +310,14 @@ export const PostEditor = React.createClass( {
 						<EditorWordCount />
 					</div>
 					<EditorSidebar
-						allPostsUrl={ this.getAllPostsUrl() }
-						sites={ this.props.sites }
-						onTitleClick={ this.toggleSidebar }
+						toggleSidebar={ this.toggleSidebar }
 						savedPost={ this.state.savedPost }
 						post={ this.state.post }
 						isNew={ this.state.isNew }
-						isDirty={ this.state.isDirty || this.props.dirty }
-						isSaveBlocked={ this.state.isSaveBlocked }
-						hasContent={ this.state.hasContent || this.props.hasContent }
-						isSaving={ this.state.isSaving }
-						isPublishing={ this.state.isPublishing }
-						onSave={ this.onSave }
-						onPreview={ this.onPreview }
 						onPublish={ this.onPublish }
 						onTrashingPost={ this.onTrashingPost }
 						site={ site }
-						user={ this.props.user }
-						userUtils={ this.props.userUtils }
 						type={ this.props.type }
-						showDrafts={ this.props.showDrafts }
-						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
-						warnPublishDateChange={ this.warnPublishDateChange }
 						/>
 					{ this.iframePreviewEnabled() ?
 						<EditorPreview

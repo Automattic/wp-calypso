@@ -23,7 +23,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		if ( ! this.props.revisions.length ) {
+		if ( ! this.props.revisions || ! this.props.revisions.length ) {
 			return null;
 		}
 
