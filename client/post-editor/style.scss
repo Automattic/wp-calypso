@@ -18,11 +18,12 @@
 
 .is-group-editor .layout__content {
 	padding: 47px 0 0;
+	overflow: inherit;
 }
 
 .post-editor__inner {
 	position: relative;
-	top: 78px;
+	top: 47px;
 }
 
 .post-editor__content {
