@@ -16,94 +16,13 @@ import Stream from 'reader/stream';
 import EmptyContent from './empty';
 import HeaderBack from 'reader/header-back';
 import SearchInput from 'components/search';
-import SiteStore from 'lib/reader-site-store';
-import FeedStore from 'lib/feed-store';
-import { recordTrackForPost, recordAction, recordTrack } from 'reader/stats';
+import { recordAction, recordTrack } from 'reader/stats';
 import SuggestionProvider from './suggestion-provider';
 import Suggestion from './suggestion';
-import ReaderPostCard from 'blocks/reader-post-card';
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
-import {
-	EMPTY_SEARCH_RECOMMENDATIONS,
-	SEARCH_RESULTS,
-} from 'reader/follow-button/follow-sources';
-
-function RecommendedPosts( { post, site } ) {
-	function handlePostClick() {
-		recordTrackForPost( 'calypso_reader_recommended_post_clicked', post, {
-			recommendation_source: 'empty-search',
-		} );
-		recordAction( 'search_page_rec_post_click' );
-	}
-
-	function handleSiteClick() {
-		recordTrackForPost( 'calypso_reader_recommended_site_clicked', post, {
-			recommendation_source: 'empty-search',
-		} );
-		recordAction( 'search_page_rec_site_click' );
-	}
-
-	if ( ! site ) {
-		site = { title: post.site_name, };
-	}
-
-	return (
-		<div className="search-stream__recommendation-list-item" key={ post.global_ID }>
-			<RelatedPostCard post={ post } site={ site }
-				onSiteClick={ handleSiteClick }
-				onPostClick={ handlePostClick }
-				followSource={ EMPTY_SEARCH_RECOMMENDATIONS } />
-		</div>
-	);
-}
-
-const SearchCardAdapter = ( isRecommendations ) => class extends Component {
-	state = this.getStateFromStores();
-
-	getStateFromStores( props = this.props ) {
-		return {
-			site: SiteStore.get( props.post.site_ID ),
-			feed: props.post.feed_ID ? FeedStore.get( props.post.feed_ID ) : null
-		};
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		this.setState( this.getStateFromStores( nextProps ) );
-	}
-
-	onCardClick = ( post ) => {
-		recordTrackForPost( 'calypso_reader_searchcard_clicked', post );
-		this.props.handleClick();
-	}
-
-	onCommentClick = () => {
-		this.props.handleClick( { comments: true } );
-	}
-
-	render() {
-		let CardComponent;
-
-		if ( isRecommendations ) {
-			CardComponent = RecommendedPosts;
-		} else {
-			CardComponent = ReaderPostCard;
-		}
-
-		return <CardComponent
-			post={ this.props.post }
-			site={ this.props.site }
-			feed={ this.props.feed }
-			onClick={ this.onCardClick }
-			followSource={ SEARCH_RESULTS }
-			onCommentClick={ this.onCommentClick }
-			showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
-			postKey={ this.props.postKey }
-		/>;
-	}
-};
+import { SEARCH_RESULTS, } from 'reader/follow-button/follow-sources';
 
 class SearchStream extends Component {
-
 	static propTypes = {
 		query: React.PropTypes.string,
 	};
@@ -146,11 +65,6 @@ class SearchStream extends Component {
 
 	scrollToTop = () => {
 		window.scrollTo( 0, 0 );
-	}
-
-	cardFactory = () => {
-		const isRecommendations = ! this.props.query;
-		return SearchCardAdapter( isRecommendations );
 	}
 
 	handleStreamMounted = ( ref ) => {
@@ -246,11 +160,12 @@ class SearchStream extends Component {
 		} );
 
 		return (
-			<Stream { ...this.props }
+			<Stream
+				{ ...this.props }
+				followSource={ SEARCH_RESULTS }
 				listName={ this.props.translate( 'Search' ) }
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
-				cardFactory={ this.cardFactory }
 				placeholderFactory={ this.placeholderFactory }
 				className="search-stream"
 				shouldCombineCards={ true }
