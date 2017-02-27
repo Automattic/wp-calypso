@@ -44,6 +44,7 @@ export const EditorInsertMenuTour = makeTour(
 		path={ [ '/post/', '/page/' ] }
 		version="20161215"
 		when={ and(
+			isEnabled( 'guided-tours/editor-insert-menu' ),
 			isEnabled( 'post-editor/insert-menu' ),
 			hasUserRegisteredBefore( new Date( '2016-12-15' ) ),
 			isDesktop,
