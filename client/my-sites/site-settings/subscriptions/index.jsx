@@ -30,7 +30,7 @@ const Subscriptions = ( {
 	return (
 		<Card className="subscriptions site-settings">
 			<FormFieldset>
-				<div className="subscriptions__info-link-container">
+				<div className="subscriptions__info-link-container site-settings__info-link-container">
 					<InfoPopover position={ 'left' }>
 						<ExternalLink href={ 'https://jetpack.com/support/subscriptions' } target="_blank">
 							{ translate( 'Learn more about Subscriptions' ) }
