@@ -240,7 +240,6 @@ export const PostEditor = React.createClass( {
 						<div className="editor">
 							<EditorActionBar
 								isNew={ this.state.isNew }
-								onTrashingPost={ this.onTrashingPost }
 								onPrivatePublish={ this.onPublish }
 								post={ this.state.post }
 								savedPost={ this.state.savedPost }

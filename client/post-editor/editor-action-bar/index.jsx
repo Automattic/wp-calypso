@@ -8,7 +8,6 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import AsyncLoad from 'components/async-load';
-import EditorDeletePost from 'post-editor/editor-delete-post';
 import EditorSticky from 'post-editor/editor-sticky';
 import utils from 'lib/posts/utils';
 import Tooltip from 'components/tooltip';
@@ -22,7 +21,6 @@ export default React.createClass( {
 
 	propTypes: {
 		isNew: React.PropTypes.bool,
-		onTrashingPost: React.PropTypes.func,
 		onPrivatePublish: React.PropTypes.func,
 		post: React.PropTypes.object,
 		savedPost: React.PropTypes.object,
@@ -59,10 +57,6 @@ export default React.createClass( {
 				</div>
 				<div className="editor-action-bar__cell is-right">
 					{ this.props.post && this.props.type === 'post' && <EditorSticky /> }
-					<EditorDeletePost
-						post={ this.props.post }
-						onTrashingPost={ this.props.onTrashingPost }
-					/>
 					{ utils.isPublished( this.props.savedPost ) && (
 						<Button
 							href={ this.props.savedPost.URL }

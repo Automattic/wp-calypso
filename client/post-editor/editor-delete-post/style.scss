@@ -1,14 +1,40 @@
-.editor-delete-post.button {
-	&:hover {
-		color: $orange-fire;
-	}
+.editor-delete-post__tooltip .popover__inner {
+	white-space: nowrap;
+}
+
+
+.editor-delete-post {
+	display: block;
+	margin: 22px -16px -16px;
+	padding: 8px;
+}
+
+.editor-delete-post__button.button {
+	color: $gray-text;
+	font-size: 13px;
+	font-weight: normal;
+	padding: 0;
+	position: relative;
+	top: -6px;
 
 	&.is-trashing {
 		color: $orange-fire;
 		animation: loading-dot-pulse 0.8s ease-in-out infinite;
 	}
-}
 
-.editor-delete-post__tooltip .popover__inner {
-	white-space: nowrap;
+	&:hover,
+	&:focus {
+		color: $orange-fire;
+		outline: none;
+
+		.gridicon {
+			color: $orange-fire;
+		}
+	}
+
+	.gridicon {
+		color: $gray-text;
+		margin-left: 6px;
+		margin-right: 4px;
+	}
 }
