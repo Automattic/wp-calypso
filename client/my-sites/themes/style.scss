@@ -70,10 +70,12 @@
 	0 2px 4px lighten( $gray, 20% );
 }
 
-.pulsing-dot {
-	right: 24px;
-	top: 22px;
-	left: initial;
+.web-preview {
+	.pulsing-dot {
+		right: 24px;
+		top: 22px;
+		left: initial;
+	}
 }
 
 .themes__upload-button {
