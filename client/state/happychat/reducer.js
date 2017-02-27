@@ -20,6 +20,7 @@ import {
 	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_CONNECTED,
 	HAPPYCHAT_SET_CHAT_STATUS,
+	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_RECEIVE_TRANSCRIPT,
 	HAPPYCHAT_DISCONNECTED
 } from 'state/action-types';
@@ -163,10 +164,10 @@ const chatStatus = ( state = 'default', action ) => {
 };
 
 /**
- * Tracks wether happychat.io is accepting new chats.
+ * Tracks whether happychat.io is accepting new chats.
  *
  * @param  {Boolean} state  Current happychat status
- * @param  {Object}  action Action playload
+ * @param  {Object}  action Action payload
  * @return {Boolean}        Updated happychat status
  */
 const isAvailable = ( state = false, action ) => {
@@ -181,4 +182,32 @@ const isAvailable = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducers( { timeline, message, connectionStatus, chatStatus, isAvailable } );
+/**
+ * Tracks the last time there was activity from either operator or user
+ *
+ * @param {Number}  state  JavaScript timestamp recording the last activity time
+ * @param {Object}  action Action payload
+ * @return {Number}        Updated timestamp
+ */
+const lastActivity = ( state = null, action ) => {
+	switch ( action.type ) {
+		case SERIALIZE:
+		case DESERIALIZE:
+			return state;
+		case HAPPYCHAT_SEND_MESSAGE:
+		case HAPPYCHAT_SET_MESSAGE:
+		case HAPPYCHAT_RECEIVE_EVENT:
+			return Date.now();
+	}
+
+	return state;
+};
+
+export default combineReducers( {
+	chatStatus,
+	connectionStatus,
+	isAvailable,
+	lastActivity,
+	message,
+	timeline,
+} );
