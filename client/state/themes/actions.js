@@ -71,6 +71,7 @@ import {
 	hasJetpackSiteJetpackThemesExtendedFeatures,
 	isJetpackSite
 } from 'state/sites/selectors';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
 import config from 'config';
@@ -345,9 +346,12 @@ export function requestActiveTheme( siteId ) {
 export function activate( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch, getState ) => {
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
-			// Suffix themeId here with `-wpcom`. If the suffixed theme is already installed,
-			// installation will silently fail, and it will just be activated.
-			return dispatch( installAndActivateTheme( themeId + '-wpcom', siteId, source, purchased ) );
+			// AT sites do not use the -wpcom suffix
+			const siteIsAT = isSiteAutomatedTransfer( getState(), siteId );
+			const installId = siteIsAT ? themeId : themeId + '-wpcom';
+			// If theme is already installed, installation will silently fail,
+			// and it will just be activated.
+			return dispatch( installAndActivateTheme( installId, siteId, source, purchased ) );
 		}
 
 		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
