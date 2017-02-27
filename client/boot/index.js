@@ -421,11 +421,7 @@ function reduxStoreReady( reduxStore ) {
 	} );
 
 	detectHistoryNavigation.start();
-	if ( config.isEnabled( 'use-page-hashbang' ) ) {
-		page.start( { hashbang: true } );
-	} else {
-		page.start();
-	}
+	page.start();
 }
 
 window.AppBoot = function() {
