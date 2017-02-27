@@ -45,7 +45,10 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 			comment: 'label for selecting a site for which to purchase a theme'
 		} ),
 		getUrl: getThemePurchaseUrl,
-		hideForSite: ( state, siteId ) => hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
+		hideForSite: ( state, siteId ) => (
+			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
+			isJetpackSite( state, siteId )
+		),
 		hideForTheme: ( state, theme, siteId ) => (
 			! isThemePremium( state, theme.id ) ||
 			isThemeActive( state, theme.id, siteId ) ||
