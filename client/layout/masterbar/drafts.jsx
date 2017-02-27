@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -26,51 +27,47 @@ import sitesList from 'lib/sites-list';
 
 const sites = sitesList();
 
-const MasterbarDrafts = React.createClass( {
-	propTypes: {
-		user: React.PropTypes.object,
-		sites: React.PropTypes.object,
-		isActive: React.PropTypes.bool,
-		className: React.PropTypes.string,
-		tooltip: React.PropTypes.string,
-		// connected props
-		selectedSite: React.PropTypes.object,
-	},
+class MasterbarDrafts extends Component {
+	static propTypes = {
+		user: PropTypes.object,
+		sites: PropTypes.object,
+		isActive: PropTypes.bool,
+		className: PropTypes.string,
+		tooltip: PropTypes.string,
+		selectedSite: PropTypes.object,
+	};
 
-	getInitialState() {
-		return {
-			showDrafts: false
-		};
-	},
+	state = {
+		showDrafts: false
+	};
 
-	toggleDrafts( event ) {
-		event.stopPropagation();
-		event.preventDefault();
+	toggleDrafts = () => {
+		const { showDrafts } = this.state;
 		this.setState( {
-			showDrafts: ! this.state.showDrafts
+			showDrafts: ! showDrafts
 		} );
-	},
+	};
 
-	closeDrafts() {
+	closeDrafts = () => {
 		this.setState( { showDrafts: false } );
-	},
+	};
 
 	render() {
-		const site = this.props.selectedSite;
-		const isLoading = this.props.draftCount !== 0 && this.props.loadingDrafts;
+		const { selectedSite, draftCount, loadingDrafts, translate } = this.props;
+		const isLoading = draftCount !== 0 && loadingDrafts;
 
-		if ( ! site ) {
+		if ( ! selectedSite ) {
 			return null;
 		}
 
 		return (
 			<div>
-				<QueryPostCounts siteId={ site.ID } type="post" />
-				{ this.props.draftCount ?
+				<QueryPostCounts siteId={ selectedSite.ID } type="post" />
+				{ this.props.draftCount > 0 &&
 					<Button compact borderless className="masterbar__toggle-drafts" onClick={ this.toggleDrafts } ref="drafts">
 						<Count count={ this.props.draftCount } />
 					</Button>
-				: null }
+				}
 				<Popover
 					isVisible={ this.state.showDrafts }
 					onClose={ this.closeDrafts }
@@ -79,21 +76,21 @@ const MasterbarDrafts = React.createClass( {
 					className="masterbar__recent-drafts"
 				>
 					<QueryPosts
-						siteId={ site.ID }
+						siteId={ selectedSite.ID }
 						query={ this.props.draftsQuery } />
-					<Site site={ site } />
+					<Site site={ selectedSite } />
 					{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
 					{ isLoading && <Draft isPlaceholder /> }
 					{ this.props.draftCount > 6 &&
-						<Button compact borderless className="masterbar__see-all-drafts" href={ `/posts/drafts/${ site.slug }` } onClick={ this.closeDrafts }>
-							{ this.translate( 'See all drafts' ) }
+						<Button compact borderless className="masterbar__see-all-drafts" href={ `/posts/drafts/${ selectedSite.slug }` } onClick={ this.closeDrafts }>
+							{ translate( 'See all drafts' ) }
 							{ this.props.draftCount ? <Count count={ this.props.draftCount } /> : null }
 						</Button>
 					}
 				</Popover>
 			</div>
 		);
-	},
+	}
 
 	renderDraft( draft ) {
 		if ( ! draft ) {
@@ -110,7 +107,7 @@ const MasterbarDrafts = React.createClass( {
 			onTitleClick={ this.closeDrafts }
 		/>;
 	}
-} );
+}
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
@@ -133,4 +130,4 @@ export default connect( ( state ) => {
 		draftCount: myPostCounts && myPostCounts.draft,
 		selectedSite: site,
 	};
-} )( MasterbarDrafts );
+} )( localize( MasterbarDrafts ) );
