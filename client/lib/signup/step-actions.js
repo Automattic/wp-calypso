@@ -16,8 +16,8 @@ import wpcom from 'lib/wp' ;
 const sites = require( 'lib/sites-list' )();
 const user = require( 'lib/user' )();
 import { getSavedVariations } from 'lib/abtest';
-import SignupCart from 'lib/signup/cart';
 import { startFreeTrial } from 'lib/upgrades/actions';
+import { addItems } from 'lib/upgrades/actions/cart'
 import { PLAN_PREMIUM } from 'lib/plans/constants';
 import analytics from 'lib/analytics';
 
@@ -41,7 +41,7 @@ function createCart( callback, dependencies, data ) {
 			themeItem
 		};
 
-		SignupCart.addToCart( cartKey, [ domainItem ], error => callback( error, providedDependencies ) );
+		addItems( [ domainItem ], 'signup', error => callback( error, providedDependencies ) );
 	} else {
 		createSiteWithCart( callback, dependencies, data );
 	}
@@ -98,9 +98,7 @@ function createSiteWithCart( callback, dependencies, {
 			].filter( item => item );
 
 			if ( newCartItems.length ) {
-				SignupCart.addToCart( siteId, newCartItems, function( cartError ) {
-					callback( cartError, providedDependencies );
-				} );
+				addItems( newCartItems, 'signup', cartError => callback( cartError, providedDependencies ) );
 			} else {
 				callback( undefined, providedDependencies );
 			}
@@ -263,7 +261,7 @@ module.exports = {
 
 		const newCartItems = [ cartItem, privacyItem ].filter( item => item );
 
-		SignupCart.addToCart( siteId, newCartItems, callback );
+		addItems( newCartItems, 'signup', callback );
 	},
 
 	createAccount( callback, dependencies, { userData, flowName, queryArgs } ) {

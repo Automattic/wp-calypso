@@ -14,10 +14,6 @@ import { cartItems } from 'lib/cart-values';
 // dispatcher even though it's not used directly here
 import 'lib/cart/store';
 
-function disableCart() {
-	Dispatcher.handleViewAction( { type: ActionTypes.CART_DISABLE } );
-}
-
 function openCartPopup( options ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_POPUP_OPEN,
@@ -47,17 +43,18 @@ function addItem( item ) {
 	addItems( [ item ] );
 }
 
-function addItems( items ) {
+function addItems( items, itemsContext, serverFlushCallback ) {
 	const extendedItems = items.map( ( item ) => {
 		const extra = assign( {}, item.extra, {
-			context: 'calypstore'
+			context: itemsContext || 'calypstore'
 		} );
 		return assign( {}, item, { extra } );
 	} );
 
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_ITEMS_ADD,
-		cartItems: extendedItems
+		cartItems: extendedItems,
+		serverFlushCallback
 	} );
 }
 
@@ -97,7 +94,6 @@ export {
 	addPrivacyToAllDomains,
 	applyCoupon,
 	closeCartPopup,
-	disableCart,
 	openCartPopup,
 	removeDomainFromCart,
 	removeItem,
