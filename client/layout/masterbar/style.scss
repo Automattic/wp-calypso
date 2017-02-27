@@ -340,3 +340,10 @@ $autobar-height: 20px;
 		margin-left: 8px;
 	}
 }
+
+.masterbar__recent-drafts {
+	// Trashing seems busted
+	.draft__actions {
+		display: none;
+	}
+}
