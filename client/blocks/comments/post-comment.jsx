@@ -10,6 +10,7 @@ import Gridicon from 'gridicons';
 /***
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import {
 	getCurrentUser
 } from 'state/current-user/selectors';
@@ -28,6 +29,9 @@ import { PLACEHOLDER_STATE } from 'state/comments/constants';
 import { decodeEntities } from 'lib/formatting';
 import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback.jsx';
+import EllipsisMenu from 'components/ellipsis-menu';
+import PopoverMenuItem from 'components/popover/menu-item';
+import PopoverMenuSeparator from 'components/popover/menu-separator';
 
 class PostComment extends React.Component {
 	constructor() {
@@ -157,6 +161,44 @@ class PostComment extends React.Component {
 					postId={ this.props.post.ID }
 					commentId={ comment.ID }
 				/>
+				{
+					isEnabled( 'comments/moderation-tools-in-posts' ) &&
+					<button className="comments__comment-actions-like" onClick={ () => {} }>
+						<Gridicon icon="checkmark" size={ 18 }/>
+						<span className="comments__comment-actions-like-label">{ translate( 'Approve' )}</span>
+					</button>
+				}
+				{
+					isEnabled( 'comments/moderation-tools-in-posts' ) &&
+					<button className="comments__comment-actions-like" onClick={ () => {} }>
+						<Gridicon icon="trash" size={ 18 }/>
+						<span className="comments__comment-actions-like-label">{ translate( 'Trash' )}</span>
+					</button>
+				}
+				{
+					isEnabled( 'comments/moderation-tools-in-posts' ) &&
+					<button className="comments__comment-actions-like" onClick={ () => {} }>
+						<Gridicon icon="spam" size={ 18 }/>
+						<span className="comments__comment-actions-like-label">{ translate( 'Spam' )}</span>
+					</button>
+				}
+				{
+					isEnabled( 'comments/moderation-tools-in-posts' ) &&
+					<button className="comments__comment-actions-like" onClick={ () => {} }>
+						<Gridicon icon="pencil" size={ 18 }/>
+						<span className="comments__comment-actions-like-label">{ translate( 'Edit' )}</span>
+					</button>
+				}
+				{
+					isEnabled( 'comments/moderation-tools-in-posts' ) &&
+					<EllipsisMenu toggleTitle={ translate( 'More' ) }>
+						<PopoverMenuItem icon="checkmark" onClick={ () => {} }>{ translate( 'Approve' ) }</PopoverMenuItem>
+						<PopoverMenuItem icon="trash" onClick={ () => {} }>{ translate( 'Trash' ) }</PopoverMenuItem>
+						<PopoverMenuItem icon="spam" onClick={ () => {} }>{ translate( 'Spam' ) }</PopoverMenuItem>
+						<PopoverMenuSeparator />
+						<PopoverMenuItem icon="pencil" onClick={ () => {} }>{ translate( 'Edit' ) }</PopoverMenuItem>
+					</EllipsisMenu>
+				}
 			</div>
 		);
 	}
