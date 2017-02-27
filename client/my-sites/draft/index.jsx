@@ -140,7 +140,7 @@ module.exports = React.createClass( {
 	render: function() {
 		var post = this.props.post,
 			image = null,
-			site, classes, imageUrl, editPostURL, title, excerpt;
+			site, classes, imageUrl, editPostURL, title;
 
 		if ( this.props.isPlaceholder ) {
 			return this.postPlaceholder();
@@ -167,33 +167,29 @@ module.exports = React.createClass( {
 			}
 		}
 
-		classes = [
-			'draft',
-			{
-				'has-all-actions': this.props.showAllActions,
-				'has-image': !! image,
-				'is-image-expanded': this.state.fullImage,
-				'is-trashed': this.props.post.status === 'trash' || this.state.isTrashing,
-				'is-placeholder': this.props.isPlaceholder,
-				'is-restoring': this.state.isRestoring,
-				'is-touch': hasTouch(),
-				'is-selected': this.props.selected
-			}
-		];
+		classes = classnames( 'draft', `is-${ post.format }`, {
+			'has-all-actions': this.props.showAllActions,
+			'has-image': !! image,
+			'is-image-expanded': this.state.fullImage,
+			'is-trashed': this.props.post.status === 'trash' || this.state.isTrashing,
+			'is-placeholder': this.props.isPlaceholder,
+			'is-restoring': this.state.isRestoring,
+			'is-touch': hasTouch(),
+			'is-selected': this.props.selected,
+		} );
 
 		title = post.title || <span className="draft__untitled">{ this.translate( 'Untitled' ) }</span>;
-		excerpt = post.excerpt && <span className="draft__excerpt">{ post.excerpt }</span>;
 
 		// Render each Post
 		return (
-			<CompactCard className={ classnames.apply( null, classes ) } key={ 'draft-' + post.ID }>
+			<CompactCard className={ classes } key={ 'draft-' + post.ID }>
 				{ this.showStatusChange() }
 				<h3 className="draft__title">
 					{ post.status === 'pending' &&
 						<span className="draft__pending-label">{ this.translate( 'Pending' ) }</span> }
 					{ this.props.showAuthor && <Gravatar user={ post.author } size={ 22 } /> }
 					<a href={ editPostURL } onClick={ this.props.onTitleClick }>
-						{ post.format === 'aside' ? excerpt : title }
+						{ title }
 					</a>
 				</h3>
 				{ post.excerpt &&
