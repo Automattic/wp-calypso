@@ -202,9 +202,9 @@ class EditContactInfoFormCard extends React.Component {
 			const newEmail = formState.getFieldValue( this.state.form, 'email' );
 
 			text = translate( 'To finish this process, this change will need to be confirmed by emails ' +
-				'sent to {{strong}}%(currentEmails)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. Please make sure ' +
+				'sent to {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. Please make sure ' +
 				'you\'ll be able to do so.', {
-					args: { currentEmails, newEmail }, components: { strong }
+					args: { oldEmail: currentEmails, newEmail }, components: { strong }
 				}
 			);
 		}
@@ -459,10 +459,10 @@ class EditContactInfoFormCard extends React.Component {
 						const newEmail = formState.getFieldValue( this.state.form, 'email' );
 
 						message = this.props.translate(
-							'Emails have been sent to {{strong}}%(currentEmails)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. ' +
+							'Emails have been sent to {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. ' +
 							'Please ensure they\'re both confirmed to finish this process.',
 							{
-								args: { currentEmails, newEmail },
+								args: { oldEmail: currentEmails, newEmail },
 								components: { strong }
 							}
 						);
