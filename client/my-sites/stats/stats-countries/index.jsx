@@ -17,10 +17,11 @@ class StatCountries extends Component {
 		path: PropTypes.string,
 		period: PropTypes.object,
 		date: PropTypes.string,
+		onRefresh: PropTypes.func,
 	};
 
 	render() {
-		const { summary, query, period } = this.props;
+		const { summary, query, onRefresh, period } = this.props;
 		const moduleStrings = statsStrings();
 
 		return (
@@ -32,6 +33,7 @@ class StatCountries extends Component {
 				summary={ summary }
 				moduleStrings={ moduleStrings.countries }
 				statType="statsCountryViews"
+				onRefresh={ onRefresh }
 			>
 				<Geochart query={ query } />
 			</StatsModule>
