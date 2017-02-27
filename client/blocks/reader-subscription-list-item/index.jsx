@@ -21,7 +21,7 @@ function SettingsMenu() {
 				icon="cog"
 				size={ 20 }
 			/>
-		Settings
+			Settings
 		</span>
 	);
 }
