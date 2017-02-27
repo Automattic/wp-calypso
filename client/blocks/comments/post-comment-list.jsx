@@ -27,6 +27,8 @@ import {
 import PostComment from './post-comment';
 import PostCommentForm from './form';
 import CommentCount from './comment-count';
+import SegmentedControl from 'components/segmented-control';
+import SegmentedControlItem from 'components/segmented-control/item';
 
 class PostCommentList extends React.Component {
 	constructor( props ) {
@@ -210,6 +212,13 @@ class PostCommentList extends React.Component {
 							} )
 						}</span> : null }
 				</div> }
+				<SegmentedControl>
+					<SegmentedControlItem selected={ true }>{ translate( 'All' ) }</SegmentedControlItem>
+					<SegmentedControlItem>{ translate( 'Approved' ) }</SegmentedControlItem>
+					<SegmentedControlItem>{ translate( 'Pending' ) }</SegmentedControlItem>
+					<SegmentedControlItem>{ translate( 'Spam' ) }</SegmentedControlItem>
+					<SegmentedControlItem>{ translate( 'Trash' ) }</SegmentedControlItem>
+				</SegmentedControl>
 				{ this.renderCommentsList( displayedComments ) }
 				{ this.renderCommentForm() }
 			</div>
