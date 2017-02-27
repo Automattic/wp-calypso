@@ -143,6 +143,10 @@ const HelpContact = React.createClass( {
 
 		messages.forEach( this.props.sendHappychatMessage );
 
+		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin', {
+			site_plan_product_id: ( site ? site.plan.product_id : null )
+		} );
+
 		page( '/help' );
 	},
 
