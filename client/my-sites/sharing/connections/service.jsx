@@ -19,7 +19,7 @@ import {
 	fetchConnection,
 	updateSiteConnection,
 } from 'state/sharing/publicize/actions';
-import { errorNotice } from 'state/notices/actions';
+import { errorNotice, warningNotice } from 'state/notices/actions';
 import Connection from './connection';
 import FoldableCard from 'components/foldable-card';
 import { getAvailableExternalAccounts } from 'state/sharing/selectors';
@@ -60,6 +60,7 @@ class SharingService extends Component {
 		siteUserConnections: PropTypes.arrayOf( PropTypes.object ),
 		translate: PropTypes.func,
 		updateSiteConnection: PropTypes.func,
+		warningNotice: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -79,6 +80,7 @@ class SharingService extends Component {
 		siteUserConnections: [],
 		translate: identity,
 		updateSiteConnection: () => {},
+		warningNotice: () => {},
 	};
 
 	/**
@@ -148,7 +150,7 @@ class SharingService extends Component {
 		} else {
 			// If an account wasn't selected from the dialog or the user cancels
 			// the connection, the dialog should simply close
-			this.props.errorNotice( this.props.translate( 'The connection could not be made because no account was selected.', {
+			this.props.warningNotice( this.props.translate( 'The connection could not be made because no account was selected.', {
 				context: 'Sharing: Publicize connection confirmation'
 			} ), { id: 'publicize' } );
 			this.setState( { isConnecting: false } );
@@ -411,5 +413,6 @@ export default connect(
 		recordGoogleEvent,
 		requestKeyringConnections,
 		updateSiteConnection,
+		warningNotice,
 	},
 )( localize( SharingService ) );
