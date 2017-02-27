@@ -149,21 +149,18 @@ const ALL_THEME_OPTIONS = {
 export const connectOptions = connect(
 	( state, { options: optionNames, siteId } ) => {
 		let options = pick( ALL_THEME_OPTIONS, optionNames );
-		let mapGetUrl = identity, mapHideForSite = identity;
-
-		// We bind hideForTheme to siteId even if it is null since the selectors
-		// that are used by it are expected to recognize that case as "no site selected"
-		// and work accordingly.
-		const mapHideForTheme = hideForTheme => ( t ) => hideForTheme( state, t, siteId );
+		let mapGetUrl = identity, mapHideForSite = identity, mapHideForTheme = identity;
 
 		if ( siteId ) {
 			mapGetUrl = getUrl => ( t ) => getUrl( state, t, siteId );
 			options = pickBy( options, option =>
 				! ( option.hideForSite && option.hideForSite( state, siteId ) )
 			);
+			mapHideForTheme = hideForTheme => ( t ) => hideForTheme( state, t, siteId );
 		} else {
 			mapGetUrl = getUrl => ( t, s ) => getUrl( state, t, s );
 			mapHideForSite = hideForSite => ( s ) => hideForSite( state, s );
+			mapHideForTheme = hideForTheme => ( t, s ) => hideForTheme( state, t, s );
 		}
 
 		return mapValues( options, option => Object.assign(
