@@ -2352,6 +2352,34 @@ Undocumented.prototype.transferStatus = function( siteId, transferId ) {
 };
 
 /**
+ * Update the poster for a video.
+ *
+ * @param {string} videoId ID of the video
+ * @param {object} data The POST data
+ * @param {Function} fn Function to invoke when request is complete
+ * @returns {Promise} A promise that resolves when the request is complete
+ */
+Undocumented.prototype.updateVideoPoster = function( videoId, data, fn ) {
+	debug( '/videos/:video_id/poster' );
+
+	const params = {
+		path: `/videos/${ videoId }/poster`,
+	};
+
+	if ( 'file' in data ) {
+		params.formData = [
+			[ 'poster', data.file ]
+		];
+	}
+
+	if ( 'at_time' in data ) {
+		params.body = data;
+	}
+
+	return this.wpcom.req.post( params, fn );
+};
+
+/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;
