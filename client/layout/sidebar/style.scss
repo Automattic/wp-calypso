@@ -27,13 +27,15 @@
 		transform: translateX( 0 );
 		transition: all 0.15s cubic-bezier(0.770, 0.000, 0.175, 1.000);
 
-		.focus-sidebar & {
+		// More specific than default transform from layout/style.
+		// Order-dependent with client/post-editor/editor-sidebar/style.scss
+		.layout.focus-sidebar & {
 			pointer-events: auto;
 			-webkit-overflow-scrolling: touch;
 			transform: translateX( 100vw );
 		}
 
-		.focus-sites & {
+		.layout.focus-sites & {
 			transform: translateX( 100vw );
 		}
 	}
