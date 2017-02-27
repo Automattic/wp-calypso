@@ -96,7 +96,12 @@ const tryandcustomize = {
 	} ),
 	action: tryAndCustomizeAction,
 	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ),
-	hideForTheme: ( state, theme, siteId ) => isThemeActive( state, theme.id, siteId )
+	hideForTheme: ( state, theme, siteId ) => (
+		isThemeActive( state, theme.id, siteId ) ||
+		// Are we trying to install and try a (previously not-installed) WP.com theme on a Jetpack site?
+		isJetpackSite( state, siteId ) && isWpcomTheme( state, theme.id ) && ! getTheme( state, siteId, theme.id ) &&
+			! ( config.isEnabled( 'manage/themes/upload' ) && hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) )
+	)
 };
 
 const preview = {
