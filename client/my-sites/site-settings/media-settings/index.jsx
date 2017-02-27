@@ -33,7 +33,7 @@ const MediaSettings = ( {
 	const labelClassName = isSavingSettings || ! carouselActive ? 'is-disabled' : null;
 
 	return (
-		<Card className="media-settings site-settings">
+		<Card className="media-settings site-settings site-settings__module-settings">
 			<FormFieldset>
 				<div className="media-settings__info-link-container">
 					<InfoPopover position={ 'left' }>
@@ -64,7 +64,7 @@ const MediaSettings = ( {
 					label={ translate( 'Transform standard image galleries into full-screen slideshows.' ) }
 					disabled={ isRequestingSettings || isSavingSettings }
 					/>
-				<div className="media-settings__module-settings is-indented">
+				<div className="media-settings__module-settings site-settings__child-settings">
 					<FormToggle
 						className="media-settings__carousel-module-settings-toggle is-compact"
 						checked={ fields.carousel_display_exif || false }
