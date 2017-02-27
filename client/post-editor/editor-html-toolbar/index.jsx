@@ -34,6 +34,12 @@ import EditorMediaModal from 'post-editor/editor-media-modal';
  * Module constants
  */
 const TOOLBAR_HEIGHT = 39;
+const isIE11Detected = (
+	window &&
+	window.MSInputMethodContext &&
+	document &&
+	document.documentMode
+);
 
 export class EditorHtmlToolbar extends Component {
 
@@ -161,11 +167,25 @@ export class EditorHtmlToolbar extends Component {
 			previousSelectionEnd + insertedContentLength;
 	}
 
-	updateEditorContent( newContent ) {
+	// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11.
+	// Using the previous version of replacing the entire content value instead.
+	updateEditorContent = isIE11Detected
+		? this.updateEditorContentIE11
+		: this.insertEditorContent;
+
+	insertEditorContent( before, newContent, after ) {
+		const { content, onToolbarChangeContent } = this.props;
+		content.focus();
+		document.execCommand( 'insertText', false, newContent );
+		onToolbarChangeContent( before + newContent + after );
+	}
+
+	updateEditorContentIE11( before, newContent, after ) {
+		const fullContent = before + newContent + after;
 		const { content: { selectionEnd, value }, onToolbarChangeContent } = this.props;
-		this.props.content.value = newContent;
-		onToolbarChangeContent( newContent );
-		this.setCursorPosition( selectionEnd, newContent.length - value.length );
+		this.props.content.value = fullContent;
+		onToolbarChangeContent( fullContent );
+		this.setCursorPosition( selectionEnd, fullContent.length - value.length );
 		this.props.content.focus();
 	}
 
@@ -192,20 +212,20 @@ export class EditorHtmlToolbar extends Component {
 	insertHtmlTagOpen( tag ) {
 		const { openTags } = this.state;
 		const { before, after } = this.splitEditorContent();
-		this.updateEditorContent( before + this.openHtmlTag( tag ) + after );
+		this.updateEditorContent( before, this.openHtmlTag( tag ), after );
 		this.setState( { openTags: openTags.concat( tag.name ) } );
 	}
 
 	insertHtmlTagClose( tag ) {
 		const { openTags } = this.state;
 		const { before, after } = this.splitEditorContent();
-		this.updateEditorContent( before + this.closeHtmlTag( tag ) + after );
+		this.updateEditorContent( before, this.closeHtmlTag( tag ), after );
 		this.setState( { openTags: openTags.filter( openTag => openTag !== tag.name ) } );
 	}
 
 	insertHtmlTagOpenClose( tag ) {
 		const { before, inner, after } = this.splitEditorContent();
-		this.updateEditorContent( before + this.openHtmlTag( tag ) + inner + this.closeHtmlTag( tag ) + after );
+		this.updateEditorContent( before, this.openHtmlTag( tag ) + inner + this.closeHtmlTag( tag ), after );
 	}
 
 	insertHtmlTagSelfClosed( tag ) {
@@ -214,22 +234,22 @@ export class EditorHtmlToolbar extends Component {
 		const content = tag.options && tag.options.paragraph
 			? '\n' + selfClosedTag + '\n\n'
 			: selfClosedTag;
-		this.updateEditorContent( before + inner + content + after );
+		this.updateEditorContent( before, inner + content, after );
 	}
 
 	insertHtmlTagWithText( tag ) {
 		const { before, after } = this.splitEditorContent();
-		this.updateEditorContent( before + this.openHtmlTag( tag ) + tag.options.text + this.closeHtmlTag( tag ) + after );
+		this.updateEditorContent( before, this.openHtmlTag( tag ) + tag.options.text + this.closeHtmlTag( tag ), after );
 	}
 
 	insertCustomContent( content, options = {} ) {
 		const { before, inner, after } = this.splitEditorContent();
+		const paragraph = options.paragraph ? '\n' : '';
 		this.updateEditorContent(
-			before + inner +
-			( options.paragraph ? '\n' : '' ) +
-			content +
-			( options.paragraph ? '\n\n' : '' ) +
-			after );
+			before,
+			inner + paragraph + content + paragraph + paragraph,
+			after
+		);
 	}
 
 	insertHtmlTag( tag ) {
