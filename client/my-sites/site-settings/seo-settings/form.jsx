@@ -32,7 +32,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import Banner from 'components/banner';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getSiteOption, getSeoTitleFormatsForSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -45,7 +45,8 @@ import {
 	isEnterprise,
 	isJetpackBusiness
 } from 'lib/products-values';
-import { FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
+import { hasFeature } from 'lib/plans';
+import { FEATURE_ADVANCED_SEO, PLAN_BUSINESS } from 'lib/plans/constants';
 
 const serviceIds = {
 	google: 'google-site-verification',
@@ -365,19 +366,21 @@ export const SeoForm = React.createClass( {
 	},
 
 	render() {
-		const { showAdvancedSeo,
-			showWebsiteMeta,
+		const {
 			jetpackManagementUrl,
 			jetpackVersionSupportsSeo,
+			showAdvancedSeo,
+			showWebsiteMeta,
+			site,
 		} = this.props;
 		const {
-			URL: siteUrl = '',
-			slug = '',
+			jetpack = false,
 			settings: {
 				blog_public = 1
 			} = {},
-			jetpack = false,
-		} = this.props.site;
+			slug = '',
+			URL: siteUrl = '',
+		} = site;
 
 		const {
 			isSubmittingForm,
@@ -413,8 +416,8 @@ export const SeoForm = React.createClass( {
 		};
 
 		const nudgeTitle = jetpack
-			? this.translate( 'Enable SEO Tools Features by Upgrading to Jetpack Professional' )
-			: this.translate( 'Enable SEO Tools Features by Upgrading to the Business Plan' );
+			? this.translate( 'Enable SEO Tools features by upgrading to Jetpack Professional' )
+			: this.translate( 'Enable SEO Tools features by upgrading to the Business Plan' );
 
 		const submitButton = (
 			<Button
@@ -438,7 +441,7 @@ export const SeoForm = React.createClass( {
 					path="/settings/seo/:site"
 					title="Site Settings > SEO"
 				/>
-				{ isSitePrivate &&
+				{ isSitePrivate && hasBusinessPlan( site.plan ) &&
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
@@ -467,7 +470,7 @@ export const SeoForm = React.createClass( {
 					</Notice>
 				}
 
-				{ jetpack && ! this.props.site.isModuleActive( 'seo-tools' ) &&
+				{ jetpack && hasBusinessPlan( site.plan ) && ! site.isModuleActive( 'seo-tools' ) &&
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
@@ -481,13 +484,15 @@ export const SeoForm = React.createClass( {
 					</Notice>
 				}
 
-				<UpgradeNudge
-					feature={ FEATURE_ADVANCED_SEO }
-					title={ nudgeTitle }
-					message={ this.translate( 'Adds tools to optimize your site for search engines and social media sharing.' ) }
-					event={ 'calypso_seo_settings_upgrade_nudge' }
-					jetpack={ jetpack }
-				/>
+				{ ! hasFeature( FEATURE_ADVANCED_SEO, site.ID ) &&
+					<Banner
+						description={ this.translate( 'Adds tools to optimize your site for search engines and social media sharing.' ) }
+						event={ 'calypso_seo_settings_upgrade_nudge' }
+						feature={ FEATURE_ADVANCED_SEO }
+						plan={ PLAN_BUSINESS }
+						title={ nudgeTitle }
+					/>
+				}
 
 				{ ! jetpack &&
 					<div>
