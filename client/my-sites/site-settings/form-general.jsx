@@ -171,7 +171,7 @@ class SiteSettingsFormGeneral extends Component {
 				<FormSettingExplanation>
 					{ translate( 'Language this blog is primarily written in.' ) }&nbsp;
 					<a href={ config.isEnabled( 'me/account' ) ? '/me/account' : '/settings/account/' }>
-						{ translate( 'You can also modify the interface language in your profile.' ) }
+						{ translate( "You can also modify your interface's language in your profile." ) }
 					</a>
 				</FormSettingExplanation>
 			</FormFieldset>
