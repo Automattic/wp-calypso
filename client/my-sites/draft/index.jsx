@@ -182,7 +182,7 @@ module.exports = React.createClass( {
 		];
 
 		title = post.title || <span className="draft__untitled">{ this.translate( 'Untitled' ) }</span>;
-		excerpt = post.excerpt ? <span className="draft__excerpt"><Gridicon icon="aside" size={ 18 } />{ post.excerpt }</span> : title;
+		excerpt = post.excerpt && <span className="draft__excerpt">{ post.excerpt }</span>;
 
 		// Render each Post
 		return (
@@ -196,6 +196,11 @@ module.exports = React.createClass( {
 						{ post.format === 'aside' ? excerpt : title }
 					</a>
 				</h3>
+				{ post.excerpt &&
+					<span className="draft__excerpt">
+						<a href={ editPostURL } onClick={ this.props.onTitleClick }>{ post.excerpt }</a>
+					</span>
+				}
 				{ this.props.sites.selected ? this.draftActions() : <SiteIcon site={ site } size={ 32 } /> }
 				{ image ? this.renderImage( imageUrl ) : null }
 				{ this.props.post.status === 'trash' ? this.restoreButton() : null }

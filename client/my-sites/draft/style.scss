@@ -1,6 +1,12 @@
 .draft.card.is-compact {
 	padding: 16px;
 	text-align: left;
+
+	&:hover {
+		.draft__excerpt {
+			display: block;
+		}
+	}
 }
 
 .draft__title {
@@ -29,14 +35,28 @@
 }
 
 .draft__excerpt {
-	color: darken( $gray, 20% );
 	font-size: 12px;
 	font-weight: 300;
+	display: none;
+	overflow: hidden;
+	line-height: 1.2;
+	position: absolute;
+	left: 0;
+	right: 24px;
+	top: 0;
+	bottom: 0;
+	padding: 12px 16px 0;
+	background: $white;
+	z-index: 20;
+	border-bottom: 10px solid $white;
 
-	.gridicon {
-		color: $gray;
-		vertical-align: text-bottom;
-		margin-right: 8px;
+	a {
+		color: $gray-text;
+		text-decoration: none;
+	}
+
+	&::after {
+		@include long-content-fade( $size: 20% );
 	}
 }
 
