@@ -112,6 +112,7 @@ export const PostEditor = React.createClass( {
 		this.debouncedAutosave = debounce( this.throttledAutosave, 3000 );
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
+		this.props.setLayoutFocus( 'sidebar' );
 
 		this.setState( {
 			isEditorInitialized: false
