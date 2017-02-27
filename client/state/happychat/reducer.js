@@ -20,8 +20,13 @@ import {
 	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_CONNECTED,
 	HAPPYCHAT_SET_CHAT_STATUS,
-	HAPPYCHAT_RECEIVE_TRANSCRIPT
+	HAPPYCHAT_RECEIVE_TRANSCRIPT,
+	HAPPYCHAT_DISCONNECTED
 } from 'state/action-types';
+
+const STATUS_DISCONNECTED = 'disconnected';
+const STATUS_CONNECTED = 'connected';
+const STATUS_CONNECTING = 'connecting';
 
 /**
  * Returns a timeline event from the redux action
@@ -119,13 +124,14 @@ const message = ( state = '', action ) => {
 const connectionStatus = ( state = 'disconnected', action ) => {
 	switch ( action.type ) {
 		case SERIALIZE:
-			return 'disconnected';
+		case HAPPYCHAT_DISCONNECTED:
+			return STATUS_DISCONNECTED;
 		case DESERIALIZE:
 			return state;
 		case HAPPYCHAT_CONNECTING:
-			return 'connecting';
+			return STATUS_CONNECTING;
 		case HAPPYCHAT_CONNECTED:
-			return 'connected';
+			return STATUS_CONNECTED;
 	}
 	return state;
 };
@@ -147,7 +153,7 @@ const connectionStatus = ( state = 'disconnected', action ) => {
 const chatStatus = ( state = 'default', action ) => {
 	switch ( action.type ) {
 		case SERIALIZE:
-			return 'default';
+			return state;
 		case DESERIALIZE:
 			return state;
 		case HAPPYCHAT_SET_CHAT_STATUS:

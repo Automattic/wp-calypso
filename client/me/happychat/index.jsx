@@ -1,13 +1,13 @@
-/*
-	External Deps
-*/
+/**
+ * External Dependencies
+ */
 import React from 'react';
 import page from 'page';
 import { translate } from 'i18n-calypso';
 
-/*
-	Internal deps
-*/
+/**
+ * Internal dependencies
+ */
 import { renderWithReduxStore } from 'lib/react-helpers';
 import config from 'config';
 import controller from 'me/controller';
