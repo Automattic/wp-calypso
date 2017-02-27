@@ -741,6 +741,24 @@ export function hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) {
 }
 
 /**
+ * Determines if the Jetpack site is part of multi-site.
+ * Returns null if the site is not known or is not a Jetpack site.
+ *
+ * @param  {Object}   state  Global state tree
+ * @param  {Number}   siteId Site ID
+ * @return {?Boolean}        true if the site is multi-site
+ */
+export function isJetpackSiteMultiSite( state, siteId ) {
+	const site = getRawSite( state, siteId );
+
+	if ( ! site || ! isJetpackSite( state, siteId ) ) {
+		return null;
+	}
+
+	return site.is_multisite === true;
+}
+
+/**
  * Determines if a site is the main site in a Network
  * True if it is either in a non multi-site configuration
  * or if its url matches the `main_network_site` url option.
