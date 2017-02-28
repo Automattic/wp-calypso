@@ -28,16 +28,10 @@ import config from 'config';
  * This function return true if the image editor can be
  * enabled/shown
  *
- * @param  {object} item - media item
  * @param  {object} site - current site
- * @return {boolean} `true` is the image-editor can be enabled.
+ * @return {boolean} `true` if the image-editor can be enabled.
  */
-const enableImageEditing = ( item, site ) => {
-	// do not allow if, for some reason, there isn't a valid item yet
-	if ( ! item ) {
-		return false;
-	}
-
+const enableImageEditing = ( site ) => {
 	// do not show if the feature flag isn't set
 	if ( ! config.isEnabled( 'post-editor/image-editor' ) ) {
 		return false;
@@ -53,6 +47,33 @@ const enableImageEditing = ( item, site ) => {
 		get( site, 'jetpack', false ) &&
 		versionCompare( get( site, 'options.jetpack_version', '0.0' ), '4.7-alpha', '<' )
 	) {
+		return false;
+	}
+
+	return true;
+};
+
+/**
+ * This function return true if the video editor can be
+ * enabled/shown
+ *
+ * @param  {object} item - media item
+ * @param  {object} site - current site
+ * @return {boolean} `true` if the video editor can be enabled.
+ */
+const enableVideoEditing = ( item, site ) => {
+	// do not show if the feature flag isn't set
+	if ( ! config.isEnabled( 'post-editor/video-editor' ) ) {
+		return false;
+	}
+
+	// do not allow for Jetpack site with VideoPress disabled
+	if ( get( site, 'jetpack', false ) ) {
+		if ( ! MediaUtils.isVideoPressItem( item ) ) {
+			return false;
+		}
+	// do not allow for wpcom site with VideoPress disabled
+	} else if ( ! site.options.videopress_enabled ) {
 		return false;
 	}
 
@@ -150,18 +171,45 @@ class EditorMediaModalDetailItem extends Component {
 		);
 	}
 
-	renderImageEditorButtons( item, classname = 'is-desktop' ) {
-		const { site } = this.props;
-
-		if ( ! enableImageEditing( item, site ) ) {
+	renderMediaEditorButtons( item, classname = 'is-desktop' ) {
+		if ( ! item ) {
 			return null;
 		}
 
+		const mimePrefix = MediaUtils.getMimePrefix( item );
 		const classes = classNames( 'editor-media-modal-detail__edition-bar', classname );
+
+		if ( 'video' === mimePrefix ) {
+			return this.renderVideoEditorButtons( item, classes );
+		}
+
+		return this.renderImageEditorButtons( classes, classname );
+	}
+
+	renderImageEditorButtons( classes, classname ) {
+		const { site } = this.props;
+
+		if ( ! enableImageEditing( site ) ) {
+			return null;
+		}
 
 		return (
 			<div className={ classes }>
 				{ this.renderRestoreButton( classname ) }
+				{ this.renderEditButton() }
+			</div>
+		);
+	}
+
+	renderVideoEditorButtons( item, classes ) {
+		const { site } = this.props;
+
+		if ( ! enableVideoEditing( item, site ) ) {
+			return null;
+		}
+
+		return (
+			<div className={ classes }>
 				{ this.renderEditButton() }
 			</div>
 		);
@@ -268,13 +316,13 @@ class EditorMediaModalDetailItem extends Component {
 
 					<div className="editor-media-modal-detail__preview-wrapper">
 						{ this.renderItem() }
-						{ this.renderImageEditorButtons( item ) }
+						{ this.renderMediaEditorButtons( item ) }
 						{ this.renderPreviousItemButton() }
 						{ this.renderNextItemButton() }
 					</div>
 
 					<div className="editor-media-modal-detail__sidebar">
-						{ this.renderImageEditorButtons( item, 'is-mobile' ) }
+						{ this.renderMediaEditorButtons( item, 'is-mobile' ) }
 						{ this.renderFields() }
 						<EditorMediaModalDetailFileInfo
 							item={ item } />
