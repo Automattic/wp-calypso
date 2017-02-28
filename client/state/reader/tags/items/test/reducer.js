@@ -9,7 +9,6 @@ import { keyBy } from 'lodash';
  */
 import { items } from '../reducer';
 import { receiveUnfollowTag, receiveTags } from '../actions';
-import { receiveTags } from '../actions';
 
 const keyById = tags => keyBy( tags, 'ID' );
 
