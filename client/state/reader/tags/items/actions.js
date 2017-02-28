@@ -9,6 +9,8 @@ import { kebabCase } from 'lodash';
 import {
 	READER_TAGS_REQUEST,
 	READER_TAGS_RECEIVE,
+	READER_UNFOLLOW_TAG_REQUEST,
+	READER_UNFOLLOW_TAG_RECEIVE,
 } from 'state/action-types';
 
 /**
@@ -34,6 +36,17 @@ export const requestTags = tag => {
 
 export const receiveTags = ( { payload, error } ) => ( {
 	type: READER_TAGS_RECEIVE,
+	payload,
+	error,
+} );
+
+export const requestUnfollowTag = tag => ( {
+	type: READER_UNFOLLOW_TAG_REQUEST,
+	payload: { tag, slug: slugify( tag ) },
+} );
+
+export const receiveUnfollowTag = ( { payload, error } ) => ( {
+	type: READER_UNFOLLOW_TAG_RECEIVE,
 	payload,
 	error,
 } );
