@@ -52,7 +52,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should update tags that have changed', () => {
-			const prevState = items( {}, [ TAG1, TAG2 ] );
+			const prevState = { [ TAG1.ID ]: TAG1, [ TAG2.ID ]: TAG2 };
 			const action = receiveTags( {
 				payload: [ { ...TAG1, title: 'NotChickens' }, TAG2 ],
 			} );
