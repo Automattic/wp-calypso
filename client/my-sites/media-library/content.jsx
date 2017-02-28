@@ -37,7 +37,7 @@ const MediaLibraryContent = React.createClass( {
 		scrollable: React.PropTypes.bool,
 		onAddMedia: React.PropTypes.func,
 		onMediaScaleChange: React.PropTypes.func,
-		onEditItem: React.PropTypes.func
+		onEditItem: React.PropTypes.func,
 	},
 
 	getDefaultProps: function() {
@@ -193,7 +193,11 @@ const MediaLibraryContent = React.createClass( {
 						filter={ this.props.filter }
 						onMediaScaleChange={ this.props.onMediaScaleChange }
 						onAddMedia={ this.props.onAddMedia }
-						onAddAndEditImage={ this.props.onAddAndEditImage } />
+						onAddAndEditImage={ this.props.onAddAndEditImage }
+						selectedItems={ this.props.selectedItems }
+						onViewDetails={ this.props.onViewDetails }
+						onDeleteItem={ this.props.onDeleteItem }
+					/>
 				}
 				{ this.renderErrors() }
 				{ this.renderMediaList() }
