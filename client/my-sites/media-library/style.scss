@@ -62,8 +62,11 @@
 
 .media-library__scale-toggle {
 	position: absolute;
-		top: 0;
-		right: 0;
+	top: 10;
+	right: 24px;
+	&.segmented-control.is-compact .segmented-control__link {
+		padding: 2px 4px;
+	}
 
 	@include breakpoint( ">480px" ) {
 		display: none;
@@ -83,7 +86,7 @@
 }
 
 .media-library__scale-toggle .gridicon {
-	margin: 2px 8px;
+	margin: 2px 4px;
 	vertical-align: middle;
 }
 

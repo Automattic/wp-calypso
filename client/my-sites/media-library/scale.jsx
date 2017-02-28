@@ -125,7 +125,7 @@ class MediaLibraryScale extends Component {
 						<span className="media-library__scale-toggle-label">
 							{ translate( 'Grid' ) }
 						</span>
-						<Gridicon icon="grid" />
+						<Gridicon icon="grid" size={ 18 } />
 					</SegmentedControlItem>
 					<SegmentedControlItem
 						selected={ 1 === scale }
@@ -133,7 +133,7 @@ class MediaLibraryScale extends Component {
 						<span className="media-library__scale-toggle-label">
 							{ translate( 'List' ) }
 						</span>
-						<Gridicon icon="menu" />
+						<Gridicon icon="menu" size={ 18 } />
 					</SegmentedControlItem>
 				</SegmentedControl>
 				<FormRange
