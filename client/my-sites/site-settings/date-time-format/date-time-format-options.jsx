@@ -15,9 +15,9 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SectionHeader from 'components/section-header';
+import StartOfWeekOption from './start-of-week-option';
 import { phpToMomentDatetimeFormat } from 'lib/formatting';
 import { getNow } from './utils';
 import wrapSettingsForm from '../wrap-settings-form';
@@ -221,38 +221,10 @@ export class DateTimeFormatOptions extends Component {
 		);
 	}
 
-	startOfWeekOption() {
+	render() {
 		const {
 			fields: { start_of_week: startOfWeek },
 			handleSelect,
-			isRequestingSettings,
-			moment,
-			translate,
-		} = this.props;
-
-		return (
-			<FormFieldset>
-				<FormLabel>
-					{ translate( 'Week starts on' ) }
-				</FormLabel>
-				<FormSelect
-					disabled={ isRequestingSettings }
-					name="start_of_week"
-					onChange={ handleSelect }
-					value={ startOfWeek || 0 }
-				>
-					{ moment.weekdays().map( ( day, index ) =>
-						<option key={ index } value={ index }>
-							{ day }
-						</option>
-					) }
-				</FormSelect>
-			</FormFieldset>
-		);
-	}
-
-	render() {
-		const {
 			handleSubmitForm,
 			isRequestingSettings,
 			isSavingSettings,
@@ -278,7 +250,11 @@ export class DateTimeFormatOptions extends Component {
 					<form>
 						{ this.dateFormatOption() }
 						{ this.timeFormatOption() }
-						{ this.startOfWeekOption() }
+						<StartOfWeekOption
+							isRequestingSettings={ isRequestingSettings }
+							onChange={ handleSelect }
+							startOfWeek={ startOfWeek }
+						/>
 					</form>
 				</Card>
 			</div>
