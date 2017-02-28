@@ -23,7 +23,7 @@
 }
 
 .editor-ground-control .site {
-	margin: 0 auto 0 0;
+	margin: 0;
 	max-width: 300px;
 
 	@include breakpoint( "<660px" ) {
@@ -40,7 +40,7 @@
 	display: flex;
 	min-height: 20px;
 	justify-content: space-between;
-	margin: 0 16px;
+	margin: 0 auto 0 16px;
 	position: relative;
 }
 
@@ -112,17 +112,12 @@
 
 .editor-ground-control__save.button.is-link,
 .editor-ground-control__saving {
-	font-size: 11px;
-	font-weight: 600;
-	height: 15px;
 	text-decoration: underline;
-	text-transform: uppercase;
 }
 
 .editor-ground-control__saving {
-	color: $alert-green;
-	line-height: 1.8;
 	text-decoration: none;
+	color: lighten( $gray, 20% );
 }
 
 .editor-ground-control__schedule-post {
