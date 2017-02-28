@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { Component } from 'react';
-import { initial, flatMap, trim, sampleSize, debounce } from 'lodash';
+import { initial, flatMap, trim, debounce } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -17,8 +17,7 @@ import SearchInput from 'components/search';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
 import { recordTrackForPost, recordAction } from 'reader/stats';
-import i18nUtils from 'lib/i18n-utils';
-import { suggestions } from './suggestions';
+import SuggestionProvider from './suggestion-provider';
 import Suggestion from './suggestion';
 import ReaderPostCard from 'blocks/reader-post-card';
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
@@ -104,22 +103,6 @@ class SearchStream extends Component {
 		query: React.PropTypes.string,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		const lang = i18nUtils.getLocaleSlug();
-		let pickedSuggestions = null;
-
-		if ( suggestions[ lang ] ) {
-			pickedSuggestions = sampleSize( suggestions[ lang ], 3 );
-		}
-
-		this.state = {
-			suggestions: pickedSuggestions,
-			title: this.getTitle()
-		};
-	}
-
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.query !== this.props.query ) {
 			this.updateState( nextProps );
@@ -137,6 +120,10 @@ class SearchStream extends Component {
 
 	getTitle = ( props = this.props ) => {
 		return props.query;
+	}
+
+	state = {
+		title: this.getTitle()
 	}
 
 	updateQuery = ( newValue ) => {
@@ -199,7 +186,7 @@ class SearchStream extends Component {
 	}
 
 	render() {
-		const { store, query } = this.props;
+		const { store, query, suggestions } = this.props;
 		const emptyContent = <EmptyContent query={ query } />;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
@@ -207,7 +194,7 @@ class SearchStream extends Component {
 			searchPlaceholderText = this.props.translate( 'Search billions of WordPress.com posts…' );
 		}
 
-		const sugList = initial( flatMap( this.state.suggestions, suggestionKeyword =>
+		const suggestionList = initial( flatMap( suggestions, suggestionKeyword =>
 			[ <Suggestion suggestion={ suggestionKeyword } source="search" />, ', ' ] ) );
 
 		const documentTitle = this.props.translate(
@@ -235,9 +222,9 @@ class SearchStream extends Component {
 							delayTimeout={ 500 }
 							placeholder={ searchPlaceholderText } />
 					</CompactCard>
-					{ this.state.suggestions &&
+					{ suggestions &&
 						<p className="search-stream__blank-suggestions">
-							{ this.props.translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: sugList } } ) }
+							{ this.props.translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: suggestionList } } ) }
 						</p>
 					}
 					<hr className="search-stream__fixed-area-separator" />
@@ -247,4 +234,4 @@ class SearchStream extends Component {
 	}
 }
 
-export default localize( SearchStream );
+export default SuggestionProvider( localize( SearchStream ) );
