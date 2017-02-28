@@ -3,12 +3,16 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 import debug from 'debug';
 
 /**
  * Internal dependencies
  */
 import { loadScript, removeScriptCallback } from 'lib/load-script';
+import {
+	setVideoEditorHasScriptLoadError,
+} from 'state/ui/editor/video-editor/actions';
 
 /**
  * Module variables
@@ -58,15 +62,18 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	}
 
 	onScriptLoaded = ( error ) => {
-		if ( error ) {
-			log( `Script${ error.src } failed to load.` );
-			return;
-		}
-
 		const {
 			isPlaying,
 			item,
+			setHasScriptLoadError,
 		} = this.props;
+
+		if ( error ) {
+			log( `Script${ error.src } failed to load.` );
+			setHasScriptLoadError();
+
+			return;
+		}
 
 		if ( typeof window !== 'undefined' && window.videopress ) {
 			this.player = window.videopress( item.videopress_guid, this.video, {
@@ -102,4 +109,9 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	}
 }
 
-export default EditorMediaModalDetailPreviewVideoPress;
+export default connect(
+	null,
+	{
+		setHasScriptLoadError: setVideoEditorHasScriptLoadError,
+	}
+)( EditorMediaModalDetailPreviewVideoPress );
