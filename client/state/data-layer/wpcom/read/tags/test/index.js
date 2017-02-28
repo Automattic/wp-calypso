@@ -1,12 +1,12 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ */
 import { expect } from 'chai';
 import sinon from 'sinon';
 
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
 import {
 	requestTags as requestTagsAction,
 	receiveTags as receiveTagsAction,
@@ -38,26 +38,24 @@ const successfulFollowedTagsResponse = {
 	]
 };
 
-const normalizedFollowedTagsResponse = {
-	tags: [
-		{
-			ID: '307',
-			slug: 'chickens',
-			title: 'Chickens',
-			display_name: 'chickens',
-			URL: '/tag/chickens',
-			is_following: true,
-		},
-		{
-			ID: '148',
-			slug: 'design',
-			title: 'Design',
-			display_name: 'design',
-			URL: '/tag/design',
-			is_following: true,
-		},
-	]
-};
+const normalizedFollowedTagsResponse = [
+	{
+		ID: '307',
+		slug: 'chickens',
+		title: 'Chickens',
+		display_name: 'chickens',
+		URL: '/tag/chickens',
+		is_following: true,
+	},
+	{
+		ID: '148',
+		slug: 'design',
+		title: 'Design',
+		display_name: 'design',
+		URL: '/tag/design',
+		is_following: true,
+	},
+];
 
 const successfulSingleTagResponse = {
 	tag: {
@@ -69,15 +67,15 @@ const successfulSingleTagResponse = {
 	},
 };
 
-const normalizedSuccessfulSingleTagResponse = {
-	tags: [ {
+const normalizedSuccessfulSingleTagResponse = [
+	{
 		ID: '307',
 		slug: 'chickens',
 		title: 'Chickens',
 		display_name: 'chickens',
-		URL: '/tag/chickens'
-	} ]
-};
+		URL: '/tag/chickens',
+	},
+];
 
 const slug = 'chickens';
 
