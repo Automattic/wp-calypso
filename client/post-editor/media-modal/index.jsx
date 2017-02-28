@@ -30,6 +30,7 @@ import MediaModalGallery from './gallery';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import Dialog from 'components/dialog';
+import Button from 'components/button';
 import accept from 'lib/accept';
 
 import { getMediaModalView } from 'state/ui/media-modal/selectors';
@@ -181,7 +182,9 @@ export class EditorMediaModal extends Component {
 			{ count: selectedCount }
 		);
 
-		accept( confirmMessage, this.confirmDeleteMedia, this.props.translate( 'Delete' ) );
+		const deleteButton = <Button primary scary>{ this.props.translate( 'Delete' ) }</Button>;
+
+		accept( confirmMessage, this.confirmDeleteMedia, deleteButton );
 	};
 
 	onAddMedia = () => {

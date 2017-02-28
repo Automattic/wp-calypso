@@ -7,10 +7,10 @@ Accept is a stylized substitute to the browser `confirm` dialog.
 
 ## Arguments
 
-* `message` - A string that gets displayed to the user in the cofirm dialog. 
+* `message` - A string that gets displayed to the user in the cofirm dialog.
 * `callback` - A callback that gets called after confirms or cancels the dialog.
-* `confirmButtonText` - Optional confirm button text, defaults to 'OK'.
-* `cancelButtonText` - Optional cancel button text, defaults to 'Cancel'.
+* `confirmButtonText` - Optional confirm button text (defaults to 'OK') OR Button element.
+* `cancelButtonText` - Optional cancel button text (defaults to 'Cancel') OR Button element.
 
 ## Usage
 
