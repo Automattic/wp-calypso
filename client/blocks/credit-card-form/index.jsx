@@ -297,7 +297,7 @@ const CreditCardForm = React.createClass( {
 				<div className="credit-card-form__card-terms">
 					<Gridicon icon="info-outline" size={ 18 } />
 					<p>
-						{ this.translate( 'This card will be also used for renewal of existing purchases, if any.' ) }
+						{ this.translate( 'This card will be used for future renewals of existing purchases.' ) }
 					</p>
 				</div>
 			);
