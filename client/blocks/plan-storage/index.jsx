@@ -34,7 +34,7 @@ class PlanStorage extends Component {
 			siteSlug,
 		} = this.props;
 
-		if ( jetpackSite ) {
+		if ( jetpackSite || ! sitePlan ) {
 			return null;
 		}
 

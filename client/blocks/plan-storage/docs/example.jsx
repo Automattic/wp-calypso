@@ -55,7 +55,7 @@ export default React.createClass( {
 						mediaStorage={ mediaStorage.green }
 					/>
 				</div>
-				<div style={ { marginBottom: 16, maxWidth: '400' } }>
+				<div style={ { marginBottom: 16, maxWidth: '400px' } }>
 					<PlanStorageBar
 						siteSlug={ primarySite.slug }
 						sitePlanSlug={ PLAN_PERSONAL }
@@ -63,7 +63,7 @@ export default React.createClass( {
 					/>
 				</div>
 
-				<div style={ { marginBottom: 16, maxWidth: '300' } }>
+				<div style={ { marginBottom: 16, maxWidth: '300px' } }>
 					<PlanStorageBar
 						siteSlug={ primarySite.slug }
 						sitePlanSlug={ PLAN_PREMIUM }
