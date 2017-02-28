@@ -58,19 +58,21 @@ const StatsInsights = ( props ) => {
 					<div className="stats__module-list">
 						<div className="stats__module-column">
 							<LatestPostSummary />
-							<AllTime />
-							<Comments
-								path={ 'comments' }
-								followList={ followList }
-							/>
+							<MostPopular />
+							{ tagsList }
 						</div>
 						<div className="stats__module-column">
 							<Reach />
 							<Followers
 								path={ 'followers' }
 								followList={ followList } />
-							<MostPopular />
-							{ tagsList }
+						</div>
+						<div className="stats__module-column">
+							<AllTime />
+							<Comments
+								path={ 'comments' }
+								followList={ followList }
+							/>
 							<StatsModule
 								path="publicize"
 								moduleStrings={ moduleStrings.publicize }
