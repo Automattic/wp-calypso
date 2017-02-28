@@ -10,6 +10,7 @@ import EditorDrawer from 'post-editor/editor-drawer';
 import EditorSidebarHeader from './header';
 import SidebarFooter from 'layout/sidebar/footer';
 import EditorActionBar from 'post-editor/editor-action-bar';
+import EditorDeletePost from 'post-editor/editor-delete-post';
 
 export default class EditorSidebar extends Component {
 	static propTypes = {
@@ -44,7 +45,12 @@ export default class EditorSidebar extends Component {
 					isNew={ isNew }
 					type={ type }
 				/>
-				<SidebarFooter />
+				<SidebarFooter>
+					<EditorDeletePost
+						post={ post }
+						onTrashingPost={ onTrashingPost }
+					/>
+				</SidebarFooter>
 			</div>
 		);
 	}

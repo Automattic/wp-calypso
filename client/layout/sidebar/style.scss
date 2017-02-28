@@ -315,6 +315,7 @@ a.sidebar__button {
 }
 
 .sidebar .sidebar__footer {
+	align-items: center;
 	padding: 0;
 	border-top: 1px solid darken( $sidebar-bg-color, 10% );
 	margin: auto 0 0;

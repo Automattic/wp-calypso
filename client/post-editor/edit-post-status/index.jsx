@@ -27,7 +27,6 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import EditorVisibility from 'post-editor/editor-visibility';
 import utils from 'lib/posts/utils';
-import EditorDeletePost from 'post-editor/editor-delete-post';
 
 class EditPostStatus extends Component {
 
@@ -186,10 +185,6 @@ class EditPostStatus extends Component {
 				<Revisions
 					revisions={ this.props.post && this.props.post.revisions }
 					adminUrl={ adminUrl }
-				/>
-				<EditorDeletePost
-					post={ this.props.post }
-					onTrashingPost={ this.props.onTrashingPost }
 				/>
 			</div>
 		);
