@@ -29,7 +29,11 @@ import {
 	isPremiumThemeAvailable,
 	isWpcomTheme
 } from 'state/themes/selectors';
-import { hasJetpackSiteJetpackThemesExtendedFeatures, isJetpackSite } from 'state/sites/selectors';
+import {
+	hasJetpackSiteJetpackThemesExtendedFeatures,
+	isJetpackSite,
+	isJetpackSiteMultiSite
+} from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { canCurrentUser } from 'state/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
@@ -62,6 +66,7 @@ const activate = {
 	extendedLabel: i18n.translate( 'Activate this design' ),
 	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
 	action: activateAction,
+	hideForSite: ( state, siteId ) => ( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ),
 	hideForTheme: ( state, theme, siteId ) => (
 		isThemeActive( state, theme.id, siteId ) ||
 		( isThemePremium( state, theme.id ) && ! isPremiumThemeAvailable( state, theme.id, siteId ) ) ||
@@ -95,7 +100,10 @@ const tryandcustomize = {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview'
 	} ),
 	action: tryAndCustomizeAction,
-	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ),
+	hideForSite: ( state, siteId ) => (
+		! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
+		( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) )
+	),
 	hideForTheme: ( state, theme, siteId ) => (
 		isThemeActive( state, theme.id, siteId ) ||
 		( isJetpackSite( state, siteId ) && isThemePremium( state, theme.id ) ) ||
