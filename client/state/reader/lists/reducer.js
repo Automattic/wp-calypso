@@ -83,7 +83,7 @@ export function items( state = {}, action ) {
 export function subscribedLists( state = [], action ) {
 	switch ( action.type ) {
 		case READER_LISTS_RECEIVE:
-			return union( state, map( action.lists, 'ID' ) );
+			return map( action.lists, 'ID' );
 		case READER_LISTS_UNFOLLOW_SUCCESS:
 			// Remove the unfollowed list ID from subscribedLists
 			return filter( state, ( listId ) => {
