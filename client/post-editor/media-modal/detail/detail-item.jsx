@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import { noop } from 'lodash';
+import { includes, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 import Gridicon from 'gridicons';
@@ -94,8 +94,14 @@ class EditorMediaModalDetailItem extends Component {
 
 		const mimePrefix = MediaUtils.getMimePrefix( item );
 
-		if ( 'image' !== mimePrefix ) {
+		if ( ! includes( [ 'image', 'video' ], mimePrefix ) ) {
 			return null;
+		}
+
+		let editText = translate( 'Edit Image' );
+
+		if ( 'video' === mimePrefix ) {
+			editText = translate( 'Edit Thumbnail' );
 		}
 
 		return (
@@ -104,7 +110,7 @@ class EditorMediaModalDetailItem extends Component {
 				onClick={ onEdit }
 				disabled={ isItemBeingUploaded( item ) }
 			>
-				<Gridicon icon="pencil" size={ 36 } /> { translate( 'Edit Image' ) }
+				<Gridicon icon="pencil" size={ 36 } /> { editText }
 			</Button>
 		);
 	}
