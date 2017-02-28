@@ -17,7 +17,7 @@ import SearchInput from 'components/search';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
 import { recordTrackForPost, recordAction } from 'reader/stats';
-import SuggestionProvider from './suggestion-provider';
+import { getSuggestions } from './suggestions';
 import Suggestion from './suggestion';
 import ReaderPostCard from 'blocks/reader-post-card';
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
@@ -186,8 +186,9 @@ class SearchStream extends Component {
 	}
 
 	render() {
-		const { store, query, suggestions } = this.props;
+		const { store, query } = this.props;
 		const emptyContent = <EmptyContent query={ query } />;
+		const suggestions = getSuggestions();
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -234,4 +235,4 @@ class SearchStream extends Component {
 	}
 }
 
-export default SuggestionProvider( localize( SearchStream ) );
+export default localize( SearchStream );

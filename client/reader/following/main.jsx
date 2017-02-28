@@ -14,7 +14,7 @@ import CompactCard from 'components/card/compact';
 import SearchInput from 'components/search';
 import { recordTrack } from 'reader/stats';
 import Suggestion from 'reader/search-stream/suggestion';
-import SuggestionProvider from 'reader/search-stream/suggestion-provider';
+import { getSuggestions } from 'reader/search-stream/suggestions';
 
 function handleSearch( query ) {
 	recordTrack( 'calypso_reader_search_from_following', {
@@ -27,7 +27,8 @@ function handleSearch( query ) {
 }
 
 const FollowingStream = ( props ) => {
-	const suggestionList = props.suggestions && initial( flatMap( props.suggestions, query =>
+	const suggestions = getSuggestions();
+	const suggestionList = suggestions && initial( flatMap( suggestions, query =>
 		[ <Suggestion suggestion={ query } source="following" />, ', ' ] ) );
 
 	return (
@@ -50,4 +51,4 @@ const FollowingStream = ( props ) => {
 	);
 };
 
-export default SuggestionProvider( localize( FollowingStream ) );
+export default localize( FollowingStream );
