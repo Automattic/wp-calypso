@@ -6,11 +6,13 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
+import { cartItems } from 'lib/cart-values';
+import { tlds } from 'lib/domains/constants';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import Card from 'components/card';
 // TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
-import DomainImage from 'signup/steps/design-type-with-store/domain-image';
+import BlogImage from 'signup/steps/design-type-with-store/blog-image';
 import PageImage from 'signup/steps/design-type-with-store/page-image';
 
 export default class SiteOrDomain extends Component {
@@ -19,12 +21,12 @@ export default class SiteOrDomain extends Component {
 			{
 				type: 'page',
 				label: 'Start a new site',
-				image: <PageImage />
+				image: <BlogImage />
 			},
 			{
 				type: 'domain',
 				label: 'Just buy a domain',
-				image: <DomainImage />
+				image: <PageImage />
 			},
 		];
 	}
@@ -47,9 +49,22 @@ export default class SiteOrDomain extends Component {
 	handleClickChoice( event, designType ) {
 		event.preventDefault();
 
-		const { stepName, goToStep, goToNextStep } = this.props;
+		const {
+			stepName,
+			goToStep,
+			goToNextStep,
+			queryObject,
+		} = this.props;
 
-		SignupActions.submitSignupStep( { stepName }, [], { designType } );
+		let domainItem;
+
+		if ( queryObject && queryObject.new ) {
+			const [ domain, ...tld ] = queryObject.new.split( '.' );
+
+			domainItem = cartItems.domainRegistration( { productSlug: tlds[ tld.join( '.' ) ], domain } );
+		}
+
+		SignupActions.submitSignupStep( { stepName }, [], { designType, domainItem } );
 
 		if ( designType === 'domain' ) {
 			// we can skip the next two steps in the `domain-first` flow if the
