@@ -49,14 +49,14 @@ export function items( state = {}, action ) {
 		case READER_LIST_UPDATE_SUCCESS:
 			return Object.assign( {}, state, keyBy( [ action.data.list ], 'ID' ) );
 		case READER_LIST_UPDATE_TITLE:
-			let listForTitleChange = Object.assign( {}, state[ action.listId ] );
+			const listForTitleChange = Object.assign( {}, state[ action.listId ] );
 			if ( ! listForTitleChange ) {
 				return state;
 			}
 			listForTitleChange.title = action.title;
 			return Object.assign( {}, state, keyBy( [ listForTitleChange ], 'ID' ) );
 		case READER_LIST_UPDATE_DESCRIPTION:
-			let listForDescriptionChange = Object.assign( {}, state[ action.listId ] );
+			const listForDescriptionChange = Object.assign( {}, state[ action.listId ] );
 			if ( ! listForDescriptionChange ) {
 				return state;
 			}

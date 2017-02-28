@@ -153,7 +153,7 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( [
-				{ owner: 'lister', slug: 'banana'}
+				{ owner: 'lister', slug: 'banana' }
 			] );
 		} );
 
@@ -181,7 +181,7 @@ describe( 'reducer', () => {
 			} );
 
 			expect( initialState ).to.eql( [
-				{ owner: 'lister', slug: 'banana'}
+				{ owner: 'lister', slug: 'banana' }
 			] );
 
 			const state = missingLists( initialState, {
@@ -206,7 +206,7 @@ describe( 'reducer', () => {
 			} );
 
 			expect( initialState ).to.eql( [
-				{ owner: 'lister', slug: 'banana'}
+				{ owner: 'lister', slug: 'banana' }
 			] );
 
 			const state = missingLists( initialState, {
