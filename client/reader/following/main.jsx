@@ -13,7 +13,6 @@ import Stream from 'reader/stream';
 import CompactCard from 'components/card/compact';
 import SearchInput from 'components/search';
 import { recordTrack } from 'reader/stats';
-import { abtest } from 'lib/abtest';
 import i18nUtils from 'lib/i18n-utils';
 import { suggestions } from 'reader/search-stream/suggestions';
 import Suggestion from 'reader/search-stream/suggestion';
@@ -28,8 +27,6 @@ function handleSearch( query ) {
 	}
 }
 
-const shouldShowSearchOnFollowing = abtest( 'readerSearchOnFollowing' ) === 'show';
-
 const FollowingStream = ( props ) => {
 	const lang = i18nUtils.getLocaleSlug();
 
@@ -41,24 +38,20 @@ const FollowingStream = ( props ) => {
 	}
 	return (
 		<Stream { ...props }>
-			{ shouldShowSearchOnFollowing &&
-				<CompactCard className="following__search">
-					<SearchInput
-						onSearch={ handleSearch }
-						autoFocus={ false }
-						delaySearch={ true }
-						delayTimeout={ 500 }
-						placeholder={ props.translate( 'Search billions of WordPress.com posts…' ) } />
-				</CompactCard>
-			}
-			{ suggestionList && shouldShowSearchOnFollowing &&
+			<CompactCard className="following__search">
+				<SearchInput
+					onSearch={ handleSearch }
+					autoFocus={ false }
+					delaySearch={ true }
+					delayTimeout={ 500 }
+					placeholder={ props.translate( 'Search billions of WordPress.com posts…' ) } />
+			</CompactCard>
+			{ suggestionList &&
 				<p className="search-stream__blank-suggestions">
 					{ props.translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: suggestionList } } ) }
 				</p>
 			}
-			{ shouldShowSearchOnFollowing &&
-				<hr className="search-stream__fixed-area-separator" />
-			}
+			<hr className="search-stream__fixed-area-separator" />
 		</Stream>
 	);
 };
