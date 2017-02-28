@@ -42,13 +42,15 @@
 }
 
 .media-library__header .button.media-library__upload-button {
+	margin-right: 0;
 	@include breakpoint( "<660px" ) {
-		margin-right: 0;
 		border-top-right-radius: 0;
 		border-bottom-right-radius: 0;
 	}
 }
-
+.media-library__header .button.media-library__upload-more {
+	margin-left: 0;
+}
 .media-library__heading {
 	@include heading;
 	display: inline-block;

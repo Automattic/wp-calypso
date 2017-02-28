@@ -79,14 +79,15 @@ export default React.createClass( {
 					site={ site }
 					filter={ filter }
 					onAddMedia={ onAddMedia }
-					className="button">
-					<Button compact>{ this.translate( 'Add New', { context: 'Media upload' } ) }</Button>
+					className="button is-compact">
+					<Gridicon icon="add-image" />
+					<span>{ this.translate( 'Add New', { context: 'Media upload' } ) }</span>
 				</UploadButton>
 				<Button
 					compact
 					ref={ this.setMoreOptionsContext }
 					onClick={ this.toggleMoreOptions.bind( this, ! this.state.isMoreOptionsVisible ) }
-					className="button">
+					className="button media-library__upload-more">
 					<span className="screen-reader-text">
 						{ this.translate( 'More Options' ) }
 					</span>

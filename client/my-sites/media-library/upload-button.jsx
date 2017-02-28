@@ -14,6 +14,7 @@ import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import uniq from 'lodash/uniq';
 import { VideoPressFileTypes } from 'lib/media/constants';
+import Button from 'components/button';
 
 module.exports = React.createClass( {
 	displayName: 'MediaLibraryUploadButton',
@@ -63,15 +64,17 @@ module.exports = React.createClass( {
 		var classes = classNames( 'media-library__upload-button', this.props.className );
 
 		return (
-			<form ref="form" className={ classes }>
-				<div>{ this.props.children }</div>
-				<input
-					type="file"
-					accept={ this.getInputAccept() }
-					multiple
-					onChange={ this.uploadFiles }
-					className="media-library__upload-button-input" />
-			</form>
+			<Button icon className={ classes }>
+				<form ref="form">
+					{ this.props.children }
+					<input
+						type="file"
+						accept={ this.getInputAccept() }
+						multiple
+						onChange={ this.uploadFiles }
+						className="media-library__upload-button-input" />
+				</form>
+			</Button>
 		);
 	}
 } );
