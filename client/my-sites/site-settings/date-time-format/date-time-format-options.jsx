@@ -17,6 +17,7 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SectionHeader from 'components/section-header';
+import DateFormatOption from './date-format-option';
 import StartOfWeekOption from './start-of-week-option';
 import { phpToMomentDatetimeFormat } from 'lib/formatting';
 import { getNow } from './utils';
@@ -87,68 +88,6 @@ export class DateTimeFormatOptions extends Component {
 	setCustomDateFormat = this.setCustomFormat( 'date' );
 
 	setCustomTimeFormat = this.setCustomFormat( 'time' );
-
-	dateFormatOption() {
-		const {
-			fields: {
-				date_format: dateFormat,
-				timezone_string: timezoneString,
-			},
-			isRequestingSettings,
-			translate,
-		} = this.props;
-		const { customDateFormat: isCustomFormat } = this.state;
-
-		const now = getNow( timezoneString );
-
-		return (
-			<FormFieldset>
-				<FormLabel>
-					{ translate( 'Date Format' ) }
-				</FormLabel>
-				{ defaultDateFormats.map( ( format, index ) =>
-					<FormLabel key={ index }>
-						<FormRadio
-							checked={ ! isCustomFormat && format === dateFormat }
-							disabled={ isRequestingSettings }
-							name="date_format"
-							onChange={ this.setDateFormat }
-							value={ format }
-						/>
-						<span>{ now.format( phpToMomentDatetimeFormat( format ) ) }</span>
-					</FormLabel>
-				) }
-				<FormLabel className="date-time-format__custom-field">
-					<FormRadio
-						checked={ isCustomFormat }
-						disabled={ isRequestingSettings }
-						name="date_format"
-						onChange={ this.setCustomDateFormat }
-						value={ dateFormat }
-					/>
-					<span>
-						{ translate( 'Custom', { comment: 'Custom date/time format field' } ) }
-						<FormInput
-							disabled={ isRequestingSettings }
-							name="date_format_custom"
-							onChange={ this.setCustomDateFormat }
-							type="text"
-							value={ dateFormat || '' }
-						/>
-						<FormSettingExplanation>
-							{ isCustomFormat && dateFormat
-								? translate( 'Preview: %s', {
-									args: now.format( phpToMomentDatetimeFormat( dateFormat ) ),
-									comment: 'Date/time format preview',
-								} )
-								: ''
-							}
-						</FormSettingExplanation>
-					</span>
-				</FormLabel>
-			</FormFieldset>
-		);
-	}
 
 	timeFormatOption() {
 		const {
@@ -223,13 +162,21 @@ export class DateTimeFormatOptions extends Component {
 
 	render() {
 		const {
-			fields: { start_of_week: startOfWeek },
+			fields: {
+				date_format: dateFormat,
+				start_of_week: startOfWeek,
+				timezone_string: timezoneString,
+			},
 			handleSelect,
 			handleSubmitForm,
 			isRequestingSettings,
 			isSavingSettings,
 			translate,
 		} = this.props;
+
+		const { customDateFormat } = this.state;
+
+		const now = getNow( timezoneString );
 
 		return (
 			<div>
@@ -248,7 +195,14 @@ export class DateTimeFormatOptions extends Component {
 				</SectionHeader>
 				<Card>
 					<form>
-						{ this.dateFormatOption() }
+						<DateFormatOption
+							dateFormat={ dateFormat }
+							isCustomFormat={ customDateFormat }
+							isRequestingSettings={ isRequestingSettings }
+							now={ now }
+							setDateFormat={ this.setDateFormat }
+							setCustomDateFormat={ this.setCustomDateFormat }
+						/>
 						{ this.timeFormatOption() }
 						<StartOfWeekOption
 							isRequestingSettings={ isRequestingSettings }
