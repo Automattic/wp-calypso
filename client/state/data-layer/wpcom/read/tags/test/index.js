@@ -3,7 +3,6 @@
 */
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { map } from 'lodash';
 
 /**
 * Internal dependencies
@@ -16,6 +15,7 @@ import {
 	requestTags,
 	receiveTagsSuccess,
 	receiveTagsError,
+	fromApi,
 } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
@@ -38,6 +38,27 @@ const successfulFollowedTagsResponse = {
 	]
 };
 
+const normalizedFollowedTagsResponse = {
+	tags: [
+		{
+			ID: '307',
+			slug: 'chickens',
+			title: 'Chickens',
+			display_name: 'chickens',
+			URL: '/tag/chickens',
+			is_following: true,
+		},
+		{
+			ID: '148',
+			slug: 'design',
+			title: 'Design',
+			display_name: 'design',
+			URL: '/tag/design',
+			is_following: true,
+		},
+	]
+};
+
 const successfulSingleTagResponse = {
 	tag: {
 		ID: '307',
@@ -47,6 +68,17 @@ const successfulSingleTagResponse = {
 		URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/chickens/posts'
 	},
 };
+
+const normalizedSuccessfulSingleTagResponse = {
+	tags: [ {
+		ID: '307',
+		slug: 'chickens',
+		title: 'Chickens',
+		display_name: 'chickens',
+		URL: '/tag/chickens'
+	} ]
+};
+
 const slug = 'chickens';
 
 describe( 'wpcom-api', () => {
@@ -108,7 +140,7 @@ describe( 'wpcom-api', () => {
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith(
 					receiveTagsAction( {
-						payload: { tags: [ successfulSingleTagResponse.tag ] },
+						payload: fromApi( successfulSingleTagResponse ),
 						error: false
 					} )
 				);
@@ -124,12 +156,7 @@ describe( 'wpcom-api', () => {
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith(
 					receiveTagsAction( {
-						payload: {
-							tags: map(
-								successfulFollowedTagsResponse.tags,
-								tag => ( { ...tag, is_following: true } )
-							),
-						},
+						payload: fromApi( successfulFollowedTagsResponse ),
 						error: false,
 					} )
 				);
@@ -149,6 +176,18 @@ describe( 'wpcom-api', () => {
 				expect( dispatch ).to.have.been.calledWith(
 					receiveTagsAction( { payload: error, error: true } )
 				);
+			} );
+		} );
+
+		describe( '#fromApi', () => {
+			it( 'should properly normalize response from following tags', () => {
+				const transformedResponse = fromApi( successfulFollowedTagsResponse );
+				expect( transformedResponse ).to.eql( normalizedFollowedTagsResponse );
+			} );
+
+			it( 'should properly normalize a single tag', () => {
+				const transformedResponse = fromApi( successfulSingleTagResponse );
+				expect( transformedResponse ).to.eql( normalizedSuccessfulSingleTagResponse );
 			} );
 		} );
 	} );

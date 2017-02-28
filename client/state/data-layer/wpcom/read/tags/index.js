@@ -15,6 +15,7 @@ import {
 
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { decodeEntities } from 'lib/formatting';
 
 export function requestTags( store, action, next ) {
 	const path = action.payload && action.payload.slug
@@ -35,10 +36,12 @@ export function requestTags( store, action, next ) {
 /**
  * Normalize response from the api so whether we get back a single tag or a list of tags
  * we always pass forward a list
+ * Also transform the api response to be something more calypso-friendly
+ *
  * @param  {Tag|Tags} apiResponse api response from the tags endpoint
  * @return {Tags}             An object containing list of tags
  */
-function fromApi( apiResponse ) {
+export function fromApi( apiResponse ) {
 	let tags;
 	if ( apiResponse.tag )	 {
 		tags = [ apiResponse.tag ];
@@ -50,6 +53,13 @@ function fromApi( apiResponse ) {
 		}
 		tags = [];
 	}
+
+	tags = map( tags, tag => ( {
+		...tag,
+		URL: `/tag/${ tag.slug }`,
+		title: decodeEntities( tag.title ),
+		slug: tag.slug.toLowerCase(),
+	} ) );
 
 	return { tags };
 }

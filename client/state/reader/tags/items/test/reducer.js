@@ -32,7 +32,7 @@ describe( 'reducer', () => {
 	describe( '#items()', () => {
 		it( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
-			expect( state ).to.eql( [] );
+			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should add single tag in the payload to state', () => {
@@ -43,7 +43,7 @@ describe( 'reducer', () => {
 			};
 
 			const state = items( prevState, action );
-			expect( state ).to.eql( keyById( [ TAG1 ] ) );
+			expect( state ).to.eql( { [ TAG1.ID ]: TAG1 } );
 		} );
 
 		it( 'should add multiple tags in the payload to state', () => {

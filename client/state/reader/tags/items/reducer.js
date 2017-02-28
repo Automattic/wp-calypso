@@ -9,9 +9,9 @@ import { keyBy } from 'lodash';
 import { READER_TAGS_RECEIVE, } from 'state/action-types';
 import { createReducer, } from 'state/utils';
 
-export const items = createReducer( [], {
+export const items = createReducer( {}, {
 	[ READER_TAGS_RECEIVE ]: ( state, action ) => {
-		const tags = action.payload;
+		const tags = action.payload.tags;
 		return { ...state, ...keyBy( tags, 'ID' ) };
 	}
 } );

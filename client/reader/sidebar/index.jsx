@@ -14,7 +14,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal Dependencies
  */
-import ReaderListsSubscriptionsStore from 'lib/reader-lists/subscriptions';
 import ReaderListsStore from 'lib/reader-lists/lists';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
@@ -28,8 +27,7 @@ import ReaderSidebarTeams from './reader-sidebar-teams';
 import ReaderSidebarHelper from './helper';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
 import { getSubscribedLists } from 'state/reader/lists/selectors';
-import { getReaderTeams } from 'state/selectors';
-import { getReaderFollowedTags } from 'state/selectors';
+import { getReaderTeams, getReaderFollowedTags } from 'state/selectors';
 import QueryReaderLists from 'components/data/query-reader-lists';
 import QueryReaderTeams from 'components/data/query-reader-teams';
 import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
@@ -48,19 +46,13 @@ export const ReaderSidebar = React.createClass( {
 		observe( 'userSettings' ),
 	],
 
-	componentDidMount() {
-		ReaderListsStore.on( 'change', this.updateState );
-		ReaderListsSubscriptionsStore.on( 'change', this.updateState );
-		ReaderListsSubscriptionsStore.on( 'create', this.highlightNewList );
-
-		// If we're browsing a tag or list, open the sidebar menu
-		this.openExpandableMenuForCurrentTagOrList();
+	getInitialState() {
+		return {};
 	},
 
-	componentWillUnmount() {
-		ReaderListsStore.off( 'change', this.updateState );
-		ReaderListsSubscriptionsStore.off( 'change', this.updateState );
-		ReaderListsSubscriptionsStore.off( 'create', this.highlightNewList );
+	componentDidMount() {
+		// If we're browsing a tag or list, open the sidebar menu
+		this.openExpandableMenuForCurrentTagOrList();
 	},
 
 	handleClick( event ) {

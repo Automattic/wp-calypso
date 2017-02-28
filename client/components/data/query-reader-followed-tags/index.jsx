@@ -19,7 +19,7 @@ class QueryReaderFollowedTags extends Component {
 	};
 
 	componentDidMount() {
-		this.props.requestTagImages();
+		this.props.requestFollowedTags();
 	}
 
 	render() {
@@ -29,5 +29,5 @@ class QueryReaderFollowedTags extends Component {
 
 export default connect(
 	null,
-	{ requestTags },
+	{ requestFollowedTags: requestTags },
 )( QueryReaderFollowedTags );
