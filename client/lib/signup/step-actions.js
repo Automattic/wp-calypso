@@ -11,14 +11,11 @@ import { startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
 import wpcom from 'lib/wp' ;
 const sites = require( 'lib/sites-list' )();
 const user = require( 'lib/user' )();
 import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
-import { startFreeTrial } from 'lib/upgrades/actions';
-import { PLAN_PREMIUM } from 'lib/plans/constants';
 import analytics from 'lib/analytics';
 
 import {
@@ -114,25 +111,6 @@ function createSiteWithCart( callback, dependencies, {
 			fetchSitesAndUser( siteSlug, addToCartAndProceed );
 		} else {
 			addToCartAndProceed();
-		}
-	} );
-}
-
-/**
- * Adds a Premium with free trial to the shopping cart.
- *
- * @param {function} callback - function to execute when action completes
- * @param {object} dependencies - data provided to the current step
- * @param {object} data - additional data provided by the current step
- */
-function startFreePremiumTrial( callback, dependencies, data ) {
-	const { siteId } = dependencies;
-
-	startFreeTrial( siteId, cartItems.planItem( PLAN_PREMIUM ), ( error ) => {
-		if ( error ) {
-			callback( error, dependencies );
-		} else {
-			callback( error, dependencies, data );
 		}
 	} );
 }
@@ -242,16 +220,6 @@ module.exports = {
 	createCart,
 
 	createSiteWithCart,
-
-	createSiteWithCartAndStartFreeTrial( callback, dependencies, data ) {
-		createSiteWithCart( ( error, providedDependencies ) => {
-			if ( error ) {
-				callback( error, providedDependencies );
-			} else {
-				startFreePremiumTrial( callback, providedDependencies, data );
-			}
-		}, dependencies, data );
-	},
 
 	addPlanToCart( callback, { siteId }, { cartItem, privacyItem } ) {
 		if ( isEmpty( cartItem ) ) {
