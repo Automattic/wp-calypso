@@ -143,18 +143,35 @@ class StatsSite extends Component {
 								statType="statsTopPosts"
 								showSummaryLink />
 							<StatsModule
-								path="referrers"
-								moduleStrings={ moduleStrings.referrers }
+								path="searchterms"
+								moduleStrings={ moduleStrings.search }
 								period={ this.props.period }
 								query={ query }
-								statType="statsReferrers"
+								statType="statsSearchTerms"
 								showSummaryLink />
+							{ videoList }
+						</div>
+						<div className="stats__module-column">
+							<Countries
+								path="countries"
+								period={ this.props.period }
+								query={ query }
+								summary={ false } />
 							<StatsModule
 								path="clicks"
 								moduleStrings={ moduleStrings.clicks }
 								period={ this.props.period }
 								query={ query }
 								statType="statsClicks"
+								showSummaryLink />
+						</div>
+						<div className="stats__module-column">
+							<StatsModule
+								path="referrers"
+								moduleStrings={ moduleStrings.referrers }
+								period={ this.props.period }
+								query={ query }
+								statType="statsReferrers"
 								showSummaryLink />
 							<StatsModule
 								path="authors"
@@ -164,21 +181,6 @@ class StatsSite extends Component {
 								statType="statsTopAuthors"
 								className="stats__author-views"
 								showSummaryLink />
-						</div>
-						<div className="stats__module-column">
-							<Countries
-								path="countries"
-								period={ this.props.period }
-								query={ query }
-								summary={ false } />
-							<StatsModule
-								path="searchterms"
-								moduleStrings={ moduleStrings.search }
-								period={ this.props.period }
-								query={ query }
-								statType="statsSearchTerms"
-								showSummaryLink />
-							{ videoList }
 							{ podcastList }
 						</div>
 					</div>
