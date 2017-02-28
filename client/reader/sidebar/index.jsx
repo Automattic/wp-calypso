@@ -32,6 +32,7 @@ import { getReaderTeams } from 'state/selectors';
 import { getReaderFollowedTags } from 'state/selectors';
 import QueryReaderLists from 'components/data/query-reader-lists';
 import QueryReaderTeams from 'components/data/query-reader-teams';
+import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
 import observe from 'lib/mixins/data-observe';
 import config from 'config';
 import userSettings from 'lib/user-settings';
@@ -162,6 +163,7 @@ export const ReaderSidebar = React.createClass( {
 
 				<QueryReaderLists />
 				<QueryReaderTeams />
+				<QueryReaderFollowedTags />
 				{ this.props.subscribedLists && this.props.subscribedLists.length
 				? <ReaderSidebarLists
 						lists={ this.props.subscribedLists }
@@ -174,7 +176,7 @@ export const ReaderSidebar = React.createClass( {
 				: null
 				}
 				<ReaderSidebarTags
-					tags={ this.state.tags }
+					tags={ this.props.followedTags }
 					path={ this.props.path }
 					isOpen={ this.props.isTagsOpen }
 					onClick={ this.props.toggleTagsVisibility }
