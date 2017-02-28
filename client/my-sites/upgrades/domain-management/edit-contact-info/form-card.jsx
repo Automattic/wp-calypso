@@ -133,7 +133,7 @@ class EditContactInfoFormCard extends React.Component {
 	}
 
 	hasEmailChanged() {
-		return this.props.contactInformation.email === formState.getFieldValue( this.state.form, 'email' );
+		return this.props.contactInformation.email !== formState.getFieldValue( this.state.form, 'email' );
 	}
 
 	handleFormControllerError = ( error ) => {
