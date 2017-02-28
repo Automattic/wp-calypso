@@ -11,14 +11,11 @@ import { startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
 import wpcom from 'lib/wp' ;
 const sites = require( 'lib/sites-list' )();
 const user = require( 'lib/user' )();
 import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
-import { startFreeTrial } from 'lib/upgrades/actions';
-import { PLAN_PREMIUM } from 'lib/plans/constants';
 import analytics from 'lib/analytics';
 
 import {
@@ -28,7 +25,7 @@ import {
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 
-function createCart( callback, dependencies, data ) {
+function createCart( callback, dependencies, data, reduxStore ) {
 	const { designType } = dependencies;
 	const { domainItem, themeItem } = data;
 
@@ -43,7 +40,7 @@ function createCart( callback, dependencies, data ) {
 
 		SignupCart.addToCart( cartKey, [ domainItem ], error => callback( error, providedDependencies ) );
 	} else {
-		createSiteWithCart( callback, dependencies, data );
+		createSiteWithCart( callback, dependencies, data, reduxStore );
 	}
 }
 
@@ -55,9 +52,9 @@ function createSiteWithCart( callback, dependencies, {
 	siteUrl,
 	themeSlugWithRepo,
 	themeItem
-} ) {
-	const siteTitle = getSiteTitle( this._reduxStore.getState() ).trim();
-	const surveyVertical = getSurveyVertical( this._reduxStore.getState() ).trim();
+}, reduxStore ) {
+	const siteTitle = getSiteTitle( reduxStore.getState() ).trim();
+	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 
 	wpcom.undocumented().sitesNew( {
 		blog_name: siteUrl,
@@ -109,30 +106,11 @@ function createSiteWithCart( callback, dependencies, {
 		if ( ! user.get() && isFreeThemePreselected ) {
 			setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
 		} else if ( user.get() && isFreeThemePreselected ) {
-			fetchSitesAndUser( siteSlug, setThemeOnSite.bind( this, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ) );
+			fetchSitesAndUser( siteSlug, setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ) );
 		} else if ( user.get() ) {
 			fetchSitesAndUser( siteSlug, addToCartAndProceed );
 		} else {
 			addToCartAndProceed();
-		}
-	} );
-}
-
-/**
- * Adds a Premium with free trial to the shopping cart.
- *
- * @param {function} callback - function to execute when action completes
- * @param {object} dependencies - data provided to the current step
- * @param {object} data - additional data provided by the current step
- */
-function startFreePremiumTrial( callback, dependencies, data ) {
-	const { siteId } = dependencies;
-
-	startFreeTrial( siteId, cartItems.planItem( PLAN_PREMIUM ), ( error ) => {
-		if ( error ) {
-			callback( error, dependencies );
-		} else {
-			callback( error, dependencies, data );
 		}
 	} );
 }
@@ -243,16 +221,6 @@ module.exports = {
 
 	createSiteWithCart,
 
-	createSiteWithCartAndStartFreeTrial( callback, dependencies, data ) {
-		createSiteWithCart( ( error, providedDependencies ) => {
-			if ( error ) {
-				callback( error, providedDependencies );
-			} else {
-				startFreePremiumTrial( callback, providedDependencies, data );
-			}
-		}, dependencies, data );
-	},
-
 	addPlanToCart( callback, { siteId }, { cartItem, privacyItem } ) {
 		if ( isEmpty( cartItem ) ) {
 			// the user selected the free plan
@@ -266,9 +234,9 @@ module.exports = {
 		SignupCart.addToCart( siteId, newCartItems, callback );
 	},
 
-	createAccount( callback, dependencies, { userData, flowName, queryArgs } ) {
-		const surveyVertical = getSurveyVertical( this._reduxStore.getState() ).trim();
-		const surveySiteType = getSurveySiteType( this._reduxStore.getState() ).trim();
+	createAccount( callback, dependencies, { userData, flowName, queryArgs }, reduxStore ) {
+		const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
+		const surveySiteType = getSurveySiteType( reduxStore.getState() ).trim();
 
 		wpcom.undocumented().usersNew( assign(
 			{}, userData, {
