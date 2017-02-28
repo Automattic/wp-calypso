@@ -179,7 +179,7 @@ const MediaModalSecondaryActions = React.createClass( {
 
 	render() {
 		return (
-			<div className="">
+			<div>
 				{ this.renderMobileButtons() }
 				{ this.renderDesktopButtons() }
 				{ this.props.renderStorage && this.renderPlanStorage() }
