@@ -13,6 +13,9 @@
 
 .dialog__content .media-library__header.card {
 	box-shadow: none;
+	.media-library__scale-range.range {
+		top: 4px;
+	}
 }
 
 .media-library__header .is-desktop {
