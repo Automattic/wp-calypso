@@ -60,6 +60,7 @@ export const PostEditor = React.createClass( {
 		siteId: React.PropTypes.number,
 		preferences: React.PropTypes.object,
 		setEditorModePreference: React.PropTypes.func,
+		setEditorSidebar: React.PropTypes.func,
 		setLayoutFocus: React.PropTypes.func.isRequired,
 		editorModePreference: React.PropTypes.string,
 		sites: React.PropTypes.object,
@@ -112,7 +113,9 @@ export const PostEditor = React.createClass( {
 		this.debouncedAutosave = debounce( this.throttledAutosave, 3000 );
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
-		this.props.setLayoutFocus( 'sidebar' );
+		if ( this.props.editorSidebarPreference === 'open' ) {
+			this.props.setLayoutFocus( 'sidebar' );
+		}
 
 		this.setState( {
 			isEditorInitialized: false
@@ -172,8 +175,10 @@ export const PostEditor = React.createClass( {
 	toggleSidebar: function() {
 		this.hideDrafts();
 		if ( this.props.layoutFocus === 'sidebar' ) {
+			this.props.setEditorSidebar( 'closed' );
 			this.props.setLayoutFocus( 'content' );
 		} else {
+			this.props.setEditorSidebar( 'open' );
 			this.props.setLayoutFocus( 'sidebar' );
 		}
 	},
@@ -807,6 +812,7 @@ export default connect(
 			postId,
 			showDrafts: isEditorDraftsVisible( state ),
 			editorModePreference: getPreference( state, 'editor-mode' ),
+			editorSidebarPreference: getPreference( state, 'editor-sidebar' ),
 			editPath: getEditorPath( state, siteId, postId ),
 			edits: getPostEdits( state, siteId, postId ),
 			dirty: isEditedPostDirty( state, siteId, postId ),
@@ -822,6 +828,7 @@ export default connect(
 			receivePost,
 			savePostSuccess,
 			setEditorModePreference: savePreference.bind( null, 'editor-mode' ),
+			setEditorSidebar: savePreference.bind( null, 'editor-sidebar' ),
 			setLayoutFocus,
 		}, dispatch );
 	},
