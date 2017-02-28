@@ -231,8 +231,7 @@ class EditContactInfoFormCard extends React.Component {
 		const { translate } = this.props,
 			saveButtonLabel = translate( 'Save Contact Info' ),
 			{ OPENHRS, OPENSRS } = registrarNames,
-			canUseDesignatedAgent = includes( [ OPENHRS, OPENSRS ], this.props.selectedDomain.registrar ),
-			requiresConfirmation = this.requiresConfirmation();
+			canUseDesignatedAgent = includes( [ OPENHRS, OPENSRS ], this.props.selectedDomain.registrar );
 
 		return (
 			<Card>
@@ -333,7 +332,7 @@ class EditContactInfoFormCard extends React.Component {
 					<FormFooter>
 						<FormButton
 							disabled={ this.state.formSubmitting }
-							onClick={ requiresConfirmation ? this.showNonDaConfirmationDialog : this.saveContactInfo }>
+							onClick={ this.requiresConfirmation() ? this.showNonDaConfirmationDialog : this.saveContactInfo }>
 							{ saveButtonLabel }
 						</FormButton>
 
