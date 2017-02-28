@@ -81,6 +81,7 @@
 		"plans/personal-plan": true,
 		"post-editor-github-link": false,
 		"post-editor/media-advanced": true,
+		"post-editor/video-editor": false,
 		"press-this": true,
 		"reader": true,
 		"reader/following-intro": true,
