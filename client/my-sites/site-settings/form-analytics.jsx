@@ -22,11 +22,12 @@ import {
 	isJetpackBusiness
 } from 'lib/products-values';
 import { removeNotice, errorNotice } from 'state/notices/actions';
-import { getSiteOption, isJetpackModuleActive, isJetpackMinimumVersion } from 'state/sites/selectors';
+import { getSiteOption, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackModuleActive } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
 import { isEnabled } from 'config';
 import { FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
 const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
 const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness );
@@ -71,6 +72,7 @@ class GoogleAnalyticsForm extends Component {
 			jetpackVersionSupportsModule,
 			showUpgradeNudge,
 			site,
+			siteId,
 			siteIsJetpack,
 			siteSlug,
 			translate,
@@ -82,6 +84,10 @@ class GoogleAnalyticsForm extends Component {
 
 		return (
 			<form id="site-settings" onSubmit={ handleSubmitForm }>
+				{
+					siteIsJetpack &&
+					<QueryJetpackModules siteId={ siteId } />
+				}
 
 				{ showUpgradeNudge &&
 					<UpgradeNudge
@@ -108,7 +114,7 @@ class GoogleAnalyticsForm extends Component {
 					</Notice>
 				}
 
-				{ siteIsJetpack && ! jetpackModuleActive && ! isJetpackUnsupported && ! showUpgradeNudge &&
+				{ siteIsJetpack && jetpackModuleActive === false && ! isJetpackUnsupported && ! showUpgradeNudge &&
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
@@ -209,6 +215,7 @@ const mapStateToProps = ( state ) => {
 
 	return {
 		site,
+		siteId,
 		siteSlug,
 		siteIsJetpack,
 		showUpgradeNudge: ! isGoogleAnalyticsEligible,
