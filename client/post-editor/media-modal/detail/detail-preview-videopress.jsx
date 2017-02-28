@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { noop } from 'lodash';
 import debug from 'debug';
 
 /**
@@ -25,10 +26,12 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		className: PropTypes.string,
 		isPlaying: PropTypes.bool,
 		item: PropTypes.object.isRequired,
+		onPause: PropTypes.func,
 	};
 
 	static defaultProps = {
 		isPlaying: false,
+		onPause: noop,
 	};
 
 	componentDidMount() {
@@ -38,6 +41,12 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	componentWillUnmount() {
 		removeScriptCallback( videoPressUrl, this.onScriptLoaded );
 		this.destroy();
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isPlaying && ! nextProps.isPlaying ) {
+			this.pause();
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -95,6 +104,24 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		while ( this.video.firstChild ) {
 			this.video.removeChild( this.video.firstChild );
 		}
+	}
+
+	pause() {
+		if ( ! this.player || ! this.player.state ) {
+			return;
+		}
+
+		if ( typeof this.player.state.pause === 'function' ) {
+			this.player.state.pause();
+		}
+
+		let currentTime;
+
+		if ( typeof this.player.state.videoAt === 'function' ) {
+			currentTime = this.player.state.videoAt();
+		}
+
+		this.props.onPause( currentTime );
 	}
 
 	render() {
