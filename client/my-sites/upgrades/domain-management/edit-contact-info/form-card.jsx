@@ -194,7 +194,7 @@ class EditContactInfoFormCard extends React.Component {
 				},
 				{
 					action: 'confirm',
-					label: this.props.translate( 'Confirm' ),
+					label: this.props.translate( 'Request Confirmation' ),
 					onClick: this.saveContactInfo,
 					isPrimary: true
 				}
