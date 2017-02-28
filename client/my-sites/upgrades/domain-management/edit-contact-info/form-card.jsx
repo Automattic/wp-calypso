@@ -222,7 +222,7 @@ class EditContactInfoFormCard extends React.Component {
 			<Dialog isVisible={ this.state.showNonDaConfirmationDialog } buttons={ buttons } onClose={ this.handleDialogClose }>
 				<h1>{ translate( 'Confirmation Needed' ) }</h1>
 				<p>{ text }</p>
-				<p>{ currentEmail !== wpcomEmail && this.renderBackupEmail() }</p>
+				{ currentEmail !== wpcomEmail && this.renderBackupEmail() }
 			</Dialog>
 		);
 	}
