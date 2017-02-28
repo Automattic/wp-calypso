@@ -7,8 +7,8 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_TAGS_RECEIVE } from 'state/action-types';
 import { items } from '../reducer';
+import { receiveTags } from '../actions';
 
 const keyById = tags => keyBy( tags, 'ID' );
 
@@ -37,10 +37,7 @@ describe( 'reducer', () => {
 
 		it( 'should add single tag in the payload to state', () => {
 			const prevState = {};
-			const action = {
-				type: READER_TAGS_RECEIVE,
-				payload: [ TAG1 ]
-			};
+			const action = receiveTags( { payload: [ TAG1 ] } );
 
 			const state = items( prevState, action );
 			expect( state ).to.eql( { [ TAG1.ID ]: TAG1 } );
@@ -48,10 +45,7 @@ describe( 'reducer', () => {
 
 		it( 'should add multiple tags in the payload to state', () => {
 			const prevState = {};
-			const action = {
-				type: READER_TAGS_RECEIVE,
-				payload: [ TAG1, TAG2 ]
-			};
+			const action = receiveTags( { payload: [ TAG1, TAG2 ] } );
 
 			const state = items( prevState, action );
 			expect( state ).to.eql( keyById( [ TAG1, TAG2 ] ) );
@@ -59,11 +53,9 @@ describe( 'reducer', () => {
 
 		it( 'should update tags that have changed', () => {
 			const prevState = items( {}, [ TAG1, TAG2 ] );
-
-			const action = {
-				type: READER_TAGS_RECEIVE,
-				payload: [ { ...TAG1, title: 'NotChickens' }, TAG2 ]
-			};
+			const action = receiveTags( {
+				payload: [ { ...TAG1, title: 'NotChickens' }, TAG2 ],
+			} );
 
 			const state = items( prevState, action );
 			expect( state ).to.eql( keyById( [ { ...TAG1, title: 'NotChickens' }, TAG2 ] ) );
