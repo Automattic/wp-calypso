@@ -9,6 +9,7 @@ import { keyBy } from 'lodash';
  */
 import { READER_TAGS_RECEIVE } from 'state/action-types';
 import { items } from '../reducer';
+import { receiveUnfollowTag } from '../actions';
 
 const keyById = tags => keyBy( tags, 'ID' );
 
@@ -58,7 +59,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should update tags that have changed', () => {
-			const prevState = items( {}, [ TAG1, TAG2 ] );
+			const prevState = { [ TAG1.ID ]: TAG1, [ TAG2.ID ]: TAG2 };
 
 			const action = {
 				type: READER_TAGS_RECEIVE,
@@ -67,6 +68,22 @@ describe( 'reducer', () => {
 
 			const state = items( prevState, action );
 			expect( state ).to.eql( keyById( [ { ...TAG1, title: 'NotChickens' }, TAG2 ] ) );
+		} );
+
+		it( 'should remove a tag if request to remove was successful', () => {
+			const prevState = { [ TAG1.ID ]: TAG1, [ TAG2.ID ]: TAG2 };
+			const action = receiveUnfollowTag( { payload: TAG1.ID, error: false } );
+			const state = items( prevState, action );
+
+			expect( state ).to.eql( keyById( [ TAG2 ] ) );
+		} );
+
+		it( 'should not remove a tag if request to remove errored', () => {
+			const prevState = { [ TAG1.ID ]: TAG1, [ TAG2.ID ]: TAG2 };
+			const action = receiveUnfollowTag( { payload: TAG1.ID, error: true } );
+			const state = items( prevState, action );
+
+			expect( state ).to.eql( keyById( [ TAG1, TAG2 ] ) );
 		} );
 	} );
 } );
