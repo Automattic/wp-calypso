@@ -174,12 +174,14 @@ export class EditorMediaModal extends Component {
 		}
 
 		const confirmMessage = this.props.translate(
-			'Are you sure you want to permanently delete this item?',
-			'Are you sure you want to permanently delete these items?',
+			'Are you sure you want to permanently delete this item? It will be ' +
+			'permanently removed from all other locations where it currently appears.',
+			'Are you sure you want to permanently delete these items? They will be ' +
+			'permanently removed from all other locations where they appear.',
 			{ count: selectedCount }
 		);
 
-		accept( confirmMessage, this.confirmDeleteMedia );
+		accept( confirmMessage, this.confirmDeleteMedia, this.props.translate( 'Delete' ) );
 	};
 
 	onAddMedia = () => {
