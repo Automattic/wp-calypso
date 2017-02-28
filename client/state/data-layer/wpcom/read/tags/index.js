@@ -61,7 +61,7 @@ export function fromApi( apiResponse ) {
 		slug: tag.slug.toLowerCase(),
 	} ) );
 
-	return { tags };
+	return tags;
 }
 
 export function receiveTagsSuccess( store, action, next, apiResponse ) {

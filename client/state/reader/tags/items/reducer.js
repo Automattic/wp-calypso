@@ -11,7 +11,7 @@ import { createReducer, } from 'state/utils';
 
 export const items = createReducer( {}, {
 	[ READER_TAGS_RECEIVE ]: ( state, action ) => {
-		const tags = action.payload.tags;
+		const tags = action.payload;
 		return { ...state, ...keyBy( tags, 'ID' ) };
 	}
 } );
