@@ -251,7 +251,25 @@ export class EditorMediaModal extends Component {
 		this.props.setView( ModalViews.DETAIL );
 	};
 
-	handleUpdatePoster = () => this.props.setView( ModalViews.DETAIL );
+	handleUpdatePoster = ( { ID, posterUrl } ) => {
+		const { site } = this.props;
+
+		// Photon does not support URLs with a querystring component.
+		posterUrl = posterUrl && posterUrl.split( '?' )[ 0 ];
+
+		if ( site ) {
+			MediaActions.edit( site.ID, {
+				ID,
+				thumbnails: {
+					fmt_hd: posterUrl,
+					fmt_dvd: posterUrl,
+					fmt_std: posterUrl,
+				}
+			} );
+		}
+
+		this.props.setView( ModalViews.DETAIL );
+	}
 
 	handleCancel = () => {
 		const { mediaLibrarySelectedItems } = this.props;
