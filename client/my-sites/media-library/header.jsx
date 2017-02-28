@@ -13,6 +13,7 @@ import MediaLibraryScale from './scale';
 import UploadButton from './upload-button';
 import MediaLibraryUploadUrl from './upload-url';
 import { userCan } from 'lib/site/utils';
+import MediaModalSecondaryActions from 'post-editor/media-modal/secondary-actions';
 
 export default React.createClass( {
 	displayName: 'MediaLibraryHeader',
@@ -123,6 +124,14 @@ export default React.createClass( {
 			<header className="media-library__header">
 				<h2 className="media-library__heading">{ this.translate( 'Media Library' ) }</h2>
 				{ this.renderUploadButtons() }
+				<MediaModalSecondaryActions
+					selectedItems={ this.props.selectedItems }
+					onViewDetails={ this.props.onViewDetails }
+					onDelete={ this.props.onDeleteItem }
+					renderStorage={ false }
+					site={ this.props.site }
+					view={ 'LIST' }
+				/>
 				<MediaLibraryScale
 					onChange={ this.props.onMediaScaleChange } />
 			</header>
