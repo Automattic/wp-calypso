@@ -16,16 +16,16 @@ import SectionHeader from 'components/section-header';
 const render = ( context ) => {
 	renderWithReduxStore( (
 		<Main className="woocommerce__main">
-			<SectionHeader label="WooCommerce" />
+			<SectionHeader label="WooCommerce Store" />
 			<Card>
-				<p>This is the starting point of something great!</p>
-				<p>This will be the home for your WooCommerce integration with WordPress.com.</p>
+				<p>This is the start of something great!</p>
+				<p>This will be the home for your WooCommerce Store integration with WordPress.com.</p>
 			</Card>
 		</Main>
 	), document.getElementById( 'primary' ), context.store );
 };
 
 export default function() {
-	page( '/woocommerce/:site?', siteSelection, navigation, render );
+	page( '/store/:site?', siteSelection, navigation, render );
 }
 
