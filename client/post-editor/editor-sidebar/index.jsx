@@ -22,10 +22,11 @@ export default class EditorSidebar extends Component {
 		site: PropTypes.object,
 		type: PropTypes.string,
 		toggleSidebar: PropTypes.func,
+		setPostDate: PropTypes.func,
 	}
 
 	render() {
-		const { toggleSidebar, isNew, onTrashingPost, onPublish, post, savedPost, site, type } = this.props;
+		const { toggleSidebar, isNew, onTrashingPost, onPublish, post, savedPost, site, type, setPostDate } = this.props;
 		return (
 			<div className="post-editor__sidebar">
 				<EditorSidebarHeader toggleSidebar={ toggleSidebar } />
@@ -44,6 +45,7 @@ export default class EditorSidebar extends Component {
 					post={ post }
 					isNew={ isNew }
 					type={ type }
+					setPostDate={ setPostDate }
 				/>
 				<SidebarFooter>
 					<EditorDeletePost

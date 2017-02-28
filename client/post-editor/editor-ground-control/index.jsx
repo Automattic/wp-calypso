@@ -16,7 +16,6 @@ const Card = require( 'components/card' ),
 	Site = require( 'blocks/site' ),
 	postUtils = require( 'lib/posts/utils' ),
 	siteUtils = require( 'lib/site/utils' ),
-	postActions = require( 'lib/posts/actions' ),
 	Tooltip = require( 'components/tooltip' ),
 	PostListFetcher = require( 'components/post-list-fetcher' ),
 	stats = require( 'lib/posts/stats' );
@@ -42,6 +41,7 @@ export default React.createClass( {
 		onMoreInfoAboutEmailVerify: React.PropTypes.func,
 		post: React.PropTypes.object,
 		savedPost: React.PropTypes.object,
+		setPostDate: React.PropTypes.func,
 		site: React.PropTypes.object,
 		user: React.PropTypes.object,
 		userUtils: React.PropTypes.object,
@@ -65,7 +65,7 @@ export default React.createClass( {
 			site: {},
 			user: null,
 			userUtils: null,
-			setDate: noop
+			setPostDate: noop
 		};
 	},
 
@@ -124,36 +124,11 @@ export default React.createClass( {
 		}
 	},
 
-	setPostDate: function( date ) {
-		const dateValue = date ? date.format() : null;
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		postActions.edit( { date: dateValue } );
-		this.checkForDateChange( dateValue );
-	},
-
 	setCurrentMonth: function( date ) {
 		this.setState( {
 			firstDayOfTheMonth: this.getFirstDayOfTheMonth( date ),
 			lastDayOfTheMonth: this.getLastDayOfTheMonth( date )
 		} );
-	},
-
-	checkForDateChange( date ) {
-		const { savedPost, warnPublishDateChange } = this.props;
-
-		if ( ! savedPost ) {
-			return;
-		}
-
-		const currentDate = this.moment( date );
-		const ModifiedDate = this.moment( savedPost.date );
-		const diff = !! currentDate.diff( ModifiedDate );
-
-		if ( savedPost.type === 'post' && postUtils.isPublished( savedPost ) && diff ) {
-			warnPublishDateChange();
-		} else {
-			warnPublishDateChange( { clearWarning: true } );
-		}
 	},
 
 	getPreviewLabel: function() {
@@ -205,7 +180,7 @@ export default React.createClass( {
 				selectedDay={ postDate }
 				timezone={ tz }
 				gmtOffset={ gmtOffset }
-				onDateChange={ this.setPostDate }
+				onDateChange={ this.props.setPostDate }
 				onMonthChange={ this.setCurrentMonth }
 				site={ this.props.site }
 			/>

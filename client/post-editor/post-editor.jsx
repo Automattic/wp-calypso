@@ -222,7 +222,7 @@ export const PostEditor = React.createClass( {
 						onClose={ this.onClose }
 						onTabChange={ this.hideNotice } />
 					<EditorGroundControl
-						warnPublishDateChange={ this.warnPublishDateChange }
+						setPostDate={ this.setPostDate }
 						hasContent={ this.state.hasContent }
 						isDirty={ this.state.isDirty || this.props.dirty }
 						isSaveBlocked={ this.state.isSaveBlocked }
@@ -323,6 +323,7 @@ export const PostEditor = React.createClass( {
 						onTrashingPost={ this.onTrashingPost }
 						site={ site }
 						type={ this.props.type }
+						setPostDate={ this.setPostDate }
 						/>
 					{ this.iframePreviewEnabled() ?
 						<EditorPreview
@@ -709,9 +710,34 @@ export const PostEditor = React.createClass( {
 		window.scrollTo( 0, 0 );
 	},
 
+	setPostDate: function( date ) {
+		const dateValue = date ? date.format() : null;
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+		actions.edit( { date: dateValue } );
+		this.checkForDateChange( dateValue );
+	},
+
+	checkForDateChange( date ) {
+		const { savedPost } = this.state;
+
+		if ( ! savedPost ) {
+			return;
+		}
+
+		const currentDate = this.moment( date );
+		const ModifiedDate = this.moment( savedPost.date );
+		const diff = !! currentDate.diff( ModifiedDate );
+
+		if ( savedPost.type === 'post' && utils.isPublished( savedPost ) && diff ) {
+			this.warnPublishDateChange();
+		} else {
+			this.warnPublishDateChange( { clearWarning: true } );
+		}
+	},
+
 	// when a post that is published, modifies its date, this updates the post url
 	// we should warn users of this case
-	warnPublishDateChange( { clearWarning = false } = {} )  {
+	warnPublishDateChange( { clearWarning = false } = {} ) {
 		if ( clearWarning ) {
 			if ( get( this.state, 'notice.message' ) === 'warnPublishDateChange' ) {
 				this.hideNotice();

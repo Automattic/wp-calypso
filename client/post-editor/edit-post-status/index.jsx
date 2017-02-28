@@ -32,7 +32,7 @@ class EditPostStatus extends Component {
 
 	static propTypes = {
 		moment: PropTypes.func,
-		onDateChange: PropTypes.func,
+		setPostDate: PropTypes.func,
 		onSave: PropTypes.func,
 		post: PropTypes.object,
 		savedPost: PropTypes.object,
@@ -46,8 +46,7 @@ class EditPostStatus extends Component {
 		super( props );
 		this.state = {
 			showTZTooltip: false,
-			showPostSchedulePopover: false,
-			onDateChange: noop
+			showPostSchedulePopover: false
 		};
 	}
 
@@ -235,7 +234,7 @@ class EditPostStatus extends Component {
 						selectedDay={ selectedDay }
 						timezone={ tz }
 						gmtOffset={ gmt }
-						onDateChange={ this.props.onDateChange }
+						onDateChange={ this.props.setPostDate }
 					/>
 				</div>
 			</Popover>

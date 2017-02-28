@@ -72,7 +72,8 @@ const EditorDrawer = React.createClass( {
 		canJetpackUseTaxonomies: React.PropTypes.bool,
 		typeObject: React.PropTypes.object,
 		isNew: React.PropTypes.bool,
-		type: React.PropTypes.string
+		type: React.PropTypes.string,
+		setPostDate: React.PropTypes.func,
 	},
 
 	onExcerptChange: function( event ) {
@@ -314,7 +315,7 @@ const EditorDrawer = React.createClass( {
 					type={ this.props.type }
 					onSave={ this.props.onSave }
 					onTrashingPost={ this.props.onTrashingPost }
-					onDateChange={ this.setPostDate }
+					setPostDate={ this.props.setPostDate }
 					site={ this.props.site }>
 				</EditPostStatus>
 			</Accordion>
