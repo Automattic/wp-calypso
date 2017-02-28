@@ -37,8 +37,10 @@ class HelloDollyPage extends Component {
 					</p>
 					<p style={ { fontSize: 24, fontWeight: 500, textAlign: 'center', margin: '0 auto' } }>
 						{ currentLyric }
-						<Button primary style={ { [ 'float' ]: 'right' } } onClick={ this.props.nextLyric } >Next</Button>
 					</p>
+					<div style={ { margin: '16px auto 32px', textAlign: 'center' } }>
+						<Button primary onClick={ this.props.nextLyric }>Next</Button>
+					</div>
 					<hr />
 					<p>This section is the home for the <strong>Hello Dolly</strong> extension.</p>
 					<p>
@@ -98,4 +100,3 @@ function mapDispatchToProps( dispatch ) {
 }
 
 export default connect( mapStateToProps, mapDispatchToProps )( HelloDollyPage );
-
