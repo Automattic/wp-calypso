@@ -27,16 +27,6 @@ import { withReducer } from 'state/with-reducer';
 export default withReducer( 'myModule', myReducerFunction )( MyMainReactComponent );
 ```
 
-Alternatively, you can use a more manual approach by adding and removing the reducer yourself. Just make sure you remove the reducer when your code becomes inactive within the system.
-
-```js
-// Call this when your code becomes active.
-store.addReducer( 'myModule', myReducerFunction );
-
-// Call this when your code becomes inactive.
-store.removeReducer( 'myModule' );
-```
-
 ## Utilities
 
 `state/utils.js` contains a number of helper utilities you may find useful in implementing your state subtree:

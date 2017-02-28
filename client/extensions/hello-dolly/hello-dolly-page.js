@@ -14,8 +14,7 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
-import { getCurrentLyric } from './state/selectors';
-import lyrics from './state/lyrics';
+import getLyric from './state/selectors';
 import { nextLyric } from './state/actions';
 
 class HelloDollyPage extends Component {
@@ -83,7 +82,7 @@ class HelloDollyPage extends Component {
 }
 
 function mapStateToProps( state ) {
-	const currentLyric = getCurrentLyric( lyrics )( state );
+	const currentLyric = getLyric( state );
 
 	return {
 		currentLyric

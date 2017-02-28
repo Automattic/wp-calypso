@@ -28,7 +28,6 @@ export default function withReducer( reducerName, reducerFunc ) {
 			constructor( props, context ) {
 				super( props, context );
 				this.store = props.store || context.store;
-				this.propsMode = Boolean( props.store );
 
 				if ( ! this.store ) {
 					throw new Error(

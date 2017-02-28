@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import chai, { expect } from 'chai';
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
@@ -11,8 +11,6 @@ import chai, { expect } from 'chai';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { createReduxStore } from '../';
 import currentUser from 'state/current-user/reducer';
-
-const should = chai.should();
 
 describe( 'index', () => {
 	describe( 'addReducer', () => {
@@ -22,13 +20,13 @@ describe( 'index', () => {
 		it( 'should add and remove a reducer by name', () => {
 			const store = createReduxStore();
 
-			should.not.exist( store.getReducers()[ name ] );
+			expect( store.getReducers()[ name ] ).to.not.exist;
 
 			store.addReducer( name, func );
-			should.exist( store.getReducers()[ name ] );
+			expect( store.getReducers()[ name ] ).to.exist;
 
 			store.removeReducer( name );
-			should.not.exist( store.getReducers()[ name ] );
+			expect( store.getReducers()[ name ] ).to.not.exist;
 		} );
 
 		it( 'should throw when trying to add a reducer with an existing name', () => {
@@ -39,7 +37,7 @@ describe( 'index', () => {
 			};
 
 			expect( addFunc ).to.not.throw( Error );
-			should.exist( store.getReducers()[ name ] );
+			expect( store.getReducers()[ name ] ).to.exist;
 
 			expect( addFunc ).to.throw( Error );
 		} );

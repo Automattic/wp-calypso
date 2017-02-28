@@ -147,8 +147,7 @@ export function createEnhancers() {
 }
 
 /**
- * Named export function for creating a redux store.
- * This creates a new redux store within the calypsoStore instance.
+ * Creates a new redux store with the ability to add/remove reducers dynamically.
  *
  * @param { object } initialState Redux state with which to initialize (optional).
  * @param { array } startingReducers Initial list of reducers to start with.
