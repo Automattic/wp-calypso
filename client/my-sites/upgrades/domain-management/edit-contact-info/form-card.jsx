@@ -185,6 +185,23 @@ class EditContactInfoFormCard extends React.Component {
 		);
 	}
 
+	renderBackupEmail() {
+		const currentEmail = this.props.contactInformation.email,
+			wpcomEmail = this.props.currentUser.email,
+			strong = <strong />;
+
+		return <p>{ this.props.translate(
+			'If you don’t have access to {{strong}}%(currentEmail)s{{/strong}}, ' +
+			'we will also email you at {{strong}}%(wpcomEmail)s{{/strong}}, as backup.', {
+				args: { currentEmail, wpcomEmail },
+				components: {
+					supportLink: <a href={ support.CALYPSO_CONTACT } />,
+					strong
+				}
+			}
+		) }</p>;
+	}
+
 	renderDialog() {
 		const { translate } = this.props,
 			strong = <strong />,
@@ -200,32 +217,29 @@ class EditContactInfoFormCard extends React.Component {
 					isPrimary: true
 				}
 			],
-			currentEmails = this.getCurrentEmails();
+			currentEmail = this.props.contactInformation.email,
+			wpcomEmail = this.props.currentUser.email;
 
 		let text;
 		if ( this.hasEmailChanged() ) {
 			const newEmail = formState.getFieldValue( this.state.form, 'email' );
 
-			text = translate( 'We’ll email you at {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}} with a link to confirm the new details. ' +
-				'The change won’t go live until we receive confirmation from both emails.' +
-				'If you don’t have access to {{strong}}%(oldEmail)s{{/strong}}, we will also email you at {{strong}}%(newEmail)s{{/strong}}, as backup.', {
-					args: { oldEmail: currentEmails, newEmail }, components: { strong }
-				}
+			text = translate( 'We’ll email you at {{strong}}%(currentEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}} ' +
+				'with a link to confirm the new details. The change won’t go live until we receive confirmation from both emails.',
+				{ args: { oldEmail: currentEmail, newEmail }, components: { strong } }
 			);
 		} else {
-			text = translate( 'We’ll email you at {{strong}}%(currentEmails)s{{/strong}} with a link to confirm the new details. ' +
+			text = translate( 'We’ll email you at {{strong}}%(currentEmail)s{{/strong}} with a link to confirm the new details. ' +
 				'The change won\'t go live until we receive confirmation from one of these emails.', {
-					args: { currentEmails }, components: { strong }
+					args: { currentEmail }, components: { strong }
 				}
 			);
 		}
 		return (
 			<Dialog isVisible={ this.state.showNonDaConfirmationDialog } buttons={ buttons } onClose={ this.handleDialogClose }>
-				<h1>{ translate( 'Request Confirmation' ) }</h1>
+				<h1>{ translate( 'Confirmation Needed' ) }</h1>
 				<p>{ text }</p>
-				<p>{ translate( 'If that is not the case, please {{supportLink}}contact support{{/supportLink}} instead.', {
-					components: { supportLink: <a href={ support.CALYPSO_CONTACT } /> }
-				} ) }</p>
+				<p>{ currentEmail !== wpcomEmail && this.renderBackupEmail() }</p>
 			</Dialog>
 		);
 	}
