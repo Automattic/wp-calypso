@@ -21,6 +21,7 @@ import { getMediaModalView } from 'state/ui/media-modal/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
+import Button from 'components/button';
 
 const MediaModalSecondaryActions = React.createClass( {
 	propTypes: {
@@ -73,8 +74,9 @@ const MediaModalSecondaryActions = React.createClass( {
 		if ( ModalViews.LIST === view && selectedItems.length ) {
 			buttons.push( {
 				key: 'edit',
-				value: this.translate( 'Edit' ),
+				text: this.translate( 'Edit' ),
 				disabled: disabled,
+				primary: true,
 				onClick: this.props.onViewDetails
 			} );
 		}
@@ -86,8 +88,8 @@ const MediaModalSecondaryActions = React.createClass( {
 		if ( ModalViews.GALLERY !== view && canDeleteItems ) {
 			buttons.push( {
 				key: 'delete',
-				value: this.translate( 'Delete' ),
-				className: 'is-link editor-media-modal__delete',
+				icon: 'trash',
+				className: 'editor-media-modal__delete',
 				disabled: disabled || some( selectedItems, 'transient' ),
 				onClick: onDelete
 			} );
@@ -149,13 +151,15 @@ const MediaModalSecondaryActions = React.createClass( {
 	},
 
 	renderDesktopButtons() {
-		return this.getButtons().map( ( button ) => {
-			return React.createElement( 'input', Object.assign( {
-				type: 'button'
-			}, button, {
-				className: classNames( 'editor-media-modal__secondary-action', 'button', 'is-desktop', button.className )
-			} ) );
-		} );
+		return this.getButtons().map( button => <Button
+			className={ classNames( 'editor-media-modal__secondary-action', button.className ) }
+			icon={ !! button.icon }
+			compact
+			{ ...pick( button, [ 'key', 'disabled', 'onClick', 'primary' ] ) }
+		>
+			{ button.icon && <Gridicon icon={ button.icon } /> }
+			{ button.text && button.text }
+		</Button> );
 	},
 
 	renderPlanStorage() {
@@ -175,7 +179,7 @@ const MediaModalSecondaryActions = React.createClass( {
 
 	render() {
 		return (
-			<div className="editor-media-modal__secondary-actions">
+			<div className="">
 				{ this.renderMobileButtons() }
 				{ this.renderDesktopButtons() }
 				{ this.props.renderStorage && this.renderPlanStorage() }

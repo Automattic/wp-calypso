@@ -6,8 +6,9 @@
 @import 'upload-url';
 
 .media-library__header {
-	position: relative;
 	margin-bottom: 14px;
+	padding: 12px 24px;
+	display: flex;
 }
 
 .media-library__header .button {
