@@ -28,7 +28,7 @@ const Subscriptions = ( {
 	translate
 } ) => {
 	return (
-		<Card className="subscriptions site-settings">
+		<Card className="subscriptions site-settings__discussion-settings">
 			<FormFieldset>
 				<div className="subscriptions__info-link-container site-settings__info-link-container">
 					<InfoPopover position={ 'left' }>
