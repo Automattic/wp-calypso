@@ -1,0 +1,14 @@
+{
+	"name": "woocommerce",
+	"author": "Automattic",
+	"description": "WooCommerce",
+	"version": "0.0.1",
+	"env_id": [ "development", "wpcalypso" ],
+	"section": {
+		"name": "woocommerce",
+		"paths": [ "/woocommerce" ],
+		"module": "woocommerce",
+		"group": "sites",
+		"secondary": true
+	}
+}
