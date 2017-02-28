@@ -11,6 +11,10 @@
 	display: flex;
 }
 
+.dialog__content .media-library__header.card {
+	box-shadow: none;
+}
+
 .media-library__header .button {
 	margin: 0 8px;
 
