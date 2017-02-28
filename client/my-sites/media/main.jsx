@@ -15,6 +15,9 @@ import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
 import ImageEditor from 'blocks/image-editor';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
+import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+import accept from 'lib/accept';
 
 export default React.createClass( {
 	displayName: 'Media',
@@ -28,7 +31,8 @@ export default React.createClass( {
 	getInitialState: function() {
 		return {
 			editedItem: null,
-			openedDetails: null,
+			currentDetail: null,
+			selectedImages: [],
 		};
 	},
 
@@ -52,21 +56,34 @@ export default React.createClass( {
 		page( redirect );
 	},
 
-	openDetailsModal( item ) {
-		this.setState( { openedDetails: item } );
+	openDetailsModalForASingleImage( image ) {
+		this.setState( {
+			currentDetail: 0,
+			selectedImages: [ image ],
+		} );
+	},
+
+	openDetailsModalForAllSelected() {
+		const site = this.props.sites.getSelectedSite();
+		const selected = MediaLibrarySelectedStore.getAll( site.ID );
+
+		this.setState( {
+			currentDetail: 0,
+			selectedImages: selected
+		} );
 	},
 
 	closeDetailsModal() {
-		this.setState( { openedDetails: null, editedItem: null } );
+		this.setState( { editedItem: null, currentDetail: null, selectedImages: [] } );
 	},
 
 	editImage() {
-		this.setState( { openedDetails: null, editedItem: this.state.openedDetails } );
+		this.setState( { currentDetail: null, editedItem: this.state.currentDetail } );
 	},
 
 	onImageEditorCancel: function( imageEditorProps ) {
 		const {	resetAllImageEditorState } = imageEditorProps;
-		this.setState( { openedDetails: this.state.editedItem, editedItem: null } );
+		this.setState( { currentDetail: this.state.editedItem, editedItem: null } );
 
 		resetAllImageEditorState();
 	},
@@ -97,54 +114,82 @@ export default React.createClass( {
 
 		MediaActions.update( site.ID, item, true );
 		resetAllImageEditorState();
-		this.setState( { openedDetails: null, editedItem: null } );
+		this.setState( { currentDetail: null, editedItem: null, selectedImages: [] } );
 	},
 	restoreOriginalMedia: function( siteId, item ) {
 		if ( ! siteId || ! item ) {
 			return;
 		}
 		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
-		this.setState( { openedDetails: null, editedItem: null } );
+		this.setState( { currentDetail: null, editedItem: null, selectedImages: [] } );
+	},
+	setDetailSelectedIndex: function( index ) {
+		this.setState( { currentDetail: index } );
+	},
+	confirmDeleteMedia: function ( accepted ) {
+		const site = this.props.sites.getSelectedSite();
+		if ( ! site || ! accepted ) {
+			return;
+		}
+		const selected = MediaLibrarySelectedStore.getAll( site.ID );
+		MediaActions.delete( site.ID, selected );
 	},
 
+	deleteMedia: function() {
+		const site = this.props.sites.getSelectedSite();
+		const selected = MediaLibrarySelectedStore.getAll( site.ID );
+		const selectedCount = selected.length;
+		const confirmMessage = this.translate(
+			'Are you sure you want to permanently delete this item?',
+			'Are you sure you want to permanently delete these items?',
+			{ count: selectedCount }
+		);
+
+		accept( confirmMessage, this.confirmDeleteMedia );
+	},
 	render: function() {
 		const site = this.props.sites.getSelectedSite();
 		return (
 			<div ref="container" className="main main-column media" role="main">
 				<SidebarNavigation />
-				{ ( this.state.editedItem || this.state.openedDetails ) &&
+				{ ( this.state.editedItem !== null || this.state.currentDetail !== null) &&
 					<Dialog
 						isVisible={ true }
 						additionalClassNames="editor-media-modal"
 						onClose={ this.closeDetailsModal }
 					>
-					{ this.state.openedDetails &&
+					{ this.state.currentDetail !== null &&
 						<EditorMediaModalDetail
 							site={ site }
-							items={ [ this.state.openedDetails ] }
-							selectedIndex={ 0 }
+							items={ this.state.selectedImages }
+							selectedIndex={ this.state.currentDetail }
 							onReturnToList={ this.closeDetailsModal }
 							onEditItem={ this.editImage }
 							onRestoreItem={ this.restoreOriginalMedia }
+							onSelectedIndexChange={ this.setDetailSelectedIndex }
 						/>
 					}
-					{ this.state.editedItem &&
+					{ this.state.editedItem !== null &&
 						<ImageEditor
 							siteId={ site && site.ID }
-							media={ this.state.editedItem }
+							media={ this.state.selectedImages[ this.state.editedItem ] }
 							onDone={ this.onImageEditorDone }
 							onCancel={ this.onImageEditorCancel }
 						/>
 					}
 					</Dialog>
 				}
-				<MediaLibrary
-					{ ...this.props }
-					onFilterChange={ this.onFilterChange }
-					site={ site || false }
-					single={ true }
-					onEditItem={ this.openDetailsModal }
-					containerWidth={ this.state.containerWidth } />
+				<MediaLibrarySelectedData siteId={ site && site.ID }>
+					<MediaLibrary
+						{ ...this.props }
+						onFilterChange={ this.onFilterChange }
+						site={ site || false }
+						single={ false }
+						onEditItem={ this.openDetailsModalForASingleImage }
+						onViewDetails={ this.openDetailsModalForAllSelected }
+						onDeleteItem={ this.deleteMedia }
+						containerWidth={ this.state.containerWidth } />
+				</MediaLibrarySelectedData>
 			</div>
 		);
 	}

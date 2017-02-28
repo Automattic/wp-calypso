@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { values, noop, some, every, flow, partial } from 'lodash';
+import { values, noop, some, every, flow, partial, pick } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -30,13 +30,15 @@ const MediaModalSecondaryActions = React.createClass( {
 		view: React.PropTypes.oneOf( values( ModalViews ) ),
 		disabled: PropTypes.bool,
 		onDelete: PropTypes.func,
-		onViewDetails: PropTypes.func
+		onViewDetails: PropTypes.func,
+		renderStorage: PropTypes.bool,
 	},
 
 	getDefaultProps() {
 		return {
 			disabled: false,
-			onDelete: noop
+			onDelete: noop,
+			renderStorage: true,
 		};
 	},
 
@@ -176,7 +178,7 @@ const MediaModalSecondaryActions = React.createClass( {
 			<div className="editor-media-modal__secondary-actions">
 				{ this.renderMobileButtons() }
 				{ this.renderDesktopButtons() }
-				{ this.renderPlanStorage() }
+				{ this.props.renderStorage && this.renderPlanStorage() }
 			</div>
 		);
 	}
@@ -194,5 +196,8 @@ export default connect(
 			withAnalytics( recordGoogleEvent( 'Media', 'Clicked Dialog Edit Button' ) ),
 			partial( setEditorMediaModalView, ModalViews.DETAIL )
 		)
+	}, function mergeProps( stateProps, dispatchProps, ownProps ) {
+		//We want to overwrite connected props if 'onViewDetails', 'view' were provided
+		return Object.assign( {}, ownProps, stateProps, dispatchProps, pick( ownProps, [ 'onViewDetails', 'view' ] ) );
 	}
 )( MediaModalSecondaryActions );
