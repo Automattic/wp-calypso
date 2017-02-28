@@ -33,7 +33,7 @@
 	display: none;
 	font-size: 13px;
 	color: $gray-dark;
-	font-weight: 600;
+	font-weight: 500;
 
 	@include breakpoint( ">660px" ) {
 		display: flex;

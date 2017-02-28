@@ -36,6 +36,7 @@ $accordion-background-expanded: $white;
 			right: ( $accordion-padding - 4px );
 		transform: translateY( -50% );
 		color: darken( $gray, 10% );
+		height: 24px;
 		.gridicon {
 			transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
 		}
@@ -80,8 +81,9 @@ $accordion-background-expanded: $white;
 .accordion__title,
 .accordion__subtitle {
 	display: block;
-	font-size: 12px;
+	font-size: 13px;
 	font-weight: 500;
+	line-height: $accordion-subtitle-height;
 
 	.accordion.has-icon & {
 		padding-left: 28px;
@@ -93,9 +95,9 @@ $accordion-background-expanded: $white;
 }
 
 .accordion__subtitle {
-	font-size: 10px;
-	font-style: italic;
-	color: $gray-dark;
+	font-size: 11px;
+	color: $gray-text-min;
+	font-weight: 400;
 	white-space: nowrap;
 	overflow: hidden;
 	position: relative;
@@ -131,7 +133,7 @@ $accordion-background-expanded: $white;
 }
 
 .accordion__content-wrap {
-	padding: $accordion-padding;
+	padding: 0 $accordion-padding $accordion-padding $accordion-padding;
 }
 
 .accordion__section {

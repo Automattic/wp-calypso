@@ -1,5 +1,6 @@
 .editor-drawer {
 	padding-bottom: 16px;
+	font-size: 13px;
 }
 
 .editor-drawer__description {
@@ -79,4 +80,8 @@
 .editor-drawer__copy-post .button {
 	margin-top: 16px;
 	width: 100%;
+}
+
+.editor-drawer .editor-categories-tags__accordion .accordion__content-wrap {
+	padding-top: 8px;
 }

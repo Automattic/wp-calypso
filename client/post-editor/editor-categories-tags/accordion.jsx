@@ -177,7 +177,6 @@ export class EditorCategoriesTagsAccordion extends Component {
 		return (
 			<Accordion
 				title={ this.getTitle() }
-				subtitle={ this.getSubtitle() }
 				className={ classes }
 			>
 				{ this.renderCategories() }
