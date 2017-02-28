@@ -15,31 +15,16 @@
 	box-shadow: none;
 }
 
+.media-library__header .is-desktop {
+	display: none;
+
+	@include breakpoint( ">660px" ) {
+		display: inline-block;
+	}
+}
+
 .media-library__header .button {
 	margin: 0 8px;
-
-	&.is-desktop {
-		display: none;
-
-		@include breakpoint( ">660px" ) {
-			display: inline-block;
-		}
-	}
-
-	&.is-mobile {
-		position: relative;
-		left: -1px;
-		height: 40px;
-		margin-left: 0;
-		padding-left: 8px;
-		padding-right: 8px;
-		border-top-left-radius: 0;
-		border-bottom-left-radius: 0;
-
-		@include breakpoint( ">660px" ) {
-			display: none;
-		}
-	}
 
 	&:first-of-type {
 		margin-left: 0;

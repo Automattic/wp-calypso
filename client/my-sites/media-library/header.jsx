@@ -81,7 +81,7 @@ export default React.createClass( {
 					onAddMedia={ onAddMedia }
 					className="button is-compact">
 					<Gridicon icon="add-image" />
-					<span>{ this.translate( 'Add New', { context: 'Media upload' } ) }</span>
+					<span className="is-desktop">{ this.translate( 'Add New', { context: 'Media upload' } ) }</span>
 				</UploadButton>
 				<Button
 					compact
