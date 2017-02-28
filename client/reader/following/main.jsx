@@ -4,7 +4,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { initial, flatMap, sampleSize, trim } from 'lodash';
+import { initial, flatMap, trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,9 +13,8 @@ import Stream from 'reader/stream';
 import CompactCard from 'components/card/compact';
 import SearchInput from 'components/search';
 import { recordTrack } from 'reader/stats';
-import i18nUtils from 'lib/i18n-utils';
-import { suggestions } from 'reader/search-stream/suggestions';
 import Suggestion from 'reader/search-stream/suggestion';
+import SuggestionProvider from 'reader/search-stream/suggestion-provider';
 
 function handleSearch( query ) {
 	recordTrack( 'calypso_reader_search_from_following', {
@@ -28,14 +27,9 @@ function handleSearch( query ) {
 }
 
 const FollowingStream = ( props ) => {
-	const lang = i18nUtils.getLocaleSlug();
+	const suggestionList = props.suggestions && initial( flatMap( props.suggestions, query =>
+		[ <Suggestion suggestion={ query } source="following" />, ', ' ] ) );
 
-	let suggestionList;
-	if ( suggestions[ lang ] ) {
-		const pickedSuggestions = sampleSize( suggestions[ lang ], 3 );
-		suggestionList = initial( flatMap( pickedSuggestions, query =>
-			[ <Suggestion suggestion={ query } source="following" />, ', ' ] ) );
-	}
 	return (
 		<Stream { ...props }>
 			<CompactCard className="following__search">
@@ -56,4 +50,4 @@ const FollowingStream = ( props ) => {
 	);
 };
 
-export default localize( FollowingStream );
+export default SuggestionProvider( localize( FollowingStream ) );
