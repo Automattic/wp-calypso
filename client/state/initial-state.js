@@ -8,7 +8,6 @@ import throttle from 'lodash/throttle';
 /**
  * Internal dependencies
  */
-import { createReduxStore, reducer } from 'state';
 import {
 	SERIALIZE,
 	DESERIALIZE,
@@ -27,7 +26,7 @@ const HOUR_IN_MS = 3600000;
 export const SERIALIZE_THROTTLE = 5000;
 export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
 
-function getInitialServerState() {
+function getInitialServerState( reducer ) {
 	// Bootstrapped state from a server-render
 	if ( typeof window === 'object' && window.initialReduxState && ! isSupportUserSession() ) {
 		const serverState = reducer( window.initialReduxState, { type: DESERIALIZE } );
@@ -36,17 +35,17 @@ function getInitialServerState() {
 	return {};
 }
 
-function serialize( state ) {
+function serialize( reducer, state ) {
 	const serializedState = reducer( state, { type: SERIALIZE } );
 	return Object.assign( serializedState, { _timestamp: Date.now() } );
 }
 
-function deserialize( state ) {
+function deserialize( reducer, state ) {
 	delete state._timestamp;
 	return reducer( state, { type: DESERIALIZE } );
 }
 
-function loadInitialState( initialState ) {
+function loadInitialState( createReduxStore, reducer, initialState ) {
 	debug( 'loading initial state', initialState );
 	if ( initialState === null ) {
 		debug( 'no initial state found in localforage' );
@@ -56,18 +55,18 @@ function loadInitialState( initialState ) {
 		debug( 'stored state is too old, building redux store from scratch' );
 		initialState = {};
 	}
-	const localforageState = deserialize( initialState );
-	const serverState = getInitialServerState();
+	const localforageState = deserialize( reducer, initialState );
+	const serverState = getInitialServerState( reducer );
 	const mergedState = Object.assign( {}, localforageState, serverState );
 	return createReduxStore( mergedState );
 }
 
-function loadInitialStateFailed( error ) {
+function loadInitialStateFailed( createReduxStore, error ) {
 	debug( 'failed to load initial redux-store state', error );
 	return createReduxStore();
 }
 
-export function persistOnChange( reduxStore, serializeState = serialize ) {
+export function persistOnChange( reducer, reduxStore, serializeState = serialize ) {
 	let state;
 
 	const throttledSaveState = throttle( function() {
@@ -78,7 +77,7 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 
 		state = nextState;
 
-		localforage.setItem( 'redux-state', serializeState( state ) )
+		localforage.setItem( 'redux-state', serializeState( reducer, state ) )
 			.catch( ( setError ) => {
 				debug( 'failed to set redux-store state', setError );
 			} );
@@ -94,14 +93,17 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 }
 
 export default function createReduxStoreFromPersistedInitialState( reduxStoreReady ) {
-	if ( config.isEnabled( 'persist-redux' ) && ! isSupportUserSession() ) {
-		localforage.getItem( 'redux-state' )
-			.then( loadInitialState )
-			.catch( loadInitialStateFailed )
-			.then( persistOnChange )
-			.then( reduxStoreReady );
-	} else {
-		debug( 'persist-redux is not enabled, building state from scratch' );
-		reduxStoreReady( loadInitialState( {} ) );
-	}
+	require.ensure( 'state', () => {
+		const { createReduxStore, reducer } = require( 'state' );
+		if ( config.isEnabled( 'persist-redux' ) && ! isSupportUserSession() ) {
+			localforage.getItem( 'redux-state' )
+				.then( loadInitialState.bind( null, createReduxStore, reducer ) )
+				.catch( loadInitialStateFailed.bind( null, createReduxStore ) )
+				.then( persistOnChange.bind( null, reducer ) )
+				.then( reduxStoreReady );
+		} else {
+			debug( 'persist-redux is not enabled, building state from scratch' );
+			reduxStoreReady( loadInitialState( createReduxStore, reducer, {} ) );
+		}
+	}, 'state' );
 }
