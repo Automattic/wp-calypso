@@ -65,28 +65,4 @@ describe( 'enrichedSurveyData', function() {
 			enrichedSurveyData( {}, moment( '2017-01-19T03:00:00+00:00' ), site, purchase ).daysSinceSiteCreation
 		).to.equal( 10 );
 	} );
-
-	it( 'should calculate newOrRenewal as new purchase when purchase subscribed date is less than one year minus 30 days ago', function() {
-		const site = null;
-		const purchase = { subscribedDate: '2017-01-09T03:00:00+00:00' };
-		expect(
-			enrichedSurveyData( {}, moment( '2017-01-19T03:00:00+00:00' ), site, purchase ).newOrRenewal
-		).to.equal( 'new purchase' );
-	} );
-
-	it( 'should calculate newOrRenewal as new purchase when purchase subscribed date is exactly one year minus 30 days ago', function() {
-		const site = null;
-		const purchase = { subscribedDate: '2017-01-10T03:00:00+00:00' };
-		expect(
-			enrichedSurveyData( {}, moment( '2017-12-11T03:00:00+00:00' ), site, purchase ).newOrRenewal
-		).to.equal( 'new purchase' );
-	} );
-
-	it( 'should calculate newOrRenewal as renewal when purchase subscribed date is greater than one year minus 30 days ago', function() {
-		const site = null;
-		const purchase = { subscribedDate: '2017-01-09T03:00:00+00:00' };
-		expect(
-			enrichedSurveyData( {}, moment( '2017-12-11T03:00:00+00:00' ), site, purchase ).newOrRenewal
-		).to.equal( 'renewal' );
-	} );
 } );
