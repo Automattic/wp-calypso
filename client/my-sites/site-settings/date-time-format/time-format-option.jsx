@@ -14,23 +14,15 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { phpToMomentDatetimeFormat } from 'lib/formatting';
-
-/**
- * Module constant
- */
-const defaultTimeFormats = [
-	'g:i a',
-	'g:i A',
-	'H:i',
-];
+import { defaultTimeFormats } from './default-formats';
 
 export const TimeFormatOption = ( {
-	timeFormat,
-	isCustomFormat,
-	isRequestingSettings,
+	disabled,
+	isCustom,
 	now,
-	setTimeFormat,
 	setCustomTimeFormat,
+	setTimeFormat,
+	timeFormat,
 	translate,
 } ) => (
 	<FormFieldset>
@@ -40,8 +32,8 @@ export const TimeFormatOption = ( {
 		{ defaultTimeFormats.map( ( format, index ) =>
 			<FormLabel key={ index }>
 				<FormRadio
-					checked={ ! isCustomFormat && format === timeFormat }
-					disabled={ isRequestingSettings }
+					checked={ ! isCustom && format === timeFormat }
+					disabled={ disabled }
 					name="time_format"
 					onChange={ setTimeFormat }
 					value={ format }
@@ -51,8 +43,8 @@ export const TimeFormatOption = ( {
 		) }
 		<FormLabel className="date-time-format__custom-field">
 			<FormRadio
-				checked={ isCustomFormat }
-				disabled={ isRequestingSettings }
+				checked={ isCustom }
+				disabled={ disabled }
 				name="time_format"
 				onChange={ setCustomTimeFormat }
 				value={ timeFormat }
@@ -60,14 +52,14 @@ export const TimeFormatOption = ( {
 			<span>
 				{ translate( 'Custom', { comment: 'Custom date/time format field' } ) }
 				<FormInput
-					disabled={ isRequestingSettings }
+					disabled={ disabled }
 					name="time_format_custom"
 					onChange={ setCustomTimeFormat }
 					type="text"
 					value={ timeFormat || '' }
 				/>
 				<FormSettingExplanation>
-					{ isCustomFormat && timeFormat
+					{ isCustom && timeFormat
 						? translate( 'Preview: %s', {
 							args: now.format( phpToMomentDatetimeFormat( timeFormat ) ),
 							comment: 'Date/time format preview'

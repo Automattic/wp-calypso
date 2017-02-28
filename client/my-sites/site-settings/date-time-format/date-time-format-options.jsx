@@ -14,24 +14,9 @@ import SectionHeader from 'components/section-header';
 import DateFormatOption from './date-format-option';
 import StartOfWeekOption from './start-of-week-option';
 import TimeFormatOption from './time-format-option';
+import { defaultDateFormats, defaultTimeFormats } from './default-formats';
 import { getNow } from './utils';
 import wrapSettingsForm from '../wrap-settings-form';
-
-/**
- * Module constants
- */
-const defaultDateFormats = [
-	'F j, Y',
-	'Y-m-d',
-	'm/d/Y',
-	'd/m/Y',
-];
-
-const defaultTimeFormats = [
-	'g:i a',
-	'g:i A',
-	'H:i',
-];
 
 export class DateTimeFormatOptions extends Component {
 	state = {
@@ -124,22 +109,22 @@ export class DateTimeFormatOptions extends Component {
 					<form>
 						<DateFormatOption
 							dateFormat={ dateFormat }
-							isCustomFormat={ customDateFormat }
-							isRequestingSettings={ isRequestingSettings }
+							disabled={ isRequestingSettings }
+							isCustom={ customDateFormat }
 							now={ now }
-							setDateFormat={ this.setDateFormat }
 							setCustomDateFormat={ this.setCustomDateFormat }
+							setDateFormat={ this.setDateFormat }
 						/>
 						<TimeFormatOption
-							timeFormat={ timeFormat }
-							isCustomFormat={ customTimeFormat }
-							isRequestingSettings={ isRequestingSettings }
+							disabled={ isRequestingSettings }
+							isCustom={ customTimeFormat }
 							now={ now }
-							setTimeFormat={ this.setTimeFormat }
 							setCustomTimeFormat={ this.setCustomTimeFormat }
+							setTimeFormat={ this.setTimeFormat }
+							timeFormat={ timeFormat }
 						/>
 						<StartOfWeekOption
-							isRequestingSettings={ isRequestingSettings }
+							disabled={ isRequestingSettings }
 							onChange={ handleSelect }
 							startOfWeek={ startOfWeek }
 						/>

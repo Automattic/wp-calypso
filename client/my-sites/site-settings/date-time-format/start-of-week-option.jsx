@@ -12,7 +12,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 
 export const StartOfWeekOption = ( {
-	isRequestingSettings,
+	disabled,
 	moment,
 	onChange,
 	startOfWeek,
@@ -23,7 +23,7 @@ export const StartOfWeekOption = ( {
 		{ translate( 'Week starts on' ) }
 	</FormLabel>
 	<FormSelect
-		disabled={ isRequestingSettings }
+		disabled={ disabled }
 		name="start_of_week"
 		onChange={ onChange }
 		value={ startOfWeek || 0 }
