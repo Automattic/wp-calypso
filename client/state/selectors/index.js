@@ -212,6 +212,5 @@ export isUserSettingUnsaved from './is-user-setting-unsaved';
 export isWordpressUpdateSuccessful from './is-wordpress-update-successful';
 export isValidatingAccountRecoveryKey from './is-validating-account-recovery-key';
 export prependThemeFilterKeys from './prepend-theme-filter-keys';
-export shouldCloseVideoEditorModal from './should-close-video-editor-modal';
 export shouldShowVideoEditorError from './should-show-video-editor-error';
 export shouldSyncReaderFollows from './should-sync-reader-follows';
