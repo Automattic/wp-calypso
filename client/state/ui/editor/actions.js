@@ -17,7 +17,8 @@ export const MODAL_VIEW_STATS = {
 	[ ModalViews.LIST ]: 'view_list',
 	[ ModalViews.DETAIL ]: 'view_detail',
 	[ ModalViews.GALLERY ]: 'view_gallery',
-	[ ModalViews.IMAGE_EDITOR ]: 'view_edit'
+	[ ModalViews.IMAGE_EDITOR ]: 'view_edit',
+	[ ModalViews.VIDEO_EDITOR ]: 'view_edit',
 };
 
 /**
