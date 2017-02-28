@@ -4,6 +4,7 @@
 import PaginatedQueryManager from '../paginated';
 import ThemeQueryKey from './key';
 import { DEFAULT_THEME_QUERY } from './constants';
+import { isThemeFromWpcom } from 'state/themes/utils';
 
 /**
  * ThemeQueryManager manages themes which can be queried
@@ -21,6 +22,20 @@ export default class ThemeQueryManager extends PaginatedQueryManager {
 	 */
 	sort() {
 		return; // Leave the keys argument unchanged.
+	}
+
+	/**
+	 * Returns true if the item matches the given query, or false otherwise.
+	 *
+	 * @param  {Object}  query Query object
+	 * @param  {Object}  item  Item to consider
+	 * @return {Boolean}       Whether item matches query
+	 */
+	matches( query, item ) {
+		if ( query.filterWpcomThemes ) {
+			return ! isThemeFromWpcom( item.id );
+		}
+		return super.matches( query, item );
 	}
 }
 
