@@ -15,6 +15,7 @@ import {
 	requestUnfollow,
 	receiveUnfollowTag,
 	receiveError,
+	fromApi,
 } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
@@ -39,7 +40,7 @@ const successfulUnfollowResponse = {
 	],
 };
 
-const unsuccessfuleResponse = {
+const unsuccessfulResponse = {
 	...successfulUnfollowResponse,
 	subscribed: true,
 };
@@ -87,9 +88,7 @@ describe( 'unfollow tag request', () => {
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith(
 				receiveUnfollowAction( {
-					payload: {
-						removedTag: successfulUnfollowResponse.removed_tag
-					},
+					payload: successfulUnfollowResponse.removed_tag,
 					error: false
 				} )
 			);
@@ -100,15 +99,13 @@ describe( 'unfollow tag request', () => {
 			const dispatch = sinon.spy();
 			const next = sinon.spy();
 
-			receiveUnfollowTag( { dispatch }, action, next, unsuccessfuleResponse );
+			receiveUnfollowTag( { dispatch }, action, next, unsuccessfulResponse );
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith(
 				receiveUnfollowAction( {
-					payload: {
-						removedTag: unsuccessfuleResponse.removed_tag,
-					},
-					error: true
+					payload: unsuccessfulResponse.removed_tag,
+					error: true,
 				} )
 			);
 		} );
@@ -127,6 +124,15 @@ describe( 'unfollow tag request', () => {
 			expect( dispatch ).to.have.been.calledWith(
 				receiveUnfollowAction( { payload: error, error: true } )
 			);
+		} );
+	} );
+
+	describe( '#fromApi', () => {
+		it( 'should extract the removed_tag from a response', () => {
+			const apiResponse = successfulUnfollowResponse;
+			const normalized = fromApi( apiResponse );
+
+			expect( normalized ).to.eql( apiResponse.removed_tag );
 		} );
 	} );
 } );

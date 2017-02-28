@@ -29,13 +29,9 @@ export function requestUnfollow( store, action, next ) {
  * Normalize response from the api. The only thing we care about is the removed_tag so only keep that.
  *
  * @param  {RemovedTag} apiResponse api response from the unfollow
- * @return {Tags}             An object containing list of tags
+ * @return {Number} the ID of the tag that was removed
  */
-export function fromApi( apiResponse ) {
-	return {
-		removedTag: apiResponse.removed_tag,
-	};
-}
+export const fromApi = apiResponse => apiResponse.removed_tag;
 
 export function receiveUnfollowTag( store, action, next, apiResponse ) {
 	store.dispatch( receiveUnfollowTagAction( {
