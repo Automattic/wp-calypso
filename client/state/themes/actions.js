@@ -350,9 +350,7 @@ export function requestActiveTheme( siteId ) {
 export function activate( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch, getState ) => {
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
-			// AT sites do not use the -wpcom suffix
-			const siteIsAT = isSiteAutomatedTransfer( getState(), siteId );
-			const installId = siteIsAT ? themeId : themeId + '-wpcom';
+			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
 			// If theme is already installed, installation will silently fail,
 			// and it will just be activated.
 			return dispatch( installAndActivateTheme( installId, siteId, source, purchased ) );
@@ -504,9 +502,10 @@ export function clearActivated( siteId ) {
 export function tryAndCustomize( themeId, siteId ) {
 	return ( dispatch, getState ) => {
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
-			// Suffix themeId here with `-wpcom`. If the suffixed theme is already installed,
-			// installation will silently fail, and we just switch to the customizer.
-			return dispatch( installAndTryAndCustomizeTheme( themeId + '-wpcom', siteId ) );
+			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
+			// If theme is already installed, installation will silently fail,
+			// and we just switch to the customizer.
+			return dispatch( installAndTryAndCustomizeTheme( installId, siteId ) );
 		}
 
 		return dispatch( tryAndCustomizeTheme( themeId, siteId ) );
@@ -825,4 +824,12 @@ export function hideThemePreview() {
 		type: THEME_PREVIEW_STATE,
 		themeId: null
 	};
+}
+
+function suffixThemeIdForInstall( state, siteId, themeId ) {
+	// AT sites do not use the -wpcom suffix
+	if ( isSiteAutomatedTransfer( state, siteId ) ) {
+		return themeId;
+	}
+	return themeId + '-wpcom';
 }
