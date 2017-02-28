@@ -32,7 +32,7 @@ export default React.createClass( {
 		return {
 			editedItem: null,
 			currentDetail: null,
-			selectedImages: []
+			selectedImages: [],
 		};
 	},
 
@@ -57,11 +57,9 @@ export default React.createClass( {
 	},
 
 	openDetailsModalForASingleImage( image ) {
-		const selected = [ image ];
-
 		this.setState( {
 			currentDetail: 0,
-			selectedImages: selected
+			selectedImages: [ image ],
 		} );
 	},
 
