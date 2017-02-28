@@ -64,18 +64,16 @@ import {
 	isThemeFromWpcom,
 	normalizeJetpackTheme,
 	normalizeWpcomTheme,
-	normalizeWporgTheme
+	normalizeWporgTheme,
+	shouldFilterWpcomThemes,
 } from './utils';
 import {
 	getSiteTitle,
-	hasJetpackSiteJetpackThemesExtendedFeatures,
 	isJetpackSite,
-	isJetpackSiteMultiSite
 } from 'state/sites/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
 import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
-import config from 'config';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
@@ -108,10 +106,19 @@ export function receiveTheme( theme, siteId ) {
  * @return {Object}        Action object
  */
 export function receiveThemes( themes, siteId ) {
-	return {
-		type: THEMES_RECEIVE,
-		themes,
-		siteId
+	return ( dispatch, getState ) => {
+		let filteredThemes = themes;
+		if ( shouldFilterWpcomThemes( getState(), siteId ) ) {
+			filteredThemes = filter(
+				themes,
+				theme => ! isThemeFromWpcom( theme.id )
+			);
+		}
+		dispatch( {
+			type: THEMES_RECEIVE,
+			filteredThemes,
+			siteId
+		} );
 	};
 }
 
@@ -166,14 +173,7 @@ export function requestThemes( siteId, query = {} ) {
 				// A Jetpack site's themes endpoint ignores the query,
 				// returning an unfiltered list of all installed themes instead.
 				// So we have to filter on the client side.
-				// Also if Jetpack plugin has Themes Extended Features,
-				// we filter out -wpcom suffixed themes because we will show them in
-				// second list that is specific to WordPress.com themes.
-				// For multi-site installation we do not provide themes upload yet so
-				// we can only show one list and we should not filter wpcom themes.
-				const keepWpcom = ! config.isEnabled( 'manage/themes/upload' ) ||
-					! hasJetpackSiteJetpackThemesExtendedFeatures( getState(), siteId ) ||
-					isJetpackSiteMultiSite( getState(), siteId );
+				const keepWpcom = ! shouldFilterWpcomThemes( getState(), siteId );
 
 				filteredThemes = filter(
 					themes,
