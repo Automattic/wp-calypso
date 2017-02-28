@@ -30,7 +30,7 @@ export const WarningList = ( {
 			<Card className="eligibility-warnings__warning-list">
 				{ map( warnings, ( { name, description, supportUrl }, index ) =>
 					<div className="eligibility-warnings__warning" key={ index }>
-						<Gridicon icon="cross" size={ 24 } />
+						<Gridicon icon="cross-small" size={ 24 } />
 						<div className="eligibility-warnings__message">
 							<span className="eligibility-warnings__message-title">
 								{ name }
