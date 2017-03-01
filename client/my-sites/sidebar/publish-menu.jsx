@@ -161,7 +161,7 @@ const PublishMenu = React.createClass( {
 				preloadSectionName={ preload }
 			>
 				{ menuItem.name === 'media' && (
-					<MediaLibraryUploadButton site={ site } href={ menuItem.buttonLink }>{ this.translate( 'Add' ) }</MediaLibraryUploadButton>
+					<MediaLibraryUploadButton className="sidebar__button" site={ site } href={ menuItem.buttonLink }>{ this.translate( 'Add' ) }</MediaLibraryUploadButton>
 				) }
 				{ menuItem.name !== 'media' && (
 					<SidebarButton href={ menuItem.buttonLink } preloadSectionName="post-editor">{ this.translate( 'Add' ) }</SidebarButton>
