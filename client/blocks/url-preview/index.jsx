@@ -13,6 +13,7 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getPreviewUrl } from 'state/ui/preview/selectors';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
@@ -77,6 +78,7 @@ export default function urlPreview( WebPreview ) {
 					showClose={ true }
 					showPreview={ this.props.showPreview }
 					onClose={ this.onClosePreview }
+					showSEO={ ! this.props.isDomainOnlySite }
 				/>
 			);
 		}
@@ -101,6 +103,7 @@ export default function urlPreview( WebPreview ) {
 			selectedSiteUrl: 'https://' + getSiteSlug( state, selectedSiteId ),
 			selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ) || '',
 			previewUrl: getPreviewUrl( state ),
+			isDomainOnlySite: isDomainOnlySite( state, selectedSiteId ),
 		};
 	}
 
