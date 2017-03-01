@@ -13,6 +13,7 @@ import {
 	overSome,
 	pickBy
 } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -238,7 +239,8 @@ export const SeoForm = React.createClass( {
 			site,
 			storedTitleFormats,
 			showAdvancedSeo,
-			showWebsiteMeta
+			showWebsiteMeta,
+			translate,
 		} = this.props;
 
 		const { dirtyFields } = this.state;
@@ -266,7 +268,7 @@ export const SeoForm = React.createClass( {
 
 		this.setState( { invalidCodes } );
 		if ( invalidCodes.length > 0 ) {
-			notices.error( this.translate( 'Invalid site verification tag entered.' ) );
+			notices.error( translate( 'Invalid site verification tag entered.' ) );
 			return;
 		}
 
@@ -302,14 +304,14 @@ export const SeoForm = React.createClass( {
 			if ( error ) {
 				switch ( error.error ) {
 					case 'invalid_ip':
-						notices.error( this.translate( 'One of your IP Addresses was invalid. Please, try again.' ) );
+						notices.error( translate( 'One of your IP Addresses was invalid. Please, try again.' ) );
 						break;
 					default:
-						notices.error( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
+						notices.error( translate( 'There was a problem saving your changes. Please, try again.' ) );
 				}
 				this.setState( { isSubmittingForm: false } );
 			} else {
-				notices.success( this.translate( 'Settings saved!' ) );
+				notices.success( translate( 'Settings saved!' ) );
 				this.props.markSaved();
 				this.setState( { isSubmittingForm: false } );
 
@@ -355,11 +357,12 @@ export const SeoForm = React.createClass( {
 	},
 
 	getVerificationError( isPasteError ) {
+		const { translate } = this.props;
 		return (
 			<FormInputValidation isError={ true } text={
 				isPasteError
-					? this.translate( 'Verification code should be copied and pasted into this field.' )
-					: this.translate( 'Invalid site verification tag.' )
+					? translate( 'Verification code should be copied and pasted into this field.' )
+					: translate( 'Invalid site verification tag.' )
 			} />
 		);
 	},
@@ -383,6 +386,7 @@ export const SeoForm = React.createClass( {
 			site,
 			isSeoToolsActive,
 			isVerificationToolsActive,
+			translate,
 		} = this.props;
 		const {
 			settings: {
@@ -408,8 +412,8 @@ export const SeoForm = React.createClass( {
 		const isSitePrivate = parseInt( blog_public, 10 ) !== 1;
 		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsSeo;
 		const isDisabled = isSitePrivate || isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
-		const isSeoDisabled = isDisabled || ( isSeoToolsActive === false );
-		const isVerificationDisabled = isDisabled || ( isVerificationToolsActive === false );
+		const isSeoDisabled = isDisabled || isSeoToolsActive === false;
+		const isVerificationDisabled = isDisabled || isVerificationToolsActive === false;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
 		const sitemapUrl = `${ siteUrl }/sitemap.xml`;
@@ -428,8 +432,8 @@ export const SeoForm = React.createClass( {
 		};
 
 		const nudgeTitle = siteIsJetpack
-			? this.translate( 'Enable SEO Tools features by upgrading to Jetpack Professional' )
-			: this.translate( 'Enable SEO Tools features by upgrading to the Business Plan' );
+			? translate( 'Enable SEO Tools features by upgrading to Jetpack Professional' )
+			: translate( 'Enable SEO Tools features by upgrading to the Business Plan' );
 
 		const seoSubmitButton = (
 			<Button
@@ -440,13 +444,13 @@ export const SeoForm = React.createClass( {
 				disabled={ isSaveDisabled || isSeoDisabled }
 			>
 				{ isSubmittingForm
-					? this.translate( 'Saving…' )
-					: this.translate( 'Save Settings' )
+					? translate( 'Saving…' )
+					: translate( 'Save Settings' )
 				}
 			</Button>
 		);
 
-		const seoHelpLink = jetpack
+		const seoHelpLink = siteIsJetpack
 			? 'https://jetpack.com/support/seo-tools/'
 			: 'https://en.blog.wordpress.com/2013/03/22/seo-on-wordpress-com/';
 
@@ -465,13 +469,13 @@ export const SeoForm = React.createClass( {
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
-						text={ this.translate(
+						text={ translate(
 							'SEO settings are disabled because the ' +
 							'site visibility is not set to Public.'
 						) }
 					>
 						<NoticeAction href={ generalTabUrl }>
-							{ this.translate( 'View Settings' ) }
+							{ translate( 'View Settings' ) }
 						</NoticeAction>
 					</Notice>
 				}
@@ -480,12 +484,12 @@ export const SeoForm = React.createClass( {
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
-						text={ this.translate(
+						text={ translate(
 							'SEO Tools require a newer version of Jetpack.'
 						) }
 					>
 						<NoticeAction href={ jetpackUpdateUrl }>
-							{ this.translate( 'Update Now' ) }
+							{ translate( 'Update Now' ) }
 						</NoticeAction>
 					</Notice>
 				}
@@ -494,19 +498,19 @@ export const SeoForm = React.createClass( {
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
-						text={ this.translate(
+						text={ translate(
 							'SEO Tools module is disabled in Jetpack.'
 						) }
 					>
 						<NoticeAction href={ jetpackManagementUrl + 'admin.php?page=jetpack#/engagement' }>
-							{ this.translate( 'Enable' ) }
+							{ translate( 'Enable' ) }
 						</NoticeAction>
 					</Notice>
 				}
 
 				{ ! hasFeature( FEATURE_ADVANCED_SEO, site.ID ) &&
 					<Banner
-						description={ this.translate( 'Adds tools to optimize your site for search engines and social media sharing.' ) }
+						description={ translate( 'Adds tools to optimize your site for search engines and social media sharing.' ) }
 						event={ 'calypso_seo_settings_upgrade_nudge' }
 						feature={ FEATURE_ADVANCED_SEO }
 						plan={ PLAN_BUSINESS }
@@ -514,9 +518,9 @@ export const SeoForm = React.createClass( {
 					/>
 				}
 
-				<SectionHeader label={ this.translate( 'Search Engine Optimization' ) } />
+				<SectionHeader label={ translate( 'Search Engine Optimization' ) } />
 				<Card>
-					{ this.translate(
+					{ translate(
 						'{{b}}WordPress.com has great SEO{{/b}} out of the box. All of our themes are optimized ' +
 						'for search engines, so you don\'t have to do anything extra. However, you can tweak ' +
 						'these settings if you\'d like more advanced control. Read more about what you can do ' +
@@ -533,13 +537,13 @@ export const SeoForm = React.createClass( {
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
 					{ showAdvancedSeo &&
 						<div>
-							<SectionHeader label={ this.translate( 'Page Title Structure' ) }>
+							<SectionHeader label={ translate( 'Page Title Structure' ) }>
 								{ seoSubmitButton }
 							</SectionHeader>
-							<Card compact className="seo-settings__page-title__header">
-								<img className="seo-settings__page-title__header-image" src="/calypso/images/seo/page-title.svg" />
-								<p className="seo-settings__page-title__header-text">
-								{ this.translate(
+							<Card compact className="seo-settings__page-title-header">
+								<img className="seo-settings__page-title-header-image" src="/calypso/images/seo/page-title.svg" />
+								<p className="seo-settings__page-title-header-text">
+								{ translate(
 									'You can set the structure of page titles for different sections of your site. ' +
 									'Doing this will change the way your site title is displayed in search engines, ' +
 									'social media sites, and browser tabs.'
@@ -558,19 +562,19 @@ export const SeoForm = React.createClass( {
 
 					{ ( showAdvancedSeo || ( ! siteIsJetpack && showWebsiteMeta ) ) &&
 						<div>
-							<SectionHeader label={ this.translate( 'Website Meta' ) }>
+							<SectionHeader label={ translate( 'Website Meta' ) }>
 								{ seoSubmitButton }
 							</SectionHeader>
 							<Card>
 								<p>
-									{ this.translate(
+									{ translate(
 										'Craft a description of your Website up to 160 characters that will be used in ' +
 										'search engine results for your front page, and when your website is shared ' +
 										'on social media sites.'
 									) }
 								</p>
 								<FormLabel htmlFor="advanced_seo_front_page_description">
-									{ this.translate( 'Front Page Meta Description' ) }
+									{ translate( 'Front Page Meta Description' ) }
 								</FormLabel>
 								<CountedTextarea
 									name="advanced_seo_front_page_description"
@@ -584,17 +588,17 @@ export const SeoForm = React.createClass( {
 									className="seo-settings__front-page-description"
 								/>
 								{ hasHtmlTagError &&
-									<FormInputValidation isError={ true } text={ this.translate( 'HTML tags are not allowed.' ) } />
+									<FormInputValidation isError={ true } text={ translate( 'HTML tags are not allowed.' ) } />
 								}
 								<FormSettingExplanation>
 									<Button
 										className="seo-settings__preview-button"
 										onClick={ this.showPreview }
 									>
-										{ this.translate( 'Show Previews' ) }
+										{ translate( 'Show Previews' ) }
 									</Button>
 									<span className="seo-settings__preview-explanation">
-										{ this.translate(
+										{ translate(
 											'See how this will look on ' +
 											'Google, Facebook, and Twitter.'
 										) }
@@ -608,33 +612,33 @@ export const SeoForm = React.createClass( {
 						<Notice
 							status="is-warning"
 							showDismiss={ false }
-							text={ this.translate(
+							text={ translate(
 								'Site Verification Services are disabled in Jetpack.'
 							) }
 						>
 							<NoticeAction href={ jetpackManagementUrl + 'admin.php?page=jetpack#/engagement' }>
-								{ this.translate( 'Enable' ) }
+								{ translate( 'Enable' ) }
 							</NoticeAction>
 						</Notice>
 					}
 
-					<SectionHeader label={ this.translate( 'Site Verification Services' ) }>
+					<SectionHeader label={ translate( 'Site Verification Services' ) }>
 						<Button
-							compact={ true }
+							compact
+							primary
 							onClick={ this.submitSeoForm }
-							primary={ true }
 							type="submit"
 							disabled={ isSaveDisabled || isVerificationDisabled }
 						>
 							{ isSubmittingForm
-								? this.translate( 'Saving…' )
-								: this.translate( 'Save Settings' )
+								? translate( 'Saving…' )
+								: translate( 'Save Settings' )
 							}
 						</Button>
 					</SectionHeader>
 					<Card>
 						<p>
-							{ this.translate(
+							{ translate(
 								'Note that {{b}}verifying your site with these services is not necessary{{/b}} in order' +
 								' for your site to be indexed by search engines. To use these advanced search engine tools' +
 								' and verify your site with a service, paste the HTML Tag code below. Read the' +
@@ -679,7 +683,7 @@ export const SeoForm = React.createClass( {
 						</p>
 						<FormFieldset>
 							<FormInput
-								prefix={ this.translate( 'Google' ) }
+								prefix={ translate( 'Google' ) }
 								name="verification_code_google"
 								type="text"
 								value={ googleCode }
@@ -693,7 +697,7 @@ export const SeoForm = React.createClass( {
 						</FormFieldset>
 						<FormFieldset>
 							<FormInput
-								prefix={ this.translate( 'Bing' ) }
+								prefix={ translate( 'Bing' ) }
 								name="verification_code_bing"
 								type="text"
 								value={ bingCode }
@@ -707,7 +711,7 @@ export const SeoForm = React.createClass( {
 						</FormFieldset>
 						<FormFieldset>
 							<FormInput
-								prefix={ this.translate( 'Pinterest' ) }
+								prefix={ translate( 'Pinterest' ) }
 								name="verification_code_pinterest"
 								type="text"
 								value={ pinterestCode }
@@ -721,7 +725,7 @@ export const SeoForm = React.createClass( {
 						</FormFieldset>
 						<FormFieldset>
 							<FormInput
-								prefix={ this.translate( 'Yandex' ) }
+								prefix={ translate( 'Yandex' ) }
 								name="verification_code_yandex"
 								type="text"
 								value={ yandexCode }
@@ -734,7 +738,7 @@ export const SeoForm = React.createClass( {
 							{ hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 						<FormFieldset>
-							<FormLabel htmlFor="seo_sitemap">{ this.translate( 'XML Sitemap' ) }</FormLabel>
+							<FormLabel htmlFor="seo_sitemap">{ translate( 'XML Sitemap' ) }</FormLabel>
 							<ExternalLink
 								className="seo-settings__seo-sitemap"
 								icon={ true }
@@ -744,7 +748,7 @@ export const SeoForm = React.createClass( {
 								{ sitemapUrl }
 							</ExternalLink>
 							<FormSettingExplanation>
-								{ this.translate( 'Your site\'s sitemap is automatically sent to all major search engines for indexing.' ) }
+								{ translate( 'Your site\'s sitemap is automatically sent to all major search engines for indexing.' ) }
 							</FormSettingExplanation>
 						</FormFieldset>
 					</Card>
@@ -799,4 +803,4 @@ export default connect(
 	mapDispatchToProps,
 	undefined,
 	{ pure: false } // defaults to true, but this component has internal state
-)( protectForm( SeoForm ) );
+)( protectForm( localize( SeoForm ) ) );
