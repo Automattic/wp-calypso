@@ -43,6 +43,7 @@ import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
 import insertMenuPlugin from './plugins/insert-menu/plugin';
 import embedReversalPlugin from './plugins/embed-reversal/plugin';
 import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
+import isIE11Detected from 'lib/detect-ie11';
 
 [
 	wpcomPlugin,
@@ -380,7 +381,10 @@ module.exports = React.createClass( {
 
 			// Collapse selection to avoid scrolling to the bottom of the textarea
 			textNode.setSelectionRange( 0, 0 );
-			textNode.focus();
+
+			if ( ! isIE11Detected ) {
+				textNode.focus();
+			}
 		} else if ( this._editor ) {
 			this._editor.focus();
 		}
