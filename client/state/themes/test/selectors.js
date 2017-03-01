@@ -38,6 +38,7 @@ import {
 	isThemePurchased,
 	isPremiumSquaredTheme,
 	isPremiumThemeAvailable,
+	isThemeAvailableOnJetpackSite,
 	getWpcomParentThemeId,
 } from '../selectors';
 import ThemeQueryManager from 'lib/query-manager/theme';
@@ -2306,6 +2307,92 @@ describe( 'themes selectors', () => {
 				}, 'mood', 2916284
 			);
 
+			expect( isAvailable ).to.be.true;
+		} );
+	} );
+
+	describe( '#isThemeAvailableOnJetpackSite', () => {
+		it( 'should return true if theme is already installed on Jetpack site', () => {
+			const isAvailable = isThemeAvailableOnJetpackSite(
+				{
+					sites: {
+						items: {
+							77203074: {
+								ID: 77203074,
+								URL: 'https://example.net',
+								jetpack: true
+							}
+						}
+					},
+					themes: {
+						queries: {
+							77203074: new ThemeQueryManager( {
+								items: { twentyfifteen }
+							} )
+						}
+					}
+				},
+				'twentyfifteen',
+				77203074
+			);
+			expect( isAvailable ).to.be.true;
+		} );
+
+		it( 'should return false if theme is a WP.com theme but Jetpack site doesn\'t support WP.com theme installation', () => {
+			const isAvailable = isThemeAvailableOnJetpackSite(
+				{
+					sites: {
+						items: {
+							77203074: {
+								ID: 77203074,
+								URL: 'https://example.net',
+								jetpack: true,
+								options: {
+									jetpack_version: '4.0'
+								}
+							}
+						}
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentyfifteen }
+							} )
+						}
+					}
+				},
+				'twentyfifteen',
+				77203074
+			);
+			expect( isAvailable ).to.be.false;
+		} );
+
+		it( 'should return true if theme is a WP.com theme and Jetpack site supports WP.com theme installation', () => {
+			const isAvailable = isThemeAvailableOnJetpackSite(
+				{
+					sites: {
+						items: {
+							77203074: {
+								ID: 77203074,
+								URL: 'https://example.net',
+								jetpack: true,
+								options: {
+									jetpack_version: '4.8'
+								}
+							}
+						}
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentyfifteen }
+							} )
+						}
+					}
+				},
+				'twentyfifteen',
+				77203074
+			);
 			expect( isAvailable ).to.be.true;
 		} );
 	} );
