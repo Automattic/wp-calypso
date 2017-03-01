@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var page = require( 'page' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var vipController = require( './controller' ),
-	controller = require( 'my-sites/controller' ),
-	config = require( 'config' );
+import vipController from './controller';
+import controller from 'my-sites/controller';
+import config from 'config';
 
 module.exports = function() {
 	if ( config.isEnabled( 'vip/deploys' ) ) {

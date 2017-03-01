@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	classnames = require( 'classnames' ),
-	i18n = require( 'i18n-calypso' ),
-	debug = require( 'debug' )( 'calypso:vip:logs' );
+import React from 'react';
+import isEmpty from 'lodash/isEmpty';
+import classnames from 'classnames';
+import i18n from 'i18n-calypso';
+const debug = require( 'debug' )( 'calypso:vip:logs' );
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	SectionHeader = require( 'components/section-header' );
+import Card from 'components/card';
+import SectionHeader from 'components/section-header';
 
 module.exports = React.createClass( {
 	displayName: 'viplogsTable',

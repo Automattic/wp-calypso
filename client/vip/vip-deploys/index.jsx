@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:vip:deploys' );
+import React from 'react';
+const debug = require( 'debug' )( 'calypso:vip:deploys' );
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	Main = require( 'components/main' ),
-	config = require( 'config' );
+import Card from 'components/card';
+import Main from 'components/main';
+import config from 'config';
 
 module.exports = React.createClass({
 	displayName: 'vipDeploys',

@@ -1,15 +1,15 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
-	i18n = require( 'i18n-calypso' ),
-	page = require( 'page' );
+import React from 'react';
+import i18n from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal Dependencies
  */
-var setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle,
-	sites = require( 'lib/sites-list' )();
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+const sites = require( 'lib/sites-list' )();
 
 import { renderWithReduxStore } from 'lib/react-helpers';
 
