@@ -222,11 +222,17 @@ class SearchStream extends Component {
 							delayTimeout={ 500 }
 							placeholder={ searchPlaceholderText } />
 					</CompactCard>
-					{ suggestions &&
-						<p className="search-stream__blank-suggestions">
-							{ this.props.translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: suggestionList } } ) }
-						</p>
-					}
+					<p className="search-stream__blank-suggestions">
+						{ suggestions &&
+							this.props.translate(
+								'Suggestions: {{suggestions /}}.', {
+									components: {
+										suggestions: suggestionList
+									}
+								} )
+						}&nbsp;
+					</p>
+
 					<hr className="search-stream__fixed-area-separator" />
 				</div>
 			</Stream>

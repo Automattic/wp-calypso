@@ -28,7 +28,10 @@ export default ( Element, count = 3 ) => {
 
 		suggestionsFromTags() {
 			const tags = TagSubscriptions.get();
-			if ( tags && tags.length ) {
+			if ( tags ) {
+				if ( tags.length <= count ) {
+					return [];
+				}
 				return map( sampleSize( tags, count ), tag => ( tag.display_name || tag.slug ).replace( /-/g, ' ' ) );
 			}
 			return null;
@@ -43,7 +46,16 @@ export default ( Element, count = 3 ) => {
 		}
 
 		getSuggestions() {
-			return this.suggestionsFromTags() || this.suggestionsFromPicks();
+			const tagSuggestions = this.suggestionsFromTags();
+			if ( tagSuggestions === null ) {
+				return null;
+			}
+
+			if ( tagSuggestions.length ) {
+				return tagSuggestions;
+			}
+
+			return this.suggestionsFromPicks();
 		}
 
 		handleChange = () => {

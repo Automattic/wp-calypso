@@ -40,11 +40,15 @@ const FollowingStream = ( props ) => {
 					delayTimeout={ 500 }
 					placeholder={ props.translate( 'Search billions of WordPress.com posts…' ) } />
 			</CompactCard>
-			{ suggestionList &&
-				<p className="search-stream__blank-suggestions">
-					{ props.translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: suggestionList } } ) }
-				</p>
-			}
+			<p className="search-stream__blank-suggestions">
+				{ suggestionList &&
+					props.translate( 'Suggestions: {{suggestions /}}.', {
+						components: {
+							suggestions: suggestionList
+						}
+					} )
+				}&nbsp;
+			</p>
 			<hr className="search-stream__fixed-area-separator" />
 		</Stream>
 	);
