@@ -6,35 +6,28 @@
 @import 'upload-url';
 
 .media-library__header {
-	position: relative;
 	margin-bottom: 14px;
+	padding: 12px 24px;
+	display: flex;
+}
+
+.dialog__content .media-library__header.card {
+	box-shadow: none;
+	.media-library__scale-range.range {
+		top: 4px;
+	}
+}
+
+.media-library__header .is-desktop {
+	display: none;
+
+	@include breakpoint( ">660px" ) {
+		display: inline-block;
+	}
 }
 
 .media-library__header .button {
 	margin: 0 8px;
-
-	&.is-desktop {
-		display: none;
-
-		@include breakpoint( ">660px" ) {
-			display: inline-block;
-		}
-	}
-
-	&.is-mobile {
-		position: relative;
-		left: -1px;
-		height: 40px;
-		margin-left: 0;
-		padding-left: 8px;
-		padding-right: 8px;
-		border-top-left-radius: 0;
-		border-bottom-left-radius: 0;
-
-		@include breakpoint( ">660px" ) {
-			display: none;
-		}
-	}
 
 	&:first-of-type {
 		margin-left: 0;
@@ -42,13 +35,15 @@
 }
 
 .media-library__header .button.media-library__upload-button {
+	margin-right: 0;
 	@include breakpoint( "<660px" ) {
-		margin-right: 0;
 		border-top-right-radius: 0;
 		border-bottom-right-radius: 0;
 	}
 }
-
+.media-library__header .button.media-library__upload-more {
+	margin-left: 0;
+}
 .media-library__heading {
 	@include heading;
 	display: inline-block;
@@ -67,8 +62,11 @@
 
 .media-library__scale-toggle {
 	position: absolute;
-		top: 0;
-		right: 0;
+	top: 10;
+	right: 24px;
+	&.segmented-control.is-compact .segmented-control__link {
+		padding: 2px 4px;
+	}
 
 	@include breakpoint( ">480px" ) {
 		display: none;
@@ -88,7 +86,7 @@
 }
 
 .media-library__scale-toggle .gridicon {
-	margin: 2px 8px;
+	margin: 2px 4px;
 	vertical-align: middle;
 }
 

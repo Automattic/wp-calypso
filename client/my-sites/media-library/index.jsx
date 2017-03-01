@@ -44,7 +44,8 @@ module.exports = React.createClass( {
 		return {
 			fullScreenDropZone: true,
 			onAddMedia: () => {},
-			onScaleChange: () => {}
+			onScaleChange: () => {},
+			scrollable: false,
 		};
 	},
 

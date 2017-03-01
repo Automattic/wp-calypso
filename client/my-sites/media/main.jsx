@@ -188,6 +188,7 @@ export default React.createClass( {
 						onEditItem={ this.openDetailsModalForASingleImage }
 						onViewDetails={ this.openDetailsModalForAllSelected }
 						onDeleteItem={ this.deleteMedia }
+						modal={ false }
 						containerWidth={ this.state.containerWidth } />
 				</MediaLibrarySelectedData>
 			</div>
