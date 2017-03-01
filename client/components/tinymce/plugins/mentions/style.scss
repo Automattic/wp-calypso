@@ -26,6 +26,10 @@ $avatar-margin: 10px;
 		color: white;
 	}
 
+	.rtl & {
+		direction: ltr; // Required to get the '@' on the correct side.
+	}
+
 	@include breakpoint( ">480px" ) {
 		line-height: 24px;
 	}
@@ -66,10 +70,4 @@ $avatar-margin: 10px;
 .mentions__highlight {
 	font-weight: 400;
 	background: rgba( $blue-light, 0.25 );
-}
-
-.rtl {
-	.mentions__suggestion {
-		direction: ltr; // required to get the '@' on the correct side
-	}
 }
