@@ -70,6 +70,14 @@
 	font-size: 13px;
 	color: $gray;
 	font-family: $sans;
+	overflow: hidden;
+	max-height: 13px * 1.4 * 1;
+	word-wrap: break-word;
+	position: relative;
+
+	&::after {
+		@include long-content-fade( $size: 20% );
+	}
 }
 
 .reader-combined-card .reader-visit-link {
