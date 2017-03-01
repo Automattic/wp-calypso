@@ -244,7 +244,7 @@ export class Mentions extends Component {
 		return (
 			<div ref={ this.setPopoverContext }>
 				<QueryUsersSuggestions siteId={ siteId } />
-				{ this.matchingSuggestions.length && showPopover &&
+				{ this.matchingSuggestions.length > 0 && showPopover &&
 					<SuggestionList
 						query={ query }
 						suggestions={ this.matchingSuggestions }
