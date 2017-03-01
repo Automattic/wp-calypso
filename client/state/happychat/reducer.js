@@ -21,7 +21,7 @@ import {
 	HAPPYCHAT_CONNECTED,
 	HAPPYCHAT_SET_CHAT_STATUS,
 	HAPPYCHAT_SEND_MESSAGE,
-	HAPPYCHAT_RECEIVE_TRANSCRIPT,
+	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_DISCONNECTED
 } from 'state/action-types';
 
@@ -74,7 +74,7 @@ const timeline = ( state = [], action ) => {
 			const event = timeline_event( {}, action );
 			const existing = find( state, ( { id } ) => event.id === id );
 			return existing ? state : concat( state, [ event ] );
-		case HAPPYCHAT_RECEIVE_TRANSCRIPT:
+		case HAPPYCHAT_TRANSCRIPT_RECEIVE:
 			const messages = filter( action.messages, message => {
 				if ( ! message.id ) {
 					return false;
