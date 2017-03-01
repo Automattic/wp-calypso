@@ -231,3 +231,48 @@
 .checkout-thank-you__verification-notice-email {
 	word-break: break-word;
 }
+
+// Jetpack thank you styles
+.checkout-thank-you__jetpack {
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+.checkout-thank-you__jetpack-plugins {
+	margin: 0 auto;
+}
+
+.checkout-thank-you__jetpack-plugin {
+	display: flex;
+
+	&.is-placeholder {
+		.checkout-thank-you__jetpack-plugin-status-text span,
+		.checkout-thank-you__jetpack-plugin-status-icon span {
+			@include placeholder();
+		}
+	}
+}
+
+.checkout-thank-you__jetpack-plugin-status-icon {
+	display: block;
+	flex-grow: 1;
+	flex-basis: 0;
+	margin-right: 8px;
+	text-align: right;
+}
+
+.checkout-thank-you__jetpack-plugin-status-text {
+	display: block;
+	flex-grow: 2;
+	flex-basis: 0;
+	text-align: left;
+}
+
+.checkout-thank-you__jetpack-plugin-status-icon .spinner,
+.checkout-thank-you__jetpack-plugin-status-icon .spinner__image {
+	display: inline;
+}
+
+.checkout-thank-you__jetpack-plugin-status-icon .gridicons-checkmark {
+	color: $alert-green;
+}
