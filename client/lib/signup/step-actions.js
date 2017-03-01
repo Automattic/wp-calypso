@@ -233,7 +233,7 @@ module.exports = {
 
 		const newCartItems = [ cartItem, privacyItem ].filter( item => item );
 
-		SignupCart.addToCart( siteId, newCartItems, callback );
+		SignupCart.addToCart( siteId, newCartItems, error => callback( error, { cartItem, privacyItem } ) );
 	},
 
 	createAccount( callback, dependencies, { userData, flowName, queryArgs }, reduxStore ) {
