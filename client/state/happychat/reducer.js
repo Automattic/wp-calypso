@@ -10,6 +10,7 @@ import {
 	get,
 	takeRight,
 } from 'lodash';
+import validator from 'is-my-json-valid';
 
 /**
  * Internal dependencies
@@ -25,10 +26,9 @@ import {
 	HAPPYCHAT_SET_CHAT_STATUS,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 } from 'state/action-types';
+import { HAPPYCHAT_MAX_STORED_MESSAGES } from './constants';
+import { timelineSchema } from './schema';
 
-import {
-	HAPPYCHAT_MAX_STORED_MESSAGES,
-} from './constants';
 /**
  * Returns a timeline event from the redux action
  *
@@ -56,6 +56,7 @@ const timeline_event = ( state = {}, action ) => {
 	return state;
 };
 
+const validateTimeline = validator( timelineSchema );
 /**
  * Adds timeline events for happychat
  *
@@ -69,7 +70,11 @@ const timeline = ( state = [], action ) => {
 		case SERIALIZE:
 			return takeRight( state, HAPPYCHAT_MAX_STORED_MESSAGES );
 		case DESERIALIZE:
-			return state;
+			const valid = validateTimeline( state );
+			if ( valid ) {
+				return state;
+			}
+			return [];
 		case HAPPYCHAT_RECEIVE_EVENT:
 			// if meta.forOperator is set, skip so won't show to user
 			if ( get( action, 'event.meta.forOperator', false ) ) {
