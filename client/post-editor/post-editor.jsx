@@ -8,6 +8,7 @@ import { debounce, throttle, get } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -203,8 +204,11 @@ export const PostEditor = React.createClass( {
 			isTrashed = this.state.post.status === 'trash';
 			hasAutosave = get( this.state.post.meta, [ 'data', 'autosave' ] );
 		}
+		const classes = classNames( 'post-editor', {
+			'is-loading': ! this.state.isEditorInitialized
+		} );
 		return (
-			<div className="post-editor">
+			<div className={ classes }>
 				<QueryPreferences />
 				<EditorDocumentHead />
 				<EditorPostTypeUnsupported />
@@ -838,7 +842,7 @@ export default connect(
 			postId,
 			showDrafts: isEditorDraftsVisible( state ),
 			editorModePreference: getPreference( state, 'editor-mode' ),
-			editorSidebarPreference: getPreference( state, 'editor-sidebar' ),
+			editorSidebarPreference: getPreference( state, 'editor-sidebar' ) || 'open',
 			editPath: getEditorPath( state, siteId, postId ),
 			edits: getPostEdits( state, siteId, postId ),
 			dirty: isEditedPostDirty( state, siteId, postId ),
