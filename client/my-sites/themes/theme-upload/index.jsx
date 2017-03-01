@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { includes, find, isEmpty } from 'lodash';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -268,7 +269,7 @@ class Upload extends React.Component {
 		);
 	}
 
-	renderNotAvailable() {
+	renderNotAvailableForMultisite() {
 		return (
 			<EmptyContent
 				title={ this.props.translate( 'Not available for multi site' ) }
@@ -279,6 +280,19 @@ class Upload extends React.Component {
 			/>
 			);
 	}
+
+	renderNotAvailable() {
+		return (
+			<EmptyContent
+				title={ this.props.translate( 'Upload not available for this site' ) }
+				line={ this.props.translate( 'Please select a different site' ) }
+				action={ this.props.translate( 'Backt to themes' ) }
+				actionURL={ this.props.backPath }
+				illustration={ '/calypso/images/drake/drake-whoops.svg' }
+			/>
+			);
+	}
+
 	render() {
 		const {
 			translate,
@@ -296,6 +310,10 @@ class Upload extends React.Component {
 		const { showEligibility } = this.state;
 
 		if ( isMultisite ) {
+			return this.renderNotAvailableForMultisite();
+		}
+
+		if ( ! isJetpack && ! config.isEnabled( 'automated-transfer' ) ) {
 			return this.renderNotAvailable();
 		}
 
