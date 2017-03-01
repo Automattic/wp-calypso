@@ -28,6 +28,7 @@ import GuidedTransferDetails from './guided-transfer-details';
 import HappinessSupport from 'components/happiness-support';
 import HeaderCake from 'components/header-cake';
 import PlanThankYouCard from 'blocks/plan-thank-you-card';
+import JetpackThankYouCard from './jetpack-thank-you-card';
 import {
 	isChargeback,
 	isDomainMapping,
@@ -56,6 +57,7 @@ import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
 import upgradesPaths from 'my-sites/upgrades/paths';
+import config from 'config';
 
 function getPurchases( props ) {
 	return ( props.receipt.data && props.receipt.data.purchases ) || [];
@@ -225,6 +227,13 @@ const CheckoutThankYou = React.createClass( {
 				<Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } />
+				</Main>
+			);
+		} else if ( wasJetpackPlanPurchased && config.isEnabled( 'plans/jetpack-config-v2' ) ) {
+			return (
+				<Main className="checkout-thank-you">
+					{ this.renderConfirmationNotice() }
+					<JetpackThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
 			);
 		}
