@@ -17,7 +17,6 @@ import {
 	showThemePreview as themePreview,
 } from 'state/themes/actions';
 import {
-	getTheme,
 	getThemeSignupUrl,
 	getThemePurchaseUrl,
 	getThemeCustomizeUrl,
@@ -27,10 +26,9 @@ import {
 	isThemeActive,
 	isThemePremium,
 	isPremiumThemeAvailable,
-	isWpcomTheme
+	isThemeAvailableOnJetpackSite
 } from 'state/themes/selectors';
 import {
-	hasJetpackSiteJetpackThemesExtendedFeatures,
 	isJetpackSite,
 	isJetpackSiteMultiSite
 } from 'state/sites/selectors';
@@ -70,9 +68,7 @@ const activate = {
 	hideForTheme: ( state, theme, siteId ) => (
 		isThemeActive( state, theme.id, siteId ) ||
 		( isThemePremium( state, theme.id ) && ! isPremiumThemeAvailable( state, theme.id, siteId ) ) ||
-		// Are we trying to install and activate a (previously not-installed) WP.com theme on a Jetpack site?
-		isJetpackSite( state, siteId ) && isWpcomTheme( state, theme.id ) && ! getTheme( state, siteId, theme.id ) &&
-			! ( config.isEnabled( 'manage/themes/upload' ) && hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) )
+		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, theme.id, siteId ) )
 	)
 };
 
@@ -112,9 +108,7 @@ const tryandcustomize = {
 			// is less readily available since it needs to be fetched using the `QuerySitePlans` component.
 			( isJetpackSite( state, siteId ) && ! isPremiumThemeAvailable( state, theme.id, siteId ) )
 		) ||
-		// Are we trying to install and try a (previously not-installed) WP.com theme on a Jetpack site?
-		isJetpackSite( state, siteId ) && isWpcomTheme( state, theme.id ) && ! getTheme( state, siteId, theme.id ) &&
-			! ( config.isEnabled( 'manage/themes/upload' ) && hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) )
+		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, theme.id, siteId ) )
 		);
 	}
 };
