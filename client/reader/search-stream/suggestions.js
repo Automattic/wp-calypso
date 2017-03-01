@@ -1,3 +1,14 @@
+/**
+ * External Dependencies
+ */
+import { map, sampleSize } from 'lodash';
+
+/**
+ * Internal Dependencies
+ */
+import TagSubscriptions from 'lib/reader-tags/subscriptions';
+import i18nUtils from 'lib/i18n-utils';
+
 export const suggestions = {
 	en: [
 		'Astrology',
@@ -76,3 +87,17 @@ export const suggestions = {
 		'Community Pool'
 	]
 };
+
+export function getSuggestions( count = 3 ) {
+	const tags = TagSubscriptions.get();
+	if ( tags && tags.length > count ) {
+		return map( sampleSize( tags, count ), tag => ( tag.display_name || tag.slug ).replace( /-/g, ' ' ) );
+	}
+
+	const lang = i18nUtils.getLocaleSlug();
+	if ( suggestions[ lang ] ) {
+		return sampleSize( suggestions[ lang ], count );
+	}
+
+	return null;
+}
