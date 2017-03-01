@@ -27,7 +27,8 @@ module.exports = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
-			onAddMedia: noop
+			onAddMedia: noop,
+			type: 'button',
 		};
 	},
 
