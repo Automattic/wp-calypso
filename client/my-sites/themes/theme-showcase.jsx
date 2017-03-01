@@ -21,6 +21,7 @@ import DocumentHead from 'components/data/document-head';
 import { getFilter, getSortedFilterTerms, stripFilters } from './theme-filters.js';
 import buildUrl from 'lib/mixins/url-search/build-url';
 import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
 
@@ -119,11 +120,11 @@ const ThemeShowcase = React.createClass( {
 	},
 
 	showUploadButton() {
-		const { siteSlug, isMultisite, isJetpack } = this.props;
+		const { isMultisite, isJetpack, isLoggedIn } = this.props;
 
 		return (
 			config.isEnabled( 'manage/themes/upload' ) &&
-			siteSlug &&
+			isLoggedIn &&
 			! isMultisite &&
 			( isJetpack || config.isEnabled( 'automated-transfer' ) )
 		);
@@ -137,7 +138,8 @@ const ThemeShowcase = React.createClass( {
 			getScreenshotOption,
 			search,
 			filter,
-			translate
+			translate,
+			siteSlug
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
@@ -162,7 +164,7 @@ const ThemeShowcase = React.createClass( {
 				</StickyPanel>
 				{ this.showUploadButton() && <Button className="themes__upload-button" compact icon
 					onClick={ this.onUploadClick }
-					href={ `/design/upload/${ this.props.siteSlug }` }>
+					href={ siteSlug ? `/design/upload/${ siteSlug }` : '/design/upload' }>
 					<Gridicon icon="cloud-upload" />
 					{ translate( 'Upload Theme' ) }
 				</Button>
@@ -209,6 +211,7 @@ const ThemeShowcase = React.createClass( {
 
 export default connect(
 	( state, { siteId } ) => ( {
+		isLoggedIn: !! getCurrentUserId( state ),
 		siteSlug: getSiteSlug( state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
 	} )
