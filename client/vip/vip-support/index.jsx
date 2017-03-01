@@ -11,7 +11,7 @@ import Card from 'components/card';
 import Main from 'components/main';
 import config from 'config';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'vipSupport',
 
 	componentWillMount: function() {

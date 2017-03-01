@@ -17,7 +17,7 @@ import URLSearch from 'lib/mixins/url-search';
 import LogsTable from './logs-table';
 import config from 'config';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'vipLogs',
 	mixins: [ URLSearch ],
 

@@ -13,7 +13,7 @@ const sites = require( 'lib/sites-list' )();
 
 import { renderWithReduxStore } from 'lib/react-helpers';
 
-module.exports = {
+export default {
 
 	vip: function() {
 		page.redirect( '/vip/updates' );

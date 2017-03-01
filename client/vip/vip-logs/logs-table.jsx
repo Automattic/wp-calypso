@@ -13,7 +13,7 @@ const debug = require( 'debug' )( 'calypso:vip:logs' );
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'viplogsTable',
 
 	componentWillMount: function() {
