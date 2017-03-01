@@ -5,6 +5,7 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import noop from 'lodash/noop';
 import classNames from 'classnames';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -22,14 +23,21 @@ module.exports = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		onAddMedia: React.PropTypes.func,
-		className: React.PropTypes.string
+		className: React.PropTypes.string,
 	},
 
 	getDefaultProps: function() {
 		return {
 			onAddMedia: noop,
 			type: 'button',
+			href: null,
 		};
+	},
+
+	onClick: function() {
+		if ( this.props.href ) {
+			page( this.props.href );
+		}
 	},
 
 	uploadFiles: function( event ) {
@@ -73,6 +81,7 @@ module.exports = React.createClass( {
 						accept={ this.getInputAccept() }
 						multiple
 						onChange={ this.uploadFiles }
+						onClick={ this.onClick }
 						className="media-library__upload-button-input" />
 				</form>
 			</Button>
