@@ -38,6 +38,8 @@ import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-d
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { receivePost, savePostSuccess } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { hasBrokenSiteUserConnection } from 'state/selectors';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import EditorForbidden from 'post-editor/editor-forbidden';
@@ -53,6 +55,7 @@ import Site from 'blocks/site';
 import StatusLabel from 'post-editor/editor-status-label';
 import { editedPostHasContent } from 'state/selectors';
 import EditorGroundControl from 'post-editor/editor-ground-control';
+import { isMobile } from 'lib/viewport';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
@@ -62,13 +65,15 @@ export const PostEditor = React.createClass( {
 		setEditorSidebar: React.PropTypes.func,
 		setLayoutFocus: React.PropTypes.func.isRequired,
 		editorModePreference: React.PropTypes.string,
+		editorSidebarPreference: React.PropTypes.string,
 		sites: React.PropTypes.object,
 		user: React.PropTypes.object,
 		userUtils: React.PropTypes.object,
 		editPath: React.PropTypes.string,
 		markChanged: React.PropTypes.func.isRequired,
 		markSaved: React.PropTypes.func.isRequired,
-		translate: React.PropTypes.func.isRequired
+		translate: React.PropTypes.func.isRequired,
+		hasBrokenPublicizeConnection: React.PropTypes.bool,
 	},
 
 	_previewWindow: null,
@@ -112,9 +117,7 @@ export const PostEditor = React.createClass( {
 		this.debouncedAutosave = debounce( this.throttledAutosave, 3000 );
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
-		if ( this.props.editorSidebarPreference === 'open' ) {
-			this.props.setLayoutFocus( 'sidebar' );
-		}
+		this.useDefaultSidebarFocus();
 
 		this.setState( {
 			isEditorInitialized: false
@@ -159,6 +162,18 @@ export const PostEditor = React.createClass( {
 		if ( nextProps.siteId === siteId && nextProps.postId !== postId ) {
 			// make sure the history entry has the post ID in it, but don't dispatch
 			page.replace( nextProps.editPath, null, false, false );
+		}
+
+		if ( nextProps.siteId !== siteId ||
+			( nextProps.siteId === siteId && nextProps.postId !== postId ) ) {
+			this.useDefaultSidebarFocus( nextProps );
+		}
+	},
+
+	useDefaultSidebarFocus( nextProps ) {
+		const props = nextProps || this.props;
+		if ( ! isMobile() && ( props.editorSidebarPreference === 'open' || props.hasBrokenPublicizeConnection ) ) {
+			this.props.setLayoutFocus( 'sidebar' );
 		}
 	},
 
@@ -227,6 +242,9 @@ export const PostEditor = React.createClass( {
 					/>
 					<div className="post-editor__content">
 						<div className="editor">
+							<EditorNotice
+								{ ...this.state.notice }
+								onDismissClick={ this.hideNotice } />
 							<EditorActionBar
 								isNew={ this.state.isNew }
 								onPrivatePublish={ this.onPublish }
@@ -248,9 +266,6 @@ export const PostEditor = React.createClass( {
 									type={ this.props.type }
 								/>
 							</div>
-							<EditorNotice
-								{ ...this.state.notice }
-								onDismissClick={ this.hideNotice } />
 							<FeaturedImage
 								site={ site }
 								post={ this.state.post }
@@ -660,7 +675,6 @@ export const PostEditor = React.createClass( {
 
 	onPublishFailure: function( error ) {
 		this.onSaveFailure( error, 'publishFailure' );
-		this.toggleSidebar();
 	},
 
 	onPublishSuccess: function() {
@@ -676,7 +690,6 @@ export const PostEditor = React.createClass( {
 		}
 
 		this.onSaveSuccess( message, ( message === 'published' ? 'view' : 'preview' ), savedPost.URL );
-		this.toggleSidebar();
 	},
 
 	onSaveFailure: function( error, message ) {
@@ -815,6 +828,7 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
+		const userId = getCurrentUserId( state );
 
 		return {
 			siteId,
@@ -826,6 +840,7 @@ export default connect(
 			dirty: isEditedPostDirty( state, siteId, postId ),
 			hasContent: editedPostHasContent( state, siteId, postId ),
 			layoutFocus: getCurrentLayoutFocus( state ),
+			hasBrokenPublicizeConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
 		};
 	},
 	( dispatch ) => {

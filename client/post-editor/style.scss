@@ -109,6 +109,12 @@
 	position: relative;
 }
 
+.editor .editor-notice .notice {
+	@include breakpoint( ">660px" ) {
+		margin: 0;
+	}
+}
+
 .editor .tinymce {
 	min-height: 100vh;
 	resize: none;

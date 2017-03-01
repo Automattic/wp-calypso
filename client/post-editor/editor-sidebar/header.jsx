@@ -19,6 +19,7 @@ function EditorSidebarHeader( { translate, toggleSidebar } ) {
 				compact borderless
 				className="editor-sidebar__back"
 				onClick={ toggleSidebar }
+				title={ translate( 'Close sidebar' ) }
 				aria-label={ translate( 'Close sidebar' ) }>
 				<Gridicon icon="cross" />
 			</Button>
