@@ -70,7 +70,14 @@ export default class SiteOrDomain extends Component {
 		const tld = domain.split( '.' ).slice( 1 ).join( '.' );
 		const domainItem = cartItems.domainRegistration( { productSlug: tlds[ tld ], domain } );
 
-		SignupActions.submitSignupStep( { stepName, domainItem, siteSlug: domain }, [], { designType } );
+		SignupActions.submitSignupStep( {
+			stepName,
+			domainItem,
+			designType,
+			siteSlug: domain,
+			siteUrl: domain,
+			isPurchasingItem: true,
+		}, [], { designType } );
 
 		if ( designType === 'domain' ) {
 			// we can skip the next two steps in the `domain-first` flow if the

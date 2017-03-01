@@ -4,6 +4,7 @@
 import assign from 'lodash/assign';
 import defer from 'lodash/defer';
 import isEmpty from 'lodash/isEmpty';
+import pick from 'lodash/pick';
 import async from 'async';
 import { parse as parseURL } from 'url';
 import { startsWith } from 'lodash';
@@ -25,22 +26,23 @@ import {
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 
-function createCart( callback, dependencies, data, reduxStore ) {
-	const { domainItem } = data;
-	const { designType } = dependencies;
+function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
+	const { designType, domainItem } = data;
 
 	if ( designType === 'domain' ) {
 		const cartKey = 'no-site';
 		const providedDependencies = {
 			siteId: null,
 			siteSlug: null,
-			themeItem: null,
+			themeSlugWithRepo: null,
 			domainItem,
 		};
 
 		SignupCart.createCart( cartKey, [ domainItem ], error => callback( error, providedDependencies ) );
 	} else {
-		createSiteWithCart( callback, dependencies, data, reduxStore );
+		createSiteWithCart( function( errors, providedDependencies ) {
+			callback( errors, pick( providedDependencies, [ 'siteId', 'siteSlug', 'themeSlugWithRepo', 'domainItem' ] ) )
+		}, dependencies, data, reduxStore );
 	}
 }
 
@@ -217,7 +219,7 @@ function getUsernameSuggestion( username, reduxState ) {
 }
 
 module.exports = {
-	createCart,
+	createSiteOrDomain,
 
 	createSiteWithCart,
 
