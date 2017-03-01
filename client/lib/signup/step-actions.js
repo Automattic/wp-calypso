@@ -26,13 +26,15 @@ import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 
 function createCart( callback, dependencies, data, reduxStore ) {
-	const { domainItem, designType } = dependencies;
+	const { domainItem } = data;
+	const { designType } = dependencies;
 
 	if ( designType === 'domain' ) {
 		const cartKey = 'no-site';
 		const providedDependencies = {
 			siteId: null,
-			siteSlug: cartKey,
+			siteSlug: null,
+			themeItem: null,
 			domainItem,
 		};
 
