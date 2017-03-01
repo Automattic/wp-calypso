@@ -100,10 +100,6 @@
 	border-radius: 4px 0 0 4px;
 	flex-grow: 1;
 	padding: 5px 14px 7px;
-
-	@include breakpoint( "<660px" ) {
-		display: none;
-	}
 }
 
 .editor-ground-control__time-button {
@@ -115,18 +111,11 @@
 		padding-right: 8px;
 		margin-left: -1px;
 	}
-
-	@include breakpoint( "<660px" ) {
-		width: 100%;
-	}
 }
 
 .editor-ground-control__time-button-label {
 	padding-left: 8px;
-
-	@include breakpoint( ">660px" ) {
-		display: none;
-	}
+	display: none;
 }
 
 .editor-ground-control__save.button.is-link,
@@ -229,5 +218,11 @@
 
 	.gridicon {
 		top: 4px;
+	}
+}
+
+.editor-ground-control__button-label {
+	@include breakpoint( "<660px" ) {
+		display: none;
 	}
 }

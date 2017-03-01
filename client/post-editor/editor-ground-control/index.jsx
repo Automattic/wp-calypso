@@ -341,19 +341,19 @@ export default React.createClass( {
 						onClick={ this.onPreviewButtonClick }
 						tabIndex={ 4 }
 					>
-						<Gridicon icon="visible" /> { this.getPreviewLabel() }
+						<Gridicon icon="visible" /> <span className="editor-ground-control__button-label">{ this.getPreviewLabel() }</span>
 					</Button>
 					<Button
 						borderless
 						className="editor-ground-control__toggle-sidebar"
 						onClick={ this.props.toggleSidebar }
 					>
-						<Gridicon icon="cog" /> { this.translate( '{{type/}} Settings', {
-								components: {
-									type: <EditorPostType />
-								}
+						<Gridicon icon="cog" /> <span className="editor-ground-control__button-label">
+							{ this.translate( '{{type/}} Settings', {
+								components: { type: <EditorPostType /> }
 							} )
-						}
+							}
+						</span>
 					</Button>
 					<div className="editor-ground-control__publish-combo">
 						<EditorPublishButton

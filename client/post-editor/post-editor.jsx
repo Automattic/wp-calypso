@@ -24,7 +24,6 @@ const actions = require( 'lib/posts/actions' ),
 	EditorWordCount = require( 'post-editor/editor-word-count' ),
 	SegmentedControl = require( 'components/segmented-control' ),
 	SegmentedControlItem = require( 'components/segmented-control/item' ),
-	EditorMobileNavigation = require( 'post-editor/editor-mobile-navigation' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
 	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
@@ -214,17 +213,6 @@ export const PostEditor = React.createClass( {
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
 				<div className="post-editor__inner">
-					<EditorMobileNavigation
-						site={ site }
-						post={ this.state.post }
-						savedPost={ this.state.savedPost }
-						onSave={ this.onSave }
-						onPublish={ this.onPublish }
-						isPublishing={ this.state.isPublishing }
-						isSaveBlocked={ this.state.isSaveBlocked }
-						hasContent={ this.state.hasContent || this.props.hasContent }
-						onClose={ this.onClose }
-						onTabChange={ this.hideNotice } />
 					<EditorGroundControl
 						setPostDate={ this.setPostDate }
 						hasContent={ this.state.hasContent }
@@ -258,6 +246,7 @@ export const PostEditor = React.createClass( {
 							/>
 							<div className="post-editor__site">
 								<Site
+									compact
 									site={ site }
 									indicator={ false }
 									homeLink={ true }
