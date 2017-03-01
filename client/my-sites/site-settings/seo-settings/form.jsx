@@ -34,7 +34,12 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
 import Banner from 'components/banner';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getSiteOption, getSeoTitleFormatsForSite, isJetpackMinimumVersion } from 'state/sites/selectors';
+import {
+	getSiteOption,
+	getSeoTitleFormatsForSite,
+	isJetpackMinimumVersion,
+	isJetpackSite,
+} from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
@@ -370,6 +375,7 @@ export const SeoForm = React.createClass( {
 	render() {
 		const {
 			siteId,
+			siteIsJetpack,
 			jetpackManagementUrl,
 			jetpackVersionSupportsSeo,
 			showAdvancedSeo,
@@ -379,7 +385,6 @@ export const SeoForm = React.createClass( {
 			isVerificationToolsActive,
 		} = this.props;
 		const {
-			jetpack = false,
 			settings: {
 				blog_public = 1
 			} = {},
@@ -401,8 +406,10 @@ export const SeoForm = React.createClass( {
 		let { googleCode, bingCode, pinterestCode, yandexCode } = this.state;
 
 		const isSitePrivate = parseInt( blog_public, 10 ) !== 1;
-		const isJetpackUnsupported = jetpack && ! jetpackVersionSupportsSeo;
+		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsSeo;
 		const isDisabled = isSitePrivate || isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
+		const isSeoDisabled = isDisabled || ( isSeoToolsActive === false );
+		const isVerificationDisabled = isDisabled || ( isVerificationToolsActive === false );
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
 		const sitemapUrl = `${ siteUrl }/sitemap.xml`;
@@ -420,17 +427,17 @@ export const SeoForm = React.createClass( {
 			return includes( invalidCodes, service );
 		};
 
-		const nudgeTitle = jetpack
+		const nudgeTitle = siteIsJetpack
 			? this.translate( 'Enable SEO Tools features by upgrading to Jetpack Professional' )
 			: this.translate( 'Enable SEO Tools features by upgrading to the Business Plan' );
 
-		const submitButton = (
+		const seoSubmitButton = (
 			<Button
 				compact={ true }
 				onClick={ this.submitSeoForm }
 				primary={ true }
 				type="submit"
-				disabled={ isSaveDisabled }
+				disabled={ isSaveDisabled || isSeoDisabled }
 			>
 				{ isSubmittingForm
 					? this.translate( 'Saving…' )
@@ -447,7 +454,7 @@ export const SeoForm = React.createClass( {
 		return (
 			<div>
 				{
-					site.jetpack &&
+					siteIsJetpack &&
 					<QueryJetpackModules siteId={ siteId } />
 				}
 				<PageViewTracker
@@ -483,7 +490,7 @@ export const SeoForm = React.createClass( {
 					</Notice>
 				}
 
-				{ jetpack && hasBusinessPlan( site.plan ) && isSeoToolsActive === false &&
+				{ siteIsJetpack && hasBusinessPlan( site.plan ) && isSeoToolsActive === false &&
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
@@ -527,7 +534,7 @@ export const SeoForm = React.createClass( {
 					{ showAdvancedSeo &&
 						<div>
 							<SectionHeader label={ this.translate( 'Page Title Structure' ) }>
-								{ submitButton }
+								{ seoSubmitButton }
 							</SectionHeader>
 							<Card compact className="seo-settings__page-title__header">
 								<img className="seo-settings__page-title__header-image" src="/calypso/images/seo/page-title.svg" />
@@ -541,7 +548,7 @@ export const SeoForm = React.createClass( {
 							</Card>
 							<Card>
 								<MetaTitleEditor
-									disabled={ isRefreshingSiteData || isDisabled }
+									disabled={ isRefreshingSiteData || isSeoDisabled }
 									onChange={ this.updateTitleFormats }
 									titleFormats={ this.state.seoTitleFormats }
 								/>
@@ -549,10 +556,10 @@ export const SeoForm = React.createClass( {
 						</div>
 					}
 
-					{ ( showAdvancedSeo || ( ! jetpack && showWebsiteMeta ) ) &&
+					{ ( showAdvancedSeo || ( ! siteIsJetpack && showWebsiteMeta ) ) &&
 						<div>
 							<SectionHeader label={ this.translate( 'Website Meta' ) }>
-								{ submitButton }
+								{ seoSubmitButton }
 							</SectionHeader>
 							<Card>
 								<p>
@@ -570,7 +577,7 @@ export const SeoForm = React.createClass( {
 									type="text"
 									id="advanced_seo_front_page_description"
 									value={ frontPageMetaDescription || '' }
-									disabled={ isDisabled }
+									disabled={ isSeoDisabled }
 									maxLength="300"
 									acceptableLength={ 159 }
 									onChange={ this.handleMetaChange }
@@ -597,7 +604,7 @@ export const SeoForm = React.createClass( {
 						</div>
 					}
 
-					{ jetpack && isVerificationToolsActive === false &&
+					{ siteIsJetpack && isVerificationToolsActive === false &&
 						<Notice
 							status="is-warning"
 							showDismiss={ false }
@@ -612,7 +619,18 @@ export const SeoForm = React.createClass( {
 					}
 
 					<SectionHeader label={ this.translate( 'Site Verification Services' ) }>
-						{ submitButton }
+						<Button
+							compact={ true }
+							onClick={ this.submitSeoForm }
+							primary={ true }
+							type="submit"
+							disabled={ isSaveDisabled || isVerificationDisabled }
+						>
+							{ isSubmittingForm
+								? this.translate( 'Saving…' )
+								: this.translate( 'Save Settings' )
+							}
+						</Button>
 					</SectionHeader>
 					<Card>
 						<p>
@@ -667,7 +685,7 @@ export const SeoForm = React.createClass( {
 								value={ googleCode }
 								id="verification_code_google"
 								spellCheck="false"
-								disabled={ isDisabled }
+								disabled={ isVerificationDisabled }
 								isError={ hasError( 'google' ) }
 								placeholder={ getMetaTag( 'google', placeholderTagContent ) }
 								onChange={ this.changeGoogleCode } />
@@ -681,7 +699,7 @@ export const SeoForm = React.createClass( {
 								value={ bingCode }
 								id="verification_code_bing"
 								spellCheck="false"
-								disabled={ isDisabled }
+								disabled={ isVerificationDisabled }
 								isError={ hasError( 'bing' ) }
 								placeholder={ getMetaTag( 'bing', placeholderTagContent ) }
 								onChange={ this.changeBingCode } />
@@ -695,7 +713,7 @@ export const SeoForm = React.createClass( {
 								value={ pinterestCode }
 								id="verification_code_pinterest"
 								spellCheck="false"
-								disabled={ isDisabled }
+								disabled={ isVerificationDisabled }
 								isError={ hasError( 'pinterest' ) }
 								placeholder={ getMetaTag( 'pinterest', placeholderTagContent ) }
 								onChange={ this.changePinterestCode } />
@@ -709,7 +727,7 @@ export const SeoForm = React.createClass( {
 								value={ yandexCode }
 								id="verification_code_yandex"
 								spellCheck="false"
-								disabled={ isDisabled }
+								disabled={ isVerificationDisabled }
 								isError={ hasError( 'yandex' ) }
 								placeholder={ getMetaTag( 'yandex', placeholderTagContent ) }
 								onChange={ this.changeYandexCode } />
@@ -750,12 +768,14 @@ const mapStateToProps = ( state, ownProps ) => {
 	// SEO Tools are available with Business plan on WordPress.com, and with Premium plan on Jetpack sites
 	const isAdvancedSeoEligible = site && site.plan && hasBusinessPlan( site.plan );
 	const siteId = getSelectedSiteId( state );
+	const siteIsJetpack = isJetpackSite( state, siteId );
 	const jetpackManagementUrl = getSiteOption( state, siteId, 'admin_url' );
 	const jetpackVersionSupportsSeo = isJetpackMinimumVersion( state, siteId, '4.4-beta1' );
-	const isAdvancedSeoSupported = site && ( ! site.jetpack || ( site.jetpack && jetpackVersionSupportsSeo ) );
+	const isAdvancedSeoSupported = site && ( ! siteIsJetpack || ( siteIsJetpack && jetpackVersionSupportsSeo ) );
 
 	return {
-		siteId: siteId,
+		siteId,
+		siteIsJetpack,
 		selectedSite: getSelectedSite( state ),
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible && isAdvancedSeoSupported,
