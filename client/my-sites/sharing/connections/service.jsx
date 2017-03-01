@@ -151,7 +151,7 @@ class SharingService extends Component {
 			// If an account wasn't selected from the dialog or the user cancels
 			// the connection, the dialog should simply close
 			this.props.warningNotice( this.props.translate( 'The connection could not be made because no account was selected.', {
-				context: 'Sharing: Publicize connection confirmation'
+				comment: 'Warning notice when sharing connection dialog was closed without selection'
 			} ), { id: 'publicize' } );
 			this.setState( { isConnecting: false } );
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Cancel Button in Modal', this.props.service.ID );
