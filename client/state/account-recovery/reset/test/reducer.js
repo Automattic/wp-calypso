@@ -82,7 +82,9 @@ describe( '#account-recovery/reset reducer', () => {
 	it( 'ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action should populate the user field.', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-			user: 'userlogin',
+			userData: {
+				user: 'userlogin',
+			},
 		} );
 
 		assert.equal( state.userData.user, 'userlogin' );
@@ -91,7 +93,9 @@ describe( '#account-recovery/reset reducer', () => {
 	it( 'ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action should populate the firstname field.', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-			firstName: 'Foo',
+			userData: {
+				firstName: 'Foo',
+			},
 		} );
 
 		assert.equal( state.userData.firstName, 'Foo' );
@@ -100,7 +104,9 @@ describe( '#account-recovery/reset reducer', () => {
 	it( 'ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action should populate the lastname field.', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-			lastName: 'Bar',
+			userData: {
+				lastName: 'Bar',
+			},
 		} );
 
 		assert.equal( state.userData.lastName, 'Bar' );
@@ -109,7 +115,9 @@ describe( '#account-recovery/reset reducer', () => {
 	it( 'ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action should populate the url field.', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-			url: 'examples.com',
+			userData: {
+				url: 'examples.com',
+			},
 		} );
 
 		assert.equal( state.userData.url, 'examples.com' );
@@ -118,14 +126,11 @@ describe( '#account-recovery/reset reducer', () => {
 	it( 'ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action should not populate any unexpected field.', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-			unexpected: 'random-value',
+			userData: {
+				unexpected: 'random-value',
+			},
 		} );
 
-		assert.deepEqual( state.userData, {
-			user: '',
-			firstName: '',
-			lastName: '',
-			url: '',
-		} );
+		assert.deepEqual( state.userData, {} );
 	} );
 } );

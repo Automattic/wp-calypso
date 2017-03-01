@@ -47,15 +47,7 @@ export const fetchResetOptionsByLogin = ( user ) => fetchResetOptions( { user } 
 
 export const fetchResetOptionsByNameAndUrl = ( firstname, lastname, url ) => fetchResetOptions( { firstname, lastname, url } );
 
-const updatePasswordResetUserData = ( userData ) => ( {
+export const updatePasswordResetUserData = ( userData ) => ( {
 	type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-	...userData,
+	userData,
 } );
-
-export const updatePasswordResetUserLogin = ( user ) => updatePasswordResetUserData( { user } );
-
-export const updatePasswordResetUserFirstName = ( firstName ) => updatePasswordResetUserData( { firstName } );
-
-export const updatePasswordResetUserLastName = ( lastName ) => updatePasswordResetUserData( { lastName } );
-
-export const updatePasswordResetUserSiteUrl = ( url ) => updatePasswordResetUserData( { url } );

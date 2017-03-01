@@ -13,10 +13,7 @@ import {
 	fetchResetOptions,
 	fetchResetOptionsSuccess,
 	fetchResetOptionsError,
-	updatePasswordResetUserLogin,
-	updatePasswordResetUserFirstName,
-	updatePasswordResetUserLastName,
-	updatePasswordResetUserSiteUrl,
+	updatePasswordResetUserData,
 } from '../actions';
 
 import {
@@ -135,50 +132,19 @@ describe( '#fetchResetOptions', () => {
 	} );
 } );
 
-describe( '#updatePasswordResetUserLogin', () => {
-	it( 'should return ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action with user field', () => {
-		const user = 'foo';
-		const action = updatePasswordResetUserLogin( user );
+describe( '#updatePasswordResetUserData', () => {
+	it( 'should return ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action', () => {
+		const userData = {
+			user: 'foo',
+			firstName: 'Foo',
+			lastName: 'Bar',
+			url: 'test.example.com',
+		};
+		const action = updatePasswordResetUserData( userData );
 
 		assert.deepEqual( action, {
 			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-			user,
-		} );
-	} );
-} );
-
-describe( '#updatePasswordResetUserFirstName', () => {
-	it( 'should return ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action with firstName field', () => {
-		const firstName = 'Jack';
-		const action = updatePasswordResetUserFirstName( firstName );
-
-		assert.deepEqual( action, {
-			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-			firstName,
-		} );
-	} );
-} );
-
-describe( '#updatePasswordResetUserLastName', () => {
-	it( 'should return ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action with lastName field', () => {
-		const lastName = 'Torrence';
-		const action = updatePasswordResetUserLastName( lastName );
-
-		assert.deepEqual( action, {
-			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-			lastName,
-		} );
-	} );
-} );
-
-describe( '#updatePasswordResetUserSiteUrl', () => {
-	it( 'should return ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action with url field', () => {
-		const url = 'foo.example.com';
-		const action = updatePasswordResetUserSiteUrl( url );
-
-		assert.deepEqual( action, {
-			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-			url,
+			userData,
 		} );
 	} );
 } );
