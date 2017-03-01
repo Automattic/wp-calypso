@@ -59,7 +59,7 @@ const LikeButton = React.createClass( {
 			'has-label': this.props.showLabel
 		};
 		let likeLabel = this.translate( 'Like', {
-			context: 'verb',
+			context: 'verb: imperative',
 			comment: 'Label for a button to "like" a post.'
 		} );
 
