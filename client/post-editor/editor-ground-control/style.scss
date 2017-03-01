@@ -66,6 +66,13 @@
 	margin-right: 8px;
 }
 
+.focus-sidebar .editor-ground-control__toggle-sidebar:hover,
+.focus-sidebar .editor-ground-control__toggle-sidebar:focus,
+.focus-sidebar .editor-ground-control__toggle-sidebar {
+	color: $blue-medium;
+	box-shadow: inset 0 -3px $blue-medium;
+}
+
 .editor-ground-control__toggle-sidebar.button.is-borderless,
 .editor-ground-control__preview-button.button.is-borderless {
 	font-size: 13px;
