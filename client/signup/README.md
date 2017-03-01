@@ -8,7 +8,7 @@ A Step is a React component that collects data for flows.
 
 ## Creating a new flow
 
-You can define a new flow from `/client/signup/config/flows.js`, by adding a new property to the `flows` object.
+You can define a new flow from `/client/signup/config/flows-configuration.js`, by adding a new property to the `flows` object.
 
 A flow is defined by two properties, `steps` and `destination`:
 
@@ -24,7 +24,7 @@ Example:
 account: { steps: [ 'site', 'user' ], destination: '/me/next?welcome' }
 ```
 
-Once you've added the flow to `flows.js`, it'll be available for users at `/start/flow-name` where `flow-name` is the key of your flow in `flows`.
+Once you've added the flow to `flows-configuration.js`, it'll be available for users at `/start/flow-name` where `flow-name` is the key of your flow in `flows`.
 
 *Note:* flows must include at least one step that creates a user and is able to provide a bearer token. See the `providesToken` property in "Creating a new step".
 
@@ -34,7 +34,7 @@ Anyone can create steps that flow designers can use in their flows.
 
 You can add a new step to Modular Signup from `/client/signup/config/steps.js`. A step is defined by three properties:
 
-- `stepName` is the identifier used to reference a step in `/client/signup/config/flows.js`.
+- `stepName` is the identifier used to reference a step in `/client/signup/config/flows-configuration.js`.
 - (optional) `dependencies`, which specifiy which properties this step needs from other steps in the flow in order to be processed.
 - (optional) `providesDependencies` is an array that lets the signup framework know what dependencies the step is expected to provide. If the step does not provide all of these, or if it provides more than it says, an error will be thrown.
 - (optional) `delayApiRequestUntilComplete` is a boolean that, when true, causes the step's `apiRequestFunction` to be called only after the user has submitted every step in the signup flow. This is useful for steps that the user should be able to go back and change at any point in signup.
