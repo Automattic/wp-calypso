@@ -48,13 +48,9 @@ module.exports = {
 				newCartItems = [ newCartItems ];
 			}
 
-			let newCart = data;
+			const newCart = addProductsToCart( data, newCartItems );
 
-			addProductsToCart( newCart, newCartItems );
-
-			wpcom.undocumented().cart( cartKey, 'POST', newCart, function( postError ) {
-				callback( postError );
-			} );
+			wpcom.undocumented().cart( cartKey, 'POST', newCart, callback );
 		} );
 	}
 };
