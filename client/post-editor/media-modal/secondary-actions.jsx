@@ -10,17 +10,14 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import TrackComponentView from 'lib/analytics/track-component-view';
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
 import { canUserDeleteItem } from 'lib/media/utils';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import PlanStorage from 'blocks/plan-storage';
 import { getMediaModalView } from 'state/ui/media-modal/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
+import Button from 'components/button';
 
 const MediaModalSecondaryActions = React.createClass( {
 	propTypes: {
@@ -42,22 +39,6 @@ const MediaModalSecondaryActions = React.createClass( {
 		};
 	},
 
-	getInitialState() {
-		return {
-			isMobilePopoverVisible: false
-		};
-	},
-
-	setMobilePopoverContext( component ) {
-		if ( ! component ) {
-			return;
-		}
-
-		this.setState( {
-			mobilePopoverContext: component
-		} );
-	},
-
 	getButtons() {
 		const {
 			user,
@@ -73,8 +54,9 @@ const MediaModalSecondaryActions = React.createClass( {
 		if ( ModalViews.LIST === view && selectedItems.length ) {
 			buttons.push( {
 				key: 'edit',
-				value: this.translate( 'Edit' ),
+				text: this.translate( 'Edit' ),
 				disabled: disabled,
+				primary: true,
 				onClick: this.props.onViewDetails
 			} );
 		}
@@ -86,8 +68,8 @@ const MediaModalSecondaryActions = React.createClass( {
 		if ( ModalViews.GALLERY !== view && canDeleteItems ) {
 			buttons.push( {
 				key: 'delete',
-				value: this.translate( 'Delete' ),
-				className: 'is-link editor-media-modal__delete',
+				icon: 'trash',
+				className: 'editor-media-modal__delete',
 				disabled: disabled || some( selectedItems, 'transient' ),
 				onClick: onDelete
 			} );
@@ -96,89 +78,18 @@ const MediaModalSecondaryActions = React.createClass( {
 		return buttons;
 	},
 
-	toggleMobilePopover() {
-		this.setState( {
-			isMobilePopoverVisible: ! this.state.isMobilePopoverVisible
-		} );
-	},
-
-	renderMobileButtons() {
-		const buttons = this.getButtons();
-
-		if ( ! buttons.length ) {
-			return;
-		}
-
-		const classes = classNames( 'editor-media-modal__secondary-action', 'button', 'is-mobile', 'is-link', {
-			'is-active': this.state.isMobilePopoverVisible
-		} );
-
-		const menuItems = buttons.map( ( button ) => {
-			const onClick = () => {
-				this.toggleMobilePopover();
-
-				if ( button.onClick ) {
-					button.onClick();
-				}
-			};
-
-			return React.createElement( PopoverMenuItem, {
-				key: button.key,
-				action: button.key,
-				onClick: onClick
-			}, button.value );
-		} );
-
-		return (
-			<button
-				ref={ this.setMobilePopoverContext }
-				onClick={ this.toggleMobilePopover }
-				className={ classes }>
-				<span className="screen-reader-text">{ this.translate( 'More Options' ) }</span>
-				<Gridicon icon="ellipsis" size={ 24 } />
-				<PopoverMenu
-					context={ this.state.mobilePopoverContext }
-					isVisible={ this.state.isMobilePopoverVisible }
-					onClose={ this.toggleMobilePopover }
-					position="top right"
-					className="popover is-dialog-visible">
-					{ menuItems }
-				</PopoverMenu>
-			</button>
-		);
-	},
-
-	renderDesktopButtons() {
-		return this.getButtons().map( ( button ) => {
-			return React.createElement( 'input', Object.assign( {
-				type: 'button'
-			}, button, {
-				className: classNames( 'editor-media-modal__secondary-action', 'button', 'is-desktop', button.className )
-			} ) );
-		} );
-	},
-
-	renderPlanStorage() {
-		if ( this.props.selectedItems.length === 0 ) {
-			const eventName = 'calypso_upgrade_nudge_impression';
-			const eventProperties = { cta_name: 'plan-media-storage' };
-			return (
-				<PlanStorage
-					className="editor-media-modal__plan-storage"
-					siteId={ this.props.site.ID } >
-					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
-				</PlanStorage>
-			);
-		}
-		return null;
-	},
-
 	render() {
 		return (
-			<div className="editor-media-modal__secondary-actions">
-				{ this.renderMobileButtons() }
-				{ this.renderDesktopButtons() }
-				{ this.props.renderStorage && this.renderPlanStorage() }
+			<div>
+				{ this.getButtons().map( button => <Button
+					className={ classNames( 'editor-media-modal__secondary-action', button.className ) }
+					icon={ !! button.icon }
+					compact
+					{ ...pick( button, [ 'key', 'disabled', 'onClick', 'primary' ] ) }
+				>
+					{ button.icon && <Gridicon icon={ button.icon } /> }
+					{ button.text && button.text }
+				</Button> ) }
 			</div>
 		);
 	}
