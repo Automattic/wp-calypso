@@ -14,6 +14,10 @@ import UploadButton from './upload-button';
 import MediaLibraryUploadUrl from './upload-url';
 import { userCan } from 'lib/site/utils';
 import MediaModalSecondaryActions from 'post-editor/media-modal/secondary-actions';
+import Card from 'components/card';
+import ButtonGroup from 'components/button-group';
+import Button from 'components/button';
+import StickyPanel from 'components/sticky-panel';
 
 export default React.createClass( {
 	displayName: 'MediaLibraryHeader',
@@ -23,7 +27,8 @@ export default React.createClass( {
 		filter: PropTypes.string,
 		sliderPositionCount: PropTypes.number,
 		onMediaScaleChange: React.PropTypes.func,
-		onAddMedia: PropTypes.func
+		onAddMedia: PropTypes.func,
+		sticky: React.PropTypes.bool,
 	},
 
 	getInitialState() {
@@ -36,7 +41,8 @@ export default React.createClass( {
 	getDefaultProps() {
 		return {
 			onAddMedia: () => {},
-			sliderPositionCount: 100
+			sliderPositionCount: 100,
+			sticky: false,
 		};
 	},
 
@@ -71,23 +77,20 @@ export default React.createClass( {
 		}
 
 		return (
-			<div className="media-library__upload-buttons">
+			<ButtonGroup className="media-library__upload-buttons">
 				<UploadButton
 					site={ site }
 					filter={ filter }
 					onAddMedia={ onAddMedia }
-					className="button is-primary">
-					{ this.translate( 'Add New', { context: 'Media upload' } ) }
+					className="button is-compact">
+					<Gridicon icon="add-image" />
+					<span className="is-desktop">{ this.translate( 'Add New', { context: 'Media upload' } ) }</span>
 				</UploadButton>
-				<button
-					onClick={ this.toggleAddViaUrl.bind( this, true ) }
-					className="button is-desktop">
-					{ this.translate( 'Add via URL', { context: 'Media upload' } ) }
-				</button>
-				<button
+				<Button
+					compact
 					ref={ this.setMoreOptionsContext }
 					onClick={ this.toggleMoreOptions.bind( this, ! this.state.isMoreOptionsVisible ) }
-					className="button is-primary is-mobile">
+					className="button media-library__upload-more">
 					<span className="screen-reader-text">
 						{ this.translate( 'More Options' ) }
 					</span>
@@ -98,12 +101,12 @@ export default React.createClass( {
 						onClose={ this.toggleMoreOptions.bind( this, false ) }
 						position="bottom right"
 						className="popover is-dialog-visible">
-						<PopoverMenuItem onClick={ this.toggleAddViaUrl.bind( this, true ) }>
+						<PopoverMenuItem onClick={ this.toggleAddViaUrl.bind( this, true ) } className="is-compact">
 							{ this.translate( 'Add via URL', { context: 'Media upload' } ) }
 						</PopoverMenuItem>
 					</PopoverMenu>
-				</button>
-			</div>
+				</Button>
+			</ButtonGroup>
 		);
 	},
 
@@ -120,9 +123,8 @@ export default React.createClass( {
 			);
 		}
 
-		return (
-			<header className="media-library__header">
-				<h2 className="media-library__heading">{ this.translate( 'Media Library' ) }</h2>
+		const card = (
+			<Card className="media-library__header">
 				{ this.renderUploadButtons() }
 				<MediaModalSecondaryActions
 					selectedItems={ this.props.selectedItems }
@@ -134,7 +136,17 @@ export default React.createClass( {
 				/>
 				<MediaLibraryScale
 					onChange={ this.props.onMediaScaleChange } />
-			</header>
+			</Card>
 		);
+
+		if ( this.props.sticky ) {
+			return (
+				<StickyPanel>
+					{ card }
+				</StickyPanel>
+			);
+		} else {
+			return card;
+		}
 	}
 } );
