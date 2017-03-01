@@ -60,7 +60,7 @@ function ReaderSubscriptionListItem( {
 				{ ! isEmpty( authorName ) &&
 					<span>
 						<span className="reader-subscription-list-item__by-text">
-							{ translate( 'by', { context: 'by referring to the author of a site' } ) }
+							{ translate( 'by' ) }
 						</span>
 						<span><a href={ readerStreamUrl }> { authorName } </a></span>
 					</span>
