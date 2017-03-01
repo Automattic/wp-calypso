@@ -535,7 +535,7 @@ export class MySitesSidebar extends Component {
 				<a onClick={ this.trackWpadminClick } href={ site.options.admin_url } target="_blank" rel="noopener noreferrer">
 					<Gridicon icon="my-sites" size={ 24 } />
 					<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
-					<span className="noticon noticon-external" />
+					<Gridicon icon="external" size={ 24 } />
 				</a>
 			</li>
 		);
