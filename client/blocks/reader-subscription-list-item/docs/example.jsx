@@ -22,6 +22,7 @@ const items = [
 		siteTitle: 'A Farm Girls Life',
 		siteExcerpt: 'Photography, Crafty Things, and Life on the Farm',
 		lastUpdated: 'x days ago',
+		feedId: '21587482',
 	},
 	{
 		siteAuthor: {
@@ -33,6 +34,7 @@ const items = [
 		siteTitle: 'fourth generation farmgirl',
 		siteExcerpt: 'wool and wine to tractors and travel',
 		lastUpdated: 'x days ago',
+		feedId: '24393283',
 	},
 	{
 		siteAuthor: {
@@ -44,6 +46,7 @@ const items = [
 		siteTitle: 'Not Your Typical Hippi',
 		siteExcerpt: 'Starting Young ♢ Living Healthy',
 		lastUpdated: 'x days ago',
+		feedId: '42747358',
 	}
 ]
 
@@ -56,12 +59,8 @@ export default class ReaderSubscriptionListItemExample extends PureComponent {
 				{ items.map( item =>
 						<ReaderSubscriptionListItem
 							isFollowing={ true }
-							siteUrl = { item.siteUrl }
-							siteTitle = { item.siteTitle }
-							siteAuthor = { item.siteAuthor }
-							siteExcerpt = { item.siteExcerpt }
-							lastUpdated = { item.lastUpdated }
 							key={ item.siteUrl }
+							{ ...item }
 						/>
 				) }
 			</Card>

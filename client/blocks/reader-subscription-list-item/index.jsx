@@ -4,6 +4,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import { trim, isEmpty } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -11,6 +12,7 @@ import { trim, isEmpty } from 'lodash';
 import Gravatar from 'components/gravatar';
 import FollowButton from 'reader/follow-button';
 import Gridicon from 'gridicons';
+import { getStreamUrl } from 'reader/route';
 
 const stripUrl = url => url.replace( 'https://', '' ).replace( 'http://', '' ).replace( '/', '' );
 
@@ -32,12 +34,19 @@ function ReaderSubscriptionListItem( {
 	siteTitle,
 	siteAuthor,
 	siteExcerpt,
+	feedId,
+	siteId,
 	className = '',
 	onSiteClick = () => {},
 	followSource,
 	lastUpdated,
+	translate,
 } ) {
-	const authorName = trim( `${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }` );
+	// prefer a users name property
+	// if that doesn't exist settle for combining first and last name
+	const authorName = siteAuthor.name ||
+		trim( `${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }` );
+	const readerStreamUrl = getStreamUrl( feedId, siteId );
 
 	return (
 		<div className={ classnames( 'reader-subscription-list-item', className ) }>
@@ -47,11 +56,13 @@ function ReaderSubscriptionListItem( {
 				</a>
 			</div>
 			<div className="reader-subscription-list-item__byline">
-				<span className="reader-subscription-list-item__site-title">{ <a href={ siteUrl }> { siteTitle } </a> }</span>
+				<span className="reader-subscription-list-item__site-title">{ <a href={ readerStreamUrl }> { siteTitle } </a> }</span>
 				{ ! isEmpty( authorName ) &&
 					<span>
-						<span className="reader-subscription-list-item__by-text"> by </span>
-						<span><a href={ siteUrl }> { authorName } </a></span>
+						<span className="reader-subscription-list-item__by-text">
+							{ translate( 'by', { context: 'by referring to the author of a site' } ) }
+						</span>
+						<span><a href={ readerStreamUrl }> { authorName } </a></span>
 					</span>
 				}
 				<div>{ siteExcerpt }</div>
@@ -67,4 +78,4 @@ function ReaderSubscriptionListItem( {
 	);
 }
 
-export default ReaderSubscriptionListItem;
+export default localize( ReaderSubscriptionListItem );
