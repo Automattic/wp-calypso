@@ -33,15 +33,15 @@ function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		const cartKey = 'no-site';
 		const providedDependencies = {
 			siteId: null,
-			siteSlug: null,
+			siteSlug: cartKey,
 			themeSlugWithRepo: null,
 			domainItem,
 		};
 
 		SignupCart.createCart( cartKey, [ domainItem ], error => callback( error, providedDependencies ) );
 	} else {
-		createSiteWithCart( function( errors, providedDependencies ) {
-			callback( errors, pick( providedDependencies, [ 'siteId', 'siteSlug', 'themeSlugWithRepo', 'domainItem' ] ) )
+		createSiteWithCart( ( errors, providedDependencies ) => {
+			callback( errors, pick( providedDependencies, [ 'siteId', 'siteSlug', 'themeSlugWithRepo', 'domainItem' ] ) );
 		}, dependencies, data, reduxStore );
 	}
 }
