@@ -189,7 +189,6 @@ export class EditorHtmlToolbar extends Component {
 		this.props.content.value = fullContent;
 		onToolbarChangeContent( fullContent );
 		this.setCursorPosition( selectionEnd, fullContent.length - value.length );
-		//this.props.content.focus();
 	}
 
 	attributesToString = ( attributes = {} ) => reduce(
