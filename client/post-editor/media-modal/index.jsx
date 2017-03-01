@@ -26,7 +26,6 @@ import {
 	recordEvent,
 	recordStat
 } from 'lib/posts/stats';
-import MediaModalSecondaryActions from './secondary-actions';
 import MediaModalGallery from './gallery';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
@@ -331,11 +330,6 @@ export class EditorMediaModal extends Component {
 		const isDisabled = this.isDisabled();
 		const selectedItems = this.props.mediaLibrarySelectedItems;
 		const buttons = [
-			<MediaModalSecondaryActions
-				site={ this.props.site }
-				selectedItems={ selectedItems }
-				disabled={ isDisabled }
-				onDelete={ this.deleteMedia } />,
 			{
 				action: 'cancel',
 				label: this.props.translate( 'Cancel' )
