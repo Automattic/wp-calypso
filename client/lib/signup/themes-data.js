@@ -45,7 +45,7 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Dyad 2',
+		name: 'Dyad',
 		slug: 'dyad-2',
 		repo: 'pub',
 		fallback: true,
