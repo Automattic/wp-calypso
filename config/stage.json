@@ -19,6 +19,7 @@
 		"code-splitting": true,
 		"community-translator": true,
 		"desktop-promo": true,
+		"guided-tours/gdocs-integration-tour": true,
 		"happychat": true,
 		"help": true,
 		"help/courses": true,

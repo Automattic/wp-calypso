@@ -7,6 +7,7 @@ import { TutorialSitePreviewTour } from 'layout/guided-tours/tours/tutorial-site
 import { DesignShowcaseWelcomeTour } from 'layout/guided-tours/tours/design-showcase-welcome-tour';
 import { ThemeSheetWelcomeTour } from 'layout/guided-tours/tours/theme-sheet-welcome-tour';
 import { SiteTitleTour } from 'layout/guided-tours/tours/site-title-tour';
+import { GDocsIntegrationTour } from 'layout/guided-tours/tours/gdocs-integration-tour';
 
 export default combineTours( {
 	main: MainTour,
@@ -14,4 +15,5 @@ export default combineTours( {
 	designShowcaseWelcome: DesignShowcaseWelcomeTour,
 	themeSheetWelcomeTour: ThemeSheetWelcomeTour,
 	siteTitle: SiteTitleTour,
+	gdocsIntegrationTour: GDocsIntegrationTour,
 } );
