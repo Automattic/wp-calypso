@@ -23,12 +23,20 @@
 }
 
 .editor-ground-control .site {
-	margin: 0;
-	max-width: 300px;
+	flex: 0 0 auto;
 
 	@include breakpoint( "<660px" ) {
 		display: none;
 	}
+}
+
+.editor-ground-control .site .site__title::after,
+.editor-ground-control .site .site__domain::after {
+	width: 16px;
+}
+
+.editor-ground-control .site .site__info {
+	width: auto;
 }
 
 .editor-ground-control__separator {
@@ -40,7 +48,7 @@
 	display: flex;
 	min-height: 20px;
 	justify-content: space-between;
-	margin: 0 auto 0 16px;
+	margin: 0 auto 0 0;
 	position: relative;
 }
 
@@ -120,6 +128,7 @@
 .editor-ground-control__save.button.is-link,
 .editor-ground-control__saving {
 	text-decoration: underline;
+	font-size: 13px;
 }
 
 .editor-ground-control__saving {
