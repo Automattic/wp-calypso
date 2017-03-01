@@ -35,8 +35,7 @@ const actions = require( 'lib/posts/actions' ),
 
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
-import { isEditorDraftsVisible, getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
-import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
+import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { receivePost, savePostSuccess } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import EditorDocumentHead from 'post-editor/editor-document-head';
@@ -153,7 +152,6 @@ export const PostEditor = React.createClass( {
 		this.debouncedSaveRawContent.cancel();
 		this._previewWindow = null;
 		clearTimeout( this._switchEditorTimeout );
-		this.hideDrafts();
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
@@ -173,19 +171,12 @@ export const PostEditor = React.createClass( {
 	},
 
 	toggleSidebar: function() {
-		this.hideDrafts();
 		if ( this.props.layoutFocus === 'sidebar' ) {
 			this.props.setEditorSidebar( 'closed' );
 			this.props.setLayoutFocus( 'content' );
 		} else {
 			this.props.setEditorSidebar( 'open' );
 			this.props.setLayoutFocus( 'sidebar' );
-		}
-	},
-
-	hideDrafts() {
-		if ( this.props.showDrafts ) {
-			this.props.toggleDrafts();
 		}
 	},
 
@@ -534,7 +525,6 @@ export const PostEditor = React.createClass( {
 	},
 
 	onSaveTrashed: function( status, callback ) {
-		this.hideDrafts();
 		this.onSave( status, callback );
 	},
 
@@ -829,7 +819,6 @@ export default connect(
 		return {
 			siteId,
 			postId,
-			showDrafts: isEditorDraftsVisible( state ),
 			editorModePreference: getPreference( state, 'editor-mode' ),
 			editorSidebarPreference: getPreference( state, 'editor-sidebar' ) || 'open',
 			editPath: getEditorPath( state, siteId, postId ),
@@ -841,7 +830,6 @@ export default connect(
 	},
 	( dispatch ) => {
 		return bindActionCreators( {
-			toggleDrafts: toggleEditorDraftsVisible,
 			setEditorLastDraft,
 			resetEditorLastDraft,
 			receivePost,
