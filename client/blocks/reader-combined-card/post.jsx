@@ -95,8 +95,8 @@ class ReaderCombinedCardPost extends React.Component {
 						</h1>
 					</AutoDirection>
 					<ReaderExcerpt post={ post } isDiscover={ false } />
-					<div className="reader-combined-card__post-author-and-time">
-						<ReaderVisitLink visitUrl={ post.URL } iconSize={ 14 }>
+					<div className="reader-combined-card__post-author-and-time ignore-click">
+						<ReaderVisitLink href={ post.URL } iconSize={ 14 }>
 							{ this.props.translate( 'Visit' ) }
 						</ReaderVisitLink>
 						{ hasAuthorName &&
