@@ -31,6 +31,9 @@
 	line-height: 1.4;
 	display: block;
 	position: relative;
+	max-height: 18px * 1.4 * 1;
+	word-wrap: break-word;
+	overflow: hidden;
 
 	&:hover {
 		color: $gray-dark;
