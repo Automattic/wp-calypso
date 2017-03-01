@@ -42,10 +42,14 @@
 	}
 }
 
+
+.reader-combined-card__featured-image-wrapper {
+	min-width: 100px;
+}
+
 .reader-combined-card .reader-featured-image {
 	display: block;
-	min-width: 100px;
-	max-height: 100px;
+	height: 100px;
 }
 
 .reader-combined-card__post-list {
