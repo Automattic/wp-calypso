@@ -4,7 +4,7 @@
 import React from 'react';
 import _debug from 'debug';
 import moment from 'moment';
-import { intersection, map, every, find } from 'lodash';
+import { intersection, map, every, find, get } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -97,6 +97,10 @@ export default React.createClass( {
 
 	wrongNSMappedDomains() {
 		debug( 'Rendering wrongNSMappedDomains' );
+
+		if ( get( this.props, 'selectedSite.jetpack' ) && ! get( this.props, 'selectedSite.options.is_automated_transfer' ) ) {
+			return null;
+		}
 
 		const wrongMappedDomains = this.getDomains().filter( domain =>
 			domain.type === domainTypes.MAPPED && ! domain.pointsToWpcom );
