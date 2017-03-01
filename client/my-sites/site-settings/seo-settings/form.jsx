@@ -35,7 +35,8 @@ import CountedTextarea from 'components/forms/counted-textarea';
 import Banner from 'components/banner';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getSiteOption, getSeoTitleFormatsForSite, isJetpackMinimumVersion } from 'state/sites/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackModuleActive } from 'state/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import WebPreview from 'components/web-preview';
@@ -47,6 +48,7 @@ import {
 } from 'lib/products-values';
 import { hasFeature } from 'lib/plans';
 import { FEATURE_ADVANCED_SEO, PLAN_BUSINESS } from 'lib/plans/constants';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
 const serviceIds = {
 	google: 'google-site-verification',
@@ -367,11 +369,14 @@ export const SeoForm = React.createClass( {
 
 	render() {
 		const {
+			siteId,
 			jetpackManagementUrl,
 			jetpackVersionSupportsSeo,
 			showAdvancedSeo,
 			showWebsiteMeta,
 			site,
+			isSeoToolsActive,
+			isVerificationToolsActive,
 		} = this.props;
 		const {
 			jetpack = false,
@@ -441,6 +446,10 @@ export const SeoForm = React.createClass( {
 		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<div>
+				{
+					site.jetpack &&
+					<QueryJetpackModules siteId={ siteId } />
+				}
 				<PageViewTracker
 					path="/settings/seo/:site"
 					title="Site Settings > SEO"
@@ -474,7 +483,7 @@ export const SeoForm = React.createClass( {
 					</Notice>
 				}
 
-				{ jetpack && hasBusinessPlan( site.plan ) && ! site.isModuleActive( 'seo-tools' ) &&
+				{ jetpack && hasBusinessPlan( site.plan ) && isSeoToolsActive === false &&
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
@@ -588,7 +597,7 @@ export const SeoForm = React.createClass( {
 						</div>
 					}
 
-					{ jetpack && ! this.props.site.isModuleActive( 'verification-tools' ) &&
+					{ jetpack && isVerificationToolsActive === false &&
 						<Notice
 							status="is-warning"
 							showDismiss={ false }
@@ -740,18 +749,21 @@ const mapStateToProps = ( state, ownProps ) => {
 	const { site } = ownProps;
 	// SEO Tools are available with Business plan on WordPress.com, and with Premium plan on Jetpack sites
 	const isAdvancedSeoEligible = site && site.plan && hasBusinessPlan( site.plan );
-	const siteId = get( site, 'ID', 0 );
+	const siteId = getSelectedSiteId( state );
 	const jetpackManagementUrl = getSiteOption( state, siteId, 'admin_url' );
 	const jetpackVersionSupportsSeo = isJetpackMinimumVersion( state, siteId, '4.4-beta1' );
 	const isAdvancedSeoSupported = site && ( ! site.jetpack || ( site.jetpack && jetpackVersionSupportsSeo ) );
 
 	return {
+		siteId: siteId,
 		selectedSite: getSelectedSite( state ),
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible && isAdvancedSeoSupported,
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
 		jetpackManagementUrl,
 		jetpackVersionSupportsSeo: jetpackVersionSupportsSeo,
+		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
+		isVerificationToolsActive: isJetpackModuleActive( state, siteId, 'verification-tools' ),
 	};
 };
 
