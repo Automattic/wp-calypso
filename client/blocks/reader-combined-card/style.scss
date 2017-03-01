@@ -2,16 +2,32 @@
 .reader-combined-card__header {
 	font-size: 13px;
 	display: flex;
+	max-height: 32px;
+	margin-bottom: 20px;
+}
+
+.reader-avatar.has-site-icon {
+	margin-right: 8px;
 }
 
 .reader-combined-card__header-details {
 	flex-grow: 1;
-	margin-top: -5px;
-	margin-left: 8px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	max-height: 32px;
+}
+
+.reader-combined-card__site-link {
+	line-height: 1em;
+	margin-bottom: 0;
+	top: 0;
 }
 
 .reader-combined-card__header-post-count {
 	color: $gray;
+	margin-bottom: 0;
+	line-height: 1em;
 }
 
 /* Posts */
@@ -63,7 +79,7 @@
 	list-style-type: none;
 	display: flex;
 	flex-direction: row;
-	margin-bottom: 16px;
+	margin-bottom: 20px;
 }
 
 .reader-combined-card__post-author-and-time {
