@@ -201,7 +201,7 @@ function getStoreForRecommendedPosts( storeId ) {
 				query.algorithm = 'read:recommendations:posts/es/6';
 				break;
 			case 'custom_recs_posts_with_images':
-				query.algorithm = 'read:recommendations:posts/es/7';
+				query.alg_prefix = 'read:recommendations:posts';
 
 				/* Seed FAQ:
 				 * Q: What does it do?
