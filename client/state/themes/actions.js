@@ -447,16 +447,6 @@ export function installTheme( themeId, siteId ) {
 			themeId
 		} );
 
-		if ( isThemeFromWpcom( themeId ) ) {
-			const parentThemeId = getWpcomParentThemeId(
-				getState(),
-				themeId.replace( '-wpcom', '' )
-			);
-			if ( parentThemeId ) {
-				dispatch( installTheme( parentThemeId + '-wpcom', siteId ) );
-			}
-		}
-
 		return wpcom.undocumented().installThemeOnJetpack( siteId, themeId )
 			.then( ( theme ) => {
 				dispatch( receiveTheme( theme, siteId ) );
@@ -465,6 +455,17 @@ export function installTheme( themeId, siteId ) {
 					siteId,
 					themeId
 				} );
+			} )
+			.then( () => {
+				if ( isThemeFromWpcom( themeId ) ) {
+					const parentThemeId = getWpcomParentThemeId(
+						getState(),
+						themeId.replace( '-wpcom', '' )
+					);
+					if ( parentThemeId ) {
+						dispatch( installTheme( parentThemeId + '-wpcom', siteId ) );
+					}
+				}
 			} )
 			.catch( ( error ) => {
 				dispatch( {
