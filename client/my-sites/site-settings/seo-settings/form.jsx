@@ -520,7 +520,7 @@ export const SeoForm = React.createClass( {
 							<SectionHeader label={ this.translate( 'Page Title Structure' ) }>
 								{ submitButton }
 							</SectionHeader>
-							<Card compact="true" className="seo-settings__page-title__header">
+							<Card compact className="seo-settings__page-title__header">
 								<img className="seo-settings__page-title__header-image" src="/calypso/images/seo/page-title.svg" />
 								<p className="seo-settings__page-title__header-text">
 								{ this.translate(
@@ -553,24 +553,23 @@ export const SeoForm = React.createClass( {
 										'on social media sites.'
 									) }
 								</p>
-								<p>
-									<FormLabel htmlFor="advanced_seo_front_page_description">
-										{ this.translate( 'Front Page Meta Description' ) }
-									</FormLabel>
-									<CountedTextarea
-										name="advanced_seo_front_page_description"
-										type="text"
-										id="advanced_seo_front_page_description"
-										value={ frontPageMetaDescription || '' }
-										disabled={ isDisabled }
-										maxLength="300"
-										acceptableLength={ 159 }
-										onChange={ this.handleMetaChange }
-									/>
-									{ hasHtmlTagError &&
-										<FormInputValidation isError={ true } text={ this.translate( 'HTML tags are not allowed.' ) } />
-									}
-								</p>
+								<FormLabel htmlFor="advanced_seo_front_page_description">
+									{ this.translate( 'Front Page Meta Description' ) }
+								</FormLabel>
+								<CountedTextarea
+									name="advanced_seo_front_page_description"
+									type="text"
+									id="advanced_seo_front_page_description"
+									value={ frontPageMetaDescription || '' }
+									disabled={ isDisabled }
+									maxLength="300"
+									acceptableLength={ 159 }
+									onChange={ this.handleMetaChange }
+									className="seo-settings__front-page-description"
+								/>
+								{ hasHtmlTagError &&
+									<FormInputValidation isError={ true } text={ this.translate( 'HTML tags are not allowed.' ) } />
+								}
 								<FormSettingExplanation>
 									<Button
 										className="seo-settings__preview-button"

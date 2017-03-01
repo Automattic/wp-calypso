@@ -147,6 +147,10 @@
 		line-height: 40px;
 	}
 
+	.seo-settings__front-page-description {
+		margin-bottom: 1.5em;
+	}
+
 	fieldset.site-icon-setting {
 		@include breakpoint( ">660px" ) {
 			flex: 0 0 122px;
