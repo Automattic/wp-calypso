@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import page from 'page';
 import React, { Component } from 'react';
 
 /**
@@ -14,8 +15,17 @@ import Card from 'components/card';
 // TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
 import DomainImage from 'signup/steps/design-type-with-store/domain-image';
 import PageImage from 'signup/steps/design-type-with-store/page-image';
+import { getStepUrl } from 'signup/utils';
 
 export default class SiteOrDomain extends Component {
+	componentWillMount() {
+		const { queryObject } = this.props;
+
+		if ( ! queryObject || ! queryObject.new ) {
+			page( getStepUrl( 'main' ) );
+		}
+	}
+
 	getChoices() {
 		return [
 			{
@@ -56,14 +66,9 @@ export default class SiteOrDomain extends Component {
 			queryObject,
 		} = this.props;
 
-		let domainItem;
-
-		if ( queryObject && queryObject.new ) {
-			const domain = queryObject.new;
-			const tld = domain.split( '.' ).slice( 1 ).join( '.' );
-
-			domainItem = cartItems.domainRegistration( { productSlug: tlds[ tld ], domain } );
-		}
+		const domain = queryObject.new;
+		const tld = domain.split( '.' ).slice( 1 ).join( '.' );
+		const domainItem = cartItems.domainRegistration( { productSlug: tlds[ tld ], domain } );
 
 		SignupActions.submitSignupStep( { stepName }, [], { designType, domainItem } );
 
