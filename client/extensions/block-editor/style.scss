@@ -1,0 +1,61 @@
+body {
+	background: $white;
+}
+
+.masterbar {
+	display: none;
+}
+
+.has-no-sidebar .layout__content {
+	margin: 0 auto;
+	max-width: 640px;
+	padding: 24px;
+}
+
+.block-editor__input {
+	min-height: 300px;
+	font-size: 14px;
+	font-family: $monospace;
+}
+
+.block-editor__output {
+	font-family: $serif;
+}
+.block {
+	border: 2px solid #dfe4e8;
+	transition: border-color 200ms;
+	position: relative;
+	font-size: 17px;
+	font-weight: 300;
+	line-height: 1.7;
+}
+.block.is-selected {
+	border-color: #6c7781;
+}
+
+.block__controls {
+	position: absolute;
+	top: 0;
+	left: -40px;
+	.animate__appear {
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+.mce-container.mce-tinymce.is-pinned > .mce-container-body > .mce-toolbar-grp,
+.mce-container.mce-tinymce.is-pinned > .mce-container-body:after {
+	position: static;
+}
+
+.mce-container.mce-tinymce {
+	padding: 0;
+}
+
+.mce-container.mce-tinymce.is-pinned > .mce-container-body > .mce-toolbar-grp, .mce-container.mce-tinymce.is-pinned > .mce-container-body:after {
+	display: none;
+}
+
+.mce-tinymce.mce-container.mce-panel.is-pinned {
+	padding: 0;
+}
