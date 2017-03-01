@@ -32,7 +32,6 @@
 
 /* Posts */
 .reader-combined-card__post-details {
-	margin-left: 10px;
 	font-family: $serif;
 	width: 100%;
 
@@ -64,6 +63,7 @@
 
 .reader-combined-card__featured-image-wrapper {
 	min-width: 100px;
+	margin-right: 10px;
 }
 
 .reader-combined-card .reader-featured-image {
