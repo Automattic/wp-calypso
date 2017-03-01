@@ -104,13 +104,19 @@ const tryandcustomize = {
 		! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
 		( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) )
 	),
-	hideForTheme: ( state, theme, siteId ) => (
-		isThemeActive( state, theme.id, siteId ) ||
-		( isJetpackSite( state, siteId ) && isThemePremium( state, theme.id ) ) ||
+	hideForTheme: ( state, theme, siteId ) => {
+		return (
+		isThemeActive( state, theme.id, siteId ) || (
+			isThemePremium( state, theme.id ) &&
+			// In theory, we shouldn't need the isJetpackSite() check. In practice, Redux state required for isPremiumThemeAvailable
+			// is less readily available since it needs to be fetched using the `QuerySitePlans` component.
+			( isJetpackSite( state, siteId ) && ! isPremiumThemeAvailable( state, theme.id, siteId ) )
+		) ||
 		// Are we trying to install and try a (previously not-installed) WP.com theme on a Jetpack site?
 		isJetpackSite( state, siteId ) && isWpcomTheme( state, theme.id ) && ! getTheme( state, siteId, theme.id ) &&
 			! ( config.isEnabled( 'manage/themes/upload' ) && hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) )
-	)
+		);
+	}
 };
 
 const preview = {
