@@ -197,6 +197,7 @@ const MediaLibraryContent = React.createClass( {
 						selectedItems={ this.props.selectedItems }
 						onViewDetails={ this.props.onViewDetails }
 						onDeleteItem={ this.props.onDeleteItem }
+						sticky={ ! this.props.scrollable }
 					/>
 				}
 				{ this.renderErrors() }

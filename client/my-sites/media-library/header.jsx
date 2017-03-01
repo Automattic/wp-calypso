@@ -17,6 +17,7 @@ import MediaModalSecondaryActions from 'post-editor/media-modal/secondary-action
 import Card from 'components/card';
 import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
+import StickyPanel from 'components/sticky-panel';
 
 export default React.createClass( {
 	displayName: 'MediaLibraryHeader',
@@ -26,7 +27,8 @@ export default React.createClass( {
 		filter: PropTypes.string,
 		sliderPositionCount: PropTypes.number,
 		onMediaScaleChange: React.PropTypes.func,
-		onAddMedia: PropTypes.func
+		onAddMedia: PropTypes.func,
+		sticky: React.PropTypes.bool,
 	},
 
 	getInitialState() {
@@ -39,7 +41,8 @@ export default React.createClass( {
 	getDefaultProps() {
 		return {
 			onAddMedia: () => {},
-			sliderPositionCount: 100
+			sliderPositionCount: 100,
+			sticky: false,
 		};
 	},
 
@@ -120,7 +123,7 @@ export default React.createClass( {
 			);
 		}
 
-		return (
+		const card = (
 			<Card className="media-library__header">
 				{ this.renderUploadButtons() }
 				<MediaModalSecondaryActions
@@ -135,5 +138,15 @@ export default React.createClass( {
 					onChange={ this.props.onMediaScaleChange } />
 			</Card>
 		);
+
+		if ( this.props.sticky ) {
+			return (
+				<StickyPanel>
+					{ card }
+				</StickyPanel>
+			);
+		} else {
+			return card;
+		}
 	}
 } );
