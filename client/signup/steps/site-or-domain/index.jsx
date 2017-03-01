@@ -77,7 +77,7 @@ export default class SiteOrDomain extends Component {
 			siteSlug: domain,
 			siteUrl: domain,
 			isPurchasingItem: true,
-		}, [], { designType } );
+		}, [], { domainItem } );
 
 		if ( designType === 'domain' ) {
 			// we can skip the next two steps in the `domain-first` flow if the
