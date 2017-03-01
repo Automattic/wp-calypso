@@ -38,7 +38,8 @@ export default ( Element, count = 3 ) => {
 		}
 
 		suggestionsFromPicks() {
-			const lang = i18nUtils.getLocaleSlug();
+			const lang = i18nUtils.getLocaleSlug().split( '-' )[ 0 ];
+
 			if ( suggestions[ lang ] ) {
 				return sampleSize( suggestions[ lang ], count );
 			}
