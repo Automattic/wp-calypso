@@ -123,5 +123,5 @@ module.exports = {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 		allowAnyLocale: true
-	},
+	}
 };
