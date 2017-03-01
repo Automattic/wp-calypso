@@ -5,6 +5,7 @@ import React from 'react';
 import { has, get } from 'lodash';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -18,7 +19,7 @@ import PostTime from 'reader/post-time';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import * as stats from 'reader/stats';
 
-export default class ReaderCombinedCardPost extends React.Component {
+class ReaderCombinedCardPost extends React.Component {
 	static propTypes = {
 		post: React.PropTypes.object.isRequired,
 		streamUrl: React.PropTypes.string,
@@ -93,7 +94,9 @@ export default class ReaderCombinedCardPost extends React.Component {
 					</AutoDirection>
 					<ReaderExcerpt post={ post } isDiscover={ false } />
 					<div className="reader-combined-card__post-author-and-time">
-						<ReaderVisitLink visitUrl={ post.URL } iconSize={ 12 } />
+						<ReaderVisitLink visitUrl={ post.URL } iconSize={ 14 }>
+							{ this.props.translate( 'Visit' ) }
+						</ReaderVisitLink>
 						{ hasAuthorName &&
 							<ReaderAuthorLink
 								className="reader-combined-card__author-link"
@@ -105,6 +108,7 @@ export default class ReaderCombinedCardPost extends React.Component {
 						}
 						{ post.date && post.URL &&
 							<span className="reader-combined-card__timestamp">
+								{ hasAuthorName && <span>, </span> }
 								<a className="reader-combined-card__timestamp-link"
 									onClick={ recordDateClick }
 									href={ post.URL }
@@ -120,3 +124,5 @@ export default class ReaderCombinedCardPost extends React.Component {
 		);
 	}
 }
+
+export default localize( ReaderCombinedCardPost );

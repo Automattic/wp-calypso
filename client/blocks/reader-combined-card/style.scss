@@ -62,11 +62,26 @@
 .reader-combined-card__post-author-and-time {
 	font-size: 13px;
 	color: $gray;
+	font-family: $sans;
+}
+
+.reader-combined-card .reader-visit-link {
+	margin-left: -8px; // override gridicon margin
+	margin-right: 20px;
+
+	.reader-visit-link__label {
+		margin-left: 2px;
+	}
 }
 
 .reader-combined-card .reader-visit-link,
 .reader-combined-card__timestamp-link {
 	color: $gray;
+	cursor: pointer
+}
+
+.reader-combined-card__timestamp-link {
+	cursor: pointer;
 }
 
 .reader-combined-card__post .reader-excerpt {
