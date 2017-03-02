@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDomServer from 'react-dom/server';
 import { connect } from 'react-redux';
-import { findIndex, get, head, includes, last, pick } from 'lodash';
+import { escapeRegExp, findIndex, get, head, includes, last, pick } from 'lodash';
 import tinymce from 'tinymce/tinymce';
 
 /**
@@ -80,12 +80,10 @@ export class Mentions extends Component {
 
 	getMatchingSuggestions( suggestions, query ) {
 		if ( query ) {
-			suggestions = suggestions.filter( ( { user_login: userLogin, display_name: displayName } ) => {
-				// Start of string or preceded by a space.
-				const matcher = new RegExp( `^${ query }|\\s${ query }`, 'ig' );
+			query = escapeRegExp( query );
+			const matcher = new RegExp( `^${ query }|\\s${ query }`, 'ig' ); // Start of string or preceded by a space.
 
-				return matcher.test( `${ userLogin } ${ displayName }` );
-			} );
+			suggestions = suggestions.filter( ( { user_login: login, display_name: name } ) => matcher.test( `${ login } ${ name }` ) );
 		}
 
 		return suggestions.slice( 0, 10 );
