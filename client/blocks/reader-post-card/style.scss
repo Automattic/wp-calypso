@@ -53,6 +53,8 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	&.has-thumbnail {
 
 		.reader-featured-image {
+			flex-basis: auto;
+			flex-grow: 1;
 			margin-right: 20px;
 			max-width: 190px;
 
