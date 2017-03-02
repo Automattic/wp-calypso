@@ -134,7 +134,7 @@ mixedindentlint: node_modules/mixedindentlint
 
 # Ensure that default config values exist in _shared.json
 config-defaults-lint: $(CONFIG_FILES)
-	@if [[ ! -z "$$(FORCE_COLOR=1 node server/config/validate-config-keys.js)" ]]; then exit 1; fi;
+	@$(NODE) server/config/validate-config-keys.js || exit
 
 # keep track of the current CALYPSO_ENV so that it can be used as a
 # prerequisite for other rules
@@ -249,3 +249,4 @@ FORCE:
 .PHONY: build build-development build-server build-dll build-desktop build-horizon build-stage build-production build-wpcalypso
 .PHONY: run install test clean distclean translate route node-version
 .PHONY: githooks githooks-commit githooks-push analyze-bundles urn
+.PHONY: config-defaults-lint
