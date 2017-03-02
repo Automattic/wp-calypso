@@ -17,40 +17,33 @@ const configRoot = path.resolve( __dirname, '../../', 'config' );
 const environmentConfigPattern = /^(?!_)[^.]+\.json$/;
 
 /**
- * Attempts to parse JSON data
+ * Reads a config file given its basename
  *
- * If data doesn't parse it will return
- * `null` instead of throwing an error
- *
- * @param {*} data
- * @returns {*}
+ * @param {String} filename basename of config file to read, e.g. 'development.json'
+ * @returns {String} contents of file
  */
-const parseJSON = data => {
-	try {
-		return JSON.parse( data );
-	} catch (e) {
-		return null;
-	}
-};
+const readConfigFile = filename => fs.readFileSync( path.join( configRoot, filename ), { encoding: 'utf8' } );
 
-/** @type {String[]} list of configuration files */
-const environmentConfigFiles = fs
+/**
+ * Reads and parses the data from a
+ * config file given its basename
+ *
+ * @throws SyntaxError if contents of config file not valid JSON
+ * @param {String} filename basename of config file to read, e.g. 'development.json'
+ * @returns {*} parsed data from config file contents
+ */
+const parseConfig = filename => JSON.parse( readConfigFile( filename ) );
+
+/** @type {Array} list of [ filename, config data keys ] configuration pairs */
+const environmentKeys = fs
 	.readdirSync( configRoot, { encoding: 'utf8' } )
 	.filter( filename => environmentConfigPattern.test( path.basename( filename ) ) )
 	.filter( filename => ! ( /secrets/g ).test( filename ) )
-	.filter( filename => ! ( /client/g ).test( filename ) );
-
-/** @type {Array} list of [ filename, data ] pairs */
-const environmentConfigs = environmentConfigFiles
-	.map( filename => [ filename, fs.readFileSync( path.join( configRoot, filename ), { encoding: 'utf8' } ) ] )
-	.map( ( [ filename, data ] ) => [ filename, parseJSON( data ) ] );
+	.filter( filename => ! ( /client/g ).test( filename ) )
+	.map( filename => [ filename, Object.keys( parseConfig( filename ) ) ] );
 
 /** @type {Object} config data in the shared config file (defaults) */
-const sharedConfig = parseJSON( fs.readFileSync( path.join( configRoot, '_shared.json' ), { encoding: 'utf8' } ) );
-
-/** @type {Array} list of [ filename, list of keys ] pairs */
-const environmentKeys = environmentConfigs
-	.map( ( [ filename, data ] ) => [ filename, Object.keys( data ) ] );
+const sharedConfig = parseConfig( '_shared.json' );
 
 /**
  * Iterate over all of the keys in each configuration file
