@@ -41,7 +41,6 @@ module.exports = {
 
 	connections: function( context, next ) {
 		var SharingConnections = require( 'my-sites/sharing/connections/connections' ),
-			connectionsList = require( 'lib/connections-list' )(),
 			site = sites.getSelectedSite(),
 			basePath = route.sectionify( context.path ),
 			baseAnalyticsPath;
@@ -63,9 +62,7 @@ module.exports = {
 		} else {
 			analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > Connections' );
 
-			context.contentComponent = React.createElement( SharingConnections, {
-				connections: connectionsList,
-			} );
+			context.contentComponent = React.createElement( SharingConnections );
 		}
 
 		next();
