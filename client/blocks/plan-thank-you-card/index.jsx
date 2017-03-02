@@ -4,7 +4,6 @@
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -21,7 +20,7 @@ const PlanThankYouCard = ( {
 	plan,
 	translate,
 	siteId,
-	siteURL,
+	siteUrl,
 } ) => {
 	const name = plan && translate( '%(planName)s Plan', {
 		args: { planName: getPlan( plan.productSlug ).getTitle() }
@@ -29,22 +28,19 @@ const PlanThankYouCard = ( {
 	const price = plan && formatCurrency( plan.rawPrice, plan.currencyCode );
 
 	return (
-		<ThankYouCard name={ name } price={ price }>
+		<div>
 			<QuerySites siteId={ siteId } />
 			<QuerySitePlans siteId={ siteId } />
 
-			<div className="plan-thank-you-card__heading">
-				{ translate( 'Thank you for your purchase!' ) }
-			</div>
-			<div className="plan-thank-you-card__description">
-				{ translate( "Now that we've taken care of the plan, it's time to see your new site." ) }
-			</div>
-			<a
-				className={ classnames( 'plan-thank-you-card__button', { 'is-placeholder': ! siteURL } ) }
-				href={ siteURL }>
-				{ translate( 'Visit Your Site' ) }
-			</a>
-		</ThankYouCard>
+			<ThankYouCard
+				name={ name }
+				price={ price }
+				heading={ translate( 'Thank you for your purchase!' ) }
+				description={ translate( "Now that we've taken care of the plan, it's time to see your new site." ) }
+				buttonUrl={ siteUrl }
+				buttonText={ translate( 'Visit Your Site' ) }
+			/>
+		</div>
 	);
 };
 
@@ -61,6 +57,6 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		plan,
-		siteURL: site && site.URL
+		siteUrl: site && site.URL
 	};
 } )( localize( PlanThankYouCard ) );
