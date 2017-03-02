@@ -111,8 +111,12 @@ export class LostPasswordFormComponent extends Component {
 }
 
 LostPasswordFormComponent.defaultProps = {
+	isRequesting: false,
+	userLogin: '',
+	requestError: null,
 	translate: identity,
 	fetchResetOptionsByLogin: noop,
+	updatePasswordResetUserData: noop,
 };
 
 export default connect(
