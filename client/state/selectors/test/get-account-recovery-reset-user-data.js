@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { assert } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -16,13 +17,13 @@ describe( 'getAccountRecoveryResetUserData()', () => {
 			lastName: 'Bar',
 			url: 'site.example.com',
 		};
-		const state = {
+		const state = deepFreeze( {
 			accountRecovery: {
 				reset: {
 					userData: expectedUserData,
 				},
 			},
-		};
+		} );
 
 		assert.deepEqual( getAccountRecoveryResetUserData( state ), expectedUserData );
 	} );
