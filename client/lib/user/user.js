@@ -6,7 +6,8 @@ import { isSupportUserSession, boot as supportUserBoot } from 'lib/user/support-
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:user' ),
+var store = require( 'store' ),
+	debug = require( 'debug' )( 'calypso:user' ),
 	config = require( 'config' ),
 	qs = require( 'qs' ),
 	isEqual = require( 'lodash/isEqual' );
@@ -47,11 +48,12 @@ User.prototype.initialize = function() {
 	debug( 'Initializing User' );
 	this.fetching = false;
 	this.initialized = false;
-	this.data = false;
 
 	this.on( 'change', this.checkVerification.bind( this ) );
 
 	if ( isSupportUserSession() ) {
+		this.data = false;
+
 		supportUserBoot();
 		this.fetch();
 
@@ -61,13 +63,41 @@ User.prototype.initialize = function() {
 
 	if ( config( 'wpcom_user_bootstrap' ) ) {
 		this.data = window.currentUser || false;
+
+		// Store the current user in localStorage so that we can use it to determine
+		// if the the logged in user has changed when initializing in the future
+		if ( this.data ) {
+			this.clearStoreIfChanged( this.data.ID );
+			store.set( 'wpcom_user', this.data );
+		} else {
+			// The user is logged out
+			this.initialized = true;
+		}
 	} else {
+		this.data = store.get( 'wpcom_user' ) || false;
+
+		// Make sure that the user stored in localStorage matches the logged-in user
 		this.fetch();
+
 	}
 
 	if ( this.data ) {
 		this.initialized = true;
 		this.emit( 'change' );
+	}
+};
+
+
+/**
+ * Clear localStorage when we detect that there is a mismatch between the ID
+ * of the user stored in localStorage and the current user ID
+ **/
+User.prototype.clearStoreIfChanged = function( userId ) {
+	var storedUser = store.get( 'wpcom_user' );
+
+	if ( storedUser && storedUser.ID !== userId ) {
+		debug( 'Clearing localStorage because user changed' );
+		store.clear();
 	}
 };
 
@@ -81,8 +111,10 @@ User.prototype.get = function() {
 	return this.data;
 };
 
+
 /**
- * Fetch the current user from WordPress.com via the REST API.
+ * Fetch the current user from WordPress.com via the REST API
+ * and stores it in local cache.
  *
  * @uses `wpcom`
  */
@@ -119,6 +151,10 @@ User.prototype.fetch = function() {
 		// Release lock from subsequent fetches
 		this.fetching = false;
 
+		this.clearStoreIfChanged( userData.ID );
+
+		// Store user info in `this.data` and localstorage as `wpcom_user`
+		store.set( 'wpcom_user', userData );
 		this.data = userData;
 		if ( this.settings ) {
 			debug( 'Retaining fetched settings data in new user data' );
@@ -193,6 +229,7 @@ User.prototype.clear = function() {
 	 */
 	this.data = [];
 	delete this.settings;
+	store.clear();
 	if ( config.isEnabled( 'persist-redux' ) ) {
 		localforage.removeItem( 'redux-state' );
 	}
@@ -221,6 +258,7 @@ User.prototype.set = function( attributes ) {
 
 	if ( changed ) {
 		this.emit( 'change' );
+		store.set( 'wpcom_user', this.data );
 	}
 
 	return changed;
