@@ -57,6 +57,7 @@ import {
 	getLastThemeQuery,
 	getThemeCustomizeUrl,
 	getWpcomParentThemeId,
+	shouldFilterWpcomThemes,
 } from './selectors';
 import {
 	getThemeIdFromStylesheet,
@@ -66,16 +67,10 @@ import {
 	normalizeWpcomTheme,
 	normalizeWporgTheme
 } from './utils';
-import {
-	getSiteTitle,
-	hasJetpackSiteJetpackThemesExtendedFeatures,
-	isJetpackSite,
-	isJetpackSiteMultiSite
-} from 'state/sites/selectors';
+import { getSiteTitle, isJetpackSite } from 'state/sites/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
 import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
-import config from 'config';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
@@ -109,7 +104,9 @@ export function receiveTheme( theme, siteId ) {
  */
 export function receiveThemes( themes, siteId ) {
 	return ( dispatch, getState ) => {
-		const { filteredThemes } = filterThemes( getState, themes, siteId );
+		const filterWpcom = shouldFilterWpcomThemes( getState(), siteId );
+		const { filteredThemes } = filterThemes( themes, siteId, filterWpcom );
+
 		dispatch( {
 			type: THEMES_RECEIVE,
 			themes: filteredThemes,
@@ -128,48 +125,44 @@ export function receiveThemes( themes, siteId ) {
  * @param {number} foundCount Number of themes returned by the query
  * @return {Object} Action object
  */
-function receiveThemesQuery( themes, siteId, query, foundCount ) {
+function receiveThemesQuery( themes, siteId, query ) {
 	return ( dispatch, getState ) => {
-		const { filteredThemes, found } = filterThemes(
-			getState,
-			themes,
-			siteId,
-			query,
-			foundCount
-		);
+		const filterWpcom = shouldFilterWpcomThemes( getState(), siteId );
+		const filteredThemes = filterThemes( themes, siteId, filterWpcom, query );
+
 		dispatch( {
 			type: THEMES_REQUEST_SUCCESS,
 			themes: filteredThemes,
 			siteId,
 			query,
-			found,
+			found: filteredThemes.length,
 		} );
 	};
 }
 
-function filterThemes( getState, themes, siteId, query, found ) {
+/**
+ * Remove themes from a list. We need to do some client-side filtering
+ * because:
+ * 1) Jetpack theme API does not support search queries
+ * 2) We need to filter out all wpcom themes to show an 'Uploaded' list
+ *
+ * @param {Array} themes list of themes to filter
+ * @param {number} siteId the Site ID
+ * @param {boolean} filterWpcom True to remove all wpcom themes
+ * @param {Object} query the theme query
+ * @returns {Array} the filtered list of themes
+ */
+function filterThemes( themes, siteId, filterWpcom, query ) {
 	if ( siteId === 'wporg' || siteId === 'wpcom' ) {
-		return { filteredThemes: themes, found };
+		return themes;
 	}
-
-	// A Jetpack site's themes endpoint ignores the query,
-	// returning an unfiltered list of all installed themes instead.
-	// So we have to filter on the client side.
-	// Also if Jetpack plugin has Themes Extended Features,
-	// we filter out -wpcom suffixed themes because we will show them in
-	// second list that is specific to WordPress.com themes.
-	const keepWpcom = ! config.isEnabled( 'manage/themes/upload' ) ||
-		! hasJetpackSiteJetpackThemesExtendedFeatures( getState(), siteId ) ||
-		isJetpackSiteMultiSite( getState(), siteId );
-
-	const filteredThemes = filter(
+	return filter(
 		themes,
-		theme => isThemeMatchingQuery( query, theme ) && ( keepWpcom || ! isThemeFromWpcom( theme.id ) )
+		theme => (
+			isThemeMatchingQuery( query, theme ) &&
+			! ( filterWpcom && isThemeFromWpcom( theme.id ) )
+		)
 	);
-	// The Jetpack specific endpoint doesn't return the number of `found` themes, so we calculate it ourselves.
-	found = filteredThemes.length;
-
-	return { filteredThemes, found };
 }
 
 /**
@@ -234,7 +227,7 @@ export function requestThemes( siteId, query = {} ) {
 			}
 
 			dispatch( receiveThemes( themes, siteId ) );
-			dispatch( receiveThemesQuery( themes, siteId, query, found ) );
+			dispatch( receiveThemesQuery( themes, siteId, query ) );
 		} ).catch( ( error ) => {
 			dispatch( {
 				type: THEMES_REQUEST_FAILURE,
