@@ -319,6 +319,7 @@ $autobar-height: 20px;
 	padding: 0 8px;
 	border-radius: 0 3px 3px 0;
 	position: relative;
+	transition: all 0.2s ease-out;
 
 	.count {
 		border: none;
@@ -328,6 +329,14 @@ $autobar-height: 20px;
 		color: $gray-dark;
 		padding: 0 4px;
 		line-height: 30px;
+	}
+
+	&:hover {
+		background: $white;
+
+		.count {
+			color: $blue-wordpress;
+		}
 	}
 }
 
