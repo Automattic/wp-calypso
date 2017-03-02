@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
+import { identity, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,32 +14,57 @@ import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
 
+import {
+	fetchResetOptionsByNameAndUrl,
+	updatePasswordResetUserData,
+} from 'state/account-recovery/reset/actions';
+
+import {
+	isRequestingAccountRecoveryResetOptions,
+	getAccountRecoveryResetUserFirstName,
+	getAccountRecoveryResetUserLastName,
+	getAccountRecoveryResetUserSiteUrl,
+	getAccountRecoveryResetOptionsError,
+} from 'state/selectors';
+
 export class ForgotUsernameFormComponent extends Component {
-	constructor( ...args ) {
-		super( ...args );
-
-		this.state = {
-			isSubmitting: false,
-			firstName: '',
-			lastName: '',
-			siteUrl: '',
-		};
-	}
-
 	submitForm = () => {
-		this.setState( { isSubmitting: true } );
+		const {
+			firstName,
+			lastName,
+			url,
+		} = this.props;
 
-		//TODO: dispatch an event with firstName, etc and wait to here back
+		this.props.fetchResetOptionsByNameAndUrl( {
+			firstName,
+			lastName,
+			url,
+		} );
 	};
 
-	firstNameUpdated = event => this.setState( { firstName: event.target.value } );
-	lastNameUpdated = event => this.setState( { lastName: event.target.value } );
-	siteUrlUpdated = event => this.setState( { siteUrl: event.target.value } );
+	firstNameUpdated = ( event ) => {
+		this.props.updatePasswordResetUserData( { firstName: event.target.value } );
+	};
+
+	lastNameUpdated = ( event ) => {
+		this.props.updatePasswordResetUserData( { lastName: event.target.value } );
+	};
+
+	siteUrlUpdated = ( event ) => {
+		this.props.updatePasswordResetUserData( { url: event.target.value } );
+	};
 
 	render() {
-		const { translate } = this.props;
-		const { isSubmitting, firstName, lastName, siteUrl } = this.state;
-		const isPrimaryButtonEnabled = firstName && lastName && siteUrl && ! isSubmitting;
+		const {
+			translate,
+			firstName,
+			lastName,
+			url,
+			isRequesting,
+			requestError,
+		} = this.props;
+
+		const isPrimaryButtonEnabled = firstName && lastName && url && ! isRequesting;
 
 		return (
 			<div>
@@ -53,7 +79,7 @@ export class ForgotUsernameFormComponent extends Component {
 							className="forgot-username-form__first-name-input"
 							onChange={ this.firstNameUpdated }
 							value={ firstName }
-							disabled={ isSubmitting } />
+							disabled={ isRequesting } />
 					</FormLabel>
 					<FormLabel>
 						{ translate( 'Last Name' ) }
@@ -61,16 +87,23 @@ export class ForgotUsernameFormComponent extends Component {
 							className="forgot-username-form__last-name-input"
 							onChange={ this.lastNameUpdated }
 							value={ lastName }
-							disabled={ isSubmitting } />
+							disabled={ isRequesting } />
 					</FormLabel>
 					<FormLabel>
 						{ translate( "Your site's URL" ) }
 						<FormInput
 							className="forgot-username-form__site-url-input"
 							onChange={ this.siteUrlUpdated }
-							value={ siteUrl }
-							disabled={ isSubmitting } />
+							value={ url }
+							disabled={ isRequesting } />
 					</FormLabel>
+					{
+						( null != requestError ) && (
+						<p className="forgot-username-form__error-message">
+							{ translate( 'We encountered some problems with that login information. ' +
+								'Please provide another one or try again later.' ) }
+						</p> )
+					}
 					<Button
 						className="forgot-username-form__submit-button"
 						onClick={ this.submitForm }
@@ -85,7 +118,26 @@ export class ForgotUsernameFormComponent extends Component {
 }
 
 ForgotUsernameFormComponent.defaultProps = {
+	isRequesting: false,
+	firstName: '',
+	lastName: '',
+	url: '',
+	requestError: null,
 	translate: identity,
+	fetchResetOptionsByNameAndUrl: noop,
+	updatePasswordResetUserData: noop,
 };
 
-export default localize( ForgotUsernameFormComponent );
+export default connect(
+	( state ) => ( {
+		isRequesting: isRequestingAccountRecoveryResetOptions( state ),
+		firstName: getAccountRecoveryResetUserFirstName( state ),
+		lastName: getAccountRecoveryResetUserLastName( state ),
+		url: getAccountRecoveryResetUserSiteUrl( state ),
+		requestError: getAccountRecoveryResetOptionsError( state ),
+	} ),
+	{
+		fetchResetOptionsByNameAndUrl,
+		updatePasswordResetUserData,
+	}
+)( localize( ForgotUsernameFormComponent ) );
