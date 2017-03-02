@@ -4,7 +4,7 @@
 import { connect } from 'react-redux';
 import { find } from 'lodash';
 import page from 'page';
-import React from 'react';
+import React, { PropTypes } from 'react';
 import moment from 'moment';
 
 /**
@@ -75,13 +75,14 @@ function findPurchaseAndDomain( purchases, predicate ) {
 
 const CheckoutThankYou = React.createClass( {
 	propTypes: {
-		failedPurchases: React.PropTypes.array,
-		productsList: React.PropTypes.object.isRequired,
-		receiptId: React.PropTypes.number,
-		selectedFeature: React.PropTypes.string,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.bool,
-			React.PropTypes.object
+		domainOnlySiteFlow: PropTypes.bool.isRequired,
+		failedPurchases: PropTypes.array,
+		productsList: PropTypes.object.isRequired,
+		receiptId: PropTypes.number,
+		selectedFeature: PropTypes.string,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.bool,
+			PropTypes.object
 		] ).isRequired
 	},
 
@@ -207,10 +208,6 @@ const CheckoutThankYou = React.createClass( {
 			wasDotcomPlanPurchased = purchases.some( isDotComPlan );
 		}
 
-		const userCreatedMoment = moment( this.props.userDate ),
-			isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) ),
-			goBackText = this.props.selectedSite ? this.translate( 'Back to my site' ) : this.translate( 'Register Domain' );
-
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
 		if ( ! purchases && ! failedPurchases && ! this.isGenericReceipt() ) {
 			// disabled because we use global loader icon
@@ -220,6 +217,9 @@ const CheckoutThankYou = React.createClass( {
 			);
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
+
+		const userCreatedMoment = moment( this.props.userDate ),
+			isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) );
 
 		// streamlined paid NUX thanks page
 		if ( isNewUser && wasDotcomPlanPurchased ) {
@@ -237,6 +237,17 @@ const CheckoutThankYou = React.createClass( {
 				</Main>
 			);
 		}
+
+		if ( this.props.domainOnlySiteFlow ) {
+			return (
+				<Main className="checkout-thank-you">
+					{ this.renderConfirmationNotice() }
+					<div>Domain purchased :)</div>
+				</Main>
+			);
+		}
+
+		const goBackText = this.props.selectedSite ? this.translate( 'Back to my site' ) : this.translate( 'Register Domain' );
 
 		// standard thanks page
 		return (
