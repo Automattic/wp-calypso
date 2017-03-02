@@ -50,6 +50,12 @@
 	justify-content: space-between;
 	margin: 0 auto 0 0;
 	position: relative;
+	border-left: 1px solid #dce5ec;
+	padding-left: 16px;
+
+	@include breakpoint( "<660px" ) {
+		border-left: none;
+	}
 }
 
 .editor-ground-control__action-buttons {
@@ -119,12 +125,12 @@
 }
 
 .editor-ground-control__save.button.is-link,
-.editor-ground-control__saving {
+.editor-ground-control__save-status {
 	text-decoration: underline;
 	font-size: 13px;
 }
 
-.editor-ground-control__saving {
+.editor-ground-control__save-status {
 	text-decoration: none;
 	color: lighten( $gray, 20% );
 }

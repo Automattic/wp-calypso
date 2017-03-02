@@ -327,9 +327,9 @@ export default React.createClass( {
 							{ this.translate( 'Save' ) }
 						</button>
 					}
-					{ this.props.isSaving &&
-						<span className="editor-ground-control__saving">
-							{ this.translate( 'Saving…' ) }
+					{ ! this.isSaveEnabled() &&
+						<span className="editor-ground-control__save-status">
+							{ this.props.isSaving ? this.translate( 'Saving…' ) : this.translate( 'Saved' ) }
 						</span>
 					}
 				</div>
