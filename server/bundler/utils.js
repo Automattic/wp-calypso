@@ -14,6 +14,9 @@ function getAssets( stats ) {
 }
 
 function pathToRegExp( path ) {
+	if ( path === '/' ) {
+		return path;
+	}
 	return new RegExp( '^' + path + '(/.*)?$' );
 }
 
