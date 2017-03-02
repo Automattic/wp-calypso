@@ -21,8 +21,6 @@ describe( 'ForgotUsername', () => {
 	it( 'should render as expected', () => {
 		const wrapper = shallow( <ForgotUsernameFormComponent /> );
 
-		expect( wrapper ).to.have.state( 'isSubmitting' ).to.be.false;
-
 		// Expect the fields to be enabled
 		inputSelectors.forEach( selector => {
 			expect( wrapper.find( selector ).prop( 'disabled' ) ).to.not.be.ok;
@@ -34,18 +32,11 @@ describe( 'ForgotUsername', () => {
 	context( 'fields', () => {
 		useFakeDom();
 
-		it( 'should be disabled while submitting', function() {
-			const wrapper = mount( <ForgotUsernameFormComponent className="test__test" /> );
-
-			// Initialize all inputs with some dummy text
-			inputSelectors.forEach( selector => {
-				wrapper.find( selector ).node.value = 'dummy text';
-				wrapper.find( selector ).simulate( 'change' );
-			} );
-
-			wrapper.find( '.forgot-username-form__submit-button' ).simulate( 'click' );
-
-			expect( wrapper ).to.have.state( 'isSubmitting' ).to.be.true;
+		it( 'should be disabled when isRequesting is on', function() {
+			const wrapper = mount(
+				<ForgotUsernameFormComponent className="test__test"
+					isRequesting={ true }
+				/> );
 
 			// Expect the fields to be disabled
 			inputSelectors.forEach( selector => {
@@ -57,83 +48,46 @@ describe( 'ForgotUsername', () => {
 	context( 'submit button', () => {
 		useFakeDom();
 
-		it( 'should be disabled if first name field is blank', function() {
-			const wrapper = mount( <ForgotUsernameFormComponent className="test__test" /> );
-
-			// Initialize all inputs with some dummy text
-			inputSelectors.forEach( selector => {
-				wrapper.find( selector ).node.value = 'dummy text';
-				wrapper.find( selector ).simulate( 'change' );
-			} );
-
-			// Change the field to be empty
-			wrapper.find( '.forgot-username-form__first-name-input' ).node.value = '';
-			wrapper.find( '.forgot-username-form__first-name-input' ).simulate( 'change' );
+		it( 'should be disabled if firstName is blank', function() {
+			const wrapper = mount(
+				<ForgotUsernameFormComponent className="test__test"
+					firstName={ '' }
+				/> );
 
 			// Expect the button to be disabled
 			expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 		} );
 
-		it( 'should be disabled if last name field is blank', function() {
-			const wrapper = mount( <ForgotUsernameFormComponent className="test__test" /> );
-
-			// Initialize all inputs with some dummy text
-			inputSelectors.forEach( selector => {
-				wrapper.find( selector ).node.value = 'dummy text';
-				wrapper.find( selector ).simulate( 'change' );
-			} );
-
-			// Change the field to be empty
-			wrapper.find( '.forgot-username-form__last-name-input' ).node.value = '';
-			wrapper.find( '.forgot-username-form__last-name-input' ).simulate( 'change' );
+		it( 'should be disabled if lastName is blank', function() {
+			const wrapper = mount(
+				<ForgotUsernameFormComponent className="test__test"
+					lastName={ '' }
+				/> );
 
 			// Expect the button to be disabled
 			expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 		} );
 
-		it( 'should be disabled if site url field is blank', function() {
-			const wrapper = mount( <ForgotUsernameFormComponent className="test__test" /> );
-
-			// Initialize all inputs with some dummy text
-			inputSelectors.forEach( selector => {
-				wrapper.find( selector ).node.value = 'dummy text';
-				wrapper.find( selector ).simulate( 'change' );
-			} );
-
-			// Change the field to be empty
-			wrapper.find( '.forgot-username-form__site-url-input' ).node.value = '';
-			wrapper.find( '.forgot-username-form__site-url-input' ).simulate( 'change' );
+		it( 'should be disabled if url is blank', function() {
+			const wrapper = mount(
+				<ForgotUsernameFormComponent className="test__test"
+					url={ '' }
+				/> );
 
 			// Expect the button to be disabled
 			expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 		} );
 
 		it( 'should be enabled when all fields are filled in', function() {
-			const wrapper = mount( <ForgotUsernameFormComponent className="test__test" /> );
-
-			// Initialize all inputs with some dummy text
-			inputSelectors.forEach( selector => {
-				wrapper.find( selector ).node.value = 'dummy text';
-				wrapper.find( selector ).simulate( 'change' );
-			} );
+			const wrapper = mount(
+				<ForgotUsernameFormComponent className="test__test"
+					firstName={ 'Foo' }
+					lastName={ 'Bar' }
+					url={ 'test.example.com' }
+				/> );
 
 			// Expect the button to be enabled
 			expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.not.be.ok;
-		} );
-
-		it( 'should be disabled when clicked', function() {
-			const wrapper = mount( <ForgotUsernameFormComponent className="test__test" /> );
-
-			// Initialize all inputs with some dummy text
-			inputSelectors.forEach( selector => {
-				wrapper.find( selector ).node.value = 'dummy text';
-				wrapper.find( selector ).simulate( 'change' );
-			} );
-
-			wrapper.find( '.forgot-username-form__submit-button' ).simulate( 'click' );
-
-			expect( wrapper ).to.have.state( 'isSubmitting' ).to.be.true;
-			expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 		} );
 	} );
 } );
