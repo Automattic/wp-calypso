@@ -10,7 +10,6 @@ import page from 'page';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import Button from 'components/button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextInput from 'components/forms/form-text-input';
@@ -19,38 +18,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { closeDialog, runThemeSetup } from 'state/ui/theme-setup/actions';
 
 class ThemeSetupDialog extends React.Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			confirmDeleteInput: '',
-		};
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.isDialogVisible !== nextProps.isDialogVisible ) {
-			this.setState( {
-				confirmDeleteInput: '',
-			} );
-		}
-	}
-
-	onInputChange = ( event ) => {
-		this.setState( {
-			confirmDeleteInput: event.target.value,
-		} );
-	}
-
-	renderButtons( deleteConfirmed, { onThemeSetupClick, site, saveExisting, isActive, result, translate } ) {
-		const onClickDeleteContent = () => onThemeSetupClick( false, site.ID );
-		const deleteContent = (
-			<Button
-				primary
-				scary
-				disabled={ ! deleteConfirmed }
-				onClick={ onClickDeleteContent }>
-				{ translate( 'Set Up And Delete Content' ) }
-			</Button>
-		);
+	renderButtons( { onThemeSetupClick, site, isActive, result, translate } ) {
 		const keepContent = {
 			action: 'keep-content',
 			label: translate( 'Set Up Your Theme' ),
@@ -80,20 +48,13 @@ class ThemeSetupDialog extends React.Component {
 				viewSite
 			];
 		}
-
-		if ( saveExisting ) {
-			return [
-				cancel,
-				keepContent,
-			];
-		}
 		return [
 			cancel,
-			deleteContent,
+			keepContent,
 		];
 	}
 
-	renderContent( deleteConfirmed, { isActive, result, saveExisting, site, translate } ) {
+	renderContent( { isActive, result, site, translate } ) {
 		const keepContent = (
 			<div>
 				<h1>{ translate( 'Theme Setup' ) }</h1>
@@ -107,35 +68,6 @@ class ThemeSetupDialog extends React.Component {
 						}
 					} ) }
 				</p>
-			</div>
-		);
-		const deleteContent = (
-			<div>
-				<h1>{ translate( 'Confirm Theme Setup' ) }</h1>
-				<p>
-					{ translate( 'Please type {{warn}}delete{{/warn}} into the field below to confirm. {{strong}}All content on %(site)s will be deleted{{/strong}}, and then your site will be set up. These changes will be live immediately.', {
-						components: {
-							warn: <span className="theme-setup-dialog__confirm-text"/>,
-							strong: <strong />,
-						},
-						args: {
-							site: site.domain,
-						},
-					} ) }
-				</p>
-				<FormFieldset>
-					<FormTextInput
-						autoCapitalize={ false }
-						autoComplete={ false }
-						autoCorrect={ false }
-						onChange={ this.onInputChange }
-						value={ this.state.confirmDeleteInput } />
-					<FormInputValidation
-						isError={ ! deleteConfirmed }
-						text={ deleteConfirmed
-							? translate( 'Text matches.' )
-							: translate( 'Text does not match.' ) } />
-				</FormFieldset>
 			</div>
 		);
 		const loading = (
@@ -165,17 +97,16 @@ class ThemeSetupDialog extends React.Component {
 		if ( result ) {
 			return ( 'success' === result.result ) ? success : failure;
 		}
-		return ( saveExisting ) ? keepContent : deleteContent;
+		return keepContent;
 	}
 
 	render() {
-		const deleteConfirmed = 'delete' === this.state.confirmDeleteInput;
 		return (
 			<Dialog className="theme-setup-dialog"
 				isVisible={ this.props.isDialogVisible }
-				buttons={ this.renderButtons( deleteConfirmed, this.props ) }
+				buttons={ this.renderButtons( this.props ) }
 				onClose={ this.props.isActive ? null : this.props.closeDialog }>
-				{ this.renderContent( deleteConfirmed, this.props ) }
+				{ this.renderContent( this.props ) }
 			</Dialog>
 		);
 	}
