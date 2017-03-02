@@ -38,10 +38,10 @@ const Navigation = ( { activeTab, translate } ) => {
 
 	const renderTabItems = () => {
 		return tabs.map( tab => {
-			let path = '/wp-super-cache';
+			let path = '/extensions/wp-super-cache';
 
 			if ( tab !== tabs[ 0 ] ) {
-				path = `/wp-super-cache/${ tab }`;
+				path = `/extensions/wp-super-cache/${ tab }`;
 			}
 
 			return (
