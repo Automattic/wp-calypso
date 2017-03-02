@@ -43,6 +43,11 @@ const webpackConfig = {
 		noParse: /[\/\\]node_modules[\/\\]localforage[\/\\]dist[\/\\]localforage\.js$/,
 		loaders: [
 			{
+				test: /extensions\/index/,
+				exclude: 'node_modules',
+				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' )
+			},
+			{
 				test: /sections.js$/,
 				exclude: 'node_modules',
 				loader: path.join( __dirname, 'server', 'bundler', 'loader' )
