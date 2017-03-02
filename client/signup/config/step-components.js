@@ -16,7 +16,7 @@ import UserSignupComponent from 'signup/steps/user';
 import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
 
 
-module.exports = {
+export default {
 	'design-type': DesignTypeComponent,
 	'design-type-with-store': DesignTypeWithStoreComponent,
 	domains: DomainsStepComponent,

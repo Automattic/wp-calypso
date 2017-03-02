@@ -127,7 +127,7 @@ function getDestination( destination, dependencies, flowName ) {
 	return flows.filterDestination( destination, dependencies, flowName );
 }
 
-module.exports = {
+export default {
 	getFlowName: getFlowName,
 	getFlowSteps: getFlowSteps,
 	getStepName: getStepName,
