@@ -125,7 +125,7 @@ const CheckoutThankYou = React.createClass( {
 	},
 
 	renderConfirmationNotice: function() {
-		if ( ! this.props.user || ! this.props.user.email || this.props.email_verified ) {
+		if ( ! this.props.user || ! this.props.user.email || this.props.user.email_verified ) {
 			return null;
 		}
 
