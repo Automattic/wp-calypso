@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import JetpackModuleToggle from '../jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle';
@@ -28,50 +28,50 @@ const Subscriptions = ( {
 	translate
 } ) => {
 	return (
-		<Card className="subscriptions site-settings__discussion-settings">
-			<FormFieldset>
-				<div className="subscriptions__info-link-container site-settings__info-link-container">
-					<InfoPopover position={ 'left' }>
-						<ExternalLink href={ 'https://jetpack.com/support/subscriptions' } target="_blank">
-							{ translate( 'Learn more about Subscriptions' ) }
-						</ExternalLink>
-					</InfoPopover>
-				</div>
+		<div>
+			<CompactCard className="subscriptions__card site-settings__discussion-settings">
+				<FormFieldset>
+					<div className="subscriptions__info-link-container site-settings__info-link-container">
+						<InfoPopover position={ 'left' }>
+							<ExternalLink href={ 'https://jetpack.com/support/subscriptions' } target="_blank">
+								{ translate( 'Learn more about Subscriptions' ) }
+							</ExternalLink>
+						</InfoPopover>
+					</div>
 
-				<JetpackModuleToggle
-					siteId={ selectedSiteId }
-					moduleSlug="subscriptions"
-					label={ translate( 'Allow users to subscribe to your posts and comments and receive notifications via email.' ) }
-					disabled={ isRequestingSettings || isSavingSettings }
-					/>
+					<JetpackModuleToggle
+						siteId={ selectedSiteId }
+						moduleSlug="subscriptions"
+						label={ translate( 'Allow users to subscribe to your posts and comments and receive notifications via email.' ) }
+						disabled={ isRequestingSettings || isSavingSettings }
+						/>
 
-				<div className="subscriptions__module-settings site-settings__child-settings">
-					<FormToggle
-						className="subscriptions__module-settings-toggle is-compact"
-						checked={ !! fields.stb_enabled }
-						disabled={ isRequestingSettings || isSavingSettings || ! subscriptionsModuleActive }
-						onChange={ handleToggle( 'stb_enabled' ) }
-					>
-						{ translate( 'Show a "follow blog" option in the comment form' ) }
-					</FormToggle>
+					<div className="subscriptions__module-settings site-settings__child-settings">
+						<FormToggle
+							className="subscriptions__module-settings-toggle is-compact"
+							checked={ !! fields.stb_enabled }
+							disabled={ isRequestingSettings || isSavingSettings || ! subscriptionsModuleActive }
+							onChange={ handleToggle( 'stb_enabled' ) }
+						>
+							{ translate( 'Show a "follow blog" option in the comment form' ) }
+						</FormToggle>
 
-					<FormToggle
-						className="subscriptions__module-settings-toggle is-compact"
-						checked={ !! fields.stc_enabled }
-						disabled={ isRequestingSettings || isSavingSettings || ! subscriptionsModuleActive }
-						onChange={ handleToggle( 'stc_enabled' ) }
-					>
-						{ translate( 'Show a "follow comments" option in the comment form.' ) }
-					</FormToggle>
+						<FormToggle
+							className="subscriptions__module-settings-toggle is-compact"
+							checked={ !! fields.stc_enabled }
+							disabled={ isRequestingSettings || isSavingSettings || ! subscriptionsModuleActive }
+							onChange={ handleToggle( 'stc_enabled' ) }
+						>
+							{ translate( 'Show a "follow comments" option in the comment form.' ) }
+						</FormToggle>
+					</div>
+				</FormFieldset>
+			</CompactCard>
 
-					<p className="subscriptions__email-followers">
-						<a href={ '/people/email-followers/' + selectedSiteSlug }>
-							{ translate( 'View your Email Followers' ) }
-						</a>
-					</p>
-				</div>
-			</FormFieldset>
-		</Card>
+			<CompactCard href={ '/people/email-followers/' + selectedSiteSlug }>
+				{ translate( 'View your Email Followers' ) }
+			</CompactCard>
+		</div>
 	);
 };
 
