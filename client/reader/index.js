@@ -14,7 +14,7 @@ function forceTeamA8C( context, next ) {
 	next();
 }
 
-module.exports = function() {
+export default function() {
 	if ( config.isEnabled( 'reader' ) ) {
 		page( '/',
 			controller.preloadReaderBundle,

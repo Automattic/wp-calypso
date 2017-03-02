@@ -23,4 +23,4 @@ var RecommendationPostsStream = React.createClass( {
 
 } );
 
-module.exports = RecommendationPostsStream;
+export default RecommendationPostsStream;

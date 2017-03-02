@@ -191,4 +191,4 @@ var FollowingEditNotificationSettings = React.createClass( {
 
 } );
 
-module.exports = FollowingEditNotificationSettings;
+export default FollowingEditNotificationSettings;

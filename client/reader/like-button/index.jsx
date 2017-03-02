@@ -32,4 +32,4 @@ const ReaderLikeButton = React.createClass( {
 
 } );
 
-module.exports = ReaderLikeButton;
+export default ReaderLikeButton;

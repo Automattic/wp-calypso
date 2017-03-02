@@ -35,4 +35,4 @@ const FollowingEmptyContent = React.createClass( {
 	}
 } );
 
-module.exports = FollowingEmptyContent;
+export default FollowingEmptyContent;

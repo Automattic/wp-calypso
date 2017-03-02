@@ -135,4 +135,4 @@ const SubscriptionListItem = React.createClass( {
 
 } );
 
-module.exports = SubscriptionListItem;
+export default SubscriptionListItem;

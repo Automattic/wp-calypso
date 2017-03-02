@@ -42,4 +42,4 @@ const FeedEmptyContent = React.createClass( {
 	}
 } );
 
-module.exports = FeedEmptyContent;
+export default FeedEmptyContent;

@@ -43,4 +43,4 @@ var RecommendedPostsEmptyContent = React.createClass( {
 	}
 } );
 
-module.exports = RecommendedPostsEmptyContent;
+export default RecommendedPostsEmptyContent;
