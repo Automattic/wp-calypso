@@ -17,7 +17,7 @@ import Button from 'components/button';
 import ActiveThemeScreenshot from './active-theme-screenshot';
 import ThemeSetupDialog from 'my-sites/site-settings/theme-setup-dialog';
 
-const ThemeSetupCard = ( { theme, translate, onClickKeepContent, onClickDeleteContent } ) => (
+const ThemeSetupCard = ( { theme, translate, onClickKeepContent } ) => (
 	<ActionPanel>
 		<ActionPanelBody>
 			<ActionPanelTitle>{ translate( 'Theme Setup' ) }</ActionPanelTitle>
@@ -28,14 +28,11 @@ const ThemeSetupCard = ( { theme, translate, onClickKeepContent, onClickDeleteCo
 				<ActiveThemeScreenshot theme={ theme } />
 			</ActionPanelFigure>
 			<p>{ translate( 'Want your site to look like the demo? Use Theme Setup to automatically apply the demo site\'s settings to your site.' ) }</p>
-			<p>{ translate( 'You can apply Theme Setup to your current site and keep all your posts, pages, and widgets, or use it for a fresh start and delete everything currently on your site. In both cases, placeholder text will appear on your site – some themes need certain elements to look like the demo, so Theme Setup adds those for you. Please customize it!', { components: { strong: <strong /> } } ) }</p>
+			<p>{ translate( 'You can apply Theme Setup to your current site while keeping all your posts, pages, and widgets. Some placeholder text may appear on your site – some themes need certain elements to look like the demo, so Theme Setup adds those for you. Please customize it!', { components: { strong: <strong /> } } ) }</p>
 		</ActionPanelBody>
 		<ActionPanelFooter>
 			<Button className="theme-setup__button" primary={ true } onClick={ onClickKeepContent }>
-				{ translate( 'Set Up And Keep Content' ) }
-			</Button>
-			<Button className="theme-setup__button" scary={ true } onClick={ onClickDeleteContent }>
-				{ translate( 'Set Up And Delete Content' ) }
+				{ translate( 'Set Up Your Theme' ) }
 			</Button>
 		</ActionPanelFooter>
 		<ThemeSetupDialog />

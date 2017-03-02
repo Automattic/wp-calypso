@@ -18,7 +18,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getActiveTheme, getTheme } from 'state/themes/selectors';
 import { openDialog } from 'state/ui/theme-setup/actions';
 
-let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain, onClickKeepContent, onClickDeleteContent } ) => {
+let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain, onClickKeepContent } ) => {
 	const onBack = () => {
 		page( '/settings/general/' + activeSiteDomain );
 	};
@@ -31,7 +31,6 @@ let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain, onClickK
 			{ site && theme
 				? <ThemeSetupCard
 					onClickKeepContent={ onClickKeepContent }
-					onClickDeleteContent={ onClickDeleteContent }
 					theme={ theme } />
 				: <ThemeSetupPlaceholder /> }
 		</div>
@@ -56,9 +55,6 @@ const mapDispatchToProps = ( dispatch ) => {
 		onClickKeepContent() {
 			dispatch( openDialog( true ) );
 		},
-		onClickDeleteContent() {
-			dispatch( openDialog( false ) );
-		}
 	};
 };
 
