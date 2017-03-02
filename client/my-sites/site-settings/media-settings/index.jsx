@@ -78,7 +78,7 @@ const MediaSettings = ( {
 					<FormSelect
 						name="carousel_background_color"
 						id="carousel_background_color"
-						value={ fields.carousel_background_color || '' }
+						value={ fields.carousel_background_color || 'black' }
 						onChange={ onChangeField( 'carousel_background_color' ) }
 						disabled={ isRequestingSettings || isSavingSettings || ! carouselActive } >
 						<option value="black" key="carousel_background_color_black">
