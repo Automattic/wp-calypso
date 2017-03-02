@@ -85,8 +85,6 @@ const mapStateToProps = ( state, ownProps ) => {
 		commentCount,
 	} = ownProps;
 
-	// console.log( siteId, postId, getPostTotalCommentsCount( state, siteId, postId ) );
-
 	return {
 		commentCount: getPostTotalCommentsCount( state, siteId, postId ) || commentCount
 	};
