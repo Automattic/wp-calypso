@@ -53,7 +53,7 @@ class ThemeSetupDialog extends React.Component {
 		);
 		const keepContent = {
 			action: 'keep-content',
-			label: translate( 'Set Up And Keep Content' ),
+			label: translate( 'Set Up Your Theme' ),
 			isPrimary: true,
 			onClick: () => onThemeSetupClick( true, site.ID ),
 		};
@@ -96,9 +96,9 @@ class ThemeSetupDialog extends React.Component {
 	renderContent( deleteConfirmed, { isActive, result, saveExisting, site, translate } ) {
 		const keepContent = (
 			<div>
-				<h1>{ translate( 'Confirm Theme Setup' ) }</h1>
+				<h1>{ translate( 'Theme Setup' ) }</h1>
 				<p>
-					{ translate( 'Settings will be changed on {{strong}}%(site)s{{/strong}}, but no content will be deleted. These changes will be live immmediately. Do you want to proceed?', {
+					{ translate( 'Settings will be changed on {{strong}}%(site)s{{/strong}}, and these changes will be live immmediately. Do you want to proceed?', {
 						components: {
 							strong: <strong />,
 						},
@@ -145,17 +145,17 @@ class ThemeSetupDialog extends React.Component {
 		);
 		const success = (
 			<div>
-				<h1>{ translate( 'Theme Setup Success' ) }</h1>
+				<h1>{ translate( 'Theme Setup' ) }</h1>
 				<p>
-					{ translate( 'Looks good.' ) }
+					{ translate( 'Success! Your theme is all set up like the demo.' ) }
 				</p>
 			</div>
 		);
 		const failure = (
 			<div>
-				<h1>{ translate( 'Theme Setup Failure' ) }</h1>
+				<h1>{ translate( 'Theme Setup' ) }</h1>
 				<p>
-					{ translate( 'Something went terribly wrong. Oops. Try again?' ) }
+					{ translate( 'We encountered a problem – would you like to try again?' ) }
 				</p>
 			</div>
 		);
