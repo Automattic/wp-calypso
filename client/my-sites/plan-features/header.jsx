@@ -73,12 +73,14 @@ class PlanFeaturesHeader extends Component {
 
 	getBillingTimeframe() {
 		const {
+			hideMonthly,
 			billingTimeFrame,
 			discountPrice,
 			isPlaceholder,
 			site,
 			translate,
-			isSiteAT
+			isSiteAT,
+			currentSitePlan
 		} = this.props;
 
 		const isDiscounted = !! discountPrice;
@@ -90,7 +92,8 @@ class PlanFeaturesHeader extends Component {
 		if (
 			isSiteAT ||
 			! site.jetpack ||
-			this.props.planType === PLAN_JETPACK_FREE
+			this.props.planType === PLAN_JETPACK_FREE ||
+			( hideMonthly && ( ! currentSitePlan || currentSitePlan.productSlug === PLAN_JETPACK_FREE ) )
 		) {
 			return (
 				<p className={ timeframeClasses }>
@@ -165,6 +168,7 @@ class PlanFeaturesHeader extends Component {
 
 	getPlanFeaturesPrices() {
 		const {
+			hideMonthly,
 			currencyCode,
 			discountPrice,
 			rawPrice,
@@ -185,7 +189,7 @@ class PlanFeaturesHeader extends Component {
 			);
 		}
 
-		if ( discountPrice ) {
+		if ( discountPrice && ! hideMonthly ) {
 			return (
 				<span className="plan-features__header-price-group">
 					<PlanPrice currencyCode={ currencyCode } rawPrice={ rawPrice } original />
@@ -194,7 +198,7 @@ class PlanFeaturesHeader extends Component {
 			);
 		}
 
-		if ( relatedMonthlyPlan ) {
+		if ( relatedMonthlyPlan && ! hideMonthly ) {
 			const originalPrice = relatedMonthlyPlan.raw_price * 12;
 			return (
 				<span className="plan-features__header-price-group">
@@ -260,7 +264,6 @@ export default connect( ( state, ownProps ) => {
 	const { isInSignup } = ownProps;
 	const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
 	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
-
 	return Object.assign( {},
 		ownProps,
 		{
