@@ -197,10 +197,11 @@ const CheckoutThankYou = React.createClass( {
 	},
 
 	render() {
-		let purchases = null,
-			failedPurchases = null,
+		let purchases = [],
+			failedPurchases = [],
 			wasJetpackPlanPurchased = false,
 			wasDotcomPlanPurchased = false;
+
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
 			failedPurchases = getFailedPurchases( this.props );
@@ -209,7 +210,7 @@ const CheckoutThankYou = React.createClass( {
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
-		if ( ! purchases && ! failedPurchases && ! this.isGenericReceipt() ) {
+		if ( ! purchases.length && ! failedPurchases.length && ! this.isGenericReceipt() ) {
 			// disabled because we use global loader icon
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
@@ -238,7 +239,7 @@ const CheckoutThankYou = React.createClass( {
 			);
 		}
 
-		if ( this.props.domainOnlySiteFlow && ! failedPurchases ) {
+		if ( this.props.domainOnlySiteFlow && ! failedPurchases.length ) {
 			return (
 				<Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
