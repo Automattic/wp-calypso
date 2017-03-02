@@ -6,7 +6,7 @@ import qs from 'qs';
 import i18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import React from 'react';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -264,6 +264,7 @@ module.exports = {
 				<CheckoutThankYouComponent
 					productsList={ productsList }
 					receiptId={ receiptId }
+					domainOnlySiteFlow={ isEmpty( context.params.site ) }
 					selectedFeature={ context.params.feature }
 					selectedSite={ sites.getSelectedSite() } />
 			),
