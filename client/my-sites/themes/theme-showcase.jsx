@@ -118,6 +118,17 @@ const ThemeShowcase = React.createClass( {
 		trackClick( 'upload theme' );
 	},
 
+	showUploadButton() {
+		const { siteSlug, isMultisite, isJetpack } = this.props;
+
+		return (
+			config.isEnabled( 'manage/themes/upload' ) &&
+			siteSlug &&
+			! isMultisite &&
+			( isJetpack || config.isEnabled( 'automated-transfer' ) )
+		);
+	},
+
 	render() {
 		const {
 			site,
@@ -125,10 +136,7 @@ const ThemeShowcase = React.createClass( {
 			getScreenshotOption,
 			search,
 			filter,
-			translate,
-			siteSlug,
-			isMultisite,
-			isJetpack
+			translate
 		} = this.props;
 
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
@@ -152,15 +160,12 @@ const ThemeShowcase = React.createClass( {
 						tier={ tier }
 						select={ this.onTierSelect } />
 				</StickyPanel>
-				{ config.isEnabled( 'manage/themes/upload' ) && siteSlug && ! isMultisite &&
-					( isJetpack || config.isEnabled( 'automated-transfer' ) ) &&
-						<Button className="themes__upload-button" compact icon
-							onClick={ this.onUploadClick }
-							href={ `/design/upload/${ this.props.siteSlug }` }
-						>
-							<Gridicon icon="cloud-upload" />
-							{ translate( 'Upload Theme' ) }
-						</Button>
+				{ this.showUploadButton() && <Button className="themes__upload-button" compact icon
+					onClick={ this.onUploadClick }
+					href={ `/design/upload/${ this.props.siteSlug }` }>
+					<Gridicon icon="cloud-upload" />
+					{ translate( 'Upload Theme' ) }
+				</Button>
 				}
 				<ThemesSelection
 					search={ search }
