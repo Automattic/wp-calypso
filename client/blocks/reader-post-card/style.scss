@@ -639,7 +639,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 }
 
-.reader-post-card__video {
+.reader-post-card .reader-featured-video__video {
 	padding-bottom: 17px;
 
 	@media #{$reader-post-card-breakpoint-medium} {
@@ -649,10 +649,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	@media #{$reader-post-card-breakpoint-small} {
 		padding-bottom: 10px;
 	}
-}
-
-.reader-post-card__video iframe {
-	display: flex;
 }
 
 .reader-post-card__gallery-image {
