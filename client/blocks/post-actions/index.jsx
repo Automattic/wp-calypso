@@ -48,6 +48,7 @@ const PostActions = ( { className, post, site } ) => {
 				<CommentButton
 					key="comment-button"
 					post={ post }
+					showLabel={ false }
 					commentCount={ post.discussion.comment_count }
 					onClick={ () => {} }
 					tagName="div" />
