@@ -129,18 +129,20 @@ class PlanFeatures extends Component {
 				currencyCode,
 				current,
 				features,
-				discountPrice,
 				onUpgradeClick,
 				planConstantObj,
 				planName,
 				popular,
 				newPlan,
-				rawPrice,
 				relatedMonthlyPlan,
 				primaryUpgrade,
 				isPlaceholder
 			} = properties;
-
+			let { rawPrice, discountPrice } = properties;
+			if ( abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' && relatedMonthlyPlan && relatedMonthlyPlan.raw_price ) {
+				discountPrice = rawPrice;
+				rawPrice = relatedMonthlyPlan.raw_price;
+			}
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
@@ -199,16 +201,19 @@ class PlanFeatures extends Component {
 			const {
 				currencyCode,
 				current,
-				discountPrice,
 				planConstantObj,
 				planName,
 				popular,
 				newPlan,
-				rawPrice,
 				relatedMonthlyPlan,
 				isPlaceholder
 			} = properties;
+			let { rawPrice, discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
+			if ( abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' && relatedMonthlyPlan && relatedMonthlyPlan.raw_price ) {
+				discountPrice = rawPrice;
+				rawPrice = relatedMonthlyPlan.raw_price;
+			}
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesHeader
@@ -483,7 +488,14 @@ export default connect(
 					available: available,
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
-					discountPrice: getPlanDiscountedRawPrice( state, selectedSiteId, plan, { isMonthly: showMonthly } ),
+					discountPrice: getPlanDiscountedRawPrice( state,
+						selectedSiteId,
+						plan,
+						{
+							isMonthly: abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly'
+								? true
+								: showMonthly
+						} ),
 					features: getPlanFeaturesObject( planConstantObj.getFeatures( abtest ) ),
 					onUpgradeClick: onUpgradeClick
 						? () => {

@@ -188,8 +188,7 @@ class PlanFeaturesHeader extends Component {
 				<div className={ classes } ></div>
 			);
 		}
-
-		if ( discountPrice && ! hideMonthly ) {
+		if ( discountPrice ) {
 			return (
 				<span className="plan-features__header-price-group">
 					<PlanPrice currencyCode={ currencyCode } rawPrice={ rawPrice } original />
