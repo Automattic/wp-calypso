@@ -16,6 +16,9 @@ export const normalizeSettings = ( settings ) => {
 			case 'wp_mobile_featured_images':
 				memo[ key ] = settings[ key ] === 'enabled';
 				break;
+			case 'carousel_background_color':
+				memo[ key ] = settings [ key ] === '' ? 'black' : settings[ key ];
+				break;
 			default:
 				memo[ key ] = settings[ key ];
 		}
