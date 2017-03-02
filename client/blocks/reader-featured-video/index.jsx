@@ -95,7 +95,7 @@ class ReaderFeaturedVideo extends React.Component {
 		if ( preferThumbnail && thumbnailUrl ) {
 			return (
 				<ReaderFeaturedImage imageUrl={ thumbnailUrl } onClick={ this.handleThumbnailClick }>
-					{ allowPlaying && <img className="reader-post-card__play-icon"
+					{ allowPlaying && <img className="reader-featured-video__play-icon"
 						src="/calypso/images/reader/play-icon.png"
 						title={ translate( 'Play Video' ) }
 					/> }

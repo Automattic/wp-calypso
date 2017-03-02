@@ -1,3 +1,12 @@
 .reader-featured-video__video iframe {
 	display: flex;
 }
+
+.reader-featured-video__play-icon {
+	opacity: .8;
+	transition: opacity .25s;
+}
+
+.reader-featured-image:hover .reader-featured-video__play-icon {
+	opacity: 1;
+}

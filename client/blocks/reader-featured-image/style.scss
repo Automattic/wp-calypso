@@ -1,3 +1,16 @@
 .reader-featured-image {
 	border: 1px solid lighten( $gray, 20% );
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-basis: auto;
+	flex-grow: 1;
+	cursor: pointer;
 }
+
+.is-section-devdocs .reader-featured-image {
+	min-height: 100px;
+	margin-bottom: 16px;
+}
+
