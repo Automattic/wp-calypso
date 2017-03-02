@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import EmbedHelper from 'reader/embed-helper';
-import FeaturedImage from './featured-image';
+import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
 import QueryReaderThumbnail from 'components/data/query-reader-thumbnails';
 
@@ -71,12 +71,12 @@ class FeaturedVideo extends React.Component {
 
 		if ( preferThumbnail && thumbnailUrl ) {
 			return (
-				<FeaturedImage imageUri={ thumbnailUrl } onClick={ this.handleThumbnailClick } >
+				<ReaderFeaturedImage imageUrl={ thumbnailUrl } onClick={ this.handleThumbnailClick }>
 					<img className="reader-post-card__play-icon"
 						src="/calypso/images/reader/play-icon.png"
 						title={ translate( 'Play Video' ) }
 					/>
-				</FeaturedImage>
+				</ReaderFeaturedImage>
 			);
 		}
 

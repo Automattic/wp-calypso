@@ -162,6 +162,12 @@ describe( 'utils', () => {
 				'custom-content-types': true,
 				jetpack_testimonial: true,
 				jetpack_portfolio: false,
+				comments: true,
+				highlander_comment_form_prompt: 'Leave a Reply',
+				jetpack_comment_form_color_scheme: 'light',
+				carousel: true,
+				carousel_background_color: 'black',
+				carousel_display_exif: true
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
@@ -193,6 +199,10 @@ describe( 'utils', () => {
 				ignored_phrases: true,
 				jetpack_testimonial: true,
 				jetpack_portfolio: false,
+				highlander_comment_form_prompt: 'Leave a Reply',
+				jetpack_comment_form_color_scheme: 'light',
+				carousel_background_color: 'black',
+				carousel_display_exif: true
 			} );
 		} );
 
@@ -233,6 +243,12 @@ describe( 'utils', () => {
 				'custom-content-types': false,
 				jetpack_testimonial: true,
 				jetpack_portfolio: false,
+				comments: false,
+				highlander_comment_form_prompt: 'Leave a Reply',
+				jetpack_comment_form_color_scheme: 'light',
+				carousel: false,
+				carousel_background_color: 'black',
+				carousel_display_exif: true
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
@@ -270,6 +286,10 @@ describe( 'utils', () => {
 				ignored_phrases: true,
 				jetpack_testimonial: true,
 				jetpack_portfolio: false,
+				highlander_comment_form_prompt: 'Leave a Reply',
+				jetpack_comment_form_color_scheme: 'light',
+				carousel_background_color: 'black',
+				carousel_display_exif: true
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {

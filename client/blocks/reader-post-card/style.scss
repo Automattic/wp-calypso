@@ -52,8 +52,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 	&.has-thumbnail {
 
-		.reader-post-card__featured-image {
-			border: 1px solid lighten( $gray, 20% );
+		.reader-featured-image {
 			box-sizing: border-box;
 			display: flex;
 			align-items: center;
@@ -240,7 +239,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .reader__content .reader-post-card__timestamp-link,
 .reader__content .reader-post-card__tag-link
 {
-	color: lighten( $gray, 10% );
+	color: $gray;
 	margin-top: 2px;
 	cursor: pointer;
 }
@@ -302,7 +301,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	position: relative;
 		top: 5px;
 	width: 15px;
-	fill: lighten( $gray, 10% );
+	fill: $gray;
 }
 
 .reader-post-card__byline .reader-avatar {
@@ -394,7 +393,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 }
 
-.reader-post-card__excerpt {
+.reader-post-card .reader-excerpt {
 	font-size: 15px;
 	line-height: 1.6;
 	font-weight: 100;
@@ -405,26 +404,12 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	p {
 		margin: 0;
 	}
-
-	sup, sub {
-		vertical-align: baseline;
-		position: relative;
-		font-size: 0.83em;
-	}
-
-	sup {
-		top: -0.4em;
-	}
-
-	sub {
-		bottom: -0.2em;
-	}
 }
 
 // If it's not a discover card, clamp lines
 .reader-post-card.card:not(.is-discover) {
 
-	.reader-post-card__excerpt {
+	.reader-excerpt {
 		overflow: hidden;
 		max-height: 15px * 1.6 * 3;
 
@@ -441,7 +426,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		}
 	}
 
-	.reader-post-card__excerpt[direction=rtl] {
+	.reader-excerpt[direction=rtl] {
 		&::before {
 			@include long-content-fade( $direction: left, $size: 15px * 1.6 * 5 );
 			top: inherit;
@@ -449,7 +434,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		}
 	}
 
-	.reader-post-card__excerpt[direction=ltr] {
+	.reader-excerpt[direction=ltr] {
 		&::before {
 			@include long-content-fade( $direction: right, $size: 15px * 1.6 * 5 );
 			top: inherit;
@@ -461,7 +446,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 // 3 line excerpt for thumbnail cards
 .reader-post-card.card.has-thumbnail:not(.is-gallery):not(.is-discover) {
 
-	.reader-post-card__excerpt {
+	.reader-excerpt {
 		max-height: 15px * 1.6 * 3;
 		overflow: hidden;
 	}
@@ -476,7 +461,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		margin-left: -2px;
 
 		.gridicon {
-			fill: lighten( $gray, 10% );
 			position: relative;
 				left: -8px;
 				top: -1px;
@@ -600,7 +584,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			flex-direction: column;
 		}
 
-		.reader-post-card__post .reader-post-card__featured-image {
+		.reader-post-card__post .reader-featured-image {
 			height: 100px;
 			margin-right: 0;
 			max-width: 100%;
@@ -698,7 +682,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	padding: 16px;
 }
 
-.is-section-devdocs .reader-post-card__featured-image {
+.is-section-devdocs .reader-featured-image {
 	bottom: 16px;
 }
-

@@ -98,9 +98,19 @@ export function normalizeWporgTheme( theme ) {
 		download_link: 'download'
 	};
 
-	const normalizedTheme = mapKeys( theme, ( value, key ) => (
+	const normalizedTheme = mapKeys( omit( theme, [ 'sections', 'author' ] ), ( value, key ) => (
 		get( attributesMap, key, key )
 	) );
+
+	const description = get( theme, [ 'sections', 'description' ] );
+	if ( description ) {
+		normalizedTheme.description = description;
+	}
+
+	const author = get( theme, [ 'author', 'display_name' ] );
+	if ( author ) {
+		normalizedTheme.author = author;
+	}
 
 	if ( ! normalizedTheme.tags ) {
 		return normalizedTheme;
@@ -225,6 +235,7 @@ export function isThemeMatchingQuery( query, theme ) {
 				) );
 
 				return foundInTaxonomies || (
+					( theme.id && includes( theme.id.toLowerCase(), search ) ) ||
 					( theme.name && includes( theme.name.toLowerCase(), search ) ) ||
 					( theme.author && includes( theme.author.toLowerCase(), search ) ) ||
 					( theme.descriptionLong && includes( theme.descriptionLong.toLowerCase(), search ) )

@@ -62,6 +62,10 @@
 		}
 	}
 
+	.form-toggle__switch {
+		margin-top: 3px;
+	}
+
 	p.form-setting-explanation {
 		display: block;
 		margin: 5px 0;
@@ -190,10 +194,6 @@
 }
 
 .site-settings__discussion-settings {
-	label:first-of-type {
-		font-weight: normal;
-	}
-
 	.form-toggle__label {
 		display: flex;
 		align-items: center;
@@ -227,6 +227,12 @@
 
 		.form-select {
 			margin-top: 2px;
+		}
+	}
+
+	.site-settings__moderation-settings {
+		.form-label {
+			font-weight: normal;
 		}
 	}
 }
@@ -404,6 +410,10 @@
 
 .site-settings__child-settings {
 	margin: 16px 36px 0;
+}
+
+.site-settings__info-link-container {
+	float: right;
 }
 
 .site-settings__date-time-format-custom {

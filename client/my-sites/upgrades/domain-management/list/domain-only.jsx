@@ -12,12 +12,10 @@ import { domainManagementEdit } from 'my-sites/upgrades/paths';
 
 const DomainOnly = ( { domainName, siteId, translate } ) => (
 	<EmptyContent
-		title={ translate( '%(domainName)s is not set up yet.', {
-			args: { domainName }
-		} ) }
-		action={ translate( 'Create New Site' ) }
+		title={ translate( '%(domainName)s is not set up yet.', { args: { domainName } } ) }
+		action={ translate( 'Create Site' ) }
 		actionURL={ `/start/site-selected/?siteSlug=${ encodeURIComponent( domainName ) }&siteId=${ encodeURIComponent( siteId ) }` }
-		secondaryAction={ translate( 'Advanced' ) }
+		secondaryAction={ translate( 'Manage Domain' ) }
 		secondaryActionURL={ domainManagementEdit( domainName, domainName ) }
 		illustration={ '/calypso/images/drake/drake-browser.svg' } />
 );

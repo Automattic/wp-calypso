@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { Component } from 'react';
-import { initial, flatMap, trim, sampleSize, debounce } from 'lodash';
+import { initial, flatMap, trim, debounce } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -17,8 +17,7 @@ import SearchInput from 'components/search';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
 import { recordTrackForPost, recordAction } from 'reader/stats';
-import i18nUtils from 'lib/i18n-utils';
-import { suggestions } from './suggestions';
+import SuggestionProvider from './suggestion-provider';
 import Suggestion from './suggestion';
 import ReaderPostCard from 'blocks/reader-post-card';
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
@@ -70,11 +69,11 @@ const SearchCardAdapter = ( isRecommendations ) => class extends Component {
 
 	onCardClick = ( post ) => {
 		recordTrackForPost( 'calypso_reader_searchcard_clicked', post );
-		this.props.handleClick( { post } );
+		this.props.handleClick();
 	}
 
 	onCommentClick = () => {
-		this.props.handleClick( this.props.post, { comments: true } );
+		this.props.handleClick( { comments: true } );
 	}
 
 	render() {
@@ -104,22 +103,6 @@ class SearchStream extends Component {
 		query: React.PropTypes.string,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		const lang = i18nUtils.getLocaleSlug();
-		let pickedSuggestions = null;
-
-		if ( suggestions[ lang ] ) {
-			pickedSuggestions = sampleSize( suggestions[ lang ], 3 );
-		}
-
-		this.state = {
-			suggestions: pickedSuggestions,
-			title: this.getTitle()
-		};
-	}
-
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.query !== this.props.query ) {
 			this.updateState( nextProps );
@@ -139,10 +122,19 @@ class SearchStream extends Component {
 		return props.query;
 	}
 
+	state = {
+		title: this.getTitle()
+	}
+
 	updateQuery = ( newValue ) => {
 		this.scrollToTop();
 		const trimmedValue = trim( newValue ).substring( 0, 1024 );
-		if ( trimmedValue === '' || trimmedValue.length > 1 && trimmedValue !== this.props.query ) {
+		if ( ( trimmedValue !== '' &&
+				trimmedValue.length > 1 &&
+				trimmedValue !== this.props.query
+			) ||
+			newValue === ''
+		) {
 			this.props.onQueryChange( newValue );
 		}
 	}
@@ -194,16 +186,16 @@ class SearchStream extends Component {
 	}
 
 	render() {
-		const { store } = this.props;
-		const emptyContent = <EmptyContent query={ this.props.query } />;
+		const { store, query, suggestions } = this.props;
+		const emptyContent = <EmptyContent query={ query } />;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
 			searchPlaceholderText = this.props.translate( 'Search billions of WordPress.com posts…' );
 		}
 
-		const sugList = initial( flatMap( this.state.suggestions, query =>
-			[ <Suggestion suggestion={ query } source="search" />, ', ' ] ) );
+		const suggestionList = initial( flatMap( suggestions, suggestionKeyword =>
+			[ <Suggestion suggestion={ suggestionKeyword } source="search" />, ', ' ] ) );
 
 		const documentTitle = this.props.translate(
 			'%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) }
@@ -222,7 +214,7 @@ class SearchStream extends Component {
 				<div className="search-stream__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
-							initialValue={ this.props.query }
+							initialValue={ query }
 							onSearch={ this.updateQuery }
 							onSearchClose={ this.scrollToTop }
 							autoFocus={ this.props.autoFocusInput }
@@ -231,8 +223,16 @@ class SearchStream extends Component {
 							placeholder={ searchPlaceholderText } />
 					</CompactCard>
 					<p className="search-stream__blank-suggestions">
-						{ this.props.translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: sugList } } ) }
+						{ suggestions &&
+							this.props.translate(
+								'Suggestions: {{suggestions /}}.', {
+									components: {
+										suggestions: suggestionList
+									}
+								} )
+						}&nbsp;
 					</p>
+
 					<hr className="search-stream__fixed-area-separator" />
 				</div>
 			</Stream>
@@ -240,4 +240,4 @@ class SearchStream extends Component {
 	}
 }
 
-export default localize( SearchStream );
+export default SuggestionProvider( localize( SearchStream ) );

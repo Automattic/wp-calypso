@@ -63,6 +63,7 @@ export const FEATURE_ADVANCED_SEO = 'advanced-seo';
 export const FEATURE_BUSINESS_ONBOARDING = 'business-onboarding';
 export const FEATURE_UPLOAD_PLUGINS = 'upload-plugins';
 export const FEATURE_UPLOAD_THEMES = 'upload-themes';
+export const FEATURE_REPUBLICIZE = 'republicize';
 
 // jetpack features constants
 export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';
@@ -82,17 +83,6 @@ export const FEATURE_MALWARE_SCANNING_DAILY = 'malware-scanning-daily';
 export const FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND = 'malware-scanning-daily-and-on-demand';
 export const FEATURE_ONE_CLICK_THREAT_RESOLUTION = 'one-click-threat-resolution';
 export const FEATURE_POLLS_PRO = 'polls-pro';
-export const FEATURE_CORE_JETPACK = 'core-jetpack';
-export const FEATURE_BASIC_SUPPORT_JETPACK = 'basic-support-jetpack';
-export const FEATURE_BASIC_SECURITY_JETPACK = 'basic-security-jetpack';
-export const FEATURE_SITE_BACKUPS_JETPACK = 'site-backups-jetpack';
-export const FEATURE_REALTIME_BACKUPS_JETPACK = 'realtime-backups-jetpack';
-export const FEATURE_SECURITY_SCANNING_JETPACK = 'security-scanning-jetpack';
-export const FEATURE_REVENUE_GENERATION_JETPACK = 'revenue-generation-jetpack';
-export const FEATURE_VIDEO_HOSTING_JETPACK = 'vidoe-hosting-jetpack';
-export const FEATURE_SECURITY_ESSENTIALS_JETPACK = 'security-essentials-jetpack';
-export const FEATURE_PRIORITY_SUPPORT_JETPACK = 'priority-support-jetpack';
-export const FEATURE_SEO_TOOLS_JETPACK = 'seo-tools-jetpack';
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
 export const PLANS_LIST = {
@@ -154,7 +144,7 @@ export const PLANS_LIST = {
 					strong: <strong className="plan-features__targeted-description-heading" />
 				}
 			} ),
-		getFeatures: ( abtest ) => [ // pay attention to ordering, shared features should align on /plan page
+		getFeatures: ( abtest ) => compact( [ // pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
@@ -163,8 +153,9 @@ export const PLANS_LIST = {
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
 			FEATURE_WORDADS_INSTANT,
-			FEATURE_VIDEO_UPLOADS
-		],
+			FEATURE_VIDEO_UPLOADS,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+		] ),
 		getPromotedFeatures: () => [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_NO_ADS,
@@ -200,12 +191,13 @@ export const PLANS_LIST = {
 			FEATURE_NO_ADS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 			FEATURE_BUSINESS_ONBOARDING,
 			FEATURE_ADVANCED_SEO,
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
 			FEATURE_GOOGLE_ANALYTICS,
-			FEATURE_NO_BRANDING
+			FEATURE_NO_BRANDING,
 		] ),
 		getPromotedFeatures: () => [
 			FEATURE_UNLIMITED_STORAGE,
@@ -223,18 +215,11 @@ export const PLANS_LIST = {
 		getTitle: () => i18n.translate( 'Free' ),
 		getProductId: () => 2002,
 		getStoreSlug: () => PLAN_JETPACK_FREE,
-		getDescription: ( abtest ) => abtest && abtest( 'jetpackPlansTabs' ) === 'tabs'
-			? i18n.translate( 'Everything you need to get started' )
-			: i18n.translate(
-				'The features most needed by WordPress sites' +
-				' — perfectly packaged and optimized for everyone.'
+		getDescription: () => i18n.translate(
+			'The features most needed by WordPress sites' +
+			' — perfectly packaged and optimized for everyone.'
 		),
-		getFeatures: ( abtest ) => abtest && abtest( 'jetpackPlansTabs' ) === 'tabs'
-		? [
-			FEATURE_CORE_JETPACK,
-			FEATURE_BASIC_SECURITY_JETPACK,
-			FEATURE_BASIC_SUPPORT_JETPACK ]
-		: [
+		getFeatures: () => [
 			FEATURE_STANDARD_SECURITY_TOOLS,
 			FEATURE_SITE_STATS,
 			FEATURE_TRAFFIC_TOOLS,
@@ -244,28 +229,15 @@ export const PLANS_LIST = {
 	},
 	[ PLAN_JETPACK_PREMIUM ]: {
 		getTitle: () => i18n.translate( 'Premium' ),
-		getSubtitle: () => i18n.translate( 'Protection, speed, and revenue.' ),
 		getProductId: () => 2000,
 		getStoreSlug: () => PLAN_JETPACK_PREMIUM,
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getPathSlug: () => 'premium',
-		getDescription: ( abtest ) => abtest && abtest( 'jetpackPlansTabs' ) === 'tabs'
-			? i18n.translate(
-				'Generate income and save on video hosting costs. ' +
-				'Improve security with daily backups, malware scanning, and spam defense.'
-			)
-			: i18n.translate(
-				'Protection, speed, and revenue.'
+		getDescription: () => i18n.translate(
+			'Generate income and save on video hosting costs. ' +
+			'Improve security with daily backups, malware scanning, and spam defense.'
 		),
-		getFeatures: ( abtest ) => abtest && abtest( 'jetpackPlansTabs' ) === 'tabs'
-		? [
-			FEATURE_CORE_JETPACK,
-			FEATURE_SITE_BACKUPS_JETPACK,
-			FEATURE_SECURITY_SCANNING_JETPACK,
-			FEATURE_REVENUE_GENERATION_JETPACK,
-			FEATURE_VIDEO_HOSTING_JETPACK
-		]
-		: [
+		getFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
 			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
@@ -276,7 +248,8 @@ export const PLANS_LIST = {
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
-		],
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
 
@@ -286,22 +259,10 @@ export const PLANS_LIST = {
 		getStoreSlug: () => PLAN_JETPACK_PREMIUM_MONTHLY,
 		getPathSlug: () => 'premium-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
-		getDescription: ( abtest ) => abtest && abtest( 'jetpackPlansTabs' ) === 'tabs'
-			? i18n.translate(
-				'Generate income and save on video hosting costs. ' +
-				'Improve security with daily backups, malware scanning, and spam defense.'
-			)
-			: i18n.translate(
+		getDescription: () => i18n.translate(
 				'Protection, speed, and revenue.'
 		),
-		getFeatures: ( abtest ) => abtest && abtest( 'jetpackPlansTabs' ) === 'tabs'
-		? [
-			FEATURE_CORE_JETPACK,
-			FEATURE_SITE_BACKUPS_JETPACK,
-			FEATURE_SECURITY_SCANNING_JETPACK,
-			FEATURE_REVENUE_GENERATION_JETPACK,
-			FEATURE_VIDEO_HOSTING_JETPACK
-		] : [
+		getFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
 			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
@@ -312,7 +273,8 @@ export const PLANS_LIST = {
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 			FEATURE_MALWARE_SCANNING_DAILY,
-		],
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	},
 
@@ -322,27 +284,19 @@ export const PLANS_LIST = {
 		getStoreSlug: () => PLAN_JETPACK_PERSONAL,
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
 		getPathSlug: () => 'jetpack-personal',
-		getDescription: ( abtest ) => abtest && abtest( 'jetpackPlansTabs' ) === 'tabs'
-			? i18n.translate( 'Everything you need to get started' )
-			: i18n.translate(
-				'Essentials for every site. The most affordable solution to keep your' +
-				' personal or small business site backed up and spam-free.'
+		getDescription: () => i18n.translate(
+			'Essentials for every site. The most affordable solution to keep your' +
+			' personal or small business site backed up and spam-free.'
 		),
-		getFeatures: ( abtest ) => abtest && abtest( 'jetpackPlansTabs' ) === 'tabs'
-			? [
-				FEATURE_CORE_JETPACK,
-				FEATURE_SECURITY_ESSENTIALS_JETPACK,
-				FEATURE_PRIORITY_SUPPORT_JETPACK
-			]
-			: [
-				FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-				FEATURE_BACKUP_ARCHIVE_30,
-				FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-				FEATURE_AUTOMATED_RESTORES,
-				FEATURE_SPAM_AKISMET_PLUS,
-				FEATURE_EASY_SITE_MIGRATION,
-				FEATURE_PREMIUM_SUPPORT
-			],
+		getFeatures: () => [
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+			FEATURE_BACKUP_ARCHIVE_30,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
+			FEATURE_AUTOMATED_RESTORES,
+			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_EASY_SITE_MIGRATION,
+			FEATURE_PREMIUM_SUPPORT
+		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
 
@@ -352,27 +306,19 @@ export const PLANS_LIST = {
 		getProductId: () => 2006,
 		getPathSlug: () => 'jetpack-personal-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
-		getDescription: ( abtest ) => abtest && abtest( 'jetpackPlansTabs' ) === 'tabs'
-			? i18n.translate( 'Everything you need to get started' )
-			: i18n.translate(
-				'Essentials for every site. The most affordable solution to keep your' +
-				' personal or small business site backed up and spam-free.'
+		getDescription: () => i18n.translate(
+			'Essentials for every site. The most affordable solution to keep your' +
+			' personal or small business site backed up and spam-free.'
 		),
-		getFeatures: ( abtest ) => abtest && abtest( 'jetpackPlansTabs' ) === 'tabs'
-			? [
-				FEATURE_CORE_JETPACK,
-				FEATURE_SECURITY_ESSENTIALS_JETPACK,
-				FEATURE_PRIORITY_SUPPORT_JETPACK
-			]
-			: [
-				FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-				FEATURE_BACKUP_ARCHIVE_30,
-				FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-				FEATURE_AUTOMATED_RESTORES,
-				FEATURE_SPAM_AKISMET_PLUS,
-				FEATURE_EASY_SITE_MIGRATION,
-				FEATURE_PREMIUM_SUPPORT
-			],
+		getFeatures: () => [
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+			FEATURE_BACKUP_ARCHIVE_30,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
+			FEATURE_AUTOMATED_RESTORES,
+			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_EASY_SITE_MIGRATION,
+			FEATURE_PREMIUM_SUPPORT
+		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	},
 
@@ -387,42 +333,30 @@ export const PLANS_LIST = {
 			PLAN_JETPACK_PERSONAL_MONTHLY
 		], plan ),
 		getPathSlug: () => 'professional',
-		getDescription: ( abtest ) => abtest && abtest( 'jetpackPlansTabs' ) === 'tabs'
-			? i18n.translate( 'Ultimate security and traffic tools.' )
-			: i18n.translate(
-				'Real-time backups, unlimited archives, and one-click threat ' +
-				'resolution. Also includes SEO tools, and unlimited video hosting.'
+		getDescription: () => i18n.translate(
+			'Real-time backups, unlimited archives, and one-click threat ' +
+			'resolution. Also includes SEO tools, and unlimited video hosting.'
 		),
-		getFeatures: ( abtest ) => abtest && abtest( 'jetpackPlansTabs' ) === 'tabs'
-			? [
-				FEATURE_CORE_JETPACK,
-				FEATURE_REALTIME_BACKUPS_JETPACK,
-				FEATURE_SECURITY_SCANNING_JETPACK,
-				FEATURE_REVENUE_GENERATION_JETPACK,
-				FEATURE_VIDEO_HOSTING_JETPACK,
-				FEATURE_SEO_TOOLS_JETPACK
-			]
-			: compact( [
-				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-				FEATURE_BACKUP_ARCHIVE_UNLIMITED,
-				FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-				FEATURE_AUTOMATED_RESTORES,
-				FEATURE_SPAM_AKISMET_PLUS,
-				FEATURE_EASY_SITE_MIGRATION,
-				FEATURE_PREMIUM_SUPPORT,
-				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-				FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
-				FEATURE_ONE_CLICK_THREAT_RESOLUTION,
-				FEATURE_ADVANCED_SEO,
-				isEnabled( 'jetpack/google-analytics' ) && FEATURE_GOOGLE_ANALYTICS
-			]
-		),
+		getFeatures: () => compact( [
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
+			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
+			FEATURE_AUTOMATED_RESTORES,
+			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_EASY_SITE_MIGRATION,
+			FEATURE_PREMIUM_SUPPORT,
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
+			FEATURE_ADVANCED_SEO,
+			isEnabled( 'jetpack/google-analytics' ) && FEATURE_GOOGLE_ANALYTICS
+		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
 	[ PLAN_JETPACK_BUSINESS_MONTHLY ]: {
 		getTitle: () => i18n.translate( 'Professional' ),
-		getSubtitle: () => i18n.translate( 'Ultimate security and traffic tools.' ),
 		getProductId: () => 2004,
 		getPathSlug: () => 'professional-monthly',
 		availableFor: ( plan ) => includes( [
@@ -432,37 +366,26 @@ export const PLANS_LIST = {
 			PLAN_JETPACK_PERSONAL,
 			PLAN_JETPACK_PERSONAL_MONTHLY
 		], plan ),
-		getDescription: ( abtest ) => abtest && abtest( 'jetpackPlansTabs' ) === 'tabs'
-			? i18n.translate( 'Ultimate security and traffic tools.' )
-			: i18n.translate(
-				'Real-time backups, unlimited archives, and one-click threat ' +
-				'resolution. Also includes SEO tools, and unlimited video hosting.'
+		getDescription: () =>i18n.translate(
+			'Real-time backups, unlimited archives, and one-click threat ' +
+			'resolution. Also includes SEO tools, and unlimited video hosting.'
 		),
-		getFeatures: ( abtest ) => abtest && abtest( 'jetpackPlansTabs' ) === 'tabs'
-			? [
-				FEATURE_CORE_JETPACK,
-				FEATURE_REALTIME_BACKUPS_JETPACK,
-				FEATURE_SECURITY_SCANNING_JETPACK,
-				FEATURE_REVENUE_GENERATION_JETPACK,
-				FEATURE_VIDEO_HOSTING_JETPACK,
-				FEATURE_SEO_TOOLS_JETPACK
-			]
-			: compact( [
-				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-				FEATURE_BACKUP_ARCHIVE_UNLIMITED,
-				FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-				FEATURE_AUTOMATED_RESTORES,
-				FEATURE_SPAM_AKISMET_PLUS,
-				FEATURE_EASY_SITE_MIGRATION,
-				FEATURE_PREMIUM_SUPPORT,
-				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-				FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
-				FEATURE_ONE_CLICK_THREAT_RESOLUTION,
-				FEATURE_ADVANCED_SEO,
-				isEnabled( 'jetpack/google-analytics' ) && FEATURE_GOOGLE_ANALYTICS
-			]
-		),
+		getFeatures: () => compact( [
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
+			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
+			FEATURE_AUTOMATED_RESTORES,
+			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_EASY_SITE_MIGRATION,
+			FEATURE_PREMIUM_SUPPORT,
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
+			FEATURE_ADVANCED_SEO,
+			isEnabled( 'jetpack/google-analytics' ) && FEATURE_GOOGLE_ANALYTICS
+		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	}
 };
@@ -621,7 +544,13 @@ export const FEATURES_LIST = {
 		),
 		getStoreSlug: () => 'no-adverts/no-adverts.php'
 	},
-
+	[ FEATURE_REPUBLICIZE ]: {
+		getSlug: () => FEATURE_REPUBLICIZE,
+		getTitle: () => i18n.translate( 'Targeted Social Media' ),
+		getDescription: () => i18n.translate(
+			'Share your posts as many times as you like on all your connected social media accounts using Publicize.'
+		)
+	},
 	[ FEATURE_NO_BRANDING ]: {
 		getSlug: () => FEATURE_NO_BRANDING,
 		getTitle: () => i18n.translate( 'Remove WordPress.com Branding' ),
@@ -849,95 +778,6 @@ export const FEATURES_LIST = {
 			'Custom polls, surveys, ratings, and quizzes for the ultimate in customer and reader engagement.'
 		)
 	},
-	[ FEATURE_CORE_JETPACK ]: {
-		getSlug: () => FEATURE_CORE_JETPACK,
-		getTitle: () => i18n.translate( 'Core Jetpack Services' ),
-		getDescription: () => i18n.translate(
-			'Stats, customization, and promotion tools'
-		),
-		hideInfoPopover: true
-	},
-	[ FEATURE_BASIC_SECURITY_JETPACK ]: {
-		getSlug: () => FEATURE_BASIC_SECURITY_JETPACK,
-		getTitle: () => i18n.translate( 'Basic Security' ),
-		getDescription: () => i18n.translate(
-			'Brute force protection, monitoring, secure logins, updates.'
-		),
-		hideInfoPopover: true
-	},
-	[ FEATURE_BASIC_SUPPORT_JETPACK ]: {
-		getSlug: () => FEATURE_BASIC_SUPPORT_JETPACK,
-		getTitle: () => i18n.translate( 'Basic Support' ),
-		getDescription: () => i18n.translate(
-			'Standard support for all Jetpack free features.'
-		),
-		hideInfoPopover: true
-	},
-	[ FEATURE_SITE_BACKUPS_JETPACK ]: {
-		getSlug: () => FEATURE_SITE_BACKUPS_JETPACK,
-		getTitle: () => i18n.translate( 'Site Backups' ),
-		getDescription: () => i18n.translate(
-			'Automated daily backups (unlimited storage), one-click restores, and 30-day archive.'
-		),
-		hideInfoPopover: true
-	},
-	[ FEATURE_REALTIME_BACKUPS_JETPACK ]: {
-		getSlug: () => FEATURE_REALTIME_BACKUPS_JETPACK,
-		getTitle: () => i18n.translate( 'Site Backups' ),
-		getDescription: () => i18n.translate(
-			'Automated real-time backups (unlimited storage), one-click restores, and unlimited archive.'
-		),
-		hideInfoPopover: true
-	},
-	[ FEATURE_SECURITY_SCANNING_JETPACK ]: {
-		getSlug: () => FEATURE_SECURITY_SCANNING_JETPACK,
-		getTitle: () => i18n.translate( 'Security Scanning' ),
-		getDescription: () => i18n.translate(
-			'Daily scans for malware and threats with manual resolution.'
-		),
-		hideInfoPopover: true
-	},
-	[ FEATURE_REVENUE_GENERATION_JETPACK ]: {
-		getSlug: () => FEATURE_REVENUE_GENERATION_JETPACK,
-		getTitle: () => i18n.translate( 'Revenue Generation' ),
-		getDescription: () => i18n.translate(
-			'Display high-quality ads to generate income directly from your site.'
-		),
-		hideInfoPopover: true
-	},
-	[ FEATURE_VIDEO_HOSTING_JETPACK ]: {
-		getSlug: () => FEATURE_VIDEO_HOSTING_JETPACK,
-		getTitle: () => i18n.translate( 'Video Hosting' ),
-		getDescription: () => i18n.translate(
-			'13Gb of high-speed, HD, and ad-free video hosting.'
-		),
-		hideInfoPopover: true
-	},
-	[ FEATURE_SECURITY_ESSENTIALS_JETPACK ]: {
-		getSlug: () => FEATURE_SECURITY_ESSENTIALS_JETPACK,
-		getTitle: () => i18n.translate( 'Security Essentials' ),
-		getDescription: () => i18n.translate(
-			'Daily backups, unlimited storage, one-click restores, and spam filtering.'
-		),
-		hideInfoPopover: true
-	},
-	[ FEATURE_PRIORITY_SUPPORT_JETPACK ]: {
-		getSlug: () => FEATURE_PRIORITY_SUPPORT_JETPACK,
-		getTitle: () => i18n.translate( 'Priority Support' ),
-		getDescription: () => i18n.translate(
-			'Fast, dedicated support from our WordPress security experts.'
-		),
-		hideInfoPopover: true
-	},
-	[ FEATURE_SEO_TOOLS_JETPACK ]: {
-		getSlug: () => FEATURE_SEO_TOOLS_JETPACK,
-		getTitle: () => i18n.translate( 'SEO Tools' ),
-		getDescription: () => i18n.translate(
-			'Preview and optimize site content for better search engine results.'
-		),
-		hideInfoPopover: true
-	},
-
 };
 
 export const getPlanObject = planName => {

@@ -1,0 +1,30 @@
+.themes-selection-header {
+	.section-header {
+		background-color: transparent;
+		border-color: transparent;
+		box-shadow: none;
+		padding: 24px 0px 0px;
+		margin-bottom: 4px;
+	}
+
+	.section-header__label::before {
+		background-image: none;
+	}
+
+	@include breakpoint( "<480px" ) {
+		.card {
+			padding-left: 15px;
+			padding-right: 15px;
+		}
+	}
+
+	&.is-placeholder {
+		.section-header__label-text,
+		.section-header__actions {
+			color: transparent;
+			background-color: lighten( $gray, 30% );
+			animation: loading-fade 1.6s ease-in-out infinite;
+		}
+	}
+
+}

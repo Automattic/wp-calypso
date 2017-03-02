@@ -1,6 +1,6 @@
 
 .reader-related-card__site-info-title {
-	color: $gray;
+	color: $gray-text-min;
 	float: left;
 	width: 100%;
 }
@@ -10,7 +10,7 @@
 }
 
 .reader-related-card__site-info {
-	color: $gray;
+	color: $gray-text-min;
 	display: block;
 	font-size: 13px;
 	margin-right: 120px;
@@ -20,7 +20,7 @@
 	width: 100%;
 
 	a {
-		color: $gray;
+		color: $gray-text-min;
 		text-decoration: none;
 
 		&:visited {
@@ -72,12 +72,12 @@
 }
 
 .reader-related-card__byline-author-and-site {
-	color: lighten( $gray, 10% );
+	color: $gray-text-min;
 	margin-right: 6px;
 }
 
 .reader-related-card__author-and-site {
-	color: lighten( $gray, 10% );
+	color: $gray-text-min;
 	margin-right: 10px;
 }
 
@@ -87,7 +87,7 @@
 
 	.reader-related-card__byline-link,
 	.reader-related-card__byline-link:visited {
-		color: lighten( $gray, 10% );
+		color: $gray-text-min;
 
 		&:hover {
 			color: $blue-wordpress;

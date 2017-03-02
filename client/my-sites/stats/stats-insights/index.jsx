@@ -13,10 +13,8 @@ import StatsNavigation from '../stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import AllTime from 'my-sites/stats/all-time/';
 import Comments from '../stats-comments';
-import Followers from '../stats-followers';
 import Reach from '../stats-reach';
 import PostingActivity from '../post-trends';
-import TodaysStats from '../stats-site-overview';
 import StatsModule from '../stats-module';
 import statsStrings from '../stats-strings';
 import MostPopular from 'my-sites/stats/most-popular';
@@ -24,18 +22,15 @@ import LatestPostSummary from '../post-performance';
 import DomainTip from 'my-sites/domain-tip';
 import Main from 'components/main';
 import StatsFirstView from '../stats-first-view';
+import SectionHeader from 'components/section-header';
+import StatsViews from '../stats-views';
+import Followers from '../stats-followers';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, getSiteOption } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 const StatsInsights = ( props ) => {
-	const { followList, gmtOffset, isJetpack, moment, siteId, translate } = props;
+	const { followList, isJetpack, siteId, translate } = props;
 	const moduleStrings = statsStrings();
-
-	let momentSiteZone = moment();
-	if ( gmtOffset ) {
-		momentSiteZone = moment().utcOffset( gmtOffset );
-	}
-	const summaryDate = momentSiteZone.format( 'YYYY-MM-DD' );
 
 	let tagsList;
 	if ( ! isJetpack ) {
@@ -54,33 +49,30 @@ const StatsInsights = ( props ) => {
 			<StatsFirstView />
 			<SidebarNavigation />
 			<StatsNavigation section="insights" />
-			<div id="my-stats-content">
+			<div>
 				<PostingActivity />
-				<LatestPostSummary />
-				<Reach />
-				<TodaysStats
-					siteId={ siteId }
-					period="day"
-					date={ summaryDate }
-					path={ '/stats/day' }
-					title={ translate( 'Today\'s Stats' ) }
-				/>
-				<AllTime />
-				<MostPopular />
+				<SectionHeader label={ translate( 'All Time Views' ) } />
+				<StatsViews />
 				{ siteId && <DomainTip siteId={ siteId } event="stats_insights_domain" /> }
 				<div className="stats-insights__nonperiodic has-recent">
 					<div className="stats__module-list">
 						<div className="stats__module-column">
+							<LatestPostSummary />
+							<MostPopular />
+							{ tagsList }
+						</div>
+						<div className="stats__module-column">
+							<Reach />
+							<Followers
+								path={ 'followers' }
+								followList={ followList } />
+						</div>
+						<div className="stats__module-column">
+							<AllTime />
 							<Comments
 								path={ 'comments' }
 								followList={ followList }
 							/>
-							{ tagsList }
-						</div>
-						<div className="stats__module-column">
-							<Followers
-								path={ 'followers' }
-								followList={ followList } />
 							<StatsModule
 								path="publicize"
 								moduleStrings={ moduleStrings.publicize }
@@ -104,7 +96,6 @@ const connectComponent = connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		return {
-			gmtOffset: getSiteOption( state, siteId, 'gmt_offset' ),
 			isJetpack: isJetpackSite( state, siteId ),
 			siteId
 		};
@@ -113,5 +104,5 @@ const connectComponent = connect(
 
 export default flowRight(
 	connectComponent,
-	localize
+	localize,
 )( StatsInsights );

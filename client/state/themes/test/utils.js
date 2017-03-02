@@ -123,14 +123,21 @@ describe( 'utils', () => {
 			const normalizedTheme = normalizeWporgTheme();
 			expect( normalizedTheme ).to.deep.equal( {} );
 		} );
+
 		it( 'should rename some keys', () => {
 			const normalizedTheme = normalizeWporgTheme( {
 				slug: 'twentyfifteen',
 				name: 'Twenty Fifteen',
-				author: 'wordpressdotorg',
+				author: {
+					user_nicename: 'wordpressdotorg',
+					display_name: 'WordPress.org'
+				},
 				screenshot_url: '//ts.w.org/wp-content/themes/twentyfifteen/screenshot.png?ver=1.7',
 				preview_url: 'https://wp-themes.com/twentyfifteen',
 				download_link: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip',
+				sections: {
+					description: 'Our 2015 default theme is clean, blog-focused, and designed for clarity. ...'
+				},
 				tags: {
 					'custom-header': 'Custom Header',
 					'two-columns': 'Two Columns'
@@ -139,10 +146,11 @@ describe( 'utils', () => {
 			expect( normalizedTheme ).to.deep.equal( {
 				id: 'twentyfifteen',
 				name: 'Twenty Fifteen',
-				author: 'wordpressdotorg',
+				author: 'WordPress.org',
 				screenshot: '//ts.w.org/wp-content/themes/twentyfifteen/screenshot.png?ver=1.7',
 				demo_uri: 'https://wp-themes.com/twentyfifteen',
 				download: 'http://downloads.wordpress.org/theme/twentyfifteen.1.7.zip',
+				description: 'Our 2015 default theme is clean, blog-focused, and designed for clarity. ...',
 				taxonomies: {
 					theme_feature: [
 						{ slug: 'custom-header', name: 'Custom Header' },
@@ -253,6 +261,7 @@ describe( 'utils', () => {
 
 	describe( '#matches()', () => {
 		const DEFAULT_THEME = {
+			id: 'twentysomething',
 			name: 'Twenty Something',
 			author: 'the WordPress team',
 			screenshot: 'https://i0.wp.com/theme.wordpress.com/wp-content/themes/pub/twentysomething/screenshot.png',
@@ -303,17 +312,25 @@ describe( 'utils', () => {
 				expect( isMatch ).to.be.false;
 			} );
 
-			it( 'should return true for a matching title search', () => {
+			it( 'should return true for a falsey search', () => {
 				const isMatch = isThemeMatchingQuery( {
-					search: 'Twenty'
+					search: null
 				}, DEFAULT_THEME );
 
 				expect( isMatch ).to.be.true;
 			} );
 
-			it( 'should return true for a falsey title search', () => {
+			it( 'should return true for a matching ID search', () => {
 				const isMatch = isThemeMatchingQuery( {
-					search: null
+					search: 'twentysomething'
+				}, DEFAULT_THEME );
+
+				expect( isMatch ).to.be.true;
+			} );
+
+			it( 'should return true for a matching title search', () => {
+				const isMatch = isThemeMatchingQuery( {
+					search: 'Twenty'
 				}, DEFAULT_THEME );
 
 				expect( isMatch ).to.be.true;

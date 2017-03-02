@@ -61,7 +61,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { label, count, site } = this.props;
+		const { label, count, site, children } = this.props;
 		const siteLink = this.getAddLink();
 		const classes = classNames(
 			this.props.className,
@@ -73,7 +73,7 @@ export default React.createClass( {
 				className={ classes }
 				count={ count }
 				label={ label } >
-
+				{ children }
 				{ siteLink &&
 					<ButtonGroup>
 						<Button

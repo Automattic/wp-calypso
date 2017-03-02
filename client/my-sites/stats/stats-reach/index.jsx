@@ -35,29 +35,29 @@ export const StatsReach = props => {
 		<div>
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsFollowers" /> }
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsPublicize" /> }
-			<SectionHeader label={ translate( 'Followers' ) } />
+			<SectionHeader label={ translate( 'Follower Totals' ) } />
 			<Card className="stats-module stats-reach__card">
 				<StatsTabs borderless>
 					<StatsTab
-						className="stats-reach__tab"
 						gridicon="my-sites"
 						label={ translate( 'WordPress.com' ) }
 						loading={ isLoadingFollowData }
 						href={ `/people/followers/${ siteSlug }` }
-						value={ wpcomFollowCount } />
+						value={ wpcomFollowCount }
+						compact />
 					<StatsTab
-						className="stats-reach__tab"
 						gridicon="mail"
 						label={ translate( 'Email' ) }
 						loading={ isLoadingFollowData }
 						href={ `/people/email-followers/${ siteSlug }` }
-						value={ emailFollowCount } />
+						value={ emailFollowCount }
+						compact />
 					<StatsTab
-						className="stats-reach__tab"
 						gridicon="share"
 						label={ translate( 'Social' ) }
 						loading={ isLoadingPublicize }
-						value={ publicizeFollowCount } />
+						value={ publicizeFollowCount }
+						compact />
 				</StatsTabs>
 			</Card>
 		</div>

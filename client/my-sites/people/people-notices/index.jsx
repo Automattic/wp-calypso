@@ -56,8 +56,8 @@ const PeopleNotices = React.createClass( {
 	},
 
 	getState() {
-		const siteId = this.props.site.ID,
-			userId = this.props.user && this.props.user.ID;
+		const siteId = this.props.site ? this.props.site.ID : null;
+		const userId = this.props.user ? this.props.user.ID : null;
 
 		return {
 			errors: PeopleLog.getErrors( filterBy.bind( this, siteId, userId ) ),

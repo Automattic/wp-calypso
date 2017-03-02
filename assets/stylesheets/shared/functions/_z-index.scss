@@ -44,7 +44,7 @@ $z-layers: (
 		'.reader__featured-post-title': 1,
 		'.search-stream__input-card': 0,
 		'.reader-search-card': 0,
-		'.reader-post-card__featured-image': 0,
+		'.reader-featured-image': 0,
 		'.reader-post-card__title': 0,
 		'.reader-list-gap__button': 1,
 		'.reader-following-search': 1,
@@ -226,8 +226,7 @@ $z-layers: (
 	// The following may be inserted into different areas.
 	// The parent stacking context may be root, or something else depending on where it is inserted.
 	'icon-parent': (
-		'.sidebar__menu .gridicon.gridicons-external': 1,
-		'.sidebar__menu .noticon-external': 1
+		'.sidebar__menu .gridicon.gridicons-external': 1
 	),
 	'screen-reader-text-parent': (
 		'.screen-reader-text:focus': 100000

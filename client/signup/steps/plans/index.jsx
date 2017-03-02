@@ -77,6 +77,7 @@ class PlansStep extends Component {
 					isInSignup={ true }
 					onUpgradeClick={ this.onSelectPlan }
 					showFAQ={ false }
+					displayJetpackPlans={ false }
 				/>
 			</div>
 		);

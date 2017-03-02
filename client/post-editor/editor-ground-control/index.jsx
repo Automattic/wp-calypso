@@ -123,8 +123,10 @@ export default React.createClass( {
 	},
 
 	setPostDate: function( date ) {
+		const dateValue = date ? date.format() : null;
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		postActions.edit( { date: date ? date.format() : null } );
+		postActions.edit( { date: dateValue } );
+		this.checkForDateChange( dateValue );
 	},
 
 	setCurrentMonth: function( date ) {
@@ -132,6 +134,24 @@ export default React.createClass( {
 			firstDayOfTheMonth: this.getFirstDayOfTheMonth( date ),
 			lastDayOfTheMonth: this.getLastDayOfTheMonth( date )
 		} );
+	},
+
+	checkForDateChange( date ) {
+		const { savedPost, warnPublishDateChange } = this.props;
+
+		if ( ! savedPost ) {
+			return;
+		}
+
+		const currentDate = this.moment( date );
+		const ModifiedDate = this.moment( savedPost.date );
+		const diff = !! currentDate.diff( ModifiedDate );
+
+		if ( savedPost.type === 'post' && postUtils.isPublished( savedPost ) && diff ) {
+			warnPublishDateChange();
+		} else {
+			warnPublishDateChange( { clearWarning: true } );
+		}
 	},
 
 	getPreviewLabel: function() {

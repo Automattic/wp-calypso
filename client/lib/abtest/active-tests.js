@@ -97,8 +97,8 @@ module.exports = {
 	userFirstSignup: {
 		datestamp: '20160124',
 		variations: {
-			userLast: 80,
-			userFirst: 20,
+			userLast: 100,
+			userFirst: 0,
 		},
 		defaultVariation: 'userLast',
 		allowExistingUsers: false,
@@ -113,34 +113,4 @@ module.exports = {
 		defaultVariation: 'withoutMarketingCopy',
 		allowExistingUsers: true
 	},
-
-	jetpackPlansTabs: {
-		datestamp: '20170117',
-		variations: {
-			tabs: 50,
-			noTabs: 50
-		},
-		defaultVariation: 'noTabs'
-	},
-
-	boostedPostSurvey: {
-		datestamp: '20170127',
-		variations: {
-			disabled: 90,
-			enabled: 10
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true
-	},
-
-	readerSearchOnFollowing: {
-		datestamp: '20170206',
-		variations: {
-			show: 50,
-			hide: 50
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-		allowAnyLocale: true
-	}
 };

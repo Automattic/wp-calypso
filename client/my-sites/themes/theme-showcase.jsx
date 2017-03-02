@@ -6,11 +6,13 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { pickBy } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
+import Button from 'components/button';
 import ThemesSelection from './themes-selection';
 import StickyPanel from 'components/sticky-panel';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -54,6 +56,7 @@ const optionShape = PropTypes.shape( {
 
 const ThemeShowcase = React.createClass( {
 	propTypes: {
+		emptyContent: PropTypes.element,
 		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
 		search: PropTypes.string,
 		// Connected props
@@ -62,13 +65,13 @@ const ThemeShowcase = React.createClass( {
 		secondaryOption: optionShape,
 		getScreenshotOption: PropTypes.func,
 		siteSlug: PropTypes.string,
-		showUploadButton: PropTypes.bool,
 	},
 
 	getDefaultProps() {
 		return {
 			tier: '',
 			search: '',
+			emptyContent: null,
 			showUploadButton: true
 		};
 	},
@@ -111,8 +114,12 @@ const ThemeShowcase = React.createClass( {
 		this.updateUrl( tier, this.props.filter );
 	},
 
+	onUploadClick() {
+		trackClick( 'upload theme' );
+	},
+
 	render() {
-		const { site, options, getScreenshotOption, search, filter } = this.props;
+		const { site, options, getScreenshotOption, search, filter, translate, siteSlug, isMultisite } = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
 		const metas = [
@@ -134,6 +141,15 @@ const ThemeShowcase = React.createClass( {
 						tier={ tier }
 						select={ this.onTierSelect } />
 				</StickyPanel>
+				{ config.isEnabled( 'manage/themes/upload' ) && siteSlug && ! isMultisite &&
+					<Button className="themes__upload-button" compact icon
+						onClick={ this.onUploadClick }
+						href={ `/design/upload/${ this.props.siteSlug }` }
+					>
+						<Gridicon icon="cloud-upload" />
+						{ translate( 'Upload Theme' ) }
+					</Button>
+				}
 				<ThemesSelection
 					search={ search }
 					tier={ this.props.tier }
@@ -143,7 +159,6 @@ const ThemeShowcase = React.createClass( {
 					listLabel={ this.props.listLabel }
 					defaultOption={ this.props.defaultOption }
 					secondaryOption={ this.props.secondaryOption }
-					showUploadButton={ this.props.showUploadButton }
 					placeholderCount={ this.props.placeholderCount }
 					getScreenshotUrl={ function( theme ) {
 						if ( ! getScreenshotOption( theme ).getUrl ) {
@@ -166,6 +181,7 @@ const ThemeShowcase = React.createClass( {
 							option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
 						); } }
 					trackScrollPage={ this.props.trackScrollPage }
+					emptyContent={ this.props.emptyContent }
 				/>
 				<ThemePreview />
 				{ this.props.children }

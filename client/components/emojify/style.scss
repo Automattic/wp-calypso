@@ -1,10 +1,8 @@
-/**
- * Emojify
- */
-
-// Emoji!!
+// Styles recommended by twemoji
+// https://github.com/twitter/twemoji#inline-styles
 .emojify__emoji {
-	height: 18px;
-	width: 18px;
-	vertical-align: middle;
+	height: 1em;
+	width: 1em;
+	margin: 0 .05em 0 .1em;
+	vertical-align: -0.1em;
 }

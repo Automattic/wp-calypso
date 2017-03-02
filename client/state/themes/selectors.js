@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { includes, isEqual, omit, some, get, pick, uniq } from 'lodash';
+import { find, includes, isEqual, omit, some, get, uniq } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
@@ -44,28 +44,26 @@ export const getTheme = createSelector(
 			return null;
 		}
 
-		const theme = manager.getItem( themeId );
-		if ( siteId === 'wpcom' || siteId === 'wporg' ) {
-			return theme;
-		}
-
-		if ( ! theme ) {
-			return null;
-		}
-
-		// We're dealing with a Jetpack site. If we have theme info obtained from the
-		// WordPress.org API, merge it.
-		const wporgTheme = getTheme( state, 'wporg', themeId );
-		if ( ! wporgTheme ) {
-			return theme;
-		}
-		return {
-			...theme,
-			...pick( wporgTheme, [ 'demo_uri', 'download', 'taxonomies' ] )
-		};
+		return manager.getItem( themeId );
 	},
 	( state ) => state.themes.queries
 );
+
+/**
+ * Returns a theme object from what is considered the 'canonical' source, i.e.
+ * the one with richest information. Checks WP.com (which has a long description
+ * and multiple screenshots, and a preview URL) first, then WP.org (which has a
+ * preview URL), then the given JP site.
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {Number}  siteId  Jetpack Site ID to fall back to
+ * @param  {String}  themeId Theme ID
+ * @return {?Object}         Theme object
+ */
+export function getCanonicalTheme( state, siteId, themeId ) {
+	const source = find( [ 'wpcom', 'wporg', siteId ], s => getTheme( state, s, themeId ) );
+	return getTheme( state, source, themeId );
+}
 
 /**
  * When wpcom themes are installed on Jetpack sites, the
@@ -315,6 +313,17 @@ export function isRequestingActiveTheme( state, siteId ) {
 }
 
 /**
+ * Whether a theme is present in the WordPress.com Theme Directory
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {Number}  themeId Theme ID
+ * @return {Boolean}         Whether theme is in WP.com theme directory
+ */
+export function isWpcomTheme( state, themeId ) {
+	return !! getTheme( state, 'wpcom', themeId );
+}
+
+/**
  * Whether a theme is present in the WordPress.org Theme Directory
  *
  * @param  {Object}  state   Global state tree
@@ -471,18 +480,17 @@ export function getThemeSignupUrl( state, theme ) {
  * @param  {String}  siteId  Site ID
  * @return {?String}         Theme forum URL
  */
-export function getThemeForumUrl( state, themeId, siteId ) {
-	if ( isJetpackSite( state, siteId ) ) {
-		if ( isWporgTheme( state, themeId ) ) {
-			return '//wordpress.org/support/theme/' + themeId;
-		}
-		return null;
-	}
-
+export function getThemeForumUrl( state, themeId ) {
 	if ( isThemePremium( state, themeId ) ) {
 		return '//premium-themes.forums.wordpress.com/forum/' + themeId;
 	}
-	return '//en.forums.wordpress.com/forum/themes';
+	if ( isWpcomTheme( state, themeId ) ) {
+		return '//en.forums.wordpress.com/forum/themes';
+	}
+	if ( isWporgTheme( state, themeId ) ) {
+		return '//wordpress.org/support/theme/' + themeId;
+	}
+	return null;
 }
 
 /**
@@ -501,7 +509,11 @@ export function getThemeForumUrl( state, themeId, siteId ) {
  * @return {?String}         Theme ID
  */
 export function getActiveTheme( state, siteId ) {
-	return get( state.themes.activeThemes, siteId, null );
+	const activeTheme = get( state.themes.activeThemes, siteId, null );
+	// If the theme ID is suffixed with -wpcom, remove that string. This is because
+	// we want to treat WP.com themes identically, whether or not they're installed
+	// on a given Jetpack site (where the -wpcom suffix would be appended).
+	return activeTheme && activeTheme.replace( '-wpcom', '' );
 }
 
 /**
@@ -513,7 +525,7 @@ export function getActiveTheme( state, siteId ) {
  * @return {Boolean}         True if the theme is active on the site
  */
 export function isThemeActive( state, themeId, siteId ) {
-	return getActiveTheme( state, siteId ) === getSuffixedThemeId( state, themeId, siteId );
+	return getActiveTheme( state, siteId ) === themeId;
 }
 
 /**
@@ -616,4 +628,16 @@ export function getThemePreviewThemeOptions( state ) {
  */
 export function themePreviewVisibility( state ) {
 	return get( state.themes, 'themePreviewVisibility', null );
+}
+
+/**
+ * Returns id of the parent theme, if any, for a wpcom theme.
+ *
+ * @param {Object} state Global state tree
+ * @param {string} themeId Child theme ID
+ *
+ * @return {?string} Parent theme id if it exists
+ */
+export function getWpcomParentThemeId( state, themeId ) {
+	return get( getTheme( state, 'wpcom', themeId ), [ 'template' ], null );
 }

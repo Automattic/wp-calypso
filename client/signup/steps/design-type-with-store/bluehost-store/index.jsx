@@ -9,7 +9,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import StepHeader from 'signup/step-header';
 import Button from 'components/button';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -28,7 +27,6 @@ export const BluehostStoreStep = props => {
 		'favorite WordPress eCommerce solution.'
 	);
 
-	let subHeaderText = translate( 'Our partners at BlueHost are here for you.'	);
 	let partnerUrl = 'https://www.bluehost.com/track/wp/dotcomsans2?page=/wordpress';
 	let price = '$2.95';
 
@@ -39,18 +37,12 @@ export const BluehostStoreStep = props => {
 			'to help you get started.'
 		);
 
-		subHeaderText = translate( 'Our partners at BlueHost and WooCommerce are here for you.' );
 		partnerUrl = 'https://www.bluehost.com/track/wp/dotcomwoo2?page=/wordpress-woocommerce';
 		price = '$11.95';
 	}
 
 	return (
 		<div className="design-type-with-store__partner-box">
-			<StepHeader
-				headerText={ translate( 'Create a WordPress Store' ) }
-				subHeaderText={ subHeaderText }
-			/>
-
 			<div className="design-type-with-store__flex-container">
 				<div className="design-type-with-store__copy">
 					<div className="design-type-with-store__vertical-center">

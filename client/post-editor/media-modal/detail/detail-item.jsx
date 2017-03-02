@@ -7,6 +7,7 @@ import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 import Gridicon from 'gridicons';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,9 +19,45 @@ import EditorMediaModalDetailPreviewVideo from './detail-preview-video';
 import EditorMediaModalDetailPreviewAudio from './detail-preview-audio';
 import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
 import Button from 'components/button';
-import { userCan, isJetpack } from 'lib/site/utils';
+import { userCan } from 'lib/site/utils';
+import versionCompare from 'lib/version-compare';
 import MediaUtils, { isItemBeingUploaded } from 'lib/media/utils';
 import config from 'config';
+
+/**
+ * This function return true if the image editor can be
+ * enabled/shown
+ *
+ * @param  {object} item - media item
+ * @param  {object} site - current site
+ * @return {boolean} `true` is the image-editor can be enabled.
+ */
+const enableImageEditing = ( item, site ) => {
+	// do not allow if, for some reason, there isn't a valid item yet
+	if ( ! item ) {
+		return false;
+	}
+
+	// do not show if the feature flag isn't set
+	if ( ! config.isEnabled( 'post-editor/image-editor' ) ) {
+		return false;
+	}
+
+	// do not allow for private sites
+	if ( get( site, 'is_private' ) ) {
+		return false;
+	}
+
+	// do not allow for Jetpack site with a non-valid version
+	if (
+		get( site, 'jetpack', false ) &&
+		versionCompare( get( site, 'options.jetpack_version', '0.0' ), '4.7-alpha', '<' )
+	) {
+		return false;
+	}
+
+	return true;
+};
 
 class EditorMediaModalDetailItem extends Component {
 	static propTypes = {
@@ -110,12 +147,7 @@ class EditorMediaModalDetailItem extends Component {
 	renderImageEditorButtons( item, classname = 'is-desktop' ) {
 		const { site } = this.props;
 
-		if (
-			site.is_private ||
-			! config.isEnabled( 'post-editor/image-editor' ) ||
-			isJetpack( site ) ||
-			! item
-		) {
+		if ( ! enableImageEditing( item, site ) ) {
 			return null;
 		}
 

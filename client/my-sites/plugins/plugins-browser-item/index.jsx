@@ -12,6 +12,7 @@ import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import PluginsStore from 'lib/plugins/store';
 import Rating from 'components/rating/';
 import analytics from 'lib/analytics';
+import Gridicon from 'gridicons';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
@@ -60,6 +61,7 @@ const PluginsBrowserListElement = React.createClass( {
 		if ( sites && sites.length > 0 || this.isWpcomPreinstalled() ) {
 			return (
 				<div className="plugins-browser-item__installed">
+						<Gridicon icon='checkmark' size={ 18 } />
 						{ this.translate( 'Installed' ) }
 				</div>
 			);

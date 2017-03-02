@@ -12,15 +12,15 @@ import { translate } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import PulsingDot from 'components/pulsing-dot';
 import { trackClick } from './helpers';
-import { isJetpackSite } from 'state/sites/selectors';
 import {
 	getActiveTheme,
-	getTheme,
+	getCanonicalTheme,
 	getThemeDetailsUrl,
 	getThemeCustomizeUrl,
 	getThemeForumUrl,
 	isActivatingTheme,
-	hasActivatedTheme
+	hasActivatedTheme,
+	isWpcomTheme
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
 
@@ -62,92 +62,59 @@ const ThanksModal = React.createClass( {
 		};
 	},
 
-	renderWpcomInfo() {
-		const features = translate( "Discover this theme's {{a}}awesome features.{{/a}}", {
+	renderBody() {
+		return (
+			<ul>
+				<li>
+					{ this.props.source === 'list' ? this.renderThemeInfo() : this.renderCustomizeInfo() }
+				</li>
+			<li>
+				{ this.renderSupportInfo() }
+			</li>
+			</ul>
+		);
+	},
+
+	renderThemeInfo() {
+		return translate( '{{a}}Learn more about{{/a}} this theme.', {
 			components: {
 				a: <a href={ this.props.detailsUrl }
-					onClick={ this.onLinkClick( 'features' ) } />
+					onClick={ this.onLinkClick( 'theme info' ) } />
 			}
 		} );
-		const customize = translate( '{{a}}Customize{{/a}} this design.', {
+	},
+
+	renderCustomizeInfo() {
+		return translate( '{{a}}Customize{{/a}} this design.', {
 			components: {
 				a: <a href={ this.props.customizeUrl }
 					onClick={ this.onLinkClick( 'customize' ) } />
 			}
 		} );
-		return (
-			<ul>
-				<li>
-					{ this.props.source === 'list' ? features : customize }
-				</li>
-			<li>
-				{ translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {
-					components: {
-						a: <a href={ this.props.forumUrl }
-							onClick={ this.onLinkClick( 'support' ) } />
-					}
-				} ) }
-			</li>
-			</ul>
-		);
 	},
 
-	renderWporgThemeInfo( themeUri ) {
-		if ( themeUri ) {
-			return (
-				<li>
-					{ translate( 'Learn more about this {{a}}awesome theme{{/a}}.', {
-						components: {
-							a: <a href={ themeUri }
-								onClick={ this.onLinkClick( 'org theme' ) } />
-						}
-					} ) }
-				</li>
-			);
+	renderSupportInfo() {
+		const { author_uri: authorUri } = this.props.currentTheme;
+
+		if ( this.props.forumUrl ) {
+			return translate( 'Have questions? Stop by our {{a}}support forums{{/a}}.', {
+				components: {
+					a: <a href={ this.props.forumUrl }
+						onClick={ this.onLinkClick( 'support' ) } />
+				}
+			} );
 		}
-	},
 
-	renderWporgAuthorInfo( authorUri ) {
 		if ( authorUri ) {
-			return (
-				<li>
-					{ translate( 'Have questions? {{a}}Contact the theme author.{{/a}}', {
-						components: {
-							a: <a href={ authorUri }
-								onClick={ this.onLinkClick( 'org author' ) } />
-						}
-					} ) }
-				</li>
-			);
+			return translate( 'Have questions? {{a}}Contact the theme author.{{/a}}', {
+				components: {
+					a: <a href={ authorUri }
+						onClick={ this.onLinkClick( 'org author' ) } />
+				}
+			} );
 		}
-	},
 
-	renderWporgForumInfo() {
-		return (
-			<li>
-				{ translate( 'If you need support, visit the WordPress.org {{a}}Themes forum{{/a}}.', {
-					components: {
-						a: <a href="https://wordpress.org/support/forum/themes-and-templates"
-							onClick={ this.onLinkClick( 'org forum' ) } />
-					}
-				} ) }
-			</li>
-		);
-	},
-
-	renderJetpackInfo() {
-		const {
-			theme_uri: themeUri,
-			author_uri: authorUri
-		} = this.props.currentTheme;
-
-		return (
-			<ul>
-				{ themeUri ? this.renderWporgThemeInfo( themeUri ) : null }
-				{ authorUri ? this.renderWporgAuthorInfo( authorUri ) : null }
-				{ ! themeUri || ! authorUri ? this.renderWporgForumInfo() : null }
-			</ul>
-		);
+		return null;
 	},
 
 	renderContent() {
@@ -166,9 +133,7 @@ const ThanksModal = React.createClass( {
 						}
 					} ) }
 				</h1>
-				<ul>
-					{ this.props.site.jetpack ? this.renderJetpackInfo() : this.renderWpcomInfo() }
-				</ul>
+				{ this.renderBody() }
 			</div>
 		);
 	},
@@ -202,17 +167,17 @@ const ThanksModal = React.createClass( {
 
 export default connect(
 	( state, { site } ) => {
-		const siteIdOrWpcom = ( site && isJetpackSite( state, site.ID ) ) ? site.ID : 'wpcom';
 		const currentThemeId = site && getActiveTheme( state, site.ID );
-		const currentTheme = currentThemeId && getTheme( state, siteIdOrWpcom, currentThemeId );
+		const currentTheme = currentThemeId && getCanonicalTheme( state, site.ID, currentThemeId );
 
 		return {
 			currentTheme,
 			detailsUrl: site && getThemeDetailsUrl( state, currentTheme, site.ID ),
 			customizeUrl: site && getThemeCustomizeUrl( state, currentTheme, site.ID ),
-			forumUrl: getThemeForumUrl( state, currentThemeId ),
+			forumUrl: site && getThemeForumUrl( state, currentThemeId, site.ID ),
 			isActivating: !! ( site && isActivatingTheme( state, site.ID ) ),
-			hasActivated: !! ( site && hasActivatedTheme( state, site.ID ) )
+			hasActivated: !! ( site && hasActivatedTheme( state, site.ID ) ),
+			isThemeWpcom: isWpcomTheme( state, currentThemeId )
 		};
 	},
 	{ clearActivated }

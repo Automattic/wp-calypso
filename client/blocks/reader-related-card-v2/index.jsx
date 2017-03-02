@@ -18,11 +18,16 @@ import Gravatar from 'components/gravatar';
 import FollowButton from 'reader/follow-button';
 import { getPostUrl, getStreamUrl } from 'reader/route';
 import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
+import safeImageUrl from 'lib/safe-image-url';
+import resizeImageUrl from 'lib/resize-image-url';
+
+const RELATED_IMAGE_WIDTH = 385; // usual width of featured images in related post card
 
 function FeaturedImage( { image, href } ) {
+	const uri = resizeImageUrl( safeImageUrl( image.uri ), { w: RELATED_IMAGE_WIDTH } )
 	return (
 		<div className="reader-related-card-v2__featured-image" href={ href } style={ {
-			backgroundImage: 'url(' + image.uri + ')',
+			backgroundImage: 'url(' + uri + ')',
 			backgroundSize: 'cover',
 			backgroundRepeat: 'no-repeat',
 			backgroundPosition: '50% 50%'

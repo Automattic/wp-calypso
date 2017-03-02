@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes, find } from 'lodash';
+import { includes, find, isEmpty } from 'lodash';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
 
@@ -15,6 +15,7 @@ import HeaderCake from 'components/header-cake';
 import Card from 'components/card';
 import FilePicker from 'components/file-picker';
 import DropZone from 'components/drop-zone';
+import EmptyContent from 'components/empty-content';
 import ProgressBar from 'components/progress-bar';
 import Button from 'components/button';
 import ThanksModal from 'my-sites/themes/thanks-modal';
@@ -26,7 +27,11 @@ import notices from 'notices';
 import debugFactory from 'debug';
 import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { isJetpackSite, hasJetpackSiteJetpackThemesExtendedFeatures } from 'state/sites/selectors';
+import {
+	isJetpackSite,
+	isJetpackSiteMultiSite,
+	hasJetpackSiteJetpackThemesExtendedFeatures
+} from 'state/sites/selectors';
 import {
 	isUploadInProgress,
 	isUploadComplete,
@@ -45,6 +50,11 @@ import { getBackPath } from 'state/themes/themes-ui/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import Banner from 'components/banner';
 import { PLAN_BUSINESS, FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
+import QueryEligibility from 'components/data/query-atat-eligibility';
+import {
+	getEligibility,
+	isEligibleForAutomatedTransfer
+} from 'state/automated-transfer/selectors';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -64,10 +74,11 @@ class Upload extends React.Component {
 		isJetpack: React.PropTypes.bool,
 		upgradeJetpack: React.PropTypes.bool,
 		backPath: React.PropTypes.string,
+		showEligibility: React.PropTypes.bool,
 	};
 
 	state = {
-		showEligibility: ! this.props.isJetpack,
+		showEligibility: this.props.showEligibility,
 	}
 
 	componentDidMount() {
@@ -79,8 +90,10 @@ class Upload extends React.Component {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			const { siteId, inProgress } = nextProps;
 			! inProgress && this.props.clearThemeUpload( siteId );
+		}
 
-			this.setState( { showEligibility: ! nextProps.isJetpack } );
+		if ( nextProps.showEligibility !== this.props.showEligibility ) {
+			this.setState( { showEligibility: nextProps.showEligibility } );
 		}
 	}
 
@@ -255,6 +268,17 @@ class Upload extends React.Component {
 		);
 	}
 
+	renderNotAvailable() {
+		return (
+			<EmptyContent
+				title={ this.props.translate( 'Not available for multi site' ) }
+				line={ this.props.translate( 'Use the WP Admin interface instead' ) }
+				action={ this.props.translate( 'Open WP Admin' ) }
+				actionURL={ this.props.selectedSite.options.admin_url }
+				illustration={ '/calypso/images/drake/drake-jetpack.svg' }
+			/>
+			);
+	}
 	render() {
 		const {
 			translate,
@@ -265,13 +289,19 @@ class Upload extends React.Component {
 			upgradeJetpack,
 			backPath,
 			isBusiness,
-			isJetpack
+			isJetpack,
+			isMultisite
 		} = this.props;
 
-		const showEligibility = ! isJetpack && this.state.showEligibility;
+		const { showEligibility } = this.state;
+
+		if ( isMultisite ) {
+			return this.renderNotAvailable();
+		}
 
 		return (
 			<Main>
+				<QueryEligibility siteId={ siteId } />
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryTheme siteId={ siteId } themeId={ themeId } /> }
 				<ThanksModal
@@ -314,6 +344,14 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const themeId = getUploadedThemeId( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
+		const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
+		// Use this selector to take advantage of eligibility card placeholders
+		// before data has loaded.
+		const isEligible = isEligibleForAutomatedTransfer( state, siteId );
+		const hasEligibilityMessages = ! (
+			isEmpty( eligibilityHolds ) &&
+			isEmpty( eligibilityWarnings )
+		);
 		return {
 			siteId,
 			isBusiness: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
@@ -323,6 +361,7 @@ export default connect(
 			complete: isUploadComplete( state, siteId ),
 			failed: hasUploadFailed( state, siteId ),
 			themeId,
+			isMultisite: isJetpackSiteMultiSite( state, siteId ),
 			uploadedTheme: getTheme( state, siteId, themeId ),
 			error: getUploadError( state, siteId ),
 			progressTotal: getUploadProgressTotal( state, siteId ),
@@ -330,6 +369,7 @@ export default connect(
 			installing: isInstallInProgress( state, siteId ),
 			upgradeJetpack: isJetpack && ! hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ),
 			backPath: getBackPath( state ),
+			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },

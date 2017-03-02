@@ -196,6 +196,7 @@ export default {
 				url: url,
 				type: 'remote_auth'
 			} );
+			debug( 'goToRemoteAuth', url );
 			externalRedirect(
 				addQueryArgs( {
 					calypso_env: calypsoEnv
@@ -215,9 +216,12 @@ export default {
 				url: url,
 				attempt: attemptNumber
 			} );
+			debug( 'retryAuth', url );
 			externalRedirect(
 				addQueryArgs( {
-					calypso_env: calypsoEnv
+					jetpack_connect_url: url + remoteAuthPath,
+					calypso_env: calypsoEnv,
+					auth_type: 'jetpack'
 				}, url + remoteAuthPath )
 			);
 		};
@@ -263,6 +267,7 @@ export default {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT_WP_ADMIN
 			} );
+			debug( 'goBackToWpAdmin', url );
 			externalRedirect( url );
 		};
 	},
@@ -276,6 +281,7 @@ export default {
 				type: JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 				url
 			} );
+			debug( 'goToXmlrpcErrorFallbackUrl', queryObject, authorizationCode );
 			externalRedirect( url );
 		};
 	},

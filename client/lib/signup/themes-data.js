@@ -18,12 +18,12 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Baskerville',
-		slug: 'baskerville',
+		name: 'Baskerville 2',
+		slug: 'baskerville-2',
 		repo: 'pub',
 		fallback: false,
 		design: 'grid',
-		demo_uri: 'https://baskervilledemo.wordpress.com',
+		demo_uri: 'https://baskerville2demo.wordpress.com',
 		verticals: []
 	},
 	{

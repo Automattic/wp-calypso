@@ -4,6 +4,7 @@
 import React from 'react';
 import url from 'url';
 import { connect } from 'react-redux';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,7 +13,10 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import paths from 'my-sites/upgrades/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
-import { canCurrentUser } from 'state/selectors';
+import {
+	canCurrentUser,
+	eligibleForFreeToPaidUpsell,
+} from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isFinished as isJetpackPluginsFinished } from 'state/plugins/premium/selectors';
@@ -74,6 +78,26 @@ const SiteNotice = React.createClass( {
 		);
 	},
 
+	freeToPaidPlanNotice() {
+		if ( ! this.props.eligibleForFreeToPaidUpsell ) {
+			return null;
+		}
+		const eventName = 'calypso_free_to_paid_plan_nudge_impression';
+		const eventProperties = { cta_name: 'current_site_free_to_paid_plan_nudge_notice' };
+		return (
+			<Notice isCompact status="is-success" icon="info-outline">
+				{ this.translate( 'Free domain with a plan' ) }
+				<NoticeAction
+					onClick={ this.props.clickFreeToPaidPlanNotice }
+					href={ `/plans/my-plan/${ this.props.site.slug }` }
+				>
+					{ this.translate( 'Upgrade' ) }
+					<TrackComponentView event Name={ eventName } eventProperties={ eventProperties } />
+				</NoticeAction>
+			</Notice>
+		);
+	},
+
 	jetpackPluginsSetupNotice() {
 		if ( ! this.props.pausedJetpackPluginsSetup || this.props.site.plan.product_slug === 'jetpack_free' ) {
 			return null;
@@ -103,6 +127,7 @@ const SiteNotice = React.createClass( {
 				<QuerySitePlans siteId={ site.ID } />
 				{ this.domainCreditNotice() }
 				{ this.jetpackPluginsSetupNotice() }
+				{ this.freeToPaidPlanNotice() }
 			</div>
 		);
 	}
@@ -111,6 +136,7 @@ const SiteNotice = React.createClass( {
 export default connect( ( state, ownProps ) => {
 	const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
 	return {
+		eligibleForFreeToPaidUpsell: eligibleForFreeToPaidUpsell( state, siteId, i18n.moment() ),
 		hasDomainCredit: hasDomainCredit( state, siteId ),
 		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		pausedJetpackPluginsSetup: ! isJetpackPluginsFinished( state, siteId )
@@ -121,6 +147,11 @@ export default connect( ( state, ownProps ) => {
 			'calypso_domain_credit_reminder_click', {
 				cta_name: 'current_site_domain_notice'
 			}
-		) )
+		) ),
+		clickFreeToPaidPlanNotice: () => dispatch( recordTracksEvent(
+			'calypso_free_to_paid_plan_nudge_click', {
+				cta_name: 'current_site_free_to_paid_plan_nudge_notice'
+			}
+		) ),
 	};
 } )( SiteNotice );

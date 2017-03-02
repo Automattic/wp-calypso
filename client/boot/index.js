@@ -385,11 +385,15 @@ function reduxStoreReady( reduxStore ) {
 	}
 
 	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {
-		require( 'lib/rubberband-scroll-disable' )( document.body );
+		asyncRequire( 'lib/rubberband-scroll-disable', ( disableRubberbandScroll ) => {
+			disableRubberbandScroll( document.body );
+		} );
 	}
 
 	if ( config.isEnabled( 'dev/test-helper' ) && document.querySelector( '.environment.is-tests' ) ) {
-		require( 'lib/abtest/test-helper' )( document.querySelector( '.environment.is-tests' ) );
+		asyncRequire( 'lib/abtest/test-helper', ( testHelper ) => {
+			testHelper( document.querySelector( '.environment.is-tests' ) );
+		} );
 	}
 
 	/*

@@ -2,9 +2,9 @@
 	display: block;
 	max-width: 720px;
 
-	@include breakpoint( ">1040px" ) {
+	@include breakpoint( ">1280px" ) {
 		display: flex;
-		max-width: 1040px;
+		max-width: 1440px;
 		justify-content: center;
 	}
 }
@@ -131,6 +131,9 @@
 			&:first-of-type {
 				margin-top: 0px;
 			}
+		}
+		.posts__post-share-wrapper .card.banner {
+			margin: 0;
 		}
 	}
 
@@ -615,11 +618,29 @@
 .posts__recent-drafts {
 	flex-grow: 1;
 	margin: 0 0 24px 24px;
-	max-width: 296px;
 	display: none;
 
-	@include breakpoint( ">1040px" ) {
+	@include breakpoint( ">1280px" ) {
 		display: block;
+	}
+
+	@include breakpoint( ">1600px" ) {
+		.post-item.is-mini.card.is-compact {
+			padding: 16px 24px;
+
+			.post-item__meta {
+				display: block;
+			}
+
+			.post-item__title {
+				font-size: 15px;
+				margin-bottom: 2px;
+			}
+
+			.post-actions-ellipsis-menu {
+				margin-left: 8px;
+			}
+		}
 	}
 
 	.draft__actions {
@@ -628,25 +649,13 @@
 }
 
 .posts__recent-drafts .posts__drafts-header.card.is-compact {
-	margin-bottom: 16px;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 3px 16px;
 	color: $gray-dark;
-	font-size: 14px;
 
 	&::after {
 		display: none;
-	}
-}
-
-.posts.is-single-site .section-nav-tab.is-draft {
-	@include breakpoint( ">1040px" ) {
-		display: none;
-		&.is-selected {
-			display: block;
-		}
 	}
 }
 

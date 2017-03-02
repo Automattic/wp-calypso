@@ -120,8 +120,7 @@ const Search = React.createClass( {
 			this.setState( { isOpen: nextProps.isOpen } );
 		}
 
-		if ( nextProps.initialValue !== this.props.initialValue &&
-				( this.state.keyword === this.props.initialValue || this.state.keyword === '' ) ) {
+		if ( nextProps.initialValue !== this.props.initialValue ) {
 			this.setState( { keyword: nextProps.initialValue || '' } );
 		}
 	},
@@ -352,7 +351,7 @@ const Search = React.createClass( {
 						role="search"
 						value={ searchValue }
 						ref="searchInput"
-						onInput={ this.onChange }
+						onChange={ this.onChange }
 						onKeyUp={ this.keyUp }
 						onKeyDown={ this.keyDown }
 						onMouseUp={ this.props.onClick }

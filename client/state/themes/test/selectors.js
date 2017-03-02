@@ -8,6 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	getTheme,
+	getCanonicalTheme,
 	getThemeRequestErrors,
 	isRequestingTheme,
 	getThemesForQuery,
@@ -28,6 +29,7 @@ import {
 	getActiveTheme,
 	isRequestingActiveTheme,
 	isWporgTheme,
+	isWpcomTheme,
 	isThemeActive,
 	isActivatingTheme,
 	hasActivatedTheme,
@@ -36,6 +38,7 @@ import {
 	isThemePurchased,
 	isPremiumSquaredTheme,
 	isPremiumThemeAvailable,
+	getWpcomParentThemeId,
 } from '../selectors';
 import ThemeQueryManager from 'lib/query-manager/theme';
 
@@ -94,6 +97,11 @@ const zuki = {
 	author_uri: 'https://wordpress.com/themes/'
 };
 
+const sidekick = {
+	id: 'sidekick',
+	template: 'superhero',
+};
+
 describe( 'themes selectors', () => {
 	beforeEach( () => {
 		getTheme.memoizedSelector.cache.clear();
@@ -126,61 +134,67 @@ describe( 'themes selectors', () => {
 
 			expect( theme ).to.equal( twentysixteen );
 		} );
+	} );
 
-		context( 'on a Jetpack site', () => {
-			it( 'with a theme not found on WP.org, should return the theme object', () => {
-				const jetpackTheme = {
-					id: 'twentyseventeen',
-					name: 'Twenty Seventeen',
-					author: 'the WordPress team',
-				};
-
-				const theme = getTheme( {
-					themes: {
-						queries: {
-							2916284: new ThemeQueryManager( {
-								items: { twentyseventeen: jetpackTheme }
-							} )
-						}
+	describe( '#getCanonicalTheme()', () => {
+		it( 'with a theme found on WP.com, should return the object fetched from there', () => {
+			const theme = getCanonicalTheme( {
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { twentysixteen }
+						} ),
 					}
-				}, 2916284, 'twentyseventeen' );
+				}
+			}, 2916284, 'twentysixteen' );
 
-				expect( theme ).to.deep.equal( jetpackTheme );
-			} );
+			expect( theme ).to.deep.equal( twentysixteen );
+		} );
 
-			it( 'with a theme found on WP.org, should return an object with some attrs merged from WP.org', () => {
-				const jetpackTheme = {
-					id: 'twentyseventeen',
-					name: 'Twenty Seventeen',
-					author: 'the WordPress team',
-				};
-				const wporgTheme = {
-					demo_uri: 'https://wp-themes.com/twentyseventeen',
-					download: 'http://downloads.wordpress.org/theme/twentyseventeen.1.1.zip',
-					taxonomies: {
-						theme_feature: {
-							'custom-header': 'Custom Header'
-						}
+		it( 'with a theme found on WP.org but not on WP.com, should return the object fetched from there', () => {
+			const wporgTheme = {
+				id: 'twentyseventeen',
+				name: 'Twenty Seventeen',
+				author: 'the WordPress team',
+				demo_uri: 'https://wp-themes.com/twentyseventeen',
+				download: 'http://downloads.wordpress.org/theme/twentyseventeen.1.1.zip',
+				taxonomies: {
+					theme_feature: {
+						'custom-header': 'Custom Header'
 					}
-				};
-				const theme = getTheme( {
-					themes: {
-						queries: {
-							2916284: new ThemeQueryManager( {
-								items: { twentyseventeen: jetpackTheme }
-							} ),
-							wporg: new ThemeQueryManager( {
-								items: { twentyseventeen: wporgTheme }
-							} ),
-						}
+				}
+			};
+			const theme = getCanonicalTheme( {
+				themes: {
+					queries: {
+						wporg: new ThemeQueryManager( {
+							items: { twentyseventeen: wporgTheme }
+						} ),
 					}
-				}, 2916284, 'twentyseventeen' );
+				}
+			}, 2916284, 'twentyseventeen' );
 
-				expect( theme ).to.deep.equal( {
-					...jetpackTheme,
-					...wporgTheme
-				} );
-			} );
+			expect( theme ).to.deep.equal( wporgTheme );
+		} );
+
+		it( 'with a theme not found on WP.com nor on WP.org, should return the theme object from the given siteId', () => {
+			const jetpackTheme = {
+				id: 'twentyseventeen',
+				name: 'Twenty Seventeen',
+				author: 'the WordPress team',
+			};
+
+			const theme = getCanonicalTheme( {
+				themes: {
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: { twentyseventeen: jetpackTheme }
+						} )
+					}
+				}
+			}, 2916284, 'twentyseventeen' );
+
+			expect( theme ).to.deep.equal( jetpackTheme );
 		} );
 	} );
 
@@ -1440,7 +1454,30 @@ describe( 'themes selectors', () => {
 		} );
 
 		context( 'on a Jetpack site', () => {
-			it( 'given a theme that\'s not found on WP.org, should return null', () => {
+			it( 'given a theme that\'s found on neither WP.com nor WP.org, should return null', () => {
+				const forumUrl = getThemeForumUrl(
+					{
+						sites: {
+							items: {
+								77203074: {
+									ID: 77203074,
+									URL: 'https://example.net',
+									jetpack: true
+								}
+							}
+						},
+						themes: {
+							queries: {}
+						}
+					},
+					'twentysixteen',
+					77203074
+				);
+
+				expect( forumUrl ).to.be.null;
+			} );
+
+			it( 'given a theme that\'s found on WP.com, should return the generic WP.com themes support forum URL', () => {
 				const forumUrl = getThemeForumUrl(
 					{
 						sites: {
@@ -1464,7 +1501,7 @@ describe( 'themes selectors', () => {
 					77203074
 				);
 
-				expect( forumUrl ).to.be.null;
+				expect( forumUrl ).to.equal( '//en.forums.wordpress.com/forum/themes' );
 			} );
 
 			it( 'given a theme that\'s found on WP.org, should return the correspoding WP.org theme forum URL', () => {
@@ -1531,6 +1568,21 @@ describe( 'themes selectors', () => {
 					themes: {
 						activeThemes: {
 							2916284: 'twentysixteen'
+						}
+					}
+				},
+				2916284
+			);
+
+			expect( activeTheme ).to.equal( 'twentysixteen' );
+		} );
+
+		it( 'given a site, should return its currently active theme without -wpcom suffix', () => {
+			const activeTheme = getActiveTheme(
+				{
+					themes: {
+						activeThemes: {
+							2916284: 'twentysixteen-wpcom'
 						}
 					}
 				},
@@ -1843,6 +1895,33 @@ describe( 'themes selectors', () => {
 			}, 'twentyseventeen' );
 
 			expect( isWporg ).to.be.true;
+		} );
+	} );
+
+	describe( '#isWpcomTheme()', () => {
+		it( 'should return false if theme is not found on WP.com', () => {
+			const isWpcom = isWporgTheme( {
+				themes: {
+					queries: {
+					}
+				}
+			}, 'twentysixteen' );
+
+			expect( isWpcom ).to.be.false;
+		} );
+
+		it( 'should return true if theme is found on WP.com', () => {
+			const isWpcom = isWpcomTheme( {
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { twentysixteen }
+						} ),
+					}
+				}
+			}, 'twentysixteen' );
+
+			expect( isWpcom ).to.be.true;
 		} );
 	} );
 
@@ -2228,6 +2307,49 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( isAvailable ).to.be.true;
+		} );
+	} );
+
+	describe( 'getWpcomParentThemeId', () => {
+		it( 'should return null for non-existent theme', () => {
+			const parentId = getWpcomParentThemeId(
+				{
+					themes: {
+						queries: {}
+					}
+				}, 'blah'
+			);
+			expect( parentId ).to.be.null;
+		} );
+
+		it( 'should return null for theme with no parent', () => {
+			const parentId = getWpcomParentThemeId(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { mood }
+							} )
+						}
+					}
+				}, 'mood'
+			);
+			expect( parentId ).to.be.null;
+		} );
+
+		it( 'should return parent id', () => {
+			const parentId = getWpcomParentThemeId(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { sidekick }
+							} )
+						}
+					}
+				}, 'sidekick'
+			);
+			expect( parentId ).to.equal( 'superhero' );
 		} );
 	} );
 } );

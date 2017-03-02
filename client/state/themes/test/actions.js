@@ -102,45 +102,26 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestThemes()', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.get( '/rest/v1.2/themes' )
-				.reply( 200, {
-					found: 2,
-					themes: [
-						{ ID: 'twentysixteen', name: 'Twenty Sixteen' },
-						{ ID: 'mood', name: 'Mood' }
-					]
-				} )
-				.get( '/rest/v1.2/themes' )
-				.query( { search: 'Sixteen' } )
-				.reply( 200, {
-					found: 1,
-					themes: [ { ID: 'twentysixteen', name: 'Twenty Sixteen' } ]
-				} )
-				.get( '/rest/v1/sites/77203074/themes' )
-				.reply( 200, {
-					// The endpoint doesn't return `found` for Jetpack sites
-					themes: [
-						{ ID: 'twentyfifteen', name: 'Twenty Fifteen' },
-						{ ID: 'twentysixteen', name: 'Twenty Sixteen' }
-					]
-				} )
-				.get( '/rest/v1/sites/77203074/themes' )
-				.query( { search: 'Sixteen' } )
-				.reply( 200, {
-					// The endpoint doesn't return `found` for Jetpack sites
-					themes: [ { ID: 'twentysixteen', name: 'Twenty Sixteen' } ]
-				} )
-				.get( '/rest/v1/sites/1916284/themes' )
-				.reply( 403, {
-					error: 'authorization_required',
-					message: 'User cannot access this private blog.'
-				} );
-		} );
-
 		context( 'with a wpcom site', () => {
+			useNock( ( nock ) => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.get( '/rest/v1.2/themes' )
+					.reply( 200, {
+						found: 2,
+						themes: [
+							{ ID: 'twentysixteen', name: 'Twenty Sixteen' },
+							{ ID: 'mood', name: 'Mood' }
+						]
+					} )
+					.get( '/rest/v1.2/themes' )
+					.query( { search: 'Sixteen' } )
+					.reply( 200, {
+						found: 1,
+						themes: [ { ID: 'twentysixteen', name: 'Twenty Sixteen' } ]
+					} );
+			} );
+
 			it( 'should dispatch fetch action when thunk triggered', () => {
 				requestThemes( 'wpcom' )( spy );
 
@@ -195,6 +176,30 @@ describe( 'actions', () => {
 		} );
 
 		context( 'with a Jetpack site', () => {
+			useNock( ( nock ) => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.get( '/rest/v1/sites/77203074/themes' )
+					.reply( 200, {
+						// The endpoint doesn't return `found` for Jetpack sites
+						themes: [
+							{ ID: 'twentyfifteen', name: 'Twenty Fifteen' },
+							{ ID: 'twentysixteen', name: 'Twenty Sixteen' }
+						]
+					} )
+					.get( '/rest/v1/sites/77203074/themes' )
+					.query( { search: 'Sixteen' } )
+					.reply( 200, {
+						// The endpoint doesn't return `found` for Jetpack sites
+						themes: [ { ID: 'twentysixteen', name: 'Twenty Sixteen' } ]
+					} )
+					.get( '/rest/v1/sites/1916284/themes' )
+					.reply( 403, {
+						error: 'authorization_required',
+						message: 'User cannot access this private blog.'
+					} );
+			} );
+
 			const fakeGetState = () => ( {
 				sites: {
 					items: {
@@ -264,6 +269,90 @@ describe( 'actions', () => {
 						siteId: 1916284,
 						query: {},
 						error: sinon.match( { message: 'User cannot access this private blog.' } )
+					} );
+				} );
+			} );
+		} );
+
+		context( 'with the WP.org API', () => {
+			useNock( ( nock ) => {
+				nock( 'https://api.wordpress.org' )
+					.persist()
+					.defaultReplyHeaders( {
+						'Content-Type': 'application/json'
+					} )
+					.get( '/themes/info/1.1/?action=query_themes&request%5Bfields%5D%5Bextended_author%5D=true' )
+					.reply( 200, {
+						info: { page: 1, pages: 123, results: 2452 },
+						themes: [
+							{ slug: 'bizprime', name: 'bizprime' },
+							{ slug: 'shapely', name: 'Shapely' },
+							{ slug: 'cassions', name: 'Cassions' },
+							{ slug: 'intentionally-blank', name: 'Intentionally Blank' }
+						]
+					} )
+					.get( '/themes/info/1.1/?action=query_themes&request%5Bfields%5D%5Bextended_author%5D=true' +
+						'&request%5Bsearch%5D=Sixteen' )
+					.reply( 200, {
+						info: { page: 1, pages: 1, results: 1 },
+						themes: [
+							{ slug: 'twentysixteen', name: 'Twenty Sixteen' }
+						]
+					} );
+			} );
+
+			it( 'should dispatch fetch action when thunk triggered', () => {
+				requestThemes( 'wporg' )( spy );
+
+				expect( spy ).to.have.been.calledWith( {
+					type: THEMES_REQUEST,
+					siteId: 'wporg',
+					query: {}
+				} );
+			} );
+
+			it( 'should dispatch themes receive action when request completes', () => {
+				return requestThemes( 'wporg' )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_RECEIVE,
+						themes: [
+							{ id: 'bizprime', name: 'bizprime' },
+							{ id: 'shapely', name: 'Shapely' },
+							{ id: 'cassions', name: 'Cassions' },
+							{ id: 'intentionally-blank', name: 'Intentionally Blank' }
+						],
+						siteId: 'wporg'
+					} );
+				} );
+			} );
+
+			it( 'should dispatch themes request success action when request completes', () => {
+				return requestThemes( 'wporg' )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_REQUEST_SUCCESS,
+						siteId: 'wporg',
+						query: {},
+						found: 2452,
+						themes: [
+							{ id: 'bizprime', name: 'bizprime' },
+							{ id: 'shapely', name: 'Shapely' },
+							{ id: 'cassions', name: 'Cassions' },
+							{ id: 'intentionally-blank', name: 'Intentionally Blank' }
+						]
+					} );
+				} );
+			} );
+
+			it( 'should dispatch themes request success action with query results', () => {
+				return requestThemes( 'wporg', { search: 'Sixteen' } )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_REQUEST_SUCCESS,
+						siteId: 'wporg',
+						query: { search: 'Sixteen' },
+						found: 1,
+						themes: [
+							{ id: 'twentysixteen', name: 'Twenty Sixteen' },
+						]
 					} );
 				} );
 			} );
@@ -393,9 +482,11 @@ describe( 'actions', () => {
 					.defaultReplyHeaders( {
 						'Content-Type': 'application/json'
 					} )
-					.get( '/themes/info/1.1/?action=theme_information&request%5Bslug%5D=twentyseventeen' )
+					.get( '/themes/info/1.1/?action=theme_information&request%5Bfields%5D%5Bextended_author%5D=true' +
+						'&request%5Bslug%5D=twentyseventeen' )
 					.reply( 200, { slug: 'twentyseventeen', name: 'Twenty Seventeen' } )
-					.get( '/themes/info/1.1/?action=theme_information&request%5Bslug%5D=twentyumpteen' )
+					.get( '/themes/info/1.1/?action=theme_information&request%5Bfields%5D%5Bextended_author%5D=true' +
+						'&request%5Bslug%5D=twentyumpteen' )
 					.reply( 200, false );
 			} );
 
@@ -870,6 +961,14 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#installTheme', () => {
+		const getState = () => ( {
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager()
+				}
+			}
+		} );
+
 		const successResponse = {
 			id: 'karuna-wpcom',
 			screenshot: '//i0.wp.com/budzanowski.wpsandbox.me/wp-content/themes/karuna-wpcom/screenshot.png',
@@ -915,7 +1014,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch install theme request action when triggered', () => {
-			installTheme( 'karuna-wpcom', 2211667 )( spy );
+			installTheme( 'karuna-wpcom', 2211667 )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: THEME_INSTALL,
@@ -925,7 +1024,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request success action when request completes', () => {
-			return installTheme( 'karuna-wpcom', 2211667 )( spy ).then( () => {
+			return installTheme( 'karuna-wpcom', 2211667 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_SUCCESS,
 					siteId: 2211667,
@@ -935,7 +1034,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme was not found', () => {
-			return installTheme( 'typist-wpcom', 2211667 )( spy ).then( () => {
+			return installTheme( 'typist-wpcom', 2211667 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_FAILURE,
 					siteId: 2211667,
@@ -946,7 +1045,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch wpcom theme install request failure action when theme is already installed', () => {
-			return installTheme( 'pinboard-wpcom', 2211667 )( spy ).then( () => {
+			return installTheme( 'pinboard-wpcom', 2211667 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_INSTALL_FAILURE,
 					siteId: 2211667,

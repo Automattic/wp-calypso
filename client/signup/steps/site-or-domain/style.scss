@@ -10,6 +10,15 @@
 	max-width: 330px;
 	min-width: 230px;
 	padding: 0;
+	transition: box-shadow 100ms ease-in-out;
+
+	svg {
+		display: block;
+	}
+
+	&:hover {
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
+	}
 }
 
 .site-or-domain__label {

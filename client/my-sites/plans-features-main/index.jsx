@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import { filter } from 'lodash';
+import { filter, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,6 +22,8 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 } from 'lib/plans/constants';
+import QueryPlans from 'components/data/query-plans';
+import QuerySitePlans from 'components/data/query-site-plans';
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
 import { isEnabled } from 'config';
@@ -48,7 +50,7 @@ class PlansFeaturesMain extends Component {
 				jetpackPlans.shift();
 			}
 			return (
-				<div className="plans-features-main__group">
+				<div className="plans-features-main__group" data-e2e-plans="jetpack">
 					<PlanFeatures
 						plans={ jetpackPlans }
 						selectedFeature={ selectedFeature }
@@ -69,7 +71,7 @@ class PlansFeaturesMain extends Component {
 				jetpackPlans.shift();
 			}
 			return (
-				<div className="plans-features-main__group">
+				<div className="plans-features-main__group" data-e2e-plans="jetpack">
 					<PlanFeatures
 						plans={ jetpackPlans }
 						selectedFeature={ selectedFeature }
@@ -95,7 +97,7 @@ class PlansFeaturesMain extends Component {
 		);
 
 		return (
-			<div className="plans-features-main__group">
+			<div className="plans-features-main__group" data-e2e-plans="wpcom">
 				<PlanFeatures
 					plans={ plans }
 					onUpgradeClick={ onUpgradeClick }
@@ -325,6 +327,8 @@ class PlansFeaturesMain extends Component {
 
 		return (
 			<div className="plans-features-main">
+				<QueryPlans />
+				<QuerySitePlans siteId={ get( site, 'ID' ) } />
 				{ this.getPlanFeatures() }
 
 				{
@@ -337,7 +341,7 @@ class PlansFeaturesMain extends Component {
 	}
 }
 
-PlansFeaturesMain.PropTypes = {
+PlansFeaturesMain.propTypes = {
 	site: PropTypes.object,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
@@ -347,7 +351,7 @@ PlansFeaturesMain.PropTypes = {
 	hideFreePlan: PropTypes.bool,
 	showFAQ: PropTypes.bool,
 	selectedFeature: PropTypes.string,
-	displayJetpackPlans: PropTypes.bool
+	displayJetpackPlans: PropTypes.bool.isRequired
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -355,8 +359,7 @@ PlansFeaturesMain.defaultProps = {
 	intervalType: 'yearly',
 	hideFreePlan: false,
 	site: {},
-	showFAQ: true,
-	displayJetpackPlans: false
+	showFAQ: true
 };
 
 export default localize( PlansFeaturesMain );

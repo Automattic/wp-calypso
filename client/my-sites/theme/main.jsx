@@ -14,7 +14,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import QueryTheme from 'components/data/query-theme';
+import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
@@ -41,6 +41,7 @@ import {
 	isThemeActive,
 	isThemePremium,
 	isPremiumThemeAvailable,
+	isWpcomTheme as isThemeWpcom,
 	getThemeRequestErrors,
 	getThemeForumUrl,
 } from 'state/themes/selectors';
@@ -49,7 +50,7 @@ import EmptyContentComponent from 'components/empty-content';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
-import { getTheme } from 'state/themes/selectors';
+import { getCanonicalTheme } from 'state/themes/selectors';
 import { isValidTerm } from 'my-sites/themes/theme-filters';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { setThemePreviewOptions } from 'state/themes/actions';
@@ -507,7 +508,7 @@ const ThemeSheet = React.createClass( {
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
 		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
 
-		const { name: themeName, description, currentUserId, isWpcomTheme } = this.props;
+		const { name: themeName, description, currentUserId } = this.props;
 		const title = themeName && i18n.translate( '%(themeName)s Theme', {
 			args: { themeName }
 		} );
@@ -531,9 +532,7 @@ const ThemeSheet = React.createClass( {
 
 		return (
 			<Main className="theme__sheet">
-				<QueryTheme themeId={ this.props.id } siteId={ 'wpcom' } />
-				{ ! isWpcomTheme && siteID && <QueryTheme themeId={ this.props.id } siteId={ siteID } /> }
-				{ ! isWpcomTheme && <QueryTheme themeId={ this.props.id } siteId="wporg" /> }
+				<QueryCanonicalTheme themeId={ this.props.id } siteId={ siteID } />
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
 				{ siteID && <QuerySitePurchases siteId={ siteID } /> }
 				{ siteID && <QuerySitePlans siteId={ siteID } /> }
@@ -661,12 +660,12 @@ export default connect(
 	( state, { id } ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
-		const isWpcomTheme = !! getTheme( state, 'wpcom', id );
-		const siteIdOrWpcom = ( selectedSite && ! isWpcomTheme ) ? selectedSite.ID : 'wpcom';
+		const isWpcomTheme = isThemeWpcom( state, id );
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
-		const theme = getTheme( state, siteIdOrWpcom, id );
+		const theme = getCanonicalTheme( state, selectedSite && selectedSite.ID, id );
+		const siteIdOrWpcom = selectedSite ? selectedSite.ID : 'wpcom';
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
 
 		return {
