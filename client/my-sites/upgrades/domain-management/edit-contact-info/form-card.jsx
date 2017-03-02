@@ -179,7 +179,7 @@ class EditContactInfoFormCard extends React.Component {
 			'If you don’t have access to {{strong}}%(currentEmail)s{{/strong}}, ' +
 			'we will also email you at {{strong}}%(wpcomEmail)s{{/strong}}, as backup.', {
 				args: { currentEmail, wpcomEmail },
-				components: { supportLink: <a href={ support.CALYPSO_CONTACT } />, strong }
+				components: { strong }
 			}
 		) }</p>;
 	}
