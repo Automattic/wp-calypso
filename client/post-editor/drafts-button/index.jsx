@@ -9,7 +9,6 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Count from 'components/count';
 import QueryPostCounts from 'components/data/query-post-counts';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -28,10 +27,9 @@ function EditorDraftsButton( { count, onClick, jetpack, siteId, hideText } ) {
 				<QueryPostCounts siteId={ siteId } type="post" />
 			) }
 			{ ! hideText && <span>{ translate( 'Drafts' ) }</span> }
-			{ count && ! jetpack ? <Count count={ count } /> : null }
 		</Button>
 	);
-};
+}
 
 EditorDraftsButton.propTypes = {
 	count: PropTypes.number,

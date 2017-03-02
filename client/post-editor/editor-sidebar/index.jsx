@@ -46,7 +46,7 @@ export default class EditorSidebar extends Component {
 				sites={ this.props.sites }
 				onTitleClick={ this.props.onTitleClick }
 				showAllActionsMenu={ false }
-				siteID={ this.props.site ? this.props.site.ID : null }
+				siteId={ this.props.site ? this.props.site.ID : null }
 				selectedId={ this.props.post ? this.props.post.ID : null }
 			/>
 		);

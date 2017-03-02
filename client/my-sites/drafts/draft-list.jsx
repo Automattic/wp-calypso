@@ -1,62 +1,94 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	omit = require( 'lodash/omit' );
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var PostListFetcher = require( 'components/post-list-fetcher' ),
-	hasTouch = require( 'lib/touch-detect' ).hasTouch,
-	actions = require( 'lib/posts/actions' ),
-	Draft = require( 'my-sites/draft' ),
-	EmptyContent = require( 'components/empty-content' ),
-	infiniteScroll = require( 'lib/mixins/infinite-scroll' ),
-	observe = require( 'lib/mixins/data-observe' );
+import DraftsAuthorFilter from './author-filter';
+import Count from 'components/count';
+import Draft from 'my-sites/draft';
+import EmptyContent from 'components/empty-content';
+import PostListFetcher from 'components/post-list-fetcher';
+import QueryPostCounts from 'components/data/query-post-counts';
+import {
+	getMyPostCount,
+	getAllPostCount,
+	isRequestingPostCounts
+} from 'state/posts/counts/selectors';
+import actions from 'lib/posts/actions';
+import { hasTouch } from 'lib/touch-detect';
+import infiniteScroll from 'lib/mixins/infinite-scroll';
+import observe from 'lib/mixins/data-observe';
+import { getCurrentUserId } from 'state/current-user/selectors';
 
-var DraftList = React.createClass( {
+class DraftList extends Component {
 
-	mixins: [ PureRenderMixin ],
+	static propTypes = {
+		search: PropTypes.string,
+		sites: PropTypes.object,
+		siteId: PropTypes.any,
+		trackScrollPage: PropTypes.func,
+		onTitleClick: PropTypes.func,
+		showAllActionsMenu: PropTypes.bool,
+		selectedId: PropTypes.number,
+		myCount: React.PropTypes.number,
+		allCount: React.PropTypes.number
+	};
 
-	propTypes: {
-		search: React.PropTypes.string,
-		sites: React.PropTypes.object,
-		siteID: React.PropTypes.any,
-		trackScrollPage: React.PropTypes.func,
-		onTitleClick: React.PropTypes.func,
-		showAllActionsMenu: React.PropTypes.bool,
-		selectedId: React.PropTypes.number
-	},
+	static defaultProps = {
+		showAllActionsMenu: true,
+		selectedId: false
+	};
 
-	getDefaultProps: function() {
-		return {
-			showAllActionsMenu: true,
-			selectedId: false
-		}
-	},
+	constructor( props ) {
+		super( props );
+		this.state = {
+			authorFilter: 'me'
+		};
+	}
 
-	render: function() {
+	setAuthorFilter = authorFilter => {
+		this.setState( { authorFilter } );
+	}
+
+	render() {
+		const { siteId, myCount, allCount, isRequestingCounts, selectedId, userId } = this.props;
+		const { authorFilter } = this.state;
+		const author = authorFilter === 'me' ? userId : null;
+		const count = authorFilter === 'me' ? myCount : allCount;
+		const showCount = siteId && ( ! isRequestingCounts || count );
+
 		return (
-			<PostListFetcher
-				siteID={ this.props.siteID }
-				status="draft,pending"
-				withImages={ true }
-				withCounts={ true }
-				onTitleClick={ this.props.onTitleClick }
-			>
-				<Drafts
-					{ ...omit( this.props, 'children' ) }
-					status="draft"
-					selectedId={ this.props.selectedId }
-				/>
-			</PostListFetcher>
+			<div>
+				{ siteId && <QueryPostCounts siteId={ siteId } type="post" /> }
+				<div className="drafts__header">
+					<DraftsAuthorFilter selectedScope={ authorFilter }
+						onChange={ this.setAuthorFilter } />
+					{ showCount && <Count count={ count } /> }
+				</div>
+				<PostListFetcher
+					siteID={ this.props.siteId }
+					status="draft,pending"
+					author={ author }
+					withImages
+					withCounts
+					onTitleClick={ this.props.onTitleClick }
+				>
+					<Drafts
+						{ ...this.props }
+						status="draft"
+						selectedId={ selectedId }
+					/>
+				</PostListFetcher>
+			</div>
 		);
 	}
-} );
+}
 
-var Drafts = React.createClass( {
+const Drafts = React.createClass( {
 
 	mixins: [ infiniteScroll( 'fetchPosts' ), observe( 'sites' ) ],
 
@@ -70,7 +102,7 @@ var Drafts = React.createClass( {
 		posts: React.PropTypes.array.isRequired,
 		postImages: React.PropTypes.object.isRequired,
 		search: React.PropTypes.string,
-		siteID: React.PropTypes.any,
+		siteId: React.PropTypes.any,
 		showAllActionsMenu: React.PropTypes.bool,
 		selectedId: React.PropTypes.number
 	},
@@ -110,7 +142,7 @@ var Drafts = React.createClass( {
 	},
 
 	render: function() {
-		var posts = this.props.posts;
+		let posts = this.props.posts;
 
 		// we have posts, let's render
 		if ( posts.length && this.props.sites.initialized ) {
@@ -152,4 +184,11 @@ var Drafts = React.createClass( {
 	}
 } );
 
-module.exports = DraftList;
+export default connect( ( state, { siteId } ) => {
+	return {
+		isRequestingCounts: isRequestingPostCounts( state, siteId, 'post' ),
+		myCount: getMyPostCount( state, siteId, 'post', 'draft' ),
+		allCount: getAllPostCount( state, siteId, 'post', 'draft' ),
+		userId: getCurrentUserId( state )
+	};
+} )( DraftList );

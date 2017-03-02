@@ -5,6 +5,7 @@
 	font-weight: bold;
 	margin: 0 0 30px;
 }
+
 .drafts .search {
 	margin-bottom: 24px;
 	position: static;
@@ -12,4 +13,27 @@
 	input {
 		display: block;
 	}
+}
+
+.drafts__header {
+	display: flex;
+	flex-shrink: 0;
+	justify-content: flex-end;
+	align-items: center;
+	padding: 0 14px 14px 6px;
+
+	@include breakpoint( ">660px" ) {
+		justify-content: space-between;
+	}
+}
+
+.drafts__header .section-nav-group {
+	display: inline-block;
+	width: auto;
+	margin-top: 0;
+}
+
+.drafts__author-filter .gravatar {
+	margin-left: 6px;
+	vertical-align: middle;
 }
