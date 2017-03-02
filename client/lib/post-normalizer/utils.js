@@ -138,6 +138,7 @@ export function iframeIsWhitelisted( iframe ) {
 		'facebook.com',
 		'embed.itunes.apple.com',
 		'nyt.com',
+		'google.com',
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
