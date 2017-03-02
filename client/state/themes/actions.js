@@ -118,9 +118,25 @@ export function receiveThemes( themes, siteId ) {
 	};
 }
 
+/**
+ * Returns an action object to be used in signalling that theme objects from
+ * a query have been received.
+ *
+ * @param {Array}  themes Themes received
+ * @param {number} siteId ID of site for which themes have been received
+ * @param {Object} query Theme query used in the API request
+ * @param {number} foundCount Number of themes returned by the query
+ * @return {Object} Action object
+ */
 function receiveThemesQuery( themes, siteId, query, foundCount ) {
 	return ( dispatch, getState ) => {
-		const { filteredThemes, found } = filterThemes( getState, themes, siteId, query, foundCount );
+		const { filteredThemes, found } = filterThemes(
+			getState,
+			themes,
+			siteId,
+			query,
+			foundCount
+		);
 		dispatch( {
 			type: THEMES_REQUEST_SUCCESS,
 			themes: filteredThemes,
