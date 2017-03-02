@@ -26,5 +26,5 @@ const render = ( context ) => {
 };
 
 export default function() {
-	page( '/sensei/:site?', siteSelection, navigation, render );
+	page( '/extensions/sensei/:site?', siteSelection, navigation, render );
 }

@@ -6,7 +6,7 @@
 	"env_id": [ "development", "wpcalypso" ],
 	"section": {
 		"name": "sensei",
-		"paths": [ "/sensei" ],
+		"paths": [ "/extensions/sensei" ],
 		"module": "sensei",
 		"group": "sites",
 		"secondary": true
