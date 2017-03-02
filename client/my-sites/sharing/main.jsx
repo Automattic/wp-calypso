@@ -1,85 +1,76 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:sharing' ),
-	find = require( 'lodash/find' );
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { find, get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' ),
-	Main = require( 'components/main' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	utils = require( 'lib/site/utils' ),
-	sites = require( 'lib/sites-list' )();
-
+import { canCurrentUser } from 'state/selectors';
+import DocumentHead from 'components/data/document-head';
+import Main from 'components/main';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import SectionNav from 'components/section-nav';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 
-module.exports = React.createClass( {
-	displayName: 'Sharing',
-
-	componentDidMount: function() {
-		debug( 'Sharing React component mounted.' );
-	},
-
-	getSelectedText: function() {
-		var selected = find( this.getFilters(), { path: this.props.path } );
-		if ( selected ) {
-			return selected.title;
-		}
-
-		return '';
-	},
-
-	getFilters: function() {
-		var site = sites.getSelectedSite(),
-			pathSuffix = sites.selected ? '/' + sites.selected : '',
-			filters = [];
+class Sharing extends Component {
+	getFilters() {
+		const { canManageOptions, site, translate } = this.props;
+		const pathSuffix = site ? '/' + site.slug : '';
+		const filters = [];
 
 		// Include Connections link if all sites are selected. Otherwise,
 		// verify that the required Jetpack module is active
 		if ( ! site || ! site.jetpack || site.isModuleActive( 'publicize' ) ) {
-			filters.push( { title: this.translate( 'Connections' ), path: '/sharing' + pathSuffix, id: 'sharing-connections' } );
+			filters.push( {
+				id: 'sharing-connections',
+				path: '/sharing' + pathSuffix,
+				title: translate( 'Connections' ),
+			} );
 		}
 
 		// Include Sharing Buttons link if a site is selected and the
 		// required Jetpack module is active
-		if ( site && utils.userCan( 'manage_options', site ) &&
+		if ( site && canManageOptions &&
 			( ! site.jetpack ||
 				( site.isModuleActive( 'sharedaddy' ) && site.versionCompare( '3.4-dev', '>=' ) )
 			)
 		) {
-			filters.push( { title: this.translate( 'Sharing Buttons' ), path: '/sharing/buttons' + pathSuffix, id: 'sharing-buttons' } );
+			filters.push( {
+				id: 'sharing-buttons',
+				path: '/sharing/buttons' + pathSuffix,
+				title: translate( 'Sharing Buttons' ),
+			} );
 		}
 
 		return filters;
-	},
+	}
 
-	render: function() {
+	render() {
+		const filters = this.getFilters();
+		const selected = find( filters, { path: this.props.path } );
+
 		return (
 			<Main className="sharing">
+				<DocumentHead title={ this.props.translate( 'Sharing', { textOnly: true } ) } />
 				<SidebarNavigation />
-				<SectionNav selectedText={ this.getSelectedText() }>
+				<SectionNav selectedText={ get( selected, 'title', '' ) }>
 					<NavTabs>
-						{ this.getFilters().map( function( filterItem ) {
-							return (
-								<NavItem
-									key={ filterItem.id }
-									path={ filterItem.path }
-									selected={ filterItem.path === this.props.path }
-								>
-									{ filterItem.title }
-								</NavItem>
-							);
-						}, this ) }
+						{ filters.map( ( { id, path, title } ) => (
+							<NavItem key={ id } path={ path } selected={ path === this.props.path }>
+								{ title }
+							</NavItem>
+						) ) }
 					</NavTabs>
 				</SectionNav>
 				<UpgradeNudge
-					title={ this.translate( 'No Ads with WordPress.com Premium' ) }
-					message={ this.translate( 'Prevent ads from showing on your site.' ) }
+					title={ this.props.translate( 'No Ads with WordPress.com Premium' ) }
+					message={ this.props.translate( 'Prevent ads from showing on your site.' ) }
 					feature="no-adverts"
 					event="sharing_no_ads"
 				/>
@@ -87,4 +78,18 @@ module.exports = React.createClass( {
 			</Main>
 		);
 	}
-} );
+}
+
+Sharing.propTypes = {
+	canManageOptions: PropTypes.bool,
+	contentComponent: PropTypes.node,
+	path: PropTypes.string,
+	site: PropTypes.object,
+	translate: PropTypes.func,
+};
+
+export default connect(
+	( state, { site } ) => ( {
+		canManageOptions: canCurrentUser( state, get( site, 'ID' ), 'manage_options' ),
+	} ),
+)( localize( Sharing ) );

@@ -47,7 +47,7 @@ module.exports = React.createClass( {
 		if ( welcomeSite ) {
 			postLink = '/post/' + welcomeSite.slug;
 			customizeLink = config.isEnabled( 'manage/customize' ) ? '/customize/' + welcomeSite.slug : adminURL + 'customize.php?return=' + encodeURIComponent( window.location.href );
-			sharingLink = config.isEnabled( 'manage/sharing' ) ? '/sharing/' + welcomeSite.slug : adminURL + 'options-general.php?page=sharing';
+			sharingLink = '/sharing/' + welcomeSite.slug;
 		}
 
 		if ( window.innerWidth <= 400 ) {
