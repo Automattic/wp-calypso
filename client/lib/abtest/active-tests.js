@@ -74,16 +74,6 @@ module.exports = {
 		allowExistingUsers: false
 	},
 
-	jetpackConnectPlansFirst: {
-		datestamp: '20161024',
-		variations: {
-			showPlansBeforeAuth: 50,
-			showPlansAfterAuth: 50
-		},
-		defaultVariation: 'showPlansAfterAuth',
-		allowExistingUsers: true
-	},
-
 	siteTitleTour: {
 		datestamp: '20161207',
 		variations: {
@@ -113,4 +103,15 @@ module.exports = {
 		defaultVariation: 'withoutMarketingCopy',
 		allowExistingUsers: true
 	},
+
+	jetpackPlansNoMonthly: {
+		datestamp: '20170302',
+		variations: {
+			showMonthy: 50,
+			hideMonthly: 50
+		},
+		defaultVariation: 'showMonthy',
+		allowExistingUsers: true
+	},
+
 };

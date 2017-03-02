@@ -157,6 +157,7 @@ class PlanFeatures extends Component {
 						intervalType={ intervalType }
 						site={ site }
 						basePlansPath={ basePlansPath }
+						hideMonthly={ abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 					/>
 					<p className="plan-features__description">
@@ -225,6 +226,7 @@ class PlanFeatures extends Component {
 						site={ site }
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
+						hideMonthly={ abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' }
 					/>
 				</td>
 			);
@@ -467,6 +469,9 @@ export default connect(
 				const popular = isPopular( plan ) && ! isPaid;
 				const newPlan = isNew( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
+				const showMonthyPrice = abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly'
+					? true
+					: ! relatedMonthlyPlan && showMonthly;
 
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
 					isPlaceholder = true;
@@ -505,7 +510,7 @@ export default connect(
 						popular,
 						newPlan
 					),
-					rawPrice: getPlanRawPrice( state, planProductId, ! relatedMonthlyPlan && showMonthly ),
+					rawPrice: getPlanRawPrice( state, planProductId, showMonthyPrice ),
 					relatedMonthlyPlan: relatedMonthlyPlan
 				};
 			} )
