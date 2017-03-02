@@ -68,14 +68,11 @@ import {
 } from './utils';
 import {
 	getSiteTitle,
-	hasJetpackSiteJetpackThemesExtendedFeatures,
 	isJetpackSite,
-	isJetpackSiteMultiSite
 } from 'state/sites/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
 import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
-import config from 'config';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
@@ -129,7 +126,7 @@ export function receiveThemes( themes, siteId ) {
  * @return {Function}                    Action thunk
  */
 export function requestThemes( siteId, query = {} ) {
-	return ( dispatch, getState ) => {
+	return ( dispatch ) => {
 		const startTime = new Date().getTime();
 
 		dispatch( {
@@ -166,18 +163,9 @@ export function requestThemes( siteId, query = {} ) {
 				// A Jetpack site's themes endpoint ignores the query,
 				// returning an unfiltered list of all installed themes instead.
 				// So we have to filter on the client side.
-				// Also if Jetpack plugin has Themes Extended Features,
-				// we filter out -wpcom suffixed themes because we will show them in
-				// second list that is specific to WordPress.com themes.
-				// For multi-site installation we do not provide themes upload yet so
-				// we can only show one list and we should not filter wpcom themes.
-				const keepWpcom = ! config.isEnabled( 'manage/themes/upload' ) ||
-					! hasJetpackSiteJetpackThemesExtendedFeatures( getState(), siteId ) ||
-					isJetpackSiteMultiSite( getState(), siteId );
-
 				filteredThemes = filter(
 					themes,
-					theme => isThemeMatchingQuery( query, theme ) && ( keepWpcom || ! isThemeFromWpcom( theme.id ) )
+					theme => isThemeMatchingQuery( query, theme )
 				);
 				// The Jetpack specific endpoint doesn't return the number of `found` themes, so we calculate it ourselves.
 				found = filteredThemes.length;
