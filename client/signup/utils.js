@@ -1,21 +1,21 @@
 /**
  * Exernal dependencies
  */
-var isEmpty = require( 'lodash/isEmpty' ),
-	find = require( 'lodash/find' ),
-	indexOf = require( 'lodash/indexOf' ),
-	pick = require( 'lodash/pick' ),
-	merge = require( 'lodash/merge' );
+import isEmpty from 'lodash/isEmpty';
+import find from 'lodash/find';
+import indexOf from 'lodash/indexOf';
+import pick from 'lodash/pick';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
  */
-var i18nUtils = require( 'lib/i18n-utils' ),
-	steps = require( 'signup/config/steps' ),
-	flows = require( 'signup/config/flows' ),
-	defaultFlowName = require( 'signup/config/flows' ).defaultFlowName,
-	formState = require( 'lib/form-state' ),
-	user = require( 'lib/user' )();
+import i18nUtils from 'lib/i18n-utils';
+import steps from 'signup/config/steps';
+import flows from 'signup/config/flows';
+import { defaultFlowName } from 'signup/config/flows';
+import formState from 'lib/form-state';
+const user = require( 'lib/user' )();
 
 function getFlowName( parameters ) {
 	const flow = ( parameters.flowName && isFlowName( parameters.flowName ) ) ? parameters.flowName : defaultFlowName;
