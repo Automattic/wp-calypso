@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { keyBy, omit } from 'lodash';
+import { keyBy, omit, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,10 +18,28 @@ import { createReducer, } from 'state/utils';
  *
  * the shape of a tag is { ID, URL, title, display_name  }.
  */
+ // TODO: simplify considerably
 export const items = createReducer( {}, {
 	[ READER_TAGS_RECEIVE ]: ( state, action ) => {
 		const tags = action.payload;
-		return keyBy( tags, 'ID' );
+
+		if ( tags.length === 1 ) {
+			return {
+				...state,
+				[ tags[ 0 ].ID ]: {
+					...state[ tags[ 0 ].ID ],
+					...tags[ 0 ],
+				}
+			};
+		}
+
+		return {
+			...keyBy( map( state, tag => ( {
+				...tag,
+				is_following: false,
+			} ) ), 'ID' ),
+			...keyBy( tags, 'ID' )
+		};
 	},
 	[ READER_UNFOLLOW_TAG_RECEIVE ]: ( state, action ) => {
 		const removedTag = action.payload;

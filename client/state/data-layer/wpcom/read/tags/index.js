@@ -16,6 +16,9 @@ import {
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { decodeEntities } from 'lib/formatting';
+import { mergeHandlers } from 'state/data-layer/utils';
+import followTagHandler from './mine/new';
+import unFollowTagHandler from './mine/delete';
 
 export function requestTags( store, action, next ) {
 	const path = action.payload && action.payload.slug
@@ -78,6 +81,12 @@ export function receiveTagsError( store, action, next, error ) {
 	} ) );
 }
 
-export default {
+const getFollowedTagsHandler = {
 	[ READER_TAGS_REQUEST ]: [ dispatchRequest( requestTags, receiveTagsSuccess, receiveTagsSuccess ) ],
 };
+
+export default mergeHandlers(
+	getFollowedTagsHandler,
+	followTagHandler,
+	unFollowTagHandler,
+);

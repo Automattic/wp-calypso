@@ -27,10 +27,9 @@ import ReaderSidebarTeams from './reader-sidebar-teams';
 import ReaderSidebarHelper from './helper';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
 import { getSubscribedLists } from 'state/reader/lists/selectors';
-import { getReaderTeams, getReaderFollowedTags } from 'state/selectors';
+import { getReaderTeams } from 'state/selectors';
 import QueryReaderLists from 'components/data/query-reader-lists';
 import QueryReaderTeams from 'components/data/query-reader-teams';
-import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
 import observe from 'lib/mixins/data-observe';
 import config from 'config';
 import userSettings from 'lib/user-settings';
@@ -39,6 +38,7 @@ import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import userUtils from 'lib/user/utils';
 import viewport from 'lib/viewport';
 import { localize } from 'i18n-calypso';
+import { getTagStreamUrl } from 'reader/route';
 
 export const ReaderSidebar = React.createClass( {
 
@@ -67,11 +67,11 @@ export const ReaderSidebar = React.createClass( {
 		window.location.href = url.resolve( 'https://wordpress.com', list.URL + '/edit' );
 	},
 
-	highlightNewTag( tag ) {
-		const tagUrl = `/tag/${ tag.slug }`;
-		if ( tagUrl !== page.current ) {
+	highlightNewTag( tagSlug ) {
+		const tagStreamUrl = getTagStreamUrl( tagSlug );
+		if ( tagStreamUrl !== page.current ) {
 			defer( function() {
-				page( tagUrl );
+				page( tagStreamUrl );
 				window.scrollTo( 0, 0 );
 			} );
 		}
@@ -155,7 +155,6 @@ export const ReaderSidebar = React.createClass( {
 
 				<QueryReaderLists />
 				<QueryReaderTeams />
-				<QueryReaderFollowedTags />
 				{ this.props.subscribedLists && this.props.subscribedLists.length
 				? <ReaderSidebarLists
 						lists={ this.props.subscribedLists }
@@ -172,7 +171,7 @@ export const ReaderSidebar = React.createClass( {
 					path={ this.props.path }
 					isOpen={ this.props.isTagsOpen }
 					onClick={ this.props.toggleTagsVisibility }
-					onTagExists={ this.highlightNewTag }
+					onFollowTag={ this.highlightNewTag }
 					currentTag={ this.state.currentTag } />
 			</SidebarRegion>
 
@@ -225,7 +224,6 @@ export default connect(
 			isListsOpen: state.ui.reader.sidebar.isListsOpen,
 			isTagsOpen: state.ui.reader.sidebar.isTagsOpen,
 			subscribedLists: getSubscribedLists( state ),
-			followedTags: getReaderFollowedTags( state ),
 			shouldRenderAppPromo: shouldRenderAppPromo(),
 			teams: getReaderTeams( state ),
 		};
