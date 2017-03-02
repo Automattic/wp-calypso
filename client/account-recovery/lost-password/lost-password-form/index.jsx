@@ -23,6 +23,7 @@ import {
 import {
 	isRequestingAccountRecoveryResetOptions,
 	getAccountRecoveryResetUserLogin,
+	getAccountRecoveryResetOptionsError,
 } from 'state/selectors';
 
 export class LostPasswordFormComponent extends Component {
@@ -41,6 +42,7 @@ export class LostPasswordFormComponent extends Component {
 			translate,
 			userLogin,
 			isRequesting,
+			requestError,
 		} = this.props;
 
 		const isPrimaryButtonDisabled = ! userLogin || isRequesting;
@@ -84,6 +86,13 @@ export class LostPasswordFormComponent extends Component {
 							value={ userLogin }
 							disabled={ isRequesting } />
 					</FormLabel>
+					{
+						( null != requestError ) && (
+						<p className="lost-password-form__error-message">
+							{ translate( 'We encountered some problems with that login information. ' +
+								'Please provide another one or try again later.' ) }
+						</p> )
+					}
 					<a href="/account-recovery/forgot-username" className="lost-password-form__forgot-username-link">
 						{ translate( 'Forgot your username?' ) }
 					</a>
@@ -110,6 +119,7 @@ export default connect(
 	( state ) => ( {
 		isRequesting: isRequestingAccountRecoveryResetOptions( state ),
 		userLogin: getAccountRecoveryResetUserLogin( state ),
+		requestError: getAccountRecoveryResetOptionsError( state ),
 	} ),
 	{
 		fetchResetOptionsByLogin,
