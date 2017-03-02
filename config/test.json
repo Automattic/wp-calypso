@@ -85,6 +85,7 @@
 		"plans/personal-plan": true,
 		"post-editor-github-link": false,
 		"post-editor/media-advanced": true,
+		"post-editor/mentions": false,
 		"press-this": true,
 		"reader": true,
 		"reader/full-errors": true,
