@@ -238,7 +238,7 @@ const CheckoutThankYou = React.createClass( {
 			);
 		}
 
-		if ( this.props.domainOnlySiteFlow ) {
+		if ( this.props.domainOnlySiteFlow && ! failedPurchases ) {
 			return (
 				<Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
