@@ -44,31 +44,31 @@ const RelatedContentPreview = ( { showHeadline, showThumbnails, translate } ) =>
 	];
 
 	return (
-		<div id="settings-reading-relatedposts-preview">
-			<FormLabel>{ translate( 'Example' ) }</FormLabel>
+		<div className="related-posts__preview">
+			<FormLabel className="related-posts__preview-title">{ translate( 'Example' ) }</FormLabel>
 
-			<div className="site-settings__related-posts">
+			<div className="related-posts__preview-box">
 				{
 					showHeadline &&
-					<h3 className="site-settings__related-posts-headline">{ translate( 'Related' ) }</h3>
+					<h3 className="related-posts__preview-headline">{ translate( 'Related' ) }</h3>
 				}
 
-				<div className="site-settings__related-posts-items">
+				<div className="related-posts__preview-items">
 					{
 						posts.map( ( post, index ) => {
 							return (
-								<div className="site-settings__related-posts-post" key={ index }>
+								<div className="related-posts__preview-post" key={ index }>
 									{ showThumbnails &&
-										<a className="site-settings__related-posts-post-a">
+										<a className="related-posts__preview-post-a">
 											<img src={ post.image } alt={ post.title } />
 										</a>
 									}
-									<h4 className="site-settings__related-posts-post-title">
-										<a className="site-settings__related-posts-post-a">
+									<h4 className="related-posts__preview-post-title">
+										<a className="related-posts__preview-post-a">
 											{ post.title }
 										</a>
 									</h4>
-									<p className="site-settings__related-posts-post-context">{ post.topic }</p>
+									<p className="related-posts__preview-post-context">{ post.topic }</p>
 								</div>
 							);
 						} )
