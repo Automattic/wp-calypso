@@ -586,8 +586,7 @@ export const PostEditor = React.createClass( {
 	},
 
 	iframePreviewEnabled: function() {
-		var site = this.props.sites.getSelectedSite();
-		return site && ! site.jetpack;
+		return true;
 	},
 
 	iframePreview: function() {
