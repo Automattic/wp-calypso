@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	config = require( 'config' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import config from 'config';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' );
+import Card from 'components/card';
 
 var PostUnavailable = React.createClass( {
 

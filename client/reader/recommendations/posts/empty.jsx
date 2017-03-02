@@ -1,8 +1,8 @@
-var React = require( 'react' );
+import React from 'react';
 
-var EmptyContent = require( 'components/empty-content' ),
-	stats = require( 'reader/stats' ),
-	discoverHelper = require( 'reader/discover/helper' );
+import EmptyContent from 'components/empty-content';
+import stats from 'reader/stats';
+import discoverHelper from 'reader/discover/helper';
 
 var RecommendedPostsEmptyContent = React.createClass( {
 	shouldComponentUpdate: function() {

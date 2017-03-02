@@ -16,7 +16,7 @@ import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags'
 import { getReaderFollowedTags } from 'state/selectors';
 import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
 
-const stats = require( 'reader/stats' );
+import stats from 'reader/stats';
 
 export class ReaderSidebarTags extends Component {
 

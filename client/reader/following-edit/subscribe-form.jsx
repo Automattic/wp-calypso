@@ -1,12 +1,12 @@
 // External dependencies
-const React = require( 'react' ),
-	url = require( 'url' ),
-	noop = require( 'lodash/noop' );
+import React from 'react';
+import url from 'url';
+import noop from 'lodash/noop';
 
 // Internal dependencies
-const SearchCard = require( 'components/search-card' ),
-	FollowingEditSubscribeFormResult = require( './subscribe-form-result' ),
-	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' );
+import SearchCard from 'components/search-card';
+import FollowingEditSubscribeFormResult from './subscribe-form-result';
+import FeedSubscriptionActions from 'lib/reader-feed-subscriptions/actions';
 
 const minSearchLength = 8; // includes protocol
 

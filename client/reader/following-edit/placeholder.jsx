@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
-var Card = require( 'components/card' );
-var SiteIcon = require( 'blocks/site-icon' );
+import Card from 'components/card';
+import SiteIcon from 'blocks/site-icon';
 
 module.exports = React.createClass( {
 

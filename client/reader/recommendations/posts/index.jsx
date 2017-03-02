@@ -1,8 +1,8 @@
-var React = require( 'react' );
+import React from 'react';
 
-var Stream = require( 'reader/stream' ),
-	EmptyContent = require( './empty' ),
-	DocumentHead = require( 'components/data/document-head' );
+import Stream from 'reader/stream';
+import EmptyContent from './empty';
+import DocumentHead from 'components/data/document-head';
 
 var RecommendationPostsStream = React.createClass( {
 

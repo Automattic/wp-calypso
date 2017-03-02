@@ -1,5 +1,5 @@
 // External dependencies
-var React = require( 'react' );
+import React from 'react';
 
 var FollowingEditNavigation = React.createClass( {
 

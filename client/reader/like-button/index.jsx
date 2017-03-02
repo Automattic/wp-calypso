@@ -1,9 +1,9 @@
-const React = require( 'react' );
+import React from 'react';
 
-const postStore = require( 'lib/feed-post-store' );
+import postStore from 'lib/feed-post-store';
 
-const LikeButtonContainer = require( 'blocks/like-button' );
-const { markSeen } = require( 'lib/feed-post-store/actions' );
+import LikeButtonContainer from 'blocks/like-button';
+import { markSeen } from 'lib/feed-post-store/actions';
 
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 
