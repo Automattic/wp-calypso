@@ -11,7 +11,8 @@ import Card from 'components/card';
 
 const ResetPasswordEmailSent = ( props ) => {
 	const {
-		email,
+		// TODO: uncomment it once the real data got wired
+		// email,
 		translate,
 	} = props;
 
@@ -23,10 +24,13 @@ const ResetPasswordEmailSent = ( props ) => {
 			<Card>
 			<p>
 				{ translate(
-					'We have sent an email to %(email)s with a reset link. ' +
+					'We have sent an email to {{strong}}%(email)s{{/strong}} with a reset link. ' +
 					'Click on it to reset your password and recover access to your account.',
 					{
-						args: { email }
+						components: { strong: <strong /> },
+						// TODO: it will become args: { email } when the real data got wired in the up-coming PR.
+						// args: { email }
+						args: { email: 'test@example.com' }
 					}
 				) }
 			</p>
