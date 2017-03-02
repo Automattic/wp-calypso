@@ -26,5 +26,5 @@ const render = ( context ) => {
 };
 
 export default function() {
-	page( '/wp-job-manager/:site?', siteSelection, navigation, render );
+	page( '/extensions/wp-job-manager/:site?', siteSelection, navigation, render );
 }
