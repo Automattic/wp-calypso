@@ -162,7 +162,7 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Penscratch 2',
+		name: 'Penscratch',
 		slug: 'penscratch-2',
 		repo: 'pub',
 		fallback: true,
