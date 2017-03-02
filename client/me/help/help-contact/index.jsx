@@ -65,9 +65,7 @@ const HelpContact = React.createClass( {
 			this.props.connectHappychat();
 		}
 
-		if ( config.isEnabled( 'help/directly' ) ) {
-			this.props.initializeDirectly();
-		}
+		this.prepareDirectlyWidget();
 
 		olarkStore.on( 'change', this.updateOlarkState );
 		olarkEvents.on( 'api.chat.onOperatorsAway', this.onOperatorsAway );
@@ -85,6 +83,13 @@ const HelpContact = React.createClass( {
 		olarkActions.expandBox();
 		olarkActions.shrinkBox();
 		olarkActions.hideBox();
+	},
+
+	componentDidUpdate: function() {
+		// Directly initialization is a noop if it's already happened. This catches
+		// instances where a state/prop change moves a user to Directly support from
+		// some other variation.
+		this.prepareDirectlyWidget();
 	},
 
 	componentWillUnmount: function() {
@@ -171,6 +176,12 @@ const HelpContact = React.createClass( {
 		this.sendMessageToOperator( message );
 
 		this.clearSavedContactForm();
+	},
+
+	prepareDirectlyWidget: function() {
+		if ( this.getSupportVariation() === SUPPORT_DIRECTLY && ! this.shouldShowPreloadForm() ) {
+			this.props.initializeDirectly();
+		}
 	},
 
 	submitDirectlyQuestion: function( contactForm ) {
