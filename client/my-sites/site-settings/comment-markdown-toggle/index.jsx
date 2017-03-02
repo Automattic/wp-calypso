@@ -60,7 +60,7 @@ class CommentDisplaySettings extends Component {
 				<div className="comment-markdown-toggle__info-link-container">
 					<InfoPopover position={ 'left' }>
 						<ExternalLink href="http://en.support.wordpress.com/markdown-quick-reference/" target="_blank">
-							{ this.props.translate( 'Learn more about markdown' ) }
+							{ this.props.translate( 'Learn more about Markdown' ) }
 						</ExternalLink>
 					</InfoPopover>
 				</div>
