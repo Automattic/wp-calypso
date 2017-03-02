@@ -10,5 +10,5 @@ import { navigation, siteSelection } from 'my-sites/controller';
 import controller from './controller';
 
 export default function() {
-	page( '/wp-super-cache/:tab?/:site?', siteSelection, navigation, controller.settings );
+	page( '/extensions/wp-super-cache/:tab?/:site?', siteSelection, navigation, controller.settings );
 }
