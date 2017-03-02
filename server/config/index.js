@@ -36,19 +36,29 @@ function config( key ) {
 		return data[ key ];
 	}
 
-	const errorMessage = (
-		`Could not find config value for key '${ key }'\n` +
-		`Please make sure that if you need it then it has a value assigned in 'config/_shared.json'`
-	);
-
 	if ( 'development' === process.env.NODE_ENV ) {
-		throw new ReferenceError( errorMessage );
+		throw new ReferenceError(
+			`Could not find config value for key '${ key }'\n` +
+			`Please make sure that if you need it then it has a default value assigned in 'config/_shared.json'`
+		);
 	}
 
 	// display console error only in a browser
 	// (not in tests, for example)
 	if ( 'undefined' !== typeof window ) {
-		console.error( errorMessage );
+		console.error(
+			`%cCore Error: ` +
+			`%cCould not find config value for key %c${ key }%c. ` +
+			`Please make sure that if you need it then it has a default value assigned in ` +
+			`%cconfig/_shared.json` +
+			`%c.`,
+			'color: red; font-size: 120%', // error prefix
+			'color: black;', // message
+			'color: blue;', // key name
+			'color: black;', // message
+			'color: blue;', // config file reference
+			'color: black' // message
+		);
 	}
 }
 
