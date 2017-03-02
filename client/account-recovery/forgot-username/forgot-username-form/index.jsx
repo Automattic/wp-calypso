@@ -35,11 +35,7 @@ export class ForgotUsernameFormComponent extends Component {
 			url,
 		} = this.props;
 
-		this.props.fetchResetOptionsByNameAndUrl( {
-			firstName,
-			lastName,
-			url,
-		} );
+		this.props.fetchResetOptionsByNameAndUrl( firstName, lastName, url );
 	};
 
 	firstNameUpdated = ( event ) => {
