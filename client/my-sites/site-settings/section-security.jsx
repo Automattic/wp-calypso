@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	config = require( 'config' ),
 	debug = require( 'debug' )( 'calypso:my-sites:site-settings' );
 
 /**
@@ -10,7 +9,6 @@ var React = require( 'react' ),
  */
 var JetpackProtect = require( 'my-sites/site-settings/form-jetpack-protect' ),
 	JetpackMonitor = require( 'my-sites/site-settings/form-jetpack-monitor' ),
-	JetpackScan = require( 'my-sites/site-settings/form-jetpack-scan' ),
 	JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
 
 module.exports = React.createClass( {
@@ -59,7 +57,6 @@ module.exports = React.createClass( {
 		return (
 			<div>
 				<JetpackProtect site={ site } />
-				{ config.isEnabled( 'settings/security/scan' ) && <JetpackScan site={ site } /> }
 				<JetpackMonitor site={ site } />
 			</div>
 		);
