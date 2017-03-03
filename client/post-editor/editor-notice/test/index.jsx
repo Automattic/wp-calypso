@@ -73,7 +73,6 @@ describe( 'EditorNotice', () => {
 			} )
 		);
 		expect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-success' );
-		expect( wrapper.find( Notice ) ).to.have.prop( 'showDismiss' ).be.false;
 		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'href' ).equal( 'https://example.wordpress.com/published-page' );
 		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'children' ).equal( 'View Page' );
 	} );
@@ -106,7 +105,6 @@ describe( 'EditorNotice', () => {
 			} )
 		);
 		expect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-success' );
-		expect( wrapper.find( Notice ) ).to.have.prop( 'showDismiss' ).be.false;
 		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'href' ).equal( 'https://example.wordpress.com/published-project' );
 		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'children' ).equal( 'View Project' );
 	} );
