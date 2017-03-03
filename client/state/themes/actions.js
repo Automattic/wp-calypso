@@ -105,7 +105,7 @@ export function receiveTheme( theme, siteId ) {
 export function receiveThemes( themes, siteId ) {
 	return ( dispatch, getState ) => {
 		const filterWpcom = shouldFilterWpcomThemes( getState(), siteId );
-		const { filteredThemes } = filterThemes( themes, siteId, filterWpcom );
+		const filteredThemes = filterThemes( themes, siteId, filterWpcom );
 
 		dispatch( {
 			type: THEMES_RECEIVE,
@@ -125,7 +125,7 @@ export function receiveThemes( themes, siteId ) {
  * @param {number} foundCount Number of themes returned by the query
  * @return {Object} Action object
  */
-function receiveThemesQuery( themes, siteId, query ) {
+export function receiveThemesQuery( themes, siteId, query ) {
 	return ( dispatch, getState ) => {
 		const filterWpcom = shouldFilterWpcomThemes( getState(), siteId );
 		const filteredThemes = filterThemes( themes, siteId, filterWpcom, query );
@@ -226,7 +226,6 @@ export function requestThemes( siteId, query = {} ) {
 				dispatch( trackShowcaseSearch );
 			}
 
-			dispatch( receiveThemes( themes, siteId ) );
 			dispatch( receiveThemesQuery( themes, siteId, query ) );
 		} ).catch( ( error ) => {
 			dispatch( {
