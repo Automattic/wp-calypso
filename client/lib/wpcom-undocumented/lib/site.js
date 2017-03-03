@@ -267,15 +267,11 @@ UndocumentedSite.prototype.runThemeSetup = function() {
 /**
  * Runs Theme Setup (Headstart).
  *
- * @param  {Boolean}  saveExisting Whether or not to keep existing site content.
- * @return {Promise}               A Promise to resolve when complete.
+ * @return {Promise} A Promise to resolve when complete.
  */
-UndocumentedSite.prototype.runThemeSetup = function( saveExisting ) {
+UndocumentedSite.prototype.runThemeSetup = function() {
 	return this.wpcom.req.post( {
 		path: `/sites/${ this._id }/theme-setup`,
-		body: {
-			save_existing: saveExisting,
-		},
 		apiNamespace: 'wpcom/v2',
 	} );
 };
