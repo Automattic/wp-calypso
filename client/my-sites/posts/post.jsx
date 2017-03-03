@@ -11,13 +11,11 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Card from 'components/card';
-// import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import PostControls from './post-controls';
 import PostHeader from './post-header';
 import PostImage from '../post/post-image';
 import PostExcerpt from 'components/post-excerpt';
 import PostTotalViews from 'my-sites/posts/post-total-views';
-// import PostMeta from './post-meta';
 import utils from 'lib/posts/utils';
 import updatePostStatus from 'lib/mixins/update-post-status';
 import analytics from 'lib/analytics';
@@ -413,7 +411,7 @@ const Post = React.createClass( {
 					{ this.getHeader() }
 					{ this.getPostImage() }
 					{ this.getContent() }
-					<PostActions { ...{ site, post: this.props.post } } />
+					<PostActions { ...{ site, post: this.props.post, toggleComments: this.toggleComments } } />
 				</div>
 				<PostControls
 					post={ this.props.post }

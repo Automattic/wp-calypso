@@ -6,5 +6,36 @@
 	height: auto;
 	justify-content: flex-end;
 	list-style-type: none;
-	margin: 10px 0 0;
+	margin: 10px 0;
+
+	.post-actions__item {
+		margin-right: 13px;
+
+		&.post-actions__relative-time {
+			flex: 1;
+			margin-left: 20px;
+			color: $gray;
+
+			a:hover {
+				color: $blue-medium;
+			}
+		}
+
+		&.post-actions__total-views a {
+			color: $gray;
+
+			&:hover {
+				color: $blue-medium;
+			}
+		}
+
+		&:last-child {
+			margin-right: 10px;
+		}
+
+		.comment-button,
+		.like-button {
+			padding: 0
+		}
+	}
 }
