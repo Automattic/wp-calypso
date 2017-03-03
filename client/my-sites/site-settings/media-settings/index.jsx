@@ -22,7 +22,7 @@ import { updateSettings } from 'state/jetpack/settings/actions';
 
 const MediaSettings = ( {
 	fields,
-	handleToggle,
+	handleAutosavingToggle,
 	onChangeField,
 	isRequestingSettings,
 	isSavingSettings,
@@ -69,7 +69,7 @@ const MediaSettings = ( {
 						className="media-settings__carousel-module-settings-toggle is-compact"
 						checked={ fields.carousel_display_exif || false }
 						disabled={ isRequestingSettings || isSavingSettings || ! carouselActive }
-						onChange={ handleToggle( 'carousel_display_exif' ) } >
+						onChange={ handleAutosavingToggle( 'carousel_display_exif' ) } >
 						{ translate( 'Show photo metadata in carousel, when available.' ) }
 					</FormToggle>
 					<FormLabel className={ labelClassName } htmlFor="carousel_background_color">
@@ -99,7 +99,7 @@ MediaSettings.propTypes = {
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
 	siteId: PropTypes.number.isRequired,
-	handleToggle: PropTypes.func.isRequired,
+	handleAutosavingToggle: PropTypes.func.isRequired,
 	onChangeField: PropTypes.func.isRequired,
 	fields: PropTypes.object
 };
