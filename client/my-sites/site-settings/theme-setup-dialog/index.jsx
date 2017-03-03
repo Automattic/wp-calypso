@@ -115,13 +115,11 @@ const mapStateToProps = ( state ) => {
 	const isDialogVisible = state.ui.themeSetup.isDialogVisible;
 	const isActive = state.ui.themeSetup.active;
 	const result = state.ui.themeSetup.result;
-	const saveExisting = state.ui.themeSetup.saveExisting;
 	const site = getSelectedSite( state );
 	return {
 		isDialogVisible,
 		isActive,
 		result,
-		saveExisting,
 		site,
 	};
 };
