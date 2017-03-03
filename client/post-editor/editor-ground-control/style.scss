@@ -231,4 +231,9 @@
 	@include breakpoint( "<660px" ) {
 		display: none;
 	}
+
+	.post-status {
+		display: none;
+	}
+
 }
