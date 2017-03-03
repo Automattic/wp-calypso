@@ -179,18 +179,20 @@ export default React.createClass( {
 					}
 					</Dialog>
 				}
-				<MediaLibrarySelectedData siteId={ site && site.ID }>
-					<MediaLibrary
-						{ ...this.props }
-						onFilterChange={ this.onFilterChange }
-						site={ site || false }
-						single={ false }
-						onEditItem={ this.openDetailsModalForASingleImage }
-						onViewDetails={ this.openDetailsModalForAllSelected }
-						onDeleteItem={ this.deleteMedia }
-						modal={ false }
-						containerWidth={ this.state.containerWidth } />
-				</MediaLibrarySelectedData>
+				{ site && site.ID && (
+					<MediaLibrarySelectedData siteId={ site.ID }>
+						<MediaLibrary
+							{ ...this.props }
+							onFilterChange={ this.onFilterChange }
+							site={ site || false }
+							single={ false }
+							onEditItem={ this.openDetailsModalForASingleImage }
+							onViewDetails={ this.openDetailsModalForAllSelected }
+							onDeleteItem={ this.deleteMedia }
+							modal={ false }
+							containerWidth={ this.state.containerWidth } />
+					</MediaLibrarySelectedData>
+				) }
 			</div>
 		);
 	}
