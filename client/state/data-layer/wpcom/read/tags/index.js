@@ -46,8 +46,7 @@ export function receiveTagsSuccess( store, action, next, apiResponse ) {
 
 	store.dispatch( receiveTags( {
 		payload: tags,
-		resetFollowingData: !! apiResponse.tags,
-		error: false,
+		resetFollowingData: !! apiResponse.tags
 	} ) );
 }
 
