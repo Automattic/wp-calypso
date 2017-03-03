@@ -22,7 +22,7 @@ import {
 
 import {
 	isRequestingAccountRecoveryResetOptions,
-	getAccountRecoveryResetUserLogin,
+	getAccountRecoveryResetUserData,
 	getAccountRecoveryResetOptionsError,
 } from 'state/selectors';
 
@@ -83,7 +83,7 @@ export class LostPasswordFormComponent extends Component {
 						<FormInput
 							className="lost-password-form__user-login-input"
 							onChange={ this.onUserLoginChanged }
-							value={ userLogin }
+							value={ userLogin ? userLogin : '' }
 							disabled={ isRequesting } />
 					</FormLabel>
 					{
@@ -112,7 +112,7 @@ export class LostPasswordFormComponent extends Component {
 
 LostPasswordFormComponent.defaultProps = {
 	isRequesting: false,
-	userLogin: '',
+	userLogin: null,
 	requestError: null,
 	translate: identity,
 	fetchResetOptionsByLogin: noop,
@@ -122,7 +122,7 @@ LostPasswordFormComponent.defaultProps = {
 export default connect(
 	( state ) => ( {
 		isRequesting: isRequestingAccountRecoveryResetOptions( state ),
-		userLogin: getAccountRecoveryResetUserLogin( state ),
+		userLogin: getAccountRecoveryResetUserData( state ).user,
 		requestError: getAccountRecoveryResetOptionsError( state ),
 	} ),
 	{
