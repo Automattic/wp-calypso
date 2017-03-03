@@ -51,7 +51,11 @@ describe( 'ForgotUsername', () => {
 		it( 'should be disabled if firstName is blank', function() {
 			const wrapper = mount(
 				<ForgotUsernameFormComponent className="test__test"
-					firstName={ '' }
+					userData={ {
+						firstName: '',
+						lastName: 'Bar',
+						url: 'test.example.com',
+					} }
 				/> );
 
 			// Expect the button to be disabled
@@ -61,7 +65,11 @@ describe( 'ForgotUsername', () => {
 		it( 'should be disabled if lastName is blank', function() {
 			const wrapper = mount(
 				<ForgotUsernameFormComponent className="test__test"
-					lastName={ '' }
+					userData={ {
+						firstName: 'Foo',
+						lastName: '',
+						url: 'test.example.com',
+					} }
 				/> );
 
 			// Expect the button to be disabled
@@ -71,7 +79,11 @@ describe( 'ForgotUsername', () => {
 		it( 'should be disabled if url is blank', function() {
 			const wrapper = mount(
 				<ForgotUsernameFormComponent className="test__test"
-					url={ '' }
+					userData={ {
+						firstName: 'Foo',
+						lastName: 'Bar',
+						url: '',
+					} }
 				/> );
 
 			// Expect the button to be disabled
@@ -81,9 +93,11 @@ describe( 'ForgotUsername', () => {
 		it( 'should be enabled when all fields are filled in', function() {
 			const wrapper = mount(
 				<ForgotUsernameFormComponent className="test__test"
-					firstName={ 'Foo' }
-					lastName={ 'Bar' }
-					url={ 'test.example.com' }
+					userData={ {
+						firstName: 'Foo',
+						lastName: 'Bar',
+						url: 'test.example.com',
+					} }
 				/> );
 
 			// Expect the button to be enabled
