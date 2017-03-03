@@ -9,10 +9,9 @@ import {
 	THEME_SETUP_RESULT,
 } from 'state/action-types';
 
-export function openDialog( saveExisting = true ) {
+export function openDialog() {
 	return {
 		type: THEME_SETUP_OPEN_DIALOG,
-		saveExisting,
 	};
 }
 

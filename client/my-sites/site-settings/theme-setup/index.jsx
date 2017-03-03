@@ -53,7 +53,7 @@ const mapStateToProps = ( state ) => {
 const mapDispatchToProps = ( dispatch ) => {
 	return {
 		onClickKeepContent() {
-			dispatch( openDialog( true ) );
+			dispatch( openDialog() );
 		},
 	};
 };
