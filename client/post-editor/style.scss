@@ -45,11 +45,42 @@
 }
 
 .post-editor__content {
-	transition: margin 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
+	margin: 0 auto;					// born centered, so when width collapses for sidebar anim it doesn't move
+	left: 0;
+	animation: closedsidebar 0.15s cubic-bezier(0.075, 0.82, 0.165, 1) normal 1 forwards;
+
 	.focus-sidebar & {
 		@include breakpoint( ">660px" ) {
-			margin-right: 271px;
+			width: calc( 100% - 272px );		// subtract sidebar width
+			animation: opensidebar 0.15s cubic-bezier(0.075, 0.82, 0.165, 1) normal 1 forwards;
 		}
+	}
+}
+
+@keyframes opensidebar {
+	0% {
+		transform: translateX( 0 );
+	}
+	99.9% {
+		left: 0;
+		transform: translateX( -136px );
+	}
+	100% {
+		left: -136px;
+		transform: none;
+	}
+}
+
+@keyframes closedsidebar {
+	0% {
+		transform: translateX( -136px );
+	}
+	99.9% {
+		transform: translateX( 0 );
+	}
+	100% {
+		left: 0;
+		transform: none;
 	}
 }
 
