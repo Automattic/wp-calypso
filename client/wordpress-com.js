@@ -192,7 +192,7 @@ const sections = [
 	},
 	{
 		name: 'mailing-lists',
-		paths: [ '/mailing-lists' ],
+		paths: [ '/mailing-lists/unsubscribe' ],
 		module: 'mailing-lists',
 		enableLoggedOut: true
 	}
