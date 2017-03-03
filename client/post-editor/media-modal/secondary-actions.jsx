@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { values, noop, some, every, flow, partial, pick } from 'lodash';
@@ -19,8 +19,8 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
 import Button from 'components/button';
 
-const MediaModalSecondaryActions = React.createClass( {
-	propTypes: {
+class MediaModalSecondaryActions extends Component {
+	static propTypes = {
 		user: PropTypes.object,
 		site: PropTypes.object,
 		selectedItems: PropTypes.array,
@@ -29,15 +29,13 @@ const MediaModalSecondaryActions = React.createClass( {
 		onDelete: PropTypes.func,
 		onViewDetails: PropTypes.func,
 		renderStorage: PropTypes.bool,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			disabled: false,
-			onDelete: noop,
-			renderStorage: true,
-		};
-	},
+	static defaultProps = {
+		disabled: false,
+		onDelete: noop,
+		renderStorage: true,
+	};
 
 	getButtons() {
 		const {
@@ -49,7 +47,7 @@ const MediaModalSecondaryActions = React.createClass( {
 			onDelete
 		} = this.props;
 
-		let buttons = [];
+		const buttons = [];
 
 		if ( ModalViews.LIST === view && selectedItems.length ) {
 			buttons.push( {
@@ -76,7 +74,7 @@ const MediaModalSecondaryActions = React.createClass( {
 		}
 
 		return buttons;
-	},
+	}
 
 	render() {
 		return (
@@ -93,7 +91,7 @@ const MediaModalSecondaryActions = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state, ownProps ) => ( {
