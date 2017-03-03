@@ -101,11 +101,11 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
+		const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+		const hasSharedaddy = isJetpackModuleActive( state, siteId, 'sharedaddy' ) && isJetpackMinimumVersion( state, siteId, '3.4-dev' );
 
 		return {
-			showButtons: ( siteId && canCurrentUser( state, siteId, 'manage_options' ) && ( ! isJetpack || (
-				isJetpackModuleActive( state, siteId, 'sharedaddy' ) && isJetpackMinimumVersion( state, siteId, '3.4-dev' )
-			) ) ),
+			showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
 			showConnections: ! siteId || ! isJetpack || isJetpackModuleActive( state, siteId, 'publicize' ),
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
