@@ -51,6 +51,8 @@ class ReaderFeaturedVideo extends React.Component {
 		}
 	}
 
+	throttledUpdateVideoSize = throttle( this.updateVideoSize, 100 )
+
 	handleThumbnailClick = ( e ) => {
 		e.preventDefault();
 		this.setState( { preferThumbnail: false }, () => this.updateVideoSize() );
@@ -62,7 +64,11 @@ class ReaderFeaturedVideo extends React.Component {
 	}
 
 	componentDidMount() {
-		window.addEventListener( 'resize', throttle( this.updateVideoSize, 100 ) );
+		global.window && global.window.addEventListener( 'resize', this.throttledUpdateVideoSize );
+	}
+
+	componentWillUnmount() {
+		global.window && global.window.removeEventListener( 'resize', this.throttledUpdateVideoSize );
 	}
 
 	render() {
