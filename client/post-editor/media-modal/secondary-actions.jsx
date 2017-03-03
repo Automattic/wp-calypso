@@ -29,13 +29,11 @@ class MediaModalSecondaryActions extends Component {
 		disabled: PropTypes.bool,
 		onDelete: PropTypes.func,
 		onViewDetails: PropTypes.func,
-		renderStorage: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		disabled: false,
 		onDelete: noop,
-		renderStorage: true,
 	};
 
 	getButtons() {
