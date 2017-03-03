@@ -28,9 +28,13 @@ class ResetPasswordSmsForm extends Component {
 								'It will look something like 63423423. You may need to wait a few moments before it arrives.' )
 						}
 					</p>
-					<FormTextInput />
-					<a href="#">{ translate( 'No SMS?' ) }</a>
-					<FormButton />
+					<FormTextInput className="reset-password-sms-form__validation-code-input" />
+					<a href="#" className="reset-password-sms-form__no-sms-link">
+						{ translate( 'No SMS?' ) }
+					</a>
+					<FormButton className="reset-password-sms-form__submit-button">
+						{ translate( 'Continue' ) }
+					</FormButton>
 				</Card>
 			</div>
 		);
