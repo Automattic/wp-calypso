@@ -17,6 +17,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { serialize } from 'components/tinymce/plugins/contact-form/shortcode-utils';
+import { isIE11 } from 'lib/detect-ie11';
 import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaUtils from 'lib/media/utils';
@@ -39,15 +40,9 @@ import EditorMediaModal from 'post-editor/editor-media-modal';
 import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
 
 /**
- * Module constants
+ * Module constant
  */
 const TOOLBAR_HEIGHT = 39;
-const isIE11Detected = (
-	window &&
-	window.MSInputMethodContext &&
-	document &&
-	document.documentMode
-);
 
 export class EditorHtmlToolbar extends Component {
 
@@ -177,7 +172,7 @@ export class EditorHtmlToolbar extends Component {
 
 	// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11.
 	// Using the previous version of replacing the entire content value instead.
-	updateEditorContent = isIE11Detected
+	updateEditorContent = isIE11
 		? this.updateEditorContentIE11
 		: this.insertEditorContent;
 
@@ -194,7 +189,6 @@ export class EditorHtmlToolbar extends Component {
 		this.props.content.value = fullContent;
 		onToolbarChangeContent( fullContent );
 		this.setCursorPosition( selectionEnd, fullContent.length - value.length );
-		this.props.content.focus();
 	}
 
 	attributesToString = ( attributes = {} ) => reduce(
