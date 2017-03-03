@@ -449,7 +449,9 @@ export function installTheme( themeId, siteId ) {
 
 		return wpcom.undocumented().installThemeOnJetpack( siteId, themeId )
 			.then( ( theme ) => {
-				dispatch( receiveTheme( theme, siteId ) );
+				if ( ! isThemeFromWpcom( themeId ) ) {
+					dispatch( receiveTheme( theme, siteId ) );
+				}
 				dispatch( {
 					type: THEME_INSTALL_SUCCESS,
 					siteId,
@@ -543,8 +545,8 @@ export function installAndTryAndCustomizeTheme( themeId, siteId ) {
  */
 export function tryAndCustomizeTheme( themeId, siteId ) {
 	return ( dispatch, getState ) => {
-		const siteIdOrWpcom = isJetpackSite( getState(), siteId ) ? siteId : 'wpcom';
-		const theme = getTheme( getState(), siteIdOrWpcom, themeId );
+		const siteIdOrWpcom = isJetpackSite( getState(), siteId ) && ! isThemeFromWpcom( themeId ) ? siteId : 'wpcom';
+		const theme = getTheme( getState(), siteIdOrWpcom, themeId.replace( '-wpcom', '' ) );
 		if ( ! theme ) {
 			return dispatch( {
 				type: THEME_TRY_AND_CUSTOMIZE_FAILURE,
