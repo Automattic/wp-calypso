@@ -19,6 +19,12 @@ import {
  * Internal dependencies
  */
 import { DEFAULT_THEME_QUERY } from './constants';
+import {
+	hasJetpackSiteJetpackThemesExtendedFeatures,
+	isJetpackSite,
+	isJetpackSiteMultiSite
+} from 'state/sites/selectors';
+import config from 'config';
 
 /**
  * Constants
@@ -208,6 +214,25 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
  */
 export function isThemeFromWpcom( themeId ) {
 	return endsWith( themeId, '-wpcom' );
+}
+
+/**
+ * Determine whether wpcom themes should be removed from
+ * a queried list of themes. For jetpack sites with the
+ * required capabilities, we hide wpcom themes from the
+ * list of locally installed themes.
+ *
+ * @param {Object} state Global state tree
+ * @param {number} siteId The Site ID
+ * @returns {boolean} true if wpcom themes should be removed
+ */
+export function shouldFilterWpcomThemes( state, siteId ) {
+	return (
+		isJetpackSite( state, siteId ) &&
+		config.isEnabled( 'manage/themes/upload' ) &&
+		hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) &&
+		! isJetpackSiteMultiSite( state, siteId )
+	);
 }
 
 /**
