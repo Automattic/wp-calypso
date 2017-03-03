@@ -48,9 +48,14 @@
 			border-left-width: 0;
 			border-right-width: 0;
 
-			.focus-sidebar & {
+			.focus-sidebar &,
+			.has-chat & {
 				width: calc( 100% - ( #{ $sidebar-width-max + 1 } ) );
 				margin: 0;
+			}
+
+			.focus-sidebar.has-chat & {
+				width: calc( 100% - ( #{ ( $sidebar-width-max * 2 ) + 1 } ) )
 			}
 		}
 

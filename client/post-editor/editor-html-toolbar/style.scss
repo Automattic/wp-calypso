@@ -30,8 +30,14 @@
 		width: 100%;
 		z-index: 2;
 
-		.focus-sidebar & {
+		.focus-sidebar &,
+		.has-chat & {
 			width: calc( 100% - ( #{ $sidebar-width-max + 1 } ) );
+		}
+
+		.focus-sidebar.has-chat & {
+			width: calc( 100% - ( #{ ( $sidebar-width-max * 2 ) + 1 } ) );
+			left: 0;
 		}
 	}
 
