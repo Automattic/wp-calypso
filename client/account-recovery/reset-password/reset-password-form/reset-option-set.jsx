@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 
 /**
@@ -11,35 +10,19 @@ import classnames from 'classnames';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 
-const getResetOptionDisplayString = ( optionName, translate ) => {
-	switch ( optionName ) {
-		case 'primary':
-			return translate( 'main', {
-				comment: 'It is about which way a user wants to reset the password. e.g. main email, recovery email.',
-			} );
-		case 'secondary':
-			return translate( 'recovery', {
-				comment: 'It is about which way a user wants to reset the password. e.g. main email, recovery email.',
-			} );
-		default:
-			return '';
-	}
-};
-
 const ResetOptionSet = ( props ) => {
 	const {
 		email,
 		sms,
 		name,
+		displayStrings,
 		disabled,
-		translate,
 		onOptionChanged,
 		selectedResetOption,
 	} = props;
 
 	const emailFieldValue = name + '_email';
 	const smsFieldValue = name + '_sms';
-	const optionDisplayName = getResetOptionDisplayString( name, translate );
 
 	return (
 		<div>
@@ -51,16 +34,7 @@ const ResetOptionSet = ( props ) => {
 						checked={ emailFieldValue === selectedResetOption }
 						disabled={ disabled }
 						onChange={ onOptionChanged } />
-					<span>
-						{ translate(
-							'Email a reset link to {{strong}}your %(optionName)s email address{{/strong}}',
-							{
-								components: { strong: <strong /> },
-								args: { optionName: optionDisplayName },
-								comment: 'The %(optionName)s can be "main" or "recovery".',
-							}
-						) }
-					</span>
+					<span>{ displayStrings.email }</span>
 				</FormLabel> )
 			}
 			{ sms && (
@@ -71,20 +45,11 @@ const ResetOptionSet = ( props ) => {
 						checked={ smsFieldValue === selectedResetOption }
 						disabled={ disabled }
 						onChange={ onOptionChanged } />
-					<span>
-						{ translate(
-							'Send a reset code to {{strong}}your %(optionName)s phone{{/strong}}',
-							{
-								components: { strong: <strong /> },
-								args: { optionName: optionDisplayName },
-								comment: 'The %(optionName)s can be "main" or "recovery".',
-							}
-						) }
-					</span>
+					<span>{ displayStrings.sms }</span>
 				</FormLabel> )
 			}
 		</div>
 	);
 };
 
-export default localize( ResetOptionSet );
+export default ResetOptionSet;

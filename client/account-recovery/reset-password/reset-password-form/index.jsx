@@ -42,6 +42,37 @@ export class ResetPasswordFormComponent extends Component {
 		this.setState( { selectedResetOption: event.currentTarget.value } );
 	};
 
+	getOptionDisplayStrings = ( optionName ) => {
+		const { translate } = this.props;
+
+		switch ( optionName ) {
+			case 'primary':
+				return {
+					email: translate(
+						'Email a reset link to {{strong}}your main email address{{/strong}}',
+						{ components: { strong: <strong /> } }
+					),
+					sms: translate(
+						'Send a reset code to {{strong}}your main phone{{/strong}}',
+						{ components: { strong: <strong /> } }
+					),
+				};
+			case 'secondary':
+				return {
+					email: translate(
+						'Email a reset link to {{strong}}your recovery email address{{/strong}}',
+						{ components: { strong: <strong /> } }
+					),
+					sms: translate(
+						'Send a reset code to {{strong}}your recovery phone{{/strong}}',
+						{ components: { strong: <strong /> } }
+					),
+				};
+			default:
+				return '';
+		}
+	};
+
 	render() {
 		const {
 			resetOptions,
@@ -73,6 +104,7 @@ export class ResetPasswordFormComponent extends Component {
 								email={ email }
 								sms={ sms }
 								name={ name }
+								displayStrings={ this.getOptionDisplayStrings( name ) }
 								disabled={ isSubmitting }
 								onOptionChanged={ this.onResetOptionChanged }
 								selectedResetOption={ selectedResetOption }
