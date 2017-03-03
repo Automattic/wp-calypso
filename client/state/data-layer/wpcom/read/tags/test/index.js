@@ -112,7 +112,6 @@ describe( 'wpcom-api', () => {
 				expect( dispatch ).to.have.been.calledWith(
 					receiveTagsAction( {
 						payload: fromApi( successfulSingleTagResponse ),
-						error: false,
 						resetFollowingData: false,
 					} )
 				);
@@ -135,7 +134,6 @@ describe( 'wpcom-api', () => {
 					receiveTagsAction( {
 						payload: transformedResponse,
 						resetFollowingData: true,
-						error: false,
 					} )
 				);
 			} );
