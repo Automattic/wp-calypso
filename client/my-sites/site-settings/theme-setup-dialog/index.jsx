@@ -20,7 +20,7 @@ class ThemeSetupDialog extends React.Component {
 			action: 'keep-content',
 			label: translate( 'Set Up Your Theme' ),
 			isPrimary: true,
-			onClick: () => onThemeSetupClick( true, site.ID ),
+			onClick: () => onThemeSetupClick( site.ID ),
 		};
 		const cancel = {
 			action: 'cancel',

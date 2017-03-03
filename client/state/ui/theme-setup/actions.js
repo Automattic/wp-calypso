@@ -22,13 +22,13 @@ export function closeDialog() {
 	};
 }
 
-export function runThemeSetup( saveExisting, siteId ) {
+export function runThemeSetup( siteId ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: THEME_SETUP_REQUEST,
 		} );
 
-		return wpcom.undocumented().site( siteId ).runThemeSetup( saveExisting )
+		return wpcom.undocumented().site( siteId ).runThemeSetup()
 			.then( response => {
 				dispatch( {
 					type: THEME_SETUP_RESULT,
