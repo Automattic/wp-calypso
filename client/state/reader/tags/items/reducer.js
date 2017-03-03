@@ -8,15 +8,14 @@ import { keyBy, omit } from 'lodash';
  */
 import {
 	READER_TAGS_RECEIVE,
-	READER_UNFOLLOW_TAG_RECEIVE,
+	READER_UNFOLLOW_TAG_RECEIVE
 } from 'state/action-types';
 import { createReducer, } from 'state/utils';
 
 /*
- * since the api always returns the whole list of tags unpaginated, for both read/tags
- * and for read/tags/{slug}/new we can do a full replace instead of merge
- *
- * the shape of a tag is { ID, URL, title, display_name  }.
+ * the shape of tags is { ID, URL, title, display_name  }.
+ * since the api always returns the whole list unpaginated
+ * we don't need to do a merge
  */
 export const items = createReducer( {}, {
 	[ READER_TAGS_RECEIVE ]: ( state, action ) => {

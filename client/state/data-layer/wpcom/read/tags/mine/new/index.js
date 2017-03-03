@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { map } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,13 +13,14 @@ import {
 
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { decodeEntities } from 'lib/formatting';
+import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
+import { errorNotice } from 'state/notices/actions';
 
 export function requestFollowTag( store, action, next ) {
 	store.dispatch( http( {
 		path: `/read/tags/${ action.payload.slug }/mine/new`,
 		method: 'POST',
-		apiVersion: '1.2',
+		apiVersion: '1.0',
 		onSuccess: action,
 		onFailure: action,
 	} ) );
@@ -27,32 +28,28 @@ export function requestFollowTag( store, action, next ) {
 	next( action );
 }
 
-export const fromApi = apiResponse => {
-	const tags = map( apiResponse.tags, tag => ( {
-		...tag,
-		is_following: true,
-		URL: `/tag/${ tag.slug }`,
-		title: decodeEntities( tag.title ),
-		slug: tag.slug.toLowerCase(),
-	} ) );
-
-	return tags;
-};
-
 export function receiveFollowTag( store, action, next, apiResponse ) {
-	// TODO: is this a good thing to do here?
 	if ( apiResponse.subscribed === false ) {
-		return receiveError( store, action, next );
+		receiveError( store, action, next, 'apiResponse.subscribed === false' );
+		return;
 	}
+
+	const normalizedTags = fromApi( apiResponse );
+	const followedTag = {
+		...find( normalizedTags, { id: apiResponse.added_tag } ),
+		isFollowing: true,
+	};
+
 	store.dispatch( receiveTagsAction( {
-		payload: fromApi( apiResponse ),
-		error: false,
+		payload: [ followedTag ],
 	} ) );
 }
 
 export function receiveError( store, action, next, error ) {
-	// TODO dispatch notice;
-	store.dispatch( 'warnign', action, next, error );
+	store.dispatch( errorNotice( 'Could not follow tag' ) );
+	if ( process.env.NODE_ENV === 'development' ) {
+		throw new Error( error );
+	}
 }
 
 export default {

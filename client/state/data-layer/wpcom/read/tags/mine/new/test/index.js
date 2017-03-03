@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,13 +16,14 @@ import {
 	requestFollowTag,
 	receiveFollowTag,
 	receiveError,
-	fromApi,
 } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
+import { NOTICE_CREATE } from 'state/action-types';
 
 export const successfulFollowResponse = {
 	subscribed: true,
-	added_tag: '307',
+	added_tag: '422',
 	tags: [
 		{
 			ID: '422',
@@ -58,9 +60,9 @@ describe( 'follow tag request', () => {
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith( http( {
-				apiVersion: '1.2',
+				apiVersion: '1.0',
 				method: 'POST',
-				path: `/read/tags/${ slug }/mine/delete`,
+				path: `/read/tags/${ slug }/mine/new`,
 				onSuccess: action,
 				onFailure: action,
 			} ) );
@@ -78,41 +80,42 @@ describe( 'follow tag request', () => {
 	} );
 
 	describe( '#receiveFollowSuccess', () => {
-		it( 'should dispatch the tag', () => {
+		it( 'should dispatch the followed tag with isFollowing=true', () => {
 			const action = requestFollowAction( slug );
 			const dispatch = sinon.spy();
 			const next = sinon.spy();
 
 			receiveFollowTag( { dispatch }, action, next, successfulFollowResponse );
 
+			const followedTagId = successfulFollowResponse.added_tag;
+			const followedTag = find( successfulFollowResponse.tags, { ID: followedTagId } );
+			const normalizedFollowedTag = {
+				...fromApi( { tag: followedTag } )[ 0 ],
+				isFollowing: true,
+			};
+
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith(
 				receiveTagsAction( {
-					payload: successfulFollowResponse.removed_tag,
-					error: false
+					payload: [ normalizedFollowedTag ],
 				} )
 			);
 		} );
 
-		it( 'if api reports error then should pass through an error', () => {
+		it( 'if api reports error then create an error notice', () => {
 			const action = requestFollowAction( slug );
 			const dispatch = sinon.spy();
 			const next = sinon.spy();
 
 			receiveFollowTag( { dispatch }, action, next, unsuccessfulResponse );
-
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith(
-				receiveTagsAction( {
-					payload: unsuccessfulResponse.removed_tag,
-					error: true,
-				} )
-			);
+			expect( dispatch ).to.have.been.calledWithMatch( {
+				type: NOTICE_CREATE,
+			} );
 		} );
 	} );
 
 	describe( '#receiveError', () => {
-		it( 'should dispatch error', () => {
+		it( 'should dispatch an error notice', () => {
 			const action = requestFollowAction( slug );
 			const dispatch = sinon.spy();
 			const next = sinon.spy();
@@ -120,19 +123,9 @@ describe( 'follow tag request', () => {
 
 			receiveError( { dispatch }, action, next, error );
 
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith(
-				receiveTagsAction( { payload: error, error: true } )
-			);
-		} );
-	} );
-
-	describe( '#fromApi', () => {
-		it( 'should extract the removed_tag from a response', () => {
-			const apiResponse = successfulFollowResponse;
-			const normalized = fromApi( apiResponse );
-
-			expect( normalized ).to.eql( apiResponse.removed_tag );
+			expect( dispatch ).to.have.been.calledWithMatch( {
+				type: NOTICE_CREATE,
+			} );
 		} );
 	} );
 } );
