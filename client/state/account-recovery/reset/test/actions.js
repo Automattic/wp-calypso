@@ -20,9 +20,6 @@ import {
 } from '../actions';
 
 import {
-	ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
-	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
-	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
 	ACCOUNT_RECOVERY_RESET_REQUEST,
 	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
@@ -30,7 +27,7 @@ import {
 } from 'state/action-types';
 
 describe( '#fetchResetOptionsSuccess', () => {
-	it( 'should return ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE action with options field.', () => {
+	it( 'should return ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS action with options field.', () => {
 		const items = {
 			primaryEmail: 'primary@example.com',
 			primarySms: '12345678',
@@ -41,14 +38,15 @@ describe( '#fetchResetOptionsSuccess', () => {
 		const action = fetchResetOptionsSuccess( items );
 
 		assert.deepEqual( action, {
-			type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
+			type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+			target: 'resetOptions',
 			items,
 		} );
 	} );
 } );
 
 describe( '#fetchResetOptionsError', () => {
-	it( 'should return ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR action with error field.', () => {
+	it( 'should return ACCOUNT_RECOVERY_RESET_REQUEST_ERROR action with error field.', () => {
 		const error = {
 			status: 400,
 			message: 'error!',
@@ -57,7 +55,8 @@ describe( '#fetchResetOptionsError', () => {
 		const action = fetchResetOptionsError( error );
 
 		assert.deepEqual( action, {
-			type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
+			type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+			target: 'resetOptions',
 			error,
 		} );
 	} );
@@ -93,12 +92,14 @@ describe( '#fetchResetOptions', () => {
 			const thunk = fetchResetOptions( userData )( spy );
 
 			assert.isTrue( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
+				type: ACCOUNT_RECOVERY_RESET_REQUEST,
+				target: 'resetOptions',
 			} ) );
 
 			return thunk.then( () =>
 				assert.isTrue( spy.calledWith( {
-					type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
+					type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+					target: 'resetOptions',
 					items: [
 						{
 							email: response.primary_email,
@@ -130,7 +131,8 @@ describe( '#fetchResetOptions', () => {
 			return fetchResetOptions( userData )( spy )
 				.then( () =>
 					assert.isTrue( spy.calledWithMatch( {
-						type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
+						type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+						target: 'resetOptions',
 						error: errorResponse,
 					} ) )
 				);
@@ -161,6 +163,7 @@ describe( '#requestPasswordResetSuccess', () => {
 
 		assert.deepEqual( action, {
 			type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+			target: 'resetRequest',
 		} );
 	} );
 } );
@@ -176,6 +179,7 @@ describe( '#requestPasswordResetError', () => {
 
 		assert.deepEqual( action, {
 			type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+			target: 'resetRequest',
 			error,
 		} );
 	} );
@@ -206,11 +210,13 @@ describe( '#requestPasswordReset', () => {
 
 			assert.isTrue( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_RESET_REQUEST,
+				target: 'resetRequest',
 			} ) );
 
 			return thunk.then( () =>
 				assert.isTrue( spy.calledWith( {
 					type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+					target: 'resetRequest',
 				} ) )
 			);
 		} );
@@ -233,6 +239,7 @@ describe( '#requestPasswordReset', () => {
 				.then( () =>
 					assert.isTrue( spy.calledWithMatch( {
 						type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+						target: 'resetRequest',
 						error: errorResponse,
 					} ) )
 				);

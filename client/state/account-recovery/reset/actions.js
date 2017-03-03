@@ -3,22 +3,23 @@
  */
 import wpcom from 'lib/wp';
 import {
-	ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
-	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
-	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 	ACCOUNT_RECOVERY_RESET_REQUEST,
 	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
 	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
 } from 'state/action-types';
 
+const TARGET_RESET_OPTIONS = 'resetOptions';
+
 export const fetchResetOptionsSuccess = ( items ) => ( {
-	type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
+	type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+	target: TARGET_RESET_OPTIONS,
 	items,
 } );
 
 export const fetchResetOptionsError = ( error ) => ( {
-	type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
+	type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+	target: TARGET_RESET_OPTIONS,
 	error,
 } );
 
@@ -35,7 +36,8 @@ const fromApi = ( data ) => ( [
 
 export const fetchResetOptions = ( userData ) => ( dispatch ) => {
 	dispatch( {
-		type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
+		type: ACCOUNT_RECOVERY_RESET_REQUEST,
+		target: TARGET_RESET_OPTIONS,
 	} );
 
 	return wpcom.req.get( {
@@ -55,18 +57,23 @@ export const updatePasswordResetUserData = ( userData ) => ( {
 	userData,
 } );
 
+const TARGET_RESET_REQUEST = 'resetRequest';
+
 export const requestPasswordResetSuccess = () => ( {
 	type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+	target: TARGET_RESET_REQUEST,
 } );
 
 export const requestPasswordResetError = ( error ) => ( {
 	type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+	target: TARGET_RESET_REQUEST,
 	error,
 } );
 
 export const requestPasswordReset = ( request ) => ( dispatch ) => {
 	dispatch( {
 		type: ACCOUNT_RECOVERY_RESET_REQUEST,
+		target: TARGET_RESET_REQUEST,
 	} );
 
 	return wpcom.req.post( {

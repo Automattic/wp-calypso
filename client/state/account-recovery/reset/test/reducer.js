@@ -7,46 +7,51 @@ import { assert } from 'chai';
  * Internal dependencies
  */
 import {
-	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
-	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
-	ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
+	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+	ACCOUNT_RECOVERY_RESET_REQUEST,
 	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
 } from 'state/action-types';
 
 import reducer from '../reducer';
 
 describe( '#account-recovery/reset reducer', () => {
-	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST action should set isRequesting flag.', () => {
+	it( 'ACCOUNT_RECOVERY_RESET_REQUEST action should set isRequesting subfield.', () => {
 		const state = reducer( undefined, {
-			type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST
+			type: ACCOUNT_RECOVERY_RESET_REQUEST,
+			target: 'requestOptions',
 		} );
 
-		assert.isTrue( state.isRequesting );
+		assert.isTrue( state.isRequesting.requestOptions );
 	} );
 
 	const requestingState = {
-		isRequesting: true,
+		isRequesting: {
+			requestOptions: true,
+		}
 	};
 
-	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE action should unset isRequesting flag.', () => {
+	it( 'ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS action should unset isRequesting flag.', () => {
 		const state = reducer( requestingState, {
-			type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
+			type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+			target: 'requestOptions',
 			items: [],
 		} );
 
-		assert.isFalse( state.isRequesting );
+		assert.isFalse( state.isRequesting.requestOptions );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR action should unset isRequesting flag.', () => {
+	it( 'ACCOUNT_RECOVERY_RESET_REQUEST_ERROR action should unset isRequesting flag.', () => {
 		const state = reducer( requestingState, {
-			type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
+			type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+			target: 'requestOptions',
 			error: {},
 		} );
 
-		assert.isFalse( state.isRequesting );
+		assert.isFalse( state.isRequesting.requestOptions );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE action should populate the items field.', () => {
+	it( 'ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS action should populate the items field.', () => {
 		const fetchedOptions = [
 			{
 				email: 'primary@example.com',
@@ -58,25 +63,27 @@ describe( '#account-recovery/reset reducer', () => {
 			},
 		];
 		const state = reducer( undefined, {
-			type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
+			type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+			target: 'resetOptions',
 			items: fetchedOptions,
 		} );
 
 		assert.deepEqual( state.items, fetchedOptions );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR action should populate the error field.', () => {
+	it( 'ACCOUNT_RECOVERY_RESET_REQUEST_ERROR action should populate the error field.', () => {
 		const fetchError = {
 			status: 400,
 			message: 'Something wrong!',
 		};
 
 		const state = reducer( undefined, {
-			type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
+			type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+			target: 'requestOptions',
 			error: fetchError,
 		} );
 
-		assert.deepEqual( state.error, fetchError );
+		assert.deepEqual( state.error.requestOptions, fetchError );
 	} );
 
 	it( 'ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action should populate the user field.', () => {

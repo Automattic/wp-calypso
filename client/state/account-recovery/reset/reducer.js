@@ -9,26 +9,45 @@ import { pick } from 'lodash';
  */
 import { createReducer } from 'state/utils';
 import {
-	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
-	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
-	ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
+	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+	ACCOUNT_RECOVERY_RESET_REQUEST,
 	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
 } from 'state/action-types';
 
-const isRequesting = createReducer( false, {
-	[ ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST ]: () => true,
-	[ ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE ]: () => false,
-	[ ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR ]: () => false,
+const isRequesting = createReducer( {}, {
+	[ ACCOUNT_RECOVERY_RESET_REQUEST ]: ( state, { target } ) => ( {
+		...state,
+		[ target ]: true,
+	} ),
+	[ ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS ]: ( state, { target } ) => ( {
+		...state,
+		[ target ]: false,
+	} ),
+	[ ACCOUNT_RECOVERY_RESET_REQUEST_ERROR ]: ( state, { target } ) => ( {
+		...state,
+		[ target ]: false,
+	} ),
 } );
 
-const errorReducer = createReducer( null, {
-	[ ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST ]: () => null,
-	[ ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE ]: () => null,
-	[ ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR ]: ( state, { error } ) => error,
+const errorReducer = createReducer( {}, {
+	[ ACCOUNT_RECOVERY_RESET_REQUEST ]: ( state, { target } ) => ( {
+		...state,
+		[ target ]: null,
+	} ),
+	[ ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS ]: ( state, { target } ) => ( {
+		...state,
+		[ target ]: null,
+	} ),
+	[ ACCOUNT_RECOVERY_RESET_REQUEST_ERROR ]: ( state, { target, error } ) => ( {
+		...state,
+		[ target ]: error,
+	} ),
 } );
 
 const itemsReducer = createReducer( [], {
-	[ ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE ]: ( state, { items } ) => items,
+	[ ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS ]: ( state, { target, items } ) =>
+		'resetOptions' === target ? items : state,
 } );
 
 const validUserDataProps = [ 'user', 'firstName', 'lastName', 'url' ];
