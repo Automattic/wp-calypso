@@ -602,6 +602,23 @@ export function isPremiumThemeAvailable( state, themeId, siteId ) {
 }
 
 /**
+ * Whether a given theme is installed or can be installed on a Jetpack site.
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {String}  themeId Theme ID for which we check availability
+ * @param  {Number}  siteId  Site ID
+ * @return {Boolean}         True if siteId is a Jetpack site on which theme is installed or can be installed.
+ */
+export function isThemeAvailableOnJetpackSite( state, themeId, siteId ) {
+	return !! getTheme( state, siteId, themeId ) || ( // The theme is already available or...
+		isWpcomTheme( state, themeId ) && (  // ...it's a WP.com theme and...
+			config.isEnabled( 'manage/themes/upload' ) &&
+			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) // ...the site supports theme installation from WP.com.
+		)
+	);
+}
+
+/**
  * Returns whether the theme has been purchased for the given site.
  *
  * Use this selector alongside with the <QuerySitePurchases /> component.
