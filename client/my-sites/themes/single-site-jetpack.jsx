@@ -33,7 +33,7 @@ const ConnectedThemesSelection = connectOptions(
 				getOptions={ function( theme ) {
 					return pickBy(
 						addTracking( props.options ),
-						option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
+						option => ! ( option.hideForTheme && option.hideForTheme( theme, props.siteId ) )
 					); } }
 			/>
 		);
