@@ -18,7 +18,7 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Baskerville 2',
+		name: 'Baskerville',
 		slug: 'baskerville-2',
 		repo: 'pub',
 		fallback: false,
@@ -144,7 +144,7 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Libre 2',
+		name: 'Libre',
 		slug: 'libre-2',
 		repo: 'pub',
 		fallback: false,
