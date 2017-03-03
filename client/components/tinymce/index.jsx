@@ -44,6 +44,7 @@ import insertMenuPlugin from './plugins/insert-menu/plugin';
 import embedReversalPlugin from './plugins/embed-reversal/plugin';
 import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
 import isIE11 from 'lib/detect-ie11';
+import mentionsPlugin from './plugins/mentions/plugin';
 
 [
 	wpcomPlugin,
@@ -137,6 +138,11 @@ const PLUGINS = [
 
 if ( config.isEnabled( 'post-editor/insert-menu' ) ) {
 	PLUGINS.push( 'wpcom/insertmenu' );
+}
+
+if ( config.isEnabled( 'post-editor/mentions' ) ) {
+	mentionsPlugin();
+	PLUGINS.push( 'wpcom/mentions' );
 }
 
 const CONTENT_CSS = [
