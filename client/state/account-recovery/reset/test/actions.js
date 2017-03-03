@@ -14,6 +14,9 @@ import {
 	fetchResetOptionsSuccess,
 	fetchResetOptionsError,
 	updatePasswordResetUserData,
+	requestPasswordReset,
+	requestPasswordResetSuccess,
+	requestPasswordResetError,
 } from '../actions';
 
 import {
@@ -21,6 +24,9 @@ import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
+	ACCOUNT_RECOVERY_RESET_REQUEST,
+	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
 } from 'state/action-types';
 
 describe( '#fetchResetOptionsSuccess', () => {
@@ -145,6 +151,91 @@ describe( '#updatePasswordResetUserData', () => {
 		assert.deepEqual( action, {
 			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
 			userData,
+		} );
+	} );
+} );
+
+describe( '#requestPasswordResetSuccess', () => {
+	it( 'should return action ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS', () => {
+		const action = requestPasswordResetSuccess();
+
+		assert.deepEqual( action, {
+			type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+		} );
+	} );
+} );
+
+describe( '#requestPasswordResetError', () => {
+	it( 'should return action ACCOUNT_RECOVERY_RESET_REQUEST_ERROR with error field', () => {
+		const error = {
+			status: 404,
+			message: 'Error!',
+		};
+
+		const action = requestPasswordResetError( error );
+
+		assert.deepEqual( action, {
+			type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+			error,
+		} );
+	} );
+} );
+
+describe( '#requestPasswordReset', () => {
+	let spy;
+
+	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+
+	const apiBaseUrl = 'https://public-api.wordpress.com:443';
+	const endpoint = '/wpcom/v2/account-recovery/request-reset';
+
+	const request = {
+		user: 'foo',
+		method: 'primary-email',
+	};
+
+	describe( 'success', () => {
+		useNock( nock => (
+			nock( apiBaseUrl )
+				.post( endpoint )
+				.reply( 200, { success: true } )
+		) );
+
+		it( 'should dispatch SUCCESS action on success', () => {
+			const thunk = requestPasswordReset( request )( spy );
+
+			assert.isTrue( spy.calledWith( {
+				type: ACCOUNT_RECOVERY_RESET_REQUEST,
+			} ) );
+
+			return thunk.then( () =>
+				assert.isTrue( spy.calledWith( {
+					type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+				} ) )
+			);
+		} );
+	} );
+
+	describe( 'failure', () => {
+		const errorResponse = {
+			status: 400,
+			message: 'Something wrong!',
+		};
+
+		useNock( nock => (
+			nock( apiBaseUrl )
+				.post( endpoint )
+				.reply( errorResponse.status, errorResponse )
+		) );
+
+		it( 'should dispatch ERROR action on failure', () => {
+			return requestPasswordReset( request )( spy )
+				.then( () =>
+					assert.isTrue( spy.calledWithMatch( {
+						type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+						error: errorResponse,
+					} ) )
+				);
 		} );
 	} );
 } );
