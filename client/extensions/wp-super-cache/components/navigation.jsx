@@ -41,7 +41,7 @@ const Navigation = ( { activeTab, translate } ) => {
 			let path = '/extensions/wp-super-cache';
 
 			if ( tab !== tabs[ 0 ] ) {
-				path = `/extensions/wp-super-cache/${ tab }`;
+				path = `${ path }/${ tab }`;
 			}
 
 			return (
