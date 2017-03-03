@@ -428,10 +428,6 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( ! config.isEnabled( 'manage/sharing' ) && site.options ) {
-			sharingLink = site.options.admin_url + 'options-general.php?page=sharing';
-		}
-
 		return (
 			<SidebarItem
 				label={ this.props.translate( 'Sharing' ) }
