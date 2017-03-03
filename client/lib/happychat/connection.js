@@ -64,6 +64,13 @@ class Connection extends EventEmitter {
 		);
 	}
 
+	info( message ) {
+		this.openSocket.then(
+			socket => socket.emit( 'message', { text: message.text, id: uuid(), meta: { suppress: true } } ),
+			e => debug( 'failed to send message', e )
+		);
+	}
+
 	transcript( timestamp ) {
 		return this.openSocket.then( socket => Promise.race( [
 			new Promise( ( resolve, reject ) => {
