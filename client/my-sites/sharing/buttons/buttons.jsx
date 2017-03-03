@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { flowRight } from 'lodash';
+import { flowRight, values } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -32,15 +32,15 @@ class SharingButtons extends Component {
 
 	static propTypes = {
 		buttons: PropTypes.array,
-		isSaving: PropTypes.bool.isRequired,
-		isSaveSettingsSuccessful: PropTypes.bool.isRequired,
-		isSaveButtonsSuccessful: PropTypes.bool.isRequired,
-		postTypes: PropTypes.object,
-		markSaved: PropTypes.func.isRequired,
-		markChanged: PropTypes.func.isRequired,
+		isSaving: PropTypes.bool,
+		isSaveSettingsSuccessful: PropTypes.bool,
+		isSaveButtonsSuccessful: PropTypes.bool,
+		postTypes: PropTypes.array,
+		markSaved: PropTypes.func,
+		markChanged: PropTypes.func,
 		settings: PropTypes.object,
-		siteId: PropTypes.number.isRequired,
-		translate: PropTypes.func.isRequired,
+		siteId: PropTypes.number,
+		translate: PropTypes.func,
 	};
 
 	saveChanges = event => {
@@ -97,7 +97,7 @@ class SharingButtons extends Component {
 		return (
 			<form onSubmit={ this.saveChanges } id="sharing-buttons" className="sharing-settings sharing-buttons">
 				<QuerySiteSettings siteId={ siteId } />
-				<QueryPostTypes siteId={ siteId } />
+				{ siteId && <QueryPostTypes siteId={ siteId } /> }
 				<QuerySharingButtons siteId={ siteId } />
 				<ButtonsAppearance
 					buttons={ updatedButtons }
@@ -107,7 +107,7 @@ class SharingButtons extends Component {
 					initialized={ !! buttons && !! settings }
 					saving={ isSaving } />
 				<ButtonsOptions
-					postTypes={ Object.values( postTypes ) }
+					postTypes={ postTypes }
 					buttons={ buttons }
 					values={ updatedSettings }
 					onChange={ this.handleChange }
@@ -122,7 +122,7 @@ const connectComponent = connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const settings = getSiteSettings( state, siteId );
-		const postTypes = getPostTypes( state, siteId );
+		const postTypes = values( getPostTypes( state, siteId ) );
 		const buttons = getSharingButtons( state, siteId );
 		const isSavingSettings = isSavingSiteSettings( state, siteId );
 		const isSavingButtons = isSavingSharingButtons( state, siteId );
