@@ -12,9 +12,9 @@ import notices from 'notices';
 import { pageView } from 'lib/analytics';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { sectionify } from 'lib/route';
-import Sharing from 'my-sites/sharing/main';
-import SharingButtons from 'my-sites/sharing/buttons/buttons';
-import SharingConnections from 'my-sites/sharing/connections/connections';
+import Sharing from './main';
+import SharingButtons from './buttons/buttons';
+import SharingConnections from './connections/connections';
 import sites from 'lib/sites-list';
 import utils from 'lib/site/utils';
 
