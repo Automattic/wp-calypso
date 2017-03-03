@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { throttle, constant } from 'lodash';
+import { throttle, constant, noop } from 'lodash';
 import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
 
@@ -22,12 +22,19 @@ class ReaderFeaturedVideo extends React.Component {
 		autoplayIframe: React.PropTypes.string,
 		iframe: React.PropTypes.string,
 		videoEmbed: React.PropTypes.object,
+		allowPlaying: React.PropTypes.bool,
+		onThumbnailClick: React.PropTypes.func,
+	}
+
+	static defaultProps = {
+		allowPlaying: true,
+		onThumbnailClick: noop,
 	}
 
 	constructor( props ) {
 		super( props );
 		this.state = {
-			preferThumbnail: true
+			preferThumbnail: true,
 		};
 	}
 
@@ -55,6 +62,12 @@ class ReaderFeaturedVideo extends React.Component {
 
 	handleThumbnailClick = ( e ) => {
 		e.preventDefault();
+		this.props.onThumbnailClick();
+
+		if ( ! this.props.allowPlaying ) {
+			return false;
+		}
+
 		this.setState( { preferThumbnail: false }, () => this.updateVideoSize() );
 	}
 
@@ -64,31 +77,35 @@ class ReaderFeaturedVideo extends React.Component {
 	}
 
 	componentDidMount() {
-		global.window && global.window.addEventListener( 'resize', this.throttledUpdateVideoSize );
+		if ( this.props.allowPlaying ) {
+			global.window && global.window.addEventListener( 'resize', this.throttledUpdateVideoSize );
+		}
 	}
 
 	componentWillUnmount() {
-		global.window && global.window.removeEventListener( 'resize', this.throttledUpdateVideoSize );
+		if ( this.props.allowPlaying ) {
+			global.window && global.window.removeEventListener( 'resize', this.throttledUpdateVideoSize );
+		}
 	}
 
 	render() {
-		const { thumbnailUrl, autoplayIframe, iframe, translate } = this.props;
+		const { thumbnailUrl, autoplayIframe, iframe, translate, allowPlaying } = this.props;
 		const preferThumbnail = this.state.preferThumbnail;
 
 		if ( preferThumbnail && thumbnailUrl ) {
 			return (
 				<ReaderFeaturedImage imageUrl={ thumbnailUrl } onClick={ this.handleThumbnailClick }>
-					<img className="reader-post-card__play-icon"
+					{ allowPlaying && <img className="reader-featured-video__play-icon"
 						src="/calypso/images/reader/play-icon.png"
 						title={ translate( 'Play Video' ) }
-					/>
+					/> }
 				</ReaderFeaturedImage>
 			);
 		}
 
 		// if we can't retrieve a thumbnail that means there was an issue
 		// with the embed and we shouldn't display it
-		const showEmbed = !! this.props.thumbnailUrl;
+		const showEmbed = !! thumbnailUrl;
 
 		/* eslint-disable react/no-danger */
 		return (
