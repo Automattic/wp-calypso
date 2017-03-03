@@ -80,12 +80,13 @@ export const requestTranscript = () => ( dispatch, getState ) => {
 	);
 };
 
-export const sendBrowserInfo = () => dispatch => {
-	const userAgent = `User Agent: ${ navigator.userAgent }`;
+export const sendBrowserInfo = ( siteurl ) => dispatch => {
+	const siteHelp = `Site I need help with: ${ siteurl }\n`;
 	const screenRes = `Screen Resolution: ${ screen.width }x${ screen.height }\n`;
 	const browserSize = `Browser Size: ${ window.innerWidth }x${ window.innerHeight }\n`;
+	const userAgent = `User Agent: ${ navigator.userAgent }`;
 	const msg = {
-		text: `Information to assist troubleshooting.\n ${ screenRes } ${ browserSize } ${ userAgent }`,
+		text: `Info\n ${ siteHelp } ${ screenRes } ${ browserSize } ${ userAgent }`,
 	};
 
 	debug( 'sending info message', msg );
