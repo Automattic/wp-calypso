@@ -71,6 +71,7 @@
 		"perfmon": true,
 		"persist-redux": true,
 		"plans/personal-plan": true,
+		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
 		"post-editor/insert-menu": true,
 		"post-editor/mentions": true,
