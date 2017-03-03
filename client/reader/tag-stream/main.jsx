@@ -72,7 +72,7 @@ const TagStream = React.createClass( {
 
 	getTitle() {
 		const tag = find( this.props.tags, { slug: this.props.tag } );
-		return tag && ( tag.displayName || tag.slug );
+		return tag && ( decodeURIComponent( tag.displayName || tag.slug ) );
 	},
 
 	isSubscribed() {
@@ -94,7 +94,7 @@ const TagStream = React.createClass( {
 
 	render() {
 		const emptyContent = ( <EmptyContent tag={ this.props.tag } /> );
-		const title = decodeURIComponent( this.state.title );
+		const title = this.getTitle();
 		const tag = find( this.props.tags, { slug: this.props.tag } );
 
 		let imageSearchString = this.props.tag;

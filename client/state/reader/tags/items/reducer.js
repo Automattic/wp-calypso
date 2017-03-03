@@ -21,13 +21,13 @@ import { createReducer, } from 'state/utils';
 export const items = createReducer( {}, {
 	[ READER_TAGS_RECEIVE ]: ( state, action ) => {
 		const tags = action.payload;
-		const hasFollowingData = action.meta.hasFollowingData;
+		const resetFollowingData = action.meta.resetFollowingData;
 
-		if ( ! hasFollowingData ) {
+		if ( ! resetFollowingData ) {
 			return merge(
 				{},
-				keyBy( tags, 'id' ),
 				state,
+				keyBy( tags, 'id' ),
 			);
 		}
 
@@ -38,7 +38,7 @@ export const items = createReducer( {}, {
 		return merge(
 			{},
 			allTagsUnfollowed,
-			keyBy( tags, 'id' )
+			keyBy( tags, 'id' ),
 		);
 	},
 	[ READER_UNFOLLOW_TAG_RECEIVE ]: ( state, action ) => {

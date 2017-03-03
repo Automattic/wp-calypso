@@ -35,10 +35,10 @@ export const requestTags = tag => {
 	};
 };
 
-export const receiveTags = ( { payload, error, hasFollowingData = false } ) => ( {
+export const receiveTags = ( { payload, error, resetFollowingData = false } ) => ( {
 	type: READER_TAGS_RECEIVE,
 	payload,
-	meta: { hasFollowingData },
+	meta: { resetFollowingData },
 	error,
 } );
 

@@ -79,7 +79,7 @@ describe( 'follow tag request', () => {
 	} );
 
 	describe( '#receiveFollowSuccess', () => {
-		it( 'should dispatch the tag', () => {
+		it( 'should dispatch the followed tag with isFollowing=true', () => {
 			const action = requestFollowAction( slug );
 			const dispatch = sinon.spy();
 			const next = sinon.spy();
@@ -88,12 +88,15 @@ describe( 'follow tag request', () => {
 
 			const followedTagId = successfulFollowResponse.added_tag;
 			const followedTag = find( successfulFollowResponse.tags, { ID: followedTagId } );
-			const normalizedFollowedTag = fromApi( { tag: followedTag } );
+			const normalizedFollowedTag = {
+				...fromApi( { tag: followedTag } )[ 0 ],
+				isFollowing: true,
+			};
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith(
 				receiveTagsAction( {
-					payload: normalizedFollowedTag,
+					payload: [ normalizedFollowedTag ],
 					error: false
 				} )
 			);

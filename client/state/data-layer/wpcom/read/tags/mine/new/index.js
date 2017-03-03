@@ -33,18 +33,20 @@ export function receiveFollowTag( store, action, next, apiResponse ) {
 		return receiveError( store, action, next );
 	}
 	const normalizedTags = fromApi( apiResponse );
-	const followedTag = find( normalizedTags, { id: apiResponse.added_tag } );
-	
+	const followedTag = {
+		...find( normalizedTags, { id: apiResponse.added_tag } ),
+		isFollowing: true,
+	};
+
 	store.dispatch( receiveTagsAction( {
 		payload: [ followedTag ],
 		error: false,
-		hasFollowingData: false,
 	} ) );
 }
 
 export function receiveError( store, action, next, error ) {
 	// TODO dispatch notice;
-	store.dispatch( 'warnign', action, next, error );
+//	store.dispatch( 'warnign', action, next, error );
 }
 
 export default {
