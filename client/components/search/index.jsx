@@ -119,10 +119,6 @@ const Search = React.createClass( {
 		if ( nextProps.isOpen ) {
 			this.setState( { isOpen: nextProps.isOpen } );
 		}
-
-		if ( nextProps.initialValue !== this.props.initialValue ) {
-			this.setState( { keyword: nextProps.initialValue || '' } );
-		}
 	},
 
 	componentDidUpdate: function( prevProps, prevState ) {
