@@ -301,6 +301,7 @@ class Upload extends React.Component {
 			themeId,
 			upgradeJetpack,
 			backPath,
+			isJetpack,
 			isMultisite
 		} = this.props;
 
