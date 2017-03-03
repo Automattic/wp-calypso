@@ -13,10 +13,10 @@ import {
 import { createReducer, } from 'state/utils';
 
 /*
- * since the api always returns the whole list of tags unpaginated, for both read/tags
- * and for read/tags/{slug}/new we can do a full replace instead of merge
+ * since the api always returns the whole list of followed tags unpaginated, both read/tags*,
+ * we can do a full replace instead of merge
  *
- * the shape of a tag is { ID, URL, title, display_name  }.
+ * the shape of a tag is { id, url, title, displayName, isFollowing }.
  */
 export const items = createReducer( {}, {
 	[ READER_TAGS_RECEIVE ]: ( state, action ) => {
@@ -42,10 +42,6 @@ export const items = createReducer( {}, {
 		);
 	},
 	[ READER_UNFOLLOW_TAG_RECEIVE ]: ( state, action ) => {
-		if ( action.error ) {
-			return state;
-		}
-
 		const removedTag = action.payload;
 		return merge(
 			{},
