@@ -21,8 +21,8 @@ class TrackInteractions extends Component {
 		children: PropTypes.element.isRequired,
 		mapPropsToAction: PropTypes.func,
 		fields: stringShape,
-
-		dispatch: PropTypes.func.isRequired,
+		// connected
+		trackInteraction: PropTypes.func.isRequired,
 	}
 
 	static defaultProps = {
@@ -30,14 +30,10 @@ class TrackInteractions extends Component {
 	}
 
 	track = ( child ) => {
-		const action = this.mapPropsToAction( child.props );
-
-		this.props.dispatch( {
-			type: COMPONENT_INTERACTION_TRACKED,
-			eventType: 'click',
-			component: child.type.name,
-			...action,
-		} );
+		this.props.trackInteraction(
+			child.type.name,
+			this.mapPropsToAction( child.props )
+		);
 	}
 
 	mapPropsToAction( props ) {
@@ -63,4 +59,16 @@ class TrackInteractions extends Component {
 	}
 }
 
-export default connect( null, null )( TrackInteractions );
+function trackInteraction( componentName, data ) {
+	return {
+		type: COMPONENT_INTERACTION_TRACKED,
+		eventType: 'click',
+		component: componentName,
+		...data,
+	};
+}
+
+export default connect(
+	null,
+	{ trackInteraction }
+)( TrackInteractions );
