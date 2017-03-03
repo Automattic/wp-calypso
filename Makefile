@@ -67,6 +67,11 @@ COMPONENTS_PROPTYPE_FILES = $(shell \
 		-or -name 'example.jsx' \
 		-and -not -path '*/test/*' \
 )
+CONFIG_FILES = $(shell \
+	find config \
+		-name '*.json' \
+)
+
 CLIENT_CONFIG_FILE := client/config/index.js
 
 # variables
@@ -115,7 +120,7 @@ node_modules: package.json | node-version
 test: build
 	@$(NPM) test
 
-lint: node_modules/eslint node_modules/eslint-plugin-react node_modules/babel-eslint mixedindentlint
+lint: node_modules/eslint node_modules/eslint-plugin-react node_modules/babel-eslint config-defaults-lint mixedindentlint
 	@$(NPM) run lint
 
 eslint: lint
@@ -126,6 +131,10 @@ eslint-branch: node_modules/eslint node_modules/eslint-plugin-react node_modules
 # Skip files that are auto-generated
 mixedindentlint: node_modules/mixedindentlint
 	@echo "$(JS_FILES)\n$(SASS_FILES)" | xargs $(NODE_BIN)/mixedindentlint --ignore-comments --exclude="client/config/index.js"
+
+# Ensure that default config values exist in _shared.json
+config-defaults-lint: $(CONFIG_FILES)
+	@$(NODE) bin/validate-config-keys.js || exit
 
 # keep track of the current CALYPSO_ENV so that it can be used as a
 # prerequisite for other rules
@@ -240,3 +249,4 @@ FORCE:
 .PHONY: build build-development build-server build-dll build-desktop build-horizon build-stage build-production build-wpcalypso
 .PHONY: run install test clean distclean translate route node-version
 .PHONY: githooks githooks-commit githooks-push analyze-bundles urn
+.PHONY: config-defaults-lint

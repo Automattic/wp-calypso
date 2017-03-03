@@ -17,6 +17,7 @@ test:
           fi
       : parallel: true
   override:
+    - make config-defaults-lint
     - bin/run-lint :
         parallel: true
         files:
