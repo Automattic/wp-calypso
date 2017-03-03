@@ -18,6 +18,7 @@ import {
 	fromApi,
 } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { NOTICE_CREATE } from 'state/action-types';
 
 const successfulUnfollowResponse = {
 	subscribed: false,
@@ -89,7 +90,6 @@ describe( 'unfollow tag request', () => {
 			expect( dispatch ).to.have.been.calledWith(
 				receiveUnfollowAction( {
 					payload: successfulUnfollowResponse.removed_tag,
-					error: false
 				} )
 			);
 		} );
@@ -102,17 +102,14 @@ describe( 'unfollow tag request', () => {
 			receiveUnfollowTag( { dispatch }, action, next, unsuccessfulResponse );
 
 			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith(
-				receiveUnfollowAction( {
-					payload: unsuccessfulResponse.removed_tag,
-					error: true,
-				} )
-			);
+			expect( dispatch ).to.have.been.calledWithMatch( {
+				type: NOTICE_CREATE,
+			} );
 		} );
 	} );
 
 	describe( '#receiveError', () => {
-		it( 'should dispatch error', () => {
+		it( 'should dispatch an error notice', () => {
 			const action = requestUnfollowAction( slug );
 			const dispatch = sinon.spy();
 			const next = sinon.spy();
@@ -121,9 +118,9 @@ describe( 'unfollow tag request', () => {
 			receiveError( { dispatch }, action, next, error );
 
 			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith(
-				receiveUnfollowAction( { payload: error, error: true } )
-			);
+			expect( dispatch ).to.have.been.calledWithMatch( {
+				type: NOTICE_CREATE,
+			} );
 		} );
 	} );
 

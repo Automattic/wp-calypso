@@ -35,11 +35,10 @@ export const requestTags = tag => {
 	};
 };
 
-export const receiveTags = ( { payload, error, resetFollowingData = false } ) => ( {
+export const receiveTags = ( { payload, resetFollowingData = false } ) => ( {
 	type: READER_TAGS_RECEIVE,
 	payload,
 	meta: { resetFollowingData },
-	error,
 } );
 
 export const requestUnfollowTag = tag => ( {
@@ -47,10 +46,9 @@ export const requestUnfollowTag = tag => ( {
 	payload: { tag, slug: slugify( tag ) },
 } );
 
-export const receiveUnfollowTag = ( { payload, error } ) => ( {
+export const receiveUnfollowTag = ( { payload } ) => ( {
 	type: READER_UNFOLLOW_TAG_RECEIVE,
 	payload,
-	error,
 } );
 
 export const requestFollowTag = tag => ( {

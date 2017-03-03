@@ -17,6 +17,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { mergeHandlers } from 'state/data-layer/utils';
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
+import { errorNotice } from 'state/notices/actions';
 import followTagHandler from './mine/new';
 import unFollowTagHandler from './mine/delete';
 
@@ -38,7 +39,7 @@ export function requestTags( store, action, next ) {
 
 export function receiveTagsSuccess( store, action, next, apiResponse ) {
 	let tags = fromApi( apiResponse );
-	// if from the read/tags api, then it is followed
+	// if from the read/tags api, then we should add isFollowing=true to the tag
 	if ( apiResponse.tags ) {
 		tags = map( tags, tag => ( { ...tag, isFollowing: true } ) );
 	}
@@ -51,10 +52,10 @@ export function receiveTagsSuccess( store, action, next, apiResponse ) {
 }
 
 export function receiveTagsError( store, action, next, error ) {
-	store.dispatch( receiveTags( {
-		payload: error,
-		error: true
-	} ) );
+	store.dispatch( errorNotice( 'Could not fetch the tag' ) );
+	if ( process.env.NODE_ENV === 'development' ) {
+		throw new Error( error );
+	}
 }
 
 const getFollowedTagsHandler = {

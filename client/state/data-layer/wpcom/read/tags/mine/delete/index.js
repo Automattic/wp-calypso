@@ -12,6 +12,7 @@ import {
 
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'state/notices/actions';
 
 export function requestUnfollow( store, action, next ) {
 	store.dispatch( http( {
@@ -34,17 +35,21 @@ export function requestUnfollow( store, action, next ) {
 export const fromApi = apiResponse => apiResponse.removed_tag;
 
 export function receiveUnfollowTag( store, action, next, apiResponse ) {
+	if ( apiResponse.subscribed ) {
+		receiveError( store, action, next, 'apiResponse.subcribed = true' );
+		return;
+	}
+
 	store.dispatch( receiveUnfollowTagAction( {
 		payload: fromApi( apiResponse ),
-		error: apiResponse.subscribed !== false,
 	} ) );
 }
 
 export function receiveError( store, action, next, error ) {
-	store.dispatch( receiveUnfollowTagAction( {
-		payload: error,
-		error: true
-	} ) );
+	store.dispatch( errorNotice( 'Could not unfollow tag' ) );
+	if ( process.env.NODE_ENV === 'development' ) {
+		throw new Error( error );
+	}
 }
 
 export default {

@@ -14,6 +14,7 @@ import {
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
+import { errorNotice } from 'state/notices/actions';
 
 export function requestFollowTag( store, action, next ) {
 	store.dispatch( http( {
@@ -28,10 +29,11 @@ export function requestFollowTag( store, action, next ) {
 }
 
 export function receiveFollowTag( store, action, next, apiResponse ) {
-	// TODO: is this a good thing to do here?
 	if ( apiResponse.subscribed === false ) {
-		return receiveError( store, action, next );
+		receiveError( store, action, next, 'apiResponse.subscribed === false' );
+		return;
 	}
+
 	const normalizedTags = fromApi( apiResponse );
 	const followedTag = {
 		...find( normalizedTags, { id: apiResponse.added_tag } ),
@@ -40,13 +42,14 @@ export function receiveFollowTag( store, action, next, apiResponse ) {
 
 	store.dispatch( receiveTagsAction( {
 		payload: [ followedTag ],
-		error: false,
 	} ) );
 }
 
 export function receiveError( store, action, next, error ) {
-	// TODO dispatch notice;
-//	store.dispatch( 'warnign', action, next, error );
+	store.dispatch( errorNotice( 'Could not follow tag' ) );
+	if ( process.env.NODE_ENV === 'development' ) {
+		throw new Error( error );
+	}
 }
 
 export default {

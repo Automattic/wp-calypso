@@ -19,6 +19,7 @@ import {
 } from '../';
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { NOTICE_CREATE } from 'state/action-types';
 
 const successfulFollowedTagsResponse = {
 	tags: [
@@ -141,7 +142,7 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#receiveTagsError', () => {
-			it( 'should dispatch error', () => {
+			it( 'should dispatch an error notice', () => {
 				const action = requestTagsAction( slug );
 				const dispatch = sinon.spy();
 				const next = sinon.spy();
@@ -150,9 +151,9 @@ describe( 'wpcom-api', () => {
 				receiveTagsError( { dispatch }, action, next, error );
 
 				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
-					receiveTagsAction( { payload: error, error: true } )
-				);
+				expect( dispatch ).to.have.been.calledWithMatch( {
+					type: NOTICE_CREATE,
+				} );
 			} );
 		} );
 	} );

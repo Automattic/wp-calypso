@@ -19,6 +19,7 @@ import {
 } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
+import { NOTICE_CREATE } from 'state/action-types';
 
 export const successfulFollowResponse = {
 	subscribed: true,
@@ -97,18 +98,19 @@ describe( 'follow tag request', () => {
 			expect( dispatch ).to.have.been.calledWith(
 				receiveTagsAction( {
 					payload: [ normalizedFollowedTag ],
-					error: false
 				} )
 			);
 		} );
 
-		it( 'if api reports error then should pass through an error', () => {
+		it( 'if api reports error then create an error notice', () => {
 			const action = requestFollowAction( slug );
 			const dispatch = sinon.spy();
 			const next = sinon.spy();
 
 			receiveFollowTag( { dispatch }, action, next, unsuccessfulResponse );
-			// TODO add in same error notice check as below. maybe check that receiveError was called
+			expect( dispatch ).to.have.been.calledWithMatch( {
+				type: NOTICE_CREATE,
+			} );
 		} );
 	} );
 
@@ -121,7 +123,9 @@ describe( 'follow tag request', () => {
 
 			receiveError( { dispatch }, action, next, error );
 
-			// TODO add in error notice
+			expect( dispatch ).to.have.been.calledWithMatch( {
+				type: NOTICE_CREATE,
+			} );
 		} );
 	} );
 } );
