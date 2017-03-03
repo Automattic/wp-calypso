@@ -9,14 +9,6 @@ const path = require( 'path' );
 const configRoot = path.resolve( __dirname, '../../', 'config' );
 
 /**
- * @type {RegExp} matches possible config files
- *
- *  - doesn't start with an underscore
- *  - ends in `.json`
- */
-const environmentConfigPattern = /^(?!_)[^.]+\.json$/;
-
-/**
  * Reads a config file given its basename
  *
  * @param {String} filename basename of config file to read, e.g. 'development.json'
@@ -37,9 +29,10 @@ const parseConfig = filename => JSON.parse( readConfigFile( filename ) );
 /** @type {Array} list of [ filename, config data keys ] configuration pairs */
 const environmentKeys = fs
 	.readdirSync( configRoot, { encoding: 'utf8' } )
-	.filter( filename => environmentConfigPattern.test( path.basename( filename ) ) )
-	.filter( filename => ! ( /secrets/g ).test( filename ) )
-	.filter( filename => ! ( /client/g ).test( filename ) )
+	.filter( filename => /\.json$/.test( path.basename( filename ) ) ) // only the JSON config files
+	.filter( filename => '_shared.json' !== filename ) // base config for all environments
+	.filter( filename => 'client.json' !== filename ) // whitelist of keys allowed in client
+	.filter( filename => ! ( /secrets/g ).test( filename ) ) // secret tokens not part of this system
 	.map( filename => [ filename, Object.keys( parseConfig( filename ) ) ] );
 
 /** @type {Object} config data in the shared config file (defaults) */
