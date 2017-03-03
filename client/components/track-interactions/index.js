@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import storeShape from 'react-redux/lib/utils/storeShape';
 import { cloneElement, Children, Component, PropTypes } from 'react';
-import { constant, isFunction, noop } from 'lodash';
+import { connect } from 'react-redux';
+import { constant, isFunction } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,29 +16,23 @@ const stringShape = PropTypes.oneOfType( [
 	PropTypes.arrayOf( PropTypes.string )
 ] );
 
-export default class TrackInteractions extends Component {
+class TrackInteractions extends Component {
 	static propTypes = {
 		children: PropTypes.element.isRequired,
 		mapPropsToAction: PropTypes.func,
 		fields: stringShape,
+
+		dispatch: PropTypes.func.isRequired,
 	}
 
 	static defaultProps = {
 		mapPropsToAction: constant( {} ),
 	}
 
-	static contextTypes = { store: storeShape };
-
-	constructor( props, context ) {
-		super( props, context );
-		const store = ( props.store || context.store );
-		this.dispatch = store ? store.dispatch : noop;
-	}
-
 	track = ( child ) => {
 		const action = this.mapPropsToAction( child.props );
 
-		this.dispatch( {
+		this.props.dispatch( {
 			type: COMPONENT_INTERACTION_TRACKED,
 			eventType: 'click',
 			component: child.type.name,
@@ -68,3 +62,5 @@ export default class TrackInteractions extends Component {
 		return cloneElement( child, props );
 	}
 }
+
+export default connect( null, null )( TrackInteractions );
