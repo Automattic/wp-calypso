@@ -20,7 +20,7 @@ import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'components/data/document-head';
 import { getFilter, getSortedFilterTerms, stripFilters } from './theme-filters.js';
 import buildUrl from 'lib/mixins/url-search/build-url';
-import { getSiteSlug } from 'state/sites/selectors';
+import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
 
@@ -118,8 +118,27 @@ const ThemeShowcase = React.createClass( {
 		trackClick( 'upload theme' );
 	},
 
+	showUploadButton() {
+		const { siteSlug, isMultisite, isJetpack } = this.props;
+
+		return (
+			config.isEnabled( 'manage/themes/upload' ) &&
+			siteSlug &&
+			! isMultisite &&
+			( isJetpack || config.isEnabled( 'automated-transfer' ) )
+		);
+	},
+
 	render() {
-		const { site, options, getScreenshotOption, search, filter, translate, siteSlug, isMultisite } = this.props;
+		const {
+			site,
+			options,
+			getScreenshotOption,
+			search,
+			filter,
+			translate
+		} = this.props;
+
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
 		const metas = [
@@ -141,14 +160,12 @@ const ThemeShowcase = React.createClass( {
 						tier={ tier }
 						select={ this.onTierSelect } />
 				</StickyPanel>
-				{ config.isEnabled( 'manage/themes/upload' ) && siteSlug && ! isMultisite &&
-					<Button className="themes__upload-button" compact icon
-						onClick={ this.onUploadClick }
-						href={ `/design/upload/${ this.props.siteSlug }` }
-					>
-						<Gridicon icon="cloud-upload" />
-						{ translate( 'Upload Theme' ) }
-					</Button>
+				{ this.showUploadButton() && <Button className="themes__upload-button" compact icon
+					onClick={ this.onUploadClick }
+					href={ `/design/upload/${ this.props.siteSlug }` }>
+					<Gridicon icon="cloud-upload" />
+					{ translate( 'Upload Theme' ) }
+				</Button>
 				}
 				<ThemesSelection
 					search={ search }
@@ -193,5 +210,6 @@ const ThemeShowcase = React.createClass( {
 export default connect(
 	( state, { siteId } ) => ( {
 		siteSlug: getSiteSlug( state, siteId ),
+		isJetpack: isJetpackSite( state, siteId ),
 	} )
 )( localize( ThemeShowcase ) );
