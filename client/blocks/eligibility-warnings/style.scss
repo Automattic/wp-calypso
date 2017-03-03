@@ -25,12 +25,16 @@
 .eligibility-warnings .card {
 	margin: 0;
 }
+
 .eligibility-warnings .banner {
 	margin-bottom: 16px;
 	.banner__icon-circle {
 		padding: 4px;
 	}
+}
 
+.eligibility-warnings .notice {
+	margin-bottom: 16px;
 }
 
 .eligibility-warnings__hold,
@@ -82,7 +86,7 @@
 
 .eligibility-warnings__confirm-box {
 	flex-wrap: wrap;
-	justify-content: center;
+	justify-content: flex-end;
 
 	.eligibility-warnings__confirm-text {
 		color: $gray-text-min;

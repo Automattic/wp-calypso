@@ -19,6 +19,7 @@ import Banner from 'components/banner';
 import Button from 'components/button';
 import Card from 'components/card';
 import HoldList from './hold-list';
+import Notice from 'components/notice';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import WarningList from './warning-list';
 
@@ -80,12 +81,20 @@ export const EligibilityWarnings = ( {
 			{ holds.length > 0 && <HoldList holds={ holds } /> }
 			{ warnings.length > 0 && <WarningList warnings={ warnings } /> }
 
+			{ isEligible && 0 === holds.length && 0 === warnings.length &&
+				<Notice
+					showDismiss={ false }
+					status="is-success"
+					text={ translate( 'No conflicts detected.' ) }
+				/>
+			}
+
 			<Card className="eligibility-warnings__confirm-box">
 				<div className="eligibility-warnings__confirm-text">
 					{ ! isEligible && translate(
 						'You must resolve the errors above before proceeding. '
 					) }
-					{ isEligible && translate(
+					{ isEligible && warnings.length > 0 && translate(
 						'If you proceed you will no longer be able to use these features. '
 					) }
 					{ translate( 'Have questions? Please {{a}}contact support{{/a}}.',
