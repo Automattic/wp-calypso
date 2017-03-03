@@ -2,15 +2,17 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
+import { get, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { get } from 'lodash';
+import { createReducer } from 'state/utils';
 import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
+	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
 } from 'state/action-types';
 
 const isRequesting = ( state = false, action ) => get( {
@@ -35,6 +37,16 @@ const resetOptions = combineReducers( {
 	items,
 } );
 
+const validUserDataProps = [ 'user', 'firstName', 'lastName', 'url' ];
+
+const userData = createReducer( {}, {
+	[ ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA ]: ( state, action ) => ( {
+		...state,
+		...pick( action.userData, validUserDataProps ),
+	} ),
+} );
+
 export default combineReducers( {
 	options: resetOptions,
+	userData,
 } );

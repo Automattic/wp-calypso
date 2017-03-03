@@ -6,6 +6,7 @@ import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
+	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
 } from 'state/action-types';
 
 export const fetchResetOptionsSuccess = ( items ) => ( {
@@ -45,3 +46,8 @@ export const fetchResetOptions = ( userData ) => ( dispatch ) => {
 export const fetchResetOptionsByLogin = ( user ) => fetchResetOptions( { user } );
 
 export const fetchResetOptionsByNameAndUrl = ( firstname, lastname, url ) => fetchResetOptions( { firstname, lastname, url } );
+
+export const updatePasswordResetUserData = ( userData ) => ( {
+	type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
+	userData,
+} );
