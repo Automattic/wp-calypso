@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { map, compact, concat } from 'lodash';
+import { map, compact, concat, isObject, isArray } from 'lodash';
 import { decodeEntities } from 'lib/formatting';
 
 /**
@@ -11,10 +11,10 @@ import { decodeEntities } from 'lib/formatting';
  *
  * @param  {Tag|Tags} apiResponse api response from the tags endpoint
  * @return {Tags} An object containing all of the normalized tags in the format:
- * {
- *   [ tag.id ]: tag,
- *   ...
- * }
+ *  [
+ *    { id, displayName, url, title, slug },
+ *    ...
+ *  ]
  */
 export function fromApi( apiResponse ) {
 	if ( ! apiResponse.tag && ! apiResponse.tags ) {
@@ -24,7 +24,11 @@ export function fromApi( apiResponse ) {
 		return [];
 	}
 
-	const tags = compact( concat( [], apiResponse.tag, apiResponse.tags ) );
+	const tags = compact( concat(
+		[],
+		isObject( apiResponse.tag ) && apiResponse.tag,
+		isArray( apiResponse.tags ) && apiResponse.tags,
+	) );
 
 	return map( tags, tag => ( {
 		id: tag.ID,

@@ -64,9 +64,9 @@ const normalizedSuccessfulSingleTagResponse = [
 	},
 ];
 
-describe( 'wpcom-api: read/tags', () => {
+describe( 'wpcom-api: read/tags utils', () => {
 	describe( '#fromApi', () => {
-		it( 'should properly normalize response from following tags', () => {
+		it( 'should properly normalize many tags', () => {
 			const transformedResponse = fromApi( successfulFollowedTagsResponse );
 			expect( transformedResponse ).to.eql( normalizedFollowedTagsResponse );
 		} );
@@ -74,6 +74,16 @@ describe( 'wpcom-api: read/tags', () => {
 		it( 'should properly normalize a single tag', () => {
 			const transformedResponse = fromApi( successfulSingleTagResponse );
 			expect( transformedResponse ).to.eql( normalizedSuccessfulSingleTagResponse );
+		} );
+
+		it( 'should not blow up when given wrong keys', () => {
+			const transformedResponse = fromApi( { noCorrectKeys: 'evil test' } );
+			expect( transformedResponse ).to.eql( [] );
+		} );
+
+		it( 'should not blow up when given bad values', () => {
+			const transformedResponse = fromApi( { tag: 'evil test' } );
+			expect( transformedResponse ).to.eql( [] );
 		} );
 	} );
 } );
