@@ -97,22 +97,31 @@ export class MediaLibraryFilterBar extends Component {
 		);
 	}
 
+	renderSearchSection() {
+		if ( this.props.filterRequiresUpgrade ) {
+			return null;
+		}
+
+		return (
+			<Search
+				analyticsGroup="Media"
+				pinned
+				fitsContainer
+				onSearch={ this.props.onSearch }
+				initialValue={ this.props.search }
+				placeholder={ this.getSearchPlaceholderText() }
+				delaySearch={ true } />
+		);
+	}
+
 	render() {
 		return (
 			<SectionNav selectedText={ this.getFilterLabel( this.props.filter ) } hasSearch={ true }>
 				<SectionNavTabs>
 					{ this.renderTabItems() }
 				</SectionNavTabs>
-				{ ! this.props.filterRequiresUpgrade &&
-					<Search
-						analyticsGroup="Media"
-						pinned
-						fitsContainer
-						onSearch={ this.props.onSearch }
-						initialValue={ this.props.search }
-						placeholder={ this.getSearchPlaceholderText() }
-						delaySearch={ true } />
-				}
+
+				{ this.renderSearchSection() }
 			</SectionNav>
 		);
 	}
