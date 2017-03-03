@@ -65,6 +65,10 @@ const timeline = ( state = [], action ) => {
 		case DESERIALIZE:
 			return state;
 		case HAPPYCHAT_RECEIVE_EVENT:
+			// if meta.suppress is set, skip so won't show to user
+			if ( get( action, 'event.meta.suppress', false ) ) {
+				return state;
+			}
 			const event = timeline_event( {}, action );
 			const existing = find( state, ( { id } ) => event.id === id );
 			return existing ? state : concat( state, [ event ] );
