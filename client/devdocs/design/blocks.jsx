@@ -54,6 +54,7 @@ import ReaderPostCard from 'blocks/reader-post-card/docs/example';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu/docs/example';
 import DailyPostButton from 'blocks/daily-post-button/docs/example';
 import PostLikes from 'blocks/post-likes/docs/example';
+import Timezone from 'blocks/timezone/docs/example';
 
 export default React.createClass( {
 
@@ -128,6 +129,7 @@ export default React.createClass( {
 					<ReaderPostOptionsMenu />
 					<DailyPostButton />
 					<PostLikes />
+					<Timezone />
 				</Collection>
 			</Main>
 		);

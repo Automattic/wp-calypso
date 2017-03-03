@@ -27,7 +27,7 @@ import FormRadio from 'components/forms/form-radio';
 import FormSelect from 'components/forms/form-select';
 import FormToggle from 'components/forms/form-toggle';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import Timezone from 'components/timezone';
+import Timezone from 'blocks/timezone';
 import JetpackSyncPanel from './jetpack-sync-panel';
 import SiteIconSetting from './site-icon-setting';
 import RelatedPosts from './related-posts';
