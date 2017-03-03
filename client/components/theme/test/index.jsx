@@ -1,14 +1,22 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import sinon from 'sinon';
+import { Provider } from 'react-redux';
+import { assert } from 'chai';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+
+const fakeStore = {
+	dispatch: noop,
+	getState: noop,
+	subscribe: noop,
+};
 
 describe( 'Theme', function() {
 	let ReactDom, React, TestUtils, Theme, togglePopoverStub;
@@ -52,7 +60,11 @@ describe( 'Theme', function() {
 		context( 'with default display buttonContents', function() {
 			beforeEach( function() {
 				this.props.onScreenshotClick = sinon.spy();
-				let themeElement = TestUtils.renderIntoDocument( React.createElement( Theme, this.props ) );
+				const themeElement = TestUtils.renderIntoDocument(
+					React.createElement( Provider, { store: fakeStore },
+						React.createElement( Theme, this.props )
+					)
+				);
 				this.themeNode = ReactDom.findDOMNode( themeElement );
 			} );
 
@@ -121,8 +133,10 @@ describe( 'Theme', function() {
 	context( 'when the theme has a price', function() {
 		beforeEach( function() {
 			this.props.theme.price = '$50';
-			let themeElement = TestUtils.renderIntoDocument(
-				React.createElement( Theme, this.props )
+			const themeElement = TestUtils.renderIntoDocument(
+				React.createElement( Provider, { store: fakeStore },
+					React.createElement( Theme, this.props )
+				)
 			);
 			this.themeNode = ReactDom.findDOMNode( themeElement );
 		} );
