@@ -36,7 +36,8 @@ import QueryTicketSupportConfiguration from 'components/data/query-ticket-suppor
 import HelpUnverifiedWarning from '../help-unverified-warning';
 import { connectChat as connectHappychat, sendChatMessage as sendHappychatMessage } from 'state/happychat/actions';
 import { openChat as openHappychat } from 'state/ui/happychat/actions';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
+import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } from 'state/directly/actions';
 
 /**
  * Module variables
@@ -63,6 +64,8 @@ const HelpContact = React.createClass( {
 		if ( config.isEnabled( 'happychat' ) ) {
 			this.props.connectHappychat();
 		}
+
+		this.props.initializeDirectly();
 
 		olarkStore.on( 'change', this.updateOlarkState );
 		olarkEvents.on( 'api.chat.onOperatorsAway', this.onOperatorsAway );
@@ -169,9 +172,15 @@ const HelpContact = React.createClass( {
 	},
 
 	submitDirectlyQuestion: function( contactForm ) {
-		// TODO: open Directly form here
+		const { display_name, email } = this.props.currentUser;
 
-		return contactForm; // TODO: Remove this line once functionality is implemented
+		this.props.askDirectlyQuestion(
+			contactForm.message,
+			display_name,
+			email
+		);
+
+		this.clearSavedContactForm();
 	},
 
 	submitKayakoTicket: function( contactForm ) {
@@ -511,7 +520,7 @@ const HelpContact = React.createClass( {
 					showSubjectField: false,
 					showHowCanWeHelpField: false,
 					showHowYouFeelField: false,
-					showSiteField: hasMoreThanOneSite,
+					showSiteField: false,
 				};
 
 			default:
@@ -651,6 +660,7 @@ export default connect(
 	( state ) => {
 		return {
 			currentUserLocale: getCurrentUserLocale( state ),
+			currentUser: getCurrentUser( state ),
 			olarkTimedOut: isOlarkTimedOut( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isHappychatAvailable: isHappychatAvailable( state ),
@@ -659,5 +669,11 @@ export default connect(
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
 		};
 	},
-	{ connectHappychat, openHappychat, sendHappychatMessage }
+	{
+		connectHappychat,
+		openHappychat,
+		sendHappychatMessage,
+		askDirectlyQuestion,
+		initializeDirectly,
+	}
 )( localize( HelpContact ) );

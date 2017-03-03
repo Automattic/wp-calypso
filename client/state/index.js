@@ -18,6 +18,7 @@ import componentsUsageStats from './components-usage-stats/reducer';
 import consoleDispatcher from './console-dispatch';
 import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
+import directly from './directly/reducer';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
 import geo from './geo/reducer';
@@ -71,6 +72,7 @@ export const reducer = combineReducers( {
 	componentsUsageStats,
 	countryStates,
 	currentUser,
+	directly,
 	documentHead,
 	domains,
 	geo,

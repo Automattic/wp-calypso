@@ -22,6 +22,7 @@ export getAccountRecoveryResetOptions from './get-account-recovery-reset-options
 export getAccountRecoveryResetUserData from './get-account-recovery-reset-user-data';
 export getBlockedSites from './get-blocked-sites';
 export getBillingTransactions from './get-billing-transactions';
+export getDirectlyConfig from './get-directly-config';
 export getFollowCount from './get-follow-count';
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';
 export getJetpackConnectionStatus from './get-jetpack-connection-status';
@@ -65,6 +66,7 @@ export isActivatingJetpackModule from './is-activating-jetpack-module';
 export isAutomatedTransferActive from './is-automated-transfer-active';
 export isDeactivatingJetpackJumpstart from './is-deactivating-jetpack-jumpstart';
 export isDeactivatingJetpackModule from './is-deactivating-jetpack-module';
+export isDirectlyInitialized from './is-directly-initialized';
 export isDomainOnlySite from './is-domain-only-site';
 export isFetchingJetpackModules from './is-fetching-jetpack-modules';
 export isJetpackModuleActive from './is-jetpack-module-active';
