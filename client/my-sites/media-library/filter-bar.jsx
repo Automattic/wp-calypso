@@ -16,6 +16,8 @@ import {
 import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import Search from 'components/search';
+import TrackComponentView from 'lib/analytics/track-component-view';
+import PlanStorage from 'blocks/plan-storage';
 import FilterItem from './filter-item';
 
 export class MediaLibraryFilterBar extends Component {
@@ -114,14 +116,24 @@ export class MediaLibraryFilterBar extends Component {
 		);
 	}
 
+	renderPlanStorage() {
+		const eventName = 'calypso_upgrade_nudge_impression';
+		const eventProperties = { cta_name: 'plan-media-storage' };
+		return (
+			<PlanStorage siteId={ this.props.site.ID }>
+				<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
+			</PlanStorage>
+		);
+	}
+
 	render() {
 		return (
 			<SectionNav selectedText={ this.getFilterLabel( this.props.filter ) } hasSearch={ true }>
 				<SectionNavTabs>
 					{ this.renderTabItems() }
 				</SectionNavTabs>
-
 				{ this.renderSearchSection() }
+				{ this.renderPlanStorage() }
 			</SectionNav>
 		);
 	}
