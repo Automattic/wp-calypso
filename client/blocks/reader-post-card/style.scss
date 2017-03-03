@@ -57,6 +57,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			flex-grow: 1;
 			margin-right: 20px;
 			max-width: 190px;
+			box-sizing: border-box;
 
 			@include breakpoint( ">960px" ) {
 				max-width: 250px;
