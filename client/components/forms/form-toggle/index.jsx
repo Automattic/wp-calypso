@@ -45,15 +45,15 @@ export default class FormToggle extends PureComponent {
 
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			event.preventDefault();
-			this.props.onChange();
+			this.props.onChange( event );
 		}
 
 		this.props.onKeyDown( event );
 	}
 
-	onClick() {
+	onClick( event ) {
 		if ( ! this.props.disabled ) {
-			this.props.onChange();
+			this.props.onChange( event );
 		}
 	}
 
@@ -65,7 +65,7 @@ export default class FormToggle extends PureComponent {
 		const nodeName = event.target.nodeName.toLowerCase();
 		if ( nodeName !== 'a' && nodeName !== 'input' && nodeName !== 'select' ) {
 			event.preventDefault();
-			this.props.onChange();
+			this.props.onChange( event );
 		}
 	}
 
