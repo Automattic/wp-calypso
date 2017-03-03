@@ -454,7 +454,7 @@
       "version": "2.11.0"
     },
     "body-parser": {
-      "version": "1.17.0",
+      "version": "1.16.1",
       "dependencies": {
         "debug": {
           "version": "2.6.1"
@@ -463,7 +463,7 @@
           "version": "0.7.2"
         },
         "qs": {
-          "version": "6.3.1"
+          "version": "6.2.1"
         }
       }
     },
@@ -537,7 +537,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000631"
+      "version": "1.0.30000626"
     },
     "caseless": {
       "version": "0.11.0"
@@ -936,7 +936,7 @@
       "version": "1.0.0"
     },
     "delegate": {
-      "version": "3.1.2"
+      "version": "3.1.1"
     },
     "delegates": {
       "version": "1.0.0"
@@ -1569,10 +1569,10 @@
       }
     },
     "for-in": {
-      "version": "1.0.2"
+      "version": "0.1.6"
     },
     "for-own": {
-      "version": "0.1.5"
+      "version": "0.1.4"
     },
     "foreach": {
       "version": "2.0.5"
@@ -1697,7 +1697,7 @@
       }
     },
     "good-listener": {
-      "version": "1.2.2"
+      "version": "1.2.1"
     },
     "got": {
       "version": "3.3.1",
@@ -1835,7 +1835,7 @@
       "version": "1.7.0"
     },
     "http-errors": {
-      "version": "1.6.1",
+      "version": "1.5.1",
       "dependencies": {
         "inherits": {
           "version": "2.0.3"
@@ -2173,7 +2173,7 @@
       "version": "3.0.1"
     },
     "js-yaml": {
-      "version": "3.8.2",
+      "version": "3.8.1",
       "dev": true
     },
     "jsdom": {
@@ -2314,7 +2314,7 @@
       }
     },
     "levelup": {
-      "version": "1.3.5"
+      "version": "1.3.3"
     },
     "levn": {
       "version": "0.3.0",
@@ -2343,9 +2343,6 @@
     "lodash-deep": {
       "version": "1.5.3",
       "dev": true
-    },
-    "lodash-es": {
-      "version": "4.17.4"
     },
     "lodash._baseassign": {
       "version": "3.2.0",
@@ -2414,7 +2411,7 @@
       "version": "1.6.0"
     },
     "lower-case": {
-      "version": "1.1.4"
+      "version": "1.1.3"
     },
     "lower-case-first": {
       "version": "1.0.2"
@@ -2609,7 +2606,7 @@
       }
     },
     "node-abi": {
-      "version": "2.0.0"
+      "version": "1.3.3"
     },
     "node-contains": {
       "version": "1.0.0"
@@ -2858,9 +2855,6 @@
       "version": "1.0.2",
       "dev": true
     },
-    "path-parse": {
-      "version": "1.0.5"
-    },
     "path-to-regexp": {
       "version": "0.1.7"
     },
@@ -2945,7 +2939,7 @@
       "version": "3.3.0"
     },
     "prebuild-install": {
-      "version": "2.1.1",
+      "version": "2.1.0",
       "dependencies": {
         "minimist": {
           "version": "1.2.0"
@@ -3120,7 +3114,7 @@
       "version": "1.0.2"
     },
     "react-redux": {
-      "version": "5.0.2"
+      "version": "4.4.5"
     },
     "react-test-env": {
       "version": "0.2.0",
@@ -3285,7 +3279,7 @@
       "dev": true
     },
     "resolve": {
-      "version": "1.3.2"
+      "version": "1.2.0"
     },
     "resolve-from": {
       "version": "1.0.1",
@@ -3299,7 +3293,7 @@
       "version": "0.1.3"
     },
     "rimraf": {
-      "version": "2.6.1",
+      "version": "2.6.0",
       "dependencies": {
         "glob": {
           "version": "7.1.1"
@@ -3436,20 +3430,8 @@
           "version": "1.0.3",
           "dev": true
         },
-        "http-errors": {
-          "version": "1.5.1",
-          "dev": true
-        },
-        "inherits": {
-          "version": "2.0.3",
-          "dev": true
-        },
         "negotiator": {
           "version": "0.6.1",
-          "dev": true
-        },
-        "setprototypeof": {
-          "version": "1.0.2",
           "dev": true
         }
       }
@@ -3484,7 +3466,7 @@
       "version": "1.0.5"
     },
     "setprototypeof": {
-      "version": "1.0.3"
+      "version": "1.0.2"
     },
     "sha.js": {
       "version": "2.2.6"
@@ -3619,7 +3601,7 @@
       "dev": true
     },
     "sshpk": {
-      "version": "1.11.0",
+      "version": "1.10.2",
       "dependencies": {
         "assert-plus": {
           "version": "1.0.0"
@@ -4123,10 +4105,6 @@
           "version": "1.0.6",
           "dev": true
         },
-        "debug": {
-          "version": "2.6.1",
-          "dev": true
-        },
         "destroy": {
           "version": "1.0.4",
           "dev": true
@@ -4135,24 +4113,16 @@
           "version": "1.0.3",
           "dev": true
         },
-        "etag": {
-          "version": "1.8.0",
-          "dev": true
-        },
         "express": {
-          "version": "4.15.0",
+          "version": "4.14.1",
           "dev": true
         },
         "filesize": {
-          "version": "3.5.5",
+          "version": "3.5.4",
           "dev": true
         },
         "finalhandler": {
-          "version": "1.0.0",
-          "dev": true
-        },
-        "fresh": {
-          "version": "0.5.0",
+          "version": "0.5.1",
           "dev": true
         },
         "ipaddr.js": {
@@ -4180,7 +4150,7 @@
           "dev": true
         },
         "qs": {
-          "version": "6.3.1",
+          "version": "6.2.0",
           "dev": true
         },
         "range-parser": {
@@ -4188,11 +4158,11 @@
           "dev": true
         },
         "send": {
-          "version": "0.15.0",
+          "version": "0.14.2",
           "dev": true
         },
         "serve-static": {
-          "version": "1.12.0",
+          "version": "1.11.2",
           "dev": true
         },
         "supports-color": {
@@ -4268,7 +4238,7 @@
           "dev": true
         },
         "filesize": {
-          "version": "3.5.5",
+          "version": "3.5.4",
           "dev": true
         },
         "isarray": {
@@ -4365,7 +4335,7 @@
       "version": "0.1.9"
     },
     "whatwg-fetch": {
-      "version": "2.0.3"
+      "version": "2.0.2"
     },
     "whatwg-url": {
       "version": "3.1.0",
