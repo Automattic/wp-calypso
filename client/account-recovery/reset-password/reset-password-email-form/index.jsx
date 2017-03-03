@@ -11,8 +11,7 @@ import Card from 'components/card';
 
 const ResetPasswordEmailSent = ( props ) => {
 	const {
-		// TODO: uncomment it once the real data got wired
-		// email,
+		email,
 		translate,
 	} = props;
 
@@ -28,9 +27,7 @@ const ResetPasswordEmailSent = ( props ) => {
 					'Click on it to reset your password and recover access to your account.',
 					{
 						components: { strong: <strong /> },
-						// TODO: it will become args: { email } when the real data got wired in the up-coming PR.
-						// args: { email }
-						args: { email: 'test@example.com' }
+						args: { email }
 					}
 				) }
 			</p>
@@ -41,6 +38,10 @@ const ResetPasswordEmailSent = ( props ) => {
 			</Card>
 		</div>
 	);
+};
+
+ResetPasswordEmailSent.defaultProps = {
+	email: 'test@example.com', // TODO: Remove this default prop once this component is connected
 };
 
 export default localize( ResetPasswordEmailSent );
