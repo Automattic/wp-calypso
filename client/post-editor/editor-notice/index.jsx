@@ -202,7 +202,7 @@ export class EditorNotice extends Component {
 				{ text && (
 					<Notice
 						{ ...{ status, text, onDismissClick } }
-						showDismiss={ 'is-success' !== status }>
+						showDismiss={ true }>
 						{ link && (
 							<NoticeAction href={ link } external>
 								{ this.getText( action ) }
