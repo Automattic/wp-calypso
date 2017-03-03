@@ -47,7 +47,7 @@ export default React.createClass( {
 				>
 					<Gridicon icon={ this.props.icon } size={ 24 } />
 					<span className="menu-link-text">{ this.props.label }</span>
-					{ isExternalLink ? <span className="noticon noticon-external" /> : null }
+					{ isExternalLink ? <Gridicon icon="external" size={ 24 } /> : null }
 				</a>
 				{ this.props.children }
 			</li>

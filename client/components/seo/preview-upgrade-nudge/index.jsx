@@ -95,7 +95,7 @@ const SeoPreviewNudge = ( { translate, domain, plan = {}, businessPlan = {} } ) 
 			</div>
 			<FeatureComparison className="preview-upgrade-nudge__feature-comparison">
 				<PlanCompareCard
-					title={ plan.product_name_short }
+					title={ plan.product_name_short || '' }
 					line={ planPrice }
 					buttonName={ translate( 'Your Plan' ) }
 					currentPlan={ true } >
@@ -111,7 +111,7 @@ const SeoPreviewNudge = ( { translate, domain, plan = {}, businessPlan = {} } ) 
 					) ) }
 				</PlanCompareCard>
 				<PlanCompareCard
-					title={ businessPlan.product_name_short }
+					title={ businessPlan.product_name_short || '' }
 					line={ translate( '%(price)s per month, billed yearly', { args: { price: businessPlanPrice } } ) }
 					buttonName={ translate( 'Upgrade' ) }
 					onClick={ () => {

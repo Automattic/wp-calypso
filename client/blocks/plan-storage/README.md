@@ -17,17 +17,17 @@ will query media storage limits for you.
 #### Props
 
 * `siteId`: A site ID (required)
-* `onClick`: An on click handler that is fired when the plan button is clicked.
+* `onClick`: An on click handler that is fired when the plan bar is clicked.
 * `className`: A string that adds additional class names to this component.
 
 
-You can also use PlanStorageButton directly if you need more control over when
+You can also use PlanStorageBar directly if you need more control over when
 media storage limits are fetched.
 
 #### Usage:
 
 ```javascript
-import PlanStorageButton from 'my-sites/plan-storage/button';
+import PlanStorageButton from 'blocks/plan-storage/bar';
 import QueryMediaStorage from 'components/data/query-media-storage';
 import { getMediaStorage } from 'state/sites/media-storage/selectors';
 
@@ -36,7 +36,7 @@ render() {
 	return (
 		<div>
 			<QueryMediaStorage siteId={ this.props.siteId } />
-			<PlanStorageButton
+			<PlanStorageBar
 				sitePlanName={ planName }
 				mediaStorage={ this.props.mediaStorage }
 				onClick={ this.onClickHandler }
@@ -55,8 +55,8 @@ export default connect( ( state, ownProps ) => {
 #### Props
 
 * `sitePlanName`: A plan name ( Free or Premium ) (required)
-* `mediaStorage`: Media Storage limits for a given site. If this is not provided, the button will not render.
-* `onClick`: An on click handler that is fired when the plan storage button is clicked.
+* `mediaStorage`: Media Storage limits for a given site. If this is not provided, the bar will not render.
+* `onClick`: An on click handler that is fired when the plan storage bar is clicked.
 * `className`: A string that adds additional class names to this component.
 
 

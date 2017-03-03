@@ -14,8 +14,11 @@ import Gridicon from 'gridicons';
 /**
  * Internal Dependencies
  */
+import ReaderTagsSubscriptionStore from 'lib/reader-tags/subscriptions';
+import ReaderListsSubscriptionsStore from 'lib/reader-lists/subscriptions';
 import ReaderListsStore from 'lib/reader-lists/lists';
 import Sidebar from 'layout/sidebar';
+import SidebarActions from 'lib/reader-sidebar/actions';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
 import SidebarMenu from 'layout/sidebar/menu';
@@ -27,10 +30,9 @@ import ReaderSidebarTeams from './reader-sidebar-teams';
 import ReaderSidebarHelper from './helper';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
 import { getSubscribedLists } from 'state/reader/lists/selectors';
-import { getReaderTeams, getReaderFollowedTags } from 'state/selectors';
+import { getReaderTeams } from 'state/selectors';
 import QueryReaderLists from 'components/data/query-reader-lists';
 import QueryReaderTeams from 'components/data/query-reader-teams';
-import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
 import observe from 'lib/mixins/data-observe';
 import config from 'config';
 import userSettings from 'lib/user-settings';
@@ -46,13 +48,43 @@ export const ReaderSidebar = React.createClass( {
 		observe( 'userSettings' ),
 	],
 
-	getInitialState() {
-		return {};
-	},
-
 	componentDidMount() {
+		ReaderTagsSubscriptionStore.on( 'change', this.updateState );
+		ReaderTagsSubscriptionStore.on( 'add', this.highlightNewTag );
+		ReaderListsStore.on( 'change', this.updateState );
+		ReaderListsSubscriptionsStore.on( 'change', this.updateState );
+		ReaderListsSubscriptionsStore.on( 'create', this.highlightNewList );
+
 		// If we're browsing a tag or list, open the sidebar menu
 		this.openExpandableMenuForCurrentTagOrList();
+	},
+
+	componentWillUnmount() {
+		ReaderTagsSubscriptionStore.off( 'change', this.updateState );
+		ReaderTagsSubscriptionStore.off( 'add', this.highlightNewTag );
+		ReaderListsStore.off( 'change', this.updateState );
+		ReaderListsSubscriptionsStore.off( 'change', this.updateState );
+		ReaderListsSubscriptionsStore.off( 'create', this.highlightNewList );
+	},
+
+	getInitialState() {
+		return this.getStateFromStores();
+	},
+
+	getStateFromStores() {
+		const tags = ReaderTagsSubscriptionStore.get();
+
+		if ( ! ( tags ) ) {
+			SidebarActions.fetch();
+		}
+
+		return {
+			tags,
+		};
+	},
+
+	updateState() {
+		this.setState( this.getStateFromStores() );
 	},
 
 	handleClick( event ) {
@@ -155,7 +187,6 @@ export const ReaderSidebar = React.createClass( {
 
 				<QueryReaderLists />
 				<QueryReaderTeams />
-				<QueryReaderFollowedTags />
 				{ this.props.subscribedLists && this.props.subscribedLists.length
 				? <ReaderSidebarLists
 						lists={ this.props.subscribedLists }
@@ -168,7 +199,7 @@ export const ReaderSidebar = React.createClass( {
 				: null
 				}
 				<ReaderSidebarTags
-					tags={ this.props.followedTags }
+					tags={ this.state.tags }
 					path={ this.props.path }
 					isOpen={ this.props.isTagsOpen }
 					onClick={ this.props.toggleTagsVisibility }
@@ -225,7 +256,6 @@ export default connect(
 			isListsOpen: state.ui.reader.sidebar.isListsOpen,
 			isTagsOpen: state.ui.reader.sidebar.isTagsOpen,
 			subscribedLists: getSubscribedLists( state ),
-			followedTags: getReaderFollowedTags( state ),
 			shouldRenderAppPromo: shouldRenderAppPromo(),
 			teams: getReaderTeams( state ),
 		};

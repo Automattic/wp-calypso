@@ -67,7 +67,7 @@ class JetpackModuleToggle extends Component {
 					{ this.props.label }
 					{
 						this.props.description && (
-							<FormSettingExplanation isIndented>
+							<FormSettingExplanation>
 								{ this.props.description }
 							</FormSettingExplanation>
 						)

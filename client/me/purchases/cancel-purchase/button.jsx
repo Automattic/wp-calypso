@@ -3,6 +3,7 @@
  */
 import page from 'page';
 import React from 'react';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -16,6 +17,7 @@ import { connect } from 'react-redux';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import { getName, getSubscriptionEndDate, isOneTimePurchase, isRefundable, isSubscription } from 'lib/purchases';
+import { enrichedSurveyData } from '../utils';
 import { isDomainRegistration, isTheme, isGoogleApps, isJetpackPlan } from 'lib/products-values';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
@@ -222,22 +224,25 @@ const CancelPurchaseButton = React.createClass( {
 		} );
 
 		if ( config.isEnabled( 'upgrades/removal-survey' ) ) {
-			const { purchase } = this.props,
-				surveyData = {
-					'why-cancel': {
-						response: this.state.survey.questionOneRadio,
-						text: this.state.survey.questionOneText
-					},
-					'next-adventure': {
-						response: this.state.survey.questionTwoRadio,
-						text: this.state.survey.questionTwoText
-					},
-					'what-better': { text: this.state.survey.questionThreeText },
-					purchase: purchase.productSlug,
-					type: 'refund'
-				};
+			const { purchase, selectedSite } = this.props;
+			const surveyData = {
+				'why-cancel': {
+					response: this.state.survey.questionOneRadio,
+					text: this.state.survey.questionOneText
+				},
+				'next-adventure': {
+					response: this.state.survey.questionTwoRadio,
+					text: this.state.survey.questionTwoText
+				},
+				'what-better': { text: this.state.survey.questionThreeText },
+				type: 'refund'
+			};
 
-			submitSurvey( 'calypso-remove-purchase', this.props.selectedSite.ID, surveyData );
+			submitSurvey(
+				'calypso-remove-purchase',
+				this.props.selectedSite.ID,
+				enrichedSurveyData( surveyData, moment(), selectedSite, purchase )
+			);
 		}
 
 		cancelAndRefundPurchase( this.props.purchase.id, { product_id: this.props.purchase.productId }, this.handleSubmit );

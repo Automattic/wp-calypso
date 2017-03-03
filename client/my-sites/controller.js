@@ -30,7 +30,22 @@ import utils from 'lib/site/utils';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import { domainManagementList, domainManagementEdit, domainManagementDns } from 'my-sites/upgrades/paths';
+import {
+	domainManagementAddGoogleApps,
+	domainManagementContactsPrivacy,
+	domainManagementDns,
+	domainManagementEdit,
+	domainManagementEditContactInfo,
+	domainManagementEmail,
+	domainManagementEmailForwarding,
+	domainManagementList,
+	domainManagementNameServers,
+	domainManagementPrivacyProtection,
+	domainManagementRedirectSettings,
+	domainManagementTransfer,
+	domainManagementTransferOut,
+	domainManagementTransferToAnotherUser
+} from 'my-sites/upgrades/paths';
 import SitesComponent from 'my-sites/sites';
 
 /**
@@ -113,34 +128,46 @@ function renderNoVisibleSites( context ) {
 }
 
 function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
-	const EmptyContentComponent = require( 'components/empty-content' );
+	const FeatureUnavailable = require( 'components/empty-content/feature-unavailable' );
 	const { store: reduxStore } = reactContext;
 
-	removeSidebar( reactContext );
+	renderWithReduxStore( (
+			<FeatureUnavailable domainName={ selectedSite.slug } siteId={ selectedSite.ID } />
+		),
+		document.getElementById( 'primary' ),
+		reduxStore
+	);
 
 	renderWithReduxStore(
-		React.createElement( EmptyContentComponent, {
-			title: i18n.translate( 'Add a site to start using this feature.' ),
-			line: i18n.translate( 'Your domain is only set up with a temporary page. Start a site now to unlock everything WordPress.com can offer.' ),
-			action: i18n.translate( 'Create Site' ),
-			actionURL: `/start/site-selected/?siteSlug=${ encodeURIComponent( selectedSite.slug ) }&siteId=${ encodeURIComponent( selectedSite.ID ) }`,
-			secondaryAction: i18n.translate( 'Manage Domain' ),
-			secondaryActionURL: domainManagementList( selectedSite.slug )
-		} ),
-		document.getElementById( 'primary' ),
+		createNavigation( reactContext ),
+		document.getElementById( 'secondary' ),
 		reduxStore
 	);
 }
 
-function isPathAllowedForDomainOnlySite( pathname, domainName ) {
-	const urlWhiteListForDomainOnlySite = [
-		domainManagementList( domainName ),
-		domainManagementEdit( domainName ),
-		domainManagementDns( domainName ),
-		`/checkout/${ domainName }`,
+function isPathAllowedForDomainOnlySite( path, domainName ) {
+	const domainManagementPaths = [
+		domainManagementAddGoogleApps,
+		domainManagementContactsPrivacy,
+		domainManagementDns,
+		domainManagementEdit,
+		domainManagementEditContactInfo,
+		domainManagementEmail,
+		domainManagementEmailForwarding,
+		domainManagementList,
+		domainManagementNameServers,
+		domainManagementPrivacyProtection,
+		domainManagementRedirectSettings,
+		domainManagementTransfer,
+		domainManagementTransferOut,
+		domainManagementTransferToAnotherUser
+	].map( pathFactory => pathFactory( domainName, domainName ) );
+
+	const otherPaths = [
+		`/checkout/${ domainName }`
 	];
 
-	return urlWhiteListForDomainOnlySite.indexOf( pathname ) > -1;
+	return [ ...domainManagementPaths, ...otherPaths ].indexOf( path ) > -1;
 }
 
 function onSelectedSiteAvailable( context ) {
