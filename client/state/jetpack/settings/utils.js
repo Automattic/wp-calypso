@@ -16,6 +16,9 @@ export const normalizeSettings = ( settings ) => {
 			case 'wp_mobile_featured_images':
 				memo[ key ] = settings[ key ] === 'enabled';
 				break;
+			case 'carousel_background_color':
+				memo[ key ] = settings [ key ] === '' ? 'black' : settings[ key ];
+				break;
 			default:
 				memo[ key ] = settings[ key ];
 		}
@@ -98,7 +101,11 @@ export const filterSettingsByActiveModules = ( settings ) => {
 		],
 		comments: [
 			'highlander_comment_form_prompt',
-			'jetpack_comment_form_color_scheme',
+			'jetpack_comment_form_color_scheme'
+		],
+		carousel: [
+			'carousel_background_color',
+			'carousel_display_exif'
 		]
 	};
 	let filteredSettings = { ...settings };

@@ -50,7 +50,7 @@ const slug = 'chicken';
 
 describe( 'unfollow tag request', () => {
 	describe( '#requestUnfollow', () => {
-		it( 'should dispatch HTTP request to tag endpoint', () => {
+		it( 'should dispatch HTTP request to unfollow tag endpoint', () => {
 			const action = requestUnfollowAction( slug );
 			const dispatch = sinon.spy();
 			const next = sinon.spy();
@@ -79,7 +79,7 @@ describe( 'unfollow tag request', () => {
 	} );
 
 	describe( '#receiveUnfollowSuccess', () => {
-		it( 'should dispatch the tag', () => {
+		it( 'should dispatch the id of the unfollowed tag', () => {
 			const action = requestUnfollowAction( slug );
 			const dispatch = sinon.spy();
 			const next = sinon.spy();
@@ -94,7 +94,7 @@ describe( 'unfollow tag request', () => {
 			);
 		} );
 
-		it( 'if api reports error then should pass through an error', () => {
+		it( 'if api reports error then should create an error notice', () => {
 			const action = requestUnfollowAction( slug );
 			const dispatch = sinon.spy();
 			const next = sinon.spy();

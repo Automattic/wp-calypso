@@ -58,6 +58,10 @@ class StatsModule extends Component {
 		if ( ! nextProps.requesting && this.props.requesting ) {
 			this.setState( { loaded: true } );
 		}
+
+		if ( nextProps.query !== this.props.query && this.state.loaded ) {
+			this.setState( { loaded: false } );
+		}
 	}
 
 	getModuleLabel() {

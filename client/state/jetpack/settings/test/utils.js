@@ -59,6 +59,16 @@ describe( 'utils', () => {
 				wp_mobile_featured_images: false
 			} );
 		} );
+
+		it( 'should convert carousel_background_color to "black" if it is an empty string', () => {
+			const settings = {
+				carousel_background_color: ''
+			};
+
+			expect( normalizeSettings( settings ) ).to.eql( {
+				carousel_background_color: 'black'
+			} );
+		} );
 	} );
 
 	describe( 'sanitizeSettings()', () => {
@@ -165,6 +175,9 @@ describe( 'utils', () => {
 				comments: true,
 				highlander_comment_form_prompt: 'Leave a Reply',
 				jetpack_comment_form_color_scheme: 'light',
+				carousel: true,
+				carousel_background_color: 'black',
+				carousel_display_exif: true
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
@@ -198,6 +211,8 @@ describe( 'utils', () => {
 				jetpack_portfolio: false,
 				highlander_comment_form_prompt: 'Leave a Reply',
 				jetpack_comment_form_color_scheme: 'light',
+				carousel_background_color: 'black',
+				carousel_display_exif: true
 			} );
 		} );
 
@@ -241,6 +256,9 @@ describe( 'utils', () => {
 				comments: false,
 				highlander_comment_form_prompt: 'Leave a Reply',
 				jetpack_comment_form_color_scheme: 'light',
+				carousel: false,
+				carousel_background_color: 'black',
+				carousel_display_exif: true
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
@@ -280,6 +298,8 @@ describe( 'utils', () => {
 				jetpack_portfolio: false,
 				highlander_comment_form_prompt: 'Leave a Reply',
 				jetpack_comment_form_color_scheme: 'light',
+				carousel_background_color: 'black',
+				carousel_display_exif: true
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {

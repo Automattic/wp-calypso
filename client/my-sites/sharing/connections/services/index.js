@@ -1,3 +1,1 @@
-module.exports = {
-	eventbrite: require( './eventbrite' )
-};
+export eventbrite from './eventbrite';

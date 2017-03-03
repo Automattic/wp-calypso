@@ -15,6 +15,7 @@ import HeaderCake from 'components/header-cake';
 import Card from 'components/card';
 import FilePicker from 'components/file-picker';
 import DropZone from 'components/drop-zone';
+import EmptyContent from 'components/empty-content';
 import ProgressBar from 'components/progress-bar';
 import Button from 'components/button';
 import ThanksModal from 'my-sites/themes/thanks-modal';
@@ -26,7 +27,11 @@ import notices from 'notices';
 import debugFactory from 'debug';
 import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { isJetpackSite, hasJetpackSiteJetpackThemesExtendedFeatures } from 'state/sites/selectors';
+import {
+	isJetpackSite,
+	isJetpackSiteMultiSite,
+	hasJetpackSiteJetpackThemesExtendedFeatures
+} from 'state/sites/selectors';
 import {
 	isUploadInProgress,
 	isUploadComplete,
@@ -263,6 +268,17 @@ class Upload extends React.Component {
 		);
 	}
 
+	renderNotAvailable() {
+		return (
+			<EmptyContent
+				title={ this.props.translate( 'Not available for multi site' ) }
+				line={ this.props.translate( 'Use the WP Admin interface instead' ) }
+				action={ this.props.translate( 'Open WP Admin' ) }
+				actionURL={ this.props.selectedSite.options.admin_url }
+				illustration={ '/calypso/images/drake/drake-jetpack.svg' }
+			/>
+			);
+	}
 	render() {
 		const {
 			translate,
@@ -273,10 +289,15 @@ class Upload extends React.Component {
 			upgradeJetpack,
 			backPath,
 			isBusiness,
-			isJetpack
+			isJetpack,
+			isMultisite
 		} = this.props;
 
 		const { showEligibility } = this.state;
+
+		if ( isMultisite ) {
+			return this.renderNotAvailable();
+		}
 
 		return (
 			<Main>
@@ -340,6 +361,7 @@ export default connect(
 			complete: isUploadComplete( state, siteId ),
 			failed: hasUploadFailed( state, siteId ),
 			themeId,
+			isMultisite: isJetpackSiteMultiSite( state, siteId ),
 			uploadedTheme: getTheme( state, siteId, themeId ),
 			error: getUploadError( state, siteId ),
 			progressTotal: getUploadProgressTotal( state, siteId ),

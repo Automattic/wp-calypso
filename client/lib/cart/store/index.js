@@ -134,6 +134,9 @@ CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 } );
 
 sites.on( 'change', setSelectedSite );
-setSelectedSite();
+
+if ( sites.fetched ) {
+	setSelectedSite();
+}
 
 module.exports = CartStore;
