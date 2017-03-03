@@ -76,7 +76,7 @@ export function isPostNotFound( post ) {
 	return post.statusCode === 404;
 }
 
-export function showSelectedPost( { store, replaceHistory, selectedGap, postKey, index } ) {
+export function showSelectedPost( { store, replaceHistory, selectedGap, postKey, index, comments } ) {
 	if ( ! postKey ) {
 		return;
 	}
@@ -119,6 +119,7 @@ export function showSelectedPost( { store, replaceHistory, selectedGap, postKey,
 	showFullPost( {
 		post: mappedPost,
 		replaceHistory,
+		comments
 	} );
 }
 

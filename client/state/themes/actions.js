@@ -69,8 +69,10 @@ import {
 import {
 	getSiteTitle,
 	hasJetpackSiteJetpackThemesExtendedFeatures,
-	isJetpackSite
+	isJetpackSite,
+	isJetpackSiteMultiSite
 } from 'state/sites/selectors';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
 import config from 'config';
@@ -167,8 +169,11 @@ export function requestThemes( siteId, query = {} ) {
 				// Also if Jetpack plugin has Themes Extended Features,
 				// we filter out -wpcom suffixed themes because we will show them in
 				// second list that is specific to WordPress.com themes.
+				// For multi-site installation we do not provide themes upload yet so
+				// we can only show one list and we should not filter wpcom themes.
 				const keepWpcom = ! config.isEnabled( 'manage/themes/upload' ) ||
-					! hasJetpackSiteJetpackThemesExtendedFeatures( getState(), siteId );
+					! hasJetpackSiteJetpackThemesExtendedFeatures( getState(), siteId ) ||
+					isJetpackSiteMultiSite( getState(), siteId );
 
 				filteredThemes = filter(
 					themes,
@@ -345,9 +350,10 @@ export function requestActiveTheme( siteId ) {
 export function activate( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch, getState ) => {
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
-			// Suffix themeId here with `-wpcom`. If the suffixed theme is already installed,
-			// installation will silently fail, and it will just be activated.
-			return dispatch( installAndActivateTheme( themeId + '-wpcom', siteId, source, purchased ) );
+			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
+			// If theme is already installed, installation will silently fail,
+			// and it will just be activated.
+			return dispatch( installAndActivateTheme( installId, siteId, source, purchased ) );
 		}
 
 		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
@@ -441,16 +447,6 @@ export function installTheme( themeId, siteId ) {
 			themeId
 		} );
 
-		if ( isThemeFromWpcom( themeId ) ) {
-			const parentThemeId = getWpcomParentThemeId(
-				getState(),
-				themeId.replace( '-wpcom', '' )
-			);
-			if ( parentThemeId ) {
-				dispatch( installTheme( parentThemeId + '-wpcom', siteId ) );
-			}
-		}
-
 		return wpcom.undocumented().installThemeOnJetpack( siteId, themeId )
 			.then( ( theme ) => {
 				dispatch( receiveTheme( theme, siteId ) );
@@ -459,6 +455,17 @@ export function installTheme( themeId, siteId ) {
 					siteId,
 					themeId
 				} );
+			} )
+			.then( () => {
+				if ( isThemeFromWpcom( themeId ) ) {
+					const parentThemeId = getWpcomParentThemeId(
+						getState(),
+						themeId.replace( '-wpcom', '' )
+					);
+					if ( parentThemeId ) {
+						dispatch( installTheme( parentThemeId + '-wpcom', siteId ) );
+					}
+				}
 			} )
 			.catch( ( error ) => {
 				dispatch( {
@@ -496,9 +503,10 @@ export function clearActivated( siteId ) {
 export function tryAndCustomize( themeId, siteId ) {
 	return ( dispatch, getState ) => {
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
-			// Suffix themeId here with `-wpcom`. If the suffixed theme is already installed,
-			// installation will silently fail, and we just switch to the customizer.
-			return dispatch( installAndTryAndCustomizeTheme( themeId + '-wpcom', siteId ) );
+			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
+			// If theme is already installed, installation will silently fail,
+			// and we just switch to the customizer.
+			return dispatch( installAndTryAndCustomizeTheme( installId, siteId ) );
 		}
 
 		return dispatch( tryAndCustomizeTheme( themeId, siteId ) );
@@ -817,4 +825,12 @@ export function hideThemePreview() {
 		type: THEME_PREVIEW_STATE,
 		themeId: null
 	};
+}
+
+function suffixThemeIdForInstall( state, siteId, themeId ) {
+	// AT sites do not use the -wpcom suffix
+	if ( isSiteAutomatedTransfer( state, siteId ) ) {
+		return themeId;
+	}
+	return themeId + '-wpcom';
 }

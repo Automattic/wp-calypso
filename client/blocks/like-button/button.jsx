@@ -58,7 +58,10 @@ const LikeButton = React.createClass( {
 			'has-count': showLikeCount,
 			'has-label': this.props.showLabel
 		};
-		let likeLabel = this.translate( 'Like', { comment: 'Label for a button to "like" a post.' } );
+		let likeLabel = this.translate( 'Like', {
+			context: 'verb: imperative',
+			comment: 'Label for a button to "like" a post.'
+		} );
 
 		if ( this.props.liked ) {
 			containerClasses[ 'is-liked' ] = true;
@@ -74,7 +77,8 @@ const LikeButton = React.createClass( {
 		if ( showLikeCount ) {
 			likeLabel = this.translate( 'Like', 'Likes', {
 				count: likeCount,
-				comment: 'Displayed when a person "likes" a post.'
+				context: 'noun',
+				comment: 'Number of likes.'
 			} );
 		}
 

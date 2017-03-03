@@ -86,14 +86,21 @@ const CheckoutThankYou = React.createClass( {
 	componentDidMount() {
 		this.redirectIfThemePurchased();
 
-		if ( this.props.receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
-			this.props.refreshSitePlans( this.props.selectedSite );
-		} else if ( shouldFetchSitePlans( this.props.sitePlans, this.props.selectedSite ) ) {
-			this.props.fetchSitePlans( this.props.selectedSite );
+		const {
+			receipt,
+			receiptId,
+			selectedSite,
+			sitePlans
+		} = this.props;
+
+		if ( selectedSite && receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
+			this.props.refreshSitePlans( selectedSite );
+		} else if ( shouldFetchSitePlans( sitePlans, selectedSite ) ) {
+			this.props.fetchSitePlans( selectedSite );
 		}
 
-		if ( this.props.receiptId && ! this.props.receipt.hasLoadedFromServer && ! this.props.receipt.isRequesting ) {
-			this.props.fetchReceipt( this.props.receiptId );
+		if ( receiptId && ! receipt.hasLoadedFromServer && ! receipt.isRequesting ) {
+			this.props.fetchReceipt( receiptId );
 		}
 
 		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
@@ -109,7 +116,7 @@ const CheckoutThankYou = React.createClass( {
 			nextProps.receipt.hasLoadedFromServer &&
 			this.hasPlanOrDomainProduct( nextProps )
 		) {
-			this.props.refreshSitePlans( this.props.selectedSite.ID );
+			this.props.refreshSitePlans( this.props.selectedSite );
 		}
 	},
 
@@ -118,7 +125,7 @@ const CheckoutThankYou = React.createClass( {
 	},
 
 	renderConfirmationNotice: function() {
-		if ( ! this.props.user || ! this.props.user.email || this.props.email_verified ) {
+		if ( ! this.props.user || ! this.props.user.email || this.props.user.email_verified ) {
 			return null;
 		}
 
@@ -142,7 +149,7 @@ const CheckoutThankYou = React.createClass( {
 			return true;
 		}
 
-		return this.props.sitePlans.hasLoadedFromServer && this.props.receipt.hasLoadedFromServer;
+		return ( ! this.props.selectedSite || this.props.sitePlans.hasLoadedFromServer ) && this.props.receipt.hasLoadedFromServer;
 	},
 
 	isGenericReceipt() {
@@ -165,6 +172,10 @@ const CheckoutThankYou = React.createClass( {
 			const purchases = getPurchases( this.props );
 			const site = this.props.selectedSite.slug;
 
+			if ( ! site && getFailedPurchases( this.props ).length > 0 ) {
+				return page( '/start/domain-first' );
+			}
+
 			if ( purchases.some( isPlan ) ) {
 				return page( `/plans/my-plan/${ site }` );
 			} else if (
@@ -184,19 +195,22 @@ const CheckoutThankYou = React.createClass( {
 
 	render() {
 		let purchases = null,
+			failedPurchases = null,
 			wasJetpackPlanPurchased = false,
 			wasDotcomPlanPurchased = false;
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
+			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasDotcomPlanPurchased = purchases.some( isDotComPlan );
 		}
 
-		const userCreatedMoment = moment( this.props.userDate );
-		const isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) );
+		const userCreatedMoment = moment( this.props.userDate ),
+			isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) ),
+			goBackText = this.props.selectedSite ? this.translate( 'Back to my site' ) : this.translate( 'Register Domain' );
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
-		if ( ! purchases && ! this.isGenericReceipt() ) {
+		if ( ! purchases && ! failedPurchases && ! this.isGenericReceipt() ) {
 			// disabled because we use global loader icon
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
@@ -221,7 +235,7 @@ const CheckoutThankYou = React.createClass( {
 				<HeaderCake
 					onClick={ this.goBack }
 					isCompact
-					backText={ this.translate( 'Back to my site' ) } />
+					backText={ goBackText } />
 
 				<Card className="checkout-thank-you__content">
 					{ this.productRelatedMessages() }
@@ -280,7 +294,9 @@ const CheckoutThankYou = React.createClass( {
 			failedPurchases = getFailedPurchases( this.props ),
 			hasFailedPurchases = failedPurchases.length > 0,
 			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain(),
-			registrarSupportUrl = ( ! ComponentClass || this.isGenericReceipt() || hasFailedPurchases ) ? null : primaryPurchase.registrarSupportUrl;
+			registrarSupportUrl = ( ! ComponentClass || this.isGenericReceipt() || hasFailedPurchases )
+				? null
+				: primaryPurchase.registrarSupportUrl;
 
 		if ( ! this.isDataLoaded() ) {
 			return (

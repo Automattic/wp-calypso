@@ -1,0 +1,37 @@
+
+.plan-storage__bar {
+	line-height: 12px;
+	display: inline-block;
+	width: 100%;
+}
+
+.plan-storage__storage-label,
+.plan-storage__storage-link {
+	font-size: 11px;
+	display: inline-block;
+	height: 24px;
+	line-height: 24px;
+}
+
+.plan-storage__storage-label {
+	color: $gray-dark;
+	font-weight: 500;
+	margin-right: 10px;
+}
+
+.plan-storage__storage-link {
+	float: right;
+	text-decoration: none;
+}
+
+.plan-storage__bar .progress-bar__progress {
+	background-color: $alert-green;
+}
+
+.plan-storage__bar.is-warn .progress-bar__progress {
+	background-color: $alert-yellow;
+}
+
+.plan-storage__bar.is-alert .progress-bar__progress {
+	background-color: $alert-red;
+}

@@ -8,9 +8,14 @@ import { expect } from 'chai';
  */
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
+import { EDITOR_PASTE_EVENT } from 'state/action-types';
+import {
+	SOURCE_GOOGLE_DOCS,
+	SOURCE_UNKNOWN,
+} from 'components/tinymce/plugins/wpcom-track-paste/sources';
 
 describe( 'selectors', () => {
-	let hasUserRegisteredBefore;
+	let hasUserRegisteredBefore, hasUserPastedFromGoogleDocs;
 
 	useFakeDom();
 
@@ -21,6 +26,7 @@ describe( 'selectors', () => {
 
 		const contexts = require( '../contexts' );
 		hasUserRegisteredBefore = contexts.hasUserRegisteredBefore;
+		hasUserPastedFromGoogleDocs = contexts.hasUserPastedFromGoogleDocs;
 	} );
 
 	describe( '#hasUserRegisteredBefore', () => {
@@ -54,6 +60,53 @@ describe( 'selectors', () => {
 
 		it( 'should return false for users registered after the cut-off date', () => {
 			expect( hasUserRegisteredBefore( cutoff )( newUser ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#hasUserPastedContentFromGoogleDocs', () => {
+		it( 'should return false when no actions', () => {
+			const state = {
+				ui: {
+					actionLog: []
+				}
+			};
+			expect( hasUserPastedFromGoogleDocs( state ) ).to.be.false;
+		} );
+
+		it( 'should return false when last action is not the paste event', () => {
+			const state = {
+				ui: {
+					actionLog: [
+						{ type: EDITOR_PASTE_EVENT },
+						{ type: 'NO_PASTE_EVENT' }
+					]
+				}
+			};
+			expect( hasUserPastedFromGoogleDocs( state ) ).to.be.false;
+		} );
+
+		it( 'should return true when last action is the paste event & the source is Google Docs', () => {
+			const state = {
+				ui: {
+					actionLog: [
+						{ type: 'NO_PASTE_EVENT' },
+						{ type: EDITOR_PASTE_EVENT, source: SOURCE_GOOGLE_DOCS },
+					]
+				}
+			};
+			expect( hasUserPastedFromGoogleDocs( state ) ).to.be.true;
+		} );
+
+		it( 'should return false when last action is the paste event & the source is not Google Docs', () => {
+			const state = {
+				ui: {
+					actionLog: [
+						{ type: 'NO_PASTE_EVENT' },
+						{ type: EDITOR_PASTE_EVENT, source: SOURCE_UNKNOWN },
+					]
+				}
+			};
+			expect( hasUserPastedFromGoogleDocs( state ) ).to.be.false;
 		} );
 	} );
 } );

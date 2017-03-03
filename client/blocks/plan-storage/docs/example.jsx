@@ -8,8 +8,14 @@ import PureRenderMixin from 'react-pure-render/mixin';
  * Internal dependencies
  */
 import PlanStorage from '../index';
-import PlanStorageButton from '../button';
+import PlanStorageBar from '../bar';
 import sitesList from 'lib/sites-list';
+import {
+	PLAN_BUSINESS,
+	PLAN_PREMIUM,
+	PLAN_PERSONAL,
+	PLAN_FREE,
+} from 'lib/plans/constants';
 
 const sites = sitesList();
 
@@ -20,10 +26,6 @@ export default React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render() {
-		const plans = {
-			free: 'Free',
-			premium: 'Premium'
-		};
 		const mediaStorage = {
 			red: {
 				storage_used_bytes: 11362335981,
@@ -45,21 +47,37 @@ export default React.createClass( {
 				<div style={ { marginBottom: 16 } }>
 					<PlanStorage siteId={ siteId } />
 				</div>
+
 				<div style={ { marginBottom: 16 } }>
-					<PlanStorageButton
-						sitePlanName={ plans.free }
+					<PlanStorageBar
+						siteSlug={ primarySite.slug }
+						sitePlanSlug={ PLAN_FREE }
 						mediaStorage={ mediaStorage.green }
 					/>
 				</div>
-				<div style={ { marginBottom: 16 } }>
-					<PlanStorageButton
-						sitePlanName={ plans.free }
+				<div style={ { marginBottom: 16, maxWidth: '400px' } }>
+					<PlanStorageBar
+						siteSlug={ primarySite.slug }
+						sitePlanSlug={ PLAN_PERSONAL }
 						mediaStorage={ mediaStorage.yellow }
 					/>
 				</div>
+
+				<div style={ { marginBottom: 16, maxWidth: '300px' } }>
+					<PlanStorageBar
+						siteSlug={ primarySite.slug }
+						sitePlanSlug={ PLAN_PREMIUM }
+						mediaStorage={ mediaStorage.red }
+					/>
+				</div>
+
 				<div style={ { marginBottom: 16 } }>
-					<PlanStorageButton
-						sitePlanName={ plans.premium }
+					<span style={ { fontSize: 12, color: 'grey' } }>
+						Business plans have unlimited storage, so PlanStorage will not be rendered.
+					</span>
+					<PlanStorageBar
+						siteSlug={ primarySite.slug }
+						sitePlanSlug={ PLAN_BUSINESS }
 						mediaStorage={ mediaStorage.red }
 					/>
 				</div>

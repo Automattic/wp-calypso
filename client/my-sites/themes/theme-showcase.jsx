@@ -119,7 +119,7 @@ const ThemeShowcase = React.createClass( {
 	},
 
 	render() {
-		const { site, options, getScreenshotOption, search, filter, translate } = this.props;
+		const { site, options, getScreenshotOption, search, filter, translate, siteSlug, isMultisite } = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
 		const metas = [
@@ -141,7 +141,7 @@ const ThemeShowcase = React.createClass( {
 						tier={ tier }
 						select={ this.onTierSelect } />
 				</StickyPanel>
-				{ config.isEnabled( 'manage/themes/upload' ) && this.props.siteSlug &&
+				{ config.isEnabled( 'manage/themes/upload' ) && siteSlug && ! isMultisite &&
 					<Button className="themes__upload-button" compact icon
 						onClick={ this.onUploadClick }
 						href={ `/design/upload/${ this.props.siteSlug }` }

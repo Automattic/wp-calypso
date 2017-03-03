@@ -14,7 +14,6 @@ import wrapSettingsForm from './wrap-settings-form';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
-import RelatedContentPreview from 'my-sites/site-settings/related-content-preview';
 import LanguageSelector from 'components/forms/language-selector';
 import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
 import SectionHeader from 'components/section-header';
@@ -31,6 +30,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
 import JetpackSyncPanel from './jetpack-sync-panel';
 import SiteIconSetting from './site-icon-setting';
+import RelatedPosts from './related-posts';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
@@ -171,7 +171,7 @@ class SiteSettingsFormGeneral extends Component {
 				<FormSettingExplanation>
 					{ translate( 'Language this blog is primarily written in.' ) }&nbsp;
 					<a href={ config.isEnabled( 'me/account' ) ? '/me/account' : '/settings/account/' }>
-						{ translate( 'You can also modify the interface language in your profile.' ) }
+						{ translate( "You can also modify your interface's language in your profile." ) }
 					</a>
 				</FormSettingExplanation>
 			</FormFieldset>
@@ -297,62 +297,6 @@ class SiteSettingsFormGeneral extends Component {
 					</p>
 				</Card>
 			</div>
-		);
-	}
-
-	relatedPostsOptions() {
-		const { fields, handleToggle, isRequestingSettings, translate } = this.props;
-		if ( ! fields.jetpack_relatedposts_allowed ) {
-			return null;
-		}
-
-		return (
-			<FormFieldset>
-				<ul id="settings-reading-relatedposts">
-					<li>
-						<FormToggle
-							className="is-compact"
-							checked={ !! fields.jetpack_relatedposts_enabled }
-							disabled={ isRequestingSettings }
-							onChange={ handleToggle( 'jetpack_relatedposts_enabled' ) }
-						>
-							{ translate( 'Show related content after posts' ) }
-						</FormToggle>
-					</li>
-					<li>
-						<ul id="settings-reading-relatedposts-customize" className="site-settings__child-settings">
-							<li>
-								<FormToggle
-									className="is-compact"
-									checked={ !! fields.jetpack_relatedposts_show_headline }
-									disabled={ isRequestingSettings || ! fields.jetpack_relatedposts_enabled }
-									onChange={ handleToggle( 'jetpack_relatedposts_show_headline' ) }
-								>
-									{ translate(
-										'Show a "Related" header to more clearly separate the related section from posts'
-									) }
-								</FormToggle>
-							</li>
-							<li>
-								<FormToggle
-									className="is-compact"
-									checked={ !! fields.jetpack_relatedposts_show_thumbnails }
-									disabled={ isRequestingSettings || ! fields.jetpack_relatedposts_enabled }
-									onChange={ handleToggle( 'jetpack_relatedposts_show_thumbnails' ) }
-								>
-									{ translate(
-										'Use a large and visually striking layout'
-									) }
-								</FormToggle>
-							</li>
-						</ul>
-						<RelatedContentPreview
-							showHeadline={ fields.jetpack_relatedposts_show_headline }
-							showThumbnails={ fields.jetpack_relatedposts_show_thumbnails }
-						/>
-					</li>
-				</ul>
-			</FormFieldset>
 		);
 	}
 
@@ -717,7 +661,15 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	render() {
-		const { handleSubmitForm, isRequestingSettings, isSavingSettings, site, translate } = this.props;
+		const {
+			fields,
+			handleSubmitForm,
+			handleToggle,
+			isRequestingSettings,
+			isSavingSettings,
+			site,
+			translate
+		} = this.props;
 		if ( site.jetpack && ! site.hasMinimumJetpackVersion ) {
 			return this.jetpackDisconnectOption();
 		}
@@ -800,25 +752,14 @@ class SiteSettingsFormGeneral extends Component {
 						/> }
 					</div>
 				}
-				<SectionHeader label={ translate( 'Related Posts' ) }>
-					<Button
-						compact={ true }
-						onClick={ handleSubmitForm }
-						primary={ true }
 
-						type="submit"
-						disabled={ isRequestingSettings || isSavingSettings }>
-							{ isSavingSettings
-								? translate( 'Saving…' )
-								: translate( 'Save Settings' )
-							}
-					</Button>
-				</SectionHeader>
-				<Card>
-					<form>
-						{ this.relatedPostsOptions() }
-					</form>
-				</Card>
+				<RelatedPosts
+					onSubmitForm={ handleSubmitForm }
+					handleToggle={ handleToggle }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
 
 				{ this.props.site.jetpack
 					? <div>

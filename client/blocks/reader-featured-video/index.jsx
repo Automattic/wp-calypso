@@ -15,7 +15,7 @@ import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
 import QueryReaderThumbnail from 'components/data/query-reader-thumbnails';
 
-class FeaturedVideo extends React.Component {
+class ReaderFeaturedVideo extends React.Component {
 
 	static propTypes = {
 		thumbnailUrl: React.PropTypes.string,
@@ -86,10 +86,10 @@ class FeaturedVideo extends React.Component {
 
 		/* eslint-disable react/no-danger */
 		return (
-			<div>
+			<div className="reader-featured-video">
 				<QueryReaderThumbnail embedUrl={ this.props.videoEmbed.src } />
 				{ showEmbed &&
-					<div ref={ this.setVideoEmbedRef } className="reader-post-card__video"
+					<div ref={ this.setVideoEmbedRef } className="reader-featured-video__video"
 						dangerouslySetInnerHTML={ { __html: thumbnailUrl ? autoplayIframe : iframe } }
 					/>
 				}
@@ -103,4 +103,4 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	thumbnailUrl: getThumbnailForIframe( state, ownProps.videoEmbed.src ),
 } );
 
-export default connect( mapStateToProps )( localize( FeaturedVideo ) );
+export default connect( mapStateToProps )( localize( ReaderFeaturedVideo ) );

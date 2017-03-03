@@ -3,7 +3,7 @@
 // See https://wpcalypso.wordpress.com/devdocs/docs/coding-guidelines/css.md#media-queries
 // ==========================================================================
 
-$breakpoints: 480px, 660px, 960px, 1040px, 1280px; // Think very carefully before adding a new breakpoint
+$breakpoints: 480px, 660px, 960px, 1040px, 1280px, 1600px; // Think very carefully before adding a new breakpoint
 
 @mixin breakpoint( $sizes... ){
 	@each $size in $sizes {
