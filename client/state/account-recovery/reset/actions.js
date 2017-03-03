@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-
 import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
