@@ -134,7 +134,7 @@ mixedindentlint: node_modules/mixedindentlint
 
 # Ensure that default config values exist in _shared.json
 config-defaults-lint: $(CONFIG_FILES)
-	@$(NODE) server/config/validate-config-keys.js || exit
+	@$(NODE) bin/validate-config-keys.js || exit
 
 # keep track of the current CALYPSO_ENV so that it can be used as a
 # prerequisite for other rules
