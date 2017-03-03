@@ -18,8 +18,6 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { mergeHandlers } from 'state/data-layer/utils';
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import { errorNotice } from 'state/notices/actions';
-import followTagHandler from './mine/new';
-import unFollowTagHandler from './mine/delete';
 
 export function requestTags( store, action, next ) {
 	const path = action.payload && action.payload.slug
@@ -57,12 +55,10 @@ export function receiveTagsError( store, action, next, error ) {
 	}
 }
 
-const getFollowedTagsHandler = {
+const readTagsHandler = {
 	[ READER_TAGS_REQUEST ]: [ dispatchRequest( requestTags, receiveTagsSuccess, receiveTagsSuccess ) ],
 };
 
 export default mergeHandlers(
-	getFollowedTagsHandler,
-	followTagHandler,
-	unFollowTagHandler,
+	readTagsHandler,
 );
