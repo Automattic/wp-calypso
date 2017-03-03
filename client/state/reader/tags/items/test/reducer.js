@@ -17,7 +17,7 @@ const TAG1 = {
 	slug: 'chickens',
 	title: 'Chickens',
 	displayName: 'chickens',
-	url: 'https://public-api.wordpress.com/rest/v1.2/read/tags/chickens/posts',
+	url: '/tags/chickens',
 };
 
 const TAG2 = {
@@ -25,7 +25,7 @@ const TAG2 = {
 	slug: 'design',
 	title: 'Design',
 	displayName: 'design',
-	url: 'https://public-api.wordpress.com/rest/v1.2/read/tags/design/posts',
+	url: '/tags/design',
 };
 
 describe( 'reducer', () => {
@@ -52,23 +52,40 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should update tags that have changed', () => {
-			const prevState = { [ TAG1.id ]: TAG1, [ TAG2.id ]: TAG2 };
+			const prevState = keyById( [ TAG1, TAG2 ] );
 			const action = receiveTags( {
-				payload: [ { ...TAG1, title: 'NotChickens' }, TAG2 ],
+				payload: [ { ...TAG1, title: 'NotChickens' } ],
 			} );
 
 			const state = items( prevState, action );
 			expect( state ).to.eql( keyById( [ { ...TAG1, title: 'NotChickens' }, TAG2 ] ) );
 		} );
 
+		const unfollow = tag => ( { ...tag, isFollowing: false } );
+
 		it( 'should unfollow a tag if requested to do so', () => {
-			const prevState = { [ TAG1.id ]: TAG1, [ TAG2.id ]: TAG2 };
+			const prevState = keyById( [ TAG1, TAG2 ] );
 			const action = receiveUnfollowTag( { payload: TAG1.id } );
 			const state = items( prevState, action );
 
 			expect( state ).to.eql( keyById( [
-				{ ...TAG1, isFollowing: false },
+				unfollow( TAG1 ),
 				TAG2
+			] ) );
+		} );
+
+		it( 'should mark everything as unfollowed if requested to do so', () => {
+			const follow = tag => ( { ...tag, isFollowing: true } );
+			const prevState = keyById( [
+				follow( TAG1 ),
+				follow( TAG2 ),
+			] );
+			const action = receiveTags( { payload: [], resetFollowingData: true } );
+			const state = items( prevState, action );
+
+			expect( state ).to.eql( keyById( [
+				unfollow( TAG1 ),
+				unfollow( TAG2 ),
 			] ) );
 		} );
 	} );
