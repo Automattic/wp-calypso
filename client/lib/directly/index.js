@@ -13,6 +13,7 @@ import config from 'config';
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import { loadScript } from 'lib/load-script';
 
 const DIRECTLY_RTM_SCRIPT_URL = 'https://widgets.wp.com/directly/embed.js';
@@ -98,6 +99,7 @@ export function initialize() {
 	directlyPromise = new Promise( ( resolve, reject ) => {
 		configureGlobals();
 		insertDOM();
+		analytics.tracks.recordEvent( 'calypso_directly_rtm_widget_initialize' );
 
 		loadScript( DIRECTLY_RTM_SCRIPT_URL, function( error ) {
 			if ( error ) {
@@ -120,5 +122,6 @@ export function initialize() {
  * @returns {Promise} Promise that resolves after initialization completes
  */
 export function askQuestion( questionText, name, email ) {
+	analytics.tracks.recordEvent( 'calypso_directly_rtm_widget_ask_question' );
 	return execute( 'askQuestion', { questionText, name, email } );
 }
