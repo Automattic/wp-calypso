@@ -184,7 +184,7 @@ export default React.createClass( {
 						<MediaLibrary
 							{ ...this.props }
 							onFilterChange={ this.onFilterChange }
-							site={ site || false }
+							site={ site }
 							single={ false }
 							onEditItem={ this.openDetailsModalForASingleImage }
 							onViewDetails={ this.openDetailsModalForAllSelected }
