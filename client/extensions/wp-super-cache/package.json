@@ -6,7 +6,7 @@
 	"env_id": [ "development", "wpcalypso" ],
 	"section": {
 		"name": "wp-super-cache",
-		"paths": [ "/wp-super-cache" ],
+		"paths": [ "/extensions/wp-super-cache" ],
 		"module": "wp-super-cache",
 		"group": "sites",
 		"secondary": true
