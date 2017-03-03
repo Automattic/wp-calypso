@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { keyBy, omit, map } from 'lodash';
+import { keyBy, merge, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,34 +18,40 @@ import { createReducer, } from 'state/utils';
  *
  * the shape of a tag is { ID, URL, title, display_name  }.
  */
- // TODO: simplify considerably
 export const items = createReducer( {}, {
 	[ READER_TAGS_RECEIVE ]: ( state, action ) => {
 		const tags = action.payload;
+		const hasFollowingData = action.meta.hasFollowingData;
 
-		if ( tags.length === 1 ) {
-			return {
-				...state,
-				[ tags[ 0 ].ID ]: {
-					...state[ tags[ 0 ].ID ],
-					...tags[ 0 ],
-				}
-			};
+		if ( ! hasFollowingData ) {
+			return merge(
+				{},
+				keyBy( tags, 'id' ),
+				state,
+			);
 		}
 
-		return {
-			...keyBy( map( state, tag => ( {
-				...tag,
-				is_following: false,
-			} ) ), 'ID' ),
-			...keyBy( tags, 'ID' )
-		};
+		const allTagsUnfollowed = mapValues( state, tag => (
+			{ ...tag, isFollowing: false }
+		) );
+
+		return merge(
+			{},
+			allTagsUnfollowed,
+			keyBy( tags, 'id' )
+		);
 	},
 	[ READER_UNFOLLOW_TAG_RECEIVE ]: ( state, action ) => {
+		if ( action.error ) {
+			return state;
+		}
+
 		const removedTag = action.payload;
-		return action.error
-			? state
-			: omit( state, removedTag );
+		return merge(
+			{},
+			state,
+			{ [ removedTag ]: { isFollowing: false } },
+		);
 	}
 } );
 

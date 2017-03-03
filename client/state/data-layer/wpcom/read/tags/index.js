@@ -15,8 +15,8 @@ import {
 
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { decodeEntities } from 'lib/formatting';
 import { mergeHandlers } from 'state/data-layer/utils';
+import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import followTagHandler from './mine/new';
 import unFollowTagHandler from './mine/delete';
 
@@ -36,41 +36,17 @@ export function requestTags( store, action, next ) {
 	next( action );
 }
 
-/**
- * Normalize response from the api so whether we get back a single tag or a list of tags
- * we always pass forward a list
- * Also transform the api response to be something more calypso-friendly
- *
- * @param  {Tag|Tags} apiResponse api response from the tags endpoint
- * @return {Tags}             An object containing list of tags
- */
-export function fromApi( apiResponse ) {
-	let tags;
-	if ( apiResponse.tag )	 {
-		tags = [ apiResponse.tag ];
-	} else if ( apiResponse.tags ) {
-		tags = map( apiResponse.tags, tag => ( { ...tag, is_following: true } ) );
-	} else {
-		if ( process.env.NODE_ENV === 'development' ) {
-			throw new Error( 'bad api response for /read/tags' );
-		}
-		tags = [];
+export function receiveTagsSuccess( store, action, next, apiResponse ) {
+	let tags = fromApi( apiResponse );
+	// if from the read/tags api, then it is followed
+	if ( apiResponse.tags ) {
+		tags = map( tags, tag => ( { ...tag, isFollowing: true } ) );
 	}
 
-	tags = map( tags, tag => ( {
-		...tag,
-		URL: `/tag/${ tag.slug }`,
-		title: decodeEntities( tag.title ),
-		slug: tag.slug.toLowerCase(),
-	} ) );
-
-	return tags;
-}
-
-export function receiveTagsSuccess( store, action, next, apiResponse ) {
 	store.dispatch( receiveTags( {
-		payload: fromApi( apiResponse ),
-		error: false
+		payload: tags,
+		hasFollowingData: !! apiResponse.tags,
+		error: false,
 	} ) );
 }
 

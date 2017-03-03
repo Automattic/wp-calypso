@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { map } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,7 +13,7 @@ import {
 
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { decodeEntities } from 'lib/formatting';
+import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 
 export function requestFollowTag( store, action, next ) {
 	store.dispatch( http( {
@@ -27,26 +27,18 @@ export function requestFollowTag( store, action, next ) {
 	next( action );
 }
 
-export const fromApi = apiResponse => {
-	const tags = map( apiResponse.tags, tag => ( {
-		...tag,
-		is_following: true,
-		URL: `/tag/${ tag.slug }`,
-		title: decodeEntities( tag.title ),
-		slug: tag.slug.toLowerCase(),
-	} ) );
-
-	return tags;
-};
-
 export function receiveFollowTag( store, action, next, apiResponse ) {
 	// TODO: is this a good thing to do here?
 	if ( apiResponse.subscribed === false ) {
 		return receiveError( store, action, next );
 	}
+	const normalizedTags = fromApi( apiResponse );
+	const followedTag = find( normalizedTags, { id: apiResponse.added_tag } );
+	
 	store.dispatch( receiveTagsAction( {
-		payload: fromApi( apiResponse ),
+		payload: [ followedTag ],
 		error: false,
+		hasFollowingData: false,
 	} ) );
 }
 

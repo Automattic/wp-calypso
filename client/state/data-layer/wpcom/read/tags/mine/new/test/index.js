@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,13 +16,13 @@ import {
 	requestFollowTag,
 	receiveFollowTag,
 	receiveError,
-	fromApi,
 } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 
 export const successfulFollowResponse = {
 	subscribed: true,
-	added_tag: '307',
+	added_tag: '422',
 	tags: [
 		{
 			ID: '422',
@@ -58,9 +59,9 @@ describe( 'follow tag request', () => {
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith( http( {
-				apiVersion: '1.2',
+				apiVersion: '1.0',
 				method: 'POST',
-				path: `/read/tags/${ slug }/mine/delete`,
+				path: `/read/tags/${ slug }/mine/new`,
 				onSuccess: action,
 				onFailure: action,
 			} ) );
@@ -85,10 +86,14 @@ describe( 'follow tag request', () => {
 
 			receiveFollowTag( { dispatch }, action, next, successfulFollowResponse );
 
+			const followedTagId = successfulFollowResponse.added_tag;
+			const followedTag = find( successfulFollowResponse.tags, { ID: followedTagId } );
+			const normalizedFollowedTag = fromApi( { tag: followedTag } );
+
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith(
 				receiveTagsAction( {
-					payload: successfulFollowResponse.removed_tag,
+					payload: normalizedFollowedTag,
 					error: false
 				} )
 			);
@@ -100,19 +105,12 @@ describe( 'follow tag request', () => {
 			const next = sinon.spy();
 
 			receiveFollowTag( { dispatch }, action, next, unsuccessfulResponse );
-
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith(
-				receiveTagsAction( {
-					payload: unsuccessfulResponse.removed_tag,
-					error: true,
-				} )
-			);
+			// TODO add in same error notice check as below. maybe check that receiveError was called
 		} );
 	} );
 
 	describe( '#receiveError', () => {
-		it( 'should dispatch error', () => {
+		it( 'should dispatch an error notice', () => {
 			const action = requestFollowAction( slug );
 			const dispatch = sinon.spy();
 			const next = sinon.spy();
@@ -120,19 +118,7 @@ describe( 'follow tag request', () => {
 
 			receiveError( { dispatch }, action, next, error );
 
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith(
-				receiveTagsAction( { payload: error, error: true } )
-			);
-		} );
-	} );
-
-	describe( '#fromApi', () => {
-		it( 'should extract the removed_tag from a response', () => {
-			const apiResponse = successfulFollowResponse;
-			const normalized = fromApi( apiResponse );
-
-			expect( normalized ).to.eql( apiResponse.removed_tag );
+			// TODO add in error notice
 		} );
 	} );
 } );

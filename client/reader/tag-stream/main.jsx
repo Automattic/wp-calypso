@@ -17,6 +17,7 @@ import { getReaderFollowedTags, getReaderTags } from 'state/selectors';
 import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
 import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
 import QueryReaderTag from 'components/data/query-reader-tag';
+import { find } from 'lodash';
 
 const TagStream = React.createClass( {
 
@@ -70,21 +71,18 @@ const TagStream = React.createClass( {
 	},
 
 	getTitle() {
-		const tag = this.getTagFromSlug( this.props.tag );
-		return decodeURIComponent( tag.display_name || tag.slug );
+		const tag = find( this.props.tags, { slug: this.props.tag } );
+		return tag && ( tag.displayName || tag.slug );
 	},
 
 	isSubscribed() {
-		return !! this.getTagFromSlug( this.props.tag );
+		const tag = find( this.props.tags, { slug: this.props.tag } );
+		return !! ( tag && tag.isFollowing );
 	},
 
-	getTagFromSlug( slug ) {
-		// TODO wtf
-		return find( this.props.tags, { slug } );
-	},
-
-	toggleFollowing( isFollowing ) {
+	toggleFollowing() {
 		const { tag, unfollowTag, followTag } = this.props;
+		const isFollowing = this.isSubscribed();
 		const toggleAction = isFollowing ? unfollowTag : followTag;
 		toggleAction( this.props.tag );
 		stats.recordAction( isFollowing ? 'followed_topic' : 'unfollowed_topic' );
@@ -97,6 +95,7 @@ const TagStream = React.createClass( {
 	render() {
 		const emptyContent = ( <EmptyContent tag={ this.props.tag } /> );
 		const title = decodeURIComponent( this.state.title );
+		const tag = find( this.props.tags, { slug: this.props.tag } );
 
 		let imageSearchString = this.props.tag;
 
@@ -117,8 +116,8 @@ const TagStream = React.createClass( {
 					tag={ this.props.tag }
 					title={ this.getTitle() }
 					imageSearchString={ imageSearchString }
-					showFollow={ this.state.canFollow }
-					following={ this.state.subscribed }
+					showFollow={ !! ( tag && tag.id ) }
+					following={ this.isSubscribed() }
 					onFollowToggle={ this.toggleFollowing }
 					showBack={ this.props.showBack } />
 			</Stream>

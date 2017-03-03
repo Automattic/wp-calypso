@@ -10,5 +10,5 @@ import { filter } from 'lodash';
  * @return {Array}          Reader Tags
  */
 export default function getReaderFollowedTags( state ) {
-	return filter( state.reader.tags.items, tag => tag.is_following );
+	return filter( state.reader.tags.items, tag => tag.isFollowing );
 }
