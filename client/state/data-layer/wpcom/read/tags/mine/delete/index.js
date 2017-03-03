@@ -36,7 +36,7 @@ export const fromApi = apiResponse => apiResponse.removed_tag;
 
 export function receiveUnfollowTag( store, action, next, apiResponse ) {
 	if ( apiResponse.subscribed ) {
-		receiveError( store, action, next, 'apiResponse.subcribed = true' );
+		receiveError( store, action, next );
 		return;
 	}
 
