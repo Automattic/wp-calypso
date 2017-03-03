@@ -10,7 +10,10 @@ import { keyBy } from 'lodash';
 import { items } from '../reducer';
 import { receiveUnfollowTag, receiveTags } from '../actions';
 
+// helpers
 const keyById = tags => keyBy( tags, 'id' );
+const unfollow = tag => ( { ...tag, isFollowing: false } );
+const follow = tag => ( { ...tag, isFollowing: true } );
 
 const TAG1 = {
 	id: '307',
@@ -61,8 +64,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( keyById( [ { ...TAG1, title: 'NotChickens' }, TAG2 ] ) );
 		} );
 
-		const unfollow = tag => ( { ...tag, isFollowing: false } );
-
 		it( 'should unfollow a tag if requested to do so', () => {
 			const prevState = keyById( [ TAG1, TAG2 ] );
 			const action = receiveUnfollowTag( { payload: TAG1.id } );
@@ -75,7 +76,6 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should mark everything as unfollowed if requested to do so', () => {
-			const follow = tag => ( { ...tag, isFollowing: true } );
 			const prevState = keyById( [
 				follow( TAG1 ),
 				follow( TAG2 ),
