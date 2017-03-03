@@ -128,13 +128,15 @@ export class MediaLibraryFilterBar extends Component {
 
 	render() {
 		return (
-			<SectionNav selectedText={ this.getFilterLabel( this.props.filter ) } hasSearch={ true }>
-				<SectionNavTabs>
-					{ this.renderTabItems() }
-				</SectionNavTabs>
-				{ this.renderSearchSection() }
+			<div className="media-library__filter-bar">
+				<SectionNav selectedText={ this.getFilterLabel( this.props.filter ) } hasSearch={ true }>
+					<SectionNavTabs>
+						{ this.renderTabItems() }
+					</SectionNavTabs>
+					{ this.renderSearchSection() }
+				</SectionNav>
 				{ this.renderPlanStorage() }
-			</SectionNav>
+			</div>
 		);
 	}
 }
