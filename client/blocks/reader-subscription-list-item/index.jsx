@@ -5,6 +5,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { trim, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal Dependencies
@@ -67,7 +68,8 @@ function ReaderSubscriptionListItem( {
 				}
 				<div>{ siteExcerpt }</div>
 				<div className="reader-subscription-list-item__site-url">
-					<a href={ siteUrl }> { stripUrl( siteUrl ) } </a> { lastUpdated }
+					<a href={ siteUrl }> { stripUrl( siteUrl ) } </a>
+					{ moment( lastUpdated ).fromNow() }
 				</div>
 			</div>
 			<div className="reader-subscription-list-item__options">

@@ -21,7 +21,7 @@ const items = [
 		siteUrl: 'http://afarmgirlslife.wordpress.com',
 		siteTitle: 'A Farm Girls Life',
 		siteExcerpt: 'Photography, Crafty Things, and Life on the Farm',
-		lastUpdated: 'x days ago',
+		lastUpdated: new Date() - 10000000,
 		feedId: '21587482',
 	},
 	{
@@ -33,7 +33,7 @@ const items = [
 		siteUrl: 'https://fourthgenerationfarmgirl.com/',
 		siteTitle: 'fourth generation farmgirl',
 		siteExcerpt: 'wool and wine to tractors and travel',
-		lastUpdated: 'x days ago',
+		lastUpdated: new Date() - 5000,
 		feedId: '24393283',
 	},
 	{
@@ -45,7 +45,7 @@ const items = [
 		siteUrl: 'https://notyourtypicalhippie.wordpress.com/',
 		siteTitle: 'Not Your Typical Hippi',
 		siteExcerpt: 'Starting Young ♢ Living Healthy',
-		lastUpdated: 'x days ago',
+		lastUpdated: new Date() - 100000,
 		feedId: '42747358',
 	}
 ]
