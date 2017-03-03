@@ -28,7 +28,7 @@ export const layout = ( { contentComponent, path, store } ) => {
 	}
 
 	renderWithReduxStore(
-		createElement( Sharing, { contentComponent, path, site } ),
+		createElement( Sharing, { contentComponent, path } ),
 		document.getElementById( 'primary' ),
 		store
 	);
