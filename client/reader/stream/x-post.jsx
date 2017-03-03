@@ -153,4 +153,4 @@ class CrossPost extends PureComponent {
 	}
 }
 
-module.exports = localize( CrossPost );
+export default localize( CrossPost );
