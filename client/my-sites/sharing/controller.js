@@ -75,9 +75,3 @@ export const buttons = ( context, next ) => {
 
 	next();
 };
-
-export default {
-	buttons,
-	connections,
-	layout,
-};
