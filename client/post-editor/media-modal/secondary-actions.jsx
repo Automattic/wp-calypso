@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { values, noop, some, every, flow, partial, pick } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -39,12 +40,15 @@ class MediaModalSecondaryActions extends Component {
 
 	getButtons() {
 		const {
-			user,
-			site,
-			selectedItems,
-			view,
 			disabled,
-			onDelete
+			selectedItems,
+			site,
+			translate,
+			user,
+			view,
+
+			onDelete,
+			onViewDetails,
 		} = this.props;
 
 		const buttons = [];
@@ -52,10 +56,10 @@ class MediaModalSecondaryActions extends Component {
 		if ( ModalViews.LIST === view && selectedItems.length ) {
 			buttons.push( {
 				key: 'edit',
-				text: this.translate( 'Edit' ),
+				text: translate( 'Edit' ),
 				disabled: disabled,
 				primary: true,
-				onClick: this.props.onViewDetails
+				onClick: onViewDetails
 			} );
 		}
 
@@ -109,4 +113,4 @@ export default connect(
 		//We want to overwrite connected props if 'onViewDetails', 'view' were provided
 		return Object.assign( {}, ownProps, stateProps, dispatchProps, pick( ownProps, [ 'onViewDetails', 'view' ] ) );
 	}
-)( MediaModalSecondaryActions );
+)( localize( MediaModalSecondaryActions ) );
