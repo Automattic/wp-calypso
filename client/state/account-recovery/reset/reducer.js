@@ -31,12 +31,6 @@ const itemsReducer = createReducer( [], {
 	[ ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE ]: ( state, { items } ) => items,
 } );
 
-const resetOptions = combineReducers( {
-	isRequesting,
-	error: errorReducer,
-	items: itemsReducer,
-} );
-
 const validUserDataProps = [ 'user', 'firstName', 'lastName', 'url' ];
 
 const userData = createReducer( {}, {
@@ -47,6 +41,8 @@ const userData = createReducer( {}, {
 } );
 
 export default combineReducers( {
-	options: resetOptions,
+	items: itemsReducer,
 	userData,
+	isRequesting,
+	error: errorReducer,
 } );

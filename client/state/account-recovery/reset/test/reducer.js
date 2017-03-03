@@ -21,13 +21,11 @@ describe( '#account-recovery/reset reducer', () => {
 			type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST
 		} );
 
-		assert.isTrue( state.options.isRequesting );
+		assert.isTrue( state.isRequesting );
 	} );
 
 	const requestingState = {
-		options: {
-			isRequesting: true,
-		},
+		isRequesting: true,
 	};
 
 	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE action should unset isRequesting flag.', () => {
@@ -36,7 +34,7 @@ describe( '#account-recovery/reset reducer', () => {
 			items: [],
 		} );
 
-		assert.isFalse( state.options.isRequesting );
+		assert.isFalse( state.isRequesting );
 	} );
 
 	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR action should unset isRequesting flag.', () => {
@@ -45,7 +43,7 @@ describe( '#account-recovery/reset reducer', () => {
 			error: {},
 		} );
 
-		assert.isFalse( state.options.isRequesting );
+		assert.isFalse( state.isRequesting );
 	} );
 
 	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE action should populate the items field.', () => {
@@ -64,7 +62,7 @@ describe( '#account-recovery/reset reducer', () => {
 			items: fetchedOptions,
 		} );
 
-		assert.deepEqual( state.options.items, fetchedOptions );
+		assert.deepEqual( state.items, fetchedOptions );
 	} );
 
 	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR action should populate the error field.', () => {
@@ -78,7 +76,7 @@ describe( '#account-recovery/reset reducer', () => {
 			error: fetchError,
 		} );
 
-		assert.deepEqual( state.options.error, fetchError );
+		assert.deepEqual( state.error, fetchError );
 	} );
 
 	it( 'ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action should populate the user field.', () => {
