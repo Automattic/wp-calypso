@@ -13,7 +13,6 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import { loadScript } from 'lib/load-script';
 
 const DIRECTLY_RTM_SCRIPT_URL = 'https://widgets.wp.com/directly/embed.js';
@@ -53,6 +52,18 @@ function configureGlobals() {
 	// Since we can only configure once per pageload, this library only provides a
 	// single global configuration.
 	window.DirectlyRTM( 'config', getDefaultOptions() );
+}
+
+/**
+ * Helper function to track analytics events. Since lib/analytics has dependencies
+ * that rely on the Browser Object Model, importing it at the module level makes tests
+ * throw errors for this module and any module that imports it. By abstracting the
+ * lib/analytics module inside a function, we can use it and properly mock it in
+ * this module's tests without bleeding errors into tests for all dependent modules.
+ */
+function recordEvent( ...args ) {
+	const analytics = require( 'lib/analytics' );
+	analytics.tracks.recordEvent( ...args );
 }
 
 /**
@@ -99,7 +110,7 @@ export function initialize() {
 	directlyPromise = new Promise( ( resolve, reject ) => {
 		configureGlobals();
 		insertDOM();
-		analytics.tracks.recordEvent( 'calypso_directly_rtm_widget_initialize' );
+		recordEvent( 'calypso_directly_rtm_widget_initialize' );
 
 		loadScript( DIRECTLY_RTM_SCRIPT_URL, function( error ) {
 			if ( error ) {
@@ -122,6 +133,6 @@ export function initialize() {
  * @returns {Promise} Promise that resolves after initialization completes
  */
 export function askQuestion( questionText, name, email ) {
-	analytics.tracks.recordEvent( 'calypso_directly_rtm_widget_ask_question' );
+	recordEvent( 'calypso_directly_rtm_widget_ask_question' );
 	return execute( 'askQuestion', { questionText, name, email } );
 }
