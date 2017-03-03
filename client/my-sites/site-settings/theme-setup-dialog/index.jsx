@@ -12,7 +12,7 @@ import page from 'page';
 import Dialog from 'components/dialog';
 import PulsingDot from 'components/pulsing-dot';
 import { getSelectedSite } from 'state/ui/selectors';
-import { closeDialog, runThemeSetup } from 'state/ui/theme-setup/actions';
+import { toggleDialog, runThemeSetup } from 'state/ui/theme-setup/actions';
 
 class ThemeSetupDialog extends React.Component {
 	renderButtons( { onThemeSetupClick, site, isActive, result, translate } ) {
@@ -102,7 +102,7 @@ class ThemeSetupDialog extends React.Component {
 			<Dialog className="theme-setup-dialog"
 				isVisible={ this.props.isDialogVisible }
 				buttons={ this.renderButtons( this.props ) }
-				onClose={ this.props.isActive ? null : this.props.closeDialog }>
+				onClose={ this.props.isActive ? null : this.props.toggleDialog }>
 				{ this.renderContent( this.props ) }
 			</Dialog>
 		);
@@ -124,5 +124,5 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps, { closeDialog, onThemeSetupClick: runThemeSetup } )( ThemeSetupDialog );
+export default connect( mapStateToProps, { toggleDialog, onThemeSetupClick: runThemeSetup } )( ThemeSetupDialog );
 

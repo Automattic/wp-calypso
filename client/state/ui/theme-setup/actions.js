@@ -3,21 +3,14 @@
  */
 import wpcom from 'lib/wp';
 import {
-	THEME_SETUP_CLOSE_DIALOG,
-	THEME_SETUP_OPEN_DIALOG,
+	THEME_SETUP_TOGGLE_DIALOG,
 	THEME_SETUP_REQUEST,
 	THEME_SETUP_RESULT,
 } from 'state/action-types';
 
-export function openDialog() {
+export function toggleDialog() {
 	return {
-		type: THEME_SETUP_OPEN_DIALOG,
-	};
-}
-
-export function closeDialog() {
-	return {
-		type: THEME_SETUP_CLOSE_DIALOG,
+		type: THEME_SETUP_TOGGLE_DIALOG,
 	};
 }
 

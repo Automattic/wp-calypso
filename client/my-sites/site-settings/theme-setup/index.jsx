@@ -16,7 +16,7 @@ import ThemeSetupCard from './theme-setup-card';
 import ThemeSetupPlaceholder from './theme-setup-placeholder';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getActiveTheme, getTheme } from 'state/themes/selectors';
-import { openDialog } from 'state/ui/theme-setup/actions';
+import { toggleDialog } from 'state/ui/theme-setup/actions';
 
 let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain, onClickKeepContent } ) => {
 	const onBack = () => {
@@ -53,7 +53,7 @@ const mapStateToProps = ( state ) => {
 const mapDispatchToProps = ( dispatch ) => {
 	return {
 		onClickKeepContent() {
-			dispatch( openDialog() );
+			dispatch( toggleDialog() );
 		},
 	};
 };
