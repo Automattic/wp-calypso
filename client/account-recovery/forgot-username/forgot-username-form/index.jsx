@@ -21,21 +21,15 @@ import {
 
 import {
 	isRequestingAccountRecoveryResetOptions,
-	getAccountRecoveryResetUserFirstName,
-	getAccountRecoveryResetUserLastName,
-	getAccountRecoveryResetUserSiteUrl,
+	getAccountRecoveryResetUserData,
 	getAccountRecoveryResetOptionsError,
 } from 'state/selectors';
 
 export class ForgotUsernameFormComponent extends Component {
 	submitForm = () => {
-		const {
-			firstName,
-			lastName,
-			url,
-		} = this.props;
+		const { userData } = this.props;
 
-		this.props.fetchResetOptionsByNameAndUrl( firstName, lastName, url );
+		this.props.fetchResetOptionsByNameAndUrl( userData.firstName, userData.lastName, userData.url );
 	};
 
 	firstNameUpdated = ( event ) => {
@@ -53,12 +47,16 @@ export class ForgotUsernameFormComponent extends Component {
 	render() {
 		const {
 			translate,
-			firstName,
-			lastName,
-			url,
+			userData,
 			isRequesting,
 			requestError,
 		} = this.props;
+
+		const {
+			firstName,
+			lastName,
+			url,
+		} = userData;
 
 		const isPrimaryButtonEnabled = firstName && lastName && url && ! isRequesting;
 
@@ -74,7 +72,7 @@ export class ForgotUsernameFormComponent extends Component {
 						<FormInput
 							className="forgot-username-form__first-name-input"
 							onChange={ this.firstNameUpdated }
-							value={ firstName }
+							value={ firstName ? firstName : '' }
 							disabled={ isRequesting } />
 					</FormLabel>
 					<FormLabel>
@@ -82,7 +80,7 @@ export class ForgotUsernameFormComponent extends Component {
 						<FormInput
 							className="forgot-username-form__last-name-input"
 							onChange={ this.lastNameUpdated }
-							value={ lastName }
+							value={ lastName ? lastName : '' }
 							disabled={ isRequesting } />
 					</FormLabel>
 					<FormLabel>
@@ -90,7 +88,7 @@ export class ForgotUsernameFormComponent extends Component {
 						<FormInput
 							className="forgot-username-form__site-url-input"
 							onChange={ this.siteUrlUpdated }
-							value={ url }
+							value={ url ? url : '' }
 							disabled={ isRequesting } />
 					</FormLabel>
 					{
@@ -115,9 +113,7 @@ export class ForgotUsernameFormComponent extends Component {
 
 ForgotUsernameFormComponent.defaultProps = {
 	isRequesting: false,
-	firstName: '',
-	lastName: '',
-	url: '',
+	userData: {},
 	requestError: null,
 	translate: identity,
 	fetchResetOptionsByNameAndUrl: noop,
@@ -127,9 +123,7 @@ ForgotUsernameFormComponent.defaultProps = {
 export default connect(
 	( state ) => ( {
 		isRequesting: isRequestingAccountRecoveryResetOptions( state ),
-		firstName: getAccountRecoveryResetUserFirstName( state ),
-		lastName: getAccountRecoveryResetUserLastName( state ),
-		url: getAccountRecoveryResetUserSiteUrl( state ),
+		userData: getAccountRecoveryResetUserData( state ),
 		requestError: getAccountRecoveryResetOptionsError( state ),
 	} ),
 	{
