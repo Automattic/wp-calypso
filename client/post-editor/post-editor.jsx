@@ -713,6 +713,9 @@ export const PostEditor = React.createClass( {
 			this.props.resetEditorLastDraft();
 		}
 
+		// Remove this when the editor is completely reduxified ( When using Redux actions for all post saving requests )
+		this.props.savePostSuccess( post.site_ID, this.props.postId, post, {} );
+
 		// Receive updated post into state
 		this.props.receivePost( post );
 

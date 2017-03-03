@@ -21,7 +21,6 @@ import {
 	POST_RESTORE,
 	POST_RESTORE_FAILURE,
 	POST_SAVE,
-	POST_SAVE_SUCCESS,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
@@ -273,7 +272,6 @@ export function edits( state = {}, action ) {
 			} );
 
 		case EDITOR_STOP:
-		case POST_SAVE_SUCCESS:
 			if ( ! state.hasOwnProperty( action.siteId ) ) {
 				break;
 			}
