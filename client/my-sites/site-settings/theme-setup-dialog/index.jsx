@@ -10,9 +10,6 @@ import page from 'page';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormTextInput from 'components/forms/form-text-input';
 import PulsingDot from 'components/pulsing-dot';
 import { getSelectedSite } from 'state/ui/selectors';
 import { closeDialog, runThemeSetup } from 'state/ui/theme-setup/actions';
