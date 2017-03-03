@@ -214,7 +214,7 @@ class SearchStream extends Component {
 				<div className="search-stream__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
-							initialValue={ query }
+							value={ query }
 							onSearch={ this.updateQuery }
 							onSearchClose={ this.scrollToTop }
 							autoFocus={ this.props.autoFocusInput }

@@ -41,6 +41,7 @@ const Search = React.createClass( {
 	propTypes: {
 		additionalClasses: PropTypes.string,
 		initialValue: PropTypes.string,
+		value: PropTypes.string,
 		placeholder: PropTypes.string,
 		pinned: PropTypes.bool,
 		delaySearch: PropTypes.bool,
@@ -118,6 +119,10 @@ const Search = React.createClass( {
 
 		if ( nextProps.isOpen ) {
 			this.setState( { isOpen: nextProps.isOpen } );
+		}
+
+		if ( nextProps.value && nextProps.value !== this.state.keyword ) {
+			this.setState( { keyword: nextProps.value } );
 		}
 	},
 
