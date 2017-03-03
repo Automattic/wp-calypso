@@ -150,6 +150,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 					onKeyDown={ this.handleKeyDown }
 					disableAutocorrect={ true }
 					initialValue={ this.props.initialSearchString }
+					openIcon="reader-follow"
 				/>
 				{ searchResult }
 			</div>

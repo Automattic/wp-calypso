@@ -22,7 +22,8 @@ const SearchCard = React.createClass( {
 		autoFocus: React.PropTypes.bool,
 		disabled: React.PropTypes.bool,
 		dir: React.PropTypes.string,
-		maxLength: React.PropTypes.number
+		maxLength: React.PropTypes.number,
+		openIcon: React.PropTypes.string,
 	},
 
 	render: function() {
