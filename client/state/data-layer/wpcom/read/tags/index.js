@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { map } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,6 +16,9 @@ import {
 
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { mergeHandlers } from 'state/data-layer/utils';
+import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
+import { errorNotice } from 'state/notices/actions';
 
 export function requestTags( store, action, next ) {
 	const path = action.payload && action.payload.slug
@@ -32,42 +36,38 @@ export function requestTags( store, action, next ) {
 	next( action );
 }
 
-/**
- * Normalize response from the api so whether we get back a single tag or a list of tags
- * we always pass forward a list
- * @param  {Tag|Tags} apiResponse api response from the tags endpoint
- * @return {Tags}             An object containing list of tags
- */
-function fromApi( apiResponse ) {
-	let tags;
-	if ( apiResponse.tag )	 {
-		tags = [ apiResponse.tag ];
-	} else if ( apiResponse.tags ) {
-		tags = map( apiResponse.tags, tag => ( { ...tag, is_following: true } ) );
-	} else {
-		if ( process.env.NODE_ENV === 'development' ) {
-			throw new Error( 'bad api response for /read/tags' );
-		}
-		tags = [];
+export function receiveTagsSuccess( store, action, next, apiResponse ) {
+	let tags = fromApi( apiResponse );
+
+	// if from the read following tags api, then we should add isFollowing=true to all of the tags
+	if ( apiResponse.tags ) {
+		tags = map( tags, tag => ( { ...tag, isFollowing: true } ) );
 	}
 
-	return { tags };
-}
-
-export function receiveTagsSuccess( store, action, next, apiResponse ) {
 	store.dispatch( receiveTags( {
-		payload: fromApi( apiResponse ),
-		error: false
+		payload: tags,
+		resetFollowingData: !! apiResponse.tags
 	} ) );
 }
 
 export function receiveTagsError( store, action, next, error ) {
-	store.dispatch( receiveTags( {
-		payload: error,
-		error: true
-	} ) );
+	const errorText = action.payload && action.payload.slug
+		? translate( 'Could not load tag, try refreshing the page' )
+		: translate( 'Could not load your followed tags, try refreshing the page' );
+
+	store.dispatch( errorNotice( errorText ) );
+	// imperfect solution of lying to Calypso and saying the tag doesn't exist so that the query component stops asking for it
+	// see: https://github.com/Automattic/wp-calypso/pull/11627/files#r104468481
+	store.dispatch( receiveTags( { payload: [] } ) );
+	if ( process.env.NODE_ENV === 'development' ) {
+		console.error( errorText, error ); // eslint-disable-line no-console
+	}
 }
 
-export default {
+const readTagsHandler = {
 	[ READER_TAGS_REQUEST ]: [ dispatchRequest( requestTags, receiveTagsSuccess, receiveTagsSuccess ) ],
 };
+
+export default mergeHandlers(
+	readTagsHandler,
+);
