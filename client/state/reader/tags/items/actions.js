@@ -45,8 +45,7 @@ export const requestUnfollowTag = tag => ( {
 	payload: { tag, slug: slugify( tag ) },
 } );
 
-export const receiveUnfollowTag = ( { payload, error } ) => ( {
+export const receiveUnfollowTag = ( { payload } ) => ( {
 	type: READER_UNFOLLOW_TAG_RECEIVE,
 	payload,
-	error,
 } );
