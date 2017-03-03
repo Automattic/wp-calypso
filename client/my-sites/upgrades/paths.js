@@ -13,9 +13,6 @@ function domainManagementList( siteName ) {
 }
 
 function domainManagementEdit( siteName, domainName, slug ) {
-	// the site slug and domain name are equivalent for domain-only sites,
-	// which can omit the latter in this case.
-	domainName = domainName || siteName;
 	slug = slug || 'edit';
 
 	// Encodes only real domain names and not parameter placeholders
@@ -113,12 +110,12 @@ module.exports = {
 	domainManagementEditContactInfo,
 	domainManagementEmail,
 	domainManagementEmailForwarding,
-	domainManagementNameServers,
 	domainManagementList,
-	domainManagementPrivacyProtection,
-	domainManagementRoot,
-	domainManagementRedirectSettings,
+	domainManagementNameServers,
 	domainManagementPrimaryDomain,
+	domainManagementPrivacyProtection,
+	domainManagementRedirectSettings,
+	domainManagementRoot,
 	domainManagementTransfer,
 	domainManagementTransferOut,
 	domainManagementTransferToAnotherUser,

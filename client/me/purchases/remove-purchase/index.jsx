@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import page from 'page';
 import React from 'react';
 import Gridicon from 'gridicons';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ import CompactCard from 'components/card/compact';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
-import { getPurchase, isDataLoading } from '../utils';
+import { getPurchase, isDataLoading, enrichedSurveyData } from '../utils';
 import { isDomainRegistration, isPlan, isGoogleApps, isJetpackPlan } from 'lib/products-values';
 import notices from 'notices';
 import purchasePaths from '../paths';
@@ -132,12 +133,12 @@ const RemovePurchase = React.createClass( {
 	removePurchase( closeDialog ) {
 		this.setState( { isRemoving: true } );
 
-		const purchase = getPurchase( this.props ),
-			{ isDomainOnlySite, setAllSitesSelected, selectedSite } = this.props;
+		const purchase = getPurchase( this.props );
+		const { isDomainOnlySite, setAllSitesSelected, selectedSite } = this.props;
 
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
 			const survey = wpcom.marketing().survey( 'calypso-remove-purchase', this.props.selectedSite.ID );
-			survey.addResponses( {
+			const surveyData = {
 				'why-cancel': {
 					response: this.state.survey.questionOneRadio,
 					text: this.state.survey.questionOneText
@@ -147,9 +148,10 @@ const RemovePurchase = React.createClass( {
 					text: this.state.survey.questionTwoText
 				},
 				'what-better': { text: this.state.survey.questionThreeText },
-				purchase: purchase.productSlug,
 				type: 'cancel'
-			} );
+			};
+
+			survey.addResponses( enrichedSurveyData( surveyData, moment(), selectedSite, purchase ) );
 
 			debug( 'Survey responses', survey );
 			survey.submit()

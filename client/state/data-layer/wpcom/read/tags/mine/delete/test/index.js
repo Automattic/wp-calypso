@@ -18,6 +18,7 @@ import {
 	fromApi,
 } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { NOTICE_CREATE } from 'state/action-types';
 
 const successfulUnfollowResponse = {
 	subscribed: false,
@@ -49,7 +50,7 @@ const slug = 'chicken';
 
 describe( 'unfollow tag request', () => {
 	describe( '#requestUnfollow', () => {
-		it( 'should dispatch HTTP request to tag endpoint', () => {
+		it( 'should dispatch HTTP request to unfollow tag endpoint', () => {
 			const action = requestUnfollowAction( slug );
 			const dispatch = sinon.spy();
 			const next = sinon.spy();
@@ -58,7 +59,7 @@ describe( 'unfollow tag request', () => {
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith( http( {
-				apiVersion: '1.2',
+				apiVersion: '1.0',
 				method: 'POST',
 				path: `/read/tags/${ slug }/mine/delete`,
 				onSuccess: action,
@@ -78,7 +79,7 @@ describe( 'unfollow tag request', () => {
 	} );
 
 	describe( '#receiveUnfollowSuccess', () => {
-		it( 'should dispatch the tag', () => {
+		it( 'should dispatch the id of the unfollowed tag', () => {
 			const action = requestUnfollowAction( slug );
 			const dispatch = sinon.spy();
 			const next = sinon.spy();
@@ -89,12 +90,11 @@ describe( 'unfollow tag request', () => {
 			expect( dispatch ).to.have.been.calledWith(
 				receiveUnfollowAction( {
 					payload: successfulUnfollowResponse.removed_tag,
-					error: false
 				} )
 			);
 		} );
 
-		it( 'if api reports error then should pass through an error', () => {
+		it( 'if api reports error then should create an error notice', () => {
 			const action = requestUnfollowAction( slug );
 			const dispatch = sinon.spy();
 			const next = sinon.spy();
@@ -102,17 +102,14 @@ describe( 'unfollow tag request', () => {
 			receiveUnfollowTag( { dispatch }, action, next, unsuccessfulResponse );
 
 			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith(
-				receiveUnfollowAction( {
-					payload: unsuccessfulResponse.removed_tag,
-					error: true,
-				} )
-			);
+			expect( dispatch ).to.have.been.calledWithMatch( {
+				type: NOTICE_CREATE,
+			} );
 		} );
 	} );
 
 	describe( '#receiveError', () => {
-		it( 'should dispatch error', () => {
+		it( 'should dispatch an error notice', () => {
 			const action = requestUnfollowAction( slug );
 			const dispatch = sinon.spy();
 			const next = sinon.spy();
@@ -121,9 +118,9 @@ describe( 'unfollow tag request', () => {
 			receiveError( { dispatch }, action, next, error );
 
 			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith(
-				receiveUnfollowAction( { payload: error, error: true } )
-			);
+			expect( dispatch ).to.have.been.calledWithMatch( {
+				type: NOTICE_CREATE,
+			} );
 		} );
 	} );
 

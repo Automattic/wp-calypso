@@ -13,12 +13,14 @@ import {
 	fetchResetOptions,
 	fetchResetOptionsSuccess,
 	fetchResetOptionsError,
+	updatePasswordResetUserData,
 } from '../actions';
 
 import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
+	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
 } from 'state/action-types';
 
 describe( '#fetchResetOptionsSuccess', () => {
@@ -126,6 +128,23 @@ describe( '#fetchResetOptions', () => {
 						error: errorResponse,
 					} ) )
 				);
+		} );
+	} );
+} );
+
+describe( '#updatePasswordResetUserData', () => {
+	it( 'should return ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action', () => {
+		const userData = {
+			user: 'foo',
+			firstName: 'Foo',
+			lastName: 'Bar',
+			url: 'test.example.com',
+		};
+		const action = updatePasswordResetUserData( userData );
+
+		assert.deepEqual( action, {
+			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
+			userData,
 		} );
 	} );
 } );

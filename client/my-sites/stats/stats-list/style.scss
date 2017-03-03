@@ -112,6 +112,7 @@
 // Module Content List Item Hover
 
 @include breakpoint( ">480px" ) {
+	.module-content-list .module-content-list-item-wrapper:hover,
 	.module-content-list-item-link .module-content-list-item-wrapper:hover {
 
 		&,
@@ -126,6 +127,17 @@
 		// Display hidden actions
 		.module-content-list-item-action-hidden {
 			display: inline-block;
+		}
+	}
+
+	// Don't show hover on legend row
+	.module-content-list.module-content-list-legend {
+		.module-content-list-item-wrapper:hover {
+			&,
+			.module-content-list-item-right,
+			.module-content-list-item-right::before {
+				background: none;
+			}
 		}
 	}
 }

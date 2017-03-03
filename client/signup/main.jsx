@@ -351,9 +351,17 @@ const Signup = React.createClass( {
 	},
 
 	goToFirstInvalidStep() {
-		var firstInvalidStep = find( SignupProgressStore.get(), { status: 'invalid' } );
+		const firstInvalidStep = find( SignupProgressStore.get(), { status: 'invalid' } );
 
 		if ( firstInvalidStep ) {
+			if ( firstInvalidStep.stepName === this.props.stepName ) {
+				// reset the signup stores so we have a chance to start over the flow
+				// TODO: fix loading invalid steps from the store
+				SignupDependencyStore.reset();
+				SignupProgressStore.reset();
+				console.error( 'Current step is invalid, cannot redirect to it.', firstInvalidStep.errors ); //eslint-disable-line no-console
+				return;
+			}
 			analytics.tracks.recordEvent( 'calypso_signup_goto_invalid_step', {
 				step: firstInvalidStep.stepName,
 				flow: this.props.flowName

@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,9 +16,10 @@ import {
 	requestTags,
 	receiveTagsSuccess,
 	receiveTagsError,
-	fromApi,
 } from '../';
+import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { NOTICE_CREATE } from 'state/action-types';
 
 const successfulFollowedTagsResponse = {
 	tags: [
@@ -38,25 +40,6 @@ const successfulFollowedTagsResponse = {
 	]
 };
 
-const normalizedFollowedTagsResponse = [
-	{
-		ID: '307',
-		slug: 'chickens',
-		title: 'Chickens',
-		display_name: 'chickens',
-		URL: '/tag/chickens',
-		is_following: true,
-	},
-	{
-		ID: '148',
-		slug: 'design',
-		title: 'Design',
-		display_name: 'design',
-		URL: '/tag/design',
-		is_following: true,
-	},
-];
-
 const successfulSingleTagResponse = {
 	tag: {
 		ID: '307',
@@ -66,16 +49,6 @@ const successfulSingleTagResponse = {
 		URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/chickens/posts'
 	},
 };
-
-const normalizedSuccessfulSingleTagResponse = [
-	{
-		ID: '307',
-		slug: 'chickens',
-		title: 'Chickens',
-		display_name: 'chickens',
-		URL: '/tag/chickens',
-	},
-];
 
 const slug = 'chickens';
 
@@ -139,7 +112,7 @@ describe( 'wpcom-api', () => {
 				expect( dispatch ).to.have.been.calledWith(
 					receiveTagsAction( {
 						payload: fromApi( successfulSingleTagResponse ),
-						error: false
+						resetFollowingData: false,
 					} )
 				);
 			} );
@@ -151,18 +124,23 @@ describe( 'wpcom-api', () => {
 
 				receiveTagsSuccess( { dispatch }, action, next, successfulFollowedTagsResponse );
 
+				const transformedResponse = map(
+					fromApi( successfulFollowedTagsResponse ),
+					tag => ( { ...tag, isFollowing: true } )
+				);
+
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith(
 					receiveTagsAction( {
-						payload: fromApi( successfulFollowedTagsResponse ),
-						error: false,
+						payload: transformedResponse,
+						resetFollowingData: true,
 					} )
 				);
 			} );
 		} );
 
 		describe( '#receiveTagsError', () => {
-			it( 'should dispatch error', () => {
+			it( 'should dispatch an error notice', () => {
 				const action = requestTagsAction( slug );
 				const dispatch = sinon.spy();
 				const next = sinon.spy();
@@ -171,21 +149,9 @@ describe( 'wpcom-api', () => {
 				receiveTagsError( { dispatch }, action, next, error );
 
 				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
-					receiveTagsAction( { payload: error, error: true } )
-				);
-			} );
-		} );
-
-		describe( '#fromApi', () => {
-			it( 'should properly normalize response from following tags', () => {
-				const transformedResponse = fromApi( successfulFollowedTagsResponse );
-				expect( transformedResponse ).to.eql( normalizedFollowedTagsResponse );
-			} );
-
-			it( 'should properly normalize a single tag', () => {
-				const transformedResponse = fromApi( successfulSingleTagResponse );
-				expect( transformedResponse ).to.eql( normalizedSuccessfulSingleTagResponse );
+				expect( dispatch ).to.have.been.calledWithMatch( {
+					type: NOTICE_CREATE,
+				} );
 			} );
 		} );
 	} );

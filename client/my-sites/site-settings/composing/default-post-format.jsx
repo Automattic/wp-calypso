@@ -3,6 +3,8 @@
  */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,6 +12,9 @@ import { localize } from 'i18n-calypso';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
+import QueryPostFormats from 'components/data/query-post-formats';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getPostFormats } from 'state/post-formats/selectors';
 
 const DefaultPostFormat = ( {
 	fields,
@@ -17,10 +22,13 @@ const DefaultPostFormat = ( {
 	eventTracker,
 	isRequestingSettings,
 	isSavingSettings,
+	postFormats,
+	siteId,
 	translate
 } ) => {
 	return (
 		<FormFieldset>
+			<QueryPostFormats siteId={ siteId } />
 			<FormLabel htmlFor="default_post_format">
 				{ translate( 'Default Post Format' ) }
 			</FormLabel>
@@ -33,15 +41,11 @@ const DefaultPostFormat = ( {
 				onClick={ eventTracker( 'Selected Default Post Format' ) }
 			>
 				<option value="0">{ translate( 'Standard', { context: 'Post format' } ) }</option>
-				<option value="aside">{ translate( 'Aside', { context: 'Post format' } ) }</option>
-				<option value="chat">{ translate( 'Chat', { context: 'Post format' } ) }</option>
-				<option value="gallery">{ translate( 'Gallery', { context: 'Post format' } ) }</option>
-				<option value="link">{ translate( 'Link', { context: 'Post format' } ) }</option>
-				<option value="image">{ translate( 'Image', { context: 'Post format' } ) }</option>
-				<option value="quote">{ translate( 'Quote', { context: 'Post format' } ) }</option>
-				<option value="status">{ translate( 'Status', { context: 'Post format' } ) }</option>
-				<option value="video">{ translate( 'Video', { context: 'Post format' } ) }</option>
-				<option value="audio">{ translate( 'Audio', { context: 'Post format' } ) }</option>
+				{
+					postFormats && map( postFormats, ( label, slug ) => {
+						return <option key={ slug } value={ slug }>{ label }</option>;
+					} )
+				}
 			</FormSelect>
 		</FormFieldset>
 	);
@@ -61,4 +65,13 @@ DefaultPostFormat.propTypes = {
 	fields: PropTypes.object,
 };
 
-export default localize( DefaultPostFormat );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			siteId,
+			postFormats: getPostFormats( state, siteId ),
+		};
+	}
+)( localize( DefaultPostFormat ) );

@@ -119,34 +119,34 @@ export const onPublicizeConnectionCreate = ( dispatch, { connection } ) => dispa
 	successNotice( translate( 'The %(service)s account was successfully connected.', {
 		args: { service: connection.label },
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionCreateFailure = ( dispatch, { error } ) => dispatch(
 	errorNotice( error.message || translate( 'An error occurred while connecting the account.', {
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionDelete = ( dispatch, { connection } ) => dispatch(
 	successNotice( translate( 'The %(service)s account was successfully disconnected.', {
 		args: { service: connection.label },
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionDeleteFailure = ( dispatch, { error } ) => dispatch(
 	errorNotice( translate( 'The %(service)s account was unable to be disconnected.', {
 		args: { service: error.label },
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionRefresh = ( dispatch, { connection } ) => dispatch(
 	successNotice( translate( 'The %(service)s account was successfully reconnected.', {
 		args: { service: connection.label },
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionRefreshFailure = ( dispatch, { error } ) => dispatch(
@@ -160,14 +160,14 @@ export const onPublicizeConnectionUpdate = ( dispatch, { connection } ) => dispa
 	successNotice( translate( 'The %(service)s account was successfully updated.', {
 		args: { service: connection.label },
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionUpdateFailure = ( dispatch, { error } ) => dispatch(
 	errorNotice( translate( 'The %(service)s account was unable to be updated.', {
 		args: { service: error.label },
 		context: 'Sharing: Publicize reconnection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 const onThemeDeleteSuccess = ( dispatch, { themeName } ) => dispatch(
