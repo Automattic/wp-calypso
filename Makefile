@@ -160,10 +160,6 @@ server/devdocs/components-usage-stats.json: $(COMPONENTS_USAGE_STATS_FILES) $(CO
 server/devdocs/proptypes-index.json: $(COMPONENTS_PROPTYPE_FILES) $(COMPONENTS_PROPTYPES_JS)
 	@$(COMPONENTS_PROPTYPES_JS) $(COMPONENTS_PROPTYPE_FILES)
 
-build-dll: node_modules
-	@mkdir -p build
-	@CALYPSO_ENV=$(CALYPSO_ENV) $(NODE_BIN)/webpack --display-error-details --config webpack-dll.config.js
-
 build-server: install
 	@mkdir -p build
 	@CALYPSO_ENV=$(CALYPSO_ENV) $(NODE_BIN)/webpack --display-error-details --config webpack.config.node.js
@@ -172,12 +168,12 @@ build: install build-$(CALYPSO_ENV)
 
 build-css: public/style.css public/style-rtl.css public/style-debug.css public/editor.css
 
-build-development: server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json build-server build-dll $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
+build-development: server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json build-server $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
 
-build-wpcalypso: server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json build-server build-dll $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
+build-wpcalypso: server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json build-server $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
 	@$(BUNDLER)
 
-build-horizon build-stage build-production: build-server build-dll $(CLIENT_CONFIG_FILE) build-css
+build-horizon build-stage build-production: build-server $(CLIENT_CONFIG_FILE) build-css
 	@$(BUNDLER)
 
 build-desktop: build-server $(CLIENT_CONFIG_FILE) build-css
@@ -237,6 +233,6 @@ docker-run:
 # rule that can be used as a prerequisite for other rules to force them to always run
 FORCE:
 
-.PHONY: build build-development build-server build-dll build-desktop build-horizon build-stage build-production build-wpcalypso
+.PHONY: build build-development build-server build-desktop build-horizon build-stage build-production build-wpcalypso
 .PHONY: run install test clean distclean translate route node-version
 .PHONY: githooks githooks-commit githooks-push analyze-bundles urn
