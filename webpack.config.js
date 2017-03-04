@@ -108,11 +108,26 @@ if ( calypsoEnv === 'desktop' ) {
 	// no chunks or dll here, just one big file for the desktop app
 	webpackConfig.output.filename = '[name].js';
 } else {
+	// vendor chunk
+	webpackConfig.entry.vendor = [
+		'classnames',
+		'i18n-calypso',
+		'moment',
+		'page',
+		'react',
+		'react-dom',
+		'react-redux',
+		'redux',
+		'redux-thunk',
+		'store',
+		'wpcom',
+	];
+
 	webpackConfig.plugins.push(
-		new webpack.DllReferencePlugin( {
-			context: path.join( __dirname, 'client' ),
-			manifest: require( './build/dll/vendor-manifest.json' )
-		} )
+		new webpack.optimize.CommonsChunkPlugin(
+			'vendor',
+			'vendor.[chunkhash].js'
+		)
 	);
 
 	// slight black magic here. 'manifest' is a secret webpack module that includes the webpack loader and

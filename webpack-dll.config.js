@@ -15,17 +15,7 @@ const bundleEnv = config( 'env' );
 module.exports = {
 	entry: {
 		vendor: [
-			'classnames',
-			'i18n-calypso',
-			'moment',
-			'page',
-			'react',
-			'react-dom',
-			'react-redux',
-			'redux',
-			'redux-thunk',
-			'store',
-			'wpcom',
+
 		]
 	},
 	output: {
