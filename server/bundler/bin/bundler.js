@@ -114,7 +114,6 @@ webpack( webpackConfig, function( error, stats ) {
 	} ).map( function( chunk ) {
 		return path.join( process.cwd(), 'public', chunk.file );
 	} );
-	files.unshift( path.join( process.cwd(), 'public', 'vendor.' + bundleEnv + '.js' ) );
 
 	minify( files );
 });
