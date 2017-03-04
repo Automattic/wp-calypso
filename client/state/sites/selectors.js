@@ -503,6 +503,10 @@ export function getSitePlan( state, siteId ) {
 	return site.plan;
 }
 
+export function getSitePlanSlug( state, siteId ) {
+	return get( getSitePlan( state, siteId ), 'product_slug' );
+}
+
 /**
  * Returns true if the current site plan is a paid one
  *
