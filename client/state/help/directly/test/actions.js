@@ -9,10 +9,14 @@ import { expect } from 'chai';
 import {
 	askQuestion,
 	initialize,
+	initializationCompleted,
+	initializationFailed,
 } from '../actions';
 import {
 	DIRECTLY_ASK_QUESTION,
-	DIRECTLY_INITIALIZE,
+	DIRECTLY_INITIALIZATION_START,
+	DIRECTLY_INITIALIZATION_SUCCESS,
+	DIRECTLY_INITIALIZATION_ERROR,
 } from 'state/action-types';
 
 describe( 'actions', () => {
@@ -35,7 +39,21 @@ describe( 'actions', () => {
 	describe( '#initialize()', () => {
 		it( 'returns an action with appropriate type', () => {
 			const action = initialize();
-			expect( action ).to.eql( { type: DIRECTLY_INITIALIZE } );
+			expect( action ).to.eql( { type: DIRECTLY_INITIALIZATION_START } );
+		} );
+	} );
+
+	describe( '#initializationCompleted()', () => {
+		it( 'returns an action with appropriate type', () => {
+			const action = initializationCompleted();
+			expect( action ).to.eql( { type: DIRECTLY_INITIALIZATION_SUCCESS } );
+		} );
+	} );
+
+	describe( '#initializationFailed()', () => {
+		it( 'returns an action with appropriate type', () => {
+			const action = initializationFailed();
+			expect( action ).to.eql( { type: DIRECTLY_INITIALIZATION_ERROR } );
 		} );
 	} );
 } );
