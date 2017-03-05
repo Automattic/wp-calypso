@@ -2,6 +2,7 @@
 	"env": "production",
 	"env_id": "stage",
 	"client_slug": "browser",
+	"directly_rtm_widget_environment": "sandbox",
 	"hostname": "wordpress.com",
 	"i18n_default_locale_slug": "en",
 	"wpcom_user_bootstrap": true,

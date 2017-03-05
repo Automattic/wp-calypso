@@ -2,6 +2,7 @@
 	"env": "development",
 	"env_id": "development",
 	"client_slug": "browser",
+	"directly_rtm_widget_environment": "sandbox",
 	"hostname": "calypso.localhost",
 	"port": 3000,
 	"i18n_default_locale_slug": "en",
