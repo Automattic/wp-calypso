@@ -42,7 +42,8 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class='is-desktop' + ( isFluidWidth ?
 
 		if app
 			script(type='text/javascript')!='var app = ' + sanitize.jsonStringifyForHtml( app )
-
+		if config
+			script(type='text/javascript')!= config
 		if i18nLocaleScript
 			script(src=i18nLocaleScript)
 

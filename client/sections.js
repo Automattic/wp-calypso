@@ -7,8 +7,7 @@ const path = require( 'path' );
 /**
  * Internal dependencies
  */
-const config = require( 'config' );
-const sections = require( config( 'project' ) );
+const sections = require( 'wordpress-com' );
 const extensions = require( 'extensions' );
 
 const extensionSections = extensions.map( extension => {
