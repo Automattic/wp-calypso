@@ -69,7 +69,9 @@ class CommentButton extends Component {
 				className: 'comment-button',
 				onClick
 			},
-			<Gridicon icon="comment" size={ this.props.size } className="comment-button__icon" />, labelElement
+			<Gridicon icon="comment" size={ this.props.size } className="comment-button__icon" />,
+			null,
+			labelElement
 		);
 	}
 }

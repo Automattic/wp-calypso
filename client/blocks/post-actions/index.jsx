@@ -74,12 +74,7 @@ const PostActions = ( { className, post, site, toggleComments, recordEvent } ) =
 						siteId={ +post.site_ID }
 						postId={ +post.ID }
 						post={ post }
-						site={ site }
-						tagName="a"
-						animateLike={ false }
-						forceCounter={ true }
-						showLabel={ false }
-						showZeroCount={ false } />
+						site={ site } />
 				</li>
 			}
 			{ ! isDraft && showStats( site ) &&
