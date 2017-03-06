@@ -13,7 +13,12 @@ import JetpackModuleToggle from '../jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
+import {
+	isJetpackModuleActive,
+	isJetpackModuleUnavailableInDevelopmentMode,
+	isJetpackSiteInDevelopmentMode
+} from 'state/selectors';
+import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 
@@ -22,6 +27,7 @@ const Subscriptions = ( {
 	handleToggle,
 	isRequestingSettings,
 	isSavingSettings,
+	moduleUnavailable,
 	selectedSiteId,
 	selectedSiteSlug,
 	subscriptionsModuleActive,
@@ -29,6 +35,8 @@ const Subscriptions = ( {
 } ) => {
 	return (
 		<div>
+			<QueryJetpackConnection siteId={ selectedSiteId } />
+
 			<CompactCard className="subscriptions__card site-settings__discussion-settings">
 				<FormFieldset>
 					<div className="subscriptions__info-link-container site-settings__info-link-container">
@@ -43,14 +51,14 @@ const Subscriptions = ( {
 						siteId={ selectedSiteId }
 						moduleSlug="subscriptions"
 						label={ translate( 'Allow users to subscribe to your posts and comments and receive notifications via email.' ) }
-						disabled={ isRequestingSettings || isSavingSettings }
+						disabled={ isRequestingSettings || isSavingSettings || moduleUnavailable }
 						/>
 
 					<div className="subscriptions__module-settings site-settings__child-settings">
 						<FormToggle
 							className="subscriptions__module-settings-toggle is-compact"
 							checked={ !! fields.stb_enabled }
-							disabled={ isRequestingSettings || isSavingSettings || ! subscriptionsModuleActive }
+							disabled={ isRequestingSettings || isSavingSettings || ! subscriptionsModuleActive || moduleUnavailable }
 							onChange={ handleToggle( 'stb_enabled' ) }
 						>
 							{ translate( 'Show a "follow blog" option in the comment form' ) }
@@ -59,7 +67,7 @@ const Subscriptions = ( {
 						<FormToggle
 							className="subscriptions__module-settings-toggle is-compact"
 							checked={ !! fields.stc_enabled }
-							disabled={ isRequestingSettings || isSavingSettings || ! subscriptionsModuleActive }
+							disabled={ isRequestingSettings || isSavingSettings || ! subscriptionsModuleActive || moduleUnavailable }
 							onChange={ handleToggle( 'stc_enabled' ) }
 						>
 							{ translate( 'Show a "follow comments" option in the comment form.' ) }
@@ -93,11 +101,14 @@ export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const selectedSiteSlug = getSelectedSiteSlug( state );
+		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, selectedSiteId, 'subscriptions' );
 
 		return {
 			selectedSiteId,
 			selectedSiteSlug,
 			subscriptionsModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'subscriptions' ),
+			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 		};
 	}
 )( localize( Subscriptions ) );
