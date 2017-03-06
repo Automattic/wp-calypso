@@ -111,7 +111,6 @@ export function getPlanDiscountedRawPrice(
 	if ( get( plan, 'rawPrice', -1 ) < 0 || ! isSitePlanDiscounted( state, siteId, productSlug ) ) {
 		return null;
 	}
-
 	const discountPrice = plan.rawPrice;
 
 	return isMonthly ? parseFloat( ( discountPrice / 12 ).toFixed( 2 ) ) : discountPrice;
