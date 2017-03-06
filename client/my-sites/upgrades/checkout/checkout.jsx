@@ -285,9 +285,9 @@ const Checkout = React.createClass( {
 			const receiptId = receipt.receipt_id;
 
 			this.props.fetchReceiptCompleted( receiptId, {
-				receiptId,
+				...receipt,
 				purchases: this.flattenPurchases( this.props.transaction.step.data.purchases ),
-				failedPurchases: this.flattenPurchases( this.props.transaction.step.data.failed_purchases ),
+				failedPurchases: this.flattenPurchases( this.props.transaction.step.data.failed_purchases )
 			} );
 		}
 
