@@ -18,13 +18,17 @@ function recordEvents( previousCart, nextCart ) {
 	each( difference( previousItems, nextItems ), recordRemoveEvent );
 }
 
+function flattenCartObject( cartItem ) {
+	return omitBy( cartItem, isObjectLike );
+}
+
 function recordAddEvent( cartItem ) {
-	analytics.tracks.recordEvent( 'calypso_cart_product_add', omitBy( cartItem, isObjectLike ) );
+	analytics.tracks.recordEvent( 'calypso_cart_product_add', flattenCartObject( cartItem ) );
 	recordAddToCart( cartItem );
 }
 
 function recordRemoveEvent( cartItem ) {
-	analytics.tracks.recordEvent( 'calypso_cart_product_remove', omitBy( cartItem, isObjectLike ) );
+	analytics.tracks.recordEvent( 'calypso_cart_product_remove', flattenCartObject( cartItem ) );
 }
 
 export default {
