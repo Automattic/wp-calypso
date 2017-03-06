@@ -46,12 +46,6 @@ class ReaderCombinedCardPost extends React.Component {
 			return;
 		}
 
-		if ( closest( event.target, '.should-scroll', true, rootNode ) ) {
-			setTimeout( function() {
-				window.scrollTo( 0, 0 );
-			}, 100 );
-		}
-
 		// declarative ignore
 		if ( closest( event.target, '.ignore-click, [rel~=external]', true, rootNode ) ) {
 			return;
