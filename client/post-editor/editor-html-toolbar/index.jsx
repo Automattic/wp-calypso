@@ -12,12 +12,12 @@ import {
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { Env } from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
  */
 import { serialize } from 'components/tinymce/plugins/contact-form/shortcode-utils';
-import { isFirefox, isIE11 } from 'lib/browser-detection';
 import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaUtils from 'lib/media/utils';
@@ -171,19 +171,23 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	updateEditorContent = ( before, newContent, after ) => {
-		if ( isFirefox ) {
+		// Browser is Firefox
+		if ( Env.gecko ) {
 			// In Firefox, execCommand( 'insertText' ), needed to preserve the undo stack,
 			// always moves the cursor to the end of the content.
 			// A workaround involving manually setting the cursor position and inserting the editor content
 			// is needed to put the cursor back to the correct position.
-			this.updateEditorContentFirefox( before, newContent, after );
-		} else if ( isIE11 ) {
+			return this.updateEditorContentFirefox( before, newContent, after );
+		}
+
+		// Browser is Internet Explorer 11
+		if ( 11 === Env.ie ) {
 			// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11.
 			// Using the previous version of replacing the entire content value instead.
-			this.updateEditorContentIE11( before, newContent, after );
-		} else {
-			this.insertEditorContent( before, newContent, after );
+			return this.updateEditorContentIE11( before, newContent, after );
 		}
+
+		return this.insertEditorContent( before, newContent, after );
 	}
 
 	insertEditorContent( before, newContent, after ) {
