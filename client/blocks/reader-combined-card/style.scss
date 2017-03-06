@@ -106,13 +106,14 @@
 }
 
 .reader-combined-card .reader-visit-link,
+.reader-combined-card .reader-author-link,
 .reader-combined-card__timestamp-link {
 	color: $gray;
-	cursor: pointer
+	cursor: pointer;
 }
 
-.reader-combined-card__timestamp-link {
-	cursor: pointer;
+.reader-combined-card .reader-author-link:hover {
+	color: $blue-medium;
 }
 
 .reader-combined-card__post .reader-excerpt {
