@@ -1317,18 +1317,18 @@ describe( 'themes selectors', () => {
 						delete global.window;
 					} );
 
-					it( 'should return customizer URL with return arg and suffixed theme ID', () => {
+					it( 'should return customizer URL with return arg and unsuffixed theme ID', () => {
 						const customizeUrl = getThemeCustomizeUrl( state, 'twentysixteen', 77203074 );
 						expect( customizeUrl ).to.equal(
-							'https://example.net/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com&theme=twentysixteen-wpcom'
+							'https://example.net/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com&theme=twentysixteen'
 						);
 					} );
 				} );
 
 				context( 'on the server', () => {
-					it( 'should return customizer URL with suffixed theme ID', () => {
+					it( 'should return customizer URL with unsuffixed theme ID', () => {
 						const customizeUrl = getThemeCustomizeUrl( state, 'twentysixteen', 77203074 );
-						expect( customizeUrl ).to.equal( 'https://example.net/wp-admin/customize.php?theme=twentysixteen-wpcom' );
+						expect( customizeUrl ).to.equal( 'https://example.net/wp-admin/customize.php?theme=twentysixteen' );
 					} );
 				} );
 			} );
