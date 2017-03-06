@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
-import { noop, truncate, get, isEmpty } from 'lodash';
+import { noop, truncate, get, isEmpty, isEqual } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
@@ -95,6 +95,10 @@ export default class ReaderPostCard extends React.Component {
 			event.preventDefault();
 			this.propagateCardClick();
 		}
+	}
+
+	shouldComponentUpdate( nextProps ) {
+		return isEqual( this.props, nextProps );
 	}
 
 	render() {
@@ -191,4 +195,3 @@ export default class ReaderPostCard extends React.Component {
 		);
 	}
 }
-
