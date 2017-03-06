@@ -253,6 +253,18 @@ UndocumentedSite.prototype.getConnection = function( connectionId ) {
 };
 
 /**
+ * Runs Theme Setup (Headstart).
+ *
+ * @return {Promise} A Promise to resolve when complete.
+ */
+UndocumentedSite.prototype.runThemeSetup = function() {
+	return this.wpcom.req.post( {
+		path: '/sites/' + this._id + '/theme-setup',
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+/**
  * Expose `UndocumentedSite` module
  */
 module.exports = UndocumentedSite;
