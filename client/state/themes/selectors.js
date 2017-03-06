@@ -13,8 +13,7 @@ import {
 	getSiteOption,
 	isJetpackSite,
 	canJetpackSiteManage,
-	hasJetpackSiteJetpackThemesExtendedFeatures,
-	isJetpackSiteMultiSite,
+	hasJetpackSiteJetpackThemesExtendedFeatures
 } from 'state/sites/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { getCustomizerUrl } from 'state/sites/selectors';
@@ -658,23 +657,4 @@ export function themePreviewVisibility( state ) {
  */
 export function getWpcomParentThemeId( state, themeId ) {
 	return get( getTheme( state, 'wpcom', themeId ), [ 'template' ], null );
-}
-
-/**
- * Determine whether wpcom themes should be removed from
- * a queried list of themes. For jetpack sites with the
- * required capabilities, we hide wpcom themes from the
- * list of locally installed themes.
- *
- * @param {Object} state Global state tree
- * @param {number} siteId The Site ID
- * @returns {boolean} true if wpcom themes should be removed
- */
-export function shouldFilterWpcomThemes( state, siteId ) {
-	return (
-		isJetpackSite( state, siteId ) &&
-		config.isEnabled( 'manage/themes/upload' ) &&
-		hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) &&
-		! isJetpackSiteMultiSite( state, siteId )
-	);
 }

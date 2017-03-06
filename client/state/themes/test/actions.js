@@ -44,7 +44,6 @@ import {
 	requestActiveTheme,
 	receiveTheme,
 	receiveThemes,
-	receiveThemesQuery,
 	requestThemes,
 	requestTheme,
 	pollThemeTransferStatus,
@@ -77,117 +76,36 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#receiveTheme()', () => {
-		const getState = () => ( {
-			themes: {
-				queries: {
-					wpcom: new ThemeQueryManager(),
-				},
-			},
-			sites: {
-				items: {},
-			},
-		} );
-
-		it( 'should dispatch THEMES_RECIEVE action', () => {
+		it( 'should return an action object', () => {
 			const theme = { id: 'twentysixteen', name: 'Twenty Sixteen' };
-			receiveTheme( theme, 'wpcom' )( spy, getState );
+			const action = receiveTheme( theme, 77203074 );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( action ).to.eql( {
 				type: THEMES_RECEIVE,
-				themes: [
-					{ id: 'twentysixteen', name: 'Twenty Sixteen' },
-				],
-				siteId: 'wpcom'
+				themes: [ theme ],
+				siteId: 77203074
 			} );
 		} );
 	} );
 
 	describe( '#receiveThemes()', () => {
-		const getState = () => ( {
-			themes: {
-				queries: {
-					wpcom: new ThemeQueryManager(),
-				},
-			},
-			sites: {
-				items: {},
-			},
-		} );
-
-		it( 'should dispach THEMES_RECEIVE action', () => {
+		it( 'should return an action object', () => {
 			const themes = [ { id: 'twentysixteen', name: 'Twenty Sixteen' } ];
-			receiveThemes( themes, 'wpcom' )( spy, getState );
+			const action = receiveThemes( themes, 77203074 );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( action ).to.eql( {
 				type: THEMES_RECEIVE,
-				themes: [
-					{ id: 'twentysixteen', name: 'Twenty Sixteen' },
-				],
-				siteId: 'wpcom'
-			} );
-		} );
-	} );
-
-	describe( '#receiveThemesQuery()', () => {
-		const getState = () => ( {
-			themes: {
-				queries: {
-					wpcom: new ThemeQueryManager(),
-				},
-			},
-			sites: {
-				items: {
-					77203074: {
-						jetpack: true,
-						options: { jetpack_version: '4.4.2' }
-					},
-				}
-			},
-		} );
-
-		context( 'with a wpcom site', () => {
-			const themes = [
-				{ id: 'twentysixteen', name: 'Twenty Sixteen' },
-				{ id: 'mood', name: 'Mood' }
-			];
-			const query = { search: 'Automattic' };
-
-			it( 'should dispatch themes request success action', () => {
-				receiveThemesQuery( themes, 'wpcom', query )( spy, getState );
-				expect( spy ).to.have.been.calledWith( {
-					type: THEMES_REQUEST_SUCCESS,
-					siteId: 'wpcom',
-					query,
-					found: 2,
-					themes,
-				} );
-			} );
-		} );
-
-		context( 'with a Jetpack site', () => {
-			const themes = [
-				{ id: 'twentysixteen', name: 'Twenty Sixteen' },
-				{ id: 'mood', name: 'Mood' }
-			];
-
-			it( 'should dispatch themes request success action', () => {
-				receiveThemesQuery( themes, 77203074, {} )( spy, getState );
-				expect( spy ).to.have.been.calledWith( {
-					type: THEMES_REQUEST_SUCCESS,
-					siteId: 77203074,
-					query: {},
-					found: 2,
-					themes,
-				} );
+				themes,
+				siteId: 77203074
 			} );
 		} );
 	} );
 
 	describe( '#requestThemes()', () => {
 		context( 'with a wpcom site', () => {
-			let nockScope;
 			useNock( ( nock ) => {
-				nockScope = nock( 'https://public-api.wordpress.com:443' )
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
 					.get( '/rest/v1.2/themes' )
 					.reply( 200, {
 						found: 2,
@@ -195,6 +113,12 @@ describe( 'actions', () => {
 							{ ID: 'twentysixteen', name: 'Twenty Sixteen' },
 							{ ID: 'mood', name: 'Mood' }
 						]
+					} )
+					.get( '/rest/v1.2/themes' )
+					.query( { search: 'Sixteen' } )
+					.reply( 200, {
+						found: 1,
+						themes: [ { ID: 'twentysixteen', name: 'Twenty Sixteen' } ]
 					} );
 			} );
 
@@ -206,13 +130,55 @@ describe( 'actions', () => {
 					siteId: 'wpcom',
 					query: {}
 				} );
-				expect( nockScope.isDone() ).to.be.true;
+			} );
+
+			it( 'should dispatch themes receive action when request completes', () => {
+				return requestThemes( 'wpcom' )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_RECEIVE,
+						themes: [
+							{ ID: 'twentysixteen', name: 'Twenty Sixteen' },
+							{ ID: 'mood', name: 'Mood' }
+						],
+						siteId: 'wpcom'
+					} );
+				} );
+			} );
+
+			it( 'should dispatch themes request success action when request completes', () => {
+				return requestThemes( 'wpcom' )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_REQUEST_SUCCESS,
+						siteId: 'wpcom',
+						query: {},
+						found: 2,
+						themes: [
+							{ ID: 'twentysixteen', name: 'Twenty Sixteen' },
+							{ ID: 'mood', name: 'Mood' }
+						]
+					} );
+				} );
+			} );
+
+			it( 'should dispatch themes request success action with query results', () => {
+				return requestThemes( 'wpcom', { search: 'Sixteen' } )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_REQUEST_SUCCESS,
+						siteId: 'wpcom',
+						query: { search: 'Sixteen' },
+						found: 1,
+						themes: [
+							{ ID: 'twentysixteen', name: 'Twenty Sixteen' },
+						]
+					} );
+				} );
 			} );
 		} );
 
 		context( 'with a Jetpack site', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
 					.get( '/rest/v1/sites/77203074/themes' )
 					.reply( 200, {
 						// The endpoint doesn't return `found` for Jetpack sites
@@ -221,11 +187,28 @@ describe( 'actions', () => {
 							{ ID: 'twentysixteen', name: 'Twenty Sixteen' }
 						]
 					} )
+					.get( '/rest/v1/sites/77203074/themes' )
+					.query( { search: 'Sixteen' } )
+					.reply( 200, {
+						// The endpoint doesn't return `found` for Jetpack sites
+						themes: [ { ID: 'twentysixteen', name: 'Twenty Sixteen' } ]
+					} )
 					.get( '/rest/v1/sites/1916284/themes' )
 					.reply( 403, {
 						error: 'authorization_required',
 						message: 'User cannot access this private blog.'
 					} );
+			} );
+
+			const fakeGetState = () => ( {
+				sites: {
+					items: {
+						77203074: {
+							jetpack: true,
+							options: { jetpack_version: '4.4.2' }
+						}
+					}
+				}
 			} );
 
 			it( 'should dispatch fetch action when thunk triggered', () => {
@@ -238,6 +221,47 @@ describe( 'actions', () => {
 				} );
 			} );
 
+			it( 'should dispatch themes receive action when request completes', () => {
+				return requestThemes( 77203074 )( spy, fakeGetState ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_RECEIVE,
+						themes: [
+							{ ID: 'twentyfifteen', name: 'Twenty Fifteen' },
+							{ ID: 'twentysixteen', name: 'Twenty Sixteen' },
+						],
+						siteId: 77203074
+					} );
+				} );
+			} );
+
+			it( 'should dispatch themes request success action when request completes', () => {
+				return requestThemes( 77203074 )( spy, fakeGetState ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_REQUEST_SUCCESS,
+						siteId: 77203074,
+						query: {},
+						found: 2,
+						themes: [
+							{ ID: 'twentyfifteen', name: 'Twenty Fifteen' },
+							{ ID: 'twentysixteen', name: 'Twenty Sixteen' },
+						]
+					} );
+				} );
+			} );
+
+			it( 'should dispatch themes request success action with query results', () => {
+				return requestThemes( 77203074, { search: 'Sixteen' } )( spy, fakeGetState ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_REQUEST_SUCCESS,
+						siteId: 77203074,
+						query: { search: 'Sixteen' },
+						found: 1,
+						themes: [
+							{ ID: 'twentysixteen', name: 'Twenty Sixteen' },
+						]
+					} );
+				} );
+			} );
 			it( 'should dispatch fail action when request fails', () => {
 				return requestThemes( 1916284 )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
@@ -266,6 +290,14 @@ describe( 'actions', () => {
 							{ slug: 'cassions', name: 'Cassions' },
 							{ slug: 'intentionally-blank', name: 'Intentionally Blank' }
 						]
+					} )
+					.get( '/themes/info/1.1/?action=query_themes&request%5Bfields%5D%5Bextended_author%5D=true' +
+						'&request%5Bsearch%5D=Sixteen' )
+					.reply( 200, {
+						info: { page: 1, pages: 1, results: 1 },
+						themes: [
+							{ slug: 'twentysixteen', name: 'Twenty Sixteen' }
+						]
 					} );
 			} );
 
@@ -276,6 +308,52 @@ describe( 'actions', () => {
 					type: THEMES_REQUEST,
 					siteId: 'wporg',
 					query: {}
+				} );
+			} );
+
+			it( 'should dispatch themes receive action when request completes', () => {
+				return requestThemes( 'wporg' )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_RECEIVE,
+						themes: [
+							{ id: 'bizprime', name: 'bizprime' },
+							{ id: 'shapely', name: 'Shapely' },
+							{ id: 'cassions', name: 'Cassions' },
+							{ id: 'intentionally-blank', name: 'Intentionally Blank' }
+						],
+						siteId: 'wporg'
+					} );
+				} );
+			} );
+
+			it( 'should dispatch themes request success action when request completes', () => {
+				return requestThemes( 'wporg' )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_REQUEST_SUCCESS,
+						siteId: 'wporg',
+						query: {},
+						found: 2452,
+						themes: [
+							{ id: 'bizprime', name: 'bizprime' },
+							{ id: 'shapely', name: 'Shapely' },
+							{ id: 'cassions', name: 'Cassions' },
+							{ id: 'intentionally-blank', name: 'Intentionally Blank' }
+						]
+					} );
+				} );
+			} );
+
+			it( 'should dispatch themes request success action with query results', () => {
+				return requestThemes( 'wporg', { search: 'Sixteen' } )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_REQUEST_SUCCESS,
+						siteId: 'wporg',
+						query: { search: 'Sixteen' },
+						found: 1,
+						themes: [
+							{ id: 'twentysixteen', name: 'Twenty Sixteen' },
+						]
+					} );
 				} );
 			} );
 		} );
@@ -302,6 +380,18 @@ describe( 'actions', () => {
 					type: THEME_REQUEST,
 					siteId: 'wpcom',
 					themeId: 'twentysixteen'
+				} );
+			} );
+
+			it( 'should dispatch themes receive action when request completes', () => {
+				return requestTheme( 'twentysixteen', 'wpcom' )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_RECEIVE,
+						themes: [
+							sinon.match( { id: 'twentysixteen', name: 'Twenty Sixteen' } )
+						],
+						siteId: 'wpcom'
+					} );
 				} );
 			} );
 
@@ -351,6 +441,18 @@ describe( 'actions', () => {
 				} );
 			} );
 
+			it( 'should dispatch themes receive action when request completes', () => {
+				return requestTheme( 'twentyfifteen', 77203074 )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_RECEIVE,
+						themes: [
+							sinon.match( { id: 'twentyfifteen', name: 'Twenty Fifteen' } )
+						],
+						siteId: 77203074
+					} );
+				} );
+			} );
+
 			it( 'should dispatch themes request success action when request completes', () => {
 				return requestTheme( 'twentyfifteen', 77203074 )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
@@ -395,6 +497,18 @@ describe( 'actions', () => {
 					type: THEME_REQUEST,
 					siteId: 'wporg',
 					themeId: 'twentyseventeen'
+				} );
+			} );
+
+			it( 'should dispatch themes receive action when request completes', () => {
+				return requestTheme( 'twentyseventeen', 'wporg' )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: THEMES_RECEIVE,
+						themes: [
+							sinon.match( { id: 'twentyseventeen', name: 'Twenty Seventeen' } )
+						],
+						siteId: 'wporg'
+					} );
 				} );
 			} );
 
@@ -690,6 +804,21 @@ describe( 'actions', () => {
 		} );
 
 		context( 'when request completes successfully', () => {
+			context( 'for a WP.com site', () => {
+				it( 'should dispatch receiveTheme action', () => {
+					return requestActiveTheme( 2211667 )( spy, fakeGetState ).then( () => {
+						expect( spy ).to.have.been.calledWith( receiveTheme( successResponse, 'wpcom' ) );
+					} );
+				} );
+			} );
+			context( 'for a Jetpack site', () => {
+				it( 'should dispatch receiveTheme action', () => {
+					return requestActiveTheme( 77203074 )( spy, fakeGetState ).then( () => {
+						expect( spy ).to.have.been.calledWith( receiveTheme( successResponse, 77203074 ) );
+					} );
+				} );
+			} );
+
 			it( 'should dispatch active theme request success action', () => {
 				return requestActiveTheme( 2211667 )( spy, fakeGetState ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
