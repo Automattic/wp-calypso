@@ -26,8 +26,8 @@ export default React.createClass( {
 			writing: i18n.translate( 'Writing', { context: 'settings screen' } ),
 			discussion: i18n.translate( 'Discussion', { context: 'settings screen' } ),
 			analytics: i18n.translate( 'Analytics', { context: 'settings screen' } ),
+			traffic: i18n.translate( 'Traffic', { context: 'settings screen' } ),
 			security: i18n.translate( 'Security', { context: 'settings screen' } ),
-			seo: i18n.translate( 'SEO', { context: 'settings screen' } ),
 			'import': i18n.translate( 'Import', { context: 'settings screen' } ),
 			'export': i18n.translate( 'Export', { context: 'settings screen' } ),
 		};
@@ -97,10 +97,10 @@ export default React.createClass( {
 					}
 
 					<NavItem
-						path={ `/settings/seo/${ site.slug }` }
-						selected={ section === 'seo' }
+						path={ `/settings/traffic/${ site.slug }` }
+						selected={ section === 'traffic' }
 					>
-						{ strings.seo }
+						{ strings.traffic }
 					</NavItem>
 
 					{
