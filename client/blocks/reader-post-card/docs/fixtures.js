@@ -107,6 +107,12 @@ export const posts = [
 			name: 'Sue Smith',
 			email: 'sue@example.com'
 		},
+		canonical_media: {
+			src: 'https://tedideas.files.wordpress.com/2016/11/miltonglaser11x17.jpg?w=720&quality=80&strip=info',
+			mediaType: 'image',
+			width: 720,
+			height: 988
+		},
 		images: [
 			{ src: 'https://tedideas.files.wordpress.com/2016/11/miltonglaser11x17.jpg?w=720&quality=80&strip=info', width: 720 },
 			{ src: 'https://tedideas.files.wordpress.com/2016/11/gotv_posternataliawarren.jpg?w=720&quality=80&strip=info', width: 720 },
