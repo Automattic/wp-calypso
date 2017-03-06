@@ -443,7 +443,7 @@ export function getThemeCustomizeUrl( state, themeId, siteId ) {
 	let identifier;
 
 	if ( isJetpackSite( state, siteId ) ) {
-		identifier = getSuffixedThemeId( state, themeId, siteId );
+		identifier = themeId;
 	} else {
 		const theme = getTheme( state, 'wpcom', themeId );
 		if ( ! theme ) {
