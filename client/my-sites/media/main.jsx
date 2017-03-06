@@ -87,6 +87,7 @@ export default React.createClass( {
 
 		resetAllImageEditorState();
 	},
+
 	onImageEditorDone( error, blob, imageEditorProps ) {
 		if ( error ) {
 			this.onEditImageCancel( imageEditorProps );
@@ -116,6 +117,27 @@ export default React.createClass( {
 		resetAllImageEditorState();
 		this.setState( { currentDetail: null, editedItem: null, selectedImages: [] } );
 	},
+
+	getModalButtons() {
+		return [
+			{
+				action: 'delete',
+				additionalClassNames: 'media__modal-delete-item-button is-link',
+				label: this.translate( 'Delete' ),
+				isPrimary: false,
+				disabled: false,
+				onClick: this.deleteMediaByItemDetail,
+			},
+			{
+				action: 'confirm',
+				label: this.translate( 'Done' ),
+				isPrimary: true,
+				disabled: false,
+				onClose: this.closeDetailsModal,
+			}
+		];
+	},
+
 	restoreOriginalMedia: function( siteId, item ) {
 		if ( ! siteId || ! item ) {
 			return;
@@ -123,19 +145,19 @@ export default React.createClass( {
 		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
 		this.setState( { currentDetail: null, editedItem: null, selectedImages: [] } );
 	},
+
 	setDetailSelectedIndex: function( index ) {
 		this.setState( { currentDetail: index } );
 	},
-	confirmDeleteMedia: function ( accepted ) {
-		const site = this.props.sites.getSelectedSite();
-		if ( ! site || ! accepted ) {
-			return;
-		}
-		const selected = MediaLibrarySelectedStore.getAll( site.ID );
-		MediaActions.delete( site.ID, selected );
-	},
 
-	deleteMedia: function() {
+	/**
+	 * Start the process to delete media items.
+	 * `callback` is an optional parameter which will execute once the confirm dialog is accepted.
+	 * It's used especially when the item is attempting to be removed using the item detail dialog.
+	 *
+	 * @param  {Function} [callback] - callback function
+	 */
+	deleteMedia: function( callback ) {
 		const site = this.props.sites.getSelectedSite();
 		const selected = MediaLibrarySelectedStore.getAll( site.ID );
 		const selectedCount = selected.length;
@@ -145,8 +167,40 @@ export default React.createClass( {
 			{ count: selectedCount }
 		);
 
-		accept( confirmMessage, this.confirmDeleteMedia );
+		accept( confirmMessage, accepted => {
+			if ( ! accepted ) {
+				return null;
+			}
+
+			this.confirmDeleteMedia();
+			if ( callback ) {
+				callback();
+			}
+		} );
 	},
+
+	handleDeleteMediaEvent() {
+		this.deleteMedia();
+	},
+
+	deleteMediaByItemDetail() {
+		this.deleteMedia( () => this.closeDetailsModal() );
+	},
+
+	confirmDeleteMedia: function() {
+		const site = this.props.sites.getSelectedSite();
+
+		if ( ! site ) {
+			return;
+		}
+
+		const selected = this.state.selectedImages && this.state.selectedImages.length
+			? this.state.selectedImages
+			: MediaLibrarySelectedStore.getAll( site.ID );
+
+		MediaActions.delete( site.ID, selected );
+	},
+
 	render: function() {
 		const site = this.props.sites.getSelectedSite();
 		return (
@@ -155,7 +209,8 @@ export default React.createClass( {
 				{ ( this.state.editedItem !== null || this.state.currentDetail !== null) &&
 					<Dialog
 						isVisible={ true }
-						additionalClassNames="editor-media-modal"
+						additionalClassNames="editor-media-modal media__item-dialog"
+						buttons={ this.getModalButtons() }
 						onClose={ this.closeDetailsModal }
 					>
 					{ this.state.currentDetail !== null &&
@@ -189,7 +244,7 @@ export default React.createClass( {
 							filter={ this.props.filter }
 							onEditItem={ this.openDetailsModalForASingleImage }
 							onViewDetails={ this.openDetailsModalForAllSelected }
-							onDeleteItem={ this.deleteMedia }
+							onDeleteItem={ this.handleDeleteMediaEvent }
 							modal={ false }
 							containerWidth={ this.state.containerWidth } />
 					</MediaLibrarySelectedData>
