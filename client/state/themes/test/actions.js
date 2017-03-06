@@ -29,7 +29,6 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
-	THEMES_RECEIVE,
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
@@ -43,7 +42,6 @@ import {
 	requestActiveTheme,
 	receiveTheme,
 	receiveThemes,
-	receiveThemesQuery,
 	requestThemes,
 	requestTheme,
 	pollThemeTransferStatus,
@@ -87,16 +85,18 @@ describe( 'actions', () => {
 			},
 		} );
 
-		it( 'should dispatch THEMES_RECIEVE action', () => {
+		it( 'should dispatch THEMES_REQUEST_SUCCESS action', () => {
 			const theme = { id: 'twentysixteen', name: 'Twenty Sixteen' };
 			receiveTheme( theme, 'wpcom' )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
-				type: THEMES_RECEIVE,
+				type: THEMES_REQUEST_SUCCESS,
 				themes: [
 					{ id: 'twentysixteen', name: 'Twenty Sixteen' },
 				],
-				siteId: 'wpcom'
+				siteId: 'wpcom',
+				query: {},
+				found: undefined,
 			} );
 		} );
 	} );
@@ -109,38 +109,12 @@ describe( 'actions', () => {
 				},
 			},
 			sites: {
-				items: {},
-			},
-		} );
-
-		it( 'should dispach THEMES_RECEIVE action', () => {
-			const themes = [ { id: 'twentysixteen', name: 'Twenty Sixteen' } ];
-			receiveThemes( themes, 'wpcom' )( spy, getState );
-
-			expect( spy ).to.have.been.calledWith( {
-				type: THEMES_RECEIVE,
-				themes: [
-					{ id: 'twentysixteen', name: 'Twenty Sixteen' },
-				],
-				siteId: 'wpcom'
-			} );
-		} );
-	} );
-
-	describe( '#receiveThemesQuery()', () => {
-		const getState = () => ( {
-			themes: {
-				queries: {
-					wpcom: new ThemeQueryManager(),
-				},
-			},
-			sites: {
 				items: {
 					77203074: {
 						jetpack: true,
 						options: { jetpack_version: '4.7' }
 					},
-				}
+				},
 			},
 		} );
 
@@ -152,7 +126,7 @@ describe( 'actions', () => {
 			const query = { search: 'Automattic' };
 
 			it( 'should dispatch themes request success action', () => {
-				receiveThemesQuery( themes, 'wpcom', query, 4 )( spy, getState );
+				receiveThemes( themes, 'wpcom', query, 4 )( spy, getState );
 				expect( spy ).to.have.been.calledWith( {
 					type: THEMES_REQUEST_SUCCESS,
 					siteId: 'wpcom',
@@ -170,7 +144,7 @@ describe( 'actions', () => {
 			];
 
 			it( 'should dispatch themes request success action', () => {
-				receiveThemesQuery( themes, 77203074, {} )( spy, getState );
+				receiveThemes( themes, 77203074, {} )( spy, getState );
 				expect( spy ).to.have.been.calledWith( {
 					type: THEMES_REQUEST_SUCCESS,
 					siteId: 77203074,
