@@ -11,9 +11,12 @@ import Gridicon from 'gridicons';
  */
 import SiteIcon from 'blocks/site-icon';
 import SiteIndicator from 'my-sites/site-indicator';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 export default React.createClass( {
 	displayName: 'Site',
+
+	mixins: [ PureRenderMixin ],
 
 	getDefaultProps() {
 		return {
