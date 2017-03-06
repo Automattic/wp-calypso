@@ -7,6 +7,11 @@
 	"discover_blog_id": 53424024,
 	"discover_feed_id": 41325786,
 	"daily_post_blog_id": 489937,
+	"directly_rtm_widget_environment": "production",
+	"directly_rtm_widget_ids": {
+		"sandbox": "8a2968fc57d1e2f40157f42bf2d43160",
+		"production": "8a12a3ca5a21a619015a47e492b02cfc"
+	},
 	"discover_logged_out_redirect_url": null,
 	"facebook_api_key": null,
 	"features": {},
