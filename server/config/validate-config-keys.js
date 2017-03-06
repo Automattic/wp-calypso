@@ -57,7 +57,7 @@ environmentKeys.forEach( ( [ filename, keys ] ) => {
 				`before adding overrides in the environment-specific config files.`
 			);
 
-			process.exit( 1 );
+			process.exit( 1 ); //eslint-disable-line
 		}
 	} );
 } );
