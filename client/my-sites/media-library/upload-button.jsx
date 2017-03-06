@@ -5,6 +5,7 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import noop from 'lodash/noop';
 import classNames from 'classnames';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -14,7 +15,6 @@ import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import uniq from 'lodash/uniq';
 import { VideoPressFileTypes } from 'lib/media/constants';
-import Button from 'components/button';
 
 module.exports = React.createClass( {
 	displayName: 'MediaLibraryUploadButton',
@@ -22,14 +22,21 @@ module.exports = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		onAddMedia: React.PropTypes.func,
-		className: React.PropTypes.string
+		className: React.PropTypes.string,
 	},
 
 	getDefaultProps: function() {
 		return {
 			onAddMedia: noop,
 			type: 'button',
+			href: null,
 		};
+	},
+
+	onClick: function() {
+		if ( this.props.href ) {
+			page( this.props.href );
+		}
 	},
 
 	uploadFiles: function( event ) {
@@ -62,20 +69,19 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var classes = classNames( 'media-library__upload-button', this.props.className );
+		var classes = classNames( 'media-library__upload-button', 'button', this.props.className );
 
 		return (
-			<Button icon className={ classes }>
-				<form ref="form">
-					{ this.props.children }
-					<input
-						type="file"
-						accept={ this.getInputAccept() }
-						multiple
-						onChange={ this.uploadFiles }
-						className="media-library__upload-button-input" />
-				</form>
-			</Button>
+			<form ref="form" className={ classes }>
+				{ this.props.children }
+				<input
+					type="file"
+					accept={ this.getInputAccept() }
+					multiple
+					onChange={ this.uploadFiles }
+					onClick={ this.onClick }
+					className="media-library__upload-button-input" />
+			</form>
 		);
 	}
 } );
