@@ -37,6 +37,7 @@
 		"devdocs/redirect-loggedout-homepage": true,
 		"devdocs/components-usage-stats": false,
 		"help": true,
+		"help/directly": true,
 		"jetpack_core_inline_update": true,
 		"keyboard-shortcuts": true,
 		"manage/customize": true,
