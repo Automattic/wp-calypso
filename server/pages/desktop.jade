@@ -22,6 +22,8 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class='is-desktop' + ( isFluidWidth ?
 			else
 				link(rel='stylesheet', href=urls['style.css'])
 
+		if config
+			script(type='text/javascript')!= config
 		link(rel='stylesheet', href='/desktop/wordpress-desktop.css')
 		script(src='/calypso/build.js')
 		script(src='/desktop/desktop-app.js')
@@ -39,11 +41,8 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class='is-desktop' + ( isFluidWidth ?
 			div.environment-badge
 				a(class='bug-report', href=feedbackURL, title='Report an issue', target='_blank')
 				span(class=['environment', 'is-' + badge])=badge
-
 		if app
 			script(type='text/javascript')!='var app = ' + sanitize.jsonStringifyForHtml( app )
-		if config
-			script(type='text/javascript')!= config
 		if i18nLocaleScript
 			script(src=i18nLocaleScript)
 
