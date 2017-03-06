@@ -153,12 +153,12 @@ describe( 'actions', () => {
 			const query = { search: 'Automattic' };
 
 			it( 'should dispatch themes request success action', () => {
-				receiveThemesQuery( themes, 'wpcom', query )( spy, getState );
+				receiveThemesQuery( themes, 'wpcom', query, 4 )( spy, getState );
 				expect( spy ).to.have.been.calledWith( {
 					type: THEMES_REQUEST_SUCCESS,
 					siteId: 'wpcom',
 					query,
-					found: 2,
+					found: 4,
 					themes,
 				} );
 			} );
