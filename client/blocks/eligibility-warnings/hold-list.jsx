@@ -99,8 +99,8 @@ export const HoldList = ( {
 				{ count: holds.length }
 			) } />
 			<Card className="eligibility-warnings__hold-list">
-				{ map( holds, ( hold, index ) =>
-					<div className="eligibility-warnings__hold" key={ index }>
+				{ map( holds, hold =>
+					<div className="eligibility-warnings__hold" key={ hold }>
 						<Gridicon icon="notice-outline" size={ 24 } />
 						<div className="eligibility-warnings__message">
 							<span className="eligibility-warnings__message-title">

@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { difference, filter, get, includes, noop } from 'lodash';
+import { get, includes, noop, partition } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -35,13 +35,14 @@ export const EligibilityWarnings = ( {
 	siteSlug,
 	translate,
 } ) => {
-	const context = -1 !== backUrl.indexOf( 'plugins' ) ? 'plugins' : 'themes';
+	const context = includes( backUrl, 'plugins' ) ? 'plugins' : 'themes';
 
 	const warnings = get( eligibilityData, 'eligibilityWarnings', [] );
 
-	let holds = get( eligibilityData, 'eligibilityHolds', [ 'PLACEHOLDER', 'PLACEHOLDER' ] );
-	const bannerHolds = filter( holds, hold => -1 !== [ 'NO_BUSINESS_PLAN', 'NOT_USING_CUSTOM_DOMAIN' ].indexOf( hold ) );
-	holds = difference( holds, bannerHolds );
+	const [ bannerHolds, listHolds ] = partition(
+		get( eligibilityData, 'eligibilityHolds', [ 'PLACEHOLDER', 'PLACEHOLDER' ] ),
+		hold => includes( [ 'NO_BUSINESS_PLAN', 'NOT_USING_CUSTOM_DOMAIN' ], hold ),
+	);
 
 	const classes = classNames(
 		'eligibility-warnings',
@@ -78,10 +79,10 @@ export const EligibilityWarnings = ( {
 				/>
 			}
 
-			{ holds.length > 0 && <HoldList holds={ holds } /> }
+			{ listHolds.length > 0 && <HoldList holds={ listHolds } /> }
 			{ warnings.length > 0 && <WarningList warnings={ warnings } /> }
 
-			{ isEligible && 0 === holds.length && 0 === warnings.length &&
+			{ isEligible && 0 === listHolds.length && 0 === warnings.length &&
 				<Card className="eligibility-warnings__no-conflicts">
 					<Gridicon icon="thumbs-up" size={ 24 } />
 					<span>
