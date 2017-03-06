@@ -20,20 +20,6 @@ Allows a user to manage the Jetpack Protect module on their site. They can activ
 
 3. We read and write the IP address endpoint via the site settings endpoint `/sites/:site_id:/settings`
 
-### Jetpack Scan
-
-Allows a user to manage SSH scanning on their site. This uses VaultPress technology to scan a site for vulnerabilities and malicious files. Users are sent emails if vulnerabilities are found.
-
-#### API Communications
-
-1. We fetch the SSH settings via a GET request to `/sites/:site_id:/ssh-credentials/mine`
-
-2. We activate / deactivate Jetpack Scan via a POST request to `/sites/:site_id:/ssh-credentials/mine`
-
-3. We update SSH settings via a POST request to `/sites/:site_id:/ssh-credentials/new`
-
-4. Email notifications are sent accordingly.
-
 ### Jetpack Monitor
 
 Allows a user to manage the Jetpack Monitor module on their site. They can turn the feature on and off and manage whether they receive email notifications.
