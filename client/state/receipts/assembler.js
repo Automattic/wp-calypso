@@ -1,9 +1,9 @@
 export function createReceiptObject( data ) {
 	return {
 		receiptId: data.receipt_id,
+		displayPrice: data.display_price,
 		purchases: data.purchases.map( purchase => {
 			return {
-				displayPrice: purchase.display_price,
 				freeTrial: purchase.free_trial,
 				isDomainRegistration: Boolean( purchase.is_domain_registration ),
 				meta: purchase.meta,

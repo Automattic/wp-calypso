@@ -16,7 +16,7 @@ import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
 import CheckoutThankYouHeader from './header';
-import { domainManagementEdit } from 'my-sites/upgrades/paths';
+import { domainManagementList } from 'my-sites/upgrades/paths';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
 import { fetchReceipt } from 'state/receipts/actions';
@@ -242,19 +242,19 @@ const CheckoutThankYou = React.createClass( {
 		}
 
 		if ( this.props.domainOnlySiteFlow && purchases.length > 0 && ! failedPurchases.length ) {
-			const [ purchase, domainName ] = findPurchaseAndDomain( purchases, isDomainRegistration );
+			const domainName = find( purchases, isDomainRegistration ).meta;
 
 			return (
 				<Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
 
 					<ThankYouCard
-						name={ this.translate( 'Domain Registration' ) }
-						price={ purchase.displayPrice }
+						name={ domainName }
+						price={ this.props.receipt.data.displayPrice }
 						heading={ this.translate( 'Thank you for your purchase!' ) }
 						description={ this.translate( "That looks like a great domain. Now it's time to get it all set up." ) }
-						buttonUrl={ domainManagementEdit( domainName, domainName ) }
-						buttonText={ this.translate( 'Manage Your Domain' ) }
+						buttonUrl={ domainManagementList( domainName ) }
+						buttonText={ this.translate( 'Go To Your Domain' ) }
 					/>
 				</Main>
 			);
