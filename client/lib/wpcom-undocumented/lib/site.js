@@ -259,7 +259,7 @@ UndocumentedSite.prototype.getConnection = function( connectionId ) {
  */
 UndocumentedSite.prototype.runThemeSetup = function() {
 	return this.wpcom.req.post( {
-		path: `/sites/${ this._id }/theme-setup`,
+		path: '/sites/' + this._id + '/theme-setup',
 		apiNamespace: 'wpcom/v2',
 	} );
 };
