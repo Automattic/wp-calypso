@@ -186,21 +186,26 @@ module.exports = React.createClass( {
 	},
 
 	renderActions() {
+		const {
+			activation: canToggleActivation,
+			autoupdate: canToggleAutoupdate,
+		} = this.props.allowedActions;
+
 		return (
 			<div className="plugin-item__actions">
-				<PluginActivateToggle
+			{ canToggleActivation && <PluginActivateToggle
 					isMock={ this.props.isMock }
 					plugin={ this.props.plugin }
 					disabled={ this.props.isSelectable }
 					site={ this.props.selectedSite }
-					notices={ this.props.notices } />
-				<PluginAutoupdateToggle
+					notices={ this.props.notices } /> }
+			{ canToggleAutoupdate && <PluginAutoupdateToggle
 					isMock={ this.props.isMock }
 					plugin={ this.props.plugin }
 					disabled={ this.props.isSelectable }
 					site={ this.props.selectedSite }
 					notices={ this.props.notices }
-					wporg={ !! this.props.plugin.wporg } />
+					wporg={ !! this.props.plugin.wporg } /> }
 			</div>
 		);
 	},

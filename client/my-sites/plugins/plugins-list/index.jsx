@@ -432,6 +432,13 @@ export const PluginsList = React.createClass( {
 		);
 	},
 
+	getAllowedPluginActions( ) {
+		return {
+			autoupdate: true,
+			activation: true
+		}
+	},
+
 	renderPlugin( plugin ) {
 		const selectThisPlugin = this.togglePlugin.bind( this, plugin );
 		return (
@@ -447,7 +454,8 @@ export const PluginsList = React.createClass( {
 				isSelectable={ this.state.bulkManagementActive }
 				onClick={ selectThisPlugin }
 				selectedSite={ this.props.selectedSite }
-				pluginLink={ '/plugins/' + encodeURIComponent( plugin.slug ) + this.siteSuffix() } />
+				pluginLink={ '/plugins/' + encodeURIComponent( plugin.slug ) + this.siteSuffix() }
+				allowedActions = { this.getAllowedPluginActions() } />
 		);
 	},
 
