@@ -475,7 +475,7 @@ export default connect(
 				const newPlan = isNew( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
 				const showMonthlyPrice = abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' && ! isPaid
-					? true
+					? showMonthly
 					: ! relatedMonthlyPlan && showMonthly;
 
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {

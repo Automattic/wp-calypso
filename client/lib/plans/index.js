@@ -26,6 +26,7 @@ import {
 	PLAN_PERSONAL
 } from 'lib/plans/constants';
 import SitesList from 'lib/sites-list';
+import { abtest } from 'lib/abtest';
 
 /**
  * Module vars
@@ -134,7 +135,7 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 
 	return plans.filter( function( plan ) {
 		if ( site && site.jetpack ) {
-			if ( 'monthly' === intervalType ) {
+			if ( 'monthly' === intervalType && abtest( 'jetpackPlansNoMonthly' ) !== 'hideMonthly' ) {
 				if ( showJetpackFreePlan ) {
 					return isJetpackPlan( plan ) && isMonthly( plan );
 				}
