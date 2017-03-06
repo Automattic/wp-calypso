@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { partial } from 'lodash';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -12,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import CommentButton from 'blocks/comment-button';
-import LikeButton from 'reader/like-button';
+import LikeButton from 'my-sites/post-like-button';
 import PostTotalViews from 'my-sites/posts/post-total-views';
 import utils from 'lib/posts/utils';
 
@@ -38,9 +39,13 @@ const showLikes = site => ! site.jetpack || site.isModuleActive( 'likes' );
 const showStats = site => site.capabilities	&&
 	site.capabilities.view_stats &&
 	( ! site.jetpack || site.isModuleActive( 'stats' ) );
-const PostActions = ( { className, post, site, toggleComments, recordGoogleEvent } ) => {
+
+const PostActions = ( { className, post, site, toggleComments, recordEvent } ) => {
 	const { contentLinkURL, contentLinkTarget } = getContentLink( site, post );
 	const isDraft = post.status === 'draft';
+
+	const postRelativeTimeStatusOnClick = () => recordEvent( 'Clicked Post Date' );
+	const postTotalViewsOnClick = () => recordEvent( 'Clicked View Post Stats' );
 
 	return (
 		<ul className={ classnames( 'post-actions', className ) }>
@@ -49,7 +54,7 @@ const PostActions = ( { className, post, site, toggleComments, recordGoogleEvent
 					post={ post }
 					link={ contentLinkURL }
 					target={ contentLinkTarget }
-					onClick={ () => recordGoogleEvent( 'Posts', 'Clicked Post Date' ) } />
+					onClick={ postRelativeTimeStatusOnClick } />
 			</li>
 			{ ! isDraft && showComments( site, post ) &&
 				<li className="post-actions__item">
@@ -70,7 +75,8 @@ const PostActions = ( { className, post, site, toggleComments, recordGoogleEvent
 						postId={ +post.ID }
 						post={ post }
 						site={ site }
-						tagName="div"
+						tagName="a"
+						animateLike={ false }
 						forceCounter={ true }
 						showLabel={ false }
 						showZeroCount={ false } />
@@ -80,7 +86,7 @@ const PostActions = ( { className, post, site, toggleComments, recordGoogleEvent
 				<li className="post-actions__item post-actions__total-views">
 					<PostTotalViews
 						post={ post }
-						clickHandler={ () => recordGoogleEvent( 'Posts', 'Clicked View Post Stats' ) } />
+						clickHandler={ postTotalViewsOnClick } />
 				</li>
 			}
 		</ul>
@@ -93,5 +99,5 @@ PostActions.propTypes = {
 
 export default connect(
 	null,
-	{ recordGoogleEvent }
+	{ recordEvent: partial( recordGoogleEvent, 'Posts' ) }
 )( localize( PostActions ) );

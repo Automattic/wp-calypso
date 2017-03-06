@@ -14,14 +14,10 @@
 		&.post-actions__relative-time {
 			flex: 1;
 			margin-left: 20px;
-			color: $gray;
-
-			a:hover {
-				color: $blue-medium;
-			}
 		}
 
-		&.post-actions__total-views a {
+		a,
+		&.post-actions__relative-time {
 			color: $gray;
 
 			&:hover {

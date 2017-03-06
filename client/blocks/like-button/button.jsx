@@ -4,6 +4,7 @@
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
+import { omitBy, isNull } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,7 +24,9 @@ const LikeButton = React.createClass( {
 		onLikeToggle: React.PropTypes.func,
 		likedLabel: React.PropTypes.string,
 		iconSize: React.PropTypes.number,
-		animateLike: React.PropTypes.bool
+		animateLike: React.PropTypes.bool,
+		postId: React.PropTypes.number,
+		slug: React.PropTypes.string,
 	},
 
 	getDefaultProps() {
@@ -33,7 +36,9 @@ const LikeButton = React.createClass( {
 			likeCount: 0,
 			showLabel: true,
 			iconSize: 24,
-			animateLike: true
+			animateLike: true,
+			postId: null,
+			slug: null
 		};
 	},
 
@@ -47,9 +52,15 @@ const LikeButton = React.createClass( {
 	},
 
 	render() {
-		const showLikeCount = this.props.likeCount > 0 || this.props.showZeroCount;
-		const likeCount = this.props.likeCount;
-		const containerTag = this.props.tagName || 'li';
+		const {
+			likeCount,
+			tagName: containerTag = 'li',
+			showZeroCount,
+			postId,
+			slug
+		} = this.props;
+		const showLikeCount = likeCount > 0 || showZeroCount;
+		const isLink = containerTag === 'a';
 		const containerClasses = {
 			'like-button': true,
 			'ignore-click': true,
@@ -90,10 +101,11 @@ const LikeButton = React.createClass( {
 		return (
 			React.createElement(
 				containerTag,
-				{
+				omitBy( {
+					href: isLink && `/stats/post/${ postId }/${ slug }`,
 					className: classNames( containerClasses ),
-					onClick: this.toggleLiked
-				},
+					onClick: ! isLink && this.toggleLiked
+				}, isNull ),
 				<LikeIcons size={ this.props.iconSize } />, labelElement
 			)
 		);

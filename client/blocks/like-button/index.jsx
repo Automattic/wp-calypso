@@ -71,7 +71,7 @@ const LikeButtonContainer = React.createClass( {
 	},
 
 	render() {
-		const props = omit( this.props, [ 'siteId', 'postId' ] );
+		const props = omit( this.props, [ 'siteId' ] );
 		return <LikeButton { ...props }
 				likeCount={ this.state.likeCount }
 				liked={ this.state.iLike }
