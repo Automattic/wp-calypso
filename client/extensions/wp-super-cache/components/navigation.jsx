@@ -10,37 +10,45 @@ import { localize } from 'i18n-calypso';
 import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
-
-/**
- * Module Variables
- */
-const tabs = [ 'easy', 'advanced', 'cdn', 'contents', 'preload', 'plugins', 'debug' ];
+import { Tabs } from '../constants';
 
 const Navigation = ( { activeTab, translate } ) => {
 	const getLabel = tab => {
 		switch ( tab ) {
-			case 'easy':
+			case Tabs.EASY:
 				return translate( 'Easy' );
-			case 'advanced':
+			case Tabs.ADVANCED:
 				return translate( 'Advanced' );
-			case 'cdn':
+			case Tabs.CDN:
 				return translate( 'CDN' );
-			case 'contents':
+			case Tabs.CONTENTS:
 				return translate( 'Contents' );
-			case 'preload':
+			case Tabs.PRELOAD:
 				return translate( 'Preload' );
-			case 'plugins':
+			case Tabs.PLUGINS:
 				return translate( 'Plugins' );
-			case 'debug':
+			case Tabs.DEBUG:
 				return translate( 'Debug' );
 		}
 	};
 
-	const renderTabItems = () => {
+	const getTabs = () => {
+		const tabs = [];
+
+		for ( const key in Tabs ) {
+			if ( Tabs.hasOwnProperty( key ) ) {
+				tabs.push( Tabs[ key ] );
+			}
+		}
+
+		return tabs;
+	};
+
+	const renderTabItems = ( tabs ) => {
 		return tabs.map( tab => {
 			let path = '/extensions/wp-super-cache';
 
-			if ( tab !== tabs[ 0 ] ) {
+			if ( tab !== Tabs.EASY ) {
 				path = `${ path }/${ tab }`;
 			}
 
@@ -48,7 +56,7 @@ const Navigation = ( { activeTab, translate } ) => {
 				<SectionNavTabItem
 					key={ `wp-super-cache-${ tab }` }
 					path={ path }
-					selected={ ( activeTab || tabs[ 0 ] ) === tab }>
+					selected={ ( activeTab || Tabs.EASY ) === tab }>
 					{ getLabel( tab ) }
 				</SectionNavTabItem>
 			);
@@ -58,7 +66,7 @@ const Navigation = ( { activeTab, translate } ) => {
 	return (
 		<SectionNav selectedText="Settings">
 			<SectionNavTabs>
-				{ renderTabItems() }
+				{ renderTabItems( getTabs() ) }
 			</SectionNavTabs>
 		</SectionNav>
 	);
