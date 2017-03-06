@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { find, includes, isEmpty, isEqual, negate, range } from 'lodash';
+import { find, get, includes, isEmpty, isEqual, negate, range } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -19,6 +19,7 @@ import PluginsLog from 'lib/plugins/log-store';
 import PluginNotices from 'lib/plugins/notices';
 import SectionHeader from 'components/section-header';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 function checkPropsChange( nextProps, propArr ) {
@@ -432,15 +433,24 @@ export const PluginsList = React.createClass( {
 		);
 	},
 
-	getAllowedPluginActions( ) {
-		return {
-			autoupdate: true,
-			activation: true
+	getAllowedPluginActions( plugin ) {
+		let autoupdate = true;
+		let activation = true;
+
+		if ( this.props.isSiteAutomatedTransfer && includes( [ 'jetpack', 'vaultpress' ], plugin.slug ) ) {
+			autoupdate = false;
+			activation = false;
 		}
+
+		return {
+			autoupdate,
+			activation,
+		};
 	},
 
 	renderPlugin( plugin ) {
 		const selectThisPlugin = this.togglePlugin.bind( this, plugin );
+		const allowedPluginActions = this.getAllowedPluginActions( plugin );
 		return (
 			<PluginItem
 				key={ plugin.slug }
@@ -455,7 +465,8 @@ export const PluginsList = React.createClass( {
 				onClick={ selectThisPlugin }
 				selectedSite={ this.props.selectedSite }
 				pluginLink={ '/plugins/' + encodeURIComponent( plugin.slug ) + this.siteSuffix() }
-				allowedActions = { this.getAllowedPluginActions() } />
+				allowedActions = { allowedPluginActions }
+				isAutoManaged = { ! allowedPluginActions.autoupdate } />
 		);
 	},
 
@@ -466,9 +477,13 @@ export const PluginsList = React.createClass( {
 } );
 
 export default connect(
-	state => ( {
-		selectedSite: getSelectedSite( state ),
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-	} ),
+	state => {
+		const selectedSite = getSelectedSite( state );
+		return {
+			selectedSite,
+			selectedSiteSlug: getSelectedSiteSlug( state ),
+			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) )
+		};
+	},
 	{ recordGoogleEvent }
 )( PluginsList );

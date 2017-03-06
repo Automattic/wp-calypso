@@ -160,6 +160,15 @@ module.exports = React.createClass( {
 				);
 			}
 		}
+
+		if ( this.props.isAutoManaged ) {
+			return (
+				<div className="plugin-item__last_updated">
+					{ this.translate( '%(pluginName)s is automatically managed on this site', { args: { pluginName: pluginData.name } } ) }
+				</div>
+			);
+		}
+
 		if ( this.hasUpdate() ) {
 			return this.renderUpdateFlag();
 		}
