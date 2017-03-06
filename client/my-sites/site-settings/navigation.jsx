@@ -25,7 +25,6 @@ export default React.createClass( {
 			general: i18n.translate( 'General', { context: 'settings screen' } ),
 			writing: i18n.translate( 'Writing', { context: 'settings screen' } ),
 			discussion: i18n.translate( 'Discussion', { context: 'settings screen' } ),
-			analytics: i18n.translate( 'Analytics', { context: 'settings screen' } ),
 			traffic: i18n.translate( 'Traffic', { context: 'settings screen' } ),
 			security: i18n.translate( 'Security', { context: 'settings screen' } ),
 			'import': i18n.translate( 'Import', { context: 'settings screen' } ),
@@ -85,16 +84,6 @@ export default React.createClass( {
 						selected={ section === 'discussion' } >
 							{ strings.discussion }
 					</NavItem>
-
-					{
-						( ( ! site.jetpack && config.isEnabled( 'manage/plans' ) ) ||
-							( site.jetpack && config.isEnabled( 'jetpack/google-analytics' ) ) ) &&
-							<NavItem
-								path={ `/settings/analytics/${ site.slug }` }
-								selected={ section === 'analytics' } >
-									{ strings.analytics }
-							</NavItem>
-					}
 
 					<NavItem
 						path={ `/settings/traffic/${ site.slug }` }
