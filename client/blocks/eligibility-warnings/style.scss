@@ -33,10 +33,6 @@
 	}
 }
 
-.eligibility-warnings .notice {
-	margin-bottom: 16px;
-}
-
 .eligibility-warnings__hold,
 .eligibility-warnings__warning,
 .eligibility-warnings__confirm-box.card {
@@ -81,6 +77,21 @@
 	}
 	&:hover .gridicons-help-outline {
 		color: $blue-wordpress;
+	}
+}
+
+.eligibility-warnings__no-conflicts.card {
+	align-items: center;
+	display: flex;
+
+	.gridicon {
+		color: $gray-text-min;
+		flex-shrink: 0;
+	}
+	span {
+		display: block;
+		flex-grow: 1;
+		padding-left: 16px;
 	}
 }
 

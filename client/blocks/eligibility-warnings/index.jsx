@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { difference, filter, get, includes, noop } from 'lodash';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -19,7 +20,6 @@ import Banner from 'components/banner';
 import Button from 'components/button';
 import Card from 'components/card';
 import HoldList from './hold-list';
-import Notice from 'components/notice';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import WarningList from './warning-list';
 
@@ -82,11 +82,12 @@ export const EligibilityWarnings = ( {
 			{ warnings.length > 0 && <WarningList warnings={ warnings } /> }
 
 			{ isEligible && 0 === holds.length && 0 === warnings.length &&
-				<Notice
-					showDismiss={ false }
-					status="is-success"
-					text={ translate( 'No conflicts detected.' ) }
-				/>
+				<Card className="eligibility-warnings__no-conflicts">
+					<Gridicon icon="thumbs-up" size={ 24 } />
+					<span>
+						{ translate( 'This site is eligible to install plugins and upload themes.' ) }
+					</span>
+				</Card>
 			}
 
 			<Card className="eligibility-warnings__confirm-box">
