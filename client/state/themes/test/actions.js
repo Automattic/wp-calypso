@@ -139,7 +139,7 @@ describe( 'actions', () => {
 				items: {
 					77203074: {
 						jetpack: true,
-						options: { jetpack_version: '4.4.2' }
+						options: { jetpack_version: '4.7' }
 					},
 				}
 			},

@@ -335,7 +335,7 @@ class Upload extends React.Component {
 					template="updateJetpack"
 					siteId={ siteId }
 					featureExample={ this.renderUploadCard() }
-					version="4.4.2" /> }
+					version="4.7" /> }
 				{ showEligibility && <EligibilityWarnings
 					backUrl={ backPath }
 					onProceed={ this.onProceedClick } /> }
