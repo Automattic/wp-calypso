@@ -17,7 +17,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { serialize } from 'components/tinymce/plugins/contact-form/shortcode-utils';
-import { isIE11 } from 'lib/detect-ie11';
+import { isFirefox, isIE11 } from 'lib/browser-detection';
 import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaUtils from 'lib/media/utils';
@@ -170,17 +170,38 @@ export class EditorHtmlToolbar extends Component {
 			previousSelectionEnd + insertedContentLength;
 	}
 
-	// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11.
-	// Using the previous version of replacing the entire content value instead.
-	updateEditorContent = isIE11
-		? this.updateEditorContentIE11
-		: this.insertEditorContent;
+	updateEditorContent = ( before, newContent, after ) => {
+		if ( isFirefox ) {
+			// In Firefox, execCommand( 'insertText' ), needed to preserve the undo stack,
+			// always moves the cursor to the end of the content.
+			// A workaround involving manually setting the cursor position and inserting the editor content
+			// is needed to put the cursor back to the correct position.
+			this.updateEditorContentFirefox( before, newContent, after );
+		} else if ( isIE11 ) {
+			// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11.
+			// Using the previous version of replacing the entire content value instead.
+			this.updateEditorContentIE11( before, newContent, after );
+		} else {
+			this.insertEditorContent( before, newContent, after );
+		}
+	}
 
 	insertEditorContent( before, newContent, after ) {
 		const { content, onToolbarChangeContent } = this.props;
 		content.focus();
 		document.execCommand( 'insertText', false, newContent );
 		onToolbarChangeContent( before + newContent + after );
+	}
+
+	updateEditorContentFirefox( before, newContent, after ) {
+		const fullContent = before + newContent + after;
+		const { content, content: { selectionEnd, value }, onToolbarChangeContent } = this.props;
+		this.props.content.value = fullContent;
+		content.focus();
+		document.execCommand( 'insertText', false, newContent );
+		onToolbarChangeContent( fullContent );
+		this.setCursorPosition( selectionEnd, fullContent.length - value.length );
+		this.props.content.focus();
 	}
 
 	updateEditorContentIE11( before, newContent, after ) {

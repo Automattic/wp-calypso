@@ -43,7 +43,7 @@ import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
 import insertMenuPlugin from './plugins/insert-menu/plugin';
 import embedReversalPlugin from './plugins/embed-reversal/plugin';
 import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
-import isIE11 from 'lib/detect-ie11';
+import isIE11 from 'lib/browser-detection';
 import mentionsPlugin from './plugins/mentions/plugin';
 
 [
