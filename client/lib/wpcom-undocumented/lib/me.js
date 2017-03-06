@@ -184,7 +184,7 @@ UndocumentedMe.prototype.storedCardAdd = function( paygateToken, callback ) {
 		path: '/me/stored-cards'
 	}, {
 		payment_key: paygateToken,
-		use_as_default: true
+		use_for_existing: true
 	}, callback );
 };
 
