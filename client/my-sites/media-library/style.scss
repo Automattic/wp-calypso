@@ -94,6 +94,14 @@
 	}
 }
 
+.media-library__header.media-library__upload-url {
+	padding: 6px 12px;
+	background-color: $white;
+	box-sizing: border-box;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+}
+
 .media-library__upload-buttons {
 	display: inline;
 }
