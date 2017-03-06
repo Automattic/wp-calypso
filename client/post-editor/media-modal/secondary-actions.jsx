@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { values, noop, some, every, flow, partial, pick } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -19,8 +20,8 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
 import Button from 'components/button';
 
-const MediaModalSecondaryActions = React.createClass( {
-	propTypes: {
+class MediaModalSecondaryActions extends Component {
+	static propTypes = {
 		user: PropTypes.object,
 		site: PropTypes.object,
 		selectedItems: PropTypes.array,
@@ -29,35 +30,36 @@ const MediaModalSecondaryActions = React.createClass( {
 		onDelete: PropTypes.func,
 		onViewDetails: PropTypes.func,
 		renderStorage: PropTypes.bool,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			disabled: false,
-			onDelete: noop,
-			renderStorage: true,
-		};
-	},
+	static defaultProps = {
+		disabled: false,
+		onDelete: noop,
+		renderStorage: true,
+	};
 
 	getButtons() {
 		const {
-			user,
-			site,
-			selectedItems,
-			view,
 			disabled,
-			onDelete
+			selectedItems,
+			site,
+			translate,
+			user,
+			view,
+
+			onDelete,
+			onViewDetails,
 		} = this.props;
 
-		let buttons = [];
+		const buttons = [];
 
 		if ( ModalViews.LIST === view && selectedItems.length ) {
 			buttons.push( {
 				key: 'edit',
-				text: this.translate( 'Edit' ),
+				text: translate( 'Edit' ),
 				disabled: disabled,
 				primary: true,
-				onClick: this.props.onViewDetails
+				onClick: onViewDetails
 			} );
 		}
 
@@ -76,7 +78,7 @@ const MediaModalSecondaryActions = React.createClass( {
 		}
 
 		return buttons;
-	},
+	}
 
 	render() {
 		return (
@@ -93,7 +95,7 @@ const MediaModalSecondaryActions = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state, ownProps ) => ( {
@@ -111,4 +113,4 @@ export default connect(
 		//We want to overwrite connected props if 'onViewDetails', 'view' were provided
 		return Object.assign( {}, ownProps, stateProps, dispatchProps, pick( ownProps, [ 'onViewDetails', 'view' ] ) );
 	}
-)( MediaModalSecondaryActions );
+)( localize( MediaModalSecondaryActions ) );
