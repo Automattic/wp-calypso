@@ -474,7 +474,7 @@ export default connect(
 				const popular = isPopular( plan ) && ! isPaid;
 				const newPlan = isNew( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
-				const showMonthyPrice = abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' && ! isPaid
+				const showMonthlyPrice = abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' && ! isPaid
 					? true
 					: ! relatedMonthlyPlan && showMonthly;
 
@@ -522,7 +522,7 @@ export default connect(
 						popular,
 						newPlan
 					),
-					rawPrice: getPlanRawPrice( state, planProductId, showMonthyPrice ),
+					rawPrice: getPlanRawPrice( state, planProductId, showMonthlyPrice ),
 					relatedMonthlyPlan: relatedMonthlyPlan
 				};
 			} )

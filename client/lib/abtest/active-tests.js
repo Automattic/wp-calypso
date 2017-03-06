@@ -107,10 +107,10 @@ module.exports = {
 	jetpackPlansNoMonthly: {
 		datestamp: '20170302',
 		variations: {
-			showMonthy: 50,
+			showMonthly: 50,
 			hideMonthly: 50
 		},
-		defaultVariation: 'showMonthy',
+		defaultVariation: 'showMonthly',
 		allowExistingUsers: true
 	},
 
