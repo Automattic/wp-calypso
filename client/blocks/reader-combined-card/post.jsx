@@ -17,6 +17,7 @@ import ReaderAuthorLink from 'blocks/reader-author-link';
 import { recordPermalinkClick } from 'reader/stats';
 import PostTime from 'reader/post-time';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
+import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 import * as stats from 'reader/stats';
 
 class ReaderCombinedCardPost extends React.Component {
@@ -75,10 +76,14 @@ class ReaderCombinedCardPost extends React.Component {
 	render() {
 		const { post, streamUrl } = this.props;
 		const hasAuthorName = has( post, 'author.name' );
+
 		let featuredAsset = null;
-		if ( post.canonical_media ) {
+		if ( post.canonical_media && post.canonical_media.mediaType === 'video' ) {
+			featuredAsset = <ReaderFeaturedVideo { ...post.canonical_media } videoEmbed={ post.canonical_media } allowPlaying={ false } />;
+		} else if ( post.canonical_media ) {
 			featuredAsset = <ReaderFeaturedImage imageWidth={ 100 } imageUrl={ post.canonical_media.src } href={ post.URL } />;
 		}
+
 		const recordDateClick = () => {
 			recordPermalinkClick( 'timestamp_combined_card', post );
 		};
