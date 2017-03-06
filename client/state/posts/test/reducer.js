@@ -21,6 +21,7 @@ import {
 	POST_RESTORE,
 	POST_RESTORE_FAILURE,
 	POST_SAVE,
+	POST_SAVE_SUCCESS,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_FAILURE,
@@ -886,6 +887,43 @@ describe( 'reducer', () => {
 					},
 					'': {
 						title: 'Unrelated'
+					}
+				}
+			} );
+		} );
+
+		it( 'should ignore reset edits action when discarded site doesn\'t exist', () => {
+			const original = deepFreeze( {} );
+			const state = edits( original, {
+				type: POST_SAVE_SUCCESS,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should copy edits when the post is saved and prior postId was null', () => {
+			const state = edits( deepFreeze( {
+				2916284: {
+					'': {
+						title: 'Ribs & Chicken'
+					}
+				}
+			} ), {
+				type: POST_SAVE_SUCCESS,
+				siteId: 2916284,
+				postId: null,
+				savedPost: {
+					ID: 841,
+					title: 'Ribs'
+				}
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						title: 'Ribs & Chicken'
 					}
 				}
 			} );

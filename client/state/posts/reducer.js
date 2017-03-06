@@ -21,6 +21,7 @@ import {
 	POST_RESTORE,
 	POST_RESTORE_FAILURE,
 	POST_SAVE,
+	POST_SAVE_SUCCESS,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
@@ -278,6 +279,23 @@ export function edits( state = {}, action ) {
 
 			return Object.assign( {}, state, {
 				[ action.siteId ]: omit( state[ action.siteId ], action.postId || '' )
+			} );
+
+		case POST_SAVE_SUCCESS:
+			if ( ! state.hasOwnProperty( action.siteId ) || ! action.savedPost ) {
+				break;
+			}
+			const { postId, siteId, savedPost } = action;
+
+			if ( postId ) {
+				return state;
+			}
+
+			// if postId is null, copy over any edits
+			return Object.assign( {}, state, {
+				[ siteId ]: {
+					[ savedPost.ID ]: state[ siteId ][ '' ]
+				}
 			} );
 
 		case SERIALIZE:
