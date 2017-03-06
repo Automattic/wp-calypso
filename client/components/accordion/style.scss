@@ -93,7 +93,7 @@ $accordion-background-expanded: $white;
 	font-style: italic;
 	color: $gray-dark;
 	white-space: nowrap;
-	overflow-x: hidden;
+	overflow: hidden;
 	position: relative;
 	height: $accordion-subtitle-height;
 }

@@ -27,7 +27,4 @@ export default function() {
 
 	[ 'codePointAt', 'normalize', 'repeat', 'startsWith', 'endsWith', 'includes' ]
 		.map( partial( wrapObjectFn, String.prototype, 'String#' ) );
-
-	[ 'flags' ].map( partial( wrapObjectFn, RegExp.prototype, 'RegExp#' ) );
-
 }
