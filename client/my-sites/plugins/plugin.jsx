@@ -214,6 +214,14 @@ const SinglePlugin = React.createClass( {
 		);
 	},
 
+	getAllowedPluginActions() {
+		return {
+			autoupdate: true,
+			activation: true,
+			remove: true,
+		};
+	},
+
 	renderDocumentHead() {
 		return <DocumentHead title={ this.state.pageTitle } />;
 	},
@@ -243,7 +251,6 @@ const SinglePlugin = React.createClass( {
 
 	renderPluginPlaceholder() {
 		const { selectedSite } = this.props;
-
 		return (
 			<MainComponent>
 				<SidebarNavigation />
@@ -337,6 +344,7 @@ const SinglePlugin = React.createClass( {
 
 		const plugin = this.getPlugin();
 		const pluginExists = this.pluginExists( plugin );
+		const allowedPluginActions = this.getAllowedPluginActions( plugin );
 
 		if ( pluginExists === 'unknown' ) {
 			return this.renderPluginPlaceholder();
@@ -389,7 +397,8 @@ const SinglePlugin = React.createClass( {
 								? null
 								: !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug )
 						}
-						isInstalling={ installing } />
+						isInstalling={ installing }
+						allowedActions={ allowedPluginActions } />
 					{ plugin.wporg && <PluginSections plugin={ plugin } isWpcom={ isWpcom } /> }
 					{ this.renderSitesList( plugin ) }
 				</div>

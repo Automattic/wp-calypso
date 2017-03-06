@@ -52,6 +52,21 @@ export default React.createClass( {
 		isInstalledOnSite: React.PropTypes.bool,
 		isPlaceholder: React.PropTypes.bool,
 		isMock: React.PropTypes.bool,
+		allowedActions: React.PropTypes.shape( {
+			activation: React.PropTypes.bool,
+			autoupdate: React.PropTypes.bool,
+			remove: React.PropTypes.bool,
+		} ),
+	},
+
+	getDefaultProps() {
+		return {
+			allowedActions: {
+				activation: true,
+				autoupdate: true,
+				remove: true,
+			}
+		};
 	},
 
 	displayBanner() {
@@ -121,14 +136,19 @@ export default React.createClass( {
 			return ( <div className="plugin-meta__actions"> { this.getInstallButton() } </div> );
 		}
 
+		const {
+			autoupdate: canToggleAutoupdate,
+			activation: canToggleActivation,
+			remove: canRemove,
+		} = this.props.allowedActions;
 		return (
 			<div className="plugin-meta__actions">
-				<PluginActivateToggle plugin={ this.props.plugin } site={ this.props.selectedSite }
-					notices={ this.props.notices } isMock={ this.props.isMock } />
-				<PluginAutoupdateToggle plugin={ this.props.plugin } site={ this.props.selectedSite }
-					notices={ this.props.notices } wporg={ this.props.plugin.wporg } isMock={ this.props.isMock } />
-				<PluginRemoveButton plugin={ this.props.plugin } site={ this.props.selectedSite }
-					notices={ this.props.notices } isMock={ this.props.isMock } />
+				{ canToggleActivation && <PluginActivateToggle plugin={ this.props.plugin } site={ this.props.selectedSite }
+					notices={ this.props.notices } isMock={ this.props.isMock } /> }
+				{ canToggleAutoupdate && <PluginAutoupdateToggle plugin={ this.props.plugin } site={ this.props.selectedSite }
+					notices={ this.props.notices } wporg={ this.props.plugin.wporg } isMock={ this.props.isMock } /> }
+				{ canRemove && <PluginRemoveButton plugin={ this.props.plugin } site={ this.props.selectedSite }
+					notices={ this.props.notices } isMock={ this.props.isMock } /> }
 			</div>
 		);
 	},
