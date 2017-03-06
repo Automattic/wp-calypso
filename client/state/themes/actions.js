@@ -122,7 +122,6 @@ export function receiveThemes( themes, siteId ) {
  * @param {Array}  themes Themes received
  * @param {number} siteId ID of site for which themes have been received
  * @param {Object} query Theme query used in the API request
- * @param {number} foundCount Number of themes returned by the query
  * @return {Object} Action object
  */
 export function receiveThemesQuery( themes, siteId, query ) {
