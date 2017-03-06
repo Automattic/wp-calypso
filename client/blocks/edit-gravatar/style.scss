@@ -1,17 +1,23 @@
 .edit-gravatar__image-container {
 	display: inline-block;
 	position: relative;
-	line-height: 0;
 
 	&.is-uploading::before {
 		content: '';
 		position: absolute;
 			top: 0;
-			right: 0;
-			bottom: 0;
 			left: 0;
-		background-color: rgba( $white, 0.75 );
+		background-color: rgba( $gray-dark, 0.5 );
+		border-radius: 50%;
+		height: 150px;
+		width: 150px;
 	}
+}
+
+.edit-gravatar__image-container .gravatar.is-missing {
+	display: block;
+	width: 150px;
+	height: 150px;
 }
 
 .edit-gravatar__spinner {
@@ -47,4 +53,31 @@
 
 .edit-gravatar-modal .dialog__content {
 	height: 100%;
+}
+
+.edit-gravatar__label-container {
+	position: absolute;
+		left: 0;
+		top: 0;
+	width: 150px;
+	height: 150px;
+	border-radius: 50%;
+	background: rgba( $gray-dark, 0.5 );
+	color: #fff;
+	text-align: center;
+
+	.gridicon {
+		display: block;
+		margin: 2em auto 0;
+	}
+}
+
+.edit-gravatar__label {
+	display: inline-block;
+	line-height: 1.2em;
+	padding: 0 1em;
+}
+
+.edit-gravatar .spinner__border {
+	fill: rgba( $gray-dark, 0.5 );
 }

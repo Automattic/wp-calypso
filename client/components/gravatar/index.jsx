@@ -77,7 +77,7 @@ export class Gravatar extends Component {
 			);
 		}
 
-		if ( this.state.failedToLoad ) {
+		if ( this.state.failedToLoad && ! tempImage ) {
 			return <span className="gravatar is-missing" />;
 		}
 
