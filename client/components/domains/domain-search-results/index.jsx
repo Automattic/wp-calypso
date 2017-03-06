@@ -1,19 +1,22 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	times = require( 'lodash/times' );
-
-import Notice from 'components/notice';
+import React from 'react';
+import classNames from 'classnames';
+import {
+	includes,
+	times
+} from 'lodash';
 
 /**
  * Internal dependencies
  */
-const DomainRegistrationSuggestion = require( 'components/domains/domain-registration-suggestion' ),
-	DomainMappingSuggestion = require( 'components/domains/domain-mapping-suggestion' ),
-	DomainSuggestion = require( 'components/domains/domain-suggestion' ),
-	{ isNextDomainFree } = require( 'lib/cart-values/cart-items' );
+import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
+import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
+import DomainSuggestion from 'components/domains/domain-suggestion';
+import { isNextDomainFree } from 'lib/cart-values/cart-items';
+import Notice from 'components/notice';
+import { getTld } from 'lib/domains';
 
 var DomainSearchResults = React.createClass( {
 	propTypes: {
@@ -33,8 +36,14 @@ var DomainSearchResults = React.createClass( {
 		onAddMapping: React.PropTypes.func,
 		onClickMapping: React.PropTypes.func
 	},
+
 	isDomainMappable: function() {
-		return this.props.lastDomainError && this.props.lastDomainError.code === 'not_available_but_mappable';
+		return this.props.lastDomainError &&
+			includes( [ 'not_available_but_mappable', 'no_availability_but_mappable' ], this.props.lastDomainError.code );
+	},
+
+	noAvailabilityInfoForDomain() {
+		return this.props.lastDomainError && this.props.lastDomainError.code === 'no_availability_but_mappable';
 	},
 
 	domainAvailability: function() {
@@ -84,7 +93,9 @@ var DomainSearchResults = React.createClass( {
 					'%(cost)s.{{/small}}', { args: { domain, cost: this.props.products.domain_map.cost_display }, components } );
 			}
 
-			const domainUnavailableMessage = this.translate( '%(domain)s is taken.', { args: { domain } } );
+			const domainUnavailableMessage = this.noAvailabilityInfoForDomain()
+				? this.translate( '.%(tld)s domains are not offered on WordPress.com.', { args: { tld: getTld( domain ) } } )
+				: this.translate( '%(domain)s is taken.', { args: { domain } } );
 
 			if ( this.props.offerMappingOption ) {
 				availabilityElement = (
