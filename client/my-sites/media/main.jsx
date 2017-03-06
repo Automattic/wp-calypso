@@ -186,6 +186,7 @@ export default React.createClass( {
 							onFilterChange={ this.onFilterChange }
 							site={ site }
 							single={ false }
+							filter={ this.props.filter }
 							onEditItem={ this.openDetailsModalForASingleImage }
 							onViewDetails={ this.openDetailsModalForAllSelected }
 							onDeleteItem={ this.deleteMedia }
