@@ -105,7 +105,7 @@ export function receiveTheme( theme, siteId ) {
 export function receiveThemes( themes, siteId ) {
 	return ( dispatch, getState ) => {
 		const filterWpcom = shouldFilterWpcomThemes( getState(), siteId );
-		const filteredThemes = filterThemes( themes, siteId, filterWpcom );
+		const { filteredThemes } = filterThemes( themes, siteId, filterWpcom );
 
 		dispatch( {
 			type: THEMES_RECEIVE,
@@ -122,19 +122,26 @@ export function receiveThemes( themes, siteId ) {
  * @param {Array}  themes Themes received
  * @param {number} siteId ID of site for which themes have been received
  * @param {Object} query Theme query used in the API request
+ * @param {number} foundCount Number of themes returned by the query
  * @return {Object} Action object
  */
-export function receiveThemesQuery( themes, siteId, query ) {
+export function receiveThemesQuery( themes, siteId, query, foundCount ) {
 	return ( dispatch, getState ) => {
 		const filterWpcom = shouldFilterWpcomThemes( getState(), siteId );
-		const filteredThemes = filterThemes( themes, siteId, filterWpcom, query );
+		const { filteredThemes, found } = filterThemes(
+			themes,
+			siteId,
+			filterWpcom,
+			query,
+			foundCount,
+		);
 
 		dispatch( {
 			type: THEMES_REQUEST_SUCCESS,
 			themes: filteredThemes,
 			siteId,
 			query,
-			found: filteredThemes.length,
+			found: found,
 		} );
 	};
 }
@@ -149,19 +156,23 @@ export function receiveThemesQuery( themes, siteId, query ) {
  * @param {number} siteId the Site ID
  * @param {boolean} filterWpcom True to remove all wpcom themes
  * @param {Object} query the theme query
- * @returns {Array} the filtered list of themes
+ * @param {number} found total number of themes matching query
+ * @returns {Object} contains fields filteredThemes and found
  */
-function filterThemes( themes, siteId, filterWpcom, query ) {
+function filterThemes( themes, siteId, filterWpcom, query, found ) {
 	if ( siteId === 'wporg' || siteId === 'wpcom' ) {
-		return themes;
+		return { filteredThemes: themes, found };
 	}
-	return filter(
+	const filteredThemes = filter(
 		themes,
 		theme => (
 			isThemeMatchingQuery( query, theme ) &&
 			! ( filterWpcom && isThemeFromWpcom( theme.id ) )
 		)
 	);
+
+	found = filteredThemes.length;
+	return { filteredThemes, found };
 }
 
 /**
@@ -225,7 +236,7 @@ export function requestThemes( siteId, query = {} ) {
 				dispatch( trackShowcaseSearch );
 			}
 
-			dispatch( receiveThemesQuery( themes, siteId, query ) );
+			dispatch( receiveThemesQuery( themes, siteId, query, found ) );
 		} ).catch( ( error ) => {
 			dispatch( {
 				type: THEMES_REQUEST_FAILURE,
