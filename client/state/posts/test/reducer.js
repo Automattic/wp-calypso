@@ -908,6 +908,9 @@ describe( 'reducer', () => {
 				2916284: {
 					'': {
 						title: 'Ribs & Chicken'
+					},
+					842: {
+						title: 'I like turtles'
 					}
 				}
 			} ), {
@@ -924,6 +927,9 @@ describe( 'reducer', () => {
 				2916284: {
 					841: {
 						title: 'Ribs & Chicken'
+					},
+					842: {
+						title: 'I like turtles'
 					}
 				}
 			} );

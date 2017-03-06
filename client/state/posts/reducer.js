@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { get, set, omit, omitBy, isEqual, reduce, merge, findKey, mapValues } from 'lodash';
+import { get, set, omit, omitBy, isEqual, reduce, merge, findKey, mapValues, mapKeys } from 'lodash';
 
 /**
  * Internal dependencies
@@ -282,21 +282,18 @@ export function edits( state = {}, action ) {
 			} );
 
 		case POST_SAVE_SUCCESS:
-			if ( ! state.hasOwnProperty( action.siteId ) || ! action.savedPost ) {
+			if ( ! state.hasOwnProperty( action.siteId ) || ! action.savedPost || action.postId ) {
 				break;
 			}
-			const { postId, siteId, savedPost } = action;
-
-			if ( postId ) {
-				return state;
-			}
+			const { siteId, savedPost } = action;
 
 			// if postId is null, copy over any edits
-			return Object.assign( {}, state, {
-				[ siteId ]: {
-					[ savedPost.ID ]: state[ siteId ][ '' ]
-				}
-			} );
+			return {
+				...state,
+				[ siteId ]: mapKeys( state[ siteId ], ( value, key ) => (
+					'' === key ? savedPost.ID : key
+				) )
+			};
 
 		case SERIALIZE:
 		case DESERIALIZE:
