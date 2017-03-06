@@ -10,6 +10,7 @@ import debugFactory from 'debug';
  */
 import notices from 'notices';
 import QuerySitePurchases from 'components/data/query-site-purchases';
+import QuerySiteSettings from 'components/data/query-site-settings';
 import { getSitePurchases, hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purchases/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import SeoForm from './form';
@@ -52,6 +53,7 @@ export class SeoSettings extends Component {
 
 		return (
 			<div>
+				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 				{ site && <QuerySitePurchases siteId={ site.ID } /> }
 				{ site && <SeoForm { ...{ site, upgradeToBusiness } } /> }
 			</div>
