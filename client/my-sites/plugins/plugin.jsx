@@ -5,7 +5,7 @@ import React from 'react';
 import config from 'config';
 import { connect } from 'react-redux';
 import page from 'page';
-import { uniq, upperFirst } from 'lodash';
+import { get, uniq, upperFirst } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,6 +31,7 @@ import DocumentHead from 'components/data/document-head';
 import WpcomPluginsList from 'my-sites/plugins-wpcom/plugins-list';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, canJetpackSiteManage, getRawSite } from 'state/sites/selectors';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 const SinglePlugin = React.createClass( {
@@ -214,11 +215,21 @@ const SinglePlugin = React.createClass( {
 		);
 	},
 
-	getAllowedPluginActions() {
+	getAllowedPluginActions( plugin ) {
+		let autoupdate = true;
+		let activation = true;
+		let remove = true;
+
+		if ( this.props.isSiteAutomatedTransfer && ( plugin.slug === 'jetpack' || plugin.slug === 'vaultpress' ) ) {
+			autoupdate = false;
+			activation = false;
+			remove = false;
+		}
+
 		return {
-			autoupdate: true,
-			activation: true,
-			remove: true,
+			autoupdate,
+			activation,
+			remove,
 		};
 	},
 
@@ -423,6 +434,7 @@ export default connect(
 			selectedSite: selectedSite,
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
 			canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
+			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
 		};
 	},
 	{
