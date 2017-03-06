@@ -47,7 +47,11 @@ export function hasUploadFailed( state, siteId ) {
  * @return {?Object} -- Uploaded theme ID
  */
 export function getUploadedThemeId( state, siteId ) {
-	return get( state.themes.uploadTheme.uploadedThemeId, siteId );
+	const themeId = get( state.themes.uploadTheme.uploadedThemeId, siteId );
+	if ( themeId ) {
+		return themeId.replace( /-wpcom$/, '' );
+	}
+	return null;
 }
 
 /**
