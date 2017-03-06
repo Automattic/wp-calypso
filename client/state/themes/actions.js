@@ -582,7 +582,7 @@ export function tryAndCustomizeTheme( themeId, siteId ) {
 				siteId
 			} );
 		}
-		const url = getThemeCustomizeUrl( getState(), theme, siteId );
+		const url = getThemeCustomizeUrl( getState(), themeId, siteId );
 		page( url );
 	};
 }
