@@ -130,6 +130,7 @@ class Upload extends React.Component {
 
 		const errorCauses = {
 			exists: translate( 'Upload problem: Theme already installed on site.' ),
+			already_installed: translate( 'Upload problem: Theme already installed on site.' ),
 			'Too Large': translate( 'Upload problem: Zip file too large to upload.' ),
 			incompatible: translate( 'Upload problem: Incompatible theme.' ),
 		};
