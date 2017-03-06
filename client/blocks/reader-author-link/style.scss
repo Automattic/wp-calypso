@@ -3,7 +3,10 @@
 }
 
 .reader-author-link:hover,
-.reader-author-link:focus,
 .reader-author-link:active {
 	color: $blue-medium;
+}
+
+.reader-author-link:focus {
+	color: $gray;
 }
