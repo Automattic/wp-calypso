@@ -14,7 +14,6 @@ import {
 const initialState = {
 	active: false,
 	isDialogVisible: false,
-	saveExisting: true,
 	result: false,
 };
 
