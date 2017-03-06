@@ -6,6 +6,9 @@ import {
 	forgotUsername,
 	resetPassword,
 	resetPasswordByTransactionId,
+	resetPasswordByActivationKey,
+	resetPasswordByTwoFactorCode,
+	resetPasswordByContactEmail,
 	redirectLoggedIn
 } from './controller';
 
@@ -15,4 +18,7 @@ export default function( router ) {
 	router( '/account-recovery/forgot-username', redirectLoggedIn, forgotUsername );
 	router( '/account-recovery/reset-password', redirectLoggedIn, resetPassword );
 	router( '/account-recovery/reset-password/transaction-id', redirectLoggedIn, resetPasswordByTransactionId );
+	router( '/account-recovery/reset-password/activation-key', redirectLoggedIn, resetPasswordByActivationKey );
+	router( '/account-recovery/reset-password/two-factor', redirectLoggedIn, resetPasswordByTwoFactorCode );
+	router( '/account-recovery/reset-password/email', redirectLoggedIn, resetPasswordByContactEmail );
 }

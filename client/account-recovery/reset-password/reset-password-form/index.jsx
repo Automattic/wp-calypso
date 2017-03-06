@@ -101,6 +101,13 @@ export class ResetPasswordFormComponent extends Component {
 							</span>
 						</FormLabel>
 					</FormFieldset>
+
+					<span>
+						<a href="/account-recovery/reset-password/transaction-id">
+							{ translate( "Don't have access to these?" ) }
+						</a>
+					</span>
+
 					<Button
 						className="reset-password-form__submit-button"
 						onClick={ this.submitForm }
