@@ -25,6 +25,7 @@ class ReaderCombinedCardPost extends React.Component {
 		post: React.PropTypes.object.isRequired,
 		streamUrl: React.PropTypes.string,
 		onClick: React.PropTypes.func,
+		isDiscover: React.PropTypes.bool,
 	};
 
 	propagateCardClick = () => {
@@ -74,7 +75,7 @@ class ReaderCombinedCardPost extends React.Component {
 	}
 
 	render() {
-		const { post, streamUrl } = this.props;
+		const { post, streamUrl, isDiscover } = this.props;
 		const hasAuthorName = has( post, 'author.name' );
 
 		let featuredAsset = null;
@@ -99,7 +100,7 @@ class ReaderCombinedCardPost extends React.Component {
 							<a className="reader-combined-card__post-title-link" href={ post.URL }>{ post.title }</a>
 						</h1>
 					</AutoDirection>
-					<ReaderExcerpt post={ post } isDiscover={ false } />
+					<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
 					<div className="reader-combined-card__post-author-and-time ignore-click">
 						<ReaderVisitLink href={ post.URL } iconSize={ 14 }>
 							{ this.props.translate( 'Visit' ) }
