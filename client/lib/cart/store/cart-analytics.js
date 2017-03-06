@@ -1,29 +1,32 @@
 /**
+ * External dependencies
+ */
+import { difference, each, isObjectLike, omitBy } from 'lodash';
+
+/**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	cartItems = require( 'lib/cart-values' ).cartItems,
-	difference = require( 'lodash/difference' );
-
+import analytics from 'lib/analytics';
+import { cartItems } from 'lib/cart-values';
 import { recordAddToCart } from 'lib/analytics/ad-tracking';
 
 function recordEvents( previousCart, nextCart ) {
-	var previousItems = cartItems.getAll( previousCart ),
+	const previousItems = cartItems.getAll( previousCart ),
 		nextItems = cartItems.getAll( nextCart );
 
-	difference( nextItems, previousItems ).forEach( recordAddEvent );
-	difference( previousItems, nextItems ).forEach( recordRemoveEvent );
+	each( difference( nextItems, previousItems ), recordAddEvent );
+	each( difference( previousItems, nextItems ), recordRemoveEvent );
 }
 
 function recordAddEvent( cartItem ) {
-	analytics.tracks.recordEvent( 'calypso_cart_product_add', cartItem );
+	analytics.tracks.recordEvent( 'calypso_cart_product_add', omitBy( cartItem, isObjectLike ) );
 	recordAddToCart( cartItem );
 }
 
 function recordRemoveEvent( cartItem ) {
-	analytics.tracks.recordEvent( 'calypso_cart_product_remove', cartItem );
+	analytics.tracks.recordEvent( 'calypso_cart_product_remove', omitBy( cartItem, isObjectLike ) );
 }
 
-module.exports = {
+export default {
 	recordEvents: recordEvents
 };
