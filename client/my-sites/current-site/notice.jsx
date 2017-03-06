@@ -92,7 +92,7 @@ const SiteNotice = React.createClass( {
 					href={ `/plans/my-plan/${ this.props.site.slug }` }
 				>
 					{ this.translate( 'Upgrade' ) }
-					<TrackComponentView event Name={ eventName } eventProperties={ eventProperties } />
+					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
 				</NoticeAction>
 			</Notice>
 		);
