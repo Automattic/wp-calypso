@@ -8,23 +8,36 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
-// import * as loadScript from 'lib/load-script';
+import useMockery from 'test/helpers/use-mockery';
 
+let analytics;
 let directly;
 let loadScript;
+let mockeryInstance;
 
 describe( 'index', () => {
-	// Need to use `require` to correctly spy on loadScript
-	loadScript = require( 'lib/load-script' );
-	sinon.spy( loadScript, 'loadScript' );
-
 	useFakeDom();
+
+	useMockery( mockery => {
+		mockery.registerAllowable( 'lib/load-script' );
+		mockery.registerMock( 'lib/analytics', { tracks: { recordEvent: sinon.spy() } } );
+		analytics = require( 'lib/analytics' );
+		mockeryInstance = mockery;
+	} );
 
 	beforeEach( () => {
 		directly = require( '..' );
+
+		// Need to use `require` to correctly spy on loadScript
+		loadScript = require( 'lib/load-script' );
+		sinon.spy( loadScript, 'loadScript' );
 	} );
 
 	afterEach( () => {
+		// Reset the cache so that lib/directly's local state is reset
+		mockeryInstance.resetCache();
+
+		analytics.tracks.recordEvent.reset();
 		loadScript.loadScript.reset();
 
 		// After each test, clean up the globals put in place by Directly
@@ -33,7 +46,6 @@ describe( 'index', () => {
 			script.remove();
 		}
 		delete window.DirectlyRTM;
-		delete require.cache[ require.resolve( '..' ) ];
 	} );
 
 	describe( '#initialize()', () => {
@@ -47,6 +59,11 @@ describe( 'index', () => {
 			expect( loadScript.loadScript ).to.have.been.calledOnce;
 		} );
 
+		it( 'fires an analytics event', () => {
+			directly.initialize();
+			expect( analytics.tracks.recordEvent ).to.have.been.calledWith( 'calypso_directly_rtm_widget_initialize' );
+		} );
+
 		it( 'does nothing after the first call', () => {
 			directly.initialize();
 			directly.initialize();
@@ -55,6 +72,7 @@ describe( 'index', () => {
 			expect( window.DirectlyRTM.cq ).to.have.lengthOf( 1 );
 			expect( window.DirectlyRTM.cq[ 0 ][ 0 ] ).to.equal( 'config' );
 			expect( loadScript.loadScript ).to.have.been.calledOnce;
+			expect( analytics.tracks.recordEvent ).to.have.been.calledOnce;
 		} );
 
 		it( 'resolves the returned promise if the library load succeeds', ( done ) => {
@@ -90,6 +108,16 @@ describe( 'index', () => {
 			window.DirectlyRTM = sinon.spy();
 			directly.askQuestion( questionText, name, email ).then( () => {
 				expect( window.DirectlyRTM ).to.have.been.calledWith( 'askQuestion', { questionText, name, email } );
+				done();
+			} );
+
+			// Fake the script loading to resolve the initialize() promise chain
+			loadScript.loadScript.firstCall.args[ 1 ]();
+		} );
+
+		it( 'fires an analytics event', ( done ) => {
+			directly.askQuestion( questionText, name, email ).then( () => {
+				expect( analytics.tracks.recordEvent ).to.have.been.calledWith( 'calypso_directly_rtm_widget_ask_question' );
 				done();
 			} );
 

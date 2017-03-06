@@ -55,6 +55,18 @@ function configureGlobals() {
 }
 
 /**
+ * Helper function to track analytics events. Since lib/analytics has dependencies
+ * that rely on the Browser Object Model, importing it at the module level makes tests
+ * throw errors for this module and any module that imports it. By abstracting the
+ * lib/analytics module inside a function, we can use it and properly mock it in
+ * this module's tests without bleeding errors into tests for all dependent modules.
+ */
+function recordEvent( ...args ) {
+	const analytics = require( 'lib/analytics' );
+	analytics.tracks.recordEvent( ...args );
+}
+
+/**
  * Inserts a dummy DOM element that the widget uses to calculate the base URL for its assets.
  *
  * Under standard setup, the RTM widget gathers its base URL by inspecting the src attribute of
@@ -98,6 +110,7 @@ export function initialize() {
 	directlyPromise = new Promise( ( resolve, reject ) => {
 		configureGlobals();
 		insertDOM();
+		recordEvent( 'calypso_directly_rtm_widget_initialize' );
 
 		loadScript( DIRECTLY_RTM_SCRIPT_URL, function( error ) {
 			if ( error ) {
@@ -120,5 +133,6 @@ export function initialize() {
  * @returns {Promise} Promise that resolves after initialization completes
  */
 export function askQuestion( questionText, name, email ) {
+	recordEvent( 'calypso_directly_rtm_widget_ask_question' );
 	return execute( 'askQuestion', { questionText, name, email } );
 }
