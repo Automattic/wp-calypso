@@ -115,7 +115,6 @@ export const HoldList = ( {
 								compact
 								href={ holdMessages[ hold ].supportUrl }
 								rel="noopener noreferrer"
-								target="_blank"
 							>
 								{ translate( 'Resolve' ) }
 							</Button>
