@@ -1,10 +1,10 @@
 {
 	"compilerOptions": {
-		"target": "ES6"
-	},
-	"exclude": [
-		"build",
-		"node_modules",
-		"public"
-	]
+		"module": "commonjs",
+		"target": "es2017",
+		"baseUrl": ".",
+		"paths": {
+			"*": [ "test/*", "server/*", "client/*" ]
+		}
+	}
 }
