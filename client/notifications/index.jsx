@@ -28,7 +28,7 @@ import userLib from 'lib/user';
 /**
  * Module variables
  */
-const NOTIFICATIONS_CLIENT_VERSION = 'beta-r151017-wpcom-6-gaaf83b2';
+const NOTIFICATIONS_CLIENT_VERSION = 'beta-r150343-wpcom-7-g7493844';
 
 const user = userLib();
 const widgetDomain = 'https://widgets.wp.com';
