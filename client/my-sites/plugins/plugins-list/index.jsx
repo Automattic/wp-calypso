@@ -476,7 +476,7 @@ export default connect(
 		return {
 			selectedSite,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
-			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) )
+			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
 		};
 	},
 	{ recordGoogleEvent }

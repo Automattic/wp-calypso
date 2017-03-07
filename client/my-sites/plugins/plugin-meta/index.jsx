@@ -143,12 +143,22 @@ export default React.createClass( {
 		} = this.props.allowedActions;
 		return (
 			<div className="plugin-meta__actions">
-				{ canToggleActivation && <PluginActivateToggle plugin={ this.props.plugin } site={ this.props.selectedSite }
-					notices={ this.props.notices } isMock={ this.props.isMock } /> }
-				{ canToggleAutoupdate && <PluginAutoupdateToggle plugin={ this.props.plugin } site={ this.props.selectedSite }
-					notices={ this.props.notices } wporg={ this.props.plugin.wporg } isMock={ this.props.isMock } /> }
-				{ canRemove && <PluginRemoveButton plugin={ this.props.plugin } site={ this.props.selectedSite }
-					notices={ this.props.notices } isMock={ this.props.isMock } /> }
+				{ canToggleActivation && <PluginActivateToggle
+						plugin={ this.props.plugin }
+						site={ this.props.selectedSite }
+						notices={ this.props.notices }
+						isMock={ this.props.isMock } /> }
+				{ canToggleAutoupdate && <PluginAutoupdateToggle
+						plugin={ this.props.plugin }
+						site={ this.props.selectedSite }
+						notices={ this.props.notices }
+						wporg={ this.props.plugin.wporg }
+						isMock={ this.props.isMock } /> }
+				{ canRemove && <PluginRemoveButton
+						plugin={ this.props.plugin }
+						site={ this.props.selectedSite }
+						notices={ this.props.notices }
+						isMock={ this.props.isMock } /> }
 			</div>
 		);
 	},
