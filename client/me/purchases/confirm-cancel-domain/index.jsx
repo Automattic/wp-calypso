@@ -20,6 +20,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
+import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getName as getDomainName } from 'lib/purchases';
 import { getPurchase, goToCancelPurchase, isDataLoading, recordPageView } from '../utils';
@@ -30,8 +31,11 @@ import Main from 'components/main';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
+import { receiveDeletedSite as receiveDeletedSiteDeprecated } from 'lib/sites-list/actions';
+import { receiveDeletedSite } from 'state/sites/actions';
 import { refreshSitePlans } from 'state/sites/plans/actions';
 import SelectDropdown from 'components/select-dropdown';
+import { setAllSitesSelected } from 'state/ui/actions';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
 
@@ -40,12 +44,15 @@ const user = userFactory();
 const ConfirmCancelDomain = React.createClass( {
 	propTypes: {
 		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
+		isDomainOnlySite: React.PropTypes.bool,
 		purchaseId: React.PropTypes.number.isRequired,
+		receiveDeletedSite: React.PropTypes.func.isRequired,
 		selectedPurchase: React.PropTypes.object,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.bool,
 			React.PropTypes.object
-		] )
+		] ),
+		setAllSitesSelected: React.PropTypes.func.isRequired,
 	},
 
 	getInitialState() {
@@ -114,6 +121,21 @@ const ConfirmCancelDomain = React.createClass( {
 
 		cancelAndRefundPurchase( purchase.id, data, ( error ) => {
 			this.setState( { submitting: false } );
+
+			const {
+				isDomainOnlySite,
+				selectedSite,
+			} = this.props;
+
+			if ( isDomainOnlySite ) {
+				// Removing the domain from a domain-only site results
+				// in the site being deleted entirely. We need to call
+				// `receiveDeletedSiteDeprecated` here because the site
+				// exists in `sites-list` as well as the global store.
+				receiveDeletedSiteDeprecated( selectedSite );
+				this.props.receiveDeletedSite( selectedSite );
+				this.props.setAllSitesSelected();
+			}
 
 			if ( error ) {
 				notices.error( error.message || this.translate( 'Unable to cancel your purchase. Please try again later or contact support.' ) );
@@ -278,14 +300,21 @@ const ConfirmCancelDomain = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => ( {
-		hasLoadedSites: ! isRequestingSites( state ),
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
-		selectedSite: getSelectedSiteSelector( state )
-	} ),
+	( state, props ) => {
+		const selectedSite = getSelectedSiteSelector( state );
+
+		return {
+			hasLoadedSites: ! isRequestingSites( state ),
+			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+			isDomainOnlySite: isDomainOnly( state, selectedSite && selectedSite.ID ),
+			selectedPurchase: getByPurchaseId( state, props.purchaseId ),
+			selectedSite,
+		};
+	},
 	{
 		clearPurchases,
-		refreshSitePlans
+		refreshSitePlans,
+		receiveDeletedSite,
+		setAllSitesSelected,
 	}
 )( ConfirmCancelDomain );
