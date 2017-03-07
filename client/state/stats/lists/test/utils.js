@@ -524,8 +524,7 @@ describe( 'utils', () => {
 						label: 'United States',
 						value: 1,
 						region: '021',
-						icon: '/calypso/images/flags/us.svg',
-						iconClassName: 'is-flag'
+						backgroundImage: '/calypso/images/flags/us.svg'
 					}
 				] );
 			} );
@@ -561,8 +560,7 @@ describe( 'utils', () => {
 						label: 'United States',
 						value: 10,
 						region: '021',
-						icon: '/calypso/images/flags/us.svg',
-						iconClassName: 'is-flag'
+						backgroundImage: '/calypso/images/flags/us.svg'
 					}
 				] );
 			} );
@@ -597,8 +595,7 @@ describe( 'utils', () => {
 						label: 'United States',
 						value: 100,
 						region: '021',
-						icon: '/calypso/images/flags/us.svg',
-						iconClassName: 'is-flag'
+						backgroundImage: '/calypso/images/flags/us.svg'
 					}
 				] );
 			} );
@@ -634,8 +631,7 @@ describe( 'utils', () => {
 						label: 'United States',
 						value: 100,
 						region: '021',
-						icon: '/calypso/images/flags/us.svg',
-						iconClassName: 'is-flag'
+						backgroundImage: '/calypso/images/flags/us.svg'
 					}
 				] );
 			} );
@@ -671,8 +667,7 @@ describe( 'utils', () => {
 						label: 'US\'A',
 						value: 100,
 						region: '021',
-						icon: '/calypso/images/flags/us.svg',
-						iconClassName: 'is-flag'
+						backgroundImage: '/calypso/images/flags/us.svg'
 					}
 				] );
 			} );
@@ -711,8 +706,7 @@ describe( 'utils', () => {
 						label: 'United States',
 						value: 100,
 						region: '021',
-						icon: '/calypso/images/flags/us.svg',
-						iconClassName: 'is-flag'
+						backgroundImage: '/calypso/images/flags/us.svg'
 					}
 				] );
 			} );
