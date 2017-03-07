@@ -199,8 +199,14 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
 }
 
 /**
- * Check if theme is a wpcom theme
- * checking is done based on existance of -wpcom suffix
+ * Check if theme is a wpcom theme.
+ *
+ * For wpcom theme zips, the theme_uri field is
+ * set in style.css by the bundling script.
+ *
+ * For AT themes, the wpcomsh plugin sets the theme_uri
+ * field to contain 'wordpress.com' for Jetpack API
+ * requests.
  *
  * @param  {Object} theme Theme object
  * @return {Boolean}      Whether theme is a wpcom theme
