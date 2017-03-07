@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, includes, isEqual, omit, some, get, uniq } from 'lodash';
+import { includes, isEqual, omit, some, get, uniq } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
@@ -62,8 +62,19 @@ export const getTheme = createSelector(
  * @return {?Object}         Theme object
  */
 export function getCanonicalTheme( state, siteId, themeId ) {
-	const source = find( [ 'wpcom', 'wporg', siteId ], s => getTheme( state, s, themeId ) );
-	return getTheme( state, source, themeId );
+	if ( ! themeId ) {
+		return null;
+	}
+	// Assume that a call for a -wpcom suffixed theme wants
+	// details for the non-suffixed version.
+	let theme = getTheme( state, 'wpcom', themeId.replace( /-wpcom$/, '' ) );
+	if ( ! theme ) {
+		theme = getTheme( state, 'wporg', themeId.replace( /-wpcom$/, '' ) );
+	}
+	if ( ! theme ) {
+		theme = getTheme( state, siteId, themeId );
+	}
+	return theme;
 }
 
 /**
