@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { map, pickBy } from 'lodash';
+import { get, map, pickBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -32,18 +32,19 @@ class CurrentTheme extends Component {
 		} ) ),
 		siteId: PropTypes.number.isRequired,
 		// connected props
-		currentTheme: PropTypes.object
+		currentThemeId: PropTypes.string,
+		currentThemeName: PropTypes.string
 	}
 
 	trackClick = ( event ) => trackClick( 'current theme', event )
 
 	render() {
-		const { currentTheme, currentThemeId, siteId, translate } = this.props,
+		const { currentThemeId, currentThemeName, siteId, translate } = this.props,
 			placeholderText = <span className="current-theme__placeholder">loading...</span>,
-			text = ( currentTheme && currentTheme.name ) ? currentTheme.name : placeholderText;
+			text = currentThemeName || placeholderText;
 
 		const options = pickBy( this.props.options, option =>
-			currentTheme && ! ( option.hideForTheme && option.hideForTheme( currentTheme, siteId ) )
+			currentThemeId && ! ( option.hideForTheme && option.hideForTheme( currentThemeId, siteId ) )
 		);
 
 		return (
@@ -67,7 +68,7 @@ class CurrentTheme extends Component {
 							key={ name }
 							label={ option.label }
 							icon={ option.icon }
-							href={ currentTheme && option.getUrl( currentTheme ) }
+							href={ currentThemeId && option.getUrl( currentThemeId ) }
 							onClick={ this.trackClick } />
 					) ) }
 				</div>
@@ -78,9 +79,10 @@ class CurrentTheme extends Component {
 
 const ConnectedCurrentTheme = connectOptions( localize( CurrentTheme ) );
 
-const CurrentThemeWithOptions = ( { siteId, currentTheme, currentThemeId } ) => (
-	<ConnectedCurrentTheme currentTheme={ currentTheme }
+const CurrentThemeWithOptions = ( { siteId, currentThemeId, currentThemeName } ) => (
+	<ConnectedCurrentTheme
 		currentThemeId={ currentThemeId }
+		currentThemeName={ currentThemeName }
 		siteId={ siteId }
 		options={ [
 			'customize',
@@ -93,9 +95,10 @@ const CurrentThemeWithOptions = ( { siteId, currentTheme, currentThemeId } ) => 
 export default connect(
 	( state, { siteId } ) => {
 		const currentThemeId = getActiveTheme( state, siteId );
+		const currentTheme = getCanonicalTheme( state, siteId, currentThemeId );
 		return {
 			currentThemeId,
-			currentTheme: getCanonicalTheme( state, siteId, currentThemeId ),
+			currentThemeName: get( currentTheme, 'name' ),
 		};
 	}
 )( CurrentThemeWithOptions );

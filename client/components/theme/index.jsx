@@ -86,7 +86,7 @@ const Theme = React.createClass( {
 	},
 
 	onScreenshotClick() {
-		this.props.onScreenshotClick( this.props.theme, this.props.index );
+		this.props.onScreenshotClick( this.props.theme.id, this.props.index );
 	},
 
 	renderPlaceholder() {
