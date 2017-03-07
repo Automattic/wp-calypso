@@ -34,8 +34,7 @@
       "version": "0.8.1"
     },
     "ajv": {
-      "version": "4.11.3",
-      "dev": true
+      "version": "4.11.4"
     },
     "ajv-keywords": {
       "version": "1.5.1",
@@ -454,7 +453,7 @@
       "version": "2.11.0"
     },
     "body-parser": {
-      "version": "1.17.0",
+      "version": "1.17.1",
       "dependencies": {
         "debug": {
           "version": "2.6.1"
@@ -463,7 +462,7 @@
           "version": "0.7.2"
         },
         "qs": {
-          "version": "6.3.1"
+          "version": "6.4.0"
         }
       }
     },
@@ -537,10 +536,10 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000631"
+      "version": "1.0.30000632"
     },
     "caseless": {
-      "version": "0.11.0"
+      "version": "0.12.0"
     },
     "center-align": {
       "version": "0.1.3"
@@ -642,8 +641,7 @@
       "dev": true
     },
     "co": {
-      "version": "4.6.0",
-      "dev": true
+      "version": "4.6.0"
     },
     "code-point-at": {
       "version": "1.1.0"
@@ -1144,7 +1142,7 @@
       }
     },
     "error-ex": {
-      "version": "1.3.0"
+      "version": "1.3.1"
     },
     "es-abstract": {
       "version": "1.7.0",
@@ -1726,25 +1724,17 @@
       "version": "3.0.0",
       "dev": true
     },
+    "har-schema": {
+      "version": "1.0.5"
+    },
     "har-validator": {
-      "version": "2.0.6",
-      "dependencies": {
-        "chalk": {
-          "version": "1.1.3"
-        },
-        "commander": {
-          "version": "2.9.0"
-        },
-        "supports-color": {
-          "version": "2.0.0"
-        }
-      }
+      "version": "4.2.1"
     },
     "hard-source-webpack-plugin": {
       "version": "0.0.42",
       "dependencies": {
         "bluebird": {
-          "version": "3.4.7"
+          "version": "3.5.0"
         },
         "source-map": {
           "version": "0.5.6"
@@ -2200,8 +2190,7 @@
       "version": "0.2.3"
     },
     "json-stable-stringify": {
-      "version": "1.0.1",
-      "dev": true
+      "version": "1.0.1"
     },
     "json-stringify-safe": {
       "version": "5.0.1"
@@ -2226,8 +2215,7 @@
       }
     },
     "jsonify": {
-      "version": "0.0.0",
-      "dev": true
+      "version": "0.0.0"
     },
     "jsonparse": {
       "version": "0.0.5",
@@ -2600,7 +2588,7 @@
       "dev": true,
       "dependencies": {
         "qs": {
-          "version": "6.3.1",
+          "version": "6.4.0",
           "dev": true
         }
       }
@@ -2870,6 +2858,9 @@
     "percentage-regex": {
       "version": "3.0.0"
     },
+    "performance-now": {
+      "version": "0.2.0"
+    },
     "phone": {
       "version": "1.0.8",
       "from": "git+https://github.com/Automattic/node-phone.git#6be6549b03137f2cca01e202250bf2590750119e",
@@ -2900,7 +2891,7 @@
       "dev": true
     },
     "postcss": {
-      "version": "5.2.15",
+      "version": "5.2.16",
       "dependencies": {
         "chalk": {
           "version": "1.1.3",
@@ -3249,10 +3240,10 @@
       "version": "2.0.1"
     },
     "request": {
-      "version": "2.79.0",
+      "version": "2.80.0",
       "dependencies": {
         "qs": {
-          "version": "6.3.1"
+          "version": "6.3.2"
         },
         "uuid": {
           "version": "3.0.1"
@@ -3750,7 +3741,7 @@
           "version": "1.0.0-rc4"
         },
         "qs": {
-          "version": "6.3.1"
+          "version": "6.4.0"
         },
         "readable-stream": {
           "version": "2.2.3"
@@ -4137,11 +4128,11 @@
           "dev": true
         },
         "express": {
-          "version": "4.15.0",
+          "version": "4.15.2",
           "dev": true
         },
         "filesize": {
-          "version": "3.5.5",
+          "version": "3.5.6",
           "dev": true
         },
         "finalhandler": {
@@ -4177,7 +4168,7 @@
           "dev": true
         },
         "qs": {
-          "version": "6.3.1",
+          "version": "6.4.0",
           "dev": true
         },
         "range-parser": {
@@ -4185,11 +4176,11 @@
           "dev": true
         },
         "send": {
-          "version": "0.15.0",
+          "version": "0.15.1",
           "dev": true
         },
         "serve-static": {
-          "version": "1.12.0",
+          "version": "1.12.1",
           "dev": true
         },
         "supports-color": {
@@ -4265,7 +4256,7 @@
           "dev": true
         },
         "filesize": {
-          "version": "3.5.5",
+          "version": "3.5.6",
           "dev": true
         },
         "isarray": {
@@ -4357,9 +4348,6 @@
           "version": "0.5.6"
         }
       }
-    },
-    "webpack-stable-module-id-and-hash": {
-      "version": "1.0.5"
     },
     "wemoji": {
       "version": "0.1.9"
