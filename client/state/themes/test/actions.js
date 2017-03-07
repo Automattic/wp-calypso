@@ -659,16 +659,6 @@ describe( 'actions', () => {
 			message: 'Unknown blog'
 		};
 
-		const fakeGetState = () => ( {
-			sites: {
-				items: {
-					77203074: {
-						jetpack: true
-					}
-				}
-			}
-		} );
-
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -691,7 +681,7 @@ describe( 'actions', () => {
 
 		context( 'when request completes successfully', () => {
 			it( 'should dispatch active theme request success action', () => {
-				return requestActiveTheme( 2211667 )( spy, fakeGetState ).then( () => {
+				return requestActiveTheme( 2211667 )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: ACTIVE_THEME_REQUEST_SUCCESS,
 						siteId: 2211667,
@@ -702,7 +692,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch active theme request failure action when request completes', () => {
-			return requestActiveTheme( 666 )( spy, fakeGetState ).then( () => {
+			return requestActiveTheme( 666 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: ACTIVE_THEME_REQUEST_FAILURE,
 					siteId: 666,

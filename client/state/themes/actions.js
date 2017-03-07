@@ -340,7 +340,7 @@ export function requestTheme( themeId, siteId ) {
  * @return {Function}        Redux thunk with request action
  */
 export function requestActiveTheme( siteId ) {
-	return ( dispatch, getState ) => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: ACTIVE_THEME_REQUEST,
 			siteId,
@@ -349,10 +349,6 @@ export function requestActiveTheme( siteId ) {
 		return wpcom.undocumented().activeTheme( siteId )
 			.then( theme => {
 				debug( 'Received current theme', theme );
-				// We want to store the theme object in the appropriate Redux subtree -- either 'wpcom'
-				// for WPCOM sites, or siteId for Jetpack sites.
-				const siteIdOrWpcom = isJetpackSite( getState(), siteId ) ? siteId : 'wpcom';
-				dispatch( receiveTheme( theme, siteIdOrWpcom ) );
 				dispatch( {
 					type: ACTIVE_THEME_REQUEST_SUCCESS,
 					siteId,
