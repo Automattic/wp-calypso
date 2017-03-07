@@ -54,6 +54,7 @@ import ReaderPostCard from 'blocks/reader-post-card/docs/example';
 import ReaderCombinedCard from 'blocks/reader-combined-card/docs/example';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu/docs/example';
 import DailyPostButton from 'blocks/daily-post-button/docs/example';
+import ReaderSubscriptionListItem from 'blocks/reader-subscription-list-item/docs/example';
 import PostLikes from 'blocks/post-likes/docs/example';
 import ReaderFeaturedVideo from 'blocks/reader-featured-video/docs/example';
 
@@ -119,6 +120,7 @@ export default React.createClass( {
 					<PostRelativeTime />
 					<PostStatus />
 					<ReaderAuthorLink />
+					<ReaderSubscriptionListItem />
 					<ReaderSiteStreamLink />
 					<ReaderFullPostHeader />
 					<AuthorCompactProfile />
