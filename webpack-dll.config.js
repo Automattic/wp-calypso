@@ -3,6 +3,7 @@
  */
 const path = require( 'path' );
 const webpack = require( 'webpack' );
+const WebpackStableModuleId = require( './server/bundler/webpack/stable-module-id' );
 
 /**
  * Internal Dependencies
@@ -45,7 +46,7 @@ module.exports = {
 				NODE_ENV: JSON.stringify( bundleEnv )
 			}
 		} ),
-		new webpack.optimize.OccurenceOrderPlugin()
+		new WebpackStableModuleId()
 	],
 	module: {
 		loaders: [
