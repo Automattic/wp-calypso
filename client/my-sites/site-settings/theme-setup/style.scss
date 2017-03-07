@@ -1,0 +1,16 @@
+.theme-setup__button {
+	margin-bottom: 8px;
+	margin-right: 8px;
+
+	&.is-placeholder {
+		border: none;
+		border-radius: 0;
+	}
+}
+
+.theme-setup {
+	.is-placeholder {
+		@include placeholder;
+	}
+}
+
