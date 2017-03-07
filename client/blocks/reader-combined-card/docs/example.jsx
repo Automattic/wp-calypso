@@ -17,4 +17,6 @@ const ReaderCombinedCard = () => (
 	</div>
 );
 
+ReaderCombinedCard.displayName = 'ReaderCombinedCard';
+
 export default ReaderCombinedCard;
