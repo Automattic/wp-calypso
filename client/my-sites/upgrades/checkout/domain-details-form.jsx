@@ -364,20 +364,18 @@ export default React.createClass( {
 	},
 
 	recordSubmit() {
-		const errors = formState.getErrorMessages( this.state.form );
-		let tracksEventObject = {
-			errors_count: errors && errors.length || 0,
-			submission_count: this.state.submissionCount + 1
-		};
-
-		tracksEventObject = reduce(
-			formState.getErrorMessages( this.state.form ),
-			( result, value, key ) => {
-				result[ `error_${ key }` ] = value;
-				return result;
-			},
-			tracksEventObject
-		);
+		const errors = formState.getErrorMessages( this.state.form ),
+			tracksEventObject = reduce(
+				formState.getErrorMessages( this.state.form ),
+				( result, value, key ) => {
+					result[ `error_${ key }` ] = value;
+					return result;
+				},
+				{
+					errors_count: errors && errors.length || 0,
+					submission_count: this.state.submissionCount + 1
+				}
+			);
 
 		analytics.tracks.recordEvent( 'calypso_contact_information_form_submit', tracksEventObject );
 		this.setState( { submissionCount: this.state.submissionCount + 1 } );
