@@ -1,21 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import { omitBy, isNull } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import LikeIcons from './icons';
 
-const LikeButton = React.createClass( {
+class LikeButton extends PureComponent {
 
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		liked: React.PropTypes.bool,
 		showZeroCount: React.PropTypes.bool,
 		likeCount: React.PropTypes.number,
@@ -27,20 +25,24 @@ const LikeButton = React.createClass( {
 		animateLike: React.PropTypes.bool,
 		postId: React.PropTypes.number,
 		slug: React.PropTypes.string,
-	},
+	}
 
-	getDefaultProps() {
-		return {
-			liked: false,
-			showZeroCount: false,
-			likeCount: 0,
-			showLabel: true,
-			iconSize: 24,
-			animateLike: true,
-			postId: null,
-			slug: null
-		};
-	},
+	static defaultProps = {
+		liked: false,
+		showZeroCount: false,
+		likeCount: 0,
+		showLabel: true,
+		iconSize: 24,
+		animateLike: true,
+		postId: null,
+		slug: null
+	}
+
+	constructor( props ) {
+		super( props );
+
+		this.toggleLiked = this.toggleLiked.bind( this );
+	}
 
 	toggleLiked( event ) {
 		if ( event ) {
@@ -49,7 +51,7 @@ const LikeButton = React.createClass( {
 		if ( this.props.onLikeToggle ) {
 			this.props.onLikeToggle( ! this.props.liked );
 		}
-	},
+	}
 
 	render() {
 		const {
@@ -57,7 +59,8 @@ const LikeButton = React.createClass( {
 			tagName: containerTag = 'li',
 			showZeroCount,
 			postId,
-			slug
+			slug,
+			translate,
 		} = this.props;
 		const showLikeCount = likeCount > 0 || showZeroCount;
 		const isLink = containerTag === 'a';
@@ -69,7 +72,7 @@ const LikeButton = React.createClass( {
 			'has-count': showLikeCount,
 			'has-label': this.props.showLabel
 		};
-		let likeLabel = this.translate( 'Like', {
+		let likeLabel = translate( 'Like', {
 			context: 'verb: imperative',
 			comment: 'Label for a button to "like" a post.'
 		} );
@@ -80,13 +83,13 @@ const LikeButton = React.createClass( {
 			if ( this.props.likedLabel ) {
 				likeLabel = this.props.likedLabel;
 			} else {
-				likeLabel = this.translate( 'Liked', { comment: 'Displayed when a person "likes" a post.' } );
+				likeLabel = translate( 'Liked', { comment: 'Displayed when a person "likes" a post.' } );
 			}
 		}
 
 		// Override the label with a counter
 		if ( showLikeCount ) {
-			likeLabel = this.translate( 'Like', 'Likes', {
+			likeLabel = translate( 'Like', 'Likes', {
 				count: likeCount,
 				context: 'noun',
 				comment: 'Number of likes.'
@@ -110,6 +113,6 @@ const LikeButton = React.createClass( {
 			)
 		);
 	}
-} );
+}
 
-export default LikeButton;
+export default localize( LikeButton );
