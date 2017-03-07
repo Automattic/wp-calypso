@@ -9,7 +9,7 @@ import { isEqual } from 'lodash';
  * Internal dependencies
  */
 import { requestThemes } from 'state/themes/actions';
-import { isRequestingThemesForQuery } from 'state/themes/selectors';
+import { isRequestingThemesForQuery, getThemesFoundForQuery } from 'state/themes/selectors';
 
 class QueryThemes extends Component {
 	static propTypes = {
@@ -50,7 +50,7 @@ class QueryThemes extends Component {
 	}
 
 	request() {
-		if ( ! this.props.isRequesting ) {
+		if ( ! this.props.isRequesting && ( this.props.themesCount === null ) ) {
 			this.props.requestThemes( this.props.siteId, this.props.query );
 		}
 	}
@@ -62,6 +62,7 @@ class QueryThemes extends Component {
 
 export default connect(
 	( state, { query, siteId } ) => ( {
+		themesCount: getThemesFoundForQuery( state, siteId, query ),
 		isRequesting: isRequestingThemesForQuery( state, siteId, query ),
 	} ),
 	{ requestThemes }
