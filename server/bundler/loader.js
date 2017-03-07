@@ -120,14 +120,10 @@ function splitTemplate( path, section ) {
 }
 
 function getPathRegex( pathString ) {
-	var regex;
-
 	if ( pathString === '/' ) {
 		return JSON.stringify( pathString );
 	}
-
-	regex = utils.pathToRegExp( pathString );
-
+	const regex = utils.pathToRegExp( pathString );
 	return '/' + regex.toString().slice( 1, -1 ) + '/';
 }
 
