@@ -10,6 +10,7 @@ var expect = require( 'chai' ).expect,
  * Internal dependencies
  */
 var FormRange = require( '../' );
+var Gridicon = require( 'gridicons' );
 
 describe( 'index', function() {
 	require( 'test/helpers/use-fake-dom' )();
@@ -18,12 +19,12 @@ describe( 'index', function() {
 	} );
 
 	it( 'should render beginning content if passed a `minContent` prop', function() {
-		var range = TestUtils.renderIntoDocument( <FormRange minContent={ <span className="noticon noticon-minus" /> } /> );
-		TestUtils.findRenderedDOMComponentWithClass( range, 'noticon-minus' );
+		var range = TestUtils.renderIntoDocument( <FormRange minContent={ <Gridicon icon="minus-small" /> } /> );
+		TestUtils.findRenderedDOMComponentWithClass( range, 'gridicons-minus-small' );
 	} );
 
 	it( 'should not render ending content if not passed a `maxContent` prop', function() {
-		var range = TestUtils.renderIntoDocument( <FormRange minContent={ <span className="noticon noticon-minus" /> } /> ),
+		var range = TestUtils.renderIntoDocument( <FormRange minContent={ <Gridicon icon="minus-small" /> } /> ),
 			content = TestUtils.scryRenderedDOMComponentsWithClass( range, 'range__content' );
 
 		expect( content ).to.have.length( 1 );
@@ -31,12 +32,12 @@ describe( 'index', function() {
 	} );
 
 	it( 'should render ending content if passed a `maxContent` prop', function() {
-		var range = TestUtils.renderIntoDocument( <FormRange maxContent={ <span className="noticon noticon-plus" /> } /> );
-		TestUtils.findRenderedDOMComponentWithClass( range, 'noticon-plus' );
+		var range = TestUtils.renderIntoDocument( <FormRange maxContent={ <Gridicon icon="plus-small" /> } /> );
+		TestUtils.findRenderedDOMComponentWithClass( range, 'gridicons-plus-small' );
 	} );
 
 	it( 'should not render beginning content if not passed a `minContent` prop', function() {
-		var range = TestUtils.renderIntoDocument( <FormRange maxContent={ <span className="noticon noticon-plus" /> } /> ),
+		var range = TestUtils.renderIntoDocument( <FormRange maxContent={ <Gridicon icon="plus-small" /> } /> ),
 			content = TestUtils.scryRenderedDOMComponentsWithClass( range, 'range__content' );
 
 		expect( content ).to.have.length( 1 );
