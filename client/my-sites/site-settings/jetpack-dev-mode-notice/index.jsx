@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -14,28 +14,29 @@ import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSiteInDevelopmentMode } from 'state/selectors';
 
-class JetpackDevModeNotice extends Component {
-	render() {
-		const { isJetpackSiteInDevMode, siteId, translate } = this.props;
-		return (
-			<div>
-				<QueryJetpackConnection siteId={ siteId } />
+const JetpackDevModeNotice = ( {
+	isJetpackSiteInDevMode,
+	siteId,
+	translate
+} ) => {
+	return (
+		<div>
+			<QueryJetpackConnection siteId={ siteId } />
 
-				{
-					isJetpackSiteInDevMode &&
-					<Notice
-						text={ translate( 'Some features are disabled because your site is in Development mode.' ) }
-						showDismiss={ false }
-					>
-						<NoticeAction href={ 'https://jetpack.com/support/development-mode/' } external>
-							{ translate( 'Learn more' ) }
-						</NoticeAction>
-					</Notice>
-				}
-			</div>
-		);
-	}
-}
+			{
+				isJetpackSiteInDevMode &&
+				<Notice
+					text={ translate( 'Some features are disabled because your site is in Development mode.' ) }
+					showDismiss={ false }
+				>
+					<NoticeAction href={ 'https://jetpack.com/support/development-mode/' } external>
+						{ translate( 'Learn more' ) }
+					</NoticeAction>
+				</Notice>
+			}
+		</div>
+	);
+};
 
 export default connect(
 	( state ) => {
