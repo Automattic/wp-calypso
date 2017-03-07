@@ -1,0 +1,136 @@
+/* Header */
+.reader-combined-card__header {
+	font-size: 13px;
+	display: flex;
+	max-height: 32px;
+	margin-bottom: 20px;
+}
+
+.reader-avatar.has-site-icon {
+	margin-right: 8px;
+}
+
+.reader-combined-card__header-details {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	max-height: 32px;
+}
+
+.reader-combined-card__site-link {
+	line-height: 1em;
+	margin-bottom: 0;
+	top: 0;
+}
+
+.reader-combined-card__header-post-count {
+	color: $gray;
+	margin-bottom: 0;
+	line-height: 1em;
+}
+
+/* Posts */
+.reader-combined-card__post-details {
+	font-family: $serif;
+	width: 100%;
+
+}
+
+.reader-combined-card__post-title-link,
+.reader-combined-card__post-title-link:visited {
+	color: $gray-dark;
+	cursor: pointer;
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 1.4;
+	display: block;
+	position: relative;
+	max-height: 18px * 1.4 * 1;
+	word-wrap: break-word;
+	overflow: hidden;
+
+	&:hover, &:focus {
+		color: $gray-dark;
+	}
+
+	&::after {
+		@include long-content-fade( $size: 20% );
+		height: 18px * 1.4;
+	}
+}
+
+.reader-combined-card__featured-image-wrapper {
+	min-width: 100px;
+	margin-right: 10px;
+}
+
+.reader-combined-card .reader-featured-image {
+	display: block;
+	height: 64px;
+}
+
+.reader-combined-card__post-list {
+	margin-left: 0;
+}
+
+.reader-combined-card__post {
+	list-style-type: none;
+	display: flex;
+	flex-direction: row;
+	margin-bottom: 20px;
+}
+
+.reader-combined-card__post-author-and-time {
+	font-size: 13px;
+	color: $gray;
+	font-family: $sans;
+	overflow: hidden;
+	max-height: 13px * 1.4 * 1;
+	word-wrap: break-word;
+	position: relative;
+
+	&::after {
+		@include long-content-fade( $size: 20% );
+	}
+}
+
+.reader-combined-card .reader-visit-link {
+	margin-left: -9px; // override gridicon margin
+	margin-right: 26px;
+
+	.reader-visit-link__label {
+		margin-left: 2px;
+	}
+}
+
+.reader-combined-card .reader-visit-link,
+.reader-combined-card .reader-author-link,
+.reader-combined-card__timestamp-link {
+	color: $gray;
+	cursor: pointer;
+
+	&:focus {
+		color: $gray;
+	}
+}
+
+.reader-combined-card .reader-author-link:hover {
+	color: $blue-medium;
+}
+
+.reader-combined-card__post .reader-excerpt {
+	font-size: 14px;
+	overflow: hidden;
+	max-height: 16px * 1.4 * 1;
+	word-wrap: break-word;
+	position: relative;
+
+	&::after {
+		@include long-content-fade( $size: 20% );
+	}
+}
+
+.reader-combined-card__site-link a {
+	color: $blue-wordpress;
+}

@@ -34,7 +34,8 @@ const StandardPost = ( { post, children, isDiscover } )=> {
 				<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
 				{ children }
 			</div>
-		</div> );
+		</div>
+	);
 };
 
 StandardPost.propTypes = {
