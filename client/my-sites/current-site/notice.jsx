@@ -82,8 +82,8 @@ const SiteNotice = React.createClass( {
 		if ( ! this.props.eligibleForFreeToPaidUpsell ) {
 			return null;
 		}
-		const eventName = 'calypso_free_to_paid_plan_nudge_impression';
-		const eventProperties = { cta_name: 'current_site_free_to_paid_plan_nudge_notice' };
+		const eventName = 'calypso_upgrade_nudge_impression';
+		const eventProperties = { cta_name: 'free-to-paid-sidebar' };
 		return (
 			<Notice isCompact status="is-success" icon="info-outline">
 				{ this.translate( 'Free domain with a plan' ) }
@@ -149,8 +149,8 @@ export default connect( ( state, ownProps ) => {
 			}
 		) ),
 		clickFreeToPaidPlanNotice: () => dispatch( recordTracksEvent(
-			'calypso_free_to_paid_plan_nudge_click', {
-				cta_name: 'current_site_free_to_paid_plan_nudge_notice'
+			'calypso_upgrade_nudge_cta_click', {
+				cta_name: 'free-to-paid-sidebar'
 			}
 		) ),
 	};
