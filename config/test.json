@@ -104,12 +104,6 @@
 		"upgrades/domain-search": true,
 		"upgrades/in-app-purchase": false,
 		"upgrades/paypal": true,
-		"upgrades/premium-themes": true,
-		"vip": false,
-		"vip/backups": true,
-		"vip/billing": true,
-		"vip/deploys": true,
-		"vip/logs": true,
-		"vip/support": true
+		"upgrades/premium-themes": true
 	}
 }
