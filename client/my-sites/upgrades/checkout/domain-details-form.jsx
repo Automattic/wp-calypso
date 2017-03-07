@@ -393,6 +393,7 @@ export default React.createClass( {
 		const allFieldValues = Object.assign( {}, formState.getAllFieldValues( this.state.form ) );
 		allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
 		setDomainDetails( allFieldValues );
+		cartItems.fillGoogleAppsRegistrationData( this.props.cart, allFieldValues );
 	},
 
 	setPrivacyProtectionSubscriptions( enable ) {
