@@ -64,8 +64,9 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 					.masterbar
 					.layout__content
 						.wpcom-site__logo.noticon.noticon-wordpress
-						.layout__secondary
-						ul.sidebar
+						if hasSecondary
+							.layout__secondary
+							ul.sidebar
 		if badge
 			div.environment-badge
 				if abTestHelper
