@@ -28,8 +28,8 @@ export const DateFormatOption = ( {
 		<FormLabel>
 			{ translate( 'Date Format' ) }
 		</FormLabel>
-		{ defaultDateFormats.map( ( format, index ) =>
-			<FormLabel key={ index }>
+		{ defaultDateFormats.map( format =>
+			<FormLabel key={ format }>
 				<FormRadio
 					checked={ ! isCustom && format === dateFormat }
 					disabled={ disabled }
@@ -58,12 +58,11 @@ export const DateFormatOption = ( {
 					value={ dateFormat || '' }
 				/>
 				<FormSettingExplanation>
-					{ isCustom && dateFormat
-						? translate( 'Preview: %s', {
+					{ isCustom && dateFormat &&
+						translate( 'Preview: %s', {
 							args: localizedDate.format( phpToMomentDatetimeFormat( dateFormat ) ),
 							comment: 'Date/time format preview',
 						} )
-						: ''
 					}
 				</FormSettingExplanation>
 			</span>

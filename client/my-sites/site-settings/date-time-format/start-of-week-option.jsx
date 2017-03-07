@@ -29,7 +29,7 @@ export const StartOfWeekOption = ( {
 		value={ startOfWeek || 0 }
 	>
 		{ moment.weekdays().map( ( day, index ) =>
-			<option key={ index } value={ index }>
+			<option key={ day } value={ index }>
 				{ day }
 			</option>
 		) }

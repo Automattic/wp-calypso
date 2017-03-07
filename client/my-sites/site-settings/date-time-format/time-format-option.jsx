@@ -29,8 +29,8 @@ export const TimeFormatOption = ( {
 		<FormLabel>
 			{ translate( 'Time Format' ) }
 		</FormLabel>
-		{ defaultTimeFormats.map( ( format, index ) =>
-			<FormLabel key={ index }>
+		{ defaultTimeFormats.map( format =>
+			<FormLabel key={ format }>
 				<FormRadio
 					checked={ ! isCustom && format === timeFormat }
 					disabled={ disabled }
@@ -59,12 +59,11 @@ export const TimeFormatOption = ( {
 					value={ timeFormat || '' }
 				/>
 				<FormSettingExplanation>
-					{ isCustom && timeFormat
-						? translate( 'Preview: %s', {
+					{ isCustom && timeFormat &&
+						translate( 'Preview: %s', {
 							args: localizedDate.format( phpToMomentDatetimeFormat( timeFormat ) ),
 							comment: 'Date/time format preview'
 						} )
-						: ''
 					}
 				</FormSettingExplanation>
 			</span>

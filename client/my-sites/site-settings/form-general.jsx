@@ -439,6 +439,9 @@ class SiteSettingsFormGeneral extends Component {
 		} = this.props;
 
 		const localizedDate = getLocalizedDate( timezoneString );
+		const weekday = startOfWeek
+			? moment.weekdays( parseInt( startOfWeek, 10 ) )
+			: moment.weekdays( 0 );
 
 		return (
 			<Card
@@ -449,17 +452,14 @@ class SiteSettingsFormGeneral extends Component {
 					{ translate( 'Date and Time Format' ) }
 				</h2>
 				<div className="site-settings__date-time-format-info">
-					{ dateFormat
-						? localizedDate.format( phpToMomentDatetimeFormat( dateFormat ) )
-						: ''
-					} &bull;&nbsp;
-					{ timeFormat
-						? localizedDate.format( phpToMomentDatetimeFormat( timeFormat ) )
-						: ''
-					} &bull;&nbsp;
-					{ translate( 'Week starts on' ) } { startOfWeek
-						? moment.weekdays( parseInt( startOfWeek, 10 ) )
-						: moment.weekdays( 0 )
+					{
+						dateFormat &&
+							localizedDate.format( phpToMomentDatetimeFormat( dateFormat ) )
+					} &bull; {
+						timeFormat &&
+							localizedDate.format( phpToMomentDatetimeFormat( timeFormat ) )
+					} &bull; {
+						translate( 'Week starts on %s', { args: weekday } )
 					}
 				</div>
 			</Card>

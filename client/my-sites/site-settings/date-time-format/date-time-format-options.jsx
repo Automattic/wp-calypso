@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { capitalize, includes } from 'lodash';
+import { capitalize, includes, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -98,7 +98,8 @@ export class DateTimeFormatOptions extends Component {
 						onClick={ handleSubmitForm }
 						primary={ true }
 						type="submit"
-						disabled={ isRequestingSettings || isSavingSettings }>
+						disabled={ isRequestingSettings || isSavingSettings }
+					>
 							{ isSavingSettings
 								? translate( 'Saving…' )
 								: translate( 'Save Settings' )
@@ -147,12 +148,12 @@ export default wrapSettingsForm( settings => {
 		return defaultSettings;
 	}
 
-	const formSettings = {
-		date_format: settings.date_format,
-		start_of_week: settings.start_of_week,
-		time_format: settings.time_format,
-		timezone_string: settings.timezone_string,
-	};
+	const formSettings = pick( settings, [
+		'date_format',
+		'start_of_week',
+		'time_format',
+		'timezone_string',
+	] );
 
 	// handling `gmt_offset` and `timezone_string` values
 	const gmt_offset = settings.gmt_offset;
