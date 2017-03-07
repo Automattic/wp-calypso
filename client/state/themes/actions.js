@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, map, property, delay } from 'lodash';
+import { filter, map, property, delay, endsWith } from 'lodash';
 import debugFactory from 'debug';
 import page from 'page';
 
@@ -167,7 +167,7 @@ function filterThemes( themes, siteId, filterWpcom, query, found ) {
 		themes,
 		theme => (
 			isThemeMatchingQuery( query, theme ) &&
-			! ( filterWpcom && isThemeFromWpcom( theme.id ) )
+			! ( filterWpcom && isThemeFromWpcom( theme ) )
 		)
 	);
 
@@ -487,7 +487,7 @@ export function installTheme( themeId, siteId ) {
 				} );
 			} )
 			.then( () => {
-				if ( isThemeFromWpcom( themeId ) ) {
+				if ( endsWith( themeId, '-wpcom' ) ) {
 					const parentThemeId = getWpcomParentThemeId(
 						getState(),
 						themeId.replace( '-wpcom', '' )
