@@ -49,34 +49,36 @@ export class LostPasswordFormComponent extends Component {
 
 		return (
 			<div>
-				<h2 className="lost-password-form__title">
-					{ translate( 'Lost your password' ) }
-				</h2>
-				<p>{ translate( 'Follow these simple steps to reset your account:' ) }</p>
-				<ol className="lost-password-form__instruction-list">
-					<li>
+				<Card compact>
+					<h2 className="lost-password-form__title">
+						{ translate( 'Lost your password?' ) }
+					</h2>
+					<p>{ translate( 'Follow these simple steps to reset your account:' ) }</p>
+					<ol className="lost-password-form__instruction-list">
+						<li>
+							{ translate(
+								'Enter your {{strong}}WordPress.com{{/strong}} username or email address',
+								{ components: { strong: <strong /> } }
+							) }
+						</li>
+						<li>
+							{ translate( 'Choose a password reset method' ) }
+						</li>
+						<li>
+							{ translate(
+								'Follow instructions and be re-united with your {{strong}}WordPress.com{{/strong}} account',
+								{ components: { strong: <strong /> } }
+							) }
+						</li>
+					</ol>
+					<p>
 						{ translate(
-							'Enter your {{strong}}WordPress.com{{/strong}} username or email address',
-							{ components: { strong: <strong /> } }
+							'Want more help? We have a full {{link}}guide to resetting your password{{/link}}.',
+							{ components: { link: <a href={ support.ACCOUNT_RECOVERY } /> } }
 						) }
-					</li>
-					<li>
-						{ translate( 'Choose a password reset method' ) }
-					</li>
-					<li>
-						{ translate(
-							'Follow instructions and be re-united with your {{strong}}WordPress.com{{/strong}} account',
-							{ components: { strong: <strong /> } }
-						) }
-					</li>
-				</ol>
-				<p>
-					{ translate(
-						'Want more help? We have a full {{link}}guide to resetting your password{{/link}}.',
-						{ components: { link: <a href={ support.ACCOUNT_RECOVERY } /> } }
-					) }
-				</p>
-				<Card>
+					</p>
+				</Card>
+				<Card compact>
 					<FormLabel>
 						{ translate( 'Username or Email' ) }
 
@@ -93,9 +95,6 @@ export class LostPasswordFormComponent extends Component {
 								'Please provide another one or try again later.' ) }
 						</p> )
 					}
-					<a href="/account-recovery/forgot-username" className="lost-password-form__forgot-username-link">
-						{ translate( 'Forgot your username?' ) }
-					</a>
 					<Button
 						className="lost-password-form__submit-button"
 						onClick={ this.submitForm }
@@ -104,6 +103,9 @@ export class LostPasswordFormComponent extends Component {
 					>
 						{ translate( 'Get New Password' ) }
 					</Button>
+					<a href="/account-recovery/forgot-username" className="lost-password-form__forgot-username-link">
+						{ translate( 'Forgot your username?' ) }
+					</a>
 				</Card>
 			</div>
 		);
