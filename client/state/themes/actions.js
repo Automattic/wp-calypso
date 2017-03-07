@@ -34,6 +34,7 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
+	THEME_TRY_AND_CUSTOMIZE_FAILURE,
 	THEME_UPLOAD_START,
 	THEME_UPLOAD_SUCCESS,
 	THEME_UPLOAD_FAILURE,
@@ -572,7 +573,16 @@ export function installAndTryAndCustomizeTheme( themeId, siteId ) {
  */
 export function tryAndCustomizeTheme( themeId, siteId ) {
 	return ( dispatch, getState ) => {
-		const url = getThemeCustomizeUrl( getState(), themeId, siteId );
+		const siteIdOrWpcom = isJetpackSite( getState(), siteId ) ? siteId : 'wpcom';
+		const theme = getTheme( getState(), siteIdOrWpcom, themeId );
+		if ( ! theme ) {
+			return dispatch( {
+				type: THEME_TRY_AND_CUSTOMIZE_FAILURE,
+				themeId,
+				siteId
+			} );
+		}
+		const url = getThemeCustomizeUrl( getState(), theme, siteId );
 		page( url );
 	};
 }

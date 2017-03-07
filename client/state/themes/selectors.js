@@ -338,13 +338,13 @@ export function isWporgTheme( state, themeId ) {
 /**
  * Returns the URL for a given theme's details sheet.
  *
- * @param  {Object}  state   Global state tree
- * @param  {String}  themeId Theme ID
- * @param  {?Number} siteId  Site ID to optionally use as context
- * @return {?String}         Theme details sheet URL
+ * @param  {Object}  state  Global state tree
+ * @param  {Object}  theme  Theme object
+ * @param  {?Number} siteId Site ID to optionally use as context
+ * @return {?String}        Theme details sheet URL
  */
-export function getThemeDetailsUrl( state, themeId, siteId ) {
-	if ( ! themeId ) {
+export function getThemeDetailsUrl( state, theme, siteId ) {
+	if ( ! theme ) {
 		return null;
 	}
 
@@ -354,12 +354,12 @@ export function getThemeDetailsUrl( state, themeId, siteId ) {
 			canJetpackSiteManage( state, siteId ) &&
 			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId )
 		) ) {
-		return getSiteOption( state, siteId, 'admin_url' ) + 'themes.php?theme=' + themeId;
+		return getSiteOption( state, siteId, 'admin_url' ) + 'themes.php?theme=' + theme.id;
 	}
 
-	let baseUrl = oldShowcaseUrl + themeId;
+	let baseUrl = oldShowcaseUrl + theme.id;
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		baseUrl = `/theme/${ themeId }`;
+		baseUrl = `/theme/${ theme.id }`;
 	}
 
 	return baseUrl + ( siteId ? `/${ getSiteSlug( state, siteId ) }` : '' );
@@ -368,41 +368,41 @@ export function getThemeDetailsUrl( state, themeId, siteId ) {
 /**
  * Returns the URL for a given theme's setup instructions
  *
- * @param  {Object}  state   Global state tree
- * @param  {String}  themeId Theme ID
- * @param  {?Number} siteId  Site ID to optionally use as context
- * @return {?String}         Theme setup instructions URL
+ * @param  {Object}  state  Global state tree
+ * @param  {Object}  theme  Theme object
+ * @param  {?Number} siteId Site ID to optionally use as context
+ * @return {?String}        Theme setup instructions URL
  */
-export function getThemeSupportUrl( state, themeId, siteId ) {
-	if ( ! themeId || ! isThemePremium( state, themeId ) ) {
+export function getThemeSupportUrl( state, theme, siteId ) {
+	if ( ! theme || ! isThemePremium( state, theme.id ) ) {
 		return null;
 	}
 
 	const sitePart = siteId ? `/${ getSiteSlug( state, siteId ) }` : '';
 
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		return `/theme/${ themeId }/setup${ sitePart }`;
+		return `/theme/${ theme.id }/setup${ sitePart }`;
 	}
 
-	return `${ oldShowcaseUrl }${ sitePart }${ themeId }/support`;
+	return `${ oldShowcaseUrl }${ sitePart }${ theme.id }/support`;
 }
 
 /**
  * Returns the URL for a given theme's support page.
  *
- * @param  {Object}  state   Global state tree
- * @param  {String}  themeId Theme ID
- * @param  {?Number} siteId  Site ID to optionally use as context
- * @return {?String}         Theme support page URL
+ * @param  {Object}  state  Global state tree
+ * @param  {Object}  theme  Theme object
+ * @param  {?Number} siteId Site ID to optionally use as context
+ * @return {?String}        Theme support page URL
  */
-export function getThemeHelpUrl( state, themeId, siteId ) {
-	if ( ! themeId ) {
+export function getThemeHelpUrl( state, theme, siteId ) {
+	if ( ! theme ) {
 		return null;
 	}
 
-	let baseUrl = oldShowcaseUrl + themeId;
+	let baseUrl = oldShowcaseUrl + theme.id;
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		baseUrl = `/theme/${ themeId }/support`;
+		baseUrl = `/theme/${ theme.id }/support`;
 	}
 
 	return baseUrl + ( siteId ? `/${ getSiteSlug( state, siteId ) }` : '' );
@@ -411,31 +411,31 @@ export function getThemeHelpUrl( state, themeId, siteId ) {
 /**
  * Returns the URL for purchasing the given theme for the given site.
  *
- * @param  {Object}  state   Global state tree
- * @param  {String}  themeId Theme ID
- * @param  {Number}  siteId  Site ID for which to buy the theme
- * @return {?String}         Theme purchase URL
+ * @param  {Object}  state  Global state tree
+ * @param  {Object}  theme  Theme object
+ * @param  {Number}  siteId Site ID for which to buy the theme
+ * @return {?String}        Theme purchase URL
  */
-export function getThemePurchaseUrl( state, themeId, siteId ) {
-	if ( isJetpackSite( state, siteId ) || ! isThemePremium( state, themeId ) ) {
+export function getThemePurchaseUrl( state, theme, siteId ) {
+	if ( isJetpackSite( state, siteId ) || ! isThemePremium( state, theme.id ) ) {
 		return null;
 	}
 
-	return `/checkout/${ getSiteSlug( state, siteId ) }/theme:${ themeId }`;
+	return `/checkout/${ getSiteSlug( state, siteId ) }/theme:${ theme.id }`;
 }
 
 /**
  * Returns the URL for opening the customizer with the given theme on the given site.
  *
- * @param  {Object}   state   Global state tree
- * @param  {String}   themeId Theme ID
- * @param  {?Number}  siteId  Site ID to open the customizer for
- * @return {?String}          Customizer URL
+ * @param  {Object}   state  Global state tree
+ * @param  {?Object}  theme  Theme object
+ * @param  {?Number}  siteId Site ID to open the customizer for
+ * @return {?String}         Customizer URL
  */
-export function getThemeCustomizeUrl( state, themeId, siteId ) {
+export function getThemeCustomizeUrl( state, theme, siteId ) {
 	const customizerUrl = getCustomizerUrl( state, siteId );
 
-	if ( ! ( siteId && themeId ) ) {
+	if ( ! ( siteId && theme ) ) {
 		return customizerUrl;
 	}
 
@@ -443,12 +443,8 @@ export function getThemeCustomizeUrl( state, themeId, siteId ) {
 	let identifier;
 
 	if ( isJetpackSite( state, siteId ) ) {
-		identifier = themeId;
+		identifier = getSuffixedThemeId( state, theme.id, siteId );
 	} else {
-		const theme = getTheme( state, 'wpcom', themeId );
-		if ( ! theme ) {
-			return customizerUrl;
-		}
 		identifier = theme.stylesheet;
 	}
 
@@ -458,18 +454,18 @@ export function getThemeCustomizeUrl( state, themeId, siteId ) {
 /**
  * Returns the URL for signing up for a new WordPress.com account with the given theme pre-selected.
  *
- * @param  {Object}  state   Global state tree
- * @param  {String}  themeId Theme ID
- * @return {?String}         Signup URL
+ * @param  {Object}  state  Global state tree
+ * @param  {Object}  theme  Theme object
+ * @return {?String}        Signup URL
  */
-export function getThemeSignupUrl( state, themeId ) {
-	if ( ! themeId ) {
+export function getThemeSignupUrl( state, theme ) {
+	if ( ! theme ) {
 		return null;
 	}
 
-	let url = '/start/with-theme?ref=calypshowcase&theme=' + themeId;
+	let url = '/start/with-theme?ref=calypshowcase&theme=' + theme.id;
 
-	if ( isThemePremium( state, themeId ) ) {
+	if ( isThemePremium( state, theme.id ) ) {
 		url += '&premium=true';
 	}
 
