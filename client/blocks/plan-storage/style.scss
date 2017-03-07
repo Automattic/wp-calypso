@@ -14,8 +14,8 @@
 .plan-storage__storage-label,
 .plan-storage__storage-link {
 	font-size: 11px;
-	height: 24px;
-	line-height: 24px;
+	line-height: 1;
+	margin-top: 6px;
 }
 
 .plan-storage__storage-label {
@@ -24,7 +24,7 @@
 }
 
 .plan-storage__storage-link {
-	margin-left: 3px;
+	margin-left: 12px;
 	text-decoration: none;
 }
 
