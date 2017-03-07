@@ -45,8 +45,6 @@ import QueryEligibility from 'components/data/query-atat-eligibility';
 const PluginMeta = React.createClass( {
 	OUT_OF_DATE_YEARS: 2,
 
-	displayName: 'PluginMeta',
-
 	propTypes: {
 		siteURL: React.PropTypes.string,
 		sites: React.PropTypes.array,
