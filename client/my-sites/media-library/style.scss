@@ -53,6 +53,9 @@
 
 	.section-nav {
 		flex: 1 auto;
+		.search {
+			z-index: z-index( '.media-library .section-nav', '.search.is-expanded-to-container' );
+		}
 	}
 
 	.plan-storage {

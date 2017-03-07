@@ -189,6 +189,9 @@ $z-layers: (
 		'.media-library__list-item-spinner': 20,
 		'.media-library__list-item-edit': 20
 	),
+	'.media-library .section-nav': (
+		'.search.is-expanded-to-container': 1,
+	),
 	'.dialog__backdrop': (
 		'.editor-media-modal .section-nav': 10,
 		'.editor-media-modal .notice': 10,
