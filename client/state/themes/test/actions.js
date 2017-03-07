@@ -967,8 +967,8 @@ describe( 'actions', () => {
 			}
 			return false;
 		};
-		const getThemeSpy = ( state, siteId, themeId ) => {
-			if ( themeId === 'karuna-wpcom' ) {
+		const getCanonicalThemeSpy = ( state, siteId, themeId ) => {
+			if ( themeId === 'karuna' ) {
 				return { theme: themeId };
 			}
 			return null;
@@ -984,7 +984,7 @@ describe( 'actions', () => {
 			} );
 			mockery.registerMock( './selectors', {
 				getThemeCustomizeUrl: () => 'customizer/url',
-				getTheme: getThemeSpy,
+				getCanonicalTheme: getCanonicalThemeSpy,
 			} );
 			_tryAndCustomize = require( '../actions' ).tryAndCustomizeTheme;
 		} );
