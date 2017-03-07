@@ -216,20 +216,12 @@ const SinglePlugin = React.createClass( {
 	},
 
 	getAllowedPluginActions( plugin ) {
-		let autoupdate = true;
-		let activation = true;
-		let remove = true;
-
-		if ( this.props.isSiteAutomatedTransfer && includes( [ 'jetpack', 'vaultpress' ], plugin.slug ) ) {
-			autoupdate = false;
-			activation = false;
-			remove = false;
-		}
+		const hiddenForAutomatedTransfer = this.props.isSiteAutomatedTransfer && includes( [ 'jetpack', 'vaultpress' ], plugin.slug );
 
 		return {
-			autoupdate,
-			activation,
-			remove,
+			autoupdate: ! hiddenForAutomatedTransfer,
+			activation: ! hiddenForAutomatedTransfer,
+			remove: ! hiddenForAutomatedTransfer,
 		};
 	},
 
