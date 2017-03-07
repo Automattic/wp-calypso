@@ -179,7 +179,7 @@ class AfterTheDeadline extends Component {
 		} = this.props;
 
 		return (
-			<FormFieldset>
+			<FormFieldset className="site-settings__has-divider is-top-only">
 				<QueryJetpackConnection siteId={ selectedSiteId } />
 
 				<div className="composing__info-link-container site-settings__info-link-container">
