@@ -134,7 +134,6 @@
     "walk": "2.3.4",
     "webpack": "1.13.1",
     "webpack-dev-middleware": "1.2.0",
-    "webpack-stable-module-id-and-hash": "1.0.5",
     "wpcom": "5.3.0",
     "wpcom-oauth": "0.3.3",
     "wpcom-proxy-request": "3.0.0",
@@ -193,6 +192,5 @@
     "webpack-bundle-analyzer": "2.2.1",
     "webpack-dashboard": "0.2.0",
     "webpack-dev-server": "1.11.0"
-
   }
 }
