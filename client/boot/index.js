@@ -203,11 +203,11 @@ function reduxStoreReady( reduxStore ) {
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'lib/network-connection', netConn => netConn.init( reduxStore ) );
+		require( 'lib/network-connection' ).init( reduxStore );
 	}
 
 	if ( config.isEnabled( 'css-hot-reload' ) ) {
-		asyncRequire( 'lib/css-hot-reload', cssHotReload => cssHotReload() );
+		require( 'lib/css-hot-reload' )();
 	}
 
 	// Render Layout only for non-isomorphic sections.
