@@ -67,6 +67,7 @@ export isDeactivatingJetpackJumpstart from './is-deactivating-jetpack-jumpstart'
 export isDeactivatingJetpackModule from './is-deactivating-jetpack-module';
 export isDirectlyFailed from './is-directly-failed';
 export isDirectlyReady from './is-directly-ready';
+export isDirectlyUninitialized from './is-directly-uninitialized';
 export isDomainOnlySite from './is-domain-only-site';
 export isFetchingJetpackModules from './is-fetching-jetpack-modules';
 export isJetpackModuleActive from './is-jetpack-module-active';
