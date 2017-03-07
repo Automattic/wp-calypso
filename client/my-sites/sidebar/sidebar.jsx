@@ -561,139 +561,6 @@ export class MySitesSidebar extends Component {
 		analytics.ga.recordEvent( 'Sidebar', 'Clicked WP Admin' );
 	};
 
-	vip() {
-		var site, viplink;
-
-		if ( ! config.isEnabled( 'vip' ) ) {
-			return null;
-		}
-
-		site = this.getSelectedSite();
-		viplink = '/vip/updates' + this.siteSuffix();
-
-		if ( ! site ) {
-			return null;
-		}
-
-		return (
-			<li className={ this.itemLinkClass( '/vip/updates', 'sidebar__vip' ) } >
-				<a href={ viplink } >
-					<span className="menu-link-text">{ this.props.translate( 'Updates' ) }</span>
-				</a>
-			</li>
-		);
-	}
-
-	vipDeploys() {
-		var site, viplink;
-
-		if ( ! config.isEnabled( 'vip/deploys' ) ) {
-			return null;
-		}
-
-		site = this.getSelectedSite();
-		viplink = '/vip/deploys' + this.siteSuffix();
-
-		if ( ! site ) {
-			return null;
-		}
-
-		return (
-			<li className={ this.itemLinkClass( '/vip/deploys', 'sidebar__vip-deploys' ) } >
-				<a href={ viplink } >
-					<span className="menu-link-text">{ this.props.translate( 'Deploys' ) }</span>
-				</a>
-			</li>
-		);
-	}
-
-	vipBilling() {
-		var site, viplink;
-
-		if ( ! config.isEnabled( 'vip/billing' ) ) {
-			return null;
-		}
-
-		site = this.getSelectedSite();
-		viplink = '/vip/billing' + this.siteSuffix();
-
-		if ( ! site ) {
-			return null;
-		}
-
-		return (
-			<li className={ this.itemLinkClass( '/vip/billing', 'sidebar__vip-billing' ) }>
-				<a href={ viplink } >
-					<span className="menu-link-text">{ this.props.translate( 'Billing' ) }</span>
-				</a>
-			</li>
-		);
-	}
-
-	vipSupport() {
-		var viplink;
-
-		if ( ! config.isEnabled( 'vip/support' ) ) {
-			return null;
-		}
-
-		viplink = '/vip/support' + this.siteSuffix();
-
-		return (
-			<li className={ this.itemLinkClass( '/vip/support', 'sidebar__vip-support' ) }>
-				<a href={ viplink } >
-					<span className="menu-link-text">{ this.props.translate( 'Support' ) }</span>
-				</a>
-			</li>
-		);
-	}
-
-	vipBackups() {
-		var site, viplink;
-
-		if ( ! config.isEnabled( 'vip/backups' ) ) {
-			return null;
-		}
-
-		site = this.getSelectedSite();
-		viplink = '/vip/backups' + this.siteSuffix();
-
-		if ( ! site ) {
-			return null;
-		}
-
-		return (
-			<li className={ this.itemLinkClass( '/vip/backups', 'sidebar__vip-backups' ) }>
-				<a href={ viplink } >
-					<span className="menu-link-text">{ this.props.translate( 'Backups' ) }</span>
-				</a>
-			</li>
-		);
-	}
-
-	vipLogs() {
-		var site, viplink;
-
-		if ( ! config.isEnabled( 'vip/logs' ) ) {
-			return null;
-		}
-
-		site = this.getSelectedSite();
-		viplink = '/vip/logs' + this.siteSuffix();
-
-		if ( ! site ) {
-			return null;
-		}
-
-		return (
-			<li className={ this.itemLinkClass( '/vip/logs', 'sidebar__vip-logs' ) }>
-				<a href={ viplink } >
-					<span className="menu-link-text">{ this.props.translate( 'Logs' ) }</span>
-				</a>
-			</li>
-		);
-	}
-
 	focusContent = () => {
 		this.props.setLayoutFocus( 'content' );
 	};
@@ -732,8 +599,7 @@ export class MySitesSidebar extends Component {
 
 		const publish = !! this.publish(),
 			appearance = ( !! this.themes() || !! this.menus() ),
-			configuration = ( !! this.sharing() || !! this.users() || !! this.siteSettings() || !! this.plugins() || !! this.upgrades() ),
-			vip = !! this.vip();
+			configuration = ( !! this.sharing() || !! this.users() || !! this.siteSettings() || !! this.plugins() || !! this.upgrades() );
 
 		return (
 			<div>
@@ -743,21 +609,6 @@ export class MySitesSidebar extends Component {
 						{ this.plan() }
 					</ul>
 				</SidebarMenu>
-
-				{ vip
-					? <SidebarMenu>
-						<SidebarHeading>VIP</SidebarHeading>
-						<ul>
-							{ this.vip() }
-							{ this.vipDeploys() }
-							{ this.vipBilling() }
-							{ this.vipSupport() }
-							{ this.vipBackups() }
-							{ this.vipLogs() }
-						</ul>
-					</SidebarMenu>
-					: null
-				}
 
 				{ publish
 					? <SidebarMenu>

@@ -147,12 +147,6 @@
 		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
-		"vip": false,
-		"vip/backups": true,
-		"vip/billing": true,
-		"vip/deploys": true,
-		"vip/logs": true,
-		"vip/support": true,
 		"webpack/persistent-caching": false
 	}
 }
