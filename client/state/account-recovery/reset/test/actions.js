@@ -6,11 +6,9 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
-
 import {
-	fetchResetOptions,
+	fetchResetOptionsByLogin,
+	fetchResetOptionsByNameAndUrl,
 	fetchResetOptionsSuccess,
 	fetchResetOptionsError,
 	updatePasswordResetUserData,
@@ -23,20 +21,53 @@ import {
 	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
 } from 'state/action-types';
 
+describe( '#fetchResetOptionsByLogin', () => {
+	it( 'should return ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST action with the user field', () => {
+		const user = 'foo';
+		const action = fetchResetOptionsByLogin( user );
+
+		assert.deepEqual( action, {
+			type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
+			userData: {
+				user,
+			},
+		} );
+	} );
+} );
+
+describe( '#fetchResetOptionsByNameAndUrl', () => {
+	it( 'should return ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST action with the firstname, lastname and url fields. ', () => {
+		const firstname = 'firstname';
+		const lastname = 'lastname';
+		const url = 'example.com';
+
+		const action = fetchResetOptionsByNameAndUrl( firstname, lastname, url );
+
+		assert.deepEqual( action, {
+			type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
+			userData: {
+				firstname,
+				lastname,
+				url,
+			},
+		} );
+	} );
+} );
+
 describe( '#fetchResetOptionsSuccess', () => {
 	it( 'should return ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE action with options field.', () => {
-		const items = {
-			primaryEmail: 'primary@example.com',
-			primarySms: '12345678',
-			secondaryEmail: 'secondary@example.com',
-			secondarySms: '12345678',
+		const options = {
+			primary_email: 'primary@example.com',
+			secondary_email: 'secondary@example.com',
+			primary_sms: '12345678',
+			secondary_sms: '12345678',
 		};
 
-		const action = fetchResetOptionsSuccess( items );
+		const action = fetchResetOptionsSuccess( options );
 
 		assert.deepEqual( action, {
 			type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
-			items,
+			options,
 		} );
 	} );
 } );
@@ -53,81 +84,6 @@ describe( '#fetchResetOptionsError', () => {
 		assert.deepEqual( action, {
 			type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 			error,
-		} );
-	} );
-} );
-
-describe( '#fetchResetOptions', () => {
-	let spy;
-
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
-
-	const apiBaseUrl = 'https://public-api.wordpress.com:443';
-	const endpoint = '/wpcom/v2/account-recovery/lookup';
-
-	const userData = {
-		user: 'foo',
-	};
-
-	describe( 'success', () => {
-		const response = {
-			primary_email: 'a****@example.com',
-			secondary_email: 'b*****@example.com',
-			primary_sms: '+1******456',
-			secondary_sms: '+8*******456',
-		};
-
-		useNock( nock => (
-			nock( apiBaseUrl )
-				.get( endpoint )
-				.reply( 200, response )
-		) );
-
-		it( 'should dispatch RECEIVE action on success', () => {
-			const thunk = fetchResetOptions( userData )( spy );
-
-			assert.isTrue( spy.calledWith( {
-				type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
-			} ) );
-
-			return thunk.then( () =>
-				assert.isTrue( spy.calledWith( {
-					type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
-					items: [
-						{
-							email: response.primary_email,
-							sms: response.primary_sms,
-						},
-						{
-							email: response.secondary_email,
-							sms: response.secondary_sms,
-						},
-					],
-				} ) )
-			);
-		} );
-	} );
-
-	describe( 'failure', () => {
-		const errorResponse = {
-			status: 400,
-			message: 'Something wrong!',
-		};
-
-		useNock( nock => (
-			nock( apiBaseUrl )
-				.get( endpoint )
-				.reply( errorResponse.status, errorResponse )
-		) );
-
-		it( 'should dispatch ERROR action on failure', () => {
-			return fetchResetOptions( userData )( spy )
-				.then( () =>
-					assert.isTrue( spy.calledWithMatch( {
-						type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
-						error: errorResponse,
-					} ) )
-				);
 		} );
 	} );
 } );
