@@ -55,13 +55,13 @@ const ThemePreview = React.createClass( {
 
 	onPrimaryButtonClick() {
 		const option = this.getPrimaryOption();
-		option.action && option.action( this.props.theme );
+		option.action && option.action( this.props.theme.id );
 		! this.props.isJetpack && this.props.hideThemePreview();
 	},
 
 	onSecondaryButtonClick() {
 		const secondary = this.getSecondaryOption();
-		secondary.action && secondary.action( this.props.theme );
+		secondary.action && secondary.action( this.props.theme.id );
 		! this.props.isJetpack && this.props.hideThemePreview();
 	},
 

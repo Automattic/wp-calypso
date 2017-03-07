@@ -182,7 +182,7 @@ const ThemeSheet = React.createClass( {
 	previewAction() {
 		const { preview } = this.props.options;
 		this.props.setThemePreviewOptions( this.props.defaultOption, this.props.secondaryOption );
-		return preview.action( this.props.theme );
+		return preview.action( this.props.id );
 	},
 
 	renderPreviewButton() {
