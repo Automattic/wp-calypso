@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import some from 'lodash/some';
@@ -37,9 +38,11 @@ import {
 	isBusiness,
 	isEnterprise
 } from 'lib/products-values';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isAutomatedTransferActive } from 'state/selectors';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 
-export default React.createClass( {
+const PluginMeta = React.createClass( {
 	OUT_OF_DATE_YEARS: 2,
 
 	displayName: 'PluginMeta',
@@ -165,10 +168,12 @@ export default React.createClass( {
 			return <PluginInstallButton { ...this.props } />;
 		}
 
+		const { isTransferring } = this.props;
+
 		if ( this.props.selectedSite && ! this.props.selectedSite.jetpack ) {
 			return (
 				<WpcomPluginInstallButton
-					disabled={ ! this.hasBusinessPlan() }
+					disabled={ ! this.hasBusinessPlan() || isTransferring }
 					plugin={ this.props.plugin }
 				/>
 			);
@@ -382,3 +387,13 @@ export default React.createClass( {
 		);
 	}
 } );
+
+const mapStateToProps = state => {
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		isTransferring: isAutomatedTransferActive( state, siteId ),
+	};
+};
+
+export default connect( mapStateToProps )( PluginMeta );
