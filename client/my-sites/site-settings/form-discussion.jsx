@@ -565,6 +565,7 @@ const getFormSettings = settings => {
 		'comment_order',
 		'comments_notify',
 		'moderation_notify',
+		'likes',
 		'social_notifications_like',
 		'social_notifications_reblog',
 		'social_notifications_subscribe',
@@ -578,6 +579,9 @@ const getFormSettings = settings => {
 		'markdown_supported',
 		'highlander_comment_form_prompt',
 		'jetpack_comment_form_color_scheme',
+		'subscriptions',
+		'stb_enabled',
+		'stc_enabled',
 	] );
 };
 
