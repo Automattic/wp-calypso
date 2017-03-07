@@ -39,6 +39,7 @@ class ProductsForm extends Component {
 				</p>
 
 				<ProductVariationTypesForm
+					variations={ [ { type: 'Color', values: [ 'Red' ] } ] }
 				/>
 			</Card>
 		);
