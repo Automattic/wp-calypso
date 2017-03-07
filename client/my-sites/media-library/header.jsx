@@ -130,7 +130,6 @@ export default React.createClass( {
 					selectedItems={ this.props.selectedItems }
 					onViewDetails={ this.props.onViewDetails }
 					onDelete={ this.props.onDeleteItem }
-					renderStorage={ false }
 					site={ this.props.site }
 					view={ 'LIST' }
 				/>
