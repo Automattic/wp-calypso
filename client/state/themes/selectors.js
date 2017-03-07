@@ -44,6 +44,7 @@ export const getTheme = createSelector(
 		if ( ! manager ) {
 			return null;
 		}
+
 		return manager.getItem( themeId );
 	},
 	( state ) => state.themes.queries
