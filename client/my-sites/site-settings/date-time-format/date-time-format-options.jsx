@@ -18,6 +18,16 @@ import { defaultDateFormats, defaultTimeFormats } from './default-formats';
 import { getLocalizedDate } from './utils';
 import wrapSettingsForm from '../wrap-settings-form';
 
+/**
+ * Module constant
+ */
+const defaultSettings = {
+	date_format: '',
+	start_of_week: 0,
+	time_format: '',
+	timezone_string: '',
+};
+
 export class DateTimeFormatOptions extends Component {
 	state = {
 		customDateFormat: false,
@@ -137,13 +147,6 @@ export class DateTimeFormatOptions extends Component {
 }
 
 export default wrapSettingsForm( settings => {
-	const defaultSettings = {
-		date_format: '',
-		start_of_week: 0,
-		time_format: '',
-		timezone_string: '',
-	};
-
 	if ( ! settings ) {
 		return defaultSettings;
 	}
