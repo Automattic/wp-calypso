@@ -45,10 +45,14 @@ class CommentButton extends Component {
 			},
 			<Gridicon icon="comment" size={ this.props.size } className="comment-button__icon" />,
 			<span className="comment-button__label">
-				{ commentCount > 0 && <span className="comment-button__label-count">{ commentCount }</span> }
-				{ showLabel && commentCount > 0 && <span className="comment-button__label-status">
-					{ translate( 'Comment', 'Comments', { count: commentCount	}	)	}
-				</span> }
+				{ commentCount > 0 &&
+					<span className="comment-button__label-count">{ commentCount }</span>
+				}
+				{ showLabel && commentCount > 0 &&
+					<span className="comment-button__label-status">
+						{ translate( 'Comment', 'Comments', { count: commentCount	}	)	}
+					</span>
+				}
 			</span>
 		);
 	}
