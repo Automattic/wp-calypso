@@ -37,6 +37,38 @@ module.exports = React.createClass( {
 
 	displayName: 'PluginItem',
 
+	propTypes: {
+		plugin: React.PropTypes.object,
+		sites: React.PropTypes.array,
+		isSelected: React.PropTypes.bool,
+		isSelectable: React.PropTypes.bool,
+		onClick: React.PropTypes.func,
+		pluginLink: React.PropTypes.string,
+		allowedActions: React.PropTypes.shape( {
+			activation: React.PropTypes.bool,
+			autoupdate: React.PropTypes.bool,
+		} ),
+		isAutoManaged: React.PropTypes.bool,
+		progress: React.PropTypes.array,
+		errors: React.PropTypes.array,
+		notices: React.PropTypes.shape( {
+			completed: React.PropTypes.array,
+			errors: React.PropTypes.array,
+			inProgress: React.PropTypes.array,
+		} ),
+		hasAllNoManageSites: React.PropTypes.bool,
+	},
+
+	defaultProps() {
+		return  {
+			allowedActions: {
+				activation: true,
+				autoupdate: true,
+			},
+			isAutoManaged: false,
+		}
+	},
+
 	shouldComponentUpdate( nextProps, nextState ) {
 		const propsToCheck = [ 'plugin', 'sites', 'selectedSite', 'isMock', 'isSelectable', 'isSelected' ];
 		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
