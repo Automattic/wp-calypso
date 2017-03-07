@@ -2,13 +2,14 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 
-const successfulFollowedTagsResponse = {
+const successfulFollowedTagsResponse = deepFreeze( {
 	tags: [
 		{
 			ID: '307',
@@ -25,9 +26,9 @@ const successfulFollowedTagsResponse = {
 			URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/design/posts',
 		},
 	]
-};
+} );
 
-const normalizedFollowedTagsResponse = [
+const normalizedFollowedTagsResponse = deepFreeze( [
 	{
 		id: '307',
 		slug: 'chickens',
@@ -42,9 +43,9 @@ const normalizedFollowedTagsResponse = [
 		displayName: 'design',
 		url: '/tag/design',
 	},
-];
+] );
 
-const successfulSingleTagResponse = {
+const successfulSingleTagResponse = deepFreeze( {
 	tag: {
 		ID: '307',
 		slug: 'chickens',
@@ -52,9 +53,9 @@ const successfulSingleTagResponse = {
 		display_name: 'chickens',
 		URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/chickens/posts'
 	},
-};
+} );
 
-const normalizedSuccessfulSingleTagResponse = [
+const normalizedSuccessfulSingleTagResponse = deepFreeze( [
 	{
 		id: '307',
 		slug: 'chickens',
@@ -62,7 +63,7 @@ const normalizedSuccessfulSingleTagResponse = [
 		displayName: 'chickens',
 		url: '/tag/chickens',
 	},
-];
+] );
 
 describe( 'wpcom-api: read/tags utils', () => {
 	describe( '#fromApi', () => {

@@ -46,7 +46,7 @@ function fromApi( apiResponse ) {
 		tags = map( apiResponse.tags, tag => ( { ...tag, is_following: true } ) );
 	} else {
 		if ( process.env.NODE_ENV === 'development' ) {
-			throw new Error( 'bad api response for /read/tags' );
+			console.error( 'bad api response for /read/tags' ); // eslint-disable-line no-console
 		}
 		tags = [];
 	}
