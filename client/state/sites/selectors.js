@@ -737,7 +737,7 @@ export function hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) {
 	}
 
 	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
-	return versionCompare( siteJetpackVersion, '4.4.2' ) >= 0;
+	return versionCompare( siteJetpackVersion, '4.7' ) >= 0;
 }
 
 /**
