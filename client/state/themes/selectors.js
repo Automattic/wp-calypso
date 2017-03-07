@@ -452,6 +452,21 @@ export function getThemeCustomizeUrl( state, theme, siteId ) {
 }
 
 /**
+ * Returns the URL for running Theme Setup on the current site (Headstart on demand).
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {Object}  siteId  Site ID
+ * @return {String}          Theme Setup URL
+ */
+export function getThemeSetupUrl( state, siteId ) {
+	if ( ! siteId ) {
+		return '/settings/theme-setup/';
+	}
+	const siteSlug = getSiteSlug( state, siteId );
+	return '/settings/theme-setup/' + siteSlug;
+}
+
+/**
  * Returns the URL for signing up for a new WordPress.com account with the given theme pre-selected.
  *
  * @param  {Object}  state  Global state tree
