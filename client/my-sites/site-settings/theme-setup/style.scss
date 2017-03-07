@@ -14,3 +14,19 @@
 	}
 }
 
+.theme-setup .active-theme-screenshot {
+	min-height: 200px;
+}
+
+.theme-setup .active-theme-screenshot__image {
+	border: 1px solid lighten( $gray, 30% );
+	box-sizing: border-box;
+}
+
+.theme-setup .active-theme-screenshot__name {
+	font-size: 0.85em;
+	font-weight: 600;
+	color: $gray;
+	text-transform: uppercase;
+}
+
