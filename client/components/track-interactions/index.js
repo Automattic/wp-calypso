@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { cloneElement, Children, Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { constant, isFunction } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import connectOptional from 'lib/connect-optional';
 import deepPick from 'lib/deep-pick';
 import { COMPONENT_INTERACTION_TRACKED } from 'state/action-types';
 
@@ -68,7 +68,7 @@ function trackInteraction( componentName, data ) {
 	};
 }
 
-export default connect(
+export default connectOptional(
 	null,
 	{ trackInteraction }
 )( TrackInteractions );

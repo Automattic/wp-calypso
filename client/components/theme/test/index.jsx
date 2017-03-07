@@ -2,21 +2,13 @@
  * External dependencies
  */
 import sinon from 'sinon';
-import { Provider } from 'react-redux';
 import { assert } from 'chai';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
-
-const fakeStore = {
-	dispatch: noop,
-	getState: noop,
-	subscribe: noop,
-};
 
 describe( 'Theme', function() {
 	let ReactDom, React, TestUtils, Theme, togglePopoverStub;
@@ -61,9 +53,7 @@ describe( 'Theme', function() {
 			beforeEach( function() {
 				this.props.onScreenshotClick = sinon.spy();
 				const themeElement = TestUtils.renderIntoDocument(
-					React.createElement( Provider, { store: fakeStore },
-						React.createElement( Theme, this.props )
-					)
+					React.createElement( Theme, this.props )
 				);
 				this.themeNode = ReactDom.findDOMNode( themeElement );
 			} );
@@ -134,9 +124,7 @@ describe( 'Theme', function() {
 		beforeEach( function() {
 			this.props.theme.price = '$50';
 			const themeElement = TestUtils.renderIntoDocument(
-				React.createElement( Provider, { store: fakeStore },
-					React.createElement( Theme, this.props )
-				)
+				React.createElement( Theme, this.props )
 			);
 			this.themeNode = ReactDom.findDOMNode( themeElement );
 		} );
