@@ -22,7 +22,6 @@ import ReaderVisitLink from 'blocks/reader-visit-link';
 
 const ReaderPostActions = ( props ) => {
 	const {
-		translate,
 		post,
 		site,
 		onCommentClick,
@@ -34,6 +33,7 @@ const ReaderPostActions = ( props ) => {
 		className,
 		visitUrl,
 		fullPost,
+		translate,
 	} = props;
 
 	const onEditClick = () => {

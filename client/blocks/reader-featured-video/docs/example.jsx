@@ -22,7 +22,7 @@ const exampleVideo = {
 };
 
 const ReaderFeaturedVideo = () => (
-	<div className="design-assets__group">
+	<div className="reader-featured-video-example design-assets__group">
 		<div>
 			<h3>With play button</h3>
 			<ReaderFeaturedVideoBlock

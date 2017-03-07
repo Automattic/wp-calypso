@@ -7,7 +7,6 @@
 }
 
 .reader-visit-link:hover,
-.reader-visit-link:focus,
 .reader-visit-link:active {
 	.reader-visit-link__icon {
 		fill: $blue-medium;
@@ -15,5 +14,6 @@
 
 	.reader-visit-link__label {
 		color: $blue-medium;
+		cursor: pointer;
 	}
 }
