@@ -19,6 +19,9 @@ import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import analytics from 'lib/analytics';
 
+import { receiveUser } from 'state/users/actions';
+import { setCurrentUserId, setCurrentUserFlags } from 'state/current-user/actions';
+
 import {
 	SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET,
 } from 'state/action-types';
@@ -257,6 +260,33 @@ module.exports = {
 				// Fire after a new user registers.
 				analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
 				analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
+
+				/**
+				 * Auto login the user when it has been created.
+				 */
+				user.clear();
+				user.fetching = false;
+
+				user.on( 'change', () => {
+					const newLoggedUser = user.get();
+
+					if ( newLoggedUser && newLoggedUser.ID ) {
+						// Set current user in Redux store
+						this._reduxStore.dispatch( receiveUser( newLoggedUser ) );
+						this._reduxStore.dispatch( setCurrentUserId( newLoggedUser.ID ) );
+						this._reduxStore.dispatch( setCurrentUserFlags( newLoggedUser.meta.data.flags.active_flags ) );
+					} else {
+						/**
+						 * The user fetching is a bit fragile and sometimes it requires to do a double-fetch.
+						 */
+						user.clear();
+						user.fetching = false;
+						user.fetch();
+					}
+				} );
+
+				// Force fetch the user details
+				user.fetch();
 			}
 
 			callback( errors, assign( {}, { username: userData.username }, bearerToken ) );
