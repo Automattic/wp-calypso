@@ -5,7 +5,7 @@ import React from 'react';
 import config from 'config';
 import { connect } from 'react-redux';
 import page from 'page';
-import { get, uniq, upperFirst } from 'lodash';
+import { get, includes, uniq, upperFirst } from 'lodash';
 
 /**
  * Internal dependencies
@@ -220,7 +220,7 @@ const SinglePlugin = React.createClass( {
 		let activation = true;
 		let remove = true;
 
-		if ( this.props.isSiteAutomatedTransfer && ( plugin.slug === 'jetpack' || plugin.slug === 'vaultpress' ) ) {
+		if ( this.props.isSiteAutomatedTransfer && includes( [ 'jetpack', 'vaultpress' ], plugin.slug ) ) {
 			autoupdate = false;
 			activation = false;
 			remove = false;
