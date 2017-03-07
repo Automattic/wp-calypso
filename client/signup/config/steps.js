@@ -31,7 +31,10 @@ module.exports = {
 		stepName: 'themes-site-selected',
 		dependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
 		providesDependencies: [ 'themeSlugWithRepo' ],
-		apiRequestFunction: stepActions.setThemeOnSite
+		apiRequestFunction: stepActions.setThemeOnSite,
+		props: {
+			headerText: i18n.translate( 'Choose a theme for your new site.' ),
+		}
 	},
 
 	'plans-site-selected': {
