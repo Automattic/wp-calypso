@@ -85,10 +85,6 @@ function generateStaticUrls( request ) {
 
 	assets.forEach( function( asset ) {
 		let name = asset.name;
-		if ( ! name ) {
-			// this is for auto-generated chunks that don't have names, like the commons chunk
-			name = asset.url.replace( /\/calypso\/(\w+)\..*/, '_$1' );
-		}
 		urls[ name ] = asset.url;
 		if ( config( 'env' ) !== 'development' ) {
 			urls[ name + '-min' ] = asset.url.replace( '.js', '.m.js' );

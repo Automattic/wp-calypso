@@ -11,7 +11,6 @@ const webpack = require( 'webpack' ),
  * Internal dependencies
  */
 const config = require( './server/config' ),
-	sections = require( './client/sections' ),
 	cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' ),
 	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
 	CopyWebpackPlugin = require( 'copy-webpack-plugin' ),
@@ -26,7 +25,6 @@ const config = require( './server/config' ),
 const calypsoEnv = config( 'env_id' );
 
 const bundleEnv = config( 'env' );
-const sectionCount = sections.length;
 
 const webpackConfig = {
 	bail: calypsoEnv !== 'development',
@@ -147,20 +145,6 @@ if ( calypsoEnv === 'desktop' ) {
 			filename: 'manifest.[hash].js'
 		} )
 	);
-
-	// this walks all of the chunks and finds modules that exist in at least a quarter of them.
-	// It moves those modules into a new "common" chunk, since most of the app will need to load them.
-	//
-	// Ideally we'd push these things either up into the build-env chunk, or into vendor, but there's no
-	// great way to do that yet.
-	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( {
-		children: true,
-		minChunks: Math.floor( sectionCount * 0.25 ),
-		async: true,
-		// no 'name' property on purpose, as that's what tells the plugin to walk all of the chunks looking
-		// for common modules
-		filename: 'commons.[chunkhash].js'
-	} ) );
 
 	// Somewhat badly named, this is our custom chunk loader that knows about sections
 	// and our loading notification infrastructure
