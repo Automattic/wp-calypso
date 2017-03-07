@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,6 +15,11 @@ import FormRadio from 'components/forms/form-radio';
 import SectionHeader from 'components/section-header';
 
 class Easy extends Component {
+	static propTypes = {
+		site: PropTypes.object.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
+
 	state = {
 		checkedRadio: 'off',
 	};
@@ -22,7 +27,7 @@ class Easy extends Component {
 	handleRadioChange = event => this.setState( { checkedRadio: event.currentTarget.value } );
 
 	render() {
-		const { translate } = this.props;
+		const { site, translate } = this.props;
 		const { checkedRadio } = this.state;
 
 		return (
@@ -62,16 +67,24 @@ class Easy extends Component {
 				<Card>
 					<p>
 						{ translate(
-						'Cached pages are stored on your server as html and PHP files. ' +
-						'If you need to delete them, use the button below.'
+						'Cached pages are stored on your server as HTML and PHP files. ' +
+						'If you need to delete them, use the buttons below.'
 						) }
 					</p>
 					<div>
 						<Button
 							compact={ true }
+							style={ { marginRight: '8px' } }
 							type="submit">
 								{ translate( 'Delete Cache' ) }
 						</Button>
+						{ site.jetpack && site.is_multisite &&
+							<Button
+								compact={ true }
+								type="submit">
+									{ translate( 'Delete Cache On All Blogs' ) }
+							</Button>
+						}
 					</div>
 				</Card>
 			</div>
