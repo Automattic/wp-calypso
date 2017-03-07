@@ -34,6 +34,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
 import Banner from 'components/banner';
+import SeoSettingsHelpCard from './help';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import {
 	getSiteOption,
@@ -450,10 +451,6 @@ export const SeoForm = React.createClass( {
 			</Button>
 		);
 
-		const seoHelpLink = siteIsJetpack
-			? 'https://jetpack.com/support/seo-tools/'
-			: 'https://en.blog.wordpress.com/2013/03/22/seo-on-wordpress-com/';
-
 		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<div>
@@ -518,21 +515,7 @@ export const SeoForm = React.createClass( {
 					/>
 				}
 
-				<SectionHeader label={ translate( 'Search Engine Optimization' ) } />
-				<Card>
-					{ translate(
-						'{{b}}WordPress.com has great SEO{{/b}} out of the box. All of our themes are optimized ' +
-						'for search engines, so you don\'t have to do anything extra. However, you can tweak ' +
-						'these settings if you\'d like more advanced control. Read more about what you can do ' +
-						'to {{a}}optimize your site\'s SEO{{/a}}.',
-						{
-							components: {
-								a: <a href={ seoHelpLink } />,
-								b: <strong />
-							}
-						}
-					) }
-				</Card>
+				<SeoSettingsHelpCard />
 
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
 					{ showAdvancedSeo &&
