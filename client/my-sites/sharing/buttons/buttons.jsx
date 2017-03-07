@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { flowRight, values } from 'lodash';
+import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -13,12 +13,10 @@ import ButtonsAppearance from './appearance';
 import ButtonsOptions from './options';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import QuerySharingButtons from 'components/data/query-sharing-buttons';
-import QueryPostTypes from 'components/data/query-post-types';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import { saveSharingButtons } from 'state/sites/sharing-buttons/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSettings, isSavingSiteSettings, isSiteSettingsSaveSuccessful } from 'state/site-settings/selectors';
-import { getPostTypes } from 'state/post-types/selectors';
 import { getSharingButtons, isSavingSharingButtons, isSharingButtonsSaveSuccessful } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
@@ -35,7 +33,6 @@ class SharingButtons extends Component {
 		isSaving: PropTypes.bool,
 		isSaveSettingsSuccessful: PropTypes.bool,
 		isSaveButtonsSuccessful: PropTypes.bool,
-		postTypes: PropTypes.array,
 		markSaved: PropTypes.func,
 		markChanged: PropTypes.func,
 		settings: PropTypes.object,
@@ -90,14 +87,13 @@ class SharingButtons extends Component {
 	}
 
 	render() {
-		const { buttons, isSaving, postTypes, settings, siteId } = this.props;
+		const { buttons, isSaving, settings, siteId } = this.props;
 		const updatedSettings = Object.assign( {}, settings, this.state.values );
 		const updatedButtons = this.state.buttonsPendingSave || buttons;
 
 		return (
 			<form onSubmit={ this.saveChanges } id="sharing-buttons" className="sharing-settings sharing-buttons">
 				<QuerySiteSettings siteId={ siteId } />
-				{ siteId && <QueryPostTypes siteId={ siteId } /> }
 				<QuerySharingButtons siteId={ siteId } />
 				<ButtonsAppearance
 					buttons={ updatedButtons }
@@ -107,11 +103,8 @@ class SharingButtons extends Component {
 					initialized={ !! buttons && !! settings }
 					saving={ isSaving } />
 				<ButtonsOptions
-					postTypes={ postTypes }
-					buttons={ buttons }
-					values={ updatedSettings }
+					settings={ updatedSettings }
 					onChange={ this.handleChange }
-					initialized={ !! postTypes && !! settings }
 					saving={ isSaving } />
 			</form>
 		);
@@ -122,7 +115,6 @@ const connectComponent = connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const settings = getSiteSettings( state, siteId );
-		const postTypes = values( getPostTypes( state, siteId ) );
 		const buttons = getSharingButtons( state, siteId );
 		const isSavingSettings = isSavingSiteSettings( state, siteId );
 		const isSavingButtons = isSavingSharingButtons( state, siteId );
@@ -133,7 +125,6 @@ const connectComponent = connect(
 			isSaving: isSavingSettings || isSavingButtons,
 			isSaveSettingsSuccessful,
 			isSaveButtonsSuccessful,
-			postTypes,
 			settings,
 			buttons,
 			siteId

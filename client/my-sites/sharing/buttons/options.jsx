@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { flowRight, get, partial, some, xor } from 'lodash';
+import { flowRight, get, partial, some, values, xor } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -10,8 +10,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import MultiCheckbox from 'components/forms/multi-checkbox';
+import { getPostTypes } from 'state/post-types/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSettings } from 'state/site-settings/selectors';
+import { getSharingButtons } from 'state/selectors';
 import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
+import QueryPostTypes from 'components/data/query-post-types';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class SharingButtonsOptions extends Component {
@@ -24,12 +28,13 @@ class SharingButtonsOptions extends Component {
 		postTypes: PropTypes.array,
 		recordGoogleEvent: PropTypes.func,
 		saving: PropTypes.bool,
+		siteId: PropTypes.number,
 		translate: PropTypes.func,
-		values: PropTypes.object,
+		settings: PropTypes.object,
 	};
 
 	static defaultProps = {
-		values: Object.freeze( {} ),
+		settings: Object.freeze( {} ),
 		onChange: () => {},
 		initialized: false,
 		saving: false
@@ -44,7 +49,7 @@ class SharingButtonsOptions extends Component {
 	};
 
 	handleMultiCheckboxChange = ( name, event ) => {
-		const delta = xor( this.props.values.sharing_show, event.value );
+		const delta = xor( this.props.settings.sharing_show, event.value );
 		this.props.onChange( name, event.value.length ? event.value : null );
 		if ( delta.length ) {
 			const checked = -1 !== event.value.indexOf( delta[ 0 ] );
@@ -102,12 +107,10 @@ class SharingButtonsOptions extends Component {
 	getDisplayOptions() {
 		return [
 			{ name: 'index' }
-		].concat( this.props.postTypes ).map( function( postType ) {
-			return {
-				value: postType.name,
-				label: this.getPostTypeLabel( postType )
-			};
-		}, this );
+		].concat( this.props.postTypes ).map( ( postType ) => ( {
+			value: postType.name,
+			label: this.getPostTypeLabel( postType )
+		} ) );
 	}
 
 	isTwitterButtonEnabled() {
@@ -115,7 +118,7 @@ class SharingButtonsOptions extends Component {
 	}
 
 	getTwitterViaOptionElement() {
-		const { isJetpack, initialized, isTwitterButtonAllowed, translate, values } = this.props;
+		const { isJetpack, initialized, isTwitterButtonAllowed, settings, translate } = this.props;
 		if ( ! this.isTwitterButtonEnabled() || ! isTwitterButtonAllowed ) {
 			return;
 		}
@@ -128,8 +131,8 @@ class SharingButtonsOptions extends Component {
 				<input
 					name={ option }
 					type="text"
-					placeholder={ '@' + translate( 'username', { textOnly: true } ) }
-					value={ this.getSanitizedTwitterUsername( values[ option ] ) }
+					placeholder={ '@' + translate( 'username' ) }
+					value={ this.getSanitizedTwitterUsername( settings[ option ] ) }
 					onChange={ this.handleTwitterViaChange }
 					onFocus={ this.trackTwitterViaAnalyticsEvent }
 					disabled={ ! initialized } />
@@ -141,13 +144,13 @@ class SharingButtonsOptions extends Component {
 	}
 
 	getCommentLikesOptionElement() {
-		const { isJetpack, initialized, translate, values } = this.props;
+		const { isJetpack, initialized, settings, translate } = this.props;
 
 		if ( isJetpack ) {
 			return;
 		}
 
-		const checked = get( values, 'jetpack_comment_likes_enabled', false );
+		const checked = get( settings, 'jetpack_comment_likes_enabled', false );
 
 		return (
 			<fieldset className="sharing-buttons__fieldset">
@@ -168,11 +171,12 @@ class SharingButtonsOptions extends Component {
 	}
 
 	render() {
-		const { initialized, saving, translate, values } = this.props;
+		const { initialized, saving, settings, siteId, translate } = this.props;
 		const changeSharingPostTypes = partial( this.handleMultiCheckboxChange, 'sharing_show' );
 
 		return (
 			<div className="sharing-buttons__panel">
+				{ siteId && <QueryPostTypes siteId={ siteId } /> }
 				<h4>{ translate( 'Options' ) }</h4>
 				<div className="sharing-buttons__fieldset-group">
 					<fieldset className="sharing-buttons__fieldset">
@@ -185,7 +189,7 @@ class SharingButtonsOptions extends Component {
 						<MultiCheckbox
 							name="sharing_show"
 							options={ this.getDisplayOptions() }
-							checked={ values.sharing_show }
+							checked={ settings.sharing_show }
 							onChange={ changeSharingPostTypes }
 							disabled={ ! initialized }
 						/>
@@ -211,10 +215,15 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isTwitterButtonAllowed = ! isJetpack || isJetpackMinimumVersion( state, siteId, '3.4-dev' );
+		const postTypes = values( getPostTypes( state, siteId ) );
 
 		return {
+			buttons: getSharingButtons( state, siteId ),
+			initialized: !! postTypes || !! getSiteSettings( state, siteId ),
 			isJetpack,
-			isTwitterButtonAllowed
+			isTwitterButtonAllowed,
+			postTypes,
+			siteId,
 		};
 	},
 	{ recordGoogleEvent }
