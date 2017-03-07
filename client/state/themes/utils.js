@@ -213,9 +213,9 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
  */
 export function isThemeFromWpcom( theme ) {
 	if ( ! theme.hasOwnProperty( 'theme_uri' ) ) {
-		// if not enough information to determine, assume
+		// If not enough information to determine, assume
 		// theme is wpcom to prevent it appearing in
-		// the uploaded themes list
+		// the uploaded themes list.
 		return true;
 	}
 
