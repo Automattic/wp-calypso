@@ -3,12 +3,11 @@
  */
 import { assert } from 'chai';
 import { identity } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
-
 import {
 	fromApi,
 	onSuccess,
@@ -23,9 +22,7 @@ import {
 const next = identity;
 
 describe( 'onSuccess()', () => {
-	let dispatch;
-
-	useSandbox( sandbox => ( dispatch = sandbox.spy() ) );
+	const dispatch = sinon.spy();
 
 	it( 'should dispatch the receiving action.', () => {
 		const response = {
@@ -45,9 +42,7 @@ describe( 'onSuccess()', () => {
 } );
 
 describe( 'onError()', () => {
-	let dispatch;
-
-	useSandbox( sandbox => ( dispatch = sandbox.spy() ) );
+	const dispatch = sinon.spy();
 
 	it( 'should dispatch the error action', () => {
 		const error = {
