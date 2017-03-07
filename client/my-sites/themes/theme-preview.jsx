@@ -76,7 +76,7 @@ const ThemePreview = React.createClass( {
 
 	renderPrimaryButton() {
 		const primaryOption = this.getPrimaryOption();
-		const buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.theme ) : null;
+		const buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.theme.id ) : null;
 
 		return (
 			<Button primary onClick={ this.onPrimaryButtonClick } href={ buttonHref } >
@@ -90,7 +90,7 @@ const ThemePreview = React.createClass( {
 		if ( ! secondaryButton ) {
 			return;
 		}
-		const buttonHref = secondaryButton.getUrl ? secondaryButton.getUrl( this.props.theme ) : null;
+		const buttonHref = secondaryButton.getUrl ? secondaryButton.getUrl( this.props.theme.id ) : null;
 		return (
 			<Button onClick={ this.onSecondaryButtonClick } href={ buttonHref } >
 				{ secondaryButton.extendedLabel }
