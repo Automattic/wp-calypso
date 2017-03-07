@@ -29,7 +29,6 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
-	THEME_TRY_AND_CUSTOMIZE_FAILURE,
 	THEMES_RECEIVE,
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
@@ -992,19 +991,6 @@ describe( 'actions', () => {
 		it( 'page should be called, when theme is available', () => {
 			_tryAndCustomize( 'karuna-wpcom', 2211667 )( spy, () => {} );
 			expect( pageSpy.calledWith( 'customizer/url' ) ).to.be.true;
-		} );
-
-		const tryAndActivateFalilureAction = {
-			type: THEME_TRY_AND_CUSTOMIZE_FAILURE,
-			themeId: 'typist-wpcom',
-			siteId: 2211667,
-		};
-
-		it( 'page should not be called, when theme is not available and FAILURE action shoudl be dispatched', () => {
-			pageSpy.reset();
-			_tryAndCustomize( 'typist-wpcom', 2211667 )( spy, () => {} );
-			expect( pageSpy.calledWith( 'customizer/url' ) ).to.be.false;
-			expect( spy ).to.have.been.calledWith( tryAndActivateFalilureAction );
 		} );
 	} );
 

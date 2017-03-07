@@ -172,8 +172,8 @@ export default connect(
 
 		return {
 			currentTheme,
-			detailsUrl: site && getThemeDetailsUrl( state, currentTheme, site.ID ),
-			customizeUrl: site && getThemeCustomizeUrl( state, currentTheme, site.ID ),
+			detailsUrl: site && getThemeDetailsUrl( state, currentThemeId, site.ID ),
+			customizeUrl: site && getThemeCustomizeUrl( state, currentThemeId, site.ID ),
 			forumUrl: site && getThemeForumUrl( state, currentThemeId, site.ID ),
 			isActivating: !! ( site && isActivatingTheme( state, site.ID ) ),
 			hasActivated: !! ( site && hasActivatedTheme( state, site.ID ) ),
