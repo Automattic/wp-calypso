@@ -37,7 +37,7 @@ WebpackStableChunkHash.prototype.apply = function( compiler ) {
 		compilation.plugin( 'chunk-hash', function( chunk, chunkHash ) {
 			const source = chunk.modules.map( getModuleSource ).sort( sortById ).reduce( concatenateSource, '' );
 			const hash = crypto.createHash( _plugin.algorithm ).update(
-				source + collectChunkIds( chunk )
+				source //+ collectChunkIds( chunk )
 			);
 
 			chunkHash.digest = function( digest ) {
