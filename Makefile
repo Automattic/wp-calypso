@@ -156,6 +156,10 @@ public/editor.css: node_modules $(SASS_FILES)
 	@$(SASS) assets/stylesheets/editor.scss $@
 	@$(AUTOPREFIXER) $@
 
+public/directly.css: node_modules $(SASS_FILES)
+	@$(SASS) assets/stylesheets/directly.scss $@
+	@$(AUTOPREFIXER) $@
+
 server/devdocs/search-index.js: $(MD_FILES) $(ALL_DEVDOCS_JS)
 	@$(ALL_DEVDOCS_JS) $(MD_FILES)
 
@@ -176,7 +180,7 @@ build-server: install
 build: install build-server build-dll build-css server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json
 	@if [ $(CALYPSO_ENV) != development ]; then $(BUNDLER); fi
 
-build-css: public/style.css public/style-rtl.css public/style-debug.css public/editor.css
+build-css: public/style.css public/style-rtl.css public/style-debug.css public/editor.css public/directly.css
 
 build-desktop: build-server build-css
 	@$(BUNDLER)
@@ -184,7 +188,7 @@ build-desktop: build-server build-css
 # the `clean` rule deletes all the files created from `make build`, but not
 # those created by `make install`
 clean:
-	@rm -rf public/style*.css public/style-debug.css.map public/*.js server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json public/editor.css build/* server/bundler/*.json .babel-cache
+	@rm -rf public/style*.css public/style-debug.css.map public/*.js server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json public/directly.css public/editor.css build/* server/bundler/*.json .babel-cache
 
 # the `distclean` rule deletes all the files created from `make install`
 distclean: clean
