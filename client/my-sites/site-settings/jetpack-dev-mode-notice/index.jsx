@@ -15,31 +15,23 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSiteInDevelopmentMode } from 'state/selectors';
 
 class JetpackDevModeNotice extends Component {
-	renderNotice() {
-		const { isJetpackSiteInDevMode, translate } = this.props;
-
-		if ( ! isJetpackSiteInDevMode ) {
-			return null;
-		}
-
-		return (
-			<Notice
-				text={ translate( 'Some features are disabled because your site is in Development mode.' ) }
-				showDismiss={ false }
-			>
-				<NoticeAction href={ 'https://jetpack.com/support/development-mode/' } external>
-					{ translate( 'Learn more' ) }
-				</NoticeAction>
-			</Notice>
-		);
-	}
-
 	render() {
-		const { siteId } = this.props;
+		const { isJetpackSiteInDevMode, siteId, translate } = this.props;
 		return (
 			<div>
 				<QueryJetpackConnection siteId={ siteId } />
-				{ this.renderNotice() }
+
+				{
+					isJetpackSiteInDevMode &&
+					<Notice
+						text={ translate( 'Some features are disabled because your site is in Development mode.' ) }
+						showDismiss={ false }
+					>
+						<NoticeAction href={ 'https://jetpack.com/support/development-mode/' } external>
+							{ translate( 'Learn more' ) }
+						</NoticeAction>
+					</Notice>
+				}
 			</div>
 		);
 	}
