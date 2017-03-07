@@ -60,7 +60,7 @@ const ThemesRelatedCard = React.createClass( {
 					{ themes.map( theme => (
 						<li key={ theme.id }>
 							<Card className="themes-related-card__card">
-								<a href={ this.props.getDetailsUrl( theme.id ) }>
+								<a href={ this.props.getDetailsUrl( theme ) }>
 									<img src={ theme.screenshot + `?w=${ THEME_THUMBNAIL_WIDTH }` } />
 								</a>
 							</Card>
@@ -74,6 +74,6 @@ const ThemesRelatedCard = React.createClass( {
 
 export default connect(
 	state => ( {
-		getDetailsUrl: themeId => getThemeDetailsUrl( state, themeId, getSelectedSiteId( state ) )
+		getDetailsUrl: theme => getThemeDetailsUrl( state, theme, getSelectedSiteId( state ) )
 	} )
 )( ThemesRelatedCard );

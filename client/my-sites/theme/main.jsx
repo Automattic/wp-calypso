@@ -117,12 +117,12 @@ const ThemeSheet = React.createClass( {
 
 	onButtonClick() {
 		const { defaultOption } = this.props;
-		defaultOption.action && defaultOption.action( this.props.id );
+		defaultOption.action && defaultOption.action( this.props );
 	},
 
 	onSecondaryButtonClick() {
 		const { secondaryOption } = this.props;
-		secondaryOption && secondaryOption.action && secondaryOption.action( this.props.id );
+		secondaryOption && secondaryOption.action && secondaryOption.action( this.props );
 	},
 
 	getValidSections() {
@@ -182,7 +182,7 @@ const ThemeSheet = React.createClass( {
 	previewAction() {
 		const { preview } = this.props.options;
 		this.props.setThemePreviewOptions( this.props.defaultOption, this.props.secondaryOption );
-		return preview.action( this.props.id );
+		return preview.action( this.props.theme );
 	},
 
 	renderPreviewButton() {
@@ -493,7 +493,7 @@ const ThemeSheet = React.createClass( {
 
 		return (
 			<Button className="theme__sheet-primary-button"
-				href={ getUrl ? getUrl( this.props.id ) : null }
+				href={ getUrl ? getUrl( this.props ) : null }
 				onClick={ this.onButtonClick }>
 				{ this.isLoaded() ? label : placeholder }
 				{ this.renderPrice() }

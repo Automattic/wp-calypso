@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
 import page from 'page';
 import defer from 'lodash/defer';
 import omit from 'lodash/omit';
@@ -14,7 +13,6 @@ import mapValues from 'lodash/mapValues';
 import Theme from 'components/theme';
 import SiteSelectorModal from 'components/site-selector-modal';
 import { trackClick } from './helpers';
-import { getTheme } from 'state/themes/selectors';
 
 const OPTION_SHAPE = PropTypes.shape( {
 	label: PropTypes.string,
@@ -35,31 +33,31 @@ const ThemesSiteSelectorModal = React.createClass( {
 
 	getInitialState() {
 		return {
-			selectedThemeId: null,
+			selectedTheme: null,
 			selectedOption: null,
 		};
 	},
 
 	trackAndCallAction( site ) {
 		const action = this.state.selectedOption.action;
-		const themeId = this.state.selectedThemeId;
+		const theme = this.state.selectedTheme;
 
 		trackClick( 'site selector', this.props.name );
 		page( this.props.sourcePath + '/' + site.slug );
 
 		/**
 		 * Since this implies a route change, defer it in case other state
-		 * changes are enqueued, e.g. setselectedThemeId.
+		 * changes are enqueued, e.g. setSelectedTheme.
 		 */
 		if ( action ) {
 			defer( () => {
-				action( themeId, site.ID );
+				action( theme, site.ID );
 			} );
 		}
 	},
 
-	showSiteSelectorModal( option, themeId ) {
-		this.setState( { selectedThemeId: themeId, selectedOption: option } );
+	showSiteSelectorModal( option, theme ) {
+		this.setState( { selectedTheme: theme, selectedOption: option } );
 	},
 
 	hideSiteSelectorModal() {
@@ -77,7 +75,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 			{},
 			option,
 			option.header
-				? { action: themeId => this.showSiteSelectorModal( option, themeId ) }
+				? { action: theme => this.showSiteSelectorModal( option, theme ) }
 				: {},
 			option.getUrl && option.header
 				? { getUrl: null }
@@ -95,8 +93,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 			} )
 		);
 
-		const { selectedOption, selectedThemeId } = this.state;
-		const theme = this.props.getWpcomTheme( selectedThemeId );
+		const { selectedOption, selectedTheme } = this.state;
 
 		return (
 			<div>
@@ -106,17 +103,17 @@ const ThemesSiteSelectorModal = React.createClass( {
 					filter={ function( site ) {
 						return ! (
 							( selectedOption.hideForSite && selectedOption.hideForSite( site.ID ) ) ||
-							( selectedOption.hideForTheme && selectedOption.hideForTheme( selectedThemeId, site.ID ) )
+							( selectedOption.hideForTheme && selectedOption.hideForTheme( selectedTheme, site.ID ) )
 						);
 					} }
 					hide={ this.hideSiteSelectorModal }
 					mainAction={ this.trackAndCallAction }
 					mainActionLabel={ selectedOption.label }
 					getMainUrl={ selectedOption.getUrl ? function( site ) {
-						return selectedOption.getUrl( selectedThemeId, site.ID );
+						return selectedOption.getUrl( selectedTheme, site.ID );
 					} : null } >
 
-					<Theme isActionable={ false } theme={ theme } />
+					<Theme isActionable={ false } theme={ selectedTheme } />
 					<h1>{ selectedOption.header }</h1>
 				</SiteSelectorModal> }
 			</div>
@@ -124,12 +121,4 @@ const ThemesSiteSelectorModal = React.createClass( {
 	}
 } );
 
-export default connect(
-	( state ) => ( {
-		// We don't need a <QueryTheme /> component to fetch data for the theme since the
-		// ThemesSiteSelectorModal will always be called from a context where those data are available.
-		// FIXME: Since the themeId is part of the component's internal state, we can't use it here and
-		// have to return a function instead of a ready-made theme object.
-		getWpcomTheme: themeId => getTheme( state, 'wpcom', themeId )
-	} )
-)( ThemesSiteSelectorModal );
+export default ThemesSiteSelectorModal;
