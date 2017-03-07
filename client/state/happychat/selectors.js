@@ -37,6 +37,15 @@ export const isHappychatChatActive = createSelector(
 	state => state.happychat.chatStatus
 );
 
+/**
+ * Gets the current chat session status
+ * @param {Object} state - global redux state
+ * @return {String} status of the current chat session
+ */
+export const getHappychatStatus = createSelector(
+	state => state.happychat.chatStatus
+);
+
 export const isHappychatAcceptingChats = createSelector(
 	state => state.happychat.isAvailable
 );
