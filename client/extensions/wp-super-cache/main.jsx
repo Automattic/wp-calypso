@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 /**
  * Internal dependencies
@@ -11,7 +11,7 @@ import Navigation from './components/navigation';
 import Easy from './components/easy';
 import { Tabs } from './constants';
 
-const WPSuperCache = ( { tab } ) => {
+const WPSuperCache = ( { site, tab } ) => {
 	const renderTab = () => {
 		switch ( tab ) {
 			case Tabs.ADVANCED:
@@ -27,20 +27,21 @@ const WPSuperCache = ( { tab } ) => {
 			case Tabs.DEBUG:
 				break;
 			default:
-				return <Easy />;
+				return <Easy site={ site } />;
 		}
 	};
 
 	return (
 		<Main className="wp-super-cache__main">
-			<Navigation activeTab={ tab } />
+			<Navigation activeTab={ tab } site={ site } />
 			{ renderTab() }
 		</Main>
 	);
 };
 
 WPSuperCache.propTypes = {
-	tab: React.PropTypes.string
+	site: React.PropTypes.object,
+	tab: PropTypes.string,
 };
 
 WPSuperCache.defaultProps = {

@@ -12,7 +12,7 @@ import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
 import { Tabs } from '../constants';
 
-const Navigation = ( { activeTab, translate } ) => {
+const Navigation = ( { activeTab, site, translate } ) => {
 	const getLabel = tab => {
 		switch ( tab ) {
 			case Tabs.EASY:
@@ -52,6 +52,8 @@ const Navigation = ( { activeTab, translate } ) => {
 				path = `${ path }/${ tab }`;
 			}
 
+			path += `/${ site.slug }`;
+
 			return (
 				<SectionNavTabItem
 					key={ `wp-super-cache-${ tab }` }
@@ -74,7 +76,8 @@ const Navigation = ( { activeTab, translate } ) => {
 
 Navigation.propTypes = {
 	activeTab: PropTypes.string,
-	translate: PropTypes.func.isRequired
+	site: React.PropTypes.object.isRequired,
+	translate: PropTypes.func.isRequired,
 };
 
 Navigation.defaultProps = {

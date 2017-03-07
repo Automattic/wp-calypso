@@ -11,22 +11,24 @@ import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import { getSiteFragment, sectionify } from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { getSelectedSite } from 'state/ui/selectors';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import WPSuperCache from './main';
 
 const controller = {
 
 	settings: function( context ) {
-		const siteID = getSiteFragment( context.path );
+		const siteId = getSiteFragment( context.path );
+		const site = getSelectedSite( context.store.getState() );
 		let tab = context.params.tab;
 
-		tab = ( ! tab || tab === siteID ) ? '' : tab;
+		tab = ( ! tab || tab === siteId ) ? '' : tab;
 		context.store.dispatch( setTitle( i18n.translate( 'WP Super Cache', { textOnly: true } ) ) );
 
 		const basePath = sectionify( context.path );
 		let baseAnalyticsPath;
 
-		if ( siteID ) {
+		if ( siteId ) {
 			baseAnalyticsPath = `${ basePath }/:site`;
 		} else {
 			baseAnalyticsPath = basePath;
@@ -44,8 +46,9 @@ const controller = {
 
 		renderWithReduxStore(
 			React.createElement( WPSuperCache, {
-				context: context,
-				tab: tab,
+				context,
+				site,
+				tab,
 			} ),
 			document.getElementById( 'primary' ),
 			context.store
