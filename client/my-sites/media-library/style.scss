@@ -57,15 +57,13 @@
 
 	.plan-storage {
 		display: none;
-		min-width: 200px;
-		margin-left: 1px;
 		margin-bottom: 9px;
 		box-shadow:
 		  0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
 		  0 1px 2px lighten( $gray, 30% );
 		background-color: $white;
-		padding-left:20px;
-		padding-right: 20px;
+		padding-left: 24px;
+		padding-right: 24px;
 		box-sizing: border-box;
 		flex: 1 0 auto;
 
