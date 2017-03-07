@@ -67,8 +67,6 @@ textarea {
 	line-height: 21px;
 	border-radius: 4px;
 	padding: 7px 14px 9px;
-	-webkit-appearance: none;
-	-moz-appearance: none;
 	appearance: none;
 	width: auto;
 	&:hover {
@@ -117,7 +115,7 @@ textarea {
 	border: 1px solid lighten( $gray, 25% );
 }
 .maximized-view.is-ask-view {
-	top: 0 !important;
+	top: 0;
 }
 .message-list-transition-wrapper {
 	background: #F2F6F8;
@@ -266,6 +264,8 @@ textarea {
 		&:after {
 			// Triangle for the corner
 			position: absolute;
+				top: 0;
+				right: -10px;
 			content: "";
 			display: block;
 			width: 0;
@@ -273,8 +273,6 @@ textarea {
 			border-style: solid;
 			border-width: 10px 10px 0 0;
 			border-color: #14abdd transparent transparent transparent;
-			top: 0;
-			right: -10px;
 		}
 	}
 
@@ -288,6 +286,8 @@ textarea {
 		&:after {
 			// Triangle for the corner
 			position: absolute;
+				top: 0;
+				left: -10px;
 			content: "";
 			display: block;
 			width: 0;
@@ -295,10 +295,9 @@ textarea {
 			border-style: solid;
 			border-width: 0 10px 10px 0;
 			border-color: transparent $white transparent transparent;
-			top: 0;
-			left: -10px;
 		}
-		.author .img {
+		.author img {
+			// Need to override inline styles with !importants
 			width: 32px !important;
 			height: 32px !important;
 		}
@@ -311,10 +310,8 @@ textarea {
 		font-size: 12px;
 		font-weight: 500;
 	}
-	.profile {
-		.reputation {
-			color: lighten( $gray, 10% );
-		}
+	.profile .reputation {
+		color: lighten( $gray, 10% );
 	}
 }
 .avatar {
@@ -359,10 +356,8 @@ textarea {
 
 	// Placeholder displayed when the experts info is loading
 	&.alerting-experts {
-		.expert-name {
-			&:empty {
-				background: lighten( $gray, 25% );
-			}
+		.expert-name:empty {
+			background: lighten( $gray, 25% );
 		}
 		.expert-last-active-date {
 			color: $gray;
@@ -391,13 +386,9 @@ textarea {
 			color: $alert-yellow;
 		}
 	}
-	&.inverted {
-		.icon {
-			.icon-success {
-				background-color: $white;
-				color: $alert-green;
-			}
-		}
+	&.inverted .icon.icon-success {
+		background-color: $white;
+		color: $alert-green;
 	}
 }
 
