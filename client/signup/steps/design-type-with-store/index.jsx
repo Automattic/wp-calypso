@@ -37,12 +37,22 @@ class DesignTypeWithStoreStep extends Component {
 	getChoices() {
 		const { translate } = this.props;
 
-		return [
-			{ type: 'blog', label: translate( 'A list of my latest posts' ), image: <BlogImage /> },
-			{ type: 'page', label: translate( 'A welcome page for my site' ), image: <PageImage /> },
-			{ type: 'grid', label: translate( 'A grid of my latest posts' ), image: <GridImage /> },
-			{ type: 'store', label: translate( 'An online store' ), image: <StoreImage /> },
-		];
+		switch ( abtest( 'signupCopy' ) ) {
+			case 'newSignupCopy':
+				return [
+						{ type: 'blog', label: 'Test copy for label', description: 'Test copy for description', image: <BlogImage /> },
+						{ type: 'page', label: 'Test copy for label', description: 'Test copy for description', image: <PageImage /> },
+						{ type: 'grid', label: 'Test copy for label', description: 'Test copy for description', image: <GridImage /> },
+						{ type: 'store', label: 'Test copy for label', description: 'Test copy for description', image: <StoreImage /> },
+				];
+			default:
+				return [
+						{ type: 'blog', label: translate( 'A list of my latest posts' ), image: <BlogImage /> },
+						{ type: 'page', label: translate( 'A welcome page for my site' ), image: <PageImage /> },
+						{ type: 'grid', label: translate( 'A grid of my latest posts' ), image: <GridImage /> },
+						{ type: 'store', label: translate( 'An online store' ), image: <StoreImage /> },
+				];
+		}
 	}
 
 	scrollUp() {
@@ -85,16 +95,35 @@ class DesignTypeWithStoreStep extends Component {
 	};
 
 	renderChoice = ( choice ) => {
-		return (
-			<Card className="design-type-with-store__choice" key={ choice.type }>
-				<a className="design-type-with-store__choice-link"
-					href="#"
-					onClick={ this.handleChoiceClick( choice.type ) }>
-					{ choice.image }
-					<h2>{ choice.label }</h2>
-				</a>
-			</Card>
-		);
+		switch ( abtest( 'signupCopy' ) ) {
+			case 'newSignupCopy':
+				return (
+					<Card className="design-type-with-store__choice" key={ choice.type }>
+						<a className="design-type-with-store__choice-link"
+							href="#"
+							onClick={ this.handleChoiceClick( choice.type ) }>
+							{ choice.image }
+							<div className="design-type-with-store__choice-copy">
+								<h2 className="design-type-with-store__choice-label">{ choice.label }</h2>
+								<p className="design-type-with-store__choice-description">{ choice.description }</p>
+							</div>
+						</a>
+					</Card>
+				);
+			default:
+				return (
+					<Card className="design-type-with-store__choice" key={ choice.type }>
+						<a className="design-type-with-store__choice-link"
+							href="#"
+							onClick={ this.handleChoiceClick( choice.type ) }>
+							{ choice.image }
+							<div className="design-type-with-store__choice-copy">
+								<h2 className="design-type-with-store__choice-label">{ choice.label }</h2>
+							</div>
+						</a>
+					</Card>
+				);
+		}
 	};
 
 	renderChoices() {
@@ -151,8 +180,25 @@ class DesignTypeWithStoreStep extends Component {
 		}
 	}
 
+	getHeaderText() {
+		const { translate } = this.props;
+		let headerText = translate( 'What would you like your homepage to look like?' );
+
+		if ( this.state.showStore ) {
+			headerText = translate( 'Create your WordPress Store' );
+		}
+
+		if ( abtest( 'signupCopy' ) === 'newSignupCopy' ) {
+			// Note: Don't make this translatable because it's only visible to English-language users
+			headerText = 'Test title for Header text';
+		}
+
+		return headerText;
+	}
+
 	getSubHeaderText() {
 		const { translate } = this.props;
+		let subHeaderText = translate( 'This will help us figure out what kinds of designs to show you.' );
 
 		if ( this.state.showStore ) {
 			switch ( abtest( 'signupStoreBenchmarking' ) ) {
@@ -167,16 +213,16 @@ class DesignTypeWithStoreStep extends Component {
 			}
 		}
 
-		return translate( 'This will help us figure out what kinds of designs to show you.' );
+		if ( abtest( 'signupCopy' ) === 'newSignupCopy' ) {
+			// Note: Don't make this translatable because it's only visible to English-language users
+			subHeaderText = 'Test title for subTitle';
+		}
+
+		return subHeaderText;
 	}
 
 	render() {
-		const { translate } = this.props;
-
-		const headerText = this.state.showStore
-			? translate( 'Create your WordPress Store' )
-			: translate( 'What would you like your homepage to look like?' );
-
+		const headerText = this.getHeaderText();
 		const subHeaderText = this.getSubHeaderText();
 
 		return (
@@ -186,11 +232,11 @@ class DesignTypeWithStoreStep extends Component {
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ subHeaderText }
+				headerText={ headerText }
 				subHeaderText={ subHeaderText }
 				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderChoices() }
-				shouldHideNavButtons={ this.state.showStore }
-			/>
+				shouldHideNavButtons={ this.state.showStore } />
 		);
 	}
 }

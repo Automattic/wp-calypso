@@ -71,5 +71,13 @@ module.exports = {
 			updated: 50
 		},
 		defaultVariation: 'original'
+	}
+	signupCopy: {
+		datestamp: '20170307',
+		variations: {
+            oldSignupCopy: 50,
+            newSignupCopy: 50
+        },
+        defaultVariation: 'oldSignupCopy'
 	},
 };
