@@ -279,7 +279,7 @@ class Upload extends React.Component {
 				actionURL={ this.props.selectedSite.options.admin_url }
 				illustration={ '/calypso/images/drake/drake-jetpack.svg' }
 			/>
-			);
+		);
 	}
 
 	renderNotAvailable() {
@@ -291,7 +291,7 @@ class Upload extends React.Component {
 				actionURL={ this.props.backPath }
 				illustration={ '/calypso/images/drake/drake-whoops.svg' }
 			/>
-			);
+		);
 	}
 
 	render() {
