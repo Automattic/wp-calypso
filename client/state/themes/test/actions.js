@@ -172,12 +172,13 @@ describe( 'actions', () => {
 
 			it( 'should dispatch themes request success action', () => {
 				receiveThemesQuery( themes, 77203074, {} )( spy, getState );
+				// Themes will be assumed to be wpcom themes and filtered out
 				expect( spy ).to.have.been.calledWith( {
 					type: THEMES_REQUEST_SUCCESS,
 					siteId: 77203074,
 					query: {},
-					found: 2,
-					themes,
+					found: 0,
+					themes: [ ]
 				} );
 			} );
 		} );
