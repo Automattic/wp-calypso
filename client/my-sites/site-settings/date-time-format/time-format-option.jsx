@@ -19,7 +19,7 @@ import { defaultTimeFormats } from './default-formats';
 export const TimeFormatOption = ( {
 	disabled,
 	isCustom,
-	now,
+	localizedDate,
 	setCustomTimeFormat,
 	setTimeFormat,
 	timeFormat,
@@ -38,7 +38,7 @@ export const TimeFormatOption = ( {
 					onChange={ setTimeFormat }
 					value={ format }
 				/>
-				<span>{ now.format( phpToMomentDatetimeFormat( format ) ) }</span>
+				<span>{ localizedDate.format( phpToMomentDatetimeFormat( format ) ) }</span>
 			</FormLabel>
 		) }
 		<FormLabel className="date-time-format__custom-field">
@@ -61,7 +61,7 @@ export const TimeFormatOption = ( {
 				<FormSettingExplanation>
 					{ isCustom && timeFormat
 						? translate( 'Preview: %s', {
-							args: now.format( phpToMomentDatetimeFormat( timeFormat ) ),
+							args: localizedDate.format( phpToMomentDatetimeFormat( timeFormat ) ),
 							comment: 'Date/time format preview'
 						} )
 						: ''

@@ -34,7 +34,7 @@ import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { phpToMomentDatetimeFormat } from 'lib/formatting';
-import { getNow } from './date-time-format/utils';
+import { getLocalizedDate } from './date-time-format/utils';
 
 class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
@@ -438,7 +438,7 @@ class SiteSettingsFormGeneral extends Component {
 			translate,
 		} = this.props;
 
-		const now = getNow( timezoneString );
+		const localizedDate = getLocalizedDate( timezoneString );
 
 		return (
 			<Card
@@ -449,8 +449,14 @@ class SiteSettingsFormGeneral extends Component {
 					{ translate( 'Date and Time Format' ) }
 				</h2>
 				<div className="site-settings__date-time-format-info">
-					{ dateFormat ? now.format( phpToMomentDatetimeFormat( dateFormat ) ) : '' } &bull;&nbsp;
-					{ timeFormat ? now.format( phpToMomentDatetimeFormat( timeFormat ) ) : '' } &bull;&nbsp;
+					{ dateFormat
+						? localizedDate.format( phpToMomentDatetimeFormat( dateFormat ) )
+						: ''
+					} &bull;&nbsp;
+					{ timeFormat
+						? localizedDate.format( phpToMomentDatetimeFormat( timeFormat ) )
+						: ''
+					} &bull;&nbsp;
 					{ translate( 'Week starts on' ) } { startOfWeek
 						? moment.weekdays( parseInt( startOfWeek, 10 ) )
 						: moment.weekdays( 0 )

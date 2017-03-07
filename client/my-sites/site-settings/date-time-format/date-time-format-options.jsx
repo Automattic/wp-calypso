@@ -15,7 +15,7 @@ import DateFormatOption from './date-format-option';
 import StartOfWeekOption from './start-of-week-option';
 import TimeFormatOption from './time-format-option';
 import { defaultDateFormats, defaultTimeFormats } from './default-formats';
-import { getNow } from './utils';
+import { getLocalizedDate } from './utils';
 import wrapSettingsForm from '../wrap-settings-form';
 
 export class DateTimeFormatOptions extends Component {
@@ -88,7 +88,7 @@ export class DateTimeFormatOptions extends Component {
 			customTimeFormat,
 		} = this.state;
 
-		const now = getNow( timezoneString );
+		const localizedDate = getLocalizedDate( timezoneString );
 
 		return (
 			<div>
@@ -111,14 +111,14 @@ export class DateTimeFormatOptions extends Component {
 							dateFormat={ dateFormat }
 							disabled={ isRequestingSettings }
 							isCustom={ customDateFormat }
-							now={ now }
+							localizedDate={ localizedDate }
 							setCustomDateFormat={ this.setCustomDateFormat }
 							setDateFormat={ this.setDateFormat }
 						/>
 						<TimeFormatOption
 							disabled={ isRequestingSettings }
 							isCustom={ customTimeFormat }
-							now={ now }
+							localizedDate={ localizedDate }
 							setCustomTimeFormat={ this.setCustomTimeFormat }
 							setTimeFormat={ this.setTimeFormat }
 							timeFormat={ timeFormat }
