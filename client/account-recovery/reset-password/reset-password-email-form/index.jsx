@@ -16,26 +16,24 @@ const ResetPasswordEmailSent = ( props ) => {
 	} = props;
 
 	return (
-		<div className="reset-password-email-form">
+		<Card>
 			<h2 className="reset-password-email-form__title">
 				{ translate( 'Reset your password' ) }
 			</h2>
-			<Card>
-				<p>
-					{ translate(
-						"We've sent an email to {{strong}}%(email)s{{/strong}} with a link to complete your password reset.",
-						{
-							components: { strong: <strong /> },
-							args: { email }
-						}
-					) }
-				</p>
-				<p>
-					{ translate( "If you haven't received it, please check your spam or junk folder." ) }
-				</p>
-				<a href="#">{ translate( "You didn't receive it?" ) }</a>
-			</Card>
-		</div>
+			<p>
+				{ translate(
+					"We've sent an email to {{strong}}%(email)s{{/strong}} with a link to complete your password reset.",
+					{
+						components: { strong: <strong /> },
+						args: { email }
+					}
+				) }
+			</p>
+			<p>
+				{ translate( "If you haven't received it, please check your spam or junk folder." ) }
+			</p>
+			<a href="#">{ translate( "You didn't receive it?" ) }</a>
+		</Card>
 	);
 };
 
