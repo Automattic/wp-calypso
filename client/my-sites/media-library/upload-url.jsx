@@ -38,6 +38,7 @@ class MediaLibraryUploadUrl extends Component {
 		this.setState( { isError } );
 
 		if ( isError || ! this.props.site ) {
+			event.preventDefault();
 			return;
 		}
 
@@ -76,7 +77,7 @@ class MediaLibraryUploadUrl extends Component {
 		const { onClose, translate } = this.props;
 
 		return (
-			<form className={ classes } onSubmit={ this.upload }>
+			<form className={ classes } onSubmit={ this.upload } noValidate>
 				<FormTextInput
 					type="url"
 					value={ this.state.value }
