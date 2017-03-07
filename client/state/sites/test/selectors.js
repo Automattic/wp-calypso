@@ -1735,7 +1735,7 @@ describe( 'selectors', () => {
 			expect( hasThemesExtendedFeatures ).to.be.null;
 		} );
 
-		it( 'it should return `false` if jetpack version is smaller than 4.4.2', () => {
+		it( 'it should return `false` if jetpack version is smaller than 4.7', () => {
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
@@ -1751,14 +1751,14 @@ describe( 'selectors', () => {
 			expect( hasThemesExtendedFeatures ).to.be.false;
 		} );
 
-		it( 'it should return `true` if jetpack version is greater or equal to 4.4.2', () => {
+		it( 'it should return `true` if jetpack version is greater or equal to 4.7', () => {
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
 					URL: 'https://jetpacksite.me',
 					jetpack: true,
 					options: {
-						jetpack_version: '4.4.2'
+						jetpack_version: '4.7'
 					}
 				}
 			} );

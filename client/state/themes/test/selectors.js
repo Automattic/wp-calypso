@@ -856,7 +856,7 @@ describe( 'themes selectors', () => {
 		} );
 
 		context( 'given a theme and a Jetpack site ID', () => {
-			context( 'with JP version < 4.4.2', () => {
+			context( 'with JP version < 4.7', () => {
 				it( 'should return the site\'s wp-admin theme details URL', () => {
 					const detailsUrl = getThemeDetailsUrl(
 						{
@@ -884,7 +884,7 @@ describe( 'themes selectors', () => {
 				} );
 			} );
 
-			context( 'with JP version >= 4.4.2', () => {
+			context( 'with JP version >= 4.7', () => {
 				context( 'with Jetpack Manage turned off', () => {
 					it( 'should return the site\'s wp-admin theme details URL', () => {
 						const detailsUrl = getThemeDetailsUrl(
@@ -897,7 +897,7 @@ describe( 'themes selectors', () => {
 											jetpack: true,
 											options: {
 												admin_url: 'https://example.net/wp-admin/',
-												jetpack_version: '4.4.2',
+												jetpack_version: '4.7',
 												active_modules: []
 											}
 										}
@@ -926,7 +926,7 @@ describe( 'themes selectors', () => {
 											jetpack: true,
 											options: {
 												admin_url: 'https://example.net/wp-admin/',
-												jetpack_version: '4.4.2'
+												jetpack_version: '4.7'
 											}
 										}
 									}
