@@ -22,10 +22,16 @@
 	line-height: 1.2;
 	border-radius: 6px 6px 0 0;
 	overflow: hidden;
+	z-index: z-index( 'root', '.thank-you-card__header' );
 
 	@include breakpoint( ">480px" ) {
 		padding: 32px 0 15px;
 	}
+}
+
+.thank-you-card__header-detail {
+	position: relative;
+	z-index: z-index( '.thank-you-card__header', '.thank-you-card__header-detail' );
 }
 
 .thank-you-card__body {
@@ -39,6 +45,9 @@
 .thank-you-card__main-icon {
 	width: 72px;
 	height: 72px;
+	margin: 0 auto;
+	position: relative;
+	z-index: z-index( '.thank-you-card__header', '.thank-you-card__main-icon' );
 
 	@include breakpoint( ">480px" ) {
 		width: 96px;
