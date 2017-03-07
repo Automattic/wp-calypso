@@ -51,7 +51,7 @@ const items = [
 ]
 
 export default class ReaderSubscriptionListItemExample extends PureComponent {
-	displayName = 'ReaderSubscriptionListItem';
+	static displayName = 'ReaderSubscriptionListItem';
 
 	render() {
 		return (
