@@ -201,6 +201,18 @@
 		margin-right: 8px;
 	}
 
+	.stats-list__flag-icon {
+		position: relative;
+		display: inline-block;
+		background-size: contain;
+		background-position: 50%;
+		background-repeat: no-repeat;
+		width: 24px;
+		height: 18px;
+		top: 3px;
+		margin-right: 8px;
+	}
+
 	.icon {
 		position: relative;
 		display: inline-block;
@@ -217,12 +229,6 @@
 			position: relative;
 			width: 20px;
 			height: 20px;
-
-			&.is-flag {
-				width: 24px;
-				height: 18px;
-				padding-top: 2px;
-			}
 		}
 
 		// Hide for user avatars
