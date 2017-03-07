@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { difference, each, isObjectLike, omitBy } from 'lodash';
+import { difference, each, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,17 +18,17 @@ function recordEvents( previousCart, nextCart ) {
 	each( difference( previousItems, nextItems ), recordRemoveEvent );
 }
 
-function flattenCartObject( cartItem ) {
-	return omitBy( cartItem, isObjectLike );
+function removeNestedProperties( cartItem ) {
+	return omit( cartItem, [ 'extra' ] );
 }
 
 function recordAddEvent( cartItem ) {
-	analytics.tracks.recordEvent( 'calypso_cart_product_add', flattenCartObject( cartItem ) );
+	analytics.tracks.recordEvent( 'calypso_cart_product_add', removeNestedProperties( cartItem ) );
 	recordAddToCart( cartItem );
 }
 
 function recordRemoveEvent( cartItem ) {
-	analytics.tracks.recordEvent( 'calypso_cart_product_remove', flattenCartObject( cartItem ) );
+	analytics.tracks.recordEvent( 'calypso_cart_product_remove', removeNestedProperties( cartItem ) );
 }
 
 export default {

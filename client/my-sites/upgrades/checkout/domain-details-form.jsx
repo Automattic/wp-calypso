@@ -372,7 +372,7 @@ export default React.createClass( {
 
 		tracksEventObject = reduce(
 			formState.getErrorMessages( this.state.form ),
-			function( result, value, key ) {
+			( result, value, key ) => {
 				result[ `error_${ key }` ] = value;
 				return result;
 			},
