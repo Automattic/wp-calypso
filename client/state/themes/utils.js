@@ -4,7 +4,6 @@
 import startsWith from 'lodash/startsWith';
 import {
 	every,
-	endsWith,
 	get,
 	includes,
 	map,
@@ -203,11 +202,11 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
  * Check if theme is a wpcom theme
  * checking is done based on existance of -wpcom suffix
  *
- * @param  {string}  themeId Theme id
- * @return {Boolean}         Wheter theme is a wpcom theme
+ * @param  {Object} theme Theme object
+ * @return {Boolean}      Whether theme is a wpcom theme
  */
-export function isThemeFromWpcom( themeId ) {
-	return endsWith( themeId, '-wpcom' );
+export function isThemeFromWpcom( theme ) {
+	return includes( theme.theme_uri, 'wordpress.com' );
 }
 
 /**
