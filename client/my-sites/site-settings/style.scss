@@ -334,10 +334,17 @@
 	.foldable-card__header {
 		padding: 24px;
 
-		.gridicons-checkmark {
+		.gridicons-checkmark, .gridicons-notice-outline {
 			margin-right: 4px;
 			vertical-align: bottom;
+		}
+
+		.gridicons-checkmark {
 			color: $alert-green;
+		}
+
+		.gridicons-notice-outline {
+			color: $alert-red;
 		}
 	}
 
@@ -355,7 +362,8 @@
 	}
 
 	.composing__module-settings .site-settings__info-link-container,
-	.protect__module-settings .site-settings__info-link-container {
+	.protect__module-settings .site-settings__info-link-container,
+	.spam-filtering__settings .site-settings__info-link-container {
 		margin-right: -36px;
 		height: 0;
 	}
