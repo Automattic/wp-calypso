@@ -10,7 +10,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
+var AsyncLoad = require( 'components/async-load' ),
+	MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	MasterbarLoggedOut = require( 'layout/masterbar/logged-out' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	GlobalNotices = require( 'components/global-notices' ),
@@ -29,8 +30,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	QueryPreferences = require( 'components/data/query-preferences' ),
 	KeyboardShortcutsMenu,
 	Layout,
-	SupportUser,
-	Happychat = require( 'components/happychat' );
+	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
@@ -171,7 +171,7 @@ Layout = React.createClass( {
 					isEnabled={ translator.isEnabled() }
 					isActive={ translator.isActivated() }/>
 				{ this.renderPreview() }
-				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <Happychat /> }
+				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
 			</div>
 		);
 	}
