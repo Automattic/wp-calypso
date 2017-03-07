@@ -53,6 +53,7 @@ import {
 } from 'state/analytics/actions';
 import {
 	getTheme,
+	getCanonicalTheme,
 	getActiveTheme,
 	getLastThemeQuery,
 	getThemeCustomizeUrl,
@@ -574,7 +575,11 @@ export function installAndTryAndCustomizeTheme( themeId, siteId ) {
 export function tryAndCustomizeTheme( themeId, siteId ) {
 	return ( dispatch, getState ) => {
 		const siteIdOrWpcom = isJetpackSite( getState(), siteId ) ? siteId : 'wpcom';
-		const theme = getTheme( getState(), siteIdOrWpcom, themeId );
+		const theme = getCanonicalTheme(
+			getState(),
+			siteIdOrWpcom,
+			themeId.replace( /-wpcom$/, '' )
+		);
 		if ( ! theme ) {
 			return dispatch( {
 				type: THEME_TRY_AND_CUSTOMIZE_FAILURE,
