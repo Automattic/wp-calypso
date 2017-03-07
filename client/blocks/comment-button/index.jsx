@@ -12,8 +12,6 @@ import noop from 'lodash/noop';
 import Gridicon from 'gridicons';
 import { getPostTotalCommentsCount } from 'state/comments/selectors';
 
-const CommentCount = ( { commentCount } ) => <span className="comment-button__label-count">{ commentCount }</span>;
-
 class CommentButton extends Component {
 
 	static propTypes = {
@@ -40,38 +38,18 @@ class CommentButton extends Component {
 			tagName: containerTag,
 		} = this.props;
 
-		let label;
-		if ( commentCount === 0 ) {
-			label = <span className="comment-button__label-status">
-				{ translate( 'Comment', { context: 'verb' } ) }
-			</span>;
-		} else {
-			label = translate(
-				'{{count/}}{{span}}Comment{{/span}}',
-				'{{count/}}{{span}}Comments{{/span}}', {
-					components: {
-						count: <CommentCount { ...{ commentCount } } />,
-						span: <span className="comment-button__label-status" />
-					},
-					count: commentCount,
-				}
-			);
-		}
-
-		// If the label is to be shown, output the label from above,
-		// otherwise just show the count if it's > 0.
-		const labelElement = ( <span className="comment-button__label">
-			{ showLabel ? label : commentCount > 0 && <CommentCount { ...{ commentCount } } /> }
-		</span> );
-
 		return React.createElement(
 			containerTag, {
 				className: 'comment-button',
 				onClick
 			},
 			<Gridicon icon="comment" size={ this.props.size } className="comment-button__icon" />,
-			null,
-			labelElement
+			<span className="comment-button__label">
+				{ commentCount > 0 && <span className="comment-button__label-count">{ commentCount }</span> }
+				{ showLabel && commentCount > 0 && <span className="comment-button__label-status">
+					{ translate( 'Comment', 'Comments', { count: commentCount	}	)	}
+				</span> }
+			</span>
 		);
 	}
 }
