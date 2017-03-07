@@ -15,6 +15,7 @@ import {
 	getSiteSlug,
 	isJetpackSite
 } from 'state/sites/selectors';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
 
 import PlanStorageBar from './bar';
 
@@ -37,6 +38,10 @@ class PlanStorage extends Component {
 		} = this.props;
 
 		if ( jetpackSite || ! sitePlanSlug ) {
+			return null;
+		}
+
+		if ( sitePlanSlug === PLAN_BUSINESS ) {
 			return null;
 		}
 
