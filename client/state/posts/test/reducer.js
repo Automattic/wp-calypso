@@ -903,26 +903,33 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should discard edits when the post is saved', () => {
+		it( 'should copy edits when the post is saved and prior postId was null', () => {
 			const state = edits( deepFreeze( {
 				2916284: {
-					841: {
-						title: 'Hello World'
-					},
 					'': {
 						title: 'Ribs & Chicken'
+					},
+					842: {
+						title: 'I like turtles'
 					}
 				}
 			} ), {
 				type: POST_SAVE_SUCCESS,
 				siteId: 2916284,
-				postId: 841
+				postId: null,
+				savedPost: {
+					ID: 841,
+					title: 'Ribs'
+				}
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
-					'': {
+					841: {
 						title: 'Ribs & Chicken'
+					},
+					842: {
+						title: 'I like turtles'
 					}
 				}
 			} );
