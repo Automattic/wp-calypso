@@ -29,6 +29,8 @@ class LikeButtonContainer extends PureComponent {
 	constructor( props ) {
 		super( props );
 
+		this.handleLikeToggle = this.handleLikeToggle.bind( this );
+
 		this.state = this.getStateFromStores( props );
 		this.smartSetState = smartSetState;
 	}
