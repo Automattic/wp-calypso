@@ -3,6 +3,9 @@
  */
 import page from 'page';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { defer } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,13 +19,37 @@ import Card from 'components/card';
 import DomainImage from 'signup/steps/design-type-with-store/domain-image';
 import PageImage from 'signup/steps/design-type-with-store/page-image';
 import { getStepUrl } from 'signup/utils';
+import { createNotice } from 'state/notices/actions';
 
-export default class SiteOrDomain extends Component {
+class SiteOrDomain extends Component {
 	componentWillMount() {
 		const { queryObject } = this.props;
+		let isValidDomain = queryObject && queryObject.new;
 
-		if ( ! queryObject || ! queryObject.new ) {
+		if ( isValidDomain ) {
+			const domainParts = queryObject.new.split( '.' );
+
+			if ( domainParts.length > 1 ) {
+				const tld = domainParts.slice( 1 ).join( '.' );
+				isValidDomain = !! tlds[ tld ];
+			} else {
+				isValidDomain = false;
+			}
+		}
+
+		if ( ! isValidDomain ) {
 			page( getStepUrl( 'main' ) );
+			defer( () => {
+				this.props.createNotice( 'is-error',
+					queryObject && queryObject.new
+						? this.props.translate( "Unsupported domain name '%(domainName)s', you'll be able to choose domain later", {
+							args: {
+								domainName: queryObject.new
+							}
+						} )
+						: this.props.translate( "You haven't provided a domain name, you'll be able to choose domain later" )
+				);
+			} );
 		}
 	}
 
@@ -105,3 +132,5 @@ export default class SiteOrDomain extends Component {
 		);
 	}
 }
+
+export default connect( null, { createNotice } )( localize( SiteOrDomain ) );
