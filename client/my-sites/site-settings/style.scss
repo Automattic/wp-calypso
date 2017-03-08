@@ -178,7 +178,9 @@
 	}
 }
 
-.site-settings__general-settings, .site-settings__writing-settings {
+.site-settings__general-settings,
+.site-settings__writing-settings,
+.site-settings__security-settings {
 	.form-toggle__label {
 		display: flex;
 		align-items: center;
