@@ -20,18 +20,28 @@ class ResetPasswordConfirmForm extends Component {
 		} = this.props;
 
 		return (
-			<div className="reset-password-confirm-form">
-				<h2>{ translate( 'Reset your password' ) }</h2>
-				<Card>
-					<FormLegend>{ translate( 'New password' ) }</FormLegend>
-					<FormTextInput />
-					<FormButton>{ translate( 'Generate strong password' ) }</FormButton>
-					<p>{ translate( '{{a}}Great passwords{{/a}} use upper and lower case characters' +
-							', numbers, and symbols like !/"$%&', { components: { a: <a href="#" /> }
-						} ) }</p>
-					<FormButton>{ translate( 'Reset Password' ) }</FormButton>
-				</Card>
-			</div>
+			<Card>
+				<h2 className="reset-password-confirm-form__title">{ translate( 'Reset your password' ) }</h2>
+				<FormLegend>{ translate( 'New password' ) }</FormLegend>
+				<a href="#">{ translate( 'Hide' ) }</a>
+				<FormTextInput />
+				<FormButton className="reset-password-confirm-form__button generate-password-button" isPrimary={ false }>
+					{ translate( 'Generate strong password' ) }
+				</FormButton>
+				<p className="reset-password-confirm-form__description">
+					{ translate(
+						'{{a}}Great passwords{{/a}} use upper and lower case characters, numbers, and symbols like !/"$%&',
+						{
+							components: {
+								a: <a href={ STRONG_PASSWORD } target="_blank" rel="noopener noreferrer" />
+							}
+						}
+					) }
+				</p>
+				<FormButton className="reset-password-confirm-form__button submit">
+					{ translate( 'Reset Password' ) }
+				</FormButton>
+			</Card>
 		);
 	}
 }
