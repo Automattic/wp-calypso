@@ -85,9 +85,11 @@ class ReaderCombinedCardPost extends React.Component {
 
 		return (
 			<li className="reader-combined-card__post" onClick={ this.handleCardClick }>
-				<div className="reader-combined-card__featured-image-wrapper">
-					{ featuredAsset }
-				</div>
+				{ featuredAsset &&
+					<div className="reader-combined-card__featured-image-wrapper">
+						{ featuredAsset }
+					</div>
+				}
 				<div className="reader-combined-card__post-details">
 					<AutoDirection>
 						<h1 className="reader-combined-card__post-title">
