@@ -111,5 +111,19 @@ describe( 'FormToggle', function() {
 
 			return ids.length === uniq( ids ).length;
 		} );
+
+		it( 'should use textOn when checked is true', function() {
+			var toggle = TestUtils.renderIntoDocument( <FormToggle checked={ true } textOn="On" textOff="Off" disabled={ false }/> ),
+				toggleText = TestUtils.findRenderedDOMComponentWithClass( toggle, 'form-toggle__label-text' )
+
+			assert( toggleText.textContent === 'On' );
+		} );
+
+		it( 'should use textOff when checked is false', function() {
+			var toggle = TestUtils.renderIntoDocument( <FormToggle checked={ false } textOn="On" textOff="Off" disabled={ false }/> ),
+				toggleText = TestUtils.findRenderedDOMComponentWithClass( toggle, 'form-toggle__label-text' )
+
+			assert( toggleText.textContent === 'Off' );
+		} );
 	} );
 } );

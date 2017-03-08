@@ -6,13 +6,17 @@
 	display: none;
 }
 
+.form-toggle__label-text {
+	font-size: 13px;
+}
+
 .form-toggle__switch {
 	position: relative;
 	display: inline-block;
 	border-radius: 12px;
 	box-sizing: border-box;
 	padding: 2px;
-	width: 40px;
+	min-width: 40px;
 	height: 24px;
 	vertical-align: middle;
 	align-self: flex-start;
@@ -69,6 +73,21 @@
 		background: lighten( $gray, 10% );
 	}
 
+	& + .form-toggle__label .form-toggle__switch .form-toggle__label-text {
+		float: right;
+		margin-left: 25px;
+		padding: 0;
+		padding-right: 5px;
+	}
+
+	&:checked + .form-toggle__label .form-toggle__switch .form-toggle__label-text {
+		float: left;
+		margin-left: 0;
+		margin-right: 5px;
+		padding: 0;
+		padding-left: 5px;
+	}
+
 	&:not( :disabled ) {
 		+ .form-toggle__label .form-toggle__switch:hover {
 			background: lighten( $gray, 20% );
@@ -80,7 +99,7 @@
 			background: $blue-medium;
 
 			&:after {
-				left: 16px;
+				float: right;
 			}
 		}
 	}
@@ -116,6 +135,7 @@
 		border-radius: 8px;
 		width: 24px;
 		height: 16px;
+		min-width: 24px;
 
 		&:before,
 		&:after {
@@ -126,8 +146,11 @@
 	&:checked {
 		+ .form-toggle__label .form-toggle__switch {
 			&:after{
-				left: 8px;
+				float: right;
 			}
 		}
+	}
+	& + .form-toggle__label .form-toggle__switch .form-toggle__label-text {
+		display: none;
 	}
 }

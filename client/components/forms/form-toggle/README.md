@@ -16,6 +16,8 @@ export default function MyComponent() {
 				toggling={ this.props.toggling }
 				disabled={ this.props.disabled }
 				onChange={ this.props.onChange }
+				textOn={ this.props.textOn }
+				textOff={ this.props.textOff }
 				id="you-rock-uniquely"
 			/>
 		</div>
@@ -29,4 +31,6 @@ export default function MyComponent() {
 * `toggling`: (bool) whether the toggle is in the middle of being performed.
 * `disabled`: (bool) whether the toggle should be in the disabled state.
 * `onChange`: (callback) what should be executed once the user clicks the toggle.
+* `textOn`: (string) text to display when checked
+* `textOff`: (string) text to display when unchecked
 * `id`: (string) the id of the checkbox and the for attribute of the label, should be unique.
