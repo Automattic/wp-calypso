@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { getUser } from 'state/users/selectors';
@@ -29,19 +34,23 @@ export function getCurrentUser( state ) {
 }
 
 /**
+ * Returns a selector that fetches a property from the current user object
+ * @param {String} path Path to the property in the user object
+ * @param {?Any} otherwise A default value that is returned if no user or property is found
+ * @returns {function} A selector which takes the state as a parameter
+ */
+export const createCurrentUserSelector = ( path, otherwise = null ) => ( state ) => {
+	const user = getCurrentUser( state );
+	return get( user, path, otherwise );
+};
+
+/**
  * Returns the locale slug for the current user.
  *
  * @param  {Object}  state  Global state tree
  * @return {?String}        Current user locale
  */
-export function getCurrentUserLocale( state ) {
-	const user = getCurrentUser( state );
-	if ( ! user ) {
-		return null;
-	}
-
-	return user.localeSlug || null;
-}
+export const getCurrentUserLocale = createCurrentUserSelector( 'localeSlug' );
 
 /**
  * Returns the currency code for the current user.
@@ -59,14 +68,7 @@ export function getCurrentUserCurrencyCode( state ) {
  * @param  {Object}  state  Global state tree
  * @return {?String}        Date of registration for user
  */
-export function getCurrentUserDate( state ) {
-	const user = getCurrentUser( state );
-	if ( ! user ) {
-		return null;
-	}
-
-	return user.date || null;
-}
+export const getCurrentUserDate = createCurrentUserSelector( 'date' );
 
 /**
  *  Returns the primary email of the current user.
@@ -74,14 +76,7 @@ export function getCurrentUserDate( state ) {
  *  @param {Object} state Global state tree
  *  @returns {?String} The primary email of the current user.
  */
-export function getCurrentUserEmail( state ) {
-	const user = getCurrentUser( state );
-	if ( ! user ) {
-		return null;
-	}
-
-	return user.email || null;
-}
+export const getCurrentUserEmail = createCurrentUserSelector( 'email' );
 
 /**
  * Returns true if the capability name is valid for the current user on a given
@@ -118,12 +113,4 @@ export function currentUserHasFlag( state, flagName ) {
  * @param   {Object } state Global state tree
  * @returns {boolean}       Whether the current user is email-verified.
  */
-export function isCurrentUserEmailVerified( state ) {
-	const user = getCurrentUser( state );
-
-	if ( ! user ) {
-		return false;
-	}
-
-	return user.email_verified || false;
-}
+export const isCurrentUserEmailVerified = createCurrentUserSelector( 'email_verified', false );
