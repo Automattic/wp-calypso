@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
  */
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
-import Button from 'components/button';
 import JetpackModuleToggle from '../jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle';
@@ -30,13 +29,13 @@ class ThemeEnhancements extends Component {
 	}
 
 	renderToggle( name, isDisabled, label ) {
-		const { fields, handleToggle } = this.props;
+		const { fields, handleAutosavingToggle } = this.props;
 		return (
 			<FormToggle
 				className="theme-enhancements__module-settings-toggle is-compact"
 				checked={ !! fields[ name ] }
 				disabled={ this.isFormPending() || isDisabled }
-				onChange={ handleToggle( name ) }
+				onChange={ handleAutosavingToggle( name ) }
 			>
 				{ label }
 			</FormToggle>
@@ -45,26 +44,11 @@ class ThemeEnhancements extends Component {
 
 	renderHeader() {
 		const {
-			onSubmitForm,
-			isSavingSettings,
 			translate
 		} = this.props;
-		const formPending = this.isFormPending();
 
 		return (
-			<SectionHeader label={ translate( 'Theme Enhancements' ) }>
-				<Button
-					compact
-					primary
-					onClick={ onSubmitForm }
-					disabled={ formPending }
-				>
-					{ isSavingSettings
-						? translate( 'Saving…' )
-						: translate( 'Save Settings' )
-					}
-				</Button>
-			</SectionHeader>
+			<SectionHeader label={ translate( 'Theme Enhancements' ) } />
 		);
 	}
 
@@ -185,7 +169,7 @@ ThemeEnhancements.defaultProps = {
 
 ThemeEnhancements.propTypes = {
 	onSubmitForm: PropTypes.func.isRequired,
-	handleToggle: PropTypes.func.isRequired,
+	handleAutosavingToggle: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
 	fields: PropTypes.object,
