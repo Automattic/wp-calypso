@@ -43,7 +43,6 @@ import {
 	getSelectedSiteSlug,
 } from 'state/ui/selectors';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
-import { domainManagementList } from 'my-sites/upgrades/paths';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
 
 const Checkout = React.createClass( {
@@ -206,11 +205,6 @@ const Checkout = React.createClass( {
 				? `/plans/${ selectedSiteSlug }/thank-you`
 				: '/checkout/thank-you/plans';
 		} else if ( cart.create_new_blog ) {
-			const domainName = getDomainNameFromReceiptOrCart( receipt, cart );
-			if ( domainName && receipt && isEmpty( receipt.failed_purchases ) ) {
-				return domainManagementList( domainName );
-			}
-
 			return `/checkout/thank-you/no-site/${ receiptId }`;
 		}
 
@@ -291,9 +285,9 @@ const Checkout = React.createClass( {
 			const receiptId = receipt.receipt_id;
 
 			this.props.fetchReceiptCompleted( receiptId, {
-				receiptId,
+				...receipt,
 				purchases: this.flattenPurchases( this.props.transaction.step.data.purchases ),
-				failedPurchases: this.flattenPurchases( this.props.transaction.step.data.failed_purchases ),
+				failedPurchases: this.flattenPurchases( this.props.transaction.step.data.failed_purchases )
 			} );
 		}
 
