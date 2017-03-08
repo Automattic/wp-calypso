@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { partial } from 'lodash';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -31,21 +32,22 @@ const getContentLink = ( site, post ) => {
 	return { contentLinkURL, contentLinkTarget };
 };
 
+const recordEvent = partial( recordGoogleEvent, 'Posts' );
+
 const showComments = ( site, post ) =>
 	( ! site.jetpack || site.isModuleActive( 'comments' ) ) &&
 	post.discussion &&
 	post.discussion.comments_open;
+
 const showLikes = site => ! site.jetpack || site.isModuleActive( 'likes' );
+
 const showStats = site => site.capabilities	&&
 	site.capabilities.view_stats &&
 	( ! site.jetpack || site.isModuleActive( 'stats' ) );
 
-const PostActions = ( { className, post, site, toggleComments, recordEvent } ) => {
+const PostActions = ( { className, post, site, toggleComments, postRelativeTimeStatusOnClick, postTotalViewsOnClick } ) => {
 	const { contentLinkURL, contentLinkTarget } = getContentLink( site, post );
 	const isDraft = post.status === 'draft';
-
-	const postRelativeTimeStatusOnClick = () => recordEvent( 'Clicked Post Date' );
-	const postTotalViewsOnClick = () => recordEvent( 'Clicked View Post Stats' );
 
 	return (
 		<ul className={ classnames( 'post-actions', className ) }>
@@ -92,7 +94,9 @@ PostActions.propTypes = {
 	post: React.PropTypes.object.isRequired,
 };
 
-export default connect(
-	null,
-	{ recordEvent: partial( recordGoogleEvent, 'Posts' ) }
-)( localize( PostActions ) );
+const mapDispatchToProps = dispatch => bindActionCreators( {
+	postRelativeTimeStatusOnClick: () => recordEvent( 'Clicked Post Date' ),
+	postTotalViewsOnClick: () => recordEvent( 'Clicked View Post Stats' )
+}, dispatch );
+
+export default connect(	null, mapDispatchToProps )( localize( PostActions ) );
