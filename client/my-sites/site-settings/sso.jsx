@@ -24,7 +24,7 @@ import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 
 const Sso = ( {
 	fields,
-	handleToggle,
+	handleAutosavingToggle,
 	isRequestingSettings,
 	isSavingSettings,
 	selectedSiteId,
@@ -58,7 +58,7 @@ const Sso = ( {
 						<CompactFormToggle
 							checked={ !! fields.jetpack_sso_match_by_email }
 							disabled={ isRequestingSettings || isSavingSettings || ! ssoModuleActive || ssoModuleUnavailable }
-							onChange={ handleToggle( 'jetpack_sso_match_by_email' ) }
+							onChange={ handleAutosavingToggle( 'jetpack_sso_match_by_email' ) }
 						>
 							{ translate( 'Match accounts using email addresses' ) }
 						</CompactFormToggle>
@@ -66,7 +66,7 @@ const Sso = ( {
 						<CompactFormToggle
 							checked={ !! fields.jetpack_sso_require_two_step }
 							disabled={ isRequestingSettings || isSavingSettings || ! ssoModuleActive || ssoModuleUnavailable }
-							onChange={ handleToggle( 'jetpack_sso_require_two_step' ) }
+							onChange={ handleAutosavingToggle( 'jetpack_sso_require_two_step' ) }
 						>
 							{ translate( 'Require two step authentication' ) }
 						</CompactFormToggle>
@@ -84,7 +84,7 @@ Sso.defaultProps = {
 };
 
 Sso.propTypes = {
-	handleToggle: PropTypes.func.isRequired,
+	handleAutosavingToggle: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
 	fields: PropTypes.object,
