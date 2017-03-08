@@ -1,36 +1,36 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
+import { noop, identity } from 'lodash';
 import Gridicon from 'gridicons';
-
+import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
+import DropZone from 'components/drop-zone';
 
-export default React.createClass( {
-	displayName: 'EditorDrawerWell',
-
-	propTypes: {
+class EditorDrawerWell extends Component {
+	static propTypes = {
+		children: PropTypes.node,
+		disabled: PropTypes.bool,
+		empty: PropTypes.bool,
 		icon: PropTypes.string,
 		label: PropTypes.node,
-		empty: PropTypes.bool,
-		disabled: PropTypes.bool,
 		onClick: PropTypes.func,
+		onFileDrop: PropTypes.func,
 		onRemove: PropTypes.func,
-		children: PropTypes.node
-	},
+		translate: PropTypes.func
+	};
 
-	getDefaultProps() {
-		return {
-			disabled: false,
-			onClick: noop,
-			onRemove: noop
-		};
-	},
+	static defaultProps = {
+		disabled: false,
+		onClick: noop,
+		onRemove: noop,
+		translate: identity,
+	};
 
 	render() {
 		const { empty, onRemove, onClick, disabled, icon, label, children } = this.props;
@@ -48,12 +48,13 @@ export default React.createClass( {
 							compact
 							className="editor-drawer-well__remove">
 							<span className="screen-reader-text">
-								{ this.translate( 'Remove' ) }
+								{ this.props.translate( 'Remove' ) }
 							</span>
 							<Gridicon
 								icon="cross"
 								size={ 24 }
-								className="editor-drawer-well__remove-icon" />
+								className="editor-drawer-well__remove-icon"
+							/>
 						</Button>
 					) }
 				</div>
@@ -66,14 +67,21 @@ export default React.createClass( {
 						{ icon && (
 							<Gridicon
 								icon={ icon }
-								className="editor-drawer-well__icon" />
+								className="editor-drawer-well__icon"
+							/>
 						) }
 						<span className="editor-drawer-well__button button is-secondary is-compact">
 							{ label }
 						</span>
 					</button>
 				) }
+				{ this.props.onFileDrop
+					? <DropZone onFilesDrop={ this.props.onFileDrop } />
+					: null
+				}
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( EditorDrawerWell );
