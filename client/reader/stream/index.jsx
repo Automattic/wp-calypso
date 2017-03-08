@@ -500,6 +500,12 @@ class ReaderStream extends React.Component {
 						postKey={ postKey }
 						index={ index }
 						key={ `combined-card-${ index }` }
+						onClick={ post => showSelectedPost( {
+							postKey: {
+								postId: post.feed_item_ID,
+								feedId: post.feed_ID,
+							}
+						} ) }
 					/>;
 		}
 
