@@ -5,3 +5,26 @@
 		padding: 0;
 	}
 }
+
+.media__item-dialog .dialog__action-buttons {
+	display: flex;
+	justify-content: space-between;
+}
+
+.media__modal-delete-item-button {
+	border: 0;
+
+	.dialog__button-label {
+		color: $alert-red;
+	}
+
+	&:hover {
+		color: lighten( $alert-red, 10% );
+	}
+
+	&:disabled {
+		cursor: default;
+		cursor: not-allowed;
+		color: lighten( $alert-red, 25% );
+	}
+}
