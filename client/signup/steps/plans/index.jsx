@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import React, { Component, PropTypes } from 'react';
 import { isEmpty } from 'lodash';
 import classNames from 'classnames';
@@ -11,6 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
+import { getSiteBySlug } from 'state/sites/selectors';
 import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
@@ -66,13 +68,14 @@ class PlansStep extends Component {
 	}
 
 	plansFeaturesList() {
-		const {	hideFreePlan } = this.props;
+		const {	hideFreePlan, selectedSite } = this.props;
 
 		return (
 			<div>
 				<QueryPlans />
 
 				<PlansFeaturesMain
+					site={ selectedSite }
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
 					onUpgradeClick={ this.onSelectPlan }
@@ -123,9 +126,17 @@ PlansStep.propTypes = {
 	additionalStepData: PropTypes.object,
 	goToNextStep: PropTypes.func.isRequired,
 	hideFreePlan: PropTypes.bool,
+	selectedSite: PropTypes.object,
 	stepName: PropTypes.string.isRequired,
 	stepSectionName: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 };
 
-export default localize( PlansStep );
+export default connect(
+	( state, { signupDependencies: { siteSlug } } ) => ( {
+		// This step could be used to set up an existing site, in which case
+		// some descendants of this component may display discounted prices if
+		// they apply to the given site.
+		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null
+	} )
+)( localize( PlansStep ) );
