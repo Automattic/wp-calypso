@@ -47,6 +47,7 @@ class CurrentTheme extends Component {
 		);
 
 		const showScreenshot = currentTheme && currentTheme.screenshot;
+		// Show nothing for themes with no screenshot
 		const screenshotPlaceholder = ! currentTheme;
 
 		return (
