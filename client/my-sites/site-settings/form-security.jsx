@@ -42,7 +42,7 @@ class SiteSettingsFormSecurity extends Component {
 	render() {
 		const {
 			fields,
-			handleToggle,
+			handleAutosavingToggle,
 			jetpackSettingsUISupported,
 			handleSubmitForm,
 			isRequestingSettings,
@@ -67,7 +67,7 @@ class SiteSettingsFormSecurity extends Component {
 
 				{ this.renderSectionHeader( translate( 'WordPress.com log in' ), true, ! ssoModuleActive || ssoModuleUnavailable ) }
 				<Sso
-					handleToggle={ handleToggle }
+					handleAutosavingToggle={ handleAutosavingToggle }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
