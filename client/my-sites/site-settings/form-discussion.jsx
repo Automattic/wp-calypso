@@ -484,6 +484,7 @@ class SiteSettingsFormDiscussion extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			isJetpack,
+			isSubscriptionsModuleActive,
 			jetpackSettingsUISupported,
 			translate
 		} = this.props;
@@ -513,7 +514,7 @@ class SiteSettingsFormDiscussion extends Component {
 						<div>
 							<QueryJetpackModules siteId={ siteId } />
 
-							{ this.renderSectionHeader( translate( 'Subscriptions' ) ) }
+							{ this.renderSectionHeader( translate( 'Subscriptions' ), isSubscriptionsModuleActive !== false ) }
 
 							<Subscriptions
 								onSubmitForm={ handleSubmitForm }
@@ -537,12 +538,14 @@ const connectComponent = connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const jetpackSettingsUISupported = siteSupportsJetpackSettingsUi( state, siteId );
 		const isLikesModuleActive = isJetpackModuleActive( state, siteId, 'likes' );
+		const isSubscriptionsModuleActive = isJetpackModuleActive( state, siteId, 'subscriptions' );
 
 		return {
 			siteId,
 			isJetpack,
 			jetpackSettingsUISupported,
 			isLikesModuleActive,
+			isSubscriptionsModuleActive,
 		};
 	}
 );
