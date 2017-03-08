@@ -37,24 +37,6 @@ module.exports = {
 		defaultVariation: 'hideThemeUpload',
 		allowExistingUsers: false,
 	},
-	designShowcaseWelcomeTour: {
-		datestamp: '20161206',
-		variations: {
-			enabled: 0,
-			disabled: 100,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
-	themeSheetWelcomeTour: {
-		datestamp: '20161206',
-		variations: {
-			enabled: 0,
-			disabled: 100,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
 	siteTitleStep: {
 		datestamp: '20170102',
 		variations: {
@@ -64,17 +46,6 @@ module.exports = {
 		defaultVariation: 'hideSiteTitleStep',
 		allowExistingUsers: false
 	},
-
-	siteTitleTour: {
-		datestamp: '20161207',
-		variations: {
-			disabled: 100,
-			enabled: 0,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
-
 	userFirstSignup: {
 		datestamp: '20160124',
 		variations: {
@@ -84,7 +55,6 @@ module.exports = {
 		defaultVariation: 'userLast',
 		allowExistingUsers: false,
 	},
-
 	premiumSquaredPlansWording: {
 		datestamp: '20170111',
 		variations: {
@@ -94,7 +64,6 @@ module.exports = {
 		defaultVariation: 'withoutMarketingCopy',
 		allowExistingUsers: true
 	},
-
 	jetpackPlansNoMonthly: {
 		datestamp: '20170302',
 		variations: {
@@ -104,5 +73,4 @@ module.exports = {
 		defaultVariation: 'showMonthly',
 		allowExistingUsers: true
 	},
-
 };
