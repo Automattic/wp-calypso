@@ -85,11 +85,11 @@ export class LostPasswordFormComponent extends Component {
 						<FormInput
 							className="lost-password-form__user-login-input"
 							onChange={ this.onUserLoginChanged }
-							value={ userLogin ? userLogin : '' }
+							value={ userLogin || '' }
 							disabled={ isRequesting } />
 					</FormLabel>
 					{
-						( null != requestError ) && (
+						requestError && (
 						<p className="lost-password-form__error-message">
 							{ translate( 'We encountered some problems with that login information. ' +
 								'Please provide another one or try again later.' ) }
