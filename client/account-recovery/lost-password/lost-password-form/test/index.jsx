@@ -22,22 +22,16 @@ describe( 'LostPassword', () => {
 	context( 'events', () => {
 		useFakeDom();
 
-		it( 'submit button shuold be disabled if user login is blank', function() {
-			const wrapper = mount(
-				<LostPasswordFormComponent className="test__test"
-					userLogin={ '' }
-				/> );
+		it( 'submit button should be disabled if user login is blank', function() {
+			const wrapper = mount( <LostPasswordFormComponent className="test__test" userLogin="" /> );
 
 			wrapper.find( '.lost-password-form__user-login-input' ).node.value = '';
 			expect( wrapper.find( '.lost-password-form__user-login-input' ).prop( 'disabled' ) ).to.not.be.ok;
 			expect( wrapper.find( '.lost-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 		} );
 
-		it( 'should be disabled when isRequesting is on', function() {
-			const wrapper = mount(
-				<LostPasswordFormComponent className="test__test"
-					isRequesting={ true }
-				/> );
+		it( 'should be disabled when isRequesting is true', function() {
+			const wrapper = mount( <LostPasswordFormComponent className="test__test" isRequesting={ true } /> );
 
 			expect( wrapper.find( '.lost-password-form__user-login-input' ).prop( 'disabled' ) ).to.be.ok;
 			expect( wrapper.find( '.lost-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
