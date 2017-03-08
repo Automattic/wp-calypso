@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import React, { Component } from 'react';
 
 /**
@@ -15,14 +14,28 @@ import Card from 'components/card';
 // TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
 import DomainImage from 'signup/steps/design-type-with-store/domain-image';
 import PageImage from 'signup/steps/design-type-with-store/page-image';
-import { getStepUrl } from 'signup/utils';
+import { externalRedirect } from 'lib/route/path';
 
 export default class SiteOrDomain extends Component {
 	componentWillMount() {
 		const { queryObject } = this.props;
+		let isValidDomain = queryObject && queryObject.new;
 
-		if ( ! queryObject || ! queryObject.new ) {
-			page( getStepUrl( 'main' ) );
+		if ( isValidDomain ) {
+			const domainParts = queryObject.new.split( '.' );
+
+			if ( domainParts.length > 1 ) {
+				const tld = domainParts.slice( 1 ).join( '.' );
+				isValidDomain = !! tlds[ tld ];
+			} else {
+				isValidDomain = false;
+			}
+		}
+
+		if ( ! isValidDomain ) {
+			// /domains domain search is an external application to calypso,
+			// therefor a full redirect required:
+			externalRedirect( '/domains' );
 		}
 	}
 
