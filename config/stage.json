@@ -90,7 +90,7 @@
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/security/monitor/wp-note": true,
-		"signup/domain-first-flow": false,
+		"signup/domain-first-flow": true,
 		"support-user": true,
 		"sync-handler": true,
 		"ui/first-view": true,
