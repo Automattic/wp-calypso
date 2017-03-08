@@ -4,6 +4,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { map } from 'lodash';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -21,7 +22,7 @@ import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { NOTICE_CREATE } from 'state/action-types';
 
-const successfulFollowedTagsResponse = {
+const successfulFollowedTagsResponse = deepFreeze( {
 	tags: [
 		{
 			ID: '307',
@@ -38,9 +39,9 @@ const successfulFollowedTagsResponse = {
 			URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/design/posts',
 		},
 	]
-};
+} );
 
-const successfulSingleTagResponse = {
+const successfulSingleTagResponse = deepFreeze( {
 	tag: {
 		ID: '307',
 		slug: 'chickens',
@@ -48,7 +49,7 @@ const successfulSingleTagResponse = {
 		display_name: 'chickens',
 		URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/chickens/posts'
 	},
-};
+} );
 
 const slug = 'chickens';
 
