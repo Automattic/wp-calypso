@@ -2,20 +2,17 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import DomainPrimaryFlag from 'my-sites/upgrades/domain-management/components/domain/primary-flag';
-import { isDomainOnlySite } from 'state/selectors';
 import PrimaryDomainButton from './primary-domain-button';
 import SectionHeader from 'components/section-header';
 
 const Header = React.createClass( {
 	propTypes: {
 		domain: React.PropTypes.object.isRequired,
-		isDomainOnly: React.PropTypes.bool,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
@@ -24,9 +21,9 @@ const Header = React.createClass( {
 	},
 
 	render() {
-		const { domain, isDomainOnly } = this.props;
+		const { domain } = this.props;
 
-		if ( ! domain || isDomainOnly ) {
+		if ( ! domain ) {
 			return null;
 		}
 
@@ -44,8 +41,4 @@ const Header = React.createClass( {
 	}
 } );
 
-export default connect( ( state, ownProps ) => {
-	return {
-		isDomainOnly: isDomainOnlySite( state, ownProps.selectedSite.ID )
-	};
-} )( Header );
+export default Header;
