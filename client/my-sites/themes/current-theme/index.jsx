@@ -18,7 +18,7 @@ import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 
-/**
+/*
  * Show current active theme for a site, with
  * related actions.
  */
