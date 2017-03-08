@@ -5,7 +5,6 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { reduce, size, map, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -71,7 +70,6 @@ function EditorDrawerTaxonomies( { translate, siteId, postType, isSupported, tax
 						key={ name }
 						title={ label }
 						subtitle={ subtitle }
-						icon={ <Gridicon icon={ hierarchical ? 'folder' : 'tag' } /> }
 					>
 					{ hierarchical
 						? <TermSelector compact taxonomyName={ name } />

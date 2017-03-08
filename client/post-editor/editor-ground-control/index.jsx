@@ -237,6 +237,18 @@ export default React.createClass( {
 			.second( -1 );
 	},
 
+	getSaveStatusLabel: function() {
+		if ( this.props.isSaving ) {
+			return this.translate( 'Saving…' );
+		}
+
+		if ( ! this.props.post || postUtils.isPublished( this.props.post ) || ! this.props.post.ID ) {
+			return null;
+		}
+
+		return this.translate( 'Saved' );
+	},
+
 	isSaveEnabled: function() {
 		return ! this.props.isSaving &&
 			! this.props.isSaveBlocked &&
@@ -329,7 +341,7 @@ export default React.createClass( {
 					}
 					{ ! this.isSaveEnabled() &&
 						<span className="editor-ground-control__save-status">
-							{ this.props.isSaving ? this.translate( 'Saving…' ) : this.translate( 'Saved' ) }
+							{ this.getSaveStatusLabel() }
 						</span>
 					}
 				</div>
