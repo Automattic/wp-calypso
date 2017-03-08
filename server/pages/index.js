@@ -358,6 +358,11 @@ module.exports = function() {
 					if ( config.isEnabled( 'code-splitting' ) ) {
 						req.context = Object.assign( {}, req.context, { chunk: section.name } );
 					}
+
+					if ( section.secondary ) {
+						req.context.hasSecondary = true;
+					}
+
 					next();
 				} );
 
