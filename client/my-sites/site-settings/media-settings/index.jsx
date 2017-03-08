@@ -16,9 +16,14 @@ import FormLabel from 'components/forms/form-label';
 import FormToggle from 'components/forms/form-toggle';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
-import { isJetpackModuleActive } from 'state/selectors';
+import {
+	isJetpackModuleActive,
+	isJetpackModuleUnavailableInDevelopmentMode,
+	isJetpackSiteInDevelopmentMode
+} from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { updateSettings } from 'state/jetpack/settings/actions';
+import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 
 const MediaSettings = ( {
 	fields,
@@ -28,12 +33,16 @@ const MediaSettings = ( {
 	isSavingSettings,
 	siteId,
 	carouselActive,
+	photonModuleUnavailable,
+	selectedSiteId,
 	translate
 } ) => {
 	const labelClassName = isSavingSettings || ! carouselActive ? 'is-disabled' : null;
 
 	return (
 		<Card className="media-settings site-settings site-settings__module-settings">
+			<QueryJetpackConnection siteId={ selectedSiteId } />
+
 			<FormFieldset>
 				<div className="media-settings__info-link-container site-settings__info-link-container">
 					<InfoPopover position={ 'left' }>
@@ -47,7 +56,7 @@ const MediaSettings = ( {
 					moduleSlug="photon"
 					label={ translate( 'Speed up your images and photos with Photon.' ) }
 					description="Enabling Photon is required to use Tiled Galleries."
-					disabled={ isRequestingSettings || isSavingSettings }
+					disabled={ isRequestingSettings || isSavingSettings || photonModuleUnavailable }
 					/>
 			</FormFieldset>
 			<FormFieldset className="media-settings__formfieldset has-divider is-top-only">
@@ -107,8 +116,13 @@ MediaSettings.propTypes = {
 export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
+		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, selectedSiteId, 'photon' );
+
 		return {
-			carouselActive: !! isJetpackModuleActive( state, selectedSiteId, 'carousel' )
+			selectedSiteId,
+			carouselActive: !! isJetpackModuleActive( state, selectedSiteId, 'carousel' ),
+			photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 		};
 	},
 	{
