@@ -109,9 +109,9 @@
 
 .happychat__notice {
 	padding: 12px;
-	border-left: 1px solid lighten( $gray, 20% );
 	border-top: 1px solid lighten( $gray, 20% );
-	background-color: $white;
+	color: $white;
+	background-color: lighten( $gray-dark, 20% );
 	margin: 0;
 }
 
