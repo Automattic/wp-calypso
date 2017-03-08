@@ -104,4 +104,4 @@ const mapDispatchToProps = dispatch => bindActionCreators( {
 	trackTotalViewsOnClick: () => recordEvent( 'Clicked View Post Stats' )
 }, dispatch );
 
-export default connect(	null, mapDispatchToProps )( localize( PostActions ) );
+export default connect( null, mapDispatchToProps )( localize( PostActions ) );

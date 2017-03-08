@@ -50,7 +50,7 @@ class CommentButton extends Component {
 				}
 				{ showLabel && commentCount > 0 &&
 					<span className="comment-button__label-status">
-						{ translate( 'Comment', 'Comments', { count: commentCount	}	)	}
+						{ translate( 'Comment', 'Comments', { count: commentCount } ) }
 					</span>
 				}
 			</span>
