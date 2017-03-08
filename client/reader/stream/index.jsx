@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import { defer, flatMap, lastIndexOf, noop, times, clamp, includes, last } from 'lodash';
+import { defer, flatMap, lastIndexOf, noop, times, clamp, includes, last, startsWith } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -211,7 +211,10 @@ class ReaderStream extends React.Component {
 		}
 
 		if ( config.isEnabled( 'reader/combined-cards' ) ) {
-			items = combineCards( items );
+			// Create combined cards unless we're on a site or feed stream
+			if ( ! startsWith( store.id, 'feed:' ) && ! startsWith( store.id, 'site:' ) ) {
+				items = combineCards( items );
+			}
 		}
 
 		return {
