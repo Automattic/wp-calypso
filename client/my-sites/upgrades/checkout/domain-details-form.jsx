@@ -15,7 +15,7 @@ import { cartItems } from 'lib/cart-values';
 import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
 import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
-import { addPrivacyToAllDomains, removePrivacyFromAllDomains, setDomainDetails } from 'lib/upgrades/actions';
+import { addPrivacyToAllDomains, removePrivacyFromAllDomains, setDomainDetails, addGoogleAppsRegistrationData } from 'lib/upgrades/actions';
 import FormButton from 'components/forms/form-button';
 import { countries } from 'components/phone-input/data';
 import { toIcannFormat } from 'components/phone-input/phone-number';
@@ -393,7 +393,7 @@ export default React.createClass( {
 		const allFieldValues = Object.assign( {}, formState.getAllFieldValues( this.state.form ) );
 		allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
 		setDomainDetails( allFieldValues );
-		cartItems.fillGoogleAppsRegistrationData( this.props.cart, allFieldValues );
+		addGoogleAppsRegistrationData( allFieldValues );
 	},
 
 	setPrivacyProtectionSubscriptions( enable ) {
