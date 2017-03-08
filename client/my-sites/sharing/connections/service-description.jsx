@@ -96,6 +96,17 @@ class SharingServiceDescription extends Component {
 					comment: 'Description for Eventbrite when no accounts are connected'
 				} );
 			},
+			instagram: function() {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate( 'Connected to your Instagram account.', {
+						comment: 'Description for Instagram when one or more accounts are connected'
+					} );
+				}
+
+				return this.props.translate( 'Connect to your Instagram account.', {
+					comment: 'Description for Instagram when no accounts are connected'
+				} );
+			},
 		} ),
 		numberOfConnections: 0,
 		translate: identity,
