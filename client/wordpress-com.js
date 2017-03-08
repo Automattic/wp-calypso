@@ -297,13 +297,6 @@ sections.push( {
 } );
 
 sections.push( {
-	name: 'vip',
-	paths: [ '/vip', '/vip/deploys', '/vip/billing', '/vip/support', '/vip/backups', '/vip/logs' ],
-	module: 'vip',
-	secondary: true
-} );
-
-sections.push( {
 	name: 'help',
 	paths: [ '/help' ],
 	module: 'me/help',
