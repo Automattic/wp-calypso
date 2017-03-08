@@ -4,6 +4,11 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
+import Card from 'components/card';
+
 const ResetPasswordEmailSent = ( props ) => {
 	const {
 		email,
@@ -15,6 +20,7 @@ const ResetPasswordEmailSent = ( props ) => {
 			<h2 className="reset-password-email-sent__title">
 				{ translate( 'Reset your password' ) }
 			</h2>
+			<Card>
 			<p>
 				{ translate(
 					'We have sent an email to %(email)s with a reset link. ' +
@@ -28,6 +34,7 @@ const ResetPasswordEmailSent = ( props ) => {
 				{ translate( "If you don't find it, please check your spam or junk folder too." ) }
 			</p>
 			<a href="#">{ translate( "You didn't receive it?" ) }</a>
+			</Card>
 		</div>
 	);
 };
