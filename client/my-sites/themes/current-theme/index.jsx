@@ -51,6 +51,7 @@ class CurrentTheme extends Component {
 				{ siteId && <QueryActiveTheme siteId={ siteId } /> }
 				{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 				<div className="current-theme__current">
+					{ currentTheme && <img src={ currentTheme.screenshot } className="current-theme__img" /> }
 					<span className="current-theme__label">
 						{ translate( 'Current Theme' ) }
 					</span>
