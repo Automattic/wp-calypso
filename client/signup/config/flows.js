@@ -228,7 +228,7 @@ if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
 		destination: getSiteDestination,
 		providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
 		description: 'A flow to test updating an existing site with `Signup`',
-		lastModified: '2017-01-19',
+		lastModified: '2017-03-08',
 		hideProgressIndicator: true
 	};
 }
