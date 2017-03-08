@@ -18,7 +18,7 @@ import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
-import FormToggle from 'components/forms/form-toggle';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SectionHeader from 'components/section-header';
 import Subscriptions from './subscriptions';
@@ -42,27 +42,24 @@ class SiteSettingsFormDiscussion extends Component {
 		const { fields, handleToggle, isRequestingSettings, translate } = this.props;
 		return (
 			<FormFieldset>
-				<FormToggle
-					className="is-compact"
+				<CompactFormToggle
 					checked={ !! fields.default_pingback_flag }
 					disabled={ isRequestingSettings }
 					onChange={ handleToggle( 'default_pingback_flag' ) }>
 					<span>{ translate( 'Attempt to notify any blogs linked to from the article' ) }</span>
-				</FormToggle>
-				<FormToggle
-					className="is-compact"
+				</CompactFormToggle>
+				<CompactFormToggle
 					checked={ !! fields.default_ping_status }
 					disabled={ isRequestingSettings }
 					onChange={ handleToggle( 'default_ping_status' ) }>
 					<span>{ translate( 'Allow link notifications from other blogs (pingbacks and trackbacks)' ) }</span>
-				</FormToggle>
-				<FormToggle
-					className="is-compact"
+				</CompactFormToggle>
+				<CompactFormToggle
 					checked={ !! fields.default_comment_status }
 					disabled={ isRequestingSettings }
 					onChange={ handleToggle( 'default_comment_status' ) }>
 					<span>{ translate( 'Allow people to post comments on new articles' ) }</span>
-				</FormToggle>
+				</CompactFormToggle>
 				<FormSettingExplanation>
 					{ translate( 'These settings may be overridden for individual articles.' ) }
 				</FormSettingExplanation>
@@ -100,22 +97,19 @@ class SiteSettingsFormDiscussion extends Component {
 		const markdownSupported = fields.markdown_supported;
 		return (
 			<FormFieldset className="site-settings__other-comment-settings">
-				<FormToggle
-					className="is-compact"
+				<CompactFormToggle
 					checked={ !! fields.require_name_email }
 					disabled={ isRequestingSettings }
 					onChange={ handleToggle( 'require_name_email' ) }>
 					<span>{ translate( 'Comment author must fill out name and e-mail' ) }</span>
-				</FormToggle>
-				<FormToggle
-					className="is-compact"
+				</CompactFormToggle>
+				<CompactFormToggle
 					checked={ !! fields.comment_registration }
 					disabled={ isRequestingSettings }
 					onChange={ handleToggle( 'comment_registration' ) }>
 					<span>{ translate( 'Users must be registered and logged in to comment' ) }</span>
-				</FormToggle>
-				<FormToggle
-					className="is-compact"
+				</CompactFormToggle>
+				<CompactFormToggle
 					checked={ !! fields.close_comments_for_old_posts }
 					disabled={ isRequestingSettings }
 					onChange={ handleToggle( 'close_comments_for_old_posts' ) }>
@@ -132,9 +126,8 @@ class SiteSettingsFormDiscussion extends Component {
 							)
 						}
 					</span>
-				</FormToggle>
-				<FormToggle
-					className="is-compact"
+				</CompactFormToggle>
+				<CompactFormToggle
 					checked={ !! fields.thread_comments }
 					disabled={ isRequestingSettings }
 					onChange={ handleToggle( 'thread_comments' ) }>
@@ -147,9 +140,8 @@ class SiteSettingsFormDiscussion extends Component {
 							} )
 						}
 					</span>
-				</FormToggle>
-				<FormToggle
-					className="is-compact"
+				</CompactFormToggle>
+				<CompactFormToggle
 					checked={ !! fields.page_comments }
 					disabled={ isRequestingSettings }
 					onChange={ handleToggle( 'page_comments' ) }>
@@ -167,10 +159,9 @@ class SiteSettingsFormDiscussion extends Component {
 							)
 						}
 					</span>
-				</FormToggle>
+				</CompactFormToggle>
 				{ markdownSupported &&
-					<FormToggle
-						className="is-compact"
+					<CompactFormToggle
 						checked={ !! fields.wpcom_publish_comments_with_markdown }
 						disabled={ isRequestingSettings }
 						onChange={ handleToggle( 'wpcom_publish_comments_with_markdown' ) }>
@@ -186,15 +177,14 @@ class SiteSettingsFormDiscussion extends Component {
 								} )
 							}
 						</span>
-					</FormToggle>
+					</CompactFormToggle>
 				}
-				<FormToggle
-					className="is-compact"
+				<CompactFormToggle
 					checked={ 'asc' === fields.comment_order }
 					disabled={ isRequestingSettings }
 					onChange={ this.handleCommentOrder }>
 					<span>{ translate( 'Comments should be displayed with the older comments at the top of each page' ) }</span>
-				</FormToggle>
+				</CompactFormToggle>
 			</FormFieldset>
 		);
 	}
@@ -275,20 +265,18 @@ class SiteSettingsFormDiscussion extends Component {
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'E-mail me whenever' ) }</FormLegend>
-				<FormToggle
-					className="is-compact"
+				<CompactFormToggle
 					checked={ !! fields.comments_notify }
 					disabled={ isRequestingSettings }
 					onChange={ handleToggle( 'comments_notify' ) }>
 					<span>{ translate( 'Anyone posts a comment' ) }</span>
-				</FormToggle>
-				<FormToggle
-					className="is-compact"
+				</CompactFormToggle>
+				<CompactFormToggle
 					checked={ !! fields.moderation_notify }
 					disabled={ isRequestingSettings }
 					onChange={ handleToggle( 'moderation_notify' ) }>
 					<span>{ translate( 'A comment is held for moderation' ) }</span>
-				</FormToggle>
+				</CompactFormToggle>
 				{ this.emailMeLikes() }
 				{ this.emailMeReblogs() }
 				{ this.emailMeFollows() }
@@ -304,13 +292,12 @@ class SiteSettingsFormDiscussion extends Component {
 		}
 
 		return (
-			<FormToggle
-				className="is-compact"
+			<CompactFormToggle
 				checked={ !! fields.social_notifications_like }
 				disabled={ isRequestingSettings }
 				onChange={ handleToggle( 'social_notifications_like' ) }>
 				<span>{ translate( 'Someone likes one of my posts' ) }</span>
-			</FormToggle>
+			</CompactFormToggle>
 		);
 	}
 
@@ -322,13 +309,12 @@ class SiteSettingsFormDiscussion extends Component {
 		}
 
 		return (
-			<FormToggle
-				className="is-compact"
+			<CompactFormToggle
 				checked={ !! fields.social_notifications_reblog }
 				disabled={ isRequestingSettings }
 				onChange={ handleToggle( 'social_notifications_reblog' ) }>
 				<span>{ translate( 'Someone reblogs one of my posts' ) }</span>
-			</FormToggle>
+			</CompactFormToggle>
 		);
 	}
 
@@ -340,13 +326,12 @@ class SiteSettingsFormDiscussion extends Component {
 		}
 
 		return (
-			<FormToggle
-				className="is-compact"
+			<CompactFormToggle
 				checked={ !! fields.social_notifications_subscribe }
 				disabled={ isRequestingSettings }
 				onChange={ handleToggle( 'social_notifications_subscribe' ) }>
 				<span>{ translate( 'Someone follows my blog' ) }</span>
-			</FormToggle>
+			</CompactFormToggle>
 		);
 	}
 
@@ -355,20 +340,18 @@ class SiteSettingsFormDiscussion extends Component {
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'Before a comment appears' ) }</FormLegend>
-				<FormToggle
-					className="is-compact"
+				<CompactFormToggle
 					checked={ !! fields.comment_moderation }
 					disabled={ isRequestingSettings }
 					onChange={ handleToggle( 'comment_moderation' ) }>
 					<span>{ translate( 'Comment must be manually approved' ) }</span>
-				</FormToggle>
-				<FormToggle
-					className="is-compact"
+				</CompactFormToggle>
+				<CompactFormToggle
 					checked={ !! fields.comment_whitelist }
 					disabled={ isRequestingSettings }
 					onChange={ handleToggle( 'comment_whitelist' ) }>
 					<span>{ translate( 'Comment author must have a previously approved comment' ) }</span>
-				</FormToggle>
+				</CompactFormToggle>
 			</FormFieldset>
 		);
 	}

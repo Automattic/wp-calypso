@@ -13,7 +13,7 @@ import JetpackModuleToggle from '../jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSelect from 'components/forms/form-select';
 import FormLabel from 'components/forms/form-label';
-import FormToggle from 'components/forms/form-toggle';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import {
@@ -74,13 +74,12 @@ const MediaSettings = ( {
 					disabled={ isRequestingSettings || isSavingSettings }
 					/>
 				<div className="media-settings__module-settings site-settings__child-settings">
-					<FormToggle
-						className="media-settings__carousel-module-settings-toggle is-compact"
+					<CompactFormToggle
 						checked={ fields.carousel_display_exif || false }
 						disabled={ isRequestingSettings || isSavingSettings || ! carouselActive }
 						onChange={ handleAutosavingToggle( 'carousel_display_exif' ) } >
 						{ translate( 'Show photo metadata in carousel, when available' ) }
-					</FormToggle>
+					</CompactFormToggle>
 					<FormLabel className={ labelClassName } htmlFor="carousel_background_color">
 						{ translate( 'Background color' ) }
 					</FormLabel>

@@ -13,7 +13,7 @@ import Card from 'components/card';
 import Button from 'components/button';
 import JetpackModuleToggle from '../jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormToggle from 'components/forms/form-toggle';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import InfoPopover from 'components/info-popover';
@@ -32,14 +32,13 @@ class ThemeEnhancements extends Component {
 	renderToggle( name, isDisabled, label ) {
 		const { fields, handleToggle } = this.props;
 		return (
-			<FormToggle
-				className="theme-enhancements__module-settings-toggle is-compact"
+			<CompactFormToggle
 				checked={ !! fields[ name ] }
 				disabled={ this.isFormPending() || isDisabled }
 				onChange={ handleToggle( name ) }
 			>
 				{ label }
-			</FormToggle>
+			</CompactFormToggle>
 		);
 	}
 

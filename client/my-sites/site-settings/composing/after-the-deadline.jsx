@@ -13,7 +13,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import TokenField from 'components/token-field';
-import FormToggle from 'components/forms/form-toggle';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -64,14 +64,13 @@ class AfterTheDeadline extends Component {
 			moduleUnavailable
 		} = this.props;
 		return (
-			<FormToggle
-				className="composing__module-settings-toggle is-compact"
+			<CompactFormToggle
 				checked={ !! fields[ name ] }
 				disabled={ isRequestingSettings || isSavingSettings || isDisabled || moduleUnavailable }
 				onChange={ handleToggle( name ) }
 			>
 				{ label }
-			</FormToggle>
+			</CompactFormToggle>
 		);
 	}
 

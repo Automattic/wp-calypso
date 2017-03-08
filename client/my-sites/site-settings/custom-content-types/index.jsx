@@ -12,7 +12,7 @@ import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import Button from 'components/button';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormToggle from 'components/forms/form-toggle';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive, isActivatingJetpackModule } from 'state/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
@@ -57,14 +57,13 @@ class CustomContentTypes extends Component {
 			handleToggle
 		} = this.props;
 		return (
-			<FormToggle
-				className="custom-content-types__module-settings-toggle is-compact"
+			<CompactFormToggle
 				checked={ !! fields[ name ] }
 				disabled={ this.isFormPending() || activatingCustomContentTypesModule }
 				onChange={ handleToggle( name ) }
 			>
 				{ label }
-			</FormToggle>
+			</CompactFormToggle>
 		);
 	}
 

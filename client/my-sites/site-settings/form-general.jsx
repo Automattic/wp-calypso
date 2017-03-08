@@ -26,6 +26,7 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormSelect from 'components/forms/form-select';
 import FormToggle from 'components/forms/form-toggle';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
 import JetpackSyncPanel from './jetpack-sync-panel';
@@ -324,8 +325,7 @@ class SiteSettingsFormGeneral extends Component {
 				<form>
 					<ul id="settings-jetpack">
 						<li>
-							<FormToggle
-								className="is-compact"
+							<CompactFormToggle
 								checked={ !! fields.jetpack_sync_non_public_post_stati }
 								disabled={ isRequestingSettings }
 								onChange={ handleToggle( 'jetpack_sync_non_public_post_stati' ) }
@@ -333,7 +333,7 @@ class SiteSettingsFormGeneral extends Component {
 								{ translate(
 									'Allow synchronization of Posts and Pages with non-public post statuses'
 								) }
-							</FormToggle>
+							</CompactFormToggle>
 							<FormSettingExplanation>
 								{ translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }
 							</FormSettingExplanation>
@@ -382,8 +382,7 @@ class SiteSettingsFormGeneral extends Component {
 				<FormLegend>{ translate( 'Holiday Snow' ) }</FormLegend>
 				<ul>
 					<li>
-						<FormToggle
-							className="is-compact"
+						<CompactFormToggle
 							checked={ !! fields.holidaysnow }
 							disabled={ isRequestingSettings }
 							onChange={ handleToggle( 'holidaysnow' ) }
@@ -391,7 +390,7 @@ class SiteSettingsFormGeneral extends Component {
 							{ translate(
 								'Show falling snow on my blog until January 4th.'
 							) }
-						</FormToggle>
+						</CompactFormToggle>
 					</li>
 				</ul>
 			</FormFieldset>
@@ -633,8 +632,7 @@ class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<CompactCard>
-				<FormToggle
-					className="is-compact"
+				<CompactFormToggle
 					checked={ !! fields.api_cache }
 					disabled={ isRequestingSettings }
 					onChange={ handleToggle( 'api_cache' ) }
@@ -642,7 +640,7 @@ class SiteSettingsFormGeneral extends Component {
 					{ translate(
 						'Use synchronized data to boost performance'
 					) }
-				</FormToggle>
+				</CompactFormToggle>
 			</CompactCard>
 		);
 	}
