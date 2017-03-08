@@ -16,10 +16,80 @@ import {
 	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage,
 	getTermIdsFromEdits,
+	hasTermEditDifferences,
 	mergeIgnoringArrays
 } from '../utils';
 
 describe( 'utils', () => {
+	describe( 'hasTermEditDifferences', () => {
+		it( 'should return false if no term edits passed', () => {
+			expect( hasTermEditDifferences() ).to.be.false;
+		} );
+
+		it( 'should return false if term edits are the same as saved terms', () => {
+			const hasDifferences = hasTermEditDifferences( {
+				post_tag: [ 'ribs', 'chicken' ],
+				category: [ {
+					ID: 777,
+					name: 'amazing food'
+				} ]
+			}, {
+				post_tag: {
+					ribs: {
+						ID: 11,
+						name: 'ribs'
+					},
+					chicken: {
+						ID: 12,
+						name: 'chicken'
+					}
+				},
+				category: {
+					'amazing-food': {
+						ID: 777,
+						name: 'amazing food'
+					}
+				}
+			} );
+			expect( hasDifferences ).to.be.false;
+		} );
+
+		it( 'should return true if term edits are not the same as saved terms', () => {
+			const hasDifferences = hasTermEditDifferences( {
+				post_tag: [ 'ribs' ],
+				category: [ {
+					ID: 777,
+					name: 'amazing food'
+				} ]
+			}, {
+				post_tag: {
+					ribs: {
+						ID: 11,
+						name: 'ribs'
+					},
+					chicken: {
+						ID: 12,
+						name: 'chicken'
+					}
+				},
+				category: {
+					'amazing-food': {
+						ID: 777,
+						name: 'amazing food'
+					}
+				}
+			} );
+			expect( hasDifferences ).to.be.true;
+		} );
+
+		it( 'should return true savedTerms is missing a taxonomy', () => {
+			const hasDifferences = hasTermEditDifferences( {
+				post_tag: [ 'ribs' ]
+			}, {} );
+			expect( hasDifferences ).to.be.true;
+		} );
+	} );
+
 	describe( 'normalizePostForApi()', () => {
 		it( 'should return null if post is falsey', () => {
 			const normalizedPost = normalizePostForApi();

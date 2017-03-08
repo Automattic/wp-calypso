@@ -33,6 +33,7 @@ import counts from './counts/reducer';
 import likes from './likes/reducer';
 import {
 	getSerializedPostsQuery,
+	hasTermEditDifferences,
 	mergeIgnoringArrays,
 	normalizePostForState
 } from './utils';
@@ -253,6 +254,9 @@ export function edits( state = {}, action ) {
 				}
 
 				return set( memoState, [ post.site_ID, post.ID ], omitBy( postEdits, ( value, key ) => {
+					if ( key === 'terms' ) {
+						return ! hasTermEditDifferences( value, post[ key ] );
+					}
 					return isEqual( post[ key ], value );
 				} ) );
 			}, state );

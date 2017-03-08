@@ -3,7 +3,9 @@
  */
 import {
 	isEmpty,
+	isEqual,
 	isPlainObject,
+	find,
 	flow,
 	map,
 	mapValues,
@@ -238,6 +240,33 @@ export function normalizeTermsForApi( post ) {
 			return terms.length && every( terms, isString );
 		} )
 	};
+}
+
+/**
+ * Returns truthy if local terms object is different than API response
+ *
+ * @param  {Object}  localTermEdits local state of term edits
+ * @param  {Object}  savedTerms     term object returned from API POST
+ * @return {Boolean}                are there differences in local edits vs saved terms
+ */
+export function hasTermEditDifferences( localTermEdits, savedTerms ) {
+	if ( ! localTermEdits || ! savedTerms ) {
+		return false;
+	}
+
+	return !! find( localTermEdits, ( terms, taxonomy ) => {
+		const termsArray = toArray( terms );
+		const isTag = ! isPlainObject( termsArray[ 0 ] );
+		const normalizedEditedTerms = isTag ? termsArray.sort() : map( termsArray, 'ID' ).sort();
+		const normalizedKey = isTag ? 'name' : 'ID';
+		const normalizedSavedTerms = map( savedTerms[ taxonomy ], normalizedKey ).sort();
+
+		if ( normalizedEditedTerms.length !== normalizedSavedTerms.length ) {
+			return true;
+		}
+
+		return ! isEqual( normalizedEditedTerms, normalizedSavedTerms );
+	} );
 }
 
 /**

@@ -892,6 +892,124 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should should handle term shape differences on posts received', () => {
+			const state = edits( deepFreeze( {
+				2916284: {
+					841: {
+						title: 'Hello World',
+						type: 'post',
+						terms: {
+							post_tag: [ 'chicken', 'ribs' ],
+							category: [ {
+								ID: 1,
+								name: 'uncategorized'
+							} ]
+						}
+					},
+					'': {
+						title: 'Unrelated'
+					}
+				}
+			} ), {
+				type: POSTS_RECEIVE,
+				posts: [ {
+					ID: 841,
+					site_ID: 2916284,
+					type: 'post',
+					title: 'Hello',
+					terms: {
+						post_tag: {
+							chicken: {
+								ID: 111,
+								name: 'chicken'
+							},
+							ribs: {
+								ID: 112,
+								name: 'ribs'
+							}
+						},
+						category: {
+							uncategorized: {
+								ID: 1,
+								name: 'uncategorized'
+							}
+						}
+					}
+				} ]
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						title: 'Hello World'
+					},
+					'': {
+						title: 'Unrelated'
+					}
+				}
+			} );
+		} );
+
+		it( 'should should preserve term edit differences on posts received', () => {
+			const state = edits( deepFreeze( {
+				2916284: {
+					841: {
+						title: 'Hello World',
+						type: 'post',
+						terms: {
+							post_tag: [ 'ribs' ],
+							category: [ {
+								ID: 1,
+								name: 'uncategorized'
+							} ]
+						}
+					},
+					'': {
+						title: 'Unrelated'
+					}
+				}
+			} ), {
+				type: POSTS_RECEIVE,
+				posts: [ {
+					ID: 841,
+					site_ID: 2916284,
+					type: 'post',
+					title: 'Hello World',
+					terms: {
+						post_tag: {
+							chicken: {
+								ID: 111,
+								name: 'chicken'
+							}
+						},
+						category: {
+							uncategorized: {
+								ID: 1,
+								name: 'uncategorized'
+							}
+						}
+					}
+				} ]
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						terms: {
+							post_tag: [ 'ribs' ],
+							category: [ {
+								ID: 1,
+								name: 'uncategorized'
+							} ]
+						}
+					},
+					'': {
+						title: 'Unrelated'
+					}
+				}
+			} );
+		} );
+
 		it( 'should ignore reset edits action when discarded site doesn\'t exist', () => {
 			const original = deepFreeze( {} );
 			const state = edits( original, {
