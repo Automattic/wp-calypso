@@ -4,6 +4,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { find } from 'lodash';
+import freeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -21,7 +22,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import { NOTICE_CREATE } from 'state/action-types';
 
-export const successfulFollowResponse = {
+export const successfulFollowResponse = freeze( {
 	subscribed: true,
 	added_tag: '422',
 	tags: [
@@ -40,12 +41,12 @@ export const successfulFollowResponse = {
 			URL: 'https://public-api.wordpress.com/rest/v1/read/tags/ship/posts'
 		},
 	],
-};
+} );
 
-const unsuccessfulResponse = {
+const unsuccessfulResponse = freeze( {
 	...successfulFollowResponse,
 	subscribed: false,
-};
+} );
 
 const slug = 'chicken';
 
@@ -123,6 +124,7 @@ describe( 'follow tag request', () => {
 
 			receiveError( { dispatch }, action, next, error );
 
+			expect( dispatch ).to.have.been.calledTwice;
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				type: NOTICE_CREATE,
 			} );
