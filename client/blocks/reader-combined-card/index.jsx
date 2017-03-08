@@ -16,7 +16,7 @@ import { siteNameFromSiteAndPost } from 'reader/utils';
 import ReaderCombinedCardPost from './post';
 
 const ReaderCombinedCard = ( { posts, site, feed, onClick, isDiscover, translate } ) => {
-	const feedId = get( feed, 'ID' );
+	const feedId = get( feed, 'feed_ID' );
 	const siteId = get( site, 'ID' );
 	const siteIcon = get( site, 'icon.img' );
 	const feedIcon = get( feed, 'image' );
