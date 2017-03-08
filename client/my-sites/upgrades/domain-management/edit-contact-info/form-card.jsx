@@ -367,7 +367,7 @@ class EditContactInfoFormCard extends React.Component {
 	hasFaxField() {
 		const NETHERLANDS_TLD = '.nl';
 
-		return endsWith( this.props.selectedDomain.name, NETHERLANDS_TLD );
+		return endsWith( this.props.selectedDomain.name, NETHERLANDS_TLD ) || this.props.contactInformation.fax;
 	}
 
 	onChange = ( event ) => {
