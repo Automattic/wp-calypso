@@ -697,14 +697,13 @@
 	position: relative;
 	overflow: visible;
 	display: none;
-	padding: 8px 8px 8px 26px;
+	align-items: center;
+	padding: 8px;
 	cursor: pointer;
 	border: 1px solid lighten( $gray, 20% );
 	border-radius: 4px;
 	box-shadow: 0 0 8px rgba( $gray-dark, 0.04 );
 	background-color: $white;
-	text-align: left;
-	line-height: 1;
 	color: $blue-wordpress;
 
 	@include breakpoint( "<480px") {
@@ -716,7 +715,7 @@
 	}
 
 	&.is-active {
-		display: inline-block;
+		display: inline-flex;
 	}
 
 	&.is-edit::before {
@@ -784,12 +783,8 @@
 	}
 }
 
-.sharing-buttons-preview-action .noticon {
-	position: absolute;
-	left: 6px;
-	top: 50%;
-	margin-top: -8px;
-	font-size: 16px;
+.sharing-buttons-preview-action .gridicon {
+	margin-right: 5px;
 }
 
 .sharing-buttons-preview__button-tray-actions {

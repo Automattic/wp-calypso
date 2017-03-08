@@ -5,6 +5,11 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { omit, startsWith, endsWith } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
+import Gridicon from 'gridicons';
+
 const SharingButtonsPreviewAction = ( props ) => {
 	const { active, position, icon, children } = props;
 	const classes = classNames( 'sharing-buttons-preview-action', {
@@ -17,7 +22,7 @@ const SharingButtonsPreviewAction = ( props ) => {
 
 	return (
 		<button type="button" className={ classes } { ...omit( props, [ 'active', 'position', 'icon' ] ) }>
-			{ icon && <span className={ 'noticon noticon-' + icon } /> }
+			{ icon && <Gridicon icon={ icon } size={ 18 } /> }
 			{ children }
 		</button>
 	);
