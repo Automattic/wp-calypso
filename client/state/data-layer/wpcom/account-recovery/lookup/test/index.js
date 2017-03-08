@@ -10,8 +10,8 @@ import sinon from 'sinon';
  */
 import {
 	fromApi,
-	onSuccess,
-	onError,
+	storeReceivedOptions,
+	reportError,
 } from '../';
 
 import {
@@ -21,7 +21,7 @@ import {
 
 const next = identity;
 
-describe( 'onSuccess()', () => {
+describe( 'storeReceivedOptions()', () => {
 	const dispatch = sinon.spy();
 
 	it( 'should dispatch the receiving action.', () => {
@@ -32,7 +32,7 @@ describe( 'onSuccess()', () => {
 			secondary_sms: '+8*******456',
 		};
 
-		onSuccess( { dispatch }, {}, next, response );
+		storeReceivedOptions( { dispatch }, {}, next, response );
 
 		assert.isTrue( dispatch.calledWith( {
 			type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
@@ -41,7 +41,7 @@ describe( 'onSuccess()', () => {
 	} );
 } );
 
-describe( 'onError()', () => {
+describe( 'reportError()', () => {
 	const dispatch = sinon.spy();
 
 	it( 'should dispatch the error action', () => {
@@ -50,7 +50,7 @@ describe( 'onError()', () => {
 			status: 404,
 		};
 
-		onError( { dispatch }, {}, next, error );
+		reportError( { dispatch }, {}, next, error );
 
 		assert.isTrue( dispatch.calledWith( {
 			type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,

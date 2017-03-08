@@ -35,20 +35,20 @@ export const fromApi = data => ( [
 	},
 ] );
 
-export const onSuccess = ( { dispatch }, action, next, data ) => {
-	if ( validate( data ) ) {
-		dispatch( {
-			type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
-			items: fromApi( data ),
-		} );
-	} else {
+export const storeReceivedOptions = ( { dispatch }, action, next, data ) => {
+	if ( ! validate( data ) ) {
 		throw Error( 'Unexpected response format' );
 	}
+
+	dispatch( {
+		type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
+		items: fromApi( data ),
+	} );
 };
 
-export const onError = ( { dispatch }, action, next, error ) => dispatch( {
+export const reportError = ( { dispatch }, action, next, error ) => dispatch( {
 	type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
-	error: error,
+	error,
 } );
 
 export const requestResetOptions = ( { dispatch }, action ) => dispatch( http( {
@@ -59,5 +59,5 @@ export const requestResetOptions = ( { dispatch }, action ) => dispatch( http( {
 }, action ) );
 
 export default {
-	[ ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST ]: [ dispatchRequest( requestResetOptions, onSuccess, onError ) ],
+	[ ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST ]: [ dispatchRequest( requestResetOptions, storeReceivedOptions, reportError ) ],
 };
