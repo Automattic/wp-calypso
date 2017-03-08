@@ -38,7 +38,10 @@ export default function( site ) {
 
 	// The 'standard' post format is saved as an option of '0'
 	if ( ! attributes.options.default_post_format || attributes.options.default_post_format === '0' ) {
-		attributes.options.default_post_format = 'standard';
+		attributes.options = {
+			...attributes.options,
+			default_post_format: 'standard'
+		};
 	}
 
 	//TODO:(ehg) Pull out into selector when my-sites/sidebar is connected
