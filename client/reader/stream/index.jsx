@@ -468,6 +468,13 @@ class ReaderStream extends React.Component {
 		return 'feed-post-' + ( postKey.feedId || postKey.blogId ) + '-' + postKey.postId;
 	}
 
+	handleConnectedCardClick = post => showSelectedPost( {
+		postKey: {
+			postId: post.feed_item_ID,
+			feedId: post.feed_ID,
+		}
+	} );
+
 	renderPost = ( postKey, index ) => {
 		const selectedPostKey = this.props.postsStore.getSelectedPost();
 		const isSelected = !! ( selectedPostKey &&
@@ -504,18 +511,11 @@ class ReaderStream extends React.Component {
 		}
 
 		if ( postKey.isCombination ) {
-			const handleClick = post => showSelectedPost( {
-				postKey: {
-					postId: post.feed_item_ID,
-					feedId: post.feed_ID,
-				}
-			} );
-
 			return <ConnectedCombinedCard
 						postKey={ postKey }
 						index={ index }
 						key={ `combined-card-${ index }` }
-						onClick={ handleClick }
+						onClick={ this.handleConnectedCardClick }
 					/>;
 		}
 
