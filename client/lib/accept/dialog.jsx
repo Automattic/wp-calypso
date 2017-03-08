@@ -15,7 +15,7 @@ const AcceptDialog = React.createClass( {
 		message: PropTypes.node,
 		onClose: PropTypes.func.isRequired,
 		confirmButtonText: PropTypes.node,
-		cancelButtonText: PropTypes.node,
+		cancelButtonText: PropTypes.node
 	},
 
 	getInitialState: function() {
@@ -31,18 +31,16 @@ const AcceptDialog = React.createClass( {
 	},
 
 	getActionButtons: function() {
-		const cancelButton = React.isValidElement( this.props.cancelButtonText ) ? this.props.cancelButtonText : {
-			action: 'cancel',
-			label: this.props.cancelButtonText ? this.props.cancelButtonText : this.props.translate( 'Cancel' ),
-		};
-		const confirmButton = React.isValidElement( this.props.confirmButtonText ) ? this.props.confirmButtonText : {
-			action: 'accept',
-			label: this.props.confirmButtonText ? this.props.confirmButtonText : this.props.translate( 'OK' ),
-			isPrimary: true,
-		};
 		return [
-			cancelButton,
-			confirmButton,
+			{
+				action: 'cancel',
+				label: this.props.cancelButtonText ? this.props.cancelButtonText : this.props.translate( 'Cancel' ),
+			},
+			{
+				action: 'accept',
+				label: this.props.confirmButtonText ? this.props.confirmButtonText : this.props.translate( 'OK' ),
+				isPrimary: true
+			}
 		];
 	},
 

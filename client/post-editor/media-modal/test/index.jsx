@@ -73,10 +73,7 @@ describe( 'EditorMediaModal', function() {
 		).instance();
 		tree.deleteMedia();
 
-		expect( accept ).to.have.been.calledWith(
-			'Are you sure you want to permanently delete this item? It will be ' +
-			'permanently removed from all other locations where it currently appears.'
-		);
+		expect( accept ).to.have.been.calledWith( 'Are you sure you want to permanently delete this item?' );
 		process.nextTick( function() {
 			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
 			done();
@@ -89,10 +86,7 @@ describe( 'EditorMediaModal', function() {
 		).instance();
 		tree.deleteMedia();
 
-		expect( accept ).to.have.been.calledWith(
-			'Are you sure you want to permanently delete these items? They will be ' +
-			'permanently removed from all other locations where they appear.',
-		);
+		expect( accept ).to.have.been.calledWith( 'Are you sure you want to permanently delete these items?' );
 		process.nextTick( function() {
 			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA );
 			done();
@@ -108,10 +102,7 @@ describe( 'EditorMediaModal', function() {
 		).instance();
 		tree.deleteMedia();
 
-		expect( accept ).to.have.been.calledWith(
-			'Are you sure you want to permanently delete this item? It will be ' +
-			'permanently removed from all other locations where it currently appears.'
-		);
+		expect( accept ).to.have.been.calledWith( 'Are you sure you want to permanently delete this item?' );
 		process.nextTick( function() {
 			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
 			done();
@@ -124,10 +115,7 @@ describe( 'EditorMediaModal', function() {
 		).instance();
 		tree.deleteMedia();
 
-		expect( accept ).to.have.been.calledWith(
-			'Are you sure you want to permanently delete this item? It will be ' +
-			'permanently removed from all other locations where it currently appears.'
-		);
+		expect( accept ).to.have.been.calledWith( 'Are you sure you want to permanently delete this item?' );
 		process.nextTick( function() {
 			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA[ 0 ] );
 			done();
