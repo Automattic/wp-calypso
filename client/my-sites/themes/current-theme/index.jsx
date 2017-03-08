@@ -46,12 +46,18 @@ class CurrentTheme extends Component {
 			currentTheme && ! ( option.hideForTheme && option.hideForTheme( currentTheme, siteId ) )
 		);
 
+		const showScreenshot = currentTheme && currentTheme.screenshot;
+		const screenshotPlaceholder = ! currentTheme;
+
 		return (
 			<Card className="current-theme">
 				{ siteId && <QueryActiveTheme siteId={ siteId } /> }
 				{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 				<div className="current-theme__current">
-					{ currentTheme && <img src={ currentTheme.screenshot } className="current-theme__img" /> }
+					{ screenshotPlaceholder && <div className="current-theme__img-placeholder" /> }
+					{ showScreenshot && <img
+						src={ currentTheme.screenshot + '?w=100' }
+						className="current-theme__img" /> }
 					<span className="current-theme__label">
 						{ translate( 'Current Theme' ) }
 					</span>

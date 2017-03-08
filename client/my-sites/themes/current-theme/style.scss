@@ -25,6 +25,15 @@ $current-theme-border: 1px solid transparentize( lighten( $gray, 20% ), .25 );
 	height: 100%;
 }
 
+.current-theme__img-placeholder {
+	width: 75px;
+	color: transparent;
+	background-color: lighten( $gray, 30% );
+	animation: loading-fade 1.6s ease-in-out infinite;
+	float: left;
+	height: 100%;
+}
+
 .current-theme__label {
 	font-size: 0.8em;
 	color: $gray;
