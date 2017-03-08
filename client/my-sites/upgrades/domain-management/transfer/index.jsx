@@ -12,19 +12,13 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import Header from 'my-sites/upgrades/domain-management/components/header';
 import Main from 'components/main';
+import { get } from 'lodash';
 
 class Transfer extends React.Component {
 	render() {
-		const slug = this.props.selectedSite.slug,
-			domainName = this.props.selectedDomainName;
-
-		let transferToAnotherUser = null;
-		if ( ! this.props.selectedSite.options.is_automated_transfer ) {
-			transferToAnotherUser =
-				<VerticalNavItem path={ paths.domainManagementTransferToAnotherUser( slug, domainName ) }>
-					{ this.props.translate( 'Transfer to another user' ) }
-				</VerticalNavItem>;
-		}
+		const slug = this.props.selectedSite.slug;
+		const domainName = this.props.selectedDomainName;
+		const canTransferDomain = ! get( this.props.selectedSite, 'options.is_automated_transfer', false );
 
 		return (
 		<Main className="domain-management-transfer">
@@ -39,7 +33,10 @@ class Transfer extends React.Component {
 				}>
 					{ this.props.translate( 'Transfer to another registrar' ) }
 				</VerticalNavItem>
-				{ transferToAnotherUser }
+					{ canTransferDomain &&
+						<VerticalNavItem path={ paths.domainManagementTransferToAnotherUser( slug, domainName ) }>
+							{ this.props.translate( 'Transfer to another user' ) }
+						</VerticalNavItem> }
 			</VerticalNav>
 		</Main>
 		);

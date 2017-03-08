@@ -20,6 +20,9 @@ import ProductsList from 'lib/products-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import SiteRedirectData from 'components/data/domain-management/site-redirect';
 import SitesList from 'lib/sites-list';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import TransferData from 'components/data/domain-management/transfer';
 import WhoisData from 'components/data/domain-management/whois';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
@@ -319,9 +322,13 @@ module.exports = {
 	},
 
 	domainManagementTransferToOtherUser( pageContext ) {
-		const selectedSite = sites.getSelectedSite();
-		if ( selectedSite && selectedSite.options.is_automated_transfer ) {
-			page.redirect( '/domains/manage' + ( selectedSite ? ( '/' + selectedSite.slug ) : '' ) );
+		const state = pageContext.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
+		if ( isAutomatedTransfer ) {
+			const siteSlug = getSiteSlug( state, siteId );
+			page.redirect( `/domains/manage/${ siteSlug }` );
+			return;
 		}
 
 		setTitle(
