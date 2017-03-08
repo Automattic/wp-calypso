@@ -18,9 +18,7 @@ import { decodeEntities } from 'lib/formatting';
  */
 export function fromApi( apiResponse ) {
 	if ( ! apiResponse || ( ! apiResponse.tag && ! apiResponse.tags ) ) {
-		if ( process.env.NODE_ENV === 'development' ) {
-			throw new Error( 'bad api response for /read/tags' );
-		}
+		console.error( 'bad api response for /read/tags' ); // eslint-disable-line no-console
 		return [];
 	}
 
