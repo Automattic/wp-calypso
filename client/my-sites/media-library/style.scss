@@ -6,15 +6,15 @@
 @import 'upload-url';
 
 .media-library__header {
-	margin-bottom: 14px;
-	padding: 12px 24px;
+	padding-top: 11px;
+	padding-bottom: 11px;
 	display: flex;
 }
 
 .dialog__content .media-library__header.card {
 	box-shadow: none;
 	.media-library__scale-range.range {
-		top: 4px;
+		top: 7px;
 	}
 }
 
@@ -27,11 +27,7 @@
 }
 
 .media-library__header .button {
-	margin: 0 8px;
-
-	&:first-of-type {
-		margin-left: 0;
-	}
+	margin-right: 8px;
 }
 
 .media-library__header .button.media-library__upload-button {
@@ -100,8 +96,7 @@
 
 .media-library__scale-toggle {
 	position: absolute;
-	top: 10;
-	right: 24px;
+	right: 16px;
 	&.segmented-control.is-compact .segmented-control__link {
 		padding: 2px 4px;
 	}
