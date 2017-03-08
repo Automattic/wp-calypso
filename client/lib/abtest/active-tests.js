@@ -72,12 +72,12 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	}
-	signupCopy: {
+	signupStepOneCopyChanges: {
 		datestamp: '20170307',
 		variations: {
-            oldSignupCopy: 50,
-            newSignupCopy: 50
+            original: 50,
+            modified: 50
         },
-        defaultVariation: 'oldSignupCopy'
+        defaultVariation: 'original'
 	},
 };

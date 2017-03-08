@@ -37,20 +37,20 @@ class DesignTypeWithStoreStep extends Component {
 	getChoices() {
 		const { translate } = this.props;
 
-		switch ( abtest( 'signupCopy' ) ) {
-			case 'newSignupCopy':
+		switch ( abtest( 'signupStepOneCopyChanges' ) ) {
+			case 'modified':
 				return [
-						{ type: 'blog', label: 'Test copy for label', description: 'Test copy for description', image: <BlogImage /> },
-						{ type: 'page', label: 'Test copy for label', description: 'Test copy for description', image: <PageImage /> },
-						{ type: 'grid', label: 'Test copy for label', description: 'Test copy for description', image: <GridImage /> },
-						{ type: 'store', label: 'Test copy for label', description: 'Test copy for description', image: <StoreImage /> },
+					{ type: 'blog', label: 'Test copy for label', description: 'Test copy for description', image: <BlogImage /> },
+					{ type: 'page', label: 'Test copy for label', description: 'Test copy for description', image: <PageImage /> },
+					{ type: 'grid', label: 'Test copy for label', description: 'Test copy for description', image: <GridImage /> },
+					{ type: 'store', label: 'Test copy for label', description: 'Test copy for description', image: <StoreImage /> },
 				];
 			default:
 				return [
-						{ type: 'blog', label: translate( 'A list of my latest posts' ), image: <BlogImage /> },
-						{ type: 'page', label: translate( 'A welcome page for my site' ), image: <PageImage /> },
-						{ type: 'grid', label: translate( 'A grid of my latest posts' ), image: <GridImage /> },
-						{ type: 'store', label: translate( 'An online store' ), image: <StoreImage /> },
+					{ type: 'blog', label: translate( 'A list of my latest posts' ), image: <BlogImage /> },
+					{ type: 'page', label: translate( 'A welcome page for my site' ), image: <PageImage /> },
+					{ type: 'grid', label: translate( 'A grid of my latest posts' ), image: <GridImage /> },
+					{ type: 'store', label: translate( 'An online store' ), image: <StoreImage /> },
 				];
 		}
 	}
@@ -95,35 +95,27 @@ class DesignTypeWithStoreStep extends Component {
 	};
 
 	renderChoice = ( choice ) => {
-		switch ( abtest( 'signupCopy' ) ) {
-			case 'newSignupCopy':
-				return (
-					<Card className="design-type-with-store__choice" key={ choice.type }>
-						<a className="design-type-with-store__choice-link"
-							href="#"
-							onClick={ this.handleChoiceClick( choice.type ) }>
-							{ choice.image }
-							<div className="design-type-with-store__choice-copy">
-								<h2 className="design-type-with-store__choice-label">{ choice.label }</h2>
-								<p className="design-type-with-store__choice-description">{ choice.description }</p>
-							</div>
-						</a>
-					</Card>
-				);
-			default:
-				return (
-					<Card className="design-type-with-store__choice" key={ choice.type }>
-						<a className="design-type-with-store__choice-link"
-							href="#"
-							onClick={ this.handleChoiceClick( choice.type ) }>
-							{ choice.image }
-							<div className="design-type-with-store__choice-copy">
-								<h2 className="design-type-with-store__choice-label">{ choice.label }</h2>
-							</div>
-						</a>
-					</Card>
-				);
+		let choiceDescription = <p className="design-type-with-store__choice-description">{ choice.description }</p>;
+		let choiceLabelClass = 'design-type-with-store__choice-label design-type-with-store__choice-label--with-arrow';
+
+		if ( abtest( 'signupStepOneCopyChanges' ) === 'original' ) {
+			choiceDescription = null;
+			choiceLabelClass = 'design-type-with-store__choice-label';
 		}
+
+		return (
+			<Card className="design-type-with-store__choice" key={ choice.type }>
+				<a className="design-type-with-store__choice-link"
+					href="#"
+					onClick={ this.handleChoiceClick( choice.type ) }>
+					{ choice.image }
+					<div className="design-type-with-store__choice-copy">
+						<h2 className={ choiceLabelClass }>{ choice.label }</h2>
+						{ choiceDescription }
+					</div>
+				</a>
+			</Card>
+		);
 	};
 
 	renderChoices() {
@@ -188,7 +180,7 @@ class DesignTypeWithStoreStep extends Component {
 			headerText = translate( 'Create your WordPress Store' );
 		}
 
-		if ( abtest( 'signupCopy' ) === 'newSignupCopy' ) {
+		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
 			// Note: Don't make this translatable because it's only visible to English-language users
 			headerText = 'Test title for Header text';
 		}
@@ -213,7 +205,7 @@ class DesignTypeWithStoreStep extends Component {
 			}
 		}
 
-		if ( abtest( 'signupCopy' ) === 'newSignupCopy' ) {
+		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
 			// Note: Don't make this translatable because it's only visible to English-language users
 			subHeaderText = 'Test title for subTitle';
 		}
