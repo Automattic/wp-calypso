@@ -37,7 +37,7 @@ class Easy extends Component {
 						compact={ true }
 						primary={ true }
 						type="submit">
-							{ translate( 'Update Status' ) }
+							{ translate( 'Save Settings' ) }
 					</Button>
 				</SectionHeader>
 				<Card>
