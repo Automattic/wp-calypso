@@ -1,11 +1,7 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { defer } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,10 +14,9 @@ import Card from 'components/card';
 // TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
 import DomainImage from 'signup/steps/design-type-with-store/domain-image';
 import PageImage from 'signup/steps/design-type-with-store/page-image';
-import { getStepUrl } from 'signup/utils';
-import { createNotice } from 'state/notices/actions';
+import { externalRedirect } from 'lib/route/path';
 
-class SiteOrDomain extends Component {
+export default class SiteOrDomain extends Component {
 	componentWillMount() {
 		const { queryObject } = this.props;
 		let isValidDomain = queryObject && queryObject.new;
@@ -38,18 +33,9 @@ class SiteOrDomain extends Component {
 		}
 
 		if ( ! isValidDomain ) {
-			page( getStepUrl( 'main' ) );
-			defer( () => {
-				this.props.createNotice( 'is-error',
-					queryObject && queryObject.new
-						? this.props.translate( "Unsupported domain name '%(domainName)s', you'll be able to choose domain later", {
-							args: {
-								domainName: queryObject.new
-							}
-						} )
-						: this.props.translate( "You haven't provided a domain name, you'll be able to choose domain later" )
-				);
-			} );
+			// /domains domain search is an external application to calypso,
+			// therefor a full redirect required:
+			externalRedirect( '/domains' );
 		}
 	}
 
@@ -132,5 +118,3 @@ class SiteOrDomain extends Component {
 		);
 	}
 }
-
-export default connect( null, { createNotice } )( localize( SiteOrDomain ) );
