@@ -43,6 +43,7 @@ const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
+const MAX_COMBINED_CARD_POSTS = 5;
 
 function cardFactory( post ) {
 	if ( post.display_type & DISPLAY_TYPES.X_POST ) {
@@ -119,7 +120,7 @@ function combine( postKey1, postKey2 ) {
 const combineCards = ( postKeys ) => postKeys.reduce(
 	( accumulator, postKey ) => {
 		const lastPostKey = last( accumulator );
-		if ( sameSite( lastPostKey, postKey ) && ( ! lastPostKey.postIds || lastPostKey.postIds.length < 5 ) ) {
+		if ( sameSite( lastPostKey, postKey ) && ( ! lastPostKey.postIds || lastPostKey.postIds.length < MAX_COMBINED_CARD_POSTS ) ) {
 			accumulator[ accumulator.length - 1 ] = combine( last( accumulator ), postKey );
 		} else {
 			accumulator.push( postKey );
