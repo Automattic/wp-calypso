@@ -77,10 +77,11 @@ function getDistanceBetweenRecs() {
 }
 
 /**
- * Returns true if two postKeys are for the same siteId or feedId.
+ * Check if two postKeys are for the same siteId or feedId
  *
- * @param {*} postKey1
- * @param {*} postKey2
+ * @param {Object} postKey1 First post key
+ * @param {Object} postKey2 Second post key
+ * @returns {Boolean} Returns true if two postKeys are for the same siteId or feedId
  */
 function sameSite( postKey1, postKey2 ) {
 	return postKey1 && postKey2 &&
@@ -94,8 +95,9 @@ function sameSite( postKey1, postKey2 ) {
  * Takes two postKeys and combines them into a ReaderCombinedCard postKey.
  * Note: This only makes sense for postKeys from the same site
  *
- * @param {*} postKey1 must be either a ReaderCombinedCard postKey or a regular postKey
- * @param {*} postKey2 can only be a regular postKey. may not be a combinedCard postKey or a recommendations postKey
+ * @param {Object} postKey1 must be either a ReaderCombinedCard postKey or a regular postKey
+ * @param {Object} postKey2 can only be a regular postKey. May not be a combinedCard postKey or a recommendations postKey
+ * @returns {Object} A ReaderCombinedCard postKey
  */
 function combine( postKey1, postKey2 ) {
 	if ( ! postKey1 || ! postKey2 ) {
@@ -111,7 +113,7 @@ function combine( postKey1, postKey2 ) {
 			...( postKey1.postIds || [ postKey1.postId ] ),
 			...( postKey2.postIds || [ postKey2.postId ] ),
 		],
-	}
+	};
 }
 
 const combineCards = ( postKeys ) => postKeys.reduce(
