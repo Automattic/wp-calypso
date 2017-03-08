@@ -37,22 +37,22 @@ class DesignTypeWithStoreStep extends Component {
 	getChoices() {
 		const { translate } = this.props;
 
-		switch ( abtest( 'signupStepOneCopyChanges' ) ) {
-			case 'modified':
-				return [
-					{ type: 'blog', label: 'Test copy for label', description: 'Test copy for description', image: <BlogImage /> },
-					{ type: 'page', label: 'Test copy for label', description: 'Test copy for description', image: <PageImage /> },
-					{ type: 'grid', label: 'Test copy for label', description: 'Test copy for description', image: <GridImage /> },
-					{ type: 'store', label: 'Test copy for label', description: 'Test copy for description', image: <StoreImage /> },
-				];
-			default:
-				return [
-					{ type: 'blog', label: translate( 'A list of my latest posts' ), image: <BlogImage /> },
-					{ type: 'page', label: translate( 'A welcome page for my site' ), image: <PageImage /> },
-					{ type: 'grid', label: translate( 'A grid of my latest posts' ), image: <GridImage /> },
-					{ type: 'store', label: translate( 'An online store' ), image: <StoreImage /> },
-				];
+		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
+			// Note: Don't make this translatable because it's only visible to English-language users
+			return [
+				{ type: 'blog', label: 'Test copy for label', description: 'Test copy for description', image: <BlogImage /> },
+				{ type: 'page', label: 'Test copy for label', description: 'Test copy for description', image: <PageImage /> },
+				{ type: 'grid', label: 'Test copy for label', description: 'Test copy for description', image: <GridImage /> },
+				{ type: 'store', label: 'Test copy for label', description: 'Test copy for description', image: <StoreImage /> },
+			];
 		}
+
+		return [
+			{ type: 'blog', label: translate( 'A list of my latest posts' ), image: <BlogImage /> },
+			{ type: 'page', label: translate( 'A welcome page for my site' ), image: <PageImage /> },
+			{ type: 'grid', label: translate( 'A grid of my latest posts' ), image: <GridImage /> },
+			{ type: 'store', label: translate( 'An online store' ), image: <StoreImage /> },
+		];
 	}
 
 	scrollUp() {
@@ -190,7 +190,6 @@ class DesignTypeWithStoreStep extends Component {
 
 	getSubHeaderText() {
 		const { translate } = this.props;
-		let subHeaderText = translate( 'This will help us figure out what kinds of designs to show you.' );
 
 		if ( this.state.showStore ) {
 			switch ( abtest( 'signupStoreBenchmarking' ) ) {
@@ -207,10 +206,10 @@ class DesignTypeWithStoreStep extends Component {
 
 		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
 			// Note: Don't make this translatable because it's only visible to English-language users
-			subHeaderText = 'Test title for subTitle';
+			return 'Test title for subTitle';
 		}
 
-		return subHeaderText;
+		return translate( 'This will help us figure out what kinds of designs to show you.' );
 	}
 
 	render() {
