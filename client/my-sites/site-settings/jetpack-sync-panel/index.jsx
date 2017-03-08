@@ -44,7 +44,13 @@ const JetpackSyncPanel = React.createClass( {
 	isErrored() {
 		const syncRequestError = get( this.props, 'fullSyncRequest.error' );
 		const syncStatusErrorCount = get( this.props, 'syncStatus.errorCounter', 0 );
+
 		return !! ( syncRequestError || ( syncStatusErrorCount >= SYNC_STATUS_ERROR_NOTICE_THRESHOLD ) );
+	},
+
+	isSyncDisabled() {
+		const syncDisabled = 'sync_disabled' === get( this.props, 'syncStatus.error.error' );
+		return !! syncDisabled;
 	},
 
 	shouldDisableSync() {
@@ -81,7 +87,18 @@ const JetpackSyncPanel = React.createClass( {
 			syncStatusErrorCount = get( this.props, 'syncStatus.errorCounter', 0 );
 
 		let errorNotice = null;
-		if ( syncStatusErrorCount >= SYNC_STATUS_ERROR_NOTICE_THRESHOLD ) {
+
+		if ( 'sync_disabled' === get( this.props, 'syncStatus.error.error' ) ) {
+			errorNotice = (
+				<Notice isCompact status="is-error" classNAme="jetpack-sync-pane_error-notice">
+					{ this.translate( 'Sync is disabled on %(site)s.', {
+						args: {
+							site: get( this.props, 'site.name' )
+						}
+					} ) }
+				</Notice>
+			);
+		} else if ( syncStatusErrorCount >= SYNC_STATUS_ERROR_NOTICE_THRESHOLD ) {
 			const adminUrl = get( this.props, 'site.options.admin_url' );
 			errorNotice = (
 				<Notice isCompact status="is-error" className="jetpack-sync-panel__error-notice">
@@ -185,7 +202,9 @@ const JetpackSyncPanel = React.createClass( {
 					</div>
 
 					<div className="jetpack-sync-panel__action">
-						<Button onClick={ this.onSyncRequestButtonClick } disabled={ this.shouldDisableSync() }>
+						<Button
+							onClick={ this.onSyncRequestButtonClick }
+							disabled={ this.isSyncDisabled() || this.shouldDisableSync() }>
 							{ this.translate( 'Perform full sync', { context: 'Button' } ) }
 						</Button>
 					</div>
