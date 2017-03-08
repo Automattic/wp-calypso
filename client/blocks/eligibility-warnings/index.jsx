@@ -30,7 +30,7 @@ function getHoldMessages( translate ) {
 		TRANSFER_ALREADY_EXISTS: {
 			title: translate( 'Installation in progress' ),
 			description: translate( 'Another installation is already in progress.' ),
-			supportUrl: 'https://support.wordpress.com/'
+			supportUrl: 'https://wordpress.com/help'
 		},
 		NO_BUSINESS_PLAN: {
 			title: translate( 'Business plan required' ),
@@ -40,12 +40,12 @@ function getHoldMessages( translate ) {
 		NO_JETPACK_SITES: {
 			title: translate( 'Jetpack site' ),
 			description: translate( 'This feature is not supported on Jetpack sites.' ),
-			supportUrl: 'https://support.wordpress.com/'
+			supportUrl: 'https://wordpress.com/help'
 		},
 		NO_VIP_SITES: {
 			title: translate( 'VIP site' ),
 			description: translate( 'This feature is not supported on VIP sites.' ),
-			supportUrl: 'https://support.wordpress.com/'
+			supportUrl: 'https://wordpress.com/help'
 		},
 		SITE_PRIVATE: {
 			title: translate( 'Private site' ),
@@ -55,37 +55,37 @@ function getHoldMessages( translate ) {
 		SITE_GRAYLISTED: {
 			title: translate( 'Flagged site' ),
 			description: translate( 'This feature is not supported on sites that are not in good standing.' ),
-			supportUrl: 'https://support.wordpress.com/'
+			supportUrl: 'https://wordpress.com/help'
 		},
 		NON_ADMIN_USER: {
 			title: translate( 'Admin access required' ),
 			description: translate( 'Only site administrators are allowed to use this feature.' ),
-			supportUrl: 'https://support.wordpress.com/'
+			supportUrl: 'https://support.wordpress.com/user-roles/'
 		},
 		NOT_USING_CUSTOM_DOMAIN: {
 			title: translate( 'No custom domain' ),
 			description: translate( 'Your site must use a custom domain to use this feature.' ),
-			supportUrl: 'https://support.wordpress.com/'
+			supportUrl: 'https://support.wordpress.com/register-domain/'
 		},
 		NOT_DOMAIN_OWNER: {
 			title: translate( 'Not a custom domain owner' ),
 			description: translate( 'You must be the owner of the primary domain subscription to use this feature.' ),
-			supportUrl: 'https://support.wordpress.com/'
+			supportUrl: 'https://support.wordpress.com/domains/'
 		},
 		NO_WPCOM_NAMESERVERS: {
 			title: translate( 'No WordPress.com name servers' ),
 			description: translate( 'Your custom domain must point to WordPress.com name servers.' ),
-			supportUrl: 'https://support.wordpress.com/'
+			supportUrl: 'https://support.wordpress.com/domain-helper/'
 		},
 		NOT_RESOLVING_TO_WPCOM: {
 			title: translate( 'Primary domain not pointing to WordPress.com servers' ),
 			description: translate( 'Your primary domain must point to WordPress.com servers.' ),
-			supportUrl: 'https://support.wordpress.com/'
+			supportUrl: 'https://support.wordpress.com/domain-helper/'
 		},
 		NO_SSL_CERTIFICATE: {
 			title: translate( 'Primary domain does not have a valid SSL certificate' ),
 			description: translate( 'Your primary domain must have a valid SSL certificate to use this feature.' ),
-			supportUrl: 'https://support.wordpress.com/'
+			supportUrl: 'https://support.wordpress.com/domain-helper/'
 		}
 	};
 }
