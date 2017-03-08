@@ -6,11 +6,11 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { deleteOldTicket, GUEST_TICKET_LOCALFORAGE_KEY, injectGuestSandboxTicketHandler } from '../guest-sandbox-ticket';
 import useMockery from 'test/helpers/use-mockery';
 
-let storeData = {};
+let deleteOldTicket, GUEST_TICKET_LOCALFORAGE_KEY, injectGuestSandboxTicketHandler;
 
+let storeData = {};
 const store = {
 	get( key ) {
 		return storeData[ key ];
@@ -28,6 +28,12 @@ const store = {
 describe( 'guest-sandbox-ticket', () => {
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'store', store );
+
+		const guestSandboxTicket = require( '../guest-sandbox-ticket' );
+
+		deleteOldTicket = guestSandboxTicket.deleteOldTicket;
+		GUEST_TICKET_LOCALFORAGE_KEY = guestSandboxTicket.GUEST_TICKET_LOCALFORAGE_KEY;
+		injectGuestSandboxTicketHandler = guestSandboxTicket.injectGuestSandboxTicketHandler;
 	} );
 
 	beforeEach( () => {
