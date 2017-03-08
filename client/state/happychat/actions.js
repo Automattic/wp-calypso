@@ -80,6 +80,20 @@ export const requestTranscript = () => ( dispatch, getState ) => {
 	);
 };
 
+export const sendBrowserInfo = ( siteurl ) => dispatch => {
+	const siteHelp = `Site I need help with: ${ siteurl }\n`;
+	const screenRes = `Screen Resolution: ${ screen.width }x${ screen.height }\n`;
+	const browserSize = `Browser Size: ${ window.innerWidth }x${ window.innerHeight }\n`;
+	const userAgent = `User Agent: ${ navigator.userAgent }`;
+	const msg = {
+		text: `Info\n ${ siteHelp } ${ screenRes } ${ browserSize } ${ userAgent }`,
+	};
+
+	debug( 'sending info message', msg );
+	dispatch( clearChatMessage() );
+	connection.info( msg );
+};
+
 /**
  * Opens Happychat Socket.IO client connection.
  * @return {Thunk} Action thunk
