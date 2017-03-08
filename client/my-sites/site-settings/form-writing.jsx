@@ -48,6 +48,7 @@ class SiteSettingsFormWriting extends Component {
 			eventTracker,
 			fields,
 			handleToggle,
+			handleAutosavingToggle,
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
@@ -88,7 +89,7 @@ class SiteSettingsFormWriting extends Component {
 							}
 							<MediaSettings
 								siteId={ this.props.siteId }
-								handleToggle={ handleToggle }
+								handleAutosavingToggle={ handleAutosavingToggle }
 								onChangeField={ onChangeField }
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
