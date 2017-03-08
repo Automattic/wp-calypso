@@ -57,7 +57,7 @@ class CurrentTheme extends Component {
 				<div className="current-theme__current">
 					{ screenshotPlaceholder && <div className="current-theme__img-placeholder" /> }
 					{ showScreenshot && <img
-						src={ currentTheme.screenshot + '?w=100' }
+						src={ currentTheme.screenshot + '?w=150' }
 						className="current-theme__img" /> }
 					<span className="current-theme__label">
 						{ translate( 'Current Theme' ) }
