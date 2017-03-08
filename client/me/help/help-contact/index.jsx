@@ -184,6 +184,7 @@ const HelpContact = React.createClass( {
 			this.props.isDirectlyUninitialized
 		) {
 			this.props.initializeDirectly();
+			analytics.tracks.recordEvent( 'calypso_help_contact_directly_initialize' );
 		}
 	},
 
@@ -195,6 +196,8 @@ const HelpContact = React.createClass( {
 			display_name,
 			email
 		);
+
+		analytics.tracks.recordEvent( 'calypso_help_contact_directly_ask_question' );
 
 		this.clearSavedContactForm();
 	},
