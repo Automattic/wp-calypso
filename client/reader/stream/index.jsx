@@ -37,6 +37,7 @@ import { showSelectedPost } from 'reader/utils';
 import getBlockedSites from 'state/selectors/get-blocked-sites';
 import CombinedCard from 'blocks/reader-combined-card';
 import fluxPostAdapter from 'lib/reader-post-flux-adapter';
+import config from 'config';
 
 const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );
 
@@ -205,7 +206,10 @@ class ReaderStream extends React.Component {
 		if ( ! this.state || posts !== this.state.posts || recs !== this.state.recs ) {
 			items = injectRecommendations( posts, recs );
 		}
-		items = combineCards( items );
+
+		if ( config.isEnabled( 'reader/combined-cards' ) ) {
+			items = combineCards( items );
+		}
 
 		return {
 			items,
