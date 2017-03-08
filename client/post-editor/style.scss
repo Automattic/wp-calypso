@@ -24,6 +24,10 @@
 .post-editor__inner {
 	position: relative;
 	top: 47px;
+
+	@include breakpoint( "<660px" ) {
+		overflow-x: hidden;
+	}
 }
 
 .post-editor__content {
