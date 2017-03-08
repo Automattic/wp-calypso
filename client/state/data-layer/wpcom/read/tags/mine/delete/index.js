@@ -13,6 +13,7 @@ import {
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
+import { translate } from 'i18n-calypso';
 
 export function requestUnfollow( store, action, next ) {
 	store.dispatch( http( {
@@ -46,9 +47,10 @@ export function receiveUnfollowTag( store, action, next, apiResponse ) {
 }
 
 export function receiveError( store, action, next, error ) {
-	store.dispatch( errorNotice( 'Could not unfollow tag' ) );
+	const errorText = translate( 'Could not unfollow tag: %(tag)', { tag: action.payload.slug } );
+	store.dispatch( errorNotice( errorText ) );
 	if ( process.env.NODE_ENV === 'development' ) {
-		throw new Error( error );
+		console.error( errorText, error ); // eslint-disable-line no-console
 	}
 }
 
