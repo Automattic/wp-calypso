@@ -56,7 +56,7 @@ class SiteSettingsFormSecurity extends Component {
 			>
 				<QueryJetpackModules siteId={ siteId } />
 
-				{ this.renderSectionHeader( translate( 'WordPress.com log in' ), false ) }
+				{ this.renderSectionHeader( translate( 'WordPress.com sign in' ), false ) }
 				<Sso
 					handleAutosavingToggle={ handleAutosavingToggle }
 					isSavingSettings={ isSavingSettings }
