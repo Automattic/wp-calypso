@@ -45,7 +45,7 @@ const showStats = site => site.capabilities	&&
 	site.capabilities.view_stats &&
 	( ! site.jetpack || site.isModuleActive( 'stats' ) );
 
-const PostActions = ( { className, post, site, toggleComments, postRelativeTimeStatusOnClick, postTotalViewsOnClick } ) => {
+const PostActions = ( { className, post, site, toggleComments, trackRelativeTimeStatusOnClick, trackTotalViewsOnClick } ) => {
 	const { contentLinkURL, contentLinkTarget } = getContentLink( site, post );
 	const isDraft = post.status === 'draft';
 
@@ -56,7 +56,7 @@ const PostActions = ( { className, post, site, toggleComments, postRelativeTimeS
 					post={ post }
 					link={ contentLinkURL }
 					target={ contentLinkTarget }
-					onClick={ postRelativeTimeStatusOnClick } />
+					onClick={ trackRelativeTimeStatusOnClick } />
 			</li>
 			{ ! isDraft && showComments( site, post ) &&
 				<li className="post-actions__item">
@@ -83,7 +83,7 @@ const PostActions = ( { className, post, site, toggleComments, postRelativeTimeS
 				<li className="post-actions__item post-actions__total-views">
 					<PostTotalViews
 						post={ post }
-						clickHandler={ postTotalViewsOnClick } />
+						clickHandler={ trackTotalViewsOnClick } />
 				</li>
 			}
 		</ul>
@@ -91,12 +91,17 @@ const PostActions = ( { className, post, site, toggleComments, postRelativeTimeS
 };
 
 PostActions.propTypes = {
+	className: React.PropTypes.string,
 	post: React.PropTypes.object.isRequired,
+	site: React.PropTypes.object.isRequired,
+	toggleComments: React.PropTypes.func.isRequired,
+	trackRelativeTimeStatusOnClick: React.PropTypes.func,
+	trackTotalViewsOnClick: React.PropTypes.func,
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators( {
-	postRelativeTimeStatusOnClick: () => recordEvent( 'Clicked Post Date' ),
-	postTotalViewsOnClick: () => recordEvent( 'Clicked View Post Stats' )
+	trackRelativeTimeStatusOnClick: () => recordEvent( 'Clicked Post Date' ),
+	trackTotalViewsOnClick: () => recordEvent( 'Clicked View Post Stats' )
 }, dispatch );
 
 export default connect(	null, mapDispatchToProps )( localize( PostActions ) );
