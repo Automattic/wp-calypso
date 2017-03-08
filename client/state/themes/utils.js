@@ -5,7 +5,6 @@ import startsWith from 'lodash/startsWith';
 import {
 	every,
 	get,
-	has,
 	includes,
 	map,
 	mapKeys,
@@ -213,13 +212,6 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
  * @return {Boolean}      Whether theme is a wpcom theme
  */
 export function isThemeFromWpcom( theme ) {
-	if ( ! has( theme, 'theme_uri' ) ) {
-		// If not enough information to determine, assume
-		// theme is wpcom to prevent it appearing in
-		// the uploaded themes list.
-		return true;
-	}
-
 	return includes( theme.theme_uri, 'wordpress.com' );
 }
 
