@@ -15,6 +15,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import { errorNotice } from 'state/notices/actions';
+import { translate } from 'i18n-calypso';
 
 export function requestFollowTag( store, action, next ) {
 	store.dispatch( http( {
@@ -30,7 +31,7 @@ export function requestFollowTag( store, action, next ) {
 
 export function receiveFollowTag( store, action, next, apiResponse ) {
 	if ( apiResponse.subscribed === false ) {
-		receiveError( store, action, next, 'apiResponse.subscribed === false' );
+		receiveError( store, action, next );
 		return;
 	}
 
@@ -46,9 +47,10 @@ export function receiveFollowTag( store, action, next, apiResponse ) {
 }
 
 export function receiveError( store, action, next, error ) {
+	const errorText = translate( 'Could not unfollow tag: %(tag)', { tag: action.payload.slug } );
 	store.dispatch( errorNotice( 'Could not follow tag' ) );
 	if ( process.env.NODE_ENV === 'development' ) {
-		throw new Error( error );
+		console.error( errorText, error ); // eslint-disable-line no-console
 	}
 }
 
