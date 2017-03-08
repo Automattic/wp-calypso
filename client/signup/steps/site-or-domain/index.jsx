@@ -33,7 +33,7 @@ export default class SiteOrDomain extends Component {
 		if ( queryObject && queryObject.new ) {
 			domain = queryObject.new;
 		} else if ( step && step.domainItem ) {
-			domain = step.domainItem.meta
+			domain = step.domainItem.meta;
 		}
 
 		if ( domain ) {
