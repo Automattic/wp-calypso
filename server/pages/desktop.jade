@@ -28,7 +28,13 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class='is-desktop' + ( isFluidWidth ?
 
 	body(class=isRTL ? 'rtl' : '')
 		#wpcom.wpcom-site
-			.wpcom-site__logo.noticon.noticon-wordpress
+			.layout
+				.masterbar
+				.layout__content
+					.wpcom-site__logo.noticon.noticon-wordpress
+					if hasSecondary
+						.layout__secondary
+						ul.sidebar
 		if badge
 			div.environment-badge
 				a(class='bug-report', href=feedbackURL, title='Report an issue', target='_blank')
