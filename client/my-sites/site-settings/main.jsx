@@ -15,6 +15,7 @@ import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getSitePurchases, hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purchases/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import GeneralSettings from './section-general';
 import WritingSettings from './form-writing';
 import DiscussionSettings from './form-discussion';
@@ -25,6 +26,7 @@ import GuidedTransfer from 'my-sites/guided-transfer';
 import SiteSecurity from './section-security';
 import SiteSettingsNavigation from './navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import JetpackDevModeNotice from './jetpack-dev-mode-notice';
 
 /**
  * Module vars
@@ -99,10 +101,14 @@ export class SiteSettingsComponent extends Component {
 
 	render() {
 		const { site } = this.state;
-		const { section } = this.props;
+		const { jetpackSettingsUiSupported, section } = this.props;
 
 		return (
 			<Main className="site-settings">
+					{
+						jetpackSettingsUiSupported &&
+						<JetpackDevModeNotice />
+					}
 					<SidebarNavigation />
 					<SiteSettingsNavigation site={ site } section={ section } />
 					<QueryProductsList />
@@ -131,10 +137,16 @@ SiteSettingsComponent.defaultProps = {
 
 export default connect(
 	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const jetpackSite = isJetpackSite( state, siteId );
+		const jetpackUiSupported = siteSupportsJetpackSettingsUi( state, siteId );
+
 		return {
+			siteId,
 			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
 			purchasesError: getPurchasesError( state ),
-			sitePurchases: getSitePurchases( state, getSelectedSiteId( state ) )
+			sitePurchases: getSitePurchases( state, getSelectedSiteId( state ) ),
+			jetpackSettingsUiSupported: jetpackSite && jetpackUiSupported,
 		};
 	}
 )( SiteSettingsComponent );
