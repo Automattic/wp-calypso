@@ -49,7 +49,7 @@ const Sso = ( {
 					<JetpackModuleToggle
 						siteId={ selectedSiteId }
 						moduleSlug="sso"
-						label={ translate( 'Allow log-in using WordPress.com accounts.' ) }
+						label={ translate( 'Allow sign in using WordPress.com accounts' ) }
 						description="Use WordPress.com's secure authentication"
 						disabled={ isRequestingSettings || isSavingSettings || ssoModuleUnavailable }
 					/>
@@ -68,7 +68,7 @@ const Sso = ( {
 							disabled={ isRequestingSettings || isSavingSettings || ! ssoModuleActive || ssoModuleUnavailable }
 							onChange={ handleAutosavingToggle( 'jetpack_sso_require_two_step' ) }
 						>
-							{ translate( 'Require two step authentication' ) }
+							{ translate( 'Require two-step authentication' ) }
 						</CompactFormToggle>
 					</div>
 				</FormFieldset>
