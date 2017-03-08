@@ -17,7 +17,7 @@ import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { shouldFetchSitePlans } from 'lib/plans';
 
 class CartPlanDiscountAd extends Component {
-	propTypes = {
+	static propTypes = {
 		cart: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		sitePlans: PropTypes.object
@@ -54,9 +54,9 @@ class CartPlanDiscountAd extends Component {
 		if ( plan.isDomainUpgrade ) {
 			return (
 				<CartAd>
-					<p>{ translate(
+					<p className="cart__cart-plan-discount-ad-paragraph">{ translate(
 						"You're getting a %(discount)s discount off the regular price of the plan (%(originalPrice)s)" +
-						", because you already paid for the domain.",
+						', because you already paid for the domain.',
 						{
 							args: {
 								discount: plan.formattedDiscount,
@@ -64,7 +64,7 @@ class CartPlanDiscountAd extends Component {
 							}
 						}
 					) }</p>
-					<p>{ translate(
+					<p className="cart__cart-plan-discount-ad-paragraph">{ translate(
 						'The plan and the domain can be renewed together for %(originalPrice)s / year.',
 						{
 							args: {
