@@ -10,28 +10,38 @@ import { shallow, mount } from 'enzyme';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import { ResetPasswordFormComponent } from '..';
+import ResetOptionSet from '../reset-option-set';
 
 describe( 'ResetPasswordForm', () => {
+	const exampleResetOptions = [
+		{
+			email: 'test@example.com',
+			sms: '+15555555555',
+			name: 'primary',
+		},
+		{
+			email: 'test2@example.com',
+			sms: '+16666666666',
+			name: 'secondary',
+		},
+	];
+
 	const inputSelectors = [
-		'.reset-password-form__primary-email-option',
-		'.reset-password-form__secondary-email-option',
-		'.reset-password-form__sms-option',
+		'.reset-password-form__email-option.primary',
+		'.reset-password-form__email-option.secondary',
+		'.reset-password-form__sms-option.primary',
+		'.reset-password-form__sms-option.secondary',
 	];
 
 	it( 'should render as expected', () => {
 		const wrapper = shallow(
 			<ResetPasswordFormComponent
-				primaryEmail="test@gmail.com"
-				secondaryEmail="test@yahoo.com"
-				phoneNumber="+15555555555" />
+				resetOptions={ exampleResetOptions }
+			/>
 		);
 
 		expect( wrapper ).to.have.state( 'isSubmitting' ).to.be.false;
-
-		// Expect the radio buttons to be enabled
-		inputSelectors.forEach( selector => {
-			expect( wrapper.find( selector ).prop( 'disabled' ) ).to.not.be.ok;
-		} );
+		expect( wrapper.find( ResetOptionSet ) ).to.have.length( 2 );
 
 		expect( wrapper.find( '.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 	} );
@@ -42,11 +52,10 @@ describe( 'ResetPasswordForm', () => {
 		it( 'should be disabled while submitting', function() {
 			const wrapper = mount(
 				<ResetPasswordFormComponent
-					primaryEmail="test@gmail.com"
-					secondaryEmail="test@yahoo.com"
-					phoneNumber="+15555555555" />
+					resetOptions={ exampleResetOptions }
+				/>
 			);
-			wrapper.find( '.reset-password-form__primary-email-option' ).simulate( 'change' );
+			wrapper.find( '.reset-password-form__email-option.primary' ).simulate( 'change' );
 
 			// Expect the button to be enabled
 			expect( wrapper.find( '.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.not.be.ok;
@@ -68,9 +77,8 @@ describe( 'ResetPasswordForm', () => {
 		it( 'should be disabled if no reset option is selected', function() {
 			const wrapper = mount(
 				<ResetPasswordFormComponent
-					primaryEmail="test@gmail.com"
-					secondaryEmail="test@yahoo.com"
-					phoneNumber="+15555555555" />
+					resetOptions={ exampleResetOptions }
+				/>
 			);
 
 			// Expect the button to be disabled
@@ -80,12 +88,11 @@ describe( 'ResetPasswordForm', () => {
 		it( 'should be disabled when clicked', function() {
 			const wrapper = mount(
 				<ResetPasswordFormComponent
-					primaryEmail="test@gmail.com"
-					secondaryEmail="test@yahoo.com"
-					phoneNumber="+15555555555" />
+					resetOptions={ exampleResetOptions }
+				/>
 			);
 
-			wrapper.find( '.reset-password-form__primary-email-option' ).simulate( 'click' );
+			wrapper.find( '.reset-password-form__email-option.primary' ).simulate( 'click' );
 			wrapper.find( '.reset-password-form__submit-button' ).simulate( 'click' );
 
 			expect( wrapper ).to.have.state( 'isSubmitting' ).to.be.true;
