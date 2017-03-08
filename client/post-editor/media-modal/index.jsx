@@ -30,6 +30,7 @@ import MediaModalGallery from './gallery';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import Dialog from 'components/dialog';
+import Button from 'components/button';
 import accept from 'lib/accept';
 
 import { getMediaModalView } from 'state/ui/media-modal/selectors';
@@ -174,12 +175,16 @@ export class EditorMediaModal extends Component {
 		}
 
 		const confirmMessage = this.props.translate(
-			'Are you sure you want to permanently delete this item?',
-			'Are you sure you want to permanently delete these items?',
+			'Are you sure you want to permanently delete this item? It will be ' +
+			'permanently removed from all other locations where it currently appears.',
+			'Are you sure you want to permanently delete these items? They will be ' +
+			'permanently removed from all other locations where they appear.',
 			{ count: selectedCount }
 		);
 
-		accept( confirmMessage, this.confirmDeleteMedia );
+		const deleteButton = <Button primary scary>{ this.props.translate( 'Delete' ) }</Button>;
+
+		accept( confirmMessage, this.confirmDeleteMedia, deleteButton );
 	};
 
 	onAddMedia = () => {
