@@ -8,6 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var paths = require( 'lib/paths' ),
+	Gridicon = require( 'gridicons' ),
 	config = require( 'config' );
 
 function buildCustomizeButtonURL( site ) {
@@ -36,7 +37,7 @@ module.exports = {
 					components: {
 						p1: <p />,
 						p2: <p />,
-						pencil: <span className="noticon noticon-edit" />,
+						pencil: <Gridicon icon="create" size={ 18 } />,
 					}
 				} ),
 				buttonText: i18n.translate( 'Start a Post' ),
