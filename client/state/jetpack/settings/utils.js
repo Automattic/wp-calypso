@@ -79,6 +79,10 @@ export const filterSettingsByActiveModules = ( settings ) => {
 		markdown: [
 			'wpcom_publish_comments_with_markdown',
 		],
+		sso: [
+			'jetpack_sso_match_by_email',
+			'jetpack_sso_require_two_step',
+		],
 		'after-the-deadline': [
 			'onpublish',
 			'onupdate',
