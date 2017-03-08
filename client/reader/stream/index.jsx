@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import { defer, flatMap, lastIndexOf, noop, times, clamp, includes } from 'lodash';
+import { defer, flatMap, lastIndexOf, noop, times, clamp, includes, last } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -35,6 +35,10 @@ import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import { IN_STREAM_RECOMMENDATION } from 'reader/follow-button/follow-sources';
 import { showSelectedPost } from 'reader/utils';
 import getBlockedSites from 'state/selectors/get-blocked-sites';
+import CombinedCard from 'blocks/reader-combined-card';
+import fluxPostAdapter from 'lib/reader-post-flux-adapter';
+
+const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
@@ -70,6 +74,57 @@ function getDistanceBetweenRecs() {
 		MAX_DISTANCE_BETWEEN_RECS );
 	return distance;
 }
+
+/**
+ * Returns true if two postKeys are for the same siteId or feedId.
+ *
+ * @param {*} postKey1
+ * @param {*} postKey2
+ */
+function sameSite( postKey1, postKey2 ) {
+	return postKey1 && postKey2 &&
+		! postKey1.isRecommendationBlock && ! postKey2.isRecommendationBlock && (
+			( postKey1.blogId && postKey1.blogId === postKey2.blogId ) ||
+			( postKey1.feedId && postKey1.feedId === postKey2.feedId )
+		);
+}
+
+/**
+ * Takes two postKeys and combines them into a ReaderCombinedCard postKey.
+ * Note: This only makes sense for postKeys from the same site
+ *
+ * @param {*} postKey1 must be either a ReaderCombinedCard postKey or a regular postKey
+ * @param {*} postKey2 can only be a regular postKey. may not be a combinedCard postKey or a recommendations postKey
+ */
+function combine( postKey1, postKey2 ) {
+	if ( ! postKey1 || ! postKey2 ) {
+		return null;
+	}
+
+	return {
+		isCombination: true,
+		blogId: postKey1.blogId,
+		feedId: postKey1.feedId,
+		index: postKey1.index,
+		postIds: [
+			...( postKey1.postIds || [ postKey1.postId ] ),
+			...( postKey2.postIds || [ postKey2.postId ] ),
+		],
+	}
+}
+
+const combineCards = ( postKeys ) => postKeys.reduce(
+	( accumulator, postKey ) => {
+		const lastPostKey = last( accumulator );
+		if ( sameSite( lastPostKey, postKey ) && ( ! lastPostKey.postIds || lastPostKey.postIds.length < 5 ) ) {
+			accumulator[ accumulator.length - 1 ] = combine( last( accumulator ), postKey );
+		} else {
+			accumulator.push( postKey );
+		}
+		return accumulator;
+	},
+	[]
+);
 
 function injectRecommendations( posts, recs = [] ) {
 	if ( ! recs || recs.length === 0 ) {
@@ -150,6 +205,8 @@ class ReaderStream extends React.Component {
 		if ( ! this.state || posts !== this.state.posts || recs !== this.state.recs ) {
 			items = injectRecommendations( posts, recs );
 		}
+		items = combineCards( items );
+
 		return {
 			items,
 			posts,
@@ -436,6 +493,14 @@ class ReaderStream extends React.Component {
 				key={ `recs-${ index }` }
 				followSource={ IN_STREAM_RECOMMENDATION }
 				/>;
+		}
+
+		if ( postKey.isCombination ) {
+			return <ConnectedCombinedCard
+						postKey={ postKey }
+						index={ index }
+						key={ `combined-card-${ index }` }
+					/>;
 		}
 
 		const itemKey = this.getPostRef( postKey );
