@@ -64,9 +64,16 @@ class VideoEditor extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.isPosterUpdated && ! nextProps.hasPosterUpdateError ) {
-			this.props.onUpdatePoster( this.getVideoEditorProps( nextProps.poster ) );
+		if ( ! nextProps.isPosterUpdated ) {
+			return;
 		}
+
+		if ( nextProps.hasPosterUpdateError ) {
+			this.setState( { pauseVideo: false } );
+			return;
+		}
+
+		this.props.onUpdatePoster( this.getVideoEditorProps( nextProps.poster ) );
 	}
 
 	handleSelectFrame = () => {
