@@ -32,7 +32,7 @@ const ResetPasswordEmailSent = ( props ) => {
 			<p>
 				{ translate( "If you haven't received it, please check your spam or junk folder." ) }
 			</p>
-			<a href="#">{ translate( "You didn't receive it?" ) }</a>
+			<a href="#">{ translate( "Didn't receive it?" ) }</a>
 		</Card>
 	);
 };
