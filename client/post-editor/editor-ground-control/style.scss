@@ -50,7 +50,7 @@
 	justify-content: space-between;
 	margin: 0 auto 0 0;
 	position: relative;
-	border-left: 1px solid #dce5ec;
+	border-left: 1px solid lighten( $gray, 25% );
 	padding-left: 16px;
 
 	@include breakpoint( "<660px" ) {
@@ -218,7 +218,7 @@
 }
 
 .editor-ground-control__back.button.is-borderless {
-	border-right: 1px solid #dce5ec;
+	border-right: 1px solid lighten( $gray, 25% );
 	padding: 6px 10px;
 	height: 46px;
 
