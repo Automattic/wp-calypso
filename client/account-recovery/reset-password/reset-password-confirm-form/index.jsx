@@ -11,6 +11,7 @@ import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import FormLegend from 'components/forms/form-legend';
 import FormButton from 'components/forms/form-button';
+import { STRONG_PASSWORD } from 'lib/url/support';
 
 class ResetPasswordConfirmForm extends Component {
 	render() {
