@@ -43,7 +43,6 @@ import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
 import insertMenuPlugin from './plugins/insert-menu/plugin';
 import embedReversalPlugin from './plugins/embed-reversal/plugin';
 import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
-import isIE11 from 'lib/detect-ie11';
 import mentionsPlugin from './plugins/mentions/plugin';
 
 [
@@ -388,7 +387,8 @@ module.exports = React.createClass( {
 			// Collapse selection to avoid scrolling to the bottom of the textarea
 			textNode.setSelectionRange( 0, 0 );
 
-			if ( ! isIE11 ) {
+			// Browser is not Internet Explorer 11
+			if ( 11 !== tinymce.Env.ie ) {
 				textNode.focus();
 			}
 		} else if ( this._editor ) {
