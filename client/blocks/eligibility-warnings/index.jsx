@@ -84,8 +84,8 @@ function getHoldMessages( translate ) {
 		},
 		NO_SSL_CERTIFICATE: {
 			title: translate( 'Primary domain does not have a valid SSL certificate' ),
-			description: translate( 'Your primary domain must have a valid SSL certificate to use this feature.' ),
-			supportUrl: 'https://support.wordpress.com/domain-helper/'
+			description: translate( 'You will be able to proceed once we finish setting up some security settings for the site.' ),
+			supportUrl: 'https://wordpress.com/help'
 		}
 	};
 }
