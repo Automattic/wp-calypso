@@ -42,6 +42,7 @@ var FormFields = React.createClass( {
 		return {
 			checkedRadio: 'first',
 			toggled: false,
+			toggledWithText: false,
 			compactToggled: false,
 			phoneInput: { countryCode: 'US', value: '' }
 		};
@@ -53,6 +54,10 @@ var FormFields = React.createClass( {
 
 	handleToggle: function() {
 		this.setState( { toggled: ! this.state.toggled } );
+	},
+
+	handleToggleWithText: function() {
+		this.setState( { toggledWithText: ! this.state.toggledWithText } );
 	},
 
 	handleCompactToggle: function() {
@@ -182,6 +187,13 @@ var FormFields = React.createClass( {
 					<FormToggle
 						checked={ this.state.toggled }
 						onChange={ this.handleToggle }
+					/>
+					<br />
+					<FormToggle
+						checked={ this.state.toggledWithText }
+						onChange={ this.handleToggleWithText }
+						textOn="On"
+						textOff="Off"
 					/>
 					<br />
 					<FormToggle
