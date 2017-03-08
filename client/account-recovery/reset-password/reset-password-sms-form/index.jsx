@@ -24,7 +24,8 @@ class ResetPasswordSmsForm extends Component {
 				</h2>
 				<p>
 					{ translate( 'Please enter the code you were sent by SMS. ' +
-						'It will look something like 63423423. You may need to wait a few moments before it arrives.' )
+						'It will look something like {{code}}63423423{{/code}}. You may need to wait a few moments before it arrives.',
+						{ components: { code: <code /> } } )
 					}
 				</p>
 				<FormTextInput className="reset-password-sms-form__validation-code-input" />
