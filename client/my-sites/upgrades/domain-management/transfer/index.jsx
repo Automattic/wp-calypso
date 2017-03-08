@@ -14,33 +14,31 @@ import Header from 'my-sites/upgrades/domain-management/components/header';
 import Main from 'components/main';
 import { get } from 'lodash';
 
-class Transfer extends React.Component {
-	render() {
-		const slug = this.props.selectedSite.slug;
-		const domainName = this.props.selectedDomainName;
-		const canTransferDomain = ! get( this.props.selectedSite, 'options.is_automated_transfer', false );
+function Transfer( props ) {
+	const { selectedSite, selectedDomainName, translate } = props;
+	const slug = get( selectedSite, 'slug' );
+	const canTransferDomain = ! get( selectedSite, 'options.is_automated_transfer', false );
 
-		return (
+	return (
 		<Main className="domain-management-transfer">
 			<Header
-				selectedDomainName={ domainName }
-				backHref={ paths.domainManagementEdit( slug, domainName ) }>
-				{ this.props.translate( 'Transfer Domain' ) }
+				selectedDomainName={ selectedDomainName }
+				backHref={ paths.domainManagementEdit( slug, selectedDomainName ) }>
+				{ translate( 'Transfer Domain' ) }
 			</Header>
 			<VerticalNav>
 				<VerticalNavItem path={
-					paths.domainManagementTransferOut( slug, domainName )
+					paths.domainManagementTransferOut( slug, selectedDomainName )
 				}>
-					{ this.props.translate( 'Transfer to another registrar' ) }
+					{ translate( 'Transfer to another registrar' ) }
 				</VerticalNavItem>
 					{ canTransferDomain &&
-						<VerticalNavItem path={ paths.domainManagementTransferToAnotherUser( slug, domainName ) }>
-							{ this.props.translate( 'Transfer to another user' ) }
+						<VerticalNavItem path={ paths.domainManagementTransferToAnotherUser( slug, selectedDomainName ) }>
+							{ translate( 'Transfer to another user' ) }
 						</VerticalNavItem> }
 			</VerticalNav>
 		</Main>
-		);
-	}
+	);
 }
 
 export default localize( Transfer );
