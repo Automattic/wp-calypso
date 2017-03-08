@@ -37,7 +37,8 @@ export function requestTags( store, action, next ) {
 
 export function receiveTagsSuccess( store, action, next, apiResponse ) {
 	let tags = fromApi( apiResponse );
-	// if from the read/tags api, then we should add isFollowing=true to all of the tags
+
+	// if from the read following tags api, then we should add isFollowing=true to all of the tags
 	if ( apiResponse.tags ) {
 		tags = map( tags, tag => ( { ...tag, isFollowing: true } ) );
 	}
@@ -49,9 +50,16 @@ export function receiveTagsSuccess( store, action, next, apiResponse ) {
 }
 
 export function receiveTagsError( store, action, next, error ) {
-	store.dispatch( errorNotice( 'Could not fetch the tag' ) );
+	const errorText = action.payload && action.payload.slug
+		? 'Could not load tag, try refreshing the page'
+		: 'Could not load your followed tags, try refreshing the page';
+
+	store.dispatch( errorNotice( errorText ) );
+	// imperfect solution of lying to Calypso and saying the tag doesn't exist so that the query component stops asking for it
+	// see: https://github.com/Automattic/wp-calypso/pull/11627/files#r104468481
+	store.dispatch( receiveTags( { payload: [] } ) );
 	if ( process.env.NODE_ENV === 'development' ) {
-		throw new Error( error );
+		console.error( 'could not fetch tag', error ); // eslint-disable-line no-console
 	}
 }
 

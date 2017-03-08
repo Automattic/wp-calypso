@@ -34,10 +34,10 @@ export const requestTags = tag => {
 	};
 };
 
-export const receiveTags = ( { payload, error } ) => ( {
+export const receiveTags = ( { payload, resetFollowingData = false } ) => ( {
 	type: READER_TAGS_RECEIVE,
 	payload,
-	error,
+	meta: { resetFollowingData },
 } );
 
 export const requestUnfollowTag = tag => ( {
