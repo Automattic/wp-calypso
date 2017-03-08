@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:vip:dashboard' );
+import React from 'react';
+const debug = require( 'debug' )( 'calypso:vip:dashboard' );
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	Main = require( 'components/main' ),
-	config = require( 'config' );
+import Card from 'components/card';
+import Main from 'components/main';
+import config from 'config';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'vipDashboard',
 
 	componentWillMount: function() {

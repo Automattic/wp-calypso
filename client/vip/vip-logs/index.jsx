@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:vip:logs' );
+import React from 'react';
+const debug = require( 'debug' )( 'calypso:vip:logs' );
 
 /**
  * Internal dependencies
  */
-var Main = require( 'components/main' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' ),
-	Search = require( 'components/search' ),
-	URLSearch = require( 'lib/mixins/url-search' ),
-	LogsTable = require( './logs-table' ),
-	config = require( 'config' );
+import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+import Search from 'components/search';
+import URLSearch from 'lib/mixins/url-search';
+import LogsTable from './logs-table';
+import config from 'config';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'vipLogs',
 	mixins: [ URLSearch ],
 
