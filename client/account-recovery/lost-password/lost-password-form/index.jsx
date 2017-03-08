@@ -66,7 +66,7 @@ export class LostPasswordFormComponent extends Component {
 						</li>
 						<li>
 							{ translate(
-								'Follow instructions and be re-united with your {{strong}}WordPress.com{{/strong}} account',
+								'Follow instructions and be reunited with your {{strong}}WordPress.com{{/strong}} account',
 								{ components: { strong: <strong /> } }
 							) }
 						</li>
