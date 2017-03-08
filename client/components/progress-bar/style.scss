@@ -11,6 +11,20 @@
 	}
 }
 
+.plan-thank-you-card {
+	&.is-personal-plan .progress-bar  {
+		background-color: darken( $alert-yellow, 30% );
+	}
+
+	&.is-premium-plan .progress-bar  {
+		background-color: darken( $alert-green, 30% );
+	}
+
+	&.is-business-plan .progress-bar  {
+		background-color: darken( $alert-purple, 30% );
+	}
+}
+
 .progress-bar__progress {
 	display: inline-block;
 	position: absolute;
@@ -20,6 +34,20 @@
 	background-color: lighten( $blue-dark, 10% );
 	border-radius: 4.5px;
 	transition: width 200ms;
+}
+
+.plan-thank-you-card {
+	&.is-personal-plan .progress-bar__progress {
+		background-color: $alert-yellow;
+	}
+
+	&.is-premium-plan .progress-bar__progress {
+		background-color: $alert-green;
+	}
+
+	&.is-business-plan .progress-bar__progress {
+		background-color: $alert-purple;
+	}
 }
 
 .progress-bar.is-pulsing .progress-bar__progress {
@@ -33,6 +61,38 @@
 		lighten( $blue-wordpress, 5% ) 72%,
 		$blue-wordpress 72%
 	);
+}
+
+.plan-thank-you-card {
+	&.is-personal-plan .progress-bar.is-pulsing .progress-bar__progress {
+		background-image: linear-gradient(
+			-45deg,
+			$alert-yellow 28%,
+			lighten( $alert-yellow, 20% ) 28%,
+			lighten( $alert-yellow, 20% ) 72%,
+			$alert-yellow 72%
+		);
+	}
+
+	&.is-premium-plan .progress-bar.is-pulsing .progress-bar__progress {
+		background-image: linear-gradient(
+			-45deg,
+			$alert-green 28%,
+			lighten( $alert-green, 20% ) 28%,
+			lighten( $alert-green, 20% ) 72%,
+			$alert-green 72%
+		);
+	}
+
+	&.is-business-plan .progress-bar.is-pulsing .progress-bar__progress {
+		background-image: linear-gradient(
+			-45deg,
+			$alert-purple 28%,
+			lighten( $alert-purple, 20% ) 28%,
+			lighten( $alert-purple, 20% ) 72%,
+			$alert-purple 72%
+		);
+	}
 }
 
 @keyframes progress-bar-animation {
