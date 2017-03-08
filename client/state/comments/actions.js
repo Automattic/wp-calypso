@@ -227,7 +227,7 @@ export function writeComment( commentText, siteId, postId, parentCommentId ) {
 				.post( postId )
 				.comment()
 				.replies()
-				.then( ( { found: totalCommentsCount } ) =>	dispatch( { type: COMMENTS_COUNT_RECEIVE, siteId, postId, totalCommentsCount } ) )
+				.then( ( { found: totalCommentsCount } ) => dispatch( { type: COMMENTS_COUNT_RECEIVE, siteId, postId, totalCommentsCount } ) )
 				.catch( ( err ) => commentsRequestFailure( dispatch, requestId, err ) );
 
 			return comment;
