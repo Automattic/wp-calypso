@@ -31,7 +31,7 @@ class Notices extends Component {
 
 		const noticeText = {
 			[ HAPPYCHAT_CHAT_STATUS_ABANDONED ]: translate( "We're having some connection trouble on our end, please bear with us." ),
-			[ HAPPYCHAT_CHAT_STATUS_ASSIGNING ]: translate( "We're connecting you with a Happiness Engineer" ),
+			[ HAPPYCHAT_CHAT_STATUS_ASSIGNING ]: translate( 'Connecting you with a Happiness Engineer…' ),
 			[ HAPPYCHAT_CHAT_STATUS_PENDING ]:
 				translate( "Sorry, we couldn't connect you with a Happiness Engineer. Please check back later." ),
 			[ HAPPYCHAT_CHAT_STATUS_MISSED ]:
