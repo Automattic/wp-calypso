@@ -23,7 +23,7 @@ import {
  */
 class Notices extends Component {
 	statusNotice() {
-		const { isConnected, statusNotice, translate } = this.props;
+		const { isConnected, chatStatus, translate } = this.props;
 
 		if ( ! isConnected ) {
 			return translate( "We're having trouble connecting to chat. Please check your internet connection and refresh the page." );
@@ -38,7 +38,7 @@ class Notices extends Component {
 				translate( 'Sorry, we missed you! All our Happiness Engineers are currently busy. Please check back later.' ),
 		};
 
-		return get( noticeText, statusNotice, null );
+		return get( noticeText, chatStatus, null );
 	}
 
 	render() {
