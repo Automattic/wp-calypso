@@ -4,7 +4,7 @@
 import { connect } from 'react-redux';
 import { find } from 'lodash';
 import page from 'page';
-import React from 'react';
+import React, { PropTypes } from 'react';
 import moment from 'moment';
 
 /**
@@ -16,6 +16,7 @@ import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
 import CheckoutThankYouHeader from './header';
+import { domainManagementList } from 'my-sites/upgrades/paths';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
 import { fetchReceipt } from 'state/receipts/actions';
@@ -56,6 +57,7 @@ import PurchaseDetail from 'components/purchase-detail';
 import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
+import ThankYouCard from 'components/thank-you-card';
 import upgradesPaths from 'my-sites/upgrades/paths';
 import config from 'config';
 
@@ -75,13 +77,14 @@ function findPurchaseAndDomain( purchases, predicate ) {
 
 const CheckoutThankYou = React.createClass( {
 	propTypes: {
-		failedPurchases: React.PropTypes.array,
-		productsList: React.PropTypes.object.isRequired,
-		receiptId: React.PropTypes.number,
-		selectedFeature: React.PropTypes.string,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.bool,
-			React.PropTypes.object
+		domainOnlySiteFlow: PropTypes.bool.isRequired,
+		failedPurchases: PropTypes.array,
+		productsList: PropTypes.object.isRequired,
+		receiptId: PropTypes.number,
+		selectedFeature: PropTypes.string,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.bool,
+			PropTypes.object
 		] ).isRequired
 	},
 
@@ -196,10 +199,11 @@ const CheckoutThankYou = React.createClass( {
 	},
 
 	render() {
-		let purchases = null,
-			failedPurchases = null,
+		let purchases = [],
+			failedPurchases = [],
 			wasJetpackPlanPurchased = false,
 			wasDotcomPlanPurchased = false;
+
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
 			failedPurchases = getFailedPurchases( this.props );
@@ -207,12 +211,8 @@ const CheckoutThankYou = React.createClass( {
 			wasDotcomPlanPurchased = purchases.some( isDotComPlan );
 		}
 
-		const userCreatedMoment = moment( this.props.userDate ),
-			isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) ),
-			goBackText = this.props.selectedSite ? this.translate( 'Back to my site' ) : this.translate( 'Register Domain' );
-
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
-		if ( ! purchases && ! failedPurchases && ! this.isGenericReceipt() ) {
+		if ( ! purchases.length && ! failedPurchases.length && ! this.isGenericReceipt() ) {
 			// disabled because we use global loader icon
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
@@ -220,6 +220,9 @@ const CheckoutThankYou = React.createClass( {
 			);
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
+
+		const userCreatedMoment = moment( this.props.userDate ),
+			isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) );
 
 		// streamlined paid NUX thanks page
 		if ( isNewUser && wasDotcomPlanPurchased ) {
@@ -237,6 +240,27 @@ const CheckoutThankYou = React.createClass( {
 				</Main>
 			);
 		}
+
+		if ( this.props.domainOnlySiteFlow && purchases.length > 0 && ! failedPurchases.length ) {
+			const domainName = find( purchases, isDomainRegistration ).meta;
+
+			return (
+				<Main className="checkout-thank-you">
+					{ this.renderConfirmationNotice() }
+
+					<ThankYouCard
+						name={ domainName }
+						price={ this.props.receipt.data.displayPrice }
+						heading={ this.translate( 'Thank you for your purchase!' ) }
+						description={ this.translate( "That looks like a great domain. Now it's time to get it all set up." ) }
+						buttonUrl={ domainManagementList( domainName ) }
+						buttonText={ this.translate( 'Go To Your Domain' ) }
+					/>
+				</Main>
+			);
+		}
+
+		const goBackText = this.props.selectedSite ? this.translate( 'Back to my site' ) : this.translate( 'Register Domain' );
 
 		// standard thanks page
 		return (

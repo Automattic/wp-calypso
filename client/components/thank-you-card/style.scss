@@ -1,4 +1,4 @@
-.plan-thank-you-card {
+.thank-you-card {
 	position: relative;
 	width: 100%;
 	max-width: 500px;
@@ -15,7 +15,7 @@
 	}
 }
 
-.plan-thank-you-card__header {
+.thank-you-card__header {
 	background-color: $alert-green;
 	padding: 12px 0;
 	position: relative;
@@ -28,7 +28,7 @@
 	}
 }
 
-.plan-thank-you-card__body {
+.thank-you-card__body {
 	padding: 24px;
 
 	@include breakpoint( ">480px" ) {
@@ -36,7 +36,47 @@
 	}
 }
 
-.plan-thank-you-card__heading {
+.thank-you-card__main-icon {
+	width: 72px;
+	height: 72px;
+
+	@include breakpoint( ">480px" ) {
+		width: 96px;
+		height: 96px;
+	}
+}
+
+.thank-you-card__name {
+	font-size: 18px;
+	font-weight: 500;
+	margin-bottom: 5px;
+
+	&.is-placeholder {
+		@include placeholder();
+
+		background-color: lighten( $alert-green, 40 );
+		margin-left: auto;
+		margin-right: auto;
+		width: 35%;
+	}
+}
+
+.thank-you-card__price {
+	font-size: 15px;
+	font-weight: 500;
+	color: lighten( $alert-green, 40 );
+
+	&.is-placeholder {
+		@include placeholder();
+
+		background-color: lighten( $alert-green, 40 );
+		margin-left: auto;
+		margin-right: auto;
+		width: 10%;
+	}
+}
+
+.thank-you-card__heading {
 	font-size: 18px;
 	font-weight: 600;
 	margin-bottom: 8px;
@@ -46,7 +86,7 @@
 	}
 }
 
-.plan-thank-you-card__description {
+.thank-you-card__description {
 	font-size: 13px;
 	font-weight: 400;
 	width: 280px;
@@ -59,8 +99,8 @@
 	}
 }
 
-.plan-thank-you-card__button,
-.plan-thank-you-card__button:visited {
+.thank-you-card__button,
+.thank-you-card__button:visited {
 	display: inline-block;
 	border-radius: 4px;
 	background-color: $white;
@@ -77,8 +117,8 @@
 	border-width: 1px 1px 2px;
 }
 
-.plan-thank-you-card__button.is-placeholder,
-.plan-thank-you-card__button.is-placeholder:visited {
+.thank-you-card__button.is-placeholder,
+.thank-you-card__button.is-placeholder:visited {
 	@include placeholder();
 	pointer-events: none;
 	background-color: lighten( $alert-green, 40 );
@@ -86,49 +126,19 @@
 	border-radius: 0;
 }
 
-.plan-thank-you-card__button:hover {
+.thank-you-card__button:hover {
 	border-color: darken( $alert-green, 30 );
 	color: darken( $alert-green, 10 );
 }
 
-.plan-thank-you-card__button:focus {
+.thank-you-card__button:focus {
 	color: darken( $alert-green, 10 );
 	outline: 1px dotted $white;
 }
 
-.plan-thank-you-card__button:active {
+.thank-you-card__button:active {
 	border-width: 2px 1px 1px;
 	color: darken( $alert-green, 30 );
-}
-
-.plan-thank-you-card__plan-name {
-	font-size: 18px;
-	font-weight: 500;
-	margin-bottom: 5px;
-
-	&.is-placeholder {
-		@include placeholder();
-
-		background-color: lighten( $alert-green, 40 );
-		margin-left: auto;
-		margin-right: auto;
-		width: 35%;
-	}
-}
-
-.plan-thank-you-card__plan-price {
-	font-size: 15px;
-	font-weight: 500;
-	color: lighten( $alert-green, 40 );
-
-	&.is-placeholder {
-		@include placeholder();
-
-		background-color: lighten( $alert-green, 40 );
-		margin-left: auto;
-		margin-right: auto;
-		width: 10%;
-	}
 }
 
 @keyframes floating {
@@ -146,7 +156,7 @@
 	}
 }
 
-.plan-thank-you-card__background-icons {
+.thank-you-card__background-icons {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -219,15 +229,5 @@
 		top: 161px;
 		left: 77.6%;
 		animation-delay: random(10) + s;
-	}
-}
-
-.plan-thank-you-card__main-icon {
-	width: 72px;
-	height: 72px;
-
-	@include breakpoint( ">480px" ) {
-		width: 96px;
-		height: 96px;
 	}
 }
