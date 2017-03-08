@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { map, head, get } from 'lodash';
+import { get, head, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +15,10 @@ export const HAPPYCHAT_CHAT_STATUS_PENDING = 'pending';
 export const HAPPYCHAT_CHAT_STATUS_MISSED = 'missed';
 export const HAPPYCHAT_CHAT_STATUS_ABANDONED = 'abandoned';
 
+// If the page is refreshed within the below amount of time after
+// any chat activity, Happychat will automatically reconnect.
+export const HAPPYCHAT_INACTIVE_TIMEOUT_MS = 1000 * 60 * 10;
+
 export const getHappychatChatStatus = createSelector(
 	state => state.happychat.chatStatus
 );
@@ -22,6 +26,17 @@ export const getHappychatChatStatus = createSelector(
 export const getHappychatTranscriptTimestamp = state => (
 	state.happychat.transcript_timestamp || get( head( state.happychat.timeline ), 'timestamp' )
 );
+
+export const getHappychatLastActivity = state => state.happychat.lastActivity;
+
+export const isHappychatRecentlyActive = ( state, now ) => {
+	const lastActive = getHappychatLastActivity( state );
+	if ( lastActive > now ) {
+		return false;
+	}
+
+	return ( now - lastActive ) < HAPPYCHAT_INACTIVE_TIMEOUT_MS;
+};
 
 /**
  * Gets the current happychat connection status
@@ -63,4 +78,8 @@ export const isHappychatAvailable = createSelector(
 export const getHappychatTimeline = createSelector(
 	state => state.happychat.timeline,
 	state => map( state.happychat.timeline, 'id' )
+);
+
+export const getHappychatMessage = createSelector(
+	state => get( state, [ 'happychat', 'message' ] )
 );
