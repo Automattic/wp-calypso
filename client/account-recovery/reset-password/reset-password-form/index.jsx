@@ -69,7 +69,7 @@ export class ResetPasswordFormComponent extends Component {
 					),
 				};
 			default:
-				return '';
+				return {};
 		}
 	};
 
