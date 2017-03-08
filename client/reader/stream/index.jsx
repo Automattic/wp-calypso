@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import { defer, flatMap, lastIndexOf, noop, times, clamp, includes, last, startsWith } from 'lodash';
+import { defer, flatMap, lastIndexOf, noop, times, clamp, includes, last } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -43,7 +43,6 @@ const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
-const MAX_COMBINED_CARD_POSTS = 5;
 
 function cardFactory( post ) {
 	if ( post.display_type & DISPLAY_TYPES.X_POST ) {
@@ -120,7 +119,7 @@ function combine( postKey1, postKey2 ) {
 const combineCards = ( postKeys ) => postKeys.reduce(
 	( accumulator, postKey ) => {
 		const lastPostKey = last( accumulator );
-		if ( sameSite( lastPostKey, postKey ) && ( ! lastPostKey.postIds || lastPostKey.postIds.length < MAX_COMBINED_CARD_POSTS ) ) {
+		if ( sameSite( lastPostKey, postKey ) ) {
 			accumulator[ accumulator.length - 1 ] = combine( last( accumulator ), postKey );
 		} else {
 			accumulator.push( postKey );
@@ -179,6 +178,7 @@ class ReaderStream extends React.Component {
 		placeholderFactory: PropTypes.func,
 		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
+		shouldCombineCards: PropTypes.bool,
 	}
 
 	static defaultProps = {
@@ -191,6 +191,7 @@ class ReaderStream extends React.Component {
 		showPrimaryFollowButtonOnCards: true,
 		showMobileBackToSidebar: true,
 		isDiscoverStream: false,
+		shouldCombineCards: config.isEnabled( 'reader/combined-cards' ),
 	};
 
 	getStateFromStores( store = this.props.postsStore, recommendationsStore = this.props.recommendationsStore ) {
@@ -210,11 +211,8 @@ class ReaderStream extends React.Component {
 			items = injectRecommendations( posts, recs );
 		}
 
-		if ( config.isEnabled( 'reader/combined-cards' ) ) {
-			// Create combined cards unless we're on a site or feed stream
-			if ( ! startsWith( store.id, 'feed:' ) && ! startsWith( store.id, 'site:' ) ) {
-				items = combineCards( items );
-			}
+		if ( this.props.shouldCombineCards ) {
+			items = combineCards( items );
 		}
 
 		return {
@@ -506,16 +504,18 @@ class ReaderStream extends React.Component {
 		}
 
 		if ( postKey.isCombination ) {
+			const handleClick = post => showSelectedPost( {
+				postKey: {
+					postId: post.feed_item_ID,
+					feedId: post.feed_ID,
+				}
+			} );
+
 			return <ConnectedCombinedCard
 						postKey={ postKey }
 						index={ index }
 						key={ `combined-card-${ index }` }
-						onClick={ post => showSelectedPost( {
-							postKey: {
-								postId: post.feed_item_ID,
-								feedId: post.feed_ID,
-							}
-						} ) }
+						onClick={ handleClick }
 					/>;
 		}
 

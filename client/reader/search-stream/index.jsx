@@ -207,7 +207,9 @@ class SearchStream extends Component {
 				showFollowInHeader={ true }
 				cardFactory={ this.cardFactory }
 				placeholderFactory={ this.placeholderFactory }
-				className="search-stream" >
+				className="search-stream"
+				shouldCombinedCards={ false }
+			>
 				{ this.props.showBack && <HeaderBack /> }
 				<DocumentHead title={ documentTitle } />
 				<div ref={ this.handleStreamMounted } />
