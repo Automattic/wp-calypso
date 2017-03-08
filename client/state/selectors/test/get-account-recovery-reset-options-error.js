@@ -26,4 +26,16 @@ describe( 'getAccountRecoveryResetOptionsError()', () => {
 
 		assert.deepEqual( getAccountRecoveryResetOptionsError( state ), expectedError );
 	} );
+
+	it( 'should return null if no error exists.', () => {
+		const state = {
+			accountRecovery: {
+				reset: {
+					options: {}
+				},
+			},
+		};
+
+		assert.isNull( getAccountRecoveryResetOptionsError( state ) );
+	} );
 } );
