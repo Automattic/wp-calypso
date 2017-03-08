@@ -16,8 +16,8 @@ const ResetPasswordEmailSent = ( props ) => {
 	} = props;
 
 	return (
-		<div className="reset-password-email-sent">
-			<h2 className="reset-password-email-sent__title">
+		<div className="reset-password-email-form">
+			<h2 className="reset-password-email-form__title">
 				{ translate( 'Reset your password' ) }
 			</h2>
 			<Card>
