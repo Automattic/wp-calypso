@@ -54,8 +54,8 @@ const MediaSettings = ( {
 				<JetpackModuleToggle
 					siteId={ siteId }
 					moduleSlug="photon"
-					label={ translate( 'Speed up your images and photos with Photon.' ) }
-					description="Enabling Photon is required to use Tiled Galleries."
+					label={ translate( 'Speed up your images and photos with Photon' ) }
+					description={ translate( 'Enabling Photon is required to use Tiled Galleries' ) }
 					disabled={ isRequestingSettings || isSavingSettings || photonModuleUnavailable }
 					/>
 			</FormFieldset>
@@ -70,7 +70,7 @@ const MediaSettings = ( {
 				<JetpackModuleToggle
 					siteId={ siteId }
 					moduleSlug="carousel"
-					label={ translate( 'Transform standard image galleries into full-screen slideshows.' ) }
+					label={ translate( 'Transform standard image galleries into full-screen slideshows' ) }
 					disabled={ isRequestingSettings || isSavingSettings }
 					/>
 				<div className="media-settings__module-settings site-settings__child-settings">
@@ -79,7 +79,7 @@ const MediaSettings = ( {
 						checked={ fields.carousel_display_exif || false }
 						disabled={ isRequestingSettings || isSavingSettings || ! carouselActive }
 						onChange={ handleAutosavingToggle( 'carousel_display_exif' ) } >
-						{ translate( 'Show photo metadata in carousel, when available.' ) }
+						{ translate( 'Show photo metadata in carousel, when available' ) }
 					</FormToggle>
 					<FormLabel className={ labelClassName } htmlFor="carousel_background_color">
 						{ translate( 'Background color' ) }
