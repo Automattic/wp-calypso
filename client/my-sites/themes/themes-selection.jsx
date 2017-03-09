@@ -17,7 +17,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
-	getThemesForQueryIgnoringPage,
+	getAllAvailableThemesForQueryIgnoringPage,
 	getThemesFoundForQuery,
 	isRequestingThemesForQuery,
 	isThemesLastPageForQuery,
@@ -197,7 +197,7 @@ const ConnectedThemesSelection = connect(
 			query,
 			source: sourceSiteId,
 			siteSlug: getSiteSlug( state, siteId ),
-			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
+			themes: getAllAvailableThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
 			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
 			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
