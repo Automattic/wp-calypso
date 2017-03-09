@@ -121,7 +121,7 @@
 		"press-this": true,
 		"push-notifications": true,
 		"reader": true,
-		"reader/combined-cards": false,
+		"reader/combined-cards": true,
 		"reader/full-errors": true,
 		"reader/list-management": false,
 		"reader/recommendations/posts": true,

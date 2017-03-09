@@ -208,7 +208,7 @@ class SearchStream extends Component {
 				cardFactory={ this.cardFactory }
 				placeholderFactory={ this.placeholderFactory }
 				className="search-stream"
-				shouldCombinedCards={ false }
+				shouldCombineCards={ false }
 			>
 				{ this.props.showBack && <HeaderBack /> }
 				<DocumentHead title={ documentTitle } />
