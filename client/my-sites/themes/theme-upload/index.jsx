@@ -49,8 +49,7 @@ import EligibilityWarnings from 'blocks/eligibility-warnings';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
-import Banner from 'components/banner';
-import { PLAN_BUSINESS, FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import {
 	getEligibility,
@@ -302,7 +301,6 @@ class Upload extends React.Component {
 			themeId,
 			upgradeJetpack,
 			backPath,
-			isBusiness,
 			isJetpack,
 			isMultisite
 		} = this.props;
@@ -326,11 +324,6 @@ class Upload extends React.Component {
 					site={ selectedSite }
 					source="upload" />
 				<HeaderCake backHref={ backPath }>{ translate( 'Upload theme' ) }</HeaderCake>
-				{ ! isBusiness && ! isJetpack && <Banner
-					feature={ FEATURE_UPLOAD_THEMES }
-					plan={ PLAN_BUSINESS }
-					title={ translate( 'To upload themes, upgrade to Business Plan' ) }
-					description={ translate( 'Unlimited themes, advanced customization, no ads, live chat support, and more!' ) } /> }
 				{ upgradeJetpack && <JetpackManageErrorPage
 					template="updateJetpack"
 					siteId={ siteId }
