@@ -49,62 +49,76 @@
 }
 
 .themes-magic-search-card__token {
+	/* These are required to make it work */
 	font: inherit;
 	pointer-events: none;
-	color: rgba(0, 0, 0, 0.2);
-	border-radius: 2px;
-	height: 24px;
 	position: relative;
-	z-index: 21; //needs to be made in a proper way.
 
-		.themes-magic-search-card__token-taxonomy {
-			font: inherit;
-			pointer-events: none;
-			color: inherit;
-			background-color: rgba( $white, 0.2 );
-			border-top-left-radius: 3px;
-			border-bottom-left-radius: 3px;
-			height: 100%;
-			display: inline-block;
-			z-index: 1;
-		}
+	/* These are styling */
 
-		.themes-magic-search-card__token-separator {
-			font: inherit;
-			pointer-events: none;
-			color: rgba(0, 0, 0, 0);
-			background: linear-gradient( to right, $white 50%, rgb( 128, 128, 128 ) 50% );
-			height: 100%;
-			display: inline-block;
-			z-index: 1;
-		}
+	&:before {
+		content: "";
+		position: absolute;
+		width: 100%;
+		height: calc( 100% + -3px );
+		z-index: -1;
+	}
 
+	.themes-magic-search-card__token-taxonomy {
+		/* These are required to make it work */
+		pointer-events: none;
+		display: inline-block;
+
+		/* These are styling */
+		color: $gray;
+	}
+
+	.themes-magic-search-card__token-separator {
+		/* These are required to make it work */
+		pointer-events: none;
+		display: inline-block;
+
+		/* These are styling */
+		color: $gray;
+		height: 24px;
+	}
+
+	.themes-magic-search-card__token-filter {
+		pointer-events: none;
+		display: inline-block;
+
+		/* These are styling */
+		color: $blue-dark;
+		border-bottom: 3px solid $blue-dark;
+	}
+
+	&.themes-magic-search-card__token-type-feature {
 		.themes-magic-search-card__token-filter {
-			font: inherit;
-			pointer-events: none;
-			color: inherit;
-			background-color: rgba( $gray-dark, 0.5 );
-			border-top-right-radius: 3px;
-			border-bottom-right-radius: 3px;
-			height: 100%;
-			display: inline-block;
-			z-index: 1;
+			color: $alert-green;
+			border-bottom: 3px solid $alert-green;
 		}
-}
+	}
 
-.themes-magic-search-card__token::before {
-	content: '';
-	position: absolute;
-	background-color: transparent;
-	border-radius: 3px;
-	border-width: 0.5px;
-	border-style: solid;
-	border-color: rgba( $gray-dark, 0.5 );
-	box-sizing: border-box;
- 	left: 0;
- 	width: 100%;
-	height: 100%;
-	z-index: 25;
+	&.themes-magic-search-card__token-type-color {
+		.themes-magic-search-card__token-filter {
+			color: $blue-medium;
+			border-bottom: 3px solid $blue-medium;
+		}
+	}
+
+	&.themes-magic-search-card__token-type-layout {
+		.themes-magic-search-card__token-filter {
+			color: $orange_fire;
+			border-bottom: 3px solid $orange_fire;
+		}
+	}
+
+	&.themes-magic-search-card__token-type-subject {
+		.themes-magic-search-card__token-filter {
+			color: $alert-purple;
+			border-bottom: 3px solid $alert-purple;
+		}
+	}
 }
 
 .themes-magic-search-card__search-text {

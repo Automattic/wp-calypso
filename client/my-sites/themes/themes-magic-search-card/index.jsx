@@ -146,8 +146,12 @@ class ThemesMagicSearchCard extends React.Component {
 				} else if ( filterIsValid( token ) ) {
 					const separator = ':';
 					const [ taxonomy, filter ] = token.split( separator );
+					const themesTokenTypeClass = classNames(
+						'themes-magic-search-card__token',
+						'themes-magic-search-card__token-type-' + taxonomy
+					);
 					return (
-						<span className="themes-magic-search-card__token" key={ i }>
+						<span className={ themesTokenTypeClass } key={ i }>
 							<span className="themes-magic-search-card__token-taxonomy">{ taxonomy }</span>
 							<span className="themes-magic-search-card__token-separator">{ separator }</span>
 							<span className="themes-magic-search-card__token-filter">{ filter }</span>
