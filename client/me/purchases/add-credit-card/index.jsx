@@ -49,7 +49,9 @@ class AddCreditCard extends Component {
 					createPaygateToken={ this.createPaygateToken }
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
 					saveStoredCard={ this.props.addStoredCard }
-					successCallback={ this.goToBillingHistory } />
+					successCallback={ this.goToBillingHistory }
+					showUsedForExistingPurchasesInfo={ true }
+				/>
 			</Main>
 		);
 	}
