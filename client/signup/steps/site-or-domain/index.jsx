@@ -18,25 +18,34 @@ import { externalRedirect } from 'lib/route/path';
 
 export default class SiteOrDomain extends Component {
 	componentWillMount() {
-		const { queryObject } = this.props;
-		let isValidDomain = queryObject && queryObject.new;
-
-		if ( isValidDomain ) {
-			const domainParts = queryObject.new.split( '.' );
-
-			if ( domainParts.length > 1 ) {
-				const tld = domainParts.slice( 1 ).join( '.' );
-				isValidDomain = !! tlds[ tld ];
-			} else {
-				isValidDomain = false;
-			}
-		}
-
-		if ( ! isValidDomain ) {
+		if ( ! this.getDomainName() ) {
 			// /domains domain search is an external application to calypso,
 			// therefor a full redirect required:
 			externalRedirect( '/domains' );
 		}
+	}
+
+	getDomainName() {
+		const { queryObject, step } = this.props;
+
+		let domain, isValidDomain = false;
+
+		if ( queryObject && queryObject.new ) {
+			domain = queryObject.new;
+		} else if ( step && step.domainItem ) {
+			domain = step.domainItem.meta;
+		}
+
+		if ( domain ) {
+			const domainParts = domain.split( '.' );
+
+			if ( domainParts.length > 1 ) {
+				const tld = domainParts.slice( 1 ).join( '.' );
+				isValidDomain = !! tlds[ tld ];
+			}
+		}
+
+		return isValidDomain && domain;
 	}
 
 	getChoices() {
@@ -76,10 +85,9 @@ export default class SiteOrDomain extends Component {
 			stepName,
 			goToStep,
 			goToNextStep,
-			queryObject,
 		} = this.props;
 
-		const domain = queryObject.new;
+		const domain = this.getDomainName();
 		const tld = domain.split( '.' ).slice( 1 ).join( '.' );
 		const domainItem = cartItems.domainRegistration( { productSlug: tlds[ tld ], domain } );
 

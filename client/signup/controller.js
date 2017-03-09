@@ -67,8 +67,8 @@ export default {
 	},
 
 	redirectToFlow( context, next ) {
-		if ( context.path !== utils.getValidPath( context.params ) ) {
-			return page.redirect( utils.getValidPath( context.params ) );
+		if ( context.pathname !== utils.getValidPath( context.params ) ) {
+			return page.redirect( utils.getValidPath( context.params ) + ( context.querystring ? '?' + context.querystring : '' ) );
 		}
 
 		next();
