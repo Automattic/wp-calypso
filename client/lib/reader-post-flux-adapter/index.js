@@ -69,14 +69,20 @@ const fluxPostAdapter = Component => {
 	return connect(
 		( state, ownProps ) => {
 			const { feedId, blogId } = ownProps.postKey;
-			const feed = feedId && getFeed( state, feedId );
-			const site = blogId && getSite( state, blogId );
+			let feed, site;
+			if ( feedId ) {
+				feed = getFeed( state, feedId );
+				site = feed && feed.blog_ID ? getSite( state, feed.blog_ID ) : undefined;
+			} else {
+				site = getSite( state, blogId );
+				feed = site && site.feed_ID ? getFeed( state, site.feed_ID ) : undefined;
+			}
 			return {
 				feed,
 				site
 			};
 		}
 	)( ReaderPostFluxAdapter );
-}
+};
 
 export default fluxPostAdapter;
