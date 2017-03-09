@@ -14,7 +14,7 @@ import EditorPostType from 'post-editor/editor-post-type';
 function EditorSidebarHeader( { translate, toggleSidebar } ) {
 	return (
 		<div className="editor-sidebar__header">
-			<EditorPostType />
+			<EditorPostType isSettings />
 			<Button
 				compact borderless
 				className="editor-sidebar__back"

@@ -17,14 +17,30 @@ import QueryPostTypes from 'components/data/query-post-types';
 import { decodeEntities } from 'lib/formatting';
 import PostStatus from 'blocks/post-status';
 
-function EditorPostType( { translate, siteId, typeSlug, type, globalId } ) {
+function EditorPostType( { translate, siteId, typeSlug, type, globalId, isSettings } ) {
 	let label;
 	if ( 'page' === typeSlug ) {
-		label = translate( 'Page', { context: 'noun' } );
+		if ( isSettings ) {
+			label = translate( 'Page Settings' );
+		} else {
+			label = translate( 'Page', { context: 'noun' } );
+		}
 	} else if ( 'post' === typeSlug ) {
-		label = translate( 'Post', { context: 'noun' } );
+		if ( isSettings ) {
+			label = translate( 'Post Settings' );
+		} else {
+			label = translate( 'Post', { context: 'noun' } );
+		}
 	} else if ( type ) {
-		label = type.labels.singular_name;
+		if ( isSettings ) {
+			label = translate( '%s: Settings', {
+				args: type.labels.singular_name,
+				comment: "type refers to a post type's singular noun",
+			} );
+		} else {
+			label = type.labels.singular_name;
+		}
+
 		label = decodeEntities( label );
 	} else {
 		label = translate( 'Loading…' );
@@ -49,7 +65,8 @@ EditorPostType.propTypes = {
 	siteId: PropTypes.number,
 	typeSlug: PropTypes.string,
 	type: PropTypes.object,
-	globalId: PropTypes.string
+	globalId: PropTypes.string,
+	isSettings: PropTypes.bool,
 };
 
 export default connect( ( state ) => {

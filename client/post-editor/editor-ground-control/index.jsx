@@ -333,12 +333,7 @@ export default React.createClass( {
 						className="editor-ground-control__toggle-sidebar"
 						onClick={ this.props.toggleSidebar }
 					>
-						<Gridicon icon="cog" /> <span className="editor-ground-control__button-label">
-							{ this.translate( '{{type/}} Settings', {
-								components: { type: <EditorPostType /> }
-							} )
-							}
-						</span>
+						<Gridicon icon="cog" /> <span className="editor-ground-control__button-label"><EditorPostType isSettings /></span>
 					</Button>
 					<div className="editor-ground-control__publish-combo">
 						<EditorPublishButton
