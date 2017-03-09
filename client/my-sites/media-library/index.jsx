@@ -25,6 +25,7 @@ module.exports = React.createClass( {
 	mixins: [ urlSearch ],
 
 	propTypes: {
+		className: React.PropTypes.string,
 		site: React.PropTypes.object,
 		filter: React.PropTypes.string,
 		enabledFilters: React.PropTypes.arrayOf( React.PropTypes.string ),
@@ -143,9 +144,11 @@ module.exports = React.createClass( {
 			);
 		}
 
-		classes = classNames( 'media-library', {
-			'is-single': this.props.single
-		} );
+		classes = classNames(
+			'media-library',
+			{ 'is-single': this.props.single },
+			this.props.className,
+		);
 
 		return (
 			<div className={ classes }>
