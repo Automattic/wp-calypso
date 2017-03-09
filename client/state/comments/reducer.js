@@ -8,6 +8,9 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
+	COMMENTS_APPROVE,
+	COMMENTS_APPROVE_UPDATE,
+	COMMENTS_DISAPPROVE,
 	COMMENTS_RECEIVE,
 	COMMENTS_REMOVE,
 	COMMENTS_ERROR,
@@ -72,6 +75,10 @@ function updateSpecificState( state, action, updaterOrValue ) {
  */
 export function items( state = Immutable.Map(), action ) {
 	switch ( action.type ) {
+		case COMMENTS_APPROVE:
+		case COMMENTS_APPROVE_UPDATE:
+		case COMMENTS_DISAPPROVE:
+			break;
 		case COMMENTS_RECEIVE:
 			// create set of ids for faster lookup for filter later
 			const newIds = Immutable.Set( action.comments.map( comment => comment.ID ) );

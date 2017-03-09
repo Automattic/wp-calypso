@@ -3,8 +3,11 @@
  */
 import wpcom from 'lib/wp';
 import {
+	COMMENTS_APPROVE,
+	COMMENTS_APPROVE_UPDATE,
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_RECEIVE,
+	COMMENTS_DISAPPROVE,
 	COMMENTS_REQUEST,
 	COMMENTS_REQUEST_SUCCESS,
 	COMMENTS_REQUEST_FAILURE,
@@ -308,6 +311,30 @@ export function unlikeComment( siteId, postId, commentId ) {
 			likeCount: data.like_count
 		} ) ).catch( () => dispatch( {
 			type: COMMENTS_LIKE,
+			siteId,
+			postId,
+			commentId
+		} ) );
+	};
+}
+
+export function approveComment( siteId, postId, commentId ) {
+	return dispatch => {
+		dispatch( {
+			type: COMMENTS_APPROVE,
+			siteId,
+			postId,
+			commentId
+		} );
+
+		return wpcom.site( siteId ).comment( commentId ).update( { status: 'approved' } ).then( data => dispatch( {
+			type: COMMENTS_APPROVE_UPDATE,
+			siteId,
+			postId,
+			commentId,
+			status: data.status
+		} ) ).catch( () => dispatch( {
+			type: COMMENTS_DISAPPROVE,
 			siteId,
 			postId,
 			commentId

@@ -1,4 +1,4 @@
-/***
+/**
  * External dependencies
  */
 import React from 'react';
@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
-/***
+/**
  * Internal dependencies
  */
 import { isEnabled } from 'config';
@@ -147,12 +147,12 @@ class PostComment extends React.Component {
 
 		return (
 			<div className="comments__comment-actions">
-				{ showReplyButton
-					? <button className="comments__comment-actions-reply" onClick={ this.handleReply }>
+				{ showReplyButton &&
+					<button className="comments__comment-actions-reply" onClick={ this.handleReply }>
 						<Gridicon icon="reply" size={ 18 } />
 						<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
 					</button>
-					: null }
+				}
 				{ showCancelReplyButton && <button className="comments__comment-actions-cancel-reply" onClick={ this.props.onReplyCancel }>{ translate( 'Cancel reply' ) }</button> }
 				<CommentLikeButtonContainer
 					className="comments__comment-actions-like"
@@ -161,36 +161,31 @@ class PostComment extends React.Component {
 					postId={ this.props.post.ID }
 					commentId={ comment.ID }
 				/>
-				{
-					isEnabled( 'comments/moderation-tools-in-posts' ) &&
+				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
 					<button className="comments__comment-actions-like" onClick={ () => {} }>
 						<Gridicon icon="checkmark" size={ 18 }/>
 						<span className="comments__comment-actions-like-label">{ translate( 'Approve' )}</span>
 					</button>
 				}
-				{
-					isEnabled( 'comments/moderation-tools-in-posts' ) &&
+				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
 					<button className="comments__comment-actions-like" onClick={ () => {} }>
 						<Gridicon icon="trash" size={ 18 }/>
 						<span className="comments__comment-actions-like-label">{ translate( 'Trash' )}</span>
 					</button>
 				}
-				{
-					isEnabled( 'comments/moderation-tools-in-posts' ) &&
+				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
 					<button className="comments__comment-actions-like" onClick={ () => {} }>
 						<Gridicon icon="spam" size={ 18 }/>
 						<span className="comments__comment-actions-like-label">{ translate( 'Spam' )}</span>
 					</button>
 				}
-				{
-					isEnabled( 'comments/moderation-tools-in-posts' ) &&
+				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
 					<button className="comments__comment-actions-like" onClick={ () => {} }>
 						<Gridicon icon="pencil" size={ 18 }/>
 						<span className="comments__comment-actions-like-label">{ translate( 'Edit' )}</span>
 					</button>
 				}
-				{
-					isEnabled( 'comments/moderation-tools-in-posts' ) &&
+				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
 					<EllipsisMenu toggleTitle={ translate( 'More' ) }>
 						<PopoverMenuItem icon="checkmark" onClick={ () => {} }>{ translate( 'Approve' ) }</PopoverMenuItem>
 						<PopoverMenuItem icon="trash" onClick={ () => {} }>{ translate( 'Trash' ) }</PopoverMenuItem>
@@ -206,6 +201,7 @@ class PostComment extends React.Component {
 	render() {
 		const commentsTree = this.props.commentsTree;
 		const comment = commentsTree.getIn( [ this.props.commentId, 'data' ] ).toJS();
+
 		const haveReplyWithError = commentsTree.getIn( [ this.props.commentId, 'children' ] )
 			.some( ( childId ) => commentsTree.getIn( [ childId, 'data', 'placeholderState' ] ) === PLACEHOLDER_STATE.ERROR );
 
