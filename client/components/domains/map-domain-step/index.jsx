@@ -172,7 +172,7 @@ const MapDomainStep = React.createClass( {
 			switch ( status ) {
 				case domainAvailability.MAPPABLE:
 				case domainAvailability.UNKNOWN:
-					this.props.onMapDomain( domain );
+					this.props.onMapDomain( { domain_name: domain } );
 					return;
 
 				case domainAvailability.AVAILABLE:
