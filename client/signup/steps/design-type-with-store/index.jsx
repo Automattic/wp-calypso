@@ -40,10 +40,22 @@ class DesignTypeWithStoreStep extends Component {
 		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
 			// Note: Don't make this translatable because it's only visible to English-language users
 			return [
-				{ type: 'blog', label: 'Test copy for label', description: 'Test copy for description', image: <BlogImage /> },
-				{ type: 'page', label: 'Test copy for label', description: 'Test copy for description', image: <PageImage /> },
-				{ type: 'grid', label: 'Test copy for label', description: 'Test copy for description', image: <GridImage /> },
-				{ type: 'store', label: 'Test copy for label', description: 'Test copy for description', image: <StoreImage /> },
+				{ type: 'blog',
+					label: 'A blog',
+					description: 'To share your ideas, stories, and photographs with your followers.',
+					image: <BlogImage /> },
+				{ type: 'page',
+					label: 'A website',
+					description: 'To promote your business, organization, or brand and connect with your audience.',
+					image: <PageImage /> },
+				{ type: 'grid',
+					label: 'A portfolio',
+					description: 'To present your creative projects in a visual showcase.',
+					image: <GridImage /> },
+				{ type: 'store',
+					label: 'An online store',
+					description: 'To sell your products or services and accept payments.',
+					image: <StoreImage /> },
 			];
 		}
 
@@ -95,16 +107,22 @@ class DesignTypeWithStoreStep extends Component {
 	};
 
 	renderChoice = ( choice ) => {
-		let choiceDescription = <p className="design-type-with-store__choice-description">{ choice.description }</p>;
-		let choiceLabelClass = 'design-type-with-store__choice-label design-type-with-store__choice-label--with-arrow';
+		let choiceLabelClass = 'design-type-with-store__choice-label';
+		let choiceCardClass = 'design-type-with-store__choice';
+		let choiceDescription = null;
+		let callToAction = null;
 
-		if ( abtest( 'signupStepOneCopyChanges' ) === 'original' ) {
-			choiceDescription = null;
-			choiceLabelClass = 'design-type-with-store__choice-label';
+		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
+			choiceLabelClass = 'design-type-with-store__choice-label design-type-with-store__choice-label--test';
+			choiceCardClass = 'design-type-with-store__choice design-type-with-store__choice--test';
+			choiceDescription = <p className="design-type-with-store__choice-description">{ choice.description }</p>;
+			callToAction = <div className="design-type-with-store__choice-cta">
+								<span className="button is-compact">Create {choice.label}</span>
+							</div>;
 		}
 
 		return (
-			<Card className="design-type-with-store__choice" key={ choice.type }>
+			<Card className={ choiceCardClass } key={ choice.type }>
 				<a className="design-type-with-store__choice-link"
 					href="#"
 					onClick={ this.handleChoiceClick( choice.type ) }>
@@ -112,6 +130,7 @@ class DesignTypeWithStoreStep extends Component {
 					<div className="design-type-with-store__choice-copy">
 						<h2 className={ choiceLabelClass }>{ choice.label }</h2>
 						{ choiceDescription }
+						{ callToAction }
 					</div>
 				</a>
 			</Card>
@@ -119,6 +138,8 @@ class DesignTypeWithStoreStep extends Component {
 	};
 
 	renderChoices() {
+		let disclaimer = null;
+
 		const storeWrapperClassName = classNames(
 			'design-type-with-store__store-wrapper',
 			{ 'is-hidden': ! this.state.showStore }
@@ -129,6 +150,13 @@ class DesignTypeWithStoreStep extends Component {
 			{ 'is-hidden': this.state.showStore }
 		);
 
+		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' && ! this.state.showStore ) {
+			// Note: Don't make this translatable because it's only visible to English-language users
+			disclaimer = <p className="design-type-with-store__disclaimer">
+								Not sure? Pick the closest option. You can always change your settings later.
+							</p>;
+		}
+
 		return (
 			<div className="design-type-with-store__substep-wrapper">
 				<div className={ storeWrapperClassName }>
@@ -137,6 +165,7 @@ class DesignTypeWithStoreStep extends Component {
 				<div className={ designTypeListClassName }>
 					{ this.getChoices().map( this.renderChoice ) }
 				</div>
+				{ disclaimer }
 			</div>
 		);
 	}
@@ -174,18 +203,17 @@ class DesignTypeWithStoreStep extends Component {
 
 	getHeaderText() {
 		const { translate } = this.props;
-		let headerText = translate( 'What would you like your homepage to look like?' );
 
 		if ( this.state.showStore ) {
-			headerText = translate( 'Create your WordPress Store' );
+			return translate( 'Create your WordPress Store' );
 		}
 
 		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
 			// Note: Don't make this translatable because it's only visible to English-language users
-			headerText = 'Test title for Header text';
+			return 'Hello! Let’s create your new site.';
 		}
 
-		return headerText;
+		return translate( 'What would you like your homepage to look like?' );
 	}
 
 	getSubHeaderText() {
@@ -206,7 +234,7 @@ class DesignTypeWithStoreStep extends Component {
 
 		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
 			// Note: Don't make this translatable because it's only visible to English-language users
-			return 'Test title for subTitle';
+			return 'What kind of site do you need? Choose an option below:';
 		}
 
 		return translate( 'This will help us figure out what kinds of designs to show you.' );

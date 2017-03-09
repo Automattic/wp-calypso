@@ -28,7 +28,6 @@
 .design-type-with-store__store-wrapper {
 	position: absolute;
 	width: 100%;
-
 	opacity: 1;
 	filter: blur( 0 );
 	transform: translateZ( 0 ) translateX( 0 );
@@ -47,6 +46,7 @@
 	width: 230px;
 	flex-grow: 1;
 	transition: all 100ms ease-in-out;
+	position: relative;
 
 	a, svg {
 		display: block;
@@ -58,6 +58,10 @@
 	}
 }
 
+.design-type-with-store__choice--test {
+	text-align: center;
+}
+
 .design-type-with-store__choice-copy {
 	padding: 15px;
 	border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
@@ -66,6 +70,15 @@
 .design-type-with-store__choice-label {
 	color: darken( $gray, 20% );
 	padding: 0;
+}
+
+.design-type-with-store__choice-label--test {
+	color: $blue-wordpress;
+	position: relative;
+}
+
+.design-type-with-store__choice-cta {
+	margin-top: 10px;
 }
 
 .design-type-with-store__choice-description {
@@ -221,4 +234,10 @@
 	height: 30px;
 	display: block;
 	margin-bottom: 18px;
+}
+
+.design-type-with-store__disclaimer {
+	text-align: center;
+	color: darken( $gray, 20 );
+	font-size: 0.875em;
 }
