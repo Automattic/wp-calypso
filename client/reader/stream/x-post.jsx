@@ -22,7 +22,7 @@ class CrossPost extends PureComponent {
 		xMetadata: React.PropTypes.object.isRequired,
 		xPostedTo: React.PropTypes.array,
 		handleClick: React.PropTypes.func.isRequired,
-		translate: React.PropTypes.func.isRequried,
+		translate: React.PropTypes.func.isRequired,
 	}
 
 	handleTitleClick = ( event ) => {

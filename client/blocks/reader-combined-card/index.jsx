@@ -15,8 +15,8 @@ import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import { siteNameFromSiteAndPost } from 'reader/utils';
 import ReaderCombinedCardPost from './post';
 
-const ReaderCombinedCard = ( { posts, site, feed, onClickPost, isDiscover, translate } ) => {
-	const feedId = get( feed, 'ID' );
+const ReaderCombinedCard = ( { posts, site, feed, onClick, isDiscover, translate } ) => {
+	const feedId = get( feed, 'feed_ID' );
 	const siteId = get( site, 'ID' );
 	const siteIcon = get( site, 'icon.img' );
 	const feedIcon = get( feed, 'image' );
@@ -55,7 +55,7 @@ const ReaderCombinedCard = ( { posts, site, feed, onClickPost, isDiscover, trans
 						key={ `post-${ post.ID }` }
 						post={ post }
 						streamUrl={ streamUrl }
-						onClick={ onClickPost }
+						onClick={ onClick }
 						isDiscover={ isDiscover }
 						/>
 				) ) }
@@ -68,7 +68,7 @@ ReaderCombinedCard.propTypes = {
 	posts: React.PropTypes.array.isRequired,
 	site: React.PropTypes.object,
 	feed: React.PropTypes.object,
-	onClickPost: React.PropTypes.func,
+	onClick: React.PropTypes.func,
 	isDiscover: React.PropTypes.bool,
 };
 

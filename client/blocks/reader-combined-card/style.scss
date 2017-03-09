@@ -22,12 +22,14 @@
 	line-height: 1em;
 	margin-bottom: 0;
 	top: 0;
+	color: $blue-medium;
 }
 
 .reader-combined-card__header-post-count {
 	color: $gray;
 	margin-bottom: 0;
 	line-height: 1em;
+	margin-top: 4px;
 }
 
 /* Posts */
@@ -133,4 +135,17 @@
 
 .reader-combined-card__site-link a {
 	color: $blue-wordpress;
+}
+
+// Override standard .card styles in stream
+.reader-combined-card.card {
+	border-bottom: 1px solid lighten( $gray, 30% );
+	box-shadow: none;
+	margin: 0 15px;
+	padding: 18px 0 0;
+	position: relative;
+
+	@include breakpoint( ">660px" ) {
+		margin: 0;
+	}
 }
