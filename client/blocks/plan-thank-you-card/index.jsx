@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -15,6 +16,8 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import { getPlan } from 'lib/plans';
 import formatCurrency from 'lib/format-currency';
 import ThankYouCard from 'components/thank-you-card';
+import PlanIcon from 'components/plans/plan-icon';
+import { getPlanClass } from 'lib/plans/constants';
 
 const PlanThankYouCard = ( {
 	plan,
@@ -26,9 +29,16 @@ const PlanThankYouCard = ( {
 		args: { planName: getPlan( plan.productSlug ).getTitle() }
 	} );
 	const price = plan && formatCurrency( plan.rawPrice, plan.currencyCode );
+	const productSlug = plan && plan.productSlug;
+	const planClass = productSlug
+		? getPlanClass( productSlug )
+		: '';
+	const planIcon = productSlug
+		? <PlanIcon plan={ productSlug } />
+		: null;
 
 	return (
-		<div>
+		<div className={ classnames( 'plan-thank-you-card', planClass ) }>
 			<QuerySites siteId={ siteId } />
 			<QuerySitePlans siteId={ siteId } />
 
@@ -39,6 +49,7 @@ const PlanThankYouCard = ( {
 				description={ translate( "Now that we've taken care of the plan, it's time to see your new site." ) }
 				buttonUrl={ siteUrl }
 				buttonText={ translate( 'Visit Your Site' ) }
+				icon={ planIcon }
 			/>
 		</div>
 	);

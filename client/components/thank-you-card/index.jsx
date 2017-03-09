@@ -7,12 +7,16 @@ import React, { PropTypes } from 'react';
 
 // Non standard gridicon sizes are used here because we use them as background pattern with various sizes and rotation
 /* eslint-disable wpcalypso/jsx-gridicon-size */
-const ThankYouCard = ( { heading, description, buttonUrl, buttonText, price, name } ) => (
+const ThankYouCard = ( { heading, description, buttonUrl, buttonText, price, name, icon } ) => (
 	<div className="thank-you-card">
 		<div className="thank-you-card__header">
-			<Gridicon className="thank-you-card__main-icon" icon="checkmark-circle" size={ 140 } />
+			{
+				icon
+				? <div className="thank-you-card__main-icon">{ icon }</div>
+				: <Gridicon className="thank-you-card__main-icon" icon="checkmark-circle" size={ 140 } />
+			}
 
-			<div>
+			<div className="thank-you-card__header-detail">
 				<div className={ classnames( 'thank-you-card__name', { 'is-placeholder': ! name } ) }>
 					{ name }
 				</div>
@@ -60,6 +64,7 @@ ThankYouCard.propTypes = {
 	heading: PropTypes.string,
 	name: PropTypes.string,
 	price: PropTypes.string,
+	icon: PropTypes.node
 };
 
 export default ThankYouCard;

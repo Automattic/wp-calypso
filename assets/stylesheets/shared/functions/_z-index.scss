@@ -73,6 +73,7 @@ $z-layers: (
 		'.accessible-focus .theme__more-button button:focus': 1,
 		'.domain-suggestion.is-clickable:hover': 1,
 		'.editor-html-toolbar': 1,
+		'.thank-you-card__header': 1,
 		'.is-installing .theme': 2,
 		'.reader-update-notice': 2,
 		'.people-list-item .card__link-indicator': 2,
@@ -222,6 +223,11 @@ $z-layers: (
 	),
 	'.stats-post-summary': (
 		'.section-nav': 1
+	),
+	'.thank-you-card__header' : (
+		'.thank-you-card__background-icons .gridicon': 1,
+		'.thank-you-card__main-icon': 2,
+		'.thank-you-card__header-detail': 2
 	),
 
 	// The following may be inserted into different areas.
