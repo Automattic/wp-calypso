@@ -92,7 +92,7 @@
 	max-height: 13px * 1.4 * 1;
 	word-wrap: break-word;
 	position: relative;
-	margin-top: 3px;
+	margin-top: 2px;
 
 	&::after {
 		@include long-content-fade( $size: 20% );
@@ -130,7 +130,7 @@
 	max-height: 16px * 1.4 * 1;
 	word-wrap: break-word;
 	position: relative;
-	margin-top: 1px;
+	margin-top: 4px;
 
 	&::after {
 		@include long-content-fade( $size: 20% );
