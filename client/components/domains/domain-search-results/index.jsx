@@ -115,7 +115,7 @@ var DomainSearchResults = React.createClass( {
 
 	handleAddMapping: function( event ) {
 		event.preventDefault();
-		this.props.onAddMapping( { domain_name: this.props.lastDomainSearched } );
+		this.props.onAddMapping( this.props.lastDomainSearched );
 	},
 
 	renderPlaceholders: function() {

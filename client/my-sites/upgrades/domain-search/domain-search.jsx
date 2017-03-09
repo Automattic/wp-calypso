@@ -77,8 +77,8 @@ var DomainSearch = React.createClass( {
 		}
 	},
 
-	handleAddMapping( suggestion ) {
-		upgradesActions.addItem( cartItems.domainMapping( { domain: suggestion.domain_name } ) );
+	handleAddMapping( domain ) {
+		upgradesActions.addItem( cartItems.domainMapping( { domain } ) );
 		page( '/checkout/' + this.props.sites.getSelectedSite().slug );
 	},
 
