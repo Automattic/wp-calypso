@@ -3,6 +3,7 @@
  */
 import { parse as parseUrl } from 'url';
 import startsWith from 'lodash/startsWith';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -24,6 +25,13 @@ function isOutsideCalypso( url ) {
 }
 
 function isExternal( url ) {
+	// parseURL will return hostname = null if no protocol or double-slashes
+	// the url passed in might be of form `en.support.wordpress.com`
+	// so for this function we'll append double-slashes to fake it
+	// if it is a relative URL the hostname will still be empty from parseURL
+	if ( ! includes( url, '//' ) ) {
+		url = '//' + url;
+	}
 	const { hostname } = parseUrl( url, false, true ); // no qs needed, and slashesDenoteHost to handle protocol-relative URLs
 
 	if ( ! hostname ) {
