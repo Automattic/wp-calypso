@@ -238,6 +238,7 @@ export default React.createClass( {
 					<MediaLibrarySelectedData siteId={ site.ID }>
 						<MediaLibrary
 							{ ...this.props }
+							className="media__main-section"
 							onFilterChange={ this.onFilterChange }
 							site={ site }
 							single={ false }
