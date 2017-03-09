@@ -44,6 +44,7 @@ import {
 } from 'state/plugins/premium/selectors';
 // Store for existing plugins
 import PluginsStore from 'lib/plugins/store';
+import ProgressBar from 'components/progress-bar';
 
 class JetpackThankYouCard extends Component {
 	trackConfigFinished( eventName, options = null ) {
@@ -304,6 +305,39 @@ class JetpackThankYouCard extends Component {
 		);
 	}
 
+	renderAction() {
+		const { plugins } = this.props;
+		if ( ! plugins || ! Array.isArray( plugins ) ) {
+			return null;
+		}
+
+		const countSteps = plugins.length * 3;
+		const countCompletion = plugins.reduce( ( total, plugin ) => {
+			switch ( plugin.status ) {
+				case 'done':
+					total += 3;
+					break;
+				case 'activate':
+				case 'configure':
+					total += 2;
+					break;
+				case 'install':
+					total += 1;
+					break;
+			}
+
+			return total;
+		}, 0 );
+
+		if ( countSteps === countCompletion ) {
+			return null;
+		}
+
+		return (
+			<ProgressBar value={ countCompletion } total={ countSteps } isPulsing />
+		);
+	}
+
 	render() {
 		const site = this.props.selectedSite;
 		const turnOnManage = site && ! site.canManage();
@@ -320,7 +354,7 @@ class JetpackThankYouCard extends Component {
 				<QueryPluginKeys siteId={ site.ID } />
 				{ this.renderErrorNotice() }
 				{ turnOnManage && this.renderManageNotice() }
-				<PlanThankYouCard siteId={ site.ID } />
+				<PlanThankYouCard siteId={ site.ID } action={ this.renderAction() } />
 				{ turnOnManage
 					? <FeatureExample>{ this.renderPlugins() }</FeatureExample>
 					: this.renderPlugins()
