@@ -33,16 +33,14 @@ class MediaLibraryUploadUrl extends Component {
 	};
 
 	upload = event => {
-		const isError = ! event.target.checkValidity();
+		event.preventDefault();
 
+		const isError = ! event.target.checkValidity();
 		this.setState( { isError } );
 
 		if ( isError || ! this.props.site ) {
-			event.preventDefault();
 			return;
 		}
-
-		event.preventDefault();
 
 		MediaActions.clearValidationErrors( this.props.site.ID );
 		MediaActions.add( this.props.site.ID, this.state.value );
