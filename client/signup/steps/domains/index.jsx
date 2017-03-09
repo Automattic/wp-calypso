@@ -149,7 +149,7 @@ const DomainsStep = React.createClass( {
 		const domainItem = cartItems.domainMapping( { domain } );
 		const isPurchasingItem = true;
 
-		mapDomainAnalytics.recordEvent( 'addDomainButtonClick', domain.domain_name, 'signup' );
+		mapDomainAnalytics.recordEvent( 'addDomainButtonClick', domain, 'signup' );
 
 		SignupActions.submitSignupStep( Object.assign( {
 			processingMessage: this.translate( 'Adding your domain mapping' ),
@@ -157,7 +157,7 @@ const DomainsStep = React.createClass( {
 			[ sectionName ]: state,
 			domainItem,
 			isPurchasingItem,
-			siteUrl: domain.domain_name,
+			siteUrl: domain,
 			stepSectionName: this.props.stepSectionName
 		}, this.getThemeArgs() ) );
 
