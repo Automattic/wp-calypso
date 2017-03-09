@@ -119,6 +119,11 @@ export default React.createClass( {
 	},
 
 	getModalButtons() {
+		// do not render buttons if the media image editor is opened
+		if ( this.state.editedItem !== null ) {
+			return null;
+		}
+
 		return [
 			{
 				action: 'delete',
@@ -206,7 +211,7 @@ export default React.createClass( {
 		return (
 			<div ref="container" className="main main-column media" role="main">
 				<SidebarNavigation />
-				{ ( this.state.editedItem !== null || this.state.currentDetail !== null) &&
+				{ ( this.state.editedItem !== null || this.state.currentDetail !== null ) &&
 					<Dialog
 						isVisible={ true }
 						additionalClassNames="editor-media-modal media__item-dialog"
