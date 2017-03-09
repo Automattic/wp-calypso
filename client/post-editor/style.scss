@@ -53,12 +53,22 @@
 .post-editor__content {
 	margin: 0 auto;					// born centered, so when width collapses for sidebar anim it doesn't move
 	left: 0;
-	animation: closedsidebar 0.15s cubic-bezier(0.075, 0.82, 0.165, 1) normal 1 forwards;
+	@include breakpoint( ">960px" ) {
+		animation: closedsidebar 0.15s cubic-bezier(0.075, 0.82, 0.165, 1) normal 1 forwards;
+	}
+	@include breakpoint( "<960px" ) {
+		animation: closedsidebar-min 0.15s cubic-bezier(0.075, 0.82, 0.165, 1) normal 1 forwards;
+	}
 
 	.focus-sidebar & {
-		@include breakpoint( ">660px" ) {
-			width: calc( 100% - 272px );		// subtract sidebar width
+		@include breakpoint( ">960px" ) {
 			animation: opensidebar 0.15s cubic-bezier(0.075, 0.82, 0.165, 1) normal 1 forwards;
+			width: calc( 100% - ( #{ $sidebar-width-max } ) );		// subtract sidebar width
+		}
+
+		@include breakpoint( "<960px" ) {
+			animation: opensidebar-min 0.15s cubic-bezier(0.075, 0.82, 0.165, 1) normal 1 forwards;
+			width: calc( 100% - ( #{ $sidebar-width-min } ) );		// subtract sidebar width
 		}
 	}
 }
@@ -69,17 +79,17 @@
 	}
 	99.9% {
 		left: 0;
-		transform: translateX( -136px );
+		transform: translateX( -#{ $sidebar-width-max / 2 } );
 	}
 	100% {
-		left: -136px;
+		left: -#{ $sidebar-width-max / 2 };
 		transform: none;
 	}
 }
 
 @keyframes closedsidebar {
 	0% {
-		transform: translateX( -136px );
+		transform: translateX( -#{ $sidebar-width-max / 2 } );
 	}
 	99.9% {
 		transform: translateX( 0 );
@@ -89,6 +99,34 @@
 		transform: none;
 	}
 }
+
+@keyframes opensidebar-min {
+	0% {
+		transform: translateX( 0 );
+	}
+	99.9% {
+		left: 0;
+		transform: translateX( -#{ $sidebar-width-min / 2 } );
+	}
+	100% {
+		left: -#{ $sidebar-width-min / 2 };
+		transform: none;
+	}
+}
+
+@keyframes closedsidebar-min {
+	0% {
+		transform: translateX( -#{ $sidebar-width-min / 2 } );
+	}
+	99.9% {
+		transform: translateX( 0 );
+	}
+	100% {
+		left: 0;
+		transform: none;
+	}
+}
+
 
 .post-editor__site {
 	display:  flex;
@@ -124,6 +162,12 @@
 	margin: 0 auto;
 
 	@include breakpoint( ">960px" ) {
+		width: 700px;
+	}
+}
+
+.focus-content .editor__header {
+	@include breakpoint( ">660px" ) {
 		width: 700px;
 	}
 }
