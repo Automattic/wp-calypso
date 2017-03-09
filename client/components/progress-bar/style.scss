@@ -10,10 +10,10 @@
 	.progress-bar.is-pulsing .progress-bar__progress {
 		background-image: linear-gradient(
 			-45deg,
-			darken( $color, 20% ) 28%,
-			lighten( $color, 20% ) 28%,
-			lighten( $color, 20% ) 72%,
-			darken( $color, 20% ) 72%
+			$color 28%,
+			lighten( $color, 5% ) 28%,
+			lighten( $color, 5% ) 72%,
+			$color 72%
 		);
 	}
 }
