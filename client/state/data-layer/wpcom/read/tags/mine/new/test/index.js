@@ -124,7 +124,7 @@ describe( 'follow tag request', () => {
 
 			receiveError( { dispatch }, action, next, error );
 
-			expect( dispatch ).to.have.been.calledTwice;
+			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWithMatch( {
 				type: NOTICE_CREATE,
 			} );
