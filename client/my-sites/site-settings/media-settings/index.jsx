@@ -47,7 +47,7 @@ const MediaSettings = ( {
 				<div className="media-settings__info-link-container site-settings__info-link-container">
 					<InfoPopover position={ 'left' }>
 						<ExternalLink target="_blank" icon={ true } href={ 'https://jetpack.com/support/photon' } >
-							{ translate( 'Learn more about Photon' ) }
+							{ translate( 'Learn more about Photon.' ) }
 						</ExternalLink>
 					</InfoPopover>
 				</div>
@@ -55,7 +55,7 @@ const MediaSettings = ( {
 					siteId={ siteId }
 					moduleSlug="photon"
 					label={ translate( 'Speed up your images and photos with Photon' ) }
-					description={ translate( 'Enabling Photon is required to use Tiled Galleries' ) }
+					description={ translate( 'Enabling Photon is required to use Tiled Galleries.' ) }
 					disabled={ isRequestingSettings || isSavingSettings || photonModuleUnavailable }
 					/>
 			</FormFieldset>
@@ -63,7 +63,7 @@ const MediaSettings = ( {
 				<div className="media-settings__info-link-container site-settings__info-link-container">
 					<InfoPopover position={ 'left' }>
 						<ExternalLink target="_blank" icon={ true } href={ 'https://jetpack.com/support/carousel' } >
-							{ translate( 'Learn more about Carousel' ) }
+							{ translate( 'Learn more about Carousel.' ) }
 						</ExternalLink>
 					</InfoPopover>
 				</div>
