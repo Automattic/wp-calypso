@@ -124,8 +124,6 @@ if ( calypsoEnv === 'desktop' ) {
 		'wpcom',
 	];
 
-	webpackConfig.entry.polyfill = [ path.join( __dirname, 'client', 'lib', 'polyfill' ) ];
-
 	webpackConfig.plugins.push(
 		new webpack.optimize.CommonsChunkPlugin(
 			'vendor',
