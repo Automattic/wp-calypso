@@ -306,8 +306,39 @@ class JetpackThankYouCard extends Component {
 	}
 
 	renderAction() {
+		const { plugins } = this.props;
+		if ( ! plugins || ! Array.isArray( plugins ) ) {
+			return null;
+		}
+
+		const countSteps = plugins.length * 4;
+		const countCompletion = plugins.reduce( ( total, plugin ) => {
+			switch ( plugin.status ) {
+				case 'done':
+					total += 4;
+					break;
+				case 'activate':
+				case 'configure':
+					total += 3;
+					break;
+				case 'install':
+					total += 2;
+					break;
+				case 'wait':
+				default:
+					total += 1;
+					break;
+			}
+
+			return total;
+		}, 0 );
+
+		if ( countSteps === countCompletion ) {
+			return null;
+		}
+
 		return (
-			<ProgressBar value={ 40 } isPulsing />
+			<ProgressBar value={ countCompletion } total={ countSteps } isPulsing />
 		);
 	}
 
