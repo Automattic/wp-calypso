@@ -435,7 +435,7 @@ export function getThemePurchaseUrl( state, themeId, siteId ) {
 export function getThemeCustomizeUrl( state, themeId, siteId ) {
 	const customizerUrl = getCustomizerUrl( state, siteId );
 
-	if ( ! ( siteId && themeId ) ) {
+	if ( ! ( siteId && themeId ) || isThemeActive( state, themeId, siteId ) ) {
 		return customizerUrl;
 	}
 

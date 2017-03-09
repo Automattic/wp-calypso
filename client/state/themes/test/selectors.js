@@ -1228,6 +1228,34 @@ describe( 'themes selectors', () => {
 			expect( customizeUrl ).to.equal( '/customize/example.wordpress.com?theme=pub/twentysixteen' );
 		} );
 
+		it( 'given a theme and wpcom site ID on which that theme is active, should return the correct customize URL', () => {
+			const customizeUrl = getThemeCustomizeUrl(
+				{
+					sites: {
+						items: {
+							2916284: {
+								ID: 2916284,
+								URL: 'https://example.wordpress.com'
+							}
+						}
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen }
+							} )
+						},
+						activeThemes: {
+							2916284: 'twentysixteen'
+						}
+					}
+				},
+				'twentysixteen',
+				2916284
+			);
+			expect( customizeUrl ).to.equal( '/customize/example.wordpress.com' );
+		} );
+
 		context( 'on a Jetpack site', () => {
 			context( 'with a non-WP.com theme', () => {
 				const state = {
