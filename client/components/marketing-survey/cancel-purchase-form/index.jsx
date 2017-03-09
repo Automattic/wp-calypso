@@ -14,6 +14,7 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const CancelPurchaseForm = React.createClass( {
 	propTypes: {
@@ -71,6 +72,7 @@ const CancelPurchaseForm = React.createClass( {
 	},
 
 	onRadioOneChange( event ) {
+		this.props.clickRadio( 'radio_1', event.currentTarget.value );
 		const newState = {
 			...this.state,
 			questionOneRadio: event.currentTarget.value,
@@ -90,6 +92,7 @@ const CancelPurchaseForm = React.createClass( {
 	},
 
 	onRadioTwoChange( event ) {
+		this.props.clickRadio( 'radio_2', event.currentTarget.value );
 		const newState = {
 			...this.state,
 			questionTwoRadio: event.currentTarget.value,
@@ -450,5 +453,12 @@ const CancelPurchaseForm = React.createClass( {
 
 export default connect(
 	null,
-	null,
+	( dispatch ) => ( {
+		clickRadio: ( option, value ) => dispatch( recordTracksEvent(
+			'calypso_cancel_purchase_survey_select_radio_option', {
+				option: option,
+				value: value
+			}
+		) ),
+	} )
 )( CancelPurchaseForm );
