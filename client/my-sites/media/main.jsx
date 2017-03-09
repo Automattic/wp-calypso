@@ -18,6 +18,7 @@ import MediaUtils from 'lib/media/utils';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import accept from 'lib/accept';
+import Main from 'components/main';
 
 export default React.createClass( {
 	displayName: 'Media',
@@ -209,53 +210,54 @@ export default React.createClass( {
 	render: function() {
 		const site = this.props.sites.getSelectedSite();
 		return (
-			<div ref="container" className="main main-column media" role="main">
-				<SidebarNavigation />
-				{ ( this.state.editedItem !== null || this.state.currentDetail !== null ) &&
-					<Dialog
-						isVisible={ true }
-						additionalClassNames="editor-media-modal media__item-dialog"
-						buttons={ this.getModalButtons() }
-						onClose={ this.closeDetailsModal }
-					>
-					{ this.state.currentDetail !== null &&
-						<EditorMediaModalDetail
-							site={ site }
-							items={ this.state.selectedImages }
-							selectedIndex={ this.state.currentDetail }
-							onReturnToList={ this.closeDetailsModal }
-							onEditItem={ this.editImage }
-							onRestoreItem={ this.restoreOriginalMedia }
-							onSelectedIndexChange={ this.setDetailSelectedIndex }
-						/>
+			<Main className="media main-column">
+				<div ref="container">
+					<SidebarNavigation />
+					{ ( this.state.editedItem !== null || this.state.currentDetail !== null ) &&
+						<Dialog
+							isVisible={ true }
+							additionalClassNames="editor-media-modal media__item-dialog"
+							buttons={ this.getModalButtons() }
+							onClose={ this.closeDetailsModal }
+						>
+						{ this.state.currentDetail !== null &&
+							<EditorMediaModalDetail
+								site={ site }
+								items={ this.state.selectedImages }
+								selectedIndex={ this.state.currentDetail }
+								onReturnToList={ this.closeDetailsModal }
+								onEditItem={ this.editImage }
+								onRestoreItem={ this.restoreOriginalMedia }
+								onSelectedIndexChange={ this.setDetailSelectedIndex }
+							/>
+						}
+						{ this.state.editedItem !== null &&
+							<ImageEditor
+								siteId={ site && site.ID }
+								media={ this.state.selectedImages[ this.state.editedItem ] }
+								onDone={ this.onImageEditorDone }
+								onCancel={ this.onImageEditorCancel }
+							/>
+						}
+						</Dialog>
 					}
-					{ this.state.editedItem !== null &&
-						<ImageEditor
-							siteId={ site && site.ID }
-							media={ this.state.selectedImages[ this.state.editedItem ] }
-							onDone={ this.onImageEditorDone }
-							onCancel={ this.onImageEditorCancel }
-						/>
-					}
-					</Dialog>
-				}
-				{ site && site.ID && (
-					<MediaLibrarySelectedData siteId={ site.ID }>
-						<MediaLibrary
-							{ ...this.props }
-							className="media__main-section"
-							onFilterChange={ this.onFilterChange }
-							site={ site }
-							single={ false }
-							filter={ this.props.filter }
-							onEditItem={ this.openDetailsModalForASingleImage }
-							onViewDetails={ this.openDetailsModalForAllSelected }
-							onDeleteItem={ this.handleDeleteMediaEvent }
-							modal={ false }
-							containerWidth={ this.state.containerWidth } />
-					</MediaLibrarySelectedData>
-				) }
-			</div>
+					{ site && site.ID && (
+						<MediaLibrarySelectedData siteId={ site.ID }>
+							<MediaLibrary
+								{ ...this.props }
+								onFilterChange={ this.onFilterChange }
+								site={ site }
+								single={ false }
+								filter={ this.props.filter }
+								onEditItem={ this.openDetailsModalForASingleImage }
+								onViewDetails={ this.openDetailsModalForAllSelected }
+								onDeleteItem={ this.handleDeleteMediaEvent }
+								modal={ false }
+								containerWidth={ this.state.containerWidth } />
+						</MediaLibrarySelectedData>
+					) }
+				</div>
+			</Main>
 		);
 	}
 } );
