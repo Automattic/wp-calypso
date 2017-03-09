@@ -6,15 +6,15 @@
 @import 'upload-url';
 
 .media-library__header {
-	padding-top: 11px;
-	padding-bottom: 11px;
+	padding-top: 12px;
+	padding-bottom: 12px;
 	display: flex;
 }
 
 .dialog__content .media-library__header.card {
 	box-shadow: none;
 	.media-library__scale-range.range {
-		top: 7px;
+		top: 11px;
 	}
 }
 
@@ -65,6 +65,7 @@
 
 		@include breakpoint( ">480px" ) {
 			display: flex;
+
 		}
 
 		@include breakpoint( ">660px" ) {
@@ -74,6 +75,17 @@
 		@include breakpoint( ">960px" ) {
 			display: flex;
 			margin-bottom: 17px;
+		}
+	}
+}
+
+.editor-media-modal .media-library__filter-bar {
+	.plan-storage {
+		@include breakpoint( ">480px" ) {
+			margin-bottom: 16px;
+		}
+		@include breakpoint( ">960px" ) {
+			margin-bottom: 16px;
 		}
 	}
 }
