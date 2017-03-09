@@ -107,18 +107,16 @@ class DesignTypeWithStoreStep extends Component {
 	};
 
 	renderChoice = ( choice ) => {
-		let choiceLabelClass = 'design-type-with-store__choice-label';
 		let choiceCardClass = 'design-type-with-store__choice';
+		let choiceLabel = <h2 className="design-type-with-store__choice-label">{ choice.label }</h2>;
 		let choiceDescription = null;
 		let callToAction = null;
 
 		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
-			choiceLabelClass = 'design-type-with-store__choice-label design-type-with-store__choice-label--test';
+			choiceLabel = null;
 			choiceCardClass = 'design-type-with-store__choice design-type-with-store__choice--test';
 			choiceDescription = <p className="design-type-with-store__choice-description">{ choice.description }</p>;
-			callToAction = <div className="design-type-with-store__choice-cta">
-								<span className="button is-compact">Create {choice.label}</span>
-							</div>;
+			callToAction = <span className="button is-compact">Create {choice.label}</span>;
 		}
 
 		return (
@@ -128,9 +126,9 @@ class DesignTypeWithStoreStep extends Component {
 					onClick={ this.handleChoiceClick( choice.type ) }>
 					{ choice.image }
 					<div className="design-type-with-store__choice-copy">
-						<h2 className={ choiceLabelClass }>{ choice.label }</h2>
-						{ choiceDescription }
 						{ callToAction }
+						{ choiceLabel }
+						{ choiceDescription }
 					</div>
 				</a>
 			</Card>
