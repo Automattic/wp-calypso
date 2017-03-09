@@ -19,6 +19,37 @@ class FeaturedImageDropZone extends Component {
 		post: PropTypes.object.isRequired,
 	};
 
+	state = { dispatcherID: null };
+
+	componentWillMount = () => {
+		const dispatcherID = Dispatcher.register( this.mediaEventsReducer );
+		this.setState( { dispatcherID: dispatcherID } );
+	};
+
+	componentWillUnmount = () => {
+		if ( this.state.dispatcherID ) {
+			Dispatcher.unregister( this.state.dispatcherID );
+			this.setState( { dispatcherID: null } );
+		}
+	};
+
+	mediaEventsReducer = ( payload ) => {
+		const action = payload.action;
+
+		switch ( action.type ) {
+			case 'CREATE_MEDIA_ITEM':
+				// called when the transient blob has been created and the upload starts
+				break;
+			case 'RECEIVE_MEDIA_ITEM':
+				// called when the media file has been uploaded and needs to be refreshed from the server
+				setTimeout( () => {
+					PostActions.edit( {
+						featured_image: action.data.ID
+					} );
+				}, 0 );
+		}
+	};
+
 	onFilesDrop = ( files ) => {
 		/**
 		 * Filter files for `image` media prefix and return the first image.
@@ -30,23 +61,6 @@ class FeaturedImageDropZone extends Component {
 		if ( ! droppedImage ) {
 			return false;
 		}
-
-		Dispatcher.register( ( payload ) => {
-			const action = payload.action;
-
-			switch ( action.type ) {
-				case 'CREATE_MEDIA_ITEM':
-					// called when the transient blob has been created and the upload starts
-					break;
-				case 'RECEIVE_MEDIA_ITEM':
-					// called when the media file has been uploaded and needs to be refreshed from the server
-					setTimeout( () => {
-						PostActions.edit( {
-							featured_image: action.data.ID
-						} );
-					}, 0 );
-			}
-		} );
 
 		MediaActions.clearValidationErrors( this.props.site.ID );
 		MediaActions.add( this.props.site.ID, [ droppedImage ] );
