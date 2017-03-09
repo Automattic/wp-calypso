@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { assign, filter, findIndex, findLastIndex, forEach, last, map, isNumber, defer } from 'lodash';
+import { assign, filter, findIndex, findLastIndex, forEach, last, map, defer } from 'lodash';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
