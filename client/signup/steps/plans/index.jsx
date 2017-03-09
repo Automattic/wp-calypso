@@ -75,7 +75,7 @@ class PlansStep extends Component {
 				<QueryPlans />
 
 				<PlansFeaturesMain
-					site={ selectedSite }
+					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
 					onUpgradeClick={ this.onSelectPlan }
