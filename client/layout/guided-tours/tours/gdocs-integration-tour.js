@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { translate } from 'i18n-calypso';
-import { overEvery as and } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -15,20 +15,14 @@ import {
 	LinkQuit,
 	Quit,
 } from 'layout/guided-tours/config-elements';
-import {
-	hasUserPastedFromGoogleDocs,
-	isEnabled
-} from 'state/ui/guided-tours/contexts';
+import { hasUserPastedFromGoogleDocs } from 'state/ui/guided-tours/contexts';
 
 export const GDocsIntegrationTour = makeTour(
 	<Tour
 		name="gdocsIntegrationTour"
 		version="20170227"
 		path="/post"
-		when={ and(
-			isEnabled( 'guided-tours/gdocs-integration-tour' ),
-			hasUserPastedFromGoogleDocs
-		) }
+		when={ hasUserPastedFromGoogleDocs }
 	>
 		<Step name="init" placement="right">
 			<p>{ translate( 'Do you want to post drafts directly from Google Docs?' ) }</p>

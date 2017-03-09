@@ -42,7 +42,6 @@
 		"devdocs/components-usage-stats": false,
 		"dev/test-helper": true,
 		"guided-tours/design-showcase-welcome": true,
-		"guided-tours/gdocs-integration-tour": true,
 		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,
 		"help": true,
