@@ -103,8 +103,7 @@ export function isSitePlanDiscounted(
 export function getPlanDiscountedRawPrice(
 	state,
 	siteId,
-	productSlug,
-	{ isMonthly = false } = {}
+	productSlug
 ) {
 	const plan = getSitePlan( state, siteId, productSlug );
 
@@ -113,7 +112,7 @@ export function getPlanDiscountedRawPrice(
 	}
 	const discountPrice = plan.rawPrice;
 
-	return isMonthly ? parseFloat( ( discountPrice / 12 ).toFixed( 2 ) ) : discountPrice;
+	return discountPrice;
 }
 
 /**
