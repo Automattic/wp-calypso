@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { head } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +16,7 @@ import Accordion from 'components/accordion';
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
 import FeaturedImage from 'post-editor/editor-featured-image';
 import MediaActions from 'lib/media/actions';
+import MediaUtils from 'lib/media/utils';
 
 import Dispatcher from 'dispatcher';
 import { editPost } from 'state/posts/actions';
@@ -49,6 +51,17 @@ class EditorDrawerFeaturedImage extends Component {
 	}
 
 	onFilesDrop = ( files ) => {
+		/**
+		 * Filter files for `image` media prefix and return the first image.
+		 *
+		 * At the moment we ignore all the other images that were dragged onto the DropZone
+		 */
+		const droppedImage = head( MediaUtils.filterItemsByMimePrefix( files, 'image' ) );
+
+		if ( ! droppedImage ) {
+			return false;
+		}
+
 		Dispatcher.register( ( payload ) => {
 			const action = payload.action;
 
@@ -67,7 +80,7 @@ class EditorDrawerFeaturedImage extends Component {
 		} );
 
 		MediaActions.clearValidationErrors( this.props.site.ID );
-		MediaActions.add( this.props.site.ID, files ).then();
+		MediaActions.add( this.props.site.ID, [ droppedImage ] );
 	};
 
 	render() {
