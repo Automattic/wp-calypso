@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import CompactCard from 'components/card/compact';
 import JetpackModuleToggle from '../jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormToggle from 'components/forms/form-toggle';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
 	isJetpackModuleActive,
@@ -55,23 +55,21 @@ const Subscriptions = ( {
 						/>
 
 					<div className="subscriptions__module-settings site-settings__child-settings">
-						<FormToggle
-							className="subscriptions__module-settings-toggle is-compact"
+						<CompactFormToggle
 							checked={ !! fields.stb_enabled }
 							disabled={ isRequestingSettings || isSavingSettings || ! subscriptionsModuleActive || moduleUnavailable }
 							onChange={ handleToggle( 'stb_enabled' ) }
 						>
 							{ translate( 'Show a "follow blog" option in the comment form' ) }
-						</FormToggle>
+						</CompactFormToggle>
 
-						<FormToggle
-							className="subscriptions__module-settings-toggle is-compact"
+						<CompactFormToggle
 							checked={ !! fields.stc_enabled }
 							disabled={ isRequestingSettings || isSavingSettings || ! subscriptionsModuleActive || moduleUnavailable }
 							onChange={ handleToggle( 'stc_enabled' ) }
 						>
 							{ translate( 'Show a "follow comments" option in the comment form.' ) }
-						</FormToggle>
+						</CompactFormToggle>
 					</div>
 				</FormFieldset>
 			</CompactCard>

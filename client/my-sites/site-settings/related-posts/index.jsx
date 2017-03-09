@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import Button from 'components/button';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormToggle from 'components/forms/form-toggle';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
 import RelatedContentPreview from './related-content-preview';
 
@@ -40,18 +40,16 @@ const RelatedPosts = ( {
 
 			<Card className="related-posts__card site-settings">
 				<FormFieldset>
-					<FormToggle
-						className="related-posts__settings-toggle is-compact"
+					<CompactFormToggle
 						checked={ !! fields.jetpack_relatedposts_enabled }
 						disabled={ isRequestingSettings }
 						onChange={ handleToggle( 'jetpack_relatedposts_enabled' ) }
 					>
 						{ translate( 'Show related content after posts' ) }
-					</FormToggle>
+					</CompactFormToggle>
 
 					<div className="related-posts__module-settings site-settings__child-settings">
-						<FormToggle
-							className="related-posts__settings-toggle is-compact"
+						<CompactFormToggle
 							checked={ !! fields.jetpack_relatedposts_show_headline }
 							disabled={ isRequestingSettings || ! fields.jetpack_relatedposts_enabled }
 							onChange={ handleToggle( 'jetpack_relatedposts_show_headline' ) }
@@ -59,10 +57,9 @@ const RelatedPosts = ( {
 							{ translate(
 								'Show a "Related" header to more clearly separate the related section from posts'
 							) }
-						</FormToggle>
+						</CompactFormToggle>
 
-						<FormToggle
-							className="related-posts__settings-toggle is-compact"
+						<CompactFormToggle
 							checked={ !! fields.jetpack_relatedposts_show_thumbnails }
 							disabled={ isRequestingSettings || ! fields.jetpack_relatedposts_enabled }
 							onChange={ handleToggle( 'jetpack_relatedposts_show_thumbnails' ) }
@@ -70,7 +67,7 @@ const RelatedPosts = ( {
 							{ translate(
 								'Use a large and visually striking layout'
 							) }
-						</FormToggle>
+						</CompactFormToggle>
 					</div>
 
 					<RelatedContentPreview

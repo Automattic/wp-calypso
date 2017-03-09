@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormToggle from 'components/forms/form-toggle';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 
 const Markdown = ( {
 	fields,
@@ -24,8 +24,7 @@ const Markdown = ( {
 				{ translate( 'Markdown' ) }
 			</FormLabel>
 			<FormLabel>
-				<FormToggle
-					className="is-compact"
+				<CompactFormToggle
 					name="wpcom_publish_posts_with_markdown"
 					checked={ !! fields.wpcom_publish_posts_with_markdown }
 					onChange={ handleToggle( 'wpcom_publish_posts_with_markdown' ) }
@@ -44,7 +43,7 @@ const Markdown = ( {
 							}
 						} )
 					}
-				</FormToggle>
+				</CompactFormToggle>
 			</FormLabel>
 		</FormFieldset>
 	);
