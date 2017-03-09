@@ -47,15 +47,15 @@ class CurrentTheme extends Component {
 		);
 
 		const showScreenshot = currentTheme && currentTheme.screenshot;
-		// Show nothing for themes with no screenshot
-		const screenshotPlaceholder = ! currentTheme;
+		// Some themes have no screenshot, so only show placeholder until details loaded
+		const showScreenshotPlaceholder = ! currentTheme;
 
 		return (
 			<Card className="current-theme">
 				{ siteId && <QueryActiveTheme siteId={ siteId } /> }
 				{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 				<div className="current-theme__current">
-					{ screenshotPlaceholder && <div className="current-theme__img-placeholder" /> }
+					{ showScreenshotPlaceholder && <div className="current-theme__img-placeholder" /> }
 					{ showScreenshot && <img
 						src={ currentTheme.screenshot + '?w=150' }
 						className="current-theme__img" /> }
