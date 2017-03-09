@@ -59,7 +59,7 @@ describe( 'unfollow tag request', () => {
 
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith( http( {
-				apiVersion: '1.0',
+				apiVersion: '1.1',
 				method: 'POST',
 				path: `/read/tags/${ slug }/mine/delete`,
 				onSuccess: action,

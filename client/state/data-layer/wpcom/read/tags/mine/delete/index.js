@@ -19,7 +19,7 @@ export function requestUnfollow( store, action, next ) {
 	store.dispatch( http( {
 		path: `/read/tags/${ action.payload.slug }/mine/delete`,
 		method: 'POST',
-		apiVersion: '1.0',
+		apiVersion: '1.1',
 		onSuccess: action,
 		onFailure: action,
 	} ) );
