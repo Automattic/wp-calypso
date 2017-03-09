@@ -1,0 +1,126 @@
+.disconnect-jetpack__dialog__backdrop {
+	align-items: center;
+	bottom: 0;
+	left: 0;
+	display: flex;
+	justify-content: center;
+	position: fixed;
+	right: 0;
+	top: 46px;
+	transition: background-color .2s ease-in;
+	z-index: z-index( 'root', '.dialog__backdrop' ); // try to ensure that dialogs are on top of everything else
+
+	&.dialog-enter,
+	&.dialog-leave.dialog-leave-active {
+		background-color: rgba( lighten( $gray, 30% ), 0 );
+	}
+
+	&,
+	&.dialog-enter.dialog-enter-active,
+	&.dialog-leave {
+		background-color: rgba( lighten( $gray, 30% ), 0.8 );
+	}
+
+	// covers the masterbar as well
+	&.is-full-screen {
+		top: 0;
+	}
+}
+
+.disconnect-jetpack__dialog.card {
+	max-width: 400px;
+	text-align: center;
+	opacity: 1;
+	position: relative;
+	transition: opacity .2s ease-in;
+	// IE needs a horizontal margin values to properly center flex item
+	margin: auto 0;
+
+	.dialog-enter &,
+	.dialog-leave.dialog-leave-active & {
+		opacity: 0;
+	}
+
+	&,
+	.dialog-enter.dialog-enter-active &,
+	.dialog-leave & {
+		opacity: 1;
+	}
+}
+
+.disconnect-jetpack__dialog__content {
+	color: darken( $gray, 20% );
+
+	h1 {
+		color: $gray-dark;
+		font-size: 26px;
+		font-weight: 300;
+		height: 2em;
+		line-height: 2em;
+		margin-bottom: .5em;
+	}
+}
+
+.disconnect-jetpack__highlight {
+	color: darken( $gray, 10% );
+	margin-bottom: 1em;
+	font-size: 16px;
+}
+
+.disconnect-jetpack__info {
+	font-size: 14px;
+	color: $gray-dark;
+}
+
+.disconnect-jetpack__feature:first-of-type {
+	border-top: 1px solid lighten( $gray, 20% );
+}
+
+.disconnect-jetpack__feature {
+	padding: 12px 8px 12px 32px;
+	text-align: left;
+	font-size: 13px;
+	border-bottom: 1px solid lighten( $gray, 20% );
+
+	.gridicon {
+		float: left;
+		margin-right: 5px;
+		margin-top: -2px;
+		margin-left: -24px;
+	}
+}
+
+.disconnect-jetpack__button-wrap {
+	margin-top: 32px;
+	margin-bottom:16px;
+
+	.button {
+		margin: 0 4px;
+	}
+}
+
+.disconnect-jetpack__more-info-link {
+	font-size: 13px;
+}
+
+.disconnect-jetpack__dialog__action-buttons {
+	overflow: hidden;
+	border-top: 1px solid lighten( $gray, 30% );
+	padding: 16px;
+	margin: 0 -24px -24px;
+	text-align: right;
+}
+
+.disconnect-jetpack__dialog__action-buttons .button {
+	margin-left: 10px;
+	min-width: 80px;
+
+	.is-left-aligned {
+		margin-left: 0;
+		margin-right: 10px;
+	}
+}
+
+.disconnect-jetpack__dialog__action-buttons .is-left-aligned {
+	float: left;
+}

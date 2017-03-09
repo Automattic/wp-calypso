@@ -20,6 +20,7 @@ import SearchCard from 'components/search-card';
 import CreditCardForm from 'blocks/credit-card-form/docs/example';
 import AuthorSelector from 'blocks/author-selector/docs/example';
 import CommentButtons from 'blocks/comment-button/docs/example';
+import DisconnectJetpack from 'blocks/disconnect-jetpack/docs/example';
 import FollowButton from 'blocks/follow-button/docs/example';
 import LikeButtons from 'blocks/like-button/docs/example';
 import PostSchedule from 'components/post-schedule/docs/example';
@@ -96,6 +97,7 @@ export default React.createClass( {
 				>
 					<AuthorSelector />
 					<CommentButtons />
+					<DisconnectJetpack />
 					<CreditCardForm />
 					<FollowButton />
 					<HappinessSupport />
