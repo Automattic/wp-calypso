@@ -311,21 +311,17 @@ class JetpackThankYouCard extends Component {
 			return null;
 		}
 
-		const countSteps = plugins.length * 4;
+		const countSteps = plugins.length * 3;
 		const countCompletion = plugins.reduce( ( total, plugin ) => {
 			switch ( plugin.status ) {
 				case 'done':
-					total += 4;
+					total += 3;
 					break;
 				case 'activate':
 				case 'configure':
-					total += 3;
-					break;
-				case 'install':
 					total += 2;
 					break;
-				case 'wait':
-				default:
+				case 'install':
 					total += 1;
 					break;
 			}
