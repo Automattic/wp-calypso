@@ -55,7 +55,7 @@ const MediaSettings = ( {
 					siteId={ siteId }
 					moduleSlug="photon"
 					label={ translate( 'Speed up your images and photos with Photon' ) }
-					description={ translate( 'Enabling Photon is required to use Tiled Galleries.' ) }
+					description={ translate( 'Must be enabled to use tiled galleries.' ) }
 					disabled={ isRequestingSettings || isSavingSettings || photonModuleUnavailable }
 					/>
 			</FormFieldset>
