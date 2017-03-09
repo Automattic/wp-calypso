@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import { defer, flatMap, lastIndexOf, noop, times, clamp, includes, last } from 'lodash';
+import { defer, findLast, flatMap, noop, times, clamp, includes, isEqual, last } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -220,7 +220,7 @@ class ReaderStream extends React.Component {
 			posts,
 			recs,
 			updateCount: store.getUpdateCount(),
-			selectedIndex: store.getSelectedIndex(),
+			selectedPost: store.getSelectedPost(),
 			isFetchingNextPage: store.isFetchingNextPage && store.isFetchingNextPage(),
 			isLastPage: store.isLastPage()
 		};
@@ -233,7 +233,7 @@ class ReaderStream extends React.Component {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		if ( prevState.selectedIndex !== this.state.selectedIndex ) {
+		if ( ! isEqual( prevState.selectedPost, this.state.selectedPost ) ) {
 			this.scrollToSelectedPost( true );
 			if ( this.isPostFullScreen() ) {
 				showSelectedPost( {
@@ -245,7 +245,7 @@ class ReaderStream extends React.Component {
 	}
 
 	_popstate = () => {
-		if ( this.state.selectedIndex > -1 && history.scrollRestoration !== 'manual' ) {
+		if ( this.state.selectedPost && history.scrollRestoration !== 'manual' ) {
 			this.scrollToSelectedPost( false );
 		}
 	}
@@ -377,7 +377,7 @@ class ReaderStream extends React.Component {
 		if ( this.state.updateCount && this.state.updateCount > 0 ) {
 			this.showUpdates();
 		} else {
-			FeedStreamStoreActions.selectItem( this.props.postsStore.id, 0 );
+			FeedStreamStoreActions.selectFirstItem( this.props.postsStore.id );
 		}
 	}
 
@@ -386,6 +386,13 @@ class ReaderStream extends React.Component {
 	}
 
 	selectNextItem = () => {
+
+		// do we have a selected item? if so, just move to the next one
+		if ( this.state.selectedPost ) {
+			FeedStreamStoreActions.selectNextItem( this.props.postsStore.id );
+			return;
+		}
+
 		const visibleIndexes = this.getVisibleItemIndexes();
 		const { items, posts } = this.state;
 
@@ -410,15 +417,29 @@ class ReaderStream extends React.Component {
 					break;
 				}
 			}
+
+			const candidateItem = items[ index ];
+			// is this a combo card?
+			if ( candidateItem.isCombination ) {
+				// pick the first item
+				const postKey = { postId: candidateItem.postIds[ 0 ] };
+				if ( candidateItem.feedId ) {
+					postKey.feedId = candidateItem.feedId;
+				} else {
+					postKey.blogId = candidateItem.blogId;
+				}
+				FeedStreamStoreActions.selectItem( this.props.postsStore.id, postKey );
+			}
+
 			// find the index of the post / gap in the posts array.
 			// Start the search from the index in the items array, which has to be equal to or larger than
 			// the index in the posts array.
 			// Use lastIndexOf to walk the array from right to left
-			const indexInPosts = lastIndexOf( posts, items[ index ], index );
-			if ( indexInPosts === this.state.selectedIndex ) {
+			const selectedPost = findLast( posts, items[ index ], index );
+			if ( isEqual( selectedPost, this.state.selectedPost ) ) {
 				FeedStreamStoreActions.selectNextItem( this.props.postsStore.id );
 			} else {
-				FeedStreamStoreActions.selectItem( this.props.postsStore.id, indexInPosts );
+				FeedStreamStoreActions.selectItem( this.props.postsStore.id, selectedPost );
 			}
 		}
 	}
@@ -427,7 +448,7 @@ class ReaderStream extends React.Component {
 		// unlike selectNextItem, we don't want any magic here. Just move back an item if the user
 		// currently has a selected item. Otherwise do nothing.
 		// We avoid the magic here because we expect users to enter the flow using next, not previous.
-		if ( this.state.selectedIndex > 0 ) {
+		if ( this.state.selectedPost ) {
 			FeedStreamStoreActions.selectPrevItem( this.props.postsStore.id );
 		}
 	}
@@ -516,6 +537,7 @@ class ReaderStream extends React.Component {
 						index={ index }
 						key={ `combined-card-${ index }` }
 						onClick={ this.handleConnectedCardClick }
+						selectedPost={ selectedPostKey }
 					/>;
 		}
 
@@ -523,8 +545,7 @@ class ReaderStream extends React.Component {
 		const showPost = ( args ) => showSelectedPost( {
 			...args,
 			postKey,
-			store: this.props.postsStore,
-			index,
+			store: this.props.postsStore
 		} );
 		return <PostLifecycle
 			key={ itemKey }

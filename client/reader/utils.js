@@ -3,7 +3,6 @@
  */
 import url from 'url';
 import page from 'page';
-import { isNumber } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -76,13 +75,13 @@ export function isPostNotFound( post ) {
 	return post.statusCode === 404;
 }
 
-export function showSelectedPost( { store, replaceHistory, selectedGap, postKey, index, comments } ) {
+export function showSelectedPost( { store, replaceHistory, selectedGap, postKey, comments } ) {
 	if ( ! postKey ) {
 		return;
 	}
 
-	if ( store && isNumber( index ) ) {
-		selectItem( store.getID(), index );
+	if ( store && postKey ) {
+		selectItem( store.getID(), postKey );
 	} else if ( ! store ) {
 		setLastStoreId( undefined );
 	}

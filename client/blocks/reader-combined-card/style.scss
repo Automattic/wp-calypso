@@ -82,6 +82,23 @@
 	display: flex;
 	flex-direction: row;
 	margin-bottom: 20px;
+	position: relative;
+
+	&.is-selected {
+		&::before {
+			content: '';
+			position: absolute;
+				top: -2;
+				bottom: 2;
+				left: -8px;
+				width: 2px;
+			background: $blue-wordpress;
+
+			@include breakpoint( ">660px" ) {
+				left: -16px;
+			}
+		}
+	}
 }
 
 .reader-combined-card__post-author-and-time {
