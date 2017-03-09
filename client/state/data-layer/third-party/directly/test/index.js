@@ -10,7 +10,9 @@ import { useSandbox } from 'test/helpers/use-sinon';
 import * as directly from 'lib/directly';
 import {
 	DIRECTLY_ASK_QUESTION,
-	DIRECTLY_INITIALIZE,
+	DIRECTLY_INITIALIZATION_START,
+	DIRECTLY_INITIALIZATION_SUCCESS,
+	DIRECTLY_INITIALIZATION_ERROR,
 } from 'state/action-types';
 import {
 	askQuestion,
@@ -20,6 +22,8 @@ import {
 describe( 'Directly data layer', () => {
 	let next;
 	let store;
+	let simulateInitializationSuccess;
+	let simulateInitializationError;
 
 	useSandbox( ( sandbox ) => {
 		next = sandbox.spy();
@@ -29,6 +33,17 @@ describe( 'Directly data layer', () => {
 		// Stub in all lib/directly functions to avoid them being actually called
 		sandbox.stub( directly, 'askQuestion' );
 		sandbox.stub( directly, 'initialize' );
+	} );
+
+	beforeEach( () => {
+		// Mock out a Promise that can be resolved or rejected in each test to simulate
+		// Directly's library initializing or having an error
+		directly.initialize.returns(
+			new Promise( ( resolve, reject ) => {
+				simulateInitializationSuccess = resolve;
+				simulateInitializationError = reject;
+			} )
+		);
 	} );
 
 	describe( '#askQuestion', () => {
@@ -49,7 +64,7 @@ describe( 'Directly data layer', () => {
 	} );
 
 	describe( '#initialize', () => {
-		const action = { type: DIRECTLY_INITIALIZE };
+		const action = { type: DIRECTLY_INITIALIZATION_START };
 
 		it( 'should invoke the corresponding Directly function', () => {
 			initialize( store, action, next );
@@ -59,6 +74,22 @@ describe( 'Directly data layer', () => {
 		it( 'should pass the action through', () => {
 			initialize( store, action, next );
 			expect( next ).to.have.been.calledWith( action );
+		} );
+
+		it( 'should dispatch a success action if initialization completes', ( done ) => {
+			initialize( store, action, next )
+				.then( () => expect( store.dispatch ).to.have.been.calledWith( { type: DIRECTLY_INITIALIZATION_SUCCESS } ) )
+				.then( () => done() );
+
+			simulateInitializationSuccess();
+		} );
+
+		it( 'should dispatch an error action if initialization fails', ( done ) => {
+			initialize( store, action, next )
+				.then( () => expect( store.dispatch ).to.have.been.calledWith( { type: DIRECTLY_INITIALIZATION_ERROR } ) )
+				.then( () => done() );
+
+			simulateInitializationError();
 		} );
 	} );
 } );
