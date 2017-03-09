@@ -42,16 +42,6 @@ class ThemeEnhancements extends Component {
 		);
 	}
 
-	renderHeader() {
-		const {
-			translate
-		} = this.props;
-
-		return (
-			<SectionHeader label={ translate( 'Theme Enhancements' ) } />
-		);
-	}
-
 	renderInfiniteScrollSettings() {
 		const {
 			selectedSiteId,
@@ -145,9 +135,10 @@ class ThemeEnhancements extends Component {
 	}
 
 	render() {
+		const { translate } = this.props;
 		return (
 			<div>
-				{ this.renderHeader() }
+				<SectionHeader label={ translate( 'Theme Enhancements' ) } />
 
 				<Card className="theme-enhancements__card site-settings">
 					{ this.renderInfiniteScrollSettings() }
