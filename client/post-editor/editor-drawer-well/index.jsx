@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 
-
 class EditorDrawerWell extends Component {
 	static propTypes = {
 		children: PropTypes.node,
