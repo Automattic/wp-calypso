@@ -466,7 +466,7 @@ export default connect(
 				const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
 				const planProductId = planConstantObj.getProductId();
 				const planObject = getPlan( state, planProductId );
-				const isLoadingSitePlans = ! isInSignup && ! sitePlans.hasLoadedFromServer;
+				const isLoadingSitePlans = selectedSiteId && ! sitePlans.hasLoadedFromServer;
 				const showMonthly = ! isMonthly( plan );
 				const available = isInSignup ? true : canUpgradeToPlan( plan ) && canPurchase;
 				const relatedMonthlyPlan = showMonthly ? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) ) : null;
