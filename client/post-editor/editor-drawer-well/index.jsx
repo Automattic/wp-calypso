@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import DropZone from 'components/drop-zone';
+
 
 class EditorDrawerWell extends Component {
 	static propTypes = {
@@ -20,7 +20,7 @@ class EditorDrawerWell extends Component {
 		icon: PropTypes.string,
 		label: PropTypes.node,
 		onClick: PropTypes.func,
-		onFileDrop: PropTypes.func,
+		customDropZone: PropTypes.node,
 		onRemove: PropTypes.func,
 		translate: PropTypes.func
 	};
@@ -75,8 +75,8 @@ class EditorDrawerWell extends Component {
 						</span>
 					</button>
 				) }
-				{ this.props.onFileDrop
-					? <DropZone onFilesDrop={ this.props.onFileDrop } />
+				{ this.props.customDropZone
+					? this.props.customDropZone
 					: null
 				}
 			</div>
