@@ -7,6 +7,10 @@ try {
 } catch ( error ) {
 	var _data = {};
 
+	if ( ! window.localStorage ) {
+		window.localStorage = {};
+	}
+
 	// We can't replace window.localStorage, but we can replace its methods
 	window.localStorage.setItem = function( id, val ) {
 		_data[ id ] = String( val );
