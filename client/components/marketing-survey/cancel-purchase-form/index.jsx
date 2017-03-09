@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import shuffle from 'lodash/shuffle';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -447,4 +448,7 @@ const CancelPurchaseForm = React.createClass( {
 	}
 } );
 
-export default CancelPurchaseForm;
+export default connect(
+	null,
+	null,
+)( CancelPurchaseForm );
