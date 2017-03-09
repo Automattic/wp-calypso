@@ -309,7 +309,14 @@ export const queries = ( () => {
 
 	return createReducer( {}, {
 		[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query, themes, found } ) => {
-			return applyToManager( state, siteId, 'receive', true, themes, { query, found } );
+			return applyToManager(
+				state,
+				siteId,
+				'receive',
+				true,
+				themes,
+				query ? { query, found } : {}
+			);
 		},
 		[ THEME_DELETE_SUCCESS ]: ( state, { siteId, themeId } ) => {
 			return applyToManager( state, siteId, 'removeItem', false, themeId );

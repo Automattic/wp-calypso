@@ -102,7 +102,7 @@ export function receiveTheme( theme, siteId ) {
  * @param {?number} foundCount Number of themes returned by the query
  * @return {Object} Action object
  */
-export function receiveThemes( themes, siteId, query = {}, foundCount ) {
+export function receiveThemes( themes, siteId, query, foundCount ) {
 	return ( dispatch, getState ) => {
 		let filteredThemes = themes;
 		let found = foundCount;

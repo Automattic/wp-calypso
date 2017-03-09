@@ -95,7 +95,7 @@ describe( 'actions', () => {
 					{ id: 'twentysixteen', name: 'Twenty Sixteen' },
 				],
 				siteId: 'wpcom',
-				query: {},
+				query: undefined,
 				found: undefined,
 			} );
 		} );
