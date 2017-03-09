@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isString } from 'lodash';
+import { isString, tap } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,13 +14,6 @@ import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 } from 'state/action-types';
-
-const validate = ( { primary_email, primary_sms, secondary_email, secondary_sms } ) => [
-	primary_email,
-	primary_sms,
-	secondary_email,
-	secondary_sms,
-].every( isString );
 
 export const fromApi = data => ( [
 	{
@@ -35,16 +28,16 @@ export const fromApi = data => ( [
 	},
 ] );
 
-export const storeReceivedOptions = ( { dispatch }, action, next, data ) => {
-	if ( ! validate( data ) ) {
-		throw Error( 'Unexpected response format' );
+export const validate = ( { primary_email, primary_sms, secondary_email, secondary_sms } ) => {
+	if ( ! [ primary_email, primary_sms, secondary_email, secondary_sms ].every( isString ) ) {
+		throw Error( 'Unexpected response format from /account-recovery/lookup' );
 	}
-
-	dispatch( {
-		type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
-		items: fromApi( data ),
-	} );
 };
+
+export const storeReceivedOptions = ( { dispatch }, action, next, data ) => dispatch( {
+	type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
+	items: fromApi( tap( data, validate ) ),
+} );
 
 export const reportError = ( { dispatch }, action, next, error ) => dispatch( {
 	type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
