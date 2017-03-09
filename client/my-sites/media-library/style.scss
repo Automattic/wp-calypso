@@ -41,6 +41,14 @@
 	margin-left: 0;
 }
 
+.media-library__header.media-library__upload-url {
+	margin-bottom: 10px;
+
+	@include breakpoint( ">480px" ) {
+		margin-bottom: 16px;
+	}
+}
+
 .media-library__filter-bar {
 	display: flex;
 	flex-flow: row nowrap;
@@ -81,9 +89,6 @@
 .editor-media-modal .media-library__filter-bar {
 	.plan-storage {
 		@include breakpoint( ">480px" ) {
-			margin-bottom: 16px;
-		}
-		@include breakpoint( ">960px" ) {
 			margin-bottom: 16px;
 		}
 	}
