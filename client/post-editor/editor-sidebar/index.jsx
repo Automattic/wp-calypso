@@ -32,8 +32,6 @@ export default class EditorSidebar extends Component {
 				<EditorSidebarHeader toggleSidebar={ toggleSidebar } />
 				<EditorActionBar
 					isNew={ isNew }
-					onTrashingPost={ onTrashingPost }
-					onPrivatePublish={ onPublish }
 					post={ post }
 					savedPost={ savedPost }
 					site={ site }
@@ -46,6 +44,7 @@ export default class EditorSidebar extends Component {
 					isNew={ isNew }
 					type={ type }
 					setPostDate={ setPostDate }
+					onPrivatePublish={ onPublish }
 				/>
 				<SidebarFooter>
 					<EditorDeletePost

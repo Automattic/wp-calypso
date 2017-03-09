@@ -315,6 +315,7 @@ const EditorDrawer = React.createClass( {
 					type={ this.props.type }
 					onSave={ this.props.onSave }
 					onTrashingPost={ this.props.onTrashingPost }
+					onPrivatePublish={ this.props.onPrivatePublish }
 					setPostDate={ this.props.setPostDate }
 					site={ this.props.site }>
 				</EditPostStatus>

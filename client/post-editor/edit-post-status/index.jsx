@@ -40,6 +40,7 @@ class EditPostStatus extends Component {
 		translate: PropTypes.func,
 		type: PropTypes.string,
 		postDate: PropTypes.string,
+		onPrivatePublish: PropTypes.func,
 	};
 
 	constructor( props ) {

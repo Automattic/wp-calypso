@@ -16,7 +16,6 @@ const Card = require( 'components/card' ),
 	Site = require( 'blocks/site' ),
 	postUtils = require( 'lib/posts/utils' ),
 	siteUtils = require( 'lib/site/utils' ),
-	Tooltip = require( 'components/tooltip' ),
 	PostListFetcher = require( 'components/post-list-fetcher' ),
 	stats = require( 'lib/posts/stats' );
 
@@ -99,7 +98,6 @@ export default React.createClass( {
 		return {
 			showSchedulePopover: false,
 			showAdvanceStatus: false,
-			showDateTooltip: false,
 			firstDayOfTheMonth: this.getFirstDayOfTheMonth(),
 			lastDayOfTheMonth: this.getLastDayOfTheMonth(),
 			needsVerification: this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
@@ -285,31 +283,6 @@ export default React.createClass( {
 		stats.recordEvent( eventLabel );
 	},
 
-	renderDateTooltip: function() {
-		if ( this.state.showSchedulePopover ) {
-			return null;
-		}
-
-		return (
-			<Tooltip
-				context={ this.refs && this.refs.schedulePost }
-				isVisible={ this.state.showDateTooltip }
-				position="left"
-				onClose={ noop }
-			>
-				{ this.translate( 'Set date and time' ) }
-			</Tooltip>
-		);
-	},
-
-	showDateTooltip: function() {
-		this.setState( { showDateTooltip: true } );
-	},
-
-	hideDateTooltip: function() {
-		this.setState( { showDateTooltip: false } );
-	},
-
 	render: function() {
 		return (
 			<Card className="editor-ground-control">
@@ -387,10 +360,9 @@ export default React.createClass( {
 								ref="schedulePost"
 								className="editor-ground-control__time-button"
 								onClick={ this.toggleSchedulePopover }
-								onMouseEnter={ this.showDateTooltip }
-								onMouseLeave={ this.hideDateTooltip }
 								aria-label={ this.translate( 'Schedule date and time to publish post.' ) }
 								aria-pressed={ !! this.state.showSchedulePopover }
+								title={ this.translate( 'Set date and time' ) }
 								tabIndex={ 6 }
 							>
 								{ postUtils.isFutureDated( this.props.post )
@@ -405,7 +377,6 @@ export default React.createClass( {
 								</span>
 							</Button>
 						}
-						{ this.renderDateTooltip() }
 					</div>
 					{ this.canPublishPost() &&
 						this.schedulePostPopover()
