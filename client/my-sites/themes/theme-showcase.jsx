@@ -25,7 +25,7 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
 
-const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
+const ThemesSearchCard = false /*config.isEnabled( 'manage/themes/magic-search' )*/
 	? require( './themes-magic-search-card' )
 	: require( './themes-search-card' );
 

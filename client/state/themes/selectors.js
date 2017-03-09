@@ -178,6 +178,19 @@ export function getThemesFoundForQuery( state, siteId, query ) {
 	return state.themes.queries[ siteId ].getFound( query );
 }
 
+export function getLastQueriedPageNumberForQuery( state, siteId, query ) {
+	if ( ! state.themes.queryRequestSuccess[ siteId ] ) {
+		return 0;
+	}
+	const serializedQuery = JSON.stringify( omit( query, 'page' ) );
+	return get( state.themes.queryRequestSuccess[ siteId ], serializedQuery, 0 );
+}
+
+export function wasQuerySuccesfullyRequested( state, siteId, query ) {
+	const lastQueriedPage = getLastQueriedPageNumberForQuery( state, siteId, query );
+	return query.page <= lastQueriedPage;
+}
+
 /**
  * Returns the last queryable page of themes for the given query, or null if the
  * total number of queryable themes if unknown.

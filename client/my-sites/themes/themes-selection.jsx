@@ -20,6 +20,7 @@ import {
 	getThemesForQueryIgnoringPage,
 	getThemesFoundForQuery,
 	isRequestingThemesForQuery,
+	getLastQueriedPageNumberForQuery,
 	isThemesLastPageForQuery,
 	isPremiumThemeAvailable,
 	isThemeActive,
@@ -107,7 +108,7 @@ const ThemesSelection = React.createClass( {
 			this.trackScrollPage();
 		}
 
-		this.props.incrementPage();
+		this.props.incrementPage( this.props.lastQueriedPage + 1 );
 	},
 
 	//intercept preview and add primary and secondary
@@ -202,6 +203,7 @@ const ConnectedThemesSelection = connect(
 			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
 			isLoggedIn: !! getCurrentUserId( state ),
+			lastQueriedPage: getLastQueriedPageNumberForQuery( state, sourceSiteId, query ),
 			isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
 			isInstallingTheme: themeId => isInstallingTheme( state, themeId, siteId ),
 			// Note: This component assumes that purchase and plans data is already present in the state tree
@@ -225,8 +227,8 @@ class ThemesSelectionWithPage extends React.Component {
 		page: 1,
 	};
 
-	incrementPage = () => {
-		this.setState( { page: this.state.page + 1 } );
+	incrementPage = ( newPage ) => {
+		this.setState( { page: newPage } );
 	}
 
 	resetPage = () => {
