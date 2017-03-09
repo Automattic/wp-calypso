@@ -51,6 +51,7 @@
 	max-height: 18px * 1.4 * 1;
 	word-wrap: break-word;
 	overflow: hidden;
+	margin-top: -3px;
 
 	&:hover, &:focus {
 		color: $gray-dark;
