@@ -67,16 +67,6 @@ class CustomContentTypes extends Component {
 		);
 	}
 
-	renderHeader() {
-		const {
-			translate
-		} = this.props;
-
-		return (
-			<SectionHeader label={ translate( 'Custom Content Types' ) } />
-		);
-	}
-
 	renderContentTypeSettings( fieldName, fieldLabel, fieldDescription ) {
 		return (
 			<div className="custom-content-types__module-settings">
@@ -147,9 +137,10 @@ class CustomContentTypes extends Component {
 	}
 
 	render() {
+		const { translate } = this.props;
 		return (
 			<div>
-				{ this.renderHeader() }
+				<SectionHeader label={ translate( 'Custom Content Types' ) } />
 
 				<Card className="custom-content-types__card site-settings">
 					<FormFieldset>
