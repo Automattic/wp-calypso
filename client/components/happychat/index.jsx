@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import GridIcon from 'gridicons';
@@ -11,12 +11,12 @@ import GridIcon from 'gridicons';
  */
 import {
 	first,
-	any,
 	when
 } from './functional';
 import { connectChat } from 'state/happychat/actions';
 import {
-	getHappychatConnectionStatus
+	getHappychatConnectionStatus,
+	getHappychatChatStatus
 } from 'state/happychat/selectors';
 import {
 	openChat,
@@ -35,8 +35,6 @@ import {
 } from './helpers';
 import Notices from './notices';
 import { translate } from 'i18n-calypso';
-
-const isChatOpen = any( isConnected, isConnecting );
 
 /**
  * Renders the title text of the chat sidebar when happychat is connecting.
@@ -62,9 +60,9 @@ const connectingTitle = ( { onCloseChat } ) => {
  * @param {function} params.onCloseChat - function called when close button is pressed
  * @returns {Object} react component for title bar
  */
-const connectedTitle = ( { onCloseChat } ) => (
+const connectedTitle = ( { onCloseChat, chatStatus } ) => (
 	<div className="happychat__active-toolbar">
-	<h4>{ translate( 'Support Chat' ) }</h4>
+	<h4>{ translate( 'Support Chat' ) } - { chatStatus }</h4>
 		<div onClick={ onCloseChat }>
 			<GridIcon icon="cross" />
 		</div>
@@ -86,26 +84,27 @@ const title = first(
 /*
  * Main chat UI component
  */
-const Happychat = React.createClass( {
+class Happychat extends Component {
 
 	componentDidMount() {
 		this.props.connectChat();
-	},
+	}
 
 	render() {
 		const {
+			chatStatus,
 			connectionStatus,
 			isMinimizing,
-			user,
 			onCloseChat,
-			onOpenChat
+			onOpenChat,
+			user,
 		} = this.props;
 
 		return (
 			<div className="happychat">
 				<div
 					className={ classnames( 'happychat__container', {
-						'is-open': isChatOpen( { connectionStatus } ),
+						'is-open': true,
 						'is-minimizing': isMinimizing
 					} ) } >
 					<div className="happychat__title">
@@ -114,7 +113,8 @@ const Happychat = React.createClass( {
 							isMinimizing,
 							user,
 							onCloseChat,
-							onOpenChat
+							onOpenChat,
+							chatStatus
 						} ) }
 					</div>
 					{ timeline( { connectionStatus, isMinimizing } ) }
@@ -124,11 +124,12 @@ const Happychat = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 const mapState = state => {
 	return {
 		connectionStatus: getHappychatConnectionStatus( state ),
+		chatStatus: getHappychatChatStatus( state ),
 		isMinimizing: isHappychatMinimizing( state )
 	};
 };

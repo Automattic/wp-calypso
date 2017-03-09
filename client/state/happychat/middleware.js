@@ -16,11 +16,14 @@ import {
 	HAPPYCHAT_SET_AVAILABLE,
 	HAPPYCHAT_SET_CHAT_STATUS,
 	HAPPYCHAT_CONNECTION_OPEN,
+	HAPPYCHAT_OPEN,
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 	CURRENT_USER_ID_SET
 } from 'state/action-types';
 import wpcom from 'lib/wp';
+import { isHappychatOpen } from 'state/ui/happychat/selectors';
+import { setHappychatBadgeVisible } from 'state/ui/happychat/actions';
 import { updateChatMessage } from 'state/happychat/actions';
 import {
 	isHappychatChatActive,
@@ -131,6 +134,13 @@ const sendMessage = ( { dispatch }, message ) => {
 	connection.send( message );
 };
 
+const notifyWhenMinimized = ( { getState, dispatch } ) => {
+	if ( ! isHappychatOpen( getState() ) ) {
+		debug( 'display badge for chat' );
+		dispatch( setHappychatBadgeVisible() );
+	}
+};
+
 const receiveChatTranscript = ( messages, timestamp ) => ( {
 	type: HAPPYCHAT_TRANSCRIPT_RECEIVE, messages, timestamp
 } );
@@ -160,6 +170,14 @@ export default ( store ) => {
 				break;
 			case HAPPYCHAT_SEND_MESSAGE:
 				sendMessage( store, action.message );
+				break;
+			case HAPPYCHAT_OPEN:
+				if ( action.isOpen ) {
+					store.dispatch( setHappychatBadgeVisible( false ) );
+				}
+				break;
+			case HAPPYCHAT_RECEIVE_EVENT:
+				notifyWhenMinimized( store, action );
 				break;
 			case HAPPYCHAT_TRANSCRIPT_REQUEST:
 				requestTranscript( store );

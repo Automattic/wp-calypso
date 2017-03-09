@@ -24,3 +24,7 @@ export const isHappychatOpen = createSelector(
 export const isHappychatMinimizing = createSelector(
 	state => state.ui.happychat.isMinimizing
 );
+
+export const isHappychatBadgeVisible = createSelector(
+	state => state.ui.happychat.isBadgeVisible
+);

@@ -8,6 +8,10 @@ import isEmpty from 'lodash/isEmpty';
  * Internal dependencies
  */
 import {
+	getHappychatMessage,
+	getHappychatConnectionStatus
+} from 'state/happychat/selectors';
+import {
 	updateChatMessage,
 	sendChatMessage
 } from 'state/happychat/actions';
@@ -63,7 +67,10 @@ export const Composer = React.createClass( {
 	}
 } );
 
-const mapState = ( { happychat: { message } } ) => ( { message } );
+const mapState = ( state ) => ( {
+	message: getHappychatMessage( state ),
+	connectionStatus: getHappychatConnectionStatus( state )
+} );
 
 const mapDispatch = ( dispatch ) => ( {
 	onUpdateChatMessage( message ) {

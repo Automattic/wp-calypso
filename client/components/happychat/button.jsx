@@ -6,12 +6,14 @@ import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import viewport from 'lib/viewport';
 import { openChat } from 'state/ui/happychat/actions';
+import { isHappychatBadgeVisible } from 'state/ui/happychat/selectors';
 import Button from 'components/button';
 
 class HappychatButton extends Component {
@@ -26,10 +28,14 @@ class HappychatButton extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, isBadged } = this.props;
 		return (
 			<Button
-				className="sidebar__footer-chat"
+				className={ classnames(
+						'happychat__sidebar-footer-button',
+						'sidebar__footer-chat',
+						{ 'has-unread': isBadged }
+					) }
 				borderless
 				onClick={ this.onOpenChat }
 				title={ translate( 'Support Chat' ) }>
@@ -39,4 +45,7 @@ class HappychatButton extends Component {
 	}
 }
 
-export default connect( null, { onOpenChat: openChat } )( localize( HappychatButton ) );
+const mapState = state => ( { isBadged: isHappychatBadgeVisible( state ) } );
+const mapDispatch = { onOpenChat: openChat };
+
+export default connect( mapState, mapDispatch )( localize( HappychatButton ) );

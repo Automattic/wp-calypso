@@ -1,8 +1,15 @@
+/**
+ * External dependencies
+ */
 import { combineReducers } from 'redux';
 
+/**
+ * Internal dependencies
+ */
 import {
 	HAPPYCHAT_OPEN,
-	HAPPYCHAT_MINIMIZING
+	HAPPYCHAT_MINIMIZING,
+	HAPPYCHAT_BADGE_SET_VISIBLE
 } from 'state/action-types';
 
 const open = ( state = false, action ) => {
@@ -12,8 +19,6 @@ const open = ( state = false, action ) => {
 	}
 	return state;
 };
-
-const debug = require( 'debug' )( 'calypso:happychat:ui-reducer' );
 
 /**
  * Tracks the state of the happychat minimizing process
@@ -26,10 +31,17 @@ const debug = require( 'debug' )( 'calypso:happychat:ui-reducer' );
 const isMinimizing = ( state = false, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_MINIMIZING:
-			debug( "set minimizing", action );
 			return action.isMinimizing ? true : false;
 	}
 	return state;
 };
 
-export default combineReducers( { open, isMinimizing } );
+const isBadgeVisible = ( state = false, action ) => {
+	switch ( action.type ) {
+		case HAPPYCHAT_BADGE_SET_VISIBLE:
+			return action.isBadgeVisible;
+	}
+	return state;
+};
+
+export default combineReducers( { open, isMinimizing, isBadgeVisible } );
