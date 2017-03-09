@@ -61,9 +61,11 @@ export const setVideoEditorVideoHasLoaded = () => {
  * Returns an action thunk which, when invoked, triggers a network request to
  * update the poster for a particular video.
  *
- * @param  {String}   guid    ID of the video
- * @param  {Object}   params  Poster data
- * @return {Function}         Action thunk
+ * @param {String} guid  ID of the video
+ * @param {Object} params  Poster data
+ * @param {Number} [params.at_time]  Number of seconds into the video at which to get the poster
+ * @param {Object} [params.file]  An image to attach to the video
+ * @return {Function}  Action thunk
  */
 export const updateVideoEditorPoster = ( guid, params ) => {
 	return ( dispatch ) => {
