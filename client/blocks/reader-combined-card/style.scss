@@ -88,8 +88,8 @@
 		&::before {
 			content: '';
 			position: absolute;
-				top: -2;
-				bottom: 2;
+				top: -2px;
+				bottom: 2px;
 				left: -8px;
 				width: 2px;
 			background: $blue-wordpress;
