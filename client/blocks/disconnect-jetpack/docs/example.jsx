@@ -51,6 +51,6 @@ const DisconnectJetpackSelectorExample = connect( ( state ) => {
 	};
 } )( DisconnectJetpackExample );
 
-DisconnectJetpackSelectorExample.displayName = 'Disconnect Jetpack Example';
+DisconnectJetpackSelectorExample.displayName = 'DisconnectJetpackExample';
 
 export default DisconnectJetpackSelectorExample;
