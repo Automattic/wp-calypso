@@ -15,7 +15,7 @@ import adTracking from 'lib/analytics/ad-tracking';
 import { cartItems, isFree } from 'lib/cart-values';
 import { displayError, displaySubmitting, clear } from 'lib/upgrades/notices';
 import upgradesActions from 'lib/upgrades/actions';
-import { removeNestedProperties } from 	'lib/cart/store/cart-analytics';
+import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
 
 const TransactionStepsMixin = {
 	submitTransaction: function( event ) {
