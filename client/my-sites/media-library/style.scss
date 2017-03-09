@@ -57,6 +57,7 @@
 
 	.section-nav {
 		flex: 1 auto;
+		z-index: z-index( 'root', '.media-library .search.is-expanded-to-container' );
 	}
 
 	.plan-storage {
