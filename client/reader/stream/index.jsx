@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import { defer, findLast, flatMap, noop, times, clamp, includes, isEqual, last } from 'lodash';
+import { defer, findLast, flatMap, noop, times, clamp, includes, last } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -38,6 +38,7 @@ import getBlockedSites from 'state/selectors/get-blocked-sites';
 import CombinedCard from 'blocks/reader-combined-card';
 import fluxPostAdapter from 'lib/reader-post-flux-adapter';
 import config from 'config';
+import { keysAreEqual } from 'lib/feed-stream-store/post-key';
 
 const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );
 
@@ -220,7 +221,7 @@ class ReaderStream extends React.Component {
 			posts,
 			recs,
 			updateCount: store.getUpdateCount(),
-			selectedPost: store.getSelectedPost(),
+			selectedPostKey: store.getSelectedPostKey(),
 			isFetchingNextPage: store.isFetchingNextPage && store.isFetchingNextPage(),
 			isLastPage: store.isLastPage()
 		};
@@ -233,7 +234,7 @@ class ReaderStream extends React.Component {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		if ( ! isEqual( prevState.selectedPost, this.state.selectedPost ) ) {
+		if ( ! keysAreEqual( prevState.selectedPostKey, this.state.selectedPostKey ) ) {
 			this.scrollToSelectedPost( true );
 			if ( this.isPostFullScreen() ) {
 				showSelectedPost( {
@@ -245,7 +246,7 @@ class ReaderStream extends React.Component {
 	}
 
 	_popstate = () => {
-		if ( this.state.selectedPost && history.scrollRestoration !== 'manual' ) {
+		if ( this.state.selectedPostKey && history.scrollRestoration !== 'manual' ) {
 			this.scrollToSelectedPost( false );
 		}
 	}
@@ -333,12 +334,12 @@ class ReaderStream extends React.Component {
 		showSelectedPost( {
 			store: this.props.postsStore,
 			selectedGap: this._selectedGap,
-			postKey: this.props.postsStore.getSelectedPost()
+			postKey: this.props.postsStore.getSelectedPostKey()
 		} );
 	}
 
 	toggleLikeOnSelectedPost = () => {
-		const postKey = this.props.postsStore.getSelectedPost();
+		const postKey = this.props.postsStore.getSelectedPostKey();
 		let post;
 
 		if ( postKey && ! postKey.isGap ) {
@@ -388,7 +389,7 @@ class ReaderStream extends React.Component {
 	selectNextItem = () => {
 
 		// do we have a selected item? if so, just move to the next one
-		if ( this.state.selectedPost ) {
+		if ( this.state.selectedPostKey ) {
 			FeedStreamStoreActions.selectNextItem( this.props.postsStore.id );
 			return;
 		}
@@ -435,11 +436,11 @@ class ReaderStream extends React.Component {
 			// Start the search from the index in the items array, which has to be equal to or larger than
 			// the index in the posts array.
 			// Use lastIndexOf to walk the array from right to left
-			const selectedPost = findLast( posts, items[ index ], index );
-			if ( isEqual( selectedPost, this.state.selectedPost ) ) {
+			const selectedPostKey = findLast( posts, items[ index ], index );
+			if ( keysAreEqual( selectedPostKey, this.state.selectedPostKey ) ) {
 				FeedStreamStoreActions.selectNextItem( this.props.postsStore.id );
 			} else {
-				FeedStreamStoreActions.selectItem( this.props.postsStore.id, selectedPost );
+				FeedStreamStoreActions.selectItem( this.props.postsStore.id, selectedPostKey );
 			}
 		}
 	}
@@ -448,7 +449,7 @@ class ReaderStream extends React.Component {
 		// unlike selectNextItem, we don't want any magic here. Just move back an item if the user
 		// currently has a selected item. Otherwise do nothing.
 		// We avoid the magic here because we expect users to enter the flow using next, not previous.
-		if ( this.state.selectedPost ) {
+		if ( this.state.selectedPostKey ) {
 			FeedStreamStoreActions.selectPrevItem( this.props.postsStore.id );
 		}
 	}
@@ -497,7 +498,7 @@ class ReaderStream extends React.Component {
 	} );
 
 	renderPost = ( postKey, index ) => {
-		const selectedPostKey = this.props.postsStore.getSelectedPost();
+		const selectedPostKey = this.props.postsStore.getSelectedPostKey();
 		const isSelected = !! ( selectedPostKey &&
 			selectedPostKey.postId === postKey.postId &&
 			(
@@ -537,7 +538,7 @@ class ReaderStream extends React.Component {
 						index={ index }
 						key={ `combined-card-${ index }` }
 						onClick={ this.handleConnectedCardClick }
-						selectedPost={ selectedPostKey }
+						selectedPostKey={ selectedPostKey }
 					/>;
 		}
 

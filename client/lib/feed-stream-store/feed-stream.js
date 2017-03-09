@@ -157,7 +157,7 @@ export default class FeedStream {
 		return this.pendingPostKeys.length;
 	}
 
-	getSelectedPost() {
+	getSelectedPostKey() {
 		if ( this.selectedIndex >= 0 && this.selectedIndex < this.postKeys.length ) {
 			return this.postKeys[ this.selectedIndex ];
 		}

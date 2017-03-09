@@ -119,7 +119,7 @@ export default class PagedStream {
 		return 0;
 	}
 
-	getSelectedPost() {
+	getSelectedPostKey() {
 		if ( this.selectedIndex >= 0 && this.selectedIndex < this.postKeys.length ) {
 			return this.postKeys[ this.selectedIndex ];
 		}

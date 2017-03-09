@@ -158,14 +158,14 @@ describe( 'FeedPostList', function() {
 		} );
 
 		it( 'should initially have nothing selected', function() {
-			expect( store.getSelectedPost() ).to.equal( null );
+			expect( store.getSelectedPostKey() ).to.equal( null );
 		} );
 
 		it( 'should select the next item', function() {
 			feedPostStoreStub.returns( {} );
 			store.selectItem( { feed_ID: 1, ID: 1 } );
 			store.selectNextItem();
-			expect( store.getSelectedPost() ).to.eql( fakePosts[ 1 ] );
+			expect( store.getSelectedPostKey() ).to.eql( fakePosts[ 1 ] );
 		} );
 
 		it( 'should select the next valid post', function() {
@@ -177,15 +177,15 @@ describe( 'FeedPostList', function() {
 				.onCall( 4 ).returns( {} );
 			store.selectItem( { feed_ID: 1, ID: 1 } );
 			store.selectNextItem();
-			expect( store.getSelectedPost() ).to.eql( { feed_ID: 1, ID: 4 } );
+			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 4 } );
 		} );
 
 		it( 'should select the prev item', function() {
 			feedPostStoreStub.returns( {} );
 			store.selectItem( { feed_ID: 1, ID: 3 } );
-			expect( store.getSelectedPost() ).to.eql( { feed_ID: 1, ID: 3 } );
+			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 3 } );
 			store.selectPrevItem();
-			expect( store.getSelectedPost() ).to.eql( { feed_ID: 1, ID: 2 } );
+			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 2 } );
 		} );
 
 		it( 'should select the prev valid post', function() {
@@ -194,9 +194,9 @@ describe( 'FeedPostList', function() {
 				.onCall( 1 ).returns( { _state: 'error' } )
 				.onCall( 2 ).returns( {} );
 			store.selectItem( { feed_ID: 1, ID: 3 } );
-			expect( store.getSelectedPost() ).to.eql( { feed_ID: 1, ID: 3 } );
+			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 3 } );
 			store.selectPrevItem();
-			expect( store.getSelectedPost() ).to.eql( { feed_ID: 1, ID: 1 } );
+			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 1 } );
 		} );
 	} );
 
