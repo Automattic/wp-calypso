@@ -90,11 +90,15 @@ const HelpContact = React.createClass( {
 		olarkActions.hideBox();
 	},
 
-	componentDidUpdate: function() {
+	componentDidUpdate: function( prevProps ) {
 		// Directly initialization is a noop if it's already happened. This catches
 		// instances where a state/prop change moves a user to Directly support from
 		// some other variation.
 		this.prepareDirectlyWidget();
+
+		if ( ! prevProps.isDirectlyReady && this.props.isDirectlyReady ) {
+			analytics.tracks.recordEvent( 'calypso_help_contact_directly_initialize_success' );
+		}
 	},
 
 	componentWillUnmount: function() {
