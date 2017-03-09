@@ -146,7 +146,7 @@ const DomainsStep = React.createClass( {
 	},
 
 	handleAddMapping: function( sectionName, domain, state ) {
-		const domainItem = cartItems.domainMapping( { domain: domain.domain_name } );
+		const domainItem = cartItems.domainMapping( { domain } );
 		const isPurchasingItem = true;
 
 		mapDomainAnalytics.recordEvent( 'addDomainButtonClick', domain.domain_name, 'signup' );
