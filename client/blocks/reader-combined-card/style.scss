@@ -87,11 +87,11 @@
 	&.is-selected {
 		&::before {
 			content: '';
-			position: absolute;
+			position: relative;
 				top: -2px;
 				bottom: 2px;
 				left: -8px;
-				width: 2px;
+				width: 3px;
 			background: $blue-wordpress;
 
 			@include breakpoint( ">660px" ) {
