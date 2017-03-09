@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, map, property, delay } from 'lodash';
+import { filter, map, property, delay, includes } from 'lodash';
 import debugFactory from 'debug';
 import page from 'page';
 
@@ -372,19 +372,20 @@ export function requestActiveTheme( siteId ) {
  * Triggers a network request to activate a specific theme on a given site.
  * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
  *
- * @param  {String}   themeId   Theme ID
- * @param  {Number}   siteId    Site ID
- * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
- * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
- * @return {Function}           Action thunk
+ * @param  {String}            themeId   Theme ID
+ * @param  {Number}            siteId    Site ID
+ * @param  {('wpcom'|'wporg')} origin    The origin site from which to install
+ * @param  {String}            source    The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {Boolean}           purchased Whether the theme has been purchased prior to activation
+ * @return {Function}          Action thunk
  */
-export function activate( themeId, siteId, source = 'unknown', purchased = false ) {
+export function activate( themeId, siteId, origin, source = 'unknown', purchased = false ) {
 	return ( dispatch, getState ) => {
-		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
-			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
+		if ( isJetpackSite( getState(), siteId ) && ! includes( [ 'wpcom', 'wporg' ], origin ) ) { // should be origin !== siteId
+			//const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
 			// If theme is already installed, installation will silently fail,
 			// and it will just be activated.
-			return dispatch( installAndActivateTheme( installId, siteId, source, purchased ) );
+			return dispatch( installAndActivateTheme( themeId, siteId, origin, source, purchased ) );
 		}
 
 		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
@@ -603,21 +604,23 @@ export function tryAndCustomizeTheme( themeId, siteId ) {
 
 /**
  * Triggers a network request to install and activate a specific theme on a given
- * Jetpack site. If the themeId parameter is suffixed with '-wpcom', install the
- * theme from WordPress.com. Otherwise, install from WordPress.org.
+ * Jetpack site. Use the 'origin' arg to specify 'wpcom' to install from WordPress.com,
+ * or 'wporg' to install from Wordpress.org.
  *
- * @param  {String}   themeId   Theme ID. If suffixed with '-wpcom', install theme from WordPress.com
- * @param  {Number}   siteId    Site ID
- * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
- * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
- * @return {Function}           Action thunk
+ * @param  {String}            themeId  Theme ID
+ * @param  {Number}            siteId   Site ID
+ * @param  {('wpcom'|'wporg')} origin   The origin site from which to install
+ * @param  {String}            source   The source that is requesting theme activation, e.g. 'showcase'
+ * @param  {Boolean}           purchased Whether the theme has been purchased prior to activation
+ * @return {Function}          Action thunk
  */
-export function installAndActivateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
+export function installAndActivateTheme( themeId, siteId, origin, source = 'unknown', purchased = false ) {
 	return ( dispatch ) => {
-		return dispatch( installTheme( themeId, siteId ) )
+		return dispatch( installTheme( themeId, siteId, origin ) )
 			.then( () => {
 				// This will be called even if `installTheme` silently fails. We rely on
 				// `activateTheme`'s own error handling here.
+				// TODO: If wpcom, suffix here. Or obtain received themeId from .then?
 				dispatch( activateTheme( themeId, siteId, source, purchased ) );
 			} );
 	};
