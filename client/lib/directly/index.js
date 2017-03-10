@@ -120,5 +120,14 @@ export function initialize() {
  * @returns {Promise} Promise that resolves after initialization completes
  */
 export function askQuestion( questionText, name, email ) {
-	return execute( 'askQuestion', { questionText, name, email } );
+	// There's a bug that happens when you "askQuestion" and the widget is showing the minimized
+	// bubble with an expert avatar in it (indicating an active chat session). In this case,
+	// the widget throws errors and becomes unusable.
+	//
+	// As of the time of this comment Directly is still investigating this issue, which
+	// appears to be on their end. Their suggested stopgap is to "nagivate" out of the
+	// active chat before the "askQuestion" fires, hence the solution here. Note that
+	// "navigate" is an undocumented API, so you won't see it in the config guide.
+	return execute( 'navigate', '/ask' )
+		.then( () => execute( 'askQuestion', { questionText, name, email } ) );
 }
