@@ -24,6 +24,12 @@ export function keysAreEqual( a, b ) {
 	if ( ( ! a && b ) || ( a && ! b ) ) {
 		return false;
 	}
+	if ( a.isGap && ! b.isGap || ( ! a.isGap && b.isGap ) ) {
+		return false;
+	}
+	if ( a.isGap && b.isGap ) {
+		return a.from === b.from && a.to === b.to;
+	}
 	if ( a.postId !== b.postId ) {
 		return false;
 	}
