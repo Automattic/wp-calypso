@@ -72,6 +72,11 @@ export const requestReset = ( request ) => ( {
 	request,
 } );
 
+export const validateRequest = ( request ) => ( {
+	type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST,
+	request,
+} );
+
 export const validateRequestSuccess = () => ( {
 	type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
 } );
