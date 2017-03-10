@@ -31,6 +31,7 @@ import {
 	THEMES_REQUEST_FAILURE,
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
+	INVALIDATE_THEME_QUERIES,
 } from 'state/action-types';
 import {
 	getSerializedThemesQuery,
@@ -353,6 +354,12 @@ export const queryRequestSuccess = createReducer( {}, {
 			}
 		};
 	},
+	[ INVALIDATE_THEME_QUERIES ]: ( state, { siteId } ) => {
+		return {
+			...state,
+			[ siteId ]: {}
+		};
+	}
 } );
 
 /**
