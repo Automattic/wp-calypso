@@ -126,7 +126,8 @@ export function askQuestion( questionText, name, email ) {
 	//
 	// As of the time of this comment Directly is still investigating this issue, which
 	// appears to be on their end. Their suggested stopgap is to "nagivate" out of the
-	// active chat before the "askQuestion" fires, hence the solution here:
+	// active chat before the "askQuestion" fires, hence the solution here. Note that
+	// "navigate" is an undocumented API, so you won't see it in the config guide.
 	return execute( 'navigate', '/ask' )
 		.then( () => execute( 'askQuestion', { questionText, name, email } ) );
 }
