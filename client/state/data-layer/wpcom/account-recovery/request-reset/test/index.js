@@ -12,8 +12,8 @@ import { handleRequestReset } from '../';
 import useNock from 'test/helpers/use-nock';
 
 import {
-	ACCOUNT_RECOVERY_RESET_REQUEST_RESET_SUCCESS,
-	ACCOUNT_RECOVERY_RESET_REQUEST_RESET_ERROR,
+	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
 } from 'state/action-types';
 
 describe( 'handleRequestReset()', () => {
@@ -37,7 +37,7 @@ describe( 'handleRequestReset()', () => {
 		it( 'should dispatch SUCCESS action on success', () => {
 			return handleRequestReset( { dispatch }, { request } ).then( () =>
 				assert.isTrue( dispatch.calledWith( {
-					type: ACCOUNT_RECOVERY_RESET_REQUEST_RESET_SUCCESS,
+					type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
 				} ) )
 			);
 		} );
@@ -58,7 +58,7 @@ describe( 'handleRequestReset()', () => {
 		it( 'should dispatch ERROR action on failure', () => {
 			return handleRequestReset( { dispatch }, { request } ).then( () =>
 				assert.isTrue( dispatch.calledWithMatch( {
-					type: ACCOUNT_RECOVERY_RESET_REQUEST_RESET_ERROR,
+					type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
 					error: errorResponse,
 				} ) )
 			);

@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { ACCOUNT_RECOVERY_RESET_REQUEST_RESET } from 'state/action-types';
+import { ACCOUNT_RECOVERY_RESET_REQUEST } from 'state/action-types';
 import {
 	requestResetSuccess,
 	requestResetError,
@@ -18,5 +18,5 @@ export const handleRequestReset = ( { dispatch }, { request } ) => (
 );
 
 export default {
-	[ ACCOUNT_RECOVERY_RESET_REQUEST_RESET ]: [ handleRequestReset ],
+	[ ACCOUNT_RECOVERY_RESET_REQUEST ]: [ handleRequestReset ],
 };
