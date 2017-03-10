@@ -7,7 +7,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest, getABTestVariation } from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
@@ -111,13 +111,6 @@ const flows = {
 
 	surveystep: {
 		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'The current best performing flow in AB tests',
-		lastModified: '2016-05-23'
-	},
-
-	sitetitle: {
-		steps: [ 'site-title', 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'The current best performing flow in AB tests',
 		lastModified: '2016-05-23'
@@ -362,7 +355,7 @@ const Flows = {
 		 */
 		if ( 'main' === flowName ) {
 			if ( '' === stepName ) {
-				abtest( 'siteTitleStep' );
+				// e.g. abtest( 'siteTitleStep' );
 			}
 		}
 	},
@@ -382,9 +375,11 @@ const Flows = {
 	getABTestFilteredFlow( flowName, flow ) {
 		// Only do this on the main flow
 		if ( 'main' === flowName ) {
+			/* e.g.:
 			if ( getABTestVariation( 'siteTitleStep' ) === 'showSiteTitleStep' ) {
 				return Flows.insertStepIntoFlow( 'site-title', flow );
 			}
+			*/
 		}
 
 		return flow;
