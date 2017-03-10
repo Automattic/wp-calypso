@@ -864,7 +864,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should should eliminate redundant data on posts received', () => {
+		it( 'should eliminate redundant data on posts received', () => {
 			const state = edits( deepFreeze( {
 				2916284: {
 					841: {
@@ -950,7 +950,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should should preserve term edit differences on posts received', () => {
+		it( 'should preserve term edit differences on posts received', () => {
 			const state = edits( deepFreeze( {
 				2916284: {
 					841: {
