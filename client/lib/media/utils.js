@@ -529,7 +529,8 @@ const MediaUtils = {
 				file: file,
 				title: path.basename( file ),
 				extension: MediaUtils.getFileExtension( file ),
-				mime_type: MediaUtils.getMimeType( file )
+				mime_type: MediaUtils.getMimeType( file ),
+				is_uploading_via_url: true
 			} );
 		} else {
 			// Handle the case where a an object has been passed that wraps a

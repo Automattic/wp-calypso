@@ -112,7 +112,13 @@ export class EditorMediaModal extends Component {
 	isDisabled() {
 		return some( this.props.mediaLibrarySelectedItems, function( item ) {
 			const mimePrefix = MediaUtils.getMimePrefix( item );
-			return item.transient && ( mimePrefix !== 'image' || ModalViews.GALLERY === this.props.view );
+			return item.transient && (
+				// Transients can't be handled by the editor if they are being
+				// uploaded via an external URL
+				item.is_uploading_via_url ||
+				mimePrefix !== 'image' ||
+				ModalViews.GALLERY === this.props.view
+			);
 		}.bind( this ) );
 	}
 
