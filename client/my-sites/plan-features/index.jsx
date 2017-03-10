@@ -16,7 +16,6 @@ import PlanFeaturesItem from './item';
 import PlanFeaturesActions from './actions';
 import { isCurrentPlanPaid, isCurrentSitePlan, getSitePlan, getSiteSlug } from 'state/sites/selectors';
 import { isCurrentUserCurrentPlanOwner, getPlansBySiteId } from 'state/sites/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import {
@@ -455,8 +454,8 @@ PlanFeatures.defaultProps = {
 
 export default connect(
 	( state, ownProps ) => {
-		const { isInSignup, placeholder, plans, onUpgradeClick, isLandingPage } = ownProps;
-		const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
+		const { isInSignup, placeholder, plans, onUpgradeClick, isLandingPage, site } = ownProps;
+		const selectedSiteId = site ? site.ID : null;
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
@@ -467,7 +466,7 @@ export default connect(
 				const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
 				const planProductId = planConstantObj.getProductId();
 				const planObject = getPlan( state, planProductId );
-				const isLoadingSitePlans = ! isInSignup && ! sitePlans.hasLoadedFromServer;
+				const isLoadingSitePlans = selectedSiteId && ! sitePlans.hasLoadedFromServer;
 				const showMonthly = ! isMonthly( plan );
 				const available = isInSignup ? true : canUpgradeToPlan( plan ) && canPurchase;
 				const relatedMonthlyPlan = showMonthly ? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) ) : null;
