@@ -189,9 +189,13 @@ export const PostEditor = React.createClass( {
 		if ( this.props.layoutFocus === 'sidebar' ) {
 			this.props.setEditorSidebar( 'closed' );
 			this.props.setLayoutFocus( 'content' );
+			stats.recordStat( 'close-sidebar' );
+			stats.recordEvent( 'Sidebar Toggle', 'close' );
 		} else {
 			this.props.setEditorSidebar( 'open' );
 			this.props.setLayoutFocus( 'sidebar' );
+			stats.recordStat( 'open-sidebar' );
+			stats.recordEvent( 'Sidebar Toggle', 'open' );
 		}
 	},
 
