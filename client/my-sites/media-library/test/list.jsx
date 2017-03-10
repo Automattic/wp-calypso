@@ -43,7 +43,10 @@ describe( 'MediaLibraryList item selection', function() {
 				get: noop
 			} )
 		} );
-		mockery.registerMock( 'components/infinite-list', EmptyComponent );
+		mockery.registerMock( 'react-virtualized/AutoSizer', EmptyComponent );
+		mockery.registerMock( 'react-virtualized/InfiniteLoader', EmptyComponent );
+		mockery.registerMock( 'react-virtualized/Grid', EmptyComponent );
+		mockery.registerMock( 'react-virtualized/WindowScroller', EmptyComponent );
 		mockery.registerMock( './list-item', EmptyComponent );
 		mockery.registerMock( './list-plan-upgrade-nudge', EmptyComponent );
 

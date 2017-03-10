@@ -1,14 +1,18 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
+var React = require( 'react' ),
 	clone = require( 'lodash/clone' ),
 	noop = require( 'lodash/noop' ),
 	filter = require( 'lodash/filter' ),
 	findIndex = require( 'lodash/findIndex' );
 
+import AutoSizer from 'react-virtualized/AutoSizer';
+import InfiniteLoader from 'react-virtualized/InfiniteLoader';
+import Grid from 'react-virtualized/Grid';
+import WindowScroller from 'react-virtualized/WindowScroller';
 import { connect } from 'react-redux';
+import { fill } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,9 +21,7 @@ var MediaActions = require( 'lib/media/actions' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	ListItem = require( './list-item' ),
 	ListNoResults = require( './list-no-results' ),
-	ListNoContent = require( './list-no-content' ),
-	InfiniteList = require( 'components/infinite-list' ),
-	user = require( 'lib/user' )();
+	ListNoContent = require( './list-no-content' );
 
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 import { getPreference } from 'state/preferences/selectors';
@@ -29,13 +31,13 @@ export const MediaLibraryList = React.createClass( {
 
 	propTypes: {
 		site: React.PropTypes.object,
+		batchSize: React.PropTypes.number,
 		media: React.PropTypes.arrayOf( React.PropTypes.object ),
 		mediaLibrarySelectedItems: React.PropTypes.arrayOf( React.PropTypes.object ),
 		filter: React.PropTypes.string,
 		filterRequiresUpgrade: React.PropTypes.bool.isRequired,
 		search: React.PropTypes.string,
-		containerWidth: React.PropTypes.number,
-		rowPadding: React.PropTypes.number,
+		disableHeight: React.PropTypes.bool,
 		mediaScale: React.PropTypes.number.isRequired,
 		photon: React.PropTypes.bool,
 		mediaHasNextPage: React.PropTypes.bool,
@@ -43,7 +45,8 @@ export const MediaLibraryList = React.createClass( {
 		mediaOnFetchNextPage: React.PropTypes.func,
 		single: React.PropTypes.bool,
 		scrollable: React.PropTypes.bool,
-		onEditItem: React.PropTypes.func
+		onEditItem: React.PropTypes.func,
+		padding: React.PropTypes.number
 	},
 
 	getInitialState: function() {
@@ -52,58 +55,18 @@ export const MediaLibraryList = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			batchSize: 20,
+			media: [],
 			mediaLibrarySelectedItems: Object.freeze( [] ),
-			containerWidth: 0,
-			rowPadding: 10,
+			disableHeight: false,
 			mediaHasNextPage: false,
 			mediaFetchingNextPage: false,
 			mediaOnFetchNextPage: noop,
 			single: false,
 			scrollable: false,
-			onEditItem: noop
+			onEditItem: noop,
+			padding: 5
 		};
-	},
-
-	setListContext( component ) {
-		if ( ! component ) {
-			return;
-		}
-
-		this.setState( {
-			listContext: ReactDom.findDOMNode( component )
-		} );
-	},
-
-	getMediaItemHeight: function() {
-		return Math.round( this.props.containerWidth * this.props.mediaScale ) + this.props.rowPadding;
-	},
-
-	getItemsPerRow: function() {
-		return Math.floor( 1 / this.props.mediaScale );
-	},
-
-	getMediaItemStyle: function( index ) {
-		var itemsPerRow = this.getItemsPerRow(),
-			isFillingEntireRow = itemsPerRow === 1 / this.props.mediaScale,
-			isLastInRow = 0 === ( index + 1 ) % itemsPerRow,
-			style, marginValue;
-
-		style = {
-			paddingBottom: this.props.rowPadding,
-			fontSize: this.props.mediaScale * 225
-		};
-
-		if ( ! isFillingEntireRow && ! isLastInRow ) {
-			marginValue = ( 1 % this.props.mediaScale ) / ( itemsPerRow - 1 ) * 100 + '%';
-
-			if ( user.isRTL() ) {
-				style.marginLeft = marginValue;
-			} else {
-				style.marginRight = marginValue;
-			}
-		}
-
-		return style;
 	},
 
 	toggleItem: function( item, shiftKeyPressed ) {
@@ -129,7 +92,7 @@ export const MediaLibraryList = React.createClass( {
 		}
 
 		for ( let i = start; i <= end; i++ ) {
-			let interimIndex = findIndex( selectedItems, {
+			const interimIndex = findIndex( selectedItems, {
 				ID: this.props.media[ i ].ID
 			} );
 
@@ -149,18 +112,35 @@ export const MediaLibraryList = React.createClass( {
 		}
 	},
 
-	getItemRef: function( item ) {
-		return 'item-' + item.ID;
-	},
+	renderItem: function( { rowIndex, columnIndex, key, style } ) {
+		const index = rowIndex * this._columnCount + columnIndex;
+		const item = this._gridItems[ index ];
 
-	renderItem: function( item ) {
-		var index = findIndex( this.props.media, { ID: item.ID } ),
-			selectedItems = this.props.mediaLibrarySelectedItems,
-			selectedIndex = findIndex( selectedItems, { ID: item.ID } ),
-			ref = this.getItemRef( item ),
-			showGalleryHelp;
+		style = {
+			...style,
+			fontSize: this.props.mediaScale * 225,
+			top: style.top + this.props.padding,
+			left: style.left + this.props.padding,
+			width: style.width - this.props.padding * 2,
+			height: style.height - this.props.padding * 2,
+		};
 
-		showGalleryHelp = (
+		if ( ! item ) {
+			return;
+		}
+
+		if ( item.loading ) {
+			return (
+				<ListItem
+					key={ key }
+					style={ style }
+					scale={ this.props.mediaScale } />
+			);
+		}
+
+		const selectedItems = this.props.mediaLibrarySelectedItems;
+		const selectedIndex = findIndex( selectedItems, { ID: item.ID } );
+		const showGalleryHelp = (
 			! this.props.single &&
 			selectedIndex !== -1 &&
 			selectedItems.length === 1 &&
@@ -169,9 +149,8 @@ export const MediaLibraryList = React.createClass( {
 
 		return (
 			<ListItem
-				ref={ ref }
-				key={ ref }
-				style={ this.getMediaItemStyle( index ) }
+				key={ key }
+				style={ style }
 				media={ item }
 				scale={ this.props.mediaScale }
 				photon={ this.props.photon }
@@ -182,30 +161,85 @@ export const MediaLibraryList = React.createClass( {
 		);
 	},
 
-	renderLoadingPlaceholders: function() {
-		var itemsPerRow = this.getItemsPerRow(),
-			itemsVisible = ( this.props.media || [] ).length,
-			placeholders = itemsPerRow - ( itemsVisible % itemsPerRow );
+	onSectionRendered: function( { columnStartIndex, columnStopIndex, rowStartIndex, rowStopIndex } ) {
+		const startIndex = rowStartIndex * this._columnCount + columnStartIndex;
+		const stopIndex = rowStopIndex * this._columnCount + columnStopIndex;
 
-		// We render enough placeholders to occupy the remainder of the row
-		return Array.apply( null, new Array( placeholders ) ).map( function( value, i ) {
+		return this._onRowsRendered( { startIndex, stopIndex } );
+	},
+
+	isRowLoaded: function( { index } ) {
+		return !! this.props.media[ index ] || ! this.props.mediaHasNextPage;
+	},
+
+	loadMoreRows: function() {
+		if ( ! this.props.mediaFetchingNextPage && this.props.mediaHasNextPage ) {
+			// May be triggered while dispatching an action.
+			// We cannot create a new action while dispatching an old one.
+			setTimeout( this.props.mediaOnFetchNextPage );
+		}
+	},
+
+	renderGrid: function( { height, registerChild, scrollTop, width } ) {
+		const gridSize = Math.floor( width / this._columnCount );
+
+		return (
+			<Grid
+				autoHeight={ this.props.disableHeight }
+				cellRenderer={ this.renderItem }
+				columnCount={ this._columnCount }
+				columnWidth={ gridSize }
+				height={ height }
+				onSectionRendered={ this.onSectionRendered }
+				ref={ registerChild }
+				rowCount={ this._rowCount }
+				rowHeight={ gridSize }
+				scrollTop={ scrollTop }
+				// Trigger update on change.
+				selectedItems={ this.props.mediaLibrarySelectedItems }
+				// Never show a hortizontal scrollbar.
+				style={ { overflowX: 'hidden' } }
+				width={ width } />
+		);
+	},
+
+	renderSizer: function( { onRowsRendered, registerChild } ) {
+		this._onRowsRendered = onRowsRendered;
+
+		if ( ! this.props.disableHeight ) {
 			return (
-				<ListItem
-					key={ 'placeholder-' + i }
-					style={ this.getMediaItemStyle( itemsVisible + i ) }
-					scale={ this.props.mediaScale } />
+				<AutoSizer>
+					{ ( { height, width } ) => this.renderGrid( {
+						registerChild,
+						height,
+						width
+					} ) }
+				</AutoSizer>
 			);
-		}, this );
+		}
+
+		return (
+			<WindowScroller>
+				{ ( { height, scrollTop } ) => (
+					<AutoSizer disableHeight>
+						{ ( { width } ) => this.renderGrid( {
+							registerChild,
+							height,
+							scrollTop,
+							width
+						} ) }
+					</AutoSizer>
+				) }
+			</WindowScroller>
+		);
 	},
 
 	render: function() {
-		var onFetchNextPage;
-
 		if ( this.props.filterRequiresUpgrade ) {
 			return <ListPlanUpgradeNudge filter={ this.props.filter } site={ this.props.site } />;
 		}
 
-		if ( ! this.props.mediaHasNextPage && this.props.media && 0 === this.props.media.length ) {
+		if ( ! this.props.mediaHasNextPage && this.props.media.length === 0 ) {
 			return React.createElement( this.props.search ? ListNoResults : ListNoContent, {
 				site: this.props.site,
 				filter: this.props.filter,
@@ -213,26 +247,28 @@ export const MediaLibraryList = React.createClass( {
 			} );
 		}
 
-		onFetchNextPage = function() {
-			// InfiniteList passes its own parameter which would interfere
-			// with the optional parameters expected by mediaOnFetchNextPage
-			this.props.mediaOnFetchNextPage();
-		}.bind( this );
+		this._gridItems = this.props.media;
+
+		if ( this.props.mediaHasNextPage ) {
+			this._gridItems = this._gridItems.concat(
+				fill( Array( this.props.batchSize ), { loading: true } )
+			);
+		}
+
+		this._columnCount = Math.floor( 1 / this.props.mediaScale );
+		this._rowCount = Math.ceil( this._gridItems.length / this._columnCount );
 
 		return (
-			<InfiniteList
-				ref={ this.setListContext }
-				context={ this.props.scrollable ? this.state.listContext : false }
-				items={ this.props.media || [] }
-				itemsPerRow={ this.getItemsPerRow() }
-				lastPage={ ! this.props.mediaHasNextPage }
-				fetchingNextPage={ this.props.mediaFetchingNextPage }
-				guessedItemHeight={ this.getMediaItemHeight() }
-				fetchNextPage={ onFetchNextPage }
-				getItemRef={ this.getItemRef }
-				renderItem={ this.renderItem }
-				renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
-				className="media-library__list" />
+			<div className="media-library__list">
+				<InfiniteLoader
+					isRowLoaded={ this.isRowLoaded }
+					loadMoreRows={ this.loadMoreRows }
+					rowCount={ this._gridItems.length }
+					threshold={ 5 * this._columnCount }
+					minimumBatchSize={ this.props.batchSize }>
+					{ ( args ) => this.renderSizer( args ) }
+				</InfiniteLoader>
+			</div>
 		);
 	}
 } );
