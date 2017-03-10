@@ -95,6 +95,7 @@ const RemovePurchase = React.createClass( {
 	},
 
 	closeDialog() {
+		analytics.tracks.recordEvent( 'calypso_cancel_purchase_survey_close' );
 		this.setState( {
 			isDialogVisible: false,
 			surveyStep: 1,
@@ -106,6 +107,7 @@ const RemovePurchase = React.createClass( {
 	},
 
 	openDialog( event ) {
+		analytics.tracks.recordEvent( 'calypso_cancel_purchase_survey_start' );
 		event.preventDefault();
 
 		this.setState( { isDialogVisible: true } );
@@ -119,9 +121,9 @@ const RemovePurchase = React.createClass( {
 	},
 
 	changeSurveyStep() {
-		this.setState( {
-			surveyStep: this.state.surveyStep === 1 ? 2 : 1,
-		} );
+		const newStep = this.state.surveyStep === 1 ? 2 : 1;
+		analytics.tracks.recordEvent( 'calypso_cancel_purchase_survey_step', { new_step: newStep } );
+		this.setState( { surveyStep: newStep } );
 	},
 
 	onSurveyChange( update ) {
