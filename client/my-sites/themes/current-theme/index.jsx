@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, map, pickBy } from 'lodash';
+import { map, pickBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -32,16 +32,15 @@ class CurrentTheme extends Component {
 		} ) ),
 		siteId: PropTypes.number.isRequired,
 		// connected props
-		currentThemeId: PropTypes.string,
-		currentThemeName: PropTypes.string
+		currentTheme: PropTypes.object
 	}
 
 	trackClick = ( event ) => trackClick( 'current theme', event )
 
 	render() {
-		const { currentThemeId, currentThemeName, siteId, translate } = this.props,
+		const { currentTheme, currentThemeId, siteId, translate } = this.props,
 			placeholderText = <span className="current-theme__placeholder">loading...</span>,
-			text = currentThemeName || placeholderText;
+			text = ( currentTheme && currentTheme.name ) ? currentTheme.name : placeholderText;
 
 		const options = pickBy( this.props.options, option =>
 			currentThemeId && ! ( option.hideForTheme && option.hideForTheme( currentThemeId, siteId ) )
@@ -87,10 +86,9 @@ class CurrentTheme extends Component {
 
 const ConnectedCurrentTheme = connectOptions( localize( CurrentTheme ) );
 
-const CurrentThemeWithOptions = ( { siteId, currentThemeId, currentThemeName } ) => (
-	<ConnectedCurrentTheme
+const CurrentThemeWithOptions = ( { siteId, currentTheme, currentThemeId } ) => (
+	<ConnectedCurrentTheme currentTheme={ currentTheme }
 		currentThemeId={ currentThemeId }
-		currentThemeName={ currentThemeName }
 		siteId={ siteId }
 		options={ [
 			'customize',
@@ -103,10 +101,9 @@ const CurrentThemeWithOptions = ( { siteId, currentThemeId, currentThemeName } )
 export default connect(
 	( state, { siteId } ) => {
 		const currentThemeId = getActiveTheme( state, siteId );
-		const currentTheme = getCanonicalTheme( state, siteId, currentThemeId );
 		return {
 			currentThemeId,
-			currentThemeName: get( currentTheme, 'name' ),
+			currentTheme: getCanonicalTheme( state, siteId, currentThemeId ),
 		};
 	}
 )( CurrentThemeWithOptions );
