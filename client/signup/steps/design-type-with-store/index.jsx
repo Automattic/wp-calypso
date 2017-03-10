@@ -116,7 +116,7 @@ class DesignTypeWithStoreStep extends Component {
 			choiceLabel = null;
 			choiceCardClass = 'design-type-with-store__choice design-type-with-store__choice--test';
 			choiceDescription = <p className="design-type-with-store__choice-description">{ choice.description }</p>;
-			callToAction = <span className="button is-compact">Create {choice.label}</span>;
+			callToAction = <span className="button is-compact design-type-with-store__cta">Start with {choice.label}</span>;
 		}
 
 		return (
@@ -126,8 +126,8 @@ class DesignTypeWithStoreStep extends Component {
 					onClick={ this.handleChoiceClick( choice.type ) }>
 					{ choice.image }
 					<div className="design-type-with-store__choice-copy">
-						{ callToAction }
 						{ choiceLabel }
+						{ callToAction }
 						{ choiceDescription }
 					</div>
 				</a>
@@ -148,7 +148,7 @@ class DesignTypeWithStoreStep extends Component {
 			{ 'is-hidden': this.state.showStore }
 		);
 
-		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' && ! this.state.showStore ) {
+		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
 			// Note: Don't make this translatable because it's only visible to English-language users
 			disclaimer = <p className="design-type-with-store__disclaimer">
 								Not sure? Pick the closest option. You can always change your settings later.
@@ -162,8 +162,8 @@ class DesignTypeWithStoreStep extends Component {
 				</div>
 				<div className={ designTypeListClassName }>
 					{ this.getChoices().map( this.renderChoice ) }
+					{ disclaimer }
 				</div>
-				{ disclaimer }
 			</div>
 		);
 	}
@@ -211,7 +211,7 @@ class DesignTypeWithStoreStep extends Component {
 			return 'Hello! Let’s create your new site.';
 		}
 
-		return translate( 'What would you like your homepage to look like?' );
+		return translate( 'Let\'s get started.' );
 	}
 
 	getSubHeaderText() {

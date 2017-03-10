@@ -71,13 +71,13 @@ module.exports = {
 			updated: 50
 		},
 		defaultVariation: 'original'
-	}
+	},
 	signupStepOneCopyChanges: {
 		datestamp: '20170307',
 		variations: {
-            original: 50,
-            modified: 50
-        },
-        defaultVariation: 'original'
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
 	},
 };

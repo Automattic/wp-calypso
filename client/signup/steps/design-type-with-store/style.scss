@@ -83,6 +83,10 @@
 	font-size: 0.875em;
 }
 
+.button.design-type-with-store__cta {
+	color: $blue-wordpress;
+}
+
 .design-type-with-store__flex-container {
 	display: inline-flex;
 	flex-flow: row wrap;
@@ -236,4 +240,5 @@
 	text-align: center;
 	color: darken( $gray, 20 );
 	font-size: 0.875em;
+	width: 100%;
 }
