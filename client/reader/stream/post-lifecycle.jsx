@@ -3,6 +3,9 @@
  */
 import React, { PropTypes } from 'react';
 import { defer } from 'lodash';
+import Perf from 'react-addons-perf'; // ES6
+Perf.start();
+window.Perf = Perf;
 
 /**
  * Internal Dependencies
@@ -68,6 +71,18 @@ export default class PostLifecycle extends React.PureComponent {
 
 		if ( ! shouldUpdate ) {
 			console.error('lifecycle saved');
+		} else {
+			console.error( 'lifecycle maybe should have been saved',
+				'post', this.state.post !== nextState.post,
+				'selected', isSelected !== nextProps.isSelected,
+				'sitenmaelink', suppressSiteNameLink !== nextProps.suppressSiteNameLink,
+				'postheader', showPostHeader !== nextProps.showPostHeader,
+				'followinheader', showFollowInHeader !== nextProps.showFollowInHeader,
+				'spfboc', showPrimaryFollowButtonOnCards !== showPrimaryFollowButtonOnCards,
+				'ssn', showSiteName !== nextProps.showSiteName,
+				'disocver', isDiscoverStream !== nextProps.isDiscoverStream,
+			);
+			console.error( 'post', this.state.post, nextState.post );
 		}
 		return shouldUpdate;
 	}
