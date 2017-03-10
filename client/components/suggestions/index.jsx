@@ -107,7 +107,10 @@ const Suggestions = React.createClass( {
 	},
 
 	onMouseDown( event ) {
-		this.props.suggest( event.target.textContent );
+		event.stopPropagation();
+		event.preventDefault();
+		//Additional empty space at the end adds fluidity to workflow
+		this.props.suggest( event.target.textContent + ' ' );
 	},
 
 	onMouseOver( event ) {

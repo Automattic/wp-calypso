@@ -20,6 +20,8 @@ class MagicSearchWelcome extends React.Component {
 
 	onMouseDown = ( event ) => {
 		this.props.suggestionsCallback( event.target.textContent + ':' );
+		event.stopPropagation();
+		event.preventDefault();
 	}
 
 	renderToken = ( taxonomy ) => {
@@ -31,7 +33,7 @@ class MagicSearchWelcome extends React.Component {
 		return (
 			<div
 				className={ themesTokenTypeClass }
-				onMouseDown={ this.onMouseDown }
+				onMouseDownCapture={ this.onMouseDown }
 				key={ taxonomy }
 			>
 				<Gridicon icon={ taxonomyToGridicon( taxonomy ) } className="themes-magic-search-card__welcome-taxonomy-icon" size={ 18 } />
