@@ -22,7 +22,7 @@ import { getStreamUrl } from 'reader/route';
 import ReaderAuthorLink from 'blocks/reader-author-link';
 import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
 
-const TAGS_TO_SHOW = 5;
+const TAGS_TO_SHOW = 3;
 
 class PostByline extends React.Component {
 
