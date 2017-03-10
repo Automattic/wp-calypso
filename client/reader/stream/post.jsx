@@ -171,6 +171,13 @@ export default class ReaderPostCardAdapterFluxContainer extends React.Component 
 		FeedPostStore.off( 'change', this.updateState );
 	}
 
+	shouldComponentUpdate( nextProps, nextState ) {
+		const shouldUpdate = this.props !== nextProps ||
+			get( this.state, 'discoverPick.post' ) !== get( nextState, 'discoverPick.post' );
+
+		return shouldUpdate;
+	}
+
 	render() {
 		return ( <ConnectedReaderPostCardAdapter
 					{ ...this.props }

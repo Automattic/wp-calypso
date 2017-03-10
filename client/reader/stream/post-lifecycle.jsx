@@ -69,21 +69,6 @@ export default class PostLifecycle extends React.PureComponent {
 			showSiteName !== nextProps.showSiteName ||
 			isDiscoverStream !== nextProps.isDiscoverStream;
 
-		if ( ! shouldUpdate ) {
-			console.error('lifecycle saved');
-		} else {
-			console.error( 'lifecycle maybe should have been saved',
-				'post', this.state.post !== nextState.post,
-				'selected', isSelected !== nextProps.isSelected,
-				'sitenmaelink', suppressSiteNameLink !== nextProps.suppressSiteNameLink,
-				'postheader', showPostHeader !== nextProps.showPostHeader,
-				'followinheader', showFollowInHeader !== nextProps.showFollowInHeader,
-				'spfboc', showPrimaryFollowButtonOnCards !== showPrimaryFollowButtonOnCards,
-				'ssn', showSiteName !== nextProps.showSiteName,
-				'disocver', isDiscoverStream !== nextProps.isDiscoverStream,
-			);
-			console.error( 'post', this.state.post, nextState.post );
-		}
 		return shouldUpdate;
 	}
 
