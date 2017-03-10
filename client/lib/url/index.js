@@ -43,7 +43,8 @@ function isExternal( url ) {
 		if ( hostname === window.location.hostname ) {
 			// even if hostname matches, the url might be outside calypso
 			// outside calypso should be considered external
-			if ( isLegacyRoute( path ) ) {
+			// double separators are valid paths - but not handled correctly
+			if ( isLegacyRoute( path.replace( '//', '/' ) ) ) {
 				return true;
 			}
 			return false;
