@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/assign' ),
-	difference = require( 'lodash/difference' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	pick = require( 'lodash/pick' );
+import { assign, difference, get, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -224,6 +221,10 @@ function isDomainMapping( product ) {
 	return product.product_slug === 'domain_map';
 }
 
+function isDomainMappingNotMappedToWordPressDotCom( product ) {
+	return isDomainMapping( product ) && ! get( product, 'mappedDomainHasWpcomNameServers', false );
+}
+
 function isSiteRedirect( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -356,6 +357,7 @@ module.exports = {
 	isCustomDesign,
 	isDependentProduct,
 	isDomainMapping,
+	isDomainMappingNotMappedToWordPressDotCom,
 	isDomainProduct,
 	isDomainRedemption,
 	isDomainRegistration,

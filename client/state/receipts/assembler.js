@@ -6,6 +6,7 @@ export function createReceiptObject( data ) {
 			return {
 				freeTrial: purchase.free_trial,
 				isDomainRegistration: Boolean( purchase.is_domain_registration ),
+				mappedDomainHasWpcomNameServers: Boolean( purchase.mapped_domain_has_wpcom_name_servers ),
 				meta: purchase.meta,
 				productId: purchase.product_id,
 				productSlug: purchase.product_slug,

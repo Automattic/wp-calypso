@@ -33,6 +33,7 @@ import JetpackThankYouCard from './jetpack-thank-you-card';
 import {
 	isChargeback,
 	isDomainMapping,
+	isDomainMappingNotMappedToWordPressDotCom,
 	isDomainProduct,
 	isDomainRedemption,
 	isDomainRegistration,
@@ -307,7 +308,7 @@ const CheckoutThankYou = React.createClass( {
 				return [ DomainRegistrationDetails, ...findPurchaseAndDomain( purchases, isDomainRegistration ) ];
 			} else if ( purchases.some( isGoogleApps ) ) {
 				return [ GoogleAppsDetails, ...findPurchaseAndDomain( purchases, isGoogleApps ) ];
-			} else if ( purchases.some( isDomainMapping ) ) {
+			} else if ( purchases.some( isDomainMappingNotMappedToWordPressDotCom ) ) {
 				return [ DomainMappingDetails, ...findPurchaseAndDomain( purchases, isDomainMapping ) ];
 			} else if ( purchases.some( isSiteRedirect ) ) {
 				return [ SiteRedirectDetails, ...findPurchaseAndDomain( purchases, isSiteRedirect ) ];
