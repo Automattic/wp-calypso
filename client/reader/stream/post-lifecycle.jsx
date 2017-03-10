@@ -3,9 +3,6 @@
  */
 import React, { PropTypes } from 'react';
 import { defer, every, without } from 'lodash';
-import Perf from 'react-addons-perf'; // ES6
-Perf.start();
-window.Perf = Perf;
 
 /**
  * Internal Dependencies

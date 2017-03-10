@@ -12,9 +12,6 @@ import FeedPostStore from 'lib/feed-post-store';
 import { fetchPost } from 'lib/feed-post-store/actions';
 import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
-import Perf from 'react-addons-perf'; // ES6
-Perf.start();
-window.Perf = Perf;
 
 /**
  * A HoC function that translates a postKey or postKeys into a post or posts for its child.
