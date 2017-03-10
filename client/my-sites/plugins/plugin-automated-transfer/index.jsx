@@ -11,10 +11,12 @@ import wrapWithClickOutside from 'react-click-outside';
  */
 import { transferStates } from 'state/automated-transfer/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSite } from 'state/sites/selectors';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { isAutomatedTransferActive } from 'state/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import WpAdminAutoLogin from 'components/wpadmin-auto-login';
 
 class PluginAutomatedTransfer extends Component {
 
@@ -138,21 +140,24 @@ class PluginAutomatedTransfer extends Component {
 		}
 
 		return (
-			<Notice
-				icon={ this.getIcon() }
-				className="plugin-automated-transfer"
-				showDismiss={ false }
-				status={ this.getStatus() }
-				text={ this.getNoticeText() }
-			>
-				{ ! transferComplete && CONFLICTS === transferState &&
-					<NoticeAction href="#">
-						{ translate( 'View Conflicts', {
-							comment: 'Conflicts arose during an Automated Transfer started by a plugin install.',
-						} ) }
-					</NoticeAction>
-				}
-			</Notice>
+			<div>
+				<Notice
+					icon={ this.getIcon() }
+					className="plugin-automated-transfer"
+					showDismiss={ false }
+					status={ this.getStatus() }
+					text={ this.getNoticeText() }
+				>
+					{ ! transferComplete && CONFLICTS === transferState &&
+						<NoticeAction href="#">
+							{ translate( 'View Conflicts', {
+								comment: 'Conflicts arose during an Automated Transfer started by a plugin install.',
+							} ) }
+						</NoticeAction>
+					}
+				</Notice>
+				{ this.state.transferComplete && <WpAdminAutoLogin site={ this.props.site } /> }
+			</div>
 		);
 	}
 
@@ -160,10 +165,10 @@ class PluginAutomatedTransfer extends Component {
 
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
-
 	return {
 		transferState: getAutomatedTransferStatus( state, siteId ),
 		isTransferring: isAutomatedTransferActive( state, siteId ),
+		site: getSite( state, siteId ),
 	};
 };
 

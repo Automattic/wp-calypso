@@ -55,6 +55,8 @@ import {
 	getEligibility,
 	isEligibleForAutomatedTransfer
 } from 'state/automated-transfer/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import WpAdminAutoLogin from 'components/wpadmin-auto-login';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -264,6 +266,7 @@ class Upload extends React.Component {
 				{ ! inProgress && ! complete && this.renderDropZone() }
 				{ inProgress && this.renderProgressBar() }
 				{ complete && ! failed && uploadedTheme && this.renderTheme() }
+				{ complete && this.props.isSiteAutomatedTransfer && <WpAdminAutoLogin site={ this.props.selectedSite } /> }
 			</Card>
 		);
 	}
@@ -353,6 +356,7 @@ const UploadWithOptions = ( props ) => {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const site = getSelectedSite( state );
 		const themeId = getUploadedThemeId( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 		const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
@@ -366,7 +370,7 @@ export default connect(
 		return {
 			siteId,
 			isBusiness: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
-			selectedSite: getSelectedSite( state ),
+			selectedSite: site,
 			isJetpack,
 			inProgress: isUploadInProgress( state, siteId ),
 			complete: isUploadComplete( state, siteId ),
@@ -381,6 +385,7 @@ export default connect(
 			upgradeJetpack: isJetpack && ! hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ),
 			backPath: getBackPath( state ),
 			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
+			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },
