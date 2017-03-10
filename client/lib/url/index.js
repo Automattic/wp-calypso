@@ -2,8 +2,7 @@
  * External dependencies
  */
 import { parse as parseUrl } from 'url';
-import startsWith from 'lodash/startsWith';
-import includes from 'lodash/includes';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,9 +29,10 @@ function isExternal( url ) {
 	// the url passed in might be of form `en.support.wordpress.com`
 	// so for this function we'll append double-slashes to fake it
 	// if it is a relative URL the hostname will still be empty from parseURL
-	if ( ! includes( url, '//' ) ) {
+	if ( ! startsWith( url, 'http://' ) && ! startsWith( url, 'https://' ) && ! startsWith( url, '//' ) ) {
 		url = '//' + url;
 	}
+
 	const { hostname, path } = parseUrl( url, false, true ); // no qs needed, and slashesDenoteHost to handle protocol-relative URLs
 
 	if ( ! hostname ) {
