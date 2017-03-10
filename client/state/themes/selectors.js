@@ -209,6 +209,11 @@ export function hasAllPagesQueried( state, siteId, query ) {
 	return lastPage === lastQueriedPage;
 }
 
+export function wasQueryFetched( state, siteId, query ) {
+	const lastQueriedPage = getLastQueriedPageNumberForQuery( state, siteId, query );
+	return query.page <= lastQueriedPage;
+}
+
 /**
  * Returns true if the query has reached the last page of queryable pages, or
  * null if the total number of queryable themes if unknown.
