@@ -11,7 +11,6 @@ import i18n from 'i18n-calypso';
 import { state as SiteState } from 'lib/reader-site-store/constants';
 import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import PostStore from 'lib/feed-post-store';
-import { selectItem } from 'lib/feed-stream-store/actions';
 import XPostHelper, { isXPost } from 'reader/xpost-helper';
 import { setLastStoreId } from 'reader/controller-helper';
 
@@ -80,11 +79,7 @@ export function showSelectedPost( { store, replaceHistory, selectedGap, postKey,
 		return;
 	}
 
-	if ( store && postKey ) {
-		selectItem( store.getID(), postKey );
-	} else if ( ! store ) {
-		setLastStoreId( undefined );
-	}
+	setLastStoreId( store && store.id );
 
 	if ( postKey.isGap === true ) {
 		return selectedGap.handleClick();
