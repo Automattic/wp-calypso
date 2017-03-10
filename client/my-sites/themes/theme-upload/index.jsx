@@ -288,7 +288,7 @@ class Upload extends React.Component {
 			<EmptyContent
 				title={ this.props.translate( 'Upload not available for this site' ) }
 				line={ this.props.translate( 'Please select a different site' ) }
-				action={ this.props.translate( 'Backt to themes' ) }
+				action={ this.props.translate( 'Back to themes' ) }
 				actionURL={ this.props.backPath }
 				illustration={ '/calypso/images/drake/drake-whoops.svg' }
 			/>
