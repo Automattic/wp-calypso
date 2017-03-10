@@ -53,7 +53,6 @@
 .post-editor__content {
 	margin: 0 auto; // born centered, so when width collapses for sidebar anim it doesn't move
 	left: 0;
-	width: 100%;
 
 	.focus-sidebar & {
 		@include breakpoint( ">960px" ) {
