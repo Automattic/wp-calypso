@@ -76,6 +76,13 @@ function updateSpecificState( state, action, updaterOrValue ) {
 export function items( state = Immutable.Map(), action ) {
 	switch ( action.type ) {
 		case COMMENTS_APPROVE:
+			return updateSpecificState( state, action, ( comments = Immutable.List() ) => {
+				updateExistingIn(
+					comments,
+					comment => comment.get( 'ID' ) === action.commentId,
+					comment => comment.set( 'status', 'approved' )
+				)
+			} );
 		case COMMENTS_APPROVE_UPDATE:
 		case COMMENTS_DISAPPROVE:
 			break;
