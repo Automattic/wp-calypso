@@ -30,7 +30,7 @@ export default class WpadminAutoLogin extends Component {
 		delay: 3000,
 	};
 
-	componentWillMount() {
+	componentDidMount() {
 		const siteUrl = get( this.props.site, 'URL' );
 		const requestUrl = this.getPixelUrl( siteUrl );
 
