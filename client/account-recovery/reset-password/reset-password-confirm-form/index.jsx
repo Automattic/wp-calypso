@@ -3,23 +3,19 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 import { identity } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import FormTextInput from 'components/forms/form-text-input';
+import FormPasswordInput from 'components/forms/form-password-input';
 import FormLabel from 'components/forms/form-label';
 import FormButton from 'components/forms/form-button';
 import { STRONG_PASSWORD } from 'lib/url/support';
 
 const ResetPasswordConfirmForm = ( props ) => {
-	const {
-		translate,
-		showPassword,
-	} = props;
+	const { translate } = props;
 
 	return (
 		<Card>
@@ -27,10 +23,7 @@ const ResetPasswordConfirmForm = ( props ) => {
 			<FormLabel className="reset-password-confirm-form__text-input-label" htmlFor="password">
 				{ translate( 'New password' ) }
 			</FormLabel>
-			<a className={ classNames( 'reset-password-confirm-form__show-hide-toggle', { show: showPassword } ) } href="#">
-				{ showPassword ? translate( 'Show' ) : translate( 'Hide' ) }
-			</a>
-			<FormTextInput className="reset-password-confirm-form__password-input-field" id="password" />
+			<FormPasswordInput className="reset-password-confirm-form__password-input-field" id="password" />
 			<FormButton className="reset-password-confirm-form__button generate-password-button" isPrimary={ false }>
 				{ translate( 'Generate strong password' ) }
 			</FormButton>
@@ -53,7 +46,6 @@ const ResetPasswordConfirmForm = ( props ) => {
 
 ResetPasswordConfirmForm.defaultProps = {
 	translate: identity,
-	showPassword: false,
 };
 
 export default localize( ResetPasswordConfirmForm );

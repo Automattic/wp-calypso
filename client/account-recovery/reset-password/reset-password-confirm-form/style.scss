@@ -13,38 +13,6 @@
 	margin: 4px 0;
 }
 
-.form-label.reset-password-confirm-form__text-input-label {
-	display: inline;
-	float: left;
-}
-
-.reset-password-confirm-form__show-hide-toggle {
-	display: inline;
-	float: right;
-	line-height: 16px;
-}
-
 .form-button.reset-password-confirm-form__button.generate-password-button {
 	line-height: 16px;
-}
-
-.form-button.reset-password-confirm-form__button.generate-password-button:before {
-	content: '\f427';
-	font: normal 16px/1 'Noticons';
-	margin-right: 5px;
-	vertical-align: top;
-}
-
-.reset-password-confirm-form__show-hide-toggle.show:before {
-	content: '\f403';
-	font: normal 16px/1 'Noticons';
-	margin-right: 5px;
-	vertical-align: top;
-}
-
-.reset-password-confirm-form__show-hide-toggle:before {
-	content: '\f404';
-	font: normal 16px/1 'Noticons';
-	margin-right: 5px;
-	vertical-align: top;
 }
