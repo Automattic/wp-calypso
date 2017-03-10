@@ -64,7 +64,7 @@ class MasterbarDrafts extends Component {
 			<div>
 				<QueryPostCounts siteId={ selectedSite.ID } type="post" />
 				{ this.props.draftCount > 0 &&
-					<Button compact borderless className="masterbar__toggle-drafts" onClick={ this.toggleDrafts } ref="drafts">
+					<Button compact borderless className="masterbar__toggle-drafts" onClick={ this.toggleDrafts } ref="drafts" title={ translate( 'Latest Drafts' ) }>
 						<Count count={ this.props.draftCount } />
 					</Button>
 				}
