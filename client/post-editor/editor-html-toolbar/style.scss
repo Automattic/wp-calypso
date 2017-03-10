@@ -144,7 +144,7 @@
 	left: 0;
 	position: absolute;
 	top: 38px;
-	width: 185px;
+	min-width: 185px;
 
 	&.is-visible {
 		display: block;
