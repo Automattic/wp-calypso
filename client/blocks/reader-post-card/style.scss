@@ -273,19 +273,18 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	flex: 1 0 0;
 	position: relative;
 	height: 20px;
-	width: 100%;
 	overflow: hidden;
+	white-space: nowrap;
 	margin-left: 10px;
 
 	&::after {
 		@include long-content-fade( $size: 10% );
 	}
-
 }
 
 .reader-post-card__tag {
-
 	white-space: nowrap;
+
 	&::after {
 		content: ', '
 	}
