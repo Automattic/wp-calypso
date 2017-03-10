@@ -11,9 +11,14 @@ import page from 'page';
  */
 import LoginComponent from './login';
 import ConnectComponent from './connect';
+import RequestLoginEmailForm from './request-login-email-form';
+import HandleEmailedLinkForm from './handle-emailed-link-form';
+import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
+import EmailedLoginLinkExpired from './emailed-login-link-expired';
 import * as OAuthToken from 'lib/oauth-token';
 import wpcom from 'lib/wp';
 import config from 'config';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import store from 'store';
 import WPOAuth from 'wpcom-oauth';
 import userFactory from 'lib/user';
@@ -109,5 +114,49 @@ module.exports = {
 				window.location = '/';
 			}
 		} );
+	},
+
+	magicLoginRequestEmailForm: function( context ) {
+		renderWithReduxStore( (
+				<Main className="auth__magic-login-request-form">
+					<RequestLoginEmailForm />
+				</Main>
+			),
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
+
+	magicLoginLinkWasSent: function( context ) {
+		renderWithReduxStore( (
+				<Main className="auth__magic-link-was-sent">
+					<EmailedLoginLinkSuccessfully />
+				</Main>
+			),
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
+
+	magicLoginClickHandler: function( context ) {
+		renderWithReduxStore( (
+				<Main className="auth__magic-login-handle-click">
+					<HandleEmailedLinkForm />
+				</Main>
+			),
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
+
+	magicLoginHasExpired: function( context ) {
+		renderWithReduxStore( (
+				<Main className="auth__magic-link-exipred">
+					<EmailedLoginLinkExpired />
+				</Main>
+			),
+			document.getElementById( 'primary' ),
+			context.store
+		);
 	}
 };

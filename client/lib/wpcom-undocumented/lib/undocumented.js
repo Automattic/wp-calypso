@@ -1605,6 +1605,19 @@ Undocumented.prototype.validateNewUser = function( data, fn ) {
 };
 
 /**
+ * Request a "Magic Login" email be sent to a user so they can use it to log in
+ * @param  {object} data - object containing an email address
+ * @param  {Function} fn - Function to invoke when request is complete
+ * @returns {Promise} promise
+ */
+Undocumented.prototype.requestMagicLoginEmail = function( data, fn ) {
+	restrictByOauthKeys( data );
+	return this.wpcom.req.post( '/auth/send-login-email', {
+		apiVersion: '1.2',
+	}, data, fn );
+};
+
+/**
  * Create a new site
  *
  * @param {object} query - object containing an site address
