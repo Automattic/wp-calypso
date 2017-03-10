@@ -2052,6 +2052,20 @@ Undocumented.prototype.cancelPlanTrial = function( planId, fn ) {
 	}, fn );
 };
 
+/**
+ * Get the Directly configuration for the current user
+ *
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.getDirectlyConfiguration = function( fn ) {
+	return this.wpcom.req.get( {
+		apiVersion: '1.1',
+		path: '/help/directly/mine'
+	}, fn );
+};
+
 Undocumented.prototype.submitKayakoTicket = function( subject, message, locale, client, fn ) {
 	debug( 'submitKayakoTicket' );
 
