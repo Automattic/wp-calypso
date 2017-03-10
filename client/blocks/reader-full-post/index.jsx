@@ -35,6 +35,7 @@ import Comments from 'blocks/comments';
 import scrollTo from 'lib/scroll-to';
 import PostExcerptLink from 'reader/post-excerpt-link';
 import { siteNameFromSiteAndPost } from 'reader/utils';
+import { keyForPost } from 'lib/feed-stream-store/post-key';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import ReaderPostActions from 'blocks/reader-post-actions';
 import PostStoreActions from 'lib/feed-post-store/actions';
@@ -247,16 +248,22 @@ export class FullPostView extends React.Component {
 	goToNextPost = () => {
 		const store = getLastStore();
 		if ( store ) {
+			if ( ! store.getSelectedPostKey() ) {
+				store.selectItem( keyForPost( this.props.post ), store.id );
+			}
 			FeedStreamStoreActions.selectNextItem( store.getID() );
-			showSelectedPost( { store, postKey: store.getSelectedPost() } );
+			showSelectedPost( { store, postKey: store.getSelectedPostKey() } );
 		}
 	}
 
 	goToPreviousPost = () => {
 		const store = getLastStore();
 		if ( store ) {
+			if ( ! store.getSelectedPostKey() ) {
+				store.selectItem( keyForPost( this.props.post ), store.id );
+			}
 			FeedStreamStoreActions.selectPrevItem( store.getID() );
-			showSelectedPost( { store, postKey: store.getSelectedPost() } );
+			showSelectedPost( { store, postKey: store.getSelectedPostKey() } );
 		}
 	}
 
