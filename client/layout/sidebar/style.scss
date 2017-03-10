@@ -194,7 +194,7 @@
 	}
 }
 
-a.sidebar__button {
+a.sidebar__button, form.sidebar__button {
 	display: flex;
 	position: relative;
 	box-sizing: border-box;
@@ -217,6 +217,9 @@ a.sidebar__button {
 		padding: 8px 16px;
 		margin: 10px 10px 0 0;
 	}
+}
+form.sidebar__button {
+	cursor: pointer;
 }
 
 // Selected Menu
@@ -308,7 +311,7 @@ a.sidebar__button {
 	}
 }
 
-.notouch .sidebar__menu li:not(.selected) a {
+.notouch .sidebar__menu li:not(.selected) a, form {
 	&.sidebar__button:hover {
 		color: $blue-medium;
 	}

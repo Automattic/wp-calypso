@@ -10,6 +10,7 @@ import {
 	head,
 	noop,
 	map,
+	flow,
 	partial,
 	some,
 	values,
@@ -25,7 +26,6 @@ import {
 	recordEvent,
 	recordStat
 } from 'lib/posts/stats';
-import MediaModalSecondaryActions from './secondary-actions';
 import MediaModalGallery from './gallery';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
@@ -40,6 +40,7 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 import { deleteMedia } from 'state/media/actions';
 import ImageEditor from 'blocks/image-editor';
 import MediaModalDetail from './detail';
+import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
 
 export class EditorMediaModal extends Component {
 	static propTypes = {
@@ -329,11 +330,6 @@ export class EditorMediaModal extends Component {
 		const isDisabled = this.isDisabled();
 		const selectedItems = this.props.mediaLibrarySelectedItems;
 		const buttons = [
-			<MediaModalSecondaryActions
-				site={ this.props.site }
-				selectedItems={ selectedItems }
-				disabled={ isDisabled }
-				onDelete={ this.deleteMedia } />,
 			{
 				action: 'cancel',
 				label: this.props.translate( 'Cancel' )
@@ -431,6 +427,9 @@ export class EditorMediaModal extends Component {
 						onEditItem={ this.editItem }
 						fullScreenDropZone={ false }
 						single={ this.props.single }
+						onDeleteItem={ this.deleteMedia }
+						onViewDetails={ this.props.onViewDetails }
+						mediaLibrarySelectedItems={ this.props.mediaLibrarySelectedItems }
 						scrollable />
 				);
 				break;
@@ -463,6 +462,11 @@ export default connect(
 	{
 		setView: setEditorMediaModalView,
 		resetView: resetMediaModalView,
-		deleteMedia
+		deleteMedia,
+		onViewDetails: flow(
+			withAnalytics( bumpStat( 'editor_media_actions', 'edit_button_dialog' ) ),
+			withAnalytics( recordGoogleEvent( 'Media', 'Clicked Dialog Edit Button' ) ),
+			partial( setEditorMediaModalView, ModalViews.DETAIL )
+		)
 	}
 )( localize( EditorMediaModal ) );
