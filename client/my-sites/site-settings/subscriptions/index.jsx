@@ -77,6 +77,10 @@ const Subscriptions = ( {
 			<CompactCard href={ '/people/email-followers/' + selectedSiteSlug }>
 				{ translate( 'View your Email Followers' ) }
 			</CompactCard>
+
+			<CompactCard href={ 'https://wordpress.com/manage/' + selectedSiteId }>
+				{ translate( 'Migrate followers from another WordPress.com blog' ) }
+			</CompactCard>
 		</div>
 	);
 };

@@ -638,9 +638,6 @@ class SiteSettingsFormGeneral extends Component {
 						<CompactCard href={ '../security/' + site.slug }>
 							{ translate( 'View Jetpack Monitor Settings' ) }
 						</CompactCard>
-						<CompactCard href={ 'https://wordpress.com/manage/' + site.ID }>
-							{ translate( 'Migrate followers from another WordPress.com blog' ) }
-						</CompactCard>
 					</div>
 					: null }
 			</div>
