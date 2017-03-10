@@ -1,7 +1,7 @@
 $accordion-padding: 16px;
 $accordion-subtitle-height: 16px;
 $accordion-background-collapsed: $white; // same as body
-$accordion-background-hover: $white;
+$accordion-background-hover: lighten( $gray, 35% );
 $accordion-background-expanded: $white;
 
 .accordion {
@@ -25,9 +25,18 @@ $accordion-background-expanded: $white;
 	color: $gray-dark;
 	background-color: $accordion-background-collapsed;
 	text-align: left;
+	transition: all 150ms ease-in;
 
 	&:hover {
 		background-color: $accordion-background-hover;
+
+		.accordion__title {
+			color: $blue-medium;
+		}
+
+		.accordion__arrow {
+			color: $blue-medium;
+		}
 	}
 
 	.accordion__arrow {
@@ -84,6 +93,7 @@ $accordion-background-expanded: $white;
 	font-size: 13px;
 	font-weight: 500;
 	line-height: $accordion-subtitle-height;
+	transition: all 150ms ease-in;
 
 	.accordion.has-icon & {
 		padding-left: 28px;
