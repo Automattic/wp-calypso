@@ -10,13 +10,13 @@ import { get } from 'lodash';
  */
 function tryLogin( requestUrl, initalDelay, attempt ) {
 	const image = new Image();
-	image.src = requestUrl;
 
 	if ( attempt < 9 ) {
 		image.onerror = function() {
 			setTimeout( tryLogin.bind( null, requestUrl, initalDelay, attempt + 1 ), initalDelay * attempt );
 		};
 	}
+	image.src = requestUrl;
 }
 
 export default class WpadminAutoLogin extends Component {
@@ -24,7 +24,7 @@ export default class WpadminAutoLogin extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		delay: PropTypes.number,
-	}
+	};
 
 	static defaultProps = {
 		delay: 3000,
@@ -38,7 +38,7 @@ export default class WpadminAutoLogin extends Component {
 	}
 
 	getPixelUrl( siteUrl ) {
-		const pixel = encodeURI( siteUrl + '/wp-includes/images/blank.gif' );
+		const pixel = encodeURI( `${ siteUrl }/wp-includes/images/blank.gif` );
 		return `${ siteUrl }/wp-login.php?redirect_to=${ pixel }`;
 	}
 
