@@ -7,9 +7,9 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	VIDEO_EDITOR_POSTER_UPDATE,
 	VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
 	VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
+	VIDEO_EDITOR_POSTER_UPDATING,
 	VIDEO_EDITOR_SCRIPT_LOAD_ERROR,
 	VIDEO_EDITOR_STATE_RESET,
 	VIDEO_EDITOR_STATE_RESET_POSTER,
@@ -70,7 +70,7 @@ describe( 'reducer', () => {
 
 		it( 'should change to true on poster update', () => {
 			const state = posterIsUpdating( undefined, {
-				type: VIDEO_EDITOR_POSTER_UPDATE,
+				type: VIDEO_EDITOR_POSTER_UPDATING,
 			} );
 
 			expect( state ).to.be.true;
@@ -201,7 +201,7 @@ describe( 'reducer', () => {
 
 		it( 'should change to false on poster update', () => {
 			const state = hasPosterUpdateError( undefined, {
-				type: VIDEO_EDITOR_POSTER_UPDATE,
+				type: VIDEO_EDITOR_POSTER_UPDATING,
 			} );
 
 			expect( state ).to.be.false;

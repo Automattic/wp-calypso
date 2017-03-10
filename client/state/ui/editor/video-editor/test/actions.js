@@ -1,8 +1,6 @@
 /**
  * External dependencies
  */
-import nock from 'nock';
-import sinon from 'sinon';
 import { expect } from 'chai';
 
 /**
@@ -12,6 +10,7 @@ import {
 	VIDEO_EDITOR_POSTER_UPDATE,
 	VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
 	VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
+	VIDEO_EDITOR_POSTER_UPDATING,
 	VIDEO_EDITOR_SCRIPT_LOAD_ERROR,
 	VIDEO_EDITOR_STATE_RESET,
 	VIDEO_EDITOR_STATE_RESET_POSTER,
@@ -23,6 +22,9 @@ import {
 	setVideoEditorHasScriptLoadError,
 	setVideoEditorVideoHasLoaded,
 	updateVideoEditorPoster,
+	updateVideoEditorPosterSuccess,
+	updateVideoEditorPosterFailure,
+	updatingVideoEditorPoster,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -67,57 +69,48 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#updateVideoEditorPoster()', () => {
-		const spy = sinon.spy();
-		const guid = 'dummy-guid';
-		const params = { at_time: 1 };
-		const apiBaseUrl = 'https://public-api.wordpress.com:443';
-		const endpoint = `/rest/v1.1/videos/${ guid }/poster`;
-		const poster = 'https://i1.wp.com/videos.files.wordpress.com/dummy-guid/thumbnail.jpg?ssl=1';
+		it( 'should return an action object', () => {
+			const videoId = 'dummy-videoId';
+			const params = { at_time: 1 };
+			const action = updateVideoEditorPoster( videoId, params );
 
-		beforeEach( () => {
-			spy.reset();
-		} );
-
-		it( 'should dispatch update action when thunk triggered', () => {
-			nock( apiBaseUrl )
-				.post( endpoint )
-				.reply( 200, { poster } );
-
-			updateVideoEditorPoster( guid, params )( spy );
-
-			expect( spy ).to.have.been.calledWith( { type: VIDEO_EDITOR_POSTER_UPDATE } );
-		} );
-
-		it( 'should dispatch success action when request completes', () => {
-			nock( apiBaseUrl )
-				.post( endpoint )
-				.reply( 200, { poster } );
-
-			return updateVideoEditorPoster( guid, params )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
-					poster,
-				} );
+			expect( action ).to.eql( {
+				type: VIDEO_EDITOR_POSTER_UPDATE,
+				videoId,
+				params
 			} );
 		} );
+	} );
 
-		it( 'should dispatch fail action when request fails', () => {
-			const errorResponse = {
-				status: 400,
-				message: 'Something wrong!',
-			};
+	describe( '#updatingVideoEditorPoster()', () => {
+		it( 'should return an action object', () => {
+			const action = updatingVideoEditorPoster();
 
-			nock( apiBaseUrl )
-				.post( endpoint )
-				.reply( errorResponse.status, errorResponse );
+			expect( action ).to.eql( {
+				type: VIDEO_EDITOR_POSTER_UPDATING,
+			} );
+		} );
+	} );
 
-			return updateVideoEditorPoster( guid, params )( spy )
-				.then( () =>
-					expect( spy.calledWithMatch( {
-						type: VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
-						error: errorResponse,
-					} ) ).to.be.true
-				);
+	describe( '#updateVideoEditorPosterSuccess()', () => {
+		it( 'should return an action object', () => {
+			const poster = 'https://i1.wp.com/videos.files.wordpress.com/dummy-guid/thumbnail.jpg?ssl=1';
+			const action = updateVideoEditorPosterSuccess( poster );
+
+			expect( action ).to.eql( {
+				type: VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
+				poster,
+			} );
+		} );
+	} );
+
+	describe( '#updateVideoEditorPosterFailure()', () => {
+		it( 'should return an action object', () => {
+			const action = updateVideoEditorPosterFailure();
+
+			expect( action ).to.eql( {
+				type: VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
+			} );
 		} );
 	} );
 } );

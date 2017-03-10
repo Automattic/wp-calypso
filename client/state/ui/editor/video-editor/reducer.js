@@ -7,9 +7,9 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	VIDEO_EDITOR_POSTER_UPDATE,
 	VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
 	VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
+	VIDEO_EDITOR_POSTER_UPDATING,
 	VIDEO_EDITOR_SCRIPT_LOAD_ERROR,
 	VIDEO_EDITOR_STATE_RESET,
 	VIDEO_EDITOR_STATE_RESET_POSTER,
@@ -44,7 +44,7 @@ export const videoIsLoading = ( state = true, action ) => {
  */
 export const posterIsUpdating = ( state = false, action ) => {
 	switch ( action.type ) {
-		case VIDEO_EDITOR_POSTER_UPDATE:
+		case VIDEO_EDITOR_POSTER_UPDATING:
 			return true;
 
 		case VIDEO_EDITOR_POSTER_UPDATE_SUCCESS:
@@ -110,7 +110,7 @@ export const hasPosterUpdateError = ( state = false, action ) => {
 		case VIDEO_EDITOR_POSTER_UPDATE_FAILURE:
 			return true;
 
-		case VIDEO_EDITOR_POSTER_UPDATE:
+		case VIDEO_EDITOR_POSTER_UPDATING:
 		case VIDEO_EDITOR_POSTER_UPDATE_SUCCESS:
 		case VIDEO_EDITOR_STATE_RESET:
 		case VIDEO_EDITOR_STATE_RESET_POSTER:
