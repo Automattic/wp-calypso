@@ -51,6 +51,27 @@ export default class PostLifecycle extends React.PureComponent {
 		this.updatePost( nextProps );
 	}
 
+	shouldComponentUpdate( nextProps, nextState ) {
+		const {
+			isSelected, suppressSiteNameLink, showPostHeader, showFollowInHeader,
+			showPrimaryFollowButtonOnCards, showSiteName, isDiscoverStream,
+		} = this.props;
+
+		const shouldUpdate = this.state.post !== nextState.post ||
+			isSelected !== nextProps.isSelected ||
+			suppressSiteNameLink !== nextProps.suppressSiteNameLink ||
+			showPostHeader !== nextProps.showPostHeader ||
+			showFollowInHeader !== nextProps.showFollowInHeader ||
+			showPrimaryFollowButtonOnCards !== showPrimaryFollowButtonOnCards ||
+			showSiteName !== nextProps.showSiteName ||
+			isDiscoverStream !== nextProps.isDiscoverStream;
+
+		if ( ! shouldUpdate ) {
+			console.error('lifecycle saved');
+		}
+		return shouldUpdate;
+	}
+
 	render() {
 		const post = this.state.post;
 		let postState = post._state;
