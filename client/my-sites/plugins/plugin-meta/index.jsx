@@ -8,6 +8,7 @@ import i18n from 'i18n-calypso';
 import some from 'lodash/some';
 import get from 'lodash/get';
 import { includes } from 'lodash';
+import { isEmpty } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -330,6 +331,7 @@ const PluginMeta = React.createClass( {
 		} );
 
 		const plugin = this.props.selectedSite && this.props.sites[ 0 ] ? this.props.sites[ 0 ].plugin : this.props.plugin;
+		const actionLinks = get( plugin, 'action_links' );
 
 		return (
 			<div className="plugin-meta">
@@ -345,6 +347,18 @@ const PluginMeta = React.createClass( {
 							<div className="plugin-meta__meta">
 								{ this.renderAuthorUrl() }
 							</div>
+							{ ! isEmpty( actionLinks ) &&
+								<div className="plugin-meta__action-links">
+									{ Object.keys( actionLinks ).map( linkTitle => (
+										<Button compact icon
+											href={ actionLinks[ linkTitle ] }
+											target="_blank"
+											rel="noopener noreferrer">
+												{ linkTitle } <Gridicon icon="external" />
+										</Button>
+									) ) }
+								</div>
+							}
 						</div>
 						{ this.renderActions() }
 					</div>
