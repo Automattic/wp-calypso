@@ -85,16 +85,3 @@ export const validateRequestError = ( error ) => ( {
 	type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
 	error,
 } );
-
-export const validateResetRequest = ( request ) => ( dispatch ) => {
-	dispatch( {
-		type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST,
-	} );
-
-	return wpcom.req.post( {
-		body: request,
-		apiNamespace: 'wpcom/v2',
-		path: '/account-recovery/validate',
-	} ).then( () => dispatch( validateRequestSuccess() ) )
-	.catch( ( error ) => dispatch( validateRequestError( error ) ) );
-};
