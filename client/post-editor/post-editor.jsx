@@ -323,6 +323,7 @@ export const PostEditor = React.createClass( {
 						site={ site }
 						type={ this.props.type }
 						setPostDate={ this.setPostDate }
+						onSave={ this.onSave }
 						/>
 					{ this.iframePreviewEnabled() ?
 						<EditorPreview
