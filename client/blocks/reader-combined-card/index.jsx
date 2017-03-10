@@ -2,8 +2,9 @@
  * External Dependencies
  */
 import React from 'react';
-import { get } from 'lodash';
+import { get, isEmpty, first, last } from 'lodash';
 import { localize } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal Dependencies
@@ -16,12 +17,17 @@ import { siteNameFromSiteAndPost } from 'reader/utils';
 import ReaderCombinedCardPost from './post';
 
 const ReaderCombinedCard = ( { posts, site, feed, onClick, isDiscover, translate } ) => {
+	if ( isEmpty( posts ) ) {
+		return null;
+	}
+
 	const feedId = get( feed, 'feed_ID' );
 	const siteId = get( site, 'ID' );
 	const siteIcon = get( site, 'icon.img' );
 	const feedIcon = get( feed, 'image' );
 	const streamUrl = getStreamUrl( feedId, siteId );
 	const siteName = siteNameFromSiteAndPost( site, posts[ 0 ] );
+	const duration = getHumanizedDuration( first( posts ).date, last( posts ).date );
 
 	return (
 		<Card className="reader-combined-card">
@@ -41,9 +47,10 @@ const ReaderCombinedCard = ( { posts, site, feed, onClick, isDiscover, translate
 						{ siteName }
 					</ReaderSiteStreamLink>
 					<p className="reader-combined-card__header-post-count">
-						{ translate( '%(count)d posts', {
+						{ translate( '%(count)d posts over %(duration)s', {
 							args: {
-								count: posts.length
+								count: posts.length,
+								duration,
 							}
 						} ) }
 					</p>
@@ -63,6 +70,12 @@ const ReaderCombinedCard = ( { posts, site, feed, onClick, isDiscover, translate
 		</Card>
 	);
 };
+
+function getHumanizedDuration( startDate, endDate ) {
+	const start = moment( startDate );
+	const end = moment( endDate );
+	return moment.duration( start.diff( end ) ).humanize();
+}
 
 ReaderCombinedCard.propTypes = {
 	posts: React.PropTypes.array.isRequired,
