@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import { get } from 'lodash';
+import { get, map, compact } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,6 +14,18 @@ import ReaderAvatar from 'blocks/reader-avatar';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import { siteNameFromSiteAndPost } from 'reader/utils';
 import ReaderCombinedCardPost from './post';
+import Gridicon from 'gridicons';
+import {
+	recordAction,
+	recordGaEvent,
+	recordTrackForPost,
+} from 'reader/stats';
+
+function recordTagClick( tag ) {
+	recordAction( 'click_tag' );
+	recordGaEvent( 'Clicked Tag Link' );
+	recordTrackForPost( 'calypso_reader_tag_clicked', this.props.post, { tag } );
+}
 
 const ReaderCombinedCard = ( { posts, site, feed, onClick, isDiscover, translate } ) => {
 	const feedId = get( feed, 'feed_ID' );
@@ -22,6 +34,10 @@ const ReaderCombinedCard = ( { posts, site, feed, onClick, isDiscover, translate
 	const feedIcon = get( feed, 'image' );
 	const streamUrl = getStreamUrl( feedId, siteId );
 	const siteName = siteNameFromSiteAndPost( site, posts[ 0 ] );
+	const primaryTags = compact( map(
+		posts,
+		post => post.primary_tag
+	) );
 
 	return (
 		<Card className="reader-combined-card">
@@ -40,13 +56,26 @@ const ReaderCombinedCard = ( { posts, site, feed, onClick, isDiscover, translate
 						siteId={ siteId }>
 						{ siteName }
 					</ReaderSiteStreamLink>
-					<p className="reader-combined-card__header-post-count">
-						{ translate( '%(count)d posts', {
-							args: {
-								count: posts.length
-							}
-						} ) }
-					</p>
+					<div style={ { display: 'flex' } }>
+						<p className="reader-combined-card__header-post-count">
+							{ translate( '%(count)d posts', {
+								args: {
+									count: posts.length
+								}
+							} ) }
+						</p>
+						{ map( primaryTags, tag => (
+							<span className="reader-post-card__tag">
+								<Gridicon icon="tag" />
+								<a href={ '/tag/' + tag.slug }
+									className="reader-post-card__tag-link ignore-click"
+									onClick={ tag => recordTagClick( tag ) }>
+									{ tag.name }
+								</a>
+							</span>
+						) ) }
+					</div>
+
 				</div>
 			</header>
 			<ul className="reader-combined-card__post-list">
