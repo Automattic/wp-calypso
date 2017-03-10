@@ -21,6 +21,7 @@ const fluxPostAdapter = Component => {
 	class ReaderPostFluxAdapter extends React.Component {
 		static propTypes = {
 			postKey: PropTypes.object,
+			selectedPost: PropTypes.string
 		}
 
 		getStateFromStores = ( props = this.props ) => {

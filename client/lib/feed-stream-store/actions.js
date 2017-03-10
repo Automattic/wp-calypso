@@ -137,11 +137,18 @@ export function selectPrevItem( id ) {
 	} );
 }
 
-export function selectItem( id, selectedIndex ) {
+export function selectFirstItem( id ) {
+	Dispatcher.handleViewAction( {
+		type: ActionType.SELECT_FIRST_ITEM,
+		id
+	} );
+}
+
+export function selectItem( id, postKey ) {
 	Dispatcher.handleViewAction( {
 		type: ActionType.SELECT_ITEM,
 		id,
-		selectedIndex
+		postKey
 	} );
 }
 
