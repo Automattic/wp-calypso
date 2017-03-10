@@ -30,6 +30,7 @@ const DEFAULT_FILES = [
 	'docs/coding-guidelines/javascript.md',
 	'docs/coding-guidelines/css.md',
 	'docs/coding-guidelines/html.md',
+	'docs/accessibility.md',
 ];
 
 /**
