@@ -70,12 +70,13 @@ describe( 'index', () => {
 					directly.initialize(),
 					directly.initialize(),
 					directly.initialize()
-						.then( () => {
-							expect( window.DirectlyRTM.cq ).to.have.lengthOf( 1 );
-							expect( window.DirectlyRTM.cq[ 0 ][ 0 ] ).to.equal( 'config' );
-							expect( loadScript.loadScript ).to.have.been.calledOnce;
-						} )
-				] ).then( () => done() );
+				] )
+				.then( () => {
+					expect( window.DirectlyRTM.cq ).to.have.lengthOf( 1 );
+					expect( window.DirectlyRTM.cq[ 0 ][ 0 ] ).to.equal( 'config' );
+					expect( loadScript.loadScript ).to.have.been.calledOnce;
+				} )
+				.then( () => done() );
 			} );
 
 			it( 'resolves the returned promise if the library load succeeds', ( done ) => {

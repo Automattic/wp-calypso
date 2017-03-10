@@ -115,7 +115,7 @@ export function initialize() {
 	directlyPromise = wpcom.undocumented().getDirectlyConfiguration().then(
 		( { isAvailable } ) => {
 			if ( ! isAvailable ) {
-				return Promise.reject( new Error( i18n.translate( 'Directly Real-Time Messaging is not available at this time.' ) ) );
+				return Promise.reject( new Error( 'Directly Real-Time Messaging is not available at this time.' ) );
 			}
 
 			configureGlobals();
