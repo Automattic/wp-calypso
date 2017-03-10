@@ -41,6 +41,11 @@ class EditorMediaModalDetailFields extends Component {
 		}
 	}
 
+	bumpTitleStat = () => {
+		analytics.ga.recordEvent( 'Media', 'Changed Item Title' );
+		analytics.mc.bumpStat( 'calypso_media_edit_details', 'title' );
+	};
+
 	bumpAltStat = () => {
 		analytics.ga.recordEvent( 'Media', 'Changed Image Alt' );
 		analytics.mc.bumpStat( 'calypso_media_edit_details', 'alt' );
@@ -119,6 +124,15 @@ class EditorMediaModalDetailFields extends Component {
 		const { translate } = this.props;
 		return (
 			<div className="editor-media-modal-detail__fields">
+				<EditorMediaModalFieldset legend={ translate( 'Title' ) }>
+					<TrackInputChanges onNewValue={ this.bumpTitleStat }>
+						<FormTextInput
+							name="title"
+							value={ this.getItemValue( 'title' ) }
+							onChange={ this.setFieldValue } />
+					</TrackInputChanges>
+				</EditorMediaModalFieldset>
+
 				<EditorMediaModalFieldset legend={ translate( 'Caption' ) }>
 					<TrackInputChanges onNewValue={ this.bumpCaptionStat }>
 						<FormTextarea
