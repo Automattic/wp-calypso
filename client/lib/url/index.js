@@ -10,6 +10,7 @@ import includes from 'lodash/includes';
  */
 import config from 'config';
 import addQueryArgs from 'lib/route/add-query-args';
+import { isLegacyRoute } from 'lib/route/legacy-routes';
 
 /**
  * Check if a URL is located outside of Calypso.
@@ -32,14 +33,21 @@ function isExternal( url ) {
 	if ( ! includes( url, '//' ) ) {
 		url = '//' + url;
 	}
-	const { hostname } = parseUrl( url, false, true ); // no qs needed, and slashesDenoteHost to handle protocol-relative URLs
+	const { hostname, path } = parseUrl( url, false, true ); // no qs needed, and slashesDenoteHost to handle protocol-relative URLs
 
 	if ( ! hostname ) {
 		return false;
 	}
 
 	if ( typeof window !== 'undefined' ) {
-		return hostname !== window.location.hostname;
+		if ( hostname === window.location.hostname ) {
+			// even if hostname matches, the url might be outside calypso
+			// outside calypso should be considered external
+			if ( isLegacyRoute( path ) ) {
+				return true;
+			}
+			return false;
+		}
 	}
 
 	return hostname !== config( 'hostname' );
