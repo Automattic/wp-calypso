@@ -47,7 +47,7 @@ const ReaderCombinedCard = ( { posts, site, feed, onClick, isDiscover, translate
 						{ siteName }
 					</ReaderSiteStreamLink>
 					<p className="reader-combined-card__header-post-count">
-						{ translate( '%(count)d posts in %(duration)s', {
+						{ translate( '%(count)d posts over %(duration)s', {
 							args: {
 								count: posts.length,
 								duration,
