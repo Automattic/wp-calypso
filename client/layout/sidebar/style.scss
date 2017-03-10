@@ -315,6 +315,7 @@ a.sidebar__button {
 }
 
 .sidebar .sidebar__footer {
+	align-items: center;
 	padding: 0;
 	border-top: 1px solid darken( $sidebar-bg-color, 10% );
 	margin: auto 0 0;
@@ -398,32 +399,6 @@ a.sidebar__button {
 		margin-top: auto;
 	}
 
-}
-
-.sidebar__drafts-button {
-	margin-left: auto;
-}
-
-.layout.is-group-sites .sidebar .drafts-button.button.is-borderless {
-	color: darken( $gray, 10% );
-	line-height: 0;
-	padding: 0;
-	margin: 0;
-	text-transform: none;
-
-	.count {
-		color: darken( $gray, 10% );
-	}
-
-	&:hover {
-		color: $blue-medium;
-
-		.count {
-			background: $blue-medium;
-			border-color: $blue-medium;
-			color: $white;
-		}
-	}
 }
 
 .layout.is-section-help .sidebar .sidebar__footer-help {

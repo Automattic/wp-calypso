@@ -24,15 +24,20 @@
 		border-left-width: 0;
 		border-right-width: 0;
 		border-top-width: 0;
-		left: ( $sidebar-width-min + 1 );
 		max-width: none;
 		position: fixed;
-		top: 47px;
-		width: calc( 100% - ( #{ $sidebar-width-min + 1 } ) );
+		top: 94px;
+		width: 100%;
+		z-index: 2;
 
-		@include breakpoint( ">960px" ) {
-			left: ( $sidebar-width-max + 1 );
+		.focus-sidebar &,
+		.has-chat & {
 			width: calc( 100% - ( #{ $sidebar-width-max + 1 } ) );
+		}
+
+		.focus-sidebar.has-chat & {
+			width: calc( 100% - ( #{ ( $sidebar-width-max * 2 ) + 1 } ) );
+			left: 0;
 		}
 	}
 

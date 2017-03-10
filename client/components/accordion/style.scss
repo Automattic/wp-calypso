@@ -1,7 +1,7 @@
 $accordion-padding: 16px;
 $accordion-subtitle-height: 16px;
-$accordion-background-collapsed: $gray-light; // same as body
-$accordion-background-hover: lighten( $gray, 30% );
+$accordion-background-collapsed: $white; // same as body
+$accordion-background-hover: $white;
 $accordion-background-expanded: $white;
 
 .accordion {
@@ -30,13 +30,16 @@ $accordion-background-expanded: $white;
 		background-color: $accordion-background-hover;
 	}
 
-	&::after {
-		@include noticon( '\f431', 22px );
+	.accordion__arrow {
 		position: absolute;
 			top: 50%;
-			right: $accordion-padding;
+			right: ( $accordion-padding - 4px );
 		transform: translateY( -50% );
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 10% );
+		height: 24px;
+		.gridicon {
+			transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
+		}
 	}
 
 	.accordion.has-subtitle & {
@@ -46,14 +49,14 @@ $accordion-background-expanded: $white;
 }
 
 .accordion.is-expanded {
-	box-shadow: 0 0 0 1px lighten( $gray, 20% );
 
 	.accordion__toggle {
 		background-color: $accordion-background-expanded;
-		box-shadow: 0 0 0 1px lighten( $gray, 20% );
 
-		&::after {
-			content: '\f432';
+		.accordion__arrow {
+			.gridicon {
+				transform: rotate( 180deg );
+			}
 		}
 	}
 
@@ -78,6 +81,9 @@ $accordion-background-expanded: $white;
 .accordion__title,
 .accordion__subtitle {
 	display: block;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: $accordion-subtitle-height;
 
 	.accordion.has-icon & {
 		padding-left: 28px;
@@ -89,9 +95,9 @@ $accordion-background-expanded: $white;
 }
 
 .accordion__subtitle {
-	font-size: 0.8em;
-	font-style: italic;
-	color: $gray-dark;
+	font-size: 11px;
+	color: $gray-text-min;
+	font-weight: 400;
 	white-space: nowrap;
 	overflow: hidden;
 	position: relative;
@@ -127,7 +133,7 @@ $accordion-background-expanded: $white;
 }
 
 .accordion__content-wrap {
-	padding: $accordion-padding;
+	padding: 0 $accordion-padding $accordion-padding $accordion-padding;
 }
 
 .accordion__section {

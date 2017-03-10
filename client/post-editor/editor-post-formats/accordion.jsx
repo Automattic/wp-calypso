@@ -5,7 +5,6 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { has, isEmpty } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -68,7 +67,6 @@ const EditorPostFormatsAccordion = React.createClass( {
 					<Accordion
 						title={ this.translate( 'Post Format' ) }
 						subtitle={ this.getSubtitle() }
-						icon={ <Gridicon icon="types" /> }
 						className={ classes }>
 						<PostFormats value={ this.getFormatValue() } />
 					</Accordion>

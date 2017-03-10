@@ -10,7 +10,6 @@ import PostQueryManager from 'lib/query-manager/post';
 import {
 	getEditorPostId,
 	isEditorNewPost,
-	isEditorDraftsVisible,
 	getEditorNewPostPath,
 	getEditorPath
 } from '../selectors';
@@ -53,20 +52,6 @@ describe( 'selectors', () => {
 			} );
 
 			expect( isNew ).to.be.true;
-		} );
-	} );
-
-	describe( '#isEditorDraftsVisible()', () => {
-		it( 'should return the current drafts visible state', () => {
-			const showDrafts = isEditorDraftsVisible( {
-				ui: {
-					editor: {
-						showDrafts: true
-					}
-				}
-			} );
-
-			expect( showDrafts ).to.be.true;
 		} );
 	} );
 

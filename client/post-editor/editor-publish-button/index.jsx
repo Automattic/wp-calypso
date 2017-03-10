@@ -122,6 +122,7 @@ export class EditorPublishButton extends Component {
 			<Button
 				className="editor-publish-button"
 				primary
+				compact
 				onClick={ this.onClick }
 				disabled={ ! this.isEnabled() }
 				tabIndex={ this.props.tabIndex }

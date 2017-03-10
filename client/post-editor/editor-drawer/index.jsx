@@ -4,7 +4,6 @@
 import React from 'react';
 import createFragment from 'react-addons-create-fragment';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -33,6 +32,7 @@ import EditorDrawerTaxonomies from './taxonomies';
 import EditorDrawerPageOptions from './page-options';
 import EditorDrawerLabel from './label';
 import EditorMoreOptionsCopyPost from 'post-editor/editor-more-options/copy-post';
+import EditPostStatus from 'post-editor/edit-post-status';
 
 /**
  * Constants
@@ -67,11 +67,13 @@ const POST_TYPE_SUPPORTS = {
 const EditorDrawer = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
+		savedPost: React.PropTypes.object,
 		post: React.PropTypes.object,
 		canJetpackUseTaxonomies: React.PropTypes.bool,
 		typeObject: React.PropTypes.object,
 		isNew: React.PropTypes.bool,
-		type: React.PropTypes.string
+		type: React.PropTypes.string,
+		setPostDate: React.PropTypes.func,
 	},
 
 	onExcerptChange: function( event ) {
@@ -280,7 +282,6 @@ const EditorDrawer = React.createClass( {
 		return (
 			<Accordion
 				title={ this.translate( 'More Options' ) }
-				icon={ <Gridicon icon="ellipsis" /> }
 				className="editor-drawer__more-options"
 			>
 				{ siteUtils.isPermalinkEditable( this.props.site ) && <EditorMoreOptionsSlug /> }
@@ -300,6 +301,28 @@ const EditorDrawer = React.createClass( {
 		return <EditorDrawerPageOptions />;
 	},
 
+	renderStatus() {
+		// TODO: REDUX - remove this logic and prop for EditPostStatus when date is moved to redux
+		const postDate = this.props.post && this.props.post.date
+				? this.props.post.date
+				: null;
+
+		return (
+			<Accordion title={ this.translate( 'Status' ) }>
+				<EditPostStatus
+					savedPost={ this.props.savedPost }
+					postDate={ postDate }
+					type={ this.props.type }
+					onSave={ this.props.onSave }
+					onTrashingPost={ this.props.onTrashingPost }
+					onPrivatePublish={ this.props.onPrivatePublish }
+					setPostDate={ this.props.setPostDate }
+					site={ this.props.site }>
+				</EditPostStatus>
+			</Accordion>
+		);
+	},
+
 	render: function() {
 		const { site } = this.props;
 
@@ -308,6 +331,7 @@ const EditorDrawer = React.createClass( {
 				{ site && (
 					<QueryPostTypes siteId={ site.ID } />
 				) }
+				{ this.renderStatus() }
 				{ this.renderTaxonomies() }
 				{ this.renderFeaturedImage() }
 				{ this.renderPageOptions() }

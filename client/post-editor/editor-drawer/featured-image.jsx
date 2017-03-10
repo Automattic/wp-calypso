@@ -3,7 +3,6 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -36,11 +35,8 @@ class EditorDrawerFeaturedImage extends Component {
 		const { translate, site, post } = this.props;
 
 		return (
-			<Accordion
-				title={ translate( 'Featured Image' ) }
-				icon={ <Gridicon icon="image" /> }>
+			<Accordion title={ translate( 'Featured Image' ) }>
 				<EditorDrawerWell
-					icon="image"
 					label={ translate( 'Set Featured Image' ) }
 					empty={ ! site || ! post || ! getFeaturedImageId( post ) }
 					onClick={ this.startSelecting }

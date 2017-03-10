@@ -20,7 +20,6 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Button from 'components/button';
 import Popover from 'components/popover';
 import touchDetect from 'lib/touch-detect';
-import Tooltip from 'components/tooltip';
 import postActions from 'lib/posts/actions';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 import accept from 'lib/accept';
@@ -51,7 +50,6 @@ export default React.createClass( {
 		return {
 			showPopover: false,
 			passwordIsValid: true,
-			tooltip: false,
 			showVisibilityInfotips: false,
 			visibility: 'public',
 		};
@@ -277,22 +275,6 @@ export default React.createClass( {
 		);
 	},
 
-	showTooltip() {
-		if ( this.state.tooltip ) {
-			return;
-		}
-
-		this.setState( { tooltip: true } );
-	},
-
-	hideTooltip() {
-		if ( ! this.state.tooltip ) {
-			return;
-		}
-
-		this.setState( { tooltip: false } );
-	},
-
 	toggleVisibilityInfotips() {
 		if ( this.state.showVisibilityInfotips ) {
 			recordEvent( 'InfoPopover: Visibility Closed' );
@@ -324,84 +306,76 @@ export default React.createClass( {
 		} );
 
 		return (
-			<Button
-				borderless
-				className={ classes }
-				onClick={ this.togglePopover }
-				onMouseEnter={ this.showTooltip }
-				onMouseLeave={ this.hideTooltip }
-				ref="setVisibility"
-			>
-				<Gridicon icon={ icons[ visibility ] || 'visible' } />
-				<Tooltip
-					className="editor-visibility__tooltip"
-					context={ this.refs && this.refs.setVisibility }
-					isVisible={ this.state.tooltip && ! this.state.showPopover }
-					position="bottom left"
-				>
-					{ this.translate( 'Edit visibility', { context: 'Editor: Tooltip shown on icon to change the post\'s visibility.' } ) }
-				</Tooltip>
-				<Popover
-					className="editor-visibility__popover"
-					isVisible={ this.state.showPopover }
-					onClose={ this.closePopover }
-					position={ 'bottom left' }
-					context={ this.refs && this.refs.setVisibility }
-				>
-					<div className="editor-visibility__dialog">
-						<FormFieldset className="editor-fieldset">
-							<FormLegend className="editor-fieldset__legend">
-								{ this.translate( 'Post Visibility' ) }
-								<Gridicon
-									icon="info-outline"
-									size={ 18 }
-									className={ classNames( 'editor-visibility__dialog-info', { is_active: this.state.showVisibilityInfotips } ) }
-									onClick={ this.toggleVisibilityInfotips }
-								/>
-							</FormLegend>
-							<FormLabel>
-								<FormRadio
-									name="site-visibility"
-									value="public"
-									onChange={ this.updateVisibility }
-									checked={ 'public' === visibility }
-								/>
-								<span>
-									{
-										this.props.isPrivateSite
-										? this.translate( 'Visible for members of the site', { context: 'Editor: Radio label to set post visibility' } )
-										: this.translate( 'Public', { context: 'Editor: Radio label to set post visible to public' } )
-									}
-								</span>
-							</FormLabel>
-							{ this.renderVisibilityTip( 'public' ) }
+				<div className={ classes }>
+					{ this.translate( 'Visibility' ) }
+					<Button
+						compact
+						borderless
+						onClick={ this.togglePopover }
+						ref="setVisibility"
+					>
+					<Gridicon icon={ icons[ visibility ] || 'visible' } /> { visibility }
+					<Popover
+						className="editor-visibility__popover"
+						isVisible={ this.state.showPopover }
+						onClose={ this.closePopover }
+						position={ 'bottom left' }
+						context={ this.refs && this.refs.setVisibility }
+					>
+						<div className="editor-visibility__dialog">
+							<FormFieldset className="editor-fieldset">
+								<FormLegend className="editor-fieldset__legend">
+									{ this.translate( 'Post Visibility' ) }
+									<Gridicon
+										icon="info-outline"
+										size={ 18 }
+										className={ classNames( 'editor-visibility__dialog-info', { is_active: this.state.showVisibilityInfotips } ) }
+										onClick={ this.toggleVisibilityInfotips }
+									/>
+								</FormLegend>
+								<FormLabel>
+									<FormRadio
+										name="site-visibility"
+										value="public"
+										onChange={ this.updateVisibility }
+										checked={ 'public' === visibility }
+									/>
+									<span>
+										{
+											this.props.isPrivateSite
+											? this.translate( 'Visible for members of the site', { context: 'Editor: Radio label to set post visibility' } )
+											: this.translate( 'Public', { context: 'Editor: Radio label to set post visible to public' } )
+										}
+									</span>
+								</FormLabel>
+								{ this.renderVisibilityTip( 'public' ) }
 
-							<FormLabel>
-								<FormRadio
-									name="site-visibility"
-									value="private"
-									onChange={ this.onSetToPrivate }
-									checked={ 'private' === visibility }
-								/>
-								<span>{ this.translate( 'Private', { context: 'Editor: Radio label to set post to private' } ) }</span>
-							</FormLabel>
-							{ this.renderVisibilityTip( 'private' ) }
-
-							<FormLabel>
-								<FormRadio
-									name="site-visibility"
-									value="password"
-									onChange={ this.updateVisibility }
-									checked={ 'password' === visibility }
-								/>
-								<span>{ this.translate( 'Password Protected', { context: 'Editor: Radio label to set post to password protected' } ) }</span>
-							</FormLabel>
-							{ this.renderVisibilityTip( 'password' ) }
-							{ visibility === 'password' ? this.renderPasswordInput() : null }
-						</FormFieldset>
-					</div>
-				</Popover>
-			</Button>
+								<FormLabel>
+									<FormRadio
+										name="site-visibility"
+										value="private"
+										onChange={ this.onSetToPrivate }
+										checked={ 'private' === visibility }
+									/>
+									<span>{ this.translate( 'Private', { context: 'Editor: Radio label to set post to private' } ) }</span>
+								</FormLabel>
+								{ this.renderVisibilityTip( 'private' ) }
+								<FormLabel>
+									<FormRadio
+										name="site-visibility"
+										value="password"
+										onChange={ this.updateVisibility }
+										checked={ 'password' === visibility }
+									/>
+									<span>{ this.translate( 'Password Protected', { context: 'Editor: Radio label to set post to password protected' } ) }</span>
+								</FormLabel>
+								{ this.renderVisibilityTip( 'password' ) }
+								{ visibility === 'password' ? this.renderPasswordInput() : null }
+							</FormFieldset>
+						</div>
+					</Popover>
+				</Button>
+			</div>
 		);
 	}
 

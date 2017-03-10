@@ -94,6 +94,7 @@ const SwitcherShell = React.createClass( {
 					ignoreContext={ this.props.ignoreContext } >
 					{ ( this.props.fetchOptions.search || users.length > 10 ) &&
 						<Search
+							compact
 							onSearch={ this._onSearch }
 							placeholder={ this.translate( 'Find Author…', { context: 'search label' } ) }
 							delaySearch={ true }

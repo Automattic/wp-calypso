@@ -18,10 +18,18 @@
 
 .is-group-editor .layout__content {
 	padding: 47px 0 0;
+	overflow: inherit;
 }
 
 .post-editor__inner {
 	position: relative;
+	top: 47px;
+
+	@include breakpoint( "<660px" ) {
+		overflow-x: hidden;
+		margin-bottom: 47px;
+		border-bottom: 1px solid lighten( $gray, 20 );
+	}
 }
 
 .post-editor__content {
@@ -43,14 +51,82 @@
 }
 
 .post-editor__content {
-	@include breakpoint( ">660px" ) {
-		margin-left: ( $sidebar-width-min + 1 );
+	margin: 0 auto;					// born centered, so when width collapses for sidebar anim it doesn't move
+	left: 0;
+	@include breakpoint( ">960px" ) {
+		animation: closedsidebar 0.15s cubic-bezier(0.075, 0.82, 0.165, 1) normal 1 forwards;
+	}
+	@include breakpoint( "<960px" ) {
+		animation: closedsidebar-min 0.15s cubic-bezier(0.075, 0.82, 0.165, 1) normal 1 forwards;
 	}
 
-	@include breakpoint( ">960px" ) {
-		margin-left: ( $sidebar-width-max + 1 );
+	.focus-sidebar & {
+		@include breakpoint( ">960px" ) {
+			animation: opensidebar 0.15s cubic-bezier(0.075, 0.82, 0.165, 1) normal 1 forwards;
+			width: calc( 100% - ( #{ $sidebar-width-max } ) );		// subtract sidebar width
+		}
+
+		@include breakpoint( "<960px" ) {
+			animation: opensidebar-min 0.15s cubic-bezier(0.075, 0.82, 0.165, 1) normal 1 forwards;
+			width: calc( 100% - ( #{ $sidebar-width-min } ) );		// subtract sidebar width
+		}
 	}
 }
+
+@keyframes opensidebar {
+	0% {
+		transform: translateX( 0 );
+	}
+	99.9% {
+		left: 0;
+		transform: translateX( -#{ $sidebar-width-max / 2 } );
+	}
+	100% {
+		left: -#{ $sidebar-width-max / 2 };
+		transform: none;
+	}
+}
+
+@keyframes closedsidebar {
+	0% {
+		transform: translateX( -#{ $sidebar-width-max / 2 } );
+	}
+	99.9% {
+		transform: translateX( 0 );
+	}
+	100% {
+		left: 0;
+		transform: none;
+	}
+}
+
+@keyframes opensidebar-min {
+	0% {
+		transform: translateX( 0 );
+	}
+	99.9% {
+		left: 0;
+		transform: translateX( -#{ $sidebar-width-min / 2 } );
+	}
+	100% {
+		left: -#{ $sidebar-width-min / 2 };
+		transform: none;
+	}
+}
+
+@keyframes closedsidebar-min {
+	0% {
+		transform: translateX( -#{ $sidebar-width-min / 2 } );
+	}
+	99.9% {
+		transform: translateX( 0 );
+	}
+	100% {
+		left: 0;
+		transform: none;
+	}
+}
+
 
 .post-editor__site {
 	display:  flex;
@@ -90,6 +166,12 @@
 	}
 }
 
+.focus-content .editor__header {
+	@include breakpoint( ">660px" ) {
+		width: 700px;
+	}
+}
+
 .editor__header,
 .editor .mce-edit-area {
 	padding: 0 16px;
@@ -99,10 +181,6 @@
 	}
 }
 
-.post-editor .drafts-button {
-	padding: 3px 8px;
-}
-
 .post-editor .draft .post-relative-time-status {
 	display: none;
 }
@@ -110,6 +188,12 @@
 // Component <Editor>
 .editor {
 	position: relative;
+}
+
+.editor .editor-notice .notice {
+	@include breakpoint( ">660px" ) {
+		margin: 0;
+	}
 }
 
 .editor .tinymce {
