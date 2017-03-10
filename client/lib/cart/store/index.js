@@ -119,6 +119,10 @@ CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 			update( cartItems.removePrivacyFromAllDomains( CartStore.get() ) );
 			break;
 
+		case UpgradesActionTypes.GOOGLE_APPS_REGISTRATION_DATA_ADD:
+			update( cartItems.fillGoogleAppsRegistrationData( CartStore.get(), action.registrationData ) );
+			break;
+
 		case UpgradesActionTypes.CART_ITEMS_ADD:
 			update( flow( ...action.cartItems.map( cartItem => cartItems.add( cartItem ) ) ) );
 			break;

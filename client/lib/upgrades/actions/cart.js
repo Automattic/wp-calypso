@@ -76,6 +76,13 @@ function addDomainToCart( domainSuggestion ) {
 	} ) );
 }
 
+function addGoogleAppsRegistrationData( registrationData ) {
+	Dispatcher.handleViewAction( {
+		type: ActionTypes.GOOGLE_APPS_REGISTRATION_DATA_ADD,
+		registrationData: registrationData
+	} );
+}
+
 function removeDomainFromCart( domainSuggestion ) {
 	removeItem( cartItems.domainRegistration( {
 		domain: domainSuggestion.domain_name,
@@ -92,6 +99,7 @@ function applyCoupon( coupon ) {
 
 export {
 	addDomainToCart,
+	addGoogleAppsRegistrationData,
 	addItem,
 	addItems,
 	addPrivacyToAllDomains,
