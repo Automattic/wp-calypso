@@ -43,5 +43,4 @@ export const GDocsIntegrationTour = makeTour(
 			</ButtonRow>
 		</Step>
 	</Tour>
-
 );
