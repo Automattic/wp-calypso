@@ -107,7 +107,7 @@ export default React.createClass( {
 						} )
 					}
 				>
-					<SiteIcon site={ site } size={ this.props.compact ? 24 : null } />
+					<SiteIcon site={ site } size={ this.props.compact ? 24 : 32 } />
 					<div className="site__info">
 						<div className="site__title">
 							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
