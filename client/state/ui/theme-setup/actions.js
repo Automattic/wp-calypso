@@ -14,6 +14,28 @@ export function toggleDialog() {
 	};
 }
 
+export function doPreflightCheck( siteId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: THEME_SETUP_REQUEST,
+		} );
+
+		return wpcom.undocumented().site( siteId ).themeSetupPreflightCheck()
+			.then( response => {
+				dispatch( {
+					type: THEME_SETUP_RESULT,
+					data: response,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: THEME_SETUP_RESULT,
+					data: error,
+				} );
+			} );
+	};
+}
+
 export function runThemeSetup( siteId ) {
 	return ( dispatch ) => {
 		dispatch( {

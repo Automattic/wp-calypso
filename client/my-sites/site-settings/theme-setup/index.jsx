@@ -31,7 +31,8 @@ let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain, toggleDi
 			{ site && theme
 				? <ThemeSetupCard
 					onClick={ toggleDialog }
-					theme={ theme } />
+					theme={ theme }
+					site={ site } />
 				: <ThemeSetupPlaceholder /> }
 		</div>
 	);

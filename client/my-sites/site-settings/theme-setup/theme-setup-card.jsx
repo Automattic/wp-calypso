@@ -16,14 +16,16 @@ import Notice from 'components/notice';
 import Button from 'components/button';
 import ActiveThemeScreenshot from './active-theme-screenshot';
 import ThemeSetupDialog from 'my-sites/site-settings/theme-setup-dialog';
+import ThemeSetupPreflightCheck from './theme-setup-preflight-check';
 
-const ThemeSetupCard = ( { theme, translate, onClick } ) => (
+const ThemeSetupCard = ( { theme, translate, onClick, site } ) => (
 	<ActionPanel>
 		<ActionPanelBody>
 			<ActionPanelTitle>{ translate( 'Theme Setup' ) }</ActionPanelTitle>
 			<Notice status={ 'is-warning' } showDismiss={ false }>
 				{ translate( 'This action cannot be undone.' ) }
 			</Notice>
+			<ThemeSetupPreflightCheck theme={ theme } site={ site } />
 			<ActionPanelFigure>
 				<ActiveThemeScreenshot theme={ theme } />
 			</ActionPanelFigure>
