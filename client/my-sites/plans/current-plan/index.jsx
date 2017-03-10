@@ -36,7 +36,12 @@ class CurrentPlan extends Component {
 		selectedSiteId: PropTypes.number,
 		selectedSite: PropTypes.object,
 		isRequestingSitePlans: PropTypes.bool,
-		context: PropTypes.object
+		context: PropTypes.object,
+		domains: PropTypes.array,
+		currentPlan: PropTypes.object,
+		isExpiring: PropTypes.bool,
+		shouldShowDomainWarnings: PropTypes.bool,
+		hasDomainsLoaded: PropTypes.bool,
 	};
 
 	isLoading() {
