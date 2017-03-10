@@ -347,8 +347,11 @@ export default React.createClass( {
 							{ ! isEmpty( actionLinks ) &&
 								<div className="plugin-meta__action-links">
 									{ Object.keys( actionLinks ).map( linkTitle => (
-										<Button compact icon href={ actionLinks[ linkTitle ] } target="_blank">
-											{ linkTitle } <Gridicon icon="external" />
+										<Button compact icon
+											href={ actionLinks[ linkTitle ] }
+											target="_blank"
+											rel="noopener noreferrer">
+												{ linkTitle } <Gridicon icon="external" />
 										</Button>
 									) ) }
 								</div>
