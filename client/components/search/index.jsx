@@ -63,7 +63,8 @@ const Search = React.createClass( {
 		dir: PropTypes.oneOf( [ 'ltr', 'rtl' ] ),
 		fitsContainer: PropTypes.bool,
 		maxLength: PropTypes.number,
-		hideClose: PropTypes.bool
+		hideClose: PropTypes.bool,
+		openIcon: PropTypes.string,
 	},
 
 	getInitialState: function() {
@@ -341,7 +342,7 @@ const Search = React.createClass( {
 					}
 					aria-controls={ 'search-component-' + this.state.instanceId }
 					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }>
-					<Gridicon icon="search" className="search__open-icon" />
+					<Gridicon icon={ this.props.openIcon ? this.props.openIcon : 'search' } className="search__open-icon" />
 				</div>
 				<div className={ fadeDivClass }>
 					<input
