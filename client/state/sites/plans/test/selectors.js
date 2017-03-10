@@ -363,7 +363,7 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'silver', { isMonthly: true } );
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'silver' );
 			expect( discountPrice ).to.equal( null );
 		} );
 	} );
