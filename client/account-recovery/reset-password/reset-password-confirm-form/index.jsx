@@ -29,10 +29,14 @@ const ResetPasswordConfirmForm = ( props ) => {
 			</FormButton>
 			<p className="reset-password-confirm-form__description">
 				{ translate(
-					'{{a}}Great passwords{{/a}} use upper and lower case characters, numbers, and symbols like !/"$%&',
+					'{{a}}Great passwords{{/a}} use upper and lower case characters, numbers, and symbols like {{em}}%(symbols)s{{/em}}.',
 					{
+						args: {
+							symbols: '!/"$%&',
+						},
 						components: {
-							a: <a href={ STRONG_PASSWORD } target="_blank" rel="noopener noreferrer" />
+							a: <a href={ STRONG_PASSWORD } target="_blank" rel="noopener noreferrer" />,
+							em: <em />,
 						}
 					}
 				) }
