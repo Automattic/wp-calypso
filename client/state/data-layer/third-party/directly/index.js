@@ -16,9 +16,10 @@ import {
 import * as directly from 'lib/directly';
 
 export function askQuestion( { dispatch }, action, next ) {
-	dispatch( recordTracksEvent( 'calypso_directly_ask_question' ) );
-	directly.askQuestion( action.questionText, action.name, action.email );
 	next( action );
+
+	return directly.askQuestion( action.questionText, action.name, action.email )
+		.then( () => dispatch( recordTracksEvent( 'calypso_directly_ask_question' ) ) );
 }
 
 export function initialize( { dispatch, getState }, action, next ) {

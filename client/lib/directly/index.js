@@ -9,7 +9,6 @@
  * External dependencies
  */
 import config from 'config';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -102,12 +101,9 @@ export function initialize() {
 
 		loadScript( DIRECTLY_RTM_SCRIPT_URL, function( error ) {
 			if ( error ) {
-				reject( new Error(
-					i18n.translate( 'Failed to load script "%(src)s".', { args: { src: error.src } } )
-				) );
-			} else {
-				resolve();
+				return reject( new Error( `Failed to load script "${ error.src }".` ) );
 			}
+			resolve();
 		} );
 	} );
 

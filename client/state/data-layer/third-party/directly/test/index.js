@@ -55,6 +55,10 @@ describe( 'Directly data layer', () => {
 		const email = 'hammie@royalfamily.dk';
 		const action = { type: DIRECTLY_ASK_QUESTION, questionText, name, email };
 
+		beforeEach( () => {
+			directly.askQuestion.returns( Promise.resolve() );
+		} );
+
 		it( 'should invoke the corresponding Directly function', () => {
 			askQuestion( store, action, next );
 			expect( directly.askQuestion ).to.have.been.calledWith( questionText, name, email );
@@ -65,10 +69,10 @@ describe( 'Directly data layer', () => {
 			expect( next ).to.have.been.calledWith( action );
 		} );
 
-		it( 'should dispatch an analytics event', () => {
-			askQuestion( store, action, next );
-			expect( analytics.recordTracksEvent ).to.have.been.calledWith( 'calypso_directly_ask_question' );
-		} );
+		it( 'should dispatch an analytics event', () => (
+			askQuestion( store, action, next )
+				.then( () => expect( analytics.recordTracksEvent ).to.have.been.calledWith( 'calypso_directly_ask_question' ) )
+		) );
 	} );
 
 	describe( '#initialize', () => {
