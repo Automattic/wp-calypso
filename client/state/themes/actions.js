@@ -484,8 +484,9 @@ export function installTheme( themeId, siteId ) {
 				dispatch( {
 					type: THEME_INSTALL_SUCCESS,
 					siteId,
-					themeId
+					themeId: theme.id, // id returned from AT sites will have no -wpcom suffix
 				} );
+				return theme.id;
 			} )
 			.then( () => {
 				if ( endsWith( themeId, '-wpcom' ) ) {
@@ -505,6 +506,14 @@ export function installTheme( themeId, siteId ) {
 					themeId,
 					error
 				} );
+				// Workaround: Installing a theme on an AT site currently
+				// returns an install error even after successful install.
+				// In this case, return a suffixless theme id (mimicking
+				// id return in success case above).
+				if ( error.error === 'install_error' ) {
+					return themeId.replace( '-wpcom', '' );
+				}
+				return themeId;
 			} );
 	};
 }
@@ -557,8 +566,8 @@ export function tryAndCustomize( themeId, siteId ) {
 export function installAndTryAndCustomizeTheme( themeId, siteId ) {
 	return ( dispatch ) => {
 		return dispatch( installTheme( themeId, siteId ) )
-			.then( () => {
-				dispatch( tryAndCustomizeTheme( themeId, siteId ) );
+			.then( ( installedId ) => {
+				dispatch( tryAndCustomizeTheme( installedId, siteId ) );
 			} );
 	};
 }
@@ -606,10 +615,10 @@ export function tryAndCustomizeTheme( themeId, siteId ) {
 export function installAndActivateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch ) => {
 		return dispatch( installTheme( themeId, siteId ) )
-			.then( () => {
+			.then( ( installedId ) => {
 				// This will be called even if `installTheme` silently fails. We rely on
 				// `activateTheme`'s own error handling here.
-				dispatch( activateTheme( themeId, siteId, source, purchased ) );
+				dispatch( activateTheme( installedId, siteId, source, purchased ) );
 			} );
 	};
 }
