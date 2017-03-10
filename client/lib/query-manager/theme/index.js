@@ -10,6 +10,7 @@ import PaginatedQueryManager from '../paginated';
 import ThemeQueryKey from './key';
 import { DEFAULT_THEME_QUERY } from './constants';
 
+export const DELETE_PATCH_KEY = '__DELETE';
 /**
  * ThemeQueryManager manages themes which can be queried
  */
@@ -40,6 +41,15 @@ export default class ThemeQueryManager extends PaginatedQueryManager {
 			} ),
 			nextManager.options
 		);
+	}
+
+	removeItems( itemKeys = [] ) {
+		return super.receive( itemKeys.map( ( itemKey ) => {
+			return {
+				[ this.options.itemKey ]: itemKey,
+				[ DELETE_PATCH_KEY ]: true
+			};
+		} ), { patch: true } );
 	}
 
 	/**
