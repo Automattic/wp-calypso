@@ -73,7 +73,6 @@ class PostByline extends React.Component {
 		tagsInOccurrenceOrder.sort( ( a, b ) => b.post_count - a.post_count );
 		const tags = map( tagsInOccurrenceOrder, ( tag ) => {
 			return ( <span className="reader-post-card__tag">
-				<Gridicon icon="tag" />
 				<a href={ '/tag/' + tag.slug }
 					className="reader-post-card__tag-link ignore-click"
 					onClick={ this.recordSingleTagClick.bind( this, tag ) }>
@@ -126,6 +125,7 @@ class PostByline extends React.Component {
 						}
 						{ tags.length > 0 &&
 							<span className="reader-post-card__tags">
+								<Gridicon icon="tag" />
 								{ tags }
 							</span>
 						}

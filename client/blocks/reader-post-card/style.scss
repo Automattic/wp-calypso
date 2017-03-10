@@ -275,6 +275,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	height: 20px;
 	width: 100%;
 	overflow: hidden;
+	margin-left: 10px;
 
 	&::after {
 		@include long-content-fade( $size: 10% );
@@ -283,11 +284,18 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 .reader-post-card__tag {
-	margin-left: 10px;
+
 	white-space: nowrap;
+	&::after {
+		content: ', '
+	}
+
+	&:last-child:after {
+		display: none;
+	}
 }
 
-.reader-post-card__tag .gridicons-tag {
+.reader-post-card__tags .gridicons-tag {
 	height: 18px;
 	margin: -4px 5px 0 0;
 	position: relative;
