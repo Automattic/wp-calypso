@@ -4,7 +4,6 @@
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	noop = require( 'lodash/noop' ),
-	assign = require( 'lodash/assign' ),
 	omit = require( 'lodash/omit' ),
 	isEqual = require( 'lodash/isEqual' );
 
@@ -93,7 +92,7 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var classes, props, style, title;
+		var classes, props, title;
 
 		classes = classNames( 'media-library__list-item', {
 			'is-placeholder': ! this.props.media,
@@ -104,9 +103,7 @@ export default React.createClass( {
 
 		props = omit( this.props, Object.keys( this.constructor.propTypes ) );
 
-		style = assign( {
-			width: ( this.props.scale * 100 ) + '%'
-		}, this.props.style );
+		props.style = this.props.style;
 
 		if ( this.props.media ) {
 			title = this.props.media.file;
@@ -117,22 +114,20 @@ export default React.createClass( {
 		}
 
 		return (
-			<div className={ classes } style={ style } onClick={ this.clickItem } { ...props }>
+			<figure className={ classes } onClick={ this.clickItem } title={ title } { ...props }>
 				<span className="media-library__list-item-selected-icon">
 					<Gridicon icon="checkmark" size={ 20 } />
 				</span>
-				<figure className="media-library__list-item-figure" title={ title }>
-					{ this.renderItem() }
-					{ this.renderSpinner() }
-					{ this.props.showGalleryHelp && <EditorMediaModalGalleryHelp /> }
-					<Button type="button" className="media-library__list-item-edit" onClick={ this.editItem }>
-						<span className="screen-reader-text">
-							{ this.translate( 'Edit', { context: 'verb' } ) }
-						</span>
-						<Gridicon icon="pencil" />
-					</Button>
-				</figure>
-			</div>
+				{ this.renderItem() }
+				{ this.renderSpinner() }
+				{ this.props.showGalleryHelp && <EditorMediaModalGalleryHelp /> }
+				<Button type="button" className="media-library__list-item-edit" onClick={ this.editItem }>
+					<span className="screen-reader-text">
+						{ this.translate( 'Edit', { context: 'verb' } ) }
+					</span>
+					<Gridicon icon="pencil" />
+				</Button>
+			</figure>
 		);
 	}
 } );

@@ -5,6 +5,7 @@ import { expect } from 'chai';
 import { noop, toArray } from 'lodash';
 import React from 'react';
 import mockery from 'mockery';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,12 +19,44 @@ import useMockery from 'test/helpers/use-mockery';
  */
 const DUMMY_SITE_ID = 2916284;
 
-describe( 'MediaLibraryList item selection', function() {
-	let mount, MediaLibrarySelectedData, MediaLibrarySelectedStore,
-		MediaActions, fixtures, Dispatcher, MediaList, wrapper, mediaList;
+let mount, MediaLibrarySelectedData, MediaLibrarySelectedStore,
+	MediaActions, fixtures, Dispatcher, MediaList, LocalizedMediaList;
 
-	useFakeDom();
-	useMockery();
+useFakeDom();
+useMockery();
+
+before( function() {
+	mockery.registerMock( 'lib/wp', {
+		me: () => ( {
+			get: noop
+		} )
+	} );
+	mockery.registerMock( 'react-virtualized/AutoSizer', EmptyComponent );
+	mockery.registerMock( 'react-virtualized/InfiniteLoader', EmptyComponent );
+	mockery.registerMock( 'react-virtualized/Grid', EmptyComponent );
+	mockery.registerMock( 'react-virtualized/WindowScroller', EmptyComponent );
+	mockery.registerMock( './list-item', EmptyComponent );
+	mockery.registerMock( './list-plan-upgrade-nudge', EmptyComponent );
+
+	mount = require( 'enzyme' ).mount;
+	MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' );
+	MediaLibrarySelectedStore = require( 'lib/media/library-selected-store' );
+	MediaActions = require( 'lib/media/actions' );
+	fixtures = require( './fixtures' );
+	Dispatcher = require( 'dispatcher' );
+
+	Dispatcher.handleServerAction( {
+		type: 'RECEIVE_MEDIA_ITEMS',
+		siteId: DUMMY_SITE_ID,
+		data: fixtures
+	} );
+
+	MediaList = require( '../list' ).MediaLibraryList;
+	LocalizedMediaList = localize( MediaList );
+} );
+
+describe( 'MediaLibraryList item selection', function() {
+	let mediaList, wrapper;
 
 	function toggleItem( itemIndex, shiftClick ) {
 		mediaList.toggleItem( fixtures.media[ itemIndex ], shiftClick );
@@ -37,32 +70,6 @@ describe( 'MediaLibraryList item selection', function() {
 		);
 	}
 
-	before( function() {
-		mockery.registerMock( 'lib/wp', {
-			me: () => ( {
-				get: noop
-			} )
-		} );
-		mockery.registerMock( 'components/infinite-list', EmptyComponent );
-		mockery.registerMock( './list-item', EmptyComponent );
-		mockery.registerMock( './list-plan-upgrade-nudge', EmptyComponent );
-
-		mount = require( 'enzyme' ).mount;
-		MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' );
-		MediaLibrarySelectedStore = require( 'lib/media/library-selected-store' );
-		MediaActions = require( 'lib/media/actions' );
-		fixtures = require( './fixtures' );
-		Dispatcher = require( 'dispatcher' );
-
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_MEDIA_ITEMS',
-			siteId: DUMMY_SITE_ID,
-			data: fixtures
-		} );
-
-		MediaList = require( '../list' ).MediaLibraryList;
-	} );
-
 	beforeEach( function() {
 		MediaActions.setLibrarySelectedItems( DUMMY_SITE_ID, [] );
 
@@ -75,7 +82,7 @@ describe( 'MediaLibraryList item selection', function() {
 		beforeEach( () => {
 			wrapper = mount(
 				<MediaLibrarySelectedData siteId={ DUMMY_SITE_ID }>
-					<MediaList
+					<LocalizedMediaList
 						filterRequiresUpgrade={ false }
 						site={ { ID: DUMMY_SITE_ID } }
 						media={ fixtures.media }
@@ -157,7 +164,7 @@ describe( 'MediaLibraryList item selection', function() {
 		beforeEach( () => {
 			wrapper = mount(
 				<MediaLibrarySelectedData siteId={ DUMMY_SITE_ID }>
-					<MediaList
+					<LocalizedMediaList
 						filterRequiresUpgrade={ false }
 						site={ { ID: DUMMY_SITE_ID } }
 						media={ fixtures.media }
@@ -187,5 +194,73 @@ describe( 'MediaLibraryList item selection', function() {
 			toggleItem( 4, true ); // Shift+click to select items 0 through 4
 			expectSelectedItems( 4 );
 		} );
+	} );
+} );
+
+describe( 'getGridItems()', () => {
+	let wrapper;
+
+	function getGridItemsWith( { media, nextPage, columnCount } ) {
+		wrapper = mount(
+			<LocalizedMediaList
+				batchSize={ 1 }
+				media={ media }
+				mediaHasNextPage={ nextPage }
+				mediaScale={ 1 / columnCount }
+				site={ { ID: DUMMY_SITE_ID } } />
+		);
+
+		return wrapper.find( MediaList ).get( 0 ).getGridItems();
+	}
+
+	afterEach( () => {
+		wrapper.unmount();
+	} );
+
+	it( 'should return placeholders', function() {
+		expect( getGridItemsWith( {
+			media: [],
+			nextPage: true,
+			columnCount: 2
+		} ) ).to.eql( [
+			{ heading: '' }, undefined,
+			{ loading: true }
+		] );
+	} );
+
+	it( 'should return a heading, media, and placeholders', function() {
+		expect( getGridItemsWith( {
+			media: fixtures.media,
+			nextPage: true,
+			columnCount: 2
+		} ) ).to.eql( [
+			{ heading: 'Today' }, undefined,
+			...fixtures.media,
+			{ loading: true }
+		] );
+	} );
+
+	it( 'should return a heading, media, but no placeholders', function() {
+		expect( getGridItemsWith( {
+			media: fixtures.media,
+			nextPage: false,
+			columnCount: 2
+		} ) ).to.eql( [
+			{ heading: 'Today' }, undefined,
+			...fixtures.media
+		] );
+	} );
+
+	it( 'should return multiple headings', function() {
+		expect( getGridItemsWith( {
+			media: [ ...fixtures.media, { date: '2000-01-01' } ],
+			nextPage: false,
+			columnCount: 4
+		} ) ).to.eql( [
+			{ heading: 'Today' }, undefined, undefined, undefined,
+			...fixtures.media, undefined, undefined,
+			{ heading: 'January 1, 2000' }, undefined, undefined, undefined,
+			{ date: '2000-01-01' }
+		] );
 	} );
 } );

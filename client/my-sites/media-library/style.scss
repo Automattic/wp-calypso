@@ -113,6 +113,36 @@
 
 .media-library__list {
 	padding: 0 16px;
+	margin: 0 -5px;
+}
+
+.media-library__list h3 {
+	color: darken( $gray, 20% );
+	font-size: 11px;
+	overflow: hidden;
+	text-transform: uppercase;
+}
+
+.media-library__list h3 span {
+	position: absolute;
+		bottom: 0;
+
+	&:before {
+		background: lighten( $gray, 20% );
+		content: '';
+		display: block;
+		height: 1px;
+		position: absolute;
+			top: 50%;
+			left: calc( 100% + 5px );
+		width: 10000px;
+	}
+
+	&:empty {
+		background: lighten( $gray, 20% );
+		height: 16px;
+		width: 50px;
+	}
 }
 
 .media-library__list-item:hover .media-library__list-item-edit {
