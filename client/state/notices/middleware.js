@@ -46,6 +46,7 @@ import {
 	SITE_FRONT_PAGE_SET_FAILURE,
 	THEME_DELETE_FAILURE,
 	THEME_DELETE_SUCCESS,
+	THEME_ACTIVATE_REQUEST_FAILURE,
 } from 'state/action-types';
 
 import { dispatchSuccess, dispatchError } from './utils';
@@ -228,6 +229,7 @@ export const handlers = {
 	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) ),
 	[ THEME_DELETE_FAILURE ]: onThemeDeleteFailure,
 	[ THEME_DELETE_SUCCESS ]: onThemeDeleteSuccess,
+	[ THEME_ACTIVATE_REQUEST_FAILURE ]: dispatchError( translate( 'Theme not yet available for this site' ) ),
 };
 
 /**
