@@ -80,7 +80,9 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 			// Compute the dirty fields by comparing the persisted and the current fields
 			const previousDirtyFields = this.props.dirtyFields;
-			const nextDirtyFields = previousDirtyFields.filter( field => ! isEqual( currentFields[ field ], persistedFields[ field ] ) );
+			/*eslint-disable eqeqeq*/
+			const nextDirtyFields = previousDirtyFields.filter( field => ! currentFields[ field ] == persistedFields[ field ] );
+			/*eslint-enable eqeqeq*/
 
 			// Update the dirty fields state without updating their values
 			if ( nextDirtyFields.length === 0 ) {
