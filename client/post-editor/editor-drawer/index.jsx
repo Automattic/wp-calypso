@@ -74,6 +74,7 @@ const EditorDrawer = React.createClass( {
 		isNew: React.PropTypes.bool,
 		type: React.PropTypes.string,
 		setPostDate: React.PropTypes.func,
+		onSave: React.PropTypes.func,
 	},
 
 	onExcerptChange: function( event ) {
