@@ -16,6 +16,11 @@ import {
 	Quit,
 } from 'layout/guided-tours/config-elements';
 import { hasUserPastedFromGoogleDocs } from 'state/ui/guided-tours/contexts';
+import analytics from 'lib/analytics';
+
+const trackUserInterest = () => {
+	analytics.tracks.recordEvent( 'calypso_editor_gdocs_tour_success' );
+};
 
 export const GDocsIntegrationTour = makeTour(
 	<Tour
@@ -30,6 +35,7 @@ export const GDocsIntegrationTour = makeTour(
 				<LinkQuit
 					primary
 					target="_blank"
+					onClick={ trackUserInterest }
 					href="https://apps.wordpress.com/google-docs/">
 					{ translate( 'Learn more' ) }
 				</LinkQuit>
