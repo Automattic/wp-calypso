@@ -229,6 +229,9 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	color: $gray;
 	margin-top: 2px;
 	cursor: pointer;
+	&:hover {
+		color: $blue-medium;
+	}
 }
 
 .reader-post-card__byline-details {
