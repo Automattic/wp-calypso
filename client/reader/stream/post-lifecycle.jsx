@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
-import { defer } from 'lodash';
+import { defer, every, without } from 'lodash';
 import Perf from 'react-addons-perf'; // ES6
 Perf.start();
 window.Perf = Perf;
@@ -55,19 +55,12 @@ export default class PostLifecycle extends React.PureComponent {
 	}
 
 	shouldComponentUpdate( nextProps, nextState ) {
-		const {
-			isSelected, suppressSiteNameLink, showPostHeader, showFollowInHeader,
-			showPrimaryFollowButtonOnCards, showSiteName, isDiscoverStream,
-		} = this.props;
-
+		const keysToShallowCompare = without( Object.keys( this.props ), 'handleClick' );
 		const shouldUpdate = this.state.post !== nextState.post ||
-			isSelected !== nextProps.isSelected ||
-			suppressSiteNameLink !== nextProps.suppressSiteNameLink ||
-			showPostHeader !== nextProps.showPostHeader ||
-			showFollowInHeader !== nextProps.showFollowInHeader ||
-			showPrimaryFollowButtonOnCards !== showPrimaryFollowButtonOnCards ||
-			showSiteName !== nextProps.showSiteName ||
-			isDiscoverStream !== nextProps.isDiscoverStream;
+			! every(
+				keysToShallowCompare,
+				key => this.props[ key ] === nextProps[ key ]
+			);
 
 		return shouldUpdate;
 	}
