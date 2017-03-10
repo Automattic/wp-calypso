@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import { get, has } from 'lodash';
+import { get, has, map, take, values } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -21,6 +21,8 @@ import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import { getStreamUrl } from 'reader/route';
 import ReaderAuthorLink from 'blocks/reader-author-link';
 import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
+
+const TAGS_TO_SHOW = 5;
 
 class PostByline extends React.Component {
 
@@ -44,6 +46,14 @@ class PostByline extends React.Component {
 		} );
 	}
 
+	recordSingleTagClick( tag ) {
+		recordAction( 'click_tag' );
+		recordGaEvent( 'Clicked Tag Link' );
+		recordTrackForPost( 'calypso_reader_tag_clicked', this.props.post, {
+			tag: tag.slug
+		} );
+	}
+
 	recordDateClick = () => {
 		recordPermalinkClick( 'timestamp_card', this.props.post );
 	}
@@ -52,7 +62,6 @@ class PostByline extends React.Component {
 		const { post, site, feed, isDiscoverPost, showSiteName } = this.props;
 		const feedId = get( post, 'feed_ID' );
 		const siteId = get( site, 'ID' );
-		const primaryTag = post && post.primary_tag;
 		const siteName = siteNameFromSiteAndPost( site, post );
 		const hasAuthorName = has( post, 'author.name' );
 		const hasMatchingAuthorAndSiteNames = hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
@@ -60,6 +69,18 @@ class PostByline extends React.Component {
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
+		const tagsInOccurrenceOrder = take( values( post.tags ), TAGS_TO_SHOW );
+		tagsInOccurrenceOrder.sort( ( a, b ) => b.post_count - a.post_count );
+		const tags = map( tagsInOccurrenceOrder, ( tag ) => {
+			return ( <span className="reader-post-card__tag">
+				<Gridicon icon="tag" />
+				<a href={ '/tag/' + tag.slug }
+					className="reader-post-card__tag-link ignore-click"
+					onClick={ this.recordSingleTagClick.bind( this, tag ) }>
+					{ tag.name }
+				</a>
+			</span> );
+		} );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
@@ -103,14 +124,9 @@ class PostByline extends React.Component {
 								</a>
 							</span>
 						}
-						{ primaryTag &&
-							<span className="reader-post-card__tag">
-								<Gridicon icon="tag" />
-								<a href={ '/tag/' + primaryTag.slug }
-									className="reader-post-card__tag-link ignore-click"
-									onClick={ this.recordTagClick }>
-									{ primaryTag.name }
-								</a>
+						{ tags.length > 0 &&
+							<span className="reader-post-card__tags">
+								{ tags }
 							</span>
 						}
 					</div>

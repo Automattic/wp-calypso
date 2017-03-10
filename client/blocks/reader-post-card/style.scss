@@ -269,17 +269,22 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	display: inline-table;
 }
 
-.reader-post-card__tag {
+.reader-post-card__tags {
 	flex: 1 0 0;
-	margin-left: 10px;
-	overflow: hidden;
 	position: relative;
 	height: 20px;
 	width: 100%;
+	overflow: hidden;
 
 	&::after {
 		@include long-content-fade( $size: 10% );
 	}
+
+}
+
+.reader-post-card__tag {
+	margin-left: 10px;
+	white-space: nowrap;
 }
 
 .reader-post-card__tag .gridicons-tag {
@@ -292,6 +297,8 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 .reader-post-card__byline .reader-avatar {
+
+	flex-shrink: 0;
 
 	&.has-gravatar {
 		margin-right: 6px;
