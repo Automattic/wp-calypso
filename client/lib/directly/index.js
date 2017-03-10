@@ -101,10 +101,9 @@ export function initialize() {
 
 		loadScript( DIRECTLY_RTM_SCRIPT_URL, function( error ) {
 			if ( error ) {
-				reject( error );
-			} else {
-				resolve();
+				return reject( new Error( `Failed to load script "${ error.src }".` ) );
 			}
+			resolve();
 		} );
 	} );
 

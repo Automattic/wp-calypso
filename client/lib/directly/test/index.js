@@ -63,14 +63,14 @@ describe( 'index', () => {
 		} );
 
 		it( 'rejects the returned promise if the library load fails', ( done ) => {
-			const error = { oh: 'no' };
-			directly.initialize().then(
-				() => {},
-				( e ) => {
-					expect( e ).to.equal( error );
-					done();
-				}
-			);
+			const error = { src: 'http://url.to/directly/embed.js' };
+			directly.initialize()
+				.catch( ( e ) => {
+					expect( e ).to.be.an.instanceof( Error );
+					expect( e.toString() ).to.contain( error.src );
+				} )
+				.then( () => done() );
+
 			loadScript.loadScript.firstCall.args[ 1 ]( error );
 		} );
 	} );
