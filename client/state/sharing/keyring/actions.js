@@ -45,10 +45,12 @@ export function requestKeyringConnections() {
  * @param  {Object}   connection Keyring connection to be removed.
  * @return {Function}            Action thunk
  */
-export const deleteKeyringConnection = ( connection ) => ( dispatch ) => dispatch( {
-	type: KEYRING_CONNECTION_DELETE,
-	connection,
-} );
+export function deleteKeyringConnection( connection ) {
+	return {
+		type: KEYRING_CONNECTION_DELETE,
+		connection,
+	};
+}
 
 /**
  * Triggers a network request to delete a Keyring connection from the server-side.
@@ -61,12 +63,12 @@ export const deleteKeyringConnection = ( connection ) => ( dispatch ) => dispatc
 export function deleteStoredKeyringConnection( connection ) {
 	return ( dispatch ) =>
 		wpcom.undocumented().deletekeyringConnection( connection.ID )
-			.then( () => deleteKeyringConnection( connection )( dispatch ) )
+			.then( () => dispatch( deleteKeyringConnection( connection ) ) )
 			.catch( ( error ) => {
 				if ( error && 404 === error.statusCode ) {
 					// If the connection cannot be found, we infer that it must have been deleted since the original
 					// connections were retrieved, so pass along the cached connection.
-					deleteKeyringConnection( connection )( dispatch );
+					dispatch( deleteKeyringConnection( connection ) );
 				}
 
 				dispatch( {

@@ -102,9 +102,9 @@ describe( 'actions', () => {
 
 	describe( 'deleteKeyringConnection()', () => {
 		it( 'should dispatch delete action', () => {
-			deleteKeyringConnection( { ID: 2 } )( spy );
+			const action = deleteKeyringConnection( { ID: 2 } );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( action ).to.eql( {
 				type: KEYRING_CONNECTION_DELETE,
 				connection: {
 					ID: 2,
