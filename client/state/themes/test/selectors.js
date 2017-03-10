@@ -25,6 +25,7 @@ import {
 	getThemePurchaseUrl,
 	getThemeCustomizeUrl,
 	getThemeSignupUrl,
+	getThemeDemoUrl,
 	getThemeForumUrl,
 	getActiveTheme,
 	isRequestingActiveTheme,
@@ -1396,6 +1397,58 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( signupUrl ).to.equal( '/start/with-theme?ref=calypshowcase&theme=mood&premium=true' );
+		} );
+	} );
+
+	describe( '#getThemeDemoUrl', () => {
+		it( 'with a theme not found on WP.com nor on WP.org, should return null', () => {
+			const demoUrl = getThemeDemoUrl( {
+				themes: {
+					queries: {}
+				}
+			}, 'twentysixteen', 2916284 );
+
+			expect( demoUrl ).to.be.undefined;
+		} );
+
+		it( 'with a theme found on WP.com, should return that object\'s demo_uri field', () => {
+			const demoUrl = getThemeDemoUrl( {
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { twentysixteen }
+						} ),
+					}
+				}
+			}, 'twentysixteen', 2916284 );
+
+			expect( demoUrl ).to.deep.equal( 'https://twentysixteendemo.wordpress.com/' );
+		} );
+
+		it( 'with a theme found on WP.org but not on WP.com, should return that object\'s demo_uri field', () => {
+			const wporgTheme = {
+				id: 'twentyseventeen',
+				name: 'Twenty Seventeen',
+				author: 'the WordPress team',
+				demo_uri: 'https://wp-themes.com/twentyseventeen',
+				download: 'http://downloads.wordpress.org/theme/twentyseventeen.1.1.zip',
+				taxonomies: {
+					theme_feature: {
+						'custom-header': 'Custom Header'
+					}
+				}
+			};
+			const demoUrl = getThemeDemoUrl( {
+				themes: {
+					queries: {
+						wporg: new ThemeQueryManager( {
+							items: { twentyseventeen: wporgTheme }
+						} ),
+					}
+				}
+			}, 'twentyseventeen', 2916284 );
+
+			expect( demoUrl ).to.deep.equal( 'https://wp-themes.com/twentyseventeen' );
 		} );
 	} );
 

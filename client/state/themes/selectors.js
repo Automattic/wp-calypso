@@ -477,6 +477,19 @@ export function getThemeSignupUrl( state, themeId ) {
 }
 
 /**
+ * Returns the URL for a theme's demo.
+ *
+ * @param  {Object}  state   Global state tree
+ * @param  {String}  themeId Theme ID
+ * @param  {String}  siteId  Site ID
+ * @return {?String}         Theme forum URL
+ */
+export function getThemeDemoUrl( state, themeId, siteId ) {
+	const theme = getCanonicalTheme( state, siteId, themeId );
+	return get( theme, 'demo_uri' );
+}
+
+/**
  * Returns the URL for a premium theme's dedicated forum, or for the general themes
  * forum for a free theme.
  *
