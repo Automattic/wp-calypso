@@ -16,18 +16,14 @@ import {
 	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage,
 	getTermIdsFromEdits,
-	hasTermEditDifferences,
+	isTermsEqual,
 	mergeIgnoringArrays
 } from '../utils';
 
 describe( 'utils', () => {
-	describe( 'hasTermEditDifferences', () => {
-		it( 'should return false if no term edits passed', () => {
-			expect( hasTermEditDifferences() ).to.be.false;
-		} );
-
+	describe( 'isTermsEqual', () => {
 		it( 'should return false if term edits are the same as saved terms', () => {
-			const hasDifferences = hasTermEditDifferences( {
+			const isEqual = isTermsEqual( {
 				post_tag: [ 'ribs', 'chicken' ],
 				category: [ {
 					ID: 777,
@@ -51,11 +47,11 @@ describe( 'utils', () => {
 					}
 				}
 			} );
-			expect( hasDifferences ).to.be.false;
+			expect( isEqual ).to.be.true;
 		} );
 
-		it( 'should return true if term edits are not the same as saved terms', () => {
-			const hasDifferences = hasTermEditDifferences( {
+		it( 'should return false if term edits are not the same as saved terms', () => {
+			const isEqual = isTermsEqual( {
 				post_tag: [ 'ribs' ],
 				category: [ {
 					ID: 777,
@@ -79,14 +75,14 @@ describe( 'utils', () => {
 					}
 				}
 			} );
-			expect( hasDifferences ).to.be.true;
+			expect( isEqual ).to.be.false;
 		} );
 
-		it( 'should return true savedTerms is missing a taxonomy', () => {
-			const hasDifferences = hasTermEditDifferences( {
+		it( 'should return false savedTerms is missing a taxonomy', () => {
+			const isEqual = isTermsEqual( {
 				post_tag: [ 'ribs' ]
 			}, {} );
-			expect( hasDifferences ).to.be.true;
+			expect( isEqual ).to.be.false;
 		} );
 	} );
 
