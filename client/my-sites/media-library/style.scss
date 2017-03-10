@@ -49,6 +49,11 @@
 	}
 }
 
+.media-library__header-popover .popover__menu-item.is-compact {
+	text-transform: none;
+	font-size: 14px;
+}
+
 .media-library__filter-bar {
 	display: flex;
 	flex-flow: row nowrap;

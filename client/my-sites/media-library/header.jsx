@@ -100,8 +100,8 @@ export default React.createClass( {
 						isVisible={ this.state.isMoreOptionsVisible }
 						onClose={ this.toggleMoreOptions.bind( this, false ) }
 						position="bottom right"
-						className="popover is-dialog-visible">
-						<PopoverMenuItem onClick={ this.toggleAddViaUrl.bind( this, true ) } className="is-compact">
+						className="is-dialog-visible media-library__header-popover">
+						<PopoverMenuItem onClick={ this.toggleAddViaUrl.bind( this, true ) }>
 							{ this.translate( 'Add via URL', { context: 'Media upload' } ) }
 						</PopoverMenuItem>
 					</PopoverMenu>
