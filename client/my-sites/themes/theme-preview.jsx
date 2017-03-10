@@ -13,6 +13,7 @@ import PulsingDot from 'components/pulsing-dot';
 import QueryTheme from 'components/data/query-theme';
 import { connectOptions } from './theme-options';
 import {
+	getThemeDemoUrl,
 	getThemePreviewThemeOptions,
 	getCanonicalTheme,
 	themePreviewVisibility,
@@ -20,7 +21,6 @@ import {
 	isInstallingTheme,
 	isActivatingTheme
 } from 'state/themes/selectors';
-import { getPreviewUrl } from 'my-sites/themes/helpers';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { hideThemePreview } from 'state/themes/actions';
@@ -108,13 +108,13 @@ const ThemePreview = React.createClass( {
 		return (
 			<div>
 				{ this.props.isJetpack && <QueryTheme themeId={ themeId } siteId="wporg" /> }
-				{ this.props.previewUrl && <WebPreview
+				{ this.props.demoUrl && <WebPreview
 					showPreview={ true }
 					showExternal={ true }
 					showSEO={ false }
 					onClose={ this.props.hideThemePreview }
-					previewUrl={ this.props.previewUrl }
-					externalUrl={ this.props.theme.demo_uri } >
+					previewUrl={ this.props.demoUrl + '?demo=true&iframe=true&theme_preview=true' }
+					externalUrl={ this.props.demoUrl } >
 					{ showActionIndicator && <PulsingDot active={ true } /> }
 					{ ! showActionIndicator && this.renderSecondaryButton() }
 					{ ! showActionIndicator && this.renderPrimaryButton() }
@@ -147,7 +147,7 @@ export default connect(
 			isInstalling: isInstallingTheme( state, themeId, siteId ),
 			isActive: isThemeActive( state, themeId, siteId ),
 			isActivating: isActivatingTheme( state, siteId ),
-			previewUrl: theme && theme.demo_uri ? getPreviewUrl( theme ) : null,
+			demoUrl: getThemeDemoUrl( state, themeId, siteId ),
 			options: [
 				'activate',
 				'preview',
