@@ -202,6 +202,13 @@ export function getThemesLastPageForQuery( state, siteId, query ) {
 	return Math.max( pages, 1 );
 }
 
+export function hasAllPagesQueried( state, siteId, query ) {
+	const lastPage = getThemesLastPageForQuery( state, siteId, query );
+	const lastQueriedPage = getLastQueriedPageNumberForQuery( state, siteId, query );
+
+	return lastPage === lastQueriedPage;
+}
+
 /**
  * Returns true if the query has reached the last page of queryable pages, or
  * null if the total number of queryable themes if unknown.
@@ -263,6 +270,14 @@ export function getAllAvailableThemesForQueryIgnoringPage( state, siteId, query 
 	// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
 	// over different pages) which we need to remove manually here for now.
 	return uniq( themesForQueryIgnoringPage );
+}
+
+export function getLastQueriedPageNumberForQuery( state, siteId, query ) {
+	if ( ! state.themes.queryRequestSuccess[ siteId ] ) {
+		return 0;
+	}
+	const serializedQuery = JSON.stringify( omit( query, 'page' ) );
+	return get( state.themes.queryRequestSuccess[ siteId ], serializedQuery, 0 );
 }
 
 /**

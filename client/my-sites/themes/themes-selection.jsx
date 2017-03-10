@@ -20,7 +20,7 @@ import {
 	getAllAvailableThemesForQueryIgnoringPage,
 	getThemesFoundForQuery,
 	isRequestingThemesForQuery,
-	isThemesLastPageForQuery,
+	hasAllPagesQueried,
 	isPremiumThemeAvailable,
 	isThemeActive,
 	isInstallingTheme
@@ -200,7 +200,7 @@ const ConnectedThemesSelection = connect(
 			themes: getAllAvailableThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
 			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
 			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),
-			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
+			isLastPage: hasAllPagesQueried( state, sourceSiteId, query ),
 			isLoggedIn: !! getCurrentUserId( state ),
 			isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
 			isInstallingTheme: themeId => isInstallingTheme( state, themeId, siteId ),
