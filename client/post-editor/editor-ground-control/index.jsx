@@ -278,9 +278,11 @@ export default React.createClass( {
 	},
 
 	onPreviewButtonClick: function( event ) {
-		this.props.onPreview( event );
-		const eventLabel = postUtils.isPage( this.props.page ) ? 'Clicked Preview Page Button' : 'Clicked Preview Post Button';
-		stats.recordEvent( eventLabel );
+		if ( this.isPreviewEnabled() ) {
+			this.props.onPreview( event );
+			const eventLabel = postUtils.isPage( this.props.page ) ? 'Clicked Preview Page Button' : 'Clicked Preview Post Button';
+			stats.recordEvent( eventLabel );
+		}
 	},
 
 	render: function() {
