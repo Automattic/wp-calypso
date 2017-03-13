@@ -249,7 +249,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		.has-thumbnail {
 
 			.reader-related-card-v2__post {
-				max-height: 200px;
+				max-height: 210px;
 
 				@include breakpoint( "<960px" ) {
 					max-height: 240px;
