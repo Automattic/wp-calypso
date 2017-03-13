@@ -118,6 +118,7 @@ export const PostEditor = React.createClass( {
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 		this.useDefaultSidebarFocus();
+		analytics.mc.bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
 
 		this.setState( {
 			isEditorInitialized: false
@@ -189,9 +190,13 @@ export const PostEditor = React.createClass( {
 		if ( this.props.layoutFocus === 'sidebar' ) {
 			this.props.setEditorSidebar( 'closed' );
 			this.props.setLayoutFocus( 'content' );
+			stats.recordStat( 'close-sidebar' );
+			stats.recordEvent( 'Sidebar Toggle', 'close' );
 		} else {
 			this.props.setEditorSidebar( 'open' );
 			this.props.setLayoutFocus( 'sidebar' );
+			stats.recordStat( 'open-sidebar' );
+			stats.recordEvent( 'Sidebar Toggle', 'open' );
 		}
 	},
 
