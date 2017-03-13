@@ -1,56 +1,14 @@
 /**
- * External dependencies
- */
-import cloneDeep from 'lodash/cloneDeep';
-
-/**
  * Internal dependencies
  */
 import PaginatedQueryManager from '../paginated';
 import ThemeQueryKey from './key';
 import { DEFAULT_THEME_QUERY } from './constants';
 
-export const DELETE_PATCH_KEY = '__DELETE';
 /**
  * ThemeQueryManager manages themes which can be queried
  */
 export default class ThemeQueryManager extends PaginatedQueryManager {
-
-	receive( items, options = {} ) {
-		const oldQueries = cloneDeep( this.data.queries );
-		const nextManager = super.receive( items, options );
-		const queryKey = this.constructor.QueryKey.stringify( options.query );
-		const nextQuery = nextManager.data.queries[ queryKey ];
-
-		if ( ! options.query ) {
-			return this.constructor(
-				Object.assign( {}, {
-					items: nextManager.data.items,
-					queries: Object.assign( {}, oldQueries )
-				} ),
-				nextManager.options
-			);
-		}
-
-		return this.constructor(
-			Object.assign( {}, {
-				items: nextManager.data.items,
-				queries: Object.assign( {}, oldQueries, {
-					[ queryKey ]: nextQuery
-				} )
-			} ),
-			nextManager.options
-		);
-	}
-
-	removeItems( itemKeys = [] ) {
-		return super.receive( itemKeys.map( ( itemKey ) => {
-			return {
-				[ this.options.itemKey ]: itemKey,
-				[ DELETE_PATCH_KEY ]: true
-			};
-		} ), { patch: true } );
-	}
 
 	/**
 	 * A sorting function that defines the sort order of items under

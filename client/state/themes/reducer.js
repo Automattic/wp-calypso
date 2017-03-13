@@ -311,7 +311,7 @@ export const queries = ( () => {
 
 	return createReducer( {}, {
 		[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query, themes, found } ) => {
-			return applyToManager( state, siteId, 'receive', true, themes, { query, found } );
+			return applyToManager( state, siteId, 'receive', true, themes, { query, found, preserveOtherQueries: true } );
 		},
 		[ THEMES_RECEIVE ]: ( state, { siteId, themes } ) => {
 			return applyToManager( state, siteId, 'receive', true, themes );
