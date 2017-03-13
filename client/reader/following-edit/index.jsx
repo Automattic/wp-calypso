@@ -34,7 +34,7 @@ import FollowingImportButton from './import-button';
 import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
-import stats from 'reader/stats';
+import * as stats from 'reader/stats';
 
 const initialLoadFeedCount = 20;
 

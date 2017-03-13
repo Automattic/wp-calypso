@@ -11,7 +11,7 @@ import ExpandableSidebarMenu from '../expandable';
 import ReaderSidebarListsList from './list';
 import ReaderListsActions from 'lib/reader-lists/actions';
 
-import stats from 'reader/stats';
+import * as stats from 'reader/stats';
 
 export class ReaderSidebarLists extends Component {
 

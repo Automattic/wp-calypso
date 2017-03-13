@@ -10,7 +10,7 @@ import EmptyContent from 'components/empty-content';
 import { isDiscoverEnabled } from 'reader/discover/helper';
 import QueryReaderList from 'components/data/query-reader-list';
 
-import stats from 'reader/stats';
+import * as stats from 'reader/stats';
 
 const ListMissing = React.createClass( {
 

@@ -1,8 +1,14 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
 import EmptyContent from 'components/empty-content';
-import stats from 'reader/stats';
-import discoverHelper from 'reader/discover/helper';
+import * as stats from 'reader/stats';
+import * as discoverHelper from 'reader/discover/helper';
 
 var ListEmptyContent = React.createClass( {
 	shouldComponentUpdate: function() {

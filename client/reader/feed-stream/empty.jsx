@@ -1,7 +1,7 @@
 import React from 'react';
 
 import EmptyContent from 'components/empty-content';
-import stats from 'reader/stats';
+import * as stats from 'reader/stats';
 
 const FeedEmptyContent = React.createClass( {
 	shouldComponentUpdate: function() {
