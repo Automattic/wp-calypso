@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { map } from 'lodash';
+import { every, map } from 'lodash';
 import { connect } from 'react-redux';
 
 /*
@@ -50,6 +50,16 @@ const fluxPostAdapter = Component => {
 		state = this.getStateFromStores( this.props );
 
 		updateState = ( newState = this.getStateFromStores() ) => {
+			// check to see if this new state is the same as the old state
+			if ( newState.posts.length === this.state.posts.length ) {
+				// same length, so they might be.
+				// check to see if the individual posts are equal
+				// since feed-post-store uses immutable posts, this is safe (and fast)
+				const current = this.state.posts;
+				if ( every( newState.posts, ( post, index ) => post === current[ index ] ) ) {
+					return;
+				}
+			}
 			this.setState( newState );
 		}
 
