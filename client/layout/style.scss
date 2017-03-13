@@ -182,3 +182,21 @@
 	visibility: visible;
 	opacity: 1;
 }
+
+.layout.is-primary-isolated .layout__content {
+	animation-duration: 500ms;
+	animation-name: isolate;
+	animation-fill-mode: forwards;
+}
+
+@keyframes isolate {
+  from {
+    margin-top: 110px;
+    padding-left: 252px;
+  }
+
+  to {
+    margin: 0;
+	padding-left: 24px;
+  }
+}

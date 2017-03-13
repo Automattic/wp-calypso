@@ -34,9 +34,9 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	Happychat = require( 'components/happychat' );
 
 import { isOffline } from 'state/application/selectors';
-import { hasSidebar } from 'state/ui/selectors';
 import { isHappychatOpen } from 'state/ui/happychat/selectors';
 import SitePreview from 'blocks/site-preview';
+import { hasSidebar, shouldIsolatePrimary } from 'state/ui/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
 
@@ -160,19 +160,31 @@ Layout = React.createClass( {
 
 	render: function() {
 		const sectionClass = classnames(
-				'layout',
-				`is-group-${this.props.section.group}`,
-				`is-section-${this.props.section.name}`,
-				`focus-${this.props.currentLayoutFocus}`,
-				{ 'is-support-user': this.props.isSupportUser },
-				{ 'has-no-sidebar': ! this.props.hasSidebar },
-				{ 'wp-singletree-layout': !! this.props.primary },
-				{ 'has-chat': this.props.chatIsOpen }
-			),
-			loadingClass = classnames( {
-				layout__loader: true,
-				'is-active': this.props.isLoading
-			} );
+			'layout',
+			`is-group-${ this.props.section.group }`,
+			`is-section-${ this.props.section.name }`,
+			`focus-${ this.props.currentLayoutFocus }`,
+			{ 'is-primary-isolated': this.props.isolatePrimary },
+			{ 'is-support-user': this.props.isSupportUser },
+			{ 'has-no-sidebar': ! this.props.hasSidebar },
+			{ 'wp-singletree-layout': !! this.props.primary }
+		);
+
+		const loadingClass = classnames( {
+			layout__loader: true,
+			'is-active': this.props.isLoading
+		} );
+
+		if ( this.props.isolatePrimary ) {
+			return (
+				<div className={ sectionClass }>
+					<div id="content" className="layout__content">
+						<div id="primary" className="layout__primary">
+						</div>
+					</div>
+				</div>
+			);
+		}
 
 		return (
 			<div className={ sectionClass }>
@@ -199,7 +211,7 @@ Layout = React.createClass( {
 				</div>
 				<TranslatorLauncher
 					isEnabled={ translator.isEnabled() }
-					isActive={ translator.isActivated() }/>
+					isActive={ translator.isActivated() } />
 				{ this.renderPreview() }
 				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <Happychat /> }
 			</div>
@@ -214,6 +226,7 @@ export default connect(
 			isLoading,
 			isSupportUser: state.support.isSupportUser,
 			section,
+			isolatePrimary: shouldIsolatePrimary( state ),
 			hasSidebar: hasSidebar( state ),
 			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),

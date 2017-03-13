@@ -12,6 +12,7 @@ import url from 'url';
 /**
  * Internal dependencies
  */
+import { setSection } from 'state/ui/actions';
 import DocsComponent from './main';
 import SingleDocComponent from './doc';
 import DesignAssetsComponent from './design';
@@ -30,12 +31,16 @@ const devdocs = {
 	 * so #secondary needs to be cleaned up
 	 */
 	sidebar: function( context, next ) {
-		ReactDom.render(
-			React.createElement( Sidebar, {
-				path: context.path,
-			} ),
-			document.getElementById( 'secondary' )
-		);
+		if ( context.query && context.query.isolate === 'true' ) {
+			ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		} else {
+			ReactDom.render(
+				React.createElement( Sidebar, {
+					path: context.path,
+				} ),
+				document.getElementById( 'secondary' )
+			);
+		}
 
 		next();
 	},
@@ -93,10 +98,18 @@ const devdocs = {
 
 	// UI components
 	design: function( context ) {
+		if ( context.query && typeof context.query.isolate ) {
+			const { isolate } = context.query;
+			context.store.dispatch(
+				setSection( null, { isolatePrimary: isolate === 'true' } )
+			);
+		}
+
 		ReactDom.render(
 			React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( DesignAssetsComponent, {
-					component: context.params.component
+					component: context.params.component,
+					isolate: context.query && context.query.isolate === 'true'
 				} )
 			),
 			document.getElementById( 'primary' )

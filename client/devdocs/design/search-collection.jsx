@@ -30,7 +30,7 @@ const shouldShowInstance = ( example, filter, component ) => {
 	return ( ! filter || searchPattern.toLowerCase().indexOf( filter ) > -1 );
 };
 
-const Collection = ( { children, filter, section = 'design', component } ) => {
+const Collection = ( { children, component, filter, isolate, section = 'design' } ) => {
 	let showCounter = 0;
 	const summary = [];
 
@@ -40,7 +40,7 @@ const Collection = ( { children, filter, section = 'design', component } ) => {
 		}
 
 		const exampleName = getComponentName( example );
-		const exampleLink = `./${ section }/${ camelCaseToSlug( exampleName ) }`;
+		const exampleLink = `/devdocs/${ section }/${ camelCaseToSlug( exampleName ) }`;
 
 		showCounter++;
 
@@ -60,6 +60,7 @@ const Collection = ( { children, filter, section = 'design', component } ) => {
 
 		return (
 			<DocsExampleWrapper
+				isolate= { isolate }
 				name={ exampleName }
 				unique={ !! component }
 				url={ exampleLink }

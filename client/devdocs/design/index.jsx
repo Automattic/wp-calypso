@@ -93,26 +93,31 @@ let DesignAssets = React.createClass( {
 		page( '/devdocs/design/' );
 	},
 
+	renderCake() {
+		return (
+			this.props.component
+				? <HeaderCake onClick={ this.backToComponents } backText="All Components">
+					{ slugToCamelCase( this.props.component ) }
+				</HeaderCake>
+				: <SearchCard
+					onSearch={ this.onSearch }
+					initialValue={ this.state.filter }
+					placeholder="Search components…"
+					analyticsGroup="Docs" />
+		);
+	},
+
 	render() {
-		const { componentsUsageStats = {}, component } = this.props;
+		const { componentsUsageStats = {}, isolate, component } = this.props;
 		const { filter } = this.state;
 
 		return (
 			<Main className="design">
-				{ component
-					? <HeaderCake onClick={ this.backToComponents } backText="All Components">
-						{ slugToCamelCase( component ) }
-					</HeaderCake>
-
-					: <SearchCard
-						onSearch={ this.onSearch }
-						initialValue={ filter }
-						placeholder="Search components…"
-						analyticsGroup="Docs" />
-				}
+				{ ! isolate && this.renderCake() }
 
 				<Collection
 					component={ component }
+					isolate={ isolate }
 					filter={ filter }
 				>
 					<Accordions componentUsageStats={ componentsUsageStats.accordion } />

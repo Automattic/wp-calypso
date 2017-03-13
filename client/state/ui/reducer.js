@@ -59,6 +59,14 @@ export function hasSidebar( state = true, action ) {
 	return state;
 }
 
+export function isolatePrimary( state = true, action ) {
+	switch ( action.type ) {
+		case SECTION_SET:
+			return action.isolatePrimary ? true : false;
+	}
+	return state;
+}
+
 export function isLoading( state = false, action ) {
 	switch ( action.type ) {
 		case SECTION_SET:
@@ -77,6 +85,7 @@ const reducer = combineReducers( {
 	isLoading,
 	layoutFocus,
 	hasSidebar,
+	isolatePrimary,
 	isPreviewShowing,
 	queryArguments,
 	selectedSiteId,

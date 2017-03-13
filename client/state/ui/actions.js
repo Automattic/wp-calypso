@@ -56,6 +56,8 @@ export function setSection( section, options = {} ) {
 		options.section = section;
 	}
 	options.hasSidebar = ( options.hasSidebar === false ) ? false : true;
+	options.isolatePrimary = options.isolatePrimary;
+
 	return options;
 }
 

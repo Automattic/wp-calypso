@@ -139,3 +139,8 @@ export function hasSidebar( state ) {
 	}
 	return get( getSection( state ), 'secondary', true );
 }
+
+export function shouldIsolatePrimary( state ) {
+	return state.ui.isolatePrimary;
+}
+
