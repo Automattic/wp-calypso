@@ -124,14 +124,16 @@ export class EditorMediaModal extends Component {
 	confirmSelection = () => {
 		const { view, mediaLibrarySelectedItems } = this.props;
 
-		let value;
-		if ( mediaLibrarySelectedItems.length ) {
-			value = {
+		if ( areMediaActionsDisabled( view, mediaLibrarySelectedItems ) ) {
+			return;
+		}
+
+		const value = mediaLibrarySelectedItems.length
+			? {
 				type: ModalViews.GALLERY === view ? 'gallery' : 'media',
 				items: mediaLibrarySelectedItems,
 				settings: this.state.gallerySettings
-			};
-		}
+			} : undefined;
 
 		this.props.onClose( value );
 	};
