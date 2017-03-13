@@ -228,7 +228,8 @@ button {
 // ==========================================================================
 
 // Turn Reset 'buttons' into regular text links
-.layout__content input {
+.layout__content input,
+.dialog__content input {
 	&[type=reset],
 	&[type=reset]:hover,
 	&[type=reset]:active,
@@ -242,7 +243,8 @@ button {
 }
 
 // Buttons within sentences sit on the text baseline.
-.layout__content p .button {
+.layout__content p .button,
+.dialog__content p .button {
 	vertical-align: baseline;
 }
 
@@ -250,7 +252,11 @@ button {
 .layout__content button::-moz-focus-inner,
 .layout__content input[type=reset]::-moz-focus-inner,
 .layout__content input[type=button]::-moz-focus-inner,
-.layout__content input[type=submit]::-moz-focus-inner {
+.layout__content input[type=submit]::-moz-focus-inner ,
+.dialog__content button::-moz-focus-inner,
+.dialog__content input[type=reset]::-moz-focus-inner,
+.dialog__content input[type=button]::-moz-focus-inner,
+.dialog__content input[type=submit]::-moz-focus-inner {
 	border: 0;
 	padding: 0;
 }
