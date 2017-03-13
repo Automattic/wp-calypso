@@ -9,7 +9,7 @@ function md5( content ) {
 	return md5Cache[ content ];
 }
 
-function hashToModuleId( hash, seed, hashSize ) {
+function hashToId( hash, seed, hashSize ) {
 	// Generate a unsigned integer sized <hashSize> bits using a part of the MD5
 	// hash. Seed is a number 0..31 and the hash is expected to be 32 chars
 	// (nibbles) long.
@@ -73,7 +73,7 @@ WebpackStableBuildPlugin.prototype.apply = function( compiler ) {
 	function genChunkId( chunkName ) {
 		const hash = md5( chunkName );
 		// generate a 28 bit integer using a part of the MD5 hash
-		const id = hashToModuleId( hash, seed, hashSize );
+		const id = hashToId( hash, seed, hashSize );
 		if ( usedChunkIds.hasOwnProperty( id ) && usedChunkIds[ id ] !== chunkName ) {
 			throw new Error( 'chunk id collision' );
 		}
@@ -83,7 +83,7 @@ WebpackStableBuildPlugin.prototype.apply = function( compiler ) {
 	function genModuleId( modulePath ) {
 		const hash = md5( modulePath );
 		// generate a 28 bit integer using a part of the MD5 hash
-		const id = hashToModuleId( hash, seed, hashSize );
+		const id = hashToId( hash, seed, hashSize );
 		if ( usedModuleIds.hasOwnProperty( id ) && usedModuleIds[ id ] !== modulePath ) {
 			throw new Error( 'module id collision' );
 		}
@@ -121,7 +121,7 @@ WebpackStableBuildPlugin.prototype.apply = function( compiler ) {
 			hash.update( seed.toString( 16 ) );
 
 			chunkHash.digest = function( digest ) {
-				return 'ben-' + seed.toString( 16 ) + hash.digest( digest || _plugin.digest );
+				return hash.digest( digest || _plugin.digest );
 			};
 		} );
 	} );
