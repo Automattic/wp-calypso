@@ -10,7 +10,7 @@ import React, { PropTypes } from 'react';
 import EmptyContent from 'components/empty-content';
 import { domainManagementEdit } from 'my-sites/upgrades/paths';
 
-const DomainOnly = ( { domainName, siteId, translate } ) => (
+const DomainOnly = ( { domainName, hasNotice, siteId, translate } ) => (
 	<div>
 		<EmptyContent
 			title={ translate( '%(domainName)s is ready when you are.', { args: { domainName } } ) }
@@ -20,14 +20,17 @@ const DomainOnly = ( { domainName, siteId, translate } ) => (
 			secondaryAction={ translate( 'Manage Domain' ) }
 			secondaryActionURL={ domainManagementEdit( domainName, domainName ) }
 			illustration={ '/calypso/images/drake/drake-browser.svg' } />
-		<div className="domain-only-site__settings-notice">
-			{ translate( 'New domains usually start working immediately, but may be unreliable for the first few hours.' ) }
-		</div>
+		{ hasNotice && (
+			<div className="domain-only-site__settings-notice">
+				{ translate( 'Your domain should start working immediately, but may be unreliable during the first 72 hours.' ) }
+			</div>
+		) }
 	</div>
 );
 
 DomainOnly.propTypes = {
 	domainName: PropTypes.string.isRequired,
+	hasNotice: PropTypes.bool.isRequired,
 	translate: PropTypes.func.isRequired,
 	siteId: PropTypes.number.isRequired,
 };
