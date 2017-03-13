@@ -30,8 +30,8 @@ export const WpcomPluginInstallButton = props => {
 		transferState
 	} = props;
 
-	const { COMPLETE } = transferStates;
-	if ( COMPLETE === transferState ) {
+	// Don't show the button if the transfer has completed
+	if ( transferStates.COMPLETE === transferState ) {
 		return null;
 	}
 
