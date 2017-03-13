@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -29,10 +29,14 @@ const ThemePreview = React.createClass( {
 	displayName: 'ThemePreview',
 
 	propTypes: {
-		themeOptions: React.PropTypes.object,
-		isActive: React.PropTypes.bool,
-		isInstalling: React.PropTypes.bool,
-		onClose: React.PropTypes.func,
+		// connected props
+		demoUrl: PropTypes.string,
+		isActivating: PropTypes.bool,
+		isActive: PropTypes.bool,
+		isInstalling: PropTypes.bool,
+		isJetpack: PropTypes.bool,
+		themeId: PropTypes.string,
+		themeOptions: PropTypes.object,
 	},
 
 	getInitialState() {
