@@ -7,8 +7,3 @@
 	z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
 }
 
-@media (max-width: 960px) {
-	.sticky-panel.is-sticky .sticky-panel__content {
-		margin-top: 8px;
-	}
-}

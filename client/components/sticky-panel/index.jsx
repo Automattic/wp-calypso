@@ -14,13 +14,16 @@ import viewport from 'lib/viewport';
 class StickyPanel extends Component {
 	static propTypes = {
 		className: PropTypes.string,
+		offset: PropTypes.number,
+		stickyTo: PropTypes.string,
 	};
 
-	state = {
-		isSticky: false,
-		spacerHeight: 0,
-		blockWidth: 0,
-	};
+	static defaultProps = {
+		offset: 10,
+		stickyTo: 'header',
+	}
+
+	state = { isSticky: false };
 
 	componentDidMount() {
 		if ( viewport.isMobile() ) {
@@ -47,39 +50,49 @@ class StickyPanel extends Component {
 	};
 
 	onWindowResize = () => {
-		this.setState( {
-			spacerHeight: this.state.isSticky ? ReactDom.findDOMNode( this ).clientHeight : 0,
-			blockWidth: this.state.isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0
-		} );
+		this.updateIsSticky();
 	};
 
 	updateIsSticky = () => {
-		const isSticky = window.pageYOffset > this.threshold;
-
 		if ( viewport.isMobile() ) {
 			return this.setState( { isSticky: false } );
 		}
 
-		if ( isSticky !== this.state.isSticky ) {
-			this.setState( {
-				isSticky: isSticky,
-				spacerHeight: isSticky ? ReactDom.findDOMNode( this ).clientHeight : 0,
-				blockWidth: isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0,
-			} );
+		let threshold = this.stickyDomElement.offsetTop;
+		this.stickAt = this.props.offset;
+
+		if ( this.props.stickyTo ) {
+			const elementToStick = document.getElementById( this.props.stickyTo );
+
+			if ( elementToStick ) {
+				this.stickAt += elementToStick.offsetTop + elementToStick.offsetHeight;
+			}
 		}
+
+		threshold -= this.stickAt;
+
+		this.setState( { isSticky: window.pageYOffset > threshold } );
 	};
 
-	getBlockStyle() {
-		if ( this.state.isSticky ) {
-			// Offset to account for Master Bar by finding body visual top
-			// relative the current scroll position
-			const offset = document.getElementById( 'header' ).getBoundingClientRect().height;
-
-			return {
-				top: offset,
-				width: this.state.blockWidth,
-			};
+	setPositionByStyles() {
+		if ( ! this.state.isSticky ) {
+			return null;
 		}
+
+		return {
+			top: this.stickAt,
+			width: this.stickyDomElement.offsetWidth,
+		};
+	}
+
+	showFakePanelByStyles() {
+		if ( ! this.state.isSticky ) {
+			return null;
+		}
+
+		return {
+			height: this.stickyDomElement.offsetHeight,
+		};
 	}
 
 	render() {
@@ -91,10 +104,10 @@ class StickyPanel extends Component {
 
 		return (
 			<div className={ classes }>
-				<div className="sticky-panel__content" style={ this.getBlockStyle() }>
+				<div className="sticky-panel__content" style={ this.setPositionByStyles() }>
 					{ this.props.children }
 				</div>
-				<div className="sticky-panel__spacer" style={ { height: this.state.spacerHeight } } />
+				<div className="sticky-panel__fake" style={ this.showFakePanelByStyles() } />
 			</div>
 		);
 	}
