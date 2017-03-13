@@ -107,7 +107,7 @@ export function receiveThemes( themes, siteId, query, foundCount ) {
 		let filteredThemes = themes;
 		let found = foundCount;
 
-		if ( siteId !== 'wporg' && siteId !== 'wpcom' ) {
+		if ( isJetpackSite( getState(), siteId ) ) {
 			/*
 			 * We need to do client-side filtering for Jetpack sites because:
 			 * 1) Jetpack theme API does not support search queries
