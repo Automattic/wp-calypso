@@ -11,9 +11,11 @@ import page from 'page';
  * Internal dependencies
  */
 import Button from 'components/button';
+import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getEligibility } from 'state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'state/themes/actions';
+import { transferStates } from 'state/automated-transfer/constants';
 
 export const WpcomPluginInstallButton = props => {
 	const {
@@ -24,8 +26,14 @@ export const WpcomPluginInstallButton = props => {
 		siteId,
 		eligibilityData,
 		navigateTo,
-		initiateTransfer
+		initiateTransfer,
+		transferState
 	} = props;
+
+	const { COMPLETE } = transferStates;
+	if ( COMPLETE === transferState ) {
+		return null;
+	}
 
 	function installButtonAction( event ) {
 		event.preventDefault();
@@ -59,7 +67,8 @@ const mapStateToProps = state => {
 	return {
 		siteId: site.ID,
 		siteSlug: site.slug,
-		eligibilityData: getEligibility( state, site.ID )
+		eligibilityData: getEligibility( state, site.ID ),
+		transferState: getAutomatedTransferStatus( state, site.ID ),
 	};
 };
 
