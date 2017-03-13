@@ -3,11 +3,7 @@
  */
 import { keys, trim } from 'lodash';
 import stripTags from 'striptags';
-
-/**
- * Internal Dependencies
- */
-import decode from './decode-entities';
+import { decode } from 'he';
 
 function decodeEntities( text ) {
 	// Bypass decode if text doesn't include entities
