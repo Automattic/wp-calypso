@@ -20,6 +20,7 @@
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
+		"help/directly": true,
 		"jetpack/google-analytics": true,
 		"jetpack/api-cache": false,
 		"manage/custom-post-types": true,
