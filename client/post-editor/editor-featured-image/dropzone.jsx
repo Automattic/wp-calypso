@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { head } from 'lodash';
 
 /**
@@ -19,11 +20,19 @@ class FeaturedImageDropZone extends Component {
 		post: PropTypes.object.isRequired,
 	};
 
+	static contextTypes = {
+		store: PropTypes.object
+	};
+
 	state = { dispatcherID: null };
 
 	componentWillMount = () => {
 		const dispatcherID = Dispatcher.register( this.mediaEventsReducer );
 		this.setState( { dispatcherID: dispatcherID } );
+
+		if ( ! MediaActions._reduxStore ) {
+			MediaActions._reduxStore = this.context.store;
+		}
 	};
 
 	componentWillUnmount = () => {
@@ -73,4 +82,7 @@ class FeaturedImageDropZone extends Component {
 	}
 }
 
-export default FeaturedImageDropZone;
+export default connect(
+	null,
+	null
+)( FeaturedImageDropZone );
