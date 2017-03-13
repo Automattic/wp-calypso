@@ -29,9 +29,16 @@ const fluxPostAdapter = Component => {
 			const posts = map(
 				postKey.postIds,
 				postId => {
-					const post = FeedPostStore.get( { ...postKey, postId } )
-					if ( ! post ) {
-						fetchPost( { ...postKey, postId } );
+					const postKeyForPost = {};
+					if ( postKey.feedId ) {
+						postKeyForPost.feedId = postKey.feedId;
+					} else {
+						postKeyForPost.blogId = postKey.blogId;
+					}
+					postKeyForPost.postId = postId;
+					const post = FeedPostStore.get( postKeyForPost )
+					if ( ! post || post._state === 'minimal' ) {
+						fetchPost( postKeyForPost );
 					}
 					return post;
 				}
