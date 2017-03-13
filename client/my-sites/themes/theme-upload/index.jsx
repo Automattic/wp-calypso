@@ -242,19 +242,21 @@ class Upload extends React.Component {
 
 		return (
 			<div className="theme-upload__theme-sheet">
-				<span className="theme-upload__theme-name">{ theme.name }</span>
-				<span className="theme-upload__author">
+				<img className="theme-upload__screenshot" src={ theme.screenshot } />
+				<h2 className="theme-upload__theme-name">{ theme.name }</h2>
+				<div className="theme-upload__author">
 					{ translate( 'by ' ) }
 					<a href={ theme.author_uri }>{ theme.author }</a>
-				</span>
-				<img src={ theme.screenshot } />
-				<span className="theme-upload__description">{ theme.description }</span>
-				<Button onClick={ this.onTryAndCustomizeClick } >
-					{ tryandcustomize.label }
-				</Button>
-				<Button primary onClick={ this.onActivateClick }>
-					{ activate.label }
-				</Button>
+				</div>
+				<div className="theme-upload__description">{ theme.description }</div>
+				<div className="theme-upload__action-buttons">
+					<Button onClick={ this.onTryAndCustomizeClick } >
+						{ tryandcustomize.label }
+					</Button>
+					<Button primary onClick={ this.onActivateClick }>
+						{ activate.label }
+					</Button>
+				</div>
 			</div>
 		);
 	}
