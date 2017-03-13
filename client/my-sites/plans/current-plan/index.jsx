@@ -27,7 +27,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { getPlan } from 'lib/plans';
 import QuerySiteDomains from 'components/data/query-site-domains';
-import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import DomainWarnings from 'my-sites/upgrades/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
@@ -145,6 +145,7 @@ export default connect(
 	( state, ownProps ) => {
 		const selectedSite = getSelectedSite( state );
 		const selectedSiteId = getSelectedSiteId( state );
+		const domains = getDecoratedSiteDomains( state, selectedSiteId );
 
 		const isJetpack = isJetpackSite( state, selectedSiteId );
 		const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
@@ -152,13 +153,13 @@ export default connect(
 		return {
 			selectedSite,
 			selectedSiteId,
+			domains,
 			context: ownProps.context,
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
 			isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
 			shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
-			hasDomainsLoaded: ! isRequestingSiteDomains( state, selectedSiteId ),
+			hasDomainsLoaded: !! domains,
 			isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
-			domains: getDecoratedSiteDomains( state, selectedSiteId ),
 		};
 	}
 )( localize( CurrentPlan ) );
