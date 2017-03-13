@@ -1,7 +1,7 @@
+// DO NOT USE ES6 MODULES  OR IT WILL BREAK wp-desktop COMPATIBILITY
 /**
  * Internal dependencies
  */
-//import createConfig from 'lib/config';
 var createConfig = require( 'lib/config' );
 
 /**
@@ -14,4 +14,3 @@ if ( 'undefined' === typeof window || ! window.configData ) {
 
 module.exports = createConfig( window.configData );
 
-//export default createConfig( window.configData );
