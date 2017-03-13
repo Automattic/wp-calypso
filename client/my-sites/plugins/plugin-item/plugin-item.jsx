@@ -59,7 +59,7 @@ module.exports = React.createClass( {
 		hasAllNoManageSites: React.PropTypes.bool,
 	},
 
-	defaultProps() {
+	getDefaultProps() {
 		return  {
 			allowedActions: {
 				activation: true,
