@@ -50,8 +50,7 @@ export default class ProductsVariationTypesForm extends Component {
 		};
 
 		this.addVariation = this.addVariation.bind( this );
-		this.typeInputs = this.typeInputs.bind( this );
-		this.valuesInputs = this.valuesInputs.bind( this );
+		this.renderInputs = this.renderInputs.bind( this );
 		this.handleToggle = this.handleToggle.bind( this );
 	}
 
@@ -88,18 +87,21 @@ export default class ProductsVariationTypesForm extends Component {
 		this.setState( { variations: updatedVariations } );
 	}
 
-	typeInputs( variation, index ) {
+	renderInputs( variation, index ) {
 		return (
-			<div key={ index } className="products-variation-types-form__fields">
-				<FormTextInput placeholder={ i18n.translate( 'Color' ) } value={ variation.type } name="type" onChange={ this.updateType.bind( this, index ) } />
-			</div>
-		);
-	}
-
-	valuesInputs( variation, index ) {
-		return (
-			<div key={ index } className="products-variation-types-form__fields">
-				<TokenField value={ variation.values } name="values" onChange={ this.updateValues.bind( this, index ) } />
+			<div key={index} className="products-variation-types-form__fieldset">
+				<FormTextInput
+					placeholder={ i18n.translate( 'Color' ) }
+					value={ variation.type }
+					name="type"
+					onChange={ this.updateType.bind( this, index ) }
+					className="products-variation-types-form__field"
+				/>
+				<TokenField
+					value={ variation.values }
+					name="values"
+					onChange={ this.updateValues.bind( this, index ) }
+				/>
 			</div>
 		);
 	}
@@ -112,8 +114,7 @@ export default class ProductsVariationTypesForm extends Component {
 
 	render() {
 		const fields = this.state.variations,
-			allTypeInputs = fields.map( this.typeInputs ),
-			allValuesInputs = fields.map( this.valuesInputs ),
+			inputs = fields.map( this.renderInputs ),
 			isNewProduct = this.props.product ? false : true;
 
 		let variationsForm = null;
@@ -123,16 +124,12 @@ export default class ProductsVariationTypesForm extends Component {
 					<strong>{ this.props.label }</strong>
 					<p>{ this.props.description }</p>
 
-					<div className="products-variation-types-form__fieldset-group">
-						<fieldset className="products-variation-types-form__fieldset">
-							<FormLabel>{ i18n.translate( 'Variation type' ) }</FormLabel>
-							{ allTypeInputs }
-						</fieldset>
-
-						<fieldset className="products-variation-types-form__fieldset">
+					<div className="products-variation-types-form__group">
+						<div className="products-variation-types-form__labels">
+							<FormLabel className="products-variation-types-form__label">{ i18n.translate( 'Variation type' ) }</FormLabel>
 							<FormLabel>{ i18n.translate( 'Variation values' ) }</FormLabel>
-							{ allValuesInputs }
-						</fieldset>
+						</div>
+						{inputs}
 					</div>
 
 					<Button onClick={ this.addVariation }>{ i18n.translate( 'Add another variation' ) }</Button>

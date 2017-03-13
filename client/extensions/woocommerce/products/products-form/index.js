@@ -7,7 +7,7 @@ import React, { Component, PropTypes } from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
-import ProductVariationTypesForm from '../products-variation-types-form';
+import ProductsVariationTypesForm from '../products-variation-types-form';
 
 export default class ProductsForm extends Component {
 
@@ -22,7 +22,7 @@ export default class ProductsForm extends Component {
 	render() {
 		return (
 			<Card>
-				<ProductVariationTypesForm />
+				<ProductsVariationTypesForm />
 			</Card>
 		);
 	}
