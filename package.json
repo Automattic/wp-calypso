@@ -192,6 +192,6 @@
     "webpack-bundle-analyzer": "2.2.1",
     "webpack-dashboard": "0.2.0",
     "webpack-dev-server": "1.11.0",
-    "wp-prettier": "0.22.0"
+    "wp-prettier": "0.22.1"
   }
 }
