@@ -228,12 +228,12 @@ class Upload extends React.Component {
 
 	onActivateClick = () => {
 		const { activate } = this.props.options;
-		activate.action( this.props.uploadedTheme );
+		activate.action( this.props.themeId );
 	};
 
 	onTryAndCustomizeClick = () => {
 		const { tryandcustomize } = this.props.options;
-		tryandcustomize.action( this.props.uploadedTheme );
+		tryandcustomize.action( this.props.themeId );
 	}
 
 	renderTheme() {
