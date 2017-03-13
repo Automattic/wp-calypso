@@ -16,8 +16,9 @@ import ThemeSetupCard from './theme-setup-card';
 import ThemeSetupPlaceholder from './theme-setup-placeholder';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getActiveTheme, getTheme } from 'state/themes/selectors';
+import { toggleDialog } from 'state/ui/theme-setup/actions';
 
-let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain } ) => {
+let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain, toggleDialog } ) => {
 	const onBack = () => {
 		page( '/settings/general/' + activeSiteDomain );
 	};
@@ -29,6 +30,7 @@ let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain } ) => {
 			<HeaderCake onClick={ onBack }><h1>{ translate( 'Theme Setup' ) }</h1></HeaderCake>
 			{ site && theme
 				? <ThemeSetupCard
+					onClick={ toggleDialog }
 					theme={ theme } />
 				: <ThemeSetupPlaceholder /> }
 		</div>
@@ -48,5 +50,5 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps )( ThemeSetup );
+export default connect( mapStateToProps, { toggleDialog } )( ThemeSetup );
 

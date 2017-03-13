@@ -26,7 +26,7 @@ const JetpackDevModeNotice = ( {
 			{
 				isJetpackSiteInDevMode &&
 				<Notice
-					text={ translate( 'Some features are disabled because your site is in Development mode.' ) }
+					text={ translate( 'Some features are disabled because your site is in development mode.' ) }
 					showDismiss={ false }
 				>
 					<NoticeAction href={ 'https://jetpack.com/support/development-mode/' } external>

@@ -1,23 +1,13 @@
 .editor-post-type {
-	color: lighten( $gray, 10% );
-	font-size: 11px;
-	font-weight: 500;
-	margin: 5px 0;
-	text-align: center;
-	text-transform: uppercase;
-
 	&.is-loading {
 		@include placeholder;
 	}
 
 	.post-status__text {
+		display: none;
 		color: darken( $gray, 10% );
 		margin-left: 4px;
 		vertical-align: baseline;
-		&::before {
-			content: '– ';
-			margin-right: 4px;
-		}
 	}
 }
 

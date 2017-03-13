@@ -103,12 +103,13 @@
 	}
 
 	@include breakpoint( '>480px' ) {
+		min-width: 22%;
 		border: none;
 		margin: 0;
 		padding: 0;
 		text-align: right;
 		justify-content: flex-end;
-		align-self: center;
+		align-self: flex-start;
 
 		.plugin-action {
 			margin-top: 16px;
@@ -147,6 +148,19 @@
 
 .plugin-meta__actions .plugin-meta__active {
 	color: $alert-green;
+}
+
+.plugin-meta__action-links {
+	display: flex;
+	flex-wrap: wrap;
+	clear: both;
+	padding-top: 12px;
+
+	.button {
+		margin-top: 12px;
+		flex-shrink: 0;
+		margin-right: 10px;
+	}
 }
 
 a.plugin-meta__settings-link {

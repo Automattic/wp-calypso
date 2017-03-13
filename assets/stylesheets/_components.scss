@@ -13,6 +13,7 @@
 @import 'account-recovery/reset-password/reset-password-form/style';
 @import 'account-recovery/reset-password/reset-password-sms-form/style';
 @import 'account-recovery/reset-password/reset-password-email-form/style';
+@import 'account-recovery/reset-password/reset-password-confirm-form/style';
 @import 'account-recovery/reset-password/transaction-id-form/style';
 @import 'account-recovery/style';
 @import 'auth/style';
@@ -223,6 +224,7 @@
 @import 'me/notification-settings/push-notification-settings/style';
 @import 'me/notification-settings/settings-form/style';
 @import 'me/notification-settings/wpcom-settings/style';
+@import 'me/profile/style';
 @import 'me/profile-gravatar/style';
 @import 'me/profile-link/style';
 @import 'me/profile-links-add-other/style';
@@ -335,6 +337,7 @@
 @import 'my-sites/site-settings/site-icon-setting/style';
 @import 'my-sites/site-settings/taxonomies/style';
 @import 'my-sites/site-settings/theme-setup/style';
+@import 'my-sites/site-settings/theme-setup-dialog/style';
 @import 'my-sites/importer/style';
 @import 'blocks/site/style';
 @import 'my-sites/sites/style';
@@ -386,7 +389,6 @@
 @import 'my-sites/upgrades/domain-management/style';
 @import 'my-sites/upgrades/domain-management/components/icann-verification/style';
 @import 'post-editor/style';
-@import 'post-editor/drafts-button/style';
 @import 'post-editor/edit-post-status/style';
 @import 'post-editor/editor-action-bar/style';
 @import 'post-editor/editor-author/style';
@@ -401,7 +403,6 @@
 @import 'post-editor/editor-ground-control/style';
 @import 'post-editor/editor-html-toolbar/style';
 @import 'post-editor/editor-location/style';
-@import 'post-editor/editor-mobile-navigation/style';
 @import 'post-editor/editor-notice/style';
 @import 'post-editor/editor-more-options/style';
 @import 'post-editor/editor-notice/style';

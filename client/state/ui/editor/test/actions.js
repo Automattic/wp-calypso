@@ -9,13 +9,11 @@ import { forEach } from 'lodash';
  */
 import {
 	ANALYTICS_STAT_BUMP,
-	EDITOR_SHOW_DRAFTS_TOGGLE,
 	EDITOR_START,
 	EDITOR_STOP,
 } from 'state/action-types';
 import {
 	MODAL_VIEW_STAT_MAPPING,
-	toggleEditorDraftsVisible,
 	setEditorMediaModalView,
 	startEditingPost,
 	stopEditingPost,
@@ -44,16 +42,6 @@ describe( 'actions', () => {
 				type: EDITOR_STOP,
 				siteId: 10,
 				postId: 183
-			} );
-		} );
-	} );
-
-	describe( '#toggleEditorDraftsVisible()', () => {
-		it( 'should return an action object', () => {
-			const action = toggleEditorDraftsVisible();
-
-			expect( action ).to.eql( {
-				type: EDITOR_SHOW_DRAFTS_TOGGLE
 			} );
 		} );
 	} );

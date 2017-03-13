@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { truncate } from 'lodash';
+import { truncate, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -46,7 +46,7 @@ import {
 	SITE_FRONT_PAGE_SET_FAILURE,
 	THEME_DELETE_FAILURE,
 	THEME_DELETE_SUCCESS,
-	THEME_TRY_AND_CUSTOMIZE_FAILURE,
+	THEME_ACTIVATE_REQUEST_FAILURE,
 } from 'state/action-types';
 
 import { dispatchSuccess, dispatchError } from './utils';
@@ -184,6 +184,13 @@ const onThemeDeleteFailure = ( dispatch, { themeId } ) => dispatch(
 	} ) )
 );
 
+const onThemeActivateFailure = ( dispatch, { error } ) => {
+	if ( includes( error.error, 'theme_not_found' ) ) {
+		return dispatch( errorNotice( translate( 'Theme not yet available for this site' ) ) );
+	}
+	return dispatch( errorNotice( translate( 'Unable to activate theme. Contact support.' ) ) );
+};
+
 /**
  * Handler action type mapping
  */
@@ -229,7 +236,7 @@ export const handlers = {
 	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) ),
 	[ THEME_DELETE_FAILURE ]: onThemeDeleteFailure,
 	[ THEME_DELETE_SUCCESS ]: onThemeDeleteSuccess,
-	[ THEME_TRY_AND_CUSTOMIZE_FAILURE ]: dispatchError( translate( 'Customize error, please retry or contact support' ) ),
+	[ THEME_ACTIVATE_REQUEST_FAILURE ]: onThemeActivateFailure,
 };
 
 /**

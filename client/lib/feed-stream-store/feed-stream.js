@@ -117,13 +117,16 @@ export default class FeedStream {
 				this.setIsFetchingNextPage( true );
 				break;
 			case ActionTypes.SELECT_ITEM:
-				this.selectItem( action.selectedIndex, action.id );
+				this.selectItem( action.postKey, action.id );
 				break;
 			case ActionTypes.SELECT_NEXT_ITEM:
-				this.selectNextItem( action.selectedIndex );
+				this.selectNextItem( action.postKey );
 				break;
 			case ActionTypes.SELECT_PREV_ITEM:
-				this.selectPrevItem( action.selectedIndex );
+				this.selectPrevItem( action.postKey );
+				break;
+			case ActionTypes.SELECT_FIRST_ITEM:
+				this.selectFirstItem();
 				break;
 		}
 	}
@@ -154,15 +157,11 @@ export default class FeedStream {
 		return this.pendingPostKeys.length;
 	}
 
-	getSelectedPost() {
+	getSelectedPostKey() {
 		if ( this.selectedIndex >= 0 && this.selectedIndex < this.postKeys.length ) {
 			return this.postKeys[ this.selectedIndex ];
 		}
 		return null;
-	}
-
-	getSelectedIndex() {
-		return this.selectedIndex;
 	}
 
 	isLastPage() {
@@ -217,10 +216,16 @@ export default class FeedStream {
 		}
 	}
 
-	selectItem( selectedIndex, id ) {
-		if ( selectedIndex >= 0 &&
-			selectedIndex < this.postKeys.length &&
-			this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) ) {
+	selectFirstItem() {
+		if ( this.selectedIndex !== 0 ) {
+			this.selectedIndex = 0;
+			this.emitChange();
+		}
+	}
+
+	selectItem( postKey, id ) {
+		const selectedIndex = findIndex( this.postKeys, postKey );
+		if ( this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) && selectedIndex !== this.selectedIndex ) {
 			this.selectedIndex = selectedIndex;
 			setLastStoreId( id );
 			this.emitChange();

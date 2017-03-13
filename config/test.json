@@ -94,7 +94,7 @@
 		"republicize": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
-		"signup/domain-first-flow": false,
+		"signup/domain-first-flow": true,
 		"settings/security/monitor": true,
 		"support-user": true,
 		"sync-handler": true,

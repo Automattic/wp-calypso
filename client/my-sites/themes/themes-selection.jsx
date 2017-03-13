@@ -111,24 +111,24 @@ const ThemesSelection = React.createClass( {
 	},
 
 	//intercept preview and add primary and secondary
-	getOptions( theme ) {
-		const options = this.props.getOptions( theme );
+	getOptions( themeId ) {
+		const options = this.props.getOptions( themeId );
 		const wrappedPreviewAction = ( action ) => {
 			let defaultOption;
 			let secondaryOption = this.props.secondaryOption;
-			return ( themeObj ) => {
+			return ( t ) => {
 				if ( ! this.props.isLoggedIn ) {
 					defaultOption = options.signup;
 					secondaryOption = null;
-				} else if ( this.props.isThemeActive( theme.id ) ) {
+				} else if ( this.props.isThemeActive( themeId ) ) {
 					defaultOption = options.customize;
-				} else if ( theme.price && options.purchase ) {
+				} else if ( options.purchase ) {
 					defaultOption = options.purchase;
 				} else {
 					defaultOption = options.activate;
 				}
 				this.props.setThemePreviewOptions( defaultOption, secondaryOption );
-				return action( themeObj );
+				return action( t );
 			};
 		};
 

@@ -51,6 +51,7 @@
 	max-height: 18px * 1.4 * 1;
 	word-wrap: break-word;
 	overflow: hidden;
+	margin-top: -3px;
 
 	&:hover, &:focus {
 		color: $gray-dark;
@@ -64,7 +65,7 @@
 
 .reader-combined-card__featured-image-wrapper {
 	min-width: 100px;
-	margin-right: 10px;
+	margin-right: 20px;
 }
 
 .reader-combined-card .reader-featured-image {
@@ -81,6 +82,23 @@
 	display: flex;
 	flex-direction: row;
 	margin-bottom: 20px;
+	position: relative;
+
+	&.is-selected {
+		&::before {
+			content: '';
+			position: absolute;
+				top: -2px;
+				bottom: 2px;
+				left: -8px;
+				width: 2px;
+			background: $blue-wordpress;
+
+			@include breakpoint( ">660px" ) {
+				left: -16px;
+			}
+		}
+	}
 }
 
 .reader-combined-card__post-author-and-time {
@@ -91,6 +109,7 @@
 	max-height: 13px * 1.4 * 1;
 	word-wrap: break-word;
 	position: relative;
+	margin-top: 2px;
 
 	&::after {
 		@include long-content-fade( $size: 20% );
@@ -123,10 +142,12 @@
 
 .reader-combined-card__post .reader-excerpt {
 	font-size: 14px;
+	font-weight: 100;
 	overflow: hidden;
 	max-height: 16px * 1.4 * 1;
 	word-wrap: break-word;
 	position: relative;
+	margin-top: 4px;
 
 	&::after {
 		@include long-content-fade( $size: 20% );

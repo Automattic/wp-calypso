@@ -11,10 +11,11 @@ import { connect } from 'react-redux';
 import QueryMediaStorage from 'components/data/query-media-storage';
 import { getMediaStorage } from 'state/sites/media-storage/selectors';
 import {
-	getSitePlan,
+	getSitePlanSlug,
 	getSiteSlug,
 	isJetpackSite
 } from 'state/sites/selectors';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
 
 import PlanStorageBar from './bar';
 
@@ -23,6 +24,8 @@ class PlanStorage extends Component {
 		className: PropTypes.string,
 		mediaStorage: PropTypes.object,
 		siteId: PropTypes.number,
+		sitePlanSlug: PropTypes.string,
+		siteSlug: PropTypes.string,
 	};
 
 	render() {
@@ -30,11 +33,15 @@ class PlanStorage extends Component {
 			className,
 			jetpackSite,
 			siteId,
-			sitePlan,
+			sitePlanSlug,
 			siteSlug,
 		} = this.props;
 
-		if ( jetpackSite || ! sitePlan ) {
+		if ( jetpackSite || ! sitePlanSlug ) {
+			return null;
+		}
+
+		if ( sitePlanSlug === PLAN_BUSINESS ) {
 			return null;
 		}
 
@@ -43,7 +50,7 @@ class PlanStorage extends Component {
 				<QueryMediaStorage siteId={ siteId } />
 				<PlanStorageBar
 					siteSlug={ siteSlug }
-					sitePlanSlug={ sitePlan.product_slug }
+					sitePlanSlug={ sitePlanSlug }
 					mediaStorage={ this.props.mediaStorage }
 				>
 					{ this.props.children }
@@ -58,7 +65,7 @@ export default connect( ( state, ownProps ) => {
 	return {
 		mediaStorage: getMediaStorage( state, siteId ),
 		jetpackSite: isJetpackSite( state, siteId ),
-		sitePlan: getSitePlan( state, siteId ),
+		sitePlanSlug: getSitePlanSlug( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 	};
 } )( PlanStorage );

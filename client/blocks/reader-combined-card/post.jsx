@@ -6,6 +6,7 @@ import { has, get } from 'lodash';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
+import classnames from 'classnames';
 
 /**
  * Internal Dependencies
@@ -69,7 +70,7 @@ class ReaderCombinedCardPost extends React.Component {
 	}
 
 	render() {
-		const { post, streamUrl, isDiscover } = this.props;
+		const { post, streamUrl, isDiscover, isSelected } = this.props;
 		const hasAuthorName = has( post, 'author.name' );
 
 		let featuredAsset = null;
@@ -83,8 +84,13 @@ class ReaderCombinedCardPost extends React.Component {
 			recordPermalinkClick( 'timestamp_combined_card', post );
 		};
 
+		const classes = classnames( {
+			"reader-combined-card__post": true,
+			"is-selected": isSelected
+		} );
+
 		return (
-			<li className="reader-combined-card__post" onClick={ this.handleCardClick }>
+			<li className={ classes } onClick={ this.handleCardClick }>
 				{ featuredAsset &&
 					<div className="reader-combined-card__featured-image-wrapper">
 						{ featuredAsset }

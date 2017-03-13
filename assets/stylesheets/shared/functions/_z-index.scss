@@ -39,6 +39,7 @@ $z-layers: (
 		'.site-icon.is-blank .gridicon': 0,
 		'.chart__bar-section.is-spacer': 0,
 		'.gear-dropdown:after': 0,
+		'.media-library .search.is-expanded-to-container': 1,
 		'.ribbon': 1,
 		'.reader__featured-post': 0,
 		'.reader__featured-post-title': 1,
@@ -101,6 +102,7 @@ $z-layers: (
 		'.main': 20, //TODO: this doesn't always have a stacking context
 		//'tinymce-toolbar': 20, client/components/tinymce/index.jsx
 		'.search': 22,
+		'.editor-ground-control': 22,
 		'.reader-mobile-sidebar': 23,
 		'.community-translator': 99,
 		'.author-selector__popover.popover': 100,
@@ -188,7 +190,6 @@ $z-layers: (
 		'.media-library__list-item.is-transient .media-library__list-item-figure::after': 10,
 		'.media-library__list-item-selected-icon .gridicon': 20,
 		'.media-library__list-item-spinner': 20,
-		'.media-library__list-item-edit': 20
 	),
 	'.dialog__backdrop': (
 		'.editor-media-modal .section-nav': 10,

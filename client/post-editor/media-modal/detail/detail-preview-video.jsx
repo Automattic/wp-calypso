@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-const React = require( 'react' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -13,6 +14,7 @@ module.exports = React.createClass( {
 	displayName: 'EditorMediaModalDetailPreviewVideo',
 
 	propTypes: {
+		className: React.PropTypes.string,
 		item: React.PropTypes.object.isRequired
 	},
 
@@ -21,11 +23,13 @@ module.exports = React.createClass( {
 			return <EditorMediaModalDetailItemVideoPress { ...this.props } />;
 		}
 
+		const classes = classNames( this.props.className, 'is-video' );
+
 		return (
 			<video
 				src={ MediaUtils.url( this.props.item ) }
 				controls
-				className="editor-media-modal-detail__preview is-video" />
+				className={ classes } />
 		);
 	}
 } );

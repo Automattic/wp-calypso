@@ -8,6 +8,7 @@ import {
 	resetPasswordSmsForm,
 	resetPasswordEmailForm,
 	resetPasswordByTransactionId,
+	resetPasswordConfirmForm,
 	redirectLoggedIn
 } from './controller';
 import config from 'config';
@@ -21,5 +22,6 @@ export default function( router ) {
 		router( '/account-recovery/reset-password/sms-form', redirectLoggedIn, resetPasswordSmsForm );
 		router( '/account-recovery/reset-password/email-form', redirectLoggedIn, resetPasswordEmailForm );
 		router( '/account-recovery/reset-password/transaction-id', redirectLoggedIn, resetPasswordByTransactionId );
+		router( '/account-recovery/reset-password/confirm', redirectLoggedIn, resetPasswordConfirmForm );
 	}
 }

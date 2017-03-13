@@ -14,6 +14,7 @@ import config from 'config';
  * Internal dependencies
  */
 import { loadScript } from 'lib/load-script';
+import wpcom from 'lib/wp';
 
 const DIRECTLY_RTM_SCRIPT_URL = 'https://widgets.wp.com/directly/embed.js';
 const DIRECTLY_ASSETS_BASE_URL = 'https://www.directly.com';
@@ -85,28 +86,43 @@ function execute( ...args ) {
 }
 
 /**
+ * Make the request for Directly's remote JavaScript.
+ *
+ * @returns {Promise} Promise that resolves after the script loads or fails
+ */
+function loadDirectlyScript() {
+	return new Promise( ( resolve, reject ) => {
+		loadScript( DIRECTLY_RTM_SCRIPT_URL, function( error ) {
+			if ( error ) {
+				return reject( new Error( `Failed to load script "${ error.src }".` ) );
+			}
+			resolve();
+		} );
+	} );
+}
+
+/**
  * Initializes the RTM widget if it hasn't already been initialized. This sets up global
  * objects and DOM elements and requests the vendor script.
  *
- * @returns {Promise} Promise that resolves after initialization completes
+ * @returns {Promise} Promise that resolves after initialization completes or fails
  */
 export function initialize() {
 	if ( directlyPromise instanceof Promise ) {
 		return directlyPromise;
 	}
 
-	directlyPromise = new Promise( ( resolve, reject ) => {
-		configureGlobals();
-		insertDOM();
-
-		loadScript( DIRECTLY_RTM_SCRIPT_URL, function( error ) {
-			if ( error ) {
-				reject( error );
-			} else {
-				resolve();
+	directlyPromise = wpcom.undocumented().getDirectlyConfiguration().then(
+		( { isAvailable } ) => {
+			if ( ! isAvailable ) {
+				return Promise.reject( new Error( 'Directly Real-Time Messaging is not available at this time.' ) );
 			}
-		} );
-	} );
+
+			configureGlobals();
+			insertDOM();
+			return loadDirectlyScript();
+		}
+	);
 
 	return directlyPromise;
 }
@@ -120,5 +136,14 @@ export function initialize() {
  * @returns {Promise} Promise that resolves after initialization completes
  */
 export function askQuestion( questionText, name, email ) {
-	return execute( 'askQuestion', { questionText, name, email } );
+	// There's a bug that happens when you "askQuestion" and the widget is showing the minimized
+	// bubble with an expert avatar in it (indicating an active chat session). In this case,
+	// the widget throws errors and becomes unusable.
+	//
+	// As of the time of this comment Directly is still investigating this issue, which
+	// appears to be on their end. Their suggested stopgap is to "nagivate" out of the
+	// active chat before the "askQuestion" fires, hence the solution here. Note that
+	// "navigate" is an undocumented API, so you won't see it in the config guide.
+	return execute( 'navigate', '/ask' )
+		.then( () => execute( 'askQuestion', { questionText, name, email } ) );
 }

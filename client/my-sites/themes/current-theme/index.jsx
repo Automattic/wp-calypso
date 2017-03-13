@@ -43,7 +43,7 @@ class CurrentTheme extends Component {
 			text = ( currentTheme && currentTheme.name ) ? currentTheme.name : placeholderText;
 
 		const options = pickBy( this.props.options, option =>
-			currentTheme && ! ( option.hideForTheme && option.hideForTheme( currentTheme, siteId ) )
+			currentThemeId && ! ( option.hideForTheme && option.hideForTheme( currentThemeId, siteId ) )
 		);
 
 		const showScreenshot = currentTheme && currentTheme.screenshot;
@@ -75,7 +75,7 @@ class CurrentTheme extends Component {
 							key={ name }
 							label={ option.label }
 							icon={ option.icon }
-							href={ currentTheme && option.getUrl( currentTheme ) }
+							href={ currentThemeId && option.getUrl( currentThemeId ) }
 							onClick={ this.trackClick } />
 					) ) }
 				</div>

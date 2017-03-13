@@ -1,20 +1,42 @@
 .editor-ground-control {
-	padding: 16px;
+	display: flex;
+	align-items: center;
+	padding: 0;
 	margin-bottom: 0;
 	transition: 0.3s box-shadow;
+	position: fixed;
+	top: 47px;
+	left: 0;
+	right: 0;
+	z-index: z-index( 'root', '.editor-ground-control' );
 
 	@include breakpoint( "<660px" ) {
 		padding-top: 0;
 	}
 }
 
+.editor-ground-control .site,
+.editor-ground-control .editor-ground-control__status,
+.editor-ground-control .editor-ground-control__action-buttons {
+	height: 46px;
+	line-height: 46px;
+}
+
 .editor-ground-control .site {
-	margin: -16px;
-	margin-bottom: 0;
+	flex: 0 0 auto;
 
 	@include breakpoint( "<660px" ) {
 		display: none;
 	}
+}
+
+.editor-ground-control .site .site__title::after,
+.editor-ground-control .site .site__domain::after {
+	width: 16px;
+}
+
+.editor-ground-control .site .site__info {
+	width: auto;
 }
 
 .editor-ground-control__separator {
@@ -26,72 +48,87 @@
 	display: flex;
 	min-height: 20px;
 	justify-content: space-between;
-	margin: 16px 0;
+	margin: 0 auto 0 0;
+	position: relative;
+	border-left: 1px solid lighten( $gray, 25% );
+	padding-left: 16px;
+
+	@include breakpoint( "<660px" ) {
+		border-left: none;
+	}
 }
 
 .editor-ground-control__action-buttons {
+	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
-	margin: 0 -4px -8px;
+	padding: 0 12px;
+	line-height: 32px;
+}
+
+.editor-ground-control__action-buttons .button.is-borderless {
+	padding: 0 12px;
+	line-height: 46px;
+}
+
+.editor-ground-control__action-buttons .button.is-borderless svg {
+	top: 7px;
 }
 
 .editor-ground-control__preview-button {
 	display: block;
 	flex-grow: 1;
-	margin: 0 4px 8px;
+}
+
+.editor-ground-control__toggle-sidebar {
+	margin-right: 8px;
+}
+
+.focus-sidebar .editor-ground-control__toggle-sidebar:hover,
+.focus-sidebar .editor-ground-control__toggle-sidebar:focus,
+.focus-sidebar .editor-ground-control__toggle-sidebar {
+	color: $blue-medium;
+	box-shadow: inset 0 -3px $blue-medium;
+}
+
+.editor-ground-control__toggle-sidebar.button.is-borderless,
+.editor-ground-control__preview-button.button.is-borderless {
+	font-size: 13px;
 }
 
 .editor-ground-control__publish-combo {
 	flex-grow: 1;
 	display: flex;
-	margin: 0 4px 8px;
+	margin: 0 4px;
 }
 
 .editor-ground-control .editor-publish-button {
 	border-radius: 4px 0 0 4px;
 	flex-grow: 1;
-
-	@include breakpoint( "<660px" ) {
-		display: none;
-	}
+	padding: 5px 14px 7px;
 }
 
 .editor-ground-control__time-button {
-	@include breakpoint( ">660px" ) {
-		@include button-is-primary;
-
-		border-radius: 0 4px 4px 0;
-		padding-left: 8px;
-		padding-right: 8px;
-		margin-left: -1px;
-	}
-
-	@include breakpoint( "<660px" ) {
-		width: 100%;
-	}
+	border-radius: 0 4px 4px 0;
+	padding-left: 8px;
+	padding-right: 8px;
+	margin-left: -1px;
 }
 
 .editor-ground-control__time-button-label {
 	padding-left: 8px;
-
-	@include breakpoint( ">660px" ) {
-		display: none;
-	}
+	display: none;
 }
 
 .editor-ground-control__save.button.is-link,
-.editor-ground-control__saving {
-	font-size: 11px;
-	font-weight: 600;
-	height: 15px;
+.editor-ground-control__save-status {
 	text-decoration: underline;
-	text-transform: uppercase;
+	font-size: 13px;
 }
 
-.editor-ground-control__saving {
-	color: $alert-green;
-	line-height: 1.8;
+.editor-ground-control__save-status {
 	text-decoration: none;
+	color: lighten( $gray, 20% );
 }
 
 .editor-ground-control__schedule-post {
@@ -174,4 +211,25 @@
 
 .editor-ground-control__email-verification-notice-more {
 	text-decoration: underline;
+}
+
+.editor-ground-control__back.button.is-borderless {
+	border-right: 1px solid lighten( $gray, 25% );
+	padding: 6px 10px;
+	height: 46px;
+
+	.gridicon {
+		top: 4px;
+	}
+}
+
+.editor-ground-control__button-label {
+	@include breakpoint( "<960px" ) {
+		display: none;
+	}
+
+	.post-status {
+		display: none;
+	}
+
 }

@@ -55,6 +55,8 @@ import {
 	getEligibility,
 	isEligibleForAutomatedTransfer
 } from 'state/automated-transfer/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import WpAdminAutoLogin from 'components/wpadmin-auto-login';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -226,12 +228,12 @@ class Upload extends React.Component {
 
 	onActivateClick = () => {
 		const { activate } = this.props.options;
-		activate.action( this.props.uploadedTheme );
+		activate.action( this.props.themeId );
 	};
 
 	onTryAndCustomizeClick = () => {
 		const { tryandcustomize } = this.props.options;
-		tryandcustomize.action( this.props.uploadedTheme );
+		tryandcustomize.action( this.props.themeId );
 	}
 
 	renderTheme() {
@@ -240,19 +242,21 @@ class Upload extends React.Component {
 
 		return (
 			<div className="theme-upload__theme-sheet">
-				<span className="theme-upload__theme-name">{ theme.name }</span>
-				<span className="theme-upload__author">
+				<img className="theme-upload__screenshot" src={ theme.screenshot } />
+				<h2 className="theme-upload__theme-name">{ theme.name }</h2>
+				<div className="theme-upload__author">
 					{ translate( 'by ' ) }
 					<a href={ theme.author_uri }>{ theme.author }</a>
-				</span>
-				<img src={ theme.screenshot } />
-				<span className="theme-upload__description">{ theme.description }</span>
-				<Button onClick={ this.onTryAndCustomizeClick } >
-					{ tryandcustomize.label }
-				</Button>
-				<Button primary onClick={ this.onActivateClick }>
-					{ activate.label }
-				</Button>
+				</div>
+				<div className="theme-upload__description">{ theme.description }</div>
+				<div className="theme-upload__action-buttons">
+					<Button onClick={ this.onTryAndCustomizeClick } >
+						{ tryandcustomize.label }
+					</Button>
+					<Button primary onClick={ this.onActivateClick }>
+						{ activate.label }
+					</Button>
+				</div>
 			</div>
 		);
 	}
@@ -264,6 +268,7 @@ class Upload extends React.Component {
 				{ ! inProgress && ! complete && this.renderDropZone() }
 				{ inProgress && this.renderProgressBar() }
 				{ complete && ! failed && uploadedTheme && this.renderTheme() }
+				{ complete && this.props.isSiteAutomatedTransfer && <WpAdminAutoLogin site={ this.props.selectedSite } /> }
 			</Card>
 		);
 	}
@@ -285,7 +290,7 @@ class Upload extends React.Component {
 			<EmptyContent
 				title={ this.props.translate( 'Upload not available for this site' ) }
 				line={ this.props.translate( 'Please select a different site' ) }
-				action={ this.props.translate( 'Backt to themes' ) }
+				action={ this.props.translate( 'Back to themes' ) }
 				actionURL={ this.props.backPath }
 				illustration={ '/calypso/images/drake/drake-whoops.svg' }
 			/>
@@ -353,6 +358,7 @@ const UploadWithOptions = ( props ) => {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const site = getSelectedSite( state );
 		const themeId = getUploadedThemeId( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 		const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
@@ -366,7 +372,7 @@ export default connect(
 		return {
 			siteId,
 			isBusiness: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
-			selectedSite: getSelectedSite( state ),
+			selectedSite: site,
 			isJetpack,
 			inProgress: isUploadInProgress( state, siteId ),
 			complete: isUploadComplete( state, siteId ),
@@ -381,6 +387,7 @@ export default connect(
 			upgradeJetpack: isJetpack && ! hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ),
 			backPath: getBackPath( state ),
 			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
+			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },

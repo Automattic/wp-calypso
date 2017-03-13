@@ -32,25 +32,25 @@ export default React.createClass( {
 		return theme.actionLabel;
 	},
 
-	getButtonOptions( theme ) {
+	getButtonOptions( themeId ) {
 		return {
 			action1: {
 				label: 'Menu Item 1',
 				action: function() {
-					console.log( `Menu Item 1 for theme ${ theme.name } selected` );
+					console.log( `Menu Item 1 for theme ${ themeId } selected` );
 				}
 			},
 			action2: {
 				label: 'Menu Item 2',
 				action: function() {
-					console.log( `Menu Item 2 for theme ${ theme.name } selected` );
+					console.log( `Menu Item 2 for theme ${ themeId } selected` );
 				}
 			}
 		}
 	},
 
-	themeScreenshotClick( theme, index ) {
-		console.log( `Theme ${ theme.id } at ${ index } clicked` );
+	themeScreenshotClick( themeId, index ) {
+		console.log( `Theme ${ themeId } at ${ index } clicked` );
 	},
 
 	render() {

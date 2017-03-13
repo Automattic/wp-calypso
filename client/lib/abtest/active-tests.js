@@ -37,15 +37,6 @@ module.exports = {
 		defaultVariation: 'hideThemeUpload',
 		allowExistingUsers: false,
 	},
-	siteTitleStep: {
-		datestamp: '20170102',
-		variations: {
-			showSiteTitleStep: 5,
-			hideSiteTitleStep: 95,
-		},
-		defaultVariation: 'hideSiteTitleStep',
-		allowExistingUsers: false
-	},
 	userFirstSignup: {
 		datestamp: '20160124',
 		variations: {
@@ -72,5 +63,21 @@ module.exports = {
 		},
 		defaultVariation: 'showMonthly',
 		allowExistingUsers: true
+	},
+	signupDomainsHeadline: {
+		datestamp: '20170313',
+		variations: {
+			original: 50,
+			updated: 50
+		},
+		defaultVariation: 'original'
+	},
+	signupStepOneCopyChanges: {
+		datestamp: '20170307',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
 	},
 };

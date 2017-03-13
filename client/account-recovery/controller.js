@@ -14,6 +14,7 @@ import ResetPasswordForm from 'account-recovery/reset-password/reset-password-fo
 import ResetPasswordSmsForm from 'account-recovery/reset-password/reset-password-sms-form';
 import ResetPasswordEmailForm from 'account-recovery/reset-password/reset-password-email-form';
 import TransactionIdForm from 'account-recovery/reset-password/transaction-id-form';
+import ResetPasswordConfirmForm from 'account-recovery/reset-password/reset-password-confirm-form';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 export function lostPassword( context, next ) {
@@ -60,6 +61,16 @@ export function resetPasswordByTransactionId( context, next ) {
 	context.primary = (
 		<ResetPasswordPage basePath={ context.path }>
 			<TransactionIdForm />
+		</ResetPasswordPage>
+	);
+
+	next();
+}
+
+export function resetPasswordConfirmForm( context, next ) {
+	context.primary = (
+		<ResetPasswordPage basePath={ context.path }>
+			<ResetPasswordConfirmForm />
 		</ResetPasswordPage>
 	);
 

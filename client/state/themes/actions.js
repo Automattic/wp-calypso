@@ -34,13 +34,11 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
-	THEME_TRY_AND_CUSTOMIZE_FAILURE,
 	THEME_UPLOAD_START,
 	THEME_UPLOAD_SUCCESS,
 	THEME_UPLOAD_FAILURE,
 	THEME_UPLOAD_CLEAR,
 	THEME_UPLOAD_PROGRESS,
-	THEMES_RECEIVE,
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
@@ -53,7 +51,6 @@ import {
 } from 'state/analytics/actions';
 import {
 	getTheme,
-	getCanonicalTheme,
 	getActiveTheme,
 	getLastThemeQuery,
 	getThemeCustomizeUrl,
@@ -96,84 +93,46 @@ export function receiveTheme( theme, siteId ) {
 }
 
 /**
- * Returns an action object to be used in signalling that theme objects have
- * been received.
- *
- * @param  {Array}  themes Themes received
- * @param  {Number} siteId ID of site for which themes have been received
- * @return {Object}        Action object
- */
-export function receiveThemes( themes, siteId ) {
-	return ( dispatch, getState ) => {
-		const filterWpcom = shouldFilterWpcomThemes( getState(), siteId );
-		const { filteredThemes } = filterThemes( themes, siteId, filterWpcom );
-
-		dispatch( {
-			type: THEMES_RECEIVE,
-			themes: filteredThemes,
-			siteId
-		} );
-	};
-}
-
-/**
  * Returns an action object to be used in signalling that theme objects from
  * a query have been received.
  *
  * @param {Array}  themes Themes received
  * @param {number} siteId ID of site for which themes have been received
- * @param {Object} query Theme query used in the API request
- * @param {number} foundCount Number of themes returned by the query
+ * @param {?Object} query Theme query used in the API request
+ * @param {?number} foundCount Number of themes returned by the query
  * @return {Object} Action object
  */
-export function receiveThemesQuery( themes, siteId, query, foundCount ) {
+export function receiveThemes( themes, siteId, query, foundCount ) {
 	return ( dispatch, getState ) => {
-		const filterWpcom = shouldFilterWpcomThemes( getState(), siteId );
-		const { filteredThemes, found } = filterThemes(
-			themes,
-			siteId,
-			filterWpcom,
-			query,
-			foundCount,
-		);
+		let filteredThemes = themes;
+		let found = foundCount;
+
+		if ( isJetpackSite( getState(), siteId ) ) {
+			/*
+			 * We need to do client-side filtering for Jetpack sites because:
+			 * 1) Jetpack theme API does not support search queries
+			 * 2) We need to filter out all wpcom themes to show an 'Uploaded' list
+			 */
+			const filterWpcom = shouldFilterWpcomThemes( getState(), siteId );
+			filteredThemes = filter(
+				themes,
+				theme => (
+					isThemeMatchingQuery( query, theme ) &&
+						! ( filterWpcom && isThemeFromWpcom( theme ) )
+				)
+			);
+			// Jetpack API returns all themes in one response (no paging)
+			found = filteredThemes.length;
+		}
 
 		dispatch( {
 			type: THEMES_REQUEST_SUCCESS,
 			themes: filteredThemes,
 			siteId,
 			query,
-			found: found,
+			found,
 		} );
 	};
-}
-
-/**
- * Remove themes from a list. We need to do some client-side filtering
- * because:
- * 1) Jetpack theme API does not support search queries
- * 2) We need to filter out all wpcom themes to show an 'Uploaded' list
- *
- * @param {Array} themes list of themes to filter
- * @param {number} siteId the Site ID
- * @param {boolean} filterWpcom True to remove all wpcom themes
- * @param {Object} query the theme query
- * @param {number} found total number of themes matching query
- * @returns {Object} contains fields filteredThemes and found
- */
-function filterThemes( themes, siteId, filterWpcom, query, found ) {
-	if ( siteId === 'wporg' || siteId === 'wpcom' ) {
-		return { filteredThemes: themes, found };
-	}
-	const filteredThemes = filter(
-		themes,
-		theme => (
-			isThemeMatchingQuery( query, theme ) &&
-			! ( filterWpcom && isThemeFromWpcom( theme ) )
-		)
-	);
-
-	found = filteredThemes.length;
-	return { filteredThemes, found };
 }
 
 /**
@@ -237,7 +196,7 @@ export function requestThemes( siteId, query = {} ) {
 				dispatch( trackShowcaseSearch );
 			}
 
-			dispatch( receiveThemesQuery( themes, siteId, query, found ) );
+			dispatch( receiveThemes( themes, siteId, query, found ) );
 		} ).catch( ( error ) => {
 			dispatch( {
 				type: THEMES_REQUEST_FAILURE,
@@ -574,21 +533,7 @@ export function installAndTryAndCustomizeTheme( themeId, siteId ) {
  */
 export function tryAndCustomizeTheme( themeId, siteId ) {
 	return ( dispatch, getState ) => {
-		const siteIdOrWpcom = isJetpackSite( getState(), siteId ) ? siteId : 'wpcom';
-		const theme = getCanonicalTheme(
-			getState(),
-			siteIdOrWpcom,
-			themeId.replace( /-wpcom$/, '' )
-		);
-		if ( ! theme ) {
-			return dispatch( {
-				type: THEME_TRY_AND_CUSTOMIZE_FAILURE,
-				themeId,
-				siteId
-			} );
-		}
-		const url = getThemeCustomizeUrl( getState(), theme, siteId );
-		page( url );
+		page( getThemeCustomizeUrl( getState(), themeId, siteId ) );
 	};
 }
 

@@ -25,6 +25,7 @@ module.exports = React.createClass( {
 	mixins: [ urlSearch ],
 
 	propTypes: {
+		className: React.PropTypes.string,
 		site: React.PropTypes.object,
 		filter: React.PropTypes.string,
 		enabledFilters: React.PropTypes.arrayOf( React.PropTypes.string ),
@@ -44,7 +45,8 @@ module.exports = React.createClass( {
 		return {
 			fullScreenDropZone: true,
 			onAddMedia: () => {},
-			onScaleChange: () => {}
+			onScaleChange: () => {},
+			scrollable: false,
 		};
 	},
 
@@ -128,7 +130,10 @@ module.exports = React.createClass( {
 				onAddMedia={ this.onAddMedia }
 				onAddAndEditImage={ this.props.onAddAndEditImage }
 				onMediaScaleChange={ this.props.onScaleChange }
-				onEditItem={ this.props.onEditItem } />
+				selectedItems={ this.props.mediaLibrarySelectedItems }
+				onDeleteItem={ this.props.onDeleteItem }
+				onEditItem={ this.props.onEditItem }
+				onViewDetails={ this.props.onViewDetails } />
 		);
 
 		if ( this.props.site ) {
@@ -139,9 +144,11 @@ module.exports = React.createClass( {
 			);
 		}
 
-		classes = classNames( 'media-library', {
-			'is-single': this.props.single
-		} );
+		classes = classNames(
+			'media-library',
+			{ 'is-single': this.props.single },
+			this.props.className,
+		);
 
 		return (
 			<div className={ classes }>

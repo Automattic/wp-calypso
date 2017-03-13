@@ -28,12 +28,12 @@ const ReaderAvatar = ( { author, siteIcon, feedIcon, siteUrl, siteIconSize = 96,
 		};
 	}
 
-	let hasSiteIcon = !! siteIcon;
+	let hasSiteIcon = !! ( fakeSite && fakeSite.icon );
 	let hasAvatar = !! ( author && author.has_avatar );
 
 	if ( hasSiteIcon && hasAvatar ) {
 		// Do these both reference the same image? Disregard query string params.
-		const [ withoutQuery, ] = siteIcon.split( '?' );
+		const [ withoutQuery, ] = fakeSite.icon.img.split( '?' );
 		if ( startsWith( author.avatar_URL, withoutQuery ) ) {
 			hasAvatar = false;
 		}
@@ -56,8 +56,8 @@ const ReaderAvatar = ( { author, siteIcon, feedIcon, siteUrl, siteIconSize = 96,
 	);
 
 	const siteIconElement = hasSiteIcon && <SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />;
-	const feedIconElement = ( hasAvatar || showPlaceholder ) && <Gravatar key="feed-icon" user={ author } size={ hasBothIcons ? 32 : 96 } />;
-	const iconElements = [ siteIconElement, feedIconElement ];
+	const avatarElement = ( hasAvatar || showPlaceholder ) && <Gravatar key="author-avatar" user={ author } size={ hasBothIcons ? 32 : 96 } />;
+	const iconElements = [ siteIconElement, avatarElement ];
 
 	return (
 		<div className={ classes }>

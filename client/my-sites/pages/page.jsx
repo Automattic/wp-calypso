@@ -27,7 +27,7 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 
 import MenuSeparator from 'components/popover/menu-separator';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { hasStaticFrontPage } from 'state/sites/selectors';
+import { hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
 import {
 	isFrontPage,
 	isPostsPage,
@@ -35,6 +35,9 @@ import {
 import { setFrontPage } from 'state/sites/actions';
 import { userCan } from 'lib/site/utils';
 import { updateSitesList } from './helpers';
+import { setPreviewUrl } from 'state/ui/preview/actions';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getPreviewURL } from 'lib/posts/utils';
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Pages', eventAction );
@@ -135,11 +138,24 @@ const Page = React.createClass( {
 		);
 	},
 
-	viewPage: function() {
-		window.open( this.props.page.URL );
+	viewPage: function( event ) {
+		event.preventDefault();
+		const { isPreviewable, previewURL } = this.props;
+
+		if ( this.props.page.status && this.props.page.status === 'publish' ) {
+			this.analyticsEvents.viewPage();
+		}
+
+		if ( ! isPreviewable ) {
+			return window.open( previewURL );
+		}
+
+		this.props.setPreviewUrl( previewURL );
+		this.props.setLayoutFocus( 'preview' );
 	},
 
 	getViewItem: function() {
+		const { isPreviewable } = this.props;
 		if ( this.props.page.status === 'trash' ) {
 			return null;
 		}
@@ -151,7 +167,7 @@ const Page = React.createClass( {
 		if ( this.props.page.status !== 'publish' ) {
 			return (
 				<PopoverMenuItem onClick={ this.viewPage }>
-					<Gridicon icon="external" size={ 18 } />
+					<Gridicon icon={ isPreviewable ? 'visible' : 'external' } size={ 18 } />
 					{ this.translate( 'Preview' ) }
 				</PopoverMenuItem>
 			);
@@ -159,7 +175,7 @@ const Page = React.createClass( {
 
 		return (
 			<PopoverMenuItem onClick={ this.viewPage }>
-				<Gridicon icon="external" size={ 18 } />
+				<Gridicon icon={ isPreviewable ? 'visible' : 'external' } size={ 18 } />
 				{ this.translate( 'View Page' ) }
 			</PopoverMenuItem>
 		);
@@ -446,9 +462,13 @@ export default connect(
 			hasStaticFrontPage: hasStaticFrontPage( state, props.page.site_ID ),
 			isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID ),
 			isPostsPage: isPostsPage( state, props.page.site_ID, props.page.ID ),
+			isPreviewable: false !== isSitePreviewable( state, props.site.ID ),
+			previewURL: getPreviewURL( props.page ),
 		};
 	},
 	( dispatch ) => bindActionCreators( {
-		setFrontPage
+		setFrontPage,
+		setPreviewUrl,
+		setLayoutFocus
 	}, dispatch )
 )( Page );

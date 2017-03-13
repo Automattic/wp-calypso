@@ -5,6 +5,7 @@ import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -20,6 +21,10 @@ import utils from 'lib/posts/utils';
 import updatePostStatus from 'lib/mixins/update-post-status';
 import analytics from 'lib/analytics';
 import config from 'config';
+import { setPreviewUrl } from 'state/ui/preview/actions';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getPreviewURL } from 'lib/posts/utils';
+import { isSitePreviewable } from 'state/sites/selectors';
 
 import Comments from 'blocks/comments';
 import PostShare from './post-share';
@@ -38,7 +43,7 @@ function checkPropsChange( currentProps, nextProps, propArr ) {
 	return false;
 }
 
-module.exports = React.createClass( {
+const Post = React.createClass( {
 
 	displayName: 'Post',
 
@@ -366,6 +371,24 @@ module.exports = React.createClass( {
 		this.setState( { showShare: ! this.state.showShare } );
 	},
 
+	viewPost( event ) {
+		event.preventDefault();
+		const { isPreviewable, previewURL } = this.props;
+
+		if ( this.props.post.status && this.props.post.status === 'future' ) {
+			this.analyticsEvents.previewPost;
+		} else {
+			this.analyticsEvents.viewPost;
+		}
+
+		if ( ! isPreviewable ) {
+			return window.open( previewURL );
+		}
+
+		this.props.setPreviewUrl( previewURL );
+		this.props.setLayoutFocus( 'preview' );
+	},
+
 	render() {
 		const site = this.getSite();
 
@@ -376,7 +399,7 @@ module.exports = React.createClass( {
 					{ this.getPostImage() }
 					{ this.getContent() }
 					<footer className="post__info">
-						<PostRelativeTimeStatus post={ this.props.post } link={ this.getContentLinkURL() } target={ this.getContentLinkTarget() } onClick={ this.analyticsEvents.dateClick }/>
+						<PostRelativeTimeStatus post={ this.props.post } link={ this.getContentLinkURL() } target={ this.getContentLinkTarget() } onClick={ this.analyticsEvents.dateClick } />
 						{
 							// Only show meta items for non-drafts
 							( this.props.post.status === 'draft' ) ? null : this.getMeta()
@@ -394,6 +417,7 @@ module.exports = React.createClass( {
 					onDelete={ this.deletePost }
 					onRestore={ this.restorePost }
 					onToggleShare={ this.toggleShare }
+					onViewPost={ this.viewPost }
 					site={ site }
 				/>
 				<ReactCSSTransitionGroup
@@ -409,3 +433,13 @@ module.exports = React.createClass( {
 	}
 
 } );
+
+export default connect(
+	( state, props ) => {
+		return {
+			isPreviewable: false !== isSitePreviewable( state, props.post.site_ID ),
+			previewURL: getPreviewURL( props.post ),
+		};
+	},
+	{ setPreviewUrl, setLayoutFocus }
+)( Post );
