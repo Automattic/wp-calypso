@@ -10,5 +10,6 @@
 			"${file}"
 		],
     "isShellCommand": true,
-    "showOutput": "never"
+    "showOutput": "never",
+		"suppressTaskName": true
 }
