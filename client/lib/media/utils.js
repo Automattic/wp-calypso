@@ -510,6 +510,10 @@ const MediaUtils = {
 		return !! item.transient;
 	},
 
+	isTransientPreviewable( item ) {
+		return !! ( item && item.URL );
+	},
+
 	/**
 	 * Returns an object describing a transient media item which can be used in
 	 * optimistic rendering prior to media persistence to server.
@@ -529,8 +533,7 @@ const MediaUtils = {
 				file: file,
 				title: path.basename( file ),
 				extension: MediaUtils.getFileExtension( file ),
-				mime_type: MediaUtils.getMimeType( file ),
-				is_uploading_via_url: true
+				mime_type: MediaUtils.getMimeType( file )
 			} );
 		} else {
 			// Handle the case where a an object has been passed that wraps a

@@ -42,6 +42,18 @@ import ImageEditor from 'blocks/image-editor';
 import MediaModalDetail from './detail';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
 
+function areMediaActionsDisabled( modalView, mediaItems ) {
+	return some( mediaItems, item =>
+		MediaUtils.isItemBeingUploaded( item ) && (
+			// Transients can't be handled by the editor if they are being
+			// uploaded via an external URL
+			! MediaUtils.isTransientPreviewable( item ) ||
+			MediaUtils.getMimePrefix( item ) !== 'image' ||
+			ModalViews.GALLERY === modalView
+		)
+	);
+}
+
 export class EditorMediaModal extends Component {
 	static propTypes = {
 		visible: React.PropTypes.bool,
@@ -107,19 +119,6 @@ export class EditorMediaModal extends Component {
 			detailSelectedIndex: 0,
 			gallerySettings: props.initialGallerySettings
 		};
-	}
-
-	isDisabled() {
-		return some( this.props.mediaLibrarySelectedItems, function( item ) {
-			const mimePrefix = MediaUtils.getMimePrefix( item );
-			return item.transient && (
-				// Transients can't be handled by the editor if they are being
-				// uploaded via an external URL
-				item.is_uploading_via_url ||
-				mimePrefix !== 'image' ||
-				ModalViews.GALLERY === this.props.view
-			);
-		}.bind( this ) );
 	}
 
 	confirmSelection = () => {
@@ -333,8 +332,8 @@ export class EditorMediaModal extends Component {
 			return;
 		}
 
-		const isDisabled = this.isDisabled();
 		const selectedItems = this.props.mediaLibrarySelectedItems;
+		const isDisabled = areMediaActionsDisabled( this.props.view, selectedItems );
 		const buttons = [
 			{
 				action: 'cancel',
