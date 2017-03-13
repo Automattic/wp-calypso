@@ -65,7 +65,7 @@ export class ForgotUsernameFormComponent extends Component {
 				<h2 className="forgot-username-form__title">
 					{ translate( 'Forgot your username?' ) }
 				</h2>
-				<p>{ translate( 'Enter your information to find your username' ) }</p>
+				<p>{ translate( 'Enter your information to find your username.' ) }</p>
 				<FormLabel>
 					{ translate( 'First Name' ) }
 					<FormInput
