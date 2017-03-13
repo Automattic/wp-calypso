@@ -15,9 +15,7 @@ const config = require( './server/config' ),
 	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
 	CopyWebpackPlugin = require( 'copy-webpack-plugin' ),
 	HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' ),
-	WebpackStableModuleId = require( './server/bundler/webpack/stable-module-id' ),
-	WebpackStableChunkId = require( './server/bundler/webpack/stable-chunk-id' ),
-	WebpackStableChunkHash = require( './server/bundler/webpack/stable-chunk-hash' );
+	WebpackStableBuildPlugin = require( './server/bundler/webpack/stable-build-plugin' );
 
 /**
  * Internal variables
@@ -93,9 +91,9 @@ const webpackConfig = {
 				NODE_ENV: JSON.stringify( bundleEnv )
 			}
 		} ),
-		new WebpackStableChunkId(),
-		new WebpackStableModuleId(),
-		new WebpackStableChunkHash(),
+		new WebpackStableBuildPlugin( {
+			seed: 0
+		} ),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new CopyWebpackPlugin( [ { from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' } ] )
 	],
