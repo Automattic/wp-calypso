@@ -20,7 +20,7 @@ const SiteSettingsTraffic = ( {
 	upgradeToBusiness
 } ) => {
 	return (
-		<Main className="site-settings">
+		<Main className="traffic__main site-settings">
 			<SidebarNavigation />
 			<SiteSettingsNavigation site={ site } section="traffic" />
 
