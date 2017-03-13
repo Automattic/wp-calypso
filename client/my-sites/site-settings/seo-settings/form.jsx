@@ -34,7 +34,6 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
 import Banner from 'components/banner';
-import SeoSettingsHelpCard from './help';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import {
 	getSiteOption,
@@ -503,8 +502,6 @@ export const SeoForm = React.createClass( {
 						title={ nudgeTitle }
 					/>
 				}
-
-				<SeoSettingsHelpCard />
 
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
 					{ showAdvancedSeo &&
