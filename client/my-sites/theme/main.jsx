@@ -42,6 +42,7 @@ import {
 	isThemePremium,
 	isPremiumThemeAvailable,
 	isWpcomTheme as isThemeWpcom,
+	getThemeDetailsUrl,
 	getThemeRequestErrors,
 	getThemeForumUrl,
 } from 'state/themes/selectors';
@@ -508,11 +509,10 @@ const ThemeSheet = React.createClass( {
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
 		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
 
-		const { name: themeName, description, currentUserId } = this.props;
+		const { canonicalUrl, currentUserId, description, name: themeName } = this.props;
 		const title = themeName && i18n.translate( '%(themeName)s Theme', {
 			args: { themeName }
 		} );
-		const canonicalUrl = `https://wordpress.com/theme/${ this.props.id }`; // TODO: use getDetailsUrl() When it becomes availavle
 
 		const metas = [
 			{ property: 'og:url', content: canonicalUrl },
@@ -684,6 +684,7 @@ export default connect(
 			isPremium: isThemePremium( state, id ),
 			isPurchased: selectedSite && isPremiumThemeAvailable( state, id, selectedSite.ID ),
 			forumUrl: getThemeForumUrl( state, id, selectedSite && selectedSite.ID ),
+			canonicalUrl: getThemeDetailsUrl( state, id ) // No siteId specified since we want the *canonical* URL :-)
 		};
 	},
 	{
