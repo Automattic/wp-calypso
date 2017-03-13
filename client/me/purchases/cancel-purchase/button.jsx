@@ -9,7 +9,6 @@ import { moment } from 'i18n-calypso';
  * Internal Dependencies
  */
 import config from 'config';
-import analytics from 'lib/analytics';
 import Button from 'components/button';
 import { cancelAndRefundPurchase, cancelPurchase, submitSurvey } from 'lib/upgrades/actions';
 import { clearPurchases } from 'state/purchases/actions';
@@ -23,6 +22,7 @@ import notices from 'notices';
 import paths from 'me/purchases/paths';
 import { refreshSitePlans } from 'state/sites/plans/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const CancelPurchaseButton = React.createClass( {
 	propTypes: {
@@ -43,10 +43,19 @@ const CancelPurchaseButton = React.createClass( {
 		};
 	},
 
+	recordEvent( name, properties = {} ) {
+		this.props.recordTracksEvent(
+			name,
+			Object.assign( { refund: true, product_slug: this.props.purchase.productSlug }, properties )
+		);
+	},
+
 	handleCancelPurchaseClick() {
 		if ( isDomainRegistration( this.props.purchase ) ) {
 			return this.goToCancelConfirmation();
 		}
+
+		this.recordEvent( 'calypso_purchases_cancel_form_start' );
 
 		this.setState( {
 			showDialog: true
@@ -54,6 +63,8 @@ const CancelPurchaseButton = React.createClass( {
 	},
 
 	closeDialog() {
+		this.recordEvent( 'calypso_purchases_cancel_form_close' );
+
 		this.setState( {
 			showDialog: false,
 			surveyStep: 1,
@@ -65,9 +76,11 @@ const CancelPurchaseButton = React.createClass( {
 	},
 
 	changeSurveyStep() {
-		this.setState( {
-			surveyStep: this.state.surveyStep === 1 ? 2 : 1,
-		} );
+		const newStep = this.state.surveyStep === 1 ? 2 : 1;
+
+		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
+
+		this.setState( { surveyStep: newStep } );
 	},
 
 	onSurveyChange( update ) {
@@ -210,10 +223,7 @@ const CancelPurchaseButton = React.createClass( {
 
 		this.props.clearPurchases();
 
-		analytics.tracks.recordEvent(
-			'calypso_purchases_cancel_form_submit',
-			{ product_slug: this.props.purchase.productSlug }
-		);
+		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 
 		page.redirect( paths.purchasesRoot() );
 	},
@@ -361,6 +371,7 @@ export default connect(
 	null,
 	{
 		clearPurchases,
-		refreshSitePlans
+		recordTracksEvent,
+		refreshSitePlans,
 	}
 )( CancelPurchaseButton );
