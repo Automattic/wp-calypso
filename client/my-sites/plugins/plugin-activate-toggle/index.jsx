@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -12,6 +13,7 @@ import PluginsActions from 'lib/plugins/actions';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
 import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 export class PluginActivateToggle extends Component {
@@ -48,9 +50,9 @@ export class PluginActivateToggle extends Component {
 	};
 
 	render() {
-		const { site, plugin, isMock, disabled, translate } = this.props;
+		const { hideOnAutomatedTransfer, site, plugin, isMock, disabled, translate } = this.props;
 
-		if ( ! site ) {
+		if ( ! site || hideOnAutomatedTransfer ) {
 			return null;
 		}
 
@@ -89,6 +91,7 @@ export class PluginActivateToggle extends Component {
 }
 
 PluginActivateToggle.propTypes = {
+	hideOnAutomatedTransfer: PropTypes.bool,
 	site: PropTypes.object.isRequired,
 	plugin: PropTypes.object.isRequired,
 	notices: React.PropTypes.object,
@@ -97,12 +100,15 @@ PluginActivateToggle.propTypes = {
 };
 
 PluginActivateToggle.defaultProps = {
+	hideOnAutomatedTransfer: false,
 	isMock: false,
 	disabled: false,
 };
 
 export default connect(
-	null,
+	( state, { plugin, site } ) => ( {
+		hideOnAutomatedTransfer: isSiteAutomatedTransfer( state, site.ID ) && includes( [ 'jetpack', 'vaultpress' ], plugin.slug ),
+	} ),
 	{
 		recordGoogleEvent,
 		recordTracksEvent

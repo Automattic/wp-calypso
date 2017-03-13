@@ -2,15 +2,18 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import PluginSiteJetpack from 'my-sites/plugins/plugin-site-jetpack';
 import PluginSiteNetwork from 'my-sites/plugins/plugin-site-network';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 
 const PluginSite = ( props ) => {
-	if ( ! props.site ) {
+	if ( ! props.site || props.hideOnAutomatedTransfer ) {
 		return null;
 	}
 
@@ -21,4 +24,8 @@ const PluginSite = ( props ) => {
 	return <PluginSiteJetpack { ...props } />;
 };
 
-export default PluginSite;
+export default connect(
+	( state, { plugin, site } ) => ( {
+		hideOnAutomatedTransfer: isSiteAutomatedTransfer( state, site.ID ) && includes( [ 'jetpack', 'vaultpress' ], plugin.slug ),
+	} ),
+)( PluginSite );

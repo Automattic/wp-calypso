@@ -5,7 +5,7 @@ import React from 'react';
 import config from 'config';
 import { connect } from 'react-redux';
 import page from 'page';
-import { uniq, upperFirst } from 'lodash';
+import { get, includes, some, uniq, upperFirst } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,6 +28,7 @@ import pluginsAccessControl from 'my-sites/plugins/access-control';
 import EmptyContent from 'components/empty-content';
 import FeatureExample from 'components/feature-example';
 import DocumentHead from 'components/data/document-head';
+import QuerySites from 'components/data/query-sites';
 import WpcomPluginsList from 'my-sites/plugins-wpcom/plugins-list';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, canJetpackSiteManage, getRawSite } from 'state/sites/selectors';
@@ -219,7 +220,12 @@ const SinglePlugin = React.createClass( {
 	},
 
 	renderSitesList( plugin ) {
-		if ( this.props.siteUrl || this.isFetching() ) {
+		const hideOnAutomatedTransfer = (
+			includes( [ 'jetpack', 'vaultpress' ], plugin.slug ) &&
+			! some( plugin.sites, ( site ) => ! get( site, 'options.is_automated_transfer', false ) )
+		);
+
+		if ( this.props.siteUrl || this.isFetching() || hideOnAutomatedTransfer ) {
 			return;
 		}
 
@@ -375,6 +381,7 @@ const SinglePlugin = React.createClass( {
 		return (
 			<MainComponent>
 				{ this.renderDocumentHead() }
+				<QuerySites allSites />
 				<SidebarNavigation />
 				<div className="plugin__page">
 					{ this.displayHeader() }

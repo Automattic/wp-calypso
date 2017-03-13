@@ -14,6 +14,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import pluginsAccessControl from 'my-sites/plugins/access-control';
 import PluginItem from './plugin-item/plugin-item';
 import DocumentHead from 'components/data/document-head';
+import QuerySites from 'components/data/query-sites';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
@@ -386,6 +387,7 @@ const PluginsMain = React.createClass( {
 		return (
 			<Main className={ containerClass }>
 				{ this.renderDocumentHead() }
+				<QuerySites allSites />
 				<SidebarNavigation />
 				<SectionNav selectedText={ this.getSelectedText() }>
 					<NavTabs>

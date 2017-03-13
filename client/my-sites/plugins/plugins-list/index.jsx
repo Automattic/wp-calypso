@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { find, includes, isEmpty, isEqual, negate, range } from 'lodash';
+import { find, includes, isEmpty, isEqual, get, negate, range } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -153,7 +153,12 @@ export const PluginsList = React.createClass( {
 	},
 
 	hasNoSitesThatCanManage( plugin ) {
-		return ! plugin.sites.some( site => includes( site.modules || [], 'manage' ) );
+		return ( ! plugin.sites.some( ( site ) => includes( site.modules || [], 'manage' ) ) ||
+			(
+				includes( [ 'jetpack', 'vaultpress' ], plugin.slug ) &&
+				! plugin.sites.some( ( site ) => ! get( site, 'options.is_automated_transfer', false ) )
+			)
+		);
 	},
 
 	getSelected() {

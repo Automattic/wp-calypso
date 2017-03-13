@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { includes } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -9,16 +11,14 @@ import Gridicon from 'gridicons';
  */
 import analytics from 'lib/analytics';
 import accept from 'lib/accept';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
 import PluginsActions from 'lib/plugins/actions';
 import ExternalLink from 'components/external-link';
 import utils from 'lib/site/utils';
 
-module.exports = React.createClass( {
-
-	displayName: 'PluginRemoveButton',
-
+const PluginRemoveButton = React.createClass( {
 	removeAction() {
 		accept( this.translate( 'Are you sure you want to remove {{strong}}%(pluginName)s{{/strong}} from %(siteName)s? {{br /}} {{em}}This will deactivate the plugin and delete all associated files and data.{{/em}}', {
 			components: {
@@ -150,7 +150,7 @@ module.exports = React.createClass( {
 	},
 
 	render() {
-		if ( ! this.props.site.jetpack ) {
+		if ( ! this.props.site.jetpack || this.props.hideOnAutomatedTransfer ) {
 			return null;
 		}
 
@@ -162,3 +162,22 @@ module.exports = React.createClass( {
 	}
 } );
 
+PluginRemoveButton.propTypes = {
+	hideOnAutomatedTransfer: PropTypes.bool,
+	isEmbed: PropTypes.bool,
+	notices: PropTypes.object,
+	plugin: PropTypes.object.isRequired,
+	site: PropTypes.object.isRequired,
+};
+
+PluginRemoveButton.defaultProps = {
+	hideOnAutomatedTransfer: false,
+	isEmbed: false,
+	notices: {},
+};
+
+export default connect(
+	( state, { plugin, site } ) => ( {
+		hideOnAutomatedTransfer: isSiteAutomatedTransfer( state, site.ID ) && includes( [ 'jetpack', 'vaultpress' ], plugin.slug ),
+	} ),
+)( PluginRemoveButton );
