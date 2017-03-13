@@ -492,7 +492,7 @@ export function installTheme( themeId, siteId ) {
 						themeId.replace( '-wpcom', '' )
 					);
 					if ( parentThemeId ) {
-						dispatch( installTheme( parentThemeId + '-wpcom', siteId ) );
+						return dispatch( installTheme( parentThemeId + '-wpcom', siteId ) );
 					}
 				}
 			} )
