@@ -41,6 +41,7 @@ module.exports = React.createClass( {
 				plugin={ plugin }
 				sites={ [] }
 				selectedSite={ selectedSite }
+				allowedActions={ { activation: true, autoupdate: true } }
 				progress={ [] } />
 		} );
 	},
