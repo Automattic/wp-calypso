@@ -41,6 +41,7 @@ export default React.createClass( {
 			<div className="editor-action-bar">
 				<div className="editor-action-bar__cell is-left">
 					<EditorStatusLabel
+						className="editor-action-bar__saved-status"
 						post={ this.props.savedPost }
 						advancedStatus
 						type={ this.props.type }

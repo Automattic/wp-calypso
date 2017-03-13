@@ -19,7 +19,8 @@ export default React.createClass( {
 		onClick: React.PropTypes.func,
 		post: React.PropTypes.object,
 		type: React.PropTypes.string,
-		advancedStatus: React.PropTypes.bool
+		advancedStatus: React.PropTypes.bool,
+		className: React.PropTypes.string,
 	},
 
 	mixins: [ PureRenderMixin ],
@@ -67,7 +68,7 @@ export default React.createClass( {
 
 		if ( ! this.props.onClick ) {
 			return (
-				<span className={ classNames( statusClass, 'is-plain' ) }>
+				<span className={ classNames( statusClass, this.props.className, 'is-plain' ) }>
 					{ this.renderLabel() }
 				</span>
 			);

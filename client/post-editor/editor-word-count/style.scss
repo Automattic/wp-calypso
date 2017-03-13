@@ -1,7 +1,7 @@
 .editor-word-count {
 	position: fixed;
 		right: 0;
-		bottom: 0;
+		bottom: 3px;
 	padding: 8px;
 	background-color: rgba( $white, 0.92 );
 	text-transform: uppercase;
@@ -9,12 +9,9 @@
 	line-height: 1;
 	color: lighten( $gray, 10% );
 	pointer-events: none;
+	z-index: 3;
 
 	.focus-sidebar & {
-		right: 272px;
-	}
-
-	@include breakpoint( ">960px" ) {
-		padding: 16px;
+		right: 273px;
 	}
 }

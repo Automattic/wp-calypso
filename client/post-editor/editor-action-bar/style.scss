@@ -9,11 +9,25 @@
 	@include breakpoint( "<660px" ) {
 		margin-bottom: 8px;
 	}
+}
 
-	.editor-status-label {
-		position: fixed;
-		bottom: 12px;
-		left: 16px;
+.editor-action-bar__saved-status {
+	line-height: 1;
+	position: fixed;
+		bottom: 0px;
+		left: 8px;
+	padding: 8px;
+	margin-right: 2px;
+	background-color: rgba( $white, 0.92 );
+	text-transform: uppercase;
+	font-size: 11px;
+	line-height: 1;
+	color: lighten( $gray, 10% );
+	pointer-events: none;
+	z-index: 2;
+
+	.focus-sidebar & {
+		right: 273px;
 	}
 }
 
