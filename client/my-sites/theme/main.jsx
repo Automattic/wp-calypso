@@ -684,7 +684,7 @@ export default connect(
 			isPremium: isThemePremium( state, id ),
 			isPurchased: selectedSite && isPremiumThemeAvailable( state, id, selectedSite.ID ),
 			forumUrl: getThemeForumUrl( state, id, selectedSite && selectedSite.ID ),
-			canonicalUrl: getThemeDetailsUrl( state, id ) // No siteId specified since we want the *canonical* URL :-)
+			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ) // No siteId specified since we want the *canonical* URL :-)
 		};
 	},
 	{
