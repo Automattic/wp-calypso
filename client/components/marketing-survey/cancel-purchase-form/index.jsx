@@ -455,7 +455,7 @@ export default connect(
 	null,
 	( dispatch ) => ( {
 		clickRadio: ( option, value ) => dispatch( recordTracksEvent(
-			'calypso_cancel_purchase_survey_select_radio_option', {
+			'calypso_purchases_cancel_form_select_radio_option', {
 				option: option,
 				value: value
 			}
