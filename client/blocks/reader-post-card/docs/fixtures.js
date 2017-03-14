@@ -129,8 +129,8 @@ export const posts = [
 ];
 
 export const feed = {
-	blog_ID: "53424024",
-	feed_ID: "41325786",
+	blog_ID: 53424024,
+	feed_ID: 41325786,
 	name: "Discover",
 	URL: "https://discover.wordpress.com/",
 	feed_URL: "http://discover.wordpress.com",

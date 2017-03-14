@@ -20,6 +20,7 @@ import PostTime from 'reader/post-time';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 import * as stats from 'reader/stats';
+import ReaderCombinedCardPostPlaceholder from 'blocks/reader-combined-card/placeholders/post';
 
 class ReaderCombinedCardPost extends React.Component {
 	static propTypes = {
@@ -71,8 +72,13 @@ class ReaderCombinedCardPost extends React.Component {
 
 	render() {
 		const { post, streamUrl, isDiscover, isSelected } = this.props;
-		const hasAuthorName = has( post, 'author.name' );
+		const isLoading = true; //! post || post._state === 'pending';
 
+		if ( isLoading ) {
+			return <ReaderCombinedCardPostPlaceholder />;
+		}
+
+		const hasAuthorName = has( post, 'author.name' );
 		let featuredAsset = null;
 		if ( post.canonical_media && post.canonical_media.mediaType === 'video' ) {
 			featuredAsset = <ReaderFeaturedVideo { ...post.canonical_media } videoEmbed={ post.canonical_media } allowPlaying={ false } />;

@@ -99,6 +99,16 @@
 			}
 		}
 	}
+
+	&.is-placeholder {
+		.reader-combined-card__featured-image-wrapper,
+		.reader-combined-card__post-title,
+		.reader-excerpt,
+		.reader-visit-link,
+		.reader-combined-card__timestamp {
+			@include placeholder();
+		}
+	}
 }
 
 .reader-combined-card__post-author-and-time {
@@ -111,7 +121,7 @@
 	position: relative;
 	margin-top: 2px;
 
-	&::after {
+	&:not( .is-placeholder )::after {
 		@include long-content-fade( $size: 20% );
 	}
 }
