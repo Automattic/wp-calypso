@@ -126,7 +126,7 @@ const RemovePurchase = React.createClass( {
 	openChat() {
 		olarkActions.expandBox();
 		olarkActions.focusBox();
-		this.recordChatEvent( 'calypso_purchases_cancel_form_click' );
+		this.recordChatEvent( 'calypso_precancellation_chat_click' );
 		this.setState( { isDialogVisible: false } );
 	},
 
