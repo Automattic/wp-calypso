@@ -81,9 +81,9 @@ const Suggestions = React.createClass( {
 	},
 
 	decPosition() {
-		const position = ( this.state.suggestionPosition - 1 ) % this.countSuggestions();
+		const position = this.state.suggestionPosition - 1;
 		this.setState( {
-			suggestionPosition: position,
+			suggestionPosition: position < 0 ? this.countSuggestions() - 1 : position,
 			currentSuggestion: this.getSuggestionForPosition( position )
 		} );
 	},
