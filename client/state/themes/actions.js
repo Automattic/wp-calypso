@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, map, property, delay, endsWith } from 'lodash';
+import { filter, map, property, delay, includes } from 'lodash';
 import debugFactory from 'debug';
 import page from 'page';
 
@@ -331,19 +331,20 @@ export function requestActiveTheme( siteId ) {
  * Triggers a network request to activate a specific theme on a given site.
  * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
  *
- * @param  {String}   themeId   Theme ID
- * @param  {Number}   siteId    Site ID
- * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
- * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
- * @return {Function}           Action thunk
+ * @param  {String}            themeId   Theme ID
+ * @param  {Number}            siteId    Site ID
+ * @param  {('wpcom'|'wporg')} origin    The origin site from which to install
+ * @param  {String}            source    The source that is reuquesting theme activation, e.g. 'showcase'
+ * @param  {Boolean}           purchased Whether the theme has been purchased prior to activation
+ * @return {Function}          Action thunk
  */
-export function activate( themeId, siteId, source = 'unknown', purchased = false ) {
+export function activate( themeId, siteId, origin, source = 'unknown', purchased = false ) {
 	return ( dispatch, getState ) => {
-		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
-			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
+		if ( isJetpackSite( getState(), siteId ) && ! includes( [ 'wpcom', 'wporg' ], origin ) ) { // should be origin !== siteId
+			//const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
 			// If theme is already installed, installation will silently fail,
 			// and it will just be activated.
-			return dispatch( installAndActivateTheme( installId, siteId, source, purchased ) );
+			return dispatch( installAndActivateTheme( themeId, siteId, origin, source, purchased ) );
 		}
 
 		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
@@ -422,38 +423,46 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 
 /**
  * Triggers a network request to install a WordPress.org or WordPress.com theme on a Jetpack site.
- * To install a theme from WordPress.com, suffix the theme name with '-wpcom'. Note that this options
- * requires Jetpack 4.4
+ * Use the 'origin' arg to specify 'wpcom' to install from WordPress.com, or 'wporg' to install from Wordpress.org.
+ * Note that this option requires Jetpack 4.4
  *
- * @param  {String}   themeId Theme ID. If suffixed with '-wpcom', install from WordPress.com
- * @param  {String}   siteId  Jetpack Site ID
- * @return {Function}         Action thunk
+ * @param  {String}            themeId Theme ID
+ * @param  {String}            siteId  Jetpack Site ID
+ * @param  {('wpcom'|'wporg')} origin  The origin site from which to install
+ * @return {Function}          Action thunk
  */
-export function installTheme( themeId, siteId ) {
+export function installTheme( themeId, siteId, origin ) {
+	let suffixedThemeId = themeId;
+
+	// Tell the Jetpack endpoint to install from WP.com passing a suffixed themeId
+	if ( origin === 'wpcom' ) {
+		suffixedThemeId = themeId + '-wpcom';
+	}
+
 	return ( dispatch, getState ) => {
 		dispatch( {
 			type: THEME_INSTALL,
 			siteId,
-			themeId
+			suffixedThemeId
 		} );
 
-		return wpcom.undocumented().installThemeOnJetpack( siteId, themeId )
+		return wpcom.undocumented().installThemeOnJetpack( siteId, suffixedThemeId )
 			.then( ( theme ) => {
 				dispatch( receiveTheme( theme, siteId ) );
 				dispatch( {
 					type: THEME_INSTALL_SUCCESS,
 					siteId,
-					themeId
+					suffixedThemeId
 				} );
 			} )
 			.then( () => {
-				if ( endsWith( themeId, '-wpcom' ) ) {
+				if ( origin === 'wpcom' ) {
 					const parentThemeId = getWpcomParentThemeId(
 						getState(),
-						themeId.replace( '-wpcom', '' )
+						themeId // Look up unsuffixed themeId
 					);
 					if ( parentThemeId ) {
-						dispatch( installTheme( parentThemeId + '-wpcom', siteId ) );
+						dispatch( installTheme( parentThemeId, siteId, 'wpcom' ) );
 					}
 				}
 			} )
@@ -461,7 +470,7 @@ export function installTheme( themeId, siteId ) {
 				dispatch( {
 					type: THEME_INSTALL_FAILURE,
 					siteId,
-					themeId,
+					suffixedThemeId,
 					error
 				} );
 			} );
@@ -509,13 +518,14 @@ export function tryAndCustomize( themeId, siteId ) {
  * See installTheme doc for install options.
  * Requires Jetpack 4.4
  *
- * @param  {String}   themeId      WP.com Theme ID
- * @param  {String}   siteId       Jetpack Site ID
- * @return {Function}              Action thunk
+ * @param  {String}            themeId WP.com Theme ID
+ * @param  {String}            siteId  Jetpack Site ID
+ * @param  {('wpcom'|'wporg')} origin  The origin site from which to install
+ * @return {Function}                  Action thunk
  */
-export function installAndTryAndCustomizeTheme( themeId, siteId ) {
+export function installAndTryAndCustomizeTheme( themeId, siteId, origin ) {
 	return ( dispatch ) => {
-		return dispatch( installTheme( themeId, siteId ) )
+		return dispatch( installTheme( themeId, siteId, origin ) )
 			.then( () => {
 				dispatch( tryAndCustomizeTheme( themeId, siteId ) );
 			} );
@@ -539,21 +549,23 @@ export function tryAndCustomizeTheme( themeId, siteId ) {
 
 /**
  * Triggers a network request to install and activate a specific theme on a given
- * Jetpack site. If the themeId parameter is suffixed with '-wpcom', install the
- * theme from WordPress.com. Otherwise, install from WordPress.org.
+ * Jetpack site. Use the 'origin' arg to specify 'wpcom' to install from WordPress.com,
+ * or 'wporg' to install from Wordpress.org.
  *
- * @param  {String}   themeId   Theme ID. If suffixed with '-wpcom', install theme from WordPress.com
- * @param  {Number}   siteId    Site ID
- * @param  {String}   source    The source that is reuquesting theme activation, e.g. 'showcase'
- * @param  {Boolean}  purchased Whether the theme has been purchased prior to activation
- * @return {Function}           Action thunk
+ * @param  {String}            themeId  Theme ID
+ * @param  {Number}            siteId   Site ID
+ * @param  {('wpcom'|'wporg')} origin   The origin site from which to install
+ * @param  {String}            source   The source that is requesting theme activation, e.g. 'showcase'
+ * @param  {Boolean}           purchased Whether the theme has been purchased prior to activation
+ * @return {Function}          Action thunk
  */
-export function installAndActivateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
+export function installAndActivateTheme( themeId, siteId, origin, source = 'unknown', purchased = false ) {
 	return ( dispatch ) => {
-		return dispatch( installTheme( themeId, siteId ) )
+		return dispatch( installTheme( themeId, siteId, origin ) )
 			.then( () => {
 				// This will be called even if `installTheme` silently fails. We rely on
 				// `activateTheme`'s own error handling here.
+				// TODO: If wpcom, suffix here. Or obtain received themeId from .then?
 				dispatch( activateTheme( themeId, siteId, source, purchased ) );
 			} );
 	};
