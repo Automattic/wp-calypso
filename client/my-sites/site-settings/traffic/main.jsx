@@ -19,18 +19,16 @@ const SiteSettingsTraffic = ( {
 	site,
 	sites,
 	upgradeToBusiness
-} ) => {
-	return (
-		<Main className="traffic__main site-settings">
-			<SidebarNavigation />
-			<SiteSettingsNavigation site={ site } section="traffic" />
+} ) => (
+	<Main className="traffic__main site-settings">
+		<SidebarNavigation />
+		<SiteSettingsNavigation site={ site } section="traffic" />
 
-			<SeoSettingsHelpCard />
-			<AnalyticsSettings />
-			<SeoSettingsMain sites={ sites } upgradeToBusiness={ upgradeToBusiness } />
-		</Main>
-	);
-};
+		<SeoSettingsHelpCard />
+		<AnalyticsSettings />
+		<SeoSettingsMain sites={ sites } upgradeToBusiness={ upgradeToBusiness } />
+	</Main>
+);
 
 SiteSettingsTraffic.propTypes = {
 	sites: PropTypes.object.isRequired,
