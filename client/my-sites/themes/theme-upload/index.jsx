@@ -29,6 +29,7 @@ import debugFactory from 'debug';
 import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import {
+	getSiteAdminUrl,
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 	hasJetpackSiteJetpackThemesExtendedFeatures
@@ -280,7 +281,7 @@ class Upload extends React.Component {
 				title={ this.props.translate( 'Not available for multi site' ) }
 				line={ this.props.translate( 'Use the WP Admin interface instead' ) }
 				action={ this.props.translate( 'Open WP Admin' ) }
-				actionURL={ this.props.selectedSite.options.admin_url }
+				actionURL={ this.props.siteAdminUrl }
 				illustration={ '/calypso/images/drake/drake-jetpack.svg' }
 			/>
 		);
@@ -386,6 +387,7 @@ export default connect(
 			backPath: getBackPath( state ),
 			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
+			siteAdminUrl: getSiteAdminUrl( state, siteId )
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },
