@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import createConfig from 'lib/config';
+import createConfig from 'lib/create-config';
 
 /**
  * Manages config flags for various deployment builds
@@ -12,3 +12,4 @@ if ( 'undefined' === typeof window || ! window.configData ) {
 }
 
 export default createConfig( window.configData );
+

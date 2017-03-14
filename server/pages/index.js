@@ -350,7 +350,7 @@ module.exports = function() {
 						req.context = Object.assign( {}, req.context, { chunk: section.name } );
 					}
 
-					if ( section.secondary ) {
+					if ( section.secondary && req.context ) {
 						req.context.hasSecondary = true;
 					}
 
