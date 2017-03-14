@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes, Component } from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -12,37 +13,48 @@ import Button from 'components/button';
 
 class DisconnectJetpack extends Component {
 
+	translateArgs( icon ) {
+		return { components: { icon: <Gridicon icon={ icon } /> } };
+	}
+
 	planFeatures() {
 		const { plan, translate } = this.props;
 		const features = [];
-
 		switch ( plan ) {
-
 			case 'free':
-				features.push( translate( 'Site stats, related content, and sharing tools' ) );
-				features.push( translate( 'Brute force attack protection and uptime monitoring' ) );
-				features.push( translate( 'Unlimited, high-speed image hosting' ) );
+				features.push(
+					translate( '{{icon/}} Site stats, related content, and sharing tools',
+					this.translateArgs( 'stats-alt' )
+				) );
+				features.push(
+					translate( '{{icon/}} Brute force attack protection and uptime monitoring',
+					this.translateArgs( 'lock' )
+				) );
+				features.push( translate( '{{icon/}} Unlimited, high-speed image hosting', this.translateArgs( 'image' ) ) );
 				break;
 
 			case 'personal':
-				features.push( translate( 'Daily, automated backups (unlimited storage)' ) );
-				features.push( translate( 'Priority WordPress and security support' ) );
-				features.push( translate( 'Spam filtering' ) );
+				features.push( translate( '{{icon/}} Daily, automated backups (unlimited storage)', this.translateArgs( 'history' ) ) );
+				features.push( translate( '{{icon/}} Priority WordPress and security support', this.translateArgs( 'chat' ) ) );
+				features.push( translate( '{{icon/}} Spam filtering', this.translateArgs( 'spam' ) ) );
 				break;
 
 			case 'premium':
-				features.push( translate( 'Daily, automated backups (unlimited storage)' ) );
-				features.push( translate( 'Daily, automated malware scanning' ) );
-				features.push( translate( 'Priority WordPress and security support' ) );
-				features.push( translate( '13Gb of high-speed video hosting' ) );
+				features.push( translate( '{{icon/}} Daily, automated backups (unlimited storage)', this.translateArgs( 'history' ) ) );
+				features.push( translate( '{{icon/}} Daily, automated malware scanning', this.translateArgs( 'spam' ) ) );
+				features.push( translate( '{{icon/}} Priority WordPress and security support', this.translateArgs( 'chat' ) ) );
+				features.push( translate( '{{icon/}} 13Gb of high-speed video hosting', this.translateArgs( 'video' ) ) );
 				break;
 
 			case 'professional':
-				features.push( translate( 'Daily, automated backups (unlimited storage)' ) );
-				features.push( translate( 'Daily, automated malware scanning with automated resolution' ) );
-				features.push( translate( 'Priority WordPress and security support' ) );
-				features.push( translate( 'Unlimited high-speed video hosting' ) );
-				features.push( translate( 'SEO preview tools' ) );
+				features.push( translate( '{{icon/}} Daily, automated backups (unlimited storage)', this.translateArgs( 'history' ) ) );
+				features.push(
+					translate( '{{icon/}} Daily, automated malware scanning with automated resolution',
+					this.translateArgs( 'spam' )
+				) );
+				features.push( translate( '{{icon/}} Priority WordPress and security support', this.translateArgs( 'chat' ) ) );
+				features.push( translate( '{{icon/}} Unlimited high-speed video hosting', this.translateArgs( 'video' ) ) );
+				features.push( translate( '{{icon/}} SEO preview tools', this.translateArgs( 'globe' ) ) );
 				break;
 		}
 
