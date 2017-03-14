@@ -8,6 +8,7 @@ import noop from 'lodash/noop';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
+import Gridicon from 'gridicons';
 
 const VerticalNavItem = React.createClass( {
 	propTypes: {
@@ -54,10 +55,10 @@ const VerticalNavItem = React.createClass( {
 
 	getIcon() {
 		if ( this.props.external ) {
-			return <span className="noticon noticon-external"></span>;
+			return <Gridicon icon="external" />;
 		}
 
-		return <span className="noticon noticon-collapse"></span>;
+		return <Gridicon icon="chevron-right" />;
 	}
 } );
 
