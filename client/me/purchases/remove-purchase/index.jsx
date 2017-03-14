@@ -230,13 +230,13 @@ const RemovePurchase = React.createClass( {
 		const buttons = [ {
 				action: 'cancel',
 				disabled: this.state.isRemoving,
-				label: this.translate( 'Cancel' )
+				label: this.translate( "No, I'll Keep It" )
 			},
 			{
 				action: 'remove',
 				disabled: this.state.isRemoving,
 				isPrimary: true,
-				label: this.translate( 'Remove Now' ),
+				label: this.translate( 'Yes, Cancel Now' ),
 				onClick: this.removePurchase
 			} ],
 			productName = getName( getPurchase( this.props ) );
