@@ -29,6 +29,7 @@ export class EditorNotice extends Component {
 		status: PropTypes.string,
 		action: PropTypes.string,
 		link: PropTypes.string,
+		onViewClick: PropTypes.func,
 		onDismissClick: PropTypes.func,
 		error: PropTypes.object
 	}
@@ -192,8 +193,27 @@ export class EditorNotice extends Component {
 		}
 	}
 
+	renderNoticeAction() {
+		const { onViewClick, action, link } = this.props;
+		if ( onViewClick && ! this.props.site.jetpack ) {
+			return (
+				<NoticeAction onClick={ onViewClick } icon={ 'visible' }>
+					{ this.getText( action ) }
+				</NoticeAction>
+			);
+		}
+
+		return (
+			link && (
+				<NoticeAction href={ link } external>
+					{ this.getText( action ) }
+				</NoticeAction>
+			)
+		);
+	}
+
 	render() {
-		const { siteId, message, status, action, link, onDismissClick } = this.props;
+		const { siteId, message, status, onDismissClick } = this.props;
 		const text = this.getErrorMessage() || this.getText( message );
 
 		return (
@@ -203,11 +223,7 @@ export class EditorNotice extends Component {
 					<Notice
 						{ ...{ status, text, onDismissClick } }
 						showDismiss={ true }>
-						{ link && (
-							<NoticeAction href={ link } external>
-								{ this.getText( action ) }
-							</NoticeAction>
-						) }
+						{ this.renderNoticeAction() }
 					</Notice>
 				) }
 			</div>
@@ -226,6 +242,6 @@ export default connect( ( state ) => {
 		siteId,
 		site: getSelectedSite( state ),
 		type: post.type,
-		typeObject: getPostType( state, siteId, post.type )
+		typeObject: getPostType( state, siteId, post.type ),
 	};
 }, { setLayoutFocus } )( localize( EditorNotice ) );

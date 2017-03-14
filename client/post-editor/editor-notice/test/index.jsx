@@ -5,6 +5,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { translate } from 'i18n-calypso';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -107,5 +108,39 @@ describe( 'EditorNotice', () => {
 		expect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-success' );
 		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'href' ).equal( 'https://example.wordpress.com/published-project' );
 		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'children' ).equal( 'View Project' );
+	} );
+
+	it( 'should use onViewClick function if provided on non-jetpack sites', () => {
+		const spy = sinon.spy();
+
+		const wrapper = shallow(
+			<EditorNotice
+				translate={ translate }
+				message="published"
+				status="is-success"
+				type="page"
+				link="https://example.wordpress.com/published-page"
+				action="view"
+				onViewClick={ spy }
+				site={ {
+					URL: 'https://example.wordpress.com',
+					title: 'Example Site',
+					jetpack: false
+				} } />
+		);
+
+		expect( wrapper.find( Notice ) ).to.have.prop( 'text' ).eql(
+			translate( 'Page published on {{siteLink/}}!', {
+				components: {
+					siteLink: <a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">Example Site</a>
+				}
+			} )
+		);
+		expect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-success' );
+		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'icon' ).equal( 'visible' );
+		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'children' ).equal( 'View Page' );
+		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'onClick' ).equal( spy );
+		wrapper.find( NoticeAction ).simulate( 'click' );
+		expect( spy ).to.have.been.calledOnce;
 	} );
 } );

@@ -249,7 +249,8 @@ export const PostEditor = React.createClass( {
 						<div className="editor">
 							<EditorNotice
 								{ ...this.state.notice }
-								onDismissClick={ this.hideNotice } />
+								onDismissClick={ this.hideNotice }
+								onViewClick={ this.iframePreview } />
 							<EditorActionBar
 								isNew={ this.state.isNew }
 								onPrivatePublish={ this.onPublish }
