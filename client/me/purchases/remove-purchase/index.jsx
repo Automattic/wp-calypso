@@ -6,6 +6,7 @@ import page from 'page';
 import React from 'react';
 import Gridicon from 'gridicons';
 import { moment } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -84,7 +85,7 @@ const RemovePurchase = React.createClass( {
 	},
 
 	recordChatEvent( eventAction ) {
-		const purchase = getPurchase( this.props );
+		const purchase = this.props.selectedPurchase;
 		this.props.recordTracksEvent( eventAction, {
 			survey_step: this.state.surveyStep,
 			purchase: purchase.productSlug,
@@ -95,9 +96,11 @@ const RemovePurchase = React.createClass( {
 	},
 
 	recordEvent( name, properties = {} ) {
+		const product_slug = get( this.props, 'selectedPurchase.productSlug' );
+		const refund = false;
 		this.props.recordTracksEvent(
 			name,
-			Object.assign( { refund: false, product_slug: this.props.purchase.productSlug }, properties )
+			Object.assign( { refund, product_slug }, properties )
 		);
 	},
 

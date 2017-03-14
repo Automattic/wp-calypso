@@ -4,6 +4,7 @@
 import page from 'page';
 import React from 'react';
 import { moment } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -44,9 +45,11 @@ const CancelPurchaseButton = React.createClass( {
 	},
 
 	recordEvent( name, properties = {} ) {
+		const product_slug = get( this.props, 'purchase.productSlug' );
+		const refund = true;
 		this.props.recordTracksEvent(
 			name,
-			Object.assign( { refund: true, product_slug: this.props.purchase.productSlug }, properties )
+			Object.assign( { refund, product_slug }, properties )
 		);
 	},
 
