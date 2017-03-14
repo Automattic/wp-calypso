@@ -233,6 +233,9 @@ export default class FeedStream {
 	}
 
 	getLastItemWithDate() {
+		if ( this.oldestPostDate ) {
+			return this.oldestPostDate;
+		}
 		let i = this.postKeys.length - 1;
 		if ( i === -1 ) {
 			return;
@@ -423,6 +426,7 @@ export default class FeedStream {
 		debug( 'receiving page in %s', this.id );
 
 		this._isFetchingNextPage = false;
+		this.oldestPostDate = get( data, [ 'date_range', 'after' ] );
 
 		if ( error ) {
 			debug( 'Error fetching posts from API:', error );
@@ -435,6 +439,7 @@ export default class FeedStream {
 		const posts = data && data.posts;
 
 		if ( ! posts ) {
+			this.emitChange();
 			return;
 		}
 
@@ -452,9 +457,11 @@ export default class FeedStream {
 				postById.add( postKey.postId );
 			} );
 			this.postKeys = this.postKeys.concat( postKeys );
-			this.page++;
-			this.emitChange();
+
 		}
+
+		this.page++;
+		this.emitChange( );
 	}
 
 	receiveUpdates( id, error, data ) {
