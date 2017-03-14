@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { flowRight, partialRight, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -14,6 +15,13 @@ import Button from 'components/button';
 import Protect from './protect';
 import Sso from './sso';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import {
+	isJetpackModuleActive,
+	isJetpackModuleUnavailableInDevelopmentMode,
+	isJetpackSiteInDevelopmentMode
+} from 'state/selectors';
 
 class SiteSettingsFormSecurity extends Component {
 	renderSectionHeader( title, showButton = true, disableButton = false ) {
@@ -40,16 +48,20 @@ class SiteSettingsFormSecurity extends Component {
 			handleSubmitForm,
 			isRequestingSettings,
 			isSavingSettings,
-			jetpackSettingsUISupported,
+			jetpackSettingsUiSupported,
 			onChangeField,
+			protectModuleActive,
+			protectModuleUnavailable,
 			setFieldValue,
 			siteId,
 			translate
 		} = this.props;
 
-		if ( ! jetpackSettingsUISupported ) {
+		if ( ! jetpackSettingsUiSupported ) {
 			return null;
 		}
+
+		const disableProtect = ! protectModuleActive || protectModuleUnavailable;
 
 		return (
 			<form
@@ -59,7 +71,7 @@ class SiteSettingsFormSecurity extends Component {
 			>
 				<QueryJetpackModules siteId={ siteId } />
 
-				{ this.renderSectionHeader( translate( 'Prevent brute force login attacks' ) ) }
+				{ this.renderSectionHeader( translate( 'Prevent brute force login attacks' ), true, disableProtect ) }
 				<Protect
 					fields={ fields }
 					isSavingSettings={ isSavingSettings }
@@ -80,6 +92,22 @@ class SiteSettingsFormSecurity extends Component {
 	}
 }
 
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const protectModuleActive = !! isJetpackModuleActive( state, siteId, 'protect' );
+		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
+		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, siteId, 'protect' );
+		const jetpackSettingsUiSupported = siteSupportsJetpackSettingsUi( state, siteId );
+
+		return {
+			jetpackSettingsUiSupported,
+			protectModuleActive,
+			protectModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+		};
+	}
+);
+
 const getFormSettings = partialRight( pick, [
 	'protect',
 	'jetpack_protect_global_whitelist',
@@ -89,6 +117,7 @@ const getFormSettings = partialRight( pick, [
 ] );
 
 export default flowRight(
+	connectComponent,
 	localize,
 	wrapSettingsForm( getFormSettings )
 )( SiteSettingsFormSecurity );
