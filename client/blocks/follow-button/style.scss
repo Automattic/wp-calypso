@@ -3,6 +3,10 @@ $follow-button-gray-disabled: lighten( $gray, 20% );
 .follow-button,
 button.follow-button {
 
+	&:focus {
+		box-shadow: none;
+	}
+
 	.gridicon__follow {
 		opacity: 1;
 		pointer-events: auto;
