@@ -16,7 +16,6 @@ const PostPlaceholder = React.createClass( {
 	render() {
 		return (
 			<Card tagName="article" className="reader__card is-placeholder">
-
 				<div className="reader__post-header">
 					<h1 className="reader__post-title"><a className="reader__post-title-link" target="_blank" rel="noopener noreferrer"><span className="reader__placeholder-text">Loading interesting posts…</span></a></h1>
 					<div className="reader__post-byline">
