@@ -24,6 +24,11 @@ class SupportUserLoginDialog extends Component {
 	}
 
 	onSubmit = () => {
+		// Can't submit without a username or password
+		if ( ! this.props.username || ! this.state.password ) {
+			return;
+		}
+
 		this.props.onChangeUser( this.props.username, this.state.password );
 		this.setState( { password: '' } );
 	}
@@ -77,11 +82,12 @@ class SupportUserLoginDialog extends Component {
 
 	render() {
 		const { isVisible, isBusy, errorMessage, username } = this.props;
+		const { password } = this.state;
 
 		const buttons = [
 			<FormButton
 				key="supportuser"
-				disabled={ isBusy || ! username }
+				disabled={ isBusy || ! username || ! password }
 				onClick={ this.onSubmit }>
 					{ isBusy ? 'Switching...' : 'Change user' }
 			</FormButton>,
@@ -122,7 +128,7 @@ class SupportUserLoginDialog extends Component {
 							placeholder="Username"
 							onKeyDown={ this.onInputKeyDown }
 							onChange={ this.onEditUsername }
-							value={ this.props.username || '' } />
+							value={ username || '' } />
 					</FormLabel>
 
 					<FormLabel>
@@ -136,7 +142,7 @@ class SupportUserLoginDialog extends Component {
 							ref={ supportPasswordRef }
 							onKeyDown={ this.onInputKeyDown }
 							onChange={ this.onEditPassword }
-							value={ this.state.password }
+							value={ password }
 						/>
 					</FormLabel>
 				</FormFieldset>
