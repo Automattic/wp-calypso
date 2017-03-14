@@ -35,13 +35,11 @@ const JetpackManageDisabledMessage = React.createClass( {
 			{ name: 'Publication', slug: 'publication' },
 			{ name: 'Harmonic', slug: 'harmonic' },
 		];
-		const themes = exampleThemesData.map( function( theme ) {
-			return {
-				id: theme.slug,
-				name: theme.name,
-				screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + theme.slug + '/screenshot.png?w=660'
-			};
-		} );
+		const themes = exampleThemesData.map( ( { name, slug: id } ) => ( {
+			id,
+			name,
+			screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + id + '/screenshot.png?w=660'
+		} ) );
 		return (
 			<ThemesList themes={ themes }
 				getButtonOptions={ noop }
