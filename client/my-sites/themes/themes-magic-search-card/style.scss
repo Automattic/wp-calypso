@@ -107,11 +107,15 @@
 
 .themes-magic-search {
 
+	.themes-magic-search-card__welcome,
 	.suggestions {
 		display: none;
 	}
 
+
+
 	&.has-suggestions {
+		.themes-magic-search-card__welcome,
 		.suggestions {
 			display: block;
 			margin-top: 5px;
@@ -160,12 +164,15 @@
 	&:hover {
 		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20% );
 	}
+
+	&.themes-magic-search-card__welcome-taxonomy-highlight {
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20% );
+	}
 }
 
 .themes-magic-search-card__welcome-taxonomy-icon {
 	pointer-events: none;
 }
-
 
 // Colors
 @mixin themes-magic-search__token-colors( $name, $color ) {
