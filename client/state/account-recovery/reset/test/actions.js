@@ -17,9 +17,6 @@ import {
 	requestResetSuccess,
 	requestResetError,
 	updatePasswordResetUserData,
-	validateRequest,
-	validateRequestSuccess,
-	validateRequestError,
 } from '../actions';
 
 import {
@@ -30,9 +27,6 @@ import {
 	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
 	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST,
-	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
-	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
 } from 'state/action-types';
 
 describe( '#fetchResetOptionsSuccess', () => {
@@ -199,49 +193,6 @@ describe( '#requestReset', () => {
 		assert.deepEqual( action, {
 			type: ACCOUNT_RECOVERY_RESET_REQUEST,
 			request,
-		} );
-	} );
-} );
-
-describe( '#validateRequest', () => {
-	it( 'should return action ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST', () => {
-		const request = {
-			user: 'foo',
-			method: 'primary_email',
-			key: 'a-super-cryptic-and-long-hash-key',
-		};
-
-		const action = validateRequest( request );
-
-		assert.deepEqual( action, {
-			type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST,
-			request,
-		} );
-	} );
-} );
-
-describe( '#validateRequestSuccess', () => {
-	it( 'should return action ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS', () => {
-		const action = validateRequestSuccess();
-
-		assert.deepEqual( action, {
-			type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
-		} );
-	} );
-} );
-
-describe( '#validateRequestError', () => {
-	it( 'should return action ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR', () => {
-		const error = {
-			status: 404,
-			message: 'Error!',
-		};
-
-		const action = validateRequestError( error );
-
-		assert.deepEqual( action, {
-			type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
-			error,
 		} );
 	} );
 } );
