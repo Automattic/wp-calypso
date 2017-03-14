@@ -14,11 +14,24 @@ var viewport = require( 'lib/viewport' );
 module.exports = React.createClass( {
 	displayName: 'StickyPanel',
 
+	propTypes: {
+		minLimit: React.PropTypes.oneOfType( [
+			React.PropTypes.bool,
+			React.PropTypes.number,
+		] ),
+	},
+
+	getDefaultProps: function() {
+		return {
+			minLimit: false,
+		};
+	},
+
 	getInitialState: function() {
 		return {
 			isSticky: false,
 			spacerHeight: 0,
-			blockWidth: 0
+			blockWidth: 0,
 		};
 	},
 
@@ -53,7 +66,10 @@ module.exports = React.createClass( {
 	updateIsSticky: function() {
 		var isSticky = window.pageYOffset > this.threshold;
 
-		if ( viewport.isMobile() ) {
+		if (
+			this.props.minLimit !== false && this.props.minLimit >= window.innerWidth ||
+			viewport.isMobile()
+		) {
 			return this.setState( { isSticky: false } );
 		}
 
