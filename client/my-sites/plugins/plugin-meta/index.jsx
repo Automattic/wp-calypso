@@ -88,7 +88,7 @@ const PluginMeta = React.createClass( {
 	},
 
 	isWpcomPreinstalled: function() {
-		const installedPlugins = [ 'Jetpack by WordPress.com', 'Akismet' ];
+		const installedPlugins = [ 'Jetpack by WordPress.com', 'Akismet', 'VaultPress' ];
 
 		if ( ! this.props.selectedSite ) {
 			return false;
@@ -204,6 +204,36 @@ const PluginMeta = React.createClass( {
 				<WpcomPluginInstallButton
 					disabled={ ! this.hasBusinessPlan() || isTransferring }
 					plugin={ this.props.plugin }
+				/>
+			);
+		}
+	},
+
+	maybeDisplayAtUnsupportedNotice() {
+		const { selectedSite, plugin } = this.props;
+
+		// Pressable prevents installation of some plugins, so we need to disable AT for them.
+		// More info here: https://kb.pressable.com/faq/does-pressable-restrict-any-plugins/
+		const unsupportedPlugins = [
+			'nginx-helper',
+			'w3-total-cache',
+			'wp-rocket',
+			'wp-super-cache',
+			'bwp-minify',
+		];
+
+		if ( selectedSite && ! selectedSite.jetpack && includes( unsupportedPlugins, plugin.slug ) ) {
+			return (
+				<Notice
+					text={ this.translate( 'This plugin is {{a}}not supported{{/a}} on WordPress.com.',
+						{
+							components: {
+								a: <a href="https://support.wordpress.com/incompatible-plugins/" />
+							}
+						}
+					) }
+					status="is-warning"
+					showDismiss={ false }
 				/>
 			);
 		}
@@ -403,6 +433,10 @@ const PluginMeta = React.createClass( {
 						/>
 					}
 				</Card>
+
+				{ config.isEnabled( 'automated-transfer' ) &&
+					this.maybeDisplayAtUnsupportedNotice()
+				}
 
 				{ config.isEnabled( 'automated-transfer' ) && this.hasBusinessPlan() && ! get( this.props.selectedSite, 'jetpack' ) &&
 					<PluginAutomatedTransfer plugin={ this.props.plugin } />
