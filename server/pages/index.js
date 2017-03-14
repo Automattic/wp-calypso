@@ -33,8 +33,7 @@ const staticFiles = [
 	{ path: 'editor.css' },
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
-	{ path: 'style-rtl.css' },
-	{ path: 'vendor.js' }
+	{ path: 'style-rtl.css' }
 ];
 
 const sections = sectionsModule.get();
@@ -82,18 +81,10 @@ function generateStaticUrls( request ) {
 		urls[ file.path ] = getUrl( file.path, file.hash );
 	} );
 
-	// vendor dll
-	urls.vendor = urls[ 'vendor.js' ];
-	urls[ 'vendor-min' ] = urls.vendor.replace( '.js', '.m.js' );
-
 	const assets = request.app.get( 'assets' );
 
 	assets.forEach( function( asset ) {
 		let name = asset.name;
-		if ( ! name ) {
-			// this is for auto-generated chunks that don't have names, like the commons chunk
-			name = asset.url.replace( /\/calypso\/(\w+)\..*/, '_$1' );
-		}
 		urls[ name ] = asset.url;
 		if ( config( 'env' ) !== 'development' ) {
 			urls[ name + '-min' ] = asset.url.replace( '.js', '.m.js' );
