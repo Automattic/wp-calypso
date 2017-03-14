@@ -94,7 +94,6 @@ class SiteSettingsFormDiscussion extends Component {
 
 	otherCommentSettings() {
 		const { fields, handleToggle, isRequestingSettings, translate } = this.props;
-		const markdownSupported = fields.markdown_supported;
 		return (
 			<FormFieldset className="site-settings__other-comment-settings">
 				<CompactFormToggle
@@ -160,25 +159,6 @@ class SiteSettingsFormDiscussion extends Component {
 						}
 					</span>
 				</CompactFormToggle>
-				{ markdownSupported &&
-					<CompactFormToggle
-						checked={ !! fields.wpcom_publish_comments_with_markdown }
-						disabled={ isRequestingSettings }
-						onChange={ handleToggle( 'wpcom_publish_comments_with_markdown' ) }>
-						<span>
-							{
-								translate( 'Enable Markdown for comments. {{a}}Learn more about markdown{{/a}}.', {
-									components: {
-										a: <a
-											href="http://en.support.wordpress.com/markdown-quick-reference/"
-											target="_blank"
-											rel="noopener noreferrer" />
-									}
-								} )
-							}
-						</span>
-					</CompactFormToggle>
-				}
 				<CompactFormToggle
 					checked={ 'asc' === fields.comment_order }
 					disabled={ isRequestingSettings }
@@ -561,8 +541,6 @@ const getFormSettings = settings => {
 		'moderation_keys',
 		'blacklist_keys',
 		'admin_url',
-		'wpcom_publish_comments_with_markdown',
-		'markdown_supported',
 		'highlander_comment_form_prompt',
 		'jetpack_comment_form_color_scheme',
 		'subscriptions',

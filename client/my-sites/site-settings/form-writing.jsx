@@ -163,8 +163,6 @@ const connectComponent = connect(
 
 const getFormSettings = partialRight( pick, [
 	'default_post_format',
-	'wpcom_publish_posts_with_markdown',
-	'markdown_supported',
 	'custom-content-types',
 	'jetpack_testimonial',
 	'jetpack_portfolio',
