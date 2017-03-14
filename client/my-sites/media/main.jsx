@@ -32,7 +32,7 @@ class Media extends Component {
 		currentDetail: null,
 		editedImageItem: null,
 		editedVideoItem: null,
-		selectedImages: [],
+		selectedItems: [],
 	};
 
 	componentDidMount() {
@@ -58,7 +58,7 @@ class Media extends Component {
 	openDetailsModalForASingleImage = ( image ) => {
 		this.setState( {
 			currentDetail: 0,
-			selectedImages: [ image ],
+			selectedItems: [ image ],
 		} );
 	};
 
@@ -68,12 +68,12 @@ class Media extends Component {
 
 		this.setState( {
 			currentDetail: 0,
-			selectedImages: selected
+			selectedItems: selected
 		} );
 	};
 
 	closeDetailsModal() {
-		this.setState( { editedImageItem: null, editedVideoItem: null, currentDetail: null, selectedImages: [] } );
+		this.setState( { editedImageItem: null, editedVideoItem: null, currentDetail: null, selectedItems: [] } );
 	};
 
 	editImage() {
@@ -118,12 +118,12 @@ class Media extends Component {
 
 		MediaActions.update( site.ID, item, true );
 		resetAllImageEditorState();
-		this.setState( { currentDetail: null, editedImageItem: null, selectedImages: [] } );
+		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 	};
 
 	getModalButtons() {
-		// do not render buttons if the media image editor is opened
-		if ( this.state.editedImageItem !== null ) {
+		// do not render buttons if the media image or video editor is opened
+		if ( ( this.state.editedImageItem !== null ) || ( this.state.editedVideoItem !== null ) ) {
 			return null;
 		}
 
@@ -169,7 +169,7 @@ class Media extends Component {
 			} );
 		}
 
-		this.setState( { currentDetail: null, editedVideoItem: null } );
+		this.setState( { currentDetail: null, editedVideoItem: null, selectedItems: [] } );
 	};
 
 	restoreOriginalMedia = ( siteId, item ) => {
@@ -177,7 +177,7 @@ class Media extends Component {
 			return;
 		}
 		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
-		this.setState( { currentDetail: null, editedImageItem: null, selectedImages: [] } );
+		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 	};
 
 	setDetailSelectedIndex = ( index ) => {
@@ -228,8 +228,8 @@ class Media extends Component {
 			return;
 		}
 
-		const selected = this.state.selectedImages && this.state.selectedImages.length
-			? this.state.selectedImages
+		const selected = this.state.selectedItems && this.state.selectedItems.length
+			? this.state.selectedItems
 			: MediaLibrarySelectedStore.getAll( site.ID );
 
 		MediaActions.delete( site.ID, selected );
@@ -250,7 +250,7 @@ class Media extends Component {
 					{ this.state.currentDetail !== null &&
 						<EditorMediaModalDetail
 							site={ site }
-							items={ this.state.selectedImages }
+							items={ this.state.selectedItems }
 							selectedIndex={ this.state.currentDetail }
 							onReturnToList={ this.closeDetailsModal }
 							onEditImageItem={ this.editImage }
@@ -262,14 +262,14 @@ class Media extends Component {
 					{ this.state.editedImageItem !== null &&
 						<ImageEditor
 							siteId={ site && site.ID }
-							media={ this.state.selectedImages[ this.state.editedImageItem ] }
+							media={ this.state.selectedItems[ this.state.editedImageItem ] }
 							onDone={ this.onImageEditorDone }
 							onCancel={ this.onImageEditorCancel }
 						/>
 					}
-					{ this.state.editedVideoItem &&
+					{ this.state.editedVideoItem !== null &&
 						<VideoEditor
-							media={ this.state.editedVideoItem }
+							media={ this.state.selectedItems[ this.state.editedVideoItem ] }
 							onCancel={ this.onVideoEditorCancel }
 							onUpdatePoster={ this.onVideoEditorUpdatePoster }
 						/>
