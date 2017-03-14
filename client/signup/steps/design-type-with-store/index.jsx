@@ -16,8 +16,6 @@ import { abtest } from 'lib/abtest';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PressableStoreStep from './pressable-store';
-import BluehostStoreStep from './bluehost-store';
-import SitegroundStoreStep from './siteground-store';
 import BlogImage from './blog-image';
 import PageImage from './page-image';
 import GridImage from './grid-image';
@@ -158,7 +156,11 @@ class DesignTypeWithStoreStep extends Component {
 		return (
 			<div className="design-type-with-store__substep-wrapper">
 				<div className={ storeWrapperClassName }>
-					{ this.renderStoreStep() }
+					<PressableStoreStep
+						{ ... this.props }
+						onBackClick={ this.handleStoreBackClick }
+						setRef={ this.setPressableStore }
+					/>;
 				</div>
 				<div className={ designTypeListClassName }>
 					{ this.getChoices().map( this.renderChoice ) }
@@ -170,33 +172,6 @@ class DesignTypeWithStoreStep extends Component {
 
 	setPressableStore( ref ) {
 		this.pressableStore = ref;
-	}
-
-	renderStoreStep() {
-		switch ( abtest( 'signupStoreBenchmarking' ) ) {
-			case 'bluehost':
-				return <BluehostStoreStep
-							{ ... this.props }
-							onBackClick={ this.handleStoreBackClick }
-						/>;
-			case 'bluehostWithWoo':
-				return <BluehostStoreStep
-							{ ... this.props }
-							onBackClick={ this.handleStoreBackClick }
-							partnerName="Bluehost with WooCommerce"
-						/>;
-			case 'siteground':
-				return <SitegroundStoreStep
-							{ ... this.props }
-							onBackClick={ this.handleStoreBackClick }
-						/>;
-			default:
-				return <PressableStoreStep
-							{ ... this.props }
-							onBackClick={ this.handleStoreBackClick }
-							setRef={ this.setPressableStore }
-						/>;
-		}
 	}
 
 	getHeaderText() {
@@ -218,16 +193,7 @@ class DesignTypeWithStoreStep extends Component {
 		const { translate } = this.props;
 
 		if ( this.state.showStore ) {
-			switch ( abtest( 'signupStoreBenchmarking' ) ) {
-				case 'bluehost':
-					return translate( 'Our partners at BlueHost are here for you.'	);
-				case 'bluehostWithWoo':
-					return translate( 'Our partners at BlueHost and WooCommerce are here for you.' );
-				case 'siteground':
-					return translate( 'Our partners at SiteGround and WooCommerce are here for you.' );
-				default:
-					return translate( 'Our partners at Pressable and WooCommerce are here for you.' );
-			}
+			return translate( 'Our partners at Pressable and WooCommerce are here for you.' );
 		}
 
 		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
