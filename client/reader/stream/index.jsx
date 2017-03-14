@@ -4,8 +4,9 @@
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import { defer, findLast, flatMap, noop, times, clamp, includes, last } from 'lodash';
+import { defer, findLast, flatMap, noop, times, clamp, includes, last, groupBy, map, flattenDeep, values, sortBy, reverse, compact } from 'lodash';
 import { connect } from 'react-redux';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -117,18 +118,75 @@ function combine( postKey1, postKey2 ) {
 	};
 }
 
-const combineCards = ( postKeys ) => postKeys.reduce(
-	( accumulator, postKey ) => {
-		const lastPostKey = last( accumulator );
-		if ( sameSite( lastPostKey, postKey ) ) {
-			accumulator[ accumulator.length - 1 ] = combine( last( accumulator ), postKey );
+// const combineCards = ( postKeys ) => postKeys.reduce(
+// 	( accumulator, postKey ) => {
+// 		const lastPostKey = last( accumulator );
+// 		if ( sameSite( lastPostKey, postKey ) ) {
+// 			accumulator[ accumulator.length - 1 ] = combine( last( accumulator ), postKey );
+// 		} else {
+// 			accumulator.push( postKey );
+// 		}
+// 		return accumulator;
+// 	},
+// 	[]
+// );
+
+const getMomentForPostKey = postKey =>  {
+	window.getMomentForPostKey = getMomentForPostKey;
+	let post = PostStore.get( postKey );
+	if ( postKey.isCombination ) {
+		const postKeyForPost = { postId: postKey.postIds[ 0 ] };
+		if ( postKey.feedId ) {
+			postKeyForPost.feedId = postKey.feedId;
 		} else {
-			accumulator.push( postKey );
+			postKeyForPost.blogId = postKey.blogId;
 		}
-		return accumulator;
-	},
-	[]
-);
+
+		post = PostStore.get( postKeyForPost );
+	} else if ( postKey.isRecommendationBlock ){
+		post = null;
+	} else {
+		post = PostStore.get( postKey );
+	}
+
+	return post && moment( post.date );
+}
+
+/* Combine all cards from the same site that are within the same 2 hour span
+ */
+const CARDS_PER_DAY_PER_SITE = 4; // max combined card only counts as one card
+const HOURS_PER_CARD = 24 / CARDS_PER_DAY_PER_SITE;
+const combineCards = ( postKeys ) => {
+	window.moment = moment;
+	const timeSliced = groupBy( postKeys, postKey => {
+		const moment = getMomentForPostKey( postKey );
+		moment && moment.millisecond( 0 ).second( 0 ).minute( 0 ).hour(
+			Math.floor( moment.hour() / HOURS_PER_CARD ) * HOURS_PER_CARD
+		)
+		return moment;
+	} );
+
+	const groupedBySiteInTimeWindow = map( timeSliced,
+		keys => values( groupBy( keys, key => key.feedId || key.blogId ) )
+	);
+
+	const groupedBySiteInOrder = flattenDeep( groupedBySiteInTimeWindow );
+
+	const combined = groupedBySiteInOrder.reduce(
+		( accumulator, postKey ) => {
+			const lastPostKey = last( accumulator );
+			if ( sameSite( lastPostKey, postKey ) ) {
+				accumulator[ accumulator.length - 1 ] = combine( last( accumulator ), postKey );
+			} else {
+				accumulator.push( postKey );
+			}
+			return accumulator;
+		},
+		[]
+	);
+	const sorted = reverse( sortBy( combined, getMomentForPostKey ) );
+	return sorted;
+};
 
 function injectRecommendations( posts, recs = [] ) {
 	if ( ! recs || recs.length === 0 ) {
@@ -142,15 +200,16 @@ function injectRecommendations( posts, recs = [] ) {
 	}
 
 	let recIndex = 0;
-
+	let postsIndex = 0;
 	return flatMap( posts, ( post, index ) => {
-		if ( index && index % itemsBetweenRecs === 0 && recIndex < recs.length ) {
+		if ( index && postsIndex % itemsBetweenRecs === 0 && recIndex < recs.length ) {
 			const recBlock = {
 				isRecommendationBlock: true,
 				recommendations: recs.slice( recIndex, recIndex + RECS_PER_BLOCK ),
 				index: recIndex
 			};
 			recIndex += RECS_PER_BLOCK;
+			postsIndex += post.isCombination ? clamp( post.postIds.length, 5 ) : 1;
 			return [
 				recBlock,
 				post
@@ -207,13 +266,12 @@ class ReaderStream extends React.Component {
 			}
 		}
 
-		let items = this.state && this.state.items;
-		if ( ! this.state || posts !== this.state.posts || recs !== this.state.recs ) {
-			items = injectRecommendations( posts, recs );
-		}
-
+		let items;
 		if ( this.props.shouldCombineCards ) {
-			items = combineCards( items );
+			items = combineCards( posts );
+		}
+		if ( ! this.state || posts !== this.state.posts || recs !== this.state.recs ) {
+			items = injectRecommendations( items, recs );
 		}
 
 		return {
