@@ -3,6 +3,8 @@
  */
 var pick = require( 'lodash/pick' ),
 	assign = require( 'lodash/assign' ),
+	findKey = require( 'lodash/findKey' ),
+	includes = require( 'lodash/includes' ),
 	map = require( 'lodash/map' ),
 	filter = require( 'lodash/filter' ),
 	transform = require( 'lodash/transform' ),
@@ -15,6 +17,17 @@ var pick = require( 'lodash/pick' ),
 var decodeEntities = require( 'lib/formatting' ).decodeEntities,
 	parseHtml = require( 'lib/formatting' ).parseHtml,
 	PluginUtils;
+
+const conflictingPlugins = {
+	analytics: [ 'google-analytics-for-wordpress', 'google-analytics-dashboard-for-wp' ],
+	backup: [ 'updraftplus' ],
+	sitemap: [ 'google-sitemap-generator' ],
+	seo: [ 'wordpress-seo', 'all-in-one-seo-pack' ],
+	contact: [ 'contact-form-7' ],
+	cache: [ 'wp-super-cache', 'w3-total-cache' ],
+	duplicate: [ 'duplicate-post' ],
+	security: [ 'wordfence', 'limit-login-attempts' ],
+};
 
 /**
  * @param  {Object} site       Site Object
@@ -145,8 +158,21 @@ PluginUtils = {
 		} );
 	},
 
+	getPluginJetpackConflict: function( pluginSlug ) {
+		const getCategory = ( slug ) => findKey(
+			conflictingPlugins,
+			category => includes( category, slug )
+		);
+
+		const category = getCategory( pluginSlug );
+
+		return category ? category : null;
+	},
+
 	normalizePluginData: function( plugin, pluginData ) {
 		plugin = this.whiteListPluginData( assign( plugin, pluginData ) );
+
+		plugin.jetpack_conflict = this.getPluginJetpackConflict( plugin.slug );
 
 		return transform( plugin, function( returnData, item, key ) {
 			switch ( key ) {
