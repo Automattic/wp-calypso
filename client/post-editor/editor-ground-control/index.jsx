@@ -304,6 +304,18 @@ export default React.createClass( {
 					homeLink={ true }
 					externalLink={ true }
 				/>
+				{ this.state.needsVerification &&
+					<div className="editor-ground-control__email-verification-notice"
+						tabIndex={ 7 }
+						onClick={ this.props.onMoreInfoAboutEmailVerify }>
+						<Gridicon
+							icon="info"
+							className="editor-ground-control__email-verification-notice-icon" />
+						{ this.getVerificationNoticeLabel() }
+						{ ' ' }
+						<span className="editor-ground-control__email-verification-notice-more">{ this.translate( 'Learn More' ) }</span>
+					</div>
+				}
 				<div className="editor-ground-control__status">
 					{ this.isSaveEnabled() &&
 						<button
@@ -379,19 +391,6 @@ export default React.createClass( {
 						this.schedulePostPopover()
 					}
 				</div>
-				{
-					this.state.needsVerification &&
-					<div className="editor-ground-control__email-verification-notice"
-						tabIndex={ 7 }
-						onClick={ this.props.onMoreInfoAboutEmailVerify }>
-						<Gridicon
-							icon="info"
-							className="editor-ground-control__email-verification-notice-icon" />
-						{ this.getVerificationNoticeLabel() }
-						{ ' ' }
-						<span className="editor-ground-control__email-verification-notice-more">{ this.translate( 'Learn More' ) }</span>
-					</div>
-				}
 			</Card>
 		);
 	}
