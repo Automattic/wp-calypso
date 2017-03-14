@@ -58,7 +58,7 @@ if ( 'development' === config( 'env' ) ) {
 }
 
 // Inject localization helpers to `wpcom` instance
-wpcom = injectLocalization( wpcom );
+injectLocalization( wpcom );
 
 injectGuestSandboxTicketHandler( wpcom );
 
