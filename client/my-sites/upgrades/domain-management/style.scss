@@ -1035,3 +1035,18 @@ ul.email-forwarding__list {
 	float: right;
 	font-size: 13px;
 }
+
+.domain-only-site__settings-notice {
+	color: darken( $gray, 20% );
+	margin-top: 30px;
+	text-align: center;
+
+	&::before {
+		background: lighten( $gray, 20% );
+		content: '';
+		display: block;
+		height: 1px;
+		margin: 0 auto 30px;
+		width: 60px;
+	}
+}
