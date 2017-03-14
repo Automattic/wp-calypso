@@ -74,5 +74,6 @@ export default connect(
 				productUrl: getThemeDetailsUrl( state, selectedPurchase.meta, selectedPurchase.siteId )
 			};
 		}
+		return {};
 	}
 )( ProductLink );
