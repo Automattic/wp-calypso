@@ -11,7 +11,7 @@
 	}
 }
 
-.editor-action-bar__saved-status {
+.editor-status-label.editor-action-bar__saved-status {
 	line-height: 1;
 	position: fixed;
 		bottom: 0px;
@@ -24,10 +24,18 @@
 	line-height: 1;
 	color: lighten( $gray, 10% );
 	pointer-events: none;
-	z-index: 2;
+	z-index: z-index( 'root', '.editor-action-bar__saved-status' );
+
+	@include breakpoint( "<480px" ) {
+		display: none;
+	}
 
 	.focus-sidebar & {
-		right: 273px;
+		right: 228px;
+
+		@include breakpoint( ">960px" ) {
+			right: 273px;
+		}
 	}
 }
 
