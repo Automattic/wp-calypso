@@ -41,6 +41,7 @@ import {
 	getSeoTitleFormatsForSite,
 	isJetpackMinimumVersion,
 	isJetpackSite,
+	isRequestingSite,
 } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
@@ -124,7 +125,6 @@ export const SeoForm = React.createClass( {
 			// are in progress and haven't yet been saved
 			// to the server
 			dirtyFields: Set(),
-			isRefreshingSiteData: true,
 			invalidatedSiteObject: this.props.selectedSite,
 		};
 	},
@@ -141,7 +141,7 @@ export const SeoForm = React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		const { selectedSite: prevSite } = this.props;
+		const { selectedSite: prevSite, isFetchingSite } = this.props;
 		const { selectedSite: nextSite } = nextProps;
 		const { dirtyFields } = this.state;
 
@@ -151,7 +151,6 @@ export const SeoForm = React.createClass( {
 				...stateForSite( nextSite ),
 				seoTitleFormats: nextProps.storedTitleFormats,
 				invalidatedSiteObject: nextSite,
-				isRefreshingSiteData: true,
 				dirtyFields: Set(),
 			}, this.refreshCustomTitles );
 		}
@@ -161,12 +160,7 @@ export const SeoForm = React.createClass( {
 			seoTitleFormats: nextProps.storedTitleFormats,
 		};
 
-		const isRefreshingSiteData = (
-			this.state.isRefreshingSiteData &&
-			( this.state.invalidatedSiteObject === nextProps.selectedSite )
-		);
-
-		if ( this.state.isRefreshingSiteData && ! isRefreshingSiteData ) {
+		if ( ! isFetchingSite ) {
 			nextState = {
 				...nextState,
 				seoTitleFormats: nextProps.storedTitleFormats,
@@ -174,7 +168,7 @@ export const SeoForm = React.createClass( {
 			};
 		}
 
-		if ( isRefreshingSiteData ) {
+		if ( dirtyFields.has( 'seoTitleFormats' ) ) {
 			nextState = omit( nextState, [ 'seoTitleFormats' ] );
 		}
 
@@ -182,8 +176,7 @@ export const SeoForm = React.createClass( {
 		nextState = omit( nextState, dirtyFields.toArray() );
 
 		this.setState( {
-			...nextState,
-			isRefreshingSiteData,
+			...nextState
 		} );
 	},
 
@@ -244,8 +237,6 @@ export const SeoForm = React.createClass( {
 			translate,
 		} = this.props;
 
-		const { dirtyFields } = this.state;
-
 		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
 			event.preventDefault();
 		}
@@ -274,8 +265,7 @@ export const SeoForm = React.createClass( {
 		}
 
 		this.setState( {
-			isSubmittingForm: true,
-			isRefreshingSiteData: dirtyFields.has( 'seoTitleFormats' ),
+			isSubmittingForm: true
 		} );
 
 		// We need to be careful here and only
@@ -351,7 +341,6 @@ export const SeoForm = React.createClass( {
 
 		if ( selectedSite && selectedSite.ID ) {
 			this.setState( {
-				isRefreshingSiteData: true,
 				invalidatedSiteObject: selectedSite,
 			}, () => refreshSiteData( selectedSite.ID ) );
 		}
@@ -385,6 +374,7 @@ export const SeoForm = React.createClass( {
 			showAdvancedSeo,
 			showWebsiteMeta,
 			site,
+			isFetchingSite,
 			isSeoToolsActive,
 			isVerificationToolsActive,
 			translate,
@@ -400,7 +390,6 @@ export const SeoForm = React.createClass( {
 		const {
 			isSubmittingForm,
 			isFetchingSettings,
-			isRefreshingSiteData,
 			frontPageMetaDescription,
 			showPasteError = false,
 			hasHtmlTagError = false,
@@ -535,7 +524,7 @@ export const SeoForm = React.createClass( {
 							</Card>
 							<Card>
 								<MetaTitleEditor
-									disabled={ isRefreshingSiteData || isSeoDisabled }
+									disabled={ isFetchingSite || isSeoDisabled }
 									onChange={ this.updateTitleFormats }
 									titleFormats={ this.state.seoTitleFormats }
 								/>
@@ -769,6 +758,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
 		jetpackManagementUrl,
 		jetpackVersionSupportsSeo: jetpackVersionSupportsSeo,
+		isFetchingSite: isRequestingSite( state, siteId ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isVerificationToolsActive: isJetpackModuleActive( state, siteId, 'verification-tools' ),
 	};
