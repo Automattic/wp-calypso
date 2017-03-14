@@ -69,6 +69,53 @@ describe( 'utils', () => {
 				carousel_background_color: 'black'
 			} );
 		} );
+
+		it( 'should default jetpack_protect_global_whitelist whitelist to an empty string when null', () => {
+			expect( normalizeSettings( {
+				jetpack_protect_global_whitelist: null
+			} ) ).to.eql( {
+				jetpack_protect_global_whitelist: '',
+			} );
+		} );
+
+		it( 'should default jetpack_protect_global_whitelist whitelist to an empty string when empty', () => {
+			expect( normalizeSettings( {
+				jetpack_protect_global_whitelist: {
+					local: []
+				}
+			} ) ).to.eql( {
+				jetpack_protect_global_whitelist: '',
+			} );
+		} );
+
+		it( 'should not add extra newlines when extracting jetpack_protect_global_whitelist', () => {
+			const settings = {
+				jetpack_protect_global_whitelist: {
+					local: [
+						'123.123.123.123',
+					]
+				}
+			};
+
+			expect( normalizeSettings( settings ) ).to.eql( {
+				jetpack_protect_global_whitelist: '123.123.123.123',
+			} );
+		} );
+
+		it( 'should add newlines between IPs when extracting jetpack_protect_global_whitelist', () => {
+			const settings = {
+				jetpack_protect_global_whitelist: {
+					local: [
+						'123.123.123.123',
+						'213.123.213.123',
+					]
+				}
+			};
+
+			expect( normalizeSettings( settings ) ).to.eql( {
+				jetpack_protect_global_whitelist: '123.123.123.123\n213.123.213.123',
+			} );
+		} );
 	} );
 
 	describe( 'sanitizeSettings()', () => {
