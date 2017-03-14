@@ -4,7 +4,6 @@
 import { connect } from 'react-redux';
 import page from 'page';
 import React from 'react';
-import Gridicon from 'gridicons';
 import { moment } from 'i18n-calypso';
 
 /**
@@ -180,14 +179,14 @@ const RemovePurchase = React.createClass( {
 					}
 
 					notices.success(
-						this.translate( 'The domain {{domain/}} was removed from your account.', {
+						this.translate( 'The domain {{domain/}} was cancelled from your account.', {
 							components: { domain: <em>{ productName }</em> }
 						} ),
 						{ persistent: true }
 					);
 				} else {
 					notices.success(
-						this.translate( '%(productName)s was removed from {{siteName/}}.', {
+						this.translate( '%(productName)s was cancelled from {{siteName/}}.', {
 							args: { productName },
 							components: { siteName: <em>{ selectedSite.domain }</em> }
 						} ),
@@ -212,8 +211,7 @@ const RemovePurchase = React.createClass( {
 		return (
 			<CompactCard className="remove-purchase__card" onClick={ this.openDialog }>
 				<a href="#">
-					<Gridicon icon="trash" />
-					{ this.translate( 'Remove %(productName)s', { args: { productName } } ) }
+					{ this.translate( 'Cancel %(productName)s', { args: { productName } } ) }
 				</a>
 			</CompactCard>
 		);
@@ -253,7 +251,7 @@ const RemovePurchase = React.createClass( {
 				className="remove-purchase__dialog"
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }>
-				<FormSectionHeading>{ this.translate( 'Remove %(productName)s', { args: { productName } } ) }</FormSectionHeading>
+				<FormSectionHeading>{ this.translate( 'Cancel %(productName)s', { args: { productName } } ) }</FormSectionHeading>
 				{ this.renderDomainDialogText() }
 			</Dialog>
 		);
@@ -267,7 +265,7 @@ const RemovePurchase = React.createClass( {
 			<p>
 				{
 					this.translate(
-						'This will remove %(domain)s from your account. By removing, ' +
+						'This will cancel %(domain)s from your account. By doing so, ' +
 							'you are canceling the domain registration. This may stop ' +
 							'you from using it again, even with another service.',
 						{ args: { domain: productName } }
@@ -282,7 +280,7 @@ const RemovePurchase = React.createClass( {
 				cancel: {
 					action: 'cancel',
 					disabled: this.state.isRemoving,
-					label: this.translate( 'Cancel' )
+					label: this.translate( "No, I'll Keep It" )
 				},
 				next: {
 					action: 'next',
@@ -291,20 +289,20 @@ const RemovePurchase = React.createClass( {
 						this.state.survey.questionTwoRadio === null ||
 						( this.state.survey.questionOneRadio === 'anotherReasonOne' && this.state.survey.questionOneText === '' ) ||
 						( this.state.survey.questionTwoRadio === 'anotherReasonTwo' && this.state.survey.questionTwoText === '' ),
-					label: this.translate( 'Next' ),
+					label: this.translate( 'Next Step' ),
 					onClick: this.changeSurveyStep
 				},
 				prev: {
 					action: 'prev',
 					disabled: this.state.isRemoving,
-					label: this.translate( 'Previous' ),
+					label: this.translate( 'Previous Step' ),
 					onClick: this.changeSurveyStep
 				},
 				remove: {
 					action: 'remove',
 					disabled: this.state.isRemoving,
 					isPrimary: true,
-					label: this.translate( 'Remove' ),
+					label: this.translate( 'Yes, Cancel Now' ),
 					onClick: this.removePurchase
 				}
 			},
@@ -329,7 +327,7 @@ const RemovePurchase = React.createClass( {
 					className="remove-purchase__dialog"
 					isVisible={ this.state.isDialogVisible }
 					onClose={ this.closeDialog }>
-					<FormSectionHeading>{ this.translate( 'Remove %(productName)s', { args: { productName } } ) }</FormSectionHeading>
+					<FormSectionHeading>{ this.translate( 'Cancel %(productName)s', { args: { productName } } ) }</FormSectionHeading>
 					<CancelPurchaseForm
 						surveyStep={ this.state.surveyStep }
 						showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
@@ -349,8 +347,8 @@ const RemovePurchase = React.createClass( {
 				<p>
 					{
 						this.translate(
-							'The domain associated with this plan, {{domain/}}, will not be removed. ' +
-								'It will remain active on your site, unless also removed.',
+							'The domain associated with this plan, {{domain/}}, will not be cancelled. ' +
+							'It will remain active on your site, unless also cancelled.',
 							{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
 						)
 					}
@@ -362,7 +360,7 @@ const RemovePurchase = React.createClass( {
 				<p>
 					{
 						this.translate(
-							'Are you sure you want to remove %(productName)s from {{siteName/}}?',
+							'Are you sure you want to cancel %(productName)s from {{siteName/}}?',
 							{
 								args: { productName },
 								components: { siteName: <em>{ this.props.selectedSite.domain }</em> }
