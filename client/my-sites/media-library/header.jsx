@@ -140,7 +140,7 @@ export default React.createClass( {
 
 		if ( this.props.sticky ) {
 			return (
-				<StickyPanel>
+				<StickyPanel minLimit ={ 660 }>
 					{ card }
 				</StickyPanel>
 			);
