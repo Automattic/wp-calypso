@@ -27,6 +27,7 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import { mergeFormWithValue } from 'signup/utils';
+import SocialSignupForm from './social';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
@@ -46,7 +47,14 @@ export default React.createClass( {
 	displayName: 'SignupForm',
 
 	propTypes: {
+		isSocialSignupEnabled: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired
+	},
+
+	getDefaultProps() {
+		return {
+			isSocialSignupEnabled: false,
+		};
 	},
 
 	getInitialState() {
@@ -447,6 +455,8 @@ export default React.createClass( {
 							{ this.props.formHeader }
 						</header>
 					}
+					{ this.props.isSocialSignupEnabled && <SocialSignupForm /> }
+					{ this.props.isSocialSignupEnabled && <hr /> }
 					{ this.formFields() }
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>

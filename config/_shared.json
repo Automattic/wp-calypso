@@ -28,6 +28,8 @@
 	"olark": {},
 	"port": null,
 	"happychat_url": "https://happychat.io/customer",
+	"google_oauth_client_id": "543610697398-l287fumouns096o4os9l9fs1svh5esjc.apps.googleusercontent.com",
+	"facebook_app_id": "611241942420191",
 	"languages": [
 		{ "value": 2, "langSlug": "af", "name": "af - Afrikaans", "wpLocale": "af" },
 		{ "value": 418, "langSlug": "als", "name": "als - Alemannisch", "wpLocale": "" },

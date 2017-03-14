@@ -10,6 +10,7 @@
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
+	"facebook_app_id": "2373049596",
 	"features": {
 		"ad-tracking": true,
 		"apple-pay": true,

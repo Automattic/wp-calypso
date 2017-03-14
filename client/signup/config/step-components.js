@@ -35,5 +35,5 @@ export default {
 	test: config( 'env' ) === 'development' ? require( 'signup/steps/test-step' ) : undefined,
 	themes: ThemeSelectionComponent,
 	'themes-site-selected': ThemeSelectionComponent,
-	user: UserSignupComponent
+	user: UserSignupComponent,
 };
