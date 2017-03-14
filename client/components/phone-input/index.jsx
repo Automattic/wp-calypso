@@ -5,6 +5,7 @@ import find from 'lodash/find';
 import identity from 'lodash/identity';
 import React from 'react';
 import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,13 +15,24 @@ import { formatNumber, findCountryFromNumber, processNumber, MIN_LENGTH_TO_FORMA
 import CountryFlag from './country-flag';
 import { countries } from './data';
 
-const PhoneInput = React.createClass( {
-	propTypes: {
+class PhoneInput extends React.PureComponent {
+	static propTypes = {
 		onChange: React.PropTypes.func.isRequired,
 		value: React.PropTypes.string.isRequired,
 		countryCode: React.PropTypes.string.isRequired,
 		countriesList: React.PropTypes.object.isRequired
-	},
+	};
+
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			freezeSelection: false
+		};
+
+		this.handleInput = this.handleInput.bind( this );
+		this.handleCountrySelection = this.handleCountrySelection.bind( this );
+	}
 
 	/**
 	 * Returns the country meta with default values for countries with missing metadata. Never returns null.
@@ -42,20 +54,14 @@ const PhoneInput = React.createClass( {
 			};
 		}
 		return selectedCountry;
-	},
-
-	getInitialState() {
-		return {
-			freezeSelection: false
-		};
-	},
+	}
 
 	componentDidMount() {
 		const { countryCode, value } = this.calculateInputAndCountryCode( this.props.value, this.props.countryCode );
 		if ( value !== this.props.value || countryCode !== this.props.countryCode ) {
 			this.props.onChange( { value, countryCode } );
 		}
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.value === this.props.value && nextProps.countryCode === this.props.countryCode ) {
@@ -63,7 +69,7 @@ const PhoneInput = React.createClass( {
 		}
 		const { countryCode, value } = this.calculateInputAndCountryCode( nextProps.value, nextProps.countryCode );
 		this.props.onChange( { value, countryCode } );
-	},
+	}
 
 	componentWillUpdate( nextProps ) {
 		const currentFormat = this.props.value,
@@ -99,7 +105,7 @@ const PhoneInput = React.createClass( {
 			}
 		}
 		this.numberInput.setSelectionRange( newCursorPoint, newCursorPoint );
-	},
+	}
 
 	/**
 	 * Decides whether to guess the country from the input value
@@ -112,7 +118,7 @@ const PhoneInput = React.createClass( {
 		}
 		const dialCode = this.getCountry().countryDialCode || this.getCountry().dialCode;
 		return value[ 0 ] === '+' || ( value[ 0 ] === '1' && dialCode === '1' );
-	},
+	}
 
 	/**
 	 * Returns the selected country from dropdown or guesses the country from input
@@ -126,11 +132,11 @@ const PhoneInput = React.createClass( {
 		}
 
 		return this.getCountry( fallbackCountryCode );
-	},
+	}
 
 	format( value = this.props.value, countryCode = this.props.countryCode ) {
 		return formatNumber( value, this.getCountry( countryCode ) );
-	},
+	}
 
 	handleInput( event ) {
 		const inputValue = event.target.value;
@@ -144,7 +150,7 @@ const PhoneInput = React.createClass( {
 		const { countryCode, value } = this.calculateInputAndCountryCode( inputValue, this.props.countryCode );
 
 		this.props.onChange( { value, countryCode } );
-	},
+	}
 
 	/**
 	 * Calculates the input and country
@@ -158,7 +164,7 @@ const PhoneInput = React.createClass( {
 			calculatedCountryCode = calculatedCountry.isoCode;
 
 		return { value: calculatedValue, countryCode: calculatedCountryCode };
-	},
+	}
 
 	handleCountrySelection( event ) {
 		const newCountryCode = event.target.value;
@@ -188,13 +194,13 @@ const PhoneInput = React.createClass( {
 			value: this.format( inputValue, newCountryCode )
 		} );
 		this.setState( { freezeSelection: true } );
-	},
+	}
 
 	render() {
 		return (
 			<div className={ classnames( this.props.className, 'phone-input' ) }>
 				<input
-					placeholder={ this.translate( 'Phone' ) }
+					placeholder={ this.props.translate( 'Phone' ) }
 					onChange={ this.handleInput }
 					name={ this.props.name }
 					ref={ c => this.numberInput = c }
@@ -213,7 +219,6 @@ const PhoneInput = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
-export default PhoneInput;
-
+export default localize( PhoneInput );
