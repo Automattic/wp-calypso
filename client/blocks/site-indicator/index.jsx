@@ -121,8 +121,8 @@ export const renderSiteIndicatorHasUpdate = ( { translate, site }, expanded = fa
 export class SiteIndicator extends Component {
 	constructor( props ) {
 		super( props );
-		this.state = { expand: false }
-		this.toggleExpand = this.toggleExpand.bind(this);
+		this.state = { expand: false };
+		this.toggleExpand = this.toggleExpand.bind( this );
 	}
 
 	toggleExpand() {
