@@ -131,13 +131,16 @@
 	color: $gray;
 	cursor: pointer;
 
-	&:focus {
+	&:focus,
+	&:link,
+	&:visited {
 		color: $gray;
 	}
-}
 
-.reader-combined-card .reader-author-link:hover {
-	color: $blue-medium;
+	&:hover,
+	&:active {
+		color: $blue-medium;
+	}
 }
 
 .reader-combined-card__post .reader-excerpt {
@@ -154,8 +157,17 @@
 	}
 }
 
-.reader-combined-card__site-link a {
-	color: $blue-wordpress;
+.reader-combined-card__site-link {
+	&:focus,
+	&:link,
+	&:visited {
+		color: $blue-wordpress;
+	}
+
+	&:hover,
+	&:active {
+		color: $blue-medium;
+	}
 }
 
 // Override standard .card styles in stream
