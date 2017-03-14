@@ -44,6 +44,20 @@ export class ForgotUsernameFormComponent extends Component {
 		this.props.updatePasswordResetUserData( { url: event.target.value } );
 	};
 
+	getErrorMessage = ( requestError ) => {
+		const { translate } = this.props;
+
+		if ( ! requestError ) {
+			return '';
+		}
+
+		if ( requestError.statusCode === 404 ) {
+			return translate( "We weren't able to find a user with that login information. Please try another one." );
+		}
+
+		return translate( "We've encountered some technical issues. Please try again later." );
+	};
+
 	render() {
 		const {
 			translate,
@@ -65,7 +79,7 @@ export class ForgotUsernameFormComponent extends Component {
 				<h2 className="forgot-username-form__title">
 					{ translate( 'Forgot your username?' ) }
 				</h2>
-				<p>{ translate( 'Enter your information to find your username.' ) }</p>
+				<p>{ translate( 'Enter the following information instead.' ) }</p>
 				<FormLabel>
 					{ translate( 'First Name' ) }
 					<FormInput
@@ -93,8 +107,7 @@ export class ForgotUsernameFormComponent extends Component {
 				{
 					requestError && (
 					<p className="forgot-username-form__error-message">
-						{ translate( 'We encountered some problems with that login information. ' +
-							'Please provide another one or try again later.' ) }
+						{ this.getErrorMessage( requestError ) }
 					</p> )
 				}
 				<Button
