@@ -72,7 +72,7 @@ class ReaderCombinedCardPost extends React.Component {
 
 	render() {
 		const { post, streamUrl, isDiscover, isSelected } = this.props;
-		const isLoading = true; //! post || post._state === 'pending';
+		const isLoading = ! post || post._state === 'pending';
 
 		if ( isLoading ) {
 			return <ReaderCombinedCardPostPlaceholder />;
