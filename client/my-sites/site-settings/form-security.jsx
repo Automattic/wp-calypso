@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 import wrapSettingsForm from './wrap-settings-form';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
+import Protect from './protect';
 import Sso from './sso';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
@@ -36,10 +37,12 @@ class SiteSettingsFormSecurity extends Component {
 		const {
 			fields,
 			handleAutosavingToggle,
-			jetpackSettingsUISupported,
 			handleSubmitForm,
 			isRequestingSettings,
 			isSavingSettings,
+			jetpackSettingsUISupported,
+			onChangeField,
+			setFieldValue,
 			siteId,
 			translate
 		} = this.props;
@@ -56,6 +59,15 @@ class SiteSettingsFormSecurity extends Component {
 			>
 				<QueryJetpackModules siteId={ siteId } />
 
+				{ this.renderSectionHeader( translate( 'Prevent brute force login attacks' ) ) }
+				<Protect
+					fields={ fields }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					onChangeField={ onChangeField }
+					setFieldValue={ setFieldValue }
+				/>
+
 				{ this.renderSectionHeader( translate( 'WordPress.com sign in' ), false ) }
 				<Sso
 					handleAutosavingToggle={ handleAutosavingToggle }
@@ -69,6 +81,8 @@ class SiteSettingsFormSecurity extends Component {
 }
 
 const getFormSettings = partialRight( pick, [
+	'protect',
+	'jetpack_protect_global_whitelist',
 	'sso',
 	'jetpack_sso_match_by_email',
 	'jetpack_sso_require_two_step',
