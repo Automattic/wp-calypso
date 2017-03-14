@@ -32,8 +32,8 @@ const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
 const themesMeta = {
 	'': {
 		title: 'WordPress Themes',
-		description: 'Beautiful, responsive, free and premium WordPress themes \
-			for your photography site, portfolio, magazine, business website, or blog.',
+		description: 'Beautiful, responsive, free and premium WordPress themes ' +
+			'for your photography site, portfolio, magazine, business website, or blog.',
 		canonicalUrl: 'https://wordpress.com/design',
 	},
 	free: {
