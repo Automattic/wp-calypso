@@ -23,7 +23,12 @@ import ThemesSelection from './themes-selection';
 import { addTracking } from './helpers';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getLastThemeQuery, getThemesFoundForQuery } from 'state/themes/selectors';
-import { isJetpackSiteMultiSite, hasJetpackSiteJetpackThemesExtendedFeatures } from 'state/sites/selectors';
+import {
+	canJetpackSiteManage,
+	hasJetpackSiteJetpackThemes,
+	hasJetpackSiteJetpackThemesExtendedFeatures,
+	isJetpackSiteMultiSite
+} from 'state/sites/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const ConnectedThemesSelection = connectOptions(
@@ -45,15 +50,16 @@ const ConnectedSingleSiteJetpack = connectOptions(
 		const {
 			analyticsPath,
 			analyticsPageTitle,
+			canManage,
 			emptyContent,
+			filter,
 			getScreenshotOption,
+			hasJetpackThemes,
 			showWpcomThemesList,
 			search,
-			site,
 			siteId,
-			wpcomTier,
-			filter,
-			vertical
+			vertical,
+			wpcomTier
 		} = props;
 		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
@@ -65,12 +71,12 @@ const ConnectedSingleSiteJetpack = connectOptions(
 					analyticsPageTitle={ analyticsPageTitle } />
 			);
 		}
-		if ( ! site.hasJetpackThemes ) {
+		if ( ! hasJetpackThemes ) {
 			return (
 				<JetpackUpgradeMessage siteId={ siteId } />
 			);
 		}
-		if ( ! site.canManage() ) {
+		if ( ! canManage ) {
 			return (
 				<JetpackManageDisabledMessage siteId={ siteId } />
 			);
@@ -147,6 +153,8 @@ export default connect(
 			emptyContent = ( ! siteThemesCount && ! wpcomThemesCount ) ? null : <div />;
 		}
 		return {
+			canManage: canJetpackSiteManage( state, siteId ),
+			hasJetpackThemes: hasJetpackSiteJetpackThemes( state, siteId ),
 			wpcomTier: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ? tier : 'free',
 			showWpcomThemesList,
 			emptyContent,
