@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { forEach, omit } from 'lodash';
+import { forEach, get, omit } from 'lodash';
 
 /**
  * Normalize settings for use in Redux.
@@ -18,6 +18,10 @@ export const normalizeSettings = ( settings ) => {
 				break;
 			case 'carousel_background_color':
 				memo[ key ] = settings [ key ] === '' ? 'black' : settings[ key ];
+				break;
+			case 'jetpack_protect_global_whitelist':
+				const whitelist = get( settings[ key ], [ 'local' ], [] );
+				memo[ key ] = whitelist.join( '\n' );
 				break;
 			default:
 				memo[ key ] = settings[ key ];
