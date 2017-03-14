@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { translate } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,7 +24,8 @@ import {
 	isWpcomTheme
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
-import { isJetpackSite } from 'state/sites/selectors';
+import { getSite, isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const ThanksModal = React.createClass( {
 	trackClick: trackClick.bind( null, 'current theme' ),
@@ -42,7 +44,7 @@ const ThanksModal = React.createClass( {
 	},
 
 	onCloseModal() {
-		this.props.clearActivated( this.props.site.ID );
+		this.props.clearActivated( this.props.siteId );
 		this.setState( { show: false } );
 	},
 
@@ -167,18 +169,20 @@ const ThanksModal = React.createClass( {
 } );
 
 export default connect(
-	( state, { site } ) => {
-		const currentThemeId = site && getActiveTheme( state, site.ID );
-		const currentTheme = currentThemeId && getCanonicalTheme( state, site.ID, currentThemeId );
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const siteUrl = get( getSite( state, siteId ), 'URL' );
+		const currentThemeId = getActiveTheme( state, siteId );
+		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
 
 		return {
 			currentTheme,
-			detailsUrl: site && getThemeDetailsUrl( state, currentThemeId, site.ID ),
-			customizeUrl: site && getThemeCustomizeUrl( state, currentThemeId, site.ID ),
-			forumUrl: site && getThemeForumUrl( state, currentThemeId, site.ID ),
-			visitSiteUrl: site && site.URL + ( isJetpackSite( state, site.ID ) ? '' : '?next=customize' ),
-			isActivating: !! ( site && isActivatingTheme( state, site.ID ) ),
-			hasActivated: !! ( site && hasActivatedTheme( state, site.ID ) ),
+			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
+			customizeUrl: getThemeCustomizeUrl( state, currentThemeId, siteId ),
+			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
+			visitSiteUrl: siteUrl + ( isJetpackSite( state, siteId ) ? '' : '?next=customize' ),
+			isActivating: !! ( isActivatingTheme( state, siteId ) ),
+			hasActivated: !! ( hasActivatedTheme( state, siteId ) ),
 			isThemeWpcom: isWpcomTheme( state, currentThemeId )
 		};
 	},

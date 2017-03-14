@@ -18,7 +18,7 @@ import ThemeShowcase from './theme-showcase';
 
 export default connectOptions(
 	( props ) => {
-		const { site, siteId, translate } = props;
+		const { siteId, translate } = props;
 
 		return (
 			<div>
@@ -33,9 +33,7 @@ export default connectOptions(
 				<ThemeShowcase { ...props } siteId={ siteId }>
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-					<ThanksModal
-						site={ site }
-						source={ 'list' } />
+					<ThanksModal source={ 'list' } />
 				</ThemeShowcase>
 			</div>
 		);
