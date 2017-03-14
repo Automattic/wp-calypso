@@ -176,7 +176,7 @@ export default connect(
 			detailsUrl: site && getThemeDetailsUrl( state, currentThemeId, site.ID ),
 			customizeUrl: site && getThemeCustomizeUrl( state, currentThemeId, site.ID ),
 			forumUrl: site && getThemeForumUrl( state, currentThemeId, site.ID ),
-			visitSiteUrl: site.URL + ( isJetpackSite( state, site.ID ) ? '' : '?next=customize' ),
+			visitSiteUrl: site && site.URL + ( isJetpackSite( state, site.ID ) ? '' : '?next=customize' ),
 			isActivating: !! ( site && isActivatingTheme( state, site.ID ) ),
 			hasActivated: !! ( site && hasActivatedTheme( state, site.ID ) ),
 			isThemeWpcom: isWpcomTheme( state, currentThemeId )
