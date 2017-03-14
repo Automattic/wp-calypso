@@ -63,7 +63,19 @@ class DisconnectJetpack extends Component {
 		} );
 	}
 	render() {
-		const { onStay, onDisconnect, isVisible, translate } = this.props;
+		const { onStay, onDisconnect, isVisible, translate, isBroken } = this.props;
+		if ( isBroken ) {
+			return (
+				<Dialog isVisible={ isVisible } baseClassName="disconnect-jetpack__dialog" >
+				<h1>{ translate( 'Disconnect Jetpack' ) }</h1>
+				<p className="disconnect-jetpack__highlight">{ translate( 'WordPress.com has not been able to react example.com for a while.' ) }</p>
+				<div className="disconnect-jetpack__button-wrap">
+					<Button primary scary onClick={ onDisconnect }>{ translate( 'Remove Site' ) }</Button>
+				</div>
+			</Dialog>
+			);
+		}
+
 		return (
 			<Dialog isVisible={ isVisible } baseClassName="disconnect-jetpack__dialog" >
 				<h1>{ translate( 'Disconnect Jetpack?' ) }</h1>
