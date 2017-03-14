@@ -118,6 +118,13 @@ function getStoreForSearch( storeId ) {
 	} );
 
 	function fetcher( query, callback ) {
+		switch ( storeId ) {
+			case 'suggested_search':
+				query.isSuggested = 'true';
+				break;
+			default:
+				query.isSuggested = 'false';
+		}
 		query.q = slug;
 		query.meta = 'site';
 		wpcomUndoc.readSearch( query, trainTracksProxyForStream( stream, callback ) );
