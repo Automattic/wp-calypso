@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -16,12 +16,10 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import ThemesList from 'components/themes-list';
 import { getSiteAdminUrl } from 'state/sites/selectors';
 
-const JetpackManageDisabledMessage = React.createClass( {
-	displayName: 'JetpackManageDisabledMessage',
-
-	clickOnActivate() {
+class JetpackManageDisabledMessage extends Component {
+	clickOnActivate = () => {
 		analytics.ga.recordEvent( 'Jetpack', 'Activate manage', 'Site', this.props.siteId );
-	},
+	}
 
 	renderMockThemes() {
 		const exampleThemesData = [
@@ -46,7 +44,7 @@ const JetpackManageDisabledMessage = React.createClass( {
 				onScreenshotClick= { noop }
 				onMoreButtonClick= { noop } />
 		);
-	},
+	}
 
 	render() {
 		return (
@@ -65,7 +63,7 @@ const JetpackManageDisabledMessage = React.createClass( {
 			</Main>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state, { siteId } ) => ( {
