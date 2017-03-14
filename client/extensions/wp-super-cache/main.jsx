@@ -8,6 +8,7 @@ import React, { PropTypes } from 'react';
  */
 import Main from 'components/main';
 import Navigation from './components/navigation';
+import Advanced from './components/advanced';
 import Easy from './components/easy';
 import { Tabs } from './constants';
 
@@ -15,7 +16,7 @@ const WPSuperCache = ( { site, tab } ) => {
 	const renderTab = () => {
 		switch ( tab ) {
 			case Tabs.ADVANCED:
-				break;
+				return <Advanced site={ site } />;
 			case Tabs.CDN:
 				break;
 			case Tabs.CONTENTS:
