@@ -29,7 +29,7 @@ export const progressMeta = ( { size: total, loaded } ) => ( { meta: { dataLayer
 
 const queueRequest = ( { dispatch }, action, next ) => {
 	const {
-		body = {},
+		body,
 		formData,
 		method: rawMethod,
 		onSuccess,
