@@ -445,15 +445,15 @@ export function installTheme( themeId, siteId ) {
 					siteId,
 					themeId
 				} );
-			} )
-			.then( () => {
+
+				// Install parent theme if theme requires one
 				if ( endsWith( themeId, '-wpcom' ) ) {
 					const parentThemeId = getWpcomParentThemeId(
 						getState(),
 						themeId.replace( '-wpcom', '' )
 					);
 					if ( parentThemeId ) {
-						dispatch( installTheme( parentThemeId + '-wpcom', siteId ) );
+						return dispatch( installTheme( parentThemeId + '-wpcom', siteId ) );
 					}
 				}
 			} )
