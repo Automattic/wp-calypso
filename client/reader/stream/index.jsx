@@ -186,7 +186,7 @@ const combineCards = ( postKeys ) => {
 	);
 	const sorted = reverse( sortBy( combined, getMomentForPostKey ) );
 	return sorted;
-}
+};
 
 function injectRecommendations( posts, recs = [] ) {
 	if ( ! recs || recs.length === 0 ) {
@@ -200,15 +200,16 @@ function injectRecommendations( posts, recs = [] ) {
 	}
 
 	let recIndex = 0;
-
+	let postsIndex = 0;
 	return flatMap( posts, ( post, index ) => {
-		if ( index && index % itemsBetweenRecs === 0 && recIndex < recs.length ) {
+		if ( index && postsIndex % itemsBetweenRecs === 0 && recIndex < recs.length ) {
 			const recBlock = {
 				isRecommendationBlock: true,
 				recommendations: recs.slice( recIndex, recIndex + RECS_PER_BLOCK ),
 				index: recIndex
 			};
 			recIndex += RECS_PER_BLOCK;
+			postsIndex += post.isCombination ? clamp( post.postIds.length, 5 ) : 1;
 			return [
 				recBlock,
 				post
@@ -265,13 +266,12 @@ class ReaderStream extends React.Component {
 			}
 		}
 
-		let items = this.state && this.state.items;
-		if ( ! this.state || posts !== this.state.posts || recs !== this.state.recs ) {
-			items = injectRecommendations( posts, recs );
-		}
-
+		let items;
 		if ( this.props.shouldCombineCards ) {
-			items = combineCards( items, this.props.postsStore );
+			items = combineCards( posts );
+		}
+		if ( ! this.state || posts !== this.state.posts || recs !== this.state.recs ) {
+			items = injectRecommendations( items, recs );
 		}
 
 		return {

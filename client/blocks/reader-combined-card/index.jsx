@@ -50,10 +50,10 @@ const ReaderCombinedCard = ( { posts, site, feed, selectedPostKey, onClick, isDi
 								count: posts.length
 							}
 						} ) }
-					{ thereWereMorePosts &&
-						<p> { translate( "only displaying 5 posts, read more at the site!" ) } </p>
-					}
 					</p>
+					{ thereWereMorePosts &&
+						<p> { translate( "there were more than 5 posts, read more at the site" ) } </p>
+					}
 				</div>
 			</header>
 			<ul className="reader-combined-card__post-list">
