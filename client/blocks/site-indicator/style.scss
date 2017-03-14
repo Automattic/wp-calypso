@@ -1,0 +1,115 @@
+/**
+ * Site Indicator
+ */
+
+.site-indicator {
+	align-self: center;
+	margin-right: 16px;
+}
+
+.site-indicator__button {
+	align-self: center;
+	background: $gray-light;
+	border: none;
+	border-radius: 50%;
+	box-shadow: none;
+	color: $gray;
+	cursor: default;
+	display: block;
+	width: 26px;
+	height: 26px;
+	padding: 2px;
+	position: relative;
+	text-align: center;
+	text-transform: none;
+	z-index: z-index( 'root', '.site-indicator__button' );
+	overflow: initial;
+	line-height: 28px;
+
+	&:focus {
+		box-shadow: none;
+	}
+	.accessible-focus &:focus {
+		outline: 0;
+		border: 1px dotted $blue-wordpress;
+		&::before {
+			top: 4px;
+			left: 4px;
+		}
+	}
+
+	.is-action & {
+		cursor: pointer;
+	}
+
+	.is-update & {
+		background: $alert-yellow;
+		color: $white;
+	}
+
+	.is-warning & {
+		background: $alert-yellow;
+		color: $white;
+	}
+
+	.is-error & {
+		background: $alert-red;
+		color: $white;
+	}
+
+	.is-expanded & {
+		.accessible-focus &:focus {
+			border: 1px dotted $white;
+			&::before {
+				top: 6px;
+				left: 6px;
+			}
+		}
+		.site-indicator__button {
+			position: absolute;
+				right: 0;
+		}
+	}
+
+	.notouch & {
+		&:hover {
+			cursor: pointer;
+		}
+	}
+}
+
+// Displayed on top of a Site element once the user clicks on the button
+.site-indicator__message {
+	color: $white;
+	font-size: 12px;
+	line-height: 1.4;
+	padding: 5px 16px 5px 16px;
+	position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	display: flex;
+	justify-content: space-between;
+
+	.is-warning &,
+	.is-update & {
+		background: $alert-yellow;
+	}
+	.is-error & {
+		background: $alert-red;
+	}
+}
+.site-indicator__action {
+	align-self: center;
+	display: inline-block;
+	vertical-align: middle;
+
+	// Links within the action message
+	a,
+	.button.is-link {
+		border-bottom: 1px solid rgba( 255, 255, 255, 0.6 );
+		color: $white;
+		text-decoration: none;
+	}
+}
