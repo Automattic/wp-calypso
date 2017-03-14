@@ -3,7 +3,6 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import { head } from 'lodash';
 
 /**
  * Internal dependencies

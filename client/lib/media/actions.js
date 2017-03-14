@@ -20,12 +20,6 @@ var Dispatcher = require( 'dispatcher' ),
  */
 const MediaActions = {
 	_fetching: {},
-
-	/**
-	 * The Redux object is passed from outside to be used in the library.
-	 * This is a Temporary™ measure until the library is fully reduxified.
-	 */
-	_reduxStore: null,
 };
 
 /**
