@@ -254,6 +254,9 @@ export class EditorMediaModal extends Component {
 	handleUpdatePoster = ( { ID, poster } ) => {
 		const { site } = this.props;
 
+		// Photon does not support URLs with a querystring component.
+		poster = poster.split( '?' )[ 0 ];
+
 		if ( site ) {
 			MediaActions.edit( site.ID, {
 				ID,
