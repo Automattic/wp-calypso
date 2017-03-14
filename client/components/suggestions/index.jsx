@@ -100,7 +100,7 @@ const Suggestions = React.createClass( {
 				break;
 			case 'Enter' :
 				if ( this.state.suggestionPosition !== -1 ) {
-					this.props.suggest( this.state.currentSuggestion );
+					this.props.suggest( this.state.currentSuggestion + ' ' );
 				}
 				break;
 		}
