@@ -21,6 +21,7 @@ import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import { getStreamUrl } from 'reader/route';
 import ReaderAuthorLink from 'blocks/reader-author-link';
 import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
+import { decodeEntities } from 'lib/formatting';
 
 class PostByline extends React.Component {
 
@@ -79,7 +80,7 @@ class PostByline extends React.Component {
 							author={ post.author }
 							siteUrl={ streamUrl }
 							post={ post }>
-							{ post.author.name }
+							{ decodeEntities( post.author.name ) }
 						</ReaderAuthorLink>
 						}
 						{ shouldDisplayAuthor && showSiteName && ', ' }
