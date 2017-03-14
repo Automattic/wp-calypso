@@ -107,6 +107,14 @@
 
 }
 
+.happychat__notice {
+	padding: 12px;
+	border-top: 1px solid lighten( $gray, 20% );
+	color: $white;
+	background-color: lighten( $gray-dark, 20% );
+	margin: 0;
+}
+
 .happychat__welcome {
 	flex: 1 auto;
 	padding: 16px;
