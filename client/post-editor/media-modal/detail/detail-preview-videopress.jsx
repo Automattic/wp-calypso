@@ -37,6 +37,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 
 	componentDidMount() {
 		this.loadInitializeScript();
+		window.addEventListener( 'message', this.receiveMessage, false );
 	}
 
 	componentWillUnmount() {
@@ -94,29 +95,31 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 				width: item.width,
 			} );
 		}
-
-		if ( this.player && this.player.state ) {
-			this.player.state.on( 'change state', this.onPlayerStateChange );
-		}
 	};
 
-	onPlayerStateChange = () => {
-		if ( ! this.player || ! this.player.state ) {
+	receiveMessage = ( event ) => {
+		if ( event.origin && event.origin !== location.origin ) {
 			return;
 		}
 
-		if ( 'loaded' === this.player.state.state() ) {
+		const data = 'string' === typeof event.data
+			? JSON.parse( event.data )
+			: event.data;
+
+		if ( ! data || 'videopress_loading_state' !== data.event || ! ( 'state' in data ) ) {
+			return;
+		}
+
+		if ( 'loaded' === data.state ) {
 			this.props.setVideoHasLoaded();
 		}
 	}
 
 	destroy() {
+		window.removeEventListener( 'message', this.receiveMessage );
+
 		if ( ! this.player ) {
 			return;
-		}
-
-		if ( this.player.state ) {
-			this.player.state.removeListener( 'change state', this.onPlayerStateChange );
 		}
 
 		this.player.destroy();
