@@ -105,7 +105,7 @@ class PlanFeatures extends Component {
 
 	renderMobileView() {
 		const {
-			isCurrentPlanPaid, canPurchase, translate, planProperties, isInSignup, isLandingPage, intervalType, site, basePlansPath
+			canPurchase, translate, planProperties, isInSignup, isLandingPage, intervalType, site, basePlansPath
 		} = this.props;
 
 		// move any free plan to last place in mobile view
@@ -138,10 +138,7 @@ class PlanFeatures extends Component {
 				isPlaceholder
 			} = properties;
 			let { rawPrice, discountPrice } = properties;
-			if ( abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' && ! isCurrentPlanPaid && relatedMonthlyPlan && relatedMonthlyPlan.raw_price ) {
-				discountPrice = rawPrice;
-				rawPrice = relatedMonthlyPlan.raw_price;
-			}
+
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
@@ -158,7 +155,6 @@ class PlanFeatures extends Component {
 						intervalType={ intervalType }
 						site={ site }
 						basePlansPath={ basePlansPath }
-						hideMonthly={ abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' && ! isCurrentPlanPaid }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 					/>
 					<p className="plan-features__description">
@@ -194,7 +190,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderPlanHeaders() {
-		const { isCurrentPlanPaid, planProperties, intervalType, site, basePlansPath } = this.props;
+		const { planProperties, intervalType, site, basePlansPath } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -209,10 +205,7 @@ class PlanFeatures extends Component {
 			} = properties;
 			let { rawPrice, discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
-			if ( abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' && ! isCurrentPlanPaid && relatedMonthlyPlan && relatedMonthlyPlan.raw_price ) {
-				discountPrice = rawPrice;
-				rawPrice = relatedMonthlyPlan.raw_price;
-			}
+
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesHeader
@@ -230,7 +223,6 @@ class PlanFeatures extends Component {
 						site={ site }
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
-						hideMonthly={ abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' && ! isCurrentPlanPaid }
 					/>
 				</td>
 			);
@@ -473,9 +465,7 @@ export default connect(
 				const popular = isPopular( plan ) && ! isPaid;
 				const newPlan = isNew( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
-				const showMonthlyPrice = abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' && ! isPaid
-					? showMonthly
-					: ! relatedMonthlyPlan && showMonthly;
+				const showMonthlyPrice = ! relatedMonthlyPlan && showMonthly;
 
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
 					isPlaceholder = true;
@@ -491,9 +481,7 @@ export default connect(
 						selectedSiteId,
 						plan,
 						{
-							isMonthly: abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' && ! isPaid
-								? true
-								: showMonthly
+							isMonthly: showMonthly
 						} ),
 					features: getPlanFeaturesObject( planConstantObj.getFeatures( abtest ) ),
 					onUpgradeClick: onUpgradeClick
@@ -529,8 +517,7 @@ export default connect(
 
 		return {
 			canPurchase,
-			planProperties: planProperties,
-			isCurrentPlanPaid: isPaid
+			planProperties: planProperties
 		};
 	},
 	{

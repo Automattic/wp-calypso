@@ -73,14 +73,12 @@ class PlanFeaturesHeader extends Component {
 
 	getBillingTimeframe() {
 		const {
-			hideMonthly,
 			billingTimeFrame,
 			discountPrice,
 			isPlaceholder,
 			site,
 			translate,
-			isSiteAT,
-			currentSitePlan
+			isSiteAT
 		} = this.props;
 
 		const isDiscounted = !! discountPrice;
@@ -92,8 +90,7 @@ class PlanFeaturesHeader extends Component {
 		if (
 			isSiteAT ||
 			! site.jetpack ||
-			this.props.planType === PLAN_JETPACK_FREE ||
-			( hideMonthly && ( ! currentSitePlan || currentSitePlan.productSlug === PLAN_JETPACK_FREE ) )
+			this.props.planType === PLAN_JETPACK_FREE
 		) {
 			return (
 				<p className={ timeframeClasses }>
@@ -168,7 +165,6 @@ class PlanFeaturesHeader extends Component {
 
 	getPlanFeaturesPrices() {
 		const {
-			hideMonthly,
 			currencyCode,
 			discountPrice,
 			rawPrice,
@@ -197,7 +193,7 @@ class PlanFeaturesHeader extends Component {
 			);
 		}
 
-		if ( relatedMonthlyPlan && ! hideMonthly ) {
+		if ( relatedMonthlyPlan ) {
 			const originalPrice = relatedMonthlyPlan.raw_price * 12;
 			return (
 				<span className="plan-features__header-price-group">
