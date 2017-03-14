@@ -125,7 +125,6 @@ export const SeoForm = React.createClass( {
 			// are in progress and haven't yet been saved
 			// to the server
 			dirtyFields: Set(),
-			isRefreshingSiteData: true,
 			invalidatedSiteObject: this.props.selectedSite,
 		};
 	},
@@ -152,7 +151,6 @@ export const SeoForm = React.createClass( {
 				...stateForSite( nextSite ),
 				seoTitleFormats: nextProps.storedTitleFormats,
 				invalidatedSiteObject: nextSite,
-				isRefreshingSiteData: true,
 				dirtyFields: Set(),
 			}, this.refreshCustomTitles );
 		}
@@ -162,7 +160,7 @@ export const SeoForm = React.createClass( {
 			seoTitleFormats: nextProps.storedTitleFormats,
 		};
 
-		if ( this.state.isRefreshingSiteData && ! isFetchingSite ) {
+		if ( ! isFetchingSite ) {
 			nextState = {
 				...nextState,
 				seoTitleFormats: nextProps.storedTitleFormats,
@@ -170,7 +168,7 @@ export const SeoForm = React.createClass( {
 			};
 		}
 
-		if ( isFetchingSite ) {
+		if ( dirtyFields.has( 'seoTitleFormats' ) ) {
 			nextState = omit( nextState, [ 'seoTitleFormats' ] );
 		}
 
@@ -178,8 +176,7 @@ export const SeoForm = React.createClass( {
 		nextState = omit( nextState, dirtyFields.toArray() );
 
 		this.setState( {
-			...nextState,
-			isRefreshingSiteData: isFetchingSite,
+			...nextState
 		} );
 	},
 
@@ -240,8 +237,6 @@ export const SeoForm = React.createClass( {
 			translate,
 		} = this.props;
 
-		const { dirtyFields } = this.state;
-
 		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
 			event.preventDefault();
 		}
@@ -270,8 +265,7 @@ export const SeoForm = React.createClass( {
 		}
 
 		this.setState( {
-			isSubmittingForm: true,
-			isRefreshingSiteData: dirtyFields.has( 'seoTitleFormats' ),
+			isSubmittingForm: true
 		} );
 
 		// We need to be careful here and only
@@ -347,7 +341,6 @@ export const SeoForm = React.createClass( {
 
 		if ( selectedSite && selectedSite.ID ) {
 			this.setState( {
-				isRefreshingSiteData: true,
 				invalidatedSiteObject: selectedSite,
 			}, () => refreshSiteData( selectedSite.ID ) );
 		}
@@ -381,6 +374,7 @@ export const SeoForm = React.createClass( {
 			showAdvancedSeo,
 			showWebsiteMeta,
 			site,
+			isFetchingSite,
 			isSeoToolsActive,
 			isVerificationToolsActive,
 			translate,
@@ -396,7 +390,6 @@ export const SeoForm = React.createClass( {
 		const {
 			isSubmittingForm,
 			isFetchingSettings,
-			isRefreshingSiteData,
 			frontPageMetaDescription,
 			showPasteError = false,
 			hasHtmlTagError = false,
@@ -531,7 +524,7 @@ export const SeoForm = React.createClass( {
 							</Card>
 							<Card>
 								<MetaTitleEditor
-									disabled={ isRefreshingSiteData || isSeoDisabled }
+									disabled={ isFetchingSite || isSeoDisabled }
 									onChange={ this.updateTitleFormats }
 									titleFormats={ this.state.seoTitleFormats }
 								/>
