@@ -942,7 +942,7 @@ describe( 'index', function() {
 		it( 'strips empty elements and leading brs', function( done ) {
 			assertExcerptBecomes( `<br>
 <p>&nbsp;</p>
-<p class="wp-caption-text">caption</p>
+<p class="wp-caption">caption</p>
 <p><img src="http://example.com/image.jpg"></p>
 <p><a href="http://wikipedia.org">Giraffes</a> are <br>great</p>
 <p></p>`, '<p>Giraffes are <br>great</p>', done );
