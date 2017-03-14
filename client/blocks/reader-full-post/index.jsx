@@ -294,7 +294,7 @@ export class FullPostView extends React.Component {
 		}
 
 		const externalHref = isDiscoverPost( referralPost ) ? referralPost.URL : post.URL;
-		const isLoading = ! post || post._state === 'pending';
+		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
 
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
