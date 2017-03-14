@@ -132,7 +132,6 @@ const ThemeShowcase = React.createClass( {
 
 	render() {
 		const {
-			site,
 			siteId,
 			options,
 			getScreenshotOption,
@@ -156,7 +155,6 @@ const ThemeShowcase = React.createClass( {
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle } />
 				<StickyPanel>
 					<ThemesSearchCard
-						site={ site }
 						onSearch={ this.doSearch }
 						search={ this.prependFilterKeys() + search }
 						tier={ tier }

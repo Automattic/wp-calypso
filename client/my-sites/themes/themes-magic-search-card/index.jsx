@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import debounce from 'lodash/debounce';
+import { connect } from 'react-redux';
+import { debounce } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -16,6 +17,8 @@ import { isMobile } from 'lib/viewport';
 import { filterIsValid, getTaxonomies, } from '../theme-filters.js';
 import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
+import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class ThemesMagicSearchCard extends React.Component {
 	constructor( props ) {
@@ -184,7 +187,7 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 
 	render() {
-		const isJetpack = this.props.site && this.props.site.jetpack;
+		const { isJetpack } = this.props;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 		const { translate } = this.props;
 
@@ -259,14 +262,19 @@ class ThemesMagicSearchCard extends React.Component {
 ThemesMagicSearchCard.propTypes = {
 	tier: PropTypes.string,
 	select: PropTypes.func.isRequired,
-	site: PropTypes.object,
+	siteId: PropTypes.number,
 	onSearch: PropTypes.func.isRequired,
 	search: PropTypes.string,
 	translate: PropTypes.func.isRequired,
+	isJetpack: PropTypes.bool
 };
 
 ThemesMagicSearchCard.defaultProps = {
 	tier: 'all',
 };
 
-export default localize( ThemesMagicSearchCard );
+export default connect(
+	( state ) => ( {
+		isJetpack: isJetpackSite( state, getSelectedSiteId( state ) )
+	} )
+)( localize( ThemesMagicSearchCard ) );
