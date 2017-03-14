@@ -29,6 +29,7 @@
 		"manage/edit-user": true,
 		"manage/import/medium": true,
 		"manage/jetpack": true,
+		"manage/media": true,
 		"manage/menus": true,
 		"manage/menus-jetpack": true,
 		"manage/option_sync_non_public_post_stati": false,
