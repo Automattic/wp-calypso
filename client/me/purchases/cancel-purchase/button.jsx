@@ -91,7 +91,7 @@ const CancelPurchaseButton = React.createClass( {
 				next: {
 					action: 'next',
 					disabled: this.state.isRemoving || this.isSurveyIncomplete(),
-					label: this.translate( 'Next' ),
+					label: this.translate( 'Next Step' ),
 					onClick: this.changeSurveyStep
 				},
 				prev: {
