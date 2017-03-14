@@ -8,7 +8,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormSecurity from 'my-sites/site-settings/form-security';
-import JetpackProtect from 'my-sites/site-settings/form-jetpack-protect';
 import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 
@@ -48,7 +47,6 @@ const SiteSettingsSecurity = ( { site, translate } ) => {
 
 	return (
 		<div>
-			<JetpackProtect site={ site } />
 			<JetpackMonitor site={ site } />
 			<FormSecurity />
 		</div>
