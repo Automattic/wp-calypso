@@ -128,19 +128,32 @@ if ( calypsoEnv === 'desktop' ) {
 		} )
 	);
 
-	// this walks all of the chunks and finds modules that exist in at least a quarter of them.
-	// It moves those modules into a new "common" chunk, since most of the app will need to load them.
-	//
-	// Ideally we'd push these things either up into the build-env chunk, or into vendor, but there's no
-	// great way to do that yet.
-	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( {
-		children: true,
-		minChunks: Math.floor( sectionCount * 0.25 ),
-		async: true,
-		// no 'name' property on purpose, as that's what tells the plugin to walk all of the chunks looking
-		// for common modules
-		filename: 'commons.[chunkhash].js'
-	} ) );
+	// walk each group and make a commons chunk for it
+	const groups = sections.reduce( function( groups, section ) {
+		if ( ! section.group ) {
+			return groups;
+		}
+		const modulesForGroup = groups.get( section.group ) || new Set();
+		modulesForGroup.add( section.module );
+		groups.set( section.group, modulesForGroup );
+		return groups;
+	}, new Map() );
+
+	groups.forEach( function( modules, group ) {
+		const mods = Array.from( modules );
+		console.log( 'building commons for ' + group + ': ' + mods );
+		if ( group && modules.size >= 2 ) {
+			const filename = group + '-commons.[chunkhash].js'
+			console.log( filename );
+			webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( {
+				//filename: filename,
+				chunks: mods,
+				minChunks: 2,
+				async: true,
+				children: true
+			} ) );
+		}
+	} );
 
 	// Somewhat badly named, this is our custom chunk loader that knows about sections
 	// and our loading notification infrastructure
