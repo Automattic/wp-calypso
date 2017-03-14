@@ -78,7 +78,7 @@ class MasterbarDrafts extends Component {
 					<QueryPosts
 						siteId={ selectedSite.ID }
 						query={ this.props.draftsQuery } />
-					<Site site={ selectedSite } />
+					<Site compact site={ selectedSite } />
 					{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
 					{ isLoading && <Draft isPlaceholder /> }
 					{ this.props.draftCount > 6 &&
