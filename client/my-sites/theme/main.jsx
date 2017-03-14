@@ -93,11 +93,8 @@ const ThemeSheet = React.createClass( {
 	},
 
 	getDefaultProps() {
-		// The defaultOption default prop is surprisingly important, see the long
-		// comment near the connect() function at the bottom of this file.
 		return {
-			section: '',
-			defaultOption: {}
+			section: ''
 		};
 	},
 
@@ -634,29 +631,6 @@ const ThemeSheetWithOptions = ( props ) => {
 };
 
 export default connect(
-	/*
-	 * A number of the props that this mapStateToProps function computes are used
-	 * by ThemeSheetWithOptions to compute defaultOption. After a state change
-	 * triggered by an async action, connect()ed child components are, quite
-	 * counter-intuitively, updated before their connect()ed parents (this is
-	 * https://github.com/reactjs/redux/issues/1415), and might be fixed by
-	 * react-redux 5.0.
-	 * For this reason, after e.g. activating a theme in single-site mode,
-	 * first the ThemeSheetWithOptions component's (child) connectOptions component
-	 * will update in response to the currently displayed theme being activated.
-	 * Doing so, it will filter and remove the activate option (adding customize
-	 * instead). However, since the parent connect()ed-ThemeSheetWithOptions will
-	 * only react to the state change afterwards, there is a brief moment when
-	 * connectOptions still receives "activate" as its defaultOption prop, when
-	 * activate is no longer part of its filtered options set, hence passing on
-	 * undefined as the defaultOption object prop for its child. For the theme
-	 * sheet, which eventually gets that defaultOption object prop, this means
-	 * we must be careful to not accidentally access any attribute of that
-	 * defaultOption prop. Otherwise, there will be an error that will prevent the
-	 * state update from finishing properly, hence not updating defaultOption at all.
-	 * The solution to this incredibly intricate issue is simple: Give ThemeSheet
-	 * a valid defaultProp for defaultOption.
-	 */
 	( state, { id } ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
