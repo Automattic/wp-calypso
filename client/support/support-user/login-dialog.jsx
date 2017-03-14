@@ -23,41 +23,29 @@ class SupportUserLoginDialog extends Component {
 		this.state = { password: '' };
 	}
 
-	onSubmit() {
+	onSubmit = () => {
 		this.props.onChangeUser( this.props.username, this.state.password );
 		this.setState( { password: '' } );
 	}
 
-	onCancel() {
+	onCancel = () => {
 		this.setState( { password: '' } );
 		this.props.toggleDialog();
 	}
 
-	onEnterKey( event ) {
-		event.preventDefault();
-
-		// Next action depends on which text field is active
-		switch ( event.target.name ) {
-			case 'supportUser':
-				this.supportPasswordInput.focus();
-				break;
-			case 'supportPassword':
-				this.onSubmit();
-				break;
-		}
-	}
-
-	onEscapeKey( event ) {
-		event.preventDefault();
-		this.onCancel();
-	}
-
 	onInputKeyDown = ( event ) => {
-		switch ( event.key ) {
-			case 'Enter':
-				return this.onEnterKey( event );
-			case 'Escape':
-				return this.onEscapeKey( event );
+		if ( event.key === 'Enter' ) {
+			event.preventDefault();
+
+			// Next action depends on which text field is active
+			switch ( event.target.name ) {
+				case 'supportUser':
+					this.supportPasswordInput.focus();
+					break;
+				case 'supportPassword':
+					this.onSubmit();
+					break;
+			}
 		}
 	}
 
@@ -88,12 +76,12 @@ class SupportUserLoginDialog extends Component {
 	}
 
 	render() {
-		const { isVisible, isBusy, onCloseDialog, errorMessage } = this.props;
+		const { isVisible, isBusy, errorMessage, username } = this.props;
 
 		const buttons = [
 			<FormButton
 				key="supportuser"
-				disabled={ isBusy }
+				disabled={ isBusy || ! username }
 				onClick={ this.onSubmit }>
 					{ isBusy ? 'Switching...' : 'Change user' }
 			</FormButton>,
@@ -101,7 +89,7 @@ class SupportUserLoginDialog extends Component {
 				key="cancel"
 				type="button"
 				isPrimary={ false }
-				onClick={ onCloseDialog }>
+				onClick={ this.onCancel }>
 					Cancel
 			</FormButton>
 		];
@@ -111,7 +99,7 @@ class SupportUserLoginDialog extends Component {
 		return (
 			<Dialog
 				isVisible={ isVisible }
-				onClose={ onCloseDialog }
+				onClose={ this.onCancel }
 				buttons={ buttons }
 				autoFocus={ false }
 				additionalClassNames="support-user__login-dialog">
