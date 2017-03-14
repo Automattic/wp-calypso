@@ -60,21 +60,19 @@ const ConnectedSingleSiteJetpack = connectOptions(
 		if ( ! jetpackEnabled ) {
 			return (
 				<JetpackReferrerMessage
-					site={ site }
+					siteId={ siteId }
 					analyticsPath={ analyticsPath }
 					analyticsPageTitle={ analyticsPageTitle } />
 			);
 		}
 		if ( ! site.hasJetpackThemes ) {
 			return (
-				<JetpackUpgradeMessage
-					site={ site } />
+				<JetpackUpgradeMessage siteId={ siteId } />
 			);
 		}
 		if ( ! site.canManage() ) {
 			return (
-				<JetpackManageDisabledMessage
-					site={ site } />
+				<JetpackManageDisabledMessage siteId={ siteId } />
 			);
 		}
 

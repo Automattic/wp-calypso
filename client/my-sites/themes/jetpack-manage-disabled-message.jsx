@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import noop from 'lodash/noop';
+import React from 'react';
+import { connect } from 'react-redux';
+import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,19 +14,13 @@ import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import ThemesList from 'components/themes-list';
+import { getSiteAdminUrl } from 'state/sites/selectors';
 
 const JetpackManageDisabledMessage = React.createClass( {
 	displayName: 'JetpackManageDisabledMessage',
 
-	propTypes: {
-		site: PropTypes.shape( {
-			ID: PropTypes.number.isRequired,
-			options: PropTypes.shape( { admin_url: PropTypes.string.isRequired } ).isRequired
-		} ).isRequired
-	},
-
 	clickOnActivate() {
-		analytics.ga.recordEvent( 'Jetpack', 'Activate manage', 'Site', this.props.site ? this.props.site.ID : null );
+		analytics.ga.recordEvent( 'Jetpack', 'Activate manage', 'Site', this.props.siteId );
 	},
 
 	renderMockThemes() {
@@ -45,7 +40,7 @@ const JetpackManageDisabledMessage = React.createClass( {
 				id: theme.slug,
 				name: theme.name,
 				screenshot: 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + theme.slug + '/screenshot.png?w=660'
-			}
+			};
 		} );
 		return (
 			<ThemesList themes={ themes }
@@ -62,10 +57,10 @@ const JetpackManageDisabledMessage = React.createClass( {
 				<JetpackManageErrorPage
 					template="optInManage"
 					title={ this.props.translate( 'Looking to manage this site\'s themes?' ) }
-					siteId={ this.props.site.ID }
+					siteId={ this.props.siteId }
 					section="themes"
 					secondaryAction={ this.props.translate( 'Open Site Theme Browser' ) }
-					secondaryActionURL={ this.props.site.options.admin_url + 'themes.php' }
+					secondaryActionURL={ this.props.adminUrl }
 					secondaryActionTarget="_blank"
 					actionCallback={ this.clickOnActivate }
 					featureExample={ this.renderMockThemes() } />
@@ -74,4 +69,8 @@ const JetpackManageDisabledMessage = React.createClass( {
 	}
 } );
 
-export default localize( JetpackManageDisabledMessage );
+export default connect(
+	( state, { siteId } ) => ( {
+		adminUrl: getSiteAdminUrl( state, siteId, 'themes.php' )
+	} )
+)( localize( JetpackManageDisabledMessage ) );
