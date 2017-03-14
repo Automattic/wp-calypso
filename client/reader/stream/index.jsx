@@ -118,19 +118,6 @@ function combine( postKey1, postKey2 ) {
 	};
 }
 
-// const combineCards = ( postKeys ) => postKeys.reduce(
-// 	( accumulator, postKey ) => {
-// 		const lastPostKey = last( accumulator );
-// 		if ( sameSite( lastPostKey, postKey ) ) {
-// 			accumulator[ accumulator.length - 1 ] = combine( last( accumulator ), postKey );
-// 		} else {
-// 			accumulator.push( postKey );
-// 		}
-// 		return accumulator;
-// 	},
-// 	[]
-// );
-
 const getMomentForPostKey = postKey =>  {
 	window.getMomentForPostKey = getMomentForPostKey;
 	let post = PostStore.get( postKey );
@@ -154,14 +141,14 @@ const getMomentForPostKey = postKey =>  {
 
 /* Combine all cards from the same site that are within the same 2 hour span
  */
-const CARDS_PER_DAY_PER_SITE = 4; // max combined card only counts as one card
-const HOURS_PER_CARD = 24 / CARDS_PER_DAY_PER_SITE;
+// const CARDS_PER_DAY_PER_SITE = 4; // max combined card only counts as one card
+const MINUTES_PER_CARD = 10;
 const combineCards = ( postKeys ) => {
 	window.moment = moment;
 	const timeSliced = groupBy( postKeys, postKey => {
 		const moment = getMomentForPostKey( postKey );
-		moment && moment.millisecond( 0 ).second( 0 ).minute( 0 ).hour(
-			Math.floor( moment.hour() / HOURS_PER_CARD ) * HOURS_PER_CARD
+		moment && moment.millisecond( 0 ).second( 0 ).minute(
+			Math.floor( moment.minute() / MINUTES_PER_CARD ) * MINUTES_PER_CARD
 		)
 		return moment;
 	} );
