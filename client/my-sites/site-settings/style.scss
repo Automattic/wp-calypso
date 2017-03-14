@@ -351,21 +351,18 @@
 	float: right;
 }
 
-.site-settings__date-time-format-custom {
-	.form-radio {
-		display: none;
-		margin-top: 12px;
-	}
-	&.is-custom .form-radio {
-		display: block;
-	}
+.site-settings__date-time-format {
+	margin-top: -16px;
 
-	.form-text-input {
-		margin: 0 12px;
-		width: 100px;
+	.site-settings__date-time-format-title {
+		color: $gray-text;
+		font-size: 16px;
+		line-height: 24px;
+		padding-bottom: 10px;
 	}
-
-	.site-settings__date-time-format-custom-preview {
-		white-space: nowrap;
+	.site-settings__date-time-format-info {
+		color: $gray-text-min;
+		font-size: 13px;
+		font-style: italic;
 	}
 }
