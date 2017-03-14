@@ -138,7 +138,7 @@ class ThemesMagicSearchCard extends React.Component {
 
 	searchTokens = ( input ) => {
 		//We are not able to scroll overlay on Edge so just create empty div
-		if ( /(Edge)/.test( global.window.navigator.userAgent ) ) {
+		if ( global.window && /(Edge)/.test( global.window.navigator.userAgent ) ) {
 			return <div />;
 		}
 
