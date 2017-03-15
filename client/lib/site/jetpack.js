@@ -190,8 +190,8 @@ JetpackSite.prototype.updateWordPress = function( onError, onSuccess ) {
 		}
 
 		// Decrease count
-		this.update.wordpress--;
-		this.update.total--;
+		this.updates.wordpress--;
+		this.updates.total--;
 
 		this.emit( 'change' );
 	}.bind( this ) );

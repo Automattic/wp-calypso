@@ -55,9 +55,6 @@ Site.prototype.attributes = function( attributes ) {
 		if ( attributes.hasOwnProperty( prop ) ) {
 			this[ prop ] = attributes[ prop ];
 		}
-		if ( 'updates' === prop ) {
-			this.update = attributes[ prop ];
-		}
 	}
 	this.setMaxListeners( 40 );
 	this.updateComputedAttributes();
