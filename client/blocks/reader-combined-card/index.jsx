@@ -18,6 +18,7 @@ import { keysAreEqual, keyForPost } from 'lib/feed-stream-store/post-key';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import { recordTrack } from 'reader/stats';
+import FollowButton from 'reader/follow-button';
 
 class ReaderCombinedCard extends React.Component {
 
@@ -28,11 +29,14 @@ class ReaderCombinedCard extends React.Component {
 		onClick: React.PropTypes.func,
 		isDiscover: React.PropTypes.bool,
 		postKey: React.PropTypes.object,
-		selectedPostKey: React.PropTypes.object
+		selectedPostKey: React.PropTypes.object,
+		showFollowButton: React.PropTypes.bool,
+		followSource: React.PropTypes.string,
 	}
 
 	static defaultProps = {
 		isDiscover: false,
+		showFollowButton: false,
 	}
 
 	componentDidMount() {
@@ -66,6 +70,7 @@ class ReaderCombinedCard extends React.Component {
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteName = siteNameFromSiteAndPost( site, posts[ 0 ] );
 		const isSelectedPost = post => keysAreEqual( keyForPost( post ), selectedPostKey );
+		const followUrl = feed && feed.URL || site && site.URL;
 
 		return (
 			<Card className="reader-combined-card">
@@ -92,6 +97,12 @@ class ReaderCombinedCard extends React.Component {
 							} ) }
 						</p>
 					</div>
+					{ this.props.showFollowButton && followUrl &&
+						<FollowButton
+							siteUrl={ followUrl }
+							followSource={ this.props.followSource }
+						/>
+					}
 				</header>
 				<ul className="reader-combined-card__post-list">
 					{ posts.map( post => (

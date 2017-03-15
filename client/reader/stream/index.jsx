@@ -32,7 +32,7 @@ import XPostHelper from 'reader/xpost-helper';
 import RecommendedPosts from './recommended-posts';
 import PostLifecycle from './post-lifecycle';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
-import { IN_STREAM_RECOMMENDATION } from 'reader/follow-button/follow-sources';
+import { IN_STREAM_RECOMMENDATION, COMBINED_CARD } from 'reader/follow-button/follow-sources';
 import { showSelectedPost } from 'reader/utils';
 import getBlockedSites from 'state/selectors/get-blocked-sites';
 import CombinedCard from 'blocks/reader-combined-card';
@@ -545,6 +545,8 @@ class ReaderStream extends React.Component {
 						key={ `combined-card-${ index }` }
 						onClick={ this.handleConnectedCardClick }
 						selectedPostKey={ selectedPostKey }
+						followSource={ COMBINED_CARD }
+						showFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 					/>;
 		}
 

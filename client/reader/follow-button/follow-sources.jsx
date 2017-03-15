@@ -5,4 +5,5 @@ export default {
 	SEARCH_RESULTS: 'search-results',
 	READER_SUBSCRIPTIONS: 'reader-subscriptions',
 	READER_FEED_SEARCH: 'reader-feed-search-result',
+	COMBINED_CARD: 'reader-combined-card',
 };
