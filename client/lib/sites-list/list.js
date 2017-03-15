@@ -106,7 +106,10 @@ SitesList.prototype.resumeFetching = function() {
 };
 
 SitesList.prototype.sync = function( data ) {
-	debug( 'SitesList fetched from api:', data.sites );
+	if ( this.ignoreUpdates ) {
+		return;
+	}
+	debug( 'SitesList fetched from api:', data.sites, this.ignoreUpdates );
 
 	let sites = this.parse( data );
 	if ( ! this.initialized ) {

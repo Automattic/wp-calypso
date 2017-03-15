@@ -7,12 +7,12 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 } from 'state/action-types';
 
-const pauseFetching = ( dispatch, { status } ) => {
+const pauseFetching = () => {
 	const sites = require( 'lib/sites-list' )();
 	sites.pauseFetching();
 };
 
-const resumeFetching = ( dispatch, { status } ) => {
+const resumeFetching = () => {
 	const sites = require( 'lib/sites-list' )();
 	sites.resumeFetching();
 };
