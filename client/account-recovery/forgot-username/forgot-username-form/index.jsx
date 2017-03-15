@@ -52,7 +52,8 @@ export class ForgotUsernameFormComponent extends Component {
 		}
 
 		if ( requestError.statusCode === 404 ) {
-			return translate( "We weren't able to find a user with that login information. Please try another one." );
+			return translate( "We're not able to find an account matching that information. " +
+				'Double-check your spelling, or try another name or URL.' );
 		}
 
 		return translate( "We've encountered some technical issues. Please try again later." );
@@ -79,7 +80,7 @@ export class ForgotUsernameFormComponent extends Component {
 				<h2 className="forgot-username-form__title">
 					{ translate( 'Forgot your username?' ) }
 				</h2>
-				<p>{ translate( 'Enter the following information instead.' ) }</p>
+				<p>{ translate( 'Enter your full name and URL instead.' ) }</p>
 				<FormLabel>
 					{ translate( 'First Name' ) }
 					<FormInput
