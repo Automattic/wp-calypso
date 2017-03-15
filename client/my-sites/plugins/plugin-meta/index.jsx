@@ -238,7 +238,7 @@ const PluginMeta = React.createClass( {
 	getDefaultActionLinks() {
 		const adminUrl = get( this.props, 'selectedSite.options.admin_url' );
 		return adminUrl
-			? { 'wp-admin': adminUrl }
+			? { [ i18n.translate( 'WP Admin' ) ]: adminUrl }
 			: null;
 	},
 
