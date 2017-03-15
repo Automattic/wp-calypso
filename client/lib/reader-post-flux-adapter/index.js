@@ -12,16 +12,17 @@ import FeedPostStore from 'lib/feed-post-store';
 import { fetchPost } from 'lib/feed-post-store/actions';
 import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
-import { shallowEquals } from 'reader/utils';
 
 /**
  * A HoC function that translates a postKey or postKeys into a post or posts for its child.
  */
 const fluxPostAdapter = Component => {
-	class ReaderPostFluxAdapter extends React.Component {
+	class ReaderPostFluxAdapter extends React.PureComponent {
 		static propTypes = {
 			postKey: PropTypes.object,
-			selectedPost: PropTypes.string
+			selectedPost: PropTypes.string,
+			feed: PropTypes.object,
+			site: PropTypes.object,
 		}
 
 		getStateFromStores = ( props = this.props ) => {
@@ -36,7 +37,7 @@ const fluxPostAdapter = Component => {
 						postKeyForPost.blogId = postKey.blogId;
 					}
 					postKeyForPost.postId = postId;
-					const post = FeedPostStore.get( postKeyForPost )
+					const post = FeedPostStore.get( postKeyForPost );
 					if ( ! post || post._state === 'minimal' ) {
 						fetchPost( postKeyForPost );
 					}
@@ -51,12 +52,6 @@ const fluxPostAdapter = Component => {
 
 		updateState = ( newState = this.getStateFromStores() ) => {
 			this.setState( newState );
-		}
-
-		// should not update if all of the posts refer to the same objects
-		shouldComponentUpdate( nextProps, nextState ) {
-			const differentPosts = ! shallowEquals( nextState.posts, this.state.posts );
-			return differentPosts;
 		}
 
 		componentWillMount() {
