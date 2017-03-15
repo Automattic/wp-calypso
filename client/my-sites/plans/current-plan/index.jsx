@@ -147,7 +147,7 @@ export default connect(
 		const selectedSiteId = getSelectedSiteId( state );
 		const domains = getDecoratedSiteDomains( state, selectedSiteId );
 
-		const isJetpack = isJetpackSite( state, selectedSiteId );
+		const isWpcom = ! isJetpackSite( state, selectedSiteId );
 		const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
 
 		return {
@@ -157,7 +157,7 @@ export default connect(
 			context: ownProps.context,
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
 			isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
-			shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
+			shouldShowDomainWarnings: isWpcom || isAutomatedTransfer,
 			hasDomainsLoaded: !! domains,
 			isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
 		};
