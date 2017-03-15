@@ -14,7 +14,7 @@ export function Suggestion( { suggestion, source } ) {
 	};
 
 	return (
-		<a onClick={ handleSuggestionClick } href={ '/read/search?q=' + encodeURIComponent( suggestion ) } >
+		<a onClick={ handleSuggestionClick } href={ '/read/search?suggested=1&q=' + encodeURIComponent( suggestion ) } >
 			{ suggestion }
 		</a>
 	);
