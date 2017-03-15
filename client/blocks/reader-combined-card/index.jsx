@@ -15,10 +15,12 @@ import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import { siteNameFromSiteAndPost } from 'reader/utils';
 import ReaderCombinedCardPost from './post';
 import { keysAreEqual, keyForPost } from 'lib/feed-stream-store/post-key';
+import QueryReaderSite from 'components/data/query-reader-site';
+import QueryReaderFeed from 'components/data/query-reader-feed';
 
-const ReaderCombinedCard = ( { posts, site, feed, selectedPostKey, onClick, isDiscover, translate } ) => {
-	const feedId = get( feed, 'feed_ID' );
-	const siteId = get( site, 'ID' );
+const ReaderCombinedCard = ( { posts, site, feed, postKey, selectedPostKey, onClick, isDiscover, translate } ) => {
+	const feedId = postKey.feedId;
+	const siteId = postKey.blogId;
 	const siteIcon = get( site, 'icon.img' );
 	const feedIcon = get( feed, 'image' );
 	const streamUrl = getStreamUrl( feedId, siteId );
@@ -63,6 +65,8 @@ const ReaderCombinedCard = ( { posts, site, feed, selectedPostKey, onClick, isDi
 						/>
 				) ) }
 			</ul>
+			{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }
+			{ siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
 		</Card>
 	);
 };
