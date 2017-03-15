@@ -21,7 +21,7 @@ function feedKeyMaker( post ) {
 	return {
 		feedId: post.feed_ID,
 		postId: post.ID,
-		localMoment: moment( post.date ).local(),
+		localMoment: moment( post.date ),
 	};
 }
 
@@ -29,7 +29,7 @@ function siteKeyMaker( post ) {
 	return {
 		blogId: post.site_ID,
 		postId: post.ID,
-		localMoment: moment( post.date ).local(),
+		localMoment: moment( post.date ),
 	};
 }
 
@@ -38,7 +38,7 @@ function mixedKeyMaker( post ) {
 		return {
 			feedId: post.feed_ID,
 			postId: post.feed_item_ID,
-			localMoment: moment( post.date ).local(),
+			localMoment: moment( post.date ),
 		};
 	}
 
