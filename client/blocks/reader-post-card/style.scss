@@ -249,6 +249,14 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	height: 20px;
 	width: calc( 100% - 25px );
 
+	a, a:visited {
+		color: $blue-medium;
+	}
+
+	a:hover {
+		color: $blue-light;
+	}
+
 	&::after {
 		@include long-content-fade( $size: 10% );
 	}

@@ -23,6 +23,10 @@
 	margin-bottom: 0;
 	top: 0;
 	color: $blue-medium;
+
+	&:hover {
+		color: $blue-light;
+	}
 }
 
 .reader-combined-card__header-post-count {
