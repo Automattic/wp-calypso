@@ -24,8 +24,24 @@ export default React.createClass( {
 		site: React.PropTypes.object,
 		plugin: React.PropTypes.object,
 		notices: React.PropTypes.object,
+		allowedActions: React.PropTypes.shape( {
+			activation: React.PropTypes.bool,
+			autoupdate: React.PropTypes.bool,
+			remove: React.PropTypes.bool
+		} ),
+		isAutoManaged: React.PropTypes.bool,
 	},
 
+	getDefaultProps: function() {
+		return {
+			allowedActions: {
+				activation: true,
+				autoupdate: true,
+				remove: true,
+			},
+			isAutoManaged: false,
+		};
+	},
 	renderInstallButton: function() {
 		var installInProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, 'INSTALL_PLUGIN' );
 
@@ -49,6 +65,12 @@ export default React.createClass( {
 	},
 
 	renderPluginSite: function() {
+		const {
+			activation: canToggleActivation,
+			autoupdate: canToggleAutoupdate,
+			remove: canToggleRemove,
+		} = this.props.allowedActions;
+
 		return (
 			<FoldableCard compact
 				clickableHeader
@@ -58,9 +80,21 @@ export default React.createClass( {
 				expandedSummary={ <PluginUpdateIndicator site={ this.props.site } plugin={ this.props.plugin } notices={ this.props.notices } expanded={ true } /> }
 				>
 				<div>
-					<PluginActivateToggle site={ this.props.site } plugin={ this.props.site.plugin } notices={ this.props.notices } />
-					<PluginAutoupdateToggle site={ this.props.site } plugin={ this.props.site.plugin } notices={ this.props.notices } wporg={ true } />
-					<PluginRemoveButton plugin={ this.props.site.plugin } site={ this.props.site } notices={ this.props.notices } />
+					{ canToggleActivation && <PluginActivateToggle
+						site={ this.props.site }
+						plugin={ this.props.site.plugin }
+						notices={ this.props.notices } /> }
+					{ canToggleAutoupdate && <PluginAutoupdateToggle
+						site={ this.props.site }
+						plugin={ this.props.site.plugin }
+						notices={ this.props.notices }
+						wporg={ true } /> }
+					{ canToggleRemove && <PluginRemoveButton
+						plugin={ this.props.site.plugin }
+						site={ this.props.site }
+						notices={ this.props.notices } /> }
+
+
 				</div>
 			</FoldableCard>
 		);
