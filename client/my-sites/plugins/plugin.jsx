@@ -33,6 +33,7 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, canJetpackSiteManage, getRawSite } from 'state/sites/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import QuerySites from 'components/data/query-sites';
 
 const SinglePlugin = React.createClass( {
 	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
@@ -385,6 +386,7 @@ const SinglePlugin = React.createClass( {
 
 		return (
 			<MainComponent>
+				<QuerySites allSites />
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
 				<div className="plugin__page">
