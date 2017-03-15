@@ -97,7 +97,7 @@ function sameDay( postKey1, postKey2 ) {
 		b = postKey2.localMoment;
 	return a.year() === b.year() &&
 		a.month() === b.month() &&
-		a.date() === a.date(); // date === day of the month
+		a.date() === b.date(); // date === day of the month
 }
 
 /**
