@@ -11,6 +11,7 @@ import { flowRight, pick } from 'lodash';
 import Button from 'components/button';
 import Card from 'components/card';
 import CommentDisplaySettings from './comment-display-settings';
+import CommentMarkdownToggle from './comment-markdown-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
@@ -82,7 +83,6 @@ class SiteSettingsFormDiscussion extends Component {
 
 		return (
 			<div>
-				<QueryJetpackModules siteId={ this.props.siteId } />
 				<CommentDisplaySettings
 					onChangeField={ onChangeField }
 					submittingForm={ isRequestingSettings || isSavingSettings }
@@ -93,7 +93,14 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	otherCommentSettings() {
-		const { fields, handleToggle, isRequestingSettings, translate } = this.props;
+		const {
+			fields,
+			handleToggle,
+			isJetpack,
+			isRequestingSettings,
+			isSavingSettings,
+			translate
+		} = this.props;
 		return (
 			<FormFieldset className="site-settings__other-comment-settings">
 				<CompactFormToggle
@@ -165,6 +172,13 @@ class SiteSettingsFormDiscussion extends Component {
 					onChange={ this.handleCommentOrder }>
 					<span>{ translate( 'Comments should be displayed with the older comments at the top of each page' ) }</span>
 				</CompactFormToggle>
+				{ isJetpack &&
+					<CommentMarkdownToggle
+						handleToggle={ handleToggle }
+						isSavingSettings={ isSavingSettings }
+						isRequestingSettings={ isRequestingSettings }
+						fields={ fields } />
+				}
 			</FormFieldset>
 		);
 	}
@@ -453,6 +467,7 @@ class SiteSettingsFormDiscussion extends Component {
 		} = this.props;
 		return (
 			<form id="site-settings" onSubmit={ handleSubmitForm }>
+				<QueryJetpackModules siteId={ siteId } />
 				{ this.renderSectionHeader( translate( 'Default Article Settings' ) ) }
 				<Card className="site-settings__discussion-settings">
 					{ this.defaultArticleSettings() }
@@ -541,6 +556,8 @@ const getFormSettings = settings => {
 		'moderation_keys',
 		'blacklist_keys',
 		'admin_url',
+		'markdown',
+		'wpcom_publish_comments_with_markdown',
 		'highlander_comment_form_prompt',
 		'jetpack_comment_form_color_scheme',
 		'subscriptions',
