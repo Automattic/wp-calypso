@@ -24,63 +24,64 @@ function getHoldMessages( translate ) {
 		},
 		TRANSFER_ALREADY_EXISTS: {
 			title: translate( 'Installation in progress' ),
-			description: translate( 'Another installation is already in progress.' ),
-			supportUrl: 'https://wordpress.com/help'
+			description: translate( 'Please wait for the other installation to complete, then try again.' ),
+			supportUrl: 'https://wordpress.com/help',
 		},
+		// Handled as a banner
 		NO_BUSINESS_PLAN: {
 			title: translate( 'Business plan required' ),
 			description: translate( 'This feature is only allowed on sites with a business plan.' ),
-			supportUrl: 'https://support.wordpress.com/'
+			supportUrl: 'https://support.wordpress.com/',
 		},
 		NO_JETPACK_SITES: {
-			title: translate( 'Jetpack site' ),
-			description: translate( 'This feature is not supported on Jetpack sites.' ),
-			supportUrl: 'https://wordpress.com/help'
+			title: translate( 'Jetpack not supported' ),
+			description: translate( 'Try using a different site.' ),
 		},
 		NO_VIP_SITES: {
-			title: translate( 'VIP site' ),
-			description: translate( 'This feature is not supported on VIP sites.' ),
-			supportUrl: 'https://wordpress.com/help'
+			title: translate( 'VIP site not supported' ),
+			description: translate( 'Try using a different site.' ),
 		},
 		SITE_PRIVATE: {
-			title: translate( 'Private site' ),
-			description: translate( 'This feature is not supported on private sites.' ),
-			supportUrl: 'https://support.wordpress.com/'
+			title: translate( 'Private site not supported' ),
+			description: translate( 'Make your site public to resolve.' ),
+			supportUrl: 'https://support.wordpress.com/settings/privacy-settings/',
 		},
 		SITE_GRAYLISTED: {
-			title: translate( 'Flagged site' ),
-			description: translate( 'This feature is not supported on sites that are not in good standing.' ),
-			supportUrl: 'https://wordpress.com/help'
+			title: translate( 'Flagged site not supported' ),
+			description: translate( "Contact us to review your site's standing to resolve." ),
+			supportUrl: 'https://support.wordpress.com/suspended-blogs/',
 		},
 		NON_ADMIN_USER: {
 			title: translate( 'Admin access required' ),
 			description: translate( 'Only site administrators are allowed to use this feature.' ),
-			supportUrl: 'https://support.wordpress.com/user-roles/'
+			supportUrl: 'https://support.wordpress.com/user-roles/',
 		},
+		// Handled as a banner
 		NOT_USING_CUSTOM_DOMAIN: {
 			title: translate( 'No custom domain' ),
 			description: translate( 'Your site must use a custom domain to use this feature.' ),
-			supportUrl: 'https://support.wordpress.com/register-domain/'
+			supportUrl: 'https://support.wordpress.com/register-domain/',
 		},
 		NOT_DOMAIN_OWNER: {
 			title: translate( 'Not a custom domain owner' ),
 			description: translate( 'You must be the owner of the primary domain subscription to use this feature.' ),
-			supportUrl: 'https://support.wordpress.com/domains/'
+			supportUrl: 'https://support.wordpress.com/domains/',
 		},
 		NO_WPCOM_NAMESERVERS: {
 			title: translate( 'No WordPress.com name servers' ),
-			description: translate( 'Your custom domain must point to WordPress.com name servers.' ),
-			supportUrl: 'https://support.wordpress.com/domain-helper/'
+			description: translate( 'Use WordPress.com name servers on your custom domain to resolve.' ),
+			supportUrl: 'https://support.wordpress.com/domain-helper/',
 		},
 		NOT_RESOLVING_TO_WPCOM: {
 			title: translate( 'Primary domain not pointing to WordPress.com servers' ),
-			description: translate( 'Your primary domain must point to WordPress.com servers.' ),
-			supportUrl: 'https://support.wordpress.com/domain-helper/'
+			description: translate( 'Point your primary domain to WordPress.com servers to resolve.' ),
+			supportUrl: 'https://support.wordpress.com/domain-helper/',
 		},
 		NO_SSL_CERTIFICATE: {
-			title: translate( 'Primary domain does not have a valid SSL certificate' ),
-			description: translate( 'You will be able to proceed once we finish setting up some security settings for the site.' ),
-			supportUrl: 'https://wordpress.com/help'
+			title: translate( "Primary domain doesn't have a valid SSL certificate" ),
+			description: translate(
+				'Please try again in a few minutes: you will be able to proceed once we finish setting up your security settings.'
+			),
 		}
 	};
 }
@@ -110,15 +111,17 @@ export const HoldList = ( {
 								{ holdMessages[ hold ].description }
 							</span>
 						</div>
-						<div className="eligibility-warnings__action">
-							<Button
-								compact
-								href={ holdMessages[ hold ].supportUrl }
-								rel="noopener noreferrer"
-							>
-								{ translate( 'Resolve' ) }
-							</Button>
-						</div>
+						{ holdMessages[ hold ].supportUrl &&
+							<div className="eligibility-warnings__action">
+								<Button
+									compact
+									href={ holdMessages[ hold ].supportUrl }
+									rel="noopener noreferrer"
+								>
+									{ translate( 'Resolve' ) }
+								</Button>
+							</div>
+						}
 					</div>
 				) }
 			</Card>
