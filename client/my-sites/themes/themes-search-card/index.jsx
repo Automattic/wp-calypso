@@ -18,7 +18,7 @@ import NavItem from 'components/section-nav/item';
 import { trackClick } from '../helpers';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
-import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { oldShowcaseUrl } from 'state/themes/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -163,17 +163,11 @@ const ThemesSearchCard = React.createClass( {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
+		const siteSlug = getSiteSlug( state, siteId ) || '';
 
-		let externalUrl;
-		if ( ! siteId ) {
-			externalUrl = oldShowcaseUrl;
-		} else if ( isJetpack ) {
-			externalUrl = getSiteAdminUrl( state, siteId, 'theme-install.php' );
-		} else {
-			externalUrl = oldShowcaseUrl + getSiteSlug( state, siteId );
-		}
-
-		return { externalUrl, isJetpack };
+		return {
+			externalUrl: oldShowcaseUrl + siteSlug,
+			isJetpack: isJetpackSite( state, siteId )
+		};
 	}
 )( localize( ThemesSearchCard ) );
