@@ -20,7 +20,7 @@ import EmptyContent from 'components/empty-content';
 import ProgressBar from 'components/progress-bar';
 import Button from 'components/button';
 import ThanksModal from 'my-sites/themes/thanks-modal';
-import QueryTheme from 'components/data/query-theme';
+import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 // Necessary for ThanksModal
 import QueryActiveTheme from 'components/data/query-active-theme';
 import { localize } from 'i18n-calypso';
@@ -43,7 +43,7 @@ import {
 	getUploadProgressLoaded,
 	isInstallInProgress,
 } from 'state/themes/upload-theme/selectors';
-import { getTheme } from 'state/themes/selectors';
+import { getCanonicalTheme } from 'state/themes/selectors';
 import { connectOptions } from 'my-sites/themes/theme-options';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
@@ -131,6 +131,7 @@ class Upload extends React.Component {
 
 		const errorCauses = {
 			exists: translate( 'Upload problem: Theme already installed on site.' ),
+			already_installed: translate( 'Upload problem: Theme already installed on site.' ),
 			'Too Large': translate( 'Upload problem: Zip file too large to upload.' ),
 			incompatible: translate( 'Upload problem: Incompatible theme.' ),
 		};
@@ -282,7 +283,7 @@ class Upload extends React.Component {
 				actionURL={ this.props.selectedSite.options.admin_url }
 				illustration={ '/calypso/images/drake/drake-jetpack.svg' }
 			/>
-			);
+		);
 	}
 
 	renderNotAvailable() {
@@ -294,7 +295,7 @@ class Upload extends React.Component {
 				actionURL={ this.props.backPath }
 				illustration={ '/calypso/images/drake/drake-whoops.svg' }
 			/>
-			);
+		);
 	}
 
 	render() {
@@ -324,7 +325,7 @@ class Upload extends React.Component {
 			<Main>
 				<QueryEligibility siteId={ siteId } />
 				<QueryActiveTheme siteId={ siteId } />
-				{ themeId && complete && <QueryTheme siteId={ siteId } themeId={ themeId } /> }
+				{ themeId && complete && <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
 				<ThanksModal
 					site={ selectedSite }
 					source="upload" />
@@ -379,7 +380,7 @@ export default connect(
 			failed: hasUploadFailed( state, siteId ),
 			themeId,
 			isMultisite: isJetpackSiteMultiSite( state, siteId ),
-			uploadedTheme: getTheme( state, siteId, themeId ),
+			uploadedTheme: getCanonicalTheme( state, siteId, themeId ),
 			error: getUploadError( state, siteId ),
 			progressTotal: getUploadProgressTotal( state, siteId ),
 			progressLoaded: getUploadProgressLoaded( state, siteId ),
