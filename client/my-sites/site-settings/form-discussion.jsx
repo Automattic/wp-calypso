@@ -96,6 +96,7 @@ class SiteSettingsFormDiscussion extends Component {
 		const {
 			fields,
 			handleToggle,
+			isJetpack,
 			isRequestingSettings,
 			isSavingSettings,
 			translate
@@ -171,11 +172,13 @@ class SiteSettingsFormDiscussion extends Component {
 					onChange={ this.handleCommentOrder }>
 					<span>{ translate( 'Comments should be displayed with the older comments at the top of each page' ) }</span>
 				</CompactFormToggle>
-				<CommentMarkdownToggle
-					handleToggle={ handleToggle }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields } />
+				{ isJetpack &&
+					<CommentMarkdownToggle
+						handleToggle={ handleToggle }
+						isSavingSettings={ isSavingSettings }
+						isRequestingSettings={ isRequestingSettings }
+						fields={ fields } />
+				}
 			</FormFieldset>
 		);
 	}
