@@ -19,7 +19,6 @@ import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 
-
 class FeaturedImageDropZone extends Component {
 	static propTypes = {
 		site: PropTypes.object.isRequired,
@@ -72,7 +71,7 @@ class FeaturedImageDropZone extends Component {
 			 */
 			// this.props.editPost( siteID, this.props.postId, { featured_image: media.ID } );
 
-			// You cannot dispatch an action while in a dispatched action.
+			// Cannot dispatch an action while in a dispatched action. Temporary(tm).
 			setTimeout( () => {
 				PostActions.edit( {
 					featured_image: media.ID
