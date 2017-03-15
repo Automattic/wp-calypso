@@ -78,7 +78,7 @@ export const items = ( state = {}, action ) => {
 	return state;
 };
 
-export const requesting = ( state = false, { type, siteId } ) => {
+export const requesting = ( state = {}, { type, siteId } ) => {
 	switch ( type ) {
 		case SITE_UPDATES_REQUEST:
 		case SITE_UPDATES_REQUEST_SUCCESS:
@@ -91,10 +91,10 @@ export const requesting = ( state = false, { type, siteId } ) => {
 			return {};
 	}
 
-	return {};
+	return state;
 };
 
-export const errors = ( state = false, { type, siteId, error } ) => {
+export const errors = ( state = {}, { type, siteId, error } ) => {
 	switch ( type ) {
 		case SITE_UPDATES_REQUEST:
 		case SITE_UPDATES_REQUEST_SUCCESS:
@@ -112,7 +112,7 @@ export const errors = ( state = false, { type, siteId, error } ) => {
 			return {};
 	}
 
-	return {};
+	return state;
 };
 
 export default combineReducers( {
