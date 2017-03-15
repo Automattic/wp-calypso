@@ -54,7 +54,7 @@ export default class PostLifecycle extends React.PureComponent {
 
 	shouldComponentUpdate( nextProps, nextState ) {
 		const currentPropsToCompare = omit( this.props, 'handleClick' );
-		const nextPropsToCompare = omit( nextProps.props, 'handleClick' );
+		const nextPropsToCompare = omit( nextProps, 'handleClick' );
 		const shouldUpdate = this.state.post !== nextState.post ||
 			! shallowEquals( currentPropsToCompare, nextPropsToCompare );
 

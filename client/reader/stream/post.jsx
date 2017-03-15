@@ -173,8 +173,8 @@ export default class ReaderPostCardAdapterFluxContainer extends React.Component 
 	}
 
 	shouldComponentUpdate( nextProps, nextState ) {
-		const currentPropsToCompare = omit( this.props, 'onClick' );
-		const nextPropsToCompare = omit( nextProps, 'onClick' );
+		const currentPropsToCompare = omit( this.props, 'handleClick' );
+		const nextPropsToCompare = omit( nextProps, 'handleClick' );
 		const shouldUpdate = (
 			( this.props !== nextProps && ! shallowEquals( currentPropsToCompare, nextPropsToCompare ) ) ||
 			( get( this.state, 'discoverPick.post' ) !== get( nextState, 'discoverPick.post' )
