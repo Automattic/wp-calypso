@@ -71,8 +71,9 @@ class PostByline extends React.Component {
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
-		const tagsInOccurrenceOrder = take( values( post.tags ), TAGS_TO_SHOW );
+		let tagsInOccurrenceOrder = values( post.tags );
 		tagsInOccurrenceOrder.sort( ( a, b ) => b.post_count - a.post_count );
+		tagsInOccurrenceOrder = take( tagsInOccurrenceOrder, TAGS_TO_SHOW );
 		const tags = map( tagsInOccurrenceOrder, ( tag ) => {
 			return ( <span className="reader-post-card__tag" key={ `tag-${ tag.slug }` }>
 				<a href={ '/tag/' + tag.slug }
