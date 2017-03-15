@@ -93,11 +93,7 @@ function sameSite( postKey1, postKey2 ) {
 }
 
 function sameDay( postKey1, postKey2 ) {
-	const a = postKey1.localMoment,
-		b = postKey2.localMoment;
-	return a.year() === b.year() &&
-		a.month() === b.month() &&
-		a.date() === b.date(); // date === day of the month
+	return postKey1.localMoment.isSame( postKey2.localMoment, 'day' );
 }
 
 /**
