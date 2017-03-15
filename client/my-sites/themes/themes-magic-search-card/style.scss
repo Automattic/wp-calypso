@@ -137,7 +137,6 @@
 
 	.themes-magic-search-card__welcome-header {
 		font-size: 13px;
-		text-transform: uppercase;
 	}
 }
 
@@ -150,7 +149,7 @@
 	border-radius: 3px;
 	font-size: 13px;
 	line-height: 16px;
-	text-transform: uppercase;
+	text-transform: capitalize;
 	cursor: pointer;
 	transition: all 200ms ease-in;
 
