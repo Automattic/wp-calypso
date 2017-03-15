@@ -114,6 +114,12 @@ var Buttons = React.createClass( {
 							<Gridicon icon="cross" /> Remove
 						</Button>
 					</div>
+					<div className="docs__design-button-row">
+						<Button busy >Busy button</Button>
+						<Button primary busy icon ><Gridicon icon="camera" /> Primary icon button</Button>
+						<Button primary busy icon ><Gridicon icon="time" /></Button>
+						<Button primary busy >Primary busy button</Button>
+					</div>
 				</Card>
 			);
 		} else {
@@ -176,6 +182,12 @@ var Buttons = React.createClass( {
 						<Button compact borderless scary disabled>
 							<Gridicon icon="cross" /> Remove
 						</Button>
+					</div>
+					<div className="docs__design-button-row">
+						<Button compact busy >Busy button</Button>
+						<Button compact primary busy icon ><Gridicon icon="camera" /> Primary icon button</Button>
+						<Button compact primary busy icon ><Gridicon icon="time" /></Button>
+						<Button compact primary busy >Primary busy button</Button>
 					</div>
 				</Card>
 			);
