@@ -223,3 +223,49 @@
 		margin: 0;
 	}
 }
+
+// Follow button for stream cards - copied and pasted from reader-post-card.
+// TODO: consolidate somewhere. preferabley reader/follow-button
+.reader-combined-card__header .follow-button {
+	border: 0;
+	border-radius: 0;
+	float: right;
+	padding: 0;
+	position: absolute;
+		right: 0;
+		top: 13px;
+
+	.gridicon {
+		fill: $blue-medium;
+	}
+
+	.follow-button__label {
+		color: $blue-medium;
+	}
+
+	&.is-following {
+
+		.gridicon {
+			fill: $alert-green;
+		}
+
+		.follow-button__label {
+			color: $alert-green;
+		}
+	}
+
+	&.is-discover {
+		position: relative;
+		top: 0;
+		float: none;
+		margin-top: 10px;
+		margin-bottom: 3px;
+
+		.follow-button__label {
+			@include breakpoint( "<660px" ) {
+				display: inline;
+			}
+		}
+	}
+}
+
