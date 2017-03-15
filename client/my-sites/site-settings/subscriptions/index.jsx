@@ -42,7 +42,7 @@ const Subscriptions = ( {
 					<div className="subscriptions__info-link-container site-settings__info-link-container">
 						<InfoPopover position={ 'left' }>
 							<ExternalLink href={ 'https://jetpack.com/support/subscriptions' } target="_blank">
-								{ translate( 'Learn more about Subscriptions' ) }
+								{ translate( 'Learn more about Subscriptions.' ) }
 							</ExternalLink>
 						</InfoPopover>
 					</div>
@@ -50,7 +50,7 @@ const Subscriptions = ( {
 					<JetpackModuleToggle
 						siteId={ selectedSiteId }
 						moduleSlug="subscriptions"
-						label={ translate( 'Allow users to subscribe to your posts and comments and receive notifications via email.' ) }
+						label={ translate( 'Allow users to subscribe to your posts and comments and receive notifications via email' ) }
 						disabled={ isRequestingSettings || isSavingSettings || moduleUnavailable }
 						/>
 
@@ -68,14 +68,14 @@ const Subscriptions = ( {
 							disabled={ isRequestingSettings || isSavingSettings || ! subscriptionsModuleActive || moduleUnavailable }
 							onChange={ handleAutosavingToggle( 'stc_enabled' ) }
 						>
-							{ translate( 'Show a "follow comments" option in the comment form.' ) }
+							{ translate( 'Show a "follow comments" option in the comment form' ) }
 						</CompactFormToggle>
 					</div>
 				</FormFieldset>
 			</CompactCard>
 
 			<CompactCard href={ '/people/email-followers/' + selectedSiteSlug }>
-				{ translate( 'View your Email Followers' ) }
+				{ translate( 'View your email followers' ) }
 			</CompactCard>
 
 			<CompactCard href={ 'https://wordpress.com/manage/' + selectedSiteId }>
