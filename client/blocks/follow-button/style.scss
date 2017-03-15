@@ -21,6 +21,14 @@ button.follow-button {
 		border: 0;
 	}
 
+	&:hover {
+		color: $blue-medium;
+
+		.gridicon__follow {
+			fill: $blue-medium;
+		}
+	}
+
 	@include breakpoint( "<660px" ) {
 		padding: 7px 8px 9px 14px;
 	}
