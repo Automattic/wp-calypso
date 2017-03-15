@@ -17,6 +17,7 @@ const RelatedPosts = ( {
 	fields,
 	handleAutosavingToggle,
 	isRequestingSettings,
+	isSavingSettings,
 	translate
 } ) => {
 	return (
@@ -27,7 +28,7 @@ const RelatedPosts = ( {
 				<FormFieldset>
 					<CompactFormToggle
 						checked={ !! fields.jetpack_relatedposts_enabled }
-						disabled={ isRequestingSettings }
+						disabled={ isRequestingSettings || isSavingSettings }
 						onChange={ handleAutosavingToggle( 'jetpack_relatedposts_enabled' ) }
 					>
 						{ translate( 'Show related content after posts' ) }
@@ -36,7 +37,7 @@ const RelatedPosts = ( {
 					<div className="related-posts__module-settings site-settings__child-settings">
 						<CompactFormToggle
 							checked={ !! fields.jetpack_relatedposts_show_headline }
-							disabled={ isRequestingSettings || ! fields.jetpack_relatedposts_enabled }
+							disabled={ isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled }
 							onChange={ handleAutosavingToggle( 'jetpack_relatedposts_show_headline' ) }
 						>
 							{ translate(
@@ -46,7 +47,7 @@ const RelatedPosts = ( {
 
 						<CompactFormToggle
 							checked={ !! fields.jetpack_relatedposts_show_thumbnails }
-							disabled={ isRequestingSettings || ! fields.jetpack_relatedposts_enabled }
+							disabled={ isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled }
 							onChange={ handleAutosavingToggle( 'jetpack_relatedposts_show_thumbnails' ) }
 						>
 							{ translate(
