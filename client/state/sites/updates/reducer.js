@@ -2,13 +2,17 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
+import { merge, get, forEach } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
-
+import { isValidStateWithSchema } from 'state/utils';
 import {
+	SITE_RECEIVE,
+	SITES_RECEIVE,
+	SITES_UPDATE,
+	SITE_DELETE_RECEIVE,
 	SITE_UPDATES_RECEIVE,
 	SITE_UPDATES_REQUEST,
 	SITE_UPDATES_REQUEST_SUCCESS,
@@ -19,42 +23,97 @@ import {
 
 import { itemsSchema } from './schema';
 
-export const items = createReducer(
-	{},
-	{ [ SITE_UPDATES_RECEIVE ]: ( state, { siteId, updates } ) => Object.assign( {}, state, { [ siteId ]: updates } ) },
-	itemsSchema
-);
+export const items = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case SITE_RECEIVE:
+		case SITES_RECEIVE:
+		case SITES_UPDATE:
+			// Normalize incoming site(s) to array
+			const sites = action.site ? [ action.site ] : action.sites;
+			forEach( sites, ( site ) => {
+				const updates = Object.assign(
+					{},
+					site.updates,
+					{
+						wp_version: get( site, 'options.software_version' ),
+						jp_version: get( site, 'options.jetpack_version' )
+					}
+				);
 
-export const requesting = ( state = false, { type } ) => {
-	switch ( type ) {
-		case SITE_UPDATES_REQUEST:
-		case SITE_UPDATES_REQUEST_SUCCESS:
-		case SITE_UPDATES_REQUEST_FAILURE:
-			return type === SITE_UPDATES_REQUEST;
-
-		case SERIALIZE:
+				merge( state,
+					{},
+					state,
+					{
+						[ site.ID ]: updates
+					}
+				);
+			} );
+			return state;
+		case SITE_UPDATES_RECEIVE:
+			const { siteId, updates } = action;
+			return Object.assign(
+				{},
+				state,
+				{
+					[ siteId ]: updates
+				}
+			);
+		case SITE_DELETE_RECEIVE:
+			const site = action.site;
+			return Object.assign(
+				{},
+				state,
+				{
+					[ site.ID ]: null
+				}
+			);
 		case DESERIALIZE:
-			return false;
+			if ( isValidStateWithSchema( state, itemsSchema ) ) {
+				return state;
+			}
+			return {};
+		case SERIALIZE:
+			return state;
 	}
 
 	return state;
 };
 
-export const errors = ( state = false, { type } ) => {
+export const requesting = ( state = false, { type, siteId } ) => {
 	switch ( type ) {
 		case SITE_UPDATES_REQUEST:
 		case SITE_UPDATES_REQUEST_SUCCESS:
-			return false;
+		case SITE_UPDATES_REQUEST_FAILURE:
+			return Object.assign( {}, state, {
+				[ siteId ]: ( type === SITE_UPDATES_REQUEST )
+			} );
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
+	}
+
+	return {};
+};
+
+export const errors = ( state = false, { type, siteId, error } ) => {
+	switch ( type ) {
+		case SITE_UPDATES_REQUEST:
+		case SITE_UPDATES_REQUEST_SUCCESS:
+			return Object.assign( {}, state, {
+				[ siteId ]: null
+			} );
 
 		case SITE_UPDATES_REQUEST_FAILURE:
-			return true;
+			return Object.assign( {}, state, {
+				[ siteId ]: error
+			} );
 
 		case SERIALIZE:
 		case DESERIALIZE:
-			return false;
+			return {};
 	}
 
-	return state;
+	return {};
 };
 
 export default combineReducers( {
