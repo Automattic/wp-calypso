@@ -187,9 +187,8 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 
 	render() {
-		const { isJetpack } = this.props;
+		const { isJetpack, translate } = this.props;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
-		const { translate } = this.props;
 
 		const tiers = [
 			{ value: 'all', label: translate( 'All' ) },
