@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { translate } from 'i18n-calypso';
@@ -32,15 +32,23 @@ const ThanksModal = React.createClass( {
 
 	propTypes: {
 		// Where is the modal being used?
-		source: React.PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
+		source: PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
 		// Connected props
-		isActivating: React.PropTypes.bool.isRequired,
-		hasActivated: React.PropTypes.bool.isRequired,
-		currentTheme: React.PropTypes.shape( {
-			name: React.PropTypes.string,
-			id: React.PropTypes.string
+		clearActivated: PropTypes.func.isRequired,
+		currentTheme: PropTypes.shape( {
+			author: PropTypes.string,
+			author_uri: PropTypes.string,
+			id: PropTypes.string,
+			name: PropTypes.string,
 		} ),
-		clearActivated: React.PropTypes.func.isRequired,
+		customizeUrl: PropTypes.string,
+		detailsUrl: PropTypes.string,
+		forumUrl: PropTypes.string,
+		hasActivated: PropTypes.bool.isRequired,
+		isActivating: PropTypes.bool.isRequired,
+		isThemeWpcom: PropTypes.bool.isRequired,
+		siteId: PropTypes.number,
+		visitSiteUrl: PropTypes.string
 	},
 
 	onCloseModal() {
