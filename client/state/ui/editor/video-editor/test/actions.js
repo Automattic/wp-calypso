@@ -11,16 +11,12 @@ import {
 	VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
 	VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
 	VIDEO_EDITOR_POSTER_UPDATING,
-	VIDEO_EDITOR_SCRIPT_LOAD_ERROR,
 	VIDEO_EDITOR_STATE_RESET,
 	VIDEO_EDITOR_STATE_RESET_POSTER,
-	VIDEO_EDITOR_VIDEO_HAS_LOADED,
 } from 'state/action-types';
 import {
 	resetVideoEditorState,
 	resetVideoEditorPosterState,
-	setVideoEditorHasScriptLoadError,
-	setVideoEditorVideoHasLoaded,
 	updateVideoEditorPoster,
 	updateVideoEditorPosterSuccess,
 	updateVideoEditorPosterFailure,
@@ -44,26 +40,6 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: VIDEO_EDITOR_STATE_RESET_POSTER,
-			} );
-		} );
-	} );
-
-	describe( '#setVideoEditorHasScriptLoadError()', () => {
-		it( 'should return an action object', () => {
-			const action = setVideoEditorHasScriptLoadError();
-
-			expect( action ).to.eql( {
-				type: VIDEO_EDITOR_SCRIPT_LOAD_ERROR,
-			} );
-		} );
-	} );
-
-	describe( '#setVideoEditorVideoHasLoaded()', () => {
-		it( 'should return an action object', () => {
-			const action = setVideoEditorVideoHasLoaded();
-
-			expect( action ).to.eql( {
-				type: VIDEO_EDITOR_VIDEO_HAS_LOADED,
 			} );
 		} );
 	} );

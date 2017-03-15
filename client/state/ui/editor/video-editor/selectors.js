@@ -9,17 +9,6 @@ export function getVideoEditorPoster( state ) {
 }
 
 /**
- * Returns true if the video has been loaded.
- *
- * @param  {Object}  state Global state tree
- * @return {Boolean} true if the video has been loaded.
- *
- */
-export function isVideoEditorVideoLoaded( state ) {
-	return ! state.ui.editor.videoEditor.videoIsLoading;
-}
-
-/**
  * Returns true if the poster is updating.
  *
  * @param  {Object}  state Global state tree
@@ -50,15 +39,4 @@ export function isVideoEditorPosterUpdated( state ) {
  */
 export function videoEditorHasPosterUpdateError( state ) {
 	return state.ui.editor.videoEditor.hasPosterUpdateError;
-}
-
-/**
- * Returns true if there was a problem loading the VideoPress script.
- *
- * @param  {Object}  state Global state tree
- * @return {Boolean} true if there was a problem loading the VideoPress script.
- *
- */
-export function videoEditorHasScriptLoadError( state ) {
-	return state.ui.editor.videoEditor.hasScriptLoadError;
 }

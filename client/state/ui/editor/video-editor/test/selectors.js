@@ -8,11 +8,9 @@ import { expect } from 'chai';
  */
 import {
 	getVideoEditorPoster,
-	isVideoEditorVideoLoaded,
 	isVideoEditorPosterUpdating,
 	isVideoEditorPosterUpdated,
 	videoEditorHasPosterUpdateError,
-	videoEditorHasScriptLoadError,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -30,22 +28,6 @@ describe( 'selectors', () => {
 			} );
 
 			expect( poster ).to.eql( posterUrl );
-		} );
-	} );
-
-	describe( '#isVideoEditorVideoLoaded()', () => {
-		it( 'should return the video loaded state', () => {
-			const isVideoLoaded = isVideoEditorVideoLoaded( {
-				ui: {
-					editor: {
-						videoEditor: {
-							videoIsLoading: true
-						}
-					}
-				}
-			} );
-
-			expect( isVideoLoaded ).to.be.false;
 		} );
 	} );
 
@@ -94,22 +76,6 @@ describe( 'selectors', () => {
 			} );
 
 			expect( hasPosterUpdateError ).to.be.true;
-		} );
-	} );
-
-	describe( '#videoEditorHasScriptLoadError()', () => {
-		it( 'should return the script load error state', () => {
-			const hasScriptLoadError = videoEditorHasScriptLoadError( {
-				ui: {
-					editor: {
-						videoEditor: {
-							hasScriptLoadError: false
-						}
-					}
-				}
-			} );
-
-			expect( hasScriptLoadError ).to.be.false;
 		} );
 	} );
 } );
