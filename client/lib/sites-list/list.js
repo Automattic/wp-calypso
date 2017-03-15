@@ -577,10 +577,6 @@ SitesList.prototype.onUpdatedPlugin = function( site ) {
 		siteUpdateInfo.plugins--;
 		siteUpdateInfo.total--;
 		site.set( { updates: siteUpdateInfo } );
-
-		if ( site.updates.plugins <= 0 ) {
-			site.fetchAvailableUpdates();
-		}
 	}
 };
 

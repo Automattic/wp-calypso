@@ -59,21 +59,6 @@ JetpackSite.prototype.canManage = function() {
 	return true;
 };
 
-JetpackSite.prototype.fetchAvailableUpdates = function() {
-	if ( ! this.hasMinimumJetpackVersion ||
-		! this.capabilities.manage_options ||
-		! this.canUpdateFiles ) {
-		return;
-	}
-	wpcom.undocumented().getAvailableUpdates( this.ID, function( error, data ) {
-		if ( error ) {
-			debug( 'error fetching Updates data from api', error );
-			return;
-		}
-		this.set( { update: data } );
-	}.bind( this ) );
-};
-
 JetpackSite.prototype.isSecondaryNetworkSite = function() {
 	return this.options.is_multi_site &&
 		this.options.unmapped_url !== this.options.main_network_site;
