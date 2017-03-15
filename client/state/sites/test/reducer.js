@@ -23,7 +23,7 @@ import {
 	SITES_UPDATE,
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_UPDATE,
-	THEME_ACTIVATE_REQUEST_SUCCESS,
+	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE
@@ -302,7 +302,7 @@ describe( 'reducer', () => {
 				}
 			} );
 			const state = items( original, {
-				type: THEME_ACTIVATE_REQUEST_SUCCESS,
+				type: THEME_ACTIVATE_SUCCESS,
 				siteId: 2916284,
 				themeStylesheet: 'pub/twentysixteen'
 			} );
