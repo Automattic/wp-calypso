@@ -26,6 +26,30 @@ import { abtest } from 'lib/abtest';
 // A/B test to try showing 3 tags per post instead of 1
 const TAGS_TO_SHOW = abtest( 'readerPostCardTagCount' ) === 'showThree' ? 3 : 1;
 
+class TagLink extends React.Component {
+	recordSingleTagClick() {
+		const tag = this.props.tag;
+		recordAction( 'click_tag' );
+		recordGaEvent( 'Clicked Tag Link' );
+		recordTrackForPost( 'calypso_reader_tag_clicked', this.props.post, {
+			tag: tag.slug
+		} );
+	}
+
+	render() {
+		const tag = this.props.tag;
+		return (
+			<span className="reader-post-card__tag">
+				<a href={ '/tag/' + tag.slug }
+					className="reader-post-card__tag-link ignore-click"
+					onClick={ this.recordSingleTagClick }>
+					{ tag.name }
+				</a>
+			</span>
+		);
+	}
+}
+
 class PostByline extends React.Component {
 
 	static propTypes = {
@@ -38,22 +62,6 @@ class PostByline extends React.Component {
 
 	static defaultProps = {
 		isDiscoverPost: false,
-	}
-
-	recordTagClick = () => {
-		recordAction( 'click_tag' );
-		recordGaEvent( 'Clicked Tag Link' );
-		recordTrackForPost( 'calypso_reader_tag_clicked', this.props.post, {
-			tag: this.props.post.primary_tag.slug
-		} );
-	}
-
-	recordSingleTagClick( tag ) {
-		recordAction( 'click_tag' );
-		recordGaEvent( 'Clicked Tag Link' );
-		recordTrackForPost( 'calypso_reader_tag_clicked', this.props.post, {
-			tag: tag.slug
-		} );
 	}
 
 	recordDateClick = () => {
@@ -74,15 +82,7 @@ class PostByline extends React.Component {
 		let tagsInOccurrenceOrder = values( post.tags );
 		tagsInOccurrenceOrder.sort( ( a, b ) => b.post_count - a.post_count );
 		tagsInOccurrenceOrder = take( tagsInOccurrenceOrder, TAGS_TO_SHOW );
-		const tags = map( tagsInOccurrenceOrder, ( tag ) => {
-			return ( <span className="reader-post-card__tag" key={ `tag-${ tag.slug }` }>
-				<a href={ '/tag/' + tag.slug }
-					className="reader-post-card__tag-link ignore-click"
-					onClick={ this.recordSingleTagClick.bind( this, tag ) }>
-					{ tag.name }
-				</a>
-			</span> );
-		} );
+		const tags = map( tagsInOccurrenceOrder, tag => <TagLink tag={ tag } key={ tag.slug } /> );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
