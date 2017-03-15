@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { merge, get, forEach } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,7 +30,7 @@ export const items = ( state = {}, action ) => {
 		case SITES_UPDATE:
 			// Normalize incoming site(s) to array
 			const sites = action.site ? [ action.site ] : action.sites;
-			forEach( sites, ( site ) => {
+			sites.forEach( ( site ) => {
 				const updates = Object.assign(
 					{},
 					site.updates,
@@ -40,8 +40,7 @@ export const items = ( state = {}, action ) => {
 					}
 				);
 
-				merge( state,
-					{},
+				Object.assign(
 					state,
 					{
 						[ site.ID ]: updates
