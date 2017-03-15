@@ -40,7 +40,7 @@ import {
 	isEnterprise
 } from 'lib/products-values';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isAutomatedTransferActive } from 'state/selectors';
+import { isAutomatedTransferActive, isSiteAutomatedTransfer } from 'state/selectors';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 
 const PluginMeta = React.createClass( {
@@ -192,25 +192,8 @@ const PluginMeta = React.createClass( {
 		} );
 	},
 
-	getInstallButton() {
-		if ( this.props.selectedSite && this.props.selectedSite.jetpack && this.hasOrgInstallButton() ) {
-			return <PluginInstallButton { ...this.props } />;
-		}
-
-		const { isTransferring } = this.props;
-
-		if ( this.props.selectedSite && ! this.props.selectedSite.jetpack ) {
-			return (
-				<WpcomPluginInstallButton
-					disabled={ ! this.hasBusinessPlan() || isTransferring }
-					plugin={ this.props.plugin }
-				/>
-			);
-		}
-	},
-
-	maybeDisplayUnsupportedNotice() {
-		const { selectedSite, plugin } = this.props;
+	isUnsupportedPlugin() {
+		const { plugin } = this.props;
 
 		// Pressable prevents installation of some plugins, so we need to disable AT for them.
 		// More info here: https://kb.pressable.com/faq/does-pressable-restrict-any-plugins/
@@ -222,7 +205,47 @@ const PluginMeta = React.createClass( {
 			'bwp-minify',
 		];
 
-		if ( selectedSite && ! selectedSite.jetpack && includes( unsupportedPlugins, plugin.slug ) ) {
+		return includes( unsupportedPlugins, plugin.slug );
+	},
+
+	isWpcomInstallDisabled() {
+		const { isTransfering } = this.props;
+
+		return ! this.hasBusinessPlan() || this.isUnsupportedPlugin() || isTransfering;
+	},
+
+	isJetpackInstallDisabled() {
+		const { automatedTransferSite } = this.props;
+
+		return automatedTransferSite && this.isUnsupportedPlugin();
+	},
+
+	getInstallButton() {
+		const { selectedSite } = this.props;
+
+		if ( selectedSite && selectedSite.jetpack && this.hasOrgInstallButton() ) {
+			return (
+				<PluginInstallButton
+					disabled={ this.isJetpackInstallDisabled() }
+					{ ...this.props }
+				/>
+			);
+		}
+
+		if ( selectedSite && ! selectedSite.jetpack ) {
+			return (
+				<WpcomPluginInstallButton
+					disabled={ this.isWpcomInstallDisabled() }
+					plugin={ this.props.plugin }
+				/>
+			);
+		}
+	},
+
+	maybeDisplayUnsupportedNotice() {
+		const { selectedSite, automatedTransferSite } = this.props;
+		
+		if ( selectedSite && this.isUnsupportedPlugin() && ( ! selectedSite.jetpack || automatedTransferSite ) ) {
 			return (
 				<Notice
 					text={ this.translate( 'This plugin is {{a}}not supported{{/a}} on WordPress.com.',
@@ -469,6 +492,7 @@ const mapStateToProps = state => {
 
 	return {
 		isTransferring: isAutomatedTransferActive( state, siteId ),
+		automatedTransferSite: isSiteAutomatedTransfer( state, siteId ),
 	};
 };
 

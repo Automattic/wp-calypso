@@ -4,7 +4,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get, includes } from 'lodash';
+import { get } from 'lodash';
 import page from 'page';
 
 /**
@@ -49,25 +49,11 @@ export const WpcomPluginInstallButton = props => {
 		}
 	}
 
-	function isDisabled() {
-		// Pressable prevents installation of some plugins, so we need to disable AT for them.
-		// More info here: https://kb.pressable.com/faq/does-pressable-restrict-any-plugins/
-		const unsupportedPlugins = [
-			'nginx-helper',
-			'w3-total-cache',
-			'wp-rocket',
-			'wp-super-cache',
-			'bwp-minify',
-		];
-
-		return disabled || includes( unsupportedPlugins, plugin.slug );
-	}
-
 	return (
 		<Button
 			onClick={ installButtonAction }
 			primary={ true }
-			disabled={ isDisabled() }
+			disabled={ disabled }
 		>
 			{ translate( 'Install' ) }
 		</Button>
