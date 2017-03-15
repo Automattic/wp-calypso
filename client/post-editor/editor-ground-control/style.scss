@@ -24,7 +24,7 @@
 
 .editor-ground-control .site {
 	flex: 0 0 auto;
-	max-width: $sidebar-width-max;
+	max-width: calc( 100vw - 50% );
 
 	@include breakpoint( "<660px" ) {
 		display: none;
