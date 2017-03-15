@@ -11,9 +11,31 @@
 	}
 
 	.editor-status-label {
+		line-height: 1;
 		position: fixed;
-		bottom: 12px;
-		left: 16px;
+			bottom: 0px;
+			left: 8px;
+		padding: 8px;
+		margin-right: 2px;
+		background-color: rgba( $white, 0.92 );
+		text-transform: uppercase;
+		font-size: 11px;
+		line-height: 1;
+		color: lighten( $gray, 10% );
+		pointer-events: none;
+		z-index: z-index( 'root', '.editor-action-bar .editor-status-label' );
+
+		@include breakpoint( "<480px" ) {
+			display: none;
+		}
+
+		.focus-sidebar & {
+			right: 228px;
+
+			@include breakpoint( ">960px" ) {
+				right: 273px;
+			}
+		}
 	}
 }
 
