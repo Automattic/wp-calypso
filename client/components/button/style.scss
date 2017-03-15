@@ -89,6 +89,11 @@ button {
 			margin-left: -4px;
 		}
 	}
+	&.is-busy {
+		animation: button__busy-animation 3000ms infinite linear;
+		background-size: 120px 100%;
+		background-image: linear-gradient( -45deg, lighten( $gray, 30% ) 28%, $white 28%, $white 72%, lighten( $gray, 30% ) 72%);
+	}
 	&.hidden {
 		display: none;
 	}
@@ -120,6 +125,9 @@ button {
 	}
 	&.is-compact {
 		color: $white;
+	}
+	&.is-busy {
+		background-image: linear-gradient( -45deg, $blue-medium 28%, darken( $blue-medium, 5% ) 28%, darken( $blue-medium, 5% ) 72%, $blue-medium 72%);
 	}
 }
 
@@ -295,4 +303,9 @@ button {
 		font-style: normal;
 		font-weight: normal;
 	}
+}
+
+
+@keyframes button__busy-animation {
+  0%   { background-position: 240px 0; }
 }
