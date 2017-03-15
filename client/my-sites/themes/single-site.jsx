@@ -14,7 +14,6 @@ import SingleSiteThemeShowcaseJetpack from './single-site-jetpack';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isThemeActive } from 'state/themes/selectors';
-import { canCurrentUser } from 'state/selectors';
 
 const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 	const { isJetpack, siteId, translate } = props;
@@ -78,7 +77,6 @@ export default connect(
 		return {
 			siteId: selectedSiteId,
 			isJetpack: isJetpackSite( state, selectedSiteId ),
-			isCustomizable: canCurrentUser( state, selectedSiteId, 'edit_theme_options' ),
 			getScreenshotOption: ( themeId ) => isThemeActive( state, themeId, selectedSiteId ) ? 'customize' : 'info'
 		};
 	}
