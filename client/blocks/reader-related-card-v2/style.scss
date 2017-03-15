@@ -143,6 +143,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		display: flex;
 		margin-bottom: 13px;
 		z-index: z-index( '.reader-related-card-v2.card', '.reader-related-card-v2__meta' );
+		width: 100%;
 	}
 
 	.reader-related-card-v2__post {
@@ -381,7 +382,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	border: 0;
 	border-radius: 0;
 	margin-bottom: 12px;
-	margin-top: -4px;
+	margin-top: -6px;
 	padding: 0;
 	z-index: z-index( '.reader-related-card-v2__meta', '.follow-button' );
 
