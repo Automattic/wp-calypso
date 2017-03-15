@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
  */
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
-import Button from 'components/button';
 import FormFieldset from 'components/forms/form-fieldset';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -54,41 +53,16 @@ class CustomContentTypes extends Component {
 		const {
 			activatingCustomContentTypesModule,
 			fields,
-			handleToggle
+			handleAutosavingToggle
 		} = this.props;
 		return (
 			<CompactFormToggle
 				checked={ !! fields[ name ] }
 				disabled={ this.isFormPending() || activatingCustomContentTypesModule }
-				onChange={ handleToggle( name ) }
+				onChange={ handleAutosavingToggle( name ) }
 			>
 				{ label }
 			</CompactFormToggle>
-		);
-	}
-
-	renderHeader() {
-		const {
-			onSubmitForm,
-			isSavingSettings,
-			translate
-		} = this.props;
-		const formPending = this.isFormPending();
-
-		return (
-			<SectionHeader label={ translate( 'Custom Content Types' ) }>
-				<Button
-					compact
-					primary
-					onClick={ onSubmitForm }
-					disabled={ formPending }
-				>
-					{ isSavingSettings
-						? translate( 'Saving…' )
-						: translate( 'Save Settings' )
-					}
-				</Button>
-			</SectionHeader>
 		);
 	}
 
@@ -162,9 +136,10 @@ class CustomContentTypes extends Component {
 	}
 
 	render() {
+		const { translate } = this.props;
 		return (
 			<div>
-				{ this.renderHeader() }
+				<SectionHeader label={ translate( 'Custom Content Types' ) } />
 
 				<Card className="custom-content-types__card site-settings">
 					<FormFieldset>
@@ -185,7 +160,7 @@ CustomContentTypes.defaultProps = {
 
 CustomContentTypes.propTypes = {
 	onSubmitForm: PropTypes.func.isRequired,
-	handleToggle: PropTypes.func.isRequired,
+	handleAutosavingToggle: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
 	fields: PropTypes.object,

@@ -104,7 +104,7 @@ class SiteSettingsFormWriting extends Component {
 
 							<CustomContentTypes
 								onSubmitForm={ this.props.handleSubmitForm }
-								handleToggle={ handleToggle }
+								handleAutosavingToggle={ handleAutosavingToggle }
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
 								fields={ fields }
