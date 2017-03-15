@@ -244,20 +244,18 @@ const PluginMeta = React.createClass( {
 
 	maybeDisplayUnsupportedNotice() {
 		const { selectedSite, automatedTransferSite } = this.props;
-		
+
 		if ( selectedSite && this.isUnsupportedPlugin() && ( ! selectedSite.jetpack || automatedTransferSite ) ) {
 			return (
 				<Notice
-					text={ this.translate( 'This plugin is {{a}}not supported{{/a}} on WordPress.com.',
-						{
-							components: {
-								a: <a href="https://support.wordpress.com/incompatible-plugins/" />
-							}
-						}
-					) }
+					text={ this.translate( 'Incompatible plugin: WordPress.com already provides this feature.' ) }
 					status="is-warning"
 					showDismiss={ false }
-				/>
+				>
+					<NoticeAction href="https://support.wordpress.com/incompatible-plugins/">
+						{ this.translate( 'More info' ) }
+					</NoticeAction>
+				</Notice>
 			);
 		}
 	},
