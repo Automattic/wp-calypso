@@ -116,7 +116,7 @@ export class ForgotUsernameFormComponent extends Component {
 					onClick={ this.submitForm }
 					disabled={ ! isPrimaryButtonEnabled }
 					primary>
-					{ translate( 'Continue' ) }
+					{ translate( 'Continue', { context: 'verb' } ) }
 				</Button>
 			</Card>
 		);
