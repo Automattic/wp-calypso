@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
-import { defer, every, without } from 'lodash';
+import { defer, omit } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -13,6 +13,7 @@ import PostPlaceholder from './post-placeholder';
 import PostUnavailable from './post-unavailable';
 import CrossPost from './x-post';
 import XPostHelper from 'reader/xpost-helper';
+import { shallowEquals } from 'reader/utils';
 
 export default class PostLifecycle extends React.PureComponent {
 	static propTypes = {
@@ -52,12 +53,10 @@ export default class PostLifecycle extends React.PureComponent {
 	}
 
 	shouldComponentUpdate( nextProps, nextState ) {
-		const keysToShallowCompare = without( Object.keys( this.props ), 'handleClick' );
+		const currentPropsToCompare = omit( this.props, 'handleClick' );
+		const nextPropsToCompare = omit( nextProps.props, 'handleClick' );
 		const shouldUpdate = this.state.post !== nextState.post ||
-			! every(
-				keysToShallowCompare,
-				key => this.props[ key ] === nextProps[ key ]
-			);
+			! shallowEquals( currentPropsToCompare, nextPropsToCompare );
 
 		return shouldUpdate;
 	}
