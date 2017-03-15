@@ -108,5 +108,24 @@ describe( 'ForgotUsername', () => {
 			// Expect the button to be enabled
 			expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.not.be.ok;
 		} );
+
+		it( 'should be disabled when submitted', function() {
+			const wrapper = mount(
+				<ForgotUsernameFormComponent
+					className="test__test"
+					isRequesting={ true }
+					userData={ {
+						firstName: 'Foo',
+						lastName: 'Bar',
+						url: 'test.example.com',
+					} }
+				/> );
+
+			inputSelectors.forEach( selector => {
+				expect( wrapper.find( selector ).prop( 'disabled' ) ).to.be.ok;
+			} );
+
+			expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
+		} );
 	} );
 } );
