@@ -101,6 +101,9 @@ SitesList.prototype.fetch = function() {
 SitesList.prototype.pauseFetching = function() {
 	this.ignoreUpdates = true;
 };
+SitesList.prototype.resumeFetching = function() {
+	this.ignoreUpdates = false;
+};
 
 SitesList.prototype.sync = function( data ) {
 	debug( 'SitesList fetched from api:', data.sites );
@@ -222,7 +225,7 @@ SitesList.prototype.update = function( sites ) {
 			//Assign old URL because new url is broken because the site response caches domains
 			//and we have trouble getting over it.
 			if ( site.options.is_automated_transfer && site.URL.match( '.wordpress.com' ) ) {
-				site.URL = siteObj.URL;
+				return siteObj;
 			}
 
 			if ( site.options.is_automated_transfer && ! siteObj.jetpack && site.jetpack ) {

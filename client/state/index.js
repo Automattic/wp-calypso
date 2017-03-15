@@ -58,6 +58,7 @@ import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
 import wordads from './wordads/reducer';
+import config from 'config';
 
 /**
  * Module variables
@@ -124,6 +125,7 @@ export function createReduxStore( initialState = {} ) {
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './data-layer/wpcom-api-middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
+		isBrowser && config.isEnabled( 'automated-transfer' ) && require( './automated-transfer/middleware.js' ).default,
 	].filter( Boolean );
 
 	const enhancers = [
