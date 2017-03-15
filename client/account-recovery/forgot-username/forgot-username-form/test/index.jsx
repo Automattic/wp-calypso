@@ -34,7 +34,8 @@ describe( 'ForgotUsername', () => {
 
 		it( 'should be disabled when isRequesting is on', function() {
 			const wrapper = mount(
-				<ForgotUsernameFormComponent className="test__test"
+				<ForgotUsernameFormComponent
+					className="test__test"
 					isRequesting={ true }
 				/> );
 
@@ -50,7 +51,8 @@ describe( 'ForgotUsername', () => {
 
 		it( 'should be disabled if firstName is blank', function() {
 			const wrapper = mount(
-				<ForgotUsernameFormComponent className="test__test"
+				<ForgotUsernameFormComponent
+					className="test__test"
 					userData={ {
 						firstName: '',
 						lastName: 'Bar',
@@ -64,7 +66,8 @@ describe( 'ForgotUsername', () => {
 
 		it( 'should be disabled if lastName is blank', function() {
 			const wrapper = mount(
-				<ForgotUsernameFormComponent className="test__test"
+				<ForgotUsernameFormComponent
+					className="test__test"
 					userData={ {
 						firstName: 'Foo',
 						lastName: '',
@@ -78,7 +81,8 @@ describe( 'ForgotUsername', () => {
 
 		it( 'should be disabled if url is blank', function() {
 			const wrapper = mount(
-				<ForgotUsernameFormComponent className="test__test"
+				<ForgotUsernameFormComponent
+					className="test__test"
 					userData={ {
 						firstName: 'Foo',
 						lastName: 'Bar',
@@ -92,7 +96,8 @@ describe( 'ForgotUsername', () => {
 
 		it( 'should be enabled when all fields are filled in', function() {
 			const wrapper = mount(
-				<ForgotUsernameFormComponent className="test__test"
+				<ForgotUsernameFormComponent
+					className="test__test"
 					userData={ {
 						firstName: 'Foo',
 						lastName: 'Bar',
