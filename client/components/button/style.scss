@@ -58,9 +58,11 @@ button {
 			border-width: 1px 1px 2px;
 		}
 	}
-	&:focus {
-		border-color: $blue-medium;
-		box-shadow: 0 0 0 2px $blue-light;
+	.accessible-focus & {
+		&:focus {
+			border-color: $blue-medium;
+			box-shadow: 0 0 0 2px $blue-light;
+		}
 	}
 	&.is-compact {
 		padding: 7px;
