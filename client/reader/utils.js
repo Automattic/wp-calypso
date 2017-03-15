@@ -3,7 +3,7 @@
  */
 import url from 'url';
 import page from 'page';
-import { isNumber, every } from 'lodash';
+import { every } from 'lodash';
 
 /**
  * Internal Dependencies
