@@ -91,34 +91,6 @@
 		color: $blue-dark;
 		border-bottom: 3px solid $blue-dark;
 	}
-
-	&.themes-magic-search-card__token-type-feature {
-		.themes-magic-search-card__token-filter {
-			color: $alert-green;
-			border-bottom: 3px solid $alert-green;
-		}
-	}
-
-	&.themes-magic-search-card__token-type-color {
-		.themes-magic-search-card__token-filter {
-			color: $blue-medium;
-			border-bottom: 3px solid $blue-medium;
-		}
-	}
-
-	&.themes-magic-search-card__token-type-layout {
-		.themes-magic-search-card__token-filter {
-			color: $orange_fire;
-			border-bottom: 3px solid $orange_fire;
-		}
-	}
-
-	&.themes-magic-search-card__token-type-subject {
-		.themes-magic-search-card__token-filter {
-			color: $alert-purple;
-			border-bottom: 3px solid $alert-purple;
-		}
-	}
 }
 
 .themes-magic-search-card__search-text {
@@ -165,7 +137,6 @@
 
 	.themes-magic-search-card__welcome-header {
 		font-size: 13px;
-		text-transform: uppercase;
 	}
 }
 
@@ -178,7 +149,7 @@
 	border-radius: 3px;
 	font-size: 13px;
 	line-height: 16px;
-	text-transform: uppercase;
+	text-transform: capitalize;
 	cursor: pointer;
 	transition: all 200ms ease-in;
 
@@ -195,21 +166,25 @@
 	pointer-events: none;
 }
 
-.themes-magic-search-card__welcome-taxonomy-type-color {
-	color: rgb( 0, 170, 220 );
+
+// Colors
+@mixin themes-magic-search__token-colors( $name, $color ) {
+	.themes-magic-search-card__welcome-taxonomy-type-#{$name} {
+		color: $color;
+	}
+
+	.themes-magic-search-card__token-type-#{$name} {
+		.themes-magic-search-card__token-filter {
+			color: $color;
+			border-bottom: 3px solid $color;
+		}
+	}
 }
-.themes-magic-search-card__welcome-taxonomy-type-column {
-	color: rgb( 144, 19, 254 );
-}
-.themes-magic-search-card__welcome-taxonomy-type-feature {
-	color: rgb( 102, 195, 126 );
-}
-.themes-magic-search-card__welcome-taxonomy-type-layout {
-	color: rgb( 242, 134, 10 );
-}
-.themes-magic-search-card__welcome-taxonomy-type-subject {
-	color: $gray;
-}
-.themes-magic-search-card__welcome-taxonomy-type-style {
-	color: rgb( 241, 56, 59 );
-}
+
+@include themes-magic-search__token-colors( 'color', #005082 );
+@include themes-magic-search__token-colors( 'column', #d54e21 );
+@include themes-magic-search__token-colors( 'feature', #4ab866 );
+@include themes-magic-search__token-colors( 'layout', #f0821e );
+@include themes-magic-search__token-colors( 'subject', #855da6 );
+@include themes-magic-search__token-colors( 'style', #e12f67 );
+@include themes-magic-search__token-colors( 'picks', #0087be );
