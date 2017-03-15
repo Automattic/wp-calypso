@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import { get } from 'lodash';
+import { get, take } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -24,6 +24,8 @@ const ReaderCombinedCard = ( { posts, site, feed, selectedPostKey, onClick, isDi
 	const streamUrl = getStreamUrl( feedId, siteId );
 	const siteName = siteNameFromSiteAndPost( site, posts[ 0 ] );
 	const isSelectedPost = post => keysAreEqual( keyForPost( post ), selectedPostKey );
+	const firstFivePosts = take( posts, 5 );
+	const thereWereMorePosts = firstFivePosts.length !== posts.length;
 
 	return (
 		<Card className="reader-combined-card">
@@ -49,10 +51,13 @@ const ReaderCombinedCard = ( { posts, site, feed, selectedPostKey, onClick, isDi
 							}
 						} ) }
 					</p>
+					{ thereWereMorePosts &&
+						<p> { translate( "there were more than 5 posts, read more at the site" ) } </p>
+					}
 				</div>
 			</header>
 			<ul className="reader-combined-card__post-list">
-				{ posts.map( post => (
+				{ firstFivePosts.map( post => (
 					<ReaderCombinedCardPost
 						key={ `post-${ post.ID }` }
 						post={ post }
