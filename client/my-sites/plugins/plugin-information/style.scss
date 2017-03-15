@@ -44,7 +44,7 @@
 
 .plugin-information__version-info {
 	font-size: 11px;
-	color: $gray;
+	color: $gray-text-min;
 	text-transform: uppercase;
 	width: 100%;
 
@@ -135,4 +135,3 @@
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
-
