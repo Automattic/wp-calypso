@@ -8,6 +8,10 @@ import { map, head, get } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 
+export const HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED = 'disconnected';
+export const HAPPYCHAT_CONNECTION_STATUS_CONNECTING = 'connecting';
+export const HAPPYCHAT_CONNECTION_STATUS_CONNECTED = 'connected';
+
 export const HAPPYCHAT_CHAT_STATUS_DEFAULT = 'default';
 export const HAPPYCHAT_CHAT_STATUS_ASSIGNED = 'assigned';
 export const HAPPYCHAT_CHAT_STATUS_ASSIGNING = 'assigning';
@@ -30,6 +34,14 @@ export const getHappychatTranscriptTimestamp = state => (
  */
 export const getHappychatConnectionStatus = createSelector(
 	state => state.happychat.connectionStatus
+);
+
+export const isHappychatClientConnected = createSelector(
+	state => state.happychat.connectionStatus === HAPPYCHAT_CONNECTION_STATUS_CONNECTED
+);
+
+export const isHappychatChatAssigned = createSelector(
+	state => state.happychat.chatStatus === HAPPYCHAT_CHAT_STATUS_ASSIGNED
 );
 
 export const isHappychatChatActive = createSelector(
