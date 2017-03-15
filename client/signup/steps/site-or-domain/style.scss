@@ -7,7 +7,7 @@
 .site-or-domain__choice {
 	padding: 0;
 	margin: 10px;
-	width: 230px;
+	min-width: 230px;
 	max-width: 330px;
 	flex-grow: 1;
 	transition: box-shadow 100ms ease-in-out;
