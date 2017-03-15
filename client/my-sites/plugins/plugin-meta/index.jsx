@@ -369,7 +369,7 @@ const PluginMeta = React.createClass( {
 
 		const plugin = this.props.selectedSite && this.props.sites[ 0 ] ? this.props.sites[ 0 ].plugin : this.props.plugin;
 		let actionLinks = get( plugin, 'action_links' );
-		if ( isEmpty( actionLinks ) ) {
+		if ( get( plugin, 'active' ) && isEmpty( actionLinks ) ) {
 			actionLinks = this.getDefaultActionLinks();
 		}
 
