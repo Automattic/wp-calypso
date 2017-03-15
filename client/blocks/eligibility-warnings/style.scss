@@ -11,8 +11,11 @@
 		color: $gray-light;
 		background-color: $gray-light;
 	}
+	.eligibility-warnings__message {
+		height: 24px;
+	}
 
-	.gridicon {
+	.eligibility-warnings__hold .gridicon {
 		color: $gray-light;
 	}
 

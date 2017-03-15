@@ -40,7 +40,7 @@ export const EligibilityWarnings = ( {
 	const warnings = get( eligibilityData, 'eligibilityWarnings', [] );
 
 	const [ bannerHolds, listHolds ] = partition(
-		get( eligibilityData, 'eligibilityHolds', [ 'PLACEHOLDER', 'PLACEHOLDER' ] ),
+		get( eligibilityData, 'eligibilityHolds', [] ),
 		hold => includes( [ 'NO_BUSINESS_PLAN', 'NOT_USING_CUSTOM_DOMAIN' ], hold ),
 	);
 
@@ -77,8 +77,12 @@ export const EligibilityWarnings = ( {
 				/>
 			}
 
-			{ listHolds.length > 0 && <HoldList holds={ listHolds } /> }
-			{ warnings.length > 0 && <WarningList warnings={ warnings } /> }
+			{ ( isPlaceholder || listHolds.length > 0 ) &&
+				<HoldList holds={ listHolds } isPlaceholder={ isPlaceholder } />
+			}
+			{ warnings.length > 0 &&
+				<WarningList warnings={ warnings } />
+			}
 
 			{ isEligible && 0 === listHolds.length && 0 === warnings.length &&
 				<Card className="eligibility-warnings__no-conflicts">

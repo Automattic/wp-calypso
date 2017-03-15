@@ -17,11 +17,6 @@ import SectionHeader from 'components/section-header';
 // TODO: update supportUrls and maybe create similar mapping for warnings
 function getHoldMessages( translate ) {
 	return {
-		PLACEHOLDER: {
-			title: '',
-			description: '',
-			supportUrl: '',
-		},
 		TRANSFER_ALREADY_EXISTS: {
 			title: translate( 'Installation in progress' ),
 			description: translate( 'Please wait for the other installation to complete, then try again.' ),
@@ -88,6 +83,7 @@ function getHoldMessages( translate ) {
 
 export const HoldList = ( {
 	holds,
+	isPlaceholder,
 	translate,
 } ) => {
 	const holdMessages = getHoldMessages( translate );
@@ -100,7 +96,19 @@ export const HoldList = ( {
 				{ count: holds.length }
 			) } />
 			<Card className="eligibility-warnings__hold-list">
-				{ map( holds, hold =>
+				{ isPlaceholder &&
+					<div>
+						<div className="eligibility-warnings__hold">
+							<Gridicon icon="notice-outline" size={ 24 } />
+							<div className="eligibility-warnings__message"></div>
+						</div>
+						<div className="eligibility-warnings__hold">
+							<Gridicon icon="notice-outline" size={ 24 } />
+							<div className="eligibility-warnings__message"></div>
+						</div>
+					</div>
+				}
+				{ ! isPlaceholder && map( holds, hold =>
 					<div className="eligibility-warnings__hold" key={ hold }>
 						<Gridicon icon="notice-outline" size={ 24 } />
 						<div className="eligibility-warnings__message">
