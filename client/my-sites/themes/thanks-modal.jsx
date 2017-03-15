@@ -176,6 +176,7 @@ export default connect(
 		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
 
 		return {
+			siteId,
 			currentTheme,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
 			customizeUrl: getThemeCustomizeUrl( state, currentThemeId, siteId ),
