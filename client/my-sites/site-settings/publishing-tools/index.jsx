@@ -113,7 +113,7 @@ class PublishingTools extends Component {
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="post-by-email"
-					label={ translate( 'Publish posts by sending an email.' ) }
+					label={ translate( 'Publish posts by sending an email' ) }
 					disabled={ formPending || moduleUnavailable }
 					/>
 
