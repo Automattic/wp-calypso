@@ -92,6 +92,10 @@ function sameSite( postKey1, postKey2 ) {
 		);
 }
 
+function sameDay( postKey1, postKey2 ) {
+	return postKey1.localMoment.isSame( postKey2.localMoment, 'day' );
+}
+
 /**
  * Takes two postKeys and combines them into a ReaderCombinedCard postKey.
  * Note: This only makes sense for postKeys from the same site
@@ -109,7 +113,9 @@ function combine( postKey1, postKey2 ) {
 		isCombination: true,
 		blogId: postKey1.blogId,
 		feedId: postKey1.feedId,
-		index: postKey1.index,
+		localMoment: postKey1.localMoment && postKey1.localMoment.isBefore( postKey2.localMoment ) // keep the earliest moment
+			? postKey1.localMoment
+			: postKey2.localMoment,
 		postIds: [
 			...( postKey1.postIds || [ postKey1.postId ] ),
 			...( postKey2.postIds || [ postKey2.postId ] ),
@@ -120,7 +126,7 @@ function combine( postKey1, postKey2 ) {
 const combineCards = ( postKeys ) => postKeys.reduce(
 	( accumulator, postKey ) => {
 		const lastPostKey = last( accumulator );
-		if ( sameSite( lastPostKey, postKey ) ) {
+		if ( sameSite( lastPostKey, postKey ) && sameDay( lastPostKey, postKey ) ) {
 			accumulator[ accumulator.length - 1 ] = combine( last( accumulator ), postKey );
 		} else {
 			accumulator.push( postKey );
