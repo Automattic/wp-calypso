@@ -118,8 +118,8 @@ function getStoreForSearch( storeId ) {
 	} );
 
 	function fetcher( query, callback ) {
-		if ( stream.query_suggested ) {
-			query.suggested = true;
+		if ( stream.isQuerySuggestion ) {
+			query.isSuggestion = true;
 		}
 		query.q = slug;
 		query.meta = 'site';

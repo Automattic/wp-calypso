@@ -34,7 +34,7 @@ export default {
 		let store;
 		if ( searchSlug ) {
 			store = feedStreamFactory( 'search:' + searchSlug );
-			store.query_suggested = context.query.suggested === '1';
+			store.isQuerySuggestion = context.query.isSuggestion === '1';
 			ensureStoreLoading( store, context );
 		} else {
 			store = feedStreamFactory( 'custom_recs_posts_with_images' );
