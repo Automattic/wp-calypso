@@ -52,7 +52,8 @@ export class EditorPublishButton extends Component {
 		isPublishing: PropTypes.bool,
 		isSaveBlocked: PropTypes.bool,
 		hasContent: PropTypes.bool,
-		needsVerification: PropTypes.bool
+		needsVerification: PropTypes.bool,
+		busy: PropTypes.bool
 	};
 
 	constructor( props ) {
@@ -123,6 +124,7 @@ export class EditorPublishButton extends Component {
 				className="editor-publish-button"
 				primary
 				compact
+				busy={ this.props.busy }
 				onClick={ this.onClick }
 				disabled={ ! this.isEnabled() }
 				tabIndex={ this.props.tabIndex }
