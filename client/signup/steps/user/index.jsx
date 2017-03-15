@@ -149,7 +149,7 @@ export class UserStep extends Component {
 				submitForm={ this.submitForm }
 				submitButtonText={ this.submitButtonText() }
 				suggestedUsername={ this.props.suggestedUsername }
-				isSocialSignupEnabled={ true }
+				isSocialSignupEnabled={ isEnabled( 'signup/social' ) }
 			/>
 		);
 	}
