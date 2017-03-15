@@ -70,7 +70,8 @@
 		display: inline-block;
 
 		/* These are styling */
-		color: $gray;
+		border-bottom: 3px solid $blue-medium;
+		opacity: 0.6;
 	}
 
 	.themes-magic-search-card__token-separator {
@@ -79,8 +80,8 @@
 		display: inline-block;
 
 		/* These are styling */
-		color: $gray;
-		height: 24px;
+		border-bottom: 3px solid $blue-medium;
+		opacity: 0.6;
 	}
 
 	.themes-magic-search-card__token-filter {
@@ -88,15 +89,14 @@
 		display: inline-block;
 
 		/* These are styling */
-		color: $blue-dark;
-		border-bottom: 3px solid $blue-dark;
+		border-bottom: 3px solid $blue-medium;
 	}
 }
 
 .themes-magic-search-card__search-text {
 	font: inherit;
 	pointer-events: none;
-	color: rgba(1, 0, 0, 0.2);
+	color: transparent;
 }
 
 .themes-magic-search-card__search-white-space {
@@ -174,9 +174,10 @@
 	}
 
 	.themes-magic-search-card__token-type-#{$name} {
+		.themes-magic-search-card__token-taxonomy,
+		.themes-magic-search-card__token-separator,
 		.themes-magic-search-card__token-filter {
-			color: $color;
-			border-bottom: 3px solid $color;
+			border-color: $color;
 		}
 	}
 }
