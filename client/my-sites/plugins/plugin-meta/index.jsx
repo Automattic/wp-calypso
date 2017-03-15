@@ -209,7 +209,7 @@ const PluginMeta = React.createClass( {
 		}
 	},
 
-	maybeDisplayAtUnsupportedNotice() {
+	maybeDisplayUnsupportedNotice() {
 		const { selectedSite, plugin } = this.props;
 
 		// Pressable prevents installation of some plugins, so we need to disable AT for them.
@@ -435,7 +435,7 @@ const PluginMeta = React.createClass( {
 				</Card>
 
 				{ config.isEnabled( 'automated-transfer' ) &&
-					this.maybeDisplayAtUnsupportedNotice()
+					this.maybeDisplayUnsupportedNotice()
 				}
 
 				{ config.isEnabled( 'automated-transfer' ) && this.hasBusinessPlan() && ! get( this.props.selectedSite, 'jetpack' ) &&
