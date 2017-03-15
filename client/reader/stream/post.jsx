@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +21,7 @@ import {
 	getSourceData as getDiscoverSourceData,
 	discoverBlogId
 } from 'reader/discover/helper';
+import { shallowEquals } from 'reader/utils';
 
 class ReaderPostCardAdapter extends React.Component {
 
@@ -169,6 +170,17 @@ export default class ReaderPostCardAdapterFluxContainer extends React.Component 
 
 	componentWillUnmount() {
 		FeedPostStore.off( 'change', this.updateState );
+	}
+
+	shouldComponentUpdate( nextProps, nextState ) {
+		const currentPropsToCompare = omit( this.props, 'handleClick' );
+		const nextPropsToCompare = omit( nextProps, 'handleClick' );
+		const shouldUpdate = (
+			( this.props !== nextProps && ! shallowEquals( currentPropsToCompare, nextPropsToCompare ) ) ||
+			( get( this.state, 'discoverPick.post' ) !== get( nextState, 'discoverPick.post' )
+		) );
+
+		return shouldUpdate;
 	}
 
 	render() {

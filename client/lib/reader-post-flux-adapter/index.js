@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { every, map } from 'lodash';
+import { map } from 'lodash';
 import { connect } from 'react-redux';
 
 /*
@@ -12,12 +12,12 @@ import FeedPostStore from 'lib/feed-post-store';
 import { fetchPost } from 'lib/feed-post-store/actions';
 import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
+import { shallowEquals } from 'reader/utils';
 
 /**
  * A HoC function that translates a postKey or postKeys into a post or posts for its child.
  */
 const fluxPostAdapter = Component => {
-
 	class ReaderPostFluxAdapter extends React.Component {
 		static propTypes = {
 			postKey: PropTypes.object,
@@ -50,17 +50,13 @@ const fluxPostAdapter = Component => {
 		state = this.getStateFromStores( this.props );
 
 		updateState = ( newState = this.getStateFromStores() ) => {
-			// check to see if this new state is the same as the old state
-			if ( newState.posts.length === this.state.posts.length ) {
-				// same length, so they might be.
-				// check to see if the individual posts are equal
-				// since feed-post-store uses immutable posts, this is safe (and fast)
-				const current = this.state.posts;
-				if ( every( newState.posts, ( post, index ) => post === current[ index ] ) ) {
-					return;
-				}
-			}
 			this.setState( newState );
+		}
+
+		// should not update if all of the posts refer to the same objects
+		shouldComponentUpdate( nextProps, nextState ) {
+			const differentPosts = ! shallowEquals( nextState.posts, this.state.posts );
+			return differentPosts;
 		}
 
 		componentWillMount() {
