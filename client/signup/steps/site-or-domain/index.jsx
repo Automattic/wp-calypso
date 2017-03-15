@@ -70,7 +70,7 @@ export default class SiteOrDomain extends Component {
 					<Card className="site-or-domain__choice" key={ choice.type }>
 						<a href="#" onClick={ ( event ) => this.handleClickChoice( event, choice.type ) }>
 							{ choice.image }
-							<h2 className="site-or-domain__label">{ choice.label }</h2>
+							<h2>{ choice.label }</h2>
 						</a>
 					</Card>
 				) ) }
