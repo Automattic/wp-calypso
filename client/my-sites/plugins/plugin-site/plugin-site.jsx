@@ -39,6 +39,7 @@ export default connect(
 						remove: false,
 					}
 				},
+				isAutoManaged: true,
 			};
 		}
 		return ownProps;

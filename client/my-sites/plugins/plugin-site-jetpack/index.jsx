@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-
+import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
@@ -16,7 +16,7 @@ import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
 import Site from 'blocks/site';
 
-export default React.createClass( {
+const PluginSiteJetpack = React.createClass( {
 
 	displayName: 'PluginSiteJetpack',
 
@@ -71,6 +71,8 @@ export default React.createClass( {
 			remove: canToggleRemove,
 		} = this.props.allowedActions;
 
+		const showAutoManagedMessage = this.props.isAutoManaged;
+
 		return (
 			<FoldableCard compact
 				clickableHeader
@@ -94,6 +96,13 @@ export default React.createClass( {
 						site={ this.props.site }
 						notices={ this.props.notices } /> }
 
+					{ showAutoManagedMessage &&
+						<div className="plugin-site-jetpack__automanage-notice">
+						{ this.props.translate( '%(pluginName)s is automatically managed on this site',
+							{ args: { pluginName: this.props.plugin.name } } )
+						}
+						</div>
+					}
 
 				</div>
 			</FoldableCard>
@@ -126,3 +135,5 @@ export default React.createClass( {
 		return this.renderPluginSite();
 	}
 } );
+
+export default localize( PluginSiteJetpack );
