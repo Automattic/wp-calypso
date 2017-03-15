@@ -9,17 +9,6 @@ import mapValues from 'lodash/mapValues';
  * Internal dependencies
  */
 import { sectionify } from 'lib/route/path';
-import { oldShowcaseUrl } from 'state/themes/utils';
-
-export function getExternalThemesUrl( site ) {
-	if ( ! site ) {
-		return oldShowcaseUrl;
-	}
-	if ( site.jetpack ) {
-		return site.options.admin_url + 'theme-install.php';
-	}
-	return oldShowcaseUrl + site.slug;
-}
 
 export function trackClick( componentName, eventName, verb = 'click' ) {
 	const stat = `${ componentName } ${ eventName } ${ verb }`;
