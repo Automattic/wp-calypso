@@ -540,9 +540,7 @@ const ThemeSheet = React.createClass( {
 				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
 				{ this.renderBar() }
 				{ siteID && <QueryActiveTheme siteId={ siteID } /> }
-				<ThanksModal
-					site={ this.props.selectedSite }
-					source={ 'details' } />
+				<ThanksModal source={ 'details' } />
 				<HeaderCake className="theme__sheet-action-bar"
 					backHref={ this.props.backPath }
 					backText={ i18n.translate( 'All Themes' ) }>

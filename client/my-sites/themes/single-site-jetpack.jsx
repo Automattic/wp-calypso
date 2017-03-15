@@ -87,9 +87,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 					emptyContent={ showWpcomThemesList ? <div /> : null } >
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-					<ThanksModal
-						site={ site }
-						source={ 'list' } />
+					<ThanksModal source={ 'list' } />
 					{ showWpcomThemesList &&
 						<div>
 							<ConnectedThemesSelection
