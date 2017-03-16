@@ -1,16 +1,14 @@
-.plugin-activate-toggle .disconnect-jetpack-button {
-	font-size: 11px;
-	font-weight: 400;
-	color: $alert-red;
-	text-transform: uppercase;
-
-	&:disabled,
-	&:disabled:hover {
-		color: lighten( $gray, 30% );
-		cursor: default;
-	}
-}
-
 .plugin-activate-toggle .plugin-action__children {
 	float: none;
+}
+.plugin-activate-toggle__disabled,
+.plugin-activate-toggle__link {
+	font-size: 11px;
+	line-height: 16px;
+	margin-right: 8px;
+	vertical-align: top;
+	text-transform: uppercase;
+}
+.plugin-activate-toggle__disabled {
+	color: 	lighten( $gray, 30% );
 }
