@@ -17,10 +17,26 @@ class Connection extends EventEmitter {
 		if ( ! this.openSocket ) {
 			this.openSocket = new Promise( resolve => {
 				const url = config( 'happychat_url' );
+				debug( 'connecting to', url );
 				const socket = new IO( url );
 				socket
-					.once( 'connect', () => debug( 'connected' ) )
-					.on( 'init', () => resolve( socket ) )
+					.on( 'init', () => {
+						resolve( socket );
+						debug( 'init', this );
+						this.emit( 'connect' );
+					} )
+					.on( 'connect', () => {
+						debug( 'connected' );
+						this.emit( 'connect' );
+					} )
+					.on( 'disconnect', () => {
+						debug( 'disconnected' );
+						this.emit( 'disconnect' );
+					} )
+					.on( 'reconnect', () => {
+						debug( 'reconnected' );
+						this.emit( 'reconnect' );
+					} )
 					.on( 'token', handler => {
 						handler( { signer_user_id: user_id, jwt: token, locale } );
 					} )

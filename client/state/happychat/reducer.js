@@ -19,6 +19,7 @@ import validator from 'is-my-json-valid';
 import {
 	SERIALIZE,
 	DESERIALIZE,
+	HAPPYCHAT_DISCONNECTED,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_AVAILABLE,
 	HAPPYCHAT_SET_MESSAGE,
@@ -153,6 +154,8 @@ const connectionStatus = ( state = 'disconnected', action ) => {
 			return 'connecting';
 		case HAPPYCHAT_CONNECTED:
 			return 'connected';
+		case HAPPYCHAT_DISCONNECTED:
+			return 'disconnected';
 	}
 	return state;
 };
