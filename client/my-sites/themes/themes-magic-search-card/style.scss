@@ -157,22 +157,29 @@
 	flex-direction: column;
 	text-align: center;
 	flex: 1 0 auto;
-	padding: 4px 8px;
+	padding: 10px 8px;
 	margin: 0;
 	font-size: 13px;
 	line-height: 16px;
 	text-transform: capitalize;
 	cursor: pointer;
-	border-bottom: 3px solid $blue-medium;
+	color: $gray-dark;
 	transition: all 200ms ease-in;
 
 	.gridicon {
+		fill: $gray-dark;
 		margin: 0 auto;
+		transition: fill 200ms ease-in;
 	}
 
 	&:hover {
+		color: $blue-medium;
 		background: lighten( $gray, 35% );
-		box-shadow: 0 2px 0 0 $blue-medium;
+		box-shadow: inset 0 -3px 0 0 $blue-medium;
+
+		.gridicon {
+			fill: $blue-medium;
+		}
 	}
 
 	&.themes-magic-search-card__welcome-taxonomy-highlight {
@@ -183,31 +190,3 @@
 .themes-magic-search-card__welcome-taxonomy-icon {
 	pointer-events: none;
 }
-
-// Colors
-@mixin themes-magic-search__token-colors( $name, $color ) {
-	.themes-magic-search-card__welcome-taxonomy-type-#{$name} {
-		color: $color;
-		border-color: $color;
-
-		&:hover {
-			box-shadow: 0 2px 0 0 $color;
-		}
-	}
-
-	.themes-magic-search-card__token-type-#{$name} {
-		.themes-magic-search-card__token-taxonomy,
-		.themes-magic-search-card__token-separator,
-		.themes-magic-search-card__token-filter {
-			border-color: $color;
-		}
-	}
-}
-
-@include themes-magic-search__token-colors( 'color', #005082 );
-@include themes-magic-search__token-colors( 'column', #d54e21 );
-@include themes-magic-search__token-colors( 'feature', #4ab866 );
-@include themes-magic-search__token-colors( 'layout', #f0821e );
-@include themes-magic-search__token-colors( 'subject', #855da6 );
-@include themes-magic-search__token-colors( 'style', #e12f67 );
-@include themes-magic-search__token-colors( 'picks', #0087be );
