@@ -11,7 +11,6 @@ import GridIcon from 'gridicons';
  */
 import {
 	first,
-	any,
 	when
 } from './functional';
 import { connectChat } from 'state/happychat/actions';
@@ -25,7 +24,8 @@ import {
 	minimizedChat
 } from 'state/ui/happychat/actions';
 import {
-	isHappychatMinimizing
+	isHappychatMinimizing,
+	isHappychatOpen,
 } from 'state/ui/happychat/selectors';
 import {
 	isConnected,
@@ -35,8 +35,6 @@ import {
 } from './helpers';
 import Notices from './notices';
 import { translate } from 'i18n-calypso';
-
-const isChatOpen = any( isConnected, isConnecting );
 
 /**
  * Renders the title text of the chat sidebar when happychat is connecting.
@@ -98,14 +96,15 @@ const Happychat = React.createClass( {
 			isMinimizing,
 			user,
 			onCloseChat,
-			onOpenChat
+			onOpenChat,
+			isChatOpen,
 		} = this.props;
 
 		return (
 			<div className="happychat">
 				<div
 					className={ classnames( 'happychat__container', {
-						'is-open': isChatOpen( { connectionStatus } ),
+						'is-open': isChatOpen,
 						'is-minimizing': isMinimizing
 					} ) } >
 					<div className="happychat__title">
@@ -129,7 +128,8 @@ const Happychat = React.createClass( {
 const mapState = state => {
 	return {
 		connectionStatus: getHappychatConnectionStatus( state ),
-		isMinimizing: isHappychatMinimizing( state )
+		isMinimizing: isHappychatMinimizing( state ),
+		isChatOpen: isHappychatOpen( state ),
 	};
 };
 
