@@ -7,8 +7,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	getPosterUploadProgress,
 	getVideoEditorPoster,
-	getVideoUploadProgress,
 	isVideoEditorPosterUpdated,
 	videoEditorHasPosterUpdateError,
 } from '../selectors';
@@ -31,10 +31,10 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getVideoUploadProgress()', () => {
+	describe( '#getPosterUploadProgress()', () => {
 		it( 'should return the upload progress', () => {
 			const percentage = 50;
-			const uploadProgress = getVideoUploadProgress( {
+			const uploadProgress = getPosterUploadProgress( {
 				ui: {
 					editor: {
 						videoEditor: {

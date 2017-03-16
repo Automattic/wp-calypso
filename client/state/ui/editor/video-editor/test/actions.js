@@ -86,7 +86,7 @@ describe( 'actions', () => {
 			const action = updatePosterUploadProgress( percentage );
 
 			expect( action ).to.eql( {
-				type: VIDEO_SHOW_UPLOAD_PROGRESS,
+				type: VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 				percentage,
 			} );
 		} );

@@ -21,8 +21,8 @@ import {
 	updateVideoEditorPoster,
 } from 'state/ui/editor/video-editor/actions';
 import {
+	getPosterUploadProgress,
 	getVideoEditorPoster,
-	getVideoUploadProgress,
 	isVideoEditorPosterUpdated,
 	videoEditorHasPosterUpdateError,
 } from 'state/ui/editor/video-editor/selectors';
@@ -238,7 +238,7 @@ export default connect(
 			hasPosterUpdateError: videoEditorHasPosterUpdateError( state ),
 			isPosterUpdated: isVideoEditorPosterUpdated( state ),
 			poster: getVideoEditorPoster( state ),
-			uploadProgress: getVideoUploadProgress( state ),
+			uploadProgress: getPosterUploadProgress( state ),
 		};
 	},
 	dispatch => bindActionCreators( {

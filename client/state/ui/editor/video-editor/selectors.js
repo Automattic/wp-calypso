@@ -14,7 +14,7 @@ export function getVideoEditorPoster( state ) {
  * @param  {Object}  state  Global state tree
  * @return {Number}  Poster upload progress percentage.
  */
-export function getVideoUploadProgress( state ) {
+export function getPosterUploadProgress( state ) {
 	return state.ui.editor.videoEditor.uploadProgress;
 }
 
