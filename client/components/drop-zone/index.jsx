@@ -24,6 +24,7 @@ export const DropZone = React.createClass( {
 		onFilesDrop: PropTypes.func,
 		fullScreen: PropTypes.bool,
 		icon: PropTypes.string,
+		textLabel: PropTypes.string,
 		translate: PropTypes.func,
 	},
 
@@ -196,6 +197,10 @@ export const DropZone = React.createClass( {
 	renderContent() {
 		let content;
 
+		const textLabel = this.props.textLabel
+			? this.props.textLabel
+			: this.props.translate( 'Drop files to upload' );
+
 		if ( this.props.children ) {
 			content = this.props.children;
 		} else {
@@ -203,7 +208,7 @@ export const DropZone = React.createClass( {
 				icon: <Gridicon icon={ this.props.icon } size={ 48 } className="drop-zone__content-icon" />,
 				text: (
 					<span className="drop-zone__content-text">
-						{ this.props.translate( 'Drop files to upload' ) }
+						{ textLabel }
 					</span>
 				)
 			} );
