@@ -82,6 +82,7 @@ export function getJetpackComputedAttributes( state, siteId ) {
 	return {
 		hasMinimumJetpackVersion: siteHasMinimumJetpackVersion( state, siteId ),
 		canAutoupdateFiles: canJetpackSiteAutoUpdateFiles( state, siteId ),
+		canUpdateFiles: canJetpackSiteUpdateFiles( state, siteId ),
 	};
 }
 
