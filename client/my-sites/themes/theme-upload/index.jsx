@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { includes, find, isEmpty } from 'lodash';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -21,6 +20,7 @@ import ProgressBar from 'components/progress-bar';
 import Button from 'components/button';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 // Necessary for ThanksModal
 import QueryActiveTheme from 'components/data/query-active-theme';
 import { localize } from 'i18n-calypso';
@@ -318,7 +318,7 @@ class Upload extends React.Component {
 			return this.renderNotAvailableForMultisite();
 		}
 
-		if ( ! isJetpack && ! config.isEnabled( 'automated-transfer' ) ) {
+		if ( ! isJetpack && ! isATEnabledForCurrentSite() ) {
 			return this.renderNotAvailable();
 		}
 

@@ -21,9 +21,9 @@ import {
 } from 'lib/products-values';
 import JetpackPluginsPanel from './jetpack-plugins-panel';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import config from 'config';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import Banner from 'components/banner';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 export const PluginPanel = ( {
 	plan,
@@ -40,7 +40,7 @@ export const PluginPanel = ( {
 
 			<PageViewTracker path="/plugins/:site" title="Plugins > WPCOM Site" />
 
-			{ config.isEnabled( 'automated-transfer' ) && ! hasBusiness &&
+			{ isATEnabledForCurrentSite() && ! hasBusiness &&
 				<Banner
 					feature={ FEATURE_UPLOAD_PLUGINS }
 					plan={ PLAN_BUSINESS }

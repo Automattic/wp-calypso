@@ -10,6 +10,7 @@ import controller from 'my-sites/controller';
 import config from 'config';
 import pluginsController from './controller';
 import { getSelectedSite } from 'state/ui/selectors';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 const nonJetpackRedirectTo = path => ( context, next ) => {
 	const site = getSelectedSite( context.store.getState() );
@@ -76,7 +77,7 @@ module.exports = function() {
 			pluginsController.plugin
 		);
 
-		if ( config.isEnabled( 'automated-transfer' ) ) {
+		if ( isATEnabledForCurrentSite() ) {
 			page( '/plugins/:plugin/eligibility/:site_id',
 				controller.siteSelection,
 				controller.navigation,
