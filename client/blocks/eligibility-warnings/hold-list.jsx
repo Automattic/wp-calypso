@@ -22,12 +22,6 @@ function getHoldMessages( translate ) {
 			description: translate( 'Please wait for the other installation to complete, then try again.' ),
 			supportUrl: 'https://wordpress.com/help',
 		},
-		// Handled as a banner
-		NO_BUSINESS_PLAN: {
-			title: translate( 'Business plan required' ),
-			description: translate( 'This feature is only allowed on sites with a business plan.' ),
-			supportUrl: 'https://support.wordpress.com/',
-		},
 		NO_JETPACK_SITES: {
 			title: translate( 'Jetpack not supported' ),
 			description: translate( 'Try using a different site.' ),
@@ -50,12 +44,6 @@ function getHoldMessages( translate ) {
 			title: translate( 'Admin access required' ),
 			description: translate( 'Only site administrators are allowed to use this feature.' ),
 			supportUrl: 'https://support.wordpress.com/user-roles/',
-		},
-		// Handled as a banner
-		NOT_USING_CUSTOM_DOMAIN: {
-			title: translate( 'No custom domain' ),
-			description: translate( 'Your site must use a custom domain to use this feature.' ),
-			supportUrl: 'https://support.wordpress.com/register-domain/',
 		},
 		NOT_DOMAIN_OWNER: {
 			title: translate( 'Not a custom domain owner' ),
