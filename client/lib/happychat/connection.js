@@ -37,6 +37,10 @@ class Connection extends EventEmitter {
 						debug( 'reconnected' );
 						this.emit( 'reconnect' );
 					} )
+					.on( 'reconnecting', () => {
+						debug( 'reconnecting' );
+						this.emit( 'reconnecting' );
+					} )
 					.on( 'token', handler => {
 						handler( { signer_user_id: user_id, jwt: token, locale } );
 					} )

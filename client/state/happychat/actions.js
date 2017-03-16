@@ -99,11 +99,12 @@ export const connectChat = () => ( dispatch, getState ) => {
 			dispatch( setChatConnected() );
 			dispatch( requestChatTranscript() );
 			connection
+			.on( 'connect', () => dispatch( setChatConnected() ) )
 			.on( 'message', event => dispatch( receiveChatEvent( event ) ) )
 			.on( 'status', status => dispatch( setHappychatChatStatus( status ) ) )
 			.on( 'accept', accept => dispatch( setHappychatAvailable( accept ) ) )
 			.on( 'disconnect', () => dispatch( setChatDisconnected() ) )
-			.on( 'reconnect', () => dispatch( setChatConnecting() ) );
+			.on( 'reconnecting', () => dispatch( setChatConnecting() ) );
 		},
 		e => debug( 'failed to start happychat session', e, e.stack )
 	);
