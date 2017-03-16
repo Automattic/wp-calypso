@@ -58,7 +58,8 @@ function isNodeClassOfReactComponent( node ) {
 }
 
 function isNodeReactCreateClass( node ) {
-	return node.type === 'MemberExpression'
+	return node
+		&& node.type === 'MemberExpression'
 		&& node.object.name === 'React'
 		&& node.property.name === 'createClass';
 }
@@ -66,12 +67,13 @@ function isNodeReactCreateClass( node ) {
 function isIdentifierReactComponent( astRoot, identifierName ) {
 	let isReactCreateClass = false;
 	let isSubclassOfReactComponent = false;
+	let isFunction = false;
 
 	// Identifier is intialized with React.createClass
 	astRoot
 		.findVariableDeclarators( identifierName )
 		.forEach( path => {
-			isReactCreateClass = isNodeReactCreateClass( path.value.init.callee );
+			isReactCreateClass = path.value.init && isNodeReactCreateClass( path.value.init.callee );
 		} );
 
 	// Identifier is a class declaration
@@ -82,8 +84,11 @@ function isIdentifierReactComponent( astRoot, identifierName ) {
 			isSubclassOfReactComponent = isNodeClassOfReactComponent( node.value )
 		} );
 
+	if ( astRoot.find( jscodeshift.FunctionDeclaration, { id: { name: identifierName } } ).size() > 0 ) {
+		isFunction = true;
+	}
 
-	return isReactCreateClass || isSubclassOfReactComponent;
+	return isReactCreateClass || isSubclassOfReactComponent || isFunction;
 }
 
 const getFileNameFromPath = ( filePath ) => filePath.split( path.sep ).slice( -1 )[ 0 ];
@@ -132,8 +137,6 @@ function createWithStylesCall( scssFilenames, withStylesTarget ) {
 function addStylesToJsFile( filename, scssFilenames ) {
 	const src = fs.readFileSync( filename ).toString( 'utf-8' );
 
-	console.log( filename );
-
 	let modified = false;
 	const root = jscodeshift( src );
 
@@ -156,11 +159,10 @@ function addStylesToJsFile( filename, scssFilenames ) {
 	.find( jscodeshift.ExportDefaultDeclaration )
 	.forEach(function ( path ) {
 		// do something with path
-		console.log( '>>> Type', path.value.declaration.type );
+		//console.log( '>>> Type', path.value.declaration.type );
 
 		// The export is an Identifier ( case [1] and [2] above ), lets find out what it is:
 		if ( path.value.declaration.type === 'Identifier' ) {
-			console.log( 'Export is an Identifier', path.value.declaration.name );
 
 			// Yay! The identifier is a react component
 			if ( isIdentifierReactComponent( root, path.value.declaration.name ) ) {
@@ -170,10 +172,12 @@ function addStylesToJsFile( filename, scssFilenames ) {
 								createWithStylesCall( scssFilenames, jscodeshift.identifier( path.value.declaration.name ) )
 							)
 					);
-			}
 
-			modified = true;
-			return;
+				console.log( 'Identifier modified' );
+
+				modified = true;
+				return;
+			}
 		}
 
 		// Exporting class Bla extends Component ( case [3] )
@@ -192,6 +196,8 @@ function addStylesToJsFile( filename, scssFilenames ) {
 						createWithStylesCall( scssFilenames, jscodeshift.identifier( replacedClassName ) )
 					)
 				);
+
+			console.log( 'ClassDecl modified' );
 
 			modified = true;
 			return;
@@ -215,8 +221,32 @@ function addStylesToJsFile( filename, scssFilenames ) {
 					)
 				);
 
+			console.log( 'React.createClass modified' );
 			modified = true;
 			return;
+		}
+
+		// case [5] and [6]
+		if ( path.value.declaration.type === 'CallExpression' ) {
+			// Loop down the call expression tree until we hit the final identifier
+			let curNode = path.value.declaration;
+			while ( curNode.type === 'CallExpression' ) {
+				curNode = curNode.arguments[ 0 ];
+			}
+
+			// Is the thing we found is a React component ?
+			if ( curNode.type === 'Identifier' && isIdentifierReactComponent( root, curNode.name ) ) {
+
+				jscodeshift( path )
+					.find( jscodeshift.Identifier, { name: curNode.name } )
+					.replaceWith(
+						createWithStylesCall( scssFilenames, jscodeshift.identifier( curNode.name ) )
+					);
+
+				console.log( 'Call expr modified' );
+				modified = true;
+				return;
+			}
 		}
 	} );
 
@@ -227,10 +257,18 @@ function addStylesToJsFile( filename, scssFilenames ) {
 		// find the last import
 		root.find( jscodeshift.ImportDeclaration ).forEach( path => lastImport = path );
 
+		// if haven't found imports, lets try require instead
+		if ( ! lastImport ) {
+			//root.find( jscodeshift.CallExpression ).forEach( p => console.log( p ) );
+			root
+				.find( jscodeshift.CallExpression, { callee: {name: 'require' } } )
+				.closest( jscodeshift.VariableDeclaration)
+				.forEach( path => lastImport = path );
+		}
+
 		const imports = jscodeshift( lastImport );
 
 		//TODO: Verify those identifiers not already exists
-
 		imports.insertAfter( () => jscodeshift.importDeclaration(
 			[
 				jscodeshift.importDefaultSpecifier(
@@ -291,23 +329,27 @@ walk(
 				continue;
 			}
 
-			//const indexJsFilename = indexJsFilenames[ 0 ];
-			const indexJsFilename = '/Users/yury/Automattic/wp-calypso/client/mailing-lists/main.jsx';
+			const indexJsFilename = indexJsFilenames[ 0 ];
+			//const indexJsFilename = '/Users/yury/Automattic/wp-calypso/client/mailing-lists/main.jsx';
 			//const indexJsFilename = '/Users/yury/Automattic/wp-calypso/client/components/accordion/index.jsx';
 			//const indexJsFilename = '/Users/yury/Automattic/wp-calypso/client/blocks/daily-post-button/index.jsx';
 			//const indexJsFilename = '/Users/yury/Automattic/wp-calypso/client/auth/auth-code-button.jsx';
-			console.log( addStylesToJsFile( indexJsFilename, scssFilesInDirectory ) );
-			break;
-			processedDirectories++;
+			//const indexJsFilename = '/Users/yury/Automattic/wp-calypso/client/post-editor/editor-post-type/index.jsx';
+			//const indexJsFilename = '/Users/yury/Automattic/wp-calypso/client/my-sites/themes/themes-magic-search-card/index.jsx';
+
+			//const indexJsFilename = '/Users/yury/Automattic/wp-calypso/client/post-editor/editor-discussion/index.jsx';
 
 			if ( scssFilesInDirectory.length > 0 ) {
-				processedDirectories++;
+				const result = addStylesToJsFile( indexJsFilename, scssFilesInDirectory );
+				if ( result ) {
+					processedDirectories++;
+				}
+				else {
+					console.log( '[Unable]', indexJsFilename );
+					skippedDirectories++;
+				}
 			}
-
-
 		}
-
-
 
 		console.log( 'Processed: ' + processedDirectories, 'Skipped: ' + skippedDirectories );
 	}
