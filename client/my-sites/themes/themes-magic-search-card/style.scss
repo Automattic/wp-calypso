@@ -121,18 +121,9 @@
  * Suggestions
  */
 .themes-magic-search {
-
-	.themes-magic-search-card__welcome,
-	.suggestions {
-		display: none;
-	}
-
-
-
 	&.has-suggestions {
 		.themes-magic-search-card__welcome,
 		.suggestions {
-			display: block;
 			margin-top: 5px;
 		}
 	}

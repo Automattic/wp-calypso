@@ -1,4 +1,21 @@
 
+/*
+ * Suggestions start out invisible, and they show up only when triggered.
+ */
+.suggestions {
+	display: none;
+}
+
+.has-suggestions {
+	.suggestions {
+		display: block;
+	}
+}
+
+
+/*
+ * Suggestions list
+ */
 .suggestions__suggestions {
 	display: flex;
 	flex-direction: column;
