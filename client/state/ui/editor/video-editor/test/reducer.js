@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import {
 	VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
 	VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
-	VIDEO_EDITOR_POSTER_UPDATING,
+	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 	VIDEO_EDITOR_STATE_RESET,
 	VIDEO_EDITOR_STATE_RESET_POSTER,
 } from 'state/action-types';
@@ -17,8 +17,8 @@ import {
 import reducer, {
 	hasPosterUpdateError,
 	poster,
-	posterIsUpdating,
 	posterIsUpdated,
+	uploadProgress,
 } from '../reducer';
 
 describe( 'reducer', () => {
@@ -26,57 +26,9 @@ describe( 'reducer', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'hasPosterUpdateError',
 			'poster',
-			'posterIsUpdating',
 			'posterIsUpdated',
+			'uploadProgress',
 		] );
-	} );
-
-	describe( '#posterIsUpdating()', () => {
-		it( 'should default to false', () => {
-			const state = posterIsUpdating( undefined, {} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should change to true on poster update', () => {
-			const state = posterIsUpdating( undefined, {
-				type: VIDEO_EDITOR_POSTER_UPDATING,
-			} );
-
-			expect( state ).to.be.true;
-		} );
-
-		it( 'should change to false on successful update', () => {
-			const state = posterIsUpdating( undefined, {
-				type: VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should change to false on failed update', () => {
-			const state = posterIsUpdating( undefined, {
-				type: VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should change to false on reset', () => {
-			const state = posterIsUpdating( undefined, {
-				type: VIDEO_EDITOR_STATE_RESET,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should change to false on poster reset', () => {
-			const state = posterIsUpdating( undefined, {
-				type: VIDEO_EDITOR_STATE_RESET_POSTER,
-			} );
-
-			expect( state ).to.be.false;
-		} );
 	} );
 
 	describe( '#posterIsUpdated()', () => {
@@ -154,6 +106,41 @@ describe( 'reducer', () => {
 		} );
 	} );
 
+	describe( '#uploadProgress()', () => {
+		const percentage = 50;
+
+		it( 'should default to 0', () => {
+			const state = uploadProgress( undefined, {} );
+
+			expect( state ).to.eql( 0 );
+		} );
+
+		it( 'should change to upload percentage on successful update', () => {
+			const state = uploadProgress( undefined, {
+				type: VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
+				percentage,
+			} );
+
+			expect( state ).to.eql( percentage );
+		} );
+
+		it( 'should change to 0 on reset', () => {
+			const state = uploadProgress( undefined, {
+				type: VIDEO_EDITOR_STATE_RESET,
+			} );
+
+			expect( state ).to.eql( 0 );
+		} );
+
+		it( 'should change to 0 on poster reset', () => {
+			const state = uploadProgress( undefined, {
+				type: VIDEO_EDITOR_STATE_RESET_POSTER,
+			} );
+
+			expect( state ).to.eql( 0 );
+		} );
+	} );
+
 	describe( '#hasPosterUpdateError()', () => {
 		it( 'should default to false', () => {
 			const state = hasPosterUpdateError( undefined, {} );
@@ -167,14 +154,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.true;
-		} );
-
-		it( 'should change to false on poster update', () => {
-			const state = hasPosterUpdateError( undefined, {
-				type: VIDEO_EDITOR_POSTER_UPDATING,
-			} );
-
-			expect( state ).to.be.false;
 		} );
 
 		it( 'should change to false on successful update', () => {

@@ -5,9 +5,9 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { VIDEO_EDITOR_POSTER_UPDATE } from 'state/action-types';
 import {
+	showUploadProgress,
 	updateVideoEditorPosterSuccess,
 	updateVideoEditorPosterFailure,
-	updatingVideoEditorPoster,
 } from 'state/ui/editor/video-editor/actions';
 
 /**
@@ -23,17 +23,21 @@ export const updateVideoEditorPoster = ( { dispatch }, action, next ) => {
 		return next( action );
 	}
 
-	dispatch( updatingVideoEditorPoster() );
-
-	dispatch( http( {
+	const params = {
 		apiVersion: '1.1',
 		method: 'POST',
 		path: `/videos/${ action.videoId }/poster`,
-		body: 'at_time' in action.params ? action.params : undefined,
-		formData: 'file' in action.params ? [ [ 'poster', action.params.file ] ] : undefined,
-		onSuccess: action,
-		onFailure: action,
-	} ) );
+	};
+
+	if ( 'file' in action.params ) {
+		params.formData = [ [ 'poster', action.params.file ] ];
+	}
+
+	if ( 'at_time' in action.params ) {
+		params.body = action.params;
+	}
+
+	dispatch( http( params, action ) );
 
 	return next( action );
 };
@@ -46,6 +50,19 @@ export const updateVideoPosterError = ( { dispatch } ) => {
 	dispatch( updateVideoEditorPosterFailure() );
 };
 
+export const updateUploadProgress = ( { dispatch }, action, next, progress ) => {
+	let percentage = 0;
+
+	if ( 'loaded' in progress && 'total' in progress ) {
+		percentage = Math.min( Math.round( progress.loaded / progress.total * 100 ), 100 );
+	}
+
+	dispatch( showUploadProgress( percentage ) );
+};
+
+export const dispatchPosterRequest = dispatchRequest( updateVideoEditorPoster, updateVideoPosterSuccess,
+	updateVideoPosterError, updateUploadProgress );
+
 export default {
-	[ VIDEO_EDITOR_POSTER_UPDATE ]: [ dispatchRequest( updateVideoEditorPoster, updateVideoPosterSuccess, updateVideoPosterError ) ],
+	[ VIDEO_EDITOR_POSTER_UPDATE ]: [ dispatchPosterRequest ],
 };

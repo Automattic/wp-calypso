@@ -7,8 +7,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	getPosterUploadProgress,
 	getVideoEditorPoster,
-	isVideoEditorPosterUpdating,
 	isVideoEditorPosterUpdated,
 	videoEditorHasPosterUpdateError,
 } from '../selectors';
@@ -31,19 +31,20 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#isVideoEditorPosterUpdating()', () => {
-		it( 'should return the poster updating state', () => {
-			const isPosterUpdating = isVideoEditorPosterUpdating( {
+	describe( '#getPosterUploadProgress()', () => {
+		it( 'should return the upload progress', () => {
+			const percentage = 50;
+			const uploadProgress = getPosterUploadProgress( {
 				ui: {
 					editor: {
 						videoEditor: {
-							posterIsUpdating: false
+							uploadProgress: percentage
 						}
 					}
 				}
 			} );
 
-			expect( isPosterUpdating ).to.be.false;
+			expect( uploadProgress ).to.eql( percentage );
 		} );
 	} );
 

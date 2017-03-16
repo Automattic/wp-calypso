@@ -10,17 +10,17 @@ import {
 	VIDEO_EDITOR_POSTER_UPDATE,
 	VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
 	VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
-	VIDEO_EDITOR_POSTER_UPDATING,
+	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 	VIDEO_EDITOR_STATE_RESET,
 	VIDEO_EDITOR_STATE_RESET_POSTER,
 } from 'state/action-types';
 import {
 	resetVideoEditorState,
 	resetVideoEditorPosterState,
+	showUploadProgress,
 	updateVideoEditorPoster,
 	updateVideoEditorPosterSuccess,
 	updateVideoEditorPosterFailure,
-	updatingVideoEditorPoster,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -58,16 +58,6 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#updatingVideoEditorPoster()', () => {
-		it( 'should return an action object', () => {
-			const action = updatingVideoEditorPoster();
-
-			expect( action ).to.eql( {
-				type: VIDEO_EDITOR_POSTER_UPDATING,
-			} );
-		} );
-	} );
-
 	describe( '#updateVideoEditorPosterSuccess()', () => {
 		it( 'should return an action object', () => {
 			const poster = 'https://i1.wp.com/videos.files.wordpress.com/dummy-guid/thumbnail.jpg?ssl=1';
@@ -86,6 +76,18 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
+			} );
+		} );
+	} );
+
+	describe( '#showUploadProgress()', () => {
+		it( 'should return an action object', () => {
+			const percentage = 50;
+			const action = showUploadProgress( percentage );
+
+			expect( action ).to.eql( {
+				type: VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
+				percentage,
 			} );
 		} );
 	} );

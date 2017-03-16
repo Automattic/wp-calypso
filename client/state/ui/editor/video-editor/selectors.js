@@ -9,14 +9,13 @@ export function getVideoEditorPoster( state ) {
 }
 
 /**
- * Returns true if the poster is updating.
+ * Returns the poster upload progress.
  *
- * @param  {Object}  state Global state tree
- * @return {Boolean} true if the poster is updating.
- *
+ * @param  {Object}  state  Global state tree
+ * @return {Number}  Poster upload progress percentage.
  */
-export function isVideoEditorPosterUpdating( state ) {
-	return state.ui.editor.videoEditor.posterIsUpdating;
+export function getPosterUploadProgress( state ) {
+	return state.ui.editor.videoEditor.uploadProgress;
 }
 
 /**

@@ -5,7 +5,7 @@ import {
 	VIDEO_EDITOR_POSTER_UPDATE,
 	VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
 	VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
-	VIDEO_EDITOR_POSTER_UPDATING,
+	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 	VIDEO_EDITOR_STATE_RESET,
 	VIDEO_EDITOR_STATE_RESET_POSTER,
 } from 'state/action-types';
@@ -50,18 +50,7 @@ export const updateVideoEditorPoster = ( videoId, params ) => {
 };
 
 /**
- * Returns an action object to indicate that the poster for the video is updating.
- *
- * @return {Object} Action object
- */
-export const updatingVideoEditorPoster = () => {
-	return {
-		type: VIDEO_EDITOR_POSTER_UPDATING,
-	};
-};
-
-/**
- * Returns an action object to indicate that the poster for the video has been updated successfully..
+ * Returns an action object to indicate that the poster for the video has been updated successfully.
  *
  * @param  {String} poster Poster URL
  * @return {Object} Action object
@@ -81,5 +70,18 @@ export const updateVideoEditorPosterSuccess = poster => {
 export const updateVideoEditorPosterFailure = () => {
 	return {
 		type: VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
+	};
+};
+
+/**
+ * Returns an action object to indicate the poster upload progress.
+ *
+ * @param  {String} percentage  Upload progress percentage
+ * @return {Object} Action object
+ */
+export const showUploadProgress = percentage => {
+	return {
+		type: VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
+		percentage,
 	};
 };
