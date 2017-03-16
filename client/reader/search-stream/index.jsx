@@ -126,7 +126,7 @@ class SearchStream extends Component {
 	}
 
 	render() {
-		const { query, suggestions, store } = this.props;
+		const { store, query, suggestions } = this.props;
 		const emptyContent = <EmptyContent query={ query } />;
 		const sortOrder = this.props.postsStore && this.props.postsStore.sortOrder;
 
