@@ -17,9 +17,6 @@ import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-mana
 import Site from 'blocks/site';
 
 const PluginSiteJetpack = React.createClass( {
-
-	displayName: 'PluginSiteJetpack',
-
 	propTypes: {
 		site: React.PropTypes.object,
 		plugin: React.PropTypes.object,
@@ -42,6 +39,7 @@ const PluginSiteJetpack = React.createClass( {
 			isAutoManaged: false,
 		};
 	},
+
 	renderInstallButton: function() {
 		var installInProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, 'INSTALL_PLUGIN' );
 
