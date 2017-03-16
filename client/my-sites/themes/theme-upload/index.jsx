@@ -150,6 +150,8 @@ class Upload extends React.Component {
 		const { translate, siteId } = this.props;
 		const errorMessage = translate( 'Please drop a single zip file' );
 
+		console.log( 'files:', files );
+
 		if ( files.length !== 1 ) {
 			notices.error( errorMessage );
 			return;
