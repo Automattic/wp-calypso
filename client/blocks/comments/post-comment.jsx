@@ -10,7 +10,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import {
 	getCurrentUser
 } from 'state/current-user/selectors';
@@ -22,16 +21,13 @@ import {
 	recordTrack
 } from 'reader/stats';
 import { getStreamUrl } from 'reader/route';
-import CommentLikeButtonContainer from './comment-likes';
 import PostCommentContent from './post-comment-content';
 import PostCommentForm from './form';
 import { PLACEHOLDER_STATE } from 'state/comments/constants';
 import { decodeEntities } from 'lib/formatting';
 import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback.jsx';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import PopoverMenuSeparator from 'components/popover/menu-separator';
+import CommentActions from './comment-actions';
 
 class PostComment extends React.Component {
 	constructor() {
@@ -112,7 +108,7 @@ class PostComment extends React.Component {
 				? <ol className="comments__list">
 					{
 						commentChildrenIds.reverse().map( ( childId ) =>
-							<PostComment { ...this.props } depth={ this.props.depth + 1 } key={ childId } commentId={ childId }/>
+							<PostComment { ...this.props } depth={ this.props.depth + 1 } key={ childId } commentId={ childId } />
 						)
 					}
 				</ol>
@@ -135,73 +131,12 @@ class PostComment extends React.Component {
 			onCommentSubmit={ this.props.onCommentSubmit } />;
 	}
 
-	renderCommentActions( comment ) {
-		const post = this.props.post;
-		const showReplyButton = post && post.discussion && post.discussion.comments_open === true;
-		const showCancelReplyButton = this.props.activeReplyCommentID === this.props.commentId;
-
-		// Only render actions for non placeholders and approved
-		if ( comment.isPlaceholder || comment.status !== 'approved' ) {
-			return null;
-		}
-
-		return (
-			<div className="comments__comment-actions">
-				{ showReplyButton &&
-					<button className="comments__comment-actions-reply" onClick={ this.handleReply }>
-						<Gridicon icon="reply" size={ 18 } />
-						<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
-					</button>
-				}
-				{ showCancelReplyButton && <button className="comments__comment-actions-cancel-reply" onClick={ this.props.onReplyCancel }>{ translate( 'Cancel reply' ) }</button> }
-				<CommentLikeButtonContainer
-					className="comments__comment-actions-like"
-					tagName="button"
-					siteId={ this.props.post.site_ID }
-					postId={ this.props.post.ID }
-					commentId={ comment.ID }
-				/>
-				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
-					<button className="comments__comment-actions-like" onClick={ () => {} }>
-						<Gridicon icon="checkmark" size={ 18 }/>
-						<span className="comments__comment-actions-like-label">{ translate( 'Approve' )}</span>
-					</button>
-				}
-				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
-					<button className="comments__comment-actions-like" onClick={ () => {} }>
-						<Gridicon icon="trash" size={ 18 }/>
-						<span className="comments__comment-actions-like-label">{ translate( 'Trash' )}</span>
-					</button>
-				}
-				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
-					<button className="comments__comment-actions-like" onClick={ () => {} }>
-						<Gridicon icon="spam" size={ 18 }/>
-						<span className="comments__comment-actions-like-label">{ translate( 'Spam' )}</span>
-					</button>
-				}
-				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
-					<button className="comments__comment-actions-like" onClick={ () => {} }>
-						<Gridicon icon="pencil" size={ 18 }/>
-						<span className="comments__comment-actions-like-label">{ translate( 'Edit' )}</span>
-					</button>
-				}
-				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
-					<EllipsisMenu toggleTitle={ translate( 'More' ) }>
-						<PopoverMenuItem icon="checkmark" onClick={ () => {} }>{ translate( 'Approve' ) }</PopoverMenuItem>
-						<PopoverMenuItem icon="trash" onClick={ () => {} }>{ translate( 'Trash' ) }</PopoverMenuItem>
-						<PopoverMenuItem icon="spam" onClick={ () => {} }>{ translate( 'Spam' ) }</PopoverMenuItem>
-						<PopoverMenuSeparator />
-						<PopoverMenuItem icon="pencil" onClick={ () => {} }>{ translate( 'Edit' ) }</PopoverMenuItem>
-					</EllipsisMenu>
-				}
-			</div>
-		);
-	}
-
 	render() {
+		// todo: connect this constants to the state (new selector)
 		const commentsTree = this.props.commentsTree;
 		const comment = commentsTree.getIn( [ this.props.commentId, 'data' ] ).toJS();
 
+		// todo: connect this constants to the state (new selector)
 		const haveReplyWithError = commentsTree.getIn( [ this.props.commentId, 'children' ] )
 			.some( ( childId ) => commentsTree.getIn( [ childId, 'data', 'placeholderState' ] ) === PLACEHOLDER_STATE.ERROR );
 
@@ -255,8 +190,14 @@ class PostComment extends React.Component {
 					: null }
 
 				<PostCommentContent content={ comment.content } isPlaceholder={ comment.isPlaceholder } />
+				<CommentActions
+					post={ this.props.post }
+					comment={ comment }
+					activeReplyCommentID={ this.props.activeReplyCommentID }
+					commentId={ this.props.commentId }
+					handleReply={ this.handleReply }
+					onReplyCancel={ this.props.onReplyCancel } />
 
-				{ this.renderCommentActions( comment ) }
 				{ haveReplyWithError ? null : this.renderCommentForm() }
 				{ this.renderRepliesList() }
 			</li>

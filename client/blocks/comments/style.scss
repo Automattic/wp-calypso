@@ -292,22 +292,25 @@ a.comments__comment-username {
 		cursor: pointer;
 		font-size: 14px;
 
+		.gridicon {
+			position: relative;
+			top: 4px;
+			margin-right: 4px;
+		}
+
 		.like-button__like-icons {
 			margin-right: 18px;
 		}
 
 		&.comments__comment-actions-reply {
 			.gridicon {
-				position: relative;
-					top: 4px;
-				margin-right: 4px;
 				transform: rotate( 180deg );
 			}
 		}
 
 		&.like-button {
 			.gridicon {
-				top: 4px;
+				position: absolute;
 			}
 		}
 
@@ -319,6 +322,12 @@ a.comments__comment-username {
 			float: right;
 			margin-top: 4px;
 			margin-right: 0;
+		}
+
+		&.comments__comment-actions-approve {
+			&.is-approved {
+				color: $orange-jazzy;
+			}
 		}
 	}
 
