@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -24,7 +25,7 @@ const PluginSiteJetpack = React.createClass( {
 		allowedActions: React.PropTypes.shape( {
 			activation: React.PropTypes.bool,
 			autoupdate: React.PropTypes.bool,
-			remove: React.PropTypes.bool
+			remove: React.PropTypes.bool,
 		} ),
 		isAutoManaged: React.PropTypes.bool,
 	},
