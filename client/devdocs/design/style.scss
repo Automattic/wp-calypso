@@ -144,3 +144,18 @@
 		}
 	}
 }
+
+.docs__sticky-panel-example {
+	margin: 0 20px;
+}
+
+.docs__sticky-panel-scrolling-box {
+	height: 2500px;
+	background: repeating-linear-gradient(
+		45deg,
+		lighten( $orange-jazzy, 20% ) ,
+		lighten( $orange-fire, 20% ) 10px,
+		lighten( $gray, 20% ) 10px,
+		lighten( $gray-dark, 20% ) 20px
+	)
+}
