@@ -9,7 +9,7 @@ import { includes, trimEnd } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import FoldableCard from 'components/foldable-card';
 import Button from 'components/button';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -71,13 +71,21 @@ class Protect extends Component {
 		const ipAddress = this.getIpAddress();
 		const isIpWhitelisted = this.isIpAddressWhitelisted();
 		const disabled = isRequestingSettings || isSavingSettings || protectModuleUnavailable || ! protectModuleActive;
+		const protectToggle = (
+			<JetpackModuleToggle
+				siteId={ selectedSiteId }
+				moduleSlug="protect"
+				label={ translate( 'Prevent and block malicious login attempts' ) }
+				disabled={ isRequestingSettings || isSavingSettings || protectModuleUnavailable }
+			/>
+		);
 
 		return (
-			<div>
+			<FoldableCard className="protect__foldable-card site-settings__foldable-card" header={ protectToggle }>
 				<QueryJetpackConnection siteId={ selectedSiteId } />
 
-				<Card className="protect__card site-settings__security-settings">
-					<FormFieldset>
+				<FormFieldset>
+					<div className="protect__module-settings site-settings__child-settings">
 						<div className="protect__info-link-container site-settings__info-link-container">
 							<InfoPopover position={ 'left' }>
 								<ExternalLink href={ 'https://jetpack.com/support/protect' } target="_blank">
@@ -86,63 +94,54 @@ class Protect extends Component {
 							</InfoPopover>
 						</div>
 
-						<JetpackModuleToggle
-							siteId={ selectedSiteId }
-							moduleSlug="protect"
-							label={ translate( 'Prevent and block malicious login attempts' ) }
-							disabled={ isRequestingSettings || isSavingSettings || protectModuleUnavailable }
-						/>
+						<p>
+							{
+								translate( 'Your current IP address: {{strong}}%(IP)s{{/strong}}{{br/}}', {
+									args: {
+										IP: ipAddress || translate( 'Unknown IP address' ),
+									},
+									components: {
+										strong: <strong />,
+										br: <br />,
+									}
+								} )
+							}
 
-						<div className="protect__module-settings site-settings__child-settings">
-							<p>
-								{
-									translate( 'Your current IP address: {{strong}}%(IP)s{{/strong}}{{br/}}', {
-										args: {
-											IP: ipAddress || translate( 'Unknown IP address' ),
-										},
-										components: {
-											strong: <strong />,
-											br: <br />,
-										}
-									} )
-								}
+							{ ipAddress &&
+								<Button
+									className="protect__add-to-whitelist site-settings__add-to-whitelist"
+									onClick={ this.handleAddToWhitelist }
+									disabled={ disabled || isIpWhitelisted }
+									compact
+								>
+									{ isIpWhitelisted
+										? translate( 'Already in whitelist' )
+										: translate( 'Add to whitelist' )
+									}
+								</Button>
+							}
+						</p>
 
-								{ ipAddress &&
-									<Button
-										className="protect__add-to-whitelist site-settings__add-to-whitelist"
-										onClick={ this.handleAddToWhitelist }
-										disabled={ disabled || isIpWhitelisted }
-										compact
-									>
-										{ isIpWhitelisted
-											? translate( 'Already in whitelist' )
-											: translate( 'Add to whitelist' )
-										}
-									</Button>
-								}
-							</p>
-
-							<FormLabel htmlFor="jetpack_protect_global_whitelist">{ translate( 'Whitelisted IP addresses' ) }</FormLabel>
-							<FormTextarea
-								id="jetpack_protect_global_whitelist"
-								value={ this.getProtectWhitelist() }
-								onChange={ onChangeField( 'jetpack_protect_global_whitelist' ) }
-								disabled={ disabled }
-								placeholder={ translate( 'Example: 12.12.12.1-12.12.12.100' ) }
-							>
-							</FormTextarea>
-							<FormSettingExplanation>
-								{ translate(
-									'You may whitelist an IP address or series of addresses preventing them from ' +
-									'ever being blocked by Jetpack. IPv4 and IPv6 are acceptable. ' +
-									'To specify a range, enter the low value and high value separated by a dash. ' +
-									'Example: 12.12.12.1-12.12.12.100'
-								) }
-							</FormSettingExplanation>
-						</div>
-					</FormFieldset>
-				</Card>
-			</div>
+						<FormLabel htmlFor="jetpack_protect_global_whitelist">{ translate( 'Whitelisted IP addresses' ) }</FormLabel>
+						<FormTextarea
+							id="jetpack_protect_global_whitelist"
+							value={ this.getProtectWhitelist() }
+							onChange={ onChangeField( 'jetpack_protect_global_whitelist' ) }
+							disabled={ disabled }
+							placeholder={ translate( 'Example: 12.12.12.1-12.12.12.100' ) }
+						>
+						</FormTextarea>
+						<FormSettingExplanation>
+							{ translate(
+								'You may whitelist an IP address or series of addresses preventing them from ' +
+								'ever being blocked by Jetpack. IPv4 and IPv6 are acceptable. ' +
+								'To specify a range, enter the low value and high value separated by a dash. ' +
+								'Example: 12.12.12.1-12.12.12.100'
+							) }
+						</FormSettingExplanation>
+					</div>
+				</FormFieldset>
+			</FoldableCard>
 		);
 	}
 }
