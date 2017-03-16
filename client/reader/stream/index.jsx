@@ -496,12 +496,23 @@ class ReaderStream extends React.Component {
 		return 'feed-post-' + ( postKey.feedId || postKey.blogId ) + '-' + postKey.postId;
 	}
 
-	handleConnectedCardClick = post => showSelectedPost( {
-		postKey: {
-			postId: post.feed_item_ID,
-			feedId: post.feed_ID,
+	handleConnectedCardClick = post => {
+		const postKey = {};
+		if ( post.feed_item_ID && post.feed_ID ) {
+			postKey.feedId = post.feed_ID;
+			postKey.postId = post.feed_item_ID;
+		} else if ( post.is_external ) {
+			postKey.feedId = post.site_ID;
+			postKey.postId = post.ID;
+		} else {
+			postKey.blogId = post.site_ID;
+			postKey.postId = post.ID;
 		}
-	} );
+		showSelectedPost( {
+			store: this.props.postsStore,
+			postKey: postKey
+		} );
+	}
 
 	renderPost = ( postKey, index ) => {
 		const selectedPostKey = this.props.postsStore.getSelectedPostKey();
