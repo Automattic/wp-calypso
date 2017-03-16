@@ -150,6 +150,7 @@
 }
 
 .docs__sticky-panel-scrolling-box {
+	display: none;
 	height: 2500px;
 	background: repeating-linear-gradient(
 		45deg,
@@ -158,4 +159,8 @@
 		lighten( $gray, 20% ) 10px,
 		lighten( $gray-dark, 20% ) 20px
 	)
+}
+
+.is-single-example .docs__sticky-panel-scrolling-box {
+	display: block;
 }

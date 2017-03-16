@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import page from 'page';
 import { slugToCamelCase } from 'devdocs/docs-example/util';
 import trim from 'lodash/trim';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -115,9 +116,10 @@ let DesignAssets = React.createClass( {
 	render() {
 		const { componentsUsageStats = {}, component } = this.props;
 		const { filter } = this.state;
+		const classes = classNames( 'design', { 'is-single-example': !! component } );
 
 		return (
-			<Main className="design">
+			<Main className={ classes }>
 				{ this.renderHeader( component, filter ) }
 
 				<Collection
