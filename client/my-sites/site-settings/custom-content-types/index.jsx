@@ -15,6 +15,7 @@ import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive, isActivatingJetpackModule } from 'state/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 class CustomContentTypes extends Component {
 	componentDidUpdate() {
@@ -49,7 +50,7 @@ class CustomContentTypes extends Component {
 		return isRequestingSettings || isSavingSettings;
 	}
 
-	renderToggle( name, label ) {
+	renderToggle( name, label, description ) {
 		const {
 			activatingCustomContentTypesModule,
 			fields,
@@ -62,6 +63,10 @@ class CustomContentTypes extends Component {
 				onChange={ handleAutosavingToggle( name ) }
 			>
 				{ label }
+				<FormSettingExplanation>
+					{ description }
+				</FormSettingExplanation>
+
 			</CompactFormToggle>
 		);
 	}
@@ -69,10 +74,7 @@ class CustomContentTypes extends Component {
 	renderContentTypeSettings( fieldName, fieldLabel, fieldDescription ) {
 		return (
 			<div className="custom-content-types__module-settings">
-				{ this.renderToggle( fieldName, fieldLabel ) }
-				<p className="form-setting-explanation">
-					{ fieldDescription }
-				</p>
+				{ this.renderToggle( fieldName, fieldLabel, fieldDescription ) }
 			</div>
 		);
 	}
@@ -83,7 +85,7 @@ class CustomContentTypes extends Component {
 			translate
 		} = this.props;
 		const fieldLabel = translate(
-			'Enable {{strong}}Testimonial{{/strong}} custom content types.',
+			'Enable {{strong}}Testimonial{{/strong}} custom content types',
 			{
 				components: {
 					strong: <strong />,
@@ -112,7 +114,7 @@ class CustomContentTypes extends Component {
 			translate
 		} = this.props;
 		const fieldLabel = translate(
-			'Enable {{strong}}Portfolio{{/strong}} custom content types.',
+			'Enable {{strong}}Portfolio{{/strong}} custom content types',
 			{
 				components: {
 					strong: <strong />,
