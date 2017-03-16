@@ -24,24 +24,28 @@ const PluginSite = ( props ) => {
 	return <PluginSiteJetpack { ...props } />;
 };
 
-export default connect(
-	( state, ownProps ) => {
-		const pluginSlug = get( ownProps, 'plugin.slug' );
-		const siteId = get( ownProps, 'site.ID' );
+function mapStateToProps( state, ownProps ) {
+	const siteId = get( ownProps, 'site.ID' );
+	return {
+		isAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
+	};
+}
 
-		if ( includes( [ 'jetpack', 'vaultpress' ], pluginSlug ) && isSiteAutomatedTransfer( state, siteId ) ) {
-			return {
-				...ownProps,
-				...{
-					allowedActions: {
-						activation: false,
-						autoupdate: false,
-						remove: false,
-					}
-				},
-				isAutoManaged: true,
-			};
-		}
-		return ownProps;
+function mergeProps( stateProps, dispatchProps, ownProps ) {
+	const pluginSlug = get( ownProps, 'plugin.slug' );
+	let overrides = {};
+
+	if ( includes( [ 'jetpack', 'vaultpress' ], pluginSlug ) && stateProps.isAutomatedTransfer ) {
+		overrides = {
+			allowedActions: {
+				activation: false,
+				autoupdate: false,
+				remove: false,
+			},
+			isAutoManaged: true,
+		};
 	}
-)( PluginSite );
+	return Object.assign( {}, ownProps, stateProps, dispatchProps, overrides );
+}
+
+export default connect( mapStateToProps, null, mergeProps )( PluginSite );
