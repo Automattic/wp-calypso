@@ -28,7 +28,7 @@ class ReaderCombinedCard extends React.Component {
 		feed: React.PropTypes.object,
 		onClick: React.PropTypes.func,
 		isDiscover: React.PropTypes.bool,
-		postKey: React.PropTypes.object,
+		postKey: React.PropTypes.object.isRequired,
 		selectedPostKey: React.PropTypes.object,
 		showFollowButton: React.PropTypes.bool,
 		followSource: React.PropTypes.string,

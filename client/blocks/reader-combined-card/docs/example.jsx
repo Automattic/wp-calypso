@@ -9,10 +9,12 @@ import React from 'react';
 import ReaderCombinedCardBlock from 'blocks/reader-combined-card';
 import { posts, feed, site } from 'blocks/reader-post-card/docs/fixtures';
 
+const postKey = { blogId: site.ID };
+
 const ReaderCombinedCard = () => (
 	<div className="design-assets__group">
 		<div>
-			<ReaderCombinedCardBlock posts={ posts } feed={ feed } site={ site } />
+			<ReaderCombinedCardBlock postKey={ postKey } posts={ posts } feed={ feed } site={ site } />
 		</div>
 	</div>
 );
