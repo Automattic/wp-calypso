@@ -20,8 +20,11 @@
 	&.is-wide-layout {
 		max-width: 1040px;
 	}
+}
 
-	@include breakpoint( "<660px" ) {
+@include breakpoint( "<660px" ) {
+	.focus-sites .main,
+	.focus-sidebar .main {
 		backface-visibility: hidden;
 		perspective: 1000;
 	}
