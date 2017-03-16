@@ -11,11 +11,11 @@
 	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 
 	.site__title {
-		color: $white;
+		color: $gray-dark;
 	}
 
 	.site__domain {
-		color: $gray;
+		color: $gray-text-min;
 	}
 
 	&.is-loading {
@@ -60,7 +60,7 @@
 	position: relative;
 
 	.button {
-		color: $white;
+		// color: $white;
 		text-align: left;
 		padding: 16px;
 		width: 100%;

@@ -69,7 +69,7 @@
 
 // Sidebar group headings
 .sidebar__heading {
-	color: lighten( $gray, 20% );
+	color: $gray-text-min;
 	font-weight: 600;
 	font-size: 12px;
 	margin: 16px 8px 6px 14px;
@@ -167,7 +167,7 @@
 		position: absolute;
 			top: 11px;
 			left: 20px;
-		fill: lighten( $gray, 20% );
+		fill: $gray;
 		height: 24px;
 		width: 24px;
 
@@ -239,7 +239,7 @@ a.sidebar__button {
 		background-color: $sidebar-selected-color;
 
 		a {
-			color: $white;
+			color: $gray-dark;
 
 			&:first-child:after {
 				background: linear-gradient(
@@ -256,7 +256,7 @@ a.sidebar__button {
 		}
 
 		.gridicon {
-			fill: $white;
+			fill: $gray;
 		}
 
 		&.is-action-button-selected a {
@@ -293,7 +293,7 @@ a.sidebar__button {
 		}
 
 		.gridicon {
-			fill: $white;
+			// fill: $white;
 		}
 	}
 
