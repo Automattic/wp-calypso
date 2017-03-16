@@ -97,40 +97,55 @@ export function showSelectedPost( { store, replaceHistory, selectedGap, postKey,
 		return showFullXPost( XPostHelper.getXPostMetadata( post ) );
 	}
 
+	// normal
+	let mappedPost;
+	if ( !! postKey.feedId ) {
+		mappedPost = {
+			feed_ID: postKey.feedId,
+			feed_item_ID: postKey.postId
+		};
+	} else {
+		mappedPost = {
+			site_ID: postKey.blogId,
+			ID: postKey.postId
+		};
+	}
+
 	showFullPost( {
-		postKey,
+		post: mappedPost,
 		replaceHistory,
-		comments,
-		post
+		comments
 	} );
 }
 
 export function showFullXPost( xMetadata ) {
 	if ( xMetadata.blogId && xMetadata.postId ) {
-		const postKey = {
-			blogId: xMetadata.blogId,
-			postId: xMetadata.postId,
+		const mappedPost = {
+			site_ID: xMetadata.blogId,
+			ID: xMetadata.postId
 		};
 
-		showFullPost( { postKey } );
+		showFullPost( {
+			post: mappedPost,
+		} );
 	} else {
 		window.open( xMetadata.postURL );
 	}
 }
 
-export function showFullPost( { postKey, replaceHistory, comments, post } ) {
+export function showFullPost( { post, replaceHistory, comments } ) {
 	const hashtag = comments ? '#comments' : '';
 	let query = '';
-	if ( post && post.referral ) {
+	if ( post.referral ) {
 		const { blogId, postId } = post.referral;
 		query += `ref_blog=${ blogId }&ref_post=${ postId }`;
 	}
 
 	const method = replaceHistory ? 'replace' : 'show';
-	if ( postKey.blogId && postKey.postId ) {
-		page[ method ]( `/read/blogs/${ postKey.blogId }/posts/${ postKey.postId }${ hashtag }${ query }` );
+	if ( post.feed_ID && post.feed_item_ID ) {
+		page[ method ]( `/read/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }${ hashtag }${ query }` );
 	} else {
-		page[ method ]( `/read/feeds/${ postKey.feedId }/posts/${ postKey.feedItemId || postKey.postId }${ hashtag }${ query }` );
+		page[ method ]( `/read/blogs/${ post.site_ID }/posts/${ post.ID }${ hashtag }${ query }` );
 	}
 }
 

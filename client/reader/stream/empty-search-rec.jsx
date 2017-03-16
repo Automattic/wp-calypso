@@ -10,7 +10,7 @@ import { RelatedPostCard } from 'blocks/reader-related-card-v2';
 import { recordTrackForPost, recordAction } from 'reader/stats';
 import { EMPTY_SEARCH_RECOMMENDATIONS, } from 'reader/follow-button/follow-sources';
 
-export function EmptySearchRecommendedPosts( { post } ) {
+export default function EmptySearchRecommendedPosts( { post } ) {
 	function handlePostClick() {
 		recordTrackForPost( 'calypso_reader_recommended_post_clicked', post, {
 			recommendation_source: 'empty-search',

@@ -27,7 +27,7 @@ const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );
 
 export default class PostLifecycle extends React.PureComponent {
 	static propTypes = {
-		postKey: PropTypes.object,
+		postKey: PropTypes.object.isRequired,
 		isDiscoverStream: PropTypes.bool
 	}
 
@@ -101,12 +101,12 @@ export default class PostLifecycle extends React.PureComponent {
 					showFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 				/>
 			);
+		} else if ( postKey.isRecommendation ) {
+			return <EmptySearchRecommendedPosts post={ post } site={ postKey } />;
 		} else if ( ! post || post._state === 'minimal' ) {
 			return <PostPlaceholder />;
 		} else if ( post._state === 'error' ) {
 			return <PostUnavailable post={ post } />;
-		} else if ( postKey.isRecommendation ) {
-			return <EmptySearchRecommendedPosts post={ post } site={ postKey } />;
 		} else if ( postKey.isGap ) {
 			return <ListGap gap={ postKey } store={ this.props.store } selected={ this.props.isSelected } />;
 		} else if ( postKey.isBlocked ) {
