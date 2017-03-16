@@ -29,8 +29,6 @@ export function isATEnabledForCurrentSite() {
 		return true;
 	}
 
-	const abtest = require( 'lib/abtest' ).abtest;
-
 	// Site has Business plan
 	const site = require( 'lib/sites-list' )().getSelectedSite();
 	const planSlug = get( site, 'plan.product_slug' );
@@ -46,5 +44,6 @@ export function isATEnabledForCurrentSite() {
 
 	// Gate to 40% roll. If we modify this value, we need a new test name
 	// in active-tests.js
+	const abtest = require( 'lib/abtest' ).abtest;
 	return abtest( 'automatedTransfer1' ) === 'enabled';
 }
