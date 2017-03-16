@@ -121,9 +121,15 @@
  * Suggestions
  */
 .themes-magic-search {
+
+	.themes-magic-search-card__welcome {
+		display: none;
+	}
+
 	&.has-suggestions {
 		.themes-magic-search-card__welcome,
 		.suggestions {
+			display: block;
 			margin-top: 5px;
 		}
 	}
@@ -187,6 +193,7 @@
 		transition: fill 200ms ease-in;
 	}
 
+	&.themes-magic-search-card__welcome-taxonomy-highlight,
 	&:hover {
 		color: $blue-medium;
 
@@ -198,10 +205,6 @@
 			background: lighten( $gray, 35% );
 			box-shadow: inset 0 -3px 0 0 $blue-medium;
 		}
-	}
-
-	&.themes-magic-search-card__welcome-taxonomy-highlight {
-		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20% );
 	}
 }
 
