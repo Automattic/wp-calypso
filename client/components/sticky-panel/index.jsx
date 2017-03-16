@@ -16,10 +16,6 @@ class StickyPanel extends Component {
 		className: PropTypes.string,
 	};
 
-	static defaultProps = {
-		minLimit: false,
-	};
-
 	state = {
 		isSticky: false,
 		spacerHeight: 0,
@@ -60,10 +56,7 @@ class StickyPanel extends Component {
 	updateIsSticky = () => {
 		const isSticky = window.pageYOffset > this.threshold;
 
-		if (
-			this.props.minLimit !== false && this.props.minLimit >= window.innerWidth ||
-			viewport.isMobile()
-		) {
+		if ( viewport.isMobile() ) {
 			return this.setState( { isSticky: false } );
 		}
 
