@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import { defer, findLast, flatMap, noop, times, clamp, includes, last } from 'lodash';
+import { defer, findLast, flatMap, noop, times, clamp, includes, last, takeRight, every, range, pullAt, reduce } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -123,11 +123,23 @@ function combine( postKey1, postKey2 ) {
 	};
 }
 
-const combineCards = ( postKeys ) => postKeys.reduce(
+const MIN_CARDS_TO_COMBINE = 3;
+export const combineCards = ( postKeys ) => reduce( postKeys,
 	( accumulator, postKey ) => {
 		const lastPostKey = last( accumulator );
-		if ( sameSite( lastPostKey, postKey ) && sameDay( lastPostKey, postKey ) ) {
-			accumulator[ accumulator.length - 1 ] = combine( last( accumulator ), postKey );
+		const lastN = accumulator.length + 1 >= MIN_CARDS_TO_COMBINE &&
+			takeRight( accumulator, MIN_CARDS_TO_COMBINE - 1 );
+
+		if (
+				lastPostKey && lastPostKey.isCombination &&
+				sameSite( lastPostKey, postKey ) &&
+				sameDay( lastPostKey, postKey ) ) {
+			accumulator[ accumulator.length - 1 ] = combine( lastPostKey, postKey );
+		} else if ( lastN && every( lastN, key => sameSite( key, postKey ) ) ) {
+			const rangeToPull = range( accumulator.length - 1, accumulator.length - MIN_CARDS_TO_COMBINE );
+			const toCombine = [ ...pullAt( accumulator, rangeToPull ), postKey ];
+			const combinedCardPostKey = toCombine.reduce( combine );
+			accumulator.push( combinedCardPostKey );
 		} else {
 			accumulator.push( postKey );
 		}
