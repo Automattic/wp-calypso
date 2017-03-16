@@ -62,6 +62,9 @@ function trainTracksProxyForStream( stream, callback ) {
 		}
 		forEach( response && response.posts, ( post ) => {
 			if ( post.railcar ) {
+				if ( stream.isQuerySuggestion ) {
+					post.railcar.rec_result = 'suggestion';
+				}
 				analytics.tracks.recordEvent( eventName, post.railcar );
 			}
 		} );
@@ -118,9 +121,6 @@ function getStoreForSearch( storeId ) {
 	} );
 
 	function fetcher( query, callback ) {
-		if ( stream.isQuerySuggestion ) {
-			query.isSuggestion = true;
-		}
 		query.q = slug;
 		query.meta = 'site';
 		wpcomUndoc.readSearch( query, trainTracksProxyForStream( stream, callback ) );
