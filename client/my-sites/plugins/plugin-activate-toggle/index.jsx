@@ -73,10 +73,10 @@ export class PluginActivateToggle extends Component {
 						className="plugin-activate-toggle__link"
 						onClick={ this.trackManageConnectionLink }
 						href={ '/settings/general/' + site.slug }>
-						{ translate( 'Manage Connection', { context: 'manage Jetpack connnection settings link' } ) }
+						{ translate( 'Manage Connection', { comment: 'manage Jetpack connnection settings link' } ) }
 					</a> }
 					{ disabled && <span className="plugin-activate-toggle__disabled">
-						{ translate( 'Manage Connection', { context: 'manage Jetpack connnection settings link' } ) }
+						{ translate( 'Manage Connection', { comment: 'manage Jetpack connnection settings link' } ) }
 					</span> }
 				</PluginAction>
 			);
