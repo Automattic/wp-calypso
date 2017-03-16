@@ -79,7 +79,7 @@ const Subscriptions = ( {
 			</CompactCard>
 
 			<CompactCard href={ 'https://wordpress.com/manage/' + selectedSiteId }>
-				{ translate( 'Migrate followers from another WordPress.com blog' ) }
+				{ translate( 'Migrate followers from another site' ) }
 			</CompactCard>
 		</div>
 	);
