@@ -122,17 +122,18 @@
 		}
 	}
 
-}
-
-.plugin-meta__actions .plugin-action__label {
-	@include breakpoint( '<480px' ) {
-		flex-grow: 2;
-		color: $gray-dark;
-		font-size: 11px;
+	.form-toggle__label-content {
+		@include breakpoint( '<480px' ) {
+			margin-left: 0;
+		}
 	}
-	@include breakpoint( '<660px' ) {
-		display: block;
-		padding-right: 16px;
+
+	.plugin-action__label {
+		@include breakpoint( '<480px' ) {
+			flex-grow: 2;
+			color: $gray-dark;
+			font-size: 11px;
+		}
 	}
 }
 
