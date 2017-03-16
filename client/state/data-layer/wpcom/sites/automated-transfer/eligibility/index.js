@@ -36,6 +36,7 @@ const statusMapping = {
 	no_wpcom_nameservers: eligibilityHolds.NO_WPCOM_NAMESERVERS,
 	not_resolving_to_wpcom: eligibilityHolds.NOT_RESOLVING_TO_WPCOM,
 	no_ssl_certificate: eligibilityHolds.NO_SSL_CERTIFICATE,
+	email_unverified: eligibilityHolds.EMAIL_UNVERIFIED,
 };
 
 /**

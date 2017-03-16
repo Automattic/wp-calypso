@@ -65,6 +65,12 @@ function getHoldMessages( siteSlug, translate ) {
 			description: translate(
 				'Please try again in a few minutes: you will be able to proceed once we finish setting up your security settings.'
 			),
+		},
+		EMAIL_UNVERIFIED: {
+			title: translate( 'Unconfirmed email' ),
+			description: translate(
+				'Please check your email to confirm your address.'
+			),
 		}
 	};
 }
