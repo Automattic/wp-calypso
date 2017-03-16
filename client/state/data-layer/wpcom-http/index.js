@@ -26,8 +26,14 @@ const fetcherMap = method => get( {
 export const successMeta = data => ( { meta: { dataLayer: { data } } } );
 export const failureMeta = error => ( { meta: { dataLayer: { error } } } );
 export const progressMeta = ( { size: total, loaded } ) => ( { meta: { dataLayer: { progress: { total, loaded } } } } );
+export const requestKey = ( { path, query } ) => Object
+	.keys( query || {} )
+	.sort()
+	.reduce( ( memo, key ) => memo + `&${ key }=${ query[ key ] }`, `path=${ path }` );
 
-const queueRequest = ( { dispatch }, action, next ) => {
+const inflightRequests = new Set();
+
+export const queueRequest = ( { dispatch }, action, next ) => {
 	const {
 		body = {},
 		formData,
@@ -37,17 +43,36 @@ const queueRequest = ( { dispatch }, action, next ) => {
 		onProgress,
 		path,
 		query = {},
+		options,
 	} = action;
 
 	const method = rawMethod.toUpperCase();
+
+	/* Drop the request under the following conditions:
+	 * 1. It is a GET request
+	 * 2. allowDuplicateInflightRequests hasn't been set to truthy
+	 * 3. There is a currently ongoing request for the same path with the same query
+	 */
+	if ( method === 'GET' &&
+			! options.allowDuplicateInflightRequests &&
+			! inflightRequests.has( requestKey( action ) ) ) {
+		inflightRequests.add( requestKey( action ) );
+		return;
+	}
 
 	const request = fetcherMap( method )( ...compact( [
 		{ path, formData },
 		query,
 		method === 'POST' && body,
-		( error, data ) => !! error
-			? onFailure && dispatch( extendAction( onFailure, failureMeta( error ) ) )
-			: onSuccess && dispatch( extendAction( onSuccess, successMeta( data ) ) )
+		( error, data ) => {
+			if ( method === 'GET' && ! options.allowDuplicateInflightRequests ) {
+				inflightRequests.delete( requestKey( path, query ) );
+			}
+			if ( !! error ) {
+				return onFailure && dispatch( extendAction( onFailure, failureMeta( error ) ) );
+			}
+			return onSuccess && dispatch( extendAction( onSuccess, successMeta( data ) ) );
+		}
 	] ) );
 
 	if ( 'POST' === method && onProgress ) {
