@@ -28,7 +28,7 @@ export function isATEnabledForCurrentSite() {
 
 	// Site has Business plan
 	const site = require( 'lib/sites-list' )().getSelectedSite();
-	const planSlug = get( site, 'product_slug' );
+	const planSlug = get( site, 'plan.product_slug' );
 	if ( planSlug !== PLAN_BUSINESS ) {
 		return false;
 	}
