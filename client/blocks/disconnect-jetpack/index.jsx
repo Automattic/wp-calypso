@@ -62,13 +62,16 @@ class DisconnectJetpack extends Component {
 			return <div key={ 'disconnect-jetpack__feature-' + index } className="disconnect-jetpack__feature">{ freature } </div>;
 		} );
 	}
+
 	render() {
-		const { onStay, onDisconnect, isVisible, translate, isBroken } = this.props;
+		const { onStay, onDisconnect, isVisible, translate, isBroken, siteName } = this.props;
 		if ( isBroken ) {
 			return (
-				<Dialog isVisible={ isVisible } baseClassName="disconnect-jetpack__dialog" >
+				<Dialog isVisible={ isVisible } baseClassName="disconnect-jetpack__dialog" onClose={ onStay } >
 				<h1>{ translate( 'Disconnect Jetpack' ) }</h1>
-				<p className="disconnect-jetpack__highlight">{ translate( 'WordPress.com has not been able to react example.com for a while.' ) }</p>
+				<p className="disconnect-jetpack__highlight">
+					{ translate( 'WordPress.com has not been able to reach example.com for a while.' ) }
+				</p>
 				<div className="disconnect-jetpack__button-wrap">
 					<Button primary scary onClick={ onDisconnect }>{ translate( 'Remove Site' ) }</Button>
 				</div>
@@ -77,9 +80,16 @@ class DisconnectJetpack extends Component {
 		}
 
 		return (
-			<Dialog isVisible={ isVisible } baseClassName="disconnect-jetpack__dialog" >
+			<Dialog isVisible={ isVisible } baseClassName="disconnect-jetpack__dialog" onClose={ onStay } >
 				<h1>{ translate( 'Disconnect Jetpack?' ) }</h1>
-				<p className="disconnect-jetpack__highlight">{ translate( 'By disconnecting Jetpack you will lose these services:' ) }</p>
+				<p className="disconnect-jetpack__highlight">
+					{
+						translate(
+							'By disconnecting %(siteName)s from WordPress.com you will no longer have access to the following:',
+							{ args: { siteName } }
+						)
+					}
+				</p>
 
 				{ this.planFeatures() }
 
@@ -87,7 +97,9 @@ class DisconnectJetpack extends Component {
 					<Button onClick={ onStay }>{ translate( 'Stay Connected' ) }</Button>
 					<Button primary scary onClick={ onDisconnect }>{ translate( 'Disconnect' ) }</Button>
 				</div>
-				<a className="disconnect-jetpack__more-info-link" href="#">{ translate( 'Read More about Jetpack benefits' ) }</a>
+				<a className="disconnect-jetpack__more-info-link" href="https://jetpack.com/features/">
+					{ translate( 'Read More about Jetpack benefits' ) }
+				</a>
 			</Dialog>
 		);
 	}
@@ -101,6 +113,7 @@ DisconnectJetpack.propTypes = {
 	onStay: PropTypes.func,
 	plan: PropTypes.string,
 	isBroken: PropTypes.bool,
+	siteName: PropTypes.string,
 };
 
 export default localize( DisconnectJetpack );

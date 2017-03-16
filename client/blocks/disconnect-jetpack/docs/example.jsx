@@ -22,7 +22,7 @@ class DisconnectJetpackExample extends Component {
 		this.toggleVisibilityBroken = this.toggleVisibility.bind( this, 'broken' );
 
 		this.state = {
-			isVisible : {
+			isVisible: {
 				free: false,
 				personal: false,
 				premium: false,
@@ -33,8 +33,8 @@ class DisconnectJetpackExample extends Component {
 	}
 
 	toggleVisibility( type ) {
-		this.state.isVisible[ type ] = !this.state.isVisible[ type ];
-		this.setState( { 'isVisible': this.state.isVisible } );
+		this.state.isVisible[ type ] = ! this.state.isVisible[ type ];
+		this.setState( { isVisible: this.state.isVisible } );
 	}
 
 	render() {
@@ -47,7 +47,8 @@ class DisconnectJetpackExample extends Component {
 					siteId={ this.props.primarySiteId }
 					onStay={ this.toggleVisibilityFree }
 					onDisconnect={ this.toggleVisibilityFree }
-					plan='free'
+					siteName="example.com"
+					plan="free"
 				/>
 
 				<p><Button onClick={ this.toggleVisibilityPersonal } >Disconnect Personal Jetpack </Button></p>
@@ -56,7 +57,8 @@ class DisconnectJetpackExample extends Component {
 					siteId={ this.props.primarySiteId }
 					onStay={ this.toggleVisibilityPersonal }
 					onDisconnect={ this.toggleVisibilityPersonal }
-					plan='personal'
+					siteName="example.com"
+					plan="personal"
 				/>
 
 				<p><Button onClick={ this.toggleVisibilityPremium } >Disconnect Premium Jetpack </Button></p>
@@ -65,7 +67,8 @@ class DisconnectJetpackExample extends Component {
 					siteId={ this.props.primarySiteId }
 					onStay={ this.toggleVisibilityPremium }
 					onDisconnect={ this.toggleVisibilityPremium }
-					plan='premium'
+					siteName="example.com"
+					plan="premium"
 				/>
 
 				<p><Button onClick={ this.toggleVisibilityProfessional } >Disconnect Professional Jetpack </Button></p>
@@ -74,7 +77,8 @@ class DisconnectJetpackExample extends Component {
 					siteId={ this.props.primarySiteId }
 					onStay={ this.toggleVisibilityProfessional }
 					onDisconnect={ this.toggleVisibilityProfessional }
-					plan='professional'
+					siteName="example.com"
+					plan="professional"
 				/>
 
 				<p><Button onClick={ this.toggleVisibilityBroken } >Disconnect Probably Broken Jetpack </Button></p>
@@ -83,7 +87,8 @@ class DisconnectJetpackExample extends Component {
 					siteId={ this.props.primarySiteId }
 					onStay={ this.toggleVisibilityBroken }
 					onDisconnect={ this.toggleVisibilityBroken }
-					plan='personal'
+					siteName="example.com"
+					plan="personal"
 					isBroken={ true }
 				/>
 
