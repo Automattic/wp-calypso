@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import { has, get } from 'lodash';
+import { has } from 'lodash';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
@@ -27,14 +27,7 @@ class ReaderCombinedCardPost extends React.Component {
 		post: React.PropTypes.object.isRequired,
 		streamUrl: React.PropTypes.string,
 		onClick: React.PropTypes.func,
-		isDiscover: React.PropTypes.bool,
 	};
-
-	propagateCardClick = () => {
-		// If we have an discover pick post available, send the discover pick to the full post view
-		const postToOpen = get( this.props, 'discoverPick.post' ) || this.props.post;
-		this.props.onClick( postToOpen );
-	}
 
 	handleCardClick = ( event ) => {
 		const rootNode = ReactDom.findDOMNode( this ),
@@ -66,7 +59,7 @@ class ReaderCombinedCardPost extends React.Component {
 		// programattic ignore
 		if ( ! event.defaultPrevented ) { // some child handled it
 			event.preventDefault();
-			this.propagateCardClick();
+			this.props.onClick( this.props.post );
 		}
 	}
 
