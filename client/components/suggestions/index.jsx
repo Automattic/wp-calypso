@@ -23,7 +23,6 @@ const Suggestions = React.createClass( {
 
 	getDefaultProps() {
 		return {
-			welcomeSign: noop,
 			suggest: noop,
 			terms: {},
 			input: '',
@@ -243,15 +242,8 @@ const Suggestions = React.createClass( {
 	},
 
 	render() {
-		let suggestion;
-		if ( this.props.input === '' ) {
-			suggestion = this.props.welcomeSign;
-		} else {
-			suggestion = this.createSuggestions( this.state.suggestions );
-		}
-
 		return (
-			<div className="suggestions">{ suggestion }</div>
+			<div className="suggestions">{ this.createSuggestions( this.state.suggestions ) }</div>
 		);
 	}
 
