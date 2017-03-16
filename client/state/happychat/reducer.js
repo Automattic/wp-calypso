@@ -77,6 +77,12 @@ const timeline = ( state = [], action ) => {
 				if ( ! message.id ) {
 					return false;
 				}
+
+				// if meta.forOperator is set, skip so won't show to user
+				if ( get( message, 'meta.forOperator', false ) ) {
+					return false;
+				}
+
 				return ! find( state, { id: message.id } );
 			} );
 			return state.concat( map( messages, message => {
