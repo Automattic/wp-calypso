@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,14 +17,28 @@ import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
 import Site from 'blocks/site';
 
-export default React.createClass( {
-
-	displayName: 'PluginSiteJetpack',
-
+const PluginSiteJetpack = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		plugin: React.PropTypes.object,
 		notices: React.PropTypes.object,
+		allowedActions: React.PropTypes.shape( {
+			activation: React.PropTypes.bool,
+			autoupdate: React.PropTypes.bool,
+			remove: React.PropTypes.bool,
+		} ),
+		isAutoManaged: React.PropTypes.bool,
+	},
+
+	getDefaultProps: function() {
+		return {
+			allowedActions: {
+				activation: true,
+				autoupdate: true,
+				remove: true,
+			},
+			isAutoManaged: false,
+		};
 	},
 
 	renderInstallButton: function() {
@@ -49,6 +64,14 @@ export default React.createClass( {
 	},
 
 	renderPluginSite: function() {
+		const {
+			activation: canToggleActivation,
+			autoupdate: canToggleAutoupdate,
+			remove: canToggleRemove,
+		} = this.props.allowedActions;
+
+		const showAutoManagedMessage = this.props.isAutoManaged;
+
 		return (
 			<FoldableCard compact
 				clickableHeader
@@ -58,9 +81,28 @@ export default React.createClass( {
 				expandedSummary={ <PluginUpdateIndicator site={ this.props.site } plugin={ this.props.plugin } notices={ this.props.notices } expanded={ true } /> }
 				>
 				<div>
-					<PluginActivateToggle site={ this.props.site } plugin={ this.props.site.plugin } notices={ this.props.notices } />
-					<PluginAutoupdateToggle site={ this.props.site } plugin={ this.props.site.plugin } notices={ this.props.notices } wporg={ true } />
-					<PluginRemoveButton plugin={ this.props.site.plugin } site={ this.props.site } notices={ this.props.notices } />
+					{ canToggleActivation && <PluginActivateToggle
+						site={ this.props.site }
+						plugin={ this.props.site.plugin }
+						notices={ this.props.notices } /> }
+					{ canToggleAutoupdate && <PluginAutoupdateToggle
+						site={ this.props.site }
+						plugin={ this.props.site.plugin }
+						notices={ this.props.notices }
+						wporg={ true } /> }
+					{ canToggleRemove && <PluginRemoveButton
+						plugin={ this.props.site.plugin }
+						site={ this.props.site }
+						notices={ this.props.notices } /> }
+
+					{ showAutoManagedMessage &&
+						<div className="plugin-site-jetpack__automanage-notice">
+						{ this.props.translate( '%(pluginName)s is automatically managed on this site',
+							{ args: { pluginName: this.props.plugin.name } } )
+						}
+						</div>
+					}
+
 				</div>
 			</FoldableCard>
 		);
@@ -92,3 +134,5 @@ export default React.createClass( {
 		return this.renderPluginSite();
 	}
 } );
+
+export default localize( PluginSiteJetpack );
