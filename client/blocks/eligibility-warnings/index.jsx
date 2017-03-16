@@ -78,7 +78,11 @@ export const EligibilityWarnings = ( {
 			}
 
 			{ ( isPlaceholder || listHolds.length > 0 ) &&
-				<HoldList holds={ listHolds } isPlaceholder={ isPlaceholder } />
+				<HoldList
+					holds={ listHolds }
+					isPlaceholder={ isPlaceholder }
+					siteSlug={ siteSlug }
+				/>
 			}
 			{ warnings.length > 0 &&
 				<WarningList warnings={ warnings } />

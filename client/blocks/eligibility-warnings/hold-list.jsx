@@ -15,7 +15,7 @@ import SectionHeader from 'components/section-header';
 
 // Mapping eligibility holds to messages that will be shown to the user
 // TODO: update supportUrls and maybe create similar mapping for warnings
-function getHoldMessages( translate ) {
+function getHoldMessages( siteSlug, translate ) {
 	return {
 		TRANSFER_ALREADY_EXISTS: {
 			title: translate( 'Installation in progress' ),
@@ -33,7 +33,7 @@ function getHoldMessages( translate ) {
 		SITE_PRIVATE: {
 			title: translate( 'Private site not supported' ),
 			description: translate( 'Make your site public to resolve.' ),
-			supportUrl: 'https://support.wordpress.com/settings/privacy-settings/',
+			supportUrl: `/settings/general/${ siteSlug }`,
 		},
 		SITE_GRAYLISTED: {
 			title: translate( 'Flagged site not supported' ),
@@ -72,9 +72,10 @@ function getHoldMessages( translate ) {
 export const HoldList = ( {
 	holds,
 	isPlaceholder,
+	siteSlug,
 	translate,
 } ) => {
-	const holdMessages = getHoldMessages( translate );
+	const holdMessages = getHoldMessages( siteSlug, translate );
 
 	return (
 		<div>
