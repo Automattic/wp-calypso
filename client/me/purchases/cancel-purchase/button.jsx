@@ -232,12 +232,13 @@ const CancelPurchaseButton = React.createClass( {
 	},
 
 	submitCancelAndRefundPurchase() {
+		const { purchase, selectedSite } = this.props;
+
 		this.setState( {
 			submitting: true
 		} );
 
 		if ( config.isEnabled( 'upgrades/removal-survey' ) ) {
-			const { purchase, selectedSite } = this.props;
 			const surveyData = {
 				'why-cancel': {
 					response: this.state.survey.questionOneRadio,
@@ -258,7 +259,11 @@ const CancelPurchaseButton = React.createClass( {
 			);
 		}
 
-		cancelAndRefundPurchase( this.props.purchase.id, { product_id: this.props.purchase.productId }, this.handleSubmit );
+		if ( isRefundable( purchase ) ) {
+			cancelAndRefundPurchase( purchase.id, { product_id: purchase.productId }, this.handleSubmit );
+		} else {
+			this.cancelPurchase();
+		}
 	},
 
 	renderCancellationEffect() {
@@ -350,6 +355,7 @@ const CancelPurchaseButton = React.createClass( {
 			}
 
 			if ( isSubscription( purchase ) ) {
+				onClick = this.handleCancelPurchaseClick;
 				text = this.translate( 'Cancel Subscription' );
 			}
 		}
