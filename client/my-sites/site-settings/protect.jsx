@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { includes, trimEnd } from 'lodash';
+import { includes, some, trim, trimEnd } from 'lodash';
 
 /**
  * Internal dependencies
@@ -53,8 +53,20 @@ class Protect extends Component {
 
 	isIpAddressWhitelisted() {
 		const ipAddress = this.getIpAddress();
+		if ( ! ipAddress ) {
+			return false;
+		}
+
 		const whitelist = this.getProtectWhitelist().split( '\n' );
-		return ipAddress && includes( whitelist, ipAddress );
+
+		return includes( whitelist, ipAddress ) || some( whitelist, entry => {
+			if ( entry.indexOf( '-' ) < 0 ) {
+				return false;
+			}
+
+			const range = entry.split( '-' ).map( trim );
+			return includes( range, ipAddress );
+		} );
 	}
 
 	render() {
