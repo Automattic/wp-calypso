@@ -68,9 +68,9 @@ export class ForgotUsernameFormComponent extends Component {
 		} = this.props;
 
 		const {
-			firstName,
-			lastName,
-			url,
+			firstName = '',
+			lastName = '',
+			url = '',
 		} = userData;
 
 		const isPrimaryButtonEnabled = firstName && lastName && url && ! isRequesting;
@@ -86,7 +86,7 @@ export class ForgotUsernameFormComponent extends Component {
 					<FormInput
 						className="forgot-username-form__first-name-input"
 						onChange={ this.firstNameUpdated }
-						value={ firstName || '' }
+						value={ firstName }
 						disabled={ isRequesting } />
 				</FormLabel>
 				<FormLabel>
@@ -94,7 +94,7 @@ export class ForgotUsernameFormComponent extends Component {
 					<FormInput
 						className="forgot-username-form__last-name-input"
 						onChange={ this.lastNameUpdated }
-						value={ lastName || '' }
+						value={ lastName }
 						disabled={ isRequesting } />
 				</FormLabel>
 				<FormLabel>
@@ -102,7 +102,7 @@ export class ForgotUsernameFormComponent extends Component {
 					<FormInput
 						className="forgot-username-form__site-url-input"
 						onChange={ this.siteUrlUpdated }
-						value={ url || '' }
+						value={ url }
 						disabled={ isRequesting } />
 				</FormLabel>
 				{
