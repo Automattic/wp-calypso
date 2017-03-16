@@ -23,7 +23,7 @@ function getHoldMessages( siteSlug, translate ) {
 			supportUrl: 'https://wordpress.com/help',
 		},
 		NO_JETPACK_SITES: {
-			title: translate( 'Jetpack not supported' ),
+			title: translate( 'Jetpack site not supported' ),
 			description: translate( 'Try using a different site.' ),
 		},
 		NO_VIP_SITES: {
