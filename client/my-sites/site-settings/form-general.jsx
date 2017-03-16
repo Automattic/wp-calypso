@@ -515,7 +515,7 @@ class SiteSettingsFormGeneral extends Component {
 		const {
 			fields,
 			handleSubmitForm,
-			handleToggle,
+			handleAutosavingToggle,
 			isRequestingSettings,
 			isSavingSettings,
 			site,
@@ -605,7 +605,7 @@ class SiteSettingsFormGeneral extends Component {
 
 				<RelatedPosts
 					onSubmitForm={ handleSubmitForm }
-					handleToggle={ handleToggle }
+					handleAutosavingToggle={ handleAutosavingToggle }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
