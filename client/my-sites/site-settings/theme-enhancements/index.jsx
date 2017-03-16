@@ -62,7 +62,7 @@ class ThemeEnhancements extends Component {
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="infinite-scroll"
-					label={ translate( 'Add support for infinite scroll to your theme.' ) }
+					label={ translate( 'Add support for infinite scroll to your theme' ) }
 					disabled={ formPending }
 					/>
 
@@ -103,7 +103,7 @@ class ThemeEnhancements extends Component {
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="minileven"
-					label={ translate( 'Optimize your site with a mobile-friendly theme for tablets and phones.' ) }
+					label={ translate( 'Optimize your site with a mobile-friendly theme for tablets and phones' ) }
 					disabled={ formPending }
 					/>
 
