@@ -16,21 +16,23 @@ class StickyPanel extends PureComponent {
 		return (
 			<div>
 				<textarea
-					value="Use this input element to change be able to scroll the page changing its height."
+					value="Use this input element to change the top position of the sticky element below changing its height."
 					onChange={ noop }
 				/>
 
 
 				<StickyPanelComponent className="docs__sticky-panel-example">
 					<Card>
-						<div>Let's stick this content.</div>
+						<div style={ { marginBottom: '20px', marginTop: '10px' } }>
+							<textarea
+								value="Let's stick this textarea. Play changing its height."
+								onChange={ noop }
+							/>
+						</div>
 					</Card>
 				</StickyPanelComponent>
 
-				<textarea
-					value="Use this input element to change be able to scroll the page changing its height."
-					onChange={ noop }
-				/>
+				<div className="docs__sticky-panel-scrolling-box" />
 			</div>
 		);
 	}

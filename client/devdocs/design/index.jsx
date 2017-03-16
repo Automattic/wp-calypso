@@ -70,6 +70,7 @@ import FAQ from 'components/faq/docs/example';
 import VerticalMenu from 'components/vertical-menu/docs/example';
 import Banner from 'components/banner/docs/example';
 import EmojifyExample from 'components/emojify/docs/example';
+import StickyPanelExample from 'components/sticky-panel/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -160,6 +161,7 @@ let DesignAssets = React.createClass( {
 					<Spinner searchKeywords="loading" />
 					<SpinnerButton searchKeywords="loading input submit" />
 					<SpinnerLine searchKeywords="loading" />
+					<StickyPanelExample />
 					<Timezone />
 					<TokenFields />
 					<VerticalMenu />
