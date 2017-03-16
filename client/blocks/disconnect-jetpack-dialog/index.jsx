@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 import Gridicon from 'gridicons';
 
 /**
@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import Button from 'components/button';
 
-class DisconnectJetpack extends Component {
+class DisconnectJetpackDialog extends PureComponent {
 
 	translateArgs( icon ) {
 		return { components: { icon: <Gridicon icon={ icon } /> } };
@@ -59,7 +59,11 @@ class DisconnectJetpack extends Component {
 		}
 
 		return features.map( ( freature, index ) => {
-			return <div key={ 'disconnect-jetpack__feature-' + index } className="disconnect-jetpack__feature">{ freature } </div>;
+			return (
+				<div key={ 'disconnect-jetpack-dialog__feature-' + index } className="disconnect-jetpack-dialog__feature">
+					{ freature }
+				</div>
+			);
 		} );
 	}
 
@@ -67,12 +71,12 @@ class DisconnectJetpack extends Component {
 		const { onStay, onDisconnect, isVisible, translate, isBroken, siteName } = this.props;
 		if ( isBroken ) {
 			return (
-				<Dialog isVisible={ isVisible } baseClassName="disconnect-jetpack__dialog" onClose={ onStay } >
+				<Dialog isVisible={ isVisible } additionalClassNames="disconnect-jetpack-dialog" onClose={ onStay } >
 				<h1>{ translate( 'Disconnect Jetpack' ) }</h1>
-				<p className="disconnect-jetpack__highlight">
+				<p className="disconnect-jetpack-dialog__highlight">
 					{ translate( 'WordPress.com has not been able to reach example.com for a while.' ) }
 				</p>
-				<div className="disconnect-jetpack__button-wrap">
+				<div className="disconnect-jetpack-dialog__button-wrap">
 					<Button primary scary onClick={ onDisconnect }>{ translate( 'Remove Site' ) }</Button>
 				</div>
 			</Dialog>
@@ -80,9 +84,9 @@ class DisconnectJetpack extends Component {
 		}
 
 		return (
-			<Dialog isVisible={ isVisible } baseClassName="disconnect-jetpack__dialog" onClose={ onStay } >
-				<h1>{ translate( 'Disconnect Jetpack?' ) }</h1>
-				<p className="disconnect-jetpack__highlight">
+			<Dialog isVisible={ isVisible } additionalClassNames="disconnect-jetpack-dialog" onClose={ onStay } >
+				<h1>{ translate( 'Disconnect from WordPress.com?' ) }</h1>
+				<p className="disconnect-jetpack-dialog__highlight">
 					{
 						translate(
 							'By disconnecting %(siteName)s from WordPress.com you will no longer have access to the following:',
@@ -93,11 +97,11 @@ class DisconnectJetpack extends Component {
 
 				{ this.planFeatures() }
 
-				<div className="disconnect-jetpack__button-wrap">
+				<div className="disconnect-jetpack-dialog__button-wrap">
 					<Button onClick={ onStay }>{ translate( 'Stay Connected' ) }</Button>
 					<Button primary scary onClick={ onDisconnect }>{ translate( 'Disconnect' ) }</Button>
 				</div>
-				<a className="disconnect-jetpack__more-info-link" href="https://jetpack.com/features/">
+				<a className="disconnect-jetpack-dialog__more-info-link" href="https://jetpack.com/features/">
 					{ translate( 'Read More about Jetpack benefits' ) }
 				</a>
 			</Dialog>
@@ -105,9 +109,9 @@ class DisconnectJetpack extends Component {
 	}
 }
 
-DisconnectJetpack.displayName = 'DisconnectJetpack';
+DisconnectJetpackDialog.displayName = 'DisconnectJetpackDialog';
 
-DisconnectJetpack.propTypes = {
+DisconnectJetpackDialog.propTypes = {
 	isVisible: PropTypes.bool,
 	onDisconnect: PropTypes.func,
 	onStay: PropTypes.func,
@@ -116,4 +120,4 @@ DisconnectJetpack.propTypes = {
 	siteName: PropTypes.string,
 };
 
-export default localize( DisconnectJetpack );
+export default localize( DisconnectJetpackDialog );
