@@ -24,6 +24,7 @@ import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
 	? require( './themes-magic-search-card' )
@@ -126,7 +127,7 @@ const ThemeShowcase = React.createClass( {
 			config.isEnabled( 'manage/themes/upload' ) &&
 			isLoggedIn &&
 			! isMultisite &&
-			( isJetpack || config.isEnabled( 'automated-transfer' ) )
+			( isJetpack || isATEnabledForCurrentSite() )
 		);
 	},
 
