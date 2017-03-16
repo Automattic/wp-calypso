@@ -1,3 +1,7 @@
+
+/*
+ * Search card and text input
+ */
 .themes-magic-search-card {
 	display: flex;
 	align-items: center;
@@ -12,6 +16,7 @@
 	.search {
 		flex: 0 1 auto;
 		margin: 0;
+
 		&.has-focus {
 			box-shadow: none;
 		}
@@ -45,11 +50,14 @@
 		flex: 0 1 auto;
 		padding: 8px 14px 8px;
 	}
-
 }
 
+
+/*
+ * Tokens
+ */
 .themes-magic-search-card__token {
-	/* These are required to make it work */
+	/* These are required to make token alignment work */
 	font: inherit;
 	pointer-events: none;
 	position: relative;
@@ -65,7 +73,7 @@
 	}
 
 	.themes-magic-search-card__token-taxonomy {
-		/* These are required to make it work */
+		/* These are required to make token alignment work */
 		pointer-events: none;
 		display: inline-block;
 
@@ -75,7 +83,7 @@
 	}
 
 	.themes-magic-search-card__token-separator {
-		/* These are required to make it work */
+		/* These are required to make token alignment work */
 		pointer-events: none;
 		display: inline-block;
 
@@ -85,6 +93,7 @@
 	}
 
 	.themes-magic-search-card__token-filter {
+		/* These are required to make token alignment work */
 		pointer-events: none;
 		display: inline-block;
 
@@ -94,17 +103,23 @@
 }
 
 .themes-magic-search-card__search-text {
+	/* These are required to make token alignment work */
 	font: inherit;
 	pointer-events: none;
 	color: transparent;
 }
 
 .themes-magic-search-card__search-white-space {
+	/* These are required to make token alignment work */
 	font: inherit;
 	pointer-events: none;
 	white-space: pre;
 }
 
+
+/*
+ * Suggestions
+ */
 .themes-magic-search {
 
 	.themes-magic-search-card__welcome,
@@ -121,9 +136,12 @@
 			margin-top: 5px;
 		}
 	}
-
 }
 
+
+/*
+ * Suggestions: Welcome Card
+ */
 .themes-magic-search-card__welcome {
 	color: $gray;
 	background-color: $white;
@@ -141,10 +159,6 @@
 
 	text-transform: uppercase;
 	color: $gray-dark;
-}
-
-.themes-magic-search-card__welcome-header {
-	font-size: 13px;
 }
 
 .themes-magic-search-card__welcome-taxonomies {
