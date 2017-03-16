@@ -80,7 +80,7 @@ class PluginAutomatedTransfer extends Component {
 			return translate( "Don't leave quite yet! Just a bit longer." );
 		}
 		if ( transferComplete ) {
-			return translate( 'Successfully installed %(plugin)s!', { args: { plugin: plugin.name } } );
+			return translate( 'Activating %(plugin)s...', { args: { plugin: plugin.name } } );
 		}
 		switch ( transferState ) {
 			case START: return translate( 'Installing %(plugin)s…', { args: { plugin: plugin.name } } );
@@ -91,13 +91,10 @@ class PluginAutomatedTransfer extends Component {
 	getStatus = () => {
 		const { CONFLICTS } = transferStates;
 		const { transferState } = this.props;
-		const { clickOutside, transferComplete } = this.state;
+		const { clickOutside } = this.state;
 
 		if ( clickOutside ) {
 			return 'is-info';
-		}
-		if ( transferComplete ) {
-			return 'is-success';
 		}
 		if ( CONFLICTS === transferState ) {
 			return 'is-error';
@@ -108,13 +105,10 @@ class PluginAutomatedTransfer extends Component {
 	getIcon = () => {
 		const { CONFLICTS } = transferStates;
 		const { transferState } = this.props;
-		const { clickOutside, transferComplete } = this.state;
+		const { clickOutside } = this.state;
 
 		if ( clickOutside ) {
 			return 'sync';
-		}
-		if ( transferComplete ) {
-			return 'checkmark';
 		}
 		if ( CONFLICTS === transferState ) {
 			return 'notice';
