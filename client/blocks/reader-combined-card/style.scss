@@ -46,15 +46,15 @@
 .reader-combined-card__post-title-link:visited {
 	color: $gray-dark;
 	cursor: pointer;
-	font-size: 18px;
+	font-size: 16px;
 	font-weight: 700;
 	line-height: 1.4;
 	display: block;
 	position: relative;
-	max-height: 18px * 1.4 * 1;
+	max-height: 16px * 1.4 * 1;
 	word-wrap: break-word;
 	overflow: hidden;
-	margin-top: -3px;
+	margin-top: -2px;
 
 	&:hover, &:focus {
 		color: $gray-dark;
@@ -62,7 +62,7 @@
 
 	&::after {
 		@include long-content-fade( $size: 20% );
-		height: 18px * 1.4;
+		height: 16px * 1.4;
 	}
 }
 
@@ -150,7 +150,7 @@
 	max-height: 13px * 1.4 * 1;
 	word-wrap: break-word;
 	position: relative;
-	margin-top: 2px;
+	margin-top: 3px;
 
 	&:not( .is-placeholder )::after {
 		@include long-content-fade( $size: 20% );
@@ -191,7 +191,7 @@
 	max-height: 16px * 1.4 * 1;
 	word-wrap: break-word;
 	position: relative;
-	margin-top: 4px;
+	margin-top: 5px;
 
 	&:not( .is-placeholder )::after {
 		@include long-content-fade( $size: 20% );
@@ -268,4 +268,3 @@
 		}
 	}
 }
-
