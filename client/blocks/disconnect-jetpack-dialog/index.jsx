@@ -3,6 +3,7 @@
  */
 import React, { PropTypes, PureComponent } from 'react';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -10,8 +11,12 @@ import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import Button from 'components/button';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 class DisconnectJetpackDialog extends PureComponent {
+	trackReadMoreClick = () => {
+		this.props.recordGoogleEvent( 'Disconnect Jetpack Dialog', 'Clicked Read More about Jetpack benefits' );
+	};
 
 	translateArgs( icon ) {
 		return { context: 'Jetpack Disconnect Dialog', components: { icon: <Gridicon icon={ icon } /> } };
@@ -101,7 +106,10 @@ class DisconnectJetpackDialog extends PureComponent {
 					<Button onClick={ onStay }>{ translate( 'Stay Connected' ) }</Button>
 					<Button primary scary onClick={ onDisconnect }>{ translate( 'Disconnect', { context: 'Button' } ) }</Button>
 				</div>
-				<a className="disconnect-jetpack-dialog__more-info-link" href="https://jetpack.com/features/">
+				<a
+					onClick={ this.trackReadMoreClick }
+					className="disconnect-jetpack-dialog__more-info-link"
+					href="https://jetpack.com/features/">
 					{ translate( 'Read More about Jetpack benefits', { context: 'More info link' } ) }
 				</a>
 			</Dialog>
@@ -120,4 +128,9 @@ DisconnectJetpackDialog.propTypes = {
 	siteName: PropTypes.string,
 };
 
-export default localize( DisconnectJetpackDialog );
+export default connect(
+	null,
+	{
+		recordGoogleEvent
+	}
+)( localize( DisconnectJetpackDialog ) );
