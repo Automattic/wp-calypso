@@ -55,7 +55,7 @@ export const EligibilityWarnings = ( {
 
 			{ ! hasBusinessPlan && ! isJetpack &&
 				<Banner
-					description={ translate( 'Also get unlimited themes, advanced customization, no ads, live chat support, and more!' ) }
+					description={ translate( 'Also get unlimited themes, advanced customization, no ads, live chat support, and more.' ) }
 					feature={ 'plugins' === context
 						? FEATURE_UPLOAD_PLUGINS
 						: FEATURE_UPLOAD_THEMES
@@ -71,7 +71,7 @@ export const EligibilityWarnings = ( {
 						? translate( 'To install this plugin, add a free custom domain.' )
 						: translate( 'To upload themes, add a free custom domain.' )
 					}
-					href={ `/domains/add/${ siteSlug }` }
+					href={ `/domains/manage/${ siteSlug }` }
 					icon="domains"
 					title={ translate( 'Custom domain required' ) }
 				/>
