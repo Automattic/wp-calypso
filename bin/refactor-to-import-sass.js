@@ -339,15 +339,12 @@ walk(
 
 			//const indexJsFilename = '/Users/yury/Automattic/wp-calypso/client/post-editor/editor-discussion/index.jsx';
 
-			if ( scssFilesInDirectory.length > 0 ) {
-				const result = addStylesToJsFile( indexJsFilename, scssFilesInDirectory );
-				if ( result ) {
-					processedDirectories++;
-				}
-				else {
-					console.log( '[Unable]', indexJsFilename );
-					skippedDirectories++;
-				}
+			const result = addStylesToJsFile( indexJsFilename, scssFilesInDirectory );
+			if ( result ) {
+				processedDirectories++;
+			} else {
+				console.log( '[Unable]', indexJsFilename );
+				skippedDirectories++;
 			}
 		}
 
