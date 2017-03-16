@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
 import PluginsActions from 'lib/plugins/actions';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
-import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 export class PluginActivateToggle extends Component {
@@ -48,7 +47,7 @@ export class PluginActivateToggle extends Component {
 	};
 
 	render() {
-		const { site, plugin, isMock, disabled, translate } = this.props;
+		const { site, plugin, disabled, translate } = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -65,12 +64,9 @@ export class PluginActivateToggle extends Component {
 					className="plugin-activate-toggle"
 					htmlFor={ 'disconnect-jetpack-' + site.ID }
 					>
-					<DisconnectJetpackButton
-						disabled={ disabled || ! plugin }
-						site={ site }
-						redirect="/plugins/jetpack"
-						isMock={ isMock }
-						/>
+					<a href={ '/settings/general/' + site.slug }>
+						{ translate( 'Manage Connection', { context: 'manage Jetpack connnection settings link' } ) }
+					</a>
 				</PluginAction>
 			);
 		}
