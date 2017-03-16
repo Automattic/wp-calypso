@@ -46,6 +46,11 @@ export class PluginActivateToggle extends Component {
 		}
 	};
 
+	trackManageConnectionLink = () => {
+		const { recordGoogleEvent: recordGAEvent } = this.props;
+		recordGAEvent( 'Plugins', 'Clicked Manage Jetpack Connection Link', 'Plugin Name', 'jetpack' );
+	}
+
 	render() {
 		const { site, plugin, disabled, translate } = this.props;
 
@@ -64,7 +69,9 @@ export class PluginActivateToggle extends Component {
 					className="plugin-activate-toggle"
 					htmlFor={ 'disconnect-jetpack-' + site.ID }
 					>
-					<a href={ '/settings/general/' + site.slug }>
+					<a
+						onClick={ this.trackManageConnectionLink }
+						href={ '/settings/general/' + site.slug }>
 						{ translate( 'Manage Connection', { context: 'manage Jetpack connnection settings link' } ) }
 					</a>
 				</PluginAction>
