@@ -18,41 +18,12 @@ import RecommendedPosts from './recommended-posts';
 import XPostHelper, { isXPost } from 'reader/xpost-helper';
 import PostBlocked from 'blocks/reader-post-card/blocked';
 import Post from './post';
-import { RelatedPostCard } from 'blocks/reader-related-card-v2';
-import { recordTrackForPost, recordAction } from 'reader/stats';
-import {
-	EMPTY_SEARCH_RECOMMENDATIONS,
-	IN_STREAM_RECOMMENDATION,
-	COMBINED_CARD,
-} from 'reader/follow-button/follow-sources';
+import { IN_STREAM_RECOMMENDATION, COMBINED_CARD, } from 'reader/follow-button/follow-sources';
 import CombinedCard from 'blocks/reader-combined-card';
 import fluxPostAdapter from 'lib/reader-post-flux-adapter';
+import EmptySearchRecommendedPosts from './empty-search-rec';
 
 const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );
-function EmptySearchRecommendedPosts( { post } ) {
-	function handlePostClick() {
-		recordTrackForPost( 'calypso_reader_recommended_post_clicked', post, {
-			recommendation_source: 'empty-search',
-		} );
-		recordAction( 'search_page_rec_post_click' );
-	}
-
-	function handleSiteClick() {
-		recordTrackForPost( 'calypso_reader_recommended_site_clicked', post, {
-			recommendation_source: 'empty-search',
-		} );
-		recordAction( 'search_page_rec_site_click' );
-	}
-
-	const site = { title: post.site_name, };
-
-	return (
-		<div className="search-stream__recommendation-list-item" key={ post.global_ID }>
-			<RelatedPostCard post={ post } site={ site }
-				onSiteClick={ handleSiteClick } onPostClick={ handlePostClick } followSource={ EMPTY_SEARCH_RECOMMENDATIONS } />
-		</div>
-	);
-}
 
 export default class PostLifecycle extends React.PureComponent {
 	static propTypes = {
