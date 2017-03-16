@@ -14,6 +14,7 @@ import {
 	partial,
 	some,
 	values,
+	isEmpty,
 	identity
 } from 'lodash';
 
@@ -106,6 +107,13 @@ export class EditorMediaModal extends Component {
 
 	componentDidMount() {
 		this.statsTracking = {};
+	}
+
+	componentWillMount() {
+		const { view, mediaLibrarySelectedItems, site } = this.props;
+		if ( ! isEmpty( mediaLibrarySelectedItems ) && view === ModalViews.LIST ) {
+			MediaActions.setLibrarySelectedItems( site.ID, [] );
+		}
 	}
 
 	componentWillUnmount() {

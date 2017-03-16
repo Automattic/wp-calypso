@@ -30,7 +30,7 @@ const EMPTY_COMPONENT = React.createClass( {
 } );
 
 describe( 'EditorMediaModal', function() {
-	let spy, translate, deleteMedia, accept, EditorMediaModal;
+	let spy, translate, deleteMedia, accept, EditorMediaModal, setLibrarySelectedItems;
 
 	translate = require( 'i18n-calypso' ).translate;
 
@@ -38,6 +38,7 @@ describe( 'EditorMediaModal', function() {
 	useFakeDom();
 	useSandbox( ( sandbox ) => {
 		spy = sandbox.spy();
+		setLibrarySelectedItems = sandbox.stub();
 		deleteMedia = sandbox.stub();
 		accept = sandbox.stub().callsArgWithAsync( 1, true );
 	} );
@@ -54,7 +55,7 @@ describe( 'EditorMediaModal', function() {
 		mockery.registerMock( 'lib/accept', accept );
 		mockery.registerMock( 'lib/analytics', { mc: { bumpStat: noop } } );
 		mockery.registerMock( 'component-closest', {} );
-		mockery.registerMock( 'lib/media/actions', { delete: deleteMedia } );
+		mockery.registerMock( 'lib/media/actions', { 'delete': deleteMedia, setLibrarySelectedItems: setLibrarySelectedItems } );
 		mockery.registerMock( 'lib/posts/actions', { blockSave: noop } );
 		mockery.registerMock( 'lib/posts/stats', {
 			recordEvent: noop,
