@@ -10,7 +10,10 @@ import Stream from 'reader/stream';
 
 const TeamStream = ( props ) => {
 	return (
-		<Stream { ...props }></Stream>
+		<Stream
+			{ ...props }
+			shouldCombineCards={ false }
+		/>
 	);
 };
 

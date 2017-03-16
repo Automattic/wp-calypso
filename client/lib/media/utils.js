@@ -510,6 +510,10 @@ const MediaUtils = {
 		return !! item.transient;
 	},
 
+	isTransientPreviewable( item ) {
+		return !! ( item && item.URL );
+	},
+
 	/**
 	 * Returns an object describing a transient media item which can be used in
 	 * optimistic rendering prior to media persistence to server.

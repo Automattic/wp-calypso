@@ -10,15 +10,13 @@ import { noop } from 'lodash';
 import cssSafeUrl from 'lib/css-safe-url';
 import resizeImageUrl from 'lib/resize-image-url';
 
-const FEATURED_IMAGE_WIDTH = 250;
-
-const ReaderFeaturedImage = ( { imageUrl, href, children, onClick } ) => {
+const ReaderFeaturedImage = ( { imageUrl, imageWidth, href, children, onClick } ) => {
 	if ( imageUrl === undefined ) {
 		return null;
 	}
 
 	const featuredImageStyle = {
-		backgroundImage: 'url(' + cssSafeUrl( resizeImageUrl( imageUrl, { w: FEATURED_IMAGE_WIDTH } ) ) + ')',
+		backgroundImage: 'url(' + cssSafeUrl( resizeImageUrl( imageUrl, { w: imageWidth } ) ) + ')',
 		backgroundSize: 'cover',
 		backgroundRepeat: 'no-repeat',
 		backgroundPosition: 'center center'
@@ -39,6 +37,7 @@ ReaderFeaturedImage.propTypes = {
 
 ReaderFeaturedImage.defaultProps = {
 	onClick: noop,
+	imageWidth: 250,
 };
 
 export default ReaderFeaturedImage;

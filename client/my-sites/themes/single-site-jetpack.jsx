@@ -23,7 +23,12 @@ import ThemesSelection from './themes-selection';
 import { addTracking } from './helpers';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getLastThemeQuery, getThemesFoundForQuery } from 'state/themes/selectors';
-import { hasJetpackSiteJetpackThemesExtendedFeatures } from 'state/sites/selectors';
+import {
+	canJetpackSiteManage,
+	hasJetpackSiteJetpackThemes,
+	hasJetpackSiteJetpackThemesExtendedFeatures,
+	isJetpackSiteMultiSite
+} from 'state/sites/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const ConnectedThemesSelection = connectOptions(
@@ -33,7 +38,7 @@ const ConnectedThemesSelection = connectOptions(
 				getOptions={ function( theme ) {
 					return pickBy(
 						addTracking( props.options ),
-						option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
+						option => ! ( option.hideForTheme && option.hideForTheme( theme, props.siteId ) )
 					); } }
 			/>
 		);
@@ -45,36 +50,35 @@ const ConnectedSingleSiteJetpack = connectOptions(
 		const {
 			analyticsPath,
 			analyticsPageTitle,
+			canManage,
 			emptyContent,
+			filter,
 			getScreenshotOption,
+			hasJetpackThemes,
 			showWpcomThemesList,
 			search,
-			site,
 			siteId,
-			wpcomTier,
-			filter,
-			vertical
+			vertical,
+			wpcomTier
 		} = props;
 		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
 		if ( ! jetpackEnabled ) {
 			return (
 				<JetpackReferrerMessage
-					site={ site }
+					siteId={ siteId }
 					analyticsPath={ analyticsPath }
 					analyticsPageTitle={ analyticsPageTitle } />
 			);
 		}
-		if ( ! site.hasJetpackThemes ) {
+		if ( ! hasJetpackThemes ) {
 			return (
-				<JetpackUpgradeMessage
-					site={ site } />
+				<JetpackUpgradeMessage siteId={ siteId } />
 			);
 		}
-		if ( ! site.canManage() ) {
+		if ( ! canManage ) {
 			return (
-				<JetpackManageDisabledMessage
-					site={ site } />
+				<JetpackManageDisabledMessage siteId={ siteId } />
 			);
 		}
 
@@ -87,9 +91,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 					emptyContent={ showWpcomThemesList ? <div /> : null } >
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-					<ThanksModal
-						site={ site }
-						source={ 'list' } />
+					<ThanksModal source={ 'list' } />
 					{ showWpcomThemesList &&
 						<div>
 							<ConnectedThemesSelection
@@ -139,8 +141,9 @@ const ConnectedSingleSiteJetpack = connectOptions(
 
 export default connect(
 	( state, { siteId, tier } ) => {
+		const isMultisite = isJetpackSiteMultiSite( state, siteId );
 		const showWpcomThemesList = config.isEnabled( 'manage/themes/upload' ) &&
-			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId );
+			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) && ! isMultisite;
 		let emptyContent = null;
 		if ( showWpcomThemesList ) {
 			const siteQuery = getLastThemeQuery( state, siteId );
@@ -150,9 +153,12 @@ export default connect(
 			emptyContent = ( ! siteThemesCount && ! wpcomThemesCount ) ? null : <div />;
 		}
 		return {
+			canManage: canJetpackSiteManage( state, siteId ),
+			hasJetpackThemes: hasJetpackSiteJetpackThemes( state, siteId ),
 			wpcomTier: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ? tier : 'free',
 			showWpcomThemesList,
-			emptyContent
+			emptyContent,
+			isMultisite,
 		};
 	}
 )( ConnectedSingleSiteJetpack );

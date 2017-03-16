@@ -2,15 +2,22 @@
 	position: fixed;
 		right: 0;
 		bottom: 0;
-	padding: 8px;
+	padding: 6px 8px 8px;
 	background-color: rgba( $white, 0.92 );
 	text-transform: uppercase;
 	font-size: 11px;
 	line-height: 1;
 	color: lighten( $gray, 10% );
 	pointer-events: none;
+	z-index: z-index( 'root', '.editor-word-count' );
 
-	@include breakpoint( ">960px" ) {
-		padding: 16px;
+	.focus-sidebar & {
+		right: 273px;
+	}
+
+	@include breakpoint( "<960px" ) {
+		.focus-sidebar & {
+			right: 229px;
+		}
 	}
 }

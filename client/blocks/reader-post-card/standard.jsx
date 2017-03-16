@@ -7,7 +7,7 @@ import React from 'react';
  * Internal Dependencies
  */
 import AutoDirection from 'components/auto-direction';
-import FeaturedVideo from './featured-video';
+import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderExcerpt from 'blocks/reader-excerpt';
 
@@ -17,7 +17,7 @@ const StandardPost = ( { post, children, isDiscover } )=> {
 	if ( ! canonicalMedia ) {
 		featuredAsset = null;
 	} else if ( canonicalMedia.mediaType === 'video' ) {
-		featuredAsset = <FeaturedVideo { ...canonicalMedia } videoEmbed={ canonicalMedia } />;
+		featuredAsset = <ReaderFeaturedVideo { ...canonicalMedia } videoEmbed={ canonicalMedia } />;
 	} else {
 		featuredAsset = <ReaderFeaturedImage imageUrl={ canonicalMedia.src } href={ post.URL } />;
 	}
@@ -34,7 +34,8 @@ const StandardPost = ( { post, children, isDiscover } )=> {
 				<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
 				{ children }
 			</div>
-		</div> );
+		</div>
+	);
 };
 
 StandardPost.propTypes = {

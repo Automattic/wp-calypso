@@ -20,6 +20,7 @@ import {
 } from 'state/action-types';
 import { getHappychatConnectionStatus, getHappychatTranscriptTimestamp } from './selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 const debug = require( 'debug' )( 'calypso:happychat:actions' );
 
@@ -79,6 +80,20 @@ export const requestTranscript = () => ( dispatch, getState ) => {
 	);
 };
 
+export const sendBrowserInfo = ( siteurl ) => dispatch => {
+	const siteHelp = `Site I need help with: ${ siteurl }\n`;
+	const screenRes = `Screen Resolution: ${ screen.width }x${ screen.height }\n`;
+	const browserSize = `Browser Size: ${ window.innerWidth }x${ window.innerHeight }\n`;
+	const userAgent = `User Agent: ${ navigator.userAgent }`;
+	const msg = {
+		text: `Info\n ${ siteHelp } ${ screenRes } ${ browserSize } ${ userAgent }`,
+	};
+
+	debug( 'sending info message', msg );
+	dispatch( clearChatMessage() );
+	connection.info( msg );
+};
+
 /**
  * Opens Happychat Socket.IO client connection.
  * @return {Thunk} Action thunk
@@ -86,6 +101,9 @@ export const requestTranscript = () => ( dispatch, getState ) => {
 export const connectChat = () => ( dispatch, getState ) => {
 	const state = getState();
 	const user = getCurrentUser( state );
+	const locale = getCurrentUserLocale( state );
+
+	debug( 'opening with chat locale', locale );
 
 	// if chat is already connected then do nothing
 	if ( getHappychatConnectionStatus( state ) === 'connected' ) {
@@ -95,7 +113,7 @@ export const connectChat = () => ( dispatch, getState ) => {
 	// create new session id and get signed identity data for authenticating
 	startSession()
 	.then( ( { session_id } ) => sign( { user, session_id } ) )
-	.then( ( { jwt } ) => connection.open( user.ID, jwt ) )
+	.then( ( { jwt } ) => connection.open( user.ID, jwt, locale ) )
 	.then(
 		() => {
 			dispatch( setChatConnected() );
@@ -103,7 +121,7 @@ export const connectChat = () => ( dispatch, getState ) => {
 			connection
 			.on( 'message', event => dispatch( receiveChatEvent( event ) ) )
 			.on( 'status', status => dispatch( setHappychatChatStatus( status ) ) )
-			.on( 'accept', isAvailable => dispatch( setHappychatAvailable( isAvailable ) ) );
+			.on( 'accept', accept => dispatch( setHappychatAvailable( accept ) ) );
 		},
 		e => debug( 'failed to start happychat session', e, e.stack )
 	);

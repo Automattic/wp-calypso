@@ -5,14 +5,25 @@
 }
 
 .site-or-domain__choice {
-	flex-grow: 1;
-	margin: 10px;
-	max-width: 330px;
-	min-width: 230px;
 	padding: 0;
-}
+	margin: 10px;
+	min-width: 230px;
+	max-width: 330px;
+	flex-grow: 1;
+	transition: box-shadow 100ms ease-in-out;
+	cursor: pointer;
 
-.site-or-domain__label {
-	border-top: solid 1px $gray-light;
-	padding: 10px 15px;
+	a, svg {
+		display: block;
+		width: 100%;
+	}
+
+	&:hover {
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
+	}
+
+	h2 {
+		border-top: solid 1px $gray-light;
+		padding: 10px 15px;
+	}
 }

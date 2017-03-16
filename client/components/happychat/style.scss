@@ -107,6 +107,14 @@
 
 }
 
+.happychat__notice {
+	padding: 12px;
+	border-top: 1px solid lighten( $gray, 20% );
+	color: $white;
+	background-color: lighten( $gray-dark, 20% );
+	margin: 0;
+}
+
 .happychat__welcome {
 	flex: 1 auto;
 	padding: 16px;
@@ -172,6 +180,10 @@
 
 }
 
+.layout.is-group-editor .happychat .happychat__container.is-open.is-minimizing {
+	animation: happychat-minimize-right .5s 1 forwards;
+}
+
 @keyframes happychat-disappear {
 	0% {
 		top: 0px;
@@ -191,6 +203,23 @@
 	}
 	99%, 100% {
 		right: calc( 100% - 229px ); // small sidebar
+		width: 34px;
+		max-height: 34px;
+		bottom: 0px;
+	}
+	100% {
+		max-height: 0;
+		bottom: -34px;
+	}
+}
+
+@keyframes happychat-minimize-right {	// for right hand sidebars
+	0% {
+		max-height: 220px;
+		bottom: 0px;
+	}
+	99%, 100% {
+		right: 273px;	// 273 (sidebar width) + 40 (button width)
 		width: 34px;
 		max-height: 34px;
 		bottom: 0px;
@@ -474,10 +503,6 @@
 	}
 
 	// add space in the editor for the docked sidebar
-	.has-chat.is-group-editor .layout__content {
-		padding: 47px 272px 0 0;
-	}
-
 	.has-chat.is-group-editor .editor__header,
 	.has-chat.is-group-editor .editor .mce-edit-area {
 	    padding: 0 16px;
@@ -499,6 +524,31 @@
 	.has-chat.is-group-editor .editor__switch-mode {
 	    right: 32px;
 	}
+
+	.has-chat.is-group-editor .editor-ground-control,
+	.has-chat.is-group-editor .editor-action-bar,
+	.has-chat.is-group-editor .post-editor_inner {
+		margin-right: 273px;
+	}
+
+	// make room when the sidebar is open
+	.has-chat.is-group-editor.focus-sidebar .post-editor__content {
+	    margin-right: 544px;	// 272 * 2
+	}
+
+	.has-chat.is-group-editor.focus-sidebar .post-editor__sidebar {
+	    transform: translateX( -545px );	// 272 * 2 + 1
+	}
+
+	// make room when the sidebar is closed
+	.has-chat.is-group-editor .post-editor__content {
+	    margin-right: 272px;
+	}
+
+	.has-chat.is-group-editor .post-editor__sidebar {
+	    transform: translateX( -273px );
+	}
+
 
 	// make space in customizer
 	.has-chat .main.customize.is-iframe {

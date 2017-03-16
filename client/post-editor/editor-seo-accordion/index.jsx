@@ -5,7 +5,6 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import identity from 'lodash/identity';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -55,7 +54,6 @@ class EditorSeoAccordion extends Component {
 		return (
 			<Accordion
 				title={ translate( 'SEO Description' ) }
-				icon={ <Gridicon icon="search" /> }
 				className="editor-seo-accordion"
 			>
 				<AccordionSection>

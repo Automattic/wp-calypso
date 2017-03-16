@@ -4,12 +4,12 @@
 }
 
 .editor-post-formats__format {
-	margin: 8px 0;
+	margin: 12px 0;
 }
 
 .editor-post-formats__format-label {
-	color: darken( $gray, 20% );
-	font-size: 14px;
+	color: $gray-text;
+	font-size: 12px;
 	position: relative;
 	padding-left: 26px;
 	cursor: pointer;

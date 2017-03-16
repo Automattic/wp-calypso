@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
+import { find, identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +16,7 @@ import SignupThemesList from './signup-themes-list';
 import PressableThemeStep from './pressable-theme';
 import StepWrapper from 'signup/step-wrapper';
 import Button from 'components/button';
+import { themes } from 'lib/signup/themes-data';
 
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 
@@ -38,7 +39,8 @@ class ThemeSelectionStep extends Component {
 		showPressable: false,
 	};
 
-	pickTheme = ( theme ) => {
+	pickTheme = ( themeId ) => {
+		const theme = find( themes, { slug: themeId } );
 		const repoSlug = `${ theme.repo }/${ theme.slug }`;
 
 		analytics.tracks.recordEvent( 'calypso_signup_theme_select', {

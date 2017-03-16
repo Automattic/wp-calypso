@@ -161,7 +161,9 @@ class SiteStream extends React.Component {
 				emptyContent={ emptyContent }
 				showPostHeader={ false }
 				showSiteNameOnCards={ false }
-				isDiscoverStream={ this.props.isDiscoverStream }>
+				isDiscoverStream={ this.props.isDiscoverStream }
+				shouldCombineCards={ false }
+			>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 				<RefreshFeedHeader site={ site } feed={ this.state.feed } showBack={ this.props.showBack } />
 				{ featuredContent }

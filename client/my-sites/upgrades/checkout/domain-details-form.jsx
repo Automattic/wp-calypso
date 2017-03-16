@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import { map, camelCase, kebabCase, head, omit } from 'lodash';
+import { camelCase, head, kebabCase, map, omit, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +15,7 @@ import { cartItems } from 'lib/cart-values';
 import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
 import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
-import { addPrivacyToAllDomains, removePrivacyFromAllDomains, setDomainDetails } from 'lib/upgrades/actions';
+import { addPrivacyToAllDomains, removePrivacyFromAllDomains, setDomainDetails, addGoogleAppsRegistrationData } from 'lib/upgrades/actions';
 import FormButton from 'components/forms/form-button';
 import { countries } from 'components/phone-input/data';
 import { toIcannFormat } from 'components/phone-input/phone-number';
@@ -364,12 +364,20 @@ export default React.createClass( {
 	},
 
 	recordSubmit() {
-		const errors = formState.getErrorMessages( this.state.form );
-		analytics.tracks.recordEvent( 'calypso_contact_information_form_submit', {
-			errors,
-			errors_count: errors && errors.length || 0,
-			submission_count: this.state.submissionCount + 1
-		} );
+		const errors = formState.getErrorMessages( this.state.form ),
+			tracksEventObject = reduce(
+				formState.getErrorMessages( this.state.form ),
+				( result, value, key ) => {
+					result[ `error_${ key }` ] = value;
+					return result;
+				},
+				{
+					errors_count: errors && errors.length || 0,
+					submission_count: this.state.submissionCount + 1
+				}
+			);
+
+		analytics.tracks.recordEvent( 'calypso_contact_information_form_submit', tracksEventObject );
 		this.setState( { submissionCount: this.state.submissionCount + 1 } );
 	},
 
@@ -393,6 +401,7 @@ export default React.createClass( {
 		const allFieldValues = Object.assign( {}, formState.getAllFieldValues( this.state.form ) );
 		allFieldValues.phone = toIcannFormat( allFieldValues.phone, countries[ this.state.phoneCountryCode ] );
 		setDomainDetails( allFieldValues );
+		addGoogleAppsRegistrationData( allFieldValues );
 	},
 
 	setPrivacyProtectionSubscriptions( enable ) {

@@ -1,3 +1,4 @@
+// View: theme upload
 .theme-upload__dropzone {
 	position: relative;
 	background-color: $gray-light;
@@ -39,30 +40,50 @@
 }
 
 
+.theme-upload {
+	&.is-disabled {
+		opacity: 0.2;
+		pointer-events: none;
+	}
+}
+
+
+// View : theme successfully uploaded
 .theme-upload__theme-sheet {
-	span {
-		display: block;
-	}
-
-	img {
-		width: 300px;
-		margin: 20px;
-		border: 1px solid $gray;
-	}
-
-	.button {
-		margin: 20px 20px 0 0;
-	}
+	font-size: 14px;
 }
 
 .theme-upload__theme-name {
 	font-size: 24px;
 	font-weight: 600;
+	clear: none;
 }
 
-.theme-upload {
-	&.is-disabled {
-		opacity: 0.2;
-		pointer-events: none;
+.theme-upload__screenshot {
+	float: right;
+	width: 300px;
+	border: 1px solid lighten( $gray, 30% );
+	margin-left: 24px;
+
+	@include breakpoint( "<960px" ) {
+		float: none;
+		margin-left: 0;
+		margin-bottom: 24px;
+	}
+}
+
+.theme-upload__description {
+	margin: 24px 0;
+}
+
+.theme-upload__action-buttons {
+	clear: both;
+	overflow: hidden;
+	border-top: 1px solid lighten( $gray, 30% );
+	padding: 16px;
+	margin: 24px -24px -24px;
+
+	.button {
+		margin: 0 20px 0 0;
 	}
 }

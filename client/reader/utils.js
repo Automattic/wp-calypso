@@ -3,7 +3,7 @@
  */
 import url from 'url';
 import page from 'page';
-import { isNumber } from 'lodash';
+import { every } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -12,7 +12,6 @@ import i18n from 'i18n-calypso';
 import { state as SiteState } from 'lib/reader-site-store/constants';
 import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import PostStore from 'lib/feed-post-store';
-import { selectItem } from 'lib/feed-stream-store/actions';
 import XPostHelper, { isXPost } from 'reader/xpost-helper';
 import { setLastStoreId } from 'reader/controller-helper';
 
@@ -76,16 +75,12 @@ export function isPostNotFound( post ) {
 	return post.statusCode === 404;
 }
 
-export function showSelectedPost( { store, replaceHistory, selectedGap, postKey, index } ) {
+export function showSelectedPost( { store, replaceHistory, selectedGap, postKey, comments } ) {
 	if ( ! postKey ) {
 		return;
 	}
 
-	if ( store && isNumber( index ) ) {
-		selectItem( store.getID(), index );
-	} else if ( ! store ) {
-		setLastStoreId( undefined );
-	}
+	setLastStoreId( store && store.id );
 
 	if ( postKey.isGap === true ) {
 		return selectedGap.handleClick();
@@ -119,6 +114,7 @@ export function showSelectedPost( { store, replaceHistory, selectedGap, postKey,
 	showFullPost( {
 		post: mappedPost,
 		replaceHistory,
+		comments
 	} );
 }
 
@@ -152,3 +148,5 @@ export function showFullPost( { post, replaceHistory, comments } ) {
 		page[ method ]( `/read/blogs/${ post.site_ID }/posts/${ post.ID }${ hashtag }${ query }` );
 	}
 }
+
+export const shallowEquals = ( o1, o2 ) => every( Object.keys( o1 ), key => o1[ key ] === o2[ key ] );

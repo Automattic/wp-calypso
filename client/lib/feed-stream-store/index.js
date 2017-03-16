@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { forEach, startsWith, random } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -19,14 +20,16 @@ const wpcomUndoc = wpcom.undocumented();
 function feedKeyMaker( post ) {
 	return {
 		feedId: post.feed_ID,
-		postId: post.ID
+		postId: post.ID,
+		localMoment: moment( post.date ),
 	};
 }
 
 function siteKeyMaker( post ) {
 	return {
 		blogId: post.site_ID,
-		postId: post.ID
+		postId: post.ID,
+		localMoment: moment( post.date ),
 	};
 }
 
@@ -34,7 +37,8 @@ function mixedKeyMaker( post ) {
 	if ( post.feed_ID && post.feed_item_ID ) {
 		return {
 			feedId: post.feed_ID,
-			postId: post.feed_item_ID
+			postId: post.feed_item_ID,
+			localMoment: moment( post.date ),
 		};
 	}
 
@@ -201,7 +205,7 @@ function getStoreForRecommendedPosts( storeId ) {
 				query.algorithm = 'read:recommendations:posts/es/6';
 				break;
 			case 'custom_recs_posts_with_images':
-				query.algorithm = 'read:recommendations:posts/es/7';
+				query.alg_prefix = 'read:recommendations:posts';
 
 				/* Seed FAQ:
 				 * Q: What does it do?

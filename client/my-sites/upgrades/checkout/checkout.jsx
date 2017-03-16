@@ -43,7 +43,6 @@ import {
 	getSelectedSiteSlug,
 } from 'state/ui/selectors';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
-import { domainManagementList, domainManagementRoot } from 'my-sites/upgrades/paths';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
 
 const Checkout = React.createClass( {
@@ -206,13 +205,7 @@ const Checkout = React.createClass( {
 				? `/plans/${ selectedSiteSlug }/thank-you`
 				: '/checkout/thank-you/plans';
 		} else if ( cart.create_new_blog ) {
-			const domainName = getDomainNameFromReceiptOrCart( receipt, cart );
-			if ( domainName ) {
-				return domainManagementList( domainName );
-			}
-
-			// TODO: Redirect to Thank You page, but no site slug atm, so we need a new route
-			return domainManagementRoot();
+			return `/checkout/thank-you/no-site/${ receiptId }`;
 		}
 
 		if ( ! selectedSiteSlug ) {
@@ -288,7 +281,17 @@ const Checkout = React.createClass( {
 			this.props.clearSitePlans( selectedSiteId );
 		}
 
-		if ( cart.create_new_blog ) {
+		if ( receipt && receipt.receipt_id ) {
+			const receiptId = receipt.receipt_id;
+
+			this.props.fetchReceiptCompleted( receiptId, {
+				...receipt,
+				purchases: this.flattenPurchases( this.props.transaction.step.data.purchases ),
+				failedPurchases: this.flattenPurchases( this.props.transaction.step.data.failed_purchases )
+			} );
+		}
+
+		if ( cart.create_new_blog && receipt && isEmpty( receipt.failed_purchases ) ) {
 			notices.info(
 				this.translate( 'Almost done…' )
 			);
@@ -302,16 +305,6 @@ const Checkout = React.createClass( {
 
 				return;
 			}
-		}
-
-		if ( receipt && receipt.receipt_id ) {
-			const receiptId = receipt.receipt_id;
-
-			this.props.fetchReceiptCompleted( receiptId, {
-				receiptId: receiptId,
-				purchases: this.flattenPurchases( this.props.transaction.step.data.purchases ),
-				failedPurchases: this.flattenPurchases( this.props.transaction.step.data.failed_purchases ),
-			} );
 		}
 
 		page( redirectPath );

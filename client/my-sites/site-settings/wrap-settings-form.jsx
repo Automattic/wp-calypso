@@ -135,6 +135,13 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
 		};
 
+		handleAutosavingToggle = name => () => {
+			this.props.trackEvent( `Toggled ${ name }` );
+			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] }, () => {
+				this.submitForm();
+			} );
+		};
+
 		onChangeField = field => event => {
 			this.props.updateFields( {
 				[ field ]: event.target.value
@@ -165,6 +172,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				handleSelect: this.handleSelect,
 				handleSubmitForm: this.handleSubmitForm,
 				handleToggle: this.handleToggle,
+				handleAutosavingToggle: this.handleAutosavingToggle,
 				onChangeField: this.onChangeField,
 				setFieldValue: this.setFieldValue,
 				submitForm: this.submitForm,

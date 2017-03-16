@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { truncate } from 'lodash';
+import { truncate, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -46,7 +46,7 @@ import {
 	SITE_FRONT_PAGE_SET_FAILURE,
 	THEME_DELETE_FAILURE,
 	THEME_DELETE_SUCCESS,
-	THEME_TRY_AND_CUSTOMIZE_FAILURE,
+	THEME_ACTIVATE_FAILURE,
 } from 'state/action-types';
 
 import { dispatchSuccess, dispatchError } from './utils';
@@ -119,34 +119,34 @@ export const onPublicizeConnectionCreate = ( dispatch, { connection } ) => dispa
 	successNotice( translate( 'The %(service)s account was successfully connected.', {
 		args: { service: connection.label },
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionCreateFailure = ( dispatch, { error } ) => dispatch(
 	errorNotice( error.message || translate( 'An error occurred while connecting the account.', {
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionDelete = ( dispatch, { connection } ) => dispatch(
 	successNotice( translate( 'The %(service)s account was successfully disconnected.', {
 		args: { service: connection.label },
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionDeleteFailure = ( dispatch, { error } ) => dispatch(
 	errorNotice( translate( 'The %(service)s account was unable to be disconnected.', {
 		args: { service: error.label },
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionRefresh = ( dispatch, { connection } ) => dispatch(
 	successNotice( translate( 'The %(service)s account was successfully reconnected.', {
 		args: { service: connection.label },
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionRefreshFailure = ( dispatch, { error } ) => dispatch(
@@ -160,14 +160,14 @@ export const onPublicizeConnectionUpdate = ( dispatch, { connection } ) => dispa
 	successNotice( translate( 'The %(service)s account was successfully updated.', {
 		args: { service: connection.label },
 		context: 'Sharing: Publicize connection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 export const onPublicizeConnectionUpdateFailure = ( dispatch, { error } ) => dispatch(
 	errorNotice( translate( 'The %(service)s account was unable to be updated.', {
 		args: { service: error.label },
 		context: 'Sharing: Publicize reconnection confirmation'
-	} ) )
+	} ), { id: 'publicize' } )
 );
 
 const onThemeDeleteSuccess = ( dispatch, { themeName } ) => dispatch(
@@ -183,6 +183,13 @@ const onThemeDeleteFailure = ( dispatch, { themeId } ) => dispatch(
 		context: 'Themes: Theme delete failure',
 	} ) )
 );
+
+const onThemeActivateFailure = ( dispatch, { error } ) => {
+	if ( includes( error.error, 'theme_not_found' ) ) {
+		return dispatch( errorNotice( translate( 'Theme not yet available for this site' ) ) );
+	}
+	return dispatch( errorNotice( translate( 'Unable to activate theme. Contact support.' ) ) );
+};
 
 /**
  * Handler action type mapping
@@ -229,7 +236,7 @@ export const handlers = {
 	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) ),
 	[ THEME_DELETE_FAILURE ]: onThemeDeleteFailure,
 	[ THEME_DELETE_SUCCESS ]: onThemeDeleteSuccess,
-	[ THEME_TRY_AND_CUSTOMIZE_FAILURE ]: dispatchError( translate( 'Customize error, please retry or contact support' ) ),
+	[ THEME_ACTIVATE_FAILURE ]: onThemeActivateFailure,
 };
 
 /**

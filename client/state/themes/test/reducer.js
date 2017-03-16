@@ -18,9 +18,9 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
-	THEME_ACTIVATE_REQUEST,
-	THEME_ACTIVATE_REQUEST_SUCCESS,
-	THEME_ACTIVATE_REQUEST_FAILURE,
+	THEME_ACTIVATE,
+	THEME_ACTIVATE_SUCCESS,
+	THEME_ACTIVATE_FAILURE,
 	THEME_CLEAR_ACTIVATED,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
@@ -714,7 +714,7 @@ describe( 'reducer', () => {
 
 		it( 'should track theme activate request success', () => {
 			const state = activeThemes( deepFreeze( {} ), {
-				type: THEME_ACTIVATE_REQUEST_SUCCESS,
+				type: THEME_ACTIVATE_SUCCESS,
 				themeStylesheet: 'twentysixteen',
 				siteId: 2211888,
 			} );
@@ -756,7 +756,7 @@ describe( 'reducer', () => {
 
 		it( 'should map site ID to true value if request in progress', () => {
 			const state = activationRequests( deepFreeze( {} ), {
-				type: THEME_ACTIVATE_REQUEST,
+				type: THEME_ACTIVATE,
 				siteId: 2916284,
 			} );
 
@@ -771,7 +771,7 @@ describe( 'reducer', () => {
 					2916284: true
 				} ),
 				{
-					type: THEME_ACTIVATE_REQUEST,
+					type: THEME_ACTIVATE,
 					siteId: 2916285,
 				}
 			);
@@ -788,7 +788,7 @@ describe( 'reducer', () => {
 					2916284: true
 				} ),
 				{
-					type: THEME_ACTIVATE_REQUEST_SUCCESS,
+					type: THEME_ACTIVATE_SUCCESS,
 					siteId: 2916284,
 					themeStylesheet: 'twentysixteen',
 				}
@@ -803,7 +803,7 @@ describe( 'reducer', () => {
 			const state = activationRequests( deepFreeze( {
 				2916284: true
 			} ), {
-				type: THEME_ACTIVATE_REQUEST_FAILURE,
+				type: THEME_ACTIVATE_FAILURE,
 				siteId: 2916284,
 				themeId: 'twentysixteen',
 				error: 'Unknown blog',
@@ -948,7 +948,7 @@ describe( 'reducer', () => {
 
 		it( 'should track theme activate request success', () => {
 			const state = completedActivationRequests( deepFreeze( {} ), {
-				type: THEME_ACTIVATE_REQUEST_SUCCESS,
+				type: THEME_ACTIVATE_SUCCESS,
 				siteId: 2211667,
 			} );
 

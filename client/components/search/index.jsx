@@ -41,6 +41,7 @@ const Search = React.createClass( {
 	propTypes: {
 		additionalClasses: PropTypes.string,
 		initialValue: PropTypes.string,
+		value: PropTypes.string,
 		placeholder: PropTypes.string,
 		pinned: PropTypes.bool,
 		delaySearch: PropTypes.bool,
@@ -62,7 +63,8 @@ const Search = React.createClass( {
 		dir: PropTypes.oneOf( [ 'ltr', 'rtl' ] ),
 		fitsContainer: PropTypes.bool,
 		maxLength: PropTypes.number,
-		hideClose: PropTypes.bool
+		hideClose: PropTypes.bool,
+		compact: PropTypes.bool
 	},
 
 	getInitialState: function() {
@@ -93,7 +95,8 @@ const Search = React.createClass( {
 			isOpen: false,
 			dir: undefined,
 			fitsContainer: false,
-			hideClose: false
+			hideClose: false,
+			compact: false
 		};
 	},
 
@@ -120,8 +123,8 @@ const Search = React.createClass( {
 			this.setState( { isOpen: nextProps.isOpen } );
 		}
 
-		if ( nextProps.initialValue !== this.props.initialValue ) {
-			this.setState( { keyword: nextProps.initialValue || '' } );
+		if ( nextProps.value && nextProps.value !== this.state.keyword ) {
+			this.setState( { keyword: nextProps.value } );
 		}
 	},
 
@@ -319,6 +322,7 @@ const Search = React.createClass( {
 			'is-expanded-to-container': this.props.fitsContainer,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
+			'is-compact': this.props.compact,
 			'has-focus': this.state.hasFocus,
 			search: true
 		} );

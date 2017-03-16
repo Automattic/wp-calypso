@@ -45,6 +45,7 @@ export default React.createClass( {
 					{ onRemove && (
 						<Button
 							onClick={ onRemove }
+							compact
 							className="editor-drawer-well__remove">
 							<span className="screen-reader-text">
 								{ this.translate( 'Remove' ) }
@@ -67,7 +68,7 @@ export default React.createClass( {
 								icon={ icon }
 								className="editor-drawer-well__icon" />
 						) }
-						<span className="editor-drawer-well__button button is-secondary">
+						<span className="editor-drawer-well__button button is-secondary is-compact">
 							{ label }
 						</span>
 					</button>

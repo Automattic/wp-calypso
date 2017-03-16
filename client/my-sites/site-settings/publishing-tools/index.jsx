@@ -17,22 +17,32 @@ import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
 import { regeneratePostByEmail } from 'state/jetpack/settings/actions';
-import { isRegeneratingJetpackPostByEmail } from 'state/selectors';
+import {
+	isJetpackModuleActive,
+	isJetpackModuleUnavailableInDevelopmentMode,
+	isJetpackSiteInDevelopmentMode,
+	isRegeneratingJetpackPostByEmail
+} from 'state/selectors';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import PressThis from '../press-this';
+import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 
 class PublishingTools extends Component {
 	componentDidUpdate() {
 		const {
 			fields,
+			moduleUnavailable,
 			postByEmailAddressModuleActive,
 			regeneratingPostByEmail,
 			selectedSiteId
 		} = this.props;
+
+		if ( ! moduleUnavailable ) {
+			return;
+		}
 
 		if ( postByEmailAddressModuleActive && regeneratingPostByEmail === null && ! fields.post_by_email_address ) {
 			this.props.regeneratePostByEmail( selectedSiteId );
@@ -53,10 +63,10 @@ class PublishingTools extends Component {
 	}
 
 	renderPostByEmailSettings() {
-		const { fields, translate, postByEmailAddressModuleActive, regeneratingPostByEmail } = this.props;
+		const { fields, moduleUnavailable, translate, postByEmailAddressModuleActive, regeneratingPostByEmail } = this.props;
 		const isFormPending = this.isFormPending();
 		const email = fields.post_by_email_address && fields.post_by_email_address !== 'regenerate' ? fields.post_by_email_address : '';
-		const labelClassName = regeneratingPostByEmail || ! postByEmailAddressModuleActive ? 'is-disabled' : null;
+		const labelClassName = moduleUnavailable || regeneratingPostByEmail || ! postByEmailAddressModuleActive ? 'is-disabled' : null;
 
 		return (
 			<div className="publishing-tools__module-settings site-settings__child-settings">
@@ -65,13 +75,13 @@ class PublishingTools extends Component {
 				</FormLabel>
 				<ClipboardButtonInput
 					className="publishing-tools__email-address"
-					disabled={ regeneratingPostByEmail || ! postByEmailAddressModuleActive }
+					disabled={ regeneratingPostByEmail || ! postByEmailAddressModuleActive || moduleUnavailable }
 					value={ email }
 				/>
 				<Button
 					compact
 					onClick={ this.onRegenerateButtonClick }
-					disabled={ isFormPending || regeneratingPostByEmail || ! postByEmailAddressModuleActive }
+					disabled={ isFormPending || regeneratingPostByEmail || ! postByEmailAddressModuleActive || moduleUnavailable }
 				>
 					{ regeneratingPostByEmail
 						? translate( 'Regenerating…' )
@@ -84,6 +94,7 @@ class PublishingTools extends Component {
 
 	renderPostByEmailModule() {
 		const {
+			moduleUnavailable,
 			selectedSiteId,
 			translate
 		} = this.props;
@@ -91,7 +102,7 @@ class PublishingTools extends Component {
 
 		return (
 			<FormFieldset>
-				<div className="publishing-tools__info-link-container">
+				<div className="publishing-tools__info-link-container site-settings__info-link-container">
 					<InfoPopover position={ 'left' }>
 						<ExternalLink href={ 'https://jetpack.com/support/post-by-email/' } target="_blank">
 							{ translate( 'Learn more about Post by Email' ) }
@@ -102,8 +113,8 @@ class PublishingTools extends Component {
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="post-by-email"
-					label={ translate( 'Publish posts by sending an email.' ) }
-					disabled={ formPending }
+					label={ translate( 'Publish posts by sending an email' ) }
+					disabled={ formPending || moduleUnavailable }
 					/>
 
 				{ this.renderPostByEmailSettings() }
@@ -126,13 +137,15 @@ class PublishingTools extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { selectedSiteId, translate } = this.props;
 
 		return (
 			<div>
+				<QueryJetpackConnection siteId={ selectedSiteId } />
+
 				<SectionHeader label={ translate( 'Publishing Tools' ) } />
 
-				<Card className="publishing-tools__card site-settings">
+				<Card className="publishing-tools__card site-settings__module-settings">
 					{ this.renderPostByEmailModule() }
 					<hr />
 					{ this.renderPressThis() }
@@ -159,11 +172,14 @@ export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const regeneratingPostByEmail = isRegeneratingJetpackPostByEmail( state, selectedSiteId );
+		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, selectedSiteId, 'post-by-email' );
 
 		return {
 			selectedSiteId,
 			regeneratingPostByEmail,
 			postByEmailAddressModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'post-by-email' ),
+			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 		};
 	},
 	{

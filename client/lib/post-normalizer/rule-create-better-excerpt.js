@@ -48,7 +48,7 @@ function buildStrippedDom( content ) {
 	const dom = domForHtml( content );
 
 	// Ditch any photo captions, styles, scripts
-	const stripSelectors = '.wp-caption-text, style, script, blockquote[class^="instagram-"], figure, .tiled-gallery';
+	const stripSelectors = '.wp-caption, style, script, blockquote[class^="instagram-"], figure, .tiled-gallery';
 	forEach( dom.querySelectorAll( stripSelectors ), removeElement );
 	return dom.innerHTML;
 }

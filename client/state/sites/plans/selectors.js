@@ -61,7 +61,7 @@ export const getCurrentPlan = ( state, siteId ) => {
 export const getSitePlan = createSelector(
 	( state, siteId, productSlug ) => {
 		const plansBySiteId = getPlansBySiteId( state, siteId );
-		if ( ! plansBySiteId || plansBySiteId.isRequesting || ! plansBySiteId.data ) {
+		if ( ! plansBySiteId || ! plansBySiteId.data ) {
 			return null;
 		}
 		return plansBySiteId.data.filter( plan => plan.productSlug === productSlug ).shift();
@@ -111,7 +111,6 @@ export function getPlanDiscountedRawPrice(
 	if ( get( plan, 'rawPrice', -1 ) < 0 || ! isSitePlanDiscounted( state, siteId, productSlug ) ) {
 		return null;
 	}
-
 	const discountPrice = plan.rawPrice;
 
 	return isMonthly ? parseFloat( ( discountPrice / 12 ).toFixed( 2 ) ) : discountPrice;

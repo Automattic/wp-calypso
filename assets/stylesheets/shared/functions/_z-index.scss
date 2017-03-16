@@ -39,6 +39,7 @@ $z-layers: (
 		'.site-icon.is-blank .gridicon': 0,
 		'.chart__bar-section.is-spacer': 0,
 		'.gear-dropdown:after': 0,
+		'.media-library .search.is-expanded-to-container': 1,
 		'.ribbon': 1,
 		'.reader__featured-post': 0,
 		'.reader__featured-post-title': 1,
@@ -72,6 +73,9 @@ $z-layers: (
 		'.signup-processing-screen__processing-step.is-processing:before': 1,
 		'.accessible-focus .theme__more-button button:focus': 1,
 		'.domain-suggestion.is-clickable:hover': 1,
+		'.editor-html-toolbar': 1,
+		'.thank-you-card__header': 1,
+		'.editor-action-bar .editor-status-label': 2,
 		'.is-installing .theme': 2,
 		'.reader-update-notice': 2,
 		'.people-list-item .card__link-indicator': 2,
@@ -85,6 +89,7 @@ $z-layers: (
 		'.stats-module.is-loading .module-header-title::after': 2,
 		'ul.module-content-list-item-action-submenu': 2,
 		'ul.module-content-list-item-actions': 2,
+		'.editor-word-count': 3,
 		'.site-indicator__button': 3,
 		'ul.module-content-list-item-actions.collapsed': 3,
 		'.auth__input-wrapper .gridicon': 3,
@@ -99,6 +104,7 @@ $z-layers: (
 		'.main': 20, //TODO: this doesn't always have a stacking context
 		//'tinymce-toolbar': 20, client/components/tinymce/index.jsx
 		'.search': 22,
+		'.editor-ground-control': 22,
 		'.reader-mobile-sidebar': 23,
 		'.community-translator': 99,
 		'.author-selector__popover.popover': 100,
@@ -186,7 +192,6 @@ $z-layers: (
 		'.media-library__list-item.is-transient .media-library__list-item-figure::after': 10,
 		'.media-library__list-item-selected-icon .gridicon': 20,
 		'.media-library__list-item-spinner': 20,
-		'.media-library__list-item-edit': 20
 	),
 	'.dialog__backdrop': (
 		'.editor-media-modal .section-nav': 10,
@@ -222,12 +227,16 @@ $z-layers: (
 	'.stats-post-summary': (
 		'.section-nav': 1
 	),
+	'.thank-you-card__header' : (
+		'.thank-you-card__background-icons .gridicon': 1,
+		'.thank-you-card__main-icon': 2,
+		'.thank-you-card__header-detail': 2
+	),
 
 	// The following may be inserted into different areas.
 	// The parent stacking context may be root, or something else depending on where it is inserted.
 	'icon-parent': (
-		'.sidebar__menu .gridicon.gridicons-external': 1,
-		'.sidebar__menu .noticon-external': 1
+		'.sidebar__menu .gridicon.gridicons-external': 1
 	),
 	'screen-reader-text-parent': (
 		'.screen-reader-text:focus': 100000

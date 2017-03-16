@@ -162,7 +162,8 @@
 
 	.wp-caption-text,
 	figure figcaption,
-	figure .caption {
+	figure .caption,
+	.wp-caption .wp-media-credit {
 		padding: 12px;
 		margin: 0;
 		font-size: 13px;

@@ -442,29 +442,17 @@ Undocumented.prototype._sendRequestWithLocale = function( originalParams, fn ) {
 };
 
 /**
- * Determine whether a domain name can be mapped
- *
- * @param {string} domain - The domain name to check.
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.isDomainMappable = function( domain, fn ) {
-	domain = encodeURIComponent( domain );
-
-	return this.wpcom.req.get( { path: '/domains/' + domain + '/is-mappable' }, fn );
-};
-
-/**
  * Determine whether a domain name is available for registration
  *
  * @param {string} domain - The domain name to check.
  * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
  * @api public
  */
 Undocumented.prototype.isDomainAvailable = function( domain, fn ) {
-	domain = encodeURIComponent( domain );
-
-	return this.wpcom.req.get( { path: '/domains/' + domain + '/is-available' }, fn );
+	return this.wpcom.req.get( `/domains/${ encodeURIComponent( domain ) }/is-available`, {
+		apiVersion: '1.2'
+	}, fn );
 };
 
 /**
@@ -2061,6 +2049,20 @@ Undocumented.prototype.cancelPlanTrial = function( planId, fn ) {
 
 	return this.wpcom.req.post( {
 		path: `/upgrades/${planId}/cancel-plan-trial`
+	}, fn );
+};
+
+/**
+ * Get the Directly configuration for the current user
+ *
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.getDirectlyConfiguration = function( fn ) {
+	return this.wpcom.req.get( {
+		apiVersion: '1.1',
+		path: '/help/directly/mine'
 	}, fn );
 };
 

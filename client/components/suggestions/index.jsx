@@ -23,7 +23,6 @@ const Suggestions = React.createClass( {
 
 	getDefaultProps() {
 		return {
-			welcomeSign: noop,
 			suggest: noop,
 			terms: {},
 			input: '',
@@ -81,9 +80,9 @@ const Suggestions = React.createClass( {
 	},
 
 	decPosition() {
-		const position = ( this.state.suggestionPosition - 1 ) % this.countSuggestions();
+		const position = this.state.suggestionPosition - 1;
 		this.setState( {
-			suggestionPosition: position,
+			suggestionPosition: position < 0 ? this.countSuggestions() - 1 : position,
 			currentSuggestion: this.getSuggestionForPosition( position )
 		} );
 	},
@@ -100,14 +99,17 @@ const Suggestions = React.createClass( {
 				break;
 			case 'Enter' :
 				if ( this.state.suggestionPosition !== -1 ) {
-					this.props.suggest( this.state.currentSuggestion );
+					this.props.suggest( this.state.currentSuggestion + ' ' );
 				}
 				break;
 		}
 	},
 
 	onMouseDown( event ) {
-		this.props.suggest( event.target.textContent );
+		event.stopPropagation();
+		event.preventDefault();
+		//Additional empty space at the end adds fluidity to workflow
+		this.props.suggest( event.target.textContent + ' ' );
 	},
 
 	onMouseOver( event ) {
@@ -240,15 +242,8 @@ const Suggestions = React.createClass( {
 	},
 
 	render() {
-		let suggestion;
-		if ( this.props.input === '' ) {
-			suggestion = this.props.welcomeSign;
-		} else {
-			suggestion = this.createSuggestions( this.state.suggestions );
-		}
-
 		return (
-			<div className="suggestions">{ suggestion }</div>
+			<div className="suggestions">{ this.createSuggestions( this.state.suggestions ) }</div>
 		);
 	}
 

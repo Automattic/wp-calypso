@@ -59,6 +59,7 @@ function filterNoticesBy( site, pluginSlug, log ) {
 PluginUtils = {
 	whiteListPluginData: function( plugin ) {
 		return pick( plugin,
+			'action_links',
 			'active',
 			'author',
 			'author_url',

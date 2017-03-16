@@ -16,6 +16,9 @@ export const normalizeSettings = ( settings ) => {
 			case 'wp_mobile_featured_images':
 				memo[ key ] = settings[ key ] === 'enabled';
 				break;
+			case 'carousel_background_color':
+				memo[ key ] = settings [ key ] === '' ? 'black' : settings[ key ];
+				break;
 			default:
 				memo[ key ] = settings[ key ];
 		}
@@ -76,6 +79,10 @@ export const filterSettingsByActiveModules = ( settings ) => {
 		markdown: [
 			'wpcom_publish_comments_with_markdown',
 		],
+		sso: [
+			'jetpack_sso_match_by_email',
+			'jetpack_sso_require_two_step',
+		],
 		'after-the-deadline': [
 			'onpublish',
 			'onupdate',
@@ -98,7 +105,11 @@ export const filterSettingsByActiveModules = ( settings ) => {
 		],
 		comments: [
 			'highlander_comment_form_prompt',
-			'jetpack_comment_form_color_scheme',
+			'jetpack_comment_form_color_scheme'
+		],
+		carousel: [
+			'carousel_background_color',
+			'carousel_display_exif'
 		]
 	};
 	let filteredSettings = { ...settings };

@@ -25,6 +25,7 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
+import { abtest } from 'lib/abtest';
 
 const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
 	mapDomainAnalytics = analyticsMixin( 'mapDomain' );
@@ -146,10 +147,10 @@ const DomainsStep = React.createClass( {
 	},
 
 	handleAddMapping: function( sectionName, domain, state ) {
-		const domainItem = cartItems.domainMapping( { domain: domain.domain_name } );
+		const domainItem = cartItems.domainMapping( { domain } );
 		const isPurchasingItem = true;
 
-		mapDomainAnalytics.recordEvent( 'addDomainButtonClick', domain.domain_name, 'signup' );
+		mapDomainAnalytics.recordEvent( 'addDomainButtonClick', domain, 'signup' );
 
 		SignupActions.submitSignupStep( Object.assign( {
 			processingMessage: this.translate( 'Adding your domain mapping' ),
@@ -157,7 +158,7 @@ const DomainsStep = React.createClass( {
 			[ sectionName ]: state,
 			domainItem,
 			isPurchasingItem,
-			siteUrl: domain.domain_name,
+			siteUrl: domain,
 			stepSectionName: this.props.stepSectionName
 		}, this.getThemeArgs() ) );
 
@@ -243,6 +244,18 @@ const DomainsStep = React.createClass( {
 			);
 		}
 
+		let fallbackHeaderText,
+			fallbackSubHeaderText;
+		if ( abtest( 'signupDomainsHeadline' ) === 'updated' ) {
+			fallbackHeaderText = this.translate( 'Let\'s give your site an address.' ),
+			fallbackSubHeaderText = this.translate(
+				'Enter your site\'s name, or some key words that describe it ' +
+				'we\'ll use this to create your new site\'s address.' );
+		} else {
+			fallbackHeaderText = this.translate( 'Let\'s find a domain.' ),
+			fallbackSubHeaderText = this.translate( 'Choose a custom domain, or a free .wordpress.com address.' );
+		}
+
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
@@ -251,8 +264,8 @@ const DomainsStep = React.createClass( {
 				positionInFlow={ this.props.positionInFlow }
 				signupProgress={ this.props.signupProgress }
 				subHeaderText={ this.translate( 'First up, let\'s find a domain.' ) }
-				fallbackHeaderText={ this.translate( 'Let\'s find a domain.' ) }
-				fallbackSubHeaderText={ this.translate( 'Choose a custom domain, or a free .wordpress.com address.' ) }
+				fallbackHeaderText={ fallbackHeaderText }
+				fallbackSubHeaderText={ fallbackSubHeaderText }
 				stepContent={ content } />
 		);
 	}

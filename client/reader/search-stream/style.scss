@@ -193,6 +193,14 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	margin-top: 0;
 	text-align:left;
 
+	a, a:visited {
+		color: $blue-medium;
+	}
+
+	a:hover {
+		color: $blue-light;
+	}
+
 	@include breakpoint( "<660px" ) {
 		padding-left: 16px;
 	}

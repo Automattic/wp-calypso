@@ -25,11 +25,11 @@ const fetcherMap = method => get( {
 
 export const successMeta = data => ( { meta: { dataLayer: { data } } } );
 export const failureMeta = error => ( { meta: { dataLayer: { error } } } );
-export const progressMeta = ( { size: total, loaded } ) => ( { meta: { dataLayer: { progress: { total, loaded } } } } );
+export const progressMeta = ( { total, loaded } ) => ( { meta: { dataLayer: { progress: { total, loaded } } } } );
 
 const queueRequest = ( { dispatch }, action, next ) => {
 	const {
-		body = {},
+		body,
 		formData,
 		method: rawMethod,
 		onSuccess,

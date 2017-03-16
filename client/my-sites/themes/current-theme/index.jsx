@@ -18,7 +18,7 @@ import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 
-/**
+/*
  * Show current active theme for a site, with
  * related actions.
  */
@@ -43,14 +43,22 @@ class CurrentTheme extends Component {
 			text = ( currentTheme && currentTheme.name ) ? currentTheme.name : placeholderText;
 
 		const options = pickBy( this.props.options, option =>
-			currentTheme && ! ( option.hideForTheme && option.hideForTheme( currentTheme ) )
+			currentThemeId && ! ( option.hideForTheme && option.hideForTheme( currentThemeId, siteId ) )
 		);
+
+		const showScreenshot = currentTheme && currentTheme.screenshot;
+		// Some themes have no screenshot, so only show placeholder until details loaded
+		const showScreenshotPlaceholder = ! currentTheme;
 
 		return (
 			<Card className="current-theme">
 				{ siteId && <QueryActiveTheme siteId={ siteId } /> }
 				{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 				<div className="current-theme__current">
+					{ showScreenshotPlaceholder && <div className="current-theme__img-placeholder" /> }
+					{ showScreenshot && <img
+						src={ currentTheme.screenshot + '?w=150' }
+						className="current-theme__img" /> }
 					<span className="current-theme__label">
 						{ translate( 'Current Theme' ) }
 					</span>
@@ -67,7 +75,7 @@ class CurrentTheme extends Component {
 							key={ name }
 							label={ option.label }
 							icon={ option.icon }
-							href={ currentTheme && option.getUrl( currentTheme ) }
+							href={ currentThemeId && option.getUrl( currentThemeId ) }
 							onClick={ this.trackClick } />
 					) ) }
 				</div>

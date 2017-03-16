@@ -204,6 +204,12 @@
 		vertical-align: bottom;
 		margin-right: 8px;
 	}
+	&.is-compact {
+		padding: 6px 12px;
+		font-size: 11px;
+		line-height: 1;
+		text-transform: uppercase;
+	}
 }
 
 .popover__menu-separator,

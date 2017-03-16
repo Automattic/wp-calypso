@@ -42,6 +42,7 @@ import {
 	isThemePremium,
 	isPremiumThemeAvailable,
 	isWpcomTheme as isThemeWpcom,
+	getThemeDetailsUrl,
 	getThemeRequestErrors,
 	getThemeForumUrl,
 } from 'state/themes/selectors';
@@ -92,11 +93,8 @@ const ThemeSheet = React.createClass( {
 	},
 
 	getDefaultProps() {
-		// The defaultOption default prop is surprisingly important, see the long
-		// comment near the connect() function at the bottom of this file.
 		return {
-			section: '',
-			defaultOption: {}
+			section: ''
 		};
 	},
 
@@ -117,12 +115,12 @@ const ThemeSheet = React.createClass( {
 
 	onButtonClick() {
 		const { defaultOption } = this.props;
-		defaultOption.action && defaultOption.action( this.props );
+		defaultOption.action && defaultOption.action( this.props.id );
 	},
 
 	onSecondaryButtonClick() {
 		const { secondaryOption } = this.props;
-		secondaryOption && secondaryOption.action && secondaryOption.action( this.props );
+		secondaryOption && secondaryOption.action && secondaryOption.action( this.props.id );
 	},
 
 	getValidSections() {
@@ -182,7 +180,7 @@ const ThemeSheet = React.createClass( {
 	previewAction() {
 		const { preview } = this.props.options;
 		this.props.setThemePreviewOptions( this.props.defaultOption, this.props.secondaryOption );
-		return preview.action( this.props.theme );
+		return preview.action( this.props.id );
 	},
 
 	renderPreviewButton() {
@@ -493,7 +491,7 @@ const ThemeSheet = React.createClass( {
 
 		return (
 			<Button className="theme__sheet-primary-button"
-				href={ getUrl ? getUrl( this.props ) : null }
+				href={ getUrl ? getUrl( this.props.id ) : null }
 				onClick={ this.onButtonClick }>
 				{ this.isLoaded() ? label : placeholder }
 				{ this.renderPrice() }
@@ -508,11 +506,10 @@ const ThemeSheet = React.createClass( {
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
 		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
 
-		const { name: themeName, description, currentUserId } = this.props;
+		const { canonicalUrl, currentUserId, description, name: themeName } = this.props;
 		const title = themeName && i18n.translate( '%(themeName)s Theme', {
 			args: { themeName }
 		} );
-		const canonicalUrl = `https://wordpress.com/theme/${ this.props.id }`; // TODO: use getDetailsUrl() When it becomes availavle
 
 		const metas = [
 			{ property: 'og:url', content: canonicalUrl },
@@ -543,9 +540,7 @@ const ThemeSheet = React.createClass( {
 				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
 				{ this.renderBar() }
 				{ siteID && <QueryActiveTheme siteId={ siteID } /> }
-				<ThanksModal
-					site={ this.props.selectedSite }
-					source={ 'details' } />
+				<ThanksModal source={ 'details' } />
 				<HeaderCake className="theme__sheet-action-bar"
 					backHref={ this.props.backPath }
 					backText={ i18n.translate( 'All Themes' ) }>
@@ -634,29 +629,6 @@ const ThemeSheetWithOptions = ( props ) => {
 };
 
 export default connect(
-	/*
-	 * A number of the props that this mapStateToProps function computes are used
-	 * by ThemeSheetWithOptions to compute defaultOption. After a state change
-	 * triggered by an async action, connect()ed child components are, quite
-	 * counter-intuitively, updated before their connect()ed parents (this is
-	 * https://github.com/reactjs/redux/issues/1415), and might be fixed by
-	 * react-redux 5.0.
-	 * For this reason, after e.g. activating a theme in single-site mode,
-	 * first the ThemeSheetWithOptions component's (child) connectOptions component
-	 * will update in response to the currently displayed theme being activated.
-	 * Doing so, it will filter and remove the activate option (adding customize
-	 * instead). However, since the parent connect()ed-ThemeSheetWithOptions will
-	 * only react to the state change afterwards, there is a brief moment when
-	 * connectOptions still receives "activate" as its defaultOption prop, when
-	 * activate is no longer part of its filtered options set, hence passing on
-	 * undefined as the defaultOption object prop for its child. For the theme
-	 * sheet, which eventually gets that defaultOption object prop, this means
-	 * we must be careful to not accidentally access any attribute of that
-	 * defaultOption prop. Otherwise, there will be an error that will prevent the
-	 * state update from finishing properly, hence not updating defaultOption at all.
-	 * The solution to this incredibly intricate issue is simple: Give ThemeSheet
-	 * a valid defaultProp for defaultOption.
-	 */
 	( state, { id } ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
@@ -684,6 +656,7 @@ export default connect(
 			isPremium: isThemePremium( state, id ),
 			isPurchased: selectedSite && isPremiumThemeAvailable( state, id, selectedSite.ID ),
 			forumUrl: getThemeForumUrl( state, id, selectedSite && selectedSite.ID ),
+			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ) // No siteId specified since we want the *canonical* URL :-)
 		};
 	},
 	{

@@ -67,7 +67,12 @@ COMPONENTS_PROPTYPE_FILES = $(shell \
 		-or -name 'example.jsx' \
 		-and -not -path '*/test/*' \
 )
-CLIENT_CONFIG_FILE := client/config/index.js
+
+CONFIG_FILES = $(shell \
+	find config \
+		-name '*.json' \
+)
+
 
 # variables
 NODE_ENV ?= development
@@ -92,7 +97,7 @@ install: node_modules
 
 # Simply running `make run` will spawn the Node.js server instance.
 run: welcome githooks install build
-	@$(NODE) build/bundle-$(CALYPSO_ENV).js
+	@$(NODE) build/bundle.js
 
 dashboard: install
 	@$(NODE_BIN)/webpack-dashboard -- make run
@@ -115,7 +120,7 @@ node_modules: package.json | node-version
 test: build
 	@$(NPM) test
 
-lint: node_modules/eslint node_modules/eslint-plugin-react node_modules/babel-eslint mixedindentlint
+lint: node_modules/eslint node_modules/eslint-plugin-react node_modules/babel-eslint config-defaults-lint mixedindentlint
 	@$(NPM) run lint
 
 eslint: lint
@@ -127,14 +132,14 @@ eslint-branch: node_modules/eslint node_modules/eslint-plugin-react node_modules
 mixedindentlint: node_modules/mixedindentlint
 	@echo "$(JS_FILES)\n$(SASS_FILES)" | xargs $(NODE_BIN)/mixedindentlint --ignore-comments --exclude="client/config/index.js"
 
+# Ensure that default config values exist in _shared.json
+config-defaults-lint: $(CONFIG_FILES)
+	@$(NODE) bin/validate-config-keys.js || exit
+
 # keep track of the current CALYPSO_ENV so that it can be used as a
 # prerequisite for other rules
 .env: FORCE
 	@$(RECORD_ENV) $@
-
-# generate the client-side `config` js file
-$(CLIENT_CONFIG_FILE): .env config/$(CALYPSO_ENV).json config/client.json server/config/regenerate-client.js
-	@$(NODE) server/config/regenerate-client.js > $@
 
 public/style.css: node_modules $(SASS_FILES)
 	@$(SASS) assets/stylesheets/style.scss $@
@@ -151,6 +156,10 @@ public/editor.css: node_modules $(SASS_FILES)
 	@$(SASS) assets/stylesheets/editor.scss $@
 	@$(AUTOPREFIXER) $@
 
+public/directly.css: node_modules $(SASS_FILES)
+	@$(SASS) assets/stylesheets/directly.scss $@
+	@$(AUTOPREFIXER) $@
+
 server/devdocs/search-index.js: $(MD_FILES) $(ALL_DEVDOCS_JS)
 	@$(ALL_DEVDOCS_JS) $(MD_FILES)
 
@@ -160,41 +169,30 @@ server/devdocs/components-usage-stats.json: $(COMPONENTS_USAGE_STATS_FILES) $(CO
 server/devdocs/proptypes-index.json: $(COMPONENTS_PROPTYPE_FILES) $(COMPONENTS_PROPTYPES_JS)
 	@$(COMPONENTS_PROPTYPES_JS) $(COMPONENTS_PROPTYPE_FILES)
 
-build-dll: node_modules
-	@mkdir -p build
-	@CALYPSO_ENV=$(CALYPSO_ENV) $(NODE_BIN)/webpack --display-error-details --config webpack-dll.config.js
-
 build-server: install
 	@mkdir -p build
 	@CALYPSO_ENV=$(CALYPSO_ENV) $(NODE_BIN)/webpack --display-error-details --config webpack.config.node.js
 
-build: install build-$(CALYPSO_ENV)
+build: install build-server build-css server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json
+	@if [ $(CALYPSO_ENV) != development ]; then $(BUNDLER); fi
 
-build-css: public/style.css public/style-rtl.css public/style-debug.css public/editor.css
+build-css: public/style.css public/style-rtl.css public/style-debug.css public/editor.css public/directly.css
 
-build-development: server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json build-server build-dll $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
-
-build-wpcalypso: server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json build-server build-dll $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
-	@$(BUNDLER)
-
-build-horizon build-stage build-production: build-server build-dll $(CLIENT_CONFIG_FILE) build-css
-	@$(BUNDLER)
-
-build-desktop: build-server $(CLIENT_CONFIG_FILE) build-css
+build-desktop: build-server build-css
 	@$(BUNDLER)
 
 # the `clean` rule deletes all the files created from `make build`, but not
 # those created by `make install`
 clean:
-	@rm -rf public/style*.css public/style-debug.css.map public/*.js $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json public/editor.css build/* server/bundler/*.json .babel-cache
+	@rm -rf public/style*.css public/style-debug.css.map public/*.js server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json public/directly.css public/editor.css build/* server/bundler/*.json .babel-cache
 
 # the `distclean` rule deletes all the files created from `make install`
 distclean: clean
 	@rm -rf node_modules
 
 # create list of translations, saved as `./calypso-strings.pot`
-translate: node_modules $(CLIENT_CONFIG_FILE)
-	$(I18N_CALYPSO) --format pot --output-file ./calypso-strings.pot $(JS_FILES)
+translate: node_modules
+	$(I18N_CALYPSO) --format pot --output-file ./calypso-strings.pot $(JS_FILES) -e date
 
 # install all git hooks
 githooks: githooks-commit githooks-push
@@ -237,6 +235,7 @@ docker-run:
 # rule that can be used as a prerequisite for other rules to force them to always run
 FORCE:
 
-.PHONY: build build-development build-server build-dll build-desktop build-horizon build-stage build-production build-wpcalypso
+.PHONY: build build-desktop build-server
 .PHONY: run install test clean distclean translate route node-version
 .PHONY: githooks githooks-commit githooks-push analyze-bundles urn
+.PHONY: config-defaults-lint

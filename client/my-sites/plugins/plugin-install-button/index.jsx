@@ -202,7 +202,7 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderButton() {
-		const { translate, isInstalling, isEmbed } = this.props;
+		const { translate, isInstalling, isEmbed, disabled } = this.props;
 		const label = isInstalling ? translate( 'Installing…' ) : translate( 'Install' );
 
 		if ( isEmbed ) {
@@ -210,7 +210,7 @@ export class PluginInstallButton extends Component {
 				<span className="plugin-install-button__install embed">
 					{ isInstalling
 						? <span className="plugin-install-button__installing">{ label }</span>
-						: <Button compact={ true } onClick={ this.installAction } >
+						: <Button compact={ true } onClick={ this.installAction } disabled={ disabled }>
 							<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
 							<Gridicon icon="plugins" size={ 18 } />
 							{ translate( 'Install' ) }
@@ -222,7 +222,11 @@ export class PluginInstallButton extends Component {
 
 		return (
 			<span className="plugin-install-button__install">
-				<Button onClick={ this.installAction } primary={ true } disabled={ isInstalling } >
+				<Button
+					onClick={ this.installAction }
+					primary={ true }
+					disabled={ isInstalling || disabled }
+				>
 					{ label }
 				</Button>
 			</span>

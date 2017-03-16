@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { translate } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,31 +24,41 @@ import {
 	isWpcomTheme
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
+import { getSite, isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const ThanksModal = React.createClass( {
 	trackClick: trackClick.bind( null, 'current theme' ),
 
 	propTypes: {
 		// Where is the modal being used?
-		source: React.PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
+		source: PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
 		// Connected props
-		isActivating: React.PropTypes.bool.isRequired,
-		hasActivated: React.PropTypes.bool.isRequired,
-		currentTheme: React.PropTypes.shape( {
-			name: React.PropTypes.string,
-			id: React.PropTypes.string
+		clearActivated: PropTypes.func.isRequired,
+		currentTheme: PropTypes.shape( {
+			author: PropTypes.string,
+			author_uri: PropTypes.string,
+			id: PropTypes.string,
+			name: PropTypes.string,
 		} ),
-		clearActivated: React.PropTypes.func.isRequired,
+		customizeUrl: PropTypes.string,
+		detailsUrl: PropTypes.string,
+		forumUrl: PropTypes.string,
+		hasActivated: PropTypes.bool.isRequired,
+		isActivating: PropTypes.bool.isRequired,
+		isThemeWpcom: PropTypes.bool.isRequired,
+		siteId: PropTypes.number,
+		visitSiteUrl: PropTypes.string
 	},
 
 	onCloseModal() {
-		this.props.clearActivated( this.props.site.ID );
+		this.props.clearActivated( this.props.siteId );
 		this.setState( { show: false } );
 	},
 
 	visitSite() {
 		this.trackClick( 'visit site' );
-		page( this.props.site.URL );
+		page( this.props.visitSiteUrl );
 	},
 
 	goBack() {
@@ -166,17 +177,21 @@ const ThanksModal = React.createClass( {
 } );
 
 export default connect(
-	( state, { site } ) => {
-		const currentThemeId = site && getActiveTheme( state, site.ID );
-		const currentTheme = currentThemeId && getCanonicalTheme( state, site.ID, currentThemeId );
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const siteUrl = get( getSite( state, siteId ), 'URL' );
+		const currentThemeId = getActiveTheme( state, siteId );
+		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
 
 		return {
+			siteId,
 			currentTheme,
-			detailsUrl: site && getThemeDetailsUrl( state, currentTheme, site.ID ),
-			customizeUrl: site && getThemeCustomizeUrl( state, currentTheme, site.ID ),
-			forumUrl: site && getThemeForumUrl( state, currentThemeId, site.ID ),
-			isActivating: !! ( site && isActivatingTheme( state, site.ID ) ),
-			hasActivated: !! ( site && hasActivatedTheme( state, site.ID ) ),
+			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
+			customizeUrl: getThemeCustomizeUrl( state, currentThemeId, siteId ),
+			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
+			visitSiteUrl: siteUrl + ( isJetpackSite( state, siteId ) ? '' : '?next=customize' ),
+			isActivating: !! ( isActivatingTheme( state, siteId ) ),
+			hasActivated: !! ( hasActivatedTheme( state, siteId ) ),
 			isThemeWpcom: isWpcomTheme( state, currentThemeId )
 		};
 	},

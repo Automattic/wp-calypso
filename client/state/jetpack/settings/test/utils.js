@@ -59,6 +59,16 @@ describe( 'utils', () => {
 				wp_mobile_featured_images: false
 			} );
 		} );
+
+		it( 'should convert carousel_background_color to "black" if it is an empty string', () => {
+			const settings = {
+				carousel_background_color: ''
+			};
+
+			expect( normalizeSettings( settings ) ).to.eql( {
+				carousel_background_color: 'black'
+			} );
+		} );
 	} );
 
 	describe( 'sanitizeSettings()', () => {
@@ -144,6 +154,9 @@ describe( 'utils', () => {
 				social_notifications_subscribe: false,
 				markdown: true,
 				wpcom_publish_comments_with_markdown: true,
+				sso: true,
+				jetpack_sso_match_by_email: true,
+				jetpack_sso_require_two_step: true,
 				'after-the-deadline': true,
 				onpublish: true,
 				onupdate: true,
@@ -165,6 +178,9 @@ describe( 'utils', () => {
 				comments: true,
 				highlander_comment_form_prompt: 'Leave a Reply',
 				jetpack_comment_form_color_scheme: 'light',
+				carousel: true,
+				carousel_background_color: 'black',
+				carousel_display_exif: true
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
@@ -180,6 +196,8 @@ describe( 'utils', () => {
 				social_notifications_reblog: true,
 				social_notifications_subscribe: false,
 				wpcom_publish_comments_with_markdown: true,
+				jetpack_sso_match_by_email: true,
+				jetpack_sso_require_two_step: true,
 				onpublish: true,
 				onupdate: true,
 				guess_lang: true,
@@ -198,6 +216,8 @@ describe( 'utils', () => {
 				jetpack_portfolio: false,
 				highlander_comment_form_prompt: 'Leave a Reply',
 				jetpack_comment_form_color_scheme: 'light',
+				carousel_background_color: 'black',
+				carousel_display_exif: true
 			} );
 		} );
 
@@ -220,6 +240,9 @@ describe( 'utils', () => {
 				social_notifications_subscribe: false,
 				markdown: false,
 				wpcom_publish_comments_with_markdown: true,
+				sso: false,
+				jetpack_sso_match_by_email: true,
+				jetpack_sso_require_two_step: true,
 				'after-the-deadline': false,
 				onpublish: true,
 				onupdate: true,
@@ -241,6 +264,9 @@ describe( 'utils', () => {
 				comments: false,
 				highlander_comment_form_prompt: 'Leave a Reply',
 				jetpack_comment_form_color_scheme: 'light',
+				carousel: false,
+				carousel_background_color: 'black',
+				carousel_display_exif: true
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
@@ -262,6 +288,8 @@ describe( 'utils', () => {
 				social_notifications_reblog: true,
 				social_notifications_subscribe: false,
 				wpcom_publish_comments_with_markdown: true,
+				jetpack_sso_match_by_email: true,
+				jetpack_sso_require_two_step: true,
 				onpublish: true,
 				onupdate: true,
 				guess_lang: true,
@@ -280,6 +308,8 @@ describe( 'utils', () => {
 				jetpack_portfolio: false,
 				highlander_comment_form_prompt: 'Leave a Reply',
 				jetpack_comment_form_color_scheme: 'light',
+				carousel_background_color: 'black',
+				carousel_display_exif: true
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {

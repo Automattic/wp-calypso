@@ -21,7 +21,7 @@ import { WPCOM_HTTP_REQUEST } from 'state/action-types';
  */
 export const http = ( {
 	apiVersion = 'v1',
-	body = {},
+	body,
 	method,
 	path,
 	query = {},
@@ -35,7 +35,7 @@ export const http = ( {
 	body,
 	method,
 	path,
-	query: { ...query, apiVersion },
+	query: method === 'GET' && { ...query, apiVersion },
 	formData,
 	onSuccess: onSuccess || action,
 	onFailure: onFailure || action,

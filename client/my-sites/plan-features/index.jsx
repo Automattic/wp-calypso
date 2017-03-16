@@ -16,7 +16,6 @@ import PlanFeaturesItem from './item';
 import PlanFeaturesActions from './actions';
 import { isCurrentPlanPaid, isCurrentSitePlan, getSitePlan, getSiteSlug } from 'state/sites/selectors';
 import { isCurrentUserCurrentPlanOwner, getPlansBySiteId } from 'state/sites/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import {
@@ -106,7 +105,7 @@ class PlanFeatures extends Component {
 
 	renderMobileView() {
 		const {
-			canPurchase, translate, planProperties, isInSignup, isLandingPage, intervalType, site, basePlansPath
+			isCurrentPlanPaid, canPurchase, translate, planProperties, isInSignup, isLandingPage, intervalType, site, basePlansPath
 		} = this.props;
 
 		// move any free plan to last place in mobile view
@@ -129,18 +128,20 @@ class PlanFeatures extends Component {
 				currencyCode,
 				current,
 				features,
-				discountPrice,
 				onUpgradeClick,
 				planConstantObj,
 				planName,
 				popular,
 				newPlan,
-				rawPrice,
 				relatedMonthlyPlan,
 				primaryUpgrade,
 				isPlaceholder
 			} = properties;
-
+			let { rawPrice, discountPrice } = properties;
+			if ( abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' && ! isCurrentPlanPaid && relatedMonthlyPlan && relatedMonthlyPlan.raw_price ) {
+				discountPrice = rawPrice;
+				rawPrice = relatedMonthlyPlan.raw_price;
+			}
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
@@ -157,6 +158,7 @@ class PlanFeatures extends Component {
 						intervalType={ intervalType }
 						site={ site }
 						basePlansPath={ basePlansPath }
+						hideMonthly={ abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' && ! isCurrentPlanPaid }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 					/>
 					<p className="plan-features__description">
@@ -192,22 +194,25 @@ class PlanFeatures extends Component {
 	}
 
 	renderPlanHeaders() {
-		const { planProperties, intervalType, site, basePlansPath } = this.props;
+		const { isCurrentPlanPaid, planProperties, intervalType, site, basePlansPath } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
 				currencyCode,
 				current,
-				discountPrice,
 				planConstantObj,
 				planName,
 				popular,
 				newPlan,
-				rawPrice,
 				relatedMonthlyPlan,
 				isPlaceholder
 			} = properties;
+			let { rawPrice, discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
+			if ( abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' && ! isCurrentPlanPaid && relatedMonthlyPlan && relatedMonthlyPlan.raw_price ) {
+				discountPrice = rawPrice;
+				rawPrice = relatedMonthlyPlan.raw_price;
+			}
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesHeader
@@ -225,6 +230,7 @@ class PlanFeatures extends Component {
 						site={ site }
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
+						hideMonthly={ abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' && ! isCurrentPlanPaid }
 					/>
 				</td>
 			);
@@ -448,8 +454,8 @@ PlanFeatures.defaultProps = {
 
 export default connect(
 	( state, ownProps ) => {
-		const { isInSignup, placeholder, plans, onUpgradeClick, isLandingPage } = ownProps;
-		const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
+		const { isInSignup, placeholder, plans, onUpgradeClick, isLandingPage, site } = ownProps;
+		const selectedSiteId = site ? site.ID : null;
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
@@ -460,13 +466,16 @@ export default connect(
 				const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
 				const planProductId = planConstantObj.getProductId();
 				const planObject = getPlan( state, planProductId );
-				const isLoadingSitePlans = ! isInSignup && ! sitePlans.hasLoadedFromServer;
+				const isLoadingSitePlans = selectedSiteId && ! sitePlans.hasLoadedFromServer;
 				const showMonthly = ! isMonthly( plan );
 				const available = isInSignup ? true : canUpgradeToPlan( plan ) && canPurchase;
 				const relatedMonthlyPlan = showMonthly ? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) ) : null;
 				const popular = isPopular( plan ) && ! isPaid;
 				const newPlan = isNew( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
+				const showMonthlyPrice = abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' && ! isPaid
+					? showMonthly
+					: ! relatedMonthlyPlan && showMonthly;
 
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
 					isPlaceholder = true;
@@ -478,7 +487,14 @@ export default connect(
 					available: available,
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
-					discountPrice: getPlanDiscountedRawPrice( state, selectedSiteId, plan, { isMonthly: showMonthly } ),
+					discountPrice: getPlanDiscountedRawPrice( state,
+						selectedSiteId,
+						plan,
+						{
+							isMonthly: abtest( 'jetpackPlansNoMonthly' ) === 'hideMonthly' && ! isPaid
+								? true
+								: showMonthly
+						} ),
 					features: getPlanFeaturesObject( planConstantObj.getFeatures( abtest ) ),
 					onUpgradeClick: onUpgradeClick
 						? () => {
@@ -505,7 +521,7 @@ export default connect(
 						popular,
 						newPlan
 					),
-					rawPrice: getPlanRawPrice( state, planProductId, ! relatedMonthlyPlan && showMonthly ),
+					rawPrice: getPlanRawPrice( state, planProductId, showMonthlyPrice ),
 					relatedMonthlyPlan: relatedMonthlyPlan
 				};
 			} )
@@ -513,7 +529,8 @@ export default connect(
 
 		return {
 			canPurchase,
-			planProperties: planProperties
+			planProperties: planProperties,
+			isCurrentPlanPaid: isPaid
 		};
 	},
 	{

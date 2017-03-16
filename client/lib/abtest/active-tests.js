@@ -37,63 +37,6 @@ module.exports = {
 		defaultVariation: 'hideThemeUpload',
 		allowExistingUsers: false,
 	},
-	domainSuggestionPopover: {
-		datestamp: '20160809',
-		variations: {
-			showPopover: 80,
-			hidePopover: 20,
-		},
-		defaultVariation: 'showPopover',
-		allowExistingUsers: false,
-	},
-	designShowcaseWelcomeTour: {
-		datestamp: '20161206',
-		variations: {
-			enabled: 0,
-			disabled: 100,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
-	themeSheetWelcomeTour: {
-		datestamp: '20161206',
-		variations: {
-			enabled: 0,
-			disabled: 100,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
-	siteTitleStep: {
-		datestamp: '20170102',
-		variations: {
-			showSiteTitleStep: 5,
-			hideSiteTitleStep: 95,
-		},
-		defaultVariation: 'hideSiteTitleStep',
-		allowExistingUsers: false
-	},
-
-	jetpackConnectPlansFirst: {
-		datestamp: '20161024',
-		variations: {
-			showPlansBeforeAuth: 50,
-			showPlansAfterAuth: 50
-		},
-		defaultVariation: 'showPlansAfterAuth',
-		allowExistingUsers: true
-	},
-
-	siteTitleTour: {
-		datestamp: '20161207',
-		variations: {
-			disabled: 100,
-			enabled: 0,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
-
 	userFirstSignup: {
 		datestamp: '20160124',
 		variations: {
@@ -103,7 +46,6 @@ module.exports = {
 		defaultVariation: 'userLast',
 		allowExistingUsers: false,
 	},
-
 	premiumSquaredPlansWording: {
 		datestamp: '20170111',
 		variations: {
@@ -113,34 +55,38 @@ module.exports = {
 		defaultVariation: 'withoutMarketingCopy',
 		allowExistingUsers: true
 	},
-
-	jetpackPlansTabs: {
-		datestamp: '20170117',
+	jetpackPlansNoMonthly: {
+		datestamp: '20170302',
 		variations: {
-			tabs: 50,
-			noTabs: 50
+			showMonthly: 50,
+			hideMonthly: 50
 		},
-		defaultVariation: 'noTabs'
-	},
-
-	readerSearchOnFollowing: {
-		datestamp: '20170206',
-		variations: {
-			show: 50,
-			hide: 50
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-		allowAnyLocale: true
-	},
-
-	freeToPaidUpsell: {
-		datestamp: '20170222',
-		variations: {
-			sidebar: 50,
-			disabled: 50
-		},
-		defaultVariation: 'disabled',
+		defaultVariation: 'showMonthly',
 		allowExistingUsers: true
-	}
+	},
+	signupDomainsHeadline: {
+		datestamp: '20170313',
+		variations: {
+			original: 50,
+			updated: 50
+		},
+		defaultVariation: 'original'
+	},
+	signupStepOneCopyChanges: {
+		datestamp: '20170307',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+	},
+	readerPostCardTagCount: {
+		datestamp: '20170315',
+		variations: {
+			showOne: 50,
+			showThree: 50
+		},
+		defaultVariation: 'showThree',
+		allowExistingUsers: true
+	},
 };
