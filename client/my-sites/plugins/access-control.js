@@ -31,10 +31,6 @@ const getWpcomPluginPageError = () => {
 const hasRestrictedAccess = ( site ) => {
 	site = site || sites.getSelectedSite();
 
-	if ( site.options && site.options.is_automated_transfer ) {
-		return;
-	}
-
 	// Display a 404 to users that don't have the rights to manage plugins
 	if ( hasErrorCondition( site, 'notRightsToManagePlugins' ) ) {
 		return {
