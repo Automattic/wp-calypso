@@ -16,6 +16,7 @@ import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SearchCard from 'components/search-card';
+import StickyPanel from 'components/sticky-panel';
 
 /**
  * Docs examples
@@ -94,23 +95,30 @@ let DesignAssets = React.createClass( {
 		page( '/devdocs/design/' );
 	},
 
+	renderHeader( component, filter ) {
+		return (
+			component
+				? <HeaderCake onClick={ this.backToComponents } backText="All Components">
+					{ slugToCamelCase( component ) }
+				</HeaderCake>
+
+				: <StickyPanel>
+					<SearchCard
+						onSearch={ this.onSearch }
+						initialValue={ filter }
+						placeholder="Search components…"
+						analyticsGroup="Docs" />
+				</StickyPanel>
+		);
+	},
+
 	render() {
 		const { componentsUsageStats = {}, component } = this.props;
 		const { filter } = this.state;
 
 		return (
 			<Main className="design">
-				{ component
-					? <HeaderCake onClick={ this.backToComponents } backText="All Components">
-						{ slugToCamelCase( component ) }
-					</HeaderCake>
-
-					: <SearchCard
-						onSearch={ this.onSearch }
-						initialValue={ filter }
-						placeholder="Search components…"
-						analyticsGroup="Docs" />
-				}
+				{ this.renderHeader( component, filter ) }
 
 				<Collection
 					component={ component }
@@ -166,6 +174,7 @@ let DesignAssets = React.createClass( {
 					<TokenFields />
 					<VerticalMenu />
 					<Version />
+					<StickyPanelExample />
 				</Collection>
 			</Main>
 		);
