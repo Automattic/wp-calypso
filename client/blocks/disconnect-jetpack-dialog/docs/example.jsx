@@ -2,17 +2,15 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import DisconnectJetpack from '../';
+import DisconnectJetpackDialog from '../';
 import Card from 'components/card';
 import Button from 'components/button';
-import { getCurrentUser } from 'state/current-user/selectors';
 
-class DisconnectJetpackExample extends Component {
+class DisconnectJetpackDialogExample extends Component {
 	constructor( props ) {
 		super( props );
 		this.toggleVisibilityFree = this.toggleVisibility.bind( this, 'free' );
@@ -42,7 +40,7 @@ class DisconnectJetpackExample extends Component {
 			<Card>
 
 				<p><Button onClick={ this.toggleVisibilityFree } >Disconnect Free Jetpack </Button></p>
-				<DisconnectJetpack
+				<DisconnectJetpackDialog
 					isVisible={ this.state.isVisible.free }
 					siteId={ this.props.primarySiteId }
 					onStay={ this.toggleVisibilityFree }
@@ -52,7 +50,7 @@ class DisconnectJetpackExample extends Component {
 				/>
 
 				<p><Button onClick={ this.toggleVisibilityPersonal } >Disconnect Personal Jetpack </Button></p>
-				<DisconnectJetpack
+				<DisconnectJetpackDialog
 					isVisible={ this.state.isVisible.personal }
 					siteId={ this.props.primarySiteId }
 					onStay={ this.toggleVisibilityPersonal }
@@ -62,7 +60,7 @@ class DisconnectJetpackExample extends Component {
 				/>
 
 				<p><Button onClick={ this.toggleVisibilityPremium } >Disconnect Premium Jetpack </Button></p>
-				<DisconnectJetpack
+				<DisconnectJetpackDialog
 					isVisible={ this.state.isVisible.premium }
 					siteId={ this.props.primarySiteId }
 					onStay={ this.toggleVisibilityPremium }
@@ -72,7 +70,7 @@ class DisconnectJetpackExample extends Component {
 				/>
 
 				<p><Button onClick={ this.toggleVisibilityProfessional } >Disconnect Professional Jetpack </Button></p>
-				<DisconnectJetpack
+				<DisconnectJetpackDialog
 					isVisible={ this.state.isVisible.professional }
 					siteId={ this.props.primarySiteId }
 					onStay={ this.toggleVisibilityProfessional }
@@ -82,7 +80,7 @@ class DisconnectJetpackExample extends Component {
 				/>
 
 				<p><Button onClick={ this.toggleVisibilityBroken } >Disconnect Probably Broken Jetpack </Button></p>
-				<DisconnectJetpack
+				<DisconnectJetpackDialog
 					isVisible={ this.state.isVisible.broken }
 					siteId={ this.props.primarySiteId }
 					onStay={ this.toggleVisibilityBroken }
@@ -97,17 +95,6 @@ class DisconnectJetpackExample extends Component {
 	}
 }
 
-const DisconnectJetpackSelectorExample = connect( ( state ) => {
-	const user = getCurrentUser( state );
-	if ( ! user ) {
-		return {};
-	}
+DisconnectJetpackDialogExample.displayName = 'DisconnectJetpackDialog';
 
-	return {
-		primarySiteId: user.primary_blog
-	};
-} )( DisconnectJetpackExample );
-
-DisconnectJetpackSelectorExample.displayName = 'DisconnectJetpackExample';
-
-export default DisconnectJetpackSelectorExample;
+export default DisconnectJetpackDialogExample;
