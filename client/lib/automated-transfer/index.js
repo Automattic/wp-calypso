@@ -5,7 +5,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import config, { isEnabled } from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { userCan } from 'lib/site/utils';
 
@@ -22,6 +22,11 @@ export function isATEnabledForCurrentSite() {
 	// Feature must be enabled on environment
 	if ( ! isEnabled( 'automated-transfer' ) ) {
 		return false;
+	}
+
+	// If it's wpcalypso, this is open
+	if ( config( 'env_id' ) === 'wpcalypso' ) {
+		return true;
 	}
 
 	const abtest = require( 'lib/abtest' ).abtest;
