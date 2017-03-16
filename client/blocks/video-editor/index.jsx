@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -10,7 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Spinner from 'components/spinner';
+import ProgressBar from 'components/progress-bar';
 import Notice from 'components/notice';
 import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
 import VideoEditorButtons from './video-editor-buttons';
@@ -21,11 +22,9 @@ import {
 } from 'state/ui/editor/video-editor/actions';
 import {
 	getVideoEditorPoster,
+	getVideoUploadProgress,
 	isVideoEditorPosterUpdated,
-	isVideoEditorPosterUpdating,
-	isVideoEditorVideoLoaded,
 	videoEditorHasPosterUpdateError,
-	videoEditorHasScriptLoadError,
 } from 'state/ui/editor/video-editor/selectors';
 
 /**
@@ -42,11 +41,9 @@ class VideoEditor extends Component {
 
 		// Connected props
 		hasPosterUpdateError: PropTypes.bool,
-		hasScriptLoadError: PropTypes.bool,
 		isPosterUpdated: PropTypes.bool,
-		isPosterUpdating: PropTypes.bool,
-		isVideoLoaded: PropTypes.bool,
 		poster: PropTypes.string,
+		uploadProgress: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -55,8 +52,9 @@ class VideoEditor extends Component {
 	};
 
 	state = {
+		error: false,
+		isLoading: true,
 		pauseVideo: false,
-		videoError: false,
 	};
 
 	componentDidMount() {
@@ -77,12 +75,12 @@ class VideoEditor extends Component {
 	}
 
 	handleSelectFrame = () => {
-		const { isVideoLoaded } = this.props;
+		const { isLoading } = this.state;
 
 		this.props.resetPosterState();
 
-		if ( ! isVideoLoaded ) {
-			this.setState( { videoError: true } );
+		if ( isLoading ) {
+			this.setState( { error: true } );
 			return;
 		}
 
@@ -104,6 +102,14 @@ class VideoEditor extends Component {
 		if ( guid ) {
 			updatePoster( guid, { at_time: Math.floor( currentTime ) } );
 		}
+	}
+
+	handleScriptLoadError = () => {
+		this.setState( { error: true } );
+	}
+
+	handleVideoLoaded = () => {
+		this.setState( { isLoading: false } );
 	}
 
 	handleUploadImageClick = () => {
@@ -158,17 +164,15 @@ class VideoEditor extends Component {
 	render() {
 		const {
 			className,
-			hasPosterUpdateError,
-			hasScriptLoadError,
-			isPosterUpdating,
-			isVideoLoaded,
 			media,
 			onCancel,
+			uploadProgress,
 			translate,
 		} = this.props;
 		const {
+			isLoading,
 			pauseVideo,
-			videoError,
+			error,
 		} = this.state;
 
 		const classes = classNames(
@@ -178,7 +182,7 @@ class VideoEditor extends Component {
 
 		return (
 			<div className={ classes }>
-				{ ( hasScriptLoadError || hasPosterUpdateError || videoError ) && this.renderError() }
+			{ error && this.renderError() }
 
 				<figure>
 					<div className="video-editor__content">
@@ -188,15 +192,22 @@ class VideoEditor extends Component {
 								isPlaying={ ! pauseVideo }
 								item={ media }
 								onPause={ this.handlePause }
+								onScriptLoadError={ this.handleScriptLoadError }
+								onVideoLoaded={ this.handleVideoLoaded }
 							/>
-							{ isPosterUpdating && <Spinner /> }
+							{ uploadProgress && ! isSelectingFrame &&
+								<ProgressBar
+									isPulsing={ true }
+									total={ 100 }
+									value={ uploadProgress } />
+							}
 						</div>
 						<span className="video-editor__text">
 							{ translate( 'Select a frame to use as the thumbnail image or upload your own.' ) }
 						</span>
 						<VideoEditorButtons
-							isPosterUpdating={ isPosterUpdating }
-							isVideoLoaded={ isVideoLoaded }
+							isPosterUpdating={ !! uploadProgress }
+							isVideoLoading={ isLoading }
 							onCancel={ onCancel }
 							onSelectFrame={ this.handleSelectFrame }
 							onUploadImage={ this.handleUploadImage }
@@ -213,16 +224,14 @@ export default connect(
 	( state ) => {
 		return {
 			hasPosterUpdateError: videoEditorHasPosterUpdateError( state ),
-			hasScriptLoadError: videoEditorHasScriptLoadError( state ),
 			isPosterUpdated: isVideoEditorPosterUpdated( state ),
-			isPosterUpdating: isVideoEditorPosterUpdating( state ),
-			isVideoLoaded: isVideoEditorVideoLoaded( state ),
 			poster: getVideoEditorPoster( state ),
+			uploadProgress: getVideoUploadProgress( state ),
 		};
 	},
-	{
+	dispatch => bindActionCreators( {
 		resetPosterState: resetVideoEditorPosterState,
 		resetState: resetVideoEditorState,
 		updatePoster: updateVideoEditorPoster,
-	}
+	}, dispatch ),
 )( localize( VideoEditor ) );

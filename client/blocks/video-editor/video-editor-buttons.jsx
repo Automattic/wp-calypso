@@ -13,7 +13,7 @@ import UploadButton from './video-editor-upload-button';
 
 const VideoEditorButtons = ( {
 	isPosterUpdating,
-	isVideoLoaded,
+	isVideoLoading,
 	onCancel,
 	onSelectFrame,
 	onUploadImage,
@@ -39,7 +39,7 @@ const VideoEditorButtons = ( {
 			</UploadButton>
 			<Button
 				className="video-editor__buttons-button"
-				disabled={ ! isVideoLoaded || isPosterUpdating }
+				disabled={ isVideoLoading || isPosterUpdating }
 				onClick={ onSelectFrame }
 				primary>
 				{ translate( 'Select Frame' ) }
@@ -50,7 +50,7 @@ const VideoEditorButtons = ( {
 
 VideoEditorButtons.propTypes = {
 	isPosterUpdating: PropTypes.bool,
-	isVideoLoaded: PropTypes.bool,
+	isVideoLoading: PropTypes.bool,
 	onCancel: PropTypes.func,
 	onSelectFrame: PropTypes.func,
 	onUploadImage: PropTypes.func,
@@ -59,7 +59,7 @@ VideoEditorButtons.propTypes = {
 
 VideoEditorButtons.defaultProps = {
 	isPosterUpdating: false,
-	isVideoLoaded: false,
+	isVideoLoading: true,
 	onSelectFrame: noop,
 	onUploadImage: noop,
 	onUploadImageClick: noop,
