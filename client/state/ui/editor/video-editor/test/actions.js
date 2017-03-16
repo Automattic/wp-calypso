@@ -79,4 +79,16 @@ describe( 'actions', () => {
 			} );
 		} );
 	} );
+
+	describe( '#updatePosterUploadProgress()', () => {
+		it( 'should return an action object', () => {
+			const percentage = 50;
+			const action = updatePosterUploadProgress( percentage );
+
+			expect( action ).to.eql( {
+				type: VIDEO_SHOW_UPLOAD_PROGRESS,
+				percentage,
+			} );
+		} );
+	} );
 } );

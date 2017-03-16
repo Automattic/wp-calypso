@@ -8,11 +8,9 @@ import { expect } from 'chai';
  */
 import {
 	getVideoEditorPoster,
-	isVideoEditorVideoLoaded,
-	isVideoEditorPosterUpdating,
+	getVideoUploadProgress,
 	isVideoEditorPosterUpdated,
 	videoEditorHasPosterUpdateError,
-	videoEditorHasScriptLoadError,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -33,35 +31,20 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#isVideoEditorVideoLoaded()', () => {
-		it( 'should return the video loaded state', () => {
-			const isVideoLoaded = isVideoEditorVideoLoaded( {
+	describe( '#getVideoUploadProgress()', () => {
+		it( 'should return the upload progress', () => {
+			const percentage = 50;
+			const uploadProgress = getVideoUploadProgress( {
 				ui: {
 					editor: {
 						videoEditor: {
-							videoIsLoading: true
+							uploadProgress: percentage
 						}
 					}
 				}
 			} );
 
-			expect( isVideoLoaded ).to.be.false;
-		} );
-	} );
-
-	describe( '#isVideoEditorPosterUpdating()', () => {
-		it( 'should return the poster updating state', () => {
-			const isPosterUpdating = isVideoEditorPosterUpdating( {
-				ui: {
-					editor: {
-						videoEditor: {
-							posterIsUpdating: false
-						}
-					}
-				}
-			} );
-
-			expect( isPosterUpdating ).to.be.false;
+			expect( uploadProgress ).to.eql( percentage );
 		} );
 	} );
 
@@ -94,22 +77,6 @@ describe( 'selectors', () => {
 			} );
 
 			expect( hasPosterUpdateError ).to.be.true;
-		} );
-	} );
-
-	describe( '#videoEditorHasScriptLoadError()', () => {
-		it( 'should return the script load error state', () => {
-			const hasScriptLoadError = videoEditorHasScriptLoadError( {
-				ui: {
-					editor: {
-						videoEditor: {
-							hasScriptLoadError: false
-						}
-					}
-				}
-			} );
-
-			expect( hasScriptLoadError ).to.be.false;
 		} );
 	} );
 } );
