@@ -64,7 +64,7 @@ class DialogBase extends Component {
 
 		return (
 			<button key={ button.action } className={ classes } onClick={ clickHandler } disabled={ !! button.disabled }>
-				<span className={ this.props.baseClassName + '__button-label' }>{ button.label }</span>
+				{ button.label }
 			</button>
 		);
 	}
