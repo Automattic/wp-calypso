@@ -54,6 +54,11 @@
 		font-weight: normal;
 	}
 
+	label a,
+	p a {
+		text-decoration: underline;
+	}
+
 	.is-primary {
 		float: right;
 	}
