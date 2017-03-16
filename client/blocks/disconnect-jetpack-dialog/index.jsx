@@ -14,7 +14,7 @@ import Button from 'components/button';
 class DisconnectJetpackDialog extends PureComponent {
 
 	translateArgs( icon ) {
-		return { components: { icon: <Gridicon icon={ icon } /> } };
+		return { context: 'Jetpack Disconnect Dialog', components: { icon: <Gridicon icon={ icon } /> } };
 	}
 
 	planFeatures() {
@@ -77,7 +77,7 @@ class DisconnectJetpackDialog extends PureComponent {
 					{ translate( 'WordPress.com has not been able to reach example.com for a while.' ) }
 				</p>
 				<div className="disconnect-jetpack-dialog__button-wrap">
-					<Button primary scary onClick={ onDisconnect }>{ translate( 'Remove Site' ) }</Button>
+					<Button primary scary onClick={ onDisconnect }>{ translate( 'Remove Site', { context: 'Button' } ) }</Button>
 				</div>
 			</Dialog>
 			);
@@ -90,7 +90,7 @@ class DisconnectJetpackDialog extends PureComponent {
 					{
 						translate(
 							'By disconnecting %(siteName)s from WordPress.com you will no longer have access to the following:',
-							{ args: { siteName } }
+							{ args: { siteName }, context: 'Jetpack Disconnect Dialog' }
 						)
 					}
 				</p>
@@ -99,10 +99,10 @@ class DisconnectJetpackDialog extends PureComponent {
 
 				<div className="disconnect-jetpack-dialog__button-wrap">
 					<Button onClick={ onStay }>{ translate( 'Stay Connected' ) }</Button>
-					<Button primary scary onClick={ onDisconnect }>{ translate( 'Disconnect' ) }</Button>
+					<Button primary scary onClick={ onDisconnect }>{ translate( 'Disconnect', { context: 'Button' } ) }</Button>
 				</div>
 				<a className="disconnect-jetpack-dialog__more-info-link" href="https://jetpack.com/features/">
-					{ translate( 'Read More about Jetpack benefits' ) }
+					{ translate( 'Read More about Jetpack benefits', { context: 'More info link' } ) }
 				</a>
 			</Dialog>
 		);
