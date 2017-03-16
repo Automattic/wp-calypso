@@ -22,11 +22,13 @@ export class UserStep extends Component {
 		flowName: PropTypes.string,
 		translate: PropTypes.func,
 		subHeaderText: PropTypes.string,
+		isSocialSignupEnabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		translate: identity,
-		suggestedUsername: identity
+		suggestedUsername: identity,
+		isSocialSignupEnabled: false,
 	};
 
 	state = {
@@ -149,7 +151,7 @@ export class UserStep extends Component {
 				submitForm={ this.submitForm }
 				submitButtonText={ this.submitButtonText() }
 				suggestedUsername={ this.props.suggestedUsername }
-				isSocialSignupEnabled={ isEnabled( 'signup/social' ) }
+				isSocialSignupEnabled={ this.props.isSocialSignupEnabled }
 			/>
 		);
 	}

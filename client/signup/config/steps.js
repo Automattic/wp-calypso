@@ -67,6 +67,16 @@ export default {
 		providesDependencies: [ 'bearer_token', 'username' ]
 	},
 
+	'user-social': {
+		stepName: 'user-social',
+		apiRequestFunction: stepActions.createAccount,
+		providesToken: true,
+		providesDependencies: [ 'bearer_token', 'username' ],
+		props: {
+			isSocialSignupEnabled: true
+		},
+	},
+
 	'site-title': {
 		stepName: 'site-title',
 		providesDependencies: [ 'siteTitle' ]
