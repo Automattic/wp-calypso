@@ -160,6 +160,7 @@ class Upload extends React.Component {
 
 		const validFileType = file.type === 'application/zip' || file.type === 'application/x-zip-compressed';
 		debug( 'file mime: ', file.type );
+		console.log( 'mime type:', file.type );
 
 		if ( ! validFileType ) {
 			notices.error( errorMessage );
