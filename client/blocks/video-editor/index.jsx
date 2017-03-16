@@ -67,7 +67,11 @@ class VideoEditor extends Component {
 		}
 
 		if ( nextProps.hasPosterUpdateError ) {
-			this.setState( { pauseVideo: false } );
+			this.setState( {
+				error: true,
+				pauseVideo: false
+			} );
+
 			return;
 		}
 
@@ -85,7 +89,11 @@ class VideoEditor extends Component {
 		}
 
 		isSelectingFrame = true;
-		this.setState( { pauseVideo: true } );
+
+		this.setState( {
+			error: false,
+			pauseVideo: true
+		} );
 	}
 
 	handlePause = ( currentTime ) => {
@@ -114,7 +122,12 @@ class VideoEditor extends Component {
 
 	handleUploadImageClick = () => {
 		isSelectingFrame = false;
-		this.setState( { pauseVideo: true } );
+
+		this.props.resetPosterState();
+		this.setState( {
+			error: false,
+			pauseVideo: true
+		} );
 	}
 
 	handleUploadImage = ( file ) => {
@@ -129,7 +142,6 @@ class VideoEditor extends Component {
 		const guid = media && media.videopress_guid ? media.videopress_guid : null;
 
 		if ( guid ) {
-			this.props.resetPosterState();
 			updatePoster( guid, { file } );
 		}
 	}
@@ -195,7 +207,7 @@ class VideoEditor extends Component {
 								onScriptLoadError={ this.handleScriptLoadError }
 								onVideoLoaded={ this.handleVideoLoaded }
 							/>
-							{ uploadProgress && ! isSelectingFrame &&
+							{ !! uploadProgress && ! error && ! isSelectingFrame &&
 								<ProgressBar
 									isPulsing={ true }
 									total={ 100 }
@@ -206,7 +218,7 @@ class VideoEditor extends Component {
 							{ translate( 'Select a frame to use as the thumbnail image or upload your own.' ) }
 						</span>
 						<VideoEditorButtons
-							isPosterUpdating={ !! uploadProgress }
+							isPosterUpdating={ !! uploadProgress && ! error }
 							isVideoLoading={ isLoading }
 							onCancel={ onCancel }
 							onSelectFrame={ this.handleSelectFrame }
