@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import { defer, findLast, flatMap, noop, times, clamp, includes, last } from 'lodash';
+import { defer, findLast, noop, times, clamp, includes, } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -39,8 +39,8 @@ import CombinedCard from 'blocks/reader-combined-card';
 import fluxPostAdapter from 'lib/reader-post-flux-adapter';
 import config from 'config';
 import { keysAreEqual } from 'lib/feed-stream-store/post-key';
-import { isDiscoverBlog, isDiscoverFeed } from 'reader/discover/helper';
 import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
+import { combineCards, injectRecommendations, RECS_PER_BLOCK } from './utils';
 
 const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );
 
@@ -57,7 +57,6 @@ function cardFactory( post ) {
 
 const MIN_DISTANCE_BETWEEN_RECS = 4; // page size is 7, so one in the middle of every page and one on page boundries, sometimes
 const MAX_DISTANCE_BETWEEN_RECS = 30;
-const RECS_PER_BLOCK = 2;
 
 function getDistanceBetweenRecs() {
 	// the distance between recs changes based on how many subscriptions the user has.
@@ -77,101 +76,6 @@ function getDistanceBetweenRecs() {
 		MIN_DISTANCE_BETWEEN_RECS,
 		MAX_DISTANCE_BETWEEN_RECS );
 	return distance;
-}
-
-/**
- * Check if two postKeys are for the same siteId or feedId
- *
- * @param {Object} postKey1 First post key
- * @param {Object} postKey2 Second post key
- * @returns {Boolean} Returns true if two postKeys are for the same siteId or feedId
- */
-function sameSite( postKey1, postKey2 ) {
-	return postKey1 && postKey2 &&
-		! postKey1.isRecommendationBlock && ! postKey2.isRecommendationBlock && (
-			( postKey1.blogId && postKey1.blogId === postKey2.blogId ) ||
-			( postKey1.feedId && postKey1.feedId === postKey2.feedId )
-		);
-}
-
-function sameDay( postKey1, postKey2 ) {
-	return postKey1.localMoment.isSame( postKey2.localMoment, 'day' );
-}
-
-function isDiscoverPostKey( postKey ) {
-	return isDiscoverBlog( postKey.blogId ) || isDiscoverFeed( postKey.feedId );
-}
-
-/**
- * Takes two postKeys and combines them into a ReaderCombinedCard postKey.
- * Note: This only makes sense for postKeys from the same site
- *
- * @param {Object} postKey1 must be either a ReaderCombinedCard postKey or a regular postKey
- * @param {Object} postKey2 can only be a regular postKey. May not be a combinedCard postKey or a recommendations postKey
- * @returns {Object} A ReaderCombinedCard postKey
- */
-function combine( postKey1, postKey2 ) {
-	if ( ! postKey1 || ! postKey2 ) {
-		return null;
-	}
-
-	return {
-		isCombination: true,
-		blogId: postKey1.blogId,
-		feedId: postKey1.feedId,
-		localMoment: postKey1.localMoment && postKey1.localMoment.isBefore( postKey2.localMoment ) // keep the earliest moment
-			? postKey1.localMoment
-			: postKey2.localMoment,
-		postIds: [
-			...( postKey1.postIds || [ postKey1.postId ] ),
-			...( postKey2.postIds || [ postKey2.postId ] ),
-		],
-	};
-}
-
-const combineCards = ( postKeys ) => postKeys.reduce(
-	( accumulator, postKey ) => {
-		const lastPostKey = last( accumulator );
-		if ( sameSite( lastPostKey, postKey ) &&
-			sameDay( lastPostKey, postKey ) &&
-			! isDiscoverPostKey( postKey ) ) {
-			accumulator[ accumulator.length - 1 ] = combine( last( accumulator ), postKey );
-		} else {
-			accumulator.push( postKey );
-		}
-		return accumulator;
-	},
-	[]
-);
-
-function injectRecommendations( posts, recs = [] ) {
-	if ( ! recs || recs.length === 0 ) {
-		return posts;
-	}
-
-	const itemsBetweenRecs = getDistanceBetweenRecs();
-	// if we don't have enough posts to insert recs, don't bother
-	if ( posts.length < itemsBetweenRecs ) {
-		return posts;
-	}
-
-	let recIndex = 0;
-
-	return flatMap( posts, ( post, index ) => {
-		if ( index && index % itemsBetweenRecs === 0 && recIndex < recs.length ) {
-			const recBlock = {
-				isRecommendationBlock: true,
-				recommendations: recs.slice( recIndex, recIndex + RECS_PER_BLOCK ),
-				index: recIndex
-			};
-			recIndex += RECS_PER_BLOCK;
-			return [
-				recBlock,
-				post
-			];
-		}
-		return post;
-	} );
 }
 
 class ReaderStream extends React.Component {
@@ -223,7 +127,7 @@ class ReaderStream extends React.Component {
 
 		let items = this.state && this.state.items;
 		if ( ! this.state || posts !== this.state.posts || recs !== this.state.recs ) {
-			items = injectRecommendations( posts, recs );
+			items = injectRecommendations( posts, recs, getDistanceBetweenRecs() );
 		}
 
 		if ( this.props.shouldCombineCards ) {
