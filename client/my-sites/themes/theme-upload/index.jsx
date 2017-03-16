@@ -142,7 +142,8 @@ class Upload extends React.Component {
 			return includes( errorString, key );
 		} );
 
-		notices.error( cause || translate( 'Problem uploading theme' ) );
+		const unknownCause = error.error ? `: ${ error.error }` : '';
+		notices.error( cause || translate( 'Problem uploading theme' ) + unknownCause );
 	}
 
 	onFileSelect = ( files ) => {
