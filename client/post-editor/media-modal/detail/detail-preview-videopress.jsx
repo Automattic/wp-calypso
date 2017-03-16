@@ -2,19 +2,15 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { noop } from 'lodash';
+import classNames from 'classnames';
 import debug from 'debug';
 
 /**
  * Internal dependencies
  */
 import { loadScript, removeScriptCallback } from 'lib/load-script';
-import {
-	setVideoEditorHasScriptLoadError,
-	setVideoEditorVideoHasLoaded,
-} from 'state/ui/editor/video-editor/actions';
 
 /**
  * Module variables
@@ -28,11 +24,15 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		isPlaying: PropTypes.bool,
 		item: PropTypes.object.isRequired,
 		onPause: PropTypes.func,
+		onScriptLoadError: PropTypes.func,
+		onVideoLoaded: PropTypes.func,
 	};
 
 	static defaultProps = {
 		isPlaying: false,
 		onPause: noop,
+		onScriptLoadError: noop,
+		onVideoLoaded: noop,
 	};
 
 	componentDidMount() {
@@ -78,12 +78,12 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		const {
 			isPlaying,
 			item,
-			setHasScriptLoadError,
+			onScriptLoadError,
 		} = this.props;
 
 		if ( error ) {
 			log( `Script${ error.src } failed to load.` );
-			setHasScriptLoadError();
+			onScriptLoadError();
 
 			return;
 		}
@@ -111,7 +111,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		}
 
 		if ( 'loaded' === data.state ) {
-			this.props.setVideoHasLoaded();
+			this.props.onVideoLoaded();
 		}
 	}
 
@@ -172,8 +172,4 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 
 export default connect(
 	null,
-	{
-		setHasScriptLoadError: setVideoEditorHasScriptLoadError,
-		setVideoHasLoaded: setVideoEditorVideoHasLoaded,
-	}
 )( EditorMediaModalDetailPreviewVideoPress );
