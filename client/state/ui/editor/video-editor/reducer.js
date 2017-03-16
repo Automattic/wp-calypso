@@ -9,9 +9,8 @@ import { combineReducers } from 'redux';
 import {
 	VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
 	VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
+	VIDEO_EDITOR_RESET_STATE,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
-	VIDEO_EDITOR_STATE_RESET,
-	VIDEO_EDITOR_STATE_RESET_POSTER,
 } from 'state/action-types';
 
 /**
@@ -27,8 +26,7 @@ export const posterIsUpdated = ( state = false, action ) => {
 		case VIDEO_EDITOR_POSTER_UPDATE_FAILURE:
 			return true;
 
-		case VIDEO_EDITOR_STATE_RESET:
-		case VIDEO_EDITOR_STATE_RESET_POSTER:
+		case VIDEO_EDITOR_RESET_STATE:
 			return false;
 	}
 
@@ -47,8 +45,7 @@ export const poster = ( state = '', action ) => {
 		case VIDEO_EDITOR_POSTER_UPDATE_SUCCESS:
 			return action.poster;
 
-		case VIDEO_EDITOR_STATE_RESET:
-		case VIDEO_EDITOR_STATE_RESET_POSTER:
+		case VIDEO_EDITOR_RESET_STATE:
 			return '';
 	}
 
@@ -67,8 +64,7 @@ export const uploadProgress = ( state = 0, action ) => {
 		case VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS:
 			return action.percentage;
 
-		case VIDEO_EDITOR_STATE_RESET:
-		case VIDEO_EDITOR_STATE_RESET_POSTER:
+		case VIDEO_EDITOR_RESET_STATE:
 			return 0;
 	}
 
@@ -88,8 +84,7 @@ export const hasPosterUpdateError = ( state = false, action ) => {
 			return true;
 
 		case VIDEO_EDITOR_POSTER_UPDATE_SUCCESS:
-		case VIDEO_EDITOR_STATE_RESET:
-		case VIDEO_EDITOR_STATE_RESET_POSTER:
+		case VIDEO_EDITOR_RESET_STATE:
 			return false;
 	}
 

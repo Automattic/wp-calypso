@@ -10,13 +10,11 @@ import {
 	VIDEO_EDITOR_POSTER_UPDATE,
 	VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
 	VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
+	VIDEO_EDITOR_RESET_STATE,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
-	VIDEO_EDITOR_STATE_RESET,
-	VIDEO_EDITOR_STATE_RESET_POSTER,
 } from 'state/action-types';
 import {
-	resetVideoEditorState,
-	resetVideoEditorPosterState,
+	resetState,
 	showUploadProgress,
 	updateVideoEditorPoster,
 	updateVideoEditorPosterSuccess,
@@ -24,22 +22,12 @@ import {
 } from '../actions';
 
 describe( 'actions', () => {
-	describe( '#resetVideoEditorState()', () => {
+	describe( '#resetState()', () => {
 		it( 'should return an action object', () => {
-			const action = resetVideoEditorState();
+			const action = resetState();
 
 			expect( action ).to.eql( {
-				type: VIDEO_EDITOR_STATE_RESET,
-			} );
-		} );
-	} );
-
-	describe( '#resetVideoEditorPosterState()', () => {
-		it( 'should return an action object', () => {
-			const action = resetVideoEditorPosterState();
-
-			expect( action ).to.eql( {
-				type: VIDEO_EDITOR_STATE_RESET_POSTER,
+				type: VIDEO_EDITOR_RESET_STATE,
 			} );
 		} );
 	} );

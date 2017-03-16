@@ -9,9 +9,8 @@ import { expect } from 'chai';
 import {
 	VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
 	VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
+	VIDEO_EDITOR_RESET_STATE,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
-	VIDEO_EDITOR_STATE_RESET,
-	VIDEO_EDITOR_STATE_RESET_POSTER,
 } from 'state/action-types';
 
 import reducer, {
@@ -56,15 +55,7 @@ describe( 'reducer', () => {
 
 		it( 'should change to false on reset', () => {
 			const state = posterIsUpdated( undefined, {
-				type: VIDEO_EDITOR_STATE_RESET,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should change to false on poster reset', () => {
-			const state = posterIsUpdated( undefined, {
-				type: VIDEO_EDITOR_STATE_RESET_POSTER,
+				type: VIDEO_EDITOR_RESET_STATE,
 			} );
 
 			expect( state ).to.be.false;
@@ -91,15 +82,7 @@ describe( 'reducer', () => {
 
 		it( 'should change to empty string on reset', () => {
 			const state = poster( undefined, {
-				type: VIDEO_EDITOR_STATE_RESET,
-			} );
-
-			expect( state ).to.eql( '' );
-		} );
-
-		it( 'should change to empty string on poster reset', () => {
-			const state = poster( undefined, {
-				type: VIDEO_EDITOR_STATE_RESET_POSTER,
+				type: VIDEO_EDITOR_RESET_STATE,
 			} );
 
 			expect( state ).to.eql( '' );
@@ -126,15 +109,7 @@ describe( 'reducer', () => {
 
 		it( 'should change to 0 on reset', () => {
 			const state = uploadProgress( undefined, {
-				type: VIDEO_EDITOR_STATE_RESET,
-			} );
-
-			expect( state ).to.eql( 0 );
-		} );
-
-		it( 'should change to 0 on poster reset', () => {
-			const state = uploadProgress( undefined, {
-				type: VIDEO_EDITOR_STATE_RESET_POSTER,
+				type: VIDEO_EDITOR_RESET_STATE,
 			} );
 
 			expect( state ).to.eql( 0 );
@@ -166,15 +141,7 @@ describe( 'reducer', () => {
 
 		it( 'should change to false on reset', () => {
 			const state = hasPosterUpdateError( undefined, {
-				type: VIDEO_EDITOR_STATE_RESET,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should change to false on poster reset', () => {
-			const state = hasPosterUpdateError( undefined, {
-				type: VIDEO_EDITOR_STATE_RESET_POSTER,
+				type: VIDEO_EDITOR_RESET_STATE,
 			} );
 
 			expect( state ).to.be.false;

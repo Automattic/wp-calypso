@@ -5,9 +5,8 @@ import {
 	VIDEO_EDITOR_POSTER_UPDATE,
 	VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
 	VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
+	VIDEO_EDITOR_RESET_STATE,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
-	VIDEO_EDITOR_STATE_RESET,
-	VIDEO_EDITOR_STATE_RESET_POSTER,
 } from 'state/action-types';
 
 /**
@@ -15,22 +14,11 @@ import {
  *
  * @return {Object} Action object
  */
-export const resetVideoEditorState = () => {
+export const resetState = () => {
 	return {
-		type: VIDEO_EDITOR_STATE_RESET,
+		type: VIDEO_EDITOR_RESET_STATE,
 	};
 };
-
-/**
- * Returns an action object to be used for resetting the video editor poster state.
- *
- * @return {Object} Action object
- */
-export function resetVideoEditorPosterState() {
-	return {
-		type: VIDEO_EDITOR_STATE_RESET_POSTER,
-	};
-}
 
 /**
  * Returns an action object to indicate that a request has been made to update the video poster.
