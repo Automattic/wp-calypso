@@ -12,9 +12,9 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
-	THEME_ACTIVATE_REQUEST,
-	THEME_ACTIVATE_REQUEST_SUCCESS,
-	THEME_ACTIVATE_REQUEST_FAILURE,
+	THEME_ACTIVATE,
+	THEME_ACTIVATE_SUCCESS,
+	THEME_ACTIVATE_FAILURE,
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE_SUCCESS,
 	THEME_DELETE_FAILURE,
@@ -415,7 +415,7 @@ describe( 'actions', () => {
 						},
 					],
 				},
-				type: THEME_ACTIVATE_REQUEST_SUCCESS,
+				type: THEME_ACTIVATE_SUCCESS,
 				themeStylesheet: 'pub/twentysixteen',
 				siteId: 2211667,
 			};
@@ -473,7 +473,7 @@ describe( 'actions', () => {
 			activateTheme( 'twentysixteen', 2211667 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
-				type: THEME_ACTIVATE_REQUEST,
+				type: THEME_ACTIVATE,
 				siteId: 2211667,
 				themeId: 'twentysixteen',
 			} );
@@ -490,7 +490,7 @@ describe( 'actions', () => {
 				error: sinon.match( { message: 'The specified theme was not found' } ),
 				siteId: 2211667,
 				themeId: 'badTheme',
-				type: THEME_ACTIVATE_REQUEST_FAILURE
+				type: THEME_ACTIVATE_FAILURE
 			};
 
 			return activateTheme( 'badTheme', 2211667, trackingData )( spy ).then( () => {

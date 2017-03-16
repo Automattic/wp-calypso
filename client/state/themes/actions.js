@@ -14,9 +14,9 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
-	THEME_ACTIVATE_REQUEST,
-	THEME_ACTIVATE_REQUEST_SUCCESS,
-	THEME_ACTIVATE_REQUEST_FAILURE,
+	THEME_ACTIVATE,
+	THEME_ACTIVATE_SUCCESS,
+	THEME_ACTIVATE_FAILURE,
 	THEME_BACK_PATH_SET,
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE,
@@ -362,7 +362,7 @@ export function activate( themeId, siteId, source = 'unknown', purchased = false
 export function activateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
 	return dispatch => {
 		dispatch( {
-			type: THEME_ACTIVATE_REQUEST,
+			type: THEME_ACTIVATE,
 			themeId,
 			siteId,
 		} );
@@ -375,7 +375,7 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 			} )
 			.catch( error => {
 				dispatch( {
-					type: THEME_ACTIVATE_REQUEST_FAILURE,
+					type: THEME_ACTIVATE_FAILURE,
 					themeId,
 					siteId,
 					error,
@@ -398,7 +398,7 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 export function themeActivated( themeStylesheet, siteId, source = 'unknown', purchased = false ) {
 	const themeActivatedThunk = ( dispatch, getState ) => {
 		const action = {
-			type: THEME_ACTIVATE_REQUEST_SUCCESS,
+			type: THEME_ACTIVATE_SUCCESS,
 			themeStylesheet,
 			siteId,
 		};

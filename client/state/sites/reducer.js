@@ -31,7 +31,7 @@ import {
 	SITES_REQUEST_SUCCESS,
 	SITES_UPDATE,
 	DESERIALIZE,
-	THEME_ACTIVATE_REQUEST_SUCCESS,
+	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { sitesSchema } from './schema';
@@ -115,7 +115,7 @@ export function items( state = {}, action ) {
 		case SITE_DELETE_RECEIVE:
 			return omit( state, action.site.ID );
 
-		case THEME_ACTIVATE_REQUEST_SUCCESS: {
+		case THEME_ACTIVATE_SUCCESS: {
 			const { siteId, themeStylesheet } = action;
 			const site = state[ siteId ];
 			if ( ! site ) {
