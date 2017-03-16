@@ -560,7 +560,10 @@ export const PostEditor = React.createClass( {
 			return;
 		}
 
-		edits.content = this.refs.editor.getContent();
+		// prevent deleting content when onSave is called prior to MCE being fully initialized
+		if ( this.state.isEditorInitialized ) {
+			edits.content = this.refs.editor.getContent();
+		}
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.saveEdited( edits, function( error ) {
