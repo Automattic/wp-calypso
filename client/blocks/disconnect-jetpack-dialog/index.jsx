@@ -19,7 +19,7 @@ class DisconnectJetpackDialog extends PureComponent {
 	};
 
 	translateArgs( icon ) {
-		return { context: 'Jetpack Disconnect Dialog', components: { icon: <Gridicon icon={ icon } /> } };
+		return { components: { icon: <Gridicon icon={ icon } /> } };
 	}
 
 	planFeatures() {
@@ -79,10 +79,15 @@ class DisconnectJetpackDialog extends PureComponent {
 				<Dialog isVisible={ isVisible } additionalClassNames="disconnect-jetpack-dialog" onClose={ onStay } >
 				<h1>{ translate( 'Disconnect Jetpack' ) }</h1>
 				<p className="disconnect-jetpack-dialog__highlight">
-					{ translate( 'WordPress.com has not been able to reach example.com for a while.' ) }
+					{
+						translate(
+							'WordPress.com has not been able to reach %(siteName)s for a while.',
+							{ args: { siteName } }
+						)
+					}
 				</p>
 				<div className="disconnect-jetpack-dialog__button-wrap">
-					<Button primary scary onClick={ onDisconnect }>{ translate( 'Remove Site', { context: 'Button' } ) }</Button>
+					<Button primary scary onClick={ onDisconnect }>{ translate( 'Remove Site' ) }</Button>
 				</div>
 			</Dialog>
 			);
@@ -95,7 +100,7 @@ class DisconnectJetpackDialog extends PureComponent {
 					{
 						translate(
 							'By disconnecting %(siteName)s from WordPress.com you will no longer have access to the following:',
-							{ args: { siteName }, context: 'Jetpack Disconnect Dialog' }
+							{ args: { siteName } }
 						)
 					}
 				</p>
@@ -104,13 +109,13 @@ class DisconnectJetpackDialog extends PureComponent {
 
 				<div className="disconnect-jetpack-dialog__button-wrap">
 					<Button onClick={ onStay }>{ translate( 'Stay Connected' ) }</Button>
-					<Button primary scary onClick={ onDisconnect }>{ translate( 'Disconnect', { context: 'Button' } ) }</Button>
+					<Button primary scary onClick={ onDisconnect }>{ translate( 'Disconnect', { context: 'Jetpack: Action user takes to disconnect Jetpack site from .com' } ) }</Button>
 				</div>
 				<a
 					onClick={ this.trackReadMoreClick }
 					className="disconnect-jetpack-dialog__more-info-link"
 					href="https://jetpack.com/features/">
-					{ translate( 'Read More about Jetpack benefits', { context: 'More info link' } ) }
+					{ translate( 'Read More about Jetpack benefits' ) }
 				</a>
 			</Dialog>
 		);
