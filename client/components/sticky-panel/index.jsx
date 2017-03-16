@@ -36,6 +36,7 @@ class StickyPanel extends Component {
 
 		this.stickyDomElement = ReactDom.findDOMNode( this );
 
+		this.computeHeightFakeElement();
 		this.updateIsSticky();
 	}
 
@@ -50,8 +51,28 @@ class StickyPanel extends Component {
 	};
 
 	onWindowResize = () => {
+		this.computeHeightFakeElement();
 		this.updateIsSticky();
 	};
+
+	computeHeightFakeElement() {
+		this.fakeElementHeigth = this.stickyDomElement.offsetHeight;
+
+		// be dure that a child element exists
+		if ( ! (
+			this.stickyDomElement.children &&
+			this.stickyDomElement.children[ 0 ] &&
+			this.stickyDomElement.children[ 0 ].children &&
+			this.stickyDomElement.children[ 0 ].children[ 0 ]
+		) ) {
+			return null;
+		}
+
+		// adjust fake element height considering margins of the wrapper element to stick
+		this.childDomElement = this.stickyDomElement.children[ 0 ].children[ 0 ];
+		const childStyles = this.childDomElement.currentStyle || window.getComputedStyle( this.childDomElement );
+		this.fakeElementHeigth += parseInt( childStyles.marginTop ) + parseInt( childStyles.marginBottom );
+	}
 
 	updateIsSticky = () => {
 		if ( viewport.isMobile() ) {
@@ -91,7 +112,7 @@ class StickyPanel extends Component {
 		}
 
 		return {
-			height: this.stickyDomElement.offsetHeight,
+			height: this.fakeElementHeigth,
 		};
 	}
 
