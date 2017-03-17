@@ -19,7 +19,7 @@ var Dispatcher = require( 'dispatcher' ),
  * Module variables
  */
 const MediaActions = {
-	_fetching: {},
+	_fetching: {}
 };
 
 /**
