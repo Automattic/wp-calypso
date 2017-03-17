@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import {
+<<<<<<< HEAD
 	VIDEO_EDITOR_CLOSE_MODAL,
 	VIDEO_EDITOR_SET_POSTER_URL,
 	VIDEO_EDITOR_SHOW_ERROR,
@@ -10,6 +11,27 @@ import {
 } from 'state/action-types';
 
 /**
+=======
+	VIDEO_EDITOR_POSTER_UPDATE,
+	VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
+	VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
+	VIDEO_EDITOR_RESET_STATE,
+	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
+} from 'state/action-types';
+
+/**
+ * Returns an action object to be used for resetting the video editor state.
+ *
+ * @return {Object} Action object
+ */
+export const resetState = () => {
+	return {
+		type: VIDEO_EDITOR_RESET_STATE,
+	};
+};
+
+/**
+>>>>>>> Remove obsolete action for resetting poster state
  * Returns an action object to indicate that a request has been made to update the video poster.
  *
  * @param {String} videoId  ID of the video

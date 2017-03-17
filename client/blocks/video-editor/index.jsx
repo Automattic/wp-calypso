@@ -16,8 +16,7 @@ import Notice from 'components/notice';
 import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
 import VideoEditorButtons from './video-editor-buttons';
 import {
-	resetVideoEditorPosterState,
-	resetVideoEditorState,
+	resetState,
 	updateVideoEditorPoster,
 } from 'state/ui/editor/video-editor/actions';
 import {
@@ -81,7 +80,7 @@ class VideoEditor extends Component {
 	handleSelectFrame = () => {
 		const { isLoading } = this.state;
 
-		this.props.resetPosterState();
+		this.props.resetState();
 
 		if ( isLoading ) {
 			this.setState( { error: true } );
@@ -123,7 +122,7 @@ class VideoEditor extends Component {
 	handleUploadImageClick = () => {
 		isSelectingFrame = false;
 
-		this.props.resetPosterState();
+		this.props.resetState();
 		this.setState( {
 			error: false,
 			pauseVideo: true
@@ -242,8 +241,7 @@ export default connect(
 		};
 	},
 	dispatch => bindActionCreators( {
-		resetPosterState: resetVideoEditorPosterState,
-		resetState: resetVideoEditorState,
+		resetState,
 		updatePoster: updateVideoEditorPoster,
 	}, dispatch ),
 )( localize( VideoEditor ) );
