@@ -101,12 +101,9 @@
 .editor__header,
 .editor .mce-container-body,
 .editor .tinymce {
-	max-width: 100%;
+	width: 100%;
+	max-width: 700px;
 	margin: 0 auto;
-
-	@include breakpoint( ">960px" ) {
-		width: 700px;
-	}
 }
 
 .focus-content .editor__header {
