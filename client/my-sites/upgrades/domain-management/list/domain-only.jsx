@@ -14,7 +14,7 @@ const DomainOnly = ( { domainName, hasNotice, siteId, translate } ) => (
 	<div>
 		<EmptyContent
 			title={ translate( '%(domainName)s is ready when you are.', { args: { domainName } } ) }
-			line={ translate( 'Start a site now to unlock everything WordPress.com can offer. Or add email and manage your domain preferences.' ) }
+			line={ translate( 'Start a site now to unlock everything WordPress.com can offer.' ) }
 			action={ translate( 'Create Site' ) }
 			actionURL={ `/start/site-selected/?siteSlug=${ encodeURIComponent( domainName ) }&siteId=${ encodeURIComponent( siteId ) }` }
 			secondaryAction={ translate( 'Manage Domain' ) }

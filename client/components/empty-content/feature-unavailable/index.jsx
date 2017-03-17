@@ -24,12 +24,13 @@ const FeatureUnavailable = ( { domainName, siteId, translate } ) => {
 
 			<EmptyContent
 				className={ 'feature-unavailable' }
-				title={ translate( 'Add a site to start using this feature.' ) }
-				line={ translate( 'Your domain is only set up with a temporary page. Start a site now to unlock everything WordPress.com can offer.' ) }
+				title={ translate( '%(domainName)s is ready when you are.', { args: { domainName } } ) }
+				line={ translate( 'Start a site now to unlock everything WordPress.com can offer.' ) }
 				action={ translate( 'Create Site' ) }
 				actionURL={ `/start/site-selected/?siteSlug=${ encodeURIComponent( domainName ) }&siteId=${ encodeURIComponent( siteId ) }` }
 				secondaryAction={ translate( 'Manage Domain' ) }
-				secondaryActionURL={ domainManagementEdit( domainName, domainName ) } />
+				secondaryActionURL={ domainManagementEdit( domainName, domainName ) }
+				illustration={ '/calypso/images/drake/drake-browser.svg' } />
 		</div>
 	);
 };
