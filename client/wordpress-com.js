@@ -108,9 +108,9 @@ const sections = [
 		group: 'sites'
 	},
 	{
-		name: 'settings-seo',
-		paths: [ '/settings/seo' ],
-		module: 'my-sites/site-settings/seo-settings',
+		name: 'settings-traffic',
+		paths: [ '/settings/traffic' ],
+		module: 'my-sites/site-settings/traffic',
 		secondary: true,
 		group: 'sites'
 	},

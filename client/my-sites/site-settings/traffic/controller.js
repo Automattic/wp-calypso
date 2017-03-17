@@ -11,7 +11,7 @@ import React from 'react';
 import analytics from 'lib/analytics';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
-import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
+import TrafficMain from 'my-sites/site-settings/traffic/main';
 import sitesFactory from 'lib/sites-list';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import utils from 'lib/site/utils';
@@ -19,7 +19,7 @@ import utils from 'lib/site/utils';
 const sites = sitesFactory();
 
 export default {
-	seo( context ) {
+	traffic( context ) {
 		const analyticsPageTitle = 'Site Settings > SEO';
 		const basePath = route.sectionify( context.path );
 		const fiveMinutes = 5 * 60 * 1000;
@@ -33,7 +33,7 @@ export default {
 			page.redirect( '/stats' );
 			return;
 		}
-		
+
 		if ( ! site.latestSettings || new Date().getTime() - site.latestSettings > ( fiveMinutes ) ) {
 			if ( sites.initialized ) {
 				site.fetchSettings();
@@ -48,7 +48,7 @@ export default {
 		const upgradeToBusiness = () => page( '/checkout/' + site.domain + '/business' );
 
 		renderWithReduxStore(
-			React.createElement( SeoSettingsMain, {
+			React.createElement( TrafficMain, {
 				...{ sites, upgradeToBusiness }
 			} ),
 			document.getElementById( 'primary' ),
