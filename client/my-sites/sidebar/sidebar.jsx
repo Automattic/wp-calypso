@@ -35,6 +35,7 @@ import { isDomainOnlySite } from 'state/selectors';
 import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { getStatsPathForTab } from 'lib/route/path';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 /**
  * Module variables
@@ -264,7 +265,7 @@ export class MySitesSidebar extends Component {
 			pluginsLink = '/plugins' + this.siteSuffix(),
 			addPluginsLink;
 
-		if ( config.isEnabled( 'automated-transfer' ) ) {
+		if ( isATEnabledForCurrentSite() ) {
 			addPluginsLink = '/plugins/browse' + this.siteSuffix();
 		}
 
@@ -323,7 +324,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( site.jetpack && ! ( config.isEnabled( 'automated-transfer' ) ) ) {
+		if ( site.jetpack && ! ( isATEnabledForCurrentSite() ) ) {
 			return null;
 		}
 

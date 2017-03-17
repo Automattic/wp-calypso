@@ -42,6 +42,7 @@ import {
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isAutomatedTransferActive, isSiteAutomatedTransfer } from 'state/selectors';
 import QueryEligibility from 'components/data/query-atat-eligibility';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 const PluginMeta = React.createClass( {
 	OUT_OF_DATE_YEARS: 2,
@@ -426,7 +427,7 @@ const PluginMeta = React.createClass( {
 
 		return (
 			<div className="plugin-meta">
-				{ config.isEnabled( 'automated-transfer' ) && this.props.selectedSite &&
+				{ isATEnabledForCurrentSite() && this.props.selectedSite &&
 					<QueryEligibility siteId={ this.props.selectedSite.ID } />
 				}
 				<Card>
@@ -465,11 +466,11 @@ const PluginMeta = React.createClass( {
 					}
 				</Card>
 
-				{ config.isEnabled( 'automated-transfer' ) &&
+				{ isATEnabledForCurrentSite() &&
 					this.maybeDisplayUnsupportedNotice()
 				}
 
-				{ config.isEnabled( 'automated-transfer' ) && this.hasBusinessPlan() && ! get( this.props.selectedSite, 'jetpack' ) &&
+				{ isATEnabledForCurrentSite() && this.hasBusinessPlan() && ! get( this.props.selectedSite, 'jetpack' ) &&
 					<PluginAutomatedTransfer plugin={ this.props.plugin } />
 				}
 

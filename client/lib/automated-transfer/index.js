@@ -5,7 +5,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import config, { isEnabled } from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { userCan } from 'lib/site/utils';
 
@@ -24,7 +24,10 @@ export function isATEnabledForCurrentSite() {
 		return false;
 	}
 
-	const abtest = require( 'lib/abtest' ).abtest;
+	// If it's wpcalypso, this is open
+	if ( config( 'env_id' ) === 'wpcalypso' ) {
+		return true;
+	}
 
 	// Site has Business plan
 	const site = require( 'lib/sites-list' )().getSelectedSite();
@@ -41,5 +44,6 @@ export function isATEnabledForCurrentSite() {
 
 	// Gate to 40% roll. If we modify this value, we need a new test name
 	// in active-tests.js
+	const abtest = require( 'lib/abtest' ).abtest;
 	return abtest( 'automatedTransfer1' ) === 'enabled';
 }

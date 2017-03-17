@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import config from 'config';
 import { connect } from 'react-redux';
 import page from 'page';
 import { get, includes, uniq, upperFirst } from 'lodash';
@@ -34,6 +33,7 @@ import { isJetpackSite, canJetpackSiteManage, getRawSite } from 'state/sites/sel
 import { isSiteAutomatedTransfer } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import QuerySites from 'components/data/query-sites';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 const SinglePlugin = React.createClass( {
 	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
@@ -318,7 +318,7 @@ const SinglePlugin = React.createClass( {
 		if (
 			selectedSite &&
 			! this.props.isJetpackSite( selectedSite.ID ) &&
-			! config.isEnabled( 'automated-transfer' )
+			! isATEnabledForCurrentSite()
 		) {
 			return (
 				<MainComponent>
