@@ -69,6 +69,10 @@
 .reader-combined-card__featured-image-wrapper {
 	min-width: 100px;
 	margin-right: 15px;
+
+	@include breakpoint( '<660px' ) {
+		min-width: 64px;
+	}
 }
 
 .reader-combined-card .reader-featured-image {
