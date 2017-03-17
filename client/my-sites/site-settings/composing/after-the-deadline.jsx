@@ -185,7 +185,7 @@ class AfterTheDeadline extends Component {
 				<div className="composing__info-link-container site-settings__info-link-container">
 					<InfoPopover position={ 'left' }>
 						<ExternalLink href={ 'https://jetpack.com/support/spelling-and-grammar/' } target="_blank">
-							{ translate( 'Learn more about After the Deadline' ) }
+							{ translate( 'Learn more about After the Deadline.' ) }
 						</ExternalLink>
 					</InfoPopover>
 				</div>
