@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -51,6 +52,32 @@ export class PluginActivateToggle extends Component {
 		recordGAEvent( 'Plugins', 'Clicked Manage Jetpack Connection Link', 'Plugin Name', 'jetpack' );
 	}
 
+	manageConnectionLink() {
+		const { disabled, translate, site } = this.props;
+		if ( disabled ) {
+			return (
+				<span className="plugin-activate-toggle__disabled">
+					{ translate( 'Manage Connection', { comment: 'manage Jetpack connnection settings link' } ) }
+					<span className="plugin-activate-toggle__icon"><Gridicon icon="cog" size={ 18 } /></span>
+				</span>
+			);
+		}
+
+		return (
+			<span className="plugin-activate-toggle__link">
+				<a onClick={ this.trackManageConnectionLink }
+					href={ '/settings/general/' + site.slug } >
+					{ translate( 'Manage Connection ', { comment: 'manage Jetpack connnection settings link' } ) }
+				</a>
+				<a className="plugin-activate-toggle__icon"
+					onClick={ this.trackManageConnectionLink }
+					href={ '/settings/general/' + site.slug } >
+					<Gridicon icon="cog" size={ 18 } />
+				</a>
+			</span>
+		);
+	}
+
 	render() {
 		const { site, plugin, disabled, translate } = this.props;
 
@@ -68,16 +95,7 @@ export class PluginActivateToggle extends Component {
 				<PluginAction
 					className="plugin-activate-toggle"
 					htmlFor={ 'disconnect-jetpack-' + site.ID }
-					>
-					{ ! disabled && <a
-						className="plugin-activate-toggle__link"
-						onClick={ this.trackManageConnectionLink }
-						href={ '/settings/general/' + site.slug }>
-						{ translate( 'Manage Connection', { comment: 'manage Jetpack connnection settings link' } ) }
-					</a> }
-					{ disabled && <span className="plugin-activate-toggle__disabled">
-						{ translate( 'Manage Connection', { comment: 'manage Jetpack connnection settings link' } ) }
-					</span> }
+					>{ this.manageConnectionLink() }
 				</PluginAction>
 			);
 		}
