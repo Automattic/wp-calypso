@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { head, uniqueId } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -90,7 +91,10 @@ class FeaturedImageDropZone extends Component {
 
 	render() {
 		return (
-			<DropZone onFilesDrop={ this.onFilesDrop } />
+			<DropZone
+				onFilesDrop={ this.onFilesDrop }
+				textLabel={ this.props.translate( 'Drop files to set a featured image!' ) }
+			/>
 		);
 	}
 }
@@ -107,4 +111,4 @@ export default connect(
 		deleteMedia,
 		receiveMedia
 	}
-)( FeaturedImageDropZone );
+)( localize( FeaturedImageDropZone ) );
