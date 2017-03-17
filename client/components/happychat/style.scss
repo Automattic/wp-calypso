@@ -452,6 +452,17 @@
  * Sidebar mode
  */
 
+
+ @include breakpoint( ">960px" ) {
+
+	 // move the word count
+ 	.has-chat.is-group-editor.focus-sidebar .editor-word-count,
+	.has-chat.is-group-editor.focus-sidebar .editor-action-bar .editor-status-label {
+ 		right: 546px;
+ 	}
+
+}
+
 @include breakpoint( ">1040px" ) {
 
 	.happychat__container.is-open {
