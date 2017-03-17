@@ -102,15 +102,13 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 			return;
 		}
 
-		const data = 'string' === typeof event.data
-			? JSON.parse( event.data )
-			: event.data;
+		const data = event.data;
 
-		if ( ! data || 'videopress_loading_state' !== data.event || ! ( 'state' in data ) ) {
+		if ( ! data || 'videopress_loading_state' !== data.event || ! ( 'state' in data ) || ! ( 'converting' in data ) ) {
 			return;
 		}
 
-		if ( 'loaded' === data.state ) {
+		if ( ( 'loaded' === data.state ) && ! data.converting ) {
 			this.props.onVideoLoaded();
 		}
 	}
