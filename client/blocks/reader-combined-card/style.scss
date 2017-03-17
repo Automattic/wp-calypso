@@ -80,6 +80,12 @@
 	height: 64px;
 }
 
+@include breakpoint( '>660px' ) {
+	.reader-combined-card__post.indented .reader-combined-card__post-details {
+		margin-left: 115px;
+	}
+}
+
 .reader-combined-card__post-list {
 	margin-left: 0;
 }
