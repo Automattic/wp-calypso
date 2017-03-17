@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import { noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import includes from 'lodash/includes' ;
 
 /**
  * Internal dependencies
@@ -90,13 +91,11 @@ class MagicSearchWelcome extends React.Component {
 	}
 
 	renderTaxonomies = () => {
-		return this.props.taxonomies.map(
-			( taxonomy ) => {
-				if ( taxonomiesWhitelist.indexOf( taxonomy ) !== -1 ) {
-					return this.renderToken( taxonomy );
-				}
-			}
-		);
+		const { taxonomies } = this.props;
+
+		return taxonomies
+			.filter( ( taxonomy ) => includes( taxonomiesWhitelist, taxonomy ) )
+			.map( ( taxonomy ) => this.renderToken( taxonomy ) );
 	}
 
 	render() {
