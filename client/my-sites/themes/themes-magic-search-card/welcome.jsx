@@ -12,6 +12,14 @@ import Gridicon from 'gridicons';
 import i18n from 'i18n-calypso';
 import { taxonomyToGridicon } from './taxonomy-styling.js';
 
+const taxonomiesWhitelist = [
+	'column',
+	'feature',
+	'layout',
+	'subject',
+	'style',
+];
+
 class MagicSearchWelcome extends React.Component {
 
 	constructor( props ) {
@@ -81,12 +89,22 @@ class MagicSearchWelcome extends React.Component {
 		);
 	}
 
+	renderTaxonomies = () => {
+		return this.props.taxonomies.map(
+			( taxonomy ) => {
+				if ( taxonomiesWhitelist.indexOf( taxonomy ) !== -1 ) {
+					return this.renderToken( taxonomy );
+				}
+			}
+		);
+	}
+
 	render() {
 		return (
 			<div className="themes-magic-search-card__welcome" >
 				<div className="themes-magic-search-card__welcome-header">{ i18n.translate( 'Search by' ) }</div>
 				<div className="themes-magic-search-card__welcome-taxonomies">
-					{ this.props.taxonomies.map( taxonomy => this.renderToken( taxonomy ) ) }
+					{ this.renderTaxonomies() }
 				</div>
 			</div>
 		);
