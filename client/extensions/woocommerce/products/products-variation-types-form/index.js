@@ -34,9 +34,9 @@ export default class ProductsVariationTypesForm extends Component {
 	};
 
 	static defaultProps = {
-		label: i18n.translate( 'Variation types' ),
+		label: i18n.translate( 'Okay! Let\'s add some variations.' ),
 		description: i18n.translate(
-			'Let\'s add some variations! A common {{em}}variation type{{/em}} is color. The {{em}}values{{/em}} would be the colors the product is available in.',
+			'A common {{em}}variation type{{/em}} is color. The {{em}}values{{/em}} would be the colors the product is available in.',
 			{ components: { em: <em /> } }
 		),
 	};
@@ -98,6 +98,7 @@ export default class ProductsVariationTypesForm extends Component {
 					className="products-variation-types-form__field"
 				/>
 				<TokenField
+					placeholder={ i18n.translate( 'Comma separate these' ) }
 					value={ variation.values }
 					name="values"
 					onChange={ this.updateValues.bind( this, index ) }
@@ -120,14 +121,14 @@ export default class ProductsVariationTypesForm extends Component {
 		let variationsForm = null;
 		if ( this.state.isVariation ) {
 			variationsForm = (
-				<div>
+				<div className="products-variation-types-form__wrapper">
 					<strong>{ this.props.label }</strong>
 					<p>{ this.props.description }</p>
 
 					<div className="products-variation-types-form__group">
 						<div className="products-variation-types-form__labels">
 							<FormLabel className="products-variation-types-form__label">{ i18n.translate( 'Variation type' ) }</FormLabel>
-							<FormLabel>{ i18n.translate( 'Variation values' ) }</FormLabel>
+							<FormLabel>{ i18n.translate( 'Values' ) }</FormLabel>
 						</div>
 						{inputs}
 					</div>
@@ -138,17 +139,15 @@ export default class ProductsVariationTypesForm extends Component {
 		}
 		return (
 			<div>
-				<p>
-					<FormToggle onChange={ this.handleToggle } checked={ this.state.isVariation }>
-						{ isNewProduct ? i18n.translate( 'Does this product have options like size and color?' )
-						: i18n.translate( 'Does %(productName)s have options like size and color?', {
-							args: {
-								productName: this.props.product.name,
-							}
-						} )
+				<FormToggle onChange={ this.handleToggle } checked={ this.state.isVariation }>
+					{ isNewProduct ? i18n.translate( 'This product has variations, for example size and color.' )
+					: i18n.translate( '%(productName) has variations, for example size and color.', {
+						args: {
+							productName: this.props.product.name,
 						}
-					</FormToggle>
-				</p>
+					} )
+					}
+				</FormToggle>
 				{variationsForm}
 			</div>
 		);
