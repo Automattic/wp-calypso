@@ -1212,17 +1212,6 @@ Undocumented.prototype.readSearch = function( query, fn ) {
 	return this.wpcom.req.get( '/read/search', params, fn );
 };
 
-Undocumented.prototype.readTag = function( query, fn ) {
-	var params = omit( query, 'slug' );
-	debug( '/read/tag/' + query.slug );
-	return this.wpcom.req.get( '/read/tags/' + query.slug, params, fn );
-};
-
-Undocumented.prototype.readTags = function( fn ) {
-	debug( '/read/tags' );
-	return this.wpcom.req.get( '/read/tags', fn );
-};
-
 Undocumented.prototype.readTagPosts = function( query, fn ) {
 	var params = omit( query, 'tag' );
 	debug( '/read/tags/' + query.tag + '/posts' );

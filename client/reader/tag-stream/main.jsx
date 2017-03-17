@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import { has } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -10,13 +10,14 @@ import { has } from 'lodash';
 import Stream from 'reader/stream';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from './empty';
-import ReaderTags from 'lib/reader-tags/tags';
-import ReaderTagActions from 'lib/reader-tags/actions';
-import TagSubscriptions from 'lib/reader-tags/subscriptions';
 import TagStreamHeader from './header';
-import smartSetState from 'lib/react-smart-set-state';
 import * as stats from 'reader/stats';
 import HeaderBack from 'reader/header-back';
+import { getReaderFollowedTags, getReaderTags } from 'state/selectors';
+import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
+import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
+import QueryReaderTag from 'components/data/query-reader-tag';
+import { find } from 'lodash';
 
 const TagStream = React.createClass( {
 
@@ -26,14 +27,8 @@ const TagStream = React.createClass( {
 		tag: React.PropTypes.string
 	},
 
-	smartSetState: smartSetState,
-
 	getInitialState() {
-		const title = this.getTitle();
 		return {
-			title,
-			subscribed: this.isSubscribed(),
-			canFollow: has( ReaderTags.get( this.props.tag ), 'ID' ),
 			isEmojiTitle: false
 		};
 	},
@@ -58,57 +53,40 @@ const TagStream = React.createClass( {
 		} );
 	},
 
-	componentDidMount() {
-		ReaderTags.on( 'change', this.updateState );
-		TagSubscriptions.on( 'change', this.updateState );
-	},
-
 	componentWillUnmount() {
 		this._isMounted = false;
-		ReaderTags.off( 'change', this.updateState );
-		TagSubscriptions.off( 'change', this.updateState );
 	},
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.tag !== this.props.tag ) {
-			this.updateState( nextProps );
+			this.checkForTwemoji( nextProps );
 		}
 	},
 
-	updateState( props = this.props ) {
-		const title = this.getTitle( props );
-		const newState = {
-			title,
-			subscribed: this.isSubscribed( props ),
-			canFollow: has( ReaderTags.get( props.tag ), 'ID' ),
+	checkForTwemoji() {
+		const title = this.getTitle();
+		this.setState( {
 			isEmojiTitle: title && this.state.twemoji && this.state.twemoji.test( title )
-		};
-		this.smartSetState( newState );
+		} );
 	},
 
-	getTitle( props = this.props ) {
-		const tag = ReaderTags.get( props.tag );
-		if ( ! ( tag && tag.ID ) ) {
-			ReaderTagActions.fetchTag( props.tag );
-			return props.tag;
-		}
-
-		return decodeURIComponent( tag.display_name || tag.slug );
+	getTitle() {
+		const tag = find( this.props.tags, { slug: this.props.tag } );
+		return tag && ( decodeURIComponent( tag.displayName || tag.slug ) );
 	},
 
-	isSubscribed( props = this.props ) {
-		const tag = ReaderTags.get( props.tag );
-		if ( ! tag ) {
-			return false;
-		}
-		return TagSubscriptions.isSubscribed( tag.slug );
+	isSubscribed() {
+		const tag = find( this.props.tags, { slug: this.props.tag } );
+		return !! ( tag && tag.isFollowing );
 	},
 
-	toggleFollowing( isFollowing ) {
-		const tag = ReaderTags.get( this.props.tag );
-		ReaderTagActions[ isFollowing ? 'follow' : 'unfollow' ]( tag );
+	toggleFollowing() {
+		const { tag, unfollowTag, followTag } = this.props;
+		const isFollowing = this.isSubscribed();
+		const toggleAction = isFollowing ? unfollowTag : followTag;
+		toggleAction( this.props.tag );
 		stats.recordAction( isFollowing ? 'followed_topic' : 'unfollowed_topic' );
-		stats.recordGaEvent( isFollowing ? 'Clicked Follow Topic' : 'Clicked Unfollow Topic', tag.slug );
+		stats.recordGaEvent( isFollowing ? 'Clicked Follow Topic' : 'Clicked Unfollow Topic', tag );
 		stats.recordTrack( isFollowing ? 'calypso_reader_reader_tag_followed' : 'calypso_reader_reader_tag_unfollowed', {
 			tag: tag.slug
 		} );
@@ -116,7 +94,8 @@ const TagStream = React.createClass( {
 
 	render() {
 		const emptyContent = ( <EmptyContent tag={ this.props.tag } /> );
-		const title = decodeURIComponent( this.state.title );
+		const title = this.getTitle();
+		const tag = find( this.props.tags, { slug: this.props.tag } );
 
 		let imageSearchString = this.props.tag;
 
@@ -129,14 +108,16 @@ const TagStream = React.createClass( {
 
 		return (
 			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ true } >
+				<QueryReaderFollowedTags />
+				<QueryReaderTag tag={ this.props.tag } />
 				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
 				<TagStreamHeader
 					tag={ this.props.tag }
-					title={ title }
+					title={ this.getTitle() }
 					imageSearchString={ imageSearchString }
-					showFollow={ this.state.canFollow }
-					following={ this.state.subscribed }
+					showFollow={ !! ( tag && tag.id ) }
+					following={ this.isSubscribed() }
 					onFollowToggle={ this.toggleFollowing }
 					showBack={ this.props.showBack } />
 			</Stream>
@@ -144,4 +125,13 @@ const TagStream = React.createClass( {
 	}
 } );
 
-export default TagStream;
+export default connect(
+	state => ( {
+		followedTags: getReaderFollowedTags( state ),
+		tags: getReaderTags( state ),
+	} ),
+	{
+		followTag: requestFollowTag,
+		unfollowTag: requestUnfollowTag,
+	}
+)( TagStream );
