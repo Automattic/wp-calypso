@@ -7,6 +7,8 @@
 		background-color: rgba( $white, 0.92 );
 		border-color: lighten( $gray, 20% );
 		border-style: solid;
+		border-left-width: 1px;
+		border-right-width: 1px;
 		border-bottom-width: 1px;
 		box-sizing: border-box;
 		margin: 0 auto;
@@ -14,10 +16,17 @@
 		position: relative;
 		width: 100%;
 
-		@media ( min-width: 930px ) {
-			border-left-width: 1px;
-			border-right-width: 1px;
+		@media ( max-width: 700px ) {
+			border-left-width: 0;
+			border-right-width: 0;
 		}
+
+		.focus-sidebar & {
+			@media screen and ( max-width: ( 700px + $sidebar-width-min ) ) {
+				border-left-width: 0;
+				border-right-width: 0;
+			}
+  		}
 	}
 
 	&.is-pinned .editor-html-toolbar__wrapper {
