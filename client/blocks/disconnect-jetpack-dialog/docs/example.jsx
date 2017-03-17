@@ -43,7 +43,7 @@ class DisconnectJetpackDialogExample extends Component {
 				<DisconnectJetpackDialog
 					isVisible={ this.state.isVisible.free }
 					siteId={ this.props.primarySiteId }
-					onStay={ this.toggleVisibilityFree }
+					onClose={ this.toggleVisibilityFree }
 					onDisconnect={ this.toggleVisibilityFree }
 					siteName="example.com"
 					plan="free"
@@ -53,7 +53,7 @@ class DisconnectJetpackDialogExample extends Component {
 				<DisconnectJetpackDialog
 					isVisible={ this.state.isVisible.personal }
 					siteId={ this.props.primarySiteId }
-					onStay={ this.toggleVisibilityPersonal }
+					onClose={ this.toggleVisibilityPersonal }
 					onDisconnect={ this.toggleVisibilityPersonal }
 					siteName="example.com"
 					plan="personal"
@@ -63,7 +63,7 @@ class DisconnectJetpackDialogExample extends Component {
 				<DisconnectJetpackDialog
 					isVisible={ this.state.isVisible.premium }
 					siteId={ this.props.primarySiteId }
-					onStay={ this.toggleVisibilityPremium }
+					onClose={ this.toggleVisibilityPremium }
 					onDisconnect={ this.toggleVisibilityPremium }
 					siteName="example.com"
 					plan="premium"
@@ -73,7 +73,7 @@ class DisconnectJetpackDialogExample extends Component {
 				<DisconnectJetpackDialog
 					isVisible={ this.state.isVisible.professional }
 					siteId={ this.props.primarySiteId }
-					onStay={ this.toggleVisibilityProfessional }
+					onClose={ this.toggleVisibilityProfessional }
 					onDisconnect={ this.toggleVisibilityProfessional }
 					siteName="example.com"
 					plan="professional"
@@ -83,7 +83,7 @@ class DisconnectJetpackDialogExample extends Component {
 				<DisconnectJetpackDialog
 					isVisible={ this.state.isVisible.broken }
 					siteId={ this.props.primarySiteId }
-					onStay={ this.toggleVisibilityBroken }
+					onClose={ this.toggleVisibilityBroken }
 					onDisconnect={ this.toggleVisibilityBroken }
 					siteName="example.com"
 					plan="personal"

@@ -18,7 +18,7 @@ class DisconnectJetpackDialog extends PureComponent {
 		this.props.recordGoogleEvent( 'Disconnect Jetpack Dialog', 'Clicked Read More about Jetpack benefits' );
 	};
 
-	translateArgs( icon ) {
+	getIcon( icon ) {
 		return { components: { icon: <Gridicon icon={ icon } /> } };
 	}
 
@@ -28,38 +28,40 @@ class DisconnectJetpackDialog extends PureComponent {
 		switch ( plan ) {
 			case 'free':
 				features.push(
-					translate( '{{icon/}} Site stats, related content, and sharing tools',
-					this.translateArgs( 'stats-alt' )
+					translate(
+						'{{icon/}} Site stats, related content, and sharing tools',
+						this.getIcon( 'stats-alt' )
+					)
+				);
+				features.push( translate(
+					'{{icon/}} Brute force attack protection and uptime monitoring',
+					this.getIcon( 'lock' )
 				) );
-				features.push(
-					translate( '{{icon/}} Brute force attack protection and uptime monitoring',
-					this.translateArgs( 'lock' )
-				) );
-				features.push( translate( '{{icon/}} Unlimited, high-speed image hosting', this.translateArgs( 'image' ) ) );
+				features.push( translate( '{{icon/}} Unlimited, high-speed image hosting', this.getIcon( 'image' ) ) );
 				break;
 
 			case 'personal':
-				features.push( translate( '{{icon/}} Daily, automated backups (unlimited storage)', this.translateArgs( 'history' ) ) );
-				features.push( translate( '{{icon/}} Priority WordPress and security support', this.translateArgs( 'chat' ) ) );
-				features.push( translate( '{{icon/}} Spam filtering', this.translateArgs( 'spam' ) ) );
+				features.push( translate( '{{icon/}} Daily, automated backups (unlimited storage)', this.getIcon( 'history' ) ) );
+				features.push( translate( '{{icon/}} Priority WordPress and security support', this.getIcon( 'chat' ) ) );
+				features.push( translate( '{{icon/}} Spam filtering', this.getIcon( 'spam' ) ) );
 				break;
 
 			case 'premium':
-				features.push( translate( '{{icon/}} Daily, automated backups (unlimited storage)', this.translateArgs( 'history' ) ) );
-				features.push( translate( '{{icon/}} Daily, automated malware scanning', this.translateArgs( 'spam' ) ) );
-				features.push( translate( '{{icon/}} Priority WordPress and security support', this.translateArgs( 'chat' ) ) );
-				features.push( translate( '{{icon/}} 13Gb of high-speed video hosting', this.translateArgs( 'video' ) ) );
+				features.push( translate( '{{icon/}} Daily, automated backups (unlimited storage)', this.getIcon( 'history' ) ) );
+				features.push( translate( '{{icon/}} Daily, automated malware scanning', this.getIcon( 'spam' ) ) );
+				features.push( translate( '{{icon/}} Priority WordPress and security support', this.getIcon( 'chat' ) ) );
+				features.push( translate( '{{icon/}} 13Gb of high-speed video hosting', this.getIcon( 'video' ) ) );
 				break;
 
 			case 'professional':
-				features.push( translate( '{{icon/}} Daily, automated backups (unlimited storage)', this.translateArgs( 'history' ) ) );
+				features.push( translate( '{{icon/}} Daily, automated backups (unlimited storage)', this.getIcon( 'history' ) ) );
 				features.push(
 					translate( '{{icon/}} Daily, automated malware scanning with automated resolution',
-					this.translateArgs( 'spam' )
+					this.getIcon( 'spam' )
 				) );
-				features.push( translate( '{{icon/}} Priority WordPress and security support', this.translateArgs( 'chat' ) ) );
-				features.push( translate( '{{icon/}} Unlimited high-speed video hosting', this.translateArgs( 'video' ) ) );
-				features.push( translate( '{{icon/}} SEO preview tools', this.translateArgs( 'globe' ) ) );
+				features.push( translate( '{{icon/}} Priority WordPress and security support', this.getIcon( 'chat' ) ) );
+				features.push( translate( '{{icon/}} Unlimited high-speed video hosting', this.getIcon( 'video' ) ) );
+				features.push( translate( '{{icon/}} SEO preview tools', this.getIcon( 'globe' ) ) );
 				break;
 		}
 
@@ -73,10 +75,10 @@ class DisconnectJetpackDialog extends PureComponent {
 	}
 
 	render() {
-		const { onStay, onDisconnect, isVisible, translate, isBroken, siteName } = this.props;
+		const { onClose, onDisconnect, isVisible, translate, isBroken, siteName } = this.props;
 		if ( isBroken ) {
 			return (
-				<Dialog isVisible={ isVisible } additionalClassNames="disconnect-jetpack-dialog" onClose={ onStay } >
+				<Dialog isVisible={ isVisible } additionalClassNames="disconnect-jetpack-dialog" onClose={ onClose } >
 				<h1>{ translate( 'Disconnect Jetpack' ) }</h1>
 				<p className="disconnect-jetpack-dialog__highlight">
 					{
@@ -94,7 +96,7 @@ class DisconnectJetpackDialog extends PureComponent {
 		}
 
 		return (
-			<Dialog isVisible={ isVisible } additionalClassNames="disconnect-jetpack-dialog" onClose={ onStay } >
+			<Dialog isVisible={ isVisible } additionalClassNames="disconnect-jetpack-dialog" onClose={ onClose } >
 				<h1>{ translate( 'Disconnect from WordPress.com?' ) }</h1>
 				<p className="disconnect-jetpack-dialog__highlight">
 					{
@@ -108,8 +110,10 @@ class DisconnectJetpackDialog extends PureComponent {
 				{ this.planFeatures() }
 
 				<div className="disconnect-jetpack-dialog__button-wrap">
-					<Button onClick={ onStay }>{ translate( 'Stay Connected' ) }</Button>
-					<Button primary scary onClick={ onDisconnect }>{ translate( 'Disconnect', { context: 'Jetpack: Action user takes to disconnect Jetpack site from .com' } ) }</Button>
+					<Button onClick={ onClose }>{ translate( 'Stay Connected' ) }</Button>
+					<Button primary scary onClick={ onDisconnect }>
+						{ translate( 'Disconnect', { context: 'Jetpack: Action user takes to disconnect Jetpack site from .com' } ) }
+					</Button>
 				</div>
 				<a
 					onClick={ this.trackReadMoreClick }
@@ -127,7 +131,7 @@ DisconnectJetpackDialog.displayName = 'DisconnectJetpackDialog';
 DisconnectJetpackDialog.propTypes = {
 	isVisible: PropTypes.bool,
 	onDisconnect: PropTypes.func,
-	onStay: PropTypes.func,
+	onClose: PropTypes.func,
 	plan: PropTypes.string,
 	isBroken: PropTypes.bool,
 	siteName: PropTypes.string,
