@@ -1,7 +1,6 @@
 /**
 * Functions for working with theme search filters. The filter syntax is
 * {taxonomy}:{term}
-* allowing whitespace after the :
 *
 * Valid values for {taxonomy} and {term} are contained in the
 * `taxonomies` object.
@@ -15,7 +14,7 @@ import omitBy from 'lodash/omitBy';
 import includes from 'lodash/includes';
 
 // Regular expressions for matching "taxonomy:term" search-box syntax
-const FILTER_REGEX_STRING = '(\\w+)\\:\\s*([\\w-]+)';
+const FILTER_REGEX_STRING = '(\\w+)\\:([\\w-]*)';
 const FILTER_REGEX_GLOBAL = new RegExp( FILTER_REGEX_STRING, 'g' );
 const FILTER_REGEX_SINGLE = new RegExp( '^' + FILTER_REGEX_STRING + '$' );
 const FILTER_TAXONOMY_GROUP = 1;
