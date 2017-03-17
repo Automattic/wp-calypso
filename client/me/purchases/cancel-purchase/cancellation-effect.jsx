@@ -6,15 +6,29 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import { getName } from 'lib/purchases';
-import { isTheme, isGoogleApps, isJetpackPlan } from 'lib/products-values';
+import { getName, getSubscriptionEndDate, isRefundable } from 'lib/purchases';
+import { isDomainMapping, isGoogleApps, isJetpackPlan, isTheme } from 'lib/products-values';
 
 function cancellationEffectHeadline( purchase, translate ) {
 	const { domain } = purchase;
 	const	purchaseName = getName( purchase );
 
+	if ( isRefundable( purchase ) ) {
+		return translate(
+			'Are you sure you want to cancel and remove %(purchaseName)s from {{em}}%(domain)s{{/em}}? ', {
+				args: {
+					purchaseName,
+					domain
+				},
+				components: {
+					em: <em />
+				}
+			}
+		);
+	}
+
 	return translate(
-		'Are you sure you want to cancel and remove %(purchaseName)s from {{em}}%(domain)s{{/em}}? ', {
+		'Are you sure you want to cancel %(purchaseName)s from {{em}}%(domain)s{{/em}}? ', {
 			args: {
 				purchaseName,
 				domain
@@ -26,7 +40,7 @@ function cancellationEffectHeadline( purchase, translate ) {
 	);
 }
 
-function cancellationEffectDetail( purchase, translate ) {
+function refundableCancellationEffectDetail( purchase, translate ) {
 	const { refundText } = purchase;
 
 	if ( isTheme( purchase ) ) {
@@ -68,6 +82,45 @@ function cancellationEffectDetail( purchase, translate ) {
 			}
 		}
 	);
+}
+
+function nonrefundableCancellationEffectDetail( purchase, translate ) {
+	const subscriptionEndDate = getSubscriptionEndDate( purchase );
+
+	if ( isGoogleApps( purchase ) ) {
+		return translate(
+			'Your G Suite account will continue working until it expires on %(subscriptionEndDate)s.', {
+				args: {
+					subscriptionEndDate
+				}
+			}
+		);
+	}
+
+	if ( isDomainMapping( purchase ) ) {
+		return translate(
+			'Your domain mapping will continue working until it expires on %(subscriptionEndDate)s.', {
+				args: {
+					subscriptionEndDate
+				}
+			}
+		);
+	}
+
+	return translate(
+		'All plan features will continue working until your subscription expires on %(subscriptionEndDate)s.', {
+			args: {
+				subscriptionEndDate
+			}
+		}
+	);
+}
+
+function cancellationEffectDetail( purchase, translate ) {
+	if ( isRefundable( purchase ) ) {
+		return refundableCancellationEffectDetail( purchase, translate );
+	}
+	return nonrefundableCancellationEffectDetail( purchase, translate );
 }
 
 export {
