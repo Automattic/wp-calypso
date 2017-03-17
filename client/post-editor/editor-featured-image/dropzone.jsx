@@ -93,7 +93,7 @@ class FeaturedImageDropZone extends Component {
 		return (
 			<DropZone
 				onFilesDrop={ this.onFilesDrop }
-				textLabel={ this.props.translate( 'Drop files to set a featured image!' ) }
+				textLabel={ this.props.translate( 'Drop an image to set as a Featured Image' ) }
 			/>
 		);
 	}
