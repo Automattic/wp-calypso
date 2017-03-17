@@ -16,6 +16,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getEligibility } from 'state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'state/themes/actions';
 import { transferStates } from 'state/automated-transfer/constants';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 export const WpcomPluginInstallButton = props => {
 	const {
@@ -37,13 +38,23 @@ export const WpcomPluginInstallButton = props => {
 	function installButtonAction( event ) {
 		event.preventDefault();
 
-		const hasErrors = !! get( eligibilityData, 'eligibilityHolds', [] ).length;
-		const hasWarnings = !! get( eligibilityData, 'eligibilityWarnings', [] ).length;
+		const eligibilityHolds = get( eligibilityData, 'eligibilityHolds', [] );
+		const eligibilityWarnings = get( eligibilityData, 'eligibilityWarnings', [] );
+
+		const hasErrors = !! eligibilityHolds.length;
+		const hasWarnings = !! eligibilityWarnings.length;
 
 		if ( ! hasErrors && ! hasWarnings ) {
 			// No need to show eligibility warnings page, initiate transfer immediately
 			initiateTransfer( siteId, null, plugin.slug );
 		} else {
+			props.recordTracksEvent( 'calypso_automatic_transfer_plugin_install_ineligible',
+				{
+					eligibilityHolds: eligibilityHolds.join( ', ' ),
+					eligibilityWarnings: eligibilityWarnings.join( ', ' ),
+					plugin_slug: plugin.slug
+				} );
+
 			// Show eligibility warnings before proceeding
 			navigateTo( `/plugins/${ plugin.slug }/eligibility/${ siteSlug }` );
 		}
@@ -72,7 +83,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	initiateTransfer: initiateThemeTransfer
+	initiateTransfer: initiateThemeTransfer,
+	recordTracksEvent,
 };
 
 const withNavigation = WrappedComponent => props => <WrappedComponent { ...{ ...props, navigateTo: page } } />;
