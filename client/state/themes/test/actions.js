@@ -729,7 +729,7 @@ describe( 'actions', () => {
 		it( 'should dispatch status update', () => {
 			return pollThemeTransferStatus( siteId, 3, 20 )( spy ).then( () => {
 				// Two 'progress' then a 'complete'
-				expect( spy ).to.have.been.calledThrice;
+				expect( spy ).to.have.callCount( 4 );
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_TRANSFER_STATUS_RECEIVE,
 					siteId: siteId,
@@ -774,7 +774,7 @@ describe( 'actions', () => {
 
 		it( 'should dispatch success', () => {
 			return initiateThemeTransfer( siteId )( spy ).then( () => {
-				expect( spy ).to.have.been.calledThrice;
+				expect( spy ).to.have.callCount( 4 )
 
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_TRANSFER_INITIATE_REQUEST,

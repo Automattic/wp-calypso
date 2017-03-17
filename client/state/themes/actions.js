@@ -643,8 +643,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 					siteId,
 					transferId: transfer_id,
 				} );
-				const trackInitiateTransfer = recordTracksEvent( 'calypso_automated_transfer_inititate_success', { plugin } );
-				dispatch( trackInitiateTransfer );
+				dispatch( recordTracksEvent( 'calypso_automated_transfer_inititate_success', { plugin } ) );
 				dispatch( pollThemeTransferStatus( siteId, transfer_id ) );
 			} )
 			.catch( error => {
@@ -653,8 +652,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 					siteId,
 					error,
 				} );
-				const trackTransferFailure = recordTracksEvent( 'calypso_automated_transfer_inititate_failure', { plugin } );
-				dispatch( trackTransferFailure );
+				dispatch( recordTracksEvent( 'calypso_automated_transfer_inititate_failure', { plugin } ) );
 			} );
 	};
 }
