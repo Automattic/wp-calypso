@@ -114,6 +114,7 @@
 
 .editor__header,
 .editor .mce-edit-area {
+	box-sizing: border-box;
 	padding: 0 16px;
 
 	@include breakpoint( ">1040px" ) {
