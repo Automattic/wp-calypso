@@ -12,6 +12,7 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
+	ANALYTICS_EVENT_RECORD,
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
@@ -729,7 +730,7 @@ describe( 'actions', () => {
 		it( 'should dispatch status update', () => {
 			return pollThemeTransferStatus( siteId, 3, 20 )( spy ).then( () => {
 				// Two 'progress' then a 'complete'
-				expect( spy ).to.have.been.calledThrice;
+				expect( spy ).to.have.callCount( 4 );
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_TRANSFER_STATUS_RECEIVE,
 					siteId: siteId,
@@ -782,6 +783,7 @@ describe( 'actions', () => {
 				} );
 
 				expect( spy ).to.have.been.calledWith( {
+					meta: sinon.match.object,
 					type: THEME_TRANSFER_INITIATE_SUCCESS,
 					siteId,
 					transferId: 1,
