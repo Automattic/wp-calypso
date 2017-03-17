@@ -1,5 +1,11 @@
-.product-variation-types-form {
-	margin-top: 15px;
+.foldable-card.product-variations .foldable-card__content {
+	padding: 0;
+	border: 0;
+}
+
+.product-variation-types-form__wrapper {
+	padding: 24px;
+	border-top: 1px solid $gray-light;
 }
 
 .product-variation-types-form__group {

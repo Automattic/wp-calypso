@@ -43,6 +43,7 @@ export default class ProductForm extends Component {
 			<FoldableCard
 				icon=""
 				expanded={ true }
+				className="product-variations"
 				header={ ( <FormToggle onChange={ this.handleToggle } checked={ this.state.isVariation }>
 					{ isNewProduct ? i18n.translate( 'This product has variations, for example size and color.' )
 					: i18n.translate( '%(productName) has variations, for example size and color.', {
