@@ -128,13 +128,14 @@ class Upload extends React.Component {
 	failureMessage() {
 		const { translate, error } = this.props;
 
-		debug( 'Error', error );
+		debug( 'Error', { error } );
 
 		const errorCauses = {
 			exists: translate( 'Upload problem: Theme already installed on site.' ),
 			already_installed: translate( 'Upload problem: Theme already installed on site.' ),
 			'Too Large': translate( 'Upload problem: Zip file too large to upload.' ),
 			incompatible: translate( 'Upload problem: Incompatible theme.' ),
+			unsupported_mime_type: translate( 'Upload problem: Not a valid zip file' ),
 		};
 
 		const errorString = JSON.stringify( error );
@@ -150,8 +151,6 @@ class Upload extends React.Component {
 		const { translate, siteId } = this.props;
 		const errorMessage = translate( 'Please drop a single zip file' );
 
-		console.log( 'files:', files );
-
 		if ( files.length !== 1 ) {
 			notices.error( errorMessage );
 			return;
@@ -159,15 +158,6 @@ class Upload extends React.Component {
 
 		// DropZone supplies an array, FilePicker supplies a FileList
 		const file = files[ 0 ] || files.item( 0 );
-
-		const validFileType = file.type === 'application/zip' || file.type === 'application/x-zip-compressed';
-		debug( 'file mime: ', file.type );
-		console.log( 'mime type:', file.type );
-
-		if ( ! validFileType ) {
-			notices.error( errorMessage );
-			return;
-		}
 		debug( 'zip file:', file );
 
 		const action = this.props.isJetpack
