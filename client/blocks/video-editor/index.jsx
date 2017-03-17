@@ -17,13 +17,13 @@ import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-vi
 import VideoEditorButtons from './video-editor-buttons';
 import {
 	resetState,
-	updateVideoEditorPoster,
+	updatePoster,
 } from 'state/ui/editor/video-editor/actions';
 import {
 	getPosterUploadProgress,
-	getVideoEditorPoster,
-	isVideoEditorPosterUpdated,
-	videoEditorHasPosterUpdateError,
+	getPosterUrl,
+	hasPosterUpdateError,
+	isPosterUpdated,
 } from 'state/ui/editor/video-editor/selectors';
 
 /**
@@ -41,7 +41,7 @@ class VideoEditor extends Component {
 		// Connected props
 		hasPosterUpdateError: PropTypes.bool,
 		isPosterUpdated: PropTypes.bool,
-		poster: PropTypes.string,
+		posterUrl: PropTypes.string,
 		uploadProgress: PropTypes.number,
 	};
 
@@ -74,7 +74,7 @@ class VideoEditor extends Component {
 			return;
 		}
 
-		this.props.onUpdatePoster( this.getVideoEditorProps( nextProps.poster ) );
+		this.props.onUpdatePoster( this.getVideoEditorProps( nextProps.posterUrl ) );
 	}
 
 	handleSelectFrame = () => {
@@ -100,14 +100,11 @@ class VideoEditor extends Component {
 			return;
 		}
 
-		const {
-			media,
-			updatePoster,
-		} = this.props;
+		const { media } = this.props;
 		const guid = media && media.videopress_guid ? media.videopress_guid : null;
 
 		if ( guid ) {
-			updatePoster( guid, { at_time: Math.floor( currentTime ) } );
+			this.props.updatePoster( guid, { at_time: Math.floor( currentTime ) } );
 		}
 	}
 
@@ -134,20 +131,17 @@ class VideoEditor extends Component {
 			return;
 		}
 
-		const {
-			media,
-			updatePoster,
-		} = this.props;
+		const { media } = this.props;
 		const guid = media && media.videopress_guid ? media.videopress_guid : null;
 
 		if ( guid ) {
-			updatePoster( guid, { file } );
+			this.props.updatePoster( guid, { file } );
 		}
 	}
 
-	getVideoEditorProps( poster ) {
+	getVideoEditorProps( posterUrl ) {
 		const { media } = this.props;
-		const videoProperties = { poster };
+		const videoProperties = { posterUrl };
 
 		if ( media && media.ID ) {
 			videoProperties.ID = media.ID;
@@ -234,14 +228,14 @@ class VideoEditor extends Component {
 export default connect(
 	( state ) => {
 		return {
-			hasPosterUpdateError: videoEditorHasPosterUpdateError( state ),
-			isPosterUpdated: isVideoEditorPosterUpdated( state ),
-			poster: getVideoEditorPoster( state ),
+			hasPosterUpdateError: hasPosterUpdateError( state ),
+			isPosterUpdated: isPosterUpdated( state ),
+			posterUrl: getPosterUrl( state ),
 			uploadProgress: getPosterUploadProgress( state ),
 		};
 	},
 	dispatch => bindActionCreators( {
 		resetState,
-		updatePoster: updateVideoEditorPoster,
+		updatePoster,
 	}, dispatch ),
 )( localize( VideoEditor ) );

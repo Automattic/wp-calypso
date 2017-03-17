@@ -251,19 +251,19 @@ export class EditorMediaModal extends Component {
 		this.props.setView( ModalViews.DETAIL );
 	};
 
-	handleUpdatePoster = ( { ID, poster } ) => {
+	handleUpdatePoster = ( { ID, posterUrl } ) => {
 		const { site } = this.props;
 
 		// Photon does not support URLs with a querystring component.
-		poster = poster.split( '?' )[ 0 ];
+		posterUrl = posterUrl.split( '?' )[ 0 ];
 
 		if ( site ) {
 			MediaActions.edit( site.ID, {
 				ID,
 				thumbnails: {
-					fmt_hd: poster,
-					fmt_dvd: poster,
-					fmt_std: poster,
+					fmt_hd: posterUrl,
+					fmt_dvd: posterUrl,
+					fmt_std: posterUrl,
 				}
 			} );
 		}

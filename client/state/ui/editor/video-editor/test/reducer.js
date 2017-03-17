@@ -69,7 +69,7 @@ describe( 'reducer', () => {
 				posterUrl,
 			} );
 
-			expect( state ).to.eql( posterUrl );
+			expect( state ).to.eql( url );
 		} );
 
 		it( 'should change to null on some other state change', () => {
