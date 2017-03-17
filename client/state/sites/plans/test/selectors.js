@@ -337,35 +337,6 @@ describe( 'selectors', () => {
 			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'bronze' );
 			expect( discountPrice ).to.equal( 99 );
 		} );
-		it( 'should return a monthly discount price', () => {
-			const plans = {
-				data: [ {
-					currentPlan: false,
-					productSlug: 'gold',
-					rawPrice: 299,
-					rawDiscount: 0
-				}, {
-					currentPlan: false,
-					productSlug: 'silver',
-					rawPrice: 199,
-					rawDiscount: 0
-				}, {
-					currentPlan: true,
-					productSlug: 'bronze',
-					rawPrice: 99,
-					rawDiscount: 100
-				} ]
-			};
-			const state = {
-				sites: {
-					plans: {
-						77203074: plans
-					}
-				}
-			};
-			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'bronze', { isMonthly: true } );
-			expect( discountPrice ).to.equal( 8.25 );
-		} );
 		it( 'should return null, if no discount is available', () => {
 			const plans = {
 				data: [ {
@@ -392,7 +363,7 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'silver', { isMonthly: true } );
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'silver' );
 			expect( discountPrice ).to.equal( null );
 		} );
 	} );
