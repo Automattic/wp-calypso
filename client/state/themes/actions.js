@@ -638,21 +638,27 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 			} );
 		} )
 			.then( ( { transfer_id } ) => {
-				dispatch( {
+				const themeInitiateSuccessAction = {
 					type: THEME_TRANSFER_INITIATE_SUCCESS,
 					siteId,
 					transferId: transfer_id,
-				} );
-				dispatch( recordTracksEvent( 'calypso_automated_transfer_inititate_success', { plugin } ) );
+				};
+				dispatch( withAnalytics(
+					recordTracksEvent( 'calypso_automated_transfer_inititate_success', { plugin } ),
+					themeInitiateSuccessAction
+				) );
 				dispatch( pollThemeTransferStatus( siteId, transfer_id ) );
 			} )
 			.catch( error => {
-				dispatch( {
+				const themeInitiateFailureAction = {
 					type: THEME_TRANSFER_INITIATE_FAILURE,
 					siteId,
 					error,
-				} );
-				dispatch( recordTracksEvent( 'calypso_automated_transfer_inititate_failure', { plugin } ) );
+				};
+				dispatch( withAnalytics(
+					recordTracksEvent( 'calypso_automated_transfer_inititate_failure', { plugin } ),
+					themeInitiateFailureAction
+				) );
 			} );
 	};
 }
