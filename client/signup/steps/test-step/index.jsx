@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:steps:test' );
+import React from 'react';
+const debug = require( 'debug' )( 'calypso:steps:test' );
 
 /**
  * Internal dependencies
  */
-var StepWrapper = require( 'signup/step-wrapper' ),
-	SubmitStepButton = require( 'signup/submit-step-button' );
+import StepWrapper from 'signup/step-wrapper';
+import SubmitStepButton from 'signup/submit-step-button';
 
 module.exports = React.createClass( {
 	displayName: 'TestStep',

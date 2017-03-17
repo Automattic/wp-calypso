@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
 */
 import stepActions from 'lib/signup/step-actions';
 
-module.exports = {
+export default {
 	survey: {
 		stepName: 'survey',
 		props: {
