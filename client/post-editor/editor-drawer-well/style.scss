@@ -10,6 +10,7 @@
 	@extend .card;
 	display: block;
 	width: 100%;
+	min-height: 150px;
 	padding: 24px;
 	margin: 0;
 	background: lighten( $gray, 30% );
