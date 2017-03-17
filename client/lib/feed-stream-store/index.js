@@ -66,6 +66,9 @@ function trainTracksProxyForStream( stream, callback ) {
 		}
 		forEach( response && response.posts, ( post ) => {
 			if ( post.railcar ) {
+				if ( stream.isQuerySuggestion ) {
+					post.railcar.rec_result = 'suggestion';
+				}
 				analytics.tracks.recordEvent( eventName, post.railcar );
 			}
 		} );
