@@ -39,6 +39,7 @@ import CombinedCard from 'blocks/reader-combined-card';
 import fluxPostAdapter from 'lib/reader-post-flux-adapter';
 import config from 'config';
 import { keysAreEqual } from 'lib/feed-stream-store/post-key';
+import { isDiscoverBlog, isDiscoverFeed } from 'reader/discover/helper';
 
 const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );
 
@@ -96,6 +97,10 @@ function sameDay( postKey1, postKey2 ) {
 	return postKey1.localMoment.isSame( postKey2.localMoment, 'day' );
 }
 
+function isDiscoverPostKey( postKey ) {
+	return isDiscoverBlog( postKey.blogId ) || isDiscoverFeed( postKey.feedId );
+}
+
 /**
  * Takes two postKeys and combines them into a ReaderCombinedCard postKey.
  * Note: This only makes sense for postKeys from the same site
@@ -126,7 +131,9 @@ function combine( postKey1, postKey2 ) {
 const combineCards = ( postKeys ) => postKeys.reduce(
 	( accumulator, postKey ) => {
 		const lastPostKey = last( accumulator );
-		if ( sameSite( lastPostKey, postKey ) && sameDay( lastPostKey, postKey ) ) {
+		if ( sameSite( lastPostKey, postKey ) &&
+			sameDay( lastPostKey, postKey ) &&
+			! isDiscoverPostKey( postKey ) ) {
 			accumulator[ accumulator.length - 1 ] = combine( last( accumulator ), postKey );
 		} else {
 			accumulator.push( postKey );
@@ -393,7 +400,6 @@ class ReaderStream extends React.Component {
 	}
 
 	selectNextItem = () => {
-
 		// do we have a selected item? if so, just move to the next one
 		if ( this.state.selectedPostKey ) {
 			FeedStreamStoreActions.selectNextItem( this.props.postsStore.id );
