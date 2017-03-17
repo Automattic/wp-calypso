@@ -27,7 +27,12 @@ class ReaderCombinedCardPost extends React.Component {
 		post: React.PropTypes.object.isRequired,
 		streamUrl: React.PropTypes.string,
 		onClick: React.PropTypes.func,
+		showFeaturedAsset: React.PropTypes.bool,
 	};
+
+	static defaultProps = {
+		showFeaturedAsset: true,
+	}
 
 	handleCardClick = ( event ) => {
 		const rootNode = ReactDom.findDOMNode( this ),
@@ -90,8 +95,8 @@ class ReaderCombinedCardPost extends React.Component {
 
 		return (
 			<li className={ classes } onClick={ this.handleCardClick }>
-				{ featuredAsset &&
-					<div className="reader-combined-card__featured-image-wrapper">
+				{ this.props.showFeaturedAsset &&
+					<div className="reader-combined-card__featured-asset-wrapper">
 						{ featuredAsset }
 					</div>
 				}

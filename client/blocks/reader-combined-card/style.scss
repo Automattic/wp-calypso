@@ -66,7 +66,7 @@
 	}
 }
 
-.reader-combined-card__featured-image-wrapper {
+.reader-combined-card__featured-asset-wrapper {
 	min-width: 100px;
 	margin-right: 15px;
 
@@ -78,12 +78,6 @@
 .reader-combined-card .reader-featured-image {
 	display: block;
 	height: 64px;
-}
-
-@include breakpoint( '>660px' ) {
-	.reader-combined-card__post.indented .reader-combined-card__post-details {
-		margin-left: 115px;
-	}
 }
 
 .reader-combined-card__post-list {
@@ -114,7 +108,7 @@
 	}
 
 	&.is-placeholder {
-		.reader-combined-card__featured-image-wrapper,
+		.reader-combined-card__featured-asset-wrapper,
 		.reader-combined-card__post-title,
 		.reader-excerpt,
 		.reader-combined-card__visit-link-placeholder,

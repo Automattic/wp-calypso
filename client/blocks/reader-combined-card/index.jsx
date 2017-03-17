@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import { get, size } from 'lodash';
+import { get, size, filter, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -71,6 +71,7 @@ class ReaderCombinedCard extends React.Component {
 		const siteName = siteNameFromSiteAndPost( site, posts[ 0 ] );
 		const isSelectedPost = post => keysAreEqual( keyForPost( post ), selectedPostKey );
 		const followUrl = feed && feed.URL || site && site.URL;
+		const mediaCount = filter( posts, post => ! isEmpty( post.canonical_media ) ).length;
 
 		return (
 			<Card className="reader-combined-card">
@@ -113,6 +114,7 @@ class ReaderCombinedCard extends React.Component {
 							onClick={ onClick }
 							isDiscover={ isDiscover }
 							isSelected={ isSelectedPost( post ) }
+							showFeaturedAsset={ mediaCount > 0 }
 							/>
 					) ) }
 				</ul>
