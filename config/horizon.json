@@ -15,6 +15,7 @@
 	"features": {
 		"ad-tracking": false,
 		"apple-pay": false,
+		"automated-transfer": true,
 		"catch-js-errors": true,
 		"code-splitting": true,
 		"community-translator": true,
