@@ -16,7 +16,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getEligibility } from 'state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'state/themes/actions';
 import { transferStates } from 'state/automated-transfer/constants';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 export const WpcomPluginInstallButton = props => {
 	const {
@@ -48,7 +48,7 @@ export const WpcomPluginInstallButton = props => {
 			// No need to show eligibility warnings page, initiate transfer immediately
 			initiateTransfer( siteId, null, plugin.slug );
 		} else {
-			analytics.tracks.recordEvent( 'calypso_automatic_transfer_plugin_install_ineligible',
+			props.recordTracksEvent( 'calypso_automatic_transfer_plugin_install_ineligible',
 				{
 					eligibilityHolds: eligibilityHolds.join( ', ' ),
 					eligibilityWarnings: eligibilityWarnings.join( ', ' ),
@@ -83,7 +83,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	initiateTransfer: initiateThemeTransfer
+	initiateTransfer: initiateThemeTransfer,
+	recordTracksEvent,
 };
 
 const withNavigation = WrappedComponent => props => <WrappedComponent { ...{ ...props, navigateTo: page } } />;
