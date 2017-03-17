@@ -55,15 +55,6 @@ module.exports = {
 		defaultVariation: 'withoutMarketingCopy',
 		allowExistingUsers: true
 	},
-	jetpackPlansNoMonthly: {
-		datestamp: '20170302',
-		variations: {
-			showMonthly: 50,
-			hideMonthly: 50
-		},
-		defaultVariation: 'showMonthly',
-		allowExistingUsers: true
-	},
 	signupDomainsHeadline: {
 		datestamp: '20170313',
 		variations: {
