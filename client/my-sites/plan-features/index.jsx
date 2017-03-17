@@ -137,7 +137,7 @@ class PlanFeatures extends Component {
 				primaryUpgrade,
 				isPlaceholder
 			} = properties;
-			let { rawPrice, discountPrice } = properties;
+			const { rawPrice, discountPrice } = properties;
 
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
@@ -203,7 +203,7 @@ class PlanFeatures extends Component {
 				relatedMonthlyPlan,
 				isPlaceholder
 			} = properties;
-			let { rawPrice, discountPrice } = properties;
+			const { rawPrice, discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
 
 			return (
@@ -517,7 +517,7 @@ export default connect(
 
 		return {
 			canPurchase,
-			planProperties: planProperties
+			planProperties
 		};
 	},
 	{
