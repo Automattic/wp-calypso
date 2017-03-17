@@ -233,6 +233,7 @@ const CancelPurchaseButton = React.createClass( {
 
 	submitCancelAndRefundPurchase() {
 		const { purchase, selectedSite } = this.props;
+		const refundable = isRefundable( purchase );
 
 		this.setState( {
 			submitting: true
@@ -249,7 +250,7 @@ const CancelPurchaseButton = React.createClass( {
 					text: this.state.survey.questionTwoText
 				},
 				'what-better': { text: this.state.survey.questionThreeText },
-				type: 'refund'
+				type: refundable ? 'refund' : 'cancel-without-refund'
 			};
 
 			submitSurvey(
@@ -259,7 +260,7 @@ const CancelPurchaseButton = React.createClass( {
 			);
 		}
 
-		if ( isRefundable( purchase ) ) {
+		if ( refundable ) {
 			cancelAndRefundPurchase( purchase.id, { product_id: purchase.productId }, this.handleSubmit );
 		} else {
 			this.cancelPurchase();
