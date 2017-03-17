@@ -18,12 +18,13 @@ import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import { getName, getSubscriptionEndDate, isOneTimePurchase, isRefundable, isSubscription } from 'lib/purchases';
 import { enrichedSurveyData } from '../utils';
-import { isDomainRegistration, isTheme, isGoogleApps, isJetpackPlan } from 'lib/products-values';
+import { isDomainRegistration } from 'lib/products-values';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
 import { refreshSitePlans } from 'state/sites/plans/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
 
 const CancelPurchaseButton = React.createClass( {
 	propTypes: {
@@ -268,63 +269,13 @@ const CancelPurchaseButton = React.createClass( {
 	},
 
 	renderCancellationEffect() {
-		const { domain, refundText } = this.props.purchase,
-			purchaseName = getName( this.props.purchase );
-
-		let cancelationEffectText = this.translate(
-			'All plan features and custom changes will be removed from your site and you will be refunded %(cost)s.', {
-				args: {
-					cost: refundText
-				}
-			}
-		);
-
-		if ( isTheme( this.props.purchase ) ) {
-			cancelationEffectText = this.translate(
-				'Your site\'s appearance will revert to its previously selected theme and you will be refunded %(cost)s.', {
-					args: {
-						cost: refundText
-					}
-				}
-			);
-		}
-
-		if ( isGoogleApps( this.props.purchase ) ) {
-			cancelationEffectText = this.translate(
-				'You will be refunded %(cost)s, but your G Suite account will continue working without interruption. ' +
-				'You will be able to manage your G Suite billing directly through Google.', {
-					args: {
-						cost: refundText
-					}
-				}
-			);
-		}
-
-		if ( isJetpackPlan( this.props.purchase ) ) {
-			cancelationEffectText = this.translate(
-				'All plan features - spam filtering, backups, and security screening - will be removed from your site ' +
-				'and you will be refunded %(cost)s.', {
-					args: {
-						cost: refundText
-					}
-				}
-			);
-		}
+		const { props, translate } = this;
+		const { purchase } = props;
 
 		return (
 			<p>
-				{ this.translate(
-					'Are you sure you want to cancel and remove %(purchaseName)s from {{em}}%(domain)s{{/em}}? ', {
-						args: {
-							purchaseName,
-							domain
-						},
-						components: {
-							em: <em />
-						}
-					}
-				) }
-				{ cancelationEffectText }
+				{ cancellationEffectHeadline( purchase, translate ) }
+				{ cancellationEffectDetail( purchase, translate ) }
 			</p>
 		);
 	},
