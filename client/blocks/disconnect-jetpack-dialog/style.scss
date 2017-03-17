@@ -61,18 +61,15 @@
 	padding: 16px;
 	margin: 0 -24px -24px;
 	text-align: right;
-}
 
-.disconnect-jetpack-dialog__dialog__action-buttons .button {
-	margin-left: 10px;
-	min-width: 80px;
+	.button {
+		margin-left: 10px;
+		min-width: 80px;
 
-	.is-left-aligned {
-		margin-left: 0;
-		margin-right: 10px;
+		.is-left-aligned {
+			float: left;
+			margin-left: 0;
+			margin-right: 10px;
+		}
 	}
-}
-
-.disconnect-jetpack-dialog__dialog__action-buttons .is-left-aligned {
-	float: left;
 }
