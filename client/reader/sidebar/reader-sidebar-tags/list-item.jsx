@@ -38,11 +38,11 @@ export class ReaderSidebarTagsListItem extends Component {
 		const { tag, path, onUnfollow, translate } = this.props;
 
 		return (
-			<li key={ tag.ID } className={ ReaderSidebarHelper.itemLinkClass( '/tag/' + tag.slug, path, { 'sidebar-dynamic-menu__tag': true } ) }>
-				<a className="sidebar__menu-item-label" href={ tag.URL }>
-					<div className="sidebar__menu-item-tagname">{ tag.display_name || tag.slug }</div>
+			<li key={ tag.id } className={ ReaderSidebarHelper.itemLinkClass( '/tag/' + tag.slug, path, { 'sidebar-dynamic-menu__tag': true } ) }>
+				<a className="sidebar__menu-item-label" href={ tag.url }>
+					<div className="sidebar__menu-item-tagname">{ tag.displayName || tag.slug }</div>
 				</a>
-				{ tag.ID !== 'pending' ? <button className="sidebar__menu-action" data-tag-slug={ tag.slug } onClick={ onUnfollow }>
+				{ tag.id !== 'pending' ? <button className="sidebar__menu-action" data-tag-slug={ tag.slug } onClick={ onUnfollow }>
 					<Gridicon icon="cross-small" />
 					<span className="sidebar__menu-action-label">{ translate( 'Unfollow' ) }</span>
 				</button> : null }
@@ -52,4 +52,3 @@ export class ReaderSidebarTagsListItem extends Component {
 }
 
 export default localize( ReaderSidebarTagsListItem );
-
