@@ -83,7 +83,7 @@ describe( 'actions', () => {
 	describe( '#updatePosterUploadProgress()', () => {
 		it( 'should return an action object', () => {
 			const percentage = 50;
-			const action = updatePosterUploadProgress( percentage );
+			const action = showUploadProgress( percentage );
 
 			expect( action ).to.eql( {
 				type: VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,

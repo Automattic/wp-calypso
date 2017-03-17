@@ -8,7 +8,7 @@ import {
 	closeModal,
 	setPosterUrl,
 	showError,
-	showUploadProgress,rs
+	showUploadProgress,
 } from 'state/ui/editor/video-editor/actions';
 
 /**
