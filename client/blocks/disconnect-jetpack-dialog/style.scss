@@ -28,16 +28,16 @@
 }
 
 .disconnect-jetpack-dialog__feature {
-	padding: 12px 8px 12px 32px;
+	padding: 14px 24px 14px 44px;
 	text-align: left;
 	font-size: 13px;
 	border-bottom: 1px solid lighten( $gray, 20% );
 
 	.gridicon {
 		float: left;
-		margin-right: 5px;
-		margin-top: -2px;
-		margin-left: -24px;
+		width: 18px;
+		height: 18px;
+		margin-left: -28px;
 	}
 }
 
