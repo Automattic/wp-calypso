@@ -17,15 +17,6 @@ module.exports = {
 		defaultVariation: 'designTypeWithStore',
 		allowExistingUsers: false,
 	},
-	signupThemeUpload: {
-		datestamp: '20160928',
-		variations: {
-			showThemeUpload: 10,
-			hideThemeUpload: 90,
-		},
-		defaultVariation: 'hideThemeUpload',
-		allowExistingUsers: false,
-	},
 	userFirstSignup: {
 		datestamp: '20160124',
 		variations: {

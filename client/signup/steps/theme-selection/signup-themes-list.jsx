@@ -11,7 +11,6 @@ import { identity } from 'lodash';
  */
 import getThemes from 'lib/signup/themes';
 import ThemesList from 'components/themes-list';
-import { abtest } from 'lib/abtest';
 
 class SignupThemesList extends Component {
 
@@ -29,7 +28,7 @@ class SignupThemesList extends Component {
 		designType: null,
 		handleScreenshotClick: noop,
 		handleThemeUpload: noop,
-		showThemeUpload: 'showThemeUpload' === abtest( 'signupThemeUpload' ),
+		showThemeUpload: false,
 		translate: identity
 	};
 
@@ -72,4 +71,3 @@ class SignupThemesList extends Component {
 }
 
 export default localize( SignupThemesList );
-
