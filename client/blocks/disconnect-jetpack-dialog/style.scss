@@ -13,13 +13,14 @@
 		font-weight: 300;
 		height: 2em;
 		line-height: 32px;
+		margin-top: .5em;
 		margin-bottom: .5em;
 	}
 }
 
 .disconnect-jetpack-dialog__highlight {
 	color: darken( $gray, 10% );
-	margin-bottom: 1em;
+	margin-bottom: 1.5em;
 	font-size: 16px;
 }
 
