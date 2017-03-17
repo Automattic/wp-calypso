@@ -643,6 +643,8 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 					siteId,
 					transferId: transfer_id,
 				} );
+				const trackInitiateTransfer = recordTracksEvent( 'calypso_automated_transfer_inititate_success', { plugin } );
+				dispatch( trackInitiateTransfer );
 				dispatch( pollThemeTransferStatus( siteId, transfer_id ) );
 			} )
 			.catch( error => {
@@ -651,6 +653,8 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 					siteId,
 					error,
 				} );
+				const trackTransferFailure = recordTracksEvent( 'calypso_automated_transfer_inititate_failure', { plugin } );
+				dispatch( trackTransferFailure );
 			} );
 	};
 }
@@ -705,6 +709,7 @@ export function pollThemeTransferStatus( siteId, transferId, interval = 3000, ti
 					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
 					if ( status === 'complete' ) {
 						// finished, stop polling
+						dispatch( recordTracksEvent( 'calypso_automated_transfer_complete', { transfer_id: transferId } ) );
 						return resolve();
 					}
 					// poll again
