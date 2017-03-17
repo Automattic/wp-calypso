@@ -3,19 +3,26 @@
  */
 import { expect, assert } from 'chai';
 import moment from 'moment';
+import mockery from 'mockery';
+let utils, sameDay, sameSite, combine, combineCards, injectRecommendations;
 
 /**
  * Internal dependencies
  */
-import {
-	sameDay,
-	sameSite,
-	combine,
-	combineCards,
-	injectRecommendations
-} from '../utils';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'reader stream', () => {
+	useMockery();
+	before( () => {
+		mockery.registerMock( 'lib/user/utils', {} );
+		utils = require( '../utils' );
+		sameDay = utils.sameDay;
+		sameSite = utils.sameSite;
+		combine = utils.combine;
+		combineCards = utils.combineCards;
+		injectRecommendations = utils.injectRecommendations;
+	} );
+
 	const postKey1 = { feedId: 'feed1', postId: 'postId1' };
 	const postKey2 = { feedId: 'feed1', postId: 'postId2' };
 	const postIds34 = [ 'postId3', 'postId4' ];
@@ -171,6 +178,24 @@ describe( 'reader stream', () => {
 			const postKeys = [ site1Key1, site2Key2, site3Key1, site4Key1 ];
 			const combinedItems = combineCards( postKeys );
 			expect( combinedItems ).eql( postKeys );
+		} );
+
+		it( 'should not combine discover cards', () => {
+			const discoverFeedId = 41325786;
+			const discoverSiteId = 53424024;
+			const discoverFeedPostKeys = [
+				{ feedId: discoverFeedId, postId: '1', localMoment: moment(), },
+				{ feedId: discoverFeedId, postId: '2', localMoment: moment(), },
+			];
+			const discoverSitePostKeys = [
+				{ blogId: discoverSiteId, postId: '1', localMoment: moment(), },
+				{ blogId: discoverSiteId, postId: '2', localMoment: moment(), },
+			];
+			const combinedFeedItems = combineCards( discoverFeedPostKeys );
+			const combinedSiteItems = combineCards( discoverSitePostKeys );
+
+			expect( combinedFeedItems ).eql( discoverFeedPostKeys );
+			expect( combinedSiteItems ).eql( discoverSitePostKeys );
 		} );
 
 		it( 'should not combine cards that are greater than a day apart', () => {
