@@ -129,11 +129,11 @@ function renderNoVisibleSites( context ) {
 }
 
 function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
-	const FeatureUnavailable = require( 'components/empty-content/feature-unavailable' );
+	const DomainOnly = require( 'my-sites/upgrades/domain-management/list/domain-only' );
 	const { store: reduxStore } = reactContext;
 
 	renderWithReduxStore( (
-			<FeatureUnavailable domainName={ selectedSite.slug } siteId={ selectedSite.ID } />
+			<DomainOnly domainName={ selectedSite.slug } siteId={ selectedSite.ID } hasNotice={ false } />
 		),
 		document.getElementById( 'primary' ),
 		reduxStore
