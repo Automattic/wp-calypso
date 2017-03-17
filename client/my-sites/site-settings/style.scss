@@ -334,6 +334,26 @@
 	margin-bottom: 17px;
 }
 
+.site-settings__foldable-card {
+	&.foldable-card,
+	&.foldable-card.is-expanded {
+		margin-bottom: 16px;
+	}
+
+	.foldable-card__header {
+		padding: 24px;
+	}
+
+	.foldable-card__expand {
+		width: 64px;
+	}
+
+	&.is-expanded .foldable-card__content {
+		padding: 8px 24px 24px;
+		border-top: 1px lighten( $gray, 20% ) solid;
+	}
+}
+
 // Site settings group styles
 .site-settings__module-settings {
 	.form-label {
@@ -349,6 +369,10 @@
 
 .site-settings__info-link-container {
 	float: right;
+}
+
+.site-settings__add-to-whitelist {
+	margin-top: 3px;
 }
 
 .site-settings__date-time-format {
