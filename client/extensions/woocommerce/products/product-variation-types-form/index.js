@@ -9,19 +9,13 @@ import clone from 'lodash/clone';
  * Internal dependencies
  */
 import FormLabel from 'components/forms/form-label';
-import FormToggle from 'components/forms/form-toggle';
 import FormTextInput from 'components/forms/form-text-input';
 import Button from 'components/button';
 import TokenField from 'components/token-field';
 
-export default class ProductsVariationTypesForm extends Component {
+export default class ProductVariationTypesForm extends Component {
 
 	static propTypes = {
-		label: PropTypes.string,
-		description: PropTypes.oneOfType( [
-			PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
-			PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ) )
-		] ),
 		product: PropTypes.shape( {
 			id: PropTypes.number.isRequired,
 			name: PropTypes.string.isRequired,
@@ -33,25 +27,15 @@ export default class ProductsVariationTypesForm extends Component {
 		} ) ),
 	};
 
-	static defaultProps = {
-		label: i18n.translate( 'Okay! Let\'s add some variations.' ),
-		description: i18n.translate(
-			'A common {{em}}variation type{{/em}} is color. The {{em}}values{{/em}} would be the colors the product is available in.',
-			{ components: { em: <em /> } }
-		),
-	};
-
 	constructor( props ) {
 		super( props );
 
 		this.state = {
 			variations: this.props.variations ? this.props.variations : this.getInitialFields(),
-			isVariation: props.product && 'variable' === props.product.type ? true : false,
 		};
 
 		this.addVariation = this.addVariation.bind( this );
 		this.renderInputs = this.renderInputs.bind( this );
-		this.handleToggle = this.handleToggle.bind( this );
 	}
 
 	getInitialFields() {
@@ -63,12 +47,6 @@ export default class ProductsVariationTypesForm extends Component {
 			type: '',
 			values: [],
 		};
-	}
-
-	handleToggle() {
-		this.setState( ( prevState ) => ( {
-			isVariation: ! prevState.isVariation,
-		} ) );
 	}
 
 	updateType( index, event ) {
@@ -89,13 +67,13 @@ export default class ProductsVariationTypesForm extends Component {
 
 	renderInputs( variation, index ) {
 		return (
-			<div key={index} className="products-variation-types-form__fieldset">
+			<div key={index} className="product-variation-types-form__fieldset">
 				<FormTextInput
 					placeholder={ i18n.translate( 'Color' ) }
 					value={ variation.type }
 					name="type"
 					onChange={ this.updateType.bind( this, index ) }
-					className="products-variation-types-form__field"
+					className="product-variation-types-form__field"
 				/>
 				<TokenField
 					placeholder={ i18n.translate( 'Comma separate these' ) }
@@ -115,41 +93,27 @@ export default class ProductsVariationTypesForm extends Component {
 
 	render() {
 		const fields = this.state.variations,
-			inputs = fields.map( this.renderInputs ),
-			isNewProduct = this.props.product ? false : true;
-
-		let variationsForm = null;
-		if ( this.state.isVariation ) {
-			variationsForm = (
-				<div className="products-variation-types-form__wrapper">
-					<strong>{ this.props.label }</strong>
-					<p>{ this.props.description }</p>
-
-					<div className="products-variation-types-form__group">
-						<div className="products-variation-types-form__labels">
-							<FormLabel className="products-variation-types-form__label">{ i18n.translate( 'Variation type' ) }</FormLabel>
-							<FormLabel>{ i18n.translate( 'Values' ) }</FormLabel>
-						</div>
-						{inputs}
-					</div>
-
-					<Button onClick={ this.addVariation }>{ i18n.translate( 'Add another variation' ) }</Button>
-				</div>
-			);
-		}
+			inputs = fields.map( this.renderInputs );
 		return (
-			<div>
-				<FormToggle onChange={ this.handleToggle } checked={ this.state.isVariation }>
-					{ isNewProduct ? i18n.translate( 'This product has variations, for example size and color.' )
-					: i18n.translate( '%(productName) has variations, for example size and color.', {
-						args: {
-							productName: this.props.product.name,
-						}
-					} )
-					}
-				</FormToggle>
-				{variationsForm}
-			</div>
+			<div className="product-variation-types-form">
+				<strong>{ i18n.translate( 'Variation types' ) }</strong>
+				<p>
+					{ i18n.translate(
+						'Let\'s add some variations! A common {{em}}variation type{{/em}} is color. The {{em}}values{{/em}} would be the colors the product is available in.',
+						{ components: { em: <em /> } }
+					) }
+				</p>
+
+				<div className="product-variation-types-form__group">
+					<div className="product-variation-types-form__labels">
+						<FormLabel className="product-variation-types-form__label">{ i18n.translate( 'Variation type' ) }</FormLabel>
+						<FormLabel>{ i18n.translate( 'Variation values' ) }</FormLabel>
+					</div>
+					{inputs}
+				</div>
+
+				<Button onClick={ this.addVariation }>{ i18n.translate( 'Add another variation' ) }</Button>
+		</div>
 		);
 	}
 

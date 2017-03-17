@@ -1,23 +1,22 @@
-.products-variation-types-form__wrapper {
-	margin-top: 16px;
+.product-variation-types-form {
+	margin-top: 15px;
 }
 
-.products-variation-types-form__group {
+.product-variation-types-form__group {
 
-	.products-variation-types-form__fieldset,
-	.products-variation-types-form__labels {
+	.product-variation-types-form__fieldset, .product-variation-types-form__labels {
 		display: flex;
 	}
 
-	.products-variation-types-form__fieldset {
+	.product-variation-types-form__fieldset {
 		margin-bottom: 16px;
 	}
 
-	.products-variation-types-form__field {
+	.product-variation-types-form__field {
 		width: 50%;
 	}
 
-	.products-variation-types-form__label {
+	.product-variation-types-form__label {
 		width: 35%;
 	}
 
