@@ -160,7 +160,7 @@ class DesignTypeWithStoreStep extends Component {
 						{ ... this.props }
 						onBackClick={ this.handleStoreBackClick }
 						setRef={ this.setPressableStore }
-					/>;
+					/>
 				</div>
 				<div className={ designTypeListClassName }>
 					{ this.getChoices().map( this.renderChoice ) }
