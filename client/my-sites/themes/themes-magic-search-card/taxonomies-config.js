@@ -4,10 +4,19 @@
 import { get } from 'lodash';
 
 /**
-	* This is a helper file that establishes designed visual connection between
-	* search taxonomy and its graphical representation.
-	*/
+ * Taxonomies allowed in the search welcome suggestion card.
+ */
+export const taxonomiesWelcomeWhitelist = [
+	'column',
+	'feature',
+	'layout',
+	'subject',
+	'style',
+];
 
+/**
+ * Associates an icon to each taxonomy.
+ */
 const taxonomyToGridiconMap = {
 	color: 'ink',
 	column: 'align-justify',
