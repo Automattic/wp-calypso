@@ -109,6 +109,10 @@
 		-webkit-appearance: none;
 	}
 
+	&:disabled {
+		background: $white;
+	}
+
 	&:focus {
 		box-shadow: none;
 		border: none;
