@@ -25,18 +25,20 @@ const SeoSettingsHelpCard = ( {
 		<div>
 			<SectionHeader label={ translate( 'Search Engine Optimization' ) } />
 			<Card>
-				{ translate(
-					'{{b}}WordPress.com has great SEO{{/b}} out of the box. All of our themes are optimized ' +
-					'for search engines, so you don\'t have to do anything extra. However, you can tweak ' +
-					'these settings if you\'d like more advanced control. Read more about what you can do ' +
-					'to {{a}}optimize your site\'s SEO{{/a}}.',
-					{
-						components: {
-							a: <a href={ seoHelpLink } />,
-							b: <strong />
+				<p>
+					{ translate(
+						'{{b}}WordPress.com has great SEO{{/b}} out of the box. All of our themes are optimized ' +
+						'for search engines, so you don\'t have to do anything extra. However, you can tweak ' +
+						'these settings if you\'d like more advanced control. Read more about what you can do ' +
+						'to {{a}}optimize your site\'s SEO{{/a}}.',
+						{
+							components: {
+								a: <a href={ seoHelpLink } />,
+								b: <strong />
+							}
 						}
-					}
-				) }
+					) }
+				</p>
 			</Card>
 		</div>
 	);
