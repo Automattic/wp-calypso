@@ -17,17 +17,6 @@ module.exports = {
 		defaultVariation: 'designTypeWithStore',
 		allowExistingUsers: false,
 	},
-	signupStoreBenchmarking: {
-		datestamp: '20160927',
-		variations: {
-			pressable: 97,
-			bluehost: 1,
-			bluehostWithWoo: 1,
-			siteground: 1
-		},
-		defaultVariation: 'pressable',
-		allowExistingUsers: false,
-	},
 	signupThemeUpload: {
 		datestamp: '20160928',
 		variations: {
