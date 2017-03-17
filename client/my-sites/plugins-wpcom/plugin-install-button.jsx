@@ -49,9 +49,11 @@ export const WpcomPluginInstallButton = props => {
 			initiateTransfer( siteId, null, plugin.slug );
 		} else {
 			analytics.tracks.recordEvent( 'calypso_automatic_transfer_plugin_install_ineligible',
-				{ eligibilityHolds: eligibilityHolds.join( ', ' ),
+				{
+					eligibilityHolds: eligibilityHolds.join( ', ' ),
 					eligibilityWarnings: eligibilityWarnings.join( ', ' ),
-					plugin_slug: plugin.slug } );
+					plugin_slug: plugin.slug
+				} );
 
 			// Show eligibility warnings before proceeding
 			navigateTo( `/plugins/${ plugin.slug }/eligibility/${ siteSlug }` );
