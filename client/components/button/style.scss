@@ -110,8 +110,8 @@ button {
 
 // Primary buttons
 @mixin button-is-primary {
-	background: $blue-medium;
-	border-color: darken( $blue-medium, 8% );
+	background: $blue-wordpress;
+	border-color: darken( $blue-wordpress, 8% );
 	color: $white;
 
 	&:hover,
@@ -281,7 +281,7 @@ button {
 	border: none;
 	border-radius: 0;
 	padding: 0;
-	color: $blue-medium;
+	color: $blue-wordpress;
 	font-weight: 400;
 	font-size: inherit;
 	line-height: 1.65;
