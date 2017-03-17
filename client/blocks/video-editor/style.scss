@@ -45,6 +45,11 @@
 	transform: translate( -50%, -50% );
 }
 
+.video-editor__content .progress-bar {
+	width: 90%;
+	margin: 0 auto;
+}
+
 .video-editor__text {
 	color: $white;
 	text-align: center;

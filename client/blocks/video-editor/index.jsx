@@ -200,13 +200,13 @@ class VideoEditor extends Component {
 								onScriptLoadError={ this.handleScriptLoadError }
 								onVideoLoaded={ this.handleVideoLoaded }
 							/>
-							{ !! uploadProgress && ! error && ! isSelectingFrame &&
-								<ProgressBar
-									isPulsing={ true }
-									total={ 100 }
-									value={ uploadProgress } />
-							}
 						</div>
+						{ !! uploadProgress && ! error && ! isSelectingFrame &&
+							<ProgressBar
+								isPulsing={ true }
+								total={ 100 }
+								value={ uploadProgress } />
+						}
 						<span className="video-editor__text">
 							{ translate( 'Select a frame to use as the thumbnail image or upload your own.' ) }
 						</span>
