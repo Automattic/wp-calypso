@@ -24,15 +24,15 @@
 	font-size: 16px;
 }
 
-.disconnect-jetpack-dialog__feature:first-of-type {
-	border-top: 1px solid lighten( $gray, 20% );
-}
-
 .disconnect-jetpack-dialog__feature {
 	padding: 14px 24px 14px 44px;
 	text-align: left;
 	font-size: 13px;
-	border-bottom: 1px solid lighten( $gray, 20% );
+	border-bottom: 1px solid lighten( $gray, 25% );
+
+	&:first-of-type {
+		border-top: 1px solid lighten( $gray, 25% );
+	}
 
 	.gridicon {
 		float: left;
