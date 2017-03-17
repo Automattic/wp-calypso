@@ -66,9 +66,22 @@
 	}
 }
 
-.reader-combined-card__featured-image-wrapper {
-	min-width: 100px;
+// Indent at all breakpoints but only if we have a featured asset
+.reader-combined-card__post.has-featured-asset .reader-combined-card__featured-asset-wrapper {
+	min-width: 64px;
 	margin-right: 15px;
+
+	@include breakpoint( '>660px' ) {
+		min-width: 100px;
+	}
+}
+
+// Always indent the wrapper at larger breakpoints, asset or no asset
+.reader-combined-card__featured-asset-wrapper {
+	@include breakpoint( '>660px' ) {
+		min-width: 100px;
+		margin-right: 15px;
+	}
 }
 
 .reader-combined-card .reader-featured-image {
@@ -104,7 +117,7 @@
 	}
 
 	&.is-placeholder {
-		.reader-combined-card__featured-image-wrapper,
+		.reader-combined-card__featured-asset-wrapper,
 		.reader-combined-card__post-title,
 		.reader-excerpt,
 		.reader-combined-card__visit-link-placeholder,
