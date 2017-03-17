@@ -1,36 +1,33 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var flows = require( 'signup/config/flows' );
+import flows from 'signup/config/flows';
+import { localize } from 'i18n-calypso';
 
-module.exports = React.createClass( {
-	displayName: 'FlowProgressIndicator',
+const FlowProgressIndicator = ( { flowName, positionInFlow, translate } ) => {
+	const flow = flows.getFlow( flowName ),
+		flowStepsLength = flow.steps.length,
+		hideProgressIndicator = flow.hideProgressIndicator;
 
-	getFlowLength: function() {
-		var flow = flows.getFlow( this.props.flowName );
-
-		return flow.steps.length;
-	},
-
-	render: function() {
-		if ( this.getFlowLength() > 1 ) {
-			return (
-				<div className="flow-progress-indicator">{
-					this.translate( 'Step %(stepNumber)d of %(stepTotal)d', {
-						args: {
-							stepNumber: this.props.positionInFlow + 1,
-							stepTotal: this.getFlowLength()
-						}
-					} )
-				}</div>
-			);
-		}
-
+	if ( hideProgressIndicator || flowStepsLength < 2 ) {
 		return null;
 	}
-} );
+
+	return (
+		<div className="flow-progress-indicator">{
+			translate( 'Step %(stepNumber)d of %(stepTotal)d', {
+				args: {
+					stepNumber: positionInFlow + 1,
+					stepTotal: flowStepsLength
+				}
+			} )
+		}</div>
+	);
+};
+
+export default localize( FlowProgressIndicator );
