@@ -38,24 +38,24 @@ const Suggestions = React.createClass( {
 		};
 	},
 
-	componentWillMount() {
-		const suggestions = this.narrowDown( this.props.input );
+	setInitialState( input ) {
+		const suggestions = this.narrowDown( input );
+		const taxonomySuggestionsArray = this.createTaxonomySuggestionsArray( suggestions );
 		this.setState( {
-			suggestions: suggestions,
-			taxonomySuggestionsArray: this.createTaxonomySuggestionsArray( suggestions ),
-			currentSuggestion: '',
+			suggestions,
+			taxonomySuggestionsArray,
+			suggestionPosition: 0,
+			currentSuggestion: taxonomySuggestionsArray[ 0 ],
 		} );
+	},
+
+	componentWillMount() {
+		this.setInitialState( this.props.input );
 	},
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.input !== this.props.input ) {
-			const suggestions = this.narrowDown( nextProps.input );
-			this.setState( {
-				suggestions: suggestions,
-				taxonomySuggestionsArray: this.createTaxonomySuggestionsArray( suggestions ),
-				suggestionPosition: -1,
-				currentSuggestion: '',
-			} );
+			this.setInitialState( nextProps.input );
 		}
 	},
 

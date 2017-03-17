@@ -18,7 +18,7 @@ class MagicSearchWelcome extends React.Component {
 		super( props );
 	}
 
-	state = { suggestionPosition: -1 }
+	state = { suggestionPosition: 0 }
 
 	onMouseDown = ( event ) => {
 		this.props.suggestionsCallback( event.target.textContent + ':' );
