@@ -7,18 +7,18 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	VIDEO_EDITOR_POSTER_UPDATE,
-	VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
-	VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
 	VIDEO_EDITOR_RESET_STATE,
+	VIDEO_EDITOR_SET_POSTER_URL,
+	VIDEO_EDITOR_SHOW_ERROR,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
+	VIDEO_EDITOR_UPDATE_POSTER,
 } from 'state/action-types';
 import {
 	resetState,
+	setPosterUrl,
+	showError,
 	showUploadProgress,
-	updateVideoEditorPoster,
-	updateVideoEditorPosterSuccess,
-	updateVideoEditorPosterFailure,
+	updatePoster,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -32,38 +32,38 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#updateVideoEditorPoster()', () => {
+	describe( '#updatePoster()', () => {
 		it( 'should return an action object', () => {
 			const videoId = 'dummy-videoId';
 			const params = { at_time: 1 };
-			const action = updateVideoEditorPoster( videoId, params );
+			const action = updatePoster( videoId, params );
 
 			expect( action ).to.eql( {
-				type: VIDEO_EDITOR_POSTER_UPDATE,
+				type: VIDEO_EDITOR_UPDATE_POSTER,
 				videoId,
 				params
 			} );
 		} );
 	} );
 
-	describe( '#updateVideoEditorPosterSuccess()', () => {
+	describe( '#setPosterUrl()', () => {
 		it( 'should return an action object', () => {
 			const poster = 'https://i1.wp.com/videos.files.wordpress.com/dummy-guid/thumbnail.jpg?ssl=1';
-			const action = updateVideoEditorPosterSuccess( poster );
+			const action = setPosterUrl( poster );
 
 			expect( action ).to.eql( {
-				type: VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
-				poster,
+				type: VIDEO_EDITOR_SET_POSTER_URL,
+				posterUrl: poster,
 			} );
 		} );
 	} );
 
-	describe( '#updateVideoEditorPosterFailure()', () => {
+	describe( '#showError()', () => {
 		it( 'should return an action object', () => {
-			const action = updateVideoEditorPosterFailure();
+			const action = showError();
 
 			expect( action ).to.eql( {
-				type: VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
+				type: VIDEO_EDITOR_SHOW_ERROR,
 			} );
 		} );
 	} );

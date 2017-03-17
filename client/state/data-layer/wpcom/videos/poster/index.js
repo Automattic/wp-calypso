@@ -3,11 +3,11 @@
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { VIDEO_EDITOR_POSTER_UPDATE } from 'state/action-types';
+import { VIDEO_EDITOR_UPDATE_POSTER } from 'state/action-types';
 import {
+	setPosterUrl,
+	showError,
 	showUploadProgress,
-	updateVideoEditorPosterSuccess,
-	updateVideoEditorPosterFailure,
 } from 'state/ui/editor/video-editor/actions';
 
 /**
@@ -18,7 +18,7 @@ import {
  * @param {Function} next  Dispatches to next middleware in chain
  * @returns {Object} original action
  */
-export const updateVideoEditorPoster = ( { dispatch }, action, next ) => {
+export const updatePoster = ( { dispatch }, action, next ) => {
 	if ( ! ( 'file' in action.params ) && ! ( 'at_time' in action.params ) ) {
 		return next( action );
 	}
@@ -42,12 +42,12 @@ export const updateVideoEditorPoster = ( { dispatch }, action, next ) => {
 	return next( action );
 };
 
-export const updateVideoPosterSuccess = ( { dispatch }, action, next, { poster } ) => {
-	dispatch( updateVideoEditorPosterSuccess( poster ) );
+export const updatePosterUrl = ( { dispatch }, action, next, { poster } ) => {
+	dispatch( setPosterUrl( poster ) );
 };
 
-export const updateVideoPosterError = ( { dispatch } ) => {
-	dispatch( updateVideoEditorPosterFailure() );
+export const updatePosterError = ( { dispatch } ) => {
+	dispatch( showError() );
 };
 
 export const updateUploadProgress = ( { dispatch }, action, next, progress ) => {
@@ -60,9 +60,8 @@ export const updateUploadProgress = ( { dispatch }, action, next, progress ) => 
 	dispatch( showUploadProgress( percentage ) );
 };
 
-export const dispatchPosterRequest = dispatchRequest( updateVideoEditorPoster, updateVideoPosterSuccess,
-	updateVideoPosterError, updateUploadProgress );
+export const dispatchPosterRequest = dispatchRequest( updatePoster, updatePosterUrl, updatePosterError, updateUploadProgress );
 
 export default {
-	[ VIDEO_EDITOR_POSTER_UPDATE ]: [ dispatchPosterRequest ],
+	[ VIDEO_EDITOR_UPDATE_POSTER ]: [ dispatchPosterRequest ],
 };

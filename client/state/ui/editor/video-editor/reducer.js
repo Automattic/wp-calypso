@@ -7,9 +7,9 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
-	VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
 	VIDEO_EDITOR_RESET_STATE,
+	VIDEO_EDITOR_SET_POSTER_URL,
+	VIDEO_EDITOR_SHOW_ERROR,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 } from 'state/action-types';
 
@@ -20,10 +20,10 @@ import {
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const posterIsUpdated = ( state = false, action ) => {
+export const isPosterUpdated = ( state = false, action ) => {
 	switch ( action.type ) {
-		case VIDEO_EDITOR_POSTER_UPDATE_SUCCESS:
-		case VIDEO_EDITOR_POSTER_UPDATE_FAILURE:
+		case VIDEO_EDITOR_SET_POSTER_URL:
+		case VIDEO_EDITOR_SHOW_ERROR:
 			return true;
 
 		case VIDEO_EDITOR_RESET_STATE:
@@ -40,10 +40,10 @@ export const posterIsUpdated = ( state = false, action ) => {
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const poster = ( state = '', action ) => {
+export const posterUrl = ( state = '', action ) => {
 	switch ( action.type ) {
-		case VIDEO_EDITOR_POSTER_UPDATE_SUCCESS:
-			return action.poster;
+		case VIDEO_EDITOR_SET_POSTER_URL:
+			return action.posterUrl;
 
 		case VIDEO_EDITOR_RESET_STATE:
 			return '';
@@ -80,10 +80,10 @@ export const uploadProgress = ( state = 0, action ) => {
  */
 export const hasPosterUpdateError = ( state = false, action ) => {
 	switch ( action.type ) {
-		case VIDEO_EDITOR_POSTER_UPDATE_FAILURE:
+		case VIDEO_EDITOR_SHOW_ERROR:
 			return true;
 
-		case VIDEO_EDITOR_POSTER_UPDATE_SUCCESS:
+		case VIDEO_EDITOR_SET_POSTER_URL:
 		case VIDEO_EDITOR_RESET_STATE:
 			return false;
 	}
@@ -93,7 +93,7 @@ export const hasPosterUpdateError = ( state = false, action ) => {
 
 export default combineReducers( {
 	hasPosterUpdateError,
-	poster,
-	posterIsUpdated,
+	isPosterUpdated,
+	posterUrl,
 	uploadProgress,
 } );

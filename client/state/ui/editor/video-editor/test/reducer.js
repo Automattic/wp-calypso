@@ -7,16 +7,16 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
-	VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
 	VIDEO_EDITOR_RESET_STATE,
+	VIDEO_EDITOR_SET_POSTER_URL,
+	VIDEO_EDITOR_SHOW_ERROR,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 } from 'state/action-types';
 
 import reducer, {
 	hasPosterUpdateError,
-	poster,
-	posterIsUpdated,
+	isPosterUpdated,
+	posterUrl,
 	uploadProgress,
 } from '../reducer';
 
@@ -24,37 +24,37 @@ describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'hasPosterUpdateError',
-			'poster',
-			'posterIsUpdated',
+			'isPosterUpdated',
+			'posterUrl',
 			'uploadProgress',
 		] );
 	} );
 
-	describe( '#posterIsUpdated()', () => {
+	describe( '#isPosterUpdated()', () => {
 		it( 'should default to false', () => {
-			const state = posterIsUpdated( undefined, {} );
+			const state = isPosterUpdated( undefined, {} );
 
 			expect( state ).to.be.false;
 		} );
 
 		it( 'should change to true on successful update', () => {
-			const state = posterIsUpdated( undefined, {
-				type: VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
+			const state = isPosterUpdated( undefined, {
+				type: VIDEO_EDITOR_SET_POSTER_URL,
 			} );
 
 			expect( state ).to.be.true;
 		} );
 
 		it( 'should change to true on failed update', () => {
-			const state = posterIsUpdated( undefined, {
-				type: VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
+			const state = isPosterUpdated( undefined, {
+				type: VIDEO_EDITOR_SHOW_ERROR,
 			} );
 
 			expect( state ).to.be.true;
 		} );
 
 		it( 'should change to false on reset', () => {
-			const state = posterIsUpdated( undefined, {
+			const state = isPosterUpdated( undefined, {
 				type: VIDEO_EDITOR_RESET_STATE,
 			} );
 
@@ -62,26 +62,26 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( '#poster()', () => {
-		const posterUrl = 'https://i1.wp.com/videos.files.wordpress.com/dummy-guid/thumbnail.jpg?ssl=1';
+	describe( '#posterUrl()', () => {
+		const url = 'https://i1.wp.com/videos.files.wordpress.com/dummy-guid/thumbnail.jpg?ssl=1';
 
 		it( 'should default to empty string', () => {
-			const state = poster( undefined, {} );
+			const state = posterUrl( undefined, {} );
 
 			expect( state ).to.eql( '' );
 		} );
 
 		it( 'should change to poster url on successful update', () => {
-			const state = poster( undefined, {
-				type: VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
-				poster: posterUrl,
+			const state = posterUrl( undefined, {
+				type: VIDEO_EDITOR_SET_POSTER_URL,
+				posterUrl: url,
 			} );
 
-			expect( state ).to.eql( posterUrl );
+			expect( state ).to.eql( url );
 		} );
 
 		it( 'should change to empty string on reset', () => {
-			const state = poster( undefined, {
+			const state = posterUrl( undefined, {
 				type: VIDEO_EDITOR_RESET_STATE,
 			} );
 
@@ -125,7 +125,7 @@ describe( 'reducer', () => {
 
 		it( 'should change to true on failed update', () => {
 			const state = hasPosterUpdateError( undefined, {
-				type: VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
+				type: VIDEO_EDITOR_SHOW_ERROR,
 			} );
 
 			expect( state ).to.be.true;
@@ -133,7 +133,7 @@ describe( 'reducer', () => {
 
 		it( 'should change to false on successful update', () => {
 			const state = hasPosterUpdateError( undefined, {
-				type: VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
+				type: VIDEO_EDITOR_SET_POSTER_URL,
 			} );
 
 			expect( state ).to.be.false;

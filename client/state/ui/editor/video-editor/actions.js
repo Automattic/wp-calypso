@@ -2,11 +2,11 @@
  * Internal dependencies
  */
 import {
-	VIDEO_EDITOR_POSTER_UPDATE,
-	VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
-	VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
 	VIDEO_EDITOR_RESET_STATE,
+	VIDEO_EDITOR_SET_POSTER_URL,
+	VIDEO_EDITOR_SHOW_ERROR,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
+	VIDEO_EDITOR_UPDATE_POSTER,
 } from 'state/action-types';
 
 /**
@@ -29,9 +29,9 @@ export const resetState = () => {
  * @param {Object} [params.file]  An image to attach to the video
  * @return {Object} Action object
  */
-export const updateVideoEditorPoster = ( videoId, params ) => {
+export const updatePoster = ( videoId, params ) => {
 	return {
-		type: VIDEO_EDITOR_POSTER_UPDATE,
+		type: VIDEO_EDITOR_UPDATE_POSTER,
 		videoId,
 		params,
 	};
@@ -40,13 +40,13 @@ export const updateVideoEditorPoster = ( videoId, params ) => {
 /**
  * Returns an action object to indicate that the poster for the video has been updated successfully.
  *
- * @param  {String} poster Poster URL
+ * @param  {String} posterUrl  Poster URL
  * @return {Object} Action object
  */
-export const updateVideoEditorPosterSuccess = poster => {
+export const setPosterUrl = posterUrl => {
 	return {
-		type: VIDEO_EDITOR_POSTER_UPDATE_SUCCESS,
-		poster,
+		type: VIDEO_EDITOR_SET_POSTER_URL,
+		posterUrl,
 	};
 };
 
@@ -55,9 +55,9 @@ export const updateVideoEditorPosterSuccess = poster => {
  *
  * @return {Object} Action object
  */
-export const updateVideoEditorPosterFailure = () => {
+export const showError = () => {
 	return {
-		type: VIDEO_EDITOR_POSTER_UPDATE_FAILURE,
+		type: VIDEO_EDITOR_SHOW_ERROR,
 	};
 };
 

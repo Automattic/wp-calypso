@@ -4,8 +4,8 @@
  * @param  {Object}  state Global state tree
  * @return {String}  URL of the poster.
  */
-export function getVideoEditorPoster( state ) {
-	return state.ui.editor.videoEditor.poster;
+export function getPosterUrl( state ) {
+	return state.ui.editor.videoEditor.posterUrl;
 }
 
 /**
@@ -25,8 +25,8 @@ export function getPosterUploadProgress( state ) {
  * @return {Boolean} true if the poster has been updated.
  *
  */
-export function isVideoEditorPosterUpdated( state ) {
-	return state.ui.editor.videoEditor.posterIsUpdated;
+export function isPosterUpdated( state ) {
+	return state.ui.editor.videoEditor.isPosterUpdated;
 }
 
 /**
@@ -36,6 +36,6 @@ export function isVideoEditorPosterUpdated( state ) {
  * @return {Boolean} true if the poster was not updated.
  *
  */
-export function videoEditorHasPosterUpdateError( state ) {
+export function hasPosterUpdateError( state ) {
 	return state.ui.editor.videoEditor.hasPosterUpdateError;
 }

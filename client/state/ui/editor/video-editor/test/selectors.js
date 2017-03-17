@@ -8,20 +8,20 @@ import { expect } from 'chai';
  */
 import {
 	getPosterUploadProgress,
-	getVideoEditorPoster,
-	isVideoEditorPosterUpdated,
-	videoEditorHasPosterUpdateError,
+	getPosterUrl,
+	hasPosterUpdateError,
+	isPosterUpdated,
 } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( '#getVideoEditorPoster()', () => {
+	describe( '#getPosterUrl()', () => {
 		it( 'should return the current video editor poster', () => {
 			const posterUrl = 'https://i1.wp.com/videos.files.wordpress.com/dummy-guid/thumbnail.jpg?ssl=1';
-			const poster = getVideoEditorPoster( {
+			const poster = getPosterUrl( {
 				ui: {
 					editor: {
 						videoEditor: {
-							poster: posterUrl
+							posterUrl
 						}
 					}
 				}
@@ -48,25 +48,25 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#isVideoEditorPosterUpdated()', () => {
+	describe( '#isPosterUpdated()', () => {
 		it( 'should return the poster updated state', () => {
-			const isPosterUpdated = isVideoEditorPosterUpdated( {
+			const isUpdated = isPosterUpdated( {
 				ui: {
 					editor: {
 						videoEditor: {
-							posterIsUpdated: false
+							isPosterUpdated: false
 						}
 					}
 				}
 			} );
 
-			expect( isPosterUpdated ).to.be.false;
+			expect( isUpdated ).to.be.false;
 		} );
 	} );
 
-	describe( '#videoEditorHasPosterUpdateError()', () => {
+	describe( '#hasPosterUpdateError()', () => {
 		it( 'should return the poster error state', () => {
-			const hasPosterUpdateError = videoEditorHasPosterUpdateError( {
+			const hasError = hasPosterUpdateError( {
 				ui: {
 					editor: {
 						videoEditor: {
@@ -76,7 +76,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( hasPosterUpdateError ).to.be.true;
+			expect( hasError ).to.be.true;
 		} );
 	} );
 } );
