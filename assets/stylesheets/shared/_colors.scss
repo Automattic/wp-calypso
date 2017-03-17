@@ -1,8 +1,8 @@
 // Primary Accent (Blues)
-$blue-wordpress:         #0087be;
-$blue-light:             #78dcfa;
-$blue-medium:            #00aadc;
-$blue-dark:              #005082;
+$blue-wordpress:         #177DBB;
+$blue-light:             lighten($blue-wordpress, 35%);
+$blue-medium:            $blue-wordpress;
+$blue-dark:              darken($blue-wordpress, 12%);
 
 // Grays
 $gray:                   #87a6bc;
@@ -69,5 +69,3 @@ $color-print: #f8f8f8;
 $color-skype: #00AFF0;
 $color-telegram: #0088cc;
 $color-whatsapp: #43d854;
-
-

@@ -69,7 +69,7 @@
 
 // Sidebar group headings
 .sidebar__heading {
-	color: rgba( saturate( $sidebar-text-color, 60% ), 0.6 );
+	color: rgba( $sidebar-text-color, 0.6 );
 	font-weight: 600;
 	font-size: 12px;
 	margin: 16px 8px 6px 14px;
@@ -154,7 +154,7 @@
 		position: absolute;
 			top: 12px;
 			right: 8px;
-		color: rgba( saturate( $sidebar-text-color, 60% ), 0.7 );
+		color: rgba( $sidebar-text-color, 0.7 );
 		font-size: 11px;
 
 		@include breakpoint( "<660px" ) {
@@ -205,7 +205,7 @@ a.sidebar__button, form.sidebar__button {
 	margin: 11px 8px 0 0;
 	line-height: 18px;
 	background-color: lighten( $sidebar-bg-color, 3% );
-	color: rgba( saturate( $sidebar-text-color, 50% ), 0.8 );
+	color: rgba( $sidebar-text-color, 0.8 );
 	font-size: 11px;
 	font-weight: 600;
 	border-radius: 3px;
@@ -263,7 +263,7 @@ form.sidebar__button {
 // Menu Hover
 .notouch .sidebar__menu li:hover {
 	&:not(.selected) {
-		background-color: lighten( $sidebar-bg-color, 3% );
+		background-color: $white;
 
 		a {
 			color: $blue-medium;
@@ -271,8 +271,8 @@ form.sidebar__button {
 			&:first-child:after {
 				background: linear-gradient(
 					to right,
-					rgba( lighten( $sidebar-bg-color, 3% ), 0 ),
-					rgba( lighten( $sidebar-bg-color, 3% ), 1 ) 50% );
+					rgba( white, 0 ),
+					rgba( white, 1 ) 50% );
 			}
 
 			&.sidebar__button {
