@@ -1,12 +1,22 @@
+/**
+ * External dependencies
+ */
+import { has, invoke } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import analytics from 'lib/analytics';
-import has from 'lodash/has';
-import invoke from 'lodash/invoke';
 
 import {
 	ANALYTICS_EVENT_RECORD,
 	ANALYTICS_PAGE_VIEW_RECORD,
 	ANALYTICS_STAT_BUMP
 } from 'state/action-types';
+
+import { joinAnalytics } from './actions';
+
+import actionHandlers from './action-handlers';
 
 const eventServices = {
 	ga: ( { category, action, label, value } ) => analytics.ga.recordEvent( category, action, label, value ),
@@ -15,7 +25,7 @@ const eventServices = {
 
 const pageViewServices = {
 	ga: ( { url, title } ) => analytics.ga.recordPageView( url, title ),
-	default: ( { url, title } ) => analytics.pageView.record( url, title )
+	'default': ( { url, title } ) => analytics.pageView.record( url, title )
 };
 
 const statBump = ( { group, name } ) => analytics.mc.bumpStat( group, name );
@@ -34,12 +44,16 @@ export const dispatcher = ( { meta: { analytics } } ) => {
 			case ANALYTICS_STAT_BUMP:
 				return statBump( payload );
 		}
-	} )
+	} );
 };
 
-export const analyticsMiddleware = () => next => action => {
-	if ( has( action, 'meta.analytics' ) ) {
-		dispatcher( action );
+export const analyticsMiddleware = store => next => action => {
+	const trackers = actionHandlers.hasOwnProperty( action.type )
+		? actionHandlers.map( handler => handler( store, action ) ).reduce( joinAnalytics, {} )
+		: [];
+
+	if ( trackers.length || has( action, 'meta.analytics' ) ) {
+		dispatcher( joinAnalytics( trackers, action ) );
 	}
 
 	return next( action );

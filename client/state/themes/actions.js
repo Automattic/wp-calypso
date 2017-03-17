@@ -628,6 +628,8 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 		dispatch( {
 			type: THEME_TRANSFER_INITIATE_REQUEST,
 			siteId,
+			file,
+			plugin,
 		} );
 		return wpcom.undocumented().initiateTransfer( siteId, plugin, file, ( event ) => {
 			dispatch( {
@@ -642,6 +644,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 					type: THEME_TRANSFER_INITIATE_SUCCESS,
 					siteId,
 					transferId: transfer_id,
+					plugin,
 				} );
 				dispatch( pollThemeTransferStatus( siteId, transfer_id ) );
 			} )
@@ -650,6 +653,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 					type: THEME_TRANSFER_INITIATE_FAILURE,
 					siteId,
 					error,
+					plugin,
 				} );
 			} );
 	};
