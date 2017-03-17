@@ -5,12 +5,21 @@ import React, { PropTypes } from 'react';
 import { noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import intersection from 'lodash/intersection';
 
 /**
  * Internal dependencies
  */
 import i18n from 'i18n-calypso';
 import { taxonomyToGridicon } from './taxonomy-styling.js';
+
+const taxonomiesWhitelist = [
+	'column',
+	'feature',
+	'layout',
+	'subject',
+	'style',
+];
 
 class MagicSearchWelcome extends React.Component {
 
@@ -81,12 +90,17 @@ class MagicSearchWelcome extends React.Component {
 		);
 	}
 
+	renderTaxonomies = () => {
+		const { taxonomies } = this.props;
+		return intersection( taxonomies, taxonomiesWhitelist ).map( ( taxonomy ) => this.renderToken( taxonomy ) );
+	}
+
 	render() {
 		return (
 			<div className="themes-magic-search-card__welcome" >
 				<div className="themes-magic-search-card__welcome-header">{ i18n.translate( 'Search by' ) }</div>
 				<div className="themes-magic-search-card__welcome-taxonomies">
-					{ this.props.taxonomies.map( taxonomy => this.renderToken( taxonomy ) ) }
+					{ this.renderTaxonomies() }
 				</div>
 			</div>
 		);
