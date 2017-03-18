@@ -56,9 +56,11 @@ class MagicSearchWelcome extends React.Component {
 					this.props.suggestionsCallback( this.props.taxonomies[ position ] + ':' );
 					event.stopPropagation();
 					event.preventDefault();
+					return true;
 				}
 				break;
 		}
+		return false;
 	}
 
 	renderToken = ( taxonomy ) => {

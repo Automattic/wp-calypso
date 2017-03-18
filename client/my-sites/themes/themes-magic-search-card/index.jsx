@@ -57,13 +57,25 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 
 	onKeyDown = ( event ) => {
-		this.findTextForSuggestions( event.target.value );
+		const txt = event.target.value;
+		this.findTextForSuggestions( txt );
 
+		let inputUpdated = false;
 		//We need this logic because we are working togheter with different modules.
 		//that provide suggestions to the input depending on what is currently in input
 		const target = this.state.editedSearchElement !== '' ? 'suggestions' : 'welcome';
 		if ( this.refs[ target ] ) {
-			this.refs[ target ].handleKeyEvent( event );
+			// handleKeyEvent functions return bool that infroms if suggestion was picked
+			// We need that because we cannot relly on input state because it is updated
+			// asynchronously and we are not able to observe what was changed during handleKeyEvent
+			inputUpdated = this.refs[ target ].handleKeyEvent( event );
+		}
+
+		if ( event.key === 'Enter' && ! inputUpdated ) {
+			const cursorPosition = txt.slice( 0, this.refs[ 'url-search' ].refs.searchInput.selectionStart ).length;
+			if ( txt[ cursorPosition - 1 ] === ' ' ) {
+				this.refs[ 'url-search' ].blur();
+			}
 		}
 	}
 

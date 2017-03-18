@@ -100,9 +100,11 @@ const Suggestions = React.createClass( {
 			case 'Enter' :
 				if ( this.state.suggestionPosition !== -1 ) {
 					this.props.suggest( this.state.currentSuggestion + ' ' );
+					return true;
 				}
 				break;
 		}
+		return false;
 	},
 
 	onMouseDown( event ) {
