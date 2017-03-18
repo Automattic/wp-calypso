@@ -53,7 +53,8 @@ const Post = React.createClass( {
 		return {
 			showMoreOptions: false,
 			showComments: false,
-			showShare: false
+			showShare: false,
+			commentsFilter: 'all'
 		};
 	},
 
@@ -426,7 +427,14 @@ const Post = React.createClass( {
 					transitionLeaveTimeout={ 300 }>
 					{ this.buildUpdateTemplate() }
 				</ReactCSSTransitionGroup>
-				{ this.state.showComments && <Comments showCommentCount={ false } post={ this.props.post } onCommentsUpdate={ () => {} } /> }
+				{ this.state.showComments &&
+					<Comments
+						showCommentCount={ false }
+						post={ this.props.post }
+						commentsFilter={ this.state.commentsFilter }
+						onFilterChange={ commentsFilter => this.setState( { commentsFilter } )}
+						onCommentsUpdate={ () => {} } />
+				}
 				{ this.state.showShare && config.isEnabled( 'republicize' ) && <PostShare post={ this.props.post } site={ site } /> }
 			</Card>
 		);
