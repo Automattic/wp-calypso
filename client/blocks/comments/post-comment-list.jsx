@@ -234,7 +234,7 @@ class PostCommentList extends React.Component {
 				<SegmentedControl>
 					<SegmentedControlItem
 						selected={ commentsFilter === 'all' }
-						onClick={ this.handleFilterClick( 'all' ) }>{ translate( 'All', { context: 'comment status'} ) }
+						onClick={ this.handleFilterClick( 'all' ) }>{ translate( 'All' ) }
 					</SegmentedControlItem>
 					<SegmentedControlItem
 						selected={ commentsFilter === 'approved' }
