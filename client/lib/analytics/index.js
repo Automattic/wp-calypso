@@ -95,6 +95,14 @@ const analytics = {
 		_superProps = superProps;
 	},
 
+	checkDoNotTrack: function() {
+		if ( navigator.doNotTrack ) {
+			return false;
+		}
+
+		return true;
+	},
+
 	mc: {
 		bumpStat: function( group, name ) {
 			if ( 'object' === typeof group ) {
@@ -151,7 +159,9 @@ const analytics = {
 			if ( process.env.NODE_ENV !== 'production' ) {
 				for ( const key in eventProperties ) {
 					if ( isObjectLike( eventProperties[ key ] ) && typeof console !== 'undefined' ) {
-						console.error( `Unable to record event "${ eventName }" because nested properties are not supported by Tracks. Check '${ key }' on`, eventProperties ); //eslint-disable-line no-console
+						const errorMessage = `Unable to record event "${ eventName }" because nested 
+							properties are not supported by Tracks. Check '${ key }' on`;
+						console.error( errorMessage, eventProperties ); //eslint-disable-line no-console
 
 						return;
 					}
@@ -207,7 +217,8 @@ const analytics = {
 		},
 
 		createRandomId: function() {
-			const randomBytesLength = 9; // 9 * 4/3 = 12 - this is to avoid getting padding of a random byte string when it is base64 encoded
+			// this is to avoid getting padding of a random byte string when it is base64 encoded
+			const randomBytesLength = 9; // 9 * 4/3 = 12
 			let randomBytes;
 
 			if ( window.crypto && window.crypto.getRandomValues ) {
@@ -266,11 +277,13 @@ const analytics = {
 
 				const json = JSON.stringify( {
 					beacons: [
-						'calypso.' + config( 'boom_analytics_key' ) + '.' + featureSlug + '.' + eventType.replace( '-', '_' ) + ':' + duration + '|ms'
+						'calypso.' + config( 'boom_analytics_key' ) + '.' + featureSlug + '.' +
+							eventType.replace( '-', '_' ) + ':' + duration + '|ms'
 					]
 				} );
 
-				new Image().src = 'https://pixel.wp.com/boom.gif?v=calypso&u=' + encodeURIComponent( pageUrl ) + '&json=' + encodeURIComponent( json );
+				new Image().src = 'https://pixel.wp.com/boom.gif?v=calypso&u=' + encodeURIComponent( pageUrl ) +
+					'&json=' + encodeURIComponent( json );
 			}
 		}
 	},
@@ -342,6 +355,28 @@ const analytics = {
 				window.ga( 'send', 'timing', urlPath, eventType, duration, triggerName );
 			}
 		}
+	},
+
+	// Lucky Orange tracking
+	luckyOrange: {
+		initialized: false,
+
+		initialize: function() {
+			if ( ! analytics.luckyOrange.initialized ) {
+				if ( config( 'lucky_orange_enabled' ) && analytics.checkDoNotTrack() ) {
+					const wa = document.createElement( 'script' );
+					const s = document.getElementsByTagName( 'script' )[ 0 ];
+
+					window.__lo_site_id = 77942;
+					wa.type = 'text/javascript';
+					wa.async = true;
+					wa.src = 'https://d10lpsik1i8c69.cloudfront.net/w.js';
+					s.parentNode.insertBefore( wa, s );
+
+					analytics.luckyOrange.initialized = true;
+				}
+			}
+		},
 	},
 
 	identifyUser: function() {

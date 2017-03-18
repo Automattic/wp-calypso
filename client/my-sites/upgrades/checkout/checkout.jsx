@@ -61,6 +61,7 @@ const Checkout = React.createClass( {
 
 	componentWillMount: function() {
 		upgradesActions.resetTransaction();
+		analytics.luckyOrange.initialize();
 
 		this.props.recordApplePayStatus();
 	},

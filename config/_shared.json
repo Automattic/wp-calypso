@@ -18,6 +18,7 @@
 	"google_analytics_enabled": null,
 	"google_analytics_key": null,
 	"google_adwords_conversion_id": null,
+	"lucky_orange_enabled": null,
 	"hostname": null,
 	"i18n_default_locale_slug": "en",
 	"jetpack_min_version": null,

@@ -76,7 +76,7 @@ const Signup = React.createClass( {
 	},
 
 	loadProgressFromStore() {
-		var newProgress = SignupProgressStore.get(),
+		const newProgress = SignupProgressStore.get(),
 			invalidSteps = some( newProgress, matchesProperty( 'status', 'invalid' ) ),
 			waitingForServer = ! invalidSteps && this.isEveryStepSubmitted(),
 			startLoadingScreen = waitingForServer && ! this.state.loadingScreenStartTime;
@@ -123,6 +123,7 @@ const Signup = React.createClass( {
 			ref: this.props.refParameter
 		} );
 		recordSignupStart();
+		analytics.luckyOrange.initialize();
 
 		// Signup updates the cart through `SignupCart`. To prevent
 		// synchronization issues and unnecessary polling, the cart is disabled
@@ -266,7 +267,7 @@ const Signup = React.createClass( {
 	},
 
 	loginRedirectTo( path ) {
-		var redirectTo;
+		let redirectTo;
 
 		if ( startsWith( path, 'https://' ) || startsWith( path, 'http://' ) ) {
 			return path;
@@ -354,6 +355,18 @@ const Signup = React.createClass( {
 		const firstInvalidStep = find( SignupProgressStore.get(), { status: 'invalid' } );
 
 		if ( firstInvalidStep ) {
+<<<<<<< HEAD
+=======
+			if ( firstInvalidStep.stepName === this.props.stepName ) {
+				// reset the signup stores so we have a chance to start over the flow
+				// TODO: fix loading invalid steps from the store
+				const errorMessage = 'Current step is invalid, cannot redirect to it.';
+				SignupDependencyStore.reset();
+				SignupProgressStore.reset();
+				console.error( errorMessage, firstInvalidStep.errors ); //eslint-disable-line no-console
+				return;
+			}
+>>>>>>> Add Lucky Orange analytics
 			analytics.tracks.recordEvent( 'calypso_signup_goto_invalid_step', {
 				step: firstInvalidStep.stepName,
 				flow: this.props.flowName
@@ -373,8 +386,8 @@ const Signup = React.createClass( {
 		const signupProgress = filter(
 				SignupProgressStore.get(),
 				step => (
-					-1 !== flowSteps.indexOf( step.stepName )
-					&& 'in-progress' !== step.status
+					-1 !== flowSteps.indexOf( step.stepName ) &&
+					'in-progress' !== step.status
 				),
 			);
 
@@ -386,18 +399,18 @@ const Signup = React.createClass( {
 	},
 
 	localeSuggestions() {
-		return 0 === this.positionInFlow() && ! user.get() ?
-			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } /> :
-			null;
+		return 0 === this.positionInFlow() && ! user.get()
+			? <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
+			: null;
 	},
 
 	loginForm() {
-		return this.state.bearerToken ?
-			<WpcomLoginForm
+		return this.state.bearerToken
+			? <WpcomLoginForm
 				authorization={ 'Bearer ' + this.state.bearerToken }
 				log={ this.state.username }
-				redirectTo={ this.state.redirectTo } /> :
-			null;
+				redirectTo={ this.state.redirectTo } />
+			: null;
 	},
 
 	pageTitle() {
@@ -406,7 +419,7 @@ const Signup = React.createClass( {
 	},
 
 	currentStep() {
-		let currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
+		const currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
 			CurrentComponent = stepComponents[ this.props.stepName ],
 			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
 			stepKey = this.state.loadingScreenStartTime ? 'processing' : this.props.stepName,
@@ -460,9 +473,9 @@ const Signup = React.createClass( {
 			<span>
 				<DocumentHead title={ this.pageTitle() } />
 				{
-					this.state.loadingScreenStartTime ?
-					null :
-					<FlowProgressIndicator
+					this.state.loadingScreenStartTime
+					? null
+					: <FlowProgressIndicator
 						positionInFlow={ this.positionInFlow() }
 						flowName={ this.props.flowName } />
 				}
