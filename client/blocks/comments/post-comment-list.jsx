@@ -234,23 +234,23 @@ class PostCommentList extends React.Component {
 				<SegmentedControl>
 					<SegmentedControlItem
 						selected={ commentsFilter === 'all' }
-						onClick={ this.handleFilterClick( 'all' ) }>{ translate( 'All' ) }
+						onClick={ this.handleFilterClick( 'all' ) }>{ translate( 'All', { context: 'comment status'} ) }
 					</SegmentedControlItem>
 					<SegmentedControlItem
 						selected={ commentsFilter === 'approved' }
-						onClick={ this.handleFilterClick( 'approved' ) }>{ translate( 'Approved' ) }
+						onClick={ this.handleFilterClick( 'approved' ) }>{ translate( 'Approved', { context: 'comment status'} ) }
 					</SegmentedControlItem>
 					<SegmentedControlItem
 						selected={ commentsFilter === 'unapproved' }
-						onClick={ this.handleFilterClick( 'unapproved' ) }>{ translate( 'Pending' ) }
+						onClick={ this.handleFilterClick( 'unapproved' ) }>{ translate( 'Pending', { context: 'comment status'} ) }
 					</SegmentedControlItem>
 					<SegmentedControlItem
 						selected={ commentsFilter === 'spam' }
-						onClick={ this.handleFilterClick( 'spam' ) }>{ translate( 'Spam' ) }
+						onClick={ this.handleFilterClick( 'spam' ) }>{ translate( 'Spam', { context: 'comment status'} ) }
 					</SegmentedControlItem>
 					<SegmentedControlItem
 						selected={ commentsFilter === 'trash' }
-						onClick={ this.handleFilterClick( 'trash' ) }>{ translate( 'Trash' ) }
+						onClick={ this.handleFilterClick( 'trash' ) }>{ translate( 'Trash', { context: 'comment status'} ) }
 					</SegmentedControlItem>
 				</SegmentedControl>
 				{ this.renderCommentsList( displayedComments ) }
