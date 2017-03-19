@@ -27,7 +27,7 @@ import { getPreviewURL } from 'lib/posts/utils';
 import { isSitePreviewable } from 'state/sites/selectors';
 
 import Comments from 'blocks/comments';
-import PostShare from './post-share';
+import PostShare from 'my-sites/post-share';
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Posts', eventAction );
