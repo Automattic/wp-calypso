@@ -28,7 +28,7 @@ export default class FacebookLoginButton extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.FB = null;
+		this.initFacebookP = null;
 		this.handleClick = this.handleClick.bind( this );
 	}
 
@@ -47,22 +47,25 @@ export default class FacebookLoginButton extends Component {
 	}
 
 	loadFacebookAuth() {
-		if ( this.FB ) {
-			return Promise.resolve();
+		if ( this.initFacebookP ) {
+			return this.initFacebookP;
 		}
 
-		return new Promise( resolve => {
-			this.loadDependency().then( FB => {
-				FB.init( {
-					appId: this.props.appId,
-					version: this.props.version,
-					cookie: this.props.cookie,
-					xfbml: this.props.xfbml,
-				} );
-				this.FB = FB;
-				resolve();
+		this.initFacebookP = this.loadDependency().then( FB => {
+			FB.init( {
+				appId: this.props.appId,
+				version: this.props.version,
+				cookie: this.props.cookie,
+				xfbml: this.props.xfbml,
 			} );
+
+			return FB;
+		} ).catch( error => {
+			this.initFacebookP = null;
+			return Promise.reject( error );
 		} );
+
+		return this.initFacebookP;
 	}
 
 	handleClick() {
@@ -70,8 +73,8 @@ export default class FacebookLoginButton extends Component {
 
 		// Handle click async if the library is not loaded yet
 		// the popup might be blocked by the browser in that case
-		this.loadFacebookAuth().then( () => {
-			this.FB.login( response => {
+		this.loadFacebookAuth().then( FB => {
+			FB.login( response => {
 				responseHandler( response );
 			}, { scope } );
 		} );
