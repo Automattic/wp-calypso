@@ -20,7 +20,7 @@ export default class GoogleLoginButton extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.googleAuth = null;
+		this.initGoogleP = null;
 		this.handleClick = this.handleClick.bind( this );
 	}
 
@@ -34,27 +34,29 @@ export default class GoogleLoginButton extends Component {
 		}
 
 		return new Promise( resolve => {
-			loadScript( 'https://apis.google.com/js/platform.js', () => resolve( window.gapi ) );
+			loadScript( 'https://apis.google.com/js/api.js', () => resolve( window.gapi ) );
 		} );
 	}
 
 	loadGoogleAuth() {
-		return new Promise( resolve => {
-			if ( this.googleAuth ) {
-				return resolve(); // we cannot pass `this.googleAuth` as argument is because it's a thenable
-			}
+		if ( this.initGoogleP ) {
+			return this.initGoogleP;
+		}
 
-			this.loadDependency().then( gapi => {
-				gapi.load( 'auth2', () => {
-					this.googleAuth = gapi.auth2.init( {
-						client_id: this.props.clientId,
-						scope: this.props.scope,
-						fetch_basic_profile: this.props.fetchBasicProfile,
-					} );
-					resolve();
-				} );
+		this.initGoogleP = this.loadDependency()
+			.then( gapi => new Promise( resolve => gapi.load( 'client:auth2', resolve ) ).then( () => gapi ) )
+			.then( gapi => gapi.client.init( {
+					client_id: this.props.clientId,
+					scope: this.props.scope,
+					fetch_basic_profile: this.props.fetchBasicProfile,
+				} )
+				.then( () => gapi ) // don't try to return gapi.auth2.getAuthInstance() here, it has a `then` method
+			).catch( error => {
+				this.initGoogleP = null;
+				return Promise.reject( error );
 			} );
-		} );
+
+		return this.initGoogleP;
 	}
 
 	handleClick() {
@@ -62,11 +64,7 @@ export default class GoogleLoginButton extends Component {
 
 		// Handle click async if the library is not loaded yet
 		// the popup might be blocked by the browser in that case
-		this.loadGoogleAuth().then( () => {
-			this.googleAuth.signIn().then( googleUser => {
-				responseHandler( googleUser );
-			} );
-		} );
+		this.loadGoogleAuth().then( gapi => gapi.auth2.getAuthInstance().signIn().then( responseHandler ) );
 	}
 
 	render() {
