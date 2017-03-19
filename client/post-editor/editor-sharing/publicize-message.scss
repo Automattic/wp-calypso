@@ -1,6 +1,8 @@
 .editor-sharing__publicize-message {
 	.editor-sharing__message-heading {
 		@extend .editor-drawer__heading;
+
+		font-size: 14px;
 	}
 
 	.editor-sharing__message-description {
@@ -8,6 +10,10 @@
 		.gridicon {
 			margin: 0 4px -1px 0;
 		}
+	}
+
+	.editor-sharing__message-input-wrapper {
+		margin: 0 20px;
 	}
 
 	.editor-sharing__message-input {
