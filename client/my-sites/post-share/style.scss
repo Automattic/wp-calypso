@@ -3,7 +3,7 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 .posts__list .post-share__wrapper {
 	margin: 0;
 	animation: appear .3s ease-in-out;
-	border-top: solid 1px transparentize( lighten( $gray, 20% ), .5 );
+	border-top: $section-border;
 
 	.post-share__title {
 		margin: 24px 0 0 0;

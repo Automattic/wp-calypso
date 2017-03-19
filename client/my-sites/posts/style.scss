@@ -1,3 +1,19 @@
+.posts.main {
+	display: block;
+	max-width: 720px;
+
+	@include breakpoint( ">1280px" ) {
+		display: flex;
+		max-width: 1440px;
+		justify-content: center;
+	}
+}
+
+.posts__primary {
+	flex-grow: 1;
+	max-width: 720px;
+}
+
 .posts__list {
 	.post {
 		position: relative;
@@ -367,7 +383,7 @@
 .post-controls {
 	box-sizing: border-box;
 	background-color: $white;
-	border-top: $section-border;
+	border-top: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	// border color matches shadow on components/card
 	overflow: hidden;
 	position: relative;
@@ -405,7 +421,7 @@
 		// Normal
 		box-sizing: border-box;
 		text-align: center;
-		border-left: $section-border;
+		border-left: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 		// border color matches shadow on components/card
 		&:first-child {
 			border-left: none;
