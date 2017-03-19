@@ -19,126 +19,12 @@
 }
 
 .posts__list {
-
-	.posts__post-share-main {
-		border-top: solid 1px transparentize( lighten( $gray, 20% ), .5 );
-		display: flex;
-		flex-direction: column-reverse;
-		padding: 0 24px 24px;
-
-		@include breakpoint( ">480px" ) {
-			flex-direction: row;
-		}
-	}
-
-	.posts__post-share-form.is-placeholder,
-	.posts__post-share-services.is-placeholder {
-		@include placeholder;
-		margin-top: 16px;
-		height: 48px;
-	}
-
-	.posts__post-share-head {
-		padding: 0 24px;
-	}
-
-	.posts__post-share-form {
-		flex: 3;
-	}
-
-	.posts__post-share-services {
-		flex: 2;
-		flex-direction: column;
-		justify-content: flex-start;
-		display: flex;
-		flex-wrap: wrap;
-		margin-top: 16px;
-
-		@include breakpoint( ">480px" ) {
-			margin-left: 20px;
-		}
-	}
-
-	.posts__post-share-services-header {
-		font-weight: 600;
-		margin-bottom: 4px;
-	}
-	.posts__post-share-services-add {
-		text-align: center
-	}
-
-	.posts__post-share-service {
-		cursor: pointer;
-		display: flex;
-		justify-content: left;
-		padding: 0 0 12px 4px;
-		color: lighten( $gray, 20% );
-		.social-logo {
-			padding-left: 4px;
-		}
-
-		&:first-of-type {
-			margin-top: 8px;
-		}
-
-		&.is-broken {
-			cursor: not-allowed;
-		}
-
-		&.is-active {
-			color: black;
-
-			.social-logo.twitter{
-				color: $color-twitter;
-			}
-
-			.social-logo.facebook{
-				color: $color-facebook;
-			}
-
-			.social-logo.google-plus {
-				color: $color-gplus;
-			}
-
-			.social-logo.linkedin {
-				color: $color-linkedin;
-			}
-
-			.social-logo.tumblr {
-				color: $color-tumblr;
-			}
-
-			.social-logo.path {
-				color: $color-path;
-			}
-
-			.social-logo.eventbrite {
-				color: $color-eventbrite;
-			}
-		}
-	}
-	.posts__post-share-service-account-name {
-		line-height: 24px;
-		padding-left: 4px;
-	}
-
 	.post {
 		position: relative;
 		padding: 0;
 		margin-bottom: (24 / 15) * 1em;
 		@include breakpoint( "<660px" ) {
 			font-size: 13px;
-		}
-		.posts__post-share-wrapper .notice {
-			margin-top: 4px;
-			margin-bottom: 0px;
-
-			&:first-of-type {
-				margin-top: 0px;
-			}
-		}
-		.posts__post-share-wrapper .card.banner {
-			margin: 0;
 		}
 	}
 
@@ -496,21 +382,6 @@
 
 .post .comments__view-earlier {
 	margin-top: 15px;
-}
-
-.post .posts__post-share {
-	margin: 0;
-	animation: appear .3s ease-in-out;
-	border-top: solid 1px transparentize( lighten( $gray, 20% ), .5 );
-}
-
-.posts__post-share-title {
-	margin: 24px 0 0 0;
-	font-weight: 600;
-}
-
-.posts__post-share-subtitle {
-	margin-bottom: 24px;
 }
 
 .post-controls {

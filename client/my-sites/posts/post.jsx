@@ -25,7 +25,7 @@ import { getPreviewURL } from 'lib/posts/utils';
 import { isSitePreviewable } from 'state/sites/selectors';
 
 import Comments from 'blocks/comments';
-import PostShare from './post-share';
+import PostShare from 'my-sites/post-share';
 
 import PostActions from 'blocks/post-actions';
 
