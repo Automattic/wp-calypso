@@ -119,6 +119,7 @@
 		"post-editor/media-advanced": false,
 		"post-editor/mentions": true,
 		"press-this": true,
+		"publicize-scheduling": true,
 		"push-notifications": true,
 		"reader": true,
 		"reader/combined-cards": true,

@@ -13,7 +13,10 @@ import { localize } from 'i18n-calypso';
 import QueryPostTypes from 'components/data/query-post-types';
 import Button from 'components/button';
 import { isPublicizeEnabled } from 'state/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import {
+	getSiteSlug,
+	getSitePlanSlug,
+} from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteUserConnections, hasFetchedConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
@@ -24,15 +27,20 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import { hasFeature } from 'state/sites/plans/selectors';
-import { FEATURE_REPUBLICIZE } from 'lib/plans/constants';
+import {
+	FEATURE_REPUBLICIZE,
+	PLAN_BUSINESS,
+} from 'lib/plans/constants';
 import Banner from 'components/banner';
 import Connection from './connection';
+import { isEnabled } from 'config';
 
 class PostShare extends Component {
 	static propTypes = {
 		siteSlug: PropTypes.string,
 		site: PropTypes.object,
 		post: PropTypes.object,
+		planSlug: PropTypes.string,
 		siteId: PropTypes.number,
 		isPublicizeEnabled: PropTypes.bool,
 		connections: PropTypes.array,
@@ -47,6 +55,14 @@ class PostShare extends Component {
 
 	hasConnections() {
 		return !! ( this.props.connections && this.props.connections.length );
+	}
+
+	isSchedulingEnabled() {
+		const {
+			planSlug
+		} = this.props;
+
+		return planSlug === PLAN_BUSINESS && isEnabled( 'publicize-scheduling' );
 	}
 
 	toggleConnection = id => {
@@ -260,6 +276,7 @@ export default connect(
 		return {
 			planHasRepublicizeFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE ),
 			siteSlug: getSiteSlug( state, siteId ),
+			planSlug: getSitePlanSlug( state, siteId ),
 			siteId,
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, props.post.type ),
 			connections: getSiteUserConnections( state, siteId, userId ),
