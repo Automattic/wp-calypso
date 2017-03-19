@@ -10,10 +10,9 @@ import { translate } from 'i18n-calypso';
 import {
 	READER_TAGS_REQUEST,
 } from 'state/action-types';
-import {
-	receiveTags,
-} from 'state/reader/tags/items/actions';
-
+import { receiveTags, } from 'state/reader/tags/items/actions';
+import { requestFollowHandler } from 'state/data-layer/wpcom/read/tags/mine/new';
+import { requestUnfollowHandler } from 'state/data-layer/wpcom/read/tags/mine/new';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { mergeHandlers } from 'state/data-layer/utils';
@@ -70,4 +69,6 @@ const readTagsHandler = {
 
 export default mergeHandlers(
 	readTagsHandler,
+	requestFollowHandler,
+	requestUnfollowHandler,
 );

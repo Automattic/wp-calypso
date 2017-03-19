@@ -84,11 +84,11 @@ const TagStream = React.createClass( {
 		const { tag, unfollowTag, followTag } = this.props;
 		const isFollowing = this.isSubscribed();
 		const toggleAction = isFollowing ? unfollowTag : followTag;
-		toggleAction( this.props.tag );
+		toggleAction( tag );
 		stats.recordAction( isFollowing ? 'followed_topic' : 'unfollowed_topic' );
 		stats.recordGaEvent( isFollowing ? 'Clicked Follow Topic' : 'Clicked Unfollow Topic', tag );
 		stats.recordTrack( isFollowing ? 'calypso_reader_reader_tag_followed' : 'calypso_reader_reader_tag_unfollowed', {
-			tag: tag.slug
+			tag
 		} );
 	},
 
