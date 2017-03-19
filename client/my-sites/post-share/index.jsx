@@ -104,9 +104,9 @@ class PostShare extends Component {
 		);
 	}
 
-	dismiss() {
+	dismiss = () => {
 		this.props.dismissShareConfirmation( this.props.siteId, this.props.post.ID );
-	}
+	};
 
 	sharePost = () => {
 		this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message );
