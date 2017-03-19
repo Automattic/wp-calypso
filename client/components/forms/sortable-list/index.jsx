@@ -13,7 +13,7 @@ var React = require( 'react' ),
  */
 var touchDetect = require( 'lib/touch-detect' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SortableList',
 
 	propTypes: {

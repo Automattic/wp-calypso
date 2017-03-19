@@ -23,7 +23,7 @@ const FormButton = require( 'components/forms/form-button' ),
 	Button = require( 'components/button' ),
 	Tooltip = require( 'components/tooltip' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'Security2faBackupCodesList',
 

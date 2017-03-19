@@ -21,4 +21,4 @@ var DnsDetails = React.createClass( {
 	}
 } );
 
-module.exports = DnsDetails;
+export default DnsDetails;

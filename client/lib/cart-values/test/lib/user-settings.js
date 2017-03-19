@@ -26,4 +26,4 @@ UserSettings.prototype.enableTranslator = function() {
 	this.settings.enable_translator = true;
 };
 
-module.exports = UserSettings();
+export default UserSettings();

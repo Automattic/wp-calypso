@@ -31,4 +31,4 @@ const DomainManagementHeader = React.createClass( {
 	}
 } );
 
-module.exports = DomainManagementHeader;
+export default DomainManagementHeader;

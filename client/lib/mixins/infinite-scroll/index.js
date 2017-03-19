@@ -4,7 +4,7 @@
 var throttle = require( 'lodash/throttle' ),
 	SCROLL_CHECK_RATE_IN_MS = 400;
 
-module.exports = function( nextPageMethod ) {
+export default function( nextPageMethod ) {
 
 	return {
 

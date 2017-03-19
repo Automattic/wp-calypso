@@ -396,4 +396,4 @@ var MenuEditableItem = React.createClass( {
 } );
 
 
-module.exports = MenuEditableItem;
+export default MenuEditableItem;

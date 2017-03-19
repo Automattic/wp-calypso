@@ -22,7 +22,7 @@ var dummyPluginList = [
 	}
 ];
 
-module.exports = {
+export default {
 	// Fetch Data
 	fetchedNewPluginsList: {
 		error: null,

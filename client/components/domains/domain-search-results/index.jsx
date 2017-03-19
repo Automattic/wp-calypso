@@ -173,4 +173,4 @@ var DomainSearchResults = React.createClass( {
 	}
 } );
 
-module.exports = DomainSearchResults;
+export default DomainSearchResults;

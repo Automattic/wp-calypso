@@ -104,4 +104,4 @@ const EditorPreview = React.createClass( {
 	}
 } );
 
-module.exports = EditorPreview;
+export default EditorPreview;

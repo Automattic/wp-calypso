@@ -203,4 +203,4 @@ const ReaderShare = React.createClass( {
 
 } );
 
-module.exports = ReaderShare;
+export default ReaderShare;

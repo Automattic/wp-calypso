@@ -24,7 +24,7 @@ import PaymentChatButton from './payment-chat-button';
 import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'PaypalPaymentBox',
 
 	getInitialState: function() {

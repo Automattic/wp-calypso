@@ -9,7 +9,7 @@ var React = require( 'react' );
 var CompactCard = require( 'components/card/compact' ),
 	SiteIcon = require( 'blocks/site-icon' );
 
-module.exports = {
+export default {
 	Page: React.createClass( {
 		displayName: 'PagePlaceholder',
 

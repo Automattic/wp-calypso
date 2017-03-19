@@ -30,4 +30,4 @@ var FollowingEditNavigation = React.createClass( {
 	}
 } );
 
-module.exports = FollowingEditNavigation;
+export default FollowingEditNavigation;

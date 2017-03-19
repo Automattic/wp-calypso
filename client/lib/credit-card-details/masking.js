@@ -75,7 +75,7 @@ function unmaskField( fieldName, previousValue, nextValue ) {
 	return fieldMask.unmask( fieldMask.mask( previousValue, nextValue ) );
 }
 
-module.exports = {
+export default {
 	maskField: maskField,
 	unmaskField: unmaskField
 };

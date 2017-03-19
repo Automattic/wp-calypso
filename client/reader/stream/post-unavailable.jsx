@@ -45,4 +45,4 @@ var PostUnavailable = React.createClass( {
 
 } );
 
-module.exports = PostUnavailable;
+export default PostUnavailable;

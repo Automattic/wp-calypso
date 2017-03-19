@@ -26,7 +26,7 @@ import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
 
-module.exports = protectForm( React.createClass( {
+export default protectForm( React.createClass( {
 	displayName: 'NotificationSubscriptions',
 
 	mixins: [ formBase, LinkedStateMixin, observe( 'userSettings' ), eventRecorder ],

@@ -158,4 +158,4 @@ var FollowingEditSubscribeForm = React.createClass( {
 
 } );
 
-module.exports = FollowingEditSubscribeForm;
+export default FollowingEditSubscribeForm;

@@ -135,7 +135,7 @@ var Team = React.createClass( {
 
 } );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'TeamList',
 
 	render: function() {

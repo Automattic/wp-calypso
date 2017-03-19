@@ -14,7 +14,7 @@ import LocaleSuggestionStore from 'lib/locale-suggestions';
 
 import Notice from 'components/notice';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'LocaleSuggestions',
 
 	getInitialState: function() {

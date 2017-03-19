@@ -40,4 +40,4 @@ var SiteRedirectNotice = React.createClass( {
 	}
 } );
 
-module.exports = SiteRedirectNotice;
+export default SiteRedirectNotice;

@@ -235,7 +235,7 @@ const EditUserForm = React.createClass( {
 	}
 } );
 
-module.exports = protectForm( React.createClass( {
+export default protectForm( React.createClass( {
 	displayName: 'EditTeamMemberForm',
 
 	mixins: [ PureRenderMixin ],

@@ -4,7 +4,7 @@
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:site' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SitePlaceholder',
 
 	componentDidMount: function() {

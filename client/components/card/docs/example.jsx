@@ -58,4 +58,4 @@ var Cards = React.createClass( {
 	}
 } );
 
-module.exports = Cards;
+export default Cards;

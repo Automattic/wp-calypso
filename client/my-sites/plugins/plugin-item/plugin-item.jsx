@@ -33,7 +33,7 @@ function checkPropsChange( nextProps, propArr ) {
 	return false;
 }
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'PluginItem',
 

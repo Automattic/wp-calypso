@@ -9,7 +9,7 @@ var React = require( 'react' ),
  */
 var Spinner = require( 'components/spinner' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Spinner',
 
 	mixins: [ PureRenderMixin ],

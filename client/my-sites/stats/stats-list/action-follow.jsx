@@ -12,7 +12,7 @@ var observe = require( 'lib/mixins/data-observe' ),
 	analytics = require( 'lib/analytics' ),
 	Gridicon = require( 'gridicons' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StatsActionFollow',
 
 	mixins: [ observe( 'followSite' ) ],

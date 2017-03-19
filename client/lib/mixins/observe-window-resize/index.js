@@ -26,4 +26,4 @@ var ObserveWindowSizeMixin = {
 	*/
 };
 
-module.exports = ObserveWindowSizeMixin;
+export default ObserveWindowSizeMixin;

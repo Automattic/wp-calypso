@@ -10,7 +10,7 @@ var React = require( 'react' ),
  */
 var Toggle = require( 'components/forms/form-toggle' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'CompactFormToggle',
 

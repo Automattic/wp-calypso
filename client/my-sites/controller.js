@@ -229,7 +229,7 @@ function createSitesComponent( context ) {
 	);
 }
 
-module.exports = {
+export default {
 	/*
 	 * Set up site selection based on last URL param and/or handle no-sites error cases
 	 */

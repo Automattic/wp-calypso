@@ -10,7 +10,7 @@ import { isEmpty } from 'lodash';
 import notices from 'notices';
 import { getNewMessages } from 'lib/cart-values';
 
-module.exports = {
+export default {
 	componentDidMount() {
 		// Makes sure that we display any messages from the current cart
 		// that might have been delivered when the cart was unmounted

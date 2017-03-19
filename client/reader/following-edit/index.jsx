@@ -589,4 +589,4 @@ const FollowingEdit = React.createClass( {
 
 } );
 
-module.exports = FollowingEdit;
+export default FollowingEdit;

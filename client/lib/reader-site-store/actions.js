@@ -29,4 +29,4 @@ var SitesStoreActions = {
 	}
 };
 
-module.exports = SitesStoreActions;
+export default SitesStoreActions;

@@ -267,4 +267,4 @@ UndocumentedSite.prototype.runThemeSetup = function() {
 /**
  * Expose `UndocumentedSite` module
  */
-module.exports = UndocumentedSite;
+export default UndocumentedSite;

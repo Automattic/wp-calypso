@@ -11,4 +11,4 @@ var countriesList = {
 
 emitter( countriesList );
 
-module.exports = countriesList;
+export default countriesList;

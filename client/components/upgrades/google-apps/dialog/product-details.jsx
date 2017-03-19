@@ -36,4 +36,4 @@ var GoogleAppsProductDetails = React.createClass( {
 	}
 } );
 
-module.exports = GoogleAppsProductDetails;
+export default GoogleAppsProductDetails;

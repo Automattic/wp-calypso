@@ -98,4 +98,4 @@ PreferencesActions.remove = function( key ) {
 	PreferencesActions.set( key, null );
 };
 
-module.exports = PreferencesActions;
+export default PreferencesActions;

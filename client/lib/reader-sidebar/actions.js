@@ -4,7 +4,7 @@ var Dispatcher = require( 'dispatcher' ),
 
 var isFetching = false;
 
-module.exports = {
+export default {
 
 	fetch: function() {
 		if ( isFetching ) {

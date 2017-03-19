@@ -28,4 +28,4 @@ var Sites = React.createClass( {
 	}
 } );
 
-module.exports = Sites;
+export default Sites;

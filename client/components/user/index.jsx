@@ -8,7 +8,7 @@ import React from 'react';
  */
 import Gravatar from 'components/gravatar';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'UserItem',
 	propTypes: {
 		user: React.PropTypes.object

@@ -18,4 +18,4 @@ var AppDispatcher = Object.assign( new Dispatcher(), {
 	}
 } );
 
-module.exports = AppDispatcher;
+export default AppDispatcher;

@@ -36,4 +36,4 @@ var CartSummaryBar = React.createClass( {
 	}
 } );
 
-module.exports = CartSummaryBar;
+export default CartSummaryBar;

@@ -2,7 +2,7 @@ var site = require( './site' ),
 	viewerData = require( './viewers-1' ),
 	moreViewerData = require( './viewers-2' );
 
-module.exports = {
+export default {
 	fetchedViewersEmpty: {
 		type: 'RECEIVE_VIEWERS',
 		siteId: site.ID,

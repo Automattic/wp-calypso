@@ -233,4 +233,4 @@ assign( SignupFlowController.prototype, {
 	}
 } );
 
-module.exports = SignupFlowController;
+export default SignupFlowController;

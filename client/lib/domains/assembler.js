@@ -66,6 +66,6 @@ function ensurePrimaryDomainIsFirst( domains ) {
 	return [ primaryDomain ].concat( without( domains, primaryDomain ) );
 }
 
-module.exports = {
+export default {
 	createDomainObjects
 };

@@ -6,7 +6,7 @@ import some from 'lodash/some';
 import startsWith from 'lodash/startsWith';
 import assign from 'lodash/assign';
 
-module.exports = {
+export default {
 	itemLinkClass: function( path, currentPath, additionalClasses ) {
 		const basePathLowerCase = decodeURIComponent( currentPath ).split( '?' )[ 0 ].replace( /\/edit$/, '' ).toLowerCase(),
 			pathLowerCase = decodeURIComponent( path ).replace( /\/edit$/, '' ).toLowerCase();

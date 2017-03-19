@@ -14,7 +14,7 @@ var SortableList = require( 'components/forms/sortable-list' ),
 	ButtonsPreviewButtons = require( './preview-buttons' ),
 	ButtonsPreviewButton = require( './preview-button' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SharingButtonsTray',
 
 	propTypes: {

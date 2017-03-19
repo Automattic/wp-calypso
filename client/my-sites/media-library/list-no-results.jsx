@@ -8,7 +8,7 @@ var React = require( 'react' );
  */
 var NoResults = require( 'my-sites/no-results' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'MediaLibraryListNoResults',
 
 	propTypes: {

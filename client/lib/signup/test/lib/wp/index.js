@@ -2,7 +2,7 @@
  * lib/wp stub
  */
 
-module.exports = {
+export default {
 	loadToken: function( token ) {
 		this._token = token;
 	},

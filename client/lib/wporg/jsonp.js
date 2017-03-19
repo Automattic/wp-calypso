@@ -11,7 +11,7 @@ var debug = require( 'debug' )( 'jsonp' ),
 /**
  * Module exports.
  */
-module.exports = jsonp;
+export default jsonp;
 
 /**
  * Callback index.

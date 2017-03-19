@@ -60,4 +60,4 @@ var EmailFollowersActions = {
 	}
 };
 
-module.exports = EmailFollowersActions;
+export default EmailFollowersActions;

@@ -4,7 +4,7 @@
 var masking = require( './masking' ),
 	validation = require( './validation');
 
-module.exports = {
+export default {
 	getCreditCardType: validation.getCreditCardType,
 	maskField: masking.maskField,
 	unmaskField: masking.unmaskField,

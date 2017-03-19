@@ -12,7 +12,7 @@ var DraftList = require( './draft-list' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' );
 
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'Drafts',
 

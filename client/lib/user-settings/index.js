@@ -265,4 +265,4 @@ UserSettings.prototype.hasUnsavedSettings = function() {
 /**
  * Expose UserSettings
  */
-module.exports = new UserSettings();
+export default new UserSettings();

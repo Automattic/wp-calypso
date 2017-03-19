@@ -8,7 +8,7 @@ var assign = require( 'lodash/assign' );
  */
 var path = require( './path' );
 
-module.exports = assign( {
+export default assign( {
 	untrailingslashit: require( './untrailingslashit' ),
 	trailingslashit: require( './trailingslashit' ),
 	redirect: require( './redirect' ),

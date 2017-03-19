@@ -19,7 +19,7 @@ var Content = require( './content' ),
 	urlSearch = require( 'lib/mixins/url-search' );
 import QueryPreferences from 'components/data/query-preferences';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'MediaLibrary',
 
 	mixins: [ urlSearch ],

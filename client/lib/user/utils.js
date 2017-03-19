@@ -80,4 +80,4 @@ var userUtils = {
 	},
 };
 
-module.exports = userUtils;
+export default userUtils;

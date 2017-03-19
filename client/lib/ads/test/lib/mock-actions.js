@@ -2,7 +2,7 @@ var site = require( './mock-site' ),
 	earnings = require( './mock-earnings' ),
 	settings = require( './mock-settings' );
 
-module.exports = {
+export default {
 	fetchedEarnings: {
 		type: 'RECEIVE_EARNINGS',
 		site: site,

@@ -6,7 +6,7 @@ const site = require( './site' ),
 	singleUserData = require( './single-user' ),
 	pollingUsersData = require( './polling-users' );
 
-module.exports = {
+export default {
 	fetched: {
 		type: 'RECEIVE_USERS',
 		fetchOptions: {

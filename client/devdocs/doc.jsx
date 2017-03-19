@@ -10,7 +10,7 @@ var DocService = require( './service' ),
 	CompactCard = require( 'components/card/compact' ),
 	highlight = require( 'lib/highlight' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SingleDocument',
 	propTypes: {
 		path: React.PropTypes.string.isRequired,

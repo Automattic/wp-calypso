@@ -141,7 +141,7 @@ var MapDomain = React.createClass( {
 	}
 } );
 
-module.exports = connect( state => (
+export default connect( state => (
 	{
 		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 	}

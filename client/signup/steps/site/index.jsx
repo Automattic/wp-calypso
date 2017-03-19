@@ -33,7 +33,7 @@ var VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
 var siteUrlsSearched = [],
 	timesValidationFailed = 0;
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Site',
 
 	getInitialState: function() {

@@ -98,7 +98,7 @@ function resolveEmbedConfig( embed ) {
 	return embedsConfig.default;
 }
 
-module.exports = {
+export default {
 	getEmbedSizingFunction: function getEmbedSizingFunction( embed ) {
 		var embedConfig = resolveEmbedConfig( embed );
 

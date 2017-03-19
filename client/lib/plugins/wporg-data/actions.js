@@ -105,4 +105,4 @@ var PluginsDataActions = {
 	}
 };
 
-module.exports = PluginsDataActions;
+export default PluginsDataActions;

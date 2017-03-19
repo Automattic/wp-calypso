@@ -44,4 +44,4 @@ var MenuItemDropTarget = React.createClass( {
 	}
 } );
 
-module.exports = MenuItemDropTarget;
+export default MenuItemDropTarget;

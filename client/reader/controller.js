@@ -44,7 +44,7 @@ function renderFeedError( context ) {
 	);
 }
 
-module.exports = {
+export default {
 	initAbTests( context, next ) {
 		// spin up the ab tests that are currently active for the reader
 		activeAbTests.forEach( test => abtest( test ) );

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	found: 4,
 	users: [
 		{

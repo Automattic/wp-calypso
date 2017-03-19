@@ -152,4 +152,4 @@ var Drafts = React.createClass( {
 	}
 } );
 
-module.exports = DraftList;
+export default DraftList;

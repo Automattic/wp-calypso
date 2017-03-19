@@ -16,7 +16,7 @@ import MediaUtils from 'lib/media/utils';
 import uniq from 'lodash/uniq';
 import { VideoPressFileTypes } from 'lib/media/constants';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'MediaLibraryUploadButton',
 
 	propTypes: {

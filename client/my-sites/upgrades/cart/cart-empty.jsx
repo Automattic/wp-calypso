@@ -36,4 +36,4 @@ var CartEmpty = React.createClass({
 	}
 });
 
-module.exports = CartEmpty;
+export default CartEmpty;

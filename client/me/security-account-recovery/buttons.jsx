@@ -10,7 +10,7 @@ var FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
 	FormButton = require( 'components/forms/form-button' ),
 	Gridicon = require( 'gridicons' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SecurityAccountRecoveryManageContactButtons',
 
 	propTypes: {

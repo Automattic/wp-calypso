@@ -16,7 +16,7 @@ var FormLabel = require( 'components/forms/form-label' ),
 
 var CLEAN_REGEX = /^0|[\s.\-()]+/g;
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'FormPhoneInput',
 
 	propTypes: {

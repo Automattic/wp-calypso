@@ -143,4 +143,4 @@ if ( sites.fetched ) {
 	setSelectedSite();
 }
 
-module.exports = CartStore;
+export default CartStore;

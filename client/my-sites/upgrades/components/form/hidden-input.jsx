@@ -9,7 +9,7 @@ var React = require( 'react' ),
  */
 var Input = require( './input' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'HiddenInput',
 
 	componentWillReceiveProps: function( nextProps ) {

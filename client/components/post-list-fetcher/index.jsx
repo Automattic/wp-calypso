@@ -162,4 +162,4 @@ PostListFetcher = React.createClass( {
 
 } );
 
-module.exports = PostListFetcher;
+export default PostListFetcher;

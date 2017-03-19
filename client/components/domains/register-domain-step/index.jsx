@@ -510,7 +510,7 @@ const RegisterDomainStep = React.createClass( {
 	}
 } );
 
-module.exports = connect( ( state, props ) => {
+export default connect( ( state, props ) => {
 	const queryObject = getQueryObject( props );
 	return {
 		currentUser: getCurrentUser( state ),

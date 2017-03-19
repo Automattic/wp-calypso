@@ -53,4 +53,4 @@ var PulsingDot = React.createClass( {
 
 } );
 
-module.exports = PulsingDot;
+export default PulsingDot;

@@ -54,4 +54,4 @@ const SearchEmptyContent = React.createClass( {
 	}
 } );
 
-module.exports = SearchEmptyContent;
+export default SearchEmptyContent;

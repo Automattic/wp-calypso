@@ -29,4 +29,4 @@ function deterministStringify( source ) {
 	return namespace.join( '&' );
 }
 
-module.exports = deterministStringify;
+export default deterministStringify;

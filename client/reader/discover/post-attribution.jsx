@@ -76,4 +76,4 @@ class DiscoverPostAttribution extends React.Component {
 	}
 }
 
-module.exports = DiscoverPostAttribution;
+export default DiscoverPostAttribution;

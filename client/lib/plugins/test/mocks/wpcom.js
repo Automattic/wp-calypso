@@ -102,4 +102,4 @@ var pluginsInstallCalls = 0,
 		}
 	};
 
-module.exports = mock;
+export default mock;

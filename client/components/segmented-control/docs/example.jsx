@@ -145,4 +145,4 @@ var SegmentedControlDemo = React.createClass( {
 	}
 } );
 
-module.exports = SegmentedControlDemo;
+export default SegmentedControlDemo;

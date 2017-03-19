@@ -117,4 +117,4 @@ ConnectedApplications.prototype.getApplication = function( connectionID ) {
 /**
  * Expose ConnectedApplications
  */
-module.exports = new ConnectedApplications();
+export default new ConnectedApplications();

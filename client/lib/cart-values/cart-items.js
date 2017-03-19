@@ -767,7 +767,7 @@ function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion ) {
 	return 'PRICE';
 }
 
-module.exports = {
+export default {
 	add,
 	addPrivacyToAllDomains,
 	businessPlan,

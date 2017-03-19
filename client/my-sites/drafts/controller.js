@@ -14,7 +14,7 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 
 const sites = sitesFactory();
 
-module.exports = {
+export default {
 
 	drafts: function( context ) {
 		var Drafts = require( 'my-sites/drafts/main' ),

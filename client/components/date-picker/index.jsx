@@ -13,7 +13,7 @@ import DayItem from 'components/date-picker/day';
 
 /* Internal dependencies
  */
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'DatePicker',
 
 	propTypes: {

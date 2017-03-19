@@ -384,4 +384,4 @@ JetpackSite.prototype.fetchJetpackKeys = function( callback ) {
 	}.bind( this ) );
 };
 
-module.exports = JetpackSite;
+export default JetpackSite;

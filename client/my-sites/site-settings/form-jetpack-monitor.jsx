@@ -18,7 +18,7 @@ var config = require( 'config' ),
 	Button = require( 'components/button' );
 import { protectForm } from 'lib/protect-form';
 
-module.exports = protectForm( React.createClass( {
+export default protectForm( React.createClass( {
 
 	displayName: 'SiteSettingsFormJetpackMonitor',
 

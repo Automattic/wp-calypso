@@ -6,7 +6,7 @@ var React = require( 'react' );
 var Card = require( 'components/card' );
 var SiteIcon = require( 'blocks/site-icon' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'SubscriptionPlaceholder',
 

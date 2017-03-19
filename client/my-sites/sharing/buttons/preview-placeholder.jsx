@@ -8,7 +8,7 @@ var React = require( 'react' );
  */
 var ButtonsPreviewAction = require( './preview-action' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SharingButtonsPreviewPlaceholder',
 
 	render: function() {

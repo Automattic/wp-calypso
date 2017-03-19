@@ -18,4 +18,4 @@ Sites.prototype.getSelectedSite = function() {
 };
 
 
-module.exports = Sites;
+export default Sites;

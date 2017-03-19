@@ -10,7 +10,7 @@ var analytics = require( 'lib/analytics' ),
 	support = require( 'lib/url/support' ),
 	Gridicon = require( 'gridicons' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'TermsOfService',
 
 	recordTermsAndConditionsClick: function() {

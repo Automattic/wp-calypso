@@ -5,7 +5,7 @@ var React = require( 'react' ),
 	Card = require( 'components/card' ),
 	classNames = require( 'classnames' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'PaymentBox',
 
 	render: function() {

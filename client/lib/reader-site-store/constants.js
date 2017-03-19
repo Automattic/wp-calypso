@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	action: {
 		FETCH: 'FETCH_SITE',
 		RECEIVE_FETCH: 'RECEIVE_FETCH_SITE',

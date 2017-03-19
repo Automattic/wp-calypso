@@ -3,7 +3,7 @@
  */
 import defer from 'lodash/defer';
 
-module.exports = {
+export default {
 	stepA: {
 		stepName: 'stepA'
 	},

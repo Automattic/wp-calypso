@@ -149,4 +149,4 @@ const Email = React.createClass( {
 	}
 } );
 
-module.exports = Email;
+export default Email;

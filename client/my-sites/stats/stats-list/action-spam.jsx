@@ -12,7 +12,7 @@ var wpcom = require( 'lib/wp' ),
 	analytics = require( 'lib/analytics' ),
 	Gridicon = require( 'gridicons' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StatsActionSpam',
 
 	getInitialState: function() {

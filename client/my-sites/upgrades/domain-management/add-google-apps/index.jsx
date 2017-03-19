@@ -68,4 +68,4 @@ const AddGoogleApps = React.createClass( {
 	}
 } );
 
-module.exports = AddGoogleApps;
+export default AddGoogleApps;

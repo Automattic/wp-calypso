@@ -151,7 +151,7 @@ const CONTENT_CSS = [
 	'//s1.wp.com/i/fonts/merriweather/merriweather.css',
 ];
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'TinyMCE',
 
 	propTypes: {

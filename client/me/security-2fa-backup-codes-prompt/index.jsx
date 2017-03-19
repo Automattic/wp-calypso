@@ -18,7 +18,7 @@ var FormButton = require( 'components/forms/form-button' ),
 
 import Notice from 'components/notice';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'Security2faBackupCodesPrompt',
 

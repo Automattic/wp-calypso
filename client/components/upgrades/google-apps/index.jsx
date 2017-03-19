@@ -75,4 +75,4 @@ var GoogleApps = React.createClass( {
 	}
 } );
 
-module.exports = GoogleApps;
+export default GoogleApps;

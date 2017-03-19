@@ -2,7 +2,7 @@ var site = require( './mock-site' ),
 	followerData = require( './mock-wpcom-followers1' ),
 	moreFollowerData = require( './mock-wpcom-followers2' );
 
-module.exports = {
+export default {
 	fetchedFollowers: {
 		type: 'RECEIVE_FOLLOWERS',
 		fetchOptions: {

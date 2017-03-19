@@ -54,4 +54,4 @@ var DomainMappingSuggestion = React.createClass( {
 	}
 } );
 
-module.exports = DomainMappingSuggestion;
+export default DomainMappingSuggestion;

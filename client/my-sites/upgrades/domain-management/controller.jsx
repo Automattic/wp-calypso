@@ -34,7 +34,7 @@ const setTitle = function( title, pageContext ) {
 	pageContext.store.dispatch( setDocumentHeadTitle( title ) );
 };
 
-module.exports = {
+export default {
 	domainManagementList( pageContext ) {
 		setTitle(
 			i18n.translate( 'Domain Management' ),

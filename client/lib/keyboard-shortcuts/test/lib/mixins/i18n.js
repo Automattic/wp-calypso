@@ -13,4 +13,4 @@ I18n.prototype.translate = function( string ) {
 
 Emitter( I18n.prototype );
 
-module.exports = new I18n();
+export default new I18n();

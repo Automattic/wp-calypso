@@ -10,7 +10,7 @@ var React = require( 'react' ),
  */
 var Tooltip = require( 'components/tooltip' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'DatePickerDay',
 
 	propTypes: {

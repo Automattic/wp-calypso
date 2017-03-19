@@ -55,4 +55,4 @@ Devices.prototype.fetch = function() {
 	}.bind( this ) );
 };
 
-module.exports = Devices;
+export default Devices;

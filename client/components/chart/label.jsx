@@ -6,14 +6,14 @@ import React from 'react';
 /**
  * Internal dependencies
  */
- import userModule from 'lib/user';
+import userModule from 'lib/user';
 
 /**
  * Module variables
  */
 const user = userModule();
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'ModuleChartLabel',
 
 	propTypes: {

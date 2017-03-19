@@ -10,7 +10,7 @@ import { action as InvitesActionTypes } from 'lib/invites/constants';
 let User = require( './user' ),
 	_user = false;
 
-module.exports = function() {
+export default function() {
 	if ( ! _user ) {
 		_user = new User();
 	}

@@ -64,4 +64,4 @@ const DomainRegistrationSuggestion = React.createClass( {
 	}
 } );
 
-module.exports = DomainRegistrationSuggestion;
+export default DomainRegistrationSuggestion;

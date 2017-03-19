@@ -352,4 +352,4 @@ User.prototype.signalVerification = function() {
 /**
  * Expose `User`
  */
-module.exports = User;
+export default User;

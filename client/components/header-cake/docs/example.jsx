@@ -14,7 +14,7 @@ import HeaderCake from 'components/header-cake';
  */
 const noop = function() {};
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Headers',
 
 	mixins: [ PureRenderMixin ],

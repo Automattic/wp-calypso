@@ -96,4 +96,4 @@ StatsDataLocalList.prototype.find = function( key ) {
 /**
  * Expose `StatsDataLocalList`
  */
-module.exports = StatsDataLocalList;
+export default StatsDataLocalList;

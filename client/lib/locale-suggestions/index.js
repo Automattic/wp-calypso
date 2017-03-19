@@ -37,4 +37,4 @@ LocaleSuggestionStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = LocaleSuggestionStore;
+export default LocaleSuggestionStore;

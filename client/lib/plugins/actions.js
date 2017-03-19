@@ -587,4 +587,4 @@ const PluginsActions = {
 		_actionsQueueBySite = {};
 	}
 };
-module.exports = PluginsActions;
+export default PluginsActions;

@@ -9,7 +9,7 @@ var React = require( 'react' );
 var MediaUtils = require( 'lib/media/utils' ),
 	MediaLibraryListItemFileDetails = require( './list-item-file-details' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'MediaLibraryListItemImage',
 
 	propTypes: {

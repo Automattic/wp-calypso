@@ -13,7 +13,7 @@ const debug = require( 'debug' )( 'calypso:validate-fieldset' ); // eslint-disab
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'ValidationFieldset',
 
 	renderValidationNotice: function() {

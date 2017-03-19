@@ -11,7 +11,7 @@ import BarContainer from './bar-container';
 import observe from 'lib/mixins/data-observe';
 import touchDetect from 'lib/touch-detect';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'ModuleChart',
 
 	mixins: [ observe( 'dataList' ) ],

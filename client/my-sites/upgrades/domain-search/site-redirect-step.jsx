@@ -141,4 +141,4 @@ var SiteRedirectStep = React.createClass( {
 	}
 } );
 
-module.exports = SiteRedirectStep;
+export default SiteRedirectStep;

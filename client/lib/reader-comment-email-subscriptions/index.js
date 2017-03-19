@@ -264,4 +264,4 @@ CommentEmailSubscriptionStore.dispatchToken = Dispatcher.register( function( pay
 	}
 } );
 
-module.exports = CommentEmailSubscriptionStore;
+export default CommentEmailSubscriptionStore;

@@ -42,4 +42,4 @@ const SearchCard = React.createClass( {
 	}
 } );
 
-module.exports = SearchCard;
+export default SearchCard;

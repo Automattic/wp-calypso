@@ -43,4 +43,4 @@ var TagEmptyContent = React.createClass( {
 	}
 } );
 
-module.exports = TagEmptyContent;
+export default TagEmptyContent;

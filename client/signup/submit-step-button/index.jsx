@@ -8,7 +8,7 @@ import React from 'react';
  */
 import SignupActions from 'lib/signup/actions';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SubmitStepButton',
 
 	handleSubmit: function() {

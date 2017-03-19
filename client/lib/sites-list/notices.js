@@ -5,7 +5,7 @@ var notices = require( 'notices' ),
 	SitesLog = require( 'lib/sites-list/log-store' ),
 	SitesListActions = require( 'lib/sites-list/actions' );
 
-module.exports = {
+export default {
 	getInitialState: function() {
 		return { notices: this.refreshSiteNotices() };
 	},

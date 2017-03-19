@@ -13,7 +13,7 @@ var FormFieldset = require( 'components/forms/form-fieldset' ),
 	countriesList = require( 'lib/countries-list' ).forSms(),
 	Buttons = require( './buttons' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SecurityAccountRecoveryRecoveryPhoneEdit',
 
 	propTypes: {

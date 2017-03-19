@@ -92,4 +92,4 @@ var CreditCardPaymentBox = React.createClass( {
 
 } );
 
-module.exports = CreditCardPaymentBox;
+export default CreditCardPaymentBox;

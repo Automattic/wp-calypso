@@ -79,4 +79,4 @@ var CartItems = React.createClass({
 	}
 });
 
-module.exports = CartItems;
+export default CartItems;

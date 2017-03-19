@@ -4,7 +4,7 @@
 var React = require( 'react' ),
 	map = require( 'lodash/map' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'ValidationErrorList',
 
 	propTypes: {

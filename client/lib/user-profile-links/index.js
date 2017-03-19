@@ -131,4 +131,4 @@ UserProfileLinks.prototype.deleteProfileLinkBySlug = function( slug, callback ) 
 /*
  * Expose UserProfileLinks
  */
-module.exports = new UserProfileLinks();
+export default new UserProfileLinks();

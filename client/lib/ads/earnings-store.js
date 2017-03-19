@@ -78,4 +78,4 @@ EarningsStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 emitter( EarningsStore );
 
-module.exports = EarningsStore;
+export default EarningsStore;

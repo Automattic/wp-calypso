@@ -199,4 +199,4 @@ var Buttons = React.createClass( {
 	}
 } );
 
-module.exports = Buttons;
+export default Buttons;

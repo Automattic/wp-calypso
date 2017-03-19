@@ -1,6 +1,6 @@
 const site = require( './site' );
 
-module.exports = {
+export default {
 	unauthorizedFetchingUsers: {
 		type: 'RECEIVE_USERS',
 		fetchOptions: {

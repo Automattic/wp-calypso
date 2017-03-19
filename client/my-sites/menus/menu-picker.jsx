@@ -97,4 +97,4 @@ var MenuPicker = React.createClass({
 	}
 });
 
-module.exports = MenuPicker;
+export default MenuPicker;

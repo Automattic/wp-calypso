@@ -8,7 +8,7 @@ var debug = require( 'debug' )( 'calypso:me:form-base' );
  */
 var notices = require( 'notices' );
 
-module.exports = {
+export default {
 	componentDidMount: function() {
 		this.props.userSettings.getSettings();
 	},

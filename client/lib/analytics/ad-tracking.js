@@ -918,7 +918,7 @@ function recordSignupCompletion() {
 	recordSignupCompletionInFloodlight();
 }
 
-module.exports = {
+export default {
 	retarget: function( context, next ) {
 		const nextFunction = typeof next === 'function' ? next : noop;
 

@@ -36,4 +36,4 @@ var ReadingTime = React.createClass( {
 
 } );
 
-module.exports = ReadingTime;
+export default ReadingTime;

@@ -37,4 +37,4 @@ const ThemeDownloadCard = React.createClass( {
 	}
 } );
 
-module.exports = ThemeDownloadCard;
+export default ThemeDownloadCard;

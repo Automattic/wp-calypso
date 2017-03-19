@@ -13,7 +13,7 @@ var allSites = require( 'lib/sites-list' )(),
 	SectionHeader = require( 'components/section-header' ),
 	PluginsStore = require( 'lib/plugins/store' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'PluginSiteList',
 

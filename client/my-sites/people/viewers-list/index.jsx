@@ -164,7 +164,7 @@ let Viewers = React.createClass( {
 	}
 } );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'ViewersList',
 
 	mixins: [ PureRenderMixin ],

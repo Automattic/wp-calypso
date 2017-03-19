@@ -7,7 +7,7 @@ var React = require( 'react' );
  * Internal dependencies
  */
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'Welcome',
 

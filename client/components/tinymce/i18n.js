@@ -7,7 +7,7 @@ const i18n = require( 'i18n-calypso' );
  * @see wp_mce_translation() in src/wp-includes/class-wp-editor.php from WordPress
  * In short, TinyMCE uses these strings to translate its internal strings
  */
-module.exports = {
+export default {
 
 	Formats: i18n.translate( 'Formats', { context: 'TinyMCE' } ),
 	Headings: i18n.translate( 'Headings', { context: 'TinyMCE' } ),

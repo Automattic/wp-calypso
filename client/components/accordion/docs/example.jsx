@@ -12,7 +12,7 @@ var React = require( 'react' ),
 var Accordion = require( 'components/accordion' ),
 	Gridicon = require( 'gridicons' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'AccordionExample',
 
 	mixins: [ PureRenderMixin ],

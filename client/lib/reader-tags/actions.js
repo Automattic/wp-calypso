@@ -108,4 +108,4 @@ var ReaderTagActions = {
 	}
 };
 
-module.exports = ReaderTagActions;
+export default ReaderTagActions;

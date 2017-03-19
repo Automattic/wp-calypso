@@ -30,7 +30,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 const sites = sitesFactory();
 const productsList = productsFactory();
 
-module.exports = {
+export default {
 
 	domainsAddHeader: function( context, next ) {
 		context.getSiteSelectionHeaderText = function() {

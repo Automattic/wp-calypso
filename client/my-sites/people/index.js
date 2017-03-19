@@ -10,7 +10,7 @@ var controller = require( 'my-sites/controller' ),
 	config = require( 'config' ),
 	peopleController = require( './controller' );
 
-module.exports = function() {
+export default function() {
 	if ( config.isEnabled( 'manage/people' ) ) {
 		[ 'team', 'followers', 'email-followers', 'viewers' ].forEach( function( filter ) {
 			page( '/people/' + filter, controller.siteSelection, controller.sites );

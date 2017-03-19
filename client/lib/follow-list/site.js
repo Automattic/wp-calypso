@@ -58,4 +58,4 @@ FollowListSite.prototype.unfollow = function() {
 	}
 };
 
-module.exports = FollowListSite;
+export default FollowListSite;

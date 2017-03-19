@@ -13,7 +13,7 @@ var ReactDom = require( 'react-dom' ),
  */
 var Button = require( 'components/button' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'ClipboardButton',
 
 	propTypes: {

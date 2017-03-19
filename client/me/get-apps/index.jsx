@@ -11,7 +11,7 @@ var MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	Button = require( 'components/button' ),
 	Card = require( 'components/card' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'GetApps',
 

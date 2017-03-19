@@ -9,7 +9,7 @@ var React = require( 'react' );
 var analytics = require( 'lib/analytics' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'CartCoupon',
 
 	getInitialState: function() {

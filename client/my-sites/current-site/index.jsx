@@ -161,7 +161,7 @@ const CurrentSite = React.createClass( {
 } );
 
 // TODO: make this pure when sites can be retrieved from the Redux state
-module.exports = connect(
+export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 

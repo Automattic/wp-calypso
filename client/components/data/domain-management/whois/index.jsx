@@ -34,7 +34,7 @@ function getStateFromStores( props ) {
 	};
 }
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'WhoisData',
 
 	propTypes: {

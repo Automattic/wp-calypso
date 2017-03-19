@@ -238,4 +238,4 @@ PluginUtils = {
 	}
 };
 
-module.exports = PluginUtils;
+export default PluginUtils;

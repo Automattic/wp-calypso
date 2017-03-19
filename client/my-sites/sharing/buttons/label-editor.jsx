@@ -9,7 +9,7 @@ var React = require( 'react' ),
  */
 var decodeEntities = require( 'lib/formatting' ).decodeEntities;
 
-var SharingButtonsLabelEditor = module.exports = React.createClass( {
+var SharingButtonsLabelEditor = React.createClass( {
 	displayName: 'SharingButtonsLabelEditor',
 
 	propTypes: {
@@ -85,3 +85,4 @@ var SharingButtonsLabelEditor = module.exports = React.createClass( {
 		);
 	}
 } );
+export default SharingButtonsLabelEditor;

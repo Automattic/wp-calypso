@@ -175,4 +175,4 @@ function Pageable( prototype ) {
 
 }
 
-module.exports = Pageable;
+export default Pageable;

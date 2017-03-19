@@ -76,4 +76,4 @@ var MenuDeleteButton = React.createClass( {
 	}
 } );
 
-module.exports = MenuDeleteButton;
+export default MenuDeleteButton;

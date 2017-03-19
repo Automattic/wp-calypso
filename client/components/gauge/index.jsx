@@ -4,7 +4,7 @@
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Gauge',
 
 	mixins: [ PureRenderMixin ],
