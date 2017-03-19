@@ -19,6 +19,7 @@ import {
 	getSiteSettingsSaveError,
 	getSiteSettings
 } from 'state/site-settings/selectors';
+import { getSiteTimezoneValue } from 'state/selectors';
 import {
 	isRequestingJetpackSettings,
 	isUpdatingJetpackSettings,
@@ -110,7 +111,13 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const { fields, settingsFields, siteId, jetpackSettingsUISupported } = this.props;
 			this.props.removeNotice( 'site-settings-save' );
 
-			this.props.saveSiteSettings( siteId, pick( fields, settingsFields.site ) );
+			let settings = pick( fields, settingsFields.site );
+
+			// Omit `timezone` since this value isn't used to save site settings data.
+			settings = omit( settings, 'timezone_value' );
+
+			this.props.saveSiteSettings( siteId, settings );
+
 			if ( jetpackSettingsUISupported ) {
 				this.props.updateSettings( siteId, pick( fields, settingsFields.jetpack ) );
 			}
@@ -214,6 +221,10 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				settingsFields.jetpack = keys( jetpackSettings );
 				isRequestingSettings = isRequestingSettings || ( isRequestingJetpackSettings( state, siteId ) && ! jetpackSettings );
 			}
+
+			// Add custom `timezone_value` field
+			settings = { ...settings, timezone_value: getSiteTimezoneValue( state, siteId ) };
+			settingsFields.site.push( 'timezone_value' );
 
 			return {
 				isRequestingSettings,
