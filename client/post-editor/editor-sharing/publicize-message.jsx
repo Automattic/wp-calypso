@@ -94,11 +94,9 @@ export default React.createClass( {
 				<h5 className="editor-sharing__message-heading">
 					{ this.translate( 'Customize the message', { context: 'Post editor sharing message heading' } ) }
 				</h5>
-				<div className="editor-sharing__message-input-wrapper">
-					<TrackInputChanges onNewValue={ this.recordStats }>
-						{ this.renderTextarea() }
-					</TrackInputChanges>
-				</div>
+				<TrackInputChanges onNewValue={ this.recordStats }>
+					{ this.renderTextarea() }
+				</TrackInputChanges>
 			</div>
 		);
 	}

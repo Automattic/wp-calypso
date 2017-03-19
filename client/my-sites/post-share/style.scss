@@ -7,7 +7,7 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 
 	.post-share__title {
 		margin: 24px 0 0 0;
-		font-weight: 600;
+		font-size: 18px;
 	}
 
 	.post-share__subtitle {
@@ -68,10 +68,14 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	.editor-sharing__message-heading {
 		padding-left: 20px;
 		padding-bottom: 10px;
+		padding-top: 10px;
 		border-bottom: $section-border;
+		border-top: $section-border;
 
 		@include breakpoint( ">480px" ) {
 			padding-bottom: 15px;
+			border-top: 0;
+			padding-top: 0;
 		}
 	}
 
