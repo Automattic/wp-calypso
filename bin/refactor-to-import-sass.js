@@ -48,7 +48,8 @@ function isNodeClassOfReactComponent( node ) {
 
 	let isSubclassOfReactComponent = superClassNode.type === 'MemberExpression'
 		&& superClassNode.object.name === 'React'
-		&& superClassNode.property.name === 'Component';
+		&& ( superClassNode.property.name === 'Component'
+			|| superClassNode.property.name === 'PureComponent' );
 
 	// superclass is just 'Component'
 	isSubclassOfReactComponent = isSubclassOfReactComponent
@@ -67,13 +68,17 @@ function isNodeReactCreateClass( node ) {
 function isIdentifierReactComponent( astRoot, identifierName ) {
 	let isReactCreateClass = false;
 	let isSubclassOfReactComponent = false;
-	let isFunction = false;
+	let isFunctionDeclaration = false;
+	let isFunctionExpression = false;
 
 	// Identifier is intialized with React.createClass
 	astRoot
 		.findVariableDeclarators( identifierName )
 		.forEach( path => {
 			isReactCreateClass = path.value.init && isNodeReactCreateClass( path.value.init.callee );
+			isFunctionExpression = path.value.init
+				&& ( path.value.init.type === 'ArrowFunctionExpression'
+					|| path.value.init.type === 'FunctionExpression' );
 		} );
 
 	// Identifier is a class declaration
@@ -85,10 +90,10 @@ function isIdentifierReactComponent( astRoot, identifierName ) {
 		} );
 
 	if ( astRoot.find( jscodeshift.FunctionDeclaration, { id: { name: identifierName } } ).size() > 0 ) {
-		isFunction = true;
+		isFunctionDeclaration = true;
 	}
 
-	return isReactCreateClass || isSubclassOfReactComponent || isFunction;
+	return isReactCreateClass || isSubclassOfReactComponent || isFunctionDeclaration || isFunctionExpression;
 }
 
 const getFileNameFromPath = ( filePath ) => filePath.split( path.sep ).slice( -1 )[ 0 ];
@@ -131,6 +136,9 @@ function createWithStylesCall( scssFilenames, withStylesTarget ) {
  *
  * 8. module.exports =
  *
+ * 9. Arrow function export: export default ( props ) => <div></div>;
+ *
+ * 10. connect( localize( props => <div></div> ) );
  * @param filename
  * @param scssFilenames
  */
@@ -138,7 +146,7 @@ function addStylesToJsFile( filename, scssFilenames ) {
 	const src = fs.readFileSync( filename ).toString( 'utf-8' );
 
 	let modified = false;
-	const root = jscodeshift( src );
+	let root = jscodeshift( src );
 
 	// before we start working, handle case [8] and transform "module.exports =" to "export default"
 	// riped of from: https://github.com/Hacker0x01/coffee-to-es2015-codemod/blob/master/transforms/module-exports-to-export-default.js
@@ -154,6 +162,8 @@ function addStylesToJsFile( filename, scssFilenames ) {
 		},
 	} )
 	.replaceWith( p => jscodeshift.exportDeclaration( true, p.node.expression.right ) );
+
+	root = jscodeshift( root.toSource() );
 
 	root
 	.find( jscodeshift.ExportDefaultDeclaration )
@@ -172,8 +182,6 @@ function addStylesToJsFile( filename, scssFilenames ) {
 								createWithStylesCall( scssFilenames, jscodeshift.identifier( path.value.declaration.name ) )
 							)
 					);
-
-				console.log( 'Identifier modified' );
 
 				modified = true;
 				return;
@@ -197,14 +205,14 @@ function addStylesToJsFile( filename, scssFilenames ) {
 					)
 				);
 
-			console.log( 'ClassDecl modified' );
-
 			modified = true;
 			return;
 		}
 
-		// Exporting React.createClass ( case [4] )
-		if ( path.value.declaration.type === 'CallExpression' && isNodeReactCreateClass( path.value.declaration.callee ) ) {
+		// Exporting arrow function ( case [ 9 ] ) or React.createClass ( case [4] )
+		if ( path.value.declaration.type === 'ArrowFunctionExpression'
+			|| path.value.declaration.type === 'FunctionExpression'
+			|| path.value.declaration.type === 'CallExpression' && isNodeReactCreateClass( path.value.declaration.callee ) ) {
 			const createClassVariableName = upperFirst( camelCase ( getFileNameWithoutExtensionFromPath( filename ) ) );
 
 			jscodeshift( path )
@@ -221,29 +229,65 @@ function addStylesToJsFile( filename, scssFilenames ) {
 					)
 				);
 
-			console.log( 'React.createClass modified' );
 			modified = true;
 			return;
 		}
 
-		// case [5] and [6]
+		if ( path.value.declaration.type === 'FunctionDeclaration' ) {
+			const functionDeclaration = path.get( 'declaration' );
+
+			jscodeshift( path )
+				.replaceWith( functionDeclaration.value	)
+				.insertAfter( () => jscodeshift.exportDefaultDeclaration(
+					createWithStylesCall( scssFilenames, jscodeshift.identifier( functionDeclaration.value.id.name ) )
+					)
+				);
+
+			modified = true;
+			return;
+		}
+
+
+		// case [5], [6] and [10]
 		if ( path.value.declaration.type === 'CallExpression' ) {
-			// Loop down the call expression tree until we hit the final identifier
-			let curNode = path.value.declaration;
-			while ( curNode.type === 'CallExpression' ) {
-				curNode = curNode.arguments[ 0 ];
+			// Loop down the call expression tree until we hit something that is not call expression
+			let curNode = path.get( 'declaration' );
+			while ( curNode.value.type === 'CallExpression' ) {
+				curNode = curNode.get('arguments', 0 );
 			}
 
 			// Is the thing we found is a React component ?
-			if ( curNode.type === 'Identifier' && isIdentifierReactComponent( root, curNode.name ) ) {
+			if ( curNode.value.type === 'Identifier' && isIdentifierReactComponent( root, curNode.value.name ) ) {
 
 				jscodeshift( path )
-					.find( jscodeshift.Identifier, { name: curNode.name } )
+					.find( jscodeshift.Identifier, { name: curNode.value.name } )
 					.replaceWith(
-						createWithStylesCall( scssFilenames, jscodeshift.identifier( curNode.name ) )
+						createWithStylesCall( scssFilenames, jscodeshift.identifier( curNode.value.name ) )
 					);
 
-				console.log( 'Call expr modified' );
+				modified = true;
+				return;
+			}
+
+			if ( curNode.value.type === 'ArrowFunctionExpression' ) {
+				const arrowName = upperFirst( camelCase ( getFileNameWithoutExtensionFromPath( filename ) ) );
+
+				// Declare the arrow function as a variable
+				// TODO: check identifier collitions!
+				jscodeshift( path )
+					.insertBefore( () => jscodeshift.variableDeclaration( 'const', [
+						jscodeshift.variableDeclarator(
+							jscodeshift.identifier( arrowName ),
+							curNode.value
+						) ]
+					) );
+
+				// Replace the arrow with it's variable
+				jscodeshift( curNode )
+					.replaceWith(
+						jscodeshift.identifier( arrowName )
+				);
+
 				modified = true;
 				return;
 			}
@@ -314,18 +358,21 @@ walk(
 
 
 		let processedDirectories = 0;
-		let skippedDirectories = 0;
+		let unableToProcess = [];
+		let noIndex = [];
+		let noScss = 0;
 		for ( let [ directory, filesInDirectory ] of directoryMap ) {
 			const scssFilesInDirectory = filesInDirectory.filter( filename => filename.match( /\.scss$/ ) );
 
 			if ( scssFilesInDirectory.length < 1 ) {
+				noScss++;
 				continue;
 			}
 
 			const indexJsFilenames = filesInDirectory.filter( filename => filename.match( /index\.jsx?$/ ) );
 			if ( indexJsFilenames.length !== 1 ) {
-				console.error( 'Unable to find index javascript file in ' + directory );
-				skippedDirectories++;
+				console.error( '[NoIndex] Unable to find index javascript file in ' + directory );
+				noIndex.push( directory );
 				continue;
 			}
 
@@ -338,16 +385,28 @@ walk(
 			//const indexJsFilename = '/Users/yury/Automattic/wp-calypso/client/my-sites/themes/themes-magic-search-card/index.jsx';
 
 			//const indexJsFilename = '/Users/yury/Automattic/wp-calypso/client/post-editor/editor-discussion/index.jsx';
+			//const indexJsFilename = '/Users/yury/Automattic/wp-calypso/client/me/help/help-contact-closed/index.jsx';
+			//const indexJsFilename = '/Users/yury/Automattic/wp-calypso/client/components/forms/form-tel-input/index.jsx';
+			//const indexJsFilename = '/Users/yury/Automattic/wp-calypso/client/my-sites/stats/stats-navigation/index.jsx';
+			//const indexJsFilename = '/Users/yury/Automattic/wp-calypso/client/components/forms/form-buttons-bar/index.jsx';
 
 			const result = addStylesToJsFile( indexJsFilename, scssFilesInDirectory );
 			if ( result ) {
+				//console.log( result );
 				processedDirectories++;
 			} else {
 				console.log( '[Unable]', indexJsFilename );
-				skippedDirectories++;
+				unableToProcess.push( directory );
 			}
+
+			//break;
+
 		}
 
-		console.log( 'Processed: ' + processedDirectories, 'Skipped: ' + skippedDirectories );
+		console.log( 'Total dir count: ' + directoryMap.size,
+			'No scss: ' + noScss,
+			'Processed: ' + processedDirectories,
+			'NoIndex: ' + noIndex.length,
+			'Unable to process: ' + unableToProcess.length );
 	}
 );
