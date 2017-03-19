@@ -10,6 +10,7 @@ import emailValidator from 'email-validator';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
+import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
@@ -30,14 +31,21 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 		];
 
 		return (
-			<EmptyContent
-				title={ translate( 'Check your Email!' ) }
-				line={ line }
-				action={ translate( 'Back to WordPress.com' ) }
-				actionURL={ '/' }
-				illustration={ '/calypso/images/drake/drake-all-done.svg' }
-				illustrationWidth={ 500 }
+			<div>
+				<RedirectWhenLoggedIn
+					redirectTo="/help"
+					replaceCurrentLocation={ true }
+					waitForEmailAddress={ emailAddress }
 				/>
+				<EmptyContent
+					action={ translate( 'Back to WordPress.com' ) }
+					actionURL={ '/' }
+					illustration={ '/calypso/images/drake/drake-all-done.svg' }
+					illustrationWidth={ 500 }
+					line={ line }
+					title={ translate( 'Check your Email!' ) }
+					/>
+			</div>
 		);
 	}
 }
