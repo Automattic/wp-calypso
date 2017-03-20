@@ -43,8 +43,10 @@ function getSuggestions( count, tags ) {
 	return suggestionsFromPicks( count );
 }
 
-export default ( count = 3 ) => connect(
+const SuggestionsProvider = ( count, Element ) => connect(
 	( state ) => ( {
 		suggestions: getSuggestions( count, getReaderFollowedTags( state ) )
 	} )
-);
+)( Element );
+
+export default SuggestionsProvider;

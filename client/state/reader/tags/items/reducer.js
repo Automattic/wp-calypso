@@ -18,7 +18,7 @@ import { createReducer, } from 'state/utils';
  *
  * the shape of a tag is { id, url, title, displayName, isFollowing }.
  */
-export const items = createReducer( {}, {
+export const items = createReducer( null, {
 	[ READER_TAGS_RECEIVE ]: ( state, action ) => {
 		const tags = action.payload;
 		const resetFollowingData = action.meta.resetFollowingData;
