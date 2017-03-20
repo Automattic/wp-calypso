@@ -75,6 +75,7 @@ class ThemesMagicSearchCard extends React.Component {
 
 		if ( event.key === 'Enter' && ! inputUpdated && this.isPreviousCharWhitespace() ) {
 			this.refs[ 'url-search' ].blur();
+			this.setState( { searchIsOpen: false } );
 		}
 	}
 
