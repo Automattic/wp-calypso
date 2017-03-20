@@ -66,7 +66,7 @@ class ThemesMagicSearchCard extends React.Component {
 		const target = this.state.editedSearchElement !== '' ? 'suggestions' : 'welcome';
 		if ( this.refs[ target ] ) {
 			// handleKeyEvent functions return bool that infroms if suggestion was picked
-			// We need that because we cannot relly on input state because it is updated
+			// We need that because we cannot rely on input state because it is updated
 			// asynchronously and we are not able to observe what was changed during handleKeyEvent
 			inputUpdated = this.refs[ target ].handleKeyEvent( event );
 		}
