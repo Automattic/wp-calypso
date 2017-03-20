@@ -42,6 +42,13 @@ class MagicSearchWelcome extends React.Component {
 		} );
 	}
 
+	/**
+	 * Provides keybord support for component by managing items highlith position
+	 * and calling suggestion callback when user hits Enter
+	 *
+	 * @param  {Object} event  Keybord event
+	 * @return {Bool}          true indicates suggestion was chosen and send to parent using suggestionsCallback prop callback
+	 */
 	handleKeyEvent = ( event ) => {
 		switch ( event.key ) {
 			case 'ArrowDown' :
@@ -58,9 +65,11 @@ class MagicSearchWelcome extends React.Component {
 					this.props.suggestionsCallback( this.visibleTaxonomies[ position ] + ':' );
 					event.stopPropagation();
 					event.preventDefault();
+					return true;
 				}
 				break;
 		}
+		return false;
 	}
 
 	renderToken = ( taxonomy ) => {
