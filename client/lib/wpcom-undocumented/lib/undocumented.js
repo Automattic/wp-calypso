@@ -1329,6 +1329,7 @@ Undocumented.prototype.readListItems = function( query, fn ) {
 };
 
 Undocumented.prototype.followReaderFeed = function( query, fn ) {
+	query = Object.assign( { source: config( 'readerFollowingSource' ) }, query );
 	return this.wpcom.req.post( '/read/following/mine/new', query, {}, fn );
 };
 
