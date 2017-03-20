@@ -49,7 +49,6 @@
 		"help/directly": true,
 		"jetpack/invites": true,
 		"jetpack_core_inline_update": true,
-		"jetpack/google-analytics": true,
 		"jetpack/api-cache": true,
 		"keyboard-shortcuts": true,
 		"happychat": true,
