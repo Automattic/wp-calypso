@@ -405,6 +405,7 @@ describe( 'actions', () => {
 								properties: {
 									previous_theme: 'twentyfifteen',
 									purchased: false,
+									search_taxonomies: '',
 									search_term: 'simple, white',
 									source: 'unknown',
 									theme: 'twentysixteen',
