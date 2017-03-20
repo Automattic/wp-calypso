@@ -33,6 +33,10 @@
 		.focus-sidebar & {
 			right: 228px;
 
+			@include breakpoint( "<660px" ) {
+				display: none;
+			}
+
 			@include breakpoint( ">960px" ) {
 				right: 273px;
 			}
