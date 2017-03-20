@@ -163,6 +163,49 @@ class PostShare extends Component {
 		return 'published';
 	}
 
+	renderFooter() {
+		const { footerSection } = this.state;
+
+		return (
+			<div className="post-share__footer">
+				<SectionNav selectedText={ 'some text' }>
+					<NavTabs label="Status" selectedText="Published">
+						<NavItem
+							selected={ footerSection === PostShare.FOOTER_SECTION_SCHEDULED }
+							count={ 4 }
+							onClick={ partial(
+								this.setFooterSection,
+								PostShare.FOOTER_SECTION_SCHEDULED
+							) }
+						>
+							Scheduled
+						</NavItem>
+						<NavItem
+							selected={ footerSection === PostShare.FOOTER_SECTION_PUBLISHED }
+							count={ 2 }
+							onClick={ partial(
+								this.setFooterSection,
+								PostShare.FOOTER_SECTION_PUBLISHED
+							) }
+						>
+							Published
+						</NavItem>
+					</NavTabs>
+				</SectionNav>
+				<div className="post-share__scheduled-list">
+					{ footerSection === PostShare.FOOTER_SECTION_SCHEDULED &&
+					this.renderScheduledList()
+					}
+				</div>
+				<div className="post-share__published-list">
+					{ footerSection === PostShare.FOOTER_SECTION_PUBLISHED &&
+					this.renderPublishedList()
+					}
+				</div>
+			</div>
+		);
+	}
+
 	render() {
 		if ( ! this.props.isPublicizeEnabled ) {
 			return null;
@@ -182,8 +225,6 @@ class PostShare extends Component {
 		const classes = classNames( 'post-share__wrapper', {
 			'has-connections': this.hasConnections()
 		} );
-
-		const { footerSection } = this.state;
 
 		return (
 			<div className="post-share">
@@ -276,42 +317,7 @@ class PostShare extends Component {
 								</div>
 							</div>
 
-							<div className="post-share__footer">
-								<SectionNav selectedText={ 'some text' }>
-									<NavTabs label="Status" selectedText="Published">
-										<NavItem
-											selected={ footerSection === PostShare.FOOTER_SECTION_SCHEDULED }
-											count={ 4 }
-											onClick={ partial(
-												this.setFooterSection,
-												PostShare.FOOTER_SECTION_SCHEDULED
-											) }
-										>
-											Scheduled
-										</NavItem>
-										<NavItem
-											selected={ footerSection === PostShare.FOOTER_SECTION_PUBLISHED }
-											count={ 2 }
-											onClick={ partial(
-												this.setFooterSection,
-												PostShare.FOOTER_SECTION_PUBLISHED
-											) }
-										>
-											Published
-										</NavItem>
-									</NavTabs>
-								</SectionNav>
-								<div className="post-share__scheduled-list">
-									{ footerSection === PostShare.FOOTER_SECTION_SCHEDULED &&
-										this.renderScheduledList()
-									}
-								</div>
-								<div className="post-share__published-list">
-									{ footerSection === PostShare.FOOTER_SECTION_PUBLISHED &&
-										this.renderPublishedList()
-									}
-								</div>
-							</div>
+							{ isEnabled( 'publicize-scheduling' ) && this.renderFooter() }
 						</div>
 					}
 
