@@ -187,7 +187,9 @@ function wpview( editor ) {
 			// Make sure that the editor is focused.
 			// It is possible that the editor is not focused when the mouse event fires
 			// without focus, the selection will not work properly.
-			editor.getBody().focus();
+			if ( ! focus ) {
+				editor.getBody().focus();
+			}
 
 			deselect();
 			selected = viewNode;
