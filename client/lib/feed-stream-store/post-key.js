@@ -38,3 +38,19 @@ export function keysAreEqual( a, b ) {
 	}
 	return a.blogId === b.blogId;
 }
+
+export function keyToString( postKey ) {
+	if (
+			! postKey ||
+			postKey.isRecommendationBlock ||
+			postKey.isGap ||
+			postKey.isRecommendation ||
+			postKey.isCombination
+		) {
+		return null;
+	}
+
+	const feedId = postKey.feedId ? `&feedId=${ postKey.feedId }` : '';
+	const blogId = postKey.blogId ? `&feedId=${ postKey.blogId }` : '';
+	return `postId=${ postKey.postId }${ feedId }${ blogId } `;
+}
