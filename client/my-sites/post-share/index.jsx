@@ -40,6 +40,8 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import CompactCard from 'components/card/compact';
 import SocialLogo from 'social-logos';
+import EllipsisMenu from 'components/ellipsis-menu';
+import PopoverMenuItem from 'components/popover/menu-item';
 
 class PostShare extends Component {
 	static propTypes = {
@@ -172,13 +174,24 @@ class PostShare extends Component {
 				<span className="post-share__footer-item__handle">
 					{ service === 'twitter' ? `@${ handle }` : handle }
 				</span>
-				<Gridicon icon="gridicons-time" size={ 18 } />
+				<Gridicon icon="time" size={ 18 } />
 				<span className="post-share__footer-item__timestamp">
 					{ timestamp }
 				</span>
 				<span className="post-share__footer-item__message">
 					{ message }
 				</span>
+				<EllipsisMenu>
+					<PopoverMenuItem icon="visible">
+						Preview
+					</PopoverMenuItem>
+					<PopoverMenuItem icon="pencil">
+						Edit
+					</PopoverMenuItem>
+					<PopoverMenuItem icon="trash">
+						Trash
+					</PopoverMenuItem>
+				</EllipsisMenu>
 			</CompactCard>
 		);
 	}
