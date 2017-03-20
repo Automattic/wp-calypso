@@ -69,6 +69,10 @@
       "version": "1.0.9",
       "dev": true
     },
+    "aria-query": {
+      "version": "0.3.0",
+      "dev": true
+    },
     "arr-diff": {
       "version": "2.0.0"
     },
@@ -122,6 +126,10 @@
     },
     "ast-types": {
       "version": "0.9.6"
+    },
+    "ast-types-flow": {
+      "version": "0.0.7",
+      "dev": true
     },
     "async": {
       "version": "0.9.0"
@@ -858,6 +866,10 @@
       "version": "1.0.0",
       "dev": true
     },
+    "damerau-levenshtein": {
+      "version": "1.0.3",
+      "dev": true
+    },
     "dashdash": {
       "version": "1.14.1",
       "dependencies": {
@@ -1049,6 +1061,10 @@
     },
     "emitter-component": {
       "version": "1.0.0"
+    },
+    "emoji-regex": {
+      "version": "6.4.1",
+      "dev": true
     },
     "emoji-text": {
       "version": "0.2.6"
@@ -1338,7 +1354,11 @@
       }
     },
     "eslint-config-wpcalypso": {
-      "version": "0.6.0",
+      "version": "0.7.1",
+      "dev": true
+    },
+    "eslint-plugin-jsx-a11y": {
+      "version": "4.0.0",
       "dev": true
     },
     "eslint-plugin-react": {
