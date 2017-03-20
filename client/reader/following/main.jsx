@@ -54,4 +54,4 @@ const FollowingStream = ( props ) => {
 	);
 };
 
-export default SuggestionProvider( 3, localize( FollowingStream ) );
+export default SuggestionProvider( localize( FollowingStream ) );
