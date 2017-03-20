@@ -2,9 +2,11 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import { debounce } from 'lodash';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -156,11 +158,6 @@ class ThemesMagicSearchCard extends React.Component {
 		this.setState( { searchInput: input } );
 	}
 
-	onBlur = ( event ) => {
-		event.preventDefault();
-		this.setState( { searchIsOpen: false } );
-	}
-
 	searchTokens = ( input ) => {
 		//We are not able to scroll overlay on Edge so just create empty div
 		if ( global.window && /(Edge)/.test( global.window.navigator.userAgent ) ) {
@@ -208,6 +205,24 @@ class ThemesMagicSearchCard extends React.Component {
 		this.updateInput( updatedInput );
 	}
 
+	focusOnInput = () => {
+		this.refs[ 'url-search' ].focus();
+	}
+
+	clearSearch = () => {
+		this.updateInput( '' );
+		this.focusOnInput();
+	}
+
+	handleClickOutside() {
+		this.setState( { searchIsOpen: false } );
+	}
+
+	// TODO remember cursor position and put it back after focus
+	handleClickInside = () => {
+		this.focusOnInput();
+	}
+
 	render() {
 		const { isJetpack, translate } = this.props;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
@@ -235,9 +250,8 @@ class ThemesMagicSearchCard extends React.Component {
 				onKeyDown={ this.onKeyDown }
 				onClick={ this.onClick }
 				overlayStyling={ this.searchTokens }
-				onBlur={ this.onBlur }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
-				hideClose={ isMobile() }
+				hideClose={ true }
 			/>
 		);
 
@@ -254,8 +268,23 @@ class ThemesMagicSearchCard extends React.Component {
 
 		return (
 			<div className={ magicSearchClass }>
-				<div className={ themesSearchCardClass } data-tip-target="themes-search-card">
+				<div
+					className={ themesSearchCardClass }
+					data-tip-target="themes-search-card"
+					onClick={ this.handleClickInside } >
 					{ searchField }
+					{ ! isMobile() && this.state.searchInput !== '' &&
+						<div className="themes-magic-search-card__icon" >
+							<Gridicon
+								icon="cross"
+								className="themes-magic-search-card__icon-close"
+								tabIndex="0"
+								onClick={ this.clearSearch }
+								aria-controls={ 'search-component-magic-search' }
+								aria-label={ translate( 'Clear Search', { context: 'button label' } ) }
+							/>
+						</div>
+					}
 					{ isPremiumThemesEnabled && ! isJetpack &&
 						<SegmentedControl
 							initialSelected={ this.props.tier }
@@ -303,4 +332,4 @@ export default connect(
 	( state ) => ( {
 		isJetpack: isJetpackSite( state, getSelectedSiteId( state ) )
 	} )
-)( localize( ThemesMagicSearchCard ) );
+)( localize( wrapWithClickOutside( ThemesMagicSearchCard ) ) );
