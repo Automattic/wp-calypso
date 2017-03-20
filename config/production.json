@@ -76,6 +76,7 @@
 		"preview-layout": true,
 		"push-notifications": true,
 		"reader": true,
+		"reader/combined-cards": true,
 		"reader/full-errors": false,
 		"reader/tags-with-elasticsearch": false,
 		"reader/related-posts": true,

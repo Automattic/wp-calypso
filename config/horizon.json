@@ -80,6 +80,7 @@
 		"press-this": true,
 		"preview-layout": true,
 		"reader": true,
+		"reader/combined-cards": true,
 		"reader/related-posts": true,
 		"reader/search": true,
 		"resume-editing": true,

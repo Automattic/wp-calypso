@@ -80,6 +80,7 @@
 		"preview-layout": true,
 		"push-notifications": true,
 		"reader": true,
+		"reader/combined-cards": true,
 		"reader/full-errors": true,
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,

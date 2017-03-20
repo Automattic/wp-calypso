@@ -67,6 +67,7 @@
 		"press-this": false,
 		"preview-layout": true,
 		"reader": true,
+		"reader/combined-cards": true,
 		"reader/full-errors": false,
 		"reader/search": true,
 		"resume-editing": true,
