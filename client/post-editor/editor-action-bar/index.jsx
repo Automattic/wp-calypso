@@ -21,7 +21,6 @@ export default React.createClass( {
 
 	propTypes: {
 		isNew: React.PropTypes.bool,
-		onPrivatePublish: React.PropTypes.func,
 		post: React.PropTypes.object,
 		savedPost: React.PropTypes.object,
 		site: React.PropTypes.object,
