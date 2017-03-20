@@ -408,7 +408,8 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 		};
 		const previousThemeId = getActiveTheme( getState(), siteId );
 		const query = getLastThemeQuery( getState(), siteId );
-
+		const search_taxonomies = prependFilterKeys( query.filter );
+		const search_term = search_taxonomies + ( query.search || '' );
 		const trackThemeActivation = recordTracksEvent(
 			'calypso_themeshowcase_theme_activate',
 			{
@@ -416,7 +417,8 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 				previous_theme: previousThemeId,
 				source: source,
 				purchased: purchased,
-				search_term: query.search || null
+				search_term: search_term || null,
+				search_taxonomies
 			}
 		);
 		dispatch( withAnalytics( trackThemeActivation, action ) );
