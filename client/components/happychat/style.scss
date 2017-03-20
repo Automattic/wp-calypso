@@ -538,7 +538,7 @@
 
 
 	// add space in the main column for the docked sidebar
-	.layout.has-chat:not( .is-section-theme ):not( .is-group-reader ) .layout__content {
+	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ) .layout__content {
 		padding: 79px 304px 32px;
 	}
 
