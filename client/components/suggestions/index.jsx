@@ -87,6 +87,13 @@ const Suggestions = React.createClass( {
 		} );
 	},
 
+	/**
+	 * Provides keybord support for suggestings component by managing items highlith position
+	 * and calling suggestion callback when user hits Enter
+	 *
+	 * @param  {Object} event  Keybord event
+	 * @return {Bool}          true indicates suggestion was chosen and send to parent with using suggest prop callback
+	 */
 	handleKeyEvent( event ) {
 		switch ( event.key ) {
 			case 'ArrowDown' :
