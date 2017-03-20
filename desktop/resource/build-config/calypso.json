@@ -1,0 +1,17 @@
+{
+  "name": "wp-calypso",
+  "version": "0.17.0",
+  "description": "A pure REST-API and JS based version of the WordPress.com admin",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Automattic/wp-calypso.git"
+  },
+  "main": "index.js",
+  "dependencies": {
+	  "express": "4.13.3",
+	  "superagent": "1.2.0",
+	  "webpack": "1.12.6",
+      "jade": "pugjs/jade#29784fd"
+  }
+ }
