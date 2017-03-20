@@ -16,6 +16,7 @@ class MagicSearchWelcome extends React.Component {
 
 	constructor( props ) {
 		super( props );
+		this.visibleTaxonomies = [];
 	}
 
 	state = { suggestionPosition: -1 }
@@ -26,34 +27,35 @@ class MagicSearchWelcome extends React.Component {
 		event.preventDefault();
 	}
 
-	incPosition = () => {
-		const position = ( this.state.suggestionPosition + 1 ) % this.props.taxonomies.length;
-		this.setState( {
-			suggestionPosition: position,
-		} );
-	}
+	movePositionBy = ( moveDirection ) => {
+		let newPosition = this.state.suggestionPosition + moveDirection;
 
-	decPosition = () => {
-		const position = ( this.state.suggestionPosition - 1 );
+		// Loop around
+		if ( newPosition < 0 ) {
+			newPosition = this.visibleTaxonomies.length - 1;
+		} else if ( newPosition > this.visibleTaxonomies.length - 1 ) {
+			newPosition = 0;
+		}
+
 		this.setState( {
-			suggestionPosition: position < 0 ? this.props.taxonomies.length - 1 : position
+			suggestionPosition: newPosition
 		} );
 	}
 
 	handleKeyEvent = ( event ) => {
 		switch ( event.key ) {
 			case 'ArrowDown' :
-				this.incPosition();
+				this.movePositionBy( +1 );
 				event.preventDefault();
 				break;
 			case 'ArrowUp' :
-				this.decPosition();
+				this.movePositionBy( -1 );
 				event.preventDefault();
 				break;
 			case 'Enter' :
 				const position = this.state.suggestionPosition;
 				if ( position !== -1 ) {
-					this.props.suggestionsCallback( this.props.taxonomies[ position ] + ':' );
+					this.props.suggestionsCallback( this.visibleTaxonomies[ position ] + ':' );
 					event.stopPropagation();
 					event.preventDefault();
 				}
@@ -66,7 +68,7 @@ class MagicSearchWelcome extends React.Component {
 			'themes-magic-search-card__welcome-taxonomy',
 			'themes-magic-search-card__welcome-taxonomy-type-' + taxonomy,
 			{ 'themes-magic-search-card__welcome-taxonomy-highlight':
-				this.props.taxonomies[ this.state.suggestionPosition ] === taxonomy }
+				this.visibleTaxonomies[ this.state.suggestionPosition ] === taxonomy }
 		);
 
 		return (
@@ -83,7 +85,8 @@ class MagicSearchWelcome extends React.Component {
 
 	renderTaxonomies = () => {
 		const { taxonomies } = this.props;
-		return intersection( taxonomies, taxonomiesWelcomeWhitelist ).map( ( taxonomy ) => this.renderToken( taxonomy ) );
+		this.visibleTaxonomies = intersection( taxonomies, taxonomiesWelcomeWhitelist );
+		return this.visibleTaxonomies.map( ( taxonomy ) => this.renderToken( taxonomy ) );
 	}
 
 	render() {
