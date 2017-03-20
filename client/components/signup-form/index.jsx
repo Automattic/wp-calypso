@@ -426,7 +426,6 @@ export default React.createClass( {
 	formFooter() {
 		return (
 			<LoggedOutFormFooter>
-				{ this.getNotice() }
 				{ this.termsOfServiceLink() }
 				<FormButton className="signup-form__submit" disabled={ this.state.submitting || this.props.disabled }>
 					{ this.props.submitButtonText }
@@ -477,6 +476,7 @@ export default React.createClass( {
 					{ this.props.isSocialSignupEnabled && <HrWithText>
 						{ i18n.translate( 'Or sign up with your email address:' ) }
 					</HrWithText> }
+					{ this.getNotice() }
 					{ this.formFields() }
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
