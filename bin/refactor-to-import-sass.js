@@ -407,6 +407,15 @@ walk(
 				unableToProcess.push( directory );
 			}
 
+			scssFilesInDirectory.forEach( scssFile => {
+				const contents = fs.readFileSync( scssFile );
+				const imports = "@import 'assets/stylesheets/shared/mixins/breakpoints';\n@import 'assets/stylesheets/shared/colors';\n\n";
+
+				fs.writeFile( scssFile, imports + contents, error => {
+					console.error( '[ERROR] Failed to write ' + scssFile, error );
+				} );
+			} );
+
 			//break;
 
 		}
