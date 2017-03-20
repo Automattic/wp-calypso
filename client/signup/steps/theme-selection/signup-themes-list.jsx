@@ -18,8 +18,6 @@ class SignupThemesList extends Component {
 		surveyQuestion: PropTypes.string,
 		designType: PropTypes.string,
 		handleScreenshotClick: PropTypes.func,
-		handleThemeUpload: PropTypes.func,
-		showThemeUpload: PropTypes.bool,
 		translate: PropTypes.func
 	};
 
@@ -27,8 +25,6 @@ class SignupThemesList extends Component {
 		surveyQuestion: null,
 		designType: null,
 		handleScreenshotClick: noop,
-		handleThemeUpload: noop,
-		showThemeUpload: false,
 		translate: identity
 	};
 
@@ -63,8 +59,6 @@ class SignupThemesList extends Component {
 				onMoreButtonClick= { noop }
 				getActionLabel={ getActionLabel }
 				themes= { themes }
-				showThemeUpload= { this.props.showThemeUpload }
-				onThemeUpload= { this.props.handleThemeUpload }
 			/>
 		);
 	}
