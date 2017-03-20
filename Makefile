@@ -28,13 +28,14 @@ COMPONENTS_USAGE_STATS_JS ?= server/devdocs/bin/generate-components-usage-stats.
 COMPONENTS_PROPTYPES_JS ?= server/devdocs/bin/generate-proptypes-index.js
 
 # files used as prereqs
-SASS_FILES := $(shell \
-	\( find client assets -type f -name '*.scss' \
-	| while read line; do echo `pwd`"/$line"; done \
-	| cat && cat exclude-scss-from-build \) \
-	| sort \
-	| uniq -u \
-)
+SASS_FILES_CMD := ( find client assets -type f -name '*.scss' \
+                  	| while read line; do echo \"\`pwd\`/\$$line\"; done \
+                  	| cat && cat client/exclude-scss-from-build ) \
+                  	| sort \
+                  	| uniq -u \
+                  	| wc -l
+SASS_FILES := $(shell bin/get-scss.sh)
+
 JS_FILES := $(shell \
 	find . \
 		-not \( -path './.git' -prune \) \
