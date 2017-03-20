@@ -644,6 +644,11 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 			} );
 		} )
 			.then( ( { transfer_id } ) => {
+				if ( ! transfer_id ) {
+					return dispatch(
+						transferInitiateFailure( siteId, { error: 'initiate_failure' }, plugin )
+					);
+				}
 				const themeInitiateSuccessAction = {
 					type: THEME_TRANSFER_INITIATE_SUCCESS,
 					siteId,
@@ -656,15 +661,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 				dispatch( pollThemeTransferStatus( siteId, transfer_id ) );
 			} )
 			.catch( error => {
-				const themeInitiateFailureAction = {
-					type: THEME_TRANSFER_INITIATE_FAILURE,
-					siteId,
-					error,
-				};
-				dispatch( withAnalytics(
-					recordTracksEvent( 'calypso_automatic_transfer_inititate_failure', { plugin } ),
-					themeInitiateFailureAction
-				) );
+				dispatch( transferInitiateFailure( siteId, error, plugin ) );
 			} );
 	};
 }
@@ -691,6 +688,20 @@ function transferStatusFailure( siteId, transferId, error ) {
 	};
 }
 
+// receive a transfer initiation failure
+function transferInitiateFailure( siteId, error, plugin ) {
+	return dispatch => {
+		const themeInitiateFailureAction = {
+			type: THEME_TRANSFER_INITIATE_FAILURE,
+			siteId,
+			error,
+		};
+		dispatch( withAnalytics(
+			recordTracksEvent( 'calypso_automatic_transfer_inititate_failure', { plugin } ),
+			themeInitiateFailureAction
+		) );
+	};
+}
 /**
  * Make API calls to the transfer status endpoint until a status complete is received,
  * or an error is received, or the timeout is reached.

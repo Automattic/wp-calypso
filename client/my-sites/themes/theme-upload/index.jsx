@@ -136,7 +136,7 @@ class Upload extends React.Component {
 			'Too Large': translate( 'Upload problem: Zip file too large to upload.' ),
 			incompatible: translate( 'Upload problem: Incompatible theme.' ),
 			unsupported_mime_type: translate( 'Upload problem: Not a valid zip file' ),
-			not_found: translate( 'Upload problem: Not a valid theme' ),
+			initiate_failure: translate( 'Upload problem: Theme may not be valid' ),
 		};
 
 		const errorString = JSON.stringify( error );
