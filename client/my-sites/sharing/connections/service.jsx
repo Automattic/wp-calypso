@@ -375,7 +375,7 @@ class SharingService extends Component {
 					expandedSummary={ action } >
 					<div className={ classnames( 'sharing-service__content', { 'is-placeholder': this.props.isFetching } ) }>
 						<ServiceExamples service={ this.props.service } />
-						<ServiceConnectedAccounts connect={ this.connectAnother.bind( this ) } service={ this.props.service }>
+						<ServiceConnectedAccounts connect={ this.connectAnother } service={ this.props.service }>
 							{ this.props.siteUserConnections.map( ( connection ) =>
 								<Connection
 									key={ connection.keyring_connection_ID }
