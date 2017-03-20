@@ -24,7 +24,7 @@ const RelatedPosts = ( {
 		<div>
 			<SectionHeader label={ translate( 'Related Posts' ) } />
 
-			<Card className="related-posts__card site-settings">
+			<Card className="related-posts__card site-settings__traffic-settings">
 				<FormFieldset>
 					<CompactFormToggle
 						checked={ !! fields.jetpack_relatedposts_enabled }

@@ -30,7 +30,6 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
 import JetpackSyncPanel from './jetpack-sync-panel';
 import SiteIconSetting from './site-icon-setting';
-import RelatedPosts from './related-posts';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
@@ -515,9 +514,7 @@ class SiteSettingsFormGeneral extends Component {
 
 	render() {
 		const {
-			fields,
 			handleSubmitForm,
-			handleAutosavingToggle,
 			isRequestingSettings,
 			isSavingSettings,
 			site,
@@ -605,14 +602,6 @@ class SiteSettingsFormGeneral extends Component {
 					</div>
 				}
 
-				<RelatedPosts
-					onSubmitForm={ handleSubmitForm }
-					handleAutosavingToggle={ handleAutosavingToggle }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
-				/>
-
 				{ this.props.site.jetpack
 					? <div>
 						<SectionHeader label={ translate( 'Jetpack' ) }>
@@ -676,10 +665,6 @@ export default wrapSettingsForm( settings => {
 		start_of_week: 0,
 		blog_public: '',
 		admin_url: '',
-		jetpack_relatedposts_allowed: false,
-		jetpack_relatedposts_enabled: false,
-		jetpack_relatedposts_show_headline: false,
-		jetpack_relatedposts_show_thumbnails: false,
 		jetpack_sync_non_public_post_stati: false,
 		holidaysnow: false,
 		amp_is_supported: false,
@@ -701,7 +686,6 @@ export default wrapSettingsForm( settings => {
 		date_format: settings.date_format,
 		time_format: settings.time_format,
 		start_of_week: settings.start_of_week,
-		jetpack_relatedposts_allowed: settings.jetpack_relatedposts_allowed,
 		jetpack_sync_non_public_post_stati: settings.jetpack_sync_non_public_post_stati,
 
 		amp_is_supported: settings.amp_is_supported,
@@ -711,14 +695,6 @@ export default wrapSettingsForm( settings => {
 
 		api_cache: settings.api_cache,
 	};
-
-	if ( settings.jetpack_relatedposts_allowed ) {
-		Object.assign( formSettings, {
-			jetpack_relatedposts_enabled: ( settings.jetpack_relatedposts_enabled ) ? 1 : 0,
-			jetpack_relatedposts_show_headline: settings.jetpack_relatedposts_show_headline,
-			jetpack_relatedposts_show_thumbnails: settings.jetpack_relatedposts_show_thumbnails
-		} );
-	}
 
 	// handling `gmt_offset` and `timezone_string` values
 	const gmt_offset = settings.gmt_offset;
