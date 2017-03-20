@@ -152,6 +152,11 @@ const HelpContact = React.createClass( {
 			site_plan_product_id: ( site ? site.plan.product_id : null )
 		} );
 
+		let i = 0;
+		setInterval( () => {
+			this.props.sendHappychatMessage( `Test message ${ i++ }` );
+		}, 2000 );
+
 		page( '/help' );
 	},
 
