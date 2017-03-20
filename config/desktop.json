@@ -84,6 +84,7 @@
 		"upgrades/presale-chat": true,
 		"upgrades/removal-survey": true
 	},
+	"readerFollowingSource": "desktop",
 	"rtl": false,
 	"jetpack_min_version": "3.3",
 	"siftscience_key": "a4f69f6759",
