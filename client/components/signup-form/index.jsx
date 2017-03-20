@@ -57,6 +57,7 @@ export default React.createClass( {
 		formHeader: PropTypes.node,
 		getRedirectToAfterLoginUrl: PropTypes.string.isRequired,
 		goToNextStep: PropTypes.func,
+		handleSocialResponse: PropTypes.func,
 		isSocialSignupEnabled: PropTypes.bool,
 		locale: PropTypes.string,
 		positionInFlow: PropTypes.number,
@@ -472,7 +473,7 @@ export default React.createClass( {
 							{ this.props.formHeader }
 						</header>
 					}
-					{ this.props.isSocialSignupEnabled && <SocialSignupForm /> }
+					{ this.props.isSocialSignupEnabled && <SocialSignupForm handleResponse={ this.props.handleSocialResponse } /> }
 					{ this.props.isSocialSignupEnabled && <HrWithText>
 						{ i18n.translate( 'Or sign up with your email address:' ) }
 					</HrWithText> }

@@ -73,6 +73,17 @@ export class UserStep extends Component {
 		} );
 	};
 
+	submit = ( data ) => {
+		SignupActions.submitSignupStep( {
+			processingMessage: this.props.translate( 'Creating your account' ),
+			flowName: this.props.flowName,
+			stepName: this.props.stepName,
+			...data
+		} );
+
+		this.props.goToNextStep();
+	};
+
 	submitForm = ( form, userData, analyticsData ) => {
 		const queryArgs = {
 			jetpackRedirect: get( this.props, 'queryObject.jetpack_redirect' )
@@ -88,16 +99,15 @@ export class UserStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
 
-		SignupActions.submitSignupStep( {
-			processingMessage: this.props.translate( 'Creating your account' ),
-			flowName: this.props.flowName,
+		this.submit( {
 			userData,
-			stepName: this.props.stepName,
 			form: formWithoutPassword,
 			queryArgs
 		} );
+	};
 
-		this.props.goToNextStep();
+	handleSocialResponse = ( service, token ) => {
+		this.submit( { service, token } );
 	};
 
 	userCreationComplete() {
@@ -151,6 +161,7 @@ export class UserStep extends Component {
 				submitForm={ this.submitForm }
 				submitButtonText={ this.submitButtonText() }
 				suggestedUsername={ this.props.suggestedUsername }
+				handleSocialResponse={ this.handleSocialResponse }
 				isSocialSignupEnabled={ this.props.isSocialSignupEnabled }
 			/>
 		);

@@ -1446,6 +1446,29 @@ Undocumented.prototype.usersNew = function( query, fn ) {
 };
 
 /**
+ * Sign up for a new account with a social service (e.g. Google/Facebook).
+ *
+ * @param {string} service - Social service associated with token, e.g. google.
+ * @param {string} token - Token returned from service.
+ * @param {Function} fn - callback
+ *
+ * @return {Promise} A promise for the request
+ */
+Undocumented.prototype.usersSocialNew = function( service, token, fn ) {
+	const body = { service, token, locale: i18n.getLocaleSlug() };
+
+	// This API call is restricted to these OAuth keys
+	restrictByOauthKeys( body );
+
+	const args = {
+		path: '/users/social/new',
+		body
+	};
+
+	return this.wpcom.req.post( args, fn );
+};
+
+/**
  * Sign up for a new phone account
  *
  * @param {string} query - a key/value pair; key: 'phone_number', value: 'the users phone number'
