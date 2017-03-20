@@ -71,16 +71,20 @@ class ThemesMagicSearchCard extends React.Component {
 			inputUpdated = this.refs[ target ].handleKeyEvent( event );
 		}
 
-		if ( event.key === 'Enter' && ! inputUpdated ) {
-			const cursorPosition = txt.slice( 0, this.refs[ 'url-search' ].refs.searchInput.selectionStart ).length;
-			if ( txt[ cursorPosition - 1 ] === ' ' ) {
-				this.refs[ 'url-search' ].blur();
-			}
+		if ( event.key === 'Enter' && ! inputUpdated && this.isPreviousCharWhitespace() ) {
+			this.refs[ 'url-search' ].blur();
 		}
 	}
 
 	onClick = ( event ) => {
 		this.findTextForSuggestions( event.target.value );
+	}
+
+	// Check if char before cursor in input is a space.
+	isPreviousCharWhitespace = () => {
+		const { value, selectionStart } = this.refs[ 'url-search' ].refs.searchInput;
+		const cursorPosition = value.slice( 0, selectionStart ).length;
+		return value[ cursorPosition - 1 ] === ' ';
 	}
 
 	findEditedTokenIndex = ( tokens, cursorPosition ) => {

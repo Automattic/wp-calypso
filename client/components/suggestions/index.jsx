@@ -92,7 +92,7 @@ const Suggestions = React.createClass( {
 	 * and calling suggestion callback when user hits Enter
 	 *
 	 * @param  {Object} event  Keybord event
-	 * @return {Bool}          true indicates suggestion was chosen and send to parent with using suggest prop callback
+	 * @return {Bool}          true indicates suggestion was chosen and send to parent using suggest prop callback
 	 */
 	handleKeyEvent( event ) {
 		switch ( event.key ) {
