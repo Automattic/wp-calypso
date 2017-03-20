@@ -79,6 +79,7 @@ export isJetpackSiteInStagingMode from './is-jetpack-site-in-staging-mode';
 export isMappedDomainSite from './is-mapped-domain-site';
 export isPrivateSite from './is-private-site';
 export isPublicizeEnabled from './is-publicize-enabled';
+export isFetchingPublicizeShareActions from './is-fetching-publicize-share-actions';
 export isRegeneratingJetpackPostByEmail from './is-regenerating-jetpack-post-by-email';
 export isRequestingAccountRecoveryResetOptions from './is-requesting-account-recovery-reset-options';
 export isRequestingBillingTransactions from './is-requesting-billing-transactions';
