@@ -41,6 +41,7 @@ pre {
 	background: $gray-light;
 	font-family: $code;
 	padding: 8px;
+	overflow-x: auto;
 
 	code {
 		background: none;
