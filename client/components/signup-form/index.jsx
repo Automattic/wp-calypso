@@ -48,8 +48,24 @@ export default React.createClass( {
 	displayName: 'SignupForm',
 
 	propTypes: {
+		className: PropTypes.string,
+		disableEmailExplanation: PropTypes.bool,
+		disableEmailInput: PropTypes.bool,
+		disabled: PropTypes.bool,
+		email: PropTypes.string,
+		footerLink: PropTypes.node,
+		formHeader: PropTypes.node,
+		getRedirectToAfterLoginUrl: PropTypes.string.isRequired,
+		goToNextStep: PropTypes.func,
 		isSocialSignupEnabled: PropTypes.bool,
-		suggestedUsername: PropTypes.string.isRequired
+		locale: PropTypes.string,
+		positionInFlow: PropTypes.number,
+		save: PropTypes.func,
+		signupDependencies: PropTypes.object,
+		step: PropTypes.object,
+		submitButtonText: PropTypes.string.isRequired,
+		submitting: PropTypes.bool,
+		suggestedUsername: PropTypes.string.isRequired,
 	},
 
 	getDefaultProps() {
