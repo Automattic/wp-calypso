@@ -10,6 +10,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import {
 	getPostCommentsTree,
 	getPostTotalCommentsCount,
@@ -231,28 +232,30 @@ class PostCommentList extends React.Component {
 							} )
 						}</span> : null }
 				</div> }
-				<SegmentedControl>
-					<SegmentedControlItem
-						selected={ commentsFilter === 'all' }
-						onClick={ this.handleFilterClick( 'all' ) }>{ translate( 'All' ) }
-					</SegmentedControlItem>
-					<SegmentedControlItem
-						selected={ commentsFilter === 'approved' }
-						onClick={ this.handleFilterClick( 'approved' ) }>{ translate( 'Approved', { context: 'comment status'} ) }
-					</SegmentedControlItem>
-					<SegmentedControlItem
-						selected={ commentsFilter === 'unapproved' }
-						onClick={ this.handleFilterClick( 'unapproved' ) }>{ translate( 'Pending', { context: 'comment status'} ) }
-					</SegmentedControlItem>
-					<SegmentedControlItem
-						selected={ commentsFilter === 'spam' }
-						onClick={ this.handleFilterClick( 'spam' ) }>{ translate( 'Spam', { context: 'comment status'} ) }
-					</SegmentedControlItem>
-					<SegmentedControlItem
-						selected={ commentsFilter === 'trash' }
-						onClick={ this.handleFilterClick( 'trash' ) }>{ translate( 'Trash', { context: 'comment status'} ) }
-					</SegmentedControlItem>
-				</SegmentedControl>
+				{ isEnabled( 'comments/filters-in-posts' ) &&
+					<SegmentedControl>
+						<SegmentedControlItem
+							selected={ commentsFilter === 'all' }
+							onClick={ this.handleFilterClick( 'all' ) }>{ translate( 'All' ) }
+						</SegmentedControlItem>
+						<SegmentedControlItem
+							selected={ commentsFilter === 'approved' }
+							onClick={ this.handleFilterClick( 'approved' ) }>{ translate( 'Approved', { context: 'comment status'} ) }
+						</SegmentedControlItem>
+						<SegmentedControlItem
+							selected={ commentsFilter === 'unapproved' }
+							onClick={ this.handleFilterClick( 'unapproved' ) }>{ translate( 'Pending', { context: 'comment status'} ) }
+						</SegmentedControlItem>
+						<SegmentedControlItem
+							selected={ commentsFilter === 'spam' }
+							onClick={ this.handleFilterClick( 'spam' ) }>{ translate( 'Spam', { context: 'comment status'} ) }
+						</SegmentedControlItem>
+						<SegmentedControlItem
+							selected={ commentsFilter === 'trash' }
+							onClick={ this.handleFilterClick( 'trash' ) }>{ translate( 'Trash', { context: 'comment status'} ) }
+						</SegmentedControlItem>
+					</SegmentedControl>
+				}
 				{ this.renderCommentsList( displayedComments ) }
 				{ this.renderCommentForm() }
 			</div>
