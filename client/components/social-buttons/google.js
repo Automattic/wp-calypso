@@ -20,12 +20,13 @@ export default class GoogleLoginButton extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.initGoogleP = null;
+
+		this.initialized = null;
 		this.handleClick = this.handleClick.bind( this );
 	}
 
 	componentWillMount() {
-		this.loadGoogleAuth();
+		this.initialize();
 	}
 
 	loadDependency() {
@@ -38,12 +39,12 @@ export default class GoogleLoginButton extends Component {
 		} );
 	}
 
-	loadGoogleAuth() {
-		if ( this.initGoogleP ) {
-			return this.initGoogleP;
+	initialize() {
+		if ( this.initialized ) {
+			return this.initialized;
 		}
 
-		this.initGoogleP = this.loadDependency()
+		this.initialized = this.loadDependency()
 			.then( gapi => new Promise( resolve => gapi.load( 'client:auth2', resolve ) ).then( () => gapi ) )
 			.then( gapi => gapi.client.init( {
 					client_id: this.props.clientId,
@@ -52,11 +53,12 @@ export default class GoogleLoginButton extends Component {
 				} )
 				.then( () => gapi ) // don't try to return gapi.auth2.getAuthInstance() here, it has a `then` method
 			).catch( error => {
-				this.initGoogleP = null;
+				this.initialized = null;
+
 				return Promise.reject( error );
 			} );
 
-		return this.initGoogleP;
+		return this.initialized;
 	}
 
 	handleClick( event ) {
@@ -66,7 +68,7 @@ export default class GoogleLoginButton extends Component {
 
 		// Handle click async if the library is not loaded yet
 		// the popup might be blocked by the browser in that case
-		this.loadGoogleAuth().then( gapi => gapi.auth2.getAuthInstance().signIn().then( responseHandler ) );
+		this.initialize().then( gapi => gapi.auth2.getAuthInstance().signIn().then( responseHandler ) );
 	}
 
 	render() {
@@ -74,6 +76,7 @@ export default class GoogleLoginButton extends Component {
 			<button className="button" onClick={ this.handleClick }>
 				<span>
 					<SocialLogo className="social-buttons__logo" icon="google" size={ 24 } />
+
 					<span className="social-buttons__service-name">
 						Google
 					</span>

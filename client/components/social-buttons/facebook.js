@@ -28,12 +28,13 @@ export default class FacebookLoginButton extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.initFacebookP = null;
+
+		this.initialized = null;
 		this.handleClick = this.handleClick.bind( this );
 	}
 
 	componentWillMount() {
-		this.loadFacebookAuth();
+		this.initialize();
 	}
 
 	loadDependency() {
@@ -46,12 +47,12 @@ export default class FacebookLoginButton extends Component {
 		} );
 	}
 
-	loadFacebookAuth() {
-		if ( this.initFacebookP ) {
-			return this.initFacebookP;
+	initialize() {
+		if ( this.initialized ) {
+			return this.initialized;
 		}
 
-		this.initFacebookP = this.loadDependency().then( FB => {
+		this.initialized = this.loadDependency().then( FB => {
 			FB.init( {
 				appId: this.props.appId,
 				version: this.props.version,
@@ -61,11 +62,12 @@ export default class FacebookLoginButton extends Component {
 
 			return FB;
 		} ).catch( error => {
-			this.initFacebookP = null;
+			this.initialized = null;
+
 			return Promise.reject( error );
 		} );
 
-		return this.initFacebookP;
+		return this.initialized;
 	}
 
 	handleClick( event ) {
@@ -75,7 +77,7 @@ export default class FacebookLoginButton extends Component {
 
 		// Handle click async if the library is not loaded yet
 		// the popup might be blocked by the browser in that case
-		this.loadFacebookAuth().then( FB => {
+		this.initialize().then( FB => {
 			FB.login( response => {
 				responseHandler( response );
 			}, { scope } );
@@ -87,6 +89,7 @@ export default class FacebookLoginButton extends Component {
 			<button className="button" onClick={ this.handleClick }>
 				<span>
 					<SocialLogo className="social-buttons__logo" icon="facebook" size={ 24 } />
+
 					<span className="social-buttons__service-name">
 						Facebook
 					</span>
