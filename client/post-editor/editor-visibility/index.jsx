@@ -389,6 +389,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 
-		return { siteId, postId }
-;	},
-{ editPost } )( EditorVisibility );
+		return { siteId, postId };
+	},
+	{ editPost }
+)( EditorVisibility );

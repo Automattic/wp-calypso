@@ -653,11 +653,6 @@ export const PostEditor = React.createClass( {
 			...this.props.edits
 		};
 
-		// determine if this is a future publish
-		if ( utils.isFutureDated( this.state.post ) ) {
-			edits.status = 'future';
-		}
-
 		// Update content on demand to avoid unnecessary lag and because it is expensive
 		// to serialize when TinyMCE is the active mode
 		edits.content = this.refs.editor.getContent();
