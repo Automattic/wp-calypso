@@ -9,8 +9,7 @@ import { combineReducers } from 'redux';
  */
 import {
 	COMMENTS_CHANGE_STATUS,
-	// COMMENTS_CHANGE_STATUS_SUCESS,
-	// COMMENTS_CHANGE_STATUS_FAILURE,
+	COMMENTS_EDIT,
 	COMMENTS_RECEIVE,
 	COMMENTS_REMOVE,
 	COMMENTS_ERROR,
@@ -80,8 +79,16 @@ export function items( state = Immutable.Map(), action ) {
 				updateExistingIn(
 					comments,
 					comment => comment.get( 'ID' ) === action.commentId,
-					comment => comment.set( 'status', 'approved' )
-				)
+					comment => comment.set( 'status', action.status )
+				);
+			} );
+		case COMMENTS_EDIT:
+			return updateSpecificState( state, action, ( comments = Immutable.List() ) => {
+				updateExistingIn(
+					comments,
+					comment => comment.get( 'ID' ) === action.commentId,
+					comment => comment.set( 'content', action.content )
+				);
 			} );
 		case COMMENTS_RECEIVE:
 			// create set of ids for faster lookup for filter later

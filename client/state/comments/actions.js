@@ -6,6 +6,9 @@ import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_CHANGE_STATUS_FAILURE,
 	COMMENTS_CHANGE_STATUS_SUCESS,
+	COMMENTS_EDIT,
+	COMMENTS_EDIT_FAILURE,
+	COMMENTS_EDIT_SUCCESS,
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_REQUEST,
@@ -335,6 +338,30 @@ export function changeCommentStatus( siteId, postId, commentId, status ) {
 			status: data.status
 		} ) ).catch( () => dispatch( {
 			type: COMMENTS_CHANGE_STATUS_FAILURE,
+			siteId,
+			postId,
+			commentId
+		} ) );
+	};
+}
+
+export function editComment( siteId, postId, commentId, content ) {
+	return dispatch => {
+		dispatch( {
+			type: COMMENTS_EDIT,
+			siteId,
+			postId,
+			content
+		} );
+
+		return wpcom.site( siteId ).comment( commentId ).update( { content } ).then( data => dispatch( {
+			type: COMMENTS_EDIT_SUCCESS,
+			siteId,
+			postId,
+			commentId,
+			content: data.content
+		} ) ).catch( () => dispatch( {
+			type: COMMENTS_EDIT_FAILURE,
 			siteId,
 			postId,
 			commentId

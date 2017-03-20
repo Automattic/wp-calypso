@@ -3,21 +3,19 @@
  */
 import React from 'react';
 import { noop } from 'lodash';
-// import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classnames from 'classnames';
 
-
-const CommentApproveAction = ( { translate, status, onClick } ) => {
+const CommentApproveAction = ( { translate, status, approveComment, unapproveComment } ) => {
 	const isApproved = status === 'approved';
 	const buttonStyle = classnames( 'comments__comment-actions-approve', {
 		'is-approved': isApproved
 	} );
 
 	return (
-		<button className={ buttonStyle } onClick={ onClick }>
-			<Gridicon icon="checkmark" size={ 18 }/>
+		<button className={ buttonStyle } onClick={ ! isApproved ? approveComment : unapproveComment }>
+			<Gridicon icon="checkmark" size={ 18 } />
 			<span className="comments__comment-actions-like-label">{ isApproved ? translate( 'Approved' ) : translate( 'Approve' ) }</span>
 		</button>
 	);
@@ -25,12 +23,14 @@ const CommentApproveAction = ( { translate, status, onClick } ) => {
 
 CommentApproveAction.propTypes = {
 	translate: React.PropTypes.func.isRequired,
-	onClick: React.PropTypes.func,
+	approveComment: React.PropTypes.func,
+	unapproveComment: React.PropTypes.func,
 	status: React.PropTypes.string.isRequired,
 };
 
-CommentApproveAction.defaultProps ={
-	onClick: noop,
-}
+CommentApproveAction.defaultProps = {
+	approveComment: noop,
+	unapproveComment: noop
+};
 
 export default localize( CommentApproveAction );

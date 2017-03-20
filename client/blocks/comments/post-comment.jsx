@@ -23,6 +23,7 @@ import {
 import { getStreamUrl } from 'reader/route';
 import PostCommentContent from './post-comment-content';
 import PostCommentForm from './form';
+import CommentEditForm from './comment-edit-form';
 import { PLACEHOLDER_STATE } from 'state/comments/constants';
 import { decodeEntities } from 'lib/formatting';
 import PostCommentWithError from './post-comment-with-error';
@@ -189,12 +190,26 @@ class PostComment extends React.Component {
 					? <p className="comments__comment-moderation">{ translate( 'Your comment is awaiting moderation.' ) }</p>
 					: null }
 
-				<PostCommentContent content={ comment.content } isPlaceholder={ comment.isPlaceholder } />
+				{ this.props.activeEditCommentId !== this.props.commentId &&
+					<PostCommentContent content={ comment.content } isPlaceholder={ comment.isPlaceholder } />
+				}
+
+				{ this.props.activeEditCommentId === this.props.commentId &&
+					<CommentEditForm
+						post={ this.props.post }
+						commentId={ this.props.commentId }
+						commentText={ comment.content }
+						onCommentSubmit={ this.props.onEditCommentCancel } />
+				}
+
 				<CommentActions
 					post={ this.props.post }
 					comment={ comment }
+					activeEditCommentId={ this.props.activeEditCommentId }
 					activeReplyCommentID={ this.props.activeReplyCommentID }
 					commentId={ this.props.commentId }
+					editComment={ this.props.onEditCommentClick }
+					editCommentCancel={ this.props.onEditCommentCancel }
 					handleReply={ this.handleReply }
 					onReplyCancel={ this.props.onReplyCancel } />
 

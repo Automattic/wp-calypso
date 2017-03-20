@@ -38,6 +38,7 @@ class PostCommentList extends React.Component {
 			activeReplyCommentID: null,
 			amountOfCommentsToTake: props.initialSize,
 			commentsFilter: 'all'
+			activeEditCommentId: null,
 		};
 
 		this.viewEarlierCommentsHandler = this.viewEarlierCommentsHandler.bind( this );
@@ -74,6 +75,8 @@ class PostCommentList extends React.Component {
 			return null;
 		}
 
+		const onEditCommentClick = this.onEditCommentClick.bind( this, commentId );
+		const onEditCommentCancel = this.onEditCommentCancel.bind( this );
 		const onReplyClick = this.onReplyClick.bind( this );
 		const onReplyCancel = this.onReplyCancel.bind( this );
 		const commentText = this.state.commentText;
@@ -85,7 +88,10 @@ class PostCommentList extends React.Component {
 			commentsTree={ this.props.commentsTree }
 			commentId={ commentId }
 			key={ commentId }
+			activeEditCommentId={ this.state.activeEditCommentId }
 			activeReplyCommentID={ this.state.activeReplyCommentID }
+			onEditCommentClick={ onEditCommentClick }
+			onEditCommentCancel={ onEditCommentCancel }
 			onReplyClick={ onReplyClick }
 			onReplyCancel={ onReplyCancel }
 			commentText={ commentText }
@@ -94,6 +100,12 @@ class PostCommentList extends React.Component {
 			depth={ 0 }
 		/>;
 	}
+
+	onEditCommentClick( commentId ) {
+		this.setState( { activeEditCommentId: commentId } );
+	}
+
+	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
 
 	onReplyClick( commentID ) {
 		this.setState( { activeReplyCommentID: commentID } );
