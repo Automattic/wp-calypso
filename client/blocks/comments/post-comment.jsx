@@ -10,6 +10,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import {
 	getCurrentUser
 } from 'state/current-user/selectors';
@@ -194,7 +195,7 @@ class PostComment extends React.Component {
 					<PostCommentContent content={ comment.content } isPlaceholder={ comment.isPlaceholder } />
 				}
 
-				{ this.props.activeEditCommentId === this.props.commentId &&
+				{ isEnabled( 'comments/moderation-tools-in-posts' ) && this.props.activeEditCommentId === this.props.commentId &&
 					<CommentEditForm
 						post={ this.props.post }
 						commentId={ this.props.commentId }
