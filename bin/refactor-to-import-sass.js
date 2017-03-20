@@ -4,8 +4,9 @@ const jscodeshift = require( 'jscodeshift' );
 const camelCase = require( 'lodash/camelCase' );
 const upperFirst = require( 'lodash/upperFirst' );
 
-const TRANSFORM_SOURCE_ROOT = path.resolve( 'client' );
-const PROCESSED_SCSS_LIST_FILENAME = path.resolve( 'client/exclude-scss-from-build' );
+const CALYPSO_DIR = path.resolve( path.join(  __dirname, '..' ) );
+const TRANSFORM_SOURCE_ROOT = path.resolve( path.join( CALYPSO_DIR, 'client' ) );
+const PROCESSED_SCSS_LIST_FILENAME = path.join( TRANSFORM_SOURCE_ROOT, 'exclude-scss-from-build' );
 
 // from: http://stackoverflow.com/questions/5827612/node-js-fs-readdir-recursive-directory-search
 function walk( dir, done ) {
@@ -99,13 +100,14 @@ function isIdentifierReactComponent( astRoot, identifierName ) {
 
 const getFileNameFromPath = ( filePath ) => filePath.split( path.sep ).slice( -1 )[ 0 ];
 const getFileNameWithoutExtensionFromPath = ( filePath ) => getFileNameFromPath( filePath ).split( '.' ).slice( 0, 1 )[ 0 ];
+const getIdentifierFromPath = ( filePath ) => camelCase( getFileNameWithoutExtensionFromPath( filePath ) );
 
 function createWithStylesCall( scssFilenames, withStylesTarget ) {
 	return jscodeshift.callExpression(
 		jscodeshift.callExpression(
 			jscodeshift.identifier( 'withStyles' ),
 			scssFilenames
-				.map( getFileNameWithoutExtensionFromPath )
+				.map( getIdentifierFromPath )
 				.map( styleName => jscodeshift.identifier( styleName ) )
 		),
 		[ withStylesTarget ]
@@ -328,7 +330,7 @@ function addStylesToJsFile( filename, scssFilenames ) {
 			jscodeshift.importDeclaration(
 				[
 					jscodeshift.importDefaultSpecifier(
-						jscodeshift.identifier( getFileNameWithoutExtensionFromPath( scssFile ) )
+						jscodeshift.identifier( getIdentifierFromPath( scssFile ) )
 					)
 				],
 				jscodeshift.literal( './' + getFileNameFromPath( scssFile ) )
@@ -407,14 +409,7 @@ walk(
 				unableToProcess.push( directory );
 			}
 
-			scssFilesInDirectory.forEach( scssFile => {
-				const contents = fs.readFileSync( scssFile );
-				const imports = "@import 'assets/stylesheets/shared/mixins/breakpoints';\n@import 'assets/stylesheets/shared/colors';\n\n";
-
-				fs.writeFile( scssFile, imports + contents, error => {
-					console.error( '[ERROR] Failed to write ' + scssFile, error );
-				} );
-			} );
+			scssFilesInDirectory.forEach( scssFile => transformScssfile( scssFile ) );
 
 			//break;
 
@@ -427,7 +422,109 @@ walk(
 			'NoIndex: ' + noIndex.length,
 			'Unable to process: ' + unableToProcess.length );
 
-		const scssFileList = processedScssFiles.join( '\n' );
+		const scssFileList = processedScssFiles
+			.map( filename => filename.replace( CALYPSO_DIR + path.sep, '' ) ) // convert to relative path
+			.join( '\n' );
 		fs.writeFileSync( PROCESSED_SCSS_LIST_FILENAME, scssFileList );
 	}
 );
+
+function mixinImportPredicateFactory( mixin ) {
+	return contents => contents.indexOf( '@include ' + mixin ) > -1;
+}
+
+function getVariableDeclarationsFromScss( filename ) {
+	return fs.readFileSync( path.join( CALYPSO_DIR, filename ) )
+		.toString()
+		.match( /\$[^ \n\r:]+:/g )
+		.map( match => match.slice( 0, -1 ) );
+}
+
+function joinScssVariablesToRegex( variables ) {
+	return new RegExp( variables.map( variable => variable.replace( '$', '\\$' ) ).join( '|' ) );
+}
+
+const SCSS_COLORS = getVariableDeclarationsFromScss( 'assets/stylesheets/shared/_colors.scss' );
+const SCSS_COLOR_REGEX = joinScssVariablesToRegex( SCSS_COLORS );
+
+const TYPOGRAPHY_VARS = getVariableDeclarationsFromScss( 'assets/stylesheets/shared/_typography.scss' );
+const TYPOGRAPHY_REGEX = joinScssVariablesToRegex( TYPOGRAPHY_VARS );
+
+const SCSS_IMPORT_PATHS = [
+	{
+		path: 'assets/stylesheets/shared/mixins/breakpoints',
+		predicate: mixinImportPredicateFactory( 'breakpoint' )
+	},
+	{
+		path: 'assets/stylesheets/shared/mixins/noticon',
+		predicate: mixinImportPredicateFactory( 'noticon' )
+	},
+	{
+		path: 'assets/stylesheets/shared/mixins/clear-fix',
+		predicate: mixinImportPredicateFactory( 'clear-fix' )
+	},
+	{
+		path: 'assets/stylesheets/shared/mixins/placeholder',
+		predicate: mixinImportPredicateFactory( 'placeholder' )
+	},
+	{
+		path: 'assets/stylesheets/shared/mixins/long-content-fade',
+		predicate: mixinImportPredicateFactory( 'long-content-fade' )
+	},
+	{
+		path: 'assets/stylesheets/shared/mixins/hide-content-accessibly',
+		predicate: mixinImportPredicateFactory( 'hide-content-accessibly' )
+	},
+	{
+		path: 'assets/stylesheets/shared/mixins/mixins',
+		predicate: content => mixinImportPredicateFactory( 'mobile-link-element' )( content )
+			|| mixinImportPredicateFactory( 'noticon-style' )( content )
+	},
+	{
+		path: 'assets/stylesheets/shared/mixins/stats-fade-text',
+		predicate: mixinImportPredicateFactory( 'stats-fade-text' )
+	},
+	{
+		path: 'assets/stylesheets/shared/mixins/no-select',
+		predicate: mixinImportPredicateFactory( 'no-select' )
+	},
+	{
+		path: 'assets/stylesheets/shared/mixins/dropdown-menu',
+		predicate: mixinImportPredicateFactory( 'dropdown-menu' )
+	},
+	{
+		path: 'assets/stylesheets/shared/mixins/heading',
+		predicate: mixinImportPredicateFactory( 'heading' )
+	},
+	{
+		path: 'assets/stylesheets/shared/colors',
+		// placeholder mixin requires colors
+		predicate: content => SCSS_COLOR_REGEX.test( content ) || mixinImportPredicateFactory( 'placeholder' )( content )
+	},
+	{
+		path: 'assets/stylesheets/shared/typography',
+		predicate: content => TYPOGRAPHY_REGEX.test( content )
+	}
+
+	//TODO: Not sure how to handle $sidebar-width-max from assets/stylesheets/main , probably refactor to another file
+];
+
+function transformScssfile( scssFile ) {
+	const contents = fs.readFileSync( scssFile );
+	//TODO: Make sure there are no duplicates
+	const importPaths = SCSS_IMPORT_PATHS
+		.filter( importDefinition => importDefinition.predicate( contents ) )
+		.map( importDefinition => importDefinition.path );
+
+	if ( importPaths.length < 1 ) {
+		return;
+	}
+
+	const importDeclarations = importPaths.map( path => "@import '" + path + "';" ).join( "\n" ) + "\n";
+
+	fs.writeFile( scssFile, importDeclarations + contents, error => {
+		if ( error ) {
+			console.error( '[ERROR] Failed to write ' + scssFile, error );
+		}
+	} );
+}
