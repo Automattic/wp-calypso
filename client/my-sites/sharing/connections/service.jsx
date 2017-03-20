@@ -35,6 +35,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import PopupMonitor from 'lib/popup-monitor';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
 import ServiceDescription from './service-description';
@@ -51,6 +52,7 @@ class SharingService extends Component {
 		failCreateConnection: PropTypes.func,
 		fetchConnection: PropTypes.func,
 		isFetching: PropTypes.bool,
+		isFetchingKeyringConnections: PropTypes.bool,
 		keyringConnections: PropTypes.arrayOf( PropTypes.object ),
 		recordGoogleEvent: PropTypes.func,
 		removableConnections: PropTypes.arrayOf( PropTypes.object ),
@@ -72,6 +74,7 @@ class SharingService extends Component {
 		failCreateConnection: () => {},
 		fetchConnection: () => {},
 		isFetching: false,
+		isFetchingKeyringConnections: false,
 		keyringConnections: [],
 		recordGoogleEvent: () => {},
 		requestKeyringConnections: () => {},
@@ -238,6 +241,8 @@ class SharingService extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
+		const { isFetchingKeyringConnections } = this.props;
+
 		if ( this.props.siteUserConnections.length !== nextProps.siteUserConnections.length ) {
 			this.setState( {
 				isConnecting: false,
@@ -250,8 +255,7 @@ class SharingService extends Component {
 			this.setState( { isRefreshing: false } );
 		}
 
-		if ( this.state.isAwaitingConnections ) {
-			this.setState( { isAwaitingConnections: false } );
+		if ( isFetchingKeyringConnections === true && nextProps === false ) {
 
 			if ( this.didKeyringConnectionSucceed( nextProps.availableExternalAccounts ) ) {
 				this.setState( { isSelectingAccount: true } );
@@ -402,6 +406,7 @@ export default connect(
 			availableExternalAccounts: getAvailableExternalAccounts( state, service.ID ),
 			brokenConnections: getBrokenSiteUserConnectionsForService( state, siteId, userId, service.ID ),
 			isFetching: isFetchingConnections( state, siteId ),
+			isFetchingKeyringConnections: isKeyringConnectionsFetching( state ),
 			keyringConnections: getKeyringConnectionsByName( state, service.ID ),
 			removableConnections: getRemovableConnections( state, service.ID ),
 			siteId,
@@ -414,6 +419,7 @@ export default connect(
 		errorNotice,
 		failCreateConnection,
 		fetchConnection,
+		isKeyringConnectionsFetching,
 		recordGoogleEvent,
 		requestKeyringConnections,
 		updateSiteConnection,
