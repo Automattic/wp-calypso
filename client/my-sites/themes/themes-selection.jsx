@@ -12,6 +12,7 @@ import { trackClick } from './helpers';
 import QueryThemes from 'components/data/query-themes';
 import ThemesList from 'components/themes-list';
 import ThemesSelectionHeader from './themes-selection-header';
+import { prependFilterKeys } from './theme-filters.js';
 import analytics from 'lib/analytics';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -69,8 +70,11 @@ const ThemesSelection = React.createClass( {
 
 	recordSearchResultsClick( theme, resultsRank, action ) {
 		const { query, themes } = this.props;
+		const search_taxonomies = prependFilterKeys( query.filter );
+		const search_term = search_taxonomies + ( query.search || '' );
 		analytics.tracks.recordEvent( 'calypso_themeshowcase_theme_click', {
-			search_term: query.search,
+			search_term: search_term || null,
+			search_taxonomies,
 			theme: theme.id,
 			results_rank: resultsRank + 1,
 			results: themes.map( property( 'id' ) ).join(),

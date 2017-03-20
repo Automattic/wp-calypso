@@ -10,6 +10,7 @@ import page from 'page';
  */
 import wpcom from 'lib/wp';
 import wporg from 'lib/wporg';
+import { prependFilterKeys } from 'my-sites/themes/theme-filters';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -181,12 +182,15 @@ export function requestThemes( siteId, query = {} ) {
 				themes = map( rawThemes, normalizeJetpackTheme );
 			}
 
-			if ( query.search && query.page === 1 ) {
+			if ( ( query.search || query.filter ) && query.page === 1 ) {
 				const responseTime = ( new Date().getTime() ) - startTime;
+				const search_taxonomies = prependFilterKeys( query.filter );
+				const search_term = search_taxonomies + ( query.search || '' );
 				const trackShowcaseSearch = recordTracksEvent(
 					'calypso_themeshowcase_search',
 					{
-						search_term: query.search || null,
+						search_term: search_term || null,
+						search_taxonomies,
 						tier: query.tier,
 						response_time_in_ms: responseTime,
 						result_count: found,
@@ -404,7 +408,8 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 		};
 		const previousThemeId = getActiveTheme( getState(), siteId );
 		const query = getLastThemeQuery( getState(), siteId );
-
+		const search_taxonomies = prependFilterKeys( query.filter );
+		const search_term = search_taxonomies + ( query.search || '' );
 		const trackThemeActivation = recordTracksEvent(
 			'calypso_themeshowcase_theme_activate',
 			{
@@ -412,7 +417,8 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 				previous_theme: previousThemeId,
 				source: source,
 				purchased: purchased,
-				search_term: query.search || null
+				search_term: search_term || null,
+				search_taxonomies
 			}
 		);
 		dispatch( withAnalytics( trackThemeActivation, action ) );
