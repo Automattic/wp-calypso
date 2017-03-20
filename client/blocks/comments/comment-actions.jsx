@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -68,26 +69,31 @@ const CommentActions = ( {
 				<CommentApproveAction { ...{ status, approveComment, unapproveComment } } />
 			}
 			{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
-				<button className="comments__comment-actions-like" onClick={ trashComment }>
+				<button className="comments__comment-actions-trash" onClick={ trashComment }>
 					<Gridicon icon="trash" size={ 18 } />
 					<span className="comments__comment-actions-like-label">{ translate( 'Trash' ) }</span>
 				</button>
 			}
 			{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
-				<button className="comments__comment-actions-like" onClick={ spamComment }>
+				<button className="comments__comment-actions-spam" onClick={ spamComment }>
 					<Gridicon icon="spam" size={ 18 } />
 					<span className="comments__comment-actions-like-label">{ translate( 'Spam' ) }</span>
 				</button>
 			}
 			{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
-				<button className="comments__comment-actions-like" onClick={ editComment }>
+				<button className="comments__comment-actions-edit" onClick={ editComment }>
 					<Gridicon icon="pencil" size={ 18 } />
 					<span className="comments__comment-actions-like-label">{ translate( 'Edit' ) }</span>
 				</button>
 			}
 			{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
 				<EllipsisMenu toggleTitle={ translate( 'More' ) }>
-					<PopoverMenuItem classNames="is-approved" icon="checkmark" onClick={ ! isApproved ? approveComment : unapproveComment }>
+					<PopoverMenuItem
+						className={ classnames( 'comments__comment-actions-approve', {
+							'is-approved': isApproved
+						} ) }
+						icon="checkmark"
+						onClick={ ! isApproved ? approveComment : unapproveComment }>
 						{ isApproved ? translate( 'Approved' ) : translate( 'Approve' ) }
 					</PopoverMenuItem>
 					<PopoverMenuItem icon="trash" onClick={ trashComment }>{ translate( 'Trash' ) }</PopoverMenuItem>

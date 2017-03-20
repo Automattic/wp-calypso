@@ -405,11 +405,25 @@ a.comments__comment-username {
 			margin-top: 4px;
 			margin-right: 0;
 		}
+	}
 
-		&.comments__comment-actions-approve {
-			&.is-approved {
-				color: $orange-jazzy;
-			}
+	.comments__comment-actions-approve,
+	.comments__comment-actions-trash,
+	.comments__comment-actions-spam,
+	.comments__comment-actions-edit {
+		display: none;
+	}
+
+	@include breakpoint( ">660px" ) {
+		.comments__comment-actions-approve,
+		.comments__comment-actions-trash,
+		.comments__comment-actions-spam,
+		.comments__comment-actions-edit {
+			display: inline;
+		}
+
+		.ellipsis-menu {
+			display: none;
 		}
 	}
 
@@ -417,6 +431,13 @@ a.comments__comment-username {
 		.like-button .like-button__label-status {
 			display: inline;
 		}
+	}
+}
+
+.comments__comment-actions-approve {
+	.gridicon .gridicon-checkmark,
+	&.is-approved {
+		color: $orange-jazzy;
 	}
 }
 
