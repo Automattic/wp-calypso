@@ -34,6 +34,23 @@
 		color: lighten( $gray, 10% );
 	}
 
+	.themes-magic-search-card__icon {
+		display: flex;
+		color: $blue-wordpress;
+		cursor: pointer;
+		z-index: z-index( '.search', '.search .search__open-icon' );
+
+		.accessible-focus &:focus {
+			outline: dotted 1px $blue-wordpress;
+		}
+
+		.themes-magic-search-card__icon-close {
+			flex: 0 0 auto;
+			color: darken( $gray, 30% );
+			align-items: center;
+		}
+	}
+
 	.segmented-control {
 		flex: 0 0 auto;
 		min-width: 0;
