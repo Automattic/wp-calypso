@@ -218,7 +218,6 @@ class ThemesMagicSearchCard extends React.Component {
 		this.setState( { searchIsOpen: false } );
 	}
 
-	// TODO remember cursor position and put it back after focus
 	handleClickInside = () => {
 		this.focusOnInput();
 	}
@@ -281,7 +280,7 @@ class ThemesMagicSearchCard extends React.Component {
 								tabIndex="0"
 								onClick={ this.clearSearch }
 								aria-controls={ 'search-component-magic-search' }
-								aria-label={ translate( 'Clear Search', { context: 'button label' } ) }
+								aria-label={ translate( 'Clear Search' ) }
 							/>
 						</div>
 					}
