@@ -180,7 +180,7 @@ class PostShare extends Component {
 					{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
 					<div className="post-share__head">
 						<h4 className="post-share__title">
-							{ this.props.translate( 'Share post' ) }
+							{ this.props.translate( 'Share this post' ) }
 						</h4>
 						<div className="post-share__subtitle">
 							{ this.props.translate(

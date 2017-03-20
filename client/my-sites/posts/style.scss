@@ -545,11 +545,3 @@
 		margin-left: 8px;
 	}
 }
-
-.posts__post-share-button{
-	width: 100%;
-
-	@include breakpoint( ">480px" ) {
-		width: auto;
-	}
-}
