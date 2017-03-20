@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { includes, map } from 'lodash';
+import { includes, map, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -34,6 +34,9 @@ import {
 import Banner from 'components/banner';
 import Connection from './connection';
 import { isEnabled } from 'config';
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
 
 class PostShare extends Component {
 	static propTypes = {
@@ -48,10 +51,26 @@ class PostShare extends Component {
 		requestConnections: PropTypes.func
 	};
 
+	static FOOTER_SECTION_SCHEDULED = 'footer-section-scheduled';
+	static FOOTER_SECTION_PUBLISHED = 'footer-section-published';
+
 	state = {
 		skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
-		message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title
+		message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title,
+		footerSection: PostShare.FOOTER_SECTION_SCHEDULED
 	};
+
+	constructor() {
+		super( ...arguments );
+
+		this.setFooterSection = this.setFooterSection.bind( this );
+	}
+
+	setFooterSection( section ) {
+		this.setState( {
+			footerSection: section
+		} );
+	}
 
 	hasConnections() {
 		return !! ( this.props.connections && this.props.connections.length );
@@ -136,6 +155,14 @@ class PostShare extends Component {
 		return this.props.connections.filter( this.isConnectionActive ).length < 1;
 	}
 
+	renderScheduledList() {
+		return 'scheduled';
+	}
+
+	renderPublishedList() {
+		return 'published';
+	}
+
 	render() {
 		if ( ! this.props.isPublicizeEnabled ) {
 			return null;
@@ -155,6 +182,8 @@ class PostShare extends Component {
 		const classes = classNames( 'post-share__wrapper', {
 			'has-connections': this.hasConnections()
 		} );
+
+		const { footerSection } = this.state;
 
 		return (
 			<div className="post-share">
@@ -244,6 +273,43 @@ class PostShare extends Component {
 									>
 										{ this.props.translate( 'Add account' ) }
 									</Button>
+								</div>
+							</div>
+
+							<div className="post-share__footer">
+								<SectionNav selectedText={ 'some text' }>
+									<NavTabs label="Status" selectedText="Published">
+										<NavItem
+											selected={ footerSection === PostShare.FOOTER_SECTION_SCHEDULED }
+											count={ 4 }
+											onClick={ partial(
+												this.setFooterSection,
+												PostShare.FOOTER_SECTION_SCHEDULED
+											) }
+										>
+											Scheduled
+										</NavItem>
+										<NavItem
+											selected={ footerSection === PostShare.FOOTER_SECTION_PUBLISHED }
+											count={ 2 }
+											onClick={ partial(
+												this.setFooterSection,
+												PostShare.FOOTER_SECTION_PUBLISHED
+											) }
+										>
+											Published
+										</NavItem>
+									</NavTabs>
+								</SectionNav>
+								<div className="post-share__scheduled-list">
+									{ footerSection === PostShare.FOOTER_SECTION_SCHEDULED &&
+										this.renderScheduledList()
+									}
+								</div>
+								<div className="post-share__published-list">
+									{ footerSection === PostShare.FOOTER_SECTION_PUBLISHED &&
+										this.renderPublishedList()
+									}
 								</div>
 							</div>
 						</div>
