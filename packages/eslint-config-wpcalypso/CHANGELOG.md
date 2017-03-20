@@ -1,3 +1,7 @@
+#### v0.7.0 (2017-03-20)
+
+- Added: [`eslint-plugin-jsx-a11y`](https://github.com/evcohen/eslint-plugin-jsx-a11y) rules to check for common accessibility issues, as warnings
+
 #### v0.6.0 (2016-10-21)
 
 - General: Update to `eslint-plugin-wpcalypso@3.0.1` ([see changelog](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/CHANGELOG.md#v301-2016-10-21))

@@ -29,6 +29,18 @@ Or, if your project uses React and you want to opt in to additional React-specif
 "extends": "wpcalypso/react"
 ```
 
+Another set of rules available is the `react-a11y` set, which contains the base rules, the react rules, and a set of accessibility checks. To use these:
+
+```
+"extends": "wpcalypso/react-a11y"
+```
+
+For these accessibility rules, you will need to also install [the jsx-a11y plugin](https://github.com/evcohen/eslint-plugin-jsx-a11y):
+
+```
+npm install --save-dev eslint-plugin-jsx-a11y
+```
+
 Refer to the [ESLint documentation on Shareable Configs](http://eslint.org/docs/developer-guide/shareable-configs) for more information.
 
 ## Suggesting Changes

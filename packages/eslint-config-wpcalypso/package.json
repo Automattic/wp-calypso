@@ -1,6 +1,6 @@
 {
   "name": "eslint-config-wpcalypso",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "ESLint configuration following WordPress.com's Calypso JavaScript Coding Guidelines",
   "keywords": [
     "eslint"
@@ -14,8 +14,9 @@
     }
   ],
   "files": [
-  	"index.js",
-  	"react/index.js"
+    "index.js",
+    "react/index.js",
+    "react-a11y/index.js"
   ],
   "license": "GPL-2.0+",
   "repository": {
