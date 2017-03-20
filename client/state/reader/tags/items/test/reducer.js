@@ -33,9 +33,9 @@ const TAG2 = {
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
-		it( 'should default to an empty object', () => {
+		it( 'should default to an null', () => {
 			const state = items( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).to.eql( null );
 		} );
 
 		it( 'should add single tag in the payload to state', () => {
