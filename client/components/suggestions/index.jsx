@@ -32,7 +32,8 @@ const Suggestions = React.createClass( {
 	getInitialState() {
 		return {
 			taxonomySuggestionsArray: [],
-			suggestionPosition: -1,
+			suggestionPosition: 0,
+			currentSuggestion: null,
 			suggestions: {},
 			filterTerm: ''
 		};
@@ -98,7 +99,7 @@ const Suggestions = React.createClass( {
 				event.preventDefault();
 				break;
 			case 'Enter' :
-				if ( this.state.suggestionPosition !== -1 ) {
+				if ( !! this.state.currentSuggestion ) {
 					this.props.suggest( this.state.currentSuggestion + ' ' );
 				}
 				break;
