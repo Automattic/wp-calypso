@@ -17,14 +17,6 @@ module.exports = {
 		defaultVariation: 'userLast',
 		allowExistingUsers: false,
 	},
-	signupDomainsHeadline: {
-		datestamp: '20170313',
-		variations: {
-			original: 50,
-			updated: 50
-		},
-		defaultVariation: 'original'
-	},
 	signupStepOneCopyChanges: {
 		datestamp: '20170307',
 		variations: {
