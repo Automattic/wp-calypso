@@ -40,6 +40,7 @@ import fluxPostAdapter from 'lib/reader-post-flux-adapter';
 import config from 'config';
 import { keysAreEqual } from 'lib/feed-stream-store/post-key';
 import { isDiscoverBlog, isDiscoverFeed } from 'reader/discover/helper';
+import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
 
 const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );
 
@@ -303,6 +304,7 @@ class ReaderStream extends React.Component {
 	componentDidMount() {
 		this.props.postsStore.on( 'change', this.updateState );
 		this.props.recommendationsStore && this.props.recommendationsStore.on( 'change', this.updateState );
+		this.props.resetCardExpansions();
 
 		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
 		KeyboardShortcuts.on( 'move-selection-up', this.selectPrevItem );
@@ -337,6 +339,7 @@ class ReaderStream extends React.Component {
 
 			nextProps.postsStore.on( 'change', this.updateState );
 			nextProps.recommendationsStore && nextProps.recommendationsStore.on( 'change', this.updateState );
+			this.props.resetCardExpansions();
 
 			this.updateState( nextProps.postsStore, nextProps.recommendationsStore );
 			this._list && this._list.reset();
@@ -638,5 +641,6 @@ class ReaderStream extends React.Component {
 export default connect(
 	( state ) => ( {
 		blockedSites: getBlockedSites( state )
-	} )
+	} ),
+	{ resetCardExpansions }
 )( ReaderStream );
