@@ -1,3 +1,7 @@
+#### v0.7.1 (2017-03-20)
+
+- Changed: [`eslint-plugin-jsx-a11y`](https://github.com/evcohen/eslint-plugin-jsx-a11y) rules are now errors
+
 #### v0.7.0 (2017-03-20)
 
 - Added: [`eslint-plugin-jsx-a11y`](https://github.com/evcohen/eslint-plugin-jsx-a11y) rules to check for common accessibility issues, as warnings
