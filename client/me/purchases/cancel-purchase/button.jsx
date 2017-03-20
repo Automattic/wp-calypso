@@ -46,11 +46,12 @@ const CancelPurchaseButton = React.createClass( {
 	},
 
 	recordEvent( name, properties = {} ) {
-		const product_slug = get( this.props, 'purchase.productSlug' );
-		const refund = true;
+		const { purchase } = this.props;
+		const product_slug = get( purchase, 'productSlug' );
+		const cancellation_flow = isRefundable( purchase ) ? 'cancel_with_refund' : 'cancel_autorenew';
 		this.props.recordTracksEvent(
 			name,
-			Object.assign( { refund, product_slug }, properties )
+			Object.assign( { cancellation_flow, product_slug }, properties )
 		);
 	},
 

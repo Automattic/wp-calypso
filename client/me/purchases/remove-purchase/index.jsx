@@ -97,10 +97,10 @@ const RemovePurchase = React.createClass( {
 
 	recordEvent( name, properties = {} ) {
 		const product_slug = get( this.props, 'selectedPurchase.productSlug' );
-		const refund = false;
+		const cancellation_flow = 'remove';
 		this.props.recordTracksEvent(
 			name,
-			Object.assign( { refund, product_slug }, properties )
+			Object.assign( { cancellation_flow, product_slug }, properties )
 		);
 	},
 
