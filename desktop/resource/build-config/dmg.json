@@ -1,0 +1,20 @@
+{
+	"title": "WordPress.com Installer",
+	"icon": "../image/dmg-icon.icns",
+	"icon-size": 150,
+	"background": "../image/dmg-background/background.png",
+	"contents": [
+		{
+			"x": 486,
+			"y": 176,
+			"type": "link",
+			"path": "/Applications"
+		},
+		{
+			"x": 156,
+			"y": 179,
+			"type": "file",
+			"path": "../../release/WordPress.com-darwin-x64/WordPress.com.app"
+		}
+	]
+}

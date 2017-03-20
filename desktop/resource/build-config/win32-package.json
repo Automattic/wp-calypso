@@ -1,0 +1,10 @@
+{
+	"win": {
+		"title": "WordPress.com",
+		"icon": "resource/image/wordpress.ico",
+		"nsiTemplate": "resource/build-config/windows-nsi.tpl",
+		"verbosity": 2
+	},
+
+	"description": "WordPress.com Desktop Installer"
+}
