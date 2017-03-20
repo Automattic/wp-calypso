@@ -303,7 +303,7 @@ export default React.createClass( {
 				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'email' ) }>
 					<FormLabel htmlFor="email">{ this.translate( 'Your email address' ) }</FormLabel>
 					<FormTextInput
-						autoFocus={ isEmpty( this.props.email ) }
+						autoFocus={ isEmpty( this.props.email ) && ! this.props.isSocialSignupEnabled }
 						autoCapitalize="off"
 						autoCorrect="off"
 						className="signup-form__input"
