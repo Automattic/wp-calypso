@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { includes, map, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -38,6 +39,7 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import CompactCard from 'components/card/compact';
+import SocialLogo from 'social-logos';
 
 class PostShare extends Component {
 	static propTypes = {
@@ -157,9 +159,26 @@ class PostShare extends Component {
 	}
 
 	renderFooterSectionItem( item, index ) {
+		const {
+			service,
+			handle,
+			timestamp,
+			message
+		} = item;
+
 		return (
-			<CompactCard key={ index }>
-				{ item.type }
+			<CompactCard className="post-share__footer-item" key={ index }>
+				<SocialLogo icon={ service === 'google_plus' ? 'google-plus' : service } />
+				<span className="post-share__footer-item__handle">
+					{ service === 'twitter' ? `@${ handle }` : handle }
+				</span>
+				<Gridicon icon="gridicons-time" size={ 18 } />
+				<span className="post-share__footer-item__timestamp">
+					{ timestamp }
+				</span>
+				<span className="post-share__footer-item__message">
+					{ message }
+				</span>
 			</CompactCard>
 		);
 	}
@@ -185,19 +204,19 @@ class PostShare extends Component {
 		// TODO: get from Redux
 		const scheduledItems = [
 			{
-				type: 'twitter',
+				service: 'twitter',
 				handle: 'styleandgear',
 				timestamp: 'Tue, Jan 29, 2017 at 5:00 PM',
 				message: 'Do you have a trip coming up? Bla some more text'
 			},
 			{
-				type: 'twitter',
+				service: 'tumblr',
 				handle: 'tasha',
 				timestamp: 'Tue, Jan 28, 2017 at 3:35 PM',
 				message: 'Do you have a trip coming up? Bla some more text'
 			},
 			{
-				type: 'facebook',
+				service: 'facebook',
 				handle: 'Style and Gear',
 				timestamp: 'Tue, Jan 28, 2017 at 3:35 PM',
 				message: 'Do you have a trip coming up? Bla some more text'
