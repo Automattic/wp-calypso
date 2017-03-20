@@ -5,6 +5,7 @@ const camelCase = require( 'lodash/camelCase' );
 const upperFirst = require( 'lodash/upperFirst' );
 
 const TRANSFORM_SOURCE_ROOT = path.resolve( 'client' );
+const PROCESSED_SCSS_LIST_FILENAME = path.resolve( 'client/exclude-scss-from-build' );
 
 // from: http://stackoverflow.com/questions/5827612/node-js-fs-readdir-recursive-directory-search
 function walk( dir, done ) {
@@ -357,7 +358,8 @@ walk(
 		} );
 
 
-		let processedDirectories = 0;
+		let processedDirectories = [];
+		let processedScssFiles = [];
 		let unableToProcess = [];
 		let noIndex = [];
 		let noScss = 0;
@@ -393,7 +395,13 @@ walk(
 			const result = addStylesToJsFile( indexJsFilename, scssFilesInDirectory );
 			if ( result ) {
 				//console.log( result );
-				processedDirectories++;
+				fs.writeFile( indexJsFilename, result, error => {
+					if ( error ) {
+						console.error( '[ERROR] Failed to write ' + indexJsFilename, error );
+					}
+				} );
+				processedDirectories.push( directory );
+				processedScssFiles = processedScssFiles.concat( scssFilesInDirectory );
 			} else {
 				console.log( '[Unable]', indexJsFilename );
 				unableToProcess.push( directory );
@@ -405,8 +413,12 @@ walk(
 
 		console.log( 'Total dir count: ' + directoryMap.size,
 			'No scss: ' + noScss,
-			'Processed: ' + processedDirectories,
+			'Processed dirs: ' + processedDirectories.length,
+			'Processed scss files: ' + processedScssFiles.length,
 			'NoIndex: ' + noIndex.length,
 			'Unable to process: ' + unableToProcess.length );
+
+		const scssFileList = processedScssFiles.join( '\n' );
+		fs.writeFileSync( PROCESSED_SCSS_LIST_FILENAME, scssFileList );
 	}
 );
