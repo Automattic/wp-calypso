@@ -39,7 +39,6 @@
 		"manage/payment-methods": true,
 		"manage/people": true,
 		"manage/people/readers": true,
-		"manage/plans": true,
 		"manage/plan-features": true,
 		"manage/plugins": true,
 		"manage/plugins/browser": true,

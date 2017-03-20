@@ -308,10 +308,6 @@ export class MySitesSidebar extends Component {
 			domainsLink = '/domains/manage' + this.siteSuffix(),
 			addDomainLink = '/domains/add' + this.siteSuffix();
 
-		if ( ! config.isEnabled( 'manage/plans' ) ) {
-			return null;
-		}
-
 		if ( ! this.isSingle() ) {
 			return null;
 		}
@@ -345,10 +341,6 @@ export class MySitesSidebar extends Component {
 	}
 
 	plan() {
-		if ( ! config.isEnabled( 'manage/plans' ) ) {
-			return null;
-		}
-
 		if ( ! this.isSingle() ) {
 			return null;
 		}
