@@ -151,11 +151,23 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 		margin: 0;
 	}
 
-	.post-share__button{
-		width: 100%;
+	.post-share__share-combo {
+		display: flex;
 
-		@include breakpoint( ">480px" ) {
-			width: auto;
+		.post-share__button {
+			border-radius: 4px 0 0 4px;
+			padding: 5px 14px 7px;
+
+			@include breakpoint( ">480px" ) {
+				width: auto;
+			}
+		}
+
+		.post-share__schedule-button {
+			border-radius: 0 4px 4px 0;
+			padding-left: 8px;
+			padding-right: 8px;
+			margin-left: -1px;
 		}
 	}
 }

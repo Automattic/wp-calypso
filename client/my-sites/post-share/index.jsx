@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import QueryPostTypes from 'components/data/query-post-types';
 import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
 import { isPublicizeEnabled } from 'state/selectors';
 import {
 	getSiteSlug,
@@ -34,6 +35,8 @@ import {
 import Banner from 'components/banner';
 import Connection from './connection';
 import { isEnabled } from 'config';
+import Gridicon from 'gridicons';
+import AsyncLoad from 'components/async-load';
 
 class PostShare extends Component {
 	static propTypes = {
@@ -49,8 +52,8 @@ class PostShare extends Component {
 	};
 
 	state = {
+		message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title,
 		skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
-		message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title
 	};
 
 	hasConnections() {
@@ -81,8 +84,7 @@ class PostShare extends Component {
 		return this.state.skipped.indexOf( keyring_connection_ID ) === -1;
 	}
 
-	isConnectionActive = connection =>
-		connection.status !== 'broken' && this.skipConnection( connection );
+	isConnectionActive = connection => connection.status !== 'broken' && this.skipConnection( connection );
 
 	renderServices() {
 		if ( ! this.props.site || ! this.hasConnections() ) {
@@ -100,6 +102,22 @@ class PostShare extends Component {
 	}
 
 	setMessage = message => this.setState( { message } );
+
+	dismiss = () => {
+		this.props.dismissShareConfirmation( this.props.siteId, this.props.post.ID );
+	};
+
+	sharePost = () => {
+		this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message );
+	};
+
+	isButtonDisabled() {
+		if ( this.props.requesting ) {
+			return true;
+		}
+
+		return this.props.connections.filter( this.isConnectionActive ).length < 1;
+	}
 
 	renderMessage() {
 		if ( ! this.hasConnections() ) {
@@ -120,20 +138,35 @@ class PostShare extends Component {
 		);
 	}
 
-	dismiss = () => {
-		this.props.dismissShareConfirmation( this.props.siteId, this.props.post.ID );
-	};
+	renderShareButton() {
+		const { translate } = this.props;
+		return (
+			<ButtonGroup className="post-share__share-combo">
+				<Button
+					className="post-share__button"
+					primary
+					onClick={ this.sharePost }
+					disabled={ this.isButtonDisabled() }
+				>
+					{ translate( 'Share post' ) }
+				</Button>
 
-	sharePost = () => {
-		this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message );
-	};
-
-	isButtonDisabled() {
-		if ( this.props.requesting ) {
-			return true;
-		}
-
-		return this.props.connections.filter( this.isConnectionActive ).length < 1;
+				<AsyncLoad
+					require="blocks/scheduler-popover"
+					site={ this.props.site }
+					type="button" // ButtonGroup hopes that this element should be a button.
+				>
+					<Button
+						primary
+						className="post-share__schedule-button"
+						title={ translate( 'Set date and time' ) }
+						tabIndex={ 3 }
+					>
+						<Gridicon icon="calendar" />
+					</Button>
+				</AsyncLoad>
+			</ButtonGroup>
+		);
 	}
 
 	render() {
@@ -222,14 +255,7 @@ class PostShare extends Component {
 							<div className="post-share__main">
 								<div className="post-share__form">
 									{ this.renderMessage() }
-									<Button
-										className="post-share__button"
-										primary={ true }
-										onClick={ this.sharePost }
-										disabled={ this.isButtonDisabled() }
-									>
-										{ this.props.translate( 'Share post' ) }
-									</Button>
+									{ this.renderShareButton() }
 								</div>
 
 								<div className="post-share__services">
