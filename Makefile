@@ -89,7 +89,6 @@ welcome:
 	@printf "\033[36m   \___\__,_|_|\__, | .__/|___/\___/     \n"
 	@printf "\033[36m               |___/|_|                  \n"
 	@printf "\033[m\n"
-	@printf "$(SASS_FILES)"
 
 install: node_modules
 
