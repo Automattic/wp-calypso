@@ -15,6 +15,7 @@ const initialState = {
 	active: false,
 	isDialogVisible: false,
 	result: false,
+	preflight: 'pass',
 };
 
 export const themeSetup = ( state = initialState, action ) => {

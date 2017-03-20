@@ -96,6 +96,8 @@
 		"server-side-rendering": true,
 		"signup/domain-first-flow": true,
 		"settings/security/monitor": true,
+		"settings/theme-setup": false,
+		"signup/domain-first-flow": false,
 		"support-user": true,
 		"sync-handler": true,
 		"ui/first-view": false,

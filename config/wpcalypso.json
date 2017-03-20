@@ -104,6 +104,7 @@
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/security/monitor/wp-note": true,
+		"settings/theme-setup": true,
 		"signup/domain-first-flow": true,
 		"support-user": true,
 		"sync-handler": true,
