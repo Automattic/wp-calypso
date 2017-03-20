@@ -963,15 +963,15 @@ Undocumented.prototype.createConnection = function( keyringConnectionId, siteId,
  *
  * @returns {Promise}
  */
-Undocumented.prototype.publicizePost = function( siteId, postId, message, skippedConnections, fn ) {
+Undocumented.prototype.publicizePost = function( siteId, postId, message, connections, fn ) {
 	const body = { skipped_connections: [] };
 
 	if ( message ) {
 		body.message = message;
 	}
 
-	if ( skippedConnections && skippedConnections.length > 0 ) {
-		body.skipped_connections = skippedConnections;
+	if ( connections ) {
+		body.connections = connections;
 	}
 
 	return this.wpcom.req.post( { path: `/sites/${ siteId }/post/${ postId }/publicize`, body, apiVersion: '1.1' }, fn );

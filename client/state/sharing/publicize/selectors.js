@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import filter from 'lodash/filter';
-import get from 'lodash/get';
+import { filter, get, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,6 +35,12 @@ export function getSiteUserConnections( state, siteId, userId ) {
 		const { site_ID, shared, keyring_connection_user_ID } = connection;
 		return site_ID === siteId && ( shared || keyring_connection_user_ID === userId );
 	} );
+}
+
+export function getSiteUserActiveConnectionIds( state, siteId, userId ) {
+	const connections = getSiteUserConnections( state, siteId, userId );
+	const activeConnections = filter( connections, connection => connection.status !== 'broken' );
+	return map( activeConnections, 'keyring_connection_ID' );
 }
 
 /**
