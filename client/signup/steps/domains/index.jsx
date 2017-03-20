@@ -24,7 +24,6 @@ import { getUsernameSuggestion } from 'lib/signup/step-actions';
 
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
-import { abtest } from 'lib/abtest';
 
 const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
 	mapDomainAnalytics = analyticsMixin( 'mapDomain' );
@@ -243,18 +242,6 @@ const DomainsStep = React.createClass( {
 			);
 		}
 
-		let fallbackHeaderText,
-			fallbackSubHeaderText;
-		if ( abtest( 'signupDomainsHeadline' ) === 'updated' ) {
-			fallbackHeaderText = this.translate( 'Let\'s give your site an address.' ),
-			fallbackSubHeaderText = this.translate(
-				'Enter your site\'s name, or some key words that describe it ' +
-				'we\'ll use this to create your new site\'s address.' );
-		} else {
-			fallbackHeaderText = this.translate( 'Let\'s find a domain.' ),
-			fallbackSubHeaderText = this.translate( 'Choose a custom domain, or a free .wordpress.com address.' );
-		}
-
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
@@ -263,8 +250,8 @@ const DomainsStep = React.createClass( {
 				positionInFlow={ this.props.positionInFlow }
 				signupProgress={ this.props.signupProgress }
 				subHeaderText={ this.translate( 'First up, let\'s find a domain.' ) }
-				fallbackHeaderText={ fallbackHeaderText }
-				fallbackSubHeaderText={ fallbackSubHeaderText }
+				fallbackHeaderText={ this.translate( 'Let\'s find a domain.' ) }
+				fallbackSubHeaderText={ this.translate( 'Choose a custom domain, or a free .wordpress.com address.' ) }
 				stepContent={ content } />
 		);
 	}
