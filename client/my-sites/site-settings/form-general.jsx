@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import page from 'page';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -344,8 +345,9 @@ class SiteSettingsFormGeneral extends Component {
 
 	jetpackDisconnectOption() {
 		const { site, translate } = this.props;
+		const isAutomatedTransfer = get( site, 'options.is_automated_transfer', false );
 
-		if ( ! site.jetpack ) {
+		if ( ! site.jetpack || isAutomatedTransfer ) {
 			return null;
 		}
 
