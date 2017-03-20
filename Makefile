@@ -29,9 +29,11 @@ COMPONENTS_PROPTYPES_JS ?= server/devdocs/bin/generate-proptypes-index.js
 
 # files used as prereqs
 SASS_FILES := $(shell \
-	find client assets \
-		-type f \
-		-name '*.scss' \
+	\( find client assets -type f -name '*.scss' \
+	| while read line; do echo `pwd`"/$line"; done \
+	| cat && cat exclude-scss-from-build \) \
+	| sort \
+	| uniq -u \
 )
 JS_FILES := $(shell \
 	find . \
