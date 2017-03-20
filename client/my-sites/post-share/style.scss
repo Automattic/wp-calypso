@@ -162,6 +162,11 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	}
 }
 
+.post-share__footer-nav {
+	margin: 0;
+
+}
+
 .post-share__footer-banner {
 	margin: 25px;
 }

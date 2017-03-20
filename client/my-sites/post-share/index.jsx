@@ -37,6 +37,7 @@ import { isEnabled } from 'config';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
+import CompactCard from 'components/card/compact';
 
 class PostShare extends Component {
 	static propTypes = {
@@ -155,6 +156,14 @@ class PostShare extends Component {
 		return this.props.connections.filter( this.isConnectionActive ).length < 1;
 	}
 
+	renderFooterSectionItem( item, index ) {
+		return (
+			<CompactCard key={ index }>
+				{ item.type }
+			</CompactCard>
+		);
+	}
+
 	renderScheduledList() {
 		const { planSlug } = this.props;
 
@@ -172,6 +181,32 @@ class PostShare extends Component {
 				/>
 			);
 		}
+
+		// TODO: get from Redux
+		const scheduledItems = [
+			{
+				type: 'twitter',
+				handle: 'styleandgear',
+				timestamp: 'Tue, Jan 29, 2017 at 5:00 PM',
+				message: 'Do you have a trip coming up? Bla some more text'
+			},
+			{
+				type: 'twitter',
+				handle: 'tasha',
+				timestamp: 'Tue, Jan 28, 2017 at 3:35 PM',
+				message: 'Do you have a trip coming up? Bla some more text'
+			},
+			{
+				type: 'facebook',
+				handle: 'Style and Gear',
+				timestamp: 'Tue, Jan 28, 2017 at 3:35 PM',
+				message: 'Do you have a trip coming up? Bla some more text'
+			}
+		];
+
+		return scheduledItems.map(
+			( item, index ) => this.renderFooterSectionItem( item, index )
+		);
 	}
 
 	renderPublishedList() {
@@ -183,7 +218,7 @@ class PostShare extends Component {
 
 		return (
 			<div className="post-share__footer">
-				<SectionNav selectedText={ 'some text' }>
+				<SectionNav className="post-share__footer-nav" selectedText={ 'some text' }>
 					<NavTabs label="Status" selectedText="Published">
 						<NavItem
 							selected={ footerSection === PostShare.FOOTER_SECTION_SCHEDULED }
