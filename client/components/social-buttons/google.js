@@ -59,7 +59,9 @@ export default class GoogleLoginButton extends Component {
 		return this.initGoogleP;
 	}
 
-	handleClick() {
+	handleClick( event ) {
+		event.preventDefault();
+
 		const { responseHandler } = this.props;
 
 		// Handle click async if the library is not loaded yet

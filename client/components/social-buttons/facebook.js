@@ -68,7 +68,9 @@ export default class FacebookLoginButton extends Component {
 		return this.initFacebookP;
 	}
 
-	handleClick() {
+	handleClick( event ) {
+		event.preventDefault();
+
 		const { responseHandler, scope } = this.props;
 
 		// Handle click async if the library is not loaded yet

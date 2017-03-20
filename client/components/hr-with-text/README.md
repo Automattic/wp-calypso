@@ -2,7 +2,8 @@ HR element with text over it
 ============================
 
 
-An hr-like line with text on top:
+An [hr-like](https://developer.mozilla.org/en/docs/Web/HTML/Element/hr) line with text on top:
+
 `------------------ text ---------------------`
 
 ## Usage
