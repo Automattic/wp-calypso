@@ -156,7 +156,22 @@ class PostShare extends Component {
 	}
 
 	renderScheduledList() {
-		return 'scheduled';
+		const { planSlug } = this.props;
+
+		if ( planSlug !== PLAN_BUSINESS ) {
+			return (
+				<Banner
+					className="post-share__footer-banner"
+					callToAction="Upgrade for $9.99"
+					description="Live chat support and no advertising."
+					dismissPreferenceName="devdocs-banner-example"
+					dismissTemporary
+					list={ [ 'Live chat support', 'No advertising' ] }
+					plan={ PLAN_BUSINESS }
+					title="Upgrade to a Business Plan!"
+				/>
+			);
+		}
 	}
 
 	renderPublishedList() {
