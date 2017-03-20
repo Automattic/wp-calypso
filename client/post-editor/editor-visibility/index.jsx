@@ -256,8 +256,7 @@ const EditorVisibility = React.createClass( {
 
 	renderPasswordInput() {
 		var value, isError, errorMessage;
-
-		value = this.props.password ? this.props.password.trim() : null;
+		value = this.props.password ? this.props.password.trim() : '';
 		isError = ! this.state.passwordIsValid;
 		errorMessage = this.translate( 'Password is empty.', { context: 'Editor: Error shown when password is empty.' } );
 
