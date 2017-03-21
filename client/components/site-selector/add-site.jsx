@@ -110,10 +110,6 @@ class SiteSelectorAddSite extends Component {
 	}
 
 	render() {
-		//if ( sites.getJetpack().length ) {
-		//	return this.renderButtonWithPopover();
-		//}
-
 		return this.renderButton();
 	}
 }
