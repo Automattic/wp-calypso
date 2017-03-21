@@ -119,6 +119,9 @@ class PostShare extends Component {
 		return this.props.connections.filter( this.isConnectionActive ).length < 1;
 	}
 
+	previewSharingPost = () => {
+	}
+
 	renderMessage() {
 		if ( ! this.hasConnections() ) {
 			return;
@@ -141,31 +144,37 @@ class PostShare extends Component {
 	renderShareButton() {
 		const { translate } = this.props;
 		return (
-			<ButtonGroup className="post-share__share-combo">
-				<Button
-					className="post-share__button"
-					primary
-					onClick={ this.sharePost }
-					disabled={ this.isButtonDisabled() }
-				>
-					{ translate( 'Share post' ) }
+			<div className="post-share__button-actions">
+				<Button onClick={ this.previewSharingPost }>
+					{ translate( 'Preview' ) }
 				</Button>
 
-				<AsyncLoad
-					require="blocks/scheduler-popover"
-					site={ this.props.site }
-					type="button" // ButtonGroup hopes that this element should be a button.
-				>
+				<ButtonGroup className="post-share__share-combo">
 					<Button
+						className="post-share__button"
 						primary
-						className="post-share__schedule-button"
-						title={ translate( 'Set date and time' ) }
-						tabIndex={ 3 }
+						onClick={ this.sharePost }
+						disabled={ this.isButtonDisabled() }
 					>
-						<Gridicon icon="calendar" />
+						{ translate( 'Share post' ) }
 					</Button>
-				</AsyncLoad>
-			</ButtonGroup>
+
+					<AsyncLoad
+						require="blocks/scheduler-popover"
+						site={ this.props.site }
+						type="button" // ButtonGroup hopes that this element should be a button.
+					>
+						<Button
+							primary
+							className="post-share__schedule-button"
+							title={ translate( 'Set date and time' ) }
+							tabIndex={ 3 }
+						>
+							<Gridicon icon="calendar" />
+						</Button>
+					</AsyncLoad>
+				</ButtonGroup>
+			</div>
 		);
 	}
 
