@@ -38,3 +38,28 @@ or limit it as before with
 ```bash
 DEBUG=calypso:* make run
 ```
+
+## Monitoring builds and tests
+
+Throughout your Calypso development workflow, you will find yourself waiting — either for a build to finish or for tests to run. Rather than standing idle looking at terminals while you wait, you can use status indicators and/or system notifications.
+
+One such tool is [AnyBar](https://github.com/tonsky/AnyBar) (_macOS only_), a very barebones menubar indicator. Here's a brief screencast of AnyBar reporting builds and tests for Calypso:
+
+<video src="https://cldup.com/LOqXUo351n.mp4" controls>
+<a href="https://cldup.com/LOqXUo351n.mp4">(video)</a>
+</video>
+
+### Set-up
+
+- Install [AnyBar](https://github.com/tonsky/AnyBar): `brew cask install anybar`
+- Run it at the default port: `open -a AnyBar`
+- Obtain this [handler shell script](https://gist.github.com/mcsf/56911ae03c6d87ec61429cefc7707cb7/)
+- Optionally, place the script somewhere memorable and make it executable: `chmod +x ~/bin/anybar-calypso`
+- From now on, pipe your Calypso commands through it:
+  * `make run | anybar-calypso`
+  * `npm run test-client:watch client/my-component | anybar-calypso`
+- Feel free to tweak the script and share improvements with the Calypso project
+
+### Other platforms
+
+`anybar-calypso` communicates with AnyBar by sending simple strings via UDP to a local port. This means that it can trivially be adapted to work with any other notification system, either by listening to UDP traffic or by altering `anybar-calypso` directly.
