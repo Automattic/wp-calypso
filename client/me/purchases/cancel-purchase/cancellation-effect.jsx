@@ -89,7 +89,7 @@ function nonrefundableCancellationEffectDetail( purchase, translate ) {
 
 	if ( isGoogleApps( purchase ) ) {
 		return translate(
-			'Your G Suite account will continue working until it expires on %(subscriptionEndDate)s.', {
+			'Your G Suite account remains active until it expires on %(subscriptionEndDate)s.', {
 				args: {
 					subscriptionEndDate
 				}
@@ -99,7 +99,7 @@ function nonrefundableCancellationEffectDetail( purchase, translate ) {
 
 	if ( isDomainMapping( purchase ) ) {
 		return translate(
-			'Your domain mapping will continue working until it expires on %(subscriptionEndDate)s.', {
+			'Your domain mapping remains active until it expires on %(subscriptionEndDate)s.', {
 				args: {
 					subscriptionEndDate
 				}
@@ -108,7 +108,7 @@ function nonrefundableCancellationEffectDetail( purchase, translate ) {
 	}
 
 	return translate(
-		'All plan features will continue working until your subscription expires on %(subscriptionEndDate)s.', {
+		"Your plan's features remain active until your subscription expires on %(subscriptionEndDate)s.", {
 			args: {
 				subscriptionEndDate
 			}
