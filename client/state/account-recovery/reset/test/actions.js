@@ -11,9 +11,11 @@ import {
 	requestResetSuccess,
 	requestResetError,
 	updatePasswordResetUserData,
+	pickResetMethod,
 } from '../actions';
 
 import {
+	ACCOUNT_RECOVERY_RESET_PICK_METHOD,
 	ACCOUNT_RECOVERY_RESET_REQUEST,
 	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
@@ -75,6 +77,18 @@ describe( '#requestReset', () => {
 		assert.deepEqual( action, {
 			type: ACCOUNT_RECOVERY_RESET_REQUEST,
 			request,
+		} );
+	} );
+} );
+
+describe( '#pickResetMethod', () => {
+	it( 'should return action ACCOUNT_RECOVERY_RESET_PICK_METHOD', () => {
+		const method = 'primary_email';
+		const action = pickResetMethod( method );
+
+		assert.deepEqual( action, {
+			type: ACCOUNT_RECOVERY_RESET_PICK_METHOD,
+			method,
 		} );
 	} );
 } );
