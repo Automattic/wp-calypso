@@ -24,6 +24,7 @@ import {
 	getAccountRecoveryResetUserData,
 	getAccountRecoveryResetOptions,
 	getAccountRecoveryResetPickedMethod,
+	getAccountRecoveryResetRequestError,
 	isRequestingAccountRecoveryReset,
 } from 'state/selectors';
 
@@ -92,6 +93,7 @@ export class ResetPasswordFormComponent extends Component {
 			resetOptions,
 			pickedMethod,
 			isRequesting,
+			requestError,
 			translate,
 		} = this.props;
 
@@ -125,6 +127,12 @@ export class ResetPasswordFormComponent extends Component {
 						/>
 					) ) }
 				</FormFieldset>
+				{
+					requestError && (
+					<p className="reset-password-form__error-message">
+						{ translate( "We've encountered some technical issue. Please try again later." ) }
+					</p> )
+				}
 				<Button
 					className="reset-password-form__submit-button"
 					onClick={ this.submitForm }
@@ -142,6 +150,7 @@ export default connect(
 		resetOptions: getAccountRecoveryResetOptions( state ),
 		pickedMethod: getAccountRecoveryResetPickedMethod( state ),
 		userData: getAccountRecoveryResetUserData( state ),
+		requestError: getAccountRecoveryResetRequestError( state ),
 		isRequesting: isRequestingAccountRecoveryReset( state ),
 	} ),
 	{

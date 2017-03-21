@@ -15,3 +15,8 @@
 .reset-password-form .reset-password-form__field-set {
 	margin-bottom: 0px;
 }
+
+.reset-password-form__error-message {
+	margin-bottom: 4px;
+	color: $alert-red;
+}
