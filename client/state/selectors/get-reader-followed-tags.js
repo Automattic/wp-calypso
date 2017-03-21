@@ -4,13 +4,20 @@
 import { filter, sortBy } from 'lodash';
 
 /**
- * Returns all of the reader tags a user is following
- *
- * @param  {Object}  state  Global state tree
- * @return {Array}          Reader Tags
+ * Internal dependencies
  */
-export default function getReaderFollowedTags( state ) {
-	return state.reader.tags.items
-		? sortBy( filter( state.reader.tags.items, tag => tag.isFollowing ), 'slug' )
-		: null; // no data loaded state
-}
+import createSelector from 'lib/create-selector';
+
+/**
+ * Selector for all of the reader tags a user is following. Sorted by tag slug
+ */
+const getReaderFollowedtags = createSelector(
+	state => {
+		return state.reader.tags.items
+			? sortBy( filter( state.reader.tags.items, tag => tag.isFollowing ), 'slug' )
+			: null; // no data loaded
+	},
+	state => [ state.reader.tags.items ]
+);
+
+export default getReaderFollowedtags;
