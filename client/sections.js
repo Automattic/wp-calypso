@@ -37,4 +37,4 @@ sections.push( {
 	enableLoggedOut: true
 } );
 
-module.exports = sections.concat( extensionSections.filter( Boolean ) );
+export default sections.concat( extensionSections.filter( Boolean ) );

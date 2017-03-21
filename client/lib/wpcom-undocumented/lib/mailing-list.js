@@ -114,4 +114,4 @@ function createRequestBody( hmac, context ) {
  * Expose `MailingList` module
  */
 
-module.exports = MailingList;
+export default MailingList;

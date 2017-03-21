@@ -2355,4 +2355,4 @@ Undocumented.prototype.transferStatus = function( siteId, transferId ) {
 /**
  * Expose `Undocumented` module
  */
-module.exports = Undocumented;
+export default Undocumented;

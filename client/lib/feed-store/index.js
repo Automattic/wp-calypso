@@ -114,4 +114,4 @@ FeedStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = FeedStore;
+export default FeedStore;

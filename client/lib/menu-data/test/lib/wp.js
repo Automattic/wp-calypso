@@ -24,4 +24,4 @@ WP.prototype.menusDelete = function( siteId, menuId, callback ) {
 	return callback( null, { deleted: true } );
 };
 
-module.exports = new WP();
+export default new WP();

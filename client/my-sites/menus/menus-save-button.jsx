@@ -58,4 +58,4 @@ var MenuSaveButton = React.createClass( {
 	}
 } );
 
-module.exports = MenuSaveButton;
+export default MenuSaveButton;

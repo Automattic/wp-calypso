@@ -121,4 +121,4 @@ var TemporaryInput = React.createClass( {
 	}
 } );
 
-module.exports = MenuName;
+export default MenuName;

@@ -43,4 +43,4 @@ var ListEmptyContent = React.createClass( {
 	}
 } );
 
-module.exports = ListEmptyContent;
+export default ListEmptyContent;

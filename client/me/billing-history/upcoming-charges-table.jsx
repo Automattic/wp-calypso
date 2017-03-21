@@ -9,7 +9,7 @@ import React, { PropTypes } from 'react';
 var	purchasesPaths = require( 'me/purchases/paths' ),
 	TransactionsTable = require( './transactions-table' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'UpcomingChargesTable',
 

@@ -250,4 +250,4 @@ var Pages = React.createClass( {
 	}
 } );
 
-module.exports = PageList;
+export default PageList;

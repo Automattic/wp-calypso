@@ -24,4 +24,4 @@ User.prototype.fetchSettings = function() {};
  * direct method to enable community translator
  */
 
-module.exports = User;
+export default User;

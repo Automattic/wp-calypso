@@ -67,7 +67,7 @@ function filter( transactions, params ) {
 	return transactions;
 }
 
-module.exports = {
+export default {
 	formatDate: formatDate,
 	filter: filter
 };

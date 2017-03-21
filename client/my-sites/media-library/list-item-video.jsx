@@ -10,7 +10,7 @@ var React = require( 'react' ),
 var ListItemFileDetails = require( './list-item-file-details' ),
 	Gridicon = require( 'gridicons' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'MediaLibraryListItemVideo',
 
 	propTypes: {

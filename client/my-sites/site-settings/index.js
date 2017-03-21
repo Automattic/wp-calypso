@@ -10,7 +10,7 @@ var config = require( 'config' ),
 	controller = require( 'my-sites/controller' ),
 	settingsController = require( './controller' );
 
-module.exports = function() {
+export default function() {
 	page( '/settings', controller.siteSelection, settingsController.redirectToGeneral );
 	page( '/settings/general/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );
 	page( '/settings/writing/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );

@@ -9,7 +9,7 @@ var debug = require( 'debug' )( 'calypso:url-search' ),
  */
 var buildUrl = require( './build-url' );
 
-module.exports = {
+export default {
 
 	getInitialState: function() {
 		return {

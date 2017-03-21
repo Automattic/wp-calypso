@@ -9,7 +9,7 @@ var React = require( 'react' ),
  */
 var Rating = require( 'components/rating' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Rating',
 
 	mixins: [ PureRenderMixin ],

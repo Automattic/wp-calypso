@@ -33,7 +33,7 @@ var DEFAULT_FILES = [
 
 const log = debug( 'calypso:devdocs' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Devdocs',
 	propTypes: {
 		term: React.PropTypes.string

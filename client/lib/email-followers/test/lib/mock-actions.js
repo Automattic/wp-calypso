@@ -2,7 +2,7 @@ var site = require( './mock-site' ),
 	followerData = require( './mock-email-followers' ),
 	moreFollowerData = require( './mock-more-email-followers' );
 
-module.exports = {
+export default {
 	fetchedFollowers: {
 		type: 'RECEIVE_EMAIL_FOLLOWERS',
 		fetchOptions: {

@@ -8,7 +8,7 @@ var React = require( 'react' );
  */
 var PaginationPage = require( './pagination-page' );
 
-module.exports = React.createClass({
+export default React.createClass({
 	displayName: 'StatModulePagination',
 
 	propTypes: {

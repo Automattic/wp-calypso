@@ -116,4 +116,4 @@ const MappedDomain = React.createClass( {
 	}
 } );
 
-module.exports = MappedDomain;
+export default MappedDomain;

@@ -102,7 +102,7 @@ function getSectionName( pathname ) {
 	return matches ? matches[ 1 ] : null;
 }
 
-module.exports = {
+export default {
 	domainManagementAddGoogleApps,
 	domainManagementContactsPrivacy,
 	domainManagementDns,

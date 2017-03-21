@@ -1,5 +1,5 @@
 var trailingSlashRe = /(\/)?$/;
 
-module.exports = function trailingSlashIt( path ) {
+export default function trailingSlashIt( path ) {
 	return path.replace( trailingSlashRe, '/' );
 };

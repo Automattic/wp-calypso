@@ -9,7 +9,7 @@ var React = require( 'react' );
 var actions = require( 'lib/posts/actions' ),
 	analytics = require( 'lib/analytics' );
 
-module.exports = {
+export default {
 
 	getInitialState: function() {
 		return {

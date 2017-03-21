@@ -48,4 +48,4 @@ var Gap = React.createClass( {
 
 } );
 
-module.exports = Gap;
+export default Gap;

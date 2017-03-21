@@ -28,7 +28,7 @@ var _data = {},
  * Overwrite window.localStorage if necessary
  * @param  {object} root Object to instantiate `windows` object to test in node.js
  */
-module.exports = function( root ) {
+export default function( root ) {
 	root = root || window;
 
 	if ( ! root.localStorage ) {

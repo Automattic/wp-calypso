@@ -12,7 +12,7 @@ var url = require( 'url' ),
  * @param  {string} search Search terms
  * @return {string}        Path including search terms
  */
-module.exports = function( uri, search ) {
+export default function( uri, search ) {
 	var parsedUrl = url.parse( uri, true );
 
 	if ( search ) {

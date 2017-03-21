@@ -188,4 +188,4 @@ const MapDomainStep = React.createClass( {
 	},
 } );
 
-module.exports = connect( state => ( { currentUser: getCurrentUser( state ) } ) )( localize( MapDomainStep ) );
+export default connect( state => ( { currentUser: getCurrentUser( state ) } ) )( localize( MapDomainStep ) );

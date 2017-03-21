@@ -34,7 +34,7 @@ function getCommonHandlers( { noSitePath = paths.domainManagementRoot(), warnIfJ
 	return handlers;
 }
 
-module.exports = function() {
+export default function() {
 	SiftScience.recordUser();
 
 	page(

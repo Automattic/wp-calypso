@@ -10,7 +10,7 @@ import Gridicon from 'gridicons';
  */
 import Tooltip from 'components/tooltip';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'ModuleChartBar',
 
 	propTypes: {

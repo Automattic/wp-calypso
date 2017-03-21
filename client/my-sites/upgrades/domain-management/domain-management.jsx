@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	AddGoogleApps: require( './add-google-apps' ),
 	ContactsPrivacy: require( './contacts-privacy' ),
 	Dns: require( './dns' ),

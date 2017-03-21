@@ -163,4 +163,4 @@ SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = SignupProgressStore;
+export default SignupProgressStore;

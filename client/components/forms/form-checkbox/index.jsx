@@ -5,7 +5,7 @@ var React = require( 'react' ),
 	classnames = require( 'classnames' ),
 	omit = require( 'lodash/omit' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'FormInputCheckbox',
 

@@ -11,7 +11,7 @@ import CompactCard from 'components/card/compact';
 import HelpResult from './item';
 import SectionHeader from 'components/section-header';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'HelpResults',
 
 	mixins: [ PureRenderMixin ],

@@ -86,7 +86,7 @@ const removeScriptCallback = function( url, callback ) {
 	callbacksForURLsInProgress[ url ].splice( index, 1 );
 };
 
-module.exports = {
+export default {
 	loadScript: loadScript,
 	loadjQueryDependentScript: loadjQueryDependentScript,
 	removeScriptCallback: removeScriptCallback,

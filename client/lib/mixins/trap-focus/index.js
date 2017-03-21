@@ -87,4 +87,4 @@ var trapFocus = {
 	}
 };
 
-module.exports = trapFocus;
+export default trapFocus;

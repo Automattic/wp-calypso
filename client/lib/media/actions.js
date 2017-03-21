@@ -286,4 +286,4 @@ MediaActions.clearValidationErrorsByType = function( siteId, type ) {
 	} );
 };
 
-module.exports = MediaActions;
+export default MediaActions;

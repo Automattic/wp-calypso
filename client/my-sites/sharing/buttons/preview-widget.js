@@ -6,7 +6,7 @@ var qs = require( 'querystring' ),
 
 var baseUrl = '//widgets.wp.com/sharing-buttons-preview/';
 
-module.exports = {
+export default {
 	generatePreviewUrlFromButtons: function( buttons, showMore ) {
 		var numberOfCustomButtons = 0,
 			query = {};

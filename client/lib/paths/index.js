@@ -18,7 +18,7 @@ function editorPathFromSite( site ) {
  * @param  {object|string} site Site object or site slug
  * @return {string}      URL to post editor
  */
-module.exports.newPost = function( site ) {
+export const newPost = function( site ) {
 	var sitePath = editorPathFromSite( site );
 	return '/post' + sitePath;
 };
@@ -29,7 +29,7 @@ module.exports.newPost = function( site ) {
  * @param  {object|string} site Site object or site slug
  * @return {string}      URL to page editor
  */
-module.exports.newPage = function( site ) {
+export const newPage = function( site ) {
 	var sitePath = editorPathFromSite( site );
 	return '/page' + sitePath;
 };
@@ -40,7 +40,7 @@ module.exports.newPage = function( site ) {
  * @param  {object} site Site object
  * @return {string}      URL to manage Publicize connections
  */
-module.exports.publicizeConnections = function( site ) {
+export const publicizeConnections = function( site ) {
 	var url = '/sharing';
 
 	if ( site ) {
@@ -57,7 +57,7 @@ module.exports.publicizeConnections = function( site ) {
  * @param  {string} module	Optional module name to link to
  * @return {string}      	URL to manage Jetpack modules
  */
-module.exports.jetpackModules = function( site, module ) {
+export const jetpackModules = function( site, module ) {
 	var url = '';
 	if ( ! site.jetpack ) {
 		return url;

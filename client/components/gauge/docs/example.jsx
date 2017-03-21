@@ -9,7 +9,7 @@ var React = require( 'react' ),
  */
 var Gauge = require( 'components/gauge' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Gauge',
 
 	mixins: [ PureRenderMixin ],

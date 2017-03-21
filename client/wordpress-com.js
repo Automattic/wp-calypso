@@ -329,4 +329,4 @@ sections.push( {
 	secondary: true
 } );
 
-module.exports = sections;
+export default sections;

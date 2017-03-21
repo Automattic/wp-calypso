@@ -67,4 +67,4 @@ var CommentEmailSubscriptionActions = {
 
 };
 
-module.exports = CommentEmailSubscriptionActions;
+export default CommentEmailSubscriptionActions;

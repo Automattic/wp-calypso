@@ -40,7 +40,7 @@ function getTranslateArg( logs, sampleLog, typeFilter ) {
 	};
 }
 
-module.exports = {
+export default {
 	shouldComponentUpdateNotices( currentNotices, nextNotices ) {
 		if ( currentNotices.errors && currentNotices.errors.length !== nextNotices.errors.length ) {
 			return true;

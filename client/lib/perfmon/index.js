@@ -168,7 +168,7 @@ function recordPlaceholderNode( node ) {
 	}
 }
 
-module.exports = function() {
+export default function() {
 	if ( !initialized ) {
 		var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 

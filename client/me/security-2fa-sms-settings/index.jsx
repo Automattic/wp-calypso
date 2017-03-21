@@ -20,7 +20,7 @@ var countriesList = require( 'lib/countries-list' ).forSms(),
 import { protectForm } from 'lib/protect-form';
 import Notice from 'components/notice';
 
-module.exports = protectForm( React.createClass( {
+export default protectForm( React.createClass( {
 
 	displayName: 'Security2faSMSSettings',
 

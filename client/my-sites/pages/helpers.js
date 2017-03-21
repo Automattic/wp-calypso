@@ -9,7 +9,7 @@ import store from 'store';
  */
 import sitesFactory from 'lib/sites-list';
 
-module.exports = {
+export default {
 	editLinkForPage: function( page, site ) {
 		if ( ! ( page && page.ID ) || ! ( site && site.ID ) ) {
 			return null;

@@ -73,4 +73,4 @@ ticker.handleVisibilityChange = function() {
 
 ticker.setMaxListeners( 100 );
 
-module.exports = ticker;
+export default ticker;

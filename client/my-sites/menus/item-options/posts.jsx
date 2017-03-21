@@ -78,4 +78,4 @@ var Posts = React.createClass( {
 
 } );
 
-module.exports = Posts;
+export default Posts;

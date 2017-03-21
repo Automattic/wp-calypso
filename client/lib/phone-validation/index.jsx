@@ -4,7 +4,7 @@
 var phone = require( 'phone' ),
 	i18n = require( 'i18n-calypso' );
 
-module.exports = function( phoneNumber ) {
+export default function( phoneNumber ) {
 	var phoneNumberWithoutPlus = phoneNumber.replace( /\+/, '' );
 
 	if ( phoneNumberWithoutPlus.length === 0 ) {

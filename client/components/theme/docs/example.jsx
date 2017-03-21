@@ -42,4 +42,4 @@ var ThemeExample = React.createClass( {
 	}
 } );
 
-module.exports = ThemeExample;
+export default ThemeExample;

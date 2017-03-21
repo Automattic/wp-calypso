@@ -23,7 +23,7 @@ var defaultOptions = {
 	offset: 0
 };
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SiteUsersFetcher',
 
 	propTypes: {

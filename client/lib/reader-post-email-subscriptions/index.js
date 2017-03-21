@@ -314,4 +314,4 @@ PostEmailSubscriptionStore.dispatchToken = Dispatcher.register( function( payloa
 	}
 } );
 
-module.exports = PostEmailSubscriptionStore;
+export default PostEmailSubscriptionStore;

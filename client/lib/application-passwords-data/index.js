@@ -96,4 +96,4 @@ ApplicationPasswords.prototype.clearNewPassword = function() {
 /**
  * Expose ApplicationPasswords
  */
-module.exports = new ApplicationPasswords();
+export default new ApplicationPasswords();

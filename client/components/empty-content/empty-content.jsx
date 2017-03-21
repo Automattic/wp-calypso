@@ -7,7 +7,7 @@ import classNames from 'classnames';
 
 const debug = debugFactory( 'calypso:components:emptyContent' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'EmptyContent',
 

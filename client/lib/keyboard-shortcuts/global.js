@@ -10,7 +10,7 @@ var config = require( 'config' ),
 	route = require( 'lib/route' ),
 	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' );
 
-module.exports = GlobalShortcuts;
+export default GlobalShortcuts;
 
 /**
  * This class accepts a sites-list collection and binds KeyboardShortcuts events to methods that change

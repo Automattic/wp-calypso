@@ -211,4 +211,4 @@ MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = MediaValidationStore;
+export default MediaValidationStore;

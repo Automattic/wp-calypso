@@ -121,4 +121,4 @@ var LikeActions = {
 	}
 };
 
-module.exports = LikeActions;
+export default LikeActions;

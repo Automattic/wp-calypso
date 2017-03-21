@@ -1,6 +1,6 @@
 var debug = require( 'debug' )( 'calypso:data-observe' );
 
-module.exports = function() {
+export default function() {
 	var propNames = Array.prototype.slice.call( arguments );
 
 

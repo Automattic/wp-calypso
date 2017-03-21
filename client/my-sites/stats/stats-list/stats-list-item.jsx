@@ -18,7 +18,7 @@ var Follow = require( './action-follow' ),
 	analytics = require( 'lib/analytics' ),
 	Gridicon = require( 'gridicons' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StatsListItem',
 
 	getInitialState: function() {

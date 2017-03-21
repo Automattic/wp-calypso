@@ -1,6 +1,6 @@
 // a stub for decodeEntities
 
-module.exports = {
+export default {
 	decodeEntities: function( str ) {
 		return str;
 	}

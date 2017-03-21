@@ -8,7 +8,7 @@ var React = require( 'react' );
  */
 var PluginIcon = require( 'my-sites/plugins/plugin-icon/plugin-icon' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'ConnectedApplicationIcon',
 

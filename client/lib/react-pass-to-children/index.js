@@ -4,7 +4,7 @@
 var React = require( 'react' ),
 	assign = require( 'lodash/assign' );
 
-module.exports = function( element, additionalProps ) {
+export default function( element, additionalProps ) {
 	var props = assign( {}, element.props, additionalProps ),
 		childElements;
 

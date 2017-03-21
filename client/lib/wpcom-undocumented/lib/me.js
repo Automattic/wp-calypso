@@ -355,4 +355,4 @@ UndocumentedMe.prototype.deletePurchase = function( purchaseId, fn ) {
 	}, fn );
 };
 
-module.exports = UndocumentedMe;
+export default UndocumentedMe;

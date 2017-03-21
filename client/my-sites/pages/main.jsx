@@ -21,7 +21,7 @@ var PageList = require( './page-list' ),
 
 const statuses = [ 'published', 'drafts', 'scheduled', 'trashed' ];
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'Pages',
 

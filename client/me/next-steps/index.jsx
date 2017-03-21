@@ -16,7 +16,7 @@ var NextStepsBox = require( './next-steps-box' ),
 	productsValues = require( 'lib/products-values' ),
 	sites = require( 'lib/sites-list' )();
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	mixins: [ observe( 'trophiesData', 'sites' ) ],
 

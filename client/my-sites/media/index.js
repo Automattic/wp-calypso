@@ -10,7 +10,7 @@ var controller = require( 'my-sites/controller' ),
 	mediaController = require( './controller' ),
 	config = require( 'config' );
 
-module.exports = function() {
+export default function() {
 
 	if ( config.isEnabled( 'manage/media' ) ) {
 		page( '/media', controller.siteSelection, controller.sites );

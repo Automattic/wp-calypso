@@ -35,4 +35,4 @@ const ContactDisplay = React.createClass( {
 	}
 } );
 
-module.exports = ContactDisplay;
+export default ContactDisplay;

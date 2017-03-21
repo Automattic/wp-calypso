@@ -103,4 +103,4 @@ function highlight( term, html, wrapperNode ) {
 	return root.innerHTML;
 }
 
-module.exports = highlight;
+export default highlight;

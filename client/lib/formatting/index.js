@@ -405,7 +405,7 @@ function phpToMomentDatetimeFormat( str ) {
 	);
 }
 
-module.exports = {
+export default {
 	decodeEntities: decodeEntities,
 	interpose: interpose,
 	stripHTML: stripHTML,

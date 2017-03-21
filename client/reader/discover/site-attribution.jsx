@@ -63,4 +63,4 @@ class DiscoverSiteAttribution extends React.Component {
 
 }
 
-module.exports = DiscoverSiteAttribution;
+export default DiscoverSiteAttribution;

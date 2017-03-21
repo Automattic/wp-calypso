@@ -25,7 +25,7 @@ import Gravatar from 'components/gravatar';
 import photon from 'photon';
 import Notice from 'components/notice';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'Draft',
 

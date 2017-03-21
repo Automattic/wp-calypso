@@ -301,4 +301,4 @@ var Posts = React.createClass( {
 	}
 } );
 
-module.exports = PostList;
+export default PostList;

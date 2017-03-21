@@ -14,7 +14,7 @@ var sites = require( 'lib/sites-list' )(),
 	analytics = require( 'lib/analytics' ),
 	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle;
 
-module.exports = {
+export default {
 
 	customize: function( context ) {
 		var CustomizeComponent = require( 'my-sites/customize/main' ),

@@ -71,4 +71,4 @@ var NavSegmented = React.createClass( {
 	}
 } );
 
-module.exports = NavSegmented;
+export default NavSegmented;

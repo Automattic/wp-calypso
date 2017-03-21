@@ -226,4 +226,4 @@ LikeStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = LikeStore;
+export default LikeStore;

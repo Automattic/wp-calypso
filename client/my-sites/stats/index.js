@@ -10,7 +10,7 @@ var controller = require( 'my-sites/controller' ),
 	statsController = require( './controller' ),
 	config = require( 'config' );
 
-module.exports = function() {
+export default function() {
 	if ( config.isEnabled( 'manage/stats' ) ) {
 		// Stat Overview Page
 		page( '/stats', controller.siteSelection, controller.navigation, statsController.overview );

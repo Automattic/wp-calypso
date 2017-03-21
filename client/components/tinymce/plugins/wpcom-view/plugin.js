@@ -868,6 +868,6 @@ function wpview( editor ) {
 	} );
 }
 
-module.exports = function() {
+export default function() {
 	tinymce.PluginManager.add( 'wpcom/view', wpview );
 };

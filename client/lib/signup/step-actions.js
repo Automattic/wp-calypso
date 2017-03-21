@@ -218,7 +218,7 @@ function getUsernameSuggestion( username, reduxState ) {
 	} );
 }
 
-module.exports = {
+export default {
 	createSiteOrDomain,
 
 	createSiteWithCart,

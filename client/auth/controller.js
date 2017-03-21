@@ -20,7 +20,7 @@ import userFactory from 'lib/user';
 import Main from 'components/main';
 import PulsingDot from 'components/pulsing-dot';
 
-module.exports = {
+export default {
 
 	// Login screen used by the desktop application
 	login: function() {

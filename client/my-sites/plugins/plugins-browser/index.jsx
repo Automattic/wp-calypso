@@ -324,8 +324,7 @@ const PluginsBrowser = React.createClass( {
 				// If automated transfer is _off_ then behave
 				// as normal. If it's on, then only show if we
 				// are getting an error on a Jetpack site
-				! isATEnabledForCurrentSite() ||
-				( selectedSite && selectedSite.jetpack )
+				(! isATEnabledForCurrentSite() || selectedSite && selectedSite.jetpack)
 			)
 		) {
 			return this.renderAccessError( selectedSite );

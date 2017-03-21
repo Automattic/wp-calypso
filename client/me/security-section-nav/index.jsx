@@ -12,7 +12,7 @@ var SectionNav = require( 'components/section-nav' ),
 	NavTabs = require( 'components/section-nav/tabs' ),
 	NavItem = require( 'components/section-nav/item' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	propTypes: {
 		path: React.PropTypes.string.isRequired
 	},

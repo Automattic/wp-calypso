@@ -468,4 +468,4 @@ class ScrollHelper {
 	}
 }
 
-module.exports = ScrollHelper;
+export default ScrollHelper;

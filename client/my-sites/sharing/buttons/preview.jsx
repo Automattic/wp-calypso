@@ -15,7 +15,7 @@ var ButtonsLabelEditor = require( './label-editor' ),
 	decodeEntities = require( 'lib/formatting' ).decodeEntities,
 	analytics = require( 'lib/analytics' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SharingButtonsPreview',
 
 	propTypes: {

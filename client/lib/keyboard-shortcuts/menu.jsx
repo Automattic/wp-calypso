@@ -12,7 +12,7 @@ var Dialog = require( 'components/dialog' ),
 	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
 	KeyBindings = require( 'lib/keyboard-shortcuts/key-bindings' );
 
-module.exports = React.createClass({
+export default React.createClass({
 	displayName: 'KeyboardShortcutsMenu',
 
 	componentDidMount: function() {

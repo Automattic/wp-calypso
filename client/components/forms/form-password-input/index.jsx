@@ -12,7 +12,7 @@ var React = require( 'react' ),
 var FormTextInput = require( 'components/forms/form-text-input' ),
 	viewport = require( 'lib/viewport' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'FormPasswordInput',
 

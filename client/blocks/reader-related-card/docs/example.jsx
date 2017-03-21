@@ -95,4 +95,4 @@ const RelatedPostCards = React.createClass( {
 	}
 } );
 
-module.exports = RelatedPostCards;
+export default RelatedPostCards;

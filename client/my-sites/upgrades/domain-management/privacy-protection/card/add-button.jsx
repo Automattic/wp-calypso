@@ -42,4 +42,4 @@ const AddButton = React.createClass( {
 	}
 } );
 
-module.exports = AddButton;
+export default AddButton;

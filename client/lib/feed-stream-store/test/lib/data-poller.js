@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	add: function() {},
 	remove: function() {}
 };

@@ -10,7 +10,7 @@ var React = require( 'react' ),
 var FormButton = require( 'components/forms/form-button' ),
 	analytics = require( 'lib/analytics' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'Security2faInitialSetup',
 

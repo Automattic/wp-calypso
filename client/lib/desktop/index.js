@@ -164,4 +164,4 @@ var Desktop = {
 	}
 };
 
-module.exports = Desktop;
+export default Desktop;

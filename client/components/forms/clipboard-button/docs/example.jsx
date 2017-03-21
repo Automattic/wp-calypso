@@ -9,7 +9,7 @@ var React = require( 'react' ),
  */
 var ClipboardButton = require( '../' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'ClipboardButtons',
 
 	mixins: [ PureRenderMixin ],

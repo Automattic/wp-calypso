@@ -1,7 +1,7 @@
 import { getSiteUrl, getFeedUrl } from 'reader/route';
 import { withoutHttp } from 'lib/url';
 
-module.exports = {
+export default {
 	formatUrlForDisplay: function( url ) {
 		if ( ! url ) {
 			return;

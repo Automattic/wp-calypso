@@ -176,4 +176,4 @@ var NavTabs = React.createClass( {
 	}
 } );
 
-module.exports = NavTabs;
+export default NavTabs;

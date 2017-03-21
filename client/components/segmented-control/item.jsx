@@ -53,4 +53,4 @@ var SegmentedControlItem = React.createClass( {
 	}
 } );
 
-module.exports = SegmentedControlItem;
+export default SegmentedControlItem;

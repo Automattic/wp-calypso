@@ -270,7 +270,7 @@ const DomainsStep = React.createClass( {
 	}
 } );
 
-module.exports = connect( ( state ) => {
+export default connect( ( state ) => {
 	return {
 		// no user = DOMAINS_WITH_PLANS_ONLY
 		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true,

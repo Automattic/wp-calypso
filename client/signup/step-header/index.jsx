@@ -9,7 +9,7 @@ import classNames from 'classnames';
  */
 import { preventWidows } from 'lib/formatting';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StepHeader',
 
 	propTypes: {

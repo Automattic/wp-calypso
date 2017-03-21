@@ -17,7 +17,7 @@ var Security2faBackupCodesPrompt = require( 'me/security-2fa-backup-codes-prompt
 
 import Notice from 'components/notice';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'Security2faBackupCodes',
 

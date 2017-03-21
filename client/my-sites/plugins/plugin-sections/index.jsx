@@ -16,7 +16,7 @@ const analytics = require( 'lib/analytics' ),
 	NavTabs = require( 'components/section-nav/tabs' ),
 	NavItem = require( 'components/section-nav/item' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	_COLLAPSED_DESCRIPTION_HEIGHT: 140,
 

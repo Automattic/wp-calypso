@@ -56,4 +56,4 @@ const FreeTrialConfirmationBox = React.createClass( {
 	}
 } );
 
-module.exports = FreeTrialConfirmationBox;
+export default FreeTrialConfirmationBox;

@@ -11,7 +11,7 @@ var React = require( 'react' ),
  */
 var FormRange = require( 'components/forms/form-range' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Range',
 
 	propTypes: {

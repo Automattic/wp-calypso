@@ -13,7 +13,7 @@ var translator = require( 'lib/translator-jumpstart' ),
 	Dialog = require( 'components/dialog' ),
 	analytics = require( 'lib/analytics' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'TranslatorLauncher',
 
 	propTypes: {

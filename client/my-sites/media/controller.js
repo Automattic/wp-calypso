@@ -15,7 +15,7 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 
 const sites = sitesFactory();
 
-module.exports = {
+export default {
 
 	media: function( context ) {
 		var MediaComponent = require( 'my-sites/media/main' ),

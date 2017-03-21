@@ -14,7 +14,7 @@ var Card = require( 'components/card' ),
 	WordadsActions = require( 'lib/ads/actions' ),
 	EarningsStore = require( 'lib/ads/earnings-store' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'AdsFormEarnings',
 

@@ -7,7 +7,7 @@ import Button from 'components/button';
 import Gridicon from 'gridicons';
 import Notice from 'components/notice';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SignupProcessingScreen',
 
 	propTypes: {

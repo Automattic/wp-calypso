@@ -22,7 +22,7 @@ function termObjectFromItem( menuItem ) {
 	return selectedTerm;
 }
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'MenusTaxonomyOptions',
 
 	propTypes: {

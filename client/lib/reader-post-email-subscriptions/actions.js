@@ -94,4 +94,4 @@ var PostEmailSubscriptionActions = {
 
 };
 
-module.exports = PostEmailSubscriptionActions;
+export default PostEmailSubscriptionActions;

@@ -12,7 +12,7 @@ import analytics from 'lib/analytics';
 
 const debug = debugFactory( 'calypso:my-sites:site-settings' );
 
-module.exports = {
+export default {
 
 	componentWillMount() {
 		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );

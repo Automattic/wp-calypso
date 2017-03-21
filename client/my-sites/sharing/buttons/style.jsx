@@ -8,7 +8,7 @@ var React = require( 'react' );
  */
 var analytics = require( 'lib/analytics' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SharingButtonsStyle',
 
 	propTypes: {

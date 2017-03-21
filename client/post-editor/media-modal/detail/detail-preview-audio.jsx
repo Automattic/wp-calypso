@@ -9,7 +9,7 @@ import classNames from 'classnames';
  */
 import MediaUtils from 'lib/media/utils';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorMediaModalDetailPreviewAudio',
 
 	propTypes: {

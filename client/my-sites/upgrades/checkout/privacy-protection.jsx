@@ -12,7 +12,7 @@ import { cartItems } from 'lib/cart-values';
 import PrivacyProtectionDialog from './privacy-protection-dialog';
 import Card from 'components/card';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'PrivacyProtection',
 
 	handleDialogSelect: function( options, event ) {

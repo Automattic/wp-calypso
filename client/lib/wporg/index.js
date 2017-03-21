@@ -41,7 +41,7 @@ function getWporgLocaleCode( ) {
 	return wpOrgLocaleCode;
 }
 
-module.exports = {
+export default {
 
 	/**
 	 * If successful, will call the provided callback with an object with plugin details.

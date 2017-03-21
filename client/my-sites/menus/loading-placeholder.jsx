@@ -34,4 +34,4 @@ var LoadingPlaceholder = React.createClass( {
 	},
 } );
 
-module.exports = LoadingPlaceholder;
+export default LoadingPlaceholder;

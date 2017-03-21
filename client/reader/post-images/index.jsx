@@ -187,4 +187,4 @@ var PostImageThumbList = React.createClass( {
 
 } );
 
-module.exports = PostImages;
+export default PostImages;

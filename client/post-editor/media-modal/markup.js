@@ -217,4 +217,4 @@ Markup = {
 	}
 };
 
-module.exports = Markup;
+export default Markup;

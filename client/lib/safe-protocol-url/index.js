@@ -5,7 +5,7 @@ var urls = require( 'url' ),
 	assign = require( 'lodash/assign' ),
 	pick = require( 'lodash/pick' );
 
-module.exports = function( url ) {
+export default function( url ) {
 	var bits,
 		formatKeys = [
 			'host',

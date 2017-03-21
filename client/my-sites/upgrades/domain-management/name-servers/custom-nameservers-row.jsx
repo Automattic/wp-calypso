@@ -67,4 +67,4 @@ const CustomNameserversRow = React.createClass( {
 	}
 } );
 
-module.exports = CustomNameserversRow;
+export default CustomNameserversRow;

@@ -4,7 +4,7 @@ var plugins = require( './plugins' ),
 	multiSite = require( './multi-site' ),
 	updatePluginData = require( './updated-plugin' );
 
-module.exports = {
+export default {
 	// Fetch Data
 	fetched: {
 		type: 'RECEIVE_PLUGINS',

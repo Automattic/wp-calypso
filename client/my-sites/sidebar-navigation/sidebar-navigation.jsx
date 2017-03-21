@@ -11,7 +11,7 @@ var SidebarNavigation = require( 'components/sidebar-navigation' ),
 	SiteIcon = require( 'blocks/site-icon' ),
 	sites = require( 'lib/sites-list' )();
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SidebarNavigation',
 
 	render: function() {

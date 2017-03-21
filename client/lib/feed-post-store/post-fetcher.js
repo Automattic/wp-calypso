@@ -67,4 +67,4 @@ assign( PostFetcher.prototype, {
 	}
 } );
 
-module.exports = PostFetcher;
+export default PostFetcher;

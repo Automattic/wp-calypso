@@ -30,4 +30,4 @@ var Actions = {
 
 };
 
-module.exports = Actions;
+export default Actions;

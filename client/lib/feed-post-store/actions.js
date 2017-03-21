@@ -94,4 +94,4 @@ FeedPostActions = {
 	}
 };
 
-module.exports = FeedPostActions;
+export default FeedPostActions;

@@ -10,7 +10,7 @@ var ReactDom = require( 'react-dom' ),
  */
 var OlarkEvents = require( 'lib/olark-events' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	/**
 	 * Initialize our component by binding to all of the necessary olark events.
 	 */

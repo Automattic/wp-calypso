@@ -220,4 +220,4 @@ function receiveSubscriptionMeta( subscription ) {
 	}
 }
 
-module.exports = FeedSubscriptionActions;
+export default FeedSubscriptionActions;

@@ -10,7 +10,7 @@ var analytics = require( 'lib/analytics' ),
 	Gridicon = require( 'gridicons' ),
 	PluginsActions = require( 'lib/plugins/actions' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'PluginSiteUpdateIndicator',
 

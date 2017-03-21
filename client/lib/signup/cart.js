@@ -24,7 +24,7 @@ function addProductsToCart( cart, newCartItems ) {
 	return cart;
 }
 
-module.exports = {
+export default {
 	createCart: function( cartKey, newCartItems, callback ) {
 		let newCart = {
 			cart_key: cartKey,

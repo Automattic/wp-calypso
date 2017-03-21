@@ -53,4 +53,4 @@ var LocationPicker = React.createClass({
 	}
 });
 
-module.exports = LocationPicker;
+export default LocationPicker;

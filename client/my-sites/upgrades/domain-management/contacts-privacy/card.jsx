@@ -107,4 +107,4 @@ const ContactsPrivacyCard = React.createClass( {
 	}
 } );
 
-module.exports = ContactsPrivacyCard;
+export default ContactsPrivacyCard;

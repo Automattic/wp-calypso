@@ -9,7 +9,7 @@ var React = require( 'react' ),
  */
 var SiteIcon = require( 'blocks/site-icon' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'PostHeader',
 

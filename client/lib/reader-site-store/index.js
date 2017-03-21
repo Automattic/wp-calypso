@@ -131,4 +131,4 @@ SiteStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = SiteStore;
+export default SiteStore;

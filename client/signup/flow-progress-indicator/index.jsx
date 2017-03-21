@@ -8,7 +8,7 @@ import React from 'react';
  */
 import flows from 'signup/config/flows';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'FlowProgressIndicator',
 
 	getFlowLength: function() {

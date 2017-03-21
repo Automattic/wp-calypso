@@ -161,4 +161,4 @@ const UsersActions = {
 
 };
 
-module.exports = UsersActions;
+export default UsersActions;

@@ -11,7 +11,7 @@ var React = require( 'react' ),
 var CreditCardFormFields = require( 'components/credit-card-form-fields' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'NewCardForm',
 
 	propTypes: {

@@ -10,7 +10,7 @@ var React = require( 'react' ),
  */
 var StatsListItem = require( './stats-list-item' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StatsList',
 
 	getInitialState: function() {

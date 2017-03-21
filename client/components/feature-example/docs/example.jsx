@@ -9,7 +9,7 @@ import React from 'react'
 import FeatureExample from '../index'
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item'
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'FeatureExample',
 
 	getContent: function() {

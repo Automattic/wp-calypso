@@ -72,4 +72,4 @@ var FreeCartPaymentBox = React.createClass( {
 	}
 } );
 
-module.exports = FreeCartPaymentBox;
+export default FreeCartPaymentBox;

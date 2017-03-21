@@ -9,7 +9,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import ProgressBar from 'components/progress-bar';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'ProgressBar',
 

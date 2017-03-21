@@ -151,4 +151,4 @@ var FoldableCard = React.createClass( {
 	}
 } );
 
-module.exports = FoldableCard;
+export default FoldableCard;

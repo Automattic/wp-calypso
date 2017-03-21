@@ -34,4 +34,4 @@ const FeedStoreActions = {
 	}
 };
 
-module.exports = FeedStoreActions;
+export default FeedStoreActions;

@@ -8,7 +8,7 @@ var config = require( 'config' ),
  */
 var sites = require( 'lib/sites-list' )();
 
-module.exports = {
+export default {
 	getAll: function() {
 		var selectedSite = sites.getSelectedSite(),
 			siteProps = {},

@@ -12,7 +12,7 @@ import DropZone from 'components/drop-zone';
 import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'MediaLibraryDropZone',
 
 	propTypes: {

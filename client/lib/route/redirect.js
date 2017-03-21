@@ -1,7 +1,7 @@
 var page = require( 'page' ),
 	config = require( 'config' );
 
-module.exports = function redirect( path ) {
+export default function redirect( path ) {
 	if ( config( 'env' ) === 'development' ) {
 		throw 'route.redirect() is deprecated, use page.redirect()';
 	}

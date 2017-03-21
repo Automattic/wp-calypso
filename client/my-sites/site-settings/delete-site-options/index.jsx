@@ -18,7 +18,7 @@ const trackDeleteSiteOption = ( option ) => {
 	} );
 };
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'DeleteSite',
 
 	propTypes: {

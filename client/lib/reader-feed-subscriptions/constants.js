@@ -1,7 +1,7 @@
 // External Dependencies
 var keyMirror = require( 'key-mirror' );
 
-module.exports.action = keyMirror( {
+export const action = keyMirror( {
 	FOLLOW_READER_FEED: null,
 	UNFOLLOW_READER_FEED: null,
 	RECEIVE_FOLLOW_READER_FEED: null,
@@ -11,12 +11,12 @@ module.exports.action = keyMirror( {
 	FETCH_NEXT_FEED_SUBSCRIPTIONS_PAGE: null
 } );
 
-module.exports.error = keyMirror( {
+export const error = keyMirror( {
 	UNABLE_TO_FOLLOW: null,
 	UNABLE_TO_UNFOLLOW: null,
 } );
 
-module.exports.state = keyMirror( {
+export const state = keyMirror( {
 	SUBSCRIBED: null,
 	UNSUBSCRIBED: null,
 } );

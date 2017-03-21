@@ -12,7 +12,7 @@ import { preventWidows } from 'lib/formatting';
 const EmptyContent = require( 'components/empty-content' ),
 	Button = require( 'components/button' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'MediaLibraryListPlanPromo',
 
 	propTypes: {

@@ -187,4 +187,4 @@ var SectionNavigation = React.createClass( {
 	}
 } );
 
-module.exports = SectionNavigation;
+export default SectionNavigation;

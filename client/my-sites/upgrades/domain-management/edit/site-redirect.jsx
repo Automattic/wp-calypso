@@ -74,4 +74,4 @@ const SiteRedirect = React.createClass( {
 	}
 } );
 
-module.exports = SiteRedirect;
+export default SiteRedirect;

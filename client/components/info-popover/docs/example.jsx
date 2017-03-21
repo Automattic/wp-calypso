@@ -54,4 +54,4 @@ var InfoPopoverExample = React.createClass( {
 
 } );
 
-module.exports = InfoPopoverExample;
+export default InfoPopoverExample;

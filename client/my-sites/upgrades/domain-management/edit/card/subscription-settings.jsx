@@ -24,4 +24,4 @@ const SubscriptionSettings = React.createClass( {
 	}
 } );
 
-module.exports = SubscriptionSettings;
+export default SubscriptionSettings;

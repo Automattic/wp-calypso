@@ -62,4 +62,4 @@ function closeOnEsc( closeMethod ) {
 	};
 }
 
-module.exports = closeOnEsc;
+export default closeOnEsc;

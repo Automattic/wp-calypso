@@ -112,4 +112,4 @@ var OptionList = React.createClass( {
 	}
 } );
 
-module.exports = OptionList;
+export default OptionList;

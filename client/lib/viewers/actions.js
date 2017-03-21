@@ -58,4 +58,4 @@ var ViewersActions = {
 	}
 };
 
-module.exports = ViewersActions;
+export default ViewersActions;

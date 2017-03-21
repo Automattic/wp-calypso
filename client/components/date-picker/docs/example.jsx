@@ -66,4 +66,4 @@ var datePicker = React.createClass( {
 	}
 } );
 
-module.exports = datePicker;
+export default datePicker;

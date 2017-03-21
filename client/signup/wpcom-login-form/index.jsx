@@ -9,7 +9,7 @@ const debug = require( 'debug' )( 'calypso:signup:wpcom-login' );
  */
 import config from 'config';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'WpcomLoginForm',
 
 	componentDidMount: function() {

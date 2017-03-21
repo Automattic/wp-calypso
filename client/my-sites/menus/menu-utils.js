@@ -9,7 +9,7 @@ var i18n = require( 'i18n-calypso' );
 var sites = require( 'lib/sites-list' )(),
 	decodeEntities = require( 'lib/formatting' ).decodeEntities;
 
-module.exports = {
+export default {
 
 	getNavMenusUrl: function() {
 		var site = sites.getSelectedSite();

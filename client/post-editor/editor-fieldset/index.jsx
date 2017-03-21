@@ -4,7 +4,7 @@
 var React = require( 'react' ),
 	classNames = require( 'classnames' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorFieldset',
 
 	propTypes: {

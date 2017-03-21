@@ -15,7 +15,7 @@ var ButtonsPreviewButton = require( 'my-sites/sharing/buttons/preview-button' ),
 	previewWidget = require( './preview-widget' ),
 	touchDetect = require( 'lib/touch-detect' );
 
-var SharingButtonsPreviewButtons = module.exports = React.createClass( {
+var SharingButtonsPreviewButtons = React.createClass( {
 	displayName: 'SharingButtonsPreviewButtons',
 
 	propTypes: {
@@ -235,3 +235,4 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 		);
 	}
 } );
+export default SharingButtonsPreviewButtons;

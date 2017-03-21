@@ -8,7 +8,7 @@ var React = require( 'react' );
  */
 var ListItemFileDetails = require( './list-item-file-details' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'MediaLibraryListItemDocument',
 
 	render: function() {

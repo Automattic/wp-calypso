@@ -580,4 +580,4 @@ SitesList.prototype.onUpdatedPlugin = function( site ) {
 	}
 };
 
-module.exports = SitesList;
+export default SitesList;

@@ -32,5 +32,5 @@ var MenuPlaceholder = React.createClass( {
 	},
 } );
 
-module.exports = MenuPlaceholder;
+export default MenuPlaceholder;
 	

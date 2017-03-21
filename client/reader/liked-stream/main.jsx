@@ -19,4 +19,4 @@ var LikedStream = React.createClass( {
 
 } );
 
-module.exports = LikedStream;
+export default LikedStream;

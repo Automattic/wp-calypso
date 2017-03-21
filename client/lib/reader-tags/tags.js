@@ -70,4 +70,4 @@ TagStore.dispatchToken = dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = TagStore;
+export default TagStore;

@@ -810,6 +810,6 @@ function mediaButton( editor ) {
 	advanced( editor );
 }
 
-module.exports = function() {
+export default function() {
 	tinymce.PluginManager.add( 'wpcom/media', mediaButton );
 };

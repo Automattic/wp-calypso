@@ -20,7 +20,7 @@ var user = require( 'lib/user' )(),
 	trackScrollPage = require( 'lib/track-scroll-page' ),
 	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle;
 
-module.exports = {
+export default {
 
 	posts: function( context ) {
 		var Posts = require( 'my-sites/posts/main' ),

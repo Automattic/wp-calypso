@@ -57,7 +57,7 @@ function renderPage( context, component ) {
 	);
 }
 
-module.exports = {
+export default {
 	redirectToGeneral() {
 		page.redirect( '/settings/general' );
 	},

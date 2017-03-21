@@ -18,7 +18,7 @@ var MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	SecuritySectionNav = require( 'me/security-section-nav' ),
 	Main = require( 'components/main' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'TwoStep',
 

@@ -11,7 +11,7 @@ var ReactDom = require( 'react-dom' ),
  */
 var viewport = require( 'lib/viewport' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StickyPanel',
 
 	propTypes: {

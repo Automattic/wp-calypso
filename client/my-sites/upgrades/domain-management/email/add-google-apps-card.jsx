@@ -186,4 +186,4 @@ const AddGoogleAppsCard = React.createClass( {
 	}
 } );
 
-module.exports = AddGoogleAppsCard;
+export default AddGoogleAppsCard;

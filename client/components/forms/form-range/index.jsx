@@ -5,7 +5,7 @@ var React = require( 'react' ),
 	omit = require( 'lodash/omit' ),
 	classnames = require( 'classnames' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'FormRange',
 
 	propTypes: {

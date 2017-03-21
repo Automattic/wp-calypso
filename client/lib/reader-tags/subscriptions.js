@@ -125,4 +125,4 @@ TagSubscriptionStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = TagSubscriptionStore;
+export default TagSubscriptionStore;
