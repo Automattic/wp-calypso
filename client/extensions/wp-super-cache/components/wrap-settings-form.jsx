@@ -28,6 +28,14 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.updateFields( { [ name ]: value } );
 		};
 
+		handleSelect = event => {
+			const { name, value } = event.currentTarget;
+			// Attempt to cast numeric fields value to int.
+			const parsedValue = parseInt( value, 10 );
+
+			this.props.updateFields( { [ name ]: isNaN( parsedValue ) ? value : parsedValue } );
+		};
+
 		handleToggle = name => () => {
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
 		};
@@ -36,6 +44,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const utils = {
 				handleChange: this.handleChange,
 				handleRadio: this.handleRadio,
+				handleSelect: this.handleSelect,
 				handleToggle: this.handleToggle,
 			};
 
@@ -67,6 +76,12 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				wp_super_cache_late_init: false,
 				wp_supercache_cache_list: false,
 				wp_cache_location: '/wordpress/wp-content/cache/',
+				cache_gc_email_me: false,
+				cache_max_time: '3600',
+				cache_schedule_interval: 'five_minutes_interval',
+				cache_schedule_type: 'interval',
+				cache_scheduled_time: '00:00',
+				cache_time_interval: '60',
 			};
 
 			return {

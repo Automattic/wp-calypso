@@ -11,6 +11,7 @@ import Navigation from './components/navigation';
 import Advanced from './components/advanced/advanced';
 import CacheLocation from './components/advanced/cache-location';
 import Caching from './components/advanced/caching';
+import ExpiryTime from './components/advanced/expiry-time';
 import Miscellaneous from './components/advanced/miscellaneous';
 import EasyTab from './components/easy';
 import { Tabs } from './constants';
@@ -25,6 +26,7 @@ const WPSuperCache = ( { site, tab } ) => {
 						<Miscellaneous />
 						<Advanced />
 						<CacheLocation />
+						<ExpiryTime />
 					</div>
 				);
 			case Tabs.CDN:
