@@ -95,7 +95,7 @@ const analytics = {
 		_superProps = superProps;
 	},
 
-	checkDoNotTrack: function() {
+	userAllowsTracking: function() { //Check user's Do Not Track setting in their browser
 		if ( navigator.doNotTrack ) {
 			return false;
 		}
@@ -363,7 +363,7 @@ const analytics = {
 
 		initialize: function() {
 			if ( ! analytics.luckyOrange.initialized ) {
-				if ( config( 'lucky_orange_enabled' ) && analytics.checkDoNotTrack() ) {
+				if ( config( 'lucky_orange_enabled' ) && analytics.userAllowsTracking() ) {
 					const wa = document.createElement( 'script' );
 					const s = document.getElementsByTagName( 'script' )[ 0 ];
 
