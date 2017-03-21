@@ -54,6 +54,7 @@ var config = require( 'config' ),
 
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import Stylizer, { insertCss } from 'lib/react-helpers/stylizer';
 
 function init() {
 	var i18nLocaleStringsObject = null;
@@ -169,8 +170,12 @@ function renderLayout( reduxStore ) {
 		store: reduxStore
 	} );
 
+	const stylizerElement = React.createElement( Stylizer, {
+		onInsertCss: insertCss
+	}, layoutElement );
+
 	ReactDom.render(
-		layoutElement,
+		stylizerElement,
 		document.getElementById( 'wpcom' )
 	);
 
