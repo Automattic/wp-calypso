@@ -58,6 +58,11 @@ function limitSiteParamsForLikes( params ) {
 	params.fields += ',date_liked';
 }
 
+function limitSiteParamsForTags( params ) {
+	limitSiteParams( params );
+	params.fields += ',tagged_on';
+}
+
 function trainTracksProxyForStream( stream, callback ) {
 	return function( err, response ) {
 		const eventName = 'calypso_traintracks_render';
@@ -109,8 +114,8 @@ function getStoreForTag( storeId ) {
 		id: storeId,
 		fetcher: fetcher,
 		keyMaker: mixedKeyMaker,
-		onGapFetch: limitSiteParams,
-		onUpdateFetch: limitSiteParams,
+		onGapFetch: limitSiteParamsForTags,
+		onUpdateFetch: limitSiteParamsForTags,
 		dateProperty: 'tagged_on'
 	} );
 }
