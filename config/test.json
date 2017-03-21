@@ -89,6 +89,7 @@
 		"post-editor/mentions": false,
 		"press-this": true,
 		"reader": true,
+		"reader/combined-cards": true,
 		"reader/full-errors": true,
 		"reader/list-management": false,
 		"republicize": true,
