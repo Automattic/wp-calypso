@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { connect } from 'react-redux';
+import React, { Component } from 'react';
 import { map, sampleSize } from 'lodash';
 
 /**
@@ -50,10 +51,29 @@ function getSuggestions( count, tags ) {
 	return suggestionsFromPicks( count );
 }
 
-const SuggestionsProvider = ( Element, count = 3 ) => connect(
-	( state ) => ( {
-		suggestions: getSuggestions( count, getReaderFollowedTags( state ) )
-	} )
-)( Element );
+const SuggestionsProvider = ( Element, count = 3 ) => class extends Component {
+	// never let the suggestions change once its been set to non-null so that suggestions
+	// don't keep getting recalulated every redux-store change
+	memoizedSuggestions = null;
+	getFirstSuggestions = ( state ) => this.memoizedSuggestions
+		? this.memoizedSuggestions
+		: this.memoizedSuggestions = getSuggestions( count, getReaderFollowedTags( state ) );
+
+	componentWillUnmount() {
+		// when unmounted, let the suggestions refresh
+		this.memoizedSuggestions = null;
+	}
+
+	EnhancedComponent = connect(
+		( state ) => ( {
+			suggestions: this.getFirstSuggestions( state ),
+		} )
+	)( Element );
+
+	render() {
+		const EnhancedComponent = this.EnhancedComponent;
+		return <EnhancedComponent { ...this.props } />;
+	}
+};
 
 export default SuggestionsProvider;
