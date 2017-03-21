@@ -15,6 +15,7 @@ import { getSitePosts } from 'state/posts/selectors';
 import Card from 'components/card';
 import QuerySites from 'components/data/query-sites';
 
+//Mostly copied from Seo Preview Pane
 const SharingPreviewPaneExample = ( { siteId, postId } ) => (
 	<Card>
 		<QuerySites siteId={ siteId } />

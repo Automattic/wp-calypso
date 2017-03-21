@@ -18,6 +18,8 @@ import { getSitePost } from 'state/posts/selectors';
 import { getSeoTitle } from 'state/sites/selectors';
 import { getSite } from 'state/sites/selectors';
 
+//Mostly copied from Seo Preview Pane
+
 class SharingPreviewPane extends PureComponent {
 
 	static propTypes = {

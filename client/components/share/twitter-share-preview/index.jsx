@@ -8,6 +8,8 @@ const baseDomain = url =>
 		.replace( /^[^/]+[/]*/, '' ) // strip leading protocol
 		.replace( /\/.*$/, '' ); // strip everything after the domain
 
+//Mostly copied from Seo Preview
+
 export class TwitterSharePreview extends PureComponent {
 	render() {
 		const {

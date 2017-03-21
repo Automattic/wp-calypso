@@ -10,6 +10,8 @@ import {
 	shortEnough
 } from '../helpers';
 
+//Mostly copied from Seo Preview
+
 const TITLE_LENGTH = 80;
 const DESCRIPTION_LENGTH = 270;
 
