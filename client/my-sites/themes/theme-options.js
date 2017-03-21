@@ -47,11 +47,9 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 			comment: 'label for selecting a site for which to purchase a theme'
 		} ),
 		getUrl: getThemePurchaseUrl,
-		hideForSite: ( state, siteId ) => (
-			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
-			isJetpackSite( state, siteId )
-		),
 		hideForTheme: ( state, themeId, siteId ) => (
+			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
+			isJetpackSite( state, siteId ) ||
 			! isThemePremium( state, themeId ) ||
 			isThemeActive( state, themeId, siteId ) ||
 			isPremiumThemeAvailable( state, themeId, siteId )
@@ -64,8 +62,8 @@ const activate = {
 	extendedLabel: i18n.translate( 'Activate this design' ),
 	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
 	action: activateAction,
-	hideForSite: ( state, siteId ) => ( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ),
 	hideForTheme: ( state, themeId, siteId ) => (
+		( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ||
 		isThemeActive( state, themeId, siteId ) ||
 		( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
 		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
@@ -75,8 +73,11 @@ const activate = {
 const deleteTheme = {
 	label: i18n.translate( 'Delete' ),
 	action: confirmDelete,
-	hideForSite: ( state, siteId ) => ! isJetpackSite( state, siteId ) || ! config.isEnabled( 'manage/themes/upload' ),
-	hideForTheme: ( state, themeId, siteId ) => isThemeActive( state, themeId, siteId ),
+	hideForTheme: ( state, themeId, siteId ) => (
+		! isJetpackSite( state, siteId ) ||
+		! config.isEnabled( 'manage/themes/upload' ) ||
+		isThemeActive( state, themeId, siteId )
+	)
 };
 
 const customize = {
@@ -85,8 +86,10 @@ const customize = {
 	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a site for which to customize a theme' } ),
 	icon: 'customize',
 	getUrl: getThemeCustomizeUrl,
-	hideForSite: ( state, siteId ) => ! canCurrentUser( state, siteId, 'edit_theme_options' ),
-	hideForTheme: ( state, themeId, siteId ) => ! isThemeActive( state, themeId, siteId )
+	hideForTheme: ( state, themeId, siteId ) => (
+		! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
+		! isThemeActive( state, themeId, siteId )
+	)
 };
 
 const tryandcustomize = {
@@ -96,12 +99,9 @@ const tryandcustomize = {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview'
 	} ),
 	action: tryAndCustomizeAction,
-	hideForSite: ( state, siteId ) => (
-		! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
-		( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) )
-	),
-	hideForTheme: ( state, themeId, siteId ) => {
-		return (
+	hideForTheme: ( state, themeId, siteId ) => (
+		( siteId && ( ! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
+		( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ) ) ||
 		isThemeActive( state, themeId, siteId ) || (
 			isThemePremium( state, themeId ) &&
 			// In theory, we shouldn't need the isJetpackSite() check. In practice, Redux state required for isPremiumThemeAvailable
@@ -109,8 +109,7 @@ const tryandcustomize = {
 			( isJetpackSite( state, siteId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) )
 		) ||
 		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
-		);
-	}
+	)
 };
 
 const preview = {
@@ -170,18 +169,14 @@ const ALL_THEME_OPTIONS = {
 
 export const connectOptions = connect(
 	( state, { options: optionNames, siteId } ) => {
-		let options = pick( ALL_THEME_OPTIONS, optionNames );
-		let mapGetUrl = identity, mapHideForSite = identity, mapHideForTheme = identity;
+		const options = pick( ALL_THEME_OPTIONS, optionNames );
+		let mapGetUrl = identity, mapHideForTheme = identity;
 
 		if ( siteId ) {
 			mapGetUrl = getUrl => ( t ) => getUrl( state, t, siteId );
-			options = pickBy( options, option =>
-				! ( option.hideForSite && option.hideForSite( state, siteId ) )
-			);
 			mapHideForTheme = hideForTheme => ( t ) => hideForTheme( state, t, siteId );
 		} else {
 			mapGetUrl = getUrl => ( t, s ) => getUrl( state, t, s );
-			mapHideForSite = hideForSite => ( s ) => hideForSite( state, s );
 			mapHideForTheme = hideForTheme => ( t, s ) => hideForTheme( state, t, s );
 		}
 
@@ -190,9 +185,6 @@ export const connectOptions = connect(
 			option,
 			option.getUrl
 				? { getUrl: mapGetUrl( option.getUrl ) }
-				: {},
-			option.hideForSite
-				? { hideForSite: mapHideForSite( option.hideForSite ) }
 				: {},
 			option.hideForTheme
 				? { hideForTheme: mapHideForTheme( option.hideForTheme ) }
