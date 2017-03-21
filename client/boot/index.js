@@ -1,8 +1,3 @@
-// Initialize localStorage polyfill before any dependencies are loaded
-require( 'lib/local-storage' )();
-if ( process.env.NODE_ENV === 'development' ) {
-	require( 'lib/wrap-es6-functions' )();
-}
 
 /**
  * External dependencies
@@ -20,13 +15,17 @@ var React = require( 'react' ),
 	i18n = require( 'i18n-calypso' ),
 	includes = require( 'lodash/includes' );
 
+// WordPress.com
+// JetPack wp-admin
+// mc-calypso
+
 /**
  * Internal dependencies
  */
 // lib/local-storage must be run before lib/user
 var config = require( 'config' ),
-	abtestModule = require( 'lib/abtest' ),
-	getSavedVariations = abtestModule.getSavedVariations,
+	abtestModule = require( 'lib/abtest' ), // used by error logger
+	getSavedVariations = abtestModule.getSavedVariations, // used by logger
 	switchLocale = require( 'lib/i18n-utils/switch-locale' ),
 	analytics = require( 'lib/analytics' ),
 	route = require( 'lib/route' ),
@@ -59,93 +58,49 @@ function init() {
 	var i18nLocaleStringsObject = null;
 
 	debug( 'Starting Calypso. Let\'s do this.' );
-
 	// prune sync-handler records more than two days old
 	syncHandler.pruneStaleRecords( '2 days' );
-
-	// Initialize i18n
-	if ( window.i18nLocaleStrings ) {
-		i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
-		i18n.setLocale( i18nLocaleStringsObject );
-	}
-
-	ReactClass.injection.injectMixin( i18n.mixin );
-
-	// Infer touch screen by checking if device supports touch events
-	// See touch-detect/README.md
-	if ( touchDetect.hasTouch() ) {
-		document.documentElement.classList.add( 'touch' );
-	} else {
-		document.documentElement.classList.add( 'notouch' );
-	}
-
-	// Add accessible-focus listener
-	accessibleFocus();
 }
 
-function setUpContext( reduxStore ) {
-	page( '*', function( context, next ) {
-		var parsed = url.parse( location.href, true );
-
-		context.store = reduxStore;
-
-		// Break routing and do full page load for logout link in /me
-		if ( context.pathname === '/wp-login.php' ) {
-			window.location.href = context.path;
-			return;
-		}
-
-		// set `context.query`
-		const querystringStart = context.canonicalPath.indexOf( '?' );
-		if ( querystringStart !== -1 ) {
-			context.query = qs.parse( context.canonicalPath.substring( querystringStart + 1 ) );
-		} else {
-			context.query = {};
-		}
-		context.prevPath = parsed.path === context.path ? false : parsed.path;
-
-		// set `context.hash` (we have to parse manually)
-		if ( parsed.hash && parsed.hash.length > 1 ) {
-			try {
-				context.hash = qs.parse( parsed.hash.substring( 1 ) );
-			} catch ( e ) {
-				debug( 'failed to query-string parse `location.hash`', e );
-				context.hash = {};
-			}
-		} else {
-			context.hash = {};
-		}
-		next();
-	} );
-}
-
-function loadDevModulesAndBoot() {
-	if ( process.env.NODE_ENV === 'development' && config.isEnabled( 'render-visualizer' ) ) {
-		// Use Webpack's code splitting feature to put the render visualizer in a separate fragment.
-		// This way it won't get downloaded unless this feature is enabled.
-		// Since loading this fragment is asynchronous and we need to inject this mixin into all React classes,
-		// we have to wait for it to load before proceeding with the application's startup.
-		require.ensure( [], function() {
-			ReactClass.injection.injectMixin( require( 'lib/mixins/render-visualizer' ) );
-			boot();
-		}, 'devmodules' );
-
-		return;
-	}
-
-	boot();
-}
 
 function boot() {
-	const project = config( 'project' );
+	let localeSlug;
 
 	init();
-
-	if ( project ) {
-		require( './' + project );
+	// When the user is bootstrapped, we also bootstrap the
+	// locale strings
+	if ( ! config( 'wpcom_user_bootstrap' ) ) {
+		localeSlug = user.get().localeSlug;
+		if ( localeSlug ) {
+			switchLocale( localeSlug );
+		}
 	}
+	// Set the locale for the current user
+	user.on( 'change', function() {
+		localeSlug = user.get().localeSlug;
+		if ( localeSlug ) {
+			switchLocale( localeSlug );
+		}
+	} );
 
-	createReduxStoreFromPersistedInitialState( reduxStoreReady );
+	translatorJumpstart.init();
+
+	createReduxStoreFromPersistedInitialState( reduxStoreReady ); // GENERIC
+}
+
+function renderLayout( reduxStore ) {
+	const Layout = require( 'controller' ).ReduxWrappedLayout;
+
+	const layoutElement = React.createElement( Layout, {
+		store: reduxStore,
+	} );
+
+	ReactDom.render(
+		layoutElement,
+		document.getElementById( 'wpcom' )
+	);
+
+	debug( 'Main layout rendered.' );
 }
 
 function renderLayout( reduxStore ) {
@@ -166,14 +121,15 @@ function renderLayout( reduxStore ) {
 function reduxStoreReady( reduxStore ) {
 	let layoutSection, validSections = [];
 
-	bindWpLocaleState( reduxStore );
+	bindWpLocaleState( reduxStore ); // GENERIC
 
 	supportUser.setReduxStore( reduxStore );
 
+	// LOGGED IN
 	if ( user.get() ) {
 		// When logged in the analytics module requires user and superProps objects
 		// Inject these here
-		analytics.initialize( user, superProps );
+		analytics.initialize( user, superProps ); // GENERIC hopefully, probably not
 
 		// Set current user in Redux store
 		reduxStore.dispatch( receiveUser( user.get() ) );
@@ -204,6 +160,7 @@ function reduxStoreReady( reduxStore ) {
 	if ( ! document.getElementById( 'primary' ) ) {
 		renderLayout( reduxStore );
 
+		// EWWW
 		if ( config.isEnabled( 'catch-js-errors' ) ) {
 			const Logger = require( 'lib/catch-js-errors' );
 			const errorLogger = new Logger();
@@ -232,7 +189,7 @@ function reduxStoreReady( reduxStore ) {
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
 	// This can be removed when the legacy version is retired.
-	page( '*', function( context, next ) {
+	page( '*', function( context, next ) { // FACTOR INTO ONE MIDDLEWARE
 		if ( [ 'sb', 'sp' ].indexOf( context.querystring ) !== -1 ) {
 			layoutSection = ( context.querystring === 'sb' ) ? 'sidebar' : 'sites';
 			reduxStore.dispatch( setNextLayoutFocus( layoutSection ) );
@@ -242,9 +199,8 @@ function reduxStoreReady( reduxStore ) {
 		next();
 	} );
 
-	setUpContext( reduxStore );
 
-	page( '*', function( context, next ) {
+	page( '*', function( context, next ) { // WPCOM SPECIFIC
 		// Don't normalize legacy routes - let them fall through and be unhandled
 		// so that page redirects away from Calypso
 		if ( isLegacyRoute( context.pathname ) ) {
@@ -255,7 +211,7 @@ function reduxStoreReady( reduxStore ) {
 	} );
 
 	// warn against navigating from changed, unsaved forms
-	page.exit( '*', require( 'lib/protect-form' ).checkFormHandler );
+	page.exit( '*', require( 'lib/protect-form' ).checkFormHandler ); // GENERIC
 
 	page( '*', function( context, next ) {
 		var path = context.pathname;
@@ -267,10 +223,11 @@ function reduxStoreReady( reduxStore ) {
 		}
 
 		// Focus UI on the content on page navigation
-		if ( ! config.isEnabled( 'code-splitting' ) ) {
+		if ( ! config.isEnabled( 'code-splitting' ) ) { // GENERIC
 			context.store.dispatch( activateNextLayoutFocus() );
 		}
 
+		// NOT USED
 		// If `?welcome` is present, and `?tour` isn't, show the welcome message
 		if ( ! context.query.tour && context.querystring === 'welcome' && context.pathname.indexOf( '/me/next' ) === -1 ) {
 			// show welcome message, persistent for full sized screens
@@ -295,14 +252,14 @@ function reduxStoreReady( reduxStore ) {
 
 	page( '*', emailVerification );
 
-	if ( config.isEnabled( 'oauth' ) ) {
+	if ( config.isEnabled( 'oauth' ) ) { // GENERIC
 		// Forces OAuth users to the /login page if no token is present
 		page( '*', require( 'auth/controller' ).checkToken );
 	}
 
 	// Load the application modules for the various sections and features
-	const sections = require( 'sections' );
-	sections.load();
+	const sections = require( 'sections' ); // GENERIC
+	sections.load(); // GENERIC
 
 	// delete any lingering local storage data from signup
 	if ( ! startsWith( window.location.pathname, '/start' ) ) {
@@ -311,11 +268,11 @@ function reduxStoreReady( reduxStore ) {
 
 	validSections = sections.get().reduce( function( acc, section ) {
 		return section.enableLoggedOut ? acc.concat( section.paths ) : acc;
-	}, [] );
+	}, [] ); // GENERIC
 
 	if ( ! user.get() ) {
 		// Dead-end the sections the user can't access when logged out
-		page( '*', function( context, next ) {
+		page( '*', function( context, next ) { // GENERIC, FACTOR OUT EVIL
 			const isValidSection = some( validSections, function( validPath ) {
 				return startsWith( context.path, validPath );
 			} );
@@ -353,10 +310,10 @@ function reduxStoreReady( reduxStore ) {
 					context.pathname,
 					context.query ) );
 		next();
-	} );
+	} ); // GENERIC
 
 	// clear notices
-	//TODO: remove this one when notices are reduxified - it is for old notices
+	//TODO: remove this one when notices are reduxified - it is for old notices // MOVE
 	page( '*', require( 'notices' ).clearNoticesOnNavigation );
 
 	if ( config.isEnabled( 'olark' ) ) {
@@ -364,11 +321,11 @@ function reduxStoreReady( reduxStore ) {
 	}
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
-		require( 'lib/keyboard-shortcuts/global' )( sites );
+		require( 'lib/keyboard-shortcuts/global' )( sites ); // GENERIC? WHY SITES
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		require( 'lib/desktop' ).init();
+		require( 'lib/desktop' ).init(); // COULD BE GENERIC, LIKELY NOT
 	}
 
 	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {
@@ -390,7 +347,7 @@ function reduxStoreReady( reduxStore ) {
 	 * TODO (@seear): Converting all of Calypso to single-tree layout will
 	 * make this unnecessary.
 	 */
-	page( '*', function( context, next ) {
+	page( '*', function( context, next ) { // FACTOR OUT, MTR? STR?
 		const previousLayoutIsSingleTree = !! (
 			document.getElementsByClassName( 'wp-singletree-layout' ).length
 		);
@@ -411,15 +368,16 @@ function reduxStoreReady( reduxStore ) {
 		next();
 	} );
 
-	detectHistoryNavigation.start();
-	page.start();
+	detectHistoryNavigation.start(); // GENERIC, WHAT IT FOR THOUGH
+	page.start(); // GENERIC
 }
 
+// GENERIC
 window.AppBoot = function() {
 	if ( user.initialized ) {
 		loadDevModulesAndBoot();
 	} else {
-		user.once( 'change', function() {
+		user.once( 'change', function() { // HAAACK
 			loadDevModulesAndBoot();
 		} );
 	}
