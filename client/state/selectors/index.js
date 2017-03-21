@@ -80,6 +80,8 @@ export isMappedDomainSite from './is-mapped-domain-site';
 export isPrivateSite from './is-private-site';
 export isPublicizeEnabled from './is-publicize-enabled';
 export isFetchingPublicizeShareActions from './is-fetching-publicize-share-actions';
+export isDeletingPublicizeShareAction from './is-deleting-publicize-share-action';
+export isEditingPublicizeSharePostAction from './is-editing-publicize-share-post-action';
 export isRegeneratingJetpackPostByEmail from './is-regenerating-jetpack-post-by-email';
 export isRequestingAccountRecoveryResetOptions from './is-requesting-account-recovery-reset-options';
 export isRequestingBillingTransactions from './is-requesting-billing-transactions';
