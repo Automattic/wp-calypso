@@ -22,6 +22,7 @@ export getAccountRecoveryResetOptions from './get-account-recovery-reset-options
 export getAccountRecoveryResetPickedMethod from './get-account-recovery-reset-picked-method';
 export getAccountRecoveryResetUserData from './get-account-recovery-reset-user-data';
 export getAccountRecoveryResetOptionsError from './get-account-recovery-reset-options-error';
+export getAccountRecoveryResetRequestError from './get-account-recovery-reset-request-error';
 export getBlockedSites from './get-blocked-sites';
 export getBillingTransactions from './get-billing-transactions';
 export getFollowCount from './get-follow-count';
