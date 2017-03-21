@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { includes, map } from 'lodash';
+import { get, includes, map } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -14,7 +14,10 @@ import Gridicon from 'gridicons';
 import QueryPostTypes from 'components/data/query-post-types';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
-import { isPublicizeEnabled } from 'state/selectors';
+import {
+	getSitePostPublicizeSharingActions,
+	isPublicizeEnabled,
+} from 'state/selectors';
 import {
 	getSiteSlug,
 	getSitePlanSlug,
@@ -28,6 +31,7 @@ import PublicizeMessage from 'post-editor/editor-sharing/publicize-message';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
+import QuerySharePostActions from 'components/data/query-share-post-actions/index.jsx';
 import {
 	hasFeature,
 	getSitePlanRawPrice,
@@ -57,6 +61,7 @@ class PostShare extends Component {
 		post: PropTypes.object,
 		planSlug: PropTypes.string,
 		siteId: PropTypes.number,
+		postId: PropTypes.number,
 		isPublicizeEnabled: PropTypes.bool,
 		connections: PropTypes.array,
 		hasFetchedConnections: PropTypes.bool,
@@ -197,27 +202,25 @@ class PostShare extends Component {
 		);
 	}
 
-	renderFooterSectionItem( item, index ) {
-		const {
-			service,
-			handle,
-			timestamp,
-			message,
-		} = item;
-
+	renderFooterSectionItem( {
+		externalName,
+		message,
+		shareDate,
+		service,
+	}, index ) {
 		return (
 			<CompactCard className="post-share__footer-items" key={ index }>
 				<div className="post-share__footer-item">
 					<div className="post-share__handle">
 						<SocialLogo icon={ service === 'google_plus' ? 'google-plus' : service } />
 						<span className="post-share__handle-value">
-							{ service === 'twitter' ? `@${ handle }` : handle }
+							{ service === 'twitter' ? `@${ externalName }` : externalName }
 						</span>
 					</div>
 					<div className="post-share__timestamp">
 						<Gridicon icon="time" size={ 18 } />
 						<span className="post-share__timestamp-value">
-							{ timestamp }
+							{ shareDate }
 						</span>
 					</div>
 					<div className="post-share__message">
@@ -246,6 +249,7 @@ class PostShare extends Component {
 			businessRawPrice,
 			businessDiscountedRawPrice,
 			userCurrency,
+			sharingActions,
 		} = this.props;
 
 		if ( planSlug !== PLAN_BUSINESS ) {
@@ -269,29 +273,7 @@ class PostShare extends Component {
 			);
 		}
 
-		// TODO: get from Redux
-		const scheduledItems = [
-			{
-				service: 'twitter',
-				handle: 'styleandgear',
-				timestamp: 'Tue, Jan 29, 2017 at 5:00 PM',
-				message: 'Do you have a trip coming up? Bla some more text'
-			},
-			{
-				service: 'tumblr',
-				handle: 'tasha',
-				timestamp: 'Tue, Jan 28, 2017 at 3:35 PM',
-				message: 'Do you have a trip coming up? Bla some more text'
-			},
-			{
-				service: 'facebook',
-				handle: 'Style and Gear',
-				timestamp: 'Tue, Jan 28, 2017 at 3:35 PM',
-				message: 'Do you have a trip coming up? Bla some more text'
-			}
-		];
-
-		return scheduledItems.map(
+		return sharingActions.map(
 			( item, index ) => this.renderFooterSectionItem( item, index )
 		);
 	}
@@ -357,38 +339,56 @@ class PostShare extends Component {
 			'has-connections': this.hasConnections()
 		} );
 
+		const {
+			connections,
+			failure,
+			postId,
+			requesting,
+			siteId,
+			siteSlug,
+			success,
+			translate,
+		} = this.props;
+
+		if ( ! siteId || ! postId ) {
+			return null;
+		}
+
 		return (
 			<div className="post-share">
-				{ this.props.requesting &&
+				{ requesting &&
 					<Notice status="is-warning" showDismiss={ false }>
-							{ this.props.translate( 'Sharing…' ) }
+							{ translate( 'Sharing…' ) }
 					</Notice>
 				}
 
-				{ this.props.success &&
+				{ success &&
 					<Notice status="is-success" onDismissClick={ this.dismiss }>
-						{ this.props.translate( 'Post shared. Please check your social media accounts.' ) }
+						{ translate( 'Post shared. Please check your social media accounts.' ) }
 					</Notice>
 				}
 
-				{ this.props.failure &&
+				{ failure &&
 					<Notice status="is-error" onDismissClick={ this.dismiss }>
-						{ this.props.translate( 'Something went wrong. Please don\'t be mad.' ) }
+						{ translate( 'Something went wrong. Please don\'t be mad.' ) }
 						</Notice>
 				}
 
 				<div className={ classes }>
-					{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
+					<QueryPublicizeConnections siteId={ siteId } />
+					<QuerySharePostActions siteId={ siteId } postId={ postId } />
+					<QueryPostTypes siteId={ siteId } />
+
 					<div className="post-share__head">
 						<h4 className="post-share__title">
-							{ this.props.translate( 'Share this post' ) }
+							{ translate( 'Share this post' ) }
 						</h4>
 						<div className="post-share__subtitle">
-							{ this.props.translate(
+							{ translate(
 								'Share your post on all of your connected social media accounts using ' +
 								'{{a}}Publicize{{/a}}.', {
 									components: {
-										a: <a href={ '/sharing/' + this.props.siteSlug } />
+										a: <a href={ '/sharing/' + siteSlug } />
 									}
 								}
 							) }
@@ -405,16 +405,16 @@ class PostShare extends Component {
 					{ this.props.hasFetchedConnections && this.hasConnections() &&
 						<div>
 							<div>
-								{ this.props.connections
+								{ connections
 									.filter( connection => connection.status === 'broken' )
 									.map( connection => <Notice
 										key={ connection.keyring_connection_ID }
 										status="is-warning"
 										showDismiss={ false }
-										text={ this.props.translate( 'There is an issue connecting to %s.', { args: connection.label } ) }
+										text={ translate( 'There is an issue connecting to %s.', { args: connection.label } ) }
 									>
-										<NoticeAction href={ '/sharing/' + this.props.siteSlug }>
-											{ this.props.translate( 'Reconnect' ) }
+										<NoticeAction href={ '/sharing/' + siteSlug }>
+											{ translate( 'Reconnect' ) }
 										</NoticeAction>
 									</Notice> )
 								}
@@ -428,15 +428,15 @@ class PostShare extends Component {
 
 								<div className="post-share__services">
 									<h5 className="post-share__services-header">
-										{ this.props.translate( 'Connected services' ) }
+										{ translate( 'Connected services' ) }
 									</h5>
 									{ this.renderServices() }
 									<Button
-										href={ '/sharing/' + this.props.siteId }
+										href={ '/sharing/' + siteId }
 										compact={ true }
 										className="post-share__services-add"
 									>
-										{ this.props.translate( 'Add account' ) }
+										{ translate( 'Add account' ) }
 									</Button>
 								</div>
 							</div>
@@ -449,16 +449,14 @@ class PostShare extends Component {
 						<Notice
 							status="is-warning"
 							showDismiss={ false }
-							text={ this.props.translate( 'Connect an account to get started.' ) }
+							text={ translate( 'Connect an account to get started.' ) }
 						>
-							<NoticeAction href={ '/sharing/' + this.props.siteSlug }>
-								{ this.props.translate( 'Settings' ) }
+							<NoticeAction href={ '/sharing/' + siteSlug }>
+								{ translate( 'Settings' ) }
 							</NoticeAction>
 						</Notice>
 					}
 				</div>
-
-				{ this.props.site && <QueryPublicizeConnections siteId={ this.props.site.ID } /> }
 			</div>
 		);
 	}
@@ -466,24 +464,27 @@ class PostShare extends Component {
 
 export default connect(
 	( state, props ) => {
-		const siteId = props.site.ID;
+		const siteId = get( props, 'site.ID' );
+		const postId = get( props, 'post.ID' );
 		const userId = getCurrentUserId( state );
 		const planSlug = getSitePlanSlug( state, siteId );
 
 		return {
 			siteId,
+			postId,
 			planSlug,
 			planHasRepublicizeFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE ),
 			siteSlug: getSiteSlug( state, siteId ),
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, props.post.type ),
 			connections: getSiteUserConnections( state, siteId, userId ),
 			hasFetchedConnections: hasFetchedConnections( state, siteId ),
-			requesting: isRequestingSharePost( state, siteId, props.post.ID ),
-			failed: sharePostFailure( state, siteId, props.post.ID ),
-			success: sharePostSuccessMessage( state, siteId, props.post.ID ),
+			requesting: isRequestingSharePost( state, siteId, postId ),
+			failed: sharePostFailure( state, siteId, postId ),
+			success: sharePostSuccessMessage( state, siteId, postId ),
 			businessRawPrice: getSitePlanRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
 			businessDiscountedRawPrice: getPlanDiscountedRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
 			userCurrency: getCurrentUserCurrencyCode( state ), //populated by either plans endpoint
+			sharingActions: getSitePostPublicizeSharingActions( state, siteId, postId ),
 		};
 	},
 	{ requestConnections, sharePost, dismissShareConfirmation }
