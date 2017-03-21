@@ -18,7 +18,7 @@ import StickyPanel from 'components/sticky-panel';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'components/data/document-head';
-import { getFilter, getSortedFilterTerms, stripFilters } from './theme-filters.js';
+import { prependFilterKeys, getSortedFilterTerms, stripFilters } from './theme-filters.js';
 import buildUrl from 'lib/mixins/url-search/build-url';
 import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -85,14 +85,6 @@ const ThemeShowcase = React.createClass( {
 		};
 	},
 
-	prependFilterKeys() {
-		const { filter } = this.props;
-		if ( filter ) {
-			return filter.split( ',' ).map( getFilter ).join( ' ' ) + ' ';
-		}
-		return '';
-	},
-
 	doSearch( searchBoxContent ) {
 		const filter = getSortedFilterTerms( searchBoxContent );
 		const searchString = stripFilters( searchBoxContent );
@@ -157,7 +149,7 @@ const ThemeShowcase = React.createClass( {
 				<StickyPanel>
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
-						search={ this.prependFilterKeys() + search }
+						search={ prependFilterKeys( filter ) + search }
 						tier={ tier }
 						select={ this.onTierSelect } />
 				</StickyPanel>

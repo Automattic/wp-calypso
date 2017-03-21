@@ -2,20 +2,6 @@
  * Live Chat
  */
 
-.happychat__title {
-	cursor: pointer;
-	padding: 0 12px;
-
-	background: $blue-medium;
-	border-bottom: 1px solid darken( $blue-medium, 5% );
-	color: $white;
-	flex: 0 0 auto;
-	height: 46px;
-	line-height: 46px;
-	display: flex;
-	align-items: center;
-}
-
 .happychat__active-toolbar {
 	display: flex;
 	flex: 1 1 auto;
@@ -58,9 +44,19 @@
 	backface-visibility: hidden;
 
 	.happychat__title {
-		height: auto;
+		cursor: default;
+		padding: 0;
+		background: $blue-medium;
+		border-bottom: 1px solid darken( $blue-medium, 5% );
+		color: $white;
+		flex: 0 0 auto;
+		display: flex;
+		align-items: center;
 		line-height: 32px;
-		border-radius: 4px 4px 0 0;
+	}
+
+	.happychat__active-toolbar > div {
+		padding: 4px 11px;
 	}
 
 	&.is-open {
@@ -68,14 +64,6 @@
 		background: lighten( $gray, 30% );
 		bottom: 0;
 		z-index: z-index( 'root', '.happychat__container.is-open' );
-
-		.happychat__title {
-			cursor: default;
-			padding: 0;
-			line-height: 46px;
-			border-radius: 0;
-		}
-
 	}
 
 }
@@ -219,7 +207,7 @@
 		bottom: 0px;
 	}
 	99%, 100% {
-		right: 273px;	// 273 (sidebar width) + 40 (button width)
+		right: 0px;	// 273 (sidebar width) + 40 (button width)
 		width: 34px;
 		max-height: 34px;
 		bottom: 0px;
@@ -269,7 +257,7 @@
 	border: 0;
 
 	> textarea {
-		padding: 12px 12px 32px 12px;
+		padding: 12px;
 		border: none;
 		background: transparent;
 		font-size: 14px;
@@ -449,129 +437,10 @@
 
 
 /**
- * Sidebar mode
- */
-
-@include breakpoint( ">1040px" ) {
-
-	.happychat__container.is-open {
-		position: fixed;
-		z-index: 0; // place it under the notifications drawer
-		height: calc( 100% - 47px );
-		bottom: 0;
-		right: 0;
-		width: 272px;
-		display: flex;
-		flex-direction: column;
-		box-sizing: border-box;
-
-		.happychat__loading,
-		.happychat__conversation,
-		.happychat__composer,
-		.happychat__welcome {
-			border-left: 1px solid lighten( $gray, 25% );
-		}
-
-		.happychat__active-toolbar {
-			border-left: 1px solid darken( $blue-medium, 2% );
-		}
-
-	}
-
-	// add space in the main column for the docked sidebar
-	.has-chat .layout__content {
-		padding: 79px 304px 32px;
-	}
-
-	// adjust when scoll arrows show up in stats insights when panel is open
-	.has-chat.is-section-stats .post-trends__scroll-left,
-	.has-chat.is-section-stats .post-trends__scroll-right {
-			display: block;
-	}
-
-	// adjust themes page to accomodate docked sidebar
-	.has-chat.is-section-theme .layout__content {
-		padding: 79px 0 32px;
-	}
-
-	.has-chat.is-section-theme .theme__sheet {
-		margin-right: 272px;
-	}
-
-	.has-chat.is-section-theme .theme__sheet-screenshot {
-		width: calc( 49% - 182px );
-	}
-
-	// add space in the editor for the docked sidebar
-	.has-chat.is-group-editor .editor__header,
-	.has-chat.is-group-editor .editor .mce-edit-area {
-	    padding: 0 16px;
-	}
-
-	.has-chat.is-group-editor .editor-title {
-	    margin-left: 52px;
-	}
-
-	.has-chat.is-group-editor .editor__header {
-		padding-bottom: 27px;
-	}
-
-	.has-chat.is-group-editor .mce-toolbar-grp .mce-stack-layout-item {
-	    display: inline-block;
-	    overflow: hidden;
-	}
-
-	.has-chat.is-group-editor .editor__switch-mode {
-	    right: 32px;
-	}
-
-	.has-chat.is-group-editor .editor-ground-control,
-	.has-chat.is-group-editor .editor-action-bar,
-	.has-chat.is-group-editor .post-editor_inner {
-		margin-right: 273px;
-	}
-
-	// make room when the sidebar is open
-	.has-chat.is-group-editor.focus-sidebar .post-editor__content {
-	    margin-right: 544px;	// 272 * 2
-	}
-
-	.has-chat.is-group-editor.focus-sidebar .post-editor__sidebar {
-	    transform: translateX( -545px );	// 272 * 2 + 1
-	}
-
-	// make room when the sidebar is closed
-	.has-chat.is-group-editor .post-editor__content {
-	    margin-right: 272px;
-	}
-
-	.has-chat.is-group-editor .post-editor__sidebar {
-	    transform: translateX( -273px );
-	}
-
-
-	// make space in customizer
-	.has-chat .main.customize.is-iframe {
-		right: 272px;
-	}
-
-}
-
-@include breakpoint( ">1280px" ) {
-
-	.has-chat.is-group-editor .mce-toolbar-grp .mce-stack-layout-item {
-	    display: block;
-	    overflow: hidden;
-	}
-
-}
-
-
-/**
  * Panel mode
  */
 
-@include breakpoint( "480px-1040px" ) {
+@include breakpoint( ">480px" ) {
 
 	.layout:not( .is-section-happychat ) {
 		.happychat__container.is-open {
@@ -579,23 +448,8 @@
 			width: 280px;
 		}
 
-		.happychat__container.is-open .happychat__title {
-			height: 32px;
-			line-height: 32px;
-			border-radius: 0;
-
-			.happychat__active-toolbar {
-
-				> div {
-					padding: 4px 11px;
-				}
-
-			}
-
-		}
-
 		.happychat__message {
-			height: 48px;
+			height: auto;
 		}
 
 		.happychat__message > textarea {
@@ -608,9 +462,11 @@
 			max-height: 220px;
 		}
 	}
+
 }
 
 @include breakpoint( "<480px" ) {
+
 	.layout:not( .is-section-happychat ) {
 		.happychat__container.is-open {
 			right: 0;
@@ -622,4 +478,79 @@
 			max-height: 220px;
 		}
 	}
+
+}
+
+
+/**
+ * Sidebar mode
+ */
+
+@include breakpoint( ">1040px" ) {
+
+	// be more specific in scope to override the panel mode
+	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ) .happychat__container.is-open {
+		position: fixed;
+		z-index: 0; // place it under the notifications drawer
+		height: calc( 100% - 47px );
+		bottom: 0;
+		right: 0;
+		width: 272px;
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+		box-shadow: none;
+
+		.happychat__loading,
+		.happychat__conversation,
+		.happychat__composer,
+		.happychat__welcome {
+			border-left: 1px solid lighten( $gray, 25% );
+		}
+
+		.happychat__active-toolbar {
+			border-left: 1px solid darken( $blue-medium, 2% );
+		}
+
+		.happychat__title {
+			line-height: 46px;
+		}
+
+		.happychat__active-toolbar > div {
+			padding: 11px;
+		}
+
+		.happychat__message {
+			height: auto;
+		}
+
+		.happychat__message > textarea {
+			padding: 12px 12px 32px 12px;
+		}
+
+		.happychat__conversation,
+		.happychat__welcome {
+			min-height: 160px;
+			max-height: none;
+		}
+
+	}
+
+
+	// add space in the main column for the docked sidebar
+	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ) .layout__content {
+		padding: 79px 304px 32px;
+	}
+
+	// adjust when scoll arrows show up in stats insights when panel is open
+	.has-chat.is-section-stats .post-trends__scroll-left,
+	.has-chat.is-section-stats .post-trends__scroll-right {
+			display: block;
+	}
+
+	// make space in customizer
+	.has-chat .main.customize.is-iframe {
+		right: 272px;
+	}
+
 }

@@ -272,6 +272,20 @@ export function getFilter( term ) {
 }
 
 /**
+ * For array of terms recreate full search string in
+ * "taxonomy:term taxonomy:term" search-box format.
+ *
+ * @param {Array} terms - the terms slugs
+ * @return {string}     - complete taxonomy:term filter string, or empty string if term is not valid
+ */
+export function prependFilterKeys( terms ) {
+	if ( terms ) {
+		return terms.split( ',' ).map( getFilter ).join( ' ' ) + ' ';
+	}
+	return '';
+}
+
+/**
  * Checks that a taxonomy:term filter is valid, using the theme
  * taxonomy data.
  *

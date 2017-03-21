@@ -361,7 +361,7 @@ export default React.createClass( {
 							isSaveBlocked={ this.props.isSaveBlocked }
 							hasContent={ this.props.hasContent }
 							needsVerification={ this.state.needsVerification }
-							busy={ this.props.isPublishing || this.props.isSaving }
+							busy={ this.props.isPublishing || ( postUtils.isPublished( this.props.savedPost ) && this.props.isSaving ) }
 						/>
 						{ this.canPublishPost() &&
 							<Button

@@ -168,6 +168,7 @@
 		{ "value": 452, "langSlug": "zh-tw", "name": "zh-tw - 繁體中文", "wpLocale": "zh_TW", "popular": 14 }
 	],
 	"project": "wordpress-com",
+	"readerFollowingSource": "calypso",
 	"rtl": null,
 	"siftscience_key": null,
 	"signup_url": null,
