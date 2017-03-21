@@ -260,10 +260,11 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	display: flex;
 	flex: 0 0 auto;
 	margin-right: 12px;
+}
 
-	span {
-		padding-left: 4px;
-	}
+.post-share__handle-value,
+.post-share__timestamp-value {
+	padding-left: 4px;
 }
 
 .post-share__handle {
@@ -304,19 +305,17 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	}
 }
 
-.post-share__timestamp {
-	span {
-		@include breakpoint( ">480px" ) {
-			padding-left: 2px;
-		}
+.post-share__timestamp-value {
+	@include breakpoint( ">480px" ) {
+		padding-left: 2px;
+	}
 
-		@include breakpoint( ">660px" ) {
-			padding-left: 4px;
-		}
+	@include breakpoint( ">660px" ) {
+		padding-left: 4px;
+	}
 
-		@include breakpoint( ">960px" ) {
-			padding-left: 2px;
-		}
+	@include breakpoint( ">960px" ) {
+		padding-left: 2px;
 	}
 }
 

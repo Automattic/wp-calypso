@@ -201,13 +201,13 @@ class PostShare extends Component {
 				<div className="post-share__footer-item">
 					<div className="post-share__handle">
 						<SocialLogo icon={ service === 'google_plus' ? 'google-plus' : service } />
-						<span>
+						<span className="post-share__handle-value">
 							{ service === 'twitter' ? `@${ handle }` : handle }
 						</span>
 					</div>
 					<div className="post-share__timestamp">
 						<Gridicon icon="time" size={ 18 } />
-						<span>
+						<span className="post-share__timestamp-value">
 							{ timestamp }
 						</span>
 					</div>
@@ -252,7 +252,7 @@ class PostShare extends Component {
 					description={ translate( 'Live chat support and no advertising.' ) }
 					list={ [
 						translate( 'Live chat support' ),
-						translate( 'No advertising' )
+						translate( 'No Advertising' )
 					] }
 					plan={ PLAN_BUSINESS }
 					title={ translate( 'Upgrade to a Business Plan!' ) }
