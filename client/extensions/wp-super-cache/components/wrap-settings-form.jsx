@@ -82,6 +82,20 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				cache_schedule_type: 'interval',
 				cache_scheduled_time: '00:00',
 				cache_time_interval: '60',
+				wp_cache_pages: {
+					search: false,
+					feed: false,
+					category: false,
+					home: false,
+					frontpage: false,
+					tag: false,
+					archives: false,
+					pages: false,
+					single: false,
+					author: false,
+				},
+				wp_rejected_uri: 'wp-.*\.php',
+				wp_accepted_files: 'wp-comments-popup.php',
 			};
 
 			return {
