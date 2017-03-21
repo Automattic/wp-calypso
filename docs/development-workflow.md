@@ -7,7 +7,19 @@ Running `make run` will build all the code and continuously watch the front-end 
 
 ## Tests
 
-The [test/README.md](../test/README.md) file documents how to create new tests, and how to run all or just some tests from the test suite.
+If you want to run the tests for a specific library in `client/` use:
+
+```bash
+> npm run test-client client/<subdirectory>/test
+```
+
+or for running all tests (client, server, test), use:
+
+```bash
+> npm test
+```
+
+The [test/README.md](../test/README.md) file documents how to create new tests, how to watch for file changes, and how to run all or just some tests from the test suite.
 
 ## Errors and Warnings
 
