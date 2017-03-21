@@ -100,7 +100,16 @@ function isIdentifierReactComponent( astRoot, identifierName ) {
 
 const getFileNameFromPath = ( filePath ) => filePath.split( path.sep ).slice( -1 )[ 0 ];
 const getFileNameWithoutExtensionFromPath = ( filePath ) => getFileNameFromPath( filePath ).split( '.' ).slice( 0, 1 )[ 0 ];
-const getIdentifierFromPath = ( filePath ) => camelCase( getFileNameWithoutExtensionFromPath( filePath ) );
+const getIdentifierFromPath = ( filePath ) => {
+	let identifier = getFileNameWithoutExtensionFromPath( filePath );
+
+	// if it's an index file, i.e. index.jsx, replace it with the dir name above
+	if ( identifier === 'index' ) {
+		identifier = filePath.split( path.sep ).slice( -2, -1 ) + 'Index';
+	}
+
+	return camelCase( identifier );
+};
 
 function createWithStylesCall( scssFilenames, withStylesTarget ) {
 	return jscodeshift.callExpression(
@@ -193,8 +202,8 @@ function addStylesToJsFile( filename, scssFilenames ) {
 
 		// Exporting class Bla extends Component ( case [3] )
 		if ( path.value.declaration.type === 'ClassDeclaration' && isNodeClassOfReactComponent( path.value.declaration ) ) {
-
 			const replacedClassName = path.value.declaration.id.name;
+
 			jscodeshift( path )
 				.replaceWith(
 					jscodeshift.classDeclaration(
@@ -216,7 +225,8 @@ function addStylesToJsFile( filename, scssFilenames ) {
 		if ( path.value.declaration.type === 'ArrowFunctionExpression'
 			|| path.value.declaration.type === 'FunctionExpression'
 			|| path.value.declaration.type === 'CallExpression' && isNodeReactCreateClass( path.value.declaration.callee ) ) {
-			const createClassVariableName = upperFirst( camelCase ( getFileNameWithoutExtensionFromPath( filename ) ) );
+
+			const createClassVariableName = upperFirst( getIdentifierFromPath( filename ) );
 
 			jscodeshift( path )
 				.replaceWith(
@@ -236,7 +246,9 @@ function addStylesToJsFile( filename, scssFilenames ) {
 			return;
 		}
 
-		if ( path.value.declaration.type === 'FunctionDeclaration' ) {
+		// This is a function declaration and it starts with an upper case letter
+		if ( path.value.declaration.type === 'FunctionDeclaration'
+			&& path.value.declaration.id.name[ 0 ] === path.value.declaration.id.name[ 0 ].toUpperCase() ) {
 			const functionDeclaration = path.get( 'declaration' );
 
 			jscodeshift( path )
@@ -273,7 +285,7 @@ function addStylesToJsFile( filename, scssFilenames ) {
 			}
 
 			if ( curNode.value.type === 'ArrowFunctionExpression' ) {
-				const arrowName = upperFirst( camelCase ( getFileNameWithoutExtensionFromPath( filename ) ) );
+				const arrowName = upperFirst( getIdentifierFromPath( filename ) );
 
 				// Declare the arrow function as a variable
 				// TODO: check identifier collitions!
