@@ -252,7 +252,7 @@ const CancelPurchaseButton = React.createClass( {
 					text: this.state.survey.questionTwoText
 				},
 				'what-better': { text: this.state.survey.questionThreeText },
-				type: refundable ? 'refund' : 'cancel-without-refund'
+				type: refundable ? 'refund' : 'cancel-autorenew'
 			};
 
 			submitSurvey(
