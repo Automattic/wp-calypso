@@ -28,7 +28,7 @@ function cancellationEffectHeadline( purchase, translate ) {
 	}
 
 	return translate(
-		'Are you sure you want to cancel %(purchaseName)s from {{em}}%(domain)s{{/em}}? ', {
+		'Are you sure you want to cancel %(purchaseName)s for {{em}}%(domain)s{{/em}}? ', {
 			args: {
 				purchaseName,
 				domain
