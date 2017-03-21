@@ -79,6 +79,7 @@
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
 		"signup/domain-first-flow": true,
+		"signup/social": false,
 		"ui/first-view": false,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,

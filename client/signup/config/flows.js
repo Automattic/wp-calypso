@@ -225,6 +225,15 @@ if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
 	};
 }
 
+if ( config.isEnabled( 'signup/social' ) ) {
+	flows.social = {
+		steps: [ 'user-social' ],
+		destination: '/',
+		description: 'Create an account without a blog with social signup enabled.',
+		lastModified: '2017-03-16'
+	};
+}
+
 if ( config( 'env' ) === 'development' ) {
 	flows[ 'test-plans' ] = {
 		steps: [ 'site', 'plans', 'user' ],
