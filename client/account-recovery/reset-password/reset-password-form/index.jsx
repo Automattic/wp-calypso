@@ -17,11 +17,14 @@ import ResetOptionSet from './reset-option-set';
 
 import {
 	pickResetMethod,
+	requestReset,
 } from 'state/account-recovery/reset/actions';
 
 import {
+	getAccountRecoveryResetUserData,
 	getAccountRecoveryResetOptions,
 	getAccountRecoveryResetPickedMethod,
+	isRequestingAccountRecoveryReset,
 } from 'state/selectors';
 
 export class ResetPasswordFormComponent extends Component {
@@ -34,14 +37,11 @@ export class ResetPasswordFormComponent extends Component {
 		resetOptions: PropTypes.array.isRequired,
 	};
 
-	state = {
-		isSubmitting: false,
-	};
-
 	submitForm = () => {
-		// TODO:
-		// This is going to be replaced by corresponding redux actions.
-		this.setState( { isSubmitting: true } );
+		this.props.requestReset( {
+			...this.props.userData,
+			method: this.props.pickedMethod,
+		} );
 	};
 
 	onResetOptionChanged = ( event ) => {
@@ -83,11 +83,11 @@ export class ResetPasswordFormComponent extends Component {
 		const {
 			resetOptions,
 			pickedMethod,
+			isRequesting,
 			translate,
 		} = this.props;
 
-		const { isSubmitting } = this.state;
-		const isPrimaryButtonEnabled = pickedMethod && ! isSubmitting;
+		const isPrimaryButtonEnabled = pickedMethod && ! isRequesting;
 
 		return (
 			<div className="reset-password-form">
@@ -112,7 +112,7 @@ export class ResetPasswordFormComponent extends Component {
 								sms={ sms }
 								name={ name }
 								displayStrings={ this.getOptionDisplayStrings( name ) }
-								disabled={ isSubmitting }
+								disabled={ isRequesting }
 								onOptionChanged={ this.onResetOptionChanged }
 								selectedResetOption={ pickedMethod }
 							/>
@@ -135,8 +135,11 @@ export default connect(
 	( state ) => ( {
 		resetOptions: getAccountRecoveryResetOptions( state ),
 		pickedMethod: getAccountRecoveryResetPickedMethod( state ),
+		userData: getAccountRecoveryResetUserData( state ),
+		isRequesting: isRequestingAccountRecoveryReset( state ),
 	} ),
 	{
 		pickResetMethod,
+		requestReset,
 	}
 )( localize( ResetPasswordFormComponent ) );
