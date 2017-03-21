@@ -1,6 +1,7 @@
 .guided-tours__step {
 	position: fixed;
 	max-width: 410px;
+	width: 410px;
 	z-index: z-index( 'root', '.guided-tours__step' );
 	background: darken( $gray, 52 );
 	box-shadow: 0 2px 24px 0 rgba( darken( $gray, 52 ), 0.5 );
