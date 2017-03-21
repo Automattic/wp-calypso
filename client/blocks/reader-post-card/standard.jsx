@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import { partial } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -11,13 +12,20 @@ import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderExcerpt from 'blocks/reader-excerpt';
 
-const StandardPost = ( { post, children, isDiscover } )=> {
+const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpanded, site } )=> {
 	const canonicalMedia = post.canonical_media;
 	let featuredAsset;
 	if ( ! canonicalMedia ) {
 		featuredAsset = null;
 	} else if ( canonicalMedia.mediaType === 'video' ) {
-		featuredAsset = <ReaderFeaturedVideo { ...canonicalMedia } videoEmbed={ canonicalMedia } />;
+		featuredAsset = (
+			<ReaderFeaturedVideo
+				{ ...canonicalMedia }
+				videoEmbed={ canonicalMedia }
+				onThumbnailClick={ partial( expandCard, { postKey, post, site } ) }
+				isExpanded={ isExpanded }
+			/>
+		);
 	} else {
 		featuredAsset = <ReaderFeaturedImage imageUrl={ canonicalMedia.src } href={ post.URL } />;
 	}

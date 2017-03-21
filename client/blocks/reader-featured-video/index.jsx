@@ -27,19 +27,14 @@ class ReaderFeaturedVideo extends React.Component {
 		onThumbnailClick: React.PropTypes.func,
 		className: React.PropTypes.string,
 		href: React.PropTypes.string,
+		isExpanded: React.PropTypes.bool,
+		expandCard: React.PropTypes.func,
 	}
 
 	static defaultProps = {
 		allowPlaying: true,
 		onThumbnailClick: noop,
 		className: '',
-	}
-
-	constructor( props ) {
-		super( props );
-		this.state = {
-			preferThumbnail: true,
-		};
 	}
 
 	setVideoSizingStrategy = ( videoEmbed ) => {
@@ -68,7 +63,6 @@ class ReaderFeaturedVideo extends React.Component {
 		if ( this.props.allowPlaying ) {
 			e.preventDefault();
 			this.props.onThumbnailClick();
-			this.setState( { preferThumbnail: false }, () => this.updateVideoSize() );
 		}
 	}
 
@@ -90,10 +84,9 @@ class ReaderFeaturedVideo extends React.Component {
 	}
 
 	render() {
-		const { thumbnailUrl, autoplayIframe, iframe, translate, allowPlaying, className, href } = this.props;
-		const preferThumbnail = this.state.preferThumbnail;
+		const { thumbnailUrl, autoplayIframe, iframe, translate, allowPlaying, className, href, isExpanded } = this.props;
 
-		if ( preferThumbnail && thumbnailUrl ) {
+		if ( ! isExpanded && thumbnailUrl ) {
 			return (
 				<ReaderFeaturedImage
 					imageUrl={ thumbnailUrl }
