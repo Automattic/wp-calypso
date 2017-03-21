@@ -57,6 +57,7 @@ import DailyPostButton from 'blocks/daily-post-button/docs/example';
 import ReaderSubscriptionListItem from 'blocks/reader-subscription-list-item/docs/example';
 import PostLikes from 'blocks/post-likes/docs/example';
 import ReaderFeaturedVideo from 'blocks/reader-featured-video/docs/example';
+import SharingPreviewPane from 'blocks/sharing-preview-pane/docs/example';
 
 export default React.createClass( {
 
@@ -134,6 +135,7 @@ export default React.createClass( {
 					<DailyPostButton />
 					<PostLikes />
 					<ReaderFeaturedVideo />
+					<SharingPreviewPane />
 				</Collection>
 			</Main>
 		);
