@@ -13,6 +13,7 @@ import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
 	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
+	ACCOUNT_RECOVERY_RESET_PICK_METHOD,
 } from 'state/action-types';
 
 const options = combineReducers( {
@@ -44,7 +45,12 @@ const userData = createReducer( {}, {
 	} ),
 } );
 
+const method = createReducer( null, {
+	[ ACCOUNT_RECOVERY_RESET_PICK_METHOD ]: ( state, action ) => action.method,
+} );
+
 export default combineReducers( {
 	options,
 	userData,
+	method,
 } );
