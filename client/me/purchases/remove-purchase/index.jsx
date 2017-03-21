@@ -162,7 +162,7 @@ const RemovePurchase = React.createClass( {
 					text: this.state.survey.questionTwoText
 				},
 				'what-better': { text: this.state.survey.questionThreeText },
-				type: 'cancel'
+				type: 'remove'
 			};
 
 			survey.addResponses( enrichedSurveyData( surveyData, moment(), selectedSite, purchase ) );
