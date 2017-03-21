@@ -123,7 +123,6 @@ const Signup = React.createClass( {
 			ref: this.props.refParameter
 		} );
 		recordSignupStart();
-		analytics.luckyOrange.initialize();
 
 		// Signup updates the cart through `SignupCart`. To prevent
 		// synchronization issues and unnecessary polling, the cart is disabled
@@ -259,6 +258,7 @@ const Signup = React.createClass( {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
+		analytics.luckyOrange.initialize();
 	},
 
 	componentWillUnmount() {

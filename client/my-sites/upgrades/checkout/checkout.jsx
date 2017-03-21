@@ -61,8 +61,6 @@ const Checkout = React.createClass( {
 
 	componentWillMount: function() {
 		upgradesActions.resetTransaction();
-		analytics.luckyOrange.initialize();
-
 		this.props.recordApplePayStatus();
 	},
 
@@ -76,6 +74,7 @@ const Checkout = React.createClass( {
 		}
 
 		window.scrollTo( 0, 0 );
+		analytics.luckyOrange.initialize();
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
