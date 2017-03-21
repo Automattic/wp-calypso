@@ -74,7 +74,7 @@ export const EditorBasicsTour = makeTour(
 			<p>
 				Write your post in the content area.
 			</p>
-			<img style={ { marginTop: '40px' } } src="https://en-support.files.wordpress.com/2017/03/editor-content-area_360.gif" />
+			<img src="https://en-support.files.wordpress.com/2017/03/editor-content-area_360.gif" style={ { marginBottom: '10px', border: '4px solid #00AADC' } } />
 			<ButtonRow>
 				<Next step="add-image">Continue</Next>
 				<Quit>Quit</Quit>
