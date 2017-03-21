@@ -14,11 +14,26 @@ import { getLastAction } from 'state/ui/action-log/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { canCurrentUser, isSiteCustomizable } from 'state/selectors';
 import {
+	getSiteOption,
 	hasDefaultSiteTitle,
 	isCurrentPlanPaid,
 } from 'state/sites/selectors';
 
 const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
+
+export const timeSinceSelectedSiteCreation = state => {
+	const site = getSelectedSite( state );
+	const siteId = site.id;
+	const creationDate = siteId && Date.parse( getSiteOption( state, siteId, 'created_at' ) );
+	const res = creationDate ? ( Date.now() - creationDate ) : false;
+	// console.log( site, siteId, creationDate, res );
+	return res;
+};
+
+export const isNewSite = state => {
+	const siteAge = timeSinceSelectedSiteCreation( state );
+	return siteAge !== false ? siteAge <= WEEK_IN_MILLISECONDS : false;
+};
 
 /**
  * Returns a selector that tests if the current user is in a given section
