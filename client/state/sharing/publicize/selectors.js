@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, get, map } from 'lodash';
+import { filter, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,7 +38,7 @@ export function getSiteUserConnections( state, siteId, userId ) {
 }
 
 /**
- * Returns an array of known active connection ids for the given site ID
+ * Returns an array of known active connection for the given site ID
  * that are available to the specified user ID.
  *
  * @param  {Object} state Global state tree
@@ -46,10 +46,9 @@ export function getSiteUserConnections( state, siteId, userId ) {
  * @param  {Number} userId User ID to filter
  * @return {Array}  User connections
  */
-export function getSiteUserActiveConnectionIds( state, siteId, userId ) {
+export function getSiteUserActiveConnections( state, siteId, userId ) {
 	const connections = getSiteUserConnections( state, siteId, userId );
-	const activeConnections = filter( connections, connection => connection.status !== 'broken' );
-	return map( activeConnections, 'keyring_connection_ID' );
+	return filter( connections, connection => connection.status !== 'broken' );
 }
 
 /**
