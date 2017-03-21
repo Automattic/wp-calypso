@@ -38,6 +38,8 @@
 		flex: 0 0 auto;
 		min-width: 0;
 		padding: 11px 14px 11px;
+		// z-indes to match search - those elements are at the same level
+		z-index: z-index( 'root', '.search' );
 
 		.segmented-control__item,
 		.segmented-control__link,
@@ -210,4 +212,24 @@
 
 .themes-magic-search-card__welcome-taxonomy-icon {
 	pointer-events: none;
+}
+
+.themes-magic-search-card__overflowHidden {
+	overflow: hidden;
+}
+
+.themes-magic-search-card__slideDown {
+	animation-name: slideDown;
+	animation-duration: 0.3s;
+	animation-timing-function: ease-in-out;
+	visibility: visible !important;
+}
+
+@keyframes slideDown {
+	0% {
+		transform: translateY(-100%);
+	}
+	100% {
+		transform: translateY(0%);
+	}
 }
