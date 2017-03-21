@@ -19,6 +19,7 @@
 		"apple-pay": true,
 		"catch-js-errors": true,
 		"code-splitting": true,
+		"comments/filters-in-posts": true,
 		"community-translator": true,
 		"desktop-promo": true,
 		"devdocs": true,
