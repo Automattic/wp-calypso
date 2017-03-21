@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { assert } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -16,7 +17,7 @@ import {
 import reducer from '../reducer';
 
 describe( '#account-recovery/reset reducer', () => {
-	const fetchedOptions = [
+	const fetchedOptions = deepFreeze( [
 		{
 			email: 'primary@example.com',
 			sms: '123456789',
@@ -25,7 +26,7 @@ describe( '#account-recovery/reset reducer', () => {
 			email: 'secondary@example.com',
 			sms: '123456789',
 		},
-	];
+	] );
 
 	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST action should set isRequesting flag.', () => {
 		const state = reducer( undefined, {
@@ -35,11 +36,11 @@ describe( '#account-recovery/reset reducer', () => {
 		assert.isTrue( state.options.isRequesting );
 	} );
 
-	const hasItemsState = {
+	const hasItemsState = deepFreeze( {
 		options: {
 			items: fetchedOptions,
 		},
-	};
+	} );
 
 	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST action should delete the previous items.', () => {
 		const state = reducer( hasItemsState, {
@@ -58,11 +59,11 @@ describe( '#account-recovery/reset reducer', () => {
 		assert.deepEqual( state.options.items, [] );
 	} );
 
-	const requestingState = {
+	const requestingState = deepFreeze( {
 		options: {
 			isRequesting: true,
 		},
-	};
+	} );
 
 	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE action should unset isRequesting flag.', () => {
 		const state = reducer( requestingState, {
