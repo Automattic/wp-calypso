@@ -65,7 +65,8 @@ export default React.createClass( {
 	},
 
 	shouldComponentUpdate( nextProps, nextState ) {
-		const propsToCheck = [ 'label', 'isBulkManagementActive', 'haveUpdatesSelected', 'pluginUpdateCount', 'haveActiveSelected', 'haveInactiveSelected', 'bulkManagement' ];
+		const propsToCheck = [ 'label', 'isBulkManagementActive', 'haveUpdatesSelected',
+				'pluginUpdateCount', 'haveActiveSelected', 'haveInactiveSelected', 'bulkManagement' ];
 		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
 			return true;
 		}
