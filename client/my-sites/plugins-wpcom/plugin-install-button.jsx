@@ -48,7 +48,7 @@ export const WpcomPluginInstallButton = props => {
 			// No need to show eligibility warnings page, initiate transfer immediately
 			initiateTransfer( siteId, null, plugin.slug );
 		} else {
-			props.recordTracksEvent( 'calypso_automatic_transfer_plugin_install_ineligible',
+			props.recordTracksEvent( 'calypso_automated_transfer_plugin_install_ineligible',
 				{
 					eligibilityHolds: eligibilityHolds.join( ', ' ),
 					eligibilityWarnings: eligibilityWarnings.join( ', ' ),
