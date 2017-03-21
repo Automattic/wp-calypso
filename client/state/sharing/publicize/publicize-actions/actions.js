@@ -46,7 +46,7 @@ export function deletePostShareAction( siteId, postId, actionId ) {
 		} );
 
 		return new Promise( ( resolve, reject ) => wpcom.req.post(
-			`/sites/${ siteId }/post/${ postId }/publicize/actions/${ actionId }/delete`
+			`/sites/${ siteId }/post/${ postId }/publicize/action/${ actionId }/delete`
 		, ( error, data ) => {
 			if ( error || ! data.success ) {
 				dispatch( { type: PUBLICIZE_SHARE_ACTION_DELETE_FAILURE, siteId, postId, actionId, error } );
@@ -69,13 +69,15 @@ export function editPostShareAction( siteId, postId, actionId, message, share_da
 		} );
 
 		return new Promise( ( resolve, reject ) => wpcom.req.post( {
-			path: `/sites/${ siteId }/post/${ postId }/publicize/actions/${ actionId }/edit`,
+			path: `/sites/${ siteId }/post/${ postId }/publicize/action/${ actionId }/edit`,
 			body: { message, share_date }
 		}, ( error, data ) => {
 			if ( error || ! data.item ) {
 				dispatch( { type: PUBLICIZE_SHARE_ACTION_EDIT_FAILURE, siteId, postId, actionId, error } );
 				reject();
 			} else {
+				//TODO: until we have proper data coming
+				data.item.ID = actionId;
 				dispatch( { type: PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS, siteId, postId, actionId, item: data.item } );
 				resolve();
 			}

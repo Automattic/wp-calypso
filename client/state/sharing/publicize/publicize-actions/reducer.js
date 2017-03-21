@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { omit } from 'lodash';
+import { omit, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,15 +24,15 @@ import { createReducer } from 'state/utils';
 function updateDataForPost( newValue, state, siteId, postId, actionId = undefined ) {
 	if ( actionId !== undefined ) {
 		newValue = {
-			...state[ siteId ][ postId ],
-			newValue
+			...get( state, [ siteId, postId ], {} ),
+			[ actionId ]: newValue
 		};
 	}
 	return (
 		{
 			...state,
 			[ siteId ]: {
-				...state[ siteId ],
+				...get( state, [ siteId ], {} ),
 				[ postId ]: newValue
 			}
 		}
@@ -41,8 +41,13 @@ function updateDataForPost( newValue, state, siteId, postId, actionId = undefine
 
 export const items = createReducer( {}, {
 	[ PUBLICIZE_SHARE_ACTIONS_REQUEST_SUCCESS ]: ( state, { siteId, postId, actions } ) => updateDataForPost( actions, state, siteId, postId ),
-	[ PUBLICIZE_SHARE_ACTION_DELETE_SUCCESS ]: ( state, { siteId, postId, actionId } ) => updateDataForPost( omit( state[ siteId ][ postId ], [ actionId ] ), state, siteId, postId ),
-	[ PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS ]: ( state, { siteId, postId, action } ) => updateDataForPost( action, state, siteId, postId, action.ID ),
+	[ PUBLICIZE_SHARE_ACTION_DELETE_SUCCESS ]: ( state, { siteId, postId, actionId } ) => updateDataForPost(
+		omit( get( state, [ siteId, postId ], {} ), [ actionId ] ),
+		state,
+		siteId,
+		postId
+	),
+	[ PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS ]: ( state, { siteId, postId, item } ) => updateDataForPost( item, state, siteId, postId, item.ID ),
 
 }, publicizeActionsSchema );
 
@@ -59,7 +64,7 @@ export const deletingSharePostAction = createReducer( {}, {
 } );
 
 export const editingSharePostAction = createReducer( {}, {
-	[ PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS ]: ( state, { siteId, postId, actionId } ) => updateDataForPost( false, state, siteId, postId, actionId ),
+	[ PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS ]: ( state, { siteId, postId, item } ) => updateDataForPost( false, state, siteId, postId, item.ID ),
 	[ PUBLICIZE_SHARE_ACTION_EDIT_FAILURE ]: ( state, { siteId, postId, actionId } ) => updateDataForPost( false, state, siteId, postId, actionId ),
 	[ PUBLICIZE_SHARE_ACTION_EDIT ]: ( state, { siteId, postId, actionId } ) => updateDataForPost( true, state, siteId, postId, actionId ),
 } );
