@@ -19,7 +19,7 @@ import {
 	getSiteSlug,
 	getSitePlanSlug,
 } from 'state/sites/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { getCurrentUserId, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSiteUserConnections, hasFetchedConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
 import { isRequestingSharePost, sharePostFailure, sharePostSuccessMessage } from 'state/sharing/publicize/selectors';
@@ -28,7 +28,11 @@ import PublicizeMessage from 'post-editor/editor-sharing/publicize-message';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import { hasFeature } from 'state/sites/plans/selectors';
+import {
+	hasFeature,
+	getSitePlanRawPrice,
+	getPlanDiscountedRawPrice,
+} from 'state/sites/plans/selectors';
 import {
 	FEATURE_REPUBLICIZE,
 	PLAN_BUSINESS,
@@ -44,6 +48,7 @@ import SocialLogo from 'social-logos';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import AsyncLoad from 'components/async-load';
+import formatCurrency from 'lib/format-currency';
 
 class PostShare extends Component {
 	static propTypes = {
@@ -226,13 +231,24 @@ class PostShare extends Component {
 	}
 
 	renderScheduledList() {
-		const { planSlug, translate } = this.props;
+		const {
+			planSlug,
+			translate,
+			businessRawPrice,
+			businessDiscountedRawPrice,
+			userCurrency,
+		} = this.props;
 
 		if ( planSlug !== PLAN_BUSINESS ) {
 			return (
 				<Banner
 					className="post-share__footer-banner"
-					callToAction={ translate( 'Upgrade for $9.99' ) }
+					callToAction={
+						translate( 'Upgrade for %s', {
+							args: formatCurrency( businessDiscountedRawPrice || businessRawPrice, userCurrency ),
+							comment: '%s will be replaced by a formatted price, i.e $9.99'
+						} )
+					}
 					description={ translate( 'Live chat support and no advertising.' ) }
 					list={ [
 						translate( 'Live chat support' ),
@@ -443,18 +459,22 @@ export default connect(
 	( state, props ) => {
 		const siteId = props.site.ID;
 		const userId = getCurrentUserId( state );
+		const planSlug = getSitePlanSlug( state, siteId );
 
 		return {
+			siteId,
+			planSlug,
 			planHasRepublicizeFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE ),
 			siteSlug: getSiteSlug( state, siteId ),
-			planSlug: getSitePlanSlug( state, siteId ),
-			siteId,
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, props.post.type ),
 			connections: getSiteUserConnections( state, siteId, userId ),
 			hasFetchedConnections: hasFetchedConnections( state, siteId ),
 			requesting: isRequestingSharePost( state, siteId, props.post.ID ),
 			failed: sharePostFailure( state, siteId, props.post.ID ),
-			success: sharePostSuccessMessage( state, siteId, props.post.ID )
+			success: sharePostSuccessMessage( state, siteId, props.post.ID ),
+			businessRawPrice: getSitePlanRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
+			businessDiscountedRawPrice: getPlanDiscountedRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
+			userCurrency: getCurrentUserCurrencyCode( state ), //populated by either plans endpoint
 		};
 	},
 	{ requestConnections, sharePost, dismissShareConfirmation }
