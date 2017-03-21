@@ -37,6 +37,15 @@ export function getSiteUserConnections( state, siteId, userId ) {
 	} );
 }
 
+/**
+ * Returns an array of known active connection ids for the given site ID
+ * that are available to the specified user ID.
+ *
+ * @param  {Object} state Global state tree
+ * @param  {Number} siteId Site ID
+ * @param  {Number} userId User ID to filter
+ * @return {Array}  User connections
+ */
 export function getSiteUserActiveConnectionIds( state, siteId, userId ) {
 	const connections = getSiteUserConnections( state, siteId, userId );
 	const activeConnections = filter( connections, connection => connection.status !== 'broken' );
