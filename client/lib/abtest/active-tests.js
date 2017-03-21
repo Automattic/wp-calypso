@@ -8,44 +8,6 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
-	signupStore: {
-		datestamp: '20160927',
-		variations: {
-			designTypeWithoutStore: 0,
-			designTypeWithStore: 100,
-		},
-		defaultVariation: 'designTypeWithStore',
-		allowExistingUsers: false,
-	},
-	signupStoreBenchmarking: {
-		datestamp: '20160927',
-		variations: {
-			pressable: 97,
-			bluehost: 1,
-			bluehostWithWoo: 1,
-			siteground: 1
-		},
-		defaultVariation: 'pressable',
-		allowExistingUsers: false,
-	},
-	signupThemeUpload: {
-		datestamp: '20160928',
-		variations: {
-			showThemeUpload: 10,
-			hideThemeUpload: 90,
-		},
-		defaultVariation: 'hideThemeUpload',
-		allowExistingUsers: false,
-	},
-	siteTitleStep: {
-		datestamp: '20170102',
-		variations: {
-			showSiteTitleStep: 5,
-			hideSiteTitleStep: 95,
-		},
-		defaultVariation: 'hideSiteTitleStep',
-		allowExistingUsers: false
-	},
 	userFirstSignup: {
 		datestamp: '20160124',
 		variations: {
@@ -55,13 +17,47 @@ module.exports = {
 		defaultVariation: 'userLast',
 		allowExistingUsers: false,
 	},
-	jetpackPlansNoMonthly: {
-		datestamp: '20170302',
+	premiumSquaredPlansWording: {
+		datestamp: '20170111',
 		variations: {
-			showMonthly: 50,
-			hideMonthly: 50
+			withoutMarketingCopy: 50,
+			withMarketingCopy: 50
 		},
-		defaultVariation: 'showMonthly',
+		defaultVariation: 'withoutMarketingCopy',
 		allowExistingUsers: true
+	},
+	signupDomainsHeadline: {
+		datestamp: '20170313',
+		variations: {
+			original: 50,
+			updated: 50
+		},
+		defaultVariation: 'original'
+	},
+	signupStepOneCopyChanges: {
+		datestamp: '20170307',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+	},
+	readerPostCardTagCount: {
+		datestamp: '20170315',
+		variations: {
+			showOne: 50,
+			showThree: 50
+		},
+		defaultVariation: 'showThree',
+		allowExistingUsers: true
+	},
+	automatedTransfer2: {
+		datestamp: '20170316',
+		variations: {
+			enabled: 100,
+			disabled: 0
+		},
+		defaultVariation: 'disabled',
+		allowExistingUsers: false
 	},
 };

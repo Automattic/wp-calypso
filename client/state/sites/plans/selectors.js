@@ -61,7 +61,7 @@ export const getCurrentPlan = ( state, siteId ) => {
 export const getSitePlan = createSelector(
 	( state, siteId, productSlug ) => {
 		const plansBySiteId = getPlansBySiteId( state, siteId );
-		if ( ! plansBySiteId || plansBySiteId.isRequesting || ! plansBySiteId.data ) {
+		if ( ! plansBySiteId || ! plansBySiteId.data ) {
 			return null;
 		}
 		return plansBySiteId.data.filter( plan => plan.productSlug === productSlug ).shift();

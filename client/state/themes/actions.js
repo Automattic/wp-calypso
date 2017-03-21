@@ -10,13 +10,14 @@ import page from 'page';
  */
 import wpcom from 'lib/wp';
 import wporg from 'lib/wporg';
+import { prependFilterKeys } from 'my-sites/themes/theme-filters';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
-	THEME_ACTIVATE_REQUEST,
-	THEME_ACTIVATE_REQUEST_SUCCESS,
-	THEME_ACTIVATE_REQUEST_FAILURE,
+	THEME_ACTIVATE,
+	THEME_ACTIVATE_SUCCESS,
+	THEME_ACTIVATE_FAILURE,
 	THEME_BACK_PATH_SET,
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE,
@@ -34,13 +35,11 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
-	THEME_TRY_AND_CUSTOMIZE_FAILURE,
 	THEME_UPLOAD_START,
 	THEME_UPLOAD_SUCCESS,
 	THEME_UPLOAD_FAILURE,
 	THEME_UPLOAD_CLEAR,
 	THEME_UPLOAD_PROGRESS,
-	THEMES_RECEIVE,
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
@@ -53,7 +52,6 @@ import {
 } from 'state/analytics/actions';
 import {
 	getTheme,
-	getCanonicalTheme,
 	getActiveTheme,
 	getLastThemeQuery,
 	getThemeCustomizeUrl,
@@ -96,84 +94,46 @@ export function receiveTheme( theme, siteId ) {
 }
 
 /**
- * Returns an action object to be used in signalling that theme objects have
- * been received.
- *
- * @param  {Array}  themes Themes received
- * @param  {Number} siteId ID of site for which themes have been received
- * @return {Object}        Action object
- */
-export function receiveThemes( themes, siteId ) {
-	return ( dispatch, getState ) => {
-		const filterWpcom = shouldFilterWpcomThemes( getState(), siteId );
-		const { filteredThemes } = filterThemes( themes, siteId, filterWpcom );
-
-		dispatch( {
-			type: THEMES_RECEIVE,
-			themes: filteredThemes,
-			siteId
-		} );
-	};
-}
-
-/**
  * Returns an action object to be used in signalling that theme objects from
  * a query have been received.
  *
  * @param {Array}  themes Themes received
  * @param {number} siteId ID of site for which themes have been received
- * @param {Object} query Theme query used in the API request
- * @param {number} foundCount Number of themes returned by the query
+ * @param {?Object} query Theme query used in the API request
+ * @param {?number} foundCount Number of themes returned by the query
  * @return {Object} Action object
  */
-export function receiveThemesQuery( themes, siteId, query, foundCount ) {
+export function receiveThemes( themes, siteId, query, foundCount ) {
 	return ( dispatch, getState ) => {
-		const filterWpcom = shouldFilterWpcomThemes( getState(), siteId );
-		const { filteredThemes, found } = filterThemes(
-			themes,
-			siteId,
-			filterWpcom,
-			query,
-			foundCount,
-		);
+		let filteredThemes = themes;
+		let found = foundCount;
+
+		if ( isJetpackSite( getState(), siteId ) ) {
+			/*
+			 * We need to do client-side filtering for Jetpack sites because:
+			 * 1) Jetpack theme API does not support search queries
+			 * 2) We need to filter out all wpcom themes to show an 'Uploaded' list
+			 */
+			const filterWpcom = shouldFilterWpcomThemes( getState(), siteId );
+			filteredThemes = filter(
+				themes,
+				theme => (
+					isThemeMatchingQuery( query, theme ) &&
+						! ( filterWpcom && isThemeFromWpcom( theme ) )
+				)
+			);
+			// Jetpack API returns all themes in one response (no paging)
+			found = filteredThemes.length;
+		}
 
 		dispatch( {
 			type: THEMES_REQUEST_SUCCESS,
 			themes: filteredThemes,
 			siteId,
 			query,
-			found: found,
+			found,
 		} );
 	};
-}
-
-/**
- * Remove themes from a list. We need to do some client-side filtering
- * because:
- * 1) Jetpack theme API does not support search queries
- * 2) We need to filter out all wpcom themes to show an 'Uploaded' list
- *
- * @param {Array} themes list of themes to filter
- * @param {number} siteId the Site ID
- * @param {boolean} filterWpcom True to remove all wpcom themes
- * @param {Object} query the theme query
- * @param {number} found total number of themes matching query
- * @returns {Object} contains fields filteredThemes and found
- */
-function filterThemes( themes, siteId, filterWpcom, query, found ) {
-	if ( siteId === 'wporg' || siteId === 'wpcom' ) {
-		return { filteredThemes: themes, found };
-	}
-	const filteredThemes = filter(
-		themes,
-		theme => (
-			isThemeMatchingQuery( query, theme ) &&
-			! ( filterWpcom && isThemeFromWpcom( theme ) )
-		)
-	);
-
-	found = filteredThemes.length;
-	return { filteredThemes, found };
 }
 
 /**
@@ -222,12 +182,15 @@ export function requestThemes( siteId, query = {} ) {
 				themes = map( rawThemes, normalizeJetpackTheme );
 			}
 
-			if ( query.search && query.page === 1 ) {
+			if ( ( query.search || query.filter ) && query.page === 1 ) {
 				const responseTime = ( new Date().getTime() ) - startTime;
+				const search_taxonomies = prependFilterKeys( query.filter );
+				const search_term = search_taxonomies + ( query.search || '' );
 				const trackShowcaseSearch = recordTracksEvent(
 					'calypso_themeshowcase_search',
 					{
-						search_term: query.search || null,
+						search_term: search_term || null,
+						search_taxonomies,
 						tier: query.tier,
 						response_time_in_ms: responseTime,
 						result_count: found,
@@ -237,7 +200,7 @@ export function requestThemes( siteId, query = {} ) {
 				dispatch( trackShowcaseSearch );
 			}
 
-			dispatch( receiveThemesQuery( themes, siteId, query, found ) );
+			dispatch( receiveThemes( themes, siteId, query, found ) );
 		} ).catch( ( error ) => {
 			dispatch( {
 				type: THEMES_REQUEST_FAILURE,
@@ -403,7 +366,7 @@ export function activate( themeId, siteId, source = 'unknown', purchased = false
 export function activateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
 	return dispatch => {
 		dispatch( {
-			type: THEME_ACTIVATE_REQUEST,
+			type: THEME_ACTIVATE,
 			themeId,
 			siteId,
 		} );
@@ -416,7 +379,7 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 			} )
 			.catch( error => {
 				dispatch( {
-					type: THEME_ACTIVATE_REQUEST_FAILURE,
+					type: THEME_ACTIVATE_FAILURE,
 					themeId,
 					siteId,
 					error,
@@ -439,13 +402,14 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 export function themeActivated( themeStylesheet, siteId, source = 'unknown', purchased = false ) {
 	const themeActivatedThunk = ( dispatch, getState ) => {
 		const action = {
-			type: THEME_ACTIVATE_REQUEST_SUCCESS,
+			type: THEME_ACTIVATE_SUCCESS,
 			themeStylesheet,
 			siteId,
 		};
 		const previousThemeId = getActiveTheme( getState(), siteId );
 		const query = getLastThemeQuery( getState(), siteId );
-
+		const search_taxonomies = prependFilterKeys( query.filter );
+		const search_term = search_taxonomies + ( query.search || '' );
 		const trackThemeActivation = recordTracksEvent(
 			'calypso_themeshowcase_theme_activate',
 			{
@@ -453,7 +417,8 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 				previous_theme: previousThemeId,
 				source: source,
 				purchased: purchased,
-				search_term: query.search || null
+				search_term: search_term || null,
+				search_taxonomies
 			}
 		);
 		dispatch( withAnalytics( trackThemeActivation, action ) );
@@ -486,15 +451,15 @@ export function installTheme( themeId, siteId ) {
 					siteId,
 					themeId
 				} );
-			} )
-			.then( () => {
+
+				// Install parent theme if theme requires one
 				if ( endsWith( themeId, '-wpcom' ) ) {
 					const parentThemeId = getWpcomParentThemeId(
 						getState(),
 						themeId.replace( '-wpcom', '' )
 					);
 					if ( parentThemeId ) {
-						dispatch( installTheme( parentThemeId + '-wpcom', siteId ) );
+						return dispatch( installTheme( parentThemeId + '-wpcom', siteId ) );
 					}
 				}
 			} )
@@ -574,21 +539,7 @@ export function installAndTryAndCustomizeTheme( themeId, siteId ) {
  */
 export function tryAndCustomizeTheme( themeId, siteId ) {
 	return ( dispatch, getState ) => {
-		const siteIdOrWpcom = isJetpackSite( getState(), siteId ) ? siteId : 'wpcom';
-		const theme = getCanonicalTheme(
-			getState(),
-			siteIdOrWpcom,
-			themeId.replace( /-wpcom$/, '' )
-		);
-		if ( ! theme ) {
-			return dispatch( {
-				type: THEME_TRY_AND_CUSTOMIZE_FAILURE,
-				themeId,
-				siteId
-			} );
-		}
-		const url = getThemeCustomizeUrl( getState(), theme, siteId );
-		page( url );
+		page( getThemeCustomizeUrl( getState(), themeId, siteId ) );
 	};
 }
 
@@ -693,19 +644,24 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 			} );
 		} )
 			.then( ( { transfer_id } ) => {
-				dispatch( {
+				if ( ! transfer_id ) {
+					return dispatch(
+						transferInitiateFailure( siteId, { error: 'initiate_failure' }, plugin )
+					);
+				}
+				const themeInitiateSuccessAction = {
 					type: THEME_TRANSFER_INITIATE_SUCCESS,
 					siteId,
 					transferId: transfer_id,
-				} );
+				};
+				dispatch( withAnalytics(
+					recordTracksEvent( 'calypso_automated_transfer_inititate_success', { plugin } ),
+					themeInitiateSuccessAction
+				) );
 				dispatch( pollThemeTransferStatus( siteId, transfer_id ) );
 			} )
 			.catch( error => {
-				dispatch( {
-					type: THEME_TRANSFER_INITIATE_FAILURE,
-					siteId,
-					error,
-				} );
+				dispatch( transferInitiateFailure( siteId, error, plugin ) );
 			} );
 	};
 }
@@ -732,6 +688,20 @@ function transferStatusFailure( siteId, transferId, error ) {
 	};
 }
 
+// receive a transfer initiation failure
+function transferInitiateFailure( siteId, error, plugin ) {
+	return dispatch => {
+		const themeInitiateFailureAction = {
+			type: THEME_TRANSFER_INITIATE_FAILURE,
+			siteId,
+			error,
+		};
+		dispatch( withAnalytics(
+			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', { plugin } ),
+			themeInitiateFailureAction
+		) );
+	};
+}
 /**
  * Make API calls to the transfer status endpoint until a status complete is received,
  * or an error is received, or the timeout is reached.
@@ -760,6 +730,7 @@ export function pollThemeTransferStatus( siteId, transferId, interval = 3000, ti
 					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
 					if ( status === 'complete' ) {
 						// finished, stop polling
+						dispatch( recordTracksEvent( 'calypso_automated_transfer_complete', { transfer_id: transferId } ) );
 						return resolve();
 					}
 					// poll again

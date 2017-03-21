@@ -6,6 +6,7 @@ import page from 'page';
 import React from 'react';
 import Gridicon from 'gridicons';
 import { moment } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,11 +28,11 @@ import { isOperatorsAvailable, isChatAvailable } from 'state/ui/olark/selectors'
 import olarkApi from 'lib/olark-api';
 import olarkActions from 'lib/olark-store/actions';
 import olarkEvents from 'lib/olark-events';
-import analytics from 'lib/analytics';
 import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
 import { receiveDeletedSite as receiveDeletedSiteDeprecated } from 'lib/sites-list/actions';
 import { receiveDeletedSite } from 'state/sites/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const user = userFactory();
 
@@ -84,8 +85,8 @@ const RemovePurchase = React.createClass( {
 	},
 
 	recordChatEvent( eventAction ) {
-		const purchase = getPurchase( this.props );
-		analytics.tracks.recordEvent( eventAction, {
+		const purchase = this.props.selectedPurchase;
+		this.props.recordTracksEvent( eventAction, {
 			survey_step: this.state.surveyStep,
 			purchase: purchase.productSlug,
 			is_plan: isPlan( purchase ),
@@ -94,7 +95,17 @@ const RemovePurchase = React.createClass( {
 		} );
 	},
 
+	recordEvent( name, properties = {} ) {
+		const product_slug = get( this.props, 'selectedPurchase.productSlug' );
+		const refund = false;
+		this.props.recordTracksEvent(
+			name,
+			Object.assign( { refund, product_slug }, properties )
+		);
+	},
+
 	closeDialog() {
+		this.recordEvent( 'calypso_purchases_cancel_form_close' );
 		this.setState( {
 			isDialogVisible: false,
 			surveyStep: 1,
@@ -106,6 +117,7 @@ const RemovePurchase = React.createClass( {
 	},
 
 	openDialog( event ) {
+		this.recordEvent( 'calypso_purchases_cancel_form_start' );
 		event.preventDefault();
 
 		this.setState( { isDialogVisible: true } );
@@ -119,9 +131,9 @@ const RemovePurchase = React.createClass( {
 	},
 
 	changeSurveyStep() {
-		this.setState( {
-			surveyStep: this.state.surveyStep === 1 ? 2 : 1,
-		} );
+		const newStep = this.state.surveyStep === 1 ? 2 : 1;
+		this.recordEvent( 'calypso_purchases_cancel_form_step', { new_step: newStep } );
+		this.setState( { surveyStep: newStep } );
 	},
 
 	onSurveyChange( update ) {
@@ -137,6 +149,8 @@ const RemovePurchase = React.createClass( {
 		const { isDomainOnlySite, setAllSitesSelected, selectedSite } = this.props;
 
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
+			this.recordEvent( 'calypso_purchases_cancel_form_submit' );
+
 			const survey = wpcom.marketing().survey( 'calypso-remove-purchase', this.props.selectedSite.ID );
 			const surveyData = {
 				'why-cancel': {
@@ -414,6 +428,7 @@ export default connect(
 	} ),
 	{
 		receiveDeletedSite,
+		recordTracksEvent,
 		removePurchase,
 		setAllSitesSelected,
 	}

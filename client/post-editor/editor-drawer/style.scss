@@ -1,5 +1,6 @@
 .editor-drawer {
-	padding-bottom: 16px;
+	font-size: 13px;
+	background: white;
 }
 
 .editor-drawer__description {
@@ -7,21 +8,13 @@
 	font-size: 12px;
 }
 
-.editor-drawer .accordion__toggle {
-	background: lighten( $gray, 30% );
-}
-
 .editor-drawer .accordion:not( .is-expanded ) .accordion__toggle {
-	&:hover {
-		background: $gray-light;
-	}
-
 	.accordion__subtitle::after {
-		@include long-content-fade( $color: lighten( $gray, 30% ) );
+		@include long-content-fade( $color: $white );
 	}
 
 	&:hover .accordion__subtitle::after {
-		@include long-content-fade( $color: $gray-light );
+		@include long-content-fade( $color: $white );
 	}
 }
 
@@ -45,12 +38,11 @@
 }
 
 .editor-drawer__label-text {
-	color: $gray;
+	color: $gray-text;
 	display: block;
-	font-size: 11px;
+	font-size: 12px;
 	line-height: 18px;
 	margin-bottom: 4px;
-	text-transform: uppercase;
 }
 
 .editor-drawer__label-text .info-popover {
@@ -58,7 +50,8 @@
 }
 
 .editor-drawer__heading {
-	font-weight: 600;
+	font-weight: 400;
+	font-size: 12px;
 	margin-bottom: 4px;
 }
 
@@ -87,4 +80,9 @@
 .editor-drawer__copy-post .button {
 	margin-top: 16px;
 	width: 100%;
+}
+
+.editor-drawer .editor-categories-tags__accordion .accordion__content-wrap,
+.editor-drawer .editor-drawer__more-options .accordion__content-wrap {
+	padding-top: 8px;
 }

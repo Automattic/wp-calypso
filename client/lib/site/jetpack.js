@@ -38,7 +38,6 @@ JetpackSite.prototype.updateComputedAttributes = function() {
 	this.canUpdateFiles = SiteUtils.canUpdateFiles( this );
 	this.canAutoupdateFiles = SiteUtils.canAutoupdateFiles( this );
 	this.hasJetpackMenus = versionCompare( this.options.jetpack_version, '3.5-alpha' ) >= 0;
-	this.hasJetpackThemes = versionCompare( this.options.jetpack_version, '3.7-beta' ) >= 0;
 };
 
 JetpackSite.prototype.versionCompare = function( compare, operator ) {
@@ -57,21 +56,6 @@ JetpackSite.prototype.canManage = function() {
 	}
 	// for version lower than 3.4, we cannot not determine canManage, we'll assume they can
 	return true;
-};
-
-JetpackSite.prototype.fetchAvailableUpdates = function() {
-	if ( ! this.hasMinimumJetpackVersion ||
-		! this.capabilities.manage_options ||
-		! this.canUpdateFiles ) {
-		return;
-	}
-	wpcom.undocumented().getAvailableUpdates( this.ID, function( error, data ) {
-		if ( error ) {
-			debug( 'error fetching Updates data from api', error );
-			return;
-		}
-		this.set( { update: data } );
-	}.bind( this ) );
 };
 
 JetpackSite.prototype.isSecondaryNetworkSite = function() {
@@ -190,8 +174,8 @@ JetpackSite.prototype.updateWordPress = function( onError, onSuccess ) {
 		}
 
 		// Decrease count
-		this.update.wordpress--;
-		this.update.total--;
+		this.updates.wordpress--;
+		this.updates.total--;
 
 		this.emit( 'change' );
 	}.bind( this ) );

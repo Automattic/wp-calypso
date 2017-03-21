@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
 */
 import stepActions from 'lib/signup/step-actions';
 
-module.exports = {
+export default {
 	survey: {
 		stepName: 'survey',
 		props: {
@@ -31,7 +31,10 @@ module.exports = {
 		stepName: 'themes-site-selected',
 		dependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
 		providesDependencies: [ 'themeSlugWithRepo' ],
-		apiRequestFunction: stepActions.setThemeOnSite
+		apiRequestFunction: stepActions.setThemeOnSite,
+		props: {
+			headerText: i18n.translate( 'Choose a theme for your new site.' ),
+		}
 	},
 
 	'plans-site-selected': {
@@ -62,6 +65,16 @@ module.exports = {
 		apiRequestFunction: stepActions.createAccount,
 		providesToken: true,
 		providesDependencies: [ 'bearer_token', 'username' ]
+	},
+
+	'user-social': {
+		stepName: 'user-social',
+		apiRequestFunction: stepActions.createAccount,
+		providesToken: true,
+		providesDependencies: [ 'bearer_token', 'username' ],
+		props: {
+			isSocialSignupEnabled: true
+		},
 	},
 
 	'site-title': {

@@ -38,8 +38,7 @@ class CommentDisplaySettings extends Component {
 					siteId={ selectedSiteId }
 					moduleSlug="comments"
 					label={ translate(
-						'Use Jetpack Comments. Readers will be able to use their WordPress.com, Twitter, Facebook, or Google+ accounts ' +
-						'to leave comments.'
+						'Allow readers to leave comments using their WordPress.com, Twitter, Facebook, or Google+ accounts'
 					) }
 					disabled={ !! submittingForm }
 					/>

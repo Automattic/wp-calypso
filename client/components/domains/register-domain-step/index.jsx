@@ -40,6 +40,7 @@ import {
 	getDomainsSuggestions,
 	getDomainsSuggestionsError
 } from 'state/domains/suggestions/selectors';
+import { abtest } from 'lib/abtest';
 
 const domains = wpcom.domains();
 
@@ -220,7 +221,10 @@ const RegisterDomainStep = React.createClass( {
 	},
 
 	render: function() {
-		const queryObject = getQueryObject( this.props );
+		const queryObject = getQueryObject( this.props ),
+			placeholder = ( this.props.isSignupStep && abtest( 'signupDomainsHeadline' ) === 'updated' )
+				? this.props.translate( 'Enter a name or keyword' )
+				: this.props.translate( 'Enter a domain or keyword' );
 		return (
 			<div className="register-domain-step">
 					<div className="register-domain-step__search">
@@ -231,7 +235,7 @@ const RegisterDomainStep = React.createClass( {
 							onSearch={ this.onSearch }
 							onSearchChange={ this.onSearchChange }
 							onBlur={ this.save }
-							placeholder={ this.props.translate( 'Enter a domain or keyword', { textOnly: true } ) }
+							placeholder={ placeholder }
 							autoFocus={ true }
 							delaySearch={ true }
 							delayTimeout={ 1000 }

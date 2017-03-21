@@ -1,22 +1,22 @@
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	DesignTypeComponent = require( 'signup/steps/design-type' ),
-	DesignTypeWithStoreComponent = require( 'signup/steps/design-type-with-store' ),
-	DomainsStepComponent = require( 'signup/steps/domains' ),
-	GetDotBlogPlansStepComponent = require( 'signup/steps/get-dot-blog-plans' ),
-	PlansStepComponent = require( 'signup/steps/plans' ),
-	SiteComponent = require( 'signup/steps/site' ),
-	SiteOrDomainComponent = require( 'signup/steps/site-or-domain' ),
-	SiteTitleComponent = require( 'signup/steps/site-title' ),
-	SurveyStepComponent = require( 'signup/steps/survey' ),
-	ThemeSelectionComponent = require( 'signup/steps/theme-selection' );
+import config from 'config';
+import DesignTypeComponent from 'signup/steps/design-type';
+import DesignTypeWithStoreComponent from 'signup/steps/design-type-with-store';
+import DomainsStepComponent from 'signup/steps/domains';
+import GetDotBlogPlansStepComponent from 'signup/steps/get-dot-blog-plans';
+import PlansStepComponent from 'signup/steps/plans';
+import SiteComponent from 'signup/steps/site';
+import SiteOrDomainComponent from 'signup/steps/site-or-domain';
+import SiteTitleComponent from 'signup/steps/site-title';
+import SurveyStepComponent from 'signup/steps/survey';
+import ThemeSelectionComponent from 'signup/steps/theme-selection';
 import UserSignupComponent from 'signup/steps/user';
 import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
 
 
-module.exports = {
+export default {
 	'design-type': DesignTypeComponent,
 	'design-type-with-store': DesignTypeWithStoreComponent,
 	domains: DomainsStepComponent,
@@ -35,5 +35,6 @@ module.exports = {
 	test: config( 'env' ) === 'development' ? require( 'signup/steps/test-step' ) : undefined,
 	themes: ThemeSelectionComponent,
 	'themes-site-selected': ThemeSelectionComponent,
-	user: UserSignupComponent
+	user: UserSignupComponent,
+	'user-social': UserSignupComponent,
 };

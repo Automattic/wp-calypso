@@ -2,10 +2,9 @@
  * External dependencies
  */
 import React from 'react';
-import config from 'config';
 import { connect } from 'react-redux';
 import page from 'page';
-import { uniq, upperFirst } from 'lodash';
+import { get, includes, uniq, upperFirst } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,7 +30,10 @@ import DocumentHead from 'components/data/document-head';
 import WpcomPluginsList from 'my-sites/plugins-wpcom/plugins-list';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, canJetpackSiteManage, getRawSite } from 'state/sites/selectors';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import QuerySites from 'components/data/query-sites';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 const SinglePlugin = React.createClass( {
 	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
@@ -214,6 +216,16 @@ const SinglePlugin = React.createClass( {
 		);
 	},
 
+	getAllowedPluginActions( plugin ) {
+		const hiddenForAutomatedTransfer = this.props.isSiteAutomatedTransfer && includes( [ 'jetpack', 'vaultpress' ], plugin.slug );
+
+		return {
+			autoupdate: ! hiddenForAutomatedTransfer,
+			activation: ! hiddenForAutomatedTransfer,
+			remove: ! hiddenForAutomatedTransfer,
+		};
+	},
+
 	renderDocumentHead() {
 		return <DocumentHead title={ this.state.pageTitle } />;
 	},
@@ -243,7 +255,6 @@ const SinglePlugin = React.createClass( {
 
 	renderPluginPlaceholder() {
 		const { selectedSite } = this.props;
-
 		return (
 			<MainComponent>
 				<SidebarNavigation />
@@ -307,7 +318,7 @@ const SinglePlugin = React.createClass( {
 		if (
 			selectedSite &&
 			! this.props.isJetpackSite( selectedSite.ID ) &&
-			! config.isEnabled( 'automated-transfer' )
+			! isATEnabledForCurrentSite()
 		) {
 			return (
 				<MainComponent>
@@ -337,6 +348,7 @@ const SinglePlugin = React.createClass( {
 
 		const plugin = this.getPlugin();
 		const pluginExists = this.pluginExists( plugin );
+		const allowedPluginActions = this.getAllowedPluginActions( plugin );
 
 		if ( pluginExists === 'unknown' ) {
 			return this.renderPluginPlaceholder();
@@ -374,6 +386,7 @@ const SinglePlugin = React.createClass( {
 
 		return (
 			<MainComponent>
+				<QuerySites allSites />
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
 				<div className="plugin__page">
@@ -389,7 +402,8 @@ const SinglePlugin = React.createClass( {
 								? null
 								: !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug )
 						}
-						isInstalling={ installing } />
+						isInstalling={ installing }
+						allowedActions={ allowedPluginActions } />
 					{ plugin.wporg && <PluginSections plugin={ plugin } isWpcom={ isWpcom } /> }
 					{ this.renderSitesList( plugin ) }
 				</div>
@@ -414,6 +428,7 @@ export default connect(
 			selectedSite: selectedSite,
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
 			canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
+			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
 		};
 	},
 	{

@@ -18,12 +18,13 @@ import StickyPanel from 'components/sticky-panel';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'components/data/document-head';
-import { getFilter, getSortedFilterTerms, stripFilters } from './theme-filters.js';
+import { prependFilterKeys, getSortedFilterTerms, stripFilters } from './theme-filters.js';
 import buildUrl from 'lib/mixins/url-search/build-url';
 import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
 	? require( './themes-magic-search-card' )
@@ -32,8 +33,8 @@ const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
 const themesMeta = {
 	'': {
 		title: 'WordPress Themes',
-		description: 'Beautiful, responsive, free and premium WordPress themes \
-			for your photography site, portfolio, magazine, business website, or blog.',
+		description: 'Beautiful, responsive, free and premium WordPress themes ' +
+			'for your photography site, portfolio, magazine, business website, or blog.',
 		canonicalUrl: 'https://wordpress.com/design',
 	},
 	free: {
@@ -84,14 +85,6 @@ const ThemeShowcase = React.createClass( {
 		};
 	},
 
-	prependFilterKeys() {
-		const { filter } = this.props;
-		if ( filter ) {
-			return filter.split( ',' ).map( getFilter ).join( ' ' ) + ' ';
-		}
-		return '';
-	},
-
 	doSearch( searchBoxContent ) {
 		const filter = getSortedFilterTerms( searchBoxContent );
 		const searchString = stripFilters( searchBoxContent );
@@ -126,13 +119,12 @@ const ThemeShowcase = React.createClass( {
 			config.isEnabled( 'manage/themes/upload' ) &&
 			isLoggedIn &&
 			! isMultisite &&
-			( isJetpack || config.isEnabled( 'automated-transfer' ) )
+			( isJetpack || isATEnabledForCurrentSite() )
 		);
 	},
 
 	render() {
 		const {
-			site,
 			siteId,
 			options,
 			getScreenshotOption,
@@ -156,9 +148,8 @@ const ThemeShowcase = React.createClass( {
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle } />
 				<StickyPanel>
 					<ThemesSearchCard
-						site={ site }
 						onSearch={ this.doSearch }
-						search={ this.prependFilterKeys() + search }
+						search={ prependFilterKeys( filter ) + search }
 						tier={ tier }
 						select={ this.onTierSelect } />
 				</StickyPanel>

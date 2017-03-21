@@ -8,18 +8,6 @@ Site Security Settings
 
 The security section only applies to Jetpack sites. Just like on the Jetpack settings page in wp-admin, each feature can be activated and deactivated. Each feature, when active, has its settings and save button.
 
-### Jetpack Protect
-
-Allows a user to manage the Jetpack Protect module on their site. They can activate/deactivate the feature and manage an IP address whitelist in case they mistakenly get locked out of their site.
-
-#### API Communications
-
-1. We learn if the Jetpack module is active or not via the `verifyModulesActive` method on the Jetpack site component. This communicates directly with the site via a GET request to a Jetpack endpoint `/sites/:site_id:/jetpack/modules/`
-
-2. We activate / deactivate the module by a POST request to a Jetpack endpoint `/sites/:site_id:/jetpack/modules/protect`
-
-3. We read and write the IP address endpoint via the site settings endpoint `/sites/:site_id:/settings`
-
 ### Jetpack Monitor
 
 Allows a user to manage the Jetpack Monitor module on their site. They can turn the feature on and off and manage whether they receive email notifications.

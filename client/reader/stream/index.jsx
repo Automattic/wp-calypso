@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import { defer, flatMap, lastIndexOf, noop, times, clamp, includes, last } from 'lodash';
+import { defer, findLast, flatMap, noop, times, clamp, includes, last } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -32,12 +32,15 @@ import XPostHelper from 'reader/xpost-helper';
 import RecommendedPosts from './recommended-posts';
 import PostLifecycle from './post-lifecycle';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
-import { IN_STREAM_RECOMMENDATION } from 'reader/follow-button/follow-sources';
+import { IN_STREAM_RECOMMENDATION, COMBINED_CARD } from 'reader/follow-button/follow-sources';
 import { showSelectedPost } from 'reader/utils';
 import getBlockedSites from 'state/selectors/get-blocked-sites';
 import CombinedCard from 'blocks/reader-combined-card';
 import fluxPostAdapter from 'lib/reader-post-flux-adapter';
 import config from 'config';
+import { keysAreEqual } from 'lib/feed-stream-store/post-key';
+import { isDiscoverBlog, isDiscoverFeed } from 'reader/discover/helper';
+import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
 
 const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );
 
@@ -91,6 +94,14 @@ function sameSite( postKey1, postKey2 ) {
 		);
 }
 
+function sameDay( postKey1, postKey2 ) {
+	return postKey1.localMoment.isSame( postKey2.localMoment, 'day' );
+}
+
+function isDiscoverPostKey( postKey ) {
+	return isDiscoverBlog( postKey.blogId ) || isDiscoverFeed( postKey.feedId );
+}
+
 /**
  * Takes two postKeys and combines them into a ReaderCombinedCard postKey.
  * Note: This only makes sense for postKeys from the same site
@@ -108,7 +119,9 @@ function combine( postKey1, postKey2 ) {
 		isCombination: true,
 		blogId: postKey1.blogId,
 		feedId: postKey1.feedId,
-		index: postKey1.index,
+		localMoment: postKey1.localMoment && postKey1.localMoment.isBefore( postKey2.localMoment ) // keep the earliest moment
+			? postKey1.localMoment
+			: postKey2.localMoment,
 		postIds: [
 			...( postKey1.postIds || [ postKey1.postId ] ),
 			...( postKey2.postIds || [ postKey2.postId ] ),
@@ -119,7 +132,9 @@ function combine( postKey1, postKey2 ) {
 const combineCards = ( postKeys ) => postKeys.reduce(
 	( accumulator, postKey ) => {
 		const lastPostKey = last( accumulator );
-		if ( sameSite( lastPostKey, postKey ) ) {
+		if ( sameSite( lastPostKey, postKey ) &&
+			sameDay( lastPostKey, postKey ) &&
+			! isDiscoverPostKey( postKey ) ) {
 			accumulator[ accumulator.length - 1 ] = combine( last( accumulator ), postKey );
 		} else {
 			accumulator.push( postKey );
@@ -220,7 +235,7 @@ class ReaderStream extends React.Component {
 			posts,
 			recs,
 			updateCount: store.getUpdateCount(),
-			selectedIndex: store.getSelectedIndex(),
+			selectedPostKey: store.getSelectedPostKey(),
 			isFetchingNextPage: store.isFetchingNextPage && store.isFetchingNextPage(),
 			isLastPage: store.isLastPage()
 		};
@@ -233,7 +248,7 @@ class ReaderStream extends React.Component {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		if ( prevState.selectedIndex !== this.state.selectedIndex ) {
+		if ( ! keysAreEqual( prevState.selectedPostKey, this.state.selectedPostKey ) ) {
 			this.scrollToSelectedPost( true );
 			if ( this.isPostFullScreen() ) {
 				showSelectedPost( {
@@ -245,7 +260,7 @@ class ReaderStream extends React.Component {
 	}
 
 	_popstate = () => {
-		if ( this.state.selectedIndex > -1 && history.scrollRestoration !== 'manual' ) {
+		if ( this.state.selectedPostKey && history.scrollRestoration !== 'manual' ) {
 			this.scrollToSelectedPost( false );
 		}
 	}
@@ -289,6 +304,7 @@ class ReaderStream extends React.Component {
 	componentDidMount() {
 		this.props.postsStore.on( 'change', this.updateState );
 		this.props.recommendationsStore && this.props.recommendationsStore.on( 'change', this.updateState );
+		this.props.resetCardExpansions();
 
 		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
 		KeyboardShortcuts.on( 'move-selection-up', this.selectPrevItem );
@@ -323,6 +339,7 @@ class ReaderStream extends React.Component {
 
 			nextProps.postsStore.on( 'change', this.updateState );
 			nextProps.recommendationsStore && nextProps.recommendationsStore.on( 'change', this.updateState );
+			this.props.resetCardExpansions();
 
 			this.updateState( nextProps.postsStore, nextProps.recommendationsStore );
 			this._list && this._list.reset();
@@ -333,12 +350,12 @@ class ReaderStream extends React.Component {
 		showSelectedPost( {
 			store: this.props.postsStore,
 			selectedGap: this._selectedGap,
-			postKey: this.props.postsStore.getSelectedPost()
+			postKey: this.props.postsStore.getSelectedPostKey()
 		} );
 	}
 
 	toggleLikeOnSelectedPost = () => {
-		const postKey = this.props.postsStore.getSelectedPost();
+		const postKey = this.props.postsStore.getSelectedPostKey();
 		let post;
 
 		if ( postKey && ! postKey.isGap ) {
@@ -377,7 +394,7 @@ class ReaderStream extends React.Component {
 		if ( this.state.updateCount && this.state.updateCount > 0 ) {
 			this.showUpdates();
 		} else {
-			FeedStreamStoreActions.selectItem( this.props.postsStore.id, 0 );
+			FeedStreamStoreActions.selectFirstItem( this.props.postsStore.id );
 		}
 	}
 
@@ -386,6 +403,12 @@ class ReaderStream extends React.Component {
 	}
 
 	selectNextItem = () => {
+		// do we have a selected item? if so, just move to the next one
+		if ( this.state.selectedPostKey ) {
+			FeedStreamStoreActions.selectNextItem( this.props.postsStore.id );
+			return;
+		}
+
 		const visibleIndexes = this.getVisibleItemIndexes();
 		const { items, posts } = this.state;
 
@@ -410,15 +433,29 @@ class ReaderStream extends React.Component {
 					break;
 				}
 			}
+
+			const candidateItem = items[ index ];
+			// is this a combo card?
+			if ( candidateItem.isCombination ) {
+				// pick the first item
+				const postKey = { postId: candidateItem.postIds[ 0 ] };
+				if ( candidateItem.feedId ) {
+					postKey.feedId = candidateItem.feedId;
+				} else {
+					postKey.blogId = candidateItem.blogId;
+				}
+				FeedStreamStoreActions.selectItem( this.props.postsStore.id, postKey );
+			}
+
 			// find the index of the post / gap in the posts array.
 			// Start the search from the index in the items array, which has to be equal to or larger than
 			// the index in the posts array.
 			// Use lastIndexOf to walk the array from right to left
-			const indexInPosts = lastIndexOf( posts, items[ index ], index );
-			if ( indexInPosts === this.state.selectedIndex ) {
+			const selectedPostKey = findLast( posts, items[ index ], index );
+			if ( keysAreEqual( selectedPostKey, this.state.selectedPostKey ) ) {
 				FeedStreamStoreActions.selectNextItem( this.props.postsStore.id );
 			} else {
-				FeedStreamStoreActions.selectItem( this.props.postsStore.id, indexInPosts );
+				FeedStreamStoreActions.selectItem( this.props.postsStore.id, selectedPostKey );
 			}
 		}
 	}
@@ -427,7 +464,7 @@ class ReaderStream extends React.Component {
 		// unlike selectNextItem, we don't want any magic here. Just move back an item if the user
 		// currently has a selected item. Otherwise do nothing.
 		// We avoid the magic here because we expect users to enter the flow using next, not previous.
-		if ( this.state.selectedIndex > 0 ) {
+		if ( this.state.selectedPostKey ) {
 			FeedStreamStoreActions.selectPrevItem( this.props.postsStore.id );
 		}
 	}
@@ -468,15 +505,26 @@ class ReaderStream extends React.Component {
 		return 'feed-post-' + ( postKey.feedId || postKey.blogId ) + '-' + postKey.postId;
 	}
 
-	handleConnectedCardClick = post => showSelectedPost( {
-		postKey: {
-			postId: post.feed_item_ID,
-			feedId: post.feed_ID,
+	handleConnectedCardClick = post => {
+		const postKey = {};
+		if ( post.feed_item_ID && post.feed_ID ) {
+			postKey.feedId = post.feed_ID;
+			postKey.postId = post.feed_item_ID;
+		} else if ( post.is_external ) {
+			postKey.feedId = post.site_ID;
+			postKey.postId = post.ID;
+		} else {
+			postKey.blogId = post.site_ID;
+			postKey.postId = post.ID;
 		}
-	} );
+		showSelectedPost( {
+			store: this.props.postsStore,
+			postKey: postKey
+		} );
+	}
 
 	renderPost = ( postKey, index ) => {
-		const selectedPostKey = this.props.postsStore.getSelectedPost();
+		const selectedPostKey = this.props.postsStore.getSelectedPostKey();
 		const isSelected = !! ( selectedPostKey &&
 			selectedPostKey.postId === postKey.postId &&
 			(
@@ -516,6 +564,9 @@ class ReaderStream extends React.Component {
 						index={ index }
 						key={ `combined-card-${ index }` }
 						onClick={ this.handleConnectedCardClick }
+						selectedPostKey={ selectedPostKey }
+						followSource={ COMBINED_CARD }
+						showFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 					/>;
 		}
 
@@ -523,8 +574,7 @@ class ReaderStream extends React.Component {
 		const showPost = ( args ) => showSelectedPost( {
 			...args,
 			postKey,
-			store: this.props.postsStore,
-			index,
+			store: this.props.postsStore
 		} );
 		return <PostLifecycle
 			key={ itemKey }
@@ -591,5 +641,6 @@ class ReaderStream extends React.Component {
 export default connect(
 	( state ) => ( {
 		blockedSites: getBlockedSites( state )
-	} )
+	} ),
+	{ resetCardExpansions }
 )( ReaderStream );

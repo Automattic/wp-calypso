@@ -43,7 +43,7 @@ export class ReaderSidebarTagsList extends Component {
 		const { tags, translate } = this.props;
 		if ( ! tags || tags.length === 0 ) {
 			return (
-				<li key="empty" className="sidebar__menu-empty">{ translate( 'Find relevant posts by adding a\xa0tag.' ) }</li>
+				<li key="empty" className="sidebar__menu-empty">{ translate( 'Find relevant posts by adding a tag.' ) }</li>
 			);
 		}
 

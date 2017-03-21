@@ -40,7 +40,7 @@ export const EligibilityWarnings = ( {
 	const warnings = get( eligibilityData, 'eligibilityWarnings', [] );
 
 	const [ bannerHolds, listHolds ] = partition(
-		get( eligibilityData, 'eligibilityHolds', [ 'PLACEHOLDER', 'PLACEHOLDER' ] ),
+		get( eligibilityData, 'eligibilityHolds', [] ),
 		hold => includes( [ 'NO_BUSINESS_PLAN', 'NOT_USING_CUSTOM_DOMAIN' ], hold ),
 	);
 
@@ -53,34 +53,40 @@ export const EligibilityWarnings = ( {
 		<div className={ classes }>
 			<QueryEligibility siteId={ siteId } />
 
-			{ 'plugins' === context && ! hasBusinessPlan && ! isJetpack &&
+			{ ! hasBusinessPlan && ! isJetpack &&
 				<Banner
-					description={ translate( 'Please upgrade to install this plugin.' ) }
-					feature={ FEATURE_UPLOAD_PLUGINS }
+					description={ translate( 'Also get unlimited themes, advanced customization, no ads, live chat support, and more.' ) }
+					feature={ 'plugins' === context
+						? FEATURE_UPLOAD_PLUGINS
+						: FEATURE_UPLOAD_THEMES
+					}
 					plan={ PLAN_BUSINESS }
 					title={ translate( 'Business plan required' ) }
-				/>
-			}
-			{ 'themes' === context && ! hasBusinessPlan && ! isJetpack &&
-				<Banner
-					description={ translate( 'Unlimited themes, advanced customization, no ads, live chat support, and more!' ) }
-					feature={ FEATURE_UPLOAD_THEMES }
-					plan={ PLAN_BUSINESS }
-					title={ translate( 'To upload themes, upgrade to Business Plan' ) }
 				/>
 			}
 			{ hasBusinessPlan && ! isJetpack && includes( bannerHolds, 'NOT_USING_CUSTOM_DOMAIN' ) &&
 				<Banner
 					className="eligibility-warnings__banner"
-					description={ translate( 'Add a free custom domain to install this plugin.' ) }
-					href={ `/domains/add/${ siteSlug }` }
+					description={ 'plugins' === context
+						? translate( 'To install this plugin, add a free custom domain.' )
+						: translate( 'To upload themes, add a free custom domain.' )
+					}
+					href={ `/domains/manage/${ siteSlug }` }
 					icon="domains"
 					title={ translate( 'Custom domain required' ) }
 				/>
 			}
 
-			{ listHolds.length > 0 && <HoldList holds={ listHolds } /> }
-			{ warnings.length > 0 && <WarningList warnings={ warnings } /> }
+			{ ( isPlaceholder || listHolds.length > 0 ) &&
+				<HoldList
+					holds={ listHolds }
+					isPlaceholder={ isPlaceholder }
+					siteSlug={ siteSlug }
+				/>
+			}
+			{ warnings.length > 0 &&
+				<WarningList warnings={ warnings } />
+			}
 
 			{ isEligible && 0 === listHolds.length && 0 === warnings.length &&
 				<Card className="eligibility-warnings__no-conflicts">

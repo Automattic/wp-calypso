@@ -104,7 +104,7 @@ class SiteSettingsFormWriting extends Component {
 
 							<CustomContentTypes
 								onSubmitForm={ this.props.handleSubmitForm }
-								handleToggle={ handleToggle }
+								handleAutosavingToggle={ handleAutosavingToggle }
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
 								fields={ fields }
@@ -112,7 +112,7 @@ class SiteSettingsFormWriting extends Component {
 
 							<ThemeEnhancements
 								onSubmitForm={ this.props.handleSubmitForm }
-								handleToggle={ handleToggle }
+								handleAutosavingToggle={ handleAutosavingToggle }
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
 								fields={ fields }
@@ -163,8 +163,6 @@ const connectComponent = connect(
 
 const getFormSettings = partialRight( pick, [
 	'default_post_format',
-	'wpcom_publish_posts_with_markdown',
-	'markdown_supported',
 	'custom-content-types',
 	'jetpack_testimonial',
 	'jetpack_portfolio',

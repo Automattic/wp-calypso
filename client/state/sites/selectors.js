@@ -82,6 +82,7 @@ export function getJetpackComputedAttributes( state, siteId ) {
 	return {
 		hasMinimumJetpackVersion: siteHasMinimumJetpackVersion( state, siteId ),
 		canAutoupdateFiles: canJetpackSiteAutoUpdateFiles( state, siteId ),
+		canUpdateFiles: canJetpackSiteUpdateFiles( state, siteId ),
 	};
 }
 
@@ -501,6 +502,10 @@ export function getSitePlan( state, siteId ) {
 	}
 
 	return site.plan;
+}
+
+export function getSitePlanSlug( state, siteId ) {
+	return get( getSitePlan( state, siteId ), 'product_slug' );
 }
 
 /**

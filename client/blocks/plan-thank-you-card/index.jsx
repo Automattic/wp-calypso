@@ -24,6 +24,7 @@ const PlanThankYouCard = ( {
 	translate,
 	siteId,
 	siteUrl,
+	action
 } ) => {
 	const name = plan && translate( '%(planName)s Plan', {
 		args: { planName: getPlan( plan.productSlug ).getTitle() }
@@ -36,6 +37,13 @@ const PlanThankYouCard = ( {
 	const planIcon = productSlug
 		? <PlanIcon plan={ productSlug } />
 		: null;
+	const renderAction = () => {
+		if ( action ) {
+			return action;
+		}
+
+		return null;
+	};
 
 	return (
 		<div className={ classnames( 'plan-thank-you-card', planClass ) }>
@@ -50,6 +58,7 @@ const PlanThankYouCard = ( {
 				buttonUrl={ siteUrl }
 				buttonText={ translate( 'Visit Your Site' ) }
 				icon={ planIcon }
+				action={ renderAction() }
 			/>
 		</div>
 	);
@@ -60,6 +69,7 @@ PlanThankYouCard.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	siteUrl: PropTypes.string,
 	translate: PropTypes.func.isRequired,
+	action: PropTypes.node
 };
 
 export default connect( ( state, ownProps ) => {

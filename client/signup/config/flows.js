@@ -7,7 +7,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest, getABTestVariation } from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
@@ -111,13 +111,6 @@ const flows = {
 
 	surveystep: {
 		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'The current best performing flow in AB tests',
-		lastModified: '2016-05-23'
-	},
-
-	sitetitle: {
-		steps: [ 'site-title', 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'The current best performing flow in AB tests',
 		lastModified: '2016-05-23'
@@ -232,6 +225,15 @@ if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
 	};
 }
 
+if ( config.isEnabled( 'signup/social' ) ) {
+	flows.social = {
+		steps: [ 'user-social' ],
+		destination: '/',
+		description: 'Create an account without a blog with social signup enabled.',
+		lastModified: '2017-03-16'
+	};
+}
+
 if ( config( 'env' ) === 'development' ) {
 	flows[ 'test-plans' ] = {
 		steps: [ 'site', 'plans', 'user' ],
@@ -256,7 +258,7 @@ function filterDesignTypeInFlow( flow ) {
 		return;
 	}
 
-	if ( ! includes( flow.steps, 'design-type' ) || 'designTypeWithStore' !== abtest( 'signupStore' ) ) {
+	if ( ! includes( flow.steps, 'design-type' ) ) {
 		return flow;
 	}
 
@@ -316,6 +318,7 @@ const Flows = {
 			flow = removeUserStepFromFlow( flow );
 		}
 
+		// Show design type with store option only to new users with EN locale.
 		if ( ! user.get() && 'en' === i18n.getLocaleSlug() ) {
 			flow = filterDesignTypeInFlow( flow );
 		}
@@ -362,7 +365,7 @@ const Flows = {
 		 */
 		if ( 'main' === flowName ) {
 			if ( '' === stepName ) {
-				abtest( 'siteTitleStep' );
+				// e.g. abtest( 'siteTitleStep' );
 			}
 		}
 	},
@@ -382,9 +385,11 @@ const Flows = {
 	getABTestFilteredFlow( flowName, flow ) {
 		// Only do this on the main flow
 		if ( 'main' === flowName ) {
+			/* e.g.:
 			if ( getABTestVariation( 'siteTitleStep' ) === 'showSiteTitleStep' ) {
 				return Flows.insertStepIntoFlow( 'site-title', flow );
 			}
+			*/
 		}
 
 		return flow;

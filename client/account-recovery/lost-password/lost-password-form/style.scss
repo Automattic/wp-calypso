@@ -20,3 +20,8 @@
 .lost-password-form__submit-button {
 	width: 100%;
 }
+
+.lost-password-form__error-message {
+	color: $alert-red;
+	margin-bottom: 4px;
+}

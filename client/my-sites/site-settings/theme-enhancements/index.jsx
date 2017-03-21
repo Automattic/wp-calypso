@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
  */
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
-import Button from 'components/button';
 import JetpackModuleToggle from '../jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
@@ -30,40 +29,15 @@ class ThemeEnhancements extends Component {
 	}
 
 	renderToggle( name, isDisabled, label ) {
-		const { fields, handleToggle } = this.props;
+		const { fields, handleAutosavingToggle } = this.props;
 		return (
 			<CompactFormToggle
 				checked={ !! fields[ name ] }
 				disabled={ this.isFormPending() || isDisabled }
-				onChange={ handleToggle( name ) }
+				onChange={ handleAutosavingToggle( name ) }
 			>
 				{ label }
 			</CompactFormToggle>
-		);
-	}
-
-	renderHeader() {
-		const {
-			onSubmitForm,
-			isSavingSettings,
-			translate
-		} = this.props;
-		const formPending = this.isFormPending();
-
-		return (
-			<SectionHeader label={ translate( 'Theme Enhancements' ) }>
-				<Button
-					compact
-					primary
-					onClick={ onSubmitForm }
-					disabled={ formPending }
-				>
-					{ isSavingSettings
-						? translate( 'Saving…' )
-						: translate( 'Save Settings' )
-					}
-				</Button>
-			</SectionHeader>
 		);
 	}
 
@@ -88,7 +62,7 @@ class ThemeEnhancements extends Component {
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="infinite-scroll"
-					label={ translate( 'Add support for infinite scroll to your theme.' ) }
+					label={ translate( 'Add support for infinite scroll to your theme' ) }
 					disabled={ formPending }
 					/>
 
@@ -129,7 +103,7 @@ class ThemeEnhancements extends Component {
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="minileven"
-					label={ translate( 'Optimize your site with a mobile-friendly theme for tablets and phones.' ) }
+					label={ translate( 'Optimize your site with a mobile-friendly theme for tablets and phones' ) }
 					disabled={ formPending }
 					/>
 
@@ -160,9 +134,10 @@ class ThemeEnhancements extends Component {
 	}
 
 	render() {
+		const { translate } = this.props;
 		return (
 			<div>
-				{ this.renderHeader() }
+				<SectionHeader label={ translate( 'Theme Enhancements' ) } />
 
 				<Card className="theme-enhancements__card site-settings">
 					{ this.renderInfiniteScrollSettings() }
@@ -184,7 +159,7 @@ ThemeEnhancements.defaultProps = {
 
 ThemeEnhancements.propTypes = {
 	onSubmitForm: PropTypes.func.isRequired,
-	handleToggle: PropTypes.func.isRequired,
+	handleAutosavingToggle: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
 	fields: PropTypes.object,

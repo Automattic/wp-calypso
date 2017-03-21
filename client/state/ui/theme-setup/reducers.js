@@ -24,7 +24,7 @@ export const themeSetup = ( state = initialState, action ) => {
 		case THEME_SETUP_REQUEST:
 			return { ...state, active: true, result: false };
 		case THEME_SETUP_TOGGLE_DIALOG:
-			return { ...state, isDialogVisible: ! state.isDialogVisible };
+			return { ...state, isDialogVisible: ! state.isDialogVisible, result: false };
 	}
 
 	return state;

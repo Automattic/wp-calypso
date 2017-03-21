@@ -10,12 +10,12 @@ import { connect } from 'react-redux';
  */
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
-import Button from 'components/button';
 import FormFieldset from 'components/forms/form-fieldset';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive, isActivatingJetpackModule } from 'state/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 class CustomContentTypes extends Component {
 	componentDidUpdate() {
@@ -50,55 +50,31 @@ class CustomContentTypes extends Component {
 		return isRequestingSettings || isSavingSettings;
 	}
 
-	renderToggle( name, label ) {
+	renderToggle( name, label, description ) {
 		const {
 			activatingCustomContentTypesModule,
 			fields,
-			handleToggle
+			handleAutosavingToggle
 		} = this.props;
 		return (
 			<CompactFormToggle
 				checked={ !! fields[ name ] }
 				disabled={ this.isFormPending() || activatingCustomContentTypesModule }
-				onChange={ handleToggle( name ) }
+				onChange={ handleAutosavingToggle( name ) }
 			>
 				{ label }
+				<FormSettingExplanation>
+					{ description }
+				</FormSettingExplanation>
+
 			</CompactFormToggle>
-		);
-	}
-
-	renderHeader() {
-		const {
-			onSubmitForm,
-			isSavingSettings,
-			translate
-		} = this.props;
-		const formPending = this.isFormPending();
-
-		return (
-			<SectionHeader label={ translate( 'Custom Content Types' ) }>
-				<Button
-					compact
-					primary
-					onClick={ onSubmitForm }
-					disabled={ formPending }
-				>
-					{ isSavingSettings
-						? translate( 'Saving…' )
-						: translate( 'Save Settings' )
-					}
-				</Button>
-			</SectionHeader>
 		);
 	}
 
 	renderContentTypeSettings( fieldName, fieldLabel, fieldDescription ) {
 		return (
 			<div className="custom-content-types__module-settings">
-				{ this.renderToggle( fieldName, fieldLabel ) }
-				<p className="form-setting-explanation">
-					{ fieldDescription }
-				</p>
+				{ this.renderToggle( fieldName, fieldLabel, fieldDescription ) }
 			</div>
 		);
 	}
@@ -109,7 +85,7 @@ class CustomContentTypes extends Component {
 			translate
 		} = this.props;
 		const fieldLabel = translate(
-			'Enable {{strong}}Testimonial{{/strong}} custom content types.',
+			'Enable {{strong}}Testimonial{{/strong}} custom content types',
 			{
 				components: {
 					strong: <strong />,
@@ -138,7 +114,7 @@ class CustomContentTypes extends Component {
 			translate
 		} = this.props;
 		const fieldLabel = translate(
-			'Enable {{strong}}Portfolio{{/strong}} custom content types.',
+			'Enable {{strong}}Portfolio{{/strong}} custom content types',
 			{
 				components: {
 					strong: <strong />,
@@ -162,9 +138,10 @@ class CustomContentTypes extends Component {
 	}
 
 	render() {
+		const { translate } = this.props;
 		return (
 			<div>
-				{ this.renderHeader() }
+				<SectionHeader label={ translate( 'Custom Content Types' ) } />
 
 				<Card className="custom-content-types__card site-settings">
 					<FormFieldset>
@@ -185,7 +162,7 @@ CustomContentTypes.defaultProps = {
 
 CustomContentTypes.propTypes = {
 	onSubmitForm: PropTypes.func.isRequired,
-	handleToggle: PropTypes.func.isRequired,
+	handleAutosavingToggle: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
 	fields: PropTypes.object,

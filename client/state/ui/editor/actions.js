@@ -3,7 +3,6 @@
  */
 import {
 	EDITOR_PASTE_EVENT,
-	EDITOR_SHOW_DRAFTS_TOGGLE,
 	EDITOR_START,
 	EDITOR_STOP,
 } from 'state/action-types';
@@ -52,18 +51,6 @@ export function stopEditingPost( siteId, postId ) {
 		type: EDITOR_STOP,
 		siteId,
 		postId,
-	};
-}
-
-/**
- * Returns an action object to be used in signalling that the editor draft
- * drawer visibility state should be toggled.
- *
- * @return {Object} Action object
- */
-export function toggleEditorDraftsVisible() {
-	return {
-		type: EDITOR_SHOW_DRAFTS_TOGGLE
 	};
 }
 

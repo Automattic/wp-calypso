@@ -69,6 +69,53 @@ describe( 'utils', () => {
 				carousel_background_color: 'black'
 			} );
 		} );
+
+		it( 'should default jetpack_protect_global_whitelist whitelist to an empty string when null', () => {
+			expect( normalizeSettings( {
+				jetpack_protect_global_whitelist: null
+			} ) ).to.eql( {
+				jetpack_protect_global_whitelist: '',
+			} );
+		} );
+
+		it( 'should default jetpack_protect_global_whitelist whitelist to an empty string when empty', () => {
+			expect( normalizeSettings( {
+				jetpack_protect_global_whitelist: {
+					local: []
+				}
+			} ) ).to.eql( {
+				jetpack_protect_global_whitelist: '',
+			} );
+		} );
+
+		it( 'should not add extra newlines when extracting jetpack_protect_global_whitelist', () => {
+			const settings = {
+				jetpack_protect_global_whitelist: {
+					local: [
+						'123.123.123.123',
+					]
+				}
+			};
+
+			expect( normalizeSettings( settings ) ).to.eql( {
+				jetpack_protect_global_whitelist: '123.123.123.123',
+			} );
+		} );
+
+		it( 'should add newlines between IPs when extracting jetpack_protect_global_whitelist', () => {
+			const settings = {
+				jetpack_protect_global_whitelist: {
+					local: [
+						'123.123.123.123',
+						'213.123.213.123',
+					]
+				}
+			};
+
+			expect( normalizeSettings( settings ) ).to.eql( {
+				jetpack_protect_global_whitelist: '123.123.123.123\n213.123.213.123',
+			} );
+		} );
 	} );
 
 	describe( 'sanitizeSettings()', () => {
@@ -154,6 +201,8 @@ describe( 'utils', () => {
 				social_notifications_subscribe: false,
 				markdown: true,
 				wpcom_publish_comments_with_markdown: true,
+				protect: true,
+				jetpack_protect_global_whitelist: 'test',
 				sso: true,
 				jetpack_sso_match_by_email: true,
 				jetpack_sso_require_two_step: true,
@@ -196,6 +245,7 @@ describe( 'utils', () => {
 				social_notifications_reblog: true,
 				social_notifications_subscribe: false,
 				wpcom_publish_comments_with_markdown: true,
+				jetpack_protect_global_whitelist: 'test',
 				jetpack_sso_match_by_email: true,
 				jetpack_sso_require_two_step: true,
 				onpublish: true,
@@ -240,6 +290,8 @@ describe( 'utils', () => {
 				social_notifications_subscribe: false,
 				markdown: false,
 				wpcom_publish_comments_with_markdown: true,
+				protect: false,
+				jetpack_protect_global_whitelist: 'test',
 				sso: false,
 				jetpack_sso_match_by_email: true,
 				jetpack_sso_require_two_step: true,
@@ -288,6 +340,7 @@ describe( 'utils', () => {
 				social_notifications_reblog: true,
 				social_notifications_subscribe: false,
 				wpcom_publish_comments_with_markdown: true,
+				jetpack_protect_global_whitelist: 'test',
 				jetpack_sso_match_by_email: true,
 				jetpack_sso_require_two_step: true,
 				onpublish: true,

@@ -33,6 +33,7 @@ import {
 	timeline,
 	composer
 } from './helpers';
+import Notices from './notices';
 import { translate } from 'i18n-calypso';
 
 const isChatOpen = any( isConnected, isConnecting );
@@ -117,6 +118,7 @@ const Happychat = React.createClass( {
 						} ) }
 					</div>
 					{ timeline( { connectionStatus, isMinimizing } ) }
+					<Notices />
 					{ composer( { connectionStatus, isMinimizing } ) }
 				</div>
 			</div>

@@ -41,6 +41,7 @@ import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } 
 import {
 	isDirectlyFailed,
 	isDirectlyReady,
+	isDirectlyUninitialized,
 } from 'state/selectors';
 
 /**
@@ -69,9 +70,7 @@ const HelpContact = React.createClass( {
 			this.props.connectHappychat();
 		}
 
-		if ( config.isEnabled( 'help/directly' ) ) {
-			this.props.initializeDirectly();
-		}
+		this.prepareDirectlyWidget();
 
 		olarkStore.on( 'change', this.updateOlarkState );
 		olarkEvents.on( 'api.chat.onOperatorsAway', this.onOperatorsAway );
@@ -89,6 +88,13 @@ const HelpContact = React.createClass( {
 		olarkActions.expandBox();
 		olarkActions.shrinkBox();
 		olarkActions.hideBox();
+	},
+
+	componentDidUpdate: function() {
+		// Directly initialization is a noop if it's already happened. This catches
+		// instances where a state/prop change moves a user to Directly support from
+		// some other variation.
+		this.prepareDirectlyWidget();
 	},
 
 	componentWillUnmount: function() {
@@ -142,6 +148,10 @@ const HelpContact = React.createClass( {
 		this.props.sendBrowserInfo( site.URL );
 		this.props.sendHappychatMessage( message );
 
+		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin', {
+			site_plan_product_id: ( site ? site.plan.product_id : null )
+		} );
+
 		page( '/help' );
 	},
 
@@ -167,6 +177,16 @@ const HelpContact = React.createClass( {
 		this.clearSavedContactForm();
 	},
 
+	prepareDirectlyWidget: function() {
+		if (
+			this.hasDataToDetermineVariation() &&
+			this.getSupportVariation() === SUPPORT_DIRECTLY &&
+			this.props.isDirectlyUninitialized
+		) {
+			this.props.initializeDirectly();
+		}
+	},
+
 	submitDirectlyQuestion: function( contactForm ) {
 		const { display_name, email } = this.props.currentUser;
 
@@ -177,6 +197,8 @@ const HelpContact = React.createClass( {
 		);
 
 		this.clearSavedContactForm();
+
+		page( '/help' );
 	},
 
 	submitKayakoTicket: function( contactForm ) {
@@ -572,16 +594,27 @@ const HelpContact = React.createClass( {
 		return SUPPORT_HAPPYCHAT !== variationSlug && SUPPORT_LIVECHAT !== variationSlug && null != ticketSupportRequestError;
 	},
 
-	shouldShowPreloadForm: function() {
-		const { olark, sitesInitialized } = this.state;
+	/**
+	 * Before determining which variation to assign, certain async data needs to be in place.
+	 * This function helps assess whether we're ready to say which variation the user should see.
+	 *
+	 * @returns {Boolean} Whether all the data is present to determine the variation to show
+	 */
+	hasDataToDetermineVariation: function() {
+		const { olark } = this.state;
 		const { ticketSupportConfigurationReady, ticketSupportRequestError } = this.props;
 
 		const olarkReadyOrTimedOut = olark.isOlarkReady || this.props.olarkTimedOut;
 		const ticketReadyOrError = ticketSupportConfigurationReady || null != ticketSupportRequestError;
 
-		const waitingOnDirectly = this.shouldUseDirectly() && ! this.props.isDirectlyReady;
+		return olarkReadyOrTimedOut && ticketReadyOrError;
+	},
 
-		return ! sitesInitialized || ! ticketReadyOrError || ! olarkReadyOrTimedOut || waitingOnDirectly;
+	shouldShowPreloadForm: function() {
+		const { sitesInitialized } = this.state;
+		const waitingOnDirectly = this.getSupportVariation() === SUPPORT_DIRECTLY && ! this.props.isDirectlyReady;
+
+		return ! sitesInitialized || ! this.hasDataToDetermineVariation() || waitingOnDirectly;
 	},
 
 	/**
@@ -665,6 +698,7 @@ export default connect(
 			currentUser: getCurrentUser( state ),
 			isDirectlyFailed: isDirectlyFailed( state ),
 			isDirectlyReady: isDirectlyReady( state ),
+			isDirectlyUninitialized: isDirectlyUninitialized( state ),
 			olarkTimedOut: isOlarkTimedOut( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isHappychatAvailable: isHappychatAvailable( state ),

@@ -17,10 +17,12 @@ import { getFeed } from 'state/reader/feeds/selectors';
  * A HoC function that translates a postKey or postKeys into a post or posts for its child.
  */
 const fluxPostAdapter = Component => {
-
-	class ReaderPostFluxAdapter extends React.Component {
+	class ReaderPostFluxAdapter extends React.PureComponent {
 		static propTypes = {
 			postKey: PropTypes.object,
+			selectedPost: PropTypes.string,
+			feed: PropTypes.object,
+			site: PropTypes.object,
 		}
 
 		getStateFromStores = ( props = this.props ) => {
@@ -28,9 +30,16 @@ const fluxPostAdapter = Component => {
 			const posts = map(
 				postKey.postIds,
 				postId => {
-					const post = FeedPostStore.get( { ...postKey, postId } )
-					if ( ! post ) {
-						fetchPost( { ...postKey, postId } );
+					const postKeyForPost = {};
+					if ( postKey.feedId ) {
+						postKeyForPost.feedId = postKey.feedId;
+					} else {
+						postKeyForPost.blogId = postKey.blogId;
+					}
+					postKeyForPost.postId = postId;
+					const post = FeedPostStore.get( postKeyForPost );
+					if ( ! post || post._state === 'minimal' ) {
+						fetchPost( postKeyForPost );
 					}
 					return post;
 				}
@@ -69,14 +78,20 @@ const fluxPostAdapter = Component => {
 	return connect(
 		( state, ownProps ) => {
 			const { feedId, blogId } = ownProps.postKey;
-			const feed = feedId && getFeed( state, feedId );
-			const site = blogId && getSite( state, blogId );
+			let feed, site;
+			if ( feedId ) {
+				feed = getFeed( state, feedId );
+				site = feed && feed.blog_ID ? getSite( state, feed.blog_ID ) : undefined;
+			} else {
+				site = getSite( state, blogId );
+				feed = site && site.feed_ID ? getFeed( state, site.feed_ID ) : undefined;
+			}
 			return {
 				feed,
 				site
 			};
 		}
 	)( ReaderPostFluxAdapter );
-}
+};
 
 export default fluxPostAdapter;

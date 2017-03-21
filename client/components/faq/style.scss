@@ -14,7 +14,7 @@
 	margin-bottom: 32px;
 	font-size: 24px;
 	font-weight: 300;
-	color: $gray;
+	color: darken( $gray, 10% );
 }
 
 .faq__list {
@@ -59,11 +59,10 @@
 
 .faq__answer {
 	margin-bottom: 1em;
-	color: $gray;
+	color: darken( $gray, 20% );
 
 	a {
 		color: $blue-medium;
 		text-decoration: underline;
 	}
 }
-

@@ -24,7 +24,7 @@ import ExternalLink from 'components/external-link';
 
 const Subscriptions = ( {
 	fields,
-	handleToggle,
+	handleAutosavingToggle,
 	isRequestingSettings,
 	isSavingSettings,
 	moduleUnavailable,
@@ -42,7 +42,7 @@ const Subscriptions = ( {
 					<div className="subscriptions__info-link-container site-settings__info-link-container">
 						<InfoPopover position={ 'left' }>
 							<ExternalLink href={ 'https://jetpack.com/support/subscriptions' } target="_blank">
-								{ translate( 'Learn more about Subscriptions' ) }
+								{ translate( 'Learn more about Subscriptions.' ) }
 							</ExternalLink>
 						</InfoPopover>
 					</div>
@@ -50,7 +50,7 @@ const Subscriptions = ( {
 					<JetpackModuleToggle
 						siteId={ selectedSiteId }
 						moduleSlug="subscriptions"
-						label={ translate( 'Allow users to subscribe to your posts and comments and receive notifications via email.' ) }
+						label={ translate( 'Allow users to subscribe to your posts and comments and receive notifications via email' ) }
 						disabled={ isRequestingSettings || isSavingSettings || moduleUnavailable }
 						/>
 
@@ -58,7 +58,7 @@ const Subscriptions = ( {
 						<CompactFormToggle
 							checked={ !! fields.stb_enabled }
 							disabled={ isRequestingSettings || isSavingSettings || ! subscriptionsModuleActive || moduleUnavailable }
-							onChange={ handleToggle( 'stb_enabled' ) }
+							onChange={ handleAutosavingToggle( 'stb_enabled' ) }
 						>
 							{ translate( 'Show a "follow blog" option in the comment form' ) }
 						</CompactFormToggle>
@@ -66,16 +66,20 @@ const Subscriptions = ( {
 						<CompactFormToggle
 							checked={ !! fields.stc_enabled }
 							disabled={ isRequestingSettings || isSavingSettings || ! subscriptionsModuleActive || moduleUnavailable }
-							onChange={ handleToggle( 'stc_enabled' ) }
+							onChange={ handleAutosavingToggle( 'stc_enabled' ) }
 						>
-							{ translate( 'Show a "follow comments" option in the comment form.' ) }
+							{ translate( 'Show a "follow comments" option in the comment form' ) }
 						</CompactFormToggle>
 					</div>
 				</FormFieldset>
 			</CompactCard>
 
 			<CompactCard href={ '/people/email-followers/' + selectedSiteSlug }>
-				{ translate( 'View your Email Followers' ) }
+				{ translate( 'View your email followers' ) }
+			</CompactCard>
+
+			<CompactCard href={ 'https://wordpress.com/manage/' + selectedSiteId }>
+				{ translate( 'Migrate followers from another site' ) }
 			</CompactCard>
 		</div>
 	);
@@ -89,7 +93,7 @@ Subscriptions.defaultProps = {
 
 Subscriptions.propTypes = {
 	onSubmitForm: PropTypes.func.isRequired,
-	handleToggle: PropTypes.func.isRequired,
+	handleAutosavingToggle: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
 	fields: PropTypes.object,

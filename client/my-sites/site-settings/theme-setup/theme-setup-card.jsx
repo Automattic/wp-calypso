@@ -15,8 +15,9 @@ import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
 import Notice from 'components/notice';
 import Button from 'components/button';
 import ActiveThemeScreenshot from './active-theme-screenshot';
+import ThemeSetupDialog from 'my-sites/site-settings/theme-setup-dialog';
 
-const ThemeSetupCard = ( { theme, translate } ) => (
+const ThemeSetupCard = ( { theme, translate, onClick } ) => (
 	<ActionPanel>
 		<ActionPanelBody>
 			<ActionPanelTitle>{ translate( 'Theme Setup' ) }</ActionPanelTitle>
@@ -30,10 +31,11 @@ const ThemeSetupCard = ( { theme, translate } ) => (
 			<p>{ translate( 'You can apply Theme Setup to your current site while keeping all your posts, pages, and widgets. Some placeholder text may appear on your site – some themes need certain elements to look like the demo, so Theme Setup adds those for you. Please customize it!', { components: { strong: <strong /> } } ) }</p>
 		</ActionPanelBody>
 		<ActionPanelFooter>
-			<Button className="theme-setup__button" primary={ true }>
+			<Button className="theme-setup__button" primary={ true } onClick={ onClick }>
 				{ translate( 'Set Up Your Theme' ) }
 			</Button>
 		</ActionPanelFooter>
+		<ThemeSetupDialog />
 	</ActionPanel>
 );
 

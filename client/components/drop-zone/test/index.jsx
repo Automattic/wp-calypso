@@ -227,4 +227,22 @@ describe( 'index', function() {
 			expect( zone.state.isDraggingOverElement ).to.not.be.ok;
 		} );
 	} );
+
+	it( 'should accept a custom textLabel to override the default text', function() {
+		const tree = ReactDom.render( React.createElement( DropZone, {
+			textLabel: 'Custom Drop Zone Label'
+		} ), container );
+
+		const textContent = TestUtils.findRenderedDOMComponentWithClass( tree, 'drop-zone__content-text' );
+
+		expect( textContent.textContent ).to.equal( 'Custom Drop Zone Label' );
+	} );
+
+	it( 'should show the default text label if none specified', function() {
+		const tree = ReactDom.render( React.createElement( DropZone, {} ), container );
+
+		const textContent = TestUtils.findRenderedDOMComponentWithClass( tree, 'drop-zone__content-text' );
+
+		expect( textContent.textContent ).to.equal( 'Drop files to upload' );
+	} );
 } );

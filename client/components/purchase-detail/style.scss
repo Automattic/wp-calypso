@@ -63,8 +63,7 @@
 }
 
 .purchase-detail__description {
-	color: darken( $gray, 10% );
-	font-size: 16px;
+	color: $gray-text-min;
 	margin: 8px 0 16px 0;
 }
 
@@ -119,7 +118,7 @@
 
 .purchase-detail__title {
 	clear: none;
-	color: darken( $gray, 20% );
+	color: darken( $gray, 10% );
 	font-size: 21px;
 }
 

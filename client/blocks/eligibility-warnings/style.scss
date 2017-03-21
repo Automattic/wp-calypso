@@ -11,8 +11,11 @@
 		color: $gray-light;
 		background-color: $gray-light;
 	}
+	.eligibility-warnings__message {
+		height: 24px;
+	}
 
-	.gridicon {
+	.eligibility-warnings__hold .gridicon {
 		color: $gray-light;
 	}
 
@@ -29,6 +32,7 @@
 .eligibility-warnings .banner {
 	margin-bottom: 16px;
 	.banner__icon-circle {
+		line-height: 32px;
 		padding: 4px;
 	}
 }

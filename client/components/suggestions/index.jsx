@@ -23,7 +23,6 @@ const Suggestions = React.createClass( {
 
 	getDefaultProps() {
 		return {
-			welcomeSign: noop,
 			suggest: noop,
 			terms: {},
 			input: '',
@@ -33,30 +32,31 @@ const Suggestions = React.createClass( {
 	getInitialState() {
 		return {
 			taxonomySuggestionsArray: [],
-			suggestionPosition: -1,
+			suggestionPosition: 0,
+			currentSuggestion: null,
 			suggestions: {},
 			filterTerm: ''
 		};
 	},
 
-	componentWillMount() {
-		const suggestions = this.narrowDown( this.props.input );
+	setInitialState( input ) {
+		const suggestions = this.narrowDown( input );
+		const taxonomySuggestionsArray = this.createTaxonomySuggestionsArray( suggestions );
 		this.setState( {
-			suggestions: suggestions,
-			taxonomySuggestionsArray: this.createTaxonomySuggestionsArray( suggestions ),
-			currentSuggestion: '',
+			suggestions,
+			taxonomySuggestionsArray,
+			suggestionPosition: 0,
+			currentSuggestion: taxonomySuggestionsArray[ 0 ],
 		} );
+	},
+
+	componentWillMount() {
+		this.setInitialState( this.props.input );
 	},
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.input !== this.props.input ) {
-			const suggestions = this.narrowDown( nextProps.input );
-			this.setState( {
-				suggestions: suggestions,
-				taxonomySuggestionsArray: this.createTaxonomySuggestionsArray( suggestions ),
-				suggestionPosition: -1,
-				currentSuggestion: '',
-			} );
+			this.setInitialState( nextProps.input );
 		}
 	},
 
@@ -81,13 +81,20 @@ const Suggestions = React.createClass( {
 	},
 
 	decPosition() {
-		const position = ( this.state.suggestionPosition - 1 ) % this.countSuggestions();
+		const position = this.state.suggestionPosition - 1;
 		this.setState( {
-			suggestionPosition: position,
+			suggestionPosition: position < 0 ? this.countSuggestions() - 1 : position,
 			currentSuggestion: this.getSuggestionForPosition( position )
 		} );
 	},
 
+	/**
+	 * Provides keybord support for suggestings component by managing items highlith position
+	 * and calling suggestion callback when user hits Enter
+	 *
+	 * @param  {Object} event  Keybord event
+	 * @return {Bool}          true indicates suggestion was chosen and send to parent using suggest prop callback
+	 */
 	handleKeyEvent( event ) {
 		switch ( event.key ) {
 			case 'ArrowDown' :
@@ -99,15 +106,20 @@ const Suggestions = React.createClass( {
 				event.preventDefault();
 				break;
 			case 'Enter' :
-				if ( this.state.suggestionPosition !== -1 ) {
-					this.props.suggest( this.state.currentSuggestion );
+				if ( !! this.state.currentSuggestion ) {
+					this.props.suggest( this.state.currentSuggestion + ' ' );
+					return true;
 				}
 				break;
 		}
+		return false;
 	},
 
 	onMouseDown( event ) {
-		this.props.suggest( event.target.textContent );
+		event.stopPropagation();
+		event.preventDefault();
+		//Additional empty space at the end adds fluidity to workflow
+		this.props.suggest( event.target.textContent + ' ' );
 	},
 
 	onMouseOver( event ) {
@@ -240,15 +252,8 @@ const Suggestions = React.createClass( {
 	},
 
 	render() {
-		let suggestion;
-		if ( this.props.input === '' ) {
-			suggestion = this.props.welcomeSign;
-		} else {
-			suggestion = this.createSuggestions( this.state.suggestions );
-		}
-
 		return (
-			<div className="suggestions">{ suggestion }</div>
+			<div className="suggestions">{ this.createSuggestions( this.state.suggestions ) }</div>
 		);
 	}
 

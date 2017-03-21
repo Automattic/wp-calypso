@@ -43,6 +43,11 @@
 	.site__content {
 		padding: 0;
 	}
+
+	.plugin-activate-toggle__disabled,
+	.plugin-activate-toggle__link {
+		margin-left: 12px;
+	}
 }
 
 .plugin-site-jetpack__embed-action {
@@ -52,4 +57,11 @@
 		right: 8px;
 	display: flex;
 	align-items: center;
+}
+
+.plugin-site-jetpack__automanage-notice {
+	color: $gray;
+	font-size: 12px;
+	line-height: 1;
+	padding: 6px 0;
 }

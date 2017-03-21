@@ -243,6 +243,7 @@ class EditorMediaModalDetailItem extends Component {
 		}
 
 		return React.createElement( Item, {
+			className: 'editor-media-modal-detail__preview',
 			site: site,
 			item: item
 		} );

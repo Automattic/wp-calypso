@@ -169,15 +169,11 @@ server/devdocs/components-usage-stats.json: $(COMPONENTS_USAGE_STATS_FILES) $(CO
 server/devdocs/proptypes-index.json: $(COMPONENTS_PROPTYPE_FILES) $(COMPONENTS_PROPTYPES_JS)
 	@$(COMPONENTS_PROPTYPES_JS) $(COMPONENTS_PROPTYPE_FILES)
 
-build-dll: node_modules
-	@mkdir -p build
-	@CALYPSO_ENV=$(CALYPSO_ENV) $(NODE_BIN)/webpack --display-error-details --config webpack-dll.config.js
-
 build-server: install
 	@mkdir -p build
 	@CALYPSO_ENV=$(CALYPSO_ENV) $(NODE_BIN)/webpack --display-error-details --config webpack.config.node.js
 
-build: install build-server build-dll build-css server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json
+build: install build-server build-css server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json
 	@if [ $(CALYPSO_ENV) != development ]; then $(BUNDLER); fi
 
 build-css: public/style.css public/style-rtl.css public/style-debug.css public/editor.css public/directly.css
@@ -196,7 +192,7 @@ distclean: clean
 
 # create list of translations, saved as `./calypso-strings.pot`
 translate: node_modules
-	$(I18N_CALYPSO) --format pot --output-file ./calypso-strings.pot $(JS_FILES)
+	$(I18N_CALYPSO) --format pot --output-file ./calypso-strings.pot $(JS_FILES) -e date
 
 # install all git hooks
 githooks: githooks-commit githooks-push
@@ -239,7 +235,7 @@ docker-run:
 # rule that can be used as a prerequisite for other rules to force them to always run
 FORCE:
 
-.PHONY: build build-dll build-desktop build-server
+.PHONY: build build-desktop build-server
 .PHONY: run install test clean distclean translate route node-version
 .PHONY: githooks githooks-commit githooks-push analyze-bundles urn
 .PHONY: config-defaults-lint

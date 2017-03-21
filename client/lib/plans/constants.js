@@ -9,6 +9,7 @@ import { compact, includes } from 'lodash';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 // plans constants
 export const PLAN_BUSINESS = 'business-bundle';
@@ -190,8 +191,8 @@ export const PLANS_LIST = {
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 			FEATURE_BUSINESS_ONBOARDING,
 			FEATURE_ADVANCED_SEO,
-			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
-			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
+			isATEnabledForCurrentSite() && FEATURE_UPLOAD_PLUGINS,
+			isATEnabledForCurrentSite() && FEATURE_UPLOAD_THEMES,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING,
 		] ),
@@ -256,7 +257,8 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'premium-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getDescription: () => i18n.translate(
-				'Protection, speed, and revenue.'
+			'Generate income and save on video hosting costs. ' +
+			'Improve security with daily backups, malware scanning, and spam defense.'
 		),
 		getFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,

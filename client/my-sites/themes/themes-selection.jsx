@@ -12,6 +12,7 @@ import { trackClick } from './helpers';
 import QueryThemes from 'components/data/query-themes';
 import ThemesList from 'components/themes-list';
 import ThemesSelectionHeader from './themes-selection-header';
+import { prependFilterKeys } from './theme-filters.js';
 import analytics from 'lib/analytics';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -69,8 +70,11 @@ const ThemesSelection = React.createClass( {
 
 	recordSearchResultsClick( theme, resultsRank, action ) {
 		const { query, themes } = this.props;
+		const search_taxonomies = prependFilterKeys( query.filter );
+		const search_term = search_taxonomies + ( query.search || '' );
 		analytics.tracks.recordEvent( 'calypso_themeshowcase_theme_click', {
-			search_term: query.search,
+			search_term: search_term || null,
+			search_taxonomies,
 			theme: theme.id,
 			results_rank: resultsRank + 1,
 			results: themes.map( property( 'id' ) ).join(),
@@ -111,24 +115,24 @@ const ThemesSelection = React.createClass( {
 	},
 
 	//intercept preview and add primary and secondary
-	getOptions( theme ) {
-		const options = this.props.getOptions( theme );
+	getOptions( themeId ) {
+		const options = this.props.getOptions( themeId );
 		const wrappedPreviewAction = ( action ) => {
 			let defaultOption;
 			let secondaryOption = this.props.secondaryOption;
-			return ( themeObj ) => {
+			return ( t ) => {
 				if ( ! this.props.isLoggedIn ) {
 					defaultOption = options.signup;
 					secondaryOption = null;
-				} else if ( this.props.isThemeActive( theme.id ) ) {
+				} else if ( this.props.isThemeActive( themeId ) ) {
 					defaultOption = options.customize;
-				} else if ( theme.price && options.purchase ) {
+				} else if ( options.purchase ) {
 					defaultOption = options.purchase;
 				} else {
 					defaultOption = options.activate;
 				}
 				this.props.setThemePreviewOptions( defaultOption, secondaryOption );
-				return action( themeObj );
+				return action( t );
 			};
 		};
 

@@ -2,10 +2,11 @@
  * External Dependencies
  */
 import React from 'react';
-import { has, get } from 'lodash';
+import { has } from 'lodash';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
+import classnames from 'classnames';
 
 /**
  * Internal Dependencies
@@ -19,19 +20,18 @@ import PostTime from 'reader/post-time';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 import * as stats from 'reader/stats';
+import ReaderCombinedCardPostPlaceholder from 'blocks/reader-combined-card/placeholders/post';
 
 class ReaderCombinedCardPost extends React.Component {
 	static propTypes = {
 		post: React.PropTypes.object.isRequired,
 		streamUrl: React.PropTypes.string,
 		onClick: React.PropTypes.func,
-		isDiscover: React.PropTypes.bool,
+		showFeaturedAsset: React.PropTypes.bool,
 	};
 
-	propagateCardClick = () => {
-		// If we have an discover pick post available, send the discover pick to the full post view
-		const postToOpen = get( this.props, 'discoverPick.post' ) || this.props.post;
-		this.props.onClick( postToOpen );
+	static defaultProps = {
+		showFeaturedAsset: true,
 	}
 
 	handleCardClick = ( event ) => {
@@ -64,14 +64,19 @@ class ReaderCombinedCardPost extends React.Component {
 		// programattic ignore
 		if ( ! event.defaultPrevented ) { // some child handled it
 			event.preventDefault();
-			this.propagateCardClick();
+			this.props.onClick( this.props.post );
 		}
 	}
 
 	render() {
-		const { post, streamUrl, isDiscover } = this.props;
-		const hasAuthorName = has( post, 'author.name' );
+		const { post, streamUrl, isDiscover, isSelected } = this.props;
+		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
 
+		if ( isLoading ) {
+			return <ReaderCombinedCardPostPlaceholder />;
+		}
+
+		const hasAuthorName = has( post, 'author.name' );
 		let featuredAsset = null;
 		if ( post.canonical_media && post.canonical_media.mediaType === 'video' ) {
 			featuredAsset = <ReaderFeaturedVideo { ...post.canonical_media } videoEmbed={ post.canonical_media } allowPlaying={ false } />;
@@ -83,10 +88,16 @@ class ReaderCombinedCardPost extends React.Component {
 			recordPermalinkClick( 'timestamp_combined_card', post );
 		};
 
+		const classes = classnames( {
+			'reader-combined-card__post': true,
+			'is-selected': isSelected,
+			'has-featured-asset': !! featuredAsset,
+		} );
+
 		return (
-			<li className="reader-combined-card__post" onClick={ this.handleCardClick }>
-				{ featuredAsset &&
-					<div className="reader-combined-card__featured-image-wrapper">
+			<li className={ classes } onClick={ this.handleCardClick }>
+				{ this.props.showFeaturedAsset &&
+					<div className="reader-combined-card__featured-asset-wrapper">
 						{ featuredAsset }
 					</div>
 				}

@@ -113,6 +113,7 @@ export default React.createClass( {
 			<Button
 				onClick={ this.showMediaModal }
 				borderless
+				compact
 				className={ classes }>
 				{ this.renderMediaModal() }
 				<div className="editor-featured-image__current-image">

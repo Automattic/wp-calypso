@@ -1329,6 +1329,7 @@ Undocumented.prototype.readListItems = function( query, fn ) {
 };
 
 Undocumented.prototype.followReaderFeed = function( query, fn ) {
+	query = Object.assign( { source: config( 'readerFollowingSource' ) }, query );
 	return this.wpcom.req.post( '/read/following/mine/new', query, {}, fn );
 };
 
@@ -2049,6 +2050,20 @@ Undocumented.prototype.cancelPlanTrial = function( planId, fn ) {
 
 	return this.wpcom.req.post( {
 		path: `/upgrades/${planId}/cancel-plan-trial`
+	}, fn );
+};
+
+/**
+ * Get the Directly configuration for the current user
+ *
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.getDirectlyConfiguration = function( fn ) {
+	return this.wpcom.req.get( {
+		apiVersion: '1.1',
+		path: '/help/directly/mine'
 	}, fn );
 };
 

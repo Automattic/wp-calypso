@@ -12,9 +12,9 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
-	THEME_ACTIVATE_REQUEST,
-	THEME_ACTIVATE_REQUEST_SUCCESS,
-	THEME_ACTIVATE_REQUEST_FAILURE,
+	THEME_ACTIVATE,
+	THEME_ACTIVATE_SUCCESS,
+	THEME_ACTIVATE_FAILURE,
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE_SUCCESS,
 	THEME_DELETE_FAILURE,
@@ -29,8 +29,6 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
-	THEME_TRY_AND_CUSTOMIZE_FAILURE,
-	THEMES_RECEIVE,
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
@@ -44,7 +42,6 @@ import {
 	requestActiveTheme,
 	receiveTheme,
 	receiveThemes,
-	receiveThemesQuery,
 	requestThemes,
 	requestTheme,
 	pollThemeTransferStatus,
@@ -88,16 +85,18 @@ describe( 'actions', () => {
 			},
 		} );
 
-		it( 'should dispatch THEMES_RECIEVE action', () => {
+		it( 'should dispatch THEMES_REQUEST_SUCCESS action', () => {
 			const theme = { id: 'twentysixteen', name: 'Twenty Sixteen' };
 			receiveTheme( theme, 'wpcom' )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
-				type: THEMES_RECEIVE,
+				type: THEMES_REQUEST_SUCCESS,
 				themes: [
 					{ id: 'twentysixteen', name: 'Twenty Sixteen' },
 				],
-				siteId: 'wpcom'
+				siteId: 'wpcom',
+				query: undefined,
+				found: undefined,
 			} );
 		} );
 	} );
@@ -110,38 +109,12 @@ describe( 'actions', () => {
 				},
 			},
 			sites: {
-				items: {},
-			},
-		} );
-
-		it( 'should dispach THEMES_RECEIVE action', () => {
-			const themes = [ { id: 'twentysixteen', name: 'Twenty Sixteen' } ];
-			receiveThemes( themes, 'wpcom' )( spy, getState );
-
-			expect( spy ).to.have.been.calledWith( {
-				type: THEMES_RECEIVE,
-				themes: [
-					{ id: 'twentysixteen', name: 'Twenty Sixteen' },
-				],
-				siteId: 'wpcom'
-			} );
-		} );
-	} );
-
-	describe( '#receiveThemesQuery()', () => {
-		const getState = () => ( {
-			themes: {
-				queries: {
-					wpcom: new ThemeQueryManager(),
-				},
-			},
-			sites: {
 				items: {
 					77203074: {
 						jetpack: true,
 						options: { jetpack_version: '4.7' }
 					},
-				}
+				},
 			},
 		} );
 
@@ -153,7 +126,7 @@ describe( 'actions', () => {
 			const query = { search: 'Automattic' };
 
 			it( 'should dispatch themes request success action', () => {
-				receiveThemesQuery( themes, 'wpcom', query, 4 )( spy, getState );
+				receiveThemes( themes, 'wpcom', query, 4 )( spy, getState );
 				expect( spy ).to.have.been.calledWith( {
 					type: THEMES_REQUEST_SUCCESS,
 					siteId: 'wpcom',
@@ -171,7 +144,7 @@ describe( 'actions', () => {
 			];
 
 			it( 'should dispatch themes request success action', () => {
-				receiveThemesQuery( themes, 77203074, {} )( spy, getState );
+				receiveThemes( themes, 77203074, {} )( spy, getState );
 				expect( spy ).to.have.been.calledWith( {
 					type: THEMES_REQUEST_SUCCESS,
 					siteId: 77203074,
@@ -432,6 +405,7 @@ describe( 'actions', () => {
 								properties: {
 									previous_theme: 'twentyfifteen',
 									purchased: false,
+									search_taxonomies: '',
 									search_term: 'simple, white',
 									source: 'unknown',
 									theme: 'twentysixteen',
@@ -442,7 +416,7 @@ describe( 'actions', () => {
 						},
 					],
 				},
-				type: THEME_ACTIVATE_REQUEST_SUCCESS,
+				type: THEME_ACTIVATE_SUCCESS,
 				themeStylesheet: 'pub/twentysixteen',
 				siteId: 2211667,
 			};
@@ -500,7 +474,7 @@ describe( 'actions', () => {
 			activateTheme( 'twentysixteen', 2211667 )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
-				type: THEME_ACTIVATE_REQUEST,
+				type: THEME_ACTIVATE,
 				siteId: 2211667,
 				themeId: 'twentysixteen',
 			} );
@@ -517,7 +491,7 @@ describe( 'actions', () => {
 				error: sinon.match( { message: 'The specified theme was not found' } ),
 				siteId: 2211667,
 				themeId: 'badTheme',
-				type: THEME_ACTIVATE_REQUEST_FAILURE
+				type: THEME_ACTIVATE_FAILURE
 			};
 
 			return activateTheme( 'badTheme', 2211667, trackingData )( spy ).then( () => {
@@ -756,7 +730,7 @@ describe( 'actions', () => {
 		it( 'should dispatch status update', () => {
 			return pollThemeTransferStatus( siteId, 3, 20 )( spy ).then( () => {
 				// Two 'progress' then a 'complete'
-				expect( spy ).to.have.been.calledThrice;
+				expect( spy ).to.have.callCount( 4 );
 				expect( spy ).to.have.been.calledWith( {
 					type: THEME_TRANSFER_STATUS_RECEIVE,
 					siteId: siteId,
@@ -809,6 +783,7 @@ describe( 'actions', () => {
 				} );
 
 				expect( spy ).to.have.been.calledWith( {
+					meta: sinon.match.object,
 					type: THEME_TRANSFER_INITIATE_SUCCESS,
 					siteId,
 					transferId: 1,
@@ -992,19 +967,6 @@ describe( 'actions', () => {
 		it( 'page should be called, when theme is available', () => {
 			_tryAndCustomize( 'karuna-wpcom', 2211667 )( spy, () => {} );
 			expect( pageSpy.calledWith( 'customizer/url' ) ).to.be.true;
-		} );
-
-		const tryAndActivateFalilureAction = {
-			type: THEME_TRY_AND_CUSTOMIZE_FAILURE,
-			themeId: 'typist-wpcom',
-			siteId: 2211667,
-		};
-
-		it( 'page should not be called, when theme is not available and FAILURE action shoudl be dispatched', () => {
-			pageSpy.reset();
-			_tryAndCustomize( 'typist-wpcom', 2211667 )( spy, () => {} );
-			expect( pageSpy.calledWith( 'customizer/url' ) ).to.be.false;
-			expect( spy ).to.have.been.calledWith( tryAndActivateFalilureAction );
 		} );
 	} );
 

@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
  */
 import Card from 'components/card';
 import DefaultPostFormat from './default-post-format';
-import Markdown from './markdown';
 import AfterTheDeadline from './after-the-deadline';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -34,17 +33,6 @@ const Composing = ( {
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
 			/>
-
-			{
-				fields.markdown_supported &&
-				<Markdown
-					handleToggle={ handleToggle }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
-				/>
-			}
-
 			{
 				siteIsJetpack && jetpackSettingsUISupported && (
 					<div>

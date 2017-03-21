@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import config from 'config';
 import { localize } from 'i18n-calypso';
 import {
 	find,
@@ -30,6 +29,7 @@ import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 import jetpackPlugins from './jetpack-plugins';
 import Tooltip from 'components/tooltip';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 const filterGroup = category => group => {
 	if ( category && category !== 'all' ) {
@@ -174,7 +174,7 @@ class JetpackPluginsPanel extends Component {
 				</SectionNav>
 
 				<SectionHeader label={ translate( 'Plugins' ) }>
-					{ config.isEnabled( 'automated-transfer' ) &&
+					{ isATEnabledForCurrentSite() &&
 						<ButtonGroup key="plugin-list-header__buttons-browser">
 							<Button
 								compact

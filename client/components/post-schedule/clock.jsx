@@ -147,7 +147,7 @@ class PostScheduleClock extends Component {
 		if ( timezone ) {
 			const tzDate = date.clone().tz( timezone );
 			tzDateOffset = tzDate.format( 'Z' );
-			diffInMinutes = tzDate.utcOffset() - moment().utcOffset();
+			diffInMinutes = tzDate.utcOffset() - moment( date ).utcOffset();
 		} else if ( isValidGMTOffset( gmtOffset ) ) {
 			const utcDate = date.clone().utcOffset( gmtOffset );
 			diffInMinutes = utcDate.utcOffset() - moment().utcOffset();

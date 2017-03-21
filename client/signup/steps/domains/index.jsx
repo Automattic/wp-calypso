@@ -1,30 +1,30 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	{ PropTypes } = React,
-	{ connect } = require( 'react-redux' ),
-	defer = require( 'lodash/defer' ),
-	page = require( 'page' ),
-	i18n = require( 'i18n-calypso' );
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import defer from 'lodash/defer';
+import page from 'page';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var StepWrapper = require( 'signup/step-wrapper' ),
-	productsList = require( 'lib/products-list' )(),
-	cartItems = require( 'lib/cart-values' ).cartItems,
-	SignupActions = require( 'lib/signup/actions' ),
-	MapDomainStep = require( 'components/domains/map-domain-step' ),
-	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
-	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
-	{ getSurveyVertical } = require( 'state/signup/steps/survey/selectors.js' ),
-	analyticsMixin = require( 'lib/mixins/analytics' ),
-	signupUtils = require( 'signup/utils' ),
-	getUsernameSuggestion = require( 'lib/signup/step-actions' ).getUsernameSuggestion;
+import StepWrapper from 'signup/step-wrapper';
+const productsList = require( 'lib/products-list' )();
+import { cartItems } from 'lib/cart-values';
+import SignupActions from 'lib/signup/actions';
+import MapDomainStep from 'components/domains/map-domain-step';
+import RegisterDomainStep from 'components/domains/register-domain-step';
+import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { getSurveyVertical } from 'state/signup/steps/survey/selectors.js';
+import analyticsMixin from 'lib/mixins/analytics';
+import signupUtils from 'signup/utils';
+import { getUsernameSuggestion } from 'lib/signup/step-actions';
 
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
+import { abtest } from 'lib/abtest';
 
 const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
 	mapDomainAnalytics = analyticsMixin( 'mapDomain' );
@@ -243,6 +243,18 @@ const DomainsStep = React.createClass( {
 			);
 		}
 
+		let fallbackHeaderText,
+			fallbackSubHeaderText;
+		if ( abtest( 'signupDomainsHeadline' ) === 'updated' ) {
+			fallbackHeaderText = this.translate( 'Let\'s give your site an address.' ),
+			fallbackSubHeaderText = this.translate(
+				'Enter your site\'s name, or some key words that describe it ' +
+				'we\'ll use this to create your new site\'s address.' );
+		} else {
+			fallbackHeaderText = this.translate( 'Let\'s find a domain.' ),
+			fallbackSubHeaderText = this.translate( 'Choose a custom domain, or a free .wordpress.com address.' );
+		}
+
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
@@ -251,8 +263,8 @@ const DomainsStep = React.createClass( {
 				positionInFlow={ this.props.positionInFlow }
 				signupProgress={ this.props.signupProgress }
 				subHeaderText={ this.translate( 'First up, let\'s find a domain.' ) }
-				fallbackHeaderText={ this.translate( 'Let\'s find a domain.' ) }
-				fallbackSubHeaderText={ this.translate( 'Choose a custom domain, or a free .wordpress.com address.' ) }
+				fallbackHeaderText={ fallbackHeaderText }
+				fallbackSubHeaderText={ fallbackSubHeaderText }
 				stepContent={ content } />
 		);
 	}

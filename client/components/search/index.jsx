@@ -63,7 +63,8 @@ const Search = React.createClass( {
 		dir: PropTypes.oneOf( [ 'ltr', 'rtl' ] ),
 		fitsContainer: PropTypes.bool,
 		maxLength: PropTypes.number,
-		hideClose: PropTypes.bool
+		hideClose: PropTypes.bool,
+		compact: PropTypes.bool
 	},
 
 	getInitialState: function() {
@@ -94,7 +95,8 @@ const Search = React.createClass( {
 			isOpen: false,
 			dir: undefined,
 			fitsContainer: false,
-			hideClose: false
+			hideClose: false,
+			compact: false
 		};
 	},
 
@@ -320,6 +322,7 @@ const Search = React.createClass( {
 			'is-expanded-to-container': this.props.fitsContainer,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
+			'is-compact': this.props.compact,
 			'has-focus': this.state.hasFocus,
 			search: true
 		} );
@@ -352,7 +355,7 @@ const Search = React.createClass( {
 						role="search"
 						value={ searchValue }
 						ref="searchInput"
-						onChange={ this.onChange }
+						onInput={ this.onChange /* onChange has bug IE11 React15 https://github.com/facebook/react/issues/7027 */ }
 						onKeyUp={ this.keyUp }
 						onKeyDown={ this.keyDown }
 						onMouseUp={ this.props.onClick }

@@ -163,11 +163,11 @@ export const themes = [
 	},
 	{
 		name: 'Penscratch',
-		slug: 'penscratch',
+		slug: 'penscratch-2',
 		repo: 'pub',
 		fallback: true,
 		design: 'blog',
-		demo_uri: 'https://penscratchdemo.wordpress.com',
+		demo_uri: 'https://penscratch2demo.wordpress.com',
 		verticals: []
 	},
 	{

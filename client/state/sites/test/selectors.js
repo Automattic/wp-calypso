@@ -48,6 +48,7 @@ import {
 	isJetpackSiteMainNetworkSite,
 	getSiteAdminUrl,
 	getCustomizerUrl,
+	getJetpackComputedAttributes,
 	siteSupportsJetpackSettingsUi
 } from '../selectors';
 
@@ -2464,6 +2465,43 @@ describe( 'selectors', () => {
 			}, 77203074 );
 
 			expect( supportsJetpackSettingsUI ).to.be.true;
+		} );
+	} );
+
+	describe( 'getJetpackComputedAttributes()', () => {
+		it( 'should return undefined attributes if a site is not Jetpack', () => {
+			const state = {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							jetpack: false,
+						}
+					}
+				}
+			};
+
+			const noNewAttributes = getJetpackComputedAttributes( state, 77203074 );
+			expect( noNewAttributes.hasMinimumJetpackVersion ).to.equal( undefined );
+			expect( noNewAttributes.canAutoupdateFiles ).to.equal( undefined );
+			expect( noNewAttributes.canUpdateFiles ).to.equal( undefined );
+		} );
+
+		it( 'should return exists for attributes if a site is Jetpack', () => {
+			const state = {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							jetpack: true,
+						}
+					}
+				}
+			};
+			const noNewAttributes = getJetpackComputedAttributes( state, 77203074 );
+			expect( noNewAttributes.hasMinimumJetpackVersion ).to.have.property;
+			expect( noNewAttributes.canAutoupdateFiles ).to.have.property;
+			expect( noNewAttributes.canUpdateFiles ).to.have.property;
 		} );
 	} );
 } );

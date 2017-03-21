@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import page from 'page';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { includes, startsWith } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,20 +24,18 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import FormSelect from 'components/forms/form-select';
 import FormToggle from 'components/forms/form-toggle';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
 import JetpackSyncPanel from './jetpack-sync-panel';
 import SiteIconSetting from './site-icon-setting';
-import RelatedPosts from './related-posts';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { phpToMomentDatetimeFormat } from 'lib/formatting';
-import ExternalLink from 'components/external-link';
+import { getLocalizedDate } from './date-time-format/utils';
 
 class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
@@ -346,8 +344,9 @@ class SiteSettingsFormGeneral extends Component {
 
 	jetpackDisconnectOption() {
 		const { site, translate } = this.props;
+		const isAutomatedTransfer = get( site, 'options.is_automated_transfer', false );
 
-		if ( ! site.jetpack ) {
+		if ( ! site.jetpack || isAutomatedTransfer ) {
 			return null;
 		}
 
@@ -422,193 +421,48 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	dateFormatOption() {
+	dateTimeFormat() {
 		if ( ! config.isEnabled( 'manage/site-settings/date-time-format' ) ) {
 			return null;
 		}
 
 		const {
-			fields: { date_format, timezone_string },
-			handleRadio,
-			isRequestingSettings,
+			fields: {
+				date_format: dateFormat,
+				start_of_week: startOfWeek,
+				time_format: timeFormat,
+				timezone_string: timezoneString,
+			},
 			moment,
-			onChangeField,
+			site,
 			translate,
 		} = this.props;
 
-		const defaultFormats = [ 'F j, Y', 'Y-m-d', 'm/d/Y', 'd/m/Y' ];
-		const isCustomFormat = ! includes( defaultFormats, date_format );
-		const today = startsWith( timezone_string, 'UTC' )
-			? moment().utcOffset( timezone_string.substring( 3 ) * 60 )
-			: moment.tz( timezone_string );
-
-		const customFieldClasses = classNames(
-			'site-settings__date-time-format-custom',
-			{ 'is-custom': isCustomFormat }
-		);
+		const localizedDate = getLocalizedDate( timezoneString );
+		const weekday = startOfWeek
+			? moment.weekdays( parseInt( startOfWeek, 10 ) )
+			: moment.weekdays( 0 );
 
 		return (
-			<FormFieldset>
-				<FormLabel>
-					{ translate( 'Date Format' ) }
-				</FormLabel>
-				{ defaultFormats.map( ( format, key ) =>
-					<FormLabel key={ key }>
-						<FormRadio
-							checked={ format === date_format }
-							disabled={ isRequestingSettings }
-							name="date_format"
-							onChange={ handleRadio }
-							value={ format }
-						/>
-						<span>{ today.format( phpToMomentDatetimeFormat( format ) ) }</span>
-					</FormLabel>
-				) }
-				<FormLabel className={ customFieldClasses }>
-					<FormRadio
-						checked={ isCustomFormat }
-						disabled={ isRequestingSettings }
-						name="date_format"
-						onChange={ handleRadio }
-						value={ date_format }
-					/>
-					<span>
-						{ translate( 'Custom' ) }
-						<FormInput
-							disabled={ isRequestingSettings }
-							name="date_format_custom"
-							onChange={ onChangeField( 'date_format' ) }
-							type="text"
-							value={ date_format || '' }
-						/>
-						<span className="site-settings__date-time-format-custom-preview">
-							{ isCustomFormat && date_format
-								? today.format( phpToMomentDatetimeFormat( date_format ) )
-								: ''
-							}
-						</span>
-				</span>
-				</FormLabel>
-			</FormFieldset>
-		);
-	}
-
-	timeFormatOption() {
-		if ( ! config.isEnabled( 'manage/site-settings/date-time-format' ) ) {
-			return null;
-		}
-
-		const {
-			fields: { time_format, timezone_string },
-			handleRadio,
-			isRequestingSettings,
-			moment,
-			onChangeField,
-			translate,
-		} = this.props;
-
-		const defaultFormats = [ 'g:i a', 'g:i A', 'H:i' ];
-		const isCustomFormat = ! includes( defaultFormats, time_format );
-		const today = startsWith( timezone_string, 'UTC' )
-			? moment().utcOffset( timezone_string.substring( 3 ) * 60 )
-			: moment.tz( timezone_string );
-
-		const customFieldClasses = classNames(
-			'site-settings__date-time-format-custom',
-			{ 'is-custom': isCustomFormat }
-		);
-
-		return (
-			<FormFieldset>
-				<FormLabel>
-					{ translate( 'Time Format' ) }
-				</FormLabel>
-				{ defaultFormats.map( ( format, key ) =>
-					<FormLabel key={ key }>
-						<FormRadio
-							checked={ format === time_format }
-							disabled={ isRequestingSettings }
-							name="time_format"
-							onChange={ handleRadio }
-							value={ format }
-						/>
-						<span>{ today.format( phpToMomentDatetimeFormat( format ) ) }</span>
-					</FormLabel>
-				) }
-				<FormLabel className={ customFieldClasses }>
-					<FormRadio
-						checked={ isCustomFormat }
-						disabled={ isRequestingSettings }
-						name="time_format"
-						onChange={ handleRadio }
-						value={ time_format }
-					/>
-					<span>
-						{ translate( 'Custom' ) }
-						<FormInput
-							disabled={ isRequestingSettings }
-							name="time_format_custom"
-							onChange={ onChangeField( 'time_format' ) }
-							type="text"
-							value={ time_format || '' }
-						/>
-						<span className="site-settings__date-time-format-custom-preview">
-							{ isCustomFormat && time_format
-								? today.format( phpToMomentDatetimeFormat( time_format ) )
-								: ''
-							}
-						</span>
-					</span>
-					<FormSettingExplanation>
-						<ExternalLink href="https://codex.wordpress.org/Formatting_Date_and_Time" icon>
-							{ translate( 'Documentation on date and time formatting.' ) }
-						</ExternalLink>
-					</FormSettingExplanation>
-				</FormLabel>
-			</FormFieldset>
-		);
-	}
-
-	startOfWeekOption() {
-		if ( ! config.isEnabled( 'manage/site-settings/date-time-format' ) ) {
-			return null;
-		}
-
-		const {
-			fields: { start_of_week },
-			handleSelect,
-			isRequestingSettings,
-			translate,
-		} = this.props;
-
-		const daysOfWeek = [
-			translate( 'Sunday' ),
-			translate( 'Monday' ),
-			translate( 'Tuesday' ),
-			translate( 'Wednesday' ),
-			translate( 'Thursday' ),
-			translate( 'Friday' ),
-			translate( 'Saturday' ),
-		];
-
-		return (
-			<FormFieldset>
-				<FormLabel>
-					{ translate( 'Week Starts On' ) }
-				</FormLabel>
-				<FormSelect
-					disabled={ isRequestingSettings }
-					name="start_of_week"
-					onChange={ handleSelect }
-					value={ start_of_week || 0 }
-				>
-					{ daysOfWeek.map( ( day, index ) =>
-						<option key={ index } value={ index } >
-							{ day }
-						</option>
-					) }
-				</FormSelect>
-			</FormFieldset>
+			<Card
+				className="site-settings__date-time-format"
+				href={ `/settings/date-time-format/${ site.slug }` }
+			>
+				<h2 className="site-settings__date-time-format-title">
+					{ translate( 'Date and Time Format' ) }
+				</h2>
+				<div className="site-settings__date-time-format-info">
+					{
+						dateFormat &&
+							localizedDate.format( phpToMomentDatetimeFormat( dateFormat ) )
+					} &bull; {
+						timeFormat &&
+							localizedDate.format( phpToMomentDatetimeFormat( timeFormat ) )
+					} &bull; {
+						translate( 'Week starts on %s', { args: weekday } )
+					}
+				</div>
+			</Card>
 		);
 	}
 
@@ -660,9 +514,7 @@ class SiteSettingsFormGeneral extends Component {
 
 	render() {
 		const {
-			fields,
 			handleSubmitForm,
-			handleToggle,
 			isRequestingSettings,
 			isSavingSettings,
 			site,
@@ -699,12 +551,11 @@ class SiteSettingsFormGeneral extends Component {
 						{ this.blogAddress() }
 						{ this.languageOptions() }
 						{ this.Timezone() }
-						{ this.dateFormatOption() }
-						{ this.timeFormatOption() }
-						{ this.startOfWeekOption() }
 						{ this.holidaySnowOption() }
 					</form>
 				</Card>
+
+				{ this.dateTimeFormat() }
 
 				<SectionHeader label={ translate( 'Privacy' ) }>
 					<Button
@@ -751,14 +602,6 @@ class SiteSettingsFormGeneral extends Component {
 					</div>
 				}
 
-				<RelatedPosts
-					onSubmitForm={ handleSubmitForm }
-					handleToggle={ handleToggle }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
-				/>
-
 				{ this.props.site.jetpack
 					? <div>
 						<SectionHeader label={ translate( 'Jetpack' ) }>
@@ -785,9 +628,6 @@ class SiteSettingsFormGeneral extends Component {
 
 						<CompactCard href={ '../security/' + site.slug }>
 							{ translate( 'View Jetpack Monitor Settings' ) }
-						</CompactCard>
-						<CompactCard href={ 'https://wordpress.com/manage/' + site.ID }>
-							{ translate( 'Migrate followers from another WordPress.com blog' ) }
 						</CompactCard>
 					</div>
 					: null }
@@ -825,10 +665,6 @@ export default wrapSettingsForm( settings => {
 		start_of_week: 0,
 		blog_public: '',
 		admin_url: '',
-		jetpack_relatedposts_allowed: false,
-		jetpack_relatedposts_enabled: false,
-		jetpack_relatedposts_show_headline: false,
-		jetpack_relatedposts_show_thumbnails: false,
 		jetpack_sync_non_public_post_stati: false,
 		holidaysnow: false,
 		amp_is_supported: false,
@@ -850,7 +686,6 @@ export default wrapSettingsForm( settings => {
 		date_format: settings.date_format,
 		time_format: settings.time_format,
 		start_of_week: settings.start_of_week,
-		jetpack_relatedposts_allowed: settings.jetpack_relatedposts_allowed,
 		jetpack_sync_non_public_post_stati: settings.jetpack_sync_non_public_post_stati,
 
 		amp_is_supported: settings.amp_is_supported,
@@ -860,14 +695,6 @@ export default wrapSettingsForm( settings => {
 
 		api_cache: settings.api_cache,
 	};
-
-	if ( settings.jetpack_relatedposts_allowed ) {
-		Object.assign( formSettings, {
-			jetpack_relatedposts_enabled: ( settings.jetpack_relatedposts_enabled ) ? 1 : 0,
-			jetpack_relatedposts_show_headline: settings.jetpack_relatedposts_show_headline,
-			jetpack_relatedposts_show_thumbnails: settings.jetpack_relatedposts_show_thumbnails
-		} );
-	}
 
 	// handling `gmt_offset` and `timezone_string` values
 	const gmt_offset = settings.gmt_offset;

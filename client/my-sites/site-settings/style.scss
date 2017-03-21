@@ -1,4 +1,6 @@
 .site-settings {
+	font-size: 14px;
+
 	fieldset {
 		clear: both;
 		margin-bottom: 24px;
@@ -50,6 +52,15 @@
 	label input[type="checkbox"],
 	label input[type="radio"] {
 		font-weight: normal;
+	}
+
+	label a,
+	p a {
+		text-decoration: underline;
+	}
+
+	p:last-child {
+		margin-bottom: 0;
 	}
 
 	.is-primary {
@@ -180,6 +191,7 @@
 
 .site-settings__general-settings,
 .site-settings__writing-settings,
+.site-settings__traffic-settings,
 .site-settings__security-settings {
 	.form-toggle__label {
 		display: flex;
@@ -334,6 +346,26 @@
 	margin-bottom: 17px;
 }
 
+.site-settings__foldable-card {
+	&.foldable-card,
+	&.foldable-card.is-expanded {
+		margin-bottom: 16px;
+	}
+
+	.foldable-card__header {
+		padding: 24px;
+	}
+
+	.foldable-card__expand {
+		width: 64px;
+	}
+
+	&.is-expanded .foldable-card__content {
+		padding: 8px 24px 24px;
+		border-top: 1px lighten( $gray, 20% ) solid;
+	}
+}
+
 // Site settings group styles
 .site-settings__module-settings {
 	.form-label {
@@ -351,21 +383,22 @@
 	float: right;
 }
 
-.site-settings__date-time-format-custom {
-	.form-radio {
-		display: none;
-		margin-top: 12px;
-	}
-	&.is-custom .form-radio {
-		display: block;
-	}
+.site-settings__add-to-whitelist {
+	margin-top: 3px;
+}
 
-	.form-text-input {
-		margin: 0 12px;
-		width: 100px;
-	}
+.site-settings__date-time-format {
+	margin-top: -16px;
 
-	.site-settings__date-time-format-custom-preview {
-		white-space: nowrap;
+	.site-settings__date-time-format-title {
+		color: $gray-text;
+		font-size: 16px;
+		line-height: 24px;
+		padding-bottom: 10px;
+	}
+	.site-settings__date-time-format-info {
+		color: $gray-text-min;
+		font-size: 13px;
+		font-style: italic;
 	}
 }

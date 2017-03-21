@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { forEach, startsWith, random } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -19,14 +20,16 @@ const wpcomUndoc = wpcom.undocumented();
 function feedKeyMaker( post ) {
 	return {
 		feedId: post.feed_ID,
-		postId: post.ID
+		postId: post.ID,
+		localMoment: moment( post.date ),
 	};
 }
 
 function siteKeyMaker( post ) {
 	return {
 		blogId: post.site_ID,
-		postId: post.ID
+		postId: post.ID,
+		localMoment: moment( post.date ),
 	};
 }
 
@@ -34,7 +37,8 @@ function mixedKeyMaker( post ) {
 	if ( post.feed_ID && post.feed_item_ID ) {
 		return {
 			feedId: post.feed_ID,
-			postId: post.feed_item_ID
+			postId: post.feed_item_ID,
+			localMoment: moment( post.date ),
 		};
 	}
 
@@ -62,6 +66,9 @@ function trainTracksProxyForStream( stream, callback ) {
 		}
 		forEach( response && response.posts, ( post ) => {
 			if ( post.railcar ) {
+				if ( stream.isQuerySuggestion ) {
+					post.railcar.rec_result = 'suggestion';
+				}
 				analytics.tracks.recordEvent( eventName, post.railcar );
 			}
 		} );
