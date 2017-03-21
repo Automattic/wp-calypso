@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { assert } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -16,6 +17,17 @@ import {
 import reducer from '../reducer';
 
 describe( '#account-recovery/reset reducer', () => {
+	const fetchedOptions = deepFreeze( [
+		{
+			email: 'primary@example.com',
+			sms: '123456789',
+		},
+		{
+			email: 'secondary@example.com',
+			sms: '123456789',
+		},
+	] );
+
 	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST action should set isRequesting flag.', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST
@@ -24,15 +36,39 @@ describe( '#account-recovery/reset reducer', () => {
 		assert.isTrue( state.options.isRequesting );
 	} );
 
-	const requestingState = {
+	const hasItemsState = deepFreeze( {
+		options: {
+			items: fetchedOptions,
+		},
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST action should delete the previous items.', () => {
+		const state = reducer( hasItemsState, {
+			type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
+		} );
+
+		assert.deepEqual( state.options.items, [] );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR action should delete the previous items.', () => {
+		const state = reducer( hasItemsState, {
+			type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
+			error: {},
+		} );
+
+		assert.deepEqual( state.options.items, [] );
+	} );
+
+	const requestingState = deepFreeze( {
 		options: {
 			isRequesting: true,
 		},
-	};
+	} );
 
 	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE action should unset isRequesting flag.', () => {
 		const state = reducer( requestingState, {
 			type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
+			items: [],
 		} );
 
 		assert.isFalse( state.options.isRequesting );
@@ -41,22 +77,13 @@ describe( '#account-recovery/reset reducer', () => {
 	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR action should unset isRequesting flag.', () => {
 		const state = reducer( requestingState, {
 			type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
+			error: {},
 		} );
 
 		assert.isFalse( state.options.isRequesting );
 	} );
 
 	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE action should populate the items field.', () => {
-		const fetchedOptions = [
-			{
-				email: 'primary@example.com',
-				sms: '123456789',
-			},
-			{
-				email: 'secondary@example.com',
-				sms: '123456789',
-			},
-		];
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 			items: fetchedOptions,
