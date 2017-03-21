@@ -3,7 +3,7 @@ Development Workflow
 
 ## Build
 
-Running `make run` will build all the code and continuously watch the front-end JS and CSS/Sass for changes and rebuild accordingly. In the case of React components, after the rebuild, the code is reloaded live in the browser and you should be able to see the changes without a refresh (CSS and changes deeper in the logic still need a refresh, but this will change, soon).
+Running `make run` will build all the code and continuously watch the front-end JS and CSS/Sass for changes and rebuild accordingly.
 
 ## Tests
 
@@ -21,19 +21,19 @@ Calypso uses the [debug](https://github.com/visionmedia/debug) module to handle 
 localStorage.setItem( 'debug', '*' );
 ```
 
-You can also limit the debugging to a particular scope
+You can also limit the debugging to a particular scope:
 
 ```js
 localStorage.setItem( 'debug', 'calypso:*' );
 ```
 
-The `node` server uses the `DEBUG` environment variable instead of `localStorage`. `make run` will pass along it’s environment, so you can turn on all debug messages with
+The `node` server uses the `DEBUG` environment variable instead of `localStorage`. `make run` will pass along its environment, so you can turn on all debug messages with:
 
 ```bash
 DEBUG=* make run
 ```
 
-or limit it as before with
+or limit it as before with:
 
 ```bash
 DEBUG=calypso:* make run
