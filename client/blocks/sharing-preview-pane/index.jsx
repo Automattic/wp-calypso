@@ -112,6 +112,4 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-const mapDispatchToProps = {};
-
-export default connect( mapStateToProps, mapDispatchToProps )( localize( SharingPreviewPane ) );
+export default connect( mapStateToProps )( localize( SharingPreviewPane ) );
