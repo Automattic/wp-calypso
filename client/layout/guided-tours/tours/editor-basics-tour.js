@@ -78,7 +78,7 @@ export const EditorBasicsTour = makeTour(
 			</p>
 			<img
 				src="https://en-support.files.wordpress.com/2017/03/editor-content-area_360.gif"
-				style={ { marginBottom: '10px', border: '4px solid #00AADC' } }
+				style={ { marginBottom: '10px', border: '3px solid #00AADC', borderRadius: '4px' } }
 				/>
 			<ButtonRow>
 				<Next step="add-image">Continue</Next>
