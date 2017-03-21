@@ -202,18 +202,24 @@ class PostShare extends Component {
 		} = item;
 
 		return (
-			<CompactCard className="post-share__footer-item" key={ index }>
-				<SocialLogo icon={ service === 'google_plus' ? 'google-plus' : service } />
-				<span className="post-share__footer-item__handle">
-					{ service === 'twitter' ? `@${ handle }` : handle }
-				</span>
-				<Gridicon icon="time" size={ 18 } />
-				<span className="post-share__footer-item__timestamp">
-					{ timestamp }
-				</span>
-				<span className="post-share__footer-item__message">
-					{ message }
-				</span>
+			<CompactCard className="post-share__footer-items" key={ index }>
+				<div className="post-share__footer-item">
+					<div className="post-share__handle">
+						<SocialLogo icon={ service === 'google_plus' ? 'google-plus' : service } />
+						<span>
+							{ service === 'twitter' ? `@${ handle }` : handle }
+						</span>
+					</div>
+					<div className="post-share__timestamp">
+						<Gridicon icon="time" size={ 18 } />
+						<span>
+							{ timestamp }
+						</span>
+					</div>
+					<div className="post-share__message">
+						{ message }
+					</div>
+				</div>
 				<EllipsisMenu>
 					<PopoverMenuItem icon="visible">
 						Preview
