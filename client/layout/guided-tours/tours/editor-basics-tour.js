@@ -106,8 +106,9 @@ export const EditorBasicsTour = makeTour(
 		<Step
 			name="sidebar-options"
 			arrow="right-top"
-			target=".editor-categories-tags__accordion"
+			target=".editor-ground-control__toggle-sidebar"
 			placement="beside"
+			style={ { marginTop: '-9px' } }
 			>
 			<p>
 				Find additional settings in the sidebar, such as tags, categories, and the featured image.
