@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { includes, map, partial } from 'lodash';
+import { includes, map } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -68,17 +68,7 @@ class PostShare extends Component {
 
 	};
 
-	constructor() {
-		super( ...arguments );
-
-		this.setFooterSection = this.setFooterSection.bind( this );
-	}
-
-	setFooterSection( section ) {
-		this.setState( {
-			footerSection: section
-		} );
-	}
+	setFooterSection = footerSection => () => this.setState( { footerSection } );
 
 	hasConnections() {
 		return !! ( this.props.connections && this.props.connections.length );
@@ -294,20 +284,14 @@ class PostShare extends Component {
 						<NavItem
 							selected={ footerSection === PostShare.FOOTER_SECTION_SCHEDULED }
 							count={ 4 }
-							onClick={ partial(
-								this.setFooterSection,
-								PostShare.FOOTER_SECTION_SCHEDULED
-							) }
+							onClick={ this.setFooterSection( PostShare.FOOTER_SECTION_SCHEDULED ) }
 						>
 							Scheduled
 						</NavItem>
 						<NavItem
 							selected={ footerSection === PostShare.FOOTER_SECTION_PUBLISHED }
 							count={ 2 }
-							onClick={ partial(
-								this.setFooterSection,
-								PostShare.FOOTER_SECTION_PUBLISHED
-							) }
+							onClick={ this.setFooterSection( PostShare.FOOTER_SECTION_PUBLISHED ) }
 						>
 							Published
 						</NavItem>
