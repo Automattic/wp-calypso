@@ -43,7 +43,7 @@ class CurrentTheme extends Component {
 			text = ( currentTheme && currentTheme.name ) ? currentTheme.name : placeholderText;
 
 		const options = pickBy( this.props.options, option =>
-			currentThemeId && ! ( option.hideForTheme && option.hideForTheme( currentThemeId, siteId ) )
+			option.hideForTheme && option.hideForTheme( currentThemeId, siteId )
 		);
 
 		const showScreenshot = currentTheme && currentTheme.screenshot;
