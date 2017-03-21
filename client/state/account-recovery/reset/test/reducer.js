@@ -41,7 +41,7 @@ describe( '#account-recovery/reset reducer', () => {
 		},
 	};
 
-	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST action should wipe the previous items.', () => {
+	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST action should delete the previous items.', () => {
 		const state = reducer( hasItemsState, {
 			type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
 		} );
@@ -49,7 +49,7 @@ describe( '#account-recovery/reset reducer', () => {
 		assert.deepEqual( state.options.items, [] );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR action should wipe the previous items.', () => {
+	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR action should delete the previous items.', () => {
 		const state = reducer( hasItemsState, {
 			type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 			error: {},
