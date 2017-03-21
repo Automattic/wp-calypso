@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter } from 'lodash';
+import { filter, sortBy } from 'lodash';
 
 /**
  * Returns all of the reader tags a user is following
@@ -11,6 +11,6 @@ import { filter } from 'lodash';
  */
 export default function getReaderFollowedTags( state ) {
 	return state.reader.tags.items
-		? filter( state.reader.tags.items, tag => tag.isFollowing )
+		? sortBy( filter( state.reader.tags.items, tag => tag.isFollowing ), 'slug' )
 		: null; // no data loaded state
 }
