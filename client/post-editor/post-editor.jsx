@@ -252,7 +252,6 @@ export const PostEditor = React.createClass( {
 								onDismissClick={ this.hideNotice } />
 							<EditorActionBar
 								isNew={ this.state.isNew }
-								onPrivatePublish={ this.onPublish }
 								post={ this.state.post }
 								savedPost={ this.state.savedPost }
 								site={ site }
@@ -651,15 +650,10 @@ export const PostEditor = React.createClass( {
 	onPublish: function() {
 		const edits = {
 			...this.props.edits,
-			status: 'publish'
+			status: [ 'private', 'future' ].indexOf( this.props.edits.status ) === -1
+				? 'publish'
+				: this.props.edits.status
 		};
-
-		// determine if this is a private publish
-		if ( utils.isPrivate( this.state.post ) ) {
-			edits.status = 'private';
-		} else if ( utils.isFutureDated( this.state.post ) ) {
-			edits.status = 'future';
-		}
 
 		// Update content on demand to avoid unnecessary lag and because it is expensive
 		// to serialize when TinyMCE is the active mode
