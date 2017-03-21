@@ -5,6 +5,7 @@ import page from 'page';
 import React from 'react';
 import { moment } from 'i18n-calypso';
 import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -104,23 +105,23 @@ const CancelPurchaseButton = React.createClass( {
 		const buttons = {
 				close: {
 					action: 'close',
-					label: this.translate( "No, I'll Keep It" )
+					label: this.props.translate( "No, I'll Keep It" )
 				},
 				next: {
 					action: 'next',
 					disabled: this.state.isRemoving || this.isSurveyIncomplete(),
-					label: this.translate( 'Next' ),
+					label: this.props.translate( 'Next' ),
 					onClick: this.changeSurveyStep
 				},
 				prev: {
 					action: 'prev',
 					disabled: this.state.isRemoving,
-					label: this.translate( 'Previous Step' ),
+					label: this.props.translate( 'Previous Step' ),
 					onClick: this.changeSurveyStep
 				},
 				cancel: {
 					action: 'cancel',
-					label: this.translate( 'Yes, Cancel Now' ),
+					label: this.props.translate( 'Yes, Cancel Now' ),
 					isPrimary: true,
 					disabled: this.state.submitting,
 					onClick: this.submitCancelAndRefundPurchase
@@ -142,7 +143,7 @@ const CancelPurchaseButton = React.createClass( {
 				buttons={ buttonsArr }
 				onClose={ this.closeDialog }
 				className="cancel-purchase__button-warning-dialog">
-				<FormSectionHeading>{ this.translate( 'Cancel %(purchaseName)s', { args: { purchaseName } } ) }</FormSectionHeading>
+				<FormSectionHeading>{ this.props.translate( 'Cancel %(purchaseName)s', { args: { purchaseName } } ) }</FormSectionHeading>
 				<CancelPurchaseForm
 					surveyStep={ this.state.surveyStep }
 					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
@@ -174,7 +175,7 @@ const CancelPurchaseButton = React.createClass( {
 			this.props.clearPurchases();
 
 			if ( success ) {
-				notices.success( this.translate(
+				notices.success( this.props.translate(
 					'%(purchaseName)s was successfully cancelled. It will be available ' +
 					'for use until it expires on %(subscriptionEndDate)s.',
 					{
@@ -187,7 +188,7 @@ const CancelPurchaseButton = React.createClass( {
 
 				page( paths.purchasesRoot() );
 			} else {
-				notices.error( this.translate(
+				notices.error( this.props.translate(
 					'There was a problem canceling %(purchaseName)s. ' +
 					'Please try again later or contact support.',
 					{
@@ -270,8 +271,7 @@ const CancelPurchaseButton = React.createClass( {
 	},
 
 	renderCancellationEffect() {
-		const { props, translate } = this;
-		const { purchase } = props;
+		const { purchase, translate } = this.props;
 
 		return (
 			<p>
@@ -290,26 +290,26 @@ const CancelPurchaseButton = React.createClass( {
 			onClick = this.handleCancelPurchaseClick;
 
 			if ( isDomainRegistration( purchase ) ) {
-				text = this.translate( 'Cancel Domain and Refund' );
+				text = this.props.translate( 'Cancel Domain and Refund' );
 			}
 
 			if ( isSubscription( purchase ) ) {
-				text = this.translate( 'Cancel Subscription and Refund' );
+				text = this.props.translate( 'Cancel Subscription and Refund' );
 			}
 
 			if ( isOneTimePurchase( purchase ) ) {
-				text = this.translate( 'Cancel and Refund' );
+				text = this.props.translate( 'Cancel and Refund' );
 			}
 		} else {
 			onClick = this.cancelPurchase;
 
 			if ( isDomainRegistration( purchase ) ) {
-				text = this.translate( 'Cancel Domain' );
+				text = this.props.translate( 'Cancel Domain' );
 			}
 
 			if ( isSubscription( purchase ) ) {
 				onClick = this.handleCancelPurchaseClick;
-				text = this.translate( 'Cancel Subscription' );
+				text = this.props.translate( 'Cancel Subscription' );
 			}
 		}
 
@@ -336,4 +336,4 @@ export default connect(
 		recordTracksEvent,
 		refreshSitePlans,
 	}
-)( CancelPurchaseButton );
+)( localize( CancelPurchaseButton ) );
