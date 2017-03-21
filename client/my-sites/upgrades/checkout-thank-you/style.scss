@@ -236,6 +236,10 @@
 .checkout-thank-you__jetpack {
 	max-width: 500px;
 	margin: 0 auto;
+
+	&.is-errored .thank-you-card__description {
+		margin-bottom: 0;
+	}
 }
 
 .checkout-thank-you__jetpack-plugins {
@@ -272,6 +276,10 @@
 	display: inline;
 }
 
+.checkout-thank-you__jetpack-feature-status-icon .gridicons-notice-outline {
+	color: $alert-red;
+}
+
 .checkout-thank-you__jetpack {
 	&.is-personal-plan {
 		.checkout-thank-you__jetpack-feature-status-icon .gridicons-checkmark {
@@ -290,4 +298,22 @@
 			color: $alert-purple;
 		}
 	}
+}
+
+.checkout-thank-you__jetpack-error-card {
+	text-align: left;
+}
+
+.checkout-thank-you__jetpack-error-heading {
+	font-size: 21px;
+	font-weight: 300;
+	line-height: 32px;
+	margin-top: 0;
+}
+
+.checkout-thank-you__jetpack-error-explanation {
+	color: $gray-text-min;
+	font-size: 14px;
+	font-style: italic;
+	font-weight: 400;
 }
