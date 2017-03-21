@@ -52,6 +52,7 @@
 		"manage/themes-jetpack": true,
 		"manage/themes/details": true,
 		"manage/themes/details/jetpack": true,
+		"manage/themes/magic-search": true,
 		"manage/themes/upload": true,
 		"me/account": true,
 		"me/find-friends": false,
