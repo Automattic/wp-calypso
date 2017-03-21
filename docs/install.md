@@ -34,6 +34,8 @@ The `make run` command will install any `npm` dependencies and start the develop
 
 To run Calypso locally, you'll need to add `127.0.0.1 calypso.localhost` to [your hosts file](http://www.howtogeek.com/howto/27350/beginner-geek-how-to-edit-your-hosts-file/), and load the app at [http://calypso.localhost:3000](http://calypso.localhost:3000) instead of just `localhost`. This is necessary, because when running locally Calypso is using the remote version of the WordPress.com REST API, which allows only certain origins via our current authentication methods.
 
+See [Development Workflow](../docs/development-workflow.md) for more.
+
 ## Using a portable development environment
 
 You can install Calypso very quickly via a portable development environment called [Calypso Bootstrap](https://github.com/Automattic/wp-calypso-bootstrap). It uses Vagrant and Puppet behind the scenes to install and configure a virtual machine with Calypso ready to run - with a single command.
