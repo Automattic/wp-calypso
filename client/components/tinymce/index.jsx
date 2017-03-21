@@ -303,6 +303,7 @@ module.exports = React.createClass( {
 			// minus the surrounding editor chrome to avoid scrollbars. In the
 			// future, we should calculate from the rendered editor bounds.
 			autoresize_min_height: Math.max( document.documentElement.clientHeight - 300, 300 ),
+			autoresize_bottom_margin: 150,
 
 			toolbar1: config.isEnabled( 'post-editor/insert-menu' )
 				? 'wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_advanced'
