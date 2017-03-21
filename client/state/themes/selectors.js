@@ -678,6 +678,19 @@ export function getWpcomParentThemeId( state, themeId ) {
 }
 
 /**
+ * Determine whether a zip of a given theme is hosted on
+ * wpcom for download.
+ *
+ * @param {Object} state Global state tree
+ * @param {string} themeId Child theme ID
+ * @return {boolean} true if zip is available on wpcom
+ */
+export function isDownloadableFromWpcom( state, themeId ) {
+	const downloadUri = get( getTheme( state, 'wpcom', themeId ), [ 'download' ], '' );
+	return !! includes( downloadUri, 'wordpress.com' );
+}
+
+/**
  * Determine whether wpcom themes should be removed from
  * a queried list of themes. For jetpack sites with the
  * required capabilities, we hide wpcom themes from the

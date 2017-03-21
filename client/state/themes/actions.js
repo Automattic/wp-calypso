@@ -57,6 +57,7 @@ import {
 	getThemeCustomizeUrl,
 	getWpcomParentThemeId,
 	shouldFilterWpcomThemes,
+	isDownloadableFromWpcom,
 } from './selectors';
 import {
 	getThemeIdFromStylesheet,
@@ -833,9 +834,22 @@ export function hideThemePreview() {
 	};
 }
 
+/**
+ * Install of any theme hosted as a zip on wpcom must
+ * be suffixed with -wpcom. Themes on AT sites are not
+ * installed via downloaded zip.
+ *
+ * @param {Object} state Global state tree
+ * @param {number} siteId the Site ID
+ * @param {string} themeId Child theme ID
+ * @return {string} the theme id to use when installing the theme
+ */
 function suffixThemeIdForInstall( state, siteId, themeId ) {
 	// AT sites do not use the -wpcom suffix
 	if ( isSiteAutomatedTransfer( state, siteId ) ) {
+		return themeId;
+	}
+	if ( ! isDownloadableFromWpcom( state, themeId ) ) {
 		return themeId;
 	}
 	return themeId + '-wpcom';
