@@ -602,14 +602,6 @@ const ThemeSheetWithOptions = ( props ) => {
 	return (
 		<ConnectedThemeSheet { ...props }
 			siteId={ siteId }
-			options={ [
-				'signup',
-				'customize',
-				'tryandcustomize',
-				'purchase',
-				'activate',
-				'preview'
-			] }
 			defaultOption={ defaultOption }
 			secondaryOption={ secondaryOption }
 			source="showcase-sheet" />

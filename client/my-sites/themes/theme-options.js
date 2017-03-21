@@ -4,7 +4,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
-import { has, identity, mapValues, pick, pickBy } from 'lodash';
+import { has, identity, mapValues, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,6 +34,7 @@ import {
 } from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { canCurrentUser } from 'state/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const purchase = config.isEnabled( 'upgrades/checkout' )
@@ -48,6 +49,7 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 		} ),
 		getUrl: getThemePurchaseUrl,
 		hideForTheme: ( state, themeId, siteId ) => (
+			! getCurrentUser( state ) ||
 			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
 			isJetpackSite( state, siteId ) ||
 			! isThemePremium( state, themeId ) ||
@@ -63,6 +65,7 @@ const activate = {
 	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
 	action: activateAction,
 	hideForTheme: ( state, themeId, siteId ) => (
+		! getCurrentUser( state ) ||
 		( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ||
 		isThemeActive( state, themeId, siteId ) ||
 		( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
@@ -100,6 +103,7 @@ const tryandcustomize = {
 	} ),
 	action: tryAndCustomizeAction,
 	hideForTheme: ( state, themeId, siteId ) => (
+		! getCurrentUser( state ) ||
 		( siteId && ( ! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
 		( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ) ) ||
 		isThemeActive( state, themeId, siteId ) || (
@@ -126,7 +130,8 @@ const signupLabel = i18n.translate( 'Pick this design', {
 const signup = {
 	label: signupLabel,
 	extendedLabel: signupLabel,
-	getUrl: getThemeSignupUrl
+	getUrl: getThemeSignupUrl,
+	hideForTheme: ( state ) => getCurrentUser( state )
 };
 
 const separator = {
@@ -168,8 +173,7 @@ const ALL_THEME_OPTIONS = {
 };
 
 export const connectOptions = connect(
-	( state, { options: optionNames, siteId } ) => {
-		const options = pick( ALL_THEME_OPTIONS, optionNames );
+	( state, { siteId } ) => {
 		let mapGetUrl = identity, mapHideForTheme = identity;
 
 		if ( siteId ) {
@@ -180,7 +184,7 @@ export const connectOptions = connect(
 			mapHideForTheme = hideForTheme => ( t, s ) => hideForTheme( state, t, s );
 		}
 
-		return mapValues( options, option => Object.assign(
+		return mapValues( ALL_THEME_OPTIONS, option => Object.assign(
 			{},
 			option,
 			option.getUrl
@@ -191,11 +195,8 @@ export const connectOptions = connect(
 				: {}
 		) );
 	},
-	( dispatch, { options: optionNames, siteId, source = 'unknown' } ) => {
-		const options = pickBy(
-			pick( ALL_THEME_OPTIONS, optionNames ),
-			'action'
-		);
+	( dispatch, { siteId, source = 'unknown' } ) => {
+		const options = pickBy( ALL_THEME_OPTIONS, 'action' );
 		let mapAction;
 
 		if ( siteId ) {

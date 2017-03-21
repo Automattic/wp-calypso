@@ -26,16 +26,6 @@ const MultiSiteThemeShowcase = connectOptions(
 
 export default ( props ) => (
 	<MultiSiteThemeShowcase { ...props }
-		options={ [
-			'preview',
-			'purchase',
-			'activate',
-			'tryandcustomize',
-			'separator',
-			'info',
-			'support',
-			'help',
-		] }
 		defaultOption="activate"
 		secondaryOption="tryandcustomize"
 		getScreenshotOption={ function() {

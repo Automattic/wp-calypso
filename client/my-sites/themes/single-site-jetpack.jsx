@@ -95,16 +95,6 @@ const ConnectedSingleSiteJetpack = connectOptions(
 					{ showWpcomThemesList &&
 						<div>
 							<ConnectedThemesSelection
-								options={ [
-									'activate',
-									'tryandcustomize',
-									'preview',
-									'customize',
-									'separator',
-									'info',
-									'support',
-									'help',
-								] }
 								defaultOption={ 'activate' }
 								secondaryOption={ 'tryandcustomize' }
 								search={ search }

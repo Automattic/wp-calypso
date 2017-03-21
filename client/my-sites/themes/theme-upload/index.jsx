@@ -344,8 +344,7 @@ const UploadWithOptions = ( props ) => {
 	return (
 		<ConnectedUpload { ...props }
 			siteId={ siteId }
-			theme={ uploadedTheme }
-			options={ [ 'tryandcustomize', 'activate' ] } />
+			theme={ uploadedTheme } />
 	);
 };
 

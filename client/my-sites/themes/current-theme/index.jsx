@@ -90,11 +90,6 @@ const CurrentThemeWithOptions = ( { siteId, currentTheme, currentThemeId } ) => 
 	<ConnectedCurrentTheme currentTheme={ currentTheme }
 		currentThemeId={ currentThemeId }
 		siteId={ siteId }
-		options={ [
-			'customize',
-			'info',
-			'support'
-		] }
 		source="current theme" />
 );
 
