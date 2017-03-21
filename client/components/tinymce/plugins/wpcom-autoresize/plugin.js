@@ -126,7 +126,7 @@ function wcpomAutoResize( editor ) {
 			if ( e && e.type === 'keyup' ||
 				( e && e.type === 'nodechange' && e.element && e.element.tagName === 'BR' ) ) {
 				if ( isEndOfEditor() ) {
-					window.scrollTo( 0, window.screen.availHeight );
+					window.scrollTo( 0, document.body.scrollHeight );
 				}
 			}
 		}
