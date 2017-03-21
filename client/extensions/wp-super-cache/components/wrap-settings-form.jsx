@@ -17,6 +17,10 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.replaceFields( getFormSettings( this.props.settings ) );
 		}
 
+		handleChange = field => event => {
+			this.props.updateFields( { [ field ]: event.target.value } );
+		};
+
 		handleRadio = event => {
 			const name = event.currentTarget.name;
 			const value = event.currentTarget.value;
@@ -30,6 +34,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 		render() {
 			const utils = {
+				handleChange: this.handleChange,
 				handleRadio: this.handleRadio,
 				handleToggle: this.handleToggle,
 			};
@@ -61,6 +66,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				wp_cache_refresh_single_only: false,
 				wp_super_cache_late_init: false,
 				wp_supercache_cache_list: false,
+				wp_cache_location: '/wordpress/wp-content/cache/',
 			};
 
 			return {
