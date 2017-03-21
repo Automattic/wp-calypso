@@ -15,7 +15,14 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import ResetOptionSet from './reset-option-set';
 
-import { getAccountRecoveryResetOptions } from 'state/selectors';
+import {
+	pickResetMethod,
+} from 'state/account-recovery/reset/actions';
+
+import {
+	getAccountRecoveryResetOptions,
+	getAccountRecoveryResetPickedMethod,
+} from 'state/selectors';
 
 export class ResetPasswordFormComponent extends Component {
 	static defaultProps = {
@@ -29,7 +36,6 @@ export class ResetPasswordFormComponent extends Component {
 
 	state = {
 		isSubmitting: false,
-		selectedResetOption: null,
 	};
 
 	submitForm = () => {
@@ -39,7 +45,7 @@ export class ResetPasswordFormComponent extends Component {
 	};
 
 	onResetOptionChanged = ( event ) => {
-		this.setState( { selectedResetOption: event.currentTarget.value } );
+		this.props.pickResetMethod( event.currentTarget.value );
 	};
 
 	getOptionDisplayStrings = ( optionName ) => {
@@ -76,11 +82,12 @@ export class ResetPasswordFormComponent extends Component {
 	render() {
 		const {
 			resetOptions,
-			translate
+			pickedMethod,
+			translate,
 		} = this.props;
 
-		const { isSubmitting, selectedResetOption } = this.state;
-		const isPrimaryButtonEnabled = selectedResetOption && ! isSubmitting;
+		const { isSubmitting } = this.state;
+		const isPrimaryButtonEnabled = pickedMethod && ! isSubmitting;
 
 		return (
 			<div className="reset-password-form">
@@ -107,7 +114,7 @@ export class ResetPasswordFormComponent extends Component {
 								displayStrings={ this.getOptionDisplayStrings( name ) }
 								disabled={ isSubmitting }
 								onOptionChanged={ this.onResetOptionChanged }
-								selectedResetOption={ selectedResetOption }
+								selectedResetOption={ pickedMethod }
 							/>
 						) ) }
 					</FormFieldset>
@@ -127,5 +134,9 @@ export class ResetPasswordFormComponent extends Component {
 export default connect(
 	( state ) => ( {
 		resetOptions: getAccountRecoveryResetOptions( state ),
-	} )
+		pickedMethod: getAccountRecoveryResetPickedMethod( state ),
+	} ),
+	{
+		pickResetMethod,
+	}
 )( localize( ResetPasswordFormComponent ) );
