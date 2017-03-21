@@ -10,11 +10,11 @@ import { keyToString } from 'lib/feed-stream-store/post-key';
 
 export default createReducer( {}, {
 	[ READER_EXPAND_CARD ]: ( state, action ) => {
-		const { postKey } = action.payload;
-
-		if ( ! postKey ) {
+		if ( ! action.payload.postKey ) {
 			return state;
 		}
+
+		const { postKey } = action.payload;
 
 		return {
 			...state,
