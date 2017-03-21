@@ -90,7 +90,7 @@ export class ResetPasswordFormComponent extends Component {
 		const isPrimaryButtonEnabled = pickedMethod && ! isRequesting;
 
 		return (
-			<div className="reset-password-form">
+			<Card>
 				<h2 className="reset-password-form__title">
 					{ translate( 'Reset your password' ) }
 				</h2>
@@ -100,33 +100,31 @@ export class ResetPasswordFormComponent extends Component {
 						'select one of these options and follow the instructions.'
 					) }
 				</p>
-				<Card>
-					<FormFieldset className="reset-password-form__field-set">
-						<FormLegend className="reset-password-form__legend">
-							{ translate( 'How would you like to reset your password?' ) }
-						</FormLegend>
-						{ resetOptions.map( ( { email, sms, name }, index ) => (
-							<ResetOptionSet
-								key={ index }
-								email={ email }
-								sms={ sms }
-								name={ name }
-								displayStrings={ this.getOptionDisplayStrings( name ) }
-								disabled={ isRequesting }
-								onOptionChanged={ this.onResetOptionChanged }
-								selectedResetOption={ pickedMethod }
-							/>
-						) ) }
-					</FormFieldset>
-					<Button
-						className="reset-password-form__submit-button"
-						onClick={ this.submitForm }
-						disabled={ ! isPrimaryButtonEnabled }
-						primary>
-						{ translate( 'Continue' ) }
-					</Button>
-				</Card>
-			</div>
+				<FormFieldset className="reset-password-form__field-set">
+					<FormLegend className="reset-password-form__legend">
+						{ translate( 'How would you like to reset your password?' ) }
+					</FormLegend>
+					{ resetOptions.map( ( { email, sms, name }, index ) => (
+						<ResetOptionSet
+							key={ index }
+							email={ email }
+							sms={ sms }
+							name={ name }
+							displayStrings={ this.getOptionDisplayStrings( name ) }
+							disabled={ isRequesting }
+							onOptionChanged={ this.onResetOptionChanged }
+							selectedResetOption={ pickedMethod }
+						/>
+					) ) }
+				</FormFieldset>
+				<Button
+					className="reset-password-form__submit-button"
+					onClick={ this.submitForm }
+					disabled={ ! isPrimaryButtonEnabled }
+					primary>
+					{ translate( 'Continue' ) }
+				</Button>
+			</Card>
 		);
 	}
 }
