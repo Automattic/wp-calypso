@@ -2,6 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' );
+import { endsWith } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -29,10 +31,25 @@ const DomainRegistrationSuggestion = React.createClass( {
 			isAdded = hasDomainInCart( this.props.cart, suggestion.domain_name ),
 			buttonClasses,
 			buttonContent,
-			domainFlag = null;
+			domainFlags = [],
+			translate = this.props.translate;
 
 		if ( suggestion.domain_name ) {
-			domainFlag = <DomainSuggestionFlag domain={ suggestion.domain_name }/>;
+			const newTLDs = [];
+
+			if ( newTLDs.some(
+					( tld ) => endsWith( suggestion.domain_name, tld ) && suggestion.domain_name.substring( 0, suggestion.domain_name.length - ( tld.length + 1 ) ).indexOf( '.' ) === -1
+				) ) {
+				domainFlags.push( <DomainSuggestionFlag content={ translate( 'New', { context: 'Domain suggestion flag' } ) }/> );
+			}
+		}
+
+		if ( suggestion.isRecommended ) {
+			domainFlags.push( <DomainSuggestionFlag content={ translate( 'Recommended', { context: 'Domain suggestion flag' } ) }/> );
+		}
+
+		if ( suggestion.isBestAlternative ) {
+			domainFlags.push( <DomainSuggestionFlag content={ translate( 'Best Alternative', { context: 'Domain suggestion flag' } ) }/> );
 		}
 
 		if ( isAdded ) {
@@ -57,11 +74,11 @@ const DomainRegistrationSuggestion = React.createClass( {
 					onButtonClick={ this.props.onButtonClick }>
 				<h3>
 					{ suggestion.domain_name }
-					{ domainFlag }
+					{ domainFlags }
 				</h3>
 			</DomainSuggestion>
 		);
 	}
 } );
 
-module.exports = DomainRegistrationSuggestion;
+export default localize( DomainRegistrationSuggestion );

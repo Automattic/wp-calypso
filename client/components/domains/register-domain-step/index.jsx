@@ -441,7 +441,9 @@ const RegisterDomainStep = React.createClass( {
 		const { lastDomainSearched, lastDomainStatus } = this.state,
 			matchesSearchedDomain = ( suggestion ) => ( suggestion.domain_name === lastDomainSearched ),
 			availableDomain = lastDomainStatus === domainAvailability.AVAILABLE && find( this.state.searchResults, matchesSearchedDomain ),
-			onAddMapping = ( domain ) => this.props.onAddMapping( domain, this.state );
+			onAddMapping = ( domain ) => this.props.onAddMapping( domain, this.state ),
+			exactMatchBeforeTld = ( suggestion ) => ( startsWith( suggestion.domain_name, `${ lastDomainSearched }.` ) ),
+			bestAlternative = ( suggestion ) => ( ! exactMatchBeforeTld( suggestion ) && suggestion.domain_name !== lastDomainSearched );
 
 		let suggestions = reject( this.state.searchResults, matchesSearchedDomain );
 
@@ -461,6 +463,22 @@ const RegisterDomainStep = React.createClass( {
 			suggestions = this.props.defaultSuggestions;
 		}
 
+		if ( abtest( 'domainSuggestionNudgeLabels' ) === 'updated' ) {
+			if ( availableDomain ) {
+				availableDomain.isRecommended = true;
+			} else {
+				const recommendedSuggestion = find( this.state.searchResults, exactMatchBeforeTld );
+
+				if ( recommendedSuggestion ) {
+					recommendedSuggestion.isRecommended = true;
+				}
+			}
+
+			const bestAlternativeSuggestion = find( this.state.searchResults, bestAlternative );
+			if ( bestAlternativeSuggestion ) {
+				bestAlternativeSuggestion.isBestAlternative = true;
+			}
+		}
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/

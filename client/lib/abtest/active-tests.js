@@ -51,4 +51,13 @@ module.exports = {
 		defaultVariation: 'disabled',
 		allowExistingUsers: false
 	},
+	domainSuggestionNudgeLabels: {
+		datestamp: '20170327',
+		variations: {
+			original: 50,
+			updated: 50
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true
+	},
 };
