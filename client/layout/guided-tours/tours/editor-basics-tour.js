@@ -69,7 +69,7 @@ export const EditorBasicsTour = makeTour(
 		<Step
 			name="write"
 			arrow="top-left"
-			target=".mce-toolbar"
+			target=".mce-toolbar-grp.mce-container"
 			placement="below"
 			style={ { marginTop: '40px' } }
 			>
