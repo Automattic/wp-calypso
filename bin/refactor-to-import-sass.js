@@ -363,6 +363,7 @@ walk(
 		let processedDirectories = [];
 		let processedScssFiles = [];
 		let unableToProcess = [];
+		let blacklistedScss = [];
 		let noIndex = [];
 		let noScss = 0;
 		for ( let [ directory, filesInDirectory ] of directoryMap ) {
@@ -370,6 +371,14 @@ walk(
 
 			if ( scssFilesInDirectory.length < 1 ) {
 				noScss++;
+				continue;
+			}
+
+			const directoryBlacklistedScsss = scssFilesInDirectory.filter( isScssFileBlacklisted );
+
+			if ( directoryBlacklistedScsss.length > 0 ) {
+				console.error( '[Blacklisted] skipping ' + directory, 'because these files were blacklisted:', directoryBlacklistedScsss );
+				blacklistedScss = blacklistedScss.concat( scssFilesInDirectory );
 				continue;
 			}
 
@@ -419,11 +428,12 @@ walk(
 			'No scss: ' + noScss,
 			'Processed dirs: ' + processedDirectories.length,
 			'Processed scss files: ' + processedScssFiles.length,
+			'Blacklisted scss files: ' + blacklistedScss.length,
 			'NoIndex: ' + noIndex.length,
 			'Unable to process: ' + unableToProcess.length );
 
 		const scssFileList = processedScssFiles
-			.map( filename => filename.replace( CALYPSO_DIR + path.sep, '' ) ) // convert to relative path
+			.map( filename => filename.replace( CALYPSO_DIR + path.sep, '' ) ) // convert to relative path for Makefile's SASS_FILES
 			.join( '\n' );
 		fs.writeFileSync( PROCESSED_SCSS_LIST_FILENAME, scssFileList );
 	}
@@ -449,6 +459,9 @@ const SCSS_COLOR_REGEX = joinScssVariablesToRegex( SCSS_COLORS );
 
 const TYPOGRAPHY_VARS = getVariableDeclarationsFromScss( 'assets/stylesheets/shared/_typography.scss' );
 const TYPOGRAPHY_REGEX = joinScssVariablesToRegex( TYPOGRAPHY_VARS );
+
+const SIDEBAR_VARS = getVariableDeclarationsFromScss( 'assets/stylesheets/shared/_sidebar.scss' );
+const SIDEBAR_REGEX = joinScssVariablesToRegex( SIDEBAR_VARS );
 
 const SCSS_IMPORT_PATHS = [
 	{
@@ -499,14 +512,17 @@ const SCSS_IMPORT_PATHS = [
 	{
 		path: 'assets/stylesheets/shared/colors',
 		// placeholder mixin requires colors
-		predicate: content => SCSS_COLOR_REGEX.test( content ) || mixinImportPredicateFactory( 'placeholder' )( content )
+		// typography requires colors
+		predicate: content => SCSS_COLOR_REGEX.test( content ) || TYPOGRAPHY_REGEX.test( content ) || mixinImportPredicateFactory( 'placeholder' )( content )
 	},
 	{
 		path: 'assets/stylesheets/shared/typography',
 		predicate: content => TYPOGRAPHY_REGEX.test( content )
+	},
+	{
+		path: 'assets/stylesheets/shared/sidebar',
+		predicate: content => SIDEBAR_REGEX.test( content )
 	}
-
-	//TODO: Not sure how to handle $sidebar-width-max from assets/stylesheets/main , probably refactor to another file
 ];
 
 function transformScssfile( scssFile ) {
@@ -527,4 +543,19 @@ function transformScssfile( scssFile ) {
 			console.error( '[ERROR] Failed to write ' + scssFile, error );
 		}
 	} );
+}
+
+function isScssFileBlacklisted( scssFile ) {
+	// this file has the selector: '&.style-text .social-logo,'
+	// which results in sass error: Base-level rules cannot contain the parent-selector-referencing character '&'.
+	if ( scssFile.indexOf( 'client/my-sites/sharing/style.scss' ) > -1 ) {
+		return true;
+	}
+
+	// Files with @extend _selector_ , requires the _selector_ to be present
+	// so we need to import the files the @extend references
+	const contents = fs.readFileSync( scssFile );
+
+	//TODO: allow @extend %var
+	return contents.indexOf( '@extend ' ) > -1;
 }
