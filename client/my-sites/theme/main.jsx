@@ -258,14 +258,16 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderOverviewTab() {
+		const { isWpcomTheme, download } = this.props;
+
 		return (
 			<div>
 				<Card className="theme__sheet-content">
 					{ this.renderDescription() }
 				</Card>
 				{ this.renderFeaturesCard() }
-				{ this.renderDownload() }
-				{ this.props.isWpcomTheme && this.renderRelatedThemes() }
+				{ download && <ThemeDownloadCard href={ this.props.download } /> }
+				{ isWpcomTheme && this.renderRelatedThemes() }
 			</div>
 		);
 	},
@@ -423,19 +425,6 @@ const ThemeSheet = React.createClass( {
 				</Card>
 			</div>
 		);
-	},
-
-	renderDownload() {
-		// Don't render download button:
-		// * If it's a premium theme
-		// * If it's a non-wpcom theme, and the theme object doesn't have a 'download' attr
-		//   Note that not having a 'download' attr would be permissible for a theme on WPCOM
-		//   since we don't provide any for some themes found on WordPress.org (notably the 'Twenties').
-		//   The <ThemeDownloadCard /> component can handle that case.
-		if ( this.props.isPremium || ( ! this.props.isWpcomTheme && ! this.props.download ) ) {
-			return null;
-		}
-		return <ThemeDownloadCard theme={ this.props.id } href={ this.props.download } />;
 	},
 
 	getDefaultOptionLabel() {
