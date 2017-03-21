@@ -250,8 +250,10 @@ const DomainsStep = React.createClass( {
 				positionInFlow={ this.props.positionInFlow }
 				signupProgress={ this.props.signupProgress }
 				subHeaderText={ this.translate( 'First up, let\'s find a domain.' ) }
-				fallbackHeaderText={ this.translate( 'Let\'s find a domain.' ) }
-				fallbackSubHeaderText={ this.translate( 'Choose a custom domain, or a free .wordpress.com address.' ) }
+				fallbackHeaderText={ this.translate( 'Let\'s give your site an address.' ) }
+				fallbackSubHeaderText={ this.translate(
+					'Enter your site\'s name, or some key words that describe it - ' +
+					'we\'ll use this to create your new site\'s address.' ) }
 				stepContent={ content } />
 		);
 	}
