@@ -51,6 +51,16 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				wp_cache_no_cache_for_get: false,
 				wp_cache_not_logged_in: false,
 				wp_supercache_304: false,
+				cache_page_secret: 'af1a001901367ede34cb22ffadb9a565',
+				wp_cache_clear_on_post_edit: false,
+				wp_cache_disable_utf8: false,
+				wp_cache_front_page_checks: true,
+				wp_cache_mfunc_enabled: false,
+				wp_cache_mobile_enabled: false,
+				wp_cache_mutex_disabled: false,
+				wp_cache_refresh_single_only: false,
+				wp_super_cache_late_init: false,
+				wp_supercache_cache_list: false,
 			};
 
 			return {
