@@ -55,6 +55,7 @@
 		"manage/stats": true,
 		"manage/themes": true,
 		"manage/themes-jetpack": true,
+		"manage/themes-ssr": true,
 		"manage/themes/details": true,
 		"manage/themes/details/jetpack": true,
 		"manage/themes/logged-out": true,
