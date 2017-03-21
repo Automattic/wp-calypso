@@ -13,9 +13,11 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import QueryPosts from 'components/data/query-posts';
 import { getSitePosts } from 'state/posts/selectors';
 import Card from 'components/card';
+import QuerySites from 'components/data/query-sites';
 
 const SharingPreviewPaneExample = ( { siteId, postId } ) => (
 	<Card>
+		<QuerySites siteId={ siteId } />
 		{ siteId && (
 			<QueryPosts
 				siteId={ siteId }
