@@ -30,11 +30,19 @@ import {
 export class ResetPasswordFormComponent extends Component {
 	static defaultProps = {
 		translate: identity,
+		pickedMethod: null,
+		userData: {},
+		requestError: null,
+		isRequesting: false,
 	};
 
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
 		resetOptions: PropTypes.array.isRequired,
+		pickedMethod: PropTypes.string,
+		userData: PropTypes.object.isRequired,
+		requestError: PropTypes.object,
+		isRequesting: PropTypes.bool,
 	};
 
 	submitForm = () => {
