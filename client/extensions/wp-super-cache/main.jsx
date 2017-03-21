@@ -8,14 +8,19 @@ import React, { PropTypes } from 'react';
  */
 import Main from 'components/main';
 import Navigation from './components/navigation';
-import Easy from './components/easy';
+import Caching from './components/advanced/caching';
+import EasyTab from './components/easy';
 import { Tabs } from './constants';
 
 const WPSuperCache = ( { site, tab } ) => {
 	const renderTab = () => {
 		switch ( tab ) {
 			case Tabs.ADVANCED:
-				break;
+				return (
+					<div>
+						<Caching />
+					</div>
+				);
 			case Tabs.CDN:
 				break;
 			case Tabs.CONTENTS:
@@ -27,7 +32,7 @@ const WPSuperCache = ( { site, tab } ) => {
 			case Tabs.DEBUG:
 				break;
 			default:
-				return <Easy site={ site } />;
+				return <EasyTab site={ site } />;
 		}
 	};
 
