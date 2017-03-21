@@ -26,7 +26,7 @@ import {
 	isJetpackSiteInDevelopmentMode
 } from 'state/selectors';
 
-class SiteStats extends Component {
+class JetpackSiteStats extends Component {
 	static defaultProps = {
 		isSavingSettings: false,
 		isRequestingSettings: true,
@@ -111,12 +111,12 @@ class SiteStats extends Component {
 				<SectionHeader label={ translate( 'Site stats' ) } />
 
 				<FoldableCard
-					className="stats__foldable-card site-settings__foldable-card is-top-level"
+					className="site-settings__foldable-card is-top-level"
 					header={ header }
 					clickableHeader
 				>
 					<FormFieldset>
-						<div className="stats__info-link-container site-settings__info-link-container">
+						<div className="site-settings__info-link-container">
 							<InfoPopover position={ 'left' }>
 								<ExternalLink href={ 'https://jetpack.com/support/wordpress-com-stats/' } target="_blank">
 									{ translate( 'Learn more about WordPress.com Stats' ) }
@@ -187,4 +187,4 @@ export default connect(
 			siteRoles: getSiteRoles( state, siteId ),
 		};
 	}
-)( localize( SiteStats ) );
+)( localize( JetpackSiteStats ) );
