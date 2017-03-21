@@ -3,9 +3,12 @@
  */
 import wpcom from 'lib/wp';
 import {
-	PUBLICIZE_SHARE_ACTIONS_REQUEST,
-	PUBLICIZE_SHARE_ACTIONS_REQUEST_SUCCESS,
-	PUBLICIZE_SHARE_ACTIONS_REQUEST_FAILURE,
+	PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST,
+	PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST_SUCCESS,
+	PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST_FAILURE,
+	PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST,
+	PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_SUCCESS,
+	PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_FAILURE,
 	PUBLICIZE_SHARE_ACTION_DELETE,
 	PUBLICIZE_SHARE_ACTION_DELETE_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_DELETE_FAILURE,
@@ -14,22 +17,44 @@ import {
 	PUBLICIZE_SHARE_ACTION_EDIT_FAILURE,
 } from 'state/action-types';
 
-export function fetchPostShareActions( siteId, postId ) {
+export function fetchPostShareActionsScheduled( siteId, postId ) {
 	return ( dispatch ) => {
 		dispatch( {
-			type: PUBLICIZE_SHARE_ACTIONS_REQUEST,
+			type: PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST,
 			siteId,
 			postId,
 		} );
 
-		return new Promise( ( resolve, reject ) => wpcom.req.get( `/sites/${ siteId }/post/${ postId }/publicize/actions`, ( error, data ) => {
+		return new Promise( ( resolve, reject ) => wpcom.req.get( `/sites/${ siteId }/post/${ postId }/publicize/scheduled`, ( error, data ) => {
 			if ( error || ! data.items ) {
-				dispatch( { type: PUBLICIZE_SHARE_ACTIONS_REQUEST_FAILURE, siteId, postId, error } );
+				dispatch( { type: PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST_FAILURE, siteId, postId, error } );
 				reject();
 			} else {
 				const actions = {};
 				data.items.forEach( action => ( actions[ action.ID ] = action ) );
-				dispatch( { type: PUBLICIZE_SHARE_ACTIONS_REQUEST_SUCCESS, siteId, postId, actions } );
+				dispatch( { type: PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST_SUCCESS, siteId, postId, actions } );
+				resolve();
+			}
+		} ) );
+	};
+}
+
+export function fetchPostShareActionsPublished( siteId, postId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST,
+			siteId,
+			postId,
+		} );
+
+		return new Promise( ( resolve, reject ) => wpcom.req.get( `/sites/${ siteId }/post/${ postId }/publicize/published`, ( error, data ) => {
+			if ( error || ! data.items ) {
+				dispatch( { type: PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_FAILURE, siteId, postId, error } );
+				reject();
+			} else {
+				const actions = {};
+				data.items.forEach( action => ( actions[ action.ID ] = action ) );
+				dispatch( { type: PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_SUCCESS, siteId, postId, actions } );
 				resolve();
 			}
 		} ) );
