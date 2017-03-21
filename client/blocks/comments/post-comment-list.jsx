@@ -233,7 +233,7 @@ class PostCommentList extends React.Component {
 						}</span> : null }
 				</div> }
 				{ isEnabled( 'comments/filters-in-posts' ) &&
-					<SegmentedControl>
+					<SegmentedControl compact primary>
 						<SegmentedControlItem
 							selected={ commentsFilter === 'all' }
 							onClick={ this.handleFilterClick( 'all' ) }>{ translate( 'All' ) }
