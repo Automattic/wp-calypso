@@ -108,7 +108,7 @@ export const EditorBasicsTour = makeTour(
 			placement="beside"
 			>
 			<p>
-				Find additional settings in the sidebar, such as featured image, tags, categories.
+				Find additional settings in the sidebar, such as tags, categories, and the featured image.
 			</p>
 			<ButtonRow>
 				<Next step="publish">Continue</Next>
