@@ -14,7 +14,7 @@ import CacheLocation from './components/advanced/cache-location';
 import Caching from './components/advanced/caching';
 import ExpiryTime from './components/advanced/expiry-time';
 import Miscellaneous from './components/advanced/miscellaneous';
-import EasyTab from './components/easy';
+import Easy from './components/easy/easy';
 import { Tabs } from './constants';
 
 const WPSuperCache = ( { site, tab } ) => {
@@ -42,7 +42,7 @@ const WPSuperCache = ( { site, tab } ) => {
 			case Tabs.DEBUG:
 				break;
 			default:
-				return <EasyTab site={ site } />;
+				return <Easy site={ site } />;
 		}
 	};
 
