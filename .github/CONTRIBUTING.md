@@ -32,7 +32,7 @@ For more detailed instructions, see [Installing Calypso](../docs/install.md).
 
 Running `make run` will build all the code and continuously watch the front-end JS and CSS/Sass for changes and rebuild accordingly.
 
-See [Development Workflow](../docs/development-workflow.md) for more.
+See [Development Workflow](../docs/development-workflow.md) for details on how to run tests, control what debug messages to receive, and where to look for errors and warnings.
 
 ## Pull Requests
 
