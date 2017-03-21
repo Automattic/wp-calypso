@@ -6,7 +6,6 @@ import React from 'react';
 import includes from 'lodash/includes';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -21,13 +20,13 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Button from 'components/button';
 import Popover from 'components/popover';
 import touchDetect from 'lib/touch-detect';
+import postActions from 'lib/posts/actions';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 import accept from 'lib/accept';
-import { editPost } from 'state/posts/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
 
-const EditorVisibility = React.createClass( {
+export default React.createClass( {
+	displayName: 'EditorVisibility',
+
 	showingAcceptDialog: false,
 
 	getDefaultProps() {
@@ -45,9 +44,6 @@ const EditorVisibility = React.createClass( {
 		password: React.PropTypes.string,
 		savedStatus: React.PropTypes.string,
 		savedPassword: React.PropTypes.string,
-		siteId: React.PropTypes.number,
-		postId: React.PropTypes.number,
-		editPost: React.PropTypes.func,
 	},
 
 	getInitialState() {
@@ -162,7 +158,6 @@ const EditorVisibility = React.createClass( {
 	},
 
 	updateVisibility( event ) {
-		const { siteId, postId } = this.props;
 		var defaultVisibility, newVisibility, postEdits;
 
 		defaultVisibility = 'draft' === this.props.status ? 'draft' : 'publish';
@@ -187,7 +182,8 @@ const EditorVisibility = React.createClass( {
 		recordStat( 'visibility-set-' + newVisibility );
 		recordEvent( 'Changed visibility', newVisibility );
 
-		this.props.editPost( siteId, postId, postEdits );
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+		postActions.edit( postEdits );
 	},
 
 	onKey( event ) {
@@ -197,8 +193,8 @@ const EditorVisibility = React.createClass( {
 	},
 
 	setPostToPrivate() {
-		const { siteId, postId } = this.props;
-		this.props.editPost( siteId, postId, {
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+		postActions.edit( {
 			password: '',
 			status: 'private'
 		} );
@@ -242,7 +238,6 @@ const EditorVisibility = React.createClass( {
 	},
 
 	onPasswordChange( event ) {
-		const { siteId, postId } = this.props;
 		let newPassword = event.target.value.trim();
 		const passwordIsValid = newPassword.length > 0;
 
@@ -251,12 +246,15 @@ const EditorVisibility = React.createClass( {
 		if ( ! passwordIsValid ) {
 			newPassword = ' ';
 		}
-		this.props.editPost( siteId, postId, { password: newPassword } );
+
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+		postActions.edit( { password: newPassword } );
 	},
 
 	renderPasswordInput() {
 		var value, isError, errorMessage;
-		value = this.props.password ? this.props.password.trim() : '';
+
+		value = this.props.password ? this.props.password.trim() : null;
 		isError = ! this.state.passwordIsValid;
 		errorMessage = this.translate( 'Password is empty.', { context: 'Editor: Error shown when password is empty.' } );
 
@@ -382,13 +380,3 @@ const EditorVisibility = React.createClass( {
 	}
 
 } );
-
-export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-
-		return { siteId, postId };
-	},
-	{ editPost }
-)( EditorVisibility );
