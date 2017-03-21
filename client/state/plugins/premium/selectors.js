@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, filter, some } from 'lodash';
+import { find, filter, some, every } from 'lodash';
 
 const isRequesting = function( state, siteId ) {
 	// if the `isRequesting` attribute doesn't exist yet,
@@ -35,6 +35,13 @@ const getPluginsForSite = function( state, siteId, whitelist = false ) {
 			return ( whitelist === plugin.slug );
 		}
 		return true;
+	} );
+};
+
+const isStarted = function( state, siteId, whitelist = false ) {
+	const pluginList = getPluginsForSite( state, siteId, whitelist );
+	return ! every( pluginList, ( item ) => {
+		return ( 'wait' === item.status );
 	} );
 };
 
@@ -83,4 +90,4 @@ const getNextPlugin = function( state, siteId, whitelist = false ) {
 	return plugin;
 };
 
-export default { isRequesting, hasRequested, isFinished, isInstalling, getPluginsForSite, getActivePlugin, getNextPlugin };
+export default { isRequesting, hasRequested, isStarted, isFinished, isInstalling, getPluginsForSite, getActivePlugin, getNextPlugin };

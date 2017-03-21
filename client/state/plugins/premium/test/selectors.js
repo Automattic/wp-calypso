@@ -33,6 +33,10 @@ describe( 'Premium Plugin Selectors', function() {
 		assert.equal( typeof selectors.isRequesting, 'function' );
 	} );
 
+	it( 'should contain isStarted method', function() {
+		assert.equal( typeof selectors.isStarted, 'function' );
+	} );
+
 	it( 'should contain isFinished method', function() {
 		assert.equal( typeof selectors.isFinished, 'function' );
 	} );
@@ -60,6 +64,24 @@ describe( 'Premium Plugin Selectors', function() {
 
 		it( 'Should get `true` if the requested site is being fetched', function() {
 			assert.equal( selectors.isRequesting( state, 'wait.site' ), true );
+		} );
+	} );
+
+	describe( 'isStarted', function() {
+		it( 'Should get `false` if the requested site is not in the current state', function() {
+			assert.equal( selectors.isStarted( state, 'no.site' ), false );
+		} );
+
+		it( 'Should get `false` if there are no plugins installing on the requested site', function() {
+			assert.equal( selectors.isStarted( state, 'start.site' ), false );
+		} );
+
+		it( 'Should get `true` if there is a plugin installing on the requested site', function() {
+			assert.equal( selectors.isStarted( state, 'installing.site' ), true );
+		} );
+
+		it( 'Should get `true` if all plugins on the requested site are either done or have errors', function() {
+			assert.equal( selectors.isStarted( state, 'finished.site' ), true );
 		} );
 	} );
 
