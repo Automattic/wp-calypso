@@ -15,7 +15,7 @@ import Button from 'components/button';
 import { isPublicizeEnabled } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSiteUserConnections, hasFetchedConnections, getSiteUserActiveConnectionIds } from 'state/sharing/publicize/selectors';
+import { getSiteUserConnections, hasFetchedConnections, getSiteUserActiveConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
 import { isRequestingSharePost, sharePostFailure, sharePostSuccessMessage } from 'state/sharing/publicize/selectors';
 import PostMetadata from 'lib/post-metadata';
@@ -43,7 +43,7 @@ const PostSharing = React.createClass( {
 
 	getInitialState() {
 		return {
-			messageConnectionIds: this.props.messageConnectionIds,
+			messageConnectionIds: map( this.props.activeConnectionIds, 'keyring_connectino_ID' ),
 			skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
 			message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title
 		}
@@ -60,10 +60,7 @@ const PostSharing = React.createClass( {
 	},
 
 	isConnectionActive: function( connection ) {
-		return (
-			connection.status !== 'broken' &&
-			includes( this.state.messageConnectionIds, connection.keyring_connection_ID )
-		);
+		return includes( this.state.messageConnections, connection.keyring_connection_ID );
 	},
 
 	renderServices: function() {
@@ -112,7 +109,7 @@ const PostSharing = React.createClass( {
 		this.props.dismissShareConfirmation( this.props.siteId, this.props.post.ID );
 	},
 	sharePost: function() {
-		this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.message, this.state.messageConnectionIds );
+		this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.messageConnectionIds, this.state.message );
 	},
 	isButtonDisabled() {
 		if ( this.props.requesting ) {
@@ -232,8 +229,8 @@ export default connect(
 			requesting: isRequestingSharePost( state, siteId, props.post.ID ),
 			failed: sharePostFailure( state, siteId, props.post.ID ),
 			success: sharePostSuccessMessage( state, siteId, props.post.ID ),
-			messageConnectionIds: getSiteUserActiveConnectionIds( state, siteId, userId ),
-		}
+			activeConnections: getSiteUserActiveConnections( state, siteId, userId ),
+		};
 	},
 	{ requestConnections, sharePost, dismissShareConfirmation }
 )( PostSharing );
