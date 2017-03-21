@@ -226,19 +226,20 @@ class PostShare extends Component {
 	}
 
 	renderScheduledList() {
-		const { planSlug } = this.props;
+		const { planSlug, translate } = this.props;
 
 		if ( planSlug !== PLAN_BUSINESS ) {
 			return (
 				<Banner
 					className="post-share__footer-banner"
-					callToAction="Upgrade for $9.99"
-					description="Live chat support and no advertising."
-					dismissPreferenceName="devdocs-banner-example"
-					dismissTemporary
-					list={ [ 'Live chat support', 'No advertising' ] }
+					callToAction={ translate( 'Upgrade for $9.99' ) }
+					description={ translate( 'Live chat support and no advertising.' ) }
+					list={ [
+						translate( 'Live chat support' ),
+						translate( 'No advertising' )
+					] }
 					plan={ PLAN_BUSINESS }
-					title="Upgrade to a Business Plan!"
+					title={ translate( 'Upgrade to a Business Plan!' ) }
 				/>
 			);
 		}
