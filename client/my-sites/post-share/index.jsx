@@ -188,7 +188,7 @@ class PostShare extends Component {
 			service,
 			handle,
 			timestamp,
-			message
+			message,
 		} = item;
 
 		return (

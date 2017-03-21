@@ -23,7 +23,7 @@ var SectionNav = React.createClass( {
 		selectedCount: React.PropTypes.number,
 		hasPinnedItems: React.PropTypes.bool,
 		onMobileNavPanelOpen: React.PropTypes.func,
-		className: React.PropTypes.string
+		className: React.PropTypes.string,
 	},
 
 	getInitialState: function() {
