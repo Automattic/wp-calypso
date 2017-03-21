@@ -16,9 +16,9 @@ import {
 /**
  * Tracks poster updated state.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param {Boolean} state Whether or not the video poster was already updated
+ * @param {Object} action Action object
+ * @returns {Boolean} Whether or not the video poster is now updated
  */
 export const isPosterUpdated = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -36,9 +36,9 @@ export const isPosterUpdated = ( state = false, action ) => {
 /**
  * Tracks poster URL state.
  *
- * @param  {Object} state  Current state
+ * @param  {String} state Current poster URL
  * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @return {String} Updated poster URL
  */
 export const posterUrl = ( state = '', action ) => {
 	switch ( action.type ) {
@@ -55,9 +55,9 @@ export const posterUrl = ( state = '', action ) => {
 /**
  * Tracks poster upload progress state.
  *
- * @param  {Object} state  Current state
+ * @param  {Number} state Current upload progress of the poster
  * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @return {Number} Updated upload progress of the poster
  */
 export const uploadProgress = ( state = 0, action ) => {
 	switch ( action.type ) {
@@ -74,22 +74,11 @@ export const uploadProgress = ( state = 0, action ) => {
 /**
  * Tracks poster error state.
  *
- * @param  {Object} state  Current state
+ * @param  {Boolean} state Whether or not an error was previously encountered while updating the poster
  * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @return {Boolean} Whether or not an error has now been encountered while updating the poster
  */
-export const hasPosterUpdateError = ( state = false, action ) => {
-	switch ( action.type ) {
-		case VIDEO_EDITOR_SHOW_ERROR:
-			return true;
-
-		case VIDEO_EDITOR_SET_POSTER_URL:
-		case VIDEO_EDITOR_RESET_STATE:
-			return false;
-	}
-
-	return state;
-};
+export const hasPosterUpdateError = ( state = false, { type } ) => type === VIDEO_EDITOR_SHOW_ERROR;
 
 export default combineReducers( {
 	hasPosterUpdateError,
