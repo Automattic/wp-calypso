@@ -21,6 +21,10 @@ import { getPublicizeConnection } from 'state/selectors/';
 export default function getSitePostPublicizeSharingActions( state, siteId, postId ) {
 	const rawActions = get( state, [ 'sharing', 'publicize', 'sharePostActions', 'items', siteId, postId ], null );
 
+	if ( ! rawActions ) {
+		return null;
+	}
+
 	return map( rawActions, ( {
 		ID,
 		connection_id,
