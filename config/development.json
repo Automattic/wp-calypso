@@ -102,6 +102,7 @@
 		"me/next-steps": true,
 		"me/notifications": true,
 		"me/trophies": false,
+		"nps-survey/devdocs": true,
 		"preview-layout": true,
 		"paladin": true,
 		"network-connection": true,
