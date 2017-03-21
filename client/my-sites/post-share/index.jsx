@@ -316,12 +316,12 @@ class PostShare extends Component {
 				</SectionNav>
 				<div className="post-share__scheduled-list">
 					{ footerSection === PostShare.FOOTER_SECTION_SCHEDULED &&
-					this.renderScheduledList()
+						this.renderScheduledList()
 					}
 				</div>
 				<div className="post-share__published-list">
 					{ footerSection === PostShare.FOOTER_SECTION_PUBLISHED &&
-					this.renderPublishedList()
+						this.renderPublishedList()
 					}
 				</div>
 			</div>
