@@ -26,9 +26,9 @@ class CurrentTheme extends Component {
 
 	static propTypes = {
 		options: PropTypes.objectOf( PropTypes.shape( {
-			label: PropTypes.string.isRequired,
-			icon: PropTypes.string.isRequired,
-			getUrl: PropTypes.func.isRequired
+			label: PropTypes.string,
+			icon: PropTypes.string,
+			getUrl: PropTypes.func
 		} ) ),
 		siteId: PropTypes.number.isRequired,
 		// connected props
@@ -43,7 +43,7 @@ class CurrentTheme extends Component {
 			text = ( currentTheme && currentTheme.name ) ? currentTheme.name : placeholderText;
 
 		const options = pickBy( this.props.options, option =>
-			option.hideForTheme && option.hideForTheme( currentThemeId, siteId )
+			option.icon && ! ( option.hideForTheme && option.hideForTheme( currentThemeId, siteId ) )
 		);
 
 		const showScreenshot = currentTheme && currentTheme.screenshot;
