@@ -10,6 +10,7 @@ import { uniq, some, startsWith } from 'lodash';
 /**
  * Internal Dependencies
  */
+import AsyncLoad from 'components/async-load';
 import { SITES_ONCE_CHANGED } from 'state/action-types';
 import userFactory from 'lib/user';
 import { receiveSite, requestSites } from 'state/sites/actions';
@@ -27,7 +28,6 @@ import {
 } from 'state/ui/actions';
 import { savePreference } from 'state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'state/preferences/selectors';
-import NavigationComponent from 'my-sites/navigation';
 import route from 'lib/route';
 import notices from 'notices';
 import config from 'config';
@@ -89,7 +89,8 @@ function createNavigation( context ) {
 	}
 
 	return (
-		<NavigationComponent path={ context.path }
+		<AsyncLoad require="my-sites/navigation"
+			path={ context.path }
 			allSitesPath={ basePath }
 			siteBasePath={ basePath }
 			user={ user } />
