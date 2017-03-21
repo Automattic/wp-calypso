@@ -44,6 +44,7 @@ class NpsSurvey extends Component {
 		// simulate requestresponse time
 		setTimeout( () => {
 			this.setState( {
+				isSubmitting: false,
 				isSubmitted: true
 			} );
 		}, 500 );
@@ -67,6 +68,8 @@ class NpsSurvey extends Component {
 			'is-submitted': this.state.isSubmitted
 		} );
 
+		const shouldDisableControls = this.state.isSubmitting || this.state.isSubmitted;
+
 		return (
 			<div className={ className }>
 				<div className="nps-survey__question-screen">
@@ -74,20 +77,20 @@ class NpsSurvey extends Component {
 					<div>
 						<RecommendationSelect
 							value={ this.state.recommendationValue }
-							disabled={ this.state.isSubmitting }
+							disabled={ shouldDisableControls }
 							onChange={ this.handleRecommendationSelectChange }
 						/>
 					</div>
 					<div>
 						<Button primary
 							className="nps-survey__finish-button"
-							disabled={ this.state.isSubmitting }
+							disabled={ shouldDisableControls }
 							onClick={ this.handleFinishClick }
 						>
 							Finish
 						</Button>
 						<Button borderless
-							disabled={ this.state.isSubmitting }
+							disabled={ shouldDisableControls }
 							onClick={ this.handleDismissClick }
 						>
 							I'd rather not answer

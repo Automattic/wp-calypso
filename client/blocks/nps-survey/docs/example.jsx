@@ -7,7 +7,6 @@ import React, { PureComponent } from 'react';
  * Internal dependencies
  */
 import NpsSurvey from '../';
-import { isEnabled } from 'config';
 
 class NpsSurveyExample extends PureComponent {
 	constructor( props ) {
@@ -31,14 +30,6 @@ class NpsSurveyExample extends PureComponent {
 	}
 
 	render() {
-		// Since this component is still in-progress and unstyled, we will hide it from
-		// the display in DevDocs unless in the development environment.
-		if ( ! isEnabled( 'nps-survey/devdocs' ) ) {
-			return (
-				<div>NPS Survey component is currently only available in the development environment.</div>
-			);
-		}
-
 		return (
 			<div>
 				{ ! this.state.wasDismissed &&
