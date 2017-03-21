@@ -11,6 +11,9 @@ import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
+	ACCOUNT_RECOVERY_RESET_REQUEST,
+	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
 	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
 	ACCOUNT_RECOVERY_RESET_PICK_METHOD,
 } from 'state/action-types';
@@ -93,18 +96,18 @@ describe( '#account-recovery/reset reducer', () => {
 		assert.deepEqual( state.options.items, fetchedOptions );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR action should populate the error field.', () => {
-		const fetchError = {
-			status: 400,
-			message: 'Something wrong!',
-		};
+	const mockError = deepFreeze( {
+		status: 400,
+		message: 'Something wrong!',
+	} );
 
+	it( 'ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR action should populate the error field.', () => {
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
-			error: fetchError,
+			error: mockError,
 		} );
 
-		assert.deepEqual( state.options.error, fetchError );
+		assert.deepEqual( state.options.error, mockError );
 	} );
 
 	it( 'ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action should populate the user field.', () => {
@@ -170,5 +173,45 @@ describe( '#account-recovery/reset reducer', () => {
 		} );
 
 		assert.equal( state.method, method );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_REQUEST action should set the requesting status flag', () => {
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_RESET_REQUEST,
+		} );
+
+		assert.isTrue( state.requestReset.isRequesting );
+	} );
+
+	const requestingResetState = deepFreeze( {
+		requestReset: {
+			isRequesting: true,
+		},
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS action should unset the requesting status flag', () => {
+		const state = reducer( requestingResetState, {
+			type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+		} );
+
+		assert.isFalse( state.requestReset.isRequesting );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_REQUEST_ERROR action should unset the requesting status flag', () => {
+		const state = reducer( requestingResetState, {
+			type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+			error: {},
+		} );
+
+		assert.isFalse( state.requestReset.isRequesting );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_REQUEST_ERROR action should populate the error field', () => {
+		const state = reducer( requestingResetState, {
+			type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+			error: mockError,
+		} );
+
+		assert.deepEqual( state.requestReset.error, mockError );
 	} );
 } );
