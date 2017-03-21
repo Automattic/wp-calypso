@@ -249,7 +249,7 @@ function filterDesignTypeInFlow( flow ) {
 		return;
 	}
 
-	if ( ! includes( flow.steps, 'design-type' ) || 'designTypeWithStore' !== abtest( 'signupStore' ) ) {
+	if ( ! includes( flow.steps, 'design-type' ) ) {
 		return flow;
 	}
 
@@ -309,6 +309,7 @@ const Flows = {
 			flow = removeUserStepFromFlow( flow );
 		}
 
+		// Show design type with store option only to new users with EN locale.
 		if ( ! user.get() && 'en' === i18n.getLocaleSlug() ) {
 			flow = filterDesignTypeInFlow( flow );
 		}

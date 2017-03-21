@@ -8,15 +8,6 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
-	signupStore: {
-		datestamp: '20160927',
-		variations: {
-			designTypeWithoutStore: 0,
-			designTypeWithStore: 100,
-		},
-		defaultVariation: 'designTypeWithStore',
-		allowExistingUsers: false,
-	},
 	userFirstSignup: {
 		datestamp: '20160124',
 		variations: {
