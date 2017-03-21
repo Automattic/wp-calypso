@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @param  {Number}   postId   The ID of specific share post action we're querying
  * @return {?Boolean}          Whether currently editing sharePost action.
  */
-export default function isEditingPublicizeShareAction( state, siteId, postId, actionId ) {
+export default function isEditingPublicizeSharePostAction( state, siteId, postId, actionId ) {
 	return get( state, [ 'sharing', 'sharePostActions', 'items', siteId, postId, actionId ], false );
 }
