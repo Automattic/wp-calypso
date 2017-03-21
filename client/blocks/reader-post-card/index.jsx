@@ -203,7 +203,7 @@ class ReaderPostCard extends React.Component {
 				{ postByline }
 				{ showPrimaryFollowButton && followUrl && <FollowButton siteUrl={ followUrl } followSource={ followSource } /> }
 				{ readerPostCard }
-				{/*{ this.props.children }*/}
+				{ this.props.children }
 			</Card>
 		);
 	}
