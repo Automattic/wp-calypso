@@ -1,72 +1,79 @@
 /**
  * External Dependencies
  */
-import React from 'react';
+import { connect } from 'react-redux';
+import React, { Component } from 'react';
 import { map, sampleSize } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import TagSubscriptions from 'lib/reader-tags/subscriptions';
 import i18nUtils from 'lib/i18n-utils';
 import { suggestions } from 'reader/search-stream/suggestions';
+import { getReaderFollowedTags } from 'state/selectors';
 
-export default ( Element, count = 3 ) => {
-	return class SuggestionsListener extends React.Component {
-
-		state = {
-			suggestions: this.getSuggestions()
+/**
+ * Build suggestions from subscribed tags
+ * @param  {Number} count The number of suggestions required
+ * @param  {Array} tags  An array of subscribed tags
+ * @return {Array}       An array of suggestions, or null if no tags where provided
+ */
+function suggestionsFromTags( count, tags ) {
+	if ( tags ) {
+		if ( tags.length <= count ) {
+			return [];
 		}
+		return map( sampleSize( tags, count ), tag => ( tag.displayName || tag.slug ).replace( /-/g, ' ' ) );
+	}
+	return null;
+}
 
-		componentWillMount() {
-			TagSubscriptions.on( 'change', this.handleChange );
-		}
+function suggestionsFromPicks( count ) {
+	const lang = i18nUtils.getLocaleSlug().split( '-' )[ 0 ];
 
-		componentWillUnmount() {
-			TagSubscriptions.off( 'change', this.handleChange );
-		}
+	if ( suggestions[ lang ] ) {
+		return sampleSize( suggestions[ lang ], count );
+	}
+	return null;
+}
 
-		suggestionsFromTags() {
-			const tags = TagSubscriptions.get();
-			if ( tags ) {
-				if ( tags.length <= count ) {
-					return [];
-				}
-				return map( sampleSize( tags, count ), tag => ( tag.display_name || tag.slug ).replace( /-/g, ' ' ) );
-			}
-			return null;
-		}
+function getSuggestions( count, tags ) {
+	const tagSuggestions = suggestionsFromTags( count, tags );
+	if ( tagSuggestions === null ) {
+		// return null to supperess showing any suggestions until tag subscriptions load
+		return null;
+	}
 
-		suggestionsFromPicks() {
-			const lang = i18nUtils.getLocaleSlug().split( '-' )[ 0 ];
+	if ( tagSuggestions.length ) {
+		return tagSuggestions;
+	}
 
-			if ( suggestions[ lang ] ) {
-				return sampleSize( suggestions[ lang ], count );
-			}
-			return null;
-		}
+	return suggestionsFromPicks( count );
+}
 
-		getSuggestions() {
-			const tagSuggestions = this.suggestionsFromTags();
-			if ( tagSuggestions === null ) {
-				return null;
-			}
+const SuggestionsProvider = ( Element, count = 3 ) => class extends Component {
+	// never let the suggestions change once its been set to non-null so that suggestions
+	// don't keep getting recalulated every redux-store change
+	memoizedSuggestions = null;
+	getFirstSuggestions = ( state ) => this.memoizedSuggestions
+		? this.memoizedSuggestions
+		: this.memoizedSuggestions = getSuggestions( count, getReaderFollowedTags( state ) );
 
-			if ( tagSuggestions.length ) {
-				return tagSuggestions;
-			}
+	componentWillUnmount() {
+		// when unmounted, let the suggestions refresh
+		this.memoizedSuggestions = null;
+	}
 
-			return this.suggestionsFromPicks();
-		}
+	EnhancedComponent = connect(
+		( state ) => ( {
+			suggestions: this.getFirstSuggestions( state ),
+		} )
+	)( Element );
 
-		handleChange = () => {
-			this.setState( {
-				suggestions: this.getSuggestions()
-			} );
-		}
-
-		render() {
-			return <Element { ...this.props } suggestions={ this.state.suggestions } />;
-		}
-	};
+	render() {
+		const EnhancedComponent = this.EnhancedComponent;
+		return <EnhancedComponent { ...this.props } />;
+	}
 };
+
+export default SuggestionsProvider;

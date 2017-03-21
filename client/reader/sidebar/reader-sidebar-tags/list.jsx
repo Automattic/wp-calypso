@@ -30,7 +30,7 @@ export class ReaderSidebarTagsList extends Component {
 		return map( tags, function( tag ) {
 			return (
 				<ReaderSidebarTagsListItem
-					key={ tag.ID }
+					key={ tag.id }
 					tag={ tag }
 					path={ path }
 					onUnfollow={ onUnfollow }

@@ -27,7 +27,7 @@ import { abtest } from 'lib/abtest';
 const TAGS_TO_SHOW = abtest( 'readerPostCardTagCount' ) === 'showThree' ? 3 : 1;
 
 class TagLink extends React.Component {
-	recordSingleTagClick() {
+	recordSingleTagClick = () => {
 		const tag = this.props.tag;
 		recordAction( 'click_tag' );
 		recordGaEvent( 'Clicked Tag Link' );
