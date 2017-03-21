@@ -51,9 +51,11 @@ function wcpomAutoResize( editor ) {
 		marginTop = editor.dom.getStyle( body, 'margin-top', true );
 		marginBottom = editor.dom.getStyle( body, 'margin-bottom', true );
 		paddingTop = editor.dom.getStyle( body, 'padding-top', true );
-		paddingBottom = editor.dom.getStyle( body, 'padding-bottom', true );
 		borderTop = editor.dom.getStyle( body, 'border-top-width', true );
 		borderBottom = editor.dom.getStyle( body, 'border-bottom-width', true );
+		// paddingBottom seems to get reset to 1 somewhere, so grab
+		// autoresize_bottom_margin directly here
+		paddingBottom = editor.getParam( 'autoresize_bottom_margin', 50 );
 
 		myHeight = body.offsetHeight + parseInt( marginTop, 10 ) + parseInt( marginBottom, 10 ) +
 			parseInt( paddingTop, 10 ) + parseInt( paddingBottom, 10 ) +
