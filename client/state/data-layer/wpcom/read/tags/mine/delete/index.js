@@ -47,7 +47,10 @@ export function receiveUnfollowTag( store, action, next, apiResponse ) {
 }
 
 export function receiveError( store, action, next, error ) {
-	const errorText = translate( 'Could not unfollow tag: %(tag)', { tag: action.payload.slug } );
+	const errorText = translate( 'Could not unfollow tag: %(tag)s', {
+		args: { tag: action.payload.slug }
+	} );
+
 	store.dispatch( errorNotice( errorText ) );
 	if ( process.env.NODE_ENV === 'development' ) {
 		console.error( errorText, error ); // eslint-disable-line no-console

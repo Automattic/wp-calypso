@@ -37,6 +37,10 @@ export function requestTags( store, action, next ) {
 
 export function receiveTagsSuccess( store, action, next, apiResponse ) {
 	let tags = fromApi( apiResponse );
+	if ( ! apiResponse || ! apiResponse.tag && ! apiResponse.tags ) {
+		receiveTagsError( store, action, next );
+		return;
+	}
 
 	// if from the read following tags api, then we should add isFollowing=true to all of the tags
 	if ( apiResponse.tags ) {
