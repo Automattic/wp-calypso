@@ -69,7 +69,7 @@ export class ReaderSidebarTags extends Component {
 		const tagCount = tags ? tags.length : 0;
 		return (
 			<div>
-				<QueryReaderFollowedTags />
+				{ ! this.props.tags && <QueryReaderFollowedTags /> }
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
 					title={ translate( 'Tags' ) }
