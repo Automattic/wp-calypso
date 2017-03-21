@@ -49,12 +49,14 @@ export const EditorBasicsTour = makeTour(
 			isNewSite,
 			isDesktop
 			) }
+
 		>
 		<Step
 			name="init"
 			arrow="top-left"
 			target=".editor-title"
 			placement="below"
+			style={ { animationDelay: '10s',} }
 			>
 			<p>
 				Welcome to the editor! Add a title here.
