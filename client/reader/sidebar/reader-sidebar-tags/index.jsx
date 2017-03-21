@@ -35,7 +35,7 @@ export class ReaderSidebarTags extends Component {
 	}
 
 	followTag = ( tag ) => {
-		this.props.followTag( tag );
+		this.props.followTag( decodeURIComponent( tag ) );
 		stats.recordAction( 'followed_topic' );
 		stats.recordGaEvent( 'Clicked Follow Topic', tag );
 		stats.recordTrack( 'calypso_reader_reader_tag_followed', {
@@ -54,7 +54,7 @@ export class ReaderSidebarTags extends Component {
 			stats.recordTrack( 'calypso_reader_reader_tag_unfollowed', {
 				tag: slug,
 			} );
-			this.props.unfollowTag( slug );
+			this.props.unfollowTag( decodeURIComponent( slug ) );
 		}
 	}
 

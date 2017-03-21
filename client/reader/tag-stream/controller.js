@@ -39,6 +39,7 @@ export default {
 				key={ 'tag-' + encodedTag }
 				postsStore={ tagStore }
 				tag={ encodedTag }
+				decodedTag={ tagSlug }
 				trackScrollPage={ trackScrollPage.bind(
 					null,
 					basePath,

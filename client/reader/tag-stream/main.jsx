@@ -24,7 +24,8 @@ const TagStream = React.createClass( {
 	_isMounted: false,
 
 	propTypes: {
-		tag: React.PropTypes.string
+		tag: React.PropTypes.string, // the tag slug encoded
+		decodedTag: React.PropTypes.string, // decoded tag slug
 	},
 
 	getInitialState() {
@@ -44,7 +45,7 @@ const TagStream = React.createClass( {
 		} );
 		asyncRequire( 'twemoji', function( twemoji ) {
 			if ( self._isMounted ) {
-				const title = self.state && self.state.title;
+				const title = self.getTitle();
 				self.setState( {
 					twemoji,
 					isEmojiTitle: title && twemoji.test( title )
@@ -71,8 +72,7 @@ const TagStream = React.createClass( {
 	},
 
 	getTitle() {
-		const tag = find( this.props.tags, { slug: this.props.tag } );
-		return tag && ( decodeURIComponent( tag.displayName || tag.slug ) );
+		return decodeURIComponent( this.props.tag );
 	},
 
 	isSubscribed() {
@@ -81,10 +81,10 @@ const TagStream = React.createClass( {
 	},
 
 	toggleFollowing() {
-		const { tag, unfollowTag, followTag } = this.props;
+		const { tag, decodedTag, unfollowTag, followTag } = this.props;
 		const isFollowing = this.isSubscribed();
 		const toggleAction = isFollowing ? unfollowTag : followTag;
-		toggleAction( tag );
+		toggleAction( decodedTag );
 		stats.recordAction( isFollowing ? 'followed_topic' : 'unfollowed_topic' );
 		stats.recordGaEvent( isFollowing ? 'Clicked Follow Topic' : 'Clicked Unfollow Topic', tag );
 		stats.recordTrack( isFollowing ? 'calypso_reader_reader_tag_followed' : 'calypso_reader_reader_tag_unfollowed', {
@@ -109,7 +109,7 @@ const TagStream = React.createClass( {
 		return (
 			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showFollowInHeader={ true } >
 				<QueryReaderFollowedTags />
-				<QueryReaderTag tag={ this.props.tag } />
+				<QueryReaderTag tag={ this.props.decodedTag } />
 				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
 				<TagStreamHeader
