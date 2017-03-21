@@ -93,6 +93,7 @@ const SearchCardAdapter = ( isRecommendations ) => class extends Component {
 			followSource={ SEARCH_RESULTS }
 			onCommentClick={ this.onCommentClick }
 			showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
+			postKey={ this.props.postKey }
 		/>;
 	}
 };

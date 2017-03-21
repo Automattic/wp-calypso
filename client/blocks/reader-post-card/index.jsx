@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { noop, truncate, get, isEmpty } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
@@ -25,8 +26,10 @@ import { getDiscoverBlogName,
 	getSourceFollowUrl as getDiscoverFollowUrl,
 } from 'reader/discover/helper';
 import DiscoverFollowButton from 'reader/discover/follow-button';
+import { expandCard as expandCardAction } from 'state/ui/reader/card-expansions/actions';
+import { isReaderCardExpanded } from 'state/selectors';
 
-export default class ReaderPostCard extends React.Component {
+class ReaderPostCard extends React.Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired,
 		site: PropTypes.object,
@@ -42,6 +45,7 @@ export default class ReaderPostCard extends React.Component {
 		showSiteName: PropTypes.bool,
 		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
+		postKey: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -109,6 +113,9 @@ export default class ReaderPostCard extends React.Component {
 			showSiteName,
 			followSource,
 			isDiscoverStream,
+			postKey,
+			isExpanded,
+			expandCard,
 		} = this.props;
 
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
@@ -146,10 +153,20 @@ export default class ReaderPostCard extends React.Component {
 
 		let readerPostCard;
 		if ( isPhotoPost ) {
-			readerPostCard = <PhotoPost post={ post } site={ site } title={ title } onClick={ this.handleCardClick } >
-					{ discoverFollowButton }
-					{ readerPostActions }
-				</PhotoPost>;
+			readerPostCard = (
+				<PhotoPost
+					post={ post }
+					site={ site }
+					title={ title }
+					onClick={ this.handleCardClick }
+					isExpanded={ isExpanded }
+					expandCard={ expandCard }
+					postKey={ postKey }
+				>
+						{ discoverFollowButton }
+						{ readerPostActions }
+				</PhotoPost>
+			);
 		} else if ( isGalleryPost ) {
 			readerPostCard = <GalleryPost post={ post } title={ title } isDiscover={ isDiscover }>
 					{ readerPostActions }
@@ -192,3 +209,9 @@ export default class ReaderPostCard extends React.Component {
 	}
 }
 
+export default connect(
+	( state, ownProps ) => ( {
+		isExpanded: isReaderCardExpanded( state, ownProps.postKey )
+	} ),
+	{ expandCard: expandCardAction }
+)( ReaderPostCard );

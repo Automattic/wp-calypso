@@ -98,6 +98,7 @@ export default class PostLifecycle extends React.PureComponent {
 					showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
 					showSiteName={ this.props.showSiteName }
 					isDiscoverStream={ this.props.isDiscoverStream }
+					postKey={ this.props.postKey }
 				/>;
 		}
 	}
