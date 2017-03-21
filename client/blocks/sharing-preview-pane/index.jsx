@@ -80,8 +80,8 @@ class SharingPreviewPane extends PureComponent {
 						</h1>
 						<p className="sharing-preview-pane__description">
 							{ translate(
-								'This is how your post will appear' +
-								'when people view or share it on any of' +
+								'This is how your post will appear ' +
+								'when people view or share it on any of ' +
 								'the networks below' ) }
 						</p>
 					</div>
