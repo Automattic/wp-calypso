@@ -9,6 +9,7 @@ import React, { PropTypes } from 'react';
 import Main from 'components/main';
 import Navigation from './components/navigation';
 import Caching from './components/advanced/caching';
+import Miscellaneous from './components/advanced/miscellaneous';
 import EasyTab from './components/easy';
 import { Tabs } from './constants';
 
@@ -19,6 +20,7 @@ const WPSuperCache = ( { site, tab } ) => {
 				return (
 					<div>
 						<Caching />
+						<Miscellaneous />
 					</div>
 				);
 			case Tabs.CDN:
