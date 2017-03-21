@@ -43,6 +43,11 @@
 	.site__content {
 		padding: 0;
 	}
+
+	.plugin-activate-toggle__disabled,
+	.plugin-activate-toggle__link {
+		margin-left: 12px;
+	}
 }
 
 .plugin-site-jetpack__embed-action {

@@ -131,7 +131,6 @@
 	.plugin-action__label {
 		@include breakpoint( '<480px' ) {
 			flex-grow: 2;
-			color: $gray-dark;
 			font-size: 11px;
 		}
 	}
