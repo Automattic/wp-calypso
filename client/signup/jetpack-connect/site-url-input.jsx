@@ -50,6 +50,10 @@ export default React.createClass( {
 		}, this.props.onChange );
 	},
 
+	onClick() {
+		this.props.onClick( this.state.value );
+	},
+
 	renderButtonLabel() {
 		if ( ! this.props.isFetching ) {
 			if ( ! this.props.isInstall ) {
@@ -62,7 +66,7 @@ export default React.createClass( {
 
 	handleKeyPress( event ) {
 		if ( 13 === event.keyCode ) {
-			this.props.onClick();
+			this.onClick();
 		}
 	},
 
@@ -119,7 +123,7 @@ export default React.createClass( {
 					{ this.renderTermsOfServiceLink() }
 					<Button primary
 						disabled={ ( ! this.state.value || this.props.isFetching || hasError ) }
-						onClick={ this.props.onClick }>{ this.renderButtonLabel() }</Button>
+						onClick={ this.onClick }>{ this.renderButtonLabel() }</Button>
 				</Card>
 			</div>
 		);
