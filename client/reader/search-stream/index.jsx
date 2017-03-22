@@ -246,7 +246,7 @@ class SearchStream extends Component {
 							value={ query }>
 						</SearchInput>
 						{ query &&
-							<SegmentedControl compact primary
+							<SegmentedControl compact
 								className="search-stream__sort-picker">
 								<ControlItem
 									selected={ sortOrder !== 'date' }
