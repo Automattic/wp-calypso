@@ -46,6 +46,7 @@ MD_FILES := $(shell \
 	find . \
 		-not \( -path './.git' -prune \) \
 		-not \( -path './build' -prune \) \
+		-not \( -path './desktop' -prune \) \
 		-not \( -path './node_modules' -prune \) \
 		-not \( -path './public' -prune \) \
 		-type f \

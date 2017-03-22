@@ -1,3 +1,10 @@
+ifeq ($(OS),Windows_NT)
+ENV_PATH_SEP := ;
+else
+ENV_PATH_SEP := :
+endif
+
+
 THIS_MAKEFILE_PATH := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 THIS_DIR := $(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 
@@ -18,11 +25,10 @@ PACKAGE_DMG := $(THIS_DIR)/resource/build-scripts/package-dmg.js
 PACKAGE_WIN32 := @$(NPM_BIN)/electron-builder
 CERT_SPC := $(THIS_DIR)/resource/secrets/automattic-code.spc
 CERT_PVK := $(THIS_DIR)/resource/secrets/automattic-code.pvk
-CALYPSO_DIR := $(THIS_DIR)/calypso
+CALYPSO_DIR := $(THIS_DIR)/..
 CALYPSO_JS := $(CALYPSO_DIR)/public/build.js
-CALYPSO_JS_STD := $(CALYPSO_DIR)/public/build-desktop.js
-CALYPSO_CHANGES_STD := `find "$(CALYPSO_DIR)" -newer "$(CALYPSO_JS_STD)" \( -name "*.js" -o -name "*.jsx" -o -name "*.json" -o -name "*.scss" \) -type f -print -quit | grep -v .m. | wc -l`
-CALYPSO_BRANCH = $(shell git --git-dir ./calypso/.git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+CALYPSO_CHANGES_STD := `find "$(CALYPSO_DIR)" -newer "$(CALYPSO_JS)" \( -name "*.js" -o -name "*.jsx" -o -name "*.json" -o -name "*.scss" \) -type f -print -quit | grep -v .m. | wc -l`
+CALYPSO_BRANCH = $(shell git --git-dir ../.git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 WEBPACK_BIN := $(NPM_BIN)/webpack
 
 # sets to 1 if NPM version is >= 3
@@ -46,13 +52,11 @@ run-release: config-release package
 
 # Builds Calypso (desktop)
 build: install
-	@echo "Building Calypso (Desktop on branch $(RED)$(CALYPSO_BRANCH)$(RESET))"
-	@CALYPSO_ENV=desktop make build -C $(THIS_DIR)/calypso/
-	@cp $(THIS_DIR)/calypso/public/build-desktop.js $(THIS_DIR)/calypso/public/build.js
-	@rm -f $(THIS_DIR)/calypso/public/devmodules.*
+	@echo "Building Calypso"
+	@CALYPSO_ENV=desktop make build -C $(CALYPSO_DIR)
 
 build-if-not-exists:
-	@if [ -f $(CALYPSO_JS_STD) ]; then true; else make build; fi
+	@if [ -f $(CALYPSO_JS) ]; then true; else make build; fi
 
 build-if-changed: build-if-not-exists
 	@if [ $(CALYPSO_CHANGES_STD) -eq 0 ]; then true; else make build; fi;
@@ -88,10 +92,10 @@ endif
 endif
 
 # Packagers
-package: build-if-changed
+package: build
 	@echo "Bundling app and server"
 	@rm -rf $(BUILD_DIR)/public_desktop $(BUILD_DIR)/calypso
-	@NODE_PATH=calypso/client $(WEBPACK_BIN) --config $(THIS_DIR)/webpack.config.js
+	@NODE_PATH=../server$(ENV_PATH_SEP)../client $(WEBPACK_BIN) --config $(THIS_DIR)/webpack.config.js
 	@echo "Copying Calypso client and public files"
 	@sed -e 's/build\///' $(THIS_DIR)/package.json >$(BUILD_DIR)/package.json
 	@mkdir $(BUILD_DIR)/calypso $(BUILD_DIR)/calypso/config $(BUILD_DIR)/calypso/server
@@ -99,11 +103,9 @@ package: build-if-changed
 	@cp -R $(CALYPSO_DIR)/public $(BUILD_DIR)/calypso/public
 	@cp -R $(CALYPSO_DIR)/server/pages $(BUILD_DIR)/calypso/server/pages
 	@if [ -f $(CALYPSO_DIR)/config/secrets.json ]; then cp $(CALYPSO_DIR)/config/secrets.json $(BUILD_DIR)/calypso/config/secrets.json; else cp $(CALYPSO_DIR)/config/empty-secrets.json $(BUILD_DIR)/calypso/config/secrets.json; fi;
+	@cp $(CALYPSO_DIR)/config/_shared.json $(BUILD_DIR)/calypso/config/
 	@cp $(CALYPSO_DIR)/config/desktop.json $(BUILD_DIR)/calypso/config/
-	@rm $(BUILD_DIR)/calypso/public/build-desktop.js $(BUILD_DIR)/calypso/public/style-debug.css*
-	@mv $(BUILD_DIR)/calypso/public/build-desktop.m.js $(BUILD_DIR)/calypso/public/build.js
-	@rm -rf $(BUILD_DIR)/calypso/server/pages/test $(BUILD_DIR)/calypso/server/pages/Makefile $(BUILD_DIR)/calypso/server/pages/README.md
-	@cd $(BUILD_DIR); $(NPM) install --production --no-optional; $(NPM) prune
+	@rm $(BUILD_DIR)/calypso/public/style-debug.css*
 
 package-win32: win32 verify-makensis
 	@$(PACKAGE_WIN32) ./release/WordPress.com-win32-ia32 --platform=win --out=./release --config=./resource/build-config/win32-package.json
@@ -119,11 +121,11 @@ package-linux: linux
 	@node $(THIS_DIR)/resource/build-scripts/package-linux.js
 
 distclean: clean
-	@cd calypso; make distclean
+	@cd ..; make distclean
 	@rm -rf ./node_modules
 
 clean:
-	@cd calypso; make clean
+	@cd ..; make clean
 	@rm -rf ./release
 	@rm -rf ./build
 
@@ -168,7 +170,7 @@ eslint: lint
 
 # Testing
 test: config-test package
-	@NODE_PATH=calypso/client $(WEBPACK_BIN) --config ./webpack.config.test.js
+	@NODE_PATH=../server$(ENV_PATH_SEP)../client $(WEBPACK_BIN) --config ./webpack.config.test.js
 	@CALYPSO_PATH=`pwd`/build $(ELECTRON_TEST) --inline-diffs --timeout 15000 build/desktop-test.js
 
 test-osx: osx
