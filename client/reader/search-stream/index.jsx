@@ -8,6 +8,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import ControlItem from 'components/segmented-control/item';
+import SegmentedControl from 'components/segmented-control';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import Stream from 'reader/stream';
@@ -48,7 +50,9 @@ function RecommendedPosts( { post, site } ) {
 	return (
 		<div className="search-stream__recommendation-list-item" key={ post.global_ID }>
 			<RelatedPostCard post={ post } site={ site }
-				onSiteClick={ handleSiteClick } onPostClick={ handlePostClick } followSource={ EMPTY_SEARCH_RECOMMENDATIONS } />
+				onSiteClick={ handleSiteClick }
+				onPostClick={ handlePostClick }
+				followSource={ EMPTY_SEARCH_RECOMMENDATIONS } />
 		</div>
 	);
 }
@@ -167,7 +171,10 @@ class SearchStream extends Component {
 	}
 
 	componentDidMount() {
-		this.resizeListener = window.addEventListener( 'resize', debounce( this.resizeSearchBox, 50 ) );
+		this.resizeListener = window.addEventListener(
+			'resize',
+			debounce( this.resizeSearchBox, 50 )
+		);
 		this.resizeSearchBox();
 	}
 
@@ -186,13 +193,24 @@ class SearchStream extends Component {
 		return null;
 	}
 
+	useRelevanceSort = () => {
+		this.props.onSortChange( 'relevance' );
+	}
+
+	useDateSort = () => {
+		this.props.onSortChange( 'date' );
+	}
+
 	render() {
 		const { query, suggestions } = this.props;
 		const emptyContent = <EmptyContent query={ query } />;
+		const sortOrder = this.props.postsStore && this.props.postsStore.sortOrder;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
-			searchPlaceholderText = this.props.translate( 'Search billions of WordPress.com posts…' );
+			searchPlaceholderText = this.props.translate(
+				'Search billions of WordPress.com posts…'
+			);
 		}
 
 		const suggestionList = initial( flatMap( suggestions, suggestionKeyword =>
@@ -225,8 +243,23 @@ class SearchStream extends Component {
 							delayTimeout={ 500 }
 							placeholder={ searchPlaceholderText }
 							initialValue={ query }
-							value={ query }
-						/>
+							value={ query }>
+						</SearchInput>
+						{ query &&
+							<SegmentedControl compact primary
+								className="search-stream__sort-picker">
+								<ControlItem
+									selected={ sortOrder !== 'date' }
+									onClick={ this.useRelevanceSort }>
+									{ this.props.translate( 'Relevance' ) }
+								</ControlItem>
+								<ControlItem
+									selected={ sortOrder === 'date' }
+									onClick={ this.useDateSort }>
+									{ this.props.translate( 'Date' ) }
+								</ControlItem>
+							</SegmentedControl>
+						}
 					</CompactCard>
 					<p className="search-stream__blank-suggestions">
 						{ suggestions &&

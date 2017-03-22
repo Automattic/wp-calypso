@@ -62,6 +62,10 @@ export default {
 			replaceSearchUrl( query, sort !== 'relevance' ? sort : undefined );
 		}
 
+		function reportSortChange( newSort ) {
+			replaceSearchUrl( searchSlug, newSort !== 'relevance' ? newSort : undefined );
+		}
+
 		renderWithReduxStore(
 			<AsyncLoad require="reader/search-stream"
 				key="search"
@@ -79,6 +83,7 @@ export default {
 				showPrimaryFollowButtonOnCards={ true }
 				autoFocusInput={ autoFocusInput }
 				onQueryChange={ reportQueryChange }
+				onSortChange={ reportSortChange }
 			/>,
 			document.getElementById( 'primary' ),
 			context.store

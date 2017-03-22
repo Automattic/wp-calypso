@@ -137,6 +137,7 @@ function getStoreForSearch( storeId ) {
 		keyMaker: siteKeyMaker,
 		perPage: 5
 	} );
+	stream.sortOrder = sort;
 
 	function fetcher( query, callback ) {
 		query.q = slug;
