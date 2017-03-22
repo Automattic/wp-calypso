@@ -530,6 +530,11 @@ walk(
 				return [ ...pathParts.slice( 0, -1 ), fileName ].join( path.sep );
 			})
 			.forEach( scssModulePath => { // remove module imports
+				// Must be imported here because it defines extensions that are used in `client/post-editor/editor-sharing/publicize-message.scss`
+				if ( scssModulePath === 'post-editor/editor-drawer/style' ) {
+					return;
+				}
+
 				const importStatement = `@import '${scssModulePath}';\n`;
 				componentsImport = componentsImport.replace( importStatement, '' );
 			} );
