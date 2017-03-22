@@ -24,7 +24,7 @@ import { localize } from 'i18n-calypso';
  */
 import wpcom from 'lib/wp';
 import Notice from 'components/notice';
-import { getFixedDomainSearch, checkDomainAvailability } from 'lib/domains';
+import { checkDomainAvailability, getFixedDomainSearch } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import SearchCard from 'components/search-card';
@@ -387,13 +387,17 @@ const RegisterDomainStep = React.createClass( {
 
 				if ( abtest( 'domainSuggestionNudgeLabels' ) === 'withLabels' ) {
 					const isFree = ( suggestion ) => ( suggestion.is_free === true ),
+						strippedDomain = domain.replace( / \./g, '' ),
+						isExactMatch = ( suggestion ) => ( suggestion.domain_name === domain ),
 						exactMatchBeforeTld = ( suggestion ) => (
-							startsWith( suggestion.domain_name, `${ domain.replace( / /g, '' ) }.` ) &&
-							! isFree( suggestion )
+							isExactMatch( suggestion ) || (
+								startsWith( suggestion.domain_name, `${ strippedDomain }.` ) &&
+								! isFree( suggestion )
+							)
 						),
 						bestAlternative = ( suggestion ) => (
 							! exactMatchBeforeTld( suggestion ) &&
-							suggestion.domain_name !== domain &&
+							! isExactMatch( suggestion ) &&
 							! isFree( suggestion )
 						),
 						recommendedSuggestion = find( suggestions, exactMatchBeforeTld ),
