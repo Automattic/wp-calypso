@@ -148,7 +148,7 @@ const CONTENT_CSS = [
 	window.app.tinymceWpSkin,
 	'//s1.wp.com/wp-includes/css/dashicons.css',
 	window.app.tinymceEditorCss,
-	'//s1.wp.com/i/fonts/notoserif/notoserif.css',
+	'//fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese',
 ];
 
 module.exports = React.createClass( {
