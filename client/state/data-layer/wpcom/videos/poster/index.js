@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { pick } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -19,23 +24,20 @@ import {
  * @returns {Object} original action
  */
 export const updatePoster = ( { dispatch }, action, next ) => {
-	if ( ! ( 'file' in action.params ) && ! ( 'at_time' in action.params ) ) {
+	if ( ! ( 'file' in action.params || 'at_time' in action.params ) ) {
 		return next( action );
 	}
 
-	const params = {
-		apiVersion: '1.1',
-		method: 'POST',
-		path: `/videos/${ action.videoId }/poster`,
-	};
-
-	if ( 'file' in action.params ) {
-		params.formData = [ [ 'poster', action.params.file ] ];
-	}
-
-	if ( 'at_time' in action.params ) {
-		params.body = action.params;
-	}
+	const { at_time, file } = pick( action.params, [ 'at_time', 'file' ] );
+	const params = Object.assign(
+		{
+			apiVersion: '1.1',
+			method: 'POST',
+			path: `/videos/${ action.videoId }/poster`,
+		},
+		file && { formData: [ [ 'poster', file ] ] },
+		at_time !== undefined && { body: { at_time } },
+	);
 
 	dispatch( http( params, action ) );
 
