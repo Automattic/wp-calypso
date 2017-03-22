@@ -13,6 +13,7 @@ import Collection from 'devdocs/design/search-collection';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SearchCard from 'components/search-card';
+import { isEnabled } from 'config';
 
 /**
  * Docs examples
@@ -58,6 +59,7 @@ import DailyPostButton from 'blocks/daily-post-button/docs/example';
 import ReaderSubscriptionListItem from 'blocks/reader-subscription-list-item/docs/example';
 import PostLikes from 'blocks/post-likes/docs/example';
 import ReaderFeaturedVideo from 'blocks/reader-featured-video/docs/example';
+import NpsSurvey from 'blocks/nps-survey/docs/example';
 
 export default React.createClass( {
 
@@ -136,6 +138,9 @@ export default React.createClass( {
 					<DailyPostButton />
 					<PostLikes />
 					<ReaderFeaturedVideo />
+					{ isEnabled( 'nps-survey/devdocs' ) &&
+						<NpsSurvey />
+					}
 				</Collection>
 			</Main>
 		);

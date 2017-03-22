@@ -65,6 +65,7 @@
 		"me/next-steps": true,
 		"me/notifications": true,
 		"me/trophies": false,
+		"nps-survey/devdocs": false,
 		"olark": true,
 		"perfmon": true,
 		"persist-redux": true,

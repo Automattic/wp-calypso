@@ -79,6 +79,7 @@
 		"me/trophies": false,
 		"network-connection": true,
 		"notifications2beta": true,
+		"nps-survey/devdocs": false,
 		"olark": true,
 		"perfmon": true,
 		"persist-redux": true,
