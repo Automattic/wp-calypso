@@ -140,6 +140,7 @@ export function iframeIsWhitelisted( iframe ) {
 		'nyt.com',
 		'google.com',
 		'mixcloud.com',
+		'players.brightcove.net',
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
