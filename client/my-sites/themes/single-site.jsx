@@ -40,6 +40,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 
 	return (
 		<SingleSiteThemeShowcaseWpcom { ...props }
+			origin="wpcom"
 			siteId={ siteId }
 			defaultOption="activate"
 			secondaryOption="tryandcustomize"

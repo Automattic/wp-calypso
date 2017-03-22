@@ -76,9 +76,10 @@ const activate = {
 const deleteTheme = {
 	label: i18n.translate( 'Delete' ),
 	action: confirmDelete,
-	hideForTheme: ( state, themeId, siteId ) => (
+	hideForTheme: ( state, themeId, siteId, origin ) => (
 		! isJetpackSite( state, siteId ) ||
 		! config.isEnabled( 'manage/themes/upload' ) ||
+		origin === 'wpcom' ||
 		isThemeActive( state, themeId, siteId )
 	)
 };
@@ -173,15 +174,15 @@ const ALL_THEME_OPTIONS = {
 };
 
 export const connectOptions = connect(
-	( state, { siteId } ) => {
+	( state, { siteId, origin = siteId } ) => {
 		let mapGetUrl = identity, mapHideForTheme = identity;
 
 		if ( siteId ) {
 			mapGetUrl = getUrl => ( t ) => getUrl( state, t, siteId );
-			mapHideForTheme = hideForTheme => ( t ) => hideForTheme( state, t, siteId );
+			mapHideForTheme = hideForTheme => ( t ) => hideForTheme( state, t, siteId, origin );
 		} else {
 			mapGetUrl = getUrl => ( t, s ) => getUrl( state, t, s );
-			mapHideForTheme = hideForTheme => ( t, s ) => hideForTheme( state, t, s );
+			mapHideForTheme = hideForTheme => ( t, s ) => hideForTheme( state, t, s, origin );
 		}
 
 		return mapValues( ALL_THEME_OPTIONS, option => Object.assign(
