@@ -65,7 +65,8 @@ const ThemesSelection = React.createClass( {
 	getInitialState() {
 		return {
 			themes: [],
-			initialLoad: true
+			initialLoad: true,
+			themesCount: null
 		};
 	},
 
@@ -76,6 +77,7 @@ const ThemesSelection = React.createClass( {
 		if ( nextProps.themesCount !== null ) {
 			this.setState( {
 				themes: nextProps.themes,
+				themesCount: nextProps.themesCount,
 				initialLoad: false
 			} );
 		}
@@ -157,7 +159,7 @@ const ThemesSelection = React.createClass( {
 	},
 
 	render() {
-		const { source, query, listLabel, themesCount } = this.props;
+		const { source, query, listLabel } = this.props;
 
 		return (
 			<div className="themes__selection">
@@ -166,7 +168,7 @@ const ThemesSelection = React.createClass( {
 					siteId={ source } />
 				<ThemesSelectionHeader
 					label={ listLabel }
-					count={ themesCount }
+					count={ this.state.themesCount }
 				/>
 				<ThemesList themes={ this.state.themes }
 					fetchNextPage={ this.fetchNextPage }
