@@ -25,7 +25,6 @@ import { removeNotice, errorNotice } from 'state/notices/actions';
 import { getSiteOption, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isEnabled } from 'config';
 import { FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
@@ -80,7 +79,7 @@ class GoogleAnalyticsForm extends Component {
 		} = this.props;
 
 		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
-		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsModule && isEnabled( 'jetpack/google-analytics' );
+		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsModule;
 
 		return (
 			<form id="site-settings" onSubmit={ handleSubmitForm }>
@@ -210,7 +209,7 @@ const mapStateToProps = ( state ) => {
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled = site && (
 		! siteIsJetpack ||
-		( siteIsJetpack && jetpackModuleActive && jetpackVersionSupportsModule && isEnabled( 'jetpack/google-analytics' ) )
+		( siteIsJetpack && jetpackModuleActive && jetpackVersionSupportsModule )
 	);
 
 	return {
