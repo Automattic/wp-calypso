@@ -387,7 +387,7 @@ const RegisterDomainStep = React.createClass( {
 
 				if ( abtest( 'domainSuggestionNudgeLabels' ) === 'updated' ) {
 					const matchesSearchedDomain = ( suggestion ) => ( suggestion.domain_name === domain ),
-						exactMatchBeforeTld = ( suggestion ) => ( startsWith( suggestion.domain_name, `${ domain }.` ) ),
+						exactMatchBeforeTld = ( suggestion ) => ( startsWith( suggestion.domain_name, `${ domain.replace( / /g, '') }.` ) ),
 						bestAlternative = ( suggestion ) => ( ! exactMatchBeforeTld( suggestion ) && suggestion.domain_name !== domain );
 
 					const availableDomain = find( suggestions, matchesSearchedDomain );

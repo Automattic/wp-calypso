@@ -8,11 +8,11 @@ import React from 'react';
  */
 import Notice from 'components/notice';
 
-function DomainSuggestionFlag( { content } ) {
+function DomainSuggestionFlag( { content, status = 'info' } ) {
 	return (
 		<Notice
 			isCompact
-			status="is-success">
+			status={ `is-${ status }` }>
 			{ content }
 		</Notice>
 	);

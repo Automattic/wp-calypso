@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 import { endsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var DomainSuggestion = require( 'components/domains/domain-suggestion' ),
-	Gridicon = require( 'gridicons' ),
-	DomainSuggestionFlag = require( 'components/domains/domain-suggestion-flag' ),
-	{ shouldBundleDomainWithPlan, getDomainPriceRule, hasDomainInCart } = require( 'lib/cart-values/cart-items' );
+import DomainSuggestion from 'components/domains/domain-suggestion';
+import Gridicon from 'gridicons';
+import DomainSuggestionFlag from 'components/domains/domain-suggestion-flag';
+import { shouldBundleDomainWithPlan, getDomainPriceRule, hasDomainInCart } from 'lib/cart-values/cart-items';
 
 const DomainRegistrationSuggestion = React.createClass( {
 	propTypes: {
@@ -27,29 +27,46 @@ const DomainRegistrationSuggestion = React.createClass( {
 	},
 
 	render() {
-		var suggestion = this.props.suggestion || {},
+		const { suggestion, translate } = this.props,
 			isAdded = hasDomainInCart( this.props.cart, suggestion.domain_name ),
-			buttonClasses,
-			buttonContent,
-			domainFlags = [],
-			translate = this.props.translate;
+			domainFlags = [];
+		let buttonClasses, buttonContent;
 
 		if ( suggestion.domain_name ) {
 			const newTLDs = [];
 
 			if ( newTLDs.some(
-					( tld ) => endsWith( suggestion.domain_name, tld ) && suggestion.domain_name.substring( 0, suggestion.domain_name.length - ( tld.length + 1 ) ).indexOf( '.' ) === -1
+					( tld ) =>
+						endsWith( suggestion.domain_name, tld ) &&
+						suggestion.domain_name.substring( 0, suggestion.domain_name.length - ( tld.length + 1 ) ).indexOf( '.' ) === -1
 				) ) {
-				domainFlags.push( <DomainSuggestionFlag content={ translate( 'New', { context: 'Domain suggestion flag' } ) }/> );
+				domainFlags.push(
+					<DomainSuggestionFlag
+						key={ `${ suggestion.domain_name }-new` }
+						content={ translate( 'New' ) }
+						status="success"
+					/>
+				);
 			}
 		}
 
 		if ( suggestion.isRecommended ) {
-			domainFlags.push( <DomainSuggestionFlag content={ translate( 'Recommended', { context: 'Domain suggestion flag' } ) }/> );
+			domainFlags.push(
+				<DomainSuggestionFlag
+					key={ `${ suggestion.domain_name }-recommended` }
+					content={ translate( 'Recommended' ) }
+					status="success"
+				/>
+			);
 		}
 
 		if ( suggestion.isBestAlternative ) {
-			domainFlags.push( <DomainSuggestionFlag content={ translate( 'Best Alternative', { context: 'Domain suggestion flag' } ) }/> );
+			domainFlags.push(
+				<DomainSuggestionFlag
+					key={ `${ suggestion.domain_name }-best-alternative` }
+					content={ translate( 'Best Alternative' ) }
+				/>
+			);
 		}
 
 		if ( isAdded ) {
@@ -58,8 +75,8 @@ const DomainRegistrationSuggestion = React.createClass( {
 		} else {
 			buttonClasses = 'add is-primary';
 			buttonContent = shouldBundleDomainWithPlan( this.props.domainsWithPlansOnly, this.props.selectedSite, this.props.cart, suggestion )
-				? this.translate( 'Upgrade', { context: 'Domain mapping suggestion button with plan upgrade' } )
-				: this.translate( 'Select', { context: 'Domain mapping suggestion button' } );
+				? translate( 'Upgrade', { context: 'Domain mapping suggestion button with plan upgrade' } )
+				: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
 
 		return (
