@@ -52,8 +52,7 @@ import PluginsStore from 'lib/plugins/store';
 
 const helpLinks = {
 	vaultpress: support.JETPACK_SERVICE_VAULTPRESS,
-	akismet: support.JETPACK_SERVICE_AKISMET,
-	polldaddy: support.JETPACK_SERVICE_POLLDADDY,
+	akismet: support.JETPACK_SERVICE_AKISMET
 };
 
 const PlansSetup = React.createClass( {
