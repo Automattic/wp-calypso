@@ -201,23 +201,24 @@ class SearchStream extends Component {
 		const documentTitle = this.props.translate(
 			'%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) }
 		);
-
+		debugger;
 		const searchInputProps = {
 			onSearch: this.updateQuery,
 			onSearchClose: this.scrollToTop,
 			autoFocus: this.props.autoFocusInput,
 			delaySearch: true,
 			delayTimeout: 500,
-			placeholder: searchPlaceholderText
+			placeholder: searchPlaceholderText,
+			value: query
 		};
 
-		if ( postsStore && postsStore.isQuerySuggestion ) {
-			// we need to set the value prop on the search input
-			searchInputProps.value = query;
-			searchInputProps.initialValue = query;
-		} else {
-			searchInputProps.initialValue = query;
-		}
+		// if ( postsStore && postsStore.isQuerySuggestion ) {
+		// 	// we need to set the value prop on the search input
+		// 	searchInputProps.value = query;
+		// 	searchInputProps.initialValue = query;
+		// } else {
+		// 	searchInputProps.initialValue = query;
+		// }
 
 		return (
 			<Stream { ...this.props }
