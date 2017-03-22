@@ -187,7 +187,7 @@ class SearchStream extends Component {
 	}
 
 	render() {
-		const { store, query, suggestions } = this.props;
+		const { query, suggestions } = this.props;
 		const emptyContent = <EmptyContent query={ query } />;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
@@ -201,8 +201,9 @@ class SearchStream extends Component {
 		const documentTitle = this.props.translate(
 			'%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) }
 		);
+
 		return (
-			<Stream { ...this.props } store={ store }
+			<Stream { ...this.props }
 				listName={ this.props.translate( 'Search' ) }
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
@@ -217,13 +218,15 @@ class SearchStream extends Component {
 				<div className="search-stream__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
-							value={ query }
 							onSearch={ this.updateQuery }
 							onSearchClose={ this.scrollToTop }
 							autoFocus={ this.props.autoFocusInput }
 							delaySearch={ true }
 							delayTimeout={ 500 }
-							placeholder={ searchPlaceholderText } />
+							placeholder={ searchPlaceholderText }
+							initialValue={ query }
+							value={ query }
+						/>
 					</CompactCard>
 					<p className="search-stream__blank-suggestions">
 						{ suggestions &&
