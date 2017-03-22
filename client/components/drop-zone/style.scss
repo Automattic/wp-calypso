@@ -8,7 +8,7 @@
 	visibility: hidden;
 	opacity: 0;
 	transition: 0.3s opacity, 0.3s background-color, 0s visibility 0.3s;
-	border: 2px dashed $blue-dark;
+	border: 6px solid $blue-dark;
 	background-color: rgba( $blue-wordpress, 0.8 );
 
 	&.is-active {
@@ -34,7 +34,8 @@
 	z-index: z-index( 'root', '.drop-zone__content' );
 	transform: translateY( -50% );
 	width: 100%;
-	font-size: 24px;
+	font-size: 14px;
+	font-weight:bold;
 	text-align: center;
 	color: $white;
 	transition: transform 0.3s ease-in-out;
@@ -65,7 +66,6 @@
 
 	.drop-zone__content {
 		color: #542B06;
-		font-size: 14px;
-		font-weight:bold;
+
 	}
 }
