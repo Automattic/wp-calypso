@@ -26,7 +26,8 @@
 			flex-direction: row;
 		}
 	}
-	.posts__post-share-form.is-placeholder, 
+
+	.posts__post-share-form.is-placeholder,
 	.posts__post-share-services.is-placeholder {
 		@include placeholder;
 		margin-top: 16px;
@@ -680,4 +681,9 @@
 	@include breakpoint( ">480px" ) {
 		width: auto;
 	}
+}
+
+.post__total-views {
+	display: inline-flex;
+	align-content: center;
 }
