@@ -686,4 +686,9 @@
 .post__total-views {
 	display: inline-flex;
 	align-content: center;
+
+	.stat-update-indicator {
+		font-size: 14px;
+		padding-top: 2px;
+	}
 }
