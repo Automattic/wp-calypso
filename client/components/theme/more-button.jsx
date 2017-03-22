@@ -30,6 +30,9 @@ class ThemeMoreButton extends React.Component {
 	togglePopover() {
 		this.setState( { showPopover: ! this.state.showPopover } );
 		! this.state.showPopover && this.props.onMoreButtonClick( this.props.theme, this.props.index, 'popup_open' );
+		if ( this.props.onClick ) {
+			this.props.onClick();
+		}
 	}
 
 	closePopover( action ) {

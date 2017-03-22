@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import sinon from 'sinon';
+import { assert } from 'chai';
 
 /**
  * Internal dependencies
@@ -52,7 +52,9 @@ describe( 'Theme', function() {
 		context( 'with default display buttonContents', function() {
 			beforeEach( function() {
 				this.props.onScreenshotClick = sinon.spy();
-				let themeElement = TestUtils.renderIntoDocument( React.createElement( Theme, this.props ) );
+				const themeElement = TestUtils.renderIntoDocument(
+					React.createElement( Theme, this.props )
+				);
 				this.themeNode = ReactDom.findDOMNode( themeElement );
 			} );
 
@@ -121,7 +123,7 @@ describe( 'Theme', function() {
 	context( 'when the theme has a price', function() {
 		beforeEach( function() {
 			this.props.theme.price = '$50';
-			let themeElement = TestUtils.renderIntoDocument(
+			const themeElement = TestUtils.renderIntoDocument(
 				React.createElement( Theme, this.props )
 			);
 			this.themeNode = ReactDom.findDOMNode( themeElement );
