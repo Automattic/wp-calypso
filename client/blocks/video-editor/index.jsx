@@ -24,7 +24,7 @@ import {
 	getPosterUrl,
 	hasPosterUpdateError,
 	isPosterUpdated,
-} from 'state/ui/editor/video-editor/selectors';
+} from 'state/selectors';
 
 /**
  * Module variables

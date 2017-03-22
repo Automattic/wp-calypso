@@ -120,9 +120,13 @@ export getUserSetting from './get-user-setting';
 export getUserSettings from './get-user-settings';
 export getVisibleSites from './get-visible-sites';
 export hasBrokenSiteUserConnection from './has-broken-site-user-connection';
+<<<<<<< HEAD
 export hasInitializedSites from './has-initialized-sites';
 export hasUnsavedUserSettings from './has-unsaved-user-settings';
 export hasUserSettings from './has-user-settings';
+=======
+export hasPosterUpdateError from './has-poster-update-error';
+>>>>>>> Move selectors and tests to state/selectors
 export isAccountRecoveryResetOptionsReady from './is-account-recovery-reset-options-ready';
 export isAccountRecoveryResetPasswordSucceeded from './is-account-recovery-reset-password-succeeded';
 export isAccountRecoveryUserDataReady from './is-account-recovery-user-data-ready';
@@ -157,9 +161,13 @@ export isJetpackSettingsSaveFailure from './is-jetpack-settings-save-failure';
 export isJetpackSiteInDevelopmentMode from './is-jetpack-site-in-development-mode';
 export isJetpackSiteInStagingMode from './is-jetpack-site-in-staging-mode';
 export isMappedDomainSite from './is-mapped-domain-site';
+<<<<<<< HEAD
 export isNotificationsOpen from './is-notifications-open';
 export isPendingEmailChange from './is-pending-email-change';
 export isPluginActive from './is-plugin-active';
+=======
+export isPosterUpdated from './is-poster-updated';
+>>>>>>> Move selectors and tests to state/selectors
 export isPrivateSite from './is-private-site';
 export isPublicizeEnabled from './is-publicize-enabled';
 export isReaderCardExpanded from './is-reader-card-expanded';
