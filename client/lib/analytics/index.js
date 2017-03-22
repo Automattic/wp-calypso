@@ -95,13 +95,8 @@ const analytics = {
 		_superProps = superProps;
 	},
 
-	userAllowsTracking: function() { //Check user's Do Not Track setting in their browser
-		if ( navigator.doNotTrack ) {
-			return false;
-		}
-
-		return true;
-	},
+	//Check user's Do Not Track setting in their browser
+	userAllowsTracking: () => ! navigator.doNotTrack,
 
 	mc: {
 		bumpStat: function( group, name ) {
@@ -159,8 +154,10 @@ const analytics = {
 			if ( process.env.NODE_ENV !== 'production' ) {
 				for ( const key in eventProperties ) {
 					if ( isObjectLike( eventProperties[ key ] ) && typeof console !== 'undefined' ) {
-						const errorMessage = `Unable to record event "${ eventName }" because nested 
-							properties are not supported by Tracks. Check '${ key }' on`;
+						const errorMessage = (
+							`Unable to record event "${ eventName }" because nested` +
+							`properties are not supported by Tracks. Check '${ key }' on`
+						);
 						console.error( errorMessage, eventProperties ); //eslint-disable-line no-console
 
 						return;
@@ -275,15 +272,15 @@ const analytics = {
 					featureSlug = `start_${ matched[ 1 ] }`;
 				}
 
+				const type = eventType.replace( '-', '_' );
 				const json = JSON.stringify( {
 					beacons: [
-						'calypso.' + config( 'boom_analytics_key' ) + '.' + featureSlug + '.' +
-							eventType.replace( '-', '_' ) + ':' + duration + '|ms'
+						`calypso.${ config( 'boom_analytics_key' ) }.${ featureSlug }.${ type }:${ duration }|ms`
 					]
 				} );
 
-				new Image().src = 'https://pixel.wp.com/boom.gif?v=calypso&u=' + encodeURIComponent( pageUrl ) +
-					'&json=' + encodeURIComponent( json );
+				const [ encodedUrl, jsonData ] = [ pageUrl, json ].map( encodeURIComponent );
+				new Image().src = `https://pixel.wp.com/boom.gif?v=calypso&u=${ encodedUrl }&json=${ jsonData }`;
 			}
 		}
 	},
@@ -362,21 +359,24 @@ const analytics = {
 		initialized: false,
 
 		initialize: function() {
-			if ( ! analytics.luckyOrange.initialized ) {
-				if ( config( 'lucky_orange_enabled' ) && analytics.userAllowsTracking() ) {
-					const wa = document.createElement( 'script' );
-					const s = document.getElementsByTagName( 'script' )[ 0 ];
-
-					window.__lo_site_id = 77942;
-					wa.type = 'text/javascript';
-					wa.async = true;
-					wa.src = 'https://d10lpsik1i8c69.cloudfront.net/w.js';
-					s.parentNode.insertBefore( wa, s );
-
-					analytics.luckyOrange.initialized = true;
-				}
+			if ( analytics.luckyOrange.initialized || ! config( 'lucky_orange_enabled' ) || ! analytics.userAllowsTracking() ) {
+				return;
 			}
+
+			analytics.luckyOrange.addLuckyOrangeScript();
+			analytics.luckyOrange.initialized = true;
 		},
+
+		addLuckyOrangeScript: function() {
+			const wa = document.createElement( 'script' );
+			const s = document.getElementsByTagName( 'script' )[ 0 ];
+
+			window.__lo_site_id = 77942;
+			wa.type = 'text/javascript';
+			wa.async = true;
+			wa.src = 'https://d10lpsik1i8c69.cloudfront.net/w.js';
+			s.parentNode.insertBefore( wa, s );
+		}
 	},
 
 	identifyUser: function() {

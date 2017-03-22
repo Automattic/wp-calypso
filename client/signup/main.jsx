@@ -473,11 +473,9 @@ const Signup = React.createClass( {
 			<span>
 				<DocumentHead title={ this.pageTitle() } />
 				{
-					this.state.loadingScreenStartTime
-					? null
-					: <FlowProgressIndicator
-						positionInFlow={ this.positionInFlow() }
-						flowName={ this.props.flowName } />
+					! this.state.loadingScreenStartTime && <FlowProgressIndicator
+																positionInFlow={ this.positionInFlow() }
+																flowName={ this.props.flowName } />
 				}
 				<ReactCSSTransitionGroup
 					className="signup__steps"
