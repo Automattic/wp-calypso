@@ -37,7 +37,6 @@ import {
 	isInstallingTheme,
 	isThemePremium,
 	isThemePurchased,
-	isPremiumSquaredTheme,
 	isPremiumThemeAvailable,
 	isThemeAvailableOnJetpackSite,
 	getWpcomParentThemeId,
@@ -74,28 +73,6 @@ const mood = {
 	price: '$20',
 	stylesheet: 'premium/mood',
 	demo_uri: 'https://mooddemo.wordpress.com/',
-	author_uri: 'https://wordpress.com/themes/'
-};
-
-const hustle = {
-	id: 'hustle-express',
-	name: 'Hustle Express',
-	author: 'WooThemes',
-	screenshot: 'hustle-express.jpg',
-	price: '$20',
-	stylesheet: 'premium/hustle-express',
-	demo_uri: 'https://hustleexpressdemo.wordpress.com/',
-	author_uri: 'https://wordpress.com/themes/'
-};
-
-const zuki = {
-	id: 'zuki',
-	name: 'Zuki',
-	author: 'Elmastudio',
-	screenshot: 'zuki.jpg',
-	price: '$20',
-	stylesheet: 'premium/zuki',
-	demo_uri: 'https:/zukidemo.wordpress.com/',
 	author_uri: 'https://wordpress.com/themes/'
 };
 
@@ -2103,83 +2080,6 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( isPurchased ).to.be.true;
-		} );
-	} );
-
-	describe( '#isPremiumSquaredTheme', () => {
-		it( 'given no theme object, should return false', () => {
-			const premiumSquared = isPremiumSquaredTheme(
-				{
-					themes: {
-						queries: {}
-					}
-				}
-			);
-			expect( premiumSquared ).to.be.false;
-		} );
-
-		it( 'given the ID of a premium theme that doesn\'t belong to the premium squared bundle, should return false', () => {
-			const premiumSquared = isPremiumSquaredTheme(
-				{
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { zuki }
-							} )
-						}
-					}
-				},
-				'zuki'
-			);
-			expect( premiumSquared ).to.be.false;
-		} );
-
-		it( 'given the ID of a premium theme by Automattic, should return true', () => {
-			const premiumSquared = isPremiumSquaredTheme(
-				{
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { mood }
-							} )
-						}
-					}
-				},
-				'mood'
-			);
-			expect( premiumSquared ).to.be.true;
-		} );
-
-		it( 'given the ID of a premium theme by WooThemes, should return true', () => {
-			const premiumSquared = isPremiumSquaredTheme(
-				{
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { hustle }
-							} )
-						}
-					}
-				},
-				'hustle'
-			);
-			expect( premiumSquared ).to.be.true;
-		} );
-
-		it( 'given the ID of a free theme, should return false', () => {
-			const premiumSquared = isPremiumSquaredTheme(
-				{
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { twentysixteen }
-							} )
-						}
-					}
-				},
-				'twentysixteen'
-			);
-			expect( premiumSquared ).to.be.false;
 		} );
 	} );
 

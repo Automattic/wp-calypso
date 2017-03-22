@@ -22,7 +22,7 @@ import {
 	getSitePlanSlug,
 	hasFeature
 } from '../selectors';
-import { PLAN_PREMIUM, PLAN_BUSINESS, FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
+import { PLAN_PREMIUM, PLAN_BUSINESS, FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_BUSINESS_ONBOARDING } from 'lib/plans/constants';
 
 describe( 'selectors', () => {
 	describe( '#getPlansBySite()', () => {
@@ -758,7 +758,7 @@ describe( 'selectors', () => {
 					}
 				},
 				2916284,
-				FEATURE_UNLIMITED_PREMIUM_THEMES
+				FEATURE_BUSINESS_ONBOARDING
 			) ).to.be.false;
 		} );
 
