@@ -126,6 +126,11 @@
 			color: $invert;
 		}
 	}
+
+	video {
+		max-width: 100%;
+		margin-bottom: 1em;
+	}
 }
 
 .devdocs__doc-header {
