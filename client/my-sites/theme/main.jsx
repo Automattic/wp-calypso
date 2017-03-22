@@ -266,7 +266,7 @@ const ThemeSheet = React.createClass( {
 					{ this.renderDescription() }
 				</Card>
 				{ this.renderFeaturesCard() }
-				{ download && <ThemeDownloadCard href={ this.props.download } /> }
+				{ download && <ThemeDownloadCard href={ download } /> }
 				{ isWpcomTheme && this.renderRelatedThemes() }
 			</div>
 		);
