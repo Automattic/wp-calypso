@@ -39,7 +39,9 @@ export function renderWithReduxStore( component, domContainer, reduxStore ) {
 
 	return ReactDom.render(
 		<ReduxProvider store={ reduxStore }>
-			{ component }
+			<Stylizer onInsertCss={ insertCss }>
+				{ component }
+			</Stylizer>
 		</ReduxProvider>,
 		domContainerNode
 	);
