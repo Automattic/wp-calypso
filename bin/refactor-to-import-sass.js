@@ -67,8 +67,52 @@ function isNodeReactCreateClass( node ) {
 		&& node.property.name === 'createClass';
 }
 
-function isFunctionBodyHaveJSX( ) {
+/***
+ * Determines whether the functionNode returns JSX element
+ *
+ * Example for filex skipped by that function:
+ * ➜  wp-calypso git:(try/import-css) ✗ cat ~/Desktop/nojsx | grep -vf client/exclude-scss-from-build | sort | uniq -u
+ client/account-recovery/style.scss
+ client/auth/style.scss
+ client/devdocs/style.scss
+ client/lib/accept/style.scss
+ client/mailing-lists/style.scss
+ client/me/account/style.scss
+ client/me/happychat/style.scss
+ client/me/help/style.scss
+ client/my-sites/ads/style.scss
+ client/my-sites/customize/style.scss
+ client/my-sites/drafts/style.scss
+ client/my-sites/media/style.scss
+ client/my-sites/menus/style.scss
+ client/my-sites/pages/style.scss
+ client/my-sites/plans/style.scss
+ client/my-sites/plugins/style.scss
+ client/my-sites/site-settings/style.scss
+ client/my-sites/stats/stats-page-placeholder/style.scss
+ client/my-sites/stats/style.scss
+ client/post-editor/style.scss
+ client/reader/_style.scss
+ client/reader/discover/style.scss
+ client/reader/following/style.scss
+ client/reader/recommendations/style.scss
+ client/reader/tag-stream/style.scss
+ * @param functionNode
+ * @returns {boolean}
+ */
+function isFunctionReturnsJSX( functionNode ) {
 
+	if ( functionNode.type === 'ArrowFunctionExpression' && functionNode.body.type === 'JSXElement' ) {
+		return true;
+	}
+
+	return jscodeshift( functionNode )
+		.find( jscodeshift.ReturnStatement, {
+			argument: {
+				type: 'JSXElement'
+			}
+		} )
+		.size() > 0;
 }
 
 function isIdentifierReactComponent( astRoot, identifierName ) {
@@ -84,7 +128,8 @@ function isIdentifierReactComponent( astRoot, identifierName ) {
 			isReactCreateClass = path.value.init && isNodeReactCreateClass( path.value.init.callee );
 			isFunctionExpression = path.value.init
 				&& ( path.value.init.type === 'ArrowFunctionExpression'
-					|| path.value.init.type === 'FunctionExpression' );
+					|| path.value.init.type === 'FunctionExpression' )
+				&& isFunctionReturnsJSX( path.value.init );
 		} );
 
 	// Identifier is a class declaration
@@ -95,7 +140,10 @@ function isIdentifierReactComponent( astRoot, identifierName ) {
 			isSubclassOfReactComponent = isNodeClassOfReactComponent( node.value )
 		} );
 
-	if ( astRoot.find( jscodeshift.FunctionDeclaration, { id: { name: identifierName } } ).size() > 0 ) {
+	if ( astRoot
+			.find( jscodeshift.FunctionDeclaration, { id: { name: identifierName } } )
+			.filter( path => isFunctionReturnsJSX( path.value ) )
+			.size() > 0 ) {
 		isFunctionDeclaration = true;
 	}
 
@@ -226,8 +274,7 @@ function addStylesToJsFile( filename, scssFilenames ) {
 		}
 
 		// Exporting arrow function ( case [ 9 ] ) or React.createClass ( case [4] )
-		if ( path.value.declaration.type === 'ArrowFunctionExpression'
-			|| path.value.declaration.type === 'FunctionExpression'
+		if ( ( ( path.value.declaration.type === 'ArrowFunctionExpression' || path.value.declaration.type === 'FunctionExpression' ) && isFunctionReturnsJSX( path.value.declaration ) )
 			|| path.value.declaration.type === 'CallExpression' && isNodeReactCreateClass( path.value.declaration.callee ) ) {
 
 			const createClassVariableName = upperFirst( getIdentifierFromPath( filename ) );
@@ -252,7 +299,8 @@ function addStylesToJsFile( filename, scssFilenames ) {
 
 		// This is a function declaration and it starts with an upper case letter
 		if ( path.value.declaration.type === 'FunctionDeclaration'
-			&& path.value.declaration.id.name[ 0 ] === path.value.declaration.id.name[ 0 ].toUpperCase() ) {
+			&& path.value.declaration.id.name[ 0 ] === path.value.declaration.id.name[ 0 ].toUpperCase()
+			&& isFunctionReturnsJSX( path.value.declaration ) ) {
 			const functionDeclaration = path.get( 'declaration' );
 
 			jscodeshift( path )
@@ -429,12 +477,12 @@ walk(
 				} );
 				processedDirectories.push( directory );
 				processedScssFiles = processedScssFiles.concat( scssFilesInDirectory );
+
+				scssFilesInDirectory.forEach( scssFile => transformScssfile( scssFile ) );
 			} else {
 				console.log( '[Unable]', indexJsFilename );
 				unableToProcess.push( directory );
 			}
-
-			scssFilesInDirectory.forEach( scssFile => transformScssfile( scssFile ) );
 
 			//break;
 
@@ -464,7 +512,7 @@ walk(
 
 		processedScssFiles
 			.map( scssFilePath => scssFilePath.replace( CALYPSO_DIR + path.sep, '' ) ) // convert to relative path
-			.map( scssFilePath => {
+			.map( scssFilePath => { // convert to 'scss module path'
 				const pathParts = scssFilePath.split( path.sep ).slice( 1 ); // drop 'client'
 				let fileName = pathParts.slice( -1 )[ 0 ];
 
@@ -481,7 +529,7 @@ walk(
 				// combine the path back
 				return [ ...pathParts.slice( 0, -1 ), fileName ].join( path.sep );
 			})
-			.forEach( scssModulePath => {
+			.forEach( scssModulePath => { // remove module imports
 				const importStatement = `@import '${scssModulePath}';\n`;
 				componentsImport = componentsImport.replace( importStatement, '' );
 			} );
