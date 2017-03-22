@@ -4,7 +4,6 @@
 import {
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
 } from 'state/action-types';
-
 import { receiveChatTranscript } from './actions';
 import { getHappychatTranscriptTimestamp } from './selectors';
 
