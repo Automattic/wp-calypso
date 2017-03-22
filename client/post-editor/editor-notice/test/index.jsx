@@ -108,4 +108,21 @@ describe( 'EditorNotice', () => {
 		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'href' ).equal( 'https://example.wordpress.com/published-project' );
 		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'children' ).equal( 'View Project' );
 	} );
+
+	it( 'should display a message for overpass', () =>{
+		const wrapper = shallow(
+			<EditorNotice
+				translate={ translate }
+				message="copy-from-gdocs"
+				status="is-info"
+				action="copy-from-gdocs-action"
+				link="https://apps.wordpress.com/"
+				>
+			</EditorNotice>
+		);
+		expect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-info' );
+		expect( wrapper.find( Notice ) ).to.have.prop( 'text' ).equal( 'Did you know you can post a draft directly from Google Docs?' );
+		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'href' ).equal( 'https://apps.wordpress.com/' );
+		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'children' ).equal( 'Learn how' );
+	} );
 } );
