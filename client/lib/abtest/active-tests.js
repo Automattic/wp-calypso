@@ -37,8 +37,8 @@ module.exports = {
 	signupStepOneCopyChanges: {
 		datestamp: '20170307',
 		variations: {
-			original: 50,
-			modified: 50,
+			original: 0,
+			modified: 100, //Test completed. Sending copy for translation.
 		},
 		defaultVariation: 'original',
 	},
