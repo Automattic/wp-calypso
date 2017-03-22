@@ -21,10 +21,10 @@ import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
-function replaceSearchUrl( newValue ) {
+function replaceSearchUrl( newValue, sort ) {
 	let searchUrl = '/read/search';
 	if ( newValue ) {
-		searchUrl += '?' + qs.stringify( { q: newValue } );
+		searchUrl += '?' + qs.stringify( { q: newValue, sort } );
 	}
 	page.replace( searchUrl );
 }
@@ -58,6 +58,10 @@ export default {
 
 		const autoFocusInput = ( ! searchSlug ) || context.query.focus === '1';
 
+		function reportQueryChange( query ) {
+			replaceSearchUrl( query, sort !== 'relevance' ? sort : undefined );
+		}
+
 		renderWithReduxStore(
 			<AsyncLoad require="reader/search-stream"
 				key="search"
@@ -74,7 +78,7 @@ export default {
 				showBack={ false }
 				showPrimaryFollowButtonOnCards={ true }
 				autoFocusInput={ autoFocusInput }
-				onQueryChange={ replaceSearchUrl }
+				onQueryChange={ reportQueryChange }
 			/>,
 			document.getElementById( 'primary' ),
 			context.store

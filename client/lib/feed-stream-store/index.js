@@ -120,9 +120,16 @@ function getStoreForTag( storeId ) {
 	} );
 }
 
+function validateSearchSort( sort ) {
+	if ( sort !== 'relevance' && sort !== 'date' ) {
+		return 'relevance';
+	}
+	return sort;
+}
+
 function getStoreForSearch( storeId ) {
 	const idParts = storeId.split( ':' );
-	const sort = idParts[ 1 ];
+	const sort = validateSearchSort( idParts[ 1 ] );
 	const slug = idParts.slice( 2 ).join( ':' );
 	const stream = new PagedStream( {
 		id: storeId,
