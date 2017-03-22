@@ -3,12 +3,14 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import { flowRight, partialRight, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
+import DocumentHead from 'components/data/document-head';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
@@ -30,9 +32,11 @@ const SiteSettingsTraffic = ( {
 	setFieldValue,
 	site,
 	sites,
+	translate,
 	upgradeToBusiness
 } ) => (
 	<Main className="traffic__main site-settings">
+		<DocumentHead title={ translate( 'Site Settings' ) } />
 		<SidebarNavigation />
 		<SiteSettingsNavigation site={ site } section="traffic" />
 
@@ -91,5 +95,6 @@ const getFormSettings = partialRight( pick, [
 
 export default flowRight(
 	connectComponent,
+	localize,
 	wrapSettingsForm( getFormSettings )
 )( SiteSettingsTraffic );
