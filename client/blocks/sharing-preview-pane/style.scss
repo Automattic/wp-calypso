@@ -10,10 +10,10 @@
 }
 
 .sharing-preview-pane__sidebar {
-	display: flex;
-	flex-direction: column;
-
 	background-color: $white;
+	display: flex;
+	flex: 0 0 auto;
+	flex-direction: column;
 
 	.vertical-menu {
 		flex-direction: row;
@@ -57,9 +57,8 @@
 	}
 
 	@include breakpoint( ">660px" ) {
-		width: 250px;
-		min-width: 250px;
 		border-right: 1px solid lighten( $gray, 20% );
+		flex: 0 0 250px;
 	}
 }
 
@@ -86,16 +85,9 @@
 }
 
 .sharing-preview-pane__preview-area {
-	margin: 10px auto;
-}
-
-.sharing-preview-pane__preview {
-	min-width: 400px;
-	height: auto;
-	margin: 0 10px;
-
-	background-color: $white;
-	border: 1px solid lighten( $gray, 25% );
+	background-color: #f2f6f8;
+	flex: 1 1 auto;
+	padding: 10px;
 }
 
 .sharing-preview-pane__message {

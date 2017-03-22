@@ -41,8 +41,11 @@ export class TwitterSharePreview extends PureComponent {
 						<div className="twitter-share-preview__message">
 							{ message }
 						</div>
-						<div className="twitter-share-preview__article-url">
-							{ articleUrl }
+						<div className="twitter-share-preview__article-url-line">
+							<a className="twitter-share-preview__article-url"
+								href={ articleUrl }>
+								{ articleUrl }
+							</a>
 						</div>
 						{ imageUrl &&
 							<div className="twitter-share-preview__image-wrapper">

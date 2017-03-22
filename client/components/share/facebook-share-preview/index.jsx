@@ -25,7 +25,7 @@ export class FacebookSharePreview extends PureComponent {
 						</div>
 						<div className="facebook-share-preview__profile-line-part">
 							<div className="facebook-share-preview__profile-line">
-								<a href={ externalProfileUrl }>
+								<a className="facebook-share-preview__profile-name" href={ externalProfileUrl }>
 									{ externalName }
 								</a>
 								published an article on
@@ -33,8 +33,10 @@ export class FacebookSharePreview extends PureComponent {
 									WordPress.
 								</a>
 							</div>
-							<div className="facebook-share-preview__wp-line">
-								WordPress
+							<div className="facebook-share-preview__meta-line">
+								<a href="https://wordpress.com">
+									WordPress
+								</a>
 							</div>
 						</div>
 					</div>
@@ -42,8 +44,11 @@ export class FacebookSharePreview extends PureComponent {
 						<div className="facebook-share-preview__message">
 							{ message }
 						</div>
-						<div className="facebook-share-preview__article-url">
-							{ articleUrl }
+						<div className="facebook-share-preview__article-url-line">
+							<a className="facebook-share-preview__article-url"
+								href={ articleUrl }>
+								{ articleUrl }
+							</a>
 						</div>
 						{ imageUrl &&
 							<div className="facebook-share-preview__image-wrapper">
