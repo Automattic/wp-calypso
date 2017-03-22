@@ -7,6 +7,7 @@ import { takeRight } from 'lodash';
  * Internal dependencies
  */
 import {
+	ANALYTICS_EVENT_RECORD,
 	EDITOR_PASTE_EVENT,
 	FIRST_VIEW_HIDE,
 	GUIDED_TOUR_UPDATE,
@@ -17,6 +18,7 @@ import {
 } from 'state/action-types';
 
 const relevantTypes = {
+	ANALYTICS_EVENT_RECORD,
 	EDITOR_PASTE_EVENT,
 	FIRST_VIEW_HIDE,
 	GUIDED_TOUR_UPDATE,

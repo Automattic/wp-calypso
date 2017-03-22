@@ -15,7 +15,10 @@ import {
 } from 'components/tinymce/plugins/wpcom-track-paste/sources';
 
 describe( 'selectors', () => {
-	let hasUserRegisteredBefore, hasUserPastedFromGoogleDocs;
+	let hasUserRegisteredBefore;
+	let hasUserPastedFromGoogleDocs;
+	let hasAnalyticsEventFired;
+	let hasUserClicked;
 
 	useFakeDom();
 
@@ -27,6 +30,8 @@ describe( 'selectors', () => {
 		const contexts = require( '../contexts' );
 		hasUserRegisteredBefore = contexts.hasUserRegisteredBefore;
 		hasUserPastedFromGoogleDocs = contexts.hasUserPastedFromGoogleDocs;
+		hasAnalyticsEventFired = contexts.hasAnalyticsEventFired;
+		hasUserClicked = hasAnalyticsEventFired( 'calypso_themeshowcase_theme_click' );
 	} );
 
 	describe( '#hasUserRegisteredBefore', () => {
@@ -107,6 +112,61 @@ describe( 'selectors', () => {
 				}
 			};
 			expect( hasUserPastedFromGoogleDocs( state ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#hasAnalyticsEventFired', () => {
+		it( 'should return false when no actions', () => {
+			const state = {
+				ui: {
+					actionLog: []
+				}
+			};
+			expect( hasUserClicked( state ) ).to.be.false;
+		} );
+		it( 'should return true when matching action', () => {
+			const state = {
+				ui: {
+					actionLog: [ {
+						type: 'ANALYTICS_EVENT_RECORD',
+						meta: {
+							analytics: [
+								{
+									type: 'ANALYTICS_EVENT_RECORD',
+									payload: {
+										service: 'tracks',
+										name: 'calypso_themeshowcase_theme_click',
+										properties: {}
+									}
+								}
+							]
+						}
+					} ]
+				}
+			};
+			expect( hasUserClicked( state ) ).to.be.true;
+		} );
+		it( 'should return false when mis-matching event', () => {
+			const state = {
+				ui: {
+					actionLog: [ {
+						type: 'ANALYTICS_EVENT_RECORD',
+						meta: {
+							analytics: [
+								{
+									type: 'ANALYTICS_EVENT_RECORD',
+									payload: {
+										service: 'tracks',
+										name: 'wrong_name',
+										properties: {}
+									}
+								}
+							]
+						}
+					} ]
+				}
+			};
+			expect( hasUserClicked( state ) ).to.be.false;
 		} );
 	} );
 } );

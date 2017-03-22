@@ -22,16 +22,16 @@ import {
 	Continue,
 } from 'layout/guided-tours/config-elements';
 import {
+	hasAnalyticsEventFired,
 	isAbTestInVariant,
 	inSection,
 	isNewUser,
 	isEnabled,
 	selectedSiteIsCustomizable,
-	hasUserInteractedWithComponent,
 } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
 
-const anyThemeMoreButtonClicked = hasUserInteractedWithComponent( 'ThemeMoreButton' );
+const anyThemeMoreButtonClicked = hasAnalyticsEventFired( 'calypso_themeshowcase_theme_click' );
 
 export const DesignShowcaseWelcomeTour = makeTour(
 	<Tour
