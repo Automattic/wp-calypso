@@ -215,7 +215,14 @@ class SearchStream extends Component {
 		}
 
 		const suggestionList = initial( flatMap( suggestions, suggestionKeyword =>
-			[ <Suggestion suggestion={ suggestionKeyword } source="search" />, ', ' ] ) );
+			[
+				<Suggestion
+					suggestion={ suggestionKeyword }
+					source="search"
+					sort={ sortOrder === 'date' ? sortOrder : undefined }
+				/>,
+				', '
+			] ) );
 
 		const documentTitle = this.props.translate(
 			'%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) }
