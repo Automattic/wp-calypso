@@ -14,11 +14,9 @@ import {
  *
  * @return {Object} Action object
  */
-export const resetState = () => {
-	return {
-		type: VIDEO_EDITOR_RESET_STATE,
-	};
-};
+export const resetState = () => ( {
+	type: VIDEO_EDITOR_RESET_STATE,
+} );
 
 /**
  * Returns an action object to indicate that a request has been made to update the video poster.
@@ -29,13 +27,11 @@ export const resetState = () => {
  * @param {Object} [params.file]  An image to attach to the video
  * @return {Object} Action object
  */
-export const updatePoster = ( videoId, params ) => {
-	return {
-		type: VIDEO_EDITOR_UPDATE_POSTER,
-		videoId,
-		params,
-	};
-};
+export const updatePoster = ( videoId, params ) => ( {
+	type: VIDEO_EDITOR_UPDATE_POSTER,
+	videoId,
+	params,
+} );
 
 /**
  * Returns an action object to indicate that the poster for the video has been updated successfully.
@@ -43,23 +39,19 @@ export const updatePoster = ( videoId, params ) => {
  * @param  {String} posterUrl  Poster URL
  * @return {Object} Action object
  */
-export const setPosterUrl = posterUrl => {
-	return {
-		type: VIDEO_EDITOR_SET_POSTER_URL,
-		posterUrl,
-	};
-};
+export const setPosterUrl = posterUrl => ( {
+	type: VIDEO_EDITOR_SET_POSTER_URL,
+	posterUrl,
+} );
 
 /**
  * Returns an action object to indicate that the poster for the video failed to update.
  *
  * @return {Object} Action object
  */
-export const showError = () => {
-	return {
-		type: VIDEO_EDITOR_SHOW_ERROR,
-	};
-};
+export const showError = () => ( {
+	type: VIDEO_EDITOR_SHOW_ERROR,
+} );
 
 /**
  * Returns an action object to indicate the poster upload progress.
@@ -67,9 +59,7 @@ export const showError = () => {
  * @param  {String} percentage  Upload progress percentage
  * @return {Object} Action object
  */
-export const showUploadProgress = percentage => {
-	return {
-		type: VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
-		percentage,
-	};
-};
+export const showUploadProgress = percentage => ( {
+	type: VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
+	percentage,
+} );
