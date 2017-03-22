@@ -187,7 +187,7 @@ class SearchStream extends Component {
 	}
 
 	render() {
-		const { store, query, suggestions } = this.props;
+		const { postsStore, query, suggestions } = this.props;
 		const emptyContent = <EmptyContent query={ query } />;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
@@ -201,8 +201,26 @@ class SearchStream extends Component {
 		const documentTitle = this.props.translate(
 			'%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) }
 		);
+
+		const searchInputProps = {
+			onSearch: this.updateQuery,
+			onSearchClose: this.scrollToTop,
+			autoFocus: this.props.autoFocusInput,
+			delaySearch: true,
+			delayTimeout: 500,
+			placeholder: searchPlaceholderText
+		};
+
+		if ( postsStore && postsStore.isQuerySuggestion ) {
+			// we need to set the value prop on the search input
+			searchInputProps.value = query;
+			searchInputProps.initialValue = query;
+		} else {
+			searchInputProps.initialValue = query;
+		}
+
 		return (
-			<Stream { ...this.props } store={ store }
+			<Stream { ...this.props }
 				listName={ this.props.translate( 'Search' ) }
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
@@ -216,14 +234,7 @@ class SearchStream extends Component {
 				<div ref={ this.handleStreamMounted } />
 				<div className="search-stream__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<CompactCard className="search-stream__input-card">
-						<SearchInput
-							initialValue={ query }
-							onSearch={ this.updateQuery }
-							onSearchClose={ this.scrollToTop }
-							autoFocus={ this.props.autoFocusInput }
-							delaySearch={ true }
-							delayTimeout={ 500 }
-							placeholder={ searchPlaceholderText } />
+						<SearchInput { ...searchInputProps } />
 					</CompactCard>
 					<p className="search-stream__blank-suggestions">
 						{ suggestions &&
