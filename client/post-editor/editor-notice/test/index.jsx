@@ -110,7 +110,7 @@ describe( 'EditorNotice', () => {
 		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'children' ).equal( 'View Project' );
 	} );
 
-	it( 'should use onViewClick function if provided on non-jetpack sites', () => {
+	it( 'should use onViewClick function if provided a previewable site', () => {
 		const spy = sinon.spy();
 
 		const wrapper = shallow(
@@ -121,11 +121,11 @@ describe( 'EditorNotice', () => {
 				type="page"
 				link="https://example.wordpress.com/published-page"
 				action="view"
+				isSitePreviewable={ true }
 				onViewClick={ spy }
 				site={ {
 					URL: 'https://example.wordpress.com',
 					title: 'Example Site',
-					jetpack: false
 				} } />
 		);
 
