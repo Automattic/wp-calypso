@@ -14,6 +14,9 @@ import Button from 'components/button';
 import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextValidation from 'components/forms/form-input-validation';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import {
@@ -21,7 +24,6 @@ import {
 	isEnterprise,
 	isJetpackBusiness
 } from 'lib/products-values';
-import { removeNotice, errorNotice } from 'state/notices/actions';
 import { getSiteOption, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -38,17 +40,9 @@ class GoogleAnalyticsForm extends Component {
 
 	handleCodeChange = ( event ) => {
 		const code = event.target.value;
-		const isCodeValid = validateGoogleAnalyticsCode( code );
-		if ( ! isCodeValid ) {
-			this.props.errorNotice(
-				this.props.translate( 'Invalid Google Analytics Tracking ID.' ),
-				{ id: 'google-analytics-validation' }
-			);
-		} else if ( isCodeValid ) {
-			this.props.removeNotice( 'google-analytics-validation' );
-		}
+
 		this.setState( {
-			isCodeValid
+			isCodeValid: validateGoogleAnalyticsCode( code )
 		} );
 		this.props.updateFields( { wga: { code } } );
 	};
@@ -138,20 +132,26 @@ class GoogleAnalyticsForm extends Component {
 						}
 					</Button>
 				</SectionHeader>
-				<Card className="analytics-settings">
+				<Card className="analytics-settings site-settings__analytics-settings">
 					<fieldset>
-						<label htmlFor="wgaCode">{ translate( 'Google Analytics Tracking ID', { context: 'site setting' } ) }</label>
-						<input
+						<FormLabel htmlFor="wgaCode">
+							{ translate( 'Google Analytics Tracking ID', { context: 'site setting' } ) }
+						</FormLabel>
+						<FormTextInput
 							name="wgaCode"
 							id="wgaCode"
-							type="text"
 							value={ fields.wga ? fields.wga.code : '' }
 							onChange={ this.handleCodeChange }
 							placeholder={ placeholderText }
 							disabled={ isRequestingSettings || ! enableForm }
 							onClick={ eventTracker( 'Clicked Analytics Key Field' ) }
 							onKeyPress={ uniqueEventTracker( 'Typed In Analytics Key Field' ) }
+							isError={ ! this.state.isCodeValid }
 						/>
+						{
+							! this.state.isCodeValid &&
+							<FormTextValidation isError={ true } text={ translate( 'Invalid Google Analytics Tracking ID.' ) } />
+						}
 						<ExternalLink
 							icon
 							href="https://support.google.com/analytics/answer/1032385?hl=en"
@@ -227,7 +227,7 @@ const mapStateToProps = ( state ) => {
 
 const connectComponent = connect(
 	mapStateToProps,
-	{ errorNotice, removeNotice },
+	null,
 	null,
 	{ pure: false }
 );
