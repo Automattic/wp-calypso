@@ -224,6 +224,7 @@ class SearchStream extends Component {
 							delaySearch={ true }
 							delayTimeout={ 500 }
 							placeholder={ searchPlaceholderText }
+							initialValue={ query }
 							value={ query }
 						/>
 					</CompactCard>
