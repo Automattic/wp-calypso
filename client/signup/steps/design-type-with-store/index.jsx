@@ -39,19 +39,19 @@ class DesignTypeWithStoreStep extends Component {
 			// Note: Don't make this translatable because it's only visible to English-language users
 			return [
 				{ type: 'blog',
-					label: 'A blog',
+					label: 'a blog',
 					description: 'To share your ideas, stories, and photographs with your followers.',
 					image: <BlogImage /> },
 				{ type: 'page',
-					label: 'A website',
+					label: 'a website',
 					description: 'To promote your business, organization, or brand and connect with your audience.',
 					image: <PageImage /> },
 				{ type: 'grid',
-					label: 'A portfolio',
+					label: 'a portfolio',
 					description: 'To present your creative projects in a visual showcase.',
 					image: <GridImage /> },
 				{ type: 'store',
-					label: 'An online store',
+					label: 'an online store',
 					description: 'To sell your products or services and accept payments.',
 					image: <StoreImage /> },
 			];
@@ -126,7 +126,9 @@ class DesignTypeWithStoreStep extends Component {
 				<a className="design-type-with-store__choice-link"
 					href="#"
 					onClick={ this.handleChoiceClick( choice.type ) }>
-					{ choice.image }
+					<div className="design-type-with-store__image">
+						{ choice.image }
+					</div>
 					<div className="design-type-with-store__choice-copy">
 						{ choiceLabel }
 						{ callToAction }
