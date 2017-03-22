@@ -1,5 +1,5 @@
 const fs = require( 'fs' );
-const path = require('path');
+const path = require( 'path' );
 const jscodeshift = require( 'jscodeshift' );
 const camelCase = require( 'lodash/camelCase' );
 const upperFirst = require( 'lodash/upperFirst' );
@@ -620,6 +620,7 @@ const SCSS_IMPORT_PATHS = [
 	},
 	{
 		path: 'assets/stylesheets/shared/colors',
+		// TODO: Refactor these sass module to reference dependencies directly
 		// placeholder mixin requires colors
 		// typography requires colors
 		predicate: content => SCSS_COLOR_REGEX.test( content ) || TYPOGRAPHY_REGEX.test( content ) || mixinImportPredicateFactory( 'placeholder' )( content )
