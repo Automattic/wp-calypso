@@ -24,11 +24,11 @@ import {
  * @returns {Object} original action
  */
 export const updatePoster = ( { dispatch }, action, next ) => {
-	if ( ! ( 'file' in action.params || 'at_time' in action.params ) ) {
+	if ( ! ( 'file' in action.params || 'atTime' in action.params ) ) {
 		return next( action );
 	}
 
-	const { at_time, file } = pick( action.params, [ 'at_time', 'file' ] );
+	const { atTime, file } = pick( action.params, [ 'atTime', 'file' ] );
 	const params = Object.assign(
 		{
 			apiVersion: '1.1',
@@ -36,7 +36,7 @@ export const updatePoster = ( { dispatch }, action, next ) => {
 			path: `/videos/${ action.videoId }/poster`,
 		},
 		file && { formData: [ [ 'poster', file ] ] },
-		at_time !== undefined && { body: { at_time } },
+		atTime !== undefined && { body: { at_time: atTime } },
 	);
 
 	dispatch( http( params, action ) );

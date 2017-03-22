@@ -35,7 +35,7 @@ describe( 'actions', () => {
 	describe( '#updatePoster()', () => {
 		it( 'should return an action object', () => {
 			const videoId = 'dummy-videoId';
-			const params = { at_time: 1 };
+			const params = { atTime: 1 };
 			const action = updatePoster( videoId, params );
 
 			expect( action ).to.eql( {

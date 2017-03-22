@@ -23,7 +23,7 @@ export const resetState = () => ( {
  *
  * @param {String} videoId  ID of the video
  * @param {Object} params  Poster data
- * @param {Number} [params.at_time]  Number of seconds into the video at which to get the poster
+ * @param {Number} [params.atTime]  Number of seconds into the video at which to get the poster
  * @param {Object} [params.file]  An image to attach to the video
  * @return {Object} Action object
  */
