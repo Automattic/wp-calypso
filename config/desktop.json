@@ -43,7 +43,6 @@
 		"manage/plugins/setup": false,
 		"manage/posts": true,
 		"manage/security": true,
-		"manage/seo": true,
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/categories": true,
 		"manage/site-settings/delete-site": true,
