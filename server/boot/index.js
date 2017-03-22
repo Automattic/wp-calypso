@@ -8,6 +8,8 @@ var path = require( 'path' ),
 	morgan = require( 'morgan' ),
 	pages = require( 'pages' );
 
+var calypsoPath = path.resolve( __dirname, '..', '..' );
+
 /**
  * Returns the server HTTP request handler "app".
  *
@@ -48,15 +50,16 @@ function setup() {
 	}
 
 	// attach the static file server to serve the `public` dir
-	app.use( '/calypso', express.static( path.resolve( __dirname, '..', '..', 'public' ) ) );
+	// app.use( '/calypso', express.static( path.resolve( __dirname, '..', '..', 'public' ) ) );
+	app.use( '/calypso', express.static( path.resolve( calypsoPath, 'public' ) ) );
 
 	// service-worker needs to be served from root to avoid scope issues
-	app.use( '/service-worker.js', express.static( path.resolve( __dirname, '..', '..', 'client', 'lib', 'service-worker', 'service-worker.js' ) ) );
+	app.use( '/service-worker.js', express.static( path.resolve( calypsoPath, 'client', 'lib', 'service-worker', 'service-worker.js' ) ) );
 
 	// serve files when not in production so that the source maps work correctly
 	if ( 'development' === config( 'env' ) ) {
-		app.use( '/assets', express.static( path.resolve( __dirname, '..', '..', 'assets' ) ) );
-		app.use( '/client', express.static( path.resolve( __dirname, '..', '..', 'client' ) ) );
+		app.use( '/assets', express.static( path.resolve( calypsoPath, 'assets' ) ) );
+		app.use( '/client', express.static( path.resolve( calypsoPath, 'client' ) ) );
 	}
 
 	if ( config.isEnabled( 'devdocs' ) ) {
@@ -65,7 +68,7 @@ function setup() {
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		app.use( '/desktop', express.static( path.resolve( __dirname, '..', '..', '..', 'public_desktop' ) ) );
+		app.use( '/desktop', express.static( path.resolve( calypsoPath, 'desktop', 'public_desktop' ) ) );
 	}
 
 	api = require( 'api' );

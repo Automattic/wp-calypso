@@ -42,6 +42,14 @@ env-config.sh
 /server/devdocs/proptypes-index.json
 /server/bundler/assets.json
 
+# desktop
+desktop/release
+desktop/desktop/config.json
+desktop/publish/publish-config.js
+desktop/publish/node_modules/
+desktop/resource/secrets
+desktop/build
+
 *.rdb
 *.db
 

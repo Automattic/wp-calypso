@@ -11,7 +11,7 @@ module.exports = {
 			{
 				test: /sections.js$/,
 				exclude: 'node_modules',
-				loader: path.join( __dirname, 'calypso', 'server', 'isomorphic-routing', 'loader' )
+				loader: path.join( __dirname, '..', 'server', 'isomorphic-routing', 'loader' )
 			},
 			{
 				test: /\.html$/,
@@ -48,7 +48,13 @@ module.exports = {
 	],
 	resolve: {
 		extensions: [ '', '.js', '.jsx' ],
-		modulesDirectories: [ 'node_modules', path.join( __dirname, 'calypso', 'server' ), path.join( __dirname, 'calypso', 'client' ), 'desktop' ]
+		modulesDirectories: [
+			'node_modules',
+			path.join( __dirname, '..', 'server' ),
+			path.join( __dirname, '..', 'client' ),
+			'desktop'
+		],
+
 	},
 	plugins: [
 		// new webpack.optimize.DedupePlugin(),
