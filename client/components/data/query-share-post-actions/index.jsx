@@ -21,7 +21,7 @@ class QuerySharePostActions extends Component {
 		isRequestingPublished: PropTypes.bool.isRequired,
 		fetchPostShareActionsScheduled: PropTypes.func.isRequired,
 		fetchPostShareActionsPublished: PropTypes.func.isRequired,
-	}
+	};
 
 	componentDidMount() {
 		this.request( this.props );

@@ -14,7 +14,7 @@ import { mergeShareActionWithPublicizeConnections } from './get-post-share-sched
  *
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
- * @param {Number} postId Post ID
+ * @param {Number} postId Shared Post ID
  * @return {Object} sharing actions array
  */
 export default function getPostSharePublishedActions( state, siteId, postId ) {
