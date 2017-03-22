@@ -104,7 +104,7 @@ class VideoEditor extends Component {
 		const guid = media && media.videopress_guid ? media.videopress_guid : null;
 
 		if ( guid ) {
-			this.props.updatePoster( guid, { at_time: Math.floor( currentTime ) } );
+			this.props.updatePoster( guid, { atTime: Math.floor( currentTime ) } );
 		}
 	}
 
