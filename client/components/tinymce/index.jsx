@@ -138,10 +138,8 @@ const PLUGINS = [
 	'wpcom/insertmenu',
 ];
 
-if ( config.isEnabled( 'post-editor/mentions' ) ) {
-	mentionsPlugin();
-	PLUGINS.push( 'wpcom/mentions' );
-}
+mentionsPlugin();
+PLUGINS.push( 'wpcom/mentions' );
 
 const CONTENT_CSS = [
 	window.app.tinymceWpSkin,
