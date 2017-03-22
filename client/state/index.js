@@ -28,7 +28,6 @@ import jetpack from './jetpack/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
-import happychatMiddleware from './happychat/middleware';
 import media from './media/reducer';
 import notices from './notices/reducer';
 import pageTemplates from './page-templates/reducer';
@@ -121,7 +120,7 @@ export function createReduxStore( initialState = {} ) {
 	const middlewares = [
 		thunkMiddleware,
 		noticesMiddleware,
-		happychatMiddleware,
+		isBrowser && require( './happychat/middleware.js' ).default(),
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './data-layer/wpcom-api-middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
