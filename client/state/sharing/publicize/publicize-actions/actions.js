@@ -25,19 +25,17 @@ export function fetchPostShareActionsScheduled( siteId, postId ) {
 			postId,
 		} );
 
-		return new Promise( ( resolve, reject ) => wpcom.req.get(
+		return wpcom.req.get(
 			`/sites/${ siteId }/post/${ postId }/publicize/scheduled`,
 			( error, data ) => {
 				if ( error || ! data.items ) {
 					dispatch( { type: PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST_FAILURE, siteId, postId, error } );
-					reject();
 				} else {
 					const actions = {};
 					data.items.forEach( action => ( actions[ action.ID ] = action ) );
 					dispatch( { type: PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST_SUCCESS, siteId, postId, actions } );
-					resolve();
 				}
-			} )
+			}
 		);
 	};
 }
@@ -50,19 +48,17 @@ export function fetchPostShareActionsPublished( siteId, postId ) {
 			postId,
 		} );
 
-		return new Promise( ( resolve, reject ) => wpcom.req.get(
+		return wpcom.req.get(
 			`/sites/${ siteId }/post/${ postId }/publicize/published`,
 			( error, data ) => {
 				if ( error || ! data.items ) {
 					dispatch( { type: PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_FAILURE, siteId, postId, error } );
-					reject();
 				} else {
 					const actions = {};
 					data.items.forEach( action => ( actions[ action.ID ] = action ) );
 					dispatch( { type: PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_SUCCESS, siteId, postId, actions } );
-					resolve();
 				}
-			} )
+			}
 		);
 	};
 }
@@ -76,17 +72,15 @@ export function deletePostShareAction( siteId, postId, actionId ) {
 			actionId
 		} );
 
-		return new Promise( ( resolve, reject ) => wpcom.req.post(
+		return wpcom.req.post(
 			`/sites/${ siteId }/post/${ postId }/publicize/action/${ actionId }/delete`
 		, ( error, data ) => {
 			if ( error || ! data.success ) {
 				dispatch( { type: PUBLICIZE_SHARE_ACTION_DELETE_FAILURE, siteId, postId, actionId, error } );
-				reject();
 			} else {
 				dispatch( { type: PUBLICIZE_SHARE_ACTION_DELETE_SUCCESS, siteId, postId, actionId } );
-				resolve();
 			}
-		} ) );
+		} );
 	};
 }
 
@@ -99,20 +93,18 @@ export function editPostShareAction( siteId, postId, actionId, message, share_da
 			actionId
 		} );
 
-		return new Promise( ( resolve, reject ) => wpcom.req.post( {
+		return wpcom.req.post( {
 			path: `/sites/${ siteId }/post/${ postId }/publicize/action/${ actionId }/edit`,
 			body: { message, share_date }
 		}, ( error, data ) => {
 			if ( error || ! data.item ) {
 				dispatch( { type: PUBLICIZE_SHARE_ACTION_EDIT_FAILURE, siteId, postId, actionId, error } );
-				reject();
 			} else {
 				//TODO: until we have proper data coming
 				data.item.ID = actionId;
 				dispatch( { type: PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS, siteId, postId, actionId, item: data.item } );
-				resolve();
 			}
-		} ) );
+		} );
 	};
 }
 
