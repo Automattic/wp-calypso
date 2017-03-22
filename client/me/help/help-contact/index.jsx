@@ -26,7 +26,6 @@ import wpcomLib from 'lib/wp';
 import notices from 'notices';
 import siteList from 'lib/sites-list';
 import analytics from 'lib/analytics';
-import i18n from 'lib/i18n-utils';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { isHappychatAvailable } from 'state/happychat/selectors';
@@ -578,7 +577,7 @@ const HelpContact = React.createClass( {
 		//    requests are sent to the language specific forums (for popular languages)
 		//    we don't tell the user that support is only offered in English.
 		const showHelpLanguagePrompt =
-			( currentUserLocale !== i18n.getLocaleSlug() ) &&
+			( config( 'support_locales' ).indexOf( currentUserLocale ) === -1 ) &&
 			SUPPORT_FORUM !== variationSlug;
 
 		return {
