@@ -385,23 +385,22 @@ const RegisterDomainStep = React.createClass( {
 					return suggestion.domain_name;
 				} );
 
-				if ( abtest( 'domainSuggestionNudgeLabels' ) === 'updated' ) {
-					const matchesSearchedDomain = ( suggestion ) => ( suggestion.domain_name === domain ),
-						exactMatchBeforeTld = ( suggestion ) => ( startsWith( suggestion.domain_name, `${ domain.replace( / /g, '') }.` ) ),
-						bestAlternative = ( suggestion ) => ( ! exactMatchBeforeTld( suggestion ) && suggestion.domain_name !== domain );
+				if ( abtest( 'domainSuggestionNudgeLabels' ) === 'withLabels' ) {
+					const exactMatchBeforeTld = ( suggestion ) => (
+							startsWith( suggestion.domain_name, `${ domain.replace( / /g, '') }.` )
+						),
+						bestAlternative = ( suggestion ) => (
+							! exactMatchBeforeTld( suggestion ) &&
+							suggestion.domain_name !== domain
+						),
+						nonFreeSuggestions = reject( suggestions, ( suggestion ) => ( suggestion.is_free === true ) ),
+						recommendedSuggestion = find( nonFreeSuggestions, exactMatchBeforeTld ),
+						bestAlternativeSuggestion = find( nonFreeSuggestions, bestAlternative );
 
-					const availableDomain = find( suggestions, matchesSearchedDomain );
-					if ( availableDomain ) {
-						availableDomain.isRecommended = true;
-					} else {
-						const recommendedSuggestion = find( suggestions, exactMatchBeforeTld );
-
-						if ( recommendedSuggestion ) {
-							recommendedSuggestion.isRecommended = true;
-						}
+					if ( recommendedSuggestion ) {
+						recommendedSuggestion.isRecommended = true;
 					}
 
-					const bestAlternativeSuggestion = find( suggestions, bestAlternative );
 					if ( bestAlternativeSuggestion ) {
 						bestAlternativeSuggestion.isBestAlternative = true;
 					}

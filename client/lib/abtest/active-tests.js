@@ -55,9 +55,9 @@ module.exports = {
 		datestamp: '20170327',
 		variations: {
 			original: 50,
-			updated: 50
+			withLabels: 50
 		},
 		defaultVariation: 'original',
-		allowExistingUsers: true
+		allowExistingUsers: false
 	},
 };
