@@ -17,7 +17,7 @@ module.exports = function( i18n ) {
 		var componentName = ComposedComponent.displayName || ComposedComponent.name || '';
 
 		var component = React.createClass( {
-			displayName: 'Localized' + componentName,
+			displayName: 'Localized(' + componentName + ')',
 
 			componentDidMount: function() {
 				this.boundForceUpdate = this.forceUpdate.bind( this );

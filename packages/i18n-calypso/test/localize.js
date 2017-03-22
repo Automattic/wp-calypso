@@ -22,7 +22,7 @@ describe( 'localize()', function() {
 
 		var LocalizedComponent = localize( MyComponent );
 
-		expect( LocalizedComponent.displayName ).to.equal( 'Localized' );
+		expect( LocalizedComponent.displayName ).to.equal( 'Localized()' );
 	} );
 
 	it( 'should be named using the displayName of the composed component', function() {
@@ -33,7 +33,7 @@ describe( 'localize()', function() {
 
 		var LocalizedComponent = localize( MyComponent );
 
-		expect( LocalizedComponent.displayName ).to.equal( 'LocalizedMyComponent' );
+		expect( LocalizedComponent.displayName ).to.equal( 'Localized(MyComponent)' );
 	} );
 
 	it( 'should be named using the name of the composed function component', function() {
@@ -41,7 +41,7 @@ describe( 'localize()', function() {
 
 		var LocalizedComponent = localize( MyComponent );
 
-		expect( LocalizedComponent.displayName ).to.equal( 'LocalizedMyComponent' );
+		expect( LocalizedComponent.displayName ).to.equal( 'Localized(MyComponent)' );
 	} );
 
 	it( 'should provide translate, moment, and numberFormat props to rendered child', function() {
