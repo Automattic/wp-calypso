@@ -34,12 +34,6 @@
 .post-editor__inner {
 	position: relative;
 	top: 47px;
-
-	@include breakpoint( "<660px" ) {
-		overflow-x: hidden;
-		margin-bottom: 47px;
-		border-bottom: 1px solid lighten( $gray, 20 );
-	}
 }
 
 .post-editor__content {

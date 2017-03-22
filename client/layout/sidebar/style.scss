@@ -20,9 +20,9 @@
 	}
 
 	@include breakpoint( "<660px" ) {
-		left: -100vw;
-		width: 100vw;
-		max-height: calc(100vh - 47px );
+		left: -100%;
+		width: 100%;
+		max-height: calc( 100% - 47px );
 		pointer-events: none;
 		transform: translateX( 0 );
 		transition: all 0.15s cubic-bezier(0.770, 0.000, 0.175, 1.000);
@@ -30,11 +30,11 @@
 		.focus-sidebar & {
 			pointer-events: auto;
 			-webkit-overflow-scrolling: touch;
-			transform: translateX( 100vw );
+			transform: translateX( 100% );
 		}
 
 		.focus-sites & {
-			transform: translateX( 100vw );
+			transform: translateX( 100% );
 		}
 	}
 
