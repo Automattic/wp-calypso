@@ -23,6 +23,7 @@
 		left: 0;
 		height: 0;
 		transition: none;
+		border-left: none;
 
 		.focus-sidebar & {
 			height: auto;
