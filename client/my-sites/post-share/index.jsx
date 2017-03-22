@@ -256,22 +256,24 @@ class PostShare extends Component {
 		} = this.props;
 
 		if ( planSlug !== PLAN_BUSINESS ) {
-			return ( <Banner
-				className="post-share__footer-banner"
-				callToAction={
-					translate( 'Upgrade for %s', {
-						args: formatCurrency( businessDiscountedRawPrice || businessRawPrice, userCurrency ),
-						comment: '%s will be replaced by a formatted price, i.e $9.99'
-					} )
-				}
-				description={ translate( 'Live chat support and no advertising.' ) }
-				list={ [
-					translate( 'Live chat support' ),
-					translate( 'No Advertising' )
-				] }
-				plan={ PLAN_BUSINESS }
-				title={ translate( 'Upgrade to a Business Plan!' ) }
-			/> );
+			return (
+				<Banner
+					className="post-share__footer-banner"
+					callToAction={
+						translate( 'Upgrade for %s', {
+							args: formatCurrency( businessDiscountedRawPrice || businessRawPrice, userCurrency ),
+							comment: '%s will be replaced by a formatted price, i.e $9.99'
+						} )
+					}
+					description={ translate( 'Live chat support and no advertising.' ) }
+					list={ [
+						translate( 'Live chat support' ),
+						translate( 'No Advertising' )
+					] }
+					plan={ PLAN_BUSINESS }
+					title={ translate( 'Upgrade to a Business Plan!' ) }
+				/>
+			);
 		}
 		return ( <div>
 			<QuerySharePostActions siteId={ siteId } postId={ postId } status="scheduled" />
