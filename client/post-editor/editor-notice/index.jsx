@@ -189,6 +189,12 @@ export class EditorNotice extends Component {
 					},
 					comment: 'Editor: Message displayed when a post is updated, with a link to the site it was updated on.'
 				} );
+
+			case 'copy-from-gdocs':
+				return translate( 'Did you know you can post a draft directly from Google Docs?' );
+
+			case 'copy-from-gdocs-action':
+				return translate( 'Learn how' );
 		}
 	}
 
