@@ -47,6 +47,11 @@ export function receiveFollowTag( store, action, next, apiResponse ) {
 }
 
 export function receiveError( store, action, next, error ) {
+	// exit early and do nothing if the error is that the user is already following the tag
+	if ( error && error.error === 'already_subscribed' ) {
+		return;
+	}
+
 	const errorText = translate( 'Could not follow tag: %(tag)s', {
 		args: { tag: action.payload.slug }
 	} );
