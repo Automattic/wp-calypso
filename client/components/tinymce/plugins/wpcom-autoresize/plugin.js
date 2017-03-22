@@ -24,10 +24,30 @@ function wcpomAutoResize( editor ) {
 		return;
 	}
 
+	function isEndOfEditor() {
+		var range, start, body, element, child;
+		range = editor.selection.getRng();
+
+		if ( ( range.startOffset === 0 && range.endOffset !== 0 ) || ! range.collapsed ) {
+			return false;
+		}
+
+		start = range.startContainer;
+		body = editor.getBody();
+		element = start;
+		do {
+			child = element;
+			element = element.parentNode;
+			if ( element.childNodes[ element.childNodes.length - 1 ] !== child ) {
+				return false;
+			}
+		} while ( element !== body );
+		return true;
+	}
+
 	function resize( e ) {
 		var deltaSize, doc, body, docElm, DOM = tinymce.DOM, resizeHeight, myHeight,
-			marginTop, marginBottom, paddingTop, paddingBottom, borderTop, borderBottom,
-			beforeBottomOffset, afterY;
+			marginTop, marginBottom, paddingTop, paddingBottom, borderTop, borderBottom;
 
 		doc = editor.getDoc();
 		if ( !doc ) {
@@ -97,19 +117,20 @@ function wcpomAutoResize( editor ) {
 		// Resize content element
 		if ( resizeHeight !== oldSize ) {
 			deltaSize = resizeHeight - oldSize;
-			beforeBottomOffset = document.body.scrollHeight - window.innerHeight - window.scrollY;
 			DOM.setStyle( editor.iframeElement, 'height', resizeHeight + 'px' );
 			oldSize = resizeHeight;
-
-			afterY = document.body.scrollHeight - window.innerHeight - beforeBottomOffset;
-			if ( afterY !== window.scrollY ) {
-				window.scrollTo( 0, afterY );
-			}
 
 			// WebKit doesn't decrease the size of the body element until the iframe gets resized
 			// So we need to continue to resize the iframe down until the size gets fixed
 			if ( tinymce.isWebKit && deltaSize < 0 ) {
 				resize( e );
+			}
+
+			if ( e && e.type === 'keyup' ||
+				( e && e.type === 'nodechange' && e.element && e.element.tagName === 'BR' ) ) {
+				if ( isEndOfEditor() ) {
+					window.scrollTo( 0, document.body.scrollHeight );
+				}
 			}
 		}
 	}
