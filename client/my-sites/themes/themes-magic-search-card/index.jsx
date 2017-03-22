@@ -240,6 +240,7 @@ class ThemesMagicSearchCard extends React.Component {
 			<Search
 				onSearch={ this.props.onSearch }
 				initialValue={ this.state.searchInput }
+				searching={ this.props.searching }
 				value={ this.state.searchInput }
 				ref="url-search"
 				placeholder={ translate( 'What kind of theme are you looking for?' ) }
