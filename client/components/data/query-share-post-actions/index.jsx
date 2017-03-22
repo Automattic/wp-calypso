@@ -7,17 +7,21 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import isFetchingPublicizeShareActions from 'state/selectors/is-fetching-publicize-share-actions';
-import { fetchPostShareActions } from 'state/sharing/publicize/publicize-actions/actions';
+import isFetchingPublicizeShareActionsScheduled from 'state/selectors/is-fetching-publicize-share-actions-scheduled';
+import isFetchingPublicizeShareActionsPublished from 'state/selectors/is-fetching-publicize-share-actions-published';
+import { fetchPostShareActionsScheduled, fetchPostShareActionsPublished } from 'state/sharing/publicize/publicize-actions/actions';
 
 class QuerySharePostActions extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
+		status: PropTypes.string,
 		// Connected props
-		isRequesting: PropTypes.bool.isRequired,
-		fetchPostShareActions: PropTypes.func.isRequired,
-	}
+		isRequestingScheduled: PropTypes.bool.isRequired,
+		isRequestingPublished: PropTypes.bool.isRequired,
+		fetchPostShareActionsScheduled: PropTypes.func.isRequired,
+		fetchPostShareActionsPublished: PropTypes.func.isRequired,
+	};
 
 	componentDidMount() {
 		this.request( this.props );
@@ -25,15 +29,19 @@ class QuerySharePostActions extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId === nextProps.siteId &&
-			this.props.postId === nextProps.postId ) {
+			this.props.postId === nextProps.postId &&
+			this.props.status === nextProps.status ) {
 			return;
 		}
 		this.request( nextProps );
 	}
 
 	request( props ) {
-		if ( ! props.isRequesting ) {
-			props.fetchPostShareActions( props.siteId, props.postId );
+		if ( props.status === 'scheduled' && ! props.isRequestingScheduled ) {
+			props.fetchPostShareActionsScheduled( props.siteId, props.postId );
+		}
+		if ( props.status === 'published' && ! props.fetchPostShareActionsPublished ) {
+			props.fetchPostShareActionsPublished( props.siteId, props.postId );
 		}
 	}
 
@@ -44,7 +52,8 @@ class QuerySharePostActions extends Component {
 
 export default connect(
 	( state, { siteId, postId } ) => ( {
-		isRequesting: isFetchingPublicizeShareActions( state, siteId, postId ),
+		isRequestingScheduled: isFetchingPublicizeShareActionsScheduled( state, siteId, postId ),
+		isRequestingPublished: isFetchingPublicizeShareActionsPublished( state, siteId, postId ),
 	} ),
-	{ fetchPostShareActions }
+	{ fetchPostShareActionsScheduled, fetchPostShareActionsPublished }
 )( QuerySharePostActions );

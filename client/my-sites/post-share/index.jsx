@@ -15,7 +15,8 @@ import QueryPostTypes from 'components/data/query-post-types';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import {
-	getSitePostPublicizeSharingActions,
+	getPostShareScheduledActions,
+	getPostSharePublishedActions,
 	isPublicizeEnabled,
 } from 'state/selectors';
 import {
@@ -249,7 +250,9 @@ class PostShare extends Component {
 			businessRawPrice,
 			businessDiscountedRawPrice,
 			userCurrency,
-			sharingActions,
+			scheduledSharingActions,
+			siteId,
+			postId,
 		} = this.props;
 
 		if ( planSlug !== PLAN_BUSINESS ) {
@@ -272,10 +275,10 @@ class PostShare extends Component {
 				/>
 			);
 		}
-
-		return sharingActions.map(
-			( item, index ) => this.renderFooterSectionItem( item, index )
-		);
+		return ( <div>
+			<QuerySharePostActions siteId={ siteId } postId={ postId } status="scheduled" />
+			{ scheduledSharingActions.map( ( item, index ) => this.renderFooterSectionItem( item, index ) ) }
+		</div> );
 	}
 
 	renderPublishedList() {
@@ -376,7 +379,6 @@ class PostShare extends Component {
 
 				<div className={ classes }>
 					<QueryPublicizeConnections siteId={ siteId } />
-					<QuerySharePostActions siteId={ siteId } postId={ postId } />
 					<QueryPostTypes siteId={ siteId } />
 
 					<div className="post-share__head">
@@ -484,7 +486,8 @@ export default connect(
 			businessRawPrice: getSitePlanRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
 			businessDiscountedRawPrice: getPlanDiscountedRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
 			userCurrency: getCurrentUserCurrencyCode( state ), //populated by either plans endpoint
-			sharingActions: getSitePostPublicizeSharingActions( state, siteId, postId ),
+			scheduledSharingActions: getPostShareScheduledActions( state, siteId, postId ),
+			publishedSharingActions: getPostSharePublishedActions( state, siteId, postId ),
 		};
 	},
 	{ requestConnections, sharePost, dismissShareConfirmation }
