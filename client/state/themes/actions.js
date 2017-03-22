@@ -840,8 +840,8 @@ export function hideThemePreview() {
  * installed via downloaded zip.
  *
  * @param {Object} state Global state tree
- * @param {number} siteId the Site ID
- * @param {string} themeId Child theme ID
+ * @param {number} siteId Site ID
+ * @param {string} themeId Theme ID
  * @return {string} the theme id to use when installing the theme
  */
 function suffixThemeIdForInstall( state, siteId, themeId ) {

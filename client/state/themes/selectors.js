@@ -674,7 +674,7 @@ export function themePreviewVisibility( state ) {
  * @return {?string} Parent theme id if it exists
  */
 export function getWpcomParentThemeId( state, themeId ) {
-	return get( getTheme( state, 'wpcom', themeId ), [ 'template' ], null );
+	return get( getTheme( state, 'wpcom', themeId ), 'template', null );
 }
 
 /**
@@ -682,11 +682,11 @@ export function getWpcomParentThemeId( state, themeId ) {
  * wpcom for download.
  *
  * @param {Object} state Global state tree
- * @param {string} themeId Child theme ID
+ * @param {string} themeId Theme ID
  * @return {boolean} true if zip is available on wpcom
  */
 export function isDownloadableFromWpcom( state, themeId ) {
-	const downloadUri = get( getTheme( state, 'wpcom', themeId ), [ 'download' ], '' );
+	const downloadUri = get( getTheme( state, 'wpcom', themeId ), 'download', '' );
 	return !! includes( downloadUri, 'wordpress.com' );
 }
 
