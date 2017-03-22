@@ -130,7 +130,7 @@ export class ResetPasswordFormComponent extends Component {
 				{
 					requestError && (
 					<p className="reset-password-form__error-message">
-						{ translate( "We've encountered some technical issue. Please try again later." ) }
+						{ translate( "We've encountered some technical issues. Please try again later." ) }
 					</p> )
 				}
 				<Button
