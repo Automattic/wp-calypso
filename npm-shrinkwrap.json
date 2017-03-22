@@ -1294,6 +1294,10 @@
       "version": "1.0.1",
       "dev": true
     },
+    "eslines": {
+      "version": "0.0.10",
+      "dev": true
+    },
     "eslint": {
       "version": "3.8.1",
       "dev": true,
@@ -1304,6 +1308,14 @@
         },
         "doctrine": {
           "version": "1.5.0",
+          "dev": true
+        },
+        "fast-levenshtein": {
+          "version": "2.0.6",
+          "dev": true
+        },
+        "optionator": {
+          "version": "0.8.2",
           "dev": true
         },
         "strip-bom": {
@@ -1320,6 +1332,10 @@
         },
         "user-home": {
           "version": "2.0.0",
+          "dev": true
+        },
+        "wordwrap": {
+          "version": "1.0.0",
           "dev": true
         }
       }
@@ -1466,7 +1482,7 @@
       "version": "1.0.2"
     },
     "fast-levenshtein": {
-      "version": "2.0.6",
+      "version": "1.1.4",
       "dev": true
     },
     "fast-luhn": {
@@ -2754,7 +2770,7 @@
       "version": "0.6.1"
     },
     "optionator": {
-      "version": "0.8.2",
+      "version": "0.8.1",
       "dev": true,
       "dependencies": {
         "wordwrap": {
