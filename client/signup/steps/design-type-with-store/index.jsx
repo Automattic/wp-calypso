@@ -112,9 +112,13 @@ class DesignTypeWithStoreStep extends Component {
 
 		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
 			choiceLabel = null;
-			choiceCardClass = 'design-type-with-store__choice design-type-with-store__choice--test';
+			choiceCardClass += ' design-type-with-store__choice--test';
 			choiceDescription = <p className="design-type-with-store__choice-description">{ choice.description }</p>;
 			callToAction = <span className="button is-compact design-type-with-store__cta">Start with {choice.label}</span>;
+		}
+
+		if ( abtest( 'signupStepOneMobileOptimize' ) === 'modified' ) {
+			choiceCardClass += ' design-type-with-store__choice--mobile-test';
 		}
 
 		return (
