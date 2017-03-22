@@ -10,27 +10,39 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import DisconnectJetpackDialog from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-dialog';
+import DisconnectJetpackDialog from 'blocks/disconnect-jetpack-dialog';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getPlanClass } from 'lib/plans/constants';
 
 class DisconnectJetpackButton extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = { dialogVisible: false };
+	}
+
 	handleClick = ( event ) => {
 		event.preventDefault();
 		if ( this.props.isMock ) {
 			return;
 		}
 
-		if ( this.refs.dialog ) {
-			this.refs.dialog.getWrappedInstance().open();
-		}
-
+		this.setState( { dialogVisible: true } );
 		this.props.recordGoogleEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
 	};
 
-	render() {
-		const { site, redirect, linkDisplay } = this.props;
+	hideDialog = () => {
+		this.setState( { dialogVisible: false } );
+	}
 
-		const omitProps = [ 'site', 'redirect', 'isMock', 'linkDisplay', 'text', 'recordGoogleEvent' ];
+	disconnectJetpack = () => {
+		this.setState( { dialogVisible: false } );
+	}
+
+	render() {
+		const { site, linkDisplay, planClass } = this.props;
+
+		const omitProps = [ 'site', 'redirect', 'isMock', 'linkDisplay', 'text', 'recordGoogleEvent', 'planClass' ];
 		const buttonProps = {
 			...omit( this.props, omitProps ),
 			id: `disconnect-jetpack-${ site.ID }`,
@@ -52,7 +64,14 @@ class DisconnectJetpackButton extends Component {
 
 		return <Button { ...buttonProps }>
 			{ text }
-			<DisconnectJetpackDialog site={ site } ref="dialog" redirect={ redirect } />
+			<DisconnectJetpackDialog
+				isVisible={ this.state.dialogVisible }
+				onDisconnect={ this.disconnectJetpack }
+				onClose={ this.hideDialog }
+				plan= { planClass }
+				isBroken={ false }
+				siteName={ site.slug }
+				/>
 		</Button>;
 	}
 }
@@ -71,6 +90,15 @@ DisconnectJetpackButton.defaultProps = {
 };
 
 export default connect(
-	null,
+	( state, ownProps ) => {
+		const plan = getCurrentPlan( state, ownProps.site.ID );
+		const planClass = plan && plan.productSlug
+			? getPlanClass( plan.productSlug )
+			: 'free';
+
+		return {
+			planClass
+		};
+	},
 	{ recordGoogleEvent }
 )( DisconnectJetpackButton );
