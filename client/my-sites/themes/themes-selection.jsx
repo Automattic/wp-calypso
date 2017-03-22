@@ -64,9 +64,9 @@ const ThemesSelection = React.createClass( {
 
 	getInitialState() {
 		return {
-			themes: [],
-			initialLoad: true,
-			themesCount: null
+			themes: this.props.themes,
+			initialLoad: this.props.themesCount && this.props.themes.length === 0,
+			themesCount: this.props.themesCount
 		};
 	},
 
@@ -180,7 +180,7 @@ const ThemesSelection = React.createClass( {
 					isActive={ this.props.isThemeActive }
 					isPurchased={ this.props.isThemePurchased }
 					isInstalling={ this.props.isInstallingTheme }
-					loading={ this.state.initialLoad }
+					loading={ !! this.state.initialLoad }
 					emptyContent={ this.props.emptyContent }
 					placeholderCount={ this.props.placeholderCount } />
 			</div>
