@@ -354,6 +354,10 @@ module.exports = function() {
 						req.context.hasSecondary = true;
 					}
 
+					if ( section.group && req.context ) {
+						req.context.sectionGroup = section.group;
+					}
+
 					next();
 				} );
 
