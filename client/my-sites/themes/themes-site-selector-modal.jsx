@@ -104,10 +104,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 				{ selectedOption && <SiteSelectorModal className="themes__site-selector-modal"
 					isVisible={ true }
 					filter={ function( site ) {
-						return ! (
-							( selectedOption.hideForSite && selectedOption.hideForSite( site.ID ) ) ||
-							( selectedOption.hideForTheme && selectedOption.hideForTheme( selectedThemeId, site.ID ) )
-						);
+						return ! ( selectedOption.hideForTheme && selectedOption.hideForTheme( selectedThemeId, site.ID ) );
 					} }
 					hide={ this.hideSiteSelectorModal }
 					mainAction={ this.trackAndCallAction }
