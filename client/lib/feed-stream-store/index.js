@@ -121,7 +121,9 @@ function getStoreForTag( storeId ) {
 }
 
 function getStoreForSearch( storeId ) {
-	const slug = storeId.substring( storeId.indexOf( ':' ) + 1 );
+	const idParts = storeId.split( ':' );
+	const sort = idParts[ 1 ];
+	const slug = idParts.slice( 2 ).join( ':' );
 	const stream = new PagedStream( {
 		id: storeId,
 		fetcher: fetcher,
@@ -132,6 +134,7 @@ function getStoreForSearch( storeId ) {
 	function fetcher( query, callback ) {
 		query.q = slug;
 		query.meta = 'site';
+		query.sort = sort;
 		wpcomUndoc.readSearch( query, trainTracksProxyForStream( stream, callback ) );
 	}
 
