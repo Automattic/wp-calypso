@@ -57,3 +57,15 @@
 .drop-zone.is-full-screen .drop-zone__content {
 	font-size: 30px;
 }
+
+.drop-zone__custom-featured-image {
+	background-color: rgba( $orange-jazzy, 0.7 );
+	border: 6px solid $orange-jazzy;
+
+
+	.drop-zone__content {
+		color: black;
+		font-size: 14px;
+		font-weight:bold;
+	}
+}

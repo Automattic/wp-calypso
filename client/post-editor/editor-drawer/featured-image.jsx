@@ -57,7 +57,7 @@ class EditorDrawerFeaturedImage extends Component {
 		const { translate, site, post } = this.props;
 
 		return (
-			<Accordion title={ translate( 'Featured Image' ) }>
+			<Accordion title={ translate( 'Featured Image' ) } initialExpanded={true}>
 				<EditorDrawerWell
 					label={ translate( 'Set Featured Image' ) }
 					empty={ ! site || ! post || ! getFeaturedImageId( post ) }

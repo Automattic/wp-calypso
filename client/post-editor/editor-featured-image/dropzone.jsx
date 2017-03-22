@@ -15,6 +15,8 @@ import MediaStore from 'lib/media/store';
 import MediaUtils from 'lib/media/utils';
 import PostActions from 'lib/posts/actions';
 
+import FeaturedImageDropZoneIcon from './dropzone-icon';
+
 import { receiveMedia, deleteMedia } from 'state/media/actions';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -92,8 +94,10 @@ class FeaturedImageDropZone extends Component {
 	render() {
 		return (
 			<DropZone
+				customClass="drop-zone__custom-featured-image"
+				icon={ <FeaturedImageDropZoneIcon /> }
+				textLabel={ this.props.translate( 'Set as Featured Image' ) }
 				onFilesDrop={ this.onFilesDrop }
-				textLabel={ this.props.translate( 'Drop an image to set as a Featured Image' ) }
 			/>
 		);
 	}
