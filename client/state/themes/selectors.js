@@ -305,6 +305,10 @@ export function isRequestingTheme( state, siteId, themeId ) {
 	return !! state.themes.themeRequests[ siteId ][ themeId ];
 }
 
+export function isRequestingThemes( state ) {
+	return some( state.themes.queryRequests );
+}
+
 /**
  * Returns true if a request is in progress for the site active theme, or
  * false otherwise.
