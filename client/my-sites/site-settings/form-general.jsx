@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import page from 'page';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { get } from 'lodash';
@@ -24,7 +23,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
-import FormToggle from 'components/forms/form-toggle';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
@@ -227,75 +225,6 @@ class SiteSettingsFormGeneral extends Component {
 				}
 
 			</FormFieldset>
-		);
-	}
-
-	handleAmpToggle = () => {
-		const { fields, submitForm, trackEvent, updateFields } = this.props;
-		updateFields( { amp_is_enabled: ! fields.amp_is_enabled }, () => {
-			submitForm();
-			trackEvent( 'Toggled AMP Toggle' );
-		} );
-	};
-
-	handleAmpCustomize = () => {
-		this.props.trackEvent( 'Clicked AMP Customize button' );
-		page( '/customize/amp/' + this.props.site.slug );
-	};
-
-	renderAmpSection() {
-		if ( this.props.site.jetpack ) {
-			return;
-		}
-
-		const {
-			fields: {
-				amp_is_supported: ampIsSupported,
-				amp_is_enabled: ampIsEnabled
-			},
-			isRequestingSettings,
-			isSavingSettings,
-			translate
-		} = this.props;
-
-		const isDisabled = isRequestingSettings || isSavingSettings;
-		const isCustomizeDisabled = isDisabled || ! ampIsEnabled;
-
-		if ( ! ampIsSupported ) {
-			return null;
-		}
-
-		return (
-			<div className="site-settings__amp">
-				<SectionHeader label={ translate( 'AMP' ) }>
-					<Button
-						compact
-						disabled={ isCustomizeDisabled }
-						onClick={ this.handleAmpCustomize }>
-						{ translate( 'Edit Design' ) }
-					</Button>
-					<FormToggle
-						checked={ ampIsEnabled }
-						onChange={ this.handleAmpToggle }
-						disabled={ isDisabled } />
-				</SectionHeader>
-				<Card className="site-settings__amp-explanation">
-					<p>
-						{ translate(
-							'Your WordPress.com site supports {{a}}Accelerated Mobile Pages (AMP){{/a}}, ' +
-							'a new Google-led initiative that dramatically improves loading speeds ' +
-							'on phones and tablets. {{a}}Learn More{{/a}}.',
-							{
-								components: {
-									a: <a
-										href="https://support.wordpress.com/google-amp-accelerated-mobile-pages/"
-										target="_blank" rel="noopener noreferrer" />
-								}
-							}
-						) }
-					</p>
-				</Card>
-			</div>
 		);
 	}
 
@@ -577,8 +506,6 @@ class SiteSettingsFormGeneral extends Component {
 					</form>
 				</Card>
 
-				{ this.renderAmpSection() }
-
 				{
 					! site.jetpack && <div className="site-settings__footer-credit-container">
 						<SectionHeader label={ translate( 'Footer Credit' ) } />
@@ -667,8 +594,6 @@ export default wrapSettingsForm( settings => {
 		admin_url: '',
 		jetpack_sync_non_public_post_stati: false,
 		holidaysnow: false,
-		amp_is_supported: false,
-		amp_is_enabled: false,
 		api_cache: false,
 	};
 
@@ -687,9 +612,6 @@ export default wrapSettingsForm( settings => {
 		time_format: settings.time_format,
 		start_of_week: settings.start_of_week,
 		jetpack_sync_non_public_post_stati: settings.jetpack_sync_non_public_post_stati,
-
-		amp_is_supported: settings.amp_is_supported,
-		amp_is_enabled: settings.amp_is_enabled,
 
 		holidaysnow: !! settings.holidaysnow,
 
