@@ -175,7 +175,7 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	}
 
 	&.is-active {
-		color: black;
+		color: $gray-dark;
 	}
 }
 
