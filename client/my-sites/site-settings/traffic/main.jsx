@@ -32,7 +32,6 @@ const SiteSettingsTraffic = ( {
 		<SidebarNavigation />
 		<SiteSettingsNavigation site={ site } section="traffic" />
 
-		<SeoSettingsHelpCard />
 		<RelatedPosts
 			onSubmitForm={ handleSubmitForm }
 			handleAutosavingToggle={ handleAutosavingToggle }
@@ -41,6 +40,7 @@ const SiteSettingsTraffic = ( {
 			fields={ fields }
 		/>
 		<AnalyticsSettings />
+		<SeoSettingsHelpCard />
 		<SeoSettingsMain sites={ sites } upgradeToBusiness={ upgradeToBusiness } />
 	</Main>
 );
