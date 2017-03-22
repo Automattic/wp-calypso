@@ -37,11 +37,11 @@ MAKENSIS_VERSION := $(shell expr `makensis -VERSION 2>/dev/null`)
 
 # check for secrets.json
 secret:
-	@if [ ! -f $(THIS_DIR)/calypso/config/secrets.json ]; then if [ -z "${CIRCLECI}" ]; then { echo "calypso/config/secrets.json not found. Required file, see docs/secrets.md"; exit 1; } fi; fi
+	@if [ ! -f $(THIS_DIR)/../config/secrets.json ]; then if [ -z "${CIRCLECI}" ]; then { echo "calypso/config/secrets.json not found. Required file, see docs/secrets.md"; exit 1; } fi; fi
 
 # confirm proper clientid for production release
 secret-clientid:
-	@grep -q 43452 $(THIS_DIR)/calypso/config/secrets.json
+	@grep -q 43452 $(THIS_DIR)/../config/secrets.json
 
 # Just runs Electron with whatever version of Calypso exists
 run: config-dev package
