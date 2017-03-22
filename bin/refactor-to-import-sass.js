@@ -67,6 +67,10 @@ function isNodeReactCreateClass( node ) {
 		&& node.property.name === 'createClass';
 }
 
+function isFunctionBodyHaveJSX( ) {
+
+}
+
 function isIdentifierReactComponent( astRoot, identifierName ) {
 	let isReactCreateClass = false;
 	let isSubclassOfReactComponent = false;
@@ -444,10 +448,50 @@ walk(
 			'NoIndex: ' + noIndex.length,
 			'Unable to process: ' + unableToProcess.length );
 
+		// Write exclusion list for the Makefile
 		const scssFileList = processedScssFiles
 			.map( filename => filename.replace( CALYPSO_DIR + path.sep, '' ) ) // convert to relative path for Makefile's SASS_FILES
 			.join( '\n' );
-		fs.writeFileSync( PROCESSED_SCSS_LIST_FILENAME, scssFileList );
+
+		fs.writeFile( PROCESSED_SCSS_LIST_FILENAME, scssFileList, error => {
+			if ( error ) {
+				console.error( 'Failed to write exclusion list', PROCESSED_SCSS_LIST_FILENAME, error );
+			}
+		} );
+
+		// Remove the styles from assets/stylesheets/_components.scss
+		let componentsImport = fs.readFileSync( path.join( CALYPSO_DIR, 'assets/stylesheets/_components.scss' ) ).toString();
+
+		processedScssFiles
+			.map( scssFilePath => scssFilePath.replace( CALYPSO_DIR + path.sep, '' ) ) // convert to relative path
+			.map( scssFilePath => {
+				const pathParts = scssFilePath.split( path.sep ).slice( 1 ); // drop 'client'
+				let fileName = pathParts.slice( -1 )[ 0 ];
+
+				// remove leading underscore
+				if ( fileName[0] === '0' ) {
+					fileName = fileName.substring( 1 );
+				}
+
+				// remove extension
+				if ( fileName.indexOf( '.' ) > -1 ) {
+					fileName = fileName.substring( 0, fileName.indexOf( '.' ) );
+				}
+
+				// combine the path back
+				return [ ...pathParts.slice( 0, -1 ), fileName ].join( path.sep );
+			})
+			.forEach( scssModulePath => {
+				const importStatement = `@import '${scssModulePath}';\n`;
+				componentsImport = componentsImport.replace( importStatement, '' );
+			} );
+
+
+		fs.writeFile( path.join( CALYPSO_DIR, 'assets/stylesheets/_components.scss' ), componentsImport, error => {
+			if ( error ) {
+				console.error( 'Failed to write assets/stylesheets/_components.scss', error );
+			}
+		} )
 	}
 );
 
