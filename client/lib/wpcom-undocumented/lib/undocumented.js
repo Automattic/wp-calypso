@@ -1185,7 +1185,7 @@ Undocumented.prototype.readFeedPosts = function( query, fn ) {
 };
 
 Undocumented.prototype.readFeedPost = function( query, fn ) {
-	var params = omit( query, [ 'feedId', 'postId' ] );
+	var params = omit( query, [ 'feedId', 'postId', 'isRecommendation' ] );
 	debug( '/read/feed/' + query.feedId + '/posts/' + query.postId );
 	params.apiVersion = '1.3';
 	addReaderContentWidth( params );
@@ -1339,7 +1339,7 @@ Undocumented.prototype.readSiteFeatured = function( siteId, query, fn ) {
 };
 
 Undocumented.prototype.readSitePosts = function( query, fn ) {
-	var params = omit( query, 'site' );
+	var params = omit( query, 'site', 'isRecommendation' );
 	debug( '/read/sites/:site/posts' );
 	addReaderContentWidth( params );
 	return this.wpcom.req.get( '/read/sites/' + query.site + '/posts', params, fn );
