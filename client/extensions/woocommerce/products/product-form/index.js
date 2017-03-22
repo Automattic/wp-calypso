@@ -38,25 +38,25 @@ export default class ProductForm extends Component {
 	}
 
 	render() {
-		const isNewProduct = this.props.product ? false : true;
+		const { product } = this.props;
+		const variationToggleDescription = i18n.translate(
+			'%(productName)s has variations, for example size and color.', {
+				args: {
+					productName: product && product.name || i18n.translate( 'This product' )
+				}
+			}
+		);
 		return (
 			<FoldableCard
 				icon=""
 				expanded={ true }
 				className="product-variations"
 				header={ ( <FormToggle onChange={ this.handleToggle } checked={ this.state.isVariation }>
-					{ isNewProduct ? i18n.translate( 'This product has variations, for example size and color.' )
-					: i18n.translate( '%(productName) has variations, for example size and color.', {
-						args: {
-							productName: this.props.product.name,
-						}
-					} )
-					}
+					{variationToggleDescription}
 				</FormToggle>
 				) }
 			>
-
-				{ this.state.isVariation  && (
+				{ this.state.isVariation && (
 					<ProductVariationTypesForm />
 				) }
 			</FoldableCard>

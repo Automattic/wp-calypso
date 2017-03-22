@@ -3,7 +3,6 @@
  */
 import React, { Component, PropTypes } from 'react';
 import i18n from 'i18n-calypso';
-import clone from 'lodash/clone';
 
 /**
  * Internal dependencies
@@ -31,11 +30,12 @@ export default class ProductVariationTypesForm extends Component {
 		super( props );
 
 		this.state = {
-			variations: this.props.variations ? this.props.variations : this.getInitialFields(),
+			variations: this.props.variations || this.getInitialFields(),
 		};
 
 		this.addVariation = this.addVariation.bind( this );
-		this.renderInputs = this.renderInputs.bind( this );
+		this.updateType = this.updateType.bind( this );
+		this.updateValues = this.updateValues.bind( this );
 	}
 
 	getInitialFields() {
@@ -51,17 +51,14 @@ export default class ProductVariationTypesForm extends Component {
 
 	updateType( index, event ) {
 		event.preventDefault();
-		const newValue = event.target.value,
-			updatedVariations = clone( this.state.variations );
-		updatedVariations[ index ] = clone( updatedVariations[ index ] );
-		updatedVariations[ index ].type = newValue;
+		const updatedVariations = [ ... this.state.variations ];
+		updatedVariations[ index ] = { ...updatedVariations[ index ], type: event.target.value };
 		this.setState( { variations: updatedVariations } );
 	}
 
 	updateValues( index, value ) {
-		const updatedVariations = clone( this.state.variations );
-		updatedVariations[ index ] = clone( updatedVariations[ index ] );
-		updatedVariations[ index ].values = value;
+		const updatedVariations = [ ...this.state.variations ];
+		updatedVariations[ index ] = { ...updatedVariations[ index ], values: value };
 		this.setState( { variations: updatedVariations } );
 	}
 
@@ -72,14 +69,14 @@ export default class ProductVariationTypesForm extends Component {
 					placeholder={ i18n.translate( 'Color' ) }
 					value={ variation.type }
 					name="type"
-					onChange={ this.updateType.bind( this, index ) }
+					onChange={ ( e ) => this.updateType( index, e ) }
 					className="product-variation-types-form__field"
 				/>
 				<TokenField
 					placeholder={ i18n.translate( 'Comma separate these' ) }
 					value={ variation.values }
 					name="values"
-					onChange={ this.updateValues.bind( this, index ) }
+					onChange={ ( value ) => this.updateValues( index, value ) }
 				/>
 			</div>
 		);
@@ -87,13 +84,12 @@ export default class ProductVariationTypesForm extends Component {
 
 	addVariation( event ) {
 		event.preventDefault();
-		const updatedVariations = this.state.variations.concat( [ this.getNewFields() ] );
+		const updatedVariations = [ ...this.state.variations, this.getNewFields() ];
 		this.setState( { variations: updatedVariations } );
 	}
 
 	render() {
-		const fields = this.state.variations,
-			inputs = fields.map( this.renderInputs );
+		const inputs = this.state.variations.map( this.renderInputs, this );
 		return (
 			<div className="product-variation-types-form">
 				<strong>{ i18n.translate( 'Variation types' ) }</strong>
