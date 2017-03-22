@@ -12,7 +12,6 @@ import { invoke } from 'lodash';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import Card from 'components/card';
-import { abtest } from 'lib/abtest';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PressableStoreStep from './pressable-store';
@@ -34,34 +33,28 @@ class DesignTypeWithStoreStep extends Component {
 
 	getChoices() {
 		const { translate } = this.props;
-
-		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
-			// Note: Don't make this translatable because it's only visible to English-language users
-			return [
-				{ type: 'blog',
-					label: 'a blog',
-					description: 'To share your ideas, stories, and photographs with your followers.',
-					image: <BlogImage /> },
-				{ type: 'page',
-					label: 'a website',
-					description: 'To promote your business, organization, or brand and connect with your audience.',
-					image: <PageImage /> },
-				{ type: 'grid',
-					label: 'a portfolio',
-					description: 'To present your creative projects in a visual showcase.',
-					image: <GridImage /> },
-				{ type: 'store',
-					label: 'an online store',
-					description: 'To sell your products or services and accept payments.',
-					image: <StoreImage /> },
-			];
-		}
+		const blogText = translate( 'To share your ideas, stories, and photographs with your followers.' ), // eslint-disable-line max-len
+			siteText = translate( 'To promote your business, organization, or brand and connect with your audience.' ), // eslint-disable-line max-len
+			gridText = translate( 'To present your creative projects in a visual showcase.' ),
+			storeText = translate( 'To sell your products or services and accept payments.' );
 
 		return [
-			{ type: 'blog', label: translate( 'A list of my latest posts' ), image: <BlogImage /> },
-			{ type: 'page', label: translate( 'A welcome page for my site' ), image: <PageImage /> },
-			{ type: 'grid', label: translate( 'A grid of my latest posts' ), image: <GridImage /> },
-			{ type: 'store', label: translate( 'An online store' ), image: <StoreImage /> },
+			{ type: 'blog',
+				label: translate( 'Start with a blog' ),
+				description: blogText,
+				image: <BlogImage /> },
+			{ type: 'page',
+				label: translate( 'Start with a website' ),
+				description: siteText,
+				image: <PageImage /> },
+			{ type: 'grid',
+				label: translate( 'Start with a portfolio' ),
+				description: gridText,
+				image: <GridImage /> },
+			{ type: 'store',
+				label: translate( 'Start with an online store' ),
+				description: storeText,
+				image: <StoreImage /> },
 		];
 	}
 
@@ -106,16 +99,6 @@ class DesignTypeWithStoreStep extends Component {
 
 	renderChoice = ( choice ) => {
 		let choiceCardClass = 'design-type-with-store__choice';
-		let choiceLabel = <h2 className="design-type-with-store__choice-label">{ choice.label }</h2>;
-		let choiceDescription = null;
-		let callToAction = null;
-
-		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
-			choiceLabel = null;
-			choiceCardClass += ' design-type-with-store__choice--test';
-			choiceDescription = <p className="design-type-with-store__choice-description">{ choice.description }</p>;
-			callToAction = <span className="button is-compact design-type-with-store__cta">Start with {choice.label}</span>;
-		}
 
 		if ( abtest( 'signupStepOneMobileOptimize' ) === 'modified' ) {
 			choiceCardClass += ' design-type-with-store__choice--mobile-test';
@@ -130,9 +113,12 @@ class DesignTypeWithStoreStep extends Component {
 						{ choice.image }
 					</div>
 					<div className="design-type-with-store__choice-copy">
-						{ choiceLabel }
-						{ callToAction }
-						{ choiceDescription }
+						<span className="button is-compact design-type-with-store__cta">
+							{choice.label}
+						</span>
+						<p className="design-type-with-store__choice-description">
+							{ choice.description }
+						</p>
 					</div>
 				</a>
 			</Card>
@@ -140,7 +126,8 @@ class DesignTypeWithStoreStep extends Component {
 	};
 
 	renderChoices() {
-		let disclaimer = null;
+		const { translate } = this.props;
+		const disclaimerText = translate( 'Not sure? Pick the closest option. You can always change your settings later.' ); // eslint-disable-line max-len
 
 		const storeWrapperClassName = classNames(
 			'design-type-with-store__store-wrapper',
@@ -151,13 +138,6 @@ class DesignTypeWithStoreStep extends Component {
 			'design-type-with-store__list',
 			{ 'is-hidden': this.state.showStore }
 		);
-
-		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
-			// Note: Don't make this translatable because it's only visible to English-language users
-			disclaimer = <p className="design-type-with-store__disclaimer">
-								Not sure? Pick the closest option. You can always change your settings later.
-							</p>;
-		}
 
 		return (
 			<div className="design-type-with-store__substep-wrapper">
@@ -170,7 +150,10 @@ class DesignTypeWithStoreStep extends Component {
 				</div>
 				<div className={ designTypeListClassName }>
 					{ this.getChoices().map( this.renderChoice ) }
-					{ disclaimer }
+
+					<p className="design-type-with-store__disclaimer">
+						{ disclaimerText }
+					</p>
 				</div>
 			</div>
 		);
@@ -187,12 +170,7 @@ class DesignTypeWithStoreStep extends Component {
 			return translate( 'Create your WordPress Store' );
 		}
 
-		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
-			// Note: Don't make this translatable because it's only visible to English-language users
-			return 'Hello! Let’s create your new site.';
-		}
-
-		return translate( 'Let\'s get started.' );
+		return translate( 'Hello! Let’s create your new site.' );
 	}
 
 	getSubHeaderText() {
@@ -202,12 +180,7 @@ class DesignTypeWithStoreStep extends Component {
 			return translate( 'Our partners at Pressable and WooCommerce are here for you.' );
 		}
 
-		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
-			// Note: Don't make this translatable because it's only visible to English-language users
-			return 'What kind of site do you need? Choose an option below:';
-		}
-
-		return translate( 'This will help us figure out what kinds of designs to show you.' );
+		return translate( 'What kind of site do you need? Choose an option below:' );
 	}
 
 	render() {
@@ -231,7 +204,8 @@ class DesignTypeWithStoreStep extends Component {
 }
 
 const mapDispatchToProps = dispatch => ( {
-	recordNextStep: designType => dispatch( recordTracksEvent( 'calypso_triforce_select_design', { category: designType } ) )
+	recordNextStep: designType => dispatch( recordTracksEvent( 'calypso_triforce_select_design',
+		{ category: designType } ) )
 } );
 
 export default connect( null, mapDispatchToProps )( localize( DesignTypeWithStoreStep ) );
