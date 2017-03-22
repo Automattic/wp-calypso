@@ -227,7 +227,7 @@ const PlansSetup = React.createClass( {
 	},
 
 	renderPluginsPlaceholders() {
-		const placeholderCount = !! this.props.whitelist ? 1 : 3;
+		const placeholderCount = !! this.props.whitelist ? 1 : 2;
 		return range( placeholderCount ).map( i => <PluginItem key={ 'placeholder-' + i } /> );
 	},
 
