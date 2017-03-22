@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import config from 'config';
 import ControlItem from 'components/segmented-control/item';
 import SegmentedControl from 'components/segmented-control';
 import CompactCard from 'components/card/compact';
@@ -220,6 +221,14 @@ class SearchStream extends Component {
 			'%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) }
 		);
 
+		const TEXT_RELEVANCE_SORT = this.props.translate( 'Relevance', {
+			comment: 'A sort order, showing the most relevant posts first.'
+		} );
+
+		const TEXT_DATE_SORT = this.props.translate( 'Date', {
+			comment: 'A sort order, showing the most recent posts first.'
+		} );
+
 		return (
 			<Stream { ...this.props }
 				listName={ this.props.translate( 'Search' ) }
@@ -245,18 +254,18 @@ class SearchStream extends Component {
 							initialValue={ query }
 							value={ query }>
 						</SearchInput>
-						{ query &&
+						{ query && config.isEnabled( 'reader/search/sort-by-date' ) &&
 							<SegmentedControl compact
 								className="search-stream__sort-picker">
 								<ControlItem
 									selected={ sortOrder !== 'date' }
 									onClick={ this.useRelevanceSort }>
-									{ this.props.translate( 'Relevance' ) }
+									{ TEXT_RELEVANCE_SORT }
 								</ControlItem>
 								<ControlItem
 									selected={ sortOrder === 'date' }
 									onClick={ this.useDateSort }>
-									{ this.props.translate( 'Date' ) }
+									{ TEXT_DATE_SORT }
 								</ControlItem>
 							</SegmentedControl>
 						}
