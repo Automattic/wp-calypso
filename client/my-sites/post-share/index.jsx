@@ -15,7 +15,8 @@ import QueryPostTypes from 'components/data/query-post-types';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import {
-	getSitePostPublicizeSharingActions,
+	getPostShareScheduledActions,
+	getPostSharePublishedActions,
 	isPublicizeEnabled,
 } from 'state/selectors';
 import {
@@ -249,33 +250,33 @@ class PostShare extends Component {
 			businessRawPrice,
 			businessDiscountedRawPrice,
 			userCurrency,
-			sharingActions,
+			scheduledSharingActions,
+			siteId,
+			postId,
 		} = this.props;
 
 		if ( planSlug !== PLAN_BUSINESS ) {
-			return (
-				<Banner
-					className="post-share__footer-banner"
-					callToAction={
-						translate( 'Upgrade for %s', {
-							args: formatCurrency( businessDiscountedRawPrice || businessRawPrice, userCurrency ),
-							comment: '%s will be replaced by a formatted price, i.e $9.99'
-						} )
-					}
-					description={ translate( 'Live chat support and no advertising.' ) }
-					list={ [
-						translate( 'Live chat support' ),
-						translate( 'No Advertising' )
-					] }
-					plan={ PLAN_BUSINESS }
-					title={ translate( 'Upgrade to a Business Plan!' ) }
-				/>
-			);
+			return ( <Banner
+				className="post-share__footer-banner"
+				callToAction={
+					translate( 'Upgrade for %s', {
+						args: formatCurrency( businessDiscountedRawPrice || businessRawPrice, userCurrency ),
+						comment: '%s will be replaced by a formatted price, i.e $9.99'
+					} )
+				}
+				description={ translate( 'Live chat support and no advertising.' ) }
+				list={ [
+					translate( 'Live chat support' ),
+					translate( 'No Advertising' )
+				] }
+				plan={ PLAN_BUSINESS }
+				title={ translate( 'Upgrade to a Business Plan!' ) }
+			/> );
 		}
-
-		return sharingActions.map(
-			( item, index ) => this.renderFooterSectionItem( item, index )
-		);
+		return ( <div>
+			<QuerySharePostActions siteId={ siteId } postId={ postId } status="scheduled" />
+			{ scheduledSharingActions.map( ( item, index ) => this.renderFooterSectionItem( item, index ) ) }
+		</div> );
 	}
 
 	renderPublishedList() {
@@ -376,7 +377,6 @@ class PostShare extends Component {
 
 				<div className={ classes }>
 					<QueryPublicizeConnections siteId={ siteId } />
-					<QuerySharePostActions siteId={ siteId } postId={ postId } />
 					<QueryPostTypes siteId={ siteId } />
 
 					<div className="post-share__head">
@@ -484,7 +484,8 @@ export default connect(
 			businessRawPrice: getSitePlanRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
 			businessDiscountedRawPrice: getPlanDiscountedRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
 			userCurrency: getCurrentUserCurrencyCode( state ), //populated by either plans endpoint
-			sharingActions: getSitePostPublicizeSharingActions( state, siteId, postId ),
+			scheduledSharingActions: getPostShareScheduledActions( state, siteId, postId ),
+			publishedSharingActions: getPostSharePublishedActions( state, siteId, postId ),
 		};
 	},
 	{ requestConnections, sharePost, dismissShareConfirmation }
