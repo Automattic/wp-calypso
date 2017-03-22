@@ -25,7 +25,7 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
 import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
-import { hasSiteActiveQueryRequests } from 'state/themes/selectors';
+import { isRequestingThemes } from 'state/themes/selectors';
 
 const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
 	? require( './themes-magic-search-card' )
@@ -204,10 +204,8 @@ const ThemeShowcase = React.createClass( {
 
 export default connect(
 	( state, { siteId } ) => {
-		const isRequestingSite = hasSiteActiveQueryRequests( state, siteId );
-		const isRequestingWpcom = hasSiteActiveQueryRequests( state, 'wpcom' );
 		return {
-			isRequesting: isRequestingSite || isRequestingWpcom,
+			isRequesting: isRequestingThemes( state ),
 			isLoggedIn: !! getCurrentUserId( state ),
 			siteSlug: getSiteSlug( state, siteId ),
 			isJetpack: isJetpackSite( state, siteId ),
