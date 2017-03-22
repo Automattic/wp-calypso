@@ -60,13 +60,16 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			#wpcom.wpcom-site!= renderedLayout
 		else
 			#wpcom.wpcom-site
-				.layout
+				div( class=[ 'layout', 'is-group-' + sectionGroup ] )
 					.masterbar
 					.layout__content
 						.wpcom-site__logo.noticon.noticon-wordpress
 						if hasSecondary
 							.layout__secondary
 							ul.sidebar
+						if sectionGroup === 'editor'
+							div(class=['card', 'editor-ground-control'])
+								.editor-ground-control__action-buttons
 		if badge
 			div.environment-badge
 				if abTestHelper

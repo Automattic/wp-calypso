@@ -10,6 +10,11 @@
 	z-index: z-index( 'root', '.is-group-editor::before' );
 }
 
+.is-group-editor .sidebar {
+	left: auto;
+	right: -273px;
+}
+
 @include breakpoint( "<660px" ) {
 	.is-group-editor.focus-sidebar::before {
 		background-color: lighten( $gray, 30% );
