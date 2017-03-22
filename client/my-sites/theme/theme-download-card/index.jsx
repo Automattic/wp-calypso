@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import i18n from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
 /**
@@ -10,18 +9,19 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import { localize } from 'i18n-calypso';
 
-class ThemeDownloadCard extends React.Component {
+class ThemeDownloadCard extends React.PureComponent {
 
 	static propTypes = {
 		href: React.PropTypes.string
 	}
 
 	render() {
-		const { href } = this.props;
+		const { href, translate } = this.props;
 
 		const downloadText =
-			i18n.translate( 'This theme is available for download to be used on your {{a}}WordPress self-hosted{{/a}} installation.', {
+			translate( 'This theme is available for download to be used on your {{a}}WordPress self-hosted{{/a}} installation.', {
 				components: {
 					a: <a href={ 'https://wordpress.org' } />
 				}
@@ -30,10 +30,10 @@ class ThemeDownloadCard extends React.Component {
 			<Card className="theme-download-card">
 				<Gridicon icon="cloud-download" size={ 48 } />
 				<p>{ downloadText }</p>
-				<Button href={ href }>{ i18n.translate( 'Download' ) }</Button>
+				<Button href={ href }>{ translate( 'Download' ) }</Button>
 			</Card>
 		);
 	}
 }
 
-module.exports = ThemeDownloadCard;
+export default localize( ThemeDownloadCard );
