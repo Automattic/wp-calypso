@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
+import { recordTrack } from 'reader/stats';
 import Gridicon from 'gridicons';
 
 /**
@@ -34,12 +35,18 @@ export class ReaderSidebarTagsListItem extends Component {
 		}
 	}
 
+	handleTagSidebarClick = () => {
+		recordTrack( 'calypso_reader_tag_sidebar_click', {
+			slug: this.props.tag.slug
+		} );
+	}
+
 	render() {
 		const { tag, path, onUnfollow, translate } = this.props;
 
 		return (
 			<li key={ tag.id } className={ ReaderSidebarHelper.itemLinkClass( '/tag/' + tag.slug, path, { 'sidebar-dynamic-menu__tag': true } ) }>
-				<a className="sidebar__menu-item-label" href={ tag.url }>
+				<a className="sidebar__menu-item-label" href={ tag.url } onClick={ this.handleTagSidebarClick }>
 					<div className="sidebar__menu-item-tagname">{ tag.displayName || tag.slug }</div>
 				</a>
 				{ tag.id !== 'pending' ? <button className="sidebar__menu-action" data-tag-slug={ tag.slug } onClick={ onUnfollow }>
