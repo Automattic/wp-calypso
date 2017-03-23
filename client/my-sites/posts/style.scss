@@ -12,6 +12,10 @@
 .posts__primary {
 	flex-grow: 1;
 	max-width: 720px;
+
+	@include breakpoint( ">1280px" ) {
+		min-width: 520px;
+	}
 }
 
 .posts__list {
@@ -622,9 +626,12 @@
 
 	@include breakpoint( ">1280px" ) {
 		display: block;
+		max-width: 400px;
 	}
 
 	@include breakpoint( ">1600px" ) {
+		max-width: 600px;
+
 		.post-item.is-mini.card.is-compact {
 			padding: 16px 24px;
 
