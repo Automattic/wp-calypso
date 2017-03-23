@@ -74,7 +74,8 @@ const ThemesSelection = React.createClass( {
 		if ( ! isEqual( omit( this.props.query, PAGINATION_QUERY_KEYS ), omit( nextProps.query, PAGINATION_QUERY_KEYS ) ) ) {
 			this.props.resetPage();
 		}
-		if ( nextProps.themesCount !== null && ! this.props.isRequesting ) {
+
+		if ( nextProps.themesCount !== null && ! nextProps.isRequesting ) {
 			this.setState( {
 				themes: nextProps.themes,
 				themesCount: nextProps.themesCount,
@@ -189,6 +190,8 @@ const ThemesSelection = React.createClass( {
 
 } );
 
+const noThemes = [];
+
 const ConnectedThemesSelection = connect(
 	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
 		const isJetpack = isJetpackSite( state, siteId );
@@ -216,7 +219,7 @@ const ConnectedThemesSelection = connect(
 			query,
 			source: sourceSiteId,
 			siteSlug: getSiteSlug( state, siteId ),
-			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
+			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || noThemes,
 			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
 			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
