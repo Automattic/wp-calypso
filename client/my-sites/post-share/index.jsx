@@ -14,11 +14,7 @@ import Gridicon from 'gridicons';
 import QueryPostTypes from 'components/data/query-post-types';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
-import {
-	getPostShareScheduledActions,
-	getPostSharePublishedActions,
-	isPublicizeEnabled,
-} from 'state/selectors';
+import { isPublicizeEnabled } from 'state/selectors';
 import {
 	getSiteSlug,
 	getSitePlanSlug,
@@ -32,7 +28,6 @@ import PublicizeMessage from 'post-editor/editor-sharing/publicize-message';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import QuerySharePostActions from 'components/data/query-share-post-actions/index.jsx';
 import {
 	hasFeature,
 	getSitePlanRawPrice,
@@ -42,55 +37,52 @@ import {
 	FEATURE_REPUBLICIZE,
 	PLAN_BUSINESS,
 } from 'lib/plans/constants';
-import Banner from 'components/banner';
-import Connection from './connection';
-import { isEnabled } from 'config';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import CompactCard from 'components/card/compact';
-import SocialLogo from 'social-logos';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
+import Banner from 'components/banner';
+import Connection from './connection';
+import ActionsList from './publicize-actions-list';
+import { isEnabled } from 'config';
 import AsyncLoad from 'components/async-load';
 import formatCurrency from 'lib/format-currency';
+import {
+	SCHEDULED,
+	PUBLISHED,
+} from './constants';
 
 class PostShare extends Component {
 	static propTypes = {
-		siteSlug: PropTypes.string,
-		site: PropTypes.object,
-		post: PropTypes.object,
-		planSlug: PropTypes.string,
-		siteId: PropTypes.number,
-		postId: PropTypes.number,
-		isPublicizeEnabled: PropTypes.bool,
 		connections: PropTypes.array,
 		hasFetchedConnections: PropTypes.bool,
-		requestConnections: PropTypes.func
+		isPublicizeEnabled: PropTypes.bool,
+		planSlug: PropTypes.string,
+		post: PropTypes.object,
+		postId: PropTypes.number,
+		requestConnections: PropTypes.func,
+		site: PropTypes.object,
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
 	};
 
-	static FOOTER_SECTION_SCHEDULED = 'footer-section-scheduled';
-	static FOOTER_SECTION_PUBLISHED = 'footer-section-published';
+	static defaultProps = {
+		connections: [],
+	};
 
 	state = {
+		selectedShareTab: SCHEDULED,
 		message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title,
 		skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
-		footerSection: PostShare.FOOTER_SECTION_SCHEDULED
-
 	};
 
-	setFooterSection = footerSection => () => this.setState( { footerSection } );
+	setFooterSection = selectedShareTab => () => this.setState( { selectedShareTab } );
 
 	hasConnections() {
-		return !! ( this.props.connections && this.props.connections.length );
+		return !! get( this.props, 'connections.length' );
 	}
 
 	isSchedulingEnabled() {
-		const {
-			planSlug
-		} = this.props;
-
-		return planSlug === PLAN_BUSINESS && isEnabled( 'publicize-scheduling' );
+		return this.props.planSlug === PLAN_BUSINESS && isEnabled( 'publicize-scheduling' );
 	}
 
 	toggleConnection = id => {
@@ -203,121 +195,72 @@ class PostShare extends Component {
 		);
 	}
 
-	renderFooterSectionItem( {
-		externalName,
-		message,
-		shareDate,
-		service,
-	}, index ) {
+	renderUpgradeNudge() {
+		if ( this.isSchedulingEnabled ) {
+			return null;
+		}
+
+		const {
+			businessDiscountedRawPrice,
+			businessRawPrice,
+			translate,
+			userCurrency,
+		} = this.props;
+
 		return (
-			<CompactCard className="post-share__footer-items" key={ index }>
-				<div className="post-share__footer-item">
-					<div className="post-share__handle">
-						<SocialLogo icon={ service === 'google_plus' ? 'google-plus' : service } />
-						<span className="post-share__handle-value">
-							{ service === 'twitter' ? `@${ externalName }` : externalName }
-						</span>
-					</div>
-					<div className="post-share__timestamp">
-						<Gridicon icon="time" size={ 18 } />
-						<span className="post-share__timestamp-value">
-							{ shareDate }
-						</span>
-					</div>
-					<div className="post-share__message">
-						{ message }
-					</div>
-				</div>
-				<EllipsisMenu>
-					<PopoverMenuItem icon="visible">
-						Preview
-					</PopoverMenuItem>
-					<PopoverMenuItem icon="pencil">
-						Edit
-					</PopoverMenuItem>
-					<PopoverMenuItem icon="trash">
-						Trash
-					</PopoverMenuItem>
-				</EllipsisMenu>
-			</CompactCard>
+			<Banner
+				className="post-share__footer-banner"
+				callToAction={
+					translate( 'Upgrade for %s', {
+						args: formatCurrency( businessDiscountedRawPrice || businessRawPrice, userCurrency ),
+						comment: '%s will be replaced by a formatted price, i.e $9.99'
+					} )
+				}
+				description={ translate( 'Live chat support and no advertising.' ) }
+				list={ [
+					translate( 'Live chat support' ),
+					translate( 'No Advertising' )
+				] }
+				plan={ PLAN_BUSINESS }
+				title={ translate( 'Upgrade to a Business Plan!' ) }
+			/>
 		);
 	}
 
-	renderScheduledList() {
-		const {
-			planSlug,
-			translate,
-			businessRawPrice,
-			businessDiscountedRawPrice,
-			userCurrency,
-			scheduledSharingActions,
-			siteId,
-			postId,
-		} = this.props;
-
-		if ( planSlug !== PLAN_BUSINESS ) {
-			return (
-				<Banner
-					className="post-share__footer-banner"
-					callToAction={
-						translate( 'Upgrade for %s', {
-							args: formatCurrency( businessDiscountedRawPrice || businessRawPrice, userCurrency ),
-							comment: '%s will be replaced by a formatted price, i.e $9.99'
-						} )
-					}
-					description={ translate( 'Live chat support and no advertising.' ) }
-					list={ [
-						translate( 'Live chat support' ),
-						translate( 'No Advertising' )
-					] }
-					plan={ PLAN_BUSINESS }
-					title={ translate( 'Upgrade to a Business Plan!' ) }
-				/>
-			);
-		}
-		return ( <div>
-			<QuerySharePostActions siteId={ siteId } postId={ postId } status="scheduled" />
-			{ scheduledSharingActions.map( ( item, index ) => this.renderFooterSectionItem( item, index ) ) }
-		</div> );
-	}
-
-	renderPublishedList() {
-		return 'published';
-	}
-
 	renderFooter() {
-		const { footerSection } = this.state;
+		if ( ! this.isSchedulingEnabled ) {
+			return null;
+		}
+
+		const { postId, siteId, } = this.props;
+		const { selectedShareTab } = this.state;
 
 		return (
 			<div className="post-share__footer">
 				<SectionNav className="post-share__footer-nav" selectedText={ 'some text' }>
 					<NavTabs label="Status" selectedText="Published">
 						<NavItem
-							selected={ footerSection === PostShare.FOOTER_SECTION_SCHEDULED }
+							selected={ selectedShareTab === SCHEDULED }
 							count={ 4 }
-							onClick={ this.setFooterSection( PostShare.FOOTER_SECTION_SCHEDULED ) }
+							onClick={ this.setFooterSection( SCHEDULED ) }
 						>
 							Scheduled
 						</NavItem>
 						<NavItem
-							selected={ footerSection === PostShare.FOOTER_SECTION_PUBLISHED }
+							selected={ selectedShareTab === PUBLISHED }
 							count={ 2 }
-							onClick={ this.setFooterSection( PostShare.FOOTER_SECTION_PUBLISHED ) }
+							onClick={ this.setFooterSection( PUBLISHED ) }
 						>
 							Published
 						</NavItem>
 					</NavTabs>
 				</SectionNav>
-				<div className="post-share__scheduled-list">
-					{ footerSection === PostShare.FOOTER_SECTION_SCHEDULED &&
-						this.renderScheduledList()
-					}
-				</div>
-				<div className="post-share__published-list">
-					{ footerSection === PostShare.FOOTER_SECTION_PUBLISHED &&
-						this.renderPublishedList()
-					}
-				</div>
+
+				<ActionsList
+					section={ selectedShareTab }
+					postId={ postId }
+					siteId={ siteId }
+				/>
 			</div>
 		);
 	}
@@ -443,7 +386,8 @@ class PostShare extends Component {
 								</div>
 							</div>
 
-							{ isEnabled( 'publicize-scheduling' ) && this.renderFooter() }
+							{ this.renderUpgradeNudge() }
+							{ this.renderFooter() }
 						</div>
 					}
 
@@ -485,9 +429,7 @@ export default connect(
 			success: sharePostSuccessMessage( state, siteId, postId ),
 			businessRawPrice: getSitePlanRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
 			businessDiscountedRawPrice: getPlanDiscountedRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
-			userCurrency: getCurrentUserCurrencyCode( state ), //populated by either plans endpoint
-			scheduledSharingActions: getPostShareScheduledActions( state, siteId, postId ),
-			publishedSharingActions: getPostSharePublishedActions( state, siteId, postId ),
+			userCurrency: getCurrentUserCurrencyCode( state ),
 		};
 	},
 	{ requestConnections, sharePost, dismissShareConfirmation }
