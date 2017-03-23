@@ -177,22 +177,7 @@ describe( 'FeedPostList', function() {
 				.onCall( 4 ).returns( {} );
 			store.selectItem( { feed_ID: 1, ID: 1 } );
 			store.selectNextItem();
-<<<<<<< HEAD
 			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 4 } );
-=======
-			expect( store.getSelectedIndex() ).to.equal( 3 );
-		} );
-
-		it( 'should be able to select a gap', function() {
-			fakePosts[ 1 ].isGap = true;
-			feedPostStoreStub
-				.onCall( 0 ).returns( { _state: 'error'} )
-				.onCall( 1 ).returns( {} )
-				.onCall( 2 ).returns( {} )
-				.onCall( 3 ).returns( {} );
-			store.selectItem( 1 );
-			expect( store.getSelectedIndex() ).to.equal( 1 );
->>>>>>> Upgrade ESLint computed-property-spacing to error
 		} );
 
 		it( 'should select the prev item', function() {
