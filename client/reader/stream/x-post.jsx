@@ -12,7 +12,7 @@ import closest from 'component-closest';
  * Internal Dependencies
  */
 import Card from 'components/card';
-import SiteAndAuthorIcon from 'reader/site-and-author-icon';
+import ReaderAvatar from 'blocks/reader-avatar';
 
 class CrossPost extends PureComponent {
 
@@ -73,29 +73,35 @@ class CrossPost extends PureComponent {
 		const siteName = this.getSiteNameFromURL( this.props.xMetadata.siteURL );
 		const isCrossComment = !! this.props.xMetadata.commentURL;
 		if ( isCrossComment ) {
-			label = this.props.translate( '{{author}}%(authorFirstName)s{{/author}} {{label}}left a comment on %(siteName)s, cross-posted to{{/label}} {{blogNames/}}', {
-				args: {
-					siteName: siteName,
-					authorFirstName: authorFirstName
-				},
-				components: {
-					author: <span className="reader__x-post-author" />,
-					label: <span className="reader__x-post-label" />,
-					blogNames: this.getXPostedToContent()
+			label = this.props.translate(
+				'{{author}}%(authorFirstName)s{{/author}} {{label}}left a comment on %(siteName)s, cross-posted to{{/label}} {{blogNames/}}',
+				{
+					args: {
+						siteName: siteName,
+						authorFirstName: authorFirstName
+					},
+					components: {
+						author: <span className="reader__x-post-author" />,
+						label: <span className="reader__x-post-label" />,
+						blogNames: this.getXPostedToContent()
+					}
 				}
-			} );
+			);
 		} else {
-			label = this.props.translate( '{{author}}%(authorFirstName)s{{/author}} {{label}}cross-posted from %(siteName)s to{{/label}} {{blogNames/}}', {
-				args: {
-					siteName: siteName,
-					authorFirstName: authorFirstName
-				},
-				components: {
-					author: <span className="reader__x-post-author" />,
-					label: <span className="reader__x-post-label" />,
-					blogNames: this.getXPostedToContent()
+			label = this.props.translate(
+				'{{author}}%(authorFirstName)s{{/author}} {{label}}cross-posted from %(siteName)s to{{/label}} {{blogNames/}}',
+				{
+					args: {
+						siteName: siteName,
+						authorFirstName: authorFirstName
+					},
+					components: {
+						author: <span className="reader__x-post-author" />,
+						label: <span className="reader__x-post-label" />,
+						blogNames: this.getXPostedToContent()
+					}
 				}
-			} );
+			);
 		}
 		return label;
 	}
@@ -114,7 +120,7 @@ class CrossPost extends PureComponent {
 					{ xPostedTo.siteName }
 					{ index + 2 < array.length ? <span>, </span> : null }
 					{ index + 2 === array.length ?
-						<span> { this.props.translate( 'and', { comment: 'last conjuction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4' } ) } </span> : null }
+						<span> { this.props.translate( 'and', { comment: 'last conjunction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4' } ) } </span> : null }
 				</span>
 			);
 		} );
@@ -135,12 +141,12 @@ class CrossPost extends PureComponent {
 
 		return (
 			<Card tagName="article" onClick={ this.handleCardClick } className={ articleClasses }>
-				<SiteAndAuthorIcon
-					siteId={ this.props.post.site_ID }
-					isExternal={ this.props.post.is_external }
-					user={ post.author }
+				<ReaderAvatar
+					siteIcon={ null }
+					author={ post.author }
 					onClick={ this.handleTitleClick }
-					href={ post.URL } />
+					sizeIconSize={ 24 }
+					gravatarSize={ 24 } />
 				<div className="reader__x-post">
 					{ post.title &&
 						<h1 className="reader__post-title">
