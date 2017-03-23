@@ -30,6 +30,7 @@ import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import DomainWarnings from 'my-sites/upgrades/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 class CurrentPlan extends Component {
 	static propTypes = {
@@ -96,6 +97,7 @@ class CurrentPlan extends Component {
 
 		return (
 			<Main className="current-plan" wideLayout>
+				<SidebarNavigation />
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
