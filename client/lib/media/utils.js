@@ -486,7 +486,7 @@ const MediaUtils = {
 						arr[i] = binStr.charCodeAt( i );
 					}
 
-					polyfillCallback( new Blob( [arr], {
+					polyfillCallback( new Blob( [ arr ], {
 						type: polyfillType || 'image/png'
 					} ) );
 				}

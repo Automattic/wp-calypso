@@ -51,7 +51,7 @@ describe( 'Posts', function() {
 		it( 'should inject with pass title to generator when there is a front page set', function() {
 			const isFrontPageStub = this.sandbox.stub( helpers, 'isFrontPage', () => true );
 			const post = { title: 'Test' };
-			const postsNode = new Posts( { posts: [post], type: 'page' } );
+			const postsNode = new Posts( { posts: [ post ], type: 'page' } );
 			postsNode.maybeInjectPosts();
 			chai.expect( isFrontPageStub ).to.have.been.calledWith( post );
 			chai.expect( this.siteMenusStub ).to.have.been.calledWith( post.title );

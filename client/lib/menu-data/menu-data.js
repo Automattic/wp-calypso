@@ -177,7 +177,7 @@ MenuData.prototype.parse = function( data ) {
 	return {
 		locations: data.locations.map(
 				this.decodeProperties.bind(
-						this, ['name', 'description'] )
+						this, [ 'name', 'description' ] )
 				),
 		menus: data.menus.map( this.parseMenu, this )
 	};
@@ -191,9 +191,9 @@ MenuData.prototype.parse = function( data ) {
  */
 MenuData.prototype.parseMenu = function( menu ) {
 	menu = this.allocateClientIDs( menu );
-	menu = this.decodeProperties( ['description'], menu );
+	menu = this.decodeProperties( [ 'description' ], menu );
 	menu = Traverser.traverse( menu, [ function( item ) {
-		return this.decodeProperties( ['name'], item );
+		return this.decodeProperties( [ 'name' ], item );
 	}.bind( this ) ] );
 	menu = this.interceptLoadForHomepageLink( menu );
 
@@ -553,7 +553,7 @@ MenuData.prototype.restoreMenu = function( location, callback ) {
 
 MenuData.prototype.clearIDs = function( menu ) {
 	return Traverser.traverse( menu, [ function( item ) {
-		return omit( item, ['id', 'server_id'] );
+		return omit( item, [ 'id', 'server_id' ] );
 	} ] );
 };
 
@@ -1077,4 +1077,3 @@ MenuData.prototype.deleteDefaultMenu = function() {
 		delete this.data.defaultMenu;
 	}
 };
-
