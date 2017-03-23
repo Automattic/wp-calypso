@@ -19,7 +19,7 @@ import HeaderBack from 'reader/header-back';
 import SearchInput from 'components/search';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
-import { recordTrackForPost, recordAction } from 'reader/stats';
+import { recordTrackForPost, recordAction, recordTrack } from 'reader/stats';
 import SuggestionProvider from './suggestion-provider';
 import Suggestion from './suggestion';
 import ReaderPostCard from 'blocks/reader-post-card';
@@ -195,10 +195,20 @@ class SearchStream extends Component {
 	}
 
 	useRelevanceSort = () => {
+		recordAction( 'search_page_clicked_relevance_sort' );
+		recordTrack( 'calypso_reader_clicked_search_sort', {
+			query: this.props.query,
+			sort: 'relevance',
+		} );
 		this.props.onSortChange( 'relevance' );
 	}
 
 	useDateSort = () => {
+		recordAction( 'search_page_clicked_date_sort' );
+		recordTrack( 'calypso_reader_clicked_search_sort', {
+			query: this.props.query,
+			sort: 'date',
+		} );
 		this.props.onSortChange( 'date' );
 	}
 
