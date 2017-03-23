@@ -21,32 +21,30 @@ import * as stats from 'reader/stats';
 import { getFeed } from 'state/reader/feeds/selectors';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 
-const ReaderPostOptionsMenu = React.createClass( {
+class ReaderPostOptionsMenu extends React.Component {
 
-	propTypes: {
+	static propTypes = {
 		post: React.PropTypes.object.isRequired,
 		feed: React.PropTypes.object,
 		onBlock: React.PropTypes.func,
 		showFollow: React.PropTypes.bool
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onBlock: noop,
-			position: 'top left',
-			showFollow: true
-		};
-	},
+	static defaultProps = {
+		onBlock: noop,
+		position: 'top left',
+		showFollow: true
+	};
 
-	blockSite() {
+	blockSite = () => {
 		stats.recordAction( 'blocked_blog' );
 		stats.recordGaEvent( 'Clicked Block Site' );
 		stats.recordTrackForPost( 'calypso_reader_block_site', this.props.post );
 		this.props.requestSiteBlock( this.props.post.site_ID );
 		this.props.onBlock();
-	},
+	};
 
-	reportPost() {
+	reportPost = () => {
 		if ( ! this.props.post || ! this.props.post.URL ) {
 			return;
 		}
@@ -56,19 +54,19 @@ const ReaderPostOptionsMenu = React.createClass( {
 		stats.recordTrackForPost( 'calypso_reader_post_reported', this.props.post );
 
 		window.open( 'https://wordpress.com/abuse/?report_url=' + encodeURIComponent( this.props.post.URL ), '_blank' );
-	},
+	};
 
-	getFollowUrl() {
+	getFollowUrl = () => {
 		return this.props.feed ? this.props.feed.feed_URL : this.props.post.site_URL;
-	},
+	};
 
 	onMenuToggle( isMenuVisible ) {
 		stats.recordAction( isMenuVisible ? 'open_post_options_menu' : 'close_post_options_menu' );
 		stats.recordGaEvent( isMenuVisible ? 'Open Post Options Menu' : 'Close Post Options Menu' );
 		stats.recordTrackForPost( 'calypso_reader_post_options_menu_' + ( isMenuVisible ? 'opened' : 'closed' ), this.props.post );
-	},
+	};
 
-	editPost() {
+	editPost = () => {
 		const post = this.props.post,
 			site = SiteStore.get( this.props.post.site_ID );
 		let editUrl = '//wordpress.com/post/' + post.site_ID + '/' + post.ID + '/';
@@ -88,7 +86,7 @@ const ReaderPostOptionsMenu = React.createClass( {
 				page( editUrl );
 			}
 		}, 100 );
-	},
+	};
 
 	render() {
 		const post = this.props.post,
@@ -127,7 +125,7 @@ const ReaderPostOptionsMenu = React.createClass( {
 		);
 	}
 
-} );
+}
 
 export default connect(
 	( state, ownProps ) => {
