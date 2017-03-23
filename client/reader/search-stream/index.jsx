@@ -8,6 +8,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import config from 'config';
+import ControlItem from 'components/segmented-control/item';
+import SegmentedControl from 'components/segmented-control';
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import Stream from 'reader/stream';
@@ -48,7 +51,9 @@ function RecommendedPosts( { post, site } ) {
 	return (
 		<div className="search-stream__recommendation-list-item" key={ post.global_ID }>
 			<RelatedPostCard post={ post } site={ site }
-				onSiteClick={ handleSiteClick } onPostClick={ handlePostClick } followSource={ EMPTY_SEARCH_RECOMMENDATIONS } />
+				onSiteClick={ handleSiteClick }
+				onPostClick={ handlePostClick }
+				followSource={ EMPTY_SEARCH_RECOMMENDATIONS } />
 		</div>
 	);
 }
@@ -167,7 +172,10 @@ class SearchStream extends Component {
 	}
 
 	componentDidMount() {
-		this.resizeListener = window.addEventListener( 'resize', debounce( this.resizeSearchBox, 50 ) );
+		this.resizeListener = window.addEventListener(
+			'resize',
+			debounce( this.resizeSearchBox, 50 )
+		);
 		this.resizeSearchBox();
 	}
 
@@ -186,21 +194,47 @@ class SearchStream extends Component {
 		return null;
 	}
 
+	useRelevanceSort = () => {
+		this.props.onSortChange( 'relevance' );
+	}
+
+	useDateSort = () => {
+		this.props.onSortChange( 'date' );
+	}
+
 	render() {
 		const { query, suggestions } = this.props;
 		const emptyContent = <EmptyContent query={ query } />;
+		const sortOrder = this.props.postsStore && this.props.postsStore.sortOrder;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
-			searchPlaceholderText = this.props.translate( 'Search billions of WordPress.com posts…' );
+			searchPlaceholderText = this.props.translate(
+				'Search billions of WordPress.com posts…'
+			);
 		}
 
 		const suggestionList = initial( flatMap( suggestions, suggestionKeyword =>
-			[ <Suggestion suggestion={ suggestionKeyword } source="search" />, ', ' ] ) );
+			[
+				<Suggestion
+					suggestion={ suggestionKeyword }
+					source="search"
+					sort={ sortOrder === 'date' ? sortOrder : undefined }
+				/>,
+				', '
+			] ) );
 
 		const documentTitle = this.props.translate(
 			'%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) }
 		);
+
+		const TEXT_RELEVANCE_SORT = this.props.translate( 'Relevance', {
+			comment: 'A sort order, showing the most relevant posts first.'
+		} );
+
+		const TEXT_DATE_SORT = this.props.translate( 'Date', {
+			comment: 'A sort order, showing the most recent posts first.'
+		} );
 
 		return (
 			<Stream { ...this.props }
@@ -225,8 +259,23 @@ class SearchStream extends Component {
 							delayTimeout={ 500 }
 							placeholder={ searchPlaceholderText }
 							initialValue={ query }
-							value={ query }
-						/>
+							value={ query }>
+						</SearchInput>
+						{ query && config.isEnabled( 'reader/search/sort-by-date' ) &&
+							<SegmentedControl compact
+								className="search-stream__sort-picker">
+								<ControlItem
+									selected={ sortOrder !== 'date' }
+									onClick={ this.useRelevanceSort }>
+									{ TEXT_RELEVANCE_SORT }
+								</ControlItem>
+								<ControlItem
+									selected={ sortOrder === 'date' }
+									onClick={ this.useDateSort }>
+									{ TEXT_DATE_SORT }
+								</ControlItem>
+							</SegmentedControl>
+						}
 					</CompactCard>
 					<p className="search-stream__blank-suggestions">
 						{ suggestions &&
