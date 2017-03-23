@@ -275,6 +275,28 @@ export const queryRequestErrors = createReducer( {}, {
 } );
 
 /**
+ * Returns the updated query request success state after an action has been
+ * dispatched. The state reflects a mapping of site ID, query ID pairing to an
+ * object containing the queriess that reutrned successfully.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export const queryRequestSuccess = createReducer( {}, {
+	[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query } ) => {
+		const serializedQuery = JSON.stringify( omit( query, 'page' ) );
+		return {
+			...state,
+			[ siteId ]: {
+				...state[ siteId ],
+				[ serializedQuery ]: query.page
+			}
+		};
+	},
+} );
+
+/**
  * Returns the updated theme query state after an action has been dispatched.
  * The state reflects a mapping of serialized query key to an array of theme IDs
  * for the query, if a query response was successfully received.
@@ -375,6 +397,7 @@ export default combineReducers( {
 	queries,
 	queryRequests,
 	queryRequestErrors,
+	queryRequestSuccess,
 	lastQuery,
 	themeInstalls,
 	themeRequests,

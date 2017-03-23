@@ -26,7 +26,7 @@ import ThemePreview from './theme-preview';
 import config from 'config';
 import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
-const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
+const ThemesSearchCard = false /*config.isEnabled( 'manage/themes/magic-search' )*/
 	? require( './themes-magic-search-card' )
 	: require( './themes-search-card' );
 
