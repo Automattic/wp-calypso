@@ -229,7 +229,12 @@ describe( 'utils', () => {
 				jetpack_comment_form_color_scheme: 'light',
 				carousel: true,
 				carousel_background_color: 'black',
-				carousel_display_exif: true
+				carousel_display_exif: true,
+				stats: true,
+				admin_bar: true,
+				hide_smile: true,
+				count_roles: true,
+				roles: true,
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
@@ -267,7 +272,11 @@ describe( 'utils', () => {
 				highlander_comment_form_prompt: 'Leave a Reply',
 				jetpack_comment_form_color_scheme: 'light',
 				carousel_background_color: 'black',
-				carousel_display_exif: true
+				carousel_display_exif: true,
+				admin_bar: true,
+				hide_smile: true,
+				count_roles: true,
+				roles: true,
 			} );
 		} );
 
@@ -318,7 +327,12 @@ describe( 'utils', () => {
 				jetpack_comment_form_color_scheme: 'light',
 				carousel: false,
 				carousel_background_color: 'black',
-				carousel_display_exif: true
+				carousel_display_exif: true,
+				stats: false,
+				admin_bar: true,
+				hide_smile: true,
+				count_roles: true,
+				roles: true,
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
@@ -362,7 +376,11 @@ describe( 'utils', () => {
 				highlander_comment_form_prompt: 'Leave a Reply',
 				jetpack_comment_form_color_scheme: 'light',
 				carousel_background_color: 'black',
-				carousel_display_exif: true
+				carousel_display_exif: true,
+				admin_bar: true,
+				hide_smile: true,
+				count_roles: true,
+				roles: true,
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
