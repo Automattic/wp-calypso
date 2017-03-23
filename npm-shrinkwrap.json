@@ -2365,7 +2365,7 @@
       }
     },
     "i18n-calypso": {
-      "version": "1.7.3",
+      "version": "1.7.4",
       "dependencies": {
         "async": {
           "version": "1.5.2"
