@@ -120,6 +120,7 @@ export function createReduxStore( initialState = {} ) {
 	const middlewares = [
 		thunkMiddleware,
 		noticesMiddleware,
+		isBrowser && require( './happychat/middleware.js' ).default(),
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './data-layer/wpcom-api-middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
