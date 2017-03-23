@@ -7,6 +7,7 @@ import classnames from 'classnames';
 import url from 'url';
 import { localize } from 'i18n-calypso';
 import closest from 'component-closest';
+import { get } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -23,6 +24,8 @@ class CrossPost extends PureComponent {
 		xPostedTo: React.PropTypes.array,
 		handleClick: React.PropTypes.func.isRequired,
 		translate: React.PropTypes.func.isRequired,
+		postKey: React.PropTypes.object,
+		site: React.PropTypes.object,
 	}
 
 	handleTitleClick = ( event ) => {
@@ -127,8 +130,11 @@ class CrossPost extends PureComponent {
 	}
 
 	render() {
-		const post = this.props.post,
-			articleClasses = classnames( {
+		const post = this.props.post;
+		const siteId = this.props.postKey.blogId;
+		const siteIcon = get( this.props.site, 'icon.img' );
+
+		const articleClasses = classnames( {
 				reader__card: true,
 				'is-x-post': true,
 				'is-selected': this.props.isSelected
@@ -142,7 +148,7 @@ class CrossPost extends PureComponent {
 		return (
 			<Card tagName="article" onClick={ this.handleCardClick } className={ articleClasses }>
 				<ReaderAvatar
-					siteIcon={ null }
+					siteIcon={ siteIcon }
 					author={ post.author }
 					onClick={ this.handleTitleClick }
 					sizeIconSize={ 24 }
@@ -155,7 +161,9 @@ class CrossPost extends PureComponent {
 						}
 					{ this.getDescription( post.author.first_name ) }
 				</div>
-			</Card> );
+			{ siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
+			</Card>
+		);
 	}
 }
 

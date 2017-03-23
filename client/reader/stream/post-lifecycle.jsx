@@ -14,6 +14,9 @@ import PostUnavailable from './post-unavailable';
 import CrossPost from './x-post';
 import XPostHelper from 'reader/xpost-helper';
 import { shallowEquals } from 'reader/utils';
+//import fluxPostAdapter from 'lib/reader-post-flux-adapter';
+
+//const ConnectedCrossPost = fluxPostAdapter( CrossPost );
 
 export default class PostLifecycle extends React.PureComponent {
 	static propTypes = {
@@ -83,7 +86,8 @@ export default class PostLifecycle extends React.PureComponent {
 						isSelected={ this.props.isSelected }
 						xMetadata={ xMetadata }
 						xPostedTo={ this.props.store.getSitesCrossPostedTo( xMetadata.commentURL || xMetadata.postURL ) }
-						handleClick={ this.props.handleClick } />;
+						handleClick={ this.props.handleClick }
+						postKey={ this.props.postKey } />;
 				}
 
 				return <PostClass
