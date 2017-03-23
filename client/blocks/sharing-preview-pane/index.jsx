@@ -52,7 +52,6 @@ class SharingPreviewPane extends PureComponent {
 				return <FacebookSharePreview
 					title={ seoTitle }
 					url={ get( post, 'URL', '' ) }
-					type="article"
 					description={ getExcerptForPost( post ) }
 					image={ getPostImage( post ) }
 					author={ get( post, 'author.name', '' ) }
