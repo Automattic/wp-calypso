@@ -39,6 +39,15 @@ export const isEnabled = feature => () =>
 	config.isEnabled( feature );
 
 /**
+ * Returns true if there is a global `isDebuggingGuidedTours` present with a
+ * truthy value.
+ *
+ * @return {Boolean} True if `window.isDebuggingGuidedTours` truthy
+ */
+export const isDebuggingGuidedTours = () =>
+	!! global.window.isDebuggingGuidedTours;
+
+/**
  * Returns milliseconds since registration date of the current user
  *
  * @param {Object} state Global state tree
