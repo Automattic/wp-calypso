@@ -21,7 +21,7 @@ import {
 import {
 	items as itemsReducer,
 	requests as requestsReducer,
-	disconnectsRequests as disconnectRequestsReducer
+	disconnectRequests as disconnectRequestsReducer
 } from '../reducer';
 import {
 	items as ITEMS_FIXTURE,
@@ -151,13 +151,13 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'disconnectsRequests', () => {
+	describe( 'disconnectRequests', () => {
 		it( 'state should default to an empty object', () => {
 			const state = disconnectRequestsReducer( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should set requesting to true for the specified site when status request starts', () => {
+		it( 'should set requesting to true for the specified site when disconnect request starts', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 12345678,
 				action = {
@@ -171,7 +171,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set requesting to false for the specified site when status request completes successfully', () => {
+		it( 'should set requesting to false for the specified site when disconnect request completes successfully', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 87654321,
 				action = {
@@ -185,7 +185,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should set requesting to false for the specified site when status request completes unsuccessfully', () => {
+		it( 'should set requesting to false for the specified site when disconnect request completes unsuccessfully', () => {
 			const stateIn = REQUESTS_FIXTURE,
 				siteId = 87654321,
 				action = {

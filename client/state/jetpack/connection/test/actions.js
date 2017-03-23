@@ -111,7 +111,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch a request connection status action when thunk triggered', () => {
+			it( 'should dispatch a request disconnect request action when thunk triggered', () => {
 				disconnect( siteId )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -120,7 +120,7 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			it( 'should dispatch success and receive actions when request successfully completes',
+			it( 'should dispatch success and receive actions when disconnect request successfully completes',
 				() => {
 					return disconnect( siteId )( spy ).then( () => {
 						expect( spy ).to.have.been.calledWith( {
@@ -152,7 +152,7 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			it( 'should dispatch a failure action when request completes unsuccessfully', () => {
+			it( 'should dispatch a failure action when disconnect request completes unsuccessfully', () => {
 				return disconnect( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_DISCONNECT_REQUEST_FAILURE,
