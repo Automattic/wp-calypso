@@ -8,7 +8,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import config from 'config';
 import ControlItem from 'components/segmented-control/item';
 import SegmentedControl from 'components/segmented-control';
 import CompactCard from 'components/card/compact';
@@ -261,7 +260,7 @@ class SearchStream extends Component {
 							initialValue={ query }
 							value={ query }>
 						</SearchInput>
-						{ query && config.isEnabled( 'reader/search/sort-by-date' ) &&
+						{ query &&
 							<SegmentedControl compact
 								className="search-stream__sort-picker">
 								<ControlItem
