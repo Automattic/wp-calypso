@@ -30,7 +30,7 @@ const Advanced = ( { fields, handleToggle, translate } ) => {
 				<form>
 					<FormFieldset>
 						<FormToggle
-							checked={ fields.wp_cache_mfunc_enabled }
+							checked={ !! fields.wp_cache_mfunc_enabled }
 							onChange={ handleToggle( 'wp_cache_mfunc_enabled' ) }>
 							<span>
 								{ translate(
@@ -52,7 +52,7 @@ const Advanced = ( { fields, handleToggle, translate } ) => {
 						</FormToggle>
 
 						<FormToggle
-							checked={ fields.wp_cache_mobile_enabled }
+							checked={ !! fields.wp_cache_mobile_enabled }
 							onChange={ handleToggle( 'wp_cache_mobile_enabled' ) }>
 							<span>
 								{ translate(
@@ -74,7 +74,7 @@ const Advanced = ( { fields, handleToggle, translate } ) => {
 						</FormToggle>
 
 						<FormToggle
-							checked={ fields.wp_cache_disable_utf8 }
+							checked={ !! fields.wp_cache_disable_utf8 }
 							onChange={ handleToggle( 'wp_cache_disable_utf8' ) }>
 							<span>
 								{ translate(
@@ -85,7 +85,7 @@ const Advanced = ( { fields, handleToggle, translate } ) => {
 						</FormToggle>
 
 						<FormToggle
-							checked={ fields.wp_cache_clear_on_post_edit }
+							checked={ !! fields.wp_cache_clear_on_post_edit }
 							onChange={ handleToggle( 'wp_cache_clear_on_post_edit' ) }>
 							<span>
 								{ translate( 'Clear all cache files when a post or page is published or updated.' ) }
@@ -93,7 +93,7 @@ const Advanced = ( { fields, handleToggle, translate } ) => {
 						</FormToggle>
 
 						<FormToggle
-							checked={ fields.wp_cache_front_page_checks }
+							checked={ !! fields.wp_cache_front_page_checks }
 							onChange={ handleToggle( 'wp_cache_front_page_checks' ) }>
 							<span>
 								{ translate(
@@ -106,7 +106,7 @@ const Advanced = ( { fields, handleToggle, translate } ) => {
 						</FormToggle>
 
 						<FormToggle
-							checked={ fields.wp_cache_refresh_single_only }
+							checked={ !! fields.wp_cache_refresh_single_only }
 							onChange={ handleToggle( 'wp_cache_refresh_single_only' ) }>
 							<span>
 								{ translate( 'Only refresh current page when comments made.' ) }
@@ -114,7 +114,7 @@ const Advanced = ( { fields, handleToggle, translate } ) => {
 						</FormToggle>
 
 						<FormToggle
-							checked={ fields.wp_supercache_cache_list }
+							checked={ !! fields.wp_supercache_cache_list }
 							onChange={ handleToggle( 'wp_supercache_cache_list' ) }>
 							<span>
 								{ translate( 'List the newest cached pages on this page.' ) }
@@ -122,7 +122,7 @@ const Advanced = ( { fields, handleToggle, translate } ) => {
 						</FormToggle>
 
 						<FormToggle
-							checked={ fields.wp_cache_mutex_disabled }
+							checked={ !! fields.wp_cache_mutex_disabled }
 							onChange={ handleToggle( 'wp_cache_mutex_disabled' ) }>
 							<span>
 								{ translate( 'Coarse file locking. You do not need this as it will slow down your website.' ) }
@@ -130,7 +130,7 @@ const Advanced = ( { fields, handleToggle, translate } ) => {
 						</FormToggle>
 
 						<FormToggle
-							checked={ fields.wp_super_cache_late_init }
+							checked={ !! fields.wp_super_cache_late_init }
 							onChange={ handleToggle( 'wp_super_cache_late_init' ) }>
 							<span>
 								{ translate(
@@ -148,7 +148,7 @@ const Advanced = ( { fields, handleToggle, translate } ) => {
 							}
 						) }
 						<a href="">
-							{ fields.cache_page_secret }
+							{ fields.cache_page_secret || '' }
 						</a>
 					</p>
 				</form>

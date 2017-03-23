@@ -59,7 +59,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			// TODO: Replace with REST API once ready.
 			const settings = {
 				wp_cache_status: false,
-				super_cache_enabled: '0',
+				super_cache_enabled: '1',
 				cache_compression: false,
 				cache_rebuild_files: true,
 				wp_cache_hello_world: false,
@@ -72,8 +72,10 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				wp_cache_disable_utf8: false,
 				wp_cache_front_page_checks: true,
 				wp_cache_mfunc_enabled: false,
-				wp_cache_mobile_enabled: false,
+				wp_cache_mobile_enabled: true,
 				wp_cache_mutex_disabled: false,
+				_wp_using_ext_object_cache: true,
+				wp_cache_object_cache: false,
 				wp_cache_refresh_single_only: false,
 				wp_super_cache_late_init: false,
 				wp_supercache_cache_list: false,
@@ -100,6 +102,18 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				wp_accepted_files: 'wp-comments-popup.php',
 				wp_rejected_user_agent: 'bot\nia_archive\nslurp\ncrawl\nspider\nYandex',
 				wp_lock_down: false,
+				wp_cache_mobile_browsers: 'w3c , w3c-, acs-, alav, alca, amoi, audi, avan, benq, bird, blac, ' +
+					'blaz, brew, cell, cldc, cmd-, dang, doco, eric, hipt, htc_, inno, ipaq, ipod, jigs, kddi, ' +
+					'keji, leno, lg-c, lg-d, lg-g, lge-, lg/u, maui, maxo, midp, mits, mmef, mobi, mot-, moto, ' +
+					'mwbp, nec-, newt, noki, palm, pana, pant, phil, play, port, prox, qwap, sage, sams, sany, ' +
+					'sch-, sec-, send, seri, sgh-, shar, sie-, siem, smal, smar, sony, sph-, symb, t-mo, teli, ' +
+					'tim-, tosh, tsm-, upg1, upsi, vk-v, voda, wap-, wapa, wapi, wapp, wapr, webc, winw, winw, xda , xda-',
+				wp_cache_mobile_prefixes: 'w3c , w3c-, acs-, alav, alca, amoi, audi, avan, benq, bird, blac, ' +
+					'blaz, brew, cell, cldc, cmd-, dang, doco, eric, hipt, htc_, inno, ipaq, ipod, jigs, kddi, ' +
+					'keji, leno, lg-c, lg-d, lg-g, lge-, lg/u, maui, maxo, midp, mits, mmef, mobi, mot-, moto, ' +
+					'mwbp, nec-, newt, noki, palm, pana, pant, phil, play, port, prox, qwap, sage, sams, sany, ' +
+					'sch-, sec-, send, seri, sgh-, shar, sie-, siem, smal, smar, sony, sph-, symb, t-mo, teli, ' +
+					'tim-, tosh, tsm-, upg1, upsi, vk-v, voda, wap-, wapa, wapi, wapp, wapr, webc, winw, winw, xda , xda-',
 			};
 
 			return {
