@@ -26,7 +26,7 @@ class SiteAndAuthorIcon extends React.Component {
 			<div className="reader__site-and-author-icon">
 				<SiteIcon site={ site } />
 				<Gravatar user={ this.props.user } size={ 24 } />
-				{ this.props.site && ! this.props.isExternal &&
+				{ ! this.props.site && ! this.props.isExternal &&
 					<QueryReaderSite siteId={ this.props.siteId } />
 				}
 			</div>
