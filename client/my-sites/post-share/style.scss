@@ -66,9 +66,20 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 }
 
 .post-share__form {
-	border-right: $section-border;
 	flex: 3;
 	padding-bottom: 16px;
+
+	@include breakpoint( ">480px" ) {
+		border-right: $section-border;
+	}
+
+	@include breakpoint( ">660px" ) {
+		border-right-width: 0;
+	}
+
+	@include breakpoint( ">960px" ) {
+		border-right-width: 1px;
+	}
 
 	.editor-sharing__publicize-message {
 			margin-top: 0;
