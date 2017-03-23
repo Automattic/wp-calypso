@@ -12,6 +12,7 @@ import CacheLocation from './components/advanced/cache-location';
 import Caching from './components/advanced/caching';
 import Easy from './components/easy/easy';
 import ExpiryTime from './components/advanced/expiry-time';
+import FixConfig from './components/advanced/fix-config';
 import LockDown from './components/advanced/lock-down';
 import Main from 'components/main';
 import Miscellaneous from './components/advanced/miscellaneous';
@@ -33,6 +34,7 @@ const WPSuperCache = ( { site, tab } ) => {
 						<AcceptedFilenames />
 						<RejectedUserAgents />
 						<LockDown />
+						<FixConfig />
 					</div>
 				);
 			case Tabs.CDN:

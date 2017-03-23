@@ -14,7 +14,9 @@ import trackForm from 'lib/track-form';
 const wrapSettingsForm = getFormSettings => SettingsForm => {
 	class WrappedSettingsForm extends Component {
 		componentWillMount() {
-			this.props.replaceFields( getFormSettings( this.props.settings ) );
+			if ( getFormSettings ) {
+				this.props.replaceFields( getFormSettings( this.props.settings ) );
+			}
 		}
 
 		handleChange = field => event => {
