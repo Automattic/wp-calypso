@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
-import { takeRight } from 'lodash';
+import { get, has, includes, isFunction, takeRight } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
-	ANALYTICS_EVENT_RECORD,
 	EDITOR_PASTE_EVENT,
 	FIRST_VIEW_HIDE,
 	GUIDED_TOUR_UPDATE,
@@ -17,8 +16,12 @@ import {
 	SITE_SETTINGS_RECEIVE,
 } from 'state/action-types';
 
+const relevantAnalyticsEvents = [
+	'calypso_themeshowcase_theme_click',
+];
+
 const relevantTypes = {
-	ANALYTICS_EVENT_RECORD,
+	ANALYTICS_EVENT_RECORD: isRelevantAnalytics,
 	EDITOR_PASTE_EVENT,
 	FIRST_VIEW_HIDE,
 	GUIDED_TOUR_UPDATE,
@@ -29,9 +32,14 @@ const relevantTypes = {
 };
 
 const isRelevantAction = ( action ) =>
-	relevantTypes.hasOwnProperty( action.type ) &&
-	( typeof relevantTypes[ action.type ] !== 'function' ||
+	has( relevantTypes, action.type ) && (
+		! isFunction( relevantTypes[ action.type ] ) ||
 		relevantTypes[ action.type ]( action ) );
+
+function isRelevantAnalytics( action ) {
+	return get( action, 'meta.analytics', [] ).some( record =>
+		includes( relevantAnalyticsEvents, record.payload.name ) );
+}
 
 const newAction = ( action ) => ( {
 	...action, timestamp: Date.now()
