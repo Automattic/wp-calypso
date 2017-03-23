@@ -24,7 +24,7 @@ const EXCLUDE_PLACEHOLDER_CLASSES = [
 	'editor-drawer-well__placeholder' // used in featured image in editor
 ];
 
-const PLACEHOLDER_MATCHER = PLACEHOLDER_CLASSES.map(function(clazz) { return `[class*='${clazz}']`; }).join(', ');
+const PLACEHOLDER_MATCHER = PLACEHOLDER_CLASSES.map( clazz => `[class*='${ clazz }']` ).join( ', ' );
 const OBSERVE_ROOT = document.getElementById('wpcom');
 
 let activePlaceholders = [];

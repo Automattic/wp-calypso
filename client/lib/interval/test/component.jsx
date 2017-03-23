@@ -41,7 +41,11 @@ describe( 'Interval', function() {
 		} );
 
 		it( 'Should pass props to children', function() {
-			const PropConsumer = React.createClass( { render() { return <div>{ this.props.prop }</div>; } } );
+			const PropConsumer = React.createClass( {
+				render() {
+					return <div>{ this.props.prop }</div>;
+				}
+			} );
 			const wrapper = shallow( <Interval prop={ 42 } onTick={ noop } period={ EVERY_SECOND }><PropConsumer /></Interval> );
 
 			assert( 42 === wrapper.find( PropConsumer ).prop( 'prop' ) );
