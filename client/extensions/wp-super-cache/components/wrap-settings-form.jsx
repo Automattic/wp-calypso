@@ -96,6 +96,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				},
 				wp_rejected_uri: 'wp-.*\.php',
 				wp_accepted_files: 'wp-comments-popup.php',
+				wp_rejected_user_agent: 'bot\nia_archive\nslurp\ncrawl\nspider\nYandex',
 			};
 
 			return {

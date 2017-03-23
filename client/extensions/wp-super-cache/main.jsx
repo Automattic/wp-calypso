@@ -6,15 +6,16 @@ import React, { PropTypes } from 'react';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import Navigation from './components/navigation';
 import AcceptedFilenames from './components/advanced/accepted-filenames';
 import Advanced from './components/advanced/advanced';
 import CacheLocation from './components/advanced/cache-location';
 import Caching from './components/advanced/caching';
-import ExpiryTime from './components/advanced/expiry-time';
-import Miscellaneous from './components/advanced/miscellaneous';
 import Easy from './components/easy/easy';
+import ExpiryTime from './components/advanced/expiry-time';
+import Main from 'components/main';
+import Miscellaneous from './components/advanced/miscellaneous';
+import Navigation from './components/navigation';
+import RejectedUserAgents from './components/advanced/rejected-user-agents';
 import { Tabs } from './constants';
 
 const WPSuperCache = ( { site, tab } ) => {
@@ -29,6 +30,7 @@ const WPSuperCache = ( { site, tab } ) => {
 						<CacheLocation />
 						<ExpiryTime />
 						<AcceptedFilenames />
+						<RejectedUserAgents />
 					</div>
 				);
 			case Tabs.CDN:
