@@ -37,7 +37,11 @@ export default class PostLifecycle extends React.PureComponent {
 	}
 
 	getPostFromStore( props = this.props ) {
-		if ( props.postKey.isRecommendationBlock || props.postKey.isCombination ) {
+		if (
+			props.postKey.isRecommendationBlock ||
+			props.postKey.isCombination ||
+			props.postKey.isGap
+		) {
 			return null;
 		}
 
@@ -103,7 +107,14 @@ export default class PostLifecycle extends React.PureComponent {
 		} else if ( postKey.isRecommendation ) {
 			return <EmptySearchRecommendedPosts post={ post } site={ postKey } />;
 		} else if ( postKey.isGap ) {
-			return <ListGap gap={ postKey } store={ this.props.store } selected={ this.props.isSelected } />;
+			return (
+				<ListGap
+					gap={ postKey }
+					store={ this.props.store }
+					selected={ this.props.isSelected }
+					handleClick={ this.props.handleClick }
+				/>
+			);
 		} else if ( ! post || post._state === 'minimal' ) {
 			return <PostPlaceholder />;
 		} else if ( post._state === 'error' ) {

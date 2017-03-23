@@ -7,8 +7,8 @@ export function keyForPost( post ) {
 	}
 	if ( post.is_external ) {
 		return {
-			feedId: post.site_ID,
-			postId: post.ID
+			feedId: post.feed_ID || post.site_ID,
+			postId: post.feed_item_ID || post.ID
 		};
 	}
 	return {
