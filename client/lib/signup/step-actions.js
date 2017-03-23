@@ -236,31 +236,44 @@ module.exports = {
 		SignupCart.addToCart( siteId, newCartItems, error => callback( error, { cartItem, privacyItem } ) );
 	},
 
-	createAccount( callback, dependencies, { userData, flowName, queryArgs }, reduxStore ) {
+	createAccount( callback, dependencies, { userData, flowName, queryArgs, service, token }, reduxStore ) {
 		const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 		const surveySiteType = getSurveySiteType( reduxStore.getState() ).trim();
 
-		wpcom.undocumented().usersNew( assign(
-			{}, userData, {
-				ab_test_variations: getSavedVariations(),
-				validate: false,
-				signup_flow_name: flowName,
-				nux_q_site_type: surveySiteType,
-				nux_q_question_primary: surveyVertical,
-				jetpack_redirect: queryArgs.jetpackRedirect
-			}
-		), ( error, response ) => {
-			var errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
-				bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
+		if ( service ) {
+			// We're creating a new social account
+			wpcom.undocumented().usersSocialNew( service, token, ( error, response ) => {
+				const errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined;
 
-			if ( ! errors ) {
-				// Fire after a new user registers.
-				analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
-				analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
-			}
+				if ( errors ) {
+					callback( errors );
+				} else {
+					callback( undefined, response );
+				}
+			} );
+		} else {
+			wpcom.undocumented().usersNew( assign(
+				{}, userData, {
+					ab_test_variations: getSavedVariations(),
+					validate: false,
+					signup_flow_name: flowName,
+					nux_q_site_type: surveySiteType,
+					nux_q_question_primary: surveyVertical,
+					jetpack_redirect: queryArgs.jetpackRedirect
+				}
+			), ( error, response ) => {
+				const errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
+					bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
 
-			callback( errors, assign( {}, { username: userData.username }, bearerToken ) );
-		} );
+				if ( ! errors ) {
+					// Fire after a new user registers.
+					analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
+					analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
+				}
+
+				callback( errors, assign( {}, { username: userData.username }, bearerToken ) );
+			} );
+		}
 	},
 
 	createSite( callback, { themeSlugWithRepo }, { site } ) {
