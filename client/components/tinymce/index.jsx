@@ -43,6 +43,7 @@ import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
 import insertMenuPlugin from './plugins/insert-menu/plugin';
 import embedReversalPlugin from './plugins/embed-reversal/plugin';
 import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
+import mentionsPlugin from './plugins/mentions/plugin';
 
 [
 	wpcomPlugin,
@@ -136,6 +137,11 @@ const PLUGINS = [
 
 if ( config.isEnabled( 'post-editor/insert-menu' ) ) {
 	PLUGINS.push( 'wpcom/insertmenu' );
+}
+
+if ( config.isEnabled( 'post-editor/mentions' ) ) {
+	mentionsPlugin();
+	PLUGINS.push( 'wpcom/mentions' );
 }
 
 const CONTENT_CSS = [
@@ -297,6 +303,7 @@ module.exports = React.createClass( {
 			// minus the surrounding editor chrome to avoid scrollbars. In the
 			// future, we should calculate from the rendered editor bounds.
 			autoresize_min_height: Math.max( document.documentElement.clientHeight - 300, 300 ),
+			autoresize_bottom_margin: viewport.isMobile() ? 10 : 50,
 
 			toolbar1: config.isEnabled( 'post-editor/insert-menu' )
 				? 'wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_advanced'
@@ -380,7 +387,11 @@ module.exports = React.createClass( {
 
 			// Collapse selection to avoid scrolling to the bottom of the textarea
 			textNode.setSelectionRange( 0, 0 );
-			textNode.focus();
+
+			// Browser is not Internet Explorer 11
+			if ( 11 !== tinymce.Env.ie ) {
+				textNode.focus();
+			}
 		} else if ( this._editor ) {
 			this._editor.focus();
 		}

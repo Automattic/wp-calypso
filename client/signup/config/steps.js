@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
 */
 import stepActions from 'lib/signup/step-actions';
 
-module.exports = {
+export default {
 	survey: {
 		stepName: 'survey',
 		props: {
@@ -31,7 +31,10 @@ module.exports = {
 		stepName: 'themes-site-selected',
 		dependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
 		providesDependencies: [ 'themeSlugWithRepo' ],
-		apiRequestFunction: stepActions.setThemeOnSite
+		apiRequestFunction: stepActions.setThemeOnSite,
+		props: {
+			headerText: i18n.translate( 'Choose a theme for your new site.' ),
+		}
 	},
 
 	'plans-site-selected': {
@@ -64,6 +67,16 @@ module.exports = {
 		providesDependencies: [ 'bearer_token', 'username' ]
 	},
 
+	'user-social': {
+		stepName: 'user-social',
+		apiRequestFunction: stepActions.createAccount,
+		providesToken: true,
+		providesDependencies: [ 'bearer_token', 'username' ],
+		props: {
+			isSocialSignupEnabled: true
+		},
+	},
+
 	'site-title': {
 		stepName: 'site-title',
 		providesDependencies: [ 'siteTitle' ]
@@ -91,17 +104,6 @@ module.exports = {
 		delayApiRequestUntilComplete: true
 	},
 
-	'domains-with-plan': {
-		stepName: 'domains-with-plan',
-		apiRequestFunction: stepActions.createSiteWithCartAndStartFreeTrial,
-		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
-		dependencies: [ 'themeSlugWithRepo' ],
-		props: {
-			isDomainOnly: false
-		},
-		delayApiRequestUntilComplete: true
-	},
-
 	'domains-theme-preselected': {
 		stepName: 'domains-theme-preselected',
 		apiRequestFunction: stepActions.createSiteWithCart,
@@ -109,17 +111,6 @@ module.exports = {
 		props: {
 			isDomainOnly: false
 		},
-		delayApiRequestUntilComplete: true
-	},
-
-	'domain-only': {
-		stepName: 'domain-only',
-		apiRequestFunction: stepActions.createCart,
-		props: {
-			isDomainOnly: true
-		},
-		dependencies: [ 'themeSlugWithRepo', 'designType' ],
-		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		delayApiRequestUntilComplete: true
 	},
 
@@ -154,10 +145,12 @@ module.exports = {
 	// should not be used outside of the `domain-first` flow.
 	'site-or-domain': {
 		stepName: 'site-or-domain',
+		apiRequestFunction: stepActions.createSiteOrDomain,
 		props: {
 			headerText: i18n.translate( 'Do you want to use this domain yet?' ),
 			subHeaderText: i18n.translate( "Don't worry you can easily add a site later if you're not ready" )
 		},
-		providesDependencies: [ 'designType' ]
+		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
+		delayApiRequestUntilComplete: true
 	},
 };

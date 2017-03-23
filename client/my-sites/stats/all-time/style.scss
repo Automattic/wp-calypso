@@ -4,38 +4,18 @@
 
 		padding-bottom: 0;
 
-		@include breakpoint( ">480px" ) {
-			padding-bottom: 24px;
-		}
-
-		&:nth-child(4) {
-			padding-bottom: 0;
-		}
-
 		&.all-time__is-best .gridicon,
 		&.all-time__is-best .label {
 			color: $alert-yellow;
 		}
 
-		.value {
-			font-size: 20px;
-			padding: 10px 0 5px;
-		}
-
 		.all-time__best-day {
-			color: $gray-dark;
-			font-size: 11px;
-			letter-spacing: 0.1em;
-			text-transform: uppercase;
-
-			@include breakpoint( "<480px" )  {
-				box-sizing: border-box;
-				display: block;
-				line-height: 1.7;
-				padding: 30px 0 10px 25px;
-				text-align: left;
-				width: 100%;
-			}
+			color: $gray-text-min;
+			font-size: 12px;
+			box-sizing: border-box;
+			display: block;
+			padding: 24px 0px 10px 58px;
+			text-align: left;
 		}
 	}
 }

@@ -442,29 +442,17 @@ Undocumented.prototype._sendRequestWithLocale = function( originalParams, fn ) {
 };
 
 /**
- * Determine whether a domain name can be mapped
- *
- * @param {string} domain - The domain name to check.
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.isDomainMappable = function( domain, fn ) {
-	domain = encodeURIComponent( domain );
-
-	return this.wpcom.req.get( { path: '/domains/' + domain + '/is-mappable' }, fn );
-};
-
-/**
  * Determine whether a domain name is available for registration
  *
  * @param {string} domain - The domain name to check.
  * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
  * @api public
  */
 Undocumented.prototype.isDomainAvailable = function( domain, fn ) {
-	domain = encodeURIComponent( domain );
-
-	return this.wpcom.req.get( { path: '/domains/' + domain + '/is-available' }, fn );
+	return this.wpcom.req.get( `/domains/${ encodeURIComponent( domain ) }/is-available`, {
+		apiVersion: '1.2'
+	}, fn );
 };
 
 /**
@@ -1212,17 +1200,6 @@ Undocumented.prototype.readSearch = function( query, fn ) {
 	return this.wpcom.req.get( '/read/search', params, fn );
 };
 
-Undocumented.prototype.readTag = function( query, fn ) {
-	var params = omit( query, 'slug' );
-	debug( '/read/tag/' + query.slug );
-	return this.wpcom.req.get( '/read/tags/' + query.slug, params, fn );
-};
-
-Undocumented.prototype.readTags = function( fn ) {
-	debug( '/read/tags' );
-	return this.wpcom.req.get( '/read/tags', fn );
-};
-
 Undocumented.prototype.readTagPosts = function( query, fn ) {
 	var params = omit( query, 'tag' );
 	debug( '/read/tags/' + query.tag + '/posts' );
@@ -1341,6 +1318,7 @@ Undocumented.prototype.readListItems = function( query, fn ) {
 };
 
 Undocumented.prototype.followReaderFeed = function( query, fn ) {
+	query = Object.assign( { source: config( 'readerFollowingSource' ) }, query );
 	return this.wpcom.req.post( '/read/following/mine/new', query, {}, fn );
 };
 
@@ -1464,6 +1442,29 @@ Undocumented.prototype.usersNew = function( query, fn ) {
 		path: '/users/new',
 		body: query
 	};
+	return this.wpcom.req.post( args, fn );
+};
+
+/**
+ * Sign up for a new account with a social service (e.g. Google/Facebook).
+ *
+ * @param {string} service - Social service associated with token, e.g. google.
+ * @param {string} token - Token returned from service.
+ * @param {Function} fn - callback
+ *
+ * @return {Promise} A promise for the request
+ */
+Undocumented.prototype.usersSocialNew = function( service, token, fn ) {
+	const body = { service, token, locale: i18n.getLocaleSlug() };
+
+	// This API call is restricted to these OAuth keys
+	restrictByOauthKeys( body );
+
+	const args = {
+		path: '/users/social/new',
+		body
+	};
+
 	return this.wpcom.req.post( args, fn );
 };
 
@@ -2061,6 +2062,20 @@ Undocumented.prototype.cancelPlanTrial = function( planId, fn ) {
 
 	return this.wpcom.req.post( {
 		path: `/upgrades/${planId}/cancel-plan-trial`
+	}, fn );
+};
+
+/**
+ * Get the Directly configuration for the current user
+ *
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.getDirectlyConfiguration = function( fn ) {
+	return this.wpcom.req.get( {
+		apiVersion: '1.1',
+		path: '/help/directly/mine'
 	}, fn );
 };
 

@@ -2,12 +2,12 @@
 .reader-post-options-menu .ellipsis-menu {
 
 	.button.is-borderless {
-		color: lighten( $gray, 10% );
+		color: $gray;
 
 		&:hover,
 		&:focus,
 		&:active {
-			color: $blue-light;
+			color: $blue-medium;
 		}
 	}
 

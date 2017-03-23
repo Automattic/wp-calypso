@@ -12,9 +12,8 @@
 
 .plan-compare-card__features {
 	padding: 16px 24px;
-	background-color: lighten($gray, 35%);
 	font-size: 14px;
-	color: $gray;
+	color: $gray-text-min;
 }
 
 .plan-compare-card__header {
@@ -35,7 +34,7 @@
 .plan-compare-card__line {
 	font-size: 12px;
 	font-weight: normal;
-	color: $gray;
+	color: $gray-text-min;
 	font-style: italic;
 }
 

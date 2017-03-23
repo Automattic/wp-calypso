@@ -77,7 +77,7 @@ There are two different modes of operation:
 
 1. development - in development mode, the JavaScript are generated on-the-fly and cached in the server’s memory. The server is running an instance of the webpack compiler that is in watch mode so that it responds to changes to the files. If a file changes, the assets are regenerated and a hot update is emitted over a websocket to the client. The hot update is used by the React hot loader to replace the React component on-the-fly while preserving the components state.
 
-2. production - in production mode, the files are written to the public directory by running the `make build` command. The command runs `webpack`, generates a `assets-$CALYPSO_ENV.json` file, and then minifies each file. The `assets-$CALYPSO_ENV.json` file is used in the server to map the chunk name to the current asset.
+2. production - in production mode, the files are written to the public directory by running the `make build` command. The command runs `webpack`, generates a `assets.json` file, and then minifies each file. The `assets.json` file is used in the server to map the chunk name to the current asset.
 
 
 ### Caching

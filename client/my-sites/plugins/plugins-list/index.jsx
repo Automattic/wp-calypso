@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { find, includes, isEmpty, isEqual, negate, range } from 'lodash';
+import { find, get, includes, isEmpty, isEqual, negate, range, reduce } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -19,6 +19,7 @@ import PluginsLog from 'lib/plugins/log-store';
 import PluginNotices from 'lib/plugins/notices';
 import SectionHeader from 'components/section-header';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 function checkPropsChange( nextProps, propArr ) {
@@ -114,9 +115,19 @@ export const PluginsList = React.createClass( {
 		this.props.recordGoogleEvent( 'Plugins', eventAction, 'Plugin Name', slug );
 	},
 
+	canBulkSelect( plugin ) {
+		const {
+			autoupdate: canAutoupdate,
+			activation: canActivate,
+		} = this.getAllowedPluginActions( plugin );
+		return ! this.hasNoSitesThatCanManage( plugin ) && ( canAutoupdate || canActivate );
+	},
+
 	setBulkSelectionState( plugins, selectionState ) {
-		const slugsToBeUpdated = {};
-		plugins.forEach( plugin => slugsToBeUpdated[ plugin.slug ] = this.hasNoSitesThatCanManage( plugin ) ? false : selectionState );
+		const slugsToBeUpdated = reduce( plugins, ( slugs, plugin ) => {
+			slugs[ plugin.slug ] = this.canBulkSelect( plugin ) && selectionState;
+			return slugs;
+		}, {} );
 
 		this.setState( { selectedPlugins: Object.assign( {}, this.state.selectedPlugins, slugsToBeUpdated ) } );
 	},
@@ -192,6 +203,7 @@ export const PluginsList = React.createClass( {
 
 	removePluginsNotices() {
 		const { notices: { completed, errors } = {} } = this.state;
+
 		if ( completed || errors ) {
 			PluginsActions.removePluginsNotices( [ ...completed, ...errors ] );
 		}
@@ -201,7 +213,6 @@ export const PluginsList = React.createClass( {
 		const isDeactivatingAndJetpackSelected = ( { slug } ) => 'deactivating' === actionName && 'jetpack' === slug;
 		const flattenArrays = ( full, partial ) => [ ...full, ...partial ];
 		this.removePluginsNotices();
-
 		this.props.plugins
 			.filter( this.isSelected ) // only use selected sites
 			.filter( negate( isDeactivatingAndJetpackSelected ) ) // ignore sites that are deactiving
@@ -432,8 +443,19 @@ export const PluginsList = React.createClass( {
 		);
 	},
 
+	getAllowedPluginActions( plugin ) {
+		const hiddenForAutomatedTransfer = this.props.isSiteAutomatedTransfer && includes( [ 'jetpack', 'vaultpress' ], plugin.slug );
+
+		return {
+			autoupdate: ! hiddenForAutomatedTransfer,
+			activation: ! hiddenForAutomatedTransfer,
+		};
+	},
+
 	renderPlugin( plugin ) {
 		const selectThisPlugin = this.togglePlugin.bind( this, plugin );
+		const allowedPluginActions = this.getAllowedPluginActions( plugin );
+		const isSelectable = this.state.bulkManagementActive && ( allowedPluginActions.autoupdate || allowedPluginActions.activation );
 		return (
 			<PluginItem
 				key={ plugin.slug }
@@ -444,10 +466,12 @@ export const PluginsList = React.createClass( {
 				errors={ this.state.notices.errors.filter( log => log.plugin && log.plugin.slug === plugin.slug ) }
 				notices={ this.state.notices }
 				isSelected={ this.isSelected( plugin ) }
-				isSelectable={ this.state.bulkManagementActive }
+				isSelectable={ isSelectable }
 				onClick={ selectThisPlugin }
 				selectedSite={ this.props.selectedSite }
-				pluginLink={ '/plugins/' + encodeURIComponent( plugin.slug ) + this.siteSuffix() } />
+				pluginLink={ '/plugins/' + encodeURIComponent( plugin.slug ) + this.siteSuffix() }
+				allowedActions = { allowedPluginActions }
+				isAutoManaged = { ! allowedPluginActions.autoupdate } />
 		);
 	},
 
@@ -458,9 +482,13 @@ export const PluginsList = React.createClass( {
 } );
 
 export default connect(
-	state => ( {
-		selectedSite: getSelectedSite( state ),
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-	} ),
+	state => {
+		const selectedSite = getSelectedSite( state );
+		return {
+			selectedSite,
+			selectedSiteSlug: getSelectedSiteSlug( state ),
+			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
+		};
+	},
 	{ recordGoogleEvent }
 )( PluginsList );

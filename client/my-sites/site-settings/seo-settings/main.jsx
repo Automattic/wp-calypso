@@ -8,14 +8,12 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
 import notices from 'notices';
 import QuerySitePurchases from 'components/data/query-site-purchases';
+import QuerySiteSettings from 'components/data/query-site-settings';
 import { getSitePurchases, hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purchases/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import SeoForm from './form';
-import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 /**
  * Module vars
@@ -54,12 +52,11 @@ export class SeoSettings extends Component {
 		const { upgradeToBusiness } = this.props;
 
 		return (
-			<Main className="site-settings">
-				<SidebarNavigation />
-				<SiteSettingsNavigation site={ site } section="seo" />
+			<div>
+				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 				{ site && <QuerySitePurchases siteId={ site.ID } /> }
 				{ site && <SeoForm { ...{ site, upgradeToBusiness } } /> }
-			</Main>
+			</div>
 		);
 	}
 

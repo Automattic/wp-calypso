@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import observe from 'lib/mixins/data-observe';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SiteOverview from './stats-site-overview';
 import SiteOverviewPlaceholder from './stats-overview-placeholder';
@@ -14,32 +15,31 @@ import DatePicker from './stats-date-picker';
 import StatsNavigation from './stats-navigation';
 import Main from 'components/main';
 import StatsFirstView from './stats-first-view';
+import QuerySites from 'components/data/query-sites';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { getVisibleSites } from 'state/selectors';
 
-export default React.createClass( {
-	displayName: 'StatsOverview',
-
-	mixins: [ observe( 'sites' ) ],
-
-	propTypes: {
-		path: PropTypes.string
-	},
+class StatsOverview extends Component {
+	static propTypes = {
+		moment: PropTypes.func,
+		path: PropTypes.string,
+		period: PropTypes.string,
+		sites: PropTypes.array,
+	};
 
 	render() {
-		const { path, period } = this.props;
-		const sites = this.props.sites.getVisible();
+		const { moment, path, period, sites } = this.props;
 		const statsPath = ( path === '/stats' ) ? '/stats/day' : path;
-
-		const sitesSorted = sites.map( function( site ) {
-			let momentSiteZone = this.moment();
-
+		const sitesSorted = sites.map( ( site ) => {
+			let momentSiteZone = moment();
 			if ( 'object' === typeof ( site.options ) && 'undefined' !== typeof ( site.options.gmt_offset ) ) {
-				momentSiteZone = this.moment().utcOffset( site.options.gmt_offset );
+				momentSiteZone = moment().utcOffset( site.options.gmt_offset );
 			}
-			site.periodEnd = momentSiteZone.endOf( this.props.period ).format( 'YYYY-MM-DD' );
+			site.periodEnd = momentSiteZone.endOf( period ).format( 'YYYY-MM-DD' );
 			return site;
-		}, this );
+		} );
 
-		sitesSorted.sort( function( a, b ) {
+		sitesSorted.sort( ( a, b ) => {
 			if ( a.periodEnd > b.periodEnd ) {
 				return 1;
 			}
@@ -61,7 +61,7 @@ export default React.createClass( {
 			return 0;
 		} );
 
-		const sitesList = sitesSorted.map( function( site, index ) {
+		const sitesList = sitesSorted.map( ( site, index ) => {
 			let siteOffset = 0;
 			const overview = [];
 
@@ -69,7 +69,7 @@ export default React.createClass( {
 				siteOffset = site.options.gmt_offset;
 			}
 
-			const date = this.moment().utcOffset( siteOffset ).format( 'YYYY-MM-DD' );
+			const date = moment().utcOffset( siteOffset ).format( 'YYYY-MM-DD' );
 
 			if ( 0 === index || sitesSorted[ index - 1 ].periodEnd !== site.periodEnd ) {
 				overview.push( <DatePicker period={ period } date={ date } /> );
@@ -88,21 +88,22 @@ export default React.createClass( {
 			);
 
 			return overview;
-		}, this );
+		} );
 
 		return (
-			<Main wideLayout={ true }>
+			<Main wideLayout>
+				<QuerySites allSites />
 				<StatsFirstView />
 				<SidebarNavigation />
-				<StatsNavigation section={ this.props.period } />
+				<StatsNavigation section={ period } />
 				{ sites.length !== 0 ? sitesList : this.placeholders() }
 			</Main>
 		);
-	},
+	}
 
 	placeholders() {
 		const items = [];
-		const limit = Math.min( this.props.user.get().visible_site_count, 10 );
+		const limit = Math.min( this.props.user.visible_site_count, 10 );
 
 		// TODO: a separate StatsSectionTitle component should be created
 		items.push( <h3 className="stats-section-title">&nbsp;</h3> ); // eslint-disable-line wpcalypso/jsx-classname-namespace
@@ -113,4 +114,13 @@ export default React.createClass( {
 
 		return items;
 	}
-} );
+}
+
+export default connect(
+	state => {
+		return {
+			user: getCurrentUser( state ),
+			sites: getVisibleSites( state )
+		};
+	}
+)( localize( StatsOverview ) );

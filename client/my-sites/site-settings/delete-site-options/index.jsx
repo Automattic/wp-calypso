@@ -36,12 +36,15 @@ module.exports = React.createClass( {
 
 	render() {
 		const selectedSite = this.props.site;
-		const changeAddressLink = `/domains/manage/${selectedSite.slug}`;
-		const startOverLink = `/settings/start-over/${selectedSite.slug}`;
-		const deleteSiteLink = `/settings/delete-site/${selectedSite.slug}`;
+		const changeAddressLink = `/domains/manage/${ selectedSite.slug }`;
+		const themeSetupLink = `/settings/theme-setup/${ selectedSite.slug }`;
+		const startOverLink = `/settings/start-over/${ selectedSite.slug }`;
+		const deleteSiteLink = `/settings/delete-site/${ selectedSite.slug }`;
 		let changeAddressLinkText = this.translate( 'Register a new domain or change your site\'s address.' );
+		const themeSetupLinkText = this.translate( 'Make your site look like your theme\'s demo.' );
 		const strings = {
 			changeSiteAddress: this.translate( 'Change Site Address' ),
+			themeSetup: this.translate( 'Theme Setup' ),
 			startOver: this.translate( 'Start Over' ),
 			deleteSite: this.translate( 'Delete Site' )
 		};
@@ -72,6 +75,17 @@ module.exports = React.createClass( {
 						</p>
 					</div>
 				</CompactCard>
+				{ config.isEnabled( 'settings/theme-setup' ) &&
+					<CompactCard
+						href={ themeSetupLink }
+						onClick={ this.trackThemeSetup }
+						className="delete-site-options__link">
+						<div className="delete-site-options__content">
+							<h2 className="delete-site-options__section-title">{ strings.themeSetup }</h2>
+							<p className="delete-site-options__section-desc">{ themeSetupLinkText }</p>
+						</div>
+					</CompactCard>
+				}
 				<CompactCard
 					href={ startOverLink }
 					onClick={ this.trackStartOver }
@@ -90,11 +104,15 @@ module.exports = React.createClass( {
 					<div className="delete-site-options__content">
 						<h2 className="delete-site-options__section-title">{ strings.deleteSite }</h2>
 						<p className="delete-site-options__section-desc">
-							{ this.translate( 'All your posts, images, data, and this site\'s address ({{siteAddress /}}) will be gone forever.', {
-								components: {
-									siteAddress: <strong>{ selectedSite.slug }</strong>
+							{ this.translate(
+								'All your posts, images, and data will be deleted. ' +
+								'And this site’s address ({{siteAddress /}}) will be lost.',
+								{
+									components: {
+										siteAddress: <strong>{ selectedSite.wpcom_url || selectedSite.slug }</strong>
+									}
 								}
-							} ) }
+							) }
 						</p>
 						<p className="delete-site-options__section-footnote">
 							{
@@ -112,6 +130,10 @@ module.exports = React.createClass( {
 
 	trackChangeAddress() {
 		trackDeleteSiteOption( 'change-address' );
+	},
+
+	trackThemeSetup() {
+		trackDeleteSiteOption( 'theme-setup' );
 	},
 
 	trackStartOver() {

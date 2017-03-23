@@ -192,23 +192,9 @@
 			}
 		}
 	}
-
-	.noticon-external {
-		position: absolute;
-			top: 15px;
-			right: 19px;
-		z-index: z-index( 'icon-parent', '.sidebar__menu .noticon-external' );
-		color: $gray;
-
-		@include breakpoint( "<660px" ) {
-			top: 9px;
-			right: 16px;
-			font-size: 32px;
-		}
-	}
 }
 
-a.sidebar__button {
+a.sidebar__button, form.sidebar__button {
 	display: flex;
 	position: relative;
 	box-sizing: border-box;
@@ -231,6 +217,9 @@ a.sidebar__button {
 		padding: 8px 16px;
 		margin: 10px 10px 0 0;
 	}
+}
+form.sidebar__button {
+	cursor: pointer;
 }
 
 // Selected Menu
@@ -322,13 +311,14 @@ a.sidebar__button {
 	}
 }
 
-.notouch .sidebar__menu li:not(.selected) a {
+.notouch .sidebar__menu li:not(.selected) a, form {
 	&.sidebar__button:hover {
 		color: $blue-medium;
 	}
 }
 
 .sidebar .sidebar__footer {
+	align-items: center;
 	padding: 0;
 	border-top: 1px solid darken( $sidebar-bg-color, 10% );
 	margin: auto 0 0;
@@ -412,32 +402,6 @@ a.sidebar__button {
 		margin-top: auto;
 	}
 
-}
-
-.sidebar__drafts-button {
-	margin-left: auto;
-}
-
-.layout.is-group-sites .sidebar .drafts-button.button.is-borderless {
-	color: darken( $gray, 10% );
-	line-height: 0;
-	padding: 0;
-	margin: 0;
-	text-transform: none;
-
-	.count {
-		color: darken( $gray, 10% );
-	}
-
-	&:hover {
-		color: $blue-medium;
-
-		.count {
-			background: $blue-medium;
-			border-color: $blue-medium;
-			color: $white;
-		}
-	}
 }
 
 .layout.is-section-help .sidebar .sidebar__footer-help {

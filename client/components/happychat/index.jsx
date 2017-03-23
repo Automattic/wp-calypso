@@ -33,6 +33,7 @@ import {
 	timeline,
 	composer
 } from './helpers';
+import Notices from './notices';
 import { translate } from 'i18n-calypso';
 
 const isChatOpen = any( isConnected, isConnecting );
@@ -65,7 +66,7 @@ const connectedTitle = ( { onCloseChat } ) => (
 	<div className="happychat__active-toolbar">
 	<h4>{ translate( 'Support Chat' ) }</h4>
 		<div onClick={ onCloseChat }>
-			<GridIcon icon="chevron-down" />
+			<GridIcon icon="cross" />
 		</div>
 	</div>
 );
@@ -117,6 +118,7 @@ const Happychat = React.createClass( {
 						} ) }
 					</div>
 					{ timeline( { connectionStatus, isMinimizing } ) }
+					<Notices />
 					{ composer( { connectionStatus, isMinimizing } ) }
 				</div>
 			</div>

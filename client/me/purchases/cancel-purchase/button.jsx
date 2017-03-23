@@ -3,12 +3,13 @@
  */
 import page from 'page';
 import React from 'react';
+import { moment } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import config from 'config';
-import analytics from 'lib/analytics';
 import Button from 'components/button';
 import { cancelAndRefundPurchase, cancelPurchase, submitSurvey } from 'lib/upgrades/actions';
 import { clearPurchases } from 'state/purchases/actions';
@@ -16,11 +17,13 @@ import { connect } from 'react-redux';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import { getName, getSubscriptionEndDate, isOneTimePurchase, isRefundable, isSubscription } from 'lib/purchases';
+import { enrichedSurveyData } from '../utils';
 import { isDomainRegistration, isTheme, isGoogleApps, isJetpackPlan } from 'lib/products-values';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
 import { refreshSitePlans } from 'state/sites/plans/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const CancelPurchaseButton = React.createClass( {
 	propTypes: {
@@ -41,10 +44,21 @@ const CancelPurchaseButton = React.createClass( {
 		};
 	},
 
+	recordEvent( name, properties = {} ) {
+		const product_slug = get( this.props, 'purchase.productSlug' );
+		const refund = true;
+		this.props.recordTracksEvent(
+			name,
+			Object.assign( { refund, product_slug }, properties )
+		);
+	},
+
 	handleCancelPurchaseClick() {
 		if ( isDomainRegistration( this.props.purchase ) ) {
 			return this.goToCancelConfirmation();
 		}
+
+		this.recordEvent( 'calypso_purchases_cancel_form_start' );
 
 		this.setState( {
 			showDialog: true
@@ -52,6 +66,8 @@ const CancelPurchaseButton = React.createClass( {
 	},
 
 	closeDialog() {
+		this.recordEvent( 'calypso_purchases_cancel_form_close' );
+
 		this.setState( {
 			showDialog: false,
 			surveyStep: 1,
@@ -63,9 +79,11 @@ const CancelPurchaseButton = React.createClass( {
 	},
 
 	changeSurveyStep() {
-		this.setState( {
-			surveyStep: this.state.surveyStep === 1 ? 2 : 1,
-		} );
+		const newStep = this.state.surveyStep === 1 ? 2 : 1;
+
+		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
+
+		this.setState( { surveyStep: newStep } );
 	},
 
 	onSurveyChange( update ) {
@@ -208,10 +226,7 @@ const CancelPurchaseButton = React.createClass( {
 
 		this.props.clearPurchases();
 
-		analytics.tracks.recordEvent(
-			'calypso_purchases_cancel_form_submit',
-			{ product_slug: this.props.purchase.productSlug }
-		);
+		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 
 		page.redirect( paths.purchasesRoot() );
 	},
@@ -222,22 +237,25 @@ const CancelPurchaseButton = React.createClass( {
 		} );
 
 		if ( config.isEnabled( 'upgrades/removal-survey' ) ) {
-			const { purchase } = this.props,
-				surveyData = {
-					'why-cancel': {
-						response: this.state.survey.questionOneRadio,
-						text: this.state.survey.questionOneText
-					},
-					'next-adventure': {
-						response: this.state.survey.questionTwoRadio,
-						text: this.state.survey.questionTwoText
-					},
-					'what-better': { text: this.state.survey.questionThreeText },
-					purchase: purchase.productSlug,
-					type: 'refund'
-				};
+			const { purchase, selectedSite } = this.props;
+			const surveyData = {
+				'why-cancel': {
+					response: this.state.survey.questionOneRadio,
+					text: this.state.survey.questionOneText
+				},
+				'next-adventure': {
+					response: this.state.survey.questionTwoRadio,
+					text: this.state.survey.questionTwoText
+				},
+				'what-better': { text: this.state.survey.questionThreeText },
+				type: 'refund'
+			};
 
-			submitSurvey( 'calypso-remove-purchase', this.props.selectedSite.ID, surveyData );
+			submitSurvey(
+				'calypso-remove-purchase',
+				this.props.selectedSite.ID,
+				enrichedSurveyData( surveyData, moment(), selectedSite, purchase )
+			);
 		}
 
 		cancelAndRefundPurchase( this.props.purchase.id, { product_id: this.props.purchase.productId }, this.handleSubmit );
@@ -356,6 +374,7 @@ export default connect(
 	null,
 	{
 		clearPurchases,
-		refreshSitePlans
+		recordTracksEvent,
+		refreshSitePlans,
 	}
 )( CancelPurchaseButton );

@@ -111,8 +111,8 @@ class StatModuleFollowers extends Component {
 
 		const summaryPageSlug = siteSlug || '';
 		const summaryPageLink = 'email-followers' === activeFilter
-			? '/stats/follows/email/' + summaryPageSlug
-			: '/stats/follows/wpcom/' + summaryPageSlug;
+			? '/people/email-followers/' + summaryPageSlug
+			: '/people/followers/' + summaryPageSlug;
 
 		return (
 			<div>

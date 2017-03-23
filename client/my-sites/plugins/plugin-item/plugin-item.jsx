@@ -37,6 +37,38 @@ module.exports = React.createClass( {
 
 	displayName: 'PluginItem',
 
+	propTypes: {
+		plugin: React.PropTypes.object,
+		sites: React.PropTypes.array,
+		isSelected: React.PropTypes.bool,
+		isSelectable: React.PropTypes.bool,
+		onClick: React.PropTypes.func,
+		pluginLink: React.PropTypes.string,
+		allowedActions: React.PropTypes.shape( {
+			activation: React.PropTypes.bool,
+			autoupdate: React.PropTypes.bool,
+		} ),
+		isAutoManaged: React.PropTypes.bool,
+		progress: React.PropTypes.array,
+		errors: React.PropTypes.array,
+		notices: React.PropTypes.shape( {
+			completed: React.PropTypes.array,
+			errors: React.PropTypes.array,
+			inProgress: React.PropTypes.array,
+		} ),
+		hasAllNoManageSites: React.PropTypes.bool,
+	},
+
+	getDefaultProps() {
+		return  {
+			allowedActions: {
+				activation: true,
+				autoupdate: true,
+			},
+			isAutoManaged: false,
+		}
+	},
+
 	shouldComponentUpdate( nextProps, nextState ) {
 		const propsToCheck = [ 'plugin', 'sites', 'selectedSite', 'isMock', 'isSelectable', 'isSelected' ];
 		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
@@ -160,6 +192,15 @@ module.exports = React.createClass( {
 				);
 			}
 		}
+
+		if ( this.props.isAutoManaged ) {
+			return (
+				<div className="plugin-item__last_updated">
+					{ this.translate( '%(pluginName)s is automatically managed on this site', { args: { pluginName: pluginData.name } } ) }
+				</div>
+			);
+		}
+
 		if ( this.hasUpdate() ) {
 			return this.renderUpdateFlag();
 		}
@@ -186,21 +227,26 @@ module.exports = React.createClass( {
 	},
 
 	renderActions() {
+		const {
+			activation: canToggleActivation,
+			autoupdate: canToggleAutoupdate,
+		} = this.props.allowedActions;
+
 		return (
 			<div className="plugin-item__actions">
-				<PluginActivateToggle
-					isMock={ this.props.isMock }
-					plugin={ this.props.plugin }
-					disabled={ this.props.isSelectable }
-					site={ this.props.selectedSite }
-					notices={ this.props.notices } />
-				<PluginAutoupdateToggle
-					isMock={ this.props.isMock }
-					plugin={ this.props.plugin }
-					disabled={ this.props.isSelectable }
-					site={ this.props.selectedSite }
-					notices={ this.props.notices }
-					wporg={ !! this.props.plugin.wporg } />
+				{ canToggleActivation && <PluginActivateToggle
+						isMock={ this.props.isMock }
+						plugin={ this.props.plugin }
+						disabled={ this.props.isSelectable }
+						site={ this.props.selectedSite }
+						notices={ this.props.notices } /> }
+				{ canToggleAutoupdate && <PluginAutoupdateToggle
+						isMock={ this.props.isMock }
+						plugin={ this.props.plugin }
+						disabled={ this.props.isSelectable }
+						site={ this.props.selectedSite }
+						notices={ this.props.notices }
+						wporg={ !! this.props.plugin.wporg } /> }
 			</div>
 		);
 	},

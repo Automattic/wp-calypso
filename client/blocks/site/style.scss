@@ -35,6 +35,30 @@
 		}
 
 	}
+
+	&.is-compact {
+		.site__content {
+			padding: 0 16px;
+		}
+
+		.site__domain {
+			display: none;
+		}
+
+		.site__title {
+			line-height: 46px;
+		}
+
+		.site__home {
+			top: 11px;
+			line-height: 18px;
+		}
+
+		.site__home .gridicon {
+			margin-top: 0;
+		}
+
+	}
 }
 
 // Wraps the anchor element
@@ -77,7 +101,7 @@
 }
 
 .site__domain {
-	color: $gray;
+	color: $gray-text-min;
 	display: block;
 	max-width: 95%;
 	font-size: 11px;
@@ -112,6 +136,11 @@
 	.gridicon {
 		margin-top: 5px;
 		vertical-align: middle;
+	}
+
+	.site.is-compact & {
+		width: 24px;
+		height: 24px;
 	}
 
 	&:hover {

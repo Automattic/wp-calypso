@@ -3,14 +3,17 @@
  */
 import React from 'react';
 import async from 'async';
-import flatten from 'lodash/flatten';
-import reject from 'lodash/reject';
-import find from 'lodash/find';
-import uniqBy from 'lodash/uniqBy';
-import times from 'lodash/times';
-import compact from 'lodash/compact';
-import noop from 'lodash/noop';
-import startsWith from 'lodash/startsWith';
+import {
+	compact,
+	find,
+	flatten,
+	includes,
+	noop,
+	reject,
+	startsWith,
+	times,
+	uniqBy
+} from 'lodash';
 import page from 'page';
 import qs from 'qs';
 import { connect } from 'react-redux';
@@ -22,6 +25,7 @@ import { localize } from 'i18n-calypso';
 import wpcom from 'lib/wp';
 import Notice from 'components/notice';
 import { getFixedDomainSearch, checkDomainAvailability } from 'lib/domains';
+import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import SearchCard from 'components/search-card';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
@@ -137,7 +141,7 @@ const RegisterDomainStep = React.createClass( {
 			clickedExampleSuggestion: false,
 			lastQuery: suggestion,
 			lastDomainSearched: null,
-			lastDomainError: null,
+			lastDomainStatus: null,
 			loadingResults: Boolean( suggestion ),
 			notice: null,
 			searchResults: null
@@ -227,7 +231,7 @@ const RegisterDomainStep = React.createClass( {
 							onSearch={ this.onSearch }
 							onSearchChange={ this.onSearchChange }
 							onBlur={ this.save }
-							placeholder={ this.props.translate( 'Enter a domain or keyword', { textOnly: true } ) }
+							placeholder={ this.props.translate( 'Enter a name or keyword' ) }
 							autoFocus={ true }
 							delaySearch={ true }
 							delayTimeout={ 1000 }
@@ -298,8 +302,7 @@ const RegisterDomainStep = React.createClass( {
 
 		this.setState( {
 			lastDomainSearched: domain,
-			searchResults: [],
-			lastDomainError: null
+			searchResults: []
 		} );
 
 		async.parallel(
@@ -314,22 +317,22 @@ const RegisterDomainStep = React.createClass( {
 					}
 
 					checkDomainAvailability( domain, ( error, result ) => {
-						const timeDiff = Date.now() - timestamp;
-						if ( error ) {
-							this.showValidationErrorMessage( domain, error );
-							this.setState( { lastDomainError: error } );
-						} else {
+						const timeDiff = Date.now() - timestamp,
+							status = result && result.status ? result.status : error,
+							{ AVAILABLE, UNKNOWN } = domainAvailability,
+							isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
+
+						this.setState( { lastDomainStatus: status } );
+						if ( isDomainAvailable ) {
 							this.setState( { notice: null } );
-							if ( result ) {
-								result.domain_name = domain;
-							}
+						} else {
+							this.showValidationErrorMessage( domain, status );
 						}
 
-						const analyticsResult = ( error && error.code ) || 'available';
-						this.recordEvent( 'domainAvailabilityReceive', domain, analyticsResult, timeDiff, this.props.analyticsSection );
+						this.recordEvent( 'domainAvailabilityReceive', domain, status, timeDiff, this.props.analyticsSection );
 
 						this.props.onDomainsAvailabilityChange( true );
-						callback( null, result );
+						callback( null, isDomainAvailable ? result : null );
 					} );
 				},
 				callback => {
@@ -431,9 +434,9 @@ const RegisterDomainStep = React.createClass( {
 	},
 
 	allSearchResults: function() {
-		const lastDomainSearched = this.state.lastDomainSearched,
+		const { lastDomainSearched, lastDomainStatus } = this.state,
 			matchesSearchedDomain = ( suggestion ) => ( suggestion.domain_name === lastDomainSearched ),
-			availableDomain = this.state.lastDomainError ? undefined : find( this.state.searchResults, matchesSearchedDomain ),
+			availableDomain = lastDomainStatus === domainAvailability.AVAILABLE && find( this.state.searchResults, matchesSearchedDomain ),
 			onAddMapping = ( domain ) => this.props.onAddMapping( domain, this.state );
 
 		let suggestions = reject( this.state.searchResults, matchesSearchedDomain );
@@ -460,7 +463,7 @@ const RegisterDomainStep = React.createClass( {
 				availableDomain={ availableDomain }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				lastDomainSearched={ lastDomainSearched }
-				lastDomainError = { this.state.lastDomainError }
+				lastDomainStatus = { lastDomainStatus }
 				onAddMapping={ onAddMapping }
 				onClickResult={ this.props.onAddDomain }
 				onClickMapping={ this.goToMapDomainStep }

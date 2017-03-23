@@ -4,6 +4,7 @@
 @import 'plugins/wpcom-help/style';
 @import 'plugins/wpcom-charmap/style';
 @import 'plugins/contact-form/style';
+@import 'plugins/mentions/style';
 
 .tinymce {
 	display: none;
@@ -42,23 +43,23 @@
 		& > .mce-toolbar-grp,
 		&:after {
 			position: fixed;
-				top: 47px;
+				top: 94px;
 			border-top-width: 0;
 			border-left-width: 0;
 			border-right-width: 0;
+
+			.focus-sidebar & {
+				width: calc( 100% - ( #{ $sidebar-width-max + 1 } ) );
+				@include breakpoint( "660px-960px" ) {
+					width: calc( 100% - ( #{ $sidebar-width-min + 1 } ) );
+				}
+				margin: 0;
+			}
 		}
 
 		& > .mce-toolbar-grp > .mce-container-body > .mce-container {
 			padding-left: 1px;
 			padding-right: 1px;
-		}
-
-		& > .mce-toolbar-grp {
-			left: ( $sidebar-width-min + 1 );
-
-			@include breakpoint( ">960px" ) {
-				left: ( $sidebar-width-max + 1 );
-			}
 		}
 	}
 }
@@ -67,7 +68,7 @@
 .mce-inline-toolbar-grp {
 	div.mce-toolbar-grp {
 		background-color: rgba( $white, 0.92 );
-		border-color: lighten( $gray, 20% );
+		border-color: lighten( $gray, 25% );
 		border-style: solid;
 		padding: 0;
 		overflow-x: auto;

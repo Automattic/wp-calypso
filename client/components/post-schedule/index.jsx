@@ -9,6 +9,7 @@ import { moment } from 'i18n-calypso';
  */
 import InputChrono from 'components/input-chrono';
 import DatePicker from 'components/date-picker';
+import QuerySiteSettings from 'components/data/query-site-settings';
 import User from 'lib/user';
 
 /**
@@ -168,7 +169,11 @@ class PostSchedule extends Component {
 
 	render() {
 		return (
-			<div className="post-schedule" >
+			<div className="post-schedule">
+				{
+					// Used by Clock for now, likely others in the future.
+					this.props.site && <QuerySiteSettings siteId={ this.props.site.ID } />
+				}
 				<Header
 					date={ this.state.calendarViewDate }
 					onDateChange={ this.setViewDate }
@@ -208,7 +213,6 @@ PostSchedule.propTypes = {
 	timezone: PropTypes.string,
 	gmtOffset: PropTypes.number,
 	site: PropTypes.object,
-
 	onDateChange: PropTypes.func,
 	onMonthChange: PropTypes.func
 };

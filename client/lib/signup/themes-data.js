@@ -19,11 +19,11 @@ export const themes = [
 	},
 	{
 		name: 'Baskerville',
-		slug: 'baskerville',
+		slug: 'baskerville-2',
 		repo: 'pub',
 		fallback: false,
 		design: 'grid',
-		demo_uri: 'https://baskervilledemo.wordpress.com',
+		demo_uri: 'https://baskerville2demo.wordpress.com',
 		verticals: []
 	},
 	{
@@ -144,7 +144,7 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Libre 2',
+		name: 'Libre',
 		slug: 'libre-2',
 		repo: 'pub',
 		fallback: false,
@@ -163,11 +163,11 @@ export const themes = [
 	},
 	{
 		name: 'Penscratch',
-		slug: 'penscratch',
+		slug: 'penscratch-2',
 		repo: 'pub',
 		fallback: true,
 		design: 'blog',
-		demo_uri: 'https://penscratchdemo.wordpress.com',
+		demo_uri: 'https://penscratch2demo.wordpress.com',
 		verticals: []
 	},
 	{

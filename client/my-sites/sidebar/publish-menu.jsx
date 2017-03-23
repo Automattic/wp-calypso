@@ -17,6 +17,7 @@ import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
+import MediaLibraryUploadButton from 'my-sites/media-library/upload-button';
 
 const PublishMenu = React.createClass( {
 	propTypes: {
@@ -86,6 +87,7 @@ const PublishMenu = React.createClass( {
 				queryable: true,
 				config: 'manage/media',
 				link: '/media',
+				buttonLink: '/media/' + site.slug,
 				wpAdminLink: 'upload.php',
 				showOnAllMySites: false,
 			} );
@@ -139,6 +141,7 @@ const PublishMenu = React.createClass( {
 			case 'page': icon = 'pages'; break;
 			case 'jetpack-portfolio': icon = 'folder'; break;
 			case 'jetpack-testimonial': icon = 'quote'; break;
+			case 'media': icon = 'image'; break;
 			default: icon = 'custom-post-type';
 		}
 
@@ -157,9 +160,12 @@ const PublishMenu = React.createClass( {
 				icon={ icon }
 				preloadSectionName={ preload }
 			>
-				<SidebarButton href={ menuItem.buttonLink } preloadSectionName="post-editor">
-					{ this.translate( 'Add' ) }
-				</SidebarButton>
+				{ menuItem.name === 'media' && (
+					<MediaLibraryUploadButton className="sidebar__button" site={ site } href={ menuItem.buttonLink }>{ this.translate( 'Add' ) }</MediaLibraryUploadButton>
+				) }
+				{ menuItem.name !== 'media' && (
+					<SidebarButton href={ menuItem.buttonLink } preloadSectionName="post-editor">{ this.translate( 'Add' ) }</SidebarButton>
+				) }
 			</SidebarItem>
 		);
 	},

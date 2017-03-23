@@ -1,0 +1,14 @@
+{
+	"name": "wp-job-manager",
+	"author": "Automattic",
+	"description": "WP Job Manager",
+	"version": "0.0.1",
+	"env_id": [ "development", "wpcalypso" ],
+	"section": {
+		"name": "wp-job-manager",
+		"paths": [ "/extensions/wp-job-manager" ],
+		"module": "wp-job-manager",
+		"group": "sites",
+		"secondary": true
+	}
+}

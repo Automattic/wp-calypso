@@ -1,19 +1,12 @@
 .vertical-nav-item {
-	.noticon {
+	.gridicon {
 		box-sizing: border-box;
-		color: $gray;
-		font-size: 20px;
+		color: lighten( $gray, 10% );
+		display: block;
 		height: 100%;
-		padding-left: 3px;
-		padding-top: 20px;
 		position: absolute;
 			top: 0;
-			right: 0;
-		width: 55px;
-	}
-
-	.noticon-collapse {
-		transform: rotate( 90deg );
+			right: 16px;
 	}
 }
 

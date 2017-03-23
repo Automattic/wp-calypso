@@ -524,7 +524,7 @@ describe( 'utils', () => {
 						label: 'United States',
 						value: 1,
 						region: '021',
-						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48'
+						backgroundImage: '/calypso/images/flags/us.svg'
 					}
 				] );
 			} );
@@ -560,7 +560,7 @@ describe( 'utils', () => {
 						label: 'United States',
 						value: 10,
 						region: '021',
-						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48'
+						backgroundImage: '/calypso/images/flags/us.svg'
 					}
 				] );
 			} );
@@ -595,7 +595,7 @@ describe( 'utils', () => {
 						label: 'United States',
 						value: 100,
 						region: '021',
-						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48'
+						backgroundImage: '/calypso/images/flags/us.svg'
 					}
 				] );
 			} );
@@ -631,43 +631,7 @@ describe( 'utils', () => {
 						label: 'United States',
 						value: 100,
 						region: '021',
-						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48'
-					}
-				] );
-			} );
-
-			it( 'should ignore missing grey flag icons', () => {
-				const parsedData = normalizers.statsCountryViews( {
-					date: '2015-12-25',
-					days: {
-						'2015-12-01': {
-							views: [ {
-								country_code: 'US',
-								views: 100
-							} ],
-							other_views: 0,
-							total_views: 100
-						}
-					},
-					'country-info': {
-						US: {
-							flag_icon: 'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
-							flat_flag_icon: 'https://s-ssl.wordpress.com/i/stats/square-grey.png',
-							country_full: 'United States',
-							map_region: '021'
-						}
-					}
-				}, {
-					period: 'month',
-					date: '2015-12-25'
-				} );
-
-				expect( parsedData ).to.eql( [
-					{
-						label: 'United States',
-						value: 100,
-						region: '021',
-						icon: null
+						backgroundImage: '/calypso/images/flags/us.svg'
 					}
 				] );
 			} );
@@ -703,7 +667,7 @@ describe( 'utils', () => {
 						label: 'US\'A',
 						value: 100,
 						region: '021',
-						icon: null
+						backgroundImage: '/calypso/images/flags/us.svg'
 					}
 				] );
 			} );
@@ -742,7 +706,7 @@ describe( 'utils', () => {
 						label: 'United States',
 						value: 100,
 						region: '021',
-						icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48'
+						backgroundImage: '/calypso/images/flags/us.svg'
 					}
 				] );
 			} );

@@ -14,83 +14,87 @@ import Card from 'components/card';
 import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
-import { fetchResetOptionsByLogin } from 'state/account-recovery/reset/actions';
-import { getAccountRecoveryResetOptions } from 'state/selectors';
+
+import {
+	fetchResetOptionsByLogin,
+	updatePasswordResetUserData,
+} from 'state/account-recovery/reset/actions';
+
+import {
+	isRequestingAccountRecoveryResetOptions,
+	getAccountRecoveryResetUserData,
+	getAccountRecoveryResetOptionsError,
+} from 'state/selectors';
 
 export class LostPasswordFormComponent extends Component {
-	constructor() {
-		super( ...arguments );
-
-		this.state = {
-			isSubmitting: false,
-			userLogin: '',
-		};
-	}
-
 	submitForm = () => {
-		this.setState( { isSubmitting: true } );
-
-		//This is only here to test the redux action and will be replaced in a future PR
-		this.props.fetchResetOptionsByLogin( this.state.userLogin );
+		this.props.fetchResetOptionsByLogin( this.props.userLogin );
 	};
 
 	onUserLoginChanged = ( event ) => {
-		this.setState( { userLogin: event.target.value } );
+		this.props.updatePasswordResetUserData( {
+			user: event.target.value
+		} );
 	};
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.resetOptions ) {
-			this.setState( { isSubmitting: false } );
-		}
-	}
-
 	render() {
-		const { translate } = this.props;
-		const { isSubmitting, userLogin } = this.state;
-		const isPrimaryButtonDisabled = ! userLogin || isSubmitting;
+		const {
+			translate,
+			userLogin,
+			isRequesting,
+			requestError,
+		} = this.props;
+
+		const isPrimaryButtonDisabled = ! userLogin || isRequesting;
 
 		return (
 			<div>
-				<h2 className="lost-password-form__title">
-					{ translate( 'Lost your password' ) }
-				</h2>
-				<p>{ translate( 'Follow these simple steps to reset your account:' ) }</p>
-				<ol className="lost-password-form__instruction-list">
-					<li>
+				<Card compact>
+					<h2 className="lost-password-form__title">
+						{ translate( 'Lost your password?' ) }
+					</h2>
+					<p>{ translate( 'Follow these simple steps to reset your account:' ) }</p>
+					<ol className="lost-password-form__instruction-list">
+						<li>
+							{ translate(
+								'Enter your {{strong}}WordPress.com{{/strong}} username or email address',
+								{ components: { strong: <strong /> } }
+							) }
+						</li>
+						<li>
+							{ translate( 'Choose a password reset method' ) }
+						</li>
+						<li>
+							{ translate(
+								'Follow instructions and be reunited with your {{strong}}WordPress.com{{/strong}} account',
+								{ components: { strong: <strong /> } }
+							) }
+						</li>
+					</ol>
+					<p>
 						{ translate(
-							'Enter your {{strong}}WordPress.com{{/strong}} username or email address',
-							{ components: { strong: <strong /> } }
+							'Want more help? We have a full {{link}}guide to resetting your password{{/link}}.',
+							{ components: { link: <a href={ support.ACCOUNT_RECOVERY } /> } }
 						) }
-					</li>
-					<li>
-						{ translate( 'Choose a password reset method' ) }
-					</li>
-					<li>
-						{ translate(
-							'Follow instructions and be re-united with your {{strong}}WordPress.com{{/strong}} account',
-							{ components: { strong: <strong /> } }
-						) }
-					</li>
-				</ol>
-				<p>
-					{ translate(
-						'Want more help? We have a full {{link}}guide to resetting your password{{/link}}.',
-						{ components: { link: <a href={ support.ACCOUNT_RECOVERY } /> } }
-					) }
-				</p>
-				<Card>
+					</p>
+				</Card>
+				<Card compact>
 					<FormLabel>
 						{ translate( 'Username or Email' ) }
 
 						<FormInput
 							className="lost-password-form__user-login-input"
 							onChange={ this.onUserLoginChanged }
-							value={ userLogin }
-							disabled={ isSubmitting } />
+							value={ userLogin || '' }
+							disabled={ isRequesting } />
 					</FormLabel>
-					<a href="/account-recovery/forgot-username" className="lost-password-form__forgot-username-link">
-						{ translate( 'Forgot your username?' ) }
-					</a>
+					{
+						requestError && (
+						<p className="lost-password-form__error-message">
+							{ translate( 'We encountered some problems with that login information. ' +
+								'Please provide another one or try again later.' ) }
+						</p> )
+					}
 					<Button
 						className="lost-password-form__submit-button"
 						onClick={ this.submitForm }
@@ -99,6 +103,9 @@ export class LostPasswordFormComponent extends Component {
 					>
 						{ translate( 'Get New Password' ) }
 					</Button>
+					<a href="/account-recovery/forgot-username" className="lost-password-form__forgot-username-link">
+						{ translate( 'Forgot your username?' ) }
+					</a>
 				</Card>
 			</div>
 		);
@@ -106,13 +113,22 @@ export class LostPasswordFormComponent extends Component {
 }
 
 LostPasswordFormComponent.defaultProps = {
+	isRequesting: false,
+	userLogin: null,
+	requestError: null,
 	translate: identity,
 	fetchResetOptionsByLogin: noop,
+	updatePasswordResetUserData: noop,
 };
 
 export default connect(
 	( state ) => ( {
-		resetOptions: getAccountRecoveryResetOptions( state ),
+		isRequesting: isRequestingAccountRecoveryResetOptions( state ),
+		userLogin: getAccountRecoveryResetUserData( state ).user,
+		requestError: getAccountRecoveryResetOptionsError( state ),
 	} ),
-	{ fetchResetOptionsByLogin }
+	{
+		fetchResetOptionsByLogin,
+		updatePasswordResetUserData,
+	}
 )( localize( LostPasswordFormComponent ) );

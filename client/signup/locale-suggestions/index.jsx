@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-var i18n = require( 'i18n-calypso'),
-	React = require( 'react' ),
-	assign = require( 'lodash/assign' );
+import i18n from 'i18n-calypso';
+import React from 'react';
+import assign from 'lodash/assign';
 
 /**
  * Internal dependencies
  */
-var i18nUtils = require( 'lib/i18n-utils' ),
-	switchLocale = require( 'lib/i18n-utils/switch-locale' ),
-	LocaleSuggestionStore = require( 'lib/locale-suggestions' );
+import i18nUtils from 'lib/i18n-utils';
+import switchLocale from 'lib/i18n-utils/switch-locale';
+import LocaleSuggestionStore from 'lib/locale-suggestions';
 
 import Notice from 'components/notice';
 

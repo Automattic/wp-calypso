@@ -69,10 +69,12 @@ describe( 'EditorDiscussion', function() {
 					default_comment_status: true,
 					default_ping_status: false
 				}
+			}, post = {
+				type: 'post'
 			}, tree;
 
 			tree = TestUtils.renderIntoDocument(
-				<EditorDiscussion site={ site } isNew />
+				<EditorDiscussion site={ site } post={ post } isNew />
 			);
 
 			expect( tree.getDiscussionSetting() ).to.eql( {
@@ -87,15 +89,37 @@ describe( 'EditorDiscussion', function() {
 					default_comment_status: false,
 					default_ping_status: true
 				}
+			}, post = {
+				type: 'post'
 			}, tree;
 
 			tree = TestUtils.renderIntoDocument(
-				<EditorDiscussion site={ site } isNew />
+				<EditorDiscussion site={ site } post={ post } isNew />
 			);
 
 			expect( tree.getDiscussionSetting() ).to.eql( {
 				comment_status: 'closed',
 				ping_status: 'open'
+			} );
+		} );
+
+		it( 'should return comments closed if site exists, post is new, and post is type page', function() {
+			var site = {
+				options: {
+					default_comment_status: false,
+					default_ping_status: true
+				}
+			}, post = {
+				type: 'page'
+			}, tree;
+
+			tree = TestUtils.renderIntoDocument(
+				<EditorDiscussion site={ site } post={ post } isNew />
+			);
+
+			expect( tree.getDiscussionSetting() ).to.eql( {
+				comment_status: 'closed',
+				ping_status: 'closed'
 			} );
 		} );
 

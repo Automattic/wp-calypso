@@ -136,10 +136,14 @@ export function iframeIsWhitelisted( iframe ) {
 		'bandcamp.com',
 		'kickstarter.com',
 		'facebook.com',
-		'embed.itunes.apple.com'
+		'embed.itunes.apple.com',
+		'nyt.com',
+		'google.com',
+		'mixcloud.com',
+		'players.brightcove.net',
 	];
-
-	const iframeSrc = iframe.src && url.parse( iframe.src ).hostname.toLowerCase();
+	const hostName = iframe.src && url.parse( iframe.src ).hostname;
+	const iframeSrc = hostName && hostName.toLowerCase();
 	return some( iframeWhitelist, function( whitelistedSuffix ) {
 		return endsWith( '.' + iframeSrc, '.' + whitelistedSuffix );
 	} );

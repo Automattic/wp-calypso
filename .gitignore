@@ -33,12 +33,13 @@ env-config.sh
 /public/style*.css
 /public/style*.css.map
 /public/editor*.css
+/public/directly*.css
 /public/images/flags/*.svg
 /public/images/flags/*.png
 /server/devdocs/search-index.js
 /server/devdocs/components-usage-stats.json
 /server/devdocs/proptypes-index.json
-/server/bundler/assets-*.json
+/server/bundler/assets.json
 
 *.rdb
 *.db

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { map, forEach, head, includes, keys } from 'lodash';
+import { map, forEach, head, includes, isEmpty, keys } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
@@ -27,6 +27,8 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import { mergeFormWithValue } from 'signup/utils';
+import SocialSignupForm from './social';
+import HrWithText from 'components/hr-with-text';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
@@ -46,7 +48,31 @@ export default React.createClass( {
 	displayName: 'SignupForm',
 
 	propTypes: {
-		suggestedUsername: PropTypes.string.isRequired
+		className: PropTypes.string,
+		disableEmailExplanation: PropTypes.bool,
+		disableEmailInput: PropTypes.bool,
+		disabled: PropTypes.bool,
+		email: PropTypes.string,
+		footerLink: PropTypes.node,
+		formHeader: PropTypes.node,
+		getRedirectToAfterLoginUrl: PropTypes.string.isRequired,
+		goToNextStep: PropTypes.func,
+		handleSocialResponse: PropTypes.func,
+		isSocialSignupEnabled: PropTypes.bool,
+		locale: PropTypes.string,
+		positionInFlow: PropTypes.number,
+		save: PropTypes.func,
+		signupDependencies: PropTypes.object,
+		step: PropTypes.object,
+		submitButtonText: PropTypes.string.isRequired,
+		submitting: PropTypes.bool,
+		suggestedUsername: PropTypes.string.isRequired,
+	},
+
+	getDefaultProps() {
+		return {
+			isSocialSignupEnabled: false,
+		};
 	},
 
 	getInitialState() {
@@ -61,9 +87,9 @@ export default React.createClass( {
 
 	getInitialFields() {
 		return {
-			email: this.props.email || null,
-			username: null,
-			password: null
+			email: this.props.email || '',
+			username: '',
+			password: ''
 		};
 	},
 
@@ -294,7 +320,7 @@ export default React.createClass( {
 				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'email' ) }>
 					<FormLabel htmlFor="email">{ this.translate( 'Your email address' ) }</FormLabel>
 					<FormTextInput
-						autoFocus={ ! this.props.email }
+						autoFocus={ isEmpty( this.props.email ) && ! this.props.isSocialSignupEnabled }
 						autoCapitalize="off"
 						autoCorrect="off"
 						className="signup-form__input"
@@ -313,7 +339,7 @@ export default React.createClass( {
 				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'username' ) }>
 					<FormLabel htmlFor="username">{ this.translate( 'Choose a username' ) }</FormLabel>
 					<FormTextInput
-						autoFocus={ ! ! this.props.email }
+						autoFocus={ ! isEmpty( this.props.email ) }
 						autoCapitalize="off"
 						autoCorrect="off"
 						className="signup-form__input"
@@ -400,7 +426,6 @@ export default React.createClass( {
 	formFooter() {
 		return (
 			<LoggedOutFormFooter>
-				{ this.getNotice() }
 				{ this.termsOfServiceLink() }
 				<FormButton className="signup-form__submit" disabled={ this.state.submitting || this.props.disabled }>
 					{ this.props.submitButtonText }
@@ -447,6 +472,11 @@ export default React.createClass( {
 							{ this.props.formHeader }
 						</header>
 					}
+					{ this.props.isSocialSignupEnabled && <SocialSignupForm handleResponse={ this.props.handleSocialResponse } /> }
+					{ this.props.isSocialSignupEnabled && <HrWithText>
+						{ i18n.translate( 'Or sign up with your email address:' ) }
+					</HrWithText> }
+					{ this.getNotice() }
 					{ this.formFields() }
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>

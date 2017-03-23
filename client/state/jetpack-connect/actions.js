@@ -48,7 +48,7 @@ import { JPC_PLANS_PAGE } from './constants';
  *  Local variables;
  */
 const _fetching = {};
-const calypsoEnv = config( 'env_id' ) || process.env.NODE_ENV;
+const calypsoEnv = config( 'env_id' );
 const remoteAuthPath = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + calypsoEnv;
 const remoteInstallPath = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
 const remoteActivatePath = '/wp-admin/plugins.php';
@@ -196,6 +196,7 @@ export default {
 				url: url,
 				type: 'remote_auth'
 			} );
+			debug( 'goToRemoteAuth', url );
 			externalRedirect(
 				addQueryArgs( {
 					calypso_env: calypsoEnv
@@ -215,9 +216,12 @@ export default {
 				url: url,
 				attempt: attemptNumber
 			} );
+			debug( 'retryAuth', url );
 			externalRedirect(
 				addQueryArgs( {
-					calypso_env: calypsoEnv
+					jetpack_connect_url: url + remoteAuthPath,
+					calypso_env: calypsoEnv,
+					auth_type: 'jetpack'
 				}, url + remoteAuthPath )
 			);
 		};
@@ -263,6 +267,7 @@ export default {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT_WP_ADMIN
 			} );
+			debug( 'goBackToWpAdmin', url );
 			externalRedirect( url );
 		};
 	},
@@ -276,6 +281,7 @@ export default {
 				type: JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 				url
 			} );
+			debug( 'goToXmlrpcErrorFallbackUrl', queryObject, authorizationCode );
 			externalRedirect( url );
 		};
 	},

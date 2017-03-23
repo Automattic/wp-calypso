@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { forEach, omit } from 'lodash';
+import { forEach, get, omit } from 'lodash';
 
 /**
  * Normalize settings for use in Redux.
@@ -15,6 +15,13 @@ export const normalizeSettings = ( settings ) => {
 			case 'wp_mobile_excerpt':
 			case 'wp_mobile_featured_images':
 				memo[ key ] = settings[ key ] === 'enabled';
+				break;
+			case 'carousel_background_color':
+				memo[ key ] = settings [ key ] === '' ? 'black' : settings[ key ];
+				break;
+			case 'jetpack_protect_global_whitelist':
+				const whitelist = get( settings[ key ], [ 'local' ], [] );
+				memo[ key ] = whitelist.join( '\n' );
 				break;
 			default:
 				memo[ key ] = settings[ key ];
@@ -76,6 +83,13 @@ export const filterSettingsByActiveModules = ( settings ) => {
 		markdown: [
 			'wpcom_publish_comments_with_markdown',
 		],
+		protect: [
+			'jetpack_protect_global_whitelist',
+		],
+		sso: [
+			'jetpack_sso_match_by_email',
+			'jetpack_sso_require_two_step',
+		],
 		'after-the-deadline': [
 			'onpublish',
 			'onupdate',
@@ -96,6 +110,20 @@ export const filterSettingsByActiveModules = ( settings ) => {
 			'jetpack_testimonial',
 			'jetpack_portfolio',
 		],
+		comments: [
+			'highlander_comment_form_prompt',
+			'jetpack_comment_form_color_scheme'
+		],
+		carousel: [
+			'carousel_background_color',
+			'carousel_display_exif'
+		],
+		stats: [
+			'admin_bar',
+			'hide_smile',
+			'count_roles',
+			'roles',
+		]
 	};
 	let filteredSettings = { ...settings };
 

@@ -1,7 +1,11 @@
 /**
  * Internal dependencies
  */
-import { EDITOR_SHOW_DRAFTS_TOGGLE, EDITOR_START, EDITOR_STOP } from 'state/action-types';
+import {
+	EDITOR_PASTE_EVENT,
+	EDITOR_START,
+	EDITOR_STOP,
+} from 'state/action-types';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setMediaModalView } from 'state/ui/media-modal/actions';
 import { withAnalytics, bumpStat } from 'state/analytics/actions';
@@ -51,14 +55,16 @@ export function stopEditingPost( siteId, postId ) {
 }
 
 /**
- * Returns an action object to be used in signalling that the editor draft
- * drawer visibility state should be toggled.
+ * Returns an action object to be used in signalling that the user has pasted
+ * some content from source.
  *
+ * @param {String} source Identifier of the app the content was pasted from.
  * @return {Object} Action object
  */
-export function toggleEditorDraftsVisible() {
+export function pasteEvent( source ) {
 	return {
-		type: EDITOR_SHOW_DRAFTS_TOGGLE
+		type: EDITOR_PASTE_EVENT,
+		source,
 	};
 }
 

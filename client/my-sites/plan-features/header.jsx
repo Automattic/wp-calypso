@@ -184,7 +184,6 @@ class PlanFeaturesHeader extends Component {
 				<div className={ classes } ></div>
 			);
 		}
-
 		if ( discountPrice ) {
 			return (
 				<span className="plan-features__header-price-group">
@@ -260,7 +259,6 @@ export default connect( ( state, ownProps ) => {
 	const { isInSignup } = ownProps;
 	const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
 	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
-
 	return Object.assign( {},
 		ownProps,
 		{

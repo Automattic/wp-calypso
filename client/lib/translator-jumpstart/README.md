@@ -15,5 +15,5 @@ This module contains the necessary code to launch the external [Community Transl
 
 ## Environment specific functionality
 
- - The launcher controls which GlotPress instance and project the Community-Translator communicates with. This will be http://translate.wordpress.com/wpcom by default. In a non-production environment however, the project set to will be `test` instead of `wpcom`.
+ - The launcher controls which GlotPress instance and project the Community-Translator communicates with. This will be https://translate.wordpress.com/projects/wpcom/ by default. In a non-production environment however, the project set to will be `test` instead of `wpcom`.
  - Debug output is enabled in the browser with `localStorage.setItem( 'debug', 'calypso:community-translator' )` or `localStorage.setItem( 'debug', 'calypso:i18n,calypso:community-translator' )` if you want to also include the information about the displayed translated strings.

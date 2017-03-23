@@ -18,11 +18,10 @@ import { shouldShowShare } from 'reader/share/helper';
 import { userCan } from 'lib/posts/utils';
 import * as stats from 'reader/stats';
 import { localize } from 'i18n-calypso';
-import ExternalLink from 'components/external-link';
+import ReaderVisitLink from 'blocks/reader-visit-link';
 
 const ReaderPostActions = ( props ) => {
 	const {
-		translate,
 		post,
 		site,
 		onCommentClick,
@@ -34,6 +33,7 @@ const ReaderPostActions = ( props ) => {
 		className,
 		visitUrl,
 		fullPost,
+		translate,
 	} = props;
 
 	const onEditClick = () => {
@@ -53,14 +53,12 @@ const ReaderPostActions = ( props ) => {
 		<ul className={ listClassnames }>
 			{ showVisit &&
 				<li className="reader-post-actions__item reader-post-actions__visit">
-					<ExternalLink href={ visitUrl || post.URL }
-						target="_blank"
-						icon={ true }
-						showIconFirst={ true }
+					<ReaderVisitLink
+						href={ visitUrl || post.URL }
 						iconSize={ iconSize }
 						onClick={ onPermalinkVisit }>
-						<span className="reader-post-actions__visit-label">{ translate( 'Visit' ) }</span>
-					</ExternalLink>
+							{ translate( 'Visit' ) }
+					</ReaderVisitLink>
 				</li>
 			}
 			{ showEdit && site && userCan( 'edit_post', post ) &&

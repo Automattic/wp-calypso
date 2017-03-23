@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,8 +21,10 @@ import {
 	getSourceData as getDiscoverSourceData,
 	discoverBlogId
 } from 'reader/discover/helper';
+import { shallowEquals } from 'reader/utils';
 
 class ReaderPostCardAdapter extends React.Component {
+	static displayName = 'ReaderPostCardAdapter';
 
 	onClick = ( postToOpen ) => {
 		let referredPost;
@@ -81,7 +83,9 @@ class ReaderPostCardAdapter extends React.Component {
 				showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }
 				followSource={ this.props.followSource }
 				showSiteName={ this.props.showSiteName }
-				isDiscoverStream={ this.props.isDiscoverStream }>
+				isDiscoverStream={ this.props.isDiscoverStream }
+				postKey={ this.props.postKey }
+			>
 				{ feedId && <QueryReaderFeed feedId={ feedId } includeMeta={ false } /> }
 				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
 				{ discoverPickSiteId && <QueryReaderSite siteId={ discoverPickSiteId } includeMeta={ false } /> }
@@ -132,6 +136,8 @@ const ConnectedReaderPostCardAdapter = connect(
  * A container for the ReaderPostCardAdapter responsible for binding to Flux stores
  */
 export default class ReaderPostCardAdapterFluxContainer extends React.Component {
+	static displayName = 'ReaderPostCardAdapterFluxContainer';
+
 	constructor( props ) {
 		super( props );
 		this.state = this.getStateFromStores( props );
@@ -169,6 +175,17 @@ export default class ReaderPostCardAdapterFluxContainer extends React.Component 
 
 	componentWillUnmount() {
 		FeedPostStore.off( 'change', this.updateState );
+	}
+
+	shouldComponentUpdate( nextProps, nextState ) {
+		const currentPropsToCompare = omit( this.props, 'handleClick' );
+		const nextPropsToCompare = omit( nextProps, 'handleClick' );
+		const shouldUpdate = (
+			( this.props !== nextProps && ! shallowEquals( currentPropsToCompare, nextPropsToCompare ) ) ||
+			( get( this.state, 'discoverPick.post' ) !== get( nextState, 'discoverPick.post' )
+		) );
+
+		return shouldUpdate;
 	}
 
 	render() {

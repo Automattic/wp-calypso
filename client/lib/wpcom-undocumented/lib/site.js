@@ -161,6 +161,14 @@ UndocumentedSite.prototype.removeFollower = function( followerId, callback ) {
 	}, callback );
 };
 
+UndocumentedSite.prototype.fetchFollowers = function( fetchOptions, callback ) {
+	return this.wpcom.req.get(
+		'/sites/' + this._id + '/followers/',
+		fetchOptions,
+		callback
+	);
+};
+
 UndocumentedSite.prototype.removeEmailFollower = function( followerId, callback ) {
 	return this.wpcom.req.post( {
 		path: '/sites/' + this._id + '/email-followers/' + followerId + '/delete'
@@ -241,6 +249,18 @@ UndocumentedSite.prototype.getConnection = function( connectionId ) {
 	return this.wpcom.req.get( {
 		path: '/sites/' + this._id + '/publicize-connections/' + connectionId,
 		apiVersion: '1.1',
+	} );
+};
+
+/**
+ * Runs Theme Setup (Headstart).
+ *
+ * @return {Promise} A Promise to resolve when complete.
+ */
+UndocumentedSite.prototype.runThemeSetup = function() {
+	return this.wpcom.req.post( {
+		path: '/sites/' + this._id + '/theme-setup',
+		apiNamespace: 'wpcom/v2',
 	} );
 };
 

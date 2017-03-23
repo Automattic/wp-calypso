@@ -35,16 +35,6 @@
 			color: $alert-green;
 		}
 
-		&:hover {
-			.gridicon__follow {
-				fill: lighten( $gray, 10% );
-			}
-
-			.follow-button__label {
-				color: lighten( $gray, 10% );
-			}
-		}
-
 		// No hover if already following
 		&.is-following {
 			&:hover {
@@ -77,7 +67,7 @@
 	justify-content: center;
 
 	&:hover {
-		color: lighten( $gray, 10% );
+		color: $gray-text-min;
 	}
 }
 
@@ -97,7 +87,7 @@
 }
 
 .author-compact-profile__follow-count {
-	color: lighten( $gray, 10% );
+	color: $gray;
 	padding: 5px;
 }
 

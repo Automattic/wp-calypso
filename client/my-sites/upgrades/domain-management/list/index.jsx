@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
+import { find, findIndex, times } from 'lodash';
+import Gridicon from 'gridicons';
+import moment from 'moment';
 import page from 'page';
 import React from 'react';
-import times from 'lodash/times';
-import findIndex from 'lodash/findIndex';
-import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -39,6 +39,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { isDomainOnlySite } from 'state/selectors';
 import { isPlanFeaturesEnabled } from 'lib/plans';
 import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
+import { type } from 'lib/domains/constants';
 
 export const List = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'list' ) ],
@@ -99,6 +100,7 @@ export const List = React.createClass( {
 					<SidebarNavigation />
 					<DomainOnly
 						domainName={ this.props.selectedSite.domain }
+						hasNotice={ this.isFreshDomainOnlyRegistration() }
 						siteId={ this.props.selectedSite.ID }
 					/>
 				</Main>
@@ -130,6 +132,15 @@ export const List = React.createClass( {
 				<DomainToPlanNudge />
 			</Main>
 		);
+	},
+
+	isFreshDomainOnlyRegistration() {
+		const domainName = this.props.selectedSite.domain;
+		const domain = this.props.domains.hasLoadedFromServer &&
+			find( this.props.domains.list, ( { name } ) => name === domainName );
+
+		return domain && domain.registrationMoment &&
+			moment().subtract( 1, 'day' ).isBefore( domain.registrationMoment );
 	},
 
 	hideNotice() {
@@ -215,6 +226,10 @@ export const List = React.createClass( {
 	},
 
 	headerButtons() {
+		if ( this.props.selectedSite && this.props.selectedSite.jetpack ) {
+			return null;
+		}
+
 		if ( this.state.changePrimaryDomainModeEnabled ) {
 			return (
 				<Button
@@ -329,7 +344,10 @@ export const List = React.createClass( {
 			return times( 3, n => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
-		return this.props.domains.list.map( ( domain, index ) => {
+		const domains = this.props.selectedSite.jetpack
+			? this.props.domains.list.filter( domain => domain.type !== type.WPCOM )
+			: this.props.domains.list;
+		return domains.map( ( domain, index ) => {
 			return (
 				<ListItem
 					key={ domain.name }

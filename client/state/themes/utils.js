@@ -4,7 +4,6 @@
 import startsWith from 'lodash/startsWith';
 import {
 	every,
-	endsWith,
 	get,
 	includes,
 	map,
@@ -98,9 +97,19 @@ export function normalizeWporgTheme( theme ) {
 		download_link: 'download'
 	};
 
-	const normalizedTheme = mapKeys( theme, ( value, key ) => (
+	const normalizedTheme = mapKeys( omit( theme, [ 'sections', 'author' ] ), ( value, key ) => (
 		get( attributesMap, key, key )
 	) );
+
+	const description = get( theme, [ 'sections', 'description' ] );
+	if ( description ) {
+		normalizedTheme.description = description;
+	}
+
+	const author = get( theme, [ 'author', 'display_name' ] );
+	if ( author ) {
+		normalizedTheme.author = author;
+	}
 
 	if ( ! normalizedTheme.tags ) {
 		return normalizedTheme;
@@ -190,14 +199,20 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
 }
 
 /**
- * Check if theme is a wpcom theme
- * checking is done based on existance of -wpcom suffix
+ * Check if theme is a wpcom theme.
  *
- * @param  {string}  themeId Theme id
- * @return {Boolean}         Wheter theme is a wpcom theme
+ * For wpcom theme zips, the theme_uri field is
+ * set in style.css by the bundling script.
+ *
+ * For AT themes, the wpcomsh plugin sets the theme_uri
+ * field to contain 'wordpress.com' for Jetpack API
+ * requests.
+ *
+ * @param  {Object} theme Theme object
+ * @return {Boolean}      Whether theme is a wpcom theme
  */
-export function isThemeFromWpcom( themeId ) {
-	return endsWith( themeId, '-wpcom' );
+export function isThemeFromWpcom( theme ) {
+	return includes( theme.theme_uri, 'wordpress.com' );
 }
 
 /**
@@ -225,6 +240,7 @@ export function isThemeMatchingQuery( query, theme ) {
 				) );
 
 				return foundInTaxonomies || (
+					( theme.id && includes( theme.id.toLowerCase(), search ) ) ||
 					( theme.name && includes( theme.name.toLowerCase(), search ) ) ||
 					( theme.author && includes( theme.author.toLowerCase(), search ) ) ||
 					( theme.descriptionLong && includes( theme.descriptionLong.toLowerCase(), search ) )

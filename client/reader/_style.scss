@@ -25,16 +25,6 @@
 }
 
 .reader__content {
-	a {
-		color: $blue-medium;
-
-		&:hover {
-			color: $blue-light;
-		}
-	}
-}
-
-.reader__content {
 	sup, sub {
 		position: relative;
 		font-size: 0.83em;

@@ -204,12 +204,12 @@ assign( SignupFlowController.prototype, {
 
 			SignupActions.processSignupStep( step );
 
-			const apiFunction = steps[ step.stepName ].apiRequestFunction.bind( this );
+			const apiFunction = steps[ step.stepName ].apiRequestFunction;
 
 			apiFunction( ( errors, providedDependencies ) => {
 				this._processingSteps[ step.stepName ] = false;
 				SignupActions.processedSignupStep( step, errors, providedDependencies );
-			}, dependenciesFound, step );
+			}, dependenciesFound, step, this._reduxStore );
 		}
 	},
 

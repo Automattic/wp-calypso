@@ -8,6 +8,7 @@ import { debounce, throttle, get } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -23,7 +24,6 @@ const actions = require( 'lib/posts/actions' ),
 	EditorWordCount = require( 'post-editor/editor-word-count' ),
 	SegmentedControl = require( 'components/segmented-control' ),
 	SegmentedControlItem = require( 'components/segmented-control/item' ),
-	EditorMobileNavigation = require( 'post-editor/editor-mobile-navigation' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
 	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
@@ -35,10 +35,11 @@ const actions = require( 'lib/posts/actions' ),
 
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
-import { isEditorDraftsVisible, getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
-import { toggleEditorDraftsVisible } from 'state/ui/editor/actions';
+import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { receivePost, savePostSuccess } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { hasBrokenSiteUserConnection } from 'state/selectors';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import EditorForbidden from 'post-editor/editor-forbidden';
@@ -47,26 +48,32 @@ import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { protectForm } from 'lib/protect-form';
 import EditorSidebar from 'post-editor/editor-sidebar';
 import Site from 'blocks/site';
 import StatusLabel from 'post-editor/editor-status-label';
 import { editedPostHasContent } from 'state/selectors';
+import EditorGroundControl from 'post-editor/editor-ground-control';
+import { isMobile } from 'lib/viewport';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
 		siteId: React.PropTypes.number,
 		preferences: React.PropTypes.object,
 		setEditorModePreference: React.PropTypes.func,
+		setEditorSidebar: React.PropTypes.func,
 		setLayoutFocus: React.PropTypes.func.isRequired,
 		editorModePreference: React.PropTypes.string,
+		editorSidebarPreference: React.PropTypes.string,
 		sites: React.PropTypes.object,
 		user: React.PropTypes.object,
 		userUtils: React.PropTypes.object,
 		editPath: React.PropTypes.string,
 		markChanged: React.PropTypes.func.isRequired,
 		markSaved: React.PropTypes.func.isRequired,
-		translate: React.PropTypes.func.isRequired
+		translate: React.PropTypes.func.isRequired,
+		hasBrokenPublicizeConnection: React.PropTypes.bool,
 	},
 
 	_previewWindow: null,
@@ -110,6 +117,8 @@ export const PostEditor = React.createClass( {
 		this.debouncedAutosave = debounce( this.throttledAutosave, 3000 );
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
+		this.useDefaultSidebarFocus();
+		analytics.mc.bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
 
 		this.setState( {
 			isEditorInitialized: false
@@ -147,7 +156,6 @@ export const PostEditor = React.createClass( {
 		this.debouncedSaveRawContent.cancel();
 		this._previewWindow = null;
 		clearTimeout( this._switchEditorTimeout );
-		this.hideDrafts();
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
@@ -156,20 +164,39 @@ export const PostEditor = React.createClass( {
 			// make sure the history entry has the post ID in it, but don't dispatch
 			page.replace( nextProps.editPath, null, false, false );
 		}
+
+		if ( nextProps.siteId !== siteId ||
+			( nextProps.siteId === siteId && nextProps.postId !== postId ) ) {
+			this.useDefaultSidebarFocus( nextProps );
+		}
+	},
+
+	useDefaultSidebarFocus( nextProps ) {
+		const props = nextProps || this.props;
+		if ( ! isMobile() && ( props.editorSidebarPreference === 'open' || props.hasBrokenPublicizeConnection ) ) {
+			this.props.setLayoutFocus( 'sidebar' );
+		}
 	},
 
 	hideNotice: function() {
 		this.setState( { notice: null } );
 	},
 
-	toggleSidebar: function() {
-		this.hideDrafts();
-		this.props.setLayoutFocus( 'content' );
+	getLayout() {
+		return this.props.setLayoutFocus( 'content' );
 	},
 
-	hideDrafts() {
-		if ( this.props.showDrafts ) {
-			this.props.toggleDrafts();
+	toggleSidebar: function() {
+		if ( this.props.layoutFocus === 'sidebar' ) {
+			this.props.setEditorSidebar( 'closed' );
+			this.props.setLayoutFocus( 'content' );
+			stats.recordStat( 'close-sidebar' );
+			stats.recordEvent( 'Sidebar Toggle', 'close' );
+		} else {
+			this.props.setEditorSidebar( 'open' );
+			this.props.setLayoutFocus( 'sidebar' );
+			stats.recordStat( 'open-sidebar' );
+			stats.recordEvent( 'Sidebar Toggle', 'open' );
 		}
 	},
 
@@ -187,29 +214,44 @@ export const PostEditor = React.createClass( {
 			isTrashed = this.state.post.status === 'trash';
 			hasAutosave = get( this.state.post.meta, [ 'data', 'autosave' ] );
 		}
+		const classes = classNames( 'post-editor', {
+			'is-loading': ! this.state.isEditorInitialized
+		} );
 		return (
-			<div className="post-editor">
+			<div className={ classes }>
 				<QueryPreferences />
 				<EditorDocumentHead />
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
 				<div className="post-editor__inner">
-					<EditorMobileNavigation
-						site={ site }
+					<EditorGroundControl
+						setPostDate={ this.setPostDate }
+						hasContent={ this.state.hasContent }
+						isDirty={ this.state.isDirty || this.props.dirty }
+						isSaveBlocked={ this.isSaveBlocked() }
+						isPublishing={ this.state.isPublishing }
+						isSaving={ this.state.isSaving }
+						onPreview={ this.onPreview }
+						onPublish={ this.onPublish }
+						onSave={ this.onSave }
+						onSaveDraft={ this.props.onSaveDraft }
 						post={ this.state.post }
 						savedPost={ this.state.savedPost }
-						onSave={ this.onSave }
-						onPublish={ this.onPublish }
-						isPublishing={ this.state.isPublishing }
-						isSaveBlocked={ this.state.isSaveBlocked }
-						hasContent={ this.state.hasContent || this.props.hasContent }
-						onClose={ this.onClose }
-						onTabChange={ this.hideNotice } />
+						site={ site }
+						user={ this.props.user }
+						userUtils={ this.props.userUtils }
+						toggleSidebar={ this.toggleSidebar }
+						type={ this.props.type }
+						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
+						allPostsUrl={ this.getAllPostsUrl() }
+					/>
 					<div className="post-editor__content">
 						<div className="editor">
+							<EditorNotice
+								{ ...this.state.notice }
+								onDismissClick={ this.hideNotice } />
 							<EditorActionBar
 								isNew={ this.state.isNew }
-								onTrashingPost={ this.onTrashingPost }
 								onPrivatePublish={ this.onPublish }
 								post={ this.state.post }
 								savedPost={ this.state.savedPost }
@@ -218,6 +260,7 @@ export const PostEditor = React.createClass( {
 							/>
 							<div className="post-editor__site">
 								<Site
+									compact
 									site={ site }
 									indicator={ false }
 									homeLink={ true }
@@ -228,9 +271,6 @@ export const PostEditor = React.createClass( {
 									type={ this.props.type }
 								/>
 							</div>
-							<EditorNotice
-								{ ...this.state.notice }
-								onDismissClick={ this.hideNotice } />
 							<FeaturedImage
 								site={ site }
 								post={ this.state.post }
@@ -279,28 +319,16 @@ export const PostEditor = React.createClass( {
 						<EditorWordCount />
 					</div>
 					<EditorSidebar
-						allPostsUrl={ this.getAllPostsUrl() }
-						sites={ this.props.sites }
-						onTitleClick={ this.toggleSidebar }
+						toggleSidebar={ this.toggleSidebar }
 						savedPost={ this.state.savedPost }
 						post={ this.state.post }
 						isNew={ this.state.isNew }
-						isDirty={ this.state.isDirty || this.props.dirty }
-						isSaveBlocked={ this.state.isSaveBlocked }
-						hasContent={ this.state.hasContent || this.props.hasContent }
-						isSaving={ this.state.isSaving }
-						isPublishing={ this.state.isPublishing }
-						onSave={ this.onSave }
-						onPreview={ this.onPreview }
 						onPublish={ this.onPublish }
 						onTrashingPost={ this.onTrashingPost }
 						site={ site }
-						user={ this.props.user }
-						userUtils={ this.props.userUtils }
 						type={ this.props.type }
-						showDrafts={ this.props.showDrafts }
-						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
-						warnPublishDateChange={ this.warnPublishDateChange }
+						setPostDate={ this.setPostDate }
+						onSave={ this.onSave }
 						/>
 					{ this.iframePreviewEnabled() ?
 						<EditorPreview
@@ -518,7 +546,6 @@ export const PostEditor = React.createClass( {
 	},
 
 	onSaveTrashed: function( status, callback ) {
-		this.hideDrafts();
 		this.onSave( status, callback );
 	},
 
@@ -654,7 +681,6 @@ export const PostEditor = React.createClass( {
 
 	onPublishFailure: function( error ) {
 		this.onSaveFailure( error, 'publishFailure' );
-		this.toggleSidebar();
 	},
 
 	onPublishSuccess: function() {
@@ -670,7 +696,6 @@ export const PostEditor = React.createClass( {
 		}
 
 		this.onSaveSuccess( message, ( message === 'published' ? 'view' : 'preview' ), savedPost.URL );
-		this.toggleSidebar();
 	},
 
 	onSaveFailure: function( error, message ) {
@@ -687,9 +712,34 @@ export const PostEditor = React.createClass( {
 		window.scrollTo( 0, 0 );
 	},
 
+	setPostDate: function( date ) {
+		const dateValue = date ? date.format() : null;
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+		actions.edit( { date: dateValue } );
+		this.checkForDateChange( dateValue );
+	},
+
+	checkForDateChange( date ) {
+		const { savedPost } = this.state;
+
+		if ( ! savedPost ) {
+			return;
+		}
+
+		const currentDate = this.moment( date );
+		const ModifiedDate = this.moment( savedPost.date );
+		const diff = !! currentDate.diff( ModifiedDate );
+
+		if ( savedPost.type === 'post' && utils.isPublished( savedPost ) && diff ) {
+			this.warnPublishDateChange();
+		} else {
+			this.warnPublishDateChange( { clearWarning: true } );
+		}
+	},
+
 	// when a post that is published, modifies its date, this updates the post url
 	// we should warn users of this case
-	warnPublishDateChange( { clearWarning = false } = {} )  {
+	warnPublishDateChange( { clearWarning = false } = {} ) {
 		if ( clearWarning ) {
 			if ( get( this.state, 'notice.message' ) === 'warnPublishDateChange' ) {
 				this.hideNotice();
@@ -784,26 +834,29 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
+		const userId = getCurrentUserId( state );
 
 		return {
 			siteId,
 			postId,
-			showDrafts: isEditorDraftsVisible( state ),
 			editorModePreference: getPreference( state, 'editor-mode' ),
+			editorSidebarPreference: getPreference( state, 'editor-sidebar' ) || 'open',
 			editPath: getEditorPath( state, siteId, postId ),
 			edits: getPostEdits( state, siteId, postId ),
 			dirty: isEditedPostDirty( state, siteId, postId ),
-			hasContent: editedPostHasContent( state, siteId, postId )
+			hasContent: editedPostHasContent( state, siteId, postId ),
+			layoutFocus: getCurrentLayoutFocus( state ),
+			hasBrokenPublicizeConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
 		};
 	},
 	( dispatch ) => {
 		return bindActionCreators( {
-			toggleDrafts: toggleEditorDraftsVisible,
 			setEditorLastDraft,
 			resetEditorLastDraft,
 			receivePost,
 			savePostSuccess,
 			setEditorModePreference: savePreference.bind( null, 'editor-mode' ),
+			setEditorSidebar: savePreference.bind( null, 'editor-sidebar' ),
 			setLayoutFocus,
 		}, dispatch );
 	},

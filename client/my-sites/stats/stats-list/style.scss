@@ -112,6 +112,7 @@
 // Module Content List Item Hover
 
 @include breakpoint( ">480px" ) {
+	.module-content-list .module-content-list-item-wrapper:hover,
 	.module-content-list-item-link .module-content-list-item-wrapper:hover {
 
 		&,
@@ -126,6 +127,17 @@
 		// Display hidden actions
 		.module-content-list-item-action-hidden {
 			display: inline-block;
+		}
+	}
+
+	// Don't show hover on legend row
+	.module-content-list.module-content-list-legend {
+		.module-content-list-item-wrapper:hover {
+			&,
+			.module-content-list-item-right,
+			.module-content-list-item-right::before {
+				background: none;
+			}
 		}
 	}
 }
@@ -189,13 +201,23 @@
 		margin-right: 8px;
 	}
 
-	.icon {
-		$icon-size: 24px;
-
+	.stats-list__flag-icon {
 		position: relative;
 		display: inline-block;
-		width: $icon-size;
-		height: $icon-size;
+		background-size: contain;
+		background-position: 50%;
+		background-repeat: no-repeat;
+		width: 24px;
+		height: 18px;
+		top: 3px;
+		margin-right: 8px;
+	}
+
+	.icon {
+		position: relative;
+		display: inline-block;
+		width: 24px;
+		height: 24px;
 		overflow: hidden;
 		vertical-align: middle;
 		min-width: 24px;
@@ -205,6 +227,8 @@
 			display: block;
 			background: $white;
 			position: relative;
+			width: 20px;
+			height: 20px;
 		}
 
 		// Hide for user avatars

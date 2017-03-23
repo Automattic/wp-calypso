@@ -58,6 +58,7 @@ export default {
 	SEO_TAGS: `${ root }/getting-more-views-and-traffic/#use-appropriate-tags`,
 	SETTING_PRIMARY_DOMAIN: `${ root }/domains/#setting-the-primary-domain`,
 	SETTING_UP_PREMIUM_SERVICES: `${ root }/setting-up-premium-services`,
+	STRONG_PASSWORD: `${ root }/selecting-a-strong-password/`,
 	SHARING: `${ root }/sharing`,
 	START: `${ root }/start`,
 	STATS_CLICKS: `${ root }/stats/#clicks`,

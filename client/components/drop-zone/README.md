@@ -17,7 +17,7 @@ class MyComponent extends Component {
 	onFilesDrop( files ) {
 		console.log( 'You dropped some files: %s', files.map( function( file ) {
 			return file.name;
-		}.join( ', ' ) );
+		}.join( ', ' ) ) );
 	}
 
 	render() {

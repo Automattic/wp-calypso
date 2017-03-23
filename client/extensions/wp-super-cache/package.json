@@ -1,0 +1,14 @@
+{
+	"name": "wp-super-cache",
+	"author": "Automattic",
+	"description": "WP Super Cache",
+	"version": "0.0.1",
+	"env_id": [ "development", "wpcalypso" ],
+	"section": {
+		"name": "wp-super-cache",
+		"paths": [ "/extensions/wp-super-cache" ],
+		"module": "wp-super-cache",
+		"group": "sites",
+		"secondary": true
+	}
+}

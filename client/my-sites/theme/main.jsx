@@ -14,7 +14,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import QueryTheme from 'components/data/query-theme';
+import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
@@ -41,6 +41,8 @@ import {
 	isThemeActive,
 	isThemePremium,
 	isPremiumThemeAvailable,
+	isWpcomTheme as isThemeWpcom,
+	getThemeDetailsUrl,
 	getThemeRequestErrors,
 	getThemeForumUrl,
 } from 'state/themes/selectors';
@@ -49,7 +51,7 @@ import EmptyContentComponent from 'components/empty-content';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
-import { getTheme } from 'state/themes/selectors';
+import { getCanonicalTheme } from 'state/themes/selectors';
 import { isValidTerm } from 'my-sites/themes/theme-filters';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { setThemePreviewOptions } from 'state/themes/actions';
@@ -91,11 +93,8 @@ const ThemeSheet = React.createClass( {
 	},
 
 	getDefaultProps() {
-		// The defaultOption default prop is surprisingly important, see the long
-		// comment near the connect() function at the bottom of this file.
 		return {
-			section: '',
-			defaultOption: {}
+			section: ''
 		};
 	},
 
@@ -116,12 +115,12 @@ const ThemeSheet = React.createClass( {
 
 	onButtonClick() {
 		const { defaultOption } = this.props;
-		defaultOption.action && defaultOption.action( this.props );
+		defaultOption.action && defaultOption.action( this.props.id );
 	},
 
 	onSecondaryButtonClick() {
 		const { secondaryOption } = this.props;
-		secondaryOption && secondaryOption.action && secondaryOption.action( this.props );
+		secondaryOption && secondaryOption.action && secondaryOption.action( this.props.id );
 	},
 
 	getValidSections() {
@@ -181,7 +180,7 @@ const ThemeSheet = React.createClass( {
 	previewAction() {
 		const { preview } = this.props.options;
 		this.props.setThemePreviewOptions( this.props.defaultOption, this.props.secondaryOption );
-		return preview.action( this.props.theme );
+		return preview.action( this.props.id );
 	},
 
 	renderPreviewButton() {
@@ -259,14 +258,16 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderOverviewTab() {
+		const { isWpcomTheme, download } = this.props;
+
 		return (
 			<div>
 				<Card className="theme__sheet-content">
 					{ this.renderDescription() }
 				</Card>
 				{ this.renderFeaturesCard() }
-				{ this.renderDownload() }
-				{ this.props.isWpcomTheme && this.renderRelatedThemes() }
+				{ download && <ThemeDownloadCard href={ download } /> }
+				{ isWpcomTheme && this.renderRelatedThemes() }
 			</div>
 		);
 	},
@@ -426,19 +427,6 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
-	renderDownload() {
-		// Don't render download button:
-		// * If it's a premium theme
-		// * If it's a non-wpcom theme, and the theme object doesn't have a 'download' attr
-		//   Note that not having a 'download' attr would be permissible for a theme on WPCOM
-		//   since we don't provide any for some themes found on WordPress.org (notably the 'Twenties').
-		//   The <ThemeDownloadCard /> component can handle that case.
-		if ( this.props.isPremium || ( ! this.props.isWpcomTheme && ! this.props.download ) ) {
-			return null;
-		}
-		return <ThemeDownloadCard theme={ this.props.id } href={ this.props.download } />;
-	},
-
 	getDefaultOptionLabel() {
 		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased } = this.props;
 		if ( isLoggedIn && ! isActive ) {
@@ -492,7 +480,7 @@ const ThemeSheet = React.createClass( {
 
 		return (
 			<Button className="theme__sheet-primary-button"
-				href={ getUrl ? getUrl( this.props ) : null }
+				href={ getUrl ? getUrl( this.props.id ) : null }
 				onClick={ this.onButtonClick }>
 				{ this.isLoaded() ? label : placeholder }
 				{ this.renderPrice() }
@@ -507,11 +495,10 @@ const ThemeSheet = React.createClass( {
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
 		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
 
-		const { name: themeName, description, currentUserId, isWpcomTheme } = this.props;
+		const { canonicalUrl, currentUserId, description, name: themeName } = this.props;
 		const title = themeName && i18n.translate( '%(themeName)s Theme', {
 			args: { themeName }
 		} );
-		const canonicalUrl = `https://wordpress.com/theme/${ this.props.id }`; // TODO: use getDetailsUrl() When it becomes availavle
 
 		const metas = [
 			{ property: 'og:url', content: canonicalUrl },
@@ -531,9 +518,7 @@ const ThemeSheet = React.createClass( {
 
 		return (
 			<Main className="theme__sheet">
-				<QueryTheme themeId={ this.props.id } siteId={ 'wpcom' } />
-				{ ! isWpcomTheme && siteID && <QueryTheme themeId={ this.props.id } siteId={ siteID } /> }
-				{ ! isWpcomTheme && <QueryTheme themeId={ this.props.id } siteId="wporg" /> }
+				<QueryCanonicalTheme themeId={ this.props.id } siteId={ siteID } />
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
 				{ siteID && <QuerySitePurchases siteId={ siteID } /> }
 				{ siteID && <QuerySitePlans siteId={ siteID } /> }
@@ -544,9 +529,7 @@ const ThemeSheet = React.createClass( {
 				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
 				{ this.renderBar() }
 				{ siteID && <QueryActiveTheme siteId={ siteID } /> }
-				<ThanksModal
-					site={ this.props.selectedSite }
-					source={ 'details' } />
+				<ThanksModal source={ 'details' } />
 				<HeaderCake className="theme__sheet-action-bar"
 					backHref={ this.props.backPath }
 					backText={ i18n.translate( 'All Themes' ) }>
@@ -619,15 +602,6 @@ const ThemeSheetWithOptions = ( props ) => {
 	return (
 		<ConnectedThemeSheet { ...props }
 			siteId={ siteId }
-			theme={ props /* TODO: Have connectOptions() only use theme ID */ }
-			options={ [
-				'signup',
-				'customize',
-				'tryandcustomize',
-				'purchase',
-				'activate',
-				'preview'
-			] }
 			defaultOption={ defaultOption }
 			secondaryOption={ secondaryOption }
 			source="showcase-sheet" />
@@ -635,38 +609,15 @@ const ThemeSheetWithOptions = ( props ) => {
 };
 
 export default connect(
-	/*
-	 * A number of the props that this mapStateToProps function computes are used
-	 * by ThemeSheetWithOptions to compute defaultOption. After a state change
-	 * triggered by an async action, connect()ed child components are, quite
-	 * counter-intuitively, updated before their connect()ed parents (this is
-	 * https://github.com/reactjs/redux/issues/1415), and might be fixed by
-	 * react-redux 5.0.
-	 * For this reason, after e.g. activating a theme in single-site mode,
-	 * first the ThemeSheetWithOptions component's (child) connectOptions component
-	 * will update in response to the currently displayed theme being activated.
-	 * Doing so, it will filter and remove the activate option (adding customize
-	 * instead). However, since the parent connect()ed-ThemeSheetWithOptions will
-	 * only react to the state change afterwards, there is a brief moment when
-	 * connectOptions still receives "activate" as its defaultOption prop, when
-	 * activate is no longer part of its filtered options set, hence passing on
-	 * undefined as the defaultOption object prop for its child. For the theme
-	 * sheet, which eventually gets that defaultOption object prop, this means
-	 * we must be careful to not accidentally access any attribute of that
-	 * defaultOption prop. Otherwise, there will be an error that will prevent the
-	 * state update from finishing properly, hence not updating defaultOption at all.
-	 * The solution to this incredibly intricate issue is simple: Give ThemeSheet
-	 * a valid defaultProp for defaultOption.
-	 */
 	( state, { id } ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
-		const isWpcomTheme = !! getTheme( state, 'wpcom', id );
-		const siteIdOrWpcom = ( selectedSite && ! isWpcomTheme ) ? selectedSite.ID : 'wpcom';
+		const isWpcomTheme = isThemeWpcom( state, id );
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
-		const theme = getTheme( state, siteIdOrWpcom, id );
+		const theme = getCanonicalTheme( state, selectedSite && selectedSite.ID, id );
+		const siteIdOrWpcom = selectedSite ? selectedSite.ID : 'wpcom';
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
 
 		return {
@@ -685,6 +636,7 @@ export default connect(
 			isPremium: isThemePremium( state, id ),
 			isPurchased: selectedSite && isPremiumThemeAvailable( state, id, selectedSite.ID ),
 			forumUrl: getThemeForumUrl( state, id, selectedSite && selectedSite.ID ),
+			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ) // No siteId specified since we want the *canonical* URL :-)
 		};
 	},
 	{

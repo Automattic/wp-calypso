@@ -2,28 +2,29 @@
  * External Dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize, moment } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import ControlItem from 'components/segmented-control/item';
 import InfoPopover from 'components/info-popover';
+import { getSiteSetting } from 'state/selectors';
+import SegmentedControl from 'components/segmented-control';
 import viewport from 'lib/viewport';
 
 /**
  * Local dependencies
  */
 import {
+	is12hr,
 	isValidGMTOffset,
 	parseAndValidateNumber,
 	convertHoursToHHMM,
 	convertMinutesToHHMM,
 } from './utils';
-
-/**
- * Globals
- */
-const noop = () => {};
 
 class PostScheduleClock extends Component {
 	constructor() {
@@ -32,6 +33,9 @@ class PostScheduleClock extends Component {
 		// bounds
 		this.adjustHour = event => this.handleKeyDown( event, 'hour' );
 		this.adjustMinute = event => this.handleKeyDown( event, 'minute' );
+
+		this.setAm = ( event ) => this.setAmPm( event, 'AM' );
+		this.setPm = ( event ) => this.setAmPm( event, 'PM' );
 	}
 
 	handleKeyDown( event, field ) {
@@ -42,12 +46,19 @@ class PostScheduleClock extends Component {
 			return null;
 		}
 
-		let value = Number( event.target.value ) - operation;
+		let value = Number( event.target.value );
 
 		if ( 'hour' === field ) {
+			if ( this.props.is12hour && this.refs.amPmReference ) {
+				value = this.convertTo24Hour( value );
+			}
+
+			value = value - operation;
 			value = value > 23 ? 0 : value;
 			value = value < 0 ? 23 : value;
 		} else {
+			value -= operation;
+
 			value = value > 59 ? 0 : value;
 			value = value < 0 ? 59 : value;
 		}
@@ -59,19 +70,32 @@ class PostScheduleClock extends Component {
 
 	getTimeValues() {
 		const {
+			amPmReference,
 			hourReference,
 			minuteRef
 		} = this.refs;
 
-		const hour = parseAndValidateNumber( hourReference.value );
-		const minute = parseAndValidateNumber( minuteRef.value );
 		const modifiers = {};
+		const hour = parseAndValidateNumber( hourReference.value );
+		let minute = parseAndValidateNumber( minuteRef.value );
 
 		if ( false !== hour && hour < 24 ) {
 			modifiers.hour = Number( hour );
 		}
 
-		if ( false !== minute && minute <= 59 ) {
+		if ( this.props.is12hour && amPmReference ) {
+			if ( 'undefined' === typeof modifiers.hour || ( 'PM' === amPmReference.value && modifiers.hour > 12 ) ) {
+				modifiers.hour = Number( hourReference.value.substr( -1 ) );
+			}
+
+			modifiers.hour = this.convertTo24Hour( modifiers.hour );
+		}
+
+		if ( false !== minute ) {
+			if ( minute > 60 ) {
+				minute = minuteRef.value.substr( -1 );
+			}
+
 			modifiers.minute = Number( minute );
 		}
 
@@ -81,6 +105,27 @@ class PostScheduleClock extends Component {
 	setTime = ( event, modifiers = this.getTimeValues() ) => {
 		const date = moment( this.props.date ).set( modifiers );
 		this.props.onChange( date, modifiers );
+	};
+
+	setAmPm( event, amOrPm ) {
+		this.refs.amPmReference.value = amOrPm;
+		this.setTime( event );
+	}
+
+	/**
+	 * Converts a 12-hour time to a 24-hour time, depending on time format.
+	 *
+	 * @param {Number}  hour The hour to convert.
+	 * @return {Number}      The converted hour.
+	 */
+	convertTo24Hour( hour ) {
+		if ( 'PM' === this.refs.amPmReference.value && hour < 12 ) {
+			hour += 12;
+		} else if ( 'AM' === this.refs.amPmReference.value && 12 === hour ) {
+			hour = 0;
+		}
+
+		return hour;
 	}
 
 	renderTimezoneSection() {
@@ -102,7 +147,7 @@ class PostScheduleClock extends Component {
 		if ( timezone ) {
 			const tzDate = date.clone().tz( timezone );
 			tzDateOffset = tzDate.format( 'Z' );
-			diffInMinutes = tzDate.utcOffset() - moment().utcOffset();
+			diffInMinutes = tzDate.utcOffset() - moment( date ).utcOffset();
 		} else if ( isValidGMTOffset( gmtOffset ) ) {
 			const utcDate = date.clone().utcOffset( gmtOffset );
 			diffInMinutes = utcDate.utcOffset() - moment().utcOffset();
@@ -148,7 +193,7 @@ class PostScheduleClock extends Component {
 	}
 
 	render() {
-		const { date } = this.props;
+		const { date, is12hour, translate } = this.props;
 
 		return (
 			<div className="post-schedule__clock">
@@ -156,7 +201,7 @@ class PostScheduleClock extends Component {
 					className="post-schedule__clock-time"
 					name="post-schedule__clock_hour"
 					ref="hourReference"
-					value={ date.format( 'HH' ) }
+					value={ date.format( is12hour ? 'hh' : 'HH' ) }
 					onChange={ this.setTime }
 					onKeyDown={ this.adjustHour }
 					type="text" />
@@ -171,6 +216,20 @@ class PostScheduleClock extends Component {
 					onChange={ this.setTime }
 					onKeyDown={ this.adjustMinute }
 					type="text" />
+
+				{ is12hour && (
+					<span>
+						<input type="hidden" ref="amPmReference" name="post-schedule__clock_am-pm" value={ date.format( 'A' ) } />
+						<SegmentedControl compact>
+							<ControlItem value="am" onClick={ this.setAm } selected={ 'AM' === date.format( 'A' ) }>
+								{ translate( 'AM' ) }
+							</ControlItem>
+							<ControlItem value="pm" onClick={ this.setPm } selected={ 'PM' === date.format( 'A' ) }>
+								{ translate( 'PM' ) }
+							</ControlItem>
+						</SegmentedControl>
+					</span>
+				) }
 
 				{ this.renderTimezoneSection() }
 			</div>
@@ -191,4 +250,8 @@ PostScheduleClock.defaultProps = {
 	onChange: noop
 };
 
-export default localize( PostScheduleClock );
+export default connect(
+	( state, { siteId } ) => ( {
+		is12hour: is12hr( getSiteSetting( state, siteId, 'time_format' ) ),
+	} ),
+)( localize( PostScheduleClock ) ) ;

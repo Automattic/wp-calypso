@@ -351,13 +351,19 @@ const Signup = React.createClass( {
 	},
 
 	goToFirstInvalidStep() {
-		var firstInvalidStep = find( SignupProgressStore.get(), { status: 'invalid' } );
+		const firstInvalidStep = find( SignupProgressStore.get(), { status: 'invalid' } );
 
 		if ( firstInvalidStep ) {
 			analytics.tracks.recordEvent( 'calypso_signup_goto_invalid_step', {
 				step: firstInvalidStep.stepName,
 				flow: this.props.flowName
 			} );
+
+			if ( firstInvalidStep.stepName === this.props.stepName ) {
+				// No need to redirect
+				return;
+			}
+
 			page( utils.getStepUrl( this.props.flowName, firstInvalidStep.stepName, this.props.locale ) );
 		}
 	},

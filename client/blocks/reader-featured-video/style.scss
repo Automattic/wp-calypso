@@ -1,0 +1,21 @@
+.reader-featured-video__video iframe {
+	display: flex;
+}
+
+.reader-featured-video__play-icon {
+	opacity: 0.8;
+	transition: opacity 0.25s;
+}
+
+.reader-featured-image:hover .reader-featured-video__play-icon {
+	opacity: 1;
+}
+
+.is-section-devdocs .reader-featured-video__video {
+	margin-bottom: 16px;
+}
+
+.is-section-devdocs .reader-featured-video-example .reader-featured-image {
+	min-height: 100px;
+	margin-bottom: 16px;
+}

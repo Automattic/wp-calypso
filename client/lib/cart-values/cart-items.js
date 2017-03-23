@@ -458,10 +458,17 @@ function googleAppsExtraLicenses( properties ) {
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
 
+function fillGoogleAppsRegistrationData( cart, registrationData ) {
+	const googleAppsItems = filter( getAll( cart ), isGoogleApps );
+	return flow.apply( null, googleAppsItems.map( function( item ) {
+		item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
+		return add( item )
+	} ) );
+}
+
 function hasGoogleApps( cart ) {
 	return some( getAll( cart ), isGoogleApps );
 }
-
 
 function customDesignItem() {
 	return {
@@ -769,6 +776,7 @@ module.exports = {
 	domainPrivacyProtection,
 	domainRedemption,
 	domainRegistration,
+	fillGoogleAppsRegistrationData,
 	findFreeTrial,
 	getAll,
 	getAllSorted,

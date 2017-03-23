@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	is12hr,
 	isValidGMTOffset,
 	getLocalizedDate,
 	convertHoursToHHMM,
@@ -14,29 +15,44 @@ import {
 	parseAndValidateNumber,
 } from '../utils';
 
+describe( 'is12hr', () => {
+	it( 'Should return true for a 12-hour time format', () => {
+		expect( is12hr( 'F j, Y, g:i a' ) ).to.be.true;
+		expect( is12hr( 'h:i' ) ).to.be.true;
+	} );
+
+	it( 'Should return false for a 24-hour time', () => {
+		expect( is12hr( 'H:i:s' ) ).to.be.false;
+		expect( is12hr( 'G:i' ) ).to.be.false;
+	} );
+} );
+
 describe( 'gmtOffset', () => {
 	it( 'Should return true for a valid gtm offset', () => {
 		expect( isValidGMTOffset( 2 ) ).to.be.true;
 	} );
 
-	it( 'Should return true for a valid gtm offset', () => {
+	it( 'Should return false for an invalid gtm offset', () => {
 		expect( isValidGMTOffset( '2' ) ).to.be.false;
 	} );
 } );
 
 describe( 'getLocalizedDate', () => {
+	// Use a fixed "now" to prevent issues with DST
+	const now = new Date( 2017, 1, 1, 0, 0, 0 );
+
 	it( 'Should return a date localized at Amsterdam (utc: 60 minutes)', () => {
-		const nowInAmsterdam = getLocalizedDate( new Date(), 'Europe/Amsterdam' );
+		const nowInAmsterdam = getLocalizedDate( now, 'Europe/Amsterdam' );
 		expect( nowInAmsterdam.utcOffset() ).to.equal( 60 );
 	} );
 
 	it( 'Should return a date localized at New York (utc: -300 minutes)', () => {
-		const nowInNewYork = getLocalizedDate( new Date(), 'America/New_York' );
+		const nowInNewYork = getLocalizedDate( now, 'America/New_York' );
 		expect( nowInNewYork.utcOffset() ).to.equal( -300 );
 	} );
 
 	it( 'Should return a date localized at UTC+3:30 (utc: 210 minutes)', () => {
-		const NowAtUTC3_30 = getLocalizedDate( new Date(), false, 210 );
+		const NowAtUTC3_30 = getLocalizedDate( now, false, 210 );
 		expect( NowAtUTC3_30.utcOffset() ).to.equal( 210 );
 	} );
 } );

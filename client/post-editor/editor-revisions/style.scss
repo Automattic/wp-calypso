@@ -1,11 +1,13 @@
 .editor-revisions {
-	color: darken( $gray, 10% );
+	color: $gray-text;
 	display: block;
 	font-size: 13px;
-	margin-bottom: 12px;
+	margin: 16px -16px -16px;
+	padding: 16px;
+	border-top: 1px solid darken( $sidebar-bg-color, 5% );
 
 	&:visited {
-		color: darken( $gray, 10% );
+		color: $gray-text;
 	}
 
 	&:hover,
@@ -19,7 +21,7 @@
 	}
 
 	.gridicon {
-		color: $gray;
+		color: $gray-text;
 		margin-left: -2px;
 		margin-right: 8px;
 		vertical-align: bottom;

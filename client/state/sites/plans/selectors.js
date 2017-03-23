@@ -61,7 +61,7 @@ export const getCurrentPlan = ( state, siteId ) => {
 export const getSitePlan = createSelector(
 	( state, siteId, productSlug ) => {
 		const plansBySiteId = getPlansBySiteId( state, siteId );
-		if ( ! plansBySiteId || plansBySiteId.isRequesting || ! plansBySiteId.data ) {
+		if ( ! plansBySiteId || ! plansBySiteId.data ) {
 			return null;
 		}
 		return plansBySiteId.data.filter( plan => plan.productSlug === productSlug ).shift();
@@ -111,7 +111,6 @@ export function getPlanDiscountedRawPrice(
 	if ( get( plan, 'rawPrice', -1 ) < 0 || ! isSitePlanDiscounted( state, siteId, productSlug ) ) {
 		return null;
 	}
-
 	const discountPrice = plan.rawPrice;
 
 	return isMonthly ? parseFloat( ( discountPrice / 12 ).toFixed( 2 ) ) : discountPrice;
@@ -221,6 +220,9 @@ function planHasFeature( plan, feature ) {
 /**
  * Whether a site's current plan includes a given feature
  *
+ * DO NOT USE THIS FOR FEATURE GATES, this is only to be used for deciding
+ * if nudge should be shown.
+ * If you want a feature gate, you should make it backend-side.
  * @param  {Object}  state   Global State tree
  * @param  {Number}  siteId  Site ID
  * @param  {String}  feature The feature we're looking for

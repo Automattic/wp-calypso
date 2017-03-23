@@ -30,7 +30,8 @@ describe( 'reducer', () => {
 			'preview',
 			'actionLog',
 			'happychat',
-			'mediaModal'
+			'mediaModal',
+			'themeSetup',
 		] );
 	} );
 

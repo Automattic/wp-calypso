@@ -20,7 +20,6 @@ import userFactory from 'lib/user';
 import jetpackSSOForm from './sso';
 import i18nUtils from 'lib/i18n-utils';
 import analytics from 'lib/analytics';
-import config from 'config';
 import route from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -228,7 +227,7 @@ export default {
 			basePath = route.sectionify( context.path ),
 			analyticsBasePath = basePath + '/:site';
 
-		if ( ! config.isEnabled( 'jetpack/connect' ) || ! isJetpack ) {
+		if ( ! isJetpack ) {
 			return;
 		}
 

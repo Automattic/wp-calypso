@@ -34,6 +34,7 @@ class Banner extends Component {
 		callToAction: PropTypes.string,
 		className: PropTypes.string,
 		description: PropTypes.string,
+		disableHref: PropTypes.bool,
 		dismissPreferenceName: PropTypes.string,
 		dismissTemporary: PropTypes.bool,
 		event: PropTypes.string,
@@ -49,6 +50,7 @@ class Banner extends Component {
 	};
 
 	static defaultProps = {
+		disableHref: false,
 		dismissTemporary: false,
 		onClick: noop,
 	};
@@ -192,6 +194,7 @@ class Banner extends Component {
 		const {
 			callToAction,
 			className,
+			disableHref,
 			dismissPreferenceName,
 			dismissTemporary,
 			plan,
@@ -223,7 +226,7 @@ class Banner extends Component {
 		return (
 			<Card
 				className={ classes }
-				href={ callToAction ? null : this.getHref() }
+				href={ disableHref || callToAction ? null : this.getHref() }
 				onClick={ callToAction ? noop : this.handleClick }
 			>
 				{ this.getIcon() }
@@ -234,8 +237,8 @@ class Banner extends Component {
 
 }
 
-const mapStateToProps = state => ( {
-	siteSlug: getSelectedSiteSlug( state ),
+const mapStateToProps = ( state, ownProps ) => ( {
+	siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 } );
 
 export default connect(

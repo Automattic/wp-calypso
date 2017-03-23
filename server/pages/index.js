@@ -8,6 +8,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,21 +23,20 @@ import { createReduxStore } from 'state';
 
 const debug = debugFactory( 'calypso:pages' );
 
-let HASH_LENGTH = 10,
-	URL_BASE_PATH = '/calypso',
-	SERVER_BASE_PATH = '/public',
-	CALYPSO_ENV = process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development';
+const HASH_LENGTH = 10;
+const URL_BASE_PATH = '/calypso';
+const SERVER_BASE_PATH = '/public';
+const calypsoEnv = config( 'env_id' );
 
 const staticFiles = [
 	{ path: 'style.css' },
 	{ path: 'editor.css' },
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
-	{ path: 'style-rtl.css' },
-	{ path: 'vendor.' + config( 'env' ) + '.js' }
+	{ path: 'style-rtl.css' }
 ];
 
-let sections = sectionsModule.get();
+const sections = sectionsModule.get();
 
 /**
  * Generates a hash of a files contents to be used as a version parameter on asset requests.
@@ -44,8 +44,8 @@ let sections = sectionsModule.get();
  * @returns {String} A shortened md5 hash of the contents of the file file or a timestamp in the case of failure.
  **/
 function hashFile( path ) {
-	let data, hash,
-		md5 = crypto.createHash( 'md5' );
+	const md5 = crypto.createHash( 'md5' );
+	let data, hash;
 
 	try {
 		data = fs.readFileSync( path );
@@ -81,18 +81,10 @@ function generateStaticUrls( request ) {
 		urls[ file.path ] = getUrl( file.path, file.hash );
 	} );
 
-	// vendor dll
-	urls.vendor = urls[ 'vendor.' + config( 'env' ) + '.js' ];
-	urls[ 'vendor-min' ] = urls.vendor.replace( '.js', '.m.js' );
-
 	const assets = request.app.get( 'assets' );
 
 	assets.forEach( function( asset ) {
 		let name = asset.name;
-		if ( ! name ) {
-			// this is for auto-generated chunks that don't have names, like the commons chunk
-			name = asset.url.replace( /\/calypso\/(\w+)\..*/, '_$1' );
-		}
 		urls[ name ] = asset.url;
 		if ( config( 'env' ) !== 'development' ) {
 			urls[ name + '-min' ] = asset.url.replace( '.js', '.m.js' );
@@ -123,7 +115,7 @@ function getDefaultContext( request ) {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
 		urls: generateStaticUrls( request ),
 		user: false,
-		env: CALYPSO_ENV,
+		env: calypsoEnv,
 		sanitize: sanitize,
 		isRTL: config( 'rtl' ),
 		isDebug: request.query.debug !== undefined ? true : false,
@@ -145,26 +137,26 @@ function getDefaultContext( request ) {
 		tinymceEditorCss: context.urls[ 'editor.css' ]
 	};
 
-	if ( CALYPSO_ENV === 'wpcalypso' ) {
-		context.badge = CALYPSO_ENV;
+	if ( calypsoEnv === 'wpcalypso' ) {
+		context.badge = calypsoEnv;
 		context.devDocs = true;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.faviconURL = '/calypso/images/favicons/favicon-wpcalypso.ico';
 	}
 
-	if ( CALYPSO_ENV === 'horizon' ) {
+	if ( calypsoEnv === 'horizon' ) {
 		context.badge = 'feedback';
 		context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
 		context.faviconURL = '/calypso/images/favicons/favicon-horizon.ico';
 	}
 
-	if ( CALYPSO_ENV === 'stage' ) {
+	if ( calypsoEnv === 'stage' ) {
 		context.badge = 'staging';
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.faviconURL = '/calypso/images/favicons/favicon-staging.ico';
 	}
 
-	if ( CALYPSO_ENV === 'development' ) {
+	if ( calypsoEnv === 'development' ) {
 		context.badge = 'dev';
 		context.devDocs = true;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
@@ -186,13 +178,13 @@ function setUpLoggedOutRoute( req, res, next ) {
 }
 
 function setUpLoggedInRoute( req, res, next ) {
-	let redirectUrl, protocol, start, context;
+	let redirectUrl, protocol, start;
 
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN'
 	} );
 
-	context = getDefaultContext( req );
+	const context = getDefaultContext( req );
 
 	if ( config( 'wpcom_user_bootstrap' ) ) {
 		const user = require( 'user-bootstrap' );
@@ -214,7 +206,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 		debug( 'Issuing API call to fetch user object' );
 		user( req.get( 'Cookie' ), function( error, data ) {
-			let end, searchParam, errorMessage;
+			let searchParam, errorMessage;
 
 			if ( error ) {
 				if ( error.error === 'authorization_required' ) {
@@ -235,7 +227,7 @@ function setUpLoggedInRoute( req, res, next ) {
 				return;
 			}
 
-			end = ( new Date().getTime() ) - start;
+			const end = ( new Date().getTime() ) - start;
 
 			debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
 			context.user = data;
@@ -307,10 +299,10 @@ module.exports = function() {
 
 	// redirects to handle old newdash formats
 	app.use( '/sites/:site/:section', function( req, res, next ) {
+		const redirectedSections = [ 'posts', 'pages', 'sharing', 'upgrade', 'checkout', 'change-theme' ];
 		let redirectUrl;
-		sections = [ 'posts', 'pages', 'sharing', 'upgrade', 'checkout', 'change-theme' ];
 
-		if ( -1 === sections.indexOf( req.params.section ) ) {
+		if ( -1 === redirectedSections.indexOf( req.params.section ) ) {
 			next();
 			return;
 		}
@@ -348,6 +340,7 @@ module.exports = function() {
 	app.get( '/theme', ( req, res ) => res.redirect( '/design' ) );
 
 	sections
+		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {
 			section.paths.forEach( path => {
 				const pathRegex = utils.pathToRegExp( path );
@@ -356,6 +349,15 @@ module.exports = function() {
 					if ( config.isEnabled( 'code-splitting' ) ) {
 						req.context = Object.assign( {}, req.context, { chunk: section.name } );
 					}
+
+					if ( section.secondary && req.context ) {
+						req.context.hasSecondary = true;
+					}
+
+					if ( section.group && req.context ) {
+						req.context.sectionGroup = section.group;
+					}
+
 					next();
 				} );
 
@@ -368,6 +370,20 @@ module.exports = function() {
 				sectionsModule.require( section.module )( serverRouter( app, setUpRoute, section ) );
 			}
 		} );
+
+	app.get( '/browsehappy', setUpRoute, function( req, res ) {
+		const wpcomRe = /^https?:\/\/[A-z0-9_-]+\.wordpress\.com$/;
+		const primaryBlogUrl = get( req, 'context.user.primary_blog_url', '' );
+		const isWpcom = wpcomRe.test( primaryBlogUrl );
+		const dashboardUrl = isWpcom
+			? primaryBlogUrl + '/wp-admin'
+			: 'https://dashboard.wordpress.com/wp-admin/';
+
+		res.render( 'browsehappy.jade', {
+			...req.context,
+			dashboardUrl,
+		} );
+	} );
 
 	// catchall to render 404 for all routes not whitelisted in client/sections
 	app.get( '*', render404 );

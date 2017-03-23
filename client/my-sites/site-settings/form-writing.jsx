@@ -20,6 +20,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import Composing from './composing';
 import CustomContentTypes from './custom-content-types';
+import MediaSettings from './media-settings';
 import ThemeEnhancements from './theme-enhancements';
 import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
@@ -47,6 +48,7 @@ class SiteSettingsFormWriting extends Component {
 			eventTracker,
 			fields,
 			handleToggle,
+			handleAutosavingToggle,
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
@@ -79,7 +81,22 @@ class SiteSettingsFormWriting extends Component {
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
 				/>
-
+				{
+					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
+						<div>
+							{
+								this.renderSectionHeader( translate( 'Media' ) )
+							}
+							<MediaSettings
+								siteId={ this.props.siteId }
+								handleAutosavingToggle={ handleAutosavingToggle }
+								onChangeField={ onChangeField }
+								isSavingSettings={ isSavingSettings }
+								isRequestingSettings={ isRequestingSettings }
+								fields={ fields } />
+						</div>
+					)
+				}
 				{
 					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
 						<div>
@@ -87,7 +104,7 @@ class SiteSettingsFormWriting extends Component {
 
 							<CustomContentTypes
 								onSubmitForm={ this.props.handleSubmitForm }
-								handleToggle={ handleToggle }
+								handleAutosavingToggle={ handleAutosavingToggle }
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
 								fields={ fields }
@@ -95,7 +112,7 @@ class SiteSettingsFormWriting extends Component {
 
 							<ThemeEnhancements
 								onSubmitForm={ this.props.handleSubmitForm }
-								handleToggle={ handleToggle }
+								handleAutosavingToggle={ handleAutosavingToggle }
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
 								fields={ fields }
@@ -146,8 +163,6 @@ const connectComponent = connect(
 
 const getFormSettings = partialRight( pick, [
 	'default_post_format',
-	'wpcom_publish_posts_with_markdown',
-	'markdown_supported',
 	'custom-content-types',
 	'jetpack_testimonial',
 	'jetpack_portfolio',
@@ -174,6 +189,10 @@ const getFormSettings = partialRight( pick, [
 	'Phrases to Avoid',
 	'Redundant Expression',
 	'ignored_phrases',
+	'photon',
+	'carousel',
+	'carousel_background_color',
+	'carousel_display_exif'
 ] );
 
 export default flowRight(

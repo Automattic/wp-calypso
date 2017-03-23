@@ -1,3 +1,10 @@
+/** IMPORTANT NOTE BEFORE EDITING THIS FILE **
+ *
+ * We're in the process of moving the side-effecting logic (anything to do with connection)
+ * into Redux middleware. If you're implementing something new or changing something,
+ * please consider moving any related side-effects into middleware.js.
+ */
+
 /**
  * External dependencies
  */
@@ -8,7 +15,6 @@ import throttle from 'lodash/throttle';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import buildConnection from 'lib/happychat/connection';
 import {
 	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_CONNECTED,
@@ -16,10 +22,15 @@ import {
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_SET_AVAILABLE,
 	HAPPYCHAT_SET_CHAT_STATUS,
-	HAPPYCHAT_RECEIVE_TRANSCRIPT
+	HAPPYCHAT_TRANSCRIPT_RECEIVE,
+	HAPPYCHAT_TRANSCRIPT_REQUEST,
 } from 'state/action-types';
-import { getHappychatConnectionStatus, getHappychatTranscriptTimestamp } from './selectors';
+import { getHappychatConnectionStatus } from './selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
+
+// This import will be deleted when the refactor is complete:
+import { connection } from './common';
 
 const debug = require( 'debug' )( 'calypso:happychat:actions' );
 
@@ -44,10 +55,13 @@ const startSession = () => request( {
 	path: '/happychat/session' }
 );
 
-const connection = buildConnection();
-
 const setHappychatChatStatus = status => ( {
 	type: HAPPYCHAT_SET_CHAT_STATUS, status
+} );
+
+export const requestChatTranscript = () => ( { type: HAPPYCHAT_TRANSCRIPT_REQUEST } );
+export const receiveChatTranscript = ( messages, timestamp ) => ( {
+	type: HAPPYCHAT_TRANSCRIPT_RECEIVE, messages, timestamp
 } );
 
 const setChatConnecting = () => ( { type: HAPPYCHAT_CONNECTING } );
@@ -63,20 +77,22 @@ const setHappychatAvailable = isAvailable => ( { type: HAPPYCHAT_SET_AVAILABLE, 
 const clearChatMessage = () => setChatMessage( '' );
 
 const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
-const receiveChatTranscript = ( messages, timestamp ) => ( {
-	type: HAPPYCHAT_RECEIVE_TRANSCRIPT, messages, timestamp
-} );
 const sendTyping = throttle( message => {
 	connection.typing( message );
 }, 1000, { leading: true, trailing: false } );
 
-export const requestTranscript = () => ( dispatch, getState ) => {
-	const timestamp = getHappychatTranscriptTimestamp( getState() );
-	debug( 'time to get the transcript', timestamp );
-	connection.transcript( timestamp ).then(
-		result => dispatch( receiveChatTranscript( result.messages, result.timestamp ) ),
-		e => debug( 'failed to get transcript', e )
-	);
+export const sendBrowserInfo = ( siteurl ) => dispatch => {
+	const siteHelp = `Site I need help with: ${ siteurl }\n`;
+	const screenRes = `Screen Resolution: ${ screen.width }x${ screen.height }\n`;
+	const browserSize = `Browser Size: ${ window.innerWidth }x${ window.innerHeight }\n`;
+	const userAgent = `User Agent: ${ navigator.userAgent }`;
+	const msg = {
+		text: `Info\n ${ siteHelp } ${ screenRes } ${ browserSize } ${ userAgent }`,
+	};
+
+	debug( 'sending info message', msg );
+	dispatch( clearChatMessage() );
+	connection.info( msg );
 };
 
 /**
@@ -86,6 +102,9 @@ export const requestTranscript = () => ( dispatch, getState ) => {
 export const connectChat = () => ( dispatch, getState ) => {
 	const state = getState();
 	const user = getCurrentUser( state );
+	const locale = getCurrentUserLocale( state );
+
+	debug( 'opening with chat locale', locale );
 
 	// if chat is already connected then do nothing
 	if ( getHappychatConnectionStatus( state ) === 'connected' ) {
@@ -95,15 +114,15 @@ export const connectChat = () => ( dispatch, getState ) => {
 	// create new session id and get signed identity data for authenticating
 	startSession()
 	.then( ( { session_id } ) => sign( { user, session_id } ) )
-	.then( ( { jwt } ) => connection.open( user.ID, jwt ) )
+	.then( ( { jwt } ) => connection.open( user.ID, jwt, locale ) )
 	.then(
 		() => {
 			dispatch( setChatConnected() );
-			dispatch( requestTranscript() );
+			dispatch( requestChatTranscript() );
 			connection
 			.on( 'message', event => dispatch( receiveChatEvent( event ) ) )
 			.on( 'status', status => dispatch( setHappychatChatStatus( status ) ) )
-			.on( 'accept', isAvailable => dispatch( setHappychatAvailable( isAvailable ) ) );
+			.on( 'accept', accept => dispatch( setHappychatAvailable( accept ) ) );
 		},
 		e => debug( 'failed to start happychat session', e, e.stack )
 	);

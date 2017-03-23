@@ -1,6 +1,8 @@
 .editor-media-modal-detail .header-cake.card {
 	padding-top: 0;
 	padding-bottom: 0;
+	height: 50px;
+	line-height: 1;
 
 	@include breakpoint( "<660px" ) {
 		margin-bottom: 0;
@@ -9,28 +11,6 @@
 
 .editor-media-modal-detail .header-cake__title {
 	padding: 6px;
-}
-
-.editor-media-modal-detail .editor-media-modal-detail__title-input {
-	width: 100%;
-	color: inherit;
-	word-break: normal;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	border-color: transparent;
-	outline: none;
-	text-align: center;
-
-	&[readonly]:hover,
-	&[readonly]:focus {
-		box-shadow: none;
-		border-color: transparent;
-	}
-
-	&:focus {
-		text-overflow: clip;
-	}
 }
 
 .editor-media-modal-detail__preview-wrapper {
@@ -66,6 +46,13 @@
 		width: auto;
 		height: auto;
 		transition: opacity 200ms ease-in-out;
+	}
+
+	&.is-video {
+		display: flex;
+		align-items: center;
+		height: 100%;
+		width: 100%;
 	}
 
 	&.is-uploading,

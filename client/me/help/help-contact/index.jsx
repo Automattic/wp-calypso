@@ -34,9 +34,15 @@ import { isTicketSupportEligible, isTicketSupportConfigurationReady, getTicketSu
 import QueryOlark from 'components/data/query-olark';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import HelpUnverifiedWarning from '../help-unverified-warning';
-import { connectChat as connectHappychat, sendChatMessage as sendHappychatMessage } from 'state/happychat/actions';
+import { connectChat as connectHappychat, sendChatMessage as sendHappychatMessage, sendBrowserInfo } from 'state/happychat/actions';
 import { openChat as openHappychat } from 'state/ui/happychat/actions';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
+import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } from 'state/help/directly/actions';
+import {
+	isDirectlyFailed,
+	isDirectlyReady,
+	isDirectlyUninitialized,
+} from 'state/selectors';
 
 /**
  * Module variables
@@ -54,7 +60,7 @@ const SUPPORT_FORUM = 'SUPPORT_FORUM';
 const HelpContact = React.createClass( {
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.olarkTimedOut && this.olarkTimedOut !== nextProps.olarkTimedOut ) {
+		if ( nextProps.olarkTimedOut && this.olarkTimedOut !== nextProps.olarkTimedOut && ! this.shouldUseHappychat() ) {
 			this.onOlarkUnavailable();
 		}
 	},
@@ -63,6 +69,8 @@ const HelpContact = React.createClass( {
 		if ( config.isEnabled( 'happychat' ) ) {
 			this.props.connectHappychat();
 		}
+
+		this.prepareDirectlyWidget();
 
 		olarkStore.on( 'change', this.updateOlarkState );
 		olarkEvents.on( 'api.chat.onOperatorsAway', this.onOperatorsAway );
@@ -80,6 +88,13 @@ const HelpContact = React.createClass( {
 		olarkActions.expandBox();
 		olarkActions.shrinkBox();
 		olarkActions.hideBox();
+	},
+
+	componentDidUpdate: function() {
+		// Directly initialization is a noop if it's already happened. This catches
+		// instances where a state/prop change moves a user to Directly support from
+		// some other variation.
+		this.prepareDirectlyWidget();
 	},
 
 	componentWillUnmount: function() {
@@ -130,15 +145,12 @@ const HelpContact = React.createClass( {
 		const { message, siteId } = contactForm;
 		const site = sites.getSite( siteId );
 
-		let messages = [
-			message
-		];
+		this.props.sendBrowserInfo( site.URL );
+		this.props.sendHappychatMessage( message );
 
-		if ( site ) {
-			messages = [ `Site I need help with: ${ site.URL }` ].concat( messages );
-		}
-
-		messages.forEach( this.props.sendHappychatMessage );
+		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin', {
+			site_plan_product_id: ( site ? site.plan.product_id : null )
+		} );
 
 		page( '/help' );
 	},
@@ -165,10 +177,28 @@ const HelpContact = React.createClass( {
 		this.clearSavedContactForm();
 	},
 
-	submitDirectlyQuestion: function( contactForm ) {
-		// TODO: open Directly form here
+	prepareDirectlyWidget: function() {
+		if (
+			this.hasDataToDetermineVariation() &&
+			this.getSupportVariation() === SUPPORT_DIRECTLY &&
+			this.props.isDirectlyUninitialized
+		) {
+			this.props.initializeDirectly();
+		}
+	},
 
-		return contactForm; // TODO: Remove this line once functionality is implemented
+	submitDirectlyQuestion: function( contactForm ) {
+		const { display_name, email } = this.props.currentUser;
+
+		this.props.askDirectlyQuestion(
+			contactForm.message,
+			display_name,
+			email
+		);
+
+		this.clearSavedContactForm();
+
+		page( '/help' );
 	},
 
 	submitKayakoTicket: function( contactForm ) {
@@ -410,26 +440,23 @@ const HelpContact = React.createClass( {
 
 	shouldUseHappychat: function() {
 		const { olark } = this.state;
-		const { isHappychatAvailable } = this.props;
-		let isEn = i18n.getLocaleSlug() === 'en';
-		isEn = olark.locale ? olark.locale === 'en' : isEn;
 
 		// if happychat is disabled in the config, do not use it
 		if ( ! config.isEnabled( 'happychat' ) ) {
 			return false;
 		}
 
-		if ( ! isEn ) {
-			return false;
-		}
-
 		// if the happychat connection is able to accept chats, use it
-		return isHappychatAvailable && olark.isUserEligible;
+		return this.props.isHappychatAvailable && olark.isUserEligible;
 	},
 
 	shouldUseDirectly: function() {
 		const isEn = this.props.currentUserLocale === 'en';
-		return config.isEnabled( 'help/directly' ) && isEn;
+		return (
+			config.isEnabled( 'help/directly' ) &&
+			isEn &&
+			! this.props.isDirectlyFailed
+		);
 	},
 
 	canShowChatbox: function() {
@@ -515,7 +542,7 @@ const HelpContact = React.createClass( {
 					showSubjectField: false,
 					showHowCanWeHelpField: false,
 					showHowYouFeelField: false,
-					showSiteField: hasMoreThanOneSite,
+					showSiteField: false,
 				};
 
 			default:
@@ -567,14 +594,27 @@ const HelpContact = React.createClass( {
 		return SUPPORT_HAPPYCHAT !== variationSlug && SUPPORT_LIVECHAT !== variationSlug && null != ticketSupportRequestError;
 	},
 
-	shouldShowPreloadForm: function() {
-		const { olark, sitesInitialized } = this.state;
+	/**
+	 * Before determining which variation to assign, certain async data needs to be in place.
+	 * This function helps assess whether we're ready to say which variation the user should see.
+	 *
+	 * @returns {Boolean} Whether all the data is present to determine the variation to show
+	 */
+	hasDataToDetermineVariation: function() {
+		const { olark } = this.state;
 		const { ticketSupportConfigurationReady, ticketSupportRequestError } = this.props;
 
-		const olarkReadyOrTimedOut = olark.isOlarkReady && ! this.props.olarkTimedOut;
+		const olarkReadyOrTimedOut = olark.isOlarkReady || this.props.olarkTimedOut;
 		const ticketReadyOrError = ticketSupportConfigurationReady || null != ticketSupportRequestError;
 
-		return ! sitesInitialized || ! ticketReadyOrError || ! olarkReadyOrTimedOut;
+		return olarkReadyOrTimedOut && ticketReadyOrError;
+	},
+
+	shouldShowPreloadForm: function() {
+		const { sitesInitialized } = this.state;
+		const waitingOnDirectly = this.getSupportVariation() === SUPPORT_DIRECTLY && ! this.props.isDirectlyReady;
+
+		return ! sitesInitialized || ! this.hasDataToDetermineVariation() || waitingOnDirectly;
 	},
 
 	/**
@@ -655,6 +695,10 @@ export default connect(
 	( state ) => {
 		return {
 			currentUserLocale: getCurrentUserLocale( state ),
+			currentUser: getCurrentUser( state ),
+			isDirectlyFailed: isDirectlyFailed( state ),
+			isDirectlyReady: isDirectlyReady( state ),
+			isDirectlyUninitialized: isDirectlyUninitialized( state ),
 			olarkTimedOut: isOlarkTimedOut( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isHappychatAvailable: isHappychatAvailable( state ),
@@ -663,5 +707,12 @@ export default connect(
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
 		};
 	},
-	{ connectHappychat, openHappychat, sendHappychatMessage }
+	{
+		connectHappychat,
+		openHappychat,
+		sendHappychatMessage,
+		sendBrowserInfo,
+		askDirectlyQuestion,
+		initializeDirectly,
+	}
 )( localize( HelpContact ) );

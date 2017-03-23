@@ -14,9 +14,9 @@ import {
 	ACTIVE_THEME_REQUEST_FAILURE,
 	DESERIALIZE,
 	SERIALIZE,
-	THEME_ACTIVATE_REQUEST,
-	THEME_ACTIVATE_REQUEST_SUCCESS,
-	THEME_ACTIVATE_REQUEST_FAILURE,
+	THEME_ACTIVATE,
+	THEME_ACTIVATE_SUCCESS,
+	THEME_ACTIVATE_FAILURE,
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE_SUCCESS,
 	THEME_INSTALL,
@@ -25,7 +25,6 @@ import {
 	THEME_REQUEST,
 	THEME_REQUEST_SUCCESS,
 	THEME_REQUEST_FAILURE,
-	THEMES_RECEIVE,
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
@@ -55,7 +54,7 @@ import uploadTheme from './upload-theme/reducer';
  * @return {Object}        Updated state
  */
 export const activeThemes = createReducer( {}, {
-	[ THEME_ACTIVATE_REQUEST_SUCCESS ]: ( state, { siteId, themeStylesheet } ) => ( {
+	[ THEME_ACTIVATE_SUCCESS ]: ( state, { siteId, themeStylesheet } ) => ( {
 		...state,
 		[ siteId ]: getThemeIdFromStylesheet( themeStylesheet )
 	} ),
@@ -77,12 +76,12 @@ export const activeThemes = createReducer( {}, {
  */
 export function activationRequests( state = {}, action ) {
 	switch ( action.type ) {
-		case THEME_ACTIVATE_REQUEST:
-		case THEME_ACTIVATE_REQUEST_SUCCESS:
-		case THEME_ACTIVATE_REQUEST_FAILURE:
+		case THEME_ACTIVATE:
+		case THEME_ACTIVATE_SUCCESS:
+		case THEME_ACTIVATE_FAILURE:
 			return {
 				...state,
-				[ action.siteId ]: THEME_ACTIVATE_REQUEST === action.type
+				[ action.siteId ]: THEME_ACTIVATE === action.type
 			};
 
 		case SERIALIZE:
@@ -103,7 +102,7 @@ export function activationRequests( state = {}, action ) {
  * @return {Object}        Updated state
  */
 export const completedActivationRequests = createReducer( {}, {
-	[ THEME_ACTIVATE_REQUEST_SUCCESS ]: ( state, { siteId } ) => ( {
+	[ THEME_ACTIVATE_SUCCESS ]: ( state, { siteId } ) => ( {
 		...state,
 		[ siteId ]: true,
 	} ),
@@ -311,9 +310,6 @@ export const queries = ( () => {
 	return createReducer( {}, {
 		[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query, themes, found } ) => {
 			return applyToManager( state, siteId, 'receive', true, themes, { query, found } );
-		},
-		[ THEMES_RECEIVE ]: ( state, { siteId, themes } ) => {
-			return applyToManager( state, siteId, 'receive', true, themes );
 		},
 		[ THEME_DELETE_SUCCESS ]: ( state, { siteId, themeId } ) => {
 			return applyToManager( state, siteId, 'removeItem', false, themeId );

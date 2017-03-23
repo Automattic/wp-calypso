@@ -7,12 +7,11 @@ import tinymce from 'tinymce/tinymce';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { pasteEvent } from 'state/ui/editor/actions';
+import { SOURCE_UNKNOWN, SOURCE_GOOGLE_DOCS } from './sources';
 
 const debug = debugFactory( 'calypso:tinymce-plugins:wpcom-track-paste' );
-
-const SOURCE_GOOGLE_DOCS = 'google_docs';
-const SOURCE_UNKNOWN = 'unknown';
 
 function trackPaste( editor ) {
 	debug( 'init' );
@@ -37,15 +36,20 @@ function trackPaste( editor ) {
 	const recordPasteEvent = ( mode, types ) => {
 		debug( 'track paste event' );
 		const typesAsArray = Array.from( types );
-		store.dispatch( recordTracksEvent( 'calypso_editor_content_paste', {
-			mode,
-			types: typesAsArray.join( ', ' ),
-			source: getSource( typesAsArray )
-		} ) );
+		const source = getSource( typesAsArray );
+
+		store.dispatch( withAnalytics(
+			recordTracksEvent( 'calypso_editor_content_paste', {
+				mode,
+				types: typesAsArray.join( ', ' ),
+				source
+			} ),
+			pasteEvent( source )
+		) );
 	};
 
-	const onPasteFromTinyMCEEditor = event => recordPasteEvent( 'visual-editor', event.clipboardData.types );
-	const onPasteFromHTMLEditor = event => recordPasteEvent( 'html-editor', event.clipboardData.types );
+	const onPasteFromTinyMCEEditor = event => event.clipboardData && recordPasteEvent( 'visual-editor', event.clipboardData.types );
+	const onPasteFromHTMLEditor = event => event.clipboardData && recordPasteEvent( 'html-editor', event.clipboardData.types );
 
 	editor.on( 'paste', onPasteFromTinyMCEEditor );
 	const textarea = editor.getParam( 'textarea' );

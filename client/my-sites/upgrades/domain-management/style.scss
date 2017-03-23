@@ -114,7 +114,7 @@
 
 .domain-management-list-item__meta {
 	font-size: 12px;
-	color: $gray;
+	color: $gray-text-min;
 	min-height: 20px;
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -180,18 +180,17 @@ input[type=radio].domain-management-list-item__radio {
 .domain-management-primary-domain {
 
 	.primary-domain-explanation {
-		color: $gray;
+		color: $gray-text-min;
 		display: block;
 		font-size: 13px;
 		font-style: italic;
-		font-weight: 400;
 		margin: 5px 0;
 	}
 
 	.primary-domain-notice {
 		background: lighten( $gray, 30% );
 		font-size: 13px;
-		color: #000;
+		color: $gray-dark;
 		&::before {
 			line-height: 1.5em;
 		}
@@ -200,11 +199,10 @@ input[type=radio].domain-management-list-item__radio {
 
 .contacts-privacy-card {
 	.settings-explanation {
-		color: $gray;
+		color: $gray-text-min;
 		display: block;
 		font-size: 13px;
 		font-style: italic;
-		font-weight: 400;
 		margin: 5px 0;
 	}
 
@@ -298,21 +296,19 @@ input[type=radio].domain-management-list-item__radio {
 	text-align: center;
 
 	a {
-		color: $gray;
+		color: $gray-text-min;
 		display: block;
 		font-size: 12px;
-		font-weight: 400;
 		padding: 20px 0;
 		text-transform: uppercase;
 	}
 }
 
 .edit-contact-info-privacy-enabled-card__settings-explanation {
-	color: $gray;
+	color: $gray-text-min;
 	display: block;
 	font-size: 13px;
 	font-style: italic;
-	font-weight: 400;
 	margin: 5px 0;
 }
 
@@ -383,7 +379,6 @@ input[type=radio].domain-management-list-item__radio {
 }
 
 .add-google-apps-card__product-details {
-	background: $gray-light;
 	clear: both;
 	overflow: auto;
 	padding: 16px;
@@ -418,7 +413,7 @@ input[type=radio].domain-management-list-item__radio {
 
 	p {
 		clear: left;
-		color: $gray;
+		color: $gray-text-min;
 		font-size: 12px;
 		margin: 0;
 
@@ -497,13 +492,13 @@ input[type=radio].domain-management-list-item__radio {
 		font-style: italic;
 
 		strong {
-			color: darken($gray, 15%);
+			color: $gray-text-min;
 			font-size: 15px;
 			font-weight: 600;
 		}
 
 		span {
-			color: $gray;
+			color: $gray-text-min;
 			font-size: 12px;
 			font-weight: normal;
 		}
@@ -515,7 +510,7 @@ input[type=radio].domain-management-list-item__radio {
 	}
 
 	.add-google-apps-card__billing-period {
-		color: lighten( $gray, 10% );
+		color: $gray-text-min;
 		display: inline-block;
 		font-size: 11px;
 		font-style: italic;
@@ -526,14 +521,13 @@ input[type=radio].domain-management-list-item__radio {
 .add-google-apps-card__title {
 	color: $gray-dark;
 	font-size: 16px;
-	font-weight: 400;
 	line-height: 120%;
 	margin: 0 0 10px 0;
 }
 
 .add-google-apps-card__file-storage,
 .add-google-apps-card__professional-email {
-	color: darken( $gray, 10% );
+	color: $gray-text-min;
 	font-size: 12px;
 	line-height: 130%;
 	margin: 9px 0;
@@ -560,8 +554,7 @@ input[type=radio].domain-management-list-item__radio {
 	margin-top: 5px;
 	font-size: 13px;
 	font-style: italic;
-	font-weight: 400;
-	color: $gray;
+	color: $gray-text-min;
 }
 
 .email-forwarding-card,
@@ -621,7 +614,7 @@ ul.email-forwarding__list {
 			}
 
 			strong {
-				color: darken( $gray, 15% );
+				color: $gray-text-min;
 				font-weight: normal;
 
 				&:first-child {
@@ -706,7 +699,7 @@ ul.email-forwarding__list {
 		font-size: 12px;
 
 		strong {
-			color: darken( $gray, 15% );
+			color: $gray-text-min;
 			font-size: 15px;
 			font-weight: 600;
 		}
@@ -847,7 +840,7 @@ ul.email-forwarding__list {
 	}
 	.name-servers__explanation {
 		animation: appear 0.5s ease-in-out;
-		color: $gray;
+		color: $gray-text-min;
 		font-size: 13px;
 		font-style: italic;
 		margin-bottom: 0;
@@ -930,13 +923,13 @@ ul.email-forwarding__list {
 		position: relative;
 
 		em {
-			color: #87a6bc;
+			color: $gray-text-min;
 			display: block;
 			font-size: 11px;
 		}
 
 		label {
-			background: #87a6bc;
+			background: $gray;
 			border-radius: 2px;
 			color: $white;
 			display: block;
@@ -947,7 +940,7 @@ ul.email-forwarding__list {
 		}
 
 		strong {
-			color: #58819e;
+			color: $gray-text-min;
 			font-weight: normal;
 		}
 
@@ -1041,4 +1034,19 @@ ul.email-forwarding__list {
 .google-apps-user-item__manage-link {
 	float: right;
 	font-size: 13px;
+}
+
+.domain-only-site__settings-notice {
+	color: darken( $gray, 20% );
+	margin-top: 30px;
+	text-align: center;
+
+	&::before {
+		background: lighten( $gray, 20% );
+		content: '';
+		display: block;
+		height: 1px;
+		margin: 0 auto 30px;
+		width: 60px;
+	}
 }

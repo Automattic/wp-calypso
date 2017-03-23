@@ -22,7 +22,13 @@ import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
 import { addTracking } from './helpers';
 import { hasFeature } from 'state/sites/plans/selectors';
-import { hasJetpackSiteJetpackThemesExtendedFeatures } from 'state/sites/selectors';
+import { getLastThemeQuery, getThemesFoundForQuery } from 'state/themes/selectors';
+import {
+	canJetpackSiteManage,
+	hasJetpackSiteJetpackThemes,
+	hasJetpackSiteJetpackThemesExtendedFeatures,
+	isJetpackSiteMultiSite
+} from 'state/sites/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const ConnectedThemesSelection = connectOptions(
@@ -32,7 +38,7 @@ const ConnectedThemesSelection = connectOptions(
 				getOptions={ function( theme ) {
 					return pickBy(
 						addTracking( props.options ),
-						option => ! ( option.hideForTheme && option.hideForTheme( theme ) )
+						option => ! ( option.hideForTheme && option.hideForTheme( theme, props.siteId ) )
 					); } }
 			/>
 		);
@@ -44,34 +50,35 @@ const ConnectedSingleSiteJetpack = connectOptions(
 		const {
 			analyticsPath,
 			analyticsPageTitle,
-			getScreenshotOption,
-			search,
-			site,
-			siteId,
-			wpcomTier,
+			canManage,
+			emptyContent,
 			filter,
-			vertical
+			getScreenshotOption,
+			hasJetpackThemes,
+			showWpcomThemesList,
+			search,
+			siteId,
+			vertical,
+			wpcomTier
 		} = props;
 		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
 		if ( ! jetpackEnabled ) {
 			return (
 				<JetpackReferrerMessage
-					site={ site }
+					siteId={ siteId }
 					analyticsPath={ analyticsPath }
 					analyticsPageTitle={ analyticsPageTitle } />
 			);
 		}
-		if ( ! site.hasJetpackThemes ) {
+		if ( ! hasJetpackThemes ) {
 			return (
-				<JetpackUpgradeMessage
-					site={ site } />
+				<JetpackUpgradeMessage siteId={ siteId } />
 			);
 		}
-		if ( ! site.canManage() ) {
+		if ( ! canManage ) {
 			return (
-				<JetpackManageDisabledMessage
-					site={ site } />
+				<JetpackManageDisabledMessage siteId={ siteId } />
 			);
 		}
 
@@ -79,25 +86,16 @@ const ConnectedSingleSiteJetpack = connectOptions(
 			<div>
 				<SidebarNavigation />
 				<CurrentTheme siteId={ siteId } />
-				<ThemeShowcase { ...props } siteId={ siteId }>
+				<ThemeShowcase { ...props }
+					siteId={ siteId }
+					emptyContent={ showWpcomThemesList ? <div /> : null } >
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-					<ThanksModal
-						site={ site }
-						source={ 'list' } />
-					{ config.isEnabled( 'manage/themes/upload' ) && props.showWpcomThemesList &&
+					<ThanksModal source={ 'list' } />
+					{ showWpcomThemesList &&
 						<div>
 							<ConnectedThemesSelection
-								options={ [
-									'activate',
-									'tryandcustomize',
-									'preview',
-									'customize',
-									'separator',
-									'info',
-									'support',
-									'help',
-								] }
+								origin="wpcom"
 								defaultOption={ 'activate' }
 								secondaryOption={ 'tryandcustomize' }
 								search={ search }
@@ -105,7 +103,6 @@ const ConnectedSingleSiteJetpack = connectOptions(
 								filter={ filter }
 								vertical={ vertical }
 								siteId={ siteId /* This is for the options in the '...' menu only */ }
-								showUploadButton={ false }
 								getScreenshotUrl={ function( theme ) {
 									if ( ! getScreenshotOption( theme ).getUrl ) {
 										return null;
@@ -122,7 +119,8 @@ const ConnectedSingleSiteJetpack = connectOptions(
 									return getScreenshotOption( theme ).label;
 								} }
 								trackScrollPage={ props.trackScrollPage }
-								queryWpcom={ true }
+								source="wpcom"
+								emptyContent={ emptyContent }
 							/>
 						</div>
 					}
@@ -134,9 +132,24 @@ const ConnectedSingleSiteJetpack = connectOptions(
 
 export default connect(
 	( state, { siteId, tier } ) => {
+		const isMultisite = isJetpackSiteMultiSite( state, siteId );
+		const showWpcomThemesList = config.isEnabled( 'manage/themes/upload' ) &&
+			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) && ! isMultisite;
+		let emptyContent = null;
+		if ( showWpcomThemesList ) {
+			const siteQuery = getLastThemeQuery( state, siteId );
+			const wpcomQuery = getLastThemeQuery( state, 'wpcom' );
+			const siteThemesCount = getThemesFoundForQuery( state, siteId, siteQuery );
+			const wpcomThemesCount = getThemesFoundForQuery( state, 'wpcom', wpcomQuery );
+			emptyContent = ( ! siteThemesCount && ! wpcomThemesCount ) ? null : <div />;
+		}
 		return {
+			canManage: canJetpackSiteManage( state, siteId ),
+			hasJetpackThemes: hasJetpackSiteJetpackThemes( state, siteId ),
 			wpcomTier: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ? tier : 'free',
-			showWpcomThemesList: hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId )
+			showWpcomThemesList,
+			emptyContent,
+			isMultisite,
 		};
 	}
 )( ConnectedSingleSiteJetpack );

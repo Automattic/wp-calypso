@@ -59,6 +59,63 @@ describe( 'utils', () => {
 				wp_mobile_featured_images: false
 			} );
 		} );
+
+		it( 'should convert carousel_background_color to "black" if it is an empty string', () => {
+			const settings = {
+				carousel_background_color: ''
+			};
+
+			expect( normalizeSettings( settings ) ).to.eql( {
+				carousel_background_color: 'black'
+			} );
+		} );
+
+		it( 'should default jetpack_protect_global_whitelist whitelist to an empty string when null', () => {
+			expect( normalizeSettings( {
+				jetpack_protect_global_whitelist: null
+			} ) ).to.eql( {
+				jetpack_protect_global_whitelist: '',
+			} );
+		} );
+
+		it( 'should default jetpack_protect_global_whitelist whitelist to an empty string when empty', () => {
+			expect( normalizeSettings( {
+				jetpack_protect_global_whitelist: {
+					local: []
+				}
+			} ) ).to.eql( {
+				jetpack_protect_global_whitelist: '',
+			} );
+		} );
+
+		it( 'should not add extra newlines when extracting jetpack_protect_global_whitelist', () => {
+			const settings = {
+				jetpack_protect_global_whitelist: {
+					local: [
+						'123.123.123.123',
+					]
+				}
+			};
+
+			expect( normalizeSettings( settings ) ).to.eql( {
+				jetpack_protect_global_whitelist: '123.123.123.123',
+			} );
+		} );
+
+		it( 'should add newlines between IPs when extracting jetpack_protect_global_whitelist', () => {
+			const settings = {
+				jetpack_protect_global_whitelist: {
+					local: [
+						'123.123.123.123',
+						'213.123.213.123',
+					]
+				}
+			};
+
+			expect( normalizeSettings( settings ) ).to.eql( {
+				jetpack_protect_global_whitelist: '123.123.123.123\n213.123.213.123',
+			} );
+		} );
 	} );
 
 	describe( 'sanitizeSettings()', () => {
@@ -144,6 +201,11 @@ describe( 'utils', () => {
 				social_notifications_subscribe: false,
 				markdown: true,
 				wpcom_publish_comments_with_markdown: true,
+				protect: true,
+				jetpack_protect_global_whitelist: 'test',
+				sso: true,
+				jetpack_sso_match_by_email: true,
+				jetpack_sso_require_two_step: true,
 				'after-the-deadline': true,
 				onpublish: true,
 				onupdate: true,
@@ -162,6 +224,17 @@ describe( 'utils', () => {
 				'custom-content-types': true,
 				jetpack_testimonial: true,
 				jetpack_portfolio: false,
+				comments: true,
+				highlander_comment_form_prompt: 'Leave a Reply',
+				jetpack_comment_form_color_scheme: 'light',
+				carousel: true,
+				carousel_background_color: 'black',
+				carousel_display_exif: true,
+				stats: true,
+				admin_bar: true,
+				hide_smile: true,
+				count_roles: true,
+				roles: true,
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
@@ -177,6 +250,9 @@ describe( 'utils', () => {
 				social_notifications_reblog: true,
 				social_notifications_subscribe: false,
 				wpcom_publish_comments_with_markdown: true,
+				jetpack_protect_global_whitelist: 'test',
+				jetpack_sso_match_by_email: true,
+				jetpack_sso_require_two_step: true,
 				onpublish: true,
 				onupdate: true,
 				guess_lang: true,
@@ -193,6 +269,14 @@ describe( 'utils', () => {
 				ignored_phrases: true,
 				jetpack_testimonial: true,
 				jetpack_portfolio: false,
+				highlander_comment_form_prompt: 'Leave a Reply',
+				jetpack_comment_form_color_scheme: 'light',
+				carousel_background_color: 'black',
+				carousel_display_exif: true,
+				admin_bar: true,
+				hide_smile: true,
+				count_roles: true,
+				roles: true,
 			} );
 		} );
 
@@ -215,6 +299,11 @@ describe( 'utils', () => {
 				social_notifications_subscribe: false,
 				markdown: false,
 				wpcom_publish_comments_with_markdown: true,
+				protect: false,
+				jetpack_protect_global_whitelist: 'test',
+				sso: false,
+				jetpack_sso_match_by_email: true,
+				jetpack_sso_require_two_step: true,
 				'after-the-deadline': false,
 				onpublish: true,
 				onupdate: true,
@@ -233,6 +322,17 @@ describe( 'utils', () => {
 				'custom-content-types': false,
 				jetpack_testimonial: true,
 				jetpack_portfolio: false,
+				comments: false,
+				highlander_comment_form_prompt: 'Leave a Reply',
+				jetpack_comment_form_color_scheme: 'light',
+				carousel: false,
+				carousel_background_color: 'black',
+				carousel_display_exif: true,
+				stats: false,
+				admin_bar: true,
+				hide_smile: true,
+				count_roles: true,
+				roles: true,
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {
@@ -254,6 +354,9 @@ describe( 'utils', () => {
 				social_notifications_reblog: true,
 				social_notifications_subscribe: false,
 				wpcom_publish_comments_with_markdown: true,
+				jetpack_protect_global_whitelist: 'test',
+				jetpack_sso_match_by_email: true,
+				jetpack_sso_require_two_step: true,
 				onpublish: true,
 				onupdate: true,
 				guess_lang: true,
@@ -270,6 +373,14 @@ describe( 'utils', () => {
 				ignored_phrases: true,
 				jetpack_testimonial: true,
 				jetpack_portfolio: false,
+				highlander_comment_form_prompt: 'Leave a Reply',
+				jetpack_comment_form_color_scheme: 'light',
+				carousel_background_color: 'black',
+				carousel_display_exif: true,
+				admin_bar: true,
+				hide_smile: true,
+				count_roles: true,
+				roles: true,
 			};
 
 			expect( filterSettingsByActiveModules( settings ) ).to.eql( {

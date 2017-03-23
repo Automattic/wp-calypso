@@ -1,4 +1,21 @@
 
+/*
+ * Suggestions start out invisible, and they show up only when triggered.
+ */
+.suggestions {
+	display: none;
+}
+
+.has-suggestions {
+	.suggestions {
+		display: block;
+	}
+}
+
+
+/*
+ * Suggestions list
+ */
 .suggestions__suggestions {
 	display: flex;
 	flex-direction: column;
@@ -16,25 +33,24 @@
 	font-size: 13px;
 
 	.suggestions__category-name {
-		float: left;
 		text-transform: uppercase;
-		color: darken( $gray, 20% );
+		color: $gray-dark;
 	}
 
 	.suggestions__category-counter {
-		float: right;
-		color: $gray;
+		margin-left: 6px;
+		text-transform: uppercase;
+		color: $gray-text-min;
 	}
 }
 
 .suggestions__value {
-	padding: 18px 10px;
+	padding: 10px 10px;
 	background: $white;
 	border: 1px solid darken( $gray-light, 10% );
 	border-top: 0px;
 	font-size: 16px;
 	cursor: pointer;
-	transition: background 120ms ease-in, color 60ms ease-in;
 
 	.suggestions__value-emphasis,
 	.suggestions__value-normal {
@@ -48,7 +64,7 @@
 	}
 
 	&.has-highlight {
-		background-color: $blue-wordpress;
+		background-color: $blue-medium;
 		color: $white;
 	}
 }

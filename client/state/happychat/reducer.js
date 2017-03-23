@@ -20,7 +20,7 @@ import {
 	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_CONNECTED,
 	HAPPYCHAT_SET_CHAT_STATUS,
-	HAPPYCHAT_RECEIVE_TRANSCRIPT
+	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 } from 'state/action-types';
 
 /**
@@ -65,14 +65,24 @@ const timeline = ( state = [], action ) => {
 		case DESERIALIZE:
 			return state;
 		case HAPPYCHAT_RECEIVE_EVENT:
+			// if meta.forOperator is set, skip so won't show to user
+			if ( get( action, 'event.meta.forOperator', false ) ) {
+				return state;
+			}
 			const event = timeline_event( {}, action );
 			const existing = find( state, ( { id } ) => event.id === id );
 			return existing ? state : concat( state, [ event ] );
-		case HAPPYCHAT_RECEIVE_TRANSCRIPT:
+		case HAPPYCHAT_TRANSCRIPT_RECEIVE:
 			const messages = filter( action.messages, message => {
 				if ( ! message.id ) {
 					return false;
 				}
+
+				// if meta.forOperator is set, skip so won't show to user
+				if ( get( message, 'meta.forOperator', false ) ) {
+					return false;
+				}
+
 				return ! find( state, { id: message.id } );
 			} );
 			return state.concat( map( messages, message => {
