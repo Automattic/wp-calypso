@@ -179,7 +179,7 @@ if ( calypsoEnv === 'development' ) {
 	webpackConfig.entry.build = [
 		'webpack-dev-server/client?/',
 		'webpack/hot/only-dev-server',
-		path.join( __dirname, 'client', 'boot' )
+		path.join( __dirname, 'client', 'boot', 'app' )
 	];
 
 	if ( config.isEnabled( 'use-source-maps' ) ) {
@@ -196,7 +196,7 @@ if ( calypsoEnv === 'development' ) {
 		jsLoader.loaders = [ 'react-hot' ].concat( jsLoader.loaders );
 	}
 } else {
-	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot' );
+	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot', 'app' );
 	webpackConfig.debug = false;
 	webpackConfig.devtool = false;
 }
