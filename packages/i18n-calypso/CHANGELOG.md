@@ -1,3 +1,16 @@
+1.7.1
+-----
+- Allow exposed composed component, see [#25](https://github.com/Automattic/i18n-calypso/pull/25).
+- Change Localize HOC display name to be consistent with react-redux, see [#29](https://github.com/Automattic/i18n-calypso/pull/29).
+
+1.7.0
+-----
+Replace LRU cache implementation, see [#18](https://github.com/Automattic/i18n-calypso/pull/18).
+
+1.6.3
+-----
+Add support for glob in inputFiles, see [#16](https://github.com/Automattic/i18n-calypso/pull/16).
+
 1.6.1 + 1.6.2
 -------------
 Fix invalid POT output when strings contained a line break, see [#14](https://github.com/Automattic/i18n-calypso/pull/14).
