@@ -8,7 +8,7 @@ import debugModule from 'debug';
  */
 import { getCurrentUser } from 'state/current-user/selectors';
 
-const debug = debugModule( 'calypso:reader:start' ); //eslint-disable-line no-unused-vars
+const debug = debugModule('calypso:reader:start'); //eslint-disable-line no-unused-vars
 
 /**
  * Has the user graduated from the Reader follow recommendations process?
@@ -16,13 +16,13 @@ const debug = debugModule( 'calypso:reader:start' ); //eslint-disable-line no-un
  * @param  {Object}  state  Global state tree
  * @return {Boolean} Has user graduated from initial follow recommendations?
  */
-export function hasGraduatedRecommendations( state ) {
-	let graduated = state.reader.start.hasGraduated;
-	if ( graduated === null ) {
-		const user = getCurrentUser( state );
-		graduated = ! user.is_new_reader;
-	}
-	return graduated;
+export function hasGraduatedRecommendations(state) {
+    let graduated = state.reader.start.hasGraduated;
+    if (graduated === null) {
+        const user = getCurrentUser(state);
+        graduated = !user.is_new_reader;
+    }
+    return graduated;
 }
 
 /**
@@ -30,6 +30,6 @@ export function hasGraduatedRecommendations( state ) {
  * @param  {object}  state Global state tree
  * @return {Boolean}       Is the user requesting graduation?
  */
-export function isRequestingGraduation( state ) {
-	return state.reader.start.isRequestingGraduation;
+export function isRequestingGraduation(state) {
+    return state.reader.start.isRequestingGraduation;
 }

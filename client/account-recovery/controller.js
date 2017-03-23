@@ -17,73 +17,73 @@ import TransactionIdForm from 'account-recovery/reset-password/transaction-id-fo
 import ResetPasswordConfirmForm from 'account-recovery/reset-password/reset-password-confirm-form';
 import { getCurrentUser } from 'state/current-user/selectors';
 
-export function lostPassword( context, next ) {
-	context.primary = <LostPasswordPage basePath={ context.path } />;
-	next();
+export function lostPassword(context, next) {
+    context.primary = <LostPasswordPage basePath={context.path} />;
+    next();
 }
 
-export function forgotUsername( context, next ) {
-	context.primary = <ForgotUsernamePage basePath={ context.path } />;
-	next();
+export function forgotUsername(context, next) {
+    context.primary = <ForgotUsernamePage basePath={context.path} />;
+    next();
 }
 
-export function resetPassword( context, next ) {
-	context.primary = (
-		<ResetPasswordPage basePath={ context.path }>
-			<ResetPasswordForm />
-		</ResetPasswordPage>
-	);
+export function resetPassword(context, next) {
+    context.primary = (
+        <ResetPasswordPage basePath={context.path}>
+            <ResetPasswordForm />
+        </ResetPasswordPage>
+    );
 
-	next();
+    next();
 }
 
-export function resetPasswordSmsForm( context, next ) {
-	context.primary = (
-		<ResetPasswordPage basePath={ context.path }>
-			<ResetPasswordSmsForm />
-		</ResetPasswordPage>
-	);
+export function resetPasswordSmsForm(context, next) {
+    context.primary = (
+        <ResetPasswordPage basePath={context.path}>
+            <ResetPasswordSmsForm />
+        </ResetPasswordPage>
+    );
 
-	next();
+    next();
 }
 
-export function resetPasswordEmailForm( context, next ) {
-	context.primary = (
-		<ResetPasswordPage basePath={ context.path }>
-			<ResetPasswordEmailForm />
-		</ResetPasswordPage>
-	);
+export function resetPasswordEmailForm(context, next) {
+    context.primary = (
+        <ResetPasswordPage basePath={context.path}>
+            <ResetPasswordEmailForm />
+        </ResetPasswordPage>
+    );
 
-	next();
+    next();
 }
 
-export function resetPasswordByTransactionId( context, next ) {
-	context.primary = (
-		<ResetPasswordPage basePath={ context.path }>
-			<TransactionIdForm />
-		</ResetPasswordPage>
-	);
+export function resetPasswordByTransactionId(context, next) {
+    context.primary = (
+        <ResetPasswordPage basePath={context.path}>
+            <TransactionIdForm />
+        </ResetPasswordPage>
+    );
 
-	next();
+    next();
 }
 
-export function resetPasswordConfirmForm( context, next ) {
-	context.primary = (
-		<ResetPasswordPage basePath={ context.path }>
-			<ResetPasswordConfirmForm />
-		</ResetPasswordPage>
-	);
+export function resetPasswordConfirmForm(context, next) {
+    context.primary = (
+        <ResetPasswordPage basePath={context.path}>
+            <ResetPasswordConfirmForm />
+        </ResetPasswordPage>
+    );
 
-	next();
+    next();
 }
 
-export function redirectLoggedIn( context, next ) {
-	const currentUser = getCurrentUser( context.store.getState() );
+export function redirectLoggedIn(context, next) {
+    const currentUser = getCurrentUser(context.store.getState());
 
-	if ( currentUser ) {
-		page.redirect( '/' );
-		return;
-	}
+    if (currentUser) {
+        page.redirect('/');
+        return;
+    }
 
-	next();
+    next();
 }

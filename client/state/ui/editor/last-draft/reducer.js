@@ -16,13 +16,13 @@ import { EDITOR_LAST_DRAFT_SET } from 'state/action-types';
  * @param  {Object}  action Action payload
  * @return {?Number}        Updated state
  */
-export function siteId( state = null, action ) {
-	switch ( action.type ) {
-		case EDITOR_LAST_DRAFT_SET:
-			return action.siteId;
-	}
+export function siteId(state = null, action) {
+    switch (action.type) {
+        case EDITOR_LAST_DRAFT_SET:
+            return action.siteId;
+    }
 
-	return state;
+    return state;
 }
 
 /**
@@ -33,16 +33,16 @@ export function siteId( state = null, action ) {
  * @param  {Object}  action Action payload
  * @return {?Number}        Updated state
  */
-export function postId( state = null, action ) {
-	switch ( action.type ) {
-		case EDITOR_LAST_DRAFT_SET:
-			return action.postId;
-	}
+export function postId(state = null, action) {
+    switch (action.type) {
+        case EDITOR_LAST_DRAFT_SET:
+            return action.postId;
+    }
 
-	return state;
+    return state;
 }
 
-export default combineReducers( {
-	siteId,
-	postId
-} );
+export default combineReducers({
+    siteId,
+    postId,
+});

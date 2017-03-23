@@ -12,38 +12,38 @@ import ticker from 'lib/ticker';
 import humanDate from 'lib/human-date';
 
 export default class PostTime extends PureComponent {
-	smartSetState = smartSetState;
+    smartSetState = smartSetState;
 
-	componentWillMount() {
-		this.update();
-	}
+    componentWillMount() {
+        this.update();
+    }
 
-	componentDidMount() {
-		ticker.on( 'tick', this.update );
-	}
+    componentDidMount() {
+        ticker.on('tick', this.update);
+    }
 
-	componentWillReceiveProps( nextProps ) {
-		this.update( nextProps.date );
-	}
+    componentWillReceiveProps(nextProps) {
+        this.update(nextProps.date);
+    }
 
-	componentWillUnmount() {
-		ticker.off( 'tick', this.update );
-	}
+    componentWillUnmount() {
+        ticker.off('tick', this.update);
+    }
 
-	update = date => {
-		date = date || this.props.date;
-		this.smartSetState( {
-			humanDate: humanDate( date ),
-			fullDate: moment( date ).format( 'llll' )
-		} );
-	}
+    update = date => {
+        date = date || this.props.date;
+        this.smartSetState({
+            humanDate: humanDate(date),
+            fullDate: moment(date).format('llll'),
+        });
+    };
 
-	render() {
-		const date = this.props.date;
-		return (
-			<time className={ this.props.className } dateTime={ date } title={ this.state.fullDate } >
-				{ this.state.humanDate }
-			</time>
-		);
-	}
+    render() {
+        const date = this.props.date;
+        return (
+            <time className={this.props.className} dateTime={date} title={this.state.fullDate}>
+                {this.state.humanDate}
+            </time>
+        );
+    }
 }

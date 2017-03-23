@@ -1,102 +1,104 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require('react');
 
 /**
  * Internal dependencies
  */
-var MediaUtils = require( 'lib/media/utils' ),
-	MediaLibraryListItemFileDetails = require( './list-item-file-details' );
+var MediaUtils = require('lib/media/utils'),
+    MediaLibraryListItemFileDetails = require('./list-item-file-details');
 
-module.exports = React.createClass( {
-	displayName: 'MediaLibraryListItemImage',
+module.exports = React.createClass({
+    displayName: 'MediaLibraryListItemImage',
 
-	propTypes: {
-		media: React.PropTypes.object,
-		scale: React.PropTypes.number,
-		maxImageWidth: React.PropTypes.number,
-		photon: React.PropTypes.bool
-	},
+    propTypes: {
+        media: React.PropTypes.object,
+        scale: React.PropTypes.number,
+        maxImageWidth: React.PropTypes.number,
+        photon: React.PropTypes.bool,
+    },
 
-	getDefaultProps: function() {
-		return {
-			maxImageWidth: 450,
-			photon: true
-		};
-	},
+    getDefaultProps: function() {
+        return {
+            maxImageWidth: 450,
+            photon: true,
+        };
+    },
 
-	getInitialState: function() {
-		return {};
-	},
+    getInitialState: function() {
+        return {};
+    },
 
-	getImageDimensions: function() {
-		var width, height;
+    getImageDimensions: function() {
+        var width, height;
 
-		if ( this.props.media.width ) {
-			width = this.props.media.width;
-		} else {
-			width = this.state.imageWidth;
-		}
+        if (this.props.media.width) {
+            width = this.props.media.width;
+        } else {
+            width = this.state.imageWidth;
+        }
 
-		if ( this.props.media.height ) {
-			height = this.props.media.height;
-		} else {
-			height = this.state.imageHeight;
-		}
+        if (this.props.media.height) {
+            height = this.props.media.height;
+        } else {
+            height = this.state.imageHeight;
+        }
 
-		return {
-			width: width,
-			height: height
-		};
-	},
+        return {
+            width: width,
+            height: height,
+        };
+    },
 
-	getImageStyle: function() {
-		var dimensions = this.getImageDimensions();
+    getImageStyle: function() {
+        var dimensions = this.getImageDimensions();
 
-		return {
-			maxHeight: dimensions.height > dimensions.width ? 'none' : '100%',
-			maxWidth: dimensions.height < dimensions.width ? 'none' : '100%'
-		};
-	},
+        return {
+            maxHeight: dimensions.height > dimensions.width ? 'none' : '100%',
+            maxWidth: dimensions.height < dimensions.width ? 'none' : '100%',
+        };
+    },
 
-	setUnknownImageDimensions: function( event ) {
-		if ( ! this.props.media.width ) {
-			this.setState( {
-				imageWidth: event.target.clientWidth
-			} );
-		}
+    setUnknownImageDimensions: function(event) {
+        if (!this.props.media.width) {
+            this.setState({
+                imageWidth: event.target.clientWidth,
+            });
+        }
 
-		if ( ! this.props.media.height ) {
-			this.setState( {
-				imageHeight: event.target.clientHeight
-			} );
-		}
-	},
+        if (!this.props.media.height) {
+            this.setState({
+                imageHeight: event.target.clientHeight,
+            });
+        }
+    },
 
-	render: function() {
-		var url = MediaUtils.url( this.props.media, {
-			photon: this.props.photon,
-			maxWidth: this.props.maxImageWidth
-		} );
+    render: function() {
+        var url = MediaUtils.url(this.props.media, {
+            photon: this.props.photon,
+            maxWidth: this.props.maxImageWidth,
+        });
 
-		if ( ! url ) {
-			return (
-				<MediaLibraryListItemFileDetails
-					scale={ this.props.scale }
-					media={ this.props.media }
-					icon="image" />
-			);
-		}
+        if (!url) {
+            return (
+                <MediaLibraryListItemFileDetails
+                    scale={this.props.scale}
+                    media={this.props.media}
+                    icon="image"
+                />
+            );
+        }
 
-		return (
-			<img
-				src={ url }
-				onLoad={ this.setUnknownImageDimensions }
-				alt={ this.props.media.alt || this.props.media.title }
-				style={ this.getImageStyle() }
-				className="media-library__list-item-centered"
-				draggable="false" />
-		);
-	}
-} );
+        return (
+            <img
+                src={url}
+                onLoad={this.setUnknownImageDimensions}
+                alt={this.props.media.alt || this.props.media.title}
+                style={this.getImageStyle()}
+                className="media-library__list-item-centered"
+                draggable="false"
+            />
+        );
+    },
+});

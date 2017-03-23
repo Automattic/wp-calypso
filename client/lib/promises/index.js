@@ -6,8 +6,5 @@
  *
  * Returns a promise that waits for the last item promise to be resolved.
  */
-export const makePromiseSequence = ( list, fn ) => list.reduce(
-	( acc, curr ) => acc.then( fn.bind( null, curr ) ),
-	Promise.resolve()
-);
-
+export const makePromiseSequence = (list, fn) =>
+    list.reduce((acc, curr) => acc.then(fn.bind(null, curr)), Promise.resolve());

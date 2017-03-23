@@ -16,65 +16,66 @@ import QueryPlans from 'components/data/query-plans';
 
 const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';
 
-const PlansLanding = React.createClass( {
+const PlansLanding = React.createClass({
+    propTypes: {
+        sites: React.PropTypes.object,
+        sitePlans: React.PropTypes.object.isRequired,
+        intervalType: React.PropTypes.string,
+    },
 
-	propTypes: {
-		sites: React.PropTypes.object,
-		sitePlans: React.PropTypes.object.isRequired,
-		intervalType: React.PropTypes.string
-	},
+    getDefaultProps() {
+        return {
+            intervalType: 'yearly',
+            siteSlug: '*',
+        };
+    },
 
-	getDefaultProps() {
-		return {
-			intervalType: 'yearly',
-			siteSlug: '*'
-		};
-	},
+    componentDidMount() {
+        this.props.recordTracksEvent('calypso_jpc_plans_landing_view', {
+            jpc_from: this.props.landingType,
+        });
+    },
 
-	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_jpc_plans_landing_view', {
-			jpc_from: this.props.landingType
-		} );
-	},
+    storeSelectedPlan(cartItem) {
+        this.props.recordTracksEvent('calypso_jpc_plans_store_plan', {
+            plan: cartItem ? cartItem.product_slug : 'free',
+        });
+        this.props.selectPlanInAdvance(cartItem ? cartItem.product_slug : 'free', '*');
 
-	storeSelectedPlan( cartItem ) {
-		this.props.recordTracksEvent( 'calypso_jpc_plans_store_plan', {
-			plan: cartItem ? cartItem.product_slug : 'free'
-		} );
-		this.props.selectPlanInAdvance(	cartItem ? cartItem.product_slug : 'free', '*', );
+        setTimeout(
+            () => {
+                page.redirect(CALYPSO_JETPACK_CONNECT);
+            },
+            25
+        );
+    },
 
-		setTimeout( () => {
-			page.redirect( CALYPSO_JETPACK_CONNECT );
-		}, 25 );
-	},
-
-	render() {
-		return (
-			<div>
-				<QueryPlans />
-				<PlansGrid { ...this.props }
-					onSelect={ this.storeSelectedPlan }
-					basePlansPath={ this.props.basePlansPath } />
-			</div>
-		);
-	}
-} );
+    render() {
+        return (
+            <div>
+                <QueryPlans />
+                <PlansGrid
+                    {...this.props}
+                    onSelect={this.storeSelectedPlan}
+                    basePlansPath={this.props.basePlansPath}
+                />
+            </div>
+        );
+    },
+});
 
 export default connect(
-	() => {
-		return {
-			sitePlans: {},
-			calypsoStartedConnection: true
-		};
-	},
-	( dispatch ) => {
-		return Object.assign( {},
-			bindActionCreators( { selectPlanInAdvance }, dispatch ),
-			{
-				recordTracksEvent( eventName, props ) {
-					dispatch( recordTracksEvent( eventName, props ) );
-				}
-			}
-		);
-	}
-)( PlansLanding );
+    () => {
+        return {
+            sitePlans: {},
+            calypsoStartedConnection: true,
+        };
+    },
+    dispatch => {
+        return Object.assign({}, bindActionCreators({ selectPlanInAdvance }, dispatch), {
+            recordTracksEvent(eventName, props) {
+                dispatch(recordTracksEvent(eventName, props));
+            },
+        });
+    }
+)(PlansLanding);

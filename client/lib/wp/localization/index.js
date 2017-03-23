@@ -18,8 +18,8 @@ let locale;
  *
  * @param {String} localeToSet Locale to set
  */
-export function setLocale( localeToSet ) {
-	locale = localeToSet;
+export function setLocale(localeToSet) {
+    locale = localeToSet;
 }
 
 /**
@@ -28,7 +28,7 @@ export function setLocale( localeToSet ) {
  * @return {String} Locale
  */
 export function getLocale() {
-	return locale;
+    return locale;
 }
 
 /**
@@ -38,15 +38,15 @@ export function getLocale() {
  * @param  {Object} params Original parameters
  * @return {Object}        Revised parameters, if non-default locale
  */
-export function addLocaleQueryParam( params ) {
-	if ( ! locale || 'en' === locale ) {
-		return params;
-	}
+export function addLocaleQueryParam(params) {
+    if (!locale || 'en' === locale) {
+        return params;
+    }
 
-	let query = qs.parse( params.query );
-	return Object.assign( params, {
-		query: qs.stringify( Object.assign( query, { locale } ) )
-	} );
+    let query = qs.parse(params.query);
+    return Object.assign(params, {
+        query: qs.stringify(Object.assign(query, { locale })),
+    });
 }
 
 /**
@@ -57,23 +57,23 @@ export function addLocaleQueryParam( params ) {
  * @param  {Object} wpcom Original WPCOM instance
  * @return {Object}       Modified WPCOM instance with localization helpers
  */
-export function injectLocalization( wpcom ) {
-	const request = wpcom.request.bind( wpcom );
-	return Object.assign( wpcom, {
-		withLocale: function() {
-			this.localize = true;
-			return this;
-		},
+export function injectLocalization(wpcom) {
+    const request = wpcom.request.bind(wpcom);
+    return Object.assign(wpcom, {
+        withLocale: function() {
+            this.localize = true;
+            return this;
+        },
 
-		request: function( params, callback ) {
-			if ( this.localize ) {
-				this.localize = false;
-				return request( addLocaleQueryParam( params ), callback );
-			}
+        request: function(params, callback) {
+            if (this.localize) {
+                this.localize = false;
+                return request(addLocaleQueryParam(params), callback);
+            }
 
-			return request( params, callback );
-		}
-	} );
+            return request(params, callback);
+        },
+    });
 }
 
 /**
@@ -82,11 +82,11 @@ export function injectLocalization( wpcom ) {
  *
  * @param {Object} store Redux store instance
  */
-export function bindState( store ) {
-	function setLocaleFromState() {
-		setLocale( getCurrentUserLocale( store.getState() ) );
-	}
+export function bindState(store) {
+    function setLocaleFromState() {
+        setLocale(getCurrentUserLocale(store.getState()));
+    }
 
-	store.subscribe( setLocaleFromState );
-	setLocaleFromState();
+    store.subscribe(setLocaleFromState);
+    setLocaleFromState();
 }

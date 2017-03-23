@@ -13,31 +13,29 @@ import ExporterContainer from 'my-sites/exporter';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
-const SiteSettingsExport = ( { isJetpack, site, translate } ) => {
-	if ( isJetpack ) {
-		return (
-			<EmptyContent
-				illustration="/calypso/images/drake/drake-jetpack.svg"
-				title={ translate( 'Want to export your site?' ) }
-				line={ translate( 'Visit your site\'s wp-admin for all your import and export needs.' ) }
-				action={ translate( 'Export %(siteTitle)s', { args: { siteTitle: site.title } } ) }
-				actionURL={ site.options.admin_url + 'export.php' }
-				actionTarget="_blank"
-			/>
-		);
-	}
+const SiteSettingsExport = ({ isJetpack, site, translate }) => {
+    if (isJetpack) {
+        return (
+            <EmptyContent
+                illustration="/calypso/images/drake/drake-jetpack.svg"
+                title={translate('Want to export your site?')}
+                line={translate("Visit your site's wp-admin for all your import and export needs.")}
+                action={translate('Export %(siteTitle)s', { args: { siteTitle: site.title } })}
+                actionURL={site.options.admin_url + 'export.php'}
+                actionTarget="_blank"
+            />
+        );
+    }
 
-	return <ExporterContainer />;
+    return <ExporterContainer />;
 };
 
-export default connect(
-	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const site = getSelectedSite( state );
+export default connect(state => {
+    const selectedSiteId = getSelectedSiteId(state);
+    const site = getSelectedSite(state);
 
-		return {
-			isJetpack: selectedSiteId && isJetpackSite( state, selectedSiteId ),
-			site,
-		};
-	}
-)( localize( SiteSettingsExport ) );
+    return {
+        isJetpack: selectedSiteId && isJetpackSite(state, selectedSiteId),
+        site,
+    };
+})(localize(SiteSettingsExport));

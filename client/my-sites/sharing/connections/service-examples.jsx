@@ -24,290 +24,359 @@ import ServiceExample from './service-example';
  * @type {string[]}
  */
 const SERVICES_WHITELIST = [
-	'bandpage',
-	'eventbrite',
-	'facebook',
-	'google_plus',
-	'instagram',
-	'linkedin',
-	'path',
-	'tumblr',
-	'twitter',
+    'bandpage',
+    'eventbrite',
+    'facebook',
+    'google_plus',
+    'instagram',
+    'linkedin',
+    'path',
+    'tumblr',
+    'twitter',
 ];
 
 class SharingServiceExamples extends Component {
-	static propTypes = {
-		service: PropTypes.object.isRequired,
-		site: PropTypes.object,
-		translate: PropTypes.func,
-	};
+    static propTypes = {
+        service: PropTypes.object.isRequired,
+        site: PropTypes.object,
+        translate: PropTypes.func,
+    };
 
-	static defaultProps = {
-		site: Object.freeze( {} ),
-		translate: identity,
-	};
+    static defaultProps = {
+        site: Object.freeze({}),
+        translate: identity,
+    };
 
-	getSharingButtonsLink() {
-		return this.props.site ? '/sharing/buttons/' + this.props.site.slug : 'https://support.wordpress.com/sharing/';
-	}
+    getSharingButtonsLink() {
+        return this.props.site
+            ? '/sharing/buttons/' + this.props.site.slug
+            : 'https://support.wordpress.com/sharing/';
+    }
 
-	bandpage() {
-		return [
-			{
-				image: {
-					src: '/calypso/images/sharing/bandpage-widget.png',
-					alt: this.props.translate( 'Add a BandPage widget', { textOnly: true } )
-				},
-				label: this.props.translate(
-					'Add a {{link}}BandPage widget{{/link}} to display your music, photos, videos bio, and event listings.', {
-						components: {
-							link: <a href="https://support.wordpress.com/widgets/bandpage-widget/" />
-						}
-					}
-				),
-			},
-		];
-	}
+    bandpage() {
+        return [
+            {
+                image: {
+                    src: '/calypso/images/sharing/bandpage-widget.png',
+                    alt: this.props.translate('Add a BandPage widget', { textOnly: true }),
+                },
+                label: this.props.translate(
+                    'Add a {{link}}BandPage widget{{/link}} to display your music, photos, videos bio, and event listings.',
+                    {
+                        components: {
+                            link: (
+                                <a href="https://support.wordpress.com/widgets/bandpage-widget/" />
+                            ),
+                        },
+                    }
+                ),
+            },
+        ];
+    }
 
-	eventbrite() {
-		return [
-			{
-				image: {
-					src: '/calypso/images/sharing/eventbrite-list.png',
-					alt: this.props.translate( 'Connect Eventbrite to list your events', { textOnly: true } )
-				},
-				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} Eventbrite to {{link}}list all your events{{/link}} on a page.', {
-						components: {
-							strong: <strong />,
-							link: <a href="https://support.wordpress.com/eventbrite" />
-						}
-					}
-				),
-			},
-			{
-				image: {
-					src: '/calypso/images/sharing/eventbrite-widget.png',
-					alt: this.props.translate( 'Add an Eventbrite widget to your page', { textOnly: true } )
-				},
-				label: this.props.translate( 'Add an {{link}}Eventbrite widget{{/link}} to display a list of your upcoming events.', {
-					components: {
-						link: <a href="https://support.wordpress.com/widgets/eventbrite-event-calendarlisting-widget/" />
-					}
-				} ),
-			},
-		];
-	}
+    eventbrite() {
+        return [
+            {
+                image: {
+                    src: '/calypso/images/sharing/eventbrite-list.png',
+                    alt: this.props.translate('Connect Eventbrite to list your events', {
+                        textOnly: true,
+                    }),
+                },
+                label: this.props.translate(
+                    '{{strong}}Connect{{/strong}} Eventbrite to {{link}}list all your events{{/link}} on a page.',
+                    {
+                        components: {
+                            strong: <strong />,
+                            link: <a href="https://support.wordpress.com/eventbrite" />,
+                        },
+                    }
+                ),
+            },
+            {
+                image: {
+                    src: '/calypso/images/sharing/eventbrite-widget.png',
+                    alt: this.props.translate('Add an Eventbrite widget to your page', {
+                        textOnly: true,
+                    }),
+                },
+                label: this.props.translate(
+                    'Add an {{link}}Eventbrite widget{{/link}} to display a list of your upcoming events.',
+                    {
+                        components: {
+                            link: (
+                                <a
+                                    href="https://support.wordpress.com/widgets/eventbrite-event-calendarlisting-widget/"
+                                />
+                            ),
+                        },
+                    }
+                ),
+            },
+        ];
+    }
 
-	facebook() {
-		return [
-			{
-				image: {
-					src: '/calypso/images/sharing/facebook-profile.png',
-					alt: this.props.translate( 'Share posts to your Facebook page or profile', { textOnly: true } ),
-				},
-				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to automatically share posts on your Facebook page or profile.', {
-						components: {
-							strong: <strong />
-						}
-					}
-				),
-			},
-			{
-				image: {
-					src: '/calypso/images/sharing/facebook-sharing.png',
-					alt: this.props.translate( 'Add a sharing button', { textOnly: true } )
-				},
-				label: this.props.translate(
-					'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their friends.', {
-						components: {
-							link: <a href={ this.getSharingButtonsLink() } />
-						}
-					}
-				),
-			},
-		];
-	}
+    facebook() {
+        return [
+            {
+                image: {
+                    src: '/calypso/images/sharing/facebook-profile.png',
+                    alt: this.props.translate('Share posts to your Facebook page or profile', {
+                        textOnly: true,
+                    }),
+                },
+                label: this.props.translate(
+                    '{{strong}}Connect{{/strong}} to automatically share posts on your Facebook page or profile.',
+                    {
+                        components: {
+                            strong: <strong />,
+                        },
+                    }
+                ),
+            },
+            {
+                image: {
+                    src: '/calypso/images/sharing/facebook-sharing.png',
+                    alt: this.props.translate('Add a sharing button', { textOnly: true }),
+                },
+                label: this.props.translate(
+                    'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their friends.',
+                    {
+                        components: {
+                            link: <a href={this.getSharingButtonsLink()} />,
+                        },
+                    }
+                ),
+            },
+        ];
+    }
 
-	google_plus() {
-		return [
-			{
-				image: {
-					src: '/calypso/images/sharing/google-publicize.png',
-					alt: this.props.translate( 'Share posts to your Google+ page', { textOnly: true } )
-				},
-				label: this.props.translate( '{{strong}}Connect{{/strong}} to automatically share posts to your Google+ page.', {
-					components: {
-						strong: <strong />
-					}
-				} ),
-			},
-			{
-				image: {
-					src: '/calypso/images/sharing/google-sharing.png',
-					alt: this.props.translate( 'Add a sharing button', { textOnly: true } )
-				},
-				label: this.props.translate(
-					'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their circles.', {
-						components: {
-							link: <a href={ this.getSharingButtonsLink() } />
-						}
-					}
-				),
-			},
-		];
-	}
+    google_plus() {
+        return [
+            {
+                image: {
+                    src: '/calypso/images/sharing/google-publicize.png',
+                    alt: this.props.translate('Share posts to your Google+ page', {
+                        textOnly: true,
+                    }),
+                },
+                label: this.props.translate(
+                    '{{strong}}Connect{{/strong}} to automatically share posts to your Google+ page.',
+                    {
+                        components: {
+                            strong: <strong />,
+                        },
+                    }
+                ),
+            },
+            {
+                image: {
+                    src: '/calypso/images/sharing/google-sharing.png',
+                    alt: this.props.translate('Add a sharing button', { textOnly: true }),
+                },
+                label: this.props.translate(
+                    'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their circles.',
+                    {
+                        components: {
+                            link: <a href={this.getSharingButtonsLink()} />,
+                        },
+                    }
+                ),
+            },
+        ];
+    }
 
-	instagram() {
-		return [
-			{
-				image: {
-					src: '/calypso/images/sharing/instagram-widget.png',
-					alt: this.props.translate( 'Add an Instagram widget', { textOnly: true } )
-				},
-				label: this.props.translate( 'Add an {{link}}Instagram widget{{/link}} to display your latest photos.', {
-					components: {
-						link: <a href="https://support.wordpress.com/instagram/instagram-widget/" />
-					}
-				} ),
-			},
-			{
-				image: {
-					src: '/calypso/images/sharing/instagram-media.png',
-					alt: this.props.translate( 'Access Instagram photos via the Media Library', { textOnly: true } )
-				},
-				label: this.props.translate(
-					'Get instant access to all your Instagram photos through the {{link}}Media Library{{/link}}.', {
-						components: {
-							link: <a href="https://support.wordpress.com/media/" />
-						}
-					}
-				),
-			},
-		];
-	}
+    instagram() {
+        return [
+            {
+                image: {
+                    src: '/calypso/images/sharing/instagram-widget.png',
+                    alt: this.props.translate('Add an Instagram widget', { textOnly: true }),
+                },
+                label: this.props.translate(
+                    'Add an {{link}}Instagram widget{{/link}} to display your latest photos.',
+                    {
+                        components: {
+                            link: (
+                                <a
+                                    href="https://support.wordpress.com/instagram/instagram-widget/"
+                                />
+                            ),
+                        },
+                    }
+                ),
+            },
+            {
+                image: {
+                    src: '/calypso/images/sharing/instagram-media.png',
+                    alt: this.props.translate('Access Instagram photos via the Media Library', {
+                        textOnly: true,
+                    }),
+                },
+                label: this.props.translate(
+                    'Get instant access to all your Instagram photos through the {{link}}Media Library{{/link}}.',
+                    {
+                        components: {
+                            link: <a href="https://support.wordpress.com/media/" />,
+                        },
+                    }
+                ),
+            },
+        ];
+    }
 
-	linkedin() {
-		return [
-			{
-				image: {
-					src: '/calypso/images/sharing/linkedin-publicize.png',
-					alt: this.props.translate( 'Share posts with your LinkedIn connections', { textOnly: true } )
-				},
-				label: this.props.translate( '{{strong}}Connect{{/strong}} to automatically share posts with your LinkedIn connections.', {
-					components: {
-						strong: <strong />
-					}
-				} ),
-			},
-			{
-				image: {
-					src: '/calypso/images/sharing/linkedin-sharing.png',
-					alt: this.props.translate( 'Add a sharing button', { textOnly: true } )
-				},
-				label: this.props.translate(
-					'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their connections.', {
-						components: {
-							link: <a href={ this.getSharingButtonsLink() } />
-						}
-					}
-				),
-			},
-		];
-	}
+    linkedin() {
+        return [
+            {
+                image: {
+                    src: '/calypso/images/sharing/linkedin-publicize.png',
+                    alt: this.props.translate('Share posts with your LinkedIn connections', {
+                        textOnly: true,
+                    }),
+                },
+                label: this.props.translate(
+                    '{{strong}}Connect{{/strong}} to automatically share posts with your LinkedIn connections.',
+                    {
+                        components: {
+                            strong: <strong />,
+                        },
+                    }
+                ),
+            },
+            {
+                image: {
+                    src: '/calypso/images/sharing/linkedin-sharing.png',
+                    alt: this.props.translate('Add a sharing button', { textOnly: true }),
+                },
+                label: this.props.translate(
+                    'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their connections.',
+                    {
+                        components: {
+                            link: <a href={this.getSharingButtonsLink()} />,
+                        },
+                    }
+                ),
+            },
+        ];
+    }
 
-	path() {
-		return [
-			{
-				image: {
-					src: '/calypso/images/sharing/path-publicize.png',
-					alt: this.props.translate( 'Share posts to your Path timeline', { textOnly: true } )
-				},
-				label: this.props.translate( '{{strong}}Connect{{/strong}} to automatically share posts to your Path timeline.', {
-					components: {
-						strong: <strong />
-					}
-				} ),
-			},
-		];
-	}
+    path() {
+        return [
+            {
+                image: {
+                    src: '/calypso/images/sharing/path-publicize.png',
+                    alt: this.props.translate('Share posts to your Path timeline', {
+                        textOnly: true,
+                    }),
+                },
+                label: this.props.translate(
+                    '{{strong}}Connect{{/strong}} to automatically share posts to your Path timeline.',
+                    {
+                        components: {
+                            strong: <strong />,
+                        },
+                    }
+                ),
+            },
+        ];
+    }
 
-	tumblr() {
-		return [
-			{
-				image: {
-					src: '/calypso/images/sharing/tumblr-publicize.png',
-					alt: this.props.translate( 'Share posts to your Tumblr blog', { textOnly: true } )
-				},
-				label: this.props.translate( '{{strong}}Connect{{/strong}} to automatically share posts to your Tumblr blog.', {
-					components: {
-						strong: <strong />
-					}
-				} ),
-			},
-			{
-				image: {
-					src: '/calypso/images/sharing/tumblr-sharing.png',
-					alt: this.props.translate( 'Add a sharing button', { textOnly: true } )
-				},
-				label: this.props.translate(
-					'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their followers.', {
-						components: {
-							link: <a href={ this.getSharingButtonsLink() } />
-						}
-					}
-				),
-			},
-		];
-	}
+    tumblr() {
+        return [
+            {
+                image: {
+                    src: '/calypso/images/sharing/tumblr-publicize.png',
+                    alt: this.props.translate('Share posts to your Tumblr blog', {
+                        textOnly: true,
+                    }),
+                },
+                label: this.props.translate(
+                    '{{strong}}Connect{{/strong}} to automatically share posts to your Tumblr blog.',
+                    {
+                        components: {
+                            strong: <strong />,
+                        },
+                    }
+                ),
+            },
+            {
+                image: {
+                    src: '/calypso/images/sharing/tumblr-sharing.png',
+                    alt: this.props.translate('Add a sharing button', { textOnly: true }),
+                },
+                label: this.props.translate(
+                    'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their followers.',
+                    {
+                        components: {
+                            link: <a href={this.getSharingButtonsLink()} />,
+                        },
+                    }
+                ),
+            },
+        ];
+    }
 
-	twitter() {
-		return [
-			{
-				image: {
-					src: '/calypso/images/sharing/twitter-publicize.png',
-					alt: this.props.translate( 'Share posts to your Twitter followers', { textOnly: true } )
-				},
-				label: this.props.translate( '{{strong}}Connect{{/strong}} to automatically share posts with your Twitter followers.', {
-					components: {
-						strong: <strong />
-					}
-				} ),
-			},
-			{
-				image: {
-					src: '/calypso/images/sharing/twitter-timeline.png',
-					alt: this.props.translate( 'Add a Twitter Timeline Widget', { textOnly: true } )
-				},
-				label: this.props.translate( 'Add a {{link}}Twitter Timeline Widget{{/link}} to display your latest tweets on your site.', {
-					components: {
-						link: <a href="https://support.wordpress.com/widgets/twitter-timeline-widget/" />
-					}
-				} ),
-			},
-		];
-	}
+    twitter() {
+        return [
+            {
+                image: {
+                    src: '/calypso/images/sharing/twitter-publicize.png',
+                    alt: this.props.translate('Share posts to your Twitter followers', {
+                        textOnly: true,
+                    }),
+                },
+                label: this.props.translate(
+                    '{{strong}}Connect{{/strong}} to automatically share posts with your Twitter followers.',
+                    {
+                        components: {
+                            strong: <strong />,
+                        },
+                    }
+                ),
+            },
+            {
+                image: {
+                    src: '/calypso/images/sharing/twitter-timeline.png',
+                    alt: this.props.translate('Add a Twitter Timeline Widget', { textOnly: true }),
+                },
+                label: this.props.translate(
+                    'Add a {{link}}Twitter Timeline Widget{{/link}} to display your latest tweets on your site.',
+                    {
+                        components: {
+                            link: (
+                                <a
+                                    href="https://support.wordpress.com/widgets/twitter-timeline-widget/"
+                                />
+                            ),
+                        },
+                    }
+                ),
+            },
+        ];
+    }
 
-	render() {
-		if ( ! includes( SERVICES_WHITELIST, this.props.service.ID ) ) {
-			return <div className="sharing-service-examples" />;
-		}
+    render() {
+        if (!includes(SERVICES_WHITELIST, this.props.service.ID)) {
+            return <div className="sharing-service-examples" />;
+        }
 
-		const examples = this[ this.props.service.ID ]();
+        const examples = this[this.props.service.ID]();
 
-		return (
-			<div className="sharing-service-examples">
-				{ examples.map( ( example, index ) =>
-					<ServiceExample key={ index } image={ example.image } label={ example.label } single={ 1 === examples.length } />
-				) }
-			</div>
-		);
-	}
+        return (
+            <div className="sharing-service-examples">
+                {examples.map((example, index) => (
+                    <ServiceExample
+                        key={index}
+                        image={example.image}
+                        label={example.label}
+                        single={1 === examples.length}
+                    />
+                ))}
+            </div>
+        );
+    }
 }
 
-export default connect(
-	( state ) => ( {
-		site: getSelectedSite( state ),
-	} ),
-)( localize( SharingServiceExamples ) );
+export default connect(state => ({
+    site: getSelectedSite(state),
+}))(localize(SharingServiceExamples));

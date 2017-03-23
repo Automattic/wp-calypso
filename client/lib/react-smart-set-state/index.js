@@ -3,13 +3,17 @@
  * @param  {object} newState The new state to set
  * @returns {Boolean} True if new values found, false if not
  */
-export default function smartSetState( newState ) {
-	const hasNewValues = Object.keys( newState ).some( function( key ) {
-		return ( ! ( this.state && this.state.hasOwnProperty( key ) ) || ( this.state[ key ] !== newState[ key ] ) );
-	}, this );
-	if ( hasNewValues ) {
-		this.setState( newState );
-		return true;
-	}
-	return false;
+export default function smartSetState(newState) {
+    const hasNewValues = Object.keys(newState).some(
+        function(key) {
+            return !(this.state && this.state.hasOwnProperty(key)) ||
+                this.state[key] !== newState[key];
+        },
+        this
+    );
+    if (hasNewValues) {
+        this.setState(newState);
+        return true;
+    }
+    return false;
 }

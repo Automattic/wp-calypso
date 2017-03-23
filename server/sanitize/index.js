@@ -9,32 +9,32 @@
  *
  * @private
  **/
-function jsSlashEncoder( charStr ) {
-	var code = charStr.charCodeAt( 0 ),
-		hex = code.toString( 16 ).toUpperCase();
+function jsSlashEncoder(charStr) {
+    var code = charStr.charCodeAt(0), hex = code.toString(16).toUpperCase();
 
-	if ( code < 0x80 ) { // ASCII
-		if ( hex.length === 1 ) {
-			return '\\x0' + hex;
-		}
+    if (code < 0x80) {
+        // ASCII
+        if (hex.length === 1) {
+            return '\\x0' + hex;
+        }
 
-		return '\\x' + hex;
-	}
+        return '\\x' + hex;
+    }
 
-	// Unicode
-	switch ( hex.length ) {
-		case 2:
-			return '\\u00' + hex;
-		case 3:
-			return '\\u0' + hex;
-		case 4:
-			return '\\u' + hex;
-		default:
-			// charCodeAt() JS shouldn't return code > 0xFFFF, and only four hex
-			// digits can be encoded via `\u`-encoding, so return REPLACEMENT
-			// CHARACTER U+FFFD.
-			return '\\uFFFD';
-	}
+    // Unicode
+    switch (hex.length) {
+        case 2:
+            return '\\u00' + hex;
+        case 3:
+            return '\\u0' + hex;
+        case 4:
+            return '\\u' + hex;
+        default:
+            // charCodeAt() JS shouldn't return code > 0xFFFF, and only four hex
+            // digits can be encoded via `\u`-encoding, so return REPLACEMENT
+            // CHARACTER U+FFFD.
+            return '\\uFFFD';
+    }
 }
 
 /**
@@ -42,12 +42,14 @@ function jsSlashEncoder( charStr ) {
  * @param {mixed} value The variable to be serialized
  * @return {string} JSON serialized string
  **/
-exports.jsonStringifyForHtml = function( value ) {
-	var jsonInHtmlBlacklist = /[^\x22,\-\.0-9:A-Z\[\x5C\]_a-z{}]/g;
-	var cdataClose = /\]\](?:>|\\x3E|\\u003E)/gi;
-	return JSON.stringify( value )
-		.replace( jsonInHtmlBlacklist, jsSlashEncoder )
-		// prevent breaking out of CDATA context.  Escaping < below is sufficient
-		// to prevent opening a CDATA context.
-		.replace( cdataClose, '\\x5D\\x5D\\x3E' );
+exports.jsonStringifyForHtml = function(value) {
+    var jsonInHtmlBlacklist = /[^\x22,\-\.0-9:A-Z\[\x5C\]_a-z{}]/g;
+    var cdataClose = /\]\](?:>|\\x3E|\\u003E)/gi;
+    return (
+        JSON.stringify(value)
+            .replace(jsonInHtmlBlacklist, jsSlashEncoder)
+            // prevent breaking out of CDATA context.  Escaping < below is sufficient
+            // to prevent opening a CDATA context.
+            .replace(cdataClose, '\\x5D\\x5D\\x3E')
+    );
 };

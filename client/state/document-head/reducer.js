@@ -7,61 +7,61 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	DOCUMENT_HEAD_LINK_ADD,
-	DOCUMENT_HEAD_META_ADD,
-	DOCUMENT_HEAD_TITLE_SET,
-	DOCUMENT_HEAD_UNREAD_COUNT_SET,
-	SERIALIZE,
-	DESERIALIZE
+    DOCUMENT_HEAD_LINK_ADD,
+    DOCUMENT_HEAD_META_ADD,
+    DOCUMENT_HEAD_TITLE_SET,
+    DOCUMENT_HEAD_UNREAD_COUNT_SET,
+    SERIALIZE,
+    DESERIALIZE,
 } from 'state/action-types';
 
-export function title( state = '', action ) {
-	switch ( action.type ) {
-		case DOCUMENT_HEAD_TITLE_SET:
-			return action.title;
-	}
+export function title(state = '', action) {
+    switch (action.type) {
+        case DOCUMENT_HEAD_TITLE_SET:
+            return action.title;
+    }
 
-	return state;
+    return state;
 }
 
-export function unreadCount( state = 0, action ) {
-	switch ( action.type ) {
-		case DOCUMENT_HEAD_UNREAD_COUNT_SET:
-			return action.count;
-	}
+export function unreadCount(state = 0, action) {
+    switch (action.type) {
+        case DOCUMENT_HEAD_UNREAD_COUNT_SET:
+            return action.count;
+    }
 
-	return state;
+    return state;
 }
 
-export function meta( state = [ { property: 'og:site_name', content: 'WordPress.com' } ], action ) {
-	switch ( action.type ) {
-		case DOCUMENT_HEAD_META_ADD:
-			return [ ...state, action.meta ];
-	}
+export function meta(state = [{ property: 'og:site_name', content: 'WordPress.com' }], action) {
+    switch (action.type) {
+        case DOCUMENT_HEAD_META_ADD:
+            return [...state, action.meta];
+    }
 
-	return state;
+    return state;
 }
 
-export function link( state = [], action ) {
-	switch ( action.type ) {
-		case DOCUMENT_HEAD_LINK_ADD:
-			return [ ...state, action.link ];
-	}
+export function link(state = [], action) {
+    switch (action.type) {
+        case DOCUMENT_HEAD_LINK_ADD:
+            return [...state, action.link];
+    }
 
-	return state;
+    return state;
 }
 
-const reducer = combineReducers( {
-	link,
-	meta,
-	title,
-	unreadCount
-} );
+const reducer = combineReducers({
+    link,
+    meta,
+    title,
+    unreadCount,
+});
 
-export default function( state, action ) {
-	if ( SERIALIZE === action.type || DESERIALIZE === action.type ) {
-		return {};
-	}
+export default function(state, action) {
+    if (SERIALIZE === action.type || DESERIALIZE === action.type) {
+        return {};
+    }
 
-	return reducer( state, action );
+    return reducer(state, action);
 }

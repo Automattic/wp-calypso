@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {Number}   siteId   The ID of the site we're querying
  * @return {?Boolean}          Whether the connection status is being requested
  */
-export default function isRequestingJetpackConnectionStatus( state, siteId ) {
-	return get( state.jetpack.connection.requests, [ siteId ], null );
+export default function isRequestingJetpackConnectionStatus(state, siteId) {
+    return get(state.jetpack.connection.requests, [siteId], null);
 }

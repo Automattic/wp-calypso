@@ -9,18 +9,17 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import Version from 'components/version';
 
-export default React.createClass( {
+export default React.createClass({
+    displayName: 'Version',
 
-	displayName: 'Version',
+    mixins: [PureRenderMixin],
 
-	mixins: [ PureRenderMixin ],
-
-	render() {
-		return (
-			<div>
-				<Version icon="my-sites" version={ 4.4 } />
-				<Version icon="plugins" version={ 3.8 } />
-			</div>
-		);
-	}
-} );
+    render() {
+        return (
+            <div>
+                <Version icon="my-sites" version={4.4} />
+                <Version icon="plugins" version={3.8} />
+            </div>
+        );
+    },
+});

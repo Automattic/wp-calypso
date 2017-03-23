@@ -2,10 +2,10 @@
  * Internal dependencies
  */
 import {
-	DOCUMENT_HEAD_LINK_ADD,
-	DOCUMENT_HEAD_META_ADD,
-	DOCUMENT_HEAD_TITLE_SET,
-	DOCUMENT_HEAD_UNREAD_COUNT_SET
+    DOCUMENT_HEAD_LINK_ADD,
+    DOCUMENT_HEAD_META_ADD,
+    DOCUMENT_HEAD_TITLE_SET,
+    DOCUMENT_HEAD_UNREAD_COUNT_SET,
 } from 'state/action-types';
 
 /**
@@ -15,11 +15,11 @@ import {
  * @param  {String} title Document title
  * @return {Object}       Action object
  */
-export function setDocumentHeadTitle( title ) {
-	return {
-		type: DOCUMENT_HEAD_TITLE_SET,
-		title
-	};
+export function setDocumentHeadTitle(title) {
+    return {
+        type: DOCUMENT_HEAD_TITLE_SET,
+        title,
+    };
 }
 
 /**
@@ -29,11 +29,11 @@ export function setDocumentHeadTitle( title ) {
  * @param  {Number} count Unread count
  * @return {Object}       Action object
  */
-export function setDocumentHeadUnreadCount( count ) {
-	return {
-		type: DOCUMENT_HEAD_UNREAD_COUNT_SET,
-		count
-	};
+export function setDocumentHeadUnreadCount(count) {
+    return {
+        type: DOCUMENT_HEAD_UNREAD_COUNT_SET,
+        count,
+    };
 }
 
 /**
@@ -43,11 +43,11 @@ export function setDocumentHeadUnreadCount( count ) {
  * @param  {Object} link Link object
  * @return {Object}      Action object
  */
-export function addDocumentHeadLink( link ) {
-	return {
-		type: DOCUMENT_HEAD_LINK_ADD,
-		link
-	};
+export function addDocumentHeadLink(link) {
+    return {
+        type: DOCUMENT_HEAD_LINK_ADD,
+        link,
+    };
 }
 
 /**
@@ -57,9 +57,9 @@ export function addDocumentHeadLink( link ) {
  * @param  {Object} meta Meta object
  * @return {Object}      Action object
  */
-export function addDocumentHeadMeta( meta ) {
-	return {
-		type: DOCUMENT_HEAD_META_ADD,
-		meta
-	};
+export function addDocumentHeadMeta(meta) {
+    return {
+        type: DOCUMENT_HEAD_META_ADD,
+        meta,
+    };
 }

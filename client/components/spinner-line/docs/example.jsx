@@ -9,11 +9,9 @@ import React, { PureComponent } from 'react';
 import SpinnerLine from 'components/spinner-line';
 
 export default class SpinnerLineExample extends PureComponent {
-	render() {
-		return (
-			<SpinnerLine />
-		);
-	}
+    render() {
+        return <SpinnerLine />;
+    }
 }
 
 SpinnerLineExample.displayName = 'SpinnerLine';

@@ -9,6 +9,6 @@ import { get } from 'lodash';
  * @param {Object} state - Global state tree
  * @return {Boolean} - Whether timezones is being requested
  */
-export default function isRequestingTimezones( state ) {
-	return get( state, 'timezones.isRequesting', false );
+export default function isRequestingTimezones(state) {
+    return get(state, 'timezones.isRequesting', false);
 }

@@ -1,25 +1,20 @@
-import {
-	find,
-	matches,
-	some,
-} from 'lodash';
+import { find, matches, some } from 'lodash';
 
-export function getGuidedTransferError( state, siteId ) {
-	return state.sites.guidedTransfer.error[ siteId ];
+export function getGuidedTransferError(state, siteId) {
+    return state.sites.guidedTransfer.error[siteId];
 }
 
-export function isRequestingGuidedTransferStatus( state, siteId ) {
-	return state.sites.guidedTransfer.isFetching[ siteId ] === true;
+export function isRequestingGuidedTransferStatus(state, siteId) {
+    return state.sites.guidedTransfer.isFetching[siteId] === true;
 }
 
-export function isGuidedTransferInProgress( state, siteId ) {
-	const status = state.sites.guidedTransfer.status[ siteId ];
-	if ( ! status ) {
-		return false;
-	}
+export function isGuidedTransferInProgress(state, siteId) {
+    const status = state.sites.guidedTransfer.status[siteId];
+    if (!status) {
+        return false;
+    }
 
-	return status.upgrade_purchased &&
-		status.host_details_entered;
+    return status.upgrade_purchased && status.host_details_entered;
 }
 
 /**
@@ -30,23 +25,22 @@ export function isGuidedTransferInProgress( state, siteId ) {
  * @param {number} siteId The siteId to check
  * @return {bool} true if guided transfer is awaiting purchase
  */
-export function isGuidedTransferAwaitingPurchase( state, siteId ) {
-	const status = state.sites.guidedTransfer.status[ siteId ];
-	if ( ! status ) {
-		return false;
-	}
+export function isGuidedTransferAwaitingPurchase(state, siteId) {
+    const status = state.sites.guidedTransfer.status[siteId];
+    if (!status) {
+        return false;
+    }
 
-	return ( ! status.upgrade_purchased ) &&
-		status.host_details_entered;
+    return !status.upgrade_purchased && status.host_details_entered;
 }
 
-export function getGuidedTransferIssues( state, siteId ) {
-	const gt = state.sites.guidedTransfer.status[ siteId ];
-	if ( ! gt ) {
-		return null;
-	}
+export function getGuidedTransferIssues(state, siteId) {
+    const gt = state.sites.guidedTransfer.status[siteId];
+    if (!gt) {
+        return null;
+    }
 
-	return gt.issues;
+    return gt.issues;
 }
 
 /**
@@ -57,24 +51,24 @@ export function getGuidedTransferIssues( state, siteId ) {
  * @param {any} siteId  The site ID to check
  * @returns {bool} true if the site is confirmed eligible for transfer, false otherwise
  */
-export function isEligibleForGuidedTransfer( state, siteId ) {
-	const issues = getGuidedTransferIssues( state, siteId );
-	if ( issues === null ) {
-		// No information available
-		return false;
-	}
+export function isEligibleForGuidedTransfer(state, siteId) {
+    const issues = getGuidedTransferIssues(state, siteId);
+    if (issues === null) {
+        // No information available
+        return false;
+    }
 
-	return ! some( issues, issue => issue.prevents_transfer );
+    return !some(issues, issue => issue.prevents_transfer);
 }
 
-export function getGuidedTransferIssue( state, siteId, options = {} ) {
-	const issues = getGuidedTransferIssues( state, siteId );
-	if ( issues === null ) {
-		// No information available
-		return false;
-	}
+export function getGuidedTransferIssue(state, siteId, options = {}) {
+    const issues = getGuidedTransferIssues(state, siteId);
+    if (issues === null) {
+        // No information available
+        return false;
+    }
 
-	return find( issues, matches( options ) ) || null;
+    return find(issues, matches(options)) || null;
 }
 
 /**
@@ -87,19 +81,19 @@ export function getGuidedTransferIssue( state, siteId, options = {} ) {
  * @param {any} siteId  The site ID to check
  * @returns {bool} true if the site is confirmed eligible for transfer, false otherwise
  */
-export function isGuidedTransferAvailableForAllSites( state, siteId ) {
-	const issues = getGuidedTransferIssues( state, siteId );
-	if ( issues === null ) {
-		// No information available
-		return false;
-	}
+export function isGuidedTransferAvailableForAllSites(state, siteId) {
+    const issues = getGuidedTransferIssues(state, siteId);
+    if (issues === null) {
+        // No information available
+        return false;
+    }
 
-	return ! some( issues, issue => {
-		return issue.reason === 'unavailable' || issue.reason === 'vacation';
-	} );
+    return !some(issues, issue => {
+        return issue.reason === 'unavailable' || issue.reason === 'vacation';
+    });
 }
 
-export function isGuidedTransferSavingHostDetails( state, siteId ) {
-	const status = state.sites.guidedTransfer.isSaving[ siteId ];
-	return !! status;
+export function isGuidedTransferSavingHostDetails(state, siteId) {
+    const status = state.sites.guidedTransfer.isSaving[siteId];
+    return !!status;
 }

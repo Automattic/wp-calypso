@@ -14,22 +14,29 @@ import HeaderCake from 'components/header-cake';
  */
 const noop = function() {};
 
-module.exports = React.createClass( {
-	displayName: 'Headers',
+module.exports = React.createClass({
+    displayName: 'Headers',
 
-	mixins: [ PureRenderMixin ],
+    mixins: [PureRenderMixin],
 
-	render() {
-		return (
-			<div>
-				<HeaderCake onClick={ noop }>
-					Subsection Header aka Header Cake
-				</HeaderCake>
-				<p>Clicking header cake returns to previous section.</p>
-				<HeaderCake onClick={ noop } actionIcon="status" actionText="Action" actionOnClick={ () => { alert( 'i <3 cake' ) } }>
-					Header Cake with optional Action Button
-				</HeaderCake>
-			</div>
-		);
-	}
-} );
+    render() {
+        return (
+            <div>
+                <HeaderCake onClick={noop}>
+                    Subsection Header aka Header Cake
+                </HeaderCake>
+                <p>Clicking header cake returns to previous section.</p>
+                <HeaderCake
+                    onClick={noop}
+                    actionIcon="status"
+                    actionText="Action"
+                    actionOnClick={() => {
+                        alert('i <3 cake');
+                    }}
+                >
+                    Header Cake with optional Action Button
+                </HeaderCake>
+            </div>
+        );
+    },
+});

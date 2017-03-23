@@ -16,27 +16,30 @@ import { cartItems } from 'lib/cart-values';
 import upgradesActions from 'lib/upgrades/actions';
 import page from 'page';
 
-const redirectToCart = siteSlug => () => {
-	upgradesActions.addItem( cartItems.guidedTransferItem() );
-	page( `/checkout/${ siteSlug }` );
-};
+const redirectToCart = siteSlug =>
+    () => {
+        upgradesActions.addItem(cartItems.guidedTransferItem());
+        page(`/checkout/${siteSlug}`);
+    };
 
-const CompletePurchaseNotice = ( { translate, siteSlug } ) =>
-	<Notice
-		status="is-warning"
-		showDismiss={ false }
-		text={ translate(
-			"It looks like you've started a Guided Transfer. " +
-			'We just need your payment to confirm the transfer and ' +
-			"then we'll get started!" ) }
-	>
-		<NoticeAction onClick={ redirectToCart( siteSlug ) }>
-			{ translate( 'Continue' ) }
-		</NoticeAction>
-	</Notice>;
+const CompletePurchaseNotice = ({ translate, siteSlug }) => (
+    <Notice
+        status="is-warning"
+        showDismiss={false}
+        text={translate(
+            "It looks like you've started a Guided Transfer. " +
+                'We just need your payment to confirm the transfer and ' +
+                "then we'll get started!"
+        )}
+    >
+        <NoticeAction onClick={redirectToCart(siteSlug)}>
+            {translate('Continue')}
+        </NoticeAction>
+    </Notice>
+);
 
-const mapStateToProps = state => ( {
-	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
-} );
+const mapStateToProps = state => ({
+    siteSlug: getSiteSlug(state, getSelectedSiteId(state)),
+});
 
-export default connect( mapStateToProps )( localize( CompletePurchaseNotice ) );
+export default connect(mapStateToProps)(localize(CompletePurchaseNotice));

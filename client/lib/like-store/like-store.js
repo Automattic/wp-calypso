@@ -1,39 +1,33 @@
 /**
  * External Dependencies
  */
-var assign = require( 'lodash/assign' ),
-	clone = require( 'lodash/clone' ),
-	config = require( 'config' ),
-	//debug = require( 'debug' )( 'calypso:lib:like-store' ),
-	isEqual = require( 'lodash/isEqual' );
+var assign = require('lodash/assign'),
+    clone = require('lodash/clone'),
+    config = require('config'),
+    //debug = require( 'debug' )( 'calypso:lib:like-store' ),
+    isEqual = require('lodash/isEqual');
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	FeedPostStoreActionType = require( 'lib/feed-post-store/constants' ).action,
-	LikeActions = require( './actions' ),
-	key = require( './utils' ).key;
+var Dispatcher = require('dispatcher'),
+    Emitter = require('lib/mixins/emitter'),
+    FeedPostStoreActionType = require('lib/feed-post-store/constants').action,
+    LikeActions = require('./actions'),
+    key = require('./utils').key;
 
+var _likesForPost = {}, LikeStore, receivedErrors = [];
 
-
-var _likesForPost = {},
-	LikeStore,
-	receivedErrors = [];
-
-
-function getLikes( siteId, postId ) {
-	return _likesForPost[ key( siteId, postId ) ];
+function getLikes(siteId, postId) {
+    return _likesForPost[key(siteId, postId)];
 }
 
-function setLikes( siteId, postId, likes ) {
-	_likesForPost[ key( siteId, postId ) ] = likes;
+function setLikes(siteId, postId, likes) {
+    _likesForPost[key(siteId, postId)] = likes;
 }
-
 
 LikeStore = {
-	/**
+    /**
 	 * Get a list of people who have liked a post (currently limited to 90 people by endpoint)
 	 *
 	 * @returns {object} A map with one property, likes, which contains an array of users
@@ -41,20 +35,20 @@ LikeStore = {
 	 * @param {int} Site ID
 	 * @param {int} Post ID
 	 */
-	getLikersForPost: function( siteId, postId ) {
-		var likes = getLikes( siteId, postId );
+    getLikersForPost: function(siteId, postId) {
+        var likes = getLikes(siteId, postId);
 
-		// Do we have likes for this post already?
-		if ( likes && likes.likes ) {
-			return likes.likes;
-		}
+        // Do we have likes for this post already?
+        if (likes && likes.likes) {
+            return likes.likes;
+        }
 
-		LikeActions.fetchLikes( siteId, postId );
+        LikeActions.fetchLikes(siteId, postId);
 
-		return null;
-	},
+        return null;
+    },
 
-	/**
+    /**
 	 * Get a count of likes for a post
 	 *
 	 * @returns {int} Object with count or indicator that fetching is happening
@@ -62,20 +56,20 @@ LikeStore = {
 	 * @param {int} Site ID
 	 * @param {int} Post ID
 	 */
-	getLikeCountForPost: function( siteId, postId ) {
-		var likes = getLikes( siteId, postId );
+    getLikeCountForPost: function(siteId, postId) {
+        var likes = getLikes(siteId, postId);
 
-		// Do we have likes for this post already?
-		if ( likes && likes.count != null ) {
-			return likes.count;
-		}
+        // Do we have likes for this post already?
+        if (likes && likes.count != null) {
+            return likes.count;
+        }
 
-		LikeActions.fetchLikes( siteId, postId );
+        LikeActions.fetchLikes(siteId, postId);
 
-		return null;
-	},
+        return null;
+    },
 
-	/**
+    /**
 	 * Check if a post is liked by the current user
 	 *
 	 * @returns {boolean}
@@ -83,147 +77,144 @@ LikeStore = {
 	 * @param {int} Site ID
 	 * @param {int} Post ID
 	 */
-	isPostLikedByCurrentUser: function( siteId, postId ) {
-		var likes = getLikes( siteId, postId );
+    isPostLikedByCurrentUser: function(siteId, postId) {
+        var likes = getLikes(siteId, postId);
 
-		// Do we have likes for this post already?
-		if ( likes && likes.i_like != null ) {
-			return likes.i_like;
-		}
+        // Do we have likes for this post already?
+        if (likes && likes.i_like != null) {
+            return likes.i_like;
+        }
 
-		LikeActions.fetchLikes( siteId, postId );
+        LikeActions.fetchLikes(siteId, postId);
 
-		return null;
-	},
+        return null;
+    },
 
-	receivePostLikes: function( action ) {
-		if ( ! action || action.error ) {
-			if ( action.error ) {
-				receivedErrors.push( action );
-			}
-			return;
-		}
+    receivePostLikes: function(action) {
+        if (!action || action.error) {
+            if (action.error) {
+                receivedErrors.push(action);
+            }
+            return;
+        }
 
-		if ( ! action.siteId || ! action.postId ) {
-			return;
-		}
+        if (!action.siteId || !action.postId) {
+            return;
+        }
 
-		var currentLike = getLikes( action.siteId, action.postId );
+        var currentLike = getLikes(action.siteId, action.postId);
 
-		// adapt response to our format
-		var receivedLike = {
-			count: action.data.found,
-			likes: action.data.likes,
-			i_like: action.data.i_like
-		};
+        // adapt response to our format
+        var receivedLike = {
+            count: action.data.found,
+            likes: action.data.likes,
+            i_like: action.data.i_like,
+        };
 
-		if ( ! isEqual( receivedLike, currentLike ) ) {
-			setLikes( action.siteId, action.postId, receivedLike );
-			LikeStore.emit( 'change' );
-		}
-	},
+        if (!isEqual(receivedLike, currentLike)) {
+            setLikes(action.siteId, action.postId, receivedLike);
+            LikeStore.emit('change');
+        }
+    },
 
-	receiveUserLikeChange: function( action ) {
-		if ( ! action || action.error ) {
-			if ( action.error ) {
-				receivedErrors.push( action );
-			}
-			return;
-		}
+    receiveUserLikeChange: function(action) {
+        if (!action || action.error) {
+            if (action.error) {
+                receivedErrors.push(action);
+            }
+            return;
+        }
 
-		this.receivePost( action.siteId, action.postId, action.data );
-	},
+        this.receivePost(action.siteId, action.postId, action.data);
+    },
 
-	receivePost: function( siteId, postId, post ) {
-		if ( ! siteId || ! postId || ! post || post.is_external ) {
-			return;
-		}
+    receivePost: function(siteId, postId, post) {
+        if (!siteId || !postId || !post || post.is_external) {
+            return;
+        }
 
-		var currentLike = getLikes( siteId, postId ) || {};
+        var currentLike = getLikes(siteId, postId) || {};
 
-		if ( currentLike.count !== post.like_count || currentLike.i_like !== post.i_like ) {
-			setLikes( siteId, postId, {
-				count: post.like_count,
-				likes: currentLike.likes,
-				i_like: !! post.i_like
-			} );
-			LikeStore.emit( 'change' );
-		}
-	},
+        if (currentLike.count !== post.like_count || currentLike.i_like !== post.i_like) {
+            setLikes(siteId, postId, {
+                count: post.like_count,
+                likes: currentLike.likes,
+                i_like: !!post.i_like,
+            });
+            LikeStore.emit('change');
+        }
+    },
 
-	receiveLike: function( action ) {
-		var current = getLikes( action.siteId, action.postId ),
-			newLikes = clone( current );
+    receiveLike: function(action) {
+        var current = getLikes(action.siteId, action.postId), newLikes = clone(current);
 
-		newLikes.count += 1;
-		newLikes.i_like = true;
+        newLikes.count += 1;
+        newLikes.i_like = true;
 
-		setLikes( action.siteId, action.postId, newLikes );
+        setLikes(action.siteId, action.postId, newLikes);
 
-		LikeStore.emit( 'change' );
+        LikeStore.emit('change');
+    },
 
-	},
+    receiveUnlike: function(action) {
+        var current = getLikes(action.siteId, action.postId), newLikes = clone(current);
 
-	receiveUnlike: function( action ) {
-		var current = getLikes( action.siteId, action.postId ),
-			newLikes = clone( current );
+        newLikes.count -= 1;
+        newLikes.i_like = false;
 
-		newLikes.count -= 1;
-		newLikes.i_like = false;
+        setLikes(action.siteId, action.postId, newLikes);
 
-		setLikes( action.siteId, action.postId, newLikes );
-
-		LikeStore.emit( 'change' );
-	}
+        LikeStore.emit('change');
+    },
 };
 
-if ( config( 'env' ) === 'development' ) {
-	assign( LikeStore, {
-		// These bedlumps are for testing.
-		// Ideally, we'd pull these out with envify for prod
-		_all: function() {
-			return _likesForPost;
-		},
-		_reset: function() {
-			_likesForPost = {};
-		}
-	} );
+if (config('env') === 'development') {
+    assign(LikeStore, {
+        // These bedlumps are for testing.
+        // Ideally, we'd pull these out with envify for prod
+        _all: function() {
+            return _likesForPost;
+        },
+        _reset: function() {
+            _likesForPost = {};
+        },
+    });
 }
 
-Emitter( LikeStore );
+Emitter(LikeStore);
 
 // Increase the max number of listeners from 10 to 100
-LikeStore.setMaxListeners( 100 );
+LikeStore.setMaxListeners(100);
 
-LikeStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+LikeStore.dispatchToken = Dispatcher.register(function(payload) {
+    var action = payload.action;
 
-	switch ( action.type ) {
-		case 'LIKE_POST':
-			LikeStore.receiveLike( action );
-			break;
+    switch (action.type) {
+        case 'LIKE_POST':
+            LikeStore.receiveLike(action);
+            break;
 
-		case 'UNLIKE_POST':
-			LikeStore.receiveUnlike( action );
-			break;
+        case 'UNLIKE_POST':
+            LikeStore.receiveUnlike(action);
+            break;
 
-		case 'RECEIVE_POST_LIKES':
-			LikeStore.receivePostLikes( action );
-			break;
+        case 'RECEIVE_POST_LIKES':
+            LikeStore.receivePostLikes(action);
+            break;
 
-		case 'RECEIVE_LIKE_RESPONSE':
-		case 'RECEIVE_UNLIKE_RESPONSE':
-			LikeStore.receiveUserLikeChange( action );
-			break;
+        case 'RECEIVE_LIKE_RESPONSE':
+        case 'RECEIVE_UNLIKE_RESPONSE':
+            LikeStore.receiveUserLikeChange(action);
+            break;
 
-		case FeedPostStoreActionType.RECEIVE_FEED_POST:
-			if ( ! action.data ) {
-				return;
-			}
-			LikeStore.receivePost( action.data.site_ID, action.data.ID, action.data );
+        case FeedPostStoreActionType.RECEIVE_FEED_POST:
+            if (!action.data) {
+                return;
+            }
+            LikeStore.receivePost(action.data.site_ID, action.data.ID, action.data);
 
-			break;
-	}
-} );
+            break;
+    }
+});
 
 module.exports = LikeStore;

@@ -12,7 +12,7 @@ import CreditCardForm from 'blocks/credit-card-form';
 import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-placeholder';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
-import HeaderCake from 'components/header-cake' ;
+import HeaderCake from 'components/header-cake';
 import { isDataLoading, recordPageView } from 'me/purchases/utils';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
@@ -24,65 +24,63 @@ import userFactory from 'lib/user';
 const user = userFactory();
 
 class AddCardDetails extends PurchaseCardDetails {
-	static propTypes = {
-		clearPurchases: PropTypes.func.isRequired,
-		hasLoadedSites: PropTypes.bool.isRequired,
-		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
-		selectedPurchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [
-			PropTypes.object,
-			PropTypes.bool
-		] )
-	};
+    static propTypes = {
+        clearPurchases: PropTypes.func.isRequired,
+        hasLoadedSites: PropTypes.bool.isRequired,
+        hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+        selectedPurchase: PropTypes.object,
+        selectedSite: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+    };
 
-	componentWillMount() {
-		this.redirectIfDataIsInvalid();
+    componentWillMount() {
+        this.redirectIfDataIsInvalid();
 
-		recordPageView( 'add_card_details', this.props );
-	}
+        recordPageView('add_card_details', this.props);
+    }
 
-	componentWillReceiveProps( nextProps ) {
-		this.redirectIfDataIsInvalid( nextProps );
+    componentWillReceiveProps(nextProps) {
+        this.redirectIfDataIsInvalid(nextProps);
 
-		recordPageView( 'add_card_details', this.props, nextProps );
-	}
+        recordPageView('add_card_details', this.props, nextProps);
+    }
 
-	render() {
-		if ( isDataLoading( this.props ) ) {
-			return (
-				<div>
-					<QueryUserPurchases userId={ user.get().ID } />
+    render() {
+        if (isDataLoading(this.props)) {
+            return (
+                <div>
+                    <QueryUserPurchases userId={user.get().ID} />
 
-					<CreditCardFormLoadingPlaceholder title={ titles.addCardDetails } />
-				</div>
-			);
-		}
+                    <CreditCardFormLoadingPlaceholder title={titles.addCardDetails} />
+                </div>
+            );
+        }
 
-		return (
-			<Main>
-				<HeaderCake onClick={ this.goToManagePurchase }>{ titles.addCardDetails }</HeaderCake>
+        return (
+            <Main>
+                <HeaderCake onClick={this.goToManagePurchase}>{titles.addCardDetails}</HeaderCake>
 
-				<CreditCardForm
-					apiParams={ this.getApiParams() }
-					createPaygateToken={ this.createPaygateToken }
-					recordFormSubmitEvent={ this.recordFormSubmitEvent }
-					successCallback={ this.successCallback } />
-			</Main>
-		);
-	}
+                <CreditCardForm
+                    apiParams={this.getApiParams()}
+                    createPaygateToken={this.createPaygateToken}
+                    recordFormSubmitEvent={this.recordFormSubmitEvent}
+                    successCallback={this.successCallback}
+                />
+            </Main>
+        );
+    }
 }
 
-const mapStateToProps = ( state, { purchaseId } ) => {
-	return {
-		hasLoadedSites: ! isRequestingSites( state ),
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase: getByPurchaseId( state, purchaseId ),
-		selectedSite: getSelectedSiteSelector( state )
-	};
+const mapStateToProps = (state, { purchaseId }) => {
+    return {
+        hasLoadedSites: !isRequestingSites(state),
+        hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer(state),
+        selectedPurchase: getByPurchaseId(state, purchaseId),
+        selectedSite: getSelectedSiteSelector(state),
+    };
 };
 
 const mapDispatchToProps = {
-	clearPurchases
+    clearPurchases,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( AddCardDetails );
+export default connect(mapStateToProps, mapDispatchToProps)(AddCardDetails);

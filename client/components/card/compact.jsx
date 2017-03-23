@@ -10,16 +10,18 @@ import classnames from 'classnames';
  */
 import Card from 'components/card';
 
-export default React.createClass( {
-	displayName: 'CompactCard',
+export default React.createClass({
+    displayName: 'CompactCard',
 
-	render: function() {
-		const props = assign( {}, this.props, { className: classnames( this.props.className, 'is-compact' ) } );
+    render: function() {
+        const props = assign({}, this.props, {
+            className: classnames(this.props.className, 'is-compact'),
+        });
 
-		return (
-			<Card { ...props }>
-				{ this.props.children }
-			</Card>
-		);
-	}
-} );
+        return (
+            <Card {...props}>
+                {this.props.children}
+            </Card>
+        );
+    },
+});

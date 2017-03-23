@@ -9,22 +9,22 @@ import deepFreeze from 'deep-freeze';
  */
 import { getAccountRecoveryResetUserData } from '../';
 
-describe( 'getAccountRecoveryResetUserData()', () => {
-	it( 'should return the userData substate tree.', () => {
-		const expectedUserData = {
-			user: 'userlogin',
-			firstName: 'Foo',
-			lastName: 'Bar',
-			url: 'site.example.com',
-		};
-		const state = deepFreeze( {
-			accountRecovery: {
-				reset: {
-					userData: expectedUserData,
-				},
-			},
-		} );
+describe('getAccountRecoveryResetUserData()', () => {
+    it('should return the userData substate tree.', () => {
+        const expectedUserData = {
+            user: 'userlogin',
+            firstName: 'Foo',
+            lastName: 'Bar',
+            url: 'site.example.com',
+        };
+        const state = deepFreeze({
+            accountRecovery: {
+                reset: {
+                    userData: expectedUserData,
+                },
+            },
+        });
 
-		assert.deepEqual( getAccountRecoveryResetUserData( state ), expectedUserData );
-	} );
-} );
+        assert.deepEqual(getAccountRecoveryResetUserData(state), expectedUserData);
+    });
+});

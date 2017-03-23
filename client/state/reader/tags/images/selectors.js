@@ -10,14 +10,14 @@ import { get } from 'lodash';
  * @param  {String}  tag 	Tag
  * @return {Object} Image
  */
-export function getTagImages( state, tag ) {
-	const items = get( state, 'reader.tags.images.items' );
+export function getTagImages(state, tag) {
+    const items = get(state, 'reader.tags.images.items');
 
-	if ( ! items || ! items[ tag ] ) {
-		return undefined;
-	}
+    if (!items || !items[tag]) {
+        return undefined;
+    }
 
-	return state.reader.tags.images.items[ tag ];
+    return state.reader.tags.images.items[tag];
 }
 
 /**
@@ -27,7 +27,6 @@ export function getTagImages( state, tag ) {
  * @param  {String}  tag 	Tag
  * @return {Boolean} Whether a request is in progress or we already have tags
  */
-export function shouldRequestTagImages( state, tag ) {
-	return ! ( getTagImages( state, tag ) || state.reader.tags.images.requesting[ tag ] );
+export function shouldRequestTagImages(state, tag) {
+    return !(getTagImages(state, tag) || state.reader.tags.images.requesting[tag]);
 }
-

@@ -15,6 +15,6 @@ import { getBillingTransactions } from './';
  * @param  {Object}  state   Global state tree
  * @return {?Array}          An array of upcoming transactions
  */
-export default function getUpcomingBillingTransactions( state ) {
-	return get( getBillingTransactions( state ), 'upcoming', null );
+export default function getUpcomingBillingTransactions(state) {
+    return get(getBillingTransactions(state), 'upcoming', null);
 }

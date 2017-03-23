@@ -8,31 +8,35 @@ import React from 'react';
  */
 import { doSearch, getSearchOpen } from 'lib/mixins/url-search';
 
-export default function( Component ) {
-	const componentName = Component.displayName || Component.name || '';
+export default function(Component) {
+    const componentName = Component.displayName || Component.name || '';
 
-	return class extends React.Component {
-		state = {
-			searchOpen: false
-		};
+    return class extends React.Component {
+        state = {
+            searchOpen: false,
+        };
 
-		displayName = 'Searchable' + componentName;
+        displayName = 'Searchable' + componentName;
 
-		constructor(props) {
-			super(props);
+        constructor(props) {
+            super(props);
 
-			this.doSearch = doSearch.bind( this );
-			this.getSearchOpen = getSearchOpen.bind( this );
-		}
+            this.doSearch = doSearch.bind(this);
+            this.getSearchOpen = getSearchOpen.bind(this);
+        }
 
-		componentWillReceiveProps = ( { search } ) => ! search && this.setState( { searchOpen: false } );
+        componentWillReceiveProps = ({ search }) => !search && this.setState({ searchOpen: false });
 
-		render() {
-			return <Component { ...{
-				...this.props,
-				doSearch: this.doSearch,
-				getSearchOpen: this.getSearch,
-			} } />
-		}
-	};
+        render() {
+            return (
+                <Component
+                    {...{
+                        ...this.props,
+                        doSearch: this.doSearch,
+                        getSearchOpen: this.getSearch,
+                    }}
+                />
+            );
+        }
+    };
 }

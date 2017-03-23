@@ -21,80 +21,86 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 
 class StateSelect extends Component {
-	static instances = 0;
+    static instances = 0;
 
-	componentWillMount() {
-		this.instance = ++this.constructor.instances;
-	}
+    componentWillMount() {
+        this.instance = ++this.constructor.instances;
+    }
 
-	recordStateSelectClick = () => {
-		const { eventFormName, recordGoogleEvent: recordEvent } = this.props;
+    recordStateSelectClick = () => {
+        const { eventFormName, recordGoogleEvent: recordEvent } = this.props;
 
-		if ( eventFormName ) {
-			recordEvent( 'Upgrades', `Clicked ${ eventFormName } State Select` );
-		}
-	};
+        if (eventFormName) {
+            recordEvent('Upgrades', `Clicked ${eventFormName} State Select`);
+        }
+    };
 
-	focus() {
-		const node = ReactDom.findDOMNode( this.refs.input );
-		if ( node ) {
-			node.focus();
-			scrollIntoViewport( node );
-		} else {
-			this.refs.state.focus();
-		}
-	}
+    focus() {
+        const node = ReactDom.findDOMNode(this.refs.input);
+        if (node) {
+            node.focus();
+            scrollIntoViewport(node);
+        } else {
+            this.refs.state.focus();
+        }
+    }
 
-	render() {
-		const classes = classNames( this.props.additionalClasses, 'state' );
+    render() {
+        const classes = classNames(this.props.additionalClasses, 'state');
 
-		return (
-			<div>
-				{ this.props.countryCode && <QueryCountryStates countryCode={ this.props.countryCode } /> }
-				{ isEmpty( this.props.countryStates )
-					? <Input ref="input" { ...this.props } />
-					: <div className={ classes }>
-						<FormLabel htmlFor={ `${ this.constructor.name }-${ this.instance }` }>{ this.props.label }</FormLabel>
-						<FormSelect
-							ref="input"
-							id={ `${ this.constructor.name }-${ this.instance }` }
-							name={ this.props.name }
-							value={ this.props.value }
-							disabled={ this.props.disabled }
-							onChange={ this.props.onChange }
-							onClick={ this.recordStateSelectClick }
-							isError={ this.props.isError } >
+        return (
+            <div>
+                {this.props.countryCode &&
+                    <QueryCountryStates countryCode={this.props.countryCode} />}
+                {isEmpty(this.props.countryStates)
+                    ? <Input ref="input" {...this.props} />
+                    : <div className={classes}>
+                          <FormLabel htmlFor={`${this.constructor.name}-${this.instance}`}>
+                              {this.props.label}
+                          </FormLabel>
+                          <FormSelect
+                              ref="input"
+                              id={`${this.constructor.name}-${this.instance}`}
+                              name={this.props.name}
+                              value={this.props.value}
+                              disabled={this.props.disabled}
+                              onChange={this.props.onChange}
+                              onClick={this.recordStateSelectClick}
+                              isError={this.props.isError}
+                          >
 
-							<option key="--" value="--" disabled="disabled">{ this.props.translate( 'Select State' ) }</option>
-							{ this.props.countryStates.map( ( state ) =>
-								<option key={ state.code } value={ state.code }>{ state.name }</option>
-							) }
-						</FormSelect>
-					</div>
-				}
-				{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
-			</div>
-		);
-	}
+                              <option key="--" value="--" disabled="disabled">
+                                  {this.props.translate('Select State')}
+                              </option>
+                              {this.props.countryStates.map(state => (
+                                  <option key={state.code} value={state.code}>{state.name}</option>
+                              ))}
+                          </FormSelect>
+                      </div>}
+                {this.props.errorMessage &&
+                    <FormInputValidation text={this.props.errorMessage} isError />}
+            </div>
+        );
+    }
 }
 
 StateSelect.propTypes = {
-	additionalClasses: PropTypes.string,
-	countryCode: PropTypes.string,
-	countryStates: PropTypes.array,
-	disabled: PropTypes.bool,
-	errorMessage: PropTypes.string,
-	eventFormName: PropTypes.string,
-	isError: PropTypes.bool,
-	label: PropTypes.string,
-	name: PropTypes.string,
-	onChange: PropTypes.func,
-	value: PropTypes.string,
+    additionalClasses: PropTypes.string,
+    countryCode: PropTypes.string,
+    countryStates: PropTypes.array,
+    disabled: PropTypes.bool,
+    errorMessage: PropTypes.string,
+    eventFormName: PropTypes.string,
+    isError: PropTypes.bool,
+    label: PropTypes.string,
+    name: PropTypes.string,
+    onChange: PropTypes.func,
+    value: PropTypes.string,
 };
 
 export default connect(
-	( state, { countryCode } ) => ( {
-		countryStates: countryCode ? getCountryStates( state, countryCode ) : []
-	} ),
-	{ recordGoogleEvent }
-)( localize( StateSelect ) );
+    (state, { countryCode }) => ({
+        countryStates: countryCode ? getCountryStates(state, countryCode) : [],
+    }),
+    { recordGoogleEvent }
+)(localize(StateSelect));

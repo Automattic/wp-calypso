@@ -21,62 +21,69 @@ import { States } from 'state/site-settings/exporter/constants';
  * Displays local notices for the Export tab of Site Settings
  */
 class Notices extends Component {
-	exportNotice() {
-		const {
-			exportDidComplete,
-			exportDidFail,
-			exportDownloadURL,
-			translate,
-		} = this.props;
+    exportNotice() {
+        const {
+            exportDidComplete,
+            exportDidFail,
+            exportDownloadURL,
+            translate,
+        } = this.props;
 
-		if ( exportDidComplete ) {
-			return (
-				<Notice
-					status="is-success"
-					showDismiss={ false }
-					text={ translate( 'Your export was successful! ' +
-						'A download link has also been sent to your email.' ) }
-				>
-					<NoticeAction href={ exportDownloadURL }>
-						{ translate( 'Download' ) }
-					</NoticeAction>
-				</Notice>
-			);
-		}
-		if ( exportDidFail ) {
-			return (
-				<Notice
-					status="is-error"
-					showDismiss={ false }
-					text={ translate( 'There was a problem preparing your ' +
-						'export file. Please check your connection and try ' +
-						'again, or contact support.' ) }
-				>
-					<NoticeAction href={ support.CALYPSO_CONTACT }>
-						{ translate( 'Get Help' ) }
-					</NoticeAction>
-				</Notice>
-			);
-		}
+        if (exportDidComplete) {
+            return (
+                <Notice
+                    status="is-success"
+                    showDismiss={false}
+                    text={translate(
+                        'Your export was successful! ' +
+                            'A download link has also been sent to your email.'
+                    )}
+                >
+                    <NoticeAction href={exportDownloadURL}>
+                        {translate('Download')}
+                    </NoticeAction>
+                </Notice>
+            );
+        }
+        if (exportDidFail) {
+            return (
+                <Notice
+                    status="is-error"
+                    showDismiss={false}
+                    text={translate(
+                        'There was a problem preparing your ' +
+                            'export file. Please check your connection and try ' +
+                            'again, or contact support.'
+                    )}
+                >
+                    <NoticeAction href={support.CALYPSO_CONTACT}>
+                        {translate('Get Help')}
+                    </NoticeAction>
+                </Notice>
+            );
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	render() {
-		return (
-			<div>
-				{ this.exportNotice() }
-				{ this.props.isGuidedTransferAwaitingPurchase && <CompletePurchaseNotice /> }
-			</div>
-		);
-	}
+    render() {
+        return (
+            <div>
+                {this.exportNotice()}
+                {this.props.isGuidedTransferAwaitingPurchase && <CompletePurchaseNotice />}
+            </div>
+        );
+    }
 }
 
-const mapStateToProps = ( state ) => ( {
-	exportDidComplete: getExportingState( state, getSelectedSiteId( state ) ) === States.COMPLETE,
-	exportDidFail: getExportingState( state, getSelectedSiteId( state ) ) === States.FAILED,
-	exportDownloadURL: state.siteSettings.exporter.downloadURL,
-	isGuidedTransferAwaitingPurchase: isGuidedTransferAwaitingPurchase( state, getSelectedSiteId( state ) ),
-} );
+const mapStateToProps = state => ({
+    exportDidComplete: getExportingState(state, getSelectedSiteId(state)) === States.COMPLETE,
+    exportDidFail: getExportingState(state, getSelectedSiteId(state)) === States.FAILED,
+    exportDownloadURL: state.siteSettings.exporter.downloadURL,
+    isGuidedTransferAwaitingPurchase: isGuidedTransferAwaitingPurchase(
+        state,
+        getSelectedSiteId(state)
+    ),
+});
 
-export default connect( mapStateToProps )( localize( Notices ) );
+export default connect(mapStateToProps)(localize(Notices));

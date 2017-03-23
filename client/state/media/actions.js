@@ -7,16 +7,16 @@ import { castArray } from 'lodash';
  * Internal dependencies
  */
 import {
-	MEDIA_DELETE,
-	MEDIA_ITEM_REQUEST,
-	MEDIA_ITEM_REQUEST_FAILURE,
-	MEDIA_ITEM_REQUEST_SUCCESS,
-	MEDIA_ITEM_REQUESTING,
-	MEDIA_RECEIVE,
-	MEDIA_REQUEST,
-	MEDIA_REQUEST_FAILURE,
-	MEDIA_REQUEST_SUCCESS,
-	MEDIA_REQUESTING
+    MEDIA_DELETE,
+    MEDIA_ITEM_REQUEST,
+    MEDIA_ITEM_REQUEST_FAILURE,
+    MEDIA_ITEM_REQUEST_SUCCESS,
+    MEDIA_ITEM_REQUESTING,
+    MEDIA_RECEIVE,
+    MEDIA_REQUEST,
+    MEDIA_REQUEST_FAILURE,
+    MEDIA_REQUEST_SUCCESS,
+    MEDIA_REQUESTING,
 } from 'state/action-types';
 
 /**
@@ -29,14 +29,14 @@ import {
  * @param  {Object}         query  Query Object
  * @return {Object}                Action object
  */
-export function receiveMedia( siteId, media, found, query ) {
-	return {
-		type: MEDIA_RECEIVE,
-		siteId,
-		media: castArray( media ),
-		found,
-		query
-	};
+export function receiveMedia(siteId, media, found, query) {
+    return {
+        type: MEDIA_RECEIVE,
+        siteId,
+        media: castArray(media),
+        found,
+        query,
+    };
 }
 
 /**
@@ -47,12 +47,12 @@ export function receiveMedia( siteId, media, found, query ) {
  * @param  {Object} query  Query object
  * @return {Object}        Action object
  */
-export function requestMedia( siteId, query ) {
-	return {
-		type: MEDIA_REQUEST,
-		siteId,
-		query
-	};
+export function requestMedia(siteId, query) {
+    return {
+        type: MEDIA_REQUEST,
+        siteId,
+        query,
+    };
 }
 
 /**
@@ -63,12 +63,12 @@ export function requestMedia( siteId, query ) {
  * @param  {Object} query  Query object
  * @return {Object}        Action object
  */
-export function requestingMedia( siteId, query ) {
-	return {
-		type: MEDIA_REQUESTING,
-		siteId,
-		query
-	};
+export function requestingMedia(siteId, query) {
+    return {
+        type: MEDIA_REQUESTING,
+        siteId,
+        query,
+    };
 }
 
 /**
@@ -79,12 +79,12 @@ export function requestingMedia( siteId, query ) {
  * @param  {Object} query  Query object
  * @return {Object}        Action object
  */
-export function failMediaRequest( siteId, query ) {
-	return {
-		type: MEDIA_REQUEST_FAILURE,
-		siteId,
-		query
-	};
+export function failMediaRequest(siteId, query) {
+    return {
+        type: MEDIA_REQUEST_FAILURE,
+        siteId,
+        query,
+    };
 }
 
 /**
@@ -95,12 +95,12 @@ export function failMediaRequest( siteId, query ) {
  * @param  {Object} query  Query object
  * @return {Object}        Action object
  */
-export function successMediaRequest( siteId, query ) {
-	return {
-		type: MEDIA_REQUEST_SUCCESS,
-		siteId,
-		query
-	};
+export function successMediaRequest(siteId, query) {
+    return {
+        type: MEDIA_REQUEST_SUCCESS,
+        siteId,
+        query,
+    };
 }
 
 /**
@@ -111,12 +111,12 @@ export function successMediaRequest( siteId, query ) {
  * @param  {Number} mediaId Media ID
  * @return {Object}         Action object
  */
-export function requestMediaItem( siteId, mediaId ) {
-	return {
-		type: MEDIA_ITEM_REQUEST,
-		siteId,
-		mediaId
-	};
+export function requestMediaItem(siteId, mediaId) {
+    return {
+        type: MEDIA_ITEM_REQUEST,
+        siteId,
+        mediaId,
+    };
 }
 
 /**
@@ -127,12 +127,12 @@ export function requestMediaItem( siteId, mediaId ) {
  * @param  {Number} mediaId Media ID
  * @return {Object}         Action object
  */
-export function requestingMediaItem( siteId, mediaId ) {
-	return {
-		type: MEDIA_ITEM_REQUESTING,
-		siteId,
-		mediaId
-	};
+export function requestingMediaItem(siteId, mediaId) {
+    return {
+        type: MEDIA_ITEM_REQUESTING,
+        siteId,
+        mediaId,
+    };
 }
 
 /**
@@ -143,12 +143,12 @@ export function requestingMediaItem( siteId, mediaId ) {
  * @param  {Number} mediaId Media ID
  * @return {Object}         Action object
  */
-export function failMediaItemRequest( siteId, mediaId ) {
-	return {
-		type: MEDIA_ITEM_REQUEST_FAILURE,
-		siteId,
-		mediaId
-	};
+export function failMediaItemRequest(siteId, mediaId) {
+    return {
+        type: MEDIA_ITEM_REQUEST_FAILURE,
+        siteId,
+        mediaId,
+    };
 }
 
 /**
@@ -159,12 +159,12 @@ export function failMediaItemRequest( siteId, mediaId ) {
  * @param  {Number} mediaId Media ID
  * @return {Object}         Action object
  */
-export function successMediaItemRequest( siteId, mediaId ) {
-	return {
-		type: MEDIA_ITEM_REQUEST_SUCCESS,
-		siteId,
-		mediaId
-	};
+export function successMediaItemRequest(siteId, mediaId) {
+    return {
+        type: MEDIA_ITEM_REQUEST_SUCCESS,
+        siteId,
+        mediaId,
+    };
 }
 
 /**
@@ -179,10 +179,10 @@ export function successMediaItemRequest( siteId, mediaId ) {
  * @param  {(Array|Number)} mediaIds ID(s) of media to be deleted
  * @return {Object}                  Action object
  */
-export function deleteMedia( siteId, mediaIds ) {
-	return {
-		type: MEDIA_DELETE,
-		mediaIds: castArray( mediaIds ),
-		siteId
-	};
+export function deleteMedia(siteId, mediaIds) {
+    return {
+        type: MEDIA_DELETE,
+        mediaIds: castArray(mediaIds),
+        siteId,
+    };
 }

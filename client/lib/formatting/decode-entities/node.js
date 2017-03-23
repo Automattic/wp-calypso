@@ -1,1 +1,1 @@
-module.exports = require( 'he' ).decode;
+module.exports = require('he').decode;

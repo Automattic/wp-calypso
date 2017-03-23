@@ -9,7 +9,7 @@ import { combineReducers } from 'redux';
 import sidebar from './sidebar/reducer';
 import cardExpansions from './card-expansions/reducer';
 
-export default combineReducers( {
-	sidebar,
-	cardExpansions,
-} );
+export default combineReducers({
+    sidebar,
+    cardExpansions,
+});

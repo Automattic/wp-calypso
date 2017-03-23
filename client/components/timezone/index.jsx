@@ -18,90 +18,82 @@ const noop = () => {};
 const undocumented = wpcom.undocumented();
 
 class Timezone extends Component {
-	constructor() {
-		super();
+    constructor() {
+        super();
 
-		// bound methods
-		this.onSelect = this.onSelect.bind( this );
+        // bound methods
+        this.onSelect = this.onSelect.bind(this);
 
-		this.state = {
-			zonesByContinent: [],
-			manualUtcOffsets: []
-		};
-	}
+        this.state = {
+            zonesByContinent: [],
+            manualUtcOffsets: [],
+        };
+    }
 
-	componentWillMount() {
-		undocumented.timezones( ( err, zones ) => {
-			if ( err ) {
-				return;
-			}
+    componentWillMount() {
+        undocumented.timezones((err, zones) => {
+            if (err) {
+                return;
+            }
 
-			const timezones = {
-				zonesByContinent: zones.timezones_by_continent,
-				manualUtcOffsets: zones.manual_utc_offsets
-			};
+            const timezones = {
+                zonesByContinent: zones.timezones_by_continent,
+                manualUtcOffsets: zones.manual_utc_offsets,
+            };
 
-			this.setState( timezones );
-		} );
-	}
+            this.setState(timezones);
+        });
+    }
 
-	onSelect( event ) {
-		this.props.onSelect( event.target.value );
-	}
+    onSelect(event) {
+        this.props.onSelect(event.target.value);
+    }
 
-	renderOptionsByContinent() {
-		const { zonesByContinent } = this.state;
+    renderOptionsByContinent() {
+        const { zonesByContinent } = this.state;
 
-		return (
-			map( zonesByContinent, ( countries, continent ) => {
-				return (
-					<optgroup label={ continent } key={ continent }>
-						{
-							map( countries, ( { value, label }, index ) => {
-								return (
-									<option value={ value } key={ index }>{ label }</option>
-								);
-							} )
-						}
-					</optgroup>
-				);
-			} )
-		);
-	}
+        return map(zonesByContinent, (countries, continent) => {
+            return (
+                <optgroup label={continent} key={continent}>
+                    {map(countries, ({ value, label }, index) => {
+                        return <option value={value} key={index}>{label}</option>;
+                    })}
+                </optgroup>
+            );
+        });
+    }
 
-	renderManualUtcOffsets() {
-		return (
-			<optgroup label={ this.props.translate( 'Manual Offsets' ) }>
-				{
-					map( this.state.manualUtcOffsets, ( { value, label }, index ) => {
-						return ( <option value={ value } key={ index }>{ label }</option> );
-					} )
-				}
-			</optgroup>
-		);
-	}
+    renderManualUtcOffsets() {
+        return (
+            <optgroup label={this.props.translate('Manual Offsets')}>
+                {map(this.state.manualUtcOffsets, ({ value, label }, index) => {
+                    return <option value={value} key={index}>{label}</option>;
+                })}
+            </optgroup>
+        );
+    }
 
-	render() {
-		const { selectedZone } = this.props;
-		return (
-			<select onChange={ this.onSelect } value={ selectedZone || '' }>
-				{ this.renderOptionsByContinent() }
-				<optgroup label="UTC">
-					<option value="UTC">UTC</option>
-				</optgroup>
-				{ this.renderManualUtcOffsets() }
-			</select>
-		);
-	}
+    render() {
+        const { selectedZone } = this.props;
+        return (
+            <select onChange={this.onSelect} value={selectedZone || ''}>
+                {this.renderOptionsByContinent()}
+                <optgroup label="UTC">
+                    <option value="UTC">UTC</option>
+                </optgroup>
+                {this.renderManualUtcOffsets()}
+            </select>
+        );
+    }
 }
 
 Timezone.defaultProps = {
-	onSelect: noop
+    onSelect: noop,
 };
 
 Timezone.propTypes = {
-	selectedZone: PropTypes.string,
-	onSelect: PropTypes.func
+    selectedZone: PropTypes.string,
+    onSelect: PropTypes.func,
 };
 
-export default localize( Timezone );
+export default localize(Timezone);

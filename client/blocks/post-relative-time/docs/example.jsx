@@ -14,33 +14,33 @@ import PostRelativeTime from '../';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSitePosts } from 'state/posts/selectors';
 
-function PostRelativeTimeExample( { primarySiteId, primarySiteUrl, globalId } ) {
-	return (
-		<Card>
-			{ primarySiteUrl && (
-				<p><small>Example uses result from primary site <strong>{ primarySiteUrl }</strong></small></p>
-			) }
-			{ primarySiteId && (
-				<QueryPosts
-					siteId={ primarySiteId }
-					query={ { number: 1, type: 'any' } } />
-			) }
-			{ ! globalId && <em>No matching post found</em> }
-			{ globalId && <PostRelativeTime globalId={ globalId } /> }
-		</Card>
-	);
+function PostRelativeTimeExample({ primarySiteId, primarySiteUrl, globalId }) {
+    return (
+        <Card>
+            {primarySiteUrl &&
+                <p>
+                    <small>
+                        Example uses result from primary site <strong>{primarySiteUrl}</strong>
+                    </small>
+                </p>}
+            {primarySiteId &&
+                <QueryPosts siteId={primarySiteId} query={{ number: 1, type: 'any' }} />}
+            {!globalId && <em>No matching post found</em>}
+            {globalId && <PostRelativeTime globalId={globalId} />}
+        </Card>
+    );
 }
 
-const ConnectedPostRelativeTimeExample = connect( ( state ) => {
-	const user = getCurrentUser( state );
-	const primarySiteId = get( user, 'primary_blog' );
+const ConnectedPostRelativeTimeExample = connect(state => {
+    const user = getCurrentUser(state);
+    const primarySiteId = get(user, 'primary_blog');
 
-	return {
-		primarySiteId,
-		primarySiteUrl: get( user, 'primary_blog_url' ),
-		globalId: get( getSitePosts( state, primarySiteId ), [ 0, 'global_ID' ] )
-	};
-} )( PostRelativeTimeExample );
+    return {
+        primarySiteId,
+        primarySiteUrl: get(user, 'primary_blog_url'),
+        globalId: get(getSitePosts(state, primarySiteId), [0, 'global_ID']),
+    };
+})(PostRelativeTimeExample);
 
 ConnectedPostRelativeTimeExample.displayName = 'PostRelativeTime';
 

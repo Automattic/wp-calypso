@@ -9,41 +9,45 @@ import tail from 'lodash/tail';
 
 const files = [];
 
-function addFile( file ) {
-	files.push( file );
+function addFile(file) {
+    files.push(file);
 }
 
 function getConfig() {
-	return reduce( files, ( config, file ) => {
-		const fileConfig = fileToConfig( tail( file.split( '/' ) ) );
+    return reduce(
+        files,
+        (config, file) => {
+            const fileConfig = fileToConfig(tail(file.split('/')));
 
-		return mergeWith( config, fileConfig, ( object, source ) => {
-			if ( Array.isArray( object ) ) {
-				return object.concat( source );
-			}
-		} );
-	}, {} );
+            return mergeWith(config, fileConfig, (object, source) => {
+                if (Array.isArray(object)) {
+                    return object.concat(source);
+                }
+            });
+        },
+        {}
+    );
 }
 
-function fileToConfig( pathParts, folderConfig = {} ) {
-	const folder = head( pathParts );
+function fileToConfig(pathParts, folderConfig = {}) {
+    const folder = head(pathParts);
 
-	if ( folder === 'test' && pathParts.length === 2 ) {
-		folderConfig[ folder ] = [ getFileName( pathParts ) ];
-	} else {
-		folderConfig[ folder ] = fileToConfig( tail( pathParts ) );
-	}
+    if (folder === 'test' && pathParts.length === 2) {
+        folderConfig[folder] = [getFileName(pathParts)];
+    } else {
+        folderConfig[folder] = fileToConfig(tail(pathParts));
+    }
 
-	return folderConfig;
+    return folderConfig;
 }
 
-function getFileName( pathParts ) {
-	const [ fileName ] = last( pathParts ).split( '.' );
+function getFileName(pathParts) {
+    const [fileName] = last(pathParts).split('.');
 
-	return fileName;
+    return fileName;
 }
 
 module.exports = {
-	addFile,
-	getConfig
+    addFile,
+    getConfig,
 };

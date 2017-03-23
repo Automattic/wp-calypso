@@ -6,9 +6,8 @@
 * @return {Boolean}        Whether site should be fetched
 */
 
-export function shouldSiteBeFetched( state, siteId ) {
-	return ! state.reader.sites.queuedRequests[ siteId ] && // not currently queued
-		! state.reader.sites.items[ siteId ]; // not currently loaded
+export function shouldSiteBeFetched(state, siteId) {
+    return !state.reader.sites.queuedRequests[siteId] && !state.reader.sites.items[siteId]; // not currently queued // not currently loaded
 }
 
 /**
@@ -19,6 +18,6 @@ export function shouldSiteBeFetched( state, siteId ) {
 * @return {Object}        Site
 */
 
-export function getSite( state, siteId ) {
-	return state.reader.sites.items[ siteId ];
+export function getSite(state, siteId) {
+    return state.reader.sites.items[siteId];
 }

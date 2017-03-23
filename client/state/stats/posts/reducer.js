@@ -10,12 +10,12 @@ import { get, merge } from 'lodash';
 import { isValidStateWithSchema } from 'state/utils';
 import { items as itemSchemas } from './schema';
 import {
-	SERIALIZE,
-	DESERIALIZE,
-	POST_STATS_RECEIVE,
-	POST_STATS_REQUEST,
-	POST_STATS_REQUEST_FAILURE,
-	POST_STATS_REQUEST_SUCCESS
+    SERIALIZE,
+    DESERIALIZE,
+    POST_STATS_RECEIVE,
+    POST_STATS_REQUEST,
+    POST_STATS_REQUEST_FAILURE,
+    POST_STATS_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -26,25 +26,25 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function requesting( state = {}, action ) {
-	switch ( action.type ) {
-		case POST_STATS_REQUEST:
-		case POST_STATS_REQUEST_SUCCESS:
-		case POST_STATS_REQUEST_FAILURE:
-			return merge( {}, state, {
-				[ action.siteId ]: {
-					[ action.postId ]: {
-						[ action.fields.join() ]: POST_STATS_REQUEST === action.type
-					}
-				}
-			} );
+export function requesting(state = {}, action) {
+    switch (action.type) {
+        case POST_STATS_REQUEST:
+        case POST_STATS_REQUEST_SUCCESS:
+        case POST_STATS_REQUEST_FAILURE:
+            return merge({}, state, {
+                [action.siteId]: {
+                    [action.postId]: {
+                        [action.fields.join()]: POST_STATS_REQUEST === action.type,
+                    },
+                },
+            });
 
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
-	}
+        case SERIALIZE:
+        case DESERIALIZE:
+            return {};
+    }
 
-	return state;
+    return state;
 }
 
 /**
@@ -55,32 +55,32 @@ export function requesting( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function items( state = {}, action ) {
-	switch ( action.type ) {
-		case POST_STATS_RECEIVE:
-			return {
-				...state,
-				[ action.siteId ]: {
-					...( get( state, [ action.siteId ], {} ) ),
-					[ action.postId ]: {
-						...( get( state, [ action.siteId, action.postId ], {} ) ),
-						...action.stats,
-					}
-				}
-			};
+export function items(state = {}, action) {
+    switch (action.type) {
+        case POST_STATS_RECEIVE:
+            return {
+                ...state,
+                [action.siteId]: {
+                    ...get(state, [action.siteId], {}),
+                    [action.postId]: {
+                        ...get(state, [action.siteId, action.postId], {}),
+                        ...action.stats,
+                    },
+                },
+            };
 
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, itemSchemas ) ) {
-				return state;
-			}
+        case DESERIALIZE:
+            if (isValidStateWithSchema(state, itemSchemas)) {
+                return state;
+            }
 
-			return {};
-	}
+            return {};
+    }
 
-	return state;
+    return state;
 }
 
-export default combineReducers( {
-	requesting,
-	items
-} );
+export default combineReducers({
+    requesting,
+    items,
+});

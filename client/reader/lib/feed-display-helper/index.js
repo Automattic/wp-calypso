@@ -2,52 +2,52 @@ import { getSiteUrl, getFeedUrl } from 'reader/route';
 import { withoutHttp } from 'lib/url';
 
 module.exports = {
-	formatUrlForDisplay: function( url ) {
-		if ( ! url ) {
-			return;
-		}
+    formatUrlForDisplay: function(url) {
+        if (!url) {
+            return;
+        }
 
-		return withoutHttp( url ).replace( /\/$/, '' );
-	},
+        return withoutHttp(url).replace(/\/$/, '');
+    },
 
-	// Use either the site name, feed name or display URL for the feed name
-	getFeedTitle: function( siteData, feedData, displayUrl ) {
-		var feedTitle;
+    // Use either the site name, feed name or display URL for the feed name
+    getFeedTitle: function(siteData, feedData, displayUrl) {
+        var feedTitle;
 
-		if ( siteData && siteData.get( 'name' ) ) {
-			feedTitle = siteData.get( 'name' );
-		} else if ( feedData && feedData.name ) {
-			feedTitle = feedData.name;
-		} else {
-			feedTitle = displayUrl;
-		}
+        if (siteData && siteData.get('name')) {
+            feedTitle = siteData.get('name');
+        } else if (feedData && feedData.name) {
+            feedTitle = feedData.name;
+        } else {
+            feedTitle = displayUrl;
+        }
 
-		return feedTitle;
-	},
+        return feedTitle;
+    },
 
-	getFeedStreamUrl: function( siteData, feedData ) {
-		if ( ! siteData && ! feedData ) {
-			return null;
-		}
+    getFeedStreamUrl: function(siteData, feedData) {
+        if (!siteData && !feedData) {
+            return null;
+        }
 
-		if ( feedData ) {
-			return getFeedUrl( feedData.feed_ID );
-		}
+        if (feedData) {
+            return getFeedUrl(feedData.feed_ID);
+        }
 
-		return getSiteUrl( siteData.get( 'ID' ) );
-	},
+        return getSiteUrl(siteData.get('ID'));
+    },
 
-	getSiteUrl: function( siteData, feedData, subscription ) {
-		var siteUrl;
+    getSiteUrl: function(siteData, feedData, subscription) {
+        var siteUrl;
 
-		if ( siteData && siteData.get( 'URL' ) ) {
-			siteUrl = siteData.get( 'URL' );
-		} else if ( feedData && feedData.URL ) {
-			siteUrl = feedData.URL;
-		} else if ( subscription && subscription.get( 'URL' ) ) {
-			siteUrl = subscription.get( 'URL' );
-		}
+        if (siteData && siteData.get('URL')) {
+            siteUrl = siteData.get('URL');
+        } else if (feedData && feedData.URL) {
+            siteUrl = feedData.URL;
+        } else if (subscription && subscription.get('URL')) {
+            siteUrl = subscription.get('URL');
+        }
 
-		return siteUrl;
-	}
+        return siteUrl;
+    },
 };

@@ -8,34 +8,34 @@ import { expect } from 'chai';
  */
 import { getSharingButtons } from '../';
 
-describe( 'getSharingButtons()', () => {
-	it( 'should return null if the site is not tracked', () => {
-		const state = {
-			sites: {
-				sharingButtons: {
-					items: {
-						2916284: [ { ID: 'facebook' } ]
-					}
-				}
-			}
-		};
-		const buttons = getSharingButtons( state, 2916285 );
+describe('getSharingButtons()', () => {
+    it('should return null if the site is not tracked', () => {
+        const state = {
+            sites: {
+                sharingButtons: {
+                    items: {
+                        2916284: [{ ID: 'facebook' }],
+                    },
+                },
+            },
+        };
+        const buttons = getSharingButtons(state, 2916285);
 
-		expect( buttons ).to.be.null;
-	} );
+        expect(buttons).to.be.null;
+    });
 
-	it( 'should return the buttons for a siteId', () => {
-		const state = {
-			sites: {
-				sharingButtons: {
-					items: {
-						2916284: [ { ID: 'facebook' } ]
-					}
-				}
-			}
-		};
-		const buttons = getSharingButtons( state, 2916284 );
+    it('should return the buttons for a siteId', () => {
+        const state = {
+            sites: {
+                sharingButtons: {
+                    items: {
+                        2916284: [{ ID: 'facebook' }],
+                    },
+                },
+            },
+        };
+        const buttons = getSharingButtons(state, 2916284);
 
-		expect( buttons ).to.eql( [ { ID: 'facebook' } ] );
-	} );
-} );
+        expect(buttons).to.eql([{ ID: 'facebook' }]);
+    });
+});

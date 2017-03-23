@@ -8,19 +8,19 @@
  */
 import config from 'config';
 
-const notEnabled = feature => () => ! config.isEnabled( feature );
+const notEnabled = feature => () => !config.isEnabled(feature);
 
 const legacyRoutes = [
-	{ match: /.php$/ },
-	{ match: /^\/?$/, predicate: notEnabled( 'reader' ) },
-	{ match: /^\/themes/ },
-	{ match: /^\/manage/ },
-	{ match: /^\/plans/ },
-	{
-		match: /^\/me/,
-		noMatch: /^\/me\/(billing|next)/,
-		predicate: notEnabled( 'me/my-profile' ),
-	},
+    { match: /.php$/ },
+    { match: /^\/?$/, predicate: notEnabled('reader') },
+    { match: /^\/themes/ },
+    { match: /^\/manage/ },
+    { match: /^\/plans/ },
+    {
+        match: /^\/me/,
+        noMatch: /^\/me\/(billing|next)/,
+        predicate: notEnabled('me/my-profile'),
+    },
 ];
 
 /**
@@ -29,10 +29,14 @@ const legacyRoutes = [
  * @param {any} path      The path to check
  * @returns {boolean} True if legacy path, false otherwise
  */
-export function isLegacyRoute( path ) {
-	return legacyRoutes.some( ( {
-		match,
-		noMatch = { test: () => false },
-		predicate = () => true
-	} ) => predicate( path ) && match.test( path ) && ! noMatch.test( path ) );
+export function isLegacyRoute(path) {
+    return legacyRoutes.some(
+        (
+            {
+                match,
+                noMatch = { test: () => false },
+                predicate = () => true,
+            }
+        ) => predicate(path) && match.test(path) && !noMatch.test(path)
+    );
 }

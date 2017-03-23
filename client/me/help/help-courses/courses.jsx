@@ -12,44 +12,48 @@ import CourseList, { CourseListPlaceholder } from './course-list';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 
 class Courses extends Component {
-	componentWillMount() {
-		this.fetchCoursesIfNeeded();
-	}
+    componentWillMount() {
+        this.fetchCoursesIfNeeded();
+    }
 
-	fetchCoursesIfNeeded() {
-		//TODO: When courses make it into the API we will no longer need this code.
-		//      We can move towards the use of something like <QueryHelpCourses />
-		const { courses, fetchCourses } = this.props;
+    fetchCoursesIfNeeded() {
+        //TODO: When courses make it into the API we will no longer need this code.
+        //      We can move towards the use of something like <QueryHelpCourses />
+        const { courses, fetchCourses } = this.props;
 
-		if ( courses ) {
-			return;
-		}
+        if (courses) {
+            return;
+        }
 
-		fetchCourses();
-	}
+        fetchCourses();
+    }
 
-	render() {
-		const {
-			translate,
-			userId,
-			isBusinessPlanUser,
-			courses,
-			isLoading
-		} = this.props;
+    render() {
+        const {
+            translate,
+            userId,
+            isBusinessPlanUser,
+            courses,
+            isLoading,
+        } = this.props;
 
-		return (
-			<Main className="help-courses">
-				<HeaderCake backHref="/help" isCompact={ false } className="help-courses__header-cake">
-					{ translate( 'Courses' ) }
-				</HeaderCake>
-				{ isLoading
-					? <CourseListPlaceholder />
-					: <CourseList courses={ courses } isBusinessPlanUser={ isBusinessPlanUser } /> }
+        return (
+            <Main className="help-courses">
+                <HeaderCake
+                    backHref="/help"
+                    isCompact={false}
+                    className="help-courses__header-cake"
+                >
+                    {translate('Courses')}
+                </HeaderCake>
+                {isLoading
+                    ? <CourseListPlaceholder />
+                    : <CourseList courses={courses} isBusinessPlanUser={isBusinessPlanUser} />}
 
-				<QueryUserPurchases userId={ userId } />
-			</Main>
-		);
-	}
+                <QueryUserPurchases userId={userId} />
+            </Main>
+        );
+    }
 }
 
 export default Courses;

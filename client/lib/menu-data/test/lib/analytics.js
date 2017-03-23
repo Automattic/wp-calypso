@@ -1,8 +1,8 @@
 export default {
-	mc: {
-		bumpStat: function() {}
-	},
-	tracks: {
-		recordEvent: function() {}
-	}
+    mc: {
+        bumpStat: function() {},
+    },
+    tracks: {
+        recordEvent: function() {},
+    },
 };

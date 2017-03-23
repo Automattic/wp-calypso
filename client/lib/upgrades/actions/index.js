@@ -9,10 +9,10 @@ import * as domainSearch from './domain-search';
 import * as purchases from './purchases';
 
 export default {
-	...cart,
-	...checkout,
-	...freeTrials,
-	...domainManagement,
-	...domainSearch,
-	...purchases
+    ...cart,
+    ...checkout,
+    ...freeTrials,
+    ...domainManagement,
+    ...domainSearch,
+    ...purchases,
 };

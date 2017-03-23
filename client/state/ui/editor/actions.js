@@ -1,11 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	EDITOR_PASTE_EVENT,
-	EDITOR_START,
-	EDITOR_STOP,
-} from 'state/action-types';
+import { EDITOR_PASTE_EVENT, EDITOR_START, EDITOR_STOP } from 'state/action-types';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setMediaModalView } from 'state/ui/media-modal/actions';
 import { withAnalytics, bumpStat } from 'state/analytics/actions';
@@ -14,10 +10,10 @@ import { withAnalytics, bumpStat } from 'state/analytics/actions';
  * Constants
  */
 export const MODAL_VIEW_STATS = {
-	[ ModalViews.LIST ]: 'view_list',
-	[ ModalViews.DETAIL ]: 'view_detail',
-	[ ModalViews.GALLERY ]: 'view_gallery',
-	[ ModalViews.IMAGE_EDITOR ]: 'view_edit'
+    [ModalViews.LIST]: 'view_list',
+    [ModalViews.DETAIL]: 'view_detail',
+    [ModalViews.GALLERY]: 'view_gallery',
+    [ModalViews.IMAGE_EDITOR]: 'view_edit',
 };
 
 /**
@@ -29,13 +25,13 @@ export const MODAL_VIEW_STATS = {
  * @param  {String}  postType Post Type
  * @return {Object}           Action object
  */
-export function startEditingPost( siteId, postId, postType = 'post' ) {
-	return {
-		type: EDITOR_START,
-		siteId,
-		postId,
-		postType,
-	};
+export function startEditingPost(siteId, postId, postType = 'post') {
+    return {
+        type: EDITOR_START,
+        siteId,
+        postId,
+        postType,
+    };
 }
 
 /**
@@ -46,12 +42,12 @@ export function startEditingPost( siteId, postId, postType = 'post' ) {
  * @param  {?Number} postId Post ID
  * @return {Object}         Action object
  */
-export function stopEditingPost( siteId, postId ) {
-	return {
-		type: EDITOR_STOP,
-		siteId,
-		postId,
-	};
+export function stopEditingPost(siteId, postId) {
+    return {
+        type: EDITOR_STOP,
+        siteId,
+        postId,
+    };
 }
 
 /**
@@ -61,11 +57,11 @@ export function stopEditingPost( siteId, postId ) {
  * @param {String} source Identifier of the app the content was pasted from.
  * @return {Object} Action object
  */
-export function pasteEvent( source ) {
-	return {
-		type: EDITOR_PASTE_EVENT,
-		source,
-	};
+export function pasteEvent(source) {
+    return {
+        type: EDITOR_PASTE_EVENT,
+        source,
+    };
 }
 
 /**
@@ -75,13 +71,13 @@ export function pasteEvent( source ) {
  * @param  {ModalViews} view Media view
  * @return {Object}          Action object
  */
-export function setEditorMediaModalView( view ) {
-	const action = setMediaModalView( view );
+export function setEditorMediaModalView(view) {
+    const action = setMediaModalView(view);
 
-	const stat = MODAL_VIEW_STATS[ view ];
-	if ( stat ) {
-		return withAnalytics( bumpStat( 'editor_media_actions', stat ), action );
-	}
+    const stat = MODAL_VIEW_STATS[view];
+    if (stat) {
+        return withAnalytics(bumpStat('editor_media_actions', stat), action);
+    }
 
-	return action;
+    return action;
 }

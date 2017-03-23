@@ -1,16 +1,13 @@
 import {
-	compact,
-	flowRight as compose,
-	fromPairs,
-	get,
-	map,
-	matchesProperty,
-	reduce,
+    compact,
+    flowRight as compose,
+    fromPairs,
+    get,
+    map,
+    matchesProperty,
+    reduce,
 } from 'lodash';
-import {
-	convertFromRaw,
-	convertToRaw,
-} from 'draft-js';
+import { convertFromRaw, convertToRaw } from 'draft-js';
 
 /*
  * The functions in this file convert between the
@@ -84,38 +81,38 @@ import {
  * @returns {Array} title format
  */
 export const fromEditor = content => {
-	const rawContent = convertToRaw( content );
-	const text = get( rawContent, 'blocks[0].text', '' );
-	const ranges = get( rawContent, 'blocks[0].entityRanges', [] );
-	const entities = get( rawContent, 'entityMap' );
+    const rawContent = convertToRaw(content);
+    const text = get(rawContent, 'blocks[0].text', '');
+    const ranges = get(rawContent, 'blocks[0].entityRanges', []);
+    const entities = get(rawContent, 'entityMap');
 
-	// [ output, index, text ]
-	const [ o, i, t ] = ranges.reduce( ( [ output, lastIndex, remainingText ], next ) => {
-		const tokenName = get( entities, [ next.key, 'data', 'name' ], null );
-		const textBlock = next.offset > lastIndex
-			? { type: 'string', value: remainingText.slice( lastIndex, next.offset ) }
-			: null;
+    // [ output, index, text ]
+    const [o, i, t] = ranges.reduce(
+        ([output, lastIndex, remainingText], next) => {
+            const tokenName = get(entities, [next.key, 'data', 'name'], null);
+            const textBlock = next.offset > lastIndex
+                ? { type: 'string', value: remainingText.slice(lastIndex, next.offset) }
+                : null;
 
-		return [ [
-			...output,
-			textBlock,
-			{ type: tokenName }
-		], next.offset + next.length, remainingText ];
-	}, [ [], 0, text ] );
+            return [
+                [...output, textBlock, { type: tokenName }],
+                next.offset + next.length,
+                remainingText,
+            ];
+        },
+        [[], 0, text]
+    );
 
-	// add final remaining text not captured by any entity ranges
-	return compact( [
-		...o,
-		i < t.length && { type: 'string', value: t.slice( i ) }
-	] );
+    // add final remaining text not captured by any entity ranges
+    return compact([...o, i < t.length && { type: 'string', value: t.slice(i) }]);
 };
 
-const isTextPiece = matchesProperty( 'type', 'string' );
+const isTextPiece = matchesProperty('type', 'string');
 
 const emptyBlockMap = {
-	text: '',
-	entityRanges: [],
-	type: 'unstyled'
+    text: '',
+    entityRanges: [],
+    type: 'unstyled',
 };
 
 /**
@@ -134,7 +131,7 @@ const emptyBlockMap = {
  * @param {string} title - Token's title
  * @returns string - Processed title
  */
-export const mapTokenTitleForEditor = title => `\u205f\u205f${ title }\u205f\u205f`;
+export const mapTokenTitleForEditor = title => `\u205f\u205f${title}\u205f\u205f`;
 
 /**
  * Returns the translated name for the chip
@@ -143,7 +140,7 @@ export const mapTokenTitleForEditor = title => `\u205f\u205f${ title }\u205f\u20
  * @param {object} tokens available tokens, e.g. { siteName: 'Site Name', tagline: 'Tagline' }
  * @returns {string} translated chip name
  */
-const tokenTitle = ( type, tokens ) => mapTokenTitleForEditor( get( tokens, type, '' ).trim() );
+const tokenTitle = (type, tokens) => mapTokenTitleForEditor(get(tokens, type, '').trim());
 
 /**
  * Creates a new entity reference for a blockMap
@@ -154,11 +151,11 @@ const tokenTitle = ( type, tokens ) => mapTokenTitleForEditor( get( tokens, type
  * @param {object} entityGuide mapping between tokens and entity keys
  * @returns {object} entityRange for use in blockMap in ContentState
  */
-const newEntityAt = ( offset, type, tokens, entityGuide ) => ( {
-	key: entityGuide.length,
-	length: tokenTitle( type, tokens ).length,
-	offset
-} );
+const newEntityAt = (offset, type, tokens, entityGuide) => ({
+    key: entityGuide.length,
+    length: tokenTitle(type, tokens).length,
+    offset,
+});
 
 /**
  * Converts native format object to block map
@@ -182,21 +179,26 @@ const newEntityAt = ( offset, type, tokens, entityGuide ) => ( {
  * @param {object} entityGuide mapping between tokens and entity keys
  * @returns {object} blockMap for use in ContentState
  */
-const buildBlockMap = compose(
-	( format, tokens ) => reduce( format, ( [ block, lastIndex, entityGuide ], piece ) => [
-		{
-			...block,
-			entityRanges: isTextPiece( piece )
-				? block.entityRanges // text pieces don't add entities
-				: [ ...block.entityRanges, newEntityAt( lastIndex, piece.type, tokens, entityGuide ) ],
-			text: block.text + ( isTextPiece( piece ) ? piece.value : tokenTitle( piece.type, tokens ) ),
-		},
-		lastIndex + ( piece.value ? piece.value.length : tokenTitle( piece.type, tokens ).length ),
-		isTextPiece( piece )
-			? entityGuide
-			: [ ...entityGuide, piece.type ]
-	], [ emptyBlockMap, 0, [] ] )
-);
+const buildBlockMap = compose((format, tokens) =>
+    reduce(
+        format,
+        ([block, lastIndex, entityGuide], piece) => [
+            {
+                ...block,
+                entityRanges: isTextPiece(piece)
+                    ? block.entityRanges // text pieces don't add entities
+                    : [
+                          ...block.entityRanges,
+                          newEntityAt(lastIndex, piece.type, tokens, entityGuide),
+                      ],
+                text: block.text +
+                    (isTextPiece(piece) ? piece.value : tokenTitle(piece.type, tokens)),
+            },
+            lastIndex + (piece.value ? piece.value.length : tokenTitle(piece.type, tokens).length),
+            isTextPiece(piece) ? entityGuide : [...entityGuide, piece.type],
+        ],
+        [emptyBlockMap, 0, []]
+    ));
 
 /**
  * Converts Calypso-native title format into RawDraftContentState for Editor
@@ -205,18 +207,20 @@ const buildBlockMap = compose(
  * @param {object} tokens mapping between token names and translated titles
  * @returns {ContentState} content for editor
  */
-export const toEditor = ( format, tokens ) => {
-	const [ blocks, /* lastIndex */, entityGuide ] = buildBlockMap( format, tokens );
+export const toEditor = (format, tokens) => {
+    const [blocks /* lastIndex */, , entityGuide] = buildBlockMap(format, tokens);
 
-	return convertFromRaw( {
-		blocks: [ blocks ],
-		entityMap: fromPairs( map( entityGuide, ( name, key ) => ( [
-			key, // entity key is position in list
-			{
-				type: 'TOKEN',
-				mutability: 'IMMUTABLE',
-				data: { name }
-			}
-		] ) ) )
-	} );
+    return convertFromRaw({
+        blocks: [blocks],
+        entityMap: fromPairs(
+            map(entityGuide, (name, key) => [
+                key, // entity key is position in list
+                {
+                    type: 'TOKEN',
+                    mutability: 'IMMUTABLE',
+                    data: { name },
+                },
+            ])
+        ),
+    });
 };

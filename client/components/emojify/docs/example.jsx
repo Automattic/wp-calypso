@@ -9,13 +9,13 @@ import React from 'react';
 import Emojify from 'components/emojify';
 
 const EmojifyExample = () => {
-	const textToEmojify = 'This 🙈 will be converted 🙉🙊🙂';
+    const textToEmojify = 'This 🙈 will be converted 🙉🙊🙂';
 
-	return (
-		<div className="design-assets__group">
-			<Emojify>{ textToEmojify }</Emojify>
-		</div>
-	);
+    return (
+        <div className="design-assets__group">
+            <Emojify>{textToEmojify}</Emojify>
+        </div>
+    );
 };
 
 EmojifyExample.displayName = 'Emojify';

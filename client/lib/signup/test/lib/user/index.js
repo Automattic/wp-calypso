@@ -3,9 +3,9 @@
  */
 
 module.exports = function() {
-	return {
-		get: function() {
-			return false;
-		}
-	};
+    return {
+        get: function() {
+            return false;
+        },
+    };
 };

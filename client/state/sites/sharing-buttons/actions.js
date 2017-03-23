@@ -3,14 +3,14 @@
  */
 import wpcom from 'lib/wp';
 import {
-	SHARING_BUTTONS_RECEIVE,
-	SHARING_BUTTONS_REQUEST,
-	SHARING_BUTTONS_REQUEST_FAILURE,
-	SHARING_BUTTONS_REQUEST_SUCCESS,
-	SHARING_BUTTONS_SAVE,
-	SHARING_BUTTONS_SAVE_FAILURE,
-	SHARING_BUTTONS_SAVE_SUCCESS,
-	SHARING_BUTTONS_UPDATE
+    SHARING_BUTTONS_RECEIVE,
+    SHARING_BUTTONS_REQUEST,
+    SHARING_BUTTONS_REQUEST_FAILURE,
+    SHARING_BUTTONS_REQUEST_SUCCESS,
+    SHARING_BUTTONS_SAVE,
+    SHARING_BUTTONS_SAVE_FAILURE,
+    SHARING_BUTTONS_SAVE_SUCCESS,
+    SHARING_BUTTONS_UPDATE,
 } from 'state/action-types';
 
 /**
@@ -20,12 +20,12 @@ import {
  * @param  {Object} settings The sharing buttons object
  * @return {Object}        Action object
  */
-export function receiveSharingButtons( siteId, settings ) {
-	return {
-		type: SHARING_BUTTONS_RECEIVE,
-		siteId,
-		settings
-	};
+export function receiveSharingButtons(siteId, settings) {
+    return {
+        type: SHARING_BUTTONS_RECEIVE,
+        siteId,
+        settings,
+    };
 }
 
 /**
@@ -35,12 +35,12 @@ export function receiveSharingButtons( siteId, settings ) {
  * @param  {Object} settings The updated sharing buttons
  * @return {Object}        Action object
  */
-export function updateSharingButtons( siteId, settings ) {
-	return {
-		type: SHARING_BUTTONS_UPDATE,
-		siteId,
-		settings
-	};
+export function updateSharingButtons(siteId, settings) {
+    return {
+        type: SHARING_BUTTONS_UPDATE,
+        siteId,
+        settings,
+    };
 }
 
 /**
@@ -50,29 +50,31 @@ export function updateSharingButtons( siteId, settings ) {
  * @param  {Number} siteId Site ID
  * @return {Function}      Action thunk
  */
-export function requestSharingButtons( siteId ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: SHARING_BUTTONS_REQUEST,
-			siteId
-		} );
+export function requestSharingButtons(siteId) {
+    return dispatch => {
+        dispatch({
+            type: SHARING_BUTTONS_REQUEST,
+            siteId,
+        });
 
-		return wpcom.undocumented().sharingButtons( siteId )
-			.then( ( { sharing_buttons: settings } ) => {
-				dispatch( receiveSharingButtons( siteId, settings ) );
-				dispatch( {
-					type: SHARING_BUTTONS_REQUEST_SUCCESS,
-					siteId
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
-					type: SHARING_BUTTONS_REQUEST_FAILURE,
-					siteId,
-					error
-				} );
-			} );
-	};
+        return wpcom
+            .undocumented()
+            .sharingButtons(siteId)
+            .then(({ sharing_buttons: settings }) => {
+                dispatch(receiveSharingButtons(siteId, settings));
+                dispatch({
+                    type: SHARING_BUTTONS_REQUEST_SUCCESS,
+                    siteId,
+                });
+            })
+            .catch(error => {
+                dispatch({
+                    type: SHARING_BUTTONS_REQUEST_FAILURE,
+                    siteId,
+                    error,
+                });
+            });
+    };
 }
 
 /**
@@ -83,28 +85,30 @@ export function requestSharingButtons( siteId ) {
  * @param  {Object} settings The sharing buttons to save
  * @return {Function}      Action thunk
  */
-export function saveSharingButtons( siteId, settings ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: SHARING_BUTTONS_SAVE,
-			siteId
-		} );
-		// Optimistic update
-		dispatch( updateSharingButtons( siteId, settings ) );
-		return wpcom.undocumented().saveSharingButtons( siteId, settings )
-			.then( ( { updated } ) => {
-				dispatch( updateSharingButtons( siteId, updated ) );
-				dispatch( {
-					type: SHARING_BUTTONS_SAVE_SUCCESS,
-					siteId
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
-					type: SHARING_BUTTONS_SAVE_FAILURE,
-					siteId,
-					error
-				} );
-			} );
-	};
+export function saveSharingButtons(siteId, settings) {
+    return dispatch => {
+        dispatch({
+            type: SHARING_BUTTONS_SAVE,
+            siteId,
+        });
+        // Optimistic update
+        dispatch(updateSharingButtons(siteId, settings));
+        return wpcom
+            .undocumented()
+            .saveSharingButtons(siteId, settings)
+            .then(({ updated }) => {
+                dispatch(updateSharingButtons(siteId, updated));
+                dispatch({
+                    type: SHARING_BUTTONS_SAVE_SUCCESS,
+                    siteId,
+                });
+            })
+            .catch(error => {
+                dispatch({
+                    type: SHARING_BUTTONS_SAVE_FAILURE,
+                    siteId,
+                    error,
+                });
+            });
+    };
 }

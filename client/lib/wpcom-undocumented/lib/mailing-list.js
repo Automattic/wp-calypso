@@ -1,7 +1,7 @@
 /**
  * Module dependencies.
  */
-var debug = require( 'debug' )( 'calypso:wpcom-undocumented:mailing-list' );
+var debug = require('debug')('calypso:wpcom-undocumented:mailing-list');
 
 /**
  * `MailingList` constructor.
@@ -11,13 +11,13 @@ var debug = require( 'debug' )( 'calypso:wpcom-undocumented:mailing-list' );
  * @public
  */
 
-function MailingList( category, wpcom ) {
-	if ( !( this instanceof MailingList ) ) {
-		return new MailingList( category, wpcom );
-	}
+function MailingList(category, wpcom) {
+    if (!(this instanceof MailingList)) {
+        return new MailingList(category, wpcom);
+    }
 
-	this._category = category;
-	this.wpcom = wpcom;
+    this._category = category;
+    this.wpcom = wpcom;
 }
 
 /**
@@ -40,20 +40,20 @@ function MailingList( category, wpcom ) {
  * @public
  */
 
-MailingList.prototype.subscribe = function( emailAddress, hmac, context, callback ) {
-	debug( '/mailing-lists/:category/subscribers/:emailAddress/new' );
+MailingList.prototype.subscribe = function(emailAddress, hmac, context, callback) {
+    debug('/mailing-lists/:category/subscribers/:emailAddress/new');
 
-	// `context` is optional
-	if ( 'function' === typeof context ) {
-		callback = context;
-		context = undefined;
-	}
+    // `context` is optional
+    if ('function' === typeof context) {
+        callback = context;
+        context = undefined;
+    }
 
-	return this.wpcom.req.post(
-		createSubscriberResourceUrl( this._category, emailAddress, 'new' ),
-		createRequestBody( hmac, context ),
-		callback
-	);
+    return this.wpcom.req.post(
+        createSubscriberResourceUrl(this._category, emailAddress, 'new'),
+        createRequestBody(hmac, context),
+        callback
+    );
 };
 
 /**
@@ -76,38 +76,40 @@ MailingList.prototype.subscribe = function( emailAddress, hmac, context, callbac
  * @public
  */
 
-MailingList.prototype.unsubscribe = function( emailAddress, hmac, context, callback ) {
-	debug( '/mailing-lists/:category/subscribers/:emailAddress/delete' );
+MailingList.prototype.unsubscribe = function(emailAddress, hmac, context, callback) {
+    debug('/mailing-lists/:category/subscribers/:emailAddress/delete');
 
-	// `context` is optional
-	if ( 'function' === typeof context ) {
-		callback = context;
-		context = undefined;
-	}
+    // `context` is optional
+    if ('function' === typeof context) {
+        callback = context;
+        context = undefined;
+    }
 
-	return this.wpcom.req.post(
-		createSubscriberResourceUrl( this._category, emailAddress, 'delete' ),
-		createRequestBody( hmac, context ),
-		callback
-	);
+    return this.wpcom.req.post(
+        createSubscriberResourceUrl(this._category, emailAddress, 'delete'),
+        createRequestBody(hmac, context),
+        callback
+    );
 };
 
-function createSubscriberResourceUrl( category, emailAddress, method ) {
-	var url = '/mailing-lists/' + encodeURIComponent( category ) +
-		'/subscribers/' + encodeURIComponent( emailAddress );
+function createSubscriberResourceUrl(category, emailAddress, method) {
+    var url = '/mailing-lists/' +
+        encodeURIComponent(category) +
+        '/subscribers/' +
+        encodeURIComponent(emailAddress);
 
-	if ( method ) {
-		url += '/' + method;
-	}
+    if (method) {
+        url += '/' + method;
+    }
 
-	return url;
+    return url;
 }
 
-function createRequestBody( hmac, context ) {
-	return JSON.stringify( {
-		hmac: hmac,
-		context: context
-	} );
+function createRequestBody(hmac, context) {
+    return JSON.stringify({
+        hmac: hmac,
+        context: context,
+    });
 }
 
 /*!

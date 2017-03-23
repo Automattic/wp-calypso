@@ -11,40 +11,40 @@ import { isRequestingPostFormats } from 'state/post-formats/selectors';
 import { requestPostFormats } from 'state/post-formats/actions';
 
 class QueryPostFormats extends Component {
-	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-		requestingPostFormats: PropTypes.bool,
-		requestPostFormats: PropTypes.func
-	};
+    static propTypes = {
+        siteId: PropTypes.number.isRequired,
+        requestingPostFormats: PropTypes.bool,
+        requestPostFormats: PropTypes.func,
+    };
 
-	componentWillMount() {
-		this.request( this.props );
-	}
+    componentWillMount() {
+        this.request(this.props);
+    }
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.request( nextProps );
-		}
-	}
+    componentWillReceiveProps(nextProps) {
+        if (this.props.siteId !== nextProps.siteId) {
+            this.request(nextProps);
+        }
+    }
 
-	request( props ) {
-		if ( props.requestingPostFormats ) {
-			return;
-		}
+    request(props) {
+        if (props.requestingPostFormats) {
+            return;
+        }
 
-		props.requestPostFormats( props.siteId );
-	}
+        props.requestPostFormats(props.siteId);
+    }
 
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
 export default connect(
-	( state, ownProps ) => {
-		return {
-			requestingPostFormats: isRequestingPostFormats( state, ownProps.siteId )
-		};
-	},
-	{ requestPostFormats }
-)( QueryPostFormats );
+    (state, ownProps) => {
+        return {
+            requestingPostFormats: isRequestingPostFormats(state, ownProps.siteId),
+        };
+    },
+    { requestPostFormats }
+)(QueryPostFormats);

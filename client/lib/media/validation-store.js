@@ -19,7 +19,7 @@ import { ValidationErrors as MediaValidationErrors } from './constants';
  * Module variables
  */
 const MediaValidationStore = {
-	_errors: {}
+    _errors: {},
 };
 const sites = Sites();
 
@@ -41,52 +41,51 @@ const sites = Sites();
  * @private
  */
 
-emitter( MediaValidationStore );
+emitter(MediaValidationStore);
 
-function ensureErrorsObjectForSite( siteId ) {
-	if ( siteId in MediaValidationStore._errors ) {
-		return;
-	}
+function ensureErrorsObjectForSite(siteId) {
+    if (siteId in MediaValidationStore._errors) {
+        return;
+    }
 
-	MediaValidationStore._errors[ siteId ] = {};
+    MediaValidationStore._errors[siteId] = {};
 }
 
-MediaValidationStore.validateItem = function( siteId, item ) {
-	var site = sites.getSite( siteId ),
-		itemErrors = [];
+MediaValidationStore.validateItem = function(siteId, item) {
+    var site = sites.getSite(siteId), itemErrors = [];
 
-	if ( ! site ) {
-		return;
-	}
+    if (!site) {
+        return;
+    }
 
-	if ( ! MediaUtils.isSupportedFileTypeForSite( item, site ) ) {
-		if ( MediaUtils.isSupportedFileTypeInPremium( item, site ) ) {
-			itemErrors.push( MediaValidationErrors.FILE_TYPE_NOT_IN_PLAN );
-		} else {
-			itemErrors.push( MediaValidationErrors.FILE_TYPE_UNSUPPORTED );
-		}
-	}
+    if (!MediaUtils.isSupportedFileTypeForSite(item, site)) {
+        if (MediaUtils.isSupportedFileTypeInPremium(item, site)) {
+            itemErrors.push(MediaValidationErrors.FILE_TYPE_NOT_IN_PLAN);
+        } else {
+            itemErrors.push(MediaValidationErrors.FILE_TYPE_UNSUPPORTED);
+        }
+    }
 
-	if ( true === MediaUtils.isExceedingSiteMaxUploadSize( item, site ) ) {
-		itemErrors.push( MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE );
-	}
+    if (true === MediaUtils.isExceedingSiteMaxUploadSize(item, site)) {
+        itemErrors.push(MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE);
+    }
 
-	if ( itemErrors.length ) {
-		ensureErrorsObjectForSite( siteId );
-		MediaValidationStore._errors[ siteId ][ item.ID ] = itemErrors;
-	}
+    if (itemErrors.length) {
+        ensureErrorsObjectForSite(siteId);
+        MediaValidationStore._errors[siteId][item.ID] = itemErrors;
+    }
 };
 
-MediaValidationStore.clearValidationErrors = function( siteId, itemId ) {
-	if ( ! ( siteId in MediaValidationStore._errors ) ) {
-		return;
-	}
+MediaValidationStore.clearValidationErrors = function(siteId, itemId) {
+    if (!(siteId in MediaValidationStore._errors)) {
+        return;
+    }
 
-	if ( itemId ) {
-		delete MediaValidationStore._errors[ siteId ][ itemId ];
-	} else {
-		delete MediaValidationStore._errors[ siteId ];
-	}
+    if (itemId) {
+        delete MediaValidationStore._errors[siteId][itemId];
+    } else {
+        delete MediaValidationStore._errors[siteId];
+    }
 };
 
 /**
@@ -96,119 +95,121 @@ MediaValidationStore.clearValidationErrors = function( siteId, itemId ) {
  * @param {Number}               siteId    The site ID
  * @param {MediaValidationError} errorType The error type to remove
  */
-MediaValidationStore.clearValidationErrorsByType = function( siteId, errorType ) {
-	if ( ! ( siteId in MediaValidationStore._errors ) ) {
-		return;
-	}
+MediaValidationStore.clearValidationErrorsByType = function(siteId, errorType) {
+    if (!(siteId in MediaValidationStore._errors)) {
+        return;
+    }
 
-	MediaValidationStore._errors[ siteId ] = pickBy(
-		mapValues( MediaValidationStore._errors[ siteId ], ( errors ) => without( errors, errorType ) ),
-		( errors ) => ! isEmpty( errors )
-	);
+    MediaValidationStore._errors[siteId] = pickBy(
+        mapValues(MediaValidationStore._errors[siteId], errors => without(errors, errorType)),
+        errors => !isEmpty(errors)
+    );
 };
 
-function receiveServerError( siteId, itemId, errors ) {
-	ensureErrorsObjectForSite( siteId );
+function receiveServerError(siteId, itemId, errors) {
+    ensureErrorsObjectForSite(siteId);
 
-	MediaValidationStore._errors[ siteId ][ itemId ] = errors.map( ( error ) => {
-		switch ( error.error ) {
-			case 'http_404':
-				return MediaValidationErrors.UPLOAD_VIA_URL_404;
-			case 'upload_error':
-				if ( error.message.indexOf( 'Not enough space to upload' ) === 0 ) {
-					return MediaValidationErrors.NOT_ENOUGH_SPACE;
-				}
-				if ( error.message.indexOf( 'You have used your space quota' ) === 0 ) {
-					return MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT;
-				}
-				return MediaValidationErrors.SERVER_ERROR;
-			default:
-				return MediaValidationErrors.SERVER_ERROR;
-		}
-	} );
+    MediaValidationStore._errors[siteId][itemId] = errors.map(error => {
+        switch (error.error) {
+            case 'http_404':
+                return MediaValidationErrors.UPLOAD_VIA_URL_404;
+            case 'upload_error':
+                if (error.message.indexOf('Not enough space to upload') === 0) {
+                    return MediaValidationErrors.NOT_ENOUGH_SPACE;
+                }
+                if (error.message.indexOf('You have used your space quota') === 0) {
+                    return MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT;
+                }
+                return MediaValidationErrors.SERVER_ERROR;
+            default:
+                return MediaValidationErrors.SERVER_ERROR;
+        }
+    });
 }
 
-MediaValidationStore.getAllErrors = function( siteId ) {
-	return MediaValidationStore._errors[ siteId ] || {};
+MediaValidationStore.getAllErrors = function(siteId) {
+    return MediaValidationStore._errors[siteId] || {};
 };
 
-MediaValidationStore.getErrors = function( siteId, itemId ) {
-	if ( ! ( siteId in MediaValidationStore._errors ) ) {
-		return [];
-	}
+MediaValidationStore.getErrors = function(siteId, itemId) {
+    if (!(siteId in MediaValidationStore._errors)) {
+        return [];
+    }
 
-	return MediaValidationStore._errors[ siteId ][ itemId ] || [];
+    return MediaValidationStore._errors[siteId][itemId] || [];
 };
 
-MediaValidationStore.hasErrors = function( siteId, itemId ) {
-	if ( itemId ) {
-		return MediaValidationStore.getErrors( siteId, itemId ).length;
-	}
+MediaValidationStore.hasErrors = function(siteId, itemId) {
+    if (itemId) {
+        return MediaValidationStore.getErrors(siteId, itemId).length;
+    }
 
-	return Object.keys( MediaValidationStore.getAllErrors( siteId ) ).length;
+    return Object.keys(MediaValidationStore.getAllErrors(siteId)).length;
 };
 
-MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
-		items, errors;
+MediaValidationStore.dispatchToken = Dispatcher.register(function(payload) {
+    var action = payload.action, items, errors;
 
-	switch ( action.type ) {
-		case 'CREATE_MEDIA_ITEM':
-			if ( ! action.siteId || ! action.data ) {
-				break;
-			}
+    switch (action.type) {
+        case 'CREATE_MEDIA_ITEM':
+            if (!action.siteId || !action.data) {
+                break;
+            }
 
-			items = Array.isArray( action.data.media ) ? action.data.media : [ action.data ];
-			errors = items.reduce( function( memo, item ) {
-				var itemErrors;
+            items = Array.isArray(action.data.media) ? action.data.media : [action.data];
+            errors = items.reduce(
+                function(memo, item) {
+                    var itemErrors;
 
-				MediaValidationStore.validateItem( action.siteId, item );
+                    MediaValidationStore.validateItem(action.siteId, item);
 
-				itemErrors = MediaValidationStore.getErrors( action.siteId, item.ID );
-				if ( itemErrors.length ) {
-					memo[ item.ID ] = itemErrors;
-				}
+                    itemErrors = MediaValidationStore.getErrors(action.siteId, item.ID);
+                    if (itemErrors.length) {
+                        memo[item.ID] = itemErrors;
+                    }
 
-				return memo;
-			}, {} );
+                    return memo;
+                },
+                {}
+            );
 
-			if ( errors && Object.keys( errors ).length ) {
-				action.error = MediaValidationStore.getAllErrors( action.siteId );
-				MediaValidationStore.emit( 'change' );
-			}
-			break;
+            if (errors && Object.keys(errors).length) {
+                action.error = MediaValidationStore.getAllErrors(action.siteId);
+                MediaValidationStore.emit('change');
+            }
+            break;
 
-		case 'RECEIVE_MEDIA_ITEM':
-		case 'RECEIVE_MEDIA_ITEMS':
-			// Track any errors which occurred during upload
-			if ( ! action.error || ! action.id ) {
-				break;
-			}
+        case 'RECEIVE_MEDIA_ITEM':
+        case 'RECEIVE_MEDIA_ITEMS':
+            // Track any errors which occurred during upload
+            if (!action.error || !action.id) {
+                break;
+            }
 
-			if ( Array.isArray( action.error.errors ) ) {
-				errors = action.error.errors;
-			} else {
-				errors = [ action.error ];
-			}
+            if (Array.isArray(action.error.errors)) {
+                errors = action.error.errors;
+            } else {
+                errors = [action.error];
+            }
 
-			receiveServerError( action.siteId, action.id, errors );
-			MediaValidationStore.emit( 'change' );
-			break;
+            receiveServerError(action.siteId, action.id, errors);
+            MediaValidationStore.emit('change');
+            break;
 
-		case 'CLEAR_MEDIA_VALIDATION_ERRORS':
-			if ( ! action.siteId ) {
-				break;
-			}
+        case 'CLEAR_MEDIA_VALIDATION_ERRORS':
+            if (!action.siteId) {
+                break;
+            }
 
-			if ( action.errorType ) {
-				MediaValidationStore.clearValidationErrorsByType( action.siteId, action.errorType );
-			} else {
-				MediaValidationStore.clearValidationErrors( action.siteId, action.itemId );
-			}
+            if (action.errorType) {
+                MediaValidationStore.clearValidationErrorsByType(action.siteId, action.errorType);
+            } else {
+                MediaValidationStore.clearValidationErrors(action.siteId, action.itemId);
+            }
 
-			MediaValidationStore.emit( 'change' );
-			break;
-	}
-} );
+            MediaValidationStore.emit('change');
+            break;
+    }
+});
 
 module.exports = MediaValidationStore;

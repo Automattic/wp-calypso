@@ -11,17 +11,19 @@ import Types from './main';
 import { mapPostStatus } from 'lib/route/path';
 
 export function redirect() {
-	page.redirect( '/posts' );
+    page.redirect('/posts');
 }
 
-export function list( context, next ) {
-	context.primary = (
-		<Types query={ {
-			type: context.params.type,
-			status: mapPostStatus( context.params.status ),
-			search: context.query.s
-		} } />
-	);
+export function list(context, next) {
+    context.primary = (
+        <Types
+            query={{
+                type: context.params.type,
+                status: mapPostStatus(context.params.status),
+                search: context.query.s,
+            }}
+        />
+    );
 
-	next();
+    next();
 }

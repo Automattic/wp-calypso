@@ -16,79 +16,74 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const stores = [
-	DomainsStore,
-	CartStore
-];
+const stores = [DomainsStore, CartStore];
 
-function getStateFromStores( props ) {
-	return {
-		cart: CartStore.get(),
-		context: props.context,
-		domains: ( props.selectedSite ? DomainsStore.getBySite( props.selectedSite.ID ) : null ),
-		products: props.products,
-		selectedDomainName: props.selectedDomainName,
-		selectedSite: props.selectedSite,
-		sitePlans: props.sitePlans
-	};
+function getStateFromStores(props) {
+    return {
+        cart: CartStore.get(),
+        context: props.context,
+        domains: props.selectedSite ? DomainsStore.getBySite(props.selectedSite.ID) : null,
+        products: props.products,
+        selectedDomainName: props.selectedDomainName,
+        selectedSite: props.selectedSite,
+        sitePlans: props.sitePlans,
+    };
 }
 
-const DomainManagementData = React.createClass( {
-	propTypes: {
-		context: PropTypes.object.isRequired,
-		productsList: PropTypes.object.isRequired,
-		selectedDomainName: PropTypes.string,
-		selectedSite: PropTypes.object,
-		sitePlans: PropTypes.object.isRequired
-	},
+const DomainManagementData = React.createClass({
+    propTypes: {
+        context: PropTypes.object.isRequired,
+        productsList: PropTypes.object.isRequired,
+        selectedDomainName: PropTypes.string,
+        selectedSite: PropTypes.object,
+        sitePlans: PropTypes.object.isRequired,
+    },
 
-	mixins: [ observe( 'productsList' ) ],
+    mixins: [observe('productsList')],
 
-	componentWillMount: function() {
-		const { selectedSite } = this.props;
+    componentWillMount: function() {
+        const { selectedSite } = this.props;
 
-		if ( selectedSite ) {
-			upgradesActions.fetchDomains( selectedSite.ID );
-		}
-	},
+        if (selectedSite) {
+            upgradesActions.fetchDomains(selectedSite.ID);
+        }
+    },
 
-	componentWillUpdate: function( nextProps ) {
-		const { selectedSite: prevSite } = this.props;
-		const { selectedSite: nextSite } = nextProps;
+    componentWillUpdate: function(nextProps) {
+        const { selectedSite: prevSite } = this.props;
+        const { selectedSite: nextSite } = nextProps;
 
-		if ( nextSite !== prevSite ) {
-			upgradesActions.fetchDomains( nextSite.ID );
-		}
-	},
+        if (nextSite !== prevSite) {
+            upgradesActions.fetchDomains(nextSite.ID);
+        }
+    },
 
-	render: function() {
-		return (
-			<div>
-				<StoreConnection
-					component={ this.props.component }
-					stores={ stores }
-					getStateFromStores={ getStateFromStores }
-					products={ this.props.productsList.get() }
-					selectedDomainName={ this.props.selectedDomainName }
-					selectedSite={ this.props.selectedSite }
-					sitePlans={ this.props.sitePlans }
-					context={ this.props.context }
-				/>
-				{ this.props.selectedSite &&
-					<QuerySitePlans siteId={ this.props.selectedSite.ID } />
-				}
-			</div>
-		);
-	}
-} );
+    render: function() {
+        return (
+            <div>
+                <StoreConnection
+                    component={this.props.component}
+                    stores={stores}
+                    getStateFromStores={getStateFromStores}
+                    products={this.props.productsList.get()}
+                    selectedDomainName={this.props.selectedDomainName}
+                    selectedSite={this.props.selectedSite}
+                    sitePlans={this.props.sitePlans}
+                    context={this.props.context}
+                />
+                {this.props.selectedSite && <QuerySitePlans siteId={this.props.selectedSite.ID} />}
+            </div>
+        );
+    },
+});
 
 const mapStateToProps = state => {
-	const selectedSite = getSelectedSite( state );
+    const selectedSite = getSelectedSite(state);
 
-	return {
-		sitePlans: getPlansBySite( state, selectedSite ),
-		selectedSite,
-	};
+    return {
+        sitePlans: getPlansBySite(state, selectedSite),
+        selectedSite,
+    };
 };
 
-export default connect( mapStateToProps )( DomainManagementData );
+export default connect(mapStateToProps)(DomainManagementData);

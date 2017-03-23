@@ -6,8 +6,8 @@
  * @param  {Number}  siteId Site ID
  * @return {Boolean}        Whether post types are being requested
  */
-export function isRequestingPostTypes( state, siteId ) {
-	return !! state.postTypes.requesting[ siteId ];
+export function isRequestingPostTypes(state, siteId) {
+    return !!state.postTypes.requesting[siteId];
 }
 
 /**
@@ -17,8 +17,8 @@ export function isRequestingPostTypes( state, siteId ) {
  * @param  {Number}  siteId Site ID
  * @return {?Object}        Site post types
  */
-export function getPostTypes( state, siteId ) {
-	return state.postTypes.items[ siteId ] || null;
+export function getPostTypes(state, siteId) {
+    return state.postTypes.items[siteId] || null;
 }
 
 /**
@@ -29,13 +29,13 @@ export function getPostTypes( state, siteId ) {
  * @param  {String}  slug   Post type slug
  * @return {?Object}        Post type
  */
-export function getPostType( state, siteId, slug ) {
-	const postTypes = getPostTypes( state, siteId );
-	if ( ! postTypes ) {
-		return null;
-	}
+export function getPostType(state, siteId, slug) {
+    const postTypes = getPostTypes(state, siteId);
+    if (!postTypes) {
+        return null;
+    }
 
-	return postTypes[ slug ] || null;
+    return postTypes[slug] || null;
 }
 
 /**
@@ -49,34 +49,34 @@ export function getPostType( state, siteId, slug ) {
  * @param  {String}   feature Feature slug
  * @return {?Boolean}         Whether post type supports feature
  */
-export function postTypeSupports( state, siteId, slug, feature ) {
-	// Hard-coded overrides; even if we know the post type object, continue to
-	// defer to these values. Indicates that REST API supports are inaccurate.
-	switch ( slug ) {
-		case 'post':
-			switch ( feature ) {
-				case 'publicize':
-					return true;
-			}
-	}
+export function postTypeSupports(state, siteId, slug, feature) {
+    // Hard-coded overrides; even if we know the post type object, continue to
+    // defer to these values. Indicates that REST API supports are inaccurate.
+    switch (slug) {
+        case 'post':
+            switch (feature) {
+                case 'publicize':
+                    return true;
+            }
+    }
 
-	const postType = getPostType( state, siteId, slug );
-	if ( postType ) {
-		return !! postType.supports[ feature ];
-	}
+    const postType = getPostType(state, siteId, slug);
+    if (postType) {
+        return !!postType.supports[feature];
+    }
 
-	// Hard-coded fallbacks; while themes can technically override these
-	// supports, we can be relatively safe in making the assumption. By
-	// defining fallbacks, we avoid UI flickering after request completes.
-	switch ( slug ) {
-		case 'page':
-			switch ( feature ) {
-				case 'publicize':
-					return false;
-			}
-	}
+    // Hard-coded fallbacks; while themes can technically override these
+    // supports, we can be relatively safe in making the assumption. By
+    // defining fallbacks, we avoid UI flickering after request completes.
+    switch (slug) {
+        case 'page':
+            switch (feature) {
+                case 'publicize':
+                    return false;
+            }
+    }
 
-	return null;
+    return null;
 }
 
 /**
@@ -89,11 +89,11 @@ export function postTypeSupports( state, siteId, slug, feature ) {
  * @param  {String}   slug   Post type slug
  * @return {?Boolean}        Whether site supports post type
  */
-export function isPostTypeSupported( state, siteId, slug ) {
-	const postTypes = getPostTypes( state, siteId );
-	if ( ! postTypes ) {
-		return null;
-	}
+export function isPostTypeSupported(state, siteId, slug) {
+    const postTypes = getPostTypes(state, siteId);
+    if (!postTypes) {
+        return null;
+    }
 
-	return !! postTypes[ slug ];
+    return !!postTypes[slug];
 }

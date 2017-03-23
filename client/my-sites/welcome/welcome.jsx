@@ -1,55 +1,58 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require('react');
 
 /**
  * Internal dependencies
  */
 
-module.exports = React.createClass( {
+module.exports = React.createClass({
+    displayName: 'Welcome',
 
-	displayName: 'Welcome',
+    getInitialState: function() {
+        return {
+            visible: !!this.props.isVisible,
+        };
+    },
 
-	getInitialState: function() {
-		return {
-			visible: !! this.props.isVisible
-		};
-	},
+    componentWillReceiveProps: function(nextProps) {
+        var nextVisible = !!nextProps.isVisible;
+        if (nextVisible !== this.state.visible) {
+            this.setState({
+                visible: nextVisible,
+            });
+        }
+    },
 
-	componentWillReceiveProps: function( nextProps ) {
-		var nextVisible = !! nextProps.isVisible;
-		if ( nextVisible !== this.state.visible ) {
-			this.setState( {
-				visible: nextVisible
-			} );
-		}
-	},
+    close: function(event) {
+        event.preventDefault();
 
-	close: function( event ) {
-		event.preventDefault();
+        this.setState({
+            visible: false,
+        });
 
-		this.setState( {
-			visible: false
-		} );
+        if ('function' === typeof this.props.closeAction) {
+            this.props.closeAction();
+        }
+    },
 
-		if( 'function' === typeof( this.props.closeAction ) ) {
-			this.props.closeAction();
-		}
-	},
+    render: function() {
+        var welcomeClassName = this.props.additionalClassName
+            ? this.props.additionalClassName + ' welcome-message'
+            : 'welcome-message';
 
-	render: function() {
-		var welcomeClassName = ( this.props.additionalClassName ) ? this.props.additionalClassName + ' welcome-message' : 'welcome-message';
-
-		if ( this.state.visible ) {
-			return (
-				<div className={ welcomeClassName }>
-					<a href="#" className="close-button" onClick={ this.close }><span className="noticon noticon-close"></span></a>
-					{ this.props.children }
-				</div>
-			);
-		} else {
-			return null;
-		}
-	}
-} );
+        if (this.state.visible) {
+            return (
+                <div className={welcomeClassName}>
+                    <a href="#" className="close-button" onClick={this.close}>
+                        <span className="noticon noticon-close" />
+                    </a>
+                    {this.props.children}
+                </div>
+            );
+        } else {
+            return null;
+        }
+    },
+});

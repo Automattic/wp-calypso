@@ -22,473 +22,508 @@ import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-function checkPropsChange( nextProps, propArr ) {
-	let i, prop;
+function checkPropsChange(nextProps, propArr) {
+    let i, prop;
 
-	for ( i = 0; i < propArr.length; i++ ) {
-		prop = propArr[ i ];
+    for (i = 0; i < propArr.length; i++) {
+        prop = propArr[i];
 
-		if ( ! isEqual( nextProps[ prop ], this.props[ prop ] ) ) {
-			return true;
-		}
-	}
-	return false;
+        if (!isEqual(nextProps[prop], this.props[prop])) {
+            return true;
+        }
+    }
+    return false;
 }
 
-export const PluginsList = React.createClass( {
-	mixins: [ PluginNotices ],
+export const PluginsList = React.createClass({
+    mixins: [PluginNotices],
 
-	propTypes: {
-		plugins: PropTypes.arrayOf( PropTypes.shape( {
-			sites: PropTypes.array,
-			slug: PropTypes.string,
-			name: PropTypes.string,
-		} ) ).isRequired,
-		header: PropTypes.string.isRequired,
-		sites: PropTypes.object.isRequired,
-		selectedSite: PropTypes.object,
-		selectedSiteSlug: PropTypes.string,
-		pluginUpdateCount: PropTypes.number,
-		isPlaceholder: PropTypes.bool.isRequired,
-	},
+    propTypes: {
+        plugins: PropTypes.arrayOf(
+            PropTypes.shape({
+                sites: PropTypes.array,
+                slug: PropTypes.string,
+                name: PropTypes.string,
+            })
+        ).isRequired,
+        header: PropTypes.string.isRequired,
+        sites: PropTypes.object.isRequired,
+        selectedSite: PropTypes.object,
+        selectedSiteSlug: PropTypes.string,
+        pluginUpdateCount: PropTypes.number,
+        isPlaceholder: PropTypes.bool.isRequired,
+    },
 
-	getDefaultProps() {
-		return {
-			recordGoogleEvent: () => {}
-		};
-	},
+    getDefaultProps() {
+        return {
+            recordGoogleEvent: () => {},
+        };
+    },
 
-	shouldComponentUpdate( nextProps, nextState ) {
-		const propsToCheck = [ 'plugins', 'sites', 'selectedSite', 'pluginUpdateCount', '' ];
-		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
-			return true;
-		}
+    shouldComponentUpdate(nextProps, nextState) {
+        const propsToCheck = ['plugins', 'sites', 'selectedSite', 'pluginUpdateCount', ''];
+        if (checkPropsChange.call(this, nextProps, propsToCheck)) {
+            return true;
+        }
 
-		if ( this.props.isPlaceholder !== nextProps.isPlaceholder ) {
-			return true;
-		}
+        if (this.props.isPlaceholder !== nextProps.isPlaceholder) {
+            return true;
+        }
 
-		if ( this.state.bulkManagementActive !== nextState.bulkManagementActive ) {
-			return true;
-		}
+        if (this.state.bulkManagementActive !== nextState.bulkManagementActive) {
+            return true;
+        }
 
-		if ( this.state.disconnectJetpackDialog !== nextState.disconnectJetpackDialog ) {
-			return true;
-		}
+        if (this.state.disconnectJetpackDialog !== nextState.disconnectJetpackDialog) {
+            return true;
+        }
 
-		if ( ! isEqual( this.state.selectedPlugins, nextState.selectedPlugins ) ) {
-			return true;
-		}
-		if ( this.shouldComponentUpdateNotices( this.state.notices, nextState.notices ) ) {
-			return true;
-		}
+        if (!isEqual(this.state.selectedPlugins, nextState.selectedPlugins)) {
+            return true;
+        }
+        if (this.shouldComponentUpdateNotices(this.state.notices, nextState.notices)) {
+            return true;
+        }
 
-		return false;
-	},
+        return false;
+    },
 
-	getInitialState() {
-		return {
-			disconnectJetpackDialog: false,
-			bulkManagementActive: false,
-			selectedPlugins: {}
-		};
-	},
+    getInitialState() {
+        return {
+            disconnectJetpackDialog: false,
+            bulkManagementActive: false,
+            selectedPlugins: {},
+        };
+    },
 
-	componentDidMount() {
-		PluginsLog.on( 'change', this.showDisconnectDialog );
-	},
+    componentDidMount() {
+        PluginsLog.on('change', this.showDisconnectDialog);
+    },
 
-	componentWillUnmount() {
-		PluginsLog.removeListener( 'change', this.showDisconnectDialog );
-	},
+    componentWillUnmount() {
+        PluginsLog.removeListener('change', this.showDisconnectDialog);
+    },
 
-	isSelected( { slug } ) {
-		return !! this.state.selectedPlugins[ slug ];
-	},
+    isSelected({ slug }) {
+        return !!this.state.selectedPlugins[slug];
+    },
 
-	togglePlugin( plugin ) {
-		const { slug } = plugin;
-		const { selectedPlugins } = this.state;
-		const oldValue = selectedPlugins[ slug ];
-		const eventAction = 'Clicked to ' + this.isSelected( plugin ) ? 'Deselect' : 'Select' + 'Single Plugin';
-		this.setState( { selectedPlugins: Object.assign( {}, selectedPlugins, { [ slug ]: ! oldValue } ) } );
-		this.props.recordGoogleEvent( 'Plugins', eventAction, 'Plugin Name', slug );
-	},
+    togglePlugin(plugin) {
+        const { slug } = plugin;
+        const { selectedPlugins } = this.state;
+        const oldValue = selectedPlugins[slug];
+        const eventAction = 'Clicked to ' + this.isSelected(plugin)
+            ? 'Deselect'
+            : 'Select' + 'Single Plugin';
+        this.setState({
+            selectedPlugins: Object.assign({}, selectedPlugins, { [slug]: !oldValue }),
+        });
+        this.props.recordGoogleEvent('Plugins', eventAction, 'Plugin Name', slug);
+    },
 
-	canBulkSelect( plugin ) {
-		const {
-			autoupdate: canAutoupdate,
-			activation: canActivate,
-		} = this.getAllowedPluginActions( plugin );
-		return ! this.hasNoSitesThatCanManage( plugin ) && ( canAutoupdate || canActivate );
-	},
+    canBulkSelect(plugin) {
+        const {
+            autoupdate: canAutoupdate,
+            activation: canActivate,
+        } = this.getAllowedPluginActions(plugin);
+        return !this.hasNoSitesThatCanManage(plugin) && (canAutoupdate || canActivate);
+    },
 
-	setBulkSelectionState( plugins, selectionState ) {
-		const slugsToBeUpdated = reduce( plugins, ( slugs, plugin ) => {
-			slugs[ plugin.slug ] = this.canBulkSelect( plugin ) && selectionState;
-			return slugs;
-		}, {} );
+    setBulkSelectionState(plugins, selectionState) {
+        const slugsToBeUpdated = reduce(
+            plugins,
+            (slugs, plugin) => {
+                slugs[plugin.slug] = this.canBulkSelect(plugin) && selectionState;
+                return slugs;
+            },
+            {}
+        );
 
-		this.setState( { selectedPlugins: Object.assign( {}, this.state.selectedPlugins, slugsToBeUpdated ) } );
-	},
+        this.setState({
+            selectedPlugins: Object.assign({}, this.state.selectedPlugins, slugsToBeUpdated),
+        });
+    },
 
-	getPluginBySlug( slug ) {
-		const { plugins } = this.props;
-		return find( plugins, plugin => plugin.slug === slug );
-	},
+    getPluginBySlug(slug) {
+        const { plugins } = this.props;
+        return find(plugins, plugin => plugin.slug === slug);
+    },
 
-	filterSelection: {
-		active( plugin ) {
-			if ( this.isSelected( plugin ) ) {
-				return plugin.sites.some( site => site.plugin && site.plugin.active );
-			}
-			return false;
-		},
-		inactive( plugin ) {
-			if ( this.isSelected( plugin ) ) {
-				return plugin.sites.some( site => site.plugin && ! site.plugin.active );
-			}
-			return false;
-		},
-		updates( plugin ) {
-			if ( this.isSelected( plugin ) ) {
-				return plugin.sites.some( site =>
-					site.plugin && site.plugin.update && site.plugin.update.new_version && site.canUpdateFiles
-				);
-			}
-			return false;
-		},
-		selected( plugin ) {
-			return this.isSelected( plugin );
-		}
-	},
+    filterSelection: {
+        active(plugin) {
+            if (this.isSelected(plugin)) {
+                return plugin.sites.some(site => site.plugin && site.plugin.active);
+            }
+            return false;
+        },
+        inactive(plugin) {
+            if (this.isSelected(plugin)) {
+                return plugin.sites.some(site => site.plugin && !site.plugin.active);
+            }
+            return false;
+        },
+        updates(plugin) {
+            if (this.isSelected(plugin)) {
+                return plugin.sites.some(
+                    site =>
+                        site.plugin &&
+                        site.plugin.update &&
+                        site.plugin.update.new_version &&
+                        site.canUpdateFiles
+                );
+            }
+            return false;
+        },
+        selected(plugin) {
+            return this.isSelected(plugin);
+        },
+    },
 
-	hasNoSitesThatCanManage( plugin ) {
-		return ! plugin.sites.some( site => includes( site.modules || [], 'manage' ) );
-	},
+    hasNoSitesThatCanManage(plugin) {
+        return !plugin.sites.some(site => includes(site.modules || [], 'manage'));
+    },
 
-	getSelected() {
-		return this.props.plugins.filter( this.filterSelection.selected.bind( this ) );
-	},
+    getSelected() {
+        return this.props.plugins.filter(this.filterSelection.selected.bind(this));
+    },
 
-	siteSuffix() {
-		const hasSingleSite = this.props.sites && this.props.sites.get().length === 1;
-		return ( this.props.selectedSite || hasSingleSite ) ? '/' + this.props.selectedSiteSlug : '';
-	},
+    siteSuffix() {
+        const hasSingleSite = this.props.sites && this.props.sites.get().length === 1;
+        return this.props.selectedSite || hasSingleSite ? '/' + this.props.selectedSiteSlug : '';
+    },
 
-	recordEvent( eventAction, includeSelectedPlugins ) {
-		eventAction += ( this.props.selectedSite ? '' : ' on Multisite' );
-		if ( includeSelectedPlugins ) {
-			const pluginSlugs = this.getSelected().map( plugin => plugin.slug );
-			this.props.recordGoogleEvent( 'Plugins', eventAction, 'Plugins', pluginSlugs );
-		} else {
-			this.props.recordGoogleEvent( 'Plugins', eventAction );
-		}
-	},
+    recordEvent(eventAction, includeSelectedPlugins) {
+        eventAction += this.props.selectedSite ? '' : ' on Multisite';
+        if (includeSelectedPlugins) {
+            const pluginSlugs = this.getSelected().map(plugin => plugin.slug);
+            this.props.recordGoogleEvent('Plugins', eventAction, 'Plugins', pluginSlugs);
+        } else {
+            this.props.recordGoogleEvent('Plugins', eventAction);
+        }
+    },
 
-	// Actions
-	toggleBulkManagement() {
-		const activateBulkManagement = ! this.state.bulkManagementActive;
+    // Actions
+    toggleBulkManagement() {
+        const activateBulkManagement = !this.state.bulkManagementActive;
 
-		if ( activateBulkManagement ) {
-			this.setBulkSelectionState( this.props.plugins, true );
-			this.setState( { bulkManagementActive: true } );
-			this.recordEvent( 'Clicked Manage' );
-		} else {
-			this.setState( { bulkManagementActive: false } );
-			this.removePluginsNotices();
-			this.recordEvent( 'Clicked Manage Done' );
-		}
-	},
+        if (activateBulkManagement) {
+            this.setBulkSelectionState(this.props.plugins, true);
+            this.setState({ bulkManagementActive: true });
+            this.recordEvent('Clicked Manage');
+        } else {
+            this.setState({ bulkManagementActive: false });
+            this.removePluginsNotices();
+            this.recordEvent('Clicked Manage Done');
+        }
+    },
 
-	removePluginsNotices() {
-		const { notices: { completed, errors } = {} } = this.state;
+    removePluginsNotices() {
+        const { notices: { completed, errors } = {} } = this.state;
 
-		if ( completed || errors ) {
-			PluginsActions.removePluginsNotices( [ ...completed, ...errors ] );
-		}
-	},
+        if (completed || errors) {
+            PluginsActions.removePluginsNotices([...completed, ...errors]);
+        }
+    },
 
-	doActionOverSelected( actionName, action ) {
-		const isDeactivatingAndJetpackSelected = ( { slug } ) => 'deactivating' === actionName && 'jetpack' === slug;
-		const flattenArrays = ( full, partial ) => [ ...full, ...partial ];
-		this.removePluginsNotices();
-		this.props.plugins
-			.filter( this.isSelected ) // only use selected sites
-			.filter( negate( isDeactivatingAndJetpackSelected ) ) // ignore sites that are deactiving
-			.map( p => p.sites ) // list of plugins -> list of list of sites
-			.reduce( flattenArrays, [] ) // flatten the list into one big list of sites
-			.forEach( site => action( site, site.plugin ) );
-	},
+    doActionOverSelected(actionName, action) {
+        const isDeactivatingAndJetpackSelected = ({ slug }) =>
+            'deactivating' === actionName && 'jetpack' === slug;
+        const flattenArrays = (full, partial) => [...full, ...partial];
+        this.removePluginsNotices();
+        this.props.plugins
+            .filter(this.isSelected) // only use selected sites
+            .filter(negate(isDeactivatingAndJetpackSelected)) // ignore sites that are deactiving
+            .map(p => p.sites) // list of plugins -> list of list of sites
+            .reduce(flattenArrays, []) // flatten the list into one big list of sites
+            .forEach(site => action(site, site.plugin));
+    },
 
-	updateAllPlugins() {
-		this.removePluginsNotices();
-		this.props.plugins.forEach( plugin => {
-			plugin.sites.forEach( site => PluginsActions.updatePlugin( site, site.plugin ) );
-		} );
-		this.recordEvent( 'Clicked Update all Plugins', true );
-	},
+    updateAllPlugins() {
+        this.removePluginsNotices();
+        this.props.plugins.forEach(plugin => {
+            plugin.sites.forEach(site => PluginsActions.updatePlugin(site, site.plugin));
+        });
+        this.recordEvent('Clicked Update all Plugins', true);
+    },
 
-	updateSelected() {
-		this.doActionOverSelected( 'updating', PluginsActions.updatePlugin );
-		this.recordEvent( 'Clicked Update Plugin(s)', true );
-	},
+    updateSelected() {
+        this.doActionOverSelected('updating', PluginsActions.updatePlugin);
+        this.recordEvent('Clicked Update Plugin(s)', true);
+    },
 
-	activateSelected() {
-		this.doActionOverSelected( 'activating', PluginsActions.activatePlugin );
-		this.recordEvent( 'Clicked Activate Plugin(s)', true );
-	},
+    activateSelected() {
+        this.doActionOverSelected('activating', PluginsActions.activatePlugin);
+        this.recordEvent('Clicked Activate Plugin(s)', true);
+    },
 
-	deactivateSelected() {
-		this.doActionOverSelected( 'deactivating', PluginsActions.deactivatePlugin );
-		this.recordEvent( 'Clicked Deactivate Plugin(s)', true );
-	},
+    deactivateSelected() {
+        this.doActionOverSelected('deactivating', PluginsActions.deactivatePlugin);
+        this.recordEvent('Clicked Deactivate Plugin(s)', true);
+    },
 
-	deactiveAndDisconnectSelected() {
-		let waitForDeactivate = false;
+    deactiveAndDisconnectSelected() {
+        let waitForDeactivate = false;
 
-		this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
-			waitForDeactivate = true;
-			PluginsActions.deactivatePlugin( site, plugin );
-		} );
+        this.doActionOverSelected('deactivating', (site, plugin) => {
+            waitForDeactivate = true;
+            PluginsActions.deactivatePlugin(site, plugin);
+        });
 
-		if ( waitForDeactivate ) {
-			this.setState( { disconnectJetpackDialog: true } );
-		} else {
-			this.refs.dialog.open();
-		}
+        if (waitForDeactivate) {
+            this.setState({ disconnectJetpackDialog: true });
+        } else {
+            this.refs.dialog.open();
+        }
 
-		this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
-	},
+        this.recordEvent('Clicked Deactivate Plugin(s) and Disconnect Jetpack', true);
+    },
 
-	setAutoupdateSelected() {
-		this.doActionOverSelected( 'enablingAutoupdates', PluginsActions.enableAutoUpdatesPlugin );
-		this.recordEvent( 'Clicked Enable Autoupdate Plugin(s)', true );
-	},
+    setAutoupdateSelected() {
+        this.doActionOverSelected('enablingAutoupdates', PluginsActions.enableAutoUpdatesPlugin);
+        this.recordEvent('Clicked Enable Autoupdate Plugin(s)', true);
+    },
 
-	unsetAutoupdateSelected() {
-		this.doActionOverSelected( 'disablingAutoupdates', PluginsActions.disableAutoUpdatesPlugin );
-		this.recordEvent( 'Clicked Disable Autoupdate Plugin(s)', true );
-	},
+    unsetAutoupdateSelected() {
+        this.doActionOverSelected('disablingAutoupdates', PluginsActions.disableAutoUpdatesPlugin);
+        this.recordEvent('Clicked Disable Autoupdate Plugin(s)', true);
+    },
 
-	getConfirmationText() {
-		const pluginsList = {},
-			sitesList = {};
-		let pluginName,
-			siteName;
+    getConfirmationText() {
+        const pluginsList = {}, sitesList = {};
+        let pluginName, siteName;
 
-		this.props.plugins
-			.filter( this.isSelected )
-			.forEach( ( plugin ) => {
-				pluginsList[ plugin.slug ] = true;
-				pluginName = plugin.name || plugin.slug;
+        this.props.plugins.filter(this.isSelected).forEach(plugin => {
+            pluginsList[plugin.slug] = true;
+            pluginName = plugin.name || plugin.slug;
 
-				plugin.sites.forEach( ( site ) => {
-					if ( site.canUpdateFiles ) {
-						sitesList[ site.ID ] = true;
-						siteName = site.title;
-					}
-				} );
-			} );
+            plugin.sites.forEach(site => {
+                if (site.canUpdateFiles) {
+                    sitesList[site.ID] = true;
+                    siteName = site.title;
+                }
+            });
+        });
 
-		const pluginsListSize = Object.keys( pluginsList ).length;
-		const siteListSize = Object.keys( sitesList ).length;
-		const combination = ( siteListSize > 1 ? 'n sites' : '1 site' ) + ' ' + ( pluginsListSize > 1 ? 'n plugins' : '1 plugin' );
+        const pluginsListSize = Object.keys(pluginsList).length;
+        const siteListSize = Object.keys(sitesList).length;
+        const combination = (siteListSize > 1 ? 'n sites' : '1 site') +
+            ' ' +
+            (pluginsListSize > 1 ? 'n plugins' : '1 plugin');
 
-		switch ( combination ) {
-			case '1 site 1 plugin':
-				return translate(
-					'You are about to remove {{em}}%(plugin)s from %(site)s{{/em}}.{{p}}' +
-					'This will deactivate the plugin and delete all associated files and data.{{/p}}',
-					{
-						components: {
-							em: <em />,
-							p: <p />
-						},
-						args: {
-							plugin: pluginName,
-							site: siteName
-						}
-					}
-				);
+        switch (combination) {
+            case '1 site 1 plugin':
+                return translate(
+                    'You are about to remove {{em}}%(plugin)s from %(site)s{{/em}}.{{p}}' +
+                        'This will deactivate the plugin and delete all associated files and data.{{/p}}',
+                    {
+                        components: {
+                            em: <em />,
+                            p: <p />,
+                        },
+                        args: {
+                            plugin: pluginName,
+                            site: siteName,
+                        },
+                    }
+                );
 
-			case '1 site n plugins':
-				return translate(
-					'You are about to remove {{em}}%(numberOfPlugins)d plugins from %(site)s{{/em}}.{{p}}' +
-					'This will deactivate the plugins and delete all associated files and data.{{/p}}',
-					{
-						components: {
-							em: <em />,
-							p: <p />
-						},
-						args: {
-							numberOfPlugins: pluginsListSize,
-							site: siteName
-						}
-					}
-				);
+            case '1 site n plugins':
+                return translate(
+                    'You are about to remove {{em}}%(numberOfPlugins)d plugins from %(site)s{{/em}}.{{p}}' +
+                        'This will deactivate the plugins and delete all associated files and data.{{/p}}',
+                    {
+                        components: {
+                            em: <em />,
+                            p: <p />,
+                        },
+                        args: {
+                            numberOfPlugins: pluginsListSize,
+                            site: siteName,
+                        },
+                    }
+                );
 
-			case 'n sites 1 plugin':
-				return translate(
-					'You are about to remove {{em}}%(plugin)s from %(numberOfSites)d sites{{/em}}.{{p}}' +
-					'This will deactivate the plugin and delete all associated files and data.{{/p}}',
-					{
-						components: {
-							em: <em />,
-							p: <p />
-						},
-						args: {
-							plugin: pluginName,
-							numberOfSites: siteListSize
-						}
-					}
-				);
+            case 'n sites 1 plugin':
+                return translate(
+                    'You are about to remove {{em}}%(plugin)s from %(numberOfSites)d sites{{/em}}.{{p}}' +
+                        'This will deactivate the plugin and delete all associated files and data.{{/p}}',
+                    {
+                        components: {
+                            em: <em />,
+                            p: <p />,
+                        },
+                        args: {
+                            plugin: pluginName,
+                            numberOfSites: siteListSize,
+                        },
+                    }
+                );
 
-			case 'n sites n plugins':
-				return translate(
-					'You are about to remove {{em}}%(numberOfPlugins)d plugins from %(numberOfSites)d sites{{/em}}.{{p}}' +
-					'This will deactivate the plugins and delete all associated files and data.{{/p}}',
-					{
-						components: {
-							em: <em />,
-							p: <p />
-						},
-						args: {
-							numberOfPlugins: pluginsListSize,
-							numberOfSites: siteListSize
-						}
-					}
-				);
-		}
-	},
+            case 'n sites n plugins':
+                return translate(
+                    'You are about to remove {{em}}%(numberOfPlugins)d plugins from %(numberOfSites)d sites{{/em}}.{{p}}' +
+                        'This will deactivate the plugins and delete all associated files and data.{{/p}}',
+                    {
+                        components: {
+                            em: <em />,
+                            p: <p />,
+                        },
+                        args: {
+                            numberOfPlugins: pluginsListSize,
+                            numberOfSites: siteListSize,
+                        },
+                    }
+                );
+        }
+    },
 
-	removePluginDialog() {
-		const message = (
-			<div>
-				<span>{ this.getConfirmationText() }</span>
-				<span>{ translate( 'Do you want to continue?' ) }</span>
-			</div>
-		);
+    removePluginDialog() {
+        const message = (
+            <div>
+                <span>{this.getConfirmationText()}</span>
+                <span>{translate('Do you want to continue?')}</span>
+            </div>
+        );
 
-		acceptDialog(
-			message,
-			this.removeSelected,
-			translate( 'Remove', { context: 'Verb. Presented to user as a label for a button.' } )
-		);
-	},
+        acceptDialog(
+            message,
+            this.removeSelected,
+            translate('Remove', { context: 'Verb. Presented to user as a label for a button.' })
+        );
+    },
 
-	removeSelected( accepted ) {
-		if ( accepted ) {
-			this.doActionOverSelected( 'removing', PluginsActions.removePlugin );
-			this.recordEvent( 'Clicked Remove Plugin(s)', true );
-		}
-	},
+    removeSelected(accepted) {
+        if (accepted) {
+            this.doActionOverSelected('removing', PluginsActions.removePlugin);
+            this.recordEvent('Clicked Remove Plugin(s)', true);
+        }
+    },
 
-	showDisconnectDialog() {
-		if ( this.state.disconnectJetpackDialog && ! this.state.notices.inProgress.length ) {
-			this.setState( { disconnectJetpackDialog: false } );
-			this.refs.dialog.open();
-		}
-	},
+    showDisconnectDialog() {
+        if (this.state.disconnectJetpackDialog && !this.state.notices.inProgress.length) {
+            this.setState({ disconnectJetpackDialog: false });
+            this.refs.dialog.open();
+        }
+    },
 
-	// Renders
-	render() {
-		const itemListClasses = classNames( 'list-cards-compact', 'plugins-list', {
-			'is-bulk-editing': this.state.bulkManagementActive
-		} );
+    // Renders
+    render() {
+        const itemListClasses = classNames('list-cards-compact', 'plugins-list', {
+            'is-bulk-editing': this.state.bulkManagementActive,
+        });
 
-		const selectedSiteSlug = this.props.selectedSiteSlug ? this.props.selectedSiteSlug : '';
+        const selectedSiteSlug = this.props.selectedSiteSlug ? this.props.selectedSiteSlug : '';
 
-		if ( this.props.isPlaceholder ) {
-			return (
-				<div className="plugins-list">
-					<SectionHeader
-						key="plugins-list__section-placeholder"
-						label={ this.props.header }
-						className="plugins-list__section-actions is-placeholder"
-					/>
-					<div className={ itemListClasses }>{ this.renderPlaceholders() }</div>
-				</div>
-				);
-		}
+        if (this.props.isPlaceholder) {
+            return (
+                <div className="plugins-list">
+                    <SectionHeader
+                        key="plugins-list__section-placeholder"
+                        label={this.props.header}
+                        className="plugins-list__section-actions is-placeholder"
+                    />
+                    <div className={itemListClasses}>{this.renderPlaceholders()}</div>
+                </div>
+            );
+        }
 
-		if ( isEmpty( this.props.plugins ) ) {
-			return null;
-		}
+        if (isEmpty(this.props.plugins)) {
+            return null;
+        }
 
-		return (
-			<div className="plugins-list" >
-				<PluginsListHeader label={ this.props.header }
-					isBulkManagementActive={ this.state.bulkManagementActive }
-					selectedSiteSlug={ selectedSiteSlug }
-					plugins={ this.props.plugins }
-					selected={ this.getSelected() }
-					toggleBulkManagement={ this.toggleBulkManagement }
-					updateAllPlugins={ this.updateAllPlugins }
-					updateSelected= { this.updateSelected }
-					pluginUpdateCount={ this.props.pluginUpdateCount }
-					activateSelected={ this.activateSelected }
-					deactiveAndDisconnectSelected={ this.deactiveAndDisconnectSelected }
-					deactivateSelected={ this.deactivateSelected }
-					setAutoupdateSelected={ this.setAutoupdateSelected }
-					unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
-					removePluginNotice={ this.removePluginDialog }
-					setSelectionState={ this.setBulkSelectionState }
-					haveActiveSelected={ this.props.plugins.some( this.filterSelection.active.bind( this ) ) }
-					haveInactiveSelected={ this.props.plugins.some( this.filterSelection.inactive.bind( this ) ) }
-					haveUpdatesSelected= { this.props.plugins.some( this.filterSelection.updates.bind( this ) ) } />
-				<div className={ itemListClasses }>{ this.props.plugins.map( this.renderPlugin ) }</div>
-				<DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" />
-			</div>
-		);
-	},
+        return (
+            <div className="plugins-list">
+                <PluginsListHeader
+                    label={this.props.header}
+                    isBulkManagementActive={this.state.bulkManagementActive}
+                    selectedSiteSlug={selectedSiteSlug}
+                    plugins={this.props.plugins}
+                    selected={this.getSelected()}
+                    toggleBulkManagement={this.toggleBulkManagement}
+                    updateAllPlugins={this.updateAllPlugins}
+                    updateSelected={this.updateSelected}
+                    pluginUpdateCount={this.props.pluginUpdateCount}
+                    activateSelected={this.activateSelected}
+                    deactiveAndDisconnectSelected={this.deactiveAndDisconnectSelected}
+                    deactivateSelected={this.deactivateSelected}
+                    setAutoupdateSelected={this.setAutoupdateSelected}
+                    unsetAutoupdateSelected={this.unsetAutoupdateSelected}
+                    removePluginNotice={this.removePluginDialog}
+                    setSelectionState={this.setBulkSelectionState}
+                    haveActiveSelected={this.props.plugins.some(
+                        this.filterSelection.active.bind(this)
+                    )}
+                    haveInactiveSelected={this.props.plugins.some(
+                        this.filterSelection.inactive.bind(this)
+                    )}
+                    haveUpdatesSelected={this.props.plugins.some(
+                        this.filterSelection.updates.bind(this)
+                    )}
+                />
+                <div className={itemListClasses}>{this.props.plugins.map(this.renderPlugin)}</div>
+                <DisconnectJetpackDialog
+                    ref="dialog"
+                    site={this.props.site}
+                    sites={this.props.sites}
+                    redirect="/plugins"
+                />
+            </div>
+        );
+    },
 
-	getAllowedPluginActions( plugin ) {
-		const hiddenForAutomatedTransfer = this.props.isSiteAutomatedTransfer && includes( [ 'jetpack', 'vaultpress' ], plugin.slug );
+    getAllowedPluginActions(plugin) {
+        const hiddenForAutomatedTransfer = this.props.isSiteAutomatedTransfer &&
+            includes(['jetpack', 'vaultpress'], plugin.slug);
 
-		return {
-			autoupdate: ! hiddenForAutomatedTransfer,
-			activation: ! hiddenForAutomatedTransfer,
-		};
-	},
+        return {
+            autoupdate: !hiddenForAutomatedTransfer,
+            activation: !hiddenForAutomatedTransfer,
+        };
+    },
 
-	renderPlugin( plugin ) {
-		const selectThisPlugin = this.togglePlugin.bind( this, plugin );
-		const allowedPluginActions = this.getAllowedPluginActions( plugin );
-		const isSelectable = this.state.bulkManagementActive && ( allowedPluginActions.autoupdate || allowedPluginActions.activation );
-		return (
-			<PluginItem
-				key={ plugin.slug }
-				hasAllNoManageSites={ this.hasNoSitesThatCanManage( plugin ) }
-				plugin={ plugin }
-				sites={ plugin.sites }
-				progress={ this.state.notices.inProgress.filter( log => log.plugin.slug === plugin.slug ) }
-				errors={ this.state.notices.errors.filter( log => log.plugin && log.plugin.slug === plugin.slug ) }
-				notices={ this.state.notices }
-				isSelected={ this.isSelected( plugin ) }
-				isSelectable={ isSelectable }
-				onClick={ selectThisPlugin }
-				selectedSite={ this.props.selectedSite }
-				pluginLink={ '/plugins/' + encodeURIComponent( plugin.slug ) + this.siteSuffix() }
-				allowedActions = { allowedPluginActions }
-				isAutoManaged = { ! allowedPluginActions.autoupdate } />
-		);
-	},
+    renderPlugin(plugin) {
+        const selectThisPlugin = this.togglePlugin.bind(this, plugin);
+        const allowedPluginActions = this.getAllowedPluginActions(plugin);
+        const isSelectable = this.state.bulkManagementActive &&
+            (allowedPluginActions.autoupdate || allowedPluginActions.activation);
+        return (
+            <PluginItem
+                key={plugin.slug}
+                hasAllNoManageSites={this.hasNoSitesThatCanManage(plugin)}
+                plugin={plugin}
+                sites={plugin.sites}
+                progress={this.state.notices.inProgress.filter(
+                    log => log.plugin.slug === plugin.slug
+                )}
+                errors={this.state.notices.errors.filter(
+                    log => log.plugin && log.plugin.slug === plugin.slug
+                )}
+                notices={this.state.notices}
+                isSelected={this.isSelected(plugin)}
+                isSelectable={isSelectable}
+                onClick={selectThisPlugin}
+                selectedSite={this.props.selectedSite}
+                pluginLink={'/plugins/' + encodeURIComponent(plugin.slug) + this.siteSuffix()}
+                allowedActions={allowedPluginActions}
+                isAutoManaged={!allowedPluginActions.autoupdate}
+            />
+        );
+    },
 
-	renderPlaceholders() {
-		const placeholderCount = 16;
-		return range( placeholderCount ).map( i => <PluginItem key={ 'placeholder-' + i } /> );
-	}
-} );
+    renderPlaceholders() {
+        const placeholderCount = 16;
+        return range(placeholderCount).map(i => <PluginItem key={'placeholder-' + i} />);
+    },
+});
 
 export default connect(
-	state => {
-		const selectedSite = getSelectedSite( state );
-		return {
-			selectedSite,
-			selectedSiteSlug: getSelectedSiteSlug( state ),
-			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
-		};
-	},
-	{ recordGoogleEvent }
-)( PluginsList );
+    state => {
+        const selectedSite = getSelectedSite(state);
+        return {
+            selectedSite,
+            selectedSiteSlug: getSelectedSiteSlug(state),
+            isSiteAutomatedTransfer: isSiteAutomatedTransfer(state, get(selectedSite, 'ID')),
+        };
+    },
+    { recordGoogleEvent }
+)(PluginsList);

@@ -11,7 +11,7 @@ import { get } from 'lodash';
  * @param {String} continent - continent value
  * @return {Array} Continent timezones array
  */
-export default function getTimezonesByContinent( state, continent ) {
-	const byContinents = get( state, 'timezones.byContinents', {} );
-	return byContinents[ continent ] ? byContinents[ continent ] : null;
+export default function getTimezonesByContinent(state, continent) {
+    const byContinents = get(state, 'timezones.byContinents', {});
+    return byContinents[continent] ? byContinents[continent] : null;
 }

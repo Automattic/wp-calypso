@@ -6,8 +6,8 @@ import { MainTour } from 'layout/guided-tours/tours/main-tour';
 import { TutorialSitePreviewTour } from 'layout/guided-tours/tours/tutorial-site-preview-tour';
 import { GDocsIntegrationTour } from 'layout/guided-tours/tours/gdocs-integration-tour';
 
-export default combineTours( {
-	main: MainTour,
-	tutorialSitePreview: TutorialSitePreviewTour,
-	gdocsIntegrationTour: GDocsIntegrationTour,
-} );
+export default combineTours({
+    main: MainTour,
+    tutorialSitePreview: TutorialSitePreviewTour,
+    gdocsIntegrationTour: GDocsIntegrationTour,
+});

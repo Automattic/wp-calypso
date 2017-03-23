@@ -1,14 +1,12 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:ProductsList' ),
-	store = require( 'store' );
+var debug = require('debug')('calypso:ProductsList'), store = require('store');
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	Emitter = require( 'lib/mixins/emitter' );
+var wpcom = require('lib/wp'), Emitter = require('lib/mixins/emitter');
 
 /**
  * Initialize a new list of products.
@@ -16,17 +14,17 @@ var wpcom = require( 'lib/wp' ),
  * @api public
  */
 function ProductsList() {
-	if ( ! ( this instanceof ProductsList ) ) {
-		return new ProductsList();
-	}
+    if (!(this instanceof ProductsList)) {
+        return new ProductsList();
+    }
 
-	this.initialized = false;
+    this.initialized = false;
 }
 
 /**
  * Mixins
  */
-Emitter( ProductsList.prototype );
+Emitter(ProductsList.prototype);
 
 /**
  * Gets the list of products from current object or store, triggers fetch on first request to update stale data.
@@ -35,23 +33,23 @@ Emitter( ProductsList.prototype );
  * @api public
  */
 ProductsList.prototype.get = function() {
-	var data;
+    var data;
 
-	if ( ! this.data ) {
-		debug( 'First time loading ProductsList, check store' );
+    if (!this.data) {
+        debug('First time loading ProductsList, check store');
 
-		data = store.get( 'ProductsList' );
+        data = store.get('ProductsList');
 
-		if ( data ) {
-			this.initialize( data );
-		} else {
-			this.data = {};
-		}
+        if (data) {
+            this.initialize(data);
+        } else {
+            this.data = {};
+        }
 
-		this.fetch();
-	}
+        this.fetch();
+    }
 
-	return this.data;
+    return this.data;
 };
 
 /**
@@ -60,43 +58,45 @@ ProductsList.prototype.get = function() {
  * @api public
  */
 ProductsList.prototype.fetch = function() {
-	debug( 'getting ProductsList from api' );
+    debug('getting ProductsList from api');
 
-	this.isFetching = true;
+    this.isFetching = true;
 
-	wpcom.undocumented().getProducts( function( error, data ) {
-		var productsList;
+    wpcom.undocumented().getProducts(
+        function(error, data) {
+            var productsList;
 
-		if ( error ) {
-			debug( 'error fetching ProductsList from api', error );
+            if (error) {
+                debug('error fetching ProductsList from api', error);
 
-			return;
-		}
+                return;
+            }
 
-		productsList = data;
+            productsList = data;
 
-		debug( 'ProductsList fetched from api:', productsList );
+            debug('ProductsList fetched from api:', productsList);
 
-		if ( ! this.initialized ) {
-			this.initialize( productsList );
-		} else {
-			this.data = productsList;
-		}
+            if (!this.initialized) {
+                this.initialize(productsList);
+            } else {
+                this.data = productsList;
+            }
 
-		this.isFetching = false;
+            this.isFetching = false;
 
-		this.emit( 'change' );
+            this.emit('change');
 
-		store.set( 'ProductsList', productsList );
-	}.bind( this ) );
+            store.set('ProductsList', productsList);
+        }.bind(this)
+    );
 };
 
 /**
  * Initializes data with a list of products.
  **/
-ProductsList.prototype.initialize = function( productsList ) {
-	this.data = productsList;
-	this.initialized = true;
+ProductsList.prototype.initialize = function(productsList) {
+    this.data = productsList;
+    this.initialized = true;
 };
 
 /**
@@ -105,15 +105,15 @@ ProductsList.prototype.initialize = function( productsList ) {
  * @return {boolean}
  */
 ProductsList.prototype.hasLoadedFromServer = function() {
-	return this.initialized;
+    return this.initialized;
 };
 
 var productsList = new ProductsList();
 
 module.exports = function() {
-	if ( ! productsList.hasLoadedFromServer() && ! productsList.isFetching ) {
-		productsList.get();
-	}
+    if (!productsList.hasLoadedFromServer() && !productsList.isFetching) {
+        productsList.get();
+    }
 
-	return productsList;
+    return productsList;
 };

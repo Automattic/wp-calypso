@@ -6,9 +6,8 @@
 * @return {Boolean}        Whether feed should be fetched
 */
 
-export function shouldFeedBeFetched( state, feedId ) {
-	return ! state.reader.feeds.queuedRequests[ feedId ] && // not currently queued
-		! state.reader.feeds.items[ feedId ]; // not currently loaded
+export function shouldFeedBeFetched(state, feedId) {
+    return !state.reader.feeds.queuedRequests[feedId] && !state.reader.feeds.items[feedId]; // not currently queued // not currently loaded
 }
 
 /**
@@ -18,6 +17,6 @@ export function shouldFeedBeFetched( state, feedId ) {
  * @param  {Number} feedId The feed ID
  * @return {Object}        The feed object
  */
-export function getFeed( state, feedId ) {
-	return state.reader.feeds.items[ feedId ];
+export function getFeed(state, feedId) {
+    return state.reader.feeds.items[feedId];
 }

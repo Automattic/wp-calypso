@@ -8,98 +8,95 @@ import update from 'react-addons-update';
  */
 import { action as ActionTypes } from 'lib/upgrades/constants';
 
-function updateStateForSite( state, siteId, data ) {
-	const command = state[ siteId ] ? '$merge' : '$set';
+function updateStateForSite(state, siteId, data) {
+    const command = state[siteId] ? '$merge' : '$set';
 
-	return update( state, {
-		[ siteId ]: {
-			[ command ]: data
-		}
-	} );
+    return update(state, {
+        [siteId]: {
+            [command]: data,
+        },
+    });
 }
 
 function getInitialStateForSite() {
-	return {
-		isFetching: false,
-		isUpdating: false,
-		notice: null,
-		value: null
-	};
+    return {
+        isFetching: false,
+        isUpdating: false,
+        notice: null,
+        value: null,
+    };
 }
 
-function reducer( state, payload ) {
-	const { action } = payload;
+function reducer(state, payload) {
+    const { action } = payload;
 
-	switch ( action.type ) {
-		case ActionTypes.SITE_REDIRECT_NOTICE_CLOSE:
-			state = updateStateForSite( state, action.siteId, {
-				notice: null
-			} );
+    switch (action.type) {
+        case ActionTypes.SITE_REDIRECT_NOTICE_CLOSE:
+            state = updateStateForSite(state, action.siteId, {
+                notice: null,
+            });
 
-			break;
+            break;
 
-		case ActionTypes.SITE_REDIRECT_FETCH:
-			state = updateStateForSite( state, action.siteId, {
-				isFetching: true
-			} );
+        case ActionTypes.SITE_REDIRECT_FETCH:
+            state = updateStateForSite(state, action.siteId, {
+                isFetching: true,
+            });
 
-			break;
+            break;
 
-		case ActionTypes.SITE_REDIRECT_FETCH_COMPLETED:
-			state = updateStateForSite( state, action.siteId, {
-				isFetching: false,
-				notice: null,
-				value: action.location
-			} );
+        case ActionTypes.SITE_REDIRECT_FETCH_COMPLETED:
+            state = updateStateForSite(state, action.siteId, {
+                isFetching: false,
+                notice: null,
+                value: action.location,
+            });
 
-			break;
+            break;
 
-		case ActionTypes.SITE_REDIRECT_FETCH_FAILED:
-			state = updateStateForSite( state, action.siteId, {
-				isFetching: false,
-				notice: {
-					error: true,
-					text: action.error
-				}
-			} );
+        case ActionTypes.SITE_REDIRECT_FETCH_FAILED:
+            state = updateStateForSite(state, action.siteId, {
+                isFetching: false,
+                notice: {
+                    error: true,
+                    text: action.error,
+                },
+            });
 
-			break;
+            break;
 
-		case ActionTypes.SITE_REDIRECT_UPDATE:
-			state = updateStateForSite( state, action.siteId, {
-				isUpdating: true
-			} );
+        case ActionTypes.SITE_REDIRECT_UPDATE:
+            state = updateStateForSite(state, action.siteId, {
+                isUpdating: true,
+            });
 
-			break;
+            break;
 
-		case ActionTypes.SITE_REDIRECT_UPDATE_COMPLETED:
-			state = updateStateForSite( state, action.siteId, {
-				isUpdating: false,
-				notice: {
-					success: true,
-					text: action.success
-				},
-				value: action.location
-			} );
+        case ActionTypes.SITE_REDIRECT_UPDATE_COMPLETED:
+            state = updateStateForSite(state, action.siteId, {
+                isUpdating: false,
+                notice: {
+                    success: true,
+                    text: action.success,
+                },
+                value: action.location,
+            });
 
-			break;
+            break;
 
-		case ActionTypes.SITE_REDIRECT_UPDATE_FAILED:
-			state = updateStateForSite( state, action.siteId, {
-				isUpdating: false,
-				notice: {
-					error: true,
-					text: action.error
-				}
-			} );
+        case ActionTypes.SITE_REDIRECT_UPDATE_FAILED:
+            state = updateStateForSite(state, action.siteId, {
+                isUpdating: false,
+                notice: {
+                    error: true,
+                    text: action.error,
+                },
+            });
 
-			break;
-	}
+            break;
+    }
 
-	return state;
+    return state;
 }
 
-export {
-	getInitialStateForSite,
-	reducer
-};
+export { getInitialStateForSite, reducer };

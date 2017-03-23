@@ -7,9 +7,7 @@ import React from 'react';
  */
 import Count from 'components/count';
 
-const count = () => (
-	<Count count={ 65365 } />
-)
+const count = () => <Count count={65365} />;
 
 count.displayName = 'Count';
 

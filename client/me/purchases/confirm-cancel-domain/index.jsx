@@ -41,280 +41,290 @@ import userFactory from 'lib/user';
 
 const user = userFactory();
 
-const ConfirmCancelDomain = React.createClass( {
-	propTypes: {
-		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
-		isDomainOnlySite: React.PropTypes.bool,
-		purchaseId: React.PropTypes.number.isRequired,
-		receiveDeletedSite: React.PropTypes.func.isRequired,
-		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.bool,
-			React.PropTypes.object
-		] ),
-		setAllSitesSelected: React.PropTypes.func.isRequired,
-	},
+const ConfirmCancelDomain = React.createClass({
+    propTypes: {
+        hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
+        isDomainOnlySite: React.PropTypes.bool,
+        purchaseId: React.PropTypes.number.isRequired,
+        receiveDeletedSite: React.PropTypes.func.isRequired,
+        selectedPurchase: React.PropTypes.object,
+        selectedSite: React.PropTypes.oneOfType([React.PropTypes.bool, React.PropTypes.object]),
+        setAllSitesSelected: React.PropTypes.func.isRequired,
+    },
 
-	getInitialState() {
-		return {
-			selectedReason: null,
-			message: '',
-			confirmed: false,
-			submitting: false
-		};
-	},
+    getInitialState() {
+        return {
+            selectedReason: null,
+            message: '',
+            confirmed: false,
+            submitting: false,
+        };
+    },
 
-	componentWillMount() {
-		recordPageView( 'confirm_cancel_domain', this.props );
-	},
+    componentWillMount() {
+        recordPageView('confirm_cancel_domain', this.props);
+    },
 
-	componentDidMount() {
-		this.redirectIfDataIsInvalid( this.props );
-	},
+    componentDidMount() {
+        this.redirectIfDataIsInvalid(this.props);
+    },
 
-	componentWillReceiveProps( nextProps ) {
-		this.redirectIfDataIsInvalid( nextProps );
-	},
+    componentWillReceiveProps(nextProps) {
+        this.redirectIfDataIsInvalid(nextProps);
+    },
 
-	redirectIfDataIsInvalid( props ) {
-		if ( isDataLoading( props ) || this.state.submitting ) {
-			return null;
-		}
+    redirectIfDataIsInvalid(props) {
+        if (isDataLoading(props) || this.state.submitting) {
+            return null;
+        }
 
-		const purchase = getPurchase( props );
+        const purchase = getPurchase(props);
 
-		if ( ! purchase || ! isDomainRegistration( purchase ) || ! props.selectedSite ) {
-			page.redirect( paths.purchasesRoot() );
-		}
-	},
+        if (!purchase || !isDomainRegistration(purchase) || !props.selectedSite) {
+            page.redirect(paths.purchasesRoot());
+        }
+    },
 
-	isValidReasonToCancel() {
-		const selectedReason = this.state.selectedReason;
+    isValidReasonToCancel() {
+        const selectedReason = this.state.selectedReason;
 
-		if ( ! selectedReason ) {
-			return false;
-		}
+        if (!selectedReason) {
+            return false;
+        }
 
-		return [ 'other_host', 'transfer' ].indexOf( selectedReason.value ) === -1;
-	},
+        return ['other_host', 'transfer'].indexOf(selectedReason.value) === -1;
+    },
 
-	goToCancelPurchase() {
-		goToCancelPurchase( this.props );
-	},
+    goToCancelPurchase() {
+        goToCancelPurchase(this.props);
+    },
 
-	onSubmit( event ) {
-		event.preventDefault();
+    onSubmit(event) {
+        event.preventDefault();
 
-		const purchase = getPurchase( this.props ),
-			purchaseName = getDomainName( purchase );
+        const purchase = getPurchase(this.props), purchaseName = getDomainName(purchase);
 
-		const data = {
-			domain_cancel_reason: this.state.selectedReason.value,
-			domain_cancel_message: this.state.message,
-			confirm: true,
-			product_id: purchase.productId,
-			blog_id: purchase.siteId,
-			domain: purchaseName
-		};
+        const data = {
+            domain_cancel_reason: this.state.selectedReason.value,
+            domain_cancel_message: this.state.message,
+            confirm: true,
+            product_id: purchase.productId,
+            blog_id: purchase.siteId,
+            domain: purchaseName,
+        };
 
-		this.setState( { submitting: true } );
+        this.setState({ submitting: true });
 
-		cancelAndRefundPurchase( purchase.id, data, ( error ) => {
-			this.setState( { submitting: false } );
+        cancelAndRefundPurchase(purchase.id, data, error => {
+            this.setState({ submitting: false });
 
-			const {
-				isDomainOnlySite,
-				selectedSite,
-			} = this.props;
+            const {
+                isDomainOnlySite,
+                selectedSite,
+            } = this.props;
 
-			if ( isDomainOnlySite ) {
-				// Removing the domain from a domain-only site results
-				// in the site being deleted entirely. We need to call
-				// `receiveDeletedSiteDeprecated` here because the site
-				// exists in `sites-list` as well as the global store.
-				receiveDeletedSiteDeprecated( selectedSite );
-				this.props.receiveDeletedSite( selectedSite );
-				this.props.setAllSitesSelected();
-			}
+            if (isDomainOnlySite) {
+                // Removing the domain from a domain-only site results
+                // in the site being deleted entirely. We need to call
+                // `receiveDeletedSiteDeprecated` here because the site
+                // exists in `sites-list` as well as the global store.
+                receiveDeletedSiteDeprecated(selectedSite);
+                this.props.receiveDeletedSite(selectedSite);
+                this.props.setAllSitesSelected();
+            }
 
-			if ( error ) {
-				notices.error( error.message || this.translate( 'Unable to cancel your purchase. Please try again later or contact support.' ) );
+            if (error) {
+                notices.error(
+                    error.message ||
+                        this.translate(
+                            'Unable to cancel your purchase. Please try again later or contact support.'
+                        )
+                );
 
-				return;
-			}
+                return;
+            }
 
-			notices.success(
-				this.translate( '%(purchaseName)s was successfully cancelled and refunded.', {
-					args: { purchaseName }
-				} ),
-				{ persistent: true }
-			);
+            notices.success(
+                this.translate('%(purchaseName)s was successfully cancelled and refunded.', {
+                    args: { purchaseName },
+                }),
+                { persistent: true }
+            );
 
-			this.props.refreshSitePlans( purchase.siteId );
+            this.props.refreshSitePlans(purchase.siteId);
 
-			this.props.clearPurchases();
+            this.props.clearPurchases();
 
-			analytics.tracks.recordEvent(
-				'calypso_domain_cancel_form_submit',
-				{ product_slug: purchase.productSlug }
-			);
+            analytics.tracks.recordEvent('calypso_domain_cancel_form_submit', {
+                product_slug: purchase.productSlug,
+            });
 
-			page.redirect( paths.purchasesRoot() );
-		} );
-	},
+            page.redirect(paths.purchasesRoot());
+        });
+    },
 
-	onReasonChange( newReason ) {
-		this.setState( { selectedReason: newReason } );
-	},
+    onReasonChange(newReason) {
+        this.setState({ selectedReason: newReason });
+    },
 
-	onConfirmationChange() {
-		this.setState( { confirmed: ! this.state.confirmed } );
-	},
+    onConfirmationChange() {
+        this.setState({ confirmed: !this.state.confirmed });
+    },
 
-	onMessageChange( event ) {
-		this.setState( {
-			message: event.target.value
-		} );
-	},
+    onMessageChange(event) {
+        this.setState({
+            message: event.target.value,
+        });
+    },
 
-	renderHelpMessage() {
-		const selectedReason = this.state.selectedReason;
+    renderHelpMessage() {
+        const selectedReason = this.state.selectedReason;
 
-		if ( ! selectedReason ) {
-			return;
-		}
+        if (!selectedReason) {
+            return;
+        }
 
-		return (
-			<div className="confirm-cancel-domain__help-message">
-				<p>
-					{ selectedReason.helpMessage }
-				</p>
-				{ selectedReason.showTextarea &&
-				<FormTextarea className="confirm-cancel-domain__reason-details" onChange={ this.onMessageChange } /> }
-			</div>
-		);
-	},
+        return (
+            <div className="confirm-cancel-domain__help-message">
+                <p>
+                    {selectedReason.helpMessage}
+                </p>
+                {selectedReason.showTextarea &&
+                    <FormTextarea
+                        className="confirm-cancel-domain__reason-details"
+                        onChange={this.onMessageChange}
+                    />}
+            </div>
+        );
+    },
 
-	renderConfirmationCheckbox() {
-		if ( ! this.isValidReasonToCancel() ) {
-			return;
-		}
+    renderConfirmationCheckbox() {
+        if (!this.isValidReasonToCancel()) {
+            return;
+        }
 
-		return (
-			<div className="confirm-cancel-domain__confirm-container">
-				<FormLabel>
-					<FormCheckbox checked={ this.state.confirmed } onChange={ this.onConfirmationChange } />
-					<span>
-						{ this.translate(
-							'I understand that canceling means that I may {{strong}}lose this domain forever{{/strong}}.', {
-								components: {
-									strong: <strong />
-								}
-							}
-						) }
-					</span>
-				</FormLabel>
-			</div>
-		);
-	},
+        return (
+            <div className="confirm-cancel-domain__confirm-container">
+                <FormLabel>
+                    <FormCheckbox
+                        checked={this.state.confirmed}
+                        onChange={this.onConfirmationChange}
+                    />
+                    <span>
+                        {this.translate(
+                            'I understand that canceling means that I may {{strong}}lose this domain forever{{/strong}}.',
+                            {
+                                components: {
+                                    strong: <strong />,
+                                },
+                            }
+                        )}
+                    </span>
+                </FormLabel>
+            </div>
+        );
+    },
 
-	renderSubmitButton() {
-		if ( ! this.isValidReasonToCancel() ) {
-			return;
-		}
+    renderSubmitButton() {
+        if (!this.isValidReasonToCancel()) {
+            return;
+        }
 
-		if ( this.state.submitting ) {
-			return (
-				<FormButton isPrimary={ true } disabled={ true } >
-					{ this.translate( 'Cancelling Domain…' ) }
-				</FormButton>
-			);
-		}
+        if (this.state.submitting) {
+            return (
+                <FormButton isPrimary={true} disabled={true}>
+                    {this.translate('Cancelling Domain…')}
+                </FormButton>
+            );
+        }
 
-		const selectedReason = this.state.selectedReason,
-			confirmed = this.state.confirmed;
+        const selectedReason = this.state.selectedReason, confirmed = this.state.confirmed;
 
-		if ( selectedReason && 'misspelled' === selectedReason.value ) {
-			return (
-				<FormButton isPrimary={ true } onClick={ this.onSubmit } disabled={ ! confirmed } >
-					{ this.translate( 'Cancel Anyway' ) }
-				</FormButton>
-			);
-		}
+        if (selectedReason && 'misspelled' === selectedReason.value) {
+            return (
+                <FormButton isPrimary={true} onClick={this.onSubmit} disabled={!confirmed}>
+                    {this.translate('Cancel Anyway')}
+                </FormButton>
+            );
+        }
 
-		return (
-			<FormButton isPrimary={ true } onClick={ this.onSubmit } disabled={ ! confirmed } >
-				{ this.translate( 'Cancel Domain' ) }
-			</FormButton>
-		);
-	},
+        return (
+            <FormButton isPrimary={true} onClick={this.onSubmit} disabled={!confirmed}>
+                {this.translate('Cancel Domain')}
+            </FormButton>
+        );
+    },
 
-	render() {
-		if ( isDataLoading( this.props ) ) {
-			return (
-				<div>
-					<QueryUserPurchases userId={ user.get().ID } />
-					<ConfirmCancelDomainLoadingPlaceholder
-						purchaseId={ this.props.purchaseId }
-						selectedSite={ this.props.selectedSite } />;
-				</div>
-			);
-		}
+    render() {
+        if (isDataLoading(this.props)) {
+            return (
+                <div>
+                    <QueryUserPurchases userId={user.get().ID} />
+                    <ConfirmCancelDomainLoadingPlaceholder
+                        purchaseId={this.props.purchaseId}
+                        selectedSite={this.props.selectedSite}
+                    />
+                    ;
+                </div>
+            );
+        }
 
-		const purchase = getPurchase( this.props ),
-			domain = getDomainName( purchase ),
-			selectedReason = this.state.selectedReason;
+        const purchase = getPurchase(this.props),
+            domain = getDomainName(purchase),
+            selectedReason = this.state.selectedReason;
 
-		return (
-			<Main className="confirm-cancel-domain">
-				<HeaderCake onClick={ this.goToCancelPurchase }>
-					{ titles.confirmCancelDomain }
-				</HeaderCake>
-				<Card>
-					<FormSectionHeading className="is-primary">
-						{ this.translate( 'Canceling %(domain)s', { args: { domain } } ) }
-					</FormSectionHeading>
-					<p>
-						{ this.translate(
-							'Since domain cancellation can cause your site to stop working, ' +
-							'we’d like to make sure we help you take the right action. ' +
-							'Please select the best option below.'
-						) }
-					</p>
-					<SelectDropdown
-							className="confirm-cancel-domain__reasons-dropdown"
-							key="confirm-cancel-domain__reasons-dropdown"
-							selectedText={ selectedReason
-											? selectedReason.label
-											: this.translate( 'Please let us know why you wish to cancel.' ) }
-							options={ cancellationReasons }
-							onSelect={ this.onReasonChange } >
-					</SelectDropdown>
-					{ this.renderHelpMessage() }
-					{ this.renderConfirmationCheckbox() }
-					{ this.renderSubmitButton() }
-				</Card>
-			</Main>
-		);
-	}
-} );
+        return (
+            <Main className="confirm-cancel-domain">
+                <HeaderCake onClick={this.goToCancelPurchase}>
+                    {titles.confirmCancelDomain}
+                </HeaderCake>
+                <Card>
+                    <FormSectionHeading className="is-primary">
+                        {this.translate('Canceling %(domain)s', { args: { domain } })}
+                    </FormSectionHeading>
+                    <p>
+                        {this.translate(
+                            'Since domain cancellation can cause your site to stop working, ' +
+                                'we’d like to make sure we help you take the right action. ' +
+                                'Please select the best option below.'
+                        )}
+                    </p>
+                    <SelectDropdown
+                        className="confirm-cancel-domain__reasons-dropdown"
+                        key="confirm-cancel-domain__reasons-dropdown"
+                        selectedText={
+                            selectedReason
+                                ? selectedReason.label
+                                : this.translate('Please let us know why you wish to cancel.')
+                        }
+                        options={cancellationReasons}
+                        onSelect={this.onReasonChange}
+                    />
+                    {this.renderHelpMessage()}
+                    {this.renderConfirmationCheckbox()}
+                    {this.renderSubmitButton()}
+                </Card>
+            </Main>
+        );
+    },
+});
 
 export default connect(
-	( state, props ) => {
-		const selectedSite = getSelectedSiteSelector( state );
+    (state, props) => {
+        const selectedSite = getSelectedSiteSelector(state);
 
-		return {
-			hasLoadedSites: ! isRequestingSites( state ),
-			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-			isDomainOnlySite: isDomainOnly( state, selectedSite && selectedSite.ID ),
-			selectedPurchase: getByPurchaseId( state, props.purchaseId ),
-			selectedSite,
-		};
-	},
-	{
-		clearPurchases,
-		refreshSitePlans,
-		receiveDeletedSite,
-		setAllSitesSelected,
-	}
-)( ConfirmCancelDomain );
+        return {
+            hasLoadedSites: !isRequestingSites(state),
+            hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer(state),
+            isDomainOnlySite: isDomainOnly(state, selectedSite && selectedSite.ID),
+            selectedPurchase: getByPurchaseId(state, props.purchaseId),
+            selectedSite,
+        };
+    },
+    {
+        clearPurchases,
+        refreshSitePlans,
+        receiveDeletedSite,
+        setAllSitesSelected,
+    }
+)(ConfirmCancelDomain);

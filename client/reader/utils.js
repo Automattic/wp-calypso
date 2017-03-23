@@ -15,26 +15,26 @@ import PostStore from 'lib/feed-post-store';
 import XPostHelper, { isXPost } from 'reader/xpost-helper';
 import { setLastStoreId } from 'reader/controller-helper';
 
-export function siteNameFromSiteAndPost( site, post ) {
-	let siteName;
+export function siteNameFromSiteAndPost(site, post) {
+    let siteName;
 
-	if ( site && ( site.title || site.domain ) ) {
-		siteName = site.title || site.domain;
-	} else if ( site && site.get && site.get( 'state' ) === SiteState.COMPLETE ) {
-		siteName = site.get( 'title' ) || site.get( 'domain' );
-	} else if ( post ) {
-		if ( post.site_name ) {
-			siteName = post.site_name;
-		} else if ( post.site_URL ) {
-			siteName = url.parse( post.site_URL ).hostname;
-		}
-	}
+    if (site && (site.title || site.domain)) {
+        siteName = site.title || site.domain;
+    } else if (site && site.get && site.get('state') === SiteState.COMPLETE) {
+        siteName = site.get('title') || site.get('domain');
+    } else if (post) {
+        if (post.site_name) {
+            siteName = post.site_name;
+        } else if (post.site_URL) {
+            siteName = url.parse(post.site_URL).hostname;
+        }
+    }
 
-	if ( ! siteName ) {
-		siteName = i18n.translate( '(no title)' );
-	}
+    if (!siteName) {
+        siteName = i18n.translate('(no title)');
+    }
 
-	return siteName;
+    return siteName;
 }
 
 /**
@@ -45,108 +45,108 @@ export function siteNameFromSiteAndPost( site, post ) {
  * @param  {Object} post A Reader post
  * @return {Object}      A site like object
  */
-export function siteishFromSiteAndPost( site, post ) {
-	if ( site ) {
-		return site.toJS();
-	}
+export function siteishFromSiteAndPost(site, post) {
+    if (site) {
+        return site.toJS();
+    }
 
-	if ( post ) {
-		return {
-			title: siteNameFromSiteAndPost( site, post ),
-			domain: FeedDisplayHelper.formatUrlForDisplay( post.site_URL )
-		};
-	}
+    if (post) {
+        return {
+            title: siteNameFromSiteAndPost(site, post),
+            domain: FeedDisplayHelper.formatUrlForDisplay(post.site_URL),
+        };
+    }
 
-	return {
-		title: '',
-		domain: ''
-	};
+    return {
+        title: '',
+        domain: '',
+    };
 }
 
-export function isSpecialClick( event ) {
-	return event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey;
+export function isSpecialClick(event) {
+    return event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey;
 }
 
-export function isPostNotFound( post ) {
-	if ( post === undefined ) {
-		return false;
-	}
+export function isPostNotFound(post) {
+    if (post === undefined) {
+        return false;
+    }
 
-	return post.statusCode === 404;
+    return post.statusCode === 404;
 }
 
-export function showSelectedPost( { store, replaceHistory, selectedGap, postKey, comments } ) {
-	if ( ! postKey ) {
-		return;
-	}
+export function showSelectedPost({ store, replaceHistory, selectedGap, postKey, comments }) {
+    if (!postKey) {
+        return;
+    }
 
-	setLastStoreId( store && store.id );
+    setLastStoreId(store && store.id);
 
-	if ( postKey.isGap === true ) {
-		return selectedGap.handleClick();
-	}
+    if (postKey.isGap === true) {
+        return selectedGap.handleClick();
+    }
 
-	// rec block
-	if ( postKey.isRecommendationBlock ) {
-		return;
-	}
+    // rec block
+    if (postKey.isRecommendationBlock) {
+        return;
+    }
 
-	const post = PostStore.get( postKey );
+    const post = PostStore.get(postKey);
 
-	if ( isXPost( post ) && ! replaceHistory ) {
-		return showFullXPost( XPostHelper.getXPostMetadata( post ) );
-	}
+    if (isXPost(post) && !replaceHistory) {
+        return showFullXPost(XPostHelper.getXPostMetadata(post));
+    }
 
-	// normal
-	let mappedPost;
-	if ( !! postKey.feedId ) {
-		mappedPost = {
-			feed_ID: postKey.feedId,
-			feed_item_ID: postKey.postId
-		};
-	} else {
-		mappedPost = {
-			site_ID: postKey.blogId,
-			ID: postKey.postId
-		};
-	}
+    // normal
+    let mappedPost;
+    if (!!postKey.feedId) {
+        mappedPost = {
+            feed_ID: postKey.feedId,
+            feed_item_ID: postKey.postId,
+        };
+    } else {
+        mappedPost = {
+            site_ID: postKey.blogId,
+            ID: postKey.postId,
+        };
+    }
 
-	showFullPost( {
-		post: mappedPost,
-		replaceHistory,
-		comments
-	} );
+    showFullPost({
+        post: mappedPost,
+        replaceHistory,
+        comments,
+    });
 }
 
-export function showFullXPost( xMetadata ) {
-	if ( xMetadata.blogId && xMetadata.postId ) {
-		const mappedPost = {
-			site_ID: xMetadata.blogId,
-			ID: xMetadata.postId
-		};
+export function showFullXPost(xMetadata) {
+    if (xMetadata.blogId && xMetadata.postId) {
+        const mappedPost = {
+            site_ID: xMetadata.blogId,
+            ID: xMetadata.postId,
+        };
 
-		showFullPost( {
-			post: mappedPost,
-		} );
-	} else {
-		window.open( xMetadata.postURL );
-	}
+        showFullPost({
+            post: mappedPost,
+        });
+    } else {
+        window.open(xMetadata.postURL);
+    }
 }
 
-export function showFullPost( { post, replaceHistory, comments } ) {
-	const hashtag = comments ? '#comments' : '';
-	let query = '';
-	if ( post.referral ) {
-		const { blogId, postId } = post.referral;
-		query += `ref_blog=${ blogId }&ref_post=${ postId }`;
-	}
+export function showFullPost({ post, replaceHistory, comments }) {
+    const hashtag = comments ? '#comments' : '';
+    let query = '';
+    if (post.referral) {
+        const { blogId, postId } = post.referral;
+        query += `ref_blog=${blogId}&ref_post=${postId}`;
+    }
 
-	const method = replaceHistory ? 'replace' : 'show';
-	if ( post.feed_ID && post.feed_item_ID ) {
-		page[ method ]( `/read/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }${ hashtag }${ query }` );
-	} else {
-		page[ method ]( `/read/blogs/${ post.site_ID }/posts/${ post.ID }${ hashtag }${ query }` );
-	}
+    const method = replaceHistory ? 'replace' : 'show';
+    if (post.feed_ID && post.feed_item_ID) {
+        page[method](`/read/feeds/${post.feed_ID}/posts/${post.feed_item_ID}${hashtag}${query}`);
+    } else {
+        page[method](`/read/blogs/${post.site_ID}/posts/${post.ID}${hashtag}${query}`);
+    }
 }
 
-export const shallowEquals = ( o1, o2 ) => every( Object.keys( o1 ), key => o1[ key ] === o2[ key ] );
+export const shallowEquals = (o1, o2) => every(Object.keys(o1), key => o1[key] === o2[key]);

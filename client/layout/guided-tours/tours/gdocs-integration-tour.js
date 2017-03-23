@@ -8,39 +8,40 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import {
-	makeTour,
-	Tour,
-	Step,
-	ButtonRow,
-	LinkQuit,
-	Quit,
+    makeTour,
+    Tour,
+    Step,
+    ButtonRow,
+    LinkQuit,
+    Quit,
 } from 'layout/guided-tours/config-elements';
 import { hasUserPastedFromGoogleDocs } from 'state/ui/guided-tours/contexts';
 import analytics from 'lib/analytics';
 
 const trackUserInterest = () => {
-	analytics.tracks.recordEvent( 'calypso_editor_gdocs_tour_success' );
+    analytics.tracks.recordEvent('calypso_editor_gdocs_tour_success');
 };
 
 export const GDocsIntegrationTour = makeTour(
-	<Tour
-		name="gdocsIntegrationTour"
-		version="20170227"
-		path="/post"
-		when={ hasUserPastedFromGoogleDocs }
-	>
-		<Step name="init" placement="right">
-			<p>{ translate( 'Do you want to post drafts directly from Google Docs?' ) }</p>
-			<ButtonRow>
-				<LinkQuit
-					primary
-					target="_blank"
-					onClick={ trackUserInterest }
-					href="https://apps.wordpress.com/google-docs/">
-					{ translate( 'Learn more' ) }
-				</LinkQuit>
-				<Quit>{ translate( 'No thanks' ) }</Quit>
-			</ButtonRow>
-		</Step>
-	</Tour>
+    <Tour
+        name="gdocsIntegrationTour"
+        version="20170227"
+        path="/post"
+        when={hasUserPastedFromGoogleDocs}
+    >
+        <Step name="init" placement="right">
+            <p>{translate('Do you want to post drafts directly from Google Docs?')}</p>
+            <ButtonRow>
+                <LinkQuit
+                    primary
+                    target="_blank"
+                    onClick={trackUserInterest}
+                    href="https://apps.wordpress.com/google-docs/"
+                >
+                    {translate('Learn more')}
+                </LinkQuit>
+                <Quit>{translate('No thanks')}</Quit>
+            </ButtonRow>
+        </Step>
+    </Tour>
 );

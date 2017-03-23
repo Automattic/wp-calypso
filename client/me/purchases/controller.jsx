@@ -27,15 +27,13 @@ import { setDocumentHeadTitle } from 'state/document-head/actions';
 import titles from './titles';
 import userFactory from 'lib/user';
 
-const recordPurchasesPageView = partial( recordPageView, partial.placeholder, 'Purchases' );
+const recordPurchasesPageView = partial(recordPageView, partial.placeholder, 'Purchases');
 const sites = sitesFactory();
 const user = userFactory();
 
 // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-function setTitle( context, ...title ) {
-	context.store.dispatch( setDocumentHeadTitle(
-		concatTitle( titles.purchases, ...title )
-	) );
+function setTitle(context, ...title) {
+    context.store.dispatch(setDocumentHeadTitle(concatTitle(titles.purchases, ...title)));
 }
 
 /**
@@ -45,198 +43,139 @@ function setTitle( context, ...title ) {
  * @param {String} siteSlug - The slug of a site.
  * @param {Function} dispatch - Redux dispatcher
  */
-const setSelectedSite = ( siteSlug, dispatch ) => {
-	const setSelectedSiteCalls = () => {
-		sites.setSelectedSite( siteSlug );
-		const selectedSite = sites.getSelectedSite();
-		dispatch( receiveSite( selectedSite ) );
-		dispatch( setSelectedSiteId( selectedSite.ID ) );
-	};
+const setSelectedSite = (siteSlug, dispatch) => {
+    const setSelectedSiteCalls = () => {
+        sites.setSelectedSite(siteSlug);
+        const selectedSite = sites.getSelectedSite();
+        dispatch(receiveSite(selectedSite));
+        dispatch(setSelectedSiteId(selectedSite.ID));
+    };
 
-	if ( sites.select( siteSlug ) ) {
-		setSelectedSiteCalls();
-	} else if ( ! sites.initialized ) {
-		sites.once( 'change', setSelectedSiteCalls );
-	} else {
-		// this is an edge case where the user has a purchase on a site they no
-		// longer have access to.
-		dispatch( setAllSitesSelected() );
-	}
+    if (sites.select(siteSlug)) {
+        setSelectedSiteCalls();
+    } else if (!sites.initialized) {
+        sites.once('change', setSelectedSiteCalls);
+    } else {
+        // this is an edge case where the user has a purchase on a site they no
+        // longer have access to.
+        dispatch(setAllSitesSelected());
+    }
 };
 
 export default {
-	addCardDetails( context ) {
-		setTitle(
-			context,
-			titles.addCardDetails
-		);
+    addCardDetails(context) {
+        setTitle(context, titles.addCardDetails);
 
-		recordPurchasesPageView(
-			paths.addCardDetails(),
-			'Add Card Details'
-		);
+        recordPurchasesPageView(paths.addCardDetails(), 'Add Card Details');
 
-		setSelectedSite( context.params.site, context.store.dispatch );
+        setSelectedSite(context.params.site, context.store.dispatch);
 
-		renderPage(
-			context,
-			<AddCardDetails
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
-		);
-	},
+        renderPage(
+            context,
+            <AddCardDetails purchaseId={parseInt(context.params.purchaseId, 10)} />
+        );
+    },
 
-	addCreditCard( context ) {
-		recordPurchasesPageView(
-			paths.addCreditCard(),
-			'Add Credit Card'
-		);
+    addCreditCard(context) {
+        recordPurchasesPageView(paths.addCreditCard(), 'Add Credit Card');
 
-		renderPage(
-			context,
-			<AddCreditCard />
-		);
-	},
+        renderPage(context, <AddCreditCard />);
+    },
 
-	cancelPrivacyProtection( context ) {
-		setTitle(
-			context,
-			titles.cancelPrivacyProtection
-		);
+    cancelPrivacyProtection(context) {
+        setTitle(context, titles.cancelPrivacyProtection);
 
-		recordPurchasesPageView(
-			paths.cancelPrivacyProtection(),
-			'Cancel Privacy Protection'
-		);
+        recordPurchasesPageView(paths.cancelPrivacyProtection(), 'Cancel Privacy Protection');
 
-		setSelectedSite( context.params.site, context.store.dispatch );
+        setSelectedSite(context.params.site, context.store.dispatch);
 
-		renderPage(
-			context,
-			<CancelPrivacyProtection
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			/>
-		);
-	},
+        renderPage(
+            context,
+            <CancelPrivacyProtection purchaseId={parseInt(context.params.purchaseId, 10)} />
+        );
+    },
 
-	cancelPurchase( context ) {
-		setTitle(
-			context,
-			titles.cancelPurchase
-		);
+    cancelPurchase(context) {
+        setTitle(context, titles.cancelPurchase);
 
-		recordPurchasesPageView(
-			paths.cancelPurchase(),
-			'Cancel Purchase'
-		);
+        recordPurchasesPageView(paths.cancelPurchase(), 'Cancel Purchase');
 
-		setSelectedSite( context.params.site, context.store.dispatch );
+        setSelectedSite(context.params.site, context.store.dispatch);
 
-		renderPage(
-			context,
-			<CancelPurchase
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			/>
-		);
-	},
+        renderPage(
+            context,
+            <CancelPurchase purchaseId={parseInt(context.params.purchaseId, 10)} />
+        );
+    },
 
-	confirmCancelDomain( context ) {
-		setTitle(
-			context,
-			titles.confirmCancelDomain
-		);
+    confirmCancelDomain(context) {
+        setTitle(context, titles.confirmCancelDomain);
 
-		recordPurchasesPageView(
-			paths.confirmCancelDomain(),
-			'Confirm Cancel Domain'
-		);
+        recordPurchasesPageView(paths.confirmCancelDomain(), 'Confirm Cancel Domain');
 
-		setSelectedSite( context.params.site, context.store.dispatch );
+        setSelectedSite(context.params.site, context.store.dispatch);
 
-		renderPage(
-			context,
-			<ConfirmCancelDomain
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			/>
-		);
-	},
+        renderPage(
+            context,
+            <ConfirmCancelDomain purchaseId={parseInt(context.params.purchaseId, 10)} />
+        );
+    },
 
-	editCardDetails( context ) {
-		setTitle(
-			context,
-			titles.editCardDetails
-		);
+    editCardDetails(context) {
+        setTitle(context, titles.editCardDetails);
 
-		recordPurchasesPageView(
-			paths.editCardDetails(),
-			'Edit Card Details'
-		);
+        recordPurchasesPageView(paths.editCardDetails(), 'Edit Card Details');
 
-		setSelectedSite( context.params.site, context.store.dispatch );
+        setSelectedSite(context.params.site, context.store.dispatch);
 
-		renderPage(
-			context,
-			<EditCardDetails
-				cardId={ context.params.cardId }
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
-		);
-	},
+        renderPage(
+            context,
+            <EditCardDetails
+                cardId={context.params.cardId}
+                purchaseId={parseInt(context.params.purchaseId, 10)}
+            />
+        );
+    },
 
-	list( context ) {
-		setTitle( context );
+    list(context) {
+        setTitle(context);
 
-		recordPurchasesPageView(
-			paths.purchasesRoot()
-		);
+        recordPurchasesPageView(paths.purchasesRoot());
 
-		renderPage(
-			context,
-			<PurchasesList
-				sites={ sites }
-				noticeType={ context.params.noticeType }
-			/>
-		);
-	},
+        renderPage(context, <PurchasesList sites={sites} noticeType={context.params.noticeType} />);
+    },
 
-	managePurchase( context ) {
-		setTitle(
-			context,
-			titles.managePurchase
-		);
+    managePurchase(context) {
+        setTitle(context, titles.managePurchase);
 
-		recordPurchasesPageView(
-			paths.managePurchase(),
-			'Manage Purchase'
-		);
+        recordPurchasesPageView(paths.managePurchase(), 'Manage Purchase');
 
-		setSelectedSite( context.params.site, context.store.dispatch );
+        setSelectedSite(context.params.site, context.store.dispatch);
 
-		renderPage(
-			context,
-			<ManagePurchase
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-				destinationType={ context.params.destinationType }
-			/>
-		);
-	},
+        renderPage(
+            context,
+            <ManagePurchase
+                purchaseId={parseInt(context.params.purchaseId, 10)}
+                destinationType={context.params.destinationType}
+            />
+        );
+    },
 
-	noSitesMessage( context, next ) {
-		if ( user.get().site_count > 0 ) {
-			return next();
-		}
+    noSitesMessage(context, next) {
+        if (user.get().site_count > 0) {
+            return next();
+        }
 
-		setTitle( context );
+        setTitle(context);
 
-		recordPurchasesPageView(
-			context.path,
-			'No Sites'
-		);
+        recordPurchasesPageView(context.path, 'No Sites');
 
-		renderPage(
-			context,
-			<Main>
-				<PurchasesHeader section={ 'purchases' } />
-				<NoSitesMessage />
-			</Main>
-		);
-	}
+        renderPage(
+            context,
+            <Main>
+                <PurchasesHeader section={'purchases'} />
+                <NoSitesMessage />
+            </Main>
+        );
+    },
 };

@@ -7,11 +7,11 @@ import { trim } from 'lodash';
  * Internal dependencies
  */
 import {
-	READER_TAGS_REQUEST,
-	READER_TAGS_RECEIVE,
-	READER_UNFOLLOW_TAG_REQUEST,
-	READER_UNFOLLOW_TAG_RECEIVE,
-	READER_FOLLOW_TAG_REQUEST,
+    READER_TAGS_REQUEST,
+    READER_TAGS_RECEIVE,
+    READER_UNFOLLOW_TAG_REQUEST,
+    READER_UNFOLLOW_TAG_RECEIVE,
+    READER_FOLLOW_TAG_REQUEST,
 } from 'state/action-types';
 
 /**
@@ -20,43 +20,39 @@ import {
  * @param  {String} tag  Tag name to parse into a slug
  * @return {String}      Tag slug
  */
-export const slugify = ( tag ) => encodeURIComponent(
-	trim( tag )
-		.toLowerCase()
-		.replace( /\s+/g, '-' )
-		.replace( /-{2,}/g, '-' )
-);
+export const slugify = tag =>
+    encodeURIComponent(trim(tag).toLowerCase().replace(/\s+/g, '-').replace(/-{2,}/g, '-'));
 
 export const requestTags = tag => {
-	const type = READER_TAGS_REQUEST;
-	if ( ! tag ) {
-		return { type };
-	}
+    const type = READER_TAGS_REQUEST;
+    if (!tag) {
+        return { type };
+    }
 
-	const slug = slugify( tag );
-	return {
-		type,
-		payload: { tag, slug },
-	};
+    const slug = slugify(tag);
+    return {
+        type,
+        payload: { tag, slug },
+    };
 };
 
-export const receiveTags = ( { payload, resetFollowingData = false } ) => ( {
-	type: READER_TAGS_RECEIVE,
-	payload,
-	meta: { resetFollowingData },
-} );
+export const receiveTags = ({ payload, resetFollowingData = false }) => ({
+    type: READER_TAGS_RECEIVE,
+    payload,
+    meta: { resetFollowingData },
+});
 
-export const requestUnfollowTag = tag => ( {
-	type: READER_UNFOLLOW_TAG_REQUEST,
-	payload: { tag, slug: slugify( tag ) },
-} );
+export const requestUnfollowTag = tag => ({
+    type: READER_UNFOLLOW_TAG_REQUEST,
+    payload: { tag, slug: slugify(tag) },
+});
 
-export const receiveUnfollowTag = ( { payload } ) => ( {
-	type: READER_UNFOLLOW_TAG_RECEIVE,
-	payload,
-} );
+export const receiveUnfollowTag = ({ payload }) => ({
+    type: READER_UNFOLLOW_TAG_RECEIVE,
+    payload,
+});
 
-export const requestFollowTag = tag => ( {
-	type: READER_FOLLOW_TAG_REQUEST,
-	payload: { tag, slug: slugify( tag ) },
-} );
+export const requestFollowTag = tag => ({
+    type: READER_FOLLOW_TAG_REQUEST,
+    payload: { tag, slug: slugify(tag) },
+});

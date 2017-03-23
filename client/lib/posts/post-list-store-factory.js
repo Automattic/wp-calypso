@@ -8,16 +8,16 @@ import PostListStore from './post-list-store';
  **/
 let _postListStores = {};
 
-export default function getStore( storeId ) {
-	const postStoreId = storeId || 'default';
+export default function getStore(storeId) {
+    const postStoreId = storeId || 'default';
 
-	if ( ! _postListStores[ postStoreId ] ) {
-		_postListStores[ postStoreId ] = new PostListStore( postStoreId );
-	}
+    if (!_postListStores[postStoreId]) {
+        _postListStores[postStoreId] = new PostListStore(postStoreId);
+    }
 
-	return _postListStores[ postStoreId ];
+    return _postListStores[postStoreId];
 }
 
 getStore._reset = function() {
-	_postListStores = {};
-}
+    _postListStores = {};
+};

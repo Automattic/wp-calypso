@@ -7,12 +7,12 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	PLANS_RECEIVE,
-	PLANS_REQUEST,
-	PLANS_REQUEST_SUCCESS,
-	PLANS_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE
+    PLANS_RECEIVE,
+    PLANS_REQUEST,
+    PLANS_REQUEST_SUCCESS,
+    PLANS_REQUEST_FAILURE,
+    SERIALIZE,
+    DESERIALIZE,
 } from 'state/action-types';
 
 import { isValidStateWithSchema } from 'state/utils';
@@ -27,22 +27,22 @@ import { itemsSchema } from './schema';
  * @param {Object} action - plans action
  * @return {Object} updated state
  */
-export const items = ( state = [], action ) => {
-	switch ( action.type ) {
-		case PLANS_RECEIVE:
-			return action.plans.slice( 0 );
+export const items = (state = [], action) => {
+    switch (action.type) {
+        case PLANS_RECEIVE:
+            return action.plans.slice(0);
 
-		case DESERIALIZE:
-			const isValidState = isValidStateWithSchema( state, itemsSchema );
-			if ( isValidState ) {
-				return state;
-			}
-			return [];
-		case SERIALIZE:
-			return state;
-	}
+        case DESERIALIZE:
+            const isValidState = isValidStateWithSchema(state, itemsSchema);
+            if (isValidState) {
+                return state;
+            }
+            return [];
+        case SERIALIZE:
+            return state;
+    }
 
-	return state;
+    return state;
 };
 
 /**
@@ -53,19 +53,19 @@ export const items = ( state = [], action ) => {
  * @param {Object} action - plans action
  * @return {Object} updated state
  */
-export const requesting = ( state = false, action ) => {
-	switch ( action.type ) {
-		case PLANS_REQUEST:
-		case PLANS_REQUEST_SUCCESS:
-		case PLANS_REQUEST_FAILURE:
-			return action.type === PLANS_REQUEST;
+export const requesting = (state = false, action) => {
+    switch (action.type) {
+        case PLANS_REQUEST:
+        case PLANS_REQUEST_SUCCESS:
+        case PLANS_REQUEST_FAILURE:
+            return action.type === PLANS_REQUEST;
 
-		case SERIALIZE:
-		case DESERIALIZE:
-			return false;
-	}
+        case SERIALIZE:
+        case DESERIALIZE:
+            return false;
+    }
 
-	return state;
+    return state;
 };
 
 /**
@@ -75,25 +75,25 @@ export const requesting = ( state = false, action ) => {
  * @param {Object} action - plans action
  * @return {Object} updated state
  */
-export const error = ( state = false, action ) => {
-	switch ( action.type ) {
-		case PLANS_REQUEST:
-		case PLANS_REQUEST_SUCCESS:
-			return false;
+export const error = (state = false, action) => {
+    switch (action.type) {
+        case PLANS_REQUEST:
+        case PLANS_REQUEST_SUCCESS:
+            return false;
 
-		case PLANS_REQUEST_FAILURE:
-			return true;
+        case PLANS_REQUEST_FAILURE:
+            return true;
 
-		case SERIALIZE:
-		case DESERIALIZE:
-			return false;
-	}
+        case SERIALIZE:
+        case DESERIALIZE:
+            return false;
+    }
 
-	return state;
+    return state;
 };
 
-export default combineReducers( {
-	items,
-	requesting,
-	error
-} );
+export default combineReducers({
+    items,
+    requesting,
+    error,
+});

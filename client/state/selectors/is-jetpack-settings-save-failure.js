@@ -10,6 +10,6 @@ import { getJetpackSettingsSaveRequestStatus } from './';
  * @param  {Number}  siteId Site ID
  * @return {Boolean}         Whether the requests is successful or not
  */
-export default function isJetpackSettingsSaveFailure( state, siteId ) {
-	return getJetpackSettingsSaveRequestStatus( state, siteId ) === 'error';
+export default function isJetpackSettingsSaveFailure(state, siteId) {
+    return getJetpackSettingsSaveRequestStatus(state, siteId) === 'error';
 }

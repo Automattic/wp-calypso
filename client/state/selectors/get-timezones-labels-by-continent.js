@@ -1,18 +1,12 @@
 /**
  * External dependencies
  */
-import {
-	fromPairs,
-	map,
-} from 'lodash';
+import { fromPairs, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	getTimezonesByContinent,
-	getTimezonesLabel
-} from 'state/selectors/';
+import { getTimezonesByContinent, getTimezonesLabel } from 'state/selectors/';
 
 /**
  * Return the timezones by continent data
@@ -22,12 +16,12 @@ import {
  * @param {String} continent - continent value
  * @return {Array} Continent timezones array
  */
-export default function getTimezonesLabelsByContinent( state, continent ) {
-	const timezones = getTimezonesByContinent( state, continent );
+export default function getTimezonesLabelsByContinent(state, continent) {
+    const timezones = getTimezonesByContinent(state, continent);
 
-	if ( ! timezones ) {
-		return null;
-	}
+    if (!timezones) {
+        return null;
+    }
 
-	return fromPairs( map( timezones, value => ( [ value, getTimezonesLabel( state, value ) ] ) ) );
+    return fromPairs(map(timezones, value => [value, getTimezonesLabel(state, value)]));
 }

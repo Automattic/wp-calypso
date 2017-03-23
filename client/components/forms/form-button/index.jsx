@@ -10,35 +10,33 @@ import React, { Children } from 'react';
  */
 import Button from 'components/button';
 
-export default React.createClass( {
+export default React.createClass({
+    displayName: 'FormsButton',
 
-	displayName: 'FormsButton',
+    getDefaultProps() {
+        return {
+            isSubmitting: false,
+            isPrimary: true,
+            type: 'submit',
+        };
+    },
 
-	getDefaultProps() {
-		return {
-			isSubmitting: false,
-			isPrimary: true,
-			type: 'submit'
-		};
-	},
+    getDefaultButtonAction() {
+        return this.props.isSubmitting
+            ? this.translate('Saving…')
+            : this.translate('Save Settings');
+    },
 
-	getDefaultButtonAction() {
-		return this.props.isSubmitting ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' );
-	},
+    render() {
+        const { children, className, isPrimary, ...props } = this.props,
+            buttonClasses = classNames(className, {
+                'form-button': true,
+            });
 
-	render() {
-		const { children, className, isPrimary, ...props } = this.props,
-			buttonClasses = classNames( className, {
-				'form-button': true
-			} );
-
-		return (
-			<Button
-				{ ...omit( props, 'isSubmitting' ) }
-				primary={ isPrimary }
-				className={ buttonClasses }>
-				{ Children.count( children ) ? children : this.getDefaultButtonAction() }
-			</Button>
-		);
-	}
-} );
+        return (
+            <Button {...omit(props, 'isSubmitting')} primary={isPrimary} className={buttonClasses}>
+                {Children.count(children) ? children : this.getDefaultButtonAction()}
+            </Button>
+        );
+    },
+});

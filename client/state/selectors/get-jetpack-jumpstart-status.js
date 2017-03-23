@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {Number}  siteId      The ID of the site we're querying
  * @return {?String}             Whether Jumpstart is active
  */
-export default function getJetpackJumpstartStatus( state, siteId ) {
-	return get( state.jetpack.jumpstart.items, [ siteId ], null );
+export default function getJetpackJumpstartStatus(state, siteId) {
+    return get(state.jetpack.jumpstart.items, [siteId], null);
 }

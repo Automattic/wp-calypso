@@ -28,7 +28,7 @@ import { makePromiseSequence } from 'lib/promises';
 import { decodeEntities } from 'lib/formatting';
 import postEditStore from 'lib/posts/actions';
 
-const debug = debugFactory( 'calypso:menu-data' );
+const debug = debugFactory('calypso:menu-data');
 const sites = sitesFactory();
 const treeConvert = new TreeConvert();
 
@@ -39,8 +39,8 @@ var DEFAULT_MENU_ID = 0;
 var HOMEPAGE_MENU_ITEM_ID = -99;
 var NEWPAGE_MENU_ITEM_ID = -100;
 
-export function isInjectedNewPageItem( content ) {
-	return content.content_id === NEWPAGE_MENU_ITEM_ID;
+export function isInjectedNewPageItem(content) {
+    return content.content_id === NEWPAGE_MENU_ITEM_ID;
 }
 
 /**
@@ -49,18 +49,18 @@ export function isInjectedNewPageItem( content ) {
  * @api public
  */
 export default function MenuData() {
-	this.data = {};
-	this.idCounter = 1;
-	this.hasContentsChanged = false;
-	this.hasAssociationChanged = false;
-	sites.on( 'change', this.updateInstance.bind( this ) );
-	this.updateInstance();
+    this.data = {};
+    this.idCounter = 1;
+    this.hasContentsChanged = false;
+    this.hasAssociationChanged = false;
+    sites.on('change', this.updateInstance.bind(this));
+    this.updateInstance();
 }
 
 /**
  * Mixins
  */
-Emitter( MenuData.prototype );
+Emitter(MenuData.prototype);
 
 /**
  * Generates a home page menu item
@@ -69,30 +69,30 @@ Emitter( MenuData.prototype );
  * @param {String} pageNameSuffix - page name suffix
  * @return {Object} object menu builder
  */
-MenuData.prototype.generateHomePageMenuItem = function( pageNameSuffix ) {
-	return {
-		ID: HOMEPAGE_MENU_ITEM_ID,
-		content_id: HOMEPAGE_MENU_ITEM_ID,
-		url: trailingslashit( this.site.URL ),
-		name: i18n.translate( 'Home' ) + ( pageNameSuffix ? ': ' + pageNameSuffix : '' ),
-		type: 'page',
-		type_family: 'post_type',
-		tags: [ i18n.translate( 'site' ) ],
-		status: 'publish'
-	};
+MenuData.prototype.generateHomePageMenuItem = function(pageNameSuffix) {
+    return {
+        ID: HOMEPAGE_MENU_ITEM_ID,
+        content_id: HOMEPAGE_MENU_ITEM_ID,
+        url: trailingslashit(this.site.URL),
+        name: i18n.translate('Home') + (pageNameSuffix ? ': ' + pageNameSuffix : ''),
+        type: 'page',
+        type_family: 'post_type',
+        tags: [i18n.translate('site')],
+        status: 'publish',
+    };
 };
 
 MenuData.prototype.generateNewPageMenuItem = function() {
-	return {
-		ID: NEWPAGE_MENU_ITEM_ID,
-		content_id: NEWPAGE_MENU_ITEM_ID,
-		url: trailingslashit( this.site.URL ),
-		name: i18n.translate( 'Create a new page for this menu item' ),
-		type: 'page',
-		type_family: 'post_type',
-		tags: [],
-		status: 'publish'
-	};
+    return {
+        ID: NEWPAGE_MENU_ITEM_ID,
+        content_id: NEWPAGE_MENU_ITEM_ID,
+        url: trailingslashit(this.site.URL),
+        name: i18n.translate('Create a new page for this menu item'),
+        type: 'page',
+        type_family: 'post_type',
+        tags: [],
+        status: 'publish',
+    };
 };
 
 /**
@@ -101,18 +101,18 @@ MenuData.prototype.generateNewPageMenuItem = function() {
  * internal variables that are site-specific.
  */
 MenuData.prototype.updateInstance = function() {
-	var site = sites.getSelectedSite();
+    var site = sites.getSelectedSite();
 
-	if ( site && site.ID !== this.siteID ) {
-		debug( 'site changed, fetching data...' );
-		this.siteID = site.ID;
-		this.site = site;
+    if (site && site.ID !== this.siteID) {
+        debug('site changed, fetching data...');
+        this.siteID = site.ID;
+        this.site = site;
 
-		// prevent use of stale data
-		this.data = {};
+        // prevent use of stale data
+        this.data = {};
 
-		this.fetch();
-	}
+        this.fetch();
+    }
 };
 
 /**
@@ -122,14 +122,14 @@ MenuData.prototype.updateInstance = function() {
  * @api public
  */
 MenuData.prototype.get = function() {
-	return {
-		locations: this.data.locations,
-		menus: this.data.menus,
-		hasDefaultMenu: this.data.defaultMenu !== false,
-		hasContentsChanged: this.hasContentsChanged,
-		hasAssociationChanged: this.hasAssociationChanged,
-		hasChanged: this.hasContentsChanged || this.hasAssociationChanged
-	};
+    return {
+        locations: this.data.locations,
+        menus: this.data.menus,
+        hasDefaultMenu: this.data.defaultMenu !== false,
+        hasContentsChanged: this.hasContentsChanged,
+        hasAssociationChanged: this.hasAssociationChanged,
+        hasChanged: this.hasContentsChanged || this.hasAssociationChanged,
+    };
 };
 
 /**
@@ -138,26 +138,26 @@ MenuData.prototype.get = function() {
  * @api public
  */
 MenuData.prototype.fetch = function() {
-	var requestedSiteID = this.siteID;
+    var requestedSiteID = this.siteID;
 
-	wpcom.undocumented().menus( this.siteID, ( error, data ) => {
-		if ( error ) {
-			this.emit( 'error', i18n.translate( 'There was a problem fetching your menu data.' ) );
-			debug( 'Error', error, data );
-		}
+    wpcom.undocumented().menus(this.siteID, (error, data) => {
+        if (error) {
+            this.emit('error', i18n.translate('There was a problem fetching your menu data.'));
+            debug('Error', error, data);
+        }
 
-		// Bail if site has changed in the meantime
-		if ( requestedSiteID !== this.siteID ) {
-			return;
-		}
+        // Bail if site has changed in the meantime
+        if (requestedSiteID !== this.siteID) {
+            return;
+        }
 
-		debug( 'Raw data:', data );
+        debug('Raw data:', data);
 
-		this.data = this.parse( data );
+        this.data = this.parse(data);
 
-		debug( 'Parsed data:', this.data );
-		this.change( { reset: true } );
-	} );
+        debug('Parsed data:', this.data);
+        this.change({ reset: true });
+    });
 };
 
 /**
@@ -166,21 +166,18 @@ MenuData.prototype.fetch = function() {
  * @param {Object} data - rest-api response date
  * @return {Object} locations, menus
  **/
-MenuData.prototype.parse = function( data ) {
-	if ( ! data.locations.length ) {
-		this.emit(
-			'error',
-			i18n.translate( 'There must be at least one location for a menu in your theme.' )
-		);
-	}
+MenuData.prototype.parse = function(data) {
+    if (!data.locations.length) {
+        this.emit(
+            'error',
+            i18n.translate('There must be at least one location for a menu in your theme.')
+        );
+    }
 
-	return {
-		locations: data.locations.map(
-				this.decodeProperties.bind(
-						this, [ 'name', 'description' ] )
-				),
-		menus: data.menus.map( this.parseMenu, this )
-	};
+    return {
+        locations: data.locations.map(this.decodeProperties.bind(this, ['name', 'description'])),
+        menus: data.menus.map(this.parseMenu, this),
+    };
 };
 
 /**
@@ -189,15 +186,17 @@ MenuData.prototype.parse = function( data ) {
  * @param {Object} menu - rest-api response data
  * @return {Object} parsed menu
  */
-MenuData.prototype.parseMenu = function( menu ) {
-	menu = this.allocateClientIDs( menu );
-	menu = this.decodeProperties( [ 'description' ], menu );
-	menu = Traverser.traverse( menu, [ function( item ) {
-		return this.decodeProperties( [ 'name' ], item );
-	}.bind( this ) ] );
-	menu = this.interceptLoadForHomepageLink( menu );
+MenuData.prototype.parseMenu = function(menu) {
+    menu = this.allocateClientIDs(menu);
+    menu = this.decodeProperties(['description'], menu);
+    menu = Traverser.traverse(menu, [
+        function(item) {
+            return this.decodeProperties(['name'], item);
+        }.bind(this),
+    ]);
+    menu = this.interceptLoadForHomepageLink(menu);
 
-	return menu;
+    return menu;
 };
 
 /**
@@ -211,12 +210,12 @@ MenuData.prototype.parseMenu = function( menu ) {
  *
  * @api private
  */
-MenuData.prototype.change = function( options ) {
-	options = options || {};
-	this.hasContentsChanged = ! options.reset && ! options.associationOnly;
-	this.hasAssociationChanged = options.associationOnly;
-	this.lastChangedMenuID = options.menuID;
-	this.emit( 'change' );
+MenuData.prototype.change = function(options) {
+    options = options || {};
+    this.hasContentsChanged = !options.reset && !options.associationOnly;
+    this.hasAssociationChanged = options.associationOnly;
+    this.lastChangedMenuID = options.menuID;
+    this.emit('change');
 };
 
 /**
@@ -224,10 +223,14 @@ MenuData.prototype.change = function( options ) {
  * 'change' and 'saved'.
  */
 MenuData.prototype.discard = function() {
-	this.once( 'change', function() {
-		this.emit( 'saved' );
-	}, this );
-	this.fetch();
+    this.once(
+        'change',
+        function() {
+            this.emit('saved');
+        },
+        this
+    );
+    this.fetch();
 };
 
 /**
@@ -238,15 +241,15 @@ MenuData.prototype.discard = function() {
  * @param {Function} shouldDiscard - should return a boolean
  * @param {Function} action - action function
  */
-MenuData.prototype.ensureContentsSaved = function( shouldDiscard, action ) {
-	if ( this.hasContentsChanged ) {
-		if ( shouldDiscard() ) {
-			this.once( 'saved', action );
-			this.discard();
-		}
-	} else {
-		action();
-	}
+MenuData.prototype.ensureContentsSaved = function(shouldDiscard, action) {
+    if (this.hasContentsChanged) {
+        if (shouldDiscard()) {
+            this.once('saved', action);
+            this.discard();
+        }
+    } else {
+        action();
+    }
 };
 
 /**
@@ -254,21 +257,23 @@ MenuData.prototype.ensureContentsSaved = function( shouldDiscard, action ) {
  *
  * @param {object} menu – a tree-structured menu
  */
-MenuData.prototype.restoreServerIDs = function( menu ) {
-	if ( ! ( 'items' in menu ) || ! Array.isArray( menu.items ) ) {
-		return;
-	}
+MenuData.prototype.restoreServerIDs = function(menu) {
+    if (!('items' in menu) || !Array.isArray(menu.items)) {
+        return;
+    }
 
-	menu.items.forEach( function( it ) {
-		Traverser.traverse( it, [ function( node ) {
-			if ( node.server_id ) {
-				node.id = node.server_id;
-			} else {
-				delete node.id;
-			}
-			return node;
-		} ] );
-	} );
+    menu.items.forEach(function(it) {
+        Traverser.traverse(it, [
+            function(node) {
+                if (node.server_id) {
+                    node.id = node.server_id;
+                } else {
+                    delete node.id;
+                }
+                return node;
+            },
+        ]);
+    });
 };
 
 /**
@@ -281,19 +286,24 @@ MenuData.prototype.restoreServerIDs = function( menu ) {
  * @param {object} menu – a tree-structured menu
  * @return {object} menu
  */
-MenuData.prototype.allocateClientIDs = function( menu ) {
-	if ( ! ( 'items' in menu ) || ! Array.isArray( menu.items ) ) {
-		return menu;
-	}
+MenuData.prototype.allocateClientIDs = function(menu) {
+    if (!('items' in menu) || !Array.isArray(menu.items)) {
+        return menu;
+    }
 
-	menu.items.forEach( function( it ) {
-		Traverser.traverse( it, [ function( item ) {
-			item.server_id = item.id;
-			item.id = this.idCounter++;
-			return item;
-		}.bind( this ) ] );
-	}, this );
-	return menu;
+    menu.items.forEach(
+        function(it) {
+            Traverser.traverse(it, [
+                function(item) {
+                    item.server_id = item.id;
+                    item.id = this.idCounter++;
+                    return item;
+                }.bind(this),
+            ]);
+        },
+        this
+    );
+    return menu;
 };
 
 /**
@@ -303,48 +313,49 @@ MenuData.prototype.allocateClientIDs = function( menu ) {
  * @param {Object} obj - object whose properties to entity-decode
  * @return {Object} decoded properties
  */
-MenuData.prototype.decodeProperties = function( properties, obj ) {
-	// 'undefined' makes 'cloneDeep' use it's own cloning method vs the value returned here
-	return cloneDeepWith( obj, ( value, key ) => (
-		includes( properties, key ) ? decodeEntities( value ) : undefined
-	) );
+MenuData.prototype.decodeProperties = function(properties, obj) {
+    // 'undefined' makes 'cloneDeep' use it's own cloning method vs the value returned here
+    return cloneDeepWith(
+        obj,
+        (value, key) => includes(properties, key) ? decodeEntities(value) : undefined
+    );
 };
 
 /**
  * Predicates
  */
 
-MenuData.prototype.isValidMenu = function( menu ) {
-	return menu && this.find( { id: menu.id }, this.data.menus );
+MenuData.prototype.isValidMenu = function(menu) {
+    return menu && this.find({ id: menu.id }, this.data.menus);
 };
 
 /**
  * Getters
  */
 
-MenuData.prototype.getPrimaryLocation = function( ) {
-	var primaryLocation;
+MenuData.prototype.getPrimaryLocation = function() {
+    var primaryLocation;
 
-	if ( ! this.data.locations || ! this.data.locations[0] ) {
-		return false;
-	}
+    if (!this.data.locations || !this.data.locations[0]) {
+        return false;
+    }
 
-	primaryLocation = find( this.data.locations, { name: 'primary' } );
-	return ( primaryLocation || this.data.locations[0] ).name;
+    primaryLocation = find(this.data.locations, { name: 'primary' });
+    return (primaryLocation || this.data.locations[0]).name;
 };
 
-MenuData.prototype.getMenu = function( locationName ) {
-	var menu;
+MenuData.prototype.getMenu = function(locationName) {
+    var menu;
 
-	if ( ! this.data.menus ) {
-		return null;
-	}
+    if (!this.data.menus) {
+        return null;
+    }
 
-	menu = find( this.data.menus, function( _menu ) {
-		return includes( _menu.locations, locationName );
-	} );
+    menu = find(this.data.menus, function(_menu) {
+        return includes(_menu.locations, locationName);
+    });
 
-	return menu || null;
+    return menu || null;
 };
 
 /**
@@ -358,16 +369,18 @@ MenuData.prototype.getMenu = function( locationName ) {
  * @param {Object} menu instance
  * @returns {*} menu
  */
-MenuData.prototype.interceptSaveForHomepageLink = function( menu ) {
-	var site = this.site;
-	menu.items.filter( function( item ) {
-		return item.type === 'page' && item.content_id === HOMEPAGE_MENU_ITEM_ID;
-	} ).forEach( function( item ) {
-		item.type = 'custom';
-		item.type_family = 'custom';
-		item.url = trailingslashit( site.URL );
-	} );
-	return menu;
+MenuData.prototype.interceptSaveForHomepageLink = function(menu) {
+    var site = this.site;
+    menu.items
+        .filter(function(item) {
+            return item.type === 'page' && item.content_id === HOMEPAGE_MENU_ITEM_ID;
+        })
+        .forEach(function(item) {
+            item.type = 'custom';
+            item.type_family = 'custom';
+            item.url = trailingslashit(site.URL);
+        });
+    return menu;
 };
 
 /**
@@ -376,197 +389,200 @@ MenuData.prototype.interceptSaveForHomepageLink = function( menu ) {
  * @param {Object} menu instance
  * @returns {*} menu
  */
-MenuData.prototype.interceptLoadForHomepageLink = function( menu ) {
-	var site = this.site;
-	menu.items.filter( function( item ) {
-		return item.type === 'custom' &&
-			untrailingslashit( item.url ) === untrailingslashit( site.URL );
-	} ).forEach( function( item ) {
-		item.type = 'page';
-		item.type_family = 'post_type';
-		item.content_id = HOMEPAGE_MENU_ITEM_ID;
-	} );
-	return menu;
+MenuData.prototype.interceptLoadForHomepageLink = function(menu) {
+    var site = this.site;
+    menu.items
+        .filter(function(item) {
+            return item.type === 'custom' &&
+                untrailingslashit(item.url) === untrailingslashit(site.URL);
+        })
+        .forEach(function(item) {
+            item.type = 'page';
+            item.type_family = 'post_type';
+            item.content_id = HOMEPAGE_MENU_ITEM_ID;
+        });
+    return menu;
 };
 
-MenuData.prototype.createNewPagePromise = ( menuItem, siteID ) => new Promise(
-	( resolve, reject ) => {
-		postEditStore.startEditingNew( siteID );
-		postEditStore.saveEdited(
-			{
-				title: menuItem.name,
-				ID: 'new',
-				type: 'page',
-				status: 'publish',
-			},
-			( error, data ) => {
-				postEditStore.stopEditing();
-				if ( ! error && data ) {
-					menuItem.url = data.URL;
-					menuItem.content_id = data.ID;
-					resolve();
-					return;
-				}
-				reject( error );
-			}
-		);
-	}
-);
+MenuData.prototype.createNewPagePromise = (menuItem, siteID) =>
+    new Promise((resolve, reject) => {
+        postEditStore.startEditingNew(siteID);
+        postEditStore.saveEdited(
+            {
+                title: menuItem.name,
+                ID: 'new',
+                type: 'page',
+                status: 'publish',
+            },
+            (error, data) => {
+                postEditStore.stopEditing();
+                if (!error && data) {
+                    menuItem.url = data.URL;
+                    menuItem.content_id = data.ID;
+                    resolve();
+                    return;
+                }
+                reject(error);
+            }
+        );
+    });
 
-MenuData.prototype.sendMenuToApi = function( menu, callback ) {
-	this.emit( 'saving' );
-	wpcom
-	.undocumented()
-	.menusUpdate(
-		this.siteID,
-		menu.id,
-		this.interceptSaveForHomepageLink( menu ),
-		( error, data ) => {
-			if ( error ) {
-				this.emit( 'error', i18n.translate( 'There was a problem saving your menu.' ) );
-				debug( 'Error', error, data );
-				return;
-			}
+MenuData.prototype.sendMenuToApi = function(menu, callback) {
+    this.emit('saving');
+    wpcom
+        .undocumented()
+        .menusUpdate(
+            this.siteID,
+            menu.id,
+            this.interceptSaveForHomepageLink(menu),
+            (error, data) => {
+                if (error) {
+                    this.emit('error', i18n.translate('There was a problem saving your menu.'));
+                    debug('Error', error, data);
+                    return;
+                }
 
-			// The response will contain server-allocated
-			// IDs for newly created items
-			const parsedMenu = this.parseMenu( data.menu );
-			parsedMenu.lastSaveTime = Date.now();
-			this.replaceMenu( parsedMenu );
+                // The response will contain server-allocated
+                // IDs for newly created items
+                const parsedMenu = this.parseMenu(data.menu);
+                parsedMenu.lastSaveTime = Date.now();
+                this.replaceMenu(parsedMenu);
 
-			this.change( { reset: true } );
-			this.emit( 'saved' );
-			callback && callback( null, parsedMenu );
-		}
-	);
+                this.change({ reset: true });
+                this.emit('saved');
+                callback && callback(null, parsedMenu);
+            }
+        );
 };
 
-MenuData.prototype.saveMenu = function( menu, callback ) {
-	if ( ! menu ) {
-		menu = this.find( { id: this.lastChangedMenuID } );
-	}
+MenuData.prototype.saveMenu = function(menu, callback) {
+    if (!menu) {
+        menu = this.find({ id: this.lastChangedMenuID });
+    }
 
-	if ( ! this.isValidMenu( menu ) ) {
-		callback && callback( new Error( 'Invalid menu' ) );
-		debug( 'saveMenu: fail' );
-		return;
-	}
+    if (!this.isValidMenu(menu)) {
+        callback && callback(new Error('Invalid menu'));
+        debug('saveMenu: fail');
+        return;
+    }
 
-	menu = cloneDeep( menu );
+    menu = cloneDeep(menu);
 
-	if ( menu.id === this.getDefaultMenuId() ) {
-		return this.saveDefaultMenu();
-	}
+    if (menu.id === this.getDefaultMenuId()) {
+        return this.saveDefaultMenu();
+    }
 
-	this.restoreServerIDs( menu );
+    this.restoreServerIDs(menu);
 
-	debug( 'saveMenu', menu );
+    debug('saveMenu', menu);
 
-	/**
+    /**
 	 * Below, we check for any new pages that need to be created. The post edit
 	 * store requires this process to be sequential, so we build a chain of
 	 * promises, each of them responsible for the creation of a page.
 	 */
 
-	const pendingPageItems = treeConvert
-		.untreeify( menu.items )
-		.filter( isInjectedNewPageItem );
+    const pendingPageItems = treeConvert.untreeify(menu.items).filter(isInjectedNewPageItem);
 
-	const createdPages = makePromiseSequence(
-			pendingPageItems,
-			item => this.createNewPagePromise( item, this.siteID )
-	);
+    const createdPages = makePromiseSequence(pendingPageItems, item =>
+        this.createNewPagePromise(item, this.siteID));
 
-	createdPages.catch( error => {
-		this.emit( 'error', i18n.translate( 'There was a problem saving your menu.' ) );
-		debug( 'Error', error );
-	} ).then( this.sendMenuToApi.bind( this, menu, callback ) );
+    createdPages
+        .catch(error => {
+            this.emit('error', i18n.translate('There was a problem saving your menu.'));
+            debug('Error', error);
+        })
+        .then(this.sendMenuToApi.bind(this, menu, callback));
 };
 
-MenuData.prototype.deleteMenu = function( menu, callback ) {
-	var menuIndex, menusBackup;
+MenuData.prototype.deleteMenu = function(menu, callback) {
+    var menuIndex, menusBackup;
 
-	if ( ! this.isValidMenu( menu ) ) {
-		this.emit( 'error', i18n.translate( "This menu is invalid and can't be deleted." ) );
-		callback && callback( new Error( 'Invalid menu' ) );
-		return false;
-	}
+    if (!this.isValidMenu(menu)) {
+        this.emit('error', i18n.translate("This menu is invalid and can't be deleted."));
+        callback && callback(new Error('Invalid menu'));
+        return false;
+    }
 
-	menusBackup = this.data.menus.slice();
-	menuIndex = findIndex( this.data.menus, { id: menu.id } );
-	this.deletedMenu = this.data.menus.splice( menuIndex, 1 )[0];
+    menusBackup = this.data.menus.slice();
+    menuIndex = findIndex(this.data.menus, { id: menu.id });
+    this.deletedMenu = this.data.menus.splice(menuIndex, 1)[0];
 
-	this.emit( 'change' );
-	this.emit( 'saving' );
+    this.emit('change');
+    this.emit('saving');
 
-	wpcom
-	.undocumented()
-	.menusDelete( this.siteID, menu.id, ( error, data ) => {
-		if ( error || ( data && ! data.deleted ) ) {
-			this.data.menus = menusBackup;
-			this.emit( 'error', i18n.translate( "Sorry, we couldn't delete this menu." ) );
-			this.emit( 'change' );
-			callback && callback( new Error( 'Error deleting menu' ) );
-			return;
-		} else if ( ! this.lastChangedMenuID ) {
-			// there is no menu to save, so clear unsaved changes flag
-			this.change( { reset: true } );
-		}
+    wpcom.undocumented().menusDelete(this.siteID, menu.id, (error, data) => {
+        if (error || (data && !data.deleted)) {
+            this.data.menus = menusBackup;
+            this.emit('error', i18n.translate("Sorry, we couldn't delete this menu."));
+            this.emit('change');
+            callback && callback(new Error('Error deleting menu'));
+            return;
+        } else if (!this.lastChangedMenuID) {
+            // there is no menu to save, so clear unsaved changes flag
+            this.change({ reset: true });
+        }
 
-		callback && callback( null, data );
-		this.emit( 'saved' );
-	} );
+        callback && callback(null, data);
+        this.emit('saved');
+    });
 };
 
 /**
  * @param {String} location - location to restore the menu to
  * @param {Function} [callback] - callback function
  */
-MenuData.prototype.restoreMenu = function( location, callback ) {
-	var menu;
+MenuData.prototype.restoreMenu = function(location, callback) {
+    var menu;
 
-	if ( this.deletedMenu === undefined ) {
-		debug( 'No menu to restore' );
-		callback && callback( new Error( 'No menu to restore' ) );
-		return;
-	}
+    if (this.deletedMenu === undefined) {
+        debug('No menu to restore');
+        callback && callback(new Error('No menu to restore'));
+        return;
+    }
 
-	menu = this.clearIDs( this.deletedMenu );
-	this.allocateClientIDs( menu );
+    menu = this.clearIDs(this.deletedMenu);
+    this.allocateClientIDs(menu);
 
-	delete this.deletedMenu;
+    delete this.deletedMenu;
 
-	this.addMenu( menu.name, function( error, addedMenu ) {
-		if ( error ) {
-			debug( 'restoreMenu: fail' );
-			callback && callback( new Error( 'Failed to restore menu' ) );
-			return;
-		}
+    this.addMenu(
+        menu.name,
+        function(error, addedMenu) {
+            if (error) {
+                debug('restoreMenu: fail');
+                callback && callback(new Error('Failed to restore menu'));
+                return;
+            }
 
-		this.setMenuAtLocation( addedMenu.id, location, {
-			associationOnly: false
-		} );
+            this.setMenuAtLocation(addedMenu.id, location, {
+                associationOnly: false,
+            });
 
-		this.saveMenu( addedMenu, callback );
-	}.bind( this ), menu );
+            this.saveMenu(addedMenu, callback);
+        }.bind(this),
+        menu
+    );
 };
 
-MenuData.prototype.clearIDs = function( menu ) {
-	return Traverser.traverse( menu, [ function( item ) {
-		return omit( item, [ 'id', 'server_id' ] );
-	} ] );
+MenuData.prototype.clearIDs = function(menu) {
+    return Traverser.traverse(menu, [
+        function(item) {
+            return omit(item, ['id', 'server_id']);
+        },
+    ]);
 };
 
-MenuData.prototype.setMenuName = function( menuId, name ) {
-	var menu = find( this.data.menus, { id: menuId } );
+MenuData.prototype.setMenuName = function(menuId, name) {
+    var menu = find(this.data.menus, { id: menuId });
 
-	if ( menu && name ) {
-		menu.name = name;
-		this.change();
-	} else {
-		// Invalid setting. Emit event so UI can reset to current value
-		this.emit( 'change' );
-	}
+    if (menu && name) {
+        menu.name = name;
+        this.change();
+    } else {
+        // Invalid setting. Emit event so UI can reset to current value
+        this.emit('change');
+    }
 };
 
 /**
@@ -575,95 +591,106 @@ MenuData.prototype.setMenuName = function( menuId, name ) {
  * @param {object} changeOpts [optional] change flags to pass to the #change call
  * @return {*} menu
  */
-MenuData.prototype.setMenuAtLocation = function( menuId, locationName, changeOpts ) {
-	var location = find( this.data.locations, { name: locationName } ),
-		previousMenu,
-		previousMenuId,
-		menu;
+MenuData.prototype.setMenuAtLocation = function(menuId, locationName, changeOpts) {
+    var location = find(this.data.locations, { name: locationName }),
+        previousMenu,
+        previousMenuId,
+        menu;
 
-	if ( ! location ) {
-		return false;
-	}
+    if (!location) {
+        return false;
+    }
 
-	previousMenu = find( this.data.menus, function( itemMenu ) {
-		return includes( itemMenu.locations, locationName );
-	} );
+    previousMenu = find(this.data.menus, function(itemMenu) {
+        return includes(itemMenu.locations, locationName);
+    });
 
-	if ( previousMenu ) {
-		previousMenu.locations = without( previousMenu.locations, locationName );
-	}
+    if (previousMenu) {
+        previousMenu.locations = without(previousMenu.locations, locationName);
+    }
 
-	menu = find( this.data.menus, { id: menuId } );
-	if ( menu && this.isValidMenu( menu ) ) {
-		menu.locations.push( locationName );
-	}
+    menu = find(this.data.menus, { id: menuId });
+    if (menu && this.isValidMenu(menu)) {
+        menu.locations.push(locationName);
+    }
 
-	// The first time a menu is removed from a location, stash
-	// the id so that we can save the correct menu if save is
-	// finally performed on default/no menu.
-	//
-	// this.lastChangedMenuID is cleared during reset changes, like fetches
-	// (discards) and successful saves
-	if ( previousMenu ) {
-		previousMenuId = previousMenu.id;
-	}
+    // The first time a menu is removed from a location, stash
+    // the id so that we can save the correct menu if save is
+    // finally performed on default/no menu.
+    //
+    // this.lastChangedMenuID is cleared during reset changes, like fetches
+    // (discards) and successful saves
+    if (previousMenu) {
+        previousMenuId = previousMenu.id;
+    }
 
-	this.change( assign( {
-		associationOnly: true,
-		menuID: this.lastChangedMenuID || previousMenuId
-	}, changeOpts ) );
+    this.change(
+        assign(
+            {
+                associationOnly: true,
+                menuID: this.lastChangedMenuID || previousMenuId,
+            },
+            changeOpts
+        )
+    );
 };
 
-MenuData.prototype.updateMenuItem = function( newItem ) {
-	this.replaceItem( { id: newItem.id }, newItem );
-	this.change();
+MenuData.prototype.updateMenuItem = function(newItem) {
+    this.replaceItem({ id: newItem.id }, newItem);
+    this.change();
 };
 
-MenuData.prototype.moveItem = function( sourceId, targetId, position ) {
-	this.data.menus.some( function( menu, i ) {
-		var source = this.find( { id: sourceId }, menu.items ),
-			target = this.find( { id: targetId }, menu.items );
+MenuData.prototype.moveItem = function(sourceId, targetId, position) {
+    this.data.menus.some(
+        function(menu, i) {
+            var source = this.find({ id: sourceId }, menu.items),
+                target = this.find({ id: targetId }, menu.items);
 
-		if ( undefined !== source && undefined !== target ) {
-			if ( this.isAncestor( source, target ) ) {
-				// Special case – moving an item into the subtree below itself:
-				// Cut it out of the destination subtree before the move by moving
-				// its children up a level.
-				let parent = Traverser.parent( source, menu );
-				this.moveItemsToParent( source.items, parent, { silent: true } );
-			}
+            if (undefined !== source && undefined !== target) {
+                if (this.isAncestor(source, target)) {
+                    // Special case – moving an item into the subtree below itself:
+                    // Cut it out of the destination subtree before the move by moving
+                    // its children up a level.
+                    let parent = Traverser.parent(source, menu);
+                    this.moveItemsToParent(source.items, parent, { silent: true });
+                }
 
-			// Traverse items tree to remove & reattach 'item'
-			this.data.menus[i] = Traverser.traverse( menu, [
-				Traverser.remover( source.id ),
-				Traverser.inserter( source, target.id, position )
-			] );
+                // Traverse items tree to remove & reattach 'item'
+                this.data.menus[i] = Traverser.traverse(menu, [
+                    Traverser.remover(source.id),
+                    Traverser.inserter(source, target.id, position),
+                ]);
 
-			this.change();
-			return true;
-		}
-	}, this );
+                this.change();
+                return true;
+            }
+        },
+        this
+    );
 };
 
-MenuData.prototype.getParent = function( itemId ) {
-	var parent;
+MenuData.prototype.getParent = function(itemId) {
+    var parent;
 
-	this.data.menus.some( function( menu ) {
-		var node = this.find( { id: itemId }, [ menu ] );
-		if ( node ) {
-			parent = Traverser.parent( node, menu );
-			return !! findIndex( parent.items, { id: itemId } );
-		}
-	}, this );
+    this.data.menus.some(
+        function(menu) {
+            var node = this.find({ id: itemId }, [menu]);
+            if (node) {
+                parent = Traverser.parent(node, menu);
+                return !!findIndex(parent.items, { id: itemId });
+            }
+        },
+        this
+    );
 
-	return parent;
+    return parent;
 };
 
-MenuData.prototype.getPreviousSibling = function( item, parent ) {
-	var index = findIndex( parent.items, item );
-	if ( index ) {
-		return parent.items[ index - 1 ];
-	}
+MenuData.prototype.getPreviousSibling = function(item, parent) {
+    var index = findIndex(parent.items, item);
+    if (index) {
+        return parent.items[index - 1];
+    }
 };
 
 /**
@@ -673,9 +700,9 @@ MenuData.prototype.getPreviousSibling = function( item, parent ) {
  * @param {*} parent - parent
  * @return {Boolean} has sibling
  */
-MenuData.prototype.hasSubsequentSiblings = function( item, parent ) {
-	var index = findIndex( parent.items, item );
-	return index >= 0 && index < parent.items.length - 1;
+MenuData.prototype.hasSubsequentSiblings = function(item, parent) {
+    var index = findIndex(parent.items, item);
+    return index >= 0 && index < parent.items.length - 1;
 };
 
 /**
@@ -689,31 +716,31 @@ MenuData.prototype.hasSubsequentSiblings = function( item, parent ) {
  * @param {Array} menus - menus array
  * @return {object} item
  */
-MenuData.prototype.find = function( criterion, menus ) {
-	var predicate = iteratee( criterion ),
-		i, result;
+MenuData.prototype.find = function(criterion, menus) {
+    var predicate = iteratee(criterion), i, result;
 
-	menus = menus || this.data.menus;
+    menus = menus || this.data.menus;
 
-	for ( i = 0; i < menus.length; i++ ) {
-		if ( result = Traverser.find( menus[i], predicate ) ) { // eslint-disable-line no-cond-assign
-			return result;
-		}
-	}
+    for (i = 0; i < menus.length; i++) {
+        if ((result = Traverser.find(menus[i], predicate))) {
+            // eslint-disable-line no-cond-assign
+            return result;
+        }
+    }
 };
 
-MenuData.prototype.findByName = function( name ) {
-	return this.find( { name: name } );
+MenuData.prototype.findByName = function(name) {
+    return this.find({ name: name });
 };
 
-MenuData.prototype.replaceItem = function( criterion, newItem, menus ) {
-	var predicate = iteratee( criterion ), i;
+MenuData.prototype.replaceItem = function(criterion, newItem, menus) {
+    var predicate = iteratee(criterion), i;
 
-	menus = menus || this.data.menus;
+    menus = menus || this.data.menus;
 
-	for ( i = 0; i < menus.length; i++ ) {
-		Traverser.replaceItem( menus[i], newItem, predicate );
-	}
+    for (i = 0; i < menus.length; i++) {
+        Traverser.replaceItem(menus[i], newItem, predicate);
+    }
 };
 
 /**
@@ -723,54 +750,63 @@ MenuData.prototype.replaceItem = function( criterion, newItem, menus ) {
  * @param {Number|Object} parent - a parent item object
  * @param {Object} options - include 'silent: true' property to silence change events
  */
-MenuData.prototype.moveItemsToParent = function( uiItems, parent, options ) {
-	var hasChanged;
+MenuData.prototype.moveItemsToParent = function(uiItems, parent, options) {
+    var hasChanged;
 
-	options = options || {};
+    options = options || {};
 
-	if ( ! Array.isArray( uiItems ) ) {
-		uiItems = [ uiItems ];
-	}
+    if (!Array.isArray(uiItems)) {
+        uiItems = [uiItems];
+    }
 
-	uiItems.forEach( function( uiItem ) {
-		this.data.menus.some( function( menu ) {
-			var item = this.find( { id: uiItem.id }, menu.items );
-			if ( undefined !== item ) {
-				let oldParent = Traverser.parent( uiItem, menu );
-				oldParent.items = without( oldParent.items, item );
+    uiItems.forEach(
+        function(uiItem) {
+            this.data.menus.some(
+                function(menu) {
+                    var item = this.find({ id: uiItem.id }, menu.items);
+                    if (undefined !== item) {
+                        let oldParent = Traverser.parent(uiItem, menu);
+                        oldParent.items = without(oldParent.items, item);
 
-				if ( ! Array.isArray( parent.items ) ) {
-					parent.items = [ item ];
-				} else {
-					parent.items.push( item );
-				}
-				hasChanged = true;
-				return true;
-			}
-		}, this );
-	}, this );
+                        if (!Array.isArray(parent.items)) {
+                            parent.items = [item];
+                        } else {
+                            parent.items.push(item);
+                        }
+                        hasChanged = true;
+                        return true;
+                    }
+                },
+                this
+            );
+        },
+        this
+    );
 
-	if ( hasChanged && ! options.silent ) {
-		this.change();
-	}
+    if (hasChanged && !options.silent) {
+        this.change();
+    }
 };
 
-MenuData.prototype.deleteMenuItem = function( uiItem ) {
-	this.data.menus.some( function( menu ) {
-		var item = this.find( { id: uiItem.id }, menu.items );
+MenuData.prototype.deleteMenuItem = function(uiItem) {
+    this.data.menus.some(
+        function(menu) {
+            var item = this.find({ id: uiItem.id }, menu.items);
 
-		if ( undefined !== item ) {
-			let parent = Traverser.parent( uiItem, menu );
+            if (undefined !== item) {
+                let parent = Traverser.parent(uiItem, menu);
 
-			if ( uiItem.items ) {
-				this.moveItemsToParent( uiItem.items, parent, { silent: true } );
-			}
+                if (uiItem.items) {
+                    this.moveItemsToParent(uiItem.items, parent, { silent: true });
+                }
 
-			parent.items = without( parent.items, item );
-			this.change();
-			return true;
-		}
-	}, this );
+                parent.items = without(parent.items, item);
+                this.change();
+                return true;
+            }
+        },
+        this
+    );
 };
 
 /**
@@ -779,30 +815,31 @@ MenuData.prototype.deleteMenuItem = function( uiItem ) {
  * @param {string} position - 'before' | 'after' | 'child' | 'first'
  * @param {int} menuId - id of the menu to add to
  */
-MenuData.prototype.addItem = function( item, targetId, position, menuId ) {
-	item.id = this.idCounter++;
+MenuData.prototype.addItem = function(item, targetId, position, menuId) {
+    item.id = this.idCounter++;
 
-	this.data.menus.some( function( menu, i ) {
-		var target;
+    this.data.menus.some(
+        function(menu, i) {
+            var target;
 
-		if ( menu.id !== menuId ) {
-			return;
-		}
+            if (menu.id !== menuId) {
+                return;
+            }
 
-		target = this.find( { id: targetId }, [ menu ] );
-		if ( target ) {
-			menu = Traverser.traverse( menu, [
-				Traverser.inserter( item, target.id, position )
-			] );
-		} else {
-			// Empty menu
-			menu.items = [ item ];
-		}
+            target = this.find({ id: targetId }, [menu]);
+            if (target) {
+                menu = Traverser.traverse(menu, [Traverser.inserter(item, target.id, position)]);
+            } else {
+                // Empty menu
+                menu.items = [item];
+            }
 
-		this.data.menus[i] = menu;
-		this.change();
-		return true;
-	}, this );
+            this.data.menus[i] = menu;
+            this.change();
+            return true;
+        },
+        this
+    );
 };
 
 /**
@@ -812,13 +849,13 @@ MenuData.prototype.addItem = function( item, targetId, position, menuId ) {
  *
  * @param {string} selectedLocation selected location
  */
-MenuData.prototype.addNewMenu = function( selectedLocation ) {
-	this.addMenu( this._incrementMenuName( this.data.menus ), ( error, menu ) => {
-		if ( error ) {
-			return;
-		}
-		this.setMenuAtLocation( menu.id, selectedLocation );
-	} );
+MenuData.prototype.addNewMenu = function(selectedLocation) {
+    this.addMenu(this._incrementMenuName(this.data.menus), (error, menu) => {
+        if (error) {
+            return;
+        }
+        this.setMenuAtLocation(menu.id, selectedLocation);
+    });
 };
 
 /**
@@ -828,65 +865,70 @@ MenuData.prototype.addNewMenu = function( selectedLocation ) {
  * @param {function} callback - returns menu object with new id assigned from server
  * @param {object} attributes [optional] - attributes for the new menu
  */
-MenuData.prototype.addMenu = function( name, callback, attributes ) {
-	var newMenu = assign( {
-		name: name,
-		items: [],
-		locations: []
-	}, attributes );
+MenuData.prototype.addMenu = function(name, callback, attributes) {
+    var newMenu = assign(
+        {
+            name: name,
+            items: [],
+            locations: [],
+        },
+        attributes
+    );
 
-	wpcom
-	.undocumented()
-	.menusUpdate( this.siteID, 0, newMenu, ( error, data ) => {
-		if ( ! error && data.id ) {
-			newMenu.id = data.id;
-			this.data.menus.push( newMenu );
-			debug( 'new menu', newMenu );
-			this.emit( 'change' );
-			callback && callback( null, newMenu );
-		} else {
-			this.emit( 'error', i18n.translate( "Sorry, we couldn't create this menu." ) );
-			debug( 'error creating menu', error );
-			callback && callback( error );
-		}
-	} );
+    wpcom.undocumented().menusUpdate(this.siteID, 0, newMenu, (error, data) => {
+        if (!error && data.id) {
+            newMenu.id = data.id;
+            this.data.menus.push(newMenu);
+            debug('new menu', newMenu);
+            this.emit('change');
+            callback && callback(null, newMenu);
+        } else {
+            this.emit('error', i18n.translate("Sorry, we couldn't create this menu."));
+            debug('error creating menu', error);
+            callback && callback(error);
+        }
+    });
 };
 
 // FIXME: this just appends ASCII numerals to the end of the string,
 // and does not account for RTL, or language specific numeric characters.
-MenuData.prototype._incrementMenuName = function( menus ) {
-	var menuString = i18n.translate( 'Menu' ),
-		deletedMenus = this.deletedMenu ? [ this.deletedMenu ] : [],
-		menuNumbers = menus.concat( deletedMenus ).map( function( menu ) {
-			var matches;
-			if ( matches = menu.name.match( RegExp( '^' + menuString + ' (\\d+)$' ) ) ) { // eslint-disable-line no-cond-assign
-				return Number( matches[1] );
-			}
-			return 0;
-		} );
+MenuData.prototype._incrementMenuName = function(menus) {
+    var menuString = i18n.translate('Menu'),
+        deletedMenus = this.deletedMenu ? [this.deletedMenu] : [],
+        menuNumbers = menus.concat(deletedMenus).map(function(menu) {
+            var matches;
+            if ((matches = menu.name.match(RegExp('^' + menuString + ' (\\d+)$')))) {
+                // eslint-disable-line no-cond-assign
+                return Number(matches[1]);
+            }
+            return 0;
+        });
 
-	// Ensure we pass at least one value to max()
-	menuNumbers.push( 0 );
-	return menuString + ' ' + ( Math.max.apply( Math, menuNumbers ) + 1 );
+    // Ensure we pass at least one value to max()
+    menuNumbers.push(0);
+    return menuString + ' ' + (Math.max.apply(Math, menuNumbers) + 1);
 };
 
-MenuData.prototype.isAncestor = function( ancestor, descendent ) {
-	if ( ancestor.id === descendent.id ) {
-		return false;
-	}
-	return !! Traverser.find( ancestor, function( node ) {
-		return node && node.id === descendent.id;
-	} );
+MenuData.prototype.isAncestor = function(ancestor, descendent) {
+    if (ancestor.id === descendent.id) {
+        return false;
+    }
+    return !!Traverser.find(ancestor, function(node) {
+        return node && node.id === descendent.id;
+    });
 };
 
-MenuData.prototype.replaceMenu = function( newMenu ) {
-	this.data.menus.some( function( menu, i ) {
-		if ( menu.id === newMenu.id ) {
-			this.data.menus[i] = newMenu;
-			debug( 'replaced menu', this.data.menus[i] );
-			return true;
-		}
-	}, this );
+MenuData.prototype.replaceMenu = function(newMenu) {
+    this.data.menus.some(
+        function(menu, i) {
+            if (menu.id === newMenu.id) {
+                this.data.menus[i] = newMenu;
+                debug('replaced menu', this.data.menus[i]);
+                return true;
+            }
+        },
+        this
+    );
 };
 
 /**
@@ -904,19 +946,19 @@ MenuData.prototype.replaceMenu = function( newMenu ) {
  */
 
 MenuData.prototype.getDefaultMenuId = function() {
-	return DEFAULT_MENU_ID;
+    return DEFAULT_MENU_ID;
 };
 
 MenuData.prototype.hasDefaultMenu = function() {
-	return this.data.defaultMenu && this.data.defaultMenu.id === this.getDefaultMenuId();
+    return this.data.defaultMenu && this.data.defaultMenu.id === this.getDefaultMenuId();
 };
 
 MenuData.prototype.getDefaultMenu = function() {
-	if ( this.data.defaultMenu ) {
-		return this.data.defaultMenu;
-	}
+    if (this.data.defaultMenu) {
+        return this.data.defaultMenu;
+    }
 
-	! this.fetchingDefaultMenu && this.fetchDefaultMenu();
+    !this.fetchingDefaultMenu && this.fetchDefaultMenu();
 };
 
 /**
@@ -925,42 +967,40 @@ MenuData.prototype.getDefaultMenu = function() {
  * Delegates construction of menu to #setDefaultMenu.
  */
 MenuData.prototype.fetchDefaultMenu = function() {
-	var requestedSiteID = this.siteID,
-		params = {
-			siteID: this.siteID,
-			type: 'page',
-			search: '',
-			parent_id: 0,
-			status: 'publish',
-			order: 'ASC',
-			order_by: 'title'
-		};
+    var requestedSiteID = this.siteID,
+        params = {
+            siteID: this.siteID,
+            type: 'page',
+            search: '',
+            parent_id: 0,
+            status: 'publish',
+            order: 'ASC',
+            order_by: 'title',
+        };
 
-	if ( ! requestedSiteID || ! this.data.menus ) {
-		debug( 'Site or menu data not loaded yet, not fetching default menu' );
-		return;
-	}
+    if (!requestedSiteID || !this.data.menus) {
+        debug('Site or menu data not loaded yet, not fetching default menu');
+        return;
+    }
 
-	this.data.defaultMenu = false;
-	this.fetchingDefaultMenu = true;
+    this.data.defaultMenu = false;
+    this.fetchingDefaultMenu = true;
 
-	wpcom
-	.site( requestedSiteID )
-	.postsList( params, ( error, data ) => {
-		this.fetchingDefaultMenu = false;
-		if ( error ) {
-			this.emit( 'error', i18n.translate( 'There was a problem loading the default menu.' ) );
-			debug( 'Error', error, data );
-			return;
-		}
+    wpcom.site(requestedSiteID).postsList(params, (error, data) => {
+        this.fetchingDefaultMenu = false;
+        if (error) {
+            this.emit('error', i18n.translate('There was a problem loading the default menu.'));
+            debug('Error', error, data);
+            return;
+        }
 
-		// Bail if site has changed in the meantime
-		if ( requestedSiteID !== this.siteID ) {
-			return;
-		}
+        // Bail if site has changed in the meantime
+        if (requestedSiteID !== this.siteID) {
+            return;
+        }
 
-		this.setDefaultMenu( data.posts );
-	} );
+        this.setDefaultMenu(data.posts);
+    });
 };
 
 /**
@@ -968,39 +1008,37 @@ MenuData.prototype.fetchDefaultMenu = function() {
  *
  * @param {array} pages - array of post objects
  */
-MenuData.prototype.setDefaultMenu = function( pages ) {
-	var items = [],
-		site = sites.getSelectedSite(),
-		isDefaultMenuSet = !! this.data.defaultMenu;
+MenuData.prototype.setDefaultMenu = function(pages) {
+    var items = [], site = sites.getSelectedSite(), isDefaultMenuSet = !!this.data.defaultMenu;
 
-	pages.forEach( function( page ) {
-		var item = {
-			name: page.title,
-			type: 'page',
-			type_family: 'post_type',
-			content_id: page.ID,
-			items: []
-		};
+    pages.forEach(function(page) {
+        var item = {
+            name: page.title,
+            type: 'page',
+            type_family: 'post_type',
+            content_id: page.ID,
+            items: [],
+        };
 
-		if ( isFrontPage( page, site ) ) {
-			item.name = i18n.translate( 'Home' );
-			items.unshift( item );
-		} else {
-			items.push( item );
-		}
-	} );
+        if (isFrontPage(page, site)) {
+            item.name = i18n.translate('Home');
+            items.unshift(item);
+        } else {
+            items.push(item);
+        }
+    });
 
-	this.data.defaultMenu = this.parseMenu( {
-		id: 0,
-		name: i18n.translate( 'Default Menu' ),
-		description: '',
-		items: items,
-		locations: [ this.getPrimaryLocation() ]
-	} );
-	if ( ! isDefaultMenuSet ) {
-		this.data.menus.unshift( this.data.defaultMenu );
-	}
-	this.emit( 'change' );
+    this.data.defaultMenu = this.parseMenu({
+        id: 0,
+        name: i18n.translate('Default Menu'),
+        description: '',
+        items: items,
+        locations: [this.getPrimaryLocation()],
+    });
+    if (!isDefaultMenuSet) {
+        this.data.menus.unshift(this.data.defaultMenu);
+    }
+    this.emit('change');
 };
 
 /**
@@ -1017,28 +1055,31 @@ MenuData.prototype.setDefaultMenu = function( pages ) {
  *   longer reflects a site's top-level pages.
  */
 MenuData.prototype.saveDefaultMenu = function() {
-	var newMenu;
+    var newMenu;
 
-	if ( ! this.hasContentsChanged ) {
-		// Make sure we're not switching _back_ to the default menu after
-		// cycling through other menus, lest we fall into mutual recursion.
-		if ( this.lastChangedMenuID > 0 ) {
-			this.saveMenu();
-		}
+    if (!this.hasContentsChanged) {
+        // Make sure we're not switching _back_ to the default menu after
+        // cycling through other menus, lest we fall into mutual recursion.
+        if (this.lastChangedMenuID > 0) {
+            this.saveMenu();
+        }
 
-		// We're done for now, no need for a server save.
-		// Use setTimeout to make it look like the save button actually did
-		// something.
-		setTimeout( function() {
-			this.emit( 'saved' );
-			this.change( { reset: true } );
-		}.bind( this ), 500 );
-		return;
-	}
+        // We're done for now, no need for a server save.
+        // Use setTimeout to make it look like the save button actually did
+        // something.
+        setTimeout(
+            function() {
+                this.emit('saved');
+                this.change({ reset: true });
+            }.bind(this),
+            500
+        );
+        return;
+    }
 
-	// Create a new menu. Once done, save local changes.
-	newMenu = cloneDeep( omit( this.data.defaultMenu, 'id' ) );
-	this.addMenu( newMenu.name, this.onDefaultMenuSaved.bind( this ), newMenu );
+    // Create a new menu. Once done, save local changes.
+    newMenu = cloneDeep(omit(this.data.defaultMenu, 'id'));
+    this.addMenu(newMenu.name, this.onDefaultMenuSaved.bind(this), newMenu);
 };
 
 /**
@@ -1049,20 +1090,20 @@ MenuData.prototype.saveDefaultMenu = function() {
  * @param {Object} error - rest-api error response
  * @param {Object} menu - rest-api menu data response
  */
-MenuData.prototype.onDefaultMenuSaved = function( error, menu ) {
-	if ( menu && menu.id ) {
-		this.deleteDefaultMenu();
+MenuData.prototype.onDefaultMenuSaved = function(error, menu) {
+    if (menu && menu.id) {
+        this.deleteDefaultMenu();
 
-		// Rename 'Default Menu' to 'Menu n' unless user has changed it
-		if ( menu.name === i18n.translate( 'Default Menu' ) ) {
-			menu.name = this._incrementMenuName( this.data.menus );
-		}
+        // Rename 'Default Menu' to 'Menu n' unless user has changed it
+        if (menu.name === i18n.translate('Default Menu')) {
+            menu.name = this._incrementMenuName(this.data.menus);
+        }
 
-		menu.locations = [ this.getPrimaryLocation() ];
-		this.saveMenu( menu );
-	} else {
-		debug( 'onDefaultMenuSaved: fail', error );
-	}
+        menu.locations = [this.getPrimaryLocation()];
+        this.saveMenu(menu);
+    } else {
+        debug('onDefaultMenuSaved: fail', error);
+    }
 };
 
 /**
@@ -1071,9 +1112,9 @@ MenuData.prototype.onDefaultMenuSaved = function( error, menu ) {
  * from the picker again and expect the same behavior as before.
  */
 MenuData.prototype.deleteDefaultMenu = function() {
-	var index = this.data.menus.indexOf( this.data.defaultMenu );
-	if ( ~ index ) {
-		this.data.menus.splice( index, 1 );
-		delete this.data.defaultMenu;
-	}
+    var index = this.data.menus.indexOf(this.data.defaultMenu);
+    if (~index) {
+        this.data.menus.splice(index, 1);
+        delete this.data.defaultMenu;
+    }
 };

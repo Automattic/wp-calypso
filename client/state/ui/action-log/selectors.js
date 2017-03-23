@@ -19,8 +19,8 @@ import createSelector from 'lib/create-selector';
  * @param  {Object}   state      Global state tree
  * @return {Array}               Array of Redux actions, each with timestamp
  */
-export function getActionLog( state ) {
-	return state.ui.actionLog;
+export function getActionLog(state) {
+    return state.ui.actionLog;
 }
 
 /**
@@ -30,6 +30,6 @@ export function getActionLog( state ) {
  * @return {Object}              The matching dispatched action
  */
 export const getLastAction = createSelector(
-	( state ) => last( state.ui.actionLog ) || false,
-	( state ) => [ state.ui.actionLog ]
+    state => last(state.ui.actionLog) || false,
+    state => [state.ui.actionLog]
 );

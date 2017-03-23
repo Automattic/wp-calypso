@@ -20,7 +20,7 @@ import emitter from 'lib/mixins/emitter';
  * The event hub for the section preloader
  */
 export const hub = {};
-emitter( hub );
+emitter(hub);
 
 /**
  * Preload a section by name
@@ -28,6 +28,6 @@ emitter( hub );
  * @export
  * @param {String} section The named section to load
  */
-export function preload( section ) {
-	hub.emit( 'preload', section );
+export function preload(section) {
+    hub.emit('preload', section);
 }

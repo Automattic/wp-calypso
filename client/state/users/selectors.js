@@ -5,6 +5,6 @@
  * @param  {Number} userId User ID
  * @return {Object}        User object
  */
-export function getUser( state, userId ) {
-	return state.users.items[ userId ];
+export function getUser(state, userId) {
+    return state.users.items[userId];
 }

@@ -8,201 +8,201 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	READER_LIST_DISMISS_NOTICE,
-	READER_LIST_REQUEST,
-	READER_LIST_UPDATE,
-	READER_LISTS_RECEIVE,
-	READER_LISTS_REQUEST,
-	READER_LISTS_FOLLOW,
-	READER_LISTS_UNFOLLOW,
-	READER_LIST_UPDATE_TITLE,
-	READER_LIST_UPDATE_DESCRIPTION
+    READER_LIST_DISMISS_NOTICE,
+    READER_LIST_REQUEST,
+    READER_LIST_UPDATE,
+    READER_LISTS_RECEIVE,
+    READER_LISTS_REQUEST,
+    READER_LISTS_FOLLOW,
+    READER_LISTS_UNFOLLOW,
+    READER_LIST_UPDATE_TITLE,
+    READER_LIST_UPDATE_DESCRIPTION,
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import {
-	receiveLists,
-	requestList,
-	requestSubscribedLists,
-	followList,
-	unfollowList,
-	updateListDetails,
-	dismissListNotice,
-	updateTitle,
-	updateDescription
+    receiveLists,
+    requestList,
+    requestSubscribedLists,
+    followList,
+    unfollowList,
+    updateListDetails,
+    dismissListNotice,
+    updateTitle,
+    updateDescription,
 } from '../actions';
 
-describe( 'actions', () => {
-	const spy = sinon.spy();
+describe('actions', () => {
+    const spy = sinon.spy();
 
-	beforeEach( () => {
-		spy.reset();
-	} );
+    beforeEach(() => {
+        spy.reset();
+    });
 
-	describe( '#receiveLists()', () => {
-		it( 'should return an action object', () => {
-			const lists = [ { ID: 841, title: 'Hello World', slug: 'hello-world' } ];
-			const action = receiveLists( lists );
+    describe('#receiveLists()', () => {
+        it('should return an action object', () => {
+            const lists = [{ ID: 841, title: 'Hello World', slug: 'hello-world' }];
+            const action = receiveLists(lists);
 
-			expect( action ).to.eql( {
-				type: READER_LISTS_RECEIVE,
-				lists
-			} );
-		} );
-	} );
+            expect(action).to.eql({
+                type: READER_LISTS_RECEIVE,
+                lists,
+            });
+        });
+    });
 
-	describe( '#requestList()', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.2/read/lists/listowner/listslug' )
-				.reply( 200, {
-					list: {
-						ID: 123,
-						title: 'My test list'
-					}
-				} );
-		} );
+    describe('#requestList()', () => {
+        useNock(nock => {
+            nock('https://public-api.wordpress.com:443')
+                .get('/rest/v1.2/read/lists/listowner/listslug')
+                .reply(200, {
+                    list: {
+                        ID: 123,
+                        title: 'My test list',
+                    },
+                });
+        });
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
-			requestList()( spy );
+        it('should dispatch fetch action when thunk triggered', () => {
+            requestList()(spy);
 
-			expect( spy ).to.have.been.calledWith( {
-				type: READER_LIST_REQUEST
-			} );
-		} );
-	} );
+            expect(spy).to.have.been.calledWith({
+                type: READER_LIST_REQUEST,
+            });
+        });
+    });
 
-	describe( '#requestSubscribedLists()', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.get( '/rest/v1.2/read/lists' )
-				.reply( 200, {
-					found: 2,
-					lists: [
-						{ ID: 841, title: 'Hello World' },
-						{ ID: 413, title: 'Mango & Feijoa' }
-					]
-				} );
-		} );
+    describe('#requestSubscribedLists()', () => {
+        useNock(nock => {
+            nock('https://public-api.wordpress.com:443')
+                .persist()
+                .get('/rest/v1.2/read/lists')
+                .reply(200, {
+                    found: 2,
+                    lists: [
+                        { ID: 841, title: 'Hello World' },
+                        { ID: 413, title: 'Mango & Feijoa' },
+                    ],
+                });
+        });
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
-			requestSubscribedLists()( spy );
+        it('should dispatch fetch action when thunk triggered', () => {
+            requestSubscribedLists()(spy);
 
-			expect( spy ).to.have.been.calledWith( {
-				type: READER_LISTS_REQUEST
-			} );
-		} );
+            expect(spy).to.have.been.calledWith({
+                type: READER_LISTS_REQUEST,
+            });
+        });
 
-		it( 'should dispatch lists receive action when request completes', () => {
-			return requestSubscribedLists()( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: READER_LISTS_RECEIVE,
-					lists: [
-						{ ID: 841, title: 'Hello World' },
-						{ ID: 413, title: 'Mango & Feijoa' }
-					]
-				} );
-			} );
-		} );
-	} );
+        it('should dispatch lists receive action when request completes', () => {
+            return requestSubscribedLists()(spy).then(() => {
+                expect(spy).to.have.been.calledWith({
+                    type: READER_LISTS_RECEIVE,
+                    lists: [
+                        { ID: 841, title: 'Hello World' },
+                        { ID: 413, title: 'Mango & Feijoa' },
+                    ],
+                });
+            });
+        });
+    });
 
-	describe( '#followList()', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.2/read/lists/restapitests/testlist/follow' )
-				.reply( 200, {
-					following: true
-				} );
-		} );
+    describe('#followList()', () => {
+        useNock(nock => {
+            nock('https://public-api.wordpress.com:443')
+                .post('/rest/v1.2/read/lists/restapitests/testlist/follow')
+                .reply(200, {
+                    following: true,
+                });
+        });
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
-			followList( 'restapitests', 'testlist' )( spy );
+        it('should dispatch fetch action when thunk triggered', () => {
+            followList('restapitests', 'testlist')(spy);
 
-			expect( spy ).to.have.been.calledWith( {
-				type: READER_LISTS_FOLLOW,
-				owner: 'restapitests',
-				slug: 'testlist'
-			} );
-		} );
-	} );
+            expect(spy).to.have.been.calledWith({
+                type: READER_LISTS_FOLLOW,
+                owner: 'restapitests',
+                slug: 'testlist',
+            });
+        });
+    });
 
-	describe( '#unfollowList()', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.2/read/lists/restapitests/testlist/unfollow' )
-				.reply( 200, {
-					following: false
-				} );
-		} );
+    describe('#unfollowList()', () => {
+        useNock(nock => {
+            nock('https://public-api.wordpress.com:443')
+                .post('/rest/v1.2/read/lists/restapitests/testlist/unfollow')
+                .reply(200, {
+                    following: false,
+                });
+        });
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
-			unfollowList( 'restapitests', 'testlist' )( spy );
+        it('should dispatch fetch action when thunk triggered', () => {
+            unfollowList('restapitests', 'testlist')(spy);
 
-			expect( spy ).to.have.been.calledWith( {
-				type: READER_LISTS_UNFOLLOW,
-				owner: 'restapitests',
-				slug: 'testlist'
-			} );
-		} );
-	} );
+            expect(spy).to.have.been.calledWith({
+                type: READER_LISTS_UNFOLLOW,
+                owner: 'restapitests',
+                slug: 'testlist',
+            });
+        });
+    });
 
-	describe( '#updateListDetails()', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.2/read/lists/restapitests/testlist/update' )
-				.reply( 200, {
-					following: false
-				} );
-		} );
+    describe('#updateListDetails()', () => {
+        useNock(nock => {
+            nock('https://public-api.wordpress.com:443')
+                .post('/rest/v1.2/read/lists/restapitests/testlist/update')
+                .reply(200, {
+                    following: false,
+                });
+        });
 
-		it( 'should dispatch fetch action when thunk triggered', () => {
-			const list = { owner: 'restapitests', slug: 'testlist', title: 'Banana' };
-			updateListDetails( list )( spy );
+        it('should dispatch fetch action when thunk triggered', () => {
+            const list = { owner: 'restapitests', slug: 'testlist', title: 'Banana' };
+            updateListDetails(list)(spy);
 
-			expect( spy ).to.have.been.calledWith( {
-				type: READER_LIST_UPDATE,
-				list
-			} );
-		} );
-	} );
+            expect(spy).to.have.been.calledWith({
+                type: READER_LIST_UPDATE,
+                list,
+            });
+        });
+    });
 
-	describe( '#dismissListNotice()', () => {
-		it( 'should dispatch the dismiss action', () => {
-			const listId = 123;
-			dismissListNotice( listId )( spy );
+    describe('#dismissListNotice()', () => {
+        it('should dispatch the dismiss action', () => {
+            const listId = 123;
+            dismissListNotice(listId)(spy);
 
-			expect( spy ).to.have.been.calledWith( {
-				type: READER_LIST_DISMISS_NOTICE,
-				listId: 123
-			} );
-		} );
-	} );
+            expect(spy).to.have.been.calledWith({
+                type: READER_LIST_DISMISS_NOTICE,
+                listId: 123,
+            });
+        });
+    });
 
-	describe( '#updateTitle()', () => {
-		it( 'should dispatch the right action', () => {
-			const listId = 123;
-			const newTitle = 'Banana';
-			updateTitle( listId, newTitle )( spy );
+    describe('#updateTitle()', () => {
+        it('should dispatch the right action', () => {
+            const listId = 123;
+            const newTitle = 'Banana';
+            updateTitle(listId, newTitle)(spy);
 
-			expect( spy ).to.have.been.calledWith( {
-				type: READER_LIST_UPDATE_TITLE,
-				listId: 123,
-				title: newTitle
-			} );
-		} );
-	} );
+            expect(spy).to.have.been.calledWith({
+                type: READER_LIST_UPDATE_TITLE,
+                listId: 123,
+                title: newTitle,
+            });
+        });
+    });
 
-	describe( '#updateDescription()', () => {
-		it( 'should dispatch the right action', () => {
-			const listId = 123;
-			const newDescription = 'Yellow is a excellent fruit colour';
-			updateDescription( listId, newDescription )( spy );
+    describe('#updateDescription()', () => {
+        it('should dispatch the right action', () => {
+            const listId = 123;
+            const newDescription = 'Yellow is a excellent fruit colour';
+            updateDescription(listId, newDescription)(spy);
 
-			expect( spy ).to.have.been.calledWith( {
-				type: READER_LIST_UPDATE_DESCRIPTION,
-				listId: 123,
-				description: newDescription
-			} );
-		} );
-	} );
-} );
+            expect(spy).to.have.been.calledWith({
+                type: READER_LIST_UPDATE_DESCRIPTION,
+                listId: 123,
+                description: newDescription,
+            });
+        });
+    });
+});

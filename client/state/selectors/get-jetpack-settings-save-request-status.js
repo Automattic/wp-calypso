@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @param  {Number}  siteId Site ID
  * @return {String}         The request status (peding, success or error)
  */
-export default function getJetpackSettingsSaveRequestStatus( state, siteId ) {
-	return get( state.jetpack.settings.saveRequests, [ siteId, 'status' ] );
+export default function getJetpackSettingsSaveRequestStatus(state, siteId) {
+    return get(state.jetpack.settings.saveRequests, [siteId, 'status']);
 }

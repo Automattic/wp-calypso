@@ -7,17 +7,19 @@ import store from 'store';
 export const GUEST_TICKET_LOCALFORAGE_KEY = 'guest_sandbox_ticket';
 export const GUEST_TICKET_VALIDITY_DURATION = 1000 * 60 * 60 * 2; // two hours
 
-const getTicket = () => store.get( GUEST_TICKET_LOCALFORAGE_KEY );
+const getTicket = () => store.get(GUEST_TICKET_LOCALFORAGE_KEY);
 
 /**
  * Deletes an old guest sandbox ticket from local storage if one exists.
  */
 export const deleteOldTicket = () => {
-	const existingTicket = getTicket();
+    const existingTicket = getTicket();
 
-	if ( existingTicket && existingTicket.createdDate < Date.now() - GUEST_TICKET_VALIDITY_DURATION ) {
-		store.remove( GUEST_TICKET_LOCALFORAGE_KEY );
-	}
+    if (
+        existingTicket && existingTicket.createdDate < Date.now() - GUEST_TICKET_VALIDITY_DURATION
+    ) {
+        store.remove(GUEST_TICKET_LOCALFORAGE_KEY);
+    }
 };
 
 /**
@@ -25,47 +27,46 @@ export const deleteOldTicket = () => {
  *
  * @param {Object} wpcom Original WPCOM instance
  */
-export const injectGuestSandboxTicketHandler = ( wpcom ) => {
-	const request = wpcom.request.bind( wpcom );
+export const injectGuestSandboxTicketHandler = wpcom => {
+    const request = wpcom.request.bind(wpcom);
 
-	Object.assign( wpcom, {
-		request( params, callback ) {
-			const ticket = getTicket();
+    Object.assign(wpcom, {
+        request(params, callback) {
+            const ticket = getTicket();
 
-			if ( ticket ) {
-				const query = qs.parse( params.query );
+            if (ticket) {
+                const query = qs.parse(params.query);
 
-				params = Object.assign( {}, params, {
-					query: qs.stringify( Object.assign( query, { store_sandbox_ticket: ticket.value } ) )
-				} );
-			}
+                params = Object.assign({}, params, {
+                    query: qs.stringify(
+                        Object.assign(query, { store_sandbox_ticket: ticket.value })
+                    ),
+                });
+            }
 
-			return request( params, callback );
-		}
-	} );
+            return request(params, callback);
+        },
+    });
 };
 
 /**
  * Deletes the old ticket and sets the new one from a `guest_ticket` querystring parameter.
  */
 const initialize = () => {
-	if ( typeof window === 'undefined' ) {
-		return;
-	}
+    if (typeof window === 'undefined') {
+        return;
+    }
 
-	deleteOldTicket();
+    deleteOldTicket();
 
-	const queryObject = qs.decode( window.location.search.replace( '?', '' ) );
+    const queryObject = qs.decode(window.location.search.replace('?', ''));
 
-	if ( queryObject.guest_ticket ) {
-		store.set(
-			GUEST_TICKET_LOCALFORAGE_KEY,
-			{
-				createdDate: Date.now(),
-				value: queryObject.guest_ticket
-			}
-		);
-	}
+    if (queryObject.guest_ticket) {
+        store.set(GUEST_TICKET_LOCALFORAGE_KEY, {
+            createdDate: Date.now(),
+            value: queryObject.guest_ticket,
+        });
+    }
 };
 
 initialize();

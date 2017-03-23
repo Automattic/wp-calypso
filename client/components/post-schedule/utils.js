@@ -16,7 +16,7 @@ import { moment } from 'i18n-calypso';
  * @param  {String}  timeFormat Time format.
  * @return {Boolean}            Whether it's a 12-hour time format.
  */
-const is12hr = ( timeFormat ) => timeFormat && /[gh]|[aA]$/.test( timeFormat );
+const is12hr = timeFormat => timeFormat && /[gh]|[aA]$/.test(timeFormat);
 
 /**
  * Check whether is a valid gmtOffset value.
@@ -36,45 +36,43 @@ const isValidGMTOffset = gmtOffset => 'number' === typeof gmtOffset;
  * @param {Number} gmt - gmt offset in minutes
  * @return {Moment} localized date
  */
-const getLocalizedDate = ( date, tz, gmt ) => {
-	date = moment( date );
+const getLocalizedDate = (date, tz, gmt) => {
+    date = moment(date);
 
-	if ( tz ) {
-		date.tz( tz );
-	} else if ( isValidGMTOffset( gmt ) ) {
-		date.utcOffset( gmt );
-	}
+    if (tz) {
+        date.tz(tz);
+    } else if (isValidGMTOffset(gmt)) {
+        date.utcOffset(gmt);
+    }
 
-	return date;
+    return date;
 };
 
-const getDateInLocalUTC = date => moment( date.format ? date.format() : date );
+const getDateInLocalUTC = date => moment(date.format ? date.format() : date);
 
-const getTimeOffset = ( date, tz, gmt ) => {
-	const userLocalDate = getDateInLocalUTC( date );
-	const localizedDate = getLocalizedDate( date, tz, gmt );
+const getTimeOffset = (date, tz, gmt) => {
+    const userLocalDate = getDateInLocalUTC(date);
+    const localizedDate = getLocalizedDate(date, tz, gmt);
 
-	return userLocalDate.utcOffset() - localizedDate.utcOffset();
+    return userLocalDate.utcOffset() - localizedDate.utcOffset();
 };
 
-const convertDateToUserLocation = ( date, tz, gmt ) => {
-	if ( ! ( tz || isValidGMTOffset( gmt ) ) ) {
-		return moment( date );
-	}
+const convertDateToUserLocation = (date, tz, gmt) => {
+    if (!(tz || isValidGMTOffset(gmt))) {
+        return moment(date);
+    }
 
-	return getDateInLocalUTC( date )
-		.subtract( getTimeOffset( date, tz, gmt ), 'minute' );
+    return getDateInLocalUTC(date).subtract(getTimeOffset(date, tz, gmt), 'minute');
 };
 
-const convertDateToGivenOffset = ( date, tz, gmt ) => {
-	date = getLocalizedDate( date, tz, gmt )
-		.add( getTimeOffset( date, tz, gmt ), 'minute' );
+const convertDateToGivenOffset = (date, tz, gmt) => {
+    date = getLocalizedDate(date, tz, gmt).add(getTimeOffset(date, tz, gmt), 'minute');
 
-	if ( ! tz && isValidGMTOffset( gmt ) ) {
-		date.utcOffset( gmt );
-	}
+    if (!tz && isValidGMTOffset(gmt)) {
+        date.utcOffset(gmt);
+    }
 
-	return date;
+    return date;
 };
 
 /**
@@ -86,20 +84,20 @@ const convertDateToGivenOffset = ( date, tz, gmt ) => {
  * @return {String} `hh:mm` format
  */
 const convertMinutesToHHMM = minutes => {
-	const hours = Math.trunc( minutes / 60 );
-	const sign = minutes > 0 ? '+' : '';
+    const hours = Math.trunc(minutes / 60);
+    const sign = minutes > 0 ? '+' : '';
 
-	if ( ! ( minutes / 60 % 1 ) ) {
-		return sign + String( hours );
-	}
+    if (!(minutes / 60 % 1)) {
+        return sign + String(hours);
+    }
 
-	minutes = Math.abs( minutes % 60 );
-	const mm = ( minutes < 10 ? ( '0' + minutes ) : minutes );
+    minutes = Math.abs(minutes % 60);
+    const mm = minutes < 10 ? '0' + minutes : minutes;
 
-	return `${ sign }${ hours }:${ mm }`;
+    return `${sign}${hours}:${mm}`;
 };
 
-const convertHoursToHHMM = hours => convertMinutesToHHMM( hours * 60 );
+const convertHoursToHHMM = hours => convertMinutesToHHMM(hours * 60);
 
 /**
  * Check if the given value is useful to be assigned like hours or minutes.
@@ -110,27 +108,27 @@ const convertHoursToHHMM = hours => convertMinutesToHHMM( hours * 60 );
  * @return {Number|Boolean} valid number or `false`
  */
 const parseAndValidateNumber = value => {
-	value = String( value );
-	if ( value !== '0' && value !== '00' && ( value[ 0 ] === '0' || Number( value ) > 99 ) ) {
-		value = Number( value.substr( 1 ) );
-	}
+    value = String(value);
+    if (value !== '0' && value !== '00' && (value[0] === '0' || Number(value) > 99)) {
+        value = Number(value.substr(1));
+    }
 
-	if ( ! ( isNaN( Number( value ) ) || Number( value ) < 0 || value.length > 2 ) ) {
-		return Number( value );
-	}
+    if (!(isNaN(Number(value)) || Number(value) < 0 || value.length > 2)) {
+        return Number(value);
+    }
 
-	return false;
+    return false;
 };
 
 export default {
-	convertDateToGivenOffset,
-	convertDateToUserLocation,
-	convertHoursToHHMM,
-	convertMinutesToHHMM,
-	getDateInLocalUTC,
-	getLocalizedDate,
-	getTimeOffset,
-	is12hr,
-	isValidGMTOffset,
-	parseAndValidateNumber,
+    convertDateToGivenOffset,
+    convertDateToUserLocation,
+    convertHoursToHHMM,
+    convertMinutesToHHMM,
+    getDateInLocalUTC,
+    getLocalizedDate,
+    getTimeOffset,
+    is12hr,
+    isValidGMTOffset,
+    parseAndValidateNumber,
 };

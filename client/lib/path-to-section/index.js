@@ -7,9 +7,7 @@ import { find, startsWith } from 'lodash';
 /**
  * Conditional dependency
  */
-const sections = config( 'project' ) === 'wordpress-com'
-	? require( 'wordpress-com' )
-	: null;
+const sections = config('project') === 'wordpress-com' ? require('wordpress-com') : null;
 
 /*
  * wordpress-com-aware implementation where
@@ -21,11 +19,10 @@ const sections = config( 'project' ) === 'wordpress-com'
  *  f( '/read' ) === 'reader'
  */
 export const wpcomImplementation = path => {
-	const match = find( sections, section =>
-			section.paths.some( sectionPath =>
-				startsWith( path, sectionPath ) ) );
+    const match = find(sections, section =>
+        section.paths.some(sectionPath => startsWith(path, sectionPath)));
 
-	return match && match.name;
+    return match && match.name;
 };
 
 /*
@@ -35,12 +32,10 @@ export const wpcomImplementation = path => {
  * 	f( '/foo/bar' ) === 'foo'
  */
 export const fallbackImplementation = path => {
-	const match = path.match( /[^/]+/ );
-	return match && match[ 0 ];
+    const match = path.match(/[^/]+/);
+    return match && match[0];
 };
 
-const pathToSection = sections
-	? wpcomImplementation
-	: fallbackImplementation;
+const pathToSection = sections ? wpcomImplementation : fallbackImplementation;
 
 export default pathToSection;

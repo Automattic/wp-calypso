@@ -3,14 +3,14 @@
  */
 import React from 'react';
 
-export default React.createClass( {
-	displayName: 'ContactFormViewPreviewRequired',
+export default React.createClass({
+    displayName: 'ContactFormViewPreviewRequired',
 
-	render() {
-		if ( this.props.required ) {
-			return ( <em>&nbsp;({ this.translate( 'required' ) })</em> );
-		}
+    render() {
+        if (this.props.required) {
+            return <em>&nbsp;({this.translate('required')})</em>;
+        }
 
-		return null;
-	}
-} );
+        return null;
+    },
+});

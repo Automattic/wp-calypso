@@ -8,27 +8,27 @@ import { expect } from 'chai';
  */
 import ThemeQueryManager from '../';
 
-describe( 'ThemeQueryManager', ( ) => {
-	describe( '#sort()', ( ) => {
-		it( 'should leave key order unchanged', ( ) => {
-			const originalKeys = Object.freeze( [
-				'adaline',
-				'fanwood-light',
-				'ixion',
-				'cols',
-				'timepiece',
-				'chalkboard',
-				'handmade',
-				'trvl',
-				'dyad',
-				'little-story',
-				'pachyderm'
-			] );
-			const keys = [ ...originalKeys ];
-			const manager = new ThemeQueryManager();
+describe('ThemeQueryManager', () => {
+    describe('#sort()', () => {
+        it('should leave key order unchanged', () => {
+            const originalKeys = Object.freeze([
+                'adaline',
+                'fanwood-light',
+                'ixion',
+                'cols',
+                'timepiece',
+                'chalkboard',
+                'handmade',
+                'trvl',
+                'dyad',
+                'little-story',
+                'pachyderm',
+            ]);
+            const keys = [...originalKeys];
+            const manager = new ThemeQueryManager();
 
-			manager.sort( keys );
-			expect( keys ).to.deep.equal( originalKeys );
-		} );
-	} );
-} );
+            manager.sort(keys);
+            expect(keys).to.deep.equal(originalKeys);
+        });
+    });
+});

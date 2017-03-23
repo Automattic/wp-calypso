@@ -13,39 +13,36 @@ import Gridicon from 'gridicons';
 import { getPost } from 'state/posts/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
 
-function PostTypePostAuthor( { translate, singleUserSite, name } ) {
-	if ( ! name || singleUserSite ) {
-		return null;
-	}
+function PostTypePostAuthor({ translate, singleUserSite, name }) {
+    if (!name || singleUserSite) {
+        return null;
+    }
 
-	return (
-		<div className="post-type-post-author">
-			<Gridicon
-				icon="user"
-				size={ 18 }
-				className="post-type-post-author__icon" />
-			{ translate( 'by %(name)s', { args: { name } } ) }
-		</div>
-	);
+    return (
+        <div className="post-type-post-author">
+            <Gridicon icon="user" size={18} className="post-type-post-author__icon" />
+            {translate('by %(name)s', { args: { name } })}
+        </div>
+    );
 }
 
 PostTypePostAuthor.propTypes = {
-	translate: PropTypes.func,
-	globalId: PropTypes.string,
-	singleUserSite: PropTypes.bool,
-	name: PropTypes.string
+    translate: PropTypes.func,
+    globalId: PropTypes.string,
+    singleUserSite: PropTypes.bool,
+    name: PropTypes.string,
 };
 
-export default connect( ( state, ownProps ) => {
-	const post = getPost( state, ownProps.globalId );
+export default connect((state, ownProps) => {
+    const post = getPost(state, ownProps.globalId);
 
-	let singleUserSite;
-	if ( post ) {
-		singleUserSite = isSingleUserSite( state, post.site_ID );
-	}
+    let singleUserSite;
+    if (post) {
+        singleUserSite = isSingleUserSite(state, post.site_ID);
+    }
 
-	return {
-		singleUserSite,
-		name: get( post, [ 'author', 'name' ] )
-	};
-} )( localize( PostTypePostAuthor ) );
+    return {
+        singleUserSite,
+        name: get(post, ['author', 'name']),
+    };
+})(localize(PostTypePostAuthor));

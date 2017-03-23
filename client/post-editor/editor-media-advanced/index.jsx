@@ -18,64 +18,64 @@ import FormTextInput from 'components/forms/form-text-input';
 import { getSelectedSite } from 'state/ui/selectors';
 
 class EditorMediaAdvanced extends Component {
-	constructor() {
-		super( ...arguments );
+    constructor() {
+        super(...arguments);
 
-		this.save = this.save.bind( this );
-	}
+        this.save = this.save.bind(this);
+    }
 
-	save() {
-		const { media, appearance } = this.props.item;
-		const markup = MediaMarkup.get( this.props.selectedSite, Object.assign( {}, media, {
-			alt: ReactDom.findDOMNode( this.refs.alt ).value
-		} ), appearance );
+    save() {
+        const { media, appearance } = this.props.item;
+        const markup = MediaMarkup.get(
+            this.props.selectedSite,
+            Object.assign({}, media, {
+                alt: ReactDom.findDOMNode(this.refs.alt).value,
+            }),
+            appearance
+        );
 
-		this.props.insertMedia( markup );
-	}
+        this.props.insertMedia(markup);
+    }
 
-	render() {
-		const { translate, visible, item, onClose } = this.props;
+    render() {
+        const { translate, visible, item, onClose } = this.props;
 
-		const buttons = [
-			<Button primary onClick={ this.save }>
-				{ translate( 'Save' ) }
-			</Button>
-		];
+        const buttons = [
+            <Button primary onClick={this.save}>
+                {translate('Save')}
+            </Button>,
+        ];
 
-		return (
-			<Dialog { ...{ isVisible: visible, buttons, onClose } }>
-				<form onSubmit={ this.save }>
-					<FormFieldset>
-						<FormLabel>
-							{ translate( 'Alt text' ) }
-							<FormTextInput
-								ref="alt"
-								defaultValue={ item.media.alt } />
-						</FormLabel>
-					</FormFieldset>
-				</form>
-			</Dialog>
-		);
-	}
+        return (
+            <Dialog {...{ isVisible: visible, buttons, onClose }}>
+                <form onSubmit={this.save}>
+                    <FormFieldset>
+                        <FormLabel>
+                            {translate('Alt text')}
+                            <FormTextInput ref="alt" defaultValue={item.media.alt} />
+                        </FormLabel>
+                    </FormFieldset>
+                </form>
+            </Dialog>
+        );
+    }
 }
 
 EditorMediaAdvanced.propTypes = {
-	translate: PropTypes.func,
-	visible: PropTypes.bool,
-	item: PropTypes.object,
-	onClose: PropTypes.func,
-	insertMedia: PropTypes.func
+    translate: PropTypes.func,
+    visible: PropTypes.bool,
+    item: PropTypes.object,
+    onClose: PropTypes.func,
+    insertMedia: PropTypes.func,
 };
 
 EditorMediaAdvanced.defaultProps = {
-	onClose: () => {},
-	insertMedia: () => {}
+    onClose: () => {},
+    insertMedia: () => {},
 };
 
-export default connect(
-	state => {
-		return {
-			selectedSite: getSelectedSite( state )
-		};
-	}
-)( localize( EditorMediaAdvanced ) );
+export default connect(state => {
+    return {
+        selectedSite: getSelectedSite(state),
+    };
+})(localize(EditorMediaAdvanced));

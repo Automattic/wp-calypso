@@ -12,6 +12,6 @@ import { get } from 'lodash';
  * @param  {Number}  postId Post ID
  * @return {Boolean}        Whether post likes are being requested
  */
-export default function isRequestingPostLikes( state, siteId, postId ) {
-	return get( state.posts.likes.requesting, [ siteId, postId ], false );
+export default function isRequestingPostLikes(state, siteId, postId) {
+    return get(state.posts.likes.requesting, [siteId, postId], false);
 }

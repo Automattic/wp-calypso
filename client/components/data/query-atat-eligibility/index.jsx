@@ -10,32 +10,32 @@ import { connect } from 'react-redux';
 import { requestEligibility } from 'state/automated-transfer/actions';
 
 export class QueryAutomatedTransferEligibility extends Component {
-	static propTypes = {
-		requestEligibility: PropTypes.func.isRequired,
-		siteId: PropTypes.number,
-	};
+    static propTypes = {
+        requestEligibility: PropTypes.func.isRequired,
+        siteId: PropTypes.number,
+    };
 
-	componentWillMount() {
-		this.request( this.props );
-	}
+    componentWillMount() {
+        this.request(this.props);
+    }
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.request( nextProps );
-		}
-	}
+    componentWillReceiveProps(nextProps) {
+        if (this.props.siteId !== nextProps.siteId) {
+            this.request(nextProps);
+        }
+    }
 
-	request( { requestEligibility, siteId } ) {
-		siteId && requestEligibility( siteId );
-	}
+    request({ requestEligibility, siteId }) {
+        siteId && requestEligibility(siteId);
+    }
 
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
-export const mapDispatchToProps = ( {
-	requestEligibility,
-} );
+export const mapDispatchToProps = {
+    requestEligibility,
+};
 
-export default connect( null, mapDispatchToProps )( QueryAutomatedTransferEligibility );
+export default connect(null, mapDispatchToProps)(QueryAutomatedTransferEligibility);

@@ -11,42 +11,42 @@ import FollowButton from 'reader/follow-button';
 import * as discoverStats from './stats';
 
 class DiscoverFollowButton extends React.Component {
+    static propTypes = {
+        siteName: React.PropTypes.string.isRequired,
+        followUrl: React.PropTypes.string.isRequired,
+    };
 
-	static propTypes = {
-		siteName: React.PropTypes.string.isRequired,
-		followUrl: React.PropTypes.string.isRequired
-	}
+    recordFollowToggle = isFollowing => {
+        discoverStats.recordFollowToggle(isFollowing, this.props.siteUrl);
+    };
 
-	recordFollowToggle = ( isFollowing ) => {
-		discoverStats.recordFollowToggle( isFollowing, this.props.siteUrl );
-	}
+    render() {
+        if (!this.props.followUrl) {
+            return null;
+        }
 
-	render() {
-		if ( ! this.props.followUrl ) {
-			return null;
-		}
+        const followLabel = this.props.translate('Follow %(siteName)s', {
+            args: {
+                siteName: this.props.siteName,
+            },
+        });
+        const followingLabel = this.props.translate('Following %(siteName)s', {
+            args: {
+                siteName: this.props.siteName,
+            },
+        });
 
-		const followLabel = this.props.translate( 'Follow %(siteName)s', {
-			args: {
-				siteName: this.props.siteName,
-			}
-		} );
-		const followingLabel = this.props.translate( 'Following %(siteName)s', {
-			args: {
-				siteName: this.props.siteName,
-			}
-		} );
-
-		return (
-			<FollowButton
-				className="is-discover"
-				siteUrl={ this.props.followUrl }
-				iconSize={ 20 }
-				onFollowToggle={ this.recordFollowToggle }
-				followLabel={ followLabel }
-				followingLabel={ followingLabel } />
-		);
-	}
+        return (
+            <FollowButton
+                className="is-discover"
+                siteUrl={this.props.followUrl}
+                iconSize={20}
+                onFollowToggle={this.recordFollowToggle}
+                followLabel={followLabel}
+                followingLabel={followingLabel}
+            />
+        );
+    }
 }
 
-export default localize( DiscoverFollowButton );
+export default localize(DiscoverFollowButton);

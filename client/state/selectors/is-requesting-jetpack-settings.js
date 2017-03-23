@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {Number}  siteId      The ID of the site we're querying
  * @return {?Boolean}            Whether Jetpack settings are currently being requested
  */
-export default function isRequestingJetpackSettings( state, siteId ) {
-	return get( state.jetpack.settings.requests, [ siteId, 'requesting' ], null );
+export default function isRequestingJetpackSettings(state, siteId) {
+    return get(state.jetpack.settings.requests, [siteId, 'requesting'], null);
 }

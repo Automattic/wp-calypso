@@ -8,15 +8,15 @@ import find from 'lodash/find';
  */
 import { whoisType } from './constants';
 
-function findRegistrantWhois( whoisContacts ) {
-	return find( whoisContacts, { type: whoisType.REGISTRANT } );
+function findRegistrantWhois(whoisContacts) {
+    return find(whoisContacts, { type: whoisType.REGISTRANT });
 }
 
-function findPrivacyServiceWhois( whoisContacts ) {
-	return find( whoisContacts, { type: whoisType.PRIVACY_SERVICE } );
+function findPrivacyServiceWhois(whoisContacts) {
+    return find(whoisContacts, { type: whoisType.PRIVACY_SERVICE });
 }
 
 export default {
-	findRegistrantWhois,
-	findPrivacyServiceWhois
+    findRegistrantWhois,
+    findPrivacyServiceWhois,
 };

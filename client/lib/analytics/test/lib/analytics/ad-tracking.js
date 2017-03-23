@@ -1,3 +1,1 @@
-export function retarget() {
-
-}
+export function retarget() {}

@@ -3,14 +3,14 @@
  */
 import wpcom from 'lib/wp';
 import {
-	PREFERENCES_SET,
-	PREFERENCES_RECEIVE,
-	PREFERENCES_FETCH,
-	PREFERENCES_FETCH_SUCCESS,
-	PREFERENCES_FETCH_FAILURE,
-	PREFERENCES_SAVE,
-	PREFERENCES_SAVE_FAILURE,
-	PREFERENCES_SAVE_SUCCESS
+    PREFERENCES_SET,
+    PREFERENCES_RECEIVE,
+    PREFERENCES_FETCH,
+    PREFERENCES_FETCH_SUCCESS,
+    PREFERENCES_FETCH_FAILURE,
+    PREFERENCES_SAVE,
+    PREFERENCES_SAVE_FAILURE,
+    PREFERENCES_SAVE_SUCCESS,
 } from 'state/action-types';
 import { USER_SETTING_KEY } from './constants';
 
@@ -21,11 +21,11 @@ import { USER_SETTING_KEY } from './constants';
  * @param  {Object} values Preference values
  * @return {Object}        Action object
  */
-export function receivePreferences( values ) {
-	return {
-		type: PREFERENCES_RECEIVE,
-		values
-	};
+export function receivePreferences(values) {
+    return {
+        type: PREFERENCES_RECEIVE,
+        values,
+    };
 }
 
 /**
@@ -33,19 +33,24 @@ export function receivePreferences( values ) {
  * @returns { Function }                      Action thunk
  */
 export function fetchPreferences() {
-	return ( dispatch ) => {
-		dispatch( { type: PREFERENCES_FETCH } );
+    return dispatch => {
+        dispatch({ type: PREFERENCES_FETCH });
 
-		return wpcom.me().settings().get().then( ( data ) => {
-			dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
-			dispatch( { type: PREFERENCES_FETCH_SUCCESS } );
-		} ).catch( ( data, error ) => {
-			dispatch( {
-				type: PREFERENCES_FETCH_FAILURE,
-				error
-			} );
-		} );
-	};
+        return wpcom
+            .me()
+            .settings()
+            .get()
+            .then(data => {
+                dispatch(receivePreferences(data[USER_SETTING_KEY]));
+                dispatch({ type: PREFERENCES_FETCH_SUCCESS });
+            })
+            .catch((data, error) => {
+                dispatch({
+                    type: PREFERENCES_FETCH_FAILURE,
+                    error,
+                });
+            });
+    };
 }
 
 /**
@@ -56,11 +61,11 @@ export function fetchPreferences() {
  * @param   { String | Number | Object }      value User preference value
  * @returns { Object }                        Action object
  */
-export const setPreference = ( key, value ) => ( {
-	type: PREFERENCES_SET,
-	key,
-	value
-} );
+export const setPreference = (key, value) => ({
+    type: PREFERENCES_SET,
+    key,
+    value,
+});
 
 /**
  * Returns an action thunk that stores a preference and saves it to API.
@@ -68,31 +73,37 @@ export const setPreference = ( key, value ) => ( {
  * @param   { String | Number | Object }      value User preference value
  * @returns { Function }                      Action thunk
  */
-export const savePreference = ( key, value ) => dispatch => {
-	dispatch( setPreference( key, value ) );
-	dispatch( {
-		type: PREFERENCES_SAVE,
-		key,
-		value
-	} );
+export const savePreference = (key, value) =>
+    dispatch => {
+        dispatch(setPreference(key, value));
+        dispatch({
+            type: PREFERENCES_SAVE,
+            key,
+            value,
+        });
 
-	const payload = JSON.stringify( {
-		[ USER_SETTING_KEY ]: {
-			[ key ]: value
-		}
-	} );
+        const payload = JSON.stringify({
+            [USER_SETTING_KEY]: {
+                [key]: value,
+            },
+        });
 
-	return wpcom.me().settings().update( payload ).then( ( data ) => {
-		dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
-		dispatch( {
-			type: PREFERENCES_SAVE_SUCCESS,
-			key,
-			value
-		} );
-	} ).catch( ( error ) => {
-		dispatch( {
-			type: PREFERENCES_SAVE_FAILURE,
-			error
-		} );
-	} );
-};
+        return wpcom
+            .me()
+            .settings()
+            .update(payload)
+            .then(data => {
+                dispatch(receivePreferences(data[USER_SETTING_KEY]));
+                dispatch({
+                    type: PREFERENCES_SAVE_SUCCESS,
+                    key,
+                    value,
+                });
+            })
+            .catch(error => {
+                dispatch({
+                    type: PREFERENCES_SAVE_FAILURE,
+                    error,
+                });
+            });
+    };

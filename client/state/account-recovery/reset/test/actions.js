@@ -7,74 +7,74 @@ import { assert } from 'chai';
  * Internal dependencies
  */
 import {
-	requestReset,
-	requestResetSuccess,
-	requestResetError,
-	updatePasswordResetUserData,
+    requestReset,
+    requestResetSuccess,
+    requestResetError,
+    updatePasswordResetUserData,
 } from '../actions';
 
 import {
-	ACCOUNT_RECOVERY_RESET_REQUEST,
-	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
-	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
-	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
+    ACCOUNT_RECOVERY_RESET_REQUEST,
+    ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+    ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+    ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
 } from 'state/action-types';
 
-describe( '#updatePasswordResetUserData', () => {
-	it( 'should return ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action', () => {
-		const userData = {
-			user: 'foo',
-			firstName: 'Foo',
-			lastName: 'Bar',
-			url: 'test.example.com',
-		};
-		const action = updatePasswordResetUserData( userData );
+describe('#updatePasswordResetUserData', () => {
+    it('should return ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action', () => {
+        const userData = {
+            user: 'foo',
+            firstName: 'Foo',
+            lastName: 'Bar',
+            url: 'test.example.com',
+        };
+        const action = updatePasswordResetUserData(userData);
 
-		assert.deepEqual( action, {
-			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-			userData,
-		} );
-	} );
-} );
+        assert.deepEqual(action, {
+            type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
+            userData,
+        });
+    });
+});
 
-describe( '#requestResetSuccess', () => {
-	it( 'should return action ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS', () => {
-		const action = requestResetSuccess();
+describe('#requestResetSuccess', () => {
+    it('should return action ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS', () => {
+        const action = requestResetSuccess();
 
-		assert.deepEqual( action, {
-			type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
-		} );
-	} );
-} );
+        assert.deepEqual(action, {
+            type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
+        });
+    });
+});
 
-describe( '#requestResetError', () => {
-	it( 'should return action ACCOUNT_RECOVERY_RESET_REQUEST_ERROR with error field', () => {
-		const error = {
-			status: 404,
-			message: 'Error!',
-		};
+describe('#requestResetError', () => {
+    it('should return action ACCOUNT_RECOVERY_RESET_REQUEST_ERROR with error field', () => {
+        const error = {
+            status: 404,
+            message: 'Error!',
+        };
 
-		const action = requestResetError( error );
+        const action = requestResetError(error);
 
-		assert.deepEqual( action, {
-			type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
-			error,
-		} );
-	} );
-} );
+        assert.deepEqual(action, {
+            type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
+            error,
+        });
+    });
+});
 
-describe( '#requestReset', () => {
-	it( 'should return action ACCOUNT_RECOVERY_RESET_REQUET_RESET', () => {
-		const request = {
-			user: 'foo',
-			method: 'primary_email',
-		};
+describe('#requestReset', () => {
+    it('should return action ACCOUNT_RECOVERY_RESET_REQUET_RESET', () => {
+        const request = {
+            user: 'foo',
+            method: 'primary_email',
+        };
 
-		const action = requestReset( request );
+        const action = requestReset(request);
 
-		assert.deepEqual( action, {
-			type: ACCOUNT_RECOVERY_RESET_REQUEST,
-			request,
-		} );
-	} );
-} );
+        assert.deepEqual(action, {
+            type: ACCOUNT_RECOVERY_RESET_REQUEST,
+            request,
+        });
+    });
+});

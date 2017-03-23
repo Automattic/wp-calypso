@@ -15,47 +15,49 @@ import EditorDrawerWell from 'post-editor/editor-drawer-well';
 import FeaturedImage from 'post-editor/editor-featured-image';
 
 class EditorDrawerFeaturedImage extends Component {
-	constructor( props ) {
-		super( props );
-		this.startSelecting = () => this.setState( { isSelecting: true } );
-		this.endSelecting = () => this.setState( { isSelecting: false } );
-		this.state = { isSelecting: false };
-	}
+    constructor(props) {
+        super(props);
+        this.startSelecting = () => this.setState({ isSelecting: true });
+        this.endSelecting = () => this.setState({ isSelecting: false });
+        this.state = { isSelecting: false };
+    }
 
-	removeImage() {
-		PostActions.edit( {
-			featured_image: ''
-		} );
+    removeImage() {
+        PostActions.edit({
+            featured_image: '',
+        });
 
-		stats.recordStat( 'featured_image_removed' );
-		stats.recordEvent( 'Featured image removed' );
-	}
+        stats.recordStat('featured_image_removed');
+        stats.recordEvent('Featured image removed');
+    }
 
-	render() {
-		const { translate, site, post } = this.props;
+    render() {
+        const { translate, site, post } = this.props;
 
-		return (
-			<Accordion title={ translate( 'Featured Image' ) }>
-				<EditorDrawerWell
-					label={ translate( 'Set Featured Image' ) }
-					empty={ ! site || ! post || ! getFeaturedImageId( post ) }
-					onClick={ this.startSelecting }
-					onRemove={ this.removeImage }>
-					<FeaturedImage
-						selecting={ this.state.isSelecting }
-						onImageSelected={ this.endSelecting }
-						site={ site }
-						post={ post } />
-				</EditorDrawerWell>
-			</Accordion>
-		);
-	}
+        return (
+            <Accordion title={translate('Featured Image')}>
+                <EditorDrawerWell
+                    label={translate('Set Featured Image')}
+                    empty={!site || !post || !getFeaturedImageId(post)}
+                    onClick={this.startSelecting}
+                    onRemove={this.removeImage}
+                >
+                    <FeaturedImage
+                        selecting={this.state.isSelecting}
+                        onImageSelected={this.endSelecting}
+                        site={site}
+                        post={post}
+                    />
+                </EditorDrawerWell>
+            </Accordion>
+        );
+    }
 }
 
 EditorDrawerFeaturedImage.propTypes = {
-	site: PropTypes.object,
-	post: PropTypes.object,
-	translate: PropTypes.func
+    site: PropTypes.object,
+    post: PropTypes.object,
+    translate: PropTypes.func,
 };
 
-export default localize( EditorDrawerFeaturedImage );
+export default localize(EditorDrawerFeaturedImage);

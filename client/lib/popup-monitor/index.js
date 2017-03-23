@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' );
+var Emitter = require('lib/mixins/emitter');
 
 /**
  * PopupMonitor component
@@ -13,14 +13,14 @@ var Emitter = require( 'lib/mixins/emitter' );
  * @public
  */
 function PopupMonitor() {
-	this.intervals = {};
-	this.monitorInterval = null;
+    this.intervals = {};
+    this.monitorInterval = null;
 }
 
 /**
  * Mixins
  */
-Emitter( PopupMonitor.prototype );
+Emitter(PopupMonitor.prototype);
 
 /**
  * Opens a new popup and starts monitoring it for changes. This should only be
@@ -32,14 +32,14 @@ Emitter( PopupMonitor.prototype );
  * @param (string) specs An optional parameter listing the features of the new window as a string
  * @public
  */
-PopupMonitor.prototype.open = function( url, name, specs ) {
-	var windowInstance;
-	name = name || Date.now();
+PopupMonitor.prototype.open = function(url, name, specs) {
+    var windowInstance;
+    name = name || Date.now();
 
-	windowInstance = window.open( url, name, specs );
-	this.startMonitoring( name, windowInstance );
+    windowInstance = window.open(url, name, specs);
+    this.startMonitoring(name, windowInstance);
 
-	return this;
+    return this;
 };
 
 /**
@@ -51,16 +51,16 @@ PopupMonitor.prototype.open = function( url, name, specs ) {
  * @return {string} Popup window specificatino string fragment
  * @public
  */
-PopupMonitor.prototype.getScreenCenterSpecs = function( width, height ) {
-	var screenTop = ( typeof window.screenTop !== 'undefined' ? window.screenTop : window.screenY ),
-		screenLeft = ( typeof window.screenLeft !== 'undefined' ? window.screenLeft : window.screenX );
+PopupMonitor.prototype.getScreenCenterSpecs = function(width, height) {
+    var screenTop = typeof window.screenTop !== 'undefined' ? window.screenTop : window.screenY,
+        screenLeft = typeof window.screenLeft !== 'undefined' ? window.screenLeft : window.screenX;
 
-	return [
-		'width=' + width,
-		'height=' + height,
-		'top=' + ( screenTop + ( window.innerHeight / 2 ) - ( height / 2 ) ),
-		'left=' + ( screenLeft + ( window.innerWidth / 2 ) - ( width / 2 ) )
-	].join();
+    return [
+        'width=' + width,
+        'height=' + height,
+        'top=' + (screenTop + window.innerHeight / 2 - height / 2),
+        'left=' + (screenLeft + window.innerWidth / 2 - width / 2),
+    ].join();
 };
 
 /**
@@ -70,14 +70,14 @@ PopupMonitor.prototype.getScreenCenterSpecs = function( width, height ) {
  * @param (string) name The name of the popup window to check
  * @public
  */
-PopupMonitor.prototype.isOpen = function( name ) {
-	var isClosed = false;
+PopupMonitor.prototype.isOpen = function(name) {
+    var isClosed = false;
 
-	try {
-		isClosed = this.intervals[ name ] && this.intervals[ name ].closed;
-	} catch ( e ) {}
+    try {
+        isClosed = this.intervals[name] && this.intervals[name].closed;
+    } catch (e) {}
 
-	return ! isClosed;
+    return !isClosed;
 };
 
 /**
@@ -86,17 +86,17 @@ PopupMonitor.prototype.isOpen = function( name ) {
  * open, then the interval is stopped.
  */
 PopupMonitor.prototype.checkStatus = function() {
-	for ( var name in this.intervals ) {
-		if ( this.intervals.hasOwnProperty( name ) && ! this.isOpen( name ) ) {
-			this.emit( 'close', name );
-			delete this.intervals[ name ];
-		}
-	}
+    for (var name in this.intervals) {
+        if (this.intervals.hasOwnProperty(name) && !this.isOpen(name)) {
+            this.emit('close', name);
+            delete this.intervals[name];
+        }
+    }
 
-	if ( 0 === Object.keys( this.intervals ).length ) {
-		clearInterval( this.monitorInterval );
-		delete this.monitorInterval;
-	}
+    if (0 === Object.keys(this.intervals).length) {
+        clearInterval(this.monitorInterval);
+        delete this.monitorInterval;
+    }
 };
 
 /**
@@ -106,12 +106,12 @@ PopupMonitor.prototype.checkStatus = function() {
  * @param (string) name The name of hte popup window to monitor
  * @param (window) windowInstance The popup window instance
  */
-PopupMonitor.prototype.startMonitoring = function( name, windowInstance ) {
-	if ( ! this.monitorInterval ) {
-		this.monitorInterval = setInterval( this.checkStatus.bind( this ), 100 );
-	}
+PopupMonitor.prototype.startMonitoring = function(name, windowInstance) {
+    if (!this.monitorInterval) {
+        this.monitorInterval = setInterval(this.checkStatus.bind(this), 100);
+    }
 
-	this.intervals[ name ] = windowInstance;
+    this.intervals[name] = windowInstance;
 };
 
 /**

@@ -23,97 +23,102 @@ import { editPost } from 'state/posts/actions';
 import EditorThemeHelp from 'post-editor/editor-theme-help';
 
 class EditorPageTemplates extends Component {
-	static propTypes = {
-		siteId: PropTypes.number,
-		postId: PropTypes.number,
-		postType: PropTypes.string,
-		template: PropTypes.string,
-		templates: PropTypes.array,
-		editPost: PropTypes.func,
-		pageForPostsId: PropTypes.number,
-	};
+    static propTypes = {
+        siteId: PropTypes.number,
+        postId: PropTypes.number,
+        postType: PropTypes.string,
+        template: PropTypes.string,
+        templates: PropTypes.array,
+        editPost: PropTypes.func,
+        pageForPostsId: PropTypes.number,
+    };
 
-	constructor() {
-		super( ...arguments );
+    constructor() {
+        super(...arguments);
 
-		this.selectTemplate = this.selectTemplate.bind( this );
-	}
+        this.selectTemplate = this.selectTemplate.bind(this);
+    }
 
-	selectTemplate( file ) {
-		const { siteId, postId } = this.props;
-		this.props.editPost( siteId, postId, { page_template: file } );
-	}
+    selectTemplate(file) {
+        const { siteId, postId } = this.props;
+        this.props.editPost(siteId, postId, { page_template: file });
+    }
 
-	getSelectedTemplateText() {
-		const { templates, template, translate } = this.props;
+    getSelectedTemplateText() {
+        const { templates, template, translate } = this.props;
 
-		let selectedTemplate;
-		if ( template ) {
-			selectedTemplate = find( templates, { file: template } );
-		}
+        let selectedTemplate;
+        if (template) {
+            selectedTemplate = find(templates, { file: template });
+        }
 
-		if ( selectedTemplate ) {
-			return selectedTemplate.label;
-		}
+        if (selectedTemplate) {
+            return selectedTemplate.label;
+        }
 
-		return translate( 'Default Template' );
-	}
+        return translate('Default Template');
+    }
 
-	getTemplates() {
-		const { translate, templates } = this.props;
-		return [ {
-			label: translate( 'Default Template' ),
-			file: ''
-		} ].concat( templates || [] );
-	}
+    getTemplates() {
+        const { translate, templates } = this.props;
+        return [
+            {
+                label: translate('Default Template'),
+                file: '',
+            },
+        ].concat(templates || []);
+    }
 
-	render() {
-		const { postType, template, siteId, translate, postId, pageForPostsId } = this.props;
-		if ( 'page' !== postType || postId === pageForPostsId ) {
-			return null;
-		}
+    render() {
+        const { postType, template, siteId, translate, postId, pageForPostsId } = this.props;
+        if ('page' !== postType || postId === pageForPostsId) {
+            return null;
+        }
 
-		const templates = this.getTemplates();
-		return (
-			<div>
-				{ siteId && <QueryPageTemplates siteId={ siteId } /> }
-				{ size( templates ) > 1 && (
-					<AccordionSection>
-						<EditorDrawerLabel labelText={ translate( 'Page Template' ) }>
-							<EditorThemeHelp className="editor-page-templates__help-link" />
-							<SelectDropdown selectedText={ this.getSelectedTemplateText() }>
-								{ map( templates, ( { file, label } ) => (
-									/* eslint-disable react/jsx-no-bind */
-									// jsx-no-bind disabled because while it's possible
-									// to extract this out into a separate component
-									// with its own click handler, that would severely
-									// harm the readability of this component.
-									<DropdownItem
-										key={ file }
-										selected={ file === template }
-										onClick={ () => this.selectTemplate( file ) }>
-										{ label }
-									</DropdownItem>
-								) ) }
-							</SelectDropdown>
-						</EditorDrawerLabel>
-					</AccordionSection>
-				) }
-			</div>
-		);
-	}
+        const templates = this.getTemplates();
+        return (
+            <div>
+                {siteId && <QueryPageTemplates siteId={siteId} />}
+                {size(templates) > 1 &&
+                    <AccordionSection>
+                        <EditorDrawerLabel labelText={translate('Page Template')}>
+                            <EditorThemeHelp className="editor-page-templates__help-link" />
+                            <SelectDropdown selectedText={this.getSelectedTemplateText()}>
+                                {map(templates, ({
+                                    file,
+                                    label,
+                                }) => /* eslint-disable react/jsx-no-bind */
+                                // jsx-no-bind disabled because while it's possible
+                                // to extract this out into a separate component
+                                // with its own click handler, that would severely
+                                // harm the readability of this component.
+                                (
+                                    <DropdownItem
+                                        key={file}
+                                        selected={file === template}
+                                        onClick={() => this.selectTemplate(file)}
+                                    >
+                                        {label}
+                                    </DropdownItem>
+                                ))}
+                            </SelectDropdown>
+                        </EditorDrawerLabel>
+                    </AccordionSection>}
+            </div>
+        );
+    }
 }
 
 export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const postType = getEditedPostValue( state, siteId, postId, 'type' );
-		const template = getEditedPostValue( state, siteId, postId, 'page_template' );
-		const templates = getPageTemplates( state, siteId );
-		const pageForPostsId = getSiteOption( state, siteId, 'page_for_posts' );
+    state => {
+        const siteId = getSelectedSiteId(state);
+        const postId = getEditorPostId(state);
+        const postType = getEditedPostValue(state, siteId, postId, 'type');
+        const template = getEditedPostValue(state, siteId, postId, 'page_template');
+        const templates = getPageTemplates(state, siteId);
+        const pageForPostsId = getSiteOption(state, siteId, 'page_for_posts');
 
-		return { siteId, postId, postType, template, templates, pageForPostsId };
-	},
-	{ editPost }
-)( localize( EditorPageTemplates ) );
+        return { siteId, postId, postType, template, templates, pageForPostsId };
+    },
+    { editPost }
+)(localize(EditorPageTemplates));

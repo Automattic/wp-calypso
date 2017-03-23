@@ -11,9 +11,9 @@ import { reducer as jumpstart } from './jumpstart/reducer';
 import { reducer as modules } from './modules/reducer';
 import { reducer as settings } from './settings/reducer';
 
-export default combineReducers( {
-	connection,
-	jumpstart,
-	modules,
-	settings
-} );
+export default combineReducers({
+    connection,
+    jumpstart,
+    modules,
+    settings,
+});

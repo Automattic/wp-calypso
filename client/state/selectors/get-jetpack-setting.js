@@ -12,6 +12,6 @@ import { get } from 'lodash';
  * @param  {String}  setting  Name of the setting
  * @return {*}                Value of the Jetpack setting
  */
-export default function getJetpackSetting( state, siteId, setting ) {
-	return get( state.jetpack.settings.items, [ siteId, setting ], null );
+export default function getJetpackSetting(state, siteId, setting) {
+    return get(state.jetpack.settings.items, [siteId, setting], null);
 }

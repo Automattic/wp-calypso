@@ -10,9 +10,9 @@ import { USER_RECEIVE } from 'state/action-types';
  * @param  {Object} user User received
  * @return {Object}      Action object
  */
-export function receiveUser( user ) {
-	return {
-		type: USER_RECEIVE,
-		user
-	};
+export function receiveUser(user) {
+    return {
+        type: USER_RECEIVE,
+        user,
+    };
 }

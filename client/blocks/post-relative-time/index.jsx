@@ -13,38 +13,35 @@ import Gridicon from 'gridicons';
  */
 import { getNormalizedPost } from 'state/posts/selectors';
 
-export function PostRelativeTime( { moment, post } ) {
-	let time;
-	if ( post ) {
-		const { status, modified, date } = post;
-		time = includes( [ 'draft', 'pending' ], status ) ? modified : date;
-	}
+export function PostRelativeTime({ moment, post }) {
+    let time;
+    if (post) {
+        const { status, modified, date } = post;
+        time = includes(['draft', 'pending'], status) ? modified : date;
+    }
 
-	const classes = classNames( 'post-relative-time', {
-		'is-placeholder': ! post
-	} );
+    const classes = classNames('post-relative-time', {
+        'is-placeholder': !post,
+    });
 
-	return (
-		<span className={ classes }>
-			<Gridicon
-				icon="time"
-				size={ 18 }
-				className="post-relative-time__icon" />
-			<span className="post-relative-time__text">
-				{ moment( time ).fromNow() }
-			</span>
-		</span>
-	);
+    return (
+        <span className={classes}>
+            <Gridicon icon="time" size={18} className="post-relative-time__icon" />
+            <span className="post-relative-time__text">
+                {moment(time).fromNow()}
+            </span>
+        </span>
+    );
 }
 
 PostRelativeTime.propTypes = {
-	globalId: PropTypes.string,
-	moment: PropTypes.func,
-	post: PropTypes.object
+    globalId: PropTypes.string,
+    moment: PropTypes.func,
+    post: PropTypes.object,
 };
 
-export default connect( ( state, { globalId } ) => {
-	return {
-		post: getNormalizedPost( state, globalId )
-	};
-} )( localize( PostRelativeTime ) );
+export default connect((state, { globalId }) => {
+    return {
+        post: getNormalizedPost(state, globalId),
+    };
+})(localize(PostRelativeTime));

@@ -6,6 +6,6 @@
  * @param  {Object}    state Global state tree
  * @return {MediaView}       Current media view
  */
-export function getMediaModalView( state ) {
-	return state.ui.mediaModal.view;
+export function getMediaModalView(state) {
+    return state.ui.mediaModal.view;
 }

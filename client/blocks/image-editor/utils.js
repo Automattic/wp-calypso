@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	indexOf,
-	get
-} from 'lodash';
+import { indexOf, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,12 +22,12 @@ import { AspectRatiosValues } from 'state/ui/editor/image-editor/constants';
  * @param   {Array}  aspectRatios list of aspect ratios to be validated and used in image editor
  * @returns {String}              the default valid aspect ratio image editor should use
  */
-export function getDefaultAspectRatio( aspectRatio = null, aspectRatios = AspectRatiosValues ) {
-	if ( indexOf( aspectRatios, aspectRatio ) === -1 ) {
-		aspectRatio = get( aspectRatios, '0', AspectRatiosValues.FREE );
-	}
+export function getDefaultAspectRatio(aspectRatio = null, aspectRatios = AspectRatiosValues) {
+    if (indexOf(aspectRatios, aspectRatio) === -1) {
+        aspectRatio = get(aspectRatios, '0', AspectRatiosValues.FREE);
+    }
 
-	return indexOf( AspectRatiosValues, aspectRatio ) === -1
-		? getDefaultAspectRatio( aspectRatio )
-		: aspectRatio;
+    return indexOf(AspectRatiosValues, aspectRatio) === -1
+        ? getDefaultAspectRatio(aspectRatio)
+        : aspectRatio;
 }

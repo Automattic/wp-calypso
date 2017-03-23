@@ -8,11 +8,10 @@ import React from 'react';
  */
 import SitesDropdown from 'components/sites-dropdown';
 
-export default React.createClass( {
+export default React.createClass({
+    displayName: 'SitesDropdown',
 
-	displayName: 'SitesDropdown',
-
-	render: function() {
-		return <SitesDropdown />;
-	}
-} );
+    render: function() {
+        return <SitesDropdown />;
+    },
+});

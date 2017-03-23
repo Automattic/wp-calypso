@@ -1,60 +1,57 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-progress' ),
-	ProgressItem = require( './progress-item' );
+var React = require('react'),
+    debug = require('debug')('calypso:me:security:2fa-progress'),
+    ProgressItem = require('./progress-item');
 
-module.exports = React.createClass( {
+module.exports = React.createClass({
+    displayName: 'Security2faProgress',
 
-	displayName: 'Security2faProgress',
+    componentDidMount: function() {
+        debug(this.constructor.displayName + ' React component is mounted.');
+    },
 
-	componentDidMount: function() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
+    componentWillUnmount: function() {
+        debug(this.constructor.displayName + ' React component will unmount.');
+    },
 
-	componentWillUnmount: function() {
-		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
+    stepClass: function(step) {
+        var currentStep = parseInt(this.props.step, 10);
 
-	stepClass: function( step ) {
-		var currentStep = parseInt( this.props.step, 10 );
+        return {
+            isHighlighted: step === currentStep,
+            isCompleted: step < currentStep,
+        };
+    },
 
-		return ( {
-			isHighlighted: step === currentStep,
-			isCompleted: step < currentStep
-		} );
-	},
+    render: function() {
+        return (
+            <div className="security-2fa-progress__container">
 
-	render: function() {
-		return (
+                <div className="security-2fa-progress__inner-container">
 
-			<div className="security-2fa-progress__container">
+                    <ProgressItem
+                        label={this.translate('Enter Phone Number')}
+                        icon="phone"
+                        step={this.stepClass(1)}
+                    />
 
-				<div className="security-2fa-progress__inner-container">
+                    <ProgressItem
+                        label={this.translate('Verify Code')}
+                        icon="send-to-phone"
+                        step={this.stepClass(2)}
+                    />
 
-					<ProgressItem
-						label={ this.translate( 'Enter Phone Number' ) }
-						icon="phone"
-						step={ this.stepClass( 1 ) }
-					/>
+                    <ProgressItem
+                        label={this.translate('Generate Backup Codes')}
+                        icon="refresh"
+                        step={this.stepClass(3)}
+                    />
 
-					<ProgressItem
-						label={ this.translate( 'Verify Code' ) }
-						icon="send-to-phone"
-						step={ this.stepClass( 2 ) }
-					/>
+                </div>
 
-					<ProgressItem
-						label={ this.translate( 'Generate Backup Codes' ) }
-						icon="refresh"
-						step={ this.stepClass( 3 ) }
-					/>
-
-				</div>
-
-			</div>
-
-		);
-	}
-} );
+            </div>
+        );
+    },
+});

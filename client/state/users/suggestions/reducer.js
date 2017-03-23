@@ -7,10 +7,10 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	USER_SUGGESTIONS_RECEIVE,
-	USER_SUGGESTIONS_REQUEST,
-	USER_SUGGESTIONS_REQUEST_FAILURE,
-	USER_SUGGESTIONS_REQUEST_SUCCESS,
+    USER_SUGGESTIONS_RECEIVE,
+    USER_SUGGESTIONS_REQUEST,
+    USER_SUGGESTIONS_REQUEST_FAILURE,
+    USER_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
 import { itemsSchema } from './schema';
@@ -23,17 +23,20 @@ import { itemsSchema } from './schema';
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const requesting = createReducer( {}, {
-	[ USER_SUGGESTIONS_REQUEST ]: ( state, { siteId } ) => {
-		return { ...state, [ siteId ]: true };
-	},
-	[ USER_SUGGESTIONS_REQUEST_FAILURE ]: ( state, { siteId } ) => {
-		return { ...state, [ siteId ]: false };
-	},
-	[ USER_SUGGESTIONS_REQUEST_SUCCESS ]: ( state, { siteId } ) => {
-		return { ...state, [ siteId ]: false };
-	},
-} );
+export const requesting = createReducer(
+    {},
+    {
+        [USER_SUGGESTIONS_REQUEST]: (state, { siteId }) => {
+            return { ...state, [siteId]: true };
+        },
+        [USER_SUGGESTIONS_REQUEST_FAILURE]: (state, { siteId }) => {
+            return { ...state, [siteId]: false };
+        },
+        [USER_SUGGESTIONS_REQUEST_SUCCESS]: (state, { siteId }) => {
+            return { ...state, [siteId]: false };
+        },
+    }
+);
 
 /**
  * Returns the updated items state after an action has been dispatched. Items
@@ -44,13 +47,17 @@ export const requesting = createReducer( {}, {
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export const items = createReducer( {}, {
-	[ USER_SUGGESTIONS_RECEIVE ]: ( state, { siteId, suggestions } ) => {
-		return { ...state, [ siteId ]: suggestions };
-	},
-}, itemsSchema );
+export const items = createReducer(
+    {},
+    {
+        [USER_SUGGESTIONS_RECEIVE]: (state, { siteId, suggestions }) => {
+            return { ...state, [siteId]: suggestions };
+        },
+    },
+    itemsSchema
+);
 
-export default combineReducers( {
-	requesting,
-	items,
-} );
+export default combineReducers({
+    requesting,
+    items,
+});

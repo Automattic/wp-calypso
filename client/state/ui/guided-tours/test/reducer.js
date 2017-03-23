@@ -8,12 +8,12 @@ import { expect } from 'chai';
  */
 import { guidedTour } from '../reducer';
 
-describe( 'reducer', () => {
-	describe( '#guidedTour()', () => {
-		it( 'should default to an empty object', () => {
-			const state = guidedTour( undefined, {} );
+describe('reducer', () => {
+    describe('#guidedTour()', () => {
+        it('should default to an empty object', () => {
+            const state = guidedTour(undefined, {});
 
-			expect( state ).to.be.empty;
-		} );
-	} );
-} );
+            expect(state).to.be.empty;
+        });
+    });
+});

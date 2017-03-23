@@ -8,26 +8,26 @@ import { expect } from 'chai';
  */
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
-describe( 'KeyboardShortcuts', function() {
-	let KeyboardShortcuts;
+describe('KeyboardShortcuts', function() {
+    let KeyboardShortcuts;
 
-	useFilesystemMocks( __dirname );
+    useFilesystemMocks(__dirname);
 
-	before( () => {
-		KeyboardShortcuts = require( 'lib/keyboard-shortcuts' );
-	} );
+    before(() => {
+        KeyboardShortcuts = require('lib/keyboard-shortcuts');
+    });
 
-	it( 'should emit events to subscribers', function() {
-		var arbitraryData = 'hello, world?',
-			eventResult = '',
-			handleEvent = function( data ) {
-				eventResult = data;
-			};
+    it('should emit events to subscribers', function() {
+        var arbitraryData = 'hello, world?',
+            eventResult = '',
+            handleEvent = function(data) {
+                eventResult = data;
+            };
 
-		KeyboardShortcuts.on( 'shortcut-event', handleEvent );
-		KeyboardShortcuts.emitEvent( 'shortcut-event', arbitraryData );
-		KeyboardShortcuts.off( 'shortcut-event', handleEvent );
+        KeyboardShortcuts.on('shortcut-event', handleEvent);
+        KeyboardShortcuts.emitEvent('shortcut-event', arbitraryData);
+        KeyboardShortcuts.off('shortcut-event', handleEvent);
 
-		expect( eventResult ).to.equal( arbitraryData );
-	} );
-} );
+        expect(eventResult).to.equal(arbitraryData);
+    });
+});

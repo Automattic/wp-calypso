@@ -1,65 +1,63 @@
 /**
  * External dependencies
  */
-var filter = require( 'lodash/filter' ),
-	last = require( 'lodash/last' );
+var filter = require('lodash/filter'), last = require('lodash/last');
 
 var components = [];
 
-function startCloseOnEscForComponent( component, closeMethod ) {
-	components.push( { component: component, closeMethod: closeMethod } );
+function startCloseOnEscForComponent(component, closeMethod) {
+    components.push({ component: component, closeMethod: closeMethod });
 
-	if ( components.length > 0 ) {
-		addKeydownListener();
-	}
+    if (components.length > 0) {
+        addKeydownListener();
+    }
 }
 
-function stopCloseOnEscForComponent( component ) {
-	components = filter( components, function( item ) {
-		return item.component !== component;
-	} );
+function stopCloseOnEscForComponent(component) {
+    components = filter(components, function(item) {
+        return item.component !== component;
+    });
 
-	if ( components.length < 1 ) {
-		removeKeydownListener();
-	}
+    if (components.length < 1) {
+        removeKeydownListener();
+    }
 }
 
 function addKeydownListener() {
-	document.addEventListener( 'keydown', onKeydown, true);
+    document.addEventListener('keydown', onKeydown, true);
 }
 
 function removeKeydownListener() {
-	document.removeEventListener( 'keydown', onKeydown, true );
+    document.removeEventListener('keydown', onKeydown, true);
 }
 
-function isInput( element ) {
-	return -1 !== [ 'INPUT', 'TEXTAREA' ].indexOf( element.nodeName );
+function isInput(element) {
+    return -1 !== ['INPUT', 'TEXTAREA'].indexOf(element.nodeName);
 }
 
-function onKeydown( event ) {
-	var item,
-		component,
-		closeMethod;
+function onKeydown(event) {
+    var item, component, closeMethod;
 
-	if ( components.length > 0 && event.keyCode === 27 && ! isInput( event.target ) ) { // ESC
-		item = last( components );
-		component = item.component;
-		closeMethod = item.closeMethod;
+    if (components.length > 0 && event.keyCode === 27 && !isInput(event.target)) {
+        // ESC
+        item = last(components);
+        component = item.component;
+        closeMethod = item.closeMethod;
 
-		component[ closeMethod ]();
-	}
+        component[closeMethod]();
+    }
 }
 
-function closeOnEsc( closeMethod ) {
-	return {
-		componentDidMount: function () {
-			startCloseOnEscForComponent( this, closeMethod );
-		},
+function closeOnEsc(closeMethod) {
+    return {
+        componentDidMount: function() {
+            startCloseOnEscForComponent(this, closeMethod);
+        },
 
-		componentWillUnmount: function () {
-			stopCloseOnEscForComponent( this );
-		}
-	};
+        componentWillUnmount: function() {
+            stopCloseOnEscForComponent(this);
+        },
+    };
 }
 
 module.exports = closeOnEsc;

@@ -10,10 +10,10 @@ import { getEditedPost } from 'state/posts/selectors';
  * @param  {Object} state Global state tree
  * @return {Object}       Last edited draft
  */
-export function getEditorLastDraftPost( state ) {
-	const siteId = getEditorLastDraftSiteId( state );
-	const postId = getEditorLastDraftPostId( state );
-	return getEditedPost( state, siteId, postId );
+export function getEditorLastDraftPost(state) {
+    const siteId = getEditorLastDraftSiteId(state);
+    const postId = getEditorLastDraftPostId(state);
+    return getEditedPost(state, siteId, postId);
 }
 
 /**
@@ -22,8 +22,8 @@ export function getEditorLastDraftPost( state ) {
  * @param  {Object}  state Global state tree
  * @return {?Number}       Last edited draft site ID
  */
-export function getEditorLastDraftSiteId( state ) {
-	return state.ui.editor.lastDraft.siteId;
+export function getEditorLastDraftSiteId(state) {
+    return state.ui.editor.lastDraft.siteId;
 }
 
 /**
@@ -32,6 +32,6 @@ export function getEditorLastDraftSiteId( state ) {
  * @param  {Object}  state Global state tree
  * @return {?Number}       Last edited draft post ID
  */
-export function getEditorLastDraftPostId( state ) {
-	return state.ui.editor.lastDraft.postId;
+export function getEditorLastDraftPostId(state) {
+    return state.ui.editor.lastDraft.postId;
 }

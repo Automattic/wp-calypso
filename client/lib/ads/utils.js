@@ -9,29 +9,29 @@ import { isBusiness, isPremium } from 'lib/products-values';
  * @param  {Site} site Site object
  * @return {boolean}      true if site has WordAds access
  */
-export function canAccessWordads( site ) {
-	if ( site ) {
-		if ( isWordadsInstantActivationEligible( site ) ) {
-			return true;
-		}
+export function canAccessWordads(site) {
+    if (site) {
+        if (isWordadsInstantActivationEligible(site)) {
+            return true;
+        }
 
-		const jetpackPremium = site.jetpack && ( isPremium( site.plan ) || isBusiness( site.plan ) );
-		return site.options &&
-			( site.options.wordads || jetpackPremium ) &&
-			userCan( 'manage_options', site );
-	}
+        const jetpackPremium = site.jetpack && (isPremium(site.plan) || isBusiness(site.plan));
+        return site.options &&
+            (site.options.wordads || jetpackPremium) &&
+            userCan('manage_options', site);
+    }
 
-	return false;
+    return false;
 }
 
-export function isWordadsInstantActivationEligible( site ) {
-	if (
-		( isBusiness( site.plan ) || isPremium( site.plan ) ) &&
-		userCan( 'activate_wordads', site ) &&
-		! site.jetpack
-	) {
-		return true;
-	}
+export function isWordadsInstantActivationEligible(site) {
+    if (
+        (isBusiness(site.plan) || isPremium(site.plan)) &&
+        userCan('activate_wordads', site) &&
+        !site.jetpack
+    ) {
+        return true;
+    }
 
-	return false;
+    return false;
 }

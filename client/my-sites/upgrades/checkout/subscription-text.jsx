@@ -8,20 +8,20 @@ import React from 'react';
  */
 import { cartItems } from 'lib/cart-values';
 
-const SubscriptionText = React.createClass( {
-	render() {
-		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
-			return (
-				<span className="subscription-text">
-					{ this.translate( 'renews annually', {
-						context: 'Informative text for renewals in /checkout'
-					} ) }
-				</span>
-			);
-		}
+const SubscriptionText = React.createClass({
+    render() {
+        if (cartItems.hasRenewalItem(this.props.cart)) {
+            return (
+                <span className="subscription-text">
+                    {this.translate('renews annually', {
+                        context: 'Informative text for renewals in /checkout',
+                    })}
+                </span>
+            );
+        }
 
-		return null;
-	}
-} );
+        return null;
+    },
+});
 
 export default SubscriptionText;

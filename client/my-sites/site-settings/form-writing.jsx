@@ -26,176 +26,169 @@ import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
 class SiteSettingsFormWriting extends Component {
-	renderSectionHeader( title, showButton = true ) {
-		const { isRequestingSettings, isSavingSettings, translate } = this.props;
-		return (
-			<SectionHeader label={ title }>
-				{ showButton &&
-					<Button
-						compact
-						primary
-						onClick={ this.props.handleSubmitForm }
-						disabled={ isRequestingSettings || isSavingSettings }>
-						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-					</Button>
-				}
-			</SectionHeader>
-		);
-	}
+    renderSectionHeader(title, showButton = true) {
+        const { isRequestingSettings, isSavingSettings, translate } = this.props;
+        return (
+            <SectionHeader label={title}>
+                {showButton &&
+                    <Button
+                        compact
+                        primary
+                        onClick={this.props.handleSubmitForm}
+                        disabled={isRequestingSettings || isSavingSettings}
+                    >
+                        {isSavingSettings ? translate('Saving…') : translate('Save Settings')}
+                    </Button>}
+            </SectionHeader>
+        );
+    }
 
-	render() {
-		const {
-			eventTracker,
-			fields,
-			handleToggle,
-			handleAutosavingToggle,
-			isRequestingSettings,
-			isSavingSettings,
-			onChangeField,
-			setFieldValue,
-			siteId,
-			translate
-		} = this.props;
+    render() {
+        const {
+            eventTracker,
+            fields,
+            handleToggle,
+            handleAutosavingToggle,
+            isRequestingSettings,
+            isSavingSettings,
+            onChangeField,
+            setFieldValue,
+            siteId,
+            translate,
+        } = this.props;
 
-		return (
-			<form
-				id="site-settings"
-				onSubmit={ this.props.handleSubmitForm }
-				className="site-settings__general-settings"
-			>
-				{ config.isEnabled( 'manage/site-settings/categories' ) &&
-					<div className="site-settings__taxonomies">
-						<QueryTaxonomies siteId={ siteId } postType="post" />
-						<TaxonomyCard taxonomy="category" postType="post" />
-						<TaxonomyCard taxonomy="post_tag" postType="post" />
-					</div>
-				}
+        return (
+            <form
+                id="site-settings"
+                onSubmit={this.props.handleSubmitForm}
+                className="site-settings__general-settings"
+            >
+                {config.isEnabled('manage/site-settings/categories') &&
+                    <div className="site-settings__taxonomies">
+                        <QueryTaxonomies siteId={siteId} postType="post" />
+                        <TaxonomyCard taxonomy="category" postType="post" />
+                        <TaxonomyCard taxonomy="post_tag" postType="post" />
+                    </div>}
 
-				{ this.renderSectionHeader( translate( 'Composing' ) ) }
-				<Composing
-					handleToggle={ handleToggle }
-					onChangeField={ onChangeField }
-					setFieldValue={ setFieldValue }
-					eventTracker={ eventTracker }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
-				/>
-				{
-					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
-						<div>
-							{
-								this.renderSectionHeader( translate( 'Media' ) )
-							}
-							<MediaSettings
-								siteId={ this.props.siteId }
-								handleAutosavingToggle={ handleAutosavingToggle }
-								onChangeField={ onChangeField }
-								isSavingSettings={ isSavingSettings }
-								isRequestingSettings={ isRequestingSettings }
-								fields={ fields } />
-						</div>
-					)
-				}
-				{
-					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
-						<div>
-							<QueryJetpackModules siteId={ this.props.siteId } />
+                {this.renderSectionHeader(translate('Composing'))}
+                <Composing
+                    handleToggle={handleToggle}
+                    onChangeField={onChangeField}
+                    setFieldValue={setFieldValue}
+                    eventTracker={eventTracker}
+                    isSavingSettings={isSavingSettings}
+                    isRequestingSettings={isRequestingSettings}
+                    fields={fields}
+                />
+                {this.props.isJetpackSite &&
+                    this.props.jetpackSettingsUISupported &&
+                    <div>
+                        {this.renderSectionHeader(translate('Media'))}
+                        <MediaSettings
+                            siteId={this.props.siteId}
+                            handleAutosavingToggle={handleAutosavingToggle}
+                            onChangeField={onChangeField}
+                            isSavingSettings={isSavingSettings}
+                            isRequestingSettings={isRequestingSettings}
+                            fields={fields}
+                        />
+                    </div>}
+                {this.props.isJetpackSite &&
+                    this.props.jetpackSettingsUISupported &&
+                    <div>
+                        <QueryJetpackModules siteId={this.props.siteId} />
 
-							<CustomContentTypes
-								onSubmitForm={ this.props.handleSubmitForm }
-								handleAutosavingToggle={ handleAutosavingToggle }
-								isSavingSettings={ isSavingSettings }
-								isRequestingSettings={ isRequestingSettings }
-								fields={ fields }
-							/>
+                        <CustomContentTypes
+                            onSubmitForm={this.props.handleSubmitForm}
+                            handleAutosavingToggle={handleAutosavingToggle}
+                            isSavingSettings={isSavingSettings}
+                            isRequestingSettings={isRequestingSettings}
+                            fields={fields}
+                        />
 
-							<ThemeEnhancements
-								onSubmitForm={ this.props.handleSubmitForm }
-								handleAutosavingToggle={ handleAutosavingToggle }
-								isSavingSettings={ isSavingSettings }
-								isRequestingSettings={ isRequestingSettings }
-								fields={ fields }
-							/>
+                        <ThemeEnhancements
+                            onSubmitForm={this.props.handleSubmitForm}
+                            handleAutosavingToggle={handleAutosavingToggle}
+                            isSavingSettings={isSavingSettings}
+                            isRequestingSettings={isRequestingSettings}
+                            fields={fields}
+                        />
 
-							{ config.isEnabled( 'press-this' ) &&
-								<PublishingTools
-									onSubmitForm={ this.props.handleSubmitForm }
-									isSavingSettings={ isSavingSettings }
-									isRequestingSettings={ isRequestingSettings }
-									fields={ fields }
-								/>
-							}
-						</div>
-					)
-				}
+                        {config.isEnabled('press-this') &&
+                            <PublishingTools
+                                onSubmitForm={this.props.handleSubmitForm}
+                                isSavingSettings={isSavingSettings}
+                                isRequestingSettings={isRequestingSettings}
+                                fields={fields}
+                            />}
+                    </div>}
 
-				{ config.isEnabled( 'press-this' ) && ! ( this.props.isJetpackSite || this.props.jetpackSettingsUISupported ) && (
-					<div>
-						{
-							this.renderSectionHeader( translate( 'Press This', {
-								context: 'name of browser bookmarklet tool'
-							} ), false )
-						}
+                {config.isEnabled('press-this') &&
+                    !(this.props.isJetpackSite || this.props.jetpackSettingsUISupported) &&
+                    <div>
+                        {this.renderSectionHeader(
+                            translate('Press This', {
+                                context: 'name of browser bookmarklet tool',
+                            }),
+                            false
+                        )}
 
-						<PressThis />
-					</div>
-				) }
-			</form>
-		);
-	}
+                        <PressThis />
+                    </div>}
+            </form>
+        );
+    }
 }
 
 const connectComponent = connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
+    state => {
+        const siteId = getSelectedSiteId(state);
 
-		return {
-			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
-			isJetpackSite: isJetpackSite( state, siteId ),
-			siteId
-		};
-	},
-	{ requestPostTypes },
-	null,
-	{ pure: false }
+        return {
+            jetpackSettingsUISupported: siteSupportsJetpackSettingsUi(state, siteId),
+            isJetpackSite: isJetpackSite(state, siteId),
+            siteId,
+        };
+    },
+    { requestPostTypes },
+    null,
+    { pure: false }
 );
 
-const getFormSettings = partialRight( pick, [
-	'default_post_format',
-	'custom-content-types',
-	'jetpack_testimonial',
-	'jetpack_portfolio',
-	'infinite-scroll',
-	'infinite_scroll',
-	'infinite_scroll_google_analytics',
-	'minileven',
-	'wp_mobile_excerpt',
-	'wp_mobile_featured_images',
-	'wp_mobile_app_promos',
-	'post_by_email_address',
-	'after-the-deadline',
-	'onpublish',
-	'onupdate',
-	'guess_lang',
-	'Bias Language',
-	'Cliches',
-	'Complex Expression',
-	'Diacritical Marks',
-	'Double Negative',
-	'Hidden Verbs',
-	'Jargon Language',
-	'Passive voice',
-	'Phrases to Avoid',
-	'Redundant Expression',
-	'ignored_phrases',
-	'photon',
-	'carousel',
-	'carousel_background_color',
-	'carousel_display_exif'
-] );
+const getFormSettings = partialRight(pick, [
+    'default_post_format',
+    'custom-content-types',
+    'jetpack_testimonial',
+    'jetpack_portfolio',
+    'infinite-scroll',
+    'infinite_scroll',
+    'infinite_scroll_google_analytics',
+    'minileven',
+    'wp_mobile_excerpt',
+    'wp_mobile_featured_images',
+    'wp_mobile_app_promos',
+    'post_by_email_address',
+    'after-the-deadline',
+    'onpublish',
+    'onupdate',
+    'guess_lang',
+    'Bias Language',
+    'Cliches',
+    'Complex Expression',
+    'Diacritical Marks',
+    'Double Negative',
+    'Hidden Verbs',
+    'Jargon Language',
+    'Passive voice',
+    'Phrases to Avoid',
+    'Redundant Expression',
+    'ignored_phrases',
+    'photon',
+    'carousel',
+    'carousel_background_color',
+    'carousel_display_exif',
+]);
 
-export default flowRight(
-	connectComponent,
-	wrapSettingsForm( getFormSettings )
-)( SiteSettingsFormWriting );
+export default flowRight(connectComponent, wrapSettingsForm(getFormSettings))(
+    SiteSettingsFormWriting
+);
