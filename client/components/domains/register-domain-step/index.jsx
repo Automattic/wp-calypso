@@ -387,28 +387,36 @@ const RegisterDomainStep = React.createClass( {
 
 				if ( abtest( 'domainSuggestionNudgeLabels' ) === 'withLabels' ) {
 					const isFree = ( suggestion ) => ( suggestion.is_free === true ),
-						strippedDomain = domain.replace( / \./g, '' ),
+						strippedDomain = domain.replace( /[ \.]/g, '' ),
 						isExactMatch = ( suggestion ) => ( suggestion.domain_name === domain ),
 						exactMatchBeforeTld = ( suggestion ) => (
 							isExactMatch( suggestion ) || (
-								startsWith( suggestion.domain_name, `${ strippedDomain }.` ) &&
-								! isFree( suggestion )
+								startsWith( suggestion.domain_name, `${ strippedDomain }.` )
 							)
 						),
 						bestAlternative = ( suggestion ) => (
 							! exactMatchBeforeTld( suggestion ) &&
 							! isExactMatch( suggestion ) &&
-							! isFree( suggestion )
+							suggestion.isRecommended !== true
 						),
-						recommendedSuggestion = find( suggestions, exactMatchBeforeTld ),
-						bestAlternativeSuggestion = find( suggestions, bestAlternative );
+						nonFreeDomains = reject( suggestions, isFree ),
+						recommendedSuggestion = find( nonFreeDomains, exactMatchBeforeTld );
 
 					if ( recommendedSuggestion ) {
 						recommendedSuggestion.isRecommended = true;
+					} else {
+						if ( nonFreeDomains.length > 0 ) {
+							nonFreeDomains[0].isRecommended = true;
+						}
 					}
 
+					const bestAlternativeSuggestion = find( nonFreeDomains, bestAlternative );
 					if ( bestAlternativeSuggestion ) {
 						bestAlternativeSuggestion.isBestAlternative = true;
+					} else {
+						if ( nonFreeDomains.length > 1 ) {
+							nonFreeDomains[1].isBestAlternative = true;
+						}
 					}
 				}
 
