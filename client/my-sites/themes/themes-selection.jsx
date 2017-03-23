@@ -103,12 +103,16 @@ class ThemesSelection extends Component {
 	}
 
 	fetchNextPage = ( options ) => {
-		if ( this.props.isRequesting || this.props.isLastPage ) {
-			return;
+		if ( options.triggeredByScroll ) {
+			if ( this.props.isLastPage ) {
+				this.trackLastPage();
+			} else {
+				this.trackScrollPage();
+			}
 		}
 
-		if ( options.triggeredByScroll ) {
-			this.trackScrollPage();
+		if ( this.props.isRequesting || this.props.isLastPage ) {
+			return;
 		}
 
 		this.props.incrementPage();
