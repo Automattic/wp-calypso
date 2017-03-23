@@ -17,6 +17,8 @@ import Card from 'components/card';
 import ReaderAvatar from 'blocks/reader-avatar';
 import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
+import QueryReaderSite from 'components/data/query-reader-site';
+import QueryReaderFeed from 'components/data/query-reader-feed';
 
 class CrossPost extends PureComponent {
 
@@ -125,9 +127,9 @@ class CrossPost extends PureComponent {
 			return (
 				<span className="reader__x-post-site" key={ xPostedTo.siteURL + '-' + index }>
 					{ xPostedTo.siteName }
-					{ index + 2 < array.length ? <span>, </span> : null }
-					{ index + 2 === array.length ?
-						<span> { this.props.translate( 'and', { comment: 'last conjunction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4' } ) } </span> : null }
+					{ ( index + 2 < array.length ) && <span>, </span> }
+					{ ( index + 2 === array.length ) &&
+						<span> { this.props.translate( 'and', { comment: 'last conjunction in a list of blognames: (blog1, blog2,) blog3 _and_ blog4' } ) } </span> }
 				</span>
 			);
 		} );
@@ -135,15 +137,15 @@ class CrossPost extends PureComponent {
 
 	render() {
 		const { post, postKey, site, feed } = this.props;
-		const siteId = postKey.blogId;
+		const { blogId: siteId, feedId } = postKey;
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
 
 		const articleClasses = classnames( {
-				reader__card: true,
-				'is-x-post': true,
-				'is-selected': this.props.isSelected
-			} );
+			'reader__card': true,
+			'is-x-post': true,
+			'is-selected': this.props.isSelected
+		} );
 
 		// Remove the x-post text from the title.
 		// TODO: maybe add xpost metadata, so we can remove this regex
@@ -167,7 +169,8 @@ class CrossPost extends PureComponent {
 						}
 					{ this.getDescription( post.author.first_name ) }
 				</div>
-			{ siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
+				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }
+				{ siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
 			</Card>
 		);
 	}
