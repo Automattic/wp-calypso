@@ -69,7 +69,10 @@ const UpgradeNudge = React.createClass( {
 		if ( shouldDisplay ) {
 			return shouldDisplay();
 		}
-		if ( ! site ) {
+		if ( ! site ||
+			typeof site !== 'object' ||
+			typeof site.jetpack !== 'boolean'
+		) {
 			return false;
 		}
 		if ( feature && hasFeature( feature, site.ID ) ) {
