@@ -478,7 +478,7 @@ class SiteSettingsFormDiscussion extends Component {
 			<FormFieldset>
 				<FormLegend>{ translate( 'Comment Blacklist' ) }</FormLegend>
 				<FormLabel htmlFor="blacklist_keys">{ translate(
-					'When a comment contains any of these words in its content, name, URL, e-mail, or IP, it will be marked as spam. ' +
+					'When a comment contains any of these words in its content, name, URL, e-mail, or IP, it will be put in the trash. ' +
 					'One word or IP per line. It will match inside words, so "press" will match "WordPress".'
 				) }</FormLabel>
 				<FormTextarea
