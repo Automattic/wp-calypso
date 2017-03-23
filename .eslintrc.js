@@ -13,5 +13,6 @@ module.exports = {
 	rules: {
 		camelcase: 0, // REST API objects include underscores
 		'no-unused-expressions': 0, // Allows Chai `expect` expressions
+		'max-len': [ 2, { code: 140 } ],
 	}
 };
