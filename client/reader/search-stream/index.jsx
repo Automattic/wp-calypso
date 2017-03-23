@@ -126,7 +126,7 @@ class SearchStream extends Component {
 	}
 
 	render() {
-		const { store, query, suggestions } = this.props;
+		const { query, suggestions } = this.props;
 		const emptyContent = <EmptyContent query={ query } />;
 		const sortOrder = this.props.postsStore && this.props.postsStore.sortOrder;
 
@@ -162,7 +162,6 @@ class SearchStream extends Component {
 		return (
 			<Stream
 				{ ...this.props }
-				store={ store }
 				followSource={ SEARCH_RESULTS }
 				listName={ this.props.translate( 'Search' ) }
 				emptyContent={ emptyContent }
