@@ -56,7 +56,7 @@ export const EditorBasicsTour = makeTour(
 			arrow="top-left"
 			target=".editor-title"
 			placement="below"
-			style={ { animationDelay: '5s',} }
+			style={ { animationDelay: '5s', } }
 			>
 			<p>
 				Welcome to the editor! Add a title here.
