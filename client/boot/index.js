@@ -1,29 +1,19 @@
-
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+const React = require( 'react' ),
 	ReactDom = require( 'react-dom' ),
 	store = require( 'store' ),
-	ReactClass = require( 'react/lib/ReactClass' ),
 	some = require( 'lodash/some' ),
 	startsWith = require( 'lodash/startsWith' ),
 	debug = require( 'debug' )( 'calypso' ),
 	page = require( 'page' ),
-	url = require( 'url' ),
-	qs = require( 'querystring' ),
-	i18n = require( 'i18n-calypso' ),
 	includes = require( 'lodash/includes' );
-
-// WordPress.com
-// JetPack wp-admin
-// mc-calypso
 
 /**
  * Internal dependencies
  */
-// lib/local-storage must be run before lib/user
-var config = require( 'config' ),
+const config = require( 'config' ),
 	abtestModule = require( 'lib/abtest' ), // used by error logger
 	getSavedVariations = abtestModule.getSavedVariations, // used by logger
 	switchLocale = require( 'lib/i18n-utils/switch-locale' ),
@@ -31,7 +21,6 @@ var config = require( 'config' ),
 	route = require( 'lib/route' ),
 	normalize = require( 'lib/route/normalize' ),
 	{ isLegacyRoute } = require( 'lib/route/legacy-routes' ),
-	user = require( 'lib/user' )(),
 	receiveUser = require( 'state/users/actions' ).receiveUser,
 	setCurrentUserId = require( 'state/current-user/actions' ).setCurrentUserId,
 	setCurrentUserFlags = require( 'state/current-user/actions' ).setCurrentUserFlags,
@@ -41,43 +30,34 @@ var config = require( 'config' ),
 	nuxWelcome = require( 'layout/nux-welcome' ),
 	emailVerification = require( 'components/email-verification' ),
 	viewport = require( 'lib/viewport' ),
-	detectHistoryNavigation = require( 'lib/detect-history-navigation' ),
 	pushNotificationsInit = require( 'state/push-notifications/actions' ).init,
-	touchDetect = require( 'lib/touch-detect' ),
 	setRouteAction = require( 'state/ui/actions' ).setRoute,
-	accessibleFocus = require( 'lib/accessible-focus' ),
 	syncHandler = require( 'lib/wp/sync-handler' ),
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
-	supportUser = require( 'lib/user/support-user-interop' ),
-	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default;
+	supportUser = require( 'lib/user/support-user-interop' );
 
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
-function init() {
-	var i18nLocaleStringsObject = null;
+export function boot( currentUser, reduxStore ) {
+	debug( 'Booting WordPress.com project.' );
 
-	debug( 'Starting Calypso. Let\'s do this.' );
 	// prune sync-handler records more than two days old
 	syncHandler.pruneStaleRecords( '2 days' );
-}
 
-
-function boot() {
 	let localeSlug;
 
-	init();
 	// When the user is bootstrapped, we also bootstrap the
 	// locale strings
 	if ( ! config( 'wpcom_user_bootstrap' ) ) {
-		localeSlug = user.get().localeSlug;
+		localeSlug = currentUser.get().localeSlug;
 		if ( localeSlug ) {
 			switchLocale( localeSlug );
 		}
 	}
 	// Set the locale for the current user
-	user.on( 'change', function() {
-		localeSlug = user.get().localeSlug;
+	currentUser.on( 'change', function() {
+		localeSlug = currentUser.get().localeSlug;
 		if ( localeSlug ) {
 			switchLocale( localeSlug );
 		}
@@ -85,22 +65,7 @@ function boot() {
 
 	translatorJumpstart.init();
 
-	createReduxStoreFromPersistedInitialState( reduxStoreReady ); // GENERIC
-}
-
-function renderLayout( reduxStore ) {
-	const Layout = require( 'controller' ).ReduxWrappedLayout;
-
-	const layoutElement = React.createElement( Layout, {
-		store: reduxStore,
-	} );
-
-	ReactDom.render(
-		layoutElement,
-		document.getElementById( 'wpcom' )
-	);
-
-	debug( 'Main layout rendered.' );
+	reduxStoreReady( currentUser, reduxStore );
 }
 
 function renderLayout( reduxStore ) {
@@ -118,7 +83,7 @@ function renderLayout( reduxStore ) {
 	debug( 'Main layout rendered.' );
 }
 
-function reduxStoreReady( reduxStore ) {
+function reduxStoreReady( currentUser, reduxStore ) {
 	let layoutSection, validSections = [];
 
 	bindWpLocaleState( reduxStore ); // GENERIC
@@ -126,18 +91,18 @@ function reduxStoreReady( reduxStore ) {
 	supportUser.setReduxStore( reduxStore );
 
 	// LOGGED IN
-	if ( user.get() ) {
+	if ( currentUser.get() ) {
 		// When logged in the analytics module requires user and superProps objects
 		// Inject these here
-		analytics.initialize( user, superProps ); // GENERIC hopefully, probably not
+		analytics.initialize( currentUser, superProps ); // GENERIC hopefully, probably not
 
 		// Set current user in Redux store
-		reduxStore.dispatch( receiveUser( user.get() ) );
+		reduxStore.dispatch( receiveUser( currentUser.get() ) );
 		user.on( 'change', function() {
-			reduxStore.dispatch( receiveUser( user.get() ) );
+			reduxStore.dispatch( receiveUser( currentUser.get() ) );
 		} );
-		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
-		reduxStore.dispatch( setCurrentUserFlags( user.get().meta.data.flags.active_flags ) );
+		reduxStore.dispatch( setCurrentUserId( currentUser.get().ID ) );
+		reduxStore.dispatch( setCurrentUserFlags( currentUser.get().meta.data.flags.active_flags ) );
 
 		if ( config.isEnabled( 'push-notifications' ) ) {
 			// If the browser is capable, registers a service worker & exposes the API
@@ -168,7 +133,7 @@ function reduxStoreReady( reduxStore ) {
 			require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
 			//Save data to JS error logger
 			errorLogger.saveDiagnosticData( {
-				user_id: user.get().ID,
+				user_id: currentUser.get().ID,
 				calypso_env: config( 'env_id' )
 			} );
 			errorLogger.saveDiagnosticReducer( function() {
@@ -199,7 +164,6 @@ function reduxStoreReady( reduxStore ) {
 		next();
 	} );
 
-
 	page( '*', function( context, next ) { // WPCOM SPECIFIC
 		// Don't normalize legacy routes - let them fall through and be unhandled
 		// so that page redirects away from Calypso
@@ -214,7 +178,7 @@ function reduxStoreReady( reduxStore ) {
 	page.exit( '*', require( 'lib/protect-form' ).checkFormHandler ); // GENERIC
 
 	page( '*', function( context, next ) {
-		var path = context.pathname;
+		const path = context.pathname;
 
 		// Bypass this global handler for legacy routes
 		// to avoid bumping stats and changing focus to the content
@@ -243,7 +207,7 @@ function reduxStoreReady( reduxStore ) {
 	} );
 
 	page( '*', function( context, next ) {
-		if ( '/me/account' !== context.path && user.get().phone_account ) {
+		if ( '/me/account' !== context.path && currentUser.get().phone_account ) {
 			page( '/me/account' );
 		}
 
@@ -270,7 +234,7 @@ function reduxStoreReady( reduxStore ) {
 		return section.enableLoggedOut ? acc.concat( section.paths ) : acc;
 	}, [] ); // GENERIC
 
-	if ( ! user.get() ) {
+	if ( ! currentUser.get() ) {
 		// Dead-end the sections the user can't access when logged out
 		page( '*', function( context, next ) { // GENERIC, FACTOR OUT EVIL
 			const isValidSection = some( validSections, function( validPath ) {
@@ -303,6 +267,8 @@ function reduxStoreReady( reduxStore ) {
 			}
 		} );
 	}
+
+	require( 'my-sites' )();
 
 	// clear notices
 	page( '*', function( context, next ) {
@@ -347,7 +313,7 @@ function reduxStoreReady( reduxStore ) {
 	 * TODO (@seear): Converting all of Calypso to single-tree layout will
 	 * make this unnecessary.
 	 */
-	page( '*', function( context, next ) { // FACTOR OUT, MTR? STR?
+	page( '*', function( context, next ) {
 		const previousLayoutIsSingleTree = !! (
 			document.getElementsByClassName( 'wp-singletree-layout' ).length
 		);
@@ -367,18 +333,4 @@ function reduxStoreReady( reduxStore ) {
 		}
 		next();
 	} );
-
-	detectHistoryNavigation.start(); // GENERIC, WHAT IT FOR THOUGH
-	page.start(); // GENERIC
 }
-
-// GENERIC
-window.AppBoot = function() {
-	if ( user.initialized ) {
-		loadDevModulesAndBoot();
-	} else {
-		user.once( 'change', function() { // HAAACK
-			loadDevModulesAndBoot();
-		} );
-	}
-};

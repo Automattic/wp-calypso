@@ -1,53 +1,77 @@
 // Initialize localStorage polyfill before any dependencies are loaded
-require( 'lib/local-storage' )(); // GENERIC
+require( 'lib/local-storage' )();
 if ( process.env.NODE_ENV === 'development' ) {
-	require( 'lib/wrap-es6-functions' )(); // GENERIC
+	require( 'lib/wrap-es6-functions' )();
 }
 
-import config
+/**
+ * External dependencies
+ */
+import debugFactory from 'debug';
+import page from 'page';
+import qs from 'querystring';
+import ReactClass from 'react/lib/ReactClass';
+import i18n, { setLocale } from 'i18n-calypso';
+import url from 'url';
 
-import state
-import i18n
+/**
+ * Internal dependencies
+ */
+import accessibleFocus from 'lib/accessible-focus';
+import createReduxStoreFromPersistedInitialState from 'state/initial-state';
+import detectHistoryNavigation from 'lib/detect-history-navigation';
+import touchDetect from 'lib/touch-detect';
+import userFactory from 'lib/user';
+
+const debug = debugFactory( 'calypso' );
 
 export function boot( currentUser ) {
-	locales( currentUser );
-	reduxState( currentUser, ( store ) => setupContext( store ) );
-	setupMiddleware( currentUser );
-	loadSections();
-	require( config( 'project' ) ).boot( currentUser );
-	page( '*', project.middlewares )
+	debug( "Starting Calypso. Let\'s do this." );
+
+	locales();
+	utils();
+	createReduxStoreFromPersistedInitialState( reduxStore => {
+		setupMiddlewares( reduxStore );
+		loadSections();
+
+		// TODO: make project name dynamic based on config
+		require( './wordpress-com' ).boot( currentUser, reduxStore );
+
+		// TODO: init project specific middlewares
+
+		detectHistoryNavigation.start();
+		page.start();
+	} );
 }
 
-function locales( currentUser ) {
+function locales() {
 	// Initialize i18n
-	ReactClass.injection.injectMixin( i18n.mixin ); // ← :( NO TODO REMOVE THIS
+	ReactClass.injection.injectMixin( i18n.mixin );
+
 	if ( window.i18nLocaleStrings ) {
-		i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
-		i18n.setLocale( i18nLocaleStringsObject );
+		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
+		setLocale( i18nLocaleStringsObject );
 	}
 }
 
-function setupMiddleware() {
-}
-
-function setupUtils() {
+function utils() {
 	// Infer touch screen by checking if device supports touch events
 	// See touch-detect/README.md
 	if ( touchDetect.hasTouch() ) {
 		document.documentElement.classList.add( 'touch' );
 	} else {
 		document.documentElement.classList.add( 'notouch' );
-	} // GENERIC
+	}
 
 	// Add accessible-focus listener
-	accessibleFocus(); // GENERIC
+	accessibleFocus();
 }
 
 function setUpContext( reduxStore ) {
 	page( '*', function( context, next ) {
-		var parsed = url.parse( location.href, true );
+		const parsed = url.parse( location.href, true );
 
-		context.store = reduxStore; // GENERIC
+		context.store = reduxStore;
 
 		// Break routing and do full page load for logout link in /me
 		if ( context.pathname === '/wp-login.php' ) {
@@ -55,8 +79,9 @@ function setUpContext( reduxStore ) {
 			return;
 		}
 
-		// set `context.query` GENERIC
+		// set `context.query`
 		const querystringStart = context.canonicalPath.indexOf( '?' );
+
 		if ( querystringStart !== -1 ) {
 			context.query = qs.parse( context.canonicalPath.substring( querystringStart + 1 ) );
 		} else {
@@ -65,7 +90,7 @@ function setUpContext( reduxStore ) {
 
 		context.prevPath = parsed.path === context.path ? false : parsed.path;
 
-		// set `context.hash` (we have to parse manually) // GENERIC
+		// set `context.hash` (we have to parse manually)
 		if ( parsed.hash && parsed.hash.length > 1 ) {
 			try {
 				context.hash = qs.parse( parsed.hash.substring( 1 ) );
@@ -80,25 +105,27 @@ function setUpContext( reduxStore ) {
 	} );
 }
 
-// GENERIC
-function loadDevModulesAndBoot() {
-	if ( process.env.NODE_ENV === 'development' && config.isEnabled( 'render-visualizer' ) ) {
-		// Use Webpack's code splitting feature to put the render visualizer in a separate fragment.
-		// This way it won't get downloaded unless this feature is enabled.
-		// Since loading this fragment is asynchronous and we need to inject this mixin into all React classes,
-		// we have to wait for it to load before proceeding with the application's startup.
-		require.ensure( [], function() {
-			ReactClass.injection.injectMixin( require( 'lib/mixins/render-visualizer' ) );
-			boot();
-		}, 'devmodules' );
+function setupMiddlewares( reduxStore ) {
+	setUpContext( reduxStore );
 
-		return;
-	}
-
-	boot();
+	// TODO: move other middlewares from project specific file
 }
 
-// onLoggedIn()
-// onLoggedOut()
-// setProject( config( 'project' ) ) -> RENDER
-// fallbackRender( start a project error )
+function loadSections() {
+	// TODO: move from project specific file
+}
+
+window.AppBoot = function() {
+	if ( process.env.NODE_ENV === 'development' ) {
+		require( './dev-modules' )();
+	}
+
+	const user = userFactory();
+	if ( user.initialized ) {
+		boot( user );
+	} else {
+		user.once( 'change', function() {
+			boot( user );
+		} );
+	}
+};
