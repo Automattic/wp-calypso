@@ -95,7 +95,6 @@
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
 		"reader/search": true,
-		"reader/search/sort-by-date": true,
 		"reader/tags-with-elasticsearch": false,
 		"resume-editing": true,
 		"republicize": true,

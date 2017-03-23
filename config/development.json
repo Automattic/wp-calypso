@@ -127,7 +127,6 @@
 		"reader/related-posts": true,
 		"reader/search": true,
 		"reader/tags-with-elasticsearch": false,
-		"reader/search/sort-by-date": true,
 		"resume-editing": true,
 		"republicize": true,
 		"rubberband-scroll-disable": false,
