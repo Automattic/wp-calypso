@@ -28,7 +28,8 @@ const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );
 export default class PostLifecycle extends React.PureComponent {
 	static propTypes = {
 		postKey: PropTypes.object.isRequired,
-		isDiscoverStream: PropTypes.bool
+		isDiscoverStream: PropTypes.bool,
+		handleClick: PropTypes.func,
 	}
 
 	state = {
@@ -77,7 +78,7 @@ export default class PostLifecycle extends React.PureComponent {
 
 	render() {
 		const post = this.state.post;
-		const { postKey, index, selectedPostKey } = this.props;
+		const { postKey, selectedPostKey } = this.props;
 
 		if ( postKey.isRecommendationBlock ) {
 			return (
@@ -86,7 +87,6 @@ export default class PostLifecycle extends React.PureComponent {
 					index={ postKey.index }
 					storeId={ this.props.store.id }
 					followSource={ IN_STREAM_RECOMMENDATION }
-					key={ `recs-${ index }` }
 				/>
 			);
 		} else if ( postKey.isCombination ) {
@@ -94,8 +94,7 @@ export default class PostLifecycle extends React.PureComponent {
 				<ConnectedCombinedCard
 					postKey={ postKey }
 					index={ this.props.index }
-					key={ `combined-card-${ this.props.index }` }
-					onClick={ this.handleConnectedCardClick }
+					onClick={ this.props.handleClick }
 					selectedPostKey={ selectedPostKey }
 					followSource={ COMBINED_CARD }
 					showFollowButton={ this.props.showPrimaryFollowButtonOnCards }

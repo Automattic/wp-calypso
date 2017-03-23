@@ -32,7 +32,7 @@ import config from 'config';
 import { keysAreEqual } from 'lib/feed-stream-store/post-key';
 import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
 import { combineCards, injectRecommendations, RECS_PER_BLOCK } from './utils';
-
+import { keyToString, keyForPost } from 'lib/feed-stream-store/post-key';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
@@ -374,25 +374,7 @@ class ReaderStream extends React.Component {
 	}
 
 	getPostRef = ( postKey ) => {
-		return 'feed-post-' + ( postKey.feedId || postKey.blogId ) + '-' + postKey.postId;
-	}
-
-	handleConnectedCardClick = post => {
-		const postKey = {};
-		if ( post.feed_item_ID && post.feed_ID ) {
-			postKey.feedId = post.feed_ID;
-			postKey.postId = post.feed_item_ID;
-		} else if ( post.is_external ) {
-			postKey.feedId = post.site_ID;
-			postKey.postId = post.ID;
-		} else {
-			postKey.blogId = post.site_ID;
-			postKey.postId = post.ID;
-		}
-		showSelectedPost( {
-			store: this.props.postsStore,
-			postKey: postKey
-		} );
+		return keyToString( postKey );
 	}
 
 	renderPost = ( postKey, index ) => {
@@ -408,9 +390,12 @@ class ReaderStream extends React.Component {
 		const itemKey = this.getPostRef( postKey );
 		const showPost = ( args ) => showSelectedPost( {
 			...args,
-			postKey,
+			postKey: postKey.isCombination
+				? keyForPost( args )
+				: postKey,
 			store: this.props.postsStore
 		} );
+
 		return <PostLifecycle
 			key={ itemKey }
 			ref={ itemKey }
