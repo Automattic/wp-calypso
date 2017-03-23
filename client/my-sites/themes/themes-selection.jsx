@@ -13,7 +13,7 @@ import QueryThemes from 'components/data/query-themes';
 import ThemesList from 'components/themes-list';
 import ThemesSelectionHeader from './themes-selection-header';
 import { prependFilterKeys } from './theme-filters.js';
-import analytics from 'lib/analytics';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -72,7 +72,7 @@ const ThemesSelection = React.createClass( {
 		const { query, themes } = this.props;
 		const search_taxonomies = prependFilterKeys( query.filter );
 		const search_term = search_taxonomies + ( query.search || '' );
-		analytics.tracks.recordEvent( 'calypso_themeshowcase_theme_click', {
+		this.props.recordTracksEvent( 'calypso_themeshowcase_theme_click', {
 			search_term: search_term || null,
 			search_taxonomies,
 			theme: theme.id,
@@ -85,13 +85,13 @@ const ThemesSelection = React.createClass( {
 	},
 
 	trackScrollPage() {
-		analytics.tracks.recordEvent( 'calypso_themeshowcase_scroll' );
+		this.props.recordTracksEvent( 'calypso_themeshowcase_scroll' );
 		this.props.trackScrollPage();
 	},
 
 	trackLastPage() {
-		analytics.ga.recordEvent( 'Themes', 'Reached Last Page' );
-		analytics.tracks.recordEvent( 'calypso_themeshowcase_last_page_scroll' );
+		this.props.recordGoogleEvent( 'Themes', 'Reached Last Page' );
+		this.props.recordTracksEvent( 'calypso_themeshowcase_last_page_scroll' );
 	},
 
 	onScreenshotClick( theme, resultsRank ) {
@@ -216,7 +216,7 @@ const ConnectedThemesSelection = connect(
 			isThemePurchased: themeId => isPremiumThemeAvailable( state, themeId, siteId )
 		};
 	},
-	{ setThemePreviewOptions }
+	{ setThemePreviewOptions, recordGoogleEvent, recordTracksEvent }
 )( ThemesSelection );
 
 /**
