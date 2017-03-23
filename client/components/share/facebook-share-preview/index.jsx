@@ -29,12 +29,14 @@ export class FacebookSharePreview extends PureComponent {
 									{ externalName }
 								</a>
 								published an article on
-								<a href="https://wordpress.com">
+								<a className="facebook-share-preview__profile-wp-link"
+									href="https://wordpress.com">
 									WordPress.
 								</a>
 							</div>
 							<div className="facebook-share-preview__meta-line">
-								<a href="https://wordpress.com">
+								<a className="facebook-share-preview__meta-link"
+									href="https://wordpress.com">
 									WordPress
 								</a>
 							</div>
