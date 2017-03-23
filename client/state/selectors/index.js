@@ -41,6 +41,7 @@ export getMenuItemTypes from './get-menu-item-types';
 export getPastBillingTransaction from './get-past-billing-transaction';
 export getPastBillingTransactions from './get-past-billing-transactions';
 export getPublicizeConnection from './get-publicize-connection';
+export getPublicizeSiteUserActiveConnections from './get-publicize-site-user-active-connections';
 export getPostLikes from './get-post-likes';
 export getRawOffsets from './get-raw-offsets';
 export getReaderTeams from './get-reader-teams';

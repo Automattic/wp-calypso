@@ -14,13 +14,16 @@ import Gridicon from 'gridicons';
 import QueryPostTypes from 'components/data/query-post-types';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
-import { isPublicizeEnabled } from 'state/selectors';
+import {
+	isPublicizeEnabled,
+	getPublicizeSiteUserActiveConnections,
+} from 'state/selectors';
 import {
 	getSiteSlug,
 	getSitePlanSlug,
 } from 'state/sites/selectors';
 import { getCurrentUserId, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getSiteUserConnections, hasFetchedConnections, getSiteUserActiveConnections } from 'state/sharing/publicize/selectors';
+import { getSiteUserConnections, hasFetchedConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
 import { isRequestingSharePost, sharePostFailure, sharePostSuccessMessage } from 'state/sharing/publicize/selectors';
 import PostMetadata from 'lib/post-metadata';
@@ -433,7 +436,7 @@ export default connect(
 			userCurrency: getCurrentUserCurrencyCode( state ), //populated by either plans endpoint
 			scheduledSharingActions: getPostShareScheduledActions( state, siteId, postId ),
 			publishedSharingActions: getPostSharePublishedActions( state, siteId, postId ),
-			activeConnections: getSiteUserActiveConnections( state, siteId, userId ),
+			activeConnections: getPublicizeSiteUserActiveConnections( state, siteId, userId ),
 		};
 	},
 	{ requestConnections, sharePost, dismissShareConfirmation }
