@@ -7,9 +7,9 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 
-import { getPublicizeSiteUserActiveConnections } from '../selectors';
+import { getPublicizeSiteUserActiveConnections } from '../';
 
-describe( '#getSiteUserActiveConnections()', () => {
+describe.only( '#getSiteUserActiveConnections()', () => {
 	it( 'should return an array with only active connetions', () => {
 		const activeConnections = getPublicizeSiteUserActiveConnections( {
 			sharing: {
