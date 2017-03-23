@@ -12,7 +12,16 @@ import SiteIcon from 'blocks/site-icon';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 
-const ReaderAvatar = ( { author, siteIcon, feedIcon, siteUrl, siteIconSize = 96, preferGravatar = false, showPlaceholder = false } ) => {
+const ReaderAvatar = ( {
+		author,
+		siteIcon,
+		feedIcon,
+		siteUrl,
+		siteIconSize = 96,
+		gravatarSize,
+		preferGravatar = false,
+		showPlaceholder = false,
+	} ) => {
 	let fakeSite;
 	// don't show the default favicon for some sites
 	if ( endsWith( feedIcon, 'wp.com/i/buttonw-com.png' ) ) {
@@ -50,6 +59,10 @@ const ReaderAvatar = ( { author, siteIcon, feedIcon, siteUrl, siteIconSize = 96,
 
 	const hasBothIcons = hasSiteIcon && hasAvatar;
 
+	if ( ! gravatarSize ) {
+		gravatarSize = hasBothIcons ? 32 : 96;
+	}
+
 	const classes = classnames(
 		'reader-avatar',
 		{
@@ -60,7 +73,7 @@ const ReaderAvatar = ( { author, siteIcon, feedIcon, siteUrl, siteIconSize = 96,
 	);
 
 	const siteIconElement = hasSiteIcon && <SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />;
-	const avatarElement = ( hasAvatar || showPlaceholder ) && <Gravatar key="author-avatar" user={ author } size={ hasBothIcons ? 32 : 96 } />;
+	const avatarElement = ( hasAvatar || showPlaceholder ) && <Gravatar key="author-avatar" user={ author } size={ gravatarSize } />;
 	const iconElements = [ siteIconElement, avatarElement ];
 
 	return (
