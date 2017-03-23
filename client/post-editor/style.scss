@@ -19,6 +19,11 @@
 	.is-group-editor.focus-sidebar::before {
 		background-color: lighten( $gray, 30% );
 	}
+
+	.is-group-editor .sidebar {
+		right: auto;
+	}
+
 }
 
 .is-group-editor .layout__content {
