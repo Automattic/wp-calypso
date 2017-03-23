@@ -246,6 +246,40 @@ export function queryRequests( state = {}, action ) {
 }
 
 /**
+ * Returns the updated theme query requesting state after an action has been
+ * dispatched. The state reflects a mapping of serialized query to whether a
+ * network request is in-progress for that query.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function siteActiveQueries( state = {}, action ) {
+	let serializedQuery;
+	switch ( action.type ) {
+		case THEMES_REQUEST:
+			serializedQuery = getSerializedThemesQuery( action.query, action.siteId );
+			return Object.assign( {}, state, {
+				[ action.siteId ]: Object.assign( {}, state[ action.siteId ], {
+					[ serializedQuery ]: true
+				} )
+			} );
+		case THEMES_REQUEST_SUCCESS:
+		case THEMES_REQUEST_FAILURE:
+			serializedQuery = getSerializedThemesQuery( action.query, action.siteId );
+			return Object.assign( {}, state, {
+				[ action.siteId ]: omit( state[ action.siteId ], serializedQuery )
+			} );
+
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
+	}
+
+	return state;
+}
+
+/**
  * Returns the updated query request error state after an action has been
  * dispatched. The state reflects a mapping of site ID, query ID pairing to an
  * object containing the request error. If there is no error null is stored.
@@ -375,6 +409,7 @@ export default combineReducers( {
 	queries,
 	queryRequests,
 	queryRequestErrors,
+	siteActiveQueries,
 	lastQuery,
 	themeInstalls,
 	themeRequests,

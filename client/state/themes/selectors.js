@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, includes, isEqual, omit, some, get, uniq } from 'lodash';
+import { find, includes, isEqual, omit, some, get, uniq, isEmpty } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
@@ -145,6 +145,10 @@ export const getThemesForQuery = createSelector(
  */
 export function getLastThemeQuery( state, siteId ) {
 	return get( state.themes.lastQuery, siteId, {} );
+}
+
+export function hasSiteActiveQueryRequests( state, siteId ) {
+	return ! isEmpty( get( state.themes.siteActiveQueries, siteId, {} ) );
 }
 
 /**
@@ -299,6 +303,10 @@ export function isRequestingTheme( state, siteId, themeId ) {
 	}
 
 	return !! state.themes.themeRequests[ siteId ][ themeId ];
+}
+
+export function isRequestingThemes( state ) {
+	return some( state.themes.queryRequests );
 }
 
 /**

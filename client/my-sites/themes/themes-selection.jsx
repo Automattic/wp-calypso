@@ -62,9 +62,24 @@ const ThemesSelection = React.createClass( {
 		};
 	},
 
+	getInitialState() {
+		return {
+			themes: this.props.themes,
+			initialLoad: this.props.themesCount && this.props.themes.length === 0,
+			themesCount: this.props.themesCount
+		};
+	},
+
 	componentWillReceiveProps( nextProps ) {
 		if ( ! isEqual( omit( this.props.query, PAGINATION_QUERY_KEYS ), omit( nextProps.query, PAGINATION_QUERY_KEYS ) ) ) {
 			this.props.resetPage();
+		}
+		if ( nextProps.themesCount !== null ) {
+			this.setState( {
+				themes: nextProps.themes,
+				themesCount: nextProps.themesCount,
+				initialLoad: false
+			} );
 		}
 	},
 
@@ -144,7 +159,7 @@ const ThemesSelection = React.createClass( {
 	},
 
 	render() {
-		const { source, query, listLabel, themesCount } = this.props;
+		const { source, query, listLabel } = this.props;
 
 		return (
 			<div className="themes__selection">
@@ -153,9 +168,9 @@ const ThemesSelection = React.createClass( {
 					siteId={ source } />
 				<ThemesSelectionHeader
 					label={ listLabel }
-					count={ themesCount }
+					count={ this.state.themesCount }
 				/>
-				<ThemesList themes={ this.props.themes }
+				<ThemesList themes={ this.state.themes }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }
@@ -165,7 +180,7 @@ const ThemesSelection = React.createClass( {
 					isActive={ this.props.isThemeActive }
 					isPurchased={ this.props.isThemePurchased }
 					isInstalling={ this.props.isInstallingTheme }
-					loading={ this.props.isRequesting }
+					loading={ !! this.state.initialLoad }
 					emptyContent={ this.props.emptyContent }
 					placeholderCount={ this.props.placeholderCount } />
 			</div>

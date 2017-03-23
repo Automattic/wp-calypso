@@ -257,7 +257,8 @@ class ThemesMagicSearchCard extends React.Component {
 		);
 
 		const magicSearchClass = classNames( 'themes-magic-search', {
-			'has-suggestions': this.state.searchIsOpen
+			'has-suggestions': this.state.searchIsOpen,
+			'is-busy': this.state.searching
 		} );
 
 		const themesSearchCardClass = classNames( 'themes-magic-search-card', {
