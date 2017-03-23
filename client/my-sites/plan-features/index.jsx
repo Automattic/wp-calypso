@@ -321,28 +321,28 @@ class PlanFeatures extends Component {
 	}
 
 	renderFeatureItem( feature, index ) {
+		const description = feature.getDescription
+					? feature.getDescription( abtest )
+					: null;
+		const itemClasses = classNames(
+			'plan-features__item-title',
+			abtest( 'jetpackNewDescriptions' ) === 'showNew'
+			? 'plan-features__item-title-outlined'
+			: null
+		);
+
 		return (
 			<PlanFeaturesItem
 				key={ index }
-				description={ feature.getDescription
-					? feature.getDescription( abtest )
-					: null
-				}
-				hideInfoPopover={ feature.hideInfoPopover }
+				description={ description }
+				hideInfoPopover={ abtest( 'jetpackNewDescriptions' ) === 'showNew' }
 			>
 				<span className="plan_features__item-info">
-					<span className={ classNames(
-						'plan-features__item-title',
-						feature.hideInfoPopover && feature.getDescription
-							? 'plan-features__item-title-tabs'
-							: null
-						) } >
-						{ feature.getTitle() }
-					</span>
-				{ feature.hideInfoPopover && feature.getDescription
-					? <span className="plan-features__item-description">{ feature.getDescription( abtest ) }</span>
-					: null
-				}
+					<span className={ itemClasses }>{ feature.getTitle() }</span>
+					{ abtest( 'jetpackNewDescriptions' ) === 'showNew'
+						? <span className="plan-features__item-description">{ description }</span>
+						: null
+					}
 				</span>
 			</PlanFeaturesItem>
 		);

@@ -43,4 +43,14 @@ module.exports = {
 		defaultVariation: 'disabled',
 		allowExistingUsers: false
 	},
+
+	jetpackNewDescriptions: {
+		datestamp: '20170327',
+		variations: {
+			showNew: 50,
+			showOld: 50
+		},
+		defaultVariation: 'showOld',
+		allowExistingUsers: true
+	},
 };
