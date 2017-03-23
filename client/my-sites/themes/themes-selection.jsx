@@ -74,7 +74,7 @@ const ThemesSelection = React.createClass( {
 		if ( ! isEqual( omit( this.props.query, PAGINATION_QUERY_KEYS ), omit( nextProps.query, PAGINATION_QUERY_KEYS ) ) ) {
 			this.props.resetPage();
 		}
-		if ( nextProps.themesCount !== null ) {
+		if ( nextProps.themesCount !== null && ! this.props.isRequesting ) {
 			this.setState( {
 				themes: nextProps.themes,
 				themesCount: nextProps.themesCount,
