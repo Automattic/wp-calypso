@@ -26,12 +26,7 @@ class ReaderExportButton extends React.Component {
 		saveAs: 'wpcom-subscriptions.opml',
 	}
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			disabled: false
-		};
-	}
+	state = { disabled: false }
 
 	onClick = () => {
 		// Don't kick off a new export request if there's one in progress
