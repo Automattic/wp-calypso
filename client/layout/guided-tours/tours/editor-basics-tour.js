@@ -18,27 +18,11 @@ import {
 	ButtonRow,
 	Next,
 	Quit,
-	// Link,
-	// Continue,
 } from 'layout/guided-tours/config-elements';
 import {
-	isNewSite,
-	// isNewUser,
-	// isEnabled,
-	// isSelectedSitePreviewable,
+	isNewUser,
 } from 'state/ui/guided-tours/contexts';
-// import { isPreviewShowing } from 'state/ui/selectors';
 import { isDesktop } from 'lib/viewport';
-
-// const yes = () => {
-// 	return true;
-// };
-
-/*
-TODO:
-- proper path: /post/URL -- maybe /post/ is good enough?
-- make proper when
-*/
 
 export const EditorBasicsTour = makeTour(
 	<Tour
@@ -46,10 +30,9 @@ export const EditorBasicsTour = makeTour(
 		version="20170321"
 		path="/post/"
 		when={ and(
-			isNewSite,
-			isDesktop
+			isDesktop,
+			isNewUser,
 			) }
-
 		>
 		<Step
 			name="init"
