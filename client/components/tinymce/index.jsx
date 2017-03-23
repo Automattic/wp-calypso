@@ -235,7 +235,7 @@ module.exports = React.createClass( {
 
 		this.localize();
 
-		const ltrButton = user.isRTL() ? 'ltr,' : null;
+		const ltrButton = user.isRTL() ? 'ltr,' : '';
 		const toolbar1 = config.isEnabled( 'post-editor/insert-menu' )
 				? `wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,${ ltrButton }wpcom_advanced`
 				: `wpcom_add_media,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_add_contact_form,${ ltrButton }wpcom_advanced`;
