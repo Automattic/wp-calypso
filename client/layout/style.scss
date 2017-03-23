@@ -98,7 +98,7 @@
 		pointer-events: auto;
 
 		@include breakpoint( "<660px" ) {
-			transform: translateX( 100vw );
+			transform: translateX( 100% );
 		}
 	}
 
@@ -146,8 +146,8 @@
 	}
 
 	@include breakpoint( "<660px" ) {
-		width: 100vw;
-		left: -100vw;
+		width: 100%;
+		left: -100%;
 		-webkit-overflow-scrolling: touch;
 	}
 
