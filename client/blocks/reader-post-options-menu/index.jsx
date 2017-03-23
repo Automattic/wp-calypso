@@ -71,8 +71,8 @@ class ReaderPostOptionsMenu extends React.Component {
 		const { post, site } = this.props;
 		let editUrl = '//wordpress.com/post/' + post.site_ID + '/' + post.ID + '/';
 
-		if ( site && site.get( 'slug' ) ) {
-			editUrl = PostUtils.getEditURL( post, site.toJS() );
+		if ( site && site.slug ) {
+			editUrl = PostUtils.getEditURL( post, site );
 		}
 
 		stats.recordAction( 'edit_post' );
