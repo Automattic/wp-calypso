@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { get, includes, map } from 'lodash';
+import { get, includes, map, difference } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -117,7 +117,16 @@ class PostShare extends Component {
 	};
 
 	sharePost = () => {
-		this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.message, this.state.enabledConnectionIds );
+		//TODO remove skippedConnections after api fully supports connection ids
+		const activeConnectionIds = map( this.props.activeConnections, 'keyring_connection_ID' );
+		const skippedConnections = difference( activeConnectionIds, this.state.enabledConnectionIds );
+		this.props.sharePost(
+			this.props.siteId,
+			this.props.post.ID,
+			skippedConnections,
+			this.state.message,
+			this.state.enabledConnectionIds
+		);
 	};
 
 	isButtonDisabled() {
