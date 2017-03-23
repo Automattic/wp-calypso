@@ -50,18 +50,6 @@ describe( 'legacy-routes', function() {
 			expect( isLegacyRoute( '/some/nested/page.php' ) ).to.be.true;
 		} );
 
-		it( 'should return true for /plans when `manage/plans` feature flag disabled', () => {
-			// config.isEnabled( 'manage/plans' ) === false
-			features = [];
-			expect( isLegacyRoute( '/plans' ) ).to.be.true;
-		} );
-
-		it( 'should return false for /plans when `manage/plans` feature flag enabled', () => {
-			// config.isEnabled( 'manage/plans' ) === true
-			features = [ 'manage/plans' ];
-			expect( isLegacyRoute( '/plans' ) ).to.be.false;
-		} );
-
 		describe( 'when `me/my-profile` feature flag is enabled', () => {
 			// config.isEnabled( 'me/my-profile' ) === true
 			beforeEach( () => {
