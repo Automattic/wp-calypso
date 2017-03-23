@@ -4,7 +4,7 @@
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import React, { Component, PropTypes } from 'react';
+import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import Gridicon from 'gridicons';
@@ -36,13 +36,14 @@ import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { getStatsPathForTab } from 'lib/route/path';
 import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
+import sitesObserver from 'lib/sites-list/sites-observer';
 
 /**
  * Module variables
  */
 const debug = debugFactory( 'calypso:my-sites:sidebar' );
 
-export class MySitesSidebar extends Component {
+export class MySitesSidebar extends PureComponent {
 
 	static propTypes = {
 		setNextLayoutFocus: PropTypes.func.isRequired,
@@ -671,5 +672,6 @@ function mapStateToProps( state ) {
 	};
 }
 
-// TODO: make this pure when sites can be retrieved from the Redux state
-export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus }, null, { pure: false } )( localize( MySitesSidebar ) );
+export default sitesObserver(
+	connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus } )( localize( MySitesSidebar ) )
+);

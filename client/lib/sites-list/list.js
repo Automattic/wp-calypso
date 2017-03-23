@@ -375,7 +375,7 @@ SitesList.prototype.getSelectedSite = function() {
  * @api private
  */
 SitesList.prototype.setSelectedSite = function( siteID ) {
-	if ( ! siteID ) {
+	if ( ! siteID || this.selected === siteID ) {
 		return;
 	}
 
