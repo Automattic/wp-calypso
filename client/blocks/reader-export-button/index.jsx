@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-import Blob from 'blob';
 import React from 'react';
+import Blob from 'blob';
 import { noop } from 'lodash';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import Button from 'components/button';
 
 class ReaderExportButton extends React.Component {
 	static propTypes = {
@@ -34,13 +34,18 @@ class ReaderExportButton extends React.Component {
 	}
 
 	onClick = () => {
-		wpcom.undocumented().exportReaderFeed( this.onFeed );
+		// Don't kick off a new export request if there's one in progress
+		if ( this.state.disabled ) {
+			return;
+		}
+
+		wpcom.undocumented().exportReaderFeed( this.onApiResponse );
 		this.setState( {
 			disabled: true
 		} );
 	}
 
-	onFeed = ( err, data ) => {
+	onApiResponse = ( err, data ) => {
 		this.setState( {
 			disabled: false
 		} );
@@ -60,13 +65,12 @@ class ReaderExportButton extends React.Component {
 
 	render() {
 		return (
-			<Button
-				className="reader-export-button"
-				compact
-				disabled={ this.state.disabled }
-				onClick={ this.onClick }>
-				{ this.props.translate( 'Export' ) }
-			</Button>
+			<div className="reader-export-button" onClick={ this.onClick }>
+				<Gridicon icon="cloud-download" className="reader-export-button__icon" />
+				<span className="reader-export-button__label">
+					{ this.props.translate( 'Export' ) }
+				</span>
+			</div>
 		);
 	}
 }
