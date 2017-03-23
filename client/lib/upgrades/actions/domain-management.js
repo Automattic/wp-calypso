@@ -24,566 +24,575 @@ import wp from 'lib/wp';
 import debugFactory from 'debug';
 import { isBeingProcessed } from 'lib/domains/dns';
 
-const debug = debugFactory( 'actions:domain-management' );
+const debug = debugFactory('actions:domain-management');
 
-const sites = sitesFactory(),
-	wpcom = wp.undocumented();
+const sites = sitesFactory(), wpcom = wp.undocumented();
 
-function setPrimaryDomain( siteId, domainName, onComplete = noop ) {
-	debug( 'setPrimaryDomain', siteId, domainName );
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.PRIMARY_DOMAIN_SET,
-		siteId
-	} );
-	wpcom.setPrimaryDomain( siteId, domainName, ( error, data ) => {
-		if ( error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.PRIMARY_DOMAIN_SET_FAILED,
-				error: error && error.message || i18n.translate( 'There was a problem setting the primary domain. Please try' +
-					' again later or contact support.' ),
-				siteId,
-				domainName
-			} );
+function setPrimaryDomain(siteId, domainName, onComplete = noop) {
+    debug('setPrimaryDomain', siteId, domainName);
+    Dispatcher.handleViewAction({
+        type: ActionTypes.PRIMARY_DOMAIN_SET,
+        siteId,
+    });
+    wpcom.setPrimaryDomain(siteId, domainName, (error, data) => {
+        if (error) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.PRIMARY_DOMAIN_SET_FAILED,
+                error: (error && error.message) ||
+                    i18n.translate(
+                        'There was a problem setting the primary domain. Please try' +
+                            ' again later or contact support.'
+                    ),
+                siteId,
+                domainName,
+            });
 
-			return onComplete( error, data );
-		}
+            return onComplete(error, data);
+        }
 
-		sites.setSelectedSite( siteId );
+        sites.setSelectedSite(siteId);
 
-		Dispatcher.handleServerAction( {
-			type: 'FETCH_SITES'
-		} );
+        Dispatcher.handleServerAction({
+            type: 'FETCH_SITES',
+        });
 
-		sites.once( 'change', () => {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.PRIMARY_DOMAIN_SET_COMPLETED,
-				siteId,
-				domainName
-			} );
+        sites.once('change', () => {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.PRIMARY_DOMAIN_SET_COMPLETED,
+                siteId,
+                domainName,
+            });
 
-			onComplete( null, data );
-			fetchDomains( siteId );
-		} );
-	} );
+            onComplete(null, data);
+            fetchDomains(siteId);
+        });
+    });
 }
 
-function fetchEmailForwarding( domainName ) {
-	const emailForwarding = EmailForwardingStore.getByDomainName( domainName );
+function fetchEmailForwarding(domainName) {
+    const emailForwarding = EmailForwardingStore.getByDomainName(domainName);
 
-	if ( ! emailForwarding.needsUpdate ) {
-		return;
-	}
+    if (!emailForwarding.needsUpdate) {
+        return;
+    }
 
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.EMAIL_FORWARDING_FETCH,
-		domainName
-	} );
+    Dispatcher.handleViewAction({
+        type: ActionTypes.EMAIL_FORWARDING_FETCH,
+        domainName,
+    });
 
-	wpcom.emailForwards( domainName, ( error, data ) => {
-		if ( error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.EMAIL_FORWARDING_FETCH_FAILED,
-				domainName
-			} );
-		} else {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.EMAIL_FORWARDING_FETCH_COMPLETED,
-				domainName,
-				forwards: data.forwards
-			} );
-		}
-	} );
+    wpcom.emailForwards(domainName, (error, data) => {
+        if (error) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.EMAIL_FORWARDING_FETCH_FAILED,
+                domainName,
+            });
+        } else {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.EMAIL_FORWARDING_FETCH_COMPLETED,
+                domainName,
+                forwards: data.forwards,
+            });
+        }
+    });
 }
 
-function addEmailForwarding( domainName, mailbox, destination, onComplete ) {
-	wpcom.addEmailForward( domainName, mailbox, destination, ( error ) => {
-		if ( ! error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.EMAIL_FORWARDING_ADD_COMPLETED,
-				domainName,
-				mailbox,
-				destination
-			} );
-			fetchEmailForwarding( domainName );
-		}
+function addEmailForwarding(domainName, mailbox, destination, onComplete) {
+    wpcom.addEmailForward(domainName, mailbox, destination, error => {
+        if (!error) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.EMAIL_FORWARDING_ADD_COMPLETED,
+                domainName,
+                mailbox,
+                destination,
+            });
+            fetchEmailForwarding(domainName);
+        }
 
-		onComplete( error );
-	} );
+        onComplete(error);
+    });
 }
 
-function deleteEmailForwarding( domainName, mailbox, onComplete ) {
-	wpcom.deleteEmailForward( domainName, mailbox, ( error ) => {
-		if ( ! error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.EMAIL_FORWARDING_DELETE_COMPLETED,
-				domainName,
-				mailbox
-			} );
-			fetchEmailForwarding( domainName );
-		}
+function deleteEmailForwarding(domainName, mailbox, onComplete) {
+    wpcom.deleteEmailForward(domainName, mailbox, error => {
+        if (!error) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.EMAIL_FORWARDING_DELETE_COMPLETED,
+                domainName,
+                mailbox,
+            });
+            fetchEmailForwarding(domainName);
+        }
 
-		onComplete( error );
-	} );
+        onComplete(error);
+    });
 }
 
-function resendVerificationEmailForwarding( domainName, mailbox, onComplete ) {
-	wpcom.resendVerificationEmailForward( domainName, mailbox, onComplete );
+function resendVerificationEmailForwarding(domainName, mailbox, onComplete) {
+    wpcom.resendVerificationEmailForward(domainName, mailbox, onComplete);
 }
 
-function fetchDomains( siteId ) {
-	if ( ! isDomainInitialized( DomainsStore.get(), siteId ) ) {
-		Dispatcher.handleViewAction( {
-			type: ActionTypes.DOMAINS_INITIALIZE,
-			siteId
-		} );
-	}
+function fetchDomains(siteId) {
+    if (!isDomainInitialized(DomainsStore.get(), siteId)) {
+        Dispatcher.handleViewAction({
+            type: ActionTypes.DOMAINS_INITIALIZE,
+            siteId,
+        });
+    }
 
-	const domains = DomainsStore.getBySite( siteId );
-	if ( domains.isFetching ) {
-		return;
-	}
+    const domains = DomainsStore.getBySite(siteId);
+    if (domains.isFetching) {
+        return;
+    }
 
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.DOMAINS_FETCH,
-		siteId
-	} );
+    Dispatcher.handleViewAction({
+        type: ActionTypes.DOMAINS_FETCH,
+        siteId,
+    });
 
-	wpcom.site( siteId ).domains( function( error, data ) {
-		if ( error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.DOMAINS_FETCH_FAILED,
-				siteId,
-				error
-			} );
-		} else {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.DOMAINS_FETCH_COMPLETED,
-				siteId,
-				domains: domainsAssembler.createDomainObjects( data.domains )
-			} );
-		}
-	} );
+    wpcom.site(siteId).domains(function(error, data) {
+        if (error) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.DOMAINS_FETCH_FAILED,
+                siteId,
+                error,
+            });
+        } else {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.DOMAINS_FETCH_COMPLETED,
+                siteId,
+                domains: domainsAssembler.createDomainObjects(data.domains),
+            });
+        }
+    });
 }
 
-function fetchWhois( domainName ) {
-	const whois = WhoisStore.getByDomainName( domainName );
+function fetchWhois(domainName) {
+    const whois = WhoisStore.getByDomainName(domainName);
 
-	if ( ! whois.needsUpdate ) {
-		return;
-	}
+    if (!whois.needsUpdate) {
+        return;
+    }
 
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.WHOIS_FETCH,
-		domainName
-	} );
+    Dispatcher.handleViewAction({
+        type: ActionTypes.WHOIS_FETCH,
+        domainName,
+    });
 
-	wpcom.fetchWhois( domainName, ( error, data ) => {
-		if ( error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.WHOIS_FETCH_FAILED,
-				domainName
-			} );
-		} else {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.WHOIS_FETCH_COMPLETED,
-				domainName,
-				data: whoisAssembler.createDomainWhois( data )
-			} );
-		}
-	} );
+    wpcom.fetchWhois(domainName, (error, data) => {
+        if (error) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.WHOIS_FETCH_FAILED,
+                domainName,
+            });
+        } else {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.WHOIS_FETCH_COMPLETED,
+                domainName,
+                data: whoisAssembler.createDomainWhois(data),
+            });
+        }
+    });
 }
 
-function updateWhois( domainName, contactInformation, transferLock, onComplete ) {
-	wpcom.updateWhois( domainName, contactInformation, transferLock, ( error, data ) => {
-		if ( ! error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.WHOIS_UPDATE_COMPLETED,
-				domainName
-			} );
+function updateWhois(domainName, contactInformation, transferLock, onComplete) {
+    wpcom.updateWhois(domainName, contactInformation, transferLock, (error, data) => {
+        if (!error) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.WHOIS_UPDATE_COMPLETED,
+                domainName,
+            });
 
-			// For WWD the update may take longer
-			// After 1 minute, we mark the WHOIS as needing updating
-			setTimeout( () => {
-				Dispatcher.handleServerAction( {
-					type: ActionTypes.WHOIS_UPDATE_COMPLETED,
-					domainName
-				} );
-			}, 60000 );
-		}
+            // For WWD the update may take longer
+            // After 1 minute, we mark the WHOIS as needing updating
+            setTimeout(
+                () => {
+                    Dispatcher.handleServerAction({
+                        type: ActionTypes.WHOIS_UPDATE_COMPLETED,
+                        domainName,
+                    });
+                },
+                60000
+            );
+        }
 
-		onComplete( error, data );
-	} );
+        onComplete(error, data);
+    });
 }
 
-function fetchDns( domainName ) {
-	const dns = DnsStore.getByDomainName( domainName );
+function fetchDns(domainName) {
+    const dns = DnsStore.getByDomainName(domainName);
 
-	if ( dns.isFetching || dns.hasLoadedFromServer ) {
-		return;
-	}
+    if (dns.isFetching || dns.hasLoadedFromServer) {
+        return;
+    }
 
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.DNS_FETCH,
-		domainName
-	} );
+    Dispatcher.handleViewAction({
+        type: ActionTypes.DNS_FETCH,
+        domainName,
+    });
 
-	wpcom.fetchDns( domainName, ( error, data ) => {
-		if ( ! error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.DNS_FETCH_COMPLETED,
-				records: data && data.records,
-				domainName
-			} );
-		} else {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.DNS_FETCH_FAILED,
-				domainName
-			} );
-		}
-	} );
+    wpcom.fetchDns(domainName, (error, data) => {
+        if (!error) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.DNS_FETCH_COMPLETED,
+                records: data && data.records,
+                domainName,
+            });
+        } else {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.DNS_FETCH_FAILED,
+                domainName,
+            });
+        }
+    });
 }
 
-function addDns( domainName, record, onComplete ) {
-	Dispatcher.handleServerAction( {
-		type: ActionTypes.DNS_ADD,
-		domainName,
-		record
-	} );
+function addDns(domainName, record, onComplete) {
+    Dispatcher.handleServerAction({
+        type: ActionTypes.DNS_ADD,
+        domainName,
+        record,
+    });
 
-	const dns = DnsStore.getByDomainName( domainName );
+    const dns = DnsStore.getByDomainName(domainName);
 
-	wpcom.updateDns( domainName, dns.records, ( error ) => {
-		const type = ! error ? ActionTypes.DNS_ADD_COMPLETED : ActionTypes.DNS_ADD_FAILED;
-		Dispatcher.handleServerAction( {
-			type,
-			domainName,
-			record
-		} );
+    wpcom.updateDns(domainName, dns.records, error => {
+        const type = !error ? ActionTypes.DNS_ADD_COMPLETED : ActionTypes.DNS_ADD_FAILED;
+        Dispatcher.handleServerAction({
+            type,
+            domainName,
+            record,
+        });
 
-		onComplete( error );
-	} );
+        onComplete(error);
+    });
 }
 
-function deleteDns( domainName, record, onComplete ) {
-	if ( isBeingProcessed( record ) ) {
-		return;
-	}
+function deleteDns(domainName, record, onComplete) {
+    if (isBeingProcessed(record)) {
+        return;
+    }
 
-	Dispatcher.handleServerAction( {
-		type: ActionTypes.DNS_DELETE,
-		domainName,
-		record
-	} );
+    Dispatcher.handleServerAction({
+        type: ActionTypes.DNS_DELETE,
+        domainName,
+        record,
+    });
 
-	const dns = DnsStore.getByDomainName( domainName );
+    const dns = DnsStore.getByDomainName(domainName);
 
-	wpcom.updateDns( domainName, dns.records, ( error ) => {
-		const type = ! error ? ActionTypes.DNS_DELETE_COMPLETED : ActionTypes.DNS_DELETE_FAILED;
+    wpcom.updateDns(domainName, dns.records, error => {
+        const type = !error ? ActionTypes.DNS_DELETE_COMPLETED : ActionTypes.DNS_DELETE_FAILED;
 
-		Dispatcher.handleServerAction( {
-			type,
-			domainName,
-			record,
-		} );
+        Dispatcher.handleServerAction({
+            type,
+            domainName,
+            record,
+        });
 
-		onComplete( error );
-	} );
+        onComplete(error);
+    });
 }
 
-function addDnsOffice( domainName, token, onComplete ) {
-	wpcom.addDnsOffice( domainName, token, ( error, data ) => {
-		if ( ! error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.DNS_ADD_OFFICE_COMPLETED,
-				records: data && data.records,
-				domainName
-			} );
-		}
-		onComplete( error );
-	} );
+function addDnsOffice(domainName, token, onComplete) {
+    wpcom.addDnsOffice(domainName, token, (error, data) => {
+        if (!error) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.DNS_ADD_OFFICE_COMPLETED,
+                records: data && data.records,
+                domainName,
+            });
+        }
+        onComplete(error);
+    });
 }
 
-function fetchNameservers( domainName ) {
-	const nameservers = NameserversStore.getByDomainName( domainName );
+function fetchNameservers(domainName) {
+    const nameservers = NameserversStore.getByDomainName(domainName);
 
-	if ( nameservers.isFetching || nameservers.hasLoadedFromServer ) {
-		return;
-	}
+    if (nameservers.isFetching || nameservers.hasLoadedFromServer) {
+        return;
+    }
 
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.NAMESERVERS_FETCH,
-		domainName
-	} );
+    Dispatcher.handleViewAction({
+        type: ActionTypes.NAMESERVERS_FETCH,
+        domainName,
+    });
 
-	wpcom.nameservers( domainName, ( error, data ) => {
-		if ( error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.NAMESERVERS_FETCH_FAILED,
-				domainName
-			} );
-		} else {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.NAMESERVERS_FETCH_COMPLETED,
-				domainName,
-				nameservers: data
-			} );
-		}
-	} );
+    wpcom.nameservers(domainName, (error, data) => {
+        if (error) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.NAMESERVERS_FETCH_FAILED,
+                domainName,
+            });
+        } else {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.NAMESERVERS_FETCH_COMPLETED,
+                domainName,
+                nameservers: data,
+            });
+        }
+    });
 }
 
-function updateNameservers( domainName, nameservers, onComplete ) {
-	const postData = nameservers.map( ( nameserver ) => {
-		return {
-			nameserver
-		};
-	} );
+function updateNameservers(domainName, nameservers, onComplete) {
+    const postData = nameservers.map(nameserver => {
+        return {
+            nameserver,
+        };
+    });
 
-	wpcom.updateNameservers( domainName, { nameservers: postData }, ( error ) => {
-		if ( ! error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.NAMESERVERS_UPDATE_COMPLETED,
-				domainName,
-				nameservers
-			} );
-		}
+    wpcom.updateNameservers(domainName, { nameservers: postData }, error => {
+        if (!error) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.NAMESERVERS_UPDATE_COMPLETED,
+                domainName,
+                nameservers,
+            });
+        }
 
-		onComplete( error );
-	} );
+        onComplete(error);
+    });
 }
 
-function resendIcannVerification( domainName, onComplete ) {
-	wpcom.resendIcannVerification( domainName, ( error ) => {
-		if ( ! error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.ICANN_VERIFICATION_RESEND_COMPLETED,
-				domainName
-			} );
-		}
+function resendIcannVerification(domainName, onComplete) {
+    wpcom.resendIcannVerification(domainName, error => {
+        if (!error) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.ICANN_VERIFICATION_RESEND_COMPLETED,
+                domainName,
+            });
+        }
 
-		onComplete( error );
-	} );
+        onComplete(error);
+    });
 }
 
-function closeSiteRedirectNotice( siteId ) {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.SITE_REDIRECT_NOTICE_CLOSE,
-		siteId
-	} );
+function closeSiteRedirectNotice(siteId) {
+    Dispatcher.handleViewAction({
+        type: ActionTypes.SITE_REDIRECT_NOTICE_CLOSE,
+        siteId,
+    });
 }
 
-function fetchSiteRedirect( siteId ) {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.SITE_REDIRECT_FETCH,
-		siteId
-	} );
+function fetchSiteRedirect(siteId) {
+    Dispatcher.handleViewAction({
+        type: ActionTypes.SITE_REDIRECT_FETCH,
+        siteId,
+    });
 
-	wpcom.getSiteRedirect( siteId, ( error, data ) => {
-		if ( data && data.location ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.SITE_REDIRECT_FETCH_COMPLETED,
-				location: data.location,
-				siteId
-			} );
-		} else if ( error && error.message ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.SITE_REDIRECT_FETCH_FAILED,
-				error: error.message,
-				siteId
-			} );
-		} else {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.SITE_REDIRECT_FETCH_FAILED,
-				error: i18n.translate( 'There was a problem retrieving the redirect settings. Please try again later or contact support.' ),
-				siteId
-			} );
-		}
-	} );
+    wpcom.getSiteRedirect(siteId, (error, data) => {
+        if (data && data.location) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.SITE_REDIRECT_FETCH_COMPLETED,
+                location: data.location,
+                siteId,
+            });
+        } else if (error && error.message) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.SITE_REDIRECT_FETCH_FAILED,
+                error: error.message,
+                siteId,
+            });
+        } else {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.SITE_REDIRECT_FETCH_FAILED,
+                error: i18n.translate(
+                    'There was a problem retrieving the redirect settings. Please try again later or contact support.'
+                ),
+                siteId,
+            });
+        }
+    });
 }
 
-function updateSiteRedirect( siteId, location, onComplete ) {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.SITE_REDIRECT_UPDATE,
-		siteId
-	} );
+function updateSiteRedirect(siteId, location, onComplete) {
+    Dispatcher.handleViewAction({
+        type: ActionTypes.SITE_REDIRECT_UPDATE,
+        siteId,
+    });
 
-	wpcom.setSiteRedirect( siteId, location, ( error, data ) => {
-		let success = false;
+    wpcom.setSiteRedirect(siteId, location, (error, data) => {
+        let success = false;
 
-		if ( data && data.success ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.SITE_REDIRECT_UPDATE_COMPLETED,
-				location,
-				siteId,
-				success: i18n.translate( 'The redirect settings were updated successfully.' )
-			} );
+        if (data && data.success) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.SITE_REDIRECT_UPDATE_COMPLETED,
+                location,
+                siteId,
+                success: i18n.translate('The redirect settings were updated successfully.'),
+            });
 
-			success = true;
-		} else if ( error && error.message ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.SITE_REDIRECT_UPDATE_FAILED,
-				error: error.message,
-				siteId
-			} );
-		} else {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.SITE_REDIRECT_UPDATE_FAILED,
-				error: i18n.translate( 'There was a problem updating the redirect settings. Please try again later or contact support.' ),
-				siteId
-			} );
-		}
+            success = true;
+        } else if (error && error.message) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.SITE_REDIRECT_UPDATE_FAILED,
+                error: error.message,
+                siteId,
+            });
+        } else {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.SITE_REDIRECT_UPDATE_FAILED,
+                error: i18n.translate(
+                    'There was a problem updating the redirect settings. Please try again later or contact support.'
+                ),
+                siteId,
+            });
+        }
 
-		onComplete( success );
-	} );
+        onComplete(success);
+    });
 }
 
-function fetchWapiDomainInfo( domainName ) {
-	const wapiDomainInfo = WapiDomainInfoStore.getByDomainName( domainName );
+function fetchWapiDomainInfo(domainName) {
+    const wapiDomainInfo = WapiDomainInfoStore.getByDomainName(domainName);
 
-	if ( ! wapiDomainInfo.needsUpdate ) {
-		return;
-	}
+    if (!wapiDomainInfo.needsUpdate) {
+        return;
+    }
 
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.WAPI_DOMAIN_INFO_FETCH,
-		domainName
-	} );
+    Dispatcher.handleViewAction({
+        type: ActionTypes.WAPI_DOMAIN_INFO_FETCH,
+        domainName,
+    });
 
-	wpcom.fetchWapiDomainInfo( domainName, ( error, status ) => {
-		if ( error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.WAPI_DOMAIN_INFO_FETCH_FAILED,
-				error,
-				domainName
-			} );
+    wpcom.fetchWapiDomainInfo(domainName, (error, status) => {
+        if (error) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.WAPI_DOMAIN_INFO_FETCH_FAILED,
+                error,
+                domainName,
+            });
 
-			return;
-		}
+            return;
+        }
 
-		Dispatcher.handleServerAction( {
-			type: ActionTypes.WAPI_DOMAIN_INFO_FETCH_COMPLETED,
-			status: wapiDomainInfoAssembler.createDomainObject( status ),
-			domainName
-		} );
-	} );
+        Dispatcher.handleServerAction({
+            type: ActionTypes.WAPI_DOMAIN_INFO_FETCH_COMPLETED,
+            status: wapiDomainInfoAssembler.createDomainObject(status),
+            domainName,
+        });
+    });
 }
 
-function requestTransferCode( options, onComplete ) {
-	const { siteId, domainName, unlock, disablePrivacy } = options;
+function requestTransferCode(options, onComplete) {
+    const { siteId, domainName, unlock, disablePrivacy } = options;
 
-	wpcom.requestTransferCode( options, ( error ) => {
-		if ( error ) {
-			onComplete( error );
-			return;
-		}
+    wpcom.requestTransferCode(options, error => {
+        if (error) {
+            onComplete(error);
+            return;
+        }
 
-		Dispatcher.handleServerAction( {
-			type: ActionTypes.DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED,
-			siteId,
-			domainName,
-			unlock,
-			disablePrivacy
-		} );
+        Dispatcher.handleServerAction({
+            type: ActionTypes.DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED,
+            siteId,
+            domainName,
+            unlock,
+            disablePrivacy,
+        });
 
-		onComplete( null );
-	} );
+        onComplete(null);
+    });
 }
 
-function enableDomainLocking( options, onComplete ) {
-	wpcom.enableDomainLocking( options, ( error ) => {
-		if ( error ) {
-			onComplete( error );
-			return;
-		}
+function enableDomainLocking(options, onComplete) {
+    wpcom.enableDomainLocking(options, error => {
+        if (error) {
+            onComplete(error);
+            return;
+        }
 
-		Dispatcher.handleServerAction( {
-			type: ActionTypes.DOMAIN_LOCKING_ENABLE_COMPLETED,
-			domainName: options.domainName
-		} );
+        Dispatcher.handleServerAction({
+            type: ActionTypes.DOMAIN_LOCKING_ENABLE_COMPLETED,
+            domainName: options.domainName,
+        });
 
-		if ( options.enablePrivacy ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.PRIVACY_PROTECTION_ENABLE_COMPLETED,
-				siteId: options.siteId,
-				domainName: options.domainName
-			} );
-		}
+        if (options.enablePrivacy) {
+            Dispatcher.handleServerAction({
+                type: ActionTypes.PRIVACY_PROTECTION_ENABLE_COMPLETED,
+                siteId: options.siteId,
+                domainName: options.domainName,
+            });
+        }
 
-		onComplete( null );
-	} );
+        onComplete(null);
+    });
 }
 
-function enablePrivacyProtection( { siteId, domainName }, onComplete ) {
-	wpcom.enablePrivacyProtection( domainName, ( error ) => {
-		if ( error ) {
-			onComplete( error );
-			return;
-		}
+function enablePrivacyProtection({ siteId, domainName }, onComplete) {
+    wpcom.enablePrivacyProtection(domainName, error => {
+        if (error) {
+            onComplete(error);
+            return;
+        }
 
-		Dispatcher.handleServerAction( {
-			type: ActionTypes.PRIVACY_PROTECTION_ENABLE_COMPLETED,
-			siteId,
-			domainName
-		} );
+        Dispatcher.handleServerAction({
+            type: ActionTypes.PRIVACY_PROTECTION_ENABLE_COMPLETED,
+            siteId,
+            domainName,
+        });
 
-		onComplete( null );
-	} );
+        onComplete(null);
+    });
 }
 
-function acceptTransfer( domainName, onComplete ) {
-	wpcom.acceptTransfer( domainName, ( error ) => {
-		if ( error ) {
-			onComplete( error );
-			return;
-		}
+function acceptTransfer(domainName, onComplete) {
+    wpcom.acceptTransfer(domainName, error => {
+        if (error) {
+            onComplete(error);
+            return;
+        }
 
-		Dispatcher.handleServerAction( {
-			type: ActionTypes.DOMAIN_TRANSFER_ACCEPT_COMPLETED,
-			domainName
-		} );
+        Dispatcher.handleServerAction({
+            type: ActionTypes.DOMAIN_TRANSFER_ACCEPT_COMPLETED,
+            domainName,
+        });
 
-		onComplete( null );
-	} );
+        onComplete(null);
+    });
 }
 
-function declineTransfer( domainName, onComplete ) {
-	wpcom.declineTransfer( domainName, ( error ) => {
-		if ( error ) {
-			onComplete( error );
-			return;
-		}
+function declineTransfer(domainName, onComplete) {
+    wpcom.declineTransfer(domainName, error => {
+        if (error) {
+            onComplete(error);
+            return;
+        }
 
-		Dispatcher.handleServerAction( {
-			type: ActionTypes.DOMAIN_TRANSFER_DECLINE_COMPLETED,
-			domainName
-		} );
+        Dispatcher.handleServerAction({
+            type: ActionTypes.DOMAIN_TRANSFER_DECLINE_COMPLETED,
+            domainName,
+        });
 
-		onComplete( null );
-	} );
+        onComplete(null);
+    });
 }
 
 export {
-	acceptTransfer,
-	addDns,
-	addDnsOffice,
-	addEmailForwarding,
-	closeSiteRedirectNotice,
-	declineTransfer,
-	deleteDns,
-	deleteEmailForwarding,
-	enableDomainLocking,
-	enablePrivacyProtection,
-	fetchDns,
-	fetchDomains,
-	fetchEmailForwarding,
-	fetchNameservers,
-	fetchSiteRedirect,
-	fetchWapiDomainInfo,
-	fetchWhois,
-	requestTransferCode,
-	resendIcannVerification,
-	resendVerificationEmailForwarding,
-	setPrimaryDomain,
-	updateNameservers,
-	updateSiteRedirect,
-	updateWhois
+    acceptTransfer,
+    addDns,
+    addDnsOffice,
+    addEmailForwarding,
+    closeSiteRedirectNotice,
+    declineTransfer,
+    deleteDns,
+    deleteEmailForwarding,
+    enableDomainLocking,
+    enablePrivacyProtection,
+    fetchDns,
+    fetchDomains,
+    fetchEmailForwarding,
+    fetchNameservers,
+    fetchSiteRedirect,
+    fetchWapiDomainInfo,
+    fetchWhois,
+    requestTransferCode,
+    resendIcannVerification,
+    resendVerificationEmailForwarding,
+    setPrimaryDomain,
+    updateNameservers,
+    updateSiteRedirect,
+    updateWhois,
 };

@@ -20,77 +20,84 @@ import store from 'lib/notification-settings-store';
 import { fetchSettings, toggle, saveSettings } from 'lib/notification-settings-store/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
 
-const NotificationCommentsSettings = React.createClass( {
-	displayName: 'NotificationCommentsSettings',
+const NotificationCommentsSettings = React.createClass({
+    displayName: 'NotificationCommentsSettings',
 
-	mixins: [ observe( 'devices' ) ],
+    mixins: [observe('devices')],
 
-	getInitialState() {
-		return {
-			settings: null
-		};
-	},
+    getInitialState() {
+        return {
+            settings: null,
+        };
+    },
 
-	componentDidMount() {
-		store.on( 'change', this.onChange );
-		this.props.devices.get();
-		fetchSettings();
-	},
+    componentDidMount() {
+        store.on('change', this.onChange);
+        this.props.devices.get();
+        fetchSettings();
+    },
 
-	componentWillUnmount() {
-		store.off( 'change', this.onChange );
-	},
+    componentWillUnmount() {
+        store.off('change', this.onChange);
+    },
 
-	onChange() {
-		const state = store.getStateFor( 'other' );
+    onChange() {
+        const state = store.getStateFor('other');
 
-		if ( state.error ) {
-			this.props.errorNotice( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
-		}
+        if (state.error) {
+            this.props.errorNotice(
+                this.translate('There was a problem saving your changes. Please, try again.')
+            );
+        }
 
-		if ( state.status === 'success' ) {
-			this.props.successNotice( this.translate( 'Settings saved successfully!' ) );
-		}
+        if (state.status === 'success') {
+            this.props.successNotice(this.translate('Settings saved successfully!'));
+        }
 
-		this.setState( state );
-	},
+        this.setState(state);
+    },
 
-	renderForm() {
-		if ( this.props.devices.initialized && this.state.settings ) {
-			return ( <SettingsForm
-				sourceId={ 'other' }
-				devices={ this.props.devices }
-				settings={ this.state.settings }
-				settingKeys={ [ 'comment_like', 'comment_reply' ] }
-				hasUnsavedChanges={ this.state.hasUnsavedChanges }
-				onToggle={ ( source, stream, setting ) => toggle( source, stream, setting ) }
-				onSave={ () => saveSettings( 'other', this.state.settings ) } /> );
-		}
+    renderForm() {
+        if (this.props.devices.initialized && this.state.settings) {
+            return (
+                <SettingsForm
+                    sourceId={'other'}
+                    devices={this.props.devices}
+                    settings={this.state.settings}
+                    settingKeys={['comment_like', 'comment_reply']}
+                    hasUnsavedChanges={this.state.hasUnsavedChanges}
+                    onToggle={(source, stream, setting) => toggle(source, stream, setting)}
+                    onSave={() => saveSettings('other', this.state.settings)}
+                />
+            );
+        }
 
-		return ( <p className="notification-settings-comment-settings__placeholder">&nbsp;</p> );
-	},
+        return <p className="notification-settings-comment-settings__placeholder">&nbsp;</p>;
+    },
 
-	render() {
-		return (
-			<Main>
-				<MeSidebarNavigation />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+    render() {
+        return (
+            <Main>
+                <MeSidebarNavigation />
+                <ReauthRequired twoStepAuthorization={twoStepAuthorization} />
 
-				<Navigation path={ this.props.path } />
+                <Navigation path={this.props.path} />
 
-				<Card>
-					<FormSectionHeading className="is-primary">
-						{ this.translate( 'Comments on other sites' ) }
-					</FormSectionHeading>
-					<p>{ this.translate( 'Control your notification settings when you comment on other blogs.' ) }</p>
-					{ this.renderForm() }
-				</Card>
-			</Main>
-		);
-	}
-} );
+                <Card>
+                    <FormSectionHeading className="is-primary">
+                        {this.translate('Comments on other sites')}
+                    </FormSectionHeading>
+                    <p>
+                        {this.translate(
+                            'Control your notification settings when you comment on other blogs.'
+                        )}
+                    </p>
+                    {this.renderForm()}
+                </Card>
+            </Main>
+        );
+    },
+});
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
-)( NotificationCommentsSettings );
+export default connect(null, dispatch =>
+    bindActionCreators({ successNotice, errorNotice }, dispatch))(NotificationCommentsSettings);

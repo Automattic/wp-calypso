@@ -5,13 +5,13 @@
 var isLoggedIn = false;
 
 export default function() {
-	return {
-		get: function() {
-			return isLoggedIn;
-		},
+    return {
+        get: function() {
+            return isLoggedIn;
+        },
 
-		setLoggedIn: function( newIsLoggedIn ) {
-			isLoggedIn = newIsLoggedIn;
-		}
-	};
-};
+        setLoggedIn: function(newIsLoggedIn) {
+            isLoggedIn = newIsLoggedIn;
+        },
+    };
+}

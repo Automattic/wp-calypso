@@ -9,7 +9,7 @@ import { combineReducers } from 'redux';
 import siteTitle from './site-title/reducer';
 import survey from './survey/reducer';
 
-export default combineReducers( {
-	siteTitle,
-	survey,
-} );
+export default combineReducers({
+    siteTitle,
+    survey,
+});

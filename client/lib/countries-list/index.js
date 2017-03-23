@@ -15,7 +15,7 @@ import wp from 'lib/wp';
  * Module variables
  */
 const wpcom = wp.undocumented();
-const debug = debugFactory( 'calypso:CountriesList' );
+const debug = debugFactory('calypso:CountriesList');
 
 /**
  * Initializes a new list of countries.
@@ -23,50 +23,52 @@ const debug = debugFactory( 'calypso:CountriesList' );
  * @constructor
  * @param {string} key - key used to identify this list in the store or the debug messages
  */
-function CountriesList( key ) {
-	if ( ! ( this instanceof CountriesList ) ) {
-		return new CountriesList( key );
-	}
+function CountriesList(key) {
+    if (!(this instanceof CountriesList)) {
+        return new CountriesList(key);
+    }
 
-	this.key = key + 'CountriesList';
-	this.initialized = false;
+    this.key = key + 'CountriesList';
+    this.initialized = false;
 }
 
 /**
  * Adds event capabilities to this list of countries.
  */
-makeEmitter( CountriesList.prototype );
+makeEmitter(CountriesList.prototype);
 
 /**
  * Fetches the list of countries from the server.
  */
 CountriesList.prototype.fetch = function() {
-	debug( 'Fetching ' + this.key + ' from api' );
+    debug('Fetching ' + this.key + ' from api');
 
-	this.isFetching = true;
+    this.isFetching = true;
 
-	// Sends a request to the API endpoint defined in the subclass
-	this.requestFromEndpoint( function( error, countriesList ) {
-		if ( error ) {
-			debug( 'Unable to fetch ' + this.key + ' from api', error );
+    // Sends a request to the API endpoint defined in the subclass
+    this.requestFromEndpoint(
+        function(error, countriesList) {
+            if (error) {
+                debug('Unable to fetch ' + this.key + ' from api', error);
 
-			return;
-		}
+                return;
+            }
 
-		debug( this.key + ' fetched from api successfully:', countriesList );
+            debug(this.key + ' fetched from api successfully:', countriesList);
 
-		if ( ! this.initialized ) {
-			this.initialize( countriesList );
-		} else {
-			this.data = countriesList;
-		}
+            if (!this.initialized) {
+                this.initialize(countriesList);
+            } else {
+                this.data = countriesList;
+            }
 
-		this.isFetching = false;
+            this.isFetching = false;
 
-		this.emit( 'change' );
+            this.emit('change');
 
-		store.set( this.key, countriesList );
-	}.bind( this ) );
+            store.set(this.key, countriesList);
+        }.bind(this)
+    );
 };
 
 /**
@@ -76,23 +78,23 @@ CountriesList.prototype.fetch = function() {
  * @returns {object} the list of countries
  */
 CountriesList.prototype.get = function() {
-	let data;
+    let data;
 
-	if ( ! this.data ) {
-		data = store.get( this.key );
+    if (!this.data) {
+        data = store.get(this.key);
 
-		if ( data ) {
-			debug( 'Loaded ' + this.key + ' from store', data );
+        if (data) {
+            debug('Loaded ' + this.key + ' from store', data);
 
-			this.initialize( data );
-		} else {
-			this.data = {};
-		}
+            this.initialize(data);
+        } else {
+            this.data = {};
+        }
 
-		this.fetch();
-	}
+        this.fetch();
+    }
 
-	return this.data;
+    return this.data;
 };
 
 /**
@@ -101,7 +103,7 @@ CountriesList.prototype.get = function() {
  * @return {boolean} true if this list of countries has been loaded, false otherwise
  */
 CountriesList.prototype.hasLoadedFromServer = function() {
-	return this.initialized;
+    return this.initialized;
 };
 
 /**
@@ -109,10 +111,10 @@ CountriesList.prototype.hasLoadedFromServer = function() {
  *
  * @param {object} data - data
  */
-CountriesList.prototype.initialize = function( data ) {
-	this.data = data;
+CountriesList.prototype.initialize = function(data) {
+    this.data = data;
 
-	this.initialized = true;
+    this.initialized = true;
 };
 
 /**
@@ -121,13 +123,13 @@ CountriesList.prototype.initialize = function( data ) {
  * @constructor
  */
 function DomainRegistrationCountriesList() {
-	CountriesList.call( this, 'DomainRegistration' );
+    CountriesList.call(this, 'DomainRegistration');
 }
 
-inherits( DomainRegistrationCountriesList, CountriesList );
+inherits(DomainRegistrationCountriesList, CountriesList);
 
-DomainRegistrationCountriesList.prototype.requestFromEndpoint = function( fn ) {
-	return wpcom.getDomainRegistrationSupportedCountries( fn );
+DomainRegistrationCountriesList.prototype.requestFromEndpoint = function(fn) {
+    return wpcom.getDomainRegistrationSupportedCountries(fn);
 };
 
 /**
@@ -136,13 +138,13 @@ DomainRegistrationCountriesList.prototype.requestFromEndpoint = function( fn ) {
  * @constructor
  */
 function PaymentCountriesList() {
-	CountriesList.call( this, 'Payment' );
+    CountriesList.call(this, 'Payment');
 }
 
-inherits( PaymentCountriesList, CountriesList );
+inherits(PaymentCountriesList, CountriesList);
 
-PaymentCountriesList.prototype.requestFromEndpoint = function( fn ) {
-	return wpcom.getPaymentSupportedCountries( fn );
+PaymentCountriesList.prototype.requestFromEndpoint = function(fn) {
+    return wpcom.getPaymentSupportedCountries(fn);
 };
 
 /**
@@ -151,13 +153,13 @@ PaymentCountriesList.prototype.requestFromEndpoint = function( fn ) {
  * @constructor
  */
 function SmsCountriesList() {
-	CountriesList.call( this, 'SMS' );
+    CountriesList.call(this, 'SMS');
 }
 
-inherits( SmsCountriesList, CountriesList );
+inherits(SmsCountriesList, CountriesList);
 
-SmsCountriesList.prototype.requestFromEndpoint = function( fn ) {
-	return wpcom.getSmsSupportedCountries( fn );
+SmsCountriesList.prototype.requestFromEndpoint = function(fn) {
+    return wpcom.getSmsSupportedCountries(fn);
 };
 
 const domainRegistrationCountriesList = new DomainRegistrationCountriesList();
@@ -165,13 +167,13 @@ const paymentCountriesList = new PaymentCountriesList();
 const smsCountriesList = new SmsCountriesList();
 
 module.exports = {
-	forDomainRegistrations: function() {
-		return domainRegistrationCountriesList;
-	},
-	forPayments: function() {
-		return paymentCountriesList;
-	},
-	forSms: function() {
-		return smsCountriesList;
-	}
+    forDomainRegistrations: function() {
+        return domainRegistrationCountriesList;
+    },
+    forPayments: function() {
+        return paymentCountriesList;
+    },
+    forSms: function() {
+        return smsCountriesList;
+    },
 };

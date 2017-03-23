@@ -8,40 +8,40 @@ import { expect } from 'chai';
  */
 import { getTimezonesLabels } from '../';
 
-describe( 'getTimezonesLabels()', () => {
-	it( 'should return {} if `timezones` aren\'t synced', () => {
-		const state = {
-			timezones: {
-				byContinents: {},
-				labels: {},
-				rawOffsets: {},
-			}
-		};
+describe('getTimezonesLabels()', () => {
+    it("should return {} if `timezones` aren't synced", () => {
+        const state = {
+            timezones: {
+                byContinents: {},
+                labels: {},
+                rawOffsets: {},
+            },
+        };
 
-		const timezonesLabels = getTimezonesLabels( state );
+        const timezonesLabels = getTimezonesLabels(state);
 
-		expect( timezonesLabels ).to.eql( {} );
-	} );
+        expect(timezonesLabels).to.eql({});
+    });
 
-	it( 'should return timezones by contienent object data', () => {
-		const state = {
-			timezones: {
-				byContinents: {},
-				labels: {
-					'Asia/Aqtobe': 'Aqtobe',
-					'America/Boa_Vista': 'Boa Vista',
-					'Indian/Comoro': 'Comoro',
-				},
-				rawOffsets: {},
-			}
-		};
+    it('should return timezones by contienent object data', () => {
+        const state = {
+            timezones: {
+                byContinents: {},
+                labels: {
+                    'Asia/Aqtobe': 'Aqtobe',
+                    'America/Boa_Vista': 'Boa Vista',
+                    'Indian/Comoro': 'Comoro',
+                },
+                rawOffsets: {},
+            },
+        };
 
-		const labels = getTimezonesLabels( state );
+        const labels = getTimezonesLabels(state);
 
-		expect( labels ).to.eql( {
-			'Asia/Aqtobe': 'Aqtobe',
-			'America/Boa_Vista': 'Boa Vista',
-			'Indian/Comoro': 'Comoro',
-		} );
-	} );
-} );
+        expect(labels).to.eql({
+            'Asia/Aqtobe': 'Aqtobe',
+            'America/Boa_Vista': 'Boa Vista',
+            'Indian/Comoro': 'Comoro',
+        });
+    });
+});

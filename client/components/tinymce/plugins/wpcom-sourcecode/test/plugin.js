@@ -8,77 +8,91 @@ import { expect } from 'chai';
  */
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'wpcom-sourcecode', () => {
-	let wrapPre, unwrapPre;
+describe('wpcom-sourcecode', () => {
+    let wrapPre, unwrapPre;
 
-	useMockery( mockery => {
-		mockery.registerMock( 'tinymce/tinymce', {} );
+    useMockery(mockery => {
+        mockery.registerMock('tinymce/tinymce', {});
 
-		const plugin = require( '../plugin' );
-		wrapPre = plugin.wrapPre;
-		unwrapPre = plugin.unwrapPre;
-	} );
+        const plugin = require('../plugin');
+        wrapPre = plugin.wrapPre;
+        unwrapPre = plugin.unwrapPre;
+    });
 
-	describe( '#wrapPre()', () => {
-		it( 'should wrap a code shortcode', () => {
-			const wrapped = wrapPre( {
-				content: '[code lang="javascript"]const noop = () => {};[/code]'
-			} );
+    describe('#wrapPre()', () => {
+        it('should wrap a code shortcode', () => {
+            const wrapped = wrapPre({
+                content: '[code lang="javascript"]const noop = () => {};[/code]',
+            });
 
-			expect( wrapped ).to.equal( '<pre>[code lang="javascript"]const noop = () =&gt; {};[/code]</pre>' );
-		} );
+            expect(wrapped).to.equal(
+                '<pre>[code lang="javascript"]const noop = () =&gt; {};[/code]</pre>'
+            );
+        });
 
-		it( 'should not encode entities when initial non-load', () => {
-			const wrapped = wrapPre( {
-				content: '[code lang="javascript"]const noop = () =&gt; {};[/code]',
-				initial: true
-			} );
+        it('should not encode entities when initial non-load', () => {
+            const wrapped = wrapPre({
+                content: '[code lang="javascript"]const noop = () =&gt; {};[/code]',
+                initial: true,
+            });
 
-			expect( wrapped ).to.equal( '<pre>[code lang="javascript"]const noop = () =&gt; {};[/code]</pre>' );
-		} );
+            expect(wrapped).to.equal(
+                '<pre>[code lang="javascript"]const noop = () =&gt; {};[/code]</pre>'
+            );
+        });
 
-		it( 'should encode entities when initial load', () => {
-			const wrapped = wrapPre( {
-				content: '[code lang="javascript"]const noop = () => {};[/code]',
-				initial: true,
-				load: true
-			} );
+        it('should encode entities when initial load', () => {
+            const wrapped = wrapPre({
+                content: '[code lang="javascript"]const noop = () => {};[/code]',
+                initial: true,
+                load: true,
+            });
 
-			expect( wrapped ).to.equal( '<pre>[code lang="javascript"]const noop = () =&gt; {};[/code]</pre>' );
-		} );
+            expect(wrapped).to.equal(
+                '<pre>[code lang="javascript"]const noop = () =&gt; {};[/code]</pre>'
+            );
+        });
 
-		it( 'should wrap a sourcecode shortcode', () => {
-			const wrapped = wrapPre( {
-				content: '[sourcecode lang="javascript"]const noop = () => {};[/sourcecode]'
-			} );
+        it('should wrap a sourcecode shortcode', () => {
+            const wrapped = wrapPre({
+                content: '[sourcecode lang="javascript"]const noop = () => {};[/sourcecode]',
+            });
 
-			expect( wrapped ).to.equal( '<pre>[sourcecode lang="javascript"]const noop = () =&gt; {};[/sourcecode]</pre>' );
-		} );
-	} );
+            expect(wrapped).to.equal(
+                '<pre>[sourcecode lang="javascript"]const noop = () =&gt; {};[/sourcecode]</pre>'
+            );
+        });
+    });
 
-	describe( '#unwrapPre()', () => {
-		it( 'should unwrap a code shortcode', () => {
-			const unwrapped = unwrapPre( {
-				content: '<pre>[code lang="javascript"]const noop = () =&gt; {};[/code]</pre>'
-			} );
+    describe('#unwrapPre()', () => {
+        it('should unwrap a code shortcode', () => {
+            const unwrapped = unwrapPre({
+                content: '<pre>[code lang="javascript"]const noop = () =&gt; {};[/code]</pre>',
+            });
 
-			expect( unwrapped ).to.equal( '<p>[code lang="javascript"]const noop = () => {};[/code]</p>' );
-		} );
+            expect(unwrapped).to.equal(
+                '<p>[code lang="javascript"]const noop = () => {};[/code]</p>'
+            );
+        });
 
-		it( 'should unwrap a sourcecode shortcode', () => {
-			const unwrapped = unwrapPre( {
-				content: '<pre>[sourcecode lang="javascript"]const noop = () =&gt; {};[/sourcecode]</pre>'
-			} );
+        it('should unwrap a sourcecode shortcode', () => {
+            const unwrapped = unwrapPre({
+                content: '<pre>[sourcecode lang="javascript"]const noop = () =&gt; {};[/sourcecode]</pre>',
+            });
 
-			expect( unwrapped ).to.equal( '<p>[sourcecode lang="javascript"]const noop = () => {};[/sourcecode]</p>' );
-		} );
+            expect(unwrapped).to.equal(
+                '<p>[sourcecode lang="javascript"]const noop = () => {};[/sourcecode]</p>'
+            );
+        });
 
-		it( 'should gracefully handle surrounding content', () => {
-			const unwrapped = unwrapPre( {
-				content: '<p>foo</p><p><pre>[sourcecode lang="javascript"]const noop = () =&gt; {};[/sourcecode]</pre></p><p>bar</p>'
-			} );
+        it('should gracefully handle surrounding content', () => {
+            const unwrapped = unwrapPre({
+                content: '<p>foo</p><p><pre>[sourcecode lang="javascript"]const noop = () =&gt; {};[/sourcecode]</pre></p><p>bar</p>',
+            });
 
-			expect( unwrapped ).to.equal( '<p>foo</p><p>[sourcecode lang="javascript"]const noop = () => {};[/sourcecode]</p><p>bar</p>' );
-		} );
-	} );
-} );
+            expect(unwrapped).to.equal(
+                '<p>foo</p><p>[sourcecode lang="javascript"]const noop = () => {};[/sourcecode]</p><p>bar</p>'
+            );
+        });
+    });
+});

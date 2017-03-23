@@ -12,6 +12,6 @@ import get from 'lodash/get';
  * @param  {Object} state - Global state tree
  * @return {Object} An object of timezones labels
  */
-export default function getTimezonesLabels( state ) {
-	return get( state, 'timezones.labels', {} );
+export default function getTimezonesLabels(state) {
+    return get(state, 'timezones.labels', {});
 }

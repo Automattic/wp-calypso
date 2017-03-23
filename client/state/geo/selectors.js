@@ -9,8 +9,8 @@ import { get } from 'lodash';
  * @param  {Object}  state Global state tree
  * @return {Boolean}       Whether request is in progress
  */
-export function isRequestingGeo( state ) {
-	return state.geo.requesting;
+export function isRequestingGeo(state) {
+    return state.geo.requesting;
 }
 
 /**
@@ -19,8 +19,8 @@ export function isRequestingGeo( state ) {
  * @param  {Object}  state Global state tree
  * @return {?Object}       Current browser IP geolocation data
  */
-export function getGeo( state ) {
-	return state.geo.geo;
+export function getGeo(state) {
+    return state.geo.geo;
 }
 
 /**
@@ -29,6 +29,6 @@ export function getGeo( state ) {
  * @param  {Object}  state Global state tree
  * @return {?String}       Current browser IP geolocation data
  */
-export function getGeoCountry( state ) {
-	return get( getGeo( state ), 'country_long', null );
+export function getGeoCountry(state) {
+    return get(getGeo(state), 'country_long', null);
 }

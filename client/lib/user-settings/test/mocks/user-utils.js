@@ -1,5 +1,5 @@
 export default {
-	isLoggedIn() {
-		return true;
-	}
+    isLoggedIn() {
+        return true;
+    },
 };

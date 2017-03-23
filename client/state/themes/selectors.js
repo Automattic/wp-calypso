@@ -9,23 +9,23 @@ import createSelector from 'lib/create-selector';
  */
 import config from 'config';
 import {
-	getSiteSlug,
-	getSiteOption,
-	isJetpackSite,
-	canJetpackSiteManage,
-	hasJetpackSiteJetpackThemesExtendedFeatures,
-	isJetpackSiteMultiSite,
+    getSiteSlug,
+    getSiteOption,
+    isJetpackSite,
+    canJetpackSiteManage,
+    hasJetpackSiteJetpackThemesExtendedFeatures,
+    isJetpackSiteMultiSite,
 } from 'state/sites/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { getCustomizerUrl } from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import {
-	getDeserializedThemesQueryDetails,
-	getNormalizedThemesQuery,
-	getSerializedThemesQuery,
-	getSerializedThemesQueryWithoutPage,
-	isPremium,
-	oldShowcaseUrl
+    getDeserializedThemesQueryDetails,
+    getNormalizedThemesQuery,
+    getSerializedThemesQuery,
+    getSerializedThemesQueryWithoutPage,
+    isPremium,
+    oldShowcaseUrl,
 } from './utils';
 import { DEFAULT_THEME_QUERY } from './constants';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
@@ -39,15 +39,15 @@ import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
  * @return {?Object}         Theme object
  */
 export const getTheme = createSelector(
-	( state, siteId, themeId ) => {
-		const manager = state.themes.queries[ siteId ];
-		if ( ! manager ) {
-			return null;
-		}
+    (state, siteId, themeId) => {
+        const manager = state.themes.queries[siteId];
+        if (!manager) {
+            return null;
+        }
 
-		return manager.getItem( themeId );
-	},
-	( state ) => state.themes.queries
+        return manager.getItem(themeId);
+    },
+    state => state.themes.queries
 );
 
 /**
@@ -61,9 +61,9 @@ export const getTheme = createSelector(
  * @param  {String}  themeId Theme ID
  * @return {?Object}         Theme object
  */
-export function getCanonicalTheme( state, siteId, themeId ) {
-	const source = find( [ 'wpcom', 'wporg', siteId ], s => getTheme( state, s, themeId ) );
-	return getTheme( state, source, themeId );
+export function getCanonicalTheme(state, siteId, themeId) {
+    const source = find(['wpcom', 'wporg', siteId], s => getTheme(state, s, themeId));
+    return getTheme(state, source, themeId);
 }
 
 /**
@@ -78,12 +78,12 @@ export function getCanonicalTheme( state, siteId, themeId ) {
  * @param {Number} siteId	Site ID
  * @return {String} 		Potentially suffixed theme ID
  */
-const getSuffixedThemeId = ( state, themeId, siteId ) => {
-	const siteIsJetpack = siteId && isJetpackSite( state, siteId );
-	if ( siteIsJetpack && ! getTheme( state, siteId, themeId ) ) {
-		return `${ themeId }-wpcom`;
-	}
-	return themeId;
+const getSuffixedThemeId = (state, themeId, siteId) => {
+    const siteIsJetpack = siteId && isJetpackSite(state, siteId);
+    if (siteIsJetpack && !getTheme(state, siteId, themeId)) {
+        return `${themeId}-wpcom`;
+    }
+    return themeId;
 };
 
 /**
@@ -94,8 +94,8 @@ const getSuffixedThemeId = ( state, themeId, siteId ) => {
  * @param  {Number}  siteId  Site ID
  * @return {Object}          error object if present or null otherwise
  */
-export function getThemeRequestErrors( state, themeId, siteId ) {
-	return get( state.themes.themeRequestErrors, [ siteId, themeId ], null );
+export function getThemeRequestErrors(state, themeId, siteId) {
+    return get(state.themes.themeRequestErrors, [siteId, themeId], null);
 }
 
 /**
@@ -108,32 +108,32 @@ export function getThemeRequestErrors( state, themeId, siteId ) {
  * @return {?Array}         Themes for the theme query
  */
 export const getThemesForQuery = createSelector(
-	( state, siteId, query ) => {
-		const manager = state.themes.queries[ siteId ];
-		if ( ! manager ) {
-			return null;
-		}
+    (state, siteId, query) => {
+        const manager = state.themes.queries[siteId];
+        if (!manager) {
+            return null;
+        }
 
-		const themes = manager.getItems( query );
-		if ( ! themes ) {
-			return null;
-		}
+        const themes = manager.getItems(query);
+        if (!themes) {
+            return null;
+        }
 
-		// ThemeQueryManager will return an array including undefined entries if
-		// it knows that a page of results exists for the query (via a previous
-		// request's `found` value) but the items haven't been received. While
-		// we could impose this on the developer to accommodate, instead we
-		// simply return null when any `undefined` entries exist in the set.
-		if ( includes( themes, undefined ) ) {
-			return null;
-		}
+        // ThemeQueryManager will return an array including undefined entries if
+        // it knows that a page of results exists for the query (via a previous
+        // request's `found` value) but the items haven't been received. While
+        // we could impose this on the developer to accommodate, instead we
+        // simply return null when any `undefined` entries exist in the set.
+        if (includes(themes, undefined)) {
+            return null;
+        }
 
-		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
-		// over different pages) which we need to remove manually here for now.
-		return uniq( themes );
-	},
-	( state ) => state.themes.queries,
-	( state, siteId, query ) => getSerializedThemesQuery( query, siteId )
+        // FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
+        // over different pages) which we need to remove manually here for now.
+        return uniq(themes);
+    },
+    state => state.themes.queries,
+    (state, siteId, query) => getSerializedThemesQuery(query, siteId)
 );
 
 /**
@@ -143,8 +143,8 @@ export const getThemesForQuery = createSelector(
  * @param  {Number}  siteId Site ID
  * @return {Object}         Last query
  */
-export function getLastThemeQuery( state, siteId ) {
-	return get( state.themes.lastQuery, siteId, {} );
+export function getLastThemeQuery(state, siteId) {
+    return get(state.themes.lastQuery, siteId, {});
 }
 
 /**
@@ -156,9 +156,9 @@ export function getLastThemeQuery( state, siteId ) {
  * @param  {Object}  query  Theme query object
  * @return {Boolean}        Whether themes are being requested
  */
-export function isRequestingThemesForQuery( state, siteId, query ) {
-	const serializedQuery = getSerializedThemesQuery( query, siteId );
-	return !! state.themes.queryRequests[ serializedQuery ];
+export function isRequestingThemesForQuery(state, siteId, query) {
+    const serializedQuery = getSerializedThemesQuery(query, siteId);
+    return !!state.themes.queryRequests[serializedQuery];
 }
 
 /**
@@ -170,12 +170,12 @@ export function isRequestingThemesForQuery( state, siteId, query ) {
  * @param  {Object}  query  Theme query object
  * @return {?Number}        Total number of found items
  */
-export function getThemesFoundForQuery( state, siteId, query ) {
-	if ( ! state.themes.queries[ siteId ] ) {
-		return null;
-	}
+export function getThemesFoundForQuery(state, siteId, query) {
+    if (!state.themes.queries[siteId]) {
+        return null;
+    }
 
-	return state.themes.queries[ siteId ].getFound( query );
+    return state.themes.queries[siteId].getFound(query);
 }
 
 /**
@@ -187,22 +187,22 @@ export function getThemesFoundForQuery( state, siteId, query ) {
  * @param  {Object}  query  Theme query object
  * @return {?Number}        Last themes page
  */
-export function getThemesLastPageForQuery( state, siteId, query ) {
-	if ( ! state.themes.queries[ siteId ] ) {
-		return null;
-	}
+export function getThemesLastPageForQuery(state, siteId, query) {
+    if (!state.themes.queries[siteId]) {
+        return null;
+    }
 
-	const pages = state.themes.queries[ siteId ].getNumberOfPages( query );
-	if ( null === pages ) {
-		return null;
-	}
+    const pages = state.themes.queries[siteId].getNumberOfPages(query);
+    if (null === pages) {
+        return null;
+    }
 
-	// No pagination on Jetpack sites -- everything is returned at once, i.e. on one page
-	if ( isJetpackSite( state, siteId ) ) {
-		return 1;
-	}
+    // No pagination on Jetpack sites -- everything is returned at once, i.e. on one page
+    if (isJetpackSite(state, siteId)) {
+        return 1;
+    }
 
-	return Math.max( pages, 1 );
+    return Math.max(pages, 1);
 }
 
 /**
@@ -214,13 +214,13 @@ export function getThemesLastPageForQuery( state, siteId, query ) {
  * @param  {Object}   query  Theme query object
  * @return {?Boolean}        Whether last themes page has been reached
  */
-export function isThemesLastPageForQuery( state, siteId, query = {} ) {
-	const lastPage = getThemesLastPageForQuery( state, siteId, query );
-	if ( null === lastPage ) {
-		return lastPage;
-	}
+export function isThemesLastPageForQuery(state, siteId, query = {}) {
+    const lastPage = getThemesLastPageForQuery(state, siteId, query);
+    if (null === lastPage) {
+        return lastPage;
+    }
 
-	return lastPage === ( query.page || DEFAULT_THEME_QUERY.page );
+    return lastPage === (query.page || DEFAULT_THEME_QUERY.page);
 }
 
 /**
@@ -233,23 +233,23 @@ export function isThemesLastPageForQuery( state, siteId, query = {} ) {
  * @return {?Array}         Themes for the theme query
  */
 export const getThemesForQueryIgnoringPage = createSelector(
-	( state, siteId, query ) => {
-		const themes = state.themes.queries[ siteId ];
-		if ( ! themes ) {
-			return null;
-		}
+    (state, siteId, query) => {
+        const themes = state.themes.queries[siteId];
+        if (!themes) {
+            return null;
+        }
 
-		const themesForQueryIgnoringPage = themes.getItemsIgnoringPage( query );
-		if ( ! themesForQueryIgnoringPage ) {
-			return null;
-		}
+        const themesForQueryIgnoringPage = themes.getItemsIgnoringPage(query);
+        if (!themesForQueryIgnoringPage) {
+            return null;
+        }
 
-		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
-		// over different pages) which we need to remove manually here for now.
-		return uniq( themesForQueryIgnoringPage );
-	},
-	( state ) => state.themes.queries,
-	( state, siteId, query ) => getSerializedThemesQueryWithoutPage( query, siteId )
+        // FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
+        // over different pages) which we need to remove manually here for now.
+        return uniq(themesForQueryIgnoringPage);
+    },
+    state => state.themes.queries,
+    (state, siteId, query) => getSerializedThemesQueryWithoutPage(query, siteId)
 );
 
 /**
@@ -262,26 +262,23 @@ export const getThemesForQueryIgnoringPage = createSelector(
  * @return {Boolean}        Whether themes are being requested
  */
 export const isRequestingThemesForQueryIgnoringPage = createSelector(
-	( state, siteId, query ) => {
-		const normalizedQueryWithoutPage = omit( getNormalizedThemesQuery( query ), 'page' );
-		return some( state.themes.queryRequests, ( isRequesting, serializedQuery ) => {
-			if ( ! isRequesting ) {
-				return false;
-			}
+    (state, siteId, query) => {
+        const normalizedQueryWithoutPage = omit(getNormalizedThemesQuery(query), 'page');
+        return some(state.themes.queryRequests, (isRequesting, serializedQuery) => {
+            if (!isRequesting) {
+                return false;
+            }
 
-			const queryDetails = getDeserializedThemesQueryDetails( serializedQuery );
-			if ( queryDetails.siteId !== siteId ) {
-				return false;
-			}
+            const queryDetails = getDeserializedThemesQueryDetails(serializedQuery);
+            if (queryDetails.siteId !== siteId) {
+                return false;
+            }
 
-			return isEqual(
-				normalizedQueryWithoutPage,
-				omit( queryDetails.query, 'page' )
-			);
-		} );
-	},
-	( state ) => state.themes.queryRequests,
-	( state, siteId, query ) => getSerializedThemesQuery( query, siteId )
+            return isEqual(normalizedQueryWithoutPage, omit(queryDetails.query, 'page'));
+        });
+    },
+    state => state.themes.queryRequests,
+    (state, siteId, query) => getSerializedThemesQuery(query, siteId)
 );
 
 /**
@@ -293,12 +290,12 @@ export const isRequestingThemesForQueryIgnoringPage = createSelector(
  * @param  {Number}  themeId Theme ID
  * @return {Boolean}        Whether request is in progress
  */
-export function isRequestingTheme( state, siteId, themeId ) {
-	if ( ! state.themes.themeRequests[ siteId ] ) {
-		return false;
-	}
+export function isRequestingTheme(state, siteId, themeId) {
+    if (!state.themes.themeRequests[siteId]) {
+        return false;
+    }
 
-	return !! state.themes.themeRequests[ siteId ][ themeId ];
+    return !!state.themes.themeRequests[siteId][themeId];
 }
 
 /**
@@ -309,8 +306,8 @@ export function isRequestingTheme( state, siteId, themeId ) {
  * @param  {Number}  siteId Site ID
  * @return {Boolean}        Whether request is in progress
  */
-export function isRequestingActiveTheme( state, siteId ) {
-	return get( state.themes.activeThemeRequests, siteId, false );
+export function isRequestingActiveTheme(state, siteId) {
+    return get(state.themes.activeThemeRequests, siteId, false);
 }
 
 /**
@@ -320,8 +317,8 @@ export function isRequestingActiveTheme( state, siteId ) {
  * @param  {Number}  themeId Theme ID
  * @return {Boolean}         Whether theme is in WP.com theme directory
  */
-export function isWpcomTheme( state, themeId ) {
-	return !! getTheme( state, 'wpcom', themeId );
+export function isWpcomTheme(state, themeId) {
+    return !!getTheme(state, 'wpcom', themeId);
 }
 
 /**
@@ -331,8 +328,8 @@ export function isWpcomTheme( state, themeId ) {
  * @param  {Number}  themeId Theme ID
  * @return {Boolean}         Whether theme is in WP.org theme directory
  */
-export function isWporgTheme( state, themeId ) {
-	return !! getTheme( state, 'wporg', themeId );
+export function isWporgTheme(state, themeId) {
+    return !!getTheme(state, 'wporg', themeId);
 }
 
 /**
@@ -343,26 +340,26 @@ export function isWporgTheme( state, themeId ) {
  * @param  {?Number} siteId  Site ID to optionally use as context
  * @return {?String}         Theme details sheet URL
  */
-export function getThemeDetailsUrl( state, themeId, siteId ) {
-	if ( ! themeId ) {
-		return null;
-	}
+export function getThemeDetailsUrl(state, themeId, siteId) {
+    if (!themeId) {
+        return null;
+    }
 
-	if ( isJetpackSite( state, siteId ) &&
-		! (
-			config.isEnabled( 'manage/themes/details/jetpack' ) &&
-			canJetpackSiteManage( state, siteId ) &&
-			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId )
-		) ) {
-		return getSiteOption( state, siteId, 'admin_url' ) + 'themes.php?theme=' + themeId;
-	}
+    if (
+        isJetpackSite(state, siteId) &&
+        !(config.isEnabled('manage/themes/details/jetpack') &&
+            canJetpackSiteManage(state, siteId) &&
+            hasJetpackSiteJetpackThemesExtendedFeatures(state, siteId))
+    ) {
+        return getSiteOption(state, siteId, 'admin_url') + 'themes.php?theme=' + themeId;
+    }
 
-	let baseUrl = oldShowcaseUrl + themeId;
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		baseUrl = `/theme/${ themeId }`;
-	}
+    let baseUrl = oldShowcaseUrl + themeId;
+    if (config.isEnabled('manage/themes/details')) {
+        baseUrl = `/theme/${themeId}`;
+    }
 
-	return baseUrl + ( siteId ? `/${ getSiteSlug( state, siteId ) }` : '' );
+    return baseUrl + (siteId ? `/${getSiteSlug(state, siteId)}` : '');
 }
 
 /**
@@ -373,18 +370,18 @@ export function getThemeDetailsUrl( state, themeId, siteId ) {
  * @param  {?Number} siteId  Site ID to optionally use as context
  * @return {?String}         Theme setup instructions URL
  */
-export function getThemeSupportUrl( state, themeId, siteId ) {
-	if ( ! themeId || ! isThemePremium( state, themeId ) ) {
-		return null;
-	}
+export function getThemeSupportUrl(state, themeId, siteId) {
+    if (!themeId || !isThemePremium(state, themeId)) {
+        return null;
+    }
 
-	const sitePart = siteId ? `/${ getSiteSlug( state, siteId ) }` : '';
+    const sitePart = siteId ? `/${getSiteSlug(state, siteId)}` : '';
 
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		return `/theme/${ themeId }/setup${ sitePart }`;
-	}
+    if (config.isEnabled('manage/themes/details')) {
+        return `/theme/${themeId}/setup${sitePart}`;
+    }
 
-	return `${ oldShowcaseUrl }${ sitePart }${ themeId }/support`;
+    return `${oldShowcaseUrl}${sitePart}${themeId}/support`;
 }
 
 /**
@@ -395,17 +392,17 @@ export function getThemeSupportUrl( state, themeId, siteId ) {
  * @param  {?Number} siteId  Site ID to optionally use as context
  * @return {?String}         Theme support page URL
  */
-export function getThemeHelpUrl( state, themeId, siteId ) {
-	if ( ! themeId ) {
-		return null;
-	}
+export function getThemeHelpUrl(state, themeId, siteId) {
+    if (!themeId) {
+        return null;
+    }
 
-	let baseUrl = oldShowcaseUrl + themeId;
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		baseUrl = `/theme/${ themeId }/support`;
-	}
+    let baseUrl = oldShowcaseUrl + themeId;
+    if (config.isEnabled('manage/themes/details')) {
+        baseUrl = `/theme/${themeId}/support`;
+    }
 
-	return baseUrl + ( siteId ? `/${ getSiteSlug( state, siteId ) }` : '' );
+    return baseUrl + (siteId ? `/${getSiteSlug(state, siteId)}` : '');
 }
 
 /**
@@ -416,12 +413,12 @@ export function getThemeHelpUrl( state, themeId, siteId ) {
  * @param  {Number}  siteId  Site ID for which to buy the theme
  * @return {?String}         Theme purchase URL
  */
-export function getThemePurchaseUrl( state, themeId, siteId ) {
-	if ( isJetpackSite( state, siteId ) || ! isThemePremium( state, themeId ) ) {
-		return null;
-	}
+export function getThemePurchaseUrl(state, themeId, siteId) {
+    if (isJetpackSite(state, siteId) || !isThemePremium(state, themeId)) {
+        return null;
+    }
 
-	return `/checkout/${ getSiteSlug( state, siteId ) }/theme:${ themeId }`;
+    return `/checkout/${getSiteSlug(state, siteId)}/theme:${themeId}`;
 }
 
 /**
@@ -432,27 +429,27 @@ export function getThemePurchaseUrl( state, themeId, siteId ) {
  * @param  {?Number}  siteId  Site ID to open the customizer for
  * @return {?String}          Customizer URL
  */
-export function getThemeCustomizeUrl( state, themeId, siteId ) {
-	const customizerUrl = getCustomizerUrl( state, siteId );
+export function getThemeCustomizeUrl(state, themeId, siteId) {
+    const customizerUrl = getCustomizerUrl(state, siteId);
 
-	if ( ! ( siteId && themeId ) || isThemeActive( state, themeId, siteId ) ) {
-		return customizerUrl;
-	}
+    if (!(siteId && themeId) || isThemeActive(state, themeId, siteId)) {
+        return customizerUrl;
+    }
 
-	const separator = includes( customizerUrl, '?' ) ? '&' : '?';
-	let identifier;
+    const separator = includes(customizerUrl, '?') ? '&' : '?';
+    let identifier;
 
-	if ( isJetpackSite( state, siteId ) ) {
-		identifier = themeId;
-	} else {
-		const theme = getTheme( state, 'wpcom', themeId );
-		if ( ! theme ) {
-			return customizerUrl;
-		}
-		identifier = theme.stylesheet;
-	}
+    if (isJetpackSite(state, siteId)) {
+        identifier = themeId;
+    } else {
+        const theme = getTheme(state, 'wpcom', themeId);
+        if (!theme) {
+            return customizerUrl;
+        }
+        identifier = theme.stylesheet;
+    }
 
-	return customizerUrl + separator + 'theme=' + identifier;
+    return customizerUrl + separator + 'theme=' + identifier;
 }
 
 /**
@@ -462,18 +459,18 @@ export function getThemeCustomizeUrl( state, themeId, siteId ) {
  * @param  {String}  themeId Theme ID
  * @return {?String}         Signup URL
  */
-export function getThemeSignupUrl( state, themeId ) {
-	if ( ! themeId ) {
-		return null;
-	}
+export function getThemeSignupUrl(state, themeId) {
+    if (!themeId) {
+        return null;
+    }
 
-	let url = '/start/with-theme?ref=calypshowcase&theme=' + themeId;
+    let url = '/start/with-theme?ref=calypshowcase&theme=' + themeId;
 
-	if ( isThemePremium( state, themeId ) ) {
-		url += '&premium=true';
-	}
+    if (isThemePremium(state, themeId)) {
+        url += '&premium=true';
+    }
 
-	return url;
+    return url;
 }
 
 /**
@@ -484,9 +481,9 @@ export function getThemeSignupUrl( state, themeId ) {
  * @param  {String}  siteId  Site ID
  * @return {?String}         Theme forum URL
  */
-export function getThemeDemoUrl( state, themeId, siteId ) {
-	const theme = getCanonicalTheme( state, siteId, themeId );
-	return get( theme, 'demo_uri' );
+export function getThemeDemoUrl(state, themeId, siteId) {
+    const theme = getCanonicalTheme(state, siteId, themeId);
+    return get(theme, 'demo_uri');
 }
 
 /**
@@ -498,17 +495,17 @@ export function getThemeDemoUrl( state, themeId, siteId ) {
  * @param  {String}  siteId  Site ID
  * @return {?String}         Theme forum URL
  */
-export function getThemeForumUrl( state, themeId ) {
-	if ( isThemePremium( state, themeId ) ) {
-		return '//premium-themes.forums.wordpress.com/forum/' + themeId;
-	}
-	if ( isWpcomTheme( state, themeId ) ) {
-		return '//en.forums.wordpress.com/forum/themes';
-	}
-	if ( isWporgTheme( state, themeId ) ) {
-		return '//wordpress.org/support/theme/' + themeId;
-	}
-	return null;
+export function getThemeForumUrl(state, themeId) {
+    if (isThemePremium(state, themeId)) {
+        return '//premium-themes.forums.wordpress.com/forum/' + themeId;
+    }
+    if (isWpcomTheme(state, themeId)) {
+        return '//en.forums.wordpress.com/forum/themes';
+    }
+    if (isWporgTheme(state, themeId)) {
+        return '//wordpress.org/support/theme/' + themeId;
+    }
+    return null;
 }
 
 /**
@@ -526,12 +523,12 @@ export function getThemeForumUrl( state, themeId ) {
  * @param  {Number}  siteId  Site ID
  * @return {?String}         Theme ID
  */
-export function getActiveTheme( state, siteId ) {
-	const activeTheme = get( state.themes.activeThemes, siteId, null );
-	// If the theme ID is suffixed with -wpcom, remove that string. This is because
-	// we want to treat WP.com themes identically, whether or not they're installed
-	// on a given Jetpack site (where the -wpcom suffix would be appended).
-	return activeTheme && activeTheme.replace( '-wpcom', '' );
+export function getActiveTheme(state, siteId) {
+    const activeTheme = get(state.themes.activeThemes, siteId, null);
+    // If the theme ID is suffixed with -wpcom, remove that string. This is because
+    // we want to treat WP.com themes identically, whether or not they're installed
+    // on a given Jetpack site (where the -wpcom suffix would be appended).
+    return activeTheme && activeTheme.replace('-wpcom', '');
 }
 
 /**
@@ -542,8 +539,8 @@ export function getActiveTheme( state, siteId ) {
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         True if the theme is active on the site
  */
-export function isThemeActive( state, themeId, siteId ) {
-	return getActiveTheme( state, siteId ) === themeId;
+export function isThemeActive(state, themeId, siteId) {
+    return getActiveTheme(state, siteId) === themeId;
 }
 
 /**
@@ -553,8 +550,8 @@ export function isThemeActive( state, themeId, siteId ) {
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         True if theme activation is ongoing
  */
-export function isActivatingTheme( state, siteId ) {
-	return get( state.themes.activationRequests, siteId, false );
+export function isActivatingTheme(state, siteId) {
+    return get(state.themes.activationRequests, siteId, false);
 }
 
 /**
@@ -564,8 +561,8 @@ export function isActivatingTheme( state, siteId ) {
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         True if the theme activation has finished
  */
-export function hasActivatedTheme( state, siteId ) {
-	return get( state.themes.completedActivationRequests, siteId, false );
+export function hasActivatedTheme(state, siteId) {
+    return get(state.themes.completedActivationRequests, siteId, false);
 }
 
 /**
@@ -576,9 +573,9 @@ export function hasActivatedTheme( state, siteId ) {
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         True if theme installation is ongoing
  */
-export function isInstallingTheme( state, themeId, siteId ) {
-	const suffixedThemeId = getSuffixedThemeId( state, themeId, siteId );
-	return get( state.themes.themeInstalls, [ siteId, suffixedThemeId ], false );
+export function isInstallingTheme(state, themeId, siteId) {
+    const suffixedThemeId = getSuffixedThemeId(state, themeId, siteId);
+    return get(state.themes.themeInstalls, [siteId, suffixedThemeId], false);
 }
 
 /**
@@ -588,9 +585,9 @@ export function isInstallingTheme( state, themeId, siteId ) {
  * @param  {Object} themeId Theme ID
  * @return {Boolean}        True if the theme is premium
  */
-export function isThemePremium( state, themeId ) {
-	const theme = getTheme( state, 'wpcom', themeId );
-	return isPremium( theme );
+export function isThemePremium(state, themeId) {
+    const theme = getTheme(state, 'wpcom', themeId);
+    return isPremium(theme);
 }
 
 /**
@@ -601,9 +598,9 @@ export function isThemePremium( state, themeId ) {
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}        True if the premium theme is available for the given site
  */
-export function isPremiumThemeAvailable( state, themeId, siteId ) {
-	return isThemePurchased( state, themeId, siteId ) ||
-		hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES );
+export function isPremiumThemeAvailable(state, themeId, siteId) {
+    return isThemePurchased(state, themeId, siteId) ||
+        hasFeature(state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES);
 }
 
 /**
@@ -614,13 +611,11 @@ export function isPremiumThemeAvailable( state, themeId, siteId ) {
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         True if siteId is a Jetpack site on which theme is installed or can be installed.
  */
-export function isThemeAvailableOnJetpackSite( state, themeId, siteId ) {
-	return !! getTheme( state, siteId, themeId ) || ( // The theme is already available or...
-		isWpcomTheme( state, themeId ) && (  // ...it's a WP.com theme and...
-			config.isEnabled( 'manage/themes/upload' ) &&
-			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) // ...the site supports theme installation from WP.com.
-		)
-	);
+export function isThemeAvailableOnJetpackSite(state, themeId, siteId) {
+    return !!getTheme(state, siteId, themeId) || // The theme is already available or...
+        (isWpcomTheme(state, themeId) && // ...it's a WP.com theme and...
+            (config.isEnabled('manage/themes/upload') &&
+                hasJetpackSiteJetpackThemesExtendedFeatures(state, siteId))); // ...the site supports theme installation from WP.com.
 }
 
 /**
@@ -633,13 +628,13 @@ export function isThemeAvailableOnJetpackSite( state, themeId, siteId ) {
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         True if the theme has been purchased for the site
  */
-export function isThemePurchased( state, themeId, siteId ) {
-	const sitePurchases = getSitePurchases( state, siteId );
-	return some( sitePurchases, { productSlug: 'premium_theme', meta: themeId } );
+export function isThemePurchased(state, themeId, siteId) {
+    const sitePurchases = getSitePurchases(state, siteId);
+    return some(sitePurchases, { productSlug: 'premium_theme', meta: themeId });
 }
 
-export function getThemePreviewThemeOptions( state ) {
-	return get( state.themes, 'themePreviewOptions', {} );
+export function getThemePreviewThemeOptions(state) {
+    return get(state.themes, 'themePreviewOptions', {});
 }
 
 /**
@@ -648,8 +643,8 @@ export function getThemePreviewThemeOptions( state ) {
  * @param  {Object}  state Global state tree
  * @return {?String}  ThemePreview state
  */
-export function themePreviewVisibility( state ) {
-	return get( state.themes, 'themePreviewVisibility', null );
+export function themePreviewVisibility(state) {
+    return get(state.themes, 'themePreviewVisibility', null);
 }
 
 /**
@@ -660,8 +655,8 @@ export function themePreviewVisibility( state ) {
  *
  * @return {?string} Parent theme id if it exists
  */
-export function getWpcomParentThemeId( state, themeId ) {
-	return get( getTheme( state, 'wpcom', themeId ), 'template', null );
+export function getWpcomParentThemeId(state, themeId) {
+    return get(getTheme(state, 'wpcom', themeId), 'template', null);
 }
 
 /**
@@ -672,9 +667,9 @@ export function getWpcomParentThemeId( state, themeId ) {
  * @param {string} themeId Theme ID
  * @return {boolean} true if zip is available on wpcom
  */
-export function isDownloadableFromWpcom( state, themeId ) {
-	const downloadUri = get( getTheme( state, 'wpcom', themeId ), 'download', '' );
-	return !! includes( downloadUri, 'wordpress.com' );
+export function isDownloadableFromWpcom(state, themeId) {
+    const downloadUri = get(getTheme(state, 'wpcom', themeId), 'download', '');
+    return !!includes(downloadUri, 'wordpress.com');
 }
 
 /**
@@ -687,11 +682,9 @@ export function isDownloadableFromWpcom( state, themeId ) {
  * @param {number} siteId The Site ID
  * @returns {boolean} true if wpcom themes should be removed
  */
-export function shouldFilterWpcomThemes( state, siteId ) {
-	return (
-		isJetpackSite( state, siteId ) &&
-		config.isEnabled( 'manage/themes/upload' ) &&
-		hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) &&
-		! isJetpackSiteMultiSite( state, siteId )
-	);
+export function shouldFilterWpcomThemes(state, siteId) {
+    return isJetpackSite(state, siteId) &&
+        config.isEnabled('manage/themes/upload') &&
+        hasJetpackSiteJetpackThemesExtendedFeatures(state, siteId) &&
+        !isJetpackSiteMultiSite(state, siteId);
 }

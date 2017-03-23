@@ -1,5 +1,5 @@
-var keyMirror = require( 'key-mirror' );
+var keyMirror = require('key-mirror');
 
-module.exports.action = keyMirror( {
-	SET_HELP_LINKS: null
-} );
+module.exports.action = keyMirror({
+    SET_HELP_LINKS: null,
+});

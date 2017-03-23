@@ -8,22 +8,23 @@ import React from 'react';
  */
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import CreditCardFormFieldsLoadingPlaceholder from 'components/credit-card-form-fields/loading-placeholder';
+import CreditCardFormFieldsLoadingPlaceholder
+    from 'components/credit-card-form-fields/loading-placeholder';
 import FormButton from 'components/forms/form-button';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
 
-const CreditCardFormLoadingPlaceholder = ( { title } ) => {
-	return (
-		<LoadingPlaceholder title={ title }>
-			<Card className="credit-card-form__content">
-				<CreditCardFormFieldsLoadingPlaceholder />
-			</Card>
+const CreditCardFormLoadingPlaceholder = ({ title }) => {
+    return (
+        <LoadingPlaceholder title={title}>
+            <Card className="credit-card-form__content">
+                <CreditCardFormFieldsLoadingPlaceholder />
+            </Card>
 
-			<CompactCard className="credit-card-form__footer">
-				<FormButton isPrimary={ false } />
-			</CompactCard>
-		</LoadingPlaceholder>
-	);
+            <CompactCard className="credit-card-form__footer">
+                <FormButton isPrimary={false} />
+            </CompactCard>
+        </LoadingPlaceholder>
+    );
 };
 
 export default CreditCardFormLoadingPlaceholder;

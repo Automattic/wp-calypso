@@ -5,8 +5,7 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'jsonp' ),
-	qs = require( 'qs' );
+var debug = require('debug')('jsonp'), qs = require('qs');
 
 /**
  * Module exports.
@@ -21,7 +20,7 @@ var count = 0;
 /**
  * Noop function. Does nothing.
  */
-function noop() { }
+function noop() {}
 
 /**
  * JSONP handler
@@ -30,61 +29,64 @@ function noop() { }
  * @param {Object} query params
  * @param {Function} optional callback
  */
-function jsonp( url, query, fn ) {
-	var prefix = '__jp',
-		timeout = 60000,
-		enc = encodeURIComponent,
-		target = document.getElementsByTagName( 'script' )[0] || document.head,
-		script,
-		timer,
-		id;
+function jsonp(url, query, fn) {
+    var prefix = '__jp',
+        timeout = 60000,
+        enc = encodeURIComponent,
+        target = document.getElementsByTagName('script')[0] || document.head,
+        script,
+        timer,
+        id;
 
-	// generate a unique id for this request
-	id = prefix + ( count++ );
+    // generate a unique id for this request
+    id = prefix + count++;
 
-	if ( timeout ) {
-		timer = setTimeout( function() {
-			cleanup();
-			if ( fn ) {
-				fn( new Error( 'Timeout' ) );
-			}
-		}, timeout );
-	}
+    if (timeout) {
+        timer = setTimeout(
+            function() {
+                cleanup();
+                if (fn) {
+                    fn(new Error('Timeout'));
+                }
+            },
+            timeout
+        );
+    }
 
-	function cleanup() {
-		if ( script.parentNode ) {
-			script.parentNode.removeChild( script );
-		}
+    function cleanup() {
+        if (script.parentNode) {
+            script.parentNode.removeChild(script);
+        }
 
-		window[id] = noop;
-		if ( timer ) {
-			clearTimeout( timer );
-		}
-	}
+        window[id] = noop;
+        if (timer) {
+            clearTimeout(timer);
+        }
+    }
 
-	function cancel() {
-		if ( window[id] ) {
-			cleanup();
-		}
-	}
+    function cancel() {
+        if (window[id]) {
+            cleanup();
+        }
+    }
 
-	window[id] = function( data ) {
-		debug( 'jsonp got', data );
-		cleanup();
-		if ( fn ) {
-			fn( null, data );
-		}
-	};
+    window[id] = function(data) {
+        debug('jsonp got', data);
+        cleanup();
+        if (fn) {
+            fn(null, data);
+        }
+    };
 
-	// add qs component
-	url += '=' + enc( id ) + '?' + qs.stringify( query );
+    // add qs component
+    url += '=' + enc(id) + '?' + qs.stringify(query);
 
-	debug( 'jsonp req "%s"', url );
+    debug('jsonp req "%s"', url);
 
-	// create script
-	script = document.createElement( 'script' );
-	script.src = url;
-	target.parentNode.insertBefore( script, target );
+    // create script
+    script = document.createElement('script');
+    script.src = url;
+    target.parentNode.insertBefore(script, target);
 
-	return cancel;
+    return cancel;
 }

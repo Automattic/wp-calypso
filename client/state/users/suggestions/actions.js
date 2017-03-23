@@ -3,10 +3,10 @@
  */
 import wpcom from 'lib/wp';
 import {
-	USER_SUGGESTIONS_RECEIVE,
-	USER_SUGGESTIONS_REQUEST,
-	USER_SUGGESTIONS_REQUEST_SUCCESS,
-	USER_SUGGESTIONS_REQUEST_FAILURE,
+    USER_SUGGESTIONS_RECEIVE,
+    USER_SUGGESTIONS_REQUEST,
+    USER_SUGGESTIONS_REQUEST_SUCCESS,
+    USER_SUGGESTIONS_REQUEST_FAILURE,
 } from 'state/action-types';
 
 /**
@@ -17,12 +17,12 @@ import {
  * @param  {Object} suggestions User suggestions
  * @return {Object}         	Action object
  */
-export function receiveUserSuggestions( siteId, suggestions ) {
-	return {
-		type: USER_SUGGESTIONS_RECEIVE,
-		suggestions,
-		siteId,
-	};
+export function receiveUserSuggestions(siteId, suggestions) {
+    return {
+        type: USER_SUGGESTIONS_RECEIVE,
+        suggestions,
+        siteId,
+    };
 }
 
 /**
@@ -32,28 +32,29 @@ export function receiveUserSuggestions( siteId, suggestions ) {
  * @param  {Number}   siteId  Site ID
  * @return {Function}         Action thunk
  */
-export function requestUserSuggestions( siteId ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: USER_SUGGESTIONS_REQUEST,
-			siteId,
-		} );
+export function requestUserSuggestions(siteId) {
+    return dispatch => {
+        dispatch({
+            type: USER_SUGGESTIONS_REQUEST,
+            siteId,
+        });
 
-		return wpcom.users().suggest( { site_id: siteId } )
-			.then( ( data ) => {
-				dispatch( receiveUserSuggestions( siteId, data.suggestions ) );
-				dispatch( {
-					type: USER_SUGGESTIONS_REQUEST_SUCCESS,
-					siteId,
-					data,
-				} );
-			} )
-			.catch( ( error ) =>
-				dispatch( {
-					type: USER_SUGGESTIONS_REQUEST_FAILURE,
-					siteId,
-					error,
-				} )
-			);
-	};
+        return wpcom
+            .users()
+            .suggest({ site_id: siteId })
+            .then(data => {
+                dispatch(receiveUserSuggestions(siteId, data.suggestions));
+                dispatch({
+                    type: USER_SUGGESTIONS_REQUEST_SUCCESS,
+                    siteId,
+                    data,
+                });
+            })
+            .catch(error =>
+                dispatch({
+                    type: USER_SUGGESTIONS_REQUEST_FAILURE,
+                    siteId,
+                    error,
+                }));
+    };
 }

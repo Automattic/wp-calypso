@@ -14,20 +14,17 @@ import { requestTags } from 'state/reader/tags/items/actions';
  *  users tags to the state tree.
  */
 class QueryReaderFollowedTags extends Component {
-	static propTypes = {
-		requestFollowedTags: PropTypes.func.isRequired,
-	};
+    static propTypes = {
+        requestFollowedTags: PropTypes.func.isRequired,
+    };
 
-	componentDidMount() {
-		this.props.requestFollowedTags();
-	}
+    componentDidMount() {
+        this.props.requestFollowedTags();
+    }
 
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
-export default connect(
-	null,
-	{ requestFollowedTags: requestTags },
-)( QueryReaderFollowedTags );
+export default connect(null, { requestFollowedTags: requestTags })(QueryReaderFollowedTags);

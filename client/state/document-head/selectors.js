@@ -20,8 +20,8 @@ const UNREAD_COUNT_CAP = 40;
  * @param  {Object}  state  Global state tree
  * @return {?String}        Document title
  */
-export function getDocumentHeadTitle( state ) {
-	return state.documentHead.title;
+export function getDocumentHeadTitle(state) {
+    return state.documentHead.title;
 }
 
 /**
@@ -30,8 +30,8 @@ export function getDocumentHeadTitle( state ) {
  * @param  {Object}  state  Global state tree
  * @return {?String}        Unread count (string because it can be e.g. '40+')
  */
-export function getDocumentHeadUnreadCount( state ) {
-	return state.documentHead.unreadCount;
+export function getDocumentHeadUnreadCount(state) {
+    return state.documentHead.unreadCount;
 }
 
 /**
@@ -42,15 +42,13 @@ export function getDocumentHeadUnreadCount( state ) {
  * @param  {Object}  state  Global state tree
  * @return {String}         Unread count (string because it can be e.g. '40+')
  */
-export function getDocumentHeadCappedUnreadCount( state ) {
-	const unreadCount = getDocumentHeadUnreadCount( state );
-	if ( ! unreadCount ) {
-		return '';
-	}
+export function getDocumentHeadCappedUnreadCount(state) {
+    const unreadCount = getDocumentHeadUnreadCount(state);
+    if (!unreadCount) {
+        return '';
+    }
 
-	return unreadCount <= UNREAD_COUNT_CAP
-		? String( unreadCount )
-		: `${ UNREAD_COUNT_CAP }+`;
+    return unreadCount <= UNREAD_COUNT_CAP ? String(unreadCount) : `${UNREAD_COUNT_CAP}+`;
 }
 
 /**
@@ -61,30 +59,26 @@ export function getDocumentHeadCappedUnreadCount( state ) {
  * @return {String}         Formatted title
  */
 export const getDocumentHeadFormattedTitle = createSelector(
-	( state ) => {
-		let title = '';
+    state => {
+        let title = '';
 
-		const unreadCount = getDocumentHeadCappedUnreadCount( state );
-		if ( unreadCount ) {
-			title += `(${ unreadCount }) `;
-		}
+        const unreadCount = getDocumentHeadCappedUnreadCount(state);
+        if (unreadCount) {
+            title += `(${unreadCount}) `;
+        }
 
-		title += compact( [
-			getDocumentHeadTitle( state ),
-			isSiteSection( state ) && getSiteTitle( state, getSelectedSiteId( state ) )
-		] ).join( ' ‹ ' );
+        title += compact([
+            getDocumentHeadTitle(state),
+            isSiteSection(state) && getSiteTitle(state, getSelectedSiteId(state)),
+        ]).join(' ‹ ');
 
-		if ( title ) {
-			title = decodeEntities( title ) + ' — ';
-		}
+        if (title) {
+            title = decodeEntities(title) + ' — ';
+        }
 
-		return title + 'WordPress.com';
-	},
-	( state ) => [
-		state.documentHead,
-		state.ui.section,
-		state.ui.selectedSiteId,
-	]
+        return title + 'WordPress.com';
+    },
+    state => [state.documentHead, state.ui.section, state.ui.selectedSiteId]
 );
 
 /**
@@ -94,8 +88,8 @@ export const getDocumentHeadFormattedTitle = createSelector(
  * @param  {Object}  state  Global state tree
  * @return {Object[]}       Array of meta objects
  */
-export function getDocumentHeadMeta( state ) {
-	return state.documentHead.meta;
+export function getDocumentHeadMeta(state) {
+    return state.documentHead.meta;
 }
 
 /**
@@ -105,6 +99,6 @@ export function getDocumentHeadMeta( state ) {
  * @param  {Object}  state  Global state tree
  * @return {Object[]}       Array of link objects
  */
-export function getDocumentHeadLink( state ) {
-	return state.documentHead.link;
+export function getDocumentHeadLink(state) {
+    return state.documentHead.link;
 }

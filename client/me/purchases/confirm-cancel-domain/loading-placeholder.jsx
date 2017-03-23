@@ -13,34 +13,39 @@ import CompactCard from 'components/card/compact';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
 import titles from 'me/purchases/titles';
 
-const ConfirmCancelDomainLoadingPlaceholder = ( { purchaseId, selectedSite } ) => {
-	let path;
+const ConfirmCancelDomainLoadingPlaceholder = ({ purchaseId, selectedSite }) => {
+    let path;
 
-	if ( selectedSite ) {
-		path = cancelPurchase( selectedSite.slug, purchaseId );
-	}
+    if (selectedSite) {
+        path = cancelPurchase(selectedSite.slug, purchaseId);
+    }
 
-	return (
-		<LoadingPlaceholder title={ titles.confirmCancelDomain } path={ path }>
-			<Card className="confirm-cancel-domain__loading-placeholder-card">
-				<h2 className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-header" />
-				<div className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-subheader" />
-				<div className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-reason" />
-				<div className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-reason" />
-			</Card>
-			<CompactCard>
-				<Button className="confirm-cancel-domain__loading-placeholder-cancel-button" />
-			</CompactCard>
-		</LoadingPlaceholder>
-	);
+    return (
+        <LoadingPlaceholder title={titles.confirmCancelDomain} path={path}>
+            <Card className="confirm-cancel-domain__loading-placeholder-card">
+                <h2
+                    className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-header"
+                />
+                <div
+                    className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-subheader"
+                />
+                <div
+                    className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-reason"
+                />
+                <div
+                    className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-reason"
+                />
+            </Card>
+            <CompactCard>
+                <Button className="confirm-cancel-domain__loading-placeholder-cancel-button" />
+            </CompactCard>
+        </LoadingPlaceholder>
+    );
 };
 
 ConfirmCancelDomainLoadingPlaceholder.propTypes = {
-	purchaseId: React.PropTypes.number.isRequired,
-	selectedSite: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.object
-	] )
+    purchaseId: React.PropTypes.number.isRequired,
+    selectedSite: React.PropTypes.oneOfType([React.PropTypes.bool, React.PropTypes.object]),
 };
 
 export default ConfirmCancelDomainLoadingPlaceholder;

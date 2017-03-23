@@ -18,37 +18,34 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getActiveTheme, getTheme } from 'state/themes/selectors';
 import { toggleDialog } from 'state/ui/theme-setup/actions';
 
-let ThemeSetup = ( { site, themeId, theme, translate, activeSiteDomain, toggleDialog } ) => {
-	const onBack = () => {
-		page( '/settings/general/' + activeSiteDomain );
-	};
+let ThemeSetup = ({ site, themeId, theme, translate, activeSiteDomain, toggleDialog }) => {
+    const onBack = () => {
+        page('/settings/general/' + activeSiteDomain);
+    };
 
-	return (
-		<div className="main theme-setup" role="main">
-			{ site && <QueryActiveTheme siteId={ site.ID } /> }
-			{ themeId && <QueryTheme siteId={ 'wpcom' } themeId={ themeId } /> }
-			<HeaderCake onClick={ onBack }><h1>{ translate( 'Theme Setup' ) }</h1></HeaderCake>
-			{ site && theme
-				? <ThemeSetupCard
-					onClick={ toggleDialog }
-					theme={ theme } />
-				: <ThemeSetupPlaceholder /> }
-		</div>
-	);
+    return (
+        <div className="main theme-setup" role="main">
+            {site && <QueryActiveTheme siteId={site.ID} />}
+            {themeId && <QueryTheme siteId={'wpcom'} themeId={themeId} />}
+            <HeaderCake onClick={onBack}><h1>{translate('Theme Setup')}</h1></HeaderCake>
+            {site && theme
+                ? <ThemeSetupCard onClick={toggleDialog} theme={theme} />
+                : <ThemeSetupPlaceholder />}
+        </div>
+    );
 };
 
-ThemeSetup = localize( ThemeSetup );
+ThemeSetup = localize(ThemeSetup);
 
-const mapStateToProps = ( state ) => {
-	const site = getSelectedSite( state );
-	const themeId = site && getActiveTheme( state, site.ID );
-	const theme = themeId && getTheme( state, 'wpcom', themeId );
-	return {
-		site,
-		themeId,
-		theme,
-	};
+const mapStateToProps = state => {
+    const site = getSelectedSite(state);
+    const themeId = site && getActiveTheme(state, site.ID);
+    const theme = themeId && getTheme(state, 'wpcom', themeId);
+    return {
+        site,
+        themeId,
+        theme,
+    };
 };
 
-export default connect( mapStateToProps, { toggleDialog } )( ThemeSetup );
-
+export default connect(mapStateToProps, { toggleDialog })(ThemeSetup);

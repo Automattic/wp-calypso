@@ -12,46 +12,44 @@ import { getSiteOption } from 'state/sites/selectors';
 import { requestPageTemplates } from 'state/page-templates/actions';
 
 class QueryPageTemplates extends Component {
-	componentWillMount() {
-		this.request( this.props );
-	}
+    componentWillMount() {
+        this.request(this.props);
+    }
 
-	componentWillReceiveProps( nextProps ) {
-		const { siteId, themeSlug } = this.props;
-		const { siteId: nextSiteId, themeSlug: nextThemeSlug } = nextProps;
-		const hasSiteOrThemeChanged = (
-			siteId !== nextSiteId ||
-			( themeSlug && nextThemeSlug && themeSlug !== nextThemeSlug )
-		);
+    componentWillReceiveProps(nextProps) {
+        const { siteId, themeSlug } = this.props;
+        const { siteId: nextSiteId, themeSlug: nextThemeSlug } = nextProps;
+        const hasSiteOrThemeChanged = siteId !== nextSiteId ||
+            (themeSlug && nextThemeSlug && themeSlug !== nextThemeSlug);
 
-		if ( hasSiteOrThemeChanged ) {
-			this.request( nextProps );
-		}
-	}
+        if (hasSiteOrThemeChanged) {
+            this.request(nextProps);
+        }
+    }
 
-	request( props ) {
-		if ( ! props.isRequesting ) {
-			props.requestPageTemplates( props.siteId );
-		}
-	}
+    request(props) {
+        if (!props.isRequesting) {
+            props.requestPageTemplates(props.siteId);
+        }
+    }
 
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
 QueryPageTemplates.propTypes = {
-	siteId: PropTypes.number.isRequired,
-	isRequesting: PropTypes.bool,
-	requestPageTemplates: PropTypes.func
+    siteId: PropTypes.number.isRequired,
+    isRequesting: PropTypes.bool,
+    requestPageTemplates: PropTypes.func,
 };
 
 export default connect(
-	( state, { siteId } ) => {
-		return {
-			isRequesting: isRequestingPageTemplates( state, siteId ),
-			themeSlug: getSiteOption( state, siteId, 'theme_slug' )
-		};
-	},
-	{ requestPageTemplates }
-)( QueryPageTemplates );
+    (state, { siteId }) => {
+        return {
+            isRequesting: isRequestingPageTemplates(state, siteId),
+            themeSlug: getSiteOption(state, siteId, 'theme_slug'),
+        };
+    },
+    { requestPageTemplates }
+)(QueryPageTemplates);

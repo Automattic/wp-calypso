@@ -11,7 +11,7 @@ import debugFactory from 'debug';
  */
 import Undocumented from './lib/undocumented';
 
-const debug = debugFactory( 'calypso:wpcom-undocumented' );
+const debug = debugFactory('calypso:wpcom-undocumented');
 
 /**
  * Class inherited from `WPCOMUnpublished` class and adds
@@ -21,36 +21,32 @@ const debug = debugFactory( 'calypso:wpcom-undocumented' );
  * @param {Function} [reqHandler] - request handler
  * @return {NUll} null
  */
-function WPCOMUndocumented( token, reqHandler ) {
-	if ( ! ( this instanceof WPCOMUndocumented ) ) {
-		return new WPCOMUndocumented( token, reqHandler );
-	}
+function WPCOMUndocumented(token, reqHandler) {
+    if (!(this instanceof WPCOMUndocumented)) {
+        return new WPCOMUndocumented(token, reqHandler);
+    }
 
-	if ( 'function' === typeof token ) {
-		reqHandler = token;
-		token = null;
-	} else if ( token ) {
-		this.loadToken( token );
-	}
+    if ('function' === typeof token) {
+        reqHandler = token;
+        token = null;
+    } else if (token) {
+        this.loadToken(token);
+    }
 
-	wpcomFactory.call( this, token, function( params, fn ) {
-		if ( this.isTokenLoaded() ) {
-			// authToken is used in wpcom-xhr-request,
-			// which is used for the signup flow in the REST Proxy
-			params = assign(
-				{},
-				params,
-				{ authToken: this._token, token: this._token }
-			);
-		}
+    wpcomFactory.call(this, token, function(params, fn) {
+        if (this.isTokenLoaded()) {
+            // authToken is used in wpcom-xhr-request,
+            // which is used for the signup flow in the REST Proxy
+            params = assign({}, params, { authToken: this._token, token: this._token });
+        }
 
-		return reqHandler( params, fn );
-	} );
+        return reqHandler(params, fn);
+    });
 
-	debug( 'Extending wpcom with undocumented endpoints.' );
+    debug('Extending wpcom with undocumented endpoints.');
 }
 
-inherits( WPCOMUndocumented, wpcomFactory );
+inherits(WPCOMUndocumented, wpcomFactory);
 
 /**
  * Get `Undocumented` object instance
@@ -58,7 +54,7 @@ inherits( WPCOMUndocumented, wpcomFactory );
  * @return {Undocumented} Undocumented instance
  */
 WPCOMUndocumented.prototype.undocumented = function() {
-	return new Undocumented( this );
+    return new Undocumented(this);
 };
 
 /**
@@ -67,8 +63,8 @@ WPCOMUndocumented.prototype.undocumented = function() {
  *
  * @param {String} [token] - oauth token
  */
-wpcomFactory.prototype.loadToken = function( token ) {
-	this._token = token;
+wpcomFactory.prototype.loadToken = function(token) {
+    this._token = token;
 };
 
 /**
@@ -77,7 +73,7 @@ wpcomFactory.prototype.loadToken = function( token ) {
  * @return {String} oauth token
  */
 WPCOMUndocumented.prototype.isTokenLoaded = function() {
-	return this._token !== undefined;
+    return this._token !== undefined;
 };
 
 /**

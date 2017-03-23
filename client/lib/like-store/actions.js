@@ -1,37 +1,34 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:like-store:actions' ); //eslint-disable-line no-unused-vars
+var debug = require('debug')('calypso:like-store:actions'); //eslint-disable-line no-unused-vars
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	key = require( './utils' ).key,
-	wpcom = require( 'lib/wp' );
+var Dispatcher = require('dispatcher'), key = require('./utils').key, wpcom = require('lib/wp');
 
 var inflight = {};
 
-function requestInflight( requestKey ) {
-	return requestKey in inflight;
+function requestInflight(requestKey) {
+    return requestKey in inflight;
 }
 
-function requestTracker( requestKey, callback ) {
-	inflight[ requestKey ] = true;
-	return function( error, data ) {
-		delete inflight[ requestKey ];
-		callback( error, data );
-	};
+function requestTracker(requestKey, callback) {
+    inflight[requestKey] = true;
+    return function(error, data) {
+        delete inflight[requestKey];
+        callback(error, data);
+    };
 }
 
 function getQuery() {
-	// Attribute likes to reader in stats
-	return { source: 'reader' };
+    // Attribute likes to reader in stats
+    return { source: 'reader' };
 }
 
 var LikeActions = {
-
-	/**
+    /**
 	* Fetch a post's list of likes
 	*
 	*
@@ -41,84 +38,84 @@ var LikeActions = {
 	* @param {int} Site ID
 	* @param {int} Post ID
 	*/
-	fetchLikes: function( siteId, postId ) {
-		if ( requestInflight( key( siteId, postId ) ) ) {
-			return;
-		}
+    fetchLikes: function(siteId, postId) {
+        if (requestInflight(key(siteId, postId))) {
+            return;
+        }
 
-		var requestKey = key( siteId, postId ),
-			callback = requestTracker( requestKey, function( error, data ) {
-				LikeActions.receivePostLikes( error, siteId, postId, data );
-			} );
+        var requestKey = key(siteId, postId),
+            callback = requestTracker(requestKey, function(error, data) {
+                LikeActions.receivePostLikes(error, siteId, postId, data);
+            });
 
-		wpcom.site( siteId ).post( postId ).likesList( callback );
-	},
+        wpcom.site(siteId).post(postId).likesList(callback);
+    },
 
-	/**
+    /**
 	* Like a post as the current user
 	*
 	* @param {int} siteId The Site ID
 	* @param {int} postId The Post ID
 	*/
-	likePost: function( siteId, postId ) {
-		Dispatcher.handleViewAction( {
-			type: 'LIKE_POST',
-			siteId: siteId,
-			postId: postId
-		} );
+    likePost: function(siteId, postId) {
+        Dispatcher.handleViewAction({
+            type: 'LIKE_POST',
+            siteId: siteId,
+            postId: postId,
+        });
 
-		wpcom.site( siteId ).post( postId ).like().add( getQuery(), function( error, data ) {
-			LikeActions.receiveLikeResponse( error, siteId, postId, data );
-		} );
-	},
+        wpcom.site(siteId).post(postId).like().add(getQuery(), function(error, data) {
+            LikeActions.receiveLikeResponse(error, siteId, postId, data);
+        });
+    },
 
-	/**
+    /**
 	 * Unlike a post as the current user
 	 * @param {int} siteId The Site ID
 	 * @param {int} postId The Post ID
 	 */
-	unlikePost: function( siteId, postId ) {
-		Dispatcher.handleViewAction( {
-			type: 'UNLIKE_POST',
-			siteId: siteId,
-			postId: postId
-		} );
+    unlikePost: function(siteId, postId) {
+        Dispatcher.handleViewAction({
+            type: 'UNLIKE_POST',
+            siteId: siteId,
+            postId: postId,
+        });
 
-		wpcom.site( siteId ).post( postId ).like().del( getQuery(), function( error, data ) {
-			LikeActions.receiveUnlikeResponse( error, siteId, postId, data );
-		} );
-	},
+        wpcom.site(siteId).post(postId).like().del(getQuery(), function(error, data) {
+            LikeActions.receiveUnlikeResponse(error, siteId, postId, data);
+        });
+    },
 
-	receivePostLikes: function( error, siteId, postId, data ) {
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_POST_LIKES',
-			error: error,
-			siteId: siteId,
-			postId: postId,
-			data: data
-		} );
-	},
+    receivePostLikes: function(error, siteId, postId, data) {
+        Dispatcher.handleServerAction({
+            type: 'RECEIVE_POST_LIKES',
+            error: error,
+            siteId: siteId,
+            postId: postId,
+            data: data,
+        });
+    },
 
-	receiveLikeResponse: function( error, siteId, postId, data ) {
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_LIKE_RESPONSE',
-			error: error,
-			siteId: siteId,
-			postId: postId,
-			data: data
-		} );
-	},
+    receiveLikeResponse: function(error, siteId, postId, data) {
+        Dispatcher.handleServerAction({
+            type: 'RECEIVE_LIKE_RESPONSE',
+            error: error,
+            siteId: siteId,
+            postId: postId,
+            data: data,
+        });
+    },
 
-	// @todo Some weirdness with the data received here...seems to be attached to siteId not data.
-	receiveUnlikeResponse: function( error, siteId, postId, data ) {
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_UNLIKE_RESPONSE',
-			error: error,
-			siteId: siteId,
-			postId: postId,
-			data: data
-		} );
-	}
+    // @todo Some weirdness with the data received here...seems to be attached to siteId not data.
+    receiveUnlikeResponse: function(error, siteId, postId, data) {
+        Dispatcher.handleServerAction({
+            type: 'RECEIVE_UNLIKE_RESPONSE',
+            error: error,
+            siteId: siteId,
+            postId: postId,
+            data: data,
+        });
+    },
 };
 
 module.exports = LikeActions;

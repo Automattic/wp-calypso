@@ -12,6 +12,6 @@ import { get } from 'lodash';
  * @param  {String}  moduleSlug  Slug of the module
  * @return {?Object}             Module data
  */
-export default function getJetpackModule( state, siteId, moduleSlug ) {
-	return get( state.jetpack.modules.items, [ siteId, moduleSlug ], null );
+export default function getJetpackModule(state, siteId, moduleSlug) {
+    return get(state.jetpack.modules.items, [siteId, moduleSlug], null);
 }

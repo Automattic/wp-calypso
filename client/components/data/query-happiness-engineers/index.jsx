@@ -11,31 +11,31 @@ import { isRequestingHappinessEngineers } from 'state/happiness-engineers/select
 import { fetchHappinessEngineers } from 'state/happiness-engineers/actions';
 
 class QueryHappinessEngineers extends Component {
-	componentWillMount() {
-		if ( ! this.props.isRequestingHappinessEngineers ) {
-			this.props.fetchHappinessEngineers();
-		}
-	}
+    componentWillMount() {
+        if (!this.props.isRequestingHappinessEngineers) {
+            this.props.fetchHappinessEngineers();
+        }
+    }
 
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
 QueryHappinessEngineers.propTypes = {
-	isRequestingHappinessEngineers: PropTypes.bool,
-	fetchHappinessEngineers: PropTypes.func
+    isRequestingHappinessEngineers: PropTypes.bool,
+    fetchHappinessEngineers: PropTypes.func,
 };
 
 QueryHappinessEngineers.defaultProps = {
-	fetchHappinessEngineers: () => {}
+    fetchHappinessEngineers: () => {},
 };
 
 export default connect(
-	state => {
-		return {
-			isRequestingHappinessEngineers: isRequestingHappinessEngineers( state )
-		};
-	},
-	{ fetchHappinessEngineers }
-)( QueryHappinessEngineers );
+    state => {
+        return {
+            isRequestingHappinessEngineers: isRequestingHappinessEngineers(state),
+        };
+    },
+    { fetchHappinessEngineers }
+)(QueryHappinessEngineers);

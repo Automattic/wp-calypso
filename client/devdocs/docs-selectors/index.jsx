@@ -12,20 +12,20 @@ import DocsSelectorsSingle from './single';
 import DocsSelectorsSearch from './search';
 
 export default class DocsSelectors extends PureComponent {
-	static propTypes = {
-		selector: PropTypes.string,
-		search: PropTypes.string
-	};
+    static propTypes = {
+        selector: PropTypes.string,
+        search: PropTypes.string,
+    };
 
-	render() {
-		const { search, selector } = this.props;
+    render() {
+        const { search, selector } = this.props;
 
-		return (
-			<Main className="devdocs docs-selectors">
-				<DocumentHead title="State Selectors" />
-				{ selector && <DocsSelectorsSingle { ...{ selector, search } } /> }
-				{ ! selector && <DocsSelectorsSearch search={ search } /> }
-			</Main>
-		);
-	}
+        return (
+            <Main className="devdocs docs-selectors">
+                <DocumentHead title="State Selectors" />
+                {selector && <DocsSelectorsSingle {...{ selector, search }} />}
+                {!selector && <DocsSelectorsSearch search={search} />}
+            </Main>
+        );
+    }
 }

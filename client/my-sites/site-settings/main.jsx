@@ -13,7 +13,11 @@ import Main from 'components/main';
 import notices from 'notices';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import { getSitePurchases, hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purchases/selectors';
+import {
+    getSitePurchases,
+    hasLoadedSitePurchasesFromServer,
+    getPurchasesError,
+} from 'state/purchases/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import GeneralSettings from './section-general';
@@ -30,118 +34,119 @@ import JetpackDevModeNotice from './jetpack-dev-mode-notice';
 /**
  * Module vars
  */
-const debug = debugFactory( 'calypso:my-sites:site-settings' );
+const debug = debugFactory('calypso:my-sites:site-settings');
 
 export class SiteSettingsComponent extends Component {
-	constructor( props ) {
-		super( props );
+    constructor(props) {
+        super(props);
 
-		// bound methods
-		this.updateSite = this.updateSite.bind( this );
+        // bound methods
+        this.updateSite = this.updateSite.bind(this);
 
-		this.state = {
-			site: this.props.sites.getSelectedSite()
-		};
-	}
+        this.state = {
+            site: this.props.sites.getSelectedSite(),
+        };
+    }
 
-	componentWillMount() {
-		debug( 'Mounting SiteSettings React component.' );
-		this.props.sites.on( 'change', this.updateSite );
-	}
+    componentWillMount() {
+        debug('Mounting SiteSettings React component.');
+        this.props.sites.on('change', this.updateSite);
+    }
 
-	componentWillUnmount() {
-		this.props.sites.off( 'change', this.updateSite );
-	}
+    componentWillUnmount() {
+        this.props.sites.off('change', this.updateSite);
+    }
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.purchasesError ) {
-			notices.error( nextProps.purchasesError );
-		}
-	}
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.purchasesError) {
+            notices.error(nextProps.purchasesError);
+        }
+    }
 
-	getStrings() {
-		return {
-			general: i18n.translate( 'General', { context: 'settings screen' } ),
-			writing: i18n.translate( 'Writing', { context: 'settings screen' } ),
-			discussion: i18n.translate( 'Discussion', { context: 'settings screen' } ),
-			security: i18n.translate( 'Security', { context: 'settings screen' } ),
-			'import': i18n.translate( 'Import', { context: 'settings screen' } ),
-			'export': i18n.translate( 'Export', { context: 'settings screen' } ),
-		};
-	}
+    getStrings() {
+        return {
+            general: i18n.translate('General', { context: 'settings screen' }),
+            writing: i18n.translate('Writing', { context: 'settings screen' }),
+            discussion: i18n.translate('Discussion', { context: 'settings screen' }),
+            security: i18n.translate('Security', { context: 'settings screen' }),
+            import: i18n.translate('Import', { context: 'settings screen' }),
+            export: i18n.translate('Export', { context: 'settings screen' }),
+        };
+    }
 
-	getSection() {
-		const { site } = this.state;
-		const { section, hostSlug } = this.props;
+    getSection() {
+        const { site } = this.state;
+        const { section, hostSlug } = this.props;
 
-		switch ( section ) {
-			case 'general':
-				return <GeneralSettings site={ site }
-					sitePurchases={ this.props.sitePurchases }
-					hasLoadedSitePurchasesFromServer={ this.props.hasLoadedSitePurchasesFromServer } />;
-			case 'writing':
-				return <WritingSettings site={ site } />;
-			case 'discussion':
-				return <DiscussionSettings />;
-			case 'security':
-				return <SiteSecurity site={ site } />;
-			case 'import':
-				return <ImportSettings site={ site } />;
-			case 'export':
-				return <ExportSettings />;
-			case 'guidedTransfer':
-				return <GuidedTransfer hostSlug={ hostSlug } />;
-		}
-	}
+        switch (section) {
+            case 'general':
+                return (
+                    <GeneralSettings
+                        site={site}
+                        sitePurchases={this.props.sitePurchases}
+                        hasLoadedSitePurchasesFromServer={
+                            this.props.hasLoadedSitePurchasesFromServer
+                        }
+                    />
+                );
+            case 'writing':
+                return <WritingSettings site={site} />;
+            case 'discussion':
+                return <DiscussionSettings />;
+            case 'security':
+                return <SiteSecurity site={site} />;
+            case 'import':
+                return <ImportSettings site={site} />;
+            case 'export':
+                return <ExportSettings />;
+            case 'guidedTransfer':
+                return <GuidedTransfer hostSlug={hostSlug} />;
+        }
+    }
 
-	render() {
-		const { site } = this.state;
-		const { jetpackSettingsUiSupported, section } = this.props;
+    render() {
+        const { site } = this.state;
+        const { jetpackSettingsUiSupported, section } = this.props;
 
-		return (
-			<Main className="site-settings">
-					{
-						jetpackSettingsUiSupported &&
-						<JetpackDevModeNotice />
-					}
-					<SidebarNavigation />
-					<SiteSettingsNavigation site={ site } section={ section } />
-					<QueryProductsList />
-					{ site && <QuerySitePurchases siteId={ site.ID } /> }
-					{ site && this.getSection() }
-			</Main>
-		);
-	}
+        return (
+            <Main className="site-settings">
+                {jetpackSettingsUiSupported && <JetpackDevModeNotice />}
+                <SidebarNavigation />
+                <SiteSettingsNavigation site={site} section={section} />
+                <QueryProductsList />
+                {site && <QuerySitePurchases siteId={site.ID} />}
+                {site && this.getSection()}
+            </Main>
+        );
+    }
 
-	updateSite() {
-		this.setState( { site: this.props.sites.getSelectedSite() } );
-	}
+    updateSite() {
+        this.setState({ site: this.props.sites.getSelectedSite() });
+    }
 }
 
 SiteSettingsComponent.propTypes = {
-	hasLoadedSitePurchasesFromServer: PropTypes.bool.isRequired,
-	purchasesError: PropTypes.object,
-	section: PropTypes.string,
-	sitePurchases: PropTypes.array.isRequired,
-	sites: PropTypes.object.isRequired
+    hasLoadedSitePurchasesFromServer: PropTypes.bool.isRequired,
+    purchasesError: PropTypes.object,
+    section: PropTypes.string,
+    sitePurchases: PropTypes.array.isRequired,
+    sites: PropTypes.object.isRequired,
 };
 
 SiteSettingsComponent.defaultProps = {
-	section: 'general'
+    section: 'general',
 };
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const jetpackSite = isJetpackSite( state, siteId );
-		const jetpackUiSupported = siteSupportsJetpackSettingsUi( state, siteId );
+export default connect(state => {
+    const siteId = getSelectedSiteId(state);
+    const jetpackSite = isJetpackSite(state, siteId);
+    const jetpackUiSupported = siteSupportsJetpackSettingsUi(state, siteId);
 
-		return {
-			siteId,
-			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
-			purchasesError: getPurchasesError( state ),
-			sitePurchases: getSitePurchases( state, getSelectedSiteId( state ) ),
-			jetpackSettingsUiSupported: jetpackSite && jetpackUiSupported,
-		};
-	}
-)( SiteSettingsComponent );
+    return {
+        siteId,
+        hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer(state),
+        purchasesError: getPurchasesError(state),
+        sitePurchases: getSitePurchases(state, getSelectedSiteId(state)),
+        jetpackSettingsUiSupported: jetpackSite && jetpackUiSupported,
+    };
+})(SiteSettingsComponent);

@@ -17,34 +17,34 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 
 class FollowersCount extends Component {
-	render() {
-		const { slug, followers, translate, siteId } = this.props;
+    render() {
+        const { slug, followers, translate, siteId } = this.props;
 
-		if ( ! followers ) {
-			return null;
-		}
+        if (!followers) {
+            return null;
+        }
 
-		return (
-			<div className="followers-count">
-				{ siteId && <QuerySiteStats statType="stats" siteId={ siteId } /> }
-				<Button
-					borderless
-					href={ '/people/followers/' + slug }
-					title={ translate( 'Total of WordPress and Email Followers' ) }
-					>
-					{ translate( 'Followers' ) } <Count count={ followers } />
-				</Button>
-			</div>
-		);
-	}
+        return (
+            <div className="followers-count">
+                {siteId && <QuerySiteStats statType="stats" siteId={siteId} />}
+                <Button
+                    borderless
+                    href={'/people/followers/' + slug}
+                    title={translate('Total of WordPress and Email Followers')}
+                >
+                    {translate('Followers')} <Count count={followers} />
+                </Button>
+            </div>
+        );
+    }
 }
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const data = getSiteStatsNormalizedData( state, siteId, 'stats' );
+export default connect(state => {
+    const siteId = getSelectedSiteId(state);
+    const data = getSiteStatsNormalizedData(state, siteId, 'stats');
 
-	return {
-		slug: getSiteSlug( state, siteId ),
-		followers: get( data, 'followersBlog' ),
-	};
-} )( localize( FollowersCount ) );
+    return {
+        slug: getSiteSlug(state, siteId),
+        followers: get(data, 'followersBlog'),
+    };
+})(localize(FollowersCount));

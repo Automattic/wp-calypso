@@ -3,11 +3,11 @@
  **/
 
 function returnSelf() {
-	return this;
+    return this;
 }
 
 module.exports = {
-	site: returnSelf,
-	post: returnSelf,
-	likesList: returnSelf
+    site: returnSelf,
+    post: returnSelf,
+    likesList: returnSelf,
 };

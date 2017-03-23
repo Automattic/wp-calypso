@@ -4,6 +4,6 @@
  * @param  {Object} state Global state tree
  * @return {Array}        Pairs of email and sms number.
  */
-export default ( state ) => {
-	return state.accountRecovery.reset.options.items;
+export default state => {
+    return state.accountRecovery.reset.options.items;
 };

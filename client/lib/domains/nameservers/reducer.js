@@ -9,9 +9,9 @@ import update from 'react-addons-update';
 import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
 
 const initialDomainState = {
-	isFetching: false,
-	hasLoadedFromServer: false,
-	list: null
+    isFetching: false,
+    hasLoadedFromServer: false,
+    list: null,
 };
 
 /**
@@ -22,50 +22,47 @@ const initialDomainState = {
  * @param {Object} [data] Domain name servers data.
  * @return {Object} New state
  */
-function updateState( state, domainName, data ) {
-	const command = {
-		[ domainName ]: {
-			$set: Object.assign( {}, state[ domainName ] || initialDomainState, data )
-		}
-	};
+function updateState(state, domainName, data) {
+    const command = {
+        [domainName]: {
+            $set: Object.assign({}, state[domainName] || initialDomainState, data),
+        },
+    };
 
-	return update( state, command );
+    return update(state, command);
 }
 
-function reducer( state, payload ) {
-	const { action } = payload;
+function reducer(state, payload) {
+    const { action } = payload;
 
-	switch ( action.type ) {
-		case UpgradesActionTypes.NAMESERVERS_FETCH:
-			state = updateState( state, action.domainName, {
-				isFetching: true
-			} );
-			break;
-		case UpgradesActionTypes.NAMESERVERS_FETCH_FAILED:
-			state = updateState( state, action.domainName, {
-				isFetching: false
-			} );
-			break;
-		case UpgradesActionTypes.NAMESERVERS_FETCH_COMPLETED:
-			state = updateState( state, action.domainName, {
-				isFetching: false,
-				hasLoadedFromServer: true,
-				list: action.nameservers
-			} );
-			break;
-		case UpgradesActionTypes.NAMESERVERS_UPDATE_COMPLETED:
-			state = updateState( state, action.domainName, {
-				isFetching: false,
-				hasLoadedFromServer: true,
-				list: action.nameservers
-			} );
-			break;
-	}
+    switch (action.type) {
+        case UpgradesActionTypes.NAMESERVERS_FETCH:
+            state = updateState(state, action.domainName, {
+                isFetching: true,
+            });
+            break;
+        case UpgradesActionTypes.NAMESERVERS_FETCH_FAILED:
+            state = updateState(state, action.domainName, {
+                isFetching: false,
+            });
+            break;
+        case UpgradesActionTypes.NAMESERVERS_FETCH_COMPLETED:
+            state = updateState(state, action.domainName, {
+                isFetching: false,
+                hasLoadedFromServer: true,
+                list: action.nameservers,
+            });
+            break;
+        case UpgradesActionTypes.NAMESERVERS_UPDATE_COMPLETED:
+            state = updateState(state, action.domainName, {
+                isFetching: false,
+                hasLoadedFromServer: true,
+                list: action.nameservers,
+            });
+            break;
+    }
 
-	return state;
+    return state;
 }
 
-export {
-	initialDomainState,
-	reducer
-};
+export { initialDomainState, reducer };

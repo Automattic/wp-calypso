@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { merge } from 'lodash';
+import { merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,10 +10,10 @@ import { merge } from 'lodash';
 import itemsSchema from './schema';
 import { createReducer } from 'state/utils';
 import {
-	POST_LIKES_RECEIVE,
-	POST_LIKES_REQUEST,
-	POST_LIKES_REQUEST_SUCCESS,
-	POST_LIKES_REQUEST_FAILURE
+    POST_LIKES_RECEIVE,
+    POST_LIKES_REQUEST,
+    POST_LIKES_REQUEST_SUCCESS,
+    POST_LIKES_REQUEST_FAILURE,
 } from 'state/action-types';
 
 /**
@@ -24,23 +24,29 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const requesting = createReducer( {}, {
-	[ POST_LIKES_REQUEST ]: ( state, { siteId, postId } ) => merge( {}, state, {
-		[ siteId ]: {
-			[ postId ]: true
-		}
-	} ),
-	[ POST_LIKES_REQUEST_SUCCESS ]: ( state, { siteId, postId } ) => merge( {}, state, {
-		[ siteId ]: {
-			[ postId ]: false
-		}
-	} ),
-	[ POST_LIKES_REQUEST_FAILURE ]: ( state, { siteId, postId } ) => merge( {}, state, {
-		[ siteId ]: {
-			[ postId ]: false
-		}
-	} ),
-} );
+export const requesting = createReducer(
+    {},
+    {
+        [POST_LIKES_REQUEST]: (state, { siteId, postId }) =>
+            merge({}, state, {
+                [siteId]: {
+                    [postId]: true,
+                },
+            }),
+        [POST_LIKES_REQUEST_SUCCESS]: (state, { siteId, postId }) =>
+            merge({}, state, {
+                [siteId]: {
+                    [postId]: false,
+                },
+            }),
+        [POST_LIKES_REQUEST_FAILURE]: (state, { siteId, postId }) =>
+            merge({}, state, {
+                [siteId]: {
+                    [postId]: false,
+                },
+            }),
+    }
+);
 
 /**
  * Returns the updated items state after an action has been dispatched. The
@@ -50,19 +56,23 @@ export const requesting = createReducer( {}, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer( {}, {
-	[ POST_LIKES_RECEIVE ]: ( state, { siteId, postId, likes, iLike, found } ) => {
-		return {
-			...state,
-			[ siteId ]: {
-				...state[ siteId ],
-				[ postId ]: { likes, iLike, found }
-			}
-		};
-	}
-}, itemsSchema );
+export const items = createReducer(
+    {},
+    {
+        [POST_LIKES_RECEIVE]: (state, { siteId, postId, likes, iLike, found }) => {
+            return {
+                ...state,
+                [siteId]: {
+                    ...state[siteId],
+                    [postId]: { likes, iLike, found },
+                },
+            };
+        },
+    },
+    itemsSchema
+);
 
-export default combineReducers( {
-	requesting,
-	items
-} );
+export default combineReducers({
+    requesting,
+    items,
+});

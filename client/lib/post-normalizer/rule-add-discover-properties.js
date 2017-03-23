@@ -10,21 +10,21 @@ const DISCOVER_BLOG_ID = 53424024;
  * @param  {Object} post - the post to extend
  * @return {Object}      - the post with discover properties
  */
-export default function( post ) {
-	const isDiscover = !! ( get( post, 'discover_metadata' ) || DISCOVER_BLOG_ID === get( post, 'site_ID' ) );
-	let discoverFormat;
+export default function(post) {
+    const isDiscover = !!(get(post, 'discover_metadata') ||
+        DISCOVER_BLOG_ID === get(post, 'site_ID'));
+    let discoverFormat;
 
-	if ( isDiscover ) {
-		const formats = get( post, 'discover_metadata.discover_fp_post_formats' );
-		const pickFormat = find( formats, format => format.slug !== 'pick' );
+    if (isDiscover) {
+        const formats = get(post, 'discover_metadata.discover_fp_post_formats');
+        const pickFormat = find(formats, format => format.slug !== 'pick');
 
-		// if there is no pick format the post is a discover feature
-		discoverFormat = pickFormat ? pickFormat.slug : 'feature';
-	}
+        // if there is no pick format the post is a discover feature
+        discoverFormat = pickFormat ? pickFormat.slug : 'feature';
+    }
 
-	post.is_discover = isDiscover;
-	post.discover_format = discoverFormat;
+    post.is_discover = isDiscover;
+    post.discover_format = discoverFormat;
 
-	return post;
+    return post;
 }
-

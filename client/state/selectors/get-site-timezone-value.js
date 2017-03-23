@@ -11,7 +11,7 @@ import { get } from 'lodash';
  * @param  {Number}  siteId - Site ID
  * @return {?String} site setting timezone
  */
-export default function getSiteTimezoneValue( state, siteId ) {
-	const timezone = get( state.siteSettings.items, [ siteId, 'timezone_string' ], null );
-	return timezone && timezone.length ? timezone : null;
+export default function getSiteTimezoneValue(state, siteId) {
+    const timezone = get(state.siteSettings.items, [siteId, 'timezone_string'], null);
+    return timezone && timezone.length ? timezone : null;
 }

@@ -17,15 +17,15 @@ import { parseTransactionDate } from 'state/billing-transactions/util';
  * @return {?Object}         Billing transactions
  */
 const getBillingTransactions = createSelector(
-	( state ) => {
-		const allTransactions = get( state, 'billingTransactions.items', null );
-		if ( ! allTransactions ) {
-			return null;
-		}
+    state => {
+        const allTransactions = get(state, 'billingTransactions.items', null);
+        if (!allTransactions) {
+            return null;
+        }
 
-		return mapValues( allTransactions, transactions => transactions.map( parseTransactionDate ) );
-	},
-	( state ) => [ state.billingTransactions.items ]
+        return mapValues(allTransactions, transactions => transactions.map(parseTransactionDate));
+    },
+    state => [state.billingTransactions.items]
 );
 
 export default getBillingTransactions;

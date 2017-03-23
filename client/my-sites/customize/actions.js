@@ -13,44 +13,44 @@ import { trackClick } from '../themes/helpers';
 import { themeItem } from 'lib/cart-values/cart-items';
 
 var CustomizeActions = {
-	purchase: function( id, site ) {
-		addItem( themeItem( id, 'customizer' ) );
+    purchase: function(id, site) {
+        addItem(themeItem(id, 'customizer'));
 
-		trackClick( 'customizer', 'purchase' );
+        trackClick('customizer', 'purchase');
 
-		defer( function() {
-			page( '/checkout/' + site.slug );
+        defer(function() {
+            page('/checkout/' + site.slug);
 
-			Dispatcher.handleViewAction( {
-				type: 'THEME_PURCHASE_WITH_CUSTOMIZER',
-				id: id,
-				site: site
-			} );
-		} );
-	},
+            Dispatcher.handleViewAction({
+                type: 'THEME_PURCHASE_WITH_CUSTOMIZER',
+                id: id,
+                site: site,
+            });
+        });
+    },
 
-	// TODO: Once this entire module is converted to Redux,
-	// `themeActivated` shouldn't be passed as an argument anymore,
-	// but directly imported and dispatch()ed from inside `activated()`,
-	// which needs to be turned into a Redux thunk.
-	activated: function( stylesheet, site, themeActivated ) {
-		trackClick( 'customizer', 'activate' );
+    // TODO: Once this entire module is converted to Redux,
+    // `themeActivated` shouldn't be passed as an argument anymore,
+    // but directly imported and dispatch()ed from inside `activated()`,
+    // which needs to be turned into a Redux thunk.
+    activated: function(stylesheet, site, themeActivated) {
+        trackClick('customizer', 'activate');
 
-		page( '/design/' + site.slug );
+        page('/design/' + site.slug);
 
-		themeActivated( stylesheet, site.ID, 'customizer' );
-	},
+        themeActivated(stylesheet, site.ID, 'customizer');
+    },
 
-	close: function( previousPath ) {
-		if ( previousPath.indexOf( '/design' ) > -1 ) {
-			trackClick( 'customizer', 'close' );
-		}
+    close: function(previousPath) {
+        if (previousPath.indexOf('/design') > -1) {
+            trackClick('customizer', 'close');
+        }
 
-		Dispatcher.handleViewAction( {
-			type: 'CLOSED_CUSTOMIZER',
-			previousPath: previousPath
-		} );
-	}
+        Dispatcher.handleViewAction({
+            type: 'CLOSED_CUSTOMIZER',
+            previousPath: previousPath,
+        });
+    },
 };
 
 module.exports = CustomizeActions;

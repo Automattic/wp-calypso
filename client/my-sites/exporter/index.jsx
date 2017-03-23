@@ -18,31 +18,29 @@ import GuidedTransferCard from './guided-transfer-card';
 import InProgressCard from './guided-transfer-card/in-progress';
 
 class Exporter extends Component {
-	render() {
-		const {
-			siteId,
-			isTransferInProgress,
-		} = this.props;
-		const showGuidedTransferOptions = config.isEnabled( 'manage/export/guided-transfer' );
+    render() {
+        const {
+            siteId,
+            isTransferInProgress,
+        } = this.props;
+        const showGuidedTransferOptions = config.isEnabled('manage/export/guided-transfer');
 
-		return (
-			<div className="exporter">
-				{ showGuidedTransferOptions && <QuerySiteGuidedTransfer siteId={ siteId } /> }
+        return (
+            <div className="exporter">
+                {showGuidedTransferOptions && <QuerySiteGuidedTransfer siteId={siteId} />}
 
-				<Notices />
-				{ showGuidedTransferOptions && isTransferInProgress &&
-					<InProgressCard /> }
-				<ExportCard siteId={ siteId } />
-				{ showGuidedTransferOptions && ! isTransferInProgress &&
-					<GuidedTransferCard /> }
-			</div>
-		);
-	}
+                <Notices />
+                {showGuidedTransferOptions && isTransferInProgress && <InProgressCard />}
+                <ExportCard siteId={siteId} />
+                {showGuidedTransferOptions && !isTransferInProgress && <GuidedTransferCard />}
+            </div>
+        );
+    }
 }
 
-const mapStateToProps = state => ( {
-	siteId: getSelectedSiteId( state ),
-	isTransferInProgress: isGuidedTransferInProgress( state, getSelectedSiteId( state ) ),
-} );
+const mapStateToProps = state => ({
+    siteId: getSelectedSiteId(state),
+    isTransferInProgress: isGuidedTransferInProgress(state, getSelectedSiteId(state)),
+});
 
-export default connect( mapStateToProps )( Exporter );
+export default connect(mapStateToProps)(Exporter);

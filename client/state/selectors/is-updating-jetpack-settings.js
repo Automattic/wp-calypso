@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {Number}  siteId      The ID of the site we're querying
  * @return {?Boolean}            Whether Jetpack settings are currently being updated
  */
-export default function isUpdatingJetpackSettings( state, siteId ) {
-	return get( state.jetpack.settings.requests, [ siteId, 'updating' ], null );
+export default function isUpdatingJetpackSettings(state, siteId) {
+    return get(state.jetpack.settings.requests, [siteId, 'updating'], null);
 }

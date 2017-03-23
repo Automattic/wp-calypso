@@ -2,9 +2,9 @@
  * Internal dependencies
  */
 import {
-	AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
-	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
-	AUTOMATED_TRANSFER_STATUS_SET,
+    AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
+    AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
+    AUTOMATED_TRANSFER_STATUS_SET,
 } from 'state/action-types';
 
 /**
@@ -16,11 +16,11 @@ import {
  * @param {string} status The new status of the automated transfer
  * @returns {Object} An action object
  */
-export const setAutomatedTransferStatus = ( siteId, status ) => ( {
-	type: AUTOMATED_TRANSFER_STATUS_SET,
-	siteId,
-	status,
-} );
+export const setAutomatedTransferStatus = (siteId, status) => ({
+    type: AUTOMATED_TRANSFER_STATUS_SET,
+    siteId,
+    status,
+});
 
 /**
  * Indicates that we need the eligibility information for a given site
@@ -28,10 +28,10 @@ export const setAutomatedTransferStatus = ( siteId, status ) => ( {
  * @param {number} siteId site for requested information
  * @returns {Object} Redux action
  */
-export const requestEligibility = siteId => ( {
-	type: AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
-	siteId,
-} );
+export const requestEligibility = siteId => ({
+    type: AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
+    siteId,
+});
 
 /**
  * Merges given eligibility information into the app state
@@ -42,11 +42,14 @@ export const requestEligibility = siteId => ( {
  * @param {Object} data eligibility information to be merged into existing state
  * @returns {Object} Redux action
  */
-export const updateEligibility = ( siteId, { eligibilityHolds, eligibilityWarnings, lastUpdate, status } ) => ( {
-	type: AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
-	eligibilityHolds,
-	eligibilityWarnings,
-	lastUpdate,
-	siteId,
-	status,
-} );
+export const updateEligibility = (
+    siteId,
+    { eligibilityHolds, eligibilityWarnings, lastUpdate, status }
+) => ({
+    type: AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
+    eligibilityHolds,
+    eligibilityWarnings,
+    lastUpdate,
+    siteId,
+    status,
+});

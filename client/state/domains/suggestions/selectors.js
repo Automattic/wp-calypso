@@ -13,12 +13,12 @@ import { getSerializedDomainsSuggestionsQuery } from './utils';
  * @param   {?Boolean} queryObject.includeSubdomain         adds wordpress subdomain suggestions when true
  * @returns {?Array}   domain suggestions array
  */
-export function getDomainsSuggestions( state, queryObject ) {
-	const serializedQuery = getSerializedDomainsSuggestionsQuery( queryObject );
-	if ( serializedQuery ) {
-		return state.domains.suggestions.items[ serializedQuery ];
-	}
-	return null;
+export function getDomainsSuggestions(state, queryObject) {
+    const serializedQuery = getSerializedDomainsSuggestionsQuery(queryObject);
+    if (serializedQuery) {
+        return state.domains.suggestions.items[serializedQuery];
+    }
+    return null;
 }
 
 /**
@@ -31,12 +31,12 @@ export function getDomainsSuggestions( state, queryObject ) {
  * @param   {?Boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
  * @returns {Boolean}   true if requesting
  */
-export function isRequestingDomainsSuggestions( state, queryObject ) {
-	const serializedQuery = getSerializedDomainsSuggestionsQuery( queryObject );
-	if ( serializedQuery ) {
-		return !! state.domains.suggestions.requesting[ serializedQuery ];
-	}
-	return false;
+export function isRequestingDomainsSuggestions(state, queryObject) {
+    const serializedQuery = getSerializedDomainsSuggestionsQuery(queryObject);
+    if (serializedQuery) {
+        return !!state.domains.suggestions.requesting[serializedQuery];
+    }
+    return false;
 }
 
 /**
@@ -49,10 +49,10 @@ export function isRequestingDomainsSuggestions( state, queryObject ) {
  * @param   {?Boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
  * @returns {?Object}    error or null
  */
-export function getDomainsSuggestionsError( state, queryObject ) {
-	const serializedQuery = getSerializedDomainsSuggestionsQuery( queryObject );
-	if ( serializedQuery ) {
-		return state.domains.suggestions.errors[ serializedQuery ] || null;
-	}
-	return null;
+export function getDomainsSuggestionsError(state, queryObject) {
+    const serializedQuery = getSerializedDomainsSuggestionsQuery(queryObject);
+    if (serializedQuery) {
+        return state.domains.suggestions.errors[serializedQuery] || null;
+    }
+    return null;
 }

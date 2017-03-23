@@ -18,8 +18,8 @@ import { isDomainRegistration, isDomainMapping } from 'lib/products-values';
  * @return {Array} Purchases
  */
 export const getPurchases = createSelector(
-	state => purchasesAssembler.createPurchasesArray( state.purchases.data ),
-	state => [ state.purchases.data ]
+    state => purchasesAssembler.createPurchasesArray(state.purchases.data),
+    state => [state.purchases.data]
 );
 
 /**
@@ -28,9 +28,9 @@ export const getPurchases = createSelector(
  * @param  {Number} userId      the user id
  * @return {Object} the matching purchases if there are some
  */
-export const getUserPurchases = ( state, userId ) => (
-	state.purchases.hasLoadedUserPurchasesFromServer && getPurchases( state ).filter( purchase => purchase.userId === userId )
-);
+export const getUserPurchases = (state, userId) =>
+    state.purchases.hasLoadedUserPurchasesFromServer &&
+    getPurchases(state).filter(purchase => purchase.userId === userId);
 
 /**
  * Returns the server error for site or user purchases (if there is one)
@@ -46,9 +46,8 @@ export const getPurchasesError = state => state.purchases.error;
  * @param  {Number} purchaseId  the purchase id
  * @return {Object} the matching purchase if there is one
  */
-export const getByPurchaseId = ( state, purchaseId ) => (
-	getPurchases( state ).filter( purchase => purchase.id === purchaseId ).shift()
-);
+export const getByPurchaseId = (state, purchaseId) =>
+    getPurchases(state).filter(purchase => purchase.id === purchaseId).shift();
 
 /**
  * Returns a list of Purchases associated with a Site from the state using its siteId
@@ -56,9 +55,8 @@ export const getByPurchaseId = ( state, purchaseId ) => (
  * @param  {Number} siteId      the site id
  * @return {Object} the matching purchases if there are some
  */
-export const getSitePurchases = ( state, siteId ) => (
-	getPurchases( state ).filter( purchase => purchase.siteId === siteId )
-);
+export const getSitePurchases = (state, siteId) =>
+    getPurchases(state).filter(purchase => purchase.siteId === siteId);
 
 /***
  * Returns a purchase object that corresponds to that subscription's included domain
@@ -66,18 +64,21 @@ export const getSitePurchases = ( state, siteId ) => (
  * @param  {Object} subscriptionPurchase	subscription purchase object
  * @return {Object} domain purchase if there is one, null if none found or not a subscription object passed
  */
-export const getIncludedDomainPurchase = ( state, subscriptionPurchase ) => {
-	if ( ! subscriptionPurchase || ! isSubscription( subscriptionPurchase ) ) {
-		return null;
-	}
+export const getIncludedDomainPurchase = (state, subscriptionPurchase) => {
+    if (!subscriptionPurchase || !isSubscription(subscriptionPurchase)) {
+        return null;
+    }
 
-	const { includedDomain } = subscriptionPurchase;
-	const sitePurchases = getSitePurchases( state, subscriptionPurchase.siteId );
-	const domainPurchase = find( sitePurchases, purchase => ( isDomainMapping( purchase ) ||
-															isDomainRegistration( purchase ) ) &&
-															includedDomain === purchase.meta );
+    const { includedDomain } = subscriptionPurchase;
+    const sitePurchases = getSitePurchases(state, subscriptionPurchase.siteId);
+    const domainPurchase = find(
+        sitePurchases,
+        purchase =>
+            (isDomainMapping(purchase) || isDomainRegistration(purchase)) &&
+            includedDomain === purchase.meta
+    );
 
-	return domainPurchase;
+    return domainPurchase;
 };
 
 /**
@@ -86,11 +87,12 @@ export const getIncludedDomainPurchase = ( state, subscriptionPurchase ) => {
  * @param  {Number}  userId      the user id
  * @return {Boolean} if the user currently has any purchases.
  */
-export const isUserPaid = ( state, userId ) => (
-	state.purchases.hasLoadedUserPurchasesFromServer && 0 < getUserPurchases( state, userId ).length
-);
+export const isUserPaid = (state, userId) =>
+    state.purchases.hasLoadedUserPurchasesFromServer && 0 < getUserPurchases(state, userId).length;
 
 export const isFetchingUserPurchases = state => state.purchases.isFetchingUserPurchases;
 export const isFetchingSitePurchases = state => state.purchases.isFetchingSitePurchases;
-export const hasLoadedUserPurchasesFromServer = state => state.purchases.hasLoadedUserPurchasesFromServer;
-export const hasLoadedSitePurchasesFromServer = state => state.purchases.hasLoadedSitePurchasesFromServer;
+export const hasLoadedUserPurchasesFromServer = state =>
+    state.purchases.hasLoadedUserPurchasesFromServer;
+export const hasLoadedSitePurchasesFromServer = state =>
+    state.purchases.hasLoadedSitePurchasesFromServer;

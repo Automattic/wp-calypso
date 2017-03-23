@@ -3,10 +3,10 @@
  */
 import wpcom from 'lib/wp';
 import {
-	PAGE_TEMPLATES_RECEIVE,
-	PAGE_TEMPLATES_REQUEST,
-	PAGE_TEMPLATES_REQUEST_FAILURE,
-	PAGE_TEMPLATES_REQUEST_SUCCESS
+    PAGE_TEMPLATES_RECEIVE,
+    PAGE_TEMPLATES_REQUEST,
+    PAGE_TEMPLATES_REQUEST_FAILURE,
+    PAGE_TEMPLATES_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -17,12 +17,12 @@ import {
  * @param  {Object[]} templates Array of template objects
  * @return {Object}             Action object
  */
-export function receivePageTemplates( siteId, templates ) {
-	return {
-		type: PAGE_TEMPLATES_RECEIVE,
-		siteId,
-		templates
-	};
+export function receivePageTemplates(siteId, templates) {
+    return {
+        type: PAGE_TEMPLATES_RECEIVE,
+        siteId,
+        templates,
+    };
 }
 
 /**
@@ -32,25 +32,29 @@ export function receivePageTemplates( siteId, templates ) {
  * @param  {Number}   siteId Site ID
  * @return {Function}        Action thunk
  */
-export function requestPageTemplates( siteId ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: PAGE_TEMPLATES_REQUEST,
-			siteId
-		} );
+export function requestPageTemplates(siteId) {
+    return dispatch => {
+        dispatch({
+            type: PAGE_TEMPLATES_REQUEST,
+            siteId,
+        });
 
-		return wpcom.site( siteId ).pageTemplates().then( ( { templates } ) => {
-			dispatch( receivePageTemplates( siteId, templates ) );
-			dispatch( {
-				type: PAGE_TEMPLATES_REQUEST_SUCCESS,
-				siteId
-			} );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: PAGE_TEMPLATES_REQUEST_FAILURE,
-				siteId,
-				error
-			} );
-		} );
-	};
+        return wpcom
+            .site(siteId)
+            .pageTemplates()
+            .then(({ templates }) => {
+                dispatch(receivePageTemplates(siteId, templates));
+                dispatch({
+                    type: PAGE_TEMPLATES_REQUEST_SUCCESS,
+                    siteId,
+                });
+            })
+            .catch(error => {
+                dispatch({
+                    type: PAGE_TEMPLATES_REQUEST_FAILURE,
+                    siteId,
+                    error,
+                });
+            });
+    };
 }

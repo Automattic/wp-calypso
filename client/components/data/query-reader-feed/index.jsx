@@ -12,45 +12,48 @@ import { shouldFeedBeFetched } from 'state/reader/feeds/selectors';
 import { requestFeed } from 'state/reader/feeds/actions';
 
 class QueryReaderFeed extends Component {
-	componentWillMount() {
-		if ( this.props.shouldFeedBeFetched ) {
-			this.props.requestFeed( this.props.feedId );
-		}
-	}
+    componentWillMount() {
+        if (this.props.shouldFeedBeFetched) {
+            this.props.requestFeed(this.props.feedId);
+        }
+    }
 
-	componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.shouldFeedBeFetched || ( this.props.feedId === nextProps.feedId ) ) {
-			return;
-		}
+    componentWillReceiveProps(nextProps) {
+        if (!nextProps.shouldFeedBeFetched || this.props.feedId === nextProps.feedId) {
+            return;
+        }
 
-		nextProps.requestFeed( nextProps.feedId );
-	}
+        nextProps.requestFeed(nextProps.feedId);
+    }
 
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
 QueryReaderFeed.propTypes = {
-	feedId: PropTypes.number,
-	shouldFeedBeFetched: PropTypes.bool,
-	requestFeed: PropTypes.func
+    feedId: PropTypes.number,
+    shouldFeedBeFetched: PropTypes.bool,
+    requestFeed: PropTypes.func,
 };
 
 QueryReaderFeed.defaultProps = {
-	requestFeed: () => {}
+    requestFeed: () => {},
 };
 
 export default connect(
-	( state, ownProps ) => {
-		const { feedId } = ownProps;
-		return {
-			shouldFeedBeFetched: shouldFeedBeFetched( state, feedId )
-		};
-	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			requestFeed
-		}, dispatch );
-	}
-)( QueryReaderFeed );
+    (state, ownProps) => {
+        const { feedId } = ownProps;
+        return {
+            shouldFeedBeFetched: shouldFeedBeFetched(state, feedId),
+        };
+    },
+    dispatch => {
+        return bindActionCreators(
+            {
+                requestFeed,
+            },
+            dispatch
+        );
+    }
+)(QueryReaderFeed);

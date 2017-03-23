@@ -9,10 +9,10 @@ import update from 'react-addons-update';
 import { action as ActionTypes } from 'lib/upgrades/constants';
 
 const initialDomainState = {
-	data: null,
-	hasLoadedFromServer: false,
-	isFetching: false,
-	needsUpdate: true
+    data: null,
+    hasLoadedFromServer: false,
+    isFetching: false,
+    needsUpdate: true,
 };
 
 /**
@@ -23,51 +23,48 @@ const initialDomainState = {
  * @param {Object} [data] Domain WHOIS data.
  * @return {Object} New state.
  */
-function updateDomainState( state, domainName, data ) {
-	const command = {
-		[ domainName ]: {
-			$set: Object.assign( {}, state[ domainName ] || initialDomainState, data )
-		}
-	};
+function updateDomainState(state, domainName, data) {
+    const command = {
+        [domainName]: {
+            $set: Object.assign({}, state[domainName] || initialDomainState, data),
+        },
+    };
 
-	return update( state, command );
+    return update(state, command);
 }
 
-function reducer( state, payload ) {
-	const { action } = payload;
+function reducer(state, payload) {
+    const { action } = payload;
 
-	switch ( action.type ) {
-		case ActionTypes.WHOIS_FETCH:
-			state = updateDomainState( state, action.domainName, {
-				isFetching: true,
-				needsUpdate: false
-			} );
-			break;
-		case ActionTypes.WHOIS_FETCH_FAILED:
-			state = updateDomainState( state, action.domainName, {
-				isFetching: false,
-				needsUpdate: true
-			} );
-			break;
-		case ActionTypes.WHOIS_FETCH_COMPLETED:
-			state = updateDomainState( state, action.domainName, {
-				data: action.data,
-				hasLoadedFromServer: true,
-				isFetching: false,
-				needsUpdate: false
-			} );
-			break;
-		case ActionTypes.WHOIS_UPDATE_COMPLETED:
-			state = updateDomainState( state, action.domainName, {
-				needsUpdate: true
-			} );
-			break;
-	}
+    switch (action.type) {
+        case ActionTypes.WHOIS_FETCH:
+            state = updateDomainState(state, action.domainName, {
+                isFetching: true,
+                needsUpdate: false,
+            });
+            break;
+        case ActionTypes.WHOIS_FETCH_FAILED:
+            state = updateDomainState(state, action.domainName, {
+                isFetching: false,
+                needsUpdate: true,
+            });
+            break;
+        case ActionTypes.WHOIS_FETCH_COMPLETED:
+            state = updateDomainState(state, action.domainName, {
+                data: action.data,
+                hasLoadedFromServer: true,
+                isFetching: false,
+                needsUpdate: false,
+            });
+            break;
+        case ActionTypes.WHOIS_UPDATE_COMPLETED:
+            state = updateDomainState(state, action.domainName, {
+                needsUpdate: true,
+            });
+            break;
+    }
 
-	return state;
+    return state;
 }
 
-export {
-	initialDomainState,
-	reducer
-};
+export { initialDomainState, reducer };

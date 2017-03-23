@@ -6,12 +6,12 @@
  * @param  {Number}  mediaId Media ID
  * @return {?Object}         Media object, if known
  */
-export default function getMediaItem( state, siteId, mediaId ) {
-	const queries = state.media.queries[ siteId ];
+export default function getMediaItem(state, siteId, mediaId) {
+    const queries = state.media.queries[siteId];
 
-	if ( ! queries ) {
-		return null;
-	}
+    if (!queries) {
+        return null;
+    }
 
-	return queries.getItem( mediaId ) || null;
+    return queries.getItem(mediaId) || null;
 }

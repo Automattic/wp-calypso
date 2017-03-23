@@ -5,103 +5,104 @@ import React, { PureComponent, PropTypes } from 'react';
 import classNames from 'classnames';
 
 export default class FormToggle extends PureComponent {
-	static propTypes = {
-		onChange: PropTypes.func,
-		onKeyDown: PropTypes.func,
-		checked: PropTypes.bool,
-		disabled: PropTypes.bool,
-		id: PropTypes.string,
-		className: PropTypes.string,
-		toggling: PropTypes.bool,
-		'aria-label': PropTypes.string,
-		children: PropTypes.node
-	};
+    static propTypes = {
+        onChange: PropTypes.func,
+        onKeyDown: PropTypes.func,
+        checked: PropTypes.bool,
+        disabled: PropTypes.bool,
+        id: PropTypes.string,
+        className: PropTypes.string,
+        toggling: PropTypes.bool,
+        'aria-label': PropTypes.string,
+        children: PropTypes.node,
+    };
 
-	static defaultProps = {
-		checked: false,
-		disabled: false,
-		onKeyDown: () => {},
-		onChange: () => {}
-	};
+    static defaultProps = {
+        checked: false,
+        disabled: false,
+        onKeyDown: () => {},
+        onChange: () => {},
+    };
 
-	static idNum = 0;
+    static idNum = 0;
 
-	constructor() {
-		super( ...arguments );
+    constructor() {
+        super(...arguments);
 
-		this.onKeyDown = this.onKeyDown.bind( this );
-		this.onClick = this.onClick.bind( this );
-		this.onLabelClick = this.onLabelClick.bind( this );
-	}
+        this.onKeyDown = this.onKeyDown.bind(this);
+        this.onClick = this.onClick.bind(this);
+        this.onLabelClick = this.onLabelClick.bind(this);
+    }
 
-	componentWillMount() {
-		this.id = this.constructor.idNum++;
-	}
+    componentWillMount() {
+        this.id = this.constructor.idNum++;
+    }
 
-	onKeyDown( event ) {
-		if ( this.props.disabled ) {
-			return;
-		}
+    onKeyDown(event) {
+        if (this.props.disabled) {
+            return;
+        }
 
-		if ( event.key === 'Enter' || event.key === ' ' ) {
-			event.preventDefault();
-			this.props.onChange();
-		}
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            this.props.onChange();
+        }
 
-		this.props.onKeyDown( event );
-	}
+        this.props.onKeyDown(event);
+    }
 
-	onClick() {
-		if ( ! this.props.disabled ) {
-			this.props.onChange();
-		}
-	}
+    onClick() {
+        if (!this.props.disabled) {
+            this.props.onChange();
+        }
+    }
 
-	onLabelClick( event ) {
-		if ( this.props.disabled ) {
-			return;
-		}
+    onLabelClick(event) {
+        if (this.props.disabled) {
+            return;
+        }
 
-		const nodeName = event.target.nodeName.toLowerCase();
-		if ( nodeName !== 'a' && nodeName !== 'input' && nodeName !== 'select' ) {
-			event.preventDefault();
-			this.props.onChange();
-		}
-	}
+        const nodeName = event.target.nodeName.toLowerCase();
+        if (nodeName !== 'a' && nodeName !== 'input' && nodeName !== 'select') {
+            event.preventDefault();
+            this.props.onChange();
+        }
+    }
 
-	render() {
-		const id = this.props.id || 'toggle-' + this.id;
-		const wrapperClasses = classNames( 'form-toggle__wrapper', {
-			'is-disabled': this.props.disabled,
-		} );
-		const toggleClasses = classNames( 'form-toggle', this.props.className, {
-			'is-toggling': this.props.toggling
-		} );
+    render() {
+        const id = this.props.id || 'toggle-' + this.id;
+        const wrapperClasses = classNames('form-toggle__wrapper', {
+            'is-disabled': this.props.disabled,
+        });
+        const toggleClasses = classNames('form-toggle', this.props.className, {
+            'is-toggling': this.props.toggling,
+        });
 
-		return (
-			<span className={ wrapperClasses }>
-				<input
-					className={ toggleClasses }
-					type="checkbox"
-					checked={ this.props.checked }
-					readOnly={ true }
-					disabled={ this.props.disabled }
-					/>
-				<label className="form-toggle__label" htmlFor={ id } >
-					<span className="form-toggle__switch"
-						id={ id }
-						onClick={ this.onClick }
-						onKeyDown={ this.onKeyDown }
-						role="checkbox"
-						aria-checked={ this.props.checked }
-						aria-label={ this.props[ 'aria-label' ] }
-						tabIndex={ this.props.disabled ? -1 : 0 }
-						></span>
-					<span className="form-toggle__label-content" onClick={ this.onLabelClick }>
-						{ this.props.children }
-					</span>
-				</label>
-			</span>
-		);
-	}
+        return (
+            <span className={wrapperClasses}>
+                <input
+                    className={toggleClasses}
+                    type="checkbox"
+                    checked={this.props.checked}
+                    readOnly={true}
+                    disabled={this.props.disabled}
+                />
+                <label className="form-toggle__label" htmlFor={id}>
+                    <span
+                        className="form-toggle__switch"
+                        id={id}
+                        onClick={this.onClick}
+                        onKeyDown={this.onKeyDown}
+                        role="checkbox"
+                        aria-checked={this.props.checked}
+                        aria-label={this.props['aria-label']}
+                        tabIndex={this.props.disabled ? -1 : 0}
+                    />
+                    <span className="form-toggle__label-content" onClick={this.onLabelClick}>
+                        {this.props.children}
+                    </span>
+                </label>
+            </span>
+        );
+    }
 }

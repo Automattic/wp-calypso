@@ -11,23 +11,20 @@ import { isRequestingGeo } from 'state/geo/selectors';
 import { requestGeo } from 'state/geo/actions';
 
 class QueryGeo extends Component {
-	componentWillMount() {
-		if ( ! this.props.requesting ) {
-			this.props.requestGeo();
-		}
-	}
+    componentWillMount() {
+        if (!this.props.requesting) {
+            this.props.requestGeo();
+        }
+    }
 
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
 QueryGeo.propTypes = {
-	requesting: PropTypes.bool,
-	requestGeo: PropTypes.func
+    requesting: PropTypes.bool,
+    requestGeo: PropTypes.func,
 };
 
-export default connect(
-	( state ) => ( { requesting: isRequestingGeo( state ) } ),
-	{ requestGeo }
-)( QueryGeo );
+export default connect(state => ({ requesting: isRequestingGeo(state) }), { requestGeo })(QueryGeo);

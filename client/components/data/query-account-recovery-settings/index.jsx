@@ -11,20 +11,20 @@ import { accountRecoverySettingsFetch } from 'state/account-recovery/settings/ac
 import { isFetchingAccountRecoverySettings } from 'state/account-recovery/selectors';
 
 class QueryAccountRecoverySettings extends Component {
-	componentDidMount() {
-		if ( ! this.props.isFetching ) {
-			this.props.accountRecoverySettingsFetch();
-		}
-	}
+    componentDidMount() {
+        if (!this.props.isFetching) {
+            this.props.accountRecoverySettingsFetch();
+        }
+    }
 
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
 export default connect(
-	( state ) => ( {
-		isFetching: isFetchingAccountRecoverySettings( state ),
-	} ),
-	{ accountRecoverySettingsFetch }
-)( QueryAccountRecoverySettings );
+    state => ({
+        isFetching: isFetchingAccountRecoverySettings(state),
+    }),
+    { accountRecoverySettingsFetch }
+)(QueryAccountRecoverySettings);

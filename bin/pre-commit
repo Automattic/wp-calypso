@@ -12,6 +12,12 @@ fi
 
 pass=true
 
+printf "\nFormatting .jsx and .js:\n"
+
+for file in ${files}; do
+	./bin/prettify-file.sh ${file}
+done
+
 printf "\nValidating .jsx and .js:\n"
 
 ./bin/run-lint $(git diff --cached --name-only client/ server/ test/ | grep ".jsx*$") -- --diff=index

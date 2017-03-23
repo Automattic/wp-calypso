@@ -12,48 +12,52 @@ import { isRequestingList } from 'state/reader/lists/selectors';
 import { requestList } from 'state/reader/lists/actions';
 
 class QueryReaderList extends Component {
-	componentWillMount() {
-		if ( ! this.props.isRequestingList ) {
-			this.props.requestList( this.props.owner, this.props.slug );
-		}
-	}
+    componentWillMount() {
+        if (!this.props.isRequestingList) {
+            this.props.requestList(this.props.owner, this.props.slug);
+        }
+    }
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.isRequestingList || (
-				this.props.owner === nextProps.owner &&
-				this.props.slug === nextProps.slug ) ) {
-			return;
-		}
+    componentWillReceiveProps(nextProps) {
+        if (
+            nextProps.isRequestingList ||
+            (this.props.owner === nextProps.owner && this.props.slug === nextProps.slug)
+        ) {
+            return;
+        }
 
-		nextProps.requestList( nextProps.owner, nextProps.slug );
-	}
+        nextProps.requestList(nextProps.owner, nextProps.slug);
+    }
 
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
 QueryReaderList.propTypes = {
-	owner: PropTypes.string,
-	slug: PropTypes.string,
-	isRequestingList: PropTypes.bool,
-	requestList: PropTypes.func
+    owner: PropTypes.string,
+    slug: PropTypes.string,
+    isRequestingList: PropTypes.bool,
+    requestList: PropTypes.func,
 };
 
 QueryReaderList.defaultProps = {
-	requestList: () => {}
+    requestList: () => {},
 };
 
 export default connect(
-	( state, ownProps ) => {
-		const { owner, slug } = ownProps;
-		return {
-			isRequestingList: isRequestingList( state, owner, slug )
-		};
-	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			requestList
-		}, dispatch );
-	}
-)( QueryReaderList );
+    (state, ownProps) => {
+        const { owner, slug } = ownProps;
+        return {
+            isRequestingList: isRequestingList(state, owner, slug),
+        };
+    },
+    dispatch => {
+        return bindActionCreators(
+            {
+                requestList,
+            },
+            dispatch
+        );
+    }
+)(QueryReaderList);

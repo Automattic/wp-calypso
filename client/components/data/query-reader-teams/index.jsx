@@ -12,32 +12,28 @@ import { requestTeams } from 'state/reader/teams/actions';
 import { isRequestingReaderTeams } from 'state/selectors';
 
 class QueryReaderTeams extends Component {
-	componentWillMount() {
-		if ( this.props.isRequesting ) {
-			return;
-		}
+    componentWillMount() {
+        if (this.props.isRequesting) {
+            return;
+        }
 
-		this.props.requestTeams();
-	}
+        this.props.requestTeams();
+    }
 
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
 QueryReaderTeams.propTypes = {
-	isRequesting: PropTypes.bool,
-	request: PropTypes.func
+    isRequesting: PropTypes.bool,
+    request: PropTypes.func,
 };
 
-const mapStateToProps = state => ( {
-	requesting: isRequestingReaderTeams( state )
-} );
+const mapStateToProps = state => ({
+    requesting: isRequestingReaderTeams(state),
+});
 
-const mapDispatchToProps = dispatch =>
-	bindActionCreators( { requestTeams }, dispatch );
+const mapDispatchToProps = dispatch => bindActionCreators({ requestTeams }, dispatch);
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-)( QueryReaderTeams );
+export default connect(mapStateToProps, mapDispatchToProps)(QueryReaderTeams);

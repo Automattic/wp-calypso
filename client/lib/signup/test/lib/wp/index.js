@@ -3,11 +3,11 @@
  */
 
 module.exports = {
-	loadToken: function( token ) {
-		this._token = token;
-	},
+    loadToken: function(token) {
+        this._token = token;
+    },
 
-	isTokenLoaded: function() {
-		return this._token !== undefined;
-	}
+    isTokenLoaded: function() {
+        return this._token !== undefined;
+    },
 };

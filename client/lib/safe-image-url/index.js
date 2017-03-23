@@ -10,10 +10,10 @@ import { parse as parseUrl } from 'url';
  * @type {RegExp}
  */
 let REGEX_EXEMPT_URL;
-if ( 'object' === typeof location ) {
-	REGEX_EXEMPT_URL = new RegExp( `^(/(?!/)|data:image/[^;]+;|blob:${ location.origin }/)` );
+if ('object' === typeof location) {
+    REGEX_EXEMPT_URL = new RegExp(`^(/(?!/)|data:image/[^;]+;|blob:${location.origin}/)`);
 } else {
-	REGEX_EXEMPT_URL = /^(\/(?!\/)|data:image\/[^;]+;)/;
+    REGEX_EXEMPT_URL = /^(\/(?!\/)|data:image\/[^;]+;)/;
 }
 
 /**
@@ -33,20 +33,20 @@ const REGEXP_A8C_HOST = /^([-a-zA-Z0-9_]+\.)*(gravatar\.com|wordpress\.com|wp\.c
  * @param  {string} url The URL to secure
  * @return {string}     The secured URL, or null if we couldn't make it safe
  */
-export default function safeImageUrl( url ) {
-	if ( typeof url !== 'string' ) {
-		return null;
-	}
+export default function safeImageUrl(url) {
+    if (typeof url !== 'string') {
+        return null;
+    }
 
-	if ( REGEX_EXEMPT_URL.test( url ) ) {
-		return url;
-	}
+    if (REGEX_EXEMPT_URL.test(url)) {
+        return url;
+    }
 
-	const { hostname } = parseUrl( url, false, true );
-	if ( REGEXP_A8C_HOST.test( hostname ) ) {
-		// Safely promote Automattic domains to HTTPS
-		return url.replace( /^http:/, 'https:' );
-	}
+    const { hostname } = parseUrl(url, false, true);
+    if (REGEXP_A8C_HOST.test(hostname)) {
+        // Safely promote Automattic domains to HTTPS
+        return url.replace(/^http:/, 'https:');
+    }
 
-	return photon( url );
+    return photon(url);
 }

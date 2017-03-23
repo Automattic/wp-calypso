@@ -10,54 +10,55 @@ import noop from 'lodash/noop';
 import SortableList from 'components/forms/sortable-list';
 import EditorMediaModalGalleryEditItem from './edit-item';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalGalleryEdit',
+export default React.createClass({
+    displayName: 'EditorMediaModalGalleryEdit',
 
-	propTypes: {
-		site: React.PropTypes.object,
-		settings: PropTypes.object,
-		onUpdateSetting: PropTypes.func
-	},
+    propTypes: {
+        site: React.PropTypes.object,
+        settings: PropTypes.object,
+        onUpdateSetting: PropTypes.func,
+    },
 
-	getDefaultProps() {
-		return {
-			settings: Object.freeze( {} ),
-			onUpdateSetting: noop
-		};
-	},
+    getDefaultProps() {
+        return {
+            settings: Object.freeze({}),
+            onUpdateSetting: noop,
+        };
+    },
 
-	onOrderChanged: function( order ) {
-		const items = [];
+    onOrderChanged: function(order) {
+        const items = [];
 
-		this.props.settings.items.forEach( ( item, i ) => {
-			items[ order[ i ] ] = item;
-		} );
+        this.props.settings.items.forEach((item, i) => {
+            items[order[i]] = item;
+        });
 
-		this.props.onUpdateSetting( {
-			items: items,
-			orderBy: null
-		} );
-	},
+        this.props.onUpdateSetting({
+            items: items,
+            orderBy: null,
+        });
+    },
 
-	render() {
-		const { site, settings } = this.props;
+    render() {
+        const { site, settings } = this.props;
 
-		if ( ! site || ! settings.items ) {
-			return null;
-		}
+        if (!site || !settings.items) {
+            return null;
+        }
 
-		return (
-			<SortableList onChange={ this.onOrderChanged }>
-				{ settings.items.map( ( item ) => {
-					return (
-						<EditorMediaModalGalleryEditItem
-							key={ item.ID }
-							site={ site }
-							item={ item }
-							showRemoveButton={ settings.items.length > 1 } />
-					);
-				} ) }
-			</SortableList>
-		);
-	}
-} );
+        return (
+            <SortableList onChange={this.onOrderChanged}>
+                {settings.items.map(item => {
+                    return (
+                        <EditorMediaModalGalleryEditItem
+                            key={item.ID}
+                            site={site}
+                            item={item}
+                            showRemoveButton={settings.items.length > 1}
+                        />
+                    );
+                })}
+            </SortableList>
+        );
+    },
+});

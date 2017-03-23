@@ -13,88 +13,92 @@ import Shortcode from 'lib/shortcode';
 import { ActionTypes, LoadStatus } from './constants';
 
 class ShortcodesStore extends ReduceStore {
-	getInitialState() {
-		return {};
-	}
+    getInitialState() {
+        return {};
+    }
 
-	get( siteId, shortcode ) {
-		const state = this.getState();
+    get(siteId, shortcode) {
+        const state = this.getState();
 
-		if ( ! state[ siteId ] || ! state[ siteId ][ shortcode ] ) {
-			return;
-		}
+        if (!state[siteId] || !state[siteId][shortcode]) {
+            return;
+        }
 
-		return state[ siteId ][ shortcode ];
-	}
+        return state[siteId][shortcode];
+    }
 
-	reduce( state, action ) {
-		action = action.action;
+    reduce(state, action) {
+        action = action.action;
 
-		switch ( action.type ) {
-			case ActionTypes.FETCH_SHORTCODE:
-				state = Object.assign( {}, state, {
-					[ action.payload.siteId ]: Object.assign( {}, state[ action.payload.siteId ], {
-						[ action.payload.shortcode ]: {
-							status: LoadStatus.LOADING
-						}
-					} )
-				} );
-				break;
+        switch (action.type) {
+            case ActionTypes.FETCH_SHORTCODE:
+                state = Object.assign({}, state, {
+                    [action.payload.siteId]: Object.assign({}, state[action.payload.siteId], {
+                        [action.payload.shortcode]: {
+                            status: LoadStatus.LOADING,
+                        },
+                    }),
+                });
+                break;
 
-			case ActionTypes.RECEIVE_SHORTCODE:
-				state = Object.assign( {}, state, {
-					[ action.payload.siteId ]: Object.assign( {}, state[ action.payload.siteId ], {
-						[ action.payload.shortcode ]: {
-							status: action.error ? LoadStatus.ERROR : LoadStatus.LOADED
-						}
-					} )
-				} );
+            case ActionTypes.RECEIVE_SHORTCODE:
+                state = Object.assign({}, state, {
+                    [action.payload.siteId]: Object.assign({}, state[action.payload.siteId], {
+                        [action.payload.shortcode]: {
+                            status: action.error ? LoadStatus.ERROR : LoadStatus.LOADED,
+                        },
+                    }),
+                });
 
-				if ( ! action.error ) {
-					Object.assign( state[ action.payload.siteId ][ action.payload.shortcode ], {
-						body: action.payload.data.result,
-						scripts: action.payload.data.scripts,
-						styles: action.payload.data.styles
-					} );
-				}
-				break;
+                if (!action.error) {
+                    Object.assign(state[action.payload.siteId][action.payload.shortcode], {
+                        body: action.payload.data.result,
+                        scripts: action.payload.data.scripts,
+                        styles: action.payload.data.styles,
+                    });
+                }
+                break;
 
-			/**
+            /**
 			 * When a media item or set of items is updated, we iterate over
 			 * the set of known shortcodes for the site, and "forget" any
 			 * shortcode results for galleries which contain the updated item.
 			 */
-			case 'RECEIVE_MEDIA_ITEMS':
-			case 'RECEIVE_MEDIA_ITEM':
-				if ( ! state.hasOwnProperty( action.siteId ) ) {
-					break;
-				}
+            case 'RECEIVE_MEDIA_ITEMS':
+            case 'RECEIVE_MEDIA_ITEM':
+                if (!state.hasOwnProperty(action.siteId)) {
+                    break;
+                }
 
-				let media;
-				if ( Array.isArray( action.data.media ) ) {
-					media = action.data.media;
-				} else {
-					media = [ action.data ];
-				}
+                let media;
+                if (Array.isArray(action.data.media)) {
+                    media = action.data.media;
+                } else {
+                    media = [action.data];
+                }
 
-				const updatedIds = media.map( ( item ) => item.ID.toString() );
+                const updatedIds = media.map(item => item.ID.toString());
 
-				state = Object.assign( {}, state, {
-					[ action.siteId ]: pickBy( state[ action.siteId ], ( status, shortcode ) => {
-						const parsed = Shortcode.parse( shortcode );
-						if ( parsed.tag !== 'gallery' || ! parsed.attrs.named || ! parsed.attrs.named.ids ) {
-							return true;
-						}
+                state = Object.assign({}, state, {
+                    [action.siteId]: pickBy(state[action.siteId], (status, shortcode) => {
+                        const parsed = Shortcode.parse(shortcode);
+                        if (
+                            parsed.tag !== 'gallery' ||
+                            !parsed.attrs.named ||
+                            !parsed.attrs.named.ids
+                        ) {
+                            return true;
+                        }
 
-						const ids = parsed.attrs.named.ids.split( ',' );
-						return ! intersection( ids, updatedIds ).length;
-					} )
-				} );
-				break;
-		}
+                        const ids = parsed.attrs.named.ids.split(',');
+                        return !intersection(ids, updatedIds).length;
+                    }),
+                });
+                break;
+        }
 
-		return state;
-	}
+        return state;
+    }
 }
 
-export default new ShortcodesStore( Dispatcher );
+export default new ShortcodesStore(Dispatcher);

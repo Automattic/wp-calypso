@@ -12,16 +12,15 @@ import sitesList from 'lib/sites-list';
 
 const sites = sitesList();
 
-export default React.createClass( {
+export default React.createClass({
+    displayName: 'DomainTip',
 
-	displayName: 'DomainTip',
+    mixins: [PureRenderMixin],
 
-	mixins: [ PureRenderMixin ],
+    render() {
+        const primarySite = sites.initialized && sites.getPrimary();
+        const siteId = primarySite ? primarySite.ID : 0;
 
-	render() {
-		const primarySite = sites.initialized && sites.getPrimary();
-		const siteId = primarySite ? primarySite.ID : 0;
-
-		return <DomainTip siteId={ siteId } event="domain_app_example" />;
-	}
-} );
+        return <DomainTip siteId={siteId} event="domain_app_example" />;
+    },
+});

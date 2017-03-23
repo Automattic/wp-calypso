@@ -9,16 +9,16 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import ClipboardButtonInput from '../';
 
-export default React.createClass( {
-	displayName: 'ClipboardButtonInput',
+export default React.createClass({
+    displayName: 'ClipboardButtonInput',
 
-	mixins: [ PureRenderMixin ],
+    mixins: [PureRenderMixin],
 
-	render: function() {
-		return (
-			<div>
-				<ClipboardButtonInput value="https://example.wordpress.com/" />
-			</div>
-		);
-	}
-} );
+    render: function() {
+        return (
+            <div>
+                <ClipboardButtonInput value="https://example.wordpress.com/" />
+            </div>
+        );
+    },
+});

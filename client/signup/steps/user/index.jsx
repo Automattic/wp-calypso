@@ -18,176 +18,181 @@ import { getSuggestedUsername } from 'state/signup/optional-dependencies/selecto
 import { recordTracksEvent } from 'state/analytics/actions';
 
 export class UserStep extends Component {
-	static propTypes = {
-		flowName: PropTypes.string,
-		translate: PropTypes.func,
-		subHeaderText: PropTypes.string,
-		isSocialSignupEnabled: PropTypes.bool,
-	};
+    static propTypes = {
+        flowName: PropTypes.string,
+        translate: PropTypes.func,
+        subHeaderText: PropTypes.string,
+        isSocialSignupEnabled: PropTypes.bool,
+    };
 
-	static defaultProps = {
-		translate: identity,
-		suggestedUsername: identity,
-		isSocialSignupEnabled: false,
-	};
+    static defaultProps = {
+        translate: identity,
+        suggestedUsername: identity,
+        isSocialSignupEnabled: false,
+    };
 
-	state = {
-		submitting: false,
-		subHeaderText: '',
-	};
+    state = {
+        submitting: false,
+        subHeaderText: '',
+    };
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.step && 'invalid' === nextProps.step.status ) {
-			this.setState( { submitting: false } );
-		}
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.step && 'invalid' === nextProps.step.status) {
+            this.setState({ submitting: false });
+        }
 
-		if ( this.props.flowName !== nextProps.flowName || this.props.subHeaderText !== nextProps.subHeaderText ) {
-			this.setSubHeaderText( nextProps );
-		}
-	}
+        if (
+            this.props.flowName !== nextProps.flowName ||
+            this.props.subHeaderText !== nextProps.subHeaderText
+        ) {
+            this.setSubHeaderText(nextProps);
+        }
+    }
 
-	componentWillMount() {
-		this.setSubHeaderText( this.props );
-	}
+    componentWillMount() {
+        this.setSubHeaderText(this.props);
+    }
 
-	setSubHeaderText( props ) {
-		let subHeaderText = props.subHeaderText;
+    setSubHeaderText(props) {
+        let subHeaderText = props.subHeaderText;
 
-		/**
+        /**
 		 * Update the step sub-header if they only want to create an account, without a site.
 		 */
-		if (
-			1 === signupUtils.getFlowSteps( props.flowName ).length &&
-			'userfirst' !== props.flowName
-		) {
-			subHeaderText = this.props.translate( 'Welcome to the wonderful WordPress.com community' );
-		}
+        if (
+            1 === signupUtils.getFlowSteps(props.flowName).length && 'userfirst' !== props.flowName
+        ) {
+            subHeaderText = this.props.translate(
+                'Welcome to the wonderful WordPress.com community'
+            );
+        }
 
-		this.setState( { subHeaderText: subHeaderText } );
-	}
+        this.setState({ subHeaderText: subHeaderText });
+    }
 
-	save = ( form ) => {
-		SignupActions.saveSignupStep( {
-			stepName: this.props.stepName,
-			form: form
-		} );
-	};
+    save = form => {
+        SignupActions.saveSignupStep({
+            stepName: this.props.stepName,
+            form: form,
+        });
+    };
 
-	submit = ( data ) => {
-		SignupActions.submitSignupStep( {
-			processingMessage: this.props.translate( 'Creating your account' ),
-			flowName: this.props.flowName,
-			stepName: this.props.stepName,
-			...data
-		} );
+    submit = data => {
+        SignupActions.submitSignupStep({
+            processingMessage: this.props.translate('Creating your account'),
+            flowName: this.props.flowName,
+            stepName: this.props.stepName,
+            ...data,
+        });
 
-		this.props.goToNextStep();
-	};
+        this.props.goToNextStep();
+    };
 
-	submitForm = ( form, userData, analyticsData ) => {
-		const queryArgs = {
-			jetpackRedirect: get( this.props, 'queryObject.jetpack_redirect' )
-		};
+    submitForm = (form, userData, analyticsData) => {
+        const queryArgs = {
+            jetpackRedirect: get(this.props, 'queryObject.jetpack_redirect'),
+        };
 
-		const formWithoutPassword = {
-			...form,
-			password: {
-				...form.password,
-				value: ''
-			}
-		};
+        const formWithoutPassword = {
+            ...form,
+            password: {
+                ...form.password,
+                value: '',
+            },
+        };
 
-		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
+        this.props.recordTracksEvent('calypso_signup_user_step_submit', analyticsData);
 
-		this.submit( {
-			userData,
-			form: formWithoutPassword,
-			queryArgs
-		} );
-	};
+        this.submit({
+            userData,
+            form: formWithoutPassword,
+            queryArgs,
+        });
+    };
 
-	handleSocialResponse = ( service, token ) => {
-		this.submit( { service, token } );
-	};
+    handleSocialResponse = (service, token) => {
+        this.submit({ service, token });
+    };
 
-	userCreationComplete() {
-		return this.props.step && 'completed' === this.props.step.status;
-	}
+    userCreationComplete() {
+        return this.props.step && 'completed' === this.props.step.status;
+    }
 
-	userCreationPending() {
-		return this.props.step && 'pending' === this.props.step.status;
-	}
+    userCreationPending() {
+        return this.props.step && 'pending' === this.props.step.status;
+    }
 
-	userCreationStarted() {
-		return this.userCreationPending() || this.userCreationComplete();
-	}
+    userCreationStarted() {
+        return this.userCreationPending() || this.userCreationComplete();
+    }
 
-	getRedirectToAfterLoginUrl() {
-		const stepAfterRedirect = signupUtils.getNextStepName( this.props.flowName, this.props.stepName ) ||
-			signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName );
-		return this.originUrl() + signupUtils.getStepUrl(
-				this.props.flowName,
-				stepAfterRedirect
-			);
-	}
+    getRedirectToAfterLoginUrl() {
+        const stepAfterRedirect = signupUtils.getNextStepName(
+            this.props.flowName,
+            this.props.stepName
+        ) || signupUtils.getPreviousStepName(this.props.flowName, this.props.stepName);
+        return this.originUrl() + signupUtils.getStepUrl(this.props.flowName, stepAfterRedirect);
+    }
 
-	originUrl() {
-		return window.location.protocol + '//' + window.location.hostname +
-			( window.location.port ? ':' + window.location.port : '' );
-	}
+    originUrl() {
+        return window.location.protocol +
+            '//' +
+            window.location.hostname +
+            (window.location.port ? ':' + window.location.port : '');
+    }
 
-	submitButtonText() {
-		const { translate } = this.props;
+    submitButtonText() {
+        const { translate } = this.props;
 
-		if ( this.userCreationPending() ) {
-			return translate( 'Creating Your Account…' );
-		}
+        if (this.userCreationPending()) {
+            return translate('Creating Your Account…');
+        }
 
-		if ( this.userCreationComplete() ) {
-			return translate( 'Account created - Go to next step' );
-		}
+        if (this.userCreationComplete()) {
+            return translate('Account created - Go to next step');
+        }
 
-		return translate( 'Create My Account' );
-	}
+        return translate('Create My Account');
+    }
 
-	renderSignupForm() {
-		return (
-			<SignupForm
-				{ ...omit( this.props, [ 'translate' ] ) }
-				getRedirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
-				disabled={ this.userCreationStarted() }
-				submitting={ this.userCreationStarted() }
-				save={ this.save }
-				submitForm={ this.submitForm }
-				submitButtonText={ this.submitButtonText() }
-				suggestedUsername={ this.props.suggestedUsername }
-				handleSocialResponse={ this.handleSocialResponse }
-				isSocialSignupEnabled={ this.props.isSocialSignupEnabled }
-			/>
-		);
-	}
+    renderSignupForm() {
+        return (
+            <SignupForm
+                {...omit(this.props, ['translate'])}
+                getRedirectToAfterLoginUrl={this.getRedirectToAfterLoginUrl()}
+                disabled={this.userCreationStarted()}
+                submitting={this.userCreationStarted()}
+                save={this.save}
+                submitForm={this.submitForm}
+                submitButtonText={this.submitButtonText()}
+                suggestedUsername={this.props.suggestedUsername}
+                handleSocialResponse={this.handleSocialResponse}
+                isSocialSignupEnabled={this.props.isSocialSignupEnabled}
+            />
+        );
+    }
 
-	render() {
-		return (
-			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				headerText={ this.props.headerText }
-				subHeaderText={ this.state.subHeaderText }
-				positionInFlow={ this.props.positionInFlow }
-				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
-				signupProgress={ this.props.signupProgress }
-				stepContent={ this.renderSignupForm() }
-			/>
-		);
-	}
+    render() {
+        return (
+            <StepWrapper
+                flowName={this.props.flowName}
+                stepName={this.props.stepName}
+                headerText={this.props.headerText}
+                subHeaderText={this.state.subHeaderText}
+                positionInFlow={this.props.positionInFlow}
+                fallbackHeaderText={this.props.translate('Create your account.')}
+                signupProgress={this.props.signupProgress}
+                stepContent={this.renderSignupForm()}
+            />
+        );
+    }
 }
 
 export default connect(
-	( state ) => ( {
-		suggestedUsername: getSuggestedUsername( state )
-	} ),
-	{
-		recordTracksEvent
-	}
-)( localize( UserStep ) );
+    state => ({
+        suggestedUsername: getSuggestedUsername(state),
+    }),
+    {
+        recordTracksEvent,
+    }
+)(localize(UserStep));

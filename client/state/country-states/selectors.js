@@ -6,8 +6,8 @@
  * @param  {String} countryCode Country code to check.
  * @return {?Array}             States objects, if known.
  */
-export function getCountryStates( state, countryCode ) {
-	return state.countryStates.items[ countryCode.toLowerCase() ] || null;
+export function getCountryStates(state, countryCode) {
+    return state.countryStates.items[countryCode.toLowerCase()] || null;
 }
 
 /**
@@ -18,6 +18,6 @@ export function getCountryStates( state, countryCode ) {
  * @param  {String}  countryCode Country code to check.
  * @return {Boolean}             Whether a request is in progress
  */
-export function isCountryStatesFetching( state, countryCode ) {
-	return state.countryStates.isFetching[ countryCode.toLowerCase() ] || false;
+export function isCountryStatesFetching(state, countryCode) {
+    return state.countryStates.isFetching[countryCode.toLowerCase()] || false;
 }

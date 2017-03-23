@@ -18,10 +18,10 @@ import { getPastBillingTransactions } from './';
  * @return {?Object}         The transaction object
  */
 const getPastBillingTransaction = createSelector(
-	( state, id ) => {
-		return find( getPastBillingTransactions( state ), { id } ) || null;
-	},
-	getPastBillingTransactions
+    (state, id) => {
+        return find(getPastBillingTransactions(state), { id }) || null;
+    },
+    getPastBillingTransactions
 );
 
 export default getPastBillingTransaction;

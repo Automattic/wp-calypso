@@ -1,16 +1,7 @@
 /**
  * External Dependencies
  */
-import {
-	filter,
-	findIndex,
-	findLastIndex,
-	forEach,
-	get,
-	map,
-	noop,
-	defer,
-} from 'lodash';
+import { filter, findIndex, findLastIndex, forEach, get, map, noop, defer } from 'lodash';
 import moment from 'moment';
 import url from 'url';
 import debugFactory from 'debug';
@@ -29,535 +20,546 @@ import XPostHelper from 'reader/xpost-helper';
 import { setLastStoreId } from 'reader/controller-helper';
 import * as stats from 'reader/stats';
 
-const debug = debugFactory( 'calypso:feed-store:post-list-store' );
+const debug = debugFactory('calypso:feed-store:post-list-store');
 
 export default class FeedStream {
+    constructor(spec) {
+        if (!spec) {
+            throw new Error('must supply a feed stream spec');
+        }
 
-	constructor( spec ) {
-		if ( ! spec ) {
-			throw new Error( 'must supply a feed stream spec' );
-		}
+        if (!spec.id) {
+            throw new Error('missing id');
+        }
 
-		if ( ! spec.id ) {
-			throw new Error( 'missing id' );
-		}
+        if (!spec.fetcher) {
+            throw new Error('missing fetcher');
+        }
 
-		if ( ! spec.fetcher ) {
-			throw new Error( 'missing fetcher' );
-		}
+        if (!spec.keyMaker) {
+            throw new Error('must supply keyMaker');
+        }
 
-		if ( ! spec.keyMaker ) {
-			throw new Error( 'must supply keyMaker' );
-		}
+        this.id = spec.id;
 
-		this.id = spec.id;
+        Object.assign(this, {
+            id: spec.id,
+            postKeys: [], // an array of keys, as determined by the key maker,
+            pendingPostKeys: [],
+            postById: new Set(),
+            errors: [],
+            fetcher: spec.fetcher,
+            page: 1,
+            perPage: 7,
+            selectedIndex: -1,
+            xPostedByURL: {},
+            maxUpdates: 40,
+            gapFillCount: 21,
+            orderBy: 'date',
+            _isLastPage: false,
+            _isFetchingNextPage: false,
+            keyMaker: spec.keyMaker,
+            onNextPageFetch: spec.onNextPageFetch || noop,
+            onGapFetch: spec.onGapFetch || noop,
+            onUpdateFetch: spec.onUpdateFetch || noop,
+            dateProperty: spec.dateProperty || 'date',
+            poller: PollerPool.add(this, 'pollForUpdates', {
+                interval: 60 * 1000,
+                leading: false,
+                pauseWhenHidden: false,
+            }),
+            startDate: spec.startDate,
+        });
+    }
 
-		Object.assign( this, {
-			id: spec.id,
-			postKeys: [], // an array of keys, as determined by the key maker,
-			pendingPostKeys: [],
-			postById: new Set(),
-			errors: [],
-			fetcher: spec.fetcher,
-			page: 1,
-			perPage: 7,
-			selectedIndex: -1,
-			xPostedByURL: {},
-			maxUpdates: 40,
-			gapFillCount: 21,
-			orderBy: 'date',
-			_isLastPage: false,
-			_isFetchingNextPage: false,
-			keyMaker: spec.keyMaker,
-			onNextPageFetch: spec.onNextPageFetch || noop,
-			onGapFetch: spec.onGapFetch || noop,
-			onUpdateFetch: spec.onUpdateFetch || noop,
-			dateProperty: spec.dateProperty || 'date',
-			poller: PollerPool.add( this, 'pollForUpdates', {
-				interval: 60 * 1000,
-				leading: false,
-				pauseWhenHidden: false
-			} ),
-			startDate: spec.startDate
-		} );
-	}
+    destroy() {
+        PollerPool.remove(this.poller);
+    }
 
-	destroy() {
-		PollerPool.remove( this.poller );
-	}
+    handlePayload(payload) {
+        const action = payload && payload.action;
 
-	handlePayload( payload ) {
-		const action = payload && payload.action;
+        if (!action) {
+            return;
+        }
 
-		if ( ! action ) {
-			return;
-		}
+        if (action.id !== this.id) {
+            return;
+        }
 
-		if ( action.id !== this.id ) {
-			return;
-		}
+        Dispatcher.waitFor([FeedPostStore.dispatchToken]);
 
-		Dispatcher.waitFor( [ FeedPostStore.dispatchToken ] );
+        switch (action.type) {
+            case ActionTypes.RECEIVE_PAGE:
+                this.receivePage(action.id, action.error, action.data);
+                break;
+            case ActionTypes.RECEIVE_UPDATES:
+                this.receiveUpdates(action.id, action.error, action.data);
+                break;
+            case ActionTypes.SHOW_UPDATES:
+                this.acceptUpdates();
+                break;
+            case ActionTypes.RECEIVE_GAP:
+                this.receiveFeedGap(action.gap, action.error, action.data);
+                break;
+            case ActionTypes.FETCH_NEXT_PAGE:
+                this.setIsFetchingNextPage(true);
+                break;
+            case ActionTypes.SELECT_ITEM:
+                this.selectItem(action.postKey, action.id);
+                break;
+            case ActionTypes.SELECT_NEXT_ITEM:
+                this.selectNextItem(action.postKey);
+                break;
+            case ActionTypes.SELECT_PREV_ITEM:
+                this.selectPrevItem(action.postKey);
+                break;
+            case ActionTypes.SELECT_FIRST_ITEM:
+                this.selectFirstItem();
+                break;
+        }
+    }
 
-		switch ( action.type ) {
+    get() {
+        return this.postKeys;
+    }
 
-			case ActionTypes.RECEIVE_PAGE:
-				this.receivePage( action.id, action.error, action.data );
-				break;
-			case ActionTypes.RECEIVE_UPDATES:
-				this.receiveUpdates( action.id, action.error, action.data );
-				break;
-			case ActionTypes.SHOW_UPDATES:
-				this.acceptUpdates();
-				break;
-			case ActionTypes.RECEIVE_GAP:
-				this.receiveFeedGap( action.gap, action.error, action.data );
-				break;
-			case ActionTypes.FETCH_NEXT_PAGE:
-				this.setIsFetchingNextPage( true );
-				break;
-			case ActionTypes.SELECT_ITEM:
-				this.selectItem( action.postKey, action.id );
-				break;
-			case ActionTypes.SELECT_NEXT_ITEM:
-				this.selectNextItem( action.postKey );
-				break;
-			case ActionTypes.SELECT_PREV_ITEM:
-				this.selectPrevItem( action.postKey );
-				break;
-			case ActionTypes.SELECT_FIRST_ITEM:
-				this.selectFirstItem();
-				break;
-		}
-	}
+    getID() {
+        return this.id;
+    }
 
-	get() {
-		return this.postKeys;
-	}
+    getAll() {
+        return map(this.postKeys, function(key) {
+            return key.isGap ? key : FeedPostStore.get(key);
+        });
+    }
 
-	getID() {
-		return this.id;
-	}
+    getPage() {
+        return this.page;
+    }
 
-	getAll() {
-		return map( this.postKeys, function( key ) {
-			return key.isGap ? key : FeedPostStore.get( key );
-		} );
-	}
+    getPerPage() {
+        return this.perPage;
+    }
 
-	getPage() {
-		return this.page;
-	}
+    getUpdateCount() {
+        return this.pendingPostKeys.length;
+    }
 
-	getPerPage() {
-		return this.perPage;
-	}
+    getSelectedPostKey() {
+        if (this.selectedIndex >= 0 && this.selectedIndex < this.postKeys.length) {
+            return this.postKeys[this.selectedIndex];
+        }
+        return null;
+    }
 
-	getUpdateCount() {
-		return this.pendingPostKeys.length;
-	}
+    isLastPage() {
+        return this._isLastPage;
+    }
 
-	getSelectedPostKey() {
-		if ( this.selectedIndex >= 0 && this.selectedIndex < this.postKeys.length ) {
-			return this.postKeys[ this.selectedIndex ];
-		}
-		return null;
-	}
+    isFetchingNextPage() {
+        return this._isFetchingNextPage;
+    }
 
-	isLastPage() {
-		return this._isLastPage;
-	}
+    isValidPostOrGap(postKey) {
+        if (postKey.isGap === true) {
+            return true;
+        }
+        const post = FeedPostStore.get(postKey);
+        return post &&
+            post._state !== 'error' &&
+            post._state !== 'pending' &&
+            post._state !== 'minimal';
+    }
 
-	isFetchingNextPage() {
-		return this._isFetchingNextPage;
-	}
+    selectNextItem() {
+        if (this.selectedIndex === -1) {
+            return;
+        }
+        const nextIndex = findIndex(this.postKeys, this.isValidPostOrGap, this.selectedIndex + 1);
+        if (nextIndex !== -1) {
+            this.selectedIndex = nextIndex;
+            this.emitChange();
+        }
 
-	isValidPostOrGap( postKey ) {
-		if ( postKey.isGap === true ) {
-			return true;
-		}
-		const post = FeedPostStore.get( postKey );
-		return post && post._state !== 'error' && post._state !== 'pending' &&
-			post._state !== 'minimal';
-	}
+        const PREFETCH_THRESHOLD = 10;
+        // If we are getting close to the end of the loaded stream, or are already at the end,
+        // start fetching new posts
+        if (nextIndex + PREFETCH_THRESHOLD > this.postKeys.length || nextIndex === -1) {
+            const fetchNextPage = () => FeedStreamActions.fetchNextPage(this.getID());
+            defer(fetchNextPage);
+            this.onKeyboardFetchPerformed();
+        }
+    }
 
-	selectNextItem() {
-		if ( this.selectedIndex === -1 ) {
-			return;
-		}
-		const nextIndex = findIndex( this.postKeys, this.isValidPostOrGap, this.selectedIndex + 1 );
-		if ( nextIndex !== -1 ) {
-			this.selectedIndex = nextIndex;
-			this.emitChange();
-		}
+    onKeyboardFetchPerformed() {
+        stats.recordTrack('calypso_reader_fullpost_keyboard_fetch');
+    }
 
-		const PREFETCH_THRESHOLD = 10;
-		// If we are getting close to the end of the loaded stream, or are already at the end,
-		// start fetching new posts
-		if ( nextIndex + PREFETCH_THRESHOLD > this.postKeys.length || nextIndex === -1 ) {
-			const fetchNextPage = () => FeedStreamActions.fetchNextPage( this.getID() );
-			defer( fetchNextPage );
-			this.onKeyboardFetchPerformed();
-		}
-	}
+    selectPrevItem() {
+        if (this.selectedIndex < 1) {
+            // this also captures a selectedIndex of 0, and that's intentional
+            return;
+        }
+        const prevIndex = findLastIndex(
+            this.postKeys,
+            this.isValidPostOrGap,
+            this.selectedIndex - 1
+        );
+        if (prevIndex !== -1) {
+            this.selectedIndex = prevIndex;
+            this.emitChange();
+        }
+    }
 
-	onKeyboardFetchPerformed() {
-		stats.recordTrack( 'calypso_reader_fullpost_keyboard_fetch' );
-	}
+    selectFirstItem() {
+        if (this.selectedIndex !== 0) {
+            this.selectedIndex = 0;
+            this.emitChange();
+        }
+    }
 
-	selectPrevItem() {
-		if ( this.selectedIndex < 1 ) { // this also captures a selectedIndex of 0, and that's intentional
-			return;
-		}
-		const prevIndex = findLastIndex( this.postKeys, this.isValidPostOrGap, this.selectedIndex - 1 );
-		if ( prevIndex !== -1 ) {
-			this.selectedIndex = prevIndex;
-			this.emitChange();
-		}
-	}
+    selectItem(postKey, id) {
+        const selectedIndex = findIndex(this.postKeys, postKey);
+        if (
+            this.isValidPostOrGap(this.postKeys[selectedIndex]) &&
+            selectedIndex !== this.selectedIndex
+        ) {
+            this.selectedIndex = selectedIndex;
+            setLastStoreId(id);
+            this.emitChange();
+        }
+    }
 
-	selectFirstItem() {
-		if ( this.selectedIndex !== 0 ) {
-			this.selectedIndex = 0;
-			this.emitChange();
-		}
-	}
+    getLastItemWithDate() {
+        if (this.oldestPostDate) {
+            return this.oldestPostDate;
+        }
+        let i = this.postKeys.length - 1;
+        if (i === -1) {
+            return;
+        }
 
-	selectItem( postKey, id ) {
-		const selectedIndex = findIndex( this.postKeys, postKey );
-		if ( this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) && selectedIndex !== this.selectedIndex ) {
-			this.selectedIndex = selectedIndex;
-			setLastStoreId( id );
-			this.emitChange();
-		}
-	}
+        let date;
 
-	getLastItemWithDate() {
-		if ( this.oldestPostDate ) {
-			return this.oldestPostDate;
-		}
-		let i = this.postKeys.length - 1;
-		if ( i === -1 ) {
-			return;
-		}
+        do {
+            const key = this.postKeys[i];
+            if (!key.isGap) {
+                date = FeedPostStore.get(key)[this.dateProperty];
+            }
+            --i;
+        } while (!date && i !== -1);
 
-		let date;
+        return date;
+    }
 
-		do {
-			const key = this.postKeys[ i ];
-			if ( ! key.isGap ) {
-				date = FeedPostStore.get( key )[ this.dateProperty ];
-			}
-			--i;
-		} while ( ! date && i !== -1 );
+    getFirstItemWithDate() {
+        if (this.postKeys.length === 0) {
+            return;
+        }
 
-		return date;
-	}
+        let i = 0;
+        let date;
 
-	getFirstItemWithDate() {
-		if ( this.postKeys.length === 0 ) {
-			return;
-		}
+        do {
+            const key = this.postKeys[i];
+            if (!key.isGap) {
+                date = FeedPostStore.get(key)[this.dateProperty];
+            }
+            ++i;
+        } while (!date && i < this.postKeys.length);
 
-		let i = 0;
-		let date;
+        return date;
+    }
 
-		do {
-			const key = this.postKeys[ i ];
-			if ( ! key.isGap ) {
-				date = FeedPostStore.get( key )[ this.dateProperty ];
-			}
-			++i;
-		} while ( ! date && i < this.postKeys.length );
-
-		return date;
-	}
-
-	/**
+    /**
 	 * Checks if an error has occurred in the past minute.
 	 *
 	 * @param {string} errorType - Error type to check. If not provided, we'll check for errors of any type.
 	 * @returns {bool} true if we have a recent error
 	 */
-	hasRecentError( errorType ) {
-		const aMinuteAgo = Date.now() - ( 60 * 1000 );
-		return this.errors.some( function( error ) {
-			return ( error.timestamp && error.timestamp > aMinuteAgo ) && ( ! errorType || errorType === error.error );
-		} );
-	}
+    hasRecentError(errorType) {
+        const aMinuteAgo = Date.now() - 60 * 1000;
+        return this.errors.some(function(error) {
+            return error.timestamp &&
+                error.timestamp > aMinuteAgo &&
+                (!errorType || errorType === error.error);
+        });
+    }
 
-	setIsFetchingNextPage( val ) {
-		this._isFetchingNextPage = val;
-		this.emitChange();
-	}
+    setIsFetchingNextPage(val) {
+        this._isFetchingNextPage = val;
+        this.emitChange();
+    }
 
-	pollForUpdates() {
-		if ( this.isFetchingUpdates ) {
-			debug( 'already fetching, skip' );
-			return;
-		}
+    pollForUpdates() {
+        if (this.isFetchingUpdates) {
+            debug('already fetching, skip');
+            return;
+        }
 
-		if ( ! this.postKeys.length ) {
-			debug( 'skipping poll because we have no posts' );
-			return;
-		}
+        if (!this.postKeys.length) {
+            debug('skipping poll because we have no posts');
+            return;
+        }
 
-		// most recent post
-		const mostRecentDate = this.getFirstItemWithDate();
+        // most recent post
+        const mostRecentDate = this.getFirstItemWithDate();
 
-		if ( ! mostRecentDate ) {
-			return;
-		}
+        if (!mostRecentDate) {
+            return;
+        }
 
-		this.isFetchingUpdates = true;
+        this.isFetchingUpdates = true;
 
-		const params = {
-			orderBy: this.orderBy,
-			number: this.maxUpdates,
-			before: moment().toISOString(),
-			after: mostRecentDate
-		};
+        const params = {
+            orderBy: this.orderBy,
+            number: this.maxUpdates,
+            before: moment().toISOString(),
+            after: mostRecentDate,
+        };
 
-		this.onUpdateFetch( params );
-		debug( 'polling for updates' );
-		this.fetcher( params, ( error, data ) => {
-			debug( 'poll response received', error, data );
-			this.isFetchingUpdates = false;
-			FeedStreamActions.receiveUpdates( this.id, error, data );
-		} );
-	}
+        this.onUpdateFetch(params);
+        debug('polling for updates');
+        this.fetcher(params, (error, data) => {
+            debug('poll response received', error, data);
+            this.isFetchingUpdates = false;
+            FeedStreamActions.receiveUpdates(this.id, error, data);
+        });
+    }
 
-	/**
+    /**
 	 * Returns a list of sites this url was cross posted to.
 	 * @param {string} postURL - i.e.: https://developer.wordpress.com/blog/2015/10/08/this-is-just-to-say/
 	 * @returns {array} - i.e. [ { siteURL: http://dailypost.wordpress.com/, siteName: "+dailypost" } ]
 	 */
-	getSitesCrossPostedTo( postURL ) {
-		return this.xPostedByURL[ postURL ];
-	}
+    getSitesCrossPostedTo(postURL) {
+        return this.xPostedByURL[postURL];
+    }
 
-	/**
+    /**
 	 * If possible, returns the post metadata from a given response.
 	 * @param {object} postWrapper - response with post metadata
 	 * @returns {*} - null or post object
 	 * @private
 	 */
-	getPostFromMetadata( postWrapper ) {
-		if ( postWrapper && get( postWrapper, 'meta.data.discover_original_post' ) ) {
-			return postWrapper.meta.data.discover_original_post;
-		} else if ( postWrapper && get( postWrapper, 'meta.data.post' ) ) {
-			return postWrapper.meta.data.post;
-		} else if ( postWrapper.feed_ID || postWrapper.site_ID ) {
-			return postWrapper;
-		}
-		return null;
-	}
+    getPostFromMetadata(postWrapper) {
+        if (postWrapper && get(postWrapper, 'meta.data.discover_original_post')) {
+            return postWrapper.meta.data.discover_original_post;
+        } else if (postWrapper && get(postWrapper, 'meta.data.post')) {
+            return postWrapper.meta.data.post;
+        } else if (postWrapper.feed_ID || postWrapper.site_ID) {
+            return postWrapper;
+        }
+        return null;
+    }
 
-	addXPost( postURL, xPostedBy ) {
-		if ( this.xPostedByURL[ postURL ] ) {
-			let sites = this.xPostedByURL[ postURL ];
-			sites = sites.filter( function( site ) {
-				return site.siteName !== xPostedBy.siteName && site.siteURL !== xPostedBy.siteURL;
-			} );
-			sites.push( xPostedBy );
-			this.xPostedByURL[ postURL ] = sites;
-		} else {
-			this.xPostedByURL[ postURL ] = [ xPostedBy ];
-		}
-	}
+    addXPost(postURL, xPostedBy) {
+        if (this.xPostedByURL[postURL]) {
+            let sites = this.xPostedByURL[postURL];
+            sites = sites.filter(function(site) {
+                return site.siteName !== xPostedBy.siteName && site.siteURL !== xPostedBy.siteURL;
+            });
+            sites.push(xPostedBy);
+            this.xPostedByURL[postURL] = sites;
+        } else {
+            this.xPostedByURL[postURL] = [xPostedBy];
+        }
+    }
 
-	/**
+    /**
 	 * Given a list of responses with post metadata, attempts to roll up
 	 * applicable x-posts. Has a side effect of updating this.xPostedByURL
 	 * so we can keep track of where a post has been x-posted to.
 	 * @param {array} posts - a list of posts
 	 * @returns {array} posts - a filtered list of posts
 	 */
-	filterFollowedXPosts( posts ) {
-		return posts.filter( ( postWrapper ) => {
-			const post = this.getPostFromMetadata( postWrapper );
-			//note that the post hasn't been normalized yet.
-			if ( post && post.tags && post.tags[ 'p2-xpost' ] ) {
-				const xPostMetadata = XPostHelper.getXPostMetadata( post );
-				if ( ! xPostMetadata.postURL ) {
-					// we don't have the information to render this x-post
-					return false;
-				}
-				const isFollowing = FeedSubscriptionStore.getIsFollowingBySiteUrl( xPostMetadata.siteURL );
-				// x-post sites are tagged with `+subdomain`
-				const siteName = `+${ url.parse( post.site_URL ).hostname.split( '.' )[ 0 ] }`;
-				// keep track of where we cross-posted to, so we can add
-				// this info to the original post.
-				const xPostedBy = {
-					siteURL: post.site_URL,
-					siteName: siteName
-				};
-				this.addXPost( xPostMetadata.postURL, xPostedBy );
-				// also keep track of origin comment urls, so we can roll up
-				// multiple x-posts from a single origin comment.
-				if ( xPostMetadata.commentURL ) {
-					this.addXPost( xPostMetadata.commentURL, xPostedBy );
-					return this.xPostedByURL[ xPostMetadata.commentURL ].length === 1;
-				}
-				if ( ! isFollowing ) {
-					//only leave the topmost as a notice
-					return this.xPostedByURL[ xPostMetadata.postURL ].length === 1;
-				}
-				return false;
-			}
-			return true;
-		} );
-	}
+    filterFollowedXPosts(posts) {
+        return posts.filter(postWrapper => {
+            const post = this.getPostFromMetadata(postWrapper);
+            //note that the post hasn't been normalized yet.
+            if (post && post.tags && post.tags['p2-xpost']) {
+                const xPostMetadata = XPostHelper.getXPostMetadata(post);
+                if (!xPostMetadata.postURL) {
+                    // we don't have the information to render this x-post
+                    return false;
+                }
+                const isFollowing = FeedSubscriptionStore.getIsFollowingBySiteUrl(
+                    xPostMetadata.siteURL
+                );
+                // x-post sites are tagged with `+subdomain`
+                const siteName = `+${url.parse(post.site_URL).hostname.split('.')[0]}`;
+                // keep track of where we cross-posted to, so we can add
+                // this info to the original post.
+                const xPostedBy = {
+                    siteURL: post.site_URL,
+                    siteName: siteName,
+                };
+                this.addXPost(xPostMetadata.postURL, xPostedBy);
+                // also keep track of origin comment urls, so we can roll up
+                // multiple x-posts from a single origin comment.
+                if (xPostMetadata.commentURL) {
+                    this.addXPost(xPostMetadata.commentURL, xPostedBy);
+                    return this.xPostedByURL[xPostMetadata.commentURL].length === 1;
+                }
+                if (!isFollowing) {
+                    //only leave the topmost as a notice
+                    return this.xPostedByURL[xPostMetadata.postURL].length === 1;
+                }
+                return false;
+            }
+            return true;
+        });
+    }
 
-	filterNewPosts( posts ) {
-		const postById = this.postById;
-		posts = filter( posts, function( post ) {
-			return ! ( postById.has( post.ID ) );
-		} );
-		posts = this.filterFollowedXPosts( posts );
-		return map( posts, this.keyMaker );
-	}
+    filterNewPosts(posts) {
+        const postById = this.postById;
+        posts = filter(posts, function(post) {
+            return !postById.has(post.ID);
+        });
+        posts = this.filterFollowedXPosts(posts);
+        return map(posts, this.keyMaker);
+    }
 
-	receivePage( id, error, data ) {
-		if ( id !== this.id ) {
-			return;
-		}
+    receivePage(id, error, data) {
+        if (id !== this.id) {
+            return;
+        }
 
-		debug( 'receiving page in %s', this.id );
+        debug('receiving page in %s', this.id);
 
-		this._isFetchingNextPage = false;
-		this.oldestPostDate = get( data, [ 'date_range', 'after' ] );
+        this._isFetchingNextPage = false;
+        this.oldestPostDate = get(data, ['date_range', 'after']);
 
-		if ( error ) {
-			debug( 'Error fetching posts from API:', error );
-			error.timestamp = Date.now();
-			this.errors.push( error );
-			this.emitChange();
-			return;
-		}
+        if (error) {
+            debug('Error fetching posts from API:', error);
+            error.timestamp = Date.now();
+            this.errors.push(error);
+            this.emitChange();
+            return;
+        }
 
-		const posts = data && data.posts;
+        const posts = data && data.posts;
 
-		if ( ! posts ) {
-			this.emitChange();
-			return;
-		}
+        if (!posts) {
+            this.emitChange();
+            return;
+        }
 
-		if ( ! posts.length ) {
-			this._isLastPage = true;
-			this.emitChange();
-			return;
-		}
+        if (!posts.length) {
+            this._isLastPage = true;
+            this.emitChange();
+            return;
+        }
 
-		const postKeys = this.filterNewPosts( posts );
+        const postKeys = this.filterNewPosts(posts);
 
-		if ( postKeys.length ) {
-			const postById = this.postById;
-			forEach( postKeys, function( postKey ) {
-				postById.add( postKey.postId );
-			} );
-			this.postKeys = this.postKeys.concat( postKeys );
+        if (postKeys.length) {
+            const postById = this.postById;
+            forEach(postKeys, function(postKey) {
+                postById.add(postKey.postId);
+            });
+            this.postKeys = this.postKeys.concat(postKeys);
+        }
 
-		}
+        this.page++;
+        this.emitChange();
+    }
 
-		this.page++;
-		this.emitChange( );
-	}
+    receiveUpdates(id, error, data) {
+        if (id !== this.id) {
+            return;
+        }
 
-	receiveUpdates( id, error, data ) {
-		if ( id !== this.id ) {
-			return;
-		}
+        if (error) {
+            return;
+        }
 
-		if ( error ) {
-			return;
-		}
+        // pull in the updates. might cause a gap.
+        if (data && data.posts) {
+            const postKeys = this.filterNewPosts(data.posts);
+            if (postKeys.length > 0) {
+                this.pendingPostKeys = postKeys;
+                this.pendingDateAfter = moment(
+                    FeedPostStore.get(this.keyMaker(data.posts[data.posts.length - 1]))[
+                        this.dateProperty
+                    ]
+                );
+                this.emitChange();
+            }
+        }
+    }
 
-		// pull in the updates. might cause a gap.
-		if ( data && data.posts ) {
-			const postKeys = this.filterNewPosts( data.posts );
-			if ( postKeys.length > 0 ) {
-				this.pendingPostKeys = postKeys;
-				this.pendingDateAfter = moment(
-					FeedPostStore.get(
-						this.keyMaker( data.posts[ data.posts.length - 1 ] )
-					)[ this.dateProperty ]
-				);
-				this.emitChange();
-			}
-		}
-	}
+    acceptUpdates() {
+        if (this.pendingPostKeys.length === 0) {
+            return;
+        }
 
-	acceptUpdates() {
-		if ( this.pendingPostKeys.length === 0 ) {
-			return;
-		}
+        const postById = this.postById;
+        forEach(this.pendingPostKeys, function(postKey) {
+            postById.add(postKey.postId);
+        });
 
-		const postById = this.postById;
-		forEach( this.pendingPostKeys, function( postKey ) {
-			postById.add( postKey.postId );
-		} );
+        const mostRecentPostDate = moment(FeedPostStore.get(this.postKeys[0])[this.dateProperty]);
 
-		const mostRecentPostDate = moment( FeedPostStore.get( this.postKeys[ 0 ] )[ this.dateProperty ] );
+        if (this.pendingDateAfter > mostRecentPostDate) {
+            this.pendingPostKeys.push({
+                isGap: true,
+                from: mostRecentPostDate,
+                to: this.pendingDateAfter,
+            });
+        }
+        this.postKeys = this.pendingPostKeys.concat(this.postKeys);
+        if (this.selectedIndex > -1) {
+            //we already scroll to top of content, so deselect so we don't
+            //try to scroll down again.
+            this.selectedIndex = -1;
+        }
+        this.pendingPostKeys = [];
+        this.pendingDateAfter = null;
+        this.emitChange();
+    }
 
-		if ( this.pendingDateAfter > mostRecentPostDate ) {
-			this.pendingPostKeys.push( {
-				isGap: true,
-				from: mostRecentPostDate,
-				to: this.pendingDateAfter
-			} );
-		}
-		this.postKeys = this.pendingPostKeys.concat( this.postKeys );
-		if ( this.selectedIndex > -1 ) {
-			//we already scroll to top of content, so deselect so we don't
-			//try to scroll down again.
-			this.selectedIndex = -1;
-		}
-		this.pendingPostKeys = [];
-		this.pendingDateAfter = null;
-		this.emitChange();
-	}
+    receiveFeedGap(gap, error, data) {
+        if (error) {
+            this.errors.push(error);
+            this.emitChange();
+            return;
+        }
 
-	receiveFeedGap( gap, error, data ) {
-		if ( error ) {
-			this.errors.push( error );
-			this.emitChange();
-			return;
-		}
+        const posts = data && data.posts;
+        if (!posts) {
+            return;
+        }
 
-		const posts = data && data.posts;
-		if ( ! posts ) {
-			return;
-		}
+        // find the gap
+        const indexOfGap = this.postKeys.indexOf(gap);
+        if (indexOfGap === -1) {
+            // gap not found???
+            debug('gap %o not found', gap);
+            return;
+        }
 
-		// find the gap
-		const indexOfGap = this.postKeys.indexOf( gap );
-		if ( indexOfGap === -1 ) {
-			// gap not found???
-			debug( 'gap %o not found', gap );
-			return;
-		}
+        const beforeGap = this.postKeys.slice(0, indexOfGap),
+            afterGap = this.postKeys.slice(indexOfGap + 1),
+            gapItems = this.filterNewPosts(posts),
+            afterGapDate = moment(FeedPostStore.get(afterGap[0])[this.dateProperty]);
 
-		const beforeGap = this.postKeys.slice( 0, indexOfGap ),
-			afterGap = this.postKeys.slice( indexOfGap + 1 ),
-			gapItems = this.filterNewPosts( posts ),
-			afterGapDate = moment( FeedPostStore.get( afterGap[ 0 ] )[ this.dateProperty ] );
+        if (posts.length === this.gapFillCount) {
+            if (moment(posts[posts.length - 1][this.dateProperty]) > afterGapDate) {
+                // we still might have a gap
+                gapItems.push({
+                    isGap: true,
+                    from: afterGapDate,
+                    to: moment(posts[posts.length - 1][this.dateProperty]),
+                });
+            }
+        }
 
-		if ( posts.length === this.gapFillCount ) {
-			if ( moment( posts[ posts.length - 1 ][ this.dateProperty ] ) > afterGapDate ) {
-				// we still might have a gap
-				gapItems.push( {
-					isGap: true,
-					from: afterGapDate,
-					to: moment( posts[ posts.length - 1 ][ this.dateProperty ] )
-				} );
-			}
-		}
+        this.postKeys = beforeGap.concat(gapItems, afterGap);
 
-		this.postKeys = beforeGap.concat( gapItems, afterGap );
-
-		this.emitChange();
-	}
+        this.emitChange();
+    }
 }
 
-Emitter( FeedStream.prototype );
+Emitter(FeedStream.prototype);

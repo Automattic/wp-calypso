@@ -9,8 +9,8 @@ import { filter, values } from 'lodash';
  * @param  {Object} state Global state tree
  * @return {Array}        Keyring connections, if known.
  */
-export function getKeyringConnections( state ) {
-	return values( state.sharing.keyring.items );
+export function getKeyringConnections(state) {
+    return values(state.sharing.keyring.items);
 }
 
 /**
@@ -20,8 +20,8 @@ export function getKeyringConnections( state ) {
  * @param  {Number} keyringConnectionId Keyring connection ID.
  * @return {?Object}                    Keyring connections, if known.
  */
-export function getKeyringConnectionById( state, keyringConnectionId ) {
-	return state.sharing.keyring.items[ keyringConnectionId ] || null;
+export function getKeyringConnectionById(state, keyringConnectionId) {
+    return state.sharing.keyring.items[keyringConnectionId] || null;
 }
 
 /**
@@ -31,8 +31,8 @@ export function getKeyringConnectionById( state, keyringConnectionId ) {
  * @param  {String} service Service slug.
  * @return {Array}         Keyring connections, if known.
  */
-export function getKeyringConnectionsByName( state, service ) {
-	return filter( getKeyringConnections( state ), { service } );
+export function getKeyringConnectionsByName(state, service) {
+    return filter(getKeyringConnections(state), { service });
 }
 
 /**
@@ -42,10 +42,11 @@ export function getKeyringConnectionsByName( state, service ) {
  * @param  {Number} userId User ID.
  * @return {Array}         Site connections, if known.
  */
-export function getUserConnections( state, userId ) {
-	return filter( state.sharing.keyring.items, ( connection ) => (
-		connection.shared || connection.keyring_connection_user_ID === userId
-	) );
+export function getUserConnections(state, userId) {
+    return filter(
+        state.sharing.keyring.items,
+        connection => connection.shared || connection.keyring_connection_user_ID === userId
+    );
 }
 
 /**
@@ -55,6 +56,6 @@ export function getUserConnections( state, userId ) {
  * @param  {Object}  state Global state tree
  * @return {Boolean}       Whether a request is in progress
  */
-export function isKeyringConnectionsFetching( state ) {
-	return state.sharing.keyring.isFetching;
+export function isKeyringConnectionsFetching(state) {
+    return state.sharing.keyring.isFetching;
 }

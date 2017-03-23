@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {Number}  siteId      The ID of the site we're querying
  * @return {?Boolean}            Whether Post by Email address is currently being updated
  */
-export default function isRegeneratingJetpackPostByEmail( state, siteId ) {
-	return get( state.jetpack.settings.requests, [ siteId, 'regeneratingPostByEmail' ], null );
+export default function isRegeneratingJetpackPostByEmail(state, siteId) {
+    return get(state.jetpack.settings.requests, [siteId, 'regeneratingPostByEmail'], null);
 }

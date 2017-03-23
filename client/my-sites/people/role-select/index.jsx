@@ -18,67 +18,63 @@ import QuerySiteRoles from 'components/data/query-site-roles';
 import { getSite } from 'state/sites/selectors';
 import { getSiteRoles } from 'state/site-roles/selectors';
 
-const getWpcomFollowerRole = ( { site, translate } ) => {
-	const displayName = site.is_private
-		? translate( 'Viewer', { context: 'Role that is displayed in a select' } )
-		: translate( 'Follower', { context: 'Role that is displayed in a select' } );
+const getWpcomFollowerRole = ({ site, translate }) => {
+    const displayName = site.is_private
+        ? translate('Viewer', { context: 'Role that is displayed in a select' })
+        : translate('Follower', { context: 'Role that is displayed in a select' });
 
-	return {
-		display_name: displayName,
-		name: 'follower'
-	};
+    return {
+        display_name: displayName,
+        name: 'follower',
+    };
 };
 
-const RoleSelect = ( props ) => {
-	let { siteRoles } = props;
-	const { site, includeFollower, siteId, id, explanation, translate } = props;
-	const omitProps = [
-		'site',
-		'key',
-		'siteId',
-		'includeFollower',
-		'explanation',
-		'siteRoles',
-		'dispatch',
-		'moment',
-		'numberFormat',
-		'translate'
-	];
+const RoleSelect = props => {
+    let { siteRoles } = props;
+    const { site, includeFollower, siteId, id, explanation, translate } = props;
+    const omitProps = [
+        'site',
+        'key',
+        'siteId',
+        'includeFollower',
+        'explanation',
+        'siteRoles',
+        'dispatch',
+        'moment',
+        'numberFormat',
+        'translate',
+    ];
 
-	if ( site && siteRoles && includeFollower ) {
-		siteRoles = siteRoles.concat( getWpcomFollowerRole( props ) );
-	}
+    if (site && siteRoles && includeFollower) {
+        siteRoles = siteRoles.concat(getWpcomFollowerRole(props));
+    }
 
-	return (
-		<FormFieldset key={ siteId } disabled={ ! siteRoles }>
-			{ siteId && <QuerySites siteId={ siteId } /> }
-			{ siteId && <QuerySiteRoles siteId={ siteId } /> }
-			<FormLabel htmlFor={ id }>
-				{ translate( 'Role' ) }
-			</FormLabel>
-			<FormSelect { ...omit( props, omitProps ) }>
-				{
-					siteRoles && map( siteRoles, ( role ) => {
-						return (
-							<option value={ role.name } key={ role.name }>
-								{ role.display_name }
-							</option>
-						);
-					} )
-				}
-			</FormSelect>
-			{ explanation &&
-				<FormSettingExplanation>
-					{ explanation }
-				</FormSettingExplanation>
-			}
-		</FormFieldset>
-	);
+    return (
+        <FormFieldset key={siteId} disabled={!siteRoles}>
+            {siteId && <QuerySites siteId={siteId} />}
+            {siteId && <QuerySiteRoles siteId={siteId} />}
+            <FormLabel htmlFor={id}>
+                {translate('Role')}
+            </FormLabel>
+            <FormSelect {...omit(props, omitProps)}>
+                {siteRoles &&
+                    map(siteRoles, role => {
+                        return (
+                            <option value={role.name} key={role.name}>
+                                {role.display_name}
+                            </option>
+                        );
+                    })}
+            </FormSelect>
+            {explanation &&
+                <FormSettingExplanation>
+                    {explanation}
+                </FormSettingExplanation>}
+        </FormFieldset>
+    );
 };
 
-export default connect(
-	( state, ownProps ) => ( {
-		site: getSite( state, ownProps.siteId ),
-		siteRoles: getSiteRoles( state, ownProps.siteId ),
-	} )
-)( localize( RoleSelect ) );
+export default connect((state, ownProps) => ({
+    site: getSite(state, ownProps.siteId),
+    siteRoles: getSiteRoles(state, ownProps.siteId),
+}))(localize(RoleSelect));

@@ -9,16 +9,16 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
-export default localize( ( { translate } ) => {
-	return (
-		<div className="product-purchase-features-list__item">
-			<PurchaseDetail
-				icon="comment"
-				title={ translate( 'Anti-Spam' ) }
-				description={ translate(
-					'Akismet filters out comment and other forms of spam, so you can focus on more important things.'
-				) }
-			/>
-		</div>
-	);
-} );
+export default localize(({ translate }) => {
+    return (
+        <div className="product-purchase-features-list__item">
+            <PurchaseDetail
+                icon="comment"
+                title={translate('Anti-Spam')}
+                description={translate(
+                    'Akismet filters out comment and other forms of spam, so you can focus on more important things.'
+                )}
+            />
+        </div>
+    );
+});

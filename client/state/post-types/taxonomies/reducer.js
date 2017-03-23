@@ -9,12 +9,12 @@ import keyBy from 'lodash/keyBy';
  * Internal dependencies
  */
 import {
-	POST_TYPES_TAXONOMIES_RECEIVE,
-	POST_TYPES_TAXONOMIES_REQUEST,
-	POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
-	POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE
+    POST_TYPES_TAXONOMIES_RECEIVE,
+    POST_TYPES_TAXONOMIES_REQUEST,
+    POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
+    POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
+    SERIALIZE,
+    DESERIALIZE,
 } from 'state/action-types';
 import { isValidStateWithSchema } from 'state/utils';
 import { itemsSchema } from './schema';
@@ -28,23 +28,23 @@ import { itemsSchema } from './schema';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function requesting( state = {}, action ) {
-	switch ( action.type ) {
-		case POST_TYPES_TAXONOMIES_REQUEST:
-		case POST_TYPES_TAXONOMIES_REQUEST_SUCCESS:
-		case POST_TYPES_TAXONOMIES_REQUEST_FAILURE:
-			return merge( {}, state, {
-				[ action.siteId ]: {
-					[ action.postType ]: POST_TYPES_TAXONOMIES_REQUEST === action.type
-				}
-			} );
+export function requesting(state = {}, action) {
+    switch (action.type) {
+        case POST_TYPES_TAXONOMIES_REQUEST:
+        case POST_TYPES_TAXONOMIES_REQUEST_SUCCESS:
+        case POST_TYPES_TAXONOMIES_REQUEST_FAILURE:
+            return merge({}, state, {
+                [action.siteId]: {
+                    [action.postType]: POST_TYPES_TAXONOMIES_REQUEST === action.type,
+                },
+            });
 
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
-	}
+        case SERIALIZE:
+        case DESERIALIZE:
+            return {};
+    }
 
-	return state;
+    return state;
 }
 
 /**
@@ -55,27 +55,27 @@ export function requesting( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function items( state = {}, action ) {
-	switch ( action.type ) {
-		case POST_TYPES_TAXONOMIES_RECEIVE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: {
-					[ action.postType ]: keyBy( action.taxonomies, 'name' )
-				}
-			} );
+export function items(state = {}, action) {
+    switch (action.type) {
+        case POST_TYPES_TAXONOMIES_RECEIVE:
+            return Object.assign({}, state, {
+                [action.siteId]: {
+                    [action.postType]: keyBy(action.taxonomies, 'name'),
+                },
+            });
 
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, itemsSchema ) ) {
-				return state;
-			}
+        case DESERIALIZE:
+            if (isValidStateWithSchema(state, itemsSchema)) {
+                return state;
+            }
 
-			return {};
-	}
+            return {};
+    }
 
-	return state;
+    return state;
 }
 
-export default combineReducers( {
-	requesting,
-	items
-} );
+export default combineReducers({
+    requesting,
+    items,
+});

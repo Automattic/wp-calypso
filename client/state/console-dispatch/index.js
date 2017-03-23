@@ -25,80 +25,79 @@ import { matchesProperty } from 'lodash';
 import * as actionTypes from 'state/action-types';
 
 const state = {
-	actionHistory: [],
-	shouldRecordActions: true,
-	historySize: 100,
+    actionHistory: [],
+    shouldRecordActions: true,
+    historySize: 100,
 };
 
 const actionLog = {
-	clear: () => state.actionHistory = [],
-	filter: type => state.actionHistory.filter( matchesProperty( 'type', type ) ),
-	setSize: size => state.historySize = size,
-	start: () => state.shouldRecordActions = true,
-	stop: () => state.shouldRecordActions = false,
+    clear: () => state.actionHistory = [],
+    filter: type => state.actionHistory.filter(matchesProperty('type', type)),
+    setSize: size => state.historySize = size,
+    start: () => state.shouldRecordActions = true,
+    stop: () => state.shouldRecordActions = false,
 };
 
-Object.defineProperty( actionLog, 'history', {
-	enumerable: true,
-	get: () => state.actionHistory,
-} );
+Object.defineProperty(actionLog, 'history', {
+    enumerable: true,
+    get: () => state.actionHistory,
+});
 
 const recordAction = action => {
-	const {
-		actionHistory,
-		historySize,
-	} = state;
+    const {
+        actionHistory,
+        historySize,
+    } = state;
 
-	const thunkDescription = 'function' === typeof action
-		? { type: 'thunk (hidden)' }
-		: {};
+    const thunkDescription = 'function' === typeof action ? { type: 'thunk (hidden)' } : {};
 
-	actionHistory.push( {
-		...action,
-		...thunkDescription,
-		meta: {
-			...action.meta,
-			timestamp: Date.now(),
-		},
-	} );
+    actionHistory.push({
+        ...action,
+        ...thunkDescription,
+        meta: {
+            ...action.meta,
+            timestamp: Date.now(),
+        },
+    });
 
-	// cheap optimization to keep from
-	// thrashing once we hit our size limit
-	if ( actionHistory.length > ( 2 * historySize ) ) {
-		state.actionHistory = actionHistory.slice( -1 * historySize );
-	}
+    // cheap optimization to keep from
+    // thrashing once we hit our size limit
+    if (actionHistory.length > 2 * historySize) {
+        state.actionHistory = actionHistory.slice(-1 * historySize);
+    }
 };
 
-export const consoleDispatcher = next => ( reducer, initialState ) => {
-	const store = next( reducer, initialState );
+export const consoleDispatcher = next =>
+    (reducer, initialState) => {
+        const store = next(reducer, initialState);
 
-	if ( 'undefined' === typeof window ) {
-		return store;
-	}
+        if ('undefined' === typeof window) {
+            return store;
+        }
 
-	const dispatch = action => {
-		if ( state.shouldRecordActions ) {
-			recordAction( action );
-		}
+        const dispatch = action => {
+            if (state.shouldRecordActions) {
+                recordAction(action);
+            }
 
-		return store.dispatch( action );
-	};
+            return store.dispatch(action);
+        };
 
-	Object.assign( window, store, {
-		actionLog,
-		actionTypes,
-		dispatch,
-	} );
+        Object.assign(window, store, {
+            actionLog,
+            actionTypes,
+            dispatch,
+        });
 
-	Object.defineProperty( window, 'state', {
-		enumerable: true,
-		get: () => store.getState(),
-	} );
+        Object.defineProperty(window, 'state', {
+            enumerable: true,
+            get: () => store.getState(),
+        });
 
-	return {
-		...store,
-		dispatch
-	};
-};
+        return {
+            ...store,
+            dispatch,
+        };
+    };
 
 export default consoleDispatcher;

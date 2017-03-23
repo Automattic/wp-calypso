@@ -10,30 +10,26 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import Timezone from 'components/timezone';
 import Card from 'components/card';
 
-export default React.createClass( {
+export default React.createClass({
+    mixins: [PureRenderMixin],
 
-	mixins: [ PureRenderMixin ],
+    displayName: 'Timezone',
 
-	displayName: 'Timezone',
+    getInitialState() {
+        return {
+            timezone: 'America/Argentina/La_Rioja',
+        };
+    },
 
-	getInitialState() {
-		return {
-			timezone: 'America/Argentina/La_Rioja'
-		};
-	},
+    onTimezoneSelect(timezone) {
+        this.setState({ timezone });
+    },
 
-	onTimezoneSelect( timezone ) {
-		this.setState( { timezone } );
-	},
-
-	render() {
-		return (
-			<Card style={ { width: '300px', height: '350px', margin: 0 } }>
-				<Timezone
-					selectedZone={ this.state.timezone }
-					onSelect={ this.onTimezoneSelect }
-				/>
-			</Card>
-		);
-	}
-} );
+    render() {
+        return (
+            <Card style={{ width: '300px', height: '350px', margin: 0 }}>
+                <Timezone selectedZone={this.state.timezone} onSelect={this.onTimezoneSelect} />
+            </Card>
+        );
+    },
+});

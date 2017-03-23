@@ -4,7 +4,7 @@
  * @param  {Object} state Global state tree
  * @return {Boolean}      If the reset options are ready.
  */
-export default ( state ) => {
-	const resetOptions = state.accountRecovery.reset.options;
-	return ! resetOptions.error && 0 < resetOptions.items.length;
+export default state => {
+    const resetOptions = state.accountRecovery.reset.options;
+    return !resetOptions.error && 0 < resetOptions.items.length;
 };

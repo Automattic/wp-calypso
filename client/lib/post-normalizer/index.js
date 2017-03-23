@@ -1,16 +1,15 @@
 /**
  * External Dependencies
  */
-var async = require( 'async' ),
-	debug = require( 'debug' )( 'calypso:post-normalizer' );
+var async = require('async'), debug = require('debug')('calypso:post-normalizer');
 /**
  * Internal dependencies
  */
 
-function debugForPost( post ) {
-	return function( msg ) {
-		debug( post.global_ID + ': ' + msg );
-	};
+function debugForPost(post) {
+    return function(msg) {
+        debug(post.global_ID + ': ' + msg);
+    };
 }
 
 /**
@@ -21,89 +20,93 @@ function debugForPost( post ) {
  * @param {function} callback A node-style callback, invoked when the transformation is complete, or when the first error occurs.
  * If successful, the callback is invoked with `(null, theMutatedPost)`
  */
-function normalizePost( post, transforms, callback ) {
-	if ( ! callback ) {
-		throw new Error( 'must supply a callback' );
-	}
-	if ( ! post || ! transforms ) {
-		debug( 'no post or no transform' );
-		callback( null, post );
-		return;
-	}
+function normalizePost(post, transforms, callback) {
+    if (!callback) {
+        throw new Error('must supply a callback');
+    }
+    if (!post || !transforms) {
+        debug('no post or no transform');
+        callback(null, post);
+        return;
+    }
 
-	let normalizedPost = Object.assign( {}, post ),
-		postDebug = debugForPost( post );
+    let normalizedPost = Object.assign({}, post), postDebug = debugForPost(post);
 
-	postDebug( 'running transforms' );
+    postDebug('running transforms');
 
-	async.eachSeries(
-		transforms, function( transform, transformCallback ) {
-			postDebug( 'running transform ' + ( transform.name || 'anonymous' ) );
-			transform( normalizedPost, transformCallback );
-		}, function( err ) {
-			postDebug( 'transforms complete' );
-			if ( err ) {
-				callback( err );
-			} else {
-				callback( null, normalizedPost );
-			}
-		}
-	);
+    async.eachSeries(
+        transforms,
+        function(transform, transformCallback) {
+            postDebug('running transform ' + (transform.name || 'anonymous'));
+            transform(normalizedPost, transformCallback);
+        },
+        function(err) {
+            postDebug('transforms complete');
+            if (err) {
+                callback(err);
+            } else {
+                callback(null, normalizedPost);
+            }
+        }
+    );
 }
 
-function wrapSync( fn ) {
-	return function wrapped( post, callback ) {
-		fn( post );
-		callback();
-	};
+function wrapSync(fn) {
+    return function wrapped(post, callback) {
+        fn(post);
+        callback();
+    };
 }
 
 import decodeEntities from './rule-decode-entities';
-normalizePost.decodeEntities = wrapSync( decodeEntities );
+normalizePost.decodeEntities = wrapSync(decodeEntities);
 
 import stripHtml from './rule-strip-html';
-normalizePost.stripHTML = wrapSync( stripHtml );
+normalizePost.stripHTML = wrapSync(stripHtml);
 
 import preventWidows from './rule-prevent-widows';
-normalizePost.preventWidows = wrapSync( preventWidows );
+normalizePost.preventWidows = wrapSync(preventWidows);
 
 import pickCanonicalImage from './rule-pick-canonical-image';
-normalizePost.pickCanonicalImage = wrapSync( pickCanonicalImage );
+normalizePost.pickCanonicalImage = wrapSync(pickCanonicalImage);
 
 import makeSiteIDSafeForAPI from './rule-make-site-id-safe-for-api';
-normalizePost.makeSiteIDSafeForAPI = wrapSync( makeSiteIDSafeForAPI );
+normalizePost.makeSiteIDSafeForAPI = wrapSync(makeSiteIDSafeForAPI);
 
 import pickPrimaryTag from './rule-pick-primary-tag';
-normalizePost.pickPrimaryTag = wrapSync( pickPrimaryTag );
+normalizePost.pickPrimaryTag = wrapSync(pickPrimaryTag);
 
 import safeImageProperties from './rule-safe-image-properties';
-normalizePost.safeImageProperties = function( maxWidth ) {
-	return wrapSync( safeImageProperties( maxWidth ) );
+normalizePost.safeImageProperties = function(maxWidth) {
+    return wrapSync(safeImageProperties(maxWidth));
 };
 
 import waitForImagesToLoad from './rule-wait-for-images-to-load';
-normalizePost.waitForImagesToLoad = function waitForImagesToLoadAdapter( post, callback ) {
-	waitForImagesToLoad( post ).then( () => {
-		callback();
-	}, err => {
-		callback( err );
-	} );
+normalizePost.waitForImagesToLoad = function waitForImagesToLoadAdapter(post, callback) {
+    waitForImagesToLoad(post).then(
+        () => {
+            callback();
+        },
+        err => {
+            callback(err);
+        }
+    );
 };
 
 import keepValidImages from './rule-keep-valid-images';
-normalizePost.keepValidImages = function( minWidth, minHeight ) {
-	return wrapSync( keepValidImages( minWidth, minHeight ) );
+normalizePost.keepValidImages = function(minWidth, minHeight) {
+    return wrapSync(keepValidImages(minWidth, minHeight));
 };
 
 import createBetterExcerpt from './rule-create-better-excerpt';
-normalizePost.createBetterExcerpt = wrapSync( createBetterExcerpt );
+normalizePost.createBetterExcerpt = wrapSync(createBetterExcerpt);
 
 import withContentDOM from './rule-with-content-dom';
-normalizePost.withContentDOM = function( transforms ) {
-	return function( post, callback ) {
-		withContentDOM( transforms )( post );
-		callback();
-	};
+normalizePost.withContentDOM = function(transforms) {
+    return function(post, callback) {
+        withContentDOM(transforms)(post);
+        callback();
+    };
 };
 
 import removeStyles from './rule-content-remove-styles';
@@ -115,14 +118,14 @@ import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from './rule-content-
 import detectPolls from './rule-content-detect-polls';
 
 normalizePost.content = {
-	removeStyles,
-	removeElementsBySelector,
-	makeImagesSafe,
-	makeEmbedsSafe,
-	detectMedia,
-	disableAutoPlayOnMedia,
-	disableAutoPlayOnEmbeds,
-	detectPolls
+    removeStyles,
+    removeElementsBySelector,
+    makeImagesSafe,
+    makeEmbedsSafe,
+    detectMedia,
+    disableAutoPlayOnMedia,
+    disableAutoPlayOnEmbeds,
+    detectPolls,
 };
 
 module.exports = normalizePost;

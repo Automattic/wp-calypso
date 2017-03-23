@@ -11,38 +11,38 @@ import { requestActiveTheme } from 'state/themes/actions';
 import { isRequestingActiveTheme } from 'state/themes/selectors';
 
 class QueryActiveTheme extends Component {
-	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-		// Connected props
-		isRequesting: PropTypes.bool.isRequired,
-		requestActiveTheme: PropTypes.func.isRequired,
-	}
+    static propTypes = {
+        siteId: PropTypes.number.isRequired,
+        // Connected props
+        isRequesting: PropTypes.bool.isRequired,
+        requestActiveTheme: PropTypes.func.isRequired,
+    };
 
-	componentDidMount() {
-		this.request( this.props );
-	}
+    componentDidMount() {
+        this.request(this.props);
+    }
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId ) {
-			return;
-		}
-		this.request( nextProps );
-	}
+    componentWillReceiveProps(nextProps) {
+        if (this.props.siteId === nextProps.siteId) {
+            return;
+        }
+        this.request(nextProps);
+    }
 
-	request( props ) {
-		if ( ! props.isRequesting ) {
-			props.requestActiveTheme( props.siteId );
-		}
-	}
+    request(props) {
+        if (!props.isRequesting) {
+            props.requestActiveTheme(props.siteId);
+        }
+    }
 
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
 export default connect(
-	( state, { siteId } ) => ( {
-		isRequesting: isRequestingActiveTheme( state, siteId ),
-	} ),
-	{ requestActiveTheme }
-)( QueryActiveTheme );
+    (state, { siteId }) => ({
+        isRequesting: isRequestingActiveTheme(state, siteId),
+    }),
+    { requestActiveTheme }
+)(QueryActiveTheme);

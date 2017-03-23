@@ -8,20 +8,20 @@ import React from 'react';
  */
 import SignupActions from 'lib/signup/actions';
 
-module.exports = React.createClass( {
-	displayName: 'SubmitStepButton',
+module.exports = React.createClass({
+    displayName: 'SubmitStepButton',
 
-	handleSubmit: function() {
-		SignupActions.submitSignupStep( { stepName: this.props.stepName } );
+    handleSubmit: function() {
+        SignupActions.submitSignupStep({ stepName: this.props.stepName });
 
-		this.props.goToNextStep();
-	},
+        this.props.goToNextStep();
+    },
 
-	render: function() {
-		return (
-			<button onClick={ this.handleSubmit } className='button is-primary'>
-				{ this.props.buttonText }
-			</button>
-		);
-	}
-} );
+    render: function() {
+        return (
+            <button onClick={this.handleSubmit} className="button is-primary">
+                {this.props.buttonText}
+            </button>
+        );
+    },
+});

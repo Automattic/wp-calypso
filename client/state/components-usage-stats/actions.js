@@ -1,10 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	COMPONENTS_USAGE_STATS_REQUEST,
-	COMPONENTS_USAGE_STATS_RECEIVE
-} from '../action-types';
+import { COMPONENTS_USAGE_STATS_REQUEST, COMPONENTS_USAGE_STATS_RECEIVE } from '../action-types';
 import request from 'superagent';
 
 /**
@@ -12,9 +9,9 @@ import request from 'superagent';
  * @return {Object} Action object
  */
 export function requestComponentsUsageStats() {
-	return {
-		type: COMPONENTS_USAGE_STATS_REQUEST
-	};
+    return {
+        type: COMPONENTS_USAGE_STATS_REQUEST,
+    };
 }
 
 /**
@@ -22,11 +19,11 @@ export function requestComponentsUsageStats() {
  * @param {Object} componentsUsageStats Parsed JSON for the usage stats
  * @return {Object} 					Action object
  */
-export function receiveComponentsUsageStats( componentsUsageStats ) {
-	return {
-		type: COMPONENTS_USAGE_STATS_RECEIVE,
-		componentsUsageStats
-	};
+export function receiveComponentsUsageStats(componentsUsageStats) {
+    return {
+        type: COMPONENTS_USAGE_STATS_RECEIVE,
+        componentsUsageStats,
+    };
 }
 
 /**
@@ -34,15 +31,13 @@ export function receiveComponentsUsageStats( componentsUsageStats ) {
  * @returns {Function} Action thunk
  */
 export default function fetchComponentsUsageStats() {
-	return dispatch => {
-		dispatch( requestComponentsUsageStats() );
-		return request
-			.get( '/devdocs/service/components-usage-stats' )
-			.end( ( error, res ) => {
-				if ( ! res.ok ) {
-					return;
-				}
-				dispatch( receiveComponentsUsageStats( res.body ) );
-			} );
-	};
+    return dispatch => {
+        dispatch(requestComponentsUsageStats());
+        return request.get('/devdocs/service/components-usage-stats').end((error, res) => {
+            if (!res.ok) {
+                return;
+            }
+            dispatch(receiveComponentsUsageStats(res.body));
+        });
+    };
 }

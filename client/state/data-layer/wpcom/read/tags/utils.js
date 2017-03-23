@@ -16,23 +16,25 @@ import { decodeEntities } from 'lib/formatting';
  *    ...
  *  ]
  */
-export function fromApi( apiResponse ) {
-	if ( ! apiResponse || ( ! apiResponse.tag && ! apiResponse.tags ) ) {
-		console.error( 'bad api response for /read/tags' ); // eslint-disable-line no-console
-		return [];
-	}
+export function fromApi(apiResponse) {
+    if (!apiResponse || (!apiResponse.tag && !apiResponse.tags)) {
+        console.error('bad api response for /read/tags'); // eslint-disable-line no-console
+        return [];
+    }
 
-	const tags = compact( concat(
-		[],
-		isObject( apiResponse.tag ) && apiResponse.tag,
-		isArray( apiResponse.tags ) && apiResponse.tags,
-	) );
+    const tags = compact(
+        concat(
+            [],
+            isObject(apiResponse.tag) && apiResponse.tag,
+            isArray(apiResponse.tags) && apiResponse.tags
+        )
+    );
 
-	return map( tags, tag => ( {
-		id: tag.ID,
-		displayName: decodeEntities( tag.display_name ),
-		url: `/tag/${ tag.slug }`,
-		title: decodeEntities( tag.title ),
-		slug: tag.slug.toLowerCase(),
-	} ) );
+    return map(tags, tag => ({
+        id: tag.ID,
+        displayName: decodeEntities(tag.display_name),
+        url: `/tag/${tag.slug}`,
+        title: decodeEntities(tag.title),
+        slug: tag.slug.toLowerCase(),
+    }));
 }

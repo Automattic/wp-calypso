@@ -12,16 +12,16 @@ import { getCurrentUserDate } from 'state/current-user/selectors';
  * @param {Number} to Upper bound on days
  * @return {?Boolean} True if the number of days falls withing the specified range
  */
-const isUserRegistrationDaysWithinRange = ( state, moment, from, to ) => {
-	const date = getCurrentUserDate( state );
+const isUserRegistrationDaysWithinRange = (state, moment, from, to) => {
+    const date = getCurrentUserDate(state);
 
-	if ( ! date ) {
-		return null;
-	}
+    if (!date) {
+        return null;
+    }
 
-	const days = moment.diff( date, 'days', true );
+    const days = moment.diff(date, 'days', true);
 
-	return days >= from && days <= to;
+    return days >= from && days <= to;
 };
 
 export default isUserRegistrationDaysWithinRange;

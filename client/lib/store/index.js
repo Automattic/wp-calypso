@@ -23,24 +23,23 @@ import emitter from 'lib/mixins/emitter';
  * @param {array<string>} [waitFor] - See Flux Dispatcher's `waitFor`.
  * @return {Object} Store built from reducer.
  */
-export const createReducerStore = ( reducer, initialState = {}, waitFor = [] ) => {
-	let state = initialState,
-		ReducerStore = {};
+export const createReducerStore = (reducer, initialState = {}, waitFor = []) => {
+    let state = initialState, ReducerStore = {};
 
-	emitter( ReducerStore );
+    emitter(ReducerStore);
 
-	ReducerStore.get = () => state;
+    ReducerStore.get = () => state;
 
-	ReducerStore.dispatchToken = Dispatcher.register( ( payload ) => {
-		Dispatcher.waitFor( waitFor );
+    ReducerStore.dispatchToken = Dispatcher.register(payload => {
+        Dispatcher.waitFor(waitFor);
 
-		const newState = reducer( state, payload );
+        const newState = reducer(state, payload);
 
-		if ( newState !== state ) {
-			state = newState;
-			ReducerStore.emitChange();
-		}
-	} );
+        if (newState !== state) {
+            state = newState;
+            ReducerStore.emitChange();
+        }
+    });
 
-	return ReducerStore;
+    return ReducerStore;
 };

@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @param  {Number}  siteId Site ID
  * @return {Boolean}        Whether site's sharing buttons are being requested
  */
-export default function isRequestingSharingButtons( state, siteId ) {
-	return get( state.sites.sharingButtons.requesting, [ siteId ], false );
+export default function isRequestingSharingButtons(state, siteId) {
+    return get(state.sites.sharingButtons.requesting, [siteId], false);
 }

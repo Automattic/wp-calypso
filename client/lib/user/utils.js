@@ -14,70 +14,66 @@ import { addQueryArgs } from 'lib/url';
  * Module Variables
  */
 const user = userModule();
-const debug = debugModule( 'calypso:user:utilities' );
+const debug = debugModule('calypso:user:utilities');
 
 var userUtils = {
-	getLoginUrl: function( redirect ) {
-		const url = config( 'login_url' );
+    getLoginUrl: function(redirect) {
+        const url = config('login_url');
 
-		return redirect
-			? addQueryArgs( { redirect_to: redirect }, url )
-			: url;
-	},
+        return redirect ? addQueryArgs({ redirect_to: redirect }, url) : url;
+    },
 
-	getLogoutUrl: function( redirect ) {
-		var url = '/logout',
-			userData = user.get(),
-			subdomain = '';
+    getLogoutUrl: function(redirect) {
+        var url = '/logout', userData = user.get(), subdomain = '';
 
-		// If logout_URL isn't set, then go ahead and return the logout URL
-		// without a proper nonce as a fallback.
-		// Note: we never want to use logout_URL in the desktop app
-		if ( ! userData.logout_URL || config.isEnabled( 'always_use_logout_url' ) ) {
-			// Use localized version of the homepage in the redirect
-			if ( userData.localeSlug && userData.localeSlug !== '' && userData.localeSlug !== 'en' ) {
-				subdomain = userData.localeSlug + '.';
-			}
+        // If logout_URL isn't set, then go ahead and return the logout URL
+        // without a proper nonce as a fallback.
+        // Note: we never want to use logout_URL in the desktop app
+        if (!userData.logout_URL || config.isEnabled('always_use_logout_url')) {
+            // Use localized version of the homepage in the redirect
+            if (userData.localeSlug && userData.localeSlug !== '' && userData.localeSlug !== 'en') {
+                subdomain = userData.localeSlug + '.';
+            }
 
-			url = config( 'logout_url' ).replace( '|subdomain|', subdomain );
-		} else {
-			url = userData.logout_URL;
-		}
+            url = config('logout_url').replace('|subdomain|', subdomain);
+        } else {
+            url = userData.logout_URL;
+        }
 
-		if ( 'string' === typeof redirect ) {
-			redirect = '&redirect_to=' + encodeURIComponent( redirect );
-			url += redirect;
-		}
+        if ('string' === typeof redirect) {
+            redirect = '&redirect_to=' + encodeURIComponent(redirect);
+            url += redirect;
+        }
 
-		debug( 'Logout Url: ' + url );
+        debug('Logout Url: ' + url);
 
-		return url;
-	},
+        return url;
+    },
 
-	logout: function( redirect ) {
-		var logoutUrl = userUtils.getLogoutUrl( redirect );
+    logout: function(redirect) {
+        var logoutUrl = userUtils.getLogoutUrl(redirect);
 
-		// Clear any data stored locally within the user data module or localStorage
-		user.clear();
-		debug( 'User stored data cleared' );
+        // Clear any data stored locally within the user data module or localStorage
+        user.clear();
+        debug('User stored data cleared');
 
-		// Forward user to WordPress.com to be logged out
-		location.href = logoutUrl;
-	},
+        // Forward user to WordPress.com to be logged out
+        location.href = logoutUrl;
+    },
 
-	getLocaleSlug: function() {
-		return user.get().localeSlug;
-	},
+    getLocaleSlug: function() {
+        return user.get().localeSlug;
+    },
 
-	isLoggedIn: function() {
-		return Boolean( user.data );
-	},
+    isLoggedIn: function() {
+        return Boolean(user.data);
+    },
 
-	needsVerificationForSite: function( site ) {
-		// do not allow publish for unverified e-mails,
-		// but allow if the site is VIP
-		return !user.get().email_verified && !( site && site.is_vip );
-	},
+    needsVerificationForSite: function(site) {
+        // do not allow publish for unverified e-mails,
+        // but allow if the site is VIP
+        return !user.get().email_verified && !(site && site.is_vip);
+    },
 };
 
 module.exports = userUtils;

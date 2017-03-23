@@ -18,13 +18,13 @@ const productsList = productsListFactory();
  * {cart} [partialCart] - A cart-like object. We just need a valid `product_slug` property for cart items
  * {function} [onComplete] Callback function called on completion
  */
-function submitFreeTransaction( partialCart, onComplete ) {
-	const cart = fillInAllCartItemAttributes( partialCart, productsList.get() ),
-		transaction = {
-			payment: fullCreditsPayment()
-		};
+function submitFreeTransaction(partialCart, onComplete) {
+    const cart = fillInAllCartItemAttributes(partialCart, productsList.get()),
+        transaction = {
+            payment: fullCreditsPayment(),
+        };
 
-	submitTransaction( { cart, transaction }, onComplete );
+    submitTransaction({ cart, transaction }, onComplete);
 }
 
 /*
@@ -37,11 +37,11 @@ function submitFreeTransaction( partialCart, onComplete ) {
  * {Object} [plan] - A plan-like object. We just need a valid `product_slug` property to make a cartItem out of it.
  * {function} [onComplete] Callback function called on completion
  */
-export function startFreeTrial( siteId, plan, onComplete ) {
-	let cart = emptyCart( siteId, { temporary: true } );
-	const planItem = cartItems.getItemForPlan( plan, { isFreeTrial: true } );
+export function startFreeTrial(siteId, plan, onComplete) {
+    let cart = emptyCart(siteId, { temporary: true });
+    const planItem = cartItems.getItemForPlan(plan, { isFreeTrial: true });
 
-	cart = cartItems.add( planItem )( cart );
+    cart = cartItems.add(planItem)(cart);
 
-	submitFreeTransaction( cart, onComplete );
+    submitFreeTransaction(cart, onComplete);
 }

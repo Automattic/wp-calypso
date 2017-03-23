@@ -2,12 +2,12 @@
  * Internal dependencies
  */
 import {
-	SUPPORT_USER_ACTIVATE,
-	SUPPORT_USER_ERROR,
-	SUPPORT_USER_PREFILL,
-	SUPPORT_USER_SET_USERNAME,
-	SUPPORT_USER_TOKEN_FETCH,
-	SUPPORT_USER_TOGGLE_DIALOG,
+    SUPPORT_USER_ACTIVATE,
+    SUPPORT_USER_ERROR,
+    SUPPORT_USER_PREFILL,
+    SUPPORT_USER_SET_USERNAME,
+    SUPPORT_USER_TOKEN_FETCH,
+    SUPPORT_USER_TOGGLE_DIALOG,
 } from 'state/action-types';
 
 /**
@@ -16,17 +16,17 @@ import {
  * @param  {string} supportUser     Support username
  * @return {thunk}                  The action thunk
  */
-export function supportUserTokenFetch( supportUser ) {
-	return {
-		type: SUPPORT_USER_TOKEN_FETCH,
-		supportUser
-	};
+export function supportUserTokenFetch(supportUser) {
+    return {
+        type: SUPPORT_USER_TOKEN_FETCH,
+        supportUser,
+    };
 }
 
 export function supportUserActivate() {
-	return {
-		type: SUPPORT_USER_ACTIVATE
-	}
+    return {
+        type: SUPPORT_USER_ACTIVATE,
+    };
 }
 
 /**
@@ -34,11 +34,11 @@ export function supportUserActivate() {
  * @param {string} userName The username to prefill in the form
  * @return {Object}         Action object
  */
-export function supportUserPrefill( username ) {
-	return {
-		type: SUPPORT_USER_PREFILL,
-		username,
-	};
+export function supportUserPrefill(username) {
+    return {
+        type: SUPPORT_USER_PREFILL,
+        username,
+    };
 }
 
 /**
@@ -46,11 +46,11 @@ export function supportUserPrefill( username ) {
  * @param {string} userName The username to prefill in the form
  * @return {Object}         Action object
  */
-export function supportUserSetUsername( username ) {
-	return {
-		type: SUPPORT_USER_SET_USERNAME,
-		username,
-	};
+export function supportUserSetUsername(username) {
+    return {
+        type: SUPPORT_USER_SET_USERNAME,
+        username,
+    };
 }
 
 /**
@@ -58,15 +58,15 @@ export function supportUserSetUsername( username ) {
  * @param  {string} errorMessage Message describing the error to display to the user
  * @return {Object}              Action object
  */
-export function supportUserError( errorMessage = null ) {
-	return {
-		type: SUPPORT_USER_ERROR,
-		errorMessage
-	}
+export function supportUserError(errorMessage = null) {
+    return {
+        type: SUPPORT_USER_ERROR,
+        errorMessage,
+    };
 }
 
 export function supportUserToggleDialog() {
-	return {
-		type: SUPPORT_USER_TOGGLE_DIALOG
-	}
+    return {
+        type: SUPPORT_USER_TOGGLE_DIALOG,
+    };
 }

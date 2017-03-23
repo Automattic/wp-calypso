@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getRawSite } from 'state/sites/selectors';
+import { getRawSite } from 'state/sites/selectors';
 
 /**
  * Returns true if site is a mapped domain site, false if the site is not,
@@ -16,12 +16,12 @@ import { getRawSite } from 'state/sites/selectors';
  * @param {Number} siteId Site ID
  * @return {?Boolean} Whether site is a mapped domain site
  */
-export default function isMappedDomainSite( state, siteId ) {
-	const site = getRawSite( state, siteId );
+export default function isMappedDomainSite(state, siteId) {
+    const site = getRawSite(state, siteId);
 
-	if ( ! site ) {
-		return null;
-	}
+    if (!site) {
+        return null;
+    }
 
-	return get( site, 'options.is_mapped_domain', false );
+    return get(site, 'options.is_mapped_domain', false);
 }

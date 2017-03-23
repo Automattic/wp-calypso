@@ -31,127 +31,127 @@ import config from 'config';
 const sites = sitesList();
 
 export default {
-	redirectToTeam,
+    redirectToTeam,
 
-	enforceSiteEnding( context, next ) {
-		const siteId = route.getSiteFragment( context.path );
+    enforceSiteEnding(context, next) {
+        const siteId = route.getSiteFragment(context.path);
 
-		if ( ! siteId ) {
-			redirectToTeam( context );
-		}
+        if (!siteId) {
+            redirectToTeam(context);
+        }
 
-		next();
-	},
+        next();
+    },
 
-	people( filter, context ) {
-		renderPeopleList( filter, context );
-	},
+    people(filter, context) {
+        renderPeopleList(filter, context);
+    },
 
-	invitePeople( context ) {
-		renderInvitePeople( context );
-	},
+    invitePeople(context) {
+        renderInvitePeople(context);
+    },
 
-	person( context ) {
-		renderSingleTeamMember( context );
-	}
+    person(context) {
+        renderSingleTeamMember(context);
+    },
 };
 
-function redirectToTeam( context ) {
-	if ( context ) {
-		// if we are redirecting we need to retain our intended layout-focus
-		const currentLayoutFocus = getCurrentLayoutFocus( context.store.getState() );
-		context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
-	}
-	page.redirect( '/people/team' );
+function redirectToTeam(context) {
+    if (context) {
+        // if we are redirecting we need to retain our intended layout-focus
+        const currentLayoutFocus = getCurrentLayoutFocus(context.store.getState());
+        context.store.dispatch(setNextLayoutFocus(currentLayoutFocus));
+    }
+    page.redirect('/people/team');
 }
 
-function renderPeopleList( filter, context ) {
-	context.store.dispatch( setTitle( i18n.translate( 'People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+function renderPeopleList(filter, context) {
+    context.store.dispatch(setTitle(i18n.translate('People', { textOnly: true }))); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-	renderWithReduxStore(
-		React.createElement( PeopleList, {
-			sites: sites,
-			peopleLog: PeopleLogStore,
-			filter: filter,
-			search: context.query.s
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
-	analytics.pageView.record( 'people/' + filter + '/:site', 'People > ' + titlecase( filter ) );
+    renderWithReduxStore(
+        React.createElement(PeopleList, {
+            sites: sites,
+            peopleLog: PeopleLogStore,
+            filter: filter,
+            search: context.query.s,
+        }),
+        document.getElementById('primary'),
+        context.store
+    );
+    analytics.pageView.record('people/' + filter + '/:site', 'People > ' + titlecase(filter));
 }
 
-function renderInvitePeople( context ) {
-	const site = sites.getSelectedSite();
-	const isJetpack = get( site, 'jetpack' );
+function renderInvitePeople(context) {
+    const site = sites.getSelectedSite();
+    const isJetpack = get(site, 'jetpack');
 
-	if ( ! sites.initialized ) {
-		sites.once( 'change', () => page( context.path ) );
-	}
+    if (!sites.initialized) {
+        sites.once('change', () => page(context.path));
+    }
 
-	if ( isJetpack && ! config.isEnabled( 'jetpack/invites' ) ) {
-		const currentLayoutFocus = getCurrentLayoutFocus( context.store.getState() );
-		context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
-		page.redirect( '/people/team/' + site.slug );
-		analytics.tracks.recordEvent( 'calypso_invite_people_controller_redirect_to_team' );
-	}
+    if (isJetpack && !config.isEnabled('jetpack/invites')) {
+        const currentLayoutFocus = getCurrentLayoutFocus(context.store.getState());
+        context.store.dispatch(setNextLayoutFocus(currentLayoutFocus));
+        page.redirect('/people/team/' + site.slug);
+        analytics.tracks.recordEvent('calypso_invite_people_controller_redirect_to_team');
+    }
 
-	context.store.dispatch( setTitle( i18n.translate( 'Invite People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+    context.store.dispatch(setTitle(i18n.translate('Invite People', { textOnly: true }))); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-	renderWithReduxStore(
-		React.createElement( InvitePeople, {
-			site: site
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+    renderWithReduxStore(
+        React.createElement(InvitePeople, {
+            site: site,
+        }),
+        document.getElementById('primary'),
+        context.store
+    );
 }
 
-function renderSingleTeamMember( context ) {
-	let site,
-		siteId,
-		user,
-		userLogin = context.params.user_login;
+function renderSingleTeamMember(context) {
+    let site, siteId, user, userLogin = context.params.user_login;
 
-	if ( ! sites.initialized ) {
-		sites.once( 'change', () => page( context.path ) );
-	}
+    if (!sites.initialized) {
+        sites.once('change', () => page(context.path));
+    }
 
-	site = sites.getSelectedSite();
-	siteId = site && site.ID ? site.ID : 0;
+    site = sites.getSelectedSite();
+    siteId = site && site.ID ? site.ID : 0;
 
-	context.store.dispatch( setTitle( i18n.translate( 'View Team Member', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+    context.store.dispatch(setTitle(i18n.translate('View Team Member', { textOnly: true }))); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-	if ( siteId && 0 !== siteId ) {
-		user = UsersStore.getUserByLogin( siteId, userLogin );
+    if (siteId && 0 !== siteId) {
+        user = UsersStore.getUserByLogin(siteId, userLogin);
 
-		if ( ! user ) {
-			UsersActions.fetchUser( { siteId: siteId }, userLogin );
-			PeopleLogStore.once( 'change', function() {
-				let fetchUserError = PeopleLogStore.getErrors(
-					log => siteId === log.siteId && 'RECEIVE_USER_FAILED' === log.action && userLogin === log.user
-				);
-				if ( fetchUserError.length ) {
-					const currentLayoutFocus = getCurrentLayoutFocus( context.store.getState() );
-					context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
-					page.redirect( '/people/team/' + site.slug );
-				}
-			} );
-		} else {
-			analytics.pageView.record( 'people/edit/:user_login/:site', 'View Team Member' );
-		}
-	}
+        if (!user) {
+            UsersActions.fetchUser({ siteId: siteId }, userLogin);
+            PeopleLogStore.once('change', function() {
+                let fetchUserError = PeopleLogStore.getErrors(
+                    log =>
+                        siteId === log.siteId &&
+                        'RECEIVE_USER_FAILED' === log.action &&
+                        userLogin === log.user
+                );
+                if (fetchUserError.length) {
+                    const currentLayoutFocus = getCurrentLayoutFocus(context.store.getState());
+                    context.store.dispatch(setNextLayoutFocus(currentLayoutFocus));
+                    page.redirect('/people/team/' + site.slug);
+                }
+            });
+        } else {
+            analytics.pageView.record('people/edit/:user_login/:site', 'View Team Member');
+        }
+    }
 
-	renderWithReduxStore(
-		React.createElement( EditTeamMember, {
-			siteSlug: site && site.slug ? site.slug : undefined,
-			siteId: site && site.ID ? site.ID : undefined,
-			isJetpack: site && site.jetpack,
-			isMultisite: site && site.is_multisite,
-			userLogin: userLogin,
-			prevPath: context.prevPath
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+    renderWithReduxStore(
+        React.createElement(EditTeamMember, {
+            siteSlug: site && site.slug ? site.slug : undefined,
+            siteId: site && site.ID ? site.ID : undefined,
+            isJetpack: site && site.jetpack,
+            isMultisite: site && site.is_multisite,
+            userLogin: userLogin,
+            prevPath: context.prevPath,
+        }),
+        document.getElementById('primary'),
+        context.store
+    );
 }

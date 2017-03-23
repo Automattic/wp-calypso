@@ -19,77 +19,72 @@ import { transferStates } from 'state/automated-transfer/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 export const WpcomPluginInstallButton = props => {
-	const {
-		translate,
-		disabled,
-		plugin,
-		siteSlug,
-		siteId,
-		eligibilityData,
-		navigateTo,
-		initiateTransfer,
-		transferState
-	} = props;
+    const {
+        translate,
+        disabled,
+        plugin,
+        siteSlug,
+        siteId,
+        eligibilityData,
+        navigateTo,
+        initiateTransfer,
+        transferState,
+    } = props;
 
-	if ( transferStates.COMPLETE === transferState ) {
-		return null;
-	}
+    if (transferStates.COMPLETE === transferState) {
+        return null;
+    }
 
-	function installButtonAction( event ) {
-		event.preventDefault();
+    function installButtonAction(event) {
+        event.preventDefault();
 
-		const eligibilityHolds = get( eligibilityData, 'eligibilityHolds', [] );
-		const eligibilityWarnings = get( eligibilityData, 'eligibilityWarnings', [] );
+        const eligibilityHolds = get(eligibilityData, 'eligibilityHolds', []);
+        const eligibilityWarnings = get(eligibilityData, 'eligibilityWarnings', []);
 
-		const hasErrors = !! eligibilityHolds.length;
-		const hasWarnings = !! eligibilityWarnings.length;
+        const hasErrors = !!eligibilityHolds.length;
+        const hasWarnings = !!eligibilityWarnings.length;
 
-		if ( ! hasErrors && ! hasWarnings ) {
-			// No need to show eligibility warnings page, initiate transfer immediately
-			initiateTransfer( siteId, null, plugin.slug );
-		} else {
-			props.recordTracksEvent( 'calypso_automated_transfer_plugin_install_ineligible',
-				{
-					eligibilityHolds: eligibilityHolds.join( ', ' ),
-					eligibilityWarnings: eligibilityWarnings.join( ', ' ),
-					plugin_slug: plugin.slug
-				} );
+        if (!hasErrors && !hasWarnings) {
+            // No need to show eligibility warnings page, initiate transfer immediately
+            initiateTransfer(siteId, null, plugin.slug);
+        } else {
+            props.recordTracksEvent('calypso_automated_transfer_plugin_install_ineligible', {
+                eligibilityHolds: eligibilityHolds.join(', '),
+                eligibilityWarnings: eligibilityWarnings.join(', '),
+                plugin_slug: plugin.slug,
+            });
 
-			// Show eligibility warnings before proceeding
-			navigateTo( `/plugins/${ plugin.slug }/eligibility/${ siteSlug }` );
-		}
-	}
+            // Show eligibility warnings before proceeding
+            navigateTo(`/plugins/${plugin.slug}/eligibility/${siteSlug}`);
+        }
+    }
 
-	return (
-		<Button
-			onClick={ installButtonAction }
-			primary={ true }
-			disabled={ disabled }
-		>
-			{ translate( 'Install' ) }
-		</Button>
-	);
+    return (
+        <Button onClick={installButtonAction} primary={true} disabled={disabled}>
+            {translate('Install')}
+        </Button>
+    );
 };
 
 const mapStateToProps = state => {
-	const site = getSelectedSite( state );
+    const site = getSelectedSite(state);
 
-	return {
-		siteId: site.ID,
-		siteSlug: site.slug,
-		eligibilityData: getEligibility( state, site.ID ),
-		transferState: getAutomatedTransferStatus( state, site.ID ),
-	};
+    return {
+        siteId: site.ID,
+        siteSlug: site.slug,
+        eligibilityData: getEligibility(state, site.ID),
+        transferState: getAutomatedTransferStatus(state, site.ID),
+    };
 };
 
 const mapDispatchToProps = {
-	initiateTransfer: initiateThemeTransfer,
-	recordTracksEvent,
+    initiateTransfer: initiateThemeTransfer,
+    recordTracksEvent,
 };
 
-const withNavigation = WrappedComponent => props => <WrappedComponent { ...{ ...props, navigateTo: page } } />;
+const withNavigation = WrappedComponent =>
+    props => <WrappedComponent {...{ ...props, navigateTo: page }} />;
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( withNavigation( localize( WpcomPluginInstallButton ) ) );
+export default connect(mapStateToProps, mapDispatchToProps)(
+    withNavigation(localize(WpcomPluginInstallButton))
+);

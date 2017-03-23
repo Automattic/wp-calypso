@@ -16,90 +16,97 @@ import XPostHelper from 'reader/xpost-helper';
 import { shallowEquals } from 'reader/utils';
 
 export default class PostLifecycle extends React.PureComponent {
-	static propTypes = {
-		postKey: PropTypes.object,
-		isDiscoverStream: PropTypes.bool
-	}
+    static propTypes = {
+        postKey: PropTypes.object,
+        isDiscoverStream: PropTypes.bool,
+    };
 
-	state = {
-		post: this.getPostFromStore()
-	}
+    state = {
+        post: this.getPostFromStore(),
+    };
 
-	getPostFromStore( props = this.props ) {
-		const post = PostStore.get( props.postKey );
-		if ( ! post || post._state === 'minimal' ) {
-			defer( () => PostStoreActions.fetchPost( props.postKey ) );
-		}
-		return post;
-	}
+    getPostFromStore(props = this.props) {
+        const post = PostStore.get(props.postKey);
+        if (!post || post._state === 'minimal') {
+            defer(() => PostStoreActions.fetchPost(props.postKey));
+        }
+        return post;
+    }
 
-	updatePost = ( props = this.props ) => {
-		const post = this.getPostFromStore( props );
-		if ( post !== this.state.post ) {
-			this.setState( { post } );
-		}
-	}
+    updatePost = (props = this.props) => {
+        const post = this.getPostFromStore(props);
+        if (post !== this.state.post) {
+            this.setState({ post });
+        }
+    };
 
-	componentWillMount() {
-		PostStore.on( 'change', this.updatePost );
-	}
+    componentWillMount() {
+        PostStore.on('change', this.updatePost);
+    }
 
-	componentWillUnmount() {
-		PostStore.off( 'change', this.updatePost );
-	}
+    componentWillUnmount() {
+        PostStore.off('change', this.updatePost);
+    }
 
-	componentWillReceiveProps( nextProps ) {
-		this.updatePost( nextProps );
-	}
+    componentWillReceiveProps(nextProps) {
+        this.updatePost(nextProps);
+    }
 
-	shouldComponentUpdate( nextProps, nextState ) {
-		const currentPropsToCompare = omit( this.props, 'handleClick' );
-		const nextPropsToCompare = omit( nextProps, 'handleClick' );
-		const shouldUpdate = this.state.post !== nextState.post ||
-			! shallowEquals( currentPropsToCompare, nextPropsToCompare );
+    shouldComponentUpdate(nextProps, nextState) {
+        const currentPropsToCompare = omit(this.props, 'handleClick');
+        const nextPropsToCompare = omit(nextProps, 'handleClick');
+        const shouldUpdate = this.state.post !== nextState.post ||
+            !shallowEquals(currentPropsToCompare, nextPropsToCompare);
 
-		return shouldUpdate;
-	}
+        return shouldUpdate;
+    }
 
-	render() {
-		const post = this.state.post;
-		let postState = post._state;
+    render() {
+        const post = this.state.post;
+        let postState = post._state;
 
-		if ( ! post || postState === 'minimal' ) {
-			postState = 'pending';
-		}
+        if (!post || postState === 'minimal') {
+            postState = 'pending';
+        }
 
-		switch ( postState ) {
-			case 'pending':
-				return <PostPlaceholder />;
-			case 'error':
-				return <PostUnavailable post={ post } />;
-			default:
-				const PostClass = this.props.cardClassForPost( post );
-				if ( PostClass === CrossPost ) {
-					const xMetadata = XPostHelper.getXPostMetadata( post );
-					return <CrossPost
-						post={ post }
-						isSelected={ this.props.isSelected }
-						xMetadata={ xMetadata }
-						xPostedTo={ this.props.store.getSitesCrossPostedTo( xMetadata.commentURL || xMetadata.postURL ) }
-						handleClick={ this.props.handleClick } />;
-				}
+        switch (postState) {
+            case 'pending':
+                return <PostPlaceholder />;
+            case 'error':
+                return <PostUnavailable post={post} />;
+            default:
+                const PostClass = this.props.cardClassForPost(post);
+                if (PostClass === CrossPost) {
+                    const xMetadata = XPostHelper.getXPostMetadata(post);
+                    return (
+                        <CrossPost
+                            post={post}
+                            isSelected={this.props.isSelected}
+                            xMetadata={xMetadata}
+                            xPostedTo={this.props.store.getSitesCrossPostedTo(
+                                xMetadata.commentURL || xMetadata.postURL
+                            )}
+                            handleClick={this.props.handleClick}
+                        />
+                    );
+                }
 
-				return <PostClass
-					post={ post }
-					isSelected={ this.props.isSelected }
-					followSource={ this.props.followSource }
-					xPostedTo={ this.props.store.getSitesCrossPostedTo( post.URL ) }
-					suppressSiteNameLink={ this.props.suppressSiteNameLink }
-					showPostHeader={ this.props.showPostHeader }
-					showFollowInHeader={ this.props.showFollowInHeader }
-					handleClick={ this.props.handleClick }
-					showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
-					showSiteName={ this.props.showSiteName }
-					isDiscoverStream={ this.props.isDiscoverStream }
-					postKey={ this.props.postKey }
-				/>;
-		}
-	}
+                return (
+                    <PostClass
+                        post={post}
+                        isSelected={this.props.isSelected}
+                        followSource={this.props.followSource}
+                        xPostedTo={this.props.store.getSitesCrossPostedTo(post.URL)}
+                        suppressSiteNameLink={this.props.suppressSiteNameLink}
+                        showPostHeader={this.props.showPostHeader}
+                        showFollowInHeader={this.props.showFollowInHeader}
+                        handleClick={this.props.handleClick}
+                        showPrimaryFollowButtonOnCards={this.props.showPrimaryFollowButtonOnCards}
+                        showSiteName={this.props.showSiteName}
+                        isDiscoverStream={this.props.isDiscoverStream}
+                        postKey={this.props.postKey}
+                    />
+                );
+        }
+    }
 }

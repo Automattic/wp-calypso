@@ -13,62 +13,59 @@ import DomainsStore from 'lib/domains/store';
 import upgradesActions from 'lib/upgrades/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const stores = [
-	DomainsStore,
-	DnsStore
-];
+const stores = [DomainsStore, DnsStore];
 
-function getStateFromStores( props ) {
-	let domains;
+function getStateFromStores(props) {
+    let domains;
 
-	if ( props.selectedSite ) {
-		domains = DomainsStore.getBySite( props.selectedSite.ID );
-	}
+    if (props.selectedSite) {
+        domains = DomainsStore.getBySite(props.selectedSite.ID);
+    }
 
-	return {
-		domains,
-		dns: DnsStore.getByDomainName( props.selectedDomainName ),
-		selectedDomainName: props.selectedDomainName,
-		selectedSite: props.selectedSite
-	};
+    return {
+        domains,
+        dns: DnsStore.getByDomainName(props.selectedDomainName),
+        selectedDomainName: props.selectedDomainName,
+        selectedSite: props.selectedSite,
+    };
 }
 
 export class DnsData extends Component {
-	static propTypes = {
-		component: PropTypes.func.isRequired,
-		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.object,
-	};
+    static propTypes = {
+        component: PropTypes.func.isRequired,
+        selectedDomainName: PropTypes.string.isRequired,
+        selectedSite: PropTypes.object,
+    };
 
-	constructor( props ) {
-		super( props );
+    constructor(props) {
+        super(props);
 
-		this.loadDns();
-	}
+        this.loadDns();
+    }
 
-	componentWillUpdate() {
-		this.loadDns();
-	}
+    componentWillUpdate() {
+        this.loadDns();
+    }
 
-	loadDns = () => {
-		upgradesActions.fetchDns( this.props.selectedDomainName );
-	};
+    loadDns = () => {
+        upgradesActions.fetchDns(this.props.selectedDomainName);
+    };
 
-	render() {
-		return (
-			<StoreConnection
-				component={ this.props.component }
-				stores={ stores }
-				getStateFromStores={ getStateFromStores }
-				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.selectedSite }
-			/>
-		);
-	}
+    render() {
+        return (
+            <StoreConnection
+                component={this.props.component}
+                stores={stores}
+                getStateFromStores={getStateFromStores}
+                selectedDomainName={this.props.selectedDomainName}
+                selectedSite={this.props.selectedSite}
+            />
+        );
+    }
 }
 
-const mapStateToProps = state => ( {
-	selectedSite: getSelectedSite( state ),
-} );
+const mapStateToProps = state => ({
+    selectedSite: getSelectedSite(state),
+});
 
-export default connect( mapStateToProps )( DnsData );
+export default connect(mapStateToProps)(DnsData);

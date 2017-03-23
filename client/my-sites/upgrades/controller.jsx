@@ -31,277 +31,263 @@ const sites = sitesFactory();
 const productsList = productsFactory();
 
 module.exports = {
+    domainsAddHeader: function(context, next) {
+        context.getSiteSelectionHeaderText = function() {
+            return i18n.translate('Select a site to add a domain');
+        };
 
-	domainsAddHeader: function( context, next ) {
-		context.getSiteSelectionHeaderText = function() {
-			return i18n.translate( 'Select a site to add a domain' );
-		};
+        next();
+    },
 
-		next();
-	},
+    domainsAddRedirectHeader: function(context, next) {
+        context.getSiteSelectionHeaderText = function() {
+            return i18n.translate('Select a site to add Site Redirect');
+        };
 
-	domainsAddRedirectHeader: function( context, next ) {
-		context.getSiteSelectionHeaderText = function() {
-			return i18n.translate( 'Select a site to add Site Redirect' );
-		};
+        next();
+    },
 
-		next();
-	},
+    domainSearch: function(context) {
+        var CartData = require('components/data/cart'),
+            DomainSearch = require('./domain-search'),
+            basePath = route.sectionify(context.path);
 
-	domainSearch: function( context ) {
-		var CartData = require( 'components/data/cart' ),
-			DomainSearch = require( './domain-search' ),
-			basePath = route.sectionify( context.path );
+        // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+        context.store.dispatch(setTitle(i18n.translate('Domain Search')));
 
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Domain Search' ) ) );
+        analytics.pageView.record(basePath, 'Domain Search > Domain Registration');
 
-		analytics.pageView.record( basePath, 'Domain Search > Domain Registration' );
+        // Scroll to the top
+        if (typeof window !== 'undefined') {
+            window.scrollTo(0, 0);
+        }
 
-		// Scroll to the top
-		if ( typeof window !== 'undefined' ) {
-			window.scrollTo( 0, 0 );
-		}
+        renderWithReduxStore(
+            <CartData>
+                <DomainSearch
+                    basePath={basePath}
+                    context={context}
+                    sites={sites}
+                    productsList={productsList}
+                />
+            </CartData>,
+            document.getElementById('primary'),
+            context.store
+        );
+    },
 
-		renderWithReduxStore(
-			(
-				<CartData>
-					<DomainSearch
-						basePath={ basePath }
-						context={ context }
-						sites={ sites }
-						productsList={ productsList } />
-				</CartData>
-			),
-			document.getElementById( 'primary' ),
-			context.store
-		);
-	},
+    siteRedirect: function(context) {
+        var CartData = require('components/data/cart'),
+            SiteRedirect = require('./domain-search/site-redirect'),
+            basePath = route.sectionify(context.path);
 
-	siteRedirect: function( context ) {
-		var CartData = require( 'components/data/cart' ),
-			SiteRedirect = require( './domain-search/site-redirect' ),
-			basePath = route.sectionify( context.path );
+        // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+        context.store.dispatch(setTitle(i18n.translate('Redirect a Site')));
 
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Redirect a Site' ) ) );
+        analytics.pageView.record(basePath, 'Domain Search > Site Redirect');
 
-		analytics.pageView.record( basePath, 'Domain Search > Site Redirect' );
+        renderWithReduxStore(
+            <CartData>
+                <SiteRedirect productsList={productsList} sites={sites} />
+            </CartData>,
+            document.getElementById('primary'),
+            context.store
+        );
+    },
 
-		renderWithReduxStore(
-			(
-				<CartData>
-					<SiteRedirect
-						productsList={ productsList }
-						sites={ sites } />
-				</CartData>
-			),
-			document.getElementById( 'primary' ),
-			context.store
-		);
-	},
+    mapDomain: function(context) {
+        var CartData = require('components/data/cart'),
+            MapDomain = require('my-sites/upgrades/map-domain'),
+            basePath = route.sectionify(context.path);
 
-	mapDomain: function( context ) {
-		var CartData = require( 'components/data/cart' ),
-			MapDomain = require( 'my-sites/upgrades/map-domain' ),
-			basePath = route.sectionify( context.path );
+        // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+        context.store.dispatch(setTitle(i18n.translate('Map a Domain')));
 
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Map a Domain' ) ) );
+        analytics.pageView.record(basePath, 'Domain Search > Domain Mapping');
+        renderWithReduxStore(
+            <Main>
+                <CartData>
+                    <MapDomain
+                        store={context.store}
+                        productsList={productsList}
+                        initialQuery={context.query.initialQuery}
+                        sites={sites}
+                    />
+                </CartData>
+            </Main>,
+            document.getElementById('primary'),
+            context.store
+        );
+    },
 
-		analytics.pageView.record( basePath, 'Domain Search > Domain Mapping' );
-		renderWithReduxStore(
-			(
-				<Main>
-					<CartData>
-						<MapDomain
-							store={ context.store }
-							productsList={ productsList }
-							initialQuery={ context.query.initialQuery }
-							sites={ sites } />
-					</CartData>
-				</Main>
-			),
-			document.getElementById( 'primary' ),
-			context.store
-		);
-	},
+    googleAppsWithRegistration: function(context) {
+        var CartData = require('components/data/cart'),
+            GoogleApps = require('components/upgrades/google-apps');
 
-	googleAppsWithRegistration: function( context ) {
-		var CartData = require( 'components/data/cart' ),
-			GoogleApps = require( 'components/upgrades/google-apps' );
+        // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+        context.store.dispatch(
+            setTitle(
+                i18n.translate('Register %(domain)s', {
+                    args: { domain: context.params.registerDomain },
+                })
+            )
+        );
 
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle(
-			i18n.translate( 'Register %(domain)s', {
-				args: { domain: context.params.registerDomain }
-			} )
-		) );
+        const handleAddGoogleApps = function(googleAppsCartItem) {
+            upgradesActions.addItem(googleAppsCartItem);
+            page('/checkout/' + sites.getSelectedSite().slug);
+        };
 
-		const handleAddGoogleApps = function( googleAppsCartItem ) {
-			upgradesActions.addItem( googleAppsCartItem );
-			page( '/checkout/' + sites.getSelectedSite().slug );
-		};
+        const handleGoBack = function() {
+            page('/domains/add/' + sites.getSelectedSite().slug);
+        };
 
-		const handleGoBack = function() {
-			page( '/domains/add/' + sites.getSelectedSite().slug );
-		};
+        const handleClickSkip = function() {
+            page('/checkout/' + sites.getSelectedSite().slug);
+        };
 
-		const handleClickSkip = function() {
-			page( '/checkout/' + sites.getSelectedSite().slug );
-		};
+        analytics.pageView.record(
+            '/domains/add/:site/google-apps',
+            'Domain Search > Domain Registration > Google Apps'
+        );
 
-		analytics.pageView.record( '/domains/add/:site/google-apps', 'Domain Search > Domain Registration > Google Apps' );
+        renderWithReduxStore(
+            <Main>
+                <CartData>
+                    <GoogleApps
+                        productsList={productsList}
+                        domain={context.params.registerDomain}
+                        onGoBack={handleGoBack}
+                        onAddGoogleApps={handleAddGoogleApps}
+                        onClickSkip={handleClickSkip}
+                    />
+                </CartData>
+            </Main>,
+            document.getElementById('primary'),
+            context.store
+        );
+    },
 
-		renderWithReduxStore(
-			(
-				<Main>
-					<CartData>
-						<GoogleApps
-							productsList={ productsList }
-							domain={ context.params.registerDomain }
-							onGoBack={ handleGoBack }
-							onAddGoogleApps={ handleAddGoogleApps }
-							onClickSkip={ handleClickSkip } />
-					</CartData>
-				</Main>
-			),
-			document.getElementById( 'primary' ),
-			context.store
-		);
-	},
+    checkout: function(context) {
+        var Checkout = require('./checkout'),
+            CheckoutData = require('components/data/checkout'),
+            CartData = require('components/data/cart'),
+            SecondaryCart = require('./cart/secondary-cart'),
+            basePath = route.sectionify(context.path),
+            product = context.params.product,
+            selectedFeature = context.params.feature;
 
-	checkout: function( context ) {
-		var Checkout = require( './checkout' ),
-			CheckoutData = require( 'components/data/checkout' ),
-			CartData = require( 'components/data/cart' ),
-			SecondaryCart = require( './cart/secondary-cart' ),
-			basePath = route.sectionify( context.path ),
-			product = context.params.product,
-			selectedFeature = context.params.feature;
+        if ('thank-you' === product) {
+            return;
+        }
 
-		if ( 'thank-you' === product ) {
-			return;
-		}
+        analytics.pageView.record(basePath, 'Checkout');
 
-		analytics.pageView.record( basePath, 'Checkout' );
+        // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+        context.store.dispatch(setTitle(i18n.translate('Checkout')));
 
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
+        renderWithReduxStore(
+            <CheckoutData>
+                <Checkout
+                    product={product}
+                    productsList={productsList}
+                    selectedFeature={selectedFeature}
+                />
+            </CheckoutData>,
+            document.getElementById('primary'),
+            context.store
+        );
 
-		renderWithReduxStore(
-			(
-				<CheckoutData>
-					<Checkout
-						product={ product }
-						productsList={ productsList }
-						selectedFeature={ selectedFeature }
-					/>
-				</CheckoutData>
-			),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+        renderWithReduxStore(
+            <CartData>
+                <SecondaryCart selectedSite={sites.getSelectedSite()} />
+            </CartData>,
+            document.getElementById('secondary'),
+            context.store
+        );
+    },
 
-		renderWithReduxStore(
-			(
-				<CartData>
-					<SecondaryCart selectedSite={ sites.getSelectedSite() } />
-				</CartData>
-			),
-			document.getElementById( 'secondary' ),
-			context.store
-		);
-	},
+    sitelessCheckout: function(context) {
+        const Checkout = require('./checkout'),
+            CheckoutData = require('components/data/checkout'),
+            CartData = require('components/data/cart'),
+            SecondaryCart = require('./cart/secondary-cart');
 
-	sitelessCheckout: function( context ) {
-		const Checkout = require( './checkout' ),
-			CheckoutData = require( 'components/data/checkout' ),
-			CartData = require( 'components/data/cart' ),
-			SecondaryCart = require( './cart/secondary-cart' );
+        analytics.pageView.record('/checkout/no-site', 'Checkout');
 
-		analytics.pageView.record( '/checkout/no-site', 'Checkout' );
+        // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+        context.store.dispatch(setTitle(i18n.translate('Checkout')));
 
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
+        renderWithReduxStore(
+            <CheckoutData>
+                <Checkout productsList={productsList} />
+            </CheckoutData>,
+            document.getElementById('primary'),
+            context.store
+        );
 
-		renderWithReduxStore(
-			(
-				<CheckoutData>
-					<Checkout
-						productsList={ productsList }
-					/>
-				</CheckoutData>
-			),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+        renderWithReduxStore(
+            <CartData>
+                <SecondaryCart />
+            </CartData>,
+            document.getElementById('secondary'),
+            context.store
+        );
+    },
 
-		renderWithReduxStore(
-			(
-				<CartData>
-					<SecondaryCart />
-				</CartData>
-			),
-			document.getElementById( 'secondary' ),
-			context.store
-		);
-	},
+    checkoutThankYou: function(context) {
+        const CheckoutThankYouComponent = require('./checkout-thank-you'),
+            basePath = route.sectionify(context.path),
+            receiptId = Number(context.params.receiptId);
 
-	checkoutThankYou: function( context ) {
-		const CheckoutThankYouComponent = require( './checkout-thank-you' ),
-			basePath = route.sectionify( context.path ),
-			receiptId = Number( context.params.receiptId );
+        analytics.pageView.record(basePath, 'Checkout Thank You');
 
-		analytics.pageView.record( basePath, 'Checkout Thank You' );
+        context.store.dispatch(setSection({ name: 'checkout-thank-you' }, { hasSidebar: false }));
 
-		context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
+        context.store.dispatch(setTitle(i18n.translate('Thank You'))); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-		context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+        renderWithReduxStore(
+            <CheckoutThankYouComponent
+                productsList={productsList}
+                receiptId={receiptId}
+                domainOnlySiteFlow={isEmpty(context.params.site)}
+                selectedFeature={context.params.feature}
+                selectedSite={sites.getSelectedSite()}
+            />,
+            document.getElementById('primary'),
+            context.store
+        );
 
-		renderWithReduxStore(
-			(
-				<CheckoutThankYouComponent
-					productsList={ productsList }
-					receiptId={ receiptId }
-					domainOnlySiteFlow={ isEmpty( context.params.site ) }
-					selectedFeature={ context.params.feature }
-					selectedSite={ sites.getSelectedSite() } />
-			),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+        ReactDom.unmountComponentAtNode(document.getElementById('secondary'));
+    },
 
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-	},
+    redirectIfNoSite: function(redirectTo) {
+        return function(context, next) {
+            const state = context.store.getState();
+            const siteId = getSelectedSiteId(state);
+            const userCanManageOptions = canCurrentUser(state, siteId, 'manage_options');
+            if (!userCanManageOptions) {
+                const user = getCurrentUser(state);
+                const visibleSiteCount = get(user, 'visible_site_count', 0);
+                //if only one site navigate to stats to avoid redirect loop
+                const redirect = visibleSiteCount > 1 ? redirectTo : '/stats';
+                return page.redirect(redirect);
+            }
+            next();
+        };
+    },
 
-	redirectIfNoSite: function( redirectTo ) {
-		return function( context, next ) {
-			const state = context.store.getState();
-			const siteId = getSelectedSiteId( state );
-			const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-			if ( ! userCanManageOptions ) {
-				const user = getCurrentUser( state );
-				const visibleSiteCount = get( user, 'visible_site_count', 0 );
-				//if only one site navigate to stats to avoid redirect loop
-				const redirect = visibleSiteCount > 1 ? redirectTo : '/stats';
-				return page.redirect( redirect );
-			}
-			next();
-		};
-	},
+    redirectToAddMappingIfVipSite: function() {
+        return function(context, next) {
+            const selectedSite = sites.getSelectedSite(),
+                domain = context.params.domain ? `/${context.params.domain}` : '',
+                query = qs.stringify({ initialQuery: context.params.suggestion });
 
-	redirectToAddMappingIfVipSite: function() {
-		return function( context, next ) {
-			const selectedSite = sites.getSelectedSite(),
-				domain = context.params.domain ? `/${ context.params.domain }` : '',
-				query = qs.stringify( { initialQuery: context.params.suggestion } );
+            if (selectedSite && selectedSite.is_vip) {
+                return page.redirect(`/domains/add/mapping${domain}?${query}`);
+            }
 
-			if ( selectedSite && selectedSite.is_vip ) {
-				return page.redirect( `/domains/add/mapping${ domain }?${ query }` );
-			}
-
-			next();
-		};
-	}
+            next();
+        };
+    },
 };

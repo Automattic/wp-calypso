@@ -8,39 +8,39 @@ import { useFakeTimers } from 'test/helpers/use-sinon';
 
 import { PageViewTracker } from '../';
 
-describe( 'PageViewTracker', () => {
-	let clock;
+describe('PageViewTracker', () => {
+    let clock;
 
-	useFakeDom();
-	useFakeTimers( fakeClock => {
-		clock = fakeClock
-	} );
+    useFakeDom();
+    useFakeTimers(fakeClock => {
+        clock = fakeClock;
+    });
 
-	it( 'should immediately fire off event when given no delay', () => {
-		const recorder = spy();
+    it('should immediately fire off event when given no delay', () => {
+        const recorder = spy();
 
-		mount( <PageViewTracker path="/test" title="test" recorder={ recorder } /> );
+        mount(<PageViewTracker path="/test" title="test" recorder={recorder} />);
 
-		expect( recorder ).to.have.been.calledOnce;
-	} );
+        expect(recorder).to.have.been.calledOnce;
+    });
 
-	it( 'should wait for the delay before firing off the event', () => {
-		const recorder = spy();
+    it('should wait for the delay before firing off the event', () => {
+        const recorder = spy();
 
-		mount( <PageViewTracker delay={ 500 } path="/test" title="test" recorder={ recorder } /> );
+        mount(<PageViewTracker delay={500} path="/test" title="test" recorder={recorder} />);
 
-		expect( recorder ).to.not.have.been.called;
+        expect(recorder).to.not.have.been.called;
 
-		clock.tick( 500 );
+        clock.tick(500);
 
-		expect( recorder ).to.have.been.calledOnce
-	} );
+        expect(recorder).to.have.been.calledOnce;
+    });
 
-	it( 'should pass the appropriate event information', () => {
-		const recorder = spy();
+    it('should pass the appropriate event information', () => {
+        const recorder = spy();
 
-		mount( <PageViewTracker path="/test" title="test" recorder={ recorder } /> );
+        mount(<PageViewTracker path="/test" title="test" recorder={recorder} />);
 
-		expect( recorder ).to.have.been.calledWith( '/test', 'test' );
-	} );
-} );
+        expect(recorder).to.have.been.calledWith('/test', 'test');
+    });
+});

@@ -1,16 +1,15 @@
 /**
  * External dependencies
  */
-var update = require( 'react-addons-update' ),
-	i18n = require( 'i18n-calypso' ),
-	extend = require( 'lodash/extend' ),
-	config = require( 'config' );
+var update = require('react-addons-update'),
+    i18n = require('i18n-calypso'),
+    extend = require('lodash/extend'),
+    config = require('config');
 
 /**
  * Internal dependencies
  */
-var cartItems = require( './cart-items' ),
-	productsValues = require( 'lib/products-values' );
+var cartItems = require('./cart-items'), productsValues = require('lib/products-values');
 
 /**
  * Create a new empty cart.
@@ -24,29 +23,29 @@ var cartItems = require( './cart-items' ),
  * @param {Object} [attributes] Additional attributes for the cart (optional)
  * @returns {cart} [emptyCart] The new empty cart created
  */
-function emptyCart( siteId, attributes ) {
-	return Object.assign( { blog_id: siteId, products: [] }, attributes );
+function emptyCart(siteId, attributes) {
+    return Object.assign({ blog_id: siteId, products: [] }, attributes);
 }
 
-function applyCoupon( coupon ) {
-	return function( cart ) {
-		return update( cart, {
-			coupon: { $set: coupon },
-			is_coupon_applied: { $set: false }
-		} );
-	};
+function applyCoupon(coupon) {
+    return function(cart) {
+        return update(cart, {
+            coupon: { $set: coupon },
+            is_coupon_applied: { $set: false },
+        });
+    };
 }
 
-function canRemoveFromCart( cart, cartItem ) {
-	if ( productsValues.isCredits( cartItem ) ) {
-		return false;
-	}
+function canRemoveFromCart(cart, cartItem) {
+    if (productsValues.isCredits(cartItem)) {
+        return false;
+    }
 
-	if ( cartItems.hasRenewalItem( cart ) && productsValues.isPrivacyProtection( cartItem ) ) {
-		return false;
-	}
+    if (cartItems.hasRenewalItem(cart) && productsValues.isPrivacyProtection(cartItem)) {
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 /**
@@ -59,54 +58,54 @@ function canRemoveFromCart( cart, cartItem ) {
  * @param {cartValue} [nextCartValue] - the new cart value
  * @returns {array} [nextCartMessages] - an array of messages about the state of the cart
  */
-function getNewMessages( previousCartValue, nextCartValue ) {
-	var previousDate, nextDate, hasNewServerData, nextCartMessages;
-	previousCartValue = previousCartValue || {};
-	nextCartValue = nextCartValue || {};
-	nextCartMessages = nextCartValue.messages || [];
+function getNewMessages(previousCartValue, nextCartValue) {
+    var previousDate, nextDate, hasNewServerData, nextCartMessages;
+    previousCartValue = previousCartValue || {};
+    nextCartValue = nextCartValue || {};
+    nextCartMessages = nextCartValue.messages || [];
 
-	// If there is no previous cart then just return the messages for the new cart
-	if ( ! previousCartValue || ! previousCartValue.client_metadata || ! nextCartValue.client_metadata ) {
-		return nextCartMessages;
-	}
+    // If there is no previous cart then just return the messages for the new cart
+    if (
+        !previousCartValue || !previousCartValue.client_metadata || !nextCartValue.client_metadata
+    ) {
+        return nextCartMessages;
+    }
 
-	previousDate = previousCartValue.client_metadata.last_server_response_date;
-	nextDate = nextCartValue.client_metadata.last_server_response_date;
-	hasNewServerData = i18n.moment( nextDate ).isAfter( previousDate );
+    previousDate = previousCartValue.client_metadata.last_server_response_date;
+    nextDate = nextCartValue.client_metadata.last_server_response_date;
+    hasNewServerData = i18n.moment(nextDate).isAfter(previousDate);
 
-	return hasNewServerData ? nextCartMessages : [];
+    return hasNewServerData ? nextCartMessages : [];
 }
 
-function isPaidForFullyInCredits( cart ) {
-	return (
-		! cartItems.hasFreeTrial( cart ) &&
-		! cartItems.hasProduct( cart, 'wordpress-com-credits' ) &&
-		cart.total_cost <= cart.credits &&
-		cart.total_cost > 0
-	);
+function isPaidForFullyInCredits(cart) {
+    return !cartItems.hasFreeTrial(cart) &&
+        !cartItems.hasProduct(cart, 'wordpress-com-credits') &&
+        cart.total_cost <= cart.credits &&
+        cart.total_cost > 0;
 }
 
-function isFree( cart ) {
-	return cart.total_cost === 0 && ! cartItems.hasFreeTrial( cart );
+function isFree(cart) {
+    return cart.total_cost === 0 && !cartItems.hasFreeTrial(cart);
 }
 
-function fillInAllCartItemAttributes( cart, products ) {
-	return update( cart, {
-		products: {
-			$apply: function( items ) {
-				return items.map( function( cartItem ) {
-					return fillInSingleCartItemAttributes( cartItem, products );
-				} );
-			}
-		}
-	} );
+function fillInAllCartItemAttributes(cart, products) {
+    return update(cart, {
+        products: {
+            $apply: function(items) {
+                return items.map(function(cartItem) {
+                    return fillInSingleCartItemAttributes(cartItem, products);
+                });
+            },
+        },
+    });
 }
 
-function fillInSingleCartItemAttributes( cartItem, products ) {
-	var product = products[ cartItem.product_slug ],
-		attributes = productsValues.whitelistAttributes( product );
+function fillInSingleCartItemAttributes(cartItem, products) {
+    var product = products[cartItem.product_slug],
+        attributes = productsValues.whitelistAttributes(product);
 
-	return extend( {}, cartItem, attributes );
+    return extend({}, cartItem, attributes);
 }
 
 /**
@@ -119,38 +118,38 @@ function fillInSingleCartItemAttributes( cartItem, products ) {
  * @param {Object} cart - cart as `CartValue` object
  * @returns {string} the refund policy type
  */
-function getRefundPolicy( cart ) {
-	if ( cartItems.hasDomainRegistration( cart ) && cartItems.hasPlan( cart ) ) {
-		return 'planWithDomainRefund';
-	}
+function getRefundPolicy(cart) {
+    if (cartItems.hasDomainRegistration(cart) && cartItems.hasPlan(cart)) {
+        return 'planWithDomainRefund';
+    }
 
-	if ( cartItems.hasDomainRegistration( cart ) ) {
-		return 'domainRefund';
-	}
+    if (cartItems.hasDomainRegistration(cart)) {
+        return 'domainRefund';
+    }
 
-	return 'genericRefund';
+    return 'genericRefund';
 }
 
-function isCreditCardPaymentsEnabled( cart ) {
-	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_MoneyPress_Paygate' ) >= 0;
+function isCreditCardPaymentsEnabled(cart) {
+    return cart.allowed_payment_methods.indexOf('WPCOM_Billing_MoneyPress_Paygate') >= 0;
 }
 
-function isPayPalExpressEnabled( cart ) {
-	return config.isEnabled( 'upgrades/paypal' ) &&
-			0 <= cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_PayPal_Express' );
+function isPayPalExpressEnabled(cart) {
+    return config.isEnabled('upgrades/paypal') &&
+        0 <= cart.allowed_payment_methods.indexOf('WPCOM_Billing_PayPal_Express');
 }
 
 module.exports = {
-	applyCoupon,
-	canRemoveFromCart,
-	cartItems,
-	emptyCart,
-	fillInAllCartItemAttributes,
-	fillInSingleCartItemAttributes,
-	getNewMessages,
-	getRefundPolicy,
-	isFree,
-	isPaidForFullyInCredits,
-	isPayPalExpressEnabled,
-	isCreditCardPaymentsEnabled
+    applyCoupon,
+    canRemoveFromCart,
+    cartItems,
+    emptyCart,
+    fillInAllCartItemAttributes,
+    fillInSingleCartItemAttributes,
+    getNewMessages,
+    getRefundPolicy,
+    isFree,
+    isPaidForFullyInCredits,
+    isPayPalExpressEnabled,
+    isCreditCardPaymentsEnabled,
 };

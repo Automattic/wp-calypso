@@ -2,20 +2,20 @@
  * Local variables
  */
 var defaults = {
-	localeSlug: 'de'
+    localeSlug: 'de',
 };
 
 /**
  * Stub user module to avoid its dependency on the browser
  **/
 function User() {
-	if ( ! ( this instanceof User ) ) {
-		return new User();
-	}
+    if (!(this instanceof User)) {
+        return new User();
+    }
 }
 
 User.prototype.get = function() {
-	return defaults;
+    return defaults;
 };
 User.prototype.on = function() {};
 User.prototype.fetchSettings = function() {};

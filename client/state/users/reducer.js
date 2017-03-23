@@ -7,11 +7,7 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import suggestions from './suggestions/reducer';
-import {
-	USER_RECEIVE,
-	DESERIALIZE,
-	SERIALIZE
-} from 'state/action-types';
+import { USER_RECEIVE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 
 /**
  * Tracks all known user objects, indexed by user ID.
@@ -20,22 +16,22 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function items( state = {}, action ) {
-	switch ( action.type ) {
-		case USER_RECEIVE:
-			return Object.assign( {}, state, {
-				[ action.user.ID ]: action.user
-			} );
-		case DESERIALIZE:
-			return {};
-		case SERIALIZE:
-			return {};
-	}
+export function items(state = {}, action) {
+    switch (action.type) {
+        case USER_RECEIVE:
+            return Object.assign({}, state, {
+                [action.user.ID]: action.user,
+            });
+        case DESERIALIZE:
+            return {};
+        case SERIALIZE:
+            return {};
+    }
 
-	return state;
+    return state;
 }
 
-export default combineReducers( {
-	items,
-	suggestions,
-} );
+export default combineReducers({
+    items,
+    suggestions,
+});

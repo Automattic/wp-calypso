@@ -9,15 +9,15 @@ import moment from 'moment-timezone';
  * Internal dependencies
  */
 import {
-	getNormalizedPostsQuery,
-	getSerializedPostsQuery,
-	getDeserializedPostsQueryDetails,
-	getSerializedPostsQueryWithoutPage,
-	mergeIgnoringArrays,
-	normalizePostForEditing,
-	normalizePostForDisplay
+    getNormalizedPostsQuery,
+    getSerializedPostsQuery,
+    getDeserializedPostsQueryDetails,
+    getSerializedPostsQueryWithoutPage,
+    mergeIgnoringArrays,
+    normalizePostForEditing,
+    normalizePostForDisplay,
 } from './utils';
-import { getSite } from 'state/sites/selectors';
+import { getSite } from 'state/sites/selectors';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import addQueryArgs from 'lib/route/add-query-args';
 
@@ -28,19 +28,19 @@ import addQueryArgs from 'lib/route/add-query-args';
  * @param  {String} globalId Post global ID
  * @return {Object}          Post object
  */
-export function getPost( state, globalId ) {
-	const path = state.posts.items[ globalId ];
-	if ( ! path ) {
-		return null;
-	}
+export function getPost(state, globalId) {
+    const path = state.posts.items[globalId];
+    if (!path) {
+        return null;
+    }
 
-	const [ siteId, postId ] = path;
-	const manager = state.posts.queries[ siteId ];
-	if ( ! manager ) {
-		return null;
-	}
+    const [siteId, postId] = path;
+    const manager = state.posts.queries[siteId];
+    if (!manager) {
+        return null;
+    }
 
-	return manager.getItem( postId );
+    return manager.getItem(postId);
 }
 
 /**
@@ -53,8 +53,8 @@ export function getPost( state, globalId ) {
  * @return {?Object}          Post object
  */
 export const getNormalizedPost = createSelector(
-	( state, globalId ) => normalizePostForDisplay( getPost( state, globalId ) ),
-	( state ) => [ state.posts.items, state.posts.queries ]
+    (state, globalId) => normalizePostForDisplay(getPost(state, globalId)),
+    state => [state.posts.items, state.posts.queries]
 );
 
 /**
@@ -65,15 +65,15 @@ export const getNormalizedPost = createSelector(
  * @return {Array}         Site posts
  */
 export const getSitePosts = createSelector(
-	( state, siteId ) => {
-		const manager = state.posts.queries[ siteId ];
-		if ( ! manager ) {
-			return [];
-		}
+    (state, siteId) => {
+        const manager = state.posts.queries[siteId];
+        if (!manager) {
+            return [];
+        }
 
-		return manager.getItems();
-	},
-	( state ) => state.posts.queries
+        return manager.getItems();
+    },
+    state => state.posts.queries
 );
 
 /**
@@ -85,15 +85,15 @@ export const getSitePosts = createSelector(
  * @return {?Object}        Post object
  */
 export const getSitePost = createSelector(
-	( state, siteId, postId ) => {
-		const manager = state.posts.queries[ siteId ];
-		if ( ! manager ) {
-			return null;
-		}
+    (state, siteId, postId) => {
+        const manager = state.posts.queries[siteId];
+        if (!manager) {
+            return null;
+        }
 
-		return manager.getItem( postId );
-	},
-	( state ) => state.posts.queries
+        return manager.getItem(postId);
+    },
+    state => state.posts.queries
 );
 
 /**
@@ -106,30 +106,30 @@ export const getSitePost = createSelector(
  * @return {?Array}         Posts for the post query
  */
 export const getSitePostsForQuery = createSelector(
-	( state, siteId, query ) => {
-		const manager = state.posts.queries[ siteId ];
-		if ( ! manager ) {
-			return null;
-		}
+    (state, siteId, query) => {
+        const manager = state.posts.queries[siteId];
+        if (!manager) {
+            return null;
+        }
 
-		const posts = manager.getItems( query );
-		if ( ! posts ) {
-			return null;
-		}
+        const posts = manager.getItems(query);
+        if (!posts) {
+            return null;
+        }
 
-		// PostQueryManager will return an array including undefined entries if
-		// it knows that a page of results exists for the query (via a previous
-		// request's `found` value) but the items haven't been received. While
-		// we could impose this on the developer to accommodate, instead we
-		// simply return null when any `undefined` entries exist in the set.
-		if ( includes( posts, undefined ) ) {
-			return null;
-		}
+        // PostQueryManager will return an array including undefined entries if
+        // it knows that a page of results exists for the query (via a previous
+        // request's `found` value) but the items haven't been received. While
+        // we could impose this on the developer to accommodate, instead we
+        // simply return null when any `undefined` entries exist in the set.
+        if (includes(posts, undefined)) {
+            return null;
+        }
 
-		return posts.map( normalizePostForDisplay );
-	},
-	( state ) => state.posts.queries,
-	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
+        return posts.map(normalizePostForDisplay);
+    },
+    state => state.posts.queries,
+    (state, siteId, query) => getSerializedPostsQuery(query, siteId)
 );
 
 /**
@@ -141,9 +141,9 @@ export const getSitePostsForQuery = createSelector(
  * @param  {Object}  query  Post query object
  * @return {Boolean}        Whether posts are being requested
  */
-export function isRequestingSitePostsForQuery( state, siteId, query ) {
-	const serializedQuery = getSerializedPostsQuery( query, siteId );
-	return !! state.posts.queryRequests[ serializedQuery ];
+export function isRequestingSitePostsForQuery(state, siteId, query) {
+    const serializedQuery = getSerializedPostsQuery(query, siteId);
+    return !!state.posts.queryRequests[serializedQuery];
 }
 
 /**
@@ -155,12 +155,12 @@ export function isRequestingSitePostsForQuery( state, siteId, query ) {
  * @param  {Object}  query  Post query object
  * @return {?Number}        Total number of found items
  */
-export function getSitePostsFoundForQuery( state, siteId, query ) {
-	if ( ! state.posts.queries[ siteId ] ) {
-		return null;
-	}
+export function getSitePostsFoundForQuery(state, siteId, query) {
+    if (!state.posts.queries[siteId]) {
+        return null;
+    }
 
-	return state.posts.queries[ siteId ].getFound( query );
+    return state.posts.queries[siteId].getFound(query);
 }
 
 /**
@@ -172,17 +172,17 @@ export function getSitePostsFoundForQuery( state, siteId, query ) {
  * @param  {Object}  query  Post query object
  * @return {?Number}        Last posts page
  */
-export function getSitePostsLastPageForQuery( state, siteId, query ) {
-	if ( ! state.posts.queries[ siteId ] ) {
-		return null;
-	}
+export function getSitePostsLastPageForQuery(state, siteId, query) {
+    if (!state.posts.queries[siteId]) {
+        return null;
+    }
 
-	const pages = state.posts.queries[ siteId ].getNumberOfPages( query );
-	if ( null === pages ) {
-		return null;
-	}
+    const pages = state.posts.queries[siteId].getNumberOfPages(query);
+    if (null === pages) {
+        return null;
+    }
 
-	return Math.max( pages, 1 );
+    return Math.max(pages, 1);
 }
 
 /**
@@ -194,13 +194,13 @@ export function getSitePostsLastPageForQuery( state, siteId, query ) {
  * @param  {Object}   query  Post query object
  * @return {?Boolean}        Whether last posts page has been reached
  */
-export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
-	const lastPage = getSitePostsLastPageForQuery( state, siteId, query );
-	if ( null === lastPage ) {
-		return lastPage;
-	}
+export function isSitePostsLastPageForQuery(state, siteId, query = {}) {
+    const lastPage = getSitePostsLastPageForQuery(state, siteId, query);
+    if (null === lastPage) {
+        return lastPage;
+    }
 
-	return lastPage === ( query.page || DEFAULT_POST_QUERY.page );
+    return lastPage === (query.page || DEFAULT_POST_QUERY.page);
 }
 
 /**
@@ -213,21 +213,21 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
  * @return {?Array}         Posts for the post query
  */
 export const getSitePostsForQueryIgnoringPage = createSelector(
-	( state, siteId, query ) => {
-		const posts = state.posts.queries[ siteId ];
-		if ( ! posts ) {
-			return null;
-		}
+    (state, siteId, query) => {
+        const posts = state.posts.queries[siteId];
+        if (!posts) {
+            return null;
+        }
 
-		const itemsIgnoringPage = posts.getItemsIgnoringPage( query );
-		if ( ! itemsIgnoringPage ) {
-			return null;
-		}
+        const itemsIgnoringPage = posts.getItemsIgnoringPage(query);
+        if (!itemsIgnoringPage) {
+            return null;
+        }
 
-		return itemsIgnoringPage.map( normalizePostForDisplay );
-	},
-	( state ) => state.posts.queries,
-	( state, siteId, query ) => getSerializedPostsQueryWithoutPage( query, siteId )
+        return itemsIgnoringPage.map(normalizePostForDisplay);
+    },
+    state => state.posts.queries,
+    (state, siteId, query) => getSerializedPostsQueryWithoutPage(query, siteId)
 );
 
 /**
@@ -240,26 +240,23 @@ export const getSitePostsForQueryIgnoringPage = createSelector(
  * @return {Boolean}        Whether posts are being requested
  */
 export const isRequestingSitePostsForQueryIgnoringPage = createSelector(
-	( state, siteId, query ) => {
-		const normalizedQueryWithoutPage = omit( getNormalizedPostsQuery( query ), 'page' );
-		return some( state.posts.queryRequests, ( isRequesting, serializedQuery ) => {
-			if ( ! isRequesting ) {
-				return false;
-			}
+    (state, siteId, query) => {
+        const normalizedQueryWithoutPage = omit(getNormalizedPostsQuery(query), 'page');
+        return some(state.posts.queryRequests, (isRequesting, serializedQuery) => {
+            if (!isRequesting) {
+                return false;
+            }
 
-			const queryDetails = getDeserializedPostsQueryDetails( serializedQuery );
-			if ( queryDetails.siteId !== siteId ) {
-				return false;
-			}
+            const queryDetails = getDeserializedPostsQueryDetails(serializedQuery);
+            if (queryDetails.siteId !== siteId) {
+                return false;
+            }
 
-			return isEqual(
-				normalizedQueryWithoutPage,
-				omit( queryDetails.query, 'page' )
-			);
-		} );
-	},
-	( state ) => state.posts.queryRequests,
-	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
+            return isEqual(normalizedQueryWithoutPage, omit(queryDetails.query, 'page'));
+        });
+    },
+    state => state.posts.queryRequests,
+    (state, siteId, query) => getSerializedPostsQuery(query, siteId)
 );
 
 /**
@@ -271,12 +268,12 @@ export const isRequestingSitePostsForQueryIgnoringPage = createSelector(
  * @param  {Number}  postId Post ID
  * @return {Boolean}        Whether request is in progress
  */
-export function isRequestingSitePost( state, siteId, postId ) {
-	if ( ! state.posts.siteRequests[ siteId ] ) {
-		return false;
-	}
+export function isRequestingSitePost(state, siteId, postId) {
+    if (!state.posts.siteRequests[siteId]) {
+        return false;
+    }
 
-	return !! state.posts.siteRequests[ siteId ][ postId ];
+    return !!state.posts.siteRequests[siteId][postId];
 }
 
 /**
@@ -288,20 +285,20 @@ export function isRequestingSitePost( state, siteId, postId ) {
  * @return {Object}        Post object with revisions
  */
 export const getEditedPost = createSelector(
-	( state, siteId, postId ) => {
-		const post = getSitePost( state, siteId, postId );
-		const edits = getPostEdits( state, siteId, postId );
-		if ( ! edits ) {
-			return post;
-		}
+    (state, siteId, postId) => {
+        const post = getSitePost(state, siteId, postId);
+        const edits = getPostEdits(state, siteId, postId);
+        if (!edits) {
+            return post;
+        }
 
-		if ( ! post ) {
-			return edits;
-		}
+        if (!post) {
+            return edits;
+        }
 
-		return mergeIgnoringArrays( {}, post, edits );
-	},
-	( state ) => [ state.posts.items, state.posts.edits ]
+        return mergeIgnoringArrays({}, post, edits);
+    },
+    state => [state.posts.items, state.posts.edits]
 );
 
 /**
@@ -312,9 +309,9 @@ export const getEditedPost = createSelector(
  * @param  {Number} postId Post ID
  * @return {Object}        Post revisions
  */
-export function getPostEdits( state, siteId, postId ) {
-	const { edits } = state.posts;
-	return normalizePostForEditing( get( edits, [ siteId, postId || '' ], null ) );
+export function getPostEdits(state, siteId, postId) {
+    const { edits } = state.posts;
+    return normalizePostForEditing(get(edits, [siteId, postId || ''], null));
 }
 
 /**
@@ -326,8 +323,8 @@ export function getPostEdits( state, siteId, postId ) {
  * @param  {String} field  Field value to retrieve
  * @return {*}             Field value
  */
-export function getEditedPostValue( state, siteId, postId, field ) {
-	return get( getEditedPost( state, siteId, postId ), field );
+export function getEditedPostValue(state, siteId, postId, field) {
+    return get(getEditedPost(state, siteId, postId), field);
 }
 
 /**
@@ -340,26 +337,24 @@ export function getEditedPostValue( state, siteId, postId, field ) {
  * @return {Boolean}        Whether dirty fields exist
  */
 export const isEditedPostDirty = createSelector(
-	( state, siteId, postId ) => {
-		const post = getSitePost( state, siteId, postId );
-		const edits = getPostEdits( state, siteId, postId );
+    (state, siteId, postId) => {
+        const post = getSitePost(state, siteId, postId);
+        const edits = getPostEdits(state, siteId, postId);
 
-		return some( edits, ( value, key ) => {
-			if ( key === 'type' ) {
-				return false;
-			}
+        return some(edits, (value, key) => {
+            if (key === 'type') {
+                return false;
+            }
 
-			if ( post ) {
-				return post[ key ] !== value;
-			}
+            if (post) {
+                return post[key] !== value;
+            }
 
-			return (
-				! DEFAULT_NEW_POST_VALUES.hasOwnProperty( key ) ||
-				value !== DEFAULT_NEW_POST_VALUES[ key ]
-			);
-		} );
-	},
-	( state ) => [ state.posts.items, state.posts.edits ]
+            return !DEFAULT_NEW_POST_VALUES.hasOwnProperty(key) ||
+                value !== DEFAULT_NEW_POST_VALUES[key];
+        });
+    },
+    state => [state.posts.items, state.posts.edits]
 );
 
 /**
@@ -372,17 +367,17 @@ export const isEditedPostDirty = createSelector(
  * @return {Boolean}        Whether post is published
  */
 export const isPostPublished = createSelector(
-	( state, siteId, postId ) => {
-		const post = getSitePost( state, siteId, postId );
+    (state, siteId, postId) => {
+        const post = getSitePost(state, siteId, postId);
 
-		if ( ! post ) {
-			return null;
-		}
+        if (!post) {
+            return null;
+        }
 
-		return includes( [ 'publish', 'private' ], post.status ) ||
-			( post.status === 'future' && moment( post.date ).isBefore( moment() ) );
-	},
-	( state ) => state.posts.queries
+        return includes(['publish', 'private'], post.status) ||
+            (post.status === 'future' && moment(post.date).isBefore(moment()));
+    },
+    state => state.posts.queries
 );
 
 /**
@@ -393,28 +388,28 @@ export const isPostPublished = createSelector(
  * @param  {Number} postId Post ID
  * @return {String}             Slug value
  */
-export function getEditedPostSlug( state, siteId, postId ) {
-	// if local edits exists, return them regardless of post status
-	const postEdits = getPostEdits( state, siteId, postId );
-	if ( has( postEdits, 'slug' ) ) {
-		return postEdits.slug;
-	}
+export function getEditedPostSlug(state, siteId, postId) {
+    // if local edits exists, return them regardless of post status
+    const postEdits = getPostEdits(state, siteId, postId);
+    if (has(postEdits, 'slug')) {
+        return postEdits.slug;
+    }
 
-	const post = getSitePost( state, siteId, postId );
-	const postSlug = get( post, 'slug' );
+    const post = getSitePost(state, siteId, postId);
+    const postSlug = get(post, 'slug');
 
-	// when post is published, return the slug
-	if ( isPostPublished( state, siteId, postId ) ) {
-		return decodeURI( postSlug );
-	}
+    // when post is published, return the slug
+    if (isPostPublished(state, siteId, postId)) {
+        return decodeURI(postSlug);
+    }
 
-	// only return suggested_slug if slug has not been edited
-	const suggestedSlug = get( post, [ 'other_URLs', 'suggested_slug' ] );
-	if ( suggestedSlug && ! postSlug ) {
-		return suggestedSlug;
-	}
+    // only return suggested_slug if slug has not been edited
+    const suggestedSlug = get(post, ['other_URLs', 'suggested_slug']);
+    if (suggestedSlug && !postSlug) {
+        return suggestedSlug;
+    }
 
-	return postSlug;
+    return postSlug;
 }
 
 /**
@@ -426,41 +421,45 @@ export function getEditedPostSlug( state, siteId, postId ) {
  * @param  {Number}  postId Post ID
  * @return {?String}        Post preview URL
  */
-export function getPostPreviewUrl( state, siteId, postId ) {
-	const post = getSitePost( state, siteId, postId );
-	if ( ! post ) {
-		return null;
-	}
+export function getPostPreviewUrl(state, siteId, postId) {
+    const post = getSitePost(state, siteId, postId);
+    if (!post) {
+        return null;
+    }
 
-	const { URL: url, status } = post;
-	if ( ! url || status === 'trash' ) {
-		return null;
-	}
+    const { URL: url, status } = post;
+    if (!url || status === 'trash') {
+        return null;
+    }
 
-	if ( post.preview_URL ) {
-		return post.preview_URL;
-	}
+    if (post.preview_URL) {
+        return post.preview_URL;
+    }
 
-	let previewUrl = url;
-	if ( 'publish' !== status ) {
-		previewUrl = addQueryArgs( {
-			preview: true
-		}, previewUrl );
-	}
+    let previewUrl = url;
+    if ('publish' !== status) {
+        previewUrl = addQueryArgs(
+            {
+                preview: true,
+            },
+            previewUrl
+        );
+    }
 
-	// Support mapped domains https
-	const site = getSite( state, siteId );
-	if ( site && site.options ) {
-		const { is_mapped_domain, unmapped_url } = site.options;
-		previewUrl = is_mapped_domain ? previewUrl.replace( site.URL, unmapped_url ) : previewUrl;
-	}
+    // Support mapped domains https
+    const site = getSite(state, siteId);
+    if (site && site.options) {
+        const { is_mapped_domain, unmapped_url } = site.options;
+        previewUrl = is_mapped_domain ? previewUrl.replace(site.URL, unmapped_url) : previewUrl;
+    }
 
-	return previewUrl;
+    return previewUrl;
 }
 
-export function getSitePostsByTerm( state, siteId, taxonomy, termId ) {
-	return filter( getSitePosts( state, siteId ), post => {
-		return post.terms && post.terms[ taxonomy ] &&
-			find( post.terms[ taxonomy ], postTerm => postTerm.ID === termId );
-	} );
+export function getSitePostsByTerm(state, siteId, taxonomy, termId) {
+    return filter(getSitePosts(state, siteId), post => {
+        return post.terms &&
+            post.terms[taxonomy] &&
+            find(post.terms[taxonomy], postTerm => postTerm.ID === termId);
+    });
 }

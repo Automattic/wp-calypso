@@ -14,60 +14,64 @@ import { requestMediaStorage } from 'state/sites/media-storage/actions';
 import MediaStore from 'lib/media/store';
 
 class QueryMediaStorage extends Component {
+    constructor(props) {
+        super(props);
+        this.requestStorage = this.requestStorage.bind(this);
+    }
 
-	constructor( props ) {
-		super( props );
-		this.requestStorage = this.requestStorage.bind( this );
-	}
+    requestStorage(props = this.props) {
+        if (!props.requestingMediaStorage && props.siteId) {
+            props.requestMediaStorage(props.siteId);
+        }
+    }
 
-	requestStorage( props = this.props ) {
-		if ( ! props.requestingMediaStorage && props.siteId ) {
-			props.requestMediaStorage( props.siteId );
-		}
-	}
+    componentWillMount() {
+        this.requestStorage();
+        MediaStore.on('fetch-media-limits', this.requestStorage);
+    }
 
-	componentWillMount() {
-		this.requestStorage();
-		MediaStore.on( 'fetch-media-limits', this.requestStorage );
-	}
+    componentWillUnmount() {
+        MediaStore.off('fetch-media-limits', this.requestStorage);
+    }
 
-	componentWillUnmount() {
-		MediaStore.off( 'fetch-media-limits', this.requestStorage );
-	}
+    componentWillReceiveProps(nextProps) {
+        if (
+            nextProps.requestingMediaStorage ||
+            !nextProps.siteId ||
+            this.props.siteId === nextProps.siteId
+        ) {
+            return;
+        }
+        this.requestStorage(nextProps);
+    }
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.requestingMediaStorage ||
-			! nextProps.siteId ||
-			( this.props.siteId === nextProps.siteId ) ) {
-			return;
-		}
-		this.requestStorage( nextProps );
-	}
-
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
 QueryMediaStorage.propTypes = {
-	siteId: PropTypes.number,
-	requestingMediaStorage: PropTypes.bool,
-	requestMediaStorage: PropTypes.func
+    siteId: PropTypes.number,
+    requestingMediaStorage: PropTypes.bool,
+    requestMediaStorage: PropTypes.func,
 };
 
 QueryMediaStorage.defaultProps = {
-	requestMediaStorage: () => {}
+    requestMediaStorage: () => {},
 };
 
 export default connect(
-	( state, ownProps ) => {
-		return {
-			requestingMediaStorage: isRequestingMediaStorage( state, ownProps.siteId )
-		};
-	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			requestMediaStorage
-		}, dispatch );
-	}
-)( QueryMediaStorage );
+    (state, ownProps) => {
+        return {
+            requestingMediaStorage: isRequestingMediaStorage(state, ownProps.siteId),
+        };
+    },
+    dispatch => {
+        return bindActionCreators(
+            {
+                requestMediaStorage,
+            },
+            dispatch
+        );
+    }
+)(QueryMediaStorage);

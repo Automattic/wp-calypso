@@ -28,81 +28,73 @@ import Followers from '../stats-followers';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
-const StatsInsights = ( props ) => {
-	const { followList, isJetpack, siteId, translate } = props;
-	const moduleStrings = statsStrings();
+const StatsInsights = props => {
+    const { followList, isJetpack, siteId, translate } = props;
+    const moduleStrings = statsStrings();
 
-	let tagsList;
-	if ( ! isJetpack ) {
-		tagsList = (
-			<StatsModule
-				path="tags-categories"
-				moduleStrings={ moduleStrings.tags }
-				statType="statsTags" />
-		);
-	}
+    let tagsList;
+    if (!isJetpack) {
+        tagsList = (
+            <StatsModule
+                path="tags-categories"
+                moduleStrings={moduleStrings.tags}
+                statType="statsTags"
+            />
+        );
+    }
 
-	// TODO: should be refactored into separate components
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	return (
-		<Main wideLayout>
-			<StatsFirstView />
-			<SidebarNavigation />
-			<StatsNavigation section="insights" />
-			<div>
-				<PostingActivity />
-				<SectionHeader label={ translate( 'All Time Views' ) } />
-				<StatsViews />
-				{ siteId && <DomainTip siteId={ siteId } event="stats_insights_domain" /> }
-				<div className="stats-insights__nonperiodic has-recent">
-					<div className="stats__module-list">
-						<div className="stats__module-column">
-							<LatestPostSummary />
-							<MostPopular />
-							{ tagsList }
-						</div>
-						<div className="stats__module-column">
-							<Reach />
-							<Followers
-								path={ 'followers' }
-								followList={ followList } />
-						</div>
-						<div className="stats__module-column">
-							<AllTime />
-							<Comments
-								path={ 'comments' }
-								followList={ followList }
-							/>
-							<StatsModule
-								path="publicize"
-								moduleStrings={ moduleStrings.publicize }
-								statType="statsPublicize" />
-						</div>
-					</div>
-				</div>
-			</div>
-		</Main>
-	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
+    // TODO: should be refactored into separate components
+    /* eslint-disable wpcalypso/jsx-classname-namespace */
+    return (
+        <Main wideLayout>
+            <StatsFirstView />
+            <SidebarNavigation />
+            <StatsNavigation section="insights" />
+            <div>
+                <PostingActivity />
+                <SectionHeader label={translate('All Time Views')} />
+                <StatsViews />
+                {siteId && <DomainTip siteId={siteId} event="stats_insights_domain" />}
+                <div className="stats-insights__nonperiodic has-recent">
+                    <div className="stats__module-list">
+                        <div className="stats__module-column">
+                            <LatestPostSummary />
+                            <MostPopular />
+                            {tagsList}
+                        </div>
+                        <div className="stats__module-column">
+                            <Reach />
+                            <Followers path={'followers'} followList={followList} />
+                        </div>
+                        <div className="stats__module-column">
+                            <AllTime />
+                            <Comments path={'comments'} followList={followList} />
+                            <StatsModule
+                                path="publicize"
+                                moduleStrings={moduleStrings.publicize}
+                                statType="statsPublicize"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Main>
+    );
+    /* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 StatsInsights.propTypes = {
-	followList: PropTypes.object.isRequired,
-	moment: PropTypes.func,
-	translate: PropTypes.func,
+    followList: PropTypes.object.isRequired,
+    moment: PropTypes.func,
+    translate: PropTypes.func,
 };
 
-const connectComponent = connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		return {
-			isJetpack: isJetpackSite( state, siteId ),
-			siteId
-		};
-	}
-);
+const connectComponent = connect(state => {
+    const siteId = getSelectedSiteId(state);
+    return {
+        isJetpack: isJetpackSite(state, siteId),
+        siteId,
+    };
+});
 
-export default flowRight(
-	connectComponent,
-	localize,
-)( StatsInsights );
+export default flowRight(connectComponent, localize)(StatsInsights);

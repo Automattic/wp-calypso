@@ -1,110 +1,105 @@
 const themeSchema = {
-	title: 'Theme',
-	type: 'object',
-	properties: {
-		id: { type: 'string' },
-		name: { type: 'string' },
-		author: { type: 'string' },
-		screenshot: { type: 'string' },
-		stylesheet: { type: 'string' },
-		demo_uri: { type: 'string' },
-		author_uri: { type: 'string' },
-		price: {
-			type: 'string'
-		}
-	},
-	required: [
-		'id',
-		'name',
-		'author',
-		'screenshot'
-	]
+    title: 'Theme',
+    type: 'object',
+    properties: {
+        id: { type: 'string' },
+        name: { type: 'string' },
+        author: { type: 'string' },
+        screenshot: { type: 'string' },
+        stylesheet: { type: 'string' },
+        demo_uri: { type: 'string' },
+        author_uri: { type: 'string' },
+        price: {
+            type: 'string',
+        },
+    },
+    required: ['id', 'name', 'author', 'screenshot'],
 };
 
 export const queriesSchema = {
-	type: 'object',
-	patternProperties: {
-		// Site ID
-		'^(wpcom|wporg|\\d+)$': {
-			type: 'object',
-			properties: {
-				data: {
-					type: 'object',
-					required: [ 'items', 'queries' ],
-					properties: {
-						items: {
-							description: 'Themes, keyed by ID',
-							type: 'object',
-							patternProperties: {
-								'^\\w+$': themeSchema
-							}
-						},
-						queries: {
-							patternProperties: {
-								// Query key pairs
-								'^\\[.*\\]$': {
-									type: 'object',
-									required: [ 'itemKeys' ],
-									properties: {
-										itemKeys: {
-											type: 'array'
-										},
-										found: {
-											type: 'number'
-										}
-									}
-								}
-							},
-							additionalProperties: false
-						}
-					}
-				},
-				options: {
-					type: 'object',
-					required: [ 'itemKey' ],
-					properties: {
-						itemKey: {
-							type: 'string'
-						}
-					}
-				}
-			}
-		}
-	},
-	additionalProperties: false
+    type: 'object',
+    patternProperties: {
+        // Site ID
+        '^(wpcom|wporg|\\d+)$': {
+            type: 'object',
+            properties: {
+                data: {
+                    type: 'object',
+                    required: ['items', 'queries'],
+                    properties: {
+                        items: {
+                            description: 'Themes, keyed by ID',
+                            type: 'object',
+                            patternProperties: {
+                                '^\\w+$': themeSchema,
+                            },
+                        },
+                        queries: {
+                            patternProperties: {
+                                // Query key pairs
+                                '^\\[.*\\]$': {
+                                    type: 'object',
+                                    required: ['itemKeys'],
+                                    properties: {
+                                        itemKeys: {
+                                            type: 'array',
+                                        },
+                                        found: {
+                                            type: 'number',
+                                        },
+                                    },
+                                },
+                            },
+                            additionalProperties: false,
+                        },
+                    },
+                },
+                options: {
+                    type: 'object',
+                    required: ['itemKey'],
+                    properties: {
+                        itemKey: {
+                            type: 'string',
+                        },
+                    },
+                },
+            },
+        },
+    },
+    additionalProperties: false,
 };
 
 export const activeThemesSchema = {
-	type: 'object',
-	patternProperties: {
-		'^\\d+$': {
-			description: 'Theme ID',
-			type: 'string'
-		}
-	}
+    type: 'object',
+    patternProperties: {
+        '^\\d+$': {
+            description: 'Theme ID',
+            type: 'string',
+        },
+    },
 };
 
 export const themeRequestErrorsSchema = {
-	type: 'object',
-	patternProperties: {
-		// Site ID
-		'^(wpcom|wporg|\\d+)$': {
-			type: 'object',
-			patternProperties: {
-				// Theme ID
-				'^\\w+$': {
-					type: 'object',
-					properties: {
-						path: { type: 'string' },
-						method: { type: 'string' },
-						name: { type: 'string' },
-						statusCode: { type: 'number' },
-						status: { type: 'number' },
-						message: { type: 'string' },
-						error: { type: 'string' },
-					}
-				}
-			}
-		}
-	}
+    type: 'object',
+    patternProperties: {
+        // Site ID
+        '^(wpcom|wporg|\\d+)$': {
+            type: 'object',
+            patternProperties: {
+                // Theme ID
+                '^\\w+$': {
+                    type: 'object',
+                    properties: {
+                        path: { type: 'string' },
+                        method: { type: 'string' },
+                        name: { type: 'string' },
+                        statusCode: { type: 'number' },
+                        status: { type: 'number' },
+                        message: { type: 'string' },
+                        error: { type: 'string' },
+                    },
+                },
+            },
+        },
+    },
 };

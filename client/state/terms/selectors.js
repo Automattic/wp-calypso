@@ -8,10 +8,7 @@ import range from 'lodash/range';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import {
-	getSerializedTermsQuery,
-	getSerializedTermsQueryWithoutPage
-} from './utils';
+import { getSerializedTermsQuery, getSerializedTermsQueryWithoutPage } from './utils';
 
 /**
  * Returns true if currently requesting terms for the taxonomies query, or false
@@ -23,9 +20,9 @@ import {
  * @param  {Object}  query  Taxonomy query object
  * @return {Boolean}        Whether terms are being requested
  */
-export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
-	const serializedQuery = getSerializedTermsQuery( query );
-	return !! get( state.terms.queryRequests, [ siteId, taxonomy, serializedQuery ] );
+export function isRequestingTermsForQuery(state, siteId, taxonomy, query) {
+    const serializedQuery = getSerializedTermsQuery(query);
+    return !!get(state.terms.queryRequests, [siteId, taxonomy, serializedQuery]);
 }
 
 /**
@@ -38,16 +35,16 @@ export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
  * @param  {Object}  query    Terms query object
  * @return {Boolean}           Terms for the query
  */
-export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, query ) {
-	const lastPage = getTermsLastPageForQuery( state, siteId, taxonomy, query );
-	if ( null === lastPage ) {
-		return false;
-	}
+export function isRequestingTermsForQueryIgnoringPage(state, siteId, taxonomy, query) {
+    const lastPage = getTermsLastPageForQuery(state, siteId, taxonomy, query);
+    if (null === lastPage) {
+        return false;
+    }
 
-	return range( 1, lastPage + 1 ).some( ( page ) => {
-		const termsQuery = { ...query, page };
-		return isRequestingTermsForQuery( state, siteId, taxonomy, termsQuery );
-	} );
+    return range(1, lastPage + 1).some(page => {
+        const termsQuery = { ...query, page };
+        return isRequestingTermsForQuery(state, siteId, taxonomy, termsQuery);
+    });
 }
 
 /**
@@ -61,19 +58,19 @@ export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, 
  * @return {?Array}           Terms for the query
  */
 export const getTermsForQuery = createSelector(
-	( state, siteId, taxonomy, query ) => {
-		const manager = get( state.terms.queries, [ siteId, taxonomy ] );
-		if ( ! manager ) {
-			return null;
-		}
+    (state, siteId, taxonomy, query) => {
+        const manager = get(state.terms.queries, [siteId, taxonomy]);
+        if (!manager) {
+            return null;
+        }
 
-		return manager.getItems( query );
-	},
-	( state, siteId, taxonomy ) => get( state.terms.queries, [ siteId, taxonomy ] ),
-	( state, siteId, taxonomy, query ) => {
-		const serializedQuery = getSerializedTermsQuery( query );
-		return [ siteId, taxonomy, serializedQuery ].join();
-	}
+        return manager.getItems(query);
+    },
+    (state, siteId, taxonomy) => get(state.terms.queries, [siteId, taxonomy]),
+    (state, siteId, taxonomy, query) => {
+        const serializedQuery = getSerializedTermsQuery(query);
+        return [siteId, taxonomy, serializedQuery].join();
+    }
 );
 
 /**
@@ -87,19 +84,19 @@ export const getTermsForQuery = createSelector(
  * @return {?Array}           Terms for the query
  */
 export const getTermsForQueryIgnoringPage = createSelector(
-	( state, siteId, taxonomy, query ) => {
-		const manager = get( state.terms.queries, [ siteId, taxonomy ] );
-		if ( ! manager ) {
-			return null;
-		}
+    (state, siteId, taxonomy, query) => {
+        const manager = get(state.terms.queries, [siteId, taxonomy]);
+        if (!manager) {
+            return null;
+        }
 
-		return manager.getItemsIgnoringPage( query );
-	},
-	( state, siteId, taxonomy ) => get( state.terms.queries, [ siteId, taxonomy ] ),
-	( state, siteId, taxonomy, query ) => {
-		const serializedQuery = getSerializedTermsQueryWithoutPage( query );
-		return [ siteId, taxonomy, serializedQuery ].join();
-	}
+        return manager.getItemsIgnoringPage(query);
+    },
+    (state, siteId, taxonomy) => get(state.terms.queries, [siteId, taxonomy]),
+    (state, siteId, taxonomy, query) => {
+        const serializedQuery = getSerializedTermsQueryWithoutPage(query);
+        return [siteId, taxonomy, serializedQuery].join();
+    }
 );
 
 /**
@@ -112,18 +109,18 @@ export const getTermsForQueryIgnoringPage = createSelector(
  * @param  {Object}  query    Terms query object
  * @return {?Number}          Last terms page
  */
-export function getTermsLastPageForQuery( state, siteId, taxonomy, query ) {
-	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
-	if ( ! manager ) {
-		return null;
-	}
+export function getTermsLastPageForQuery(state, siteId, taxonomy, query) {
+    const manager = get(state.terms.queries, [siteId, taxonomy]);
+    if (!manager) {
+        return null;
+    }
 
-	const pages = manager.getNumberOfPages( query );
-	if ( null === pages ) {
-		return null;
-	}
+    const pages = manager.getNumberOfPages(query);
+    if (null === pages) {
+        return null;
+    }
 
-	return Math.max( pages, 1 );
+    return Math.max(pages, 1);
 }
 
 /**
@@ -134,13 +131,13 @@ export function getTermsLastPageForQuery( state, siteId, taxonomy, query ) {
  * @param  {String} taxonomy Taxonomy slug
  * @return {?Array}          Terms
  */
-export function getTerms( state, siteId, taxonomy ) {
-	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
-	if ( ! manager ) {
-		return null;
-	}
+export function getTerms(state, siteId, taxonomy) {
+    const manager = get(state.terms.queries, [siteId, taxonomy]);
+    if (!manager) {
+        return null;
+    }
 
-	return manager.getItems();
+    return manager.getItems();
 }
 
 /**
@@ -152,19 +149,19 @@ export function getTerms( state, siteId, taxonomy ) {
  * @param  {Number}  termId   Term ID
  * @return {?Object}         Term
  */
-export function getTerm( state, siteId, taxonomy, termId ) {
-	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
-	if ( ! manager ) {
-		return null;
-	}
+export function getTerm(state, siteId, taxonomy, termId) {
+    const manager = get(state.terms.queries, [siteId, taxonomy]);
+    if (!manager) {
+        return null;
+    }
 
-	const term = manager.getItem( termId );
+    const term = manager.getItem(termId);
 
-	if ( ! term ) {
-		return null;
-	}
+    if (!term) {
+        return null;
+    }
 
-	return term;
+    return term;
 }
 
 /**
@@ -176,11 +173,11 @@ export function getTerm( state, siteId, taxonomy, termId ) {
  * @param  {Object}  query    Terms query object
  * @return {?Number}          Count terms
  */
-export function countFoundTermsForQuery( state, siteId, taxonomy, query ) {
-	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
-	if ( ! manager ) {
-		return null;
-	}
+export function countFoundTermsForQuery(state, siteId, taxonomy, query) {
+    const manager = get(state.terms.queries, [siteId, taxonomy]);
+    if (!manager) {
+        return null;
+    }
 
-	return manager.getFound( query );
+    return manager.getFound(query);
 }

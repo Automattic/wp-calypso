@@ -16,67 +16,63 @@ import textUtils from 'lib/text-utils';
  */
 const user = userModule();
 
-export default React.createClass( {
-	displayName: 'EditorWordCount',
+export default React.createClass({
+    displayName: 'EditorWordCount',
 
-	mixins: [ PureRenderMixin ],
+    mixins: [PureRenderMixin],
 
-	getInitialState() {
-		return {
-			rawContent: ''
-		};
-	},
+    getInitialState() {
+        return {
+            rawContent: '',
+        };
+    },
 
-	componentWillMount() {
-		PostEditStore.on( 'rawContentChange', this.onRawContentChange );
-	},
+    componentWillMount() {
+        PostEditStore.on('rawContentChange', this.onRawContentChange);
+    },
 
-	componentDidMount() {
-		this.onRawContentChange();
-	},
+    componentDidMount() {
+        this.onRawContentChange();
+    },
 
-	componentWillUnmount() {
-		PostEditStore.removeListener( 'rawContentChange', this.onRawContentChange );
-	},
+    componentWillUnmount() {
+        PostEditStore.removeListener('rawContentChange', this.onRawContentChange);
+    },
 
-	onRawContentChange() {
-		this.setState( {
-			rawContent: PostEditStore.getRawContent()
-		} );
-	},
+    onRawContentChange() {
+        this.setState({
+            rawContent: PostEditStore.getRawContent(),
+        });
+    },
 
-	render() {
-		const currentUser = user.get();
-		const localeSlug = currentUser && currentUser.localeSlug || 'en';
+    render() {
+        const currentUser = user.get();
+        const localeSlug = (currentUser && currentUser.localeSlug) || 'en';
 
-		switch ( localeSlug ) {
-			case 'ja':
-			case 'th':
-			case 'zh-cn':
-			case 'zh-hk':
-			case 'zh-sg':
-			case 'zh-tw':
-				// TODO these are character-based languages - count characters instead
-				return null;
+        switch (localeSlug) {
+            case 'ja':
+            case 'th':
+            case 'zh-cn':
+            case 'zh-hk':
+            case 'zh-sg':
+            case 'zh-tw':
+                // TODO these are character-based languages - count characters instead
+                return null;
 
-			case 'ko':
-				// TODO Korean is not supported by our current word count regex
-				return null;
-		}
+            case 'ko':
+                // TODO Korean is not supported by our current word count regex
+                return null;
+        }
 
-		const wordCount = textUtils.countWords( this.state.rawContent );
+        const wordCount = textUtils.countWords(this.state.rawContent);
 
-		return (
-			<div className="editor-word-count">
-				{ this.translate(
-					'%d word',
-					'%d words',
-					{
-						count: wordCount,
-						args: [ wordCount ]
-					}
-				) }
-			</div>
-		);
-	}
-} );
+        return (
+            <div className="editor-word-count">
+                {this.translate('%d word', '%d words', {
+                    count: wordCount,
+                    args: [wordCount],
+                })}
+            </div>
+        );
+    },
+});

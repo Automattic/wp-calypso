@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:catch-js-errors:log' );
+const debug = debugFactory('calypso:catch-js-errors:log');
 let logger = null;
 
 /**
@@ -12,13 +12,13 @@ let logger = null;
  * Everything from ./index on environments that don't support remote error logging or in SSR
  * @param  { Object } loggerObject
  */
-export function registerLogger( loggerObject ) {
-	logger = loggerObject;
+export function registerLogger(loggerObject) {
+    logger = loggerObject;
 }
 
-export default function log( msg, data ) {
-	debug( msg, data );
-	if ( logger && logger.log ) {
-		logger.log( msg, data );
-	}
+export default function log(msg, data) {
+    debug(msg, data);
+    if (logger && logger.log) {
+        logger.log(msg, data);
+    }
 }

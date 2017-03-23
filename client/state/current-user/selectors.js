@@ -9,8 +9,8 @@ import { getUser } from 'state/users/selectors';
  * @param  {Object}  state  Global state tree
  * @return {?Number}        Current user ID
  */
-export function getCurrentUserId( state ) {
-	return state.currentUser.id;
+export function getCurrentUserId(state) {
+    return state.currentUser.id;
 }
 
 /**
@@ -19,13 +19,13 @@ export function getCurrentUserId( state ) {
  * @param  {Object}  state  Global state tree
  * @return {?Object}        Current user
  */
-export function getCurrentUser( state ) {
-	const userId = getCurrentUserId( state );
-	if ( ! userId ) {
-		return null;
-	}
+export function getCurrentUser(state) {
+    const userId = getCurrentUserId(state);
+    if (!userId) {
+        return null;
+    }
 
-	return getUser( state, userId );
+    return getUser(state, userId);
 }
 
 /**
@@ -34,13 +34,13 @@ export function getCurrentUser( state ) {
  * @param  {Object}  state  Global state tree
  * @return {?String}        Current user locale
  */
-export function getCurrentUserLocale( state ) {
-	const user = getCurrentUser( state );
-	if ( ! user ) {
-		return null;
-	}
+export function getCurrentUserLocale(state) {
+    const user = getCurrentUser(state);
+    if (!user) {
+        return null;
+    }
 
-	return user.localeSlug || null;
+    return user.localeSlug || null;
 }
 
 /**
@@ -49,8 +49,8 @@ export function getCurrentUserLocale( state ) {
  * @param  {Object}  state  Global state tree
  * @return {?String}        Current currency code
  */
-export function getCurrentUserCurrencyCode( state ) {
-	return state.currentUser.currencyCode;
+export function getCurrentUserCurrencyCode(state) {
+    return state.currentUser.currencyCode;
 }
 
 /**
@@ -59,13 +59,13 @@ export function getCurrentUserCurrencyCode( state ) {
  * @param  {Object}  state  Global state tree
  * @return {?String}        Date of registration for user
  */
-export function getCurrentUserDate( state ) {
-	const user = getCurrentUser( state );
-	if ( ! user ) {
-		return null;
-	}
+export function getCurrentUserDate(state) {
+    const user = getCurrentUser(state);
+    if (!user) {
+        return null;
+    }
 
-	return user.date || null;
+    return user.date || null;
 }
 
 /**
@@ -74,13 +74,13 @@ export function getCurrentUserDate( state ) {
  *  @param {Object} state Global state tree
  *  @returns {?String} The primary email of the current user.
  */
-export function getCurrentUserEmail( state ) {
-	const user = getCurrentUser( state );
-	if ( ! user ) {
-		return null;
-	}
+export function getCurrentUserEmail(state) {
+    const user = getCurrentUser(state);
+    if (!user) {
+        return null;
+    }
 
-	return user.email || null;
+    return user.email || null;
 }
 
 /**
@@ -93,13 +93,13 @@ export function getCurrentUserEmail( state ) {
  * @param  {String}   capability Capability name
  * @return {?Boolean}            Whether capability name is valid
  */
-export function isValidCapability( state, siteId, capability ) {
-	const capabilities = state.currentUser.capabilities[ siteId ];
-	if ( ! capabilities ) {
-		return null;
-	}
+export function isValidCapability(state, siteId, capability) {
+    const capabilities = state.currentUser.capabilities[siteId];
+    if (!capabilities) {
+        return null;
+    }
 
-	return capabilities.hasOwnProperty( capability );
+    return capabilities.hasOwnProperty(capability);
 }
 
 /**
@@ -108,8 +108,8 @@ export function isValidCapability( state, siteId, capability ) {
  * @param {String}    flagName   Flag name
  * @returns {boolean}            Whether the flag is enabled for the user
  */
-export function currentUserHasFlag( state, flagName ) {
-	return state.currentUser.flags.indexOf( flagName ) !== -1;
+export function currentUserHasFlag(state, flagName) {
+    return state.currentUser.flags.indexOf(flagName) !== -1;
 }
 
 /**
@@ -118,12 +118,12 @@ export function currentUserHasFlag( state, flagName ) {
  * @param   {Object } state Global state tree
  * @returns {boolean}       Whether the current user is email-verified.
  */
-export function isCurrentUserEmailVerified( state ) {
-	const user = getCurrentUser( state );
+export function isCurrentUserEmailVerified(state) {
+    const user = getCurrentUser(state);
 
-	if ( ! user ) {
-		return false;
-	}
+    if (!user) {
+        return false;
+    }
 
-	return user.email_verified || false;
+    return user.email_verified || false;
 }

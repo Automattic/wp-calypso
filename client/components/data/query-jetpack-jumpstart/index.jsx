@@ -11,40 +11,40 @@ import { isRequestingJetpackJumpstartStatus } from 'state/selectors';
 import { requestJumpstartStatus } from 'state/jetpack/jumpstart/actions';
 
 class QueryJetpackJumpstart extends Component {
-	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-		requestingJumpstartStatus: PropTypes.bool,
-		requestJumpstartStatus: PropTypes.func
-	};
+    static propTypes = {
+        siteId: PropTypes.number.isRequired,
+        requestingJumpstartStatus: PropTypes.bool,
+        requestJumpstartStatus: PropTypes.func,
+    };
 
-	componentWillMount() {
-		this.request( this.props );
-	}
+    componentWillMount() {
+        this.request(this.props);
+    }
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.request( nextProps );
-		}
-	}
+    componentWillReceiveProps(nextProps) {
+        if (this.props.siteId !== nextProps.siteId) {
+            this.request(nextProps);
+        }
+    }
 
-	request( props ) {
-		if ( props.requestingJumpstartStatus ) {
-			return;
-		}
+    request(props) {
+        if (props.requestingJumpstartStatus) {
+            return;
+        }
 
-		props.requestJumpstartStatus( props.siteId );
-	}
+        props.requestJumpstartStatus(props.siteId);
+    }
 
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
 export default connect(
-	( state, ownProps ) => {
-		return {
-			requestingJumpstartStatus: isRequestingJetpackJumpstartStatus( state, ownProps.siteId )
-		};
-	},
-	{ requestJumpstartStatus }
-)( QueryJetpackJumpstart );
+    (state, ownProps) => {
+        return {
+            requestingJumpstartStatus: isRequestingJetpackJumpstartStatus(state, ownProps.siteId),
+        };
+    },
+    { requestJumpstartStatus }
+)(QueryJetpackJumpstart);

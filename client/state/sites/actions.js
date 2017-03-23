@@ -3,24 +3,21 @@
  */
 import wpcom from 'lib/wp';
 import {
-	SITE_DELETE_RECEIVE,
-	SITE_FRONT_PAGE_SET,
-	SITE_FRONT_PAGE_SET_FAILURE,
-	SITE_FRONT_PAGE_SET_SUCCESS,
-	SITE_RECEIVE,
-	SITE_REQUEST,
-	SITE_REQUEST_FAILURE,
-	SITE_REQUEST_SUCCESS,
-	SITES_RECEIVE,
-	SITES_REQUEST,
-	SITES_REQUEST_SUCCESS,
-	SITES_REQUEST_FAILURE,
-	SITES_UPDATE
+    SITE_DELETE_RECEIVE,
+    SITE_FRONT_PAGE_SET,
+    SITE_FRONT_PAGE_SET_FAILURE,
+    SITE_FRONT_PAGE_SET_SUCCESS,
+    SITE_RECEIVE,
+    SITE_REQUEST,
+    SITE_REQUEST_FAILURE,
+    SITE_REQUEST_SUCCESS,
+    SITES_RECEIVE,
+    SITES_REQUEST,
+    SITES_REQUEST_SUCCESS,
+    SITES_REQUEST_FAILURE,
+    SITES_UPDATE,
 } from 'state/action-types';
-import {
-	bumpStat,
-	recordTracksEvent,
-} from 'state/analytics/actions';
+import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { omit } from 'lodash';
 
 /**
@@ -30,11 +27,11 @@ import { omit } from 'lodash';
  * @param  {Object} site Site received
  * @return {Object}      Action object
  */
-export function receiveDeletedSite( site ) {
-	return {
-		type: SITE_DELETE_RECEIVE,
-		site
-	};
+export function receiveDeletedSite(site) {
+    return {
+        type: SITE_DELETE_RECEIVE,
+        site,
+    };
 }
 
 /**
@@ -44,11 +41,11 @@ export function receiveDeletedSite( site ) {
  * @param  {Object} site Site received
  * @return {Object}      Action object
  */
-export function receiveSite( site ) {
-	return {
-		type: SITE_RECEIVE,
-		site
-	};
+export function receiveSite(site) {
+    return {
+        type: SITE_RECEIVE,
+        site,
+    };
 }
 
 /**
@@ -58,11 +55,11 @@ export function receiveSite( site ) {
  * @param  {Object[]} sites Sites received
  * @return {Object}         Action object
  */
-export function receiveSites( sites ) {
-	return {
-		type: SITES_RECEIVE,
-		sites
-	};
+export function receiveSites(sites) {
+    return {
+        type: SITES_RECEIVE,
+        sites,
+    };
 }
 
 /**
@@ -72,11 +69,11 @@ export function receiveSites( sites ) {
  * @param  {Object[]} sites Sites updated
  * @return {Object}         Action object
  */
-export function receiveSiteUpdates( sites ) {
-	return {
-		type: SITES_UPDATE,
-		sites
-	};
+export function receiveSiteUpdates(sites) {
+    return {
+        type: SITES_UPDATE,
+        sites,
+    };
 }
 
 /**
@@ -84,22 +81,26 @@ export function receiveSiteUpdates( sites ) {
  * @returns {Function}        Action thunk
  */
 export function requestSites() {
-	return ( dispatch ) => {
-		dispatch( {
-			type: SITES_REQUEST
-		} );
-		return wpcom.me().sites( { site_visibility: 'all' } ).then( ( response ) => {
-			dispatch( receiveSites( response.sites ) );
-			dispatch( {
-				type: SITES_REQUEST_SUCCESS
-			} );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: SITES_REQUEST_FAILURE,
-				error
-			} );
-		} );
-	};
+    return dispatch => {
+        dispatch({
+            type: SITES_REQUEST,
+        });
+        return wpcom
+            .me()
+            .sites({ site_visibility: 'all' })
+            .then(response => {
+                dispatch(receiveSites(response.sites));
+                dispatch({
+                    type: SITES_REQUEST_SUCCESS,
+                });
+            })
+            .catch(error => {
+                dispatch({
+                    type: SITES_REQUEST_FAILURE,
+                    error,
+                });
+            });
+    };
 }
 
 /**
@@ -109,79 +110,89 @@ export function requestSites() {
  * @param  {Number}   siteId Site ID
  * @return {Function}        Action thunk
  */
-export function requestSite( siteId ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: SITE_REQUEST,
-			siteId
-		} );
+export function requestSite(siteId) {
+    return dispatch => {
+        dispatch({
+            type: SITE_REQUEST,
+            siteId,
+        });
 
-		return wpcom.site( siteId ).get().then( ( site ) => {
-			dispatch( receiveSite( omit( site, '_headers' ) ) );
-			dispatch( {
-				type: SITE_REQUEST_SUCCESS,
-				siteId
-			} );
-		} ).catch( ( error ) => {
-			dispatch( {
-				type: SITE_REQUEST_FAILURE,
-				siteId,
-				error
-			} );
-		} );
-	};
+        return wpcom
+            .site(siteId)
+            .get()
+            .then(site => {
+                dispatch(receiveSite(omit(site, '_headers')));
+                dispatch({
+                    type: SITE_REQUEST_SUCCESS,
+                    siteId,
+                });
+            })
+            .catch(error => {
+                dispatch({
+                    type: SITE_REQUEST_FAILURE,
+                    siteId,
+                    error,
+                });
+            });
+    };
 }
 
-export function setFrontPage( siteId, pageId, successCallback ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: SITE_FRONT_PAGE_SET,
-			siteId,
-			pageId
-		} );
+export function setFrontPage(siteId, pageId, successCallback) {
+    return dispatch => {
+        dispatch({
+            type: SITE_FRONT_PAGE_SET,
+            siteId,
+            pageId,
+        });
 
-		const requestData = {
-			is_page_on_front: true,
-			page_on_front_id: pageId,
-		};
+        const requestData = {
+            is_page_on_front: true,
+            page_on_front_id: pageId,
+        };
 
-		return wpcom.undocumented().setSiteHomepageSettings( siteId, requestData ).then( ( response ) => {
-			const updatedOptions = {
-				page_on_front: parseInt( response.page_on_front_id, 10 ),
-				show_on_front: response.is_page_on_front ? 'page' : 'posts',
-			};
+        return wpcom
+            .undocumented()
+            .setSiteHomepageSettings(siteId, requestData)
+            .then(response => {
+                const updatedOptions = {
+                    page_on_front: parseInt(response.page_on_front_id, 10),
+                    show_on_front: response.is_page_on_front ? 'page' : 'posts',
+                };
 
-			if ( 0 === response.page_for_posts_id || response.page_for_posts_id ) {
-				updatedOptions.page_for_posts = parseInt( response.page_for_posts_id, 10 );
-			}
+                if (0 === response.page_for_posts_id || response.page_for_posts_id) {
+                    updatedOptions.page_for_posts = parseInt(response.page_for_posts_id, 10);
+                }
 
-			// This gives us a means to fix the `SitesList` cache outside of actions
-			// @todo Remove this when `SitesList` is Reduxified
-			if ( 'function' === typeof( successCallback ) ) {
-				successCallback( {
-					siteId,
-					updatedOptions,
-				} );
-			}
+                // This gives us a means to fix the `SitesList` cache outside of actions
+                // @todo Remove this when `SitesList` is Reduxified
+                if ('function' === typeof successCallback) {
+                    successCallback({
+                        siteId,
+                        updatedOptions,
+                    });
+                }
 
-			dispatch( recordTracksEvent( 'calypso_front_page_set', {
-				siteId,
-				pageId,
-			} ) );
-			dispatch( bumpStat( 'calypso_front_page_set', 'success' ) );
-			dispatch( {
-				type: SITE_FRONT_PAGE_SET_SUCCESS,
-				siteId,
-				updatedOptions,
-			} );
-		} ).catch( ( error ) => {
-			dispatch( bumpStat( 'calypso_front_page_set', 'failure' ) );
-			dispatch( {
-				type: SITE_FRONT_PAGE_SET_FAILURE,
-				siteId,
-				pageId,
-				error
-			} );
-		} );
-	};
+                dispatch(
+                    recordTracksEvent('calypso_front_page_set', {
+                        siteId,
+                        pageId,
+                    })
+                );
+                dispatch(bumpStat('calypso_front_page_set', 'success'));
+                dispatch({
+                    type: SITE_FRONT_PAGE_SET_SUCCESS,
+                    siteId,
+                    updatedOptions,
+                });
+            })
+            .catch(error => {
+                dispatch(bumpStat('calypso_front_page_set', 'failure'));
+                dispatch({
+                    type: SITE_FRONT_PAGE_SET_FAILURE,
+                    siteId,
+                    pageId,
+                    error,
+                });
+            });
+    };
 }

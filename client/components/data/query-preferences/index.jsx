@@ -11,29 +11,27 @@ import { isFetchingPreferences } from 'state/preferences/selectors';
 import { fetchPreferences } from 'state/preferences/actions';
 
 class QueryPreferences extends Component {
+    componentWillMount() {
+        if (!this.props.fetchingPreferences) {
+            this.props.fetchPreferences();
+        }
+    }
 
-	componentWillMount() {
-		if ( ! this.props.fetchingPreferences ) {
-			this.props.fetchPreferences();
-		}
-	}
-
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
 QueryPreferences.propTypes = {
-	fetchingPreferences: PropTypes.bool,
-	fetchPreferences: PropTypes.func
+    fetchingPreferences: PropTypes.bool,
+    fetchPreferences: PropTypes.func,
 };
 
 QueryPreferences.defaultProps = {
-	fetchPreferences: () => {},
-	fetchingPreferences: false
+    fetchPreferences: () => {},
+    fetchingPreferences: false,
 };
 
-export default connect(
-	( state ) => ( { fetchingPreferences: isFetchingPreferences( state ) } ),
-	{ fetchPreferences }
-)( QueryPreferences );
+export default connect(state => ({ fetchingPreferences: isFetchingPreferences(state) }), {
+    fetchPreferences,
+})(QueryPreferences);

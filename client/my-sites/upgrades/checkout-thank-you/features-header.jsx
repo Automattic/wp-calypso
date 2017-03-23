@@ -9,45 +9,42 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import {
-	isDomainMapping,
-	isDomainRegistration,
-	isGoogleApps,
-	isGuidedTransfer,
+    isDomainMapping,
+    isDomainRegistration,
+    isGoogleApps,
+    isGuidedTransfer,
 } from 'lib/products-values';
 
-const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedPurchases } ) => {
-	const classes = classNames( 'checkout-thank-you__features-header', {
-		'is-placeholder': ! isDataLoaded
-	} );
+const FeaturesHeader = ({ isDataLoaded, isGenericReceipt, purchases, hasFailedPurchases }) => {
+    const classes = classNames('checkout-thank-you__features-header', {
+        'is-placeholder': !isDataLoaded,
+    });
 
-	if ( ! isDataLoaded ) {
-		return <div className={ classes } />;
-	}
+    if (!isDataLoaded) {
+        return <div className={classes} />;
+    }
 
-	if ( isGenericReceipt ) {
-		return <div />;
-	}
+    if (isGenericReceipt) {
+        return <div />;
+    }
 
-	const shouldHideFeaturesHeading = hasFailedPurchases ||
-		purchases.some( isGoogleApps ) ||
-		purchases.some( isDomainRegistration ) ||
-		purchases.some( isDomainMapping ) ||
-		purchases.some( isGuidedTransfer );
+    const shouldHideFeaturesHeading = hasFailedPurchases ||
+        purchases.some(isGoogleApps) ||
+        purchases.some(isDomainRegistration) ||
+        purchases.some(isDomainMapping) ||
+        purchases.some(isGuidedTransfer);
 
-	if ( shouldHideFeaturesHeading ) {
-		return <div />;
-	}
+    if (shouldHideFeaturesHeading) {
+        return <div />;
+    }
 
-	return <div className={ classes }>{ i18n.translate( 'What now?' ) }</div>;
+    return <div className={classes}>{i18n.translate('What now?')}</div>;
 };
 
 FeaturesHeader.propTypes = {
-	isDataLoaded: React.PropTypes.bool.isRequired,
-	isGenericReceipt: React.PropTypes.bool,
-	purchases: React.PropTypes.oneOfType( [
-		React.PropTypes.bool,
-		React.PropTypes.array
-	] )
+    isDataLoaded: React.PropTypes.bool.isRequired,
+    isGenericReceipt: React.PropTypes.bool,
+    purchases: React.PropTypes.oneOfType([React.PropTypes.bool, React.PropTypes.array]),
 };
 
 export default FeaturesHeader;

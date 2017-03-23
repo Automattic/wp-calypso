@@ -8,211 +8,219 @@ import { expect } from 'chai';
  */
 import useNock from 'test/helpers/use-nock';
 import {
-	SITE_VOUCHERS_ASSIGN_RECEIVE,
-	SITE_VOUCHERS_ASSIGN_REQUEST,
-	SITE_VOUCHERS_ASSIGN_REQUEST_SUCCESS,
-	SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE,
-	SITE_VOUCHERS_RECEIVE,
-	SITE_VOUCHERS_REQUEST,
-	SITE_VOUCHERS_REQUEST_SUCCESS,
-	SITE_VOUCHERS_REQUEST_FAILURE
+    SITE_VOUCHERS_ASSIGN_RECEIVE,
+    SITE_VOUCHERS_ASSIGN_REQUEST,
+    SITE_VOUCHERS_ASSIGN_REQUEST_SUCCESS,
+    SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE,
+    SITE_VOUCHERS_RECEIVE,
+    SITE_VOUCHERS_REQUEST,
+    SITE_VOUCHERS_REQUEST_SUCCESS,
+    SITE_VOUCHERS_REQUEST_FAILURE,
 } from 'state/action-types';
 import {
-	vouchersAssignReceiveAction,
-	vouchersAssignRequestAction,
-	vouchersAssignRequestSuccessAction,
-	vouchersAssignRequestFailureAction,
-	vouchersReceiveAction,
-	vouchersRequestAction,
-	vouchersRequestSuccessAction,
-	vouchersRequestFailureAction,
-	assignSiteVoucher,
-	requestSiteVouchers
+    vouchersAssignReceiveAction,
+    vouchersAssignRequestAction,
+    vouchersAssignRequestSuccessAction,
+    vouchersAssignRequestFailureAction,
+    vouchersReceiveAction,
+    vouchersRequestAction,
+    vouchersRequestSuccessAction,
+    vouchersRequestFailureAction,
+    assignSiteVoucher,
+    requestSiteVouchers,
 } from '../actions';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	SITE_ID_0 as siteId,
-	REST_API_RESPONSE as wpcomResponse,
-	REST_API_ASSIGN_VOUCHER_RESPONSE as wpcomAssignResponse,
-	REST_API_ERROR_RESPONSE as wpcomErrorResponse,
-	ERROR_RESPONSE as errorResponse,
-	SERVICE_TYPE as oneOfOurServiceTypes
+    SITE_ID_0 as siteId,
+    REST_API_RESPONSE as wpcomResponse,
+    REST_API_ASSIGN_VOUCHER_RESPONSE as wpcomAssignResponse,
+    REST_API_ERROR_RESPONSE as wpcomErrorResponse,
+    ERROR_RESPONSE as errorResponse,
+    SERVICE_TYPE as oneOfOurServiceTypes,
 } from './fixture';
 
-describe( 'actions', () => {
-	let sandbox, spy;
+describe('actions', () => {
+    let sandbox, spy;
 
-	useSandbox( newSandbox => {
-		sandbox = newSandbox;
-		spy = sandbox.spy();
-	} );
+    useSandbox(newSandbox => {
+        sandbox = newSandbox;
+        spy = sandbox.spy();
+    });
 
-	describe( 'Actions creators', () => {
-		it( '#vouchersReceiveAction()', () => {
-			const { vouchers } = wpcomAssignResponse;
-			const action = vouchersReceiveAction( siteId, vouchers );
-			expect( action ).to.eql( {
-				type: SITE_VOUCHERS_RECEIVE,
-				siteId,
-				vouchers
-			} );
-		} );
+    describe('Actions creators', () => {
+        it('#vouchersReceiveAction()', () => {
+            const { vouchers } = wpcomAssignResponse;
+            const action = vouchersReceiveAction(siteId, vouchers);
+            expect(action).to.eql({
+                type: SITE_VOUCHERS_RECEIVE,
+                siteId,
+                vouchers,
+            });
+        });
 
-		it( '#vouchersRequestAction()', () => {
-			const action = vouchersRequestAction( siteId );
-			expect( action ).to.eql( {
-				type: SITE_VOUCHERS_REQUEST,
-				siteId
-			} );
-		} );
+        it('#vouchersRequestAction()', () => {
+            const action = vouchersRequestAction(siteId);
+            expect(action).to.eql({
+                type: SITE_VOUCHERS_REQUEST,
+                siteId,
+            });
+        });
 
-		it( '#vouchersRequestSuccessAction()', () => {
-			const action = vouchersRequestSuccessAction( siteId );
-			expect( action ).to.eql( {
-				type: SITE_VOUCHERS_REQUEST_SUCCESS,
-				siteId
-			} );
-		} );
+        it('#vouchersRequestSuccessAction()', () => {
+            const action = vouchersRequestSuccessAction(siteId);
+            expect(action).to.eql({
+                type: SITE_VOUCHERS_REQUEST_SUCCESS,
+                siteId,
+            });
+        });
 
-		it( '#vouchersRequestFailureAction()', () => {
-			const action = vouchersRequestFailureAction( siteId, errorResponse );
-			expect( action ).to.eql( {
-				type: SITE_VOUCHERS_REQUEST_FAILURE,
-				siteId,
-				error: errorResponse
-			} );
-		} );
+        it('#vouchersRequestFailureAction()', () => {
+            const action = vouchersRequestFailureAction(siteId, errorResponse);
+            expect(action).to.eql({
+                type: SITE_VOUCHERS_REQUEST_FAILURE,
+                siteId,
+                error: errorResponse,
+            });
+        });
 
-		it( '#vouchersAssignReceiveAction()', () => {
-			const { voucher } = wpcomResponse;
+        it('#vouchersAssignReceiveAction()', () => {
+            const { voucher } = wpcomResponse;
 
-			const action = vouchersAssignReceiveAction( siteId, oneOfOurServiceTypes, voucher );
-			expect( action ).to.eql( {
-				type: SITE_VOUCHERS_ASSIGN_RECEIVE,
-				siteId,
-				serviceType: oneOfOurServiceTypes,
-				voucher
-			} );
-		} );
+            const action = vouchersAssignReceiveAction(siteId, oneOfOurServiceTypes, voucher);
+            expect(action).to.eql({
+                type: SITE_VOUCHERS_ASSIGN_RECEIVE,
+                siteId,
+                serviceType: oneOfOurServiceTypes,
+                voucher,
+            });
+        });
 
-		it( '#vouchersAssignRequestAction()', () => {
-			const action = vouchersAssignRequestAction( siteId, oneOfOurServiceTypes );
-			expect( action ).to.eql( {
-				type: SITE_VOUCHERS_ASSIGN_REQUEST,
-				siteId,
-				serviceType: oneOfOurServiceTypes
-			} );
-		} );
+        it('#vouchersAssignRequestAction()', () => {
+            const action = vouchersAssignRequestAction(siteId, oneOfOurServiceTypes);
+            expect(action).to.eql({
+                type: SITE_VOUCHERS_ASSIGN_REQUEST,
+                siteId,
+                serviceType: oneOfOurServiceTypes,
+            });
+        });
 
-		it( '#vouchersAssignRequestSuccessAction()', () => {
-			const action = vouchersAssignRequestSuccessAction( siteId, oneOfOurServiceTypes );
-			expect( action ).to.eql( {
-				type: SITE_VOUCHERS_ASSIGN_REQUEST_SUCCESS,
-				siteId,
-				serviceType: oneOfOurServiceTypes
-			} );
-		} );
+        it('#vouchersAssignRequestSuccessAction()', () => {
+            const action = vouchersAssignRequestSuccessAction(siteId, oneOfOurServiceTypes);
+            expect(action).to.eql({
+                type: SITE_VOUCHERS_ASSIGN_REQUEST_SUCCESS,
+                siteId,
+                serviceType: oneOfOurServiceTypes,
+            });
+        });
 
-		it( '#vouchersAssignRequestFailureAction()', () => {
-			const action = vouchersAssignRequestFailureAction( siteId, oneOfOurServiceTypes, errorResponse );
-			expect( action ).to.eql( {
-				type: SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE,
-				siteId,
-				serviceType: oneOfOurServiceTypes,
-				error: errorResponse
-			} );
-		} );
-	} );
+        it('#vouchersAssignRequestFailureAction()', () => {
+            const action = vouchersAssignRequestFailureAction(
+                siteId,
+                oneOfOurServiceTypes,
+                errorResponse
+            );
+            expect(action).to.eql({
+                type: SITE_VOUCHERS_ASSIGN_REQUEST_FAILURE,
+                siteId,
+                serviceType: oneOfOurServiceTypes,
+                error: errorResponse,
+            });
+        });
+    });
 
-	describe( '#requestSiteVouchers() - success', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.get( `/wpcom/v2/sites/${ siteId }/vouchers` )
-				.reply( 200, wpcomResponse );
-		} );
+    describe('#requestSiteVouchers() - success', () => {
+        useNock(nock => {
+            nock('https://public-api.wordpress.com:443')
+                .persist()
+                .get(`/wpcom/v2/sites/${siteId}/vouchers`)
+                .reply(200, wpcomResponse);
+        });
 
-		it( 'should dispatch REQUEST action when thunk triggered', () => {
-			const action = vouchersRequestAction( siteId );
-			requestSiteVouchers( siteId )( spy );
-			expect( spy ).to.have.been.calledWith( action );
-		} );
+        it('should dispatch REQUEST action when thunk triggered', () => {
+            const action = vouchersRequestAction(siteId);
+            requestSiteVouchers(siteId)(spy);
+            expect(spy).to.have.been.calledWith(action);
+        });
 
-		it( 'should dispatch RECEIVE action when request completes', () => {
-			const { vouchers } = wpcomResponse;
-			const action = vouchersReceiveAction( siteId, vouchers );
+        it('should dispatch RECEIVE action when request completes', () => {
+            const { vouchers } = wpcomResponse;
+            const action = vouchersReceiveAction(siteId, vouchers);
 
-			return requestSiteVouchers( siteId )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( action );
-			} );
-		} );
-	} );
+            return requestSiteVouchers(siteId)(spy).then(() => {
+                expect(spy).to.have.been.calledWith(action);
+            });
+        });
+    });
 
-	describe( '#assignSiteVoucher() - success', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.post( `/wpcom/v2/sites/${ siteId }/vouchers/${ oneOfOurServiceTypes }/assign` )
-				.reply( 200, wpcomAssignResponse );
-		} );
+    describe('#assignSiteVoucher() - success', () => {
+        useNock(nock => {
+            nock('https://public-api.wordpress.com:443')
+                .persist()
+                .post(`/wpcom/v2/sites/${siteId}/vouchers/${oneOfOurServiceTypes}/assign`)
+                .reply(200, wpcomAssignResponse);
+        });
 
-		it( 'should dispatch REQUEST action when thunk triggered', () => {
-			const action = vouchersAssignRequestAction( siteId, oneOfOurServiceTypes );
-			assignSiteVoucher( siteId, oneOfOurServiceTypes )( spy );
-			expect( spy ).to.have.been.calledWith( action );
-		} );
+        it('should dispatch REQUEST action when thunk triggered', () => {
+            const action = vouchersAssignRequestAction(siteId, oneOfOurServiceTypes);
+            assignSiteVoucher(siteId, oneOfOurServiceTypes)(spy);
+            expect(spy).to.have.been.calledWith(action);
+        });
 
-		it( 'should dispatch RECEIVE action when request completes', () => {
-			const { voucher } = wpcomAssignResponse;
-			const action = vouchersAssignRequestAction( siteId, oneOfOurServiceTypes, voucher );
+        it('should dispatch RECEIVE action when request completes', () => {
+            const { voucher } = wpcomAssignResponse;
+            const action = vouchersAssignRequestAction(siteId, oneOfOurServiceTypes, voucher);
 
-			return assignSiteVoucher( siteId, oneOfOurServiceTypes )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( action );
-			} );
-		} );
-	} );
+            return assignSiteVoucher(siteId, oneOfOurServiceTypes)(spy).then(() => {
+                expect(spy).to.have.been.calledWith(action);
+            });
+        });
+    });
 
-	describe( '#requestSiteVouchers() - failure', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.get( `/wpcom/v2/sites/${ siteId }/vouchers` )
-				.reply( 403, wpcomErrorResponse );
-		} );
+    describe('#requestSiteVouchers() - failure', () => {
+        useNock(nock => {
+            nock('https://public-api.wordpress.com:443')
+                .persist()
+                .get(`/wpcom/v2/sites/${siteId}/vouchers`)
+                .reply(403, wpcomErrorResponse);
+        });
 
-		it( 'should dispatch REQUEST_FAILURE action when request failed', () => {
-			const { message } = wpcomErrorResponse;
-			const requestAction = vouchersRequestAction( siteId );
-			const failureAction = vouchersRequestFailureAction( siteId, message );
+        it('should dispatch REQUEST_FAILURE action when request failed', () => {
+            const { message } = wpcomErrorResponse;
+            const requestAction = vouchersRequestAction(siteId);
+            const failureAction = vouchersRequestFailureAction(siteId, message);
 
-			const promise = requestSiteVouchers( siteId )( spy );
-			expect( spy ).to.have.been.calledWith( requestAction );
+            const promise = requestSiteVouchers(siteId)(spy);
+            expect(spy).to.have.been.calledWith(requestAction);
 
-			return promise.then( () => {
-				expect( spy ).to.have.been.calledWith( failureAction );
-			} );
-		} );
-	} );
+            return promise.then(() => {
+                expect(spy).to.have.been.calledWith(failureAction);
+            });
+        });
+    });
 
-	describe( '#assignSiteVoucher() - failure', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.post( `/wpcom/v2/sites/${ siteId }/vouchers/${ oneOfOurServiceTypes }/assign` )
-				.reply( 403, wpcomErrorResponse );
-		} );
+    describe('#assignSiteVoucher() - failure', () => {
+        useNock(nock => {
+            nock('https://public-api.wordpress.com:443')
+                .persist()
+                .post(`/wpcom/v2/sites/${siteId}/vouchers/${oneOfOurServiceTypes}/assign`)
+                .reply(403, wpcomErrorResponse);
+        });
 
-		it( 'should dispatch assign_FAILURE action when assign failed', () => {
-			const { message } = wpcomErrorResponse;
-			const assignAction = vouchersAssignRequestAction( siteId, oneOfOurServiceTypes );
-			const failureAction = vouchersAssignRequestFailureAction( siteId, oneOfOurServiceTypes, message );
+        it('should dispatch assign_FAILURE action when assign failed', () => {
+            const { message } = wpcomErrorResponse;
+            const assignAction = vouchersAssignRequestAction(siteId, oneOfOurServiceTypes);
+            const failureAction = vouchersAssignRequestFailureAction(
+                siteId,
+                oneOfOurServiceTypes,
+                message
+            );
 
-			const promise = assignSiteVoucher( siteId, oneOfOurServiceTypes )( spy );
-			expect( spy ).to.have.been.calledWith( assignAction );
+            const promise = assignSiteVoucher(siteId, oneOfOurServiceTypes)(spy);
+            expect(spy).to.have.been.calledWith(assignAction);
 
-			return promise.then( () => {
-				expect( spy ).to.have.been.calledWith( failureAction );
-			} );
-		} );
-	} );
-} );
+            return promise.then(() => {
+                expect(spy).to.have.been.calledWith(failureAction);
+            });
+        });
+    });
+});

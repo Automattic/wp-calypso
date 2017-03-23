@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @param  {Number}  siteId Site ID
  * @return {Object}        Sharing Buttons
  */
-export default function getSharingButtons( state, siteId ) {
-	return get( state.sites.sharingButtons.items, [ siteId ], null );
+export default function getSharingButtons(state, siteId) {
+    return get(state.sites.sharingButtons.items, [siteId], null);
 }

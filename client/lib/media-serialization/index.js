@@ -12,7 +12,7 @@ import Strategies from './strategies';
  * @param  {Object} _parsed In recursion, the known values
  * @return {Object}         Object of all detected values
  */
-export function deserialize( node, _parsed ) {
-	const format = detectFormat( node );
-	return Strategies[ format.toLowerCase() ].deserialize( node, _parsed );
+export function deserialize(node, _parsed) {
+    const format = detectFormat(node);
+    return Strategies[format.toLowerCase()].deserialize(node, _parsed);
 }

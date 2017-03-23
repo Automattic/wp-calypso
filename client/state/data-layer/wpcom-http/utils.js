@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * @param {Object} action may contain HTTP response data
  * @returns {?*} response data if available
  */
-export const getData = action => get( action, 'meta.dataLayer.data', null );
+export const getData = action => get(action, 'meta.dataLayer.data', null);
 
 /**
  * Returns error data from an HTTP request failure action if available
@@ -17,7 +17,7 @@ export const getData = action => get( action, 'meta.dataLayer.data', null );
  * @param {Object} action may contain HTTP response error data
  * @returns {?*} error data if available
  */
-export const getError = action => get( action, 'meta.dataLayer.error', null );
+export const getError = action => get(action, 'meta.dataLayer.error', null);
 
 /**
  * @typedef {Object} ProgressData
@@ -32,7 +32,7 @@ export const getError = action => get( action, 'meta.dataLayer.error', null );
  * @returns {Object|null} progress data if available
  * @returns {ProgressData}
  */
-export const getProgress = action => get( action, 'meta.dataLayer.progress', null );
+export const getProgress = action => get(action, 'meta.dataLayer.progress', null);
 
 /**
  * Dispatches to appropriate function based on HTTP request meta
@@ -64,21 +64,22 @@ export const getProgress = action => get( action, 'meta.dataLayer.progress', nul
  * @param {Function} [onProgress] called on progress events when uploading
  * @returns {?*} please ignore return values, they are undefined
  */
-export const dispatchRequest = ( initiator, onSuccess, onError, onProgress = null ) => ( store, action, next ) => {
-	const error = getError( action );
-	if ( error ) {
-		return onError( store, action, next, error );
-	}
+export const dispatchRequest = (initiator, onSuccess, onError, onProgress = null) =>
+    (store, action, next) => {
+        const error = getError(action);
+        if (error) {
+            return onError(store, action, next, error);
+        }
 
-	const data = getData( action );
-	if ( data ) {
-		return onSuccess( store, action, next, data );
-	}
+        const data = getData(action);
+        if (data) {
+            return onSuccess(store, action, next, data);
+        }
 
-	const progress = getProgress( action );
-	if ( progress ) {
-		return onProgress( store, action, next, progress );
-	}
+        const progress = getProgress(action);
+        if (progress) {
+            return onProgress(store, action, next, progress);
+        }
 
-	return initiator( store, action, next );
-};
+        return initiator(store, action, next);
+    };

@@ -11,36 +11,36 @@ import { isCountryStatesFetching } from 'state/country-states/selectors';
 import { requestCountryStates } from 'state/country-states/actions';
 
 class QueryCountryStates extends Component {
-	componentWillMount() {
-		this.request( this.props );
-	}
+    componentWillMount() {
+        this.request(this.props);
+    }
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.countryCode !== nextProps.countryCode ) {
-			this.request( nextProps );
-		}
-	}
+    componentWillReceiveProps(nextProps) {
+        if (this.props.countryCode !== nextProps.countryCode) {
+            this.request(nextProps);
+        }
+    }
 
-	request( props ) {
-		if ( ! props.isRequesting ) {
-			props.requestCountryStates( props.countryCode );
-		}
-	}
+    request(props) {
+        if (!props.isRequesting) {
+            props.requestCountryStates(props.countryCode);
+        }
+    }
 
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
 QueryCountryStates.propTypes = {
-	countryCode: PropTypes.string.isRequired,
-	isRequesting: PropTypes.bool,
-	requestCountryStates: PropTypes.func
+    countryCode: PropTypes.string.isRequired,
+    isRequesting: PropTypes.bool,
+    requestCountryStates: PropTypes.func,
 };
 
 export default connect(
-	( state, { countryCode } ) => ( {
-		isRequesting: isCountryStatesFetching( state, countryCode )
-	} ),
-	{ requestCountryStates }
-)( QueryCountryStates );
+    (state, { countryCode }) => ({
+        isRequesting: isCountryStatesFetching(state, countryCode),
+    }),
+    { requestCountryStates }
+)(QueryCountryStates);

@@ -19,15 +19,15 @@ import { getJetpackModulesRequiringConnection } from './';
  * @return {?Boolean}            Whether the module is unavailable in dev mode.
  */
 const isJetpackModuleUnavailableInDevelopmentMode = createSelector(
-	( state, siteId, moduleSlug ) => {
-		const modulesRequiringConnection = getJetpackModulesRequiringConnection( state, siteId );
-		if ( ! modulesRequiringConnection ) {
-			return null;
-		}
+    (state, siteId, moduleSlug) => {
+        const modulesRequiringConnection = getJetpackModulesRequiringConnection(state, siteId);
+        if (!modulesRequiringConnection) {
+            return null;
+        }
 
-		return includes( modulesRequiringConnection, moduleSlug );
-	},
-	getJetpackModulesRequiringConnection
+        return includes(modulesRequiringConnection, moduleSlug);
+    },
+    getJetpackModulesRequiringConnection
 );
 
 export default isJetpackModuleUnavailableInDevelopmentMode;

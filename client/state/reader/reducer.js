@@ -18,16 +18,16 @@ import tags from './tags/reducer';
 import thumbnails from './thumbnails/reducer';
 import teams from './teams/reducer';
 
-export default combineReducers( {
-	feeds,
-	follows,
-	lists,
-	sites,
-	start,
-	posts,
-	relatedPosts,
-	siteBlocks,
-	tags,
-	thumbnails,
-	teams,
-} );
+export default combineReducers({
+    feeds,
+    follows,
+    lists,
+    sites,
+    start,
+    posts,
+    relatedPosts,
+    siteBlocks,
+    tags,
+    thumbnails,
+    teams,
+});

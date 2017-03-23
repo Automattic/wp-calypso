@@ -1,6 +1,6 @@
-var sinon = require( 'sinon' );
+var sinon = require('sinon');
 
 module.exports = {
-	togglePluginAutoUpdate: sinon.spy(),
-	removePluginsNotices: function() {}
+    togglePluginAutoUpdate: sinon.spy(),
+    removePluginsNotices: function() {},
 };

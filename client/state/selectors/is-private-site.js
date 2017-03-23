@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getRawSite } from 'state/sites/selectors';
+import { getRawSite } from 'state/sites/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
 
 /**
@@ -11,19 +11,19 @@ import { getSiteSettings } from 'state/site-settings/selectors';
  * @param {Object} siteId Site ID
  * @return {Boolean} True if site is private
  */
-export default function isPrivateSite( state, siteId ) {
-	const site = getRawSite( state, siteId );
+export default function isPrivateSite(state, siteId) {
+    const site = getRawSite(state, siteId);
 
-	if ( site ) {
-		return site.is_private;
-	}
+    if (site) {
+        return site.is_private;
+    }
 
-	const settings = getSiteSettings( state, siteId );
+    const settings = getSiteSettings(state, siteId);
 
-	if ( settings ) {
-		// Site settings returns a numerical value for blog_public.
-		return parseInt( settings.blog_public, 10 ) === -1;
-	}
+    if (settings) {
+        // Site settings returns a numerical value for blog_public.
+        return parseInt(settings.blog_public, 10) === -1;
+    }
 
-	return null;
+    return null;
 }

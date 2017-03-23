@@ -17,17 +17,15 @@ import createSelector from 'lib/create-selector';
  * @return {?Array}              Slugs of modules that require connection to work.
  */
 const getJetpackModulesRequiringConnection = createSelector(
-	( state, siteId ) => {
-		const modules = get( state.jetpack.modules.items, [ siteId ], null );
-		if ( ! modules ) {
-			return null;
-		}
+    (state, siteId) => {
+        const modules = get(state.jetpack.modules.items, [siteId], null);
+        if (!modules) {
+            return null;
+        }
 
-		return Object.keys( modules ).filter( ( module_slug ) =>
-			modules[ module_slug ].requires_connection
-		);
-	},
-	( state ) => [ state.jetpack.modules.items ]
+        return Object.keys(modules).filter(module_slug => modules[module_slug].requires_connection);
+    },
+    state => [state.jetpack.modules.items]
 );
 
 export default getJetpackModulesRequiringConnection;

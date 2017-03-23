@@ -18,58 +18,56 @@ import * as upgradesActions from 'lib/upgrades/actions';
 import { PLAN_PREMIUM } from 'lib/plans/constants';
 
 class CartPlanAd extends Component {
-	addToCartAndRedirect( event ) {
-		event.preventDefault();
-		upgradesActions.addItem( cartItems.premiumPlan( PLAN_PREMIUM, { isFreeTrial: false } ) );
-		page( '/checkout/' + this.props.selectedSite.slug );
-	}
+    addToCartAndRedirect(event) {
+        event.preventDefault();
+        upgradesActions.addItem(cartItems.premiumPlan(PLAN_PREMIUM, { isFreeTrial: false }));
+        page('/checkout/' + this.props.selectedSite.slug);
+    }
 
-	shouldDisplayAd() {
-		const { cart, isDomainOnlySite, selectedSite } = this.props;
+    shouldDisplayAd() {
+        const { cart, isDomainOnlySite, selectedSite } = this.props;
 
-		return ! isDomainOnlySite &&
-			cart.hasLoadedFromServer &&
-			! cartItems.hasDomainCredit( cart ) &&
-			cartItems.getDomainRegistrations( cart ).length === 1 &&
-			selectedSite &&
-			selectedSite.plan &&
-			! isPlan( selectedSite.plan );
-	}
+        return !isDomainOnlySite &&
+            cart.hasLoadedFromServer &&
+            !cartItems.hasDomainCredit(cart) &&
+            cartItems.getDomainRegistrations(cart).length === 1 &&
+            selectedSite &&
+            selectedSite.plan &&
+            !isPlan(selectedSite.plan);
+    }
 
-	render() {
-		if ( ! this.shouldDisplayAd() ) {
-			return null;
-		}
+    render() {
+        if (!this.shouldDisplayAd()) {
+            return null;
+        }
 
-		return (
-			<CartAd>
-				{
-					this.props.translate( 'Get this domain for free when you upgrade to {{strong}}WordPress.com Premium{{/strong}}!', {
-						components: { strong: <strong /> }
-					} )
-				}
-				{ ' ' }
-				<a href="" onClick={ this.addToCartAndRedirect }>{ this.props.translate( 'Upgrade Now' ) }</a>
-			</CartAd>
-		);
-	}
+        return (
+            <CartAd>
+                {this.props.translate(
+                    'Get this domain for free when you upgrade to {{strong}}WordPress.com Premium{{/strong}}!',
+                    {
+                        components: { strong: <strong /> },
+                    }
+                )}
+                {' '}
+                <a href="" onClick={this.addToCartAndRedirect}>
+                    {this.props.translate('Upgrade Now')}
+                </a>
+            </CartAd>
+        );
+    }
 }
 
 CartPlanAd.propTypes = {
-	cart: PropTypes.object.isRequired,
-	isDomainOnlySite: PropTypes.bool,
-	selectedSite: PropTypes.oneOfType( [
-		PropTypes.bool,
-		PropTypes.object
-	] )
+    cart: PropTypes.object.isRequired,
+    isDomainOnlySite: PropTypes.bool,
+    selectedSite: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
 };
 
-export default connect(
-	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
+export default connect(state => {
+    const selectedSiteId = getSelectedSiteId(state);
 
-		return {
-			isDomainOnlySite: isDomainOnlySite( state, selectedSiteId )
-		};
-	}
-)( localize( CartPlanAd ) );
+    return {
+        isDomainOnlySite: isDomainOnlySite(state, selectedSiteId),
+    };
+})(localize(CartPlanAd));

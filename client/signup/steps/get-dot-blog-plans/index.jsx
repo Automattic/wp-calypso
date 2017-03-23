@@ -5,23 +5,23 @@ import React, { PropTypes } from 'react';
 import { cartItems } from 'lib/cart-values';
 import PlansStep from 'signup/steps/plans';
 
-const GetDotBlogPlansStep = ( { queryObject, ...props } ) => (
-	<PlansStep
-		additionalStepData={ {
-			isPurchasingItem: true,
-			domainItem: cartItems.domainMapping( {
-				domain: queryObject.domain,
-				source: 'get-dot-blog-signup'
-			} ),
-			siteUrl: queryObject.domain.replace( /\W+/g, '' )
-		} }
-		{ ...props }
-		hideFreePlan
-	/>
+const GetDotBlogPlansStep = ({ queryObject, ...props }) => (
+    <PlansStep
+        additionalStepData={{
+            isPurchasingItem: true,
+            domainItem: cartItems.domainMapping({
+                domain: queryObject.domain,
+                source: 'get-dot-blog-signup',
+            }),
+            siteUrl: queryObject.domain.replace(/\W+/g, ''),
+        }}
+        {...props}
+        hideFreePlan
+    />
 );
 
 GetDotBlogPlansStep.propTypes = {
-	queryObject: PropTypes.object.isRequired,
+    queryObject: PropTypes.object.isRequired,
 };
 
 export default GetDotBlogPlansStep;

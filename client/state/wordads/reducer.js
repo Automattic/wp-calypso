@@ -9,7 +9,7 @@ import { combineReducers } from 'redux';
 import approve from './approve/reducer';
 import status from './status/reducer';
 
-export default combineReducers( {
-	approve,
-	status
-} );
+export default combineReducers({
+    approve,
+    status,
+});

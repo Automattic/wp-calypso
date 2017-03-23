@@ -12,28 +12,28 @@ import MediaUtils from 'lib/media/utils';
 /**
  * Module variables
  */
-const VALID_SHORTCODE_TYPES = [ 'closed', 'self-closing', 'single' ];
+const VALID_SHORTCODE_TYPES = ['closed', 'self-closing', 'single'];
 
-export default function( node ) {
-	if ( 'string' === typeof node ) {
-		return Formats.STRING;
-	}
+export default function(node) {
+    if ('string' === typeof node) {
+        return Formats.STRING;
+    }
 
-	if ( 'object' === typeof node && 'string' === typeof node.nodeName ) {
-		return Formats.DOM;
-	}
+    if ('object' === typeof node && 'string' === typeof node.nodeName) {
+        return Formats.DOM;
+    }
 
-	if ( node && node.tag && includes( VALID_SHORTCODE_TYPES, node.type ) ) {
-		return Formats.SHORTCODE;
-	}
+    if (node && node.tag && includes(VALID_SHORTCODE_TYPES, node.type)) {
+        return Formats.SHORTCODE;
+    }
 
-	if ( node && node.type && includes( MediaTypes, node.type ) ) {
-		return Formats.OBJECT;
-	}
+    if (node && node.type && includes(MediaTypes, node.type)) {
+        return Formats.OBJECT;
+    }
 
-	if ( MediaUtils.getMimePrefix( node ) ) {
-		return Formats.API;
-	}
+    if (MediaUtils.getMimePrefix(node)) {
+        return Formats.API;
+    }
 
-	return Formats.UNKNOWN;
+    return Formats.UNKNOWN;
 }

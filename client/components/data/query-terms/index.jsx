@@ -12,56 +12,63 @@ import { requestSiteTerms } from 'state/terms/actions';
 import { isRequestingTermsForQuery } from 'state/terms/selectors';
 
 class QueryTerms extends Component {
-	componentWillMount() {
-		this.request( this.props );
-	}
+    componentWillMount() {
+        this.request(this.props);
+    }
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId &&
-				this.props.taxonomy === nextProps.taxonomy &&
-				shallowEqual( this.props.query, nextProps.query ) ) {
-			return;
-		}
+    componentWillReceiveProps(nextProps) {
+        if (
+            this.props.siteId === nextProps.siteId &&
+            this.props.taxonomy === nextProps.taxonomy &&
+            shallowEqual(this.props.query, nextProps.query)
+        ) {
+            return;
+        }
 
-		this.request( nextProps );
-	}
+        this.request(nextProps);
+    }
 
-	request( props ) {
-		if ( props.requesting || ! props.siteId ) {
-			return;
-		}
+    request(props) {
+        if (props.requesting || !props.siteId) {
+            return;
+        }
 
-		props.requestSiteTerms( props.siteId, props.taxonomy, props.query );
-	}
+        props.requestSiteTerms(props.siteId, props.taxonomy, props.query);
+    }
 
-	shouldComponentUpdate() {
-		return false;
-	}
+    shouldComponentUpdate() {
+        return false;
+    }
 
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
 QueryTerms.propTypes = {
-	siteId: PropTypes.number,
-	taxonomy: PropTypes.string.isRequired,
-	query: PropTypes.object,
-	requesting: PropTypes.bool.isRequired,
-	requestSiteTerms: PropTypes.func.isRequired
+    siteId: PropTypes.number,
+    taxonomy: PropTypes.string.isRequired,
+    query: PropTypes.object,
+    requesting: PropTypes.bool.isRequired,
+    requestSiteTerms: PropTypes.func.isRequired,
 };
 
 QueryTerms.defaultProps = {
-	query: {}
+    query: {},
 };
 
 export default connect(
-	( state, ownProps ) => {
-		return {
-			requesting: isRequestingTermsForQuery( state, ownProps.siteId, ownProps.taxonomy, ownProps.query )
-		};
-	},
-	{
-		requestSiteTerms
-	}
-)( QueryTerms );
+    (state, ownProps) => {
+        return {
+            requesting: isRequestingTermsForQuery(
+                state,
+                ownProps.siteId,
+                ownProps.taxonomy,
+                ownProps.query
+            ),
+        };
+    },
+    {
+        requestSiteTerms,
+    }
+)(QueryTerms);

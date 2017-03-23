@@ -18,8 +18,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @param  {Number} siteId Site ID
  * @return {Array}         Site connections
  */
-export function getConnectionsBySiteId( state, siteId ) {
-	return filter( state.sharing.publicize.connections, { site_ID: siteId } );
+export function getConnectionsBySiteId(state, siteId) {
+    return filter(state.sharing.publicize.connections, { site_ID: siteId });
 }
 
 /**
@@ -31,11 +31,11 @@ export function getConnectionsBySiteId( state, siteId ) {
  * @param  {Number} userId User ID to filter
  * @return {Array}         User connections
  */
-export function getSiteUserConnections( state, siteId, userId ) {
-	return filter( state.sharing.publicize.connections, ( connection ) => {
-		const { site_ID, shared, keyring_connection_user_ID } = connection;
-		return site_ID === siteId && ( shared || keyring_connection_user_ID === userId );
-	} );
+export function getSiteUserConnections(state, siteId, userId) {
+    return filter(state.sharing.publicize.connections, connection => {
+        const { site_ID, shared, keyring_connection_user_ID } = connection;
+        return site_ID === siteId && (shared || keyring_connection_user_ID === userId);
+    });
 }
 
 /**
@@ -48,8 +48,8 @@ export function getSiteUserConnections( state, siteId, userId ) {
  * @param  {String} service The name of the service to check
  * @return {Array}          User connections
  */
-export function getSiteUserConnectionsForService( state, siteId, userId, service ) {
-	return filter( getSiteUserConnections( state, siteId, userId ), { service } );
+export function getSiteUserConnectionsForService(state, siteId, userId, service) {
+    return filter(getSiteUserConnections(state, siteId, userId), { service });
 }
 
 /**
@@ -61,8 +61,10 @@ export function getSiteUserConnectionsForService( state, siteId, userId, service
  * @param  {String} service The name of the service to check
  * @return {Array}          Broken user connections.
  */
-export function getBrokenSiteUserConnectionsForService( state, siteId, userId, service ) {
-	return filter( getSiteUserConnectionsForService( state, siteId, userId, service ), { status: 'broken' } );
+export function getBrokenSiteUserConnectionsForService(state, siteId, userId, service) {
+    return filter(getSiteUserConnectionsForService(state, siteId, userId, service), {
+        status: 'broken',
+    });
 }
 
 /**
@@ -78,16 +80,21 @@ export function getBrokenSiteUserConnectionsForService( state, siteId, userId, s
  * @return {Array}          Connections for which the current user is
  *                          permitted to remove.
  */
-export function getRemovableConnections( state, service ) {
-	const siteId = getSelectedSiteId( state );
-	const userId = getCurrentUserId( state );
-	const siteUserConnectionsForService = getSiteUserConnectionsForService( state, siteId, userId, service );
+export function getRemovableConnections(state, service) {
+    const siteId = getSelectedSiteId(state);
+    const userId = getCurrentUserId(state);
+    const siteUserConnectionsForService = getSiteUserConnectionsForService(
+        state,
+        siteId,
+        userId,
+        service
+    );
 
-	if ( canCurrentUser( state, siteId, 'edit_others_posts' ) ) {
-		return siteUserConnectionsForService;
-	}
+    if (canCurrentUser(state, siteId, 'edit_others_posts')) {
+        return siteUserConnectionsForService;
+    }
 
-	return filter( siteUserConnectionsForService, { user_ID: userId } );
+    return filter(siteUserConnectionsForService, { user_ID: userId });
 }
 
 /**
@@ -97,8 +104,8 @@ export function getRemovableConnections( state, service ) {
  * @param  {Number} siteId Site ID
  * @return {Array}         Site connections
  */
-export function hasFetchedConnections( state, siteId ) {
-	return get( state.sharing.publicize.fetchedConnections, [ siteId ], false );
+export function hasFetchedConnections(state, siteId) {
+    return get(state.sharing.publicize.fetchedConnections, [siteId], false);
 }
 
 /**
@@ -108,8 +115,8 @@ export function hasFetchedConnections( state, siteId ) {
  * @param  {Number} siteId Site ID
  * @return {Array}         Site connections
  */
-export function isFetchingConnections( state, siteId ) {
-	return get( state.sharing.publicize.fetchingConnections, [ siteId ], false );
+export function isFetchingConnections(state, siteId) {
+    return get(state.sharing.publicize.fetchingConnections, [siteId], false);
 }
 
 /**
@@ -119,18 +126,18 @@ export function isFetchingConnections( state, siteId ) {
  * @param  {Number}  connectionId Connection ID
  * @return {Boolean}              Whether the connection is being fetched.
  */
-export function isFetchingConnection( state, connectionId ) {
-	return state.sharing.publicize.fetchingConnection[ connectionId ] || false;
+export function isFetchingConnection(state, connectionId) {
+    return state.sharing.publicize.fetchingConnection[connectionId] || false;
 }
 
-export function isRequestingSharePost( state, siteId, postId ) {
-	return get( state.sharing.publicize.sharePostStatus, [ siteId, postId, 'requesting' ], false );
+export function isRequestingSharePost(state, siteId, postId) {
+    return get(state.sharing.publicize.sharePostStatus, [siteId, postId, 'requesting'], false);
 }
 
-export function sharePostSuccessMessage( state, siteId, postId ) {
-	return get( state.sharing.publicize.sharePostStatus, [ siteId, postId, 'success' ], false );
+export function sharePostSuccessMessage(state, siteId, postId) {
+    return get(state.sharing.publicize.sharePostStatus, [siteId, postId, 'success'], false);
 }
 
-export function sharePostFailure( state, siteId, postId ) {
-	return ( get( state.sharing.publicize.sharePostStatus, [ siteId, postId, 'error' ], false ) === true );
+export function sharePostFailure(state, siteId, postId) {
+    return get(state.sharing.publicize.sharePostStatus, [siteId, postId, 'error'], false) === true;
 }

@@ -19,182 +19,179 @@ const sites = sitesFactory();
 const user = userFactory();
 
 export default class EmailUnverifiedNotice extends React.Component {
-	constructor( props ) {
-		super( props );
+    constructor(props) {
+        super(props);
 
-		this.updateVerificationState = this.updateVerificationState.bind( this );
-		this.handleDismiss = this.handleDismiss.bind( this );
-		this.handleSendVerificationEmail = this.handleSendVerificationEmail.bind( this );
+        this.updateVerificationState = this.updateVerificationState.bind(this);
+        this.handleDismiss = this.handleDismiss.bind(this);
+        this.handleSendVerificationEmail = this.handleSendVerificationEmail.bind(this);
 
-		this.state = {
-			needsVerification: userUtils.needsVerificationForSite( sites.getSelectedSite() ),
-			pendingRequest: false,
-			emailSent: false,
-			error: null,
-		};
-	}
+        this.state = {
+            needsVerification: userUtils.needsVerificationForSite(sites.getSelectedSite()),
+            pendingRequest: false,
+            emailSent: false,
+            error: null,
+        };
+    }
 
-	static propTypes = {
-		noticeText: React.PropTypes.node,
-		noticeStatus: React.PropTypes.string
-	};
+    static propTypes = {
+        noticeText: React.PropTypes.node,
+        noticeStatus: React.PropTypes.string,
+    };
 
-	static defaultProps = {
-		noticeText: null,
-		noticeStatus: ''
-	};
+    static defaultProps = {
+        noticeText: null,
+        noticeStatus: '',
+    };
 
-	componentWillMount() {
-		user.on( 'change', this.updateVerificationState );
-		user.on( 'verify', this.updateVerificationState );
-		sites.on( 'change', this.updateVerificationState );
-	}
+    componentWillMount() {
+        user.on('change', this.updateVerificationState);
+        user.on('verify', this.updateVerificationState);
+        sites.on('change', this.updateVerificationState);
+    }
 
-	componentWillUnmount() {
-		user.off( 'change', this.updateVerificationState );
-		user.off( 'verify', this.updateVerificationState );
-		sites.off( 'change', this.updateVerificationState );
-	}
+    componentWillUnmount() {
+        user.off('change', this.updateVerificationState);
+        user.off('verify', this.updateVerificationState);
+        sites.off('change', this.updateVerificationState);
+    }
 
-	updateVerificationState() {
-		this.setState( {
-			needsVerification: userUtils.needsVerificationForSite( sites.getSelectedSite() ),
-		} );
-	}
+    updateVerificationState() {
+        this.setState({
+            needsVerification: userUtils.needsVerificationForSite(sites.getSelectedSite()),
+        });
+    }
 
-	handleDismiss() {
-		this.setState( { error: null, emailSent: false } );
-	}
+    handleDismiss() {
+        this.setState({ error: null, emailSent: false });
+    }
 
-	handleSendVerificationEmail( e ) {
-		e.preventDefault();
+    handleSendVerificationEmail(e) {
+        e.preventDefault();
 
-		if ( this.state.pendingRequest ) {
-			return;
-		}
+        if (this.state.pendingRequest) {
+            return;
+        }
 
-		this.setState( {
-			pendingRequest: true
-		} );
+        this.setState({
+            pendingRequest: true,
+        });
 
-		user.sendVerificationEmail( ( error, response ) => {
-			this.setState( {
-				emailSent: response && response.success,
-				error: error,
-				pendingRequest: false,
-			} );
-		} );
-	}
+        user.sendVerificationEmail((error, response) => {
+            this.setState({
+                emailSent: response && response.success,
+                error: error,
+                pendingRequest: false,
+            });
+        });
+    }
 
-	renderEmailSendPending() {
-		return (
-			<Notice
-				icon="mail"
-				showDismiss={ false }
-				text={ i18n.translate( 'Sending…' ) }>
-				<NoticeAction><Spinner /></NoticeAction>
-			</Notice>
-		);
-	}
+    renderEmailSendPending() {
+        return (
+            <Notice icon="mail" showDismiss={false} text={i18n.translate('Sending…')}>
+                <NoticeAction><Spinner /></NoticeAction>
+            </Notice>
+        );
+    }
 
-	renderEmailSendSuccess() {
-		const noticeText = i18n.translate(
-			'We sent another confirmation email to %(email)s.',
-			{ args: { email: user.get().email } }
-		);
+    renderEmailSendSuccess() {
+        const noticeText = i18n.translate('We sent another confirmation email to %(email)s.', {
+            args: { email: user.get().email },
+        });
 
-		return (
-			<Notice
-				text={ noticeText }
-				status="is-success"
-				onDismissClick={ this.handleDismiss }
-				className="email-verification-notice" />
-		);
-	}
+        return (
+            <Notice
+                text={noticeText}
+                status="is-success"
+                onDismissClick={this.handleDismiss}
+                className="email-verification-notice"
+            />
+        );
+    }
 
-	renderEmailSendError() {
-		const noticeText = [
-			<strong>{ i18n.translate( 'The email could not be sent.' ) }</strong>,
-			' ',
-			this.state.error.message,
-		];
+    renderEmailSendError() {
+        const noticeText = [
+            <strong>{i18n.translate('The email could not be sent.')}</strong>,
+            ' ',
+            this.state.error.message,
+        ];
 
-		return <Notice
-			text={ noticeText }
-			icon="notice"
-			onDismissClick={ this.handleDismiss }
-			status="is-warning"
-			className="email-verification-notice">
-			<NoticeAction onClick={ this.handleSendVerificationEmail }>
-				{ i18n.translate( 'Try Again' ) }
-			</NoticeAction>
-		</Notice>;
-	}
+        return (
+            <Notice
+                text={noticeText}
+                icon="notice"
+                onDismissClick={this.handleDismiss}
+                status="is-warning"
+                className="email-verification-notice"
+            >
+                <NoticeAction onClick={this.handleSendVerificationEmail}>
+                    {i18n.translate('Try Again')}
+                </NoticeAction>
+            </Notice>
+        );
+    }
 
-	render() {
-		if ( this.state.pendingRequest ) {
-			return this.renderEmailSendPending();
-		}
+    render() {
+        if (this.state.pendingRequest) {
+            return this.renderEmailSendPending();
+        }
 
-		if ( this.state.error ) {
-			return this.renderEmailSendError();
-		}
+        if (this.state.error) {
+            return this.renderEmailSendError();
+        }
 
-		if ( this.state.emailSent ) {
-			return this.renderEmailSendSuccess();
-		}
+        if (this.state.emailSent) {
+            return this.renderEmailSendSuccess();
+        }
 
-		const noticeText = this.props.noticeText
-			? this.props.noticeText
-			: (
-				<div>
-					<p>
-						<strong>
-							{ i18n.translate( 'Please confirm your email address' ) }
-						</strong>
-					</p>
-					<p>
-						{
-							i18n.translate(
-								'To post and keep using WordPress.com you need to confirm your email address. ' +
-								'Please click the link in the email we sent at %(email)s.', {
-									args: {
-										email: user.get().email
-									}
-								}
-							)
-						}
-					</p>
-					<p>
-						{
-							i18n.translate(
-								'{{requestButton}}Re-send your confirmation email{{/requestButton}} ' +
-								'or {{changeButton}}change the email address on your account{{/changeButton}}.', {
-									components: {
-										requestButton: <a href="#" onClick={ this.handleSendVerificationEmail } />,
-										changeButton: <a href="/me/account" />
-									}
-								}
-							)
-						}
-					</p>
-				</div>
-			);
+        const noticeText = this.props.noticeText
+            ? this.props.noticeText
+            : <div>
+                  <p>
+                      <strong>
+                          {i18n.translate('Please confirm your email address')}
+                      </strong>
+                  </p>
+                  <p>
+                      {i18n.translate(
+                          'To post and keep using WordPress.com you need to confirm your email address. ' +
+                              'Please click the link in the email we sent at %(email)s.',
+                          {
+                              args: {
+                                  email: user.get().email,
+                              },
+                          }
+                      )}
+                  </p>
+                  <p>
+                      {i18n.translate(
+                          '{{requestButton}}Re-send your confirmation email{{/requestButton}} ' +
+                              'or {{changeButton}}change the email address on your account{{/changeButton}}.',
+                          {
+                              components: {
+                                  requestButton: (
+                                      <a href="#" onClick={this.handleSendVerificationEmail} />
+                                  ),
+                                  changeButton: <a href="/me/account" />,
+                              },
+                          }
+                      )}
+                  </p>
+              </div>;
 
-		return (
-			<Notice
-				text={ noticeText }
-				icon="info"
-				showDismiss={ false }
-				status={ this.props.noticeStatus }
-				className="email-unverified-notice">
-				{
-					this.props.noticeText &&
-					<NoticeAction onClick={ this.handleSendVerificationEmail }>
-						{ i18n.translate( 'Resend Email' ) }
-					</NoticeAction>
-				}
-			</Notice>
-		);
-	}
+        return (
+            <Notice
+                text={noticeText}
+                icon="info"
+                showDismiss={false}
+                status={this.props.noticeStatus}
+                className="email-unverified-notice"
+            >
+                {this.props.noticeText &&
+                    <NoticeAction onClick={this.handleSendVerificationEmail}>
+                        {i18n.translate('Resend Email')}
+                    </NoticeAction>}
+            </Notice>
+        );
+    }
 }

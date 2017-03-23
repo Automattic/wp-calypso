@@ -11,11 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import { canCurrentUser, isJetpackModuleActive } from 'state/selectors';
 import DocumentHead from 'components/data/document-head';
-import {
-	getSiteSlug,
-	isJetpackMinimumVersion,
-	isJetpackSite,
-} from 'state/sites/selectors';
+import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
 import NavItem from 'components/section-nav/item';
@@ -25,90 +21,90 @@ import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 
-export const Sharing = ( {
-	contentComponent,
-	path,
-	showButtons,
-	showConnections,
-	siteId,
-	siteSlug,
-	translate,
-} ) => {
-	const pathSuffix = siteSlug ? '/' + siteSlug : '';
-	const filters = [];
+export const Sharing = (
+    {
+        contentComponent,
+        path,
+        showButtons,
+        showConnections,
+        siteId,
+        siteSlug,
+        translate,
+    }
+) => {
+    const pathSuffix = siteSlug ? '/' + siteSlug : '';
+    const filters = [];
 
-	// Include Connections link if all sites are selected. Otherwise,
-	// verify that the required Jetpack module is active
-	if ( showConnections ) {
-		filters.push( {
-			id: 'sharing-connections',
-			route: '/sharing' + pathSuffix,
-			title: translate( 'Connections' ),
-		} );
-	}
+    // Include Connections link if all sites are selected. Otherwise,
+    // verify that the required Jetpack module is active
+    if (showConnections) {
+        filters.push({
+            id: 'sharing-connections',
+            route: '/sharing' + pathSuffix,
+            title: translate('Connections'),
+        });
+    }
 
-	// Include Sharing Buttons link if a site is selected and the
-	// required Jetpack module is active
-	if ( showButtons ) {
-		filters.push( {
-			id: 'sharing-buttons',
-			route: '/sharing/buttons' + pathSuffix,
-			title: translate( 'Sharing Buttons' ),
-		} );
-	}
+    // Include Sharing Buttons link if a site is selected and the
+    // required Jetpack module is active
+    if (showButtons) {
+        filters.push({
+            id: 'sharing-buttons',
+            route: '/sharing/buttons' + pathSuffix,
+            title: translate('Sharing Buttons'),
+        });
+    }
 
-	const selected = find( filters, { route: path } );
+    const selected = find(filters, { route: path });
 
-	return (
-		<Main className="sharing">
-			<DocumentHead title={ translate( 'Sharing' ) } />
-			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-			<SidebarNavigation />
-			{ filters.length > 0 &&
-				<SectionNav selectedText={ get( selected, 'title', '' ) }>
-					<NavTabs>
-						{ filters.map( ( { id, route, title } ) => (
-							<NavItem key={ id } path={ route } selected={ path === route }>
-								{ title }
-							</NavItem>
-						) ) }
-					</NavTabs>
-				</SectionNav>
-			}
-			<UpgradeNudge
-				event="sharing_no_ads"
-				feature="no-adverts"
-				message={ translate( 'Prevent ads from showing on your site.' ) }
-				title={ translate( 'No Ads with WordPress.com Premium' ) }
-			/>
-			{ contentComponent }
-		</Main>
-	);
+    return (
+        <Main className="sharing">
+            <DocumentHead title={translate('Sharing')} />
+            {siteId && <QueryJetpackModules siteId={siteId} />}
+            <SidebarNavigation />
+            {filters.length > 0 &&
+                <SectionNav selectedText={get(selected, 'title', '')}>
+                    <NavTabs>
+                        {filters.map(({ id, route, title }) => (
+                            <NavItem key={id} path={route} selected={path === route}>
+                                {title}
+                            </NavItem>
+                        ))}
+                    </NavTabs>
+                </SectionNav>}
+            <UpgradeNudge
+                event="sharing_no_ads"
+                feature="no-adverts"
+                message={translate('Prevent ads from showing on your site.')}
+                title={translate('No Ads with WordPress.com Premium')}
+            />
+            {contentComponent}
+        </Main>
+    );
 };
 
 Sharing.propTypes = {
-	canManageOptions: PropTypes.bool,
-	contentComponent: PropTypes.node,
-	path: PropTypes.string,
-	showButtons: PropTypes.bool,
-	showConnections: PropTypes.bool,
-	siteId: PropTypes.number,
-	siteSlug: PropTypes.string,
-	translate: PropTypes.func,
+    canManageOptions: PropTypes.bool,
+    contentComponent: PropTypes.node,
+    path: PropTypes.string,
+    showButtons: PropTypes.bool,
+    showConnections: PropTypes.bool,
+    siteId: PropTypes.number,
+    siteSlug: PropTypes.string,
+    translate: PropTypes.func,
 };
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
-		const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-		const hasSharedaddy = isJetpackModuleActive( state, siteId, 'sharedaddy' ) && isJetpackMinimumVersion( state, siteId, '3.4-dev' );
+export default connect(state => {
+    const siteId = getSelectedSiteId(state);
+    const isJetpack = isJetpackSite(state, siteId);
+    const canManageOptions = canCurrentUser(state, siteId, 'manage_options');
+    const hasSharedaddy = isJetpackModuleActive(state, siteId, 'sharedaddy') &&
+        isJetpackMinimumVersion(state, siteId, '3.4-dev');
 
-		return {
-			showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
-			showConnections: ! siteId || ! isJetpack || isJetpackModuleActive( state, siteId, 'publicize' ),
-			siteId,
-			siteSlug: getSiteSlug( state, siteId ),
-		};
-	},
-)( localize( Sharing ) );
+    return {
+        showButtons: siteId && canManageOptions && (!isJetpack || hasSharedaddy),
+        showConnections: !siteId || !isJetpack || isJetpackModuleActive(state, siteId, 'publicize'),
+        siteId,
+        siteSlug: getSiteSlug(state, siteId),
+    };
+})(localize(Sharing));

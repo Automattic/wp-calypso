@@ -8,12 +8,8 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import {
-	getSerializedStatsQuery,
-	normalizers,
-	buildExportArray,
-} from './utils';
-import { getSite } from 'state/sites/selectors';
+import { getSerializedStatsQuery, normalizers, buildExportArray } from './utils';
+import { getSite } from 'state/sites/selectors';
 
 /**
  * Returns true if currently requesting stats for the statType and query combo, or false
@@ -25,9 +21,9 @@ import { getSite } from 'state/sites/selectors';
  * @param  {Object}  query    Stats query object
  * @return {Boolean}          Whether stats are being requested
  */
-export function isRequestingSiteStatsForQuery( state, siteId, statType, query ) {
-	const serializedQuery = getSerializedStatsQuery( query );
-	return !! get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'requesting' ] );
+export function isRequestingSiteStatsForQuery(state, siteId, statType, query) {
+    const serializedQuery = getSerializedStatsQuery(query);
+    return !!get(state.stats.lists.requests, [siteId, statType, serializedQuery, 'requesting']);
 }
 
 /**
@@ -40,9 +36,10 @@ export function isRequestingSiteStatsForQuery( state, siteId, statType, query ) 
  * @param  {Object}  query    Stats query object
  * @return {Boolean}          Whether stats are being requested
  */
-export function hasSiteStatsQueryFailed( state, siteId, statType, query ) {
-	const serializedQuery = getSerializedStatsQuery( query );
-	return get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'status' ] ) === 'error';
+export function hasSiteStatsQueryFailed(state, siteId, statType, query) {
+    const serializedQuery = getSerializedStatsQuery(query);
+    return get(state.stats.lists.requests, [siteId, statType, serializedQuery, 'status']) ===
+        'error';
 }
 
 /**
@@ -55,9 +52,9 @@ export function hasSiteStatsQueryFailed( state, siteId, statType, query ) {
  * @param  {Object}  query    Stats query object
  * @return {?Object}           Data for the query
  */
-export function getSiteStatsForQuery( state, siteId, statType, query ) {
-	const serializedQuery = getSerializedStatsQuery( query );
-	return get( state.stats.lists.items, [ siteId, statType, serializedQuery ], null );
+export function getSiteStatsForQuery(state, siteId, statType, query) {
+    const serializedQuery = getSerializedStatsQuery(query);
+    return get(state.stats.lists.items, [siteId, statType, serializedQuery], null);
 }
 
 /**
@@ -71,31 +68,31 @@ export function getSiteStatsForQuery( state, siteId, statType, query ) {
  * @return {Object}           			Parsed Data for the query
  */
 export const getSiteStatsPostStreakData = createSelector(
-	( state, siteId, query ) => {
-		const { gmtOffset = 0 } = query;
-		const response = {};
-		const streakData = getSiteStatsForQuery( state, siteId, 'statsStreak', query );
-		// ensure streakData.data exists and it is not an array
-		if ( streakData && streakData.data && ! isArray( streakData.data ) ) {
-			Object.keys( streakData.data ).forEach( ( timestamp ) => {
-				const postDay = i18n.moment.unix( timestamp ).locale( 'en' );
-				const datestamp = postDay.utcOffset( gmtOffset ).format( 'YYYY-MM-DD' );
+    (state, siteId, query) => {
+        const { gmtOffset = 0 } = query;
+        const response = {};
+        const streakData = getSiteStatsForQuery(state, siteId, 'statsStreak', query);
+        // ensure streakData.data exists and it is not an array
+        if (streakData && streakData.data && !isArray(streakData.data)) {
+            Object.keys(streakData.data).forEach(timestamp => {
+                const postDay = i18n.moment.unix(timestamp).locale('en');
+                const datestamp = postDay.utcOffset(gmtOffset).format('YYYY-MM-DD');
 
-				if ( 'undefined' === typeof( response[ datestamp ] ) ) {
-					response[ datestamp ] = 0;
-				}
+                if ('undefined' === typeof response[datestamp]) {
+                    response[datestamp] = 0;
+                }
 
-				response[ datestamp ] += streakData.data[ timestamp ];
-			} );
-		}
+                response[datestamp] += streakData.data[timestamp];
+            });
+        }
 
-		return response;
-	},
-	( state, siteId, query ) => getSiteStatsForQuery( state, siteId, 'statsStreak', query ),
-	( state, siteId, query ) => {
-		const serializedQuery = getSerializedStatsQuery( query );
-		return [ siteId, 'statsStreak', serializedQuery ].join();
-	}
+        return response;
+    },
+    (state, siteId, query) => getSiteStatsForQuery(state, siteId, 'statsStreak', query),
+    (state, siteId, query) => {
+        const serializedQuery = getSerializedStatsQuery(query);
+        return [siteId, 'statsStreak', serializedQuery].join();
+    }
 );
 
 /**
@@ -107,22 +104,22 @@ export const getSiteStatsPostStreakData = createSelector(
  * @return {?Number}          Max number of posts by day
  */
 export const getSiteStatsMaxPostsByDay = createSelector(
-	( state, siteId, query ) => {
-		let max = 0;
+    (state, siteId, query) => {
+        let max = 0;
 
-		forOwn( getSiteStatsPostStreakData( state, siteId, query ), count => {
-			if ( count > max ) {
-				max = count;
-			}
-		} );
+        forOwn(getSiteStatsPostStreakData(state, siteId, query), count => {
+            if (count > max) {
+                max = count;
+            }
+        });
 
-		return max || null;
-	},
-	( state, siteId, query ) => getSiteStatsForQuery( state, siteId, 'statsStreak', query ),
-	( state, siteId, query ) => {
-		const serializedQuery = getSerializedStatsQuery( query );
-		return [ siteId, 'statsStreakMax', serializedQuery ].join();
-	}
+        return max || null;
+    },
+    (state, siteId, query) => getSiteStatsForQuery(state, siteId, 'statsStreak', query),
+    (state, siteId, query) => {
+        const serializedQuery = getSerializedStatsQuery(query);
+        return [siteId, 'statsStreakMax', serializedQuery].join();
+    }
 );
 
 /**
@@ -134,16 +131,20 @@ export const getSiteStatsMaxPostsByDay = createSelector(
  * @return {?Number}          Max number of posts by day
  */
 export const getSiteStatsTotalPostsForStreakQuery = createSelector(
-	( state, siteId, query ) => {
-		return reduce( getSiteStatsPostStreakData( state, siteId, query ), ( posts, sum ) => {
-			return sum + posts;
-		}, 0 );
-	},
-	( state, siteId, query ) => getSiteStatsForQuery( state, siteId, 'statsStreak', query ),
-	( state, siteId, query ) => {
-		const serializedQuery = getSerializedStatsQuery( query );
-		return [ siteId, 'statsStreakMax', serializedQuery ].join();
-	}
+    (state, siteId, query) => {
+        return reduce(
+            getSiteStatsPostStreakData(state, siteId, query),
+            (posts, sum) => {
+                return sum + posts;
+            },
+            0
+        );
+    },
+    (state, siteId, query) => getSiteStatsForQuery(state, siteId, 'statsStreak', query),
+    (state, siteId, query) => {
+        const serializedQuery = getSerializedStatsQuery(query);
+        return [siteId, 'statsStreakMax', serializedQuery].join();
+    }
 );
 
 /**
@@ -155,9 +156,9 @@ export const getSiteStatsTotalPostsForStreakQuery = createSelector(
  * @param  {String}  date   Date in YYYY-MM-DD format
  * @return {?Number}        Number of posts made on date
  */
-export function getSiteStatsPostsCountByDay( state, siteId, query, date ) {
-	const data = getSiteStatsPostStreakData( state, siteId, query );
-	return data[ date ] || null;
+export function getSiteStatsPostsCountByDay(state, siteId, query, date) {
+    const data = getSiteStatsPostStreakData(state, siteId, query);
+    return data[date] || null;
 }
 
 /**
@@ -171,20 +172,20 @@ export function getSiteStatsPostsCountByDay( state, siteId, query, date ) {
  * @return {*}                Normalized Data for the query, typically an array or object
  */
 export const getSiteStatsNormalizedData = createSelector(
-	( state, siteId, statType, query ) => {
-		const data = getSiteStatsForQuery( state, siteId, statType, query );
-		if ( 'function' === typeof normalizers[ statType ] ) {
-			const site = getSite( state, siteId );
-			return normalizers[ statType ].call( this, data, query, siteId, site );
-		}
+    (state, siteId, statType, query) => {
+        const data = getSiteStatsForQuery(state, siteId, statType, query);
+        if ('function' === typeof normalizers[statType]) {
+            const site = getSite(state, siteId);
+            return normalizers[statType].call(this, data, query, siteId, site);
+        }
 
-		return data;
-	},
-	( state, siteId, statType, query ) => getSiteStatsForQuery( state, siteId, statType, query ),
-	( state, siteId, statType, query ) => {
-		const serializedQuery = getSerializedStatsQuery( query );
-		return [ siteId, statType, serializedQuery ].join();
-	}
+        return data;
+    },
+    (state, siteId, statType, query) => getSiteStatsForQuery(state, siteId, statType, query),
+    (state, siteId, statType, query) => {
+        const serializedQuery = getSerializedStatsQuery(query);
+        return [siteId, statType, serializedQuery].join();
+    }
 );
 
 /**
@@ -196,13 +197,15 @@ export const getSiteStatsNormalizedData = createSelector(
  * @param  {Object}  query    Stats query object
  * @return {Array}            Array of stats data ready for CSV export
  */
-export function getSiteStatsCSVData( state, siteId, statType, query ) {
-	const data = getSiteStatsNormalizedData( state, siteId, statType, query );
-	if ( ! data || ! isArray( data ) ) {
-		return [];
-	}
+export function getSiteStatsCSVData(state, siteId, statType, query) {
+    const data = getSiteStatsNormalizedData(state, siteId, statType, query);
+    if (!data || !isArray(data)) {
+        return [];
+    }
 
-	return flatten( map( data, ( item ) => {
-		return buildExportArray( item );
-	} ) );
+    return flatten(
+        map(data, item => {
+            return buildExportArray(item);
+        })
+    );
 }

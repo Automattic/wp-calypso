@@ -1,6 +1,10 @@
 module.exports = {
 	root: true,
-	'extends': 'wpcalypso/react',
+	'extends': [
+		'wpcalypso/react',
+		'prettier',
+		'prettier/react'
+	],
 	parser: 'babel-eslint',
 	env: {
 		browser: true,

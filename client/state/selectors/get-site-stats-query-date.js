@@ -17,7 +17,7 @@ import { getSerializedStatsQuery } from 'state/stats/lists/utils';
  * @param  {Object}  query    Stats query object
  * @return {Date}             Date of the last site stats query
  */
-export default function getSiteStatsQueryDate( state, siteId, statType, query ) {
-	const serializedQuery = getSerializedStatsQuery( query );
-	return get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'date' ] );
+export default function getSiteStatsQueryDate(state, siteId, statType, query) {
+    const serializedQuery = getSerializedStatsQuery(query);
+    return get(state.stats.lists.requests, [siteId, statType, serializedQuery, 'date']);
 }

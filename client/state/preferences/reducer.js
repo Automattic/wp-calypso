@@ -8,12 +8,12 @@ import { omit } from 'lodash';
  * Internal dependencies
  */
 import {
-	PREFERENCES_SET,
-	PREFERENCES_RECEIVE,
-	PREFERENCES_FETCH,
-	PREFERENCES_FETCH_SUCCESS,
-	PREFERENCES_FETCH_FAILURE,
-	PREFERENCES_SAVE_SUCCESS
+    PREFERENCES_SET,
+    PREFERENCES_RECEIVE,
+    PREFERENCES_FETCH,
+    PREFERENCES_FETCH_SUCCESS,
+    PREFERENCES_FETCH_FAILURE,
+    PREFERENCES_SAVE_SUCCESS,
 } from 'state/action-types';
 import { remoteValuesSchema } from './schema';
 import { createReducer } from 'state/utils';
@@ -28,18 +28,21 @@ import { createReducer } from 'state/utils';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const localValues = createReducer( {}, {
-	[ PREFERENCES_SET ]: ( state, { key, value } ) => {
-		if ( state[ key ] === value ) {
-			return state;
-		}
+export const localValues = createReducer(
+    {},
+    {
+        [PREFERENCES_SET]: (state, { key, value }) => {
+            if (state[key] === value) {
+                return state;
+            }
 
-		return { ...state, [ key ]: value };
-	},
-	[ PREFERENCES_SAVE_SUCCESS ]: ( state, { key } ) => {
-		return omit( state, key );
-	}
-} );
+            return { ...state, [key]: value };
+        },
+        [PREFERENCES_SAVE_SUCCESS]: (state, { key }) => {
+            return omit(state, key);
+        },
+    }
+);
 
 /**
  * Returns the updated remote values state after an action has been dispatched.
@@ -50,23 +53,27 @@ export const localValues = createReducer( {}, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const remoteValues = createReducer( null, {
-	[ PREFERENCES_RECEIVE ]: ( state, { values } ) => values
-}, remoteValuesSchema );
+export const remoteValues = createReducer(
+    null,
+    {
+        [PREFERENCES_RECEIVE]: (state, { values }) => values,
+    },
+    remoteValuesSchema
+);
 
-export const fetching = createReducer( false, {
-	[ PREFERENCES_FETCH_SUCCESS ]: () => false,
-	[ PREFERENCES_FETCH_FAILURE ]: () => false,
-	[ PREFERENCES_FETCH ]: () => true,
-} );
+export const fetching = createReducer(false, {
+    [PREFERENCES_FETCH_SUCCESS]: () => false,
+    [PREFERENCES_FETCH_FAILURE]: () => false,
+    [PREFERENCES_FETCH]: () => true,
+});
 
-const lastFetchedTimestamp = createReducer( false, {
-	[ PREFERENCES_FETCH_SUCCESS ]: () => Date.now(),
-} );
+const lastFetchedTimestamp = createReducer(false, {
+    [PREFERENCES_FETCH_SUCCESS]: () => Date.now(),
+});
 
-export default combineReducers( {
-	localValues,
-	remoteValues,
-	fetching,
-	lastFetchedTimestamp,
-} );
+export default combineReducers({
+    localValues,
+    remoteValues,
+    fetching,
+    lastFetchedTimestamp,
+});

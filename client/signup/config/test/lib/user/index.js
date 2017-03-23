@@ -3,9 +3,9 @@
  */
 
 export default () => {
-	return {
-		get() {
-			return {};
-		}
-	};
+    return {
+        get() {
+            return {};
+        },
+    };
 };

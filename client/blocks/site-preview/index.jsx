@@ -14,33 +14,33 @@ import urlPreview from 'blocks/url-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { getCurrentPreviewType } from 'state/ui/preview/selectors';
 
-const DesignPreview = designPreview( WebPreview );
-const UrlPreview = urlPreview( WebPreview );
+const DesignPreview = designPreview(WebPreview);
+const UrlPreview = urlPreview(WebPreview);
 
 class SitePreview extends Component {
-	render() {
-		const components = {
-			'design-preview': DesignPreview,
-			'site-preview': UrlPreview,
-		};
-		const Preview = components[ this.props.currentPreviewType ] || noop;
-		return <Preview showPreview={ this.props.showPreview } />;
-	}
+    render() {
+        const components = {
+            'design-preview': DesignPreview,
+            'site-preview': UrlPreview,
+        };
+        const Preview = components[this.props.currentPreviewType] || noop;
+        return <Preview showPreview={this.props.showPreview} />;
+    }
 }
 
 SitePreview.propTypes = {
-	currentPreviewType: PropTypes.string,
-	showPreview: PropTypes.bool,
+    currentPreviewType: PropTypes.string,
+    showPreview: PropTypes.bool,
 };
 
 SitePreview.defaultProps = {
-	currentPreviewType: 'site-preview',
-	showPreview: false,
+    currentPreviewType: 'site-preview',
+    showPreview: false,
 };
 
-const mapStateToProps = state => ( {
-	currentPreviewType: getCurrentPreviewType( state ),
-	showPreview: getCurrentLayoutFocus( state ) === 'preview',
-} );
+const mapStateToProps = state => ({
+    currentPreviewType: getCurrentPreviewType(state),
+    showPreview: getCurrentLayoutFocus(state) === 'preview',
+});
 
-export default connect( mapStateToProps )( SitePreview );
+export default connect(mapStateToProps)(SitePreview);

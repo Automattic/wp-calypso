@@ -5,33 +5,37 @@ import classNames from 'classnames';
 import React, { PropTypes } from 'react';
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
+export default React.createClass({
+    displayName: 'PlanCompareCardItem',
 
-	displayName: 'PlanCompareCardItem',
+    propTypes: {
+        highlight: PropTypes.bool,
+        unavailable: PropTypes.bool,
+    },
 
-	propTypes: {
-		highlight: PropTypes.bool,
-		unavailable: PropTypes.bool
-	},
+    getDefaultProps() {
+        return {
+            highlight: false,
+            unavailable: false,
+        };
+    },
 
-	getDefaultProps() {
-		return {
-			highlight: false,
-			unavailable: false
-		};
-	},
-
-	render() {
-		const classes = classNames( this.props.className, 'plan-compare-card-item', {
-			'is-highlight': this.props.highlight,
-			'is-unavailable': this.props.unavailable
-		} );
-		const showCheckmark = this.props.highlight || ! this.props.unavailable;
-		return (
-			<li className={ classes }>
-				{ showCheckmark && <Gridicon className="plan-compare-card-item__checkmark" size={ 18 } icon="checkmark" /> }
-				{ this.props.children }
-			</li>
-		);
-	}
-} );
+    render() {
+        const classes = classNames(this.props.className, 'plan-compare-card-item', {
+            'is-highlight': this.props.highlight,
+            'is-unavailable': this.props.unavailable,
+        });
+        const showCheckmark = this.props.highlight || !this.props.unavailable;
+        return (
+            <li className={classes}>
+                {showCheckmark &&
+                    <Gridicon
+                        className="plan-compare-card-item__checkmark"
+                        size={18}
+                        icon="checkmark"
+                    />}
+                {this.props.children}
+            </li>
+        );
+    },
+});

@@ -14,54 +14,54 @@ import Button from 'components/button';
 import Popover from 'components/popover';
 
 class ContactFormDialogFieldEditButton extends PureComponent {
-	static propTypes = {
-		expanded: PropTypes.bool.isRequired
-	};
+    static propTypes = {
+        expanded: PropTypes.bool.isRequired,
+    };
 
-	constructor() {
-		super( ...arguments );
-		this.state = { showTooltip: false };
-		this.handleMouseEnter = this.handleMouseEnter.bind( this );
-		this.handleMouseLeave = this.handleMouseLeave.bind( this );
-	}
+    constructor() {
+        super(...arguments);
+        this.state = { showTooltip: false };
+        this.handleMouseEnter = this.handleMouseEnter.bind(this);
+        this.handleMouseLeave = this.handleMouseLeave.bind(this);
+    }
 
-	handleMouseEnter() {
-		this.setState( { showTooltip: true } );
-	}
+    handleMouseEnter() {
+        this.setState({ showTooltip: true });
+    }
 
-	handleMouseLeave() {
-		this.setState( { showTooltip: false } );
-	}
+    handleMouseLeave() {
+        this.setState({ showTooltip: false });
+    }
 
-	render() {
-		const { expanded, translate } = this.props;
-		const classes = classNames( 'editor-contact-form-modal-field__edit', {
-			'is-expanded': expanded
-		} );
+    render() {
+        const { expanded, translate } = this.props;
+        const classes = classNames('editor-contact-form-modal-field__edit', {
+            'is-expanded': expanded,
+        });
 
-		return (
-			<div className="editor-contact-form-modal-field__edit-wrapper foldable-card__expand" >
-				<Button
-					className="editor-contact-form-modal-field__edit-wrapper-button"
-					ref="editField"
-					borderless
-					onMouseEnter={ this.handleMouseEnter }
-					onMouseLeave={ this.handleMouseLeave }
-				>
-						<Gridicon icon="pencil" className={ classes } />
-				</Button>
-				<Popover
-					isVisible={ this.state.showTooltip }
-					context={ this.refs && this.refs.editField }
-					onClose={ noop }
-					position="bottom"
-					className="popover tooltip is-dialog-visible"
-				>
-						{ translate( 'Edit Field', { context: 'button tooltip' } ) }
-				</Popover>
-			</div>
-		);
-	}
+        return (
+            <div className="editor-contact-form-modal-field__edit-wrapper foldable-card__expand">
+                <Button
+                    className="editor-contact-form-modal-field__edit-wrapper-button"
+                    ref="editField"
+                    borderless
+                    onMouseEnter={this.handleMouseEnter}
+                    onMouseLeave={this.handleMouseLeave}
+                >
+                    <Gridicon icon="pencil" className={classes} />
+                </Button>
+                <Popover
+                    isVisible={this.state.showTooltip}
+                    context={this.refs && this.refs.editField}
+                    onClose={noop}
+                    position="bottom"
+                    className="popover tooltip is-dialog-visible"
+                >
+                    {translate('Edit Field', { context: 'button tooltip' })}
+                </Popover>
+            </div>
+        );
+    }
 }
 
-export default localize( ContactFormDialogFieldEditButton );
+export default localize(ContactFormDialogFieldEditButton);

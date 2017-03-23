@@ -5,49 +5,46 @@ import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import Gridicon from 'gridicons';
 
-export default React.createClass( {
+export default React.createClass({
+    displayName: 'EditorRevisions',
 
-	displayName: 'EditorRevisions',
+    mixins: [PureRenderMixin],
 
-	mixins: [ PureRenderMixin ],
+    propTypes: {
+        adminUrl: React.PropTypes.string,
+        revisions: React.PropTypes.array,
+    },
 
-	propTypes: {
-		adminUrl: React.PropTypes.string,
-		revisions: React.PropTypes.array
-	},
+    getDefaultProps() {
+        return {
+            revisions: [],
+        };
+    },
 
-	getDefaultProps() {
-		return {
-			revisions: []
-		};
-	},
+    render() {
+        if (!this.props.revisions || !this.props.revisions.length) {
+            return null;
+        }
 
-	render() {
-		if ( ! this.props.revisions || ! this.props.revisions.length ) {
-			return null;
-		}
+        const lastRevision = this.props.revisions[0];
+        const revisionsLink = this.props.adminUrl + 'revision.php?revision=' + lastRevision;
 
-		const lastRevision = this.props.revisions[0];
-		const revisionsLink = this.props.adminUrl + 'revision.php?revision=' + lastRevision;
-
-		return (
-			<a className="editor-revisions"
-				href={ revisionsLink }
-				target="_blank"
-				rel="noopener noreferrer"
-				aria-label={ this.translate( 'Open list of revisions' ) }
-			>
-				<Gridicon icon="history" size={ 18 } />
-				{ this.translate(
-					'%(revisions)d revision',
-					'%(revisions)d revisions', {
-						count: this.props.revisions.length,
-						args: {
-							revisions: this.props.revisions.length
-						}
-					}
-				) }
-			</a>
-		);
-	}
-} );
+        return (
+            <a
+                className="editor-revisions"
+                href={revisionsLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={this.translate('Open list of revisions')}
+            >
+                <Gridicon icon="history" size={18} />
+                {this.translate('%(revisions)d revision', '%(revisions)d revisions', {
+                    count: this.props.revisions.length,
+                    args: {
+                        revisions: this.props.revisions.length,
+                    },
+                })}
+            </a>
+        );
+    },
+});
