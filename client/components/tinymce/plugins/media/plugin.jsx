@@ -3,7 +3,6 @@
  */
 import ReactDom from 'react-dom';
 import ReactDomServer from 'react-dom/server';
-import { Provider as ReduxProvider } from 'react-redux';
 import React from 'react';
 import tinymce from 'tinymce/tinymce';
 import { assign, debounce, find, findLast, pick, values } from 'lodash';
@@ -33,6 +32,7 @@ import config from 'config';
 import { getSelectedSite } from 'state/ui/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 /**
  * Module variables
@@ -89,17 +89,18 @@ function mediaButton( editor ) {
 			store.dispatch( setEditorMediaModalView( view ) );
 		}
 
-		ReactDom.render(
-			<ReduxProvider store={ store }>
-				<EditorMediaModal
-					{ ...props }
-					onClose={ renderModal.bind( null, { visible: false } ) }
-					onInsertMedia={ ( markup ) => {
-						insertMedia( markup );
-						renderModal( { visible: false } );
-					} } />
-			</ReduxProvider>,
-			nodes.modal
+		renderWithReduxStore(
+			<EditorMediaModal
+				{ ...props }
+				/* eslint-disable react/jsx-no-bind */
+				onClose={ renderModal.bind( null, { visible: false } ) }
+				/* eslint-disable react/jsx-no-bind */
+				onInsertMedia={ ( markup ) => {
+					insertMedia( markup );
+					renderModal( { visible: false } );
+				} } />,
+			nodes.modal,
+			store
 		);
 	}
 

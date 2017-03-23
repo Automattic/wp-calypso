@@ -15,13 +15,14 @@ var tinymce = require( 'tinymce/tinymce' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react'),
 	i18n = require( 'i18n-calypso' );
-import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 var views = require( './views' ),
 	sites = require( 'lib/sites-list' )();
+
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 /**
  * WordPress View plugin.
@@ -90,15 +91,14 @@ function wpview( editor ) {
 
 			type = $view.attr( 'data-wpview-type' );
 
-			ReactDom.render(
-				React.createElement( ReduxProvider, { store: editor.getParam( 'redux_store' ) },
-					React.createElement( views.components[ type ], {
-						content: getText( view ),
-						siteId: sites.getSelectedSite() ? sites.getSelectedSite().ID : null,
-						onResize: debounce( triggerNodeChanged, 500 )
-					} )
-				),
-				$view.find( '.wpview-body' )[ 0 ]
+			renderWithReduxStore(
+				React.createElement( views.components[ type ], {
+					content: getText( view ),
+					siteId: sites.getSelectedSite() ? sites.getSelectedSite().ID : null,
+					onResize: debounce( triggerNodeChanged, 500 )
+				} ),
+				$view.find( '.wpview-body' )[0],
+				editor.getParam( 'redux_store' )
 			);
 
 			$view.attr( 'data-wpview-rendered', '' );
@@ -656,7 +656,7 @@ function wpview( editor ) {
 					}
 				}
 				event.preventDefault();
-			} else if ( cursorBefore && ( key === VK.UP || key ===  VK.LEFT ) ) {
+			} else if ( cursorBefore && ( key === VK.UP || key === VK.LEFT ) ) {
 				if ( view.previousSibling ) {
 					if ( getView( view.previousSibling ) ) {
 						setViewCursor( key === VK.UP, view.previousSibling );

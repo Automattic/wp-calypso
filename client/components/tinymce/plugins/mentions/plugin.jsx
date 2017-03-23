@@ -4,13 +4,13 @@
 import tinymce from 'tinymce/tinymce';
 import ReactDom from 'react-dom';
 import React from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Mentions from './mentions';
 import { getSelectedSite } from 'state/ui/selectors';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 /**
  * Module variables
@@ -29,11 +29,10 @@ function mentions( editor ) {
 			node.setAttribute( 'class', 'mentions__container' );
 			editor.getContainer().appendChild( node );
 
-			ReactDom.render(
-				<ReduxProvider store={ store }>
-					<Mentions editor={ editor } node={ node } />
-				</ReduxProvider>,
-				node
+			renderWithReduxStore(
+				<Mentions editor={ editor } node={ node } />,
+				node,
+				store
 			);
 
 			isRendered = true;

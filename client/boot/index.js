@@ -54,6 +54,7 @@ var config = require( 'config' ),
 
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 function init() {
 	var i18nLocaleStringsObject = null;
@@ -165,14 +166,7 @@ function boot() {
 function renderLayout( reduxStore ) {
 	const Layout = require( 'controller' ).ReduxWrappedLayout;
 
-	const layoutElement = React.createElement( Layout, {
-		store: reduxStore
-	} );
-
-	ReactDom.render(
-		layoutElement,
-		document.getElementById( 'wpcom' )
-	);
+	renderWithReduxStore( React.createElement( Layout, { store: reduxStore } ), 'wpcom', reduxStore );
 
 	debug( 'Main layout rendered.' );
 }

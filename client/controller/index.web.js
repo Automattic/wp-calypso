@@ -18,6 +18,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import userFactory from 'lib/user';
 import sitesFactory from 'lib/sites-list';
 import debugFactory from 'debug';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 /**
  * Re-export
@@ -89,12 +90,7 @@ function renderPrimary( context ) {
 
 	if ( primary ) {
 		debug( 'Rendering primary', primary );
-		ReactDom.render(
-			<ReduxProvider store={ store }>
-				{ primary }
-			</ReduxProvider>,
-			document.getElementById( 'primary' )
-		);
+		renderWithReduxStore( primary, 'primary', store );
 	}
 }
 
@@ -106,11 +102,6 @@ function renderSecondary( context ) {
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 	} else if ( secondary !== undefined ) {
 		debug( 'Rendering secondary' );
-		ReactDom.render(
-			<ReduxProvider store={ store }>
-				{ secondary }
-			</ReduxProvider>,
-			document.getElementById( 'secondary' )
-		);
+		renderWithReduxStore( secondary, 'secondary', store );
 	}
 }
