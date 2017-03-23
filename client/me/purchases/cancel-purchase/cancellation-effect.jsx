@@ -9,7 +9,7 @@ import React from 'react';
 import { getName, getSubscriptionEndDate, isRefundable } from 'lib/purchases';
 import { isDomainMapping, isGoogleApps, isJetpackPlan, isTheme } from 'lib/products-values';
 
-function cancellationEffectHeadline( purchase, translate ) {
+export function cancellationEffectHeadline( purchase, translate ) {
 	const { domain } = purchase;
 	const	purchaseName = getName( purchase );
 
@@ -116,14 +116,9 @@ function nonrefundableCancellationEffectDetail( purchase, translate ) {
 	);
 }
 
-function cancellationEffectDetail( purchase, translate ) {
+export function cancellationEffectDetail( purchase, translate ) {
 	if ( isRefundable( purchase ) ) {
 		return refundableCancellationEffectDetail( purchase, translate );
 	}
 	return nonrefundableCancellationEffectDetail( purchase, translate );
 }
-
-export {
-	cancellationEffectDetail,
-	cancellationEffectHeadline,
-};
