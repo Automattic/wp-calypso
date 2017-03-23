@@ -50,7 +50,8 @@ export default {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		if ( searchSlug ) {
 			recordTrack( 'calypso_reader_search_performed', {
-				query: searchSlug
+				query: searchSlug,
+				sort
 			} );
 		} else {
 			recordTrack( 'calypso_reader_search_loaded' );
