@@ -21,6 +21,7 @@ import * as stats from 'reader/stats';
 import { getFeed } from 'state/reader/feeds/selectors';
 import { getSite } from 'state/reader/sites/selectors';
 import QueryReaderFeed from 'components/data/query-reader-feed';
+import QueryReaderSite from 'components/data/query-reader-feed';
 
 class ReaderPostOptionsMenu extends React.Component {
 
@@ -93,6 +94,7 @@ class ReaderPostOptionsMenu extends React.Component {
 			isEditPossible = PostUtils.userCan( 'edit_post', post ),
 			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
 			followUrl = this.getFollowUrl();
+		const { site, feed } = this.props;
 
 		let isBlockPossible = false;
 
@@ -105,7 +107,8 @@ class ReaderPostOptionsMenu extends React.Component {
 
 		return (
 			<span className={ classes }>
-				{ post && post.feed_ID && <QueryReaderFeed feedId={ post.feed_ID } /> }
+				{ ! feed && post && post.feed_ID && <QueryReaderFeed feedId={ post.feed_ID } /> }
+				{ ! site && post && post.site_ID && <QueryReaderSite siteId={ post.site_ID } /> }
 				<EllipsisMenu
 					className="reader-post-options-menu__ellipsis-menu"
 					popoverClassName="reader-post-options-menu__popover"
