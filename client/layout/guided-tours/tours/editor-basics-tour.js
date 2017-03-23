@@ -122,7 +122,15 @@ export const EditorBasicsTour = makeTour(
 			style={ { marginTop: '-17px' } }
 			>
 			<p>
-				Your changes are saved automatically. Click here when you're ready to publish!
+				{
+					translate( 'Your changes are saved automatically. ' +
+									'Click {{strong}}Publish{{/strong}} to share your work with the world!',
+						{
+							components: {
+								strong: <strong />,
+							}
+						} )
+				}
 			</p>
 			<ButtonRow>
 				<Quit primary>Got it, I'm ready to write!</Quit>
