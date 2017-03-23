@@ -30,6 +30,7 @@ import {
 	THEMES_REQUEST_FAILURE,
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
+	INVALIDATE_THEME_QUERIES,
 } from 'state/action-types';
 import {
 	getSerializedThemesQuery,
@@ -309,7 +310,7 @@ export const queries = ( () => {
 
 	return createReducer( {}, {
 		[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query, themes, found } ) => {
-			return applyToManager( state, siteId, 'receive', true, themes, { query, found } );
+			return applyToManager( state, siteId, 'receive', true, themes, { query, found, preserveOtherQueries: true } );
 		},
 		[ THEME_DELETE_SUCCESS ]: ( state, { siteId, themeId } ) => {
 			return applyToManager( state, siteId, 'removeItem', false, themeId );
@@ -328,6 +329,34 @@ export const queries = ( () => {
 		},
 	} );
 } )();
+
+/**
+ * Returns the updated query request success state after an action has been
+ * dispatched. The state reflects a mapping of site ID, query ID pairing to an
+ * object containing the queriess that reutrned successfully.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export const queryRequestSuccess = createReducer( {}, {
+	[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query } ) => {
+		const serializedQuery = JSON.stringify( omit( query, 'page' ) );
+		return {
+			...state,
+			[ siteId ]: {
+				...state[ siteId ],
+				[ serializedQuery ]: query.page
+			}
+		};
+	},
+	[ INVALIDATE_THEME_QUERIES ]: ( state, { siteId } ) => {
+		return {
+			...state,
+			[ siteId ]: {}
+		};
+	}
+} );
 
 /**
  * Returns the updated themes last query state.
@@ -375,6 +404,7 @@ export default combineReducers( {
 	queries,
 	queryRequests,
 	queryRequestErrors,
+	queryRequestSuccess,
 	lastQuery,
 	themeInstalls,
 	themeRequests,

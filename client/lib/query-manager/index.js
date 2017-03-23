@@ -350,7 +350,8 @@ export default class QueryManager {
 							memo[ queryKey ].found--;
 						}
 					}
-				} else if ( updatedItem && this.matches( query, updatedItem ) ) {
+				} else if ( updatedItem && this.matches( query, updatedItem ) &&
+					( ! options.preserveOtherQueries || isReceivedQueryKey ) ) {
 					// Item doesn't currently exist in query but is a match, so
 					// insert item into set
 

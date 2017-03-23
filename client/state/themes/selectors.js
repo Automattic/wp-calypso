@@ -38,17 +38,14 @@ import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
  * @param  {String}  themeId Theme ID
  * @return {?Object}         Theme object
  */
-export const getTheme = createSelector(
-	( state, siteId, themeId ) => {
-		const manager = state.themes.queries[ siteId ];
-		if ( ! manager ) {
-			return null;
-		}
+export function getTheme( state, siteId, themeId ) {
+	const manager = state.themes.queries[ siteId ];
+	if ( ! manager ) {
+		return null;
+	}
 
-		return manager.getItem( themeId );
-	},
-	( state ) => state.themes.queries
-);
+	return manager.getItem( themeId );
+}
 
 /**
  * Returns a theme object from what is considered the 'canonical' source, i.e.
@@ -205,6 +202,18 @@ export function getThemesLastPageForQuery( state, siteId, query ) {
 	return Math.max( pages, 1 );
 }
 
+export function hasAllPagesQueried( state, siteId, query ) {
+	const lastPage = getThemesLastPageForQuery( state, siteId, query );
+	const lastQueriedPage = getLastQueriedPageNumberForQuery( state, siteId, query );
+
+	return lastPage === lastQueriedPage;
+}
+
+export function wasQueryFetched( state, siteId, query ) {
+	const lastQueriedPage = getLastQueriedPageNumberForQuery( state, siteId, query );
+	return query.page <= lastQueriedPage;
+}
+
 /**
  * Returns true if the query has reached the last page of queryable pages, or
  * null if the total number of queryable themes if unknown.
@@ -251,6 +260,30 @@ export const getThemesForQueryIgnoringPage = createSelector(
 	( state ) => state.themes.queries,
 	( state, siteId, query ) => getSerializedThemesQueryWithoutPage( query, siteId )
 );
+
+export function getAllAvailableThemesForQueryIgnoringPage( state, siteId, query ) {
+	const themes = state.themes.queries[ siteId ];
+	if ( ! themes ) {
+		return null;
+	}
+
+	const themesForQueryIgnoringPage = themes.getItemsIgnoringPage( query );
+	if ( ! themesForQueryIgnoringPage ) {
+		return null;
+	}
+
+	// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
+	// over different pages) which we need to remove manually here for now.
+	return uniq( themesForQueryIgnoringPage );
+}
+
+export function getLastQueriedPageNumberForQuery( state, siteId, query ) {
+	if ( ! state.themes.queryRequestSuccess[ siteId ] ) {
+		return 0;
+	}
+	const serializedQuery = JSON.stringify( omit( query, 'page' ) );
+	return get( state.themes.queryRequestSuccess[ siteId ], serializedQuery, 0 );
+}
 
 /**
  * Returns true if currently requesting themes for the themes query, regardless

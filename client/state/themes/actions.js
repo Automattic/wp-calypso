@@ -45,6 +45,7 @@ import {
 	THEMES_REQUEST_FAILURE,
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
+	INVALIDATE_THEME_QUERIES,
 } from 'state/action-types';
 import {
 	recordTracksEvent,
@@ -595,6 +596,10 @@ export function uploadTheme( siteId, file ) {
 					siteId,
 					themeId: theme.id,
 				} );
+				dispatch( {
+					type: INVALIDATE_THEME_QUERIES,
+					siteId,
+				})
 			} )
 			.catch( error => {
 				dispatch( {

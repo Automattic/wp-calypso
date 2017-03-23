@@ -18,10 +18,11 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
-	getThemesForQueryIgnoringPage,
+	getAllAvailableThemesForQueryIgnoringPage,
+	getLastQueriedPageNumberForQuery,
 	getThemesFoundForQuery,
 	isRequestingThemesForQuery,
-	isThemesLastPageForQuery,
+	hasAllPagesQueried,
 	isPremiumThemeAvailable,
 	isThemeActive,
 	isInstallingTheme
@@ -38,7 +39,7 @@ const ThemesSelection = React.createClass( {
 		onScreenshotClick: PropTypes.func,
 		getOptions: PropTypes.func,
 		getActionLabel: PropTypes.func,
-		incrementPage: PropTypes.func,
+		setPage: PropTypes.func,
 		resetPage: PropTypes.func,
 		// connected props
 		source: PropTypes.oneOfType( [
@@ -62,9 +63,16 @@ const ThemesSelection = React.createClass( {
 		};
 	},
 
+	getInitialState: function() {
+		return {
+			noInitialFetchPage: true,
+		};
+	},
+
 	componentWillReceiveProps( nextProps ) {
 		if ( ! isEqual( omit( this.props.query, PAGINATION_QUERY_KEYS ), omit( nextProps.query, PAGINATION_QUERY_KEYS ) ) ) {
 			this.props.resetPage();
+			this.setState( { noInitialFetchPage: true } );
 		}
 	},
 
@@ -103,15 +111,20 @@ const ThemesSelection = React.createClass( {
 	},
 
 	fetchNextPage( options ) {
+		if ( this.state.noInitialFetchPage ) {
+			this.setState( { noInitialFetchPage: false } );
+			return;
+		}
+
 		if ( this.props.isRequesting || this.props.isLastPage ) {
 			return;
 		}
 
 		if ( options.triggeredByScroll ) {
+			this.props.setPage( this.props.lastQueriedPage + 1 );
 			this.trackScrollPage();
 		}
-
-		this.props.incrementPage();
+		this.props.setPage( this.props.query.page + 1 );
 	},
 
 	//intercept preview and add primary and secondary
@@ -201,10 +214,11 @@ const ConnectedThemesSelection = connect(
 			query,
 			source: sourceSiteId,
 			siteSlug: getSiteSlug( state, siteId ),
-			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
+			themes: getAllAvailableThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
 			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
 			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),
-			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
+			lastQueriedPage: getLastQueriedPageNumberForQuery( state, sourceSiteId, query ),
+			isLastPage: hasAllPagesQueried( state, sourceSiteId, query ),
 			isLoggedIn: !! getCurrentUserId( state ),
 			isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
 			isInstallingTheme: themeId => isInstallingTheme( state, themeId, siteId ),
@@ -225,12 +239,24 @@ const ConnectedThemesSelection = connect(
  * call for selectors that require the entire query object, including the page.
  */
 class ThemesSelectionWithPage extends React.Component {
+
+	componentWillReceiveProps = ( nextProps ) => {
+		if (
+			this.props.search !== nextProps.search ||
+			this.props.tier !== nextProps.tier ||
+			compact( [ this.props.filter, this.props.vertical ] ).join( ',' ) !==
+			compact( [ nextProps.filter, nextProps.vertical ] ).join( ',' )
+		) {
+			this.setState( { page: 1 } );
+		}
+	}
+
 	state = {
 		page: 1,
 	};
 
-	incrementPage = () => {
-		this.setState( { page: this.state.page + 1 } );
+	setPage = ( page ) => {
+		this.setState( { page } );
 	}
 
 	resetPage = () => {
@@ -241,7 +267,7 @@ class ThemesSelectionWithPage extends React.Component {
 		return (
 			<ConnectedThemesSelection { ...this.props }
 				page={ this.state.page }
-				incrementPage={ this.incrementPage }
+				setPage={ this.setPage }
 				resetPage={ this.resetPage }
 			/>
 		);
