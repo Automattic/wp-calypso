@@ -35,7 +35,7 @@ export function boot( currentUser ) {
 		loadSections();
 
 		// TODO: make project name dynamic based on config
-		require( './wordpress-com' ).boot( currentUser, reduxStore );
+		require( './project/wordpress-com' ).boot( currentUser, reduxStore );
 
 		// TODO: init project specific middlewares
 
