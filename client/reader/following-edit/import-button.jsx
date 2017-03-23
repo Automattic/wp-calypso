@@ -35,7 +35,9 @@ const FollowingImportButton = React.createClass( {
 	onPick( files ) {
 		// we only care about the first file in the list
 		const file = files[ 0 ];
-		if ( ! file ) return;
+		if ( ! file ) {
+			return;
+		}
 
 		this.fileName = file.name;
 		const req = wpcom.undocumented().importReaderFeed( file, this.onImport );
