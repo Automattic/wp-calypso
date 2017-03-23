@@ -52,7 +52,7 @@ export default class ProductForm extends Component {
 				expanded={ true }
 				className="product-variations"
 				header={ ( <FormToggle onChange={ this.handleToggle } checked={ this.state.isVariation }>
-					{variationToggleDescription}
+				{variationToggleDescription}
 				</FormToggle>
 				) }
 			>

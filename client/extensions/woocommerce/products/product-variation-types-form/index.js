@@ -51,7 +51,7 @@ export default class ProductVariationTypesForm extends Component {
 
 	updateType( index, event ) {
 		event.preventDefault();
-		const updatedVariations = [ ... this.state.variations ];
+		const updatedVariations = [ ...this.state.variations ];
 		updatedVariations[ index ] = { ...updatedVariations[ index ], type: event.target.value };
 		this.setState( { variations: updatedVariations } );
 	}
@@ -91,7 +91,7 @@ export default class ProductVariationTypesForm extends Component {
 	render() {
 		const inputs = this.state.variations.map( this.renderInputs, this );
 		return (
-			<div className="product-variation-types-form">
+			<div className="product-variation-types-form__wrapper">
 				<strong>{ i18n.translate( 'Variation types' ) }</strong>
 				<p>
 					{ i18n.translate(
