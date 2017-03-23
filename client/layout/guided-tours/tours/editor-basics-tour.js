@@ -114,7 +114,17 @@ export const EditorBasicsTour = makeTour(
 			style={ { marginTop: '-9px' } }
 			>
 			<p>
-				Find additional settings in the sidebar, such as tags, categories, and the featured image.
+				Find additional settings in the sidebar — such as tags, categories, and the featured image.
+			</p>
+			<p>
+				{
+					translate( 'Click the {{icon/}} to show or hide these settings.', {
+						components: {
+							icon: <Gridicon icon="cog" />,
+						}
+					} )
+				}
+
 			</p>
 			<ButtonRow>
 				<Next step="publish">Continue</Next>
