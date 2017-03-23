@@ -8,18 +8,18 @@ import { assert } from 'chai';
  */
 import { isRequestingAccountRecoveryResetOptions } from '../';
 
-describe( 'isRequestingAccountRecoveryResetOptions()', () => {
-	it( 'should return the isRequesting flag under the accountRecovery.reset.options substate tree.', () => {
-		const state = {
-			accountRecovery: {
-				reset: {
-					options: {
-						isRequesting: true,
-					},
-				},
-			},
-		};
+describe('isRequestingAccountRecoveryResetOptions()', () => {
+    it('should return the isRequesting flag under the accountRecovery.reset.options substate tree.', () => {
+        const state = {
+            accountRecovery: {
+                reset: {
+                    options: {
+                        isRequesting: true,
+                    },
+                },
+            },
+        };
 
-		assert.isTrue( isRequestingAccountRecoveryResetOptions( state ) );
-	} );
-} );
+        assert.isTrue(isRequestingAccountRecoveryResetOptions(state));
+    });
+});

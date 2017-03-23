@@ -17,6 +17,6 @@ import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
  * @param  {Number}  userId User ID
  * @return {Boolean}        Whether broken connection exists
  */
-export default function hasBrokenSiteUserConnection( state, siteId, userId ) {
-	return some( getSiteUserConnections( state, siteId, userId ), { status: 'broken' } );
+export default function hasBrokenSiteUserConnection(state, siteId, userId) {
+    return some(getSiteUserConnections(state, siteId, userId), { status: 'broken' });
 }

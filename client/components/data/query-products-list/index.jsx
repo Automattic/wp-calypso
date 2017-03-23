@@ -11,23 +11,22 @@ import { isProductsListFetching as isFetching } from 'state/products-list/select
 import { requestProductsList } from 'state/products-list/actions';
 
 class QueryProductsList extends Component {
-	componentWillMount() {
-		if ( ! this.props.isFetching ) {
-			this.props.requestProductsList();
-		}
-	}
+    componentWillMount() {
+        if (!this.props.isFetching) {
+            this.props.requestProductsList();
+        }
+    }
 
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
 QueryProductsList.propTypes = {
-	isFetching: PropTypes.bool,
-	requestProductsList: PropTypes.func
+    isFetching: PropTypes.bool,
+    requestProductsList: PropTypes.func,
 };
 
-export default connect(
-	state => ( { isFetching: isFetching( state ) } ),
-	{ requestProductsList }
-)( QueryProductsList );
+export default connect(state => ({ isFetching: isFetching(state) }), { requestProductsList })(
+    QueryProductsList
+);

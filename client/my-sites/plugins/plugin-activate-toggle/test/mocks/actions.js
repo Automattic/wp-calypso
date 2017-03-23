@@ -4,6 +4,6 @@
 import sinon from 'sinon';
 
 export default {
-	togglePluginActivation: sinon.spy(),
-	removePluginsNotices: () => {}
+    togglePluginActivation: sinon.spy(),
+    removePluginsNotices: () => {},
 };

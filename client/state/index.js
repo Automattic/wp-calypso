@@ -62,76 +62,76 @@ import wordads from './wordads/reducer';
 /**
  * Module variables
  */
-export const reducer = combineReducers( {
-	application,
-	accountRecovery,
-	automatedTransfer,
-	billingTransactions,
-	comments,
-	componentsUsageStats,
-	countryStates,
-	currentUser,
-	documentHead,
-	domains,
-	geo,
-	googleAppsUsers,
-	happinessEngineers,
-	happychat,
-	help,
-	jetpackConnect,
-	jetpack,
-	jetpackSync,
-	media,
-	notices,
-	pageTemplates,
-	plugins,
-	plans,
-	postFormats,
-	posts,
-	postTypes,
-	preferences,
-	preview,
-	productsList,
-	purchases,
-	pushNotifications,
-	reader,
-	receipts,
-	sharing,
-	shortcodes,
-	signup,
-	sites,
-	siteRoles,
-	siteSettings,
-	stats,
-	storedCards,
-	support,
-	terms,
-	timezones,
-	themes,
-	ui,
-	users,
-	wordads,
-} );
+export const reducer = combineReducers({
+    application,
+    accountRecovery,
+    automatedTransfer,
+    billingTransactions,
+    comments,
+    componentsUsageStats,
+    countryStates,
+    currentUser,
+    documentHead,
+    domains,
+    geo,
+    googleAppsUsers,
+    happinessEngineers,
+    happychat,
+    help,
+    jetpackConnect,
+    jetpack,
+    jetpackSync,
+    media,
+    notices,
+    pageTemplates,
+    plugins,
+    plans,
+    postFormats,
+    posts,
+    postTypes,
+    preferences,
+    preview,
+    productsList,
+    purchases,
+    pushNotifications,
+    reader,
+    receipts,
+    sharing,
+    shortcodes,
+    signup,
+    sites,
+    siteRoles,
+    siteSettings,
+    stats,
+    storedCards,
+    support,
+    terms,
+    timezones,
+    themes,
+    ui,
+    users,
+    wordads,
+});
 
-export function createReduxStore( initialState = {} ) {
-	const isBrowser = typeof window === 'object';
-	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
+export function createReduxStore(initialState = {}) {
+    const isBrowser = typeof window === 'object';
+    const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
 
-	const middlewares = [
-		thunkMiddleware,
-		noticesMiddleware,
-		isBrowser && require( './happychat/middleware.js' ).default(),
-		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
-		isBrowser && require( './data-layer/wpcom-api-middleware.js' ).default,
-		isAudioSupported && require( './audio/middleware.js' ).default,
-	].filter( Boolean );
+    const middlewares = [
+        thunkMiddleware,
+        noticesMiddleware,
+        isBrowser && require('./happychat/middleware.js').default(),
+        isBrowser && require('./analytics/middleware.js').analyticsMiddleware,
+        isBrowser && require('./data-layer/wpcom-api-middleware.js').default,
+        isAudioSupported && require('./audio/middleware.js').default,
+    ].filter(Boolean);
 
-	const enhancers = [
-		isBrowser && window.app && window.app.isDebug && consoleDispatcher,
-		applyMiddleware( ...middlewares ),
-		isBrowser && sitesSync,
-		isBrowser && window.devToolsExtension && window.devToolsExtension()
-	].filter( Boolean );
+    const enhancers = [
+        isBrowser && window.app && window.app.isDebug && consoleDispatcher,
+        applyMiddleware(...middlewares),
+        isBrowser && sitesSync,
+        isBrowser && window.devToolsExtension && window.devToolsExtension(),
+    ].filter(Boolean);
 
-	return compose( ...enhancers )( createStore )( reducer, initialState );
+    return compose(...enhancers)(createStore)(reducer, initialState);
 }

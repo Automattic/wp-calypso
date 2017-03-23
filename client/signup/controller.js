@@ -32,72 +32,80 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
 let refParameter, queryObject;
 
 export default {
-	redirectWithoutLocaleIfLoggedIn( context, next ) {
-		if ( user.get() && utils.getLocale( context.params ) ) {
-			const flowName = utils.getFlowName( context.params ),
-				stepName = utils.getStepName( context.params ),
-				stepSectionName = utils.getStepSectionName( context.params ),
-				urlWithoutLocale = utils.getStepUrl( flowName, stepName, stepSectionName );
+    redirectWithoutLocaleIfLoggedIn(context, next) {
+        if (user.get() && utils.getLocale(context.params)) {
+            const flowName = utils.getFlowName(context.params),
+                stepName = utils.getStepName(context.params),
+                stepSectionName = utils.getStepSectionName(context.params),
+                urlWithoutLocale = utils.getStepUrl(flowName, stepName, stepSectionName);
 
-			if ( config( 'wpcom_user_bootstrap' ) ) {
-				return page.redirect( urlWithoutLocale );
-			}
+            if (config('wpcom_user_bootstrap')) {
+                return page.redirect(urlWithoutLocale);
+            }
 
-			window.location = urlWithoutLocale + '?' + qs.stringify( context.query );
-			return;
-		}
+            window.location = urlWithoutLocale + '?' + qs.stringify(context.query);
+            return;
+        }
 
-		next();
-	},
+        next();
+    },
 
-	saveRefParameter( context, next ) {
-		if ( context.query.ref ) {
-			refParameter = context.query.ref;
-		}
+    saveRefParameter(context, next) {
+        if (context.query.ref) {
+            refParameter = context.query.ref;
+        }
 
-		next();
-	},
+        next();
+    },
 
-	saveQueryObject( context, next ) {
-		if ( ! isEmpty( context.query ) ) {
-			queryObject = context.query;
-		}
+    saveQueryObject(context, next) {
+        if (!isEmpty(context.query)) {
+            queryObject = context.query;
+        }
 
-		next();
-	},
+        next();
+    },
 
-	redirectToFlow( context, next ) {
-		if ( context.pathname !== utils.getValidPath( context.params ) ) {
-			return page.redirect( utils.getValidPath( context.params ) + ( context.querystring ? '?' + context.querystring : '' ) );
-		}
+    redirectToFlow(context, next) {
+        if (context.pathname !== utils.getValidPath(context.params)) {
+            return page.redirect(
+                utils.getValidPath(context.params) +
+                    (context.querystring ? '?' + context.querystring : '')
+            );
+        }
 
-		next();
-	},
+        next();
+    },
 
-	start( context ) {
-		var basePath = route.sectionify( context.path ),
-			flowName = utils.getFlowName( context.params ),
-			stepName = utils.getStepName( context.params ),
-			stepSectionName = utils.getStepSectionName( context.params );
+    start(context) {
+        var basePath = route.sectionify(context.path),
+            flowName = utils.getFlowName(context.params),
+            stepName = utils.getStepName(context.params),
+            stepSectionName = utils.getStepSectionName(context.params);
 
-		analytics.pageView.record( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName );
+        analytics.pageView.record(
+            basePath,
+            basePageTitle + ' > Start > ' + flowName + ' > ' + stepName
+        );
 
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-		context.store.dispatch( setLayoutFocus( 'content' ) );
+        ReactDom.unmountComponentAtNode(document.getElementById('secondary'));
+        context.store.dispatch(setLayoutFocus('content'));
 
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( SignupComponent, {
-					path: context.path,
-					refParameter,
-					queryObject,
-					locale: utils.getLocale( context.params ),
-					flowName: flowName,
-					stepName: stepName,
-					stepSectionName: stepSectionName
-				} )
-			),
-			document.getElementById( 'primary' )
-		);
-	}
+        ReactDom.render(
+            React.createElement(
+                ReduxProvider,
+                { store: context.store },
+                React.createElement(SignupComponent, {
+                    path: context.path,
+                    refParameter,
+                    queryObject,
+                    locale: utils.getLocale(context.params),
+                    flowName: flowName,
+                    stepName: stepName,
+                    stepSectionName: stepSectionName,
+                })
+            ),
+            document.getElementById('primary')
+        );
+    },
 };

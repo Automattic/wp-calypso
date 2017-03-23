@@ -3,10 +3,10 @@
  */
 import wpcom from 'lib/wp';
 import {
-	POST_TYPES_TAXONOMIES_RECEIVE,
-	POST_TYPES_TAXONOMIES_REQUEST,
-	POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
-	POST_TYPES_TAXONOMIES_REQUEST_SUCCESS
+    POST_TYPES_TAXONOMIES_RECEIVE,
+    POST_TYPES_TAXONOMIES_REQUEST,
+    POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
+    POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -18,13 +18,13 @@ import {
  * @param  {Array}  taxonomies Taxonomies received
  * @return {Object}            Action object
  */
-export function receivePostTypeTaxonomies( siteId, postType, taxonomies ) {
-	return {
-		type: POST_TYPES_TAXONOMIES_RECEIVE,
-		siteId,
-		postType,
-		taxonomies
-	};
+export function receivePostTypeTaxonomies(siteId, postType, taxonomies) {
+    return {
+        type: POST_TYPES_TAXONOMIES_RECEIVE,
+        siteId,
+        postType,
+        taxonomies,
+    };
 }
 
 /**
@@ -35,34 +35,34 @@ export function receivePostTypeTaxonomies( siteId, postType, taxonomies ) {
  * @param  {String}   postType Post type
  * @return {Function}          Action thunk
  */
-export function requestPostTypeTaxonomies( siteId, postType ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: POST_TYPES_TAXONOMIES_REQUEST,
-			siteId,
-			postType
-		} );
+export function requestPostTypeTaxonomies(siteId, postType) {
+    return dispatch => {
+        dispatch({
+            type: POST_TYPES_TAXONOMIES_REQUEST,
+            siteId,
+            postType,
+        });
 
-		return wpcom
-			.withLocale()
-			.site( siteId )
-			.postType( postType )
-			.taxonomiesList()
-			.then( ( { taxonomies } ) => {
-				dispatch( receivePostTypeTaxonomies( siteId, postType, taxonomies ) );
-				dispatch( {
-					type: POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
-					siteId,
-					postType
-				} );
-			} )
-			.catch( ( error ) => {
-				dispatch( {
-					type: POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
-					siteId,
-					postType,
-					error
-				} );
-			} );
-	};
+        return wpcom
+            .withLocale()
+            .site(siteId)
+            .postType(postType)
+            .taxonomiesList()
+            .then(({ taxonomies }) => {
+                dispatch(receivePostTypeTaxonomies(siteId, postType, taxonomies));
+                dispatch({
+                    type: POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
+                    siteId,
+                    postType,
+                });
+            })
+            .catch(error => {
+                dispatch({
+                    type: POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
+                    siteId,
+                    postType,
+                    error,
+                });
+            });
+    };
 }

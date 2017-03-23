@@ -10,27 +10,24 @@ import { connect } from 'react-redux';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { setPreviewType } from 'state/ui/preview/actions';
 
-const NativeCustomizer = React.createClass( {
-	propTypes: {
-		setPreviewType: PropTypes.func.isRequired,
-		setLayoutFocus: PropTypes.func.isRequired,
-	},
+const NativeCustomizer = React.createClass({
+    propTypes: {
+        setPreviewType: PropTypes.func.isRequired,
+        setLayoutFocus: PropTypes.func.isRequired,
+    },
 
-	componentWillMount() {
-		this.props.setPreviewType( 'design-preview' );
-		this.props.setLayoutFocus( 'preview-sidebar' );
-	},
+    componentWillMount() {
+        this.props.setPreviewType('design-preview');
+        this.props.setLayoutFocus('preview-sidebar');
+    },
 
-	componentWillUnmount() {
-		this.props.setLayoutFocus( 'content' );
-	},
+    componentWillUnmount() {
+        this.props.setLayoutFocus('content');
+    },
 
-	render() {
-		return (
-			<div className="paladin__native-customizer">
-			</div>
-		);
-	}
-} );
+    render() {
+        return <div className="paladin__native-customizer" />;
+    },
+});
 
-export default connect( null, { setLayoutFocus, setPreviewType } )( NativeCustomizer );
+export default connect(null, { setLayoutFocus, setPreviewType })(NativeCustomizer);

@@ -9,23 +9,23 @@ import React, { PropTypes } from 'react';
 import StreamHeader from './stream-header';
 import LabelsList from './labels-list';
 
-export default React.createClass( {
-	displayName: 'NotificationSettingsFormLabels',
+export default React.createClass({
+    displayName: 'NotificationSettingsFormLabels',
 
-	propTypes: {
-		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired
-	},
+    propTypes: {
+        settingKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
+    },
 
-	shouldComponentUpdate() {
-		return false;
-	},
+    shouldComponentUpdate() {
+        return false;
+    },
 
-	render() {
-		return (
-			<div className="notification-settings-form-labels">
-				<StreamHeader title={ this.translate( 'notifications' ) } />
-				<LabelsList settingKeys={ this.props.settingKeys } />
-			</div>
-		);
-	}
-} );
+    render() {
+        return (
+            <div className="notification-settings-form-labels">
+                <StreamHeader title={this.translate('notifications')} />
+                <LabelsList settingKeys={this.props.settingKeys} />
+            </div>
+        );
+    },
+});

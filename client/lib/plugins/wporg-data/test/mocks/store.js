@@ -1,4 +1,4 @@
 module.exports = {
-	get: function() {},
-	set: function() {}
+    get: function() {},
+    set: function() {},
 };

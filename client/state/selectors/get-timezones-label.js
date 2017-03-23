@@ -10,7 +10,7 @@ import { getTimezonesLabels } from 'state/selectors';
  * @param {String} key - timezone value
  * @return {String} the timezone label
  */
-export default function getTimezonesLabel( state, key ) {
-	const labels = getTimezonesLabels( state );
-	return labels[ key ] ? labels[ key ] : null;
+export default function getTimezonesLabel(state, key) {
+    const labels = getTimezonesLabels(state);
+    return labels[key] ? labels[key] : null;
 }

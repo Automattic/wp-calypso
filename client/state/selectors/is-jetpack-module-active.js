@@ -12,6 +12,6 @@ import { get } from 'lodash';
  * @param  {String}  moduleSlug  Slug of the module
  * @return {?Boolean}            Whether the module is active
  */
-export default function isJetpackModuleActive( state, siteId, moduleSlug ) {
-	return get( state.jetpack.modules.items, [ siteId, moduleSlug, 'active' ], null );
+export default function isJetpackModuleActive(state, siteId, moduleSlug) {
+    return get(state.jetpack.modules.items, [siteId, moduleSlug, 'active'], null);
 }

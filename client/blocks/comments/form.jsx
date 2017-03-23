@@ -14,246 +14,261 @@ import { translate } from 'i18n-calypso';
 import AutoDirection from 'components/auto-direction';
 import Gravatar from 'components/gravatar';
 import Notice from 'components/notice';
-import {
-	getCurrentUser
-} from 'state/current-user/selectors';
-import {
-	writeComment,
-	removeComment
-} from 'state/comments/actions';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrackForPost
-} from 'reader/stats';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { writeComment, removeComment } from 'state/comments/actions';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import { isCommentableDiscoverPost } from 'blocks/comments/helper';
 
 class PostCommentForm extends React.Component {
-	constructor( props ) {
-		super();
+    constructor(props) {
+        super();
 
-		this.state = {
-			commentText: props.commentText || '',
-			haveFocus: false
-		};
+        this.state = {
+            commentText: props.commentText || '',
+            haveFocus: false,
+        };
 
-		// bind event handlers to this instance
-		Object.getOwnPropertyNames( PostCommentForm.prototype )
-			.filter( ( prop ) => prop.indexOf( 'handle' ) === 0 )
-			.filter( ( prop ) => typeof this[ prop ] === 'function' )
-			.forEach( ( prop ) => this[ prop ] = this[ prop ].bind( this ) );
-	}
+        // bind event handlers to this instance
+        Object.getOwnPropertyNames(PostCommentForm.prototype)
+            .filter(prop => prop.indexOf('handle') === 0)
+            .filter(prop => typeof this[prop] === 'function')
+            .forEach(prop => this[prop] = this[prop].bind(this));
+    }
 
-	componentWillReceiveProps( nextProps ) {
-		this.setState( {
-			commentText: nextProps.commentText || ''
-		} );
-	}
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            commentText: nextProps.commentText || '',
+        });
+    }
 
-	componentDidMount() {
-		// If it's a reply, give the input focus if commentText exists ( can not exist if comments are closed )
-		if ( this.props.parentCommentID && this._textareaNode ) {
-			this._textareaNode.focus();
-		}
-	}
+    componentDidMount() {
+        // If it's a reply, give the input focus if commentText exists ( can not exist if comments are closed )
+        if (this.props.parentCommentID && this._textareaNode) {
+            this._textareaNode.focus();
+        }
+    }
 
-	componentDidUpdate() {
-		const commentTextNode = this.refs.commentText;
+    componentDidUpdate() {
+        const commentTextNode = this.refs.commentText;
 
-		if ( ! commentTextNode ) {
-			return;
-		}
+        if (!commentTextNode) {
+            return;
+        }
 
-		const commentText = this.getCommentText();
-		const currentHeight = parseInt( commentTextNode.style.height, 10 ) || 0;
-		commentTextNode.style.height = commentText.length ? Math.max( commentTextNode.scrollHeight, currentHeight ) + 'px' : null;
-	}
+        const commentText = this.getCommentText();
+        const currentHeight = parseInt(commentTextNode.style.height, 10) || 0;
+        commentTextNode.style.height = commentText.length
+            ? Math.max(commentTextNode.scrollHeight, currentHeight) + 'px'
+            : null;
+    }
 
-	handleTextAreaNode( textareaNode ) {
-		this._textareaNode = textareaNode;
-	}
+    handleTextAreaNode(textareaNode) {
+        this._textareaNode = textareaNode;
+    }
 
-	handleSubmit( event ) {
-		event.preventDefault();
-		this.submit();
-	}
+    handleSubmit(event) {
+        event.preventDefault();
+        this.submit();
+    }
 
-	handleKeyDown( event ) {
-		// Use Ctrl+Enter to submit comment
-		if ( event.keyCode === 13 && ( event.ctrlKey || event.metaKey ) ) {
-			event.preventDefault();
-			this.submit();
-		}
+    handleKeyDown(event) {
+        // Use Ctrl+Enter to submit comment
+        if (event.keyCode === 13 && (event.ctrlKey || event.metaKey)) {
+            event.preventDefault();
+            this.submit();
+        }
 
-		// Use ESC to remove the erroneous comment placeholder and just start over
-		if ( event.keyCode === 27 ) {
-			if ( this.props.placeholderId ) {
-				// sync the text to the upper level so it won't be lost
-				this.props.onUpdateCommentText( this.props.commentText );
-				// remove the comment
-				this.props.removeComment( this.props.post.site_ID, this.props.post.ID, this.props.placeholderId );
-			}
-		}
-	}
+        // Use ESC to remove the erroneous comment placeholder and just start over
+        if (event.keyCode === 27) {
+            if (this.props.placeholderId) {
+                // sync the text to the upper level so it won't be lost
+                this.props.onUpdateCommentText(this.props.commentText);
+                // remove the comment
+                this.props.removeComment(
+                    this.props.post.site_ID,
+                    this.props.post.ID,
+                    this.props.placeholderId
+                );
+            }
+        }
+    }
 
-	handleFocus() {
-		this.setState( { haveFocus: true } );
-	}
+    handleFocus() {
+        this.setState({ haveFocus: true });
+    }
 
-	handleTextChange( event ) {
-		const commentText = event.target.value;
+    handleTextChange(event) {
+        const commentText = event.target.value;
 
-		this.setState( { commentText } );
-
-		// Update the comment text in the container's state
-		this.props.onUpdateCommentText( commentText );
-	}
-
-	resetCommentText() {
-		this.setState( { commentText: '' } );
+        this.setState({ commentText });
 
         // Update the comment text in the container's state
-		this.props.onUpdateCommentText( '' );
-	}
+        this.props.onUpdateCommentText(commentText);
+    }
 
-	hasCommentText() {
-		return this.state.commentText.trim().length > 0;
-	}
+    resetCommentText() {
+        this.setState({ commentText: '' });
 
-	submit() {
-		const post = this.props.post;
-		const commentText = this.state.commentText.trim();
+        // Update the comment text in the container's state
+        this.props.onUpdateCommentText('');
+    }
 
-		if ( ! commentText ) {
-			this.resetCommentText(); // Clean up any newlines
-			return false;
-		}
+    hasCommentText() {
+        return this.state.commentText.trim().length > 0;
+    }
 
-		if ( this.props.placeholderId ) {
-			this.props.removeComment( post.site_ID, post.ID, this.props.placeholderId );
-		}
-		this.props.writeComment( commentText, post.site_ID, post.ID, this.props.parentCommentID );
+    submit() {
+        const post = this.props.post;
+        const commentText = this.state.commentText.trim();
 
-		recordAction( 'posted_comment' );
-		recordGaEvent( 'Clicked Post Comment Button' );
-		recordTrackForPost( 'calypso_reader_article_commented_on', post, {
-			parent_post_id: this.props.parentCommentID ? this.props.parentCommentID : undefined
-		} );
+        if (!commentText) {
+            this.resetCommentText(); // Clean up any newlines
+            return false;
+        }
 
-		this.resetCommentText();
+        if (this.props.placeholderId) {
+            this.props.removeComment(post.site_ID, post.ID, this.props.placeholderId);
+        }
+        this.props.writeComment(commentText, post.site_ID, post.ID, this.props.parentCommentID);
 
-		// Resets the active reply comment in PostCommentList
-		this.props.onCommentSubmit();
+        recordAction('posted_comment');
+        recordGaEvent('Clicked Post Comment Button');
+        recordTrackForPost('calypso_reader_article_commented_on', post, {
+            parent_post_id: this.props.parentCommentID ? this.props.parentCommentID : undefined,
+        });
 
-		return true;
-	}
+        this.resetCommentText();
 
-	renderError() {
-		const error = this.props.error;
-		let message;
+        // Resets the active reply comment in PostCommentList
+        this.props.onCommentSubmit();
 
-		if ( ! error ) {
-			return null;
-		}
+        return true;
+    }
 
-		switch ( error.error ) {
-			case 'comment_duplicate':
-				message = translate( "Duplicate comment detected. It looks like you've already said that!" );
-				break;
+    renderError() {
+        const error = this.props.error;
+        let message;
 
-			default:
-				message = translate( 'Sorry - there was a problem posting your comment.' );
-				break;
-		}
+        if (!error) {
+            return null;
+        }
 
-		return <Notice text={ message } className="comments__notice" showDismiss={ false } status="is-error" />;
-	}
+        switch (error.error) {
+            case 'comment_duplicate':
+                message = translate(
+                    "Duplicate comment detected. It looks like you've already said that!"
+                );
+                break;
 
-	render() {
-		const post = this.props.post;
+            default:
+                message = translate('Sorry - there was a problem posting your comment.');
+                break;
+        }
 
-		// Don't display the form if comments are closed
-		if ( post && post.discussion && post.discussion.comments_open === false && ! isCommentableDiscoverPost( post ) ) {
-			// If we already have some comments, show a 'comments closed message'
-			if ( post.discussion.comment_count && post.discussion.comment_count > 0 ) {
-				return <p className="comments__form-closed">{ translate( 'Comments are closed.' ) }</p>;
-			}
+        return (
+            <Notice
+                text={message}
+                className="comments__notice"
+                showDismiss={false}
+                status="is-error"
+            />
+        );
+    }
 
-			return null;
-		}
+    render() {
+        const post = this.props.post;
 
-		const buttonClasses = classNames( {
-			'is-active': this.hasCommentText(),
-			'is-visible': this.state.haveFocus || this.hasCommentText()
-		} );
+        // Don't display the form if comments are closed
+        if (
+            post &&
+            post.discussion &&
+            post.discussion.comments_open === false &&
+            !isCommentableDiscoverPost(post)
+        ) {
+            // If we already have some comments, show a 'comments closed message'
+            if (post.discussion.comment_count && post.discussion.comment_count > 0) {
+                return <p className="comments__form-closed">{translate('Comments are closed.')}</p>;
+            }
 
-		const expandingAreaClasses = classNames( {
-			focused: this.state.haveFocus,
-			'expanding-area': true
-		} );
+            return null;
+        }
 
-		// How auto expand works for the textarea is covered in this article:
-		// http://alistapart.com/article/expanding-text-areas-made-elegant
-		return (
-			<form className="comments__form" ref="commentForm">
-				<fieldset>
-					<Gravatar user={ this.props.currentUser } />
-					<label>
-						<div className={ expandingAreaClasses }>
-							<pre><span>{ this.state.commentText }</span><br /></pre>
-							<AutoDirection>
-								<textarea
-									value={ this.state.commentText }
-									placeholder={ translate( 'Enter your comment here…' ) }
-									ref={ this.handleTextAreaNode }
-									onKeyUp={ this.handleKeyUp }
-									onKeyDown={ this.handleKeyDown }
-									onFocus={ this.handleFocus }
-									onBlur={ this.handleBlur }
-									onChange={ this.handleTextChange }
-								/>
-							</AutoDirection>
-						</div>
-						<button
-							ref="commentButton"
-							className={ buttonClasses }
-							disabled={ this.state.commentText.length === 0 }
-							onClick={ this.handleSubmit }>
-							{ translate( 'Send' ) }
-						</button>
-						{ this.renderError() }
-					</label>
-				</fieldset>
-			</form>
-		);
-	}
+        const buttonClasses = classNames({
+            'is-active': this.hasCommentText(),
+            'is-visible': this.state.haveFocus || this.hasCommentText(),
+        });
 
+        const expandingAreaClasses = classNames({
+            focused: this.state.haveFocus,
+            'expanding-area': true,
+        });
+
+        // How auto expand works for the textarea is covered in this article:
+        // http://alistapart.com/article/expanding-text-areas-made-elegant
+        return (
+            <form className="comments__form" ref="commentForm">
+                <fieldset>
+                    <Gravatar user={this.props.currentUser} />
+                    <label>
+                        <div className={expandingAreaClasses}>
+                            <pre><span>{this.state.commentText}</span><br /></pre>
+                            <AutoDirection>
+                                <textarea
+                                    value={this.state.commentText}
+                                    placeholder={translate('Enter your comment here…')}
+                                    ref={this.handleTextAreaNode}
+                                    onKeyUp={this.handleKeyUp}
+                                    onKeyDown={this.handleKeyDown}
+                                    onFocus={this.handleFocus}
+                                    onBlur={this.handleBlur}
+                                    onChange={this.handleTextChange}
+                                />
+                            </AutoDirection>
+                        </div>
+                        <button
+                            ref="commentButton"
+                            className={buttonClasses}
+                            disabled={this.state.commentText.length === 0}
+                            onClick={this.handleSubmit}
+                        >
+                            {translate('Send')}
+                        </button>
+                        {this.renderError()}
+                    </label>
+                </fieldset>
+            </form>
+        );
+    }
 }
 
 PostCommentForm.propTypes = {
-	post: React.PropTypes.object.isRequired,
-	parentCommentID: React.PropTypes.number,
-	placeholderId: React.PropTypes.string, // can only be 'placeholder-123'
-	commentText: React.PropTypes.string,
-	onUpdateCommentText: React.PropTypes.func.isRequired,
-	onCommentSubmit: React.PropTypes.func,
+    post: React.PropTypes.object.isRequired,
+    parentCommentID: React.PropTypes.number,
+    placeholderId: React.PropTypes.string, // can only be 'placeholder-123'
+    commentText: React.PropTypes.string,
+    onUpdateCommentText: React.PropTypes.func.isRequired,
+    onCommentSubmit: React.PropTypes.func,
 
-	// connect()ed props:
-	currentUser: React.PropTypes.object.isRequired,
-	writeComment: React.PropTypes.func.isRequired,
-	removeComment: React.PropTypes.func.isRequired
+    // connect()ed props:
+    currentUser: React.PropTypes.object.isRequired,
+    writeComment: React.PropTypes.func.isRequired,
+    removeComment: React.PropTypes.func.isRequired,
 };
 
 PostCommentForm.defaultProps = {
-	onCommentSubmit: noop
+    onCommentSubmit: noop,
 };
 
 export default connect(
-	( state ) => ( {
-		currentUser: getCurrentUser( state )
-	} ),
-	( dispatch ) => bindActionCreators( {
-		writeComment,
-		removeComment
-	}, dispatch )
-)( PostCommentForm );
+    state => ({
+        currentUser: getCurrentUser(state),
+    }),
+    dispatch =>
+        bindActionCreators(
+            {
+                writeComment,
+                removeComment,
+            },
+            dispatch
+        )
+)(PostCommentForm);

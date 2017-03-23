@@ -18,30 +18,29 @@ import PageTemplates from 'post-editor/editor-page-templates';
 import PageOrder from 'post-editor/editor-page-order';
 import Accordion from 'components/accordion';
 
-function EditorDrawerPageOptions( { translate, postType, hierarchical } ) {
-	let title;
-	if ( 'page' === postType ) {
-		title = translate( 'Page Attributes' );
-	} else {
-		title = translate( 'Attributes' );
-	}
+function EditorDrawerPageOptions({ translate, postType, hierarchical }) {
+    let title;
+    if ('page' === postType) {
+        title = translate('Page Attributes');
+    } else {
+        title = translate('Attributes');
+    }
 
-	return (
-		<Accordion title={ title }>
-			{ hierarchical && (
-				<PageParent />
-			) }
-			<PageTemplates />
-			<PageOrder />
-		</Accordion>
-	);
+    return (
+        <Accordion title={title}>
+            {hierarchical && <PageParent />}
+            <PageTemplates />
+            <PageOrder />
+        </Accordion>
+    );
 }
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
-	const postType = getEditedPostValue( state, siteId, postId, 'type' );
-	const hierarchical = 'page' === postType || get( getPostType( state, siteId, postType ), 'hierarchical' );
+export default connect(state => {
+    const siteId = getSelectedSiteId(state);
+    const postId = getEditorPostId(state);
+    const postType = getEditedPostValue(state, siteId, postId, 'type');
+    const hierarchical = 'page' === postType ||
+        get(getPostType(state, siteId, postType), 'hierarchical');
 
-	return { postType, hierarchical };
-} )( localize( EditorDrawerPageOptions ) );
+    return { postType, hierarchical };
+})(localize(EditorDrawerPageOptions));

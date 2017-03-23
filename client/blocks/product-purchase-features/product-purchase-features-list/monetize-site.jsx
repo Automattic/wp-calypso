@@ -9,21 +9,19 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
-export default localize( ( { selectedSite, translate } ) => {
-	return (
-		<div className="product-purchase-features-list__item">
-			<PurchaseDetail
-				icon="speaker"
-				title={ translate( 'Easily monetize your site' ) }
-				description={
-					translate(
-						'Take advantage of WordAds instant activation on your upgraded site. ' +
-						'WordAds lets you earn money by displaying promotional content.'
-					)
-				}
-				buttonText={ translate( 'Start earning' ) }
-				href={ '/ads/settings/' + selectedSite.slug }
-			/>
-		</div>
-	);
-} );
+export default localize(({ selectedSite, translate }) => {
+    return (
+        <div className="product-purchase-features-list__item">
+            <PurchaseDetail
+                icon="speaker"
+                title={translate('Easily monetize your site')}
+                description={translate(
+                    'Take advantage of WordAds instant activation on your upgraded site. ' +
+                        'WordAds lets you earn money by displaying promotional content.'
+                )}
+                buttonText={translate('Start earning')}
+                href={'/ads/settings/' + selectedSite.slug}
+            />
+        </div>
+    );
+});

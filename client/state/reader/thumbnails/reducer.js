@@ -7,12 +7,12 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	READER_THUMBNAIL_REQUEST,
-	READER_THUMBNAIL_REQUEST_SUCCESS,
-	READER_THUMBNAIL_REQUEST_FAILURE,
-	READER_THUMBNAIL_RECEIVE,
-	SERIALIZE,
-	DESERIALIZE,
+    READER_THUMBNAIL_REQUEST,
+    READER_THUMBNAIL_REQUEST_SUCCESS,
+    READER_THUMBNAIL_REQUEST_FAILURE,
+    READER_THUMBNAIL_RECEIVE,
+    SERIALIZE,
+    DESERIALIZE,
 } from 'state/action-types';
 
 /**
@@ -36,21 +36,21 @@ import {
  * @param  {Object} action Action payload
  * @return {Array}        Updated state
  */
-export function items( state = {}, action ) {
-	switch ( action.type ) {
-		case READER_THUMBNAIL_RECEIVE:
-			return {
-				...state,
-				[ action.embedUrl ]: action.thumbnailUrl,
-			};
+export function items(state = {}, action) {
+    switch (action.type) {
+        case READER_THUMBNAIL_RECEIVE:
+            return {
+                ...state,
+                [action.embedUrl]: action.thumbnailUrl,
+            };
 
-		// Always return default state - we don't want to serialize thumbnails
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
-	}
+        // Always return default state - we don't want to serialize thumbnails
+        case SERIALIZE:
+        case DESERIALIZE:
+            return {};
+    }
 
-	return state;
+    return state;
 }
 
 /**
@@ -61,23 +61,23 @@ export function items( state = {}, action ) {
  * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export function requesting( state = {}, action ) {
-	switch ( action.type ) {
-		case READER_THUMBNAIL_REQUEST:
-		case READER_THUMBNAIL_REQUEST_SUCCESS:
-		case READER_THUMBNAIL_REQUEST_FAILURE:
-			return {
-				...state,
-				[ action.embedUrl ]: action.type === READER_THUMBNAIL_REQUEST
-			};
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
-	}
-	return state;
+export function requesting(state = {}, action) {
+    switch (action.type) {
+        case READER_THUMBNAIL_REQUEST:
+        case READER_THUMBNAIL_REQUEST_SUCCESS:
+        case READER_THUMBNAIL_REQUEST_FAILURE:
+            return {
+                ...state,
+                [action.embedUrl]: action.type === READER_THUMBNAIL_REQUEST,
+            };
+        case SERIALIZE:
+        case DESERIALIZE:
+            return {};
+    }
+    return state;
 }
 
-export default combineReducers( {
-	items,
-	requesting
-} );
+export default combineReducers({
+    items,
+    requesting,
+});

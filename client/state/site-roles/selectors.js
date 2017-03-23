@@ -11,8 +11,8 @@ import { get } from 'lodash';
  * @param  {Number}  siteId    Site ID
  * @return {Boolean}           Whether that shortcode is being requested
  */
-export const isRequestingSiteRoles = ( state, siteId ) => {
-	return get( state.siteRoles.requesting, [ siteId ], false );
+export const isRequestingSiteRoles = (state, siteId) => {
+    return get(state.siteRoles.requesting, [siteId], false);
 };
 
 /**
@@ -21,6 +21,6 @@ export const isRequestingSiteRoles = ( state, siteId ) => {
  * @param  {Number} siteId   Site ID
  * @return {Array}           Site roles
  */
-export const getSiteRoles = ( state, siteId ) => {
-	return get( state.siteRoles.items, [ siteId ] );
+export const getSiteRoles = (state, siteId) => {
+    return get(state.siteRoles.items, [siteId]);
 };

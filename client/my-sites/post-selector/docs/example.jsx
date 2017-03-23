@@ -12,57 +12,59 @@ import observe from 'lib/mixins/data-observe';
 import sites from 'lib/sites-list';
 import FormLabel from 'components/forms/form-label';
 
-const PostSelectorExample = React.createClass( {
-	mixins: [ observe( 'sites' ), PureRenderMixin ],
+const PostSelectorExample = React.createClass({
+    mixins: [observe('sites'), PureRenderMixin],
 
-	getInitialState() {
-		return {
-			showTypeLabels: true,
-			selectedPostId: null,
-		};
-	},
+    getInitialState() {
+        return {
+            showTypeLabels: true,
+            selectedPostId: null,
+        };
+    },
 
-	setSelected( post ) {
-		this.setState( {
-			selectedPostId: post.ID,
-		} );
-	},
+    setSelected(post) {
+        this.setState({
+            selectedPostId: post.ID,
+        });
+    },
 
-	render() {
-		const primary = this.props.sites.getPrimary();
+    render() {
+        const primary = this.props.sites.getPrimary();
 
-		return (
-			<div>
-				<div style={ { width: 300 } }>
-					<FormLabel>
-						<input
-							type="checkbox"
-							checked={ this.state.showTypeLabels }
-							onChange={ () => this.setState( { showTypeLabels: ! this.state.showTypeLabels } ) } />
-						<span>Show Type Labels</span>
-					</FormLabel>
-					{ this.props.sites.initialized && (
-						<PostSelector
-							siteId={ primary ? primary.ID : 3584907 }
-							type="any"
-							orderBy="date"
-							order="DESC"
-							showTypeLabels={ this.state.showTypeLabels }
-							selected={ this.state.selectedPostId }
-							onChange={ this.setSelected } />
-					) }
-				</div>
-			</div>
-		);
-	}
-} );
+        return (
+            <div>
+                <div style={{ width: 300 }}>
+                    <FormLabel>
+                        <input
+                            type="checkbox"
+                            checked={this.state.showTypeLabels}
+                            onChange={() =>
+                                this.setState({ showTypeLabels: !this.state.showTypeLabels })}
+                        />
+                        <span>Show Type Labels</span>
+                    </FormLabel>
+                    {this.props.sites.initialized &&
+                        <PostSelector
+                            siteId={primary ? primary.ID : 3584907}
+                            type="any"
+                            orderBy="date"
+                            order="DESC"
+                            showTypeLabels={this.state.showTypeLabels}
+                            selected={this.state.selectedPostId}
+                            onChange={this.setSelected}
+                        />}
+                </div>
+            </div>
+        );
+    },
+});
 
-export default React.createClass( {
-	displayName: 'PostSelector',
+export default React.createClass({
+    displayName: 'PostSelector',
 
-	mixins: [ PureRenderMixin ],
+    mixins: [PureRenderMixin],
 
-	render() {
-		return <PostSelectorExample sites={ sites() } />;
-	}
-} );
+    render() {
+        return <PostSelectorExample sites={sites()} />;
+    },
+});

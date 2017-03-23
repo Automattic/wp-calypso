@@ -27,46 +27,49 @@
 //
 // [1] https://github.com/Automattic/wp-calypso/blob/master/docs/coding-guidelines/css.md#media-queries
 //
-function isWithinBreakpoint( breakpoint ) {
-	var screenWidth = getWindowInnerWidth(),
-		breakpoints = {
-			'<480px': () => ( screenWidth <= 480 ),
-			'<660px': () => ( screenWidth <= 660 ),
-			'<960px': () => ( screenWidth <= 960 ),
-			'>480px': () => ( screenWidth > 480 ),
-			'>660px': () => ( screenWidth > 660 ),
-			'>960px': () => ( screenWidth > 960 ),
-			'480px-660px': () => ( screenWidth > 480 && screenWidth <= 660 ),
-			'660px-960px': () => ( screenWidth > 660 && screenWidth <= 960 ),
-			'480px-960px': () => ( screenWidth > 480 && screenWidth <= 960 ),
-		};
+function isWithinBreakpoint(breakpoint) {
+    var screenWidth = getWindowInnerWidth(),
+        breakpoints = {
+            '<480px': () => screenWidth <= 480,
+            '<660px': () => screenWidth <= 660,
+            '<960px': () => screenWidth <= 960,
+            '>480px': () => screenWidth > 480,
+            '>660px': () => screenWidth > 660,
+            '>960px': () => screenWidth > 960,
+            '480px-660px': () => screenWidth > 480 && screenWidth <= 660,
+            '660px-960px': () => screenWidth > 660 && screenWidth <= 960,
+            '480px-960px': () => screenWidth > 480 && screenWidth <= 960,
+        };
 
-	if ( ! breakpoints.hasOwnProperty( breakpoint ) ) {
-		try{
-			global.window.console.warn( 'Undefined breakpoint used in `mobile-first-breakpoint`', breakpoint );
-		}catch( e ){}
-		return undefined;
-	}
-	return breakpoints[ breakpoint ]();
+    if (!breakpoints.hasOwnProperty(breakpoint)) {
+        try {
+            global.window.console.warn(
+                'Undefined breakpoint used in `mobile-first-breakpoint`',
+                breakpoint
+            );
+        } catch (e) {}
+        return undefined;
+    }
+    return breakpoints[breakpoint]();
 }
 
 function isMobile() {
-	return isWithinBreakpoint( '<480px' );
+    return isWithinBreakpoint('<480px');
 }
 
 function isDesktop() {
-	return isWithinBreakpoint( '>960px' );
+    return isWithinBreakpoint('>960px');
 }
 
 // FIXME: We can't detect window size on the server, so until we have more intelligent detection,
 // use 769, which is just above the general maximum mobile screen width.
 function getWindowInnerWidth() {
-	return global.window ? global.window.innerWidth : 769;
+    return global.window ? global.window.innerWidth : 769;
 }
 
 module.exports = {
-	isMobile: isMobile,
-	isDesktop: isDesktop,
-	isWithinBreakpoint: isWithinBreakpoint,
-	getWindowInnerWidth: getWindowInnerWidth,
+    isMobile: isMobile,
+    isDesktop: isDesktop,
+    isWithinBreakpoint: isWithinBreakpoint,
+    getWindowInnerWidth: getWindowInnerWidth,
 };

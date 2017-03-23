@@ -14,10 +14,8 @@
  * @param {string} b the second string
  * @returns
  */
-export function areEqualIgnoringWhitespaceAndCase( a, b ) {
-	a = a.replace( /[\s'.\-_"]/g, '' );
-	b = b.replace( /[\s'.\-_"]/g, '' );
-	return a.toLowerCase() === b.toLowerCase();
+export function areEqualIgnoringWhitespaceAndCase(a, b) {
+    a = a.replace(/[\s'.\-_"]/g, '');
+    b = b.replace(/[\s'.\-_"]/g, '');
+    return a.toLowerCase() === b.toLowerCase();
 }
-
-

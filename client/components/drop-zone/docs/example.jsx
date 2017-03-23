@@ -10,58 +10,60 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import Card from 'components/card';
 import DropZone from 'components/drop-zone';
 
-export default React.createClass( {
-	displayName: 'DropZones',
+export default React.createClass({
+    displayName: 'DropZones',
 
-	mixins: [ PureRenderMixin ],
+    mixins: [PureRenderMixin],
 
-	getInitialState() {
-		return {};
-	},
+    getInitialState() {
+        return {};
+    },
 
-	onFilesDrop( files ) {
-		this.setState( {
-			lastDroppedFiles: files
-		} );
-	},
+    onFilesDrop(files) {
+        this.setState({
+            lastDroppedFiles: files,
+        });
+    },
 
-	renderContainerContent() {
-		const style = {
-			lineHeight: '100px',
-			textAlign: 'center'
-		};
-		let fileNames;
+    renderContainerContent() {
+        const style = {
+            lineHeight: '100px',
+            textAlign: 'center',
+        };
+        let fileNames;
 
-		if ( this.state.lastDroppedFiles ) {
-			fileNames = this.state.lastDroppedFiles.map( function( file ) {
-				return file.name;
-			} ).join( ', ' );
-		}
+        if (this.state.lastDroppedFiles) {
+            fileNames = this.state.lastDroppedFiles
+                .map(function(file) {
+                    return file.name;
+                })
+                .join(', ');
+        }
 
-		return (
-			<Card style={ style }>
-				{ fileNames
-					? this.translate( 'You dropped: %s', { args: fileNames } )
-					: this.translate( 'This is a droppable area' ) }
-			</Card>
-		);
-	},
+        return (
+            <Card style={style}>
+                {fileNames
+                    ? this.translate('You dropped: %s', { args: fileNames })
+                    : this.translate('This is a droppable area')}
+            </Card>
+        );
+    },
 
-	renderContainer() {
-		const style = {
-			position: 'relative',
-			height: '150px'
-		};
+    renderContainer() {
+        const style = {
+            position: 'relative',
+            height: '150px',
+        };
 
-		return (
-			<div style={ style }>
-				{ this.renderContainerContent() }
-				<DropZone onFilesDrop={ this.onFilesDrop } />
-			</div>
-		);
-	},
+        return (
+            <div style={style}>
+                {this.renderContainerContent()}
+                <DropZone onFilesDrop={this.onFilesDrop} />
+            </div>
+        );
+    },
 
-	render() {
-		return this.renderContainer();
-	}
-} );
+    render() {
+        return this.renderContainer();
+    },
+});

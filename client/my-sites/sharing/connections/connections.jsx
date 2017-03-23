@@ -13,22 +13,22 @@ import QueryKeyringServices from 'components/data/query-keyring-services';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import SharingServicesGroup from './services-group';
 
-const SharingConnections = ( { translate } ) => (
-	<div className="sharing-settings sharing-connections">
-		<QueryKeyringConnections />
-		<QueryKeyringServices />
-		<QueryPublicizeConnections selectedSite />
-		<SharingServicesGroup type="publicize" title={ translate( 'Publicize Your Posts' ) } />
-		<SharingServicesGroup type="other" title={ translate( 'Other Connections' ) } />
-	</div>
+const SharingConnections = ({ translate }) => (
+    <div className="sharing-settings sharing-connections">
+        <QueryKeyringConnections />
+        <QueryKeyringServices />
+        <QueryPublicizeConnections selectedSite />
+        <SharingServicesGroup type="publicize" title={translate('Publicize Your Posts')} />
+        <SharingServicesGroup type="other" title={translate('Other Connections')} />
+    </div>
 );
 
 SharingConnections.propTypes = {
-	translate: PropTypes.func,
+    translate: PropTypes.func,
 };
 
 SharingConnections.defaultProps = {
-	translate: identity,
+    translate: identity,
 };
 
-export default localize( SharingConnections );
+export default localize(SharingConnections);

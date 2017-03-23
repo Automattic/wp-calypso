@@ -10,22 +10,24 @@ import { localize } from 'i18n-calypso';
  */
 import Notice from 'components/notice';
 
-function DomainSuggestionFlag( { domain, translate } ) {
-	const newTLDs = [];
+function DomainSuggestionFlag({ domain, translate }) {
+    const newTLDs = [];
 
-	if ( newTLDs.some(
-		( tld ) => endsWith( domain, tld ) && domain.substring( 0, domain.length - ( tld.length + 1 ) ).indexOf( '.' ) === -1
-	) ) {
-		return (
-			<Notice
-				isCompact
-				status="is-success">
-				{ translate( 'New', { context: 'Domain suggestion flag' } ) }
-			</Notice>
-		);
-	}
+    if (
+        newTLDs.some(
+            tld =>
+                endsWith(domain, tld) &&
+                domain.substring(0, domain.length - (tld.length + 1)).indexOf('.') === -1
+        )
+    ) {
+        return (
+            <Notice isCompact status="is-success">
+                {translate('New', { context: 'Domain suggestion flag' })}
+            </Notice>
+        );
+    }
 
-	return null;
+    return null;
 }
 
-export default localize( DomainSuggestionFlag );
+export default localize(DomainSuggestionFlag);

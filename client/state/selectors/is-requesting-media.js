@@ -11,12 +11,12 @@ import MediaQueryManager from 'lib/query-manager/media';
  * @param  {Object}  query  Query object
  * @return {bool}           True if media is being requested
  */
-export default function isRequestingMedia( state, siteId, query ) {
-	const queryRequests = state.media.queryRequests[ siteId ];
+export default function isRequestingMedia(state, siteId, query) {
+    const queryRequests = state.media.queryRequests[siteId];
 
-	if ( ! queryRequests ) {
-		return false;
-	}
+    if (!queryRequests) {
+        return false;
+    }
 
-	return queryRequests[ MediaQueryManager.QueryKey.stringify( query ) ] || false;
+    return queryRequests[MediaQueryManager.QueryKey.stringify(query)] || false;
 }

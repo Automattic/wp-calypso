@@ -16,28 +16,30 @@ import Actions from 'reader/list-item/actions';
 import FollowButton from 'blocks/follow-button/button';
 import SiteIcon from 'blocks/site-icon';
 
-const FollowingEditSubscribeFormResult = ( { url, isValid, onFollowToggle, translate } ) => {
-	const message = ! isValid
-		? translate( 'Not a valid URL' )
-		: translate( 'Follow this site' );
-	const classes = classNames( 'is-search-result', { 'is-valid': isValid } );
+const FollowingEditSubscribeFormResult = ({ url, isValid, onFollowToggle, translate }) => {
+    const message = !isValid ? translate('Not a valid URL') : translate('Follow this site');
+    const classes = classNames('is-search-result', { 'is-valid': isValid });
 
-	return (
-		<ListItem className={ classes }>
-			<Icon><SiteIcon size={ 48 } /></Icon>
-			<Title>{ url }</Title>
-			<Description>{ message }</Description>
-			<Actions>
-				<FollowButton disabled={ ! isValid } following={ false } onFollowToggle={ onFollowToggle } />
-			</Actions>
-		</ListItem>
-	);
+    return (
+        <ListItem className={classes}>
+            <Icon><SiteIcon size={48} /></Icon>
+            <Title>{url}</Title>
+            <Description>{message}</Description>
+            <Actions>
+                <FollowButton
+                    disabled={!isValid}
+                    following={false}
+                    onFollowToggle={onFollowToggle}
+                />
+            </Actions>
+        </ListItem>
+    );
 };
 
 FollowingEditSubscribeFormResult.propTypes = {
-	url: React.PropTypes.string.isRequired,
-	isValid: React.PropTypes.bool.isRequired,
-	onFollowToggle: React.PropTypes.func.isRequired
+    url: React.PropTypes.string.isRequired,
+    isValid: React.PropTypes.bool.isRequired,
+    onFollowToggle: React.PropTypes.func.isRequired,
 };
 
-export default localize( FollowingEditSubscribeFormResult );
+export default localize(FollowingEditSubscribeFormResult);

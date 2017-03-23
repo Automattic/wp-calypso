@@ -28,114 +28,135 @@ import Main from 'components/main';
 import { isEnabled } from 'config';
 import SectionHeader from 'components/section-header';
 
-const debug = debugFactory( 'calypso:me:profile' );
+const debug = debugFactory('calypso:me:profile');
 
-export default protectForm( React.createClass( {
+export default protectForm(
+    React.createClass({
+        displayName: 'Profile',
 
-	displayName: 'Profile',
+        mixins: [formBase, LinkedStateMixin, observe('userSettings'), eventRecorder],
 
-	mixins: [ formBase, LinkedStateMixin, observe( 'userSettings' ), eventRecorder ],
+        componentDidMount() {
+            debug(this.displayName + ' component is mounted.');
+        },
 
-	componentDidMount() {
-		debug( this.displayName + ' component is mounted.' );
-	},
+        componentWillUnmount() {
+            debug(this.displayName + ' component is unmounting.');
+        },
 
-	componentWillUnmount() {
-		debug( this.displayName + ' component is unmounting.' );
-	},
+        render() {
+            const gravatarProfileLink = 'https://gravatar.com/' +
+                this.props.userSettings.getSetting('user_login');
 
-	render() {
-		const gravatarProfileLink = 'https://gravatar.com/' + this.props.userSettings.getSetting( 'user_login' );
+            return (
+                <Main className="profile">
+                    <MeSidebarNavigation />
+                    <ReauthRequired twoStepAuthorization={twoStepAuthorization} />
+                    <SectionHeader label={this.translate('Profile')} />
+                    <Card className="me-profile-settings">
+                        {isEnabled('me/edit-gravatar') && <EditGravatar />}
 
-		return (
-			<Main className="profile">
-				<MeSidebarNavigation />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<SectionHeader label={ this.translate( 'Profile' ) } />
-				<Card className="me-profile-settings">
-					{ isEnabled( 'me/edit-gravatar' ) && <EditGravatar /> }
+                        <form onSubmit={this.submitForm} onChange={this.props.markChanged}>
+                            <FormFieldset>
+                                <FormLabel htmlFor="first_name">
+                                    {this.translate('First Name')}
+                                </FormLabel>
+                                <FormTextInput
+                                    disabled={this.getDisabledState()}
+                                    id="first_name"
+                                    name="first_name"
+                                    onFocus={this.recordFocusEvent('First Name Field')}
+                                    valueLink={this.valueLink('first_name')}
+                                />
+                            </FormFieldset>
 
-					<form onSubmit={ this.submitForm } onChange={ this.props.markChanged }>
-						<FormFieldset>
-							<FormLabel htmlFor="first_name">{ this.translate( 'First Name' ) }</FormLabel>
-							<FormTextInput
-								disabled={ this.getDisabledState() }
-								id="first_name"
-								name="first_name"
-								onFocus={ this.recordFocusEvent( 'First Name Field' ) }
-								valueLink={ this.valueLink( 'first_name' ) } />
-						</FormFieldset>
+                            <FormFieldset>
+                                <FormLabel htmlFor="last_name">
+                                    {this.translate('Last Name')}
+                                </FormLabel>
+                                <FormTextInput
+                                    disabled={this.getDisabledState()}
+                                    id="last_name"
+                                    name="last_name"
+                                    onFocus={this.recordFocusEvent('Last Name Field')}
+                                    valueLink={this.valueLink('last_name')}
+                                />
+                            </FormFieldset>
 
-						<FormFieldset>
-							<FormLabel htmlFor="last_name">{ this.translate( 'Last Name' ) }</FormLabel>
-							<FormTextInput
-								disabled={ this.getDisabledState() }
-								id="last_name"
-								name="last_name"
-								onFocus={ this.recordFocusEvent( 'Last Name Field' ) }
-								valueLink={ this.valueLink( 'last_name' ) } />
-						</FormFieldset>
+                            <FormFieldset>
+                                <FormLabel htmlFor="display_name">
+                                    {this.translate('Public Display Name')}
+                                </FormLabel>
+                                <FormTextInput
+                                    disabled={this.getDisabledState()}
+                                    id="display_name"
+                                    name="display_name"
+                                    onFocus={this.recordFocusEvent('Display Name Field')}
+                                    valueLink={this.valueLink('display_name')}
+                                />
+                            </FormFieldset>
 
-						<FormFieldset>
-							<FormLabel htmlFor="display_name">{ this.translate( 'Public Display Name' ) }</FormLabel>
-							<FormTextInput
-								disabled={ this.getDisabledState() }
-								id="display_name"
-								name="display_name"
-								onFocus={ this.recordFocusEvent( 'Display Name Field' ) }
-								valueLink={ this.valueLink( 'display_name' ) } />
-						</FormFieldset>
+                            <FormFieldset>
+                                <FormLabel htmlFor="description">
+                                    {this.translate('About Me')}
+                                </FormLabel>
+                                <FormTextarea
+                                    disabled={this.getDisabledState()}
+                                    id="description"
+                                    name="description"
+                                    onFocus={this.recordFocusEvent('About Me Field')}
+                                    valueLink={this.valueLink('description')}
+                                />
+                            </FormFieldset>
 
-						<FormFieldset>
-							<FormLabel htmlFor="description">{ this.translate( 'About Me' ) }</FormLabel>
-							<FormTextarea
-								disabled={ this.getDisabledState() }
-								id="description"
-								name="description"
-								onFocus={ this.recordFocusEvent( 'About Me Field' ) }
-								valueLink={ this.valueLink( 'description' ) }>
-							</FormTextarea>
-						</FormFieldset>
+                            <p>
+                                <FormButton
+                                    disabled={
+                                        !this.props.userSettings.hasUnsavedSettings() ||
+                                            this.getDisabledState()
+                                    }
+                                    onClick={this.recordClickEvent('Save Profile Details Button')}
+                                >
+                                    {this.state.submittingForm
+                                        ? this.translate('Saving…')
+                                        : this.translate('Save Profile Details')}
+                                </FormButton>
+                            </p>
+                        </form>
+                        <p className="me-profile-settings__info-text">
+                            {this.translate(
+                                'This information will be displayed publicly on {{profilelink}}your profile{{/profilelink}} and in ' +
+                                    '{{hovercardslink}}Gravatar Hovercards{{/hovercardslink}}.',
+                                {
+                                    components: {
+                                        profilelink: (
+                                            <a
+                                                onClick={this.recordClickEvent('My Profile Link')}
+                                                href={gravatarProfileLink}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            />
+                                        ),
+                                        hovercardslink: (
+                                            <a
+                                                onClick={this.recordClickEvent(
+                                                    'Gravatar Hovercards Link'
+                                                )}
+                                                href="https://support.wordpress.com/gravatar-hovercards/"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            />
+                                        ),
+                                    },
+                                }
+                            )}
+                        </p>
+                    </Card>
 
-						<p>
-							<FormButton
-								disabled={ ! this.props.userSettings.hasUnsavedSettings() || this.getDisabledState() }
-								onClick={ this.recordClickEvent( 'Save Profile Details Button' ) }>
-								{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Profile Details' ) }
-							</FormButton>
-						</p>
-					</form>
-					<p className="me-profile-settings__info-text">
-						{ this.translate(
-							'This information will be displayed publicly on {{profilelink}}your profile{{/profilelink}} and in ' +
-							'{{hovercardslink}}Gravatar Hovercards{{/hovercardslink}}.',
-							{
-								components: {
-									profilelink: (
-										<a
-											onClick={ this.recordClickEvent( 'My Profile Link' ) }
-											href={ gravatarProfileLink }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-									hovercardslink: (
-										<a
-											onClick={ this.recordClickEvent( 'Gravatar Hovercards Link' ) }
-											href="https://support.wordpress.com/gravatar-hovercards/"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									)
-								}
-							}
-						) }
-					</p>
-				</Card>
+                    <ProfileLinks userProfileLinks={userProfileLinks} />
 
-				<ProfileLinks userProfileLinks={ userProfileLinks } />
-
-			</Main>
-		);
-	}
-} ) );
+                </Main>
+            );
+        },
+    })
+);

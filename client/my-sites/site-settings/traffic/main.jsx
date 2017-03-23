@@ -20,76 +20,72 @@ import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 
-const SiteSettingsTraffic = ( {
-	fields,
-	jetpackSettingsUiSupported,
-	handleAutosavingToggle,
-	handleSubmitForm,
-	isRequestingSettings,
-	isSavingSettings,
-	setFieldValue,
-	site,
-	sites,
-	upgradeToBusiness
-} ) => (
-	<Main className="traffic__main site-settings">
-		<SidebarNavigation />
-		<SiteSettingsNavigation site={ site } section="traffic" />
+const SiteSettingsTraffic = (
+    {
+        fields,
+        jetpackSettingsUiSupported,
+        handleAutosavingToggle,
+        handleSubmitForm,
+        isRequestingSettings,
+        isSavingSettings,
+        setFieldValue,
+        site,
+        sites,
+        upgradeToBusiness,
+    }
+) => (
+    <Main className="traffic__main site-settings">
+        <SidebarNavigation />
+        <SiteSettingsNavigation site={site} section="traffic" />
 
-		{ jetpackSettingsUiSupported &&
-			<JetpackSiteStats
-				handleAutosavingToggle={ handleAutosavingToggle }
-				setFieldValue={ setFieldValue }
-				isSavingSettings={ isSavingSettings }
-				isRequestingSettings={ isRequestingSettings }
-				fields={ fields }
-			/>
-		}
-		<RelatedPosts
-			onSubmitForm={ handleSubmitForm }
-			handleAutosavingToggle={ handleAutosavingToggle }
-			isSavingSettings={ isSavingSettings }
-			isRequestingSettings={ isRequestingSettings }
-			fields={ fields }
-		/>
-		<AnalyticsSettings />
-		<SeoSettingsHelpCard />
-		<SeoSettingsMain sites={ sites } upgradeToBusiness={ upgradeToBusiness } />
-	</Main>
+        {jetpackSettingsUiSupported &&
+            <JetpackSiteStats
+                handleAutosavingToggle={handleAutosavingToggle}
+                setFieldValue={setFieldValue}
+                isSavingSettings={isSavingSettings}
+                isRequestingSettings={isRequestingSettings}
+                fields={fields}
+            />}
+        <RelatedPosts
+            onSubmitForm={handleSubmitForm}
+            handleAutosavingToggle={handleAutosavingToggle}
+            isSavingSettings={isSavingSettings}
+            isRequestingSettings={isRequestingSettings}
+            fields={fields}
+        />
+        <AnalyticsSettings />
+        <SeoSettingsHelpCard />
+        <SeoSettingsMain sites={sites} upgradeToBusiness={upgradeToBusiness} />
+    </Main>
 );
 
 SiteSettingsTraffic.propTypes = {
-	sites: PropTypes.object.isRequired,
-	upgradeToBusiness: PropTypes.func.isRequired,
+    sites: PropTypes.object.isRequired,
+    upgradeToBusiness: PropTypes.func.isRequired,
 };
 
-const connectComponent = connect(
-	( state ) => {
-		const site = getSelectedSite( state );
-		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
-		const jetpackSettingsUiSupported = isJetpack && siteSupportsJetpackSettingsUi( state, siteId );
+const connectComponent = connect(state => {
+    const site = getSelectedSite(state);
+    const siteId = getSelectedSiteId(state);
+    const isJetpack = isJetpackSite(state, siteId);
+    const jetpackSettingsUiSupported = isJetpack && siteSupportsJetpackSettingsUi(state, siteId);
 
-		return {
-			site,
-			jetpackSettingsUiSupported,
-		};
-	}
-);
+    return {
+        site,
+        jetpackSettingsUiSupported,
+    };
+});
 
-const getFormSettings = partialRight( pick, [
-	'stats',
-	'admin_bar',
-	'hide_smile',
-	'count_roles',
-	'roles',
-	'jetpack_relatedposts_allowed',
-	'jetpack_relatedposts_enabled',
-	'jetpack_relatedposts_show_headline',
-	'jetpack_relatedposts_show_thumbnails',
-] );
+const getFormSettings = partialRight(pick, [
+    'stats',
+    'admin_bar',
+    'hide_smile',
+    'count_roles',
+    'roles',
+    'jetpack_relatedposts_allowed',
+    'jetpack_relatedposts_enabled',
+    'jetpack_relatedposts_show_headline',
+    'jetpack_relatedposts_show_thumbnails',
+]);
 
-export default flowRight(
-	connectComponent,
-	wrapSettingsForm( getFormSettings )
-)( SiteSettingsTraffic );
+export default flowRight(connectComponent, wrapSettingsForm(getFormSettings))(SiteSettingsTraffic);

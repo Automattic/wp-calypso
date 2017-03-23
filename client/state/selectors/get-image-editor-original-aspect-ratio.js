@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @param  {Object}  state   Global state tree
  * @return {?Object}         Original image dimensions, if known
  */
-export default function getImageEditorOriginalAspectRatio( state ) {
-	return get( state, 'ui.editor.imageEditor.originalAspectRatio', null );
+export default function getImageEditorOriginalAspectRatio(state) {
+    return get(state, 'ui.editor.imageEditor.originalAspectRatio', null);
 }

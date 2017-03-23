@@ -11,23 +11,23 @@
  * @param  {string} filter Media filter path segment
  * @return {string}        Media mime type prefix
  */
-export default function( filter ) {
-	var mimePrefix;
+export default function(filter) {
+    var mimePrefix;
 
-	switch ( filter ) {
-		case 'images':
-			mimePrefix = 'image';
-			break;
-		case 'audio':
-			mimePrefix = 'audio';
-			break;
-		case 'videos':
-			mimePrefix = 'video';
-			break;
-		case 'documents':
-			mimePrefix = 'application';
-			break;
-	}
+    switch (filter) {
+        case 'images':
+            mimePrefix = 'image';
+            break;
+        case 'audio':
+            mimePrefix = 'audio';
+            break;
+        case 'videos':
+            mimePrefix = 'video';
+            break;
+        case 'documents':
+            mimePrefix = 'application';
+            break;
+    }
 
-	return mimePrefix;
+    return mimePrefix;
 }

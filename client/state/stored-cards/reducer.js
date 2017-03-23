@@ -7,15 +7,15 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	SERIALIZE,
-	DESERIALIZE,
-	STORED_CARDS_ADD_COMPLETED,
-	STORED_CARDS_FETCH,
-	STORED_CARDS_FETCH_COMPLETED,
-	STORED_CARDS_FETCH_FAILED,
-	STORED_CARDS_DELETE,
-	STORED_CARDS_DELETE_COMPLETED,
-	STORED_CARDS_DELETE_FAILED
+    SERIALIZE,
+    DESERIALIZE,
+    STORED_CARDS_ADD_COMPLETED,
+    STORED_CARDS_FETCH,
+    STORED_CARDS_FETCH_COMPLETED,
+    STORED_CARDS_FETCH_FAILED,
+    STORED_CARDS_DELETE,
+    STORED_CARDS_DELETE_COMPLETED,
+    STORED_CARDS_DELETE_FAILED,
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
 import { storedCardsSchema } from './schema';
@@ -28,14 +28,18 @@ import { storedCardsSchema } from './schema';
  * @param  {Object} action storeCard action
  * @return {Array}         Updated state
  */
-export const items = createReducer( [], {
-	[ STORED_CARDS_ADD_COMPLETED ]: ( state, { item } ) => [ ...state, item ],
+export const items = createReducer(
+    [],
+    {
+        [STORED_CARDS_ADD_COMPLETED]: (state, { item }) => [...state, item],
 
-	[ STORED_CARDS_FETCH_COMPLETED ]: ( state, { list } ) => list,
+        [STORED_CARDS_FETCH_COMPLETED]: (state, { list }) => list,
 
-	[ STORED_CARDS_DELETE_COMPLETED ]: ( state, { card } ) =>
-		state.filter( item => item.stored_details_id !== card.stored_details_id )
-}, storedCardsSchema );
+        [STORED_CARDS_DELETE_COMPLETED]: (state, { card }) =>
+            state.filter(item => item.stored_details_id !== card.stored_details_id),
+    },
+    storedCardsSchema
+);
 
 /**
  * Returns whether the list of stored cards has been loaded from the server in reaction to the specified action.
@@ -44,18 +48,18 @@ export const items = createReducer( [], {
  * @param {Object} action - action payload
  * @return {Boolean} - updated state
  */
-export const hasLoadedFromServer = ( state = false, action ) => {
-	switch ( action.type ) {
-		case STORED_CARDS_FETCH_COMPLETED:
-			return true;
+export const hasLoadedFromServer = (state = false, action) => {
+    switch (action.type) {
+        case STORED_CARDS_FETCH_COMPLETED:
+            return true;
 
-		// return initial state when serializing/deserializing
-		case SERIALIZE:
-		case DESERIALIZE:
-			return false;
-	}
+        // return initial state when serializing/deserializing
+        case SERIALIZE:
+        case DESERIALIZE:
+            return false;
+    }
 
-	return state;
+    return state;
 };
 
 /**
@@ -66,22 +70,22 @@ export const hasLoadedFromServer = ( state = false, action ) => {
  * @param {Object} action - storedCard action
  * @return {Object} updated state
  */
-export const isFetching = ( state = false, action ) => {
-	switch ( action.type ) {
-		case STORED_CARDS_FETCH:
-			return true;
+export const isFetching = (state = false, action) => {
+    switch (action.type) {
+        case STORED_CARDS_FETCH:
+            return true;
 
-		case STORED_CARDS_FETCH_COMPLETED:
-		case STORED_CARDS_FETCH_FAILED:
-			return false;
+        case STORED_CARDS_FETCH_COMPLETED:
+        case STORED_CARDS_FETCH_FAILED:
+            return false;
 
-		// return initial state when serializing/deserializing
-		case SERIALIZE:
-		case DESERIALIZE:
-			return false;
-	}
+        // return initial state when serializing/deserializing
+        case SERIALIZE:
+        case DESERIALIZE:
+            return false;
+    }
 
-	return state;
+    return state;
 };
 
 /**
@@ -92,27 +96,27 @@ export const isFetching = ( state = false, action ) => {
  * @param {Object} action - storedCard action
  * @return {Object} updated state
  */
-export const isDeleting = ( state = false, action ) => {
-	switch ( action.type ) {
-		case STORED_CARDS_DELETE:
-			return true;
+export const isDeleting = (state = false, action) => {
+    switch (action.type) {
+        case STORED_CARDS_DELETE:
+            return true;
 
-		case STORED_CARDS_DELETE_FAILED:
-		case STORED_CARDS_DELETE_COMPLETED:
-			return false;
+        case STORED_CARDS_DELETE_FAILED:
+        case STORED_CARDS_DELETE_COMPLETED:
+            return false;
 
-		// return initial state when serializing/deserializing
-		case SERIALIZE:
-		case DESERIALIZE:
-			return false;
-	}
+        // return initial state when serializing/deserializing
+        case SERIALIZE:
+        case DESERIALIZE:
+            return false;
+    }
 
-	return state;
+    return state;
 };
 
-export default combineReducers( {
-	hasLoadedFromServer,
-	isDeleting,
-	isFetching,
-	items
-} );
+export default combineReducers({
+    hasLoadedFromServer,
+    isDeleting,
+    isFetching,
+    items,
+});

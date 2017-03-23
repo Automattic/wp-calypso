@@ -14,8 +14,8 @@ import deterministicStringify from 'lib/deterministic-stringify';
  * @param  {Object} query A list of query parameters
  * @return {String}       Alphabetically ordered string of query parameters and values
  */
-export function getSerializedQuery( query ) {
-	return deterministicStringify( omit( query, [ 'page', 'max' ] ) );
+export function getSerializedQuery(query) {
+    return deterministicStringify(omit(query, ['page', 'max']));
 }
 
 /**
@@ -25,7 +25,7 @@ export function getSerializedQuery( query ) {
  * @param  {Object} follower A follower ojbect
  * @return {Object}          A normalized follower object
  */
-export function normalizeFollower( follower ) {
-	follower.avatar_URL = follower.avatar;
-	return follower;
+export function normalizeFollower(follower) {
+    follower.avatar_URL = follower.avatar;
+    return follower;
 }

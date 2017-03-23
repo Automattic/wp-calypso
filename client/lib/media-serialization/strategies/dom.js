@@ -17,42 +17,42 @@ const REGEXP_IMG_CLASS_ALIGN = /\balign(left|center|right|none)\b/;
  * @param  {Object}      _parsed In recursion, the known values
  * @return {Object}              Object of all detected values
  */
-function parseImage( node, _parsed ) {
-	_parsed.type = MediaTypes.IMAGE;
-	_parsed.media.URL = node.getAttribute( 'src' );
-	_parsed.media.alt = node.getAttribute( 'alt' );
-	_parsed.media.transient = ( 0 === ( _parsed.media.URL || '' ).indexOf( 'blob:' ) );
+function parseImage(node, _parsed) {
+    _parsed.type = MediaTypes.IMAGE;
+    _parsed.media.URL = node.getAttribute('src');
+    _parsed.media.alt = node.getAttribute('alt');
+    _parsed.media.transient = 0 === (_parsed.media.URL || '').indexOf('blob:');
 
-	// Parse dimensions
-	[ 'width', 'height' ].forEach( ( dimension ) => {
-		var natural = 'natural' + dimension[ 0 ].toUpperCase() + dimension.slice( 1 ),
-			value = node.getAttribute( dimension ) || node[ natural ] || node[ dimension ];
+    // Parse dimensions
+    ['width', 'height'].forEach(dimension => {
+        var natural = 'natural' + dimension[0].toUpperCase() + dimension.slice(1),
+            value = node.getAttribute(dimension) || node[natural] || node[dimension];
 
-		if ( value && isFinite( value ) ) {
-			_parsed.media[ dimension ] = parseInt( value, 10 );
-		}
-	} );
+        if (value && isFinite(value)) {
+            _parsed.media[dimension] = parseInt(value, 10);
+        }
+    });
 
-	// Parse size from class name
-	if ( REGEXP_IMG_CLASS_SIZE.test( node.className ) ) {
-		_parsed.appearance.size = node.className.match( REGEXP_IMG_CLASS_SIZE )[ 1 ];
-	}
+    // Parse size from class name
+    if (REGEXP_IMG_CLASS_SIZE.test(node.className)) {
+        _parsed.appearance.size = node.className.match(REGEXP_IMG_CLASS_SIZE)[1];
+    }
 
-	// Parse alignment from class name
-	if ( REGEXP_IMG_CLASS_ALIGN.test( node.className ) ) {
-		_parsed.appearance.align = node.className.match( REGEXP_IMG_CLASS_ALIGN )[ 1 ];
-	}
+    // Parse alignment from class name
+    if (REGEXP_IMG_CLASS_ALIGN.test(node.className)) {
+        _parsed.appearance.align = node.className.match(REGEXP_IMG_CLASS_ALIGN)[1];
+    }
 
-	// Parse ID from class name
-	if ( REGEXP_IMG_CLASS_ID.test( node.className ) ) {
-		_parsed.media.ID = node.className.match( REGEXP_IMG_CLASS_ID )[ 1 ];
+    // Parse ID from class name
+    if (REGEXP_IMG_CLASS_ID.test(node.className)) {
+        _parsed.media.ID = node.className.match(REGEXP_IMG_CLASS_ID)[1];
 
-		if ( isFinite( _parsed.media.ID ) ) {
-			_parsed.media.ID = parseInt( _parsed.media.ID, 10 );
-		}
-	}
+        if (isFinite(_parsed.media.ID)) {
+            _parsed.media.ID = parseInt(_parsed.media.ID, 10);
+        }
+    }
 
-	return _parsed;
+    return _parsed;
 }
 
 /**
@@ -63,12 +63,12 @@ function parseImage( node, _parsed ) {
  * @param  {Object}      _parsed In recursion, the known values
  * @return {Object}              Object of all detected values
  */
-export function deserialize( node, _parsed = { media: {}, appearance: {} } ) {
-	switch ( node.nodeName ) {
-		case 'IMG':
-			_parsed = parseImage( node, _parsed );
-			break;
-	}
+export function deserialize(node, _parsed = { media: {}, appearance: {} }) {
+    switch (node.nodeName) {
+        case 'IMG':
+            _parsed = parseImage(node, _parsed);
+            break;
+    }
 
-	return _parsed;
+    return _parsed;
 }

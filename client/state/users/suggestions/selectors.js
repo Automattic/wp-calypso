@@ -11,8 +11,8 @@ import { get } from 'lodash';
  * @param  {Number}  siteId  Site ID
  * @return {Boolean}         Whether user suggestions are being requested
  */
-export function isRequestingUserSuggestions( state, siteId ) {
-	return get( state.users.suggestions.requesting, [ siteId ], false );
+export function isRequestingUserSuggestions(state, siteId) {
+    return get(state.users.suggestions.requesting, [siteId], false);
 }
 
 /**
@@ -22,6 +22,6 @@ export function isRequestingUserSuggestions( state, siteId ) {
  * @param  {Number}  siteId  Site ID
  * @return {Array}           Site user suggestions
  */
-export function getUserSuggestions( state, siteId ) {
-	return get( state.users.suggestions.items, [ siteId ], [] );
+export function getUserSuggestions(state, siteId) {
+    return get(state.users.suggestions.items, [siteId], []);
 }

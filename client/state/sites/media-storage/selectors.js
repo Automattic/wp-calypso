@@ -4,8 +4,8 @@
  * @param   {Number}  siteId Site ID
  * @returns {Object}         Media Storage Information
  */
-export function getMediaStorage( state, siteId ) {
-	return state.sites.mediaStorage.items[ siteId ];
+export function getMediaStorage(state, siteId) {
+    return state.sites.mediaStorage.items[siteId];
 }
 
 /**
@@ -14,8 +14,8 @@ export function getMediaStorage( state, siteId ) {
  * @param   {Number}  siteId Site ID
  * @returns {Boolean}        If media storage is requested
  */
-export function isRequestingMediaStorage( state, siteId ) {
-	return !! state.sites.mediaStorage.fetchingItems[ siteId ];
+export function isRequestingMediaStorage(state, siteId) {
+    return !!state.sites.mediaStorage.fetchingItems[siteId];
 }
 
 /**
@@ -25,13 +25,13 @@ export function isRequestingMediaStorage( state, siteId ) {
  * @returns {?Boolean}       True if site is over storage limits, and null if
  *                           mediaStorage is unavailable.
  */
-export function isOverMediaLimit( state, siteId ) {
-	const mediaStorage = state.sites.mediaStorage.items[ siteId ];
-	if ( ! mediaStorage ) {
-		return null;
-	}
-	if ( mediaStorage.max_storage_bytes === -1 ) {
-		return false;
-	}
-	return mediaStorage.storage_used_bytes >= mediaStorage.max_storage_bytes;
+export function isOverMediaLimit(state, siteId) {
+    const mediaStorage = state.sites.mediaStorage.items[siteId];
+    if (!mediaStorage) {
+        return null;
+    }
+    if (mediaStorage.max_storage_bytes === -1) {
+        return false;
+    }
+    return mediaStorage.storage_used_bytes >= mediaStorage.max_storage_bytes;
 }

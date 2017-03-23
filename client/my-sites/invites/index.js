@@ -9,9 +9,9 @@ import page from 'page';
 import { acceptInvite, redirectWithoutLocaleifLoggedIn } from './controller';
 
 export default () => {
-	page(
-		'/accept-invite/:site_id?/:invitation_key?/:activation_key?/:auth_key?/:locale?',
-		redirectWithoutLocaleifLoggedIn,
-		acceptInvite
-	);
+    page(
+        '/accept-invite/:site_id?/:invitation_key?/:activation_key?/:auth_key?/:locale?',
+        redirectWithoutLocaleifLoggedIn,
+        acceptInvite
+    );
 };

@@ -8,13 +8,13 @@ import { omit } from 'lodash/object';
  */
 import wpcom from 'lib/wp';
 import {
-	GUIDED_TRANSFER_HOST_DETAILS_SAVE,
-	GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
-	GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
-	GUIDED_TRANSFER_STATUS_RECEIVE,
-	GUIDED_TRANSFER_STATUS_REQUEST,
-	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
-	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
+    GUIDED_TRANSFER_HOST_DETAILS_SAVE,
+    GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
+    GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
+    GUIDED_TRANSFER_STATUS_RECEIVE,
+    GUIDED_TRANSFER_STATUS_REQUEST,
+    GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
+    GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -24,12 +24,12 @@ import {
  * @param {Object} guidedTransferStatus The current status of the guided transfer
  * @returns {Object} An action object
  */
-export function receiveGuidedTransferStatus( siteId, guidedTransferStatus ) {
-	return {
-		type: GUIDED_TRANSFER_STATUS_RECEIVE,
-		siteId,
-		guidedTransferStatus,
-	};
+export function receiveGuidedTransferStatus(siteId, guidedTransferStatus) {
+    return {
+        type: GUIDED_TRANSFER_STATUS_RECEIVE,
+        siteId,
+        guidedTransferStatus,
+    };
 }
 
 /**
@@ -38,39 +38,43 @@ export function receiveGuidedTransferStatus( siteId, guidedTransferStatus ) {
  * @param {number} siteId The site ID to which the status belongs
  * @returns {Thunk} Action thunk
  */
-export function requestGuidedTransferStatus( siteId ) {
-	return ( dispatch ) => {
-		dispatch( { type: GUIDED_TRANSFER_STATUS_REQUEST, siteId } );
+export function requestGuidedTransferStatus(siteId) {
+    return dispatch => {
+        dispatch({ type: GUIDED_TRANSFER_STATUS_REQUEST, siteId });
 
-		const success = response => {
-			const guidedTransferStatus = omit( response, '_headers' );
+        const success = response => {
+            const guidedTransferStatus = omit(response, '_headers');
 
-			dispatch( {
-				type: GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
-				siteId
-			} );
+            dispatch({
+                type: GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
+                siteId,
+            });
 
-			dispatch( receiveGuidedTransferStatus( siteId, guidedTransferStatus ) );
-		};
+            dispatch(receiveGuidedTransferStatus(siteId, guidedTransferStatus));
+        };
 
-		const failure = error => dispatch( {
-			type: GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
-			siteId,
-			error,
-		} );
+        const failure = error =>
+            dispatch({
+                type: GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
+                siteId,
+                error,
+            });
 
-		return wpcom.undocumented().site( siteId ).getGuidedTransferStatus()
-			.then( success )
-			.catch( failure );
-	};
+        return wpcom
+            .undocumented()
+            .site(siteId)
+            .getGuidedTransferStatus()
+            .then(success)
+            .catch(failure);
+    };
 }
 
-export function saveHostDetailsFailure( siteId, error = {} ) {
-	return {
-		type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
-		siteId,
-		error,
-	};
+export function saveHostDetailsFailure(siteId, error = {}) {
+    return {
+        type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
+        siteId,
+        error,
+    };
 }
 
 /**
@@ -81,35 +85,36 @@ export function saveHostDetailsFailure( siteId, error = {} ) {
  * @param {Object} data The form data containing the target host details
  * @returns {Thunk} Action thunk
  */
-export function saveHostDetails( siteId, data ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: GUIDED_TRANSFER_HOST_DETAILS_SAVE,
-			siteId,
-		} );
+export function saveHostDetails(siteId, data) {
+    return dispatch => {
+        dispatch({
+            type: GUIDED_TRANSFER_HOST_DETAILS_SAVE,
+            siteId,
+        });
 
-		const failure = error => {
-			dispatch( saveHostDetailsFailure( siteId, error ) );
-		};
+        const failure = error => {
+            dispatch(saveHostDetailsFailure(siteId, error));
+        };
 
-		const success = response => {
-			// The success response is the updated status of the guided transfer
-			dispatch( receiveGuidedTransferStatus(
-				siteId, omit( response, '_headers' )
-			) );
+        const success = response => {
+            // The success response is the updated status of the guided transfer
+            dispatch(receiveGuidedTransferStatus(siteId, omit(response, '_headers')));
 
-			if ( ! response.host_details_entered ) {
-				return failure();
-			}
+            if (!response.host_details_entered) {
+                return failure();
+            }
 
-			dispatch( {
-				type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
-				siteId,
-			} );
-		};
+            dispatch({
+                type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
+                siteId,
+            });
+        };
 
-		return wpcom.undocumented().site( siteId ).saveGuidedTransferHostDetails( data )
-			.then( success )
-			.catch( failure );
-	};
+        return wpcom
+            .undocumented()
+            .site(siteId)
+            .saveGuidedTransferHostDetails(data)
+            .then(success)
+            .catch(failure);
+    };
 }

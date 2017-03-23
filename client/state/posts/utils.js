@@ -2,22 +2,22 @@
  * External dependencies
  */
 import {
-	isEmpty,
-	isPlainObject,
-	flow,
-	map,
-	mapValues,
-	mergeWith,
-	omit,
-	omitBy,
-	reduce,
-	toArray,
-	cloneDeep,
-	pickBy,
-	isString,
-	every,
-	unset,
-	xor,
+    isEmpty,
+    isPlainObject,
+    flow,
+    map,
+    mapValues,
+    mergeWith,
+    omit,
+    omitBy,
+    reduce,
+    toArray,
+    cloneDeep,
+    pickBy,
+    isString,
+    every,
+    unset,
+    xor,
 } from 'lodash';
 
 /**
@@ -38,19 +38,11 @@ const REGEXP_SERIALIZED_QUERY = /^((\d+):)?(.*)$/;
  * Utility
  */
 
-const normalizeEditedFlow = flow( [
-	getTermIdsFromEdits
-] );
+const normalizeEditedFlow = flow([getTermIdsFromEdits]);
 
-const normalizeApiFlow = flow( [
-	normalizeTermsForApi
-] );
+const normalizeApiFlow = flow([normalizeTermsForApi]);
 
-const normalizeDisplayFlow = flow( [
-	pickCanonicalImage,
-	decodeEntities,
-	stripHtml
-] );
+const normalizeDisplayFlow = flow([pickCanonicalImage, decodeEntities, stripHtml]);
 
 /**
  * Returns a normalized posts query, excluding any values which match the
@@ -59,8 +51,8 @@ const normalizeDisplayFlow = flow( [
  * @param  {Object} query Posts query
  * @return {Object}       Normalized posts query
  */
-export function getNormalizedPostsQuery( query ) {
-	return omitBy( query, ( value, key ) => DEFAULT_POST_QUERY[ key ] === value );
+export function getNormalizedPostsQuery(query) {
+    return omitBy(query, (value, key) => DEFAULT_POST_QUERY[key] === value);
 }
 
 /**
@@ -70,15 +62,15 @@ export function getNormalizedPostsQuery( query ) {
  * @param  {Number} siteId Optional site ID
  * @return {String}        Serialized posts query
  */
-export function getSerializedPostsQuery( query = {}, siteId ) {
-	const normalizedQuery = getNormalizedPostsQuery( query );
-	const serializedQuery = JSON.stringify( normalizedQuery );
+export function getSerializedPostsQuery(query = {}, siteId) {
+    const normalizedQuery = getNormalizedPostsQuery(query);
+    const serializedQuery = JSON.stringify(normalizedQuery);
 
-	if ( siteId ) {
-		return [ siteId, serializedQuery ].join( ':' );
-	}
+    if (siteId) {
+        return [siteId, serializedQuery].join(':');
+    }
 
-	return serializedQuery;
+    return serializedQuery;
 }
 
 /**
@@ -88,18 +80,18 @@ export function getSerializedPostsQuery( query = {}, siteId ) {
  * @param  {String} serializedQuery Serialized posts query
  * @return {Object}                 Deserialized posts query details
  */
-export function getDeserializedPostsQueryDetails( serializedQuery ) {
-	let siteId, query;
+export function getDeserializedPostsQueryDetails(serializedQuery) {
+    let siteId, query;
 
-	const matches = serializedQuery.match( REGEXP_SERIALIZED_QUERY );
-	if ( matches ) {
-		siteId = Number( matches[ 2 ] ) || undefined;
-		try {
-			query = JSON.parse( matches[ 3 ] );
-		} catch ( error ) {}
-	}
+    const matches = serializedQuery.match(REGEXP_SERIALIZED_QUERY);
+    if (matches) {
+        siteId = Number(matches[2]) || undefined;
+        try {
+            query = JSON.parse(matches[3]);
+        } catch (error) {}
+    }
 
-	return { siteId, query };
+    return { siteId, query };
 }
 
 /**
@@ -109,8 +101,8 @@ export function getDeserializedPostsQueryDetails( serializedQuery ) {
  * @param  {Number} siteId Optional site ID
  * @return {String}        Serialized posts query
  */
-export function getSerializedPostsQueryWithoutPage( query, siteId ) {
-	return getSerializedPostsQuery( omit( query, 'page' ), siteId );
+export function getSerializedPostsQueryWithoutPage(query, siteId) {
+    return getSerializedPostsQuery(omit(query, 'page'), siteId);
 }
 
 /**
@@ -122,12 +114,12 @@ export function getSerializedPostsQueryWithoutPage( query, siteId ) {
  * @param  {...Object} sources Source objects for merge
  * @return {Object}            Merged object with values from all sources
  */
-export function mergeIgnoringArrays( object, ...sources ) {
-	return mergeWith( object, ...sources, ( objValue, srcValue ) => {
-		if ( Array.isArray( srcValue ) ) {
-			return srcValue;
-		}
-	} );
+export function mergeIgnoringArrays(object, ...sources) {
+    return mergeWith(object, ...sources, (objValue, srcValue) => {
+        if (Array.isArray(srcValue)) {
+            return srcValue;
+        }
+    });
 }
 
 /**
@@ -137,12 +129,12 @@ export function mergeIgnoringArrays( object, ...sources ) {
  * @param  {Object} post Raw post object
  * @return {Object}      Normalized post object
  */
-export function normalizePostForDisplay( post ) {
-	if ( ! post ) {
-		return null;
-	}
+export function normalizePostForDisplay(post) {
+    if (!post) {
+        return null;
+    }
 
-	return normalizeDisplayFlow( cloneDeep( post ) );
+    return normalizeDisplayFlow(cloneDeep(post));
 }
 
 /**
@@ -151,12 +143,12 @@ export function normalizePostForDisplay( post ) {
  * @param  {Ojbect} post Raw edited post object
  * @return {Object}      Normalized post object
  */
-export function normalizePostForEditing( post ) {
-	if ( ! post ) {
-		return null;
-	}
+export function normalizePostForEditing(post) {
+    if (!post) {
+        return null;
+    }
 
-	return normalizeEditedFlow( post );
+    return normalizeEditedFlow(post);
 }
 
 /**
@@ -166,20 +158,27 @@ export function normalizePostForEditing( post ) {
  * @param  {Object} post Raw post object
  * @return {Object}      Normalized post object
  */
-export function normalizePostForState( post ) {
-	const normalizedPost = cloneDeep( post );
-	return reduce( [
-		[],
-		...reduce( post.terms, ( memo, terms, taxonomy ) => (
-			memo.concat( map( terms, ( term, slug ) => [ 'terms', taxonomy, slug ] ) )
-		), [] ),
-		...map( post.categories, ( category, slug ) => [ 'categories', slug ] ),
-		...map( post.tags, ( tag, slug ) => [ 'tags', slug ] ),
-		...map( post.attachments, ( attachment, id ) => [ 'attachments', id ] )
-	], ( memo, path ) => {
-		unset( memo, path.concat( 'meta' ) );
-		return memo;
-	}, normalizedPost );
+export function normalizePostForState(post) {
+    const normalizedPost = cloneDeep(post);
+    return reduce(
+        [
+            [],
+            ...reduce(
+                post.terms,
+                (memo, terms, taxonomy) =>
+                    memo.concat(map(terms, (term, slug) => ['terms', taxonomy, slug])),
+                []
+            ),
+            ...map(post.categories, (category, slug) => ['categories', slug]),
+            ...map(post.tags, (tag, slug) => ['tags', slug]),
+            ...map(post.attachments, (attachment, id) => ['attachments', id]),
+        ],
+        (memo, path) => {
+            unset(memo, path.concat('meta'));
+            return memo;
+        },
+        normalizedPost
+    );
 }
 
 /**
@@ -188,38 +187,42 @@ export function normalizePostForState( post ) {
  * @param  {Object}    post  object of post edits
  * @return {Object}          normalized post edits
  */
-export function getTermIdsFromEdits( post ) {
-	if ( ! post || ! post.terms ) {
-		return post;
-	}
+export function getTermIdsFromEdits(post) {
+    if (!post || !post.terms) {
+        return post;
+    }
 
-	// Filter taxonomies that are set as arrays ( i.e. tags )
-	// This can be detected by an array of strings vs an array of objects
-	const taxonomies = reduce( post.terms, ( prev, taxonomyTerms, taxonomyName ) => {
-		// Ensures we are working with an array
-		const termsArray = toArray( taxonomyTerms );
-		if ( termsArray && termsArray.length && ! isPlainObject( termsArray[ 0 ] ) ) {
-			return prev;
-		}
+    // Filter taxonomies that are set as arrays ( i.e. tags )
+    // This can be detected by an array of strings vs an array of objects
+    const taxonomies = reduce(
+        post.terms,
+        (prev, taxonomyTerms, taxonomyName) => {
+            // Ensures we are working with an array
+            const termsArray = toArray(taxonomyTerms);
+            if (termsArray && termsArray.length && !isPlainObject(termsArray[0])) {
+                return prev;
+            }
 
-		prev[ taxonomyName ] = termsArray;
-		return prev;
-	}, {} );
+            prev[taxonomyName] = termsArray;
+            return prev;
+        },
+        {}
+    );
 
-	if ( isEmpty( taxonomies ) ) {
-		return post;
-	}
+    if (isEmpty(taxonomies)) {
+        return post;
+    }
 
-	return {
-		...post,
-		terms_by_id: mapValues( taxonomies, ( taxonomy ) => {
-			const termIds = map( taxonomy, 'ID' );
+    return {
+        ...post,
+        terms_by_id: mapValues(taxonomies, taxonomy => {
+            const termIds = map(taxonomy, 'ID');
 
-			// Hack: qs omits empty arrays in wpcom.js request, which prevents
-			// removing all terms for a given taxonomy since the empty array is not sent to the API
-			return termIds.length ? termIds : null;
-		} )
-	};
+            // Hack: qs omits empty arrays in wpcom.js request, which prevents
+            // removing all terms for a given taxonomy since the empty array is not sent to the API
+            return termIds.length ? termIds : null;
+        }),
+    };
 }
 
 /**
@@ -228,17 +231,17 @@ export function getTermIdsFromEdits( post ) {
  * @param  {Object} post Raw post object
  * @return {Object}      Normalized post object
  */
-export function normalizeTermsForApi( post ) {
-	if ( ! post || ! post.terms ) {
-		return post;
-	}
+export function normalizeTermsForApi(post) {
+    if (!post || !post.terms) {
+        return post;
+    }
 
-	return {
-		...post,
-		terms: pickBy( post.terms, ( terms ) => {
-			return terms.length && every( terms, isString );
-		} )
-	};
+    return {
+        ...post,
+        terms: pickBy(post.terms, terms => {
+            return terms.length && every(terms, isString);
+        }),
+    };
 }
 
 /**
@@ -248,15 +251,15 @@ export function normalizeTermsForApi( post ) {
  * @param  {Object}  savedTerms     term object returned from API POST
  * @return {Boolean}                are there differences in local edits vs saved terms
  */
-export function isTermsEqual( localTermEdits, savedTerms ) {
-	return every( localTermEdits, ( terms, taxonomy ) => {
-		const termsArray = toArray( terms );
-		const isHierarchical = isPlainObject( termsArray[ 0 ] );
-		const normalizedEditedTerms = isHierarchical ? map( termsArray, 'ID' ) : termsArray;
-		const normalizedKey = isHierarchical ? 'ID' : 'name';
-		const normalizedSavedTerms = map( savedTerms[ taxonomy ], normalizedKey );
-		return ! xor( normalizedEditedTerms, normalizedSavedTerms ).length;
-	} );
+export function isTermsEqual(localTermEdits, savedTerms) {
+    return every(localTermEdits, (terms, taxonomy) => {
+        const termsArray = toArray(terms);
+        const isHierarchical = isPlainObject(termsArray[0]);
+        const normalizedEditedTerms = isHierarchical ? map(termsArray, 'ID') : termsArray;
+        const normalizedKey = isHierarchical ? 'ID' : 'name';
+        const normalizedSavedTerms = map(savedTerms[taxonomy], normalizedKey);
+        return !xor(normalizedEditedTerms, normalizedSavedTerms).length;
+    });
 }
 
 /**
@@ -265,10 +268,10 @@ export function isTermsEqual( localTermEdits, savedTerms ) {
  * @param  {Object} post Raw post object
  * @return {Object}      Normalized post object
  */
-export function normalizePostForApi( post ) {
-	if ( ! post ) {
-		return null;
-	}
+export function normalizePostForApi(post) {
+    if (!post) {
+        return null;
+    }
 
-	return normalizeApiFlow( post );
+    return normalizeApiFlow(post);
 }

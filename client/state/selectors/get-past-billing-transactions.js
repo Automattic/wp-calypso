@@ -15,6 +15,6 @@ import { getBillingTransactions } from './';
  * @param  {Object}  state   Global state tree
  * @return {?Array}          An array of past transactions
  */
-export default function getPastBillingTransactions( state ) {
-	return get( getBillingTransactions( state ), 'past', null );
+export default function getPastBillingTransactions(state) {
+    return get(getBillingTransactions(state), 'past', null);
 }

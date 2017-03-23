@@ -1,22 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+var React = require('react'), PureRenderMixin = require('react-pure-render/mixin');
 
 /**
  * Internal dependencies
  */
-var Rating = require( 'components/rating' );
+var Rating = require('components/rating');
 
-module.exports = React.createClass( {
-	displayName: 'Rating',
+module.exports = React.createClass({
+    displayName: 'Rating',
 
-	mixins: [ PureRenderMixin ],
+    mixins: [PureRenderMixin],
 
-	render: function() {
-		return (
-			<Rating rating={ 65 } size={ 50 } />
-		);
-	}
-} );
+    render: function() {
+        return <Rating rating={65} size={50} />;
+    },
+});

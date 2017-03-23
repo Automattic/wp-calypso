@@ -9,12 +9,12 @@ import cloneDeep from 'lodash/cloneDeep';
 import usersData from './users';
 import moreUsersData from './more-users';
 
-const clonedMoreUsers = cloneDeep( moreUsersData.users );
-const updatedUsers = clonedMoreUsers.map( ( user ) => {
-	return Object.assign( {}, user, { roles: [ 'contributor' ] } );
-} );
+const clonedMoreUsers = cloneDeep(moreUsersData.users);
+const updatedUsers = clonedMoreUsers.map(user => {
+    return Object.assign({}, user, { roles: ['contributor'] });
+});
 
 export default {
-	found: 7,
-	users: Array.concat( usersData.users, updatedUsers )
+    found: 7,
+    users: Array.concat(usersData.users, updatedUsers),
 };

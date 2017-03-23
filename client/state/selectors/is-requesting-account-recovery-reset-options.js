@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @return {Boolean} If the request is in progress
  */
 
-export default ( state ) => {
-	return get( state, 'accountRecovery.reset.options.isRequesting', false );
+export default state => {
+    return get(state, 'accountRecovery.reset.options.isRequesting', false);
 };

@@ -1,50 +1,50 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require('react');
 
 /**
  * Internal dependencies
  */
-var MediaLibrarySelectedStore = require( 'lib/media/library-selected-store' ),
-	passToChildren = require( 'lib/react-pass-to-children' );
+var MediaLibrarySelectedStore = require('lib/media/library-selected-store'),
+    passToChildren = require('lib/react-pass-to-children');
 
-function getStateData( siteId ) {
-	return {
-		mediaLibrarySelectedItems: MediaLibrarySelectedStore.getAll( siteId )
-	};
+function getStateData(siteId) {
+    return {
+        mediaLibrarySelectedItems: MediaLibrarySelectedStore.getAll(siteId),
+    };
 }
 
-module.exports = React.createClass( {
-	displayName: 'MediaLibrarySelectedData',
+module.exports = React.createClass({
+    displayName: 'MediaLibrarySelectedData',
 
-	propTypes: {
-		siteId: React.PropTypes.number.isRequired
-	},
+    propTypes: {
+        siteId: React.PropTypes.number.isRequired,
+    },
 
-	getInitialState: function() {
-		return getStateData( this.props.siteId );
-	},
+    getInitialState: function() {
+        return getStateData(this.props.siteId);
+    },
 
-	componentDidMount: function() {
-		MediaLibrarySelectedStore.on( 'change', this.updateState );
-	},
+    componentDidMount: function() {
+        MediaLibrarySelectedStore.on('change', this.updateState);
+    },
 
-	componentWillUnmount: function() {
-		MediaLibrarySelectedStore.off( 'change', this.updateState );
-	},
+    componentWillUnmount: function() {
+        MediaLibrarySelectedStore.off('change', this.updateState);
+    },
 
-	componentWillReceiveProps: function( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
-			this.setState( getStateData( nextProps.siteId ) );
-		}
-	},
+    componentWillReceiveProps: function(nextProps) {
+        if (this.props.siteId !== nextProps.siteId) {
+            this.setState(getStateData(nextProps.siteId));
+        }
+    },
 
-	updateState: function() {
-		this.setState( getStateData( this.props.siteId ) );
-	},
+    updateState: function() {
+        this.setState(getStateData(this.props.siteId));
+    },
 
-	render: function() {
-		return passToChildren( this, this.state );
-	}
-} );
+    render: function() {
+        return passToChildren(this, this.state);
+    },
+});

@@ -12,6 +12,6 @@ import { get } from 'lodash';
  * @param  {String}  moduleSlug  Slug of the module
  * @return {?Boolean}            Whether module is currently being deactivated
  */
-export default function isDeactivatingJetpackModule( state, siteId, moduleSlug ) {
-	return get( state.jetpack.modules.requests, [ siteId, moduleSlug, 'deactivating' ], null );
+export default function isDeactivatingJetpackModule(state, siteId, moduleSlug) {
+    return get(state.jetpack.modules.requests, [siteId, moduleSlug, 'deactivating'], null);
 }

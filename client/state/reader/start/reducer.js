@@ -7,12 +7,12 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	READER_START_GRADUATE_REQUEST,
-	READER_START_GRADUATED,
-	READER_START_GRADUATE_REQUEST_SUCCESS,
-	READER_START_GRADUATE_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE,
+    READER_START_GRADUATE_REQUEST,
+    READER_START_GRADUATED,
+    READER_START_GRADUATE_REQUEST_SUCCESS,
+    READER_START_GRADUATE_REQUEST_FAILURE,
+    SERIALIZE,
+    DESERIALIZE,
 } from 'state/action-types';
 
 /**
@@ -23,19 +23,19 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function isRequestingGraduation( state = false, action ) {
-	switch ( action.type ) {
-		case READER_START_GRADUATE_REQUEST:
-		case READER_START_GRADUATE_REQUEST_SUCCESS:
-		case READER_START_GRADUATE_REQUEST_FAILURE:
-			return READER_START_GRADUATE_REQUEST === action.type;
+export function isRequestingGraduation(state = false, action) {
+    switch (action.type) {
+        case READER_START_GRADUATE_REQUEST:
+        case READER_START_GRADUATE_REQUEST_SUCCESS:
+        case READER_START_GRADUATE_REQUEST_FAILURE:
+            return READER_START_GRADUATE_REQUEST === action.type;
 
-		case SERIALIZE:
-		case DESERIALIZE:
-			return false;
-	}
+        case SERIALIZE:
+        case DESERIALIZE:
+            return false;
+    }
 
-	return state;
+    return state;
 }
 
 /**
@@ -47,20 +47,20 @@ export function isRequestingGraduation( state = false, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function hasGraduated( state = null, action ) {
-	switch ( action.type ) {
-		case READER_START_GRADUATED:
-			return true;
+export function hasGraduated(state = null, action) {
+    switch (action.type) {
+        case READER_START_GRADUATED:
+            return true;
 
-		case SERIALIZE:
-		case DESERIALIZE:
-			return null;
-	}
+        case SERIALIZE:
+        case DESERIALIZE:
+            return null;
+    }
 
-	return state;
+    return state;
 }
 
-export default combineReducers( {
-	hasGraduated,
-	isRequestingGraduation,
-} );
+export default combineReducers({
+    hasGraduated,
+    isRequestingGraduation,
+});

@@ -16,59 +16,59 @@ import { savePost } from 'state/posts/actions';
 import { canCurrentUser } from 'state/selectors';
 
 class PostActionsEllipsisMenuPublish extends Component {
-	static propTypes = {
-		globalId: PropTypes.string,
-		translate: PropTypes.func.isRequired,
-		status: PropTypes.string,
-		siteId: PropTypes.number,
-		postId: PropTypes.number,
-		canPublish: PropTypes.bool,
-		savePost: PropTypes.func
-	};
+    static propTypes = {
+        globalId: PropTypes.string,
+        translate: PropTypes.func.isRequired,
+        status: PropTypes.string,
+        siteId: PropTypes.number,
+        postId: PropTypes.number,
+        canPublish: PropTypes.bool,
+        savePost: PropTypes.func,
+    };
 
-	constructor() {
-		super( ...arguments );
+    constructor() {
+        super(...arguments);
 
-		this.publishPost = this.publishPost.bind( this );
-	}
+        this.publishPost = this.publishPost.bind(this);
+    }
 
-	publishPost() {
-		const { siteId, postId } = this.props;
-		if ( ! siteId || ! postId ) {
-			return;
-		}
+    publishPost() {
+        const { siteId, postId } = this.props;
+        if (!siteId || !postId) {
+            return;
+        }
 
-		mc.bumpStat( 'calypso_cpt_actions', 'publish' );
-		this.props.savePost( siteId, postId, { status: 'publish' } );
-	}
+        mc.bumpStat('calypso_cpt_actions', 'publish');
+        this.props.savePost(siteId, postId, { status: 'publish' });
+    }
 
-	render() {
-		const { translate, status, canPublish } = this.props;
-		if ( ! canPublish || ! includes( [ 'pending', 'draft' ], status ) ) {
-			return null;
-		}
+    render() {
+        const { translate, status, canPublish } = this.props;
+        if (!canPublish || !includes(['pending', 'draft'], status)) {
+            return null;
+        }
 
-		return (
-			<PopoverMenuItem onClick={ this.publishPost } icon="reader">
-				{ translate( 'Publish' ) }
-			</PopoverMenuItem>
-		);
-	}
+        return (
+            <PopoverMenuItem onClick={this.publishPost} icon="reader">
+                {translate('Publish')}
+            </PopoverMenuItem>
+        );
+    }
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const post = getPost( state, ownProps.globalId );
-		if ( ! post ) {
-			return {};
-		}
+    (state, ownProps) => {
+        const post = getPost(state, ownProps.globalId);
+        if (!post) {
+            return {};
+        }
 
-		return {
-			status: post.status,
-			siteId: post.site_ID,
-			postId: post.ID,
-			canPublish: canCurrentUser( state, post.site_ID, 'publish_posts' )
-		};
-	},
-	{ savePost }
-)( localize( PostActionsEllipsisMenuPublish ) );
+        return {
+            status: post.status,
+            siteId: post.site_ID,
+            postId: post.ID,
+            canPublish: canCurrentUser(state, post.site_ID, 'publish_posts'),
+        };
+    },
+    { savePost }
+)(localize(PostActionsEllipsisMenuPublish));

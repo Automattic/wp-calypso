@@ -5,18 +5,11 @@ import { EDITOR_PASTE_EVENT } from 'state/action-types';
 import { SOURCE_GOOGLE_DOCS } from 'components/tinymce/plugins/wpcom-track-paste/sources';
 import config from 'config';
 import { abtest } from 'lib/abtest';
-import {
-	getSectionName,
-	getSelectedSite,
-	getSelectedSiteId,
-} from 'state/ui/selectors';
+import { getSectionName, getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getLastAction } from 'state/ui/action-log/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { canCurrentUser } from 'state/selectors';
-import {
-	hasDefaultSiteTitle,
-	isCurrentPlanPaid,
-} from 'state/sites/selectors';
+import { hasDefaultSiteTitle, isCurrentPlanPaid } from 'state/sites/selectors';
 
 const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 
@@ -26,8 +19,7 @@ const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
  * @param {String} sectionName Name of section
  * @return {Function} Selector function
  */
-export const inSection = sectionName => state =>
-	getSectionName( state ) === sectionName;
+export const inSection = sectionName => state => getSectionName(state) === sectionName;
 
 /**
  * Returns a selector that tests if a feature is enabled in config
@@ -35,8 +27,7 @@ export const inSection = sectionName => state =>
  * @param {String} feature Name of feature
  * @return {Function} Selector function
  */
-export const isEnabled = feature => () =>
-	config.isEnabled( feature );
+export const isEnabled = feature => () => config.isEnabled(feature);
 
 /**
  * Returns milliseconds since registration date of the current user
@@ -45,9 +36,9 @@ export const isEnabled = feature => () =>
  * @return {Number|Boolean} Milliseconds since registration, false if cannot be determined
  */
 const timeSinceUserRegistration = state => {
-	const user = getCurrentUser( state );
-	const registrationDate = user && Date.parse( user.date );
-	return registrationDate ? ( Date.now() - registrationDate ) : false;
+    const user = getCurrentUser(state);
+    const registrationDate = user && Date.parse(user.date);
+    return registrationDate ? Date.now() - registrationDate : false;
 };
 
 /**
@@ -57,8 +48,8 @@ const timeSinceUserRegistration = state => {
  * @return {Boolean} True if user is new, false otherwise
  */
 export const isNewUser = state => {
-	const userAge = timeSinceUserRegistration( state );
-	return userAge !== false ? userAge <= WEEK_IN_MILLISECONDS : false;
+    const userAge = timeSinceUserRegistration(state);
+    return userAge !== false ? userAge <= WEEK_IN_MILLISECONDS : false;
 };
 
 /**
@@ -67,10 +58,11 @@ export const isNewUser = state => {
  * @param {Number} age Number of milliseconds
  * @return {Function} Selector function
  */
-export const isUserOlderThan = age => state => {
-	const userAge = timeSinceUserRegistration( state );
-	return userAge !== false ? userAge >= age : false;
-};
+export const isUserOlderThan = age =>
+    state => {
+        const userAge = timeSinceUserRegistration(state);
+        return userAge !== false ? userAge >= age : false;
+    };
 
 /**
  * Returns a selector that tests if the user has registered before given date
@@ -78,12 +70,13 @@ export const isUserOlderThan = age => state => {
  * @param {Date} date Date of registration
  * @return {Function} Selector function
  */
-export const hasUserRegisteredBefore = date => state => {
-	const compareDate = date && Date.parse( date );
-	const user = getCurrentUser( state );
-	const registrationDate = user && Date.parse( user.date );
-	return ( registrationDate < compareDate );
-};
+export const hasUserRegisteredBefore = date =>
+    state => {
+        const compareDate = date && Date.parse(date);
+        const user = getCurrentUser(state);
+        const registrationDate = user && Date.parse(user.date);
+        return registrationDate < compareDate;
+    };
 
 /*
  * Deprecated.
@@ -97,7 +90,7 @@ export const hasUserInteractedWithComponent = () => () => false;
  * @return {Boolean} True if selected site can be previewed, false otherwise.
  */
 export const isSelectedSitePreviewable = state =>
-	getSelectedSite( state ) && getSelectedSite( state ).is_previewable;
+    getSelectedSite(state) && getSelectedSite(state).is_previewable;
 
 /**
  * Returns true if the current user can run customizer for the selected site
@@ -106,7 +99,7 @@ export const isSelectedSitePreviewable = state =>
  * @return {Boolean} True if user can run customizer, false otherwise.
  */
 export const isSelectedSiteCustomizable = state =>
-	getSelectedSite( state ) && getSelectedSite( state ).is_customizable;
+    getSelectedSite(state) && getSelectedSite(state).is_customizable;
 
 /**
  * Returns a selector that tests whether an A/B test is in a given variant.
@@ -117,8 +110,7 @@ export const isSelectedSiteCustomizable = state =>
  * @param {String} variant Variant identifier
  * @return {Function} Selector function
  */
-export const isAbTestInVariant = ( testName, variant ) => () =>
-	abtest( testName ) === variant;
+export const isAbTestInVariant = (testName, variant) => () => abtest(testName) === variant;
 
 /**
  * Returns true if the selected site has an unchanged site title
@@ -127,8 +119,8 @@ export const isAbTestInVariant = ( testName, variant ) => () =>
  * @return {Boolean} True if site title is default, false otherwise.
  */
 export const hasSelectedSiteDefaultSiteTitle = state => {
-	const siteId = getSelectedSiteId( state );
-	return siteId ? hasDefaultSiteTitle( state, siteId ) : false;
+    const siteId = getSelectedSiteId(state);
+    return siteId ? hasDefaultSiteTitle(state, siteId) : false;
 };
 
 /**
@@ -138,8 +130,8 @@ export const hasSelectedSiteDefaultSiteTitle = state => {
  * @return {Boolean} True if selected site is on a paid plan, false otherwise.
  */
 export const isSelectedSitePlanPaid = state => {
-	const siteId = getSelectedSiteId( state );
-	return siteId ? isCurrentPlanPaid( state, siteId ) : false;
+    const siteId = getSelectedSiteId(state);
+    return siteId ? isCurrentPlanPaid(state, siteId) : false;
 };
 
 /**
@@ -149,8 +141,8 @@ export const isSelectedSitePlanPaid = state => {
  * @return {Boolean} True if user has just pasted something from Google Docs, false otherwise.
  */
 export const hasUserPastedFromGoogleDocs = state => {
-	const action = getLastAction( state ) || false;
-	return action && ( action.type === EDITOR_PASTE_EVENT ) && ( action.source === SOURCE_GOOGLE_DOCS );
+    const action = getLastAction(state) || false;
+    return action && action.type === EDITOR_PASTE_EVENT && action.source === SOURCE_GOOGLE_DOCS;
 };
 
 /**
@@ -161,6 +153,6 @@ export const hasUserPastedFromGoogleDocs = state => {
  * @return {Boolean} True if user can edit settings, false otherwise.
  */
 export const canUserEditSettingsOfSelectedSite = state => {
-	const siteId = getSelectedSiteId( state );
-	return siteId ? canCurrentUser( state, siteId, 'manage_options' ) : false;
+    const siteId = getSelectedSiteId(state);
+    return siteId ? canCurrentUser(state, siteId, 'manage_options') : false;
 };

@@ -14,21 +14,18 @@ import { requestTags } from 'state/reader/tags/items/actions';
  *  and add to the state tree
  */
 class QueryReaderTag extends Component {
-	static propTypes = {
-		requestTag: PropTypes.func.isRequired,
-		tag: PropTypes.string.isRequired,
-	};
+    static propTypes = {
+        requestTag: PropTypes.func.isRequired,
+        tag: PropTypes.string.isRequired,
+    };
 
-	componentDidMount() {
-		this.props.requestTag( this.props.tag );
-	}
+    componentDidMount() {
+        this.props.requestTag(this.props.tag);
+    }
 
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
-export default connect(
-	null,
-	{ requestTag: requestTags },
-)( QueryReaderTag );
+export default connect(null, { requestTag: requestTags })(QueryReaderTag);

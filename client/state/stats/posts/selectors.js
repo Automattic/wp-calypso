@@ -13,8 +13,8 @@ import { get } from 'lodash';
  * @param  {Object}  fields Stat fields
  * @return {Boolean}        Whether post stat is being requested
  */
-export function isRequestingPostStats( state, siteId, postId, fields = [] ) {
-	return get( state.stats.posts.requesting, [ siteId, postId, fields.join() ], false );
+export function isRequestingPostStats(state, siteId, postId, fields = []) {
+    return get(state.stats.posts.requesting, [siteId, postId, fields.join()], false);
 }
 
 /**
@@ -27,8 +27,8 @@ export function isRequestingPostStats( state, siteId, postId, fields = [] ) {
  * @param  {String}  stat   Stat Key
  * @return {*}              Stat value
  */
-export function getPostStat( state, siteId, postId, stat ) {
-	return get( state.stats.posts.items, [ siteId, postId, stat ], null );
+export function getPostStat(state, siteId, postId, stat) {
+    return get(state.stats.posts.items, [siteId, postId, stat], null);
 }
 
 /**
@@ -39,6 +39,6 @@ export function getPostStat( state, siteId, postId, stat ) {
  * @param  {Number}  postId Post Id
  * @return {Object}         Stats
  */
-export function getPostStats( state, siteId, postId ) {
-	return get( state.stats.posts.items, [ siteId, postId ], null );
+export function getPostStats(state, siteId, postId) {
+    return get(state.stats.posts.items, [siteId, postId], null);
 }

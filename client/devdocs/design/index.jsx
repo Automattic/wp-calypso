@@ -71,128 +71,124 @@ import VerticalMenu from 'components/vertical-menu/docs/example';
 import Banner from 'components/banner/docs/example';
 import EmojifyExample from 'components/emojify/docs/example';
 
-let DesignAssets = React.createClass( {
-	displayName: 'DesignAssets',
+let DesignAssets = React.createClass({
+    displayName: 'DesignAssets',
 
-	getInitialState() {
-		return { filter: '' };
-	},
+    getInitialState() {
+        return { filter: '' };
+    },
 
-	componentWillMount() {
-		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-			const { dispatchFetchComponentsUsageStats } = this.props;
-			dispatchFetchComponentsUsageStats();
-		}
-	},
+    componentWillMount() {
+        if (config.isEnabled('devdocs/components-usage-stats')) {
+            const { dispatchFetchComponentsUsageStats } = this.props;
+            dispatchFetchComponentsUsageStats();
+        }
+    },
 
-	onSearch( term ) {
-		this.setState( { filter: trim( term || '' ).toLowerCase() } );
-	},
+    onSearch(term) {
+        this.setState({ filter: trim(term || '').toLowerCase() });
+    },
 
-	backToComponents() {
-		page( '/devdocs/design/' );
-	},
+    backToComponents() {
+        page('/devdocs/design/');
+    },
 
-	render() {
-		const { componentsUsageStats = {}, component } = this.props;
-		const { filter } = this.state;
+    render() {
+        const { componentsUsageStats = {}, component } = this.props;
+        const { filter } = this.state;
 
-		return (
-			<Main className="design">
-				{ component
-					? <HeaderCake onClick={ this.backToComponents } backText="All Components">
-						{ slugToCamelCase( component ) }
-					</HeaderCake>
+        return (
+            <Main className="design">
+                {component
+                    ? <HeaderCake onClick={this.backToComponents} backText="All Components">
+                          {slugToCamelCase(component)}
+                      </HeaderCake>
+                    : <SearchCard
+                          onSearch={this.onSearch}
+                          initialValue={filter}
+                          placeholder="Search components…"
+                          analyticsGroup="Docs"
+                      />}
 
-					: <SearchCard
-						onSearch={ this.onSearch }
-						initialValue={ filter }
-						placeholder="Search components…"
-						analyticsGroup="Docs" />
-				}
+                <Collection component={component} filter={filter}>
+                    <Accordions componentUsageStats={componentsUsageStats.accordion} />
+                    <Banner />
+                    <BulkSelect />
+                    <ButtonGroups />
+                    <Buttons componentUsageStats={componentsUsageStats.button} />
+                    <Cards />
+                    <ClipboardButtonInput />
+                    <ClipboardButtons />
+                    <Count />
+                    <CountedTextareas />
+                    <DatePicker />
+                    <DropZones searchKeywords="drag" />
+                    <EllipsisMenu />
+                    <EmojifyExample />
+                    <ExternalLink />
+                    <FAQ />
+                    <FeatureGate />
+                    <FilePickers />
+                    <FoldableCard />
+                    <FormFields searchKeywords="input textbox textarea radio" />
+                    <Gauge />
+                    <GlobalNotices />
+                    <Gravatar />
+                    <Gridicons />
+                    <Headers />
+                    <ImagePreloader />
+                    <InfoPopover />
+                    <Tooltip />
+                    <InputChrono />
+                    <Notices />
+                    <PaymentLogo />
+                    <Popovers />
+                    <ProgressBar />
+                    <Ranges />
+                    <Rating />
+                    <Ribbon />
+                    <SearchDemo />
+                    <SectionHeader />
+                    <SectionNav />
+                    <SegmentedControl />
+                    <SelectDropdown searchKeywords="menu" />
+                    <SocialLogos />
+                    <Spinner searchKeywords="loading" />
+                    <SpinnerButton searchKeywords="loading input submit" />
+                    <SpinnerLine searchKeywords="loading" />
+                    <Timezone />
+                    <TokenFields />
+                    <VerticalMenu />
+                    <Version />
+                </Collection>
+            </Main>
+        );
+    },
+});
 
-				<Collection
-					component={ component }
-					filter={ filter }
-				>
-					<Accordions componentUsageStats={ componentsUsageStats.accordion } />
-					<Banner />
-					<BulkSelect />
-					<ButtonGroups />
-					<Buttons componentUsageStats={ componentsUsageStats.button } />
-					<Cards />
-					<ClipboardButtonInput />
-					<ClipboardButtons />
-					<Count />
-					<CountedTextareas />
-					<DatePicker />
-					<DropZones searchKeywords="drag" />
-					<EllipsisMenu />
-					<EmojifyExample />
-					<ExternalLink />
-					<FAQ />
-					<FeatureGate />
-					<FilePickers />
-					<FoldableCard />
-					<FormFields searchKeywords="input textbox textarea radio" />
-					<Gauge />
-					<GlobalNotices />
-					<Gravatar />
-					<Gridicons />
-					<Headers />
-					<ImagePreloader />
-					<InfoPopover />
-					<Tooltip />
-					<InputChrono />
-					<Notices />
-					<PaymentLogo />
-					<Popovers />
-					<ProgressBar />
-					<Ranges />
-					<Rating />
-					<Ribbon />
-					<SearchDemo />
-					<SectionHeader />
-					<SectionNav />
-					<SegmentedControl />
-					<SelectDropdown searchKeywords="menu" />
-					<SocialLogos />
-					<Spinner searchKeywords="loading" />
-					<SpinnerButton searchKeywords="loading input submit" />
-					<SpinnerLine searchKeywords="loading" />
-					<Timezone />
-					<TokenFields />
-					<VerticalMenu />
-					<Version />
-				</Collection>
-			</Main>
-		);
-	}
-} );
+if (config.isEnabled('devdocs/components-usage-stats')) {
+    const mapStateToProps = state => {
+        const { componentsUsageStats } = state;
 
-if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-	const mapStateToProps = ( state ) => {
-		const { componentsUsageStats } = state;
+        return componentsUsageStats;
+    };
 
-		return componentsUsageStats;
-	};
+    const mapDispatchToProps = dispatch => {
+        return bindActionCreators(
+            {
+                dispatchFetchComponentsUsageStats: fetchComponentsUsageStats,
+            },
+            dispatch
+        );
+    };
 
-	const mapDispatchToProps = ( dispatch ) => {
-		return bindActionCreators( {
-			dispatchFetchComponentsUsageStats: fetchComponentsUsageStats
-		}, dispatch );
-	};
+    DesignAssets.propTypes = {
+        componentsUsageStats: PropTypes.object,
+        isFetching: PropTypes.bool,
+        dispatchFetchComponentsUsageStats: PropTypes.func,
+    };
 
-	DesignAssets.propTypes = {
-		componentsUsageStats: PropTypes.object,
-		isFetching: PropTypes.bool,
-		dispatchFetchComponentsUsageStats: PropTypes.func
-	};
-
-	DesignAssets = connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( DesignAssets );
+    DesignAssets = connect(mapStateToProps, mapDispatchToProps)(DesignAssets);
 }
 
 export default DesignAssets;

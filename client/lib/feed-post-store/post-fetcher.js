@@ -9,62 +9,70 @@ import Immutable from 'immutable';
  */
 import FeedPostStore from './';
 
-function PostFetcher( options ) {
-	assign( this, {
-		onFetch: noop,
-		onPostReceived: noop,
-		onError: noop
-	}, options );
+function PostFetcher(options) {
+    assign(
+        this,
+        {
+            onFetch: noop,
+            onPostReceived: noop,
+            onError: noop,
+        },
+        options
+    );
 
-	this.postsToFetch = Immutable.OrderedSet(); // eslint-disable-line new-cap
-	this.batchQueued = false;
+    this.postsToFetch = Immutable.OrderedSet(); // eslint-disable-line new-cap
+    this.batchQueued = false;
 }
 
-assign( PostFetcher.prototype, {
+assign(PostFetcher.prototype, {
+    add: function(postKey) {
+        this.postsToFetch = this.postsToFetch.add(Immutable.fromJS(omit(postKey, 'localMoment')));
 
-	add: function( postKey ) {
-		this.postsToFetch = this.postsToFetch.add( Immutable.fromJS( omit( postKey, 'localMoment' ) ) );
+        if (!this.batchQueued) {
+            this.batchQueued = setTimeout(this.run.bind(this), 100);
+        }
+    },
 
-		if ( ! this.batchQueued ) {
-			this.batchQueued = setTimeout( this.run.bind( this ), 100 );
-		}
-	},
+    remove: function(postKey) {
+        this.postsToFetch = this.postsToFetch.delete(
+            Immutable.fromJS(omit(postKey, 'localMoment'))
+        );
+    },
 
-	remove: function( postKey ) {
-		this.postsToFetch = this.postsToFetch.delete( Immutable.fromJS( omit( postKey, 'localMoment' ) ) );
-	},
+    run: function() {
+        const toFetch = this.postsToFetch;
 
-	run: function() {
-		const toFetch = this.postsToFetch;
+        this.batchQueued = false;
 
-		this.batchQueued = false;
+        if (toFetch.size === 0) {
+            return;
+        }
 
-		if ( toFetch.size === 0 ) {
-			return;
-		}
+        toFetch.forEach(
+            function(postKey) {
+                postKey = postKey.toJS();
+                const post = FeedPostStore.get(postKey);
 
-		toFetch.forEach( function( postKey ) {
-			postKey = postKey.toJS();
-			const post = FeedPostStore.get( postKey );
+                if (post && post._state !== 'minimal') {
+                    return;
+                }
 
-			if ( post && post._state !== 'minimal' ) {
-				return;
-			}
+                this.onFetch(postKey);
 
-			this.onFetch( postKey );
+                this.makeRequest(postKey).then(
+                    data => {
+                        this.onPostReceived(postKey.blogId || postKey.feedId, postKey.postId, data);
+                    },
+                    err => {
+                        this.onError(err, postKey);
+                    }
+                );
+            },
+            this
+        );
 
-			this.makeRequest( postKey ).then(
-				data => {
-					this.onPostReceived( postKey.blogId || postKey.feedId, postKey.postId, data );
-				},
-				err => {
-					this.onError( err, postKey );
-				}
-			);
-		}, this );
-
-		this.postsToFetch = Immutable.OrderedSet(); // eslint-disable-line new-cap
-	}
-} );
+        this.postsToFetch = Immutable.OrderedSet(); // eslint-disable-line new-cap
+    },
+});
 
 module.exports = PostFetcher;

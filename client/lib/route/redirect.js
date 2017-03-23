@@ -1,14 +1,16 @@
-var page = require( 'page' ),
-	config = require( 'config' );
+var page = require('page'), config = require('config');
 
-module.exports = function redirect( path ) {
-	if ( config( 'env' ) === 'development' ) {
-		throw 'route.redirect() is deprecated, use page.redirect()';
-	}
+module.exports = function redirect(path) {
+    if (config('env') === 'development') {
+        throw 'route.redirect() is deprecated, use page.redirect()';
+    }
 
-	// Have to wrap the page.replace call in a defer due to
-	// https://github.com/visionmedia/page.js/issues/50
-	setTimeout( function() {
-		page.replace( path );
-	}, 0 );
+    // Have to wrap the page.replace call in a defer due to
+    // https://github.com/visionmedia/page.js/issues/50
+    setTimeout(
+        function() {
+            page.replace(path);
+        },
+        0
+    );
 };

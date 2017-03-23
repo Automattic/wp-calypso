@@ -16,65 +16,62 @@ import { initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 class PluginEligibility extends Component {
-	static propTypes = {
-		pluginSlug: PropTypes.string,
-		siteId: PropTypes.number,
-		siteSlug: PropTypes.string,
-		translate: PropTypes.func,
-		navigateTo: PropTypes.func,
-		initiateTransfer: PropTypes.func
-	};
+    static propTypes = {
+        pluginSlug: PropTypes.string,
+        siteId: PropTypes.number,
+        siteSlug: PropTypes.string,
+        translate: PropTypes.func,
+        navigateTo: PropTypes.func,
+        initiateTransfer: PropTypes.func,
+    };
 
-	getBackUrl = () => {
-		const { pluginSlug, siteSlug } = this.props;
+    getBackUrl = () => {
+        const { pluginSlug, siteSlug } = this.props;
 
-		return `/plugins/${ pluginSlug }/${ siteSlug }`;
-	};
+        return `/plugins/${pluginSlug}/${siteSlug}`;
+    };
 
-	goBack = () => this.props.navigateTo( this.getBackUrl() );
+    goBack = () => this.props.navigateTo(this.getBackUrl());
 
-	pluginTransferInitiate = () => {
-		// Use theme transfer action until we introduce generic ones that will handle both plugins and themes
-		this.props.initiateTransfer( this.props.siteId, null, this.props.pluginSlug );
-		this.goBack();
-	};
+    pluginTransferInitiate = () => {
+        // Use theme transfer action until we introduce generic ones that will handle both plugins and themes
+        this.props.initiateTransfer(this.props.siteId, null, this.props.pluginSlug);
+        this.goBack();
+    };
 
-	render() {
-		const { translate } = this.props;
+    render() {
+        const { translate } = this.props;
 
-		return (
-			<MainComponent>
-				<HeaderCake
-					isCompact={ true }
-					onClick={ this.goBack }
-				>
-					{ translate( 'Install plugin' ) }
-				</HeaderCake>
-				<EligibilityWarnings
-					onProceed={ this.pluginTransferInitiate }
-					backUrl={ this.getBackUrl() }
-				/>
-			</MainComponent>
-		);
-	}
+        return (
+            <MainComponent>
+                <HeaderCake isCompact={true} onClick={this.goBack}>
+                    {translate('Install plugin')}
+                </HeaderCake>
+                <EligibilityWarnings
+                    onProceed={this.pluginTransferInitiate}
+                    backUrl={this.getBackUrl()}
+                />
+            </MainComponent>
+        );
+    }
 }
 
 // It was 2:45AM, I wanted to deploy, and @dmsnell made me do it... props to @dmsnell :)
-const withNavigation = WrappedComponent => props => <WrappedComponent { ...{ ...props, navigateTo: page } } />;
+const withNavigation = WrappedComponent =>
+    props => <WrappedComponent {...{ ...props, navigateTo: page }} />;
 
 const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
+    const siteId = getSelectedSiteId(state);
 
-	return {
-		siteId,
-	};
+    return {
+        siteId,
+    };
 };
 
 const mapDispatchToProps = {
-	initiateTransfer: initiateThemeTransfer
+    initiateTransfer: initiateThemeTransfer,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( withNavigation( localize( PluginEligibility ) ) );
+export default connect(mapStateToProps, mapDispatchToProps)(
+    withNavigation(localize(PluginEligibility))
+);

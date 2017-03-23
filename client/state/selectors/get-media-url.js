@@ -12,11 +12,11 @@ import { getMediaItem } from './';
  * @param  {Number}  mediaId Media ID
  * @return {?String}         Media URL, if known
  */
-export default function getMediaUrl( state, siteId, mediaId ) {
-	const media = getMediaItem( state, siteId, mediaId );
-	if ( ! media ) {
-		return null;
-	}
+export default function getMediaUrl(state, siteId, mediaId) {
+    const media = getMediaItem(state, siteId, mediaId);
+    if (!media) {
+        return null;
+    }
 
-	return safeImageUrl( media.URL );
+    return safeImageUrl(media.URL);
 }

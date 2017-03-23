@@ -14,98 +14,100 @@ import { isWithinBreakpoint } from 'lib/viewport';
 import { savePreference, fetchPreferences } from 'state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
 
-function advanced( editor ) {
-	const store = editor.getParam( 'redux_store' );
-	if ( ! store ) {
-		return;
-	}
+function advanced(editor) {
+    const store = editor.getParam('redux_store');
+    if (!store) {
+        return;
+    }
 
-	const { dispatch, getState, subscribe } = store;
+    const { dispatch, getState, subscribe } = store;
 
-	function getVisibleState() {
-		return getPreference( getState(), 'editorAdvancedVisible' );
-	}
+    function getVisibleState() {
+        return getPreference(getState(), 'editorAdvancedVisible');
+    }
 
-	let isAdvancedVisible = getVisibleState();
-	let menuButton;
+    let isAdvancedVisible = getVisibleState();
+    let menuButton;
 
-	function updateVisibleState() {
-		const toolbars = editor.theme.panel.find( '.toolbar:not(.menubar)' );
-		const isSmallViewport = isWithinBreakpoint( '<960px' );
-		let containerPadding = 0;
+    function updateVisibleState() {
+        const toolbars = editor.theme.panel.find('.toolbar:not(.menubar)');
+        const isSmallViewport = isWithinBreakpoint('<960px');
+        let containerPadding = 0;
 
-		toolbars.each( function( toolbar, i ) {
-			const isToolbarVisible = isSmallViewport || i === 0 || isAdvancedVisible;
+        toolbars.each(function(toolbar, i) {
+            const isToolbarVisible = isSmallViewport || i === 0 || isAdvancedVisible;
 
-			toolbar.visible( isToolbarVisible );
+            toolbar.visible(isToolbarVisible);
 
-			if ( isToolbarVisible ) {
-				if ( isSmallViewport ) {
-					containerPadding = Math.max( containerPadding, toolbar.getEl().clientHeight );
-				} else {
-					containerPadding += toolbar.getEl().clientHeight;
-				}
-			}
-		} );
+            if (isToolbarVisible) {
+                if (isSmallViewport) {
+                    containerPadding = Math.max(containerPadding, toolbar.getEl().clientHeight);
+                } else {
+                    containerPadding += toolbar.getEl().clientHeight;
+                }
+            }
+        });
 
-		tinymce.DOM.setStyles( editor.getContainer(), {
-			'padding-top': containerPadding
-		} );
+        tinymce.DOM.setStyles(editor.getContainer(), {
+            'padding-top': containerPadding,
+        });
 
-		if ( menuButton ) {
-			menuButton.active( isAdvancedVisible );
-		}
-	}
+        if (menuButton) {
+            menuButton.active(isAdvancedVisible);
+        }
+    }
 
-	editor.addButton( 'wpcom_advanced', {
-		text: translate( 'Toggle Advanced' ),
-		tooltip: translate( 'Toggle Advanced' ),
-		classes: 'btn wpcom-icon-button advanced',
-		cmd: 'WPCOM_ToggleAdvancedVisible',
-		onPostRender: function() {
-			// Save a reference to the menu button after render so the
-			// visibility update handler can change its active state.
-			menuButton = this;
+    editor.addButton('wpcom_advanced', {
+        text: translate('Toggle Advanced'),
+        tooltip: translate('Toggle Advanced'),
+        classes: 'btn wpcom-icon-button advanced',
+        cmd: 'WPCOM_ToggleAdvancedVisible',
+        onPostRender: function() {
+            // Save a reference to the menu button after render so the
+            // visibility update handler can change its active state.
+            menuButton = this;
 
-			this.innerHtml( ReactDomServer.renderToStaticMarkup(
-				<button type="button" role="presentation" tabIndex="-1">
-					{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-					<Gridicon icon="ellipsis" size={ 28 } />
-					{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-				</button>
-			) );
-		}
-	} );
+            this.innerHtml(
+                ReactDomServer.renderToStaticMarkup(
+                    <button type="button" role="presentation" tabIndex="-1">
+                        {/* eslint-disable wpcalypso/jsx-gridicon-size */}
+                        <Gridicon icon="ellipsis" size={28} />
+                        {/* eslint-enable wpcalypso/jsx-gridicon-size */}
+                    </button>
+                )
+            );
+        },
+    });
 
-	editor.addCommand( 'WPCOM_ToggleAdvancedVisible', () => {
-		dispatch( savePreference( 'editorAdvancedVisible', ! isAdvancedVisible ) );
-	} );
+    editor.addCommand('WPCOM_ToggleAdvancedVisible', () => {
+        dispatch(savePreference('editorAdvancedVisible', !isAdvancedVisible));
+    });
 
-	editor.on( 'init', function() {
-		if ( ! isFetchingPreferences( getState() ) ) {
-			dispatch( fetchPreferences() );
-		}
-	} );
+    editor.on('init', function() {
+        if (!isFetchingPreferences(getState())) {
+            dispatch(fetchPreferences());
+        }
+    });
 
-	editor.on( 'preInit', function() {
-		editor.shortcuts.add( 'access+z', '', 'WPCOM_ToggleAdvancedVisible' );
-	} );
+    editor.on('preInit', function() {
+        editor.shortcuts.add('access+z', '', 'WPCOM_ToggleAdvancedVisible');
+    });
 
-	editor.on( 'init show', updateVisibleState );
+    editor.on('init show', updateVisibleState);
 
-	window.addEventListener( 'resize', updateVisibleState );
+    window.addEventListener('resize', updateVisibleState);
 
-	subscribe( () => {
-		const nextVisible = getVisibleState();
-		if ( nextVisible === isAdvancedVisible ) {
-			return;
-		}
+    subscribe(() => {
+        const nextVisible = getVisibleState();
+        if (nextVisible === isAdvancedVisible) {
+            return;
+        }
 
-		isAdvancedVisible = nextVisible;
-		updateVisibleState();
-	} );
+        isAdvancedVisible = nextVisible;
+        updateVisibleState();
+    });
 }
 
 export default function() {
-	tinymce.PluginManager.add( 'wpcom/advanced', advanced );
+    tinymce.PluginManager.add('wpcom/advanced', advanced);
 }

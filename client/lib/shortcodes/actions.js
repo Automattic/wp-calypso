@@ -18,17 +18,17 @@ import { ActionTypes } from './constants';
  * @param {Number} siteId    Site ID for which to render the shortcode
  * @param {String} shortcode Shortcode text to be rendered
  */
-export function fetch( siteId, shortcode ) {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.FETCH_SHORTCODE,
-		payload: { siteId, shortcode }
-	} );
+export function fetch(siteId, shortcode) {
+    Dispatcher.handleViewAction({
+        type: ActionTypes.FETCH_SHORTCODE,
+        payload: { siteId, shortcode },
+    });
 
-	wpcom.undocumented().site( siteId ).shortcodes( { shortcode }, ( error, data ) => {
-		Dispatcher.handleServerAction( {
-			type: ActionTypes.RECEIVE_SHORTCODE,
-			payload: { siteId, shortcode, data },
-			error: error
-		} );
-	} );
+    wpcom.undocumented().site(siteId).shortcodes({ shortcode }, (error, data) => {
+        Dispatcher.handleServerAction({
+            type: ActionTypes.RECEIVE_SHORTCODE,
+            payload: { siteId, shortcode, data },
+            error: error,
+        });
+    });
 }

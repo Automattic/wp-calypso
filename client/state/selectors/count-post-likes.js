@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {Number}  postId Post ID
  * @return {Array}          Post Likes
  */
-export default function countPostLikes( state, siteId, postId ) {
-	return get( state.posts.likes.items, [ siteId, postId, 'found' ], null );
+export default function countPostLikes(state, siteId, postId) {
+    return get(state.posts.likes.items, [siteId, postId, 'found'], null);
 }

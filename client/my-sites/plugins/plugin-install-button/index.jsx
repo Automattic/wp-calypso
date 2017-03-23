@@ -18,248 +18,289 @@ import utils from 'lib/site/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 export class PluginInstallButton extends Component {
-	installAction = () => {
-		const {
-			isEmbed,
-			selectedSite,
-			isInstalling,
-			plugin,
-			notices,
-			recordGoogleEvent: recordGAEvent,
-			recordTracksEvent: recordEvent } = this.props;
+    installAction = () => {
+        const {
+            isEmbed,
+            selectedSite,
+            isInstalling,
+            plugin,
+            notices,
+            recordGoogleEvent: recordGAEvent,
+            recordTracksEvent: recordEvent,
+        } = this.props;
 
-		if ( isInstalling ) {
-			return;
-		}
+        if (isInstalling) {
+            return;
+        }
 
-		PluginsActions.removePluginsNotices( notices.completed.concat( notices.errors ) );
-		PluginsActions.installPlugin( selectedSite, plugin );
+        PluginsActions.removePluginsNotices(notices.completed.concat(notices.errors));
+        PluginsActions.installPlugin(selectedSite, plugin);
 
-		if ( isEmbed ) {
-			recordGAEvent( 'Plugins', 'Install with no selected site', 'Plugin Name', plugin.slug );
-			recordEvent( 'calypso_plugin_install_click_from_sites_list', {
-				site: selectedSite,
-				plugin: plugin.slug
-			} );
-		} else {
-			recordGAEvent( 'Plugins', 'Install on selected Site', 'Plugin Name', plugin.slug );
-			recordEvent( 'calypso_plugin_install_click_from_plugin_info', {
-				site: selectedSite,
-				plugin: plugin.slug
-			} );
-		}
-	}
+        if (isEmbed) {
+            recordGAEvent('Plugins', 'Install with no selected site', 'Plugin Name', plugin.slug);
+            recordEvent('calypso_plugin_install_click_from_sites_list', {
+                site: selectedSite,
+                plugin: plugin.slug,
+            });
+        } else {
+            recordGAEvent('Plugins', 'Install on selected Site', 'Plugin Name', plugin.slug);
+            recordEvent('calypso_plugin_install_click_from_plugin_info', {
+                site: selectedSite,
+                plugin: plugin.slug,
+            });
+        }
+    };
 
-	updateJetpackAction = () => {
-		const {
-			plugin,
-			selectedSite,
-			recordGoogleEvent: recordGAEvent,
-			recordTracksEvent: recordEvent } = this.props;
+    updateJetpackAction = () => {
+        const {
+            plugin,
+            selectedSite,
+            recordGoogleEvent: recordGAEvent,
+            recordTracksEvent: recordEvent,
+        } = this.props;
 
-		recordGAEvent( 'Plugins', 'Update jetpack', 'Plugin Name', plugin.slug );
-		recordEvent( 'calypso_plugin_update_jetpack', {
-			site: selectedSite,
-			plugin: plugin.slug
-		} );
-	}
+        recordGAEvent('Plugins', 'Update jetpack', 'Plugin Name', plugin.slug);
+        recordEvent('calypso_plugin_update_jetpack', {
+            site: selectedSite,
+            plugin: plugin.slug,
+        });
+    };
 
-	clickSupportLink = () => {
-		this.props.recordGoogleEvent( 'Plugins', 'Clicked How do I fix disabled plugin installs unresponsive site.' );
-	}
+    clickSupportLink = () => {
+        this.props.recordGoogleEvent(
+            'Plugins',
+            'Clicked How do I fix disabled plugin installs unresponsive site.'
+        );
+    };
 
-	clickSiteManagmentLink = () => {
-		this.props.recordGoogleEvent( 'Plugins', 'Clicked How do I fix disabled plugin installs' );
-	}
+    clickSiteManagmentLink = () => {
+        this.props.recordGoogleEvent('Plugins', 'Clicked How do I fix disabled plugin installs');
+    };
 
-	togglePopover = ( event ) => {
-		this.refs.infoPopover._onClick( event );
-	}
+    togglePopover = event => {
+        this.refs.infoPopover._onClick(event);
+    };
 
-	getDisabledInfo() {
-		const { translate, selectedSite } = this.props;
-		if ( ! selectedSite ) { // we don't have enough info
-			return null;
-		}
+    getDisabledInfo() {
+        const { translate, selectedSite } = this.props;
+        if (!selectedSite) {
+            // we don't have enough info
+            return null;
+        }
 
-		if ( selectedSite.options.is_multi_network ) {
-			return translate( '%(site)s is part of a multi-network installation, which is not currently supported.', {
-				args: { site: selectedSite.title }
-			} );
-		}
+        if (selectedSite.options.is_multi_network) {
+            return translate(
+                '%(site)s is part of a multi-network installation, which is not currently supported.',
+                {
+                    args: { site: selectedSite.title },
+                }
+            );
+        }
 
-		if ( ! utils.isMainNetworkSite( selectedSite ) ) {
-			return translate( 'Only the main site on a multi-site installation can install plugins.', {
-				args: { site: selectedSite.title }
-			} );
-		}
+        if (!utils.isMainNetworkSite(selectedSite)) {
+            return translate(
+                'Only the main site on a multi-site installation can install plugins.',
+                {
+                    args: { site: selectedSite.title },
+                }
+            );
+        }
 
-		if ( ! selectedSite.canUpdateFiles && selectedSite.options.file_mod_disabled ) {
-			const reasons = utils.getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
-			const html = [];
+        if (!selectedSite.canUpdateFiles && selectedSite.options.file_mod_disabled) {
+            const reasons = utils.getSiteFileModDisableReason(selectedSite, 'modifyFiles');
+            const html = [];
 
-			if ( reasons.length > 1 ) {
-				html.push(
-					<p key="reason-shell">
-						{ translate( 'Plugin install is not available for %(site)s:', { args: { site: selectedSite.title } } ) }
-					</p>
-				);
-				const list = reasons.map( ( reason, i ) => ( <li key={ 'reason-i' + i + '-' + selectedSite.ID } >{ reason }</li> ) );
-				html.push( <ul className="plugin-action__disabled-info-list" key="reason-shell-list">{ list }</ul> );
-			} else {
-				html.push(
-					<p key="reason-shell">{
-						translate( 'Plugin install is not available for %(site)s. %(reason)s', {
-							args: { site: selectedSite.title, reason: reasons[ 0 ] }
-						} )
-					}</p> );
-			}
-			html.push(
-				<ExternalLink
-					key="external-link"
-					onClick={ this.clickSiteManagmentLink }
-					href="https://jetpack.me/support/site-management/#file-update-disabled"
-					>
-					{ translate( 'How do I fix this?' ) }
-				</ExternalLink>
-			);
+            if (reasons.length > 1) {
+                html.push(
+                    <p key="reason-shell">
+                        {translate('Plugin install is not available for %(site)s:', {
+                            args: { site: selectedSite.title },
+                        })}
+                    </p>
+                );
+                const list = reasons.map((reason, i) => (
+                    <li key={'reason-i' + i + '-' + selectedSite.ID}>{reason}</li>
+                ));
+                html.push(
+                    <ul className="plugin-action__disabled-info-list" key="reason-shell-list">
+                        {list}
+                    </ul>
+                );
+            } else {
+                html.push(
+                    <p key="reason-shell">
+                        {translate('Plugin install is not available for %(site)s. %(reason)s', {
+                            args: { site: selectedSite.title, reason: reasons[0] },
+                        })}
+                    </p>
+                );
+            }
+            html.push(
+                <ExternalLink
+                    key="external-link"
+                    onClick={this.clickSiteManagmentLink}
+                    href="https://jetpack.me/support/site-management/#file-update-disabled"
+                >
+                    {translate('How do I fix this?')}
+                </ExternalLink>
+            );
 
-			return html;
-		}
-		return null;
-	}
+            return html;
+        }
+        return null;
+    }
 
-	renderUnreachableNotice() {
-		const { translate, selectedSite, isEmbed } = this.props;
-		return (
-			<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
-				<span
-					onClick={ this.togglePopover }
-					ref="disabledInfoLabel"
-					className="plugin-install-button__warning">
-					{ translate( 'Site unreachable' ) }
-				</span>
-				<InfoPopover
-						position="bottom left"
-						popoverName={ 'Plugin Action Disabled Install' }
-						gaEventCategory="Plugins"
-						ref="infoPopover"
-						ignoreContext={ this.refs && this.refs.disabledInfoLabel }
-						>
-						<div>
-							<p>{ translate( '%(site)s is unresponsive.', { args: { site: selectedSite.title } } ) }</p>
-							<ExternalLink
-								key="external-link"
-								onClick={ this.clickSupportLink }
-								href={ 'http://jetpack.me/support/debug/?url=' + selectedSite.URL }
-								>
-								{ translate( 'Debug site!' ) }
-							</ExternalLink>
-						</div>
-					</InfoPopover>
-			</div>
-		);
-	}
+    renderUnreachableNotice() {
+        const { translate, selectedSite, isEmbed } = this.props;
+        return (
+            <div className={classNames({ 'plugin-install-button__install': true, embed: isEmbed })}>
+                <span
+                    onClick={this.togglePopover}
+                    ref="disabledInfoLabel"
+                    className="plugin-install-button__warning"
+                >
+                    {translate('Site unreachable')}
+                </span>
+                <InfoPopover
+                    position="bottom left"
+                    popoverName={'Plugin Action Disabled Install'}
+                    gaEventCategory="Plugins"
+                    ref="infoPopover"
+                    ignoreContext={this.refs && this.refs.disabledInfoLabel}
+                >
+                    <div>
+                        <p>
+                            {translate('%(site)s is unresponsive.', {
+                                args: { site: selectedSite.title },
+                            })}
+                        </p>
+                        <ExternalLink
+                            key="external-link"
+                            onClick={this.clickSupportLink}
+                            href={'http://jetpack.me/support/debug/?url=' + selectedSite.URL}
+                        >
+                            {translate('Debug site!')}
+                        </ExternalLink>
+                    </div>
+                </InfoPopover>
+            </div>
+        );
+    }
 
-	renderDisabledNotice() {
-		const { translate, selectedSite, isEmbed } = this.props;
+    renderDisabledNotice() {
+        const { translate, selectedSite, isEmbed } = this.props;
 
-		if ( ! selectedSite.canUpdateFiles ) {
-			if ( ! selectedSite.hasMinimumJetpackVersion ) {
-				return (
-					<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
-						<span className="plugin-install-button__warning">{ translate( 'Jetpack 3.7 is required' ) }</span>
-						<Button
-							compact={ true }
-							onClick={ this.updateJetpackAction }
-							href={ selectedSite.options.admin_url + 'plugins.php?plugin_status=upgrade' } >
-							{ translate( 'update', { context: 'verb, update plugin button label' } ) }
-						</Button>
-					</div>
-				);
-			}
+        if (!selectedSite.canUpdateFiles) {
+            if (!selectedSite.hasMinimumJetpackVersion) {
+                return (
+                    <div
+                        className={classNames({
+                            'plugin-install-button__install': true,
+                            embed: isEmbed,
+                        })}
+                    >
+                        <span className="plugin-install-button__warning">
+                            {translate('Jetpack 3.7 is required')}
+                        </span>
+                        <Button
+                            compact={true}
+                            onClick={this.updateJetpackAction}
+                            href={
+                                selectedSite.options.admin_url + 'plugins.php?plugin_status=upgrade'
+                            }
+                        >
+                            {translate('update', { context: 'verb, update plugin button label' })}
+                        </Button>
+                    </div>
+                );
+            }
 
-			if ( this.getDisabledInfo() ) {
-				return (
-					<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) } >
-						<span onClick={ this.togglePopover } ref="disabledInfoLabel" className="plugin-install-button__warning">
-							{ translate( 'Install Disabled' ) }
-						</span>
-						<InfoPopover
-							position="bottom left"
-							popoverName={ 'Plugin Action Disabled Install' }
-							gaEventCategory="Plugins"
-							ref="infoPopover"
-							ignoreContext={ this.refs && this.refs.disabledInfoLabel }
-							>
-							{ this.getDisabledInfo() }
-						</InfoPopover>
-					</div>
-				);
-			}
-			return null;
-		}
-	}
+            if (this.getDisabledInfo()) {
+                return (
+                    <div
+                        className={classNames({
+                            'plugin-install-button__install': true,
+                            embed: isEmbed,
+                        })}
+                    >
+                        <span
+                            onClick={this.togglePopover}
+                            ref="disabledInfoLabel"
+                            className="plugin-install-button__warning"
+                        >
+                            {translate('Install Disabled')}
+                        </span>
+                        <InfoPopover
+                            position="bottom left"
+                            popoverName={'Plugin Action Disabled Install'}
+                            gaEventCategory="Plugins"
+                            ref="infoPopover"
+                            ignoreContext={this.refs && this.refs.disabledInfoLabel}
+                        >
+                            {this.getDisabledInfo()}
+                        </InfoPopover>
+                    </div>
+                );
+            }
+            return null;
+        }
+    }
 
-	renderButton() {
-		const { translate, isInstalling, isEmbed, disabled } = this.props;
-		const label = isInstalling ? translate( 'Installing…' ) : translate( 'Install' );
+    renderButton() {
+        const { translate, isInstalling, isEmbed, disabled } = this.props;
+        const label = isInstalling ? translate('Installing…') : translate('Install');
 
-		if ( isEmbed ) {
-			return (
-				<span className="plugin-install-button__install embed">
-					{ isInstalling
-						? <span className="plugin-install-button__installing">{ label }</span>
-						: <Button compact={ true } onClick={ this.installAction } disabled={ disabled }>
-							<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
-							<Gridicon icon="plugins" size={ 18 } />
-							{ translate( 'Install' ) }
-						</Button>
-					}
-				</span>
-			);
-		}
+        if (isEmbed) {
+            return (
+                <span className="plugin-install-button__install embed">
+                    {isInstalling
+                        ? <span className="plugin-install-button__installing">{label}</span>
+                        : <Button compact={true} onClick={this.installAction} disabled={disabled}>
+                              <Gridicon key="plus-icon" icon="plus-small" size={18} />
+                              <Gridicon icon="plugins" size={18} />
+                              {translate('Install')}
+                          </Button>}
+                </span>
+            );
+        }
 
-		return (
-			<span className="plugin-install-button__install">
-				<Button
-					onClick={ this.installAction }
-					primary={ true }
-					disabled={ isInstalling || disabled }
-				>
-					{ label }
-				</Button>
-			</span>
-		);
-	}
+        return (
+            <span className="plugin-install-button__install">
+                <Button
+                    onClick={this.installAction}
+                    primary={true}
+                    disabled={isInstalling || disabled}
+                >
+                    {label}
+                </Button>
+            </span>
+        );
+    }
 
-	render() {
-		const { selectedSite } = this.props;
-		if ( selectedSite.unreachable ) {
-			return this.renderUnreachableNotice();
-		}
-		if ( ! selectedSite.canUpdateFiles ) {
-			return this.renderDisabledNotice();
-		}
+    render() {
+        const { selectedSite } = this.props;
+        if (selectedSite.unreachable) {
+            return this.renderUnreachableNotice();
+        }
+        if (!selectedSite.canUpdateFiles) {
+            return this.renderDisabledNotice();
+        }
 
-		return this.renderButton();
-	}
+        return this.renderButton();
+    }
 }
 
 PluginInstallButton.propTypes = {
-	selectedSite: PropTypes.object.isRequired,
-	plugin: PropTypes.object.isRequired,
-	isEmbed: PropTypes.bool,
-	isInstalling: PropTypes.bool,
-	notices: React.PropTypes.object,
-	isMock: PropTypes.bool,
-	disabled: React.PropTypes.bool,
+    selectedSite: PropTypes.object.isRequired,
+    plugin: PropTypes.object.isRequired,
+    isEmbed: PropTypes.bool,
+    isInstalling: PropTypes.bool,
+    notices: React.PropTypes.object,
+    isMock: PropTypes.bool,
+    disabled: React.PropTypes.bool,
 };
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-		recordTracksEvent
-	}
-)( localize( PluginInstallButton ) );
+export default connect(null, {
+    recordGoogleEvent,
+    recordTracksEvent,
+})(localize(PluginInstallButton));

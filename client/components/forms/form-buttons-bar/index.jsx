@@ -1,21 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' ),
-	omit = require( 'lodash/omit' );
+var React = require('react'), classnames = require('classnames'), omit = require('lodash/omit');
 
-module.exports = React.createClass( {
+module.exports = React.createClass({
+    displayName: 'FormButtonsBar',
 
-	displayName: 'FormButtonsBar',
-
-	render: function() {
-		return (
-			<div
-				{ ...omit( this.props, 'className' ) }
-				className={ classnames( this.props.className, 'form-buttons-bar' ) } >
-				{ this.props.children }
-			</div>
-		);
-	}
-} );
+    render: function() {
+        return (
+            <div
+                {...omit(this.props, 'className')}
+                className={classnames(this.props.className, 'form-buttons-bar')}
+            >
+                {this.props.children}
+            </div>
+        );
+    },
+});

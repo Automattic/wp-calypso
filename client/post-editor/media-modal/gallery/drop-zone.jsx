@@ -12,41 +12,42 @@ import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalGalleryDropZone',
+export default React.createClass({
+    displayName: 'EditorMediaModalGalleryDropZone',
 
-	propTypes: {
-		site: PropTypes.object,
-		onInvalidItemAdded: PropTypes.func
-	},
+    propTypes: {
+        site: PropTypes.object,
+        onInvalidItemAdded: PropTypes.func,
+    },
 
-	getDefaultProps() {
-		return {
-			onInvalidItemAdded: () => {}
-		};
-	},
+    getDefaultProps() {
+        return {
+            onInvalidItemAdded: () => {},
+        };
+    },
 
-	filterDroppedImagesSelected() {
-		const { site } = this.props;
-		if ( ! site ) {
-			return;
-		}
+    filterDroppedImagesSelected() {
+        const { site } = this.props;
+        if (!site) {
+            return;
+        }
 
-		const selectedItems = MediaLibrarySelectedStore.getAll( site.ID );
-		const filteredItems = MediaUtils.filterItemsByMimePrefix( selectedItems, 'image' );
+        const selectedItems = MediaLibrarySelectedStore.getAll(site.ID);
+        const filteredItems = MediaUtils.filterItemsByMimePrefix(selectedItems, 'image');
 
-		if ( ! isEqual( selectedItems, filteredItems ) ) {
-			MediaActions.setLibrarySelectedItems( site.ID, filteredItems );
-			this.props.onInvalidItemAdded();
-		}
-	},
+        if (!isEqual(selectedItems, filteredItems)) {
+            MediaActions.setLibrarySelectedItems(site.ID, filteredItems);
+            this.props.onInvalidItemAdded();
+        }
+    },
 
-	render() {
-		return (
-			<MediaLibraryDropZone
-				site={ this.props.site }
-				onAddMedia={ this.filterDroppedImagesSelected }
-				fullScreen={ false } />
-		);
-	}
-} );
+    render() {
+        return (
+            <MediaLibraryDropZone
+                site={this.props.site}
+                onAddMedia={this.filterDroppedImagesSelected}
+                fullScreen={false}
+            />
+        );
+    },
+});

@@ -20,42 +20,42 @@ import { isLegacyRoute } from 'lib/route/legacy-routes';
  * @param {string} url - URL to check
  * @return {bool} true if the given URL is located outside of Calypso
  */
-function isOutsideCalypso( url ) {
-	return url && ( startsWith( url, '//' ) || ! startsWith( url, '/' ) );
+function isOutsideCalypso(url) {
+    return url && (startsWith(url, '//') || !startsWith(url, '/'));
 }
 
-function isExternal( url ) {
-	// parseURL will return hostname = null if no protocol or double-slashes
-	// the url passed in might be of form `en.support.wordpress.com`
-	// so for this function we'll append double-slashes to fake it
-	// if it is a relative URL the hostname will still be empty from parseURL
-	if ( ! startsWith( url, 'http://' ) && ! startsWith( url, 'https://' ) && ! startsWith( url, '//' ) ) {
-		url = '//' + url;
-	}
+function isExternal(url) {
+    // parseURL will return hostname = null if no protocol or double-slashes
+    // the url passed in might be of form `en.support.wordpress.com`
+    // so for this function we'll append double-slashes to fake it
+    // if it is a relative URL the hostname will still be empty from parseURL
+    if (!startsWith(url, 'http://') && !startsWith(url, 'https://') && !startsWith(url, '//')) {
+        url = '//' + url;
+    }
 
-	const { hostname, path } = parseUrl( url, false, true ); // no qs needed, and slashesDenoteHost to handle protocol-relative URLs
+    const { hostname, path } = parseUrl(url, false, true); // no qs needed, and slashesDenoteHost to handle protocol-relative URLs
 
-	if ( ! hostname ) {
-		return false;
-	}
+    if (!hostname) {
+        return false;
+    }
 
-	if ( typeof window !== 'undefined' ) {
-		if ( hostname === window.location.hostname ) {
-			// even if hostname matches, the url might be outside calypso
-			// outside calypso should be considered external
-			// double separators are valid paths - but not handled correctly
-			if ( path && isLegacyRoute( path.replace( '//', '/' ) ) ) {
-				return true;
-			}
-			return false;
-		}
-	}
+    if (typeof window !== 'undefined') {
+        if (hostname === window.location.hostname) {
+            // even if hostname matches, the url might be outside calypso
+            // outside calypso should be considered external
+            // double separators are valid paths - but not handled correctly
+            if (path && isLegacyRoute(path.replace('//', '/'))) {
+                return true;
+            }
+            return false;
+        }
+    }
 
-	return hostname !== config( 'hostname' );
+    return hostname !== config('hostname');
 }
 
-function isHttps( url ) {
-	return url && startsWith( url, 'https://' );
+function isHttps(url) {
+    return url && startsWith(url, 'https://');
 }
 
 const schemeRegex = /^\w+:\/\//;
@@ -66,55 +66,55 @@ const urlWithoutHttpRegex = /^https?:\/\//;
  * @param  {String}  url The URL to remove http(s) from
  * @return {?String}     URL without the initial http(s)
  */
-function withoutHttp( url ) {
-	if ( url === '' ) {
-		return '';
-	}
+function withoutHttp(url) {
+    if (url === '') {
+        return '';
+    }
 
-	if ( ! url ) {
-		return null;
-	}
+    if (!url) {
+        return null;
+    }
 
-	return url.replace( urlWithoutHttpRegex, '' );
+    return url.replace(urlWithoutHttpRegex, '');
 }
 
-function addSchemeIfMissing( url, scheme ) {
-	if ( false === schemeRegex.test( url ) ) {
-		return scheme + '://' + url;
-	}
-	return url;
+function addSchemeIfMissing(url, scheme) {
+    if (false === schemeRegex.test(url)) {
+        return scheme + '://' + url;
+    }
+    return url;
 }
 
-function setUrlScheme( url, scheme ) {
-	const schemeWithSlashes = scheme + '://';
-	if ( startsWith( url, schemeWithSlashes ) ) {
-		return url;
-	}
+function setUrlScheme(url, scheme) {
+    const schemeWithSlashes = scheme + '://';
+    if (startsWith(url, schemeWithSlashes)) {
+        return url;
+    }
 
-	const newUrl = addSchemeIfMissing( url, scheme );
-	if ( newUrl !== url ) {
-		return newUrl;
-	}
+    const newUrl = addSchemeIfMissing(url, scheme);
+    if (newUrl !== url) {
+        return newUrl;
+    }
 
-	return url.replace( schemeRegex, schemeWithSlashes );
+    return url.replace(schemeRegex, schemeWithSlashes);
 }
 
-function urlToSlug( url ) {
-	if ( ! url ) {
-		return null;
-	}
+function urlToSlug(url) {
+    if (!url) {
+        return null;
+    }
 
-	return withoutHttp( url ).replace( /\//g, '::' );
+    return withoutHttp(url).replace(/\//g, '::');
 }
 
 export default {
-	isOutsideCalypso,
-	isExternal,
-	isHttps,
-	withoutHttp,
-	addSchemeIfMissing,
-	setUrlScheme,
-	urlToSlug,
-	// [TODO]: Move lib/route/add-query-args contents here
-	addQueryArgs
+    isOutsideCalypso,
+    isExternal,
+    isHttps,
+    withoutHttp,
+    addSchemeIfMissing,
+    setUrlScheme,
+    urlToSlug,
+    // [TODO]: Move lib/route/add-query-args contents here
+    addQueryArgs,
 };

@@ -8,12 +8,6 @@ import sites from './sites';
 import read from './read';
 import timezones from './timezones';
 
-export const handlers = mergeHandlers(
-	accountRecovery,
-	plans,
-	sites,
-	read,
-	timezones,
-);
+export const handlers = mergeHandlers(accountRecovery, plans, sites, read, timezones);
 
 export default handlers;

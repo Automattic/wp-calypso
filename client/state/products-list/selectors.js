@@ -1,5 +1,5 @@
-export function isProductsListFetching( state ) {
-	return state.productsList.isFetching;
+export function isProductsListFetching(state) {
+    return state.productsList.isFetching;
 }
 
 /**
@@ -9,11 +9,11 @@ export function isProductsListFetching( state ) {
  * @param {string} productSlug The internal product slug, eg 'jetpack_premium'
  * @return {string} The display price formatted in the user's currency, eg "A$29.00"
  */
-export function getProductDisplayCost( state, productSlug ) {
-	const product = state.productsList.items[ productSlug ];
-	if ( ! product ) {
-		return null;
-	}
+export function getProductDisplayCost(state, productSlug) {
+    const product = state.productsList.items[productSlug];
+    if (!product) {
+        return null;
+    }
 
-	return product.cost_display;
+    return product.cost_display;
 }

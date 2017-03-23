@@ -3,12 +3,12 @@
  */
 import olarkApi from 'lib/olark-api';
 import {
-	OLARK_READY,
-	OLARK_REQUEST,
-	OLARK_TIMEOUT,
-	OLARK_OPERATORS_AVAILABLE,
-	OLARK_OPERATORS_AWAY,
-	OLARK_SET_AVAILABILITY,
+    OLARK_READY,
+    OLARK_REQUEST,
+    OLARK_TIMEOUT,
+    OLARK_OPERATORS_AVAILABLE,
+    OLARK_OPERATORS_AWAY,
+    OLARK_SET_AVAILABILITY,
 } from 'state/action-types';
 import { OLARK_TIMEOUT_MS } from './constants';
 
@@ -19,9 +19,9 @@ import { OLARK_TIMEOUT_MS } from './constants';
  * @return {Object}              Action object
  */
 export function olarkTimeout() {
-	return {
-		type: OLARK_TIMEOUT
-	};
+    return {
+        type: OLARK_TIMEOUT,
+    };
 }
 
 /**
@@ -30,9 +30,9 @@ export function olarkTimeout() {
  * @return {Object}              Action object
  */
 export function olarkReady() {
-	return {
-		type: OLARK_READY
-	};
+    return {
+        type: OLARK_READY,
+    };
 }
 
 /**
@@ -41,9 +41,9 @@ export function olarkReady() {
  * @return {Object}              Action object
  */
 export function operatorsAvailable() {
-	return {
-		type: OLARK_OPERATORS_AVAILABLE
-	};
+    return {
+        type: OLARK_OPERATORS_AVAILABLE,
+    };
 }
 
 /**
@@ -52,9 +52,9 @@ export function operatorsAvailable() {
  * @return {Object}              Action object
  */
 export function operatorsAway() {
-	return {
-		type: OLARK_OPERATORS_AWAY
-	};
+    return {
+        type: OLARK_OPERATORS_AWAY,
+    };
 }
 
 /**
@@ -62,11 +62,11 @@ export function operatorsAway() {
  * @param {object} availability  An object containing the availibility of different areas for chat
  * @return {Object}              Action object
  */
-export function setChatAvailability( availability ) {
-	return {
-		type: OLARK_SET_AVAILABILITY,
-		availability,
-	};
+export function setChatAvailability(availability) {
+    return {
+        type: OLARK_SET_AVAILABILITY,
+        availability,
+    };
 }
 
 /**
@@ -74,20 +74,23 @@ export function setChatAvailability( availability ) {
  * @returns {Function}        Action thunk
  */
 export function requestOlark() {
-	return ( dispatch ) => {
-		dispatch( {
-			type: OLARK_REQUEST
-		} );
-		return new Promise( ( resolve ) => {
-			const timeout = setTimeout( () => {
-				dispatch( olarkTimeout() );
-				resolve();
-			}, OLARK_TIMEOUT_MS );
-			olarkApi( 'api.chat.onReady', () => {
-				clearTimeout( timeout );
-				dispatch( olarkReady() );
-				resolve();
-			} );
-		} );
-	};
+    return dispatch => {
+        dispatch({
+            type: OLARK_REQUEST,
+        });
+        return new Promise(resolve => {
+            const timeout = setTimeout(
+                () => {
+                    dispatch(olarkTimeout());
+                    resolve();
+                },
+                OLARK_TIMEOUT_MS
+            );
+            olarkApi('api.chat.onReady', () => {
+                clearTimeout(timeout);
+                dispatch(olarkReady());
+                resolve();
+            });
+        });
+    };
 }

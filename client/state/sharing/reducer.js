@@ -10,8 +10,8 @@ import keyring from './keyring/reducer';
 import publicize from './publicize/reducer';
 import services from './services/reducer';
 
-export default combineReducers( {
-	keyring,
-	publicize,
-	services,
-} );
+export default combineReducers({
+    keyring,
+    publicize,
+    services,
+});

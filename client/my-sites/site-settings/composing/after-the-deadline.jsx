@@ -18,214 +18,262 @@ import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
-	isJetpackModuleActive,
-	isJetpackModuleUnavailableInDevelopmentMode,
-	isJetpackSiteInDevelopmentMode
+    isJetpackModuleActive,
+    isJetpackModuleUnavailableInDevelopmentMode,
+    isJetpackSiteInDevelopmentMode,
 } from 'state/selectors';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 
 class AfterTheDeadline extends Component {
-	static defaultProps = {
-		isSavingSettings: false,
-		isRequestingSettings: true,
-		fields: {}
-	};
+    static defaultProps = {
+        isSavingSettings: false,
+        isRequestingSettings: true,
+        fields: {},
+    };
 
-	static propTypes = {
-		handleToggle: PropTypes.func.isRequired,
-		setFieldValue: PropTypes.func.isRequired,
-		isSavingSettings: PropTypes.bool,
-		isRequestingSettings: PropTypes.bool,
-		fields: PropTypes.object,
-	};
+    static propTypes = {
+        handleToggle: PropTypes.func.isRequired,
+        setFieldValue: PropTypes.func.isRequired,
+        isSavingSettings: PropTypes.bool,
+        isRequestingSettings: PropTypes.bool,
+        fields: PropTypes.object,
+    };
 
-	state = {
-		advancedOptionsVisible: false,
-	};
+    state = {
+        advancedOptionsVisible: false,
+    };
 
-	onChangeIgnoredPhrases = ( phrases ) => {
-		this.props.setFieldValue( 'ignored_phrases', phrases.join( ',' ) );
-	};
+    onChangeIgnoredPhrases = phrases => {
+        this.props.setFieldValue('ignored_phrases', phrases.join(','));
+    };
 
-	onAdvancedOptionsClick = ( event ) => {
-		event.preventDefault();
+    onAdvancedOptionsClick = event => {
+        event.preventDefault();
 
-		this.setState( {
-			advancedOptionsVisible: ! this.state.advancedOptionsVisible,
-		} );
-	};
+        this.setState({
+            advancedOptionsVisible: !this.state.advancedOptionsVisible,
+        });
+    };
 
-	renderToggle( name, isDisabled, label ) {
-		const {
-			fields,
-			handleToggle,
-			isRequestingSettings,
-			isSavingSettings,
-			moduleUnavailable
-		} = this.props;
-		return (
-			<CompactFormToggle
-				checked={ !! fields[ name ] }
-				disabled={ isRequestingSettings || isSavingSettings || isDisabled || moduleUnavailable }
-				onChange={ handleToggle( name ) }
-			>
-				{ label }
-			</CompactFormToggle>
-		);
-	}
+    renderToggle(name, isDisabled, label) {
+        const {
+            fields,
+            handleToggle,
+            isRequestingSettings,
+            isSavingSettings,
+            moduleUnavailable,
+        } = this.props;
+        return (
+            <CompactFormToggle
+                checked={!!fields[name]}
+                disabled={
+                    isRequestingSettings || isSavingSettings || isDisabled || moduleUnavailable
+                }
+                onChange={handleToggle(name)}
+            >
+                {label}
+            </CompactFormToggle>
+        );
+    }
 
-	renderProofreadingSection() {
-		const { afterTheDeadlineModuleActive, translate } = this.props;
+    renderProofreadingSection() {
+        const { afterTheDeadlineModuleActive, translate } = this.props;
 
-		return (
-			<div className="composing__module-settings site-settings__child-settings">
-				<FormLegend>
-					{ translate( 'Proofreading' ) }
-				</FormLegend>
-				<FormSettingExplanation>
-					{ translate( 'Automatically proofread content when:' ) }
-				</FormSettingExplanation>
+        return (
+            <div className="composing__module-settings site-settings__child-settings">
+                <FormLegend>
+                    {translate('Proofreading')}
+                </FormLegend>
+                <FormSettingExplanation>
+                    {translate('Automatically proofread content when:')}
+                </FormSettingExplanation>
 
-				{
-					this.renderToggle( 'onpublish', ! afterTheDeadlineModuleActive, translate(
-						'Posts or pages are first published'
-					) )
-				}
+                {this.renderToggle(
+                    'onpublish',
+                    !afterTheDeadlineModuleActive,
+                    translate('Posts or pages are first published')
+                )}
 
-				{
-					this.renderToggle( 'onupdate', ! afterTheDeadlineModuleActive, translate(
-						'Posts or pages are updated'
-					) )
-				}
-			</div>
-		);
-	}
+                {this.renderToggle(
+                    'onupdate',
+                    !afterTheDeadlineModuleActive,
+                    translate('Posts or pages are updated')
+                )}
+            </div>
+        );
+    }
 
-	renderAutoLanguageDetectionSection() {
-		const { afterTheDeadlineModuleActive, translate } = this.props;
+    renderAutoLanguageDetectionSection() {
+        const { afterTheDeadlineModuleActive, translate } = this.props;
 
-		return (
-			<div className="composing__module-settings site-settings__child-settings">
-				<FormLegend>
-					{ translate( 'Automatic Language Detection' ) }
-				</FormLegend>
-				<FormSettingExplanation>
-					{ translate( 'The proofreader supports English, French, German, Portuguese and Spanish.' ) }
-				</FormSettingExplanation>
+        return (
+            <div className="composing__module-settings site-settings__child-settings">
+                <FormLegend>
+                    {translate('Automatic Language Detection')}
+                </FormLegend>
+                <FormSettingExplanation>
+                    {translate(
+                        'The proofreader supports English, French, German, Portuguese and Spanish.'
+                    )}
+                </FormSettingExplanation>
 
-				{
-					this.renderToggle( 'guess_lang', ! afterTheDeadlineModuleActive, translate(
-						'Use automatically detected language to proofread posts and pages'
-					) )
-				}
-			</div>
-		);
-	}
+                {this.renderToggle(
+                    'guess_lang',
+                    !afterTheDeadlineModuleActive,
+                    translate('Use automatically detected language to proofread posts and pages')
+                )}
+            </div>
+        );
+    }
 
-	renderEnglishOptionsSection() {
-		const { afterTheDeadlineModuleActive, translate } = this.props;
+    renderEnglishOptionsSection() {
+        const { afterTheDeadlineModuleActive, translate } = this.props;
 
-		return (
-			<div className="composing__module-settings site-settings__child-settings">
-				<FormLegend>
-					{ translate( 'English Options' ) }
-				</FormLegend>
-				<FormSettingExplanation>
-					{ translate( 'Enable proofreading for the following grammar and style rules when writing posts and pages:' ) }
-				</FormSettingExplanation>
+        return (
+            <div className="composing__module-settings site-settings__child-settings">
+                <FormLegend>
+                    {translate('English Options')}
+                </FormLegend>
+                <FormSettingExplanation>
+                    {translate(
+                        'Enable proofreading for the following grammar and style rules when writing posts and pages:'
+                    )}
+                </FormSettingExplanation>
 
-				{ this.renderToggle( 'Bias Language', ! afterTheDeadlineModuleActive, translate( 'Bias Language' ) ) }
-				{ this.renderToggle( 'Cliches', ! afterTheDeadlineModuleActive, translate( 'Clichés' ) ) }
-				{ this.renderToggle( 'Complex Expression', ! afterTheDeadlineModuleActive, translate( 'Complex Phrases' ) ) }
-				{ this.renderToggle( 'Diacritical Marks', ! afterTheDeadlineModuleActive, translate( 'Diacritical Marks' ) ) }
-				{ this.renderToggle( 'Double Negative', ! afterTheDeadlineModuleActive, translate( 'Double Negatives' ) ) }
-				{ this.renderToggle( 'Hidden Verbs', ! afterTheDeadlineModuleActive, translate( 'Hidden Verbs' ) ) }
-				{ this.renderToggle( 'Jargon Language', ! afterTheDeadlineModuleActive, translate( 'Jargon' ) ) }
-				{ this.renderToggle( 'Passive voice', ! afterTheDeadlineModuleActive, translate( 'Passive Voice' ) ) }
-				{ this.renderToggle( 'Phrases to Avoid', ! afterTheDeadlineModuleActive, translate( 'Phrases to Avoid' ) ) }
-				{ this.renderToggle( 'Redundant Expression', ! afterTheDeadlineModuleActive, translate( 'Redundant Phrases' ) ) }
-			</div>
-		);
-	}
+                {this.renderToggle(
+                    'Bias Language',
+                    !afterTheDeadlineModuleActive,
+                    translate('Bias Language')
+                )}
+                {this.renderToggle('Cliches', !afterTheDeadlineModuleActive, translate('Clichés'))}
+                {this.renderToggle(
+                    'Complex Expression',
+                    !afterTheDeadlineModuleActive,
+                    translate('Complex Phrases')
+                )}
+                {this.renderToggle(
+                    'Diacritical Marks',
+                    !afterTheDeadlineModuleActive,
+                    translate('Diacritical Marks')
+                )}
+                {this.renderToggle(
+                    'Double Negative',
+                    !afterTheDeadlineModuleActive,
+                    translate('Double Negatives')
+                )}
+                {this.renderToggle(
+                    'Hidden Verbs',
+                    !afterTheDeadlineModuleActive,
+                    translate('Hidden Verbs')
+                )}
+                {this.renderToggle(
+                    'Jargon Language',
+                    !afterTheDeadlineModuleActive,
+                    translate('Jargon')
+                )}
+                {this.renderToggle(
+                    'Passive voice',
+                    !afterTheDeadlineModuleActive,
+                    translate('Passive Voice')
+                )}
+                {this.renderToggle(
+                    'Phrases to Avoid',
+                    !afterTheDeadlineModuleActive,
+                    translate('Phrases to Avoid')
+                )}
+                {this.renderToggle(
+                    'Redundant Expression',
+                    !afterTheDeadlineModuleActive,
+                    translate('Redundant Phrases')
+                )}
+            </div>
+        );
+    }
 
-	renderIgnoredPhrasesSection() {
-		const { afterTheDeadlineModuleActive, fields, moduleUnavailable, translate } = this.props;
-		const ignoredPhrases = fields.ignored_phrases
-			? fields.ignored_phrases.split( ',' )
-			: [];
+    renderIgnoredPhrasesSection() {
+        const { afterTheDeadlineModuleActive, fields, moduleUnavailable, translate } = this.props;
+        const ignoredPhrases = fields.ignored_phrases ? fields.ignored_phrases.split(',') : [];
 
-		return (
-			<div className="composing__module-settings site-settings__child-settings">
-				<FormLegend>
-					{ translate( 'Ignored Phrases' ) }
-				</FormLegend>
+        return (
+            <div className="composing__module-settings site-settings__child-settings">
+                <FormLegend>
+                    {translate('Ignored Phrases')}
+                </FormLegend>
 
-				<TokenField
-					onChange={ this.onChangeIgnoredPhrases }
-					value={ ignoredPhrases }
-					disabled={ ! afterTheDeadlineModuleActive || moduleUnavailable }
-				/>
-			</div>
-		);
-	}
+                <TokenField
+                    onChange={this.onChangeIgnoredPhrases}
+                    value={ignoredPhrases}
+                    disabled={!afterTheDeadlineModuleActive || moduleUnavailable}
+                />
+            </div>
+        );
+    }
 
-	render() {
-		const {
-			isRequestingSettings,
-			isSavingSettings,
-			moduleUnavailable,
-			selectedSiteId,
-			translate
-		} = this.props;
+    render() {
+        const {
+            isRequestingSettings,
+            isSavingSettings,
+            moduleUnavailable,
+            selectedSiteId,
+            translate,
+        } = this.props;
 
-		return (
-			<FormFieldset>
-				<QueryJetpackConnection siteId={ selectedSiteId } />
+        return (
+            <FormFieldset>
+                <QueryJetpackConnection siteId={selectedSiteId} />
 
-				<div className="composing__info-link-container site-settings__info-link-container">
-					<InfoPopover position={ 'left' }>
-						<ExternalLink href={ 'https://jetpack.com/support/spelling-and-grammar/' } target="_blank">
-							{ translate( 'Learn more about After the Deadline' ) }
-						</ExternalLink>
-					</InfoPopover>
-				</div>
+                <div className="composing__info-link-container site-settings__info-link-container">
+                    <InfoPopover position={'left'}>
+                        <ExternalLink
+                            href={'https://jetpack.com/support/spelling-and-grammar/'}
+                            target="_blank"
+                        >
+                            {translate('Learn more about After the Deadline')}
+                        </ExternalLink>
+                    </InfoPopover>
+                </div>
 
-				<JetpackModuleToggle
-					siteId={ selectedSiteId }
-					moduleSlug="after-the-deadline"
-					label={ translate( 'Check your spelling, style, and grammar' ) }
-					disabled={ isRequestingSettings || isSavingSettings || moduleUnavailable }
-					/>
+                <JetpackModuleToggle
+                    siteId={selectedSiteId}
+                    moduleSlug="after-the-deadline"
+                    label={translate('Check your spelling, style, and grammar')}
+                    disabled={isRequestingSettings || isSavingSettings || moduleUnavailable}
+                />
 
-				<div className="composing__module-settings site-settings__child-settings">
-					<a href="#" onClick={ this.onAdvancedOptionsClick }>
-						{ translate( 'Advanced Options' ) }
-					</a>
-				</div>
+                <div className="composing__module-settings site-settings__child-settings">
+                    <a href="#" onClick={this.onAdvancedOptionsClick}>
+                        {translate('Advanced Options')}
+                    </a>
+                </div>
 
-				{ this.state.advancedOptionsVisible && (
-					<div>
-						{ this.renderProofreadingSection() }
-						{ this.renderAutoLanguageDetectionSection() }
-						{ this.renderEnglishOptionsSection() }
-						{ this.renderIgnoredPhrasesSection() }
-					</div>
-				) }
-			</FormFieldset>
-		);
-	}
+                {this.state.advancedOptionsVisible &&
+                    <div>
+                        {this.renderProofreadingSection()}
+                        {this.renderAutoLanguageDetectionSection()}
+                        {this.renderEnglishOptionsSection()}
+                        {this.renderIgnoredPhrasesSection()}
+                    </div>}
+            </FormFieldset>
+        );
+    }
 }
 
-export default connect(
-	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
-		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, selectedSiteId, 'after-the-deadline' );
+export default connect(state => {
+    const selectedSiteId = getSelectedSiteId(state);
+    const siteInDevMode = isJetpackSiteInDevelopmentMode(state, selectedSiteId);
+    const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+        state,
+        selectedSiteId,
+        'after-the-deadline'
+    );
 
-		return {
-			selectedSiteId,
-			afterTheDeadlineModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'after-the-deadline' ),
-			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-		};
-	}
-)( localize( AfterTheDeadline ) );
+    return {
+        selectedSiteId,
+        afterTheDeadlineModuleActive: !!isJetpackModuleActive(
+            state,
+            selectedSiteId,
+            'after-the-deadline'
+        ),
+        moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+    };
+})(localize(AfterTheDeadline));

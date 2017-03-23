@@ -9,16 +9,19 @@ import React from 'react';
 import ExternalLink from 'components/external-link';
 import Card from 'components/card';
 
-export default React.createClass( {
+export default React.createClass({
+    displayName: 'ExternalLink',
 
-	displayName: 'ExternalLink',
-
-	render() {
-		return (
-			<Card>
-				<p><ExternalLink icon={ true } href="https://wordpress.org" >WordPress.org</ExternalLink></p>
-				<p><ExternalLink href="https://wordpress.org">WordPress.org</ExternalLink></p>
-			</Card>
-		);
-	}
-} );
+    render() {
+        return (
+            <Card>
+                <p>
+                    <ExternalLink icon={true} href="https://wordpress.org">
+                        WordPress.org
+                    </ExternalLink>
+                </p>
+                <p><ExternalLink href="https://wordpress.org">WordPress.org</ExternalLink></p>
+            </Card>
+        );
+    },
+});

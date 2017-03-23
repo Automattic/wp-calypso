@@ -26,27 +26,25 @@ export { setSection } from './shared.js';
 
 const user = userFactory();
 const sites = sitesFactory();
-const debug = debugFactory( 'calypso:controller' );
+const debug = debugFactory('calypso:controller');
 
-export const ReduxWrappedLayout = ( { store, primary, secondary, tertiary } ) => (
-	<ReduxProvider store={ store }>
-		{ getCurrentUser( store.getState() )
-			? <Layout primary={ primary }
-				secondary={ secondary }
-				tertiary={ tertiary }
-				user={ user }
-				sites={ sites }
-				nuxWelcome={ nuxWelcome }
-				translatorInvitation={ translatorInvitation }
-			/>
-			: <LayoutLoggedOut primary={ primary }
-				secondary={ secondary }
-				tertiary={ tertiary } />
-		}
-	</ReduxProvider>
+export const ReduxWrappedLayout = ({ store, primary, secondary, tertiary }) => (
+    <ReduxProvider store={store}>
+        {getCurrentUser(store.getState())
+            ? <Layout
+                  primary={primary}
+                  secondary={secondary}
+                  tertiary={tertiary}
+                  user={user}
+                  sites={sites}
+                  nuxWelcome={nuxWelcome}
+                  translatorInvitation={translatorInvitation}
+              />
+            : <LayoutLoggedOut primary={primary} secondary={secondary} tertiary={tertiary} />}
+    </ReduxProvider>
 );
 
-export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
+export const makeLayout = makeLayoutMiddleware(ReduxWrappedLayout);
 
 /**
  * Isomorphic routing helper, client side
@@ -62,55 +60,50 @@ export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
  * (or, if that is empty, in `context.primary`) to the respectively corresponding
  * divs.
  */
-export function clientRouter( route, ...middlewares ) {
-	page( route, ...middlewares, render );
+export function clientRouter(route, ...middlewares) {
+    page(route, ...middlewares, render);
 }
 
-function render( context ) {
-	context.layout
-		? renderSingleTree( context )
-		: renderSeparateTrees( context );
+function render(context) {
+    context.layout ? renderSingleTree(context) : renderSeparateTrees(context);
 }
 
-function renderSingleTree( context ) {
-	ReactDom.render(
-		context.layout,
-		document.getElementById( 'wpcom' )
-	);
+function renderSingleTree(context) {
+    ReactDom.render(context.layout, document.getElementById('wpcom'));
 }
 
-function renderSeparateTrees( context ) {
-	renderPrimary( context );
-	renderSecondary( context );
+function renderSeparateTrees(context) {
+    renderPrimary(context);
+    renderSecondary(context);
 }
 
-function renderPrimary( context ) {
-	const { primary, store } = context;
+function renderPrimary(context) {
+    const { primary, store } = context;
 
-	if ( primary ) {
-		debug( 'Rendering primary', primary );
-		ReactDom.render(
-			<ReduxProvider store={ store }>
-				{ primary }
-			</ReduxProvider>,
-			document.getElementById( 'primary' )
-		);
-	}
+    if (primary) {
+        debug('Rendering primary', primary);
+        ReactDom.render(
+            <ReduxProvider store={store}>
+                {primary}
+            </ReduxProvider>,
+            document.getElementById('primary')
+        );
+    }
 }
 
-function renderSecondary( context ) {
-	const { secondary, store } = context;
+function renderSecondary(context) {
+    const { secondary, store } = context;
 
-	if ( secondary === null ) {
-		debug( 'Unmounting secondary' );
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-	} else if ( secondary !== undefined ) {
-		debug( 'Rendering secondary' );
-		ReactDom.render(
-			<ReduxProvider store={ store }>
-				{ secondary }
-			</ReduxProvider>,
-			document.getElementById( 'secondary' )
-		);
-	}
+    if (secondary === null) {
+        debug('Unmounting secondary');
+        ReactDom.unmountComponentAtNode(document.getElementById('secondary'));
+    } else if (secondary !== undefined) {
+        debug('Rendering secondary');
+        ReactDom.render(
+            <ReduxProvider store={store}>
+                {secondary}
+            </ReduxProvider>,
+            document.getElementById('secondary')
+        );
+    }
 }

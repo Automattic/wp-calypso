@@ -23,14 +23,14 @@ const REGEXP_VALID_PROTOCOL = /^https?:$/;
  *
  * @type {Number}
  */
-const IMAGE_SCALE_FACTOR = get( global.window, 'devicePixelRatio', 1 ) > 1 ? 2 : 1;
+const IMAGE_SCALE_FACTOR = get(global.window, 'devicePixelRatio', 1) > 1 ? 2 : 1;
 
 /**
  * Query parameters to be treated as image dimensions
  *
  * @type {String[]}
  */
-const SIZE_PARAMS = [ 'w', 'h', 'resize', 'fit', 's' ];
+const SIZE_PARAMS = ['w', 'h', 'resize', 'fit', 's'];
 
 /**
  * Mappings of supported safe services to patterns by which they can be matched
@@ -38,8 +38,8 @@ const SIZE_PARAMS = [ 'w', 'h', 'resize', 'fit', 's' ];
  * @type {Object}
  */
 const SERVICE_HOSTNAME_PATTERNS = {
-	photon: /(^i\d\.wp\.com|(^|\.)wordpress\.com)$/,
-	gravatar: /(^|\.)gravatar\.com$/
+    photon: /(^i\d\.wp\.com|(^|\.)wordpress\.com)$/,
+    gravatar: /(^|\.)gravatar\.com$/,
 };
 
 /**
@@ -48,7 +48,7 @@ const SERVICE_HOSTNAME_PATTERNS = {
  * @param  {Number} value Original value
  * @return {Number}       Updated value
  */
-const scaleByFactor = ( value ) => value * IMAGE_SCALE_FACTOR;
+const scaleByFactor = value => value * IMAGE_SCALE_FACTOR;
 
 /**
  * Changes the sizing parameters on a URL. Works for WordPress.com, Photon, and
@@ -60,47 +60,51 @@ const scaleByFactor = ( value ) => value * IMAGE_SCALE_FACTOR;
  * @param   {?Number}         height   Pixel height if specifying resize width
  * @returns {String}                   Resize image URL
  */
-export default function resizeImageUrl( imageUrl, resize, height ) {
-	if ( 'string' !== typeof imageUrl ) {
-		return imageUrl;
-	}
+export default function resizeImageUrl(imageUrl, resize, height) {
+    if ('string' !== typeof imageUrl) {
+        return imageUrl;
+    }
 
-	const parsedUrl = parse( imageUrl, true, true );
-	if ( ! REGEXP_VALID_PROTOCOL.test( parsedUrl.protocol ) ) {
-		return imageUrl;
-	}
+    const parsedUrl = parse(imageUrl, true, true);
+    if (!REGEXP_VALID_PROTOCOL.test(parsedUrl.protocol)) {
+        return imageUrl;
+    }
 
-	parsedUrl.query = omit( parsedUrl.query, SIZE_PARAMS );
+    parsedUrl.query = omit(parsedUrl.query, SIZE_PARAMS);
 
-	if ( 'number' === typeof resize ) {
-		const service = findKey( SERVICE_HOSTNAME_PATTERNS, String.prototype.match.bind( parsedUrl.hostname ) );
-		if ( 'gravatar' === service ) {
-			resize = { s: resize };
-		} else {
-			resize = height > 0
-				? { fit: [ resize, height ].join() }
-				: { w: resize };
+    if ('number' === typeof resize) {
+        const service = findKey(
+            SERVICE_HOSTNAME_PATTERNS,
+            String.prototype.match.bind(parsedUrl.hostname)
+        );
+        if ('gravatar' === service) {
+            resize = { s: resize };
+        } else {
+            resize = height > 0 ? { fit: [resize, height].join() } : { w: resize };
 
-			// External URLs are made "safe" (i.e. passed through Photon), so
-			// recurse with an assumed set of query arguments for Photon
-			if ( ! service ) {
-				return resizeImageUrl( safeImageUrl( imageUrl ), resize );
-			}
-		}
-	}
+            // External URLs are made "safe" (i.e. passed through Photon), so
+            // recurse with an assumed set of query arguments for Photon
+            if (!service) {
+                return resizeImageUrl(safeImageUrl(imageUrl), resize);
+            }
+        }
+    }
 
-	// Map sizing parameters, multiplying their values by the scale factor
-	assign( parsedUrl.query, mapValues( resize, ( value, key ) => {
-		if ( 'resize' === key || 'fit' === key ) {
-			return value.split( ',' ).map( scaleByFactor ).join( ',' );
-		} else if ( includes( SIZE_PARAMS, key ) ) {
-			return scaleByFactor( value );
-		}
+    // Map sizing parameters, multiplying their values by the scale factor
+    assign(
+        parsedUrl.query,
+        mapValues(resize, (value, key) => {
+            if ('resize' === key || 'fit' === key) {
+                return value.split(',').map(scaleByFactor).join(',');
+            } else if (includes(SIZE_PARAMS, key)) {
+                return scaleByFactor(value);
+            }
 
-		return value;
-	} ) );
+            return value;
+        })
+    );
 
-	delete parsedUrl.search;
+    delete parsedUrl.search;
 
-	return format( parsedUrl );
+    return format(parsedUrl);
 }

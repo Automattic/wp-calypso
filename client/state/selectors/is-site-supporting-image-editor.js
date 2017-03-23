@@ -12,9 +12,7 @@ import { isPrivateSite } from './';
  * @param  {Number}  siteId Site ID
  * @return {Boolean}        Whether site supports editing images
  */
-export default function isSiteSupportingImageEditor( state, siteId ) {
-	return (
-		true !== isPrivateSite( state, siteId ) &&
-		false !== isJetpackModuleActive( state, siteId, 'photon' )
-	);
+export default function isSiteSupportingImageEditor(state, siteId) {
+    return true !== isPrivateSite(state, siteId) &&
+        false !== isJetpackModuleActive(state, siteId, 'photon');
 }

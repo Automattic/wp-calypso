@@ -7,7 +7,7 @@ const hasWindow = typeof window !== 'undefined';
 
 let olark = noop;
 
-if ( hasWindow ) {
-	olark = require( './vendor-olark' );
+if (hasWindow) {
+    olark = require('./vendor-olark');
 }
 export default olark;

@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var store = require( 'store' );
+var store = require('store');
 
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' );
+var Emitter = require('lib/mixins/emitter');
 
 /**
  * This module stores the current and previous
@@ -17,47 +17,48 @@ var Emitter = require( 'lib/mixins/emitter' );
  * what the focus for any view of Calypso should be.
  */
 var nuxWelcome = {
+    tempWelcome: false,
 
-	tempWelcome: false,
+    showWelcome: store.get('show-welcome'),
 
-	showWelcome: store.get( 'show-welcome' ),
+    setWelcome: function(persist) {
+        if (persist) {
+            this.showWelcome = true;
+            this.emit('change');
+            setTimeout(
+                function() {
+                    store.set('show-welcome', true);
+                },
+                0
+            );
+        } else {
+            this.tempWelcome = true;
+        }
+    },
 
-	setWelcome: function( persist ) {
-		if ( persist ) {
-			this.showWelcome = true;
-			this.emit( 'change' );
-			setTimeout( function() {
-				store.set( 'show-welcome', true );
-			}, 0 );
-		} else {
-			this.tempWelcome = true;
-		}
-	},
+    getWelcome: function() {
+        return this.tempWelcome || this.showWelcome;
+    },
 
-	getWelcome: function() {
-		return ( this.tempWelcome || this.showWelcome );
-	},
+    clearTempWelcome: function() {
+        if (!this.tempWelcome) {
+            return;
+        }
+        this.tempWelcome = false;
+        this.emit('change');
+    },
 
-	clearTempWelcome: function() {
-		if ( ! this.tempWelcome ) {
-			return;
-		}
-		this.tempWelcome = false;
-		this.emit( 'change' );
-	},
-
-	closeWelcome: function() {
-		this.showWelcome = false;
-		this.tempWelcome = false;
-		store.remove( 'show-welcome' );
-	}
-
+    closeWelcome: function() {
+        this.showWelcome = false;
+        this.tempWelcome = false;
+        store.remove('show-welcome');
+    },
 };
 
 /**
  * Mixins
  */
-Emitter( nuxWelcome );
+Emitter(nuxWelcome);
 
 /**
  * Expose `nuxWelcome` singleton

@@ -1,43 +1,40 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:drafts' ),
-	classNames = require( 'classnames' );
+var React = require('react'),
+    debug = require('debug')('calypso:my-sites:drafts'),
+    classNames = require('classnames');
 
 /**
  * Internal dependencies
  */
-var DraftList = require( './draft-list' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' );
+var DraftList = require('./draft-list'), SidebarNavigation = require('my-sites/sidebar-navigation');
 
+module.exports = React.createClass({
+    displayName: 'Drafts',
 
-module.exports = React.createClass( {
+    propTypes: {
+        trackScrollPage: React.PropTypes.func.isRequired,
+    },
 
-	displayName: 'Drafts',
+    componentDidMount: function() {
+        debug('Drafts React component mounted.');
+    },
 
-	propTypes: {
-		trackScrollPage: React.PropTypes.func.isRequired
-	},
+    render: function() {
+        var containerClass;
 
-	componentDidMount: function() {
-		debug( 'Drafts React component mounted.' );
-	},
+        containerClass = classNames({
+            main: true,
+            drafts: true,
+            'main-column': true,
+        });
 
-	render: function() {
-		var containerClass;
-
-		containerClass = classNames( {
-			'main': true,
-			'drafts': true,
-			'main-column': true
-		} );
-
-		return (
-			<div className={ containerClass } role="main">
-				<SidebarNavigation />
-				<DraftList { ...this.props } />
-			</div>
-		);
-	}
-} );
+        return (
+            <div className={containerClass} role="main">
+                <SidebarNavigation />
+                <DraftList {...this.props} />
+            </div>
+        );
+    },
+});

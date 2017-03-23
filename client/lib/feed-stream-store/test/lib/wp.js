@@ -3,20 +3,20 @@
  **/
 
 function returnSelf() {
-	return this;
+    return this;
 }
 
 module.exports = {
-	site: returnSelf,
-	post: returnSelf,
-	undocumented: returnSelf,
-	readFeedPost: returnSelf,
-	batch: function() {
-		return {
-			add: returnSelf,
-			run: returnSelf
-		};
-	},
-	me: returnSelf,
-	dismissSite: returnSelf
+    site: returnSelf,
+    post: returnSelf,
+    undocumented: returnSelf,
+    readFeedPost: returnSelf,
+    batch: function() {
+        return {
+            add: returnSelf,
+            run: returnSelf,
+        };
+    },
+    me: returnSelf,
+    dismissSite: returnSelf,
 };

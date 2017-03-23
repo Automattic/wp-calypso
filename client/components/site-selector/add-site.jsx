@@ -20,104 +20,111 @@ import sitesFactory from 'lib/sites-list';
 const sites = sitesFactory();
 
 class SiteSelectorAddSite extends Component {
-	constructor() {
-		super();
+    constructor() {
+        super();
 
-		this.state = {
-			showPopoverMenu: false,
-			popoverPosition: 'top'
-		};
+        this.state = {
+            showPopoverMenu: false,
+            popoverPosition: 'top',
+        };
 
-		this.handleShowPopover = this.handleShowPopover.bind( this );
-		this.onPopoverButtonClick = this.onPopoverButtonClick.bind( this );
-		this.onClosePopover = this.onClosePopover.bind( this );
-		this.recordAddNewSite = this.recordAddNewSite.bind( this );
-		this.recordPopoverAddNewSite = this.recordPopoverAddNewSite.bind( this );
-		this.recordPopoverAddJetpackSite = this.recordPopoverAddJetpackSite.bind( this );
-	}
+        this.handleShowPopover = this.handleShowPopover.bind(this);
+        this.onPopoverButtonClick = this.onPopoverButtonClick.bind(this);
+        this.onClosePopover = this.onClosePopover.bind(this);
+        this.recordAddNewSite = this.recordAddNewSite.bind(this);
+        this.recordPopoverAddNewSite = this.recordPopoverAddNewSite.bind(this);
+        this.recordPopoverAddJetpackSite = this.recordPopoverAddJetpackSite.bind(this);
+    }
 
-	getAddNewSiteUrl() {
-		return config( 'signup_url' ) + '?ref=calypso-selector';
-	}
+    getAddNewSiteUrl() {
+        return config('signup_url') + '?ref=calypso-selector';
+    }
 
-	handleShowPopover( isShowing ) {
-		const action = isShowing ? 'show' : 'hide';
+    handleShowPopover(isShowing) {
+        const action = isShowing ? 'show' : 'hide';
 
-		this.setState( {
-			showPopoverMenu: isShowing
-		} );
+        this.setState({
+            showPopoverMenu: isShowing,
+        });
 
-		this.props.recordTracksEvent( 'calypso_add_site_popover', { action } );
-	}
+        this.props.recordTracksEvent('calypso_add_site_popover', { action });
+    }
 
-	onPopoverButtonClick() {
-		this.handleShowPopover( ! this.state.showPopoverMenu );
-	}
+    onPopoverButtonClick() {
+        this.handleShowPopover(!this.state.showPopoverMenu);
+    }
 
-	onClosePopover() {
-		this.handleShowPopover( false );
-	}
+    onClosePopover() {
+        this.handleShowPopover(false);
+    }
 
-	recordAddNewSite() {
-		this.props.recordTracksEvent( 'calypso_add_new_wordpress_click' );
-	}
+    recordAddNewSite() {
+        this.props.recordTracksEvent('calypso_add_new_wordpress_click');
+    }
 
-	recordPopoverAddNewSite() {
-		this.props.recordTracksEvent( 'calypso_add_new_wordpress_popover_click' );
-	}
+    recordPopoverAddNewSite() {
+        this.props.recordTracksEvent('calypso_add_new_wordpress_popover_click');
+    }
 
-	recordPopoverAddJetpackSite() {
-		this.props.recordTracksEvent( 'calypso_add_jetpack_site_popover_click' );
-	}
+    recordPopoverAddJetpackSite() {
+        this.props.recordTracksEvent('calypso_add_jetpack_site_popover_click');
+    }
 
-	renderButton() {
-		const { translate } = this.props;
-		return (
-			<span className="site-selector__add-new-site">
-				<Button borderless href={ this.getAddNewSiteUrl() } onClick={ this.recordAddNewSite }>
-					<Gridicon icon="add-outline" /> { translate( 'Add New Site' ) }
-				</Button>
-			</span>
-		);
-	}
+    renderButton() {
+        const { translate } = this.props;
+        return (
+            <span className="site-selector__add-new-site">
+                <Button borderless href={this.getAddNewSiteUrl()} onClick={this.recordAddNewSite}>
+                    <Gridicon icon="add-outline" /> {translate('Add New Site')}
+                </Button>
+            </span>
+        );
+    }
 
-	renderButtonWithPopover() {
-		const { translate } = this.props;
-		return (
-			<span className="site-selector__add-new-site" ref="popoverMenuTarget">
-				<PopoverMenu
-					isVisible={ this.state.showPopoverMenu }
-					onClose={ this.onClosePopover }
-					position={ this.state.popoverPosition }
-					context={ this.refs && this.refs.popoverMenuTarget }
-					>
-					<PopoverMenuItem href={ this.getAddNewSiteUrl() } onClick={ this.recordPopoverAddNewSite }>
-						{ translate( 'New WordPress.com site' ) }
-					</PopoverMenuItem>
-					<PopoverMenuItem href="/jetpack/connect" onClick={ this.recordPopoverAddJetpackSite }>
-						{ translate( 'Self-hosted WordPress site' ) }
-					</PopoverMenuItem>
-				</PopoverMenu>
+    renderButtonWithPopover() {
+        const { translate } = this.props;
+        return (
+            <span className="site-selector__add-new-site" ref="popoverMenuTarget">
+                <PopoverMenu
+                    isVisible={this.state.showPopoverMenu}
+                    onClose={this.onClosePopover}
+                    position={this.state.popoverPosition}
+                    context={this.refs && this.refs.popoverMenuTarget}
+                >
+                    <PopoverMenuItem
+                        href={this.getAddNewSiteUrl()}
+                        onClick={this.recordPopoverAddNewSite}
+                    >
+                        {translate('New WordPress.com site')}
+                    </PopoverMenuItem>
+                    <PopoverMenuItem
+                        href="/jetpack/connect"
+                        onClick={this.recordPopoverAddJetpackSite}
+                    >
+                        {translate('Self-hosted WordPress site')}
+                    </PopoverMenuItem>
+                </PopoverMenu>
 
-				<Button borderless onClick={ this.onPopoverButtonClick }>
-					<Gridicon icon="add-outline" /> { translate( 'Add Site' ) }
-				</Button>
-			</span>
-		);
-	}
+                <Button borderless onClick={this.onPopoverButtonClick}>
+                    <Gridicon icon="add-outline" /> {translate('Add Site')}
+                </Button>
+            </span>
+        );
+    }
 
-	render() {
-		if ( sites.getJetpack().length ) {
-			return this.renderButtonWithPopover();
-		}
+    render() {
+        if (sites.getJetpack().length) {
+            return this.renderButtonWithPopover();
+        }
 
-		return this.renderButton();
-	}
+        return this.renderButton();
+    }
 }
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( {
-		recordTracksEvent
-	}, dispatch )
-)( localize( SiteSelectorAddSite ) );
+export default connect(null, dispatch =>
+    bindActionCreators(
+        {
+            recordTracksEvent,
+        },
+        dispatch
+    ))(localize(SiteSelectorAddSite));

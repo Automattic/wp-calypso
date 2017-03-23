@@ -19,20 +19,20 @@ import contactForm from './contact-form/reducer';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function postId( state = null, action ) {
-	switch ( action.type ) {
-		case EDITOR_START:
-			return action.postId;
-		case POST_SAVE_SUCCESS:
-			return state === action.postId ? action.savedPost.ID : state;
-	}
+export function postId(state = null, action) {
+    switch (action.type) {
+        case EDITOR_START:
+            return action.postId;
+        case POST_SAVE_SUCCESS:
+            return state === action.postId ? action.savedPost.ID : state;
+    }
 
-	return state;
+    return state;
 }
 
-export default combineReducers( {
-	postId,
-	imageEditor,
-	lastDraft,
-	contactForm
-} );
+export default combineReducers({
+    postId,
+    imageEditor,
+    lastDraft,
+    contactForm,
+});

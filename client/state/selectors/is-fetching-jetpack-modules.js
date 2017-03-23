@@ -12,6 +12,6 @@ import { get } from 'lodash';
  * @param  {Number}  siteId The ID of the site we're querying
  * @return {?Boolean}         Whether the list is being requested
  */
-export default function isFetchingJetpackModules( state, siteId ) {
-	return get( state.jetpack.modules.requests, [ siteId, 'fetchingModules' ], null );
+export default function isFetchingJetpackModules(state, siteId) {
+    return get(state.jetpack.modules.requests, [siteId, 'fetchingModules'], null);
 }

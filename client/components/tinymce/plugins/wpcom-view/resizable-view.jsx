@@ -4,67 +4,67 @@
 import React, { PropTypes } from 'react';
 import PureComponent from 'react-pure-render/component';
 
-export default function( Component ) {
-	const componentName = Component.displayName || Component.name || '';
+export default function(Component) {
+    const componentName = Component.displayName || Component.name || '';
 
-	return class extends PureComponent {
-		static displayName = `ResizableView(${ componentName })`;
+    return class extends PureComponent {
+        static displayName = `ResizableView(${componentName})`;
 
-		static propTypes = {
-			onResize: PropTypes.func
-		};
+        static propTypes = {
+            onResize: PropTypes.func,
+        };
 
-		static defaultProps = {
-			onResize: () => {}
-		};
+        static defaultProps = {
+            onResize: () => {},
+        };
 
-		constructor() {
-			super( ...arguments );
+        constructor() {
+            super(...arguments);
 
-			this.boundSetWrapperState = this.setWrapperState.bind( this );
-			this.state = {
-				wrapper: null
-			};
-		}
+            this.boundSetWrapperState = this.setWrapperState.bind(this);
+            this.state = {
+                wrapper: null,
+            };
+        }
 
-		setWrapperState( wrapper ) {
-			if ( ! wrapper ) {
-				return;
-			}
+        setWrapperState(wrapper) {
+            if (!wrapper) {
+                return;
+            }
 
-			this.setState( { wrapper } );
-			this.disconnectObserver();
-			this.observer = new MutationObserver( this.props.onResize );
-			this.observer.observe( wrapper, {
-				attributes: true,
-				childList: true,
-				subtree: true
-			} );
-		}
+            this.setState({ wrapper });
+            this.disconnectObserver();
+            this.observer = new MutationObserver(this.props.onResize);
+            this.observer.observe(wrapper, {
+                attributes: true,
+                childList: true,
+                subtree: true,
+            });
+        }
 
-		componentWillUnmount() {
-			this.disconnectObserver();
-		}
+        componentWillUnmount() {
+            this.disconnectObserver();
+        }
 
-		disconnectObserver() {
-			if ( this.observer ) {
-				this.observer.disconnect();
-			}
-		}
+        disconnectObserver() {
+            if (this.observer) {
+                this.observer.disconnect();
+            }
+        }
 
-		render() {
-			let childProps;
-			if ( this.state.wrapper ) {
-				childProps = {
-					width: this.state.wrapper.clientWidth
-				};
-			}
+        render() {
+            let childProps;
+            if (this.state.wrapper) {
+                childProps = {
+                    width: this.state.wrapper.clientWidth,
+                };
+            }
 
-			return (
-				<div ref={ this.boundSetWrapperState }>
-					<Component { ...this.props } { ...childProps } />
-				</div>
-			);
-		}
-	};
+            return (
+                <div ref={this.boundSetWrapperState}>
+                    <Component {...this.props} {...childProps} />
+                </div>
+            );
+        }
+    };
 }

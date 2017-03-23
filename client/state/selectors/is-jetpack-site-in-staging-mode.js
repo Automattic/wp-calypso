@@ -16,6 +16,6 @@ import { getJetpackConnectionStatus } from './';
  * @param  {Number}   siteId   The ID of the site we're querying
  * @return {?Boolean}          Whether the site is in staging mode.
  */
-export default function isJetpackSiteInStagingMode( state, siteId ) {
-	return get( getJetpackConnectionStatus( state, siteId ), [ 'isStaging' ], null );
+export default function isJetpackSiteInStagingMode(state, siteId) {
+    return get(getJetpackConnectionStatus(state, siteId), ['isStaging'], null);
 }

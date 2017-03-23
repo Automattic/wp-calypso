@@ -15,10 +15,10 @@ const user = userModule();
 const MAX_LENGTH_OF_TEXT_TO_EXAMINE = 100;
 
 const SPACE_CHARACTERS = {
-	'\n': true,
-	'\r': true,
-	'\t': true,
-	' ': true,
+    '\n': true,
+    '\r': true,
+    '\t': true,
+    ' ': true,
 };
 
 /***
@@ -26,32 +26,32 @@ const SPACE_CHARACTERS = {
  * @param {String} character character to examine
  * @returns {bool} true if character is a space character, false otherwise
  */
-const isSpaceCharacter = character => !! SPACE_CHARACTERS[ character ];
+const isSpaceCharacter = character => !!SPACE_CHARACTERS[character];
 
 /***
  * Get index of the first character that is not within a tag
  * @param {String} text text to examine
  * @returns {number} index not within a tag
  */
-const getTaglessIndex = ( text ) => {
-	let isTagOpen = false;
+const getTaglessIndex = text => {
+    let isTagOpen = false;
 
-	for ( let i = 0; i < text.length; i++ ) {
-		// skip spaces
-		if ( isSpaceCharacter( text[ i ] ) ) {
-			continue;
-		}
+    for (let i = 0; i < text.length; i++) {
+        // skip spaces
+        if (isSpaceCharacter(text[i])) {
+            continue;
+        }
 
-		if ( text[ i ] === '<' ) {
-			isTagOpen = true;
-		} else if ( isTagOpen && text[ i ] === '>' ) {
-			isTagOpen = false;
-		} else if ( ! isTagOpen ) {
-			return i;
-		}
-	}
+        if (text[i] === '<') {
+            isTagOpen = true;
+        } else if (isTagOpen && text[i] === '>') {
+            isTagOpen = false;
+        } else if (!isTagOpen) {
+            return i;
+        }
+    }
 
-	return 0;
+    return 0;
 };
 
 /***
@@ -59,44 +59,46 @@ const getTaglessIndex = ( text ) => {
  * @param {React.Element} reactElement react element
  * @returns {string|null} returns a text content of the react element or null if it's not a leaf element
  */
-const getContent = ( reactElement ) => {
-	if ( ! reactElement ) {
-		return null;
-	}
-	const { props } = reactElement;
+const getContent = reactElement => {
+    if (!reactElement) {
+        return null;
+    }
+    const { props } = reactElement;
 
-	if ( ! props ) {
-		return null;
-	}
+    if (!props) {
+        return null;
+    }
 
-	// The child is a text node
-	if ( typeof props.children === 'string' ) {
-		return props.children;
-	}
+    // The child is a text node
+    if (typeof props.children === 'string') {
+        return props.children;
+    }
 
-	// This child has it's content set to external HTML
-	if ( typeof props.dangerouslySetInnerHTML === 'object' ) {
-		// Strip tags because we're only interested in the text, not markup
-		// We examine from the first position without tags of the string, so we won't get an empty text
-		// because we might get only tags in the beginning
-		const html = props.dangerouslySetInnerHTML.__html;
-		if ( ! html ) {
-			return '';
-		}
+    // This child has it's content set to external HTML
+    if (typeof props.dangerouslySetInnerHTML === 'object') {
+        // Strip tags because we're only interested in the text, not markup
+        // We examine from the first position without tags of the string, so we won't get an empty text
+        // because we might get only tags in the beginning
+        const html = props.dangerouslySetInnerHTML.__html;
+        if (!html) {
+            return '';
+        }
 
-		const taglessIndex = getTaglessIndex( html );
-		const startIndex = taglessIndex + MAX_LENGTH_OF_TEXT_TO_EXAMINE < html.length ? taglessIndex : 0;
+        const taglessIndex = getTaglessIndex(html);
+        const startIndex = taglessIndex + MAX_LENGTH_OF_TEXT_TO_EXAMINE < html.length
+            ? taglessIndex
+            : 0;
 
-		return stripHTML( html.substring( startIndex, startIndex + MAX_LENGTH_OF_TEXT_TO_EXAMINE ) );
-	}
+        return stripHTML(html.substring(startIndex, startIndex + MAX_LENGTH_OF_TEXT_TO_EXAMINE));
+    }
 
-	// This child is some kind of input
-	if ( typeof props.value === 'string' ) {
-		return props.value;
-	}
+    // This child is some kind of input
+    if (typeof props.value === 'string') {
+        return props.value;
+    }
 
-	// We have no idea how to get this element's content or it's not a leaf component
-	return null;
+    // We have no idea how to get this element's content or it's not a leaf component
+    return null;
 };
 
 /***
@@ -106,24 +108,24 @@ const getContent = ( reactElement ) => {
  * @param {string} text the text to be examined
  * @returns {string} either 'rtl' or 'ltr'
  */
-const getTextMainDirection = ( text ) => {
-	let rtlCount = 0;
-	let ltrCount = 0;
+const getTextMainDirection = text => {
+    let rtlCount = 0;
+    let ltrCount = 0;
 
-	const examinedLength = Math.min( MAX_LENGTH_OF_TEXT_TO_EXAMINE, text.length );
-	for ( let i = 0; i < examinedLength; i++ ) {
-		if ( isRTLCharacter( text[ i ] ) ) {
-			rtlCount++;
-		} else if ( isLTRCharacter( text[ i ] ) ) {
-			ltrCount++;
-		}
-	}
+    const examinedLength = Math.min(MAX_LENGTH_OF_TEXT_TO_EXAMINE, text.length);
+    for (let i = 0; i < examinedLength; i++) {
+        if (isRTLCharacter(text[i])) {
+            rtlCount++;
+        } else if (isLTRCharacter(text[i])) {
+            ltrCount++;
+        }
+    }
 
-	if ( ( rtlCount + ltrCount ) === 0 ) {
-		return user.isRTL() ? 'rtl' : 'ltr';
-	}
+    if (rtlCount + ltrCount === 0) {
+        return user.isRTL() ? 'rtl' : 'ltr';
+    }
 
-	return rtlCount > ltrCount ? 'rtl' : 'ltr';
+    return rtlCount > ltrCount ? 'rtl' : 'ltr';
 };
 
 /***
@@ -135,33 +137,33 @@ const getTextMainDirection = ( text ) => {
  * @param {React.Element} child
  * @returns {React.Element} transformed child
  */
-const setChildDirection = ( child ) => {
-	const childContent = getContent( child );
+const setChildDirection = child => {
+    const childContent = getContent(child);
 
-	if ( childContent ) {
-		const textMainDirection = getTextMainDirection( childContent );
-		const userDirection = user.isRTL() ? 'rtl' : 'ltr';
+    if (childContent) {
+        const textMainDirection = getTextMainDirection(childContent);
+        const userDirection = user.isRTL() ? 'rtl' : 'ltr';
 
-		if ( textMainDirection !== userDirection ) {
-			return React.cloneElement( child, {
-				direction: textMainDirection,
-				style: Object.assign( {}, child.props.style, {
-					direction: textMainDirection,
-					textAlign: textMainDirection === 'rtl' ? 'right' : 'left'
-				} )
-			} );
-		}
+        if (textMainDirection !== userDirection) {
+            return React.cloneElement(child, {
+                direction: textMainDirection,
+                style: Object.assign({}, child.props.style, {
+                    direction: textMainDirection,
+                    textAlign: textMainDirection === 'rtl' ? 'right' : 'left',
+                }),
+            });
+        }
 
-		return child;
-	}
+        return child;
+    }
 
-	if ( child && child.props.children ) {
-		return React.cloneElement( child, {
-			children: React.Children.map( child.props.children, setChildDirection )
-		} );
-	}
+    if (child && child.props.children) {
+        return React.cloneElement(child, {
+            children: React.Children.map(child.props.children, setChildDirection),
+        });
+    }
 
-	return child;
+    return child;
 };
 
 /***
@@ -169,15 +171,15 @@ const setChildDirection = ( child ) => {
  * @param {Object.children} props react element props that must contain some children
  * @returns {React.Element} returns a react element with adjusted children
  */
-const AutoDirection = ( props ) => {
-	const { children } = props;
-	const directionedChild = setChildDirection( children );
+const AutoDirection = props => {
+    const { children } = props;
+    const directionedChild = setChildDirection(children);
 
-	return directionedChild;
+    return directionedChild;
 };
 
 AutoDirection.propTypes = {
-	children: PropTypes.node,
+    children: PropTypes.node,
 };
 
 export default AutoDirection;

@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-var url = require( 'url' ),
-	pick = require( 'lodash/pick' );
+var url = require('url'), pick = require('lodash/pick');
 
 /**
  * Given a URL or path and search terms, returns a path including the search
@@ -12,15 +11,15 @@ var url = require( 'url' ),
  * @param  {string} search Search terms
  * @return {string}        Path including search terms
  */
-module.exports = function( uri, search ) {
-	var parsedUrl = url.parse( uri, true );
+module.exports = function(uri, search) {
+    var parsedUrl = url.parse(uri, true);
 
-	if ( search ) {
-		parsedUrl.query.s = search;
-	} else {
-		delete parsedUrl.query.s;
-	}
+    if (search) {
+        parsedUrl.query.s = search;
+    } else {
+        delete parsedUrl.query.s;
+    }
 
-	parsedUrl = pick( parsedUrl, 'pathname', 'hash', 'query' );
-	return url.format( parsedUrl ).replace( /\%20/g, '+' );
+    parsedUrl = pick(parsedUrl, 'pathname', 'hash', 'query');
+    return url.format(parsedUrl).replace(/\%20/g, '+');
 };

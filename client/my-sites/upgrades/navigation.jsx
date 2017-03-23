@@ -18,111 +18,129 @@ import { action as upgradesActionTypes } from 'lib/upgrades/constants';
 import PopoverCart from 'my-sites/upgrades/cart/popover-cart';
 import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
-const PlansNavigation = React.createClass( {
-	propTypes: {
-		cart: React.PropTypes.object,
-		path: React.PropTypes.string.isRequired,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired
-	},
+const PlansNavigation = React.createClass({
+    propTypes: {
+        cart: React.PropTypes.object,
+        path: React.PropTypes.string.isRequired,
+        selectedSite: React.PropTypes.oneOfType([
+            React.PropTypes.object,
+            React.PropTypes.bool,
+        ]).isRequired,
+    },
 
-	getInitialState() {
-		return {
-			cartVisible: false,
-			cartShowKeepSearching: false
-		};
-	},
+    getInitialState() {
+        return {
+            cartVisible: false,
+            cartShowKeepSearching: false,
+        };
+    },
 
-	componentWillMount() {
-		this.dispatchToken = Dispatcher.register( function( payload ) {
-			if ( payload.action.type === upgradesActionTypes.CART_POPUP_OPEN ) {
-				this.setState( { cartVisible: true, cartShowKeepSearching: payload.action.options.showKeepSearching } );
-			} else if ( payload.action.type === upgradesActionTypes.CART_POPUP_CLOSE ) {
-				this.setState( { cartVisible: false } );
-			}
-		}.bind( this ) );
-	},
+    componentWillMount() {
+        this.dispatchToken = Dispatcher.register(
+            function(payload) {
+                if (payload.action.type === upgradesActionTypes.CART_POPUP_OPEN) {
+                    this.setState({
+                        cartVisible: true,
+                        cartShowKeepSearching: payload.action.options.showKeepSearching,
+                    });
+                } else if (payload.action.type === upgradesActionTypes.CART_POPUP_CLOSE) {
+                    this.setState({ cartVisible: false });
+                }
+            }.bind(this)
+        );
+    },
 
-	componentWillUnmount() {
-		Dispatcher.unregister( this.dispatchToken );
-	},
+    componentWillUnmount() {
+        Dispatcher.unregister(this.dispatchToken);
+    },
 
-	render() {
-		const site = this.props.selectedSite;
-		const path = sectionify( this.props.path );
-		const hasPlan = site && site.plan && site.plan.product_slug !== 'free_plan';
-		const sectionTitle = path.split( '?' )[ 0 ].replace( /\//g, ' ' );
-		const userCanManageOptions = get( site, 'capabilities.manage_options', false );
-		const canManageDomain = userCanManageOptions &&
-			( isATEnabledForCurrentSite() || ! site.jetpack );
+    render() {
+        const site = this.props.selectedSite;
+        const path = sectionify(this.props.path);
+        const hasPlan = site && site.plan && site.plan.product_slug !== 'free_plan';
+        const sectionTitle = path.split('?')[0].replace(/\//g, ' ');
+        const userCanManageOptions = get(site, 'capabilities.manage_options', false);
+        const canManageDomain = userCanManageOptions &&
+            (isATEnabledForCurrentSite() || !site.jetpack);
 
-		return (
-			<SectionNav
-					hasPinnedItems={ viewport.isMobile() }
-					selectedText={ sectionTitle }
-					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }>
-				<NavTabs label="Section" selectedText={ sectionTitle }>
-					{ hasPlan &&
-						<NavItem path={ `/plans/my-plan/${ site.slug }` } key="myPlan" selected={ path === '/plans/my-plan' }>
-							{ this.translate( 'My Plan' ) }
-						</NavItem>
-					}
-					<NavItem path={ `/plans/${ site.slug }` } key="plans" selected={ path === '/plans' || path === '/plans/monthly' }>
-						{ this.translate( 'Plans' ) }
-					</NavItem>
-					{ canManageDomain &&
-						<NavItem path={ `/domains/manage/${ site.slug }` } key="domains"
-							selected={ path === '/domains/manage' || path === '/domains/add' }>
-							{ this.translate( 'Domains' ) }
-						</NavItem>
-					}
-					{ canManageDomain &&
-						<NavItem path={ `/domains/manage/email/${ site.slug }` } key="googleApps"
-							selected={ path === '/domains/manage/email' }>
-							{ this.translate( 'Email' ) }
-						</NavItem>
-					}
-				</NavTabs>
-				{ this.cartToggleButton() }
-			</SectionNav>
-		);
-	},
+        return (
+            <SectionNav
+                hasPinnedItems={viewport.isMobile()}
+                selectedText={sectionTitle}
+                onMobileNavPanelOpen={this.onMobileNavPanelOpen}
+            >
+                <NavTabs label="Section" selectedText={sectionTitle}>
+                    {hasPlan &&
+                        <NavItem
+                            path={`/plans/my-plan/${site.slug}`}
+                            key="myPlan"
+                            selected={path === '/plans/my-plan'}
+                        >
+                            {this.translate('My Plan')}
+                        </NavItem>}
+                    <NavItem
+                        path={`/plans/${site.slug}`}
+                        key="plans"
+                        selected={path === '/plans' || path === '/plans/monthly'}
+                    >
+                        {this.translate('Plans')}
+                    </NavItem>
+                    {canManageDomain &&
+                        <NavItem
+                            path={`/domains/manage/${site.slug}`}
+                            key="domains"
+                            selected={path === '/domains/manage' || path === '/domains/add'}
+                        >
+                            {this.translate('Domains')}
+                        </NavItem>}
+                    {canManageDomain &&
+                        <NavItem
+                            path={`/domains/manage/email/${site.slug}`}
+                            key="googleApps"
+                            selected={path === '/domains/manage/email'}
+                        >
+                            {this.translate('Email')}
+                        </NavItem>}
+                </NavTabs>
+                {this.cartToggleButton()}
+            </SectionNav>
+        );
+    },
 
-	toggleCartVisibility( event ) {
-		if ( event ) {
-			event.preventDefault();
-		}
+    toggleCartVisibility(event) {
+        if (event) {
+            event.preventDefault();
+        }
 
-		this.setState( { cartVisible: ! this.state.cartVisible } );
-	},
+        this.setState({ cartVisible: !this.state.cartVisible });
+    },
 
-	onMobileNavPanelOpen() {
-		this.setState( { cartVisible: false } );
-	},
+    onMobileNavPanelOpen() {
+        this.setState({ cartVisible: false });
+    },
 
-	onKeepSearchingClick() {
-		this.setState( { cartVisible: false } );
-	},
+    onKeepSearchingClick() {
+        this.setState({ cartVisible: false });
+    },
 
-	cartToggleButton() {
-		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.cart ) {
-			return null;
-		}
+    cartToggleButton() {
+        if (!config.isEnabled('upgrades/checkout') || !this.props.cart) {
+            return null;
+        }
 
-		return (
-			<PopoverCart
-				cart={ this.props.cart }
-				selectedSite={ this.props.selectedSite }
-				onToggle={ this.toggleCartVisibility }
-				pinned={ viewport.isMobile() }
-				visible={ this.state.cartVisible }
-				showKeepSearching={ this.state.cartShowKeepSearching }
-				onKeepSearchingClick={ this.onKeepSearchingClick }
-				path={ this.props.path } />
-		);
-	}
-} );
+        return (
+            <PopoverCart
+                cart={this.props.cart}
+                selectedSite={this.props.selectedSite}
+                onToggle={this.toggleCartVisibility}
+                pinned={viewport.isMobile()}
+                visible={this.state.cartVisible}
+                showKeepSearching={this.state.cartShowKeepSearching}
+                onKeepSearchingClick={this.onKeepSearchingClick}
+                path={this.props.path}
+            />
+        );
+    },
+});
 
 export default PlansNavigation;

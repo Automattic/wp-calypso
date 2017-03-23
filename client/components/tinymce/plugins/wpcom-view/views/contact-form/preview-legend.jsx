@@ -8,8 +8,8 @@ import React from 'react';
  */
 import PreviewRequired from './preview-required';
 
-export default React.createClass( {
-	render() {
-		return ( <legend>{ this.props.label }<PreviewRequired { ...this.props } /></legend> );
-	}
-} );
+export default React.createClass({
+    render() {
+        return <legend>{this.props.label}<PreviewRequired {...this.props} /></legend>;
+    },
+});

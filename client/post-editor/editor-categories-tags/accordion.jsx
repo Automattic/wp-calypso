@@ -26,182 +26,174 @@ import { getSiteOption, isJetpackMinimumVersion, getSiteSlug } from 'state/sites
 import { getTerm } from 'state/terms/selectors';
 
 export class EditorCategoriesTagsAccordion extends Component {
-	static propTypes = {
-		translate: PropTypes.func,
-		postTerms: PropTypes.object,
-		postType: PropTypes.string,
-		defaultCategory: PropTypes.object,
-		isTermsSupported: PropTypes.bool,
-		siteSlug: PropTypes.string,
-	};
+    static propTypes = {
+        translate: PropTypes.func,
+        postTerms: PropTypes.object,
+        postType: PropTypes.string,
+        defaultCategory: PropTypes.object,
+        isTermsSupported: PropTypes.bool,
+        siteSlug: PropTypes.string,
+    };
 
-	renderJetpackNotice() {
-		const { translate, siteSlug } = this.props;
-		return (
-			<Notice
-				status="is-warning"
-				showDismiss={ false }
-				text={ translate( 'You must update Jetpack to use this feature.' ) }
-				className="editor-categories-tags__upgrade-notice" >
-				<NoticeAction href={ addSiteFragment( '/plugins/jetpack', siteSlug ) }>
-					{ translate( 'Update Now' ) }
-				</NoticeAction>
-			</Notice>
-		);
-	}
+    renderJetpackNotice() {
+        const { translate, siteSlug } = this.props;
+        return (
+            <Notice
+                status="is-warning"
+                showDismiss={false}
+                text={translate('You must update Jetpack to use this feature.')}
+                className="editor-categories-tags__upgrade-notice"
+            >
+                <NoticeAction href={addSiteFragment('/plugins/jetpack', siteSlug)}>
+                    {translate('Update Now')}
+                </NoticeAction>
+            </Notice>
+        );
+    }
 
-	renderCategories() {
-		const { translate, postType, isTermsSupported } = this.props;
-		if ( postType === 'page' ) {
-			return;
-		}
+    renderCategories() {
+        const { translate, postType, isTermsSupported } = this.props;
+        if (postType === 'page') {
+            return;
+        }
 
-		return (
-			<AccordionSection>
-				<EditorDrawerLabel
-					helpText={ translate( 'Use categories to group your posts by topic.' ) }
-					labelText={ translate( 'Categories' ) } />
-				{ isTermsSupported
-					? <TermSelector compact taxonomyName="category" />
-					: this.renderJetpackNotice()
-				}
-			</AccordionSection>
-		);
-	}
+        return (
+            <AccordionSection>
+                <EditorDrawerLabel
+                    helpText={translate('Use categories to group your posts by topic.')}
+                    labelText={translate('Categories')}
+                />
+                {isTermsSupported
+                    ? <TermSelector compact taxonomyName="category" />
+                    : this.renderJetpackNotice()}
+            </AccordionSection>
+        );
+    }
 
-	renderTags() {
-		const { isTermsSupported, postType, translate } = this.props;
-		const helpText = postType === 'page'
-			? translate( 'Use tags to associate more specific keywords with your pages.' )
-			: translate( 'Use tags to associate more specific keywords with your posts.' );
+    renderTags() {
+        const { isTermsSupported, postType, translate } = this.props;
+        const helpText = postType === 'page'
+            ? translate('Use tags to associate more specific keywords with your pages.')
+            : translate('Use tags to associate more specific keywords with your posts.');
 
-		return (
-			<AccordionSection>
-				<EditorDrawerLabel helpText={ helpText } labelText={ translate( 'Tags' ) }>
-					{ isTermsSupported
-						? <TermTokenField taxonomyName="post_tag" />
-						: this.renderJetpackNotice()
-					}
-				</EditorDrawerLabel>
+        return (
+            <AccordionSection>
+                <EditorDrawerLabel helpText={helpText} labelText={translate('Tags')}>
+                    {isTermsSupported
+                        ? <TermTokenField taxonomyName="post_tag" />
+                        : this.renderJetpackNotice()}
+                </EditorDrawerLabel>
 
-			</AccordionSection>
-		);
-	}
+            </AccordionSection>
+        );
+    }
 
-	getCategoriesSubtitle() {
-		const { translate, postTerms, defaultCategory } = this.props;
-		const categories = toArray( get( postTerms, 'category' ) );
+    getCategoriesSubtitle() {
+        const { translate, postTerms, defaultCategory } = this.props;
+        const categories = toArray(get(postTerms, 'category'));
 
-		if ( categories.length > 1 ) {
-			return translate( '%d category', '%d categories', {
-				args: [ categories.length ],
-				count: categories.length
-			} );
-		}
+        if (categories.length > 1) {
+            return translate('%d category', '%d categories', {
+                args: [categories.length],
+                count: categories.length,
+            });
+        }
 
-		let category;
-		if ( categories.length > 0 ) {
-			category = categories[ 0 ];
-		} else {
-			category = defaultCategory;
-		}
+        let category;
+        if (categories.length > 0) {
+            category = categories[0];
+        } else {
+            category = defaultCategory;
+        }
 
-		if ( category ) {
-			return unescapeString( category.name );
-		}
-	}
+        if (category) {
+            return unescapeString(category.name);
+        }
+    }
 
-	getTagsSubtitle() {
-		const { translate, postTerms } = this.props;
-		const tags = toArray( get( postTerms, 'post_tag' ) );
-		const tagsLength = tags.length;
+    getTagsSubtitle() {
+        const { translate, postTerms } = this.props;
+        const tags = toArray(get(postTerms, 'post_tag'));
+        const tagsLength = tags.length;
 
-		switch ( tagsLength ) {
-			case 0:
-				return null; // No tags subtitle
-			case 1:
-			case 2:
-				return tags.map( ( tag ) => {
-					return '#' + unescapeString( tag.name || tag );
-				} ).join( ', ' );
-			default:
-				return translate(
-					'%d tag',
-					'%d tags',
-					{ args: [ tagsLength ], count: tagsLength }
-				);
-		}
-	}
+        switch (tagsLength) {
+            case 0:
+                return null; // No tags subtitle
+            case 1:
+            case 2:
+                return tags
+                    .map(tag => {
+                        return '#' + unescapeString(tag.name || tag);
+                    })
+                    .join(', ');
+            default:
+                return translate('%d tag', '%d tags', { args: [tagsLength], count: tagsLength });
+        }
+    }
 
-	getSubtitle() {
-		const subtitlePieces = [];
-		const { postType, siteId } = this.props;
+    getSubtitle() {
+        const subtitlePieces = [];
+        const { postType, siteId } = this.props;
 
-		if ( ! siteId ) {
-			return null;
-		}
+        if (!siteId) {
+            return null;
+        }
 
-		if ( postType === 'post' ) {
-			const categoriesSubtitle = this.getCategoriesSubtitle();
-			if ( categoriesSubtitle ) {
-				subtitlePieces.push( categoriesSubtitle );
-			}
-		}
+        if (postType === 'post') {
+            const categoriesSubtitle = this.getCategoriesSubtitle();
+            if (categoriesSubtitle) {
+                subtitlePieces.push(categoriesSubtitle);
+            }
+        }
 
-		const tagsSubtitle = this.getTagsSubtitle();
-		if ( tagsSubtitle ) {
-			subtitlePieces.push( tagsSubtitle );
-		}
+        const tagsSubtitle = this.getTagsSubtitle();
+        if (tagsSubtitle) {
+            subtitlePieces.push(tagsSubtitle);
+        }
 
-		return subtitlePieces.join( ', ' );
-	}
+        return subtitlePieces.join(', ');
+    }
 
-	getTitle() {
-		const { translate, postType } = this.props;
-		let title;
-		if ( postType === 'page' ) {
-			title = translate( 'Tags' );
-		} else {
-			title = translate( 'Categories & Tags' );
-		}
-		return title;
-	}
+    getTitle() {
+        const { translate, postType } = this.props;
+        let title;
+        if (postType === 'page') {
+            title = translate('Tags');
+        } else {
+            title = translate('Categories & Tags');
+        }
+        return title;
+    }
 
-	render() {
-		const classes = classNames(
-			'editor-drawer__accordion',
-			'editor-categories-tags__accordion',
-			this.props.className
-		);
+    render() {
+        const classes = classNames(
+            'editor-drawer__accordion',
+            'editor-categories-tags__accordion',
+            this.props.className
+        );
 
-		return (
-			<Accordion
-				title={ this.getTitle() }
-				subtitle={ this.getSubtitle() }
-				className={ classes }
-			>
-				{ this.renderCategories() }
-				{ this.renderTags() }
-			</Accordion>
-		);
-	}
+        return (
+            <Accordion title={this.getTitle()} subtitle={this.getSubtitle()} className={classes}>
+                {this.renderCategories()}
+                {this.renderTags()}
+            </Accordion>
+        );
+    }
 }
 
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-		const defaultCategoryId = getSiteOption( state, siteId, 'default_category' );
-		const isTermsSupported = false !== isJetpackMinimumVersion( state, siteId, '4.1.0' );
+export default connect(state => {
+    const siteId = getSelectedSiteId(state);
+    const postId = getEditorPostId(state);
+    const defaultCategoryId = getSiteOption(state, siteId, 'default_category');
+    const isTermsSupported = false !== isJetpackMinimumVersion(state, siteId, '4.1.0');
 
-		return {
-			defaultCategory: getTerm( state, siteId, 'category', defaultCategoryId ),
-			postTerms: getEditedPostValue( state, siteId, postId, 'terms' ),
-			postType: getEditedPostValue( state, siteId, postId, 'type' ),
-			siteSlug: getSiteSlug( state, siteId ),
-			siteId,
-			postId,
-			isTermsSupported,
-		};
-	}
-)( localize( EditorCategoriesTagsAccordion ) );
+    return {
+        defaultCategory: getTerm(state, siteId, 'category', defaultCategoryId),
+        postTerms: getEditedPostValue(state, siteId, postId, 'terms'),
+        postType: getEditedPostValue(state, siteId, postId, 'type'),
+        siteSlug: getSiteSlug(state, siteId),
+        siteId,
+        postId,
+        isTermsSupported,
+    };
+})(localize(EditorCategoriesTagsAccordion));

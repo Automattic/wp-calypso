@@ -14,55 +14,53 @@ import { getPurchase, goToManagePurchase, isDataLoading } from 'me/purchases/uti
 import paths from 'me/purchases/paths';
 
 class PurchaseCardDetails extends Component {
-	constructor( props ) {
-		super( props );
-		this.createPaygateToken = curry( createPaygateToken )( 'card_update' );
-		this.goToManagePurchase = this.goToManagePurchase.bind( this );
-		this.recordFormSubmitEvent = this.recordFormSubmitEvent.bind( this );
-		this.successCallback = this.successCallback.bind( this );
-	}
+    constructor(props) {
+        super(props);
+        this.createPaygateToken = curry(createPaygateToken)('card_update');
+        this.goToManagePurchase = this.goToManagePurchase.bind(this);
+        this.recordFormSubmitEvent = this.recordFormSubmitEvent.bind(this);
+        this.successCallback = this.successCallback.bind(this);
+    }
 
-	redirectIfDataIsInvalid( props = this.props ) {
-		if ( isDataLoading( props ) ) {
-			return true;
-		}
+    redirectIfDataIsInvalid(props = this.props) {
+        if (isDataLoading(props)) {
+            return true;
+        }
 
-		if ( ! this.isDataValid( props ) ) {
-			page( paths.purchasesRoot() );
-		}
-	}
+        if (!this.isDataValid(props)) {
+            page(paths.purchasesRoot());
+        }
+    }
 
-	isDataValid( props = this.props ) {
-		const purchase = getPurchase( props ),
-			{ selectedSite } = props;
+    isDataValid(props = this.props) {
+        const purchase = getPurchase(props), { selectedSite } = props;
 
-		return purchase && selectedSite;
-	}
+        return purchase && selectedSite;
+    }
 
-	getApiParams() {
-		return {
-			purchaseId: getPurchase( this.props ).id
-		};
-	}
+    getApiParams() {
+        return {
+            purchaseId: getPurchase(this.props).id,
+        };
+    }
 
-	goToManagePurchase() {
-		goToManagePurchase( this.props );
-	}
+    goToManagePurchase() {
+        goToManagePurchase(this.props);
+    }
 
-	recordFormSubmitEvent() {
-		analytics.tracks.recordEvent(
-			'calypso_purchases_credit_card_form_submit',
-			{ product_slug: getPurchase( this.props ).productSlug }
-		);
-	}
+    recordFormSubmitEvent() {
+        analytics.tracks.recordEvent('calypso_purchases_credit_card_form_submit', {
+            product_slug: getPurchase(this.props).productSlug,
+        });
+    }
 
-	successCallback() {
-		const { id } = getPurchase( this.props );
+    successCallback() {
+        const { id } = getPurchase(this.props);
 
-		this.props.clearPurchases();
+        this.props.clearPurchases();
 
-		page( paths.managePurchase( this.props.selectedSite.slug, id ) );
-	}
+        page(paths.managePurchase(this.props.selectedSite.slug, id));
+    }
 }
 
 export default PurchaseCardDetails;

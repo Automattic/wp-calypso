@@ -13,27 +13,25 @@ import { localize } from 'i18n-calypso';
 import Notice from 'components/notice';
 
 class DomainPrimaryFlag extends Component {
-	render() {
-		const { isDomainOnly, domain, translate } = this.props;
+    render() {
+        const { isDomainOnly, domain, translate } = this.props;
 
-		if ( domain.isPrimary && ! isDomainOnly ) {
-			return (
-				<Notice isCompact status="is-success">{ translate( 'Primary Domain' ) }</Notice>
-			);
-		}
+        if (domain.isPrimary && !isDomainOnly) {
+            return <Notice isCompact status="is-success">{translate('Primary Domain')}</Notice>;
+        }
 
-		return null;
-	}
+        return null;
+    }
 }
 
 DomainPrimaryFlag.propTypes = {
-	domain: React.PropTypes.object.isRequired,
-	isDomainOnly: React.PropTypes.bool,
-	translate: React.PropTypes.func.isRequired,
+    domain: React.PropTypes.object.isRequired,
+    isDomainOnly: React.PropTypes.bool,
+    translate: React.PropTypes.func.isRequired,
 };
 
-export default connect( ( state ) => {
-	return {
-		isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) )
-	};
-} )( localize( DomainPrimaryFlag ) );
+export default connect(state => {
+    return {
+        isDomainOnly: isDomainOnlySite(state, getSelectedSiteId(state)),
+    };
+})(localize(DomainPrimaryFlag));

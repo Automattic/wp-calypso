@@ -14,13 +14,13 @@ import { getSite, getSiteSlug } from 'state/sites/selectors';
  * @param  {Object}  state  Global state tree
  * @return {?Object}        Selected site
  */
-export function getSelectedSite( state ) {
-	const siteId = getSelectedSiteId( state );
-	if ( ! siteId ) {
-		return null;
-	}
+export function getSelectedSite(state) {
+    const siteId = getSelectedSiteId(state);
+    if (!siteId) {
+        return null;
+    }
 
-	return getSite( state, siteId );
+    return getSite(state, siteId);
 }
 
 /**
@@ -29,8 +29,8 @@ export function getSelectedSite( state ) {
  * @param  {Object}  state Global state tree
  * @return {?Number}       Selected site ID
  */
-export function getSelectedSiteId( state ) {
-	return state.ui.selectedSiteId;
+export function getSelectedSiteId(state) {
+    return state.ui.selectedSiteId;
 }
 
 /**
@@ -40,13 +40,13 @@ export function getSelectedSiteId( state ) {
  * @param  {Object}  state Global state tree
  * @return {?String}       Selected site slug
  */
-export function getSelectedSiteSlug( state ) {
-	const siteId = getSelectedSiteId( state );
-	if ( ! siteId ) {
-		return null;
-	}
+export function getSelectedSiteSlug(state) {
+    const siteId = getSelectedSiteId(state);
+    if (!siteId) {
+        return null;
+    }
 
-	return getSiteSlug( state, siteId );
+    return getSiteSlug(state, siteId);
 }
 
 /**
@@ -55,8 +55,8 @@ export function getSelectedSiteSlug( state ) {
  * @param  {Object}  state Global state tree
  * @return {Object}        Current section
  */
-export function getSection( state ) {
-	return state.ui.section || false;
+export function getSection(state) {
+    return state.ui.section || false;
 }
 
 /**
@@ -65,8 +65,8 @@ export function getSection( state ) {
  * @param  {Object}  state Global state tree
  * @return {?String}       Current section name
  */
-export function getSectionName( state ) {
-	return get( getSection( state ), 'name', null );
+export function getSectionName(state) {
+    return get(getSection(state), 'name', null);
 }
 
 /**
@@ -75,8 +75,8 @@ export function getSectionName( state ) {
  * @param  {Object}  state Global state tree
  * @return {?String}       Current section group name
  */
-export function getSectionGroup( state ) {
-	return get( getSection( state ), 'group', null );
+export function getSectionGroup(state) {
+    return get(getSection(state), 'group', null);
 }
 
 /**
@@ -85,8 +85,8 @@ export function getSectionGroup( state ) {
  * @param  {Object}  state Global state tree
  * @return {Boolean}       Whether current section is site-specific
  */
-export function isSiteSection( state ) {
-	return includes( [ 'sites', 'editor' ], getSectionGroup( state ) );
+export function isSiteSection(state) {
+    return includes(['sites', 'editor'], getSectionGroup(state));
 }
 
 /**
@@ -95,8 +95,8 @@ export function isSiteSection( state ) {
  * @param  {Object}  state Global state tree
  * @return {Boolean}       Whether the section is loading
  */
-export function isSectionLoading( state ) {
-	return state.ui.isLoading;
+export function isSectionLoading(state) {
+    return state.ui.isLoading;
 }
 
 /**
@@ -107,8 +107,8 @@ export function isSectionLoading( state ) {
  *
  * @see client/sections
  */
-export function isSectionIsomorphic( state ) {
-	return get( getSection( state ), 'isomorphic', false );
+export function isSectionIsomorphic(state) {
+    return get(getSection(state), 'isomorphic', false);
 }
 
 /**
@@ -119,23 +119,23 @@ export function isSectionIsomorphic( state ) {
  *
  * @see client/components/web-preview
  */
-export function isPreviewShowing( state ) {
-	return get( state.ui, 'isPreviewShowing', false );
+export function isPreviewShowing(state) {
+    return get(state.ui, 'isPreviewShowing', false);
 }
 
-export function getInitialQueryArguments( state ) {
-	return state.ui.queryArguments.initial;
+export function getInitialQueryArguments(state) {
+    return state.ui.queryArguments.initial;
 }
 
-export function getCurrentQueryArguments( state ) {
-	return state.ui.queryArguments.current;
+export function getCurrentQueryArguments(state) {
+    return state.ui.queryArguments.current;
 }
 
-export function hasSidebar( state ) {
-	// this one is weird. defaults to true, so if true, fall through to the secondary prop on the section
-	const val = state.ui.hasSidebar;
-	if ( val === false ) {
-		return false;
-	}
-	return get( getSection( state ), 'secondary', true );
+export function hasSidebar(state) {
+    // this one is weird. defaults to true, so if true, fall through to the secondary prop on the section
+    const val = state.ui.hasSidebar;
+    if (val === false) {
+        return false;
+    }
+    return get(getSection(state), 'secondary', true);
 }

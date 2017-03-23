@@ -9,20 +9,19 @@ import React, { PropTypes } from 'react';
  */
 import Card from 'components/card';
 
-export default React.createClass( {
+export default React.createClass({
+    displayName: 'FeatureComparison',
 
-	displayName: 'FeatureComparison',
+    propTypes: {
+        className: PropTypes.string,
+    },
 
-	propTypes: {
-		className: PropTypes.string
-	},
-
-	render() {
-		const classes = classNames( this.props.className, 'feature-comparison' );
-		return (
-			<Card compact className={ classes } >
-				{ this.props.children }
-			</Card>
-		);
-	}
-} );
+    render() {
+        const classes = classNames(this.props.className, 'feature-comparison');
+        return (
+            <Card compact className={classes}>
+                {this.props.children}
+            </Card>
+        );
+    },
+});

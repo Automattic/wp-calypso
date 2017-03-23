@@ -12,20 +12,19 @@ import page from 'page';
 import { isValidTerm, sortFilterTerms } from './theme-filters';
 
 // Reorder and remove invalid filters to redirect to canonical URL
-module.exports = function validateFilter( context, next ) {
-	const filterParam = context.params.filter;
-	const validFilters = filterParam.split( ',' ).filter( isValidTerm );
-	const sortedValidFilters = sortFilterTerms( validFilters ).join( ',' );
+module.exports = function validateFilter(context, next) {
+    const filterParam = context.params.filter;
+    const validFilters = filterParam.split(',').filter(isValidTerm);
+    const sortedValidFilters = sortFilterTerms(validFilters).join(',');
 
-	if ( sortedValidFilters !== filterParam ) {
-		const path = context.path;
-		const newPath = path.replace(
-			`/filter/${ filterParam }`,
-			sortedValidFilters ? `/filter/${ sortedValidFilters }` : ''
-		);
-		page.redirect( newPath );
-	}
+    if (sortedValidFilters !== filterParam) {
+        const path = context.path;
+        const newPath = path.replace(
+            `/filter/${filterParam}`,
+            sortedValidFilters ? `/filter/${sortedValidFilters}` : ''
+        );
+        page.redirect(newPath);
+    }
 
-	next();
+    next();
 };
-

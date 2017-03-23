@@ -16,42 +16,47 @@ import { recordTrack } from 'reader/stats';
 import Suggestion from 'reader/search-stream/suggestion';
 import SuggestionProvider from 'reader/search-stream/suggestion-provider';
 
-function handleSearch( query ) {
-	recordTrack( 'calypso_reader_search_from_following', {
-		query
-	} );
+function handleSearch(query) {
+    recordTrack('calypso_reader_search_from_following', {
+        query,
+    });
 
-	if ( trim( query ) !== '' ) {
-		page( '/read/search?q=' + encodeURIComponent( query ) + '&focus=1' );
-	}
+    if (trim(query) !== '') {
+        page('/read/search?q=' + encodeURIComponent(query) + '&focus=1');
+    }
 }
 
-const FollowingStream = ( props ) => {
-	const suggestionList = props.suggestions && initial( flatMap( props.suggestions, query =>
-		[ <Suggestion suggestion={ query } source="following" />, ', ' ] ) );
+const FollowingStream = props => {
+    const suggestionList = props.suggestions &&
+        initial(
+            flatMap(props.suggestions, query => [
+                <Suggestion suggestion={query} source="following" />,
+                ', ',
+            ])
+        );
 
-	return (
-		<Stream { ...props }>
-			<CompactCard className="following__search">
-				<SearchInput
-					onSearch={ handleSearch }
-					autoFocus={ false }
-					delaySearch={ true }
-					delayTimeout={ 500 }
-					placeholder={ props.translate( 'Search billions of WordPress.com posts…' ) } />
-			</CompactCard>
-			<p className="search-stream__blank-suggestions">
-				{ suggestionList &&
-					props.translate( 'Suggestions: {{suggestions /}}.', {
-						components: {
-							suggestions: suggestionList
-						}
-					} )
-				}&nbsp;
-			</p>
-			<hr className="search-stream__fixed-area-separator" />
-		</Stream>
-	);
+    return (
+        <Stream {...props}>
+            <CompactCard className="following__search">
+                <SearchInput
+                    onSearch={handleSearch}
+                    autoFocus={false}
+                    delaySearch={true}
+                    delayTimeout={500}
+                    placeholder={props.translate('Search billions of WordPress.com posts…')}
+                />
+            </CompactCard>
+            <p className="search-stream__blank-suggestions">
+                {suggestionList &&
+                    props.translate('Suggestions: {{suggestions /}}.', {
+                        components: {
+                            suggestions: suggestionList,
+                        },
+                    })}&nbsp;
+            </p>
+            <hr className="search-stream__fixed-area-separator" />
+        </Stream>
+    );
 };
 
-export default SuggestionProvider( localize( FollowingStream ) );
+export default SuggestionProvider(localize(FollowingStream));

@@ -16,62 +16,66 @@ import { restorePost } from 'state/posts/actions';
 import { getCurrentUserId } from 'state/current-user/selectors';
 
 class PostActionsEllipsisMenuRestore extends Component {
-	static propTypes = {
-		globalId: PropTypes.string,
-		translate: PropTypes.func.isRequired,
-		siteId: PropTypes.number,
-		postId: PropTypes.number,
-		canRestore: PropTypes.bool,
-		status: PropTypes.string,
-		restorePost: PropTypes.func.isRequired
-	};
+    static propTypes = {
+        globalId: PropTypes.string,
+        translate: PropTypes.func.isRequired,
+        siteId: PropTypes.number,
+        postId: PropTypes.number,
+        canRestore: PropTypes.bool,
+        status: PropTypes.string,
+        restorePost: PropTypes.func.isRequired,
+    };
 
-	constructor() {
-		super( ...arguments );
+    constructor() {
+        super(...arguments);
 
-		this.restorePost = this.restorePost.bind( this );
-	}
+        this.restorePost = this.restorePost.bind(this);
+    }
 
-	restorePost() {
-		const { siteId, postId } = this.props;
-		if ( ! siteId || ! postId ) {
-			return;
-		}
+    restorePost() {
+        const { siteId, postId } = this.props;
+        if (!siteId || !postId) {
+            return;
+        }
 
-		mc.bumpStat( 'calypso_cpt_actions', 'restore' );
-		this.props.restorePost( siteId, postId );
-	}
+        mc.bumpStat('calypso_cpt_actions', 'restore');
+        this.props.restorePost(siteId, postId);
+    }
 
-	render() {
-		const { translate, canRestore, status } = this.props;
-		if ( 'trash' !== status || ! canRestore ) {
-			return null;
-		}
+    render() {
+        const { translate, canRestore, status } = this.props;
+        if ('trash' !== status || !canRestore) {
+            return null;
+        }
 
-		return (
-			<PopoverMenuItem onClick={ this.restorePost } icon="undo">
-				{ translate( 'Restore' ) }
-			</PopoverMenuItem>
-		);
-	}
+        return (
+            <PopoverMenuItem onClick={this.restorePost} icon="undo">
+                {translate('Restore')}
+            </PopoverMenuItem>
+        );
+    }
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const post = getPost( state, ownProps.globalId );
-		if ( ! post ) {
-			return {};
-		}
+    (state, ownProps) => {
+        const post = getPost(state, ownProps.globalId);
+        if (!post) {
+            return {};
+        }
 
-		const userId = getCurrentUserId( state );
-		const isAuthor = post.author && post.author.ID === userId;
+        const userId = getCurrentUserId(state);
+        const isAuthor = post.author && post.author.ID === userId;
 
-		return {
-			siteId: post.site_ID,
-			postId: post.ID,
-			status: post.status,
-			canRestore: canCurrentUser( state, post.site_ID, isAuthor ? 'delete_posts' : 'delete_others_posts' )
-		};
-	},
-	{ restorePost }
-)( localize( PostActionsEllipsisMenuRestore ) );
+        return {
+            siteId: post.site_ID,
+            postId: post.ID,
+            status: post.status,
+            canRestore: canCurrentUser(
+                state,
+                post.site_ID,
+                isAuthor ? 'delete_posts' : 'delete_others_posts'
+            ),
+        };
+    },
+    { restorePost }
+)(localize(PostActionsEllipsisMenuRestore));

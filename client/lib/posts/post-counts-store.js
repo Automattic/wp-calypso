@@ -1,142 +1,141 @@
-
 /**
  * External dependencies
  */
 
-var isEqual = require( 'lodash/isEqual' ),
-	debug = require( 'debug' )( 'calypso:posts:post-counts-store' );
+var isEqual = require('lodash/isEqual'),
+    debug = require('debug')('calypso:posts:post-counts-store');
 
 const sum = obj => {
-	return Object.keys( obj )
-		.reduce( function( _sum, key ) {
-			return _sum + parseFloat( obj[ key ] );
-		}, 0 );
-}
+    return Object.keys(obj).reduce(
+        function(_sum, key) {
+            return _sum + parseFloat(obj[key]);
+        },
+        0
+    );
+};
 
 /**
  * Internal dependencies
  */
-var emitter = require( 'lib/mixins/emitter' ),
-	PostListStore = require( './post-list-store-factory' )(),
-	PostsStore = require( './posts-store' ),
-	sites = require( 'lib/sites-list' )(),
-	postUtils = require( 'lib/posts/utils' ),
-	Dispatcher = require( 'dispatcher' );
+var emitter = require('lib/mixins/emitter'),
+    PostListStore = require('./post-list-store-factory')(),
+    PostsStore = require('./posts-store'),
+    sites = require('lib/sites-list')(),
+    postUtils = require('lib/posts/utils'),
+    Dispatcher = require('dispatcher');
 
-var _counts = {},
-	PostCountsStore;
+var _counts = {}, PostCountsStore;
 
 /**
  * Get a normalized numberic siteId
  * @param {String|Integer} id - A site id (numeric site ID, site.slug, or API $site path fragment
  * @return {Integer} - normalized numeric site id
  */
-function getSiteId( id ) {
-	var site, siteId;
+function getSiteId(id) {
+    var site, siteId;
 
-	id = id || PostListStore.getSiteID();
+    id = id || PostListStore.getSiteID();
 
-	site = sites.getSite( id );
+    site = sites.getSite(id);
 
-	if ( site ) {
-		siteId = site.ID;
-	}
+    if (site) {
+        siteId = site.ID;
+    }
 
-	return siteId;
+    return siteId;
 }
 
 /**
  * PostCountsStore
  */
 PostCountsStore = {
-
-	/**
+    /**
 	 * Return statuses of current site
 	 *
 	 * @param {String|Number} [id] - site_ID
 	 * @param {Boolean} [scope] - `all` or `mine`
 	 * @return {Object} statuses
 	 */
-	get: function( id, scope ) {
-		var statuses, siteId;
+    get: function(id, scope) {
+        var statuses, siteId;
 
-		siteId = getSiteId( id );
+        siteId = getSiteId(id);
 
-		if ( ! siteId ) {
-			return null;
-		}
+        if (!siteId) {
+            return null;
+        }
 
-		scope = scope || 'all';
+        scope = scope || 'all';
 
-		statuses = _counts[ siteId ] ? _counts[ siteId ][ scope ] : null;
+        statuses = _counts[siteId] ? _counts[siteId][scope] : null;
 
-		debug( '[%s][%s] statuses: %o', siteId, scope, statuses );
-		return statuses;
-	},
+        debug('[%s][%s] statuses: %o', siteId, scope, statuses);
+        return statuses;
+    },
 
-	getTotalCount: function( id, scope ) {
-		var statuses, total, siteId;
+    getTotalCount: function(id, scope) {
+        var statuses, total, siteId;
 
-		scope = scope || 'all';
-		siteId = getSiteId( id );
+        scope = scope || 'all';
+        siteId = getSiteId(id);
 
-		if ( ! siteId ) {
-			return null;
-		}
+        if (!siteId) {
+            return null;
+        }
 
-		statuses = _counts[ siteId ] ? _counts[ siteId ][ scope ] : null;
-		total = 0;
+        statuses = _counts[siteId] ? _counts[siteId][scope] : null;
+        total = 0;
 
-		if ( statuses ) {
-			total = sum( statuses );
-		}
+        if (statuses) {
+            total = sum(statuses);
+        }
 
-		debug( '[%s][%s] total: %o ', siteId, scope, total );
+        debug('[%s][%s] total: %o ', siteId, scope, total);
 
-		return total;
-	}
+        return total;
+    },
 };
 
-emitter( PostCountsStore );
+emitter(PostCountsStore);
 
-PostCountsStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
-	var data = action.data;
+PostCountsStore.dispatchToken = Dispatcher.register(function(payload) {
+    var action = payload.action;
+    var data = action.data;
 
-	Dispatcher.waitFor( [ PostsStore.dispatchToken ] );
+    Dispatcher.waitFor([PostsStore.dispatchToken]);
 
-	switch ( action.type ) {
-		case 'RECEIVE_UPDATED_POSTS':
-		case 'RECEIVE_POSTS_PAGE':
-			if ( data && data.meta && data.meta.data && data.meta.data.counts ) {
-				const responseSource = data.__sync && data.__sync.responseSource;
-				setPostCounts( responseSource, data.meta.data.counts );
-			}
-			break;
+    switch (action.type) {
+        case 'RECEIVE_UPDATED_POSTS':
+        case 'RECEIVE_POSTS_PAGE':
+            if (data && data.meta && data.meta.data && data.meta.data.counts) {
+                const responseSource = data.__sync && data.__sync.responseSource;
+                setPostCounts(responseSource, data.meta.data.counts);
+            }
+            break;
 
-		case 'RECEIVE_POST_COUNTS':
-			if ( data && data.counts && action.siteId ) {
-				const responseSource = data.__sync && data.__sync.responseSource;
-				setPostCounts( responseSource, data, action.siteId );
-			}
-			break;
+        case 'RECEIVE_POST_COUNTS':
+            if (data && data.counts && action.siteId) {
+                const responseSource = data.__sync && data.__sync.responseSource;
+                setPostCounts(responseSource, data, action.siteId);
+            }
+            break;
 
-		case 'RECEIVE_UPDATED_POST':
-			if ( action.post && ! postUtils.isPage( action.post ) ) {
-				updateCountsWhenPostChanges( action.post, action.original );
-			}
-			break;
-		case 'RECEIVE_POST_BEING_EDITED':
-			if ( action.post && ! postUtils.isPage( action.post ) ) {
-				if ( action.original ) {
-					updateCountsWhenPostChanges( action.post, action.original );
-				} else if ( action.isNew ) {
-					updateCountsOnNewPost( action.post );
-				}
-			}
-			break;
-	}
-} );
+        case 'RECEIVE_UPDATED_POST':
+            if (action.post && !postUtils.isPage(action.post)) {
+                updateCountsWhenPostChanges(action.post, action.original);
+            }
+            break;
+        case 'RECEIVE_POST_BEING_EDITED':
+            if (action.post && !postUtils.isPage(action.post)) {
+                if (action.original) {
+                    updateCountsWhenPostChanges(action.post, action.original);
+                } else if (action.isNew) {
+                    updateCountsOnNewPost(action.post);
+                }
+            }
+            break;
+    }
+});
 
 /**
  * Store post counts
@@ -146,21 +145,21 @@ PostCountsStore.dispatchToken = Dispatcher.register( function( payload ) {
  * @param {String|Number} siteID - identifier for the site
  * @return {void}
  */
-function setPostCounts( responseSource, counts, siteID ) {
-	var siteId = getSiteId( siteID );
+function setPostCounts(responseSource, counts, siteID) {
+    var siteId = getSiteId(siteID);
 
-	if ( isEqual( counts, _counts[ siteId ] ) ) {
-		return debug( 'No changes' );
-	}
+    if (isEqual(counts, _counts[siteId])) {
+        return debug('No changes');
+    }
 
-	if ( _counts[ siteId ] && responseSource === 'local' ) {
-		debug( 'do not override post-counts with local response data' );
-		return;
-	}
+    if (_counts[siteId] && responseSource === 'local') {
+        debug('do not override post-counts with local response data');
+        return;
+    }
 
-	_counts[ siteId ] = counts.counts;
-	debug( '[%s] update statuses: %o', siteId || 'All my sites', counts.counts );
-	PostCountsStore.emit( 'change' );
+    _counts[siteId] = counts.counts;
+    debug('[%s] update statuses: %o', siteId || 'All my sites', counts.counts);
+    PostCountsStore.emit('change');
 }
 
 /**
@@ -170,29 +169,29 @@ function setPostCounts( responseSource, counts, siteID ) {
  * @param {Object} original - previous post state
  * @return {void}
  */
-function updateCountsWhenPostChanges( post, original ) {
-	var siteId;
+function updateCountsWhenPostChanges(post, original) {
+    var siteId;
 
-	if ( ! post || ! original ) {
-		return debug( 'Post states are not defined' );
-	}
+    if (!post || !original) {
+        return debug('Post states are not defined');
+    }
 
-	siteId = post.site_ID;
+    siteId = post.site_ID;
 
-	if ( ! siteId ) {
-		return debug( 'No site ID defined' );
-	}
+    if (!siteId) {
+        return debug('No site ID defined');
+    }
 
-	debug( 'comparing `%s` == `%s`', post.status, original.status );
-	if ( post.status === original.status ) {
-		debug( '[%s] %o post has not changed its status', post.site_ID, post.ID );
-		return;
-	}
+    debug('comparing `%s` == `%s`', post.status, original.status);
+    if (post.status === original.status) {
+        debug('[%s] %o post has not changed its status', post.site_ID, post.ID);
+        return;
+    }
 
-	changeCounts( post, original, PostCountsStore.get( siteId, 'all' ) );
-	changeCounts( post, original, PostCountsStore.get( siteId, 'mine' ) );
+    changeCounts(post, original, PostCountsStore.get(siteId, 'all'));
+    changeCounts(post, original, PostCountsStore.get(siteId, 'mine'));
 
-	PostCountsStore.emit( 'change' );
+    PostCountsStore.emit('change');
 }
 
 /*
@@ -200,17 +199,17 @@ function updateCountsWhenPostChanges( post, original ) {
  *
  * @param {Object} post - current post state
  */
-function updateCountsOnNewPost( post ) {
-	var siteId = post.site_ID;
+function updateCountsOnNewPost(post) {
+    var siteId = post.site_ID;
 
-	if ( ! siteId ) {
-		return debug( 'No site ID defined' );
-	}
+    if (!siteId) {
+        return debug('No site ID defined');
+    }
 
-	changeCounts( post, null, PostCountsStore.get( siteId, 'all' ) );
-	changeCounts( post, null, PostCountsStore.get( siteId, 'mine' ) );
+    changeCounts(post, null, PostCountsStore.get(siteId, 'all'));
+    changeCounts(post, null, PostCountsStore.get(siteId, 'mine'));
 
-	PostCountsStore.emit( 'change' );
+    PostCountsStore.emit('change');
 }
 
 /**
@@ -221,23 +220,23 @@ function updateCountsOnNewPost( post ) {
  * @param {Object} counts - current counts
  * @return {void}
  */
-function changeCounts( post, original, counts ) {
-	if ( ! post || ! counts ) {
-		return;
-	}
+function changeCounts(post, original, counts) {
+    if (!post || !counts) {
+        return;
+    }
 
-	if ( 'undefined' === typeof counts[ post.status ] ) {
-		debug( 'Add new post status `%s`', post.status );
-		counts[ post.status ] = 0;
-	}
+    if ('undefined' === typeof counts[post.status]) {
+        debug('Add new post status `%s`', post.status);
+        counts[post.status] = 0;
+    }
 
-	counts[ post.status ]++;
-	debug( '%s status incremented to %o', post.status, counts[ post.status ] );
+    counts[post.status]++;
+    debug('%s status incremented to %o', post.status, counts[post.status]);
 
-	if ( original ) {
-		counts[ original.status ]--;
-		debug( '%s status decremented to %o', original.status, counts[ original.status ] );
-	}
+    if (original) {
+        counts[original.status]--;
+        debug('%s status decremented to %o', original.status, counts[original.status]);
+    }
 }
 
 /**

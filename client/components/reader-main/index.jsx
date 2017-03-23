@@ -15,15 +15,15 @@ import Main from 'components/main';
  * Notably, this overrides the background color of the document and is used as a hook by other parts to override styles.
  */
 export default class ReaderMain extends React.Component {
-	componentWillMount() {
-		document.querySelector( 'body' ).classList.add( 'is-reader-page' );
-	}
+    componentWillMount() {
+        document.querySelector('body').classList.add('is-reader-page');
+    }
 
-	componentWillUnmount() {
-		document.querySelector( 'body' ).classList.remove( 'is-reader-page' );
-	}
+    componentWillUnmount() {
+        document.querySelector('body').classList.remove('is-reader-page');
+    }
 
-	render() {
-		return ( <Main { ...this.props } /> );
-	}
+    render() {
+        return <Main {...this.props} />;
+    }
 }

@@ -11,17 +11,17 @@ import { get } from 'lodash';
 import PlanThankYouCard from '../';
 import { getCurrentUser } from 'state/current-user/selectors';
 
-function PlanThankYouCardExample( { primarySiteId } ) {
-	return <PlanThankYouCard siteId={ primarySiteId } />;
+function PlanThankYouCardExample({ primarySiteId }) {
+    return <PlanThankYouCard siteId={primarySiteId} />;
 }
 
-const ConnectedPlanThankYouCard = connect( ( state ) => {
-	const primarySiteId = get( getCurrentUser( state ), 'primary_blog', null );
+const ConnectedPlanThankYouCard = connect(state => {
+    const primarySiteId = get(getCurrentUser(state), 'primary_blog', null);
 
-	return {
-		primarySiteId,
-	};
-} )( PlanThankYouCardExample );
+    return {
+        primarySiteId,
+    };
+})(PlanThankYouCardExample);
 
 ConnectedPlanThankYouCard.displayName = 'PlanThankYouCard';
 

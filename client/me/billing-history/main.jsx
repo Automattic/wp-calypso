@@ -24,44 +24,42 @@ import QueryBillingTransactions from 'components/data/query-billing-transactions
 import purchasesPaths from 'me/purchases/paths';
 import { getPastBillingTransactions, getUpcomingBillingTransactions } from 'state/selectors';
 
-const BillingHistory = React.createClass( {
-	mixins: [ observe( 'sites' ) ],
+const BillingHistory = React.createClass({
+    mixins: [observe('sites')],
 
-	render() {
-		const { pastTransactions, upcomingTransactions, sites, translate } = this.props;
+    render() {
+        const { pastTransactions, upcomingTransactions, sites, translate } = this.props;
 
-		return (
-			<Main className="billing-history">
-				<DocumentHead title={ translate( 'Billing History' ) } />
-				<PageViewTracker path="/me/purchases/billing" title="Me > Billing History" />
-				<MeSidebarNavigation />
-				<QueryBillingTransactions />
-				<PurchasesHeader section={ 'billing' } />
-				<Card className="billing-history__receipts">
-					<BillingHistoryTable transactions={ pastTransactions } />
-				</Card>
-				<Card href={ purchasesPaths.purchasesRoot() }>
-					{ translate( 'Go to "Purchases" to add or cancel a plan.' ) }
-				</Card>
-				{ pastTransactions &&
-					<div>
-						<SectionHeader label={ translate( 'Upcoming Charges' ) } />
-						<Card className="billing-history__upcoming-charges">
-							<UpcomingChargesTable sites={ sites } transactions={ upcomingTransactions } />
-						</Card>
-					</div>
-				}
-				{ config.isEnabled( 'upgrades/credit-cards' ) &&
-					<CreditCards />
-				}
-			</Main>
-		);
-	}
-} );
+        return (
+            <Main className="billing-history">
+                <DocumentHead title={translate('Billing History')} />
+                <PageViewTracker path="/me/purchases/billing" title="Me > Billing History" />
+                <MeSidebarNavigation />
+                <QueryBillingTransactions />
+                <PurchasesHeader section={'billing'} />
+                <Card className="billing-history__receipts">
+                    <BillingHistoryTable transactions={pastTransactions} />
+                </Card>
+                <Card href={purchasesPaths.purchasesRoot()}>
+                    {translate('Go to "Purchases" to add or cancel a plan.')}
+                </Card>
+                {pastTransactions &&
+                    <div>
+                        <SectionHeader label={translate('Upcoming Charges')} />
+                        <Card className="billing-history__upcoming-charges">
+                            <UpcomingChargesTable
+                                sites={sites}
+                                transactions={upcomingTransactions}
+                            />
+                        </Card>
+                    </div>}
+                {config.isEnabled('upgrades/credit-cards') && <CreditCards />}
+            </Main>
+        );
+    },
+});
 
-export default connect(
-	( state ) => ( {
-		pastTransactions: getPastBillingTransactions( state ),
-		upcomingTransactions: getUpcomingBillingTransactions( state ),
-	} ),
-)( localize( BillingHistory ) );
+export default connect(state => ({
+    pastTransactions: getPastBillingTransactions(state),
+    upcomingTransactions: getUpcomingBillingTransactions(state),
+}))(localize(BillingHistory));

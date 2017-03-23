@@ -9,8 +9,7 @@ import { DEFAULT_THEME_QUERY } from './constants';
  * ThemeQueryManager manages themes which can be queried
  */
 export default class ThemeQueryManager extends PaginatedQueryManager {
-
-	/**
+    /**
 	 * A sorting function that defines the sort order of items under
 	 * consideration of the specified query.
 	 *
@@ -19,9 +18,9 @@ export default class ThemeQueryManager extends PaginatedQueryManager {
 	 * The themes query REST API endpoint uses ElasticSearch to sort results by
 	 * relevancy, which we cannot easily mimick on the client side.
 	 */
-	sort() {
-		return; // Leave the keys argument unchanged.
-	}
+    sort() {
+        return; // Leave the keys argument unchanged.
+    }
 }
 
 ThemeQueryManager.QueryKey = ThemeQueryKey;

@@ -1,5 +1,5 @@
-export function getCurrentPreviewType( state ) {
-	return state.ui.preview.currentPreviewType;
+export function getCurrentPreviewType(state) {
+    return state.ui.preview.currentPreviewType;
 }
 /**
  * Returns the URL if SitePreview currently has one.
@@ -9,10 +9,10 @@ export function getCurrentPreviewType( state ) {
  *
  * @see client/components/design-preview
  */
-export function getPreviewUrl( state ) {
-	return state.ui.preview.currentPreviewUrl;
+export function getPreviewUrl(state) {
+    return state.ui.preview.currentPreviewUrl;
 }
 
-export function getActiveDesignTool( state ) {
-	return state.ui.preview.activeDesignTool;
+export function getActiveDesignTool(state) {
+    return state.ui.preview.activeDesignTool;
 }

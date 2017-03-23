@@ -9,113 +9,114 @@ import noop from 'lodash/noop';
  * Constants
  */
 const LoadStatus = {
-	PENDING: 'PENDING',
-	LOADING: 'LOADING',
-	LOADED: 'LOADED',
-	FAILED: 'FAILED'
+    PENDING: 'PENDING',
+    LOADING: 'LOADING',
+    LOADED: 'LOADED',
+    FAILED: 'FAILED',
 };
 
-export default React.createClass( {
-	displayName: 'ImagePreloader',
+export default React.createClass({
+    displayName: 'ImagePreloader',
 
-	propTypes: {
-		src: React.PropTypes.string,
-		placeholder: React.PropTypes.element.isRequired,
-		children: React.PropTypes.node,
-		onLoad: React.PropTypes.func,
-		onError: React.PropTypes.func
-	},
+    propTypes: {
+        src: React.PropTypes.string,
+        placeholder: React.PropTypes.element.isRequired,
+        children: React.PropTypes.node,
+        onLoad: React.PropTypes.func,
+        onError: React.PropTypes.func,
+    },
 
-	getInitialState() {
-		return {
-			status: LoadStatus.PENDING
-		};
-	},
+    getInitialState() {
+        return {
+            status: LoadStatus.PENDING,
+        };
+    },
 
-	componentWillMount() {
-		this.createLoader();
-	},
+    componentWillMount() {
+        this.createLoader();
+    },
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.src !== this.props.src ) {
-			this.createLoader( nextProps );
-		}
-	},
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.src !== this.props.src) {
+            this.createLoader(nextProps);
+        }
+    },
 
-	componentWillUnmount() {
-		this.destroyLoader();
-	},
+    componentWillUnmount() {
+        this.destroyLoader();
+    },
 
-	createLoader( nextProps ) {
-		const src = ( nextProps || this.props ).src;
+    createLoader(nextProps) {
+        const src = (nextProps || this.props).src;
 
-		this.destroyLoader();
-		this.setState( {
-			status: LoadStatus.LOADING
-		} );
+        this.destroyLoader();
+        this.setState({
+            status: LoadStatus.LOADING,
+        });
 
-		if ( ! src ) {
-			return;
-		}
+        if (!src) {
+            return;
+        }
 
-		this.image = new Image();
-		this.image.src = src;
-		this.image.onload = this.onLoadComplete;
-		this.image.onerror = this.onLoadComplete;
-	},
+        this.image = new Image();
+        this.image.src = src;
+        this.image.onload = this.onLoadComplete;
+        this.image.onerror = this.onLoadComplete;
+    },
 
-	destroyLoader() {
-		if ( ! this.image ) {
-			return;
-		}
+    destroyLoader() {
+        if (!this.image) {
+            return;
+        }
 
-		this.image.onload = noop;
-		this.image.onerror = noop;
-		delete this.image;
-	},
+        this.image.onload = noop;
+        this.image.onerror = noop;
+        delete this.image;
+    },
 
-	onLoadComplete( event ) {
-		this.destroyLoader();
+    onLoadComplete(event) {
+        this.destroyLoader();
 
-		if ( event.type !== 'load' ) {
-			return this.setState( { status: LoadStatus.FAILED }, () => {
-				if ( this.props.onError ) {
-					this.props.onError( event );
-				}
-			} );
-		}
+        if (event.type !== 'load') {
+            return this.setState({ status: LoadStatus.FAILED }, () => {
+                if (this.props.onError) {
+                    this.props.onError(event);
+                }
+            });
+        }
 
-		this.setState( { status: LoadStatus.LOADED }, () => {
-			if ( this.props.onLoad ) {
-				this.props.onLoad( event );
-			}
-		} );
-	},
+        this.setState({ status: LoadStatus.LOADED }, () => {
+            if (this.props.onLoad) {
+                this.props.onLoad(event);
+            }
+        });
+    },
 
-	render() {
-		let children, imageProps;
+    render() {
+        let children, imageProps;
 
-		switch ( this.state.status ) {
-			case LoadStatus.LOADING:
-				children = this.props.placeholder;
-				break;
+        switch (this.state.status) {
+            case LoadStatus.LOADING:
+                children = this.props.placeholder;
+                break;
 
-			case LoadStatus.LOADED:
-				imageProps = omit( this.props, Object.keys( this.constructor.propTypes ) );
-				children = <img src={ this.props.src } { ...imageProps } />;
-				break;
+            case LoadStatus.LOADED:
+                imageProps = omit(this.props, Object.keys(this.constructor.propTypes));
+                children = <img src={this.props.src} {...imageProps} />;
+                break;
 
-			case LoadStatus.FAILED:
-				children = this.props.children;
-				break;
+            case LoadStatus.FAILED:
+                children = this.props.children;
+                break;
 
-			default: break;
-		}
+            default:
+                break;
+        }
 
-		return (
-			<div className="image-preloader">
-				{ children }
-			</div>
-		);
-	}
-} );
+        return (
+            <div className="image-preloader">
+                {children}
+            </div>
+        );
+    },
+});

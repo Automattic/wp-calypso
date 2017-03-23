@@ -5,19 +5,19 @@
  * @return {Array} Array of strings that are expected keys in API response.
  */
 export function getExpectedResponseKeys() {
-	return [
-		'started',
-		'queue_finished',
-		'sent_started',
-		'finished',
-		'queue',
-		'sent',
-		'is_scheduled',
-		'total',
-		'config',
-		'queue_size',
-		'queue_lag',
-		'full_queue_size',
-		'full_queue_lag'
-	];
+    return [
+        'started',
+        'queue_finished',
+        'sent_started',
+        'finished',
+        'queue',
+        'sent',
+        'is_scheduled',
+        'total',
+        'config',
+        'queue_size',
+        'queue_lag',
+        'full_queue_size',
+        'full_queue_lag',
+    ];
 }

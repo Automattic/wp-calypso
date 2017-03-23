@@ -14,37 +14,34 @@ import PostItem from '../';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSitePosts } from 'state/posts/selectors';
 
-function PostItemExample( { primarySiteId, globalId } ) {
-	return (
-		<div>
-			{ primarySiteId && <QuerySites siteId={ primarySiteId } /> }
+function PostItemExample({ primarySiteId, globalId }) {
+    return (
+        <div>
+            {primarySiteId && <QuerySites siteId={primarySiteId} />}
 
-			{ primarySiteId && (
-				<QueryPosts
-					siteId={ primarySiteId }
-					query={ { number: 1, type: 'any' } } />
-			) }
-			<p>
-				<strong>Standard</strong>
-				{ ! globalId && <em style={ { display: 'block' } }>No posts found</em> }
-				{ globalId && <PostItem globalId={ globalId } /> }
-			</p>
-			<p>
-				<strong>Placeholder</strong>
-				<PostItem />
-			</p>
-		</div>
-	);
+            {primarySiteId &&
+                <QueryPosts siteId={primarySiteId} query={{ number: 1, type: 'any' }} />}
+            <p>
+                <strong>Standard</strong>
+                {!globalId && <em style={{ display: 'block' }}>No posts found</em>}
+                {globalId && <PostItem globalId={globalId} />}
+            </p>
+            <p>
+                <strong>Placeholder</strong>
+                <PostItem />
+            </p>
+        </div>
+    );
 }
 
-const ConnectedPostItemExample = connect( ( state ) => {
-	const primarySiteId = get( getCurrentUser( state ), 'primary_blog' );
+const ConnectedPostItemExample = connect(state => {
+    const primarySiteId = get(getCurrentUser(state), 'primary_blog');
 
-	return {
-		primarySiteId,
-		globalId: get( getSitePosts( state, primarySiteId ), [ 0, 'global_ID' ] )
-	};
-} )( PostItemExample );
+    return {
+        primarySiteId,
+        globalId: get(getSitePosts(state, primarySiteId), [0, 'global_ID']),
+    };
+})(PostItemExample);
 
 ConnectedPostItemExample.displayName = 'PostItem';
 

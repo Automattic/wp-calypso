@@ -1,8 +1,7 @@
-
-export const isRequestingSiteUpdates = ( state, siteId ) => {
-	return state.sites.updates.requesting[ siteId ] || false;
+export const isRequestingSiteUpdates = (state, siteId) => {
+    return state.sites.updates.requesting[siteId] || false;
 };
 
-export const getUpdatesBySiteId = ( state, siteId ) => {
-	return state.sites.updates.items[ siteId ] || [];
+export const getUpdatesBySiteId = (state, siteId) => {
+    return state.sites.updates.items[siteId] || [];
 };

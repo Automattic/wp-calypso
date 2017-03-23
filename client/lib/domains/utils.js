@@ -10,20 +10,20 @@ import { type as domainTypes } from './constants';
 import { cartItems } from 'lib/cart-values';
 import { isDomainRegistration } from 'lib/products-values';
 
-function getDomainType( domainFromApi ) {
-	if ( domainFromApi.type === 'redirect' ) {
-		return domainTypes.SITE_REDIRECT;
-	}
+function getDomainType(domainFromApi) {
+    if (domainFromApi.type === 'redirect') {
+        return domainTypes.SITE_REDIRECT;
+    }
 
-	if ( domainFromApi.wpcom_domain ) {
-		return domainTypes.WPCOM;
-	}
+    if (domainFromApi.wpcom_domain) {
+        return domainTypes.WPCOM;
+    }
 
-	if ( domainFromApi.has_registration ) {
-		return domainTypes.REGISTERED;
-	}
+    if (domainFromApi.has_registration) {
+        return domainTypes.REGISTERED;
+    }
 
-	return domainTypes.MAPPED;
+    return domainTypes.MAPPED;
 }
 
 /**
@@ -35,25 +35,22 @@ function getDomainType( domainFromApi ) {
  *
  * @return {?String} the name of the first domain for the transaction.
  */
-function getDomainNameFromReceiptOrCart( receipt, cart ) {
-	let domainRegistration;
+function getDomainNameFromReceiptOrCart(receipt, cart) {
+    let domainRegistration;
 
-	if ( receipt && ! isEmpty( receipt.purchases ) ) {
-		domainRegistration = find( values( receipt.purchases ), isDomainRegistration );
-	}
+    if (receipt && !isEmpty(receipt.purchases)) {
+        domainRegistration = find(values(receipt.purchases), isDomainRegistration);
+    }
 
-	if ( cartItems.hasDomainRegistration( cart ) ) {
-		domainRegistration = cartItems.getDomainRegistrations( cart )[ 0 ];
-	}
+    if (cartItems.hasDomainRegistration(cart)) {
+        domainRegistration = cartItems.getDomainRegistrations(cart)[0];
+    }
 
-	if ( domainRegistration ) {
-		return domainRegistration.meta;
-	}
+    if (domainRegistration) {
+        return domainRegistration.meta;
+    }
 
-	return null;
+    return null;
 }
 
-export {
-	getDomainNameFromReceiptOrCart,
-	getDomainType,
-};
+export { getDomainNameFromReceiptOrCart, getDomainType };

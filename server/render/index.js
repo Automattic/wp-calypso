@@ -13,20 +13,20 @@ import debugFactory from 'debug';
 import config from 'config';
 import { isSectionIsomorphic } from 'state/ui/selectors';
 import {
-	getDocumentHeadFormattedTitle,
-	getDocumentHeadMeta,
-	getDocumentHeadLink
+    getDocumentHeadFormattedTitle,
+    getDocumentHeadMeta,
+    getDocumentHeadLink,
 } from 'state/document-head/selectors';
 
-const debug = debugFactory( 'calypso:server-render' );
-const markupCache = new Lru( { max: 3000 } );
+const debug = debugFactory('calypso:server-render');
+const markupCache = new Lru({ max: 3000 });
 
-function bumpStat( group, name ) {
-	const statUrl = `http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_${ group }=${ name }&t=${ Math.random() }`;
+function bumpStat(group, name) {
+    const statUrl = `http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_${group}=${name}&t=${Math.random()}`;
 
-	if ( config( 'env' ) === 'production' ) {
-		superagent.get( statUrl ).end();
-	}
+    if (config('env') === 'production') {
+        superagent.get(statUrl).end();
+    }
 }
 
 /**
@@ -37,69 +37,69 @@ function bumpStat( group, name ) {
 * @param {string} key - (optional) custom key
 * @return {object} context object with `renderedLayout` field populated
 */
-export function render( element, key = JSON.stringify( element ) ) {
-	try {
-		const startTime = Date.now();
-		debug( 'cache access for key', key );
+export function render(element, key = JSON.stringify(element)) {
+    try {
+        const startTime = Date.now();
+        debug('cache access for key', key);
 
-		let context = markupCache.get( key );
-		if ( ! context ) {
-			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
-			debug( 'cache miss for key', key );
-			const renderedLayout = ReactDomServer.renderToString( element );
-			context = { renderedLayout };
+        let context = markupCache.get(key);
+        if (!context) {
+            bumpStat('calypso-ssr', 'loggedout-design-cache-miss');
+            debug('cache miss for key', key);
+            const renderedLayout = ReactDomServer.renderToString(element);
+            context = { renderedLayout };
 
-			markupCache.set( key, context );
-		}
-		const rtsTimeMs = Date.now() - startTime;
-		debug( 'Server render time (ms)', rtsTimeMs );
+            markupCache.set(key, context);
+        }
+        const rtsTimeMs = Date.now() - startTime;
+        debug('Server render time (ms)', rtsTimeMs);
 
-		if ( rtsTimeMs > 100 ) {
-			// Server renders should probably never take longer than 100ms
-			bumpStat( 'calypso-ssr', 'over-100ms-rendertostring' );
-		}
+        if (rtsTimeMs > 100) {
+            // Server renders should probably never take longer than 100ms
+            bumpStat('calypso-ssr', 'over-100ms-rendertostring');
+        }
 
-		return context;
-	} catch ( ex ) {
-		if ( config( 'env' ) === 'development' ) {
-			throw ex;
-		}
-	}
-	//todo: render an error?
+        return context;
+    } catch (ex) {
+        if (config('env') === 'development') {
+            throw ex;
+        }
+    }
+    //todo: render an error?
 }
 
-export function serverRender( req, res ) {
-	const context = req.context;
-	let title, metas = [], links = [];
+export function serverRender(req, res) {
+    const context = req.context;
+    let title, metas = [], links = [];
 
-	if ( context.lang !== config( 'i18n_default_locale_slug' ) ) {
-		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
-	}
+    if (context.lang !== config('i18n_default_locale_slug')) {
+        context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
+    }
 
-	if ( config.isEnabled( 'server-side-rendering' ) && context.layout && ! context.user ) {
-		const key = context.renderCacheKey || JSON.stringify( context.layout );
-		Object.assign( context, render( context.layout, key ) );
-	}
+    if (config.isEnabled('server-side-rendering') && context.layout && !context.user) {
+        const key = context.renderCacheKey || JSON.stringify(context.layout);
+        Object.assign(context, render(context.layout, key));
+    }
 
-	if ( context.store ) {
-		title = getDocumentHeadFormattedTitle( context.store.getState() );
-		metas = getDocumentHeadMeta( context.store.getState() );
-		links = getDocumentHeadLink( context.store.getState() );
+    if (context.store) {
+        title = getDocumentHeadFormattedTitle(context.store.getState());
+        metas = getDocumentHeadMeta(context.store.getState());
+        links = getDocumentHeadLink(context.store.getState());
 
-		let reduxSubtrees = [ 'documentHead' ];
-		if ( isSectionIsomorphic( context.store.getState() ) ) {
-			reduxSubtrees = reduxSubtrees.concat( [ 'ui', 'themes' ] );
-		}
+        let reduxSubtrees = ['documentHead'];
+        if (isSectionIsomorphic(context.store.getState())) {
+            reduxSubtrees = reduxSubtrees.concat(['ui', 'themes']);
+        }
 
-		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
-	}
+        context.initialReduxState = pick(context.store.getState(), reduxSubtrees);
+    }
 
-	context.head = { title, metas, links };
-	context.config = config.ssrConfig;
+    context.head = { title, metas, links };
+    context.config = config.ssrConfig;
 
-	if ( config.isEnabled( 'desktop' ) ) {
-		res.render( 'desktop.jade', context );
-	} else {
-		res.render( 'index.jade', context );
-	}
+    if (config.isEnabled('desktop')) {
+        res.render('desktop.jade', context);
+    } else {
+        res.render('index.jade', context);
+    }
 }

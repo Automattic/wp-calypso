@@ -9,21 +9,21 @@ import PureRenderMixin from 'react-pure-render/mixin';
  */
 import PaymentLogo from '../index';
 
-const PaymentLogoExamples = React.createClass( {
-	mixins: [ PureRenderMixin ],
+const PaymentLogoExamples = React.createClass({
+    mixins: [PureRenderMixin],
 
-	render() {
-		return (
-			<div>
-				<PaymentLogo type="amex" /> { ' ' }
-				<PaymentLogo type="discover" /> { ' ' }
-				<PaymentLogo type="mastercard" /> { ' ' }
-				<PaymentLogo type="visa" /> { ' ' }
-				<PaymentLogo type="paypal" isCompact /> { ' ' }
-				<PaymentLogo type="paypal" />
-			</div>
-		);
-	}
-} );
+    render() {
+        return (
+            <div>
+                <PaymentLogo type="amex" /> {' '}
+                <PaymentLogo type="discover" /> {' '}
+                <PaymentLogo type="mastercard" /> {' '}
+                <PaymentLogo type="visa" /> {' '}
+                <PaymentLogo type="paypal" isCompact /> {' '}
+                <PaymentLogo type="paypal" />
+            </div>
+        );
+    },
+});
 
 module.exports = PaymentLogoExamples;

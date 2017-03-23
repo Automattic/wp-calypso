@@ -62,89 +62,84 @@ import ReaderFeaturedVideo from 'blocks/reader-featured-video/docs/example';
 import NpsSurvey from 'blocks/nps-survey/docs/example';
 import ReaderExportButton from 'blocks/reader-export-button/docs/example';
 
-export default React.createClass( {
+export default React.createClass({
+    displayName: 'AppComponents',
 
-	displayName: 'AppComponents',
+    getInitialState() {
+        return { filter: '' };
+    },
 
-	getInitialState() {
-		return { filter: '' };
-	},
+    onSearch(term) {
+        this.setState({ filter: trim(term || '').toLowerCase() });
+    },
 
-	onSearch( term ) {
-		this.setState( { filter: trim( term || '' ).toLowerCase() } );
-	},
+    backToComponents() {
+        page('/devdocs/blocks/');
+    },
 
-	backToComponents() {
-		page( '/devdocs/blocks/' );
-	},
-
-	render() {
-		return (
-			<Main className="design">
-				{
-					this.props.component
-					? <HeaderCake onClick={ this.backToComponents } backText="All Blocks">
-						{ slugToCamelCase( this.props.component ) }
-					</HeaderCake>
-					: <SearchCard
-						onSearch={ this.onSearch }
-						initialValue={ this.state.filter }
-						placeholder="Search blocks…"
-						analyticsGroup="Docs">
-					</SearchCard>
-				}
-				<Collection
-					component={ this.props.component }
-					filter={ this.state.filter }
-					section="blocks"
-				>
-					<AuthorSelector />
-					<CommentButtons />
-					<DisconnectJetpackDialog />
-					<CreditCardForm />
-					<FollowButton />
-					<HappinessSupport />
-					<ImageEditor />
-					<LikeButtons />
-					<PostEditButton />
-					<PlanStorage />
-					<PostSchedule />
-					<PostSelector />
-					<Sites />
-					<SitesDropdown />
-					<SiteIcon />
-					<Theme />
-					<ThemesListExample />
-					<UpgradeNudge />
-					<PlanCompareCard />
-					<FeatureComparison />
-					<DomainTip />
-					<RelatedPostCard />
-					<RelatedPostCardv2 />
-					<PostItem />
-					<PostRelativeTime />
-					<PostStatus />
-					<ReaderAuthorLink />
-					<ReaderSubscriptionListItem />
-					<ReaderSiteStreamLink />
-					<ReaderFullPostHeader />
-					<AuthorCompactProfile />
-					<ReaderPostCard />
-					<ReaderCombinedCard />
-					<PlanPrice />
-					<PlanThankYouCard />
-					<DismissibleCard />
-					<ReaderAvatar />
-					<ReaderPostOptionsMenu />
-					<DailyPostButton />
-					<PostLikes />
-					<ReaderFeaturedVideo />
-					{ isEnabled( 'nps-survey/devdocs' ) &&
-						<NpsSurvey />
-					}
-					<ReaderExportButton />
-				</Collection>
-			</Main>
-		);
-	}
-} );
+    render() {
+        return (
+            <Main className="design">
+                {this.props.component
+                    ? <HeaderCake onClick={this.backToComponents} backText="All Blocks">
+                          {slugToCamelCase(this.props.component)}
+                      </HeaderCake>
+                    : <SearchCard
+                          onSearch={this.onSearch}
+                          initialValue={this.state.filter}
+                          placeholder="Search blocks…"
+                          analyticsGroup="Docs"
+                      />}
+                <Collection
+                    component={this.props.component}
+                    filter={this.state.filter}
+                    section="blocks"
+                >
+                    <AuthorSelector />
+                    <CommentButtons />
+                    <DisconnectJetpackDialog />
+                    <CreditCardForm />
+                    <FollowButton />
+                    <HappinessSupport />
+                    <ImageEditor />
+                    <LikeButtons />
+                    <PostEditButton />
+                    <PlanStorage />
+                    <PostSchedule />
+                    <PostSelector />
+                    <Sites />
+                    <SitesDropdown />
+                    <SiteIcon />
+                    <Theme />
+                    <ThemesListExample />
+                    <UpgradeNudge />
+                    <PlanCompareCard />
+                    <FeatureComparison />
+                    <DomainTip />
+                    <RelatedPostCard />
+                    <RelatedPostCardv2 />
+                    <PostItem />
+                    <PostRelativeTime />
+                    <PostStatus />
+                    <ReaderAuthorLink />
+                    <ReaderSubscriptionListItem />
+                    <ReaderSiteStreamLink />
+                    <ReaderFullPostHeader />
+                    <AuthorCompactProfile />
+                    <ReaderPostCard />
+                    <ReaderCombinedCard />
+                    <PlanPrice />
+                    <PlanThankYouCard />
+                    <DismissibleCard />
+                    <ReaderAvatar />
+                    <ReaderPostOptionsMenu />
+                    <DailyPostButton />
+                    <PostLikes />
+                    <ReaderFeaturedVideo />
+                    {isEnabled('nps-survey/devdocs') && <NpsSurvey />}
+                    <ReaderExportButton />
+                </Collection>
+            </Main>
+        );
+    },
+});

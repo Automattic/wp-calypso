@@ -15,7 +15,7 @@ import createSelector from 'lib/create-selector';
  * @return {Array} WordPress plans
  */
 export const getPlans = state => {
-	return state.plans.items;
+    return state.plans.items;
 };
 
 /**
@@ -25,7 +25,7 @@ export const getPlans = state => {
  * @return {Boolean} is plans requesting?
  */
 export const isRequestingPlans = state => {
-	return state.plans.requesting;
+    return state.plans.requesting;
 };
 
 /**
@@ -35,8 +35,8 @@ export const isRequestingPlans = state => {
  * @return {Object} the matching plan
  */
 export const getPlan = createSelector(
-	( state, productId ) => find( getPlans( state ), { product_id: productId } ),
-	( state ) => getPlans( state )
+    (state, productId) => find(getPlans(state), { product_id: productId }),
+    state => getPlans(state)
 );
 
 /**
@@ -46,8 +46,8 @@ export const getPlan = createSelector(
  * @return {Object} the matching plan
  */
 export const getPlanBySlug = createSelector(
-	( state, planSlug ) => find( getPlans( state ), { product_slug: planSlug } ),
-	( state ) => getPlans( state )
+    (state, planSlug) => find(getPlans(state), { product_slug: planSlug }),
+    state => getPlans(state)
 );
 
 /**
@@ -57,12 +57,12 @@ export const getPlanBySlug = createSelector(
  * @param  {Boolean} isMonthly if true, returns monthly price
  * @return {Number}  plan price
  */
-export function getPlanRawPrice( state, productId, isMonthly = false ) {
-	const plan = getPlan( state, productId );
-	if ( get( plan, 'raw_price', -1 ) < 0 ) {
-		return null;
-	}
-	return isMonthly ? parseFloat( ( plan.raw_price / 12 ).toFixed( 2 ) ) : plan.raw_price;
+export function getPlanRawPrice(state, productId, isMonthly = false) {
+    const plan = getPlan(state, productId);
+    if (get(plan, 'raw_price', -1) < 0) {
+        return null;
+    }
+    return isMonthly ? parseFloat((plan.raw_price / 12).toFixed(2)) : plan.raw_price;
 }
 
 /**
@@ -72,8 +72,8 @@ export function getPlanRawPrice( state, productId, isMonthly = false ) {
  * @param  {Number}  productId the plan productId
  * @return {String}  plan product_slug
  */
-export function getPlanSlug( state, productId ) {
-	const plan = getPlan( state, productId );
+export function getPlanSlug(state, productId) {
+    const plan = getPlan(state, productId);
 
-	return get( plan, 'product_slug', null );
+    return get(plan, 'product_slug', null);
 }

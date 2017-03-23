@@ -14,7 +14,6 @@ import { GUIDED_TOUR_UPDATE } from 'state/action-types';
  * yet finished or dimissed according to the action log.
  */
 export default state => {
-	const last = findLast( getActionLog( state ), { type: GUIDED_TOUR_UPDATE } );
-	return last && ( last.shouldShow === undefined ) && last.tour;
+    const last = findLast(getActionLog(state), { type: GUIDED_TOUR_UPDATE });
+    return last && last.shouldShow === undefined && last.tour;
 };
-

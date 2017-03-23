@@ -11,66 +11,71 @@ import omit from 'lodash/omit';
 import ClipboardButton from 'components/forms/clipboard-button';
 import FormTextInput from 'components/forms/form-text-input';
 
-export default React.createClass( {
-	displayName: 'ClipboardButtonInput',
+export default React.createClass({
+    displayName: 'ClipboardButtonInput',
 
-	propTypes: {
-		value: PropTypes.string,
-		disabled: PropTypes.bool,
-		className: PropTypes.string
-	},
+    propTypes: {
+        value: PropTypes.string,
+        disabled: PropTypes.bool,
+        className: PropTypes.string,
+    },
 
-	getInitialState() {
-		return {
-			isCopied: false,
-			disabled: false
-		};
-	},
+    getInitialState() {
+        return {
+            isCopied: false,
+            disabled: false,
+        };
+    },
 
-	getDefaultProps() {
-		return {
-			value: ''
-		};
-	},
+    getDefaultProps() {
+        return {
+            value: '',
+        };
+    },
 
-	componentWillUnmount() {
-		clearTimeout( this.confirmationTimeout );
-		delete this.confirmationTimeout;
-	},
+    componentWillUnmount() {
+        clearTimeout(this.confirmationTimeout);
+        delete this.confirmationTimeout;
+    },
 
-	showConfirmation() {
-		this.setState( {
-			isCopied: true
-		} );
+    showConfirmation() {
+        this.setState({
+            isCopied: true,
+        });
 
-		this.confirmationTimeout = setTimeout( () => {
-			this.setState( {
-				isCopied: false
-			} );
-		}, 4000 );
-	},
+        this.confirmationTimeout = setTimeout(
+            () => {
+                this.setState({
+                    isCopied: false,
+                });
+            },
+            4000
+        );
+    },
 
-	render() {
-		const { value, className, disabled } = this.props;
-		const classes = classnames( 'clipboard-button-input', className );
+    render() {
+        const { value, className, disabled } = this.props;
+        const classes = classnames('clipboard-button-input', className);
 
-		return (
-			<span className={ classes }>
-				<FormTextInput
-					{ ...omit( this.props, 'className' ) }
-					type="text"
-					selectOnFocus
-					readOnly />
-				<ClipboardButton
-					text={ value }
-					onCopy={ this.showConfirmation }
-					disabled={ disabled }
-					compact>
-					{ this.state.isCopied
-						? this.translate( 'Copied!' )
-						: this.translate( 'Copy', { context: 'verb' } ) }
-				</ClipboardButton>
-			</span>
-		);
-	}
-} );
+        return (
+            <span className={classes}>
+                <FormTextInput
+                    {...omit(this.props, 'className')}
+                    type="text"
+                    selectOnFocus
+                    readOnly
+                />
+                <ClipboardButton
+                    text={value}
+                    onCopy={this.showConfirmation}
+                    disabled={disabled}
+                    compact
+                >
+                    {this.state.isCopied
+                        ? this.translate('Copied!')
+                        : this.translate('Copy', { context: 'verb' })}
+                </ClipboardButton>
+            </span>
+        );
+    },
+});

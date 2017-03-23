@@ -1,3 +1,3 @@
 export const suggestedUsername = {
-	type: [ 'string', 'null' ]
+    type: ['string', 'null'],
 };

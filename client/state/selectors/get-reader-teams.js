@@ -4,6 +4,6 @@
  * @param  {Object}  state  Global state tree
  * @return {Array}          Reader Teams
  */
-export default function getReaderTeams( state ) {
-	return state.reader.teams.items;
+export default function getReaderTeams(state) {
+    return state.reader.teams.items;
 }

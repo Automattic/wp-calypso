@@ -7,13 +7,13 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	WORDADS_SITE_APPROVE_REQUEST,
-	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
-	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
-	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
-	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE
+    WORDADS_SITE_APPROVE_REQUEST,
+    WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
+    WORDADS_SITE_APPROVE_REQUEST_FAILURE,
+    WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
+    WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
+    SERIALIZE,
+    DESERIALIZE,
 } from 'state/action-types';
 
 /**
@@ -23,20 +23,20 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function requesting( state = {}, action ) {
-	switch ( action.type ) {
-		case WORDADS_SITE_APPROVE_REQUEST:
-		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
-		case WORDADS_SITE_APPROVE_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: action.type === WORDADS_SITE_APPROVE_REQUEST
-			} );
+export function requesting(state = {}, action) {
+    switch (action.type) {
+        case WORDADS_SITE_APPROVE_REQUEST:
+        case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
+        case WORDADS_SITE_APPROVE_REQUEST_FAILURE:
+            return Object.assign({}, state, {
+                [action.siteId]: action.type === WORDADS_SITE_APPROVE_REQUEST,
+            });
 
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
-	}
-	return state;
+        case SERIALIZE:
+        case DESERIALIZE:
+            return {};
+    }
+    return state;
 }
 
 /**
@@ -45,23 +45,23 @@ export function requesting( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function requestErrors( state = {}, action ) {
-	switch ( action.type ) {
-		case WORDADS_SITE_APPROVE_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: action.error
-			} );
-		case WORDADS_SITE_APPROVE_REQUEST:
-		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
-		case WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: null
-			} );
-		case DESERIALIZE:
-		case SERIALIZE:
-			return {};
-	}
-	return state;
+export function requestErrors(state = {}, action) {
+    switch (action.type) {
+        case WORDADS_SITE_APPROVE_REQUEST_FAILURE:
+            return Object.assign({}, state, {
+                [action.siteId]: action.error,
+            });
+        case WORDADS_SITE_APPROVE_REQUEST:
+        case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
+        case WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR:
+            return Object.assign({}, state, {
+                [action.siteId]: null,
+            });
+        case DESERIALIZE:
+        case SERIALIZE:
+            return {};
+    }
+    return state;
 }
 
 /**
@@ -70,27 +70,27 @@ export function requestErrors( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function requestSuccess( state = {}, action ) {
-	switch ( action.type ) {
-		case WORDADS_SITE_APPROVE_REQUEST:
-		case WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS:
-		case WORDADS_SITE_APPROVE_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: null
-			} );
-		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: true
-			} );
-		case DESERIALIZE:
-		case SERIALIZE:
-			return {};
-	}
-	return state;
+export function requestSuccess(state = {}, action) {
+    switch (action.type) {
+        case WORDADS_SITE_APPROVE_REQUEST:
+        case WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS:
+        case WORDADS_SITE_APPROVE_REQUEST_FAILURE:
+            return Object.assign({}, state, {
+                [action.siteId]: null,
+            });
+        case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
+            return Object.assign({}, state, {
+                [action.siteId]: true,
+            });
+        case DESERIALIZE:
+        case SERIALIZE:
+            return {};
+    }
+    return state;
 }
 
-export default combineReducers( {
-	requesting,
-	requestSuccess,
-	requestErrors,
-} );
+export default combineReducers({
+    requesting,
+    requestSuccess,
+    requestErrors,
+});

@@ -8,71 +8,71 @@ import { expect } from 'chai';
  */
 import { isRequestingGeo, getGeo, getGeoCountry } from '../selectors';
 
-describe( 'selectors', () => {
-	describe( 'isRequestingGeo()', () => {
-		it( 'should return requesting state', () => {
-			const isRequesting = isRequestingGeo( {
-				geo: {
-					requesting: true
-				}
-			} );
+describe('selectors', () => {
+    describe('isRequestingGeo()', () => {
+        it('should return requesting state', () => {
+            const isRequesting = isRequestingGeo({
+                geo: {
+                    requesting: true,
+                },
+            });
 
-			expect( isRequesting ).to.be.true;
-		} );
-	} );
+            expect(isRequesting).to.be.true;
+        });
+    });
 
-	describe( 'getGeo()', () => {
-		it( 'should return geo data state', () => {
-			const geo = getGeo( {
-				geo: {
-					geo: {
-						latitude: '39.36006',
-						longitude: '-84.30994',
-						country_short: 'US',
-						country_long: 'United States',
-						region: 'Ohio',
-						city: 'Mason'
-					}
-				}
-			} );
+    describe('getGeo()', () => {
+        it('should return geo data state', () => {
+            const geo = getGeo({
+                geo: {
+                    geo: {
+                        latitude: '39.36006',
+                        longitude: '-84.30994',
+                        country_short: 'US',
+                        country_long: 'United States',
+                        region: 'Ohio',
+                        city: 'Mason',
+                    },
+                },
+            });
 
-			expect( geo ).to.eql( {
-				latitude: '39.36006',
-				longitude: '-84.30994',
-				country_short: 'US',
-				country_long: 'United States',
-				region: 'Ohio',
-				city: 'Mason'
-			} );
-		} );
-	} );
+            expect(geo).to.eql({
+                latitude: '39.36006',
+                longitude: '-84.30994',
+                country_short: 'US',
+                country_long: 'United States',
+                region: 'Ohio',
+                city: 'Mason',
+            });
+        });
+    });
 
-	describe( 'getGeoCountry()', () => {
-		it( 'should return null if no geo data state', () => {
-			const country = getGeoCountry( {
-				geo: {
-					geo: null
-				}
-			} );
+    describe('getGeoCountry()', () => {
+        it('should return null if no geo data state', () => {
+            const country = getGeoCountry({
+                geo: {
+                    geo: null,
+                },
+            });
 
-			expect( country ).to.be.null;
-		} );
+            expect(country).to.be.null;
+        });
 
-		it( 'should return full country name of geo data state', () => {
-			const country = getGeoCountry( {
-				geo: {
-					geo: {
-						latitude: '39.36006',
-						longitude: '-84.30994',
-						country_short: 'US',
-						country_long: 'United States',
-						region: 'Ohio',
-						city: 'Mason'
-					}
-				}
-			} );
+        it('should return full country name of geo data state', () => {
+            const country = getGeoCountry({
+                geo: {
+                    geo: {
+                        latitude: '39.36006',
+                        longitude: '-84.30994',
+                        country_short: 'US',
+                        country_long: 'United States',
+                        region: 'Ohio',
+                        city: 'Mason',
+                    },
+                },
+            });
 
-			expect( country ).to.equal( 'United States' );
-		} );
-	} );
-} );
+            expect(country).to.equal('United States');
+        });
+    });
+});

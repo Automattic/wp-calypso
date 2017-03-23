@@ -3,16 +3,16 @@
  */
 var returnValue;
 
-function makeSafe( url ) {
-	return returnValue !== undefined ? returnValue : ( url + '-SAFE' );
+function makeSafe(url) {
+    return returnValue !== undefined ? returnValue : url + '-SAFE';
 }
 
-makeSafe.setReturns = function( val ) {
-	returnValue = val;
-}
+makeSafe.setReturns = function(val) {
+    returnValue = val;
+};
 
 makeSafe.undoReturns = function() {
-	returnValue = undefined;
-}
+    returnValue = undefined;
+};
 
 module.exports = makeSafe;

@@ -12,11 +12,11 @@ import { MEDIA_MODAL_VIEW_SET } from 'state/action-types';
  * @param  {ModalViews} view Media view
  * @return {Object}          Action object
  */
-export function setMediaModalView( view ) {
-	return {
-		type: MEDIA_MODAL_VIEW_SET,
-		view
-	};
+export function setMediaModalView(view) {
+    return {
+        type: MEDIA_MODAL_VIEW_SET,
+        view,
+    };
 }
 
 /**
@@ -29,5 +29,5 @@ export function setMediaModalView( view ) {
  * @return {Object}          Action object
  */
 export function resetMediaModalView() {
-	return setMediaModalView( null );
+    return setMediaModalView(null);
 }

@@ -11,27 +11,27 @@ import { isFetchingStoredCards } from 'state/stored-cards/selectors';
 import { fetchStoredCards } from 'state/stored-cards/actions';
 
 class QueryStoredCards extends Component {
-	componentWillMount() {
-		if ( ! this.props.isRequesting ) {
-			this.props.fetchStoredCards();
-		}
-	}
+    componentWillMount() {
+        if (!this.props.isRequesting) {
+            this.props.fetchStoredCards();
+        }
+    }
 
-	render() {
-		return null;
-	}
+    render() {
+        return null;
+    }
 }
 
 QueryStoredCards.propTypes = {
-	fetchStoredCards: PropTypes.func.isRequired,
-	isRequesting: PropTypes.bool.isRequired
+    fetchStoredCards: PropTypes.func.isRequired,
+    isRequesting: PropTypes.bool.isRequired,
 };
 
 export default connect(
-	state => {
-		return {
-			isRequesting: isFetchingStoredCards( state )
-		};
-	},
-	{ fetchStoredCards }
-)( QueryStoredCards );
+    state => {
+        return {
+            isRequesting: isFetchingStoredCards(state),
+        };
+    },
+    { fetchStoredCards }
+)(QueryStoredCards);

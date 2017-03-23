@@ -15,8 +15,8 @@ import { isJetpackSite, isJetpackModuleActive } from 'state/sites/selectors';
  * @param  {Object} state Global state tree
  * @return {Object}       Keyring services, if known.
  */
-export function getKeyringServices( state ) {
-	return state.sharing.services.items;
+export function getKeyringServices(state) {
+    return state.sharing.services.items;
 }
 
 /**
@@ -26,8 +26,8 @@ export function getKeyringServices( state ) {
  * @param  {String} type  Type of service. 'publicize' or 'other'.
  * @return {Array}        Keyring services, if known.
  */
-export function getKeyringServicesByType( state, type ) {
-	return filter( getKeyringServices( state ), { type } );
+export function getKeyringServicesByType(state, type) {
+    return filter(getKeyringServices(state), { type });
 }
 
 /**
@@ -44,37 +44,40 @@ export function getKeyringServicesByType( state, type ) {
  * @param  {String} type   Type of service. 'publicize' or 'other'.
  * @return {Array}         Keyring services, if known.
  */
-export function getEligibleKeyringServices( state, siteId, type ) {
-	const services = getKeyringServicesByType( state, type );
+export function getEligibleKeyringServices(state, siteId, type) {
+    const services = getKeyringServicesByType(state, type);
 
-	if ( ! siteId ) {
-		return services;
-	}
+    if (!siteId) {
+        return services;
+    }
 
-	return services.filter( ( service ) => {
-		// Omit if the site is Jetpack and service doesn't support Jetpack
-		if ( isJetpackSite( state, siteId ) && ! service.jetpack_support ) {
-			return false;
-		}
+    return services.filter(service => {
+        // Omit if the site is Jetpack and service doesn't support Jetpack
+        if (isJetpackSite(state, siteId) && !service.jetpack_support) {
+            return false;
+        }
 
-		// Omit if Jetpack module not activated
-		if ( isJetpackSite( state, siteId ) && service.jetpack_module_required &&
-			! isJetpackModuleActive( state, siteId, service.jetpack_module_required ) ) {
-			return false;
-		}
+        // Omit if Jetpack module not activated
+        if (
+            isJetpackSite(state, siteId) &&
+            service.jetpack_module_required &&
+            !isJetpackModuleActive(state, siteId, service.jetpack_module_required)
+        ) {
+            return false;
+        }
 
-		// Omit if service is settings-oriented and user cannot manage
-		if ( 'eventbrite' === service.ID && ! canCurrentUser( state, siteId, 'manage_options' ) ) {
-			return false;
-		}
+        // Omit if service is settings-oriented and user cannot manage
+        if ('eventbrite' === service.ID && !canCurrentUser(state, siteId, 'manage_options')) {
+            return false;
+        }
 
-		// Omit if Publicize service and user cannot publish
-		if ( 'publicize' === service.type && ! canCurrentUser( state, siteId, 'publish_posts' ) ) {
-			return false;
-		}
+        // Omit if Publicize service and user cannot publish
+        if ('publicize' === service.type && !canCurrentUser(state, siteId, 'publish_posts')) {
+            return false;
+        }
 
-		return true;
-	} );
+        return true;
+    });
 }
 
 /**
@@ -84,6 +87,6 @@ export function getEligibleKeyringServices( state, siteId, type ) {
  * @param  {Object}  state Global state tree
  * @return {Boolean}       Whether a request is in progress
  */
-export function isKeyringServicesFetching( state ) {
-	return state.sharing.services.isFetching;
+export function isKeyringServicesFetching(state) {
+    return state.sharing.services.isFetching;
 }

@@ -9,14 +9,14 @@ import React from 'react';
 import Card from 'components/card';
 import HappinessSupport from 'components/happiness-support';
 
-export default React.createClass( {
-	displayName: 'HappinessSupport',
+export default React.createClass({
+    displayName: 'HappinessSupport',
 
-	render() {
-		return (
-			<Card>
-				<HappinessSupport />
-			</Card>
-		);
-	}
-} );
+    render() {
+        return (
+            <Card>
+                <HappinessSupport />
+            </Card>
+        );
+    },
+});

@@ -4,6 +4,6 @@
  * @param  {Object}  state  Global state tree
  * @return {Array}          Reader Tags
  */
-export default function getReaderTags( state ) {
-	return state.reader.tags.items;
+export default function getReaderTags(state) {
+    return state.reader.tags.items;
 }

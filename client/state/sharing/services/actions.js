@@ -3,10 +3,10 @@
  */
 import wpcom from 'lib/wp';
 import {
-	KEYRING_SERVICES_RECEIVE,
-	KEYRING_SERVICES_REQUEST,
-	KEYRING_SERVICES_REQUEST_FAILURE,
-	KEYRING_SERVICES_REQUEST_SUCCESS,
+    KEYRING_SERVICES_RECEIVE,
+    KEYRING_SERVICES_REQUEST,
+    KEYRING_SERVICES_REQUEST_FAILURE,
+    KEYRING_SERVICES_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -15,24 +15,27 @@ import {
  * @return {Function} Action thunk
  */
 export function requestKeyringServices() {
-	return ( dispatch ) => {
-		dispatch( {
-			type: KEYRING_SERVICES_REQUEST,
-		} );
+    return dispatch => {
+        dispatch({
+            type: KEYRING_SERVICES_REQUEST,
+        });
 
-		return wpcom.undocumented().metaKeyring()
-			.then( ( response ) => {
-				dispatch( {
-					type: KEYRING_SERVICES_RECEIVE,
-					services: response.services,
-				} );
-				dispatch( {
-					type: KEYRING_SERVICES_REQUEST_SUCCESS,
-				} );
-			} )
-			.catch( ( error ) => dispatch( {
-				type: KEYRING_SERVICES_REQUEST_FAILURE,
-				error,
-			} ) );
-	};
+        return wpcom
+            .undocumented()
+            .metaKeyring()
+            .then(response => {
+                dispatch({
+                    type: KEYRING_SERVICES_RECEIVE,
+                    services: response.services,
+                });
+                dispatch({
+                    type: KEYRING_SERVICES_REQUEST_SUCCESS,
+                });
+            })
+            .catch(error =>
+                dispatch({
+                    type: KEYRING_SERVICES_REQUEST_FAILURE,
+                    error,
+                }));
+    };
 }

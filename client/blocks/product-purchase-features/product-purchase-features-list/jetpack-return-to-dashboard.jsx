@@ -10,17 +10,17 @@ import { get } from 'lodash';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
-export default localize( ( { selectedSite, translate } ) => {
-	const adminURL = get( selectedSite, 'options.admin_url', '' );
+export default localize(({ selectedSite, translate }) => {
+    const adminURL = get(selectedSite, 'options.admin_url', '');
 
-	return (
-		<div className="product-purchase-features-list__item">
-			<PurchaseDetail
-				icon="house"
-				title={ translate( 'Return to your site\'s dashboard' ) }
-				buttonText={ translate( 'Go back to %(site)s', { args: { site: selectedSite.name } } ) }
-				href={ adminURL }
-			/>
-		</div>
-	);
-} );
+    return (
+        <div className="product-purchase-features-list__item">
+            <PurchaseDetail
+                icon="house"
+                title={translate("Return to your site's dashboard")}
+                buttonText={translate('Go back to %(site)s', { args: { site: selectedSite.name } })}
+                href={adminURL}
+            />
+        </div>
+    );
+});

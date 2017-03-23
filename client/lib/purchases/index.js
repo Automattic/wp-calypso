@@ -9,14 +9,10 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	isDomainRegistration,
-	isPlan,
-	isTheme
-} from 'lib/products-values';
+import { isDomainRegistration, isPlan, isTheme } from 'lib/products-values';
 
-function getIncludedDomain( purchase ) {
-	return purchase.includedDomain;
+function getIncludedDomain(purchase) {
+    return purchase.includedDomain;
 }
 
 /**
@@ -26,54 +22,61 @@ function getIncludedDomain( purchase ) {
  * @param {array} sites An array of site objects
  * @return {array} An array of sites with purchases attached.
  */
-function getPurchasesBySite( purchases, sites ) {
-	return purchases.reduce( ( result, currentValue ) => {
-		const site = find( result, { id: currentValue.siteId } );
-		if ( site ) {
-			site.purchases = site.purchases.concat( currentValue );
-		} else {
-			const siteObject = find( sites, { ID: currentValue.siteId } );
+function getPurchasesBySite(purchases, sites) {
+    return purchases
+        .reduce(
+            (result, currentValue) => {
+                const site = find(result, { id: currentValue.siteId });
+                if (site) {
+                    site.purchases = site.purchases.concat(currentValue);
+                } else {
+                    const siteObject = find(sites, { ID: currentValue.siteId });
 
-			result = result.concat( {
-				id: currentValue.siteId,
-				name: currentValue.siteName,
-				/* if the purchase is attached to a deleted site,
+                    result = result.concat({
+                        id: currentValue.siteId,
+                        name: currentValue.siteName,
+                        /* if the purchase is attached to a deleted site,
 				 * there will be no site with this ID in `sites`, so
 				 * we fall back on the domain. */
-				slug: siteObject ? siteObject.slug : currentValue.domain,
-				isDomainOnly: siteObject ? siteObject.options.is_domain_only : false,
-				title: currentValue.siteName || currentValue.domain || '',
-				purchases: [ currentValue ],
-				domain: siteObject ? siteObject.domain : currentValue.domain
-			} );
-		}
+                        slug: siteObject ? siteObject.slug : currentValue.domain,
+                        isDomainOnly: siteObject ? siteObject.options.is_domain_only : false,
+                        title: currentValue.siteName || currentValue.domain || '',
+                        purchases: [currentValue],
+                        domain: siteObject ? siteObject.domain : currentValue.domain,
+                    });
+                }
 
-		return result;
-	}, [] ).sort( ( a, b ) => a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1 );
+                return result;
+            },
+            []
+        )
+        .sort((a, b) => a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1);
 }
 
-function getName( purchase ) {
-	if ( isDomainRegistration( purchase ) ) {
-		return purchase.meta;
-	}
+function getName(purchase) {
+    if (isDomainRegistration(purchase)) {
+        return purchase.meta;
+    }
 
-	return purchase.productName;
+    return purchase.productName;
 }
 
-function getSubscriptionEndDate( purchase ) {
-	return purchase.expiryMoment.format( 'LL' );
+function getSubscriptionEndDate(purchase) {
+    return purchase.expiryMoment.format('LL');
 }
 
-function hasIncludedDomain( purchase ) {
-	return Boolean( purchase.includedDomain );
+function hasIncludedDomain(purchase) {
+    return Boolean(purchase.includedDomain);
 }
 
-function hasPaymentMethod( purchase ) {
-	return isPaidWithPaypal( purchase ) || isPaidWithCreditCard( purchase ) || isPaidWithPayPalDirect( purchase );
+function hasPaymentMethod(purchase) {
+    return isPaidWithPaypal(purchase) ||
+        isPaidWithCreditCard(purchase) ||
+        isPaidWithPayPalDirect(purchase);
 }
 
-function hasPrivacyProtection( purchase ) {
-	return purchase.hasPrivacyProtection;
+function hasPrivacyProtection(purchase) {
+    return purchase.hasPrivacyProtection;
 }
 
 /**
@@ -85,57 +88,55 @@ function hasPrivacyProtection( purchase ) {
  * @param {Object} purchase - the purchase with which we are concerned
  * @return {boolean} whether the purchase is cancelable
  */
-function isCancelable( purchase ) {
-	if ( isIncludedWithPlan( purchase ) ) {
-		return false;
-	}
+function isCancelable(purchase) {
+    if (isIncludedWithPlan(purchase)) {
+        return false;
+    }
 
-	if ( isPendingTransfer( purchase ) ) {
-		return false;
-	}
+    if (isPendingTransfer(purchase)) {
+        return false;
+    }
 
-	if ( isExpired( purchase ) ) {
-		return false;
-	}
+    if (isExpired(purchase)) {
+        return false;
+    }
 
-	if ( isRefundable( purchase ) ) {
-		return true;
-	}
+    if (isRefundable(purchase)) {
+        return true;
+    }
 
-	return purchase.canDisableAutoRenew;
+    return purchase.canDisableAutoRenew;
 }
 
-function isExpired( purchase ) {
-	return 'expired' === purchase.expiryStatus;
+function isExpired(purchase) {
+    return 'expired' === purchase.expiryStatus;
 }
 
-function isExpiring( purchase ) {
-	return includes( [
-		'cardExpired',
-		'cardExpiring',
-		'manualRenew',
-		'expiring'
-	], purchase.expiryStatus );
+function isExpiring(purchase) {
+    return includes(
+        ['cardExpired', 'cardExpiring', 'manualRenew', 'expiring'],
+        purchase.expiryStatus
+    );
 }
 
-function isIncludedWithPlan( purchase ) {
-	return 'included' === purchase.expiryStatus;
+function isIncludedWithPlan(purchase) {
+    return 'included' === purchase.expiryStatus;
 }
 
-function isOneTimePurchase( purchase ) {
-	return 'oneTimePurchase' === purchase.expiryStatus;
+function isOneTimePurchase(purchase) {
+    return 'oneTimePurchase' === purchase.expiryStatus;
 }
 
-function isPaidWithPaypal( purchase ) {
-	return 'paypal' === purchase.payment.type;
+function isPaidWithPaypal(purchase) {
+    return 'paypal' === purchase.payment.type;
 }
 
-function isPendingTransfer( purchase ) {
-	return purchase.pendingTransfer;
+function isPendingTransfer(purchase) {
+    return purchase.pendingTransfer;
 }
 
-function isRedeemable( purchase ) {
-	return purchase.isRedeemable;
+function isRedeemable(purchase) {
+    return purchase.isRedeemable;
 }
 
 /**
@@ -147,8 +148,8 @@ function isRedeemable( purchase ) {
  * @param {Object} purchase - the purchase with which we are concerned
  * @return {boolean} if the purchase is refundable
  */
-function isRefundable( purchase ) {
-	return purchase.isRefundable;
+function isRefundable(purchase) {
+    return purchase.isRefundable;
 }
 
 /**
@@ -158,123 +159,122 @@ function isRefundable( purchase ) {
  * @param {Object} purchase - the purchase with which we are concerned
  * @return {boolean} true if the purchase can be removed, false otherwise
  */
-function isRemovable( purchase ) {
-	if ( isIncludedWithPlan( purchase ) ) {
-		return false;
-	}
+function isRemovable(purchase) {
+    if (isIncludedWithPlan(purchase)) {
+        return false;
+    }
 
-	return isExpiring( purchase ) || isExpired( purchase );
+    return isExpiring(purchase) || isExpired(purchase);
 }
 
-function isRenewable( purchase ) {
-	return purchase.isRenewable;
+function isRenewable(purchase) {
+    return purchase.isRenewable;
 }
 
-function isRenewal( purchase ) {
-	return purchase.isRenewal;
+function isRenewal(purchase) {
+    return purchase.isRenewal;
 }
 
-function isRenewing( purchase ) {
-	return includes( [ 'active', 'autoRenewing' ], purchase.expiryStatus );
+function isRenewing(purchase) {
+    return includes(['active', 'autoRenewing'], purchase.expiryStatus);
 }
 
-function isSubscription( purchase ) {
-	const nonSubscriptionFunctions = [
-		isDomainRegistration,
-		isOneTimePurchase
-	];
+function isSubscription(purchase) {
+    const nonSubscriptionFunctions = [isDomainRegistration, isOneTimePurchase];
 
-	return ! nonSubscriptionFunctions.some( fn => fn( purchase ) );
+    return !nonSubscriptionFunctions.some(fn => fn(purchase));
 }
 
-function isPaidWithCreditCard( purchase ) {
-	return 'credit_card' === purchase.payment.type && hasCreditCardData( purchase );
+function isPaidWithCreditCard(purchase) {
+    return 'credit_card' === purchase.payment.type && hasCreditCardData(purchase);
 }
 
-function isPaidWithPayPalDirect( purchase ) {
-	return 'paypal_direct' === purchase.payment.type && purchase.payment.expiryMoment;
+function isPaidWithPayPalDirect(purchase) {
+    return 'paypal_direct' === purchase.payment.type && purchase.payment.expiryMoment;
 }
 
-function hasCreditCardData( purchase ) {
-	return Boolean( purchase.payment.creditCard.expiryMoment );
+function hasCreditCardData(purchase) {
+    return Boolean(purchase.payment.creditCard.expiryMoment);
 }
 
-function creditCardExpiresBeforeSubscription( purchase ) {
-	return isPaidWithCreditCard( purchase ) && hasCreditCardData( purchase ) && purchase.payment.creditCard.expiryMoment.diff( purchase.expiryMoment, 'months' ) < 0;
+function creditCardExpiresBeforeSubscription(purchase) {
+    return isPaidWithCreditCard(purchase) &&
+        hasCreditCardData(purchase) &&
+        purchase.payment.creditCard.expiryMoment.diff(purchase.expiryMoment, 'months') < 0;
 }
 
-function monthsUntilCardExpires( purchase ) {
-	return purchase.payment.creditCard.expiryMoment.diff( moment(), 'months' );
+function monthsUntilCardExpires(purchase) {
+    return purchase.payment.creditCard.expiryMoment.diff(moment(), 'months');
 }
 
-function paymentLogoType( purchase ) {
-	if ( isPaidWithCreditCard( purchase ) ) {
-		return purchase.payment.creditCard.type;
-	}
+function paymentLogoType(purchase) {
+    if (isPaidWithCreditCard(purchase)) {
+        return purchase.payment.creditCard.type;
+    }
 
-	if ( isPaidWithPaypal( purchase ) ) {
-		return 'paypal';
-	}
+    if (isPaidWithPaypal(purchase)) {
+        return 'paypal';
+    }
 
-	if ( isPaidWithPayPalDirect( purchase ) ) {
-		return 'placeholder';
-	}
+    if (isPaidWithPayPalDirect(purchase)) {
+        return 'placeholder';
+    }
 
-	return null;
+    return null;
 }
 
-function purchaseType( purchase ) {
-	if ( isTheme( purchase ) ) {
-		return i18n.translate( 'Premium Theme' );
-	}
+function purchaseType(purchase) {
+    if (isTheme(purchase)) {
+        return i18n.translate('Premium Theme');
+    }
 
-	if ( isPlan( purchase ) ) {
-		return i18n.translate( 'Site Plan' );
-	}
+    if (isPlan(purchase)) {
+        return i18n.translate('Site Plan');
+    }
 
-	if ( isDomainRegistration( purchase ) ) {
-		return purchase.productName;
-	}
+    if (isDomainRegistration(purchase)) {
+        return purchase.productName;
+    }
 
-	if ( purchase.meta ) {
-		return purchase.meta;
-	}
+    if (purchase.meta) {
+        return purchase.meta;
+    }
 
-	return null;
+    return null;
 }
 
-function showCreditCardExpiringWarning( purchase ) {
-	return ! isIncludedWithPlan( purchase ) &&
-		isPaidWithCreditCard( purchase ) &&
-		creditCardExpiresBeforeSubscription( purchase ) &&
-		monthsUntilCardExpires( purchase ) < 3;
+function showCreditCardExpiringWarning(purchase) {
+    return !isIncludedWithPlan(purchase) &&
+        isPaidWithCreditCard(purchase) &&
+        creditCardExpiresBeforeSubscription(purchase) &&
+        monthsUntilCardExpires(purchase) < 3;
 }
 
 export {
-	creditCardExpiresBeforeSubscription,
-	getIncludedDomain,
-	getName,
-	getPurchasesBySite,
-	getSubscriptionEndDate,
-	hasIncludedDomain,
-	hasPaymentMethod,
-	hasPrivacyProtection,
-	isCancelable,
-	isPaidWithCreditCard,
-	isPaidWithPayPalDirect,
-	isPaidWithPaypal,
-	isExpired,
-	isExpiring,
-	isIncludedWithPlan,
-	isOneTimePurchase,
-	isRedeemable,
-	isRefundable,
-	isRemovable,
-	isRenewable,
-	isRenewal,
-	isRenewing,
-	isSubscription,
-	paymentLogoType,
-	purchaseType,
-	showCreditCardExpiringWarning,
+    creditCardExpiresBeforeSubscription,
+    getIncludedDomain,
+    getName,
+    getPurchasesBySite,
+    getSubscriptionEndDate,
+    hasIncludedDomain,
+    hasPaymentMethod,
+    hasPrivacyProtection,
+    isCancelable,
+    isPaidWithCreditCard,
+    isPaidWithPayPalDirect,
+    isPaidWithPaypal,
+    isExpired,
+    isExpiring,
+    isIncludedWithPlan,
+    isOneTimePurchase,
+    isRedeemable,
+    isRefundable,
+    isRemovable,
+    isRenewable,
+    isRenewal,
+    isRenewing,
+    isSubscription,
+    paymentLogoType,
+    purchaseType,
+    showCreditCardExpiringWarning,
 };

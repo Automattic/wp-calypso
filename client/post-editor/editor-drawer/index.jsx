@@ -48,319 +48,312 @@ import EditPostStatus from 'post-editor/edit-post-status';
  * @type {Object}
  */
 const POST_TYPE_SUPPORTS = {
-	post: {
-		thumbnail: true,
-		excerpt: true,
-		'post-formats': true,
-		'geo-location': true,
-		tags: true,
-		comments: true
-	},
-	page: {
-		thumbnail: true,
-		'page-attributes': true,
-		'geo-location': true,
-		excerpt: true,
-		comments: true
-	}
+    post: {
+        thumbnail: true,
+        excerpt: true,
+        'post-formats': true,
+        'geo-location': true,
+        tags: true,
+        comments: true,
+    },
+    page: {
+        thumbnail: true,
+        'page-attributes': true,
+        'geo-location': true,
+        excerpt: true,
+        comments: true,
+    },
 };
 
-const EditorDrawer = React.createClass( {
-	propTypes: {
-		site: React.PropTypes.object,
-		savedPost: React.PropTypes.object,
-		post: React.PropTypes.object,
-		canJetpackUseTaxonomies: React.PropTypes.bool,
-		typeObject: React.PropTypes.object,
-		isNew: React.PropTypes.bool,
-		type: React.PropTypes.string,
-		setPostDate: React.PropTypes.func,
-		onSave: React.PropTypes.func,
-	},
+const EditorDrawer = React.createClass({
+    propTypes: {
+        site: React.PropTypes.object,
+        savedPost: React.PropTypes.object,
+        post: React.PropTypes.object,
+        canJetpackUseTaxonomies: React.PropTypes.bool,
+        typeObject: React.PropTypes.object,
+        isNew: React.PropTypes.bool,
+        type: React.PropTypes.string,
+        setPostDate: React.PropTypes.func,
+        onSave: React.PropTypes.func,
+    },
 
-	onExcerptChange: function( event ) {
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.edit( { excerpt: event.target.value } );
-	},
+    onExcerptChange: function(event) {
+        // TODO: REDUX - remove flux actions when whole post-editor is reduxified
+        actions.edit({ excerpt: event.target.value });
+    },
 
-	currentPostTypeSupports: function( feature ) {
-		const { typeObject, type } = this.props;
+    currentPostTypeSupports: function(feature) {
+        const { typeObject, type } = this.props;
 
-		if ( typeObject && typeObject.supports ) {
-			return !! typeObject.supports[ feature ];
-		}
+        if (typeObject && typeObject.supports) {
+            return !!typeObject.supports[feature];
+        }
 
-		// Fall back to hard-coded settings if known for type
-		if ( POST_TYPE_SUPPORTS.hasOwnProperty( type ) ) {
-			return !! POST_TYPE_SUPPORTS[ type ][ feature ];
-		}
+        // Fall back to hard-coded settings if known for type
+        if (POST_TYPE_SUPPORTS.hasOwnProperty(type)) {
+            return !!POST_TYPE_SUPPORTS[type][feature];
+        }
 
-		// Default to true until post types are known
-		return true;
-	},
+        // Default to true until post types are known
+        return true;
+    },
 
-	recordExcerptChangeStats: function() {
-		recordStat( 'excerpt_changed' );
-		recordEvent( 'Changed Excerpt' );
-	},
+    recordExcerptChangeStats: function() {
+        recordStat('excerpt_changed');
+        recordEvent('Changed Excerpt');
+    },
 
-	renderTaxonomies: function() {
-		const { type, canJetpackUseTaxonomies } = this.props;
+    renderTaxonomies: function() {
+        const { type, canJetpackUseTaxonomies } = this.props;
 
-		// Compatibility: Allow Tags for pages when supported prior to launch
-		// of custom post types feature (#6934). [TODO]: Remove after launch.
-		const isCustomTypesEnabled = config.isEnabled( 'manage/custom-post-types' );
-		const typeSupportsTags = ! isCustomTypesEnabled && this.currentPostTypeSupports( 'tags' );
+        // Compatibility: Allow Tags for pages when supported prior to launch
+        // of custom post types feature (#6934). [TODO]: Remove after launch.
+        const isCustomTypesEnabled = config.isEnabled('manage/custom-post-types');
+        const typeSupportsTags = !isCustomTypesEnabled && this.currentPostTypeSupports('tags');
 
-		// Categories & Tags
-		let categories;
-		if ( 'post' === type || typeSupportsTags ) {
-			categories = (
-				<CategoriesTagsAccordion />
-			);
-		}
+        // Categories & Tags
+        let categories;
+        if ('post' === type || typeSupportsTags) {
+            categories = <CategoriesTagsAccordion />;
+        }
 
-		// Custom Taxonomies
-		let taxonomies;
-		if ( isCustomTypesEnabled && false !== canJetpackUseTaxonomies ) {
-			taxonomies = <EditorDrawerTaxonomies />;
-		}
+        // Custom Taxonomies
+        let taxonomies;
+        if (isCustomTypesEnabled && false !== canJetpackUseTaxonomies) {
+            taxonomies = <EditorDrawerTaxonomies />;
+        }
 
-		return createFragment( { categories, taxonomies } );
-	},
+        return createFragment({ categories, taxonomies });
+    },
 
-	renderPostFormats: function() {
-		if ( ! this.props.post || ! this.currentPostTypeSupports( 'post-formats' ) ) {
-			return;
-		}
+    renderPostFormats: function() {
+        if (!this.props.post || !this.currentPostTypeSupports('post-formats')) {
+            return;
+        }
 
-		return (
-			<AsyncLoad
-				require="post-editor/editor-post-formats/accordion"
-				post={ this.props.post }
-				className="editor-drawer__accordion"
-			/>
-		);
-	},
+        return (
+            <AsyncLoad
+                require="post-editor/editor-post-formats/accordion"
+                post={this.props.post}
+                className="editor-drawer__accordion"
+            />
+        );
+    },
 
-	renderSharing: function() {
-		return (
-			<AsyncLoad
-				require="post-editor/editor-sharing/accordion"
-				site={ this.props.site }
-				post={ this.props.post } />
-		);
-	},
+    renderSharing: function() {
+        return (
+            <AsyncLoad
+                require="post-editor/editor-sharing/accordion"
+                site={this.props.site}
+                post={this.props.post}
+            />
+        );
+    },
 
-	renderFeaturedImage: function() {
-		if ( ! this.currentPostTypeSupports( 'thumbnail' ) ) {
-			return;
-		}
+    renderFeaturedImage: function() {
+        if (!this.currentPostTypeSupports('thumbnail')) {
+            return;
+        }
 
-		return (
-			<AsyncLoad
-				require="./featured-image"
-				site={ this.props.site }
-				post={ this.props.post }
-			/>
-		);
-	},
+        return (
+            <AsyncLoad require="./featured-image" site={this.props.site} post={this.props.post} />
+        );
+    },
 
-	renderExcerpt: function() {
-		let excerpt;
+    renderExcerpt: function() {
+        let excerpt;
 
-		if ( ! this.currentPostTypeSupports( 'excerpt' ) ) {
-			return;
-		}
+        if (!this.currentPostTypeSupports('excerpt')) {
+            return;
+        }
 
-		if ( this.props.post ) {
-			excerpt = this.props.post.excerpt;
-		}
+        if (this.props.post) {
+            excerpt = this.props.post.excerpt;
+        }
 
-		return (
-			<AccordionSection>
-				<EditorDrawerLabel
-					labelText={ this.translate( 'Excerpt' ) }
-					helpText={ this.translate( 'Excerpts are optional hand-crafted summaries of your content.' ) }
-				>
-					<TrackInputChanges onNewValue={ this.recordExcerptChangeStats }>
-						<FormTextarea
-							id="excerpt"
-							name="excerpt"
-							onChange={ this.onExcerptChange }
-							value={ excerpt }
-							placeholder={ this.translate( 'Write an excerpt…' ) }
-							aria-label={ this.translate( 'Write an excerpt…' ) }
-						/>
-					</TrackInputChanges>
-				</EditorDrawerLabel>
-			</AccordionSection>
-		);
-	},
+        return (
+            <AccordionSection>
+                <EditorDrawerLabel
+                    labelText={this.translate('Excerpt')}
+                    helpText={this.translate(
+                        'Excerpts are optional hand-crafted summaries of your content.'
+                    )}
+                >
+                    <TrackInputChanges onNewValue={this.recordExcerptChangeStats}>
+                        <FormTextarea
+                            id="excerpt"
+                            name="excerpt"
+                            onChange={this.onExcerptChange}
+                            value={excerpt}
+                            placeholder={this.translate('Write an excerpt…')}
+                            aria-label={this.translate('Write an excerpt…')}
+                        />
+                    </TrackInputChanges>
+                </EditorDrawerLabel>
+            </AccordionSection>
+        );
+    },
 
-	renderLocation: function() {
-		if ( ! this.props.site || this.props.site.jetpack ) {
-			return;
-		}
+    renderLocation: function() {
+        if (!this.props.site || this.props.site.jetpack) {
+            return;
+        }
 
-		if ( ! this.currentPostTypeSupports( 'geo-location' ) ) {
-			return;
-		}
+        if (!this.currentPostTypeSupports('geo-location')) {
+            return;
+        }
 
-		return (
-			<AccordionSection>
-				<EditorDrawerLabel labelText={ this.translate( 'Location' ) } />
-				<AsyncLoad
-					require="post-editor/editor-location"
-					coordinates={ PostMetadata.geoCoordinates( this.props.post ) }
-				/>
-			</AccordionSection>
-		);
-	},
+        return (
+            <AccordionSection>
+                <EditorDrawerLabel labelText={this.translate('Location')} />
+                <AsyncLoad
+                    require="post-editor/editor-location"
+                    coordinates={PostMetadata.geoCoordinates(this.props.post)}
+                />
+            </AccordionSection>
+        );
+    },
 
-	renderDiscussion: function() {
-		if ( ! this.currentPostTypeSupports( 'comments' ) ) {
-			return;
-		}
+    renderDiscussion: function() {
+        if (!this.currentPostTypeSupports('comments')) {
+            return;
+        }
 
-		return (
-			<AccordionSection>
-				<AsyncLoad
-					require="post-editor/editor-discussion"
-					site={ this.props.site }
-					post={ this.props.post }
-					isNew={ this.props.isNew }
-				/>
-			</AccordionSection>
-		);
-	},
+        return (
+            <AccordionSection>
+                <AsyncLoad
+                    require="post-editor/editor-discussion"
+                    site={this.props.site}
+                    post={this.props.post}
+                    isNew={this.props.isNew}
+                />
+            </AccordionSection>
+        );
+    },
 
-	renderSeo: function() {
-		const { jetpackVersionSupportsSeo } = this.props;
+    renderSeo: function() {
+        const { jetpackVersionSupportsSeo } = this.props;
 
-		if ( ! this.props.site ) {
-			return;
-		}
+        if (!this.props.site) {
+            return;
+        }
 
-		if ( this.props.site.jetpack ) {
-			if ( ! this.props.site.isModuleActive( 'seo-tools' ) ||	! jetpackVersionSupportsSeo ) {
-				return;
-			}
-		}
+        if (this.props.site.jetpack) {
+            if (!this.props.site.isModuleActive('seo-tools') || !jetpackVersionSupportsSeo) {
+                return;
+            }
+        }
 
-		const { plan } = this.props.site;
-		const hasBusinessPlan = isBusiness( plan ) || isEnterprise( plan );
-		const { isPrivate } = this.props;
+        const { plan } = this.props.site;
+        const hasBusinessPlan = isBusiness(plan) || isEnterprise(plan);
+        const { isPrivate } = this.props;
 
-		if ( ! hasBusinessPlan || isPrivate ) {
-			return;
-		}
+        if (!hasBusinessPlan || isPrivate) {
+            return;
+        }
 
-		return (
-			<AsyncLoad
-				require="post-editor/editor-seo-accordion"
-				metaDescription={ PostMetadata.metaDescription( this.props.post ) }
-			/>
-		);
-	},
+        return (
+            <AsyncLoad
+                require="post-editor/editor-seo-accordion"
+                metaDescription={PostMetadata.metaDescription(this.props.post)}
+            />
+        );
+    },
 
-	renderCopyPost: function() {
-		const { type } = this.props;
-		if ( 'post' !== type && 'page' !== type ) {
-			return;
-		}
+    renderCopyPost: function() {
+        const { type } = this.props;
+        if ('post' !== type && 'page' !== type) {
+            return;
+        }
 
-		return <EditorMoreOptionsCopyPost type={ type } />;
-	},
+        return <EditorMoreOptionsCopyPost type={type} />;
+    },
 
-	renderMoreOptions: function() {
-		if (
-			! this.currentPostTypeSupports( 'excerpt' ) &&
-			! this.currentPostTypeSupports( 'geo-location' ) &&
-			! this.currentPostTypeSupports( 'comments' ) &&
-			! siteUtils.isPermalinkEditable( this.props.site )
-		) {
-			return;
-		}
+    renderMoreOptions: function() {
+        if (
+            !this.currentPostTypeSupports('excerpt') &&
+            !this.currentPostTypeSupports('geo-location') &&
+            !this.currentPostTypeSupports('comments') &&
+            !siteUtils.isPermalinkEditable(this.props.site)
+        ) {
+            return;
+        }
 
-		return (
-			<Accordion
-				title={ this.translate( 'More Options' ) }
-				className="editor-drawer__more-options"
-			>
-				{ siteUtils.isPermalinkEditable( this.props.site ) && <EditorMoreOptionsSlug /> }
-				{ this.renderExcerpt() }
-				{ this.renderLocation() }
-				{ this.renderDiscussion() }
-				{ this.renderCopyPost() }
-			</Accordion>
-		);
-	},
+        return (
+            <Accordion
+                title={this.translate('More Options')}
+                className="editor-drawer__more-options"
+            >
+                {siteUtils.isPermalinkEditable(this.props.site) && <EditorMoreOptionsSlug />}
+                {this.renderExcerpt()}
+                {this.renderLocation()}
+                {this.renderDiscussion()}
+                {this.renderCopyPost()}
+            </Accordion>
+        );
+    },
 
-	renderPageOptions() {
-		if ( ! this.currentPostTypeSupports( 'page-attributes' ) ) {
-			return;
-		}
+    renderPageOptions() {
+        if (!this.currentPostTypeSupports('page-attributes')) {
+            return;
+        }
 
-		return <EditorDrawerPageOptions />;
-	},
+        return <EditorDrawerPageOptions />;
+    },
 
-	renderStatus() {
-		// TODO: REDUX - remove this logic and prop for EditPostStatus when date is moved to redux
-		const postDate = this.props.post && this.props.post.date
-				? this.props.post.date
-				: null;
+    renderStatus() {
+        // TODO: REDUX - remove this logic and prop for EditPostStatus when date is moved to redux
+        const postDate = this.props.post && this.props.post.date ? this.props.post.date : null;
 
-		return (
-			<Accordion title={ this.translate( 'Status' ) }>
-				<EditPostStatus
-					savedPost={ this.props.savedPost }
-					postDate={ postDate }
-					type={ this.props.type }
-					onSave={ this.props.onSave }
-					onTrashingPost={ this.props.onTrashingPost }
-					onPrivatePublish={ this.props.onPrivatePublish }
-					setPostDate={ this.props.setPostDate }
-					site={ this.props.site }>
-				</EditPostStatus>
-			</Accordion>
-		);
-	},
+        return (
+            <Accordion title={this.translate('Status')}>
+                <EditPostStatus
+                    savedPost={this.props.savedPost}
+                    postDate={postDate}
+                    type={this.props.type}
+                    onSave={this.props.onSave}
+                    onTrashingPost={this.props.onTrashingPost}
+                    onPrivatePublish={this.props.onPrivatePublish}
+                    setPostDate={this.props.setPostDate}
+                    site={this.props.site}
+                />
+            </Accordion>
+        );
+    },
 
-	render: function() {
-		const { site } = this.props;
+    render: function() {
+        const { site } = this.props;
 
-		return (
-			<div className="editor-drawer">
-				{ site && (
-					<QueryPostTypes siteId={ site.ID } />
-				) }
-				{ this.renderStatus() }
-				{ this.renderTaxonomies() }
-				{ this.renderFeaturedImage() }
-				{ this.renderPageOptions() }
-				{ this.renderSharing() }
-				{ this.renderPostFormats() }
-				{ this.renderSeo() }
-				{ this.renderMoreOptions() }
-			</div>
-		);
-	}
-} );
+        return (
+            <div className="editor-drawer">
+                {site && <QueryPostTypes siteId={site.ID} />}
+                {this.renderStatus()}
+                {this.renderTaxonomies()}
+                {this.renderFeaturedImage()}
+                {this.renderPageOptions()}
+                {this.renderSharing()}
+                {this.renderPostFormats()}
+                {this.renderSeo()}
+                {this.renderMoreOptions()}
+            </div>
+        );
+    },
+});
 
 export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const type = getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
+    state => {
+        const siteId = getSelectedSiteId(state);
+        const type = getEditedPostValue(state, siteId, getEditorPostId(state), 'type');
 
-		return {
-			canJetpackUseTaxonomies: isJetpackMinimumVersion( state, siteId, '4.1' ),
-			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
-			typeObject: getPostType( state, siteId, type ),
-			isPrivate: isPrivateSite( state, siteId ),
-		};
-	},
-	null,
-	null,
-	{ pure: false }
-)( EditorDrawer );
+        return {
+            canJetpackUseTaxonomies: isJetpackMinimumVersion(state, siteId, '4.1'),
+            jetpackVersionSupportsSeo: isJetpackMinimumVersion(state, siteId, '4.4-beta1'),
+            typeObject: getPostType(state, siteId, type),
+            isPrivate: isPrivateSite(state, siteId),
+        };
+    },
+    null,
+    null,
+    { pure: false }
+)(EditorDrawer);

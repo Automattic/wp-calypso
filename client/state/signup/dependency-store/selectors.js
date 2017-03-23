@@ -3,6 +3,6 @@
  */
 import get from 'lodash/get';
 
-export function getSignupDependencyStore( state ) {
-	return get( state, 'signup.dependencyStore', {} );
+export function getSignupDependencyStore(state) {
+    return get(state, 'signup.dependencyStore', {});
 }

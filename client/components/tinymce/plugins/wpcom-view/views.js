@@ -19,25 +19,24 @@ import * as VideoView from './views/video';
  * Module variables
  */
 let views = {
-	gallery: GalleryView,
-	embed: new EmbedViewManager(),
-	contactForm: ContactFormView,
-	video: VideoView
+    gallery: GalleryView,
+    embed: new EmbedViewManager(),
+    contactForm: ContactFormView,
+    video: VideoView,
 };
 
-const components = mapValues( views, ( view ) => {
-	if ( 'function' === typeof view.getComponent ) {
-		return view.getComponent();
-	}
+const components = mapValues(views, view => {
+    if ('function' === typeof view.getComponent) {
+        return view.getComponent();
+    }
 
-	return view;
-} );
+    return view;
+});
 
-const emitters = values( views ).filter( ( view ) => view instanceof EventEmitter );
+const emitters = values(views).filter(view => view instanceof EventEmitter);
 
 export default {
-
-	/**
+    /**
 	 * Scans a given string for each view's pattern,
 	 * replacing any matches with markers,
 	 * and creates a new instance for every match.
@@ -46,68 +45,71 @@ export default {
 	 *
 	 * @return {String} The string with markers.
 	 */
-	setMarkers( content ) {
-		var pieces = [ { content: content } ],
-			current;
+    setMarkers(content) {
+        var pieces = [{ content: content }], current;
 
-		forEach( views, function( view, type ) {
-			current = pieces.slice();
-			pieces = [];
+        forEach(views, function(view, type) {
+            current = pieces.slice();
+            pieces = [];
 
-			forEach( current, function( piece ) {
-				var remaining = piece.content,
-					result;
+            forEach(current, function(piece) {
+                var remaining = piece.content, result;
 
-				// Ignore processed pieces, but retain their location.
-				if ( piece.processed ) {
-					pieces.push( piece );
-					return;
-				}
+                // Ignore processed pieces, but retain their location.
+                if (piece.processed) {
+                    pieces.push(piece);
+                    return;
+                }
 
-				// Iterate through the string progressively matching views
-				// and slicing the string as we go.
-				while ( remaining && ( result = view.match( remaining ) ) ) {
-					// Any text before the match becomes an unprocessed piece.
-					if ( result.index ) {
-						pieces.push( { content: remaining.substring( 0, result.index ) } );
-					}
+                // Iterate through the string progressively matching views
+                // and slicing the string as we go.
+                while (remaining && (result = view.match(remaining))) {
+                    // Any text before the match becomes an unprocessed piece.
+                    if (result.index) {
+                        pieces.push({ content: remaining.substring(0, result.index) });
+                    }
 
-					// Add the processed piece for the match.
-					pieces.push( {
-						content: '<p class="wpview-marker" data-wpview-text="' + view.serialize( result.content, result.options ) + '" data-wpview-type="' + type + '">.</p>',
-						processed: true
-					} );
+                    // Add the processed piece for the match.
+                    pieces.push({
+                        content: '<p class="wpview-marker" data-wpview-text="' +
+                            view.serialize(result.content, result.options) +
+                            '" data-wpview-type="' +
+                            type +
+                            '">.</p>',
+                        processed: true,
+                    });
 
-					// Update the remaining content.
-					remaining = remaining.slice( result.index + result.content.length );
-				}
+                    // Update the remaining content.
+                    remaining = remaining.slice(result.index + result.content.length);
+                }
 
-				// There are no additional matches.
-				// If any content remains, add it as an unprocessed piece.
-				if ( remaining ) {
-					pieces.push( { content: remaining } );
-				}
-			} );
-		} );
+                // There are no additional matches.
+                // If any content remains, add it as an unprocessed piece.
+                if (remaining) {
+                    pieces.push({ content: remaining });
+                }
+            });
+        });
 
-		content = map( pieces, 'content' ).join( '' );
-		return content.replace( /<p>\s*<p data-wpview-marker=/g, '<p data-wpview-marker=' ).replace( /<\/p>\s*<\/p>/g, '</p>' );
-	},
+        content = map(pieces, 'content').join('');
+        return content
+            .replace(/<p>\s*<p data-wpview-marker=/g, '<p data-wpview-marker=')
+            .replace(/<\/p>\s*<\/p>/g, '</p>');
+    },
 
-	isEditable( type ) {
-		return !! ( views[ type ] && views[ type ].edit );
-	},
+    isEditable(type) {
+        return !!(views[type] && views[type].edit);
+    },
 
-	edit( type, editor, content ) {
-		if ( ! this.isEditable( type ) ) {
-			return;
-		}
+    edit(type, editor, content) {
+        if (!this.isEditable(type)) {
+            return;
+        }
 
-		views[ type ].edit( editor, content );
-	},
+        views[type].edit(editor, content);
+    },
 
-	components: components,
+    components: components,
 
-	emitters: emitters
-
+    emitters: emitters,
 };
