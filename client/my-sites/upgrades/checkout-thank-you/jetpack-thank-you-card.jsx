@@ -9,6 +9,13 @@ import filter from 'lodash/filter';
 import range from 'lodash/range';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import {
+	map,
+	reduce,
+	get,
+	difference,
+	some
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -45,8 +52,50 @@ import {
 // Store for existing plugins
 import PluginsStore from 'lib/plugins/store';
 import ProgressBar from 'components/progress-bar';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
+import {
+	FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+	FEATURE_BACKUP_ARCHIVE_30,
+	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
+	FEATURE_AUTOMATED_RESTORES,
+	FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+	FEATURE_EASY_SITE_MIGRATION,
+	FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
+	FEATURE_ONE_CLICK_THREAT_RESOLUTION,
+	FEATURE_SPAM_AKISMET_PLUS,
+	FEATURE_POLLS_PRO,
+	FEATURES_LIST,
+	getPlanClass
+} from 'lib/plans/constants';
+import { getPlan } from 'lib/plans';
+
+const vpFeatures = {
+	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: true,
+	[ FEATURE_BACKUP_ARCHIVE_30 ]: true,
+	[ FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED ]: true,
+	[ FEATURE_AUTOMATED_RESTORES ]: true,
+	[ FEATURE_BACKUP_ARCHIVE_UNLIMITED ]: true,
+	[ FEATURE_EASY_SITE_MIGRATION ]: true,
+	[ FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND ]: true,
+	[ FEATURE_ONE_CLICK_THREAT_RESOLUTION ]: true
+};
+
+const akismetFeatures = {
+	[ FEATURE_SPAM_AKISMET_PLUS ]: true
+};
+
+const pdFeatures = {
+	[ FEATURE_POLLS_PRO ]: true
+};
 
 class JetpackThankYouCard extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
+			completedJetpackFeatures: []
+		};
+	}
+
 	trackConfigFinished( eventName, options = null ) {
 		if ( ! this.sentTracks ) {
 			analytics.tracks.recordEvent( eventName, options );
@@ -109,15 +158,27 @@ class JetpackThankYouCard extends Component {
 
 	componentDidUpdate() {
 		const site = this.props.selectedSite;
-		if ( site &&
-			site.jetpack &&
-			site.canUpdateFiles &&
-			site.canManage() &&
-			this.allPluginsHaveWporgData() &&
-			! this.props.isInstalling &&
-			this.props.nextPlugin
+		const { plugins } = this.props;
+
+		if ( ! site ||
+			! site.jetpack ||
+			! site.canUpdateFiles ||
+			! site.canManage() ||
+			! this.allPluginsHaveWporgData() ||
+			this.props.isInstalling
 		) {
+			return;
+		}
+
+		if ( this.props.nextPlugin ) {
 			this.startNextPlugin( this.props.nextPlugin );
+		} else if (
+			plugins &&
+			! this.shouldRenderPlaceholders() &&
+			! some( plugins, ( plugin ) => 'done' !== plugin.status ) &&
+			! Object.keys( this.state.completedJetpackFeatures ).length
+		) {
+			this.activateJetpackFeatures();
 		}
 	}
 
@@ -164,103 +225,68 @@ class JetpackThankYouCard extends Component {
 		getPluginFromStore();
 	}
 
-	renderPlugin( key = 0, plugin ) {
-		const classes = classNames( 'checkout-thank-you__jetpack-plugin', {
-			'is-placeholder': ! plugin
+	renderFeature( feature, key = 0 ) {
+		const description = feature
+			? get( FEATURES_LIST, [ feature.slug, 'getTitle' ], () => false )()
+			: 'Activating your Jetpack plan';
+
+		if ( false === description ) {
+			return null;
+		}
+
+		let icon = 'x';
+		if ( feature ) {
+			if ( feature.status ) {
+				icon = <Gridicon icon="checkmark" size={ 18 } />;
+			} else {
+				icon = <Spinner size={ 18 } />;
+			}
+		}
+
+		const classes = classNames( 'checkout-thank-you__jetpack-feature', {
+			'is-placeholder': ! feature
 		} );
 		return (
-			<div key={ key } className={ classes } >
-				<div className="checkout-thank-you__jetpack-plugin-status-icon">
-					<span>
-						{ plugin
-							? this.getStatusIcon( plugin )
-							: this.getStatusIcon( { status: 'placeholder' } )
-						}
-					</span>
-				</div>
-				<div className="checkout-thank-you__jetpack-plugin-status-text">
-					<span>
-						{ plugin
-							? this.getStatusText( plugin )
-							: this.getStatusText( {
-								slug: 'placeholder',
-								status: 'placeholder'
-							} )
-						}
-					</span>
-				</div>
-			</div>
+			<li key={ key } className={ classes }>
+				<span className="checkout-thank-you__jetpack-feature-status-icon">
+					{ icon }
+				</span>
+				<span className="checkout-thank-you__jetpack-feature-status-text">
+					{ description }
+				</span>
+			</li>
 		);
 	}
 
 	renderFeaturePlaceholders() {
-		const placeholderCount = !! this.props.whitelist ? 1 : 3;
+		const placeholderCount = !! this.props.whitelist ? 1 : 2;
 		return range( placeholderCount ).map( i => {
-			return this.renderPlugin( i );
+			return this.renderFeature( null, i );
 		} );
 	}
 
-	renderPlugins() {
-		const site = this.props.selectedSite;
-		let mappedPlugins;
-		if ( ! this.props.hasRequested || this.props.isRequesting || PluginsStore.isFetchingSite( site ) ) {
-			mappedPlugins = this.renderFeaturePlaceholders();
-		} else {
-			const plugins = this.addWporgDataToPlugins( this.props.plugins );
-			mappedPlugins = plugins.map( ( item ) => {
-				const plugin = Object.assign( {}, item, getPlugin( this.props.wporg, item.slug ) );
-				return this.renderPlugin( plugin.slug, plugin );
-			} );
-		}
-
-		return (
-			<div className="checkout-thank-you__jetpack-plugins">
-				{ mappedPlugins }
-			</div>
-		);
-	}
-
-	getStatusIcon( plugin ) {
-		switch ( plugin.status ) {
-			case 'done':
-				return <Gridicon icon="checkmark" size={ 18 } />;
-			case 'placeholder':
-				return 'x';
-			default:
-				return <Spinner size={ 18 } />;
-		}
-	}
-
-	getStatusText( plugin ) {
-		const { translate } = this.props;
-
-		if ( 'vaultpress' === plugin.slug ) {
-			switch ( plugin.status ) {
-				case 'done':
-					return translate( 'Backups and security active' );
-				default:
-					return translate( 'Activating backups and security' );
-			}
-		} else if ( 'akismet' === plugin.slug ) {
-			switch ( plugin.status ) {
-				case 'done':
-					return translate( 'Spam protection active' );
-				default:
-					return translate( 'Activating spam protection' );
-			}
-		}
-
-		switch ( plugin.status ) {
-			case 'done':
-				return translate( 'Successfully installed & configured.' );
-			default:
-				return translate( 'Installing and configuring' );
-		}
+	shouldRenderPlaceholders() {
+		return ! this.props.hasRequested || this.props.isRequesting;
 	}
 
 	isErrored() {
 		const { selectedSite } = this.props;
 		return selectedSite && ! selectedSite.canUpdateFiles;
+	}
+
+	renderFeatures() {
+		let mappedFeatures;
+		if ( this.shouldRenderPlaceholders() ) {
+			mappedFeatures = this.renderFeaturePlaceholders();
+		} else {
+			mappedFeatures = this.getFeaturesWithStatus().map( this.renderFeature );
+		}
+
+		return (
+			<ul className="checkout-thank-you__jetpack-features">
+				{ mappedFeatures }
+			</ul>
+		);
 	}
 
 	renderErrorNotice() {
@@ -305,42 +331,87 @@ class JetpackThankYouCard extends Component {
 		);
 	}
 
-	renderAction() {
-		const { plugins } = this.props;
-		if ( ! plugins || ! Array.isArray( plugins ) ) {
-			return null;
+	activateJetpackFeatures() {
+		const { planFeatures } = this.props;
+		if ( ! planFeatures ) {
+			return false;
 		}
 
-		const countSteps = plugins.length * 3;
-		const countCompletion = plugins.reduce( ( total, plugin ) => {
-			switch ( plugin.status ) {
-				case 'done':
-					total += 3;
-					break;
-				case 'activate':
-				case 'configure':
-					total += 2;
-					break;
-				case 'install':
-					total += 1;
-					break;
+		const jetpackFeatures = difference(
+			planFeatures,
+			Object.keys( vpFeatures ),
+			Object.keys( akismetFeatures ),
+			Object.keys( pdFeatures )
+		);
+
+		const completedJetpackFeatures = reduce( jetpackFeatures, ( completed, feature ) => {
+			completed[ feature ] = true;
+			return completed;
+		}, {} );
+
+		this.setState( {
+			completedJetpackFeatures
+		} );
+	}
+
+	getFeaturesWithStatus() {
+		const { planFeatures, plugins } = this.props;
+		const { completedJetpackFeatures } = this.state;
+		if ( ! planFeatures ) {
+			return false;
+		}
+
+		const completedPlugins = reduce( plugins, ( completed, plugin ) => {
+			if ( 'done' === plugin.status ) {
+				completed[ plugin.slug ] = true;
 			}
 
-			return total;
-		}, 0 );
+			return completed;
+		}, {} );
 
-		if ( countSteps === countCompletion ) {
+		return map( planFeatures, ( feature ) => {
+			let status = false;
+			if (
+				vpFeatures.hasOwnProperty( feature ) && completedPlugins.hasOwnProperty( 'vaultpress' ) ||
+				akismetFeatures.hasOwnProperty( feature ) && completedPlugins.hasOwnProperty( 'akismet' ) ||
+				pdFeatures.hasOwnProperty( feature ) && completedPlugins.hasOwnProperty( 'polldaddy' ) ||
+				completedJetpackFeatures.hasOwnProperty( feature )
+			) {
+				status = true;
+			}
+
+			return {
+				slug: feature,
+				status
+			};
+		} );
+	}
+
+	renderAction() {
+		const features = this.getFeaturesWithStatus() || [ '' ];
+		const completed = this.shouldRenderPlaceholders()
+			? 0
+			: reduce( features, ( total, feature ) => {
+				if ( 'object' !== typeof feature || ! feature.hasOwnProperty( 'status' ) || ! feature.status ) {
+					return total;
+				}
+
+				return total += 1;
+			}, 0 );
+
+		if ( completed === features.length ) {
 			return null;
 		}
 
 		return (
-			<ProgressBar value={ countCompletion } total={ countSteps } isPulsing />
+			<ProgressBar value={ completed } total={ features.length } isPulsing />
 		);
 	}
 
 	render() {
 		const site = this.props.selectedSite;
 		const turnOnManage = site && ! site.canManage();
+
 		if ( ! site && this.props.isRequestingSites ) {
 			return (
 				<div className="checkout-thank-you__jetpack">
@@ -350,14 +421,14 @@ class JetpackThankYouCard extends Component {
 		}
 
 		return (
-			<div className="checkout-thank-you__jetpack">
+			<div className={ classNames( 'checkout-thank-you__jetpack', this.props.planClass ) }>
 				<QueryPluginKeys siteId={ site.ID } />
 				{ this.renderErrorNotice() }
 				{ turnOnManage && this.renderManageNotice() }
 				<PlanThankYouCard siteId={ site.ID } action={ this.renderAction() } />
 				{ turnOnManage
-					? <FeatureExample>{ this.renderPlugins() }</FeatureExample>
-					: this.renderPlugins()
+					? <FeatureExample>{ this.renderFeatures() }</FeatureExample>
+					: this.renderFeatures()
 				}
 			</div>
 		);
@@ -369,6 +440,16 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const site = getSelectedSite( state );
 		const whitelist = ownProps.whitelist || false;
+		let plan = getCurrentPlan( state, siteId );
+		const planClass = plan && plan.productSlug
+			? getPlanClass( plan.productSlug )
+			: '';
+		if ( plan ) {
+			plan = getPlan( plan.productSlug );
+		}
+		const planFeatures = plan && plan.getFeatures
+			? plan.getFeatures()
+			: false;
 
 		// We need to pass the raw redux site to JetpackSite() in order to properly build the site.
 		const selectedSite = site && isJetpackSite( state, siteId )
@@ -386,7 +467,9 @@ export default connect(
 			nextPlugin: getNextPlugin( state, siteId, whitelist ),
 			selectedSite: selectedSite,
 			isRequestingSites: isRequestingSites( state ),
-			siteId
+			siteId,
+			planFeatures,
+			planClass
 		};
 	},
 	dispatch => bindActionCreators( { requestSites, fetchPluginData, installPlugin }, dispatch )
