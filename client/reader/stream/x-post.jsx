@@ -8,12 +8,15 @@ import url from 'url';
 import { localize } from 'i18n-calypso';
 import closest from 'component-closest';
 import { get } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
 import Card from 'components/card';
 import ReaderAvatar from 'blocks/reader-avatar';
+import { getSite } from 'state/reader/sites/selectors';
+import { getFeed } from 'state/reader/feeds/selectors';
 
 class CrossPost extends PureComponent {
 
@@ -26,6 +29,7 @@ class CrossPost extends PureComponent {
 		translate: React.PropTypes.func.isRequired,
 		postKey: React.PropTypes.object,
 		site: React.PropTypes.object,
+		feed: React.PropTypes.object,
 	}
 
 	handleTitleClick = ( event ) => {
@@ -130,9 +134,10 @@ class CrossPost extends PureComponent {
 	}
 
 	render() {
-		const post = this.props.post;
-		const siteId = this.props.postKey.blogId;
-		const siteIcon = get( this.props.site, 'icon.img' );
+		const { post, postKey, site, feed } = this.props;
+		const siteId = postKey.blogId;
+		const siteIcon = get( site, 'icon.img' );
+		const feedIcon = get( feed, 'image' );
 
 		const articleClasses = classnames( {
 				reader__card: true,
@@ -149,6 +154,7 @@ class CrossPost extends PureComponent {
 			<Card tagName="article" onClick={ this.handleCardClick } className={ articleClasses }>
 				<ReaderAvatar
 					siteIcon={ siteIcon }
+					feedIcon={ feedIcon }
 					author={ post.author }
 					onClick={ this.handleTitleClick }
 					sizeIconSize={ 24 }
@@ -167,4 +173,20 @@ class CrossPost extends PureComponent {
 	}
 }
 
-export default localize( CrossPost );
+export default connect(
+	( state, ownProps ) => {
+		const { feedId, blogId } = ownProps.postKey;
+		let feed, site;
+		if ( feedId ) {
+			feed = getFeed( state, feedId );
+			site = feed && feed.blog_ID ? getSite( state, feed.blog_ID ) : undefined;
+		} else {
+			site = getSite( state, blogId );
+			feed = site && site.feed_ID ? getFeed( state, site.feed_ID ) : undefined;
+		}
+		return {
+			feed,
+			site
+		};
+	}
+)( localize( CrossPost ) );
