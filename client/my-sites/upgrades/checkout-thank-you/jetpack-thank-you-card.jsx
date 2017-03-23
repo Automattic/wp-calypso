@@ -226,25 +226,26 @@ class JetpackThankYouCard extends Component {
 	}
 
 	renderFeature( feature, key = 0 ) {
-		const classes = classNames( 'checkout-thank-you__jetpack-feature', {
-			'is-placeholder': ! feature
-		} );
-
 		const description = feature
 			? get( FEATURES_LIST, [ feature.slug, 'getTitle' ], () => false )()
 			: 'Activating your Jetpack plan';
-
-		let icon = 'x';
-		if ( feature && feature.status ) {
-			icon = <Gridicon icon="checkmark" size={ 18 } />;
-		} else if ( feature ) {
-			icon = <Spinner size={ 18 } />;
-		}
 
 		if ( false === description ) {
 			return null;
 		}
 
+		let icon = 'x';
+		if ( feature ) {
+			if ( feature.status ) {
+				icon = <Gridicon icon="checkmark" size={ 18 } />;
+			} else {
+				icon = <Spinner size={ 18 } />;
+			}
+		}
+
+		const classes = classNames( 'checkout-thank-you__jetpack-feature', {
+			'is-placeholder': ! feature
+		} );
 		return (
 			<li key={ key } className={ classes }>
 				<span className="checkout-thank-you__jetpack-feature-status-icon">
