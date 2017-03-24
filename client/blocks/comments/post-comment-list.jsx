@@ -37,7 +37,7 @@ class PostCommentList extends React.Component {
 		this.state = {
 			activeReplyCommentID: null,
 			amountOfCommentsToTake: props.initialSize,
-			commentsFilter: 'all'
+			commentsFilter: 'all',
 			activeEditCommentId: null,
 		};
 
@@ -252,19 +252,19 @@ class PostCommentList extends React.Component {
 						</SegmentedControlItem>
 						<SegmentedControlItem
 							selected={ commentsFilter === 'approved' }
-							onClick={ this.handleFilterClick( 'approved' ) }>{ translate( 'Approved', { context: 'comment status'} ) }
+							onClick={ this.handleFilterClick( 'approved' ) }>{ translate( 'Approved', { context: 'comment status' } ) }
 						</SegmentedControlItem>
 						<SegmentedControlItem
 							selected={ commentsFilter === 'unapproved' }
-							onClick={ this.handleFilterClick( 'unapproved' ) }>{ translate( 'Pending', { context: 'comment status'} ) }
+							onClick={ this.handleFilterClick( 'unapproved' ) }>{ translate( 'Pending', { context: 'comment status' } ) }
 						</SegmentedControlItem>
 						<SegmentedControlItem
 							selected={ commentsFilter === 'spam' }
-							onClick={ this.handleFilterClick( 'spam' ) }>{ translate( 'Spam', { context: 'comment status'} ) }
+							onClick={ this.handleFilterClick( 'spam' ) }>{ translate( 'Spam', { context: 'comment status' } ) }
 						</SegmentedControlItem>
 						<SegmentedControlItem
 							selected={ commentsFilter === 'trash' }
-							onClick={ this.handleFilterClick( 'trash' ) }>{ translate( 'Trash', { context: 'comment status'} ) }
+							onClick={ this.handleFilterClick( 'trash' ) }>{ translate( 'Trash', { context: 'comment status' } ) }
 						</SegmentedControlItem>
 					</SegmentedControl>
 				}
