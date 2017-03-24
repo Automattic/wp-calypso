@@ -84,6 +84,9 @@ export const FEATURE_ONE_CLICK_THREAT_RESOLUTION = 'one-click-threat-resolution'
 export const FEATURE_POLLS_PRO = 'polls-pro';
 export const FEATURE_CORE_JETPACK = 'core-jetpack';
 export const FEATURE_BASIC_SUPPORT_JETPACK = 'basic-support-jetpack';
+export const FEATURE_SPEED_JETPACK = 'speed-jetpack';
+export const FEATURE_SPEED_ADVANCED_JETPACK = 'speed-advanced-jetpack';
+export const FEATURE_SPEED_UNLIMITED_JETPACK = 'speed-unlimited_jetpack';
 export const FEATURE_BASIC_SECURITY_JETPACK = 'basic-security-jetpack';
 export const FEATURE_SITE_BACKUPS_JETPACK = 'site-backups-jetpack';
 export const FEATURE_SECURITY_SCANNING_JETPACK = 'security-scanning-jetpack';
@@ -91,7 +94,8 @@ export const FEATURE_REVENUE_GENERATION_JETPACK = 'revenue-generation-jetpack';
 export const FEATURE_VIDEO_HOSTING_JETPACK = 'vidoe-hosting-jetpack';
 export const FEATURE_SECURITY_ESSENTIALS_JETPACK = 'security-essentials-jetpack';
 export const FEATURE_PRIORITY_SUPPORT_JETPACK = 'priority-support-jetpack';
-export const FEATURE_SEO_TOOLS_JETPACK = 'seo-tools-jetpack';
+export const FEATURE_TRAFFIC_TOOLS_JETPACK = 'seo-tools-jetpack';
+export const FEATURE_ADVANCED_TRAFFIC_TOOLS_JETPACK = 'seo-tools-jetpack';
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
 export const PLANS_LIST = {
@@ -233,7 +237,8 @@ export const PLANS_LIST = {
 		? [
 			FEATURE_CORE_JETPACK,
 			FEATURE_BASIC_SECURITY_JETPACK,
-			FEATURE_BASIC_SUPPORT_JETPACK ]
+			FEATURE_BASIC_SUPPORT_JETPACK,
+			FEATURE_SPEED_JETPACK ]
 		: [
 			FEATURE_STANDARD_SECURITY_TOOLS,
 			FEATURE_SITE_STATS,
@@ -255,16 +260,16 @@ export const PLANS_LIST = {
 				'Improve security with daily backups, malware scanning, and spam defense.'
 			)
 			: i18n.translate(
-				'Generate income and save on hosting costs.'
+				'Earn income and reduce costs.'
 		),
 		getFeatures: ( abtest ) => abtest && abtest( 'jetpackNewDescriptions' ) === 'showNew'
 		? [
 			FEATURE_CORE_JETPACK,
-			FEATURE_SITE_BACKUPS_JETPACK,
 			FEATURE_SECURITY_SCANNING_JETPACK,
+			FEATURE_PRIORITY_SUPPORT_JETPACK,
+			FEATURE_SPEED_ADVANCED_JETPACK,
 			FEATURE_REVENUE_GENERATION_JETPACK,
-			FEATURE_VIDEO_HOSTING_JETPACK,
-			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			FEATURE_TRAFFIC_TOOLS_JETPACK
 		]
 		: [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -294,16 +299,16 @@ export const PLANS_LIST = {
 				'Improve security with daily backups, malware scanning, and spam defense.'
 			)
 			: i18n.translate(
-				'Generate income and save on hosting costs.'
+				'Earn income and reduce costs.'
 		),
 		getFeatures: ( abtest ) => abtest && abtest( 'jetpackNewDescriptions' ) === 'showNew'
 		? [
 			FEATURE_CORE_JETPACK,
-			FEATURE_SITE_BACKUPS_JETPACK,
 			FEATURE_SECURITY_SCANNING_JETPACK,
+			FEATURE_PRIORITY_SUPPORT_JETPACK,
+			FEATURE_SPEED_ADVANCED_JETPACK,
 			FEATURE_REVENUE_GENERATION_JETPACK,
-			FEATURE_VIDEO_HOSTING_JETPACK,
-			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			FEATURE_TRAFFIC_TOOLS_JETPACK
 		] : [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
@@ -336,7 +341,8 @@ export const PLANS_LIST = {
 			? [
 				FEATURE_CORE_JETPACK,
 				FEATURE_SECURITY_ESSENTIALS_JETPACK,
-				FEATURE_PRIORITY_SUPPORT_JETPACK
+				FEATURE_PRIORITY_SUPPORT_JETPACK,
+				FEATURE_SPEED_JETPACK
 			]
 			: [
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -366,7 +372,8 @@ export const PLANS_LIST = {
 			? [
 				FEATURE_CORE_JETPACK,
 				FEATURE_SECURITY_ESSENTIALS_JETPACK,
-				FEATURE_PRIORITY_SUPPORT_JETPACK
+				FEATURE_PRIORITY_SUPPORT_JETPACK,
+				FEATURE_SPEED_JETPACK
 			]
 			: [
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -400,11 +407,11 @@ export const PLANS_LIST = {
 		getFeatures: ( abtest ) => abtest && abtest( 'jetpackNewDescriptions' ) === 'showNew'
 			? [
 				FEATURE_CORE_JETPACK,
-				FEATURE_SITE_BACKUPS_JETPACK,
 				FEATURE_SECURITY_SCANNING_JETPACK,
+				FEATURE_PRIORITY_SUPPORT_JETPACK,
+				FEATURE_SPEED_UNLIMITED_JETPACK,
 				FEATURE_REVENUE_GENERATION_JETPACK,
-				FEATURE_VIDEO_HOSTING_JETPACK,
-				FEATURE_SEO_TOOLS_JETPACK
+				FEATURE_ADVANCED_TRAFFIC_TOOLS_JETPACK
 			]
 			: compact( [
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -445,11 +452,11 @@ export const PLANS_LIST = {
 		getFeatures: ( abtest ) => abtest && abtest( 'jetpackNewDescriptions' ) === 'showNew'
 			? [
 				FEATURE_CORE_JETPACK,
-				FEATURE_SITE_BACKUPS_JETPACK,
 				FEATURE_SECURITY_SCANNING_JETPACK,
+				FEATURE_PRIORITY_SUPPORT_JETPACK,
+				FEATURE_SPEED_UNLIMITED_JETPACK,
 				FEATURE_REVENUE_GENERATION_JETPACK,
-				FEATURE_VIDEO_HOSTING_JETPACK,
-				FEATURE_SEO_TOOLS_JETPACK
+				FEATURE_ADVANCED_TRAFFIC_TOOLS_JETPACK
 			]
 			: compact( [
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -840,7 +847,7 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_CORE_JETPACK,
 		getTitle: () => i18n.translate( 'Core Jetpack Services' ),
 		getDescription: () => i18n.translate(
-			'Stats, customization, and promotion tools'
+			'Stats, themes, and promotion tools.'
 		),
 		hideInfoPopover: true
 	},
@@ -852,11 +859,39 @@ export const FEATURES_LIST = {
 		),
 		hideInfoPopover: true
 	},
+
 	[ FEATURE_BASIC_SUPPORT_JETPACK ]: {
 		getSlug: () => FEATURE_BASIC_SUPPORT_JETPACK,
 		getTitle: () => i18n.translate( 'Basic Support' ),
 		getDescription: () => i18n.translate(
-			'Standard support for all Jetpack free features.'
+			'Free support to help you make the most of Jetpack.'
+		),
+		hideInfoPopover: true
+	},
+
+	[ FEATURE_SPEED_JETPACK ]: {
+		getSlug: () => FEATURE_SPEED_JETPACK,
+		getTitle: () => i18n.translate( 'Speed and Storage' ),
+		getDescription: () => i18n.translate(
+			'Unlimited use of our high speed image content delivery network.'
+		),
+		hideInfoPopover: true
+	},
+
+	[ FEATURE_SPEED_ADVANCED_JETPACK ]: {
+		getSlug: () => FEATURE_SPEED_ADVANCED_JETPACK,
+		getTitle: () => i18n.translate( 'Speed and Storage' ),
+		getDescription: () => i18n.translate(
+			'Also includes 13Gb of high-speed, ad-free video hosting.'
+		),
+		hideInfoPopover: true
+	},
+
+	[ FEATURE_SPEED_UNLIMITED_JETPACK ]: {
+		getSlug: () => FEATURE_SPEED_UNLIMITED_JETPACK,
+		getTitle: () => i18n.translate( 'Speed and Storage' ),
+		getDescription: () => i18n.translate(
+			'Also includes unlimited, high-speed, ad-free video hosting.'
 		),
 		hideInfoPopover: true
 	},
@@ -869,22 +904,25 @@ export const FEATURES_LIST = {
 		),
 		hideInfoPopover: true
 	},
+
 	[ FEATURE_SECURITY_SCANNING_JETPACK ]: {
 		getSlug: () => FEATURE_SECURITY_SCANNING_JETPACK,
-		getTitle: () => i18n.translate( 'Security Scanning' ),
+		getTitle: () => i18n.translate( 'Advanced Security' ),
 		getDescription: () => i18n.translate(
-			'Daily scans for malware and threats with manual resolution.'
+			'Also includes daily scans for malware and security threats.'
 		),
 		hideInfoPopover: true
 	},
+
 	[ FEATURE_REVENUE_GENERATION_JETPACK ]: {
 		getSlug: () => FEATURE_REVENUE_GENERATION_JETPACK,
 		getTitle: () => i18n.translate( 'Revenue Generation' ),
 		getDescription: () => i18n.translate(
-			'Display high-quality ads to generate income directly from your site.'
+			'High quality ads to generate income from your site.'
 		),
 		hideInfoPopover: true
 	},
+
 	[ FEATURE_VIDEO_HOSTING_JETPACK ]: {
 		getSlug: () => FEATURE_VIDEO_HOSTING_JETPACK,
 		getTitle: () => i18n.translate( 'Video Hosting' ),
@@ -893,30 +931,41 @@ export const FEATURES_LIST = {
 		),
 		hideInfoPopover: true
 	},
+
 	[ FEATURE_SECURITY_ESSENTIALS_JETPACK ]: {
 		getSlug: () => FEATURE_SECURITY_ESSENTIALS_JETPACK,
-		getTitle: () => i18n.translate( 'Security Essentials' ),
+		getTitle: () => i18n.translate( 'Essential Security' ),
 		getDescription: () => i18n.translate(
-			'Daily backups, unlimited storage, one-click restores, and spam filtering.'
+			'Daily backups, unlimited storage, one-click restores, spam filtering.'
 		),
 		hideInfoPopover: true
 	},
+
 	[ FEATURE_PRIORITY_SUPPORT_JETPACK ]: {
 		getSlug: () => FEATURE_PRIORITY_SUPPORT_JETPACK,
 		getTitle: () => i18n.translate( 'Priority Support' ),
 		getDescription: () => i18n.translate(
-			'Fast, dedicated support from our WordPress security experts.'
+			'Faster response times from our security experts.'
 		),
 		hideInfoPopover: true
 	},
-	[ FEATURE_SEO_TOOLS_JETPACK ]: {
-		getSlug: () => FEATURE_SEO_TOOLS_JETPACK,
-		getTitle: () => i18n.translate( 'SEO Tools' ),
+	[ FEATURE_TRAFFIC_TOOLS_JETPACK ]: {
+		getSlug: () => FEATURE_TRAFFIC_TOOLS_JETPACK,
+		getTitle: () => i18n.translate( 'Advanced Traffic Tools' ),
 		getDescription: () => i18n.translate(
-			'Preview and optimize site content for better search engine results.'
+			'Automatically re-promote existing content to social media.'
 		),
 		hideInfoPopover: true
 	},
+
+	[ FEATURE_ADVANCED_TRAFFIC_TOOLS_JETPACK ]: {
+		getSlug: () => FEATURE_ADVANCED_TRAFFIC_TOOLS_JETPACK,
+		getTitle: () => i18n.translate( 'Advanced Traffic Tools' ),
+		getDescription: () => i18n.translate(
+			'Also includes SEO previews and Google Analytics.'
+		),
+		hideInfoPopover: true
+	}
 };
 
 export const getPlanObject = planName => {
