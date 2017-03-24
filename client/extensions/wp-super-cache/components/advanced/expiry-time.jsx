@@ -103,6 +103,7 @@ const ExpiryTime = ( { fields, handleChange, handleRadio, handleSelect, handleTo
 
 				<FormSelect
 					id="cache_schedule_interval"
+					disabled={ 'time' !== fields.cache_schedule_type }
 					name="cache_schedule_interval"
 					onChange={ handleSelect }
 					value={ fields.cache_schedule_interval || 'five_minutes_interval' }>
@@ -125,16 +126,14 @@ const ExpiryTime = ( { fields, handleChange, handleRadio, handleSelect, handleTo
 					{ translate( 'Notification Emails' ) }
 				</FormLabel>
 
-				<FormLabel>
-					<FormToggle
-						checked={ !! fields.cache_gc_email_me }
-						id="cache_gc_email_me"
-						onChange={ handleToggle( 'cache_gc_email_me' ) }>
-						<span>
-							{ translate( 'Email me when the garbage collection runs.' ) }
-						</span>
-					</FormToggle>
-				</FormLabel>
+				<FormToggle
+					checked={ !! fields.cache_gc_email_me }
+					id="cache_gc_email_me"
+					onChange={ handleToggle( 'cache_gc_email_me' ) }>
+					<span>
+						{ translate( 'Email me when the garbage collection runs.' ) }
+					</span>
+				</FormToggle>
 			</FormFieldset>
 		);
 	};
@@ -152,7 +151,25 @@ const ExpiryTime = ( { fields, handleChange, handleRadio, handleSelect, handleTo
 			<Card>
 				<p>
 					{ translate( 'UTC time is ' ) + moment().utc().format( 'YYYY-MM-DD h:mm:ss' ) }
+					<br />
+					{ translate( 'Local time is ' ) + moment().format( 'YYYY-MM-DD h:mm:ss' ) }
 				</p>
+				{ fields.wp_cache_next_gc &&
+					<p>
+						{ translate( 'Next scheduled garbage collection will be at ' ) + fields.wp_cache_next_gc }
+					</p>
+				}
+				{ fields.wp_cache_preload_on &&
+					<p>
+						{ translate(
+							'Warning! {{strong}}PRELOAD MODE{{/strong}} activated. Supercache files will not be ' +
+							'deleted regardless of age.',
+							{
+								components: { strong: <strong /> }
+							}
+						) }
+					</p>
+				}
 				<form>
 					{ renderCacheTimeout() }
 					{ renderScheduler() }
@@ -172,6 +189,8 @@ const getFormSettings = settings => {
 		'cache_schedule_type',
 		'cache_scheduled_time',
 		'cache_time_interval',
+		'wp_cache_next_gc',
+		'wp_cache_preload_on',
 	] );
 };
 

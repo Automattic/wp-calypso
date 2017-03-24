@@ -114,6 +114,8 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 					'mwbp, nec-, newt, noki, palm, pana, pant, phil, play, port, prox, qwap, sage, sams, sany, ' +
 					'sch-, sec-, send, seri, sgh-, shar, sie-, siem, smal, smar, sony, sph-, symb, t-mo, teli, ' +
 					'tim-, tosh, tsm-, upg1, upsi, vk-v, voda, wap-, wapa, wapi, wapp, wapr, webc, winw, winw, xda , xda-',
+				wp_cache_next_gc: '2017-03-23 17:45:16 UTC',
+				wp_cache_preload_on: true,
 				wp_cache_readonly: false,
 				wp_cache_writable: false,
 				wp_cache_path: '/wordpress/',
