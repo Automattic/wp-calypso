@@ -19,7 +19,7 @@ import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import { getName, getSubscriptionEndDate, isOneTimePurchase, isRefundable, isSubscription } from 'lib/purchases';
 import { enrichedSurveyData } from '../utils';
-import { isDomainRegistration } from 'lib/products-values';
+import { isDomainRegistration, isJetpackPlan } from 'lib/products-values';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
 import { refreshSitePlans } from 'state/sites/plans/actions';
@@ -100,34 +100,34 @@ class CancelPurchaseButton extends Component {
 	}
 
 	renderCancelConfirmationDialog = () => {
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
 		const buttons = {
-				close: {
-					action: 'close',
-					label: translate( "No, I'll Keep It" )
-				},
-				next: {
-					action: 'next',
-					disabled: this.state.isRemoving || this.isSurveyIncomplete(),
-					label: translate( 'Next' ),
-					onClick: this.changeSurveyStep
-				},
-				prev: {
-					action: 'prev',
-					disabled: this.state.isRemoving,
-					label: translate( 'Previous Step' ),
-					onClick: this.changeSurveyStep
-				},
-				cancel: {
-					action: 'cancel',
-					label: translate( 'Yes, Cancel Now' ),
-					isPrimary: true,
-					disabled: this.state.submitting,
-					onClick: this.submitCancelAndRefundPurchase
-				}
+			close: {
+				action: 'close',
+				label: translate( "No, I'll Keep It" )
 			},
-			purchaseName = getName( this.props.purchase ),
-			inStepOne = this.state.surveyStep === 1;
+			next: {
+				action: 'next',
+				disabled: this.state.isRemoving || this.isSurveyIncomplete(),
+				label: translate( 'Next' ),
+				onClick: this.changeSurveyStep
+			},
+			prev: {
+				action: 'prev',
+				disabled: this.state.isRemoving,
+				label: translate( 'Previous Step' ),
+				onClick: this.changeSurveyStep
+			},
+			cancel: {
+				action: 'cancel',
+				label: translate( 'Yes, Cancel Now' ),
+				isPrimary: true,
+				disabled: this.state.submitting,
+				onClick: this.submitCancelAndRefundPurchase
+			}
+		};
+		const purchaseName = getName( purchase );
+		const inStepOne = this.state.surveyStep === 1;
 
 		let buttonsArr;
 		if ( ! config.isEnabled( 'upgrades/removal-survey' ) ) {
@@ -148,6 +148,7 @@ class CancelPurchaseButton extends Component {
 					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
 					defaultContent={ this.renderCancellationEffect() }
 					onInputChange={ this.onSurveyChange }
+					isJetpack={ isJetpackPlan( purchase ) }
 				/>
 			</Dialog>
 		);
