@@ -386,37 +386,32 @@ const RegisterDomainStep = React.createClass( {
 				} );
 
 				if ( abtest( 'domainSuggestionNudgeLabels' ) === 'withLabels' ) {
-					const isFree = ( suggestion ) => ( suggestion.is_free === true ),
-						strippedDomain = domain.replace( /[ \.]/g, '' ),
-						isExactMatch = ( suggestion ) => ( suggestion.domain_name === domain ),
+					const isFreeOrUnknown = ( suggestion ) => (
+							suggestion.is_free === true ||
+							suggestion.status === domainAvailability.UNKNOWN
+						),
+						strippedDomainBase = this.getStrippedDomainBase( domain ),
 						exactMatchBeforeTld = ( suggestion ) => (
-							isExactMatch( suggestion ) || (
-								startsWith( suggestion.domain_name, `${ strippedDomain }.` )
-							)
+							startsWith( suggestion.domain_name, `${ strippedDomainBase }.` )
 						),
 						bestAlternative = ( suggestion ) => (
 							! exactMatchBeforeTld( suggestion ) &&
-							! isExactMatch( suggestion ) &&
 							suggestion.isRecommended !== true
 						),
-						nonFreeDomains = reject( suggestions, isFree ),
-						recommendedSuggestion = find( nonFreeDomains, exactMatchBeforeTld );
+						availableSuggestions = reject( suggestions, isFreeOrUnknown );
 
+					const recommendedSuggestion = find( availableSuggestions, exactMatchBeforeTld );
 					if ( recommendedSuggestion ) {
 						recommendedSuggestion.isRecommended = true;
-					} else {
-						if ( nonFreeDomains.length > 0 ) {
-							nonFreeDomains[0].isRecommended = true;
-						}
+					} else if ( availableSuggestions.length > 0 ) {
+						availableSuggestions[ 0 ].isRecommended = true;
 					}
 
-					const bestAlternativeSuggestion = find( nonFreeDomains, bestAlternative );
+					const bestAlternativeSuggestion = find( availableSuggestions, bestAlternative );
 					if ( bestAlternativeSuggestion ) {
 						bestAlternativeSuggestion.isBestAlternative = true;
-					} else {
-						if ( nonFreeDomains.length > 1 ) {
-							nonFreeDomains[1].isBestAlternative = true;
-						}
+					} else if ( availableSuggestions.length > 1 ) {
+						availableSuggestions[ 1 ].isBestAlternative = true;
 					}
 				}
 
@@ -426,6 +421,16 @@ const RegisterDomainStep = React.createClass( {
 				}, this.save );
 			}
 		);
+	},
+
+	getStrippedDomainBase( domain ) {
+		let strippedDomainBase = domain;
+		const lastIndexOfDot = strippedDomainBase.lastIndexOf( '.' );
+
+		if ( lastIndexOfDot !== -1 ) {
+			strippedDomainBase = strippedDomainBase.substring( 0, lastIndexOfDot );
+		}
+		return strippedDomainBase.replace( /[ .]/g, '' );
 	},
 
 	initialSuggestions: function() {
