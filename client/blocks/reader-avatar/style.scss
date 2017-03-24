@@ -32,6 +32,9 @@
 	}
 
 	&.is-compact {
+		min-width: 32px;
+		min-height: 32px;
+
 		&.has-site-and-author-icon {
 			.site-icon {
 				height: 32px;
