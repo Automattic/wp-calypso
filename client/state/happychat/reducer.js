@@ -8,6 +8,7 @@ import {
 	find,
 	map,
 	get,
+	sortBy,
 	takeRight,
 } from 'lodash';
 import validator from 'is-my-json-valid';
@@ -57,6 +58,8 @@ const timeline_event = ( state = {}, action ) => {
 };
 
 const validateTimeline = validator( timelineSchema );
+const sortTimeline = timeline => sortBy( timeline, event => parseInt( event.timestamp, 10 ) );
+
 /**
  * Adds timeline events for happychat
  *
@@ -96,7 +99,7 @@ const timeline = ( state = [], action ) => {
 
 				return ! find( state, { id: message.id } );
 			} );
-			return state.concat( map( messages, message => {
+			return sortTimeline( state.concat( map( messages, message => {
 				return Object.assign( {
 					id: message.id,
 					source: message.source,
@@ -108,7 +111,7 @@ const timeline = ( state = [], action ) => {
 					type: get( message, 'type', 'message' ),
 					links: get( message, 'meta.links' )
 				} );
-			} ) );
+			} ) ) );
 	}
 	return state;
 };
