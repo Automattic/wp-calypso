@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import ReaderMain from 'components/reader-main';
+import Main from 'components/main';
 import DISPLAY_TYPES from 'lib/feed-post-store/display-types';
 import EmptyContent from './empty';
 import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
@@ -526,7 +526,7 @@ class ReaderStream extends React.Component {
 		}
 
 		return (
-			<ReaderMain className={ classnames( 'following', this.props.className ) }>
+			<Main className={ classnames( 'following', this.props.className ) }>
 				{ this.props.showMobileBackToSidebar && <MobileBackToSidebar>
 					<h1>{ this.props.listName }</h1>
 				</MobileBackToSidebar> }
@@ -538,7 +538,7 @@ class ReaderStream extends React.Component {
 					? <div className="infinite-scroll-end" />
 					: null
 				}
-			</ReaderMain>
+			</Main>
 		);
 	}
 }

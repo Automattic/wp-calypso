@@ -1,11 +1,11 @@
 // Reader-specific tweaks to components
 
 // Overrides default 720px width
-.is-reader-page .following.main {
+.is-group-reader .following.main {
 	max-width: 800px;
 }
 
-.is-reader-page .reader__card.card.is-placeholder {
+.is-group-reader .reader__card.card.is-placeholder {
 	border-bottom: 1px solid lighten( $gray, 30% );
 	box-shadow: none;
 	margin-bottom: 0;
@@ -214,7 +214,7 @@
 
 // X-Posts
 
-.is-reader-page {
+.is-group-reader {
 
 	.reader__card.card.is-x-post {
 		border-bottom: 1px solid lighten( $gray, 30% );

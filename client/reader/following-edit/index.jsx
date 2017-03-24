@@ -9,7 +9,7 @@ import classnames from 'classnames';
 import Gridicon from 'gridicons';
 
 // Internal dependencies
-import ReaderMain from 'components/reader-main';
+import Main from 'components/main';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
@@ -522,7 +522,7 @@ const FollowingEdit = React.createClass( {
 		}, 'following-edit' );
 
 		return (
-			<ReaderMain className={ containerClasses }>
+			<Main className={ containerClasses }>
 				<MobileBackToSidebar>
 					<h1>{ this.translate( 'Manage Followed Sites' ) }</h1>
 				</MobileBackToSidebar>
@@ -589,7 +589,7 @@ const FollowingEdit = React.createClass( {
 				}
 
 				{ hasNoSubscriptions ? <EmptyContent /> : null }
-			</ReaderMain>
+			</Main>
 		);
 	}
 

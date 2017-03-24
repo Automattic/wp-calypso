@@ -37,13 +37,13 @@
 	}
 }
 
-.is-reader-page .follow-button {
+.is-group-reader .follow-button {
 	border: 0;
 	border-radius: 0;
 	float: right;
 }
 
-.is-reader-page .search-card.card {
+.is-group-reader .search-card.card {
 	box-shadow: 0 0 0 2px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
 }
 
@@ -128,7 +128,7 @@
 	}
 }
 
-.is-reader-page .following-edit__subscribe-form .card.is-search-result {
+.is-group-reader .following-edit__subscribe-form .card.is-search-result {
 	top: 71px;
 	box-shadow: 0 0 0 2px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
 }

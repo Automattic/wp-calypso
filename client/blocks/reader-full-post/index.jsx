@@ -14,7 +14,7 @@ import { get } from 'lodash';
  */
 import PostStore from 'lib/feed-post-store';
 import AutoDirection from 'components/auto-direction';
-import ReaderMain from 'components/reader-main';
+import Main from 'components/main';
 import EmbedContainer from 'components/embed-container';
 import PostExcerpt from 'components/post-excerpt';
 import { setSection } from 'state/ui/actions';
@@ -299,7 +299,7 @@ export class FullPostView extends React.Component {
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
-			<ReaderMain className={ classNames( classes ) }>
+			<Main className={ classNames( classes ) }>
 				{ ! post || post._state === 'pending'
 					? <DocumentHead title={ translate( 'Loading' ) } />
 					: <DocumentHead title={ `${ post.title } ‹ ${ siteName } ‹ Reader` } />
@@ -407,7 +407,7 @@ export class FullPostView extends React.Component {
 						}
 					</article>
 				</div>
-			</ReaderMain>
+			</Main>
 		);
 	}
 }
