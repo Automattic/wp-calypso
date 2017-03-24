@@ -88,6 +88,7 @@ class PostCommentList extends React.Component {
 			commentsTree={ this.props.commentsTree }
 			commentId={ commentId }
 			key={ commentId }
+			showModerationTools={ this.props.showModerationTools }
 			activeEditCommentId={ this.state.activeEditCommentId }
 			activeReplyCommentID={ this.state.activeReplyCommentID }
 			onEditCommentClick={ onEditCommentClick }
@@ -211,7 +212,8 @@ class PostCommentList extends React.Component {
 		}
 
 		const {
-			commentsFilter
+			commentsFilter,
+			showFilters,
 		} = this.props;
 
 		const {
@@ -244,7 +246,7 @@ class PostCommentList extends React.Component {
 							} )
 						}</span> : null }
 				</div> }
-				{ isEnabled( 'comments/filters-in-posts' ) &&
+				{ showFilters && isEnabled( 'comments/filters-in-posts' ) &&
 					<SegmentedControl compact primary>
 						<SegmentedControlItem
 							selected={ commentsFilter === 'all' }

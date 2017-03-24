@@ -21,6 +21,7 @@ import PopoverMenuSeparator from 'components/popover/menu-separator';
 const CommentActions = ( {
 	post,
 	comment: { isPlaceholder, status },
+	showModerationTools,
 	translate,
 	activeEditCommentId,
 	activeReplyCommentID,
@@ -65,28 +66,28 @@ const CommentActions = ( {
 				postId={ post.ID }
 				commentId={ commentId }
 			/>
-			{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
+			{ showModerationTools && isEnabled( 'comments/moderation-tools-in-posts' ) &&
 				<CommentApproveAction { ...{ status, approveComment, unapproveComment } } />
 			}
-			{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
+			{ showModerationTools && isEnabled( 'comments/moderation-tools-in-posts' ) &&
 				<button className="comments__comment-actions-trash" onClick={ trashComment }>
 					<Gridicon icon="trash" size={ 18 } />
 					<span className="comments__comment-actions-like-label">{ translate( 'Trash' ) }</span>
 				</button>
 			}
-			{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
+			{ showModerationTools && isEnabled( 'comments/moderation-tools-in-posts' ) &&
 				<button className="comments__comment-actions-spam" onClick={ spamComment }>
 					<Gridicon icon="spam" size={ 18 } />
 					<span className="comments__comment-actions-like-label">{ translate( 'Spam' ) }</span>
 				</button>
 			}
-			{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
+			{ showModerationTools && isEnabled( 'comments/moderation-tools-in-posts' ) &&
 				<button className="comments__comment-actions-edit" onClick={ editComment }>
 					<Gridicon icon="pencil" size={ 18 } />
 					<span className="comments__comment-actions-like-label">{ translate( 'Edit' ) }</span>
 				</button>
 			}
-			{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
+			{ showModerationTools && isEnabled( 'comments/moderation-tools-in-posts' ) &&
 				<EllipsisMenu toggleTitle={ translate( 'More' ) }>
 					<PopoverMenuItem
 						className={ classnames( 'comments__comment-actions-approve', {

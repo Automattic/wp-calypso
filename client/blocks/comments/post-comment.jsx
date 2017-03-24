@@ -206,6 +206,7 @@ class PostComment extends React.Component {
 				<CommentActions
 					post={ this.props.post }
 					comment={ comment }
+					showModerationTools={ this.props.showModerationTools }
 					activeEditCommentId={ this.props.activeEditCommentId }
 					activeReplyCommentID={ this.props.activeReplyCommentID }
 					commentId={ this.props.commentId }

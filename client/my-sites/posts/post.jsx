@@ -333,6 +333,8 @@ const Post = React.createClass( {
 					<Comments
 						showCommentCount={ false }
 						post={ this.props.post }
+						showFilters
+						showModerationTools
 						commentsFilter={ config.isEnabled( 'comments/filters-in-posts' ) ? this.state.commentsFilter : 'approved' }
 						onFilterChange={ commentsFilter => this.setState( { commentsFilter } )}
 						onCommentsUpdate={ () => {} } />
