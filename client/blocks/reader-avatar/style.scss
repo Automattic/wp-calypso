@@ -8,7 +8,6 @@
 }
 
 .reader-avatar {
-
 	&.has-site-and-author-icon {
 		.site-icon {
 			height: 96px;
@@ -32,10 +31,12 @@
 	}
 
 	&.is-compact {
-		&.has-site-and-author-icon {
+		&.has-gravatar {
 			min-width: 32px;
 			min-height: 32px;
+		}
 
+		&.has-site-and-author-icon {
 			.site-icon {
 				height: 32px;
 				width: 32px;
