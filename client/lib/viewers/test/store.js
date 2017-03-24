@@ -53,7 +53,7 @@ describe( 'Viewers Store', () => {
 			viewers = ViewersStore.getViewers( siteId );
 
 			assert.isArray( viewers, 'viewers is an array' );
-			assert.isObject( viewers[0] );
+			assert.isObject( viewers[ 0 ] );
 		} );
 	} );
 

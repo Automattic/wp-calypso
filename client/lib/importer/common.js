@@ -24,14 +24,14 @@ function apiToAppState( state ) {
 	return find(
 		importerStateMap,
 		( [ , api ] ) => api === state
-	)[0];
+	)[ 0 ];
 }
 
 function appStateToApi( state ) {
 	return find(
 		importerStateMap,
 		( [ appState ] ) => appState === state
-	)[1];
+	)[ 1 ];
 }
 
 function generateSourceAuthorIds( customData ) {

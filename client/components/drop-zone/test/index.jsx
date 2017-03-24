@@ -168,7 +168,7 @@ describe( 'index', function() {
 		window.dispatchEvent( dropEvent );
 
 		expect( spyDrop.calledOnce ).to.be.ok;
-		expect( spyDrop.getCall( 0 ).args[0] ).to.eql( dropEvent );
+		expect( spyDrop.getCall( 0 ).args[ 0 ] ).to.eql( dropEvent );
 	} );
 
 	it( 'should call onFilesDrop with the files array when a drop occurs', function() {
@@ -185,7 +185,7 @@ describe( 'index', function() {
 		window.dispatchEvent( dropEvent );
 
 		expect( spyDrop.calledOnce ).to.be.ok;
-		expect( spyDrop.getCall( 0 ).args[0] ).to.eql( [ 1, 2, 3 ] );
+		expect( spyDrop.getCall( 0 ).args[ 0 ] ).to.eql( [ 1, 2, 3 ] );
 	} );
 
 	it( 'should not call onFilesDrop if onVerifyValidTransfer returns false', function() {

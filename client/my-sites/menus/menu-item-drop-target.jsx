@@ -15,7 +15,7 @@ var MenuItemDropTarget = React.createClass( {
 
 	onClick: function() {
 		var positionText = { before: 'above', after: 'below', child: 'to children' },
-			actionText = 'Clicked ' + this.props.operation + ' menu item ' + positionText[this.props.position];
+			actionText = 'Clicked ' + this.props.operation + ' menu item ' + positionText[ this.props.position ];
 
 		analytics.ga.recordEvent( 'Menus', actionText );
 		this.props.action();

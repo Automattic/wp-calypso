@@ -28,18 +28,18 @@ module.exports = {
 	removeFollower: {
 		type: 'REMOVE_EMAIL_FOLLOWER',
 		siteId: site.ID,
-		follower: followerData.subscribers[0]
+		follower: followerData.subscribers[ 0 ]
 	},
 
 	removeFollowerSuccess: {
 		type: 'RECEIVE_REMOVE_EMAIL_FOLLOWER_SUCCESS',
 		siteId: site.ID,
-		follower: followerData.subscribers[0]
+		follower: followerData.subscribers[ 0 ]
 	},
 
 	removeFollowerError: {
 		type: 'RECEIVE_REMOVE_EMAIL_FOLLOWER_ERROR',
 		siteId: site.ID,
-		follower: followerData.subscribers[0]
+		follower: followerData.subscribers[ 0 ]
 	}
 };

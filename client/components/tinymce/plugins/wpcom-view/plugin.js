@@ -98,7 +98,7 @@ function wpview( editor ) {
 						onResize: debounce( triggerNodeChanged, 500 )
 					} )
 				),
-				$view.find( '.wpview-body' )[0]
+				$view.find( '.wpview-body' )[ 0 ]
 			);
 
 			$view.attr( 'data-wpview-rendered', '' );
@@ -137,7 +137,7 @@ function wpview( editor ) {
 		var location = before ? 'before' : 'after',
 			offset = before ? 0 : 1;
 		deselect();
-		editor.selection.setCursorLocation( editor.dom.select( '.wpview-selection-' + location, view )[0], offset );
+		editor.selection.setCursorLocation( editor.dom.select( '.wpview-selection-' + location, view )[ 0 ], offset );
 		editor.nodeChanged();
 	}
 
@@ -169,7 +169,7 @@ function wpview( editor ) {
 	function removeView( view ) {
 		editor.undoManager.transact( function() {
 			handleEnter( view );
-			ReactDom.unmountComponentAtNode( $( view ).find( '.wpview-body' )[0] );
+			ReactDom.unmountComponentAtNode( $( view ).find( '.wpview-body' )[ 0 ] );
 			editor.dom.remove( view );
 			editor.focus();
 		} );
@@ -200,7 +200,7 @@ function wpview( editor ) {
 				contenteditable: 'true'
 			}, getText( viewNode ) );
 
-			editor.dom.select( '.wpview-body', viewNode )[0].appendChild( clipboard );
+			editor.dom.select( '.wpview-body', viewNode )[ 0 ].appendChild( clipboard );
 
 			// Both of the following are necessary to prevent manipulating the selection/focus
 			dom.bind( clipboard, 'beforedeactivate focusin focusout', _stop );
@@ -226,7 +226,7 @@ function wpview( editor ) {
 			dom = editor.dom;
 
 		if ( selected ) {
-			clipboard = editor.dom.select( '.wpview-clipboard', selected )[0];
+			clipboard = editor.dom.select( '.wpview-clipboard', selected )[ 0 ];
 			dom.unbind( clipboard );
 			dom.remove( clipboard );
 

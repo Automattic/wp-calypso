@@ -94,7 +94,7 @@ function mockContext() {
 			update: 'callback'
 		};
 	propNames.forEach( function( name ) {
-		context.props[name] = mockEventEmitter( context, name );
+		context.props[ name ] = mockEventEmitter( context, name );
 	} );
 	return context;
 }

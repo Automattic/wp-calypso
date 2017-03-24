@@ -111,13 +111,13 @@ function getValueFromProgressStore( { signupProgress, stepName, fieldName } ) {
 		signupProgress,
 		step => step.stepName === stepName
 	);
-	return siteStepProgress ? siteStepProgress[fieldName] : null;
+	return siteStepProgress ? siteStepProgress[ fieldName ] : null;
 }
 
 function mergeFormWithValue( { form, fieldName, fieldValue} ) {
 	if ( ! formState.getFieldValue( form, fieldName ) ) {
 		return merge( form, {
-			[fieldName]: { value: fieldValue }
+			[ fieldName ]: { value: fieldValue }
 		} );
 	}
 	return form;

@@ -98,7 +98,7 @@ module.exports = React.createClass( {
 			} else {
 				html.push(
 					<p key="reason-shell">
-						{ this.translate( '%(pluginName)s cannot be removed. %(reason)s', { args: { pluginName: this.props.plugin.name, reason: reasons[0] } } ) }
+						{ this.translate( '%(pluginName)s cannot be removed. %(reason)s', { args: { pluginName: this.props.plugin.name, reason: reasons[ 0 ] } } ) }
 					</p>
 				);
 			}
@@ -161,4 +161,3 @@ module.exports = React.createClass( {
 		return this.renderButton();
 	}
 } );
-

@@ -32,7 +32,7 @@ describe( 'selectors', () => {
 				}
 			}, 1, 1 );
 
-			expect( res ).to.be.eql( new Date( commentItems[0].date ) );
+			expect( res ).to.be.eql( new Date( commentItems[ 0 ].date ) );
 		} );
 
 		it( 'should return undefined if no comment items', () => {
@@ -63,7 +63,7 @@ describe( 'selectors', () => {
 				}
 			}, 1, 1 );
 
-			expect( res ).to.be.eql( new Date( commentItems[1].date ) );
+			expect( res ).to.be.eql( new Date( commentItems[ 1 ].date ) );
 		} );
 
 		it( 'should return undefined if no comment items', () => {

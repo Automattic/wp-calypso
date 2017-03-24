@@ -39,16 +39,16 @@ describe( 'Users Store', () => {
 		} );
 
 		it( 'Should return undefined when user not in store', () => {
-			assert.isUndefined( UsersStore.getUserByLogin( siteId, usersData.users[0].login ) );
+			assert.isUndefined( UsersStore.getUserByLogin( siteId, usersData.users[ 0 ].login ) );
 		} );
 
 		it( 'Should return a user object when the user exists', () => {
 			let user;
 			Dispatcher.handleServerAction( actions.fetched );
-			user = UsersStore.getUserByLogin( siteId, usersData.users[0].login );
+			user = UsersStore.getUserByLogin( siteId, usersData.users[ 0 ].login );
 
 			assert.isObject( user );
-			assert.equal( user.ID, usersData.users[0].ID );
+			assert.equal( user.ID, usersData.users[ 0 ].ID );
 		} );
 	} );
 
@@ -66,11 +66,11 @@ describe( 'Users Store', () => {
 
 		it( 'The users store should return an array of objects when fetching users', () => {
 			assert.isArray( users );
-			assert.isObject( users[0] );
+			assert.isObject( users[ 0 ] );
 		} );
 
 		it( 'A user object from the store should contain an array of roles', () => {
-			assert.isArray( users[0].roles );
+			assert.isArray( users[ 0 ].roles );
 		} );
 
 		it( 'Re-fetching a list of users when a users was deleted from the site should result in a smaller array', () => {
@@ -142,7 +142,7 @@ describe( 'Users Store', () => {
 
 			// The last two users should have a 'contributor' role
 			updatedUsers.slice( -2, 2 ).forEach( user => {
-				assert.equal( user.roles[0], 'contributor' );
+				assert.equal( user.roles[ 0 ], 'contributor' );
 			} );
 		} );
 	} );
@@ -163,7 +163,7 @@ describe( 'Users Store', () => {
 		} );
 
 		it( 'Error should restore the updated user', () => {
-			const userId = usersData.users[0].ID,
+			const userId = usersData.users[ 0 ].ID,
 				user = UsersStore.getUser( siteId, userId );
 			let userAgain, userRestored;
 
@@ -184,7 +184,7 @@ describe( 'Users Store', () => {
 
 		beforeEach( function() {
 			Dispatcher.handleServerAction( actions.fetched );
-			userId = usersData.users[0].ID;
+			userId = usersData.users[ 0 ].ID;
 		} );
 
 		it( 'Should delete a specific user', () => {
