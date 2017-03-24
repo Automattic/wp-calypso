@@ -37,7 +37,8 @@ class PostCommentList extends React.Component {
 		this.state = {
 			activeReplyCommentID: null,
 			amountOfCommentsToTake: props.initialSize,
-			commentsFilter: 'all'
+			commentsFilter: 'all',
+			activeEditCommentId: null,
 		};
 
 		this.viewEarlierCommentsHandler = this.viewEarlierCommentsHandler.bind( this );
@@ -74,6 +75,8 @@ class PostCommentList extends React.Component {
 			return null;
 		}
 
+		const onEditCommentClick = this.onEditCommentClick.bind( this, commentId );
+		const onEditCommentCancel = this.onEditCommentCancel.bind( this );
 		const onReplyClick = this.onReplyClick.bind( this );
 		const onReplyCancel = this.onReplyCancel.bind( this );
 		const commentText = this.state.commentText;
@@ -85,7 +88,10 @@ class PostCommentList extends React.Component {
 			commentsTree={ this.props.commentsTree }
 			commentId={ commentId }
 			key={ commentId }
+			activeEditCommentId={ this.state.activeEditCommentId }
 			activeReplyCommentID={ this.state.activeReplyCommentID }
+			onEditCommentClick={ onEditCommentClick }
+			onEditCommentCancel={ onEditCommentCancel }
 			onReplyClick={ onReplyClick }
 			onReplyCancel={ onReplyCancel }
 			commentText={ commentText }
@@ -94,6 +100,12 @@ class PostCommentList extends React.Component {
 			depth={ 0 }
 		/>;
 	}
+
+	onEditCommentClick( commentId ) {
+		this.setState( { activeEditCommentId: commentId } );
+	}
+
+	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
 
 	onReplyClick( commentID ) {
 		this.setState( { activeReplyCommentID: commentID } );
@@ -240,19 +252,19 @@ class PostCommentList extends React.Component {
 						</SegmentedControlItem>
 						<SegmentedControlItem
 							selected={ commentsFilter === 'approved' }
-							onClick={ this.handleFilterClick( 'approved' ) }>{ translate( 'Approved', { context: 'comment status'} ) }
+							onClick={ this.handleFilterClick( 'approved' ) }>{ translate( 'Approved', { context: 'comment status' } ) }
 						</SegmentedControlItem>
 						<SegmentedControlItem
 							selected={ commentsFilter === 'unapproved' }
-							onClick={ this.handleFilterClick( 'unapproved' ) }>{ translate( 'Pending', { context: 'comment status'} ) }
+							onClick={ this.handleFilterClick( 'unapproved' ) }>{ translate( 'Pending', { context: 'comment status' } ) }
 						</SegmentedControlItem>
 						<SegmentedControlItem
 							selected={ commentsFilter === 'spam' }
-							onClick={ this.handleFilterClick( 'spam' ) }>{ translate( 'Spam', { context: 'comment status'} ) }
+							onClick={ this.handleFilterClick( 'spam' ) }>{ translate( 'Spam', { context: 'comment status' } ) }
 						</SegmentedControlItem>
 						<SegmentedControlItem
 							selected={ commentsFilter === 'trash' }
-							onClick={ this.handleFilterClick( 'trash' ) }>{ translate( 'Trash', { context: 'comment status'} ) }
+							onClick={ this.handleFilterClick( 'trash' ) }>{ translate( 'Trash', { context: 'comment status' } ) }
 						</SegmentedControlItem>
 					</SegmentedControl>
 				}
