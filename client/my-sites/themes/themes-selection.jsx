@@ -24,7 +24,8 @@ import {
 	isThemesLastPageForQuery,
 	isPremiumThemeAvailable,
 	isThemeActive,
-	isInstallingTheme
+	isInstallingTheme,
+	getLastThemeQuery
 } from 'state/themes/selectors';
 import { setThemePreviewOptions } from 'state/themes/actions';
 import config from 'config';
@@ -58,14 +59,6 @@ class ThemesSelection extends Component {
 	static defaultProps = {
 		emptyContent: null,
 		showUploadButton: true
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		if ( ! isEqual(
-				omit( this.props.query, PAGINATION_QUERY_KEYS ),
-				omit( nextProps.query, PAGINATION_QUERY_KEYS ) ) ) {
-			this.props.resetPage();
-		}
 	}
 
 	recordSearchResultsClick = ( theme, resultsRank, action ) => {
@@ -165,7 +158,7 @@ class ThemesSelection extends Component {
 					isActive={ this.props.isThemeActive }
 					isPurchased={ this.props.isThemePurchased }
 					isInstalling={ this.props.isInstallingTheme }
-					loading={ this.props.isRequesting }
+					loading={ this.props.themesCount === null }
 					emptyContent={ this.props.emptyContent }
 					placeholderCount={ this.props.placeholderCount } />
 			</div>
@@ -173,8 +166,10 @@ class ThemesSelection extends Component {
 	}
 }
 
+const noThemes = [];
+
 const ConnectedThemesSelection = connect(
-	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
+	( state, { filter, page, search, tier, vertical, siteId, source, resetPage } ) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		let sourceSiteId;
 		if ( source === 'wpcom' || source === 'wporg' ) {
@@ -196,13 +191,21 @@ const ConnectedThemesSelection = connect(
 			number
 		};
 
+		const lastQuery = getLastThemeQuery( state, sourceSiteId ) || query;
+		const themesCount = getThemesFoundForQuery( state, sourceSiteId, lastQuery );
+
+		if ( ! isEqual( omit( query, PAGINATION_QUERY_KEYS ), omit( lastQuery, PAGINATION_QUERY_KEYS ) ) ) {
+			query.page = 1;
+			resetPage();
+		}
+
 		return {
 			query,
 			source: sourceSiteId,
 			siteSlug: getSiteSlug( state, siteId ),
-			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
-			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
-			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),
+			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, lastQuery ) || noThemes,
+			themesCount,
+			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ) || themesCount === null,
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
 			isLoggedIn: !! getCurrentUserId( state ),
 			isThemeActive: themeId => isThemeActive( state, themeId, siteId ),
