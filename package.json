@@ -166,7 +166,7 @@
     "esformatter-quotes": "1.0.3",
     "esformatter-semicolons": "1.1.1",
     "esformatter-special-bangs": "1.0.1",
-    "eslines": "0.0.11",
+    "eslines": "0.0.12",
     "eslint": "3.8.1",
     "eslint-config-wpcalypso": "0.6.0",
     "eslint-plugin-react": "6.4.1",
