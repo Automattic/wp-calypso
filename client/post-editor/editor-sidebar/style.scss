@@ -1,5 +1,6 @@
 .post-editor__sidebar {
 	@extend .sidebar;
+	z-index: z-index( 'root', '.post-editor__sidebar' );
 	background: lighten( $gray, 30% );
 	left: auto;
 	right: -273px;
