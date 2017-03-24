@@ -58,7 +58,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		() => {
 			// TODO: Replace with REST API once ready.
 			const settings = {
-				wp_cache_status: false,
+				wp_cache_enabled: true,
 				super_cache_enabled: '1',
 				cache_compression: false,
 				cache_rebuild_files: true,

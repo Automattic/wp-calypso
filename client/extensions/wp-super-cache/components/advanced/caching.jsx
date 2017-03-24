@@ -32,8 +32,8 @@ const Caching = ( { fields, handleRadio, handleToggle, translate } ) => {
 				<form>
 					<FormFieldset>
 						<FormToggle
-							checked={ !! fields.wp_cache_status }
-							onChange={ handleToggle( 'wp_cache_status' ) }>
+							checked={ !! fields.wp_cache_enabled }
+							onChange={ handleToggle( 'wp_cache_enabled' ) }>
 							<span>
 								{ translate( 'Caching On {{em}}(Recommended){{/em}}',
 									{
@@ -101,7 +101,7 @@ const Caching = ( { fields, handleRadio, handleToggle, translate } ) => {
 const getFormSettings = settings => {
 	return pick( settings, [
 		'super_cache_enabled',
-		'wp_cache_status',
+		'wp_cache_enabled',
 	] );
 };
 
