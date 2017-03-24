@@ -15,7 +15,7 @@ export const eventSchema = {
 		message: { type: 'string' },
 		name: { type: 'string' },
 		image: { type: 'string' },
-		timestamp: { type: 'number' },
+		timestamp: { type: [ 'number', 'string' ] },
 		user_id: { type: [ 'number', 'string' ] },
 		type: { type: 'string' },
 		links: { type: 'array' },
