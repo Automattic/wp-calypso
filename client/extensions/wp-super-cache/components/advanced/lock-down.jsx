@@ -12,10 +12,15 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
-const LockDown = ( { fields, translate } ) => {
+const LockDown = ( {
+	fields: {
+		wp_lock_down,
+	},
+	translate,
+} ) => {
 	return (
 		<div>
-			<SectionHeader label={ !! fields.wp_lock_down ? translate( 'Lock Down - Enabled' ) : translate( 'Lock Down - Disabled' ) } />
+			<SectionHeader label={ !! wp_lock_down ? translate( 'Lock Down - Enabled' ) : translate( 'Lock Down - Disabled' ) } />
 			<Card>
 				<form>
 					<p>
@@ -42,7 +47,7 @@ const LockDown = ( { fields, translate } ) => {
 						) }
 					</p>
 					<p>
-						{ !! fields.wp_lock_down
+						{ !! wp_lock_down
 							? translate( 'WordPress is locked down. Super Cache static files will not be deleted ' +
 								'when new comments are made.' )
 							: translate( 'WordPress is not locked down. New comments will refresh Super Cache static files as normal.' )
@@ -52,7 +57,7 @@ const LockDown = ( { fields, translate } ) => {
 						<Button
 							compact={ true }
 							type="submit">
-								{ ! fields.wp_lock_down ? translate( 'Enable Lock Down' ) : translate( 'Disable Lock Down' ) }
+								{ ! wp_lock_down ? translate( 'Enable Lock Down' ) : translate( 'Disable Lock Down' ) }
 						</Button>
 					</div>
 				</form>

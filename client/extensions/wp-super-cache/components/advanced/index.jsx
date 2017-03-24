@@ -19,7 +19,13 @@ import Miscellaneous from './miscellaneous';
 import RejectedUserAgents from './rejected-user-agents';
 import WrapSettingsForm from '../wrap-settings-form';
 
-const AdvancedTab = ( { fields, site } ) => {
+const AdvancedTab = ( {
+	fields: {
+		super_cache_enabled,
+		wp_cache_enabled,
+	},
+	site,
+} ) => {
 	return (
 		<div>
 			<Caching />
@@ -30,7 +36,7 @@ const AdvancedTab = ( { fields, site } ) => {
 			<AcceptedFilenames />
 			<RejectedUserAgents />
 			<LockDown />
-			{	!! fields.wp_cache_enabled && ( '1' === fields.super_cache_enabled || '2' === fields.super_cache_enabled ) &&
+			{	!! wp_cache_enabled && ( '1' === super_cache_enabled || '2' === super_cache_enabled ) &&
 				<DirectlyCachedFiles site={ site } />
 			}
 			<FixConfig />

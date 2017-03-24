@@ -15,7 +15,13 @@ import FormTextInput from 'components/forms/form-text-input';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
-const CacheLocation = ( { fields, handleChange, translate } ) => {
+const CacheLocation = ( {
+	fields: {
+		wp_cache_location,
+	},
+	handleChange,
+	translate,
+} ) => {
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Cache Location' ) }>
@@ -31,14 +37,14 @@ const CacheLocation = ( { fields, handleChange, translate } ) => {
 					<FormFieldset>
 						<FormTextInput
 							onChange={ handleChange( 'wp_cache_location' ) }
-							value={ fields.wp_cache_location || '' } />
+							value={ wp_cache_location || '' } />
 						<FormSettingExplanation>
 							{ translate(
 								'Change the location of your cache files. The default is WP_CONTENT_DIR . ' +
 								'/cache/ which translates to {{cacheLocation/}}',
 								{
 									components: {
-										cacheLocation: <span>{ fields.wp_cache_location || '' }</span>,
+										cacheLocation: <span>{ wp_cache_location || '' }</span>,
 									}
 								}
 							) }

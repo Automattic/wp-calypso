@@ -20,7 +20,23 @@ import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
-const ExpiryTime = ( { fields, handleChange, handleRadio, handleSelect, handleToggle, translate } ) => {
+const ExpiryTime = ( {
+	fields: {
+		cache_gc_email_me,
+		cache_max_time,
+		cache_schedule_interval,
+		cache_schedule_type,
+		cache_scheduled_time,
+		cache_time_interval,
+		wp_cache_next_gc,
+		wp_cache_preload_on,
+	},
+	handleChange,
+	handleRadio,
+	handleSelect,
+	handleToggle,
+	translate,
+} ) => {
 	const renderCacheTimeout = () => {
 		return (
 			<FormFieldset>
@@ -31,7 +47,7 @@ const ExpiryTime = ( { fields, handleChange, handleRadio, handleSelect, handleTo
 				<FormTextInput
 					className="wp-super-cache__cache-timeout"
 					onChange={ handleChange( 'cache_max_time' ) }
-					value={ fields.cache_max_time || '' } />
+					value={ cache_max_time || '' } />
 				{ translate( 'seconds' ) }
 				<FormSettingExplanation>
 					{
@@ -54,16 +70,16 @@ const ExpiryTime = ( { fields, handleChange, handleRadio, handleSelect, handleTo
 
 				<FormLabel>
 					<FormRadio
-						checked={ 'interval' === fields.cache_schedule_type }
+						checked={ 'interval' === cache_schedule_type }
 						name="cache_schedule_type"
 						onChange={ handleRadio }
 						value="interval" />
 					<span>
 						{ translate( 'Timer' ) }
 						<FormTextInput
-							disabled={ 'interval' !== fields.cache_schedule_type }
+							disabled={ 'interval' !== cache_schedule_type }
 							onChange={ handleChange( 'cache_time_interval' ) }
-							value={ fields.cache_time_interval || '' } />
+							value={ cache_time_interval || '' } />
 						{ translate( 'seconds' ) }
 					</span>
 				</FormLabel>
@@ -73,16 +89,16 @@ const ExpiryTime = ( { fields, handleChange, handleRadio, handleSelect, handleTo
 
 				<FormLabel>
 					<FormRadio
-						checked={ 'time' === fields.cache_schedule_type }
+						checked={ 'time' === cache_schedule_type }
 						name="cache_schedule_type"
 						onChange={ handleRadio }
 						value="time" />
 					<span>
 						{ translate( 'Clock' ) }
 						<FormTextInput
-							disabled={ 'time' !== fields.cache_schedule_type }
+							disabled={ 'time' !== cache_schedule_type }
 							onChange={ handleChange( 'cache_scheduled_time' ) }
-							value={ fields.cache_scheduled_time || '' } />
+							value={ cache_scheduled_time || '' } />
 						{ translate( 'HH:MM' ) }
 					</span>
 				</FormLabel>
@@ -103,10 +119,10 @@ const ExpiryTime = ( { fields, handleChange, handleRadio, handleSelect, handleTo
 
 				<FormSelect
 					id="cache_schedule_interval"
-					disabled={ 'time' !== fields.cache_schedule_type }
+					disabled={ 'time' !== cache_schedule_type }
 					name="cache_schedule_interval"
 					onChange={ handleSelect }
-					value={ fields.cache_schedule_interval || 'five_minutes_interval' }>
+					value={ cache_schedule_interval || 'five_minutes_interval' }>
 					<option value="five_minutes_interval">{ translate( 'Once every five minutes' ) }</option>
 					<option value="jetpack_sync_interval">{ translate( 'Every 5 minutes' ) }</option>
 					<option value="minutes_10">{ translate( 'Every 10 minutes' ) }</option>
@@ -127,7 +143,7 @@ const ExpiryTime = ( { fields, handleChange, handleRadio, handleSelect, handleTo
 				</FormLabel>
 
 				<FormToggle
-					checked={ !! fields.cache_gc_email_me }
+					checked={ !! cache_gc_email_me }
 					id="cache_gc_email_me"
 					onChange={ handleToggle( 'cache_gc_email_me' ) }>
 					<span>
@@ -154,12 +170,12 @@ const ExpiryTime = ( { fields, handleChange, handleRadio, handleSelect, handleTo
 					<br />
 					{ translate( 'Local time is ' ) + moment().format( 'YYYY-MM-DD h:mm:ss' ) }
 				</p>
-				{ fields.wp_cache_next_gc &&
+				{ wp_cache_next_gc &&
 					<p>
-						{ translate( 'Next scheduled garbage collection will be at ' ) + fields.wp_cache_next_gc }
+						{ translate( 'Next scheduled garbage collection will be at ' ) + wp_cache_next_gc }
 					</p>
 				}
-				{ fields.wp_cache_preload_on &&
+				{ wp_cache_preload_on &&
 					<p>
 						{ translate(
 							'Warning! {{strong}}PRELOAD MODE{{/strong}} activated. Supercache files will not be ' +

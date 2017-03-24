@@ -16,7 +16,21 @@ import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
-const Miscellaneous = ( { fields, handleToggle, translate } ) => {
+const Miscellaneous = ( {
+	fields: {
+		cache_compression,
+		cache_rebuild_files,
+		super_cache_enabled,
+		wp_cache_compression_disabled,
+		wp_cache_hello_world,
+		wp_cache_make_known_anon,
+		wp_cache_no_cache_for_get,
+		wp_cache_not_logged_in,
+		wp_supercache_304,
+	},
+	handleToggle,
+	translate,
+} ) => {
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Miscellaneous' ) }>
@@ -29,7 +43,7 @@ const Miscellaneous = ( { fields, handleToggle, translate } ) => {
 			</SectionHeader>
 			<Card>
 				<form>
-					{ !! fields.wp_cache_compression_disabled &&
+					{ !! wp_cache_compression_disabled &&
 					<p>
 						{ translate(
 							' {{em}}Warning! Compression is disabled as gzencode() function was not found.{{/em}}',
@@ -40,9 +54,9 @@ const Miscellaneous = ( { fields, handleToggle, translate } ) => {
 					</p>
 					}
 					<FormFieldset>
-						{ ! fields.wp_cache_compression_disabled &&
+						{ ! wp_cache_compression_disabled &&
 						<FormToggle
-							checked={ !! fields.cache_compression }
+							checked={ !! cache_compression }
 							onChange={ handleToggle( 'cache_compression' ) }>
 							<span>
 								{ translate(
@@ -56,7 +70,7 @@ const Miscellaneous = ( { fields, handleToggle, translate } ) => {
 						}
 
 						<FormToggle
-							checked={ !! fields.wp_cache_not_logged_in }
+							checked={ !! wp_cache_not_logged_in }
 							onChange={ handleToggle( 'wp_cache_not_logged_in' ) }>
 							<span>
 								{ translate(
@@ -69,7 +83,7 @@ const Miscellaneous = ( { fields, handleToggle, translate } ) => {
 						</FormToggle>
 
 						<FormToggle
-							checked={ !! fields.cache_rebuild_files }
+							checked={ !! cache_rebuild_files }
 							onChange={ handleToggle( 'cache_rebuild_files' ) }>
 							<span>
 								{ translate(
@@ -83,8 +97,8 @@ const Miscellaneous = ( { fields, handleToggle, translate } ) => {
 						</FormToggle>
 
 						<FormToggle
-							checked={ !! fields.wp_supercache_304 }
-							disabled={ '1' === fields.super_cache_enabled }
+							checked={ !! wp_supercache_304 }
+							disabled={ '1' === super_cache_enabled }
 							onChange={ handleToggle( 'wp_supercache_304' ) }>
 							<span>
 								{ translate(
@@ -95,7 +109,7 @@ const Miscellaneous = ( { fields, handleToggle, translate } ) => {
 									}
 								) }
 							</span>
-							{ '1' === fields.super_cache_enabled &&
+							{ '1' === super_cache_enabled &&
 								<FormSettingExplanation>
 									{ translate(
 										'{{strong}}Warning! 304 browser caching is only supported when mod_rewrite caching ' +
@@ -106,7 +120,7 @@ const Miscellaneous = ( { fields, handleToggle, translate } ) => {
 									) }
 								</FormSettingExplanation>
 							}
-							{ '1' !== fields.super_cache_enabled &&
+							{ '1' !== super_cache_enabled &&
 								<FormSettingExplanation>
 									{ translate(
 										'304 support is disabled by default because some hosts have had problems with the ' +
@@ -117,7 +131,7 @@ const Miscellaneous = ( { fields, handleToggle, translate } ) => {
 						</FormToggle>
 
 						<FormToggle
-							checked={ !! fields.wp_cache_no_cache_for_get }
+							checked={ !! wp_cache_no_cache_for_get }
 							onChange={ handleToggle( 'wp_cache_no_cache_for_get' ) }>
 							<span>
 								{ translate( 'Don’t cache pages with GET parameters. (?x=y at the end of a url)' ) }
@@ -125,7 +139,7 @@ const Miscellaneous = ( { fields, handleToggle, translate } ) => {
 						</FormToggle>
 
 						<FormToggle
-							checked={ !! fields.wp_cache_make_known_anon }
+							checked={ !! wp_cache_make_known_anon }
 							onChange={ handleToggle( 'wp_cache_make_known_anon' ) }>
 							<span>
 								{ translate( 'Make known users anonymous so they’re served supercached static files.' ) }
@@ -133,7 +147,7 @@ const Miscellaneous = ( { fields, handleToggle, translate } ) => {
 						</FormToggle>
 
 						<FormToggle
-							checked={ !! fields.wp_cache_hello_world }
+							checked={ !! wp_cache_hello_world }
 							onChange={ handleToggle( 'wp_cache_hello_world' ) }>
 							<span>
 								{ translate( 'Proudly tell the world your server is {{fry}}Stephen Fry proof{{/fry}}! ' +
@@ -163,8 +177,8 @@ const getFormSettings = settings => {
 	return pick( settings, [
 		'cache_compression',
 		'cache_rebuild_files',
-		'wp_cache_compression_disabled',
 		'super_cache_enabled',
+		'wp_cache_compression_disabled',
 		'wp_cache_hello_world',
 		'wp_cache_make_known_anon',
 		'wp_cache_no_cache_for_get',

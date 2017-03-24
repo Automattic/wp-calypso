@@ -15,7 +15,13 @@ import FormTextarea from 'components/forms/form-textarea';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
-const RejectedUserAgents = ( { fields, handleChange, translate } ) => {
+const RejectedUserAgents = ( {
+	fields: {
+		wp_rejected_user_agent,
+	},
+	handleChange,
+	translate,
+} ) => {
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Rejected User Agents' ) }>
@@ -31,7 +37,7 @@ const RejectedUserAgents = ( { fields, handleChange, translate } ) => {
 					<FormFieldset>
 						<FormTextarea
 							onChange={ handleChange( 'wp_rejected_user_agent' ) }
-							value={ fields.wp_rejected_user_agent || '' } />
+							value={ wp_rejected_user_agent || '' } />
 						<FormSettingExplanation>
 							{ translate(
 								'Strings in the HTTP ’User Agent’ header that prevent WP-Cache from caching bot, ' +

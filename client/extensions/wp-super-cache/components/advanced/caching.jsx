@@ -17,7 +17,15 @@ import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
-const Caching = ( { fields, handleRadio, handleToggle, translate } ) => {
+const Caching = ( {
+	fields: {
+		super_cache_enabled,
+		wp_cache_enabled,
+	},
+	handleRadio,
+	handleToggle,
+	translate,
+} ) => {
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Caching' ) }>
@@ -32,7 +40,7 @@ const Caching = ( { fields, handleRadio, handleToggle, translate } ) => {
 				<form>
 					<FormFieldset>
 						<FormToggle
-							checked={ !! fields.wp_cache_enabled }
+							checked={ !! wp_cache_enabled }
 							onChange={ handleToggle( 'wp_cache_enabled' ) }>
 							<span>
 								{ translate( 'Caching On {{em}}(Recommended){{/em}}',
@@ -47,7 +55,7 @@ const Caching = ( { fields, handleRadio, handleToggle, translate } ) => {
 					<FormFieldset>
 						<FormLabel>
 							<FormRadio
-								checked={ '1' === fields.super_cache_enabled }
+								checked={ '1' === super_cache_enabled }
 								name="super_cache_enabled"
 								onChange={ handleRadio }
 								value="1" />
@@ -58,7 +66,7 @@ const Caching = ( { fields, handleRadio, handleToggle, translate } ) => {
 
 						<FormLabel>
 							<FormRadio
-								checked={ '2' === fields.super_cache_enabled }
+								checked={ '2' === super_cache_enabled }
 								name="super_cache_enabled"
 								onChange={ handleRadio }
 								value="2" />
@@ -74,7 +82,7 @@ const Caching = ( { fields, handleRadio, handleToggle, translate } ) => {
 
 						<FormLabel>
 							<FormRadio
-								checked={ '0' === fields.super_cache_enabled }
+								checked={ '0' === super_cache_enabled }
 								name="super_cache_enabled"
 								onChange={ handleRadio }
 								value="0" />

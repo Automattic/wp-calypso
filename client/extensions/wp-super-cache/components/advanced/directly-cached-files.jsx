@@ -19,8 +19,8 @@ import WrapSettingsForm from '../wrap-settings-form';
 const DirectlyCachedFiles = ( {
 	fields: {
 		wp_cache_direct_pages,
-		wp_cache_readonly,
 		wp_cache_path,
+		wp_cache_readonly,
 		wp_cache_writable,
 	},
 	handleChange,

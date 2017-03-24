@@ -17,7 +17,25 @@ import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
-const AcceptedFilenames = ( { fields, handleChange, handleToggle, translate } ) => {
+const AcceptedFilenames = ( {
+	fields: {
+		archives,
+		author,
+		category,
+		feed,
+		frontpage,
+		home,
+		pages,
+		search,
+		single,
+		tag,
+		wp_accepted_files,
+		wp_rejected_uri,
+	},
+	handleChange,
+	handleToggle,
+	translate,
+} ) => {
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Accepted Filenames & Rejected URIs' ) }>
@@ -32,7 +50,7 @@ const AcceptedFilenames = ( { fields, handleChange, handleToggle, translate } ) 
 				<form>
 					<FormFieldset>
 						<FormToggle
-							checked={ !! fields.single }
+							checked={ !! single }
 							onChange={ handleToggle( 'single' ) }>
 							<span>
 								{ translate( 'Single Posts (is_single)' ) }
@@ -40,7 +58,7 @@ const AcceptedFilenames = ( { fields, handleChange, handleToggle, translate } ) 
 						</FormToggle>
 
 						<FormToggle
-							checked={ !! fields.pages }
+							checked={ !! pages }
 							onChange={ handleToggle( 'pages' ) }>
 							<span>
 								{ translate( 'Pages (is_page)' ) }
@@ -48,7 +66,7 @@ const AcceptedFilenames = ( { fields, handleChange, handleToggle, translate } ) 
 						</FormToggle>
 
 						<FormToggle
-							checked={ !! fields.frontpage }
+							checked={ !! frontpage }
 							onChange={ handleToggle( 'frontpage' ) }>
 							<span>
 								{ translate( 'Front Page (is_front_page)' ) }
@@ -56,7 +74,7 @@ const AcceptedFilenames = ( { fields, handleChange, handleToggle, translate } ) 
 						</FormToggle>
 
 						<FormToggle
-							checked={ !! fields.home }
+							checked={ !! home }
 							onChange={ handleToggle( 'home' ) }>
 							<span>
 								{ translate( 'Home (is_home)' ) }
@@ -64,7 +82,7 @@ const AcceptedFilenames = ( { fields, handleChange, handleToggle, translate } ) 
 						</FormToggle>
 
 						<FormToggle
-							checked={ !! fields.archives }
+							checked={ !! archives }
 							onChange={ handleToggle( 'archives' ) }>
 							<span>
 								{ translate( 'Archives (is_archive)' ) }
@@ -72,7 +90,7 @@ const AcceptedFilenames = ( { fields, handleChange, handleToggle, translate } ) 
 						</FormToggle>
 
 						<FormToggle
-							checked={ !! fields.tag }
+							checked={ !! tag }
 							onChange={ handleToggle( 'tag' ) }>
 							<span>
 								{ translate( 'Tags (is_tag)' ) }
@@ -80,7 +98,7 @@ const AcceptedFilenames = ( { fields, handleChange, handleToggle, translate } ) 
 						</FormToggle>
 
 						<FormToggle
-							checked={ !! fields.category }
+							checked={ !! category }
 							onChange={ handleToggle( 'category' ) }>
 							<span>
 								{ translate( 'Category (is_category)' ) }
@@ -88,7 +106,7 @@ const AcceptedFilenames = ( { fields, handleChange, handleToggle, translate } ) 
 						</FormToggle>
 
 						<FormToggle
-							checked={ !! fields.feed }
+							checked={ !! feed }
 							onChange={ handleToggle( 'feed' ) }>
 							<span>
 								{ translate( 'Feeds (is_feed)' ) }
@@ -96,7 +114,7 @@ const AcceptedFilenames = ( { fields, handleChange, handleToggle, translate } ) 
 						</FormToggle>
 
 						<FormToggle
-							checked={ !! fields.search }
+							checked={ !! search }
 							onChange={ handleToggle( 'search' ) }>
 							<span>
 								{ translate( 'Search Pages (is_search)' ) }
@@ -104,7 +122,7 @@ const AcceptedFilenames = ( { fields, handleChange, handleToggle, translate } ) 
 						</FormToggle>
 
 						<FormToggle
-							checked={ !! fields.author }
+							checked={ !! author }
 							onChange={ handleToggle( 'author' ) }>
 							<span>
 								{ translate( 'Author Pages (is_author)' ) }
@@ -132,7 +150,7 @@ const AcceptedFilenames = ( { fields, handleChange, handleToggle, translate } ) 
 					<FormFieldset>
 						<FormTextarea
 							onChange={ handleChange( 'wp_rejected_uri' ) }
-							value={ fields.wp_rejected_uri || '' } />
+							value={ wp_rejected_uri || '' } />
 						<FormSettingExplanation>
 							{ translate(
 								'Add here strings (not a filename) that forces a page not to be cached. For example, ' +
@@ -146,7 +164,7 @@ const AcceptedFilenames = ( { fields, handleChange, handleToggle, translate } ) 
 					<FormFieldset>
 						<FormTextarea
 							onChange={ handleChange( 'wp_accepted_files' ) }
-							value={ fields.wp_accepted_files || '' } />
+							value={ wp_accepted_files || '' } />
 						<FormSettingExplanation>
 							{ translate(
 								'Add here those filenames that can be cached, even if they match one of the rejected ' +
