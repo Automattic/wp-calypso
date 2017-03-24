@@ -5,7 +5,6 @@ import { renderToString } from 'react-dom/server';
 import i18n from 'i18n-calypso';
 
 import Gridicon from 'gridicons';
-import config from 'config';
 
 import menuItems from './menu-items';
 
@@ -36,9 +35,5 @@ const initialize = editor => {
 };
 
 export default () => {
-	if ( ! config.isEnabled( 'post-editor/insert-menu' ) ) {
-		return;
-	}
-
 	tinymce.PluginManager.add( 'wpcom/insertmenu', initialize );
 };
