@@ -93,7 +93,7 @@ class PostByline extends React.Component {
 					author={ post.author }
 					preferGravatar={ true }
 					siteUrl={ streamUrl }
-					siteIconSize={ 32 } />
+					isCompact={ true } />
 				<div className="reader-post-card__byline-details">
 					<div className="reader-post-card__byline-author-site">
 						{ shouldDisplayAuthor &&

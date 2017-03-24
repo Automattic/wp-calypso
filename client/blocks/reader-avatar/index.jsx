@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { startsWith, endsWith } from 'lodash';
+import { startsWith, endsWith, noop, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,12 +12,23 @@ import SiteIcon from 'blocks/site-icon';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 
-const ReaderAvatar = ( { author, siteIcon, feedIcon, siteUrl, siteIconSize = 96, preferGravatar = false, showPlaceholder = false } ) => {
+const ReaderAvatar = ( {
+		author,
+		siteIcon,
+		feedIcon,
+		siteUrl,
+		isCompact = false,
+		preferGravatar = false,
+		showPlaceholder = false,
+		onClick,
+	} ) => {
 	let fakeSite;
+
 	// don't show the default favicon for some sites
 	if ( endsWith( feedIcon, 'wp.com/i/buttonw-com.png' ) ) {
 		feedIcon = null;
 	}
+
 	if ( siteIcon ) {
 		fakeSite = {
 			icon: {
@@ -32,7 +43,7 @@ const ReaderAvatar = ( { author, siteIcon, feedIcon, siteUrl, siteIconSize = 96,
 		};
 	}
 
-	let hasSiteIcon = !! ( fakeSite && fakeSite.icon );
+	let hasSiteIcon = !! get( fakeSite, 'icon.img' );
 	let hasAvatar = !! ( author && author.has_avatar );
 
 	if ( hasSiteIcon && hasAvatar ) {
@@ -50,9 +61,19 @@ const ReaderAvatar = ( { author, siteIcon, feedIcon, siteUrl, siteIconSize = 96,
 
 	const hasBothIcons = hasSiteIcon && hasAvatar;
 
+	let siteIconSize, gravatarSize;
+	if ( isCompact ) {
+		siteIconSize = 32;
+		gravatarSize = hasBothIcons ? 24 : 32;
+	} else {
+		siteIconSize = 96;
+		gravatarSize = hasBothIcons ? 32 : 96;
+	}
+
 	const classes = classnames(
 		'reader-avatar',
 		{
+			'is-compact': isCompact,
 			'has-site-and-author-icon': hasBothIcons,
 			'has-site-icon': hasSiteIcon,
 			'has-gravatar': hasAvatar || showPlaceholder
@@ -60,11 +81,11 @@ const ReaderAvatar = ( { author, siteIcon, feedIcon, siteUrl, siteIconSize = 96,
 	);
 
 	const siteIconElement = hasSiteIcon && <SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />;
-	const avatarElement = ( hasAvatar || showPlaceholder ) && <Gravatar key="author-avatar" user={ author } size={ hasBothIcons ? 32 : 96 } />;
+	const avatarElement = ( hasAvatar || showPlaceholder ) && <Gravatar key="author-avatar" user={ author } size={ gravatarSize } />;
 	const iconElements = [ siteIconElement, avatarElement ];
 
 	return (
-		<div className={ classes }>
+		<div className={ classes } onClick={ onClick }>
 			{ siteUrl ? <a href={ siteUrl }>{ iconElements }</a> : iconElements }
 		</div>
 	);
@@ -76,7 +97,13 @@ ReaderAvatar.propTypes = {
 	feedIcon: React.PropTypes.string,
 	siteUrl: React.PropTypes.string,
 	preferGravatar: React.PropTypes.bool,
-	showPlaceholder: React.PropTypes.bool
+	showPlaceholder: React.PropTypes.bool,
+	isCompact: React.PropTypes.bool,
+	onClick: React.PropTypes.func,
+};
+
+ReaderAvatar.defaultProps = {
+	onClick: noop,
 };
 
 export default localize( ReaderAvatar );
