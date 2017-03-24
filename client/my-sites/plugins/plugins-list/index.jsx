@@ -255,11 +255,9 @@ export const PluginsList = React.createClass( {
 			PluginsActions.deactivatePlugin( site, plugin );
 		} );
 
-		if ( waitForDeactivate ) {
-			this.setState( { disconnectJetpackDialog: true } );
-		} else {
-			this.setState( { showJetpackDisconnectDialog: true } );
-			this.forceUpdate();
+		if ( waitForDeactivate && this.props.selectedSite ) {
+				this.setState( { disconnectJetpackDialog: true } );
+			}
 		}
 
 		this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
