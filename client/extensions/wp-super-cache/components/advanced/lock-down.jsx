@@ -36,7 +36,6 @@ const LockDown = ( { fields, translate } ) => {
 							'"Sorry. My blog is locked down. Updates will appear shortly"; }{{/code}}',
 							{
 								components: {
-									br: <br />,
 									code: <code />,
 								}
 							}
