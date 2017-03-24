@@ -2,11 +2,12 @@
  * Internal dependencies
  */
 import {
+	AUTOMATED_TRANSFER_STATUS_SET,
 	THEME_TRANSFER_INITIATE_FAILURE,
 	THEME_TRANSFER_INITIATE_REQUEST,
 	THEME_TRANSFER_INITIATE_SUCCESS,
 } from 'state/action-types';
-import { pauseAll, resumePaused } from 'lib/data-poller'; 
+import { pauseAll, resumePaused } from 'lib/data-poller';
 
 const pauseFetching = () => {
 	pauseAll();
@@ -23,7 +24,14 @@ const resumeFetching = () => {
 export const handlers = {
 	[ THEME_TRANSFER_INITIATE_REQUEST ]: pauseFetching,
 	[ THEME_TRANSFER_INITIATE_FAILURE ]: resumeFetching,
-	[ THEME_TRANSFER_INITIATE_SUCCESS ]: resumeFetching
+	[ THEME_TRANSFER_INITIATE_SUCCESS ]: resumeFetching,
+	[ AUTOMATED_TRANSFER_STATUS_SET ]: ( dispatch, { status } ) => {
+		if ( 'complete' === status ) {
+			resumeFetching();
+		} else if ( 'start' === status ) {
+			pauseFetching();
+		}
+	}
 };
 
 /**
