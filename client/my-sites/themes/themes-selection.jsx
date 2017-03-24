@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { compact, includes, isEqual, omit, property, snakeCase } from 'lodash';
+import { compact, includes, isEqual, property, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +28,6 @@ import {
 } from 'state/themes/selectors';
 import { setThemePreviewOptions } from 'state/themes/actions';
 import config from 'config';
-import { PAGINATION_QUERY_KEYS } from 'lib/query-manager/paginated/constants';
 
 class ThemesSelection extends Component {
 	static propTypes = {
@@ -39,7 +38,6 @@ class ThemesSelection extends Component {
 		getOptions: PropTypes.func,
 		getActionLabel: PropTypes.func,
 		incrementPage: PropTypes.func,
-		resetPage: PropTypes.func,
 		// connected props
 		source: PropTypes.oneOfType( [
 			PropTypes.number,
@@ -58,14 +56,6 @@ class ThemesSelection extends Component {
 	static defaultProps = {
 		emptyContent: null,
 		showUploadButton: true
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		if ( ! isEqual(
-				omit( this.props.query, PAGINATION_QUERY_KEYS ),
-				omit( nextProps.query, PAGINATION_QUERY_KEYS ) ) ) {
-			this.props.resetPage();
-		}
 	}
 
 	recordSearchResultsClick = ( theme, resultsRank, action ) => {
@@ -228,6 +218,15 @@ class ThemesSelectionWithPage extends React.Component {
 		page: 1,
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.search !== this.props.search ||
+			nextProps.tier !== this.props.tier ||
+			! isEqual( nextProps.filter, this.props.filter ) ||
+			! isEqual( nextProps.vertical, this.props.vertical ) ) {
+			this.resetPage();
+		}
+	}
+
 	incrementPage = () => {
 		this.setState( { page: this.state.page + 1 } );
 	}
@@ -241,7 +240,6 @@ class ThemesSelectionWithPage extends React.Component {
 			<ConnectedThemesSelection { ...this.props }
 				page={ this.state.page }
 				incrementPage={ this.incrementPage }
-				resetPage={ this.resetPage }
 			/>
 		);
 	}
