@@ -495,6 +495,7 @@ class ReaderStream extends React.Component {
 			showSiteName={ this.props.showSiteNameOnCards }
 			cardClassForPost={ this.cardClassForPost }
 			followSource={ this.props.followSource }
+			blockedSites={ this.props.blockedSites }
 		/>;
 	}
 
