@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import JetpackModuleToggle from '../jetpack-module-toggle';
+import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
