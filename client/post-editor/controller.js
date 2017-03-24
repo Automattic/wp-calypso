@@ -28,6 +28,7 @@ import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { editPost } from 'state/posts/actions';
 import wpcom from 'lib/wp';
 import Dispatcher from 'dispatcher';
+import { getFeaturedImageId } from 'lib/posts/utils';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -132,6 +133,7 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 		);
 		postAttributes.tags = map( postToCopy.tags, 'name' );
 		postAttributes.title = decodeEntities( postAttributes.title );
+		postAttributes.featured_image = getFeaturedImageId( postToCopy );
 
 		actions.startEditingNew( siteId, {
 			content: postToCopy.content,
