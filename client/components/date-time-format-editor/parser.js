@@ -7,13 +7,18 @@ import {
 	fromPairs,
 	get,
 	map,
-	matchesProperty,
+	//matchesProperty,
 	reduce,
 } from 'lodash';
 import {
 	convertFromRaw,
 	convertToRaw,
 } from 'draft-js';
+
+/**
+ * Internal dependencies
+ */
+import { phpToMomentMapping } from 'lib/formatting';
 
 /*
  * The functions in this file convert between the
@@ -113,7 +118,8 @@ export const fromEditor = content => {
 	] );
 };
 
-const isTextPiece = matchesProperty( 'type', 'string' );
+//const isTextPiece = matchesProperty( 'type', 'string' );
+const isTextPiece = piece => undefined === phpToMomentMapping[ piece ];
 
 const emptyBlockMap = {
 	text: '',
@@ -146,7 +152,8 @@ export const mapTokenTitleForEditor = title => `\u205f\u205f${ title }\u205f\u20
  * @param {object} tokens available tokens, e.g. { siteName: 'Site Name', tagline: 'Tagline' }
  * @returns {string} translated chip name
  */
-const tokenTitle = ( type, tokens ) => mapTokenTitleForEditor( get( tokens, type, '' ).trim() );
+//const tokenTitle = ( type, tokens ) => mapTokenTitleForEditor( get( tokens, type, '' ).trim() );
+const tokenTitle = title => mapTokenTitleForEditor( title.trim() );
 
 /**
  * Creates a new entity reference for a blockMap
@@ -191,13 +198,13 @@ const buildBlockMap = compose(
 			...block,
 			entityRanges: isTextPiece( piece )
 				? block.entityRanges // text pieces don't add entities
-				: [ ...block.entityRanges, newEntityAt( lastIndex, piece.type, tokens, entityGuide ) ],
-			text: block.text + ( isTextPiece( piece ) ? piece.value : tokenTitle( piece.type, tokens ) ),
+				: [ ...block.entityRanges, newEntityAt( lastIndex, piece, tokens, entityGuide ) ],
+			text: block.text + ( isTextPiece( piece ) ? piece : tokenTitle( piece, tokens ) ),
 		},
-		lastIndex + ( piece.value ? piece.value.length : tokenTitle( piece.type, tokens ).length ),
+		lastIndex + ( isTextPiece( piece ) ? piece.length : tokenTitle( piece, tokens ).length ),
 		isTextPiece( piece )
 			? entityGuide
-			: [ ...entityGuide, piece.type ]
+			: [ ...entityGuide, piece ]
 	], [ emptyBlockMap, 0, [] ] )
 );
 

@@ -121,11 +121,12 @@ export class DateTimeFormatEditor extends Component {
 		placeholder: PropTypes.string,
 		type: PropTypes.object.isRequired,
 		tokens: PropTypes.object.isRequired,
-		onChange: PropTypes.func.isRequired,
+		onChange: PropTypes.func,
 	};
 
 	static defaultProps = {
 		disabled: false,
+		onChange: noop,
 		placeholder: '',
 	};
 
@@ -143,16 +144,19 @@ export class DateTimeFormatEditor extends Component {
 		this.skipOverTokens = this.skipOverTokens.bind( this );
 
 		this.state = {
-			editorState: EditorState.moveSelectionToEnd(
+			editorState: EditorState.moveFocusToEnd(
 				this.editorStateFrom( props )
 			)
 		};
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.disabled && ! nextProps.disabled ) {
+		if (
+			this.props.disabled && ! nextProps.disabled ||
+			this.props.titleFormats !== nextProps.titleFormats
+		) {
 			this.setState( {
-				editorState: EditorState.moveSelectionToEnd(
+				editorState: EditorState.moveFocusToEnd(
 					this.editorStateFrom( nextProps )
 				)
 			} );
