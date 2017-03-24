@@ -210,6 +210,12 @@ describe( 'I18n', function() {
 			it( 'should use available translations for relative time in the future', function() {
 				assert.equal( 'in ein paar Sekunden', moment().add( 10, 'seconds' ).fromNow() );
 			} );
+			it( 'should be able to convert dates to any timezone', function() {
+				assert.equal( 'Freitag, 18. Juli 2014 14:59', moment( '2014-07-18T14:59:09-07:00' ).tz( 'America/Los_Angeles' ).format( 'LLLL' ) );
+				assert.equal( 'Samstag, 19. Juli 2014 06:59', moment( '2014-07-18T14:59:09-07:00' ).tz( 'Asia/Tokyo' ).format( 'LLLL' ) );
+				assert.equal( 'Freitag, 18. Juli 2014 23:59', moment( '2014-07-18T14:59:09-07:00' ).tz( 'Europe/Paris' ).format( 'LLLL' ) );
+				assert.equal( 'Freitag, 18. Juli 2014 22:59', moment( '2014-07-18T14:59:09-07:00' ).tz( 'Europe/London' ).format( 'LLLL' ) );
+			} );
 		} );
 	} );
 
