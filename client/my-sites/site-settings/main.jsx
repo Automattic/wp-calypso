@@ -11,7 +11,6 @@ import i18n from 'i18n-calypso';
  */
 import Main from 'components/main';
 import QueryProductsList from 'components/data/query-products-list';
-import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import ImportSettings from './section-import';
@@ -85,7 +84,6 @@ export class SiteSettingsComponent extends Component {
 					<SidebarNavigation />
 					{ site && <SiteSettingsNavigation site={ site } section={ section } /> }
 					<QueryProductsList />
-					{ site && <QuerySitePurchases siteId={ site.ID } /> }
 					{ site && this.getSection() }
 			</Main>
 		);

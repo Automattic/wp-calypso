@@ -14,6 +14,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import GeneralForm from 'my-sites/site-settings/form-general';
 import DeleteSiteOptions from 'my-sites/site-settings/delete-site-options';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 import config from 'config';
 import notices from 'notices';
 import { getSitePurchases, hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purchases/selectors';
@@ -22,7 +23,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 class SiteSettingsGeneral extends Component {
 	static propTypes = {
 		site: PropTypes.object.isRequired,
-		loadedSitePurchasesFromServer: PropTypes.bool.isRequired,
+		hasLoadedSitePurchasesFromServer: PropTypes.bool.isRequired,
 		sitePurchases: PropTypes.array.isRequired,
 		purchasesError: PropTypes.object,
 	};
@@ -35,7 +36,6 @@ class SiteSettingsGeneral extends Component {
 
 	render() {
 		const {
-			loadedSitePurchasesFromServer,
 			site,
 			sitePurchases,
 			translate,
@@ -44,6 +44,8 @@ class SiteSettingsGeneral extends Component {
 		return (
 			<Main className="general__main site-settings">
 				<DocumentHead title={ translate( 'Site Settings' ) } />
+				{ site && <QuerySitePurchases siteId={ site.ID } /> }
+
 				<SidebarNavigation />
 				<SiteSettingsNavigation site={ site } section="general" />
 
@@ -53,7 +55,7 @@ class SiteSettingsGeneral extends Component {
 					<DeleteSiteOptions
 						site={ site }
 						sitePurchases={ sitePurchases }
-						hasLoadedSitePurchasesFromServer={ loadedSitePurchasesFromServer }
+						hasLoadedSitePurchasesFromServer={ this.props.hasLoadedSitePurchasesFromServer }
 					/>
 				}
 			</Main>
@@ -63,7 +65,7 @@ class SiteSettingsGeneral extends Component {
 
 export default connect(
 	( state ) => ( {
-		loadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
+		hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
 		purchasesError: getPurchasesError( state ),
 		sitePurchases: getSitePurchases( state, getSelectedSiteId( state ) ),
 	} )
