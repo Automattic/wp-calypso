@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
-import { defer, omit } from 'lodash';
+import { defer, omit, includes } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -119,7 +119,7 @@ export default class PostLifecycle extends React.PureComponent {
 			return <PostPlaceholder />;
 		} else if ( post._state === 'error' ) {
 			return <PostUnavailable post={ post } />;
-		} else if ( postKey.isBlocked ) {
+		} else if ( includes( this.props.blockedSites, +postKey.blogId ) ) {
 			return <PostBlocked post={ post } />;
 		} else if ( isXPost( post ) ) {
 			const xMetadata = XPostHelper.getXPostMetadata( post );
