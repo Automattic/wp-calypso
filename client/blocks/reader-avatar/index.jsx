@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { startsWith, endsWith } from 'lodash';
+import { startsWith, endsWith, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +20,7 @@ const ReaderAvatar = ( {
 		isCompact = false,
 		preferGravatar = false,
 		showPlaceholder = false,
+		onClick,
 	} ) => {
 	let fakeSite;
 
@@ -84,7 +85,7 @@ const ReaderAvatar = ( {
 	const iconElements = [ siteIconElement, avatarElement ];
 
 	return (
-		<div className={ classes }>
+		<div className={ classes } onClick={ onClick }>
 			{ siteUrl ? <a href={ siteUrl }>{ iconElements }</a> : iconElements }
 		</div>
 	);
@@ -98,6 +99,11 @@ ReaderAvatar.propTypes = {
 	preferGravatar: React.PropTypes.bool,
 	showPlaceholder: React.PropTypes.bool,
 	isCompact: React.PropTypes.bool,
+	onClick: React.PropTypes.func,
+};
+
+ReaderAvatar.defaultProps = {
+	onClick: noop,
 };
 
 export default localize( ReaderAvatar );
