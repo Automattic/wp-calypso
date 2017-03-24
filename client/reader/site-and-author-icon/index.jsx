@@ -2,40 +2,74 @@
  * External Dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal Dependencies
  */
 import SiteIcon from 'blocks/site-icon';
 import Gravatar from 'components/gravatar';
-import { getSite } from 'state/reader/sites/selectors';
-import QueryReaderSite from 'components/data/query-reader-site';
+import SiteStore from 'lib/reader-site-store';
+import SiteStoreActions from 'lib/reader-site-store/actions';
 
-class SiteAndAuthorIcon extends React.Component {
+const SiteAndAuthorIcon = React.createClass( {
 
-	static propTypes = {
+	mixins: [ PureRenderMixin ],
+
+	propTypes: {
 		siteId: React.PropTypes.number.isRequired,
 		isExternal: React.PropTypes.bool.isRequired,
 		user: React.PropTypes.object.isRequired
-	}
+	},
+
+	getInitialState: function() {
+		return this.getStateFromStores();
+	},
+
+	getStateFromStores( props = this.props ) {
+		let site;
+		const siteId = ! props.isExternal && props.siteId;
+		if ( siteId ) {
+			site = SiteStore.get( siteId );
+			if ( ! site ) {
+				SiteStoreActions.fetch( siteId );
+			}
+		}
+		return {
+			site: site
+		};
+	},
+
+	componentDidMount() {
+		SiteStore.on( 'change', this.updateState );
+	},
+
+	componentWillUnmount() {
+		SiteStore.off( 'change', this.updateState );
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.siteId !== this.props.siteId ) {
+			this.updateState( nextProps );
+		}
+	},
+
+	updateState( props ) {
+		var newState = this.getStateFromStores( props );
+		if ( newState.site !== this.state.site ) {
+			this.setState( newState );
+		}
+	},
 
 	render() {
-		const site = this.props.site || {};
+		let site = this.state.site ? this.state.site.toJS() : {};
 		return (
 			<div className="reader__site-and-author-icon">
 				<SiteIcon site={ site } />
 				<Gravatar user={ this.props.user } size={ 24 } />
-				{ ! this.props.site && ! this.props.isExternal &&
-					<QueryReaderSite siteId={ this.props.siteId } />
-				}
 			</div>
 		);
 	}
-}
+} );
 
-export default connect(
-	( state, ownProps ) => ( {
-		site: getSite( state, ownProps.siteId )
-	} )
-)( SiteAndAuthorIcon );
+export default SiteAndAuthorIcon;

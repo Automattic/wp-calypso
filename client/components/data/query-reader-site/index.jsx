@@ -3,6 +3,7 @@
  */
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -47,5 +48,9 @@ export default connect(
 			shouldSiteBeFetched: shouldSiteBeFetched( state, siteId )
 		};
 	},
-	{ requestSite }
+	( dispatch ) => {
+		return bindActionCreators( {
+			requestSite
+		}, dispatch );
+	}
 )( QueryReaderSite );

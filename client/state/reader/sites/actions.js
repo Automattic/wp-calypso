@@ -17,7 +17,6 @@ export function requestSite( siteId ) {
 				ID: siteId
 			}
 		} );
-
 		return wpcom.undocumented().readSite( { site: siteId } ).then(
 			function success( data ) {
 				dispatch( {
