@@ -1,0 +1,13 @@
+.form-number-input {
+	-webkit-appearance: none;
+
+	&:not( :focus ) {
+		&.is-error {
+			border-color: $alert-red;
+		}
+
+		&.form-number-input__is-error:hover {
+			border-color: darken( $alert-red, 10 );
+		}
+	}
+}

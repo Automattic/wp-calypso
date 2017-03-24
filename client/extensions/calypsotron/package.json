@@ -1,0 +1,20 @@
+{
+  "name": "calypsotron",
+  "author": "Automattic",
+  "description": "Calypsotron",
+  "version": "0.0.1",
+  "env_id": [
+    "development",
+    "wpcalypso"
+  ],
+  "section": {
+    "name": "calypsotron",
+    "paths": [
+      "/calypsotron"
+    ],
+    "module": "calypsotron",
+    "group": "sites",
+    "secondary": true,
+    "enableLoggedOut": false
+  }
+}

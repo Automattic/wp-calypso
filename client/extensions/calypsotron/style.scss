@@ -1,0 +1,17 @@
+@import './components/forms/form-currency-input/style';
+@import './components/forms/form-date-input/style';
+@import './components/forms/form-number-input/style';
+@import './components/forms/form-number-input-with-affixes/style';
+
+@import './app/product-list/style';
+
+.calypsotron__main {
+	display: flex;
+	flex-direction: row;
+}
+
+.calypsotron__screen {
+	flex: 1;
+	overflow: auto;
+}
+

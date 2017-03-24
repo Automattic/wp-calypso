@@ -20,6 +20,7 @@ import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
+import extensions from '../extensions/reducer';
 import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import help from './help/reducer';
@@ -73,6 +74,7 @@ export const reducer = combineReducers( {
 	currentUser,
 	documentHead,
 	domains,
+	extensions,
 	geo,
 	googleAppsUsers,
 	happinessEngineers,

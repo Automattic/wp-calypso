@@ -1,0 +1,13 @@
+.form-date-input {
+	-webkit-appearance: none;
+
+	&:not( :focus ) {
+		&.form-date-input__is-error {
+			border-color: $alert-red;
+		}
+
+		&.form-date-input__is-error:hover {
+			border-color: darken( $alert-red, 10 );
+		}
+	}
+}

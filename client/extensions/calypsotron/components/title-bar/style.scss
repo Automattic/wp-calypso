@@ -1,0 +1,23 @@
+.title-bar {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 24px;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: $light-gray;
+	background-color: white;
+
+	.title-bar__title {
+		flex: 1;
+	}
+}
+
+.title-bar__title-icon {
+	margin: 0 4px -2px 0;
+	vertical-align: bottom;
+}
+
+.title-bar__sidebar .button{
+	margin-left: 16px;
+}
