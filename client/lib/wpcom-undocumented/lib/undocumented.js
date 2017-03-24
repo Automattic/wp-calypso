@@ -959,7 +959,7 @@ Undocumented.prototype.createConnection = function( keyringConnectionId, siteId,
  * @param {int}       siteId            The site ID
  * @param {int}       postId            The post ID
  * @param {String}    message           Message for social media
- * @param {Array(int)}skippedConnetions        CKeyring connection ids to skip publicize
+ * @param {Array(int)}skippedConnetions CKeyring connection ids to skip publicize
  * @param {Array(int)}connetions        CKeyring connection ids to publicize
  *
  * @returns {Promise}
