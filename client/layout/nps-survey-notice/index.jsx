@@ -9,26 +9,17 @@ import { connect } from 'react-redux';
  */
 import Dialog from 'components/dialog';
 import NpsSurvey from 'blocks/nps-survey';
-import notices from 'notices';
-import { setNpsSurveyDialogShowing } from 'state/ui/nps-survey-notice/actions';
+import { showNpsSurveyNotice, setNpsSurveyDialogShowing } from 'state/ui/nps-survey-notice/actions';
 import { isNpsSurveyDialogShowing } from 'state/ui/nps-survey-notice/selectors';
 
 class NpsSurveyNotice extends Component {
 	componentDidMount() {
-		const options = {
-			button: 'Sure!',
-			onClick: ( event, closeFn ) => {
-				closeFn();
-				this.props.setNpsSurveyDialogShowing( true );
-			}
-		};
-
 		// wait a little bit before showing the notice, so that
 		// (1) the user gets a chance to look briefly at the uncluttered screen, and
 		// (2) the user notices the notice more, since it will cause a change to the
 		//     screen they are already looking at
 		setTimeout( () => {
-			notices.new( 'Let us know how we are doing...', options, 'is-info' );
+			this.props.showNpsSurveyNotice();
 		}, 2000 );
 	}
 
@@ -59,4 +50,7 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps, { setNpsSurveyDialogShowing } )( NpsSurveyNotice );
+export default connect(
+	mapStateToProps,
+	{ showNpsSurveyNotice, setNpsSurveyDialogShowing }
+)( NpsSurveyNotice );
