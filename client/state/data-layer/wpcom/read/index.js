@@ -4,10 +4,10 @@
 import { mergeHandlers } from 'state/data-layer/utils';
 import teams from './teams';
 import tags from './tags';
-import follows from './follows';
+import followingMine from './following/mine';
 
 export default mergeHandlers(
 	teams,
 	tags,
-	follows,
+	followingMine,
 );
