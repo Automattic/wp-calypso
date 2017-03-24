@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import page from 'page';
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import { moment } from 'i18n-calypso';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -27,26 +27,24 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
 
-const CancelPurchaseButton = React.createClass( {
-	propTypes: {
-		purchase: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.object.isRequired
-	},
+class CancelPurchaseButton extends Component {
+	static propTypes = {
+		purchase: PropTypes.object.isRequired,
+		selectedSite: PropTypes.object.isRequired
+	}
 
-	getInitialState() {
-		return {
-			disabled: false,
-			showDialog: false,
-			isRemoving: false,
-			surveyStep: 1,
-			survey: {
-				questionOneRadio: null,
-				questionTwoRadio: null
-			}
-		};
-	},
+	state = {
+		disabled: false,
+		showDialog: false,
+		isRemoving: false,
+		surveyStep: 1,
+		survey: {
+			questionOneRadio: null,
+			questionTwoRadio: null
+		}
+	}
 
-	recordEvent( name, properties = {} ) {
+	recordEvent = ( name, properties = {} ) => {
 		const { purchase } = this.props;
 		const product_slug = get( purchase, 'productSlug' );
 		const cancellation_flow = isRefundable( purchase ) ? 'cancel_with_refund' : 'cancel_autorenew';
@@ -54,9 +52,9 @@ const CancelPurchaseButton = React.createClass( {
 			name,
 			Object.assign( { cancellation_flow, product_slug }, properties )
 		);
-	},
+	}
 
-	handleCancelPurchaseClick() {
+	handleCancelPurchaseClick = () => {
 		if ( isDomainRegistration( this.props.purchase ) ) {
 			return this.goToCancelConfirmation();
 		}
@@ -66,9 +64,9 @@ const CancelPurchaseButton = React.createClass( {
 		this.setState( {
 			showDialog: true
 		} );
-	},
+	}
 
-	closeDialog() {
+	closeDialog = () => {
 		this.recordEvent( 'calypso_purchases_cancel_form_close' );
 
 		this.setState( {
@@ -79,29 +77,29 @@ const CancelPurchaseButton = React.createClass( {
 				questionTwoRadio: null
 			}
 		} );
-	},
+	}
 
-	changeSurveyStep() {
+	changeSurveyStep = () => {
 		const newStep = this.state.surveyStep === 1 ? 2 : 1;
 
 		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
 
 		this.setState( { surveyStep: newStep } );
-	},
+	}
 
-	onSurveyChange( update ) {
+	onSurveyChange = ( update ) => {
 		this.setState( {
 			survey: update,
 		} );
-	},
+	}
 
-	isSurveyIncomplete() {
+	isSurveyIncomplete = () => {
 		return this.state.survey.questionOneRadio === null || this.state.survey.questionTwoRadio === null ||
 			( this.state.survey.questionOneRadio === 'anotherReasonOne' && this.state.survey.questionOneText === '' ) ||
 			( this.state.survey.questionTwoRadio === 'anotherReasonTwo' && this.state.survey.questionTwoText === '' );
-	},
+	}
 
-	renderCancelConfirmationDialog() {
+	renderCancelConfirmationDialog = () => {
 		const { translate } = this.props;
 		const buttons = {
 				close: {
@@ -153,16 +151,16 @@ const CancelPurchaseButton = React.createClass( {
 				/>
 			</Dialog>
 		);
-	},
+	}
 
-	goToCancelConfirmation() {
+	goToCancelConfirmation = () => {
 		const { id } = this.props.purchase,
 			{ slug } = this.props.selectedSite;
 
 		page( paths.confirmCancelDomain( slug, id ) );
-	},
+	}
 
-	cancelPurchase() {
+	cancelPurchase = () => {
 		const { purchase, translate } = this.props;
 
 		this.toggleDisabled();
@@ -199,23 +197,23 @@ const CancelPurchaseButton = React.createClass( {
 				this.cancellationFailed();
 			}
 		} );
-	},
+	}
 
-	cancellationFailed() {
+	cancellationFailed = () => {
 		this.closeDialog();
 
 		this.setState( {
 			submitting: false
 		} );
-	},
+	}
 
-	toggleDisabled() {
+	toggleDisabled = () => {
 		this.setState( {
 			disabled: ! this.state.disabled
 		} );
-	},
+	}
 
-	handleSubmit( error, response ) {
+	handleSubmit = ( error, response ) => {
 		if ( error ) {
 			notices.error( error.message );
 
@@ -233,9 +231,9 @@ const CancelPurchaseButton = React.createClass( {
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 
 		page.redirect( paths.purchasesRoot() );
-	},
+	}
 
-	submitCancelAndRefundPurchase() {
+	submitCancelAndRefundPurchase = () => {
 		const { purchase, selectedSite } = this.props;
 		const refundable = isRefundable( purchase );
 
@@ -269,9 +267,9 @@ const CancelPurchaseButton = React.createClass( {
 		} else {
 			this.cancelPurchase();
 		}
-	},
+	}
 
-	renderCancellationEffect() {
+	renderCancellationEffect = () => {
 		const { purchase, translate } = this.props;
 
 		return (
@@ -280,7 +278,7 @@ const CancelPurchaseButton = React.createClass( {
 				{ cancellationEffectDetail( purchase, translate ) }
 			</p>
 		);
-	},
+	}
 
 	render() {
 		const { purchase, translate } = this.props;
@@ -328,7 +326,7 @@ const CancelPurchaseButton = React.createClass( {
 
 		);
 	}
-} );
+}
 
 export default connect(
 	null,
