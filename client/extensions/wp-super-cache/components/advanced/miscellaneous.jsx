@@ -11,6 +11,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
@@ -28,7 +29,18 @@ const Miscellaneous = ( { fields, handleToggle, translate } ) => {
 			</SectionHeader>
 			<Card>
 				<form>
+					{ !! fields.wp_cache_compression_disabled &&
+					<p>
+						{ translate(
+							' {{em}}Warning! Compression is disabled as gzencode() function was not found.{{/em}}',
+							{
+								components: { em: <em /> }
+							}
+						) }
+					</p>
+					}
 					<FormFieldset>
+						{ ! fields.wp_cache_compression_disabled &&
 						<FormToggle
 							checked={ !! fields.cache_compression }
 							onChange={ handleToggle( 'cache_compression' ) }>
@@ -41,6 +53,7 @@ const Miscellaneous = ( { fields, handleToggle, translate } ) => {
 								) }
 							</span>
 						</FormToggle>
+						}
 
 						<FormToggle
 							checked={ !! fields.wp_cache_not_logged_in }
@@ -71,6 +84,7 @@ const Miscellaneous = ( { fields, handleToggle, translate } ) => {
 
 						<FormToggle
 							checked={ !! fields.wp_supercache_304 }
+							disabled={ '1' === fields.super_cache_enabled }
 							onChange={ handleToggle( 'wp_supercache_304' ) }>
 							<span>
 								{ translate(
@@ -81,6 +95,25 @@ const Miscellaneous = ( { fields, handleToggle, translate } ) => {
 									}
 								) }
 							</span>
+							{ '1' === fields.super_cache_enabled &&
+								<FormSettingExplanation>
+									{ translate(
+										'{{strong}}Warning! 304 browser caching is only supported when mod_rewrite caching ' +
+										'is not used.{{/strong}}',
+										{
+											components: { strong: <strong /> }
+										}
+									) }
+								</FormSettingExplanation>
+							}
+							{ '1' !== fields.super_cache_enabled &&
+								<FormSettingExplanation>
+									{ translate(
+										'304 support is disabled by default because some hosts have had problems with the ' +
+										'headers used in the past.'
+									) }
+								</FormSettingExplanation>
+							}
 						</FormToggle>
 
 						<FormToggle
@@ -130,6 +163,8 @@ const getFormSettings = settings => {
 	return pick( settings, [
 		'cache_compression',
 		'cache_rebuild_files',
+		'wp_cache_compression_disabled',
+		'super_cache_enabled',
 		'wp_cache_hello_world',
 		'wp_cache_make_known_anon',
 		'wp_cache_no_cache_for_get',

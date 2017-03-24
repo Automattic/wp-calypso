@@ -60,6 +60,8 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const settings = {
 				wp_cache_enabled: true,
 				super_cache_enabled: '1',
+				wp_cache_mod_rewrite: false,
+				wp_cache_compression_disabled: false,
 				cache_compression: false,
 				cache_rebuild_files: true,
 				wp_cache_hello_world: false,
