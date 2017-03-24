@@ -15,7 +15,6 @@ import { getSitePosts } from 'state/posts/selectors';
 import Card from 'components/card';
 import QuerySites from 'components/data/query-sites';
 
-//Mostly copied from Seo Preview Pane
 const SharingPreviewPaneExample = ( { siteId, postId } ) => (
 	<Card>
 		<QuerySites siteId={ siteId } />
@@ -25,6 +24,7 @@ const SharingPreviewPaneExample = ( { siteId, postId } ) => (
 				query={ { number: 1, type: 'post' } } />
 		) }
 		<SharingPreviewPane
+			message="Do you have a trip coming up?"
 			postId={ postId }
 			siteId={ siteId } />
 	</Card>
