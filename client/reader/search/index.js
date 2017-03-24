@@ -7,16 +7,20 @@ import page from 'page';
  * Internal dependencies
  */
 import config from 'config';
-import controller from './controller';
-import readerController from 'reader/controller';
+import { search } from './controller';
+import {
+	preloadReaderBundle,
+	sidebar,
+	updateLastRoute,
+} from 'reader/controller';
 
 export default function() {
 	if ( config.isEnabled( 'reader/search' ) ) {
 		page( '/read/search',
-			readerController.preloadReaderBundle,
-			readerController.updateLastRoute,
-			readerController.sidebar,
-			controller.search );
+			preloadReaderBundle,
+			updateLastRoute,
+			sidebar,
+			search );
 	} else {
 		// redirect search to the root
 		page.redirect( '/read/search', '/' );

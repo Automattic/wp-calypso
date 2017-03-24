@@ -6,26 +6,35 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from './controller';
-import readerController from 'reader/controller';
+import {
+	recommendedTags,
+	tagListing,
+} from './controller';
+import {
+	initAbTests,
+	loadSubscriptions,
+	preloadReaderBundle,
+	sidebar,
+	updateLastRoute,
+} from 'reader/controller';
 
 export default function() {
 	page( '/tag/*',
-		readerController.preloadReaderBundle,
-		readerController.loadSubscriptions,
-		readerController.initAbTests
+		preloadReaderBundle,
+		loadSubscriptions,
+		initAbTests
 	);
 	page( '/tag/:tag',
-		readerController.updateLastRoute,
-		readerController.sidebar,
-		controller.tagListing
+		updateLastRoute,
+		sidebar,
+		tagListing
 	);
 
 	page( '/tags',
-		readerController.loadSubscriptions,
-		readerController.initAbTests,
-		readerController.updateLastRoute,
-		readerController.sidebar,
-		controller.recommendedTags
+		loadSubscriptions,
+		initAbTests,
+		updateLastRoute,
+		sidebar,
+		recommendedTags
 	);
 }

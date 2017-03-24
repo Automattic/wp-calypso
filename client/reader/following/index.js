@@ -6,14 +6,22 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from './controller';
-import readerController from 'reader/controller';
+import {
+	followingEdit,
+	followingManage,
+} from './controller';
+import {
+	loadSubscriptions,
+	initAbTests,
+	updateLastRoute,
+	sidebar,
+} from 'reader/controller';
 import config from 'config';
 
 export default function() {
-	page( '/following/*', readerController.loadSubscriptions, readerController.initAbTests );
-	page( '/following/edit', readerController.updateLastRoute, readerController.sidebar, controller.followingEdit );
+	page( '/following/*', loadSubscriptions, initAbTests );
+	page( '/following/edit', updateLastRoute, sidebar, followingEdit );
 	if ( config.isEnabled( 'reader/following-manage-refresh' ) ) {
-		page( '/following/manage', readerController.updateLastRoute, readerController.sidebar, controller.followingManage );
+		page( '/following/manage', updateLastRoute, sidebar, followingManage );
 	}
 }

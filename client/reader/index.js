@@ -6,7 +6,21 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from './controller';
+import {
+	blogListing,
+	feedDiscovery,
+	feedListing,
+	following,
+	incompleteUrlRedirects,
+	initAbTests,
+	legacyRedirects,
+	loadSubscriptions,
+	preloadReaderBundle,
+	prettyRedirects,
+	readA8C,
+	sidebar,
+	updateLastRoute,
+} from './controller';
 import config from 'config';
 
 function forceTeamA8C( context, next ) {
@@ -17,12 +31,12 @@ function forceTeamA8C( context, next ) {
 export default function() {
 	if ( config.isEnabled( 'reader' ) ) {
 		page( '/',
-			controller.preloadReaderBundle,
-			controller.loadSubscriptions,
-			controller.initAbTests,
-			controller.updateLastRoute,
-			controller.sidebar,
-			controller.following );
+			preloadReaderBundle,
+			loadSubscriptions,
+			initAbTests,
+			updateLastRoute,
+			sidebar,
+			following );
 
 		// Old and incomplete paths that should be redirected to /
 		page( '/read/following', '/' );
@@ -34,26 +48,26 @@ export default function() {
 		page( '/read/feed', '/' );
 
 		// Feed stream
-		page( '/read/*', controller.preloadReaderBundle, controller.loadSubscriptions, controller.initAbTests );
-		page( '/read/blog/feed/:feed_id', controller.legacyRedirects );
-		page( '/read/feeds/:feed_id/posts', controller.incompleteUrlRedirects );
+		page( '/read/*', preloadReaderBundle, loadSubscriptions, initAbTests );
+		page( '/read/blog/feed/:feed_id', legacyRedirects );
+		page( '/read/feeds/:feed_id/posts', incompleteUrlRedirects );
 		page( '/read/feeds/:feed_id',
-			controller.updateLastRoute,
-			controller.prettyRedirects,
-			controller.sidebar,
-			controller.feedDiscovery,
-			controller.feedListing );
+			updateLastRoute,
+			prettyRedirects,
+			sidebar,
+			feedDiscovery,
+			feedListing );
 
 		// Blog stream
-		page( '/read/blog/id/:blog_id', controller.legacyRedirects );
-		page( '/read/blogs/:blog_id/posts', controller.incompleteUrlRedirects );
+		page( '/read/blog/id/:blog_id', legacyRedirects );
+		page( '/read/blogs/:blog_id/posts', incompleteUrlRedirects );
 		page( '/read/blogs/:blog_id',
-			controller.updateLastRoute,
-			controller.prettyRedirects,
-			controller.sidebar,
-			controller.blogListing );
+			updateLastRoute,
+			prettyRedirects,
+			sidebar,
+			blogListing );
 	}
 
 	// Automattic Employee Posts
-	page( '/read/a8c', controller.updateLastRoute, controller.sidebar, forceTeamA8C, controller.readA8C );
+	page( '/read/a8c', updateLastRoute, sidebar, forceTeamA8C, readA8C );
 };

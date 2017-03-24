@@ -7,8 +7,17 @@ import { forEach } from 'lodash';
 /**
  * Internal dependencies
  */
-import controller from './controller';
-import readerController from 'reader/controller';
+import {
+	recommendedForYou,
+	recommendedPosts,
+} from './controller';
+import {
+	initAbTests,
+	loadSubscriptions,
+	preloadReaderBundle,
+	sidebar,
+	updateLastRoute,
+} from 'reader/controller';
 import config from 'config';
 
 export default function() {
@@ -17,12 +26,12 @@ export default function() {
 
 	// Blog Recommendations
 	page( '/recommendations',
-		readerController.preloadReaderBundle,
-		readerController.loadSubscriptions,
-		readerController.initAbTests,
-		readerController.updateLastRoute,
-		readerController.sidebar,
-		controller.recommendedForYou
+		preloadReaderBundle,
+		loadSubscriptions,
+		initAbTests,
+		updateLastRoute,
+		sidebar,
+		recommendedForYou
 	);
 
 	// Post Recommendations - Used by the Data team to test recommendation algorithms
@@ -31,11 +40,11 @@ export default function() {
 			( path ) => {
 				page.apply( page, [
 					path,
-					readerController.preloadReaderBundle,
-					readerController.loadSubscriptions,
-					readerController.updateLastRoute,
-					readerController.sidebar,
-					controller.recommendedPosts
+					preloadReaderBundle,
+					loadSubscriptions,
+					updateLastRoute,
+					sidebar,
+					recommendedPosts
 		] ) } )
 	}
 }
