@@ -971,7 +971,7 @@ Undocumented.prototype.publicizePost = function( siteId, postId, message, skippe
 		body.message = message;
 	}
 
-	if ( skippedConnections && skippedConnections.length > 0) {
+	if ( skippedConnections && skippedConnections.length > 0 ) {
 		body.skipped_connections = skippedConnections;
 	}
 
