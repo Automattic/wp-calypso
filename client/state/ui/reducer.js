@@ -25,6 +25,7 @@ import preview from './preview/reducer';
 import happychat from './happychat/reducer';
 import mediaModal from './media-modal/reducer';
 import themeSetup from './theme-setup/reducers';
+import npsSurveyNotice from './nps-survey-notice/reducer';
 
 /**
  * Tracks the currently selected site ID.
@@ -89,6 +90,7 @@ const reducer = combineReducers( {
 	happychat,
 	mediaModal,
 	themeSetup,
+	npsSurveyNotice,
 } );
 
 export default function( state, action ) {

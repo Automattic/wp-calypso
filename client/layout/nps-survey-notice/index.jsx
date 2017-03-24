@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -9,20 +10,16 @@ import React, { Component } from 'react';
 import Dialog from 'components/dialog';
 import NpsSurvey from 'blocks/nps-survey';
 import notices from 'notices';
+import { setNpsSurveyDialogShowing } from 'state/ui/nps-survey-notice/actions';
+import { isNpsSurveyDialogShowing } from 'state/ui/nps-survey-notice/selectors';
 
 class NpsSurveyNotice extends Component {
-	state = {
-		showDialog: false,
-	}
-
 	componentDidMount() {
 		const options = {
 			button: 'Sure!',
 			onClick: ( event, closeFn ) => {
 				closeFn();
-				this.setState( {
-					showDialog: true
-				} );
+				this.props.setNpsSurveyDialogShowing( true );
 			}
 		};
 
@@ -37,9 +34,7 @@ class NpsSurveyNotice extends Component {
 
 	handleDialogClose = () => {
 		// TODO: detect if survey was never submitted
-		this.setState( {
-			showDialog: false
-		} );
+		this.props.setNpsSurveyDialogShowing( false );
 	}
 
 	handleSurveyDismissed = () => {
@@ -48,7 +43,7 @@ class NpsSurveyNotice extends Component {
 
 	render() {
 		return (
-			<Dialog isVisible={ this.state.showDialog } onClose={ this.handleDialogClose }>
+			<Dialog isVisible={ this.props.isNpsSurveyDialogShowing } onClose={ this.handleDialogClose }>
 				<NpsSurvey
 					name="global-notice-radio-buttons-v1"
 					onDismissed={ this.handleSurveyDismissed }
@@ -58,4 +53,10 @@ class NpsSurveyNotice extends Component {
 	}
 }
 
-export default NpsSurveyNotice;
+const mapStateToProps = ( state ) => {
+	return {
+		isNpsSurveyDialogShowing: isNpsSurveyDialogShowing( state ),
+	};
+};
+
+export default connect( mapStateToProps, { setNpsSurveyDialogShowing } )( NpsSurveyNotice );
