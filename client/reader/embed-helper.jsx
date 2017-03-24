@@ -98,10 +98,16 @@ function resolveEmbedConfig( embed ) {
 	return embedsConfig.default;
 }
 
-export default {
+const exported = {
 	getEmbedSizingFunction: function getEmbedSizingFunction( embed ) {
 		var embedConfig = resolveEmbedConfig( embed );
 
 		return embedConfig.sizingFunction.bind( embedConfig, embed );
 	}
 };
+
+export default exported;
+
+export const {
+    getEmbedSizingFunction
+} = exported;

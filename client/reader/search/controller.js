@@ -29,7 +29,7 @@ function replaceSearchUrl( newValue, sort ) {
 	page.replace( searchUrl );
 }
 
-export default {
+const exported = {
 	search: function( context ) {
 		const basePath = '/read/search',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Search',
@@ -91,3 +91,9 @@ export default {
 		);
 	}
 };
+
+export default exported;
+
+export const {
+    search
+} = exported;

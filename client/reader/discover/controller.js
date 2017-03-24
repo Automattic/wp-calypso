@@ -16,7 +16,7 @@ import AsyncLoad from 'components/async-load';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
-export default {
+const exported = {
 	discover( context ) {
 		const blogId = config( 'discover_blog_id' );
 		const basePath = route.sectionify( context.path );
@@ -60,3 +60,9 @@ export default {
 		);
 	}
 };
+
+export default exported;
+
+export const {
+    discover
+} = exported;

@@ -15,7 +15,7 @@ import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
-export default {
+const exported = {
 	followingEdit( context ) {
 		const basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage Followed Sites',
@@ -64,3 +64,10 @@ export default {
 		);
 	}
 };
+
+export default exported;
+
+export const {
+    followingEdit,
+    followingManage
+} = exported;

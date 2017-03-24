@@ -13,7 +13,7 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
 
-export default {
+const exported = {
 	likes( context ) {
 		var LikedPostsStream = require( 'reader/liked-stream/main' ),
 			basePath = route.sectionify( context.path ),
@@ -43,3 +43,9 @@ export default {
 		);
 	}
 };
+
+export default exported;
+
+export const {
+    likes
+} = exported;

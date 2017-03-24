@@ -43,7 +43,7 @@ function renderFeedError( context ) {
 	);
 }
 
-export default {
+const exported = {
 	initAbTests( context, next ) {
 		// spin up the ab tests that are currently active for the reader
 		activeAbTests.forEach( test => abtest( test ) );
@@ -298,3 +298,22 @@ export default {
 		);
 	}
 };
+
+export default exported;
+
+export const {
+    initAbTests,
+    prettyRedirects,
+    legacyRedirects,
+    updateLastRoute,
+    incompleteUrlRedirects,
+    preloadReaderBundle,
+    loadSubscriptions,
+    sidebar,
+    unmountSidebar,
+    following,
+    feedDiscovery,
+    feedListing,
+    blogListing,
+    readA8C
+} = exported;

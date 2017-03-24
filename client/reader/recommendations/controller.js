@@ -16,7 +16,7 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
-export default {
+const exported = {
 	recommendedForYou( context ) {
 		const RecommendedForYou = require( 'reader/recommendations/for-you' ),
 			basePath = '/recommendations',
@@ -105,3 +105,10 @@ export default {
 		);
 	}
 };
+
+export default exported;
+
+export const {
+    recommendedForYou,
+    recommendedPosts
+} = exported;
