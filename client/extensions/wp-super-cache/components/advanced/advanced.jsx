@@ -11,6 +11,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
@@ -31,6 +32,7 @@ const Advanced = ( { fields, handleToggle, translate } ) => {
 					<FormFieldset>
 						<FormToggle
 							checked={ !! fields.wp_cache_mfunc_enabled }
+							disabled={ '1' === fields.super_cache_enabled }
 							onChange={ handleToggle( 'wp_cache_mfunc_enabled' ) }>
 							<span>
 								{ translate(
@@ -71,6 +73,31 @@ const Advanced = ( { fields, handleToggle, translate } ) => {
 									}
 								) }
 							</span>
+							{ !! fields.wp_cache_mobile_enabled &&
+								<FormSettingExplanation>
+									{ translate(
+										'{{strong}}Mobile Browsers{{/strong}}{{br/}}',
+										{
+											components: {
+												br: <br />,
+												strong: <strong />,
+											}
+										}
+									) }
+									{ fields.wp_cache_mobile_browsers || '' }
+
+									{ translate(
+										'{{br/}}{{strong}}Mobile Prefixes{{/strong}}{{br/}}',
+										{
+											components: {
+												br: <br />,
+												strong: <strong />,
+											}
+										}
+									) }
+									{ fields.wp_cache_mobile_prefixes || '' }
+								</FormSettingExplanation>
+							}
 						</FormToggle>
 
 						<FormToggle
@@ -121,13 +148,15 @@ const Advanced = ( { fields, handleToggle, translate } ) => {
 							</span>
 						</FormToggle>
 
-						<FormToggle
-							checked={ !! fields.wp_cache_mutex_disabled }
-							onChange={ handleToggle( 'wp_cache_mutex_disabled' ) }>
-							<span>
-								{ translate( 'Coarse file locking. You do not need this as it will slow down your website.' ) }
-							</span>
-						</FormToggle>
+						{ ! fields.wp_cache_disable_locking &&
+							<FormToggle
+								checked={ !! fields.wp_cache_mutex_disabled }
+								onChange={ handleToggle( 'wp_cache_mutex_disabled' ) }>
+								<span>
+									{ translate( 'Coarse file locking. You do not need this as it will slow down your website.' ) }
+								</span>
+							</FormToggle>
+						}
 
 						<FormToggle
 							checked={ !! fields.wp_super_cache_late_init }
@@ -138,6 +167,15 @@ const Advanced = ( { fields, handleToggle, translate } ) => {
 								) }
 							</span>
 						</FormToggle>
+						{ !! fields._wp_using_ext_object_cache &&
+							<FormToggle
+								checked={ !! fields.wp_cache_object_cache }
+								onChange={ handleToggle( 'wp_cache_object_cache' ) }>
+								<span>
+									{ translate( 'Use object cache to store cached files. (Experimental)' ) }
+								</span>
+							</FormToggle>
+						}
 					</FormFieldset>
 
 					<p>
@@ -159,13 +197,19 @@ const Advanced = ( { fields, handleToggle, translate } ) => {
 
 const getFormSettings = settings => {
 	return pick( settings, [
+		'_wp_using_ext_object_cache',
 		'cache_page_secret',
+		'super_cache_enabled',
 		'wp_cache_clear_on_post_edit',
+		'wp_cache_disable_locking',
 		'wp_cache_disable_utf8',
 		'wp_cache_front_page_checks',
-		'wp_cache_mfunc_enabled:',
+		'wp_cache_mfunc_enabled',
+		'wp_cache_mobile_browsers',
 		'wp_cache_mobile_enabled',
+		'wp_cache_mobile_prefixes',
 		'wp_cache_mutex_disabled',
+		'wp_cache_object_cache',
 		'wp_cache_refresh_single_only',
 		'wp_super_cache_late_init',
 		'wp_supercache_cache_list',

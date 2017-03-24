@@ -121,6 +121,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 					'/about/',
 					'/home/',
 				],
+				wp_cache_disable_locking: false,
 			};
 
 			return {
