@@ -102,8 +102,16 @@ export default React.createClass( {
 			return null;
 		}
 
-		const wrongMappedDomains = this.getDomains().filter( domain =>
-			domain.type === domainTypes.MAPPED && ! domain.pointsToWpcom );
+		const wrongMappedDomains = this.getDomains().filter( ( domain ) => {
+			if (
+				get( this.props, 'selectedSite.options.is_automated_transfer' ) &&
+				get( this.props, 'selectedSite.domain' ) === domain.domain
+			) {
+				return false;
+			}
+
+			return domain.type === domainTypes.MAPPED && ! domain.pointsToWpcom;
+		} );
 
 		debug( 'NS error domains:', wrongMappedDomains );
 		let learnMoreUrl,
