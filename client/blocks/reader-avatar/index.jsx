@@ -17,16 +17,17 @@ const ReaderAvatar = ( {
 		siteIcon,
 		feedIcon,
 		siteUrl,
-		siteIconSize = 96,
-		gravatarSize,
+		isCompact = false,
 		preferGravatar = false,
 		showPlaceholder = false,
 	} ) => {
 	let fakeSite;
+
 	// don't show the default favicon for some sites
 	if ( endsWith( feedIcon, 'wp.com/i/buttonw-com.png' ) ) {
 		feedIcon = null;
 	}
+
 	if ( siteIcon ) {
 		fakeSite = {
 			icon: {
@@ -41,7 +42,7 @@ const ReaderAvatar = ( {
 		};
 	}
 
-	let hasSiteIcon = !! ( fakeSite && fakeSite.icon );
+	let hasSiteIcon = !! ( fakeSite && fakeSite.icon.img );
 	let hasAvatar = !! ( author && author.has_avatar );
 
 	if ( hasSiteIcon && hasAvatar ) {
@@ -59,13 +60,19 @@ const ReaderAvatar = ( {
 
 	const hasBothIcons = hasSiteIcon && hasAvatar;
 
-	if ( ! gravatarSize ) {
+	let siteIconSize, gravatarSize;
+	if ( isCompact ) {
+		siteIconSize = 32;
+		gravatarSize = hasBothIcons ? 24 : 32;
+	} else {
+		siteIconSize = 96;
 		gravatarSize = hasBothIcons ? 32 : 96;
 	}
 
 	const classes = classnames(
 		'reader-avatar',
 		{
+			'is-compact': isCompact,
 			'has-site-and-author-icon': hasBothIcons,
 			'has-site-icon': hasSiteIcon,
 			'has-gravatar': hasAvatar || showPlaceholder
@@ -89,7 +96,8 @@ ReaderAvatar.propTypes = {
 	feedIcon: React.PropTypes.string,
 	siteUrl: React.PropTypes.string,
 	preferGravatar: React.PropTypes.bool,
-	showPlaceholder: React.PropTypes.bool
+	showPlaceholder: React.PropTypes.bool,
+	isCompact: React.PropTypes.bool,
 };
 
 export default localize( ReaderAvatar );

@@ -82,7 +82,7 @@ class ReaderCombinedCard extends React.Component {
 						author={ null }
 						preferGravatar={ true }
 						siteUrl={ streamUrl }
-						siteIconSize={ 32 } />
+						isCompact={ true } />
 					<div className="reader-combined-card__header-details">
 						<ReaderSiteStreamLink
 							className="reader-combined-card__site-link"
