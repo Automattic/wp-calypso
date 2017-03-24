@@ -102,7 +102,13 @@ const sections = [
 	},
 	{
 		name: 'settings-general',
-		paths: [ '/settings/general' ],
+		paths: [
+			'/settings/general',
+			'/settings/delete-site',
+			'/settings/start-over',
+			'/settings/theme-setup',
+			'/settings/date-time-format',
+		],
 		module: 'my-sites/site-settings/general',
 		secondary: true,
 		group: 'sites'
