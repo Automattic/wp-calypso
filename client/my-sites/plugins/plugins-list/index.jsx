@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import page from 'page';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { find, get, includes, isEmpty, isEqual, negate, range, reduce } from 'lodash';
@@ -11,7 +12,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import acceptDialog from 'lib/accept';
-import DisconnectJetpackDialog from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-dialog';
+import Dialog from 'components/dialog';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 import PluginsActions from 'lib/plugins/actions';
 import PluginsListHeader from 'my-sites/plugins/plugin-list-header';
@@ -139,13 +140,13 @@ export const PluginsList = React.createClass( {
 
 	filterSelection: {
 		active( plugin ) {
-			if ( this.isSelected( plugin ) ) {
+			if ( this.isSelected( plugin ) && plugin.slug !== 'jetpack' ) {
 				return plugin.sites.some( site => site.plugin && site.plugin.active );
 			}
 			return false;
 		},
 		inactive( plugin ) {
-			if ( this.isSelected( plugin ) ) {
+			if ( this.isSelected( plugin ) && plugin.slug !== 'jetpack' ) {
 				return plugin.sites.some( site => site.plugin && ! site.plugin.active );
 			}
 			return false;
@@ -210,12 +211,14 @@ export const PluginsList = React.createClass( {
 	},
 
 	doActionOverSelected( actionName, action ) {
-		const isDeactivatingAndJetpackSelected = ( { slug } ) => 'deactivating' === actionName && 'jetpack' === slug;
+		const isDeactivatingAndJetpackSelected =
+			( { slug } ) => ( 'deactivating' === actionName || 'activating' === actionName ) && 'jetpack' === slug;
+
 		const flattenArrays = ( full, partial ) => [ ...full, ...partial ];
 		this.removePluginsNotices();
 		this.props.plugins
 			.filter( this.isSelected ) // only use selected sites
-			.filter( negate( isDeactivatingAndJetpackSelected ) ) // ignore sites that are deactiving
+			.filter( negate( isDeactivatingAndJetpackSelected ) ) // ignore sites that are deactiving or activating jetpack
 			.map( p => p.sites ) // list of plugins -> list of list of sites
 			.reduce( flattenArrays, [] ) // flatten the list into one big list of sites
 			.forEach( site => action( site, site.plugin ) );
@@ -255,7 +258,8 @@ export const PluginsList = React.createClass( {
 		if ( waitForDeactivate ) {
 			this.setState( { disconnectJetpackDialog: true } );
 		} else {
-			this.refs.dialog.open();
+			this.setState( { showJetpackDisconnectDialog: true } );
+			this.forceUpdate();
 		}
 
 		this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
@@ -386,9 +390,21 @@ export const PluginsList = React.createClass( {
 
 	showDisconnectDialog() {
 		if ( this.state.disconnectJetpackDialog && ! this.state.notices.inProgress.length ) {
-			this.setState( { disconnectJetpackDialog: false } );
-			this.refs.dialog.open();
+			this.setState( {
+				disconnectJetpackDialog: false,
+				showJetpackDisconnectDialog: true
+			} );
+			this.forceUpdate();
 		}
+	},
+
+	closeDialog( action ) {
+		if ( 'continue' === action ) {
+			page.redirect( '/settings/general/' + this.props.selectedSiteSlug );
+			return;
+		}
+		this.setState( { showJetpackDisconnectDialog: false } );
+		this.forceUpdate();
 	},
 
 	// Renders
@@ -416,6 +432,18 @@ export const PluginsList = React.createClass( {
 			return null;
 		}
 
+		const dialogButtons = [
+			{
+				action: 'cancel',
+				label: translate( 'Cancel' )
+			},
+			{
+				action: 'continue',
+				label: translate( 'Manage Connection' ),
+				isPrimary: true
+			}
+		];
+
 		return (
 			<div className="plugins-list" >
 				<PluginsListHeader label={ this.props.header }
@@ -438,7 +466,15 @@ export const PluginsList = React.createClass( {
 					haveInactiveSelected={ this.props.plugins.some( this.filterSelection.inactive.bind( this ) ) }
 					haveUpdatesSelected= { this.props.plugins.some( this.filterSelection.updates.bind( this ) ) } />
 				<div className={ itemListClasses }>{ this.props.plugins.map( this.renderPlugin ) }</div>
-				<DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" />
+				{ this.props.selectedSite &&
+					<Dialog
+						ref="dialog"
+						isVisible={ this.state.showJetpackDisconnectDialog }
+						buttons={ dialogButtons }
+						onClose={ this.closeDialog }>
+						<h1>{ translate( 'Disconnect Jetpack' ) }</h1>
+					</Dialog>
+				}
 			</div>
 		);
 	},
