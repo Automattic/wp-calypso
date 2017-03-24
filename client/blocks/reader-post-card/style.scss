@@ -7,7 +7,7 @@ $reader-post-card-breakpoint-medium: "( min-width: 661px ) and ( max-width: 940p
 $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 // Adds a top border to first card in the Site Stream
-.is-reader-page .is-site-stream .reader-post-card.card {
+.is-group-reader .is-site-stream .reader-post-card.card {
 
 	&:nth-child(2) {
 		border-top: 1px solid lighten( $gray, 30% );
@@ -15,7 +15,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 // Removes top border from first card in Discover Stream
-.is-reader-page .is-discover-stream.is-site-stream .reader-post-card.card {
+.is-group-reader .is-discover-stream.is-site-stream .reader-post-card.card {
 
 	&:nth-child(2) {
 		border-top: 0;
@@ -241,7 +241,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 /* Fix for IE11 unable to handle nested flexbox min-height.
  * See issue: https://github.com/Automattic/wp-calypso/issues/9412
  */
-.is-reader-page .reader-post-card.is-gallery .reader-post-card__post-details {
+.is-group-reader .reader-post-card.is-gallery .reader-post-card__post-details {
 	flex: inherit;
 }
 

@@ -1,4 +1,8 @@
-.is-reader-page .layout__content {
+.is-group-reader {
+	background-color: #fff;
+}
+
+.is-group-reader .layout__content {
 	padding-top: 47px;
 }
 
@@ -7,20 +11,20 @@
 	width: 50%
 }
 
-.is-reader-page .reader__content,
-.is-reader-page .reader-start {
+.is-group-reader .reader__content,
+.is-group-reader .reader-start {
 	margin-top: 0;
 }
 
-.is-reader-page .recommended-for-you.main,
-.is-reader-page .following.main {
+.is-group-reader .recommended-for-you.main,
+.is-group-reader .following.main {
 
 	@include breakpoint( ">660px" ) {
 		margin: 30px auto;
 	}
 }
 
-.is-reader-page .reader-full-post__story-content {
+.is-group-reader .reader-full-post__story-content {
 	margin-top: 0;
 }
 
@@ -104,7 +108,7 @@
 }
 
 // Back button in Reader FeedHeader
-.is-reader-page .is-site-stream .reader-feed-header.has-back-button .reader-feed-header__follow {
+.is-group-reader .is-site-stream .reader-feed-header.has-back-button .reader-feed-header__follow {
 
 	@include breakpoint( "<660px" ) {
 		right: 0;
@@ -119,7 +123,7 @@
 	}
 }
 
-.is-reader-page .is-site-stream .reader-feed-header__back-and-follow {
+.is-group-reader .is-site-stream .reader-feed-header__back-and-follow {
 
 	.card.header-cake {
 		background: none;
@@ -352,7 +356,7 @@
 }
 
 .is-group-reader .main .empty-content,
-.is-reader-page .main .empty-content {
+.is-group-reader .main .empty-content {
 	margin-top: -90px;
 	padding-top: 0;
 
@@ -370,14 +374,14 @@
 }
 
 .is-group-reader .empty-content__action,
-.is-reader-page .empty-content__action {
+.is-group-reader .empty-content__action {
 	@include breakpoint( "<480px" ) {
 		margin-bottom: 10px;
 	}
 }
 
 // No Results in new Search
-.is-reader-page .search-stream .empty-content {
+.is-group-reader .search-stream .empty-content {
 	margin-top: 0;
 }
 
@@ -420,7 +424,7 @@
 /* = Infinite scroll end (shown at end of streams)
  --------------------------------------------------------------- */
 
-.is-reader-page .infinite-scroll-end {
+.is-group-reader .infinite-scroll-end {
 	&:before {
 		border-bottom: none;
 	}

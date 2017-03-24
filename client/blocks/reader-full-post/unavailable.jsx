@@ -9,13 +9,13 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import ReaderMain from 'components/reader-main';
+import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import ReaderFullPostBack from './back';
 
 const ReaderFullPostUnavailable = ( { post, onBackClick, translate } ) => {
 	return (
-		<ReaderMain className="reader-full-post reader-full-post__unavailable">
+		<Main className="reader-full-post reader-full-post__unavailable">
 			<ReaderFullPostBack onBackClick={ onBackClick } />
 			<DocumentHead title={ translate( 'Post unavailable' ) } />
 				<div className="reader-full-post__content">
@@ -27,7 +27,7 @@ const ReaderFullPostUnavailable = ( { post, onBackClick, translate } ) => {
 						{ config.isEnabled( 'reader/full-errors' ) ? <pre>{ JSON.stringify( post, null, '  ' ) }</pre> : null }
 					</div>
 				</div>
-		</ReaderMain>
+		</Main>
 	);
 };
 
