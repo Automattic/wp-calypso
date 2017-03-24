@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { startsWith, endsWith, noop } from 'lodash';
+import { startsWith, endsWith, noop, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,7 +43,7 @@ const ReaderAvatar = ( {
 		};
 	}
 
-	let hasSiteIcon = !! ( fakeSite && fakeSite.icon.img );
+	let hasSiteIcon = !! get( fakeSite, 'icon.img' );
 	let hasAvatar = !! ( author && author.has_avatar );
 
 	if ( hasSiteIcon && hasAvatar ) {
