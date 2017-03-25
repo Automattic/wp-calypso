@@ -20,18 +20,22 @@ var LinkDialog = require( './dialog' );
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 function wpLink( editor ) {
-	var node, toolbar;
+	var node, toolbar, firstLoadComplete;
 
 	function render( visible = true ) {
 		renderWithReduxStore(
 			React.createElement( LinkDialog, {
 				visible: visible,
 				editor: editor,
+				firstLoad: ! firstLoadComplete,
 				onClose: () => render( false )
 			} ),
 			node,
 			editor.getParam( 'redux_store' )
 		);
+		if ( visible ) {
+			firstLoadComplete = true;
+		}
 
 		if ( ! visible ) {
 			editor.focus();

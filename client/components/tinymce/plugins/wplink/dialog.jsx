@@ -38,7 +38,8 @@ var LinkDialog = React.createClass( {
 		editor: PropTypes.object,
 		onClose: PropTypes.func,
 		site: PropTypes.object,
-		sitePosts: PropTypes.array
+		sitePosts: PropTypes.array,
+		firstLoad: PropTypes.bool,
 	},
 
 	getInitialState: function() {
@@ -351,6 +352,7 @@ var LinkDialog = React.createClass( {
 								order="DESC"
 								selected={ this.getSelectedPostId() }
 								onChange={ this.setExistingContent }
+								surpressFirstPageLoad={ ! this.props.firstLoad }
 								emptyMessage={ this.translate( 'No posts found' ) } />
 						) }
 					</FormLabel>

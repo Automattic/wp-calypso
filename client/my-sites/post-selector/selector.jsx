@@ -41,7 +41,7 @@ import QueryPosts from 'components/data/query-posts';
 /**
  * Constants
  */
-const SEARCH_DEBOUNCE_TIME_MS = 500;
+const SEARCH_DEBOUNCE_TIME_MS = 800;
 const ITEM_HEIGHT = 25;
 const DEFAULT_POSTS_PER_PAGE = 20;
 const LOAD_OFFSET = 10;
@@ -395,7 +395,7 @@ const PostSelectorPosts = React.createClass( {
 	},
 
 	render() {
-		const { className, siteId, queryWithVersion } = this.props;
+		const { className, siteId, queryWithVersion, suppressFirstPageLoad, posts, postTypes } = this.props;
 		const { requestedPages, searchTerm } = this.state;
 		const isCompact = this.isCompact();
 		const isTypeLabelsVisible = this.isTypeLabelsVisible();
@@ -405,15 +405,22 @@ const PostSelectorPosts = React.createClass( {
 			'is-type-labels-visible': isTypeLabelsVisible
 		} );
 
+		const pagesToRequest = filter( requestedPages, ( page ) => {
+			if ( page !== 1 || ! suppressFirstPageLoad ) {
+				return true;
+			}
+			return ! posts;
+		} );
+
 		return (
 			<div className={ classes }>
-				{ requestedPages.map( ( page ) => (
+				{ pagesToRequest.map( ( page ) => (
 					<QueryPosts
 						key={ `page-${ page }` }
 						siteId={ siteId }
 						query={ { ...queryWithVersion, page } } />
 				) ) }
-				{ isTypeLabelsVisible && siteId && (
+				{ isTypeLabelsVisible && siteId && ! postTypes && (
 					<QueryPostTypes siteId={ siteId } />
 				) }
 				{ showSearch && (
