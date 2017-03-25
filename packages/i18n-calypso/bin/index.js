@@ -17,15 +17,20 @@ var i18nCalypso = require( '../cli' );
 /**
  * Internal variables/
  */
-var format, projectName, outputFile, extras, arrayName, inputFiles, inputPaths;
+var keywords, format, projectName, outputFile, extras, arrayName, inputFiles, inputPaths;
 
 function collect( val, memo ) {
 	memo.push( val );
 	return memo;
 }
 
+function list( val ) {
+	return val.split( ',' );
+}
+
 program
 	.version( '0.0.1' )
+	.option( '-k, --keywords <keyword,keyword>', 'keywords of the translate function', list )
 	.option( '-f, --format <format>', 'format of the output (php or pot)' )
 	.option( '-o, --output-file <file>', 'output file for WP-style translation functions' )
 	.option( '-i, --input-file <filename>', 'files in which to search for translation methods', collect, [] )
@@ -40,6 +45,7 @@ program
 	} )
 	.parse( process.argv );
 
+keywords = program.keywords;
 format = program.format;
 outputFile = program.outputFile;
 arrayName = program.arrayName;
@@ -69,6 +75,7 @@ inputPaths.forEach( function( inputFile ) {
 } );
 
 var result = i18nCalypso( {
+	keywords: keywords,
 	output: outputFile,
 	phpArrayName: arrayName,
 	inputPaths: inputPaths,
