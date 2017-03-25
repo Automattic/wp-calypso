@@ -9,7 +9,7 @@ import {
 import Gridicon from 'gridicons';
 
 /**
- * Internal dependencies
+ * Internal dependencies list
  */
 import {
     makeTour,
