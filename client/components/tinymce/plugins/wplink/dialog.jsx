@@ -48,7 +48,8 @@ var LinkDialog = React.createClass( {
 
 	getDefaultProps() {
 		return {
-			onClose: () => {}
+			onClose: () => {},
+			firstLoad: false,
 		};
 	},
 
