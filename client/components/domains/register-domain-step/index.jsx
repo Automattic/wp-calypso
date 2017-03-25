@@ -22,9 +22,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import wpcom from 'lib/wp';
 import Notice from 'components/notice';
-import { getFixedDomainSearch, checkDomainAvailability } from 'lib/domains';
+import { checkDomainAvailability, getFixedDomainSearch } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import SearchCard from 'components/search-card';
@@ -381,12 +382,52 @@ const RegisterDomainStep = React.createClass( {
 					return suggestion.domain_name;
 				} );
 
+				if ( abtest( 'domainSuggestionNudgeLabels' ) === 'withLabels' ) {
+					const isFreeOrUnknown = ( suggestion ) => (
+							suggestion.is_free === true ||
+							suggestion.status === domainAvailability.UNKNOWN
+						),
+						strippedDomainBase = this.getStrippedDomainBase( domain ),
+						exactMatchBeforeTld = ( suggestion ) => (
+							startsWith( suggestion.domain_name, `${ strippedDomainBase }.` )
+						),
+						bestAlternative = ( suggestion ) => (
+							! exactMatchBeforeTld( suggestion ) &&
+							suggestion.isRecommended !== true
+						),
+						availableSuggestions = reject( suggestions, isFreeOrUnknown );
+
+					const recommendedSuggestion = find( availableSuggestions, exactMatchBeforeTld );
+					if ( recommendedSuggestion ) {
+						recommendedSuggestion.isRecommended = true;
+					} else if ( availableSuggestions.length > 0 ) {
+						availableSuggestions[ 0 ].isRecommended = true;
+					}
+
+					const bestAlternativeSuggestion = find( availableSuggestions, bestAlternative );
+					if ( bestAlternativeSuggestion ) {
+						bestAlternativeSuggestion.isBestAlternative = true;
+					} else if ( availableSuggestions.length > 1 ) {
+						availableSuggestions[ 1 ].isBestAlternative = true;
+					}
+				}
+
 				this.setState( {
 					searchResults: suggestions,
 					loadingResults: false
 				}, this.save );
 			}
 		);
+	},
+
+	getStrippedDomainBase( domain ) {
+		let strippedDomainBase = domain;
+		const lastIndexOfDot = strippedDomainBase.lastIndexOf( '.' );
+
+		if ( lastIndexOfDot !== -1 ) {
+			strippedDomainBase = strippedDomainBase.substring( 0, lastIndexOfDot );
+		}
+		return strippedDomainBase.replace( /[ .]/g, '' );
 	},
 
 	initialSuggestions: function() {
