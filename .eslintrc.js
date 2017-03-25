@@ -1,5 +1,7 @@
 /* eslint-disable import/no-commonjs */
-const resolveConfig = require( './webpack.config.resolve.js' );
+
+const path = require( 'path' );
+const customResolverPath = path.join( __dirname, './.eslint-resolver.js' );
 
 module.exports = {
 	root: true,
@@ -17,21 +19,14 @@ module.exports = {
 		'import'
 	],
 	settings: {
-		'import/ignore': [
-			'server\/.*$',
-		],
 		'import/resolver': {
-			webpack: {
-				config: {
-					resolve: resolveConfig,
-				}
-			},
+			[ customResolverPath ]: {}
 		}
 	},
 	rules: {
 		camelcase: 0, // REST API objects include underscores
-		// NOTE: Some import rules are errors in client and warnings in server
-		//       due to how CommonJS and ES module notations inter-op.
+		// NOTE: Some import rules are errors in client (Webpack's resolution) and
+		//       warnings in server (Node's module resolution).
 		'import/default': 2,
 		'import/export': 2,
 		'import/named': 2,
