@@ -50,5 +50,5 @@ export function isATEnabledForCurrentSite() {
 	// Gate to 40% roll. If we modify this value, we need a new test name
 	// in active-tests.js
 	const abtest = require( 'lib/abtest' ).abtest;
-	return abtest( 'automatedTransfer2' ) === 'enabled';
+	return abtest( 'automatedTransfer3' ) === 'enabled';
 }
