@@ -1,5 +1,6 @@
 /***** WARNING: ES5 code only here. Not transpiled! *****/
 /* eslint-disable no-var */
+/* eslint-disable import/no-commonjs */
 
 /**
  * External dependencies

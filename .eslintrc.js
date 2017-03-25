@@ -1,3 +1,4 @@
+/* eslint-disable import/no-commonjs */
 const resolveConfig = require( './webpack.config.resolve.js' );
 
 module.exports = {

@@ -1,4 +1,5 @@
 /***** WARNING: ES5 code only here. Not transpiled! *****/
+/* eslint-disable import/no-commonjs */
 
 /**
  * External dependencies

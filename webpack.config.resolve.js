@@ -1,3 +1,5 @@
+/* eslint-disable import/no-commonjs */
+
 const path = require( 'path' );
 
 module.exports = {
