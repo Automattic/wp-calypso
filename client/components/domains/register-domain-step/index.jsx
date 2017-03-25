@@ -22,6 +22,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import wpcom from 'lib/wp';
 import Notice from 'components/notice';
 import { checkDomainAvailability, getFixedDomainSearch } from 'lib/domains';
