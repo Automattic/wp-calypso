@@ -6,7 +6,7 @@
 }
 
 .is-reader-page .reader__card.card.is-placeholder {
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-bottom: 1px solid lighten( $gray, 20% );
 	box-shadow: none;
 	margin-bottom: 0;
 	padding: 6px 0 30px;
@@ -217,7 +217,7 @@
 .is-reader-page {
 
 	.reader__card.card.is-x-post {
-		border-bottom: 1px solid lighten( $gray, 30% );
+		border-bottom: 1px solid lighten( $gray, 20% );
 		margin: 0;
 		padding: 20px 42px;
 
@@ -234,8 +234,8 @@
 			color: $gray-dark;
 		}
 
-		.reader__site-and-author-icon {
-			margin-right: 12px;
+		.reader-avatar {
+			margin: 0 12px 0 0;
 			width: auto;
 
 			&:hover {
@@ -406,7 +406,7 @@ $reader-related-card-v2-breakpoint-medium: "( min-width: 661px ) and ( max-width
 $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-stream__recommended-posts {
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-bottom: 1px solid lighten( $gray, 20% );
 	padding-bottom: 12px;
 
 	@include breakpoint( "<660px" ) {

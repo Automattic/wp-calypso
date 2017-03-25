@@ -17,14 +17,6 @@ module.exports = {
 		defaultVariation: 'userLast',
 		allowExistingUsers: false,
 	},
-	signupDomainsHeadline: {
-		datestamp: '20170313',
-		variations: {
-			original: 50,
-			updated: 50
-		},
-		defaultVariation: 'original'
-	},
 	signupStepOneCopyChanges: {
 		datestamp: '20170307',
 		variations: {
@@ -59,5 +51,14 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 		allowExistingUsers: false
+	},
+	jetpackNewDescriptions: {
+		datestamp: '20170327',
+		variations: {
+			showNew: 50,
+			showOld: 50
+		},
+		defaultVariation: 'showOld',
+		allowExistingUsers: true
 	},
 };

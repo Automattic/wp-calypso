@@ -56,6 +56,7 @@ import StatusLabel from 'post-editor/editor-status-label';
 import { editedPostHasContent } from 'state/selectors';
 import EditorGroundControl from 'post-editor/editor-ground-control';
 import { isMobile } from 'lib/viewport';
+import { isSitePreviewable } from 'state/sites/selectors';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
@@ -249,7 +250,8 @@ export const PostEditor = React.createClass( {
 						<div className="editor">
 							<EditorNotice
 								{ ...this.state.notice }
-								onDismissClick={ this.hideNotice } />
+								onDismissClick={ this.hideNotice }
+								onViewClick={ this.iframePreview } />
 							<EditorActionBar
 								isNew={ this.state.isNew }
 								onPrivatePublish={ this.onPublish }
@@ -330,7 +332,7 @@ export const PostEditor = React.createClass( {
 						setPostDate={ this.setPostDate }
 						onSave={ this.onSave }
 						/>
-					{ this.iframePreviewEnabled() ?
+					{ this.props.isSitePreviewable ?
 						<EditorPreview
 							showPreview={ this.state.showPreview }
 							onClose={ this.onPreviewClose }
@@ -582,7 +584,7 @@ export const PostEditor = React.createClass( {
 		var status = 'draft',
 			previewPost;
 
-		if ( this.iframePreviewEnabled() && ! event.metaKey && ! event.ctrlKey ) {
+		if ( this.props.isSitePreviewable && ! event.metaKey && ! event.ctrlKey ) {
 			return this.iframePreview();
 		}
 
@@ -610,11 +612,6 @@ export const PostEditor = React.createClass( {
 		} else {
 			this.onSave( null, previewPost );
 		}
-	},
-
-	iframePreviewEnabled: function() {
-		var site = this.props.sites.getSelectedSite();
-		return site && ! site.jetpack;
 	},
 
 	iframePreview: function() {
@@ -847,6 +844,7 @@ export default connect(
 			hasContent: editedPostHasContent( state, siteId, postId ),
 			layoutFocus: getCurrentLayoutFocus( state ),
 			hasBrokenPublicizeConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
+			isSitePreviewable: isSitePreviewable( state, siteId ),
 		};
 	},
 	( dispatch ) => {

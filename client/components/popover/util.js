@@ -345,8 +345,7 @@ const isElement = obj => {
 	try {
 		//Using W3 DOM2 (works for FF, Opera and Chrom)
 		return obj instanceof HTMLElement;
-	}
-	catch ( error ) {
+	} catch ( error ) {
 		return ( typeof obj === 'object' ) &&
 			( obj.nodeType === 1 ) &&
 			( typeof obj.style === 'object' ) &&

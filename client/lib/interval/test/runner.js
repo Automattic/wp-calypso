@@ -40,7 +40,7 @@ describe( 'Interval Runner', function() {
 		} );
 
 		it( 'Should increment the next id after adding an action', function() {
-			[1, 2, 3, 4, 5, 6, 7, 8, 9].forEach( () => add( EVERY_SECOND, noop ) );
+			[ 1, 2, 3, 4, 5, 6, 7, 8, 9 ].forEach( () => add( EVERY_SECOND, noop ) );
 
 			assert( 10 === add( EVERY_FIVE_SECONDS, noop ) );
 		} );

@@ -56,7 +56,7 @@ export default React.createClass( {
 		}
 
 		if ( this.props.blogs.get().length === 1 ) {
-			return renderBlog( this.props.blogs.get()[0], null, true );
+			return renderBlog( this.props.blogs.get()[ 0 ], null, true );
 		}
 
 		return (

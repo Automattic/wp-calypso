@@ -80,7 +80,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 		keyCombinations = [],
 		matches;
 
-	if ( typeof keys[0] === 'string' ) {
+	if ( typeof keys[ 0 ] === 'string' ) {
 		// this is a single key combination
 		keyCombinations = [ keys ];
 	} else {
@@ -90,11 +90,11 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 
 	keyCombinations.forEach( function( keys ) {
 		if ( 'sequence' === type ) {
-			keymaster( keys[1], function( event, handler ) {
-				if ( self.lastKey === keys[0] && self.lastKeyTime > Date.now() - self.timeLimit ) {
+			keymaster( keys[ 1 ], function( event, handler ) {
+				if ( self.lastKey === keys[ 0 ] && self.lastKeyTime > Date.now() - self.timeLimit ) {
 					self.emitEvent( eventName, event, handler );
 
-					self.lastKey = keys[1];
+					self.lastKey = keys[ 1 ];
 					self.lastKeyTime = Date.now();
 
 					// return false at the end of a sequence to prevent other shortcuts from firing

@@ -57,7 +57,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( action ).to.be.undefined;
+			expect( action ).to.be.false;
 		} );
 
 		it( 'should retrieve the last action from the action log', () => {

@@ -142,6 +142,7 @@ $autobar-height: 20px;
 	color: $blue-wordpress;
 	height: 36px;
 	margin: 5px 8px;
+	transition: all 0.2s ease-out;
 
 	&:visited {
 		color: $blue-wordpress;
@@ -177,6 +178,22 @@ $autobar-height: 20px;
 	.is-support-user &.is-active {
 		color: $white;
 	}
+
+	// active state when editing
+	.is-group-editor & {
+		background: darken( $masterbar-color, 17% );
+		color: $white;
+	}
+
+	.is-group-editor &:visited,
+	.is-group-editor & .masterbar__item-content {
+		color: $white;
+	}
+
+	.is-group-editor &:hover {
+		background: darken( $masterbar-color, 13% );
+	}
+
 }
 
 .masterbar__item-me {
@@ -338,6 +355,24 @@ $autobar-height: 20px;
 			color: $blue-wordpress;
 		}
 	}
+
+	.is-group-editor & {
+		background: darken( $masterbar-color, 12% );
+		border-left: 1px solid darken( $masterbar-color, 5% );
+
+		.count {
+			color: $gray-light;
+		}
+	}
+
+	.is-group-editor &:hover {
+		background: darken( $masterbar-color, 17% );
+
+		.count {
+			color: $white;
+		}
+	}
+
 }
 
 .masterbar__see-all-drafts {

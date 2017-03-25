@@ -22,7 +22,7 @@ export function getCommentParentKey( siteId, postId ) {
  */
 export function createRequestId( siteId, postId, query ) {
 	const queryKeys = Object.keys( query ).sort();
-	const queryString = queryKeys.map( ( key ) => `${ key }=${ query[key] }` ).join( '-' );
+	const queryString = queryKeys.map( ( key ) => `${ key }=${ query[ key ] }` ).join( '-' );
 
 	return `${siteId}-${postId}-${ queryString }`;
 }
@@ -33,13 +33,16 @@ export function createRequestId( siteId, postId, query ) {
  * 	children: List<id>, // Array of root level comments ids
  * }
  * @param {Immutable.List} comments list of comments (as built on state.comments.items) sorted by date in descending order
+ * @param {String} status String representing the comment status to show. Defaults to 'all'.
  * @returns {Immutable.Map} Immutable map comments tree instance of the shape Map<id, CommentNode>{ children: List<id> }
  */
-export function buildCommentsTree( comments ) {
+export function buildCommentsTree( comments, status = 'all' ) {
 	const tree = Immutable.fromJS( { children: [] } );
 
+	const filteredComments = status !== 'all' ? comments.filter( comment => comment.get( 'status' ) === status ) : comments;
+
 	return tree.withMutations( ( commentsTree ) => {
-		comments.forEach( ( comment ) => {
+		filteredComments.forEach( ( comment ) => {
 			// if the comment has a parent, but we haven't seen that parent yet, create a placeholder
 			if ( comment.get( 'parent' ) && ! commentsTree.has( comment.getIn( [ 'parent', 'ID' ] ) ) ) {
 				commentsTree.set( comment.getIn( [ 'parent', 'ID' ] ), Immutable.fromJS( {

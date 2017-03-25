@@ -145,7 +145,7 @@ describe( 'reducer', () => {
 					type: PUBLICIZE_CONNECTIONS_RECEIVE,
 					siteId: 2916284,
 					data: {
-						connections: [{ ID: 1, site_ID: 2916284 }]
+						connections: [ { ID: 1, site_ID: 2916284 } ]
 					}
 				} );
 
@@ -161,7 +161,7 @@ describe( 'reducer', () => {
 					type: PUBLICIZE_CONNECTIONS_RECEIVE,
 					siteId: 77203074,
 					data: {
-						connections: [{ ID: 2, site_ID: 77203074 }]
+						connections: [ { ID: 2, site_ID: 77203074 } ]
 					}
 				} );
 
@@ -178,7 +178,7 @@ describe( 'reducer', () => {
 					type: PUBLICIZE_CONNECTIONS_RECEIVE,
 					siteId: 2916284,
 					data: {
-						connections: [{ ID: 2, site_ID: 2916284 }]
+						connections: [ { ID: 2, site_ID: 2916284 } ]
 					}
 				} );
 
@@ -195,7 +195,7 @@ describe( 'reducer', () => {
 					type: PUBLICIZE_CONNECTIONS_RECEIVE,
 					siteId: 2916284,
 					data: {
-						connections: [connection]
+						connections: [ connection ]
 					}
 				} );
 

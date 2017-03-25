@@ -13,14 +13,7 @@ const ConnectedThemeShowcase = connectOptions( ThemeShowcase );
 
 export default props => (
 	<ConnectedThemeShowcase { ...props }
-		options={ [
-			'signup',
-			'preview',
-			'separator',
-			'info',
-			'support',
-			'help'
-		] }
+		origin="wpcom"
 		defaultOption="signup"
 		getScreenshotOption={ function() {
 			return 'info';

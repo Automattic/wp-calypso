@@ -29,18 +29,6 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 		return (
 			<SingleSiteThemeShowcaseJetpack { ...props }
 				siteId={ siteId }
-				options={ [
-					'customize',
-					'purchase',
-					'preview',
-					'activate',
-					'tryandcustomize',
-					'deleteTheme',
-					'separator',
-					'info',
-					'support',
-					'help'
-				] }
 				defaultOption="activate"
 				secondaryOption="tryandcustomize"
 				source="showcase"
@@ -52,18 +40,8 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 
 	return (
 		<SingleSiteThemeShowcaseWpcom { ...props }
+			origin="wpcom"
 			siteId={ siteId }
-			options={ [
-				'customize',
-				'preview',
-				'purchase',
-				'activate',
-				'tryandcustomize',
-				'separator',
-				'info',
-				'support',
-				'help'
-			] }
 			defaultOption="activate"
 			secondaryOption="tryandcustomize"
 			source="showcase"

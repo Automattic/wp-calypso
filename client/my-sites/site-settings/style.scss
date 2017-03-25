@@ -364,6 +364,10 @@
 		padding: 8px 24px 24px;
 		border-top: 1px lighten( $gray, 20% ) solid;
 	}
+
+	&.is-expanded.is-top-level .foldable-card__content {
+		padding: 24px;
+	}
 }
 
 // Site settings group styles

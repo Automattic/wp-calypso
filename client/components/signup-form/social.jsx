@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import GoogleLoginButton from 'components/social-buttons/google';
 import FacebookLoginButton from 'components/social-buttons/facebook';
 
@@ -11,20 +11,25 @@ import FacebookLoginButton from 'components/social-buttons/facebook';
 import config from 'config';
 
 class SocialSignupForm extends Component {
-	constructor() {
-		super();
-		this.onGoogleResponse = this.onGoogleResponse.bind( this );
-		this.onFacebookResponse = this.onFacebookResponse.bind( this );
+	static propTypes = {
+		handleResponse: PropTypes.func.isRequired,
 	}
 
-	onGoogleResponse( response ) {
+	constructor() {
+		super();
+		this.handleGoogleResponse = this.handleGoogleResponse.bind( this );
+		this.handleFacebookResponse = this.handleFacebookResponse.bind( this );
+	}
+
+	handleGoogleResponse( response ) {
 		if ( ! response.Zi || ! response.Zi.id_token ) {
 			return;
 		}
-		// TODO: post response to the new wpcom endpoint to login
+
+		this.props.handleResponse( 'google', response.Zi.id_token );
 	}
 
-	onFacebookResponse( response ) {
+	handleFacebookResponse( response ) {
 		if ( ! response.email ) {
 			return;
 		}
@@ -36,10 +41,10 @@ class SocialSignupForm extends Component {
 			<div className="signup-form__social">
 				<GoogleLoginButton
 					clientId={ config( 'google_oauth_client_id' ) }
-					responseHandler={ this.onGoogleResponse } />
+					responseHandler={ this.handleGoogleResponse } />
 				<FacebookLoginButton
 					appId={ config( 'facebook_app_id' ) }
-					responseHandler={ this.onFacebookResponse } />
+					responseHandler={ this.handleFacebookResponse } />
 			</div>
 		);
 	}

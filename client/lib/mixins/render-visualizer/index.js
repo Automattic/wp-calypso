@@ -178,7 +178,7 @@ var RenderVisualizerMixin = {
 
 		removeRenderLogNode: function() {
 			if ( this.renderLogContainer ) {
-				document.getElementsByTagName( 'body' )[0].removeChild( this.renderLogContainer );
+				document.getElementsByTagName( 'body' )[ 0 ].removeChild( this.renderLogContainer );
 			}
 		},
 

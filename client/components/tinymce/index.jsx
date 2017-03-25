@@ -13,6 +13,7 @@ require( 'tinymce/themes/modern/theme.js' );
 
 // TinyMCE plugins
 require( 'tinymce/plugins/colorpicker/plugin.js' );
+require( 'tinymce/plugins/directionality/plugin.js' );
 require( 'tinymce/plugins/hr/plugin.js' );
 require( 'tinymce/plugins/lists/plugin.js' );
 require( 'tinymce/plugins/media/plugin.js' );
@@ -117,6 +118,7 @@ const PLUGINS = [
 	'wpeditimage',
 	'wplink',
 	'AtD',
+	'directionality',
 	'wpcom/autoresize',
 	'wpcom/media',
 	'wpcom/advanced',
@@ -133,11 +135,8 @@ const PLUGINS = [
 	'wpcom/sourcecode',
 	'wpcom/embedreversal',
 	'wpcom/trackpaste',
+	'wpcom/insertmenu',
 ];
-
-if ( config.isEnabled( 'post-editor/insert-menu' ) ) {
-	PLUGINS.push( 'wpcom/insertmenu' );
-}
 
 if ( config.isEnabled( 'post-editor/mentions' ) ) {
 	mentionsPlugin();
@@ -233,6 +232,8 @@ module.exports = React.createClass( {
 
 		this.localize();
 
+		const ltrButton = user.isRTL() ? 'ltr,' : '';
+
 		tinymce.init( {
 			selector: '#' + this._id,
 			skin_url: '//s1.wp.com/wp-includes/js/tinymce/skins/lightgray',
@@ -305,9 +306,7 @@ module.exports = React.createClass( {
 			autoresize_min_height: Math.max( document.documentElement.clientHeight - 300, 300 ),
 			autoresize_bottom_margin: viewport.isMobile() ? 10 : 50,
 
-			toolbar1: config.isEnabled( 'post-editor/insert-menu' )
-				? 'wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_advanced'
-				: 'wpcom_add_media,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_add_contact_form,wpcom_advanced',
+			toolbar1: `wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,${ ltrButton }wpcom_advanced`,
 			toolbar2: 'strikethrough,underline,hr,alignjustify,forecolor,pastetext,removeformat,wp_charmap,outdent,indent,undo,redo,wp_help',
 			toolbar3: '',
 			toolbar4: '',

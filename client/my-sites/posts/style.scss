@@ -12,6 +12,10 @@
 .posts__primary {
 	flex-grow: 1;
 	max-width: 720px;
+
+	@include breakpoint( ">1280px" ) {
+		min-width: 520px;
+	}
 }
 
 .posts__list {
@@ -26,7 +30,8 @@
 			flex-direction: row;
 		}
 	}
-	.posts__post-share-form.is-placeholder, 
+
+	.posts__post-share-form.is-placeholder,
 	.posts__post-share-services.is-placeholder {
 		@include placeholder;
 		margin-top: 16px;
@@ -622,9 +627,12 @@
 
 	@include breakpoint( ">1280px" ) {
 		display: block;
+		max-width: 400px;
 	}
 
 	@include breakpoint( ">1600px" ) {
+		max-width: 600px;
+
 		.post-item.is-mini.card.is-compact {
 			padding: 16px 24px;
 
@@ -679,5 +687,15 @@
 
 	@include breakpoint( ">480px" ) {
 		width: auto;
+	}
+}
+
+.post__total-views {
+	display: inline-flex;
+	align-content: center;
+
+	.stat-update-indicator {
+		font-size: 14px;
+		padding-top: 2px;
 	}
 }

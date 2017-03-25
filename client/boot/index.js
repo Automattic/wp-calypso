@@ -203,11 +203,11 @@ function reduxStoreReady( reduxStore ) {
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
-		require( 'lib/network-connection' ).init( reduxStore );
+		asyncRequire( 'lib/network-connection', netConn => netConn.init( reduxStore ) );
 	}
 
 	if ( config.isEnabled( 'css-hot-reload' ) ) {
-		require( 'lib/css-hot-reload' )();
+		asyncRequire( 'lib/css-hot-reload', cssHotReload => cssHotReload() );
 	}
 
 	// Render Layout only for non-isomorphic sections.
@@ -373,7 +373,7 @@ function reduxStoreReady( reduxStore ) {
 	page( '*', require( 'notices' ).clearNoticesOnNavigation );
 
 	if ( config.isEnabled( 'olark' ) ) {
-		require( 'lib/olark' ).initialize( reduxStore.dispatch );
+		asyncRequire( 'lib/olark', olark => olark.initialize( reduxStore.dispatch ) );
 	}
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {

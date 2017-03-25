@@ -592,12 +592,6 @@ div.mce-path {
 	}
 }
 
-// [TODO]: Selector `:not( .mce-wpcom-insert-menu )` unnecessary when
-// `post-editor/insert-menu` feature enabled in all environments
-.mce-toolbar-grp:not( .mce-inline-toolbar-grp ) .mce-btn-group .mce-btn.mce-first:not( .mce-wpcom-insert-menu ) {
-	margin-left: 4px;
-}
-
 #wp-fullscreen-buttons .mce-btn:hover,
 .mce-toolbar .mce-btn-group .mce-btn:hover,
 #wp-fullscreen-buttons .mce-btn:focus,

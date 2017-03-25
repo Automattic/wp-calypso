@@ -84,9 +84,9 @@ module.exports = React.createClass({
 
 		return shortcutsByCategory.map( function( category ) {
 			var classes = {};
-			classes['keyboard-shortcuts__category'] = true;
+			classes[ 'keyboard-shortcuts__category' ] = true;
 			classes[ category.className ] = true;
-			classes['keyboard-shortcuts__category-disabled'] = category.disabled;
+			classes[ 'keyboard-shortcuts__category-disabled' ] = category.disabled;
 
 			return (
 				<li className={ classNames( classes ) } key={ category.name }>

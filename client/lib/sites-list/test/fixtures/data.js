@@ -261,7 +261,7 @@ export const original = [
 
 export const updated = cloneDeep( original );
 
-updated[0].name = 'Checkout this new name';
+updated[ 0 ].name = 'Checkout this new name';
 
 updated.push( {
 	'ID': 43889156,

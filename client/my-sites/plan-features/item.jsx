@@ -12,7 +12,8 @@ import viewport from 'lib/viewport';
 
 export default function PlanFeaturesItem( {
 	children,
-	description
+	description,
+	hideInfoPopover
 } ) {
 	return (
 		<div className="plan-features__item">
@@ -20,11 +21,14 @@ export default function PlanFeaturesItem( {
 				className="plan-features__item-checkmark"
 				size={ 18 } icon="checkmark" />
 			{ children }
-			<InfoPopover
-				className="plan-features__item-tip-info"
-				position={ viewport.isMobile() ? 'top' : 'right' }>
-				{ description }
-			</InfoPopover>
+			{ hideInfoPopover
+				? null
+				: <InfoPopover
+					className="plan-features__item-tip-info"
+					position={ viewport.isMobile() ? 'top' : 'right' }>
+					{ description }
+				</InfoPopover>
+			}
 		</div>
 	);
 }

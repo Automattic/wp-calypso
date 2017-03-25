@@ -48,8 +48,25 @@ export default React.createClass( {
 	displayName: 'SignupForm',
 
 	propTypes: {
+		className: PropTypes.string,
+		disableEmailExplanation: PropTypes.bool,
+		disableEmailInput: PropTypes.bool,
+		disabled: PropTypes.bool,
+		email: PropTypes.string,
+		footerLink: PropTypes.node,
+		formHeader: PropTypes.node,
+		getRedirectToAfterLoginUrl: PropTypes.string.isRequired,
+		goToNextStep: PropTypes.func,
+		handleSocialResponse: PropTypes.func,
 		isSocialSignupEnabled: PropTypes.bool,
-		suggestedUsername: PropTypes.string.isRequired
+		locale: PropTypes.string,
+		positionInFlow: PropTypes.number,
+		save: PropTypes.func,
+		signupDependencies: PropTypes.object,
+		step: PropTypes.object,
+		submitButtonText: PropTypes.string.isRequired,
+		submitting: PropTypes.bool,
+		suggestedUsername: PropTypes.string.isRequired,
 	},
 
 	getDefaultProps() {
@@ -409,7 +426,6 @@ export default React.createClass( {
 	formFooter() {
 		return (
 			<LoggedOutFormFooter>
-				{ this.getNotice() }
 				{ this.termsOfServiceLink() }
 				<FormButton className="signup-form__submit" disabled={ this.state.submitting || this.props.disabled }>
 					{ this.props.submitButtonText }
@@ -456,10 +472,11 @@ export default React.createClass( {
 							{ this.props.formHeader }
 						</header>
 					}
-					{ this.props.isSocialSignupEnabled && <SocialSignupForm /> }
+					{ this.props.isSocialSignupEnabled && <SocialSignupForm handleResponse={ this.props.handleSocialResponse } /> }
 					{ this.props.isSocialSignupEnabled && <HrWithText>
 						{ i18n.translate( 'Or sign up with your email address:' ) }
 					</HrWithText> }
+					{ this.getNotice() }
 					{ this.formFields() }
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>

@@ -26,7 +26,7 @@ export default React.createClass( {
 		isPlaceholder: React.PropTypes.bool,
 		hasUpdate: React.PropTypes.bool,
 		pluginVersion: React.PropTypes.string,
-		siteVersion: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool] ),
+		siteVersion: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
 	},
 
 	getDefaultProps() {

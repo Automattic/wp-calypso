@@ -15,7 +15,7 @@ const legacyRoutes = [
 	{ match: /^\/?$/, predicate: notEnabled( 'reader' ) },
 	{ match: /^\/themes/ },
 	{ match: /^\/manage/ },
-	{ match: /^\/plans/, predicate: notEnabled( 'manage/plans' ) },
+	{ match: /^\/plans/ },
 	{
 		match: /^\/me/,
 		noMatch: /^\/me\/(billing|next)/,

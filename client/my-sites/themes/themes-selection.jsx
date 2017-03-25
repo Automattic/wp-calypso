@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { compact, includes, isEqual, omit, property, snakeCase } from 'lodash';
 
@@ -13,7 +13,7 @@ import QueryThemes from 'components/data/query-themes';
 import ThemesList from 'components/themes-list';
 import ThemesSelectionHeader from './themes-selection-header';
 import { prependFilterKeys } from './theme-filters.js';
-import analytics from 'lib/analytics';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -30,8 +30,8 @@ import { setThemePreviewOptions } from 'state/themes/actions';
 import config from 'config';
 import { PAGINATION_QUERY_KEYS } from 'lib/query-manager/paginated/constants';
 
-const ThemesSelection = React.createClass( {
-	propTypes: {
+class ThemesSelection extends Component {
+	static propTypes = {
 		emptyContent: PropTypes.element,
 		query: PropTypes.object.isRequired,
 		siteId: PropTypes.number,
@@ -53,26 +53,26 @@ const ThemesSelection = React.createClass( {
 		isThemePurchased: PropTypes.func,
 		isInstallingTheme: PropTypes.func,
 		placeholderCount: PropTypes.number
-	},
+	}
 
-	getDefaultProps() {
-		return {
-			emptyContent: null,
-			showUploadButton: true
-		};
-	},
+	static defaultProps = {
+		emptyContent: null,
+		showUploadButton: true
+	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! isEqual( omit( this.props.query, PAGINATION_QUERY_KEYS ), omit( nextProps.query, PAGINATION_QUERY_KEYS ) ) ) {
+		if ( ! isEqual(
+				omit( this.props.query, PAGINATION_QUERY_KEYS ),
+				omit( nextProps.query, PAGINATION_QUERY_KEYS ) ) ) {
 			this.props.resetPage();
 		}
-	},
+	}
 
-	recordSearchResultsClick( theme, resultsRank, action ) {
+	recordSearchResultsClick = ( theme, resultsRank, action ) => {
 		const { query, themes } = this.props;
 		const search_taxonomies = prependFilterKeys( query.filter );
 		const search_term = search_taxonomies + ( query.search || '' );
-		analytics.tracks.recordEvent( 'calypso_themeshowcase_theme_click', {
+		this.props.recordTracksEvent( 'calypso_themeshowcase_theme_click', {
 			search_term: search_term || null,
 			search_taxonomies,
 			theme: theme.id,
@@ -82,27 +82,27 @@ const ThemesSelection = React.createClass( {
 			theme_on_page: parseInt( ( resultsRank + 1 ) / query.number ),
 			action: snakeCase( action )
 		} );
-	},
+	}
 
 	trackScrollPage() {
-		analytics.tracks.recordEvent( 'calypso_themeshowcase_scroll' );
+		this.props.recordTracksEvent( 'calypso_themeshowcase_scroll' );
 		this.props.trackScrollPage();
-	},
+	}
 
 	trackLastPage() {
-		analytics.ga.recordEvent( 'Themes', 'Reached Last Page' );
-		analytics.tracks.recordEvent( 'calypso_themeshowcase_last_page_scroll' );
-	},
+		this.props.recordGoogleEvent( 'Themes', 'Reached Last Page' );
+		this.props.recordTracksEvent( 'calypso_themeshowcase_last_page_scroll' );
+	}
 
-	onScreenshotClick( theme, resultsRank ) {
+	onScreenshotClick = ( theme, resultsRank ) => {
 		trackClick( 'theme', 'screenshot' );
 		if ( ! this.props.isThemeActive( theme ) ) {
 			this.recordSearchResultsClick( theme, resultsRank, 'screenshot_info' );
 		}
 		this.props.onScreenshotClick && this.props.onScreenshotClick( theme );
-	},
+	}
 
-	fetchNextPage( options ) {
+	fetchNextPage = ( options ) => {
 		if ( this.props.isRequesting || this.props.isLastPage ) {
 			return;
 		}
@@ -112,10 +112,10 @@ const ThemesSelection = React.createClass( {
 		}
 
 		this.props.incrementPage();
-	},
+	}
 
 	//intercept preview and add primary and secondary
-	getOptions( themeId ) {
+	getOptions = ( themeId ) => {
 		const options = this.props.getOptions( themeId );
 		const wrappedPreviewAction = ( action ) => {
 			let defaultOption;
@@ -141,7 +141,7 @@ const ThemesSelection = React.createClass( {
 		}
 
 		return options;
-	},
+	}
 
 	render() {
 		const { source, query, listLabel, themesCount } = this.props;
@@ -170,9 +170,8 @@ const ThemesSelection = React.createClass( {
 					placeholderCount={ this.props.placeholderCount } />
 			</div>
 		);
-	},
-
-} );
+	}
+}
 
 const ConnectedThemesSelection = connect(
 	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
@@ -216,7 +215,7 @@ const ConnectedThemesSelection = connect(
 			isThemePurchased: themeId => isPremiumThemeAvailable( state, themeId, siteId )
 		};
 	},
-	{ setThemePreviewOptions }
+	{ setThemePreviewOptions, recordGoogleEvent, recordTracksEvent }
 )( ThemesSelection );
 
 /**
@@ -227,7 +226,7 @@ const ConnectedThemesSelection = connect(
 class ThemesSelectionWithPage extends React.Component {
 	state = {
 		page: 1,
-	};
+	}
 
 	incrementPage = () => {
 		this.setState( { page: this.state.page + 1 } );

@@ -7,5 +7,10 @@
 		"paths": {
 			"*": [ "test/*", "server/*", "client/*" ]
 		}
-	}
+	},
+	"exclude": [
+		"node_modules",
+		"public",
+		"build"
+	]
 }

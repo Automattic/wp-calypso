@@ -13,8 +13,8 @@ import {
 import { createReducer } from 'state/utils';
 
 export const connectionState = createReducer( 'CHECKING', {
-	[CONNECTION_LOST]: () => 'OFFLINE',
-	[CONNECTION_RESTORED]: () => 'ONLINE'
+	[ CONNECTION_LOST ]: () => 'OFFLINE',
+	[ CONNECTION_RESTORED ]: () => 'ONLINE'
 } );
 
 export default combineReducers( {

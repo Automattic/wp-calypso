@@ -117,6 +117,12 @@ export const filterSettingsByActiveModules = ( settings ) => {
 		carousel: [
 			'carousel_background_color',
 			'carousel_display_exif'
+		],
+		stats: [
+			'admin_bar',
+			'hide_smile',
+			'count_roles',
+			'roles',
 		]
 	};
 	let filteredSettings = { ...settings };

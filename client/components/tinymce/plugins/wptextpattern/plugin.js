@@ -126,7 +126,7 @@ function wptextpattern( editor ) {
 
 		format = editor.formatter.get( pattern.format );
 
-		if ( format && format[0].inline ) {
+		if ( format && format[ 0 ].inline ) {
 			editor.undoManager.add();
 
 			editor.undoManager.transact( function() {
@@ -209,14 +209,14 @@ function wptextpattern( editor ) {
 		tinymce.each( spacePatterns, function( pattern ) {
 			var match = text.match( pattern.regExp );
 
-			if ( ! match || rng.startOffset !== match[0].length ) {
+			if ( ! match || rng.startOffset !== match[ 0 ].length ) {
 				return;
 			}
 
 			editor.undoManager.add();
 
 			editor.undoManager.transact( function() {
-				node.deleteData( 0, match[0].length );
+				node.deleteData( 0, match[ 0 ].length );
 
 				if ( ! parent.innerHTML ) {
 					parent.appendChild( document.createElement( 'br' ) );

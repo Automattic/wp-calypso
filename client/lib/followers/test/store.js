@@ -38,7 +38,7 @@ describe( 'WPCOM Followers Store', function() {
 		it( 'The store should return an array of objects when fetching followers', function() {
 			var followers = FollowersStore.getFollowers( options );
 			assert.isArray( followers );
-			assert.isObject( followers[0] );
+			assert.isObject( followers[ 0 ] );
 		} );
 
 		it( 'Fetching more followers should update the array in the store', function() {

@@ -133,13 +133,13 @@ class Upload extends React.Component {
 		const errorCauses = {
 			exists: translate( 'Upload problem: Theme already installed on site.' ),
 			already_installed: translate( 'Upload problem: Theme already installed on site.' ),
-			'Too Large': translate( 'Upload problem: Zip file too large to upload.' ),
+			'too large': translate( 'Upload problem: Zip file too large to upload.' ),
 			incompatible: translate( 'Upload problem: Incompatible theme.' ),
 			unsupported_mime_type: translate( 'Upload problem: Not a valid zip file' ),
 			initiate_failure: translate( 'Upload problem: Theme may not be valid' ),
 		};
 
-		const errorString = JSON.stringify( error );
+		const errorString = JSON.stringify( error ).toLowerCase();
 		const cause = find( errorCauses, ( v, key ) => {
 			return includes( errorString, key );
 		} );
@@ -344,8 +344,7 @@ const UploadWithOptions = ( props ) => {
 	return (
 		<ConnectedUpload { ...props }
 			siteId={ siteId }
-			theme={ uploadedTheme }
-			options={ [ 'tryandcustomize', 'activate' ] } />
+			theme={ uploadedTheme } />
 	);
 };
 

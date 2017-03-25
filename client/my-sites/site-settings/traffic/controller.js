@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import i18n from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
 
@@ -13,20 +12,16 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import TrafficMain from 'my-sites/site-settings/traffic/main';
 import sitesFactory from 'lib/sites-list';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import utils from 'lib/site/utils';
 
 const sites = sitesFactory();
 
 export default {
 	traffic( context ) {
-		const analyticsPageTitle = 'Site Settings > SEO';
+		const analyticsPageTitle = 'Site Settings > Traffic';
 		const basePath = route.sectionify( context.path );
 		const fiveMinutes = 5 * 60 * 1000;
 		let site = sites.getSelectedSite();
-
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Site Settings', { textOnly: true } ) ) );
 
 		// if site loaded, but user cannot manage site, redirect
 		if ( site && ! utils.userCan( 'manage_options', site ) ) {

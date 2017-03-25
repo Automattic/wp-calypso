@@ -150,9 +150,11 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			} );
 		};
 
-		setFieldValue = ( field, value ) => {
+		setFieldValue = ( field, value, autosave = false ) => {
 			this.props.updateFields( {
 				[ field ]: value
+			}, () => {
+				autosave && this.submitForm();
 			} );
 		};
 
