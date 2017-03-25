@@ -43,7 +43,7 @@ export const SeeFollowersTour = makeTour(
 			name="init"
 			placement="right">
 			<p>
-				{ translate( "Interested in viewing your followers?"
+				{ translate( 'Interested in viewing your followers?'
 				)}
 			</p>
 			<ButtonRow>
@@ -54,31 +54,31 @@ export const SeeFollowersTour = makeTour(
 		<Step
 			name="click-people"
 			placement="beside"
-			arrow="left-top" 
+			arrow="left-top"
 			target=".users"
 			scrollContainer=".sidebar__region"
 			shouldScrollTo>
 				<Continue
-					target=".users" 
+					target=".users"
 					step="people"click>
-					{ translate( "Click {{strong}}{{icon/}} People{{/strong}} to continue.", {
-							components: {
-								icon: <Gridicon icon="user" />,
-								strong: <strong />
-							}
-						})
-					}
+					{ translate( 'Click {{strong}}{{icon/}} People{{/strong}} to continue.', {
+						components: {
+							icon: <Gridicon icon="user" />,
+							strong: <strong />
+						}
+					} )
+			}
 				</Continue>
 		</Step>
 		<Step
 			name="people"
 			placement="right">
 		<p>
-			{ translate( "See who subscribed by going to {{strong}}Followers{{/strong}} and {{strong}}Email Followers{{/strong}}.", {
-						components: {
-							strong: <strong />
-							}
-				})
+			{ translate( 'See who subscribed by going to {{strong}}Followers{{/strong}} and {{strong}}Email Followers{{/strong}}.', {
+				components: {
+					strong: <strong />
+				}
+			} )
 			}
 		</p>
 		<ButtonRow>
