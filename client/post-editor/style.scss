@@ -13,6 +13,10 @@
 .is-group-editor .sidebar {
 	left: auto;
 	right: -273px;
+
+	@include breakpoint( "<660px" ) {
+		left: 0;
+	}
 }
 
 @include breakpoint( "<660px" ) {
