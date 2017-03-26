@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { map, get, omit } from 'lodash';
+import { map, omit, isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,41 +11,35 @@ import {
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_PAGE,
 } from 'state/action-types';
-import { updateFeeds as updateFeedsAction } from 'state/reader/feeds/actions';
 import { receiveFollows as receiveFollowsAction } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 
-export const requestPageAction = ( page = 1, number = 50, meta = 'feed' )=> ( {
+export const requestPageAction = ( page = 1, number = 50, meta = '' )=> ( {
 	type: READER_FOLLOWS_SYNC_PAGE,
 	payload: { page, meta, number, }
 } );
 
-export const feedsFromApi = apiResponse =>
-	map( apiResponse.subscriptions, subscription =>
-		get( subscription, 'meta.data.feed' )
-	);
+export const isValidApiResponse = apiResponse => {
+	const hasSubscriptions = apiResponse && apiResponse.subscriptions &&
+		isArray( apiResponse.subscriptions );
+	return hasSubscriptions;
+};
 
-export const subscriptionsFromApi = apiResponse =>
-	map( apiResponse.subscriptions, subscription =>
+export const subscriptionsFromApi = apiResponse => {
+	if ( ! isValidApiResponse( apiResponse ) ) {
+		return [];
+	}
+
+	return map( apiResponse.subscriptions, subscription =>
 		omit( subscription, 'meta' )
 	);
-
-export const isValidApiResponse = ( apiResponse, action ) => {
-	const hasSubscriptions = apiResponse && apiResponse.subscriptions;
-	const hasFeedsIfRequested = (
-		// if either at end of pages or didn't request feeds then return true
-		( apiResponse.number === 0 || action.payload.meta.indexOf( 'feed' ) === -1 ) ||
-		// if there are subs and feeds were requested, then they should in the apiResponse
-		( hasSubscriptions && get( apiResponse.subscriptions[ 0 ], 'meta.data.feed' ) )
-	);
-
-	return hasSubscriptions && hasFeedsIfRequested;
 };
 
 let syncingFollows = false;
 export const isSyncingFollows = () => syncingFollows;
+export const resetSyncingFollows = () => syncingFollows = false;
 
 export function syncReaderFollows( store, action, next ) {
 	if ( isSyncingFollows() ) {
@@ -88,8 +82,6 @@ export function receivePage( store, action, next, apiResponse ) {
 	store.dispatch(
 		receiveFollowsAction( subscriptionsFromApi( apiResponse ) )
 	);
-
-	store.dispatch( updateFeedsAction( feedsFromApi( apiResponse ) ) );
 
 	// Fetch the next page of subscriptions where applicable
 	if ( number > 0 && page <= MAX_PAGES_TO_FETCH && isSyncingFollows() ) {
