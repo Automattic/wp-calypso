@@ -108,6 +108,13 @@ const sections = [
 		group: 'sites'
 	},
 	{
+		name: 'settings-writing',
+		paths: [ '/settings/writing', '/settings/taxonomies' ],
+		module: 'my-sites/site-settings/writing',
+		secondary: true,
+		group: 'sites'
+	},
+	{
 		name: 'settings-traffic',
 		paths: [ '/settings/traffic', '/settings/seo', '/settings/analytics' ],
 		module: 'my-sites/site-settings/traffic',
