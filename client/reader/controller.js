@@ -4,7 +4,6 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
-import { Provider as ReduxProvider } from 'react-redux';
 import i18n from 'i18n-calypso';
 
 /**
@@ -159,25 +158,24 @@ module.exports = {
 		setPageTitle( context, i18n.translate( 'Following' ) );
 
 		// warn: don't async load this only. we need it to keep feed-post-store in the reader bundle
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( StreamComponent, {
-					key: 'following',
-					listName: i18n.translate( 'Followed Sites' ),
-					postsStore: followingStore,
-					recommendationsStore,
-					showPrimaryFollowButtonOnCards: false,
-					trackScrollPage: trackScrollPage.bind(
-						null,
-						basePath,
-						fullAnalyticsPageTitle,
-						analyticsPageTitle,
-						mcKey
-					),
-					onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
-				} )
-			),
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			React.createElement( StreamComponent, {
+				key: 'following',
+				listName: i18n.translate( 'Followed Sites' ),
+				postsStore: followingStore,
+				recommendationsStore,
+				showPrimaryFollowButtonOnCards: false,
+				trackScrollPage: trackScrollPage.bind(
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					analyticsPageTitle,
+					mcKey
+				),
+				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
+			} ),
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 

@@ -83,11 +83,19 @@ var webpackConfig = {
 				test: /\.json$/,
 				exclude: /(devdocs\/components-usage-stats.json)/,
 				loader: 'json-loader'
+			},
+			{
+				test: /\.scss$/,
+				loaders: [
+					'isomorphic-style-loader',
+					'css-loader?camelCase=dashes&importLoaders=1',
+					'sass-loader'
+				]
 			}
 		]
 	},
 	resolve: {
-		extensions: [ '', '.json', '.js', '.jsx' ],
+		extensions: [ '', '.json', '.js', '.jsx', '.scss' ],
 		root: [ path.join( __dirname, 'server' ), path.join( __dirname, 'client' ), __dirname ],
 		modulesDirectories: [ 'node_modules' ]
 	},

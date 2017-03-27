@@ -2,8 +2,7 @@
  * General styles
  */
 
-$sidebar-width-max: 272px;
-$sidebar-width-min: 228px;
+@import 'shared/sidebar';
 
 .wpcom-site__logo {
 	color: lighten( $gray, 20% );
