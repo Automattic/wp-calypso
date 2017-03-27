@@ -231,6 +231,7 @@
 	margin: 0 15px;
 	padding: 18px 0 0;
 	position: relative;
+	width: 100%;
 
 	@include breakpoint( ">660px" ) {
 		margin: 0;
