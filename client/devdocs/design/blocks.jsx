@@ -19,6 +19,7 @@ import { isEnabled } from 'config';
  * Docs examples
  */
 import CreditCardForm from 'blocks/credit-card-form/docs/example';
+import CalendarPopover from 'blocks/calendar-popover/docs/example';
 import AuthorSelector from 'blocks/author-selector/docs/example';
 import CommentButtons from 'blocks/comment-button/docs/example';
 import DisconnectJetpackDialog from 'blocks/disconnect-jetpack-dialog/docs/example';
@@ -99,6 +100,7 @@ export default React.createClass( {
 					section="blocks"
 				>
 					<AuthorSelector />
+					<CalendarPopover />
 					<CommentButtons />
 					<DisconnectJetpackDialog />
 					<CreditCardForm />
