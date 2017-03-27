@@ -10,7 +10,6 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import {
 	getPostCommentsTree,
 	getPostTotalCommentsCount,
@@ -28,44 +27,30 @@ import {
 import PostComment from './post-comment';
 import PostCommentForm from './form';
 import CommentCount from './comment-count';
-import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
 
 class PostCommentList extends React.Component {
 	constructor( props ) {
 		super();
 		this.state = {
 			activeReplyCommentID: null,
-			amountOfCommentsToTake: props.initialSize,
-			commentsFilter: 'all'
+			amountOfCommentsToTake: props.initialSize
 		};
 
 		this.viewEarlierCommentsHandler = this.viewEarlierCommentsHandler.bind( this );
 	}
 
 	componentWillMount() {
-		const {
-			post: { ID: postId, site_ID: siteId }
-		} = this.props;
+		const siteId = this.props.post.site_ID;
+		const postId = this.props.post.ID;
 
-		this.props.requestPostComments( siteId, postId, this.props.commentsFilter );
+		this.props.requestPostComments( siteId, postId );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		const nextSiteId = get( nextProps, 'post.site_ID' );
 		const nextPostId = get( nextProps, 'post.ID' );
-		const nextCommentsFilter = get( nextProps, 'commentsFilter' );
-
-		if (
-			nextSiteId &&
-			nextPostId &&
-			nextCommentsFilter &&
-			(
-				this.props.post.site_ID !== nextSiteId ||
-				this.props.post.ID !== nextPostId ||
-				this.props.commentsFilter !== nextCommentsFilter )
-			) {
-			this.props.requestPostComments( nextSiteId, nextPostId, this.props.commentsFilter );
+		if ( nextSiteId && nextPostId && ( this.props.post.site_ID !== nextSiteId || this.props.post.ID !== nextPostId ) ) {
+			this.props.requestPostComments( nextSiteId, nextPostId );
 		}
 	}
 
@@ -176,9 +161,8 @@ class PostCommentList extends React.Component {
 	}
 
 	viewEarlierCommentsHandler() {
-		const {
-			post: { ID: postId, site_ID: siteId },
-		} = this.props;
+		const siteId = this.props.post.site_ID;
+		const postId = this.props.post.ID;
 
 		const amountOfCommentsToTake = this.state.amountOfCommentsToTake + this.props.pageSize;
 
@@ -187,20 +171,14 @@ class PostCommentList extends React.Component {
 		} );
 
 		if ( this.props.haveMoreCommentsToFetch ) {
-			this.props.requestPostComments( siteId, postId, this.props.commentsFilter );
+			this.props.requestPostComments( siteId, postId );
 		}
 	}
-
-	handleFilterClick = commentsFilter => () => this.props.onFilterChange( commentsFilter );
 
 	render() {
 		if ( ! this.props.commentsTree ) {
 			return null;
 		}
-
-		const {
-			commentsFilter
-		} = this.props;
 
 		const {
 			displayedComments,
@@ -232,30 +210,6 @@ class PostCommentList extends React.Component {
 							} )
 						}</span> : null }
 				</div> }
-				{ isEnabled( 'comments/filters-in-posts' ) &&
-					<SegmentedControl compact primary>
-						<SegmentedControlItem
-							selected={ commentsFilter === 'all' }
-							onClick={ this.handleFilterClick( 'all' ) }>{ translate( 'All' ) }
-						</SegmentedControlItem>
-						<SegmentedControlItem
-							selected={ commentsFilter === 'approved' }
-							onClick={ this.handleFilterClick( 'approved' ) }>{ translate( 'Approved', { context: 'comment status'} ) }
-						</SegmentedControlItem>
-						<SegmentedControlItem
-							selected={ commentsFilter === 'unapproved' }
-							onClick={ this.handleFilterClick( 'unapproved' ) }>{ translate( 'Pending', { context: 'comment status'} ) }
-						</SegmentedControlItem>
-						<SegmentedControlItem
-							selected={ commentsFilter === 'spam' }
-							onClick={ this.handleFilterClick( 'spam' ) }>{ translate( 'Spam', { context: 'comment status'} ) }
-						</SegmentedControlItem>
-						<SegmentedControlItem
-							selected={ commentsFilter === 'trash' }
-							onClick={ this.handleFilterClick( 'trash' ) }>{ translate( 'Trash', { context: 'comment status'} ) }
-						</SegmentedControlItem>
-					</SegmentedControl>
-				}
 				{ this.renderCommentsList( displayedComments ) }
 				{ this.renderCommentForm() }
 			</div>
@@ -290,7 +244,7 @@ PostCommentList.defaultProps = {
 export default connect(
 	( state, ownProps ) => (
 		{
-			commentsTree: getPostCommentsTree( state, ownProps.post.site_ID, ownProps.post.ID, ownProps.commentsFilter ),
+			commentsTree: getPostCommentsTree( state, ownProps.post.site_ID, ownProps.post.ID ),
 			totalCommentsCount: getPostTotalCommentsCount( state, ownProps.post.site_ID, ownProps.post.ID ),
 			haveMoreCommentsToFetch: haveMoreCommentsToFetch( state, ownProps.post.site_ID, ownProps.post.ID )
 		}

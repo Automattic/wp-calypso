@@ -92,15 +92,14 @@ function commentsRequestFailure( dispatch, requestId, err ) {
  * @param {Number} postId post identifier
  * @returns {Function} thunk that requests comments for a given post
  */
-export function requestPostComments( siteId, postId, status = 'all' ) {
+export function requestPostComments( siteId, postId ) {
 	return ( dispatch, getState ) => {
 		const postCommentRequests = getPostCommentRequests( getState(), siteId, postId );
 		const oldestCommentDateForPost = getPostOldestCommentDate( getState(), siteId, postId );
 
 		const query = {
 			order: 'DESC',
-			number: NUMBER_OF_COMMENTS_PER_FETCH,
-			status
+			number: NUMBER_OF_COMMENTS_PER_FETCH
 		};
 
 		if ( oldestCommentDateForPost && oldestCommentDateForPost.toISOString ) {
