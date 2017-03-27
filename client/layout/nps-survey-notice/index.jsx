@@ -13,14 +13,6 @@ import { showNpsSurveyNotice, setNpsSurveyDialogShowing } from 'state/ui/nps-sur
 import { isNpsSurveyDialogShowing } from 'state/ui/nps-survey-notice/selectors';
 
 class NpsSurveyNotice extends Component {
-	componentDidMount() {
-		// wait a little bit before showing the notice, so that
-		// (1) the user gets a chance to look briefly at the uncluttered screen, and
-		// (2) the user notices the notice more, since it will cause a change to the
-		//     screen they are already looking at
-		setTimeout( this.props.showNpsSurveyNotice, 3000 );
-	}
-
 	handleDialogClose = () => {
 		// TODO: detect if survey was never submitted
 		this.props.setNpsSurveyDialogShowing( false );
@@ -28,6 +20,14 @@ class NpsSurveyNotice extends Component {
 
 	handleSurveyDismissed = () => {
 		this.handleDialogClose();
+	}
+
+	componentDidMount() {
+		// wait a little bit before showing the notice, so that
+		// (1) the user gets a chance to look briefly at the uncluttered screen, and
+		// (2) the user notices the notice more, since it will cause a change to the
+		//     screen they are already looking at
+		setTimeout( this.props.showNpsSurveyNotice, 3000 );
 	}
 
 	render() {
