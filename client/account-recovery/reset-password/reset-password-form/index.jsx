@@ -4,7 +4,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,14 +28,6 @@ import {
 } from 'state/selectors';
 
 export class ResetPasswordFormComponent extends Component {
-	static defaultProps = {
-		translate: identity,
-		pickedMethod: null,
-		userData: {},
-		requestError: null,
-		isRequesting: false,
-	};
-
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
 		resetOptions: PropTypes.array.isRequired,

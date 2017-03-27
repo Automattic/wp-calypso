@@ -4,6 +4,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,6 +38,7 @@ describe( 'ResetPasswordForm', () => {
 		const wrapper = shallow(
 			<ResetPasswordFormComponent
 				resetOptions={ exampleResetOptions }
+				translate={ identity }
 			/>
 		);
 
@@ -52,6 +54,7 @@ describe( 'ResetPasswordForm', () => {
 				<ResetPasswordFormComponent
 					resetOptions={ exampleResetOptions }
 					isRequesting={ true }
+					translate={ identity }
 				/>
 			);
 
@@ -70,6 +73,7 @@ describe( 'ResetPasswordForm', () => {
 				<ResetPasswordFormComponent
 					resetOptions={ exampleResetOptions }
 					pickedMethod={ null }
+					translate={ identity }
 				/>
 			);
 
@@ -82,6 +86,7 @@ describe( 'ResetPasswordForm', () => {
 				<ResetPasswordFormComponent
 					resetOptions={ exampleResetOptions }
 					isRequesting={ true }
+					translate={ identity }
 				/>
 			);
 
