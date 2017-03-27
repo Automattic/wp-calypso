@@ -98,7 +98,7 @@ export default React.createClass( {
 	wrongNSMappedDomains() {
 		debug( 'Rendering wrongNSMappedDomains' );
 
-		if ( get( this.props, 'selectedSite.jetpack' ) && ! get( this.props, 'selectedSite.options.is_automated_transfer' ) ) {
+		if ( get( this.props, 'selectedSite.jetpack' ) || get( this.props, 'selectedSite.options.is_automated_transfer' ) ) {
 			return null;
 		}
 
