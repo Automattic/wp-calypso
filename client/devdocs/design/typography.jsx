@@ -48,21 +48,21 @@ export default React.createClass( {
 		};
 
 		const contentTitle = {
-			fontFamily: 'Merriweather',
+			fontFamily: 'Noto Serif',
 			fontSize: '32px',
 			fontWeight: '700',
 			lineHeight: '40px'
 		};
 
 		const contentSubtitle = {
-			fontFamily: 'Merriweather',
+			fontFamily: 'Noto Serif',
 			fontSize: '24px',
 			fontWeight: '700',
 			lineHeight: '32px'
 		};
 
 		const contentBodyCopy = {
-			fontFamily: 'Merriweather',
+			fontFamily: 'Noto Serif',
 			fontSize: '16px',
 			fontWeight: '400',
 			lineHeight: '1.5'
