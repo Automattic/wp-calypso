@@ -47,6 +47,7 @@ import { translate } from 'i18n-calypso';
 import SignupActions from 'lib/signup/actions';
 import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-tracking';
 import { disableCart } from 'lib/upgrades/actions';
+import { startLuckyOrangeTracking } from 'state/analytics/actions';
 
 /**
  * Constants
@@ -258,7 +259,7 @@ const Signup = React.createClass( {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
-		analytics.luckyOrange.initialize();
+		this.props.startLuckyOrangeTracking( analytics );
 	},
 
 	componentWillUnmount() {
@@ -355,18 +356,6 @@ const Signup = React.createClass( {
 		const firstInvalidStep = find( SignupProgressStore.get(), { status: 'invalid' } );
 
 		if ( firstInvalidStep ) {
-<<<<<<< HEAD
-=======
-			if ( firstInvalidStep.stepName === this.props.stepName ) {
-				// reset the signup stores so we have a chance to start over the flow
-				// TODO: fix loading invalid steps from the store
-				const errorMessage = 'Current step is invalid, cannot redirect to it.';
-				SignupDependencyStore.reset();
-				SignupProgressStore.reset();
-				console.error( errorMessage, firstInvalidStep.errors ); //eslint-disable-line no-console
-				return;
-			}
->>>>>>> Add Lucky Orange analytics
 			analytics.tracks.recordEvent( 'calypso_signup_goto_invalid_step', {
 				step: firstInvalidStep.stepName,
 				flow: this.props.flowName
@@ -495,6 +484,6 @@ export default connect(
 		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true,
 		signupDependencies: getSignupDependencyStore( state ),
 	} ),
-	{ setSurvey },
+	{ setSurvey, startLuckyOrangeTracking },
 	undefined,
 	{ pure: false } )( Signup );
