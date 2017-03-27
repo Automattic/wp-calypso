@@ -39,7 +39,7 @@ export function displayError( error ) {
 	if ( typeof error.message === 'object' ) {
 		notices.error( <ValidationErrorList messages={ flatten( values( error.message ) ) } /> );
 	} else {
-		notices.error( getErrorFromApi( error.message ) )
+		notices.error( getErrorFromApi( error.message ) );
 	}
 }
 
