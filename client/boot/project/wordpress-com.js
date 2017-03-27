@@ -16,7 +16,6 @@ const React = require( 'react' ),
 const config = require( 'config' ),
 	abtestModule = require( 'lib/abtest' ), // used by error logger
 	getSavedVariations = abtestModule.getSavedVariations, // used by logger
-	switchLocale = require( 'lib/i18n-utils/switch-locale' ),
 	analytics = require( 'lib/analytics' ),
 	route = require( 'lib/route' ),
 	normalize = require( 'lib/route/normalize' ),
@@ -44,24 +43,6 @@ export function boot( currentUser, reduxStore ) {
 
 	// prune sync-handler records more than two days old
 	syncHandler.pruneStaleRecords( '2 days' );
-
-	let localeSlug;
-
-	// When the user is bootstrapped, we also bootstrap the
-	// locale strings
-	if ( ! config( 'wpcom_user_bootstrap' ) ) {
-		localeSlug = currentUser.get().localeSlug;
-		if ( localeSlug ) {
-			switchLocale( localeSlug );
-		}
-	}
-	// Set the locale for the current user
-	currentUser.on( 'change', function() {
-		localeSlug = currentUser.get().localeSlug;
-		if ( localeSlug ) {
-			switchLocale( localeSlug );
-		}
-	} );
 
 	translatorJumpstart.init();
 

@@ -19,7 +19,9 @@ import url from 'url';
  */
 import accessibleFocus from 'lib/accessible-focus';
 import createReduxStoreFromPersistedInitialState from 'state/initial-state';
+import config from 'config';
 import detectHistoryNavigation from 'lib/detect-history-navigation';
+import switchLocale from 'lib/i18n-utils/switch-locale';
 import touchDetect from 'lib/touch-detect';
 import userFactory from 'lib/user';
 
@@ -28,7 +30,7 @@ const debug = debugFactory( 'calypso' );
 export function boot( currentUser ) {
 	debug( "Starting Calypso. Let\'s do this." );
 
-	locales();
+	locales( currentUser );
 	utils();
 	createReduxStoreFromPersistedInitialState( reduxStore => {
 		setupMiddlewares( reduxStore );
@@ -44,15 +46,30 @@ export function boot( currentUser ) {
 	} );
 }
 
-function locales() {
-	// Initialize i18n
+const switchUserLocale = currentUser => {
+	const localeSlug = currentUser.get().localeSlug;
+	if ( localeSlug ) {
+		switchLocale( localeSlug );
+	}
+};
+
+const locales = currentUser => {
+	// Initialize i18n mixin
 	ReactClass.injection.injectMixin( i18n.mixin );
 
 	if ( window.i18nLocaleStrings ) {
 		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
 		setLocale( i18nLocaleStringsObject );
 	}
-}
+
+	// When the user is not bootstrapped, we also bootstrap the
+	// locale strings
+	if ( ! config( 'wpcom_user_bootstrap' ) ) {
+		switchUserLocale( currentUser );
+	}
+
+	currentUser.on( 'change', () => switchUserLocale( currentUser ) );
+};
 
 function utils() {
 	// Infer touch screen by checking if device supports touch events
@@ -115,7 +132,7 @@ function loadSections() {
 	// TODO: move from project specific file
 }
 
-window.AppBoot = function() {
+window.AppBoot = () => {
 	if ( process.env.NODE_ENV === 'development' ) {
 		require( './dev-modules' )();
 	}
@@ -124,8 +141,6 @@ window.AppBoot = function() {
 	if ( user.initialized ) {
 		boot( user );
 	} else {
-		user.once( 'change', function() {
-			boot( user );
-		} );
+		user.once( 'change', () => boot( user ) );
 	}
 };
