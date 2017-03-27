@@ -54,7 +54,6 @@ class ThemesSelection extends Component {
 	static defaultProps = {
 		emptyContent: null,
 		showUploadButton: true,
-		showPlaceholders: true
 	}
 
 	state = {
