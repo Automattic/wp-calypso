@@ -8,8 +8,8 @@ import isEmpty from 'lodash/isEmpty';
  * Internal dependencies
  */
 import {
-	updateChatMessage,
-	sendChatMessage
+	sendChatMessage,
+	setChatMessage,
 } from 'state/happychat/actions';
 import {
 	when,
@@ -67,7 +67,7 @@ const mapState = ( { happychat: { message } } ) => ( { message } );
 
 const mapDispatch = ( dispatch ) => ( {
 	onUpdateChatMessage( message ) {
-		dispatch( updateChatMessage( message ) );
+		dispatch( setChatMessage( message ) );
 	},
 	onSendChatMessage( message ) {
 		dispatch( sendChatMessage( message ) );
