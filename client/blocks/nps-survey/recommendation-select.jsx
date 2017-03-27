@@ -31,7 +31,11 @@ class RecommendationSelect extends PureComponent {
 		const options = values.map( ( value ) => this.renderOption( value ) );
 
 		return (
-			<div>
+			<div className="nps-survey__recommendation-select">
+				<div className="nps-survey__scale-labels">
+					<span>Unlikely</span>
+					<span className="nps-survey__very-likely-label">Very Likely</span>
+				</div>
 				{ options }
 			</div>
 		);

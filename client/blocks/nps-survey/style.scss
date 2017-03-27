@@ -26,6 +26,18 @@
 	}
 }
 
+.nps-survey__recommendation-select {
+	display: inline-block;
+}
+
+.nps-survey__scale-labels {
+	padding: 0 6px;
+}
+
+.nps-survey__very-likely-label {
+	float: right;
+}
+
 .nps-survey__recommendation-option {
 	display: inline-block;
 	padding: 0 6px;
