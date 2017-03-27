@@ -31,5 +31,14 @@ describe( 'reducer', () => {
 
 			expect( state ).to.be.true;
 		} );
+
+		it( 'should track if the dialog is not showing', () => {
+			const state = isNpsSurveyDialogShowing( undefined, {
+				type: NPS_SURVEY_DIALOG_IS_SHOWING,
+				isShowing: false
+			} );
+
+			expect( state ).to.be.false;
+		} );
 	} );
 } );
