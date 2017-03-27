@@ -741,6 +741,17 @@
     "builtin-status-codes": {
       "version": "2.0.0"
     },
+    "bundle-loader": {
+      "version": "0.5.5",
+      "dependencies": {
+        "json5": {
+          "version": "0.5.1"
+        },
+        "loader-utils": {
+          "version": "1.1.0"
+        }
+      }
+    },
     "bytes": {
       "version": "2.4.0"
     },
