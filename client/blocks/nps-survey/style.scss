@@ -28,9 +28,15 @@
 
 .nps-survey__recommendation-option {
 	display: inline-block;
+	padding: 0 6px;
+}
+
+.nps-survey__recommendation-option input[type=radio] {
+	margin: 0 2px;
 }
 
 .nps-survey__recommendation-option input[type=radio] + span {
 	clear: both;
 	margin-left: 0;
+	text-align: center;
 }
