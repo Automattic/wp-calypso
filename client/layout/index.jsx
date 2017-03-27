@@ -38,6 +38,7 @@ import { isHappychatOpen } from 'state/ui/happychat/selectors';
 import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
+import NpsSurveyNotice from 'layout/nps-survey-notice';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -149,6 +150,7 @@ Layout = React.createClass( {
 				<DocumentHead />
 				<QueryPreferences />
 				{ <GuidedTours /> }
+				{ config.isEnabled( 'nps-survey/notice' ) && <NpsSurveyNotice /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }

@@ -32,6 +32,7 @@ describe( 'reducer', () => {
 			'happychat',
 			'mediaModal',
 			'themeSetup',
+			'npsSurveyNotice',
 		] );
 	} );
 

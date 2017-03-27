@@ -79,6 +79,7 @@
 		"network-connection": true,
 		"notifications2beta": true,
 		"nps-survey/devdocs": false,
+		"nps-survey/notice": false,
 		"olark": true,
 		"perfmon": true,
 		"persist-redux": true,
