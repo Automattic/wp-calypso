@@ -2,11 +2,16 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import get from 'lodash/get';
-import find from 'lodash/find';
-import concat from 'lodash/concat';
-import filter from 'lodash/filter';
-import map from 'lodash/map';
+import {
+	concat,
+	filter,
+	find,
+	map,
+	get,
+	sortBy,
+	takeRight,
+} from 'lodash';
+import validator from 'is-my-json-valid';
 
 /**
  * Internal dependencies
@@ -22,6 +27,8 @@ import {
 	HAPPYCHAT_SET_CHAT_STATUS,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 } from 'state/action-types';
+import { HAPPYCHAT_MAX_STORED_MESSAGES } from './constants';
+import { timelineSchema } from './schema';
 
 /**
  * Returns a timeline event from the redux action
@@ -50,6 +57,9 @@ const timeline_event = ( state = {}, action ) => {
 	return state;
 };
 
+const validateTimeline = validator( timelineSchema );
+const sortTimeline = timeline => sortBy( timeline, event => parseInt( event.timestamp, 10 ) );
+
 /**
  * Adds timeline events for happychat
  *
@@ -61,9 +71,13 @@ const timeline_event = ( state = {}, action ) => {
 const timeline = ( state = [], action ) => {
 	switch ( action.type ) {
 		case SERIALIZE:
-			return [];
+			return takeRight( state, HAPPYCHAT_MAX_STORED_MESSAGES );
 		case DESERIALIZE:
-			return state;
+			const valid = validateTimeline( state );
+			if ( valid ) {
+				return state;
+			}
+			return [];
 		case HAPPYCHAT_RECEIVE_EVENT:
 			// if meta.forOperator is set, skip so won't show to user
 			if ( get( action, 'event.meta.forOperator', false ) ) {
@@ -85,7 +99,7 @@ const timeline = ( state = [], action ) => {
 
 				return ! find( state, { id: message.id } );
 			} );
-			return state.concat( map( messages, message => {
+			return sortTimeline( state.concat( map( messages, message => {
 				return Object.assign( {
 					id: message.id,
 					source: message.source,
@@ -97,7 +111,7 @@ const timeline = ( state = [], action ) => {
 					type: get( message, 'type', 'message' ),
 					links: get( message, 'meta.links' )
 				} );
-			} ) );
+			} ) ) );
 	}
 	return state;
 };
