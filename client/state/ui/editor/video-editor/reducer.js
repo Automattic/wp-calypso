@@ -7,6 +7,7 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
+	VIDEO_EDITOR_CLOSE_MODAL,
 	VIDEO_EDITOR_RESET_STATE,
 	VIDEO_EDITOR_SET_POSTER_URL,
 	VIDEO_EDITOR_SHOW_ERROR,
@@ -14,24 +15,13 @@ import {
 } from 'state/action-types';
 
 /**
- * Tracks poster updated state.
+ * Tracks whether or not the modal should close.
  *
- * @param {Boolean} state Whether or not the video poster was already updated
+ * @param {Boolean} state Whether or not the modal was set to close
  * @param {Object} action Action object
- * @returns {Boolean} Whether or not the video poster is now updated
+ * @returns {Boolean} Whether or not the modal should now be closed
  */
-export const isPosterUpdated = ( state = false, action ) => {
-	switch ( action.type ) {
-		case VIDEO_EDITOR_SET_POSTER_URL:
-		case VIDEO_EDITOR_SHOW_ERROR:
-			return true;
-
-		case VIDEO_EDITOR_RESET_STATE:
-			return false;
-	}
-
-	return state;
-};
+export const closeModal = ( state = false, { type } ) => type === VIDEO_EDITOR_CLOSE_MODAL;
 
 /**
  * Tracks poster URL state.
@@ -81,8 +71,8 @@ export const uploadProgress = ( state = 0, action ) => {
 export const hasPosterUpdateError = ( state = false, { type } ) => type === VIDEO_EDITOR_SHOW_ERROR;
 
 export default combineReducers( {
+	closeModal,
 	hasPosterUpdateError,
-	isPosterUpdated,
 	posterUrl,
 	uploadProgress,
 } );

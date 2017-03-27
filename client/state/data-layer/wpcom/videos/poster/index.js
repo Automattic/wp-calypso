@@ -10,6 +10,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { VIDEO_EDITOR_UPDATE_POSTER } from 'state/action-types';
 import {
+	closeModal,
 	setPosterUrl,
 	showError,
 	showUploadProgress,
@@ -44,15 +45,16 @@ export const updatePoster = ( { dispatch }, action, next ) => {
 	return next( action );
 };
 
-export const updatePosterUrl = ( { dispatch }, action, next, { poster } ) => {
+export const receivePosterUrl = ( { dispatch }, action, next, { poster } ) => {
 	dispatch( setPosterUrl( poster ) );
+	dispatch( closeModal() );
 };
 
-export const updatePosterError = ( { dispatch } ) => {
+export const receivePosterError = ( { dispatch } ) => {
 	dispatch( showError() );
 };
 
-export const updateUploadProgress = ( { dispatch }, action, next, progress ) => {
+export const receiveUploadProgress = ( { dispatch }, action, next, progress ) => {
 	let percentage = 0;
 
 	if ( 'loaded' in progress && 'total' in progress ) {
@@ -62,7 +64,8 @@ export const updateUploadProgress = ( { dispatch }, action, next, progress ) => 
 	dispatch( showUploadProgress( percentage ) );
 };
 
-export const dispatchPosterRequest = dispatchRequest( updatePoster, updatePosterUrl, updatePosterError, updateUploadProgress );
+export const dispatchPosterRequest =
+	dispatchRequest( updatePoster, receivePosterUrl, receivePosterError, receiveUploadProgress );
 
 export default {
 	[ VIDEO_EDITOR_UPDATE_POSTER ]: [ dispatchPosterRequest ],

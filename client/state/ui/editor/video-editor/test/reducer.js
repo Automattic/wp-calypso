@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	VIDEO_EDITOR_CLOSE_MODAL,
 	VIDEO_EDITOR_RESET_STATE,
 	VIDEO_EDITOR_SET_POSTER_URL,
 	VIDEO_EDITOR_SHOW_ERROR,
@@ -14,8 +15,8 @@ import {
 } from 'state/action-types';
 
 import reducer, {
+	closeModal,
 	hasPosterUpdateError,
-	isPosterUpdated,
 	posterUrl,
 	uploadProgress,
 } from '../reducer';
@@ -23,38 +24,30 @@ import reducer, {
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'closeModal',
 			'hasPosterUpdateError',
-			'isPosterUpdated',
 			'posterUrl',
 			'uploadProgress',
 		] );
 	} );
 
-	describe( '#isPosterUpdated()', () => {
+	describe( '#closeModal()', () => {
 		it( 'should default to false', () => {
-			const state = isPosterUpdated( undefined, {} );
+			const state = closeModal( undefined, {} );
 
 			expect( state ).to.be.false;
 		} );
 
 		it( 'should change to true on successful update', () => {
-			const state = isPosterUpdated( undefined, {
-				type: VIDEO_EDITOR_SET_POSTER_URL,
-			} );
-
-			expect( state ).to.be.true;
-		} );
-
-		it( 'should change to true on failed update', () => {
-			const state = isPosterUpdated( undefined, {
-				type: VIDEO_EDITOR_SHOW_ERROR,
+			const state = closeModal( undefined, {
+				type: VIDEO_EDITOR_CLOSE_MODAL,
 			} );
 
 			expect( state ).to.be.true;
 		} );
 
 		it( 'should change to false on reset', () => {
-			const state = isPosterUpdated( undefined, {
+			const state = closeModal( undefined, {
 				type: VIDEO_EDITOR_RESET_STATE,
 			} );
 
