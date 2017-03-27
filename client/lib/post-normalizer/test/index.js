@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-const assert = require( 'chai' ).assert,
-	Spy = require( 'sinon' ).spy,
-	trim = require( 'lodash/trim' );
+import { assert } from 'chai';
+import { spy } from 'sinon';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
+import linkJetpackCarousels from '../rule-content-link-jetpack-carousels';
 
 function identifyTransform( post, callback ) {
 	callback();
@@ -653,7 +654,7 @@ describe( 'index', function() {
 						fakeImage( 101, 201 )
 					]
 				},
-				callbackSpy = new Spy();
+				callbackSpy = spy();
 
 			normalizer.keepValidImages( 100, 200 )( post, callbackSpy );
 
@@ -1003,6 +1004,48 @@ describe( 'index', function() {
 				assert.strictEqual( normalized.content_no_html, 'hi there' );
 				done( err );
 			} );
+		} );
+	} );
+
+	describe( 'Jetpack Carousel Linker', () => {
+		it( 'should fix links to jetpack carousels', done => {
+			const source = `
+				<div class="tiled-gallery"
+					data-carousel-extra="{&quot;permalink&quot;:&quot;https:\\/\\/example.com\\/foo\\/&quot;}">
+					<div class="gallery-row">
+						<div class="gallery-group">
+							<div class="tiled-gallery-item">
+								<a href="https://example.com/foo/bar/">
+									<img
+										src="https://example.com/foo/bar/img/"
+										data-attachment-id="500"
+									/>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			`;
+			const expected = `
+				<div class="tiled-gallery" data-carousel-extra="{&quot;permalink&quot;:&quot;https:\\/\\/example.com\\/foo\\/&quot;}">
+					<div class="gallery-row">
+						<div class="gallery-group">
+							<div class="tiled-gallery-item">
+								<a href="https://example.com/foo/#jp-carousel-500">
+									<img src="https://example.com/foo/bar/img/" data-attachment-id="500">
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			`;
+			normalizer(
+				{ content: source },
+				[ normalizer.withContentDOM( [ linkJetpackCarousels ] ) ],
+				( err, normalized ) => {
+					assert.deepEqual( normalized.content, expected );
+					done( err );
+				} );
 		} );
 	} );
 } );
