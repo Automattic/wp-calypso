@@ -1,3 +1,7 @@
+/**
+ * External dependencies
+ */
+
 import analytics from 'lib/analytics';
 import has from 'lodash/has';
 import invoke from 'lodash/invoke';
@@ -5,7 +9,8 @@ import invoke from 'lodash/invoke';
 import {
 	ANALYTICS_EVENT_RECORD,
 	ANALYTICS_PAGE_VIEW_RECORD,
-	ANALYTICS_STAT_BUMP
+	ANALYTICS_STAT_BUMP,
+	ANALYTICS_CONTINOUS_MONITOR_ON
 } from 'state/action-types';
 
 const eventServices = {
@@ -16,6 +21,12 @@ const eventServices = {
 const pageViewServices = {
 	ga: ( { url, title } ) => analytics.ga.recordPageView( url, title ),
 	default: ( { url, title } ) => analytics.pageView.record( url, title )
+};
+
+const loadTrackingTool = ( trackingTool ) => {
+	if ( trackingTool === 'Lucky Orange' ) {
+		analytics.luckyOrange.addLuckyOrangeScript();
+	}
 };
 
 const statBump = ( { group, name } ) => analytics.mc.bumpStat( group, name );
@@ -33,8 +44,11 @@ export const dispatcher = ( { meta: { analytics } } ) => {
 
 			case ANALYTICS_STAT_BUMP:
 				return statBump( payload );
+
+			case ANALYTICS_CONTINOUS_MONITOR_ON:
+				return loadTrackingTool( payload );
 		}
-	} )
+	} );
 };
 
 export const analyticsMiddleware = () => next => action => {

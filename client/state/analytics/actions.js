@@ -14,7 +14,8 @@ import {
 	ANALYTICS_EVENT_RECORD,
 	ANALYTICS_MULTI_TRACK,
 	ANALYTICS_PAGE_VIEW_RECORD,
-	ANALYTICS_STAT_BUMP
+	ANALYTICS_STAT_BUMP,
+	ANALYTICS_CONTINOUS_MONITOR_ON
 } from 'state/action-types';
 
 const mergedMetaData = ( a, b ) => [
@@ -59,6 +60,16 @@ export const recordEvent = ( service, args ) => ( {
 	}
 } );
 
+export const startContinuousTracking = ( trackingTool ) => ( {
+	type: ANALYTICS_CONTINOUS_MONITOR_ON,
+	meta: {
+		analytics: [ {
+			type: ANALYTICS_CONTINOUS_MONITOR_ON,
+			payload: trackingTool,
+		} ]
+	}
+} );
+
 export const recordGoogleEvent = ( category, action, label, value ) =>
 	recordEvent( 'ga', { category, action, label, value } );
 
@@ -81,7 +92,3 @@ export const recordPageView = ( url, title, service ) => ( {
 
 export const recordGooglePageView = ( url, title ) =>
 	recordPageView( url, title, 'ga' );
-
-export const startLuckyOrangeTracking = function( analytics ) {
-	analytics.luckyOrange.initialize();
-};

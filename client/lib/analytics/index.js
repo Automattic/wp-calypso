@@ -356,18 +356,11 @@ const analytics = {
 
 	// Lucky Orange tracking
 	luckyOrange: {
-		initialized: false,
-
-		initialize: function() {
-			if ( analytics.luckyOrange.initialized || ! config( 'lucky_orange_enabled' ) || ! analytics.userAllowsTracking() ) {
+		addLuckyOrangeScript: function() {
+			if ( ! config( 'lucky_orange_enabled' ) || ! analytics.userAllowsTracking() ) {
 				return;
 			}
 
-			analytics.luckyOrange.addLuckyOrangeScript();
-			analytics.luckyOrange.initialized = true;
-		},
-
-		addLuckyOrangeScript: function() {
 			const wa = document.createElement( 'script' );
 			const s = document.getElementsByTagName( 'script' )[ 0 ];
 

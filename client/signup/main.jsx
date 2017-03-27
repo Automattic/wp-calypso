@@ -47,7 +47,7 @@ import { translate } from 'i18n-calypso';
 import SignupActions from 'lib/signup/actions';
 import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-tracking';
 import { disableCart } from 'lib/upgrades/actions';
-import { startLuckyOrangeTracking } from 'state/analytics/actions';
+import { startContinuousTracking } from 'state/analytics/actions';
 
 /**
  * Constants
@@ -259,7 +259,7 @@ const Signup = React.createClass( {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
-		this.props.startLuckyOrangeTracking( analytics );
+		this.props.startContinuousTracking( 'Lucky Orange' );
 	},
 
 	componentWillUnmount() {
@@ -484,6 +484,6 @@ export default connect(
 		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true,
 		signupDependencies: getSignupDependencyStore( state ),
 	} ),
-	{ setSurvey, startLuckyOrangeTracking },
+	{ setSurvey, startContinuousTracking },
 	undefined,
 	{ pure: false } )( Signup );
