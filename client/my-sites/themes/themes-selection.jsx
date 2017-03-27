@@ -32,8 +32,6 @@ import config from 'config';
 class ThemesSelection extends Component {
 	static propTypes = {
 		emptyContent: PropTypes.element,
-		query: PropTypes.object.isRequired,
-		siteId: PropTypes.number,
 		onScreenshotClick: PropTypes.func,
 		getOptions: PropTypes.func,
 		getActionLabel: PropTypes.func,
@@ -55,7 +53,22 @@ class ThemesSelection extends Component {
 
 	static defaultProps = {
 		emptyContent: null,
-		showUploadButton: true
+		showUploadButton: true,
+		showPlaceholders: true
+	}
+
+	state = {
+		showPlaceholders: ! this.themes
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.themesCount !== null && ! nextProps.isRequesting ) {
+			this.setState( { showPlaceholders: false } );
+		}
+	}
+
+	shouldComponentUpdate( nextProps ) {
+		return nextProps.themesCount !== null;
 	}
 
 	recordSearchResultsClick = ( theme, resultsRank, action ) => {
@@ -133,19 +146,22 @@ class ThemesSelection extends Component {
 		return options;
 	}
 
+	shouldShowPlaceholders() {
+		// 1 show placholders on initial load
+		// 2 show placeholders when we have themes to show and are fetching next pages
+		return this.state.showPlaceholders || ( this.props.isRequesting && ( this.props.themesCount !== null ) );
+	}
+
 	render() {
-		const { source, query, listLabel, themesCount } = this.props;
+		const { listLabel, themes, themesCount } = this.props;
 
 		return (
 			<div className="themes__selection">
-				<QueryThemes
-					query={ query }
-					siteId={ source } />
 				<ThemesSelectionHeader
 					label={ listLabel }
 					count={ themesCount }
 				/>
-				<ThemesList themes={ this.props.themes }
+				<ThemesList themes={ themes }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }
@@ -155,7 +171,7 @@ class ThemesSelection extends Component {
 					isActive={ this.props.isThemeActive }
 					isPurchased={ this.props.isThemePurchased }
 					isInstalling={ this.props.isInstallingTheme }
-					loading={ this.props.isRequesting }
+					loading={ this.shouldShowPlaceholders() }
 					emptyContent={ this.props.emptyContent }
 					placeholderCount={ this.props.placeholderCount } />
 			</div>
@@ -164,31 +180,8 @@ class ThemesSelection extends Component {
 }
 
 const ConnectedThemesSelection = connect(
-	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
-		const isJetpack = isJetpackSite( state, siteId );
-		let sourceSiteId;
-		if ( source === 'wpcom' || source === 'wporg' ) {
-			sourceSiteId = source;
-		} else {
-			sourceSiteId = ( siteId && isJetpack ) ? siteId : 'wpcom';
-		}
-
-		// number calculation is just a hack for Jetpack sites. Jetpack themes endpoint does not paginate the
-		// results and sends all of the themes at once. QueryManager is not expecting such behaviour
-		// and we ended up loosing all of the themes above number 20. Real solution will be pagination on
-		// Jetpack themes endpoint.
-		const number = ! includes( [ 'wpcom', 'wporg' ], sourceSiteId ) ? 2000 : 20;
-		const query = {
-			search,
-			page,
-			tier: config.isEnabled( 'upgrades/premium-themes' ) ? tier : 'free',
-			filter: compact( [ filter, vertical ] ).join( ',' ),
-			number
-		};
-
+	( state, { siteId, sourceSiteId, query } ) => {
 		return {
-			query,
-			source: sourceSiteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
 			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
@@ -236,13 +229,50 @@ class ThemesSelectionWithPage extends React.Component {
 	}
 
 	render() {
+		const { filter, search, tier, vertical, sourceSiteId } = this.props;
+
+		// number calculation is just a hack for Jetpack sites. Jetpack themes endpoint does not paginate the
+		// results and sends all of the themes at once. QueryManager is not expecting such behaviour
+		// and we ended up loosing all of the themes above number 20. Real solution will be pagination on
+		// Jetpack themes endpoint.
+		const number = ! includes( [ 'wpcom', 'wporg' ], sourceSiteId ) ? 2000 : 20;
+		const query = {
+			search,
+			page: this.state.page,
+			tier: config.isEnabled( 'upgrades/premium-themes' ) ? tier : 'free',
+			filter: compact( [ filter, vertical ] ).join( ',' ),
+			number
+		};
+
 		return (
-			<ConnectedThemesSelection { ...this.props }
-				page={ this.state.page }
-				incrementPage={ this.incrementPage }
-			/>
+			<div>
+				<QueryThemes
+					query={ query }
+					siteId={ sourceSiteId } />
+				<ConnectedThemesSelection { ...this.props }
+					query={ query }
+					page={ this.state.page }
+					incrementPage={ this.incrementPage }
+				/>
+			</div>
 		);
 	}
 }
 
-export default ThemesSelectionWithPage;
+const ConnectedThemesSelectionWithPage = connect(
+	( state, { siteId, source } ) => {
+		const isJetpack = isJetpackSite( state, siteId );
+		let sourceSiteId;
+		if ( source === 'wpcom' || source === 'wporg' ) {
+			sourceSiteId = source;
+		} else {
+			sourceSiteId = ( siteId && isJetpack ) ? siteId : 'wpcom';
+		}
+
+		return {
+			sourceSiteId
+		};
+	}
+)( ThemesSelectionWithPage );
+
+export default ConnectedThemesSelectionWithPage;
