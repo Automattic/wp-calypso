@@ -16,8 +16,8 @@ import {
 
 import reducer, {
 	closeModal,
-	hasPosterUpdateError,
 	posterUrl,
+	showError,
 	uploadProgress,
 } from '../reducer';
 
@@ -25,8 +25,8 @@ describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'closeModal',
-			'hasPosterUpdateError',
 			'posterUrl',
+			'showError',
 			'uploadProgress',
 		] );
 	} );
@@ -109,15 +109,15 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( '#hasPosterUpdateError()', () => {
+	describe( '#showError()', () => {
 		it( 'should default to false', () => {
-			const state = hasPosterUpdateError( undefined, {} );
+			const state = showError( undefined, {} );
 
 			expect( state ).to.be.false;
 		} );
 
 		it( 'should change to true on failed update', () => {
-			const state = hasPosterUpdateError( undefined, {
+			const state = showError( undefined, {
 				type: VIDEO_EDITOR_SHOW_ERROR,
 			} );
 
@@ -125,7 +125,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should change to false on successful update', () => {
-			const state = hasPosterUpdateError( undefined, {
+			const state = showError( undefined, {
 				type: VIDEO_EDITOR_SET_POSTER_URL,
 			} );
 
@@ -133,7 +133,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should change to false on reset', () => {
-			const state = hasPosterUpdateError( undefined, {
+			const state = showError( undefined, {
 				type: VIDEO_EDITOR_RESET_STATE,
 			} );
 

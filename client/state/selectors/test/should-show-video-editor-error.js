@@ -6,20 +6,20 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { hasPosterUpdateError } from '../';
+import { shouldShowVideoEditorError } from '../';
 
-describe( 'hasPosterUpdateError()', () => {
+describe( 'shouldShowVideoEditorError()', () => {
 	it( 'should return the poster error state', () => {
-		const hasError = hasPosterUpdateError( {
+		const showError = shouldShowVideoEditorError( {
 			ui: {
 				editor: {
 					videoEditor: {
-						hasPosterUpdateError: true
+						showError: true
 					}
 				}
 			}
 		} );
 
-		expect( hasError ).to.be.true;
+		expect( showError ).to.be.true;
 	} );
 } );

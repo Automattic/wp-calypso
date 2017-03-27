@@ -62,17 +62,17 @@ export const uploadProgress = ( state = 0, action ) => {
 };
 
 /**
- * Tracks poster error state.
+ * Tracks whether or not an error should be shown.
  *
- * @param  {Boolean} state Whether or not an error was previously encountered while updating the poster
+ * @param  {Boolean} state Whether or not an error was to be shown
  * @param  {Object} action Action object
- * @return {Boolean} Whether or not an error has now been encountered while updating the poster
+ * @return {Boolean} Whether or not an error should now be shown
  */
-export const hasPosterUpdateError = ( state = false, { type } ) => type === VIDEO_EDITOR_SHOW_ERROR;
+export const showError = ( state = false, { type } ) => type === VIDEO_EDITOR_SHOW_ERROR;
 
 export default combineReducers( {
 	closeModal,
-	hasPosterUpdateError,
 	posterUrl,
+	showError,
 	uploadProgress,
 } );
