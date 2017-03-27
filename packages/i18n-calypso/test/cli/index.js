@@ -128,6 +128,14 @@ describe( 'index', function() {
 					'"laborisnisiutaliquipexeacommodo consequat."'
 				].join( '\n' ) );
 			} );
+
+			it( 'should not break very long line without separators', function() {
+				var literal = '"LoremipsumdolorsitametconsecteturadipiscingelitseddoeiusmodtemporincididuntutlaboreetdoloremagnaaliquaUtenimadminimveniamquisnostrudexercitationullamcolaborisnisiutaliquipexeacommodoconsequat."';
+				expect( multiline( literal ) ).to.equal( [
+					'""',
+					'"LoremipsumdolorsitametconsecteturadipiscingelitseddoeiusmodtemporincididuntutlaboreetdoloremagnaaliquaUtenimadminimveniamquisnostrudexercitationullamcolaborisnisiutaliquipexeacommodoconsequat."'
+				].join( '\n' ) );
+			} );
 		} );
 	} );
 

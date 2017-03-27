@@ -56,6 +56,11 @@ function multiline( literal, startAt ) {
 		}
 	}
 
+	// we encountered a line without separators, don't break it
+	if ( i === literal.length - 1 ) {
+		return literal;
+	}
+
 	return literal.substring( startAt, nextSpaceIndex + 1 ) + '"\n' + multiline( '"' + literal.substr( nextSpaceIndex + 1 ), 0 );
 }
 
