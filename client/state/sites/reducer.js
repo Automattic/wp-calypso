@@ -19,6 +19,7 @@ import {
 	MEDIA_DELETE,
 	SITE_FRONT_PAGE_SET_SUCCESS,
 	SITE_DELETE_RECEIVE,
+	JETPACK_DISCONNECT_RECEIVE,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -114,6 +115,9 @@ export function items( state = {}, action ) {
 
 		case SITE_DELETE_RECEIVE:
 			return omit( state, action.site.ID );
+
+		case JETPACK_DISCONNECT_RECEIVE:
+			return omit( state, action.siteId );
 
 		case THEME_ACTIVATE_SUCCESS: {
 			const { siteId, themeStylesheet } = action;

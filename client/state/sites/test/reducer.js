@@ -12,6 +12,7 @@ import {
 	MEDIA_DELETE,
 	SITE_FRONT_PAGE_SET_SUCCESS,
 	SITE_DELETE_RECEIVE,
+	JETPACK_DISCONNECT_RECEIVE,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -196,6 +197,23 @@ describe( 'reducer', () => {
 			const state = items( original, {
 				type: SITE_DELETE_RECEIVE,
 				site: { ID: 2916284, name: 'WordPress.com Example Blog' }
+			} );
+
+			expect( state ).to.eql( {
+				77203074: { ID: 77203074, name: 'Just You Wait' }
+			} );
+		} );
+
+		it( 'should remove Jetpack Disconnected sites', () => {
+			const original = deepFreeze( {
+				2916284: { ID: 2916284, name: 'Jetpack Example Blog' },
+				77203074: { ID: 77203074, name: 'Just You Wait' }
+			} );
+
+			const state = items( original, {
+				type: JETPACK_DISCONNECT_RECEIVE,
+				siteId: 2916284,
+				status: { }
 			} );
 
 			expect( state ).to.eql( {
