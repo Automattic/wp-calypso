@@ -25,3 +25,12 @@
 		display: inline-block;
 	}
 }
+
+.nps-survey__recommendation-option {
+	display: inline-block;
+}
+
+.nps-survey__recommendation-option input[type=radio] + span {
+	clear: both;
+	margin-left: 0;
+}
