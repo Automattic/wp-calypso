@@ -10,7 +10,7 @@ import {
 	READER_FOLLOW,
 	READER_UNFOLLOW,
 	READER_FOLLOWS_RECEIVE,
-	READER_FOLLOWS_REQUEST,
+	READER_FOLLOWS_SYNC_START,
 } from 'state/action-types';
 
 /**
@@ -70,6 +70,6 @@ export function receiveFollows( follows ) {
  */
 export function requestFollows() {
 	return {
-		type: READER_FOLLOWS_REQUEST,
+		type: READER_FOLLOWS_SYNC_START,
 	};
 }
