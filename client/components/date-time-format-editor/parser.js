@@ -2,10 +2,10 @@
  * External dependencies
  */
 import {
-	compact,
 	flowRight as compose,
 	fromPairs,
 	get,
+	last,
 	map,
 	//matchesProperty,
 	reduce,
@@ -97,25 +97,18 @@ export const fromEditor = content => {
 	const ranges = get( rawContent, 'blocks[0].entityRanges', [] );
 	const entities = get( rawContent, 'entityMap' );
 
-	// [ output, index, text ]
-	const [ o, i, t ] = ranges.reduce( ( [ output, lastIndex, remainingText ], next ) => {
-		const tokenName = get( entities, [ next.key, 'data', 'name' ], null );
+	const lastRange = last( ranges );
+
+	const [ oText ] = ranges.reduce( ( [ output, lastIndex, remainingText ], next ) => {
+		const tokenName = get( entities, [ next.key, 'data', 'name' ], '' );
 		const textBlock = next.offset > lastIndex
-			? { type: 'string', value: remainingText.slice( lastIndex, next.offset ) }
-			: null;
+			? remainingText.slice( lastIndex, next.offset )
+			: '';
+		return [ output + textBlock + tokenName, next.offset + next.length, remainingText ];
+	}, [ '', 0, text ] );
 
-		return [ [
-			...output,
-			textBlock,
-			{ type: tokenName }
-		], next.offset + next.length, remainingText ];
-	}, [ [], 0, text ] );
-
-	// add final remaining text not captured by any entity ranges
-	return compact( [
-		...o,
-		i < t.length && { type: 'string', value: t.slice( i ) }
-	] );
+	// Add any remaining non-token part of the text
+	return oText + ( text.substring( lastRange.offset + lastRange.length ) );
 };
 
 //const isTextPiece = matchesProperty( 'type', 'string' );
@@ -148,12 +141,10 @@ export const mapTokenTitleForEditor = title => `\u205f\u205f${ title }\u205f\u20
 /**
  * Returns the translated name for the chip
  *
- * @param {string} type chip name, e.g. 'siteName'
- * @param {object} tokens available tokens, e.g. { siteName: 'Site Name', tagline: 'Tagline' }
+ * @param {string} title chip name, e.g. 'Y'
  * @returns {string} translated chip name
  */
-//const tokenTitle = ( type, tokens ) => mapTokenTitleForEditor( get( tokens, type, '' ).trim() );
-const tokenTitle = title => mapTokenTitleForEditor( title.trim() );
+const tokenTitle = title => mapTokenTitleForEditor( phpToMomentMapping[ title.trim() ] );
 
 /**
  * Creates a new entity reference for a blockMap
