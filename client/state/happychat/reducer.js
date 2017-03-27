@@ -19,6 +19,7 @@ import validator from 'is-my-json-valid';
 import {
 	SERIALIZE,
 	DESERIALIZE,
+	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_AVAILABLE,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_RECEIVE_EVENT,
@@ -124,8 +125,10 @@ const timeline = ( state = [], action ) => {
  * @return {Object}        Updated state
  *
  */
-const message = ( state = '', action ) => {
+export const message = ( state = '', action ) => {
 	switch ( action.type ) {
+		case HAPPYCHAT_SEND_MESSAGE:
+			return '';
 		case HAPPYCHAT_SET_MESSAGE:
 			return action.message;
 	}
