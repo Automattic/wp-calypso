@@ -5,6 +5,10 @@
 	max-width: 800px;
 }
 
+.is-group-reader {
+	-webkit-font-smoothing: antialiased;
+}
+
 .is-reader-page .reader__card.card.is-placeholder {
 	border-bottom: 1px solid lighten( $gray, 20% );
 	box-shadow: none;
