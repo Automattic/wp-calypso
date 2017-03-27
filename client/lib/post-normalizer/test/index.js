@@ -378,10 +378,10 @@ describe( 'index', function() {
 		it( 'leaves galleries intact', function( done ) {
 			normalizer(
 				{
-					content: '<style>.gallery{}</style><div class="gallery" style="width: 100000px"><div style="width:100px">some content</div></div>'
+					content: '<style>.gallery{}</style><div class="gallery" style="width: 100000px"><div style="width:100px">some content</div></div>' //eslint-disable-line max-len
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.removeStyles ] ) ], function( err, normalized ) {
-					assert.equal( normalized.content, '<style>.gallery{}</style><div class="gallery" style="width: 100000px"><div style="width:100px">some content</div></div>' );
+					assert.equal( normalized.content, '<style>.gallery{}</style><div class="gallery" style="width: 100000px"><div style="width:100px">some content</div></div>' ); //eslint-disable-line max-len
 					done( err );
 				}
 			);
@@ -395,7 +395,7 @@ describe( 'index', function() {
 					content: '<img src="http://example.com/example.jpg"><img src="http://example.com/example2.jpg">'
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
-					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE"><img src="http://example.com/example2.jpg-SAFE">' );
+					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE"><img src="http://example.com/example2.jpg-SAFE">' ); //eslint-disable-line max-len
 					done( err );
 				}
 			);
@@ -408,7 +408,9 @@ describe( 'index', function() {
 					content: '<img src="/example.jpg"><img src="example2.jpg">'
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
-					assert.equal( normalized.content, '<img src="http://example.wordpress.com/example.jpg-SAFE"><img src="http://example.wordpress.com/example2.jpg-SAFE">' );
+					assert.equal(
+						normalized.content,
+						'<img src="http://example.wordpress.com/example.jpg-SAFE"><img src="http://example.wordpress.com/example2.jpg-SAFE">' ); //eslint-disable-line max-len
 					done( err );
 				}
 			);
@@ -433,7 +435,9 @@ describe( 'index', function() {
 					content: '<img src="http://example.com/example.jpg"><img src="http://example.com/example2.jpg">'
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe( 400 ) ] ) ], function( err, normalized ) {
-					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE?quality=80&amp;strip=info&amp;w=400"><img src="http://example.com/example2.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">' );
+					assert.equal(
+						normalized.content,
+						'<img src="http://example.com/example.jpg-SAFE?quality=80&amp;strip=info&amp;w=400"><img src="http://example.com/example2.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">' ); //eslint-disable-line max-len
 					done( err );
 				}
 			);
@@ -468,7 +472,7 @@ describe( 'index', function() {
 		it( 'removes srcsets', function( done ) {
 			normalizer(
 				{
-					content: '<img src="http://example.com/example.jpg" srcset="http://example.com/example-100.jpg 100w, http://example.com/example-600.jpg 600w">'
+					content: '<img src="http://example.com/example.jpg" srcset="http://example.com/example-100.jpg 100w, http://example.com/example-600.jpg 600w">' //eslint-disable-line max-len
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE">' );
@@ -480,7 +484,7 @@ describe( 'index', function() {
 		it( 'removes invalid srcsets', function( done ) {
 			normalizer(
 				{
-					content: '<img src="http://example.com/example.jpg" srcset="http://example.com/example-100-and-a-half.jpg 100.5w, http://example.com/example-600.jpg 600w">'
+					content: '<img src="http://example.com/example.jpg" srcset="http://example.com/example-100-and-a-half.jpg 100.5w, http://example.com/example-600.jpg 600w">' //eslint-disable-line max-len
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE">' );
@@ -493,7 +497,7 @@ describe( 'index', function() {
 	describe( 'waitForImagesToLoad', function() {
 		it.skip( 'should fire when all images have loaded or errored', function( done ) {
 			// these need to be objects that mimic the Image object
-			let completeImage = {
+			const completeImage = {
 					complete: true,
 					src: 'http://example.com/one'
 				},
@@ -510,13 +514,12 @@ describe( 'index', function() {
 					error: function() {
 						this.onerror();
 					}
-				},
-				post;
+				};
 
 			loadingImage.load = loadingImage.load.bind( loadingImage );
 			erroringImage.error = erroringImage.error.bind( erroringImage );
 
-			post = {
+			const post = {
 				content_images: [
 					completeImage, loadingImage, erroringImage
 				]
@@ -529,7 +532,7 @@ describe( 'index', function() {
 		} );
 
 		it.skip( 'should dedupe the images to check', function( done ) {
-			let first = {
+			const first = {
 					complete: true,
 					src: 'http://example.com/one'
 				},
@@ -637,7 +640,7 @@ describe( 'index', function() {
 					height: height
 				};
 			}
-			let post = {
+			const post = {
 					images: [
 						fakeImage( 5, 201 ),
 						fakeImage( 101, 5 ),
@@ -692,7 +695,10 @@ describe( 'index', function() {
 					content: '<iframe src="http://youtube.com"></iframe>'
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ], function( err, normalized ) {
-					assert.strictEqual( normalized.content, '<iframe src="https://youtube.com/" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>' );
+					assert.strictEqual(
+						normalized.content,
+						'<iframe src="https://youtube.com/" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>'
+					);
 					done( err );
 				}
 			);
@@ -744,10 +750,9 @@ describe( 'index', function() {
 					content: '<iframe width="100" height="50" src="https://youtube.com"></iframe>'
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ], function( err, normalized ) {
-					let embed;
 					assert.lengthOf( normalized.content_embeds, 1 );
 
-					embed = normalized.content_embeds[ 0 ];
+					const embed = normalized.content_embeds[ 0 ];
 					assert.strictEqual( embed.iframe, '<iframe width="100" height="50" src="https://youtube.com"></iframe>' );
 					assert.strictEqual( embed.height, 50 );
 					assert.strictEqual( embed.width, 100 );
@@ -779,7 +784,9 @@ describe( 'index', function() {
 		it( 'detects images', function( done ) {
 			normalizer(
 				{
-					content: '<img src="example1.png" /> <img src="/relativeurl.png" /> <img src="https://google.com/images/absoluteurl.jpg"> text in the middle</img>'
+					content: `<img src="example1.png" />
+					<img src="/relativeurl.png" />
+					<img src="https://google.com/images/absoluteurl.jpg"> text in the middle</img>`
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ], function( err, normalized ) {
 					assert.lengthOf( normalized.content_media, 3 );
@@ -797,10 +804,9 @@ describe( 'index', function() {
 					content: '<iframe width="100" height="50" src="https://embed.spotify.com"></iframe>'
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.detectMedia ] ) ], function( err, normalized ) {
-					let embed;
 					assert.lengthOf( normalized.content_embeds, 1 );
 
-					embed = normalized.content_embeds[ 0 ];
+					const embed = normalized.content_embeds[ 0 ];
 					assert.strictEqual( embed.iframe, '<iframe width="100" height="50" src="https://embed.spotify.com"></iframe>' );
 					done( err );
 				}
@@ -896,7 +902,10 @@ describe( 'index', function() {
 				[
 					normalizer.withContentDOM( [ normalizer.content.detectPolls ] )
 				], function( err, normalized ) {
-					assert.include( normalized.content, '<p><a target="_blank" rel="external noopener noreferrer" href="https://polldaddy.com/poll/8980420">Take our poll</a></p>' );
+					assert.include(
+						normalized.content,
+						'<p><a target="_blank" rel="external noopener noreferrer" href="https://polldaddy.com/poll/8980420">Take our poll</a></p>' //eslint-disable-line max-len
+					);
 					done( err );
 				}
 			);
