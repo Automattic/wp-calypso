@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import notices from 'notices'
+import notices from 'notices';
 import ValidationErrorList from 'notices/validation-error-list';
 
 function getErrorFromApi( errorMessage ) {
@@ -41,10 +41,6 @@ export function displayError( error ) {
 	} else {
 		notices.error( getErrorFromApi( error.message ) )
 	}
-}
-
-export function displaySubmitting( { isFreeCart } ) {
-	notices.info( isFreeCart ? i18n.translate( 'Submitting' ) : i18n.translate( 'Submitting payment' ) );
 }
 
 export function clear() {

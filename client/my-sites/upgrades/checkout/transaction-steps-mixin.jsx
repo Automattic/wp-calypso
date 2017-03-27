@@ -12,8 +12,8 @@ const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:transaction-step
  */
 import analytics from 'lib/analytics';
 import adTracking from 'lib/analytics/ad-tracking';
-import { cartItems, isFree } from 'lib/cart-values';
-import { displayError, displaySubmitting, clear } from 'lib/upgrades/notices';
+import { cartItems } from 'lib/cart-values';
+import { displayError, clear } from 'lib/upgrades/notices';
 import upgradesActions from 'lib/upgrades/actions';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
 
@@ -53,12 +53,6 @@ const TransactionStepsMixin = {
 		}
 
 		switch ( step.name ) {
-			case 'input-validation':
-				if ( ! cartItems.hasFreeTrial( cart ) ) {
-					displaySubmitting( { isFreeCart: isFree( cart ) } );
-				}
-				break;
-
 			case 'received-wpcom-response':
 				clear();
 				break;
