@@ -22,7 +22,6 @@
 		"fluid-width": true,
 		"help": true,
 		"help/courses": true,
-		"help/directly": true,
 		"jetpack/personalPlan": true,
 		"manage/custom-post-types": true,
 		"manage/customize": true,
