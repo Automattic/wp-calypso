@@ -55,22 +55,22 @@ export class ResetPasswordFormComponent extends Component {
 			case 'primary':
 				return {
 					email: translate(
-						'Email a reset link to {{strong}}your main email address{{/strong}}',
+						'Email a reset link to {{strong}}your main email address{{/strong}}.',
 						{ components: { strong: <strong /> } }
 					),
 					sms: translate(
-						'Send a reset code to {{strong}}your main phone{{/strong}}',
+						'Send a reset code to {{strong}}your main phone{{/strong}}.',
 						{ components: { strong: <strong /> } }
 					),
 				};
 			case 'secondary':
 				return {
 					email: translate(
-						'Email a reset link to {{strong}}your recovery email address{{/strong}}',
+						'Email a reset link to {{strong}}your recovery email address{{/strong}}.',
 						{ components: { strong: <strong /> } }
 					),
 					sms: translate(
-						'Send a reset code to {{strong}}your recovery phone{{/strong}}',
+						'Send a reset code to {{strong}}your recovery phone{{/strong}}.',
 						{ components: { strong: <strong /> } }
 					),
 				};
