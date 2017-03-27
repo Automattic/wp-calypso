@@ -1,18 +1,30 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 
 export class FacebookSharePreview extends PureComponent {
-	render() {
-		// TODO: use real data
-		const externalProfilePicture = 'https://3.bp.blogspot.com/-W__wiaHUjwI/Vt3Grd8df0I/AAAAAAAAA78/7xqUNj8ujtY/s1600/image02.png';
-		const externalProfileUrl = 'https://example.com';
-		const externalName = 'Style and Gear';
-		const message = 'Do you have a trip coming up? Check out this winter travel gear roundup!';
-		const articleUrl = 'https://styleandgear.com/2016/01/03/how-to-dress-like-a-proper-we-need-some-long-url';
-		const imageUrl = 'https://www.w3schools.com/css/trolltunga.jpg';
 
+	static PropTypes = {
+		articleUrl: PropTypes.string,
+		externalProfilePicture: PropTypes.string,
+		externalProfileUrl: PropTypes.string,
+		externalName: PropTypes.string,
+		imageUrl: PropTypes.string,
+		message: PropTypes.string,
+	};
+
+	render() {
+		const {
+			articleUrl,
+			externalProfilePicture,
+			externalProfileUrl,
+			externalName,
+			imageUrl,
+			message,
+			translate
+		} = this.props;
 		return (
 			<div className="facebook-share-preview">
 				<div className="facebook-share-preview__content">
@@ -28,14 +40,19 @@ export class FacebookSharePreview extends PureComponent {
 								<a className="facebook-share-preview__profile-name" href={ externalProfileUrl }>
 									{ externalName }
 								</a>
-								published an article on
-								<a href="https://wordpress.com">
-									WordPress.
-								</a>
+								<span>
+									{
+										translate( 'published an article on {{a}}WordPress{{/a}}', {
+											components: {
+												a: <a href="#" />
+											}
+										} )
+									}
+								</span>
 							</div>
 							<div className="facebook-share-preview__meta-line">
 								<a href="https://wordpress.com">
-									WordPress
+									{ translate( 'WordPress' ) }
 								</a>
 							</div>
 						</div>
@@ -65,4 +82,4 @@ export class FacebookSharePreview extends PureComponent {
 	}
 }
 
-export default FacebookSharePreview;
+export default localize( FacebookSharePreview );
