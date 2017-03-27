@@ -20,6 +20,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 import {
 	getThemesForQueryIgnoringPage,
 	getThemesFoundForQuery,
+	getQueryRequestError,
 	isRequestingThemesForQuery,
 	isThemesLastPageForQuery,
 	isPremiumThemeAvailable,
@@ -138,7 +139,7 @@ class ThemesSelection extends Component {
 	shouldShowPlaceholders() {
 		// 1 show placholders on initial load
 		// 2 show placeholders when we have themes to show and are fetching next pages
-		return this.props.isRequesting || this.props.themesCount === null;
+		return this.props.isRequesting || ( this.props.themesCount === null && this.props.queryError === null );
 	}
 
 	render() {
@@ -174,6 +175,7 @@ const ConnectedThemesSelection = connect(
 			siteSlug: getSiteSlug( state, siteId ),
 			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
 			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
+			queryError: getQueryRequestError( state, sourceSiteId, query ),
 			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
 			isLoggedIn: !! getCurrentUserId( state ),
