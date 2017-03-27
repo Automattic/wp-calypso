@@ -1,29 +1,37 @@
 /**
  * Internal dependencies
  */
-import localforage from 'lib/localforage';
 import {
-	THEME_TRANSFER_STATUS_RECEIVE,
 	AUTOMATED_TRANSFER_STATUS_SET,
-	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE
+	THEME_TRANSFER_INITIATE_FAILURE,
+	THEME_TRANSFER_INITIATE_REQUEST,
+	THEME_TRANSFER_INITIATE_SUCCESS,
 } from 'state/action-types';
+import { pauseAll, resumePaused } from 'lib/data-poller';
 
-const clearBrowserStorageAndRefresh = ( dispatch, { status } ) => {
-	if ( typeof window !== 'undefined' && status === 'complete' ) {
-		localStorage.clear();
-		const isThemeUpload = window.location.pathname.indexOf( '/design/upload' ) === 0;
-		const destination = isThemeUpload
-			? window.location.pathname.split( '/upload' ).join( '' )
-			: window.location.pathname;
-		const goToDestination = () => window.location.href = destination;
-		localforage.clear().then( goToDestination, goToDestination );
-	}
+const pauseFetching = () => {
+	pauseAll();
+	const sites = require( 'lib/sites-list' )();
+	sites.pauseFetching();
+};
+
+const resumeFetching = () => {
+	resumePaused();
+	const sites = require( 'lib/sites-list' )();
+	sites.resumeFetching();
 };
 
 export const handlers = {
-	[ THEME_TRANSFER_STATUS_RECEIVE ]: clearBrowserStorageAndRefresh,
-	[ AUTOMATED_TRANSFER_STATUS_SET ]: clearBrowserStorageAndRefresh,
-	[ AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE ]: clearBrowserStorageAndRefresh
+	[ THEME_TRANSFER_INITIATE_REQUEST ]: pauseFetching,
+	[ THEME_TRANSFER_INITIATE_FAILURE ]: resumeFetching,
+	[ THEME_TRANSFER_INITIATE_SUCCESS ]: resumeFetching,
+	[ AUTOMATED_TRANSFER_STATUS_SET ]: ( dispatch, { status } ) => {
+		if ( 'complete' === status ) {
+			resumeFetching();
+		} else if ( 'start' === status ) {
+			pauseFetching();
+		}
+	}
 };
 
 /**
