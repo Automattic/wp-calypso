@@ -14,7 +14,7 @@ import {
 	getRemovableConnections,
 	hasFetchedConnections,
 	isFetchingConnection,
-	isFetchingConnections
+	isFetchingConnections,
 } from '../selectors';
 
 describe( 'getBrokenSiteUserConnectionsForService()', () => {

@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { get, includes, map } from 'lodash';
+import { get, includes, map, difference } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -14,7 +14,10 @@ import Gridicon from 'gridicons';
 import QueryPostTypes from 'components/data/query-post-types';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
-import { isPublicizeEnabled } from 'state/selectors';
+import {
+	isPublicizeEnabled,
+	getPublicizeSiteUserActiveConnections,
+} from 'state/selectors';
 import {
 	getSiteSlug,
 	getSitePlanSlug,
@@ -63,6 +66,7 @@ class PostShare extends Component {
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
+		enabledConnectionIds: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -72,7 +76,8 @@ class PostShare extends Component {
 	state = {
 		selectedShareTab: SCHEDULED,
 		message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title,
-		skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
+		footerSection: PostShare.FOOTER_SECTION_SCHEDULED
+		enabledConnectionIds: map( this.props.activeConnections, 'keyring_connection_ID' ),
 	};
 
 	setFooterSection = selectedShareTab => () => this.setState( { selectedShareTab } );
@@ -86,22 +91,12 @@ class PostShare extends Component {
 	}
 
 	toggleConnection = id => {
-		const skipped = this.state.skipped.slice();
-		const index = skipped.indexOf( id );
-		if ( index !== -1 ) {
-			skipped.splice( index, 1 );
-		} else {
-			skipped.push( id );
-		}
-
-		this.setState( { skipped } );
+		const enabledConnectionIds = new Set( this.state.enabledConnectionIds );
+		enabledConnectionIds.delete( id ) || enabledConnectionIds.add( id );
+		this.setState( { enabledConnectionIds: Array.from( enabledConnectionIds ) } );
 	};
 
-	skipConnection( { keyring_connection_ID } ) {
-		return this.state.skipped.indexOf( keyring_connection_ID ) === -1;
-	}
-
-	isConnectionActive = connection => connection.status !== 'broken' && this.skipConnection( connection );
+	isConnectionActive = connection => includes( this.state.enabledConnectionIds, connection.keyring_connection_ID );
 
 	renderServices() {
 		if ( ! this.props.site || ! this.hasConnections() ) {
@@ -125,7 +120,16 @@ class PostShare extends Component {
 	};
 
 	sharePost = () => {
-		this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message );
+		//TODO remove skippedConnections after api fully supports connection ids
+		const activeConnectionIds = map( this.props.activeConnections, 'keyring_connection_ID' );
+		const skippedConnections = difference( activeConnectionIds, this.state.enabledConnectionIds );
+		this.props.sharePost(
+			this.props.siteId,
+			this.props.post.ID,
+			skippedConnections,
+			this.state.message,
+			this.state.enabledConnectionIds
+		);
 	};
 
 	isButtonDisabled() {
@@ -429,7 +433,10 @@ export default connect(
 			success: sharePostSuccessMessage( state, siteId, postId ),
 			businessRawPrice: getSitePlanRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
 			businessDiscountedRawPrice: getPlanDiscountedRawPrice( state, siteId, PLAN_BUSINESS, { isMonthly: true } ),
-			userCurrency: getCurrentUserCurrencyCode( state ),
+			userCurrency: getCurrentUserCurrencyCode( state ), //populated by either plans endpoint
+			scheduledSharingActions: getPostShareScheduledActions( state, siteId, postId ),
+			publishedSharingActions: getPostSharePublishedActions( state, siteId, postId ),
+			activeConnections: getPublicizeSiteUserActiveConnections( state, siteId, userId ),
 		};
 	},
 	{ requestConnections, sharePost, dismissShareConfirmation }

@@ -959,11 +959,12 @@ Undocumented.prototype.createConnection = function( keyringConnectionId, siteId,
  * @param {int}       siteId            The site ID
  * @param {int}       postId            The post ID
  * @param {String}    message           Message for social media
- * @param {Array(int)}skipped           CKeyring connection ids to skip publicizing
+ * @param {Array(int)}skippedConnetions CKeyring connection ids to skip publicize
+ * @param {Array(int)}connetions        CKeyring connection ids to publicize
  *
  * @returns {Promise}
  */
-Undocumented.prototype.publicizePost = function( siteId, postId, message, skippedConnections, fn ) {
+Undocumented.prototype.publicizePost = function( siteId, postId, message, skippedConnections, connections, fn ) {
 	const body = { skipped_connections: [] };
 
 	if ( message ) {
@@ -972,6 +973,10 @@ Undocumented.prototype.publicizePost = function( siteId, postId, message, skippe
 
 	if ( skippedConnections && skippedConnections.length > 0 ) {
 		body.skipped_connections = skippedConnections;
+	}
+
+	if ( connections ) {
+		body.connections = connections;
 	}
 
 	return this.wpcom.req.post( { path: `/sites/${ siteId }/post/${ postId }/publicize`, body, apiVersion: '1.1' }, fn );
