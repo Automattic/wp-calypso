@@ -18,9 +18,7 @@ class NpsSurveyNotice extends Component {
 		// (1) the user gets a chance to look briefly at the uncluttered screen, and
 		// (2) the user notices the notice more, since it will cause a change to the
 		//     screen they are already looking at
-		setTimeout( () => {
-			this.props.showNpsSurveyNotice();
-		}, 2000 );
+		setTimeout( this.props.showNpsSurveyNotice, 3000 );
 	}
 
 	handleDialogClose = () => {
