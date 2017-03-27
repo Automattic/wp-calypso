@@ -18,9 +18,15 @@ import url from 'url';
  * Internal dependencies
  */
 import accessibleFocus from 'lib/accessible-focus';
+import { bindState as bindWpLocaleState } from 'lib/wp/localization';
 import createReduxStoreFromPersistedInitialState from 'state/initial-state';
 import config from 'config';
 import detectHistoryNavigation from 'lib/detect-history-navigation';
+import { receiveUser } from 'state/users/actions';
+import {
+	setCurrentUserId,
+	setCurrentUserFlags
+} from 'state/current-user/actions';
 import switchLocale from 'lib/i18n-utils/switch-locale';
 import touchDetect from 'lib/touch-detect';
 import userFactory from 'lib/user';
@@ -69,8 +75,24 @@ const utils = () => {
 	accessibleFocus();
 };
 
-function setUpContext( reduxStore ) {
-	page( '*', function( context, next ) {
+const configureReduxStore = ( currentUser, reduxStore ) => {
+	bindWpLocaleState( reduxStore );
+
+	// Set current user in Redux store
+	reduxStore.dispatch( receiveUser( currentUser.get() ) );
+	currentUser.on( 'change', () => {
+		reduxStore.dispatch( receiveUser( currentUser.get() ) );
+	} );
+	reduxStore.dispatch( setCurrentUserId( currentUser.get().ID ) );
+	reduxStore.dispatch( setCurrentUserFlags( currentUser.get().meta.data.flags.active_flags ) );
+
+	if ( config.isEnabled( 'network-connection' ) ) {
+		asyncRequire( 'lib/network-connection', networkConnection => networkConnection.init( reduxStore ) );
+	}
+};
+
+const setUpContext = reduxStore => {
+	page( '*', ( context, next ) => {
 		const parsed = url.parse( location.href, true );
 
 		context.store = reduxStore;
@@ -105,17 +127,17 @@ function setUpContext( reduxStore ) {
 		}
 		next();
 	} );
-}
+};
 
-function setupMiddlewares( reduxStore ) {
+const setupMiddlewares = reduxStore => {
 	setUpContext( reduxStore );
 
 	// TODO: move other middlewares from project specific file
-}
+};
 
-function loadSections() {
+const loadSections = () => {
 	// TODO: move from project specific file
-}
+};
 
 const boot = currentUser => {
 	debug( "Starting Calypso. Let's do this." );
@@ -123,6 +145,7 @@ const boot = currentUser => {
 	locales( currentUser );
 	utils();
 	createReduxStoreFromPersistedInitialState( reduxStore => {
+		configureReduxStore( currentUser, reduxStore );
 		setupMiddlewares( reduxStore );
 		loadSections();
 
