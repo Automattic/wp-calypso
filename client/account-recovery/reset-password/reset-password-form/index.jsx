@@ -22,7 +22,7 @@ import {
 import {
 	getAccountRecoveryResetUserData,
 	getAccountRecoveryResetOptions,
-	getAccountRecoveryResetPickedMethod,
+	getAccountRecoveryResetSelectedMethod,
 	getAccountRecoveryResetRequestError,
 	isRequestingAccountRecoveryReset,
 } from 'state/selectors';
@@ -31,7 +31,7 @@ export class ResetPasswordFormComponent extends Component {
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
 		resetOptions: PropTypes.array.isRequired,
-		pickedMethod: PropTypes.string,
+		selectedMethod: PropTypes.string,
 		userData: PropTypes.object.isRequired,
 		requestError: PropTypes.object,
 		isRequesting: PropTypes.bool,
@@ -40,7 +40,7 @@ export class ResetPasswordFormComponent extends Component {
 	submitForm = () => {
 		this.props.requestReset( {
 			...this.props.userData,
-			method: this.props.pickedMethod,
+			method: this.props.selectedMethod,
 		} );
 	};
 
@@ -82,13 +82,13 @@ export class ResetPasswordFormComponent extends Component {
 	render() {
 		const {
 			resetOptions,
-			pickedMethod,
+			selectedMethod,
 			isRequesting,
 			requestError,
 			translate,
 		} = this.props;
 
-		const isPrimaryButtonEnabled = pickedMethod && ! isRequesting;
+		const isPrimaryButtonEnabled = selectedMethod && ! isRequesting;
 
 		return (
 			<Card>
@@ -114,7 +114,7 @@ export class ResetPasswordFormComponent extends Component {
 							displayStrings={ this.getOptionDisplayStrings( name ) }
 							disabled={ isRequesting }
 							onOptionChanged={ this.onResetOptionChanged }
-							selectedResetOption={ pickedMethod }
+							selectedResetOption={ selectedMethod }
 						/>
 					) ) }
 				</FormFieldset>
@@ -139,7 +139,7 @@ export class ResetPasswordFormComponent extends Component {
 export default connect(
 	( state ) => ( {
 		resetOptions: getAccountRecoveryResetOptions( state ),
-		pickedMethod: getAccountRecoveryResetPickedMethod( state ),
+		selectedMethod: getAccountRecoveryResetSelectedMethod( state ),
 		userData: getAccountRecoveryResetUserData( state ),
 		requestError: getAccountRecoveryResetRequestError( state ),
 		isRequesting: isRequestingAccountRecoveryReset( state ),

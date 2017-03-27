@@ -7,9 +7,9 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { getAccountRecoveryResetPickedMethod } from '../';
+import { getAccountRecoveryResetSelectedMethod } from '../';
 
-describe( 'getAccountRecoveryResetPickedMethod()', () => {
+describe( 'getAccountRecoveryResetSelectedMethod()', () => {
 	it( 'should return the method field under the account recovery state tree.', () => {
 		const method = 'primary_email';
 		const state = deepFreeze( {
@@ -20,6 +20,6 @@ describe( 'getAccountRecoveryResetPickedMethod()', () => {
 			},
 		} );
 
-		assert.equal( getAccountRecoveryResetPickedMethod( state ), method );
+		assert.equal( getAccountRecoveryResetSelectedMethod( state ), method );
 	} );
 } );
