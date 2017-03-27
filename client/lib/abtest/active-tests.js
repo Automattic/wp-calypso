@@ -25,6 +25,14 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
+	signupStepOneMobileOptimize: {
+		datestamp: '20170322',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+	},
 	readerPostCardTagCount: {
 		datestamp: '20170315',
 		variations: {

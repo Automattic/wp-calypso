@@ -39,19 +39,19 @@ class DesignTypeWithStoreStep extends Component {
 			// Note: Don't make this translatable because it's only visible to English-language users
 			return [
 				{ type: 'blog',
-					label: 'A blog',
+					label: 'a blog',
 					description: 'To share your ideas, stories, and photographs with your followers.',
 					image: <BlogImage /> },
 				{ type: 'page',
-					label: 'A website',
+					label: 'a website',
 					description: 'To promote your business, organization, or brand and connect with your audience.',
 					image: <PageImage /> },
 				{ type: 'grid',
-					label: 'A portfolio',
+					label: 'a portfolio',
 					description: 'To present your creative projects in a visual showcase.',
 					image: <GridImage /> },
 				{ type: 'store',
-					label: 'An online store',
+					label: 'an online store',
 					description: 'To sell your products or services and accept payments.',
 					image: <StoreImage /> },
 			];
@@ -112,9 +112,13 @@ class DesignTypeWithStoreStep extends Component {
 
 		if ( abtest( 'signupStepOneCopyChanges' ) === 'modified' ) {
 			choiceLabel = null;
-			choiceCardClass = 'design-type-with-store__choice design-type-with-store__choice--test';
+			choiceCardClass += ' design-type-with-store__choice--test';
 			choiceDescription = <p className="design-type-with-store__choice-description">{ choice.description }</p>;
 			callToAction = <span className="button is-compact design-type-with-store__cta">Start with {choice.label}</span>;
+		}
+
+		if ( abtest( 'signupStepOneMobileOptimize' ) === 'modified' ) {
+			choiceCardClass += ' design-type-with-store__choice--mobile-test';
 		}
 
 		return (
@@ -122,7 +126,9 @@ class DesignTypeWithStoreStep extends Component {
 				<a className="design-type-with-store__choice-link"
 					href="#"
 					onClick={ this.handleChoiceClick( choice.type ) }>
-					{ choice.image }
+					<div className="design-type-with-store__image">
+						{ choice.image }
+					</div>
 					<div className="design-type-with-store__choice-copy">
 						{ choiceLabel }
 						{ callToAction }

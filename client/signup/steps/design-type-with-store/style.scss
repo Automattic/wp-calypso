@@ -93,3 +93,97 @@
 	font-size: 0.875em;
 	width: 100%;
 }
+
+.design-type-with-store__choice--mobile-test {
+	@include breakpoint( "<480px" ) {
+		margin-bottom: 0;
+		text-align: left;
+		position: relative;
+		border: 1px solid lighten( $gray, 20% );
+		border-bottom: 0;
+		box-shadow: none;
+
+		&:first-child {
+			border-top-right-radius: 6px;
+			border-top-left-radius: 6px;
+		}
+		
+		&:last-of-type {
+			margin-bottom: 20px;
+			border: 1px solid lighten( $gray, 20% );
+			border-bottom-right-radius: 6px;
+			border-bottom-left-radius: 6px;
+		}
+
+		&:hover {
+			box-shadow: none;
+		}
+
+		&:active {
+			.design-type-with-store__cta {
+				color: $blue-dark;
+			}
+
+			.design-type-with-store__choice-link:after {
+				border-top-color: $blue-dark;
+				border-right-color: $blue-dark;
+			}
+		}
+
+		.design-type-with-store__choice-link {
+			padding-right: 40px;
+			display: block;
+			box-sizing: border-box;
+
+			&:after {
+				content: '';
+				display: block;
+				width: 8px; //Match the size of the cta copy
+				height: 8px; //Match the size of the cta copy
+				position: absolute;
+				top: 20px;
+				right: 15px;
+				border-top: 2px solid lighten( $gray, 20% );
+				border-right: 2px solid lighten( $gray, 20% );
+				transform: rotate(45deg);
+			}
+		}
+
+		.design-type-with-store__image {
+			display: none;
+		}
+
+		.design-type-with-store__choice-copy {
+			border-top: 0;
+		}
+
+		//Reset button for now. If this test passes, we should remove button class.
+		.design-type-with-store__cta {
+			background: none;
+			font-size: 1.1em;
+			border: 0;
+			padding: 0;
+			text-transform: none;
+			margin: 0;
+			line-height: 1.1em;
+		}
+
+		.design-type-with-store__choice-description {
+			margin-top: 0;
+		}
+	}
+
+	@include breakpoint( ">480px" ) {
+		.design-type-with-store__image {
+			display: block;
+		}
+	}
+}
+
+.step-wrapper--mobile-test {
+	@include breakpoint( "<480px" ) {
+		.design-type-with-store__disclaimer {
+			padding: 0 20px;
+		}
+	}
+}
