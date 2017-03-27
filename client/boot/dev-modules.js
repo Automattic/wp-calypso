@@ -17,4 +17,8 @@ export default function() {
 		// we have to wait for it to load before proceeding with the application's startup.
 		ReactClass.injection.injectMixin( RenderVisualizerMixin );
 	}
+
+	if ( config.isEnabled( 'css-hot-reload' ) ) {
+		asyncRequire( 'lib/css-hot-reload', cssHotReload => cssHotReload() );
+	}
 }

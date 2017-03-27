@@ -97,10 +97,6 @@ function reduxStoreReady( currentUser, reduxStore ) {
 		asyncRequire( 'lib/network-connection', netConn => netConn.init( reduxStore ) );
 	}
 
-	if ( config.isEnabled( 'css-hot-reload' ) ) {
-		asyncRequire( 'lib/css-hot-reload', cssHotReload => cssHotReload() );
-	}
-
 	// Render Layout only for non-isomorphic sections.
 	// Isomorphic sections will take care of rendering their Layout last themselves.
 	if ( ! document.getElementById( 'primary' ) ) {

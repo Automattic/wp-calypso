@@ -27,25 +27,6 @@ import userFactory from 'lib/user';
 
 const debug = debugFactory( 'calypso' );
 
-export function boot( currentUser ) {
-	debug( "Starting Calypso. Let\'s do this." );
-
-	locales( currentUser );
-	utils();
-	createReduxStoreFromPersistedInitialState( reduxStore => {
-		setupMiddlewares( reduxStore );
-		loadSections();
-
-		// TODO: make project name dynamic based on config
-		require( './project/wordpress-com' ).boot( currentUser, reduxStore );
-
-		// TODO: init project specific middlewares
-
-		detectHistoryNavigation.start();
-		page.start();
-	} );
-}
-
 const switchUserLocale = currentUser => {
 	const localeSlug = currentUser.get().localeSlug;
 	if ( localeSlug ) {
@@ -71,7 +52,11 @@ const locales = currentUser => {
 	currentUser.on( 'change', () => switchUserLocale( currentUser ) );
 };
 
-function utils() {
+const utils = () => {
+	if ( process.env.NODE_ENV === 'development' ) {
+		require( './dev-modules' )();
+	}
+
 	// Infer touch screen by checking if device supports touch events
 	// See touch-detect/README.md
 	if ( touchDetect.hasTouch() ) {
@@ -82,7 +67,7 @@ function utils() {
 
 	// Add accessible-focus listener
 	accessibleFocus();
-}
+};
 
 function setUpContext( reduxStore ) {
 	page( '*', function( context, next ) {
@@ -132,11 +117,26 @@ function loadSections() {
 	// TODO: move from project specific file
 }
 
-window.AppBoot = () => {
-	if ( process.env.NODE_ENV === 'development' ) {
-		require( './dev-modules' )();
-	}
+const boot = currentUser => {
+	debug( "Starting Calypso. Let's do this." );
 
+	locales( currentUser );
+	utils();
+	createReduxStoreFromPersistedInitialState( reduxStore => {
+		setupMiddlewares( reduxStore );
+		loadSections();
+
+		// TODO: make project name dynamic based on config
+		require( './project/wordpress-com' ).boot( currentUser, reduxStore );
+
+		// TODO: init project specific middlewares
+
+		detectHistoryNavigation.start();
+		page.start();
+	} );
+};
+
+window.AppBoot = () => {
 	const user = userFactory();
 	if ( user.initialized ) {
 		boot( user );
