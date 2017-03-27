@@ -30,6 +30,7 @@
 
 			@include breakpoint( "660px-960px" ) {
 				@include long-content-fade();
+				right: 1px;
 				height: 36px;
 			}
 		}
@@ -70,13 +71,22 @@
 		background-color: rgba( $white, 0.92 );
 		border-color: lighten( $gray, 25% );
 		border-style: solid;
+		border-left-width: 1px;
+		border-right-width: 1px;
 		padding: 0;
 		overflow-x: auto;
 		margin: 0 auto;
 
-		@media screen and ( min-width: ( 700px + $sidebar-width-min ) ) {
-			border-left-width: 1px;
-			border-right-width: 1px;
+		@media screen and ( max-width: 700px ) {
+			border-left-width: 0;
+			border-right-width: 0;
+		}
+
+		.focus-sidebar & {
+			@media screen and ( max-width: ( 700px + $sidebar-width-min ) ) {
+				border-left-width: 0;
+				border-right-width: 0;
+			}
 		}
 	}
 
