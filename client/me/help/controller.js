@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import ReactDom from 'react-dom';
 import React from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
 import i18n from 'i18n-calypso';
 
 /**
@@ -54,11 +52,10 @@ export default {
 
 		analytics.pageView.record( basePath, 'Help > Courses' );
 
-		ReactDom.render(
-			<ReduxProvider store={ context.store } >
-				<CoursesComponent />
-			</ReduxProvider>,
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			<CoursesComponent />,
+			'primary',
+			context.store
 		);
 	},
 
@@ -72,11 +69,10 @@ export default {
 			window.scrollTo( 0, 0 );
 		}
 
-		ReactDom.render(
-			<ReduxProvider store={ context.store } >
-				<ContactComponent clientSlug={ config( 'client_slug' ) } />
-			</ReduxProvider>,
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			<ContactComponent clientSlug={ config( 'client_slug' ) } />,
+			'primary',
+			context.store
 		);
 	}
 };

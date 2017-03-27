@@ -4,9 +4,8 @@
 import tinymce from 'tinymce/tinymce';
 import i18n from 'i18n-calypso';
 import React, { createElement } from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
+import { unmountComponentAtNode } from 'react-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Provider } from 'react-redux';
 import Gridicon from 'gridicons';
 
 /**
@@ -22,6 +21,7 @@ import {
 	settingsUpdate
 } from 'state/ui/editor/contact-form/actions';
 import { serialize, deserialize } from './shortcode-utils';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const wpcomContactForm = editor => {
 	let node;
@@ -49,40 +49,43 @@ const wpcomContactForm = editor => {
 		}
 
 		function renderModal( visibility = 'show', activeTab = 'fields' ) {
-			render(
-				createElement( Provider, { store },
-					createElement( ContactFormDialog, {
-						showDialog: visibility === 'show',
-						activeTab,
-						isEdit,
-						onInsert() {
-							const state = store.getState();
-							editor.execCommand( 'mceInsertContent', false, serialize( state.ui.editor.contactForm ) );
-							renderModal( 'hide' );
-						},
-						onChangeTabs( tab ) {
-							renderModal( 'show', tab );
-						},
-						onClose() {
-							store.dispatch( formClear() );
-							editor.focus();
-							renderModal( 'hide' );
-						},
-						onFieldAdd() {
-							store.dispatch( fieldAdd() );
-						},
-						onFieldRemove( index ) {
-							store.dispatch( fieldRemove( index ) );
-						},
-						onFieldUpdate( index, field ) {
-							store.dispatch( fieldUpdate( index, field ) );
-						},
-						onSettingsUpdate( settings ) {
-							store.dispatch( settingsUpdate( settings ) );
-						}
-					} )
-				),
-				node
+			renderWithReduxStore(
+				createElement( ContactFormDialog, {
+					showDialog: visibility === 'show',
+					activeTab,
+					isEdit,
+					onInsert() {
+						const state = store.getState();
+						editor.execCommand(
+							'mceInsertContent',
+							false,
+							serialize( state.ui.editor.contactForm )
+						);
+						renderModal( 'hide' );
+					},
+					onChangeTabs( tab ) {
+						renderModal( 'show', tab );
+					},
+					onClose() {
+						store.dispatch( formClear() );
+						editor.focus();
+						renderModal( 'hide' );
+					},
+					onFieldAdd() {
+						store.dispatch( fieldAdd() );
+					},
+					onFieldRemove( index ) {
+						store.dispatch( fieldRemove( index ) );
+					},
+					onFieldUpdate( index, field ) {
+						store.dispatch( fieldUpdate( index, field ) );
+					},
+					onSettingsUpdate( settings ) {
+						store.dispatch( settingsUpdate( settings ) );
+					}
+				} ),
+				node,
+				store
 			);
 		}
 
