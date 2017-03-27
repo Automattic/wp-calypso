@@ -67,7 +67,7 @@ export function clientRouter( route, ...middlewares ) {
 	page( route, ...middlewares, render );
 }
 
-function render( context ) {
+export function render( context ) {
 	context.layout
 		? renderSingleTree( context )
 		: renderSeparateTrees( context );
