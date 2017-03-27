@@ -56,16 +56,6 @@ class ThemesSelection extends Component {
 		showUploadButton: true,
 	}
 
-	state = {
-		showPlaceholders: ! this.themes
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.themesCount !== null && ! nextProps.isRequesting ) {
-			this.setState( { showPlaceholders: false } );
-		}
-	}
-
 	shouldComponentUpdate( nextProps ) {
 		return nextProps.themesCount !== null;
 	}
@@ -148,7 +138,7 @@ class ThemesSelection extends Component {
 	shouldShowPlaceholders() {
 		// 1 show placholders on initial load
 		// 2 show placeholders when we have themes to show and are fetching next pages
-		return this.state.showPlaceholders || ( this.props.isRequesting && ( this.props.themesCount !== null ) );
+		return this.props.isRequesting || this.props.themesCount === null;
 	}
 
 	render() {
