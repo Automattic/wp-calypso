@@ -27,6 +27,7 @@ export default function linkJetpackCarousels( post, dom ) {
 				const attachmentId = img.getAttribute( 'data-attachment-id' );
 				if ( attachmentId ) {
 					link.href = permalink + '#jp-carousel-' + attachmentId;
+					link.setAttribute( 'target', '_blank' );
 				}
 			}
 		} );

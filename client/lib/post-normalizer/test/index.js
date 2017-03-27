@@ -1031,7 +1031,7 @@ describe( 'index', function() {
 					<div class="gallery-row">
 						<div class="gallery-group">
 							<div class="tiled-gallery-item">
-								<a href="https://example.com/foo/#jp-carousel-500">
+								<a href="https://example.com/foo/#jp-carousel-500" target="_blank">
 									<img src="https://example.com/foo/bar/img/" data-attachment-id="500">
 								</a>
 							</div>
