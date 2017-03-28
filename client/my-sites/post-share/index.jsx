@@ -12,8 +12,12 @@ import { localize } from 'i18n-calypso';
  */
 import QueryPostTypes from 'components/data/query-post-types';
 import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
 import { isPublicizeEnabled } from 'state/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import {
+	getSiteSlug,
+	getSitePlanSlug,
+} from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteUserConnections, hasFetchedConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
@@ -24,29 +28,40 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import { hasFeature } from 'state/sites/plans/selectors';
-import { FEATURE_REPUBLICIZE } from 'lib/plans/constants';
+import {
+	FEATURE_REPUBLICIZE,
+	PLAN_BUSINESS,
+} from 'lib/plans/constants';
 import Banner from 'components/banner';
 import Connection from './connection';
+import { isEnabled } from 'config';
+import CalendarButton from 'blocks/calendar-button';
 
 class PostShare extends Component {
 	static propTypes = {
 		siteSlug: PropTypes.string,
 		site: PropTypes.object,
 		post: PropTypes.object,
+		planSlug: PropTypes.string,
 		siteId: PropTypes.number,
 		isPublicizeEnabled: PropTypes.bool,
 		connections: PropTypes.array,
 		hasFetchedConnections: PropTypes.bool,
-		requestConnections: PropTypes.func
+		requestConnections: PropTypes.func,
 	};
 
 	state = {
+		message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title,
 		skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
-		message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title
 	};
 
 	hasConnections() {
 		return !! ( this.props.connections && this.props.connections.length );
+	}
+
+	isSchedulingEnabled() {
+		const { planSlug } = this.props;
+		return planSlug === PLAN_BUSINESS && isEnabled( 'publicize-scheduling' );
 	}
 
 	toggleConnection = id => {
@@ -65,8 +80,7 @@ class PostShare extends Component {
 		return this.state.skipped.indexOf( keyring_connection_ID ) === -1;
 	}
 
-	isConnectionActive = connection =>
-		connection.status !== 'broken' && this.skipConnection( connection );
+	isConnectionActive = connection => connection.status !== 'broken' && this.skipConnection( connection );
 
 	renderServices() {
 		if ( ! this.props.site || ! this.hasConnections() ) {
@@ -84,6 +98,25 @@ class PostShare extends Component {
 	}
 
 	setMessage = message => this.setState( { message } );
+
+	dismiss = () => {
+		this.props.dismissShareConfirmation( this.props.siteId, this.props.post.ID );
+	};
+
+	sharePost = () => {
+		this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message );
+	};
+
+	isButtonDisabled() {
+		if ( this.props.requesting ) {
+			return true;
+		}
+
+		return this.props.connections.filter( this.isConnectionActive ).length < 1;
+	}
+
+	previewSharingPost = () => {
+	}
 
 	renderMessage() {
 		if ( ! this.hasConnections() ) {
@@ -104,20 +137,34 @@ class PostShare extends Component {
 		);
 	}
 
-	dismiss = () => {
-		this.props.dismissShareConfirmation( this.props.siteId, this.props.post.ID );
-	};
+	renderShareButton() {
+		const { siteId, translate } = this.props;
+		return (
+			<div className="post-share__button-actions">
+				<Button onClick={ this.previewSharingPost }>
+					{ translate( 'Preview' ) }
+				</Button>
 
-	sharePost = () => {
-		this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message );
-	};
+				<ButtonGroup className="post-share__share-combo">
+					<Button
+						className="post-share__button"
+						primary
+						onClick={ this.sharePost }
+						disabled={ this.isButtonDisabled() }
+					>
+						{ translate( 'Share post' ) }
+					</Button>
 
-	isButtonDisabled() {
-		if ( this.props.requesting ) {
-			return true;
-		}
-
-		return this.props.connections.filter( this.isConnectionActive ).length < 1;
+					<CalendarButton
+						primary
+						className="post-share__schedule-button"
+						title={ translate( 'Set date and time' ) }
+						tabIndex={ 3 }
+						siteId={ siteId }
+						popoverPosition="bottom left" />
+				</ButtonGroup>
+			</div>
+		);
 	}
 
 	render() {
@@ -164,7 +211,7 @@ class PostShare extends Component {
 					{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
 					<div className="post-share__head">
 						<h4 className="post-share__title">
-							{ this.props.translate( 'Share post' ) }
+							{ this.props.translate( 'Share this post' ) }
 						</h4>
 						<div className="post-share__subtitle">
 							{ this.props.translate(
@@ -206,14 +253,7 @@ class PostShare extends Component {
 							<div className="post-share__main">
 								<div className="post-share__form">
 									{ this.renderMessage() }
-									<Button
-										className="post-share__button"
-										primary={ true }
-										onClick={ this.sharePost }
-										disabled={ this.isButtonDisabled() }
-									>
-										{ this.props.translate( 'Share post' ) }
-									</Button>
+									{ this.renderShareButton() }
 								</div>
 
 								<div className="post-share__services">
@@ -260,13 +300,14 @@ export default connect(
 		return {
 			planHasRepublicizeFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE ),
 			siteSlug: getSiteSlug( state, siteId ),
+			planSlug: getSitePlanSlug( state, siteId ),
 			siteId,
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, props.post.type ),
 			connections: getSiteUserConnections( state, siteId, userId ),
 			hasFetchedConnections: hasFetchedConnections( state, siteId ),
 			requesting: isRequestingSharePost( state, siteId, props.post.ID ),
 			failed: sharePostFailure( state, siteId, props.post.ID ),
-			success: sharePostSuccessMessage( state, siteId, props.post.ID )
+			success: sharePostSuccessMessage( state, siteId, props.post.ID ),
 		};
 	},
 	{ requestConnections, sharePost, dismissShareConfirmation }

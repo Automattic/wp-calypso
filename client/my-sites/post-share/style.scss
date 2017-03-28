@@ -1,11 +1,13 @@
+$section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
+
 .posts__list .post-share__wrapper {
 	margin: 0;
 	animation: appear .3s ease-in-out;
-	border-top: solid 1px transparentize( lighten( $gray, 20% ), .5 );
+	border-top: $section-border;
 
 	.post-share__title {
 		margin: 24px 0 0 0;
-		font-weight: 600;
+		font-size: 18px;
 	}
 
 	.post-share__subtitle {
@@ -13,17 +15,16 @@
 	}
 
 	.post-share__main {
-		border-top: solid 1px transparentize( lighten( $gray, 20% ), .5 );
+		border-top: $section-border;
 		display: flex;
 		flex-direction: column-reverse;
-		padding: 0 24px 24px;
 
 		@include breakpoint( ">480px" ) {
 			flex-direction: row;
 		}
 	}
 
-	.post-share__form.is-placeholder, 
+	.post-share__form.is-placeholder,
 	.post-share__services.is-placeholder {
 		@include placeholder;
 		margin-top: 16px;
@@ -36,6 +37,7 @@
 
 	.post-share__form {
 		flex: 3;
+		border-right: $section-border;
 	}
 
 	.post-share__services {
@@ -47,17 +49,34 @@
 		margin-top: 16px;
 
 		@include breakpoint( ">480px" ) {
-			margin-left: 20px;
 		}
 	}
 
 	.post-share__services-header {
-		font-weight: 600;
 		margin-bottom: 4px;
+		padding-left: 20px;
+		padding-bottom: 15px;
+		font-size: 14px;
+		border-bottom: $section-border;
 	}
 
 	.post-share__services-add {
-		text-align: center
+		text-align: center;
+		margin: 5px 20px;
+	}
+
+	.editor-sharing__message-heading {
+		padding-left: 20px;
+		padding-bottom: 10px;
+		padding-top: 10px;
+		border-bottom: $section-border;
+		border-top: $section-border;
+
+		@include breakpoint( ">480px" ) {
+			padding-bottom: 15px;
+			border-top: 0;
+			padding-top: 0;
+		}
 	}
 
 	.post-share__service {
@@ -66,6 +85,9 @@
 		justify-content: left;
 		padding: 0 0 12px 4px;
 		color: lighten( $gray, 20% );
+		margin-right: 20px;
+		margin-left: 20px;
+
 		.social-logo {
 			padding-left: 4px;
 		}
@@ -129,11 +151,23 @@
 		margin: 0;
 	}
 
-	.post-share__button{
-		width: 100%;
+	.post-share__share-combo {
+		display: flex;
 
-		@include breakpoint( ">480px" ) {
-			width: auto;
+		.post-share__button {
+			border-radius: 4px 0 0 4px;
+			padding: 5px 14px 7px;
+
+			@include breakpoint( ">480px" ) {
+				width: auto;
+			}
+		}
+
+		.post-share__schedule-button {
+			border-radius: 0 4px 4px 0;
+			padding-left: 8px;
+			padding-right: 8px;
+			margin-left: -1px;
 		}
 	}
 }
