@@ -6,6 +6,7 @@ import page from 'page';
 import qs from 'querystring';
 import ReactClass from 'react/lib/ReactClass';
 import i18n, { setLocale } from 'i18n-calypso';
+import { some, startsWith } from 'lodash';
 import url from 'url';
 
 /**
@@ -71,6 +72,26 @@ const setupContextMiddleware = reduxStore => {
 	} );
 };
 
+const setupLoggedOutMiddleware = currentUser => {
+	if ( currentUser.get() ) {
+		return;
+	}
+
+	const sections = require( 'sections' );
+	const validSections = sections.get().reduce( ( acc, section ) => {
+		return section.enableLoggedOut ? acc.concat( section.paths ) : acc;
+	}, [] );
+	const isValidSection = sectionPath => some(
+		validSections, validPath => startsWith( sectionPath, validPath )
+	);
+
+	page( '*', ( context, next ) => {
+		if ( isValidSection( context.path ) ) {
+			next();
+		}
+	} );
+};
+
 export const locales = currentUser => {
 	debug( 'Executing Calypso locales.' );
 
@@ -115,13 +136,15 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 
 	bindWpLocaleState( reduxStore );
 
-	// Set current user in Redux store
-	reduxStore.dispatch( receiveUser( currentUser.get() ) );
-	currentUser.on( 'change', () => {
+	if ( currentUser.get() ) {
+		// Set current user in Redux store
 		reduxStore.dispatch( receiveUser( currentUser.get() ) );
-	} );
-	reduxStore.dispatch( setCurrentUserId( currentUser.get().ID ) );
-	reduxStore.dispatch( setCurrentUserFlags( currentUser.get().meta.data.flags.active_flags ) );
+		currentUser.on( 'change', () => {
+			reduxStore.dispatch( receiveUser( currentUser.get() ) );
+		} );
+		reduxStore.dispatch( setCurrentUserId( currentUser.get().ID ) );
+		reduxStore.dispatch( setCurrentUserFlags( currentUser.get().meta.data.flags.active_flags ) );
+	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
 		asyncRequire( 'lib/network-connection', networkConnection => networkConnection.init( reduxStore ) );
@@ -133,5 +156,5 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 
 	setupContextMiddleware( reduxStore );
 
-	// TODO: move other middlewares from project specific file
+	setupLoggedOutMiddleware( currentUser );
 };

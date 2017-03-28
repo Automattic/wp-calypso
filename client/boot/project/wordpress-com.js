@@ -4,7 +4,6 @@
 const React = require( 'react' ),
 	ReactDom = require( 'react-dom' ),
 	store = require( 'store' ),
-	some = require( 'lodash/some' ),
 	startsWith = require( 'lodash/startsWith' ),
 	debug = require( 'debug' )( 'calypso' ),
 	page = require( 'page' ),
@@ -61,11 +60,10 @@ function renderLayout( reduxStore ) {
 export function setupMiddlewares( currentUser, reduxStore ) {
 	debug( 'Executing WordPress.com setup middlewares.' );
 
-	let layoutSection, validSections = [];
+	let layoutSection;
 
 	supportUser.setReduxStore( reduxStore );
 
-	// LOGGED IN
 	if ( currentUser.get() ) {
 		// When logged in the analytics module requires user and superProps objects
 		// Inject these here
@@ -184,19 +182,9 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		[ 'signupProgress', 'signupDependencies' ].forEach( store.remove );
 	}
 
-	// Load the application modules for the various sections and features
-	const sections = require( 'sections' );
-	validSections = sections.get().reduce( function( acc, section ) {
-		return section.enableLoggedOut ? acc.concat( section.paths ) : acc;
-	}, [] ); // GENERIC
-
 	if ( ! currentUser.get() ) {
 		// Dead-end the sections the user can't access when logged out
-		page( '*', function( context, next ) { // GENERIC, FACTOR OUT EVIL
-			const isValidSection = some( validSections, function( validPath ) {
-				return startsWith( context.path, validPath );
-			} );
-
+		page( '*', function( context, next ) {
 			if ( '/' === context.pathname && config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
 				if ( config.isEnabled( 'oauth' ) ) {
 					page.redirect( '/authorize' );
@@ -218,9 +206,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 				return;
 			}
 
-			if ( isValidSection ) {
-				next();
-			}
+			next();
 		} );
 	}
 
