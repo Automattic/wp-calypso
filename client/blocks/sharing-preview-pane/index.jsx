@@ -9,7 +9,7 @@ import { get, find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPostImage, getExcerptForPost } from './utils';
+import { getPostImage } from './utils';
 import FacebookSharePreview from 'components/share/facebook-share-preview';
 import TwitterSharePreview from 'components/share/twitter-share-preview';
 import VerticalMenu from 'components/vertical-menu';
@@ -46,35 +46,38 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	renderPreview() {
-		const { post, seoTitle, message, connections } = this.props;
+		const { post, message, connections } = this.props;
 		const { selectedService } = this.state;
 		const connection = find( connections, { service: selectedService } );
 		if ( ! connection ) {
 			return null;
 		}
 
-		const externalName = get( connection, 'external_name' );
-		const externalProfileURL = get( connection, 'external_profile_URL' );
-		const externalProfilePicture = get( connection, 'external_profile_picture' );
+		const articleUrl = get( post, 'URL', '' );
+		const imageUrl = getPostImage( post );
+		const {
+			external_name: externalName,
+			external_profile_url: externalProfileURL,
+			external_profile_picture: externalProfilePicture,
+			external_display: externalDisplay,
+		} = connection || {};
+
+		const previewProps = {
+			articleUrl,
+			externalName,
+			externalProfileURL,
+			externalProfilePicture,
+			message,
+			imageUrl,
+		};
 
 		switch ( selectedService ) {
 			case 'facebook':
-				return <FacebookSharePreview
-					articleUrl={ get( post, 'URL', '' ) }
-					externalName={ externalName }
-					externalProfileURL={ externalProfileURL }
-					externalProfilePicture={ externalProfilePicture }
-					message={ message }
-					imageUrl={ getPostImage( post ) }
-				/>;
+				return <FacebookSharePreview { ...previewProps } />;
 			case 'twitter':
 				return <TwitterSharePreview
-					title={ seoTitle }
-					url={ get( post, 'URL', '' ) }
-					type="large_image_summary"
-					description={ getExcerptForPost( post ) }
-					image={ getPostImage( post ) }
-				/>;
+					{ ...previewProps }
+					externalDisplay={ externalDisplay } />;
 			default:
 				return null;
 		}
