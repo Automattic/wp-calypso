@@ -39,7 +39,7 @@ const ConnectedSharingPreviewPaneExample = connect( ( state ) => {
 
 	return {
 		siteId,
-		postId
+		postId,
 	};
 } )( SharingPreviewPaneExample );
 

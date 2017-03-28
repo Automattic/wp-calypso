@@ -18,8 +18,6 @@ import { parseHtml } from 'lib/formatting';
 
 const PREVIEW_IMAGE_WIDTH = 512;
 
-//Mostly copied from Seo Preview Pane
-
 export const getPostImage = ( post ) => {
 	if ( ! post ) {
 		return null;

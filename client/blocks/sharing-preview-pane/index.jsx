@@ -60,7 +60,7 @@ class SharingPreviewPane extends PureComponent {
 			external_profile_url: externalProfileURL,
 			external_profile_picture: externalProfilePicture,
 			external_display: externalDisplay,
-		} = connection || {};
+		} = connection;
 
 		const previewProps = {
 			articleUrl,
@@ -126,7 +126,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		site,
 		post,
 		seoTitle,
-		connections
+		connections,
 	};
 };
 
