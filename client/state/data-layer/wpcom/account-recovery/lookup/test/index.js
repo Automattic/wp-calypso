@@ -3,6 +3,7 @@
  */
 import { assert } from 'chai';
 import sinon from 'sinon';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,6 +20,8 @@ import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 } from 'state/action-types';
+
+import { ACCOUNT_RECOVERY_ROUTES } from 'account-recovery/constants';
 
 const validResponse = {
 	primary_email: 'a****@example.com',
@@ -50,6 +53,7 @@ describe( 'validate()', () => {
 
 describe( 'handleRequestResetOptions()', () => {
 	const dispatch = sinon.spy();
+	const transit = sinon.spy();
 
 	const apiBaseUrl = 'https://public-api.wordpress.com:443';
 	const endpoint = '/wpcom/v2/account-recovery/lookup';
@@ -66,12 +70,14 @@ describe( 'handleRequestResetOptions()', () => {
 		) );
 
 		it( 'should dispatch RECEIVE action on success', () => {
-			return handleRequestResetOptions( { dispatch }, { userData } ).then( () =>
+			return handleRequestResetOptions( { dispatch }, { userData }, noop, transit ).then( () => {
 				assert.isTrue( dispatch.calledWith( {
 					type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 					items: fromApi( validResponse ),
-				} ) )
-			);
+				} ) );
+
+				assert.isTrue( transit.calledWith( ACCOUNT_RECOVERY_ROUTES.RESET_PASSWORD ) );
+			} );
 		} );
 	} );
 

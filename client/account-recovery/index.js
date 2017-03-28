@@ -13,7 +13,7 @@ import {
 } from './controller';
 import config from 'config';
 
-import { ACCOUNT_RECOVERY_ROUTES } from 'state/account-recovery/reset/constants';
+import { ACCOUNT_RECOVERY_ROUTES } from './constants';
 
 export default function( router ) {
 	// Main route for account recovery is the lost password page

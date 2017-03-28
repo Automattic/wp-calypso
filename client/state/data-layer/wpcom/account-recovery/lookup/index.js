@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { isString, tap } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -12,6 +13,8 @@ import {
 	fetchResetOptionsSuccess,
 	fetchResetOptionsError,
 } from 'state/account-recovery/reset/actions';
+
+import { ACCOUNT_RECOVERY_ROUTES } from 'account-recovery/constants';
 
 export const fromApi = data => ( [
 	{
@@ -32,12 +35,15 @@ export const validate = ( { primary_email, primary_sms, secondary_email, seconda
 	}
 };
 
-export const handleRequestResetOptions = ( { dispatch }, { userData } ) => (
+export const handleRequestResetOptions = ( { dispatch }, { userData }, next, transit = page ) => (
 	wpcom.req.get( {
 		body: userData,
 		apiNamespace: 'wpcom/v2',
 		path: '/account-recovery/lookup',
-	} ).then( data => dispatch( fetchResetOptionsSuccess( fromApi( tap( data, validate ) ) ) ) )
+	} ).then( data => {
+		dispatch( fetchResetOptionsSuccess( fromApi( tap( data, validate ) ) ) );
+		transit( ACCOUNT_RECOVERY_ROUTES.RESET_PASSWORD );
+	} )
 	.catch( error => dispatch( fetchResetOptionsError( error ) ) )
 );
 
