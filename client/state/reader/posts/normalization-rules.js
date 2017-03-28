@@ -31,6 +31,7 @@ import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-loa
 import pickCanonicalMedia from 'lib/post-normalizer/rule-pick-canonical-media';
 import removeElementsBySelector from 'lib/post-normalizer/rule-content-remove-elements-by-selector';
 import addDiscoverProperties from 'lib/post-normalizer/rule-add-discover-properties';
+import linkJetpackCarousels from 'lib/post-normalizer/rule-content-link-jetpack-carousels';
 
 /**
  * Module vars
@@ -123,6 +124,7 @@ const fastPostNormalizationRules = flow( [
 		disableAutoPlayOnMedia,
 		detectMedia,
 		detectPolls,
+		linkJetpackCarousels,
 	] ),
 	createBetterExcerpt,
 	pickCanonicalImage,
