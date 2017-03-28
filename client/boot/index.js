@@ -185,6 +185,9 @@ function reduxStoreReady( reduxStore ) {
 
 		// Set current user in Redux store
 		reduxStore.dispatch( receiveUser( user.get() ) );
+		user.on( 'change', function() {
+			reduxStore.dispatch( receiveUser( user.get() ) );
+		} );
 		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
 		reduxStore.dispatch( setCurrentUserFlags( user.get().meta.data.flags.active_flags ) );
 

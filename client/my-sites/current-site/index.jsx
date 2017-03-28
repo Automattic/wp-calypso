@@ -4,6 +4,7 @@
 import React from 'react';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 const debug = debugFactory( 'calypso:my-sites:current-site' );
 
@@ -23,6 +24,7 @@ const AllSites = require( 'my-sites/all-sites' ),
 import SiteNotice from './notice';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
 const CurrentSite = React.createClass( {
@@ -33,8 +35,8 @@ const CurrentSite = React.createClass( {
 	},
 
 	propTypes: {
-		sites: React.PropTypes.object.isRequired,
 		siteCount: React.PropTypes.number.isRequired,
+		sites: React.PropTypes.object.isRequired,
 		setLayoutFocus: React.PropTypes.func.isRequired,
 		selectedSiteId: React.PropTypes.number,
 		selectedSite: React.PropTypes.object,
@@ -163,12 +165,14 @@ const CurrentSite = React.createClass( {
 // TODO: make this pure when sites can be retrieved from the Redux state
 module.exports = connect(
 	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
+		const selectedSiteId = getSelectedSiteId( state ),
+			user = getCurrentUser( state );
 
 		return {
+			isJetpack: isJetpackSite( state, selectedSiteId ),
 			selectedSiteId,
 			selectedSite: getSelectedSite( state ),
-			isJetpack: isJetpackSite( state, selectedSiteId )
+			siteCount: get( user, 'visible_site_count', 0 )
 		};
 	},
 	{ setLayoutFocus },
