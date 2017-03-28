@@ -115,7 +115,6 @@
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
 		"post-editor/media-advanced": false,
-		"post-editor/mentions": true,
 		"press-this": true,
 		"push-notifications": true,
 		"reader": true,
