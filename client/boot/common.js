@@ -20,6 +20,7 @@ import {
 	setCurrentUserId,
 	setCurrentUserFlags
 } from 'state/current-user/actions';
+import { setRoute as setRouteAction } from 'state/ui/actions';
 import switchLocale from 'lib/i18n-utils/switch-locale';
 import touchDetect from 'lib/touch-detect';
 
@@ -72,7 +73,7 @@ const setupContextMiddleware = reduxStore => {
 	} );
 };
 
-const setupLoggedOutMiddleware = currentUser => {
+const loggedOutMiddleware = currentUser => {
 	if ( currentUser.get() ) {
 		return;
 	}
@@ -90,6 +91,20 @@ const setupLoggedOutMiddleware = currentUser => {
 			next();
 		}
 	} );
+};
+
+const clearNoticesMiddleware = () => {
+	page( '*', function( context, next ) {
+		context.store.dispatch( setRouteAction(
+			context.pathname,
+			context.query
+		) );
+
+		next();
+	} );
+
+	//TODO: remove this one when notices are reduxified - it is for old notices
+	page( '*', require( 'notices' ).clearNoticesOnNavigation );
 };
 
 export const locales = currentUser => {
@@ -155,6 +170,6 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
 	setupContextMiddleware( reduxStore );
-
-	setupLoggedOutMiddleware( currentUser );
+	loggedOutMiddleware( currentUser );
+	clearNoticesMiddleware();
 };

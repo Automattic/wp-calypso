@@ -26,7 +26,6 @@ const config = require( 'config' ),
 	emailVerification = require( 'components/email-verification' ),
 	viewport = require( 'lib/viewport' ),
 	pushNotificationsInit = require( 'state/push-notifications/actions' ).init,
-	setRouteAction = require( 'state/ui/actions' ).setRoute,
 	syncHandler = require( 'lib/wp/sync-handler' ),
 	supportUser = require( 'lib/user/support-user-interop' );
 
@@ -215,18 +214,6 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 	}
 
 	require( 'my-sites' )();
-
-	// clear notices
-	page( '*', function( context, next ) {
-		context.store.dispatch( setRouteAction(
-					context.pathname,
-					context.query ) );
-		next();
-	} ); // GENERIC
-
-	// clear notices
-	//TODO: remove this one when notices are reduxified - it is for old notices
-	page( '*', require( 'notices' ).clearNoticesOnNavigation );
 
 	if ( config.isEnabled( 'olark' ) ) {
 		asyncRequire( 'lib/olark', olark => olark.initialize( reduxStore.dispatch ) );
