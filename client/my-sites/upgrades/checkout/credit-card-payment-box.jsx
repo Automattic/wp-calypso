@@ -31,7 +31,7 @@ var CreditCardPaymentBox = React.createClass( {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		if ( nextProps.transactionStep && this.submitting( nextProps.transactionStep ) ) {
+		if ( ! this.submitting( this.props.transactionStep ) && this.submitting( nextProps.transactionStep ) ) {
 			this.timer = setInterval( this.tick, 100 );
 		}
 	},
