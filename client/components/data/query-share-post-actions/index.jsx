@@ -26,6 +26,7 @@ class QuerySharePostActions extends Component {
 	componentDidMount() {
 		this.request( this.props );
 	}
+
 	shouldComponentUpdate( nextProps ) {
 		if ( this.props.siteId === nextProps.siteId &&
 			this.props.postId === nextProps.postId &&
