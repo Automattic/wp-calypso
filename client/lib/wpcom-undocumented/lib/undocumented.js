@@ -2365,6 +2365,27 @@ Undocumented.prototype.transferStatus = function( siteId, transferId ) {
 };
 
 /**
+ * Submit a response to the NPS Survey.
+ * @param {string}     surveyName     The name of the NPS survey being submitted
+ * @param {int}        score          The value for the survey response
+ * @param {Function}   fn             The callback function
+ * @returns {Promise}
+ */
+Undocumented.prototype.submitNPSSurvey = function( surveyName, score, fn ) {
+	return this.wpcom.req.post( { path: `/nps/${ surveyName }` }, { apiVersion: '1.2' }, { score }, fn );
+};
+
+/**
+ * Dismiss the NPS Survey.
+ * @param {string}     surveyName     The name of the NPS survey being submitted
+ * @param {Function}   fn             The callback function
+ * @returns {Promise}
+ */
+Undocumented.prototype.dismissNPSSurvey = function( surveyName, fn ) {
+	return this.wpcom.req.post( { path: `/nps/${ surveyName }` }, { apiVersion: '1.2' }, { dismissed: true }, fn );
+};
+
+/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;
