@@ -121,7 +121,13 @@ export class ResetPasswordFormComponent extends Component {
 				{
 					requestError && (
 					<p className="reset-password-form__error-message">
-						{ translate( "We've encountered some technical issues. Please try again later." ) }
+						{ translate(
+							"We're having trouble connecting to our servers at the moment. " +
+							'Please try again later. If the problem persists, please {{a}}contact us{{/a}}.',
+							{ components: {
+								a: <a href="https://wordpress.com/wp-login.php?action=recovery" target="_blank" rel="noopener noreferrer" />
+							} }
+						) }
 					</p> )
 				}
 				<Button
