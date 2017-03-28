@@ -14,6 +14,8 @@ import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import PostStore from 'lib/feed-post-store';
 import XPostHelper, { isXPost } from 'reader/xpost-helper';
 import { setLastStoreId } from 'reader/controller-helper';
+import { fillGap } from 'lib/feed-stream-store/actions';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 export function siteNameFromSiteAndPost( site, post ) {
 	let siteName;
@@ -75,7 +77,7 @@ export function isPostNotFound( post ) {
 	return post.statusCode === 404;
 }
 
-export function showSelectedPost( { store, replaceHistory, selectedGap, postKey, comments } ) {
+export function showSelectedPost( { store, replaceHistory, postKey, comments } ) {
 	if ( ! postKey ) {
 		return;
 	}
@@ -83,7 +85,7 @@ export function showSelectedPost( { store, replaceHistory, selectedGap, postKey,
 	setLastStoreId( store && store.id );
 
 	if ( postKey.isGap === true ) {
-		return selectedGap.handleClick();
+		return handleGapClicked( postKey, store.id );
 	}
 
 	// rec block
@@ -131,6 +133,17 @@ export function showFullXPost( xMetadata ) {
 	} else {
 		window.open( xMetadata.postURL );
 	}
+}
+
+export function handleGapClicked( postKey, storeId ) {
+	if ( ! postKey || ! postKey.isGap || ! storeId ) {
+		return;
+	}
+
+	fillGap( storeId, postKey );
+	recordAction( 'fill_gap' );
+	recordGaEvent( 'Clicked Fill Gap' );
+	recordTrack( 'calypso_reader_filled_gap', { stream: storeId } );
 }
 
 export function showFullPost( { post, replaceHistory, comments } ) {
