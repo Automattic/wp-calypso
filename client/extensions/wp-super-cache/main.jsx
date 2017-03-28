@@ -16,7 +16,7 @@ const WPSuperCache = ( { site, tab } ) => {
 	const renderTab = () => {
 		switch ( tab ) {
 			case Tabs.ADVANCED:
-				return <AdvancedTab site={ site } />;
+				return <AdvancedTab siteUrl={ site.URL } />;
 			case Tabs.CDN:
 				break;
 			case Tabs.CONTENTS:

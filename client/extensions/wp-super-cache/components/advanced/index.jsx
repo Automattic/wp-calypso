@@ -24,7 +24,7 @@ const AdvancedTab = ( {
 		super_cache_enabled,
 		wp_cache_enabled,
 	},
-	site,
+	siteUrl,
 } ) => {
 	return (
 		<div>
@@ -37,7 +37,7 @@ const AdvancedTab = ( {
 			<RejectedUserAgents />
 			<LockDown />
 			{	!! wp_cache_enabled && ( '1' === super_cache_enabled || '2' === super_cache_enabled ) &&
-				<DirectlyCachedFiles site={ site } />
+				<DirectlyCachedFiles siteUrl={ siteUrl } />
 			}
 			<FixConfig />
 		</div>

@@ -24,7 +24,7 @@ const DirectlyCachedFiles = ( {
 		wp_cache_writable,
 	},
 	handleChange,
-	site,
+	siteUrl,
 	translate,
 } ) => {
 	wp_cache_direct_pages = wp_cache_direct_pages || [];
@@ -80,7 +80,7 @@ const DirectlyCachedFiles = ( {
 								'For example: to cache {{em}}%(url)s/about/{{/em}}, you would enter %(url)s/about/ or /about/. ' +
 								'The cached file will be generated the next time an anonymous user visits that page.',
 								{
-									args: { url: site.URL },
+									args: { url: siteUrl },
 									components: { em: <em /> },
 								}
 							) }
