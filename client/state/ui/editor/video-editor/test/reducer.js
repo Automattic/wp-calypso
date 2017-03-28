@@ -8,7 +8,6 @@ import { expect } from 'chai';
  */
 import {
 	VIDEO_EDITOR_CLOSE_MODAL,
-	VIDEO_EDITOR_RESET_STATE,
 	VIDEO_EDITOR_SET_POSTER_URL,
 	VIDEO_EDITOR_SHOW_ERROR,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
@@ -16,18 +15,18 @@ import {
 
 import reducer, {
 	closeModal,
-	posterUrl,
 	showError,
 	uploadProgress,
+	url,
 } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'closeModal',
-			'posterUrl',
 			'showError',
 			'uploadProgress',
+			'url',
 		] );
 	} );
 
@@ -46,49 +45,49 @@ describe( 'reducer', () => {
 			expect( state ).to.be.true;
 		} );
 
-		it( 'should change to false on reset', () => {
+		it( 'should change to false on some other state change', () => {
 			const state = closeModal( undefined, {
-				type: VIDEO_EDITOR_RESET_STATE,
+				type: VIDEO_EDITOR_SHOW_ERROR,
 			} );
 
 			expect( state ).to.be.false;
 		} );
 	} );
 
-	describe( '#posterUrl()', () => {
-		const url = 'https://i1.wp.com/videos.files.wordpress.com/dummy-guid/thumbnail.jpg?ssl=1';
+	describe( '#url()', () => {
+		const posterUrl = 'https://i1.wp.com/videos.files.wordpress.com/guid/thumbnail.jpg?ssl=1';
 
-		it( 'should default to empty string', () => {
-			const state = posterUrl( undefined, {} );
+		it( 'should default to null', () => {
+			const state = url( undefined, {} );
 
-			expect( state ).to.eql( '' );
+			expect( state ).to.be.null;
 		} );
 
 		it( 'should change to poster url on successful update', () => {
-			const state = posterUrl( undefined, {
+			const state = url( undefined, {
 				type: VIDEO_EDITOR_SET_POSTER_URL,
-				posterUrl: url,
+				posterUrl,
 			} );
 
-			expect( state ).to.eql( url );
+			expect( state ).to.eql( posterUrl );
 		} );
 
-		it( 'should change to empty string on reset', () => {
-			const state = posterUrl( undefined, {
-				type: VIDEO_EDITOR_RESET_STATE,
+		it( 'should change to null on some other state change', () => {
+			const state = url( undefined, {
+				type: VIDEO_EDITOR_SHOW_ERROR,
 			} );
 
-			expect( state ).to.eql( '' );
+			expect( state ).to.be.null;
 		} );
 	} );
 
 	describe( '#uploadProgress()', () => {
 		const percentage = 50;
 
-		it( 'should default to 0', () => {
+		it( 'should default to null', () => {
 			const state = uploadProgress( undefined, {} );
 
-			expect( state ).to.eql( 0 );
+			expect( state ).to.be.null;
 		} );
 
 		it( 'should change to upload percentage on successful update', () => {
@@ -100,12 +99,20 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( percentage );
 		} );
 
-		it( 'should change to 0 on reset', () => {
+		it( 'should change to null on modal closed', () => {
 			const state = uploadProgress( undefined, {
-				type: VIDEO_EDITOR_RESET_STATE,
+				type: VIDEO_EDITOR_CLOSE_MODAL,
 			} );
 
-			expect( state ).to.eql( 0 );
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should change to null on some other state change', () => {
+			const state = uploadProgress( undefined, {
+				type: VIDEO_EDITOR_SHOW_ERROR,
+			} );
+
+			expect( state ).to.be.null;
 		} );
 	} );
 
@@ -124,17 +131,9 @@ describe( 'reducer', () => {
 			expect( state ).to.be.true;
 		} );
 
-		it( 'should change to false on successful update', () => {
+		it( 'should change to false on some other state change', () => {
 			const state = showError( undefined, {
 				type: VIDEO_EDITOR_SET_POSTER_URL,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should change to false on reset', () => {
-			const state = showError( undefined, {
-				type: VIDEO_EDITOR_RESET_STATE,
 			} );
 
 			expect( state ).to.be.false;

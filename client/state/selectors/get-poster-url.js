@@ -5,5 +5,5 @@
  * @return {String}  URL of the poster.
  */
 export default function getPosterUrl( state ) {
-	return state.ui.editor.videoEditor.posterUrl;
+	return state.ui.editor.videoEditor.url;
 }

@@ -10,17 +10,17 @@ import { getPosterUrl } from '../';
 
 describe( 'getPosterUrl()', () => {
 	it( 'should return the current video editor poster', () => {
-		const posterUrl = 'https://i1.wp.com/videos.files.wordpress.com/dummy-guid/thumbnail.jpg?ssl=1';
+		const url = 'https://i1.wp.com/videos.files.wordpress.com/dummy-guid/thumbnail.jpg?ssl=1';
 		const poster = getPosterUrl( {
 			ui: {
 				editor: {
 					videoEditor: {
-						posterUrl
+						url
 					}
 				}
 			}
 		} );
 
-		expect( poster ).to.eql( posterUrl );
+		expect( poster ).to.eql( url );
 	} );
 } );

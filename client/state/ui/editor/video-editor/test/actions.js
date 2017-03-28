@@ -8,7 +8,6 @@ import { expect } from 'chai';
  */
 import {
 	VIDEO_EDITOR_CLOSE_MODAL,
-	VIDEO_EDITOR_RESET_STATE,
 	VIDEO_EDITOR_SET_POSTER_URL,
 	VIDEO_EDITOR_SHOW_ERROR,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
@@ -16,7 +15,6 @@ import {
 } from 'state/action-types';
 import {
 	closeModal,
-	resetState,
 	setPosterUrl,
 	showError,
 	showUploadProgress,
@@ -24,16 +22,6 @@ import {
 } from '../actions';
 
 describe( 'actions', () => {
-	describe( '#resetState()', () => {
-		it( 'should return an action object', () => {
-			const action = resetState();
-
-			expect( action ).to.eql( {
-				type: VIDEO_EDITOR_RESET_STATE,
-			} );
-		} );
-	} );
-
 	describe( '#updatePoster()', () => {
 		it( 'should return an action object', () => {
 			const videoId = 'dummy-videoId';
