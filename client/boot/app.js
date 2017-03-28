@@ -7,152 +7,42 @@ if ( process.env.NODE_ENV === 'development' ) {
 /**
  * External dependencies
  */
+import * as common from './common';
 import debugFactory from 'debug';
 import page from 'page';
-import qs from 'querystring';
-import ReactClass from 'react/lib/ReactClass';
-import i18n, { setLocale } from 'i18n-calypso';
-import url from 'url';
 
 /**
  * Internal dependencies
  */
-import accessibleFocus from 'lib/accessible-focus';
-import { bindState as bindWpLocaleState } from 'lib/wp/localization';
 import createReduxStoreFromPersistedInitialState from 'state/initial-state';
-import config from 'config';
 import detectHistoryNavigation from 'lib/detect-history-navigation';
-import { receiveUser } from 'state/users/actions';
-import {
-	setCurrentUserId,
-	setCurrentUserFlags
-} from 'state/current-user/actions';
-import switchLocale from 'lib/i18n-utils/switch-locale';
-import touchDetect from 'lib/touch-detect';
 import userFactory from 'lib/user';
 
 const debug = debugFactory( 'calypso' );
 
-const switchUserLocale = currentUser => {
-	const localeSlug = currentUser.get().localeSlug;
-	if ( localeSlug ) {
-		switchLocale( localeSlug );
-	}
-};
+const withProject = () => {
+	// TODO: make project name dynamic based on config
+	const project = require( './project/wordpress-com' );
 
-const locales = currentUser => {
-	// Initialize i18n mixin
-	ReactClass.injection.injectMixin( i18n.mixin );
-
-	if ( window.i18nLocaleStrings ) {
-		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
-		setLocale( i18nLocaleStringsObject );
-	}
-
-	// When the user is not bootstrapped, we also bootstrap the
-	// locale strings
-	if ( ! config( 'wpcom_user_bootstrap' ) ) {
-		switchUserLocale( currentUser );
-	}
-
-	currentUser.on( 'change', () => switchUserLocale( currentUser ) );
-};
-
-const utils = () => {
-	if ( process.env.NODE_ENV === 'development' ) {
-		require( './dev-modules' )();
-	}
-
-	// Infer touch screen by checking if device supports touch events
-	// See touch-detect/README.md
-	if ( touchDetect.hasTouch() ) {
-		document.documentElement.classList.add( 'touch' );
-	} else {
-		document.documentElement.classList.add( 'notouch' );
-	}
-
-	// Add accessible-focus listener
-	accessibleFocus();
-};
-
-const configureReduxStore = ( currentUser, reduxStore ) => {
-	bindWpLocaleState( reduxStore );
-
-	// Set current user in Redux store
-	reduxStore.dispatch( receiveUser( currentUser.get() ) );
-	currentUser.on( 'change', () => {
-		reduxStore.dispatch( receiveUser( currentUser.get() ) );
-	} );
-	reduxStore.dispatch( setCurrentUserId( currentUser.get().ID ) );
-	reduxStore.dispatch( setCurrentUserFlags( currentUser.get().meta.data.flags.active_flags ) );
-
-	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'lib/network-connection', networkConnection => networkConnection.init( reduxStore ) );
-	}
-};
-
-const setUpContext = reduxStore => {
-	page( '*', ( context, next ) => {
-		const parsed = url.parse( location.href, true );
-
-		context.store = reduxStore;
-
-		// Break routing and do full page load for logout link in /me
-		if ( context.pathname === '/wp-login.php' ) {
-			window.location.href = context.path;
-			return;
+	return ( funcName, ...params ) => {
+		common[ funcName ]( ...params );
+		if ( project[ funcName ] !== undefined ) {
+			project[ funcName ]( ...params );
 		}
-
-		// set `context.query`
-		const querystringStart = context.canonicalPath.indexOf( '?' );
-
-		if ( querystringStart !== -1 ) {
-			context.query = qs.parse( context.canonicalPath.substring( querystringStart + 1 ) );
-		} else {
-			context.query = {};
-		}
-
-		context.prevPath = parsed.path === context.path ? false : parsed.path;
-
-		// set `context.hash` (we have to parse manually)
-		if ( parsed.hash && parsed.hash.length > 1 ) {
-			try {
-				context.hash = qs.parse( parsed.hash.substring( 1 ) );
-			} catch ( e ) {
-				debug( 'failed to query-string parse `location.hash`', e );
-				context.hash = {};
-			}
-		} else {
-			context.hash = {};
-		}
-		next();
-	} );
-};
-
-const setupMiddlewares = reduxStore => {
-	setUpContext( reduxStore );
-
-	// TODO: move other middlewares from project specific file
-};
-
-const loadSections = () => {
-	// TODO: move from project specific file
+	};
 };
 
 const boot = currentUser => {
 	debug( "Starting Calypso. Let's do this." );
 
-	locales( currentUser );
-	utils();
+	const callWithProject = withProject();
+
+	callWithProject( 'locales', currentUser );
+	callWithProject( 'utils' );
 	createReduxStoreFromPersistedInitialState( reduxStore => {
-		configureReduxStore( currentUser, reduxStore );
-		setupMiddlewares( reduxStore );
-		loadSections();
-
-		// TODO: make project name dynamic based on config
-		require( './project/wordpress-com' ).boot( currentUser, reduxStore );
-
-		// TODO: init project specific middlewares
+		callWithProject( 'configureReduxStore', currentUser, reduxStore );
+		callWithProject( 'setupMiddlewares', currentUser, reduxStore );
+		callWithProject( 'loadSections' );
 
 		detectHistoryNavigation.start();
 		page.start();

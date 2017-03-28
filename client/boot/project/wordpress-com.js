@@ -34,15 +34,13 @@ const config = require( 'config' ),
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
-export function boot( currentUser, reduxStore ) {
-	debug( 'Booting WordPress.com project.' );
+export function utils() {
+	debug( 'Executing WordPress.com utils.' );
 
 	// prune sync-handler records more than two days old
 	syncHandler.pruneStaleRecords( '2 days' );
 
 	translatorJumpstart.init();
-
-	reduxStoreReady( currentUser, reduxStore );
 }
 
 function renderLayout( reduxStore ) {
@@ -60,7 +58,9 @@ function renderLayout( reduxStore ) {
 	debug( 'Main layout rendered.' );
 }
 
-function reduxStoreReady( currentUser, reduxStore ) {
+export function setupMiddlewares( currentUser, reduxStore ) {
+	debug( 'Executing WordPress.com setup middlewares.' );
+
 	let layoutSection, validSections = [];
 
 	supportUser.setReduxStore( reduxStore );
