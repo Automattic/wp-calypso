@@ -15,15 +15,12 @@ import ProgressBar from 'components/progress-bar';
 import Notice from 'components/notice';
 import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
 import VideoEditorButtons from './video-editor-buttons';
-import {
-	resetState,
-	updatePoster,
-} from 'state/ui/editor/video-editor/actions';
+import { updatePoster } from 'state/ui/editor/video-editor/actions';
 import {
 	getPosterUploadProgress,
 	getPosterUrl,
-	hasPosterUpdateError,
-	isPosterUpdated,
+	shouldCloseVideoEditorModal,
+	shouldShowVideoEditorError,
 } from 'state/selectors';
 
 /**
@@ -39,9 +36,9 @@ class VideoEditor extends Component {
 		onUpdatePoster: PropTypes.func,
 
 		// Connected props
-		hasPosterUpdateError: PropTypes.bool,
-		isPosterUpdated: PropTypes.bool,
 		posterUrl: PropTypes.string,
+		shouldCloseModal: PropTypes.bool,
+		shouldShowError: PropTypes.bool,
 		uploadProgress: PropTypes.number,
 	};
 
@@ -56,16 +53,12 @@ class VideoEditor extends Component {
 		pauseVideo: false,
 	};
 
-	componentDidMount() {
-		this.props.resetState();
-	}
-
 	componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.isPosterUpdated ) {
+		if ( ! nextProps.shouldCloseModal && ! nextProps.shouldShowError ) {
 			return;
 		}
 
-		if ( nextProps.hasPosterUpdateError ) {
+		if ( nextProps.shouldShowError ) {
 			this.setState( {
 				error: true,
 				pauseVideo: false
@@ -79,8 +72,6 @@ class VideoEditor extends Component {
 
 	handleSelectFrame = () => {
 		const { isLoading } = this.state;
-
-		this.props.resetState();
 
 		if ( isLoading ) {
 			this.setState( { error: true } );
@@ -119,7 +110,6 @@ class VideoEditor extends Component {
 	handleUploadImageClick = () => {
 		isSelectingFrame = false;
 
-		this.props.resetState();
 		this.setState( {
 			error: false,
 			pauseVideo: true
@@ -201,7 +191,7 @@ class VideoEditor extends Component {
 								onVideoLoaded={ this.handleVideoLoaded }
 							/>
 						</div>
-						{ !! uploadProgress && ! error && ! isSelectingFrame &&
+						{ uploadProgress && ! error && ! isSelectingFrame &&
 							<ProgressBar
 								isPulsing={ true }
 								total={ 100 }
@@ -211,7 +201,7 @@ class VideoEditor extends Component {
 							{ translate( 'Select a frame to use as the thumbnail image or upload your own.' ) }
 						</span>
 						<VideoEditorButtons
-							isPosterUpdating={ !! uploadProgress && ! error }
+							isPosterUpdating={ uploadProgress && ! error }
 							isVideoLoading={ isLoading }
 							onCancel={ onCancel }
 							onSelectFrame={ this.handleSelectFrame }
@@ -228,14 +218,13 @@ class VideoEditor extends Component {
 export default connect(
 	( state ) => {
 		return {
-			hasPosterUpdateError: hasPosterUpdateError( state ),
-			isPosterUpdated: isPosterUpdated( state ),
 			posterUrl: getPosterUrl( state ),
+			shouldCloseModal: shouldCloseVideoEditorModal( state ),
+			shouldShowError: shouldShowVideoEditorError( state ),
 			uploadProgress: getPosterUploadProgress( state ),
 		};
 	},
 	dispatch => bindActionCreators( {
-		resetState,
 		updatePoster,
 	}, dispatch ),
 )( localize( VideoEditor ) );
