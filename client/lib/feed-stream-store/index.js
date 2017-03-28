@@ -133,8 +133,15 @@ function getStoreForSearch( storeId ) {
 	const slug = idParts.slice( 2 ).join( ':' );
 	// We can use a feed stream when it's a strict date sort.
 	// This lets us go deeper than 20 pages and let's the results auto-update
-	const StreamClass = sort === 'date' ? FeedStream : PagedStream;
-	const stream = new StreamClass( {
+	const stream = sort === 'date' ? new FeedStream( {
+		id: storeId,
+		fetcher: fetcher,
+		keyMaker: siteKeyMaker,
+		perPage: 5,
+		onGapFetch: limitSiteParams,
+		onUpdateFetch: limitSiteParams,
+		maxUpdates: 20,
+	} ) : new PagedStream( {
 		id: storeId,
 		fetcher: fetcher,
 		keyMaker: siteKeyMaker,
