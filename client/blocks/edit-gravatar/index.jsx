@@ -31,6 +31,7 @@ import {
 	uploadGravatar
 } from 'state/current-user/gravatar-status/actions';
 import ImageEditor from 'blocks/image-editor';
+import InfoPopover from 'components/info-popover';
 
 /**
  * Module dependencies
@@ -158,8 +159,10 @@ export class EditGravatar extends Component {
 	render() {
 		const {
 			isUploading,
+			translate,
 			user
 		} = this.props;
+		const gravatarLink = `//gravatar.com/${ user.username || '' }`;
 		return (
 			<div className="edit-gravatar">
 				{ this.renderImageEditor() }
@@ -187,6 +190,30 @@ export class EditGravatar extends Component {
 						{ isUploading && <Spinner className="edit-gravatar__spinner" /> }
 						</div>
 				</FilePicker>
+				<div>
+					<p className="edit-gravatar__explanation">Your profile photo is public.</p>
+					<InfoPopover
+						className="edit-gravatar__pop-over"
+						position="left" >
+						{ translate( '{{p}}The avatar you use on WordPress.com comes ' +
+							'from {{a}}Gravatar{{/a}} - a universal avatar service.{{/p}}' +
+							'{{p}}Your photo may be displayed on other sites where ' +
+							'you use your email address %(email)s.{{/p}}',
+							{
+								components: {
+									a: <a
+										href={ gravatarLink }
+										target="_blank"
+										rel="noopener noreferrer" />,
+									p: <p />
+								},
+								args: {
+									email: user.email
+								}
+							}
+						) }
+					</InfoPopover>
+				</div>
 			</div>
 		);
 	}

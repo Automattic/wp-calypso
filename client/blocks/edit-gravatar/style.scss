@@ -82,3 +82,24 @@
 .edit-gravatar .spinner__border {
 	fill: rgba( $gray-dark, 0.5 );
 }
+
+.edit-gravatar__explanation {
+	color: $gray-text-min;
+	font-size: 13px;
+	font-style: italic;
+	font-weight: 400;
+	display: inline-block;
+	margin-top: 0.5em;
+}
+
+.edit-gravatar .info-popover {
+	vertical-align: middle;
+}
+
+.edit-gravatar__pop-over .external-link .gridicons-external { // specificity used to override margin
+	margin-left: 1px;
+}
+
+.edit-gravatar__pop-over p:last-of-type {
+	margin-bottom: 0;
+}
