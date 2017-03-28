@@ -15,9 +15,13 @@ export default function( router ) {
 
 	if ( config.isEnabled( 'manage/themes' ) ) {
 		if ( config.isEnabled( 'manage/themes-ssr' ) ) {
-			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?$`, fetchThemeDataWithCaching, loggedOut, makeLayout );
-			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?`, fetchThemeData, loggedOut, makeLayout );
-			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`, fetchThemeData, loggedOut, makeLayout );
+			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?`, fetchThemeDataWithCaching, loggedOut, makeLayout );
+			router(
+				`/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`,
+				fetchThemeDataWithCaching,
+				loggedOut,
+				makeLayout
+			);
 			router( '/design/upload/*', makeLayout );
 			router( '/design/*', fetchThemeData, loggedOut, makeLayout ); // Needed so direct hits don't result in a 404.
 		} else {
