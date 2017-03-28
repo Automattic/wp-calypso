@@ -14,6 +14,7 @@ import Gridicon from 'gridicons';
 import Search from 'components/search';
 import SegmentedControl from 'components/segmented-control';
 import Suggestions from 'components/suggestions';
+import StickyPanel from 'components/sticky-panel';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
 import { filterIsValid, getTaxonomies, } from '../theme-filters.js';
@@ -269,31 +270,33 @@ class ThemesMagicSearchCard extends React.Component {
 
 		return (
 			<div className={ magicSearchClass }>
-				<div
-					className={ themesSearchCardClass }
-					data-tip-target="themes-search-card"
-					onClick={ this.handleClickInside } >
-					{ searchField }
-					{ ! isMobile() && this.state.searchInput !== '' &&
-						<div className="themes-magic-search-card__icon" >
-							<Gridicon
-								icon="cross"
-								className="themes-magic-search-card__icon-close"
-								tabIndex="0"
-								onClick={ this.clearSearch }
-								aria-controls={ 'search-component-magic-search' }
-								aria-label={ translate( 'Clear Search' ) }
+				<StickyPanel>
+					<div
+						className={ themesSearchCardClass }
+						data-tip-target="themes-search-card"
+						onClick={ this.handleClickInside } >
+						{ searchField }
+						{ ! isMobile() && this.state.searchInput !== '' &&
+							<div className="themes-magic-search-card__icon" >
+								<Gridicon
+									icon="cross"
+									className="themes-magic-search-card__icon-close"
+									tabIndex="0"
+									onClick={ this.clearSearch }
+									aria-controls={ 'search-component-magic-search' }
+									aria-label={ translate( 'Clear Search' ) }
+								/>
+							</div>
+						}
+						{ isPremiumThemesEnabled && ! isJetpack &&
+							<SegmentedControl
+								initialSelected={ this.props.tier }
+								options={ tiers }
+								onSelect={ this.props.select }
 							/>
-						</div>
-					}
-					{ isPremiumThemesEnabled && ! isJetpack &&
-						<SegmentedControl
-							initialSelected={ this.props.tier }
-							options={ tiers }
-							onSelect={ this.props.select }
-						/>
-					}
-				</div>
+						}
+					</div>
+				</StickyPanel>
 				{ renderSuggestions &&
 					<Suggestions
 						ref="suggestions"
