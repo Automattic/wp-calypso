@@ -7,8 +7,8 @@ export function keyForPost( post ) {
 	}
 	if ( post.is_external ) {
 		return {
-			feedId: post.feed_ID,
-			postId: post.ID
+			feedId: post.feed_ID || post.site_ID,
+			postId: post.feed_item_ID || post.ID
 		};
 	}
 	return {
@@ -39,19 +39,19 @@ export function keysAreEqual( a, b ) {
 	return a.blogId === b.blogId;
 }
 
-// TODO add support for CombinedCard postKeys + Recs etc.
 export function keyToString( postKey ) {
-	if (
-			! postKey ||
-			postKey.isRecommendationBlock ||
-			postKey.isGap ||
-			postKey.isRecommendation ||
-			postKey.isCombination
-		) {
+	if ( ! postKey || postKey.isGap ) {
 		return null;
 	}
 
 	const feedId = postKey.feedId ? `&feedId=${ postKey.feedId }` : '';
 	const blogId = postKey.blogId ? `&feedId=${ postKey.blogId }` : '';
+
+	if ( postKey.isCombination ) {
+		return `postId=${ postKey.postIds[ 0 ] }${ feedId }${ blogId } `;
+	} else if ( postKey.isRecommendationBlock ) {
+		return `rec-${ postKey.index }`;
+	}
+
 	return `postId=${ postKey.postId }${ feedId }${ blogId } `;
 }
