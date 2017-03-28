@@ -12,7 +12,15 @@ import { connect } from 'react-redux';
  */
 import ReaderMain from 'components/reader-main';
 import EmptyContent from './empty';
-import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
+import {
+	fetchNextPage,
+	selectFirstItem,
+	selectItem,
+	selectNextItem,
+	selectPrevItem,
+	showUpdates,
+	shufflePosts,
+} from 'lib/feed-stream-store/actions';
 import LikeStore from 'lib/like-store/like-store';
 import LikeStoreActions from 'lib/like-store/actions';
 import LikeHelper from 'reader/like-helper';
@@ -103,7 +111,7 @@ class ReaderStream extends React.Component {
 		if ( recommendationsStore ) {
 			if ( ! recs || recs.length < posts.length * ( RECS_PER_BLOCK / getDistanceBetweenRecs() ) ) {
 				if ( ! recommendationsStore.isFetchingNextPage() ) {
-					defer( () => FeedStreamStoreActions.fetchNextPage( recommendationsStore.id ) );
+					defer( () => fetchNextPage( recommendationsStore.id ) );
 				}
 			}
 		}
@@ -267,7 +275,7 @@ class ReaderStream extends React.Component {
 		if ( this.state.updateCount && this.state.updateCount > 0 ) {
 			this.showUpdates();
 		} else {
-			FeedStreamStoreActions.selectFirstItem( this.props.postsStore.id );
+			selectFirstItem( this.props.postsStore.id );
 		}
 	}
 
@@ -278,7 +286,7 @@ class ReaderStream extends React.Component {
 	selectNextItem = () => {
 		// do we have a selected item? if so, just move to the next one
 		if ( this.state.selectedPostKey ) {
-			FeedStreamStoreActions.selectNextItem( this.props.postsStore.id );
+			selectNextItem( this.props.postsStore.id );
 			return;
 		}
 
@@ -317,7 +325,7 @@ class ReaderStream extends React.Component {
 				} else {
 					postKey.blogId = candidateItem.blogId;
 				}
-				FeedStreamStoreActions.selectItem( this.props.postsStore.id, postKey );
+				selectItem( this.props.postsStore.id, postKey );
 			}
 
 			// find the index of the post / gap in the posts array.
@@ -326,9 +334,9 @@ class ReaderStream extends React.Component {
 			// Use lastIndexOf to walk the array from right to left
 			const selectedPostKey = findLast( posts, items[ index ], index );
 			if ( keysAreEqual( selectedPostKey, this.state.selectedPostKey ) ) {
-				FeedStreamStoreActions.selectNextItem( this.props.postsStore.id );
+				selectNextItem( this.props.postsStore.id );
 			} else {
-				FeedStreamStoreActions.selectItem( this.props.postsStore.id, selectedPostKey );
+				selectItem( this.props.postsStore.id, selectedPostKey );
 			}
 		}
 	}
@@ -338,7 +346,7 @@ class ReaderStream extends React.Component {
 		// currently has a selected item. Otherwise do nothing.
 		// We avoid the magic here because we expect users to enter the flow using next, not previous.
 		if ( this.state.selectedPostKey ) {
-			FeedStreamStoreActions.selectPrevItem( this.props.postsStore.id );
+			selectPrevItem( this.props.postsStore.id );
 		}
 	}
 
@@ -349,14 +357,14 @@ class ReaderStream extends React.Component {
 		if ( options.triggeredByScroll ) {
 			this.props.trackScrollPage( this.props.postsStore.getPage() + 1 );
 		}
-		FeedStreamStoreActions.fetchNextPage( this.props.postsStore.id );
+		fetchNextPage( this.props.postsStore.id );
 	}
 
 	showUpdates = () => {
 		this.props.onUpdatesShown();
-		FeedStreamStoreActions.showUpdates( this.props.postsStore.id );
+		showUpdates( this.props.postsStore.id );
 		if ( this.props.recommendationsStore ) {
-			FeedStreamStoreActions.shufflePosts( this.props.recommendationsStore.id );
+			shufflePosts( this.props.recommendationsStore.id );
 		}
 		if ( this._list ) {
 			this._list.scrollToTop();

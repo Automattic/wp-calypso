@@ -11,7 +11,11 @@ import Gridicon from 'gridicons';
 import { translate } from 'i18n-calypso';
 import FollowButton from 'reader/follow-button';
 import { getLinkProps } from './helper';
-import * as discoverStats from './stats';
+import {
+	recordAuthorClick,
+	recordFollowToggle,
+	recordSiteClick,
+} from './stats';
 
 class DiscoverPostAttribution extends React.Component {
 
@@ -36,15 +40,15 @@ class DiscoverPostAttribution extends React.Component {
 	}
 
 	recordAuthorClick( ) {
-		discoverStats.recordAuthorClick( this.props.attribution.author_url );
+		recordAuthorClick( this.props.attribution.author_url );
 	}
 
 	recordSiteClick( ) {
-		discoverStats.recordSiteClick( this.props.siteUrl );
+		recordSiteClick( this.props.siteUrl );
 	}
 
 	recordFollowToggle( isFollowing ) {
-		discoverStats.recordFollowToggle( isFollowing, this.props.siteUrl );
+		recordFollowToggle( isFollowing, this.props.siteUrl );
 	}
 
 	render() {

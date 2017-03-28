@@ -10,7 +10,10 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import FollowButton from 'reader/follow-button';
 import { getLinkProps } from './helper';
-import * as discoverStats from './stats';
+import {
+	recordFollowToggle,
+	recordSiteClick,
+} from './stats';
 
 class DiscoverSiteAttribution extends React.Component {
 
@@ -33,11 +36,11 @@ class DiscoverSiteAttribution extends React.Component {
 	}
 
 	recordSiteClick() {
-		discoverStats.recordSiteClick( this.props.siteUrl );
+		recordSiteClick( this.props.siteUrl );
 	}
 
 	recordFollowToggle( isFollowing ) {
-		discoverStats.recordFollowToggle( isFollowing, this.props.siteUrl );
+		recordFollowToggle( isFollowing, this.props.siteUrl );
 	}
 
 	render() {

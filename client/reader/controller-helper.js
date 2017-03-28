@@ -10,7 +10,7 @@
 import analytics from 'lib/analytics';
 import { recordTrack } from 'reader/stats';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
+import { fetchNextPage } from 'lib/feed-stream-store/actions';
 import feedStreamFactory from 'lib/feed-stream-store';
 
 let storeId;
@@ -33,7 +33,7 @@ export function ensureStoreLoading( store, context ) {
 				store.startDate = startDate.format();
 			}
 		}
-		FeedStreamStoreActions.fetchNextPage( store.id );
+		fetchNextPage( store.id );
 	}
 	return store;
 }
