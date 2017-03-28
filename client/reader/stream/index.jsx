@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import { defer, findLast, noop, times, clamp } from 'lodash';
+import { defer, findLast, noop, times, clamp, identity, map } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -79,6 +79,7 @@ class ReaderStream extends React.Component {
 		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
 		shouldCombineCards: PropTypes.bool,
+		transformStreamItems: PropTypes.func,
 	}
 
 	static defaultProps = {
@@ -92,6 +93,7 @@ class ReaderStream extends React.Component {
 		showMobileBackToSidebar: true,
 		isDiscoverStream: false,
 		shouldCombineCards: config.isEnabled( 'reader/combined-cards' ),
+		transformStreamItems: identity,
 	};
 
 	getStateFromStores( store = this.props.postsStore, recommendationsStore = this.props.recommendationsStore ) {
@@ -114,6 +116,7 @@ class ReaderStream extends React.Component {
 		if ( this.props.shouldCombineCards ) {
 			items = combineCards( items );
 		}
+		items = map( items, this.props.transformStreamItems );
 
 		return {
 			items,

@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { Component } from 'react';
-import { initial, flatMap, trim, debounce } from 'lodash';
+import { initial, flatMap, trim, debounce, identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -129,6 +129,9 @@ class SearchStream extends Component {
 		const { query, suggestions } = this.props;
 		const emptyContent = <EmptyContent query={ query } />;
 		const sortOrder = this.props.postsStore && this.props.postsStore.sortOrder;
+		const transformStreamItems = ( ! query || query === '' )
+			? postKey => ( { ...postKey, isRecommendation: true } )
+			: identity;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -169,6 +172,7 @@ class SearchStream extends Component {
 				placeholderFactory={ this.placeholderFactory }
 				className="search-stream"
 				shouldCombineCards={ true }
+				transformStreamItems={ transformStreamItems }
 			>
 				{ this.props.showBack && <HeaderBack /> }
 				<DocumentHead title={ documentTitle } />

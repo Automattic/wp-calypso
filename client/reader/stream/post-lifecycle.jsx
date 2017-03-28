@@ -21,7 +21,7 @@ import Post from './post';
 import { IN_STREAM_RECOMMENDATION, COMBINED_CARD, } from 'reader/follow-button/follow-sources';
 import CombinedCard from 'blocks/reader-combined-card';
 import fluxPostAdapter from 'lib/reader-post-flux-adapter';
-import EmptySearchRecommendedPosts from './empty-search-rec';
+import EmptySearchRecommendedPost from './empty-search-recommended-post';
 
 const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );
 
@@ -105,7 +105,7 @@ export default class PostLifecycle extends React.PureComponent {
 				/>
 			);
 		} else if ( postKey.isRecommendation ) {
-			return <EmptySearchRecommendedPosts post={ post } site={ postKey } />;
+			return <EmptySearchRecommendedPost post={ post } site={ postKey } />;
 		} else if ( postKey.isGap ) {
 			return (
 				<ListGap
