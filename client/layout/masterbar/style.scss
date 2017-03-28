@@ -23,7 +23,8 @@ $autobar-height: 20px;
 		border-bottom: 1px solid darken( $orange-jazzy, 4% );
 	}
 
-	.is-section-theme & {
+	.is-section-theme &,
+	.is-section-themes.has-no-sidebar & {
 		border: none;
 	}
 

@@ -20,7 +20,8 @@
 		padding-left: 32px;
 	}
 
-	.is-section-theme & {
+	.is-section-theme &,
+	.is-section-themes.has-no-sidebar & {
 		padding: 0;
 		margin: 0;
 	}
@@ -39,7 +40,8 @@
 			padding-left: 24px;
 		}
 
-		.is-section-theme & {
+		.is-section-theme &,
+		.is-section-themes.has-no-sidebar & {
 			padding: 0;
 			margin: 0;
 		}
