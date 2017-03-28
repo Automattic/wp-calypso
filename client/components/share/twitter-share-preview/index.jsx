@@ -12,7 +12,7 @@ export class TwitterSharePreview extends PureComponent {
 			externalName,
 			message,
 			articleUrl,
-			imageUrl
+			imageUrl,
 		} = this.props;
 
 		return (
