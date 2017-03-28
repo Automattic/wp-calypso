@@ -10,6 +10,7 @@ var PayButton = require( './pay-button' ),
 	PaymentBox = require( './payment-box' ),
 	TermsOfService = require( './terms-of-service' );
 
+import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/upgrades/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import config from 'config';
@@ -22,6 +23,7 @@ var CreditsPaymentBox = React.createClass( {
 		const hasBusinessPlanInCart = some( cart.products, { product_slug: PLAN_BUSINESS } );
 		const showPaymentChatButton =
 			config.isEnabled( 'upgrades/presale-chat' ) &&
+			abtest( 'presaleChatButton' ) === 'showChatButton' &&
 			hasBusinessPlanInCart;
 
 		return (
