@@ -27,4 +27,16 @@ describe( 'getAccountRecoveryResetRequestError()', () => {
 
 		assert.deepEqual( getAccountRecoveryResetRequestError( state ), error );
 	} );
+
+	it( 'should return null when there is no error stored in the request-reset substate tree.', () => {
+		const state = deepFreeze( {
+			accountRecovery: {
+				reset: {
+					requestReset: {}
+				},
+			},
+		} );
+
+		assert.isNull( getAccountRecoveryResetRequestError( state ) );
+	} );
 } );
