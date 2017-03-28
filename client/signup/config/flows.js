@@ -58,7 +58,7 @@ const flows = {
 	},
 
 	business: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/business/' + dependencies.siteSlug;
 		},
@@ -70,7 +70,7 @@ const flows = {
 	},
 
 	premium: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/premium/' + dependencies.siteSlug;
 		},
@@ -82,7 +82,7 @@ const flows = {
 	},
 
 	free: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'user' ],
 		destination: getSiteDestination,
 		description: 'Create an account and a blog and default to the free plan.',
 		lastModified: '2016-06-02'
@@ -103,7 +103,7 @@ const flows = {
 	},
 
 	main: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'The current best performing flow in AB tests',
 		lastModified: '2016-05-23'
@@ -117,7 +117,7 @@ const flows = {
 	},
 
 	website: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'This flow was originally used for the users who clicked "Create Website" ' +
 			'on the two-button homepage. It is now linked to from the default homepage CTA as ' +
@@ -126,7 +126,7 @@ const flows = {
 	},
 
 	blog: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'This flow was originally used for the users who clicked "Create Blog" on ' +
 			'the two-button homepage. It is now used from blog-specific landing pages so that ' +
@@ -135,7 +135,7 @@ const flows = {
 	},
 
 	personal: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/personal/' + dependencies.siteSlug;
 		},
@@ -159,7 +159,7 @@ const flows = {
 	},
 
 	'delta-blog': {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'A copy of the `blog` flow for the Delta email campaigns. Half of users who go ' +
 			'through this flow receive a blogging-specific drip email series.',
@@ -167,7 +167,7 @@ const flows = {
 	},
 
 	'delta-site': {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'A copy of the `website` flow for the Delta email campaigns. Half of users who go ' +
 			'through this flow receive a website-specific drip email series.',
@@ -175,7 +175,7 @@ const flows = {
 	},
 
 	desktop: {
-		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getPostsDestination,
 		description: 'Signup flow for desktop app',
 		lastModified: '2016-05-30'
@@ -189,7 +189,7 @@ const flows = {
 	},
 
 	pressable: {
-		steps: [ 'survey', 'design-type-with-store', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'design-type-with-store', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'Signup flow for testing the pressable-store step',
 		lastModified: '2016-06-27'
@@ -372,7 +372,7 @@ const Flows = {
 		 */
 		if ( 'main' === flowName ) {
 			if ( '' === stepName ) {
-				// e.g. abtest( 'siteTitleStep' );
+				abtest( 'signupSurveyStep' );
 			}
 		}
 	},
@@ -392,16 +392,9 @@ const Flows = {
 	getABTestFilteredFlow( flowName, flow ) {
 		// Only do this on the main flow
 		if ( 'main' === flowName ) {
-			/* e.g.:
-			if ( getABTestVariation( 'siteTitleStep' ) === 'showSiteTitleStep' ) {
-				return Flows.insertStepIntoFlow( 'site-title', flow );
+			if ( abtest( 'signupSurveyStep' ) === 'showSurveyStep' ) {
+				return Flows.insertStepIntoFlow( 'survey', flow );
 			}
-			*/
-		}
-
-		// no matter the flow
-		if ( abtest( 'signupSurveyStep' ) === 'hideSurveyStep' ) {
-			return Flows.removeStepFromFlow( 'survey', flow );
 		}
 
 		return flow;
