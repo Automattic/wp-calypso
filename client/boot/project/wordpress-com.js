@@ -33,15 +33,6 @@ const config = require( 'config' ),
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
-export function utils() {
-	debug( 'Executing WordPress.com utils.' );
-
-	// prune sync-handler records more than two days old
-	syncHandler.pruneStaleRecords( '2 days' );
-
-	translatorJumpstart.init();
-}
-
 function renderLayout( reduxStore ) {
 	const Layout = require( 'controller' ).ReduxWrappedLayout;
 
@@ -57,22 +48,35 @@ function renderLayout( reduxStore ) {
 	debug( 'Main layout rendered.' );
 }
 
-export function setupMiddlewares( currentUser, reduxStore ) {
-	debug( 'Executing WordPress.com setup middlewares.' );
+export function utils() {
+	debug( 'Executing WordPress.com utils.' );
 
-	let layoutSection;
+	// prune sync-handler records more than two days old
+	syncHandler.pruneStaleRecords( '2 days' );
+
+	translatorJumpstart.init();
+}
+
+export const configureReduxStore = ( currentUser, reduxStore ) => {
+	debug( 'Executing WordPress.com configure Redux store.' );
 
 	supportUser.setReduxStore( reduxStore );
 
 	if ( currentUser.get() ) {
-		// When logged in the analytics module requires user and superProps objects
-		// Inject these here
-		analytics.initialize( currentUser, superProps ); // GENERIC hopefully, probably not
-
 		if ( config.isEnabled( 'push-notifications' ) ) {
 			// If the browser is capable, registers a service worker & exposes the API
 			reduxStore.dispatch( pushNotificationsInit() );
 		}
+	}
+};
+
+export function setupMiddlewares( currentUser, reduxStore ) {
+	debug( 'Executing WordPress.com setup middlewares.' );
+
+	if ( currentUser.get() ) {
+		// When logged in the analytics module requires user and superProps objects
+		// Inject these here
+		analytics.initialize( currentUser, superProps );
 	} else {
 		analytics.setSuperProps( superProps );
 	}
@@ -112,7 +116,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 	// This can be removed when the legacy version is retired.
 	page( '*', function( context, next ) { // FACTOR INTO ONE MIDDLEWARE
 		if ( [ 'sb', 'sp' ].indexOf( context.querystring ) !== -1 ) {
-			layoutSection = ( context.querystring === 'sb' ) ? 'sidebar' : 'sites';
+			const layoutSection = ( context.querystring === 'sb' ) ? 'sidebar' : 'sites';
 			reduxStore.dispatch( setNextLayoutFocus( layoutSection ) );
 			page.replace( context.pathname );
 		}
@@ -221,7 +225,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 	} ); // GENERIC
 
 	// clear notices
-	//TODO: remove this one when notices are reduxified - it is for old notices // MOVE
+	//TODO: remove this one when notices are reduxified - it is for old notices
 	page( '*', require( 'notices' ).clearNoticesOnNavigation );
 
 	if ( config.isEnabled( 'olark' ) ) {
