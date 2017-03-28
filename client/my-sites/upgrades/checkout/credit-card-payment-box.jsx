@@ -41,7 +41,7 @@ var CreditCardPaymentBox = React.createClass( {
 	},
 
 	tick: function() {
-		const elasped = this.state.elapsed + 1 / 100 * ( 100 - this.state.elapsed );
+		const elasped = this.state.elapsed + 1 / 200 * ( 100 - this.state.elapsed );
 		this.setState( {
 			elapsed: elasped
 		} );
@@ -59,16 +59,12 @@ var CreditCardPaymentBox = React.createClass( {
 				return true;
 
 			case transactionStepTypes.SUBMITTING_PAYMENT_KEY_REQUEST:
-				return true;
-
 			case transactionStepTypes.RECEIVED_PAYMENT_KEY_RESPONSE:
-				return true;
-
 			case transactionStepTypes.SUBMITTING_WPCOM_REQUEST:
 				return true;
 
 			case transactionStepTypes.RECEIVED_WPCOM_RESPONSE:
-				if ( this.props.transactionStep.error || ! this.props.transactionStep.data.success ) {
+				if ( transactionStep.error || ! transactionStep.data.success ) {
 					return false;
 				}
 				return true;
@@ -142,11 +138,19 @@ var CreditCardPaymentBox = React.createClass( {
 		);
 	},
 
+	submit: function( event ) {
+		event.preventDefault();
+		this.setState( {
+			elapsed: 0
+		} );
+		this.props.onSubmit( event );
+	},
+
 	content: function() {
 		var cart = this.props.cart;
 
 		return (
-			<form autoComplete="off" onSubmit={ this.props.onSubmit }>
+			<form autoComplete="off" onSubmit={ this.submit }>
 				<CreditCardSelector
 					cards={ this.props.cards }
 					countriesList={ this.props.countriesList }
