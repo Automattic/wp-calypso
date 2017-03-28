@@ -49,7 +49,7 @@ describe( 'ResetPasswordForm', () => {
 	context( 'fields', () => {
 		useFakeDom();
 
-		it( 'should be disabled while isRequesting is on.', function() {
+		it( 'should be disabled while isRequesting is true.', function() {
 			const wrapper = mount(
 				<ResetPasswordFormComponent
 					resetOptions={ exampleResetOptions }
@@ -81,7 +81,7 @@ describe( 'ResetPasswordForm', () => {
 			expect( wrapper.find( '.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 		} );
 
-		it( 'should be disabled when isRequesting is on', function() {
+		it( 'should be disabled when isRequesting is true.', function() {
 			const wrapper = mount(
 				<ResetPasswordFormComponent
 					resetOptions={ exampleResetOptions }
