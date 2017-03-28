@@ -135,9 +135,3 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 
 	// TODO: move other middlewares from project specific file
 };
-
-export const loadSections = () => {
-	debug( 'Executing Calypso load sections.' );
-
-	// TODO: move from project specific file
-};

@@ -179,15 +179,13 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		page( '*', require( 'auth/controller' ).checkToken );
 	}
 
-	// Load the application modules for the various sections and features
-	const sections = require( 'sections' ); // GENERIC
-	sections.load(); // GENERIC
-
 	// delete any lingering local storage data from signup
 	if ( ! startsWith( window.location.pathname, '/start' ) ) {
 		[ 'signupProgress', 'signupDependencies' ].forEach( store.remove );
 	}
 
+	// Load the application modules for the various sections and features
+	const sections = require( 'sections' );
 	validSections = sections.get().reduce( function( acc, section ) {
 		return section.enableLoggedOut ? acc.concat( section.paths ) : acc;
 	}, [] ); // GENERIC

@@ -42,7 +42,8 @@ const boot = currentUser => {
 	createReduxStoreFromPersistedInitialState( reduxStore => {
 		callWithProject( 'configureReduxStore', currentUser, reduxStore );
 		callWithProject( 'setupMiddlewares', currentUser, reduxStore );
-		callWithProject( 'loadSections' );
+		// We need to require sections to load React with i18n mixin
+		require( 'sections' ).load();
 
 		detectHistoryNavigation.start();
 		page.start();
