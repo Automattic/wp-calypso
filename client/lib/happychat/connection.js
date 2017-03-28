@@ -64,18 +64,6 @@ class Connection extends EventEmitter {
 		);
 	}
 
-	sendEvent( message ) {
-		this.openSocket.then(
-			socket => socket.emit( 'message', {
-				text: message,
-				id: uuid(),
-				type: 'customer-event',
-				meta: { forOperator: true, event_type: 'customer-event' }
-			} ),
-			e => debug( 'failed to send message', e )
-		);
-	}
-
 	info( message ) {
 		this.openSocket.then(
 			socket => socket.emit( 'message', { text: message.text, id: uuid(), meta: { forOperator: true } } ),
