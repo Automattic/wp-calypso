@@ -8,7 +8,6 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
 import {
 	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_CONNECTED,
@@ -21,88 +20,32 @@ import {
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
 } from 'state/action-types';
-import { getHappychatConnectionStatus } from './selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 // This import will be deleted when the refactor is complete:
 import { connection } from './common';
 
 const debug = require( 'debug' )( 'calypso:happychat:actions' );
 
-// Promise based interface for wpcom.request
-const request = ( ... args ) => new Promise( ( resolve, reject ) => {
-	wpcom.request( ... args, ( error, response ) => {
-		if ( error ) {
-			return reject( error );
-		}
-		resolve( response );
-	} );
-} );
-
-const sign = ( payload ) => request( {
-	method: 'POST',
-	path: '/jwt/sign',
-	body: { payload: JSON.stringify( payload ) }
-} );
-
-const startSession = () => request( {
-	method: 'POST',
-	path: '/happychat/session' }
-);
-
-const setHappychatChatStatus = status => ( {
+export const setHappychatChatStatus = status => ( {
 	type: HAPPYCHAT_SET_CHAT_STATUS, status
 } );
-
 export const requestChatTranscript = () => ( { type: HAPPYCHAT_TRANSCRIPT_REQUEST } );
 export const receiveChatTranscript = ( messages, timestamp ) => ( {
 	type: HAPPYCHAT_TRANSCRIPT_RECEIVE, messages, timestamp
 } );
 
 const setChatConnecting = () => ( { type: HAPPYCHAT_CONNECTING } );
-const setChatConnected = () => ( { type: HAPPYCHAT_CONNECTED } );
+export const setChatConnected = () => ( { type: HAPPYCHAT_CONNECTED } );
 
-const setHappychatAvailable = isAvailable => ( { type: HAPPYCHAT_SET_AVAILABLE, isAvailable } );
+export const setHappychatAvailable = isAvailable => ( { type: HAPPYCHAT_SET_AVAILABLE, isAvailable } );
 
 export const setChatMessage = message => ( { type: HAPPYCHAT_SET_MESSAGE, message } );
 export const clearChatMessage = () => setChatMessage( '' );
 
-const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
+export const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
 
 export const sendBrowserInfo = siteUrl => ( { type: HAPPYCHAT_SEND_BROWSER_INFO, siteUrl } );
 
-/**
- * Opens Happychat Socket.IO client connection.
- * @return {Thunk} Action thunk
- */
-export const connectChat = () => ( dispatch, getState ) => {
-	const state = getState();
-	const user = getCurrentUser( state );
-	const locale = getCurrentUserLocale( state );
-
-	debug( 'opening with chat locale', locale );
-
-	// if chat is already connected then do nothing
-	if ( getHappychatConnectionStatus( state ) === 'connected' ) {
-		return;
-	}
-	dispatch( setChatConnecting() );
-	// create new session id and get signed identity data for authenticating
-	startSession()
-	.then( ( { session_id } ) => sign( { user, session_id } ) )
-	.then( ( { jwt } ) => connection.open( user.ID, jwt, locale ) )
-	.then(
-		() => {
-			dispatch( setChatConnected() );
-			dispatch( requestChatTranscript() );
-			connection
-			.on( 'message', event => dispatch( receiveChatEvent( event ) ) )
-			.on( 'status', status => dispatch( setHappychatChatStatus( status ) ) )
-			.on( 'accept', accept => dispatch( setHappychatAvailable( accept ) ) );
-		},
-		e => debug( 'failed to start happychat session', e, e.stack )
-	);
-};
+export const connectChat = () => ( { type: HAPPYCHAT_CONNECTING } );
 
 export const sendChatMessage = message => ( { type: HAPPYCHAT_SEND_MESSAGE, message } );
