@@ -25,9 +25,15 @@
 	margin-right: 10px;
 }
 
-.wp-super-cache__directly-cached-files {
-	.form-text-input,
-	.form-text-input-with-action {
-		width: 300px;
-	}
+.wp-super-cache__clock {
+	margin-top: 5px;
+}
+
+.wp-super-cache__interval {
+	margin: 10px 0 0 24px;
+}
+
+.wp-super-cache__directly-cached-files .form-text-input,
+.wp-super-cache__directly-cached-files .form-text-input-with-action {
+	width: 300px;
 }

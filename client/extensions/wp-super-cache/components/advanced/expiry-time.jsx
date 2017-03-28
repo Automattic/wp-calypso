@@ -87,7 +87,7 @@ const ExpiryTime = ( {
 					{ translate( 'Check for stale cached files every interval seconds.' ) }
 				</FormSettingExplanation>
 
-				<FormLabel>
+				<FormLabel className="wp-super-cache__clock">
 					<FormRadio
 						checked={ 'time' === cache_schedule_type }
 						name="cache_schedule_type"
@@ -106,31 +106,27 @@ const ExpiryTime = ( {
 					{ translate( 'Check for stale cached files at this time (UTC) or starting at this time ' +
 						'every interval below.' ) }
 				</FormSettingExplanation>
-			</FormFieldset>
-		);
-	};
 
-	const renderInterval = () => {
-		return (
-			<FormFieldset>
-				<FormLabel htmlFor="cache_schedule_interval">
-					{ translate( 'Interval' ) }
-				</FormLabel>
+				<div className="wp-super-cache__interval">
+					<FormLabel htmlFor="cache_schedule_interval">
+						{ translate( 'Interval' ) }
+					</FormLabel>
 
-				<FormSelect
-					id="cache_schedule_interval"
-					disabled={ 'time' !== cache_schedule_type }
-					name="cache_schedule_interval"
-					onChange={ handleSelect }
-					value={ cache_schedule_interval || 'five_minutes_interval' }>
-					<option value="five_minutes_interval">{ translate( 'Once every five minutes' ) }</option>
-					<option value="jetpack_sync_interval">{ translate( 'Every 5 minutes' ) }</option>
-					<option value="minutes_10">{ translate( 'Every 10 minutes' ) }</option>
-					<option value="minutes_30">{ translate( 'Every 30 minutes' ) }</option>
-					<option value="hourly">{ translate( 'Once Hourly' ) }</option>
-					<option value="twicedaily">{ translate( 'Twice Daily' ) }</option>
-					<option value="daily">{ translate( 'Once Daily' ) }</option>
-				</FormSelect>
+					<FormSelect
+						id="cache_schedule_interval"
+						disabled={ 'time' !== cache_schedule_type }
+						name="cache_schedule_interval"
+						onChange={ handleSelect }
+						value={ cache_schedule_interval || 'five_minutes_interval' }>
+						<option value="five_minutes_interval">{ translate( 'Once every five minutes' ) }</option>
+						<option value="jetpack_sync_interval">{ translate( 'Every 5 minutes' ) }</option>
+						<option value="minutes_10">{ translate( 'Every 10 minutes' ) }</option>
+						<option value="minutes_30">{ translate( 'Every 30 minutes' ) }</option>
+						<option value="hourly">{ translate( 'Once Hourly' ) }</option>
+						<option value="twicedaily">{ translate( 'Twice Daily' ) }</option>
+						<option value="daily">{ translate( 'Once Daily' ) }</option>
+					</FormSelect>
+				</div>
 			</FormFieldset>
 		);
 	};
@@ -189,7 +185,6 @@ const ExpiryTime = ( {
 				<form>
 					{ renderCacheTimeout() }
 					{ renderScheduler() }
-					{ renderInterval() }
 					{ renderNotificationEmails() }
 				</form>
 			</Card>
