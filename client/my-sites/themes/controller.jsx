@@ -16,7 +16,7 @@ import Upload from 'my-sites/themes/theme-upload';
 import trackScrollPage from 'lib/track-scroll-page';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 import { requestThemes, receiveThemes, setBackPath } from 'state/themes/actions';
-import { getThemesForQuery } from 'state/themes/selectors';
+import { getThemesForQuery, getThemesFoundForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 
 const debug = debugFactory( 'calypso:themes' );
@@ -113,7 +113,7 @@ export function fetchThemeData( context, next, shouldUseCache = false ) {
 		const cachedData = themesQueryCache.get( cacheKey );
 		if ( cachedData ) {
 			debug( `found theme data in cache key=${ cacheKey }` );
-			context.store.dispatch( receiveThemes( cachedData.themes, siteId ) );
+			context.store.dispatch( receiveThemes( cachedData.themes, siteId, query, cachedData.found ) );
 			context.renderCacheKey = context.path + cachedData.timestamp;
 			return next();
 		}
@@ -123,8 +123,9 @@ export function fetchThemeData( context, next, shouldUseCache = false ) {
 		.then( () => {
 			if ( shouldUseCache ) {
 				const themes = getThemesForQuery( context.store.getState(), siteId, query );
+				const found = getThemesFoundForQuery( context.store.getState(), siteId, query );
 				const timestamp = Date.now();
-				themesQueryCache.set( cacheKey, { themes, timestamp } );
+				themesQueryCache.set( cacheKey, { themes, found, timestamp } );
 				context.renderCacheKey = context.path + timestamp;
 				debug( `caching theme data key=${ cacheKey }` );
 			}
