@@ -91,6 +91,7 @@
 
 .reader-combined-card__post-list {
 	margin-left: 0;
+	margin-bottom: 18px;
 }
 
 .reader-combined-card__post {
@@ -152,6 +153,10 @@
 		.reader-combined-card__post-author-and-time {
 			display: flex;
 		}
+	}
+
+	&:last-of-type {
+		margin-bottom: 18px;
 	}
 }
 
