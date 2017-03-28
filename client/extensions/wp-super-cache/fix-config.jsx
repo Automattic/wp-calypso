@@ -9,7 +9,7 @@ import React from 'react';
 import Button from 'components/button';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import WrapSettingsForm from '../wrap-settings-form';
+import WrapSettingsForm from './wrap-settings-form';
 
 const FixConfig = ( { translate } ) => {
 	return (

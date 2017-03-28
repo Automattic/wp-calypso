@@ -17,7 +17,7 @@ import FixConfig from './fix-config';
 import LockDown from './lock-down';
 import Miscellaneous from './miscellaneous';
 import RejectedUserAgents from './rejected-user-agents';
-import WrapSettingsForm from '../wrap-settings-form';
+import WrapSettingsForm from './wrap-settings-form';
 
 const AdvancedTab = ( {
 	fields: {

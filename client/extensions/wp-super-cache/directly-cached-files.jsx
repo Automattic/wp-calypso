@@ -14,7 +14,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 import SectionHeader from 'components/section-header';
-import WrapSettingsForm from '../wrap-settings-form';
+import WrapSettingsForm from './wrap-settings-form';
 
 const DirectlyCachedFiles = ( {
 	fields: {

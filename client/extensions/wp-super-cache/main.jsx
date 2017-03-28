@@ -6,10 +6,10 @@ import React, { PropTypes } from 'react';
 /**
  * Internal dependencies
  */
-import AdvancedTab from './components/advanced';
-import Easy from './components/easy/easy';
+import AdvancedTab from './advanced-tab';
+import Easy from './easy';
 import Main from 'components/main';
-import Navigation from './components/navigation';
+import Navigation from './navigation';
 import { Tabs } from './constants';
 
 const WPSuperCache = ( { site, tab } ) => {

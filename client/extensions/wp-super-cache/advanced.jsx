@@ -14,7 +14,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
-import WrapSettingsForm from '../wrap-settings-form';
+import WrapSettingsForm from './wrap-settings-form';
 
 const Advanced = ( {
 	fields: {

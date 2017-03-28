@@ -10,7 +10,7 @@ import { pick } from 'lodash';
 import Button from 'components/button';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import WrapSettingsForm from '../wrap-settings-form';
+import WrapSettingsForm from './wrap-settings-form';
 
 const LockDown = ( {
 	fields: {

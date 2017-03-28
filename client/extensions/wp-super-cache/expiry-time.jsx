@@ -18,7 +18,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
-import WrapSettingsForm from '../wrap-settings-form';
+import WrapSettingsForm from './wrap-settings-form';
 
 const ExpiryTime = ( {
 	fields: {

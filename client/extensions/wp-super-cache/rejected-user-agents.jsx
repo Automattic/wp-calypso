@@ -13,7 +13,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextarea from 'components/forms/form-textarea';
 import SectionHeader from 'components/section-header';
-import WrapSettingsForm from '../wrap-settings-form';
+import WrapSettingsForm from './wrap-settings-form';
 
 const RejectedUserAgents = ( {
 	fields: {
