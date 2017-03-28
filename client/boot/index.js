@@ -50,11 +50,11 @@ var config = require( 'config' ),
 	syncHandler = require( 'lib/wp/sync-handler' ),
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	supportUser = require( 'lib/user/support-user-interop' ),
-	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default;
+	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default,
+	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
 
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 function init() {
 	var i18nLocaleStringsObject = null;
