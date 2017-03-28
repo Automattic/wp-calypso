@@ -4,11 +4,13 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
+import Card from 'components/card';
 import RecommendationSelect from './recommendation-select';
 import {
 	submitNpsSurvey,
@@ -49,49 +51,57 @@ class NpsSurvey extends Component {
 	}
 
 	render() {
+		const { translate } = this.props;
+
 		const className = classNames( 'nps-survey', {
 			'is-recommendation-selected': Number.isInteger( this.state.score ),
 			'is-submitted': this.props.hasAnswered,
 		} );
 
 		return (
-			<div className={ className }>
+			<Card className={ className }>
 				<div className="nps-survey__question-screen">
-					<div>How likely is it that you would recommend WordPress.com to your friends, family, or colleagues?</div>
-					<div>
+					<div className="nps-survey__question">
+						{ translate( 'How likely are you to recommend WordPress.com to your friends, family, or colleagues?' ) }
+					</div>
+					<div className="nps-survey__recommendation-select-wrapper">
 						<RecommendationSelect
 							value={ this.state.score }
 							disabled={ this.props.hasAnswered }
 							onChange={ this.handleRecommendationSelectChange }
 						/>
 					</div>
-					<div>
+					<div className="nps-survey__buttons">
 						<Button primary
 							className="nps-survey__finish-button"
 							disabled={ this.props.hasAnswered }
 							onClick={ this.handleFinishClick }
 						>
-							Finish
+							{ translate( 'Finish', { context: 'verb' } ) }
 						</Button>
 						<Button borderless
+							className="nps-survey__not-answer-button"
 							disabled={ this.props.hasAnswered }
 							onClick={ this.handleDismissClick }
 						>
-							I'd rather not answer
+							{ translate( 'I\'d rather not answer' ) }
 						</Button>
 					</div>
 				</div>
 				<div className="nps-survey__thank-you-screen">
-					Thanks for providing your feedback!
-					<div>
+					<div className="nps-survey__thank-you">
+						{ translate( 'Thanks for your feedback!' ) }
+					</div>
+					<div className="nps-survey__buttons">
 						<Button primary
+							className="nps-survey__dismiss-button"
 							onClick={ this.props.onClose }
 						>
-							Dismiss
+							Close
 						</Button>
 					</div>
 				</div>
-		</div>
+		</Card>
 		);
 	}
 }
@@ -106,7 +116,10 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ submitNpsSurvey, submitNpsSurveyWithNoScore }
-)( NpsSurvey );
+export default
+	connect(
+		mapStateToProps,
+		{ submitNpsSurvey, submitNpsSurveyWithNoScore }
+	)( localize(
+		NpsSurvey
+	) );
