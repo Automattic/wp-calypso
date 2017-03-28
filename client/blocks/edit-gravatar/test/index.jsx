@@ -20,6 +20,7 @@ describe( 'EditGravatar', function() {
 		Gravatar,
 		ImageEditor,
 		VerifyEmailDialog,
+		DropZone,
 		sandbox;
 	const user = {
 		email_verified: false
@@ -47,6 +48,7 @@ describe( 'EditGravatar', function() {
 		Gravatar = require( 'components/gravatar' ).default;
 		ImageEditor = require( 'blocks/image-editor' );
 		VerifyEmailDialog = require( 'components/email-verification/email-verification-dialog' );
+		DropZone = require( 'components/drop-zone' ).default;
 	} );
 
 	describe( 'component rendering', () => {
@@ -80,6 +82,32 @@ describe( 'EditGravatar', function() {
 				/>
 			);
 			expect( wrapper.find( ImageEditor ).length ).to.equal( 0 );
+		} );
+
+		describe( 'drag and drop', () => {
+			it( 'does not contain a drop zone for unverified users', () => {
+				const wrapper = shallow(
+					<EditGravatar
+						translate={ noop }
+						user={ {
+							email_verified: false
+						} }
+					/>
+				);
+				expect( wrapper.find( DropZone ) ).to.have.length( 0 );
+			} );
+
+			it( 'contains a drop zone for verified users', () => {
+				const wrapper = shallow(
+					<EditGravatar
+						translate={ noop }
+						user={ {
+							email_verified: true
+						} }
+					/>
+				);
+				expect( wrapper.find( DropZone ) ).to.have.length( 1 );
+			} );
 		} );
 	} );
 
