@@ -25,6 +25,7 @@ import {
 } from 'state/action-types';
 import { connectionsSchema } from './schema';
 import { createReducer } from 'state/utils';
+import sharePostActions from './publicize-actions/reducer';
 
 export const sharePostStatus = createReducer( {}, {
 	[ PUBLICIZE_SHARE ]: ( state, { siteId, postId } ) => ( { ...state, [ siteId ]: { ...state[ siteId ], [ postId ]: {
@@ -83,5 +84,6 @@ export default combineReducers( {
 	fetchingConnections,
 	fetchedConnections,
 	connections,
-	sharePostStatus
+	sharePostStatus,
+	sharePostActions,
 } );
