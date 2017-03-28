@@ -26,8 +26,11 @@ module.exports = {
 				// why we use it here instead of calling the property site_id
 				blog_id: selectedSite.ID,
 
+				// Tracks expects a blog_lang property to identify the blog language which is
+				// why we use it here instead of calling the property site_language
+				blog_lang: selectedSite.lang,
+
 				site_id_label: selectedSite.jetpack ? 'jetpack' : 'wpcom',
-				site_language: selectedSite.lang,
 				site_plan_id: selectedSite.plan ? selectedSite.plan.product_id : null,
 				site_post_count: selectedSite.post_count
 			};
