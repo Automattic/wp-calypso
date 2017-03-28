@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { compact, startsWith } from 'lodash';
+import { compact, isEmpty, startsWith } from 'lodash';
 import debugFactory from 'debug';
 import Lru from 'lru';
 import React from 'react';
@@ -138,8 +138,8 @@ export function fetchThemeData( context, next, shouldUseCache = false ) {
 }
 
 export function fetchThemeDataWithCaching( context, next ) {
-	if ( Object.keys( context.query ).length > 0 ) {
-		// Don't cache URLs with query params for now
+	if ( ! isEmpty( context.query ) ) {
+		// Don't cache URLs with query params
 		return fetchThemeData( context, next, false );
 	}
 
