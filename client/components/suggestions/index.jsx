@@ -248,7 +248,18 @@ const Suggestions = React.createClass( {
 			noOfSuggestions += suggestions[ key ].length;
 		}
 
-		return <div className="suggestions__suggestions">{ rendered }</div>;
+		if ( rendered.length ) {
+			return <div className="suggestions__suggestions">{ rendered }</div>;
+		}
+
+		// inform that there are no suggestions at all for input
+		return (
+			<div className="suggestions__suggestions">
+				<div className="suggestions__category" key={ 'nothing' }>
+					{ this.translate( 'No suggestions found, try different phrase' ) }
+				</div>
+			</div>
+		);
 	},
 
 	render() {

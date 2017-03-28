@@ -294,22 +294,26 @@ class ThemesMagicSearchCard extends React.Component {
 						/>
 					}
 				</div>
-				{ renderSuggestions &&
-					<Suggestions
-						ref="suggestions"
-						terms={ taxonomies }
-						input={ this.state.editedSearchElement }
-						suggest={ this.suggest }
-					/>
-				}
-				{ ! renderSuggestions &&
-					<MagicSearchWelcome
-						ref="welcome"
-						taxonomies={ taxonomiesKeys }
-						topSearches={ [] }
-						suggestionsCallback={ this.insertTextInInput }
-					/>
-				}
+				<div className="themes-magic-search-card__overflowHidden">
+					{ this.state.searchIsOpen && <div className="themes-magic-search-card__slideDown" >
+						{ renderSuggestions &&
+							<Suggestions
+								ref="suggestions"
+								terms={ taxonomies }
+								input={ this.state.editedSearchElement }
+								suggest={ this.suggest }
+							/>
+						}
+						{ ! renderSuggestions &&
+							<MagicSearchWelcome
+								ref="welcome"
+								taxonomies={ taxonomiesKeys }
+								topSearches={ [] }
+								suggestionsCallback={ this.insertTextInInput }
+							/>
+						}
+					</div> }
+				</div>
 			</div>
 		);
 	}
