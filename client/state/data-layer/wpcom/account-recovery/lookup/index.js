@@ -8,9 +8,12 @@ import { isString, tap } from 'lodash';
  */
 import wpcom from 'lib/wp';
 import { ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST } from 'state/action-types';
+import { ACCOUNT_RECOVERY_ROUTES } from 'state/account-recovery/reset/constants';
+
 import {
 	fetchResetOptionsSuccess,
 	fetchResetOptionsError,
+	transitToRoute,
 } from 'state/account-recovery/reset/actions';
 
 export const fromApi = data => ( [
@@ -37,7 +40,10 @@ export const handleRequestResetOptions = ( { dispatch }, { userData } ) => (
 		body: userData,
 		apiNamespace: 'wpcom/v2',
 		path: '/account-recovery/lookup',
-	} ).then( data => dispatch( fetchResetOptionsSuccess( fromApi( tap( data, validate ) ) ) ) )
+	} ).then( data => {
+		dispatch( fetchResetOptionsSuccess( fromApi( tap( data, validate ) ) ) );
+		dispatch( transitToRoute( ACCOUNT_RECOVERY_ROUTES.RESET_PASSWORD ) );
+	} )
 	.catch( error => dispatch( fetchResetOptionsError( error ) ) )
 );
 

@@ -13,9 +13,7 @@ import { getAccountRecoveryCurrentRoute } from 'state/selectors';
 const transit = ( ComposedComponent ) => {
 	const ResultComponent = class extends Component {
 		componentWillReceiveProps( nextProps ) {
-			if ( this.props.accountRecoveryCurrentRoute !== nextProps.accountRecoveryCurrentRoute ) {
-				page( nextProps.accountRecoveryCurrentRoute );
-			}
+			page( nextProps.accountRecoveryCurrentRoute );
 		}
 
 		render() {
