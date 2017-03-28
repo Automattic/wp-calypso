@@ -167,7 +167,7 @@ class RemovePurchase extends Component {
 		this.setState( { isRemoving: true } );
 
 		const purchase = getPurchase( this.props );
-		const { isDomainOnlySite, setAllSitesSelected, selectedSite, translate } = this.props;
+		const { isDomainOnlySite, selectedSite, translate } = this.props;
 
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
 			this.recordEvent( 'calypso_purchases_cancel_form_submit' );
@@ -211,7 +211,7 @@ class RemovePurchase extends Component {
 						// exists in `sites-list` as well as the global store.
 						receiveDeletedSiteDeprecated( selectedSite );
 						this.props.receiveDeletedSite( selectedSite );
-						setAllSitesSelected();
+						this.props.setAllSitesSelected();
 					}
 
 					notices.success(
