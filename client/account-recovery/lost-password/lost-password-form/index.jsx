@@ -26,6 +26,8 @@ import {
 	getAccountRecoveryResetOptionsError,
 } from 'state/selectors';
 
+import { ACCOUNT_RECOVERY_ROUTES } from 'account-recovery/constants';
+
 export class LostPasswordFormComponent extends Component {
 	submitForm = () => {
 		this.props.fetchResetOptionsByLogin( this.props.userLogin );
@@ -103,7 +105,7 @@ export class LostPasswordFormComponent extends Component {
 					>
 						{ translate( 'Get New Password' ) }
 					</Button>
-					<a href="/account-recovery/forgot-username" className="lost-password-form__forgot-username-link">
+					<a href={ ACCOUNT_RECOVERY_ROUTES.FORGOT_USERNAME } className="lost-password-form__forgot-username-link">
 						{ translate( 'Forgot your username?' ) }
 					</a>
 				</Card>
