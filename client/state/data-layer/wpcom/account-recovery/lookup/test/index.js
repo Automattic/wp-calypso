@@ -18,7 +18,10 @@ import {
 import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
+	ACCOUNT_RECOVERY_RESET_TRANSIT_TO_ROUTE,
 } from 'state/action-types';
+
+import { ACCOUNT_RECOVERY_ROUTES } from 'state/account-recovery/reset/constants';
 
 const validResponse = {
 	primary_email: 'a****@example.com',
@@ -66,12 +69,17 @@ describe( 'handleRequestResetOptions()', () => {
 		) );
 
 		it( 'should dispatch RECEIVE action on success', () => {
-			return handleRequestResetOptions( { dispatch }, { userData } ).then( () =>
+			return handleRequestResetOptions( { dispatch }, { userData } ).then( () => {
 				assert.isTrue( dispatch.calledWith( {
 					type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 					items: fromApi( validResponse ),
-				} ) )
-			);
+				} ) );
+
+				assert.isTrue( dispatch.calledWith( {
+					type: ACCOUNT_RECOVERY_RESET_TRANSIT_TO_ROUTE,
+					route: ACCOUNT_RECOVERY_ROUTES.RESET_PASSWORD,
+				} ) );
+			} );
 		} );
 	} );
 

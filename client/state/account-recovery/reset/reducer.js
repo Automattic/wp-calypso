@@ -13,7 +13,10 @@ import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
 	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
+	ACCOUNT_RECOVERY_RESET_TRANSIT_TO_ROUTE,
 } from 'state/action-types';
+
+import { ACCOUNT_RECOVERY_ROUTES } from './constants';
 
 const options = combineReducers( {
 	isRequesting: createReducer( false, {
@@ -44,7 +47,12 @@ const userData = createReducer( {}, {
 	} ),
 } );
 
+const currentRoute = createReducer( ACCOUNT_RECOVERY_ROUTES.ROOT, {
+	[ ACCOUNT_RECOVERY_RESET_TRANSIT_TO_ROUTE ]: ( state, { route } ) => route,
+} );
+
 export default combineReducers( {
 	options,
 	userData,
+	currentRoute,
 } );
