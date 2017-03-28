@@ -93,6 +93,13 @@ const loggedOutMiddleware = currentUser => {
 	} );
 };
 
+const oauthTokenMiddleware = () => {
+	if ( config.isEnabled( 'oauth' ) ) {
+		// Forces OAuth users to the /login page if no token is present
+		page( '*', require( 'auth/controller' ).checkToken );
+	}
+};
+
 const clearNoticesMiddleware = () => {
 	page( '*', function( context, next ) {
 		context.store.dispatch( setRouteAction(
@@ -105,6 +112,11 @@ const clearNoticesMiddleware = () => {
 
 	//TODO: remove this one when notices are reduxified - it is for old notices
 	page( '*', require( 'notices' ).clearNoticesOnNavigation );
+};
+
+const unsavedFormsMiddleware = () => {
+	// warn against navigating from changed, unsaved forms
+	page.exit( '*', require( 'lib/protect-form' ).checkFormHandler );
 };
 
 export const locales = currentUser => {
@@ -171,5 +183,7 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 
 	setupContextMiddleware( reduxStore );
 	loggedOutMiddleware( currentUser );
+	oauthTokenMiddleware();
 	clearNoticesMiddleware();
+	unsavedFormsMiddleware();
 };

@@ -133,9 +133,6 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		return normalize( context, next );
 	} );
 
-	// warn against navigating from changed, unsaved forms
-	page.exit( '*', require( 'lib/protect-form' ).checkFormHandler ); // GENERIC
-
 	page( '*', function( context, next ) {
 		const path = context.pathname;
 
@@ -146,7 +143,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		}
 
 		// Focus UI on the content on page navigation
-		if ( ! config.isEnabled( 'code-splitting' ) ) { // GENERIC
+		if ( ! config.isEnabled( 'code-splitting' ) ) {
 			context.store.dispatch( activateNextLayoutFocus() );
 		}
 
@@ -174,11 +171,6 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 	} );
 
 	page( '*', emailVerification );
-
-	if ( config.isEnabled( 'oauth' ) ) { // GENERIC
-		// Forces OAuth users to the /login page if no token is present
-		page( '*', require( 'auth/controller' ).checkToken );
-	}
 
 	// delete any lingering local storage data from signup
 	if ( ! startsWith( window.location.pathname, '/start' ) ) {
@@ -224,7 +216,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		require( 'lib/desktop' ).init(); // COULD BE GENERIC, LIKELY NOT
+		require( 'lib/desktop' ).init();
 	}
 
 	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {
