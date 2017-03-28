@@ -97,7 +97,7 @@ class ReaderStream extends React.Component {
 	};
 
 	getStateFromStores( store = this.props.postsStore, recommendationsStore = this.props.recommendationsStore ) {
-		const posts = store.get();
+		const posts = map( store.get(), this.props.transformStreamItems );
 		const recs = recommendationsStore ? recommendationsStore.get() : null;
 		// do we have enough recs? if we have a store, but not enough recs, we should fetch some more...
 		if ( recommendationsStore ) {
@@ -116,7 +116,6 @@ class ReaderStream extends React.Component {
 		if ( this.props.shouldCombineCards ) {
 			items = combineCards( items );
 		}
-		items = map( items, this.props.transformStreamItems );
 
 		return {
 			items,
