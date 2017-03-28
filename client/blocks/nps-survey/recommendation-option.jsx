@@ -3,12 +3,6 @@
  */
 import React, { Component, PropTypes } from 'react';
 
-/**
- * Internal dependencies
- */
-import FormRadio from 'components/forms/form-radio';
-import FormLabel from 'components/forms/form-label';
-
 class RecommendationOption extends Component {
 	constructor( props ) {
 		super( props );
@@ -27,9 +21,8 @@ class RecommendationOption extends Component {
 
 	render() {
 		return (
-			<FormLabel>
-				<FormRadio
-					className="nps-survey__recommendation-option"
+			<label className="nps-survey__recommendation-option">
+				<input type="radio"
 					name="nps-survey-recommendation-option"
 					value={ this.props.value }
 					checked={ this.props.selected }
@@ -37,7 +30,7 @@ class RecommendationOption extends Component {
 					onChange={ this.handleChange }
 				/>
 				<span>{ this.props.value }</span>
-			</FormLabel>
+			</label>
 		);
 	}
 }
