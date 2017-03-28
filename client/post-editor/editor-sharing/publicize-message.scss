@@ -1,6 +1,8 @@
 .editor-sharing__publicize-message {
 	.editor-sharing__message-heading {
 		@extend .editor-drawer__heading;
+
+		font-size: 14px;
 	}
 
 	.editor-sharing__message-description {
@@ -11,7 +13,7 @@
 	}
 
 	.editor-sharing__message-input {
-		margin: 8px 0;
+		margin: 13px 20px 8px 20px;
 	}
 
 	.info-popover {
