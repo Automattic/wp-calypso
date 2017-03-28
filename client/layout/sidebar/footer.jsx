@@ -12,11 +12,13 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import config from 'config';
 import HappychatButton from 'components/happychat/button';
+import LanguageButton from 'components/language-picker/button';
 import { isHappychatChatActive } from 'state/happychat/selectors';
 
 const SidebarFooter = ( { translate, children, isHappychatButtonVisible } ) => (
 	<div className="sidebar__footer">
 		{ children }
+		<LanguageButton />
 		<Button
 			className="sidebar__footer-help"
 			borderless

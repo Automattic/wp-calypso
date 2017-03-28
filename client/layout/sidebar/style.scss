@@ -356,7 +356,8 @@ form.sidebar__button {
 	margin-right: auto;
 
 	&.sidebar__footer-help,
-	&.sidebar__footer-chat {
+	&.sidebar__footer-chat,
+	&.sidebar__footer-lang {
 		border-left: 1px solid darken( $sidebar-bg-color, 10% );
 		flex: 0 1 40px;
 		margin-right: 0;
@@ -369,7 +370,7 @@ form.sidebar__button {
 
 	}
 
-	&.sidebar__footer-help {
+	&.sidebar__footer-lang {
 		margin-left: auto;
 	}
 
@@ -419,6 +420,21 @@ form.sidebar__button {
 .layout.is-section-help .sidebar .sidebar__footer-help {
 	background-color: $sidebar-selected-color;
 	color: $white;
+}
+
+.sidebar__footer-lang-icon {
+	width: 24px;
+	height: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	line-height: 1.0;
+	text-align: left;
+
+	&.is-loading {
+		animation: loading-dot-pulse 0.8s ease-in-out infinite;
+		background-color: lighten( $gray, 20% );
+	}
 }
 
 .sidebar__region {
