@@ -25,7 +25,7 @@ import ProgressBar from 'components/progress-bar';
 var CreditCardPaymentBox = React.createClass( {
 	getInitialState: function() {
 		return {
-			elapsed: 0,
+			progress: 0,
 			previousCart: null
 		};
 	},
@@ -41,10 +41,10 @@ var CreditCardPaymentBox = React.createClass( {
 	},
 
 	tick: function() {
-		const elasped = this.state.elapsed + 1 / 200 * ( 100 - this.state.elapsed );
-		this.setState( {
-			elapsed: elasped
-		} );
+		// increase the progress of the progress bar by 0.5% of the remaining progress each tick
+		const progress = this.state.progress + 1 / 200 * ( 100 - this.state.progress );
+
+		this.setState( { progress } );
 	},
 
 	submitting: function( transactionStep ) {
@@ -74,10 +74,6 @@ var CreditCardPaymentBox = React.createClass( {
 		}
 	},
 
-	progress: function() {
-		return Math.round( this.state.elapsed );
-	},
-
 	handleToggle: function( event ) {
 		event.preventDefault();
 
@@ -90,7 +86,7 @@ var CreditCardPaymentBox = React.createClass( {
 		return (
 			<div className="credit-card-payment-box__progress-bar">
 				{ this.translate( 'Processing payment…' ) }
-				<ProgressBar value={ this.progress() } isPulsing />
+				<ProgressBar value={ Math.round( this.state.progress ) } isPulsing />
 			</div>
 		);
 	},
@@ -141,7 +137,7 @@ var CreditCardPaymentBox = React.createClass( {
 	submit: function( event ) {
 		event.preventDefault();
 		this.setState( {
-			elapsed: 0
+			progress: 0
 		} );
 		this.props.onSubmit( event );
 	},
