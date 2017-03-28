@@ -29,6 +29,7 @@ import jetpack from './jetpack/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
+import login from './login/reducer';
 import media from './media/reducer';
 import notices from './notices/reducer';
 import pageTemplates from './page-templates/reducer';
@@ -88,6 +89,7 @@ const reducers = {
 	jetpackConnect,
 	jetpack,
 	jetpackSync,
+	login,
 	media,
 	notices,
 	pageTemplates,

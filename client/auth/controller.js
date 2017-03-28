@@ -9,7 +9,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import LoginComponent from './login';
+import OAuthLogin from './login';
+import WPLogin from './wp-login';
 import ConnectComponent from './connect';
 import RequestLoginEmailForm from './request-login-email-form';
 import HandleEmailedLinkForm from './handle-emailed-link-form';
@@ -25,16 +26,25 @@ import userFactory from 'lib/user';
 import Main from 'components/main';
 import PulsingDot from 'components/pulsing-dot';
 
-module.exports = {
+export default {
 
-	// Login screen used by the desktop application
-	login: function() {
-		if ( OAuthToken.getToken() ) {
-			page( '/' );
-		} else {
-			ReactDom.render(
-				React.createElement( LoginComponent, {} ),
-				document.getElementById( 'primary' )
+	login: function( context ) {
+		if ( config.isEnabled( 'oauth' ) ) {
+			if ( OAuthToken.getToken() ) {
+				page( '/' );
+			} else {
+				ReactDom.render(
+					<OAuthLogin />,
+					document.getElementById( 'primary' )
+				);
+			}
+		}
+
+		if ( config.isEnabled( 'wp-login' ) ) {
+			renderWithReduxStore(
+				<WPLogin />,
+				'primary',
+				context.store
 			);
 		}
 	},

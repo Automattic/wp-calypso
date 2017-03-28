@@ -149,6 +149,7 @@
 		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
-		"webpack/persistent-caching": false
+		"webpack/persistent-caching": false,
+		"wp-login": true
 	}
 }
