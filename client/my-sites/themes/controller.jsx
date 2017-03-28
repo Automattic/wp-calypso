@@ -107,14 +107,17 @@ export function fetchThemeData( context, next, shouldUseCache = false ) {
 		page: 1,
 		number: DEFAULT_THEME_QUERY.number,
 	};
-	const cacheKey = context.path;
+	// context.pathname includes tier, filter, and verticals, but not the query string, so it's a suitable cacheKey
+	// However, we can't guarantee it's normalized -- filters can be in any order, resulting in multiple possible cacheKeys for
+	// the same sets of results.
+	const cacheKey = context.pathname;
 
 	if ( shouldUseCache ) {
 		const cachedData = themesQueryCache.get( cacheKey );
 		if ( cachedData ) {
 			debug( `found theme data in cache key=${ cacheKey }` );
 			context.store.dispatch( receiveThemes( cachedData.themes, siteId, query, cachedData.found ) );
-			context.renderCacheKey = context.path + cachedData.timestamp;
+			context.renderCacheKey = cacheKey + cachedData.timestamp;
 			return next();
 		}
 	}
@@ -126,7 +129,7 @@ export function fetchThemeData( context, next, shouldUseCache = false ) {
 				const found = getThemesFoundForQuery( context.store.getState(), siteId, query );
 				const timestamp = Date.now();
 				themesQueryCache.set( cacheKey, { themes, found, timestamp } );
-				context.renderCacheKey = context.path + timestamp;
+				context.renderCacheKey = cacheKey + timestamp;
 				debug( `caching theme data key=${ cacheKey }` );
 			}
 			next();
