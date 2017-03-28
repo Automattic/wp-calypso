@@ -7,8 +7,12 @@ import React from 'react';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import * as stats from 'reader/stats';
-import * as discoverHelper from 'reader/discover/helper';
+import {
+	recordAction,
+	recordGaEvent,
+	recordTrack,
+} from 'reader/stats';
+import { isDiscoverEnabled } from 'reader/discover/helper';
 
 const SearchEmptyContent = React.createClass( {
 
@@ -21,15 +25,15 @@ const SearchEmptyContent = React.createClass( {
 	},
 
 	recordAction: function() {
-		stats.recordAction( 'clicked_following_on_empty' );
-		stats.recordGaEvent( 'Clicked Following on EmptyContent' );
-		stats.recordTrack( 'calypso_reader_following_on_empty_search_stream_clicked' );
+		recordAction( 'clicked_following_on_empty' );
+		recordGaEvent( 'Clicked Following on EmptyContent' );
+		recordTrack( 'calypso_reader_following_on_empty_search_stream_clicked' );
 	},
 
 	recordSecondaryAction: function() {
-		stats.recordAction( 'clicked_discover_on_empty' );
-		stats.recordGaEvent( 'Clicked Discover on EmptyContent' );
-		stats.recordTrack( 'calypso_reader_discover_on_empty_search_stream_clicked' );
+		recordAction( 'clicked_discover_on_empty' );
+		recordGaEvent( 'Clicked Discover on EmptyContent' );
+		recordTrack( 'calypso_reader_discover_on_empty_search_stream_clicked' );
 	},
 
 	render: function() {
@@ -38,7 +42,7 @@ const SearchEmptyContent = React.createClass( {
 			onClick={ this.recordAction }
 			href="/">{ this.translate( 'Back to Following' ) }</a> );
 
-		const secondaryAction = discoverHelper.isDiscoverEnabled()
+		const secondaryAction = isDiscoverEnabled()
 			? ( <a
 			className="empty-content__action button"
 			onClick={ this.recordSecondaryAction }

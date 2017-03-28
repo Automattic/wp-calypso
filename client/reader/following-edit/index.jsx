@@ -34,7 +34,12 @@ import FollowingImportButton from './import-button';
 import FeedDisplayHelper from 'reader/lib/feed-display-helper';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
-import * as stats from 'reader/stats';
+import {
+	recordAction,
+	recordFollow,
+	recordGaEvent,
+	recordTrack,
+} from 'reader/stats';
 
 const initialLoadFeedCount = 20;
 
@@ -300,9 +305,9 @@ const FollowingEdit = React.createClass( {
 		// Call originating store and mark error as dismissed
 		FeedSubscriptionActions.dismissError( this.state.lastError );
 		this.setState( { isAttemptingFollow: false } );
-		stats.recordAction( 'dismiss_follow_error' );
-		stats.recordGaEvent( 'Clicked Dismiss Follow Error' );
-		stats.recordTrack( 'calypso_reader_follow_error_dismissed' );
+		recordAction( 'dismiss_follow_error' );
+		recordGaEvent( 'Clicked Dismiss Follow Error' );
+		recordTrack( 'calypso_reader_follow_error_dismissed' );
 	},
 
 	handleNewSubscriptionSearch: function( searchString ) {
@@ -359,7 +364,7 @@ const FollowingEdit = React.createClass( {
 	handleFollow: function( newUrl ) {
 		this.toggleAddSite();
 		this.setState( { isAttemptingFollow: true } );
-		stats.recordFollow( newUrl );
+		recordFollow( newUrl );
 	},
 
 	renderUnfollowError: function() {

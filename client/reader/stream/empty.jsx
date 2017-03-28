@@ -7,8 +7,12 @@ import React from 'react';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import * as stats from 'reader/stats';
-import * as discoverHelper from 'reader/discover/helper';
+import {
+	recordAction,
+	recordGaEvent,
+	recordTrack,
+} from 'reader/stats';
+import { isDiscoverEnabled } from 'reader/discover/helper';
 
 const FollowingEmptyContent = React.createClass( {
 	shouldComponentUpdate: function() {
@@ -16,13 +20,13 @@ const FollowingEmptyContent = React.createClass( {
 	},
 
 	recordAction: function() {
-		stats.recordAction( 'clicked_search_on_empty' );
-		stats.recordGaEvent( 'Clicked Search on EmptyContent' );
-		stats.recordTrack( 'calypso_reader_search_on_empty_stream_clicked' );
+		recordAction( 'clicked_search_on_empty' );
+		recordGaEvent( 'Clicked Search on EmptyContent' );
+		recordTrack( 'calypso_reader_search_on_empty_stream_clicked' );
 	},
 
 	render: function() {
-		const action = discoverHelper.isDiscoverEnabled()
+		const action = isDiscoverEnabled()
 		? (
 			<a
 				className="empty-content__action button is-primary"

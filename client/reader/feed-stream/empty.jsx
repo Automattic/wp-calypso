@@ -1,7 +1,11 @@
 import React from 'react';
 
 import EmptyContent from 'components/empty-content';
-import * as stats from 'reader/stats';
+import {
+	recordAction,
+	recordGaEvent,
+	recordTrack,
+} from 'reader/stats';
 
 const FeedEmptyContent = React.createClass( {
 	shouldComponentUpdate: function() {
@@ -9,15 +13,15 @@ const FeedEmptyContent = React.createClass( {
 	},
 
 	recordAction: function() {
-		stats.recordAction( 'clicked_search_on_empty' );
-		stats.recordGaEvent( 'Clicked Search on EmptyContent' );
-		stats.recordTrack( 'calypso_reader_search_on_empty_feed_clicked' );
+		recordAction( 'clicked_search_on_empty' );
+		recordGaEvent( 'Clicked Search on EmptyContent' );
+		recordTrack( 'calypso_reader_search_on_empty_feed_clicked' );
 	},
 
 	recordSecondaryAction: function() {
-		stats.recordAction( 'clicked_discover_on_empty' );
-		stats.recordGaEvent( 'Clicked Discover on EmptyContent' );
-		stats.recordTrack( 'calypso_reader_discover_on_empty_feed_clicked' );
+		recordAction( 'clicked_discover_on_empty' );
+		recordGaEvent( 'Clicked Discover on EmptyContent' );
+		recordTrack( 'calypso_reader_discover_on_empty_feed_clicked' );
 	},
 
 	render: function() {

@@ -11,7 +11,11 @@ import ExpandableSidebarMenu from '../expandable';
 import ReaderSidebarListsList from './list';
 import ReaderListsActions from 'lib/reader-lists/actions';
 
-import * as stats from 'reader/stats';
+import {
+	recordAction,
+	recordGaEvent,
+	recordTrack,
+} from 'reader/stats';
 
 export class ReaderSidebarLists extends Component {
 
@@ -30,16 +34,16 @@ export class ReaderSidebarLists extends Component {
 	}
 
 	createList = ( list ) => {
-		stats.recordAction( 'add_list' );
-		stats.recordGaEvent( 'Clicked Create List' );
-		stats.recordTrack( 'calypso_reader_create_list_clicked' );
+		recordAction( 'add_list' );
+		recordGaEvent( 'Clicked Create List' );
+		recordTrack( 'calypso_reader_create_list_clicked' );
 		ReaderListsActions.create( list );
 	}
 
 	handleAddClick = () => {
-		stats.recordAction( 'add_list_open_input' );
-		stats.recordGaEvent( 'Clicked Add List to Open Input' );
-		stats.recordTrack( 'calypso_reader_add_list_clicked' );
+		recordAction( 'add_list_open_input' );
+		recordGaEvent( 'Clicked Add List to Open Input' );
+		recordTrack( 'calypso_reader_add_list_clicked' );
 	}
 
 	render() {
