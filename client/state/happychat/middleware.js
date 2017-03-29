@@ -8,6 +8,7 @@ import throttle from 'lodash/throttle';
  * Internal dependencies
  */
 import {
+	HAPPYCHAT_SEND_BROWSER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
@@ -44,6 +45,19 @@ const sendMessage = ( connection, message ) => {
 	connection.notTyping();
 };
 
+const sendBrowserInfo = ( connection, siteUrl ) => {
+	const siteHelp = `Site I need help with: ${ siteUrl }\n`;
+	const screenRes = ( typeof screen === 'object' ) && `Screen Resolution: ${ screen.width }x${ screen.height }\n`;
+	const browserSize = ( typeof window === 'object' ) && `Browser Size: ${ window.innerWidth }x${ window.innerHeight }\n`;
+	const userAgent = ( typeof navigator === 'object' ) && `User Agent: ${ navigator.userAgent }`;
+	const msg = {
+		text: `Info\n ${ siteHelp } ${ screenRes } ${ browserSize } ${ userAgent }`,
+	};
+
+	debug( 'sending info message', msg );
+	connection.info( msg );
+};
+
 export default function( connection = null ) {
 	// Allow a connection object to be specified for
 	// testing. If blank, use a real connection.
@@ -53,6 +67,10 @@ export default function( connection = null ) {
 
 	return store => next => action => {
 		switch ( action.type ) {
+			case HAPPYCHAT_SEND_BROWSER_INFO:
+				sendBrowserInfo( connection, action.siteUrl );
+				break;
+
 			case HAPPYCHAT_SEND_MESSAGE:
 				sendMessage( connection, action.message );
 				break;

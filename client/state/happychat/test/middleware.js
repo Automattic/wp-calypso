@@ -10,6 +10,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import {
+	HAPPYCHAT_SEND_BROWSER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
@@ -17,6 +18,17 @@ import {
 import middleware, { requestTranscript } from '../middleware';
 
 describe( 'middleware', () => {
+	describe( 'HAPPYCHAT_SET_MESSAGE action', () => {
+		it( 'should send relevant browser information to the connection', () => {
+			const action = { type: HAPPYCHAT_SEND_BROWSER_INFO, siteUrl: 'http://butt.holdings/' };
+			const connection = { info: spy() };
+			middleware( connection )()( noop )( action );
+
+			expect( connection.info ).to.have.been.calledOnce;
+			expect( connection.info.firstCall.args[ 0 ].text ).to.include( action.siteUrl );
+		} );
+	} );
+
 	describe( 'HAPPYCHAT_SEND_MESSAGE action', () => {
 		it( 'should send the message through the connection and send a notTyping signal', () => {
 			const action = { type: HAPPYCHAT_SEND_MESSAGE, message: 'Hello world' };
