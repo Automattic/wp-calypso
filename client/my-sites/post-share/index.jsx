@@ -44,7 +44,6 @@ import NavItem from 'components/section-nav/item';
 import Banner from 'components/banner';
 import Connection from './connection';
 import ActionsList from './publicize-actions-list';
-import { isEnabled } from 'config';
 import CalendarButton from 'blocks/calendar-button';
 import formatCurrency from 'lib/format-currency';
 import {
@@ -199,7 +198,7 @@ class PostShare extends Component {
 	}
 
 	renderUpgradeToGetSchedulingNudge() {
-		if ( ! isEnabled( 'publicize-scheduling' ) ) {
+		if ( this.props.hasRepublicizeSchedulingFeature ) {
 			return null;
 		}
 
@@ -231,7 +230,7 @@ class PostShare extends Component {
 	}
 
 	renderActionsSection() {
-		if ( ! isEnabled( 'publicize-scheduling' ) ) {
+		if ( ! this.props.hasRepublicizeSchedulingFeature ) {
 			return null;
 		}
 
