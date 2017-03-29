@@ -277,10 +277,6 @@ class PostShare extends Component {
 			return this.renderUpgradeToGetPublicizeNudge();
 		}
 
-		const classes = classNames( 'post-share__wrapper', {
-			'has-connections': this.hasConnections()
-		} );
-
 		const {
 			connections,
 			failure,
@@ -295,6 +291,11 @@ class PostShare extends Component {
 		if ( ! siteId || ! postId ) {
 			return null;
 		}
+
+		const classes = classNames(
+			'post-share__wrapper',
+			{ 'has-connections': this.hasConnections() }
+		);
 
 		return (
 			<div className="post-share">
