@@ -297,22 +297,24 @@ class ThemesMagicSearchCard extends React.Component {
 						}
 					</div>
 				</StickyPanel>
-				{ renderSuggestions &&
-					<Suggestions
-						ref="suggestions"
-						terms={ taxonomies }
-						input={ this.state.editedSearchElement }
-						suggest={ this.suggest }
-					/>
-				}
-				{ ! renderSuggestions &&
-					<MagicSearchWelcome
-						ref="welcome"
-						taxonomies={ taxonomiesKeys }
-						topSearches={ [] }
-						suggestionsCallback={ this.insertTextInInput }
-					/>
-				}
+				<div onClick={ this.handleClickInside }>
+					{ renderSuggestions &&
+						<Suggestions
+							ref="suggestions"
+							terms={ taxonomies }
+							input={ this.state.editedSearchElement }
+							suggest={ this.suggest }
+						/>
+					}
+					{ ! renderSuggestions &&
+						<MagicSearchWelcome
+							ref="welcome"
+							taxonomies={ taxonomiesKeys }
+							topSearches={ [] }
+							suggestionsCallback={ this.insertTextInInput }
+						/>
+					}
+				</div>
 			</div>
 		);
 	}

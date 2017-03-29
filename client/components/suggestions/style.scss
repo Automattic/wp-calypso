@@ -42,6 +42,11 @@
 		text-transform: uppercase;
 		color: $gray-text-min;
 	}
+
+	.suggestions__category-show-all {
+		float: right;
+		cursor: pointer;
+	}
 }
 
 .suggestions__value {
