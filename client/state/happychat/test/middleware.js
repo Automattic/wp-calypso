@@ -10,12 +10,26 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import {
+	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 } from 'state/action-types';
 import middleware, { requestTranscript } from '../middleware';
 
 describe( 'middleware', () => {
+	describe( 'HAPPYCHAT_SEND_MESSAGE action', () => {
+		it( 'should send the message through the connection and send a notTyping signal', () => {
+			const action = { type: HAPPYCHAT_SEND_MESSAGE, message: 'Hello world' };
+			const connection = {
+				send: spy(),
+				notTyping: spy(),
+			};
+			middleware( connection )()( noop )( action );
+			expect( connection.send ).to.have.been.calledWith( action.message );
+			expect( connection.notTyping ).to.have.been.calledOnce;
+		} );
+	} );
+
 	describe( 'HAPPYCHAT_SET_MESSAGE action', () => {
 		it( 'should send the connection a typing signal when a message is present', () => {
 			const action = { type: HAPPYCHAT_SET_MESSAGE, message: 'Hello world' };
