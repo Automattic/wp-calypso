@@ -95,6 +95,31 @@
 
 	background-color: $white;
 	border: 1px solid lighten( $gray, 25% );
+
+	.reader-post-card {
+		padding: 10px;
+
+		a {
+			text-decoration: none;
+			pointer-events: none;
+   		cursor: default;
+		}
+
+		.reader-post-card__timestamp-and-tag a {
+			color: $gray;
+		}
+
+		.reader-post-actions__item {
+			span, .comment-button, .like-button, .ellipsis-menu .button {
+				cursor: default;
+				pointer-events: none;
+
+				&:hover {
+					color: $gray;
+				}
+			}
+		}
+	}
 }
 
 .seo-preview-pane__message {
