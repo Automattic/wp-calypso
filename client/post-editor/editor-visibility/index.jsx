@@ -69,10 +69,23 @@ const EditorVisibility = React.createClass( {
 		}
 	},
 
+	getVisibility( props ) {
+		if ( props.password ) {
+			return 'password';
+		}
+
+		if ( 'private' === props.status ) {
+			return 'private';
+		}
+
+		return 'public';
+	},
+
 	setVisibility( props ) {
-		if ( props.visibility !== this.state.visibility ) {
+		const newVisibility = this.getVisibility( props );
+		if ( newVisibility !== this.state.visibility ) {
 			this.setState( {
-				visibility: props.visibility
+				visibility: newVisibility
 			} );
 		}
 	},
@@ -164,13 +177,9 @@ const EditorVisibility = React.createClass( {
 	updateVisibility( event ) {
 		const { siteId, postId } = this.props;
 		const defaultVisibility = 'draft' === this.props.status ? 'draft' : 'publish';
-		const postEdits = {
-			status: this.props.savedStatus && 'private' !== this.props.savedStatus
-				? this.props.savedStatus
-				: defaultVisibility
-		};
 		const newVisibility = event.target.value;
-		let reduxPostEdits = false;
+		const postEdits = { status: defaultVisibility };
+		let reduxPostEdits;
 
 		switch ( newVisibility ) {
 			case 'public':
@@ -202,11 +211,12 @@ const EditorVisibility = React.createClass( {
 	},
 
 	setPostToPrivate() {
+		const { siteId, postId } = this.props;
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		postActions.edit( {
-			password: '',
 			status: 'private'
 		} );
+		this.props.editPost( siteId, postId, { password: '' } );
 
 		this.setState( { visibility: 'private' } );
 

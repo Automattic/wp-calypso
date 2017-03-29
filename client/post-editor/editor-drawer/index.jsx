@@ -308,8 +308,11 @@ const EditorDrawer = React.createClass( {
 	renderStatus() {
 		// TODO: REDUX - remove this logic and prop for EditPostStatus when date is moved to redux
 		const postDate = this.props.post && this.props.post.date
-				? this.props.post.date
-				: null;
+			? this.props.post.date
+			: null;
+		const postStatus = this.props.post && this.props.post.status
+			? this.props.post.status
+			: null;
 
 		return (
 			<Accordion title={ this.translate( 'Status' ) }>
@@ -321,7 +324,9 @@ const EditorDrawer = React.createClass( {
 					onTrashingPost={ this.props.onTrashingPost }
 					onPrivatePublish={ this.props.onPrivatePublish }
 					setPostDate={ this.props.setPostDate }
-					site={ this.props.site }>
+					site={ this.props.site }
+					status={ postStatus }
+				>
 				</EditPostStatus>
 			</Accordion>
 		);
