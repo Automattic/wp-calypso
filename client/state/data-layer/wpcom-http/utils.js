@@ -82,3 +82,38 @@ export const dispatchRequest = ( initiator, onSuccess, onError, onProgress = nul
 
 	return initiator( store, action, next );
 };
+
+export function createWpcomHttpMiddleware( {
+	type,
+	mapActionToHttp,
+	isValidResponse,
+	mapSuccessfulResponseToActions,
+	mapFailureResponseToActions,
+} ) {
+	function initiator( store, action, next ) {
+		store.dispatch( mapActionToHttp( action ) );
+		next( action );
+	}
+
+	function onError( store, action, next, apiResponse ) {
+		if ( process.env.NODE_ENV === 'development' ) {
+			console.error( apiResponse ); // eslint-disable-line no-console
+		}
+
+		mapFailureResponseToActions && mapFailureResponseToActions( { apiResponse, action } )
+			.forEach( store.dispatch );
+	}
+
+	function onSuccess( store, action, next, apiResponse ) {
+		if ( ! isValidResponse( apiResponse ) ) {
+			return onError( store, action, next );
+		}
+
+		mapSuccessfulResponseToActions && mapSuccessfulResponseToActions( { apiResponse, action } )
+			.forEach( store.dispatch );
+	}
+
+	return {
+		[ type ]: [ dispatchRequest( initiator, onSuccess, onError ) ]
+	};
+}
