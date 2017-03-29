@@ -21,7 +21,7 @@ function wpEditImage( editor ) {
 
 	editor.addButton( 'wp_img_remove', {
 		tooltip: 'Remove',
-		icon: 'dashicon dashicons-no',
+		icon: 'dashicon dashicons-trash',
 		onclick: function() {
 			removeImage( editor.selection.getNode() );
 		}
