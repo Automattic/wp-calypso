@@ -12,7 +12,7 @@ Used in combination with the Redux store instance `dispatch` function, actions c
 
 Opens Happychat Socket.IO client connection
 
-### `updateChatMessage( message: String )`
+### `setChatMessage( message: String )`
 
 Updates the pending message that the user is composing in the Happychat client.
 
