@@ -4,7 +4,7 @@
 import config from 'config';
 import { makeLayout } from 'controller';
 import { getSubjects } from './theme-filters.js';
-import { fetchThemeDataWithCaching, fetchThemeData, loggedOut } from './controller';
+import { fetchThemeDataWithCaching, loggedOut } from './controller';
 
 // `logged-out` middleware isn't SSR-compliant yet, but we can at least render
 // the layout.
@@ -23,7 +23,7 @@ export default function( router ) {
 				makeLayout
 			);
 			router( '/design/upload/*', makeLayout );
-			router( '/design/*', fetchThemeData, loggedOut, makeLayout ); // Needed so direct hits don't result in a 404.
+			router( '/design/*', fetchThemeDataWithCaching, loggedOut, makeLayout ); // Needed so direct hits don't result in a 404.
 		} else {
 			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?`, makeLayout );
 			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`, makeLayout );
