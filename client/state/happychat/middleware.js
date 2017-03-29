@@ -47,9 +47,9 @@ const sendMessage = ( connection, message ) => {
 
 const sendBrowserInfo = ( connection, siteUrl ) => {
 	const siteHelp = `Site I need help with: ${ siteUrl }\n`;
-	const screenRes = ( typeof screen !== 'undefined' ) && `Screen Resolution: ${ screen.width }x${ screen.height }\n`;
-	const browserSize = ( typeof window !== 'undefined' ) && `Browser Size: ${ window.innerWidth }x${ window.innerHeight }\n`;
-	const userAgent = ( typeof navigator !== 'undefined' ) && `User Agent: ${ navigator.userAgent }`;
+	const screenRes = ( typeof screen === 'object' ) && `Screen Resolution: ${ screen.width }x${ screen.height }\n`;
+	const browserSize = ( typeof window === 'object' ) && `Browser Size: ${ window.innerWidth }x${ window.innerHeight }\n`;
+	const userAgent = ( typeof navigator === 'object' ) && `User Agent: ${ navigator.userAgent }`;
 	const msg = {
 		text: `Info\n ${ siteHelp } ${ screenRes } ${ browserSize } ${ userAgent }`,
 	};

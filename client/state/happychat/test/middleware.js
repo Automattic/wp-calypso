@@ -22,7 +22,7 @@ describe( 'middleware', () => {
 		it( 'should send relevant browser information to the connection', () => {
 			const action = { type: HAPPYCHAT_SEND_BROWSER_INFO, siteUrl: 'http://butt.holdings/' };
 			const connection = { info: spy() };
-			middleware( connection )()( spy() )( action );
+			middleware( connection )()( noop )( action );
 
 			expect( connection.info ).to.have.been.calledOnce;
 			expect( connection.info.firstCall.args[ 0 ].text ).to.include( action.siteUrl );
