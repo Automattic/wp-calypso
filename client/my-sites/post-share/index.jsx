@@ -185,7 +185,20 @@ class PostShare extends Component {
 		);
 	}
 
-	renderUpgradeNudge() {
+	renderUpgradeToGetPublicizeNudge() {
+		const { translate } = this.props;
+		return (
+			<Banner
+				className="post-share__upgrade-nudge"
+				feature="republicize"
+				title={ translate( 'Unlock the ability to re-share posts to social media' ) }
+				callToAction={ translate( 'Upgrade to Premium' ) }
+				description={ translate( 'Get unlimited premium themes, video uploads, monetize your site and more.' ) }
+			/>
+		);
+	}
+
+	renderUpgradeToGetSchedulingNudge() {
 		if ( ! isEnabled( 'publicize-scheduling' ) ) {
 			return null;
 		}
@@ -261,14 +274,7 @@ class PostShare extends Component {
 		}
 
 		if ( ! this.props.hasRepublicizeFeature ) {
-			return ( <div className="post-share">
-				<Banner
-					feature="republicize"
-					title={ this.props.translate( 'Unlock the ability to re-share posts to social media' ) }
-					callToAction={ this.props.translate( 'Upgrade to Premium' ) }
-					description={ this.props.translate( 'Get unlimited premium themes, video uploads, monetize your site and more.' ) }
-				/>
-			</div> );
+			return this.renderUpgradeToGetPublicizeNudge();
 		}
 
 		const classes = classNames( 'post-share__wrapper', {
@@ -376,7 +382,7 @@ class PostShare extends Component {
 								</div>
 							</div>
 
-							{ this.renderUpgradeNudge() }
+							{ this.renderUpgradeToGetSchedulingNudge() }
 							{ this.renderActionsSection() }
 						</div>
 					}
