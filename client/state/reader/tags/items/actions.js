@@ -51,9 +51,9 @@ export const requestUnfollowTag = tag => ( {
 	payload: { tag, slug: slugify( tag ) },
 } );
 
-export const receiveUnfollowTag = ( { payload } ) => ( {
+export const receiveUnfollowTag = ( removedTag ) => ( {
 	type: READER_UNFOLLOW_TAG_RECEIVE,
-	payload,
+	payload: removedTag
 } );
 
 export const requestFollowTag = tag => ( {

@@ -11,52 +11,40 @@ import {
 } from 'state/reader/tags/items/actions';
 
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
+import { createWpcomHttpMiddleware } from 'state/data-layer/wpcom-http/utils';
 
-export function requestUnfollow( store, action, next ) {
-	store.dispatch( http( {
-		path: `/read/tags/${ action.payload.slug }/mine/delete`,
-		method: 'POST',
-		apiVersion: '1.1',
-		onSuccess: action,
-		onFailure: action,
-	} ) );
 
-	next( action );
-}
+export const mapActionToHttp = action => http( {
+	path: `/read/tags/${ action.payload.slug }/mine/delete`,
+	method: 'POST',
+	apiVersion: '1.1',
+	onSuccess: action,
+	onFailure: action,
+} );
 
-/**
- * Normalize response from the api. The only thing we care about is the removed_tag so only keep that.
- *
- * @param  {RemovedTag} apiResponse api response from the unfollow
- * @return {Number} the ID of the tag that was removed
- */
-export const fromApi = apiResponse => apiResponse.removed_tag;
+export const isValidResponse = apiResponse =>
+	apiResponse && apiResponse.removed_tag && ! apiResponse.subscribed;
 
-export function receiveUnfollowTag( store, action, next, apiResponse ) {
-	if ( apiResponse.subscribed ) {
-		receiveError( store, action, next );
-		return;
-	}
+export const mapSuccessfulResponseToActions = ( { apiResponse } ) => [
+	receiveUnfollowTagAction( apiResponse.removed_tag ),
+];
 
-	store.dispatch( receiveUnfollowTagAction( {
-		payload: fromApi( apiResponse ),
-	} ) );
-}
-
-export function receiveError( store, action, next, error ) {
-	const errorText = translate( 'Could not unfollow tag: %(tag)s', {
+export const mapFailureResponseToActions = ( { action } ) => {
+	const errorNoticeText = translate( 'Could not unfollow tag: %(tag)s', {
 		args: { tag: action.payload.slug }
 	} );
 
-	store.dispatch( errorNotice( errorText ) );
-	if ( process.env.NODE_ENV === 'development' ) {
-		console.error( errorText, error ); // eslint-disable-line no-console
-	}
-}
-
-export default {
-	[ READER_UNFOLLOW_TAG_REQUEST ]: [ dispatchRequest( requestUnfollow, receiveUnfollowTag, receiveError ) ],
+	return [
+		errorNotice( errorNoticeText ),
+	];
 };
+
+export default createWpcomHttpMiddleware( {
+	type: READER_UNFOLLOW_TAG_REQUEST,
+	mapActionToHttp,
+	isValidResponse,
+	mapSuccessfulResponseToActions,
+	mapFailureResponseToActions,
+} );
