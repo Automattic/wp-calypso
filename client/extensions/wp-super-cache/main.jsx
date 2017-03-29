@@ -6,16 +6,17 @@ import React, { PropTypes } from 'react';
 /**
  * Internal dependencies
  */
+import AdvancedTab from './advanced-tab';
+import Easy from './easy';
 import Main from 'components/main';
-import Navigation from './components/navigation';
-import Easy from './components/easy';
+import Navigation from './navigation';
 import { Tabs } from './constants';
 
 const WPSuperCache = ( { site, tab } ) => {
 	const renderTab = () => {
 		switch ( tab ) {
 			case Tabs.ADVANCED:
-				break;
+				return <AdvancedTab siteUrl={ site.URL } />;
 			case Tabs.CDN:
 				break;
 			case Tabs.CONTENTS:

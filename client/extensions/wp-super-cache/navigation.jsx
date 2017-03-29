@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
-import { Tabs } from '../constants';
+import { Tabs } from './constants';
 
 const Navigation = ( { activeTab, site, translate } ) => {
 	const getLabel = tab => {
