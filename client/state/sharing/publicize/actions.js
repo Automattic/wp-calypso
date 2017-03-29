@@ -31,18 +31,18 @@ export function dismissShareConfirmation( siteId, postId ) {
 	};
 }
 
-export function sharePost( siteId, postId, skippedConnections, message ) {
+export function sharePost( siteId, postId, message, connectionIds ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: PUBLICIZE_SHARE,
 			siteId,
 			postId,
-			skippedConnections,
-			message
+			message,
+			connectionIds,
 		} );
 
 		return new Promise( ( resolve ) => {
-			wpcom.undocumented().publicizePost( siteId, postId, message, skippedConnections, ( error, data ) => {
+			wpcom.undocumented().publicizePost( siteId, postId, message, connectionIds, ( error, data ) => {
 				if ( error || ! data.success ) {
 					dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId, error } );
 				} else {

@@ -15,7 +15,7 @@ import Button from 'components/button';
 import { isPublicizeEnabled } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSiteUserConnections, hasFetchedConnections } from 'state/sharing/publicize/selectors';
+import { getSiteUserConnections, hasFetchedConnections, getSiteUserActiveConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
 import { isRequestingSharePost, sharePostFailure, sharePostSuccessMessage } from 'state/sharing/publicize/selectors';
 import PostMetadata from 'lib/post-metadata';
@@ -37,11 +37,13 @@ const PostSharing = React.createClass( {
 		isPublicizeEnabled: PropTypes.bool,
 		connections: PropTypes.array,
 		hasFetchedConnections: PropTypes.bool,
-		requestConnections: PropTypes.func
+		requestConnections: PropTypes.func,
+		messageConnectionIds: PropTypes.array,
 	},
 
 	getInitialState() {
 		return {
+			messageConnectionIds: map( this.props.activeConnectionIds, 'keyring_connectino_ID' ),
 			skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
 			message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title
 		}
@@ -52,21 +54,13 @@ const PostSharing = React.createClass( {
 	},
 
 	toggleConnection: function ( id ) {
-		const skipped = this.state.skipped.slice();
-		const index = skipped.indexOf( id );
-		if ( index !== -1 ) {
-			skipped.splice( index, 1 );
-		} else {
-			skipped.push( id );
-		}
-		this.setState( { skipped } );
+		const messageConnectionIds = new Set( this.state.messageConnectionIds );
+		messageConnectionIds.delete( id ) || messageConnectionIds.add( id );
+		this.setState( { messageConnectionIds: Array.from( messageConnectionIds ) } );
 	},
 
 	isConnectionActive: function( connection ) {
-		return (
-			connection.status !== 'broken' &&
-			this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1
-		);
+		return includes( this.state.messageConnections, connection.keyring_connection_ID );
 	},
 
 	renderServices: function() {
@@ -115,7 +109,7 @@ const PostSharing = React.createClass( {
 		this.props.dismissShareConfirmation( this.props.siteId, this.props.post.ID );
 	},
 	sharePost: function() {
-		this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message );
+		this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.messageConnectionIds, this.state.message );
 	},
 	isButtonDisabled() {
 		if ( this.props.requesting ) {
@@ -234,7 +228,8 @@ export default connect(
 			hasFetchedConnections: hasFetchedConnections( state, siteId ),
 			requesting: isRequestingSharePost( state, siteId, props.post.ID ),
 			failed: sharePostFailure( state, siteId, props.post.ID ),
-			success: sharePostSuccessMessage( state, siteId, props.post.ID )
+			success: sharePostSuccessMessage( state, siteId, props.post.ID ),
+			activeConnections: getSiteUserActiveConnections( state, siteId, userId ),
 		};
 	},
 	{ requestConnections, sharePost, dismissShareConfirmation }
