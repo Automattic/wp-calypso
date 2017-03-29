@@ -30,7 +30,7 @@ export const GDocsIntegrationTour = makeTour(
 		when={ hasUserPastedFromGoogleDocs }
 	>
 		<Step name="init" placement="right">
-			<p>{ translate( 'Do you want to post drafts directly from Google Docs?' ) }</p>
+			<p>{ translate( 'Did you know you can create drafts from Google Docs?' ) }</p>
 			<ButtonRow>
 				<LinkQuit
 					primary
