@@ -139,7 +139,8 @@ export const PLANS_LIST = {
 			FEATURE_FREE_THEMES,
 			FEATURE_BASIC_DESIGN,
 			FEATURE_6GB_STORAGE,
-			FEATURE_NO_ADS
+			FEATURE_NO_ADS,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
