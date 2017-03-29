@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, has, includes, isFunction, takeRight } from 'lodash';
+import { get, has, includes, isFunction, overSome, takeRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +21,10 @@ const relevantAnalyticsEvents = [
 ];
 
 const relevantTypes = {
-	ANALYTICS_EVENT_RECORD: isRelevantAnalytics,
+	// to catch all actions of a type:
+	// ACTION_TYPE,
+	// to catch actions of a type that match some criterion:
+	// ACTION_TYPE: ( action ) => isValid( action.data )
 	EDITOR_PASTE_EVENT,
 	FIRST_VIEW_HIDE,
 	GUIDED_TOUR_UPDATE,
@@ -31,15 +34,19 @@ const relevantTypes = {
 	SITE_SETTINGS_RECEIVE,
 };
 
-const isRelevantAction = ( action ) =>
+const hasRelevantAnalytics = ( action ) =>
+	get( action, 'meta.analytics', [] ).some( record =>
+		includes( relevantAnalyticsEvents, record.payload.name ) );
+
+const isRelevantActionType = ( action ) =>
 	has( relevantTypes, action.type ) && (
 		! isFunction( relevantTypes[ action.type ] ) ||
 		relevantTypes[ action.type ]( action ) );
 
-function isRelevantAnalytics( action ) {
-	return get( action, 'meta.analytics', [] ).some( record =>
-		includes( relevantAnalyticsEvents, record.payload.name ) );
-}
+const isRelevantAction = overSome( [
+	isRelevantActionType,
+	hasRelevantAnalytics,
+] );
 
 const newAction = ( action ) => ( {
 	...action, timestamp: Date.now()
