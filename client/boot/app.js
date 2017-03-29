@@ -14,6 +14,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import createReduxStoreFromPersistedInitialState from 'state/initial-state';
 import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
@@ -21,8 +22,7 @@ import userFactory from 'lib/user';
 const debug = debugFactory( 'calypso' );
 
 const withProject = () => {
-	// TODO: make project name dynamic based on config
-	const project = require( './project/wordpress-com' );
+	const project = require( `./project/${ config( 'project' ) }` );
 
 	return ( funcName, ...params ) => {
 		common[ funcName ]( ...params );
