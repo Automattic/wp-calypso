@@ -1,8 +1,4 @@
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
 import { READER_UNFOLLOW_TAG_REQUEST } from 'state/action-types';
@@ -14,7 +10,6 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
 import { createWpcomHttpMiddleware } from 'state/data-layer/wpcom-http/utils';
-
 
 export const mapActionToHttp = action => http( {
 	path: `/read/tags/${ action.payload.slug }/mine/delete`,
