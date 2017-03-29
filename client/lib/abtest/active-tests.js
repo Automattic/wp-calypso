@@ -70,7 +70,7 @@ module.exports = {
 		allowExistingUsers: true
 	},
 	signupSurveyStep: {
-		datestamp: '20170327',
+		datestamp: '20170329',
 		variations: {
 			showSurveyStep: 20,
 			hideSurveyStep: 80,
