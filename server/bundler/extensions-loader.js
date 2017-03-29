@@ -15,7 +15,7 @@ function generateExtensionsModuleString( reducerRequires ) {
 	return `module.exports = {
 		reducers: function() {
 			return {
-				${ reducerRequires.join( '\n' ) }
+				${ reducerRequires.join( ',\n' ) }
 			};
 		}
 	};`;
