@@ -34,6 +34,7 @@ import {
 } from 'state/sites/plans/selectors';
 import {
 	FEATURE_REPUBLICIZE,
+	FEATURE_REPUBLICIZE_SCHEDULING,
 	PLAN_BUSINESS,
 } from 'lib/plans/constants';
 
@@ -409,6 +410,7 @@ export default connect(
 			postId,
 			planSlug,
 			hasRepublicizeFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE ),
+			hasRepublicizeSchedulingFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE_SCHEDULING ),
 			siteSlug: getSiteSlug( state, siteId ),
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, props.post.type ),
 			connections: getSiteUserConnections( state, siteId, userId ),
