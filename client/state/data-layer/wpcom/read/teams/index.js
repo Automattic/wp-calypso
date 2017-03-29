@@ -3,9 +3,20 @@
  */
 import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/action-types';
 import wpcom from 'lib/wp';
+import inflight from 'lib/inflight';
 
 export function handleTeamsRequest( store, action, next ) {
-	wpcom.req.get( '/read/teams', { apiVersion: '1.2' } )
+	const dedupeKey = READER_TEAMS_REQUEST;
+	if ( inflight.requestInflight( dedupeKey ) ) {
+		return;
+	}
+
+	const request = inflight.promiseTracker(
+		dedupeKey,
+		wpcom.req.get( '/read/teams', { apiVersion: '1.2' } )
+	);
+
+	request
 		.then(
 			payload => {
 				store.dispatch( {

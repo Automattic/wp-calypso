@@ -6,9 +6,8 @@ import { assert, expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { items, isRequesting } from '../reducer';
+import { items } from '../reducer';
 import {
-	READER_TEAMS_REQUEST,
 	READER_TEAMS_RECEIVE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -66,40 +65,6 @@ describe( 'reducer', ( ) => {
 			} catch ( err ) {
 				assert.deepEqual( [], state );
 			}
-		} );
-	} );
-
-	describe( 'isRequesting', () => {
-		it( 'requesting teams should set requesting to true', () => {
-			expect(
-				isRequesting( false,
-					{
-						type: READER_TEAMS_REQUEST,
-					}
-				)
-			).to.equal( true );
-		} );
-
-		it( 'successful request should set requesting to false', () => {
-			expect(
-				isRequesting( true,
-					{
-						type: READER_TEAMS_RECEIVE,
-						teams: [ {}, {}, {} ],
-					}
-				)
-			).to.equal( false );
-		} );
-
-		it( 'failed request should set requesting to false', () => {
-			expect(
-				isRequesting( true,
-					{
-						type: READER_TEAMS_RECEIVE,
-						error: new Error( 'test error' ),
-					}
-				)
-			).to.equal( false );
 		} );
 	} );
 } );
