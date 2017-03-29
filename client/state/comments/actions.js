@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import wpcom from 'lib/wp';
 import {
 	COMMENTS_CHANGE_STATUS,
@@ -96,9 +97,14 @@ function commentsRequestFailure( dispatch, requestId, err ) {
  * Creates a thunk that requests comments for a given post
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
+ * @param {String} status status filter. Defaults to approved posts
  * @returns {Function} thunk that requests comments for a given post
  */
 export function requestPostComments( siteId, postId, status = 'approved' ) {
+	if ( ! isEnabled( 'comments/filters-in-posts' ) ) {
+		status = 'approved';
+	}
+
 	return ( dispatch, getState ) => {
 		const postCommentRequests = getPostCommentRequests( getState(), siteId, postId );
 		const oldestCommentDateForPost = getPostOldestCommentDate( getState(), siteId, postId );
