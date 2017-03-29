@@ -53,11 +53,17 @@ export const FeaturedImageTour = makeTour(
         </ButtonRow>
         </Step>
 
+        /** The next two steps use the width: 410px as a hack to make the positioning work. 
+        *** Without it, they sort of 'float' to the left of their designated targets.
+        *** Recommended alternatives are welcomed.
+        **/
+
         <Step
             name="open-featured-images"
             arrow="right-top"
             target=".editor-drawer__taxonomies + .accordion"
             placement="beside"
+            style={ { width: '410px' } }
         >
             <Continue click step="click-featured-image-button" target=".editor-drawer__taxonomies + .accordion">
                 Toggle the Featured Image section
@@ -68,7 +74,8 @@ export const FeaturedImageTour = makeTour(
             name="click-featured-image-button"
             arrow="right-top"
             target="button.editor-drawer-well__placeholder"
-            placement="beside"            
+            placement="beside"  
+            style={ { width: '410px' } }          
         >
             <Continue click step="select-featured-image" target=".editor-drawer__taxonomies + .accordion .editor-drawer-well__placeholder">
                 Click "Set Featured Image"
@@ -110,11 +117,10 @@ export const FeaturedImageTour = makeTour(
             target=".editor-ground-control__toggle-sidebar"
             placement="beside"
         >
-        <p>Awesome! You've now set a featured image.</p>
+        <p>Nice work! Your Featured Image is ready!</p>
         <ButtonRow>
-            <Quit />
+            <Quit>Quit</Quit>
         </ButtonRow>
         </Step>
     </Tour>
 );
-
