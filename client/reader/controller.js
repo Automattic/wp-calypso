@@ -299,8 +299,6 @@ const exported = {
 	}
 };
 
-export default exported;
-
 export const {
     initAbTests,
     prettyRedirects,
