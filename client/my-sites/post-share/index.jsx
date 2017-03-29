@@ -330,7 +330,10 @@ class PostShare extends Component {
 
 		const classes = classNames(
 			'post-share__wrapper',
-			{ 'has-connections': this.hasConnections() }
+			{ 'has-connections': this.hasConnections() },
+			{ 'has-republicize-feature': this.props.hasRepublicizeFeature },
+			{ 'has-republicize-scheduling-feature': this.props.hasRepublicizeSchedulingFeature },
+			{ 'has-connections': this.hasConnections() },
 		);
 
 		return (
