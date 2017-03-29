@@ -34,7 +34,7 @@ function getSiteDestination( dependencies ) {
 	 *
 	 * Redirect them
 	 */
-	if ( ! dependencies.siteSlug.match(/wordpress\.[a-z]+$/i) ) {
+	if ( ! dependencies.siteSlug.match( /wordpress\.[a-z]+$/i ) ) {
 		protocol = 'http';
 	}
 
@@ -119,14 +119,18 @@ const flows = {
 	website: {
 		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
-		description: 'This flow was originally used for the users who clicked "Create Website" on the two-button homepage. It is now linked to from the default homepage CTA as the main flow was slightly behind given translations.',
+		description: 'This flow was originally used for the users who clicked "Create Website" ' +
+			'on the two-button homepage. It is now linked to from the default homepage CTA as ' +
+			'the main flow was slightly behind given translations.',
 		lastModified: '2016-05-23'
 	},
 
 	blog: {
 		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
-		description: 'This flow was originally used for the users who clicked "Create Blog" on the two-button homepage. It is now used from blog-specific landing pages so that verbiage in survey steps refers to "blog" instead of "website".',
+		description: 'This flow was originally used for the users who clicked "Create Blog" on ' +
+			'the two-button homepage. It is now used from blog-specific landing pages so that ' +
+			'verbiage in survey steps refers to "blog" instead of "website".',
 		lastModified: '2016-05-23'
 	},
 
@@ -149,21 +153,24 @@ const flows = {
 	'delta-discover': {
 		steps: [ 'user' ],
 		destination: '/',
-		description: 'A copy of the `account` flow for the Delta email campaigns. Half of users who go through this flow receive a reader-specific drip email series.',
+		description: 'A copy of the `account` flow for the Delta email campaigns. Half of users who ' +
+			'go through this flow receive a reader-specific drip email series.',
 		lastModified: '2016-05-03'
 	},
 
 	'delta-blog': {
 		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
-		description: 'A copy of the `blog` flow for the Delta email campaigns. Half of users who go through this flow receive a blogging-specific drip email series.',
+		description: 'A copy of the `blog` flow for the Delta email campaigns. Half of users who go ' +
+			'through this flow receive a blogging-specific drip email series.',
 		lastModified: '2016-03-09'
 	},
 
 	'delta-site': {
 		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
-		description: 'A copy of the `website` flow for the Delta email campaigns. Half of users who go through this flow receive a website-specific drip email series.',
+		description: 'A copy of the `website` flow for the Delta email campaigns. Half of users who go ' +
+			'through this flow receive a website-specific drip email series.',
 		lastModified: '2016-03-09'
 	},
 
@@ -365,7 +372,7 @@ const Flows = {
 		 */
 		if ( 'main' === flowName ) {
 			if ( '' === stepName ) {
-				// e.g. abtest( 'siteTitleStep' );
+				abtest( 'signupSurveyStep' );
 			}
 		}
 	},
@@ -385,11 +392,9 @@ const Flows = {
 	getABTestFilteredFlow( flowName, flow ) {
 		// Only do this on the main flow
 		if ( 'main' === flowName ) {
-			/* e.g.:
-			if ( getABTestVariation( 'siteTitleStep' ) === 'showSiteTitleStep' ) {
-				return Flows.insertStepIntoFlow( 'site-title', flow );
+			if ( abtest( 'signupSurveyStep' ) === 'showSurveyStep' ) {
+				return Flows.insertStepIntoFlow( 'survey', flow );
 			}
-			*/
 		}
 
 		return flow;

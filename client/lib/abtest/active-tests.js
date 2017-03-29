@@ -69,4 +69,12 @@ module.exports = {
 		defaultVariation: 'showOld',
 		allowExistingUsers: true
 	},
+	signupSurveyStep: {
+		datestamp: '20170329',
+		variations: {
+			showSurveyStep: 20,
+			hideSurveyStep: 80,
+		},
+		defaultVariation: 'hideSurveyStep',
+	},
 };
