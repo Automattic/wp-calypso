@@ -7,6 +7,7 @@ import React, { PropTypes } from 'react';
  * Internal dependencies
  */
 import AdvancedTab from './advanced-tab';
+import CdnTab from './cdn-tab';
 import ContentsTab from './contents-tab';
 import Easy from './easy';
 import Main from 'components/main';
@@ -19,7 +20,7 @@ const WPSuperCache = ( { site, tab } ) => {
 			case Tabs.ADVANCED:
 				return <AdvancedTab siteUrl={ site.URL } />;
 			case Tabs.CDN:
-				break;
+				return <CdnTab siteUrl={ site.URL } />;
 			case Tabs.CONTENTS:
 				return <ContentsTab isMultisite={ site.is_multisite } />;
 			case Tabs.PRELOAD:
