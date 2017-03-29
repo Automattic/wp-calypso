@@ -156,30 +156,37 @@ class PostShare extends Component {
 
 	renderShareButton() {
 		const { siteId, translate } = this.props;
+
+		const shareButton = <Button
+			className="post-share__button"
+			primary
+			onClick={ this.sharePost }
+			disabled={ this.isButtonDisabled() }
+		>
+			{ translate( 'Share post' ) }
+		</Button>;
+
 		return (
 			<div className="post-share__button-actions">
 				<Button onClick={ this.previewSharingPost }>
 					{ translate( 'Preview' ) }
 				</Button>
 
-				<ButtonGroup className="post-share__share-combo">
-					<Button
-						className="post-share__button"
-						primary
-						onClick={ this.sharePost }
-						disabled={ this.isButtonDisabled() }
-					>
-						{ translate( 'Share post' ) }
-					</Button>
+				{ ! this.props.hasRepublicizeSchedulingFeature && shareButton }
 
-					<CalendarButton
-						primary
-						className="post-share__schedule-button"
-						title={ translate( 'Set date and time' ) }
-						tabIndex={ 3 }
-						siteId={ siteId }
-						popoverPosition="bottom left" />
-				</ButtonGroup>
+				{ this.props.hasRepublicizeSchedulingFeature &&
+					<ButtonGroup className="post-share__share-combo">
+						{ shareButton }
+
+						<CalendarButton
+							primary
+							className="post-share__schedule-button"
+							title={ translate( 'Set date and time' ) }
+							tabIndex={ 3 }
+							siteId={ siteId }
+							popoverPosition="bottom left" />
+					</ButtonGroup>
+				}
 			</div>
 		);
 	}
