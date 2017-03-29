@@ -21,11 +21,6 @@ import {
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
 } from 'state/action-types';
 
-// This import will be deleted when the refactor is complete:
-import { connection } from './common';
-
-const debug = require( 'debug' )( 'calypso:happychat:actions' );
-
 export const setHappychatChatStatus = status => ( {
 	type: HAPPYCHAT_SET_CHAT_STATUS, status
 } );
@@ -34,7 +29,6 @@ export const receiveChatTranscript = ( messages, timestamp ) => ( {
 	type: HAPPYCHAT_TRANSCRIPT_RECEIVE, messages, timestamp
 } );
 
-const setChatConnecting = () => ( { type: HAPPYCHAT_CONNECTING } );
 export const setChatConnected = () => ( { type: HAPPYCHAT_CONNECTED } );
 
 export const setHappychatAvailable = isAvailable => ( { type: HAPPYCHAT_SET_AVAILABLE, isAvailable } );
