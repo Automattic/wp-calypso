@@ -223,7 +223,6 @@ class ReaderStream extends React.Component {
 		const selectedPostKey = this.props.postsStore.getSelectedPostKey();
 		showSelectedPost( {
 			store: this.props.postsStore,
-			selectedGap: selectedPostKey.isGap && selectedPostKey,
 			postKey: selectedPostKey,
 		} );
 	}
