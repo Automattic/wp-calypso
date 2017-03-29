@@ -35,9 +35,12 @@ class FeedHeader extends Component {
 		let siteish = site && site.toJS();
 		if ( ! siteish && feed ) {
 			siteish = {
-				title: feed.name || ( feed.URL && url.parse( feed.URL ).hostname ) || ( feed.feed_URL && url.parse( feed.feed_URL ).hostname ),
-				domain: ( feed.URL && url.parse( feed.URL ).hostname ) || ( feed.feed_URL && url.parse( feed.feed_URL ).hostname ),
-				URL: feed.feed_URL || feed.URL
+				title: feed.name ||
+					( feed.URL && url.parse( feed.URL ).hostname ) ||
+					( feed.feed_URL && url.parse( feed.feed_URL ).hostname ),
+				domain: ( feed.URL && url.parse( feed.URL ).hostname ) ||
+					( feed.feed_URL && url.parse( feed.feed_URL ).hostname ),
+				URL: feed.URL || feed.feed_URL
 			};
 		}
 		return siteish;
@@ -80,9 +83,12 @@ class FeedHeader extends Component {
 						this.props.translate( '%s follower', '%s followers',
 						{ count: followerCount, args: [ this.props.numberFormat( followerCount ) ] } ) }
 						</span> : null }
-						{ this.props.feed && this.props.feed.state === feedState.COMPLETE ? <div className="reader-feed-header__follow-button">
-							<ReaderFollowButton siteUrl={ this.props.feed.feed_URL } iconSize={ 24 } />
-						</div> : null }
+						{ this.props.feed && this.props.feed.state === feedState.COMPLETE
+							? ( <div className="reader-feed-header__follow-button">
+								<ReaderFollowButton siteUrl={ this.props.feed.feed_URL } iconSize={ 24 } />
+								</div> )
+							: null
+						}
 					</div>
 				</div>
 				<Card className="reader-feed-header__site">
