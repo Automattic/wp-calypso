@@ -52,4 +52,4 @@ Pass true to have the droppable area occupy the entire screen, regardless of whe
 
 ### `icon`
 
-Pass a React Node to set a custom icon. 
+Pass a React Node to set a custom icon. Defaults to `<Gridicon icon="cloud-upload" size={ 48 } />`.
