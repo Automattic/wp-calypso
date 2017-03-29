@@ -66,7 +66,7 @@ describe( 'reducer', () => {
 
 		it( 'should unfollow a tag if requested to do so', () => {
 			const prevState = keyById( [ TAG1, TAG2 ] );
-			const action = receiveUnfollowTag( { payload: TAG1.id } );
+			const action = receiveUnfollowTag( TAG1.id );
 			const state = items( prevState, action );
 
 			expect( state ).to.eql( keyById( [
