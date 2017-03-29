@@ -73,6 +73,9 @@ const setupContextMiddleware = reduxStore => {
 	} );
 };
 
+// We need to require sections to load React with i18n mixin
+const loadSectionsMiddleware = () => require( 'sections' ).load();
+
 const loggedOutMiddleware = currentUser => {
 	if ( currentUser.get() ) {
 		return;
@@ -182,8 +185,9 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
 	setupContextMiddleware( reduxStore );
-	loggedOutMiddleware( currentUser );
 	oauthTokenMiddleware();
+	loadSectionsMiddleware();
+	loggedOutMiddleware( currentUser );
 	clearNoticesMiddleware();
 	unsavedFormsMiddleware();
 };
