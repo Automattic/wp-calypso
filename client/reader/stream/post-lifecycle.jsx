@@ -115,7 +115,7 @@ export default class PostLifecycle extends React.PureComponent {
 					handleClick={ this.props.handleClick }
 				/>
 			);
-		} else if ( ! post || post._state === 'minimal' ) {
+		} else if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
 			return <PostPlaceholder />;
 		} else if ( post._state === 'error' ) {
 			return <PostUnavailable post={ post } />;
