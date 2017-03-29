@@ -81,10 +81,6 @@ class PostShare extends Component {
 		return !! get( this.props, 'connections.length' );
 	}
 
-	isSchedulingEnabled() {
-		return this.props.planSlug === PLAN_BUSINESS && isEnabled( 'publicize-scheduling' );
-	}
-
 	toggleConnection = id => {
 		const skipped = this.state.skipped.slice();
 		const index = skipped.indexOf( id );
@@ -189,7 +185,7 @@ class PostShare extends Component {
 	}
 
 	renderUpgradeNudge() {
-		if ( this.isSchedulingEnabled ) {
+		if ( ! isEnabled( 'publicize-scheduling' ) ) {
 			return null;
 		}
 
@@ -220,8 +216,8 @@ class PostShare extends Component {
 		);
 	}
 
-	renderFooter() {
-		if ( ! this.isSchedulingEnabled ) {
+	renderActionsSection() {
+		if ( ! isEnabled( 'publicize-scheduling' ) ) {
 			return null;
 		}
 
@@ -380,7 +376,7 @@ class PostShare extends Component {
 							</div>
 
 							{ this.renderUpgradeNudge() }
-							{ this.renderFooter() }
+							{ this.renderActionsSection() }
 						</div>
 					}
 
