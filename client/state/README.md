@@ -17,6 +17,16 @@ const store = createReduxStore();
 
 All the application information and data in Calypso should go through this data flow. When you are creating a new module with new data requirements, you should add them to this global store.
 
+You can add a new reducer to the store at runtime easily by wrapping your main component with the `withReducer` Higher Order Component:
+
+```js
+import { withReducer } from 'state/with-reducer';
+
+//...your main React component here...
+
+export default withReducer( 'myModule', myReducerFunction )( MyMainReactComponent );
+```
+
 ## Utilities
 
 `state/utils.js` contains a number of helper utilities you may find useful in implementing your state subtree:

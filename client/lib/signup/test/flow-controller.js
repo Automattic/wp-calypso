@@ -9,8 +9,8 @@ import ary from 'lodash/ary';
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
-import { createStore } from 'redux';
-import { reducer } from 'state';
+import { createStore, combineReducers } from 'redux';
+import { initialReducers } from 'state';
 
 describe( 'flow-controller', function() {
 	let SignupProgressStore,
@@ -29,7 +29,7 @@ describe( 'flow-controller', function() {
 		SignupActions = require( '../actions' );
 		SignupProgressStore.reset();
 
-		const store = createStore( reducer );
+		const store = createStore( combineReducers( initialReducers ) );
 		SignupDependencyStore.setReduxStore( store );
 	} );
 

@@ -13,6 +13,36 @@ import { createReduxStore } from '../';
 import currentUser from 'state/current-user/reducer';
 
 describe( 'index', () => {
+	describe( 'addReducer', () => {
+		const name = 'myReducer';
+		const func = ( state ) => state || {};
+
+		it( 'should add and remove a reducer by name', () => {
+			const store = createReduxStore();
+
+			expect( store.getReducers()[ name ] ).to.not.exist;
+
+			store.addReducer( name, func );
+			expect( store.getReducers()[ name ] ).to.exist;
+
+			store.removeReducer( name );
+			expect( store.getReducers()[ name ] ).to.not.exist;
+		} );
+
+		it( 'should throw when trying to add a reducer with an existing name', () => {
+			const store = createReduxStore();
+
+			const addFunc = () => {
+				store.addReducer( name, func );
+			};
+
+			expect( addFunc ).to.not.throw( Error );
+			expect( store.getReducers()[ name ] ).to.exist;
+
+			expect( addFunc ).to.throw( Error );
+		} );
+	} );
+
 	describe( 'createReduxStore', () => {
 		it( 'can be called without specifying initialState', () => {
 			const reduxStoreNoArgs = createReduxStore().getState();
@@ -53,7 +83,9 @@ describe( 'index', () => {
 			it( 'ignores non-existent keys', () => {
 				expect( console.error.calledOnce ).to.eql( false );
 				const reduxStoreNoArgs = createReduxStore().getState();
-				const reduxStoreBadData = createReduxStore( { some: { bad: { stuff: true } } } ).getState();
+				const reduxStoreBadData = createReduxStore(
+					{ some: { bad: { stuff: true } } }
+				).getState();
 				expect( reduxStoreBadData ).to.eql( reduxStoreNoArgs );
 				expect( console.error.calledOnce ).to.eql( true );
 			} );

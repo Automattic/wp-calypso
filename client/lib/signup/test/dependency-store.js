@@ -7,8 +7,8 @@ import assert from 'assert';
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
-import { createStore } from 'redux';
-import { reducer } from 'state';
+import { createStore, combineReducers } from 'redux';
+import { initialReducers } from 'state';
 
 describe( 'dependency-store', function() {
 	let SignupProgressStore,
@@ -23,7 +23,7 @@ describe( 'dependency-store', function() {
 		SignupDependencyStore = require( '../dependency-store' );
 		SignupActions = require( '../actions' );
 
-		const store = createStore( reducer );
+		const store = createStore( combineReducers( initialReducers ) );
 		SignupDependencyStore.setReduxStore( store );
 	} );
 
