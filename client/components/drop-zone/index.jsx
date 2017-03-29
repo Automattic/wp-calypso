@@ -3,7 +3,6 @@
  */
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
-import createFragment from 'react-addons-create-fragment';
 import without from 'lodash/without';
 import includes from 'lodash/includes';
 import classNames from 'classnames';
@@ -23,7 +22,7 @@ export const DropZone = React.createClass( {
 		onVerifyValidTransfer: PropTypes.func,
 		onFilesDrop: PropTypes.func,
 		fullScreen: PropTypes.bool,
-		icon: PropTypes.string,
+		icon: PropTypes.node,
 		textLabel: PropTypes.string,
 		translate: PropTypes.func,
 	},
@@ -41,7 +40,7 @@ export const DropZone = React.createClass( {
 			onVerifyValidTransfer: () => true,
 			onFilesDrop: noop,
 			fullScreen: false,
-			icon: 'cloud-upload',
+			icon: <Gridicon icon="cloud-upload" size={ 48 } />,
 			translate: identity,
 		};
 	},
@@ -195,26 +194,28 @@ export const DropZone = React.createClass( {
 	},
 
 	renderContent() {
-		let content;
-
 		const textLabel = this.props.textLabel
 			? this.props.textLabel
 			: this.props.translate( 'Drop files to upload' );
 
-		if ( this.props.children ) {
-			content = this.props.children;
-		} else {
-			content = createFragment( {
-				icon: <Gridicon icon={ this.props.icon } size={ 48 } className="drop-zone__content-icon" />,
-				text: (
-					<span className="drop-zone__content-text">
-						{ textLabel }
-					</span>
-				)
-			} );
-		}
-
-		return <div className="drop-zone__content">{ content }</div>;
+		return (
+			<div className="drop-zone__content">
+				{
+					this.props.children
+						? this.props.children
+						: (
+							<div>
+								<span className="drop-zone__content-icon">
+									{ this.props.icon }
+								</span>
+								<span className="drop-zone__content-text">
+									{ textLabel }
+								</span>
+							</div>
+						)
+				}
+			</div>
+		);
 	},
 
 	render() {
