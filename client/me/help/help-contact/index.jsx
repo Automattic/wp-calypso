@@ -453,7 +453,6 @@ const HelpContact = React.createClass( {
 	shouldUseDirectly: function() {
 		const isEn = this.props.currentUserLocale === 'en';
 		return (
-			config.isEnabled( 'help/directly' ) &&
 			isEn &&
 			! this.props.isDirectlyFailed
 		);
