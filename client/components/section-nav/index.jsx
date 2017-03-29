@@ -22,7 +22,8 @@ var SectionNav = React.createClass( {
 		selectedText: React.PropTypes.node,
 		selectedCount: React.PropTypes.number,
 		hasPinnedItems: React.PropTypes.bool,
-		onMobileNavPanelOpen: React.PropTypes.func
+		onMobileNavPanelOpen: React.PropTypes.func,
+		className: React.PropTypes.string,
 	},
 
 	getInitialState: function() {
@@ -61,7 +62,7 @@ var SectionNav = React.createClass( {
 			className = classNames( {
 				'section-nav': true,
 				'is-empty': true
-			} );
+			}, this.props.className );
 
 			return (
 				<div className={ className }>
@@ -76,7 +77,7 @@ var SectionNav = React.createClass( {
 			'section-nav': true,
 			'is-open': this.state.mobileOpen,
 			'has-pinned-items': this.hasPinnedSearch || this.props.hasPinnedItems
-		} );
+		}, this.props.className );
 
 		return (
 			<div className={ className }>

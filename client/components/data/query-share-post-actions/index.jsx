@@ -1,0 +1,59 @@
+/**
+ * External dependencies
+ */
+import { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+
+/**
+ * Internal dependencies
+ */
+import isFetchingPublicizeShareActionsScheduled from 'state/selectors/is-fetching-publicize-share-actions-scheduled';
+import isFetchingPublicizeShareActionsPublished from 'state/selectors/is-fetching-publicize-share-actions-published';
+import { fetchPostShareActionsScheduled, fetchPostShareActionsPublished } from 'state/sharing/publicize/publicize-actions/actions';
+
+class QuerySharePostActions extends Component {
+	static propTypes = {
+		siteId: PropTypes.number,
+		postId: PropTypes.number,
+		status: PropTypes.string,
+		// Connected props
+		isRequestingScheduled: PropTypes.bool.isRequired,
+		isRequestingPublished: PropTypes.bool.isRequired,
+		fetchPostShareActionsScheduled: PropTypes.func.isRequired,
+		fetchPostShareActionsPublished: PropTypes.func.isRequired,
+	};
+
+	componentDidMount() {
+		this.request( this.props );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.siteId === nextProps.siteId &&
+			this.props.postId === nextProps.postId &&
+			this.props.status === nextProps.status ) {
+			return;
+		}
+		this.request( nextProps );
+	}
+
+	request( props ) {
+		if ( props.status === 'scheduled' && ! props.isRequestingScheduled ) {
+			props.fetchPostShareActionsScheduled( props.siteId, props.postId );
+		}
+		if ( props.status === 'published' && ! props.fetchPostShareActionsPublished ) {
+			props.fetchPostShareActionsPublished( props.siteId, props.postId );
+		}
+	}
+
+	render() {
+		return null;
+	}
+}
+
+export default connect(
+	( state, { siteId, postId } ) => ( {
+		isRequestingScheduled: isFetchingPublicizeShareActionsScheduled( state, siteId, postId ),
+		isRequestingPublished: isFetchingPublicizeShareActionsPublished( state, siteId, postId ),
+	} ),
+	{ fetchPostShareActionsScheduled, fetchPostShareActionsPublished }
+)( QuerySharePostActions );
