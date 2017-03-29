@@ -214,7 +214,8 @@ describe( 'actions', () => {
 					.persist()
 					.get( '/rest/v1.1/me/sites' )
 					.query( {
-						site_visibility: 'all'
+						site_visibility: 'all',
+						include_domain_only: true
 					} )
 					.reply( 200, {
 						sites: [ client_id ]
