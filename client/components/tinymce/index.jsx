@@ -236,7 +236,7 @@ module.exports = React.createClass( {
 			selector: '#' + this._id,
 			skin_url: '//s1.wp.com/wp-includes/js/tinymce/skins/lightgray',
 			skin: 'lightgray',
-			content_css: CONTENT_CSS.join( ',' ),
+			content_css: CONTENT_CSS,
 			language: user.get() ? user.get().localeSlug : 'en',
 			language_url: DUMMY_LANG_URL,
 			directionality: user.isRTL() ? 'rtl' : 'ltr',
