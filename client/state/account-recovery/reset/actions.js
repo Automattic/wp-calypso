@@ -15,6 +15,7 @@ import {
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST,
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
+	ACCOUNT_RECOVERY_RESET_PICK_METHOD,
 } from 'state/action-types';
 
 export const fetchResetOptionsSuccess = ( items ) => ( {
@@ -84,4 +85,9 @@ export const requestResetPassword = ( userData, method, key, password ) => ( {
 	method,
 	key,
 	password,
+} );
+
+export const pickResetMethod = ( method ) => ( {
+	type: ACCOUNT_RECOVERY_RESET_PICK_METHOD,
+	method,
 } );

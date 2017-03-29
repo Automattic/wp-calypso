@@ -4,7 +4,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,31 +14,38 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import ResetOptionSet from './reset-option-set';
 
-import { getAccountRecoveryResetOptions } from 'state/selectors';
+import {
+	pickResetMethod,
+	requestReset,
+} from 'state/account-recovery/reset/actions';
+
+import {
+	getAccountRecoveryResetUserData,
+	getAccountRecoveryResetOptions,
+	getAccountRecoveryResetSelectedMethod,
+	getAccountRecoveryResetRequestError,
+	isRequestingAccountRecoveryReset,
+} from 'state/selectors';
 
 export class ResetPasswordFormComponent extends Component {
-	static defaultProps = {
-		translate: identity,
-	};
-
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
 		resetOptions: PropTypes.array.isRequired,
-	};
-
-	state = {
-		isSubmitting: false,
-		selectedResetOption: null,
+		selectedMethod: PropTypes.string,
+		userData: PropTypes.object.isRequired,
+		requestError: PropTypes.object,
+		isRequesting: PropTypes.bool,
 	};
 
 	submitForm = () => {
-		// TODO:
-		// This is going to be replaced by corresponding redux actions.
-		this.setState( { isSubmitting: true } );
+		this.props.requestReset( {
+			...this.props.userData,
+			method: this.props.selectedMethod,
+		} );
 	};
 
 	onResetOptionChanged = ( event ) => {
-		this.setState( { selectedResetOption: event.currentTarget.value } );
+		this.props.pickResetMethod( event.currentTarget.value );
 	};
 
 	getOptionDisplayStrings = ( optionName ) => {
@@ -49,22 +55,22 @@ export class ResetPasswordFormComponent extends Component {
 			case 'primary':
 				return {
 					email: translate(
-						'Email a reset link to {{strong}}your main email address{{/strong}}',
+						'Email a reset link to {{strong}}your main email address{{/strong}}.',
 						{ components: { strong: <strong /> } }
 					),
 					sms: translate(
-						'Send a reset code to {{strong}}your main phone{{/strong}}',
+						'Send a reset code to {{strong}}your main phone{{/strong}}.',
 						{ components: { strong: <strong /> } }
 					),
 				};
 			case 'secondary':
 				return {
 					email: translate(
-						'Email a reset link to {{strong}}your recovery email address{{/strong}}',
+						'Email a reset link to {{strong}}your recovery email address{{/strong}}.',
 						{ components: { strong: <strong /> } }
 					),
 					sms: translate(
-						'Send a reset code to {{strong}}your recovery phone{{/strong}}',
+						'Send a reset code to {{strong}}your recovery phone{{/strong}}.',
 						{ components: { strong: <strong /> } }
 					),
 				};
@@ -76,14 +82,16 @@ export class ResetPasswordFormComponent extends Component {
 	render() {
 		const {
 			resetOptions,
-			translate
+			selectedMethod,
+			isRequesting,
+			requestError,
+			translate,
 		} = this.props;
 
-		const { isSubmitting, selectedResetOption } = this.state;
-		const isPrimaryButtonEnabled = selectedResetOption && ! isSubmitting;
+		const isPrimaryButtonEnabled = selectedMethod && ! isRequesting;
 
 		return (
-			<div className="reset-password-form">
+			<Card>
 				<h2 className="reset-password-form__title">
 					{ translate( 'Reset your password' ) }
 				</h2>
@@ -93,33 +101,43 @@ export class ResetPasswordFormComponent extends Component {
 						'select one of these options and follow the instructions.'
 					) }
 				</p>
-				<Card>
-					<FormFieldset className="reset-password-form__field-set">
-						<FormLegend className="reset-password-form__legend">
-							{ translate( 'How would you like to reset your password?' ) }
-						</FormLegend>
-						{ resetOptions.map( ( { email, sms, name }, index ) => (
-							<ResetOptionSet
-								key={ index }
-								email={ email }
-								sms={ sms }
-								name={ name }
-								displayStrings={ this.getOptionDisplayStrings( name ) }
-								disabled={ isSubmitting }
-								onOptionChanged={ this.onResetOptionChanged }
-								selectedResetOption={ selectedResetOption }
-							/>
-						) ) }
-					</FormFieldset>
-					<Button
-						className="reset-password-form__submit-button"
-						onClick={ this.submitForm }
-						disabled={ ! isPrimaryButtonEnabled }
-						primary>
-						{ translate( 'Continue' ) }
-					</Button>
-				</Card>
-			</div>
+				<FormFieldset className="reset-password-form__field-set">
+					<FormLegend className="reset-password-form__legend">
+						{ translate( 'How would you like to reset your password?' ) }
+					</FormLegend>
+					{ resetOptions.map( ( { email, sms, name }, index ) => (
+						<ResetOptionSet
+							key={ index }
+							email={ email }
+							sms={ sms }
+							name={ name }
+							displayStrings={ this.getOptionDisplayStrings( name ) }
+							disabled={ isRequesting }
+							onOptionChanged={ this.onResetOptionChanged }
+							selectedResetOption={ selectedMethod }
+						/>
+					) ) }
+				</FormFieldset>
+				{
+					requestError && (
+					<p className="reset-password-form__error-message">
+						{ translate(
+							"We're having trouble connecting to our servers at the moment. " +
+							'Please try again later. If the problem persists, please {{a}}contact us{{/a}}.',
+							{ components: {
+								a: <a href="https://wordpress.com/wp-login.php?action=recovery" target="_blank" rel="noopener noreferrer" />
+							} }
+						) }
+					</p> )
+				}
+				<Button
+					className="reset-password-form__submit-button"
+					onClick={ this.submitForm }
+					disabled={ ! isPrimaryButtonEnabled }
+					primary>
+					{ translate( 'Continue' ) }
+				</Button>
+			</Card>
 		);
 	}
 }
@@ -127,5 +145,13 @@ export class ResetPasswordFormComponent extends Component {
 export default connect(
 	( state ) => ( {
 		resetOptions: getAccountRecoveryResetOptions( state ),
-	} )
+		selectedMethod: getAccountRecoveryResetSelectedMethod( state ),
+		userData: getAccountRecoveryResetUserData( state ),
+		requestError: getAccountRecoveryResetRequestError( state ),
+		isRequesting: isRequestingAccountRecoveryReset( state ),
+	} ),
+	{
+		pickResetMethod,
+		requestReset,
+	}
 )( localize( ResetPasswordFormComponent ) );

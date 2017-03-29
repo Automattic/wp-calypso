@@ -4,6 +4,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,32 +38,25 @@ describe( 'ResetPasswordForm', () => {
 		const wrapper = shallow(
 			<ResetPasswordFormComponent
 				resetOptions={ exampleResetOptions }
+				translate={ identity }
 			/>
 		);
 
-		expect( wrapper ).to.have.state( 'isSubmitting' ).to.be.false;
 		expect( wrapper.find( ResetOptionSet ) ).to.have.length( 2 );
-
 		expect( wrapper.find( '.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 	} );
 
 	context( 'fields', () => {
 		useFakeDom();
 
-		it( 'should be disabled while submitting', function() {
+		it( 'should be disabled while isRequesting is true.', function() {
 			const wrapper = mount(
 				<ResetPasswordFormComponent
 					resetOptions={ exampleResetOptions }
+					isRequesting={ true }
+					translate={ identity }
 				/>
 			);
-			wrapper.find( '.reset-password-form__email-option.primary' ).simulate( 'change' );
-
-			// Expect the button to be enabled
-			expect( wrapper.find( '.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.not.be.ok;
-
-			wrapper.find( '.reset-password-form__submit-button' ).simulate( 'click' );
-
-			expect( wrapper ).to.have.state( 'isSubmitting' ).to.be.true;
 
 			// Expect the fields to be disabled
 			inputSelectors.forEach( selector => {
@@ -78,6 +72,8 @@ describe( 'ResetPasswordForm', () => {
 			const wrapper = mount(
 				<ResetPasswordFormComponent
 					resetOptions={ exampleResetOptions }
+					pickedMethod={ null }
+					translate={ identity }
 				/>
 			);
 
@@ -85,17 +81,15 @@ describe( 'ResetPasswordForm', () => {
 			expect( wrapper.find( '.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 		} );
 
-		it( 'should be disabled when clicked', function() {
+		it( 'should be disabled when isRequesting is true.', function() {
 			const wrapper = mount(
 				<ResetPasswordFormComponent
 					resetOptions={ exampleResetOptions }
+					isRequesting={ true }
+					translate={ identity }
 				/>
 			);
 
-			wrapper.find( '.reset-password-form__email-option.primary' ).simulate( 'click' );
-			wrapper.find( '.reset-password-form__submit-button' ).simulate( 'click' );
-
-			expect( wrapper ).to.have.state( 'isSubmitting' ).to.be.true;
 			expect( wrapper.find( '.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 		} );
 	} );
