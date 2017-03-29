@@ -88,7 +88,7 @@ export function requestSites() {
 		dispatch( {
 			type: SITES_REQUEST
 		} );
-		return wpcom.me().sites( { site_visibility: 'all' } ).then( ( response ) => {
+		return wpcom.me().sites( { site_visibility: 'all', include_domain_only: true } ).then( ( response ) => {
 			dispatch( receiveSites( response.sites ) );
 			dispatch( {
 				type: SITES_REQUEST_SUCCESS
