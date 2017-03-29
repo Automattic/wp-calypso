@@ -24,7 +24,7 @@ describe( 'middleware', () => {
 				send: spy(),
 				notTyping: spy(),
 			};
-			middleware( connection )()( spy() )( action );
+			middleware( connection )()( noop )( action );
 			expect( connection.send ).to.have.been.calledWith( action.message );
 			expect( connection.notTyping ).to.have.been.calledOnce;
 		} );
