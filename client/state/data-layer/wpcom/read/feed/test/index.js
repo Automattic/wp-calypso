@@ -11,7 +11,7 @@ import freeze from 'deep-freeze';
 import {
 	requestFeedSearch,
 	receiveFeedSearch,
-} from 'state/reader/feed-search//actions';
+} from 'state/reader/feed-search/actions';
 import {
 	initiateFeedSearch,
 	receiveFeeds,
