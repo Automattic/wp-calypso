@@ -267,6 +267,39 @@ class PostShare extends Component {
 		);
 	}
 
+	renderRequestSharingNotice() {
+		const {
+			failure,
+			requesting,
+			success,
+			translate,
+		} = this.props;
+
+		if ( requesting ) {
+			return (
+				<Notice status="is-warning" showDismiss={ false }>
+						{ translate( 'Sharing…' ) }
+				</Notice>
+			);
+		}
+
+		if ( success ) {
+			return (
+				<Notice status="is-success" onDismissClick={ this.dismiss }>
+					{ translate( 'Post shared. Please check your social media accounts.' ) }
+				</Notice>
+			);
+		}
+
+		if ( failure ) {
+			return (
+				<Notice status="is-error" onDismissClick={ this.dismiss }>
+					{ translate( 'Something went wrong. Please don\'t be mad.' ) }
+				</Notice>
+			);
+		}
+	}
+
 	render() {
 		if ( ! this.props.isPublicizeEnabled ) {
 			return null;
@@ -278,12 +311,9 @@ class PostShare extends Component {
 
 		const {
 			connections,
-			failure,
 			postId,
-			requesting,
 			siteId,
 			siteSlug,
-			success,
 			translate,
 		} = this.props;
 
@@ -298,23 +328,7 @@ class PostShare extends Component {
 
 		return (
 			<div className="post-share">
-				{ requesting &&
-					<Notice status="is-warning" showDismiss={ false }>
-							{ translate( 'Sharing…' ) }
-					</Notice>
-				}
-
-				{ success &&
-					<Notice status="is-success" onDismissClick={ this.dismiss }>
-						{ translate( 'Post shared. Please check your social media accounts.' ) }
-					</Notice>
-				}
-
-				{ failure &&
-					<Notice status="is-error" onDismissClick={ this.dismiss }>
-						{ translate( 'Something went wrong. Please don\'t be mad.' ) }
-						</Notice>
-				}
+				{ this.renderRequestSharingNotice() }
 
 				<div className={ classes }>
 					<QueryPublicizeConnections siteId={ siteId } />
