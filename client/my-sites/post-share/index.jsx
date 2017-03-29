@@ -336,14 +336,11 @@ class PostShare extends Component {
 			return this.renderUpgradeToGetPublicizeNudge();
 		}
 
-		const classes = classNames(
-			'post-share__wrapper',
-			{ 'has-connections': this.hasConnections() }
-		);
-
 		const {
 			connections,
 			message,
+			hasRepublicizeFeature,
+			hasRepublicizeSchedulingFeature,
 			postId,
 			siteId,
 			siteSlug,
@@ -353,6 +350,13 @@ class PostShare extends Component {
 		if ( ! siteId || ! postId ) {
 			return null;
 		}
+
+		const classes = classNames(
+			'post-share__wrapper',
+			{ 'has-connections': this.hasConnections() },
+			{ 'has-republicize-feature': hasRepublicizeFeature },
+			{ 'has-republicize-scheduling-feature': hasRepublicizeSchedulingFeature },
+		);
 
 		return (
 			<div className="post-share">
