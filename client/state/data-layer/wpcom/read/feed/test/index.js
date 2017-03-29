@@ -3,65 +3,88 @@
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
+import freeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import useNock from 'test/helpers/use-nock';
+import {
+	requestFeedSearch,
+	receiveFeedSearch,
+} from 'state/reader/feed-search//actions';
+import {
+	initiateFeedSearch,
+	receiveFeeds,
+	receiveError,
+} from '../';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { NOTICE_CREATE } from 'state/action-types';
 
-import { handleTeamsRequest } from '../';
-import { requestTeams } from 'state/reader/teams/actions';
-import { READER_TEAMS_RECEIVE } from 'state/action-types';
+const feeds = freeze( [
+	{ blog_ID: 'IM A BLOG' },
+] );
 
-export const successfulResponse = {
-	teams: [
-		{
-			title: 'Automattic',
-			slug: 'a8c'
-		}
-	],
-	number: 1
-};
+const query = 'okapis r us';
 
 describe( 'wpcom-api', () => {
-	const nextSpy = sinon.spy();
+	describe( 'search feeds', () => {
+		describe( '#initiateFeedSearch', () => {
+			it( 'should dispatch http request for feed search', () => {
+				const action = requestFeedSearch( query );
+				const dispatch = sinon.spy();
+				const next = sinon.spy();
 
-	describe( 'teams request', () => {
-		useNock( nock => (
-			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.2/read/teams' )
-				.reply( 200, successfulResponse )
-				.get( '/rest/v1.2/read/teams' )
-				.reply( 500, new Error() )
-		) );
+				initiateFeedSearch( { dispatch }, action, next );
 
-		it( 'should dispatch RECEIVE action when request completes', ( done ) => {
-			const dispatch = sinon.spy( action => {
-				if ( action.type === READER_TEAMS_RECEIVE ) {
-					expect( dispatch ).to.have.been.calledWith( {
-						type: READER_TEAMS_RECEIVE,
-						payload: successfulResponse,
-					} );
-					done();
-				}
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith( http( {
+					method: 'GET',
+					path: '/read/feed',
+					query: { q: query },
+					onSuccess: action,
+					onFailure: action,
+				} ) );
 			} );
 
-			handleTeamsRequest( { dispatch }, requestTeams(), nextSpy, );
+			it( 'should pass the original action along the middleware chain', () => {
+				const action = requestFeedSearch( query );
+				const dispatch = sinon.spy();
+				const next = sinon.spy();
+
+				initiateFeedSearch( { dispatch }, action, next );
+
+				expect( next ).to.have.been.calledWith( action );
+			} );
 		} );
 
-		it( 'should dispatch RECEIVE action with error when request errors', ( done ) => {
-			const dispatch = sinon.spy( action => {
-				if ( action.type === READER_TEAMS_RECEIVE ) {
-					expect( dispatch ).to.have.been.calledWith( {
-						type: READER_TEAMS_RECEIVE,
-						payload: sinon.match.any,
-						error: true,
-					} );
-					done();
-				}
-			} );
+		describe( '#receiveFeeds', () => {
+			it( 'should dispatch an action with the feed results', () => {
+				const action = requestFeedSearch( query );
+				const dispatch = sinon.spy();
+				const next = sinon.spy();
 
-			handleTeamsRequest( { dispatch }, requestTeams(), nextSpy, );
+				receiveFeeds( { dispatch }, action, next, feeds );
+
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWith(
+					receiveFeedSearch( query, feeds )
+				);
+			} );
+		} );
+
+		describe( '#receiveFeedsError', () => {
+			it( 'should dispatch error notice', () => {
+				const action = requestFeedSearch( query );
+				const dispatch = sinon.spy();
+				const next = sinon.spy();
+
+				receiveError( { dispatch }, action, next );
+
+				expect( dispatch ).to.have.been.calledWithMatch( {
+					type: NOTICE_CREATE,
+				} );
+				expect( next ).callCount( 0 );
+			} );
 		} );
 	} );
 } );
