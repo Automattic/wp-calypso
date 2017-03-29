@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, get } from 'lodash';
+import { find, get, map, filter, last } from 'lodash';
 import url from 'url';
 import config from 'config';
 import Debug from 'debug';
@@ -95,4 +95,13 @@ export function getSourceFollowUrl( post ) {
 	}
 
 	return followUrl || '';
+}
+
+export function getDiscoverPickFormat( post ) {
+	const postFormats = get( post, 'discover_metadata.discover_fp_post_formats' );
+	const discoverFormat = filter( map( postFormats, ( format ) => {
+		// format pattern determined by discover.wordpress.com
+		return last( format.slug.match( /(\w+)-pick/ ) );
+	} ) );
+	return discoverFormat[ 0 ];
 }

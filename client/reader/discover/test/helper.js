@@ -148,4 +148,16 @@ describe( 'helper', () => {
 			assert.isUndefined( followUrl );
 		} );
 	}	);
+
+	describe( 'getDiscoverPickFormat', () => {
+		it( 'returns the pick format if the post is a discover pick', () => {
+			const format = helper.getDiscoverPickFormat( discoverPost );
+			assert.equal( 'standard', format );
+		} );
+
+		it( 'returns undefined if the format can not be deterimined', () => {
+			const format = helper.getDiscoverPickFormat( fixtures.nonDiscoverPost );
+			assert.isUndefined( format );
+		} );
+	}	);
 } );
