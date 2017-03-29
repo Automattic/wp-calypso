@@ -259,7 +259,7 @@ class PostShare extends Component {
 			return null;
 		}
 
-		if ( ! this.props.planHasRepublicizeFeature ) {
+		if ( ! this.props.hasRepublicizeFeature ) {
 			return ( <div className="post-share">
 				<Banner
 					feature="republicize"
@@ -408,7 +408,7 @@ export default connect(
 			siteId,
 			postId,
 			planSlug,
-			planHasRepublicizeFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE ),
+			hasRepublicizeFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE ),
 			siteSlug: getSiteSlug( state, siteId ),
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, props.post.type ),
 			connections: getSiteUserConnections( state, siteId, userId ),
