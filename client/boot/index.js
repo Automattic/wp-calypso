@@ -17,8 +17,7 @@ var React = require( 'react' ),
 	page = require( 'page' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' ),
-	i18n = require( 'i18n-calypso' ),
-	includes = require( 'lodash/includes' );
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies
@@ -395,34 +394,6 @@ function reduxStoreReady( reduxStore ) {
 			testHelper( document.querySelector( '.environment.is-tests' ) );
 		} );
 	}
-
-	/*
-	 * Layouts with differing React mount-points will not reconcile correctly,
-	 * so remove an existing single-tree layout by re-rendering if necessary.
-	 *
-	 * TODO (@seear): Converting all of Calypso to single-tree layout will
-	 * make this unnecessary.
-	 */
-	page( '*', function( context, next ) {
-		const previousLayoutIsSingleTree = !! (
-			document.getElementsByClassName( 'wp-singletree-layout' ).length
-		);
-
-		const singleTreeSections = [ 'theme', 'themes' ];
-		const sectionName = getSectionName( context.store.getState() );
-		const isMultiTreeLayout = ! includes( singleTreeSections, sectionName );
-
-		if ( isMultiTreeLayout && previousLayoutIsSingleTree ) {
-			debug( 'Re-rendering multi-tree layout' );
-			ReactDom.unmountComponentAtNode( document.getElementById( 'wpcom' ) );
-			renderLayout( context.store );
-		} else if ( ! isMultiTreeLayout && ! previousLayoutIsSingleTree ) {
-			debug( 'Unmounting multi-tree layout' );
-			ReactDom.unmountComponentAtNode( document.getElementById( 'primary' ) );
-			ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-		}
-		next();
-	} );
 
 	detectHistoryNavigation.start();
 	page.start();

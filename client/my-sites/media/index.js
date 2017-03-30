@@ -13,8 +13,21 @@ var controller = require( 'my-sites/controller' ),
 module.exports = function() {
 
 	if ( config.isEnabled( 'manage/media' ) ) {
-		page( '/media', controller.siteSelection, controller.sites );
-		page( '/media/:filter?/:domain', controller.siteSelection, controller.navigation, mediaController.media );
+		page(
+		    '/media',
+			controller.siteSelection,
+			controller.sites,
+			makeLayout,
+			clientRender
+		);
+		page(
+		    '/media/:filter?/:domain',
+			controller.siteSelection,
+			controller.navigation,
+			mediaController.media,
+			makeLayout,
+			clientRender
+		);
 	}
 
 };

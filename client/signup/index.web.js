@@ -10,78 +10,174 @@ import controller from './controller';
 import jetpackConnectController from './jetpack-connect/controller';
 import sitesController from 'my-sites/controller';
 
+import { makeLayout, render as clientRender } from 'controller';
+
 export default function() {
 	page(
-		'/start/:flowName?/:stepName?/:stepSectionName?/:lang?',
+	    '/start/:flowName?/:stepName?/:stepSectionName?/:lang?',
 		controller.saveRefParameter,
 		controller.saveQueryObject,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.redirectToFlow,
-		controller.start
+		controller.start,
+		makeLayout,
+		clientRender
 	);
 
-	page( '/jetpack/connect/install', jetpackConnectController.install );
-
-	page( '/jetpack/connect/personal', jetpackConnectController.personal );
-	page( '/jetpack/connect/personal/:intervalType', jetpackConnectController.personal );
-
-	page( '/jetpack/connect/premium', jetpackConnectController.premium );
-	page( '/jetpack/connect/premium/:intervalType', jetpackConnectController.premium );
-
-	page( '/jetpack/connect/pro', jetpackConnectController.pro );
-	page( '/jetpack/connect/pro/:intervalType', jetpackConnectController.pro );
-
-	page( '/jetpack/connect', jetpackConnectController.connect );
-
-	page( '/jetpack/connect/choose/:site', jetpackConnectController.plansPreSelection );
+	page(
+	    '/jetpack/connect/install',
+		jetpackConnectController.install,
+		makeLayout,
+		clientRender
+	);
 
 	page(
-		'/jetpack/connect/authorize/:localeOrInterval?',
+	    '/jetpack/connect/personal',
+		jetpackConnectController.personal,
+		makeLayout,
+		clientRender
+	);
+	page(
+	    '/jetpack/connect/personal/:intervalType',
+		jetpackConnectController.personal,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+	    '/jetpack/connect/premium',
+		jetpackConnectController.premium,
+		makeLayout,
+		clientRender
+	);
+	page(
+	    '/jetpack/connect/premium/:intervalType',
+		jetpackConnectController.premium,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+	    '/jetpack/connect/pro',
+		jetpackConnectController.pro,
+		makeLayout,
+		clientRender
+	);
+	page(
+	    '/jetpack/connect/pro/:intervalType',
+		jetpackConnectController.pro,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+	    '/jetpack/connect',
+		jetpackConnectController.connect,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+	    '/jetpack/connect/choose/:site',
+		jetpackConnectController.plansPreSelection,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+	    '/jetpack/connect/authorize/:localeOrInterval?',
 		jetpackConnectController.redirectWithoutLocaleifLoggedIn,
 		jetpackConnectController.saveQueryObject,
-		jetpackConnectController.authorizeForm
+		jetpackConnectController.authorizeForm,
+		makeLayout,
+		clientRender
 	);
 
 	page(
-		'/jetpack/connect/authorize/:intervalType/:locale',
+	    '/jetpack/connect/authorize/:intervalType/:locale',
 		jetpackConnectController.redirectWithoutLocaleifLoggedIn,
 		jetpackConnectController.saveQueryObject,
-		jetpackConnectController.authorizeForm
+		jetpackConnectController.authorizeForm,
+		makeLayout,
+		clientRender
 	);
 
 	page(
-		'/jetpack/connect/install/:locale?',
+	    '/jetpack/connect/install/:locale?',
 		jetpackConnectController.redirectWithoutLocaleifLoggedIn,
-		jetpackConnectController.install
+		jetpackConnectController.install,
+		makeLayout,
+		clientRender
 	);
 
-	page( '/jetpack/connect/store', jetpackConnectController.plansLanding );
-	page( '/jetpack/connect/store/:intervalType', jetpackConnectController.plansLanding );
-
-	page( '/jetpack/connect/vaultpress', jetpackConnectController.vaultpressLanding );
-	page( '/jetpack/connect/vaultpress/:intervalType', jetpackConnectController.vaultpressLanding );
-
-	page( '/jetpack/connect/akismet', jetpackConnectController.akismetLanding );
-	page( '/jetpack/connect/akismet/:intervalType', jetpackConnectController.akismetLanding );
+	page(
+	    '/jetpack/connect/store',
+		jetpackConnectController.plansLanding,
+		makeLayout,
+		clientRender
+	);
+	page(
+	    '/jetpack/connect/store/:intervalType',
+		jetpackConnectController.plansLanding,
+		makeLayout,
+		clientRender
+	);
 
 	page(
-		'/jetpack/connect/:locale?',
+	    '/jetpack/connect/vaultpress',
+		jetpackConnectController.vaultpressLanding,
+		makeLayout,
+		clientRender
+	);
+	page(
+	    '/jetpack/connect/vaultpress/:intervalType',
+		jetpackConnectController.vaultpressLanding,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+	    '/jetpack/connect/akismet',
+		jetpackConnectController.akismetLanding,
+		makeLayout,
+		clientRender
+	);
+	page(
+	    '/jetpack/connect/akismet/:intervalType',
+		jetpackConnectController.akismetLanding,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+	    '/jetpack/connect/:locale?',
 		jetpackConnectController.redirectWithoutLocaleifLoggedIn,
-		jetpackConnectController.connect
+		jetpackConnectController.connect,
+		makeLayout,
+		clientRender
 	);
 
 	page(
-		'/jetpack/connect/plans/:site',
+	    '/jetpack/connect/plans/:site',
 		sitesController.siteSelection,
-		jetpackConnectController.plansSelection
+		jetpackConnectController.plansSelection,
+		makeLayout,
+		clientRender
 	);
 
 	page(
-		'/jetpack/connect/plans/:intervalType/:site',
+	    '/jetpack/connect/plans/:intervalType/:site',
 		sitesController.siteSelection,
-		jetpackConnectController.plansSelection
+		jetpackConnectController.plansSelection,
+		makeLayout,
+		clientRender
 	);
 
-	page( '/jetpack/sso/:siteId?/:ssoNonce?', jetpackConnectController.sso );
-	page( '/jetpack/sso/*', jetpackConnectController.sso );
-};
+	page(
+	    '/jetpack/sso/:siteId?/:ssoNonce?',
+		jetpackConnectController.sso,
+		makeLayout,
+		clientRender
+	);
+	page('/jetpack/sso/*', jetpackConnectController.sso, makeLayout, clientRender);
+}

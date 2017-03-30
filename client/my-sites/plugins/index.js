@@ -11,6 +11,8 @@ import config from 'config';
 import pluginsController from './controller';
 import { getSelectedSite } from 'state/ui/selectors';
 
+import { makeLayout, render as clientRender } from 'controller';
+
 const nonJetpackRedirectTo = path => ( context, next ) => {
 	const site = getSelectedSite( context.store.getState() );
 
@@ -23,63 +25,90 @@ const nonJetpackRedirectTo = path => ( context, next ) => {
 
 module.exports = function() {
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
-		page( '/plugins/setup',
+		page(
+		    '/plugins/setup',
 			controller.siteSelection,
-			pluginsController.setupPlugins
+			pluginsController.setupPlugins,
+			makeLayout,
+			clientRender
 		);
 
-		page( '/plugins/setup/:site',
+		page(
+		    '/plugins/setup/:site',
 			controller.siteSelection,
-			pluginsController.setupPlugins
+			pluginsController.setupPlugins,
+			makeLayout,
+			clientRender
 		);
 	}
 
 	if ( config.isEnabled( 'manage/plugins' ) ) {
-		page( '/plugins/browse/:category/:site',
+		page(
+		    '/plugins/browse/:category/:site',
 			controller.siteSelection,
 			controller.navigation,
-			pluginsController.browsePlugins
+			pluginsController.browsePlugins,
+			makeLayout,
+			clientRender
 		);
 
-		page( '/plugins/browse/:siteOrCategory?',
+		page(
+		    '/plugins/browse/:siteOrCategory?',
 			controller.siteSelection,
 			controller.navigation,
-			pluginsController.browsePlugins
+			pluginsController.browsePlugins,
+			makeLayout,
+			clientRender
 		);
 
-		page( '/plugins/category/:category/:site_id',
+		page(
+		    '/plugins/category/:category/:site_id',
 			controller.siteSelection,
 			controller.navigation,
 			nonJetpackRedirectTo( '/plugins' ),
 			pluginsController.plugins.bind( null, 'all' ),
+			makeLayout,
+			clientRender
 		);
 
-		page( '/plugins',
+		page(
+		    '/plugins',
 			controller.siteSelection,
 			controller.navigation,
 			pluginsController.plugins.bind( null, 'all' ),
-			controller.sites
+			controller.sites,
+			makeLayout,
+			clientRender
 		);
 
 		[ 'active', 'inactive', 'updates' ].forEach( filter => (
-			page( `/plugins/${ filter }/:site_id?`,
+			page(
+			    `/plugins/${ filter }/:site_id?`,
 				controller.siteSelection,
 				controller.navigation,
 				pluginsController.jetpackCanUpdate.bind( null, filter ),
-				pluginsController.plugins.bind( null, filter )
+				pluginsController.plugins.bind( null, filter ),
+				makeLayout,
+				clientRender
 			)
 		) );
 
-		page( '/plugins/:plugin/:site_id?',
+		page(
+		    '/plugins/:plugin/:site_id?',
 			controller.siteSelection,
 			controller.navigation,
-			pluginsController.plugin
+			pluginsController.plugin,
+			makeLayout,
+			clientRender
 		);
 
-		page( '/plugins/:plugin/eligibility/:site_id',
+		page(
+		    '/plugins/:plugin/eligibility/:site_id',
 			controller.siteSelection,
 			controller.navigation,
-			pluginsController.eligibility
+			pluginsController.eligibility,
+			makeLayout,
+			clientRender
 		);
 
 		page.exit( '/plugins*',

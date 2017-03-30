@@ -13,7 +13,14 @@ var controller = require( 'my-sites/controller' ),
 module.exports = function() {
 
 	if ( config.isEnabled( 'manage/drafts' ) ) {
-		page( '/drafts/:domain?', controller.siteSelection, controller.navigation, draftsController.drafts );
+		page(
+		    '/drafts/:domain?',
+			controller.siteSelection,
+			controller.navigation,
+			draftsController.drafts,
+			makeLayout,
+			clientRender
+		);
 	}
 
 };

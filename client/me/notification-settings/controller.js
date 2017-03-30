@@ -10,7 +10,6 @@ import i18n from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import userSettings from 'lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import devicesFactory from 'lib/devices';
 import sitesFactory from 'lib/sites-list';
 import userFactory from 'lib/user';
@@ -21,86 +20,74 @@ const sites = sitesFactory();
 const user = userFactory();
 
 export default {
-	notifications( context ) {
-		const NotificationsComponent = require( 'me/notification-settings/main' ),
+	notifications(context, next) {
+	    const NotificationsComponent = require( 'me/notification-settings/main' ),
 			basePath = context.path;
 
 		context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications' );
 
-		renderWithReduxStore(
-			React.createElement( NotificationsComponent, {
-				user: user,
-				userSettings: userSettings,
-				blogs: sites,
-				devices: devices,
-				path: context.path
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = React.createElement( NotificationsComponent, {
+			user: user,
+			userSettings: userSettings,
+			blogs: sites,
+			devices: devices,
+			path: context.path
+		} );
+		next();
 	},
 
-	comments( context ) {
-		const CommentSettingsComponent = require( 'me/notification-settings/comment-settings' ),
+	comments(context, next) {
+	    const CommentSettingsComponent = require( 'me/notification-settings/comment-settings' ),
 			basePath = context.path;
 
 		context.store.dispatch( setTitle( i18n.translate( 'Comments on other sites', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites' );
 
-		renderWithReduxStore(
-			React.createElement( CommentSettingsComponent,
-				{
-					user: user,
-					devices: devices,
-					path: context.path
-				}
-			),
-			document.getElementById( 'primary' ),
-			context.store
+		context.primary = React.createElement( CommentSettingsComponent,
+			{
+				user: user,
+				devices: devices,
+				path: context.path
+			}
 		);
+		next();
 	},
 
-	updates( context ) {
-		const WPcomSettingsComponent = require( 'me/notification-settings/wpcom-settings' ),
+	updates(context, next) {
+	    const WPcomSettingsComponent = require( 'me/notification-settings/wpcom-settings' ),
 			basePath = context.path;
 
 		context.store.dispatch( setTitle( i18n.translate( 'Updates from WordPress.com', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Updates from WordPress.com' );
 
-		renderWithReduxStore(
-			React.createElement( WPcomSettingsComponent,
-				{
-					user: user,
-					devices: devices,
-					path: context.path
-				}
-			),
-			document.getElementById( 'primary' ),
-			context.store
+		context.primary = React.createElement( WPcomSettingsComponent,
+			{
+				user: user,
+				devices: devices,
+				path: context.path
+			}
 		);
+		next();
 	},
 
-	notificationSubscriptions( context ) {
-		const NotificationSubscriptions = require( 'me/notification-settings/reader-subscriptions' ),
+	notificationSubscriptions(context, next) {
+	    const NotificationSubscriptions = require( 'me/notification-settings/reader-subscriptions' ),
 			basePath = context.path;
 
 		context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.ga.recordPageView( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites' );
 
-		renderWithReduxStore(
-			React.createElement( NotificationSubscriptions,
-				{
-					userSettings: userSettings,
-					path: context.path
-				}
-			),
-			document.getElementById( 'primary' ),
-			context.store
+		context.primary = React.createElement( NotificationSubscriptions,
+			{
+				userSettings: userSettings,
+				path: context.path
+			}
 		);
+		next();
 	}
 };

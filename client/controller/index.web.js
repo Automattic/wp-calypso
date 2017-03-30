@@ -18,7 +18,6 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import userFactory from 'lib/user';
 import sitesFactory from 'lib/sites-list';
 import debugFactory from 'debug';
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 /**
  * Re-export
@@ -67,7 +66,7 @@ export function clientRouter( route, ...middlewares ) {
 	page( route, ...middlewares, render );
 }
 
-function render( context ) {
+export function render( context ) {
 	context.layout
 		? renderSingleTree( context )
 		: renderSeparateTrees( context );
@@ -86,22 +85,22 @@ function renderSeparateTrees( context ) {
 }
 
 function renderPrimary( context ) {
-	const { primary, store } = context;
+    const { primary, store } = context;
 
 	if ( primary ) {
 		debug( 'Rendering primary', primary );
-		renderWithReduxStore( primary, 'primary', store );
+		context.primary = primary;
 	}
 }
 
 function renderSecondary( context ) {
-	const { secondary, store } = context;
+    const { secondary, store } = context;
 
 	if ( secondary === null ) {
 		debug( 'Unmounting secondary' );
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 	} else if ( secondary !== undefined ) {
 		debug( 'Rendering secondary' );
-		renderWithReduxStore( secondary, 'secondary', store );
+		context.secondary = secondary;
 	}
 }

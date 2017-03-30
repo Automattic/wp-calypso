@@ -9,10 +9,12 @@ import page from 'page';
 import config from 'config';
 import controller from './controller';
 
+import { makeLayout, render as clientRender } from 'controller';
+
 module.exports = function() {
 	if ( config.isEnabled( 'oauth' ) ) {
-		page( '/login', controller.login );
-		page( '/authorize', controller.authorize );
-		page( '/api/oauth/token', controller.getToken );
+		page('/login', controller.login, makeLayout, clientRender);
+		page('/authorize', controller.authorize, makeLayout, clientRender);
+		page('/api/oauth/token', controller.getToken, makeLayout, clientRender);
 	}
 };

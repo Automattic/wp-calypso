@@ -11,18 +11,23 @@ import controller from './controller';
 import readerController from 'reader/controller';
 import config from 'config';
 
+import { makeLayout, render as clientRender } from 'controller';
+
 export default function() {
 	// Cold Start no longer exists - redirect to /
-	page( '/recommendations/start', '/' );
+	page('/recommendations/start', '/', makeLayout, clientRender);
 
 	// Blog Recommendations
-	page( '/recommendations',
+	page(
+	    '/recommendations',
 		readerController.preloadReaderBundle,
 		readerController.loadSubscriptions,
 		readerController.initAbTests,
 		readerController.updateLastRoute,
 		readerController.sidebar,
-		controller.recommendedForYou
+		controller.recommendedForYou,
+		makeLayout,
+		clientRender
 	);
 
 	// Post Recommendations - Used by the Data team to test recommendation algorithms

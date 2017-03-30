@@ -21,7 +21,6 @@ import DevWelcome from './welcome';
 import Sidebar from './sidebar';
 import FormStateExamplesComponent from './form-state-examples';
 import EmptyContent from 'components/empty-content';
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 const devdocs = {
 
@@ -92,36 +91,27 @@ const devdocs = {
 	},
 
 	// UI components
-	design: function( context ) {
-		renderWithReduxStore(
-			React.createElement( DesignAssetsComponent, {
-				component: context.params.component
-			} ),
-			'primary',
-			context.store
-		);
+	design: function(context, next) {
+	    context.primary = React.createElement( DesignAssetsComponent, {
+			component: context.params.component
+		} );
+		next();
 	},
 
 	// App Blocks
-	blocks: function( context ) {
-		renderWithReduxStore(
-			React.createElement( Blocks, {
-				component: context.params.component
-			} ),
-			'primary',
-			context.store
-		);
+	blocks: function(context, next) {
+	    context.primary = React.createElement( Blocks, {
+			component: context.params.component
+		} );
+		next();
 	},
 
-	selectors: function( context ) {
-		renderWithReduxStore(
-			React.createElement( DocsSelectors, {
-				selector: context.params.selector,
-				search: context.query.search
-			} ),
-			'primary',
-			context.store
-		);
+	selectors: function(context, next) {
+	    context.primary = React.createElement( DocsSelectors, {
+			selector: context.params.selector,
+			search: context.query.search
+		} );
+		next();
 	},
 
 	typography: function( context ) {

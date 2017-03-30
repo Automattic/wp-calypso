@@ -10,72 +10,94 @@ import controller from 'my-sites/controller';
 import plansController from './controller';
 import currentPlanController from './current-plan/controller';
 
+import { makeLayout, render as clientRender } from 'controller';
+
 export default function() {
 	page(
-		'/plans',
+	    '/plans',
 		controller.siteSelection,
-		controller.sites
+		controller.sites,
+		makeLayout,
+		clientRender
 	);
 
 	page(
-		'/plans/compare',
-		controller.siteSelection,
-		controller.navigation,
-		plansController.redirectToPlans
-	);
-
-	page(
-		'/plans/compare/:domain',
+	    '/plans/compare',
 		controller.siteSelection,
 		controller.navigation,
-		plansController.redirectToPlans
+		plansController.redirectToPlans,
+		makeLayout,
+		clientRender
 	);
 
 	page(
-		'/plans/features',
+	    '/plans/compare/:domain',
 		controller.siteSelection,
 		controller.navigation,
-		plansController.redirectToPlans
+		plansController.redirectToPlans,
+		makeLayout,
+		clientRender
 	);
 
 	page(
-		'/plans/features/:domain',
+	    '/plans/features',
 		controller.siteSelection,
 		controller.navigation,
-		plansController.redirectToPlans
+		plansController.redirectToPlans,
+		makeLayout,
+		clientRender
 	);
 
 	page(
-		'/plans/features/:feature/:domain',
-		plansController.features
+	    '/plans/features/:domain',
+		controller.siteSelection,
+		controller.navigation,
+		plansController.redirectToPlans,
+		makeLayout,
+		clientRender
 	);
 
 	page(
-		'/plans/my-plan',
+	    '/plans/features/:feature/:domain',
+		plansController.features,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+	    '/plans/my-plan',
 		controller.siteSelection,
 		controller.sites,
 		controller.navigation,
-		currentPlanController.currentPlan
+		currentPlanController.currentPlan,
+		makeLayout,
+		clientRender
 	);
 
 	page(
-		'/plans/my-plan/:site',
+	    '/plans/my-plan/:site',
 		controller.siteSelection,
 		controller.navigation,
-		currentPlanController.currentPlan
+		currentPlanController.currentPlan,
+		makeLayout,
+		clientRender
 	);
 
 	page(
-		'/plans/select/:plan/:domain',
+	    '/plans/select/:plan/:domain',
 		controller.siteSelection,
-		plansController.redirectToCheckout
+		plansController.redirectToCheckout,
+		makeLayout,
+		clientRender
 	);
 
 	// This route renders the plans page for both WPcom and Jetpack sites.
 	page(
-		'/plans/:intervalType?/:site',
+	    '/plans/:intervalType?/:site',
 		controller.siteSelection,
 		controller.navigation,
-		plansController.plans
+		plansController.plans,
+		makeLayout,
+		clientRender
 	);
 }

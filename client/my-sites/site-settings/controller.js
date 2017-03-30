@@ -12,7 +12,6 @@ import analytics from 'lib/analytics';
 import config from 'config';
 import DeleteSite from './delete-site';
 import purchasesPaths from 'me/purchases/paths';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import { sectionify } from 'lib/route/path';
 import SiteSettingsComponent from 'my-sites/site-settings/main';
@@ -50,11 +49,7 @@ function canDeleteSite( site ) {
 }
 
 function renderPage( context, component ) {
-	renderWithReduxStore(
-		component,
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = component;
 }
 
 module.exports = {

@@ -12,13 +12,12 @@ import analytics from 'lib/analytics';
 import notices from 'notices';
 import userSettings from 'lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
 
 export default {
-	password( context ) {
-		const PasswordComponent = require( 'me/security/main' );
+	password(context, next) {
+	    const PasswordComponent = require( 'me/security/main' );
 		const basePath = context.path;
 		const accountPasswordData = require( 'lib/account-password-data' );
 
@@ -32,21 +31,18 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Password' );
 
-		renderWithReduxStore(
-			React.createElement( PasswordComponent,
-				{
-					userSettings: userSettings,
-					path: context.path,
-					accountPasswordData: accountPasswordData
-				}
-			),
-			document.getElementById( 'primary' ),
-			context.store
+		context.primary = React.createElement( PasswordComponent,
+			{
+				userSettings: userSettings,
+				path: context.path,
+				accountPasswordData: accountPasswordData
+			}
 		);
+		next();
 	},
 
-	twoStep( context ) {
-		const TwoStepComponent = require( 'me/two-step' ),
+	twoStep(context, next) {
+	    const TwoStepComponent = require( 'me/two-step' ),
 			basePath = context.path,
 			appPasswordsData = require( 'lib/application-passwords-data' );
 
@@ -54,21 +50,18 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Two-Step Authentication' );
 
-		renderWithReduxStore(
-			React.createElement( TwoStepComponent,
-				{
-					userSettings: userSettings,
-					path: context.path,
-					appPasswordsData: appPasswordsData
-				}
-			),
-			document.getElementById( 'primary' ),
-			context.store
+		context.primary = React.createElement( TwoStepComponent,
+			{
+				userSettings: userSettings,
+				path: context.path,
+				appPasswordsData: appPasswordsData
+			}
 		);
+		next();
 	},
 
-	connectedApplications( context ) {
-		const ConnectedAppsComponent = require( 'me/connected-applications' ),
+	connectedApplications(context, next) {
+	    const ConnectedAppsComponent = require( 'me/connected-applications' ),
 			basePath = context.path,
 			connectedAppsData = require( 'lib/connected-applications-data' );
 
@@ -76,36 +69,30 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Connected Applications' );
 
-		renderWithReduxStore(
-			React.createElement( ConnectedAppsComponent,
-				{
-					userSettings: userSettings,
-					path: context.path,
-					connectedAppsData: connectedAppsData
-				}
-			),
-			document.getElementById( 'primary' ),
-			context.store
+		context.primary = React.createElement( ConnectedAppsComponent,
+			{
+				userSettings: userSettings,
+				path: context.path,
+				connectedAppsData: connectedAppsData
+			}
 		);
+		next();
 	},
 
-	accountRecovery( context ) {
-		const AccountRecoveryComponent = require( 'me/security-account-recovery' ),
+	accountRecovery(context, next) {
+	    const AccountRecoveryComponent = require( 'me/security-account-recovery' ),
 			basePath = context.path;
 
 		context.store.dispatch( setTitle( i18n.translate( 'Account Recovery', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Account Recovery' );
 
-		renderWithReduxStore(
-			React.createElement( AccountRecoveryComponent,
-				{
-					userSettings: userSettings,
-					path: context.path
-				}
-			),
-			document.getElementById( 'primary' ),
-			context.store
+		context.primary = React.createElement( AccountRecoveryComponent,
+			{
+				userSettings: userSettings,
+				path: context.path
+			}
 		);
+		next();
 	}
 };

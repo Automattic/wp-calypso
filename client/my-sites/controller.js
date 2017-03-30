@@ -28,7 +28,6 @@ import config from 'config';
 import analytics from 'lib/analytics';
 import utils from 'lib/site/utils';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import {
 	domainManagementAddGoogleApps,
@@ -87,63 +86,48 @@ function removeSidebar( context ) {
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 }
 
-function renderEmptySites( context ) {
-	const NoSitesMessage = require( 'components/empty-content/no-sites-message' );
+function renderEmptySites(context, next) {
+    const NoSitesMessage = require( 'components/empty-content/no-sites-message' );
 
 	removeSidebar( context );
 
-	renderWithReduxStore(
-		React.createElement( NoSitesMessage ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( NoSitesMessage );
+	next();
 }
 
-function renderNoVisibleSites( context ) {
-	const EmptyContentComponent = require( 'components/empty-content' );
+function renderNoVisibleSites(context, next) {
+    const EmptyContentComponent = require( 'components/empty-content' );
 	const currentUser = user.get();
 	const hiddenSites = currentUser.site_count - currentUser.visible_site_count;
 	const signup_url = config( 'signup_url' );
 
 	removeSidebar( context );
 
-	renderWithReduxStore(
-		React.createElement( EmptyContentComponent, {
-			title: i18n.translate( 'You have %(hidden)d hidden WordPress site.', 'You have %(hidden)d hidden WordPress sites.', {
-				count: hiddenSites,
-				args: { hidden: hiddenSites }
-			} ),
-
-			line: i18n.translate( 'To manage it here, set it to visible.', 'To manage them here, set them to visible.', {
-				count: hiddenSites
-			} ),
-
-			action: i18n.translate( 'Change Visibility' ),
-			actionURL: '//dashboard.wordpress.com/wp-admin/index.php?page=my-blogs',
-			secondaryAction: i18n.translate( 'Create New Site' ),
-			secondaryActionURL: `${ signup_url }?ref=calypso-nosites`
+	context.primary = React.createElement( EmptyContentComponent, {
+		title: i18n.translate( 'You have %(hidden)d hidden WordPress site.', 'You have %(hidden)d hidden WordPress sites.', {
+			count: hiddenSites,
+			args: { hidden: hiddenSites }
 		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+
+		line: i18n.translate( 'To manage it here, set it to visible.', 'To manage them here, set them to visible.', {
+			count: hiddenSites
+		} ),
+
+		action: i18n.translate( 'Change Visibility' ),
+		actionURL: '//dashboard.wordpress.com/wp-admin/index.php?page=my-blogs',
+		secondaryAction: i18n.translate( 'Create New Site' ),
+		secondaryActionURL: `${ signup_url }?ref=calypso-nosites`
+	} );
+	next();
 }
 
 function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 	const FeatureUnavailable = require( 'components/empty-content/feature-unavailable' );
 	const { store: reduxStore } = reactContext;
 
-	renderWithReduxStore( (
-			<FeatureUnavailable domainName={ selectedSite.slug } siteId={ selectedSite.ID } />
-		),
-		document.getElementById( 'primary' ),
-		reduxStore
-	);
+	reactContext.primary = <FeatureUnavailable domainName={ selectedSite.slug } siteId={ selectedSite.ID } />;
 
-	renderWithReduxStore(
-		createNavigation( reactContext ),
-		document.getElementById( 'secondary' ),
-		reduxStore
-	);
+	reactContext.secondary = createNavigation( reactContext );
 }
 
 function isPathAllowedForDomainOnlySite( path, domainName ) {
@@ -381,11 +365,7 @@ module.exports = {
 
 	navigation: function( context, next ) {
 		// Render the My Sites navigation in #secondary
-		renderWithReduxStore(
-			createNavigation( context ),
-			document.getElementById( 'secondary' ),
-			context.store
-		);
+		context.secondary = createNavigation( context );
 		next();
 	},
 
@@ -396,14 +376,12 @@ module.exports = {
 		const selectedSite = sites.getSelectedSite();
 
 		if ( selectedSite && selectedSite.jetpack && ! isATEnabledForCurrentSite() ) {
-			renderWithReduxStore( (
-				<Main>
-					<JetpackManageErrorPage
-						template="noDomainsOnJetpack"
-						siteId={ sites.getSelectedSite().ID }
-					/>
-				</Main>
-			), document.getElementById( 'primary' ), context.store );
+			context.primary = <Main>
+				<JetpackManageErrorPage
+					template="noDomainsOnJetpack"
+					siteId={ sites.getSelectedSite().ID }
+				/>
+			</Main>;
 
 			analytics.pageView.record( basePath, '> No Domains On Jetpack' );
 		} else {
@@ -411,8 +389,8 @@ module.exports = {
 		}
 	},
 
-	sites( context ) {
-		if ( context.query.verified === '1' ) {
+	sites(context, next) {
+	    if ( context.query.verified === '1' ) {
 			notices.success(
 				i18n.translate(
 					"Email verified! Now that you've confirmed your email address you can publish posts on your blog."
@@ -425,11 +403,8 @@ module.exports = {
 		removeSidebar( context );
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 
-		renderWithReduxStore(
-			createSitesComponent( context ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = createSitesComponent( context );
+		next();
 	},
 
 	/**

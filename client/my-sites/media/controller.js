@@ -11,14 +11,13 @@ import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
 import analytics from 'lib/analytics';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 const sites = sitesFactory();
 
 module.exports = {
 
-	media: function( context ) {
-		var MediaComponent = require( 'my-sites/media/main' ),
+	media: function(context, next) {
+	    var MediaComponent = require( 'my-sites/media/main' ),
 			filter = context.params.filter,
 			search = context.query.s,
 			baseAnalyticsPath = route.sectionify( context.path );
@@ -34,15 +33,12 @@ module.exports = {
 		context.store.dispatch( setTitle( i18n.translate( 'Media', { textOnly: true } ) ) );
 
 		// Render
-		renderWithReduxStore(
-			React.createElement( MediaComponent, {
-				sites: sites,
-				filter: filter,
-				search: search
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = React.createElement( MediaComponent, {
+			sites: sites,
+			filter: filter,
+			search: search
+		} );
+		next();
 	}
 
 };

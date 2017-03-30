@@ -3,35 +3,25 @@
  */
 import React from 'react';
 
-/**
- * Internal dependencies
- */
-import { renderWithReduxStore } from 'lib/react-helpers';
 import sitesFactory from 'lib/sites-list';
 
 const sites = sitesFactory();
 
 export default {
-	billingHistory( context ) {
-		const BillingHistoryComponent = require( './main' );
+	billingHistory(context, next) {
+	    const BillingHistoryComponent = require( './main' );
 
-		renderWithReduxStore(
-			React.createElement( BillingHistoryComponent, { sites: sites } ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = React.createElement( BillingHistoryComponent, { sites: sites } );
+		next();
 	},
 
-	transaction( context ) {
-		const Receipt = require( './receipt' );
+	transaction(context, next) {
+	    const Receipt = require( './receipt' );
 		const receiptId = context.params.receiptId;
 
 		if ( receiptId ) {
-			renderWithReduxStore(
-				React.createElement( Receipt, { transactionId: receiptId } ),
-				document.getElementById( 'primary' ),
-				context.store
-			);
+			context.primary = React.createElement( Receipt, { transactionId: receiptId } );
 		}
+		next();
 	}
 };

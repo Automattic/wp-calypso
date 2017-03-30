@@ -17,7 +17,6 @@ import SignupComponent from './main';
 import utils from './utils';
 import userModule from 'lib/user';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 const user = userModule();
 
@@ -74,8 +73,8 @@ export default {
 		next();
 	},
 
-	start( context ) {
-		var basePath = route.sectionify( context.path ),
+	start(context, next) {
+	    var basePath = route.sectionify( context.path ),
 			flowName = utils.getFlowName( context.params ),
 			stepName = utils.getStepName( context.params ),
 			stepSectionName = utils.getStepSectionName( context.params );
@@ -85,18 +84,15 @@ export default {
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 
-		renderWithReduxStore(
-			React.createElement( SignupComponent, {
-				path: context.path,
-				refParameter,
-				queryObject,
-				locale: utils.getLocale( context.params ),
-				flowName: flowName,
-				stepName: stepName,
-				stepSectionName: stepSectionName
-			} ),
-			'primary',
-			context.store
-		);
+		context.primary = React.createElement( SignupComponent, {
+			path: context.path,
+			refParameter,
+			queryObject,
+			locale: utils.getLocale( context.params ),
+			flowName: flowName,
+			stepName: stepName,
+			stepSectionName: stepSectionName
+		} );
+		next();
 	}
 };

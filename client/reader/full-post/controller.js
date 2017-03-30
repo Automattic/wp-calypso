@@ -15,7 +15,6 @@ import {
 	trackPageLoad
 } from 'reader/controller-helper';
 import AsyncLoad from 'components/async-load';
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
 
@@ -31,8 +30,8 @@ function renderPostNotFound() {
 	);
 }
 
-export function blogPost( context ) {
-	const blogId = context.params.blog,
+export function blogPost(context, next) {
+    const blogId = context.params.blog,
 		postId = context.params.post,
 		basePath = '/read/blogs/:blog_id/posts/:post_id',
 		fullPageTitle = analyticsPageTitle + ' > Blog Post > ' + blogId + ' > ' + postId;
@@ -43,29 +42,26 @@ export function blogPost( context ) {
 	}
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
-	renderWithReduxStore(
-		<AsyncLoad
-			require="blocks/reader-full-post"
-			blogId={ blogId }
-			postId={ postId }
-			referral={ referral }
-			onClose={ function() {
-				page.back( context.lastRoute || '/' );
-			} }
-			onPostNotFound={ renderPostNotFound }
-		/>,
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = <AsyncLoad
+		require="blocks/reader-full-post"
+		blogId={ blogId }
+		postId={ postId }
+		referral={ referral }
+		onClose={ function() {
+			page.back( context.lastRoute || '/' );
+		} }
+		onPostNotFound={ renderPostNotFound }
+	/>;
 	defer( function() {
 		if ( typeof window !== 'undefined' ) {
 			window.scrollTo( 0, 0 );
 		}
 	} );
+	next();
 }
 
-export function feedPost( context ) {
-	const feedId = context.params.feed,
+export function feedPost(context, next) {
+    const feedId = context.params.feed,
 		postId = context.params.post,
 		basePath = '/read/feeds/:feed_id/posts/:feed_item_id',
 		fullPageTitle = analyticsPageTitle + ' > Feed Post > ' + feedId + ' > ' + postId;
@@ -76,19 +72,16 @@ export function feedPost( context ) {
 		page.back( context.lastRoute || '/' );
 	}
 
-	renderWithReduxStore(
-		<AsyncLoad
-			require="blocks/reader-full-post"
-			feedId={ feedId }
-			postId={ postId }
-			onClose={ closer }
-			onPostNotFound={ renderPostNotFound } />,
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = <AsyncLoad
+		require="blocks/reader-full-post"
+		feedId={ feedId }
+		postId={ postId }
+		onClose={ closer }
+		onPostNotFound={ renderPostNotFound } />;
 	defer( function() {
 		if ( typeof window !== 'undefined' ) {
 			window.scrollTo( 0, 0 );
 		}
 	} );
+	next();
 }

@@ -14,12 +14,10 @@ var sites = require( 'lib/sites-list' )(),
 	trackScrollPage = require( 'lib/track-scroll-page' ),
 	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle;
 
-import { renderWithReduxStore } from 'lib/react-helpers';
-
 var controller = {
 
-	pages: function( context ) {
-		var Pages = require( 'my-sites/pages/main' ),
+	pages: function(context, next) {
+	    var Pages = require( 'my-sites/pages/main' ),
 			siteID = route.getSiteFragment( context.path ),
 			status = context.params.status,
 			search = context.query.s,
@@ -44,23 +42,20 @@ var controller = {
 
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-		renderWithReduxStore(
-			React.createElement( Pages, {
-				context: context,
-				siteID: siteID,
-				status: status,
-				sites: sites,
-				search: search,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					baseAnalyticsPath,
-					analyticsPageTitle,
-					'Pages'
-				)
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = React.createElement( Pages, {
+			context: context,
+			siteID: siteID,
+			status: status,
+			sites: sites,
+			search: search,
+			trackScrollPage: trackScrollPage.bind(
+				null,
+				baseAnalyticsPath,
+				analyticsPageTitle,
+				'Pages'
+			)
+		} );
+		next();
 	}
 };
 
