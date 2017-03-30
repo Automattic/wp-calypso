@@ -50,8 +50,7 @@ var config = require( 'config' ),
 	syncHandler = require( 'lib/wp/sync-handler' ),
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	supportUser = require( 'lib/user/support-user-interop' ),
-	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default,
-	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
+	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default;
 
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -166,7 +165,14 @@ function boot() {
 function renderLayout( reduxStore ) {
 	const Layout = require( 'controller' ).ReduxWrappedLayout;
 
-	renderWithReduxStore( React.createElement( Layout, { store: reduxStore } ), 'wpcom', reduxStore );
+	const layoutElement = React.createElement( Layout, {
+		store: reduxStore
+	} );
+
+	ReactDom.render(
+		layoutElement,
+		document.getElementById( 'wpcom' )
+	);
 
 	debug( 'Main layout rendered.' );
 }
