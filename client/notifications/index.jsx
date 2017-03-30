@@ -15,8 +15,8 @@
  */
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import oAuthToken from 'lib/oauth-token';
-import { compact, get, invoke } from 'lodash';
+import wpcom from 'lib/wp';
+import { get, invoke } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,18 +25,18 @@ import analytics from 'lib/analytics';
 import config from 'config';
 import userLib from 'lib/user';
 
+import NotificationsPanel from './notifications-panel/src/Notifications';
+
 /**
  * Module variables
  */
-const NOTIFICATIONS_CLIENT_VERSION = 'beta-r152164-wpcom-38-gbf2d7f1';
-
 const user = userLib();
 const widgetDomain = 'https://widgets.wp.com';
 
 /**
  * Attempts to parse a JSON string
  *
- * @param {String} input
+ * @param {String} input possibly JSON data
  * @returns {*} parsed data on success and `null` on failure
  */
 const parseJson = input => {
@@ -47,49 +47,17 @@ const parseJson = input => {
 	}
 };
 
-/**
- * Prevents default action on an input event
- *
- * @param {Object} event
- * @returns {undefined}
- */
-const preventDefault = event => event.preventDefault();
-
-/**
- * Encapsulates the notifications client
- *
- * @extends Component
- */
 export class Notifications extends Component {
 	state = {
-		loaded: true,
-		iframeLoaded: false,
 		shownOnce: false,
 		widescreen: false,
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.visible && ! this.state.loaded ) {
-			this.setState( { loaded: true } );
-		} else if ( ! nextProps.visible && ! this.state.iframeLoaded && this.state.shownOnce ) {
-			// for cases where iframe is stuck loading, this will remove it from
-			// the DOM so we can try reloading it next time
-			this.setState( { loaded: false } );
-		}
-
 		// tell the iframe if we're changing visible status
 		if ( nextProps.visible !== this.props.visible ) {
 			this.postMessage( { action: 'togglePanel', showing: nextProps.visible } );
 			this.setState( { shownOnce: true, widescreen: false } );
-		}
-
-		if ( document.documentElement.classList.contains( 'touch' ) ) {
-			// prevent scrolling on main page on mobile
-			if ( this.props.visible && ! nextProps.visible ) {
-				document.body.removeEventListener( 'touchmove', this.preventDefault, false );
-			} else if ( ! this.props.visible && nextProps.visible ) {
-				document.body.addEventListener( 'touchmove', this.preventDefault, false );
-			}
 		}
 	}
 
@@ -122,8 +90,6 @@ export class Notifications extends Component {
 		window.removeEventListener( 'mousedown', this.props.checkToggle );
 		window.removeEventListener( 'touchstart', this.props.checkToggle );
 		window.removeEventListener( 'keydown', this.handleKeyPress );
-		document.body.removeEventListener( 'mousewheel', this.preventDefault, false );
-		document.body.removeEventListener( 'touchmove', this.preventDefault, false );
 
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
@@ -133,10 +99,6 @@ export class Notifications extends Component {
 			window.navigator.serviceWorker.removeEventListener( 'message', this.receiveServiceWorkerMessage );
 		}
 	}
-
-	enableMainWindowScroll = () => document.body.removeEventListener( 'mousewheel', preventDefault );
-
-	disableMainWindowScroll = () => document.body.addEventListener( 'mousewheel', preventDefault );
 
 	handleKeyPress = event => {
 		if ( event.target !== document.body && event.target.tagName !== 'A' ) {
@@ -159,36 +121,6 @@ export class Notifications extends Component {
 		hidden: !! document.hidden,
 	} );
 
-	/**
-	 * Sends the current oAuth token to the notifications client
-	 *
-	 * Calypso utilizes the browser cookie when making HTTP
-	 * requests and because the notifications client exists in
-	 * the same cookie domain it can make requests without
-	 * needing specific authentication.
-	 *
-	 * However, in the desktop the oAuth token plays a more
-	 * important role in authentication and thus we need to
-	 * pass it into the notifications client so that it can
-	 * make the authenticated calls it needs to.
-	 */
-	postAuth = () => {
-		if ( ! config.isEnabled( 'oauth' ) ) {
-			return;
-		}
-
-		const token = oAuthToken.getToken();
-
-		if ( token === false ) {
-			return;
-		}
-
-		this.postMessage( {
-			action: 'setAuthToken',
-			token: token
-		} );
-	};
-
 	receiveMessage = event => {
 		// Receives messages from the notifications widget
 		if ( event.origin !== widgetDomain ) {
@@ -206,20 +138,6 @@ export class Notifications extends Component {
 		}
 
 		switch ( data.action ) {
-			case 'iFrameReady':
-				if ( ! this.state.iframeLoaded ) {
-					this.setState( { iframeLoaded: true } );
-				}
-
-				this.postAuth();
-
-				if ( this.queuedMessage ) {
-					this.postMessage( this.queuedMessage );
-					this.queuedMessage = null;
-				}
-
-				return;
-
 			case 'render':
 				return this.props.setIndicator( data.num_new );
 
@@ -278,14 +196,8 @@ export class Notifications extends Component {
 	 *
 	 * @param {!Object} message data to send
 	 * @param {!String} message.action name of action for notes app to dispatch
-	 * @returns {*} please ignore return value
 	 */
 	postMessage = message => {
-		// save only the latest message to send when iframe is loaded
-		if ( ! ( this.notesFrame && this.state.iframeLoaded ) ) {
-			return this.queuedMessage = message;
-		}
-
 		const data = JSON.stringify( {
 			...message,
 			type: 'notesIframeMessage',
@@ -304,50 +216,21 @@ export class Notifications extends Component {
 		);
 	};
 
-	storeNotesFrame = ref => this.notesFrame = ref;
-
 	render() {
-		if ( ! this.props.visible && ! this.state.loaded ) {
-			// @TODO we need a good loading message
-			return <div />;
-		}
-
 		const localeSlug = get( user.get(), 'localeSlug', config( 'i18n_default_locale_slug' ) );
-
-		/** * @type {string} holds the URL for the notifications client for the iframe */
-		const widgetUrl = compact( [
-			widgetDomain,
-			'/notifications',
-			// we deploy to beta before pushing to production
-			config.isEnabled( 'notifications2beta' ) && 'beta',
-			'/',
-			// default app is at index.html
-			// auto-rtl is used to generate
-			// the flipped copy
-			user.isRTL() && 'rtl.html',
-			`?locale=${ localeSlug }`,
-			`&cache_buster=${ NOTIFICATIONS_CLIENT_VERSION }`,
-		] ).join( '' );
 
 		return (
 			<div
-				id="wpnt-notes-panel2"
-				className={ classNames( 'wide', {
+				id="wpnc-panel"
+				className={ classNames( 'wide', 'wpnc__main', {
 					'wpnt-open': this.props.visible,
 					'wpnt-closed': ! this.props.visible,
 				} ) }
-				onMouseEnter={ this.disableMainWindowScroll }
-				onMouseLeave={ this.enableMainWindowScroll }
 			>
-				<iframe
-					ref={ this.storeNotesFrame }
-					id="wpnt-notes-iframe2"
-					className={ classNames( 'wide', {
-						widescreen: this.state.widescreen && this.props.visible,
-					} ) }
-					src={ widgetUrl }
-					frameBorder="0"
-					allowTransparency="true"
+				<NotificationsPanel
+					isVisible={ this.props.visible }
+					locale={ localeSlug }
+					wpcom={ wpcom }
 				/>
 			</div>
 		);
