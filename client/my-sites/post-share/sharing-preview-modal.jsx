@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import Gridicon from 'gridicons';
 import { pick } from 'lodash';
 
@@ -28,6 +28,16 @@ const SharingPreviewModal = ( props ) => {
 			<SharingPreviewPane { ...previewProps } />
 		</Dialog>
 	);
+};
+
+SharingPreviewModal.propTypes = {
+	isVisible: PropTypes.bool.isRequired,
+	onClose: PropTypes.func.isRequired,
+
+	// SharingPreviewPane props
+	siteId: PropTypes.number,
+	postId: PropTypes.number,
+	message: PropTypes.string,
 };
 
 export default SharingPreviewModal;
