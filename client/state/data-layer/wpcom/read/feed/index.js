@@ -17,6 +17,7 @@ export function initiateFeedSearch( store, action, next ) {
 	store.dispatch( http( {
 		path,
 		method: 'GET',
+		apiVersion: '1.1',
 		query: { q: action.payload.query },
 		onSuccess: action,
 		onFailure: action,

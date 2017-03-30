@@ -6,7 +6,7 @@ import { createReducer, keyedReducer } from 'state/utils';
 /**
  * Internal dependencies
  */
-import { READER_FEED_SEARCH_RECIEVE } from 'state/action-types';
+import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
 
 /**
  * Tracks mappings between queries --> feed results
@@ -24,8 +24,8 @@ import { READER_FEED_SEARCH_RECIEVE } from 'state/action-types';
  * @param  {Object} action Action payload
  * @return {Array}        Updated state
  */
-export const items = keyedReducer( 'query', createReducer( {}, {
-	[ READER_FEED_SEARCH_RECIEVE ]: ( state = [], action ) => state.concat( action.payload.feeds )
+export const items = keyedReducer( 'query', createReducer( [], {
+	[ READER_FEED_SEARCH_RECEIVE ]: ( state, action ) => state.concat( action.payload )
 } ) );
 
 export default items;

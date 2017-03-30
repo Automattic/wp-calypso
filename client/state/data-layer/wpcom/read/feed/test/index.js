@@ -40,6 +40,7 @@ describe( 'wpcom-api', () => {
 				expect( dispatch ).to.have.been.calledWith( http( {
 					method: 'GET',
 					path: '/read/feed',
+					apiVersion: '1.1',
 					query: { q: query },
 					onSuccess: action,
 					onFailure: action,
