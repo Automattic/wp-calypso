@@ -16,7 +16,10 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 
-export const requestPageAction = ( page = 1, number = 50, meta = '' )=> ( {
+const ITEMS_PER_PAGE = 200;
+const MAX_ITEMS = 2000;
+
+export const requestPageAction = ( page = 1, number = ITEMS_PER_PAGE, meta = '' )=> ( {
 	type: READER_FOLLOWS_SYNC_PAGE,
 	payload: { page, meta, number, }
 } );
@@ -70,7 +73,7 @@ export function requestPage( store, action, next ) {
 	next( action );
 }
 
-const MAX_PAGES_TO_FETCH = 40; // TODO what should be the number here?
+const MAX_PAGES_TO_FETCH = MAX_ITEMS / ITEMS_PER_PAGE;
 export function receivePage( store, action, next, apiResponse ) {
 	if ( ! isValidApiResponse( apiResponse, action ) ) {
 		receiveError( store, action, next, apiResponse );
