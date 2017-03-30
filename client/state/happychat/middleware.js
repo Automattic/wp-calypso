@@ -56,8 +56,8 @@ const sign = ( payload ) => request( {
 
 const startSession = () => request( {
 	method: 'POST',
-	path: '/happychat/session' }
-);
+	path: '/happychat/session'
+} );
 
 export const connectChat = ( connection, { getState, dispatch } ) => {
 	const state = getState();
