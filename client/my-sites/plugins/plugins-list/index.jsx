@@ -12,7 +12,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import acceptDialog from 'lib/accept';
-import Dialog from 'components/dialog';
+import { infoNotice } from 'state/notices/actions';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 import PluginsActions from 'lib/plugins/actions';
 import PluginsListHeader from 'my-sites/plugins/plugin-list-header';
@@ -256,8 +256,7 @@ export const PluginsList = React.createClass( {
 		} );
 
 		if ( waitForDeactivate && this.props.selectedSite ) {
-				this.setState( { disconnectJetpackDialog: true } );
-			}
+			this.setState( { disconnectJetpackDialog: true } );
 		}
 
 		this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
@@ -390,9 +389,13 @@ export const PluginsList = React.createClass( {
 		if ( this.state.disconnectJetpackDialog && ! this.state.notices.inProgress.length ) {
 			this.setState( {
 				disconnectJetpackDialog: false,
-				showJetpackDisconnectDialog: true
 			} );
-			this.forceUpdate();
+
+			this.props.infoNotice( 'Disconnect Jetpack from WordPress.com', {
+				button: 'Manage Connection',
+				persistent: true,
+				href: '/settings/general/' + this.props.selectedSiteSlug
+			} );
 		}
 	},
 
@@ -430,18 +433,6 @@ export const PluginsList = React.createClass( {
 			return null;
 		}
 
-		const dialogButtons = [
-			{
-				action: 'cancel',
-				label: translate( 'Cancel' )
-			},
-			{
-				action: 'continue',
-				label: translate( 'Manage Connection' ),
-				isPrimary: true
-			}
-		];
-
 		return (
 			<div className="plugins-list" >
 				<PluginsListHeader label={ this.props.header }
@@ -464,15 +455,7 @@ export const PluginsList = React.createClass( {
 					haveInactiveSelected={ this.props.plugins.some( this.filterSelection.inactive.bind( this ) ) }
 					haveUpdatesSelected= { this.props.plugins.some( this.filterSelection.updates.bind( this ) ) } />
 				<div className={ itemListClasses }>{ this.props.plugins.map( this.renderPlugin ) }</div>
-				{ this.props.selectedSite &&
-					<Dialog
-						ref="dialog"
-						isVisible={ this.state.showJetpackDisconnectDialog }
-						buttons={ dialogButtons }
-						onClose={ this.closeDialog }>
-						<h1>{ translate( 'Disconnect Jetpack' ) }</h1>
-					</Dialog>
-				}
+
 			</div>
 		);
 	},
@@ -524,5 +507,8 @@ export default connect(
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
 		};
 	},
-	{ recordGoogleEvent }
+	{
+		recordGoogleEvent,
+		infoNotice
+	}
 )( PluginsList );
