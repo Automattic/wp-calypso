@@ -17,8 +17,6 @@ import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
 			...
 		},
 	}
-/**
- * Tracks all known feeds, indexed by iframe.query
  *
  * @param  {Array} state  Current state
  * @param  {Object} action Action payload

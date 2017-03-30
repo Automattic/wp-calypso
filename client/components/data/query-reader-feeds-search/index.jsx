@@ -10,6 +10,11 @@ import { connect } from 'react-redux';
 import { requestFeedSearch } from 'state/reader/feed-search/actions';
 
 class QueryFeedSearch extends Component {
+	static propTypes = {
+		query: PropTypes.string,
+		searchFeeds: PropTypes.func,
+	}
+
 	componentWillMount() {
 		const { searchFeeds, query } = this.props;
 		searchFeeds( query );
@@ -19,10 +24,5 @@ class QueryFeedSearch extends Component {
 		return null;
 	}
 }
-
-QueryFeedSearch.propTypes = {
-	query: PropTypes.string,
-	searchFeeds: PropTypes.func,
-};
 
 export default connect( null, { requestFeedSearch } )( QueryFeedSearch );
