@@ -23,12 +23,14 @@ export default function( router ) {
 				makeLayout
 			);
 			router( '/design/upload/*', makeLayout );
-			router( '/design/*', fetchThemeDataWithCaching, loggedOut, makeLayout ); // Needed so direct hits don't result in a 404.
+			// The following route definition is needed so direct hits on `/design/<mysite>` don't result in a 404.
+			router( '/design/*', fetchThemeDataWithCaching, loggedOut, makeLayout );
 		} else {
 			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?`, makeLayout );
 			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`, makeLayout );
 			router( '/design/upload/*', makeLayout );
-			router( '/design/*', makeLayout ); // Needed so direct hits don't result in a 404.
+			// The following route definition is needed so direct hits on `/design/<mysite>` don't result in a 404.
+			router( '/design/*', makeLayout );
 		}
 	}
 }
