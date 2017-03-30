@@ -7,41 +7,40 @@ if ( process.env.NODE_ENV === 'development' ) {
 /**
  * External dependencies
  */
-import * as common from './common';
 import debugFactory from 'debug';
+import { invoke } from 'lodash';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
+import {
+	configureReduxStore,
+	locales,
+	setupMiddlewares,
+	utils
+} from './common';
 import createReduxStoreFromPersistedInitialState from 'state/initial-state';
 import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
 
 const debug = debugFactory( 'calypso' );
 
-const withProject = () => {
-	const project = require( `./project/${ config( 'project' ) }` );
-
-	return ( funcName, ...params ) => {
-		common[ funcName ]( ...params );
-		if ( project[ funcName ] !== undefined ) {
-			project[ funcName ]( ...params );
-		}
-	};
-};
-
 const boot = currentUser => {
 	debug( "Starting Calypso. Let's do this." );
 
-	const callWithProject = withProject();
+	const project = require( `./project/${ config( 'project' ) }` );
 
-	callWithProject( 'locales', currentUser );
-	callWithProject( 'utils' );
+	locales( currentUser );
+	invoke( project, 'locales', currentUser );
+	utils();
+	invoke( project, 'utils' );
 	createReduxStoreFromPersistedInitialState( reduxStore => {
-		callWithProject( 'configureReduxStore', currentUser, reduxStore );
-		callWithProject( 'setupMiddlewares', currentUser, reduxStore );
+		configureReduxStore( currentUser, reduxStore );
+		invoke( project, 'configureReduxStore', currentUser, reduxStore );
+		setupMiddlewares( currentUser, reduxStore );
+		invoke( project, 'setupMiddlewares', currentUser, reduxStore );
 		detectHistoryNavigation.start();
 		page.start();
 	} );
