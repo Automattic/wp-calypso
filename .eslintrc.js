@@ -1,8 +1,5 @@
 /* eslint-disable import/no-commonjs */
 
-const path = require( 'path' );
-const customResolverPath = path.join( __dirname, './.eslint-resolver.js' );
-
 module.exports = {
 	root: true,
 	'extends': 'wpcalypso/react',
@@ -20,7 +17,7 @@ module.exports = {
 	],
 	settings: {
 		'import/resolver': {
-			[ customResolverPath ]: {}
+			'.eslint-resolver.js': {}
 		}
 	},
 	rules: {
