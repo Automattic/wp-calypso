@@ -109,7 +109,7 @@ const sections = [
 			'/settings/theme-setup',
 			'/settings/date-time-format',
 		],
-		module: 'my-sites/site-settings/general',
+		module: 'my-sites/site-settings/settings-general',
 		secondary: true,
 		group: 'sites'
 	},

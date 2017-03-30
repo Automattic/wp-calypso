@@ -9,7 +9,7 @@ import page from 'page';
  */
 import config from 'config';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import SiteSettingsGeneral from 'my-sites/site-settings/general/main';
+import SiteSettingsGeneral from 'my-sites/site-settings/settings-general/main';
 import DeleteSite from 'my-sites/site-settings/delete-site';
 import StartOver from 'my-sites/site-settings/start-over';
 import ThemeSetup from 'my-sites/site-settings/theme-setup';

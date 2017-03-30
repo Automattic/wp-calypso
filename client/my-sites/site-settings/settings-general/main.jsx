@@ -42,7 +42,7 @@ class SiteSettingsGeneral extends Component {
 		} = this.props;
 
 		return (
-			<Main className="general__main site-settings">
+			<Main className="settings-general__main site-settings">
 				<DocumentHead title={ translate( 'Site Settings' ) } />
 				{ site && <QuerySitePurchases siteId={ site.ID } /> }
 
