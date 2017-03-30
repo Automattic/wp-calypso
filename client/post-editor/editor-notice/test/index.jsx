@@ -22,14 +22,19 @@ describe( 'EditorNotice', () => {
 	} );
 
 	it( 'should display an no content error message if recognized', () => {
+		const spy = sinon.stub();
+
 		const wrapper = shallow(
 			<EditorNotice
 				translate={ translate }
 				status="is-error"
 				message="publishFailure"
+				isSitePreviewable={ true }
+				onViewClick={ spy }
 				error={ new Error( 'NO_CONTENT' ) } />
 		);
 
+		expect( wrapper.find( Notice ) ).to.not.have.descendants( NoticeAction );
 		expect( wrapper.find( Notice ) ).to.have.prop( 'text' ).equal( 'You haven\'t written anything yet!' );
 		expect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-error' );
 		expect( wrapper.find( Notice ) ).to.have.prop( 'showDismiss' ).be.true;
@@ -137,7 +142,6 @@ describe( 'EditorNotice', () => {
 			} )
 		);
 		expect( wrapper.find( Notice ) ).to.have.prop( 'status' ).equal( 'is-success' );
-		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'icon' ).equal( 'visible' );
 		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'children' ).equal( 'View Page' );
 		expect( wrapper.find( NoticeAction ) ).to.have.prop( 'onClick' ).equal( spy );
 		wrapper.find( NoticeAction ).simulate( 'click' );

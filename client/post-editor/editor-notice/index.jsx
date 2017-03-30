@@ -197,9 +197,9 @@ export class EditorNotice extends Component {
 
 	renderNoticeAction() {
 		const { onViewClick, action, link, isSitePreviewable } = this.props;
-		if ( onViewClick && isSitePreviewable ) {
+		if ( onViewClick && isSitePreviewable && link ) {
 			return (
-				<NoticeAction onClick={ onViewClick } icon={ 'visible' }>
+				<NoticeAction onClick={ onViewClick }>
 					{ this.getText( action ) }
 				</NoticeAction>
 			);
