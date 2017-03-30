@@ -8,25 +8,17 @@ import page from 'page';
  * Internal dependencies
  */
 import { navigation, siteSelection } from 'my-sites/controller';
-import { renderWithReduxStore } from 'lib/react-helpers';
-import ProductForm from './products/product-form';
-import Dashboard from './dashboard';
+import { renderPage } from 'lib/react-helpers';
+import ProductForm from './app/products/product-form';
+import Dashboard from './app/dashboard';
 
 const Controller = {
 	dashboard: function( context ) {
-		renderWithReduxStore(
-			React.createElement( Dashboard, { } ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		renderPage( context, <Dashboard /> );
 	},
 
 	addProduct: function( context ) {
-		renderWithReduxStore(
-			React.createElement( ProductForm, { } ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		renderPage( context, <ProductForm /> );
 	}
 };
 

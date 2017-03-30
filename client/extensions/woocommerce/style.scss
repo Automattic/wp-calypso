@@ -1,16 +1,21 @@
-.foldable-card.product-variations .foldable-card__content {
+.foldable-card.product-form__product-variations .foldable-card__content {
 	padding: 0;
 	border: 0;
 }
 
-.product-variation-types-form__wrapper {
+.product-variation-types-form {
 	padding: 24px;
 	border-top: 1px solid $gray-light;
+
+	button {
+		margin-right: 10px;
+	}
 }
 
 .product-variation-types-form__group {
 
-	.product-variation-types-form__fieldset, .product-variation-types-form__labels {
+	.product-variation-types-form__fieldset,
+	.product-variation-types-form__labels {
 		display: flex;
 	}
 
@@ -28,5 +33,14 @@
 
 	.token-field {
 		margin-left: 16px;
+	}
+}
+
+.product-variations-form__table {
+	border-spacing: 20px 10px;
+	border-collapse: collapse;
+
+	th, td {
+		padding: 10px;
 	}
 }
