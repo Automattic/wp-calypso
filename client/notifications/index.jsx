@@ -16,7 +16,7 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import wpcom from 'lib/wp';
-import { compact, get, invoke } from 'lodash';
+import { get, invoke } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,7 +36,7 @@ const widgetDomain = 'https://widgets.wp.com';
 /**
  * Attempts to parse a JSON string
  *
- * @param {String} input
+ * @param {String} input possibly JSON data
  * @returns {*} parsed data on success and `null` on failure
  */
 const parseJson = input => {
@@ -47,19 +47,6 @@ const parseJson = input => {
 	}
 };
 
-/**
- * Prevents default action on an input event
- *
- * @param {Object} event
- * @returns {undefined}
- */
-const preventDefault = event => event.preventDefault();
-
-/**
- * Encapsulates the notifications client
- *
- * @extends Component
- */
 export class Notifications extends Component {
 	state = {
 		loaded: true,
