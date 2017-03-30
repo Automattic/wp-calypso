@@ -47,6 +47,7 @@ import NavItem from 'components/section-nav/item';
 import Banner from 'components/banner';
 import ConnectionsList, { NoConnectionsNotice } from './connections-list';
 import ActionsList from './publicize-actions-list';
+import SharingPreviewModal from './sharing-preview-modal';
 import CalendarButton from 'blocks/calendar-button';
 import formatCurrency from 'lib/format-currency';
 import {
@@ -75,6 +76,7 @@ class PostShare extends Component {
 		selectedShareTab: SCHEDULED,
 		message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title,
 		skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
+		showSharingPreview: false,
 	};
 
 	setFooterSection = selectedShareTab => () => this.setState( { selectedShareTab } );
@@ -121,6 +123,10 @@ class PostShare extends Component {
 
 	previewSharingPost = () => {
 	}
+	toggleSharingPreview = () => {
+		const showSharingPreview = ! this.state.showSharingPreview;
+		this.setState( { showSharingPreview } );
+	}
 
 	renderMessage() {
 		if ( ! this.hasConnections() ) {
@@ -163,7 +169,7 @@ class PostShare extends Component {
 
 		return (
 			<div className="post-share__button-actions">
-				<Button onClick={ this.previewSharingPost }>
+				<Button onClick={ this.toggleSharingPreview }>
 					{ translate( 'Preview' ) }
 				</Button>
 
@@ -420,6 +426,13 @@ class PostShare extends Component {
 
 					{ this.renderPrimarySection() }
 				</div>
+				<SharingPreviewModal
+					postId={ postId }
+					siteId={ siteId }
+					message={ this.state.message }
+					isVisible={ this.state.showSharingPreview }
+					onClose={ this.toggleSharingPreview }
+				/>
 			</div>
 		);
 	}
