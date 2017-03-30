@@ -9,9 +9,12 @@ import page from 'page';
 import config from 'config';
 import controller from './controller';
 
-module.exports = function() {
-	if ( config.isEnabled( 'oauth' ) ) {
+export default () => {
+	if ( config.isEnabled( 'wp-login' ) || config.isEnabled( 'oauth' ) ) {
 		page( '/login', controller.login );
+	}
+
+	if ( config.isEnabled( 'oauth' ) ) {
 		page( '/authorize', controller.authorize );
 		page( '/api/oauth/token', controller.getToken );
 	}
