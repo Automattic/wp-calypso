@@ -38,7 +38,6 @@ const EditorVisibility = React.createClass( {
 	},
 
 	propTypes: {
-		visibility: React.PropTypes.string,
 		onPrivatePublish: React.PropTypes.func,
 		isPrivateSite: React.PropTypes.bool,
 		type: React.PropTypes.string,
@@ -55,39 +54,19 @@ const EditorVisibility = React.createClass( {
 			showPopover: false,
 			passwordIsValid: true,
 			showVisibilityInfotips: false,
-			visibility: 'public',
 		};
 	},
 
-	componentWillMount() {
-		this.setVisibility( this.props );
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		if ( this.state.passwordIsValid ) {
-			this.setVisibility( nextProps );
-		}
-	},
-
-	getVisibility( props ) {
-		if ( props.password ) {
+	getVisibility() {
+		if ( this.props.password ) {
 			return 'password';
 		}
 
-		if ( 'private' === props.status ) {
+		if ( 'private' === this.props.status ) {
 			return 'private';
 		}
 
 		return 'public';
-	},
-
-	setVisibility( props ) {
-		const newVisibility = this.getVisibility( props );
-		if ( newVisibility !== this.state.visibility ) {
-			this.setState( {
-				visibility: newVisibility
-			} );
-		}
 	},
 
 	togglePopover() {
@@ -130,7 +109,7 @@ const EditorVisibility = React.createClass( {
 	isPasswordValid() {
 		var password;
 
-		if ( 'password' !== this.state.visibility ) {
+		if ( 'password' !== this.getVisibility() ) {
 			return true;
 		}
 
@@ -192,8 +171,6 @@ const EditorVisibility = React.createClass( {
 				break;
 		}
 
-		this.setState( { visibility: newVisibility } );
-
 		recordStat( 'visibility-set-' + newVisibility );
 		recordEvent( 'Changed visibility', newVisibility );
 
@@ -217,8 +194,6 @@ const EditorVisibility = React.createClass( {
 			status: 'private'
 		} );
 		this.props.editPost( siteId, postId, { password: '' } );
-
-		this.setState( { visibility: 'private' } );
 
 		recordStat( 'visibility-set-private' );
 		recordEvent( 'Changed visibility', 'private' );
@@ -310,17 +285,13 @@ const EditorVisibility = React.createClass( {
 	},
 
 	render() {
-		var visibility, icons, classes;
-
-		icons = {
+		const visibility = this.getVisibility();
+		const icons = {
 			password: 'lock',
 			'private': 'not-visible',
 			'public': 'visible'
 		};
-
-		visibility = this.state.visibility;
-
-		classes = classNames( 'editor-visibility', {
+		const classes = classNames( 'editor-visibility', {
 			'is-dialog-open': this.state.showPopover,
 			'is-touch': touchDetect.hasTouch()
 		} );
