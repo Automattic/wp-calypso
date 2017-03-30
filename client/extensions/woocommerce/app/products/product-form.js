@@ -10,10 +10,10 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
-import ProductVariationTypesForm from '../product-variation-types-form';
-import ProductVariationsForm from '../product-variations-form';
+import ProductVariationTypesForm from './product-variation-types-form';
+import ProductVariationsForm from './product-variations-form';
 import FormToggle from 'components/forms/form-toggle';
-import { editProduct, addVariation } from '../../../state/products/actions';
+import { editProduct, addVariation } from '../../state/products/actions';
 
 class ProductForm extends Component {
 
