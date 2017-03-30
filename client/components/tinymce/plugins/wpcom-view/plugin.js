@@ -321,8 +321,8 @@ function wpview( editor ) {
 		if ( pastedStr ) {
 			pastedStr = tinymce.trim( pastedStr.replace( /<[^>]+>/g, '' ) );
 
-			let imageMatch;
-			if ( imageMatch = /(https?:\/\/[^<]*)(\.jpg|\.jpeg|\.gif|\.png)\??.*$/i.exec( pastedStr ) ) {
+			const imageMatch = /(https?:\/\/[^<]*)(\.jpg|\.jpeg|\.gif|\.png)\??.*$/i.exec( pastedStr );
+			if ( imageMatch ) {
 				// If the link looks like an image, replace the pasted content with an <img> tag.
 				// As a side effect, this won't request an embed code to the REST API anymore.
 				event.content = `<img src="${ imageMatch[ 1 ] }${ imageMatch[ 2 ] }" style="max-width:100%;" />`;
