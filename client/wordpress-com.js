@@ -117,7 +117,7 @@ const sections = [
 	{
 		name: 'settings-discussion',
 		paths: [ '/settings/discussion' ],
-		module: 'my-sites/site-settings/discussion',
+		module: 'my-sites/site-settings/settings-discussion',
 		secondary: true,
 		group: 'sites'
 	},
