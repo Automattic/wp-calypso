@@ -202,8 +202,6 @@ export class Notifications extends Component {
 			...message,
 			type: 'notesIframeMessage',
 		} );
-
-		this.notesFrame.contentWindow.postMessage( data, widgetDomain );
 	};
 
 	postServiceWorkerMessage = message => {
