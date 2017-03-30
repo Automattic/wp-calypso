@@ -16,15 +16,15 @@ import {
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 
-function ShowAll( props ) {
+function SuggestionsButtonAll( props ) {
 	function click() {
-		return props.onClick( props.cat );
+		return props.onClick( props.category );
 	}
 
 	return <span
 		className="suggestions__category-show-all"
 		onClick={ click }>
-		{ props.txt }
+		{ props.label }
 	</span>;
 }
 
@@ -229,10 +229,10 @@ class Suggestions extends React.Component {
 		return token;
 	}
 
-	onShowAllClick = ( value ) => {
-		const suggestions = this.narrowDown( this.props.input, value );
+	onShowAllClick = ( category ) => {
+		const suggestions = this.narrowDown( this.props.input, category );
 		this.setState( {
-			showAll: value,
+			showAll: category,
 			suggestions,
 			taxonomySuggestionsArray: this.createTaxonomySuggestionsArray( suggestions )
 		} );
@@ -259,15 +259,15 @@ class Suggestions extends React.Component {
 						} ) }
 					</span>
 					{ this.props.terms[ key ].length > suggestions[ key ].length &&
-						<ShowAll
+						<SuggestionsButtonAll
 							onClick={ this.onShowAllClick }
-							cat={ key }
-							txt={ i18n.translate( 'Show All' ) } /> }
+							category={ key }
+							label={ i18n.translate( 'Show all' ) } /> }
 					{ key === this.state.showAll &&
-						<ShowAll
+						<SuggestionsButtonAll
 							onClick={ this.onShowAllClick }
-							cat={ '' }
-							txt={ i18n.translate( 'Show Less' ) } /> }
+							category={ '' }
+							label={ i18n.translate( 'Show less' ) } /> }
 				</div>
 			);
 			//Add values
