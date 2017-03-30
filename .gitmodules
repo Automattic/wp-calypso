@@ -1,3 +1,4 @@
 [submodule "client/notifications/notifications-panel"]
 	path = client/notifications/notifications-panel
 	url = git@github.com:Automattic/notifications-panel.git
+	branch = master
