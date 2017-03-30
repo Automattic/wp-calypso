@@ -98,6 +98,7 @@ class CalendarButton extends Component {
 	render() {
 		const buttonsProperties = Object.assign( {}, pick( this.props, [
 			'compact',
+			'disabled',
 			'primary',
 			'scary',
 			'busy',
