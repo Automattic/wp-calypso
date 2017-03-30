@@ -16,8 +16,8 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import SiteURLInput from '../site-url-input';
 import ReaderBack from '../../../blocks/reader-full-post/back';
 
-import WordPressLogo from './wordpress-logo';
-import JetpackLogo from './jetpack-logo';
+import WordPressLogo from 'components/wordpress-logo';
+import JetpackLogo from 'components/jetpack-logo';
 
 const JetpackNewSite = React.createClass( {
 	displayName: 'JetpackNewSite',
@@ -30,12 +30,9 @@ const JetpackNewSite = React.createClass( {
 		return config( 'signup_url' ) + '?ref=calypso-selector';
 	},
 
-	onURLEnter( url ) {
-		if ( ! url ) {
-			return;
-		}
+	onURLEnter() {
 		this.props.recordTracksEvent( 'calypso_jetpack_new_site_connect_click' );
-		page( '/jetpack/connect?url=' + url.toLowerCase() );
+		page( '/jetpack/connect?url=' + this.refs.siteUrlInputRef.state.value.toLowerCase() );
 	},
 
 	handleOnClickTos() {

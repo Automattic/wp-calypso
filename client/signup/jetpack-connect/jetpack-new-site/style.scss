@@ -1,16 +1,8 @@
-// Colors
-$green-jetpack:     #8cc258; // RGB 140, 194, 88
-
 // Structure
 .jetpack-new-site {
 	max-width: 960px;
 	margin: 35px auto 0;
 	text-align: center;
-
-	/* @include breakpoint( ">480px" ) {
-		margin-bottom: 16px;
-		padding: 24px;
-	} */
 }
 
 .jetpack-new-site__header {
@@ -62,8 +54,8 @@ $green-jetpack:     #8cc258; // RGB 140, 194, 88
 	}
 }
 
-.jetpack-new-site__wordpress-logo,
-.jetpack-new-site__jetpack-logo {
+.jetpack-new-site__wpcom-site .wordpress-logo,
+.jetpack-new-site__jetpack-site .jetpack-logo {
 	flex: 1;
 	max-width: 72px;
 	max-height: 72px;
@@ -71,11 +63,11 @@ $green-jetpack:     #8cc258; // RGB 140, 194, 88
 	transition: .25s transform ease;
 }
 
-.jetpack-new-site__wordpress-logo {
+.jetpack-new-site__wpcom-site .wordpress-logo {
 	fill: $blue-wordpress;
 }
 
-.jetpack-new-site__jetpack-logo {
+.jetpack-new-site__jetpack-site .jetpack-logo {
 	fill: $green-jetpack;
 }
 
