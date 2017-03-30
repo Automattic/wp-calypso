@@ -175,3 +175,18 @@
 		color: $white;
 	}
 }
+
+.language-picker__modal-suggested {
+	flex: none;
+	width: 100%;
+	background: $gray-light;
+	border-top: 1px solid lighten( $gray, 30% );
+	display: flex;
+	align-items: center;
+	padding: 8px 16px;
+	box-sizing: border-box;
+
+	.language-picker__modal-text {
+		margin-left: 16px;
+	}
+}
