@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -195,6 +196,35 @@ export class EditorNotice extends Component {
 		}
 	}
 
+	renderAddAnotherPage() {
+		const { message, site, translate, type } = this.props;
+		if (
+			'page' !== type ||
+			! includes( [ 'published', 'publishedPrivately', 'scheduled', 'updated' ], message )
+		) {
+			return null;
+		}
+
+		return (
+			<span>
+				{ translate( '{{a}}Add another page{{/a}}.', {
+					components: {
+						a: <a href={ `/page/${ site.slug }` } />,
+					},
+				} ) }
+			</span>
+		);
+	}
+
+	renderNoticeText( text ) {
+		return (
+			<span className="editor-notice__text">
+				<span>{ text }</span>
+				{ this.renderAddAnotherPage() }
+			</span>
+		);
+	}
+
 	renderNoticeAction() {
 		const { onViewClick, action, link, isSitePreviewable } = this.props;
 		if ( onViewClick && isSitePreviewable && link ) {
@@ -223,8 +253,10 @@ export class EditorNotice extends Component {
 				{ siteId && <QueryPostTypes siteId={ siteId } /> }
 				{ text && (
 					<Notice
-						{ ...{ status, text, onDismissClick } }
-						showDismiss={ true }>
+						{ ...{ status, onDismissClick } }
+						showDismiss={ true }
+						text={ this.renderNoticeText( text ) }
+					>
 						{ this.renderNoticeAction() }
 					</Notice>
 				) }

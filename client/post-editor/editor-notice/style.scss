@@ -11,10 +11,22 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		display: inline-block;
+		width: 100%;
+		max-width: 100%;
 
 		a {
 			text-decoration: underline;
 			background-image: none;
+		}
+	}
+
+	.editor-notice__text {
+		display: flex;
+		flex-flow: row wrap;
+
+		span:first-child {
+			flex-grow: 1;
+			padding-right: 16px;
 		}
 	}
 }
