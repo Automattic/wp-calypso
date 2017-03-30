@@ -74,7 +74,7 @@ describe( 'get follow subscriptions', () => {
 				method: 'GET',
 				path: '/read/following/mine',
 				apiVersion: '1.2',
-				query: { page: 1, number: 50, meta: '' },
+				query: { page: 1, number: 200, meta: '' },
 				onSuccess: action,
 				onError: action,
 			} ) );
