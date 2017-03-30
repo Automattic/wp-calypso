@@ -2,54 +2,60 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import NpsSurvey from '../';
+import {
+	isNpsSurveySubmitted,
+	isNpsSurveySubmitFailure,
+	hasAnsweredNpsSurvey,
+	hasAnsweredNpsSurveyWithNoScore,
+	getNpsSurveyName,
+	getNpsSurveyScore,
+} from 'state/nps-survey/selectors';
 
 class NpsSurveyExample extends PureComponent {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			wasDismissed: false,
-			wasSubmitted: false,
-			surveyName: null,
-			recommendationValue: null,
-		};
-		this.handleDismissed = this.handleDismissed.bind( this );
-	}
+	static displayName = 'NpsSurvey';
 
-	handleDismissed( event ) {
+	state = {
+		isClosed: false,
+	};
+
+	handleClose = () => {
 		this.setState( {
-			wasDismissed: true,
-			wasSubmitted: event.wasSubmitted,
-			surveyName: event.surveyName,
-			recommendationValue: event.recommendationValue
+			isClosed: true,
 		} );
 	}
 
 	render() {
 		return (
 			<div>
-				{ ! this.state.wasDismissed &&
+				{ ! this.state.isClosed &&
 					<NpsSurvey
-						name="devdocs"
-						onDismissed={ this.handleDismissed }
+						name="api-valid-test-survey"
+						onClose={ this.handleClose }
 					/>
 				}
-				{ this.state.wasDismissed && this.state.wasSubmitted &&
+				{ this.state.isClosed && this.props.hasAnswered &&
 					<div>
-						User dismissed survey after submitting:
+						User closed survey after submitting:
 						<ul>
-							<li>Survey name: { this.state.surveyName }</li>
-							<li>Recommendation value: { this.state.recommendationValue }</li>
+							<li>Survey name: { this.props.surveyName }</li>
+							<li>Score: { this.props.surveyScore }</li>
 						</ul>
 					</div>
 				}
-				{ this.state.wasDismissed && ! this.state.wasSubmitted &&
+				{ this.state.isClosed && this.props.hasAnsweredWithNoScore &&
 					<div>
 						User dismissed survey without submitting.
+					</div>
+				}
+				{ this.state.isClosed && this.props.isSubmitFailure &&
+					<div>
+						Error submitting survey.
 					</div>
 				}
 			</div>
@@ -57,6 +63,21 @@ class NpsSurveyExample extends PureComponent {
 	}
 }
 
-NpsSurveyExample.displayName = 'NpsSurvey';
+const mapStateToProps = ( state ) => {
+	return {
+		isSubmitted: isNpsSurveySubmitted( state ),
+		isSubmitFailure: isNpsSurveySubmitFailure( state ),
+		hasAnswered: hasAnsweredNpsSurvey( state ),
+		hasAnsweredWithNoScore: hasAnsweredNpsSurveyWithNoScore( state ),
+		surveyName: getNpsSurveyName( state ),
+		surveyScore: getNpsSurveyScore( state ),
+	};
+};
 
-export default NpsSurveyExample;
+const ConnectedNpsSurveyExample = connect(
+	mapStateToProps,
+)( NpsSurveyExample );
+
+ConnectedNpsSurveyExample.displayName = NpsSurveyExample.displayName;
+
+export default ConnectedNpsSurveyExample;
