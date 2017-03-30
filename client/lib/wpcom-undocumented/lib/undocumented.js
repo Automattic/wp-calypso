@@ -382,7 +382,8 @@ Undocumented.prototype.getInvite = function( siteId, inviteKey, fn ) {
 Undocumented.prototype.acceptInvite = function( invite, fn ) {
 	debug( '/sites/:site_id:/invites/:inviteKey:/accept query' );
 	return this.wpcom.req.get( '/sites/' + invite.site.ID + '/invites/' + invite.inviteKey + '/accept', {
-		activate: invite.activationKey
+		activate: invite.activationKey,
+		include_domain_only: true
 	}, fn );
 };
 

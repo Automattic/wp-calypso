@@ -78,7 +78,7 @@ SitesList.prototype.fetch = function() {
 
 	debug( 'getting SitesList from api' );
 
-	wpcom.me().sites( { site_visibility: 'all' }, function( error, data ) {
+	wpcom.me().sites( { site_visibility: 'all', include_domain_only: true }, function( error, data ) {
 		if ( error ) {
 			debug( 'error fetching SitesList from api', error );
 			this.fetching = false;
