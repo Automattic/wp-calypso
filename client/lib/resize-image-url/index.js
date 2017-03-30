@@ -69,10 +69,6 @@ export default function resizeImageUrl( imageUrl, resize, height ) {
 	if ( ! REGEXP_VALID_PROTOCOL.test( parsedUrl.protocol ) ) {
 		return imageUrl;
 	}
-	if ( ! parsedUrl.hostname ) {
-		// no hostname? must be a bad url.
-		return imageUrl;
-	}
 
 	parsedUrl.query = omit( parsedUrl.query, SIZE_PARAMS );
 
