@@ -63,7 +63,7 @@ export default class FeedStream {
 			perPage: 7,
 			selectedIndex: -1,
 			xPostedByURL: {},
-			maxUpdates: 40,
+			maxUpdates: spec.maxUpdates || 40,
 			gapFillCount: 21,
 			orderBy: 'date',
 			_isLastPage: false,
@@ -457,7 +457,6 @@ export default class FeedStream {
 				postById.add( postKey.postId );
 			} );
 			this.postKeys = this.postKeys.concat( postKeys );
-
 		}
 
 		this.page++;
