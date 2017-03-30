@@ -15,7 +15,6 @@ var sites = require( 'lib/sites-list' )(),
 	AdsUtils = require( 'lib/ads/utils' ),
 	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle,
 	utils = require( 'lib/site/utils' );
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 function _recordPageView( context, analyticsPageTitle ) {
 	var basePath = route.sectionify( context.path );
@@ -43,8 +42,8 @@ module.exports = {
 		return;
 	},
 
-	layout: function( context ) {
-		var Ads = require( 'my-sites/ads/main' ),
+	layout: function(context, next) {
+	    var Ads = require( 'my-sites/ads/main' ),
 			pathSuffix = sites.selected ? '/' + sites.selected : '',
 			layoutTitle = _getLayoutTitle( context ),
 			site = sites.getSelectedSite();
@@ -68,14 +67,11 @@ module.exports = {
 			window.scrollTo( 0, 0 );
 		}
 
-		renderWithReduxStore(
-			React.createElement( Ads, {
-				site: site,
-				section: context.params.section,
-				path: context.path,
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = React.createElement( Ads, {
+			site: site,
+			section: context.params.section,
+			path: context.path,
+		} );
+		next();
 	}
 };

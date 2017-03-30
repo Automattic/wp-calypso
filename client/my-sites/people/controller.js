@@ -20,7 +20,6 @@ import UsersActions from 'lib/users/actions';
 import PeopleLogStore from 'lib/people/log-store';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import InvitePeople from './invite-people';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import config from 'config';
@@ -68,21 +67,17 @@ function redirectToTeam( context ) {
 function renderPeopleList( filter, context ) {
 	context.store.dispatch( setTitle( i18n.translate( 'People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-	renderWithReduxStore(
-		React.createElement( PeopleList, {
-			sites: sites,
-			peopleLog: PeopleLogStore,
-			filter: filter,
-			search: context.query.s
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	filter.primary = React.createElement( PeopleList, {
+		sites: sites,
+		peopleLog: PeopleLogStore,
+		filter: filter,
+		search: context.query.s
+	} );
 	analytics.pageView.record( 'people/' + filter + '/:site', 'People > ' + titlecase( filter ) );
 }
 
-function renderInvitePeople( context ) {
-	const site = sites.getSelectedSite();
+function renderInvitePeople(context, next) {
+    const site = sites.getSelectedSite();
 	const isJetpack = get( site, 'jetpack' );
 
 	if ( ! sites.initialized ) {
@@ -98,17 +93,14 @@ function renderInvitePeople( context ) {
 
 	context.store.dispatch( setTitle( i18n.translate( 'Invite People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-	renderWithReduxStore(
-		React.createElement( InvitePeople, {
-			site: site
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( InvitePeople, {
+		site: site
+	} );
+	next();
 }
 
-function renderSingleTeamMember( context ) {
-	let site,
+function renderSingleTeamMember(context, next) {
+    let site,
 		siteId,
 		user,
 		userLogin = context.params.user_login;
@@ -142,16 +134,13 @@ function renderSingleTeamMember( context ) {
 		}
 	}
 
-	renderWithReduxStore(
-		React.createElement( EditTeamMember, {
-			siteSlug: site && site.slug ? site.slug : undefined,
-			siteId: site && site.ID ? site.ID : undefined,
-			isJetpack: site && site.jetpack,
-			isMultisite: site && site.is_multisite,
-			userLogin: userLogin,
-			prevPath: context.prevPath
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( EditTeamMember, {
+		siteSlug: site && site.slug ? site.slug : undefined,
+		siteId: site && site.ID ? site.ID : undefined,
+		isJetpack: site && site.jetpack,
+		isMultisite: site && site.is_multisite,
+		userLogin: userLogin,
+		prevPath: context.prevPath
+	} );
+	next();
 }

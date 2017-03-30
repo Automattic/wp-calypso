@@ -16,12 +16,11 @@ import MenusComponent from 'my-sites/menus/main';
 import notices from 'notices';
 import siteMenus from 'lib/menu-data';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 const sites = sitesFactory();
 
-export default function menus( context ) {
-	const analyticsPageTitle = 'Menus',
+export default function menus(context, next) {
+    const analyticsPageTitle = 'Menus',
 		basePath = route.sectionify( context.path ),
 		site = sites.getSelectedSite();
 	let baseAnalyticsPath;
@@ -35,20 +34,16 @@ export default function menus( context ) {
 	context.store.dispatch( setTitle( i18n.translate( 'Menus', { textOnly: true } ) ) );
 
 	function renderJetpackUpgradeMessage() {
-		renderWithReduxStore(
-			React.createElement( MainComponent, null,
-				React.createElement( JetpackManageErrorPage, {
-					template: 'updateJetpack',
-					site: site,
-					version: '3.5',
-					illustration: '/calypso/images/drake/drake-nomenus.svg',
-					secondaryAction: i18n.translate( 'Open Classic Menu Editor' ),
-					secondaryActionURL: site.options.admin_url + 'nav-menus.php',
-					secondaryActionTarget: '_blank'
-				} )
-			),
-			document.getElementById( 'primary' ),
-			context.store
+		context.primary = React.createElement( MainComponent, null,
+			React.createElement( JetpackManageErrorPage, {
+				template: 'updateJetpack',
+				site: site,
+				version: '3.5',
+				illustration: '/calypso/images/drake/drake-nomenus.svg',
+				secondaryAction: i18n.translate( 'Open Classic Menu Editor' ),
+				secondaryActionURL: site.options.admin_url + 'nav-menus.php',
+				secondaryActionTarget: '_blank'
+			} )
 		);
 	}
 
@@ -65,13 +60,10 @@ export default function menus( context ) {
 
 	analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-	renderWithReduxStore(
-		React.createElement( MenusComponent, {
-			siteMenus: siteMenus,
-			key: siteMenus.siteID,
-			site: site
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( MenusComponent, {
+		siteMenus: siteMenus,
+		key: siteMenus.siteID,
+		site: site
+	} );
+	next();
 }

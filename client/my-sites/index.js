@@ -8,6 +8,14 @@ import page from 'page';
  */
 import controller from './controller';
 
+import { makeLayout, render as clientRender } from 'controller';
+
 export default function() {
-	page( '/sites/:sitesFilter?', controller.siteSelection, controller.sites );
-};
+	page(
+	 '/sites/:sitesFilter?',
+	 controller.siteSelection,
+	 controller.sites,
+	 makeLayout,
+	 clientRender
+	);
+}

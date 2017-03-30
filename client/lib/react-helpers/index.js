@@ -15,11 +15,7 @@ export function concatTitle( ...parts ) {
 }
 
 export function renderPage( context, component ) {
-	renderWithReduxStore(
-		component,
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = component;
 }
 
 export function recordPageView( path, ...title ) {

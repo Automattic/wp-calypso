@@ -13,33 +13,51 @@ var controller = require( 'my-sites/controller' ),
 module.exports = function() {
 	if ( config.isEnabled( 'manage/people' ) ) {
 		[ 'team', 'followers', 'email-followers', 'viewers' ].forEach( function( filter ) {
-			page( '/people/' + filter, controller.siteSelection, controller.sites );
 			page(
-				'/people/' + filter + '/:site_id',
+			    '/people/' + filter,
+				controller.siteSelection,
+				controller.sites,
+				makeLayout,
+				clientRender
+			);
+			page(
+			    '/people/' + filter + '/:site_id',
 				peopleController.enforceSiteEnding,
 				controller.siteSelection,
 				controller.navigation,
-				peopleController.people.bind( null, filter )
+				peopleController.people.bind( null, filter ),
+				makeLayout,
+				clientRender
 			);
 		} );
 
 		page(
-			'/people/new/:site_id',
+		    '/people/new/:site_id',
 			peopleController.enforceSiteEnding,
 			controller.siteSelection,
 			controller.navigation,
-			peopleController.invitePeople
+			peopleController.invitePeople,
+			makeLayout,
+			clientRender
 		);
 
 		page(
-			'/people/edit/:site_id/:user_login',
+		    '/people/edit/:site_id/:user_login',
 			peopleController.enforceSiteEnding,
 			controller.siteSelection,
 			controller.navigation,
-			peopleController.person
+			peopleController.person,
+			makeLayout,
+			clientRender
 		);
 
 		// Anything else is unexpected and should be redirected to the default people management URL: /people/team
-		page( '/people/(.*)?', controller.siteSelection, peopleController.redirectToTeam );
+		page(
+		    '/people/(.*)?',
+			controller.siteSelection,
+			peopleController.redirectToTeam,
+			makeLayout,
+			clientRender
+		);
 	}
 };

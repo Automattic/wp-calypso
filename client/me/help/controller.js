@@ -11,7 +11,6 @@ import analytics from 'lib/analytics';
 import route from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import config from 'config';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import HelpComponent from './main';
 import CoursesComponent from './help-courses';
 import ContactComponent from './help-contact';
@@ -32,35 +31,29 @@ export default {
 		window.location.href = url;
 	},
 
-	help( context ) {
-		const basePath = route.sectionify( context.path );
+	help(context, next) {
+	    const basePath = route.sectionify( context.path );
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Help', { textOnly: true } ) ) );
 
 		analytics.pageView.record( basePath, 'Help' );
 
-		renderWithReduxStore(
-			<HelpComponent isCoursesEnabled={ config.isEnabled( 'help/courses' ) } />,
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = <HelpComponent isCoursesEnabled={ config.isEnabled( 'help/courses' ) } />;
+		next();
 	},
 
-	courses( context ) {
-		const basePath = route.sectionify( context.path );
+	courses(context, next) {
+	    const basePath = route.sectionify( context.path );
 
 		analytics.pageView.record( basePath, 'Help > Courses' );
 
-		renderWithReduxStore(
-			<CoursesComponent />,
-			'primary',
-			context.store
-		);
+		context.primary = <CoursesComponent />;
+		next();
 	},
 
-	contact( context ) {
-		const basePath = route.sectionify( context.path );
+	contact(context, next) {
+	    const basePath = route.sectionify( context.path );
 
 		analytics.pageView.record( basePath, 'Help > Contact' );
 
@@ -69,10 +62,7 @@ export default {
 			window.scrollTo( 0, 0 );
 		}
 
-		renderWithReduxStore(
-			<ContactComponent clientSlug={ config( 'client_slug' ) } />,
-			'primary',
-			context.store
-		);
+		context.primary = <ContactComponent clientSlug={ config( 'client_slug' ) } />;
+		next();
 	}
 };

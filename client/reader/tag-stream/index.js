@@ -9,23 +9,34 @@ import page from 'page';
 import controller from './controller';
 import readerController from 'reader/controller';
 
+import { makeLayout, render as clientRender } from 'controller';
+
 export default function() {
-	page( '/tag/*',
+	page(
+	    '/tag/*',
 		readerController.preloadReaderBundle,
 		readerController.loadSubscriptions,
-		readerController.initAbTests
+		readerController.initAbTests,
+		makeLayout,
+		clientRender
 	);
-	page( '/tag/:tag',
+	page(
+	    '/tag/:tag',
 		readerController.updateLastRoute,
 		readerController.sidebar,
-		controller.tagListing
+		controller.tagListing,
+		makeLayout,
+		clientRender
 	);
 
-	page( '/tags',
+	page(
+	    '/tags',
 		readerController.loadSubscriptions,
 		readerController.initAbTests,
 		readerController.updateLastRoute,
 		readerController.sidebar,
-		controller.recommendedTags
+		controller.recommendedTags,
+		makeLayout,
+		clientRender
 	);
 }

@@ -12,6 +12,13 @@ var controller = require( 'my-sites/controller' ),
 
 module.exports = function() {
 	if ( config.isEnabled( 'manage/pages' ) ) {
-		page( '/pages/:status?/:domain?', controller.siteSelection, controller.navigation, pagesController.pages );
+		page(
+		    '/pages/:status?/:domain?',
+			controller.siteSelection,
+			controller.navigation,
+			pagesController.pages,
+			makeLayout,
+			clientRender
+		);
 	}
 };

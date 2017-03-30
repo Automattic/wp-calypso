@@ -17,12 +17,10 @@ var user = require( 'lib/user' )(),
 	trackScrollPage = require( 'lib/track-scroll-page' ),
 	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle;
 
-import { renderWithReduxStore } from 'lib/react-helpers';
-
 module.exports = {
 
-	posts: function( context ) {
-		var Posts = require( 'my-sites/posts/main' ),
+	posts: function(context, next) {
+	    var Posts = require( 'my-sites/posts/main' ),
 			siteID = route.getSiteFragment( context.path ),
 			author = ( context.params.author === 'my' ) ? user.get().ID : null,
 			statusSlug = ( author ) ? context.params.status : context.params.author,
@@ -76,23 +74,20 @@ module.exports = {
 
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-		renderWithReduxStore(
-			React.createElement( Posts, {
-				context: context,
-				siteID: siteID,
-				author: author,
-				statusSlug: statusSlug,
-				sites: sites,
-				search: search,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					baseAnalyticsPath,
-					analyticsPageTitle,
-					'Posts'
-				)
-			} ),
-			'primary',
-			context.store
-		);
+		context.primary = React.createElement( Posts, {
+			context: context,
+			siteID: siteID,
+			author: author,
+			statusSlug: statusSlug,
+			sites: sites,
+			search: search,
+			trackScrollPage: trackScrollPage.bind(
+				null,
+				baseAnalyticsPath,
+				analyticsPageTitle,
+				'Posts'
+			)
+		} );
+		next();
 	}
 };

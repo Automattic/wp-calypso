@@ -12,39 +12,35 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, userHasHistory } from 'reader/controller-helper';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
 export default {
-	recommendedForYou( context ) {
-		const RecommendedForYou = require( 'reader/recommendations/for-you' ),
+	recommendedForYou(context, next) {
+	    const RecommendedForYou = require( 'reader/recommendations/for-you' ),
 			basePath = '/recommendations',
 			fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Recommended Sites For You',
 			mcKey = 'recommendations_for_you';
 
-		renderWithReduxStore(
-			React.createElement( RecommendedForYou, {
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					ANALYTICS_PAGE_TITLE,
-					mcKey
-				)
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = React.createElement( RecommendedForYou, {
+			trackScrollPage: trackScrollPage.bind(
+				null,
+				basePath,
+				fullAnalyticsPageTitle,
+				ANALYTICS_PAGE_TITLE,
+				mcKey
+			)
+		} );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Recommended Sites For You ‹ Reader' ) ) );
+		next();
 	},
 
 	// Post Recommendations - Used by the Data team to test recommendation algorithms
-	recommendedPosts( context ) {
-		const RecommendedPostsStream = require( 'reader/recommendations/posts' ),
+	recommendedPosts(context, next) {
+	    const RecommendedPostsStream = require( 'reader/recommendations/posts' ),
 			basePath = route.sectionify( context.path );
 
 		let fullAnalyticsPageTitle = '';
@@ -86,22 +82,19 @@ export default {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		renderWithReduxStore(
-			React.createElement( RecommendedPostsStream, {
-				key: 'recommendations_posts',
-				postsStore: RecommendedPostsStore,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					ANALYTICS_PAGE_TITLE,
-					mcKey
-				),
-				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
-				showBack: userHasHistory( context )
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = React.createElement( RecommendedPostsStream, {
+			key: 'recommendations_posts',
+			postsStore: RecommendedPostsStore,
+			trackScrollPage: trackScrollPage.bind(
+				null,
+				basePath,
+				fullAnalyticsPageTitle,
+				ANALYTICS_PAGE_TITLE,
+				mcKey
+			),
+			onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
+			showBack: userHasHistory( context )
+		} );
+		next();
 	}
 };

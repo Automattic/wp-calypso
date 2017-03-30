@@ -14,7 +14,6 @@ import i18n from 'i18n-calypso';
 import JetpackConnect from './index';
 import JetpackConnectAuthorizeForm from './authorize-form';
 import { setSection } from 'state/ui/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
 import userFactory from 'lib/user';
 import jetpackSSOForm from './sso';
@@ -44,17 +43,13 @@ const jetpackConnectFirstStep = ( context, type ) => {
 
 	userModule.fetch();
 
-	renderWithReduxStore(
-		React.createElement( JetpackConnect, {
-			path: context.path,
-			context: context,
-			type: type,
-			userModule: userModule,
-			locale: context.params.locale
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( JetpackConnect, {
+		path: context.path,
+		context: context,
+		type: type,
+		userModule: userModule,
+		locale: context.params.locale
+	} );
 };
 
 const getPlansLandingPage = ( context, hideFreePlan, path, landingType ) => {
@@ -152,8 +147,8 @@ export default {
 		jetpackConnectFirstStep( context, false );
 	},
 
-	authorizeForm( context ) {
-		const analyticsBasePath = 'jetpack/connect/authorize',
+	authorizeForm(context, next) {
+	    const analyticsBasePath = 'jetpack/connect/authorize',
 			analyticsPageTitle = 'Jetpack Authorize';
 
 		removeSidebar( context );
@@ -171,19 +166,16 @@ export default {
 		}
 
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-		renderWithReduxStore(
-			<JetpackConnectAuthorizeForm
-				path={ context.path }
-				intervalType={ intervalType }
-				locale={ locale }
-				userModule={ userModule } />,
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = <JetpackConnectAuthorizeForm
+			path={ context.path }
+			intervalType={ intervalType }
+			locale={ locale }
+			userModule={ userModule } />;
+		next();
 	},
 
-	sso( context ) {
-		const analyticsBasePath = '/jetpack/sso',
+	sso(context, next) {
+	    const analyticsBasePath = '/jetpack/sso',
 			analyticsPageTitle = 'Jetpack SSO';
 
 		removeSidebar( context );
@@ -192,17 +184,14 @@ export default {
 
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
-		renderWithReduxStore(
-			React.createElement( jetpackSSOForm, {
-				path: context.path,
-				locale: context.params.locale,
-				userModule: userModule,
-				siteId: context.params.siteId,
-				ssoNonce: context.params.ssoNonce
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = React.createElement( jetpackSSOForm, {
+			path: context.path,
+			locale: context.params.locale,
+			userModule: userModule,
+			siteId: context.params.siteId,
+			ssoNonce: context.params.ssoNonce
+		} );
+		next();
 	},
 
 	vaultpressLanding( context ) {
@@ -217,8 +206,8 @@ export default {
 		getPlansLandingPage( context, false, '/jetpack/connect/store', 'jetpack' );
 	},
 
-	plansSelection( context ) {
-		const Plans = require( './plans' ),
+	plansSelection(context, next) {
+	    const Plans = require( './plans' ),
 			CheckoutData = require( 'components/data/checkout' ),
 			state = context.store.getState(),
 			siteId = getSelectedSiteId( state ),
@@ -239,21 +228,18 @@ export default {
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
-		renderWithReduxStore(
-			<CheckoutData>
-				<Plans
-					context={ context }
-					destinationType={ context.params.destinationType }
-					basePlansPath={ '/jetpack/connect/plans' }
-					intervalType={ context.params.intervalType } />
-			</CheckoutData>,
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = <CheckoutData>
+			<Plans
+				context={ context }
+				destinationType={ context.params.destinationType }
+				basePlansPath={ '/jetpack/connect/plans' }
+				intervalType={ context.params.intervalType } />
+		</CheckoutData>;
+		next();
 	},
 
-	plansPreSelection( context ) {
-		const Plans = require( './plans' ),
+	plansPreSelection(context, next) {
+	    const Plans = require( './plans' ),
 			analyticsPageTitle = 'Plans',
 			basePath = route.sectionify( context.path ),
 			analyticsBasePath = basePath + '/:site';
@@ -261,13 +247,10 @@ export default {
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
-		renderWithReduxStore(
-			<Plans
-				context={ context }
-				showFirst={ true }
-				destinationType={ context.params.destinationType } />,
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = <Plans
+			context={ context }
+			showFirst={ true }
+			destinationType={ context.params.destinationType } />;
+		next();
 	},
 };

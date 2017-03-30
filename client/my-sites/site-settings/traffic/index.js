@@ -9,14 +9,33 @@ import page from 'page';
 import controller from './controller';
 import mySitesController from 'my-sites/controller';
 
+import { makeLayout, render as clientRender } from 'controller';
+
 const redirectToTrafficSection = ( context ) => {
 	page.redirect( '/settings/traffic/' + ( context.params.site_id || '' ) );
 };
 
 export default function() {
-	page( '/settings/traffic/:site_id', mySitesController.siteSelection, mySitesController.navigation, controller.traffic );
+	page(
+	 '/settings/traffic/:site_id',
+	 mySitesController.siteSelection,
+	 mySitesController.navigation,
+	 controller.traffic,
+	 makeLayout,
+	 clientRender
+	);
 
 	// redirect legacy urls
-	page( '/settings/analytics/:site_id', redirectToTrafficSection );
-	page( '/settings/seo/:site_id', redirectToTrafficSection );
+	page(
+	 '/settings/analytics/:site_id',
+	 redirectToTrafficSection,
+	 makeLayout,
+	 clientRender
+	);
+	page(
+	 '/settings/seo/:site_id',
+	 redirectToTrafficSection,
+	 makeLayout,
+	 clientRender
+	);
 }

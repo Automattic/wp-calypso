@@ -12,13 +12,12 @@ import titlecase from 'to-title-case';
 import { getSiteFragment, sectionify } from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getSelectedSite } from 'state/ui/selectors';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import WPSuperCache from './main';
 
 const controller = {
 
-	settings: function( context ) {
-		const siteId = getSiteFragment( context.path );
+	settings: function(context, next) {
+	    const siteId = getSiteFragment( context.path );
 		const site = getSelectedSite( context.store.getState() );
 		let tab = context.params.tab;
 
@@ -44,15 +43,12 @@ const controller = {
 
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-		renderWithReduxStore(
-			React.createElement( WPSuperCache, {
-				context,
-				site,
-				tab,
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = React.createElement( WPSuperCache, {
+			context,
+			site,
+			tab,
+		} );
+		next();
 	}
 };
 

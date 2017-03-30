@@ -16,7 +16,6 @@ import {
 	trackUpdatesLoaded,
 	trackScrollPage
 } from 'reader/controller-helper';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
@@ -30,8 +29,8 @@ function replaceSearchUrl( newValue, sort ) {
 }
 
 export default {
-	search: function( context ) {
-		const basePath = '/read/search',
+	search: function(context, next) {
+	    const basePath = '/read/search',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Search',
 			searchSlug = context.query.q,
 			sort = context.query.sort || 'relevance',
@@ -67,27 +66,24 @@ export default {
 			replaceSearchUrl( searchSlug, newSort !== 'relevance' ? newSort : undefined );
 		}
 
-		renderWithReduxStore(
-			<AsyncLoad require="reader/search-stream"
-				key="search"
-				postsStore={ store }
-				query={ searchSlug }
-				trackScrollPage={ trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				) }
-				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-				showBack={ false }
-				showPrimaryFollowButtonOnCards={ true }
-				autoFocusInput={ autoFocusInput }
-				onQueryChange={ reportQueryChange }
-				onSortChange={ reportSortChange }
-			/>,
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = <AsyncLoad require="reader/search-stream"
+			key="search"
+			postsStore={ store }
+			query={ searchSlug }
+			trackScrollPage={ trackScrollPage.bind(
+				null,
+				basePath,
+				fullAnalyticsPageTitle,
+				analyticsPageTitle,
+				mcKey
+			) }
+			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+			showBack={ false }
+			showPrimaryFollowButtonOnCards={ true }
+			autoFocusInput={ autoFocusInput }
+			onQueryChange={ reportQueryChange }
+			onSortChange={ reportSortChange }
+		/>;
+		next();
 	}
 };

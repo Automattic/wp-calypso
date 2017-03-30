@@ -10,14 +10,13 @@ import i18n from 'i18n-calypso';
 import route from 'lib/route';
 import userSettings from 'lib/user-settings';
 import { trackPageLoad, setPageTitle } from 'reader/controller-helper';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
 export default {
-	followingEdit( context ) {
-		const basePath = route.sectionify( context.path ),
+	followingEdit(context, next) {
+	    const basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage Followed Sites',
 			mcKey = 'following_edit',
 			search = context.query.s;
@@ -26,22 +25,19 @@ export default {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		renderWithReduxStore(
-			<AsyncLoad
-				require="reader/following-edit"
-				key="following-edit"
-				initialFollowUrl={ context.query.follow }
-				search={ search }
-				context={ context }
-				userSettings={ userSettings }
-			/>,
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = <AsyncLoad
+			require="reader/following-edit"
+			key="following-edit"
+			initialFollowUrl={ context.query.follow }
+			search={ search }
+			context={ context }
+			userSettings={ userSettings }
+		/>;
+		next();
 	},
 
-	followingManage( context ) {
-		const basePath = route.sectionify( context.path ),
+	followingManage(context, next) {
+	    const basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage Followed Sites',
 			mcKey = 'following_edit',
 			search = context.query.s;
@@ -50,17 +46,14 @@ export default {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		renderWithReduxStore(
-			<AsyncLoad
-				require="reader/following-manage"
-				key="following-manage"
-				initialFollowUrl={ context.query.follow }
-				search={ search }
-				context={ context }
-				userSettings={ userSettings }
-			/>,
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = <AsyncLoad
+			require="reader/following-manage"
+			key="following-manage"
+			initialFollowUrl={ context.query.follow }
+			search={ search }
+			context={ context }
+			userSettings={ userSettings }
+		/>;
+		next();
 	}
 };
