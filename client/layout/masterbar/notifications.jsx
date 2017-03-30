@@ -51,7 +51,8 @@ class MasterbarItemNotifications extends Component {
 
 	toggleNotesFrame = ( event ) => {
 		if ( event ) {
-			event.preventDefault();
+			event.preventDefault && event.preventDefault();
+			event.stopPropagation && event.stopPropagation();
 		}
 
 		this.setState( {

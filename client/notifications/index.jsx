@@ -15,8 +15,9 @@
  */
 import React, { Component } from 'react';
 import classNames from 'classnames';
+import debugFactory from 'debug';
 import wpcom from 'lib/wp';
-import { get, invoke } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,6 +31,7 @@ import NotificationsPanel from './notifications-panel/src/Notifications';
 /**
  * Module variables
  */
+const debug = debugFactory( 'notifications:wrapper' );
 const user = userLib();
 const widgetDomain = 'https://widgets.wp.com';
 
@@ -47,8 +49,27 @@ const parseJson = input => {
 	}
 };
 
+/**
+ * Returns whether or not the browser session
+ * is currently visible to the user
+ *
+ * @returns {boolean} is the browser session visible
+ */
+const getIsVisible = () => {
+	if ( ! document ) {
+		return true;
+	}
+
+	if ( ! document.visibilityState ) {
+		return true;
+	}
+
+	return document.visibilityState === 'visible';
+};
+
 export class Notifications extends Component {
 	state = {
+		isVisible: getIsVisible(),
 		shownOnce: false,
 		widescreen: false,
 	};
@@ -56,16 +77,7 @@ export class Notifications extends Component {
 	componentWillReceiveProps( nextProps ) {
 		// tell the iframe if we're changing visible status
 		if ( nextProps.visible !== this.props.visible ) {
-			this.postMessage( { action: 'togglePanel', showing: nextProps.visible } );
 			this.setState( { shownOnce: true, widescreen: false } );
-		}
-	}
-
-	componentDidUpdate( { visible } ) {
-		// focus notes frame when it opens to
-		// enable notes keyboard shortcuts
-		if ( visible && ! this.props.visible ) {
-			invoke( this, 'notesFrame.contentWindow.focus' );
 		}
 	}
 
@@ -116,10 +128,9 @@ export class Notifications extends Component {
 		}
 	};
 
-	handleVisibilityChange = () => this.postMessage( {
-		action: 'toggleVisibility',
-		hidden: !! document.hidden,
-	} );
+	handleVisibilityChange = () => this.setState( { isVisible: getIsVisible() } );
+
+	indicateRender = ( { unseen } ) => this.props.setIndicator( unseen );
 
 	receiveMessage = event => {
 		// Receives messages from the notifications widget
@@ -138,15 +149,6 @@ export class Notifications extends Component {
 		}
 
 		switch ( data.action ) {
-			case 'render':
-				return this.props.setIndicator( data.num_new );
-
-			case 'renderAllSeen':
-				return this.props.setIndicator( 0 );
-
-			case 'togglePanel':
-				return this.props.checkToggle();
-
 			case 'widescreen':
 				return this.setState( { widescreen: data.widescreen } );
 		}
@@ -203,7 +205,7 @@ export class Notifications extends Component {
 			type: 'notesIframeMessage',
 		} );
 
-		this.notesFrame.contentWindow.postMessage( data, widgetDomain );
+		debug( data );
 	};
 
 	postServiceWorkerMessage = message => {
@@ -228,8 +230,11 @@ export class Notifications extends Component {
 				} ) }
 			>
 				<NotificationsPanel
-					isVisible={ this.props.visible }
+					isShowing={ true }
+					isVisible={ this.state.isVisible }
 					locale={ localeSlug }
+					onRender={ this.indicateRender }
+					onTogglePanel={ this.props.checkToggle }
 					wpcom={ wpcom }
 				/>
 			</div>
