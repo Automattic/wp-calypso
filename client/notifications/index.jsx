@@ -267,7 +267,7 @@ export class Notifications extends Component {
 
 		return (
 			<div
-				id="wpnt-notes-panel2"
+				id="wpnc-panel"
 				className={ classNames( 'wide', 'wpnc__main', {
 					'wpnt-open': this.props.visible,
 					'wpnt-closed': ! this.props.visible,
