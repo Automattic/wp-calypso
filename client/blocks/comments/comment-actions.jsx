@@ -10,7 +10,6 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import { changeCommentStatus } from 'state/comments/actions';
 import CommentLikeButtonContainer from './comment-likes';
 import CommentApproveAction from './comment-approve-action';
@@ -54,10 +53,14 @@ const CommentActions = ( {
 				</button>
 			}
 			{ showCancelReplyButton &&
-				<button className="comments__comment-actions-cancel-reply" onClick={ onReplyCancel }>{ translate( 'Cancel reply' ) }</button>
+				<button className="comments__comment-actions-cancel-reply" onClick={ onReplyCancel }>
+					{ translate( 'Cancel reply' ) }
+				</button>
 			}
 			{ showCancelEditButton &&
-				<button className="comments__comment-actions-cancel-reply" onClick={ editCommentCancel }>{ translate( 'Cancel' ) }</button>
+				<button className="comments__comment-actions-cancel-reply" onClick={ editCommentCancel }>
+					{ translate( 'Cancel' ) }
+				</button>
 			}
 			<CommentLikeButtonContainer
 				className="comments__comment-actions-like"
@@ -66,42 +69,36 @@ const CommentActions = ( {
 				postId={ post.ID }
 				commentId={ commentId }
 			/>
-			{ showModerationTools && isEnabled( 'comments/moderation-tools-in-posts' ) &&
-				<CommentApproveAction { ...{ status, approveComment, unapproveComment } } />
-			}
-			{ showModerationTools && isEnabled( 'comments/moderation-tools-in-posts' ) &&
-				<button className="comments__comment-actions-trash" onClick={ trashComment }>
-					<Gridicon icon="trash" size={ 18 } />
-					<span className="comments__comment-actions-like-label">{ translate( 'Trash' ) }</span>
-				</button>
-			}
-			{ showModerationTools && isEnabled( 'comments/moderation-tools-in-posts' ) &&
-				<button className="comments__comment-actions-spam" onClick={ spamComment }>
-					<Gridicon icon="spam" size={ 18 } />
-					<span className="comments__comment-actions-like-label">{ translate( 'Spam' ) }</span>
-				</button>
-			}
-			{ showModerationTools && isEnabled( 'comments/moderation-tools-in-posts' ) &&
-				<button className="comments__comment-actions-edit" onClick={ editComment }>
-					<Gridicon icon="pencil" size={ 18 } />
-					<span className="comments__comment-actions-like-label">{ translate( 'Edit' ) }</span>
-				</button>
-			}
-			{ showModerationTools && isEnabled( 'comments/moderation-tools-in-posts' ) &&
-				<EllipsisMenu toggleTitle={ translate( 'More' ) }>
-					<PopoverMenuItem
-						className={ classnames( 'comments__comment-actions-approve', {
-							'is-approved': isApproved
-						} ) }
-						icon="checkmark"
-						onClick={ ! isApproved ? approveComment : unapproveComment }>
-						{ isApproved ? translate( 'Approved' ) : translate( 'Approve' ) }
-					</PopoverMenuItem>
-					<PopoverMenuItem icon="trash" onClick={ trashComment }>{ translate( 'Trash' ) }</PopoverMenuItem>
-					<PopoverMenuItem icon="spam" onClick={ spamComment }>{ translate( 'Spam' ) }</PopoverMenuItem>
-					<PopoverMenuSeparator />
-					<PopoverMenuItem icon="pencil" onClick={ editComment }>{ translate( 'Edit' ) }</PopoverMenuItem>
-				</EllipsisMenu>
+			{ showModerationTools &&
+				<div className="comments__comment-actions-moderation-tools">
+					<CommentApproveAction { ...{ status, approveComment, unapproveComment } } />
+					<button className="comments__comment-actions-trash" onClick={ trashComment }>
+						<Gridicon icon="trash" size={ 18 } />
+						<span className="comments__comment-actions-like-label">{ translate( 'Trash' ) }</span>
+					</button>
+					<button className="comments__comment-actions-spam" onClick={ spamComment }>
+						<Gridicon icon="spam" size={ 18 } />
+						<span className="comments__comment-actions-like-label">{ translate( 'Spam' ) }</span>
+					</button>
+					<button className="comments__comment-actions-edit" onClick={ editComment }>
+						<Gridicon icon="pencil" size={ 18 } />
+						<span className="comments__comment-actions-like-label">{ translate( 'Edit' ) }</span>
+					</button>
+					<EllipsisMenu toggleTitle={ translate( 'More' ) }>
+						<PopoverMenuItem
+							className={ classnames( 'comments__comment-actions-approve', {
+								'is-approved': isApproved
+							} ) }
+							icon="checkmark"
+							onClick={ ! isApproved ? approveComment : unapproveComment }>
+							{ isApproved ? translate( 'Approved' ) : translate( 'Approve' ) }
+						</PopoverMenuItem>
+						<PopoverMenuItem icon="trash" onClick={ trashComment }>{ translate( 'Trash' ) }</PopoverMenuItem>
+						<PopoverMenuItem icon="spam" onClick={ spamComment }>{ translate( 'Spam' ) }</PopoverMenuItem>
+						<PopoverMenuSeparator />
+						<PopoverMenuItem icon="pencil" onClick={ editComment }>{ translate( 'Edit' ) }</PopoverMenuItem>
+					</EllipsisMenu>
+				</div>
 			}
 		</div>
 	);

@@ -10,7 +10,6 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import {
 	getPostCommentsTree,
 	getPostTotalCommentsCount,
@@ -246,7 +245,7 @@ class PostCommentList extends React.Component {
 							} )
 						}</span> : null }
 				</div> }
-				{ showFilters && isEnabled( 'comments/filters-in-posts' ) &&
+				{ showFilters &&
 					<SegmentedControl compact primary>
 						<SegmentedControlItem
 							selected={ commentsFilter === 'all' }
