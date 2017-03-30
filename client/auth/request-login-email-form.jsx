@@ -25,6 +25,7 @@ import { localize } from 'i18n-calypso';
 import wpcom from 'lib/wp';
 
 const debug = debugFactory( 'calypso:magic-login' );
+const loginUrl = config( 'native_login_url' );
 
 class RequestLoginEmailForm extends React.Component {
 	state = {
@@ -156,7 +157,7 @@ class RequestLoginEmailForm extends React.Component {
 					</FormFieldset>
 				</LoggedOutForm>
 				<LoggedOutFormLinks>
-					<LoggedOutFormLinkItem href={ config( 'login_url' ) }>
+					<LoggedOutFormLinkItem href={ loginUrl }>
 						{ translate( 'Enter a password instead' ) }
 					</LoggedOutFormLinkItem>
 				</LoggedOutFormLinks>
