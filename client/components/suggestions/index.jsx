@@ -274,9 +274,9 @@ class Suggestions extends React.Component {
 					</span>
 					{ this.props.terms[ key ].length > suggestions[ key ].length &&
 						<SuggestionsButtonAll
-								onClick={ this.onShowAllClick }
-								category={ key }
-								label={ i18n.translate( 'Show all' ) } /> }
+							onClick={ this.onShowAllClick }
+							category={ key }
+							label={ i18n.translate( 'Show all' ) } /> }
 					{ key === this.state.showAll &&
 						<SuggestionsButtonAll
 							onClick={ this.onShowAllClick }
