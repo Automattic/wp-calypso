@@ -12,7 +12,7 @@ import i18n from 'i18n-calypso';
  * Internal Dependencies
  */
 import JetpackConnect from './index';
-import JetpackNewSite from './new-site/index';
+import JetpackNewSite from './jetpack-new-site/index';
 import JetpackConnectAuthorizeForm from './authorize-form';
 import { setSection } from 'state/ui/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
