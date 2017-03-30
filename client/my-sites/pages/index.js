@@ -10,6 +10,8 @@ var controller = require( 'my-sites/controller' ),
 	pagesController = require( './controller' ),
 	config = require( 'config' );
 
+import { makeLayout, render as clientRender } from 'controller';
+
 module.exports = function() {
 	if ( config.isEnabled( 'manage/pages' ) ) {
 		page(

@@ -18,7 +18,6 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import userFactory from 'lib/user';
 import sitesFactory from 'lib/sites-list';
 import debugFactory from 'debug';
-import { makeLayout, render as clientRender } from 'controller';
 
 /**
  * Re-export
@@ -64,7 +63,7 @@ export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
  * divs.
  */
 export function clientRouter( route, ...middlewares ) {
-	page(route, ...middlewares, render, makeLayout, clientRender);
+	page( route, ...middlewares, render );
 }
 
 export function render( context ) {
@@ -85,17 +84,16 @@ function renderSeparateTrees( context ) {
 	renderSecondary( context );
 }
 
-function renderPrimary(context, next) {
+function renderPrimary( context ) {
     const { primary, store } = context;
 
 	if ( primary ) {
 		debug( 'Rendering primary', primary );
 		context.primary = primary;
 	}
-	next();
 }
 
-function renderSecondary(context, next) {
+function renderSecondary( context ) {
     const { secondary, store } = context;
 
 	if ( secondary === null ) {
@@ -105,5 +103,4 @@ function renderSecondary(context, next) {
 		debug( 'Rendering secondary' );
 		context.secondary = secondary;
 	}
-	next();
 }
