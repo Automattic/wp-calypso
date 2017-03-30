@@ -37,6 +37,7 @@ import {
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
+import { isDomainOnlySite } from 'state/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -224,6 +225,7 @@ const Checkout = React.createClass( {
 
 		const {
 			cart,
+			isDomainOnly,
 			selectedSiteId,
 			transaction: {
 				step: {
@@ -291,7 +293,10 @@ const Checkout = React.createClass( {
 			} );
 		}
 
-		if ( cart.create_new_blog && receipt && isEmpty( receipt.failed_purchases ) ) {
+		if (
+			( cart.create_new_blog && receipt && isEmpty( receipt.failed_purchases ) ) ||
+			( isDomainOnly && cartItems.hasPlan( cart ) )
+		) {
 			notices.info(
 				this.translate( 'Almost done…' )
 			);
@@ -379,6 +384,7 @@ module.exports = connect(
 
 		return {
 			cards: getStoredCards( state ),
+			isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
