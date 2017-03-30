@@ -19,7 +19,7 @@ const SiteSettingsWriting = ( {
 	site,
 	translate,
 } ) => (
-	<Main className="writing__main site-settings">
+	<Main className="settings-writing__main site-settings">
 		<DocumentHead title={ translate( 'Site Settings' ) } />
 		<SidebarNavigation />
 		<SiteSettingsNavigation site={ site } section="writing" />
