@@ -230,13 +230,4 @@ if ( config.isEnabled( 'signup/social' ) ) {
 	};
 }
 
-if ( config( 'env' ) === 'development' ) {
-	flows[ 'test-plans' ] = {
-		steps: [ 'site', 'plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'This flow is used to test plans choice in signup',
-		lastModified: '2016-06-30'
-	};
-}
-
 export default flows;
