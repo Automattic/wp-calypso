@@ -44,7 +44,7 @@ class Flows {
 			return;
 		}
 
-		if ( ! includes( flow.steps, 'design-type' ) || 'designTypeWithStore' !== abtest( 'signupStore' ) ) {
+		if ( ! includes( flow.steps, 'design-type' ) ) {
 			return flow;
 		}
 
@@ -63,7 +63,7 @@ class Flows {
 	 * @param {String} flowName The name of the flow
 	 * @returns {String} The flow where the user will be redirected to.
 	 */
-	filterDestination( destination, dependencies, flowName ) {
+	filterDestination( destination /*, dependencies, flowName */ ) {
 		return destination;
 	}
 
@@ -149,7 +149,7 @@ class Flows {
 		 */
 		if ( 'main' === flowName ) {
 			if ( '' === stepName ) {
-				abtest( 'siteTitleStep' );
+				abtest( 'signupSurveyStep' );
 			}
 		}
 	};
