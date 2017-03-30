@@ -11,14 +11,6 @@ const dependenciesContainCartItem = ( dependencies ) => {
 	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
 };
 
-const getPostsDestination = ( dependencies ) => {
-	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies );
-	}
-
-	return '/posts/' + dependencies.siteSlug;
-};
-
 const getSiteDestination = ( dependencies ) => {
 	if ( dependenciesContainCartItem( dependencies ) ) {
 		return getCheckoutUrl( dependencies );
@@ -36,6 +28,14 @@ const getSiteDestination = ( dependencies ) => {
 	}
 
 	return protocol + '://' + dependencies.siteSlug;
+};
+
+const getPostsDestination = ( dependencies ) => {
+	if ( dependenciesContainCartItem( dependencies ) ) {
+		return getCheckoutUrl( dependencies );
+	}
+
+	return '/posts/' + dependencies.siteSlug;
 };
 
 const flows = {
@@ -108,14 +108,18 @@ const flows = {
 	website: {
 		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
-		description: 'This flow was originally used for the users who clicked "Create Website" on the two-button homepage. It is now linked to from the default homepage CTA as the main flow was slightly behind given translations.',
+		description: 'This flow was originally used for the users who clicked "Create Website" ' +
+		'on the two-button homepage. It is now linked to from the default homepage CTA as ' +
+		'the main flow was slightly behind given translations.',
 		lastModified: '2016-05-23'
 	},
 
 	blog: {
 		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
-		description: 'This flow was originally used for the users who clicked "Create Blog" on the two-button homepage. It is now used from blog-specific landing pages so that verbiage in survey steps refers to "blog" instead of "website".',
+		description: 'This flow was originally used for the users who clicked "Create Blog" on ' +
+		'the two-button homepage. It is now used from blog-specific landing pages so that ' +
+		'verbiage in survey steps refers to "blog" instead of "website".',
 		lastModified: '2016-05-23'
 	},
 
@@ -138,21 +142,24 @@ const flows = {
 	'delta-discover': {
 		steps: [ 'user' ],
 		destination: '/',
-		description: 'A copy of the `account` flow for the Delta email campaigns. Half of users who go through this flow receive a reader-specific drip email series.',
+		description: 'A copy of the `account` flow for the Delta email campaigns. Half of users who ' +
+		'go through this flow receive a reader-specific drip email series.',
 		lastModified: '2016-05-03'
 	},
 
 	'delta-blog': {
 		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
-		description: 'A copy of the `blog` flow for the Delta email campaigns. Half of users who go through this flow receive a blogging-specific drip email series.',
+		description: 'A copy of the `blog` flow for the Delta email campaigns. Half of users who go ' +
+		'through this flow receive a blogging-specific drip email series.',
 		lastModified: '2016-03-09'
 	},
 
 	'delta-site': {
 		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
-		description: 'A copy of the `website` flow for the Delta email campaigns. Half of users who go through this flow receive a website-specific drip email series.',
+		description: 'A copy of the `website` flow for the Delta email campaigns. Half of users who go ' +
+		'through this flow receive a website-specific drip email series.',
 		lastModified: '2016-03-09'
 	},
 
@@ -199,7 +206,7 @@ const flows = {
 
 if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
 	flows[ 'domain-first' ] = {
-		steps: [ 'domain-only', 'site-or-domain', 'themes', 'plans', 'user' ],
+		steps: [ 'site-or-domain', 'themes', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'An experimental approach for WordPress.com/domains',
 		lastModified: '2017-01-16'
@@ -211,6 +218,24 @@ if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
 		providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
 		description: 'A flow to test updating an existing site with `Signup`',
 		lastModified: '2017-01-19'
+	};
+}
+
+if ( config.isEnabled( 'signup/social' ) ) {
+	flows.social = {
+		steps: [ 'user-social' ],
+		destination: '/',
+		description: 'Create an account without a blog with social signup enabled.',
+		lastModified: '2017-03-16'
+	};
+}
+
+if ( config( 'env' ) === 'development' ) {
+	flows[ 'test-plans' ] = {
+		steps: [ 'site', 'plans', 'user' ],
+		destination: getSiteDestination,
+		description: 'This flow is used to test plans choice in signup',
+		lastModified: '2016-06-30'
 	};
 }
 
