@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { compact, startsWith } from 'lodash';
+import { compact, isEmpty, startsWith } from 'lodash';
 import debugFactory from 'debug';
 import Lru from 'lru';
 import React from 'react';
@@ -16,7 +16,7 @@ import Upload from 'my-sites/themes/theme-upload';
 import trackScrollPage from 'lib/track-scroll-page';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 import { requestThemes, receiveThemes, setBackPath } from 'state/themes/actions';
-import { getThemesForQuery } from 'state/themes/selectors';
+import { getThemesForQuery, getThemesFoundForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 
 const debug = debugFactory( 'calypso:themes' );
@@ -107,14 +107,17 @@ export function fetchThemeData( context, next, shouldUseCache = false ) {
 		page: 1,
 		number: DEFAULT_THEME_QUERY.number,
 	};
-	const cacheKey = context.path;
+	// context.pathname includes tier, filter, and verticals, but not the query string, so it's a suitable cacheKey
+	// However, we can't guarantee it's normalized -- filters can be in any order, resulting in multiple possible cacheKeys for
+	// the same sets of results.
+	const cacheKey = context.pathname;
 
 	if ( shouldUseCache ) {
 		const cachedData = themesQueryCache.get( cacheKey );
 		if ( cachedData ) {
 			debug( `found theme data in cache key=${ cacheKey }` );
-			context.store.dispatch( receiveThemes( cachedData.themes, siteId ) );
-			context.renderCacheKey = context.path + cachedData.timestamp;
+			context.store.dispatch( receiveThemes( cachedData.themes, siteId, query, cachedData.found ) );
+			context.renderCacheKey = cacheKey + cachedData.timestamp;
 			return next();
 		}
 	}
@@ -123,9 +126,10 @@ export function fetchThemeData( context, next, shouldUseCache = false ) {
 		.then( () => {
 			if ( shouldUseCache ) {
 				const themes = getThemesForQuery( context.store.getState(), siteId, query );
+				const found = getThemesFoundForQuery( context.store.getState(), siteId, query );
 				const timestamp = Date.now();
-				themesQueryCache.set( cacheKey, { themes, timestamp } );
-				context.renderCacheKey = context.path + timestamp;
+				themesQueryCache.set( cacheKey, { themes, found, timestamp } );
+				context.renderCacheKey = cacheKey + timestamp;
 				debug( `caching theme data key=${ cacheKey }` );
 			}
 			next();
@@ -134,8 +138,8 @@ export function fetchThemeData( context, next, shouldUseCache = false ) {
 }
 
 export function fetchThemeDataWithCaching( context, next ) {
-	if ( Object.keys( context.query ).length > 0 ) {
-		// Don't cache URLs with query params for now
+	if ( ! isEmpty( context.query ) ) {
+		// Don't cache URLs with query params
 		return fetchThemeData( context, next, false );
 	}
 

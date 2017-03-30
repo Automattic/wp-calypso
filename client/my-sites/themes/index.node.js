@@ -4,7 +4,7 @@
 import config from 'config';
 import { makeLayout } from 'controller';
 import { getSubjects } from './theme-filters.js';
-import { fetchThemeDataWithCaching, fetchThemeData, loggedOut } from './controller';
+import { fetchThemeDataWithCaching, loggedOut } from './controller';
 
 // `logged-out` middleware isn't SSR-compliant yet, but we can at least render
 // the layout.
@@ -15,16 +15,22 @@ export default function( router ) {
 
 	if ( config.isEnabled( 'manage/themes' ) ) {
 		if ( config.isEnabled( 'manage/themes-ssr' ) ) {
-			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?$`, fetchThemeDataWithCaching, loggedOut, makeLayout );
-			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?`, fetchThemeData, loggedOut, makeLayout );
-			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`, fetchThemeData, loggedOut, makeLayout );
+			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?`, fetchThemeDataWithCaching, loggedOut, makeLayout );
+			router(
+				`/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`,
+				fetchThemeDataWithCaching,
+				loggedOut,
+				makeLayout
+			);
 			router( '/design/upload/*', makeLayout );
-			router( '/design/*', fetchThemeData, loggedOut, makeLayout ); // Needed so direct hits don't result in a 404.
+			// The following route definition is needed so direct hits on `/design/<mysite>` don't result in a 404.
+			router( '/design/*', fetchThemeDataWithCaching, loggedOut, makeLayout );
 		} else {
 			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?`, makeLayout );
 			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`, makeLayout );
 			router( '/design/upload/*', makeLayout );
-			router( '/design/*', makeLayout ); // Needed so direct hits don't result in a 404.
+			// The following route definition is needed so direct hits on `/design/<mysite>` don't result in a 404.
+			router( '/design/*', makeLayout );
 		}
 	}
 }
