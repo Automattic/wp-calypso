@@ -10,6 +10,8 @@ import i18n from 'i18n-calypso';
 import trackScrollPage from 'lib/track-scroll-page';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, userHasHistory } from 'reader/controller-helper';
+import RecommendedForYou from 'reader/recommendations/for-you';
+import RecommendedPostsStream from 'reader/recommendations/posts';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { renderWithReduxStore } from 'lib/react-helpers';
@@ -18,8 +20,7 @@ const ANALYTICS_PAGE_TITLE = 'Reader';
 
 const exported = {
 	recommendedForYou( context ) {
-		const RecommendedForYou = require( 'reader/recommendations/for-you' ),
-			basePath = '/recommendations',
+		const basePath = '/recommendations',
 			fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Recommended Sites For You',
 			mcKey = 'recommendations_for_you';
 
@@ -44,13 +45,12 @@ const exported = {
 
 	// Post Recommendations - Used by the Data team to test recommendation algorithms
 	recommendedPosts( context ) {
-		const RecommendedPostsStream = require( 'reader/recommendations/posts' ),
-			basePath = route.sectionify( context.path );
+		const basePath = route.sectionify( context.path );
 
 		let fullAnalyticsPageTitle = '';
 		let RecommendedPostsStore = null;
 		let mcKey = '';
-		switch( basePath ) {
+		switch ( basePath ) {
 			case '/recommendations/cold':
 				fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Coldstart Posts';
 				RecommendedPostsStore = feedStreamFactory( 'cold_posts' );

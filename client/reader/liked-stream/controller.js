@@ -9,14 +9,14 @@ import React from 'react';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
+import LikedPostsStream from 'reader/liked-stream/main';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
 
 const exported = {
 	likes( context ) {
-		var LikedPostsStream = require( 'reader/liked-stream/main' ),
-			basePath = route.sectionify( context.path ),
+		const basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > My Likes',
 			likedPostsStore = feedStreamFactory( 'likes' ),
 			mcKey = 'postlike';
