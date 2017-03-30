@@ -49,21 +49,11 @@ const parseJson = input => {
 
 export class Notifications extends Component {
 	state = {
-		loaded: true,
-		iframeLoaded: false,
 		shownOnce: false,
 		widescreen: false,
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.visible && ! this.state.loaded ) {
-			this.setState( { loaded: true } );
-		} else if ( ! nextProps.visible && ! this.state.iframeLoaded && this.state.shownOnce ) {
-			// for cases where iframe is stuck loading, this will remove it from
-			// the DOM so we can try reloading it next time
-			this.setState( { loaded: false } );
-		}
-
 		// tell the iframe if we're changing visible status
 		if ( nextProps.visible !== this.props.visible ) {
 			this.postMessage( { action: 'togglePanel', showing: nextProps.visible } );
@@ -148,18 +138,6 @@ export class Notifications extends Component {
 		}
 
 		switch ( data.action ) {
-			case 'iFrameReady':
-				if ( ! this.state.iframeLoaded ) {
-					this.setState( { iframeLoaded: true } );
-				}
-
-				if ( this.queuedMessage ) {
-					this.postMessage( this.queuedMessage );
-					this.queuedMessage = null;
-				}
-
-				return;
-
 			case 'render':
 				return this.props.setIndicator( data.num_new );
 
@@ -218,14 +196,8 @@ export class Notifications extends Component {
 	 *
 	 * @param {!Object} message data to send
 	 * @param {!String} message.action name of action for notes app to dispatch
-	 * @returns {*} please ignore return value
 	 */
 	postMessage = message => {
-		// save only the latest message to send when iframe is loaded
-		if ( ! ( this.notesFrame && this.state.iframeLoaded ) ) {
-			return this.queuedMessage = message;
-		}
-
 		const data = JSON.stringify( {
 			...message,
 			type: 'notesIframeMessage',
@@ -245,11 +217,6 @@ export class Notifications extends Component {
 	};
 
 	render() {
-		if ( ! this.props.visible && ! this.state.loaded ) {
-			// @TODO we need a good loading message
-			return <div />;
-		}
-
 		const localeSlug = get( user.get(), 'localeSlug', config( 'i18n_default_locale_slug' ) );
 
 		return (
