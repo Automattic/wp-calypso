@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { identity, find, replace, some } from 'lodash';
+import { identity, isEqual, find, replace, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 import SocialLogo from 'social-logos';
 
@@ -234,7 +234,7 @@ class SharingService extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteUserConnections.length !== nextProps.siteUserConnections.length ) {
+		if ( ! isEqual( this.props.siteUserConnections, nextProps.siteUserConnections ) ) {
 			this.setState( {
 				isConnecting: false,
 				isDisconnecting: false,
@@ -242,7 +242,7 @@ class SharingService extends Component {
 			} );
 		}
 
-		if ( this.props.brokenConnections.length !== nextProps.brokenConnections.length ) {
+		if ( ! isEqual( this.props.brokenConnections, nextProps.brokenConnections ) ) {
 			this.setState( { isRefreshing: false } );
 		}
 
