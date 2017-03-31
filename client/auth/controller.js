@@ -10,16 +10,10 @@ import page from 'page';
  * Internal dependencies
  */
 import OAuthLogin from './login';
-import WPLogin from './wp-login';
 import ConnectComponent from './connect';
-import RequestLoginEmailForm from './request-login-email-form';
-import HandleEmailedLinkForm from './handle-emailed-link-form';
-import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
-import EmailedLoginLinkExpired from './emailed-login-link-expired';
 import * as OAuthToken from 'lib/oauth-token';
 import wpcom from 'lib/wp';
 import config from 'config';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import store from 'store';
 import WPOAuth from 'wpcom-oauth';
 import userFactory from 'lib/user';
@@ -28,7 +22,7 @@ import PulsingDot from 'components/pulsing-dot';
 
 export default {
 
-	login: function( context ) {
+	oauthLogin: function() {
 		if ( config.isEnabled( 'oauth' ) ) {
 			// hack to keep the blue background for Desktop login
 			document.querySelector( '.layout' ).style.backgroundColor = '#0087be';
@@ -41,18 +35,10 @@ export default {
 				);
 			}
 		}
-
-		if ( config.isEnabled( 'wp-login' ) ) {
-			renderWithReduxStore(
-				<WPLogin />,
-				'primary',
-				context.store
-			);
-		}
 	},
 
 	checkToken: function( context, next ) {
-		const loggedOutRoutes = [ '/login', '/oauth', '/start', '/authorize', '/api/oauth/token' ],
+		const loggedOutRoutes = [ '/oauth-login', '/oauth', '/start', '/authorize', '/api/oauth/token' ],
 			isValidSection = loggedOutRoutes.some( route => startsWith( context.path, route ) );
 
 		// Check we have an OAuth token, otherwise redirect to auth/login page
@@ -126,49 +112,5 @@ export default {
 				window.location = '/';
 			}
 		} );
-	},
-
-	magicLoginRequestEmailForm: function( context ) {
-		renderWithReduxStore( (
-				<Main className="auth__magic-login-request-form">
-					<RequestLoginEmailForm />
-				</Main>
-			),
-			document.getElementById( 'primary' ),
-			context.store
-		);
-	},
-
-	magicLoginLinkWasSent: function( context ) {
-		renderWithReduxStore( (
-				<Main className="auth__magic-link-was-sent">
-					<EmailedLoginLinkSuccessfully />
-				</Main>
-			),
-			document.getElementById( 'primary' ),
-			context.store
-		);
-	},
-
-	magicLoginClickHandler: function( context ) {
-		renderWithReduxStore( (
-				<Main className="auth__magic-login-handle-click">
-					<HandleEmailedLinkForm />
-				</Main>
-			),
-			document.getElementById( 'primary' ),
-			context.store
-		);
-	},
-
-	magicLoginHasExpired: function( context ) {
-		renderWithReduxStore( (
-				<Main className="auth__magic-link-exipred">
-					<EmailedLoginLinkExpired />
-				</Main>
-			),
-			document.getElementById( 'primary' ),
-			context.store
-		);
 	}
 };

@@ -306,8 +306,16 @@ sections.push( {
 } );
 
 sections.push( {
+	name: 'login',
+	paths: [ '/login' ],
+	module: 'login',
+	secondary: false,
+	enableLoggedOut: true
+} );
+
+sections.push( {
 	name: 'auth',
-	paths: [ '/login', '/authorize', '/api/oauth/token' ],
+	paths: [ '/oauth-login', '/authorize', '/api/oauth/token' ],
 	module: 'auth',
 	secondary: false,
 	enableLoggedOut: true
