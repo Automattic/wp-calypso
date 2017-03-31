@@ -14,7 +14,6 @@ import {
 	any,
 	when
 } from './functional';
-import { connectChat } from 'state/happychat/actions';
 import {
 	getHappychatConnectionStatus
 } from 'state/happychat/selectors';
@@ -33,6 +32,7 @@ import {
 	timeline,
 	composer
 } from './helpers';
+import HappychatConnection from './connection';
 import Notices from './notices';
 import { translate } from 'i18n-calypso';
 
@@ -87,11 +87,6 @@ const title = first(
  * Main chat UI component
  */
 const Happychat = React.createClass( {
-
-	componentDidMount() {
-		this.props.connectChat();
-	},
-
 	render() {
 		const {
 			connectionStatus,
@@ -103,6 +98,7 @@ const Happychat = React.createClass( {
 
 		return (
 			<div className="happychat">
+				<HappychatConnection />
 				<div
 					className={ classnames( 'happychat__container', {
 						'is-open': isChatOpen( { connectionStatus } ),
@@ -145,9 +141,6 @@ const mapDispatch = ( dispatch ) => {
 				dispatch( closeChat() );
 			}, 500 );
 		},
-		connectChat() {
-			dispatch( connectChat() );
-		}
 	};
 };
 

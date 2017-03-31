@@ -31,10 +31,11 @@ import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { isHappychatAvailable } from 'state/happychat/selectors';
 import { isTicketSupportEligible, isTicketSupportConfigurationReady, getTicketSupportRequestError } from 'state/help/ticket/selectors';
+import HappychatConnection from 'components/happychat/connection';
 import QueryOlark from 'components/data/query-olark';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import HelpUnverifiedWarning from '../help-unverified-warning';
-import { connectChat as connectHappychat, sendChatMessage as sendHappychatMessage, sendBrowserInfo } from 'state/happychat/actions';
+import { sendChatMessage as sendHappychatMessage, sendBrowserInfo } from 'state/happychat/actions';
 import { openChat as openHappychat } from 'state/ui/happychat/actions';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 import { askQuestion as askDirectlyQuestion, initialize as initializeDirectly } from 'state/help/directly/actions';
@@ -66,10 +67,6 @@ const HelpContact = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		if ( config.isEnabled( 'happychat' ) ) {
-			this.props.connectHappychat();
-		}
-
 		this.prepareDirectlyWidget();
 
 		olarkStore.on( 'change', this.updateOlarkState );
@@ -683,6 +680,7 @@ const HelpContact = React.createClass( {
 				<Card className={ this.canShowChatbox() ? 'help-contact__chat-form' : 'help-contact__form' }>
 					{ this.getView() }
 				</Card>
+				<HappychatConnection />
 				<QueryOlark />
 				<QueryTicketSupportConfiguration />
 			</Main>
@@ -707,7 +705,6 @@ export default connect(
 		};
 	},
 	{
-		connectHappychat,
 		openHappychat,
 		sendHappychatMessage,
 		sendBrowserInfo,

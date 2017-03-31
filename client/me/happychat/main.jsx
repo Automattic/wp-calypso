@@ -8,10 +8,10 @@ import { findDOMNode } from 'react-dom';
  * Internal dependencies
  */
 import viewport from 'lib/viewport';
-import { connectChat } from 'state/happychat/actions';
 import { openChat } from 'state/ui/happychat/actions';
 import { getHappychatConnectionStatus } from 'state/happychat/selectors';
 import { timeline, composer } from 'components/happychat/helpers';
+import HappychatConnection from 'components/happychat/connection';
 
 /**
  * React component for rendering a happychat client as a full page
@@ -19,7 +19,6 @@ import { timeline, composer } from 'components/happychat/helpers';
 class HappychatPage extends Component {
 	componentDidMount() {
 		this.props.openChat();
-		this.props.connectChat();
 	}
 
 	onFocus() {
@@ -35,6 +34,7 @@ class HappychatPage extends Component {
 		const { connectionStatus } = this.props;
 		return (
 			<div className="happychat__page" aria-live="polite" aria-relevant="additions">
+				<HappychatConnection />
 				{ timeline( { connectionStatus } ) }
 				{ composer( { connectionStatus } ) }
 			</div>
@@ -46,4 +46,4 @@ const mapState = state => ( {
 	connectionStatus: getHappychatConnectionStatus( state )
 } );
 
-export default connect( mapState, { connectChat, openChat } )( HappychatPage );
+export default connect( mapState, { openChat } )( HappychatPage );
