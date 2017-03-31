@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { throttle, constant, noop } from 'lodash';
 import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
+import classnames from 'classnames';
 
 /**
  * Internal Dependencies
@@ -24,11 +25,13 @@ class ReaderFeaturedVideo extends React.Component {
 		videoEmbed: React.PropTypes.object,
 		allowPlaying: React.PropTypes.bool,
 		onThumbnailClick: React.PropTypes.func,
+		className: React.PropTypes.string,
 	}
 
 	static defaultProps = {
 		allowPlaying: true,
 		onThumbnailClick: noop,
+		className: '',
 	}
 
 	constructor( props ) {
@@ -89,12 +92,16 @@ class ReaderFeaturedVideo extends React.Component {
 	}
 
 	render() {
-		const { thumbnailUrl, autoplayIframe, iframe, translate, allowPlaying } = this.props;
+		const { thumbnailUrl, autoplayIframe, iframe, translate, allowPlaying, className } = this.props;
 		const preferThumbnail = this.state.preferThumbnail;
 
 		if ( preferThumbnail && thumbnailUrl ) {
 			return (
-				<ReaderFeaturedImage imageUrl={ thumbnailUrl } onClick={ this.handleThumbnailClick }>
+				<ReaderFeaturedImage
+					imageUrl={ thumbnailUrl }
+					onClick={ this.handleThumbnailClick }
+					className={ className }
+				>
 					{ allowPlaying && <img className="reader-featured-video__play-icon"
 						src="/calypso/images/reader/play-icon.png"
 						title={ translate( 'Play Video' ) }
@@ -106,10 +113,11 @@ class ReaderFeaturedVideo extends React.Component {
 		// if we can't retrieve a thumbnail that means there was an issue
 		// with the embed and we shouldn't display it
 		const showEmbed = !! thumbnailUrl;
+		const classNames = classnames( className, 'reader-featured-video' );
 
 		/* eslint-disable react/no-danger */
 		return (
-			<div className="reader-featured-video">
+			<div className={ classNames }>
 				<QueryReaderThumbnail embedUrl={ this.props.videoEmbed.src } />
 				{ showEmbed &&
 					<div ref={ this.setVideoEmbedRef } className="reader-featured-video__video"
