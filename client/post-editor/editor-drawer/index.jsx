@@ -4,6 +4,7 @@
 import React from 'react';
 import createFragment from 'react-addons-create-fragment';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -307,12 +308,8 @@ const EditorDrawer = React.createClass( {
 
 	renderStatus() {
 		// TODO: REDUX - remove this logic and prop for EditPostStatus when date is moved to redux
-		const postDate = this.props.post && this.props.post.date
-			? this.props.post.date
-			: null;
-		const postStatus = this.props.post && this.props.post.status
-			? this.props.post.status
-			: null;
+		const postDate = get( this.props.post, 'date', null );
+		const postStatus = get( this.props.post, 'status', null );
 
 		return (
 			<Accordion title={ this.translate( 'Status' ) }>
@@ -326,8 +323,7 @@ const EditorDrawer = React.createClass( {
 					setPostDate={ this.props.setPostDate }
 					site={ this.props.site }
 					status={ postStatus }
-				>
-				</EditPostStatus>
+				/>
 			</Accordion>
 		);
 	},
