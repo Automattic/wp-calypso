@@ -3,7 +3,7 @@
  */
 import { connect } from 'react-redux';
 import { flatten, find, isEmpty, isEqual, reduce, startsWith } from 'lodash';
-import i18n from 'i18n-calypso';
+import { i18n, localize } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
 
@@ -232,7 +232,8 @@ const Checkout = React.createClass( {
 				step: {
 					data: receipt
 				}
-			}
+			},
+			translate
 		} = this.props;
 		const redirectPath = this.getCheckoutCompleteRedirectPath();
 
@@ -253,7 +254,7 @@ const Checkout = React.createClass( {
 
 			if ( product && product.will_auto_renew ) {
 				notices.success(
-					this.translate( '%(productName)s has been renewed and will now auto renew in the future. ' +
+					translate( '%(productName)s has been renewed and will now auto renew in the future. ' +
 						'{{a}}Learn more{{/a}}', {
 							args: {
 								productName: renewalItem.product_name
@@ -267,7 +268,7 @@ const Checkout = React.createClass( {
 				);
 			} else if ( product ) {
 				notices.success(
-					this.translate( 'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
+					translate( 'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
 						'We sent your receipt to %(email)s.', {
 							args: {
 								productName: renewalItem.product_name,
@@ -299,7 +300,7 @@ const Checkout = React.createClass( {
 			( isDomainOnly && cartItems.hasPlan( cart ) )
 		) {
 			notices.info(
-				this.translate( 'Almost done…' )
+				translate( 'Almost done…' )
 			);
 
 			const domainName = getDomainNameFromReceiptOrCart( receipt, cart );
@@ -402,4 +403,4 @@ module.exports = connect(
 		recordApplePayStatus,
 		requestSite
 	}
-)( Checkout );
+)( localize( Checkout ) );
