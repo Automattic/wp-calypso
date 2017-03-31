@@ -110,19 +110,19 @@ export default React.createClass( {
 		} );
 
 		return (
-			<Button
-				onClick={ this.showMediaModal }
-				borderless
-				compact
-				className={ classes }>
+			<div className={ classes }>
 				{ this.renderMediaModal() }
-				<div className="editor-featured-image__current-image">
+				<Button
+						className="editor-featured-image__current-image"
+						onClick={ this.showMediaModal }
+						borderless
+						compact>
 					{ this.renderCurrentImage() }
 					<Gridicon
 						icon="pencil"
 						className="editor-featured-image__edit-icon" />
-				</div>
-			</Button>
+				</Button>
+			</div>
 		);
 	}
 } );
