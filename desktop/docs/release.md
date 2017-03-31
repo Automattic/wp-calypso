@@ -26,15 +26,17 @@ Note that you need the certificates installed prior to building.
 
 You can create the Windows build using OS X, which is much easier since all the tools needed to run Calypso are already in place. You need two packages:
 
-`brew install wine makensis`
+```bash
+$ brew install wine makensis
+```
 
-The Windows build doesn't get signed until the packaging stage, to sign you can [see the directions here](https://mkaz.wordpress.com/2015/12/09/code-signing-a-windows-application/).
+The Windows build doesn't get signed until the packaging stage. To sign you can [see the directions here](https://mkaz.wordpress.com/2015/12/09/code-signing-a-windows-application/).
 
 ### Linux
 
 To build the Debian package for Linux, we use the [FPM tool](https://github.com/jordansissel/fpm/wiki) which is a Ruby library that makes building packages a little easier. The Linux package is also built on OS X, to install the prerequisites:
 
-```
-brew install ruby
-sudo gem install fpm
+```bash
+$ brew install ruby
+$ sudo gem install fpm
 ```
