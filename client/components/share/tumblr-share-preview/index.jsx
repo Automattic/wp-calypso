@@ -11,7 +11,6 @@ export class TumblrSharePreview extends PureComponent {
 		const {
 			externalProfilePicture,
 			externalProfileUrl,
-			externalDisplay,
 			externalName,
 			message,
 			articleUrl,
@@ -35,17 +34,20 @@ export class TumblrSharePreview extends PureComponent {
 								className="tumblr-share-preview__profile-name"
 								href={ externalProfileUrl }
 							>
-								{ externalDisplay }
-							</a>
-							<a
-								className="tumblr-share-preview__profile-handle"
-								href={ externalProfileUrl }
-							>
 								{ externalName }
 							</a>
+							<span className="tumblr-share-preview__profile-wp">
+								{ translate( 'WordPress' ) }
+							</span>
 						</div>
-						<div className="tumblr-share-preview__post-title">
-							<h1> { postTitle } </h1>
+						<div className="tumblr-share-preview__post-title-part">
+							<h1 className="tumblr-share-preview__post-title">{ postTitle }</h1>
+						</div>
+						<div className="tumblr-share-preview__message">
+							<a className="tumblr-share-preview__message-link"
+								href={ articleUrl }>
+								{ message }
+							</a>
 						</div>
 						{ imageUrl &&
 							<div className="tumblr-share-preview__image-wrapper">
@@ -55,13 +57,13 @@ export class TumblrSharePreview extends PureComponent {
 								/>
 							</div>
 						}
-						<div className="tumblr-share-preview__message">
-							<blockquote>
-								{ message }
+						<div className="tumblr-share-preview__summery-part">
+							<blockquote className="tumblr-share-preview__summery">
+								Post contents goes here.
 							</blockquote>
 						</div>
-						<div className="tumblr-share-preview__article-url-line">
-							<a className="tumblr-share-preview__article-url"
+						<div className="tumblr-share-preview__article-link-line">
+							<a className="tumblr-share-preview__article-link"
 								href={ articleUrl }>
 								{ translate( 'View On WordPress' ) }
 							</a>
