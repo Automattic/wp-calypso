@@ -414,7 +414,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-related-card-v2__featured-image {
 	border: 1px solid lighten( $gray, 30% );
-	display: block;
 	height: 90px;
 
 	@media #{$reader-related-card-v2-breakpoint-small} {
