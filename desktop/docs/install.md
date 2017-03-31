@@ -3,14 +3,8 @@
 ## Quick Summary of Steps
 
 1.	Check that you have all prerequisites (Git, Node, NPM). See below for more details.
-2.	Clone this repository locally.
- - `git submodule init`
- - `git submodule update`
-3. Create a calypso/config/secrets.json file and fill it with
-   [secrets](https://github.com/Automattic/wp-desktop/blob/master/docs/secrets.md)
-4. `make run` to build and run the app
-
-
+2. Create a /config/secrets.json file and fill it with [secrets](../secrets.md)
+3. `make run` to build and run the app
 
 ## Prerequisites
 
@@ -22,12 +16,12 @@ To be able to clone the repo and run the application you need:
 
 ## Installing and Running
 
-Clone this git repo to your machine via the terminal using the `git clone` command and then run `make run` from the root app directory:
+Clone this git repo to your machine via the terminal using the `git clone` command and then run `make desktop-run` from the root app directory:
 
 ```bash
-$ git clone git@github.com:Automattic/wp-desktop.git
-$ cd wp-desktop
-$ make run
+$ git clone git@github.com:Automattic/wp-calypso.git
+$ cd wp-calypso
+$ make desktop-run
 ```
 
-The `make run` command will install any `npm` dependencies and start the development server.
+The `make desktop-run` command will install any `npm` dependencies and start the development server.
