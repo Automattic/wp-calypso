@@ -44,7 +44,7 @@ const ReaderAvatar = ( {
 	}
 
 	let hasSiteIcon = !! get( fakeSite, 'icon.img' );
-	let hasAvatar = !! ( author && author.has_avatar );
+	let hasAvatar = ( author && get( author, 'has_avatar', true ) );
 
 	if ( hasSiteIcon && hasAvatar ) {
 		// Do these both reference the same image? Disregard query string params.

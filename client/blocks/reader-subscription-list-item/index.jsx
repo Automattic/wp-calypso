@@ -3,14 +3,14 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { trim, isEmpty } from 'lodash';
+import { trim, isEmpty, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 
 /**
  * Internal Dependencies
  */
-import Gravatar from 'components/gravatar';
+import ReaderAvatar from 'blocks/reader-avatar';
 import FollowButton from 'reader/follow-button';
 import Gridicon from 'gridicons';
 import { getStreamUrl } from 'reader/route';
@@ -36,39 +36,47 @@ function ReaderSubscriptionListItem( {
 	siteAuthor,
 	siteExcerpt,
 	feedId,
+	feed,
 	siteId,
+	site,
 	className = '',
-	onSiteClick = () => {},
 	followSource,
 	lastUpdated,
 	translate,
 } ) {
 	// prefer a users name property
 	// if that doesn't exist settle for combining first and last name
-	const authorName = siteAuthor.name ||
-		trim( `${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }` );
-	const readerStreamUrl = getStreamUrl( feedId, siteId );
+	const authorName = siteAuthor && ( siteAuthor.name ||
+		trim( `${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }` ) );
+	const siteIcon = get( site, 'icon.img' );
+	const feedIcon = get( feed, 'image' );
+	const streamUrl = getStreamUrl( feedId, siteId );
 
 	return (
 		<div className={ classnames( 'reader-subscription-list-item', className ) }>
 			<div>
-				<a href={ siteUrl } onClick={ onSiteClick }>
-					<Gravatar user={ siteAuthor } />
-				</a>
+				<ReaderAvatar
+					siteIcon={ siteIcon }
+					feedIcon={ feedIcon }
+					author={ siteAuthor }
+					preferGravatar={ true }
+					siteUrl={ streamUrl }
+					isCompact={ true }
+				/>
 			</div>
 			<div className="reader-subscription-list-item__byline">
-				<span className="reader-subscription-list-item__site-title">{ <a href={ readerStreamUrl }> { siteTitle } </a> }</span>
+				<span className="reader-subscription-list-item__site-title">{ <a href={ streamUrl }> { siteTitle } </a> }</span>
 				{ ! isEmpty( authorName ) &&
 					<span>
 						<span className="reader-subscription-list-item__by-text">
 							{ translate( 'by' ) }
 						</span>
-						<span><a href={ readerStreamUrl }> { authorName } </a></span>
+						<span><a href={ streamUrl }> { authorName } </a></span>
 					</span>
 				}
 				<div>{ siteExcerpt }</div>
 				<div className="reader-subscription-list-item__site-url">
-					<a href={ siteUrl }> { stripUrl( siteUrl ) } </a>
+					<a href={ siteUrl }> { siteUrl && stripUrl( siteUrl ) } </a>
 					{ moment( lastUpdated ).fromNow() }
 				</div>
 			</div>
