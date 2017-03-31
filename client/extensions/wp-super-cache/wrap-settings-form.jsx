@@ -104,7 +104,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 				// Expiry Time & Garbage Collection
 				cache_gc_email_me: false,
-				cache_max_time: '3600',
+				cache_max_time: 3600,
 				cache_schedule_interval: 'five_minutes_interval',
 				cache_schedule_type: 'interval',
 				cache_scheduled_time: '00:00',
@@ -142,6 +142,57 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				wp_cache_path: '/wordpress/',
 				wp_cache_readonly: false,
 				wp_cache_writable: false,
+
+				// Contents
+				cache_stats: {
+					generated: 60,
+					supercache: {
+						cached_list: [
+							{
+								age: 3029,
+								uri: 'localhost/blogs/',
+							},
+							{
+								age: 3031,
+								uri: 'localhost/professionals/',
+							},
+							{
+								age: 3322,
+								uri: 'localhost/',
+							},
+						],
+						expired_list: [
+							{
+								age: 4975,
+								uri: 'localhost/support/',
+							},
+							{
+								age: 4973,
+								uri: 'localhost/get-involved/',
+							},
+						],
+						fsize: '69.78KB',
+					},
+					wpcache: {
+						cached_list: [
+							{
+								age: 95,
+								uri: 'localhost/support-info/',
+							},
+							{
+								age: 3031,
+								uri: 'localhost/about/',
+							},
+						],
+						expired_list: [
+							{
+								age: 81,
+								uri: 'localhost/blogs/',
+							},
+						],
+						fsize: '32.18KB',
+					},
+				},
 			};
 
 			return {
