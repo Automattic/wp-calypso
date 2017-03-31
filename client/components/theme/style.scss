@@ -8,6 +8,11 @@ $theme-info-height: 54px;
 	overflow: hidden;
 	transition: all 100ms ease-in-out;
 
+	.themes-list__cell & {
+		width: 100%;
+		margin: 0;
+	}
+
 	&.is-active {
 		background: $blue-medium;
 
