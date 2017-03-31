@@ -9,11 +9,6 @@ import GridIcon from 'gridicons';
 /**
  * Internal dependencies
  */
-import {
-	first,
-	any,
-	when
-} from './functional';
 import { connectChat } from 'state/happychat/actions';
 import {
 	getHappychatConnectionStatus
@@ -25,63 +20,25 @@ import {
 	minimizedChat
 } from 'state/ui/happychat/actions';
 import {
-	isHappychatMinimizing
+	isHappychatMinimizing,
+	isHappychatOpen,
 } from 'state/ui/happychat/selectors';
-import {
-	isConnected,
-	isConnecting,
-	timeline,
-	composer
-} from './helpers';
 import Notices from './notices';
-import { translate } from 'i18n-calypso';
-
-const isChatOpen = any( isConnected, isConnecting );
-
-/**
- * Renders the title text of the chat sidebar when happychat is connecting.
- * @param {Object} params - parameters for the component
- * @param {function} params.onCloseChat - function called when close button is pressed
- * @returns {Object} react component for title bar
- */
-const connectingTitle = ( { onCloseChat } ) => {
-	return (
-		<div className="happychat__active-toolbar">
-		<span>{ translate( 'Starting chat' ) }</span>
-			<div onClick={ onCloseChat }>
-				<GridIcon icon="chevron-down" />
-			</div>
-		</div>
-	);
-};
+import Timeline from './timeline';
+import Composer from './composer';
+import { localize } from 'i18n-calypso';
 
 /**
- * Returns the title bar for Happychat when it is connected
- * @private
- * @param {Object} params - parameters for the component
- * @param {function} params.onCloseChat - function called when close button is pressed
- * @returns {Object} react component for title bar
+ * Function for rendering correct titlebar based on happychat client state
  */
-const connectedTitle = ( { onCloseChat } ) => (
+const Title = localize( ( { onCloseChat, translate } ) => (
 	<div className="happychat__active-toolbar">
 	<h4>{ translate( 'Support Chat' ) }</h4>
 		<div onClick={ onCloseChat }>
 			<GridIcon icon="cross" />
 		</div>
 	</div>
-);
-
-/**
- * Function for rendering correct titlebar based on happychat client state
- */
-const title = first(
-	when( isConnected, connectedTitle ),
-	when( isConnecting, connectingTitle ),
-	( { onOpenChat } ) => {
-		const onClick = () => onOpenChat();
-		return <div onClick={ onClick }>{ translate( 'Support Chat' ) }</div>;
-	}
-);
+) );
 
 /*
  * Main chat UI component
@@ -94,32 +51,24 @@ const Happychat = React.createClass( {
 
 	render() {
 		const {
-			connectionStatus,
 			isMinimizing,
-			user,
 			onCloseChat,
-			onOpenChat
+			isChatOpen,
 		} = this.props;
 
 		return (
 			<div className="happychat">
 				<div
 					className={ classnames( 'happychat__container', {
-						'is-open': isChatOpen( { connectionStatus } ),
+						'is-open': isChatOpen,
 						'is-minimizing': isMinimizing
 					} ) } >
 					<div className="happychat__title">
-						{ title( {
-							connectionStatus,
-							isMinimizing,
-							user,
-							onCloseChat,
-							onOpenChat
-						} ) }
+						<Title onCloseChat={ onCloseChat } />
 					</div>
-					{ timeline( { connectionStatus, isMinimizing } ) }
+					<Timeline />
 					<Notices />
-					{ composer( { connectionStatus, isMinimizing } ) }
+					<Composer />
 				</div>
 			</div>
 		);
@@ -129,7 +78,8 @@ const Happychat = React.createClass( {
 const mapState = state => {
 	return {
 		connectionStatus: getHappychatConnectionStatus( state ),
-		isMinimizing: isHappychatMinimizing( state )
+		isMinimizing: isHappychatMinimizing( state ),
+		isChatOpen: isHappychatOpen( state ),
 	};
 };
 

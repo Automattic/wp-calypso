@@ -18,14 +18,23 @@ import {
 	getHappychatConnectionStatus,
 } from 'state/happychat/selectors';
 
+import {
+	HAPPYCHAT_CONNECTION_STATUS_CONNECTING,
+	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
+} from 'state/happychat/constants';
+
 /*
  * Renders any notices about the chat session to the user
  */
 class Notices extends Component {
 	statusNotice() {
-		const { isConnected, chatStatus, translate } = this.props;
+		const { connectionStatus, chatStatus, translate } = this.props;
 
-		if ( ! isConnected ) {
+		if ( connectionStatus !== HAPPYCHAT_CONNECTION_STATUS_CONNECTED ) {
+			if ( connectionStatus === HAPPYCHAT_CONNECTION_STATUS_CONNECTING ) {
+				return translate( 'Connecting you with a Happiness Engineer…' );
+			}
+
 			return translate( "We're having trouble connecting to chat. Please check your internet connection and refresh the page." );
 		}
 
@@ -57,7 +66,7 @@ class Notices extends Component {
 }
 
 const mapState = ( state ) => ( {
-	isConnected: getHappychatConnectionStatus( state ) === 'connected',
+	connectionStatus: getHappychatConnectionStatus( state ),
 	chatStatus: getHappychatStatus( state )
 } );
 

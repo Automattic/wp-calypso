@@ -1,5 +1,11 @@
+/**
+ * External dependencies
+ */
 import { combineReducers } from 'redux';
 
+/**
+ * Internal dependencies
+ */
 import {
 	HAPPYCHAT_OPEN,
 	HAPPYCHAT_MINIMIZING
@@ -26,7 +32,7 @@ const debug = require( 'debug' )( 'calypso:happychat:ui-reducer' );
 const isMinimizing = ( state = false, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_MINIMIZING:
-			debug( "set minimizing", action );
+			debug( 'set minimizing', action );
 			return action.isMinimizing ? true : false;
 	}
 	return state;

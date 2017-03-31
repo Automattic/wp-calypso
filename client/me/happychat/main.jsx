@@ -4,14 +4,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { findDOMNode } from 'react-dom';
+
 /**
  * Internal dependencies
  */
 import viewport from 'lib/viewport';
 import { connectChat } from 'state/happychat/actions';
 import { openChat } from 'state/ui/happychat/actions';
-import { getHappychatConnectionStatus } from 'state/happychat/selectors';
-import { timeline, composer } from 'components/happychat/helpers';
+import Timeline from 'components/happychat/timeline';
+import Notices from 'components/happychat/notices';
+import Composer from 'components/happychat/composer';
 
 /**
  * React component for rendering a happychat client as a full page
@@ -32,18 +34,14 @@ class HappychatPage extends Component {
 	}
 
 	render() {
-		const { connectionStatus } = this.props;
 		return (
 			<div className="happychat__page" aria-live="polite" aria-relevant="additions">
-				{ timeline( { connectionStatus } ) }
-				{ composer( { connectionStatus } ) }
+				<Timeline />
+				<Notices />
+				<Composer />
 			</div>
 		);
 	}
 }
 
-const mapState = state => ( {
-	connectionStatus: getHappychatConnectionStatus( state )
-} );
-
-export default connect( mapState, { connectChat, openChat } )( HappychatPage );
+export default connect( null, { connectChat, openChat } )( HappychatPage );
