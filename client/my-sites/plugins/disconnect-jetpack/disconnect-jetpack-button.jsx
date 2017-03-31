@@ -3,8 +3,9 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { omit } from 'lodash';
-import { translate } from 'i18n-calypso';
+import { pick } from 'lodash';
+import page from 'page';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,8 +13,12 @@ import { translate } from 'i18n-calypso';
 import Button from 'components/button';
 import DisconnectJetpackDialog from 'blocks/disconnect-jetpack-dialog';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { disconnect } from 'state/jetpack/connection/actions';
+import { disconnectedSite as disconnectedSiteDeprecated } from 'lib/sites-list/actions';
+import { setAllSitesSelected } from 'state/ui/actions';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanClass } from 'lib/plans/constants';
+import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
 
 class DisconnectJetpackButton extends Component {
 	constructor( props ) {
@@ -23,28 +28,70 @@ class DisconnectJetpackButton extends Component {
 
 	handleClick = ( event ) => {
 		event.preventDefault();
-		if ( this.props.isMock ) {
+		const {
+			isMock,
+			recordGoogleEvent: recordGAEvent
+		} = this.props;
+
+		if ( isMock ) {
 			return;
 		}
-
 		this.setState( { dialogVisible: true } );
-		this.props.recordGoogleEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
+		recordGAEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
 	};
 
 	hideDialog = () => {
+		const { recordGoogleEvent: recordGAEvent } = this.props;
 		this.setState( { dialogVisible: false } );
+		recordGAEvent( 'Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog' );
 	}
 
 	disconnectJetpack = () => {
+		const {
+			site,
+			translate,
+			successNotice: showSuccessNotice,
+			errorNotice: showErrorNotice,
+			infoNotice: showInfoNotice,
+			removeNotice: removeInfoNotice,
+			disconnect: disconnectSite,
+			recordGoogleEvent: recordGAEvent
+		} = this.props;
+
 		this.setState( { dialogVisible: false } );
+		recordGAEvent( 'Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog' );
+
+		const { notice } = showInfoNotice(
+			translate( 'Disconecting %(siteName)s', { args: { siteName: site.title } } )
+			, { isPersistent: true, showDismiss: false }
+		);
+
+		disconnectSite( site.ID ).then( () => {
+			// Removing the domain from a domain-only site results
+			// in the site being deleted entirely. We need to call
+			// `receiveDeletedSiteDeprecated` here because the site
+			// exists in `sites-list` as well as the global store.
+			disconnectedSiteDeprecated( site );
+			this.props.setAllSitesSelected();
+			removeInfoNotice( notice.noticeId );
+			showSuccessNotice( translate( 'Disconnected %(siteName)s', { args: { siteName: site.title } } ) );
+			recordGAEvent( 'Jetpack', 'Successfully Disconnected' );
+		}, () => {
+			removeInfoNotice( notice.noticeId );
+			showErrorNotice( translate( 'Error Disconnecting %(siteName)s', { args: { siteName: site.title } } ) );
+			recordGAEvent( 'Jetpack', 'Failed Disconnected Site' );
+		}, );
+
+		page.redirect( this.props.redirect );
 	}
 
 	render() {
 		const { site, linkDisplay, planClass } = this.props;
 
-		const omitProps = [ 'site', 'redirect', 'isMock', 'linkDisplay', 'text', 'recordGoogleEvent', 'planClass' ];
+		const pickProps = [ 'compact', 'primary', 'scary', 'busy', 'type', 'href', 'borderless', 'target', 'rel' ];
+
 		const buttonProps = {
-			...omit( this.props, omitProps ),
+			...pick( this.props, pickProps, ),
 			id: `disconnect-jetpack-${ site.ID }`,
 			className: 'disconnect-jetpack-button',
 			compact: true,
@@ -57,7 +104,7 @@ class DisconnectJetpackButton extends Component {
 		let { text } = this.props;
 
 		if ( ! text ) {
-			text = translate( 'Disconnect', {
+			text = this.props.translate( 'Disconnect', {
 				context: 'Jetpack: Action user takes to disconnect Jetpack site from .com'
 			} );
 		}
@@ -100,5 +147,13 @@ export default connect(
 			planClass
 		};
 	},
-	{ recordGoogleEvent }
-)( DisconnectJetpackButton );
+	{
+		setAllSitesSelected,
+		recordGoogleEvent,
+		disconnect,
+		successNotice,
+		errorNotice,
+		infoNotice,
+		removeNotice
+	}
+)( localize( DisconnectJetpackButton ) );
