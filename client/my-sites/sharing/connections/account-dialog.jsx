@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { filter, find, identity, isEqual } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Notice from 'components/notice';
 
 /**
  * Internal dependencies
@@ -113,12 +113,21 @@ class AccountDialog extends Component {
 		const connectedAccounts = this.getAccountsByConnectedStatus( true );
 
 		if ( connectedAccounts.length ) {
+			const hasConflictingAccounts = this.isSelectedAccountConflicting();
+
 			return (
 				<div className="account-dialog__connected-accounts">
 					<h3 className="account-dialog__connected-accounts-heading">{ this.props.translate( 'Connected' ) }</h3>
 					<ul className="account-dialog__accounts">
 						{ this.getAccountElements( connectedAccounts ) }
 					</ul>
+					{ hasConflictingAccounts &&
+					<Notice
+						status="is-warning"
+						icon="notice"
+						text={ this.props.translate( 'The marked connection will be replaced with your selection.' ) }
+						isCompact />
+					}
 				</div>
 			);
 		}
@@ -152,13 +161,6 @@ class AccountDialog extends Component {
 				{ action: 'connect', label: this.props.translate( 'Connect' ), isPrimary: true }
 			];
 
-		if ( this.isSelectedAccountConflicting() ) {
-			this.props.warningNotice( this.props.translate( 'The connection marked {{icon/}} will be replaced with your selection.', {
-				components: { icon: <Gridicon icon="notice" size={ 18 } /> },
-				context: 'Sharing: Publicize confirmation',
-			} ), { showDismiss: false } );
-		}
-
 		return (
 			<Dialog isVisible={ this.props.isVisible } buttons={ buttons } additionalClassNames={ classes } onClose={ this.onClose }>
 				<h2 className="account-dialog__authorizing-service">
@@ -170,6 +172,7 @@ class AccountDialog extends Component {
 				<p className="account-dialog__authorizing-disclaimer">{ this.getDisclaimerText() }</p>
 				<ul className="account-dialog__accounts">{ this.getAccountElements( this.getAccountsByConnectedStatus( false ) ) }</ul>
 				{ this.getConnectedAccountsContent() }
+
 			</Dialog>
 		);
 	}
