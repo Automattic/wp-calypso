@@ -70,8 +70,9 @@ class Plans extends Component {
 	}
 
 	componentDidUpdate() {
-		if ( this.props.isAutomatedTransfer && ! this.redirecting ) {
-			this.redirect( CALYPSO_REDIRECTION_PAGE );
+		if ( this.props.isAutomatedTransfer && ! this.redirecting && this.props.selectedSite ) {
+			this.redirecting = true;
+			this.props.goBackToWpAdmin( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
 		}
 
 		if ( this.hasPlan( this.props.selectedSite ) && ! this.redirecting ) {
