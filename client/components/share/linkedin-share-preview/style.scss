@@ -1,0 +1,90 @@
+.linkedin-share-preview {
+	background: $white;
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 2px 3px rgba(0, 0, 0, 0.2);
+	font-family: Source Sans Pro,Helvetica,Arial,sans-serif,Hiragino Kaku Gothic Pro,Meiryo,Hiragino Sans GB W3,Noto Naskh Arabic,Droid Arabic Naskh,Geeza Pro,Simplified Arabic,Noto Sans Thai,Thonburi,Dokchampa,Droid Sans Thai,Droid Sans Fallback,-apple-system,'.SFNSDisplay-Regular',Heiti SC,Microsoft Yahei,Segoe UI;
+	margin: 0 auto;
+	max-width: 552px;
+	padding: 16px;
+}
+
+.linkedin-share-preview__header {
+	display: flex;
+}
+
+.linkedin-share-preview__profile-picture-part {
+	flex: 0 0 48px;
+}
+
+.linkedin-share-preview__profile-picture {
+	border-radius: 50%;
+	display: block;
+	height: 48px;
+	width: 48px;
+}
+
+.linkedin-share-preview__profile-line-part {
+	margin-left: 8px;
+}
+
+.linkedin-share-preview__profile-line {
+	font-size: 15px;
+	line-height: 20px;
+}
+
+.linkedin-share-preview__profile-name {
+	color: rgba(0, 0, 0, 0.85);
+	font-weight: 600;
+}
+
+.linkedin-share-preview__meta-line {
+	color: rgba(0, 0, 0, 0.55);
+    font-size: 13px;
+    line-height: 16px;
+}
+
+.linkedin-share-preview__body {
+	align-items: center;
+	border-radius: 2px;
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+	display: flex;
+	margin-top: 16px;
+	padding: 8px;
+}
+
+.linkedin-share-preview__image-wrapper {
+	flex: 0 0 138px;
+	height: 72px;
+	margin-right: 8px;
+	max-width: 138px;
+	overflow: hidden;
+	position: relative;
+}
+
+.linkedin-share-preview__image {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.linkedin-share-preview__message {
+	color: rgba(0, 0, 0, 0.85);
+	display: -webkit-box;
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 16px;
+	max-height: 40px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+
+.linkedin-share-preview__site-url {
+	color: rgba(0, 0, 0, 0.55);
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 16px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-wrap: break-word;
+}

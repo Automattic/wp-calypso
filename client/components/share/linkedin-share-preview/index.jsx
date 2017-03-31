@@ -22,8 +22,7 @@ export class LinkedinSharePreview extends PureComponent {
 			externalProfileUrl,
 			externalName,
 			imageUrl,
-			message,
-			translate
+			message
 		} = this.props;
 		return (
 			<div className="linkedin-share-preview">
@@ -40,41 +39,33 @@ export class LinkedinSharePreview extends PureComponent {
 								<a className="linkedin-share-preview__profile-name" href={ externalProfileUrl }>
 									{ externalName }
 								</a>
-								<span>
-									{
-										translate( 'published an article on {{a}}WordPress{{/a}}', {
-											components: {
-												a: <a href="#" />
-											}
-										} )
-									}
-								</span>
 							</div>
 							<div className="linkedin-share-preview__meta-line">
-								<a href="https://wordpress.com">
-									{ translate( 'WordPress' ) }
-								</a>
+								companyName
 							</div>
 						</div>
 					</div>
 					<div className="linkedin-share-preview__body">
-						<div className="linkedin-share-preview__message">
-							{ message }
-						</div>
-						<div className="linkedin-share-preview__article-url-line">
-							<a className="linkedin-share-preview__article-url"
-								href={ articleUrl }>
-								{ articleUrl }
-							</a>
-						</div>
 						{ imageUrl &&
 							<div className="linkedin-share-preview__image-wrapper">
-								<img
-									className="linkedin-share-preview__image"
-									src={ imageUrl }
-								/>
+								<a href={ articleUrl }>
+									<img
+										className="linkedin-share-preview__image"
+										src={ imageUrl }
+									/>
+								</a>
 							</div>
 						}
+						<div className="linkedin-share-preview__message-part">
+							<a href={ articleUrl }>
+								<div className="linkedin-share-preview__message">
+									{ message }
+								</div>
+								<div className="linkedin-share-preview__site-url">
+									siteUrl
+								</div>
+							</a>
+						</div>
 					</div>
 				</div>
 			</div>
