@@ -125,7 +125,7 @@ export const ThemesList = React.createClass( {
 
 	renderGrid( width, height, scrollTop, registerChild, onRowsRendered ) {
 		const columnCount = this.getItemsPerRow( width );
-		const rowCount = Math.ceil( this.props.themes.length / columnCount );
+		const rowCount = Math.ceil( ( this.props.themes.length + this.props.placeholderCount ) / columnCount );
 
 		const onSectionRendered = ( args ) => this.onSectionRendered( args, onRowsRendered );
 
