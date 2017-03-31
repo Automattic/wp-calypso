@@ -11,6 +11,10 @@
 	vertical-align: top;
 	max-width: 100%;
 
+	&.button {
+		padding-bottom: 0;
+	}
+
 	&.button.is-borderless .editor-featured-image__edit-icon {
 		position: absolute;
 			top: auto;
