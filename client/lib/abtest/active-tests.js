@@ -63,8 +63,10 @@ module.exports = {
 	jetpackNewDescriptions: {
 		datestamp: '20170327',
 		variations: {
-			showNew: 50,
-			showOld: 50
+			showNew: 0,
+			showOld: 100 /* test completed. I'm disabling it here first because
+						it need some work to remove the added code for the
+						new variation that's not going to be used */
 		},
 		defaultVariation: 'showOld',
 		allowExistingUsers: true
