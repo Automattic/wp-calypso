@@ -9,6 +9,7 @@
  * Internal dependencies
  */
 import {
+	HAPPYCHAT_CONNECT,
 	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_CONNECTED,
 	HAPPYCHAT_RECEIVE_EVENT,
@@ -29,7 +30,9 @@ export const receiveChatTranscript = ( messages, timestamp ) => ( {
 	type: HAPPYCHAT_TRANSCRIPT_RECEIVE, messages, timestamp
 } );
 
-export const setChatConnected = () => ( { type: HAPPYCHAT_CONNECTED } );
+export const connectChat = () => ( { type: HAPPYCHAT_CONNECT } );
+export const setConnected = () => ( { type: HAPPYCHAT_CONNECTED } );
+export const setConnecting = () => ( { type: HAPPYCHAT_CONNECTING } );
 
 export const setHappychatAvailable = isAvailable => ( { type: HAPPYCHAT_SET_AVAILABLE, isAvailable } );
 
@@ -39,7 +42,5 @@ export const clearChatMessage = () => setChatMessage( '' );
 export const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
 
 export const sendBrowserInfo = siteUrl => ( { type: HAPPYCHAT_SEND_BROWSER_INFO, siteUrl } );
-
-export const connectChat = () => ( { type: HAPPYCHAT_CONNECTING } );
 
 export const sendChatMessage = message => ( { type: HAPPYCHAT_SEND_MESSAGE, message } );
