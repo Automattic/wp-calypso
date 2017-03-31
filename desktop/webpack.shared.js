@@ -47,14 +47,15 @@ module.exports = {
 		'devdocs/components-usage-stats.json'
 	],
 	resolve: {
-		extensions: [ '', '.js', '.jsx' ],
+		extensions: [ '', '.js', '.json', '.jsx' ],
 		modulesDirectories: [
 			'node_modules',
+		],
+		root: [
 			path.join( __dirname, '..', 'server' ),
 			path.join( __dirname, '..', 'client' ),
-			'desktop'
+			path.join( __dirname, 'desktop' ),
 		],
-
 	},
 	plugins: [
 		// new webpack.optimize.DedupePlugin(),
