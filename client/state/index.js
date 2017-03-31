@@ -30,6 +30,7 @@ import jetpackSync from './jetpack-sync/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
 import login from './login/reducer';
+import isTracking from './analytics/reducer';
 import media from './media/reducer';
 import notices from './notices/reducer';
 import npsSurvey from './nps-survey/reducer';
@@ -87,6 +88,7 @@ const reducers = {
 	happinessEngineers,
 	happychat,
 	help,
+	isTracking,
 	jetpackConnect,
 	jetpack,
 	jetpackSync,
