@@ -1,23 +1,26 @@
 /**
  * External dependencies
  */
-var reject = require( 'lodash/reject' ),
-	filter = require( 'lodash/filter' ),
-	clone = require( 'lodash/clone' ),
-	debug = require( 'debug' )( 'calypso:sites-list:log-store' );
+import { reject, filter, clone } from 'lodash';
+import debugModule from 'debug';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	Emitter = require( 'lib/mixins/emitter' );
+import Dispatcher from 'dispatcher';
+import Emitter from 'lib/mixins/emitter';
 
-var _errors = [],
+/**
+ * Module variables
+ */
+const debug = debugModule( 'calypso:sites-list:log-store' );
+
+let _errors = [],
 	_inProgress = [],
 	_completed = [];
 
 function addLog( status, action, site, error ) {
-	var log = {
+	const log = {
 		status: status,
 		action: action,
 		site: site
@@ -62,7 +65,7 @@ function removeLog( log ) {
 	}
 }
 
-var LogStore = {
+const LogStore = {
 
 	getErrors: function( filterBy ) {
 		if ( filterBy ) {
@@ -91,34 +94,12 @@ var LogStore = {
 };
 
 LogStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	debug( 'register event Type', action.type, payload );
 	switch ( action.type ) {
 		case 'REMOVE_SITES_NOTICES':
 			action.logs.forEach( removeLog );
-			LogStore.emitChange();
-			break;
-		case 'DISCONNECTING_SITE_ERROR':
-			addLog( 'error', action.action, action.site, action.error );
-			LogStore.emitChange();
-			break;
-		case 'DISCONNECT_SITE':
-			addLog( 'inProgress', action.action, action.site );
-			LogStore.emitChange();
-			break;
-		case 'RECEIVE_DISCONNECTED_SITE':
-			removeLog( {
-				status: 'inProgress',
-				action: action.action,
-				site: action.site
-			} );
-
-			if ( action.error ) {
-				addLog( 'error', action.action, action.site, action.error );
-			} else {
-				addLog( 'completed', action.action, action.site );
-			}
 			LogStore.emitChange();
 			break;
 		case 'RECEIVE_PLUGINS':
@@ -128,7 +109,6 @@ LogStore.dispatchToken = Dispatcher.register( function( payload ) {
 			}
 			break;
 	}
-
 } );
 
 // Add the Store to the emitter so we can emit change events.
