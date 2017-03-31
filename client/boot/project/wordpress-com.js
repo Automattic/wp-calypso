@@ -113,7 +113,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
 	// This can be removed when the legacy version is retired.
-	page( '*', function( context, next ) { // FACTOR INTO ONE MIDDLEWARE
+	page( '*', function( context, next ) {
 		if ( [ 'sb', 'sp' ].indexOf( context.querystring ) !== -1 ) {
 			const layoutSection = ( context.querystring === 'sb' ) ? 'sidebar' : 'sites';
 			reduxStore.dispatch( setNextLayoutFocus( layoutSection ) );
@@ -147,7 +147,6 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 			context.store.dispatch( activateNextLayoutFocus() );
 		}
 
-		// NOT USED
 		// If `?welcome` is present, and `?tour` isn't, show the welcome message
 		if ( ! context.query.tour && context.querystring === 'welcome' && context.pathname.indexOf( '/me/next' ) === -1 ) {
 			// show welcome message, persistent for full sized screens
