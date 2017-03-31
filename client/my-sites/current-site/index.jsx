@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import debugFactory from 'debug';
 import { connect } from 'react-redux';
+import debugFactory from 'debug';
+import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 
 const debug = debugFactory( 'calypso:my-sites:current-site' );
 
@@ -23,6 +25,7 @@ const AllSites = require( 'my-sites/all-sites' ),
 import SiteNotice from './notice';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
 const CurrentSite = React.createClass( {
@@ -33,12 +36,13 @@ const CurrentSite = React.createClass( {
 	},
 
 	propTypes: {
-		sites: React.PropTypes.object.isRequired,
+		isJetpack: React.PropTypes.bool,
 		siteCount: React.PropTypes.number.isRequired,
+		sites: React.PropTypes.object.isRequired,
 		setLayoutFocus: React.PropTypes.func.isRequired,
 		selectedSiteId: React.PropTypes.number,
 		selectedSite: React.PropTypes.object,
-		isJetpack: React.PropTypes.bool
+		translate: React.PropTypes.func.isRequired
 	},
 
 	componentWillMount() {
@@ -114,7 +118,7 @@ const CurrentSite = React.createClass( {
 	},
 
 	render: function() {
-		const { selectedSite, isJetpack } = this.props;
+		const { isJetpack, selectedSite, translate } = this.props;
 
 		if ( ! this.props.sites.initialized ) {
 			return (
@@ -126,7 +130,7 @@ const CurrentSite = React.createClass( {
 						<a className="site__content">
 							<div className="site-icon" />
 							<div className="site__info">
-								<span className="site__title">{ this.translate( 'Loading My Sites…' ) }</span>
+								<span className="site__title">{ translate( 'Loading My Sites…' ) }</span>
 							</div>
 						</a>
 					</div>
@@ -140,7 +144,7 @@ const CurrentSite = React.createClass( {
 					<span className="current-site__switch-sites">
 						<Button compact borderless onClick={ this.switchSites }>
 							<Gridicon icon="arrow-left" size={ 18 } />
-							{ this.translate( 'Switch Site' ) }
+							{ translate( 'Switch Site' ) }
 						</Button>
 					</span>
 				}
@@ -163,15 +167,17 @@ const CurrentSite = React.createClass( {
 // TODO: make this pure when sites can be retrieved from the Redux state
 module.exports = connect(
 	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
+		const selectedSiteId = getSelectedSiteId( state ),
+			user = getCurrentUser( state );
 
 		return {
+			isJetpack: isJetpackSite( state, selectedSiteId ),
 			selectedSiteId,
 			selectedSite: getSelectedSite( state ),
-			isJetpack: isJetpackSite( state, selectedSiteId )
+			siteCount: get( user, 'visible_site_count', 0 )
 		};
 	},
 	{ setLayoutFocus },
 	null,
 	{ pure: false }
-)( CurrentSite );
+)( localize( CurrentSite ) );
