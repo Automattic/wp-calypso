@@ -1,0 +1,84 @@
+.tumblr-share-preview {
+	color: #444;
+	font-family: Helvetica Neue, HelveticaNeue, Helvetica, Arial, sans-serif;
+	margin: 0 auto;
+	max-width: 624px;
+}
+
+.tumblr-share-preview__content {
+	display: flex;
+}
+
+.tumblr-share-preview__profile-picture-part {
+	flex: 0 0 10%;
+	margin-right: 20px;
+}
+
+.tumblr-share-preview__content-part {
+	background-color: $white;
+	border-radius: 3px;
+	flex: 1 1 auto;
+	padding: 15px 20px;
+}
+
+.tumblr-share-preview__profile-line {
+	display: flex;
+	font-size: 13px;
+	justify-content: space-between;
+	line-height: 20px;
+	margin-bottom: 13px;
+}
+
+.tumblr-share-preview__profile-name {
+	color: #444;
+	font-weight: bold;
+}
+
+.tumblr-share-preview__profile-wp {
+	color: #8f8f8f;
+}
+
+.tumblr-share-preview__post-title {
+    font-family: Gibson, Helvetica Neue, HelveticaNeue, Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 36px;
+    line-height: 47px;
+    margin-bottom: 10px;
+}
+
+.tumblr-share-preview__image-wrapper {
+	margin: 15px 0;
+}
+
+.tumblr-share-preview__image {
+	width: 300px;
+}
+
+.tumblr-share-preview__message,
+.tumblr-share-preview__summery,
+.tumblr-share-preview__article-link-line {
+	font-size: 14px;
+	line-height: 21px;
+}
+
+.tumblr-share-preview__message {
+	margin-bottom: 15px;
+}
+
+.tumblr-share-preview__message-link,
+.tumblr-share-preview__article-link {
+	border-bottom: 1px solid #d1d1d1;
+	color: #444;
+
+	&:hover {
+		color: #444;
+	}
+}
+
+.tumblr-share-preview__summery {
+	background: transparent;
+	border-left: 2px solid #e7e7e7;
+	margin-top: 15px;
+	margin-bottom: 15px;
+	padding: 0 0 0 18px;
+}
