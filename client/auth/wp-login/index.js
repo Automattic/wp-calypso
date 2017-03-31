@@ -9,6 +9,7 @@ import Gridicon from 'gridicons';
  */
 import Main from 'components/main';
 import LoginBlock from 'blocks/login';
+import { isEnabled } from 'config';
 import { localize } from 'i18n-calypso';
 
 const Login = ( { translate } ) => (
@@ -20,6 +21,13 @@ const Login = ( { translate } ) => (
 		<div className="wp-login__container">
 			<LoginBlock
 				title={ translate( 'Sign in to WordPress.com' ) } />
+		</div>
+		<div className="wp-login__footer">
+			{
+				isEnabled( 'magic-login' ) && (
+					<a href="/login/send-me-a-link">{ translate( 'Email me a login link' ) }</a>
+				)
+			}
 		</div>
 	</Main>
 );
