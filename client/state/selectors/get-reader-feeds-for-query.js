@@ -6,5 +6,5 @@
  * @return {Array} list of feeds that are the result of that query
  */
 export default function getReaderFeedsForQuery( state, query ) {
-	return state.reader.feedSearch.items[ query ];
+	return state.reader.feedSearch[ query ];
 }

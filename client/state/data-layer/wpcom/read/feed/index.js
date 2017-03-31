@@ -27,7 +27,8 @@ export function initiateFeedSearch( store, action, next ) {
 }
 
 export function receiveFeeds( store, action, next, apiResponse ) {
-	const feeds = apiResponse;
+	const feeds = apiResponse.feeds;
+
 	store.dispatch(
 		receiveFeedSearch( action.payload.query, feeds )
 	);
