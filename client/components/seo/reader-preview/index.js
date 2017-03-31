@@ -29,10 +29,7 @@ export class ReaderPreview extends PureComponent {
 		}
 
 		return (
-			<ReaderPostCard
-				site={ site }
-				post={ readerPost }
-			/>
+			<ReaderPostCard site={ site } post={ readerPost } />
 		);
 	}
 }
