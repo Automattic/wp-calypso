@@ -22,8 +22,7 @@ export class GooglePlusSharePreview extends PureComponent {
 			externalProfileUrl,
 			externalName,
 			imageUrl,
-			message,
-			translate
+			message
 		} = this.props;
 
 		return (
@@ -41,20 +40,6 @@ export class GooglePlusSharePreview extends PureComponent {
 								<a className="google-plus-share-preview__profile-name" href={ externalProfileUrl }>
 									{ externalName }
 								</a>
-								<span>
-									{
-										translate( 'published an article on {{a}}WordPress{{/a}}', {
-											components: {
-												a: <a href="#" />
-											}
-										} )
-									}
-								</span>
-							</div>
-							<div className="google-plus-share-preview__meta-line">
-								<a href="https://wordpress.com">
-									{ translate( 'WordPress' ) }
-								</a>
 							</div>
 						</div>
 					</div>
@@ -62,18 +47,22 @@ export class GooglePlusSharePreview extends PureComponent {
 						<div className="google-plus-share-preview__message">
 							{ message }
 						</div>
-						<div className="google-plus-share-preview__article-url-line">
-							<a className="google-plus-share-preview__article-url"
-								href={ articleUrl }>
-								{ articleUrl }
+						<div className="google-plus-share-preview__article-summary">
+							Summury of the post goes here.
+						</div>
+						<div className="google-plus-share-preview__article-title">
+							<a className="google-plus-share-preview__article-url" href={ articleUrl }>
+							Title of the post goes here.
 							</a>
 						</div>
 						{ imageUrl &&
 							<div className="google-plus-share-preview__image-wrapper">
+								<a href={ articleUrl }>
 								<img
 									className="google-plus-share-preview__image"
 									src={ imageUrl }
 								/>
+								</a>
 							</div>
 						}
 					</div>
