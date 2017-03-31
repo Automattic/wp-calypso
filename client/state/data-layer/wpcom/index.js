@@ -7,6 +7,7 @@ import plans from './plans';
 import read from './read';
 import sites from './sites';
 import timezones from './timezones';
+import themeFilters from './theme-filters';
 import videos from './videos';
 
 export const handlers = mergeHandlers(
@@ -15,6 +16,7 @@ export const handlers = mergeHandlers(
 	read,
 	sites,
 	timezones,
+	themeFilters,
 	videos,
 );
 
