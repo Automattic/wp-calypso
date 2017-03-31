@@ -20,16 +20,16 @@ So what happens when you `make run`? It's a fairly complicated process so buckle
 - *(main)* Various [app handlers](../desktop/app-handlers/README.md) are loaded from `desktop/app-handlers` - these are bits of code that run before the main window opens
 - *(main)* A Calypso server is started in `desktop/start-app.js` in a forked child_process. The server is customized to serve files from the following directories:
   - `/` - mapped to the Calypso server
-  - `/calypso` - mapped to `calypso/public`
-  - `/desktop` - mapped to `public_desktop`
+  - `/calypso` - mapped to `/public` (from Calypso's root)
+  - `/desktop` - mapped to `/desktop/public_desktop`
 - *(main)* An Electron `BrowserWindow` is opened and loads the 'index' page from the Calypso server
 - *(main)* Once the window has opened the [window handlers](../desktop/window-handlers/README.md) load to provide interaction between Calypso and Electron
-- *(renderer)* Calypso provides the 'index' page from `calypso/server/pages/desktop.jade`, which is a standard Calypso start page plus:
-  - `public_desktop/wordpress-desktop.css` - any CSS specific to the desktop app
-  - `public_desktop/desktop-app.js` - desktop app specific JS and also the Calypso boot code
-  - `calypso/public/build.js` - a prebuilt Calypso
+- *(renderer)* Calypso provides the 'index' page from `/server/pages/desktop.jade`, which is a standard Calypso start page plus:
+  - `/desktop/public_desktop/wordpress-desktop.css` - any CSS specific to the desktop app
+  - `/desktop/public_desktop/desktop-app.js` - desktop app specific JS and also the Calypso boot code
+  - `/desktop/build/calypso/public/build.js` - a prebuilt Calypso
 - *(renderer)* The `desktop-app.js` code runs which sets up various app specific handlers that need to be inside the renderer. It also starts Calypso with `AppBoot()`
-- *(renderer)* The code in `calypso/client/lib/desktop` runs to send and receive IPC messages between the main process and Calypso.
+- *(renderer)* The code in `/client/lib/desktop` runs to send and receive IPC messages between the main process and Calypso.
 
 Phew!
 
@@ -43,17 +43,6 @@ All app code is contained in `desktop`. Any changes you make there will run the 
 - [Window Handlers](../desktop/window-handlers/README.md) - handlers that run after the main window is created
 
 Note that currently we do not compile or transpile the app code.
-
-## How do I change Calypso?
-
-All Calypso code is contained in the `calypso` directory as a submodule. If you need to change Calypso and want to try it inside the desktop app then you can:
-
-- `cd calypso`
-- Create a new branch or change to an existing branch in Calypso as you would normally
-
-When you do a `make run` it will re-compile any changes in Calypso.
-
-To update the `calypso` directory to the upstream project's latest commit, run `git submodule update --remote`. If you want to commit that change, you need to `git add calypso` to do so.
 
 ## Tell me more about the server
 
