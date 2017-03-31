@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import Card from 'components/card';
 import PostControls from './post-controls';
 import PostHeader from './post-header';
@@ -333,8 +334,10 @@ const Post = React.createClass( {
 					<Comments
 						showCommentCount={ false }
 						post={ this.props.post }
+						showFilters={ isEnabled( 'comments/filters-in-posts' ) }
+						showModerationTools={ isEnabled( 'comments/moderation-tools-in-posts' ) }
 						commentsFilter={ config.isEnabled( 'comments/filters-in-posts' ) ? this.state.commentsFilter : 'approved' }
-						onFilterChange={ commentsFilter => this.setState( { commentsFilter } )}
+						onFilterChange={ commentsFilter => this.setState( { commentsFilter } ) }
 						onCommentsUpdate={ () => {} } />
 				}
 				{ this.state.showShare && config.isEnabled( 'republicize' ) && <PostShare post={ this.props.post } site={ site } /> }

@@ -441,6 +441,10 @@ a.comments__comment-username {
 	}
 }
 
+.comments__comment-actions-moderation-tools {
+	display: inline-block;
+}
+
 .comments__info-bar {
 	margin: 0 24px -24px 0;
 	overflow: auto;
