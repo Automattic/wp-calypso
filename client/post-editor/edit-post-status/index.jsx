@@ -26,7 +26,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import EditorVisibility from 'post-editor/editor-visibility';
-import utils from 'lib/posts/utils';
 
 class EditPostStatus extends Component {
 
@@ -41,6 +40,7 @@ class EditPostStatus extends Component {
 		type: PropTypes.string,
 		postDate: PropTypes.string,
 		onPrivatePublish: PropTypes.func,
+		status: PropTypes.string,
 	};
 
 	constructor( props ) {
@@ -195,16 +195,15 @@ class EditPostStatus extends Component {
 			return;
 		}
 
-		const { status, password, type } = this.props.post || {};
+		const { password, type } = this.props.post || {};
 		const isPrivateSite = this.props.site && this.props.site.is_private;
 		const savedStatus = this.props.savedPost ? this.props.savedPost.status : null;
 		const savedPassword = this.props.savedPost ? this.props.savedPost.password : null;
 		const props = {
-			visibility: utils.getVisibility( this.props.post ),
+			status: this.props.status,
 			onPrivatePublish: this.props.onPrivatePublish,
 			isPrivateSite,
 			type,
-			status,
 			password,
 			savedStatus,
 			savedPassword
