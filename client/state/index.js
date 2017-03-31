@@ -2,6 +2,7 @@
  * External dependencies
  */
 import thunkMiddleware from 'redux-thunk';
+import multi from 'redux-multi';
 import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 
 /**
@@ -130,6 +131,7 @@ export function createReduxStore( initialState = {} ) {
 
 	const middlewares = [
 		thunkMiddleware,
+		multi,
 		noticesMiddleware,
 		isBrowser && require( './happychat/middleware.js' ).default(),
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
