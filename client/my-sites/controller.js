@@ -5,7 +5,7 @@ import page from 'page';
 import ReactDom from 'react-dom';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { uniq } from 'lodash';
+import { uniq, startsWith } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -168,7 +168,8 @@ function isPathAllowedForDomainOnlySite( path, domainName ) {
 		`/checkout/${ domainName }`
 	];
 
-	return [ ...domainManagementPaths, ...otherPaths ].indexOf( path ) > -1;
+	return [ ...domainManagementPaths, ...otherPaths ].indexOf( path ) > -1 ||
+		startsWith( path, '/checkout/thank-you' );
 }
 
 function onSelectedSiteAvailable( context ) {

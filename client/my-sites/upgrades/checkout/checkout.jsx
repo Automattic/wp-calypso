@@ -37,6 +37,7 @@ import {
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
+import { requestSite } from 'state/sites/actions';
 import { isDomainOnlySite } from 'state/selectors';
 import {
 	getSelectedSite,
@@ -310,6 +311,10 @@ const Checkout = React.createClass( {
 
 				return;
 			}
+
+			if ( selectedSiteId ) {
+				this.props.requestSite( selectedSiteId );
+			}
 		}
 
 		page( redirectPath );
@@ -394,6 +399,7 @@ module.exports = connect(
 		clearPurchases,
 		clearSitePlans,
 		fetchReceiptCompleted,
-		recordApplePayStatus
+		recordApplePayStatus,
+		requestSite
 	}
 )( Checkout );
