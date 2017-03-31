@@ -15,6 +15,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import RootChild from 'components/root-child';
+import {
+	showDropZone, hideDropZone
+} from 'state/components/drop-zone/actions';
 
 export const DropZone = React.createClass( {
 	propTypes: {
@@ -25,6 +28,10 @@ export const DropZone = React.createClass( {
 		icon: PropTypes.node,
 		textLabel: PropTypes.string,
 		translate: PropTypes.func,
+	},
+
+	contextTypes: {
+		store: PropTypes.object
 	},
 
 	getInitialState() {
@@ -78,6 +85,8 @@ export const DropZone = React.createClass( {
 			isDraggingOverDocument: false,
 			isDraggingOverElement: false
 		} );
+
+		this.toggleDropZoneReduxState( false );
 	},
 
 	toggleMutationObserver() {
@@ -143,6 +152,25 @@ export const DropZone = React.createClass( {
 			// For redirected CustomEvent instances, immediately remove window
 			// from tracked nodes since another "real" event will be triggered.
 			this.dragEnterNodes = without( this.dragEnterNodes, window );
+		}
+
+		this.toggleDropZoneReduxState( this.state.isDraggingOverDocument || this.state.isDraggingOverElement );
+	},
+
+	toggleDropZoneReduxState( isVisible ) {
+		/**
+		 * The DropZone component is included in components/libraries which are not yet reduxified,
+		 * for which `connect` ( from `react-redux` ) complains that it can't find `store`
+		 * in the current context.
+		 *
+		 * For places where the reduxification has happened, this will work.
+		 */
+		if ( this.context.store ) {
+			if ( isVisible ) {
+				this.context.store.dispatch( showDropZone() );
+			} else {
+				this.context.store.dispatch( hideDropZone() );
+			}
 		}
 	},
 
