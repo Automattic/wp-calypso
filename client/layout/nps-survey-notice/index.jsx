@@ -17,12 +17,14 @@ import {
 	hasAnsweredNpsSurveyWithNoScore,
 } from 'state/nps-survey/selectors';
 
+const SURVEY_NAME = 'calypso-global-notice-radio-buttons-v1';
+
 class NpsSurveyNotice extends Component {
 	handleDialogClose = () => {
 		if ( ! this.props.hasAnswered && ! this.props.hasAnsweredWithNoScore ) {
 			// the dialog was dismised by clicking outside it
 			// and the survey was never answered, so track it
-			this.props.submitNpsSurveyWithNoScore();
+			this.props.submitNpsSurveyWithNoScore( SURVEY_NAME );
 		}
 
 		this.props.setNpsSurveyDialogShowing( false );
@@ -40,7 +42,7 @@ class NpsSurveyNotice extends Component {
 		return (
 			<Dialog isVisible={ this.props.isNpsSurveyDialogShowing } onClose={ this.handleDialogClose }>
 				<NpsSurvey
-					name="calypso-global-notice-radio-buttons-v1"
+					name={ SURVEY_NAME }
 					onClose={ this.handleDialogClose }
 				/>
 			</Dialog>
