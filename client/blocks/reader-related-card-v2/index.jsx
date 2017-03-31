@@ -103,14 +103,16 @@ export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSit
 			{ ...canonicalMedia }
 			videoEmbed={ canonicalMedia }
 			className={ 'reader-related-card-v2__featured-image' }
+			href={ postLink }
+			onThumbnailClick={ postClickTracker }
 			allowPlaying={ false }
 		/>;
 	} else {
 		featuredAsset = <ReaderFeaturedImage
 			imageUrl={ canonicalMedia.src }
-			href={ post.URL }
 			imageWidth={ RELATED_IMAGE_WIDTH }
 			onClick={ postClickTracker }
+			href={ postLink }
 			className={ 'reader-related-card-v2__featured-image' }
 		/>;
 	}

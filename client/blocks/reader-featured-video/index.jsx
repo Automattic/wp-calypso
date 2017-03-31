@@ -26,6 +26,7 @@ class ReaderFeaturedVideo extends React.Component {
 		allowPlaying: React.PropTypes.bool,
 		onThumbnailClick: React.PropTypes.func,
 		className: React.PropTypes.string,
+		href: React.PropTypes.string,
 	}
 
 	static defaultProps = {
@@ -64,14 +65,11 @@ class ReaderFeaturedVideo extends React.Component {
 	throttledUpdateVideoSize = throttle( this.updateVideoSize, 100 )
 
 	handleThumbnailClick = ( e ) => {
-		e.preventDefault();
-		this.props.onThumbnailClick();
-
-		if ( ! this.props.allowPlaying ) {
-			return false;
+		if ( this.props.allowPlaying ) {
+			e.preventDefault();
+			this.props.onThumbnailClick();
+			this.setState( { preferThumbnail: false }, () => this.updateVideoSize() );
 		}
-
-		this.setState( { preferThumbnail: false }, () => this.updateVideoSize() );
 	}
 
 	setVideoEmbedRef = ( c ) => {
@@ -92,7 +90,7 @@ class ReaderFeaturedVideo extends React.Component {
 	}
 
 	render() {
-		const { thumbnailUrl, autoplayIframe, iframe, translate, allowPlaying, className } = this.props;
+		const { thumbnailUrl, autoplayIframe, iframe, translate, allowPlaying, className, href } = this.props;
 		const preferThumbnail = this.state.preferThumbnail;
 
 		if ( preferThumbnail && thumbnailUrl ) {
@@ -101,6 +99,7 @@ class ReaderFeaturedVideo extends React.Component {
 					imageUrl={ thumbnailUrl }
 					onClick={ this.handleThumbnailClick }
 					className={ className }
+					href={ href }
 				>
 					{ allowPlaying && <img className="reader-featured-video__play-icon"
 						src="/calypso/images/reader/play-icon.png"
