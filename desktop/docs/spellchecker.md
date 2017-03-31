@@ -3,10 +3,10 @@
 
 The spellchecker used is the [node-spellchecker][1] module which is a native
 module that needs to be built for each platform. It is relatively straight
-forward to build, however requires having a build enviornment setup for each
+forward to build, however requires having a build environment setup for each
 platform.
 
-So to simplify this, we zip up the built binaries and upload to the `gh-pages`
+So, to simplify this, we zip up the built binaries and upload to the `gh-pages`
 branch which is then downloaded and binds when creating a release package, so
 anyone creating a release doesn't need an enviornment only on major upgrades to
 Electron and/or Spellcheck library.
@@ -34,9 +34,8 @@ your PATH.
 Additionally, you will need Microsoft Visual C++ tools installed, which I found easiest
 to do installing [Visual Studio 2013 SDK][5] and selecting the libraries in the installer.
 
-
 [1]: https://github.com/atom/node-spellchecker
-[2]: https://github.com/Automattic/wp-desktop/blob/master/resource/platform/darwin.js#L58
-[3]: https://github.com/Automattic/wp-desktop/blob/master/resource/platform/linux.js#L35
-[4]: https://github.com/Automattic/wp-desktop/blob/master/resource/platform/win32.js
+[2]: https://github.com/Automattic/wp-calypso/blob/master/desktop/resource/platform/darwin.js#L58
+[3]: https://github.com/Automattic/wp-calypso/blob/master/desktop/resource/platform/linux.js#L35
+[4]: https://github.com/Automattic/wp-calypso/blob/master/desktop/resource/platform/win32.js
 [5]: https://www.microsoft.com/en-US/download/details.aspx?id=44914
