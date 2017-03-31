@@ -77,7 +77,7 @@ class NpsSurvey extends Component {
 							disabled={ this.props.hasAnswered }
 							onClick={ this.handleFinishClick }
 						>
-							{ translate( 'Finish', { context: 'verb' } ) }
+							{ translate( 'Finish' ) }
 						</Button>
 						<Button borderless
 							className="nps-survey__not-answer-button"
