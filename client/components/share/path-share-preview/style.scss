@@ -1,0 +1,72 @@
+.path-share-preview {
+	background: $white;
+	border-bottom: 1px solid #e4e4e4;
+	color: #333;
+	font-family: Helvetica Neue, Helvetica,Arial, Lucida Grande, sans-serif;
+
+	// Nesting to win main.scss
+	.path-share-preview__article-url {
+		color: #888;
+
+		&:hover {
+			color: #888;
+		}
+	}
+}
+
+.path-share-preview__header {
+	border-bottom: 1px solid #f1f1f1;
+	display: flex;
+	padding: 19px 9px 10px;
+}
+
+.path-share-preview__profile-picture {
+	border-radius: 2px;
+	display: block;
+	flex: 0 0 35px;
+	height: 35px;
+	width: 35px;
+}
+
+.path-share-preview__profile-name {
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 16px;
+    padding-left: 9px;
+}
+
+.path-share-preview__image {
+	display: block;
+}
+
+.path-share-preview__body {
+	display: flex;
+	padding: 13px 10px 13px 9px;
+}
+
+.path-share-preview__body .path-share-preview__profile-picture {
+	flex: 0 0 30px;
+	height: 30px;
+	width: 30px;
+}
+
+.path-share-preview__message-part {
+	padding-left: 9px;
+}
+
+.path-share-preview__message,
+.path-share-preview__summery,
+.path-share-preview__article-url-line {
+	font-size: 15px;
+	line-height: 19px;
+	margin-bottom: 17px;
+}
+
+.path-share-preview__message .path-share-preview__profile-name {
+	padding-left: 0;
+}
+
+.path-share-preview__article-url-line {
+	margin-bottom: 0;
+    word-break: break-word;
+}

@@ -16,6 +16,10 @@
 
 	.twitter-share-preview__profile-name {
 		color: #14171a;
+
+		&:hover {
+			color: #0084b4;
+		}
 	}
 
 	.twitter-share-preview__article-url {
@@ -39,12 +43,10 @@
 }
 
 .twitter-share-preview__profile-name {
-	color: #14171a;
 	font-weight: bold;
 	margin-right: 5px;
 
 	&:hover {
-		color: #0084b4;
 		text-decoration: underline;
 	}
 }

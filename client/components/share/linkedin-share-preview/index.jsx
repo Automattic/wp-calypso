@@ -56,16 +56,14 @@ export class LinkedinSharePreview extends PureComponent {
 								</a>
 							</div>
 						}
-						<div className="linkedin-share-preview__message-part">
-							<a href={ articleUrl }>
-								<div className="linkedin-share-preview__message">
-									{ message }
-								</div>
-								<div className="linkedin-share-preview__site-url">
-									siteUrl
-								</div>
-							</a>
-						</div>
+						<a href={ articleUrl }>
+							<div className="linkedin-share-preview__message">
+								{ message }
+							</div>
+							<div className="linkedin-share-preview__site-url">
+								siteUrl
+							</div>
+						</a>
 					</div>
 				</div>
 			</div>

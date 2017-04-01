@@ -5,6 +5,11 @@
 	margin: 0 auto;
 	max-width: 552px;
 	padding: 16px;
+
+	// Nesting to win main.scss
+	.linkedin-share-preview__profile-name {
+		color: rgba(0, 0, 0, 0.85);
+	}
 }
 
 .linkedin-share-preview__header {
@@ -32,7 +37,6 @@
 }
 
 .linkedin-share-preview__profile-name {
-	color: rgba(0, 0, 0, 0.85);
 	font-weight: 600;
 }
 
@@ -86,5 +90,5 @@
 	line-height: 16px;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	word-wrap: break-word;
+	word-break: break-word;
 }

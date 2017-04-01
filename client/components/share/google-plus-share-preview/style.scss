@@ -7,6 +7,23 @@
 	margin: 0 auto;
 	max-width: 530px;
 	width: 100%;
+
+	// Nesting to win main.scss
+	.google-plus-share-preview__profile-name {
+		color: rgba(0, 0, 0, 0.87);
+
+		&:hover {
+			color: rgba(0, 0, 0, 0.87);
+		}
+	}
+
+	.google-plus-share-preview__article-url {
+		color: rgba(0, 0, 0, 0.87);
+
+		&:hover {
+			color: rgba(0, 0, 0, 0.87);
+		}
+	}
 }
 
 .google-plus-share-preview__header {
@@ -33,16 +50,12 @@
 	margin-left: 6px;
 }
 
-.google-plus-share-preview__profile-name {
-	color: rgba(0, 0, 0, 0.87);
-}
-
 .google-plus-share-preview__message,
 .google-plus-share-preview__article-summary {
 	font-size: 14px;
 	line-height: 20px;
 	margin: 0 16px 16px;
-	word-wrap: break-word;
+	word-break: break-word;
 }
 
 .google-plus-share-preview__article-title {
@@ -58,14 +71,6 @@
 	text-overflow: ellipsis;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
-}
-
-.google-plus-share-preview__article-url {
-	color: rgba(0, 0, 0, 0.87);
-
-	&:hover {
-		color: rgba(0, 0, 0, 0.87);
-	}
 }
 
 .google-plus-share-preview__image {

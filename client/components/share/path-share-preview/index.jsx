@@ -19,62 +19,49 @@ export class PathSharePreview extends PureComponent {
 		const {
 			articleUrl,
 			externalProfilePicture,
-			externalProfileUrl,
 			externalName,
 			imageUrl,
-			message,
-			translate
+			message
 		} = this.props;
 		return (
 			<div className="path-share-preview">
 				<div className="path-share-preview__content">
 					<div className="path-share-preview__header">
-						<div className="path-share-preview__profile-picture-part">
+						<img
+							className="path-share-preview__profile-picture"
+							src={ externalProfilePicture }
+						/>
+						<span className="path-share-preview__profile-name">
+							{ externalName }
+						</span>
+					</div>
+					{ imageUrl &&
+						<div className="path-share-preview__image-wrapper">
 							<img
-								className="path-share-preview__profile-picture"
-								src={ externalProfilePicture }
+								className="path-share-preview__image"
+								src={ imageUrl }
 							/>
 						</div>
-						<div className="path-share-preview__profile-line-part">
-							<div className="path-share-preview__profile-line">
-								<a className="path-share-preview__profile-name" href={ externalProfileUrl }>
-									{ externalName }
-								</a>
-								<span>
-									{
-										translate( 'published an article on {{a}}WordPress{{/a}}', {
-											components: {
-												a: <a href="#" />
-											}
-										} )
-									}
-								</span>
-							</div>
-							<div className="path-share-preview__meta-line">
-								<a href="https://wordpress.com">
-									{ translate( 'WordPress' ) }
-								</a>
-							</div>
-						</div>
-					</div>
+					}
 					<div className="path-share-preview__body">
-						<div className="path-share-preview__message">
-							{ message }
-						</div>
-						<div className="path-share-preview__article-url-line">
-							<a className="path-share-preview__article-url"
-								href={ articleUrl }>
-								{ articleUrl }
-							</a>
-						</div>
-						{ imageUrl &&
-							<div className="path-share-preview__image-wrapper">
-								<img
-									className="path-share-preview__image"
-									src={ imageUrl }
-								/>
+						<img
+							className="path-share-preview__profile-picture"
+							src={ externalProfilePicture }
+						/>
+						<div className="path-share-preview__message-part">
+							<div className="path-share-preview__message">
+								<span className="path-share-preview__profile-name">{ externalName }:</span> { message }
 							</div>
-						}
+							<div className="path-share-preview__summery">
+								Summury of the post goes here.
+							</div>
+							<div className="path-share-preview__article-url-line">
+								<a className="path-share-preview__article-url"
+									href={ articleUrl }>
+									{ articleUrl }
+								</a>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

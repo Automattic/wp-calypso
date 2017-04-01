@@ -3,6 +3,17 @@
 	font-family: Helvetica Neue, HelveticaNeue, Helvetica, Arial, sans-serif;
 	margin: 0 auto;
 	max-width: 624px;
+
+	// Nesting to win main.scss
+	.tumblr-share-preview__profile-name,
+	.tumblr-share-preview__message-link,
+	.tumblr-share-preview__article-link {
+		color: #444;
+
+		&:hover {
+			color: #444;
+		}
+	}
 }
 
 .tumblr-share-preview__content {
@@ -30,7 +41,6 @@
 }
 
 .tumblr-share-preview__profile-name {
-	color: #444;
 	font-weight: bold;
 }
 
@@ -68,11 +78,6 @@
 .tumblr-share-preview__message-link,
 .tumblr-share-preview__article-link {
 	border-bottom: 1px solid #d1d1d1;
-	color: #444;
-
-	&:hover {
-		color: #444;
-	}
 }
 
 .tumblr-share-preview__summery {
