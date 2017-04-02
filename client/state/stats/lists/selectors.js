@@ -7,7 +7,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import createSelector, { createSelectorPerKey } from 'lib/create-selector';
 import {
 	getSerializedStatsQuery,
 	normalizers,
@@ -170,7 +170,7 @@ export function getSiteStatsPostsCountByDay( state, siteId, query, date ) {
  * @param  {Object}  query    Stats query object
  * @return {*}                Normalized Data for the query, typically an array or object
  */
-export const getSiteStatsNormalizedData = createSelector(
+export const getSiteStatsNormalizedData = createSelectorPerKey(
 	( state, siteId, statType, query ) => {
 		const data = getSiteStatsForQuery( state, siteId, statType, query );
 		if ( 'function' === typeof normalizers[ statType ] ) {

@@ -3,6 +3,7 @@
  */
 import memoize from 'lodash/memoize';
 import shallowEqual from 'react-pure-render/shallowEqual';
+import { isEqual } from 'lodash';
 
 /**
  * Constants
@@ -105,3 +106,28 @@ export default function createSelector( selector, getDependants = DEFAULT_GET_DE
 	}, { memoizedSelector } );
 }
 
+export function createSelectorPerKey( selector, getDependants = DEFAULT_GET_DEPENDANTS, getCacheKey = DEFAULT_GET_CACHE_KEY ) {
+	const memoizedSelector = memoize( selector, getCacheKey );
+	const lastDependantsByKey = {};
+
+	if ( Array.isArray( getDependants ) ) {
+		getDependants = makeSelectorFromArray( getDependants );
+	}
+
+	return Object.assign( function( state, ...args ) {
+		let currentDependants = getDependants( state, ...args );
+		if ( ! Array.isArray( currentDependants ) ) {
+			currentDependants = [ currentDependants ];
+		}
+
+		const cacheKey = getCacheKey( state, ...args );
+		const lastDependants = lastDependantsByKey[ cacheKey ];
+		if ( lastDependants && ! shallowEqual( currentDependants, lastDependants ) ) {
+			memoizedSelector.cache.delete( cacheKey );
+		}
+
+		lastDependantsByKey[ cacheKey ] = currentDependants;
+
+		return memoizedSelector( state, ...args );
+	}, { memoizedSelector } );
+}
