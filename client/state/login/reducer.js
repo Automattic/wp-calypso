@@ -7,6 +7,7 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
+import magicLogin from './magic-login/reducer';
 
 import {
 	LOGIN_REQUEST,
@@ -34,6 +35,7 @@ export const requestSuccess = createReducer( null, {
 
 export default combineReducers( {
 	isRequesting,
+	magicLogin,
 	requestError,
 	requestSuccess,
 } );

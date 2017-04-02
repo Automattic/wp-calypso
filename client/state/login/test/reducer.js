@@ -23,6 +23,7 @@ describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'isRequesting',
+			'magicLogin',
 			'requestError',
 			'requestSuccess',
 		] );

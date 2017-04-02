@@ -2,16 +2,13 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import emailValidator from 'email-validator';
 
 /**
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
-import { getCurrentQueryArguments } from 'state/ui/selectors';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
 	render() {
@@ -50,13 +47,4 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 	}
 }
 
-const mapState = state => {
-	const queryArguments = getCurrentQueryArguments( state );
-	const { email } = queryArguments;
-
-	return {
-		emailAddress: emailValidator.validate( email ) ? email : null,
-	};
-};
-
-export default connect( mapState )( localize( EmailedLoginLinkSuccessfully ) );
+export default localize( EmailedLoginLinkSuccessfully );
