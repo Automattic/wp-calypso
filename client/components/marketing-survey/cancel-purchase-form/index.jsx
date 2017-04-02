@@ -15,10 +15,12 @@ import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
 import { recordTracksEvent } from 'state/analytics/actions';
+import Button from 'components/button';
 
 const CancelPurchaseForm = React.createClass( {
 	propTypes: {
 		surveyStep: React.PropTypes.number.isRequired,
+		finalStep: React.PropTypes.number.isRequired,
 		showSurvey: React.PropTypes.bool.isRequired,
 		defaultContent: React.PropTypes.node.isRequired,
 		onInputChange: React.PropTypes.func.isRequired,
@@ -426,6 +428,35 @@ const CancelPurchaseForm = React.createClass( {
 		);
 	},
 
+	openCalendly() {
+		this.props.clickCalendly();
+		return window.open( 'https://calendly.com/wordpressdotcom/wordpress-com-business-site-setup/' );
+	},
+
+	renderConciergeOffer() {
+		return (
+			<FormFieldset>
+				<FormLabel>
+					{ this.translate( 'Let us help you setup your site!' ) }
+				</FormLabel>
+				<p>
+					{
+						this.translate(
+							'Schedule a 30 minute orientation with one of our Happiness Engineers. ' +
+							'We\'ll help you to setup your site and answer any questions you have!'
+						)
+					}
+				</p>
+				<Button
+					onClick={ this.openCalendly }
+					primary
+				>
+					{ this.translate( 'Schedule a session' ) }
+				</Button>
+			</FormFieldset>
+		);
+	},
+
 	render() {
 		if ( this.props.showSurvey ) {
 			if ( this.props.surveyStep === 1 ) {
@@ -437,7 +468,16 @@ const CancelPurchaseForm = React.createClass( {
 				);
 			}
 
-			// 2nd surveyStep
+			// Render concierge offer if appropriate
+			if ( this.props.surveyStep === 2 && this.props.finalStep === 3 ) {
+				return (
+					<div>
+						{ this.renderConciergeOffer() }
+					</div>
+				);
+			}
+
+			// Render cancellation step
 			return (
 				<div>
 					{ this.renderFreeformQuestion() }
@@ -459,6 +499,9 @@ export default connect(
 				option: option,
 				value: value
 			}
+		) ),
+		clickCalendly: () => dispatch( recordTracksEvent(
+			'calypso_purchases_cancel_form_concierge_click'
 		) ),
 	} )
 )( CancelPurchaseForm );

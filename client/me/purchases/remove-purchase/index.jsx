@@ -18,7 +18,7 @@ import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { getPurchase, isDataLoading, enrichedSurveyData } from '../utils';
-import { isDomainRegistration, isPlan, isGoogleApps, isJetpackPlan } from 'lib/products-values';
+import { isDomainRegistration, isPlan, isGoogleApps, isJetpackPlan, isBusiness } from 'lib/products-values';
 import notices from 'notices';
 import purchasePaths from '../paths';
 import { removePurchase } from 'state/purchases/actions';
@@ -62,6 +62,7 @@ const RemovePurchase = React.createClass( {
 			isDialogVisible: false,
 			isRemoving: false,
 			surveyStep: 1,
+			finalStep: 2,
 			survey: {
 				questionOneRadio: null,
 				questionTwoRadio: null
@@ -130,8 +131,32 @@ const RemovePurchase = React.createClass( {
 		this.setState( { isDialogVisible: false } );
 	},
 
-	changeSurveyStep() {
-		const newStep = this.state.surveyStep === 1 ? 2 : 1;
+	changeSurveyStep( direction ) {
+		const purchase = getPurchase( this.props );
+		let newStep;
+
+		if ( isBusiness( purchase ) && this.state.survey.questionOneRadio === 'tooHard' ) {
+			this.setState( { finalStep: 3 } );
+
+			switch ( this.state.surveyStep ) {
+				case 1:
+					newStep = 2;
+					break;
+				case 2:
+					newStep = direction === 'previous' ? 1 : 3;
+					break;
+				case 3:
+					newStep = 2;
+					break;
+				default:
+					newStep = 1;
+					break;
+			}
+		} else {
+			this.setState( { finalStep: 2 } );
+			newStep = this.state.surveyStep === 1 ? 2 : 1;
+		}
+
 		this.recordEvent( 'calypso_purchases_cancel_form_step', { new_step: newStep } );
 		this.setState( { surveyStep: newStep } );
 	},
@@ -312,7 +337,7 @@ const RemovePurchase = React.createClass( {
 					action: 'prev',
 					disabled: this.state.isRemoving,
 					label: this.translate( 'Previous' ),
-					onClick: this.changeSurveyStep
+					onClick: this.changeSurveyStep.bind( null, 'previous' )
 				},
 				remove: {
 					action: 'remove',
@@ -323,13 +348,17 @@ const RemovePurchase = React.createClass( {
 				}
 			},
 			productName = getName( getPurchase( this.props ) ),
-			inStepOne = this.state.surveyStep === 1;
+			inFinalStep = ( this.state.surveyStep === this.state.finalStep );
 
 		let buttonsArr;
 		if ( ! config.isEnabled( 'upgrades/removal-survey' ) ) {
 			buttonsArr = [ buttons.cancel, buttons.remove ];
+		} else if ( inFinalStep ) {
+			buttonsArr = [ buttons.cancel, buttons.prev, buttons.remove ];
 		} else {
-			buttonsArr = inStepOne ? [ buttons.cancel, buttons.next ] : [ buttons.cancel, buttons.prev, buttons.remove ];
+			buttonsArr = this.state.surveyStep === 2
+				? [ buttons.cancel, buttons.prev, buttons.next ]
+				: [ buttons.cancel, buttons.next ];
 		}
 
 		if ( this.props.showChatLink && config.isEnabled( 'upgrades/precancellation-chat' ) ) {
@@ -346,6 +375,7 @@ const RemovePurchase = React.createClass( {
 					<FormSectionHeading>{ this.translate( 'Remove %(productName)s', { args: { productName } } ) }</FormSectionHeading>
 					<CancelPurchaseForm
 						surveyStep={ this.state.surveyStep }
+						finalStep={ this.state.finalStep }
 						showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
 						defaultContent={ this.renderPlanDialogsText() }
 						onInputChange={ this.onSurveyChange }
