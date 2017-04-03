@@ -5,6 +5,9 @@ import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { noop } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import Gridicon from 'gridicons';
 
 export const Item = props => {
