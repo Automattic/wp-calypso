@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import Tooltip from 'components/tooltip';
 import { getSiteStatsQueryDate } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
 
@@ -27,7 +26,6 @@ class StatsDatePicker extends Component {
 		query: PropTypes.object,
 		statType: PropTypes.string,
 		showQueryDate: PropTypes.bool,
-		userLocale: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -47,8 +45,8 @@ class StatsDatePicker extends Component {
 	};
 
 	dateForSummarize() {
-		const { query, moment, translate, userLocale } = this.props;
-		const localizedDate = moment().locale( userLocale );
+		const { query, moment, translate } = this.props;
+		const localizedDate = moment();
 
 		switch ( query.num ) {
 			case '-1':
@@ -70,8 +68,8 @@ class StatsDatePicker extends Component {
 	}
 
 	dateForDisplay() {
-		const { date, moment, period, translate, userLocale } = this.props;
-		const localizedDate = moment( date ).locale( userLocale );
+		const { date, moment, period, translate } = this.props;
+		const localizedDate = moment( date.format( 'YYYY-MM-DD' ) );
 		let formattedDate;
 
 		switch ( period ) {
@@ -178,7 +176,6 @@ const connectComponent = connect(
 	( state, { query, statsType, showQueryDate } ) => {
 		const siteId = getSelectedSiteId( state );
 		return {
-			userLocale: getCurrentUserLocale( state ),
 			queryDate: showQueryDate ? getSiteStatsQueryDate( state, siteId, statsType, query ) : null,
 			requesting: showQueryDate ? isRequestingSiteStatsForQuery( state, siteId, statsType, query ) : false,
 		};
