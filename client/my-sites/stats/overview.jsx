@@ -109,7 +109,7 @@ class StatsOverview extends Component {
 		items.push( <h3 key="header-placeholder" className="stats-section-title">&nbsp;</h3> ); // eslint-disable-line wpcalypso/jsx-classname-namespace
 
 		for ( let i = 0; i < limit; i++ ) {
-			items.push( <SiteOverviewPlaceholder key={ i + '-placeholder' } /> );
+			items.push( <SiteOverviewPlaceholder key={ 'placeholder-' + i } /> );
 		}
 
 		return items;
