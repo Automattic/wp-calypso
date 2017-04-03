@@ -51,15 +51,6 @@ module.exports = {
 		defaultVariation: 'disabled',
 		allowExistingUsers: false
 	},
-	domainSuggestionNudgeLabels: {
-		datestamp: '20170327',
-		variations: {
-			original: 50,
-			withLabels: 50
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: false
-	},
 	jetpackNewDescriptions: {
 		datestamp: '20170327',
 		variations: {
