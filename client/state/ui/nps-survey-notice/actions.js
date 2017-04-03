@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { translate } from 'i18n-calypso';
 import { random } from 'lodash';
 
 /**
@@ -26,7 +27,7 @@ export function showNpsSurveyNoticeIfEligible() {
 export function showNpsSurveyNotice() {
 	return ( dispatch ) => {
 		const options = {
-			button: 'Sure!',
+			button: translate( 'Sure!' ),
 			onClick: ( event, closeFn ) => {
 				closeFn();
 				dispatch( setNpsSurveyDialogShowing( true ) );
@@ -36,7 +37,7 @@ export function showNpsSurveyNotice() {
 		// NOTE: It would be nice to move to dispatching the `createNotice` action,
 		// but that currently doesn't support notices with `button` and `onClick`
 		// options.
-		notices.new( 'Let us know how we are doing...', options, 'is-info' );
+		notices.new( translate( 'Would you mind answering a question about WordPress.com?' ), options, 'is-info' );
 	};
 }
 

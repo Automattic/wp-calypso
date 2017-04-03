@@ -36,7 +36,9 @@ class RecommendationSelect extends PureComponent {
 					<span>Unlikely</span>
 					<span className="nps-survey__very-likely-label">Very Likely</span>
 				</div>
-				{ options }
+				<div className="nps-survey__options">
+					{ options }
+				</div>
 			</div>
 		);
 	}

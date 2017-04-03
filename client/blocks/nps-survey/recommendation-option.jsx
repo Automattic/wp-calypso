@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
 
 class RecommendationOption extends Component {
 	constructor( props ) {
@@ -20,8 +21,12 @@ class RecommendationOption extends Component {
 	}
 
 	render() {
+		const className = classNames( 'nps-survey__recommendation-option', {
+			'is-selected': this.props.selected,
+		} );
+
 		return (
-			<label className="nps-survey__recommendation-option">
+			<label className={ className }>
 				<input type="radio"
 					name="nps-survey-recommendation-option"
 					value={ this.props.value }
