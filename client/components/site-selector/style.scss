@@ -17,7 +17,15 @@
 	}
 
 	&.is-large .site-selector__sites {
-		border-top: 1px solid lighten( $gray, 20% );
+		border-top: 1px solid darken( $sidebar-bg-color, 10% );
+	}
+
+	.site__title {
+		color: $gray-dark;
+	}
+
+	.site__domain {
+		color: $gray-text-min;
 	}
 
 }
@@ -29,7 +37,7 @@
 
 	// Highlight selected site
 	&.is-selected {
-		background-color: $gray;
+		background-color: $sidebar-selected-color;
 
 		.site__badge {
 			color: $white;
@@ -39,12 +47,12 @@
 		.site__domain {
 			color: $white;
 			&::after {
-				@include long-content-fade( $color: $gray );
+				@include long-content-fade( $color: $sidebar-selected-color );
 			}
 		}
 
 		.count {
-			border-color: $white;
+			border-color: darken( $sidebar-bg-color, 10% );
 			color: $white;
 		}
 
@@ -88,7 +96,7 @@
 	margin: 8px;
 	width: auto;
 	height: 33px;
-	border: 1px solid lighten( $gray, 20% );
+	border: 1px solid darken( $sidebar-bg-color, 10% );
 	display: block;
 	opacity: 0;
 	position: absolute;
@@ -169,11 +177,11 @@
 }
 
 .site-selector .all-sites {
-	border-bottom: 1px solid lighten( $gray, 20% );
+	border-bottom: 1px solid darken( $sidebar-bg-color, 10% );
 }
 
 .site-selector__recent {
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-bottom: 1px solid darken( $sidebar-bg-color, 10% );
 
 	&:empty {
 		border-bottom-width: 0;

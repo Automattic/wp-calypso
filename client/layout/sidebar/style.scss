@@ -10,12 +10,12 @@
 		left: 0;
 
 	@include breakpoint( "<960px" ) {
-		border-right: 1px solid darken( $sidebar-bg-color, 5% );
+		border-right: 1px solid lighten( $gray, 20% );
 		width: $sidebar-width-min;
 	}
 
 	@include breakpoint( ">960px" ) {
-		border-right: 1px solid darken( $sidebar-bg-color, 5% );
+		border-right: 1px solid lighten( $gray, 20% );
 		width: $sidebar-width-max;
 	}
 
@@ -69,7 +69,7 @@
 
 // Sidebar group headings
 .sidebar__heading {
-	color: rgba( saturate( $sidebar-text-color, 60% ), 0.6 );
+	color: $gray-text-min;
 	font-weight: 600;
 	font-size: 12px;
 	margin: 16px 8px 6px 14px;
@@ -228,7 +228,7 @@ form.sidebar__button {
 		background-color: $sidebar-selected-color;
 
 		a {
-			color: $white;
+			color: $gray-dark;
 
 			&:first-child:after {
 				background: linear-gradient(
@@ -245,7 +245,7 @@ form.sidebar__button {
 		}
 
 		.gridicon {
-			fill: $white;
+			fill: $gray;
 		}
 
 		&.is-action-button-selected a {
@@ -263,16 +263,16 @@ form.sidebar__button {
 // Menu Hover
 .notouch .sidebar__menu li:hover {
 	&:not(.selected) {
-		background-color: lighten( $sidebar-bg-color, 3% );
+		background-color: $sidebar-selected-color;
 
 		a {
-			color: $blue-medium;
+			// color: $blue-medium;
 
 			&:first-child:after {
 				background: linear-gradient(
 					to right,
-					rgba( lighten( $sidebar-bg-color, 3% ), 0 ),
-					rgba( lighten( $sidebar-bg-color, 3% ), 1 ) 50% );
+					rgba( $sidebar-selected-color, 0 ),
+					rgba( $sidebar-selected-color, 1 ) 50% );
 			}
 
 			&.sidebar__button {
@@ -282,7 +282,7 @@ form.sidebar__button {
 		}
 
 		.gridicon {
-			fill: $blue-medium;
+			// fill: $white;
 		}
 	}
 
