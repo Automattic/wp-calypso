@@ -28,8 +28,10 @@ import PluginsList from './plugins-list';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import WpcomPluginPanel from 'my-sites/plugins-wpcom';
 import PluginsBrowser from './plugins-browser';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite, canJetpackSiteManage, canJetpackSiteUpdateFiles } from 'state/sites/selectors';
+import { isJetpackSite, canJetpackSiteUpdateFiles } from 'state/sites/selectors';
+import { isJetpackModuleActive } from 'state/selectors';
 
 const PluginsMain = React.createClass( {
 	mixins: [ URLSearch ],
@@ -367,6 +369,7 @@ const PluginsMain = React.createClass( {
 				<Main>
 					{ this.renderDocumentHead() }
 					<SidebarNavigation />
+					<QueryJetpackModules siteId={ selectedSiteId } />
 					<JetpackManageErrorPage
 						template="optInManage"
 						siteId={ selectedSiteId }
@@ -386,6 +389,7 @@ const PluginsMain = React.createClass( {
 		return (
 			<Main className={ containerClass }>
 				{ this.renderDocumentHead() }
+				<QueryJetpackModules siteId={ selectedSiteId } />
 				<SidebarNavigation />
 				<SectionNav selectedText={ this.getSelectedText() }>
 					<NavTabs>
@@ -435,7 +439,7 @@ export default connect(
 			selectedSiteId: selectedSite && selectedSite.ID,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
-			canSelectedJetpackSiteManage: selectedSite && canJetpackSiteManage( state, selectedSite.ID ),
+			canSelectedJetpackSiteManage: selectedSite && isJetpackModuleActive( state, selectedSite.ID, 'manage' ),
 			canSelectedJetpackSiteUpdateFiles: selectedSite && canJetpackSiteUpdateFiles( state, selectedSite.ID ),
 			canJetpackSiteUpdateFiles: siteId => canJetpackSiteUpdateFiles( state, siteId ),
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
