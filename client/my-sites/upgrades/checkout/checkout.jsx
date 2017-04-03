@@ -3,7 +3,7 @@
  */
 import { connect } from 'react-redux';
 import { flatten, find, isEmpty, isEqual, reduce, startsWith } from 'lodash';
-import i18n from 'i18n-calypso';
+import { i18n, localize } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
 
@@ -37,6 +37,8 @@ import {
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
+import { requestSite } from 'state/sites/actions';
+import { isDomainOnlySite } from 'state/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -224,12 +226,14 @@ const Checkout = React.createClass( {
 
 		const {
 			cart,
+			isDomainOnly,
 			selectedSiteId,
 			transaction: {
 				step: {
 					data: receipt
 				}
-			}
+			},
+			translate
 		} = this.props;
 		const redirectPath = this.getCheckoutCompleteRedirectPath();
 
@@ -250,7 +254,7 @@ const Checkout = React.createClass( {
 
 			if ( product && product.will_auto_renew ) {
 				notices.success(
-					this.translate( '%(productName)s has been renewed and will now auto renew in the future. ' +
+					translate( '%(productName)s has been renewed and will now auto renew in the future. ' +
 						'{{a}}Learn more{{/a}}', {
 							args: {
 								productName: renewalItem.product_name
@@ -264,7 +268,7 @@ const Checkout = React.createClass( {
 				);
 			} else if ( product ) {
 				notices.success(
-					this.translate( 'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
+					translate( 'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
 						'We sent your receipt to %(email)s.', {
 							args: {
 								productName: renewalItem.product_name,
@@ -291,9 +295,12 @@ const Checkout = React.createClass( {
 			} );
 		}
 
-		if ( cart.create_new_blog && receipt && isEmpty( receipt.failed_purchases ) ) {
+		if (
+			( cart.create_new_blog && receipt && isEmpty( receipt.failed_purchases ) ) ||
+			( isDomainOnly && cartItems.hasPlan( cart ) )
+		) {
 			notices.info(
-				this.translate( 'Almost done…' )
+				translate( 'Almost done…' )
 			);
 
 			const domainName = getDomainNameFromReceiptOrCart( receipt, cart );
@@ -304,6 +311,10 @@ const Checkout = React.createClass( {
 				} );
 
 				return;
+			}
+
+			if ( selectedSiteId ) {
+				this.props.requestSite( selectedSiteId );
 			}
 		}
 
@@ -379,6 +390,7 @@ module.exports = connect(
 
 		return {
 			cards: getStoredCards( state ),
+			isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
@@ -388,6 +400,7 @@ module.exports = connect(
 		clearPurchases,
 		clearSitePlans,
 		fetchReceiptCompleted,
-		recordApplePayStatus
+		recordApplePayStatus,
+		requestSite
 	}
-)( Checkout );
+)( localize( Checkout ) );
