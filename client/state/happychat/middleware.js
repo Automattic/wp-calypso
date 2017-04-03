@@ -77,7 +77,7 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 
 	// Before establishing a connection, set up connection handlers
 	connection
-		.on( 'connect', () => {
+		.on( 'connected', () => {
 			dispatch( setConnected() );
 
 			// TODO: There's no need to dispatch a separate action to request a transcript.

@@ -19,11 +19,11 @@ class Connection extends EventEmitter {
 				const url = config( 'happychat_url' );
 				const socket = new IO( url );
 				socket
-					.once( 'connect', () => {
-						debug( 'connected' );
-						this.emit( 'connect' );
+					.once( 'connect', () => debug( 'connected' ) )
+					.on( 'init', () => {
+						this.emit( 'connected' );
+						resolve( socket );
 					} )
-					.on( 'init', () => resolve( socket ) )
 					.on( 'token', handler => {
 						handler( { signer_user_id: user_id, jwt: token, locale } );
 					} )
