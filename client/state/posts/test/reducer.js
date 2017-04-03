@@ -52,6 +52,7 @@ describe( 'reducer', () => {
 			'queries',
 			'edits',
 			'likes',
+			'revisions',
 		] );
 	} );
 
