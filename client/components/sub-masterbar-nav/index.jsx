@@ -42,13 +42,13 @@ export default class SubMasterbarNav extends Component {
 	componentDidMount() {
 		this.onResize();
 
-		window.addEventListener( 'resize', this.onResize.bind( this ) );
-		window.addEventListener( 'scroll', this.onScroll.bind( this ) );
+		window.addEventListener( 'resize', this.onResize );
+		window.addEventListener( 'scroll', this.onScroll );
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.onResize.bind( this ) );
-		window.removeEventListener( 'scroll', this.onScroll.bind( this ) );
+		window.removeEventListener( 'resize', this.onResize );
+		window.removeEventListener( 'scroll', this.onScroll );
 	}
 
 	render() {
@@ -65,7 +65,7 @@ export default class SubMasterbarNav extends Component {
 		return (
 			<div className={ className }>
 				{ this.isDroppable( this.state.width ) &&
-					<div className="sub-masterbar-nav__select" onClick={ this.toggleList.bind( this ) }>
+					<div className="sub-masterbar-nav__select" onClick={ this.toggleList }>
 						<Item
 							isSelected={ true }
 							label={ this.getSelected().label }
@@ -81,7 +81,7 @@ export default class SubMasterbarNav extends Component {
 				</div>
 				{ this.isFoldable( this.state.width, this.props.options ) && (
 					<div className="sub-masterbar-nav__switch">
-						<Gridicon icon="ellipsis" className={ ellipsisClass } onClick={ this.toggleList.bind( this ) } />
+						<Gridicon icon="ellipsis" className={ ellipsisClass } onClick={ this.toggleList } />
 					</div>
 				)}
 			</div>
@@ -93,7 +93,7 @@ export default class SubMasterbarNav extends Component {
 			<Item
 				key={ index }
 				isSelected={ this.isSelected( item ) }
-				onClick={ this.selectItem.bind( this, item ) }
+				onClick={ this.onSelect }
 				label={ item.label }
 				icon={ item.icon }
 				href={ item.uri }
@@ -101,29 +101,25 @@ export default class SubMasterbarNav extends Component {
 		);
 	}
 
-	selectItem( option ) {
-		if ( ! option ) {
-			return;
-		}
-
-		this.setState( ( state ) => ( {
-			collapsed: this.isDroppable( state.width ) || state.collapsed
-		} ) );
-	}
-
-	toggleList() {
+	toggleList = () => {
 		this.setState( ( state ) => ( {
 			collapsed: ! state.collapsed
 		} ) );
 	}
 
-	onScroll() {
+	onSelect = () => {
+		this.setState( ( state ) => ( {
+			collapsed: this.isDroppable( state.width ) || state.collapsed
+		} ) );
+	}
+
+	onScroll = () => {
 		this.setState( ( state ) => ( {
 			collapsed: state.collapsed || this.isDroppable( state.width )
 		} ) );
 	}
 
-	onResize() {
+	onResize = () => {
 		const currentWidth = findDOMNode( this ).offsetWidth;
 
 		this.setState( ( state, props ) => ( {
