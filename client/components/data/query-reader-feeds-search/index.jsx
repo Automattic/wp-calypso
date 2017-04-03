@@ -20,6 +20,11 @@ class QueryFeedSearch extends Component {
 		searchFeeds( query );
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		const { searchFeeds, query } = nextProps;
+		searchFeeds( query );
+	}
+
 	render() {
 		return null;
 	}
