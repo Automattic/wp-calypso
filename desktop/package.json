@@ -21,40 +21,5 @@
   ],
   "engines": {
     "npm": "^3.5.3"
-  },
-  "optionalDependencies": {
-    "appdmg": "^0.4.5"
-  },
-  "devDependencies": {
-    "asar": "^0.11.0",
-    "babel-core": "^6.9.0",
-    "babel-eslint": "^6.0.4",
-    "babel-loader": "^6.2.2",
-    "babel-preset-es2015": "^6.9.0",
-    "babel-preset-react": "^6.3.13",
-    "chai": "^3.4.1",
-    "electron-builder": "2.8.4",
-    "electron-mocha": "^2.1.0",
-    "electron-packager": "^7.0.2",
-    "electron": "1.3.5",
-    "electron-rebuild": "^1.2.1",
-    "eslint": "^2.10.2",
-    "eslint-plugin-react": "^5.1.1",
-    "json-loader": "^0.5.4",
-    "minimist": "^1.2.0",
-    "mkdirp": "^0.5.1",
-    "mv": "^2.1.1",
-    "unzip": "^0.1.11",
-    "webpack": "^1.13.1"
-  },
-  "dependencies": {
-    "debug": "^2.2.0",
-    "express": "^4.13.3",
-    "jade": "^1.11.0",
-    "lodash.clonedeep": "^4.3.0",
-    "lodash.debounce": "^4.0.0",
-    "portscanner": "^1.0.0",
-    "spellchecker": "^3.2.3",
-    "superagent": "^1.4.0"
   }
 }

@@ -9,7 +9,7 @@ THIS_MAKEFILE_PATH := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 THIS_DIR := $(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 
 NPM ?= $(NODE) $(shell which npm)
-NPM_BIN = $(shell npm bin)
+NPM_BIN = $(shell cd ..; npm bin)
 
 RED=`tput setaf 1`
 RESET=`tput sgr0`

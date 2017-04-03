@@ -7,7 +7,7 @@
  */
 
 var noop = function(){};
-var cloneDeep = require('lodash.clonedeep');
+var cloneDeep = require('lodash/clonedeep');
 var BrowserWindow = require('electron').BrowserWindow;
 var Menu = require('electron').Menu;
 var platform = require( '../platform' );

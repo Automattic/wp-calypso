@@ -10,13 +10,12 @@ var path = require( 'path' );
  */
 var builder = require( './resource/lib/tools' );
 var config = require( './resource/lib/config' );
-var pkg = require( './package.json' );
+var pkg = require( '../package.json' );
 
 /**
  * Module variables
  */
-var electronVersion = pkg.devDependencies['electron'].replace( '^', '' );
-var key;
+var electronVersion = pkg.devDependencies.electron;
 
 var opts = {
 	dir: './build',
