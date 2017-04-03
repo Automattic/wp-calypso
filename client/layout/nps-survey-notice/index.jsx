@@ -30,6 +30,13 @@ class NpsSurveyNotice extends Component {
 		this.props.setNpsSurveyDialogShowing( false );
 	}
 
+	handleSurveyClose = ( afterClose ) => {
+		this.props.setNpsSurveyDialogShowing( false );
+
+		// slightly delay the showing of the thank you notice
+		setTimeout( afterClose, 500 );
+	}
+
 	componentDidMount() {
 		// wait a little bit before showing the notice, so that
 		// (1) the user gets a chance to look briefly at the uncluttered screen, and
@@ -46,7 +53,7 @@ class NpsSurveyNotice extends Component {
 				onClose={ this.handleDialogClose }>
 				<NpsSurvey
 					name={ SURVEY_NAME }
-					onClose={ this.handleDialogClose }
+					onClose={ this.handleSurveyClose }
 				/>
 			</Dialog>
 		);

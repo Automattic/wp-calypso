@@ -24,10 +24,11 @@ class NpsSurveyExample extends PureComponent {
 		isClosed: false,
 	};
 
-	handleClose = () => {
+	handleClose = ( afterClose ) => {
 		this.setState( {
 			isClosed: true,
 		} );
+		afterClose();
 	}
 
 	render() {

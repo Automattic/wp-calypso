@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,10 +18,9 @@ import {
 	submitNpsSurveyWithNoScore,
 } from 'state/nps-survey/actions';
 import {
-	isNpsSurveyNotSubmitted,
-	isNpsSurveySubmitted,
-	isNpsSurveySubmitting,
-	isNpsSurveySubmitFailure,
+	successNotice
+} from 'state/notices/actions';
+import {
 	hasAnsweredNpsSurvey,
 } from 'state/nps-survey/selectors';
 
@@ -40,13 +40,27 @@ class NpsSurvey extends Component {
 
 	handleFinishClick = () => {
 		this.props.submitNpsSurvey( this.props.name, this.state.score );
+		this.onClose( this.showThanksNotice );
 	}
 
 	handleDismissClick = () => {
 		this.props.submitNpsSurveyWithNoScore( this.props.name );
-		// allow for the state to propagate
+		this.onClose( noop );
+	}
+
+	showThanksNotice = () => {
+		this.props.successNotice(
+			this.props.translate( 'Thanks for your feedback!' ),
+			{
+				duration: 5000,
+			}
+		);
+	}
+
+	onClose = ( afterClose ) => {
+		// ensure that state is updated before onClose handler is called
 		setTimeout( () => {
-			this.props.onClose();
+			this.props.onClose( afterClose );
 		}, 0 );
 	}
 
@@ -88,19 +102,6 @@ class NpsSurvey extends Component {
 						</Button>
 					</div>
 				</div>
-				<div className="nps-survey__thank-you-screen">
-					<div className="nps-survey__thank-you">
-						{ translate( 'Thanks for your feedback!' ) }
-					</div>
-					<div className="nps-survey__buttons">
-						<Button primary
-							className="nps-survey__dismiss-button"
-							onClick={ this.props.onClose }
-						>
-							Close
-						</Button>
-					</div>
-				</div>
 		</Card>
 		);
 	}
@@ -108,10 +109,6 @@ class NpsSurvey extends Component {
 
 const mapStateToProps = ( state ) => {
 	return {
-		isNotSubmitted: isNpsSurveyNotSubmitted( state ),
-		isSubmitting: isNpsSurveySubmitting( state ),
-		isSubmitted: isNpsSurveySubmitted( state ),
-		isSubmitFailure: isNpsSurveySubmitFailure( state ),
 		hasAnswered: hasAnsweredNpsSurvey( state ),
 	};
 };
@@ -119,7 +116,7 @@ const mapStateToProps = ( state ) => {
 export default
 	connect(
 		mapStateToProps,
-		{ submitNpsSurvey, submitNpsSurveyWithNoScore }
+		{ submitNpsSurvey, submitNpsSurveyWithNoScore, successNotice }
 	)( localize(
 		NpsSurvey
 	) );
