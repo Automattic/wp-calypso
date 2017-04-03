@@ -118,6 +118,7 @@
 		"post-editor/image-editor": true,
 		"post-editor/media-advanced": false,
 		"press-this": true,
+		"publicize/preview": false,
 		"push-notifications": true,
 		"reader": true,
 		"reader/combined-cards": true,

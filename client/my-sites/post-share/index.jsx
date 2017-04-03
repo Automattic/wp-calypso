@@ -27,6 +27,7 @@ import { hasFeature } from 'state/sites/plans/selectors';
 import { FEATURE_REPUBLICIZE } from 'lib/plans/constants';
 import Banner from 'components/banner';
 import Connection from './connection';
+import { isEnabled } from 'config';
 
 class PostShare extends Component {
 	static propTypes = {
@@ -206,6 +207,13 @@ class PostShare extends Component {
 							<div className="post-share__main">
 								<div className="post-share__form">
 									{ this.renderMessage() }
+
+									{ isEnabled( 'publicize/preview' ) &&
+										<Button>
+											{ this.props.translate( 'Preview' ) }
+										</Button>
+									}
+
 									<Button
 										className="post-share__button"
 										primary={ true }
