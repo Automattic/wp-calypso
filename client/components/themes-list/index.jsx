@@ -58,7 +58,7 @@ export const ThemesList = React.createClass( {
 	},
 
 	isRowLoaded( { index } ) {
-       return !! this.props.themes[ this.getItemsPerRow() * ( index + 1 ) - 1 ];
+		return !! this.props.themes[ index ];
 	},
 
 	componentDidMount() {
@@ -78,7 +78,7 @@ export const ThemesList = React.createClass( {
 		return Math.floor( ( rowWidth || this._width ) / 250 );
 	},
 
-   loadMoreRows() {
+	loadMoreRows() {
 		return this.fetchNextPage( { triggeredByScroll: true } );
 	},
 
@@ -105,7 +105,7 @@ export const ThemesList = React.createClass( {
 			<div className="themes-list">
 				<InfiniteLoader
 					isRowLoaded={ this.isRowLoaded }
-                   loadMoreRows={ this.fetchNextPage }
+					loadMoreRows={ this.loadMoreRows }
 					rowCount={ 1000 }
 					threshold={ 2 }
 				>
