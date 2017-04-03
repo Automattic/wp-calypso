@@ -12,22 +12,16 @@ import Navbar from './navbar';
 import Dropdown from './dropdown';
 import Item from './item';
 
+const OptionShape = PropTypes.shape( {
+	label: PropTypes.string.isRequired,
+	uri: PropTypes.string.isRequired,
+	icon: PropTypes.string
+} );
+
 export default class SubMasterbarNav extends Component {
 	static propTypes = {
-		fallback: PropTypes.shape(
-			{
-				label: PropTypes.string.isRequired,
-				uri: PropTypes.string.isRequired,
-				icon: PropTypes.string
-			}
-		),
-		options: PropTypes.arrayOf(
-			PropTypes.shape( {
-				label: PropTypes.string.isRequired,
-				uri: PropTypes.string.isRequired,
-				icon: PropTypes.string
-			} )
-		),
+		fallback: OptionShape,
+		options: PropTypes.arrayOf( OptionShape ),
 		uri: PropTypes.string.isRequired
 	};
 
