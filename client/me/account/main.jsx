@@ -157,8 +157,6 @@ const Account = React.createClass( {
 			return;
 		}
 
-		// Config names are like 'fr - Francais', so strip the slug off
-		const languageName = language.name.replace( /^[a-zA-Z-]* - /, '' );
 		const url = 'https://translate.wordpress.com/translators/?contributor_locale=' + locale;
 
 		return ( <FormSettingExplanation> {
@@ -169,7 +167,7 @@ const Account = React.createClass( {
 							rel="noopener noreferrer"
 							href={ url }
 					/>,
-					language: <span>{ languageName }</span>
+					language: <span>{ language.name }</span>
 				}
 			} ) }
 		</FormSettingExplanation> );
