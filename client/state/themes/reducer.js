@@ -310,8 +310,8 @@ export const queries = ( () => {
 	return createReducer( {}, {
 		[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query, themes, found } ) => {
 			return applyToManager(
-				// Always 'patch' to avoid overwriting fields when receiving from a
-				// less rich endpoint such as /mine
+				// Always 'patch' to avoid overwriting existing fields when receiving
+				// from a less rich endpoint such as /mine
 				state, siteId, 'receive', true, themes, { query, found, patch: true }
 			);
 		},
