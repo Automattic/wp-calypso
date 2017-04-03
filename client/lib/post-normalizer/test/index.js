@@ -458,6 +458,20 @@ describe( 'index', function() {
 			safeImageUrlFake.undoReturns();
 		} );
 
+		it( 'can allow images that cannot be made safe but are from secure hosts', function( done ) {
+			safeImageUrlFake.setReturns( null );
+			normalizer(
+				{
+					content: '<img width="700" height="700" src="https://example.com/example.jpg?nope">'
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe( 400 ) ] ) ], function( err, normalized ) {
+					assert.equal( normalized.content, '<img width="700" height="700" src="https://example.com/example.jpg?nope">' );
+					done( err );
+				}
+			);
+			safeImageUrlFake.undoReturns();
+		} );
+
 		it( 'removes event handlers from content images', function( done ) {
 			normalizer(
 				{
