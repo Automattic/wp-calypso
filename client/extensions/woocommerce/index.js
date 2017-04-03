@@ -9,8 +9,8 @@ import page from 'page';
  */
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import ProductForm from './products/product-form';
-import Dashboard from './dashboard';
+import ProductForm from './app/products/product-form';
+import Dashboard from './app/dashboard';
 
 const Controller = {
 	dashboard: function( context ) {
