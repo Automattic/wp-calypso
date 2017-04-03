@@ -6,10 +6,12 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { index, blocks, contentPreview } from './controller';
+import { removeSidebar, index, blocks, contentPreview, customize, customizeBlock } from './controller';
 
 export default function() {
-	page( '/pandance', index );
-	page( '/pandance/blocks', blocks );
-	page( '/pandance/content-preview', contentPreview );
+	page( '/pandance', removeSidebar, index );
+	page( '/pandance/blocks', removeSidebar, blocks );
+	page( '/pandance/content-preview', removeSidebar, contentPreview );
+	page( '/pandance/customize', removeSidebar, customize );
+	page( '/pandance/customize/:blockId', removeSidebar, customizeBlock );
 }

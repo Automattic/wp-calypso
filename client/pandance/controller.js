@@ -13,28 +13,34 @@ import Blocks from './blocks';
 import ContentPreview from './content-preview';
 import { setSection } from 'state/ui/actions';
 
-function removeSidebar( context ) {
+export function removeSidebar( context, next ) {
 	context.store.dispatch( setSection( {
 		group: 'pandance',
 		secondary: false
 	} ) );
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+	next();
 }
 
 // last handler don't call next()
 export function index( context ) {
-	removeSidebar( context );
 	renderPage( context, <BusinessInfo />);
 }
 
 // last handler don't call next()
 export function blocks( context ) {
-	removeSidebar( context );
 	renderPage( context, <Blocks /> );
 }
 
 // last handler don't call next()
 export function contentPreview( context ) {
-	removeSidebar( context );
 	renderPage( context, <ContentPreview /> );
+}
+
+export function customize( context ) {
+	renderPage( context, <ContentPreview /> );
+}
+
+export function customizeBlock( context ) {
+	renderPage( context, <ContentPreview blockId={ context.params.blockId } /> );
 }
