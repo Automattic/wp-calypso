@@ -179,10 +179,20 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 		return <ResizableIframe ref="iframe" src={ previewUrl } width="100%" frameBorder="0" className="official-preview" />;
 	},
 
+	handleButtonClick: function( button ) {
+		return () => this.props.onButtonClick( button );
+	},
+
 	getCustomPreviewElement: function() {
-		var buttons = this.props.buttons.map( function( button ) {
-			return <ButtonsPreviewButton key={ button.ID } button={ button } enabled={ button.visibility === this.props.visibility } style={ this.props.style } onClick={ this.props.onButtonClick.bind( null, button ) } />;
-		}, this );
+		const buttons = this.props.buttons &&
+			this.props.buttons.map( ( button ) => {
+				return <ButtonsPreviewButton
+					key={ button.ID }
+					button={ button }
+					enabled={ button.visibility === this.props.visibility }
+					style={ this.props.style }
+					onClick={ this.handleButtonClick( button ) } />;
+			} );
 
 		if ( this.props.showMore ) {
 			buttons.push(

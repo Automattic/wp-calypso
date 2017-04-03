@@ -13,7 +13,6 @@ import { canCurrentUser, isJetpackModuleActive } from 'state/selectors';
 import DocumentHead from 'components/data/document-head';
 import {
 	getSiteSlug,
-	isJetpackMinimumVersion,
 	isJetpackSite,
 } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -102,10 +101,9 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
 		const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-		const hasSharedaddy = isJetpackModuleActive( state, siteId, 'sharedaddy' ) && isJetpackMinimumVersion( state, siteId, '3.4-dev' );
 
 		return {
-			showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
+			showButtons: siteId && canManageOptions,
 			showConnections: ! siteId || ! isJetpack || isJetpackModuleActive( state, siteId, 'publicize' ),
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
