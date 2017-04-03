@@ -214,21 +214,23 @@ class PostShare extends Component {
 							<div className="post-share__main">
 								<div className="post-share__form">
 									{ this.renderMessage() }
+									<div className="post-share__button-actions" >
+										{ isEnabled( 'publicize/preview' ) &&
+											<Button className="post-share__preview-button"
+												onClick={ this.toggleSharingPreview } >
+												{ this.props.translate( 'Preview' ) }
+											</Button>
+										}
 
-									{ isEnabled( 'publicize/preview' ) &&
-										<Button onClick={ this.toggleSharingPreview } >
-											{ this.props.translate( 'Preview' ) }
+										<Button
+											className="post-share__button"
+											primary={ true }
+											onClick={ this.sharePost }
+											disabled={ this.isButtonDisabled() }
+										>
+											{ this.props.translate( 'Share post' ) }
 										</Button>
-									}
-
-									<Button
-										className="post-share__button"
-										primary={ true }
-										onClick={ this.sharePost }
-										disabled={ this.isButtonDisabled() }
-									>
-										{ this.props.translate( 'Share post' ) }
-									</Button>
+									</div>
 								</div>
 
 								<div className="post-share__services">
