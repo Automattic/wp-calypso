@@ -106,10 +106,10 @@ class StatsOverview extends Component {
 		const limit = Math.min( this.props.user.visible_site_count, 10 );
 
 		// TODO: a separate StatsSectionTitle component should be created
-		items.push( <h3 className="stats-section-title">&nbsp;</h3> ); // eslint-disable-line wpcalypso/jsx-classname-namespace
+		items.push( <h3 key="header-placeholder" className="stats-section-title">&nbsp;</h3> ); // eslint-disable-line wpcalypso/jsx-classname-namespace
 
 		for ( let i = 0; i < limit; i++ ) {
-			items.push( <SiteOverviewPlaceholder key={ i } /> );
+			items.push( <SiteOverviewPlaceholder key={ 'placeholder-' + i } /> );
 		}
 
 		return items;
