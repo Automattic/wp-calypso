@@ -52,8 +52,7 @@ import PluginsStore from 'lib/plugins/store';
 
 const helpLinks = {
 	vaultpress: support.JETPACK_SERVICE_VAULTPRESS,
-	akismet: support.JETPACK_SERVICE_AKISMET,
-	polldaddy: support.JETPACK_SERVICE_POLLDADDY,
+	akismet: support.JETPACK_SERVICE_AKISMET
 };
 
 const PlansSetup = React.createClass( {
@@ -228,7 +227,7 @@ const PlansSetup = React.createClass( {
 	},
 
 	renderPluginsPlaceholders() {
-		const placeholderCount = !! this.props.whitelist ? 1 : 3;
+		const placeholderCount = !! this.props.whitelist ? 1 : 2;
 		return range( placeholderCount ).map( i => <PluginItem key={ 'placeholder-' + i } /> );
 	},
 

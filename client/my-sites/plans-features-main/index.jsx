@@ -121,8 +121,7 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'I signed up and paid. What’s next?' ) }
 					answer={ translate(
 						'Our premium features are powered by a few of our other plugins. After purchasing you will' +
-						' need to install the Akismet and VaultPress plugins. If you purchase a Professional' +
-						' subscription, you will also need to install the Polldaddy plugin. Just follow the guide' +
+						' need to install the Akismet and VaultPress plugins. Just follow the guide' +
 						' after you complete your purchase.'
 					) }
 				/>
