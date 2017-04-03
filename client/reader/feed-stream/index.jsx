@@ -91,7 +91,7 @@ class FeedStream extends React.Component {
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 				<RefreshFeedHeader feed={ feed } site={ site } showBack={ this.props.showBack } />
 				{ ! feed && <QueryReaderFeed feedId={ this.props.feedId } /> }
-				{ ! site && feed.blog_ID && <QueryReaderSite siteId={ feed.blog_ID } /> }
+				{ ! site && feed && feed.blog_ID && <QueryReaderSite siteId={ feed.blog_ID } /> }
 			</Stream>
 		);
 	}
