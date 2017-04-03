@@ -94,11 +94,12 @@ export function loggedOut( context, next ) {
 	next();
 }
 
-export function fetchThemeData( context, next, shouldUseCache = false ) {
+export function fetchThemeData( context, next ) {
 	if ( ! context.isServerSide ) {
 		return next();
 	}
 
+	const shouldUseCache = isEmpty( context.query ); // Don't cache URLs with query params
 	const siteId = 'wpcom';
 	const query = {
 		search: context.query.s,
@@ -135,13 +136,4 @@ export function fetchThemeData( context, next, shouldUseCache = false ) {
 			next();
 		} )
 		.catch( () => next() );
-}
-
-export function fetchThemeDataWithCaching( context, next ) {
-	if ( ! isEmpty( context.query ) ) {
-		// Don't cache URLs with query params
-		return fetchThemeData( context, next, false );
-	}
-
-	return fetchThemeData( context, next, true );
 }
