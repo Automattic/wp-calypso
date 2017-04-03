@@ -5,7 +5,7 @@
 import analytics from 'lib/analytics';
 import has from 'lodash/has';
 import invoke from 'lodash/invoke';
-import { isTracking } from './selectors';
+import { isTracking } from 'state/selectors/is-tracking';
 
 import {
 	ANALYTICS_EVENT_RECORD,
