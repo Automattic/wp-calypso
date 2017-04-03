@@ -29,10 +29,12 @@ import FeatureExample from 'components/feature-example';
 import DocumentHead from 'components/data/document-head';
 import WpcomPluginsList from 'my-sites/plugins-wpcom/plugins-list';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, canJetpackSiteManage, getRawSite } from 'state/sites/selectors';
+import { isJetpackSite, getRawSite } from 'state/sites/selectors';
+import { isJetpackModuleActive } from 'state/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import QuerySites from 'components/data/query-sites';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 const SinglePlugin = React.createClass( {
@@ -230,6 +232,11 @@ const SinglePlugin = React.createClass( {
 		return <DocumentHead title={ this.state.pageTitle } />;
 	},
 
+	renderQueryJetpackModules() {
+		const { selectedSite } = this.props;
+		return selectedSite && this.props.isJetpackSite && <QueryJetpackModules siteId={ selectedSite.ID } />;
+	},
+
 	renderSitesList( plugin ) {
 		if ( this.props.siteUrl || this.isFetching() ) {
 			return;
@@ -257,6 +264,7 @@ const SinglePlugin = React.createClass( {
 		const { selectedSite } = this.props;
 		return (
 			<MainComponent>
+				{ this.renderQueryJetpackModules() }
 				<SidebarNavigation />
 				<div className="plugin__page" >
 					{ this.displayHeader() }
@@ -297,6 +305,7 @@ const SinglePlugin = React.createClass( {
 
 		return (
 			<MainComponent>
+				{ this.renderQueryJetpackModules() }
 				<div className="plugin__page">
 					{ this.displayHeader() }
 					<PluginMeta
@@ -336,6 +345,7 @@ const SinglePlugin = React.createClass( {
 			return (
 				<MainComponent>
 					{ this.renderDocumentHead() }
+					{ this.renderQueryJetpackModules() }
 					<SidebarNavigation />
 					<EmptyContent { ...this.state.accessError } />
 					{ this.state.accessError.featureExample
@@ -362,13 +372,19 @@ const SinglePlugin = React.createClass( {
 			return (
 				<MainComponent>
 					{ this.renderDocumentHead() }
+					{ this.renderQueryJetpackModules() }
 					<SidebarNavigation />
-					<JetpackManageErrorPage
-						template="optInManage"
-						title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
-						siteId={ selectedSite.ID }
-						section="plugins"
-						featureExample={ this.getMockPlugin() } />
+					{ this.props.canJetpackSiteManage( selectedSite.ID ) === false
+						? (
+							<JetpackManageErrorPage
+								template="optInManage"
+								siteId={ selectedSite.ID }
+								title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
+								section="plugins"
+								featureExample={ this.getMockPlugin() } />
+						)
+						: this.renderPluginPlaceholder()
+					}
 				</MainComponent>
 			);
 		}
@@ -388,6 +404,7 @@ const SinglePlugin = React.createClass( {
 			<MainComponent>
 				<QuerySites allSites />
 				{ this.renderDocumentHead() }
+				{ this.renderQueryJetpackModules() }
 				<SidebarNavigation />
 				<div className="plugin__page">
 					{ this.displayHeader() }
@@ -427,7 +444,7 @@ export default connect(
 			wporgFetching: WporgPluginsSelectors.isFetching( state.plugins.wporg.fetchingItems, props.pluginSlug ),
 			selectedSite: selectedSite,
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
-			canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
+			canJetpackSiteManage: siteId => isJetpackModuleActive( state, siteId, 'manage' ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
 		};
 	},
