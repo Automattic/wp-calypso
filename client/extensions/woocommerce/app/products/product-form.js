@@ -8,7 +8,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
-import ProductVariationTypesForm from '../product-variation-types-form';
+import ProductVariationTypesForm from './product-variation-types-form';
 import FormToggle from 'components/forms/form-toggle';
 
 export default class ProductForm extends Component {
