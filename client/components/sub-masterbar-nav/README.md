@@ -15,14 +15,14 @@ If no `icon` is provided, `star` will be used by default.
 ```js
 const SubMasterbarNav = require( 'components/sub-masterbar-nav' );
 
-const options = {
+const options = [
     {
         label: 'Home',
         uri: '/',
         icon: 'house'
     },
     ...
-};
+];
 
 render: function() {
     return {
