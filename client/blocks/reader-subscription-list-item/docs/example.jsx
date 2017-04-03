@@ -55,19 +55,19 @@ const items = [
 		}
 	},
 	{
-   siteUrl: 'http://b19ytest.wordpress.com',
-   siteTitle: 'AAAA BEST BLOG WOULD BLOG AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN',
-   siteAuthor:{
-      name: 'b3n low3ry',
-      first_name: 'Ben',
-      last_name: 'Lowery',
-      URL: 'http://b19y.com',
-      avatar_URL: 'https://0.gravatar.com/avatar/3b7b2c457b9201d166b9a2b47cadc86d?s=96&d=identicon&r=G'
-   },
-   siteExcerpt:'BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS',
-   feedId:25320833,
-   siteId:77147075,
-   feed: {  image: 'http://s2.wp.com/i/buttonw-com.png' }
+		siteUrl: 'http://b19ytest.wordpress.com',
+		siteTitle: 'AAAA BEST BLOG WOULD BLOG AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN',
+		siteAuthor: {
+			name: 'b3n low3ry',
+			first_name: 'Ben',
+			last_name: 'Lowery',
+			URL: 'http://b19y.com',
+			avatar_URL: 'https://0.gravatar.com/avatar/3b7b2c457b9201d166b9a2b47cadc86d?s=96&d=identicon&r=G'
+		},
+		siteExcerpt: 'BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS',
+		feedId: 25320833,
+		siteId: 77147075,
+		feed: { image: 'http://s2.wp.com/i/buttonw-com.png' }
 	},
 	{
 		siteUrl: 'http://theatlantic.com/feed/all',
