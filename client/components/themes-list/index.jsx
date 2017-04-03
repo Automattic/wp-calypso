@@ -141,6 +141,7 @@ export const ThemesList = React.createClass( {
 				rowCount={ rowCount }
 				rowHeight={ Math.floor( ( ( width / columnCount ) - 20 ) * 0.75 ) + 74 }
 				scrollTop={ scrollTop }
+				overscanRowCount={ 3 }
 				cellRenderer={ this.renderCell }
 				onSectionRendered={ onSectionRendered }
 				ref={ registerChild }
