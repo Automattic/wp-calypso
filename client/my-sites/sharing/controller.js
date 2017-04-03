@@ -67,10 +67,6 @@ export const buttons = ( context, next ) => {
 		notices.error( translate( 'You are not authorized to manage sharing settings for this site.' ) );
 	}
 
-	if ( site && site.jetpack && ( ! site.isModuleActive( 'sharedaddy' ) || site.versionCompare( '3.4-dev', '<' ) ) ) {
-		notices.error( translate( 'This page is only available to Jetpack sites running version 3.4 or higher with the Sharing module activated.' ) );
-	}
-
 	context.contentComponent = createElement( SharingButtons );
 
 	next();
