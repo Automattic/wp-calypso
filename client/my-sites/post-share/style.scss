@@ -198,6 +198,31 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	flex: 0 0 24px;
 }
 
+.post-share__service-account-image {
+	background-size: cover;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+    position: relative;
+    left: -10px;
+    top: 5px;
+    border: 1px solid white;
+
+    &::after {
+		content: '';
+		width: 24px;
+		height: 24px;
+		background-color: $white;
+		display: block;
+		position: absolute;
+		top: 0;
+		left: 0;
+		border-radius: 50%;
+		opacity: 0.5;
+   		transition: opacity .25s ease;
+	}
+}
+
 .post-share__service.is-active,
 .post-share__handle {
 	.social-logo.twitter{
@@ -226,6 +251,10 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 
 	.social-logo.eventbrite {
 		color: $color-eventbrite;
+	}
+
+	.post-share__service-account-image::after{
+		opacity: 0;
 	}
 }
 
