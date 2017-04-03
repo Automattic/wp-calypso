@@ -39,9 +39,7 @@ const setupContextMiddleware = reduxStore => {
 
 		context.store = reduxStore;
 
-		// Break routing and do full
-		//
-		// load for logout link in /me
+		// Break routing and do full load for logout link in /me
 		if ( context.pathname === '/wp-login.php' ) {
 			window.location.href = context.path;
 			return;
