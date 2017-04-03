@@ -3,7 +3,15 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import { camelCase, head, kebabCase, map, omit, reduce } from 'lodash';
+import {
+	camelCase,
+	deburr,
+	head,
+	kebabCase,
+	map,
+	omit,
+	reduce,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -73,7 +81,7 @@ export default React.createClass( {
 		const sanitizedFieldValues = Object.assign( {}, fieldValues );
 		this.fieldNames.forEach( ( fieldName ) => {
 			if ( typeof fieldValues[ fieldName ] === 'string' ) {
-				sanitizedFieldValues[ fieldName ] = fieldValues[ fieldName ].trim();
+				sanitizedFieldValues[ fieldName ] = deburr( fieldValues[ fieldName ].trim() );
 				if ( fieldName === 'postalCode' ) {
 					sanitizedFieldValues[ fieldName ] = sanitizedFieldValues[ fieldName ].toUpperCase();
 				}
