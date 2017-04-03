@@ -123,6 +123,18 @@
 		&.card {
 			border-bottom: none;
 		}
+
+		.comment-button__label-status,
+		.like-button__label-status,
+		.reader-share__button-label {
+			@include breakpoint( "<960px" ) {
+				display: none;
+			}
+		}
+
+		@include breakpoint( ">960px" ) {
+			min-width: 480px;
+		}
 	}
 }
 
