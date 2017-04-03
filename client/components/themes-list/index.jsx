@@ -107,7 +107,7 @@ export const ThemesList = React.createClass( {
 					isRowLoaded={ this.isRowLoaded }
 					loadMoreRows={ this.loadMoreRows }
 					rowCount={ 1000 }
-					threshold={ 2 }
+					threshold={ 20 }
 				>
 					{ ( { onRowsRendered, registerChild } ) => (
 						<WindowScroller>
