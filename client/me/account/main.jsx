@@ -55,7 +55,7 @@ const user = _user();
 /**
  * Debug instance
  */
-let debug = new Debug( 'calypso:me:account' );
+const debug = new Debug( 'calypso:me:account' );
 
 const Account = React.createClass( {
 
@@ -219,13 +219,8 @@ const Account = React.createClass( {
 	},
 
 	handleRadioChange( event ) {
-		const name = event.currentTarget.name;
-		const value = event.currentTarget.value;
-		let updateObj = {};
-
-		updateObj[ name ] = value;
-
-		this.setState( updateObj );
+		const { name, value } = event.currentTarget;
+		this.setState( { [ name ]: value } );
 	},
 
 	/**
@@ -274,7 +269,7 @@ const Account = React.createClass( {
 	},
 
 	onSiteSelect( siteSlug ) {
-		let selectedSite = sites.getSite( siteSlug );
+		const selectedSite = sites.getSite( siteSlug );
 		if ( selectedSite ) {
 			this.updateUserSetting( 'primary_site_ID', selectedSite.ID );
 		}
@@ -475,6 +470,9 @@ const Account = React.createClass( {
 	renderAccountFields() {
 		const { translate, userSettings } = this.props;
 
+		const isSubmitButtonDisabled = ! userSettings.hasUnsavedSettings() ||
+			this.getDisabledState() || this.hasEmailValidationError();
+
 		return (
 			<div className="account__settings-form" key="settingsForm">
 				<FormFieldset>
@@ -536,7 +534,7 @@ const Account = React.createClass( {
 
 				<FormButton
 					isSubmitting={ this.state.submittingForm }
-					disabled={ ! userSettings.hasUnsavedSettings() || this.getDisabledState() || this.hasEmailValidationError() }
+					disabled={ isSubmitButtonDisabled }
 					onClick={ this.recordClickEvent( 'Save Account Settings Button' ) }
 				>
 					{ this.state.submittingForm ? translate( 'Saving…' ) : translate( 'Save Account Settings' ) }
@@ -584,6 +582,9 @@ const Account = React.createClass( {
 	 */
 	renderUsernameFields() {
 		const { translate, username } = this.props;
+
+		const isSaveButtonDisabled = ( this.getUserSetting( 'user_login' ) !== this.state.userLoginConfirm ) ||
+			! username.isUsernameValid() || this.state.submittingForm;
 
 		return (
 			<div className="account__username-form" key="usernameForm">
@@ -645,7 +646,7 @@ const Account = React.createClass( {
 
 				<FormButtonsBar>
 					<FormButton
-						disabled={ ( this.getUserSetting( 'user_login' ) !== this.state.userLoginConfirm ) || ! username.isUsernameValid() || this.state.submittingForm }
+						disabled={ isSaveButtonDisabled }
 						type="button"
 						onClick={ this.recordClickEvent( 'Change Username Button', this.submitUsernameForm ) }
 					>
