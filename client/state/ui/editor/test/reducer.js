@@ -15,7 +15,8 @@ describe( 'reducer', () => {
 			'postId',
 			'lastDraft',
 			'contactForm',
-			'imageEditor'
+			'imageEditor',
+			'videoEditor',
 		] );
 	} );
 
