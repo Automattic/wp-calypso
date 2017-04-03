@@ -19,6 +19,7 @@ import BlogImage from './blog-image';
 import PageImage from './page-image';
 import GridImage from './grid-image';
 import StoreImage from './store-image';
+import { abtest } from 'lib/abtest';
 
 class DesignTypeWithStoreStep extends Component {
 	constructor( props ) {
