@@ -25,6 +25,8 @@ import {
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_CONNECTED,
+	HAPPYCHAT_DISCONNECTED,
+	HAPPYCHAT_RECONNECTING,
 	HAPPYCHAT_SET_CHAT_STATUS,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 } from 'state/action-types';
@@ -152,6 +154,22 @@ const connectionStatus = ( state = 'uninitialized', action ) => {
 			return 'connecting';
 		case HAPPYCHAT_CONNECTED:
 			return 'connected';
+		case HAPPYCHAT_DISCONNECTED:
+			return 'disconnected';
+		case HAPPYCHAT_RECONNECTING:
+			return 'reconnecting';
+	}
+	return state;
+};
+
+const connectionError = ( state = null, action ) => {
+	switch ( action.type ) {
+		case DESERIALIZE:
+			return null;
+		case HAPPYCHAT_CONNECTED:
+			return null;
+		case HAPPYCHAT_DISCONNECTED:
+			return action.errorStatus;
 	}
 	return state;
 };
@@ -201,4 +219,11 @@ const isAvailable = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducers( { timeline, message, connectionStatus, chatStatus, isAvailable } );
+export default combineReducers( {
+	chatStatus,
+	connectionError,
+	connectionStatus,
+	isAvailable,
+	message,
+	timeline,
+} );

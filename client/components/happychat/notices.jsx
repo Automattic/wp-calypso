@@ -16,6 +16,7 @@ import {
 	HAPPYCHAT_CHAT_STATUS_ABANDONED,
 	getHappychatStatus,
 	getHappychatConnectionStatus,
+	isHappychatServerReachable,
 } from 'state/happychat/selectors';
 
 /*
@@ -23,15 +24,21 @@ import {
  */
 class Notices extends Component {
 	statusNotice() {
-		const { connectionStatus, chatStatus, translate } = this.props;
+		const { isServerReachable, connectionStatus, chatStatus, translate } = this.props;
+
+		if ( ! isServerReachable ) {
+			return translate( "We're having trouble connecting to chat. Please check your internet connection while we try to reconnect…" );
+		}
 
 		switch ( connectionStatus ) {
 			case 'uninitialized':
 				return translate( 'Waiting to connect you with a Happiness Engineer…' );
 			case 'connecting':
 				return translate( 'Connecting you with a Happiness Engineer…' );
+			case 'reconnecting':
+				// Fall through to the same notice as `disconnected`
 			case 'disconnected':
-				return translate( "We're having trouble connecting to chat. Please check your internet connection and refresh the page." );
+				return translate( "We're having trouble connecting to chat. Please bear with us while we try to reconnect…" );
 		}
 
 		const noticeText = {
@@ -62,6 +69,7 @@ class Notices extends Component {
 }
 
 const mapState = ( state ) => ( {
+	isServerReachable: isHappychatServerReachable( state ),
 	chatStatus: getHappychatStatus( state ),
 	connectionStatus: getHappychatConnectionStatus( state ),
 } );

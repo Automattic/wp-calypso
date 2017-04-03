@@ -12,6 +12,9 @@ import {
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+import {
+	HAPPYCHAT_CONNECTION_ERROR_PING_TIMEOUT
+} from './constants';
 
 export const HAPPYCHAT_CHAT_STATUS_DEFAULT = 'default';
 export const HAPPYCHAT_CHAT_STATUS_ASSIGNED = 'assigned';
@@ -42,6 +45,10 @@ export const isHappychatUninitialized = state => getHappychatConnectionStatus( s
 export const isHappychatChatActive = createSelector(
 	state => state.happychat.chatStatus !== HAPPYCHAT_CHAT_STATUS_DEFAULT,
 	state => state.happychat.chatStatus
+);
+
+export const isHappychatServerReachable = createSelector(
+	state => state.happychat.connectionError !== HAPPYCHAT_CONNECTION_ERROR_PING_TIMEOUT
 );
 
 /**

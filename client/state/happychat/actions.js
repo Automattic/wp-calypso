@@ -12,7 +12,9 @@ import {
 	HAPPYCHAT_CONNECT,
 	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_CONNECTED,
+	HAPPYCHAT_DISCONNECTED,
 	HAPPYCHAT_RECEIVE_EVENT,
+	HAPPYCHAT_RECONNECTING,
 	HAPPYCHAT_SEND_BROWSER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_AVAILABLE,
@@ -33,6 +35,8 @@ export const receiveChatTranscript = ( messages, timestamp ) => ( {
 export const connectChat = () => ( { type: HAPPYCHAT_CONNECT } );
 export const setConnected = () => ( { type: HAPPYCHAT_CONNECTED } );
 export const setConnecting = () => ( { type: HAPPYCHAT_CONNECTING } );
+export const setDisconnected = errorStatus => ( { type: HAPPYCHAT_DISCONNECTED, errorStatus } );
+export const setReconnecting = () => ( { type: HAPPYCHAT_RECONNECTING } );
 
 export const setHappychatAvailable = isAvailable => ( { type: HAPPYCHAT_SET_AVAILABLE, isAvailable } );
 
