@@ -38,16 +38,55 @@ const items = [
 	},
 	{
 		siteAuthor: {
-			avatar_URL: 'https://1.gravatar.com/avatar/d1becc42ff085294b51c77f3ce850b15?d=mm&r=G&s=96',
-			first_name: 'Morgan',
-			last_name: 'Pencek',
+			avatar_URL: 'https://1.gravatar.com/avatar/d32da26cc0df3353cc997eea1da557a6?s=96&d=https%3A%2F%2Fs0.wp.com%2Fi%2Fmu.gif&r=G',
+			first_name: 'Ben',
+			last_name: 'Orlin',
+			has_avatar: false,
 		},
-		siteUrl: 'https://notyourtypicalhippie.wordpress.com/',
-		siteTitle: 'Not Your Typical Hippi',
-		siteExcerpt: 'Starting Young ♢ Living Healthy',
+		siteUrl: 'http://mathwithbaddrawings.com',
+		siteTitle: 'Math with Bad Drawings',
+		siteExcerpt: 'Math, teaching, copious metaphors, and drawings that will never ever earn a spot on the fridge',
+		lastUpdated: new Date() - 1000000,
+		feedId: '10056049',
+		site: {
+			icon: {
+				img: 'https://secure.gravatar.com/blavatar/11f9cce0bbf89940278ac446f3c3505a',
+			}
+		}
+	},
+	{
+		siteUrl: 'http://b19ytest.wordpress.com',
+		siteTitle: 'AAAA BEST BLOG WOULD BLOG AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN AND AGAIN',
+		siteAuthor: {
+			name: 'b3n low3ry',
+			first_name: 'Ben',
+			last_name: 'Lowery',
+			URL: 'http://b19y.com',
+			avatar_URL: 'https://0.gravatar.com/avatar/3b7b2c457b9201d166b9a2b47cadc86d?s=96&d=identicon&r=G'
+		},
+		siteExcerpt: 'BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS BEST SITE ON THE INTERWEBS',
+		feedId: 25320833,
+		siteId: 77147075,
+		feed: { image: 'http://s2.wp.com/i/buttonw-com.png' }
+	},
+	{
+		siteUrl: 'http://theatlantic.com/feed/all',
+		siteTitle: 'The Atlantic',
 		lastUpdated: new Date() - 100000,
-		feedId: '42747358',
-	}
+		feedId: '49548095',
+	},
+	{
+		siteUrl: 'http://uproxx.com',
+		siteTitle: 'Real Stories – UPROXX',
+		siteExcerpt: 'The Culture Of Now',
+		lastUpdated: new Date() - 100000,
+		feedId: '19850964',
+		site: {
+			icon: {
+				img: 'https://secure.gravatar.com/blavatar/bae760df0e3bd64e122a0b36facaee58',
+			}
+		}
+	},
 ]
 
 export default class ReaderSubscriptionListItemExample extends PureComponent {
