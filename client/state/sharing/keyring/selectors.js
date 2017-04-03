@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, values } from 'lodash';
+import { filter, values, get } from 'lodash';
 
 /**
  * Returns an array of keyring connection objects.
@@ -56,5 +56,5 @@ export function getUserConnections( state, userId ) {
  * @return {Boolean}       Whether a request is in progress
  */
 export function isKeyringConnectionsFetching( state ) {
-	return state.sharing.keyring.isFetching;
+	return get( state, 'sharing.keyring.isFetching' );
 }
