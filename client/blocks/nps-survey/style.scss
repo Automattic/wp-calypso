@@ -7,12 +7,7 @@
 	box-shadow: unset;
 }
 
-.nps-survey__thank-you-screen {
-	display: none;
-}
-
-.nps-survey__question,
-.nps-survey__thank-you {
+.nps-survey__question {
 	padding: 16px;
 
 	@include breakpoint( ">480px" ) {
@@ -21,7 +16,9 @@
 }
 
 .nps-survey__buttons {
-	padding: 16px;
+	padding: 16px 16px 7px;
+	transform: translateY(-25px);
+	transition: transform .1s ease-in;
 }
 
 .button.nps-survey__finish-button,
@@ -35,23 +32,18 @@
 .button.nps-survey__finish-button {
 	opacity: 0;
 	visibility: hidden;
-	transition: opacity .25s ease-in;
-}
-
-.nps-survey.is-submitted {
-	.nps-survey__question-screen {
-		display: none;
-	}
-
-	.nps-survey__thank-you-screen {
-		display: block;
-	}
+	transition: opacity .2s ease-in;
 }
 
 .nps-survey.is-recommendation-selected {
+	.nps-survey__buttons {
+		//height: 75px;
+		transform: translateY(0);
+	}
+
 	.button.nps-survey__finish-button {
-		//display: block;
 		opacity: 1;
+		//transform: translateY(0);
 		visibility: visible;
 	}
 }
