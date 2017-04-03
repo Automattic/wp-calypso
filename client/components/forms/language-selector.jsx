@@ -12,7 +12,7 @@ import SelectOptGroups from 'components/forms/select-opt-groups';
 function coerceToOptions( data, valueKey = 'value' ) {
 	return data.map( language => ( {
 		value: language[ valueKey ],
-		label: language.name,
+		label: `${ language.langSlug } - ${ language.name }`,
 	} ) );
 }
 
