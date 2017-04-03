@@ -3050,7 +3050,7 @@
       "version": "2.2.0"
     },
     "rc": {
-      "version": "1.2.0",
+      "version": "1.2.1",
       "dependencies": {
         "minimist": {
           "version": "1.2.0"
