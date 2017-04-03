@@ -22,25 +22,28 @@ export function removeSidebar( context, next ) {
 	next();
 }
 
+function wrap( component ) {
+	return <div className="pandance">{ component }</div>;
+}
 // last handler don't call next()
 export function index( context ) {
-	renderPage( context, <BusinessInfo />);
+	renderPage( context, wrap( <BusinessInfo /> ));
 }
 
 // last handler don't call next()
 export function blocks( context ) {
-	renderPage( context, <Blocks /> );
+	renderPage( context, wrap( <Blocks /> ) );
 }
 
 // last handler don't call next()
 export function contentPreview( context ) {
-	renderPage( context, <ContentPreview /> );
+	renderPage( context, wrap( <ContentPreview /> ) );
 }
 
 export function customize( context ) {
-	renderPage( context, <ContentPreview /> );
+	renderPage( context, wrap( <ContentPreview /> ) );
 }
 
 export function customizeBlock( context ) {
-	renderPage( context, <ContentPreview blockId={ context.params.blockId } /> );
+	renderPage( context, wrap( <ContentPreview blockId={ context.params.blockId } /> ) );
 }

@@ -28,10 +28,8 @@ PreviewBlock.props = {
 };
 
 export const ContentPreview = props => <div style={ { maxWidth: '800px', margin: '0 auto' } }>
-
-	<h1>Content preview</h1>
-	<Button primary={ true } onClick={ () => page( '/pandance/customize' ) }>Customize</Button>
 	<p>Here is what your website will look like:</p>
+	<p><Button primary={ true } onClick={ () => page( '/pandance/customize' ) }>Customize</Button></p>
 	<Card>
 	{
 		SITE_BLOCKS
@@ -40,7 +38,7 @@ export const ContentPreview = props => <div style={ { maxWidth: '800px', margin:
 		)
 	}
 	</Card>
-	<Button primary={ true } onClick={ () => page( '/pandance/blocks' ) }>Next</Button>
+	<Button primary={ true } onClick={ () => page( '/pandance/customize' ) }>Customize</Button>
 </div>;
 
 export default connect( ( state, props ) => ( {
