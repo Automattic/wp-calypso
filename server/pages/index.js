@@ -338,6 +338,10 @@ module.exports = function() {
 	}
 
 	app.get( '/theme', ( req, res ) => res.redirect( '/design' ) );
+	// Interim redirect before we make `/themes` the canonical showcase URL.
+	app.get( [ '/themes', '/themes/*' ], ( req, res ) => {
+		res.redirect( '/design' + req.originalUrl.slice( '/themes'.length ) );
+	} );
 
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
