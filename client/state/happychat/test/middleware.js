@@ -83,7 +83,7 @@ describe( 'middleware', () => {
 						expect( connection.on.callCount ).to.equal( 4 );
 
 						// Ensure 'connect' listener was connected by executing a fake message event
-						connection.on.withArgs( 'connect' ).firstCall.args[ 1 ]( true );
+						connection.on.withArgs( 'connected' ).firstCall.args[ 1 ]( true );
 						expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_CONNECTED } );
 						expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_TRANSCRIPT_REQUEST } );
 
