@@ -28,7 +28,7 @@ If `dismissPreferenceName` is provided, `href` is only applied if `callToAction`
 
 ## Usage:
 
-```js
+```jsx
 import { PLAN_BUSINESS, FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
 import Banner from 'components/banner';
 
