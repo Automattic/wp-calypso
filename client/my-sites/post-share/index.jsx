@@ -27,6 +27,7 @@ import { hasFeature } from 'state/sites/plans/selectors';
 import { FEATURE_REPUBLICIZE } from 'lib/plans/constants';
 import Banner from 'components/banner';
 import Connection from './connection';
+import SharingPreviewModal from './sharing-preview-modal';
 import { isEnabled } from 'config';
 
 class PostShare extends Component {
@@ -43,7 +44,8 @@ class PostShare extends Component {
 
 	state = {
 		skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
-		message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title
+		message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title,
+		showSharingPreview: false,
 	};
 
 	hasConnections() {
@@ -68,6 +70,11 @@ class PostShare extends Component {
 
 	isConnectionActive = connection =>
 		connection.status !== 'broken' && this.skipConnection( connection );
+
+	toggleSharingPreview = () => {
+		const showSharingPreview = ! this.state.showSharingPreview;
+		this.setState( { showSharingPreview } );
+	}
 
 	renderServices() {
 		if ( ! this.props.site || ! this.hasConnections() ) {
@@ -207,21 +214,23 @@ class PostShare extends Component {
 							<div className="post-share__main">
 								<div className="post-share__form">
 									{ this.renderMessage() }
+									<div className="post-share__button-actions" >
+										{ isEnabled( 'publicize/preview' ) &&
+											<Button className="post-share__preview-button"
+												onClick={ this.toggleSharingPreview } >
+												{ this.props.translate( 'Preview' ) }
+											</Button>
+										}
 
-									{ isEnabled( 'publicize/preview' ) &&
-										<Button>
-											{ this.props.translate( 'Preview' ) }
+										<Button
+											className="post-share__button"
+											primary={ true }
+											onClick={ this.sharePost }
+											disabled={ this.isButtonDisabled() }
+										>
+											{ this.props.translate( 'Share post' ) }
 										</Button>
-									}
-
-									<Button
-										className="post-share__button"
-										primary={ true }
-										onClick={ this.sharePost }
-										disabled={ this.isButtonDisabled() }
-									>
-										{ this.props.translate( 'Share post' ) }
-									</Button>
+									</div>
 								</div>
 
 								<div className="post-share__services">
@@ -255,6 +264,13 @@ class PostShare extends Component {
 				</div>
 
 				{ this.props.site && <QueryPublicizeConnections siteId={ this.props.site.ID } /> }
+				<SharingPreviewModal
+					siteId={ this.props.siteId }
+					postId={ this.props.postId }
+					message={ this.state.message }
+					isVisible={ this.state.showSharingPreview }
+					onClose={ this.toggleSharingPreview }
+				/>
 			</div>
 		);
 	}
@@ -263,12 +279,14 @@ class PostShare extends Component {
 export default connect(
 	( state, props ) => {
 		const siteId = props.site.ID;
+		const postId = props.post.ID;
 		const userId = getCurrentUserId( state );
 
 		return {
 			planHasRepublicizeFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE ),
 			siteSlug: getSiteSlug( state, siteId ),
 			siteId,
+			postId,
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, props.post.type ),
 			connections: getSiteUserConnections( state, siteId, userId ),
 			hasFetchedConnections: hasFetchedConnections( state, siteId ),
