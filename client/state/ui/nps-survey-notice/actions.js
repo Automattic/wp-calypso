@@ -21,6 +21,12 @@ export function showNpsSurveyNoticeIfEligible() {
 		if ( 1 === random( 1, NPS_SURVEY_RAND_MAX ) ) {
 			dispatch( showNpsSurveyNotice() );
 		}
+
+		if ( config.isEnabled( 'nps-survey/dev-trigger' ) ) {
+			window.npsSurvey = function() {
+				dispatch( showNpsSurveyNotice() );
+			};
+		}
 	};
 }
 
@@ -46,8 +52,4 @@ export function setNpsSurveyDialogShowing( isShowing ) {
 		type: NPS_SURVEY_DIALOG_IS_SHOWING,
 		isShowing,
 	};
-}
-
-if ( 'development' === config( 'env' ) ) {
-	window.showNpsSurveyNotice = showNpsSurveyNotice;
 }

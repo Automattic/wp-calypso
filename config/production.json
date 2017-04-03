@@ -64,6 +64,7 @@
 		"me/notifications": true,
 		"me/trophies": false,
 		"nps-survey/devdocs": false,
+		"nps-survey/dev-trigger": false,
 		"nps-survey/notice": false,
 		"olark": true,
 		"perfmon": true,
