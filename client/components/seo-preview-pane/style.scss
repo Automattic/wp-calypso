@@ -110,8 +110,6 @@
 		}
 
 		.reader-post-actions__item {
-			white-space: nowrap;
-
 			span, .comment-button, .like-button, .ellipsis-menu .button {
 				cursor: default;
 				pointer-events: none;
@@ -120,6 +118,10 @@
 					color: $gray;
 				}
 			}
+		}
+
+		&.card {
+			border-bottom: none;
 		}
 	}
 }
