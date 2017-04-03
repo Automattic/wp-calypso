@@ -22,6 +22,7 @@ export const ThemesList = React.createClass( {
 
 	propTypes: {
 		themes: React.PropTypes.array.isRequired,
+		themesCount: React.PropTypes.number,
 		emptyContent: React.PropTypes.element,
 		loading: React.PropTypes.bool.isRequired,
 		fetchNextPage: React.PropTypes.func.isRequired,
@@ -45,6 +46,7 @@ export const ThemesList = React.createClass( {
 		return {
 			loading: false,
 			themes: [],
+			themesCount: 0,
 			fetchNextPage: noop,
 			placeholderCount: DEFAULT_THEME_QUERY.number,
 			optionsGenerator: () => [],
@@ -56,7 +58,7 @@ export const ThemesList = React.createClass( {
 	},
 
 	isRowLoaded( { index } ) {
-		return !! this.props.themes[ this.getItemsPerRow() * ( index + 1 ) - 1 ];
+       return !! this.props.themes[ this.getItemsPerRow() * ( index + 1 ) - 1 ];
 	},
 
 	componentDidMount() {
@@ -76,7 +78,7 @@ export const ThemesList = React.createClass( {
 		return Math.floor( ( rowWidth || this._width ) / 250 );
 	},
 
-	loadMoreRows() {
+   loadMoreRows() {
 		return this.fetchNextPage( { triggeredByScroll: true } );
 	},
 
@@ -103,7 +105,7 @@ export const ThemesList = React.createClass( {
 			<div className="themes-list">
 				<InfiniteLoader
 					isRowLoaded={ this.isRowLoaded }
-					loadMoreRows={ this.fetchNextPage }
+                   loadMoreRows={ this.fetchNextPage }
 					rowCount={ 1000 }
 					threshold={ 2 }
 				>
@@ -125,7 +127,7 @@ export const ThemesList = React.createClass( {
 
 	renderGrid( width, height, scrollTop, registerChild, onRowsRendered ) {
 		const columnCount = this.getItemsPerRow( width );
-		const rowCount = Math.ceil( ( this.props.themes.length + this.props.placeholderCount ) / columnCount );
+		const rowCount = Math.ceil( this.props.themesCount / columnCount );
 
 		const onSectionRendered = ( args ) => this.onSectionRendered( args, onRowsRendered );
 
