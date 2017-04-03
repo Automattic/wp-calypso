@@ -3,6 +3,8 @@
  */
 import React from 'react';
 import page from 'page';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
 /***
  * Internal Dependencies
@@ -10,6 +12,7 @@ import page from 'page';
 import Card from 'components/card';
 import Ribbon from 'components/ribbon';
 import Button from 'components/button';
+import { toggleBlock } from 'state/pandance/actions';
 import SITE_BLOCKS from './site-blocks';
 
 class BlockItem extends React.Component {
@@ -26,28 +29,15 @@ class BlockItem extends React.Component {
 	}
 }
 
-export default class Blocks extends React.Component {
+export class Blocks extends React.Component {
 	constructor( props ) {
 		super( props );
-
-		this.state = {
-			selectedBlocks: new Set()
-		};
 
 		this.boundOnBlockToggle = this.onBlockToggle.bind( this );
 	}
 
 	onBlockToggle( id ) {
-
-		if ( this.state.selectedBlocks.has( id ) ) {
-			this.state.selectedBlocks.delete( id );
-		} else {
-			this.state.selectedBlocks.add( id );
-		}
-
-		this.setState( {
-			selectedBlocks: this.state.selectedBlocks
-		} )
+		this.props.toggleBlock( id );
 	}
 
 	render() {
@@ -56,7 +46,7 @@ export default class Blocks extends React.Component {
 					SITE_BLOCKS.map( block => <BlockItem
 						id={ block.id }
 						name={ block.name }
-						isSelected={ this.state.selectedBlocks.has( block.id ) }
+						isSelected={ this.props.selected.includes( block.id ) }
 						onBlockToggle={ this.boundOnBlockToggle } />
 					)
 				}
@@ -64,3 +54,7 @@ export default class Blocks extends React.Component {
 		</div>;
 	}
 }
+
+export default connect( ( state, props ) => ( {
+	selected: state.pandance.selected,
+} ), dispatch => bindActionCreators( { toggleBlock }, dispatch ) )( Blocks );

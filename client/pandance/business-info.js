@@ -3,6 +3,8 @@
  */
 import React from 'react';
 import page from 'page';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,16 +13,25 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import Button from 'components/button';
+import { enterBusinessName, enterBusinessDescription } from 'state/pandance/actions';
 
-export default props => <div>
+export const BusinessInfo  = props => <div>
 	<FormFieldset>
 		<FormLabel>Name</FormLabel>
-		<FormTextInput placeholder="Manuel Pizza"></FormTextInput>
+		<FormTextInput placeholder="Manuel Pizza"
+					   value={ props.business.name }
+					   onChange={ event => props.enterBusinessName( event.target.value ) } />
 	</FormFieldset>
 	<FormFieldset>
 		<FormLabel>Business description</FormLabel>
-		<FormTextInput placeholder="The best pizzaria in town"></FormTextInput>
+		<FormTextInput placeholder="The best pizzaria in town"
+					   value={ props.business.description }
+					   onChange={ event => props.enterBusinessDescription( event.target.value ) } />
 	</FormFieldset>
 
 	<Button primary={ true } onClick={ () => page( '/pandance/blocks' ) }>Next</Button>
 </div>;
+
+export default connect( ( state, props ) => ( {
+	business: state.pandance.business,
+} ), dispatch => bindActionCreators( { enterBusinessName, enterBusinessDescription }, dispatch ) )( BusinessInfo );

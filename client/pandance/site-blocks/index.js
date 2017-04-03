@@ -39,7 +39,7 @@ export default [
 	},
 	{
 		id: 7,
-		name: 'Social media',
+		name: 'Social Media',
 		component: SocialMedia
 	},
 ];

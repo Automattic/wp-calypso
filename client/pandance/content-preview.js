@@ -4,6 +4,7 @@
 import React from 'react';
 import page from 'page';
 import { find } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -26,7 +27,7 @@ PreviewBlock.props = {
 	id: React.PropTypes.number.isRequired
 };
 
-export default props => <div style={ { maxWidth: '800px', margin: '0 auto' } }>
+export const ContentPreview = props => <div style={ { maxWidth: '800px', margin: '0 auto' } }>
 
 	<h1>Content preview</h1>
 	<Button primary={ true } onClick={ () => page( '/pandance/customize' ) }>Customize</Button>
@@ -34,10 +35,14 @@ export default props => <div style={ { maxWidth: '800px', margin: '0 auto' } }>
 	<Card>
 	{
 		SITE_BLOCKS
-			.filter( () => true ) // only selected blocks
+			.filter( block => props.selected.includes( block.id ) )
 			.map( block => <PreviewBlock id={ block.id } />
 		)
 	}
 	</Card>
 	<Button primary={ true } onClick={ () => page( '/pandance/blocks' ) }>Next</Button>
 </div>;
+
+export default connect( ( state, props ) => ( {
+	selected: state.pandance.selected,
+} ) )( ContentPreview );
