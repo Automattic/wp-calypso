@@ -50,11 +50,11 @@ class FeedHeader extends Component {
 	}
 
 	render() {
-		const site = this.props.site,
-			feed = this.props.feed,
-			followerCount = this.getFollowerCount( feed, site ),
-			ownerDisplayName = site && site.owner && site.owner.name;
+		const { site, feed } = this.props;
+		const followerCount = this.getFollowerCount( feed, site );
+		const ownerDisplayName = site && site.owner && site.owner.name;
 		const siteish = this.buildSiteish( site, feed );
+		const description = site && site.description;
 
 		const classes = classnames( {
 			'reader-feed-header': true,
@@ -88,7 +88,7 @@ class FeedHeader extends Component {
 							indicator={ false } />
 					}
 					<div className="reader-feed-header__details">
-						<span className="reader-feed-header__description">{ ( site && site.description ) }</span>
+						<span className="reader-feed-header__description">{ description }</span>
 						{ ownerDisplayName && <span className="reader-feed-header__byline">
 							{ this.props.translate(
 								'by %(author)s',

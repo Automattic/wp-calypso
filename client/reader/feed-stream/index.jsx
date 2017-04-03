@@ -19,6 +19,11 @@ import QueryReaderFeed from 'components/data/query-reader-feed';
 import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
 
+// If the blog_ID of a reader feed is 0, that means no site exists for it.
+const getReaderSiteId = feed => feed && feed.blog_ID === 0
+		? null
+		: feed && feed.blog_ID;
+
 class FeedStream extends React.Component {
 
 	static propTypes = {
@@ -46,7 +51,7 @@ class FeedStream extends React.Component {
 		}
 
 		if ( ! title && site ) {
-			title = site.get( 'name' );
+			title = site.name;
 		}
 
 		if ( ! title && feed ) {
@@ -57,7 +62,7 @@ class FeedStream extends React.Component {
 		}
 
 		if ( ! title && site ) {
-			title = site.get( 'URL' );
+			title = site.URL;
 			if ( title ) {
 				title = url.parse( title ).hostname;
 			}
@@ -71,7 +76,7 @@ class FeedStream extends React.Component {
 	}
 
 	render() {
-		const { feed, site } = this.props;
+		const { feed, site, siteId } = this.props;
 		const emptyContent = ( <EmptyContent /> );
 		const title = this.getTitle( feed, site );
 
@@ -91,7 +96,7 @@ class FeedStream extends React.Component {
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
 				<RefreshFeedHeader feed={ feed } site={ site } showBack={ this.props.showBack } />
 				{ ! feed && <QueryReaderFeed feedId={ this.props.feedId } /> }
-				{ ! site && feed && feed.blog_ID && <QueryReaderSite siteId={ feed.blog_ID } /> }
+				{ siteId && <QueryReaderSite siteId={ siteId } /> }
 			</Stream>
 		);
 	}
@@ -100,9 +105,12 @@ class FeedStream extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const feed = getFeed( state, ownProps.feedId );
+		const siteId = getReaderSiteId( feed );
+
 		return {
 			feed,
-			site: feed && feed.blog_ID && getSite( state, feed.blog_ID ),
+			siteId,
+			site: siteId && getSite( state, siteId ),
 		};
 	}
 )( localize( FeedStream ) );
