@@ -68,7 +68,7 @@ export function fetchThemeDetailsData( context, next ) {
 
 export function details( context, next ) {
 	const { slug, section } = context.params;
-	if ( startsWith( context.prevPath, '/design' ) ) {
+	if ( startsWith( context.prevPath, '/themes' ) ) {
 		context.store.dispatch( setBackPath( context.prevPath ) );
 	}
 

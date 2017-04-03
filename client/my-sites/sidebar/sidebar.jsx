@@ -201,16 +201,16 @@ export class MySitesSidebar extends Component {
 		if ( site.jetpack && ! jetpackEnabled && site.options ) {
 			themesLink = site.options.admin_url + 'themes.php';
 		} else if ( this.isSingle() ) {
-			themesLink = '/design' + this.siteSuffix();
+			themesLink = '/themes' + this.siteSuffix();
 		} else {
-			themesLink = '/design';
+			themesLink = '/themes';
 		}
 
 		return (
 			<SidebarItem
 				label={ this.props.translate( 'Themes' ) }
 				tipTarget="themes"
-				className={ this.itemLinkClass( '/design', 'themes' ) }
+				className={ this.itemLinkClass( '/themes', 'themes' ) }
 				link={ themesLink }
 				onNavigate={ this.onNavigate }
 				icon="themes"

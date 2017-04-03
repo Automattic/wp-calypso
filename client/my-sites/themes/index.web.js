@@ -17,32 +17,32 @@ export default function( router ) {
 	if ( config.isEnabled( 'manage/themes' ) ) {
 		if ( isLoggedIn ) {
 			if ( config.isEnabled( 'manage/themes/upload' ) ) {
-				router( '/design/upload', makeSites, makeLayout );
+				router( '/themes/upload', makeSites, makeLayout );
 				router(
-					'/design/upload/:site_id?',
+					'/themes/upload/:site_id?',
 					siteSelection, upload, makeNavigation, makeLayout
 				);
 			}
 			router(
-				`/design/:vertical(${ verticals })?/:tier(free|premium)?`,
+				`/themes/:vertical(${ verticals })?/:tier(free|premium)?`,
 				siteSelection, multiSite, makeNavigation, makeLayout
 			);
 			router(
-				`/design/:vertical(${ verticals })?/:tier(free|premium)?/:site_id`,
+				`/themes/:vertical(${ verticals })?/:tier(free|premium)?/:site_id`,
 				siteSelection, singleSite, makeNavigation, makeLayout
 			);
 			router(
-				`/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`,
+				`/themes/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`,
 				validateFilters, siteSelection, multiSite, makeNavigation, makeLayout
 			);
 			router(
-				`/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter/:site_id`,
+				`/themes/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter/:site_id`,
 				validateFilters, siteSelection, singleSite, makeNavigation, makeLayout
 			);
 		} else {
-			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?`, loggedOut, makeLayout );
+			router( `/themes/:vertical(${ verticals })?/:tier(free|premium)?`, loggedOut, makeLayout );
 			router(
-				`/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`,
+				`/themes/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`,
 				validateFilters, loggedOut, makeLayout
 			);
 		}

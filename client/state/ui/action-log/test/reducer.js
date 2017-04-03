@@ -26,11 +26,11 @@ describe( 'reducer', () => {
 		const actions = [
 			{
 				type: ROUTE_SET,
-				path: '/design/77203074',
+				path: '/themes/77203074',
 			},
 			{
 				type: ROUTE_SET,
-				path: '/design/foobar',
+				path: '/themes/foobar',
 			},
 		];
 		const state = actions.reduce( reducer, undefined );
@@ -61,7 +61,7 @@ describe( 'reducer', () => {
 		const actions = [
 			{
 				type: ROUTE_SET,
-				path: '/design/77203074',
+				path: '/themes/77203074',
 				meta: { analytics: [ {
 					type: 'ANALYTICS_EVENT_RECORD',
 					payload: {
@@ -96,7 +96,7 @@ describe( 'reducer', () => {
 		const actions = [
 			{
 				type: ROUTE_SET,
-				path: '/design/77203074',
+				path: '/themes/77203074',
 				meta: { analytics: [ {
 					type: 'ANALYTICS_EVENT_RECORD',
 					payload: {

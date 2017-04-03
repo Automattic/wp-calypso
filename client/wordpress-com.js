@@ -162,7 +162,7 @@ const sections = [
 	},
 	{
 		name: 'themes',
-		paths: [ '/design' ],
+		paths: [ '/themes' ],
 		module: 'my-sites/themes',
 		enableLoggedOut: true,
 		secondary: true,

@@ -56,8 +56,8 @@ function getProps( context ) {
 
 export function upload( context, next ) {
 	// Store previous path to return to only if it was main showcase page
-	if ( startsWith( context.prevPath, '/design' ) &&
-		! startsWith( context.prevPath, '/design/upload' ) ) {
+	if ( startsWith( context.prevPath, '/themes' ) &&
+		! startsWith( context.prevPath, '/themes/upload' ) ) {
 		context.store.dispatch( setBackPath( context.prevPath ) );
 	}
 

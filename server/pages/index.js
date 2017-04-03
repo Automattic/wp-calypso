@@ -337,10 +337,10 @@ module.exports = function() {
 		} );
 	}
 
-	app.get( '/theme', ( req, res ) => res.redirect( '/design' ) );
-	// Interim redirect before we make `/themes` the canonical showcase URL.
-	app.get( [ '/themes', '/themes/*' ], ( req, res ) => {
-		res.redirect( '/design' + req.originalUrl.slice( '/themes'.length ) );
+	app.get( '/theme', ( req, res ) => res.redirect( '/themes' ) );
+	// Interim redirect before this is handled on server route config level
+	app.get( [ '/design', '/design/*' ], ( req, res ) => {
+		res.redirect( '/themes' + req.originalUrl.slice( '/design'.length ) );
 	} );
 
 	sections

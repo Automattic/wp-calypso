@@ -34,17 +34,17 @@ const themesMeta = {
 		title: 'WordPress Themes',
 		description: 'Beautiful, responsive, free and premium WordPress themes ' +
 			'for your photography site, portfolio, magazine, business website, or blog.',
-		canonicalUrl: 'https://wordpress.com/design',
+		canonicalUrl: 'https://wordpress.com/themes',
 	},
 	free: {
 		title: 'Free WordPress Themes',
 		description: 'Discover Free WordPress Themes on the WordPress.com Theme Showcase.',
-		canonicalUrl: 'https://wordpress.com/design/free',
+		canonicalUrl: 'https://wordpress.com/themes/free',
 	},
 	premium: {
 		title: 'Premium WordPress Themes',
 		description: 'Discover Premium WordPress Themes on the WordPress.com Theme Showcase.',
-		canonicalUrl: 'https://wordpress.com/design/premium',
+		canonicalUrl: 'https://wordpress.com/themes/premium',
 	}
 };
 
@@ -98,7 +98,7 @@ const ThemeShowcase = React.createClass( {
 		const tierSection = tier === 'all' ? '' : `/${ tier }`;
 		const filterSection = filter ? `/filter/${ filter }` : '';
 
-		const url = `/design${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
+		const url = `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
 		page( buildUrl( url, searchString ) );
 	},
 
@@ -152,7 +152,7 @@ const ThemeShowcase = React.createClass( {
 					select={ this.onTierSelect } />
 				{ this.showUploadButton() && <Button className="themes__upload-button" compact icon
 					onClick={ this.onUploadClick }
-					href={ siteSlug ? `/design/upload/${ siteSlug }` : '/design/upload' }>
+					href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }>
 					<Gridicon icon="cloud-upload" />
 					{ translate( 'Upload Theme' ) }
 				</Button>

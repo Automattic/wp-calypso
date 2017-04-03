@@ -14,7 +14,7 @@ describe( 'pathToSection', () => {
 			expect( wpcomImplementation( '/' ) ).to.equal( 'reader' );
 		} );
 		it( 'should handle cases where path and section have different names', () => {
-			expect( wpcomImplementation( '/design' ) ).to.equal( 'themes' );
+			expect( wpcomImplementation( '/themes' ) ).to.equal( 'themes' );
 			expect( wpcomImplementation( '/read' ) ).to.equal( 'reader' );
 		} );
 		it( 'should handle deep paths', () => {

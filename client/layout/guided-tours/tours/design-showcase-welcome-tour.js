@@ -37,7 +37,7 @@ export const DesignShowcaseWelcomeTour = makeTour(
 	<Tour
 		name="designShowcaseWelcome"
 		version="20161206"
-		path="/design"
+		path="/themes"
 		when={ and(
 			isNewUser,
 			isEnabled( 'guided-tours/design-showcase-welcome' ),

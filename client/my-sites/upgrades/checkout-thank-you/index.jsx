@@ -168,7 +168,7 @@ const CheckoutThankYou = React.createClass( {
 			const themeId = purchases[ 0 ].meta;
 			this.props.activatedTheme( 'premium/' + themeId, this.props.selectedSite.ID );
 
-			page.redirect( '/design/' + this.props.selectedSite.slug );
+			page.redirect( '/themes/' + this.props.selectedSite.slug );
 		}
 	},
 

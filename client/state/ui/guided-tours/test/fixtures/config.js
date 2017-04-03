@@ -21,7 +21,7 @@ export const MainTour = makeTour(
 );
 
 export const ThemesTour = makeTour(
-	<Tour name="themes" version="test" path="/design" when={ () => true } >
+	<Tour name="themes" version="test" path="/themes" when={ () => true } >
 		<Step name="init" placement="right" when={ inSection( 'themes' ) } >
 			Hey there! Want me to show you how to find a great theme for your site?
 		</Step>
