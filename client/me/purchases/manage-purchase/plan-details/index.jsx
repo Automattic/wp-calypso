@@ -3,6 +3,7 @@
  */
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -12,19 +13,17 @@ import ClipboardButtonInput from 'components/clipboard-button-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
-import { getPurchase, isDataLoading } from '../utils';
+import { getPurchase, isDataLoading } from '../../utils';
 import { isJetpackPlan, isFreeJetpackPlan } from 'lib/products-values';
 import { getPluginsForSite } from 'state/plugins/premium/selectors';
 
-class ManagePurchaseApiKeys extends Component {
+class PurchasePlanDetails extends Component {
 	renderPluginLabel( slug ) {
 		switch ( slug ) {
 			case 'vaultpress':
-				return 'VaultPress';
+				return this.props.translate( 'Backups and security scanning API key' );
 			case 'akismet':
-				return 'Akismet';
-			case 'polldaddy':
-				return 'Polldaddy';
+				return this.props.translate( 'Anti-spam API key' );
 		}
 	}
 
@@ -43,10 +42,6 @@ class ManagePurchaseApiKeys extends Component {
 			<Card>
 				<QueryPluginKeys siteId={ selectedSite.ID } />
 				{ pluginList.map( ( plugin, i ) => {
-					if ( 'vaultpress' === plugin.slug )
-						plugin.key = '5bGeNE9vQceyS2VL2ZmIbL4bdaaa3vVR5Omu4kZ311';
-					else
-						plugin.key = '0078qyIuSZow';
 					return (
 						<FormFieldset key={ i }>
 							<FormLabel htmlFor={ `plugin-${ plugin.slug }` }>{ this.renderPluginLabel( plugin.slug ) }</FormLabel>
@@ -63,4 +58,4 @@ export default connect(
 	( state, props ) => ( {
 		pluginList: getPluginsForSite( state, props.selectedSite.ID ),
 	} )
-)( ManagePurchaseApiKeys );
+)( localize( PurchasePlanDetails ) );
