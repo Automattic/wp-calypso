@@ -370,12 +370,27 @@ const PluginsMain = React.createClass( {
 					{ this.renderDocumentHead() }
 					<SidebarNavigation />
 					<QueryJetpackModules siteId={ selectedSiteId } />
-					<JetpackManageErrorPage
-						template="optInManage"
-						siteId={ selectedSiteId }
-						title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
-						section="plugins"
-						featureExample={ this.getMockPluginItems() } />
+					{ this.props.canSelectedJetpackSiteManage === false
+						? (
+							<JetpackManageErrorPage
+								template="optInManage"
+								siteId={ selectedSiteId }
+								title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
+								section="plugins"
+								featureExample={ this.getMockPluginItems() } />
+						)
+						: (
+							<div>
+								<EmptyContent
+									title=""
+									section="plugins"
+									illustration=""
+									/>
+								<FeatureExample>{ this.getMockPluginItems() }</FeatureExample>
+							</div>
+						)
+					}
+
 				</Main>
 			);
 		}
@@ -439,7 +454,7 @@ export default connect(
 			selectedSiteId: selectedSite && selectedSite.ID,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
-			canSelectedJetpackSiteManage: selectedSite && isJetpackModuleActive( state, selectedSite.ID, 'manage' ),
+			canSelectedJetpackSiteManage: isJetpackModuleActive( state, selectedSite.ID, 'manage' ),
 			canSelectedJetpackSiteUpdateFiles: selectedSite && canJetpackSiteUpdateFiles( state, selectedSite.ID ),
 			canJetpackSiteUpdateFiles: siteId => canJetpackSiteUpdateFiles( state, siteId ),
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
