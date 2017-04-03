@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
+import { find } from 'lodash';
 
 import Gridicon from 'gridicons';
 import Item from './item';
@@ -149,9 +150,6 @@ export default class SubMasterbarNav extends Component {
 	}
 
 	getSelected() {
-		return this.props.options.reduce(
-			( selected, current ) => this.isSelected( current ) ? current : selected,
-			this.props.fallback
-		);
+		return find( this.props.options, ( option ) => this.isSelected( option ) ) || this.props.fallback;
 	}
 }
