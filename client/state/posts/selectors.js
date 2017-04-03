@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, find, has, get, includes, isEqual, omit, some } from 'lodash';
+import { filter, find, has, get, includes, isEqual, map, omit, some } from 'lodash';
 import createSelector from 'lib/create-selector';
 import moment from 'moment-timezone';
 
@@ -464,3 +464,12 @@ export function getSitePostsByTerm( state, siteId, taxonomy, termId ) {
 			find( post.terms[ taxonomy ], postTerm => postTerm.ID === termId );
 	} );
 }
+
+export const getPostRevisions = createSelector(
+	( state, siteId, postId ) => {
+		return map(
+			get( state.posts.revisions, [ siteId, postId ], [] ),
+			normalizePostForDisplay );
+	},
+	( state ) => [ state.posts.revisions ]
+);
