@@ -47,19 +47,21 @@ export default class ProductForm extends Component {
 			}
 		);
 		return (
-			<FoldableCard
-				icon=""
-				expanded={ true }
-				className="product-variations"
-				header={ ( <FormToggle onChange={ this.handleToggle } checked={ this.state.isVariation }>
-				{variationToggleDescription}
-				</FormToggle>
-				) }
-			>
-				{ this.state.isVariation && (
-					<ProductVariationTypesForm />
-				) }
-			</FoldableCard>
+			<div className="woocommerce products__form">
+				<FoldableCard
+					icon=""
+					expanded={ true }
+					className="products__variation-card"
+					header={ ( <FormToggle onChange={ this.handleToggle } checked={ this.state.isVariation }>
+					{variationToggleDescription}
+					</FormToggle>
+					) }
+				>
+					{ this.state.isVariation && (
+						<ProductVariationTypesForm />
+					) }
+				</FoldableCard>
+			</div>
 		);
 	}
 

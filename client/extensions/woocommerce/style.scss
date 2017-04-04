@@ -1,32 +1,37 @@
-.foldable-card.product-variations .foldable-card__content {
-	padding: 0;
-	border: 0;
-}
+.woocommerce {
 
-.product-variation-types-form__wrapper {
-	padding: 24px;
-	border-top: 1px solid $gray-light;
-}
-
-.product-variation-types-form__group {
-
-	.product-variation-types-form__fieldset, .product-variation-types-form__labels {
-		display: flex;
+	.foldable-card.products__variation-card .foldable-card__content {
+		padding: 0;
+		border: 0;
 	}
 
-	.product-variation-types-form__fieldset {
-		margin-bottom: 16px;
+	.products__variation-types-form-wrapper {
+		padding: 24px;
+		border-top: 1px solid $gray-light;
 	}
 
-	.product-variation-types-form__field {
-		width: 50%;
+	.products__variation-types-form-group {
+
+		.products__variation-types-form-fieldset,
+		.products__variation-types-form-labels {
+			display: flex;
+		}
+
+		.products__variation-types-form-fieldset {
+			margin-bottom: 16px;
+		}
+
+		.products__variation-types-form-field {
+			width: 50%;
+		}
+
+		.products__variation-types-form-label {
+			width: 35%;
+		}
+
+		.token-field {
+			margin-left: 16px;
+		}
 	}
 
-	.product-variation-types-form__label {
-		width: 35%;
-	}
-
-	.token-field {
-		margin-left: 16px;
-	}
 }

@@ -14,7 +14,7 @@ export default class Dashboard extends Component {
 
 	render() {
 		return (
-			<Main className="woocommerce__main">
+			<Main className="woocommerce dashboard">
 				<SectionHeader label="WooCommerce Store" />
 				<Card>
 					<p>This is the start of something great!</p>

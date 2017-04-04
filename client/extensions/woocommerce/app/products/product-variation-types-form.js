@@ -64,13 +64,13 @@ export default class ProductVariationTypesForm extends Component {
 
 	renderInputs( variation, index ) {
 		return (
-			<div key={index} className="product-variation-types-form__fieldset">
+			<div key={ index } className="products__variation-types-form-fieldset">
 				<FormTextInput
 					placeholder={ i18n.translate( 'Color' ) }
 					value={ variation.type }
 					name="type"
 					onChange={ ( e ) => this.updateType( index, e ) }
-					className="product-variation-types-form__field"
+					className="products__variation-types-form-field"
 				/>
 				<TokenField
 					placeholder={ i18n.translate( 'Comma separate these' ) }
@@ -91,18 +91,19 @@ export default class ProductVariationTypesForm extends Component {
 	render() {
 		const inputs = this.state.variations.map( this.renderInputs, this );
 		return (
-			<div className="product-variation-types-form__wrapper">
+			<div className="products__variation-types-form-wrapper">
 				<strong>{ i18n.translate( 'Variation types' ) }</strong>
 				<p>
 					{ i18n.translate(
-						'Let\'s add some variations! A common {{em}}variation type{{/em}} is color. The {{em}}values{{/em}} would be the colors the product is available in.',
+						'Let\'s add some variations! A common {{em}}variation type{{/em}} is color. ' +
+						'The {{em}}values{{/em}} would be the colors the product is available in.',
 						{ components: { em: <em /> } }
 					) }
 				</p>
 
-				<div className="product-variation-types-form__group">
-					<div className="product-variation-types-form__labels">
-						<FormLabel className="product-variation-types-form__label">{ i18n.translate( 'Variation type' ) }</FormLabel>
+				<div className="products__variation-types-form-group">
+					<div className="products__variation-types-form-labels">
+						<FormLabel className="products__variation-types-form-label">{ i18n.translate( 'Variation type' ) }</FormLabel>
 						<FormLabel>{ i18n.translate( 'Variation values' ) }</FormLabel>
 					</div>
 					{inputs}
