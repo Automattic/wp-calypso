@@ -309,7 +309,11 @@ export const queries = ( () => {
 
 	return createReducer( {}, {
 		[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query, themes, found } ) => {
-			return applyToManager( state, siteId, 'receive', true, themes, { query, found } );
+			return applyToManager(
+				// Always 'patch' to avoid overwriting existing fields when receiving
+				// from a less rich endpoint such as /mine
+				state, siteId, 'receive', true, themes, { query, found, patch: true }
+			);
 		},
 		[ THEME_DELETE_SUCCESS ]: ( state, { siteId, themeId } ) => {
 			return applyToManager( state, siteId, 'removeItem', false, themeId );
