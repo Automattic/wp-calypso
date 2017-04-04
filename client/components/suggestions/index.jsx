@@ -7,7 +7,7 @@ import {
 	noop,
 	pick,
 	pickBy,
-	pull,
+	without,
 	negate,
 	isEmpty,
 	take,
@@ -194,7 +194,7 @@ class Suggestions extends React.Component {
 		//If this is valid full taxonomy:filter we want to show alternatives instead of suggestions
 		if ( filter !== undefined && includes( terms[ taxonomy ], filter ) ) {
 			// remove what is already in input and limit number of suggestions
-			const otherSuggestions = pull( terms[ taxonomy ], filter );
+			const otherSuggestions = without( terms[ taxonomy ], filter );
 			// limit or show all
 			filtered[ taxonomy ] = showAll === taxonomy ? otherSuggestions : take( otherSuggestions, limit );
 			return filtered;
