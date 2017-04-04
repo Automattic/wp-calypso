@@ -50,8 +50,8 @@ export const WpcomPluginInstallButton = props => {
 		} else {
 			props.recordTracksEvent( 'calypso_automated_transfer_plugin_install_ineligible',
 				{
-					eligibilityHolds: eligibilityHolds.join( ', ' ),
-					eligibilityWarnings: eligibilityWarnings.join( ', ' ),
+					eligibility_holds: eligibilityHolds.join( ', ' ),
+					eligibility_warnings: eligibilityWarnings.join( ', ' ),
 					plugin_slug: plugin.slug
 				} );
 
