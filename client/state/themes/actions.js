@@ -23,8 +23,6 @@ import {
 	THEME_DELETE,
 	THEME_DELETE_SUCCESS,
 	THEME_DELETE_FAILURE,
-	THEME_FILTERS_REQUEST_SUCCESS,
-	THEME_FILTERS_REQUEST_FAILURE,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
@@ -833,20 +831,6 @@ export function hideThemePreview() {
 	return {
 		type: THEME_PREVIEW_STATE,
 		themeId: null
-	};
-}
-
-export function receiveThemeFilters( data ) {
-	return {
-		type: THEME_FILTERS_REQUEST_SUCCESS,
-		data,
-	};
-}
-
-export function receiveThemeFiltersFailure( error ) {
-	return {
-		type: THEME_FILTERS_REQUEST_FAILURE,
-		error,
 	};
 }
 

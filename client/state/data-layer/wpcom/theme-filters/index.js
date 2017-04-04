@@ -1,22 +1,33 @@
 /**
+ * External dependencies
+ */
+import i18n from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
-import { THEME_FILTERS_REQUEST } from 'state/action-types';
 import {
-	receiveThemeFilters,
-	receiveThemeFiltersFailure,
-} from 'state/themes/actions';
-import wpcom from 'lib/wp';
+	THEME_FILTERS_REQUEST,
+	THEME_FILTERS_ADD,
+} from 'state/action-types';
+import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { errorNotice } from 'state/notices/actions';
 
-export const fetchThemeFilters = ( { dispatch } ) =>
-	wpcom.req.get( '/theme-filters', { apiVersion: '1.2' } )
-		.then( ( themeFilters ) => {
-			dispatch( receiveThemeFilters( themeFilters ) );
-		} )
-		.catch( ( error ) => {
-			dispatch( receiveThemeFiltersFailure( error ) );
-		} );
+const fetchFilters = ( { dispatch }, action ) => {
+	dispatch( http( {
+		method: 'GET',
+		apiVersion: '1.2',
+		path: '/theme-filters',
+	}, action ) );
+};
+
+const storeFilters = ( { dispatch }, action, next, data ) =>
+	dispatch( { type: THEME_FILTERS_ADD, filters: data } );
+
+const reportError = ( { dispatch } ) =>
+	dispatch( errorNotice( i18n.translate( 'Problem fetching theme filters.' ) ) );
 
 export default {
-	[ THEME_FILTERS_REQUEST ]: [ fetchThemeFilters ],
+	[ THEME_FILTERS_REQUEST ]: [ dispatchRequest( fetchFilters, storeFilters, reportError ) ],
 };
