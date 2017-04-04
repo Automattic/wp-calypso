@@ -51,7 +51,7 @@ class Suggestions extends React.Component {
 	}
 
 	setInitialState = ( input ) => {
-		const suggestions = this.narrowDown( input, this.state.showAll );
+		const suggestions = this.narrowDownAndSort( input, this.state.showAll );
 		const taxonomySuggestionsArray = this.createTaxonomySuggestionsArray( suggestions );
 		this.setState( {
 			suggestions,
@@ -144,7 +144,18 @@ class Suggestions extends React.Component {
 		return pickBy( suggestions, negate( isEmpty ) );
 	}
 
-	narrowDown = ( input, showAll = '' ) => {
+	/**
+	 * Returns an object containing lists of fliters keyed by taxnomies.
+	 * This function takes all available taxonomies and removes the ones that
+	 * do not match provided input param. At the end keys that have empty lists are removed.
+	 * showAll parameter if provided sidesteps the matching logic for the key value in showAll
+	 * and passes all filters for that key. For showAll also soome reordering happens - explained in code
+	 *
+	 * @param  {String}  input   text that will be matched against the taxonomies
+	 * @param  {String}  showAll taxonomy for which we want all filters
+	 * @return {Object}          filtered taxonomy:[ terms ] object
+	 */
+	narrowDownAndSort = ( input, showAll = '' ) => {
 		const [ taxonomy, filter ] = input.split( ':' );
 		if ( taxonomy === '' ) {
 			// empty string or just ":" or ":filter" -
@@ -186,10 +197,13 @@ class Suggestions extends React.Component {
 				continue;
 			}
 
-			//check if we have show all enabled for key
+			//check if we have showAll key match. If we have then don't filter, use all and reorder.
 			if ( showAll === key ) {
+				// split to terms matching an non matching to the input
 				const parts = partition( terms[ key ], term => term.indexOf( filterTerm ) !== -1 );
+				// sort matching so that the best hit is first
 				const matchingSorted = sortBy( parts[ 0 ], term => term.indexOf( filterTerm ) );
+				// concatenate mathing and non matchin - this is full set of filters just reordered.
 				filtered[ key ] = [ ...matchingSorted, ...parts[ 1 ] ];
 			} else {
 				filtered[ key ] = take(
@@ -230,7 +244,7 @@ class Suggestions extends React.Component {
 	}
 
 	onShowAllClick = ( category ) => {
-		const suggestions = this.narrowDown( this.props.input, category );
+		const suggestions = this.narrowDownAndSort( this.props.input, category );
 		this.setState( {
 			showAll: category,
 			suggestions,
