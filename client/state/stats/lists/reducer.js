@@ -75,11 +75,11 @@ export function items( state = {}, action ) {
 
 			return {
 				...state,
-				[ action.siteId ]: {
+				[ action.siteId ]: merge( {}, state[ action.siteId ], {
 					[ action.statType ]: {
 						[ queryKey ]: action.data
 					}
-				}
+				} )
 			};
 
 		case DESERIALIZE:
