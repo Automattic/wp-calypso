@@ -330,7 +330,7 @@ export class MySitesSidebar extends Component {
 				className={ this.itemLinkClass( [ '/domains' ], 'domains' ) }
 				link={ domainsLink }
 				onNavigate={ this.onNavigate }
-				icon="globe"
+				icon="domains"
 				preloadSectionName="upgrades"
 			>
 				<SidebarButton href={ addDomainLink }>
