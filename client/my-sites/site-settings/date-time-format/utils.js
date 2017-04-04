@@ -38,14 +38,13 @@ export function getLocalizedDate( timezoneString ) {
 const phpToMomentMapping = {
 	d: 'DD',
 	D: 'ddd',
-	jS: 'Do',
 	j: 'D',
 	l: 'dddd',
 	N: 'E',
-	// See "jS"
+	// "S" is andled via custom check
 	//S: '',
 	w: 'd',
-	// Moment.js equivalent of 'z' (0 based) is 'DDD' (1 based), so it must be adjusted
+	// Moment.js equivalent of "z" (0 based) is "DDD" (1 based), so it must be adjusted
 	//z: 'DDD',
 	W: 'W',
 	F: 'MMMM',
@@ -115,7 +114,7 @@ export function phpToMomentDatetimeFormat( momentDate, formatString ) {
 
 		// Check if character is a token mapped as a function
 		if ( 'z' === c ) {
-			// 'DDD' is 1 based but 'z' is 0 based
+			// "DDD" is 1 based but "z" is 0 based
 			return `[${ momentDate.format( 'DDD' ) - 1 }]`;
 		}
 		if ( 't' === c ) {
