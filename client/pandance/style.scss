@@ -25,6 +25,21 @@
 
 .card {
 	box-shadow: none;
+	margin-bottom: 0;
+}
+
+.section {
+	.card {
+		padding: 80px 30px;
+	}
+}
+
+.section-title {
+	font-size: 18px;
+	font-weight: bold;
+	@include breakpoint( ">660px" ) {
+		font-size: 24px;
+	}
 }
 
 .site-header {
@@ -52,8 +67,14 @@
 }
 
 .hours {
+	text-align: center;
+
 	.card {
 		background: #000;
 		color: #fff;
 	}
+}
+
+.contact-info {
+	text-align: center;
 }

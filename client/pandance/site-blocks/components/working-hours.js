@@ -5,8 +5,9 @@ import React from 'react';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 
-export default props => <div className="hours">
+export default props => <div className="hours section">
 	<Card>
+		<h3 className="section-title">Hours</h3>
 		<dl>
 			<dt>Monday – Friday</dt>
 			<dd>11AM—7PM</dd>
