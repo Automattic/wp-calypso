@@ -32,8 +32,18 @@ describe( 'wpcom-api', () => {
 				.get( '/rest/v1.2/read/teams' )
 				.reply( 200, successfulResponse )
 				.get( '/rest/v1.2/read/teams' )
+				.reply( 200, successfulResponse )
+				.get( '/rest/v1.2/read/teams' )
 				.reply( 500, new Error() )
 		) );
+
+		it( 'should pass the action foward', () => {
+			const dispatch = sinon.spy();
+			const action = requestTeams();
+
+			handleTeamsRequest( { dispatch }, action, nextSpy, );
+			expect( nextSpy ).calledWith( action );
+		} );
 
 		it( 'should dispatch RECEIVE action when request completes', ( done ) => {
 			const dispatch = sinon.spy( action => {
