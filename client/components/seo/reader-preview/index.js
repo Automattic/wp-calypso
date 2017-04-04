@@ -37,15 +37,10 @@ export class ReaderPreview extends PureComponent {
 }
 
 ReaderPreview.propTypes = {
-	siteTitle: PropTypes.string,
-	siteSlug: PropTypes.string,
-	siteIcon: PropTypes.string,
-	postTitle: PropTypes.string,
+	site: PropTypes.object,
+	post: PropTypes.object,
 	postExcerpt: PropTypes.string,
-	postImage: PropTypes.string,
-	postDate: PropTypes.string,
-	authorName: PropTypes.string,
-	authorIcon: PropTypes.string
+	postImage: PropTypes.string
 };
 
 export default ReaderPreview;
