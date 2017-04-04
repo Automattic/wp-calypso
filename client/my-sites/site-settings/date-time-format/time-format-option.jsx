@@ -13,8 +13,8 @@ import FormInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { phpToMomentDatetimeFormat } from 'lib/formatting';
 import { defaultTimeFormats } from './default-formats';
+import { phpToMomentDatetimeFormat } from './utils';
 
 export const TimeFormatOption = ( {
 	disabled,
@@ -38,7 +38,7 @@ export const TimeFormatOption = ( {
 					onChange={ setTimeFormat }
 					value={ format }
 				/>
-				<span>{ localizedDate.format( phpToMomentDatetimeFormat( format ) ) }</span>
+				<span>{ phpToMomentDatetimeFormat( localizedDate, format ) }</span>
 			</FormLabel>
 		) }
 		<FormLabel className="date-time-format__custom-field">
@@ -61,7 +61,7 @@ export const TimeFormatOption = ( {
 				<FormSettingExplanation>
 					{ isCustom && timeFormat &&
 						translate( 'Preview: %s', {
-							args: localizedDate.format( phpToMomentDatetimeFormat( timeFormat ) ),
+							args: phpToMomentDatetimeFormat( localizedDate, timeFormat ),
 							comment: 'Date/time format preview'
 						} )
 					}

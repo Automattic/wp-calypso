@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { keys, trim } from 'lodash';
+import { trim } from 'lodash';
 import stripTags from 'striptags';
 
 /**
@@ -324,87 +324,6 @@ function unescapeAndFormatSpaces( str ) {
 	return decodeEntities( str ).replace( / /g, nbsp );
 }
 
-/**
- * Mapping object between PHP date() and Moment.js format() tokens.
- * The commented tokens exist in PHP but have no direct Moment.js equivalent.
- *
- * The "S" case is an exception, since it's only used in conjunction with "j":
- * PHP `date( 'jS' )` returns "1st", which is equivalent to `moment().format( 'Do' )`)
- *
- * @see http://php.net/manual/en/function.date.php#refsect1-function.date-parameters
- * @see http://momentjs.com/docs/#/displaying/format/
- *
- * @type {Object}
- */
-const phpToMomentMapping = {
-	// Days
-	d: 'DD',
-	D: 'ddd',
-	jS: 'Do',
-	j: 'D',
-	l: 'dddd',
-	N: 'E',
-	// See "jS"
-	//S: '',
-	w: 'd',
-	z: 'DDD',
-	// Week
-	W: 'W',
-	// Month
-	F: 'MMMM',
-	m: 'MM',
-	M: 'MMM',
-	n: 'M',
-	// Moment.js has no "t" token equivalent, but a `moment().daysInMonth()` function
-	//t: '',
-	// Year
-	// Moment.js has no "L" token equivalent, but a `moment().isLeapYear()` function
-	//L: '',
-	o: 'Y',
-	Y: 'YYYY',
-	y: 'YY',
-	// Time
-	a: 'a',
-	A: 'A',
-	// Moment.js has no "B" token equivalent
-	//B: '',
-	g: 'h',
-	G: 'H',
-	h: 'hh',
-	H: 'HH',
-	i: 'mm',
-	s: 'ss',
-	u: 'SSSSSS',
-	v: 'SSS',
-	// Timezone
-	e: 'z',
-	// Moment.js has no "I" token, but a `moment().isDST()` function
-	//I: '',
-	O: 'ZZ',
-	P: 'Z',
-	// Moment.js has no "T" token equivalent
-	//T: '',
-	// Moment.js has no "Z" token equivalent
-	//Z: '',
-	// Full Date/Time
-	c: 'YYYY-MM-DDTHH:mm-ssZ',
-	r: 'ddd, DD MMM YYYY HH:mm:ss ZZ',
-	U: 'X',
-};
-
-/**
- * Convert a PHP datetime format string into a Moment.js one.
- *
- * @param  {String} str PHP datetime format string
- * @return {String} Moment.js datetime format string
- */
-function phpToMomentDatetimeFormat( str ) {
-	return str.replace(
-		new RegExp( keys( phpToMomentMapping ).join( '|' ), 'g' ),
-		match => phpToMomentMapping[ match ],
-	);
-}
-
 module.exports = {
 	decodeEntities: decodeEntities,
 	interpose: interpose,
@@ -415,5 +334,4 @@ module.exports = {
 	capitalPDangit: capitalPDangit,
 	parseHtml: parseHtml,
 	unescapeAndFormatSpaces: unescapeAndFormatSpaces,
-	phpToMomentDatetimeFormat,
 };
