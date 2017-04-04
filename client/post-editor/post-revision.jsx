@@ -25,14 +25,10 @@ class PostRevision extends React.Component {
 				<h1>{ this.props.translate( 'Post History' ) }</h1>
 				<ul>
 					{ map( this.props.revisions, ( revision ) => {
-						// TODO: revision's title is empty, need to di
-						// deeper, probably some discrepancies between
-						// REST 1.1 / 2.0 output
-
 						return (
 							<li key={ revision.id }>
 								<h2>{ revision.title }</h2>
-								<p>{ revision.content.rendered }</p>
+								<p>{ revision.content }</p>
 							</li>
 						);
 					} ) }

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { keyBy } from 'lodash';
+import { keyBy, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,10 +17,23 @@ export default function revisions( state = {}, action ) {
 			...state,
 			[ siteId ]: {
 				...state[ siteId ],
-				[ postId ]: keyBy( action.revisions, 'id' )
+				[ postId ]: keyBy( map( action.revisions, normalizeRevisionForState ), 'id' )
 			}
 		};
 	}
 
 	return state;
+}
+
+function normalizeRevisionForState( revision ) {
+	if ( ! revision ) {
+		return revision;
+	}
+
+	return {
+		...revision,
+		title: revision.title.rendered,
+		content: revision.content.rendered,
+		excerpt: revision.excerpt.rendered,
+	};
 }
