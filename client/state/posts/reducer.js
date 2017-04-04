@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { get, set, omit, omitBy, isEqual, reduce, merge, findKey, mapValues, mapKeys, keyBy } from 'lodash';
+import { get, set, omit, omitBy, isEqual, reduce, merge, findKey, mapValues, mapKeys } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +20,6 @@ import {
 	POST_REQUEST_FAILURE,
 	POST_RESTORE,
 	POST_RESTORE_FAILURE,
-	POST_REVISIONS_RECEIVE,
 	POST_SAVE,
 	POST_SAVE_SUCCESS,
 	POSTS_RECEIVE,
@@ -32,6 +31,7 @@ import {
 } from 'state/action-types';
 import counts from './counts/reducer';
 import likes from './likes/reducer';
+import revisions from './revisions/reducer';
 import {
 	getSerializedPostsQuery,
 	isTermsEqual,
@@ -303,21 +303,6 @@ export function edits( state = {}, action ) {
 		case SERIALIZE:
 		case DESERIALIZE:
 			return {};
-	}
-
-	return state;
-}
-
-export function revisions( state = {}, action ) {
-	if ( action.type === POST_REVISIONS_RECEIVE ) {
-		const { siteId, postId } = action;
-		return {
-			...state,
-			[ siteId ]: {
-				...state[ siteId ],
-				[ postId ]: keyBy( action.revisions, 'id' )
-			}
-		};
 	}
 
 	return state;

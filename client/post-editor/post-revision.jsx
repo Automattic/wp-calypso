@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getPostRevisions } from 'state/posts/selectors';
+import { getPostRevisions } from 'state/posts/revisions/selectors';
 import QueryPostRevisions from 'components/data/query-post-revisions';
 
 class PostRevision extends React.Component {

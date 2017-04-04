@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestSitePostRevisions } from 'state/posts/actions';
+import { requestSitePostRevisions } from 'state/posts/revisions/actions';
 
 class QueryPostRevisions extends Component {
 	componentWillMount() {
