@@ -5,7 +5,7 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { isEqual, includes } from 'lodash';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -62,25 +62,6 @@ class StatsModule extends Component {
 		if ( nextProps.query !== this.props.query && this.state.loaded ) {
 			this.setState( { loaded: false } );
 		}
-	}
-
-	shouldComponentUpdate( nextProps ) {
-		for ( const key in nextProps ) {
-			if ( this.props[ key ] !== nextProps[ key ] ) {
-				if ( key !== 'data' ) {
-					return true; // found shallow unequal prop, should update.
-				}
-
-				// Special case for data prop, do deep equality check.
-				const isDeepEqual = isEqual( this.props[ key ], nextProps[ key ] );
-				if ( ! isDeepEqual ) {
-					return true; // data has changed, the comoponent should update.
-				}
-			}
-		}
-
-		// All keys are either shallow equal or deep equal, no updated required.
-		return false;
 	}
 
 	getModuleLabel() {
