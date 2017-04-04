@@ -20,7 +20,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 
 function combineMiddlewares( ...middlewares ) {
 	return function( req, res, next ) {
-		req.context = getEnhancedContext( req );
+		req.context = getEnhancedContext( req, res );
 		applyMiddlewares( req.context, ...middlewares, () => {
 			next();
 		} );
@@ -28,14 +28,15 @@ function combineMiddlewares( ...middlewares ) {
 }
 
 // TODO: Maybe merge into getDefaultContext().
-function getEnhancedContext( req ) {
+function getEnhancedContext( req, res ) {
 	return Object.assign( {}, req.context, {
 		isLoggedIn: req.cookies.wordpress_logged_in,
 		isServerSide: true,
 		path: req.url,
 		pathname: req.path,
 		params: req.params,
-		query: req.query
+		query: req.query,
+		res
 	} );
 }
 
