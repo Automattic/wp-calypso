@@ -4,7 +4,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -90,9 +89,10 @@ export class EditorNotice extends Component {
 				}
 
 				if ( 'page' === type ) {
-					return translate( 'Page published on {{siteLink/}}!', {
+					return translate( 'Page published on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 						components: {
-							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>
+							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>,
+							a: <a href={ `/page/${ site.slug }` } />,
 						},
 						comment: 'Editor: Message displayed when a page is published, with a link to the site it was published on.'
 					} );
@@ -115,9 +115,10 @@ export class EditorNotice extends Component {
 				}
 
 				if ( 'page' === type ) {
-					return translate( 'Page scheduled on {{siteLink/}}!', {
+					return translate( 'Page scheduled on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 						components: {
-							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>
+							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>,
+							a: <a href={ `/page/${ site.slug }` } />,
 						},
 						comment: 'Editor: Message displayed when a page is scheduled, with a link to the site it was scheduled on.'
 					} );
@@ -140,9 +141,10 @@ export class EditorNotice extends Component {
 				}
 
 				if ( 'page' === type ) {
-					return translate( 'Page privately published on {{siteLink/}}!', {
+					return translate( 'Page privately published on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 						components: {
-							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>
+							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>,
+							a: <a href={ `/page/${ site.slug }` } />,
 						},
 						comment: 'Editor: Message displayed when a page is published privately,' +
 							' with a link to the site it was published on.'
@@ -179,9 +181,10 @@ export class EditorNotice extends Component {
 				}
 
 				if ( 'page' === type ) {
-					return translate( 'Page updated on {{siteLink/}}!', {
+					return translate( 'Page updated on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 						components: {
-							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>
+							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>,
+							a: <a href={ `/page/${ site.slug }` } />,
 						},
 						comment: 'Editor: Message displayed when a page is updated, with a link to the site it was updated on.'
 					} );
@@ -194,35 +197,6 @@ export class EditorNotice extends Component {
 					comment: 'Editor: Message displayed when a post is updated, with a link to the site it was updated on.'
 				} );
 		}
-	}
-
-	renderAddAnotherPage() {
-		const { message, site, translate, type } = this.props;
-		if (
-			'page' !== type ||
-			! includes( [ 'published', 'publishedPrivately', 'scheduled', 'updated' ], message )
-		) {
-			return null;
-		}
-
-		return (
-			<span>
-				{ translate( '{{a}}Add another page{{/a}}.', {
-					components: {
-						a: <a href={ `/page/${ site.slug }` } />,
-					},
-				} ) }
-			</span>
-		);
-	}
-
-	renderNoticeText( text ) {
-		return (
-			<span className="editor-notice__text">
-				<span>{ text }</span>
-				{ this.renderAddAnotherPage() }
-			</span>
-		);
 	}
 
 	renderNoticeAction() {
@@ -258,9 +232,8 @@ export class EditorNotice extends Component {
 				{ siteId && <QueryPostTypes siteId={ siteId } /> }
 				{ text && (
 					<Notice
-						{ ...{ status, onDismissClick } }
+						{ ...{ status, text, onDismissClick } }
 						showDismiss={ true }
-						text={ this.renderNoticeText( text ) }
 					>
 						{ this.renderNoticeAction() }
 					</Notice>
