@@ -24,25 +24,28 @@ function generateExtensionsModuleString( reducerRequires ) {
 function getReducersSync( extensionDirs = [] ) {
 	return extensionDirs
 		.filter( ( extensionDir ) => fs.existsSync( getReducerPath( extensionDir ) ) )
-		.map( ( extensionDir ) => generateReducerRequireString( extensionDir ) );
+		.map( generateReducerRequireString );
 }
 
 function getExtensionsModuleSync( extensionDirs ) {
 	return generateExtensionsModuleString( getReducersSync( extensionDirs ) );
 }
 
-function getReducersAsync( extensionDirs = [] ) {
-	return new Promise( ( resolveAll ) => {
-		Promise.all(
-			extensionDirs.map( ( extensionDir ) => {
-				return new Promise( ( resolveOne ) => {
-					fs.access( getReducerPath( extensionDir ), fs.constants.F_OK, ( err ) => {
-						resolveOne( ( ! err ) && generateReducerRequireString( extensionDir ) );
-					} );
-				} );
-			} )
-		).then( ( reducerRequires ) => resolveAll( compact( reducerRequires ) ) );
+function pathExists( testPath ) {
+	return new Promise( ( resolve ) => {
+		fs.access( testPath, fs.constants.F_OK, ( err ) => resolve( ! err ) );
 	} );
+}
+
+function getReducersAsync( extensionDirs = [] ) {
+	const dirsWithReducers = Promise.all(
+		extensionDirs.map( ( extensionDir ) =>
+			pathExists( getReducerPath( extensionDir ) )
+				.then( ( exists ) => exists && extensionDir ) )
+	).then( compact );
+
+	return dirsWithReducers.then( dirs =>
+		dirs.map( generateReducerRequireString ) );
 }
 
 function getExtensionsModuleAsync( extensionDirs ) {
