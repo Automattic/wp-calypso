@@ -20,11 +20,17 @@ export default createReducer( {
 	},
 	selected: [ 1, 2, 3, 4, 5, 6, 7 ],
 }, {
-	[PANDANCE_SELECTED_TOGGLE]: (state, action) => ( {
-		...state,
-		selected: state.selected.includes( action.id ) ?
-			without( state.selected, action.id ) : [ action.id, ...state.selected ]
-	} ),
+	[PANDANCE_SELECTED_TOGGLE]: (state, action) => {
+		const nextSelected = state.selected.includes( action.id ) ?
+			without( state.selected, action.id ) : [ action.id, ...state.selected ];
+
+		nextSelected.sort();
+
+		return {
+			...state,
+			selected: nextSelected
+		};
+	},
 	[PANDANCE_BUSINESS_NAME_ENTER]: (state, action) => ( {
 		...state,
 		business: {

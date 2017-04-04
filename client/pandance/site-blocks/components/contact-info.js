@@ -6,6 +6,10 @@ import React from 'react';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormTextArea from 'components/forms/form-textarea';
+
 export default props => <div>
 	<SectionHeader label="Contact Us"></SectionHeader>
 	<Card>
@@ -20,3 +24,9 @@ export default props => <div>
 	</Card>
 </div>;
 
+export const EditContactInfo = prop => <div>
+	<FormFieldset>
+		<FormLabel>Message</FormLabel>
+		<FormTextArea placeholder="You're awesome!"></FormTextArea>
+	</FormFieldset>
+</div>;

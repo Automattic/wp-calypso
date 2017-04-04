@@ -1,8 +1,8 @@
-import Logo from './components/logo';
+import { Logo, EditLogo } from './components/logo';
 import ContactForm from './components/contact-form';
-import WorkingHours from './components/working-hours';
-import SocialMedia from './components/social-media';
-import ContactInfo from './components/contact-info';
+import { WorkingHours, EditWorkingHours } from './components/working-hours';
+import { SocialMedia, EditSocialMedia } from './components/social-media';
+import { ContactInfo, EditContactInfo } from './components/contact-info';
 import Map from './components/map';
 import Header from './components/header';
 
@@ -10,7 +10,8 @@ export default [
 	{
 		id: 1,
 		name: 'Logo',
-		component: Logo
+		component: Logo,
+		editComponent: EditLogo
 	},
 	{
 		id: 2,
@@ -20,12 +21,14 @@ export default [
 	{
 		id: 3,
 		name: 'Working hours',
-		component: WorkingHours
+		component: WorkingHours,
+		editComponent: EditWorkingHours,
 	},
 	{
 		id: 4,
 		name: 'Contact Info',
-		component: ContactInfo
+		component: ContactInfo,
+		editComponent: EditContactInfo,
 	},
 	{
 		id: 5,
@@ -40,6 +43,7 @@ export default [
 	{
 		id: 7,
 		name: 'Social Media',
-		component: SocialMedia
+		component: SocialMedia,
+		editComponent: EditSocialMedia
 	},
 ];
