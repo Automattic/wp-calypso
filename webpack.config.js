@@ -69,7 +69,7 @@ const webpackConfig = {
 			}
 		]
 	},
-	resolve: require( 'webpack.config.resolve' ),
+	resolve: require( 'webpack.config.resolve' ).client,
 	resolveLoader: {
 		root: [ __dirname ]
 	},

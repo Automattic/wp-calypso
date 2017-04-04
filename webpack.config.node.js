@@ -92,11 +92,7 @@ var webpackConfig = {
 			}
 		]
 	},
-	resolve: {
-		extensions: [ '', '.json', '.js', '.jsx' ],
-		root: [ path.join( __dirname, 'server' ), path.join( __dirname, 'client' ), __dirname ],
-		modulesDirectories: [ 'node_modules' ]
-	},
+	resolve: require( 'webpack.config.resolve' ).server,
 	node: {
 		// Tell webpack we want to supply absolute paths for server code,
 		// specifically needed by the client code bundler.
