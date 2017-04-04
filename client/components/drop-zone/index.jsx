@@ -16,7 +16,8 @@ import { localize } from 'i18n-calypso';
  */
 import RootChild from 'components/root-child';
 import {
-	showDropZone, hideDropZone
+	hideDropZone,
+	showDropZone,
 } from 'state/components/drop-zone/actions';
 
 export const DropZone = React.createClass( {
