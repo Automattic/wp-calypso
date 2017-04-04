@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestFeedSearch } from 'state/reader/feed-search/actions';
+import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 
 class QueryFeedSearch extends Component {
 	static propTypes = {

@@ -17,7 +17,7 @@ import siteBlocks from './site-blocks/reducer';
 import tags from './tags/reducer';
 import thumbnails from './thumbnails/reducer';
 import teams from './teams/reducer';
-import feedSearch from './feed-search/reducer';
+import feedSearches from './feed-searches/reducer';
 
 export default combineReducers( {
 	feeds,
@@ -31,5 +31,5 @@ export default combineReducers( {
 	tags,
 	thumbnails,
 	teams,
-	feedSearch,
+	feedSearches,
 } );

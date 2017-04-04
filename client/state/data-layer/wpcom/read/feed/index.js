@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { READER_FEED_SEARCH_REQUEST } from 'state/action-types';
-import { receiveFeedSearch } from 'state/reader/feed-search//actions';
+import { receiveFeedSearch } from 'state/reader/feed-searches/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
