@@ -6,9 +6,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isDropZoneVisible } from '../selectors';
+import { isDropZoneVisible } from '../';
 
-describe( 'selectors', () => {
+describe( 'isDropZoneVisible()', () => {
 	it( 'should return false as a default state', () => {
 		expect( isDropZoneVisible( { dropZone: undefined } ) ).to.be.false;
 	} );
@@ -16,8 +16,8 @@ describe( 'selectors', () => {
 	it( 'should return isVisible state', () => {
 		expect( isDropZoneVisible( {
 			dropZone: {
-				isVisible: 'mytest'
+				isVisible: 'myTest'
 			}
-		} ) ).to.be.eql( 'mytest' );
+		} ) ).to.be.eql( 'myTest' );
 	} );
 } );
