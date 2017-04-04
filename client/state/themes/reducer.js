@@ -19,6 +19,7 @@ import {
 	THEME_ACTIVATE_FAILURE,
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE_SUCCESS,
+	THEME_FILTERS_ADD,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
@@ -39,6 +40,7 @@ import { createReducer, isValidStateWithSchema } from 'state/utils';
 import {
 	queriesSchema,
 	activeThemesSchema,
+	themeFiltersSchema,
 	themeRequestErrorsSchema,
 } from './schema';
 import themesUI from './themes-ui/reducer';
@@ -375,6 +377,10 @@ export const themePreviewVisibility = createReducer( null, {
 	[ THEME_PREVIEW_STATE ]: ( state, { themeId } ) => ( themeId )
 } );
 
+export const themeFilters = createReducer( null, {
+	[ THEME_FILTERS_ADD ]: ( state, { filters } ) => ( filters )
+}, themeFiltersSchema );
+
 export default combineReducers( {
 	queries,
 	queryRequests,
@@ -390,5 +396,6 @@ export default combineReducers( {
 	themesUI,
 	uploadTheme,
 	themePreviewOptions,
-	themePreviewVisibility
+	themePreviewVisibility,
+	themeFilters,
 } );

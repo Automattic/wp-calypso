@@ -108,3 +108,15 @@ export const themeRequestErrorsSchema = {
 		}
 	}
 };
+
+export const themeFiltersSchema = {
+	type: 'object',
+	patternProperties: {
+		'^\\w+$': {
+			type: 'array',
+			items: { type: 'string' },
+			uniqueItems: true
+		},
+	},
+	additionalProperties: false,
+};
