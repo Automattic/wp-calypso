@@ -4,9 +4,9 @@
  * External dependencies
  */
 const debugFactory = require( 'debug' );
-const nodeResolver = require( 'eslint-import-resolver-node' );
 const path = require( 'path' );
 const webpackResolver = require( 'eslint-import-resolver-webpack' );
+const merge = require( 'lodash/merge' );
 
 /**
  * Internal dependencies
@@ -18,25 +18,15 @@ const webpackResolveConfig = require( './webpack.config.resolve' );
  */
 const log = debugFactory( 'eslint-plugin-import:resolver:wp-calypso-resolver' );
 
-const nodeResolverConfig = {
-	extensions: [
-		'.js',
-		'.jsx',
-	],
-	moduleDirectory: [
-		'node_modules',
-		'server'
-	],
-	paths: [
-		path.join( __dirname, 'test' ),
-		path.join( __dirname, 'server' ),
-		path.join( __dirname, 'client' ),
-	]
+const clientResolverConfig = {
+	config: {
+		resolve: webpackResolveConfig.client,
+	},
 };
 
-const webpackResolverConfig = {
+const serverResolverConfig = {
 	config: {
-		resolve: webpackResolveConfig,
+		resolve: webpackResolveConfig.server,
 	},
 };
 
@@ -44,13 +34,22 @@ exports.interfaceVersion = 2;
 
 exports.resolve = function( source, file ) {
 	log( 'Resolving', source, 'from:', file );
-	// If the file is from the client folder, use Webpack for resolution.
-	// Otherwise, use Node's resolver.
-	if ( file.indexOf( '/client/' ) > 0 ) {
-		log( 'Client file detected, resolving with Webpack' );
-		return webpackResolver.resolve( source, file, webpackResolverConfig );
+	// If the file is from...
+	//   - a 'test' folder:     assume valid resolution.
+	//   - the 'client' folder: use client Webpack config for resolution.
+	//   - the 'server' folder: use server Webpack config for resolution.
+	//   - none of above:       assume valid resolution.
+	if ( file.indexOf( '/test/' ) > 0 ) {
+		log( 'Test file found, skipping resolution checks' );
+		return { found: true, path: null };
+	} else if ( file.indexOf( '/client/' ) > 0 ) {
+		log( 'Resolving with webpack.config.js' );
+		return webpackResolver.resolve( source, file, clientResolverConfig );
+	} else if ( file.indexOf( '/server/' ) > 0 ) {
+		log( 'Resolving with webpack.node.js' );
+		return webpackResolver.resolve( source, file, serverResolverConfig );
 	}
 
-	log( 'Resolving with Node resolver' );
-	return nodeResolver.resolve( source, file, nodeResolverConfig );
+	log( 'Modules outside of client and server directories are not parsed, skipping' );
+	return { found: true, path: null };
 };
