@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { canCurrentUser, isJetpackModuleActive } from 'state/selectors';
+import { canCurrentUser } from 'state/selectors';
 import DocumentHead from 'components/data/document-head';
 import {
 	getSiteSlug,
@@ -104,7 +104,7 @@ export default connect(
 
 		return {
 			showButtons: siteId && canManageOptions,
-			showConnections: ! siteId || ! isJetpack || isJetpackModuleActive( state, siteId, 'publicize' ),
+			showConnections: siteId && isJetpack,
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 		};
