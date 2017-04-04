@@ -19,3 +19,41 @@
 .message {
 	padding: 15px;
 }
+
+
+/* Blocks */
+
+.card {
+	box-shadow: none;
+}
+
+.site-header {
+	align-items: center;
+	background: url("/calypso/images/pandance/pizza-header-img.jpg") no-repeat center;
+	background-size: cover;
+	display: flex;
+	justify-content: center;
+	min-height: 250px;
+
+	@include breakpoint( ">660px" ) {
+		min-height: 600px;
+	}
+}
+
+.site-title {
+	color: #fff;
+	font-size: 24px;
+	font-weight: bold;
+
+	@include breakpoint( ">660px" ) {
+		font-size: 48px;
+		text-shadow: 2px 2px rgba(0,0,0, .35);
+	}
+}
+
+.hours {
+	.card {
+		background: #000;
+		color: #fff;
+	}
+}

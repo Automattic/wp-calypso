@@ -32,14 +32,12 @@ export const ContentPreview = props => <div className="content-preview">
 		<p>Here is a preview of your site with the things you wanted to see on it. Take a look, then lets get a bit more info from you to make it your own.</p>
 		<p><Button primary={ true } onClick={ () => page( '/pandance/customize' ) }>Customize</Button></p>
 	</div>
-	<Card>
 	{
 		SITE_BLOCKS
 			.filter( block => props.selected.includes( block.id ) )
 			.map( block => <PreviewBlock id={ block.id } />
 		)
 	}
-	</Card>
 	<Button primary={ true } onClick={ () => page( '/pandance/customize' ) }>Customize</Button>
 </div>;
 
