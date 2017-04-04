@@ -26,7 +26,6 @@ import wpcomLib from 'lib/wp';
 import notices from 'notices';
 import siteList from 'lib/sites-list';
 import analytics from 'lib/analytics';
-import i18n from 'lib/i18n-utils';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { isHappychatAvailable } from 'state/happychat/selectors';
@@ -203,7 +202,7 @@ const HelpContact = React.createClass( {
 
 	submitKayakoTicket: function( contactForm ) {
 		const { subject, message, howCanWeHelp, howYouFeel, siteSlug } = contactForm;
-		const { locale } = this.state.olark;
+		const { currentUserLocale } = this.props;
 		const site = sites.getSite( siteSlug );
 
 		const ticketMeta = [
@@ -216,7 +215,7 @@ const HelpContact = React.createClass( {
 
 		this.setState( { isSubmitting: true } );
 
-		wpcom.submitKayakoTicket( subject, kayakoMessage, locale, this.props.clientSlug, ( error ) => {
+		wpcom.submitKayakoTicket( subject, kayakoMessage, currentUserLocale, this.props.clientSlug, ( error ) => {
 			if ( error ) {
 				// TODO: bump a stat here
 				notices.error( error.message );
@@ -247,11 +246,11 @@ const HelpContact = React.createClass( {
 
 	submitSupportForumsTopic: function( contactForm ) {
 		const { subject, message } = contactForm;
-		const locale = this.props.currentUserLocale;
+		const { currentUserLocale } = this.props;
 
 		this.setState( { isSubmitting: true } );
 
-		wpcom.submitSupportForumsTopic( subject, message, locale, this.props.clientSlug, ( error, data ) => {
+		wpcom.submitSupportForumsTopic( subject, message, currentUserLocale, this.props.clientSlug, ( error, data ) => {
 			if ( error ) {
 				// TODO: bump a stat here
 				notices.error( error.message );
@@ -568,7 +567,8 @@ const HelpContact = React.createClass( {
 	},
 
 	getContactFormCommonProps: function( variationSlug ) {
-		const { olark, isSubmitting } = this.state;
+		const { isSubmitting } = this.state;
+		const { currentUserLocale } = this.props;
 
 		// Let the user know we only offer support in English.
 		// We only need to show the message if:
@@ -577,7 +577,7 @@ const HelpContact = React.createClass( {
 		//    requests are sent to the language specific forums (for popular languages)
 		//    we don't tell the user that support is only offered in English.
 		const showHelpLanguagePrompt =
-			( olark.locale !== i18n.getLocaleSlug() ) &&
+			( config( 'support_locales' ).indexOf( currentUserLocale ) === -1 ) &&
 			SUPPORT_FORUM !== variationSlug;
 
 		return {

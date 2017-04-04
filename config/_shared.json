@@ -31,6 +31,7 @@
 	"happychat_url": "https://happychat.io/customer",
 	"google_oauth_client_id": "543610697398-l287fumouns096o4os9l9fs1svh5esjc.apps.googleusercontent.com",
 	"facebook_app_id": "611241942420191",
+	"support_locales": [ "en", "es", "pt-br" ],
 	"languages": [
 		{ "value": 2, "langSlug": "af", "name": "Afrikaans", "wpLocale": "af" },
 		{ "value": 418, "langSlug": "als", "name": "Alemannisch", "wpLocale": "" },

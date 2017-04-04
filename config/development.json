@@ -29,6 +29,7 @@
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"happychat_url": "https://happychat-io-staging.go-vip.co/customer",
+	"support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"account-recovery": true,
 		"ad-tracking": false,
