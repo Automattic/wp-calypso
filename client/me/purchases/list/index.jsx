@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -62,10 +63,10 @@ const PurchasesList = React.createClass( {
 			content = (
 				<CompactCard className="purchases-list__no-content">
 					<EmptyContent
-						title={ this.translate( 'Looking to upgrade?' ) }
-						line={ this.translate( 'Our plans give your site the power to thrive. ' +
+						title={ this.props.translate( 'Looking to upgrade?' ) }
+						line={ this.props.translate( 'Our plans give your site the power to thrive. ' +
 								'Find the plan that works for you.' ) }
-						action={ this.translate( 'Upgrade Now' ) }
+						action={ this.props.translate( 'Upgrade Now' ) }
 						actionURL={ '/plans' }
 						illustration={ '/calypso/images/drake/drake-whoops.svg' }
 						isCompact />
@@ -74,14 +75,12 @@ const PurchasesList = React.createClass( {
 		}
 
 		return (
-			<span>
-				<Main className="purchases-list">
-					<MeSidebarNavigation />
-					<PurchasesHeader section={ 'purchases' } />
-					<QueryUserPurchases userId={ user.get().ID } />
-					{ content }
-				</Main>
-			</span>
+			<Main className="purchases-list">
+				<MeSidebarNavigation />
+				<PurchasesHeader section={ 'purchases' } />
+				<QueryUserPurchases userId={ user.get().ID } />
+				{ content }
+			</Main>
 		);
 	}
 } );
@@ -93,4 +92,4 @@ export default connect(
 		isFetchingUserPurchases: isFetchingUserPurchases( state )
 	} ),
 	undefined
-)( PurchasesList );
+)( localize( PurchasesList ) );

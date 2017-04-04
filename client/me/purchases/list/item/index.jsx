@@ -3,6 +3,7 @@
  */
 import classNames from 'classnames';
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -34,13 +35,13 @@ const PurchaseItem = React.createClass( {
 		if ( showCreditCardExpiringWarning( purchase ) ) {
 			return (
 				<Notice isCompact status="is-error" icon="spam">
-					{ this.translate( 'Credit card expiring soon' ) }
+					{ this.props.translate( 'Credit card expiring soon' ) }
 				</Notice>
 			);
 		}
 
 		if ( isRenewing( purchase ) ) {
-			return this.translate( 'Renews on %s', {
+			return this.props.translate( 'Renews on %s', {
 				args: purchase.renewMoment.format( 'LL' )
 			} );
 		}
@@ -49,7 +50,7 @@ const PurchaseItem = React.createClass( {
 			if ( purchase.expiryMoment < this.moment().add( 30, 'days' ) ) {
 				return (
 					<Notice isCompact status="is-error" icon="spam">
-						{ this.translate( 'Expires %(timeUntilExpiry)s', {
+						{ this.props.translate( 'Expires %(timeUntilExpiry)s', {
 							args: {
 								timeUntilExpiry: purchase.expiryMoment.fromNow()
 							},
@@ -59,7 +60,7 @@ const PurchaseItem = React.createClass( {
 				);
 			}
 
-			return this.translate( 'Expires on %s', {
+			return this.props.translate( 'Expires on %s', {
 				args: purchase.expiryMoment.format( 'LL' )
 			} );
 		}
@@ -67,7 +68,7 @@ const PurchaseItem = React.createClass( {
 		if ( isExpired( purchase ) ) {
 			return (
 				<Notice isCompact status="is-error" icon="spam">
-					{ this.translate( 'Expired %(timeSinceExpiry)s', {
+					{ this.props.translate( 'Expired %(timeSinceExpiry)s', {
 						args: {
 							timeSinceExpiry: purchase.expiryMoment.fromNow()
 						},
@@ -78,11 +79,11 @@ const PurchaseItem = React.createClass( {
 		}
 
 		if ( isIncludedWithPlan( purchase ) ) {
-			return this.translate( 'Included with Plan' );
+			return this.props.translate( 'Included with Plan' );
 		}
 
 		if ( isOneTimePurchase( purchase ) ) {
-			return this.translate( 'Never Expires' );
+			return this.props.translate( 'Never Expires' );
 		}
 
 		return null;
@@ -144,4 +145,4 @@ const PurchaseItem = React.createClass( {
 	}
 } );
 
-export default PurchaseItem;
+export default localize( PurchaseItem );
