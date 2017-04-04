@@ -7,7 +7,6 @@ import { find, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isWithinBreakpoint } from 'lib/viewport';
 import Navbar from './navbar';
 import Dropdown from './dropdown';
 import Item from './item';
@@ -29,43 +28,18 @@ export default class SubMasterbarNav extends Component {
 		options: []
 	}
 
-	state = {
-		collapsed: true
-	};
-
-	componentDidMount() {
-		this.onResize();
-
-		window.addEventListener( 'resize', this.onResize );
-	}
-
-	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.onResize );
-	}
-
 	render() {
-		if ( this.state.isDropdown ) {
-			return this.renderDropdown();
-		}
-
-		return this.renderNavbar();
-	}
-
-	renderDropdown() {
 		return (
-			<Dropdown selected={ this.getSelected() }>
-				{ ( { onSelect } ) => (
-					this.renderItems( onSelect )
-				) }
-			</Dropdown>
-		);
-	}
-
-	renderNavbar() {
-		return (
-			<Navbar>
-				{ this.renderItems( noop ) }
-			</Navbar>
+			<div className="sub-masterbar-nav">
+				<Dropdown selected={ this.getSelected() }>
+					{ ( { onSelect } ) => (
+						this.renderItems( onSelect )
+					) }
+				</Dropdown>
+				<Navbar>
+					{ this.renderItems( noop ) }
+				</Navbar>
+			</div>
 		);
 	}
 
@@ -80,12 +54,6 @@ export default class SubMasterbarNav extends Component {
 				href={ item.uri }
 			/>
 		);
-	}
-
-	onResize = () => {
-		this.setState( () => ( {
-			isDropdown: isWithinBreakpoint( '<660px' )
-		} ) );
 	}
 
 	isSelected( option ) {

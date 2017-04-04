@@ -36,7 +36,7 @@ export default class Navbar extends Component {
 
 	render() {
 		const className = classNames(
-			'sub-masterbar-nav',
+			'sub-masterbar-nav__navbar',
 			{ 'is-collapsed': this.state.collapsed }
 		);
 

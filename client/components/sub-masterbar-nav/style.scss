@@ -1,4 +1,5 @@
-.sub-masterbar-nav {
+.sub-masterbar-nav__dropdown,
+.sub-masterbar-nav__navbar {
 	display: flex;
 	flex-direction: column;
 	padding: 56px 20px 28px;
@@ -22,6 +23,19 @@
 	}
 }
 
+.sub-masterbar-nav__dropdown {
+	@include breakpoint( ">660px" ) {
+		display: none;
+	}
+}
+
+.sub-masterbar-nav__navbar {
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
+}
+
+
 .sub-masterbar-nav__wrapper {
 	flex: 1;
 	position: relative;
@@ -42,7 +56,8 @@
 		border-bottom-left-radius: 5px;
 		border-bottom-right-radius: 5px;
 
-		.sub-masterbar-nav.is-collapsed & {
+		.sub-masterbar-nav__dropdown.is-collapsed &,
+		.sub-masterbar-nav__navbar.is-collapsed & {
 			display: none;
 		}
 	}

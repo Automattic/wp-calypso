@@ -34,7 +34,7 @@ export default class Dropdown extends Component {
 
 	render() {
 		const className = classNames(
-			'sub-masterbar-nav',
+			'sub-masterbar-nav__dropdown',
 			{ 'is-collapsed': this.state.collapsed }
 		);
 
