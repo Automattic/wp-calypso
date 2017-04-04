@@ -17,7 +17,7 @@ module.exports = {
 	],
 	settings: {
 		'import/resolver': {
-			'.eslint-resolver.js': {}
+			'./.eslint-resolver.js': {}
 		}
 	},
 	rules: {
