@@ -193,8 +193,10 @@ class Suggestions extends React.Component {
 
 		//If this is valid full taxonomy:filter we want to show alternatives instead of suggestions
 		if ( filter !== undefined && includes( terms[ taxonomy ], filter ) ) {
-			// remove what is already in input and limit number of suggestions
+			// remove what is already in input - so we can add it to the beggining of the list
 			const otherSuggestions = without( terms[ taxonomy ], filter );
+			// add back at the beggining of the list so it will showup first.
+			otherSuggestions.unshift( filter );
 			// limit or show all
 			filtered[ taxonomy ] = showAll === taxonomy ? otherSuggestions : take( otherSuggestions, limit );
 			return filtered;
