@@ -13,12 +13,12 @@ import Item from '../item';
 
 describe( 'SubMasterbarNav', () => {
 	const options = [
-		{ label: 'sites', uri: '/sites' },
-		{ label: 'more' }
+		{ label: 'sites', uri: '/sites', icon: 'star' },
+		{ label: 'more', uri: '/more', icon: 'star' }
 	];
 
 	it( 'should render a navigation bar given a list of options', () => {
-		const wrapper = shallow( <SubMasterbarNav options={ options } uri="" /> );
+		const wrapper = shallow( <SubMasterbarNav options={ options } uri="/" /> );
 		const items = wrapper.find( Item );
 
 		expect( items.length ).to.equal( 2 );
