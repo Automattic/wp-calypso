@@ -15,6 +15,7 @@ import {
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
 import editor from './editor/reducer';
+import dropZone from './drop-zone/reducer';
 import guidedTour from './guided-tours/reducer';
 import queryArguments from './query-arguments/reducer';
 import reader from './reader/reducer';
@@ -81,6 +82,7 @@ const reducer = combineReducers( {
 	isPreviewShowing,
 	queryArguments,
 	selectedSiteId,
+	dropZone,
 	guidedTour,
 	editor,
 	reader,

@@ -18,7 +18,7 @@ import RootChild from 'components/root-child';
 import {
 	hideDropZone,
 	showDropZone,
-} from 'state/components/drop-zone/actions';
+} from 'state/ui/drop-zone/actions';
 
 export const DropZone = React.createClass( {
 	propTypes: {
