@@ -17,19 +17,18 @@ import { enterBusinessName, enterBusinessDescription } from 'state/pandance/acti
 
 export const BusinessInfo  = props => <div>
 	<FormFieldset>
-		<FormLabel>Name</FormLabel>
-		<FormTextInput placeholder="Manuel Pizza"
-					   value={ props.business.name }
+		<FormLabel>What is the name of your business?</FormLabel>
+		<FormTextInput value={ props.business.name }
 					   onChange={ event => props.enterBusinessName( event.target.value ) } />
 	</FormFieldset>
 	<FormFieldset>
-		<FormLabel>Business description</FormLabel>
-		<FormTextInput placeholder="The best pizzaria in town"
+		<FormLabel>In a few words, describe your business?</FormLabel>
+		<FormTextInput placeholder="ex. Traditional pizzeria in New York"
 					   value={ props.business.description }
 					   onChange={ event => props.enterBusinessDescription( event.target.value ) } />
 	</FormFieldset>
 
-	<Button primary={ true } onClick={ () => page( '/pandance/blocks' ) }>Next</Button>
+	<Button primary={ true } onClick={ () => page( '/pandance/blocks' ) }>Create Site</Button>
 </div>;
 
 export default connect( ( state, props ) => ( {

@@ -1,3 +1,80 @@
+#content {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.pandance {
+	padding: 15px;
+}
+
 .pandance button {
 	color: red; /* :-) */
+}
+
+.content-preview {
+	margin-left: -15px;
+	margin-right: -15px;
+}
+
+.message {
+	padding: 15px;
+}
+
+
+/* Blocks */
+
+.card {
+	box-shadow: none;
+	margin-bottom: 0;
+}
+
+.section {
+	.card {
+		padding: 80px 30px;
+	}
+}
+
+.section-title {
+	font-size: 18px;
+	font-weight: bold;
+	@include breakpoint( ">660px" ) {
+		font-size: 24px;
+	}
+}
+
+.site-header {
+	align-items: center;
+	background: url("/calypso/images/pandance/pizza-header-img.jpg") no-repeat center;
+	background-size: cover;
+	display: flex;
+	justify-content: center;
+	min-height: 250px;
+
+	@include breakpoint( ">660px" ) {
+		min-height: 600px;
+	}
+}
+
+.site-title {
+	color: #fff;
+	font-size: 24px;
+	font-weight: bold;
+
+	@include breakpoint( ">660px" ) {
+		font-size: 48px;
+		text-shadow: 2px 2px rgba(0,0,0, .35);
+	}
+}
+
+.hours {
+	text-align: center;
+
+	.card {
+		background: #000;
+		color: #fff;
+	}
+}
+
+.contact-info {
+	text-align: center;
 }

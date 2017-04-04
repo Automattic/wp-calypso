@@ -3,7 +3,9 @@
  */
 import React from 'react';
 
-export default props => <div>
-	<img src="/calypso/images/pandance/header.jpg" style={ { width: '100%' } } />
+export default props => <div className="site-header section">
+
+	<h1 className="site-title">Manuel's Pizzeria</h1> 
+	
 </div>;
 

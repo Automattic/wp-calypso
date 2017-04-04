@@ -42,6 +42,8 @@ export class Blocks extends React.Component {
 
 	render() {
 		return <div>
+			<h2>Choose a few things to get your site started.</h2>
+			<p>We will help you start a site so you can tell the world about your business right away. This is just the start of your online presence, you can add to it later.</p>
 				{
 					SITE_BLOCKS.map( block => <BlockItem
 						id={ block.id }
@@ -50,7 +52,7 @@ export class Blocks extends React.Component {
 						onBlockToggle={ this.boundOnBlockToggle } />
 					)
 				}
-			<Button primary={ true } onClick={ () => page( '/pandance/content-preview' ) }>Next</Button>
+			<Button primary={ true } onClick={ () => page( '/pandance/content-preview' ) }>Continue</Button>
 		</div>;
 	}
 }

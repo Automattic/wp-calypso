@@ -16,7 +16,9 @@ import { enterBusinessName, enterBusinessDescription } from 'state/pandance/acti
 
 export default props => <div>
 	<SectionHeader label="We’re Open"></SectionHeader>
+export default props => <div className="hours section">
 	<Card>
+		<h3 className="section-title">Hours</h3>
 		<dl>
 			<dt>Monday – Friday</dt>
 			<dd>11AM—7PM</dd>

@@ -13,8 +13,8 @@ import ImageEditor from 'blocks/image-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 
-export default props => <div style={ { textAlign: 'center' } }>
-	<img src="/calypso/images/pandance/manuel-logo.jpg" style={ { height: '128px' } } />
+export default props => <div className="logo">
+	
 </div>;
 
 class ImageEditorExample extends Component {
