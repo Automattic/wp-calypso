@@ -4,9 +4,7 @@
  * External dependencies
  */
 const debugFactory = require( 'debug' );
-const path = require( 'path' );
 const webpackResolver = require( 'eslint-import-resolver-webpack' );
-const merge = require( 'lodash/merge' );
 
 /**
  * Internal dependencies
