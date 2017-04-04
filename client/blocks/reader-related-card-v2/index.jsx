@@ -18,21 +18,10 @@ import Gravatar from 'components/gravatar';
 import FollowButton from 'reader/follow-button';
 import { getPostUrl, getStreamUrl } from 'reader/route';
 import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
-import safeImageUrl from 'lib/safe-image-url';
-import resizeImageUrl from 'lib/resize-image-url';
+import ReaderFeaturedVideo from 'blocks/reader-featured-video';
+import ReaderFeaturedImage from 'blocks/reader-featured-image';
 
 const RELATED_IMAGE_WIDTH = 385; // usual width of featured images in related post card
-
-function FeaturedImage( { image, href } ) {
-	const uri = resizeImageUrl( safeImageUrl( image.uri ), { w: RELATED_IMAGE_WIDTH } )
-	return (
-		<div className="reader-related-card-v2__featured-image" href={ href } style={ {
-			backgroundImage: 'url(' + uri + ')',
-			backgroundSize: 'cover',
-			backgroundRepeat: 'no-repeat',
-			backgroundPosition: '50% 50%'
-		} } ></div> );
-}
 
 function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 	const siteUrl = getStreamUrl( post.feed_ID, post.site_ID );
@@ -105,20 +94,42 @@ export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSit
 	const postClickTracker = partial( onPostClick, post );
 	const siteClickTracker = partial( onSiteClick, post );
 
+	const canonicalMedia = post.canonical_media;
+	let featuredAsset;
+	if ( ! canonicalMedia ) {
+		featuredAsset = null;
+	} else if ( canonicalMedia.mediaType === 'video' ) {
+		featuredAsset = <ReaderFeaturedVideo
+			{ ...canonicalMedia }
+			videoEmbed={ canonicalMedia }
+			className={ 'reader-related-card-v2__featured-image' }
+			href={ postLink }
+			onThumbnailClick={ postClickTracker }
+			allowPlaying={ false }
+		/>;
+	} else {
+		featuredAsset = <ReaderFeaturedImage
+			imageUrl={ canonicalMedia.src }
+			imageWidth={ RELATED_IMAGE_WIDTH }
+			onClick={ postClickTracker }
+			href={ postLink }
+			className={ 'reader-related-card-v2__featured-image' }
+		/>;
+	}
+
 	return (
 		<Card className={ classes }>
 			{ siteId && ! site && <QueryReaderSite siteId={ siteId } /> }
 			<AuthorAndSiteFollow post={ post } site={ site } onSiteClick={ siteClickTracker } followSource={ followSource } />
+			{ featuredAsset }
 			<a href={ postLink } className="reader-related-card-v2__post reader-related-card-v2__link-block"
 				onClick={ postClickTracker } >
-					{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL }
-						onClick={ postClickTracker } /> }
-					<div className="reader-related-card-v2__site-info">
-						<h1 className="reader-related-card-v2__title">{ post.title }</h1>
-						<div className="reader-related-card-v2__excerpt post-excerpt">
-							{ featuredImage ? post.short_excerpt : post.better_excerpt_no_html }
-						</div>
+				<div className="reader-related-card-v2__site-info">
+					<h1 className="reader-related-card-v2__title">{ post.title }</h1>
+					<div className="reader-related-card-v2__excerpt post-excerpt">
+						{ featuredImage ? post.short_excerpt : post.better_excerpt_no_html }
 					</div>
+				</div>
 			</a>
 		</Card>
 	);
