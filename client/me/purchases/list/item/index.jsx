@@ -19,7 +19,9 @@ import {
 	purchaseType,
 	showCreditCardExpiringWarning
 } from 'lib/purchases';
+import { isPlan } from 'lib/products-values';
 import Notice from 'components/notice';
+import PlanIcon from 'components/plans/plan-icon';
 import paths from '../../paths';
 
 const PurchaseItem = React.createClass( {
@@ -91,10 +93,13 @@ const PurchaseItem = React.createClass( {
 
 	placeholder() {
 		return (
-			<span>
-				<div className="purchase-item__title" />
-				<div className="purchase-item__purchase-type" />
-				<div className="purchase-item__purchase-date" />
+			<span className="purchase-item__wrapper">
+				<div className="purchase-item__plan-icon" />
+				<div className="purchase-item__details">
+					<div className="purchase-item__title" />
+					<div className="purchase-item__purchase-type" />
+					<div className="purchase-item__purchase-date" />
+				</div>
 			</span>
 		);
 	},
@@ -118,13 +123,21 @@ const PurchaseItem = React.createClass( {
 			content = this.placeholder();
 		} else {
 			content = (
-				<span>
-					<div className="purchase-item__title">
-						{ getName( this.props.purchase ) }
+				<span className="purchase-item__wrapper">
+					<div className="purchase-item__plan-icon">
+						{ isPlan( this.props.purchase )
+							? <PlanIcon plan={ this.props.purchase.productSlug } />
+							: null
+						}
 					</div>
-					<div className="purchase-item__purchase-type">{ purchaseType( this.props.purchase ) }</div>
-					<div className="purchase-item__purchase-date">
-						{ this.renewsOrExpiresOn() }
+					<div className="purchase-item__details">
+						<div className="purchase-item__title">
+							{ getName( this.props.purchase ) }
+						</div>
+						<div className="purchase-item__purchase-type">{ purchaseType( this.props.purchase ) }</div>
+						<div className="purchase-item__purchase-date">
+							{ this.renewsOrExpiresOn() }
+						</div>
 					</div>
 				</span>
 			);
