@@ -18,13 +18,16 @@ const ANALYTICS_PAGE_TITLE = 'Reader';
 
 export default {
 	discover( context ) {
-		const blogId = config( 'discover_blog_id' ),
-			basePath = route.sectionify( context.path ),
-			fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Site > ' + blogId,
-			feedStore = feedStreamFactory( 'site:' + blogId ),
-			mcKey = 'discover';
+		const blogId = config( 'discover_blog_id' );
+		const basePath = route.sectionify( context.path );
+		const fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Site > ' + blogId;
+		const feedStore = feedStreamFactory( 'site:' + blogId );
+		const featuredStore = feedStreamFactory( `featured:${ blogId }` );
+
+		const mcKey = 'discover';
 
 		ensureStoreLoading( feedStore, context );
+		ensureStoreLoading( featuredStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_discover_viewed' );
@@ -50,6 +53,7 @@ export default {
 				isDiscoverStream={ true }
 				showBack={ false }
 				className="is-discover-stream is-site-stream"
+				featuredStore={ featuredStore }
 			/>,
 			document.getElementById( 'primary' ),
 			context.store
