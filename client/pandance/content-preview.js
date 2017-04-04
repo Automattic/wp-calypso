@@ -27,9 +27,11 @@ PreviewBlock.props = {
 	id: React.PropTypes.number.isRequired
 };
 
-export const ContentPreview = props => <div style={ { maxWidth: '800px', margin: '0 auto' } }>
-	<p>Here is what your website will look like:</p>
-	<p><Button primary={ true } onClick={ () => page( '/pandance/customize' ) }>Customize</Button></p>
+export const ContentPreview = props => <div className="content-preview">
+	<div className="message">
+		<p>Here is a preview of your site with the things you wanted to see on it. Take a look, then lets get a bit more info from you to make it your own.</p>
+		<p><Button primary={ true } onClick={ () => page( '/pandance/customize' ) }>Customize</Button></p>
+	</div>
 	<Card>
 	{
 		SITE_BLOCKS
