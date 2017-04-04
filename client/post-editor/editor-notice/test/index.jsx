@@ -67,14 +67,16 @@ describe( 'EditorNotice', () => {
 				action="view"
 				site={ {
 					URL: 'https://example.wordpress.com',
-					title: 'Example Site'
+					title: 'Example Site',
+					slug: 'example.wordpress.com',
 				} } />
 		);
 
 		expect( wrapper.find( Notice ) ).to.have.prop( 'text' ).eql(
-			translate( 'Page published on {{siteLink/}}!', {
+			translate( 'Page published on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 				components: {
-					siteLink: <a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">Example Site</a>
+					siteLink: <a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">Example Site</a>,
+					a: <a href="/page/example.wordpress.com" />,
 				}
 			} )
 		);
@@ -131,13 +133,15 @@ describe( 'EditorNotice', () => {
 				site={ {
 					URL: 'https://example.wordpress.com',
 					title: 'Example Site',
+					slug: 'example.wordpress.com',
 				} } />
 		);
 
 		expect( wrapper.find( Notice ) ).to.have.prop( 'text' ).eql(
-			translate( 'Page published on {{siteLink/}}!', {
+			translate( 'Page published on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 				components: {
-					siteLink: <a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">Example Site</a>
+					siteLink: <a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">Example Site</a>,
+					a: <a href="/page/example.wordpress.com" />,
 				}
 			} )
 		);
