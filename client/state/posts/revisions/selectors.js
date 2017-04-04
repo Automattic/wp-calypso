@@ -12,8 +12,8 @@ import { normalizePostForDisplay } from '../utils';
 export const getPostRevisions = createSelector(
 	( state, siteId, postId ) => {
 		return map(
-			get( state.posts.revisions, [ siteId, postId ], [] ),
+			get( state.posts.revisions.revisions, [ siteId, postId ], [] ),
 			normalizePostForDisplay );
 	},
-	( state ) => [ state.posts.revisions ]
+	( state ) => [ state.posts.revisions.revisions ]
 );
