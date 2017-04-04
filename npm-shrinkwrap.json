@@ -533,7 +533,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000640"
+      "version": "1.0.30000649"
     },
     "caseless": {
       "version": "0.12.0"
@@ -756,7 +756,7 @@
       "version": "1.0.2"
     },
     "convert-source-map": {
-      "version": "1.4.0"
+      "version": "1.5.0"
     },
     "cookie": {
       "version": "0.1.2"
@@ -1359,11 +1359,11 @@
       "version": "1.0.1"
     },
     "espree": {
-      "version": "3.4.0",
+      "version": "3.4.1",
       "dev": true,
       "dependencies": {
         "acorn": {
-          "version": "4.0.4",
+          "version": "5.0.3",
           "dev": true
         }
       }
@@ -1492,7 +1492,7 @@
       "version": "2.1.1"
     },
     "fbjs": {
-      "version": "0.8.11",
+      "version": "0.8.12",
       "dependencies": {
         "core-js": {
           "version": "1.2.7"
@@ -1641,11 +1641,14 @@
     "get-document": {
       "version": "1.0.0"
     },
+    "get-src": {
+      "version": "1.0.1"
+    },
     "get-stdin": {
       "version": "4.0.1"
     },
     "get-video-id": {
-      "version": "2.1.0"
+      "version": "2.1.4"
     },
     "getpass": {
       "version": "0.1.6",
@@ -1668,7 +1671,7 @@
       "version": "2.0.0"
     },
     "globals": {
-      "version": "9.16.0"
+      "version": "9.17.0"
     },
     "globby": {
       "version": "3.0.1",
@@ -2675,7 +2678,7 @@
       "version": "2.3.6"
     },
     "normalize-path": {
-      "version": "2.0.1"
+      "version": "2.1.1"
     },
     "normalize-range": {
       "version": "0.1.2"
@@ -3047,7 +3050,7 @@
       "version": "2.2.0"
     },
     "rc": {
-      "version": "1.1.7",
+      "version": "1.2.0",
       "dependencies": {
         "minimist": {
           "version": "1.2.0"
@@ -3248,6 +3251,9 @@
     },
     "relateurl": {
       "version": "0.2.7"
+    },
+    "remove-trailing-separator": {
+      "version": "1.0.1"
     },
     "repeat-element": {
       "version": "1.1.2"
@@ -3959,7 +3965,7 @@
       "dev": true
     },
     "type-is": {
-      "version": "1.6.14"
+      "version": "1.6.15"
     },
     "typedarray": {
       "version": "0.0.6"
@@ -4175,7 +4181,7 @@
           "dev": true
         },
         "ipaddr.js": {
-          "version": "1.2.0",
+          "version": "1.3.0",
           "dev": true
         },
         "lodash": {
@@ -4195,7 +4201,7 @@
           "dev": true
         },
         "proxy-addr": {
-          "version": "1.1.3",
+          "version": "1.1.4",
           "dev": true
         },
         "qs": {
