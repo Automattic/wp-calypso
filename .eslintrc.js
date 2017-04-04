@@ -22,8 +22,7 @@ module.exports = {
 	},
 	rules: {
 		camelcase: 0, // REST API objects include underscores
-		// NOTE: Some import rules are errors in client (Webpack's resolution) and
-		//       warnings in server (Node's module resolution).
+		// NOTE: Some import rules are errors in client but warnings in the server.
 		'import/default': 2,
 		'import/export': 2,
 		'import/named': 2,
