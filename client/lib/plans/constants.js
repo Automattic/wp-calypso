@@ -429,7 +429,7 @@ export const PLANS_LIST = {
 				FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 				FEATURE_ONE_CLICK_THREAT_RESOLUTION,
 				FEATURE_ADVANCED_SEO,
-				isEnabled( 'jetpack/google-analytics' ) && FEATURE_GOOGLE_ANALYTICS
+				FEATURE_GOOGLE_ANALYTICS
 			]
 		),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
@@ -474,7 +474,7 @@ export const PLANS_LIST = {
 				FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 				FEATURE_ONE_CLICK_THREAT_RESOLUTION,
 				FEATURE_ADVANCED_SEO,
-				isEnabled( 'jetpack/google-analytics' ) && FEATURE_GOOGLE_ANALYTICS
+				FEATURE_GOOGLE_ANALYTICS
 			]
 		),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
