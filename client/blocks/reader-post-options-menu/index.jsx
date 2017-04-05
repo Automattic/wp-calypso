@@ -107,8 +107,8 @@ class ReaderPostOptionsMenu extends React.Component {
 
 		return (
 			<span className={ classes }>
-				{ ! feed && post && post.feed_ID && <QueryReaderFeed feedId={ post.feed_ID } /> }
-				{ ! site && post && post.site_ID && <QueryReaderSite siteId={ post.site_ID } /> }
+				{ ! feed && post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
+				{ ! site && post && post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
 				<EllipsisMenu
 					className="reader-post-options-menu__ellipsis-menu"
 					popoverClassName="reader-post-options-menu__popover"
