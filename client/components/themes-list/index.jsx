@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { findDOMNode } from 'react-dom';
-import times from 'lodash/times';
 import { localize } from 'i18n-calypso';
 import { isEqual, noop } from 'lodash';
 import { InfiniteLoader, WindowScroller, AutoSizer, Grid } from 'react-virtualized';
@@ -155,9 +154,11 @@ export const ThemesList = React.createClass( {
 
 		return (
 			<div key={ key } className="themes-list__cell" style={ style }>
-				{ theme
-					? this.renderTheme( theme, index )
-					: this.renderLoadingPlaceholder( index )
+				{ index < this.props.themesCount &&
+					( theme
+							? this.renderTheme( theme, index )
+							: this.renderLoadingPlaceholder( index )
+					)
 				}
 			</div>
 		);
@@ -189,14 +190,6 @@ export const ThemesList = React.createClass( {
 				isPlaceholder={ true }
 			/>
 		);
-	},
-
-	// Invisible trailing items keep all elements same width in flexbox grid.
-	renderTrailingItems() {
-		const NUM_SPACERS = 11; // gives enough spacers for a theoretical 12 column layout
-		return times( NUM_SPACERS, function( i ) {
-			return <div className="themes-list--spacer" key={ 'themes-list--spacer-' + i } />;
-		} );
 	},
 
 	renderEmpty() {
