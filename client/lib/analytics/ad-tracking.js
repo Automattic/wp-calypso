@@ -290,6 +290,32 @@ function retarget() {
 }
 
 /**
+ * Fire ad tracking events for selected vertical
+ *
+ * @param {String} vertical - The name of the selected vertical
+ * @returns {void}
+ */
+function recordSelectedVertical( vertical ) {
+	// Facebook
+	if ( window.fbq ) {
+		window.fbq(
+			'trackCustom',
+			'VerticalSelectedEvent',
+			{ vertical }
+		);
+	}
+
+	// Adwords
+	if ( window.google_trackConversion ) {
+		window.google_trackConversion( {
+			google_conversion_id: GOOGLE_CONVERSION_ID,
+			google_custom_params: { vertical },
+			google_remarketing_only: true
+		} );
+	}
+}
+
+/**
  * A generic function that we can export and call to track plans page views with our ad partners
  */
 function retargetViewPlans() {
@@ -990,6 +1016,7 @@ module.exports = {
 	recordAddToCart,
 	recordViewCheckout,
 	recordOrder,
+	recordSelectedVertical,
 	recordSignupStart,
 	recordSignupCompletion
 };
