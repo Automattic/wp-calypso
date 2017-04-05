@@ -23,7 +23,7 @@ import { isPlan, isDomainProduct } from 'lib/products-values';
 import Notice from 'components/notice';
 import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'gridicons';
-import paths from '../../paths';
+import paths from '../paths';
 
 const PurchaseItem = React.createClass( {
 	propTypes: {
@@ -118,13 +118,13 @@ const PurchaseItem = React.createClass( {
 		);
 
 		let icon;
-		if ( isPlan( purchase ) ) {
+		if ( purchase && isPlan( purchase ) ) {
 			icon = (
 				<div className="purchase-item__plan-icon">
 					<PlanIcon plan={ purchase.productSlug } />
 				</div>
 			);
-		} else if ( isDomainProduct( purchase ) ) {
+		} else if ( purchase && isDomainProduct( purchase ) ) {
 			icon = (
 				<div className="purchase-item__plan-icon">
 					<Gridicon icon="domains" size={ 48 } />

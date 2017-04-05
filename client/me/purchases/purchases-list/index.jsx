@@ -15,7 +15,7 @@ import { getPurchasesBySite } from 'lib/purchases';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PurchasesHeader from './header';
-import PurchasesSite from './site';
+import PurchasesSite from '../purchases-site';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import userFactory from 'lib/user';
 const user = userFactory();

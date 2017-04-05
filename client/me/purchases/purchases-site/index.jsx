@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PurchaseItem from '../item';
+import PurchaseItem from '../purchase-item';
 import SectionHeader from 'components/section-header';
 
 const PurchasesSite = ( { isDomainOnly, isPlaceholder, name, purchases, slug, domain } ) => {

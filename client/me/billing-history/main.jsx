@@ -13,7 +13,7 @@ import Card from 'components/card';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import config from 'config';
 import CreditCards from 'me/purchases/credit-cards';
-import PurchasesHeader from '../purchases/list/header';
+import PurchasesHeader from '../purchases/purchases-list/header';
 import BillingHistoryTable from './billing-history-table';
 import UpcomingChargesTable from './upcoming-charges-table';
 import SectionHeader from 'components/section-header';
