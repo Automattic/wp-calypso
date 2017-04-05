@@ -1,23 +1,31 @@
-var React = require( 'react' ),
-	url = require( 'url' ),
-	defer = require( 'lodash/defer' ),
-	config = require( 'config' ),
-	classnames = require( 'classnames' ),
-	qs = require( 'qs' ),
-	page = require( 'page' );
+/**
+ * External Dependencies
+ */
+import React from 'react';
+import url from 'url';
+import { defer } from 'lodash';
+import config from 'config';
+import classnames from 'classnames';
+import qs from 'qs';
+import page from 'page';
 import SocialLogo from 'social-logos';
 
-var PopoverMenu = require( 'components/popover/menu' ),
-	PopoverMenuItem = require( 'components/popover/menu-item' ),
-	Gridicon = require( 'gridicons' ),
-	sitesList = require( 'lib/sites-list' )(),
-	stats = require( 'reader/stats' ),
-	SitesPopover = require( 'components/sites-popover' ),
-	sections = require( 'sections-preload' );
+/**
+ * Internal Dependencies
+ */
+import PopoverMenu from 'components/popover/menu';
+import PopoverMenuItem from 'components/popover/menu-item';
+import Gridicon from 'gridicons';
+import * as stats from 'reader/stats';
+import SitesPopover from 'components/sites-popover';
 
-var actionMap = {
-	twitter: function( post ) {
-		var twitterUrl = {
+// remove me
+const sitesList = require( 'lib/sites-list' )();
+const sections = require( 'sections-preload' );
+
+const actionMap = {
+	twitter( post ) {
+		const twitterUrlProperties = {
 			scheme: 'https',
 			hostname: 'twitter.com',
 			pathname: '/intent/tweet',
@@ -28,7 +36,7 @@ var actionMap = {
 			}
 		};
 
-		twitterUrl = url.format( twitterUrl );
+		const twitterUrl = url.format( twitterUrlProperties );
 
 		window.open( twitterUrl, 'twitter', 'width=550,height=420,resizeable,scrollbars' );
 	},
@@ -203,4 +211,4 @@ const ReaderShare = React.createClass( {
 
 } );
 
-module.exports = ReaderShare;
+export default ReaderShare;
