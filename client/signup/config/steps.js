@@ -150,6 +150,9 @@ export default {
 	'oauth2-user': {
 		stepName: 'oauth2-user',
 		apiRequestFunction: stepActions.createAccount,
+		props: {
+			oauth2Signup: true
+		},
 		providesToken: true,
 		providesDependencies: [ 'bearer_token', 'username', 'oauth2_redirect' ]
 	},
