@@ -9,6 +9,7 @@ import classnames from 'classnames';
 import qs from 'qs';
 import page from 'page';
 import SocialLogo from 'social-logos';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -40,8 +41,8 @@ const actionMap = {
 
 		window.open( twitterUrl, 'twitter', 'width=550,height=420,resizeable,scrollbars' );
 	},
-	facebook: function( post ) {
-		var fackbookUrl = {
+	facebook( post ) {
+		const facebookUrlProperties = {
 			scheme: 'https',
 			hostname: 'www.facebook.com',
 			pathname: '/sharer.php',
@@ -51,9 +52,9 @@ const actionMap = {
 			}
 		};
 
-		fackbookUrl = url.format( fackbookUrl );
+		const facebookUrl = url.format( facebookUrlProperties );
 
-		window.open( fackbookUrl, 'facebook', 'width=626,height=436,resizeable,scrollbars' );
+		window.open( facebookUrl, 'facebook', 'width=626,height=436,resizeable,scrollbars' );
 	}
 };
 
@@ -140,7 +141,7 @@ const ReaderShare = React.createClass( {
 		stats.recordAction( 'share_wordpress' );
 		stats.recordGaEvent( 'Clicked on Share to WordPress' );
 		stats.recordTrack( 'calypso_reader_share_to_site' );
-		page( `/post/${slug}?` + buildQuerystringForPost( this.props.post ) );
+		page( `/post/${ slug }?` + buildQuerystringForPost( this.props.post ) );
 		return true;
 	},
 
@@ -178,13 +179,13 @@ const ReaderShare = React.createClass( {
 			[
 				( <span key="button" ref="shareButton" className={ buttonClasses }>
 					<Gridicon icon="share" size={ this.props.iconSize } />
-					<span className="reader-share__button-label">{ this.translate( 'Share', { comment: 'Share the post' } ) }</span>
+					<span className="reader-share__button-label">{ this.props.translate( 'Share', { comment: 'Share the post' } ) }</span>
 				</span> ),
 				( this.state.showingMenu &&
 						( canShareToWordpress
 						? <SitesPopover
 								key="menu"
-								header={ <div>{ this.translate( 'Share on:' ) }</div> }
+								header={ <div>{ this.props.translate( 'Share on:' ) }</div> }
 								sites={ sitesList }
 								context={ this.refs && this.refs.shareButton }
 								visible={ this.state.showingMenu }
@@ -192,7 +193,7 @@ const ReaderShare = React.createClass( {
 								onSiteSelect={ this.pickSiteToShareTo }
 								onClose={ this.closeMenu }
 								position={ this.props.position }
-								className="is-reader"/>
+								className="is-reader" />
 						: <PopoverMenu key="menu" context={ this.refs && this.refs.shareButton }
 								isVisible={ this.state.showingMenu }
 								onClose={ this.closeExternalShareMenu }
@@ -211,4 +212,4 @@ const ReaderShare = React.createClass( {
 
 } );
 
-export default ReaderShare;
+export default localize( ReaderShare );
