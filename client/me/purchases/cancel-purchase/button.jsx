@@ -165,7 +165,6 @@ class CancelPurchaseButton extends Component {
 				onClick: this.submitCancelAndRefundPurchase
 			}
 		};
-		const purchaseName = getName( purchase );
 		const inFinalStep = ( this.state.surveyStep === this.state.finalStep );
 
 		let buttonsArr;
@@ -185,7 +184,12 @@ class CancelPurchaseButton extends Component {
 				buttons={ buttonsArr }
 				onClose={ this.closeDialog }
 				className="cancel-purchase__button-warning-dialog">
-				<FormSectionHeading>{ translate( 'Cancel %(purchaseName)s', { args: { purchaseName } } ) }</FormSectionHeading>
+				<FormSectionHeading>
+					{ translate( 'Your thoughts are needed.' ) }
+				</FormSectionHeading>
+				<p>
+					{ translate( 'Before you go, please answer a few quick questions to help us improve WordPress.com.' ) }
+				</p>
 				<CancelPurchaseForm
 					surveyStep={ this.state.surveyStep }
 					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
