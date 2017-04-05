@@ -39,6 +39,7 @@ import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
 import { isDomainOnlySite } from 'state/selectors';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -346,6 +347,7 @@ const Checkout = React.createClass( {
 				cards={ this.props.cards }
 				products={ this.props.productsList.get() }
 				selectedSite={ selectedSite }
+				userLocale={ this.props.userLocale }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 			/>
@@ -395,6 +397,7 @@ module.exports = connect(
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
+			userLocale: getCurrentUserLocale( state ),
 		};
 	},
 	{

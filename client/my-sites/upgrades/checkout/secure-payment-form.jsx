@@ -48,7 +48,7 @@ const SecurePaymentForm = React.createClass( {
 	getInitialState() {
 		return {
 			userSelectedPaymentBox: null,
-			visiblePaymentBox: this.getVisiblePaymentBox( this.props.cart ),
+			visiblePaymentBox: this.getVisiblePaymentBox( this.props.cart, this.props.userLocale ),
 			previousCart: null
 		};
 	},
@@ -88,7 +88,7 @@ const SecurePaymentForm = React.createClass( {
 		}
 
 		this.setState( {
-			visiblePaymentBox: this.getVisiblePaymentBox( nextProps.cart )
+			visiblePaymentBox: this.getVisiblePaymentBox( nextProps.cart, nextProps.userLocale )
 		} );
 	},
 
