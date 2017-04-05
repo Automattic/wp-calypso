@@ -153,6 +153,8 @@
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
 		"webpack/persistent-caching": false,
+		"woocommerce/extension": true,
+		"woocommerce/extension/stats": true,
 		"wp-login": true
 	}
 }
