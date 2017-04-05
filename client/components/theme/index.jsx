@@ -63,7 +63,7 @@ const Theme = React.createClass( {
 		actionLabel: React.PropTypes.string
 	},
 
-	shouldComponentUpdate( nextProps ) {
+	shouldComponentUpdate( nextProps, nextState ) {
 		return nextProps.theme.id !== this.props.theme.id ||
 			( nextProps.active !== this.props.active ) ||
 			( nextProps.purchased !== this.props.purchased ) ||
@@ -71,7 +71,8 @@ const Theme = React.createClass( {
 			! isEqual( Object.keys( nextProps.buttonContents ), Object.keys( this.props.buttonContents ) ) ||
 			( nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ) ||
 			( nextProps.onScreenshotClick !== this.props.onScreenshotClick ) ||
-			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
+			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick ) ||
+			( nextState.hidpiScreenshotPreloaded !== this.state.hidpiScreenshotPreloaded );
 	},
 
 	getDefaultProps() {
@@ -82,6 +83,44 @@ const Theme = React.createClass( {
 			actionLabel: '',
 			active: false
 		} );
+	},
+
+	getInitialState() {
+		return {
+			hidpiScreenshotPreloaded: false
+		};
+	},
+
+	componentWillReceiveProps( nextProps ) {
+		//should we load high res?
+		if ( ! this.shouldHaveHidpiScreenshot() ) {
+			return;
+		}
+
+		//are we already preloading?
+		if ( this.screenshotPreloader ) {
+			return;
+		}
+
+		//do we even have a screenshot link?
+		if ( ! ( nextProps.theme && nextProps.theme.screenshot ) ) {
+			return;
+		}
+
+		//create image loader and set staet in onload event
+		this.screenshotPreloader = new Image();
+		this.screenshotPreloader.src = nextProps.theme.screenshot + '?w=680';
+		this.screenshotPreloader.onload = this.onHidpiScreenshotLoad;
+	},
+
+	onHidpiScreenshotLoad( event ) {
+		if ( event.type === 'load' ) {
+			this.setState( { hidpiScreenshotPreloaded: true } );
+		}
+	},
+
+	shouldHaveHidpiScreenshot() {
+		return typeof window !== 'undefined' && window.devicePixelRatio > 1;
 	},
 
 	onScreenshotClick() {
@@ -142,7 +181,6 @@ const Theme = React.createClass( {
 			return this.renderPlaceholder();
 		}
 
-		const screenshotWidth = typeof window !== 'undefined' && window.devicePixelRatio > 1 ? 680 : 340;
 		return (
 			<Card className={ themeClass }>
 				<div className="theme__content">
@@ -153,7 +191,7 @@ const Theme = React.createClass( {
 						{ this.renderInstalling() }
 						{ screenshot
 							? <img className="theme__img"
-								src={ screenshot + '?w=' + screenshotWidth }
+								src={ screenshot + '?w=' + ( this.state.hidpiScreenshotPreloaded ? 680 : 340 ) }
 								onClick={ this.onScreenshotClick }
 								id={ screenshotID } />
 							: <div className="theme__no-screenshot" >
