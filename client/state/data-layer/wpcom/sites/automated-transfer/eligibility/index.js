@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, identity } from 'lodash';
+import { get, identity, isEmpty, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +15,10 @@ import { updateEligibility } from 'state/automated-transfer/actions';
 import {
 	eligibilityHolds,
 } from 'state/automated-transfer/constants';
+import {
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
 
 /**
  * Maps the constants used in the WordPress.com API with
@@ -76,13 +80,45 @@ const fromApi = data => ( {
 } );
 
 /**
+ * Build track events for eligibility status
+ *
+ * @param {Object} data eligibility data from the api
+ * @returns {Object} An analytics event object
+ */
+const trackEligibility = data => {
+	const isEligible = get( data, 'is_eligible', false );
+	const pluginWarnings = get( data, 'warnings.plugins', [] );
+	const widgetWarnings = get( data, 'warnings.widgets', [] );
+	const hasEligibilityWarnings = ! ( isEmpty( pluginWarnings ) && isEmpty( widgetWarnings ) );
+
+	const eventProps = {
+		has_warnings: hasEligibilityWarnings,
+		plugins: map( pluginWarnings, 'id' ).join( ',' ),
+		widgets: map( widgetWarnings, 'id' ).join( ',' ),
+	};
+
+	if ( isEligible ) {
+		return recordTracksEvent( 'calypso_automated_transfer_eligibility_eligible', eventProps );
+	}
+
+	// add holds to event props if the transfer is ineligible
+	eventProps.holds = eligibilityHoldsFromApi( data ).join( ',' );
+	return recordTracksEvent( 'calypso_automated_transfer_eligibility_ineligible', eventProps );
+};
+
+/**
  * Dispatches to update eligibility information from API response
  *
  * @param {Function} dispatch action dispatcher
  * @param {number} siteId site for which the update belongs
  * @returns {Function} the handler function with site and dispatch partially applied
  */
-const apiResponse = ( dispatch, siteId ) => data => dispatch( updateEligibility( siteId, fromApi( data ) ) );
+const apiResponse = ( dispatch, siteId ) => data => {
+	dispatch( withAnalytics(
+		trackEligibility( data ),
+		updateEligibility( siteId, fromApi( data ) )
+	) );
+};
 
 /**
  * Respond to API fetch failure

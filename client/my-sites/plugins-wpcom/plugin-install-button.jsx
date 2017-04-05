@@ -16,7 +16,6 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { getEligibility } from 'state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'state/themes/actions';
 import { transferStates } from 'state/automated-transfer/constants';
-import { recordTracksEvent } from 'state/analytics/actions';
 
 export const WpcomPluginInstallButton = props => {
 	const {
@@ -43,18 +42,10 @@ export const WpcomPluginInstallButton = props => {
 
 		const hasErrors = !! eligibilityHolds.length;
 		const hasWarnings = !! eligibilityWarnings.length;
-
 		if ( ! hasErrors && ! hasWarnings ) {
 			// No need to show eligibility warnings page, initiate transfer immediately
 			initiateTransfer( siteId, null, plugin.slug );
 		} else {
-			props.recordTracksEvent( 'calypso_automated_transfer_plugin_install_ineligible',
-				{
-					eligibility_holds: eligibilityHolds.join( ', ' ),
-					eligibility_warnings: eligibilityWarnings.join( ', ' ),
-					plugin_slug: plugin.slug
-				} );
-
 			// Show eligibility warnings before proceeding
 			navigateTo( `/plugins/${ plugin.slug }/eligibility/${ siteSlug }` );
 		}
@@ -83,8 +74,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	initiateTransfer: initiateThemeTransfer,
-	recordTracksEvent,
+	initiateTransfer: initiateThemeTransfer
 };
 
 const withNavigation = WrappedComponent => props => <WrappedComponent { ...{ ...props, navigateTo: page } } />;
