@@ -7,7 +7,7 @@ printf "\nBy contributing to this project, you license the materials you contrib
 # Make quick pass over config files on every change
 make config-defaults-lint || exit 1
 
-files=$(git diff --cached --name-only --diff-filter=ACM | grep ".jsx*$")
+files=$(git diff --cached --name-only client/ server/ test/ | grep ".jsx*$")
 if [ "$files" = "" ]; then
     exit 0
 fi
@@ -16,7 +16,7 @@ pass=true
 
 printf "\nValidating .jsx and .js:\n"
 
-./bin/run-lint $(git diff --cached --name-only client/ server/ test/ | grep ".jsx*$") -- --diff=index
+./bin/run-lint $files -- --diff=index
 linter_exit_code=$?
 if [ ! 0 = "$linter_exit_code" ]
 then
