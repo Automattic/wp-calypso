@@ -95,9 +95,6 @@ const analytics = {
 		_superProps = superProps;
 	},
 
-	//Check user's Do Not Track setting in their browser
-	userAllowsTracking: () => ! navigator.doNotTrack,
-
 	mc: {
 		bumpStat: function( group, name ) {
 			if ( 'object' === typeof group ) {
@@ -357,10 +354,6 @@ const analytics = {
 	// Lucky Orange tracking
 	luckyOrange: {
 		addLuckyOrangeScript: function() {
-			if ( ! config( 'lucky_orange_enabled' ) || ! analytics.userAllowsTracking() ) {
-				return;
-			}
-
 			const wa = document.createElement( 'script' );
 			const s = document.getElementsByTagName( 'script' )[ 0 ];
 

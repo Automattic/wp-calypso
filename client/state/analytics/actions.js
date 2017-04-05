@@ -15,7 +15,7 @@ import {
 	ANALYTICS_MULTI_TRACK,
 	ANALYTICS_PAGE_VIEW_RECORD,
 	ANALYTICS_STAT_BUMP,
-	ANALYTICS_CONTINOUS_MONITOR_ON
+	ANALYTICS_TRACKING_ON,
 } from 'state/action-types';
 
 const mergedMetaData = ( a, b ) => [
@@ -60,11 +60,11 @@ export const recordEvent = ( service, args ) => ( {
 	}
 } );
 
-export const startContinuousTracking = ( trackingTool ) => ( {
-	type: ANALYTICS_CONTINOUS_MONITOR_ON,
+export const loadTrackingTool = ( trackingTool ) => ( {
+	type: ANALYTICS_TRACKING_ON,
 	meta: {
 		analytics: [ {
-			type: ANALYTICS_CONTINOUS_MONITOR_ON,
+			type: ANALYTICS_TRACKING_ON,
 			payload: trackingTool,
 		} ]
 	}

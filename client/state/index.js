@@ -7,6 +7,7 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 /**
  * Internal dependencies
  */
+import analyticsTracking from './analytics/reducer';
 import sitesSync from './sites/enhancer';
 import noticesMiddleware from './notices/middleware';
 import extensionsModule from 'extensions';
@@ -30,7 +31,6 @@ import jetpackSync from './jetpack-sync/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
 import login from './login/reducer';
-import isTracking from './analytics/reducer';
 import media from './media/reducer';
 import notices from './notices/reducer';
 import npsSurvey from './nps-survey/reducer';
@@ -72,8 +72,9 @@ import config from 'config';
 const extensions = combineReducers( extensionsModule.reducers() );
 
 const reducers = {
-	application,
+	analyticsTracking,
 	accountRecovery,
+	application,
 	automatedTransfer,
 	billingTransactions,
 	comments,
@@ -88,7 +89,6 @@ const reducers = {
 	happinessEngineers,
 	happychat,
 	help,
-	isTracking,
 	jetpackConnect,
 	jetpack,
 	jetpackSync,

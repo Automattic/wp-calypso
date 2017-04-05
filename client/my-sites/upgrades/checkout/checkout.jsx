@@ -46,7 +46,7 @@ import {
 } from 'state/ui/selectors';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
-import { startContinuousTracking } from 'state/analytics/actions';
+import { loadTrackingTool } from 'state/analytics/actions';
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'productsList' ) ],
@@ -75,7 +75,7 @@ const Checkout = React.createClass( {
 		}
 
 		window.scrollTo( 0, 0 );
-		this.props.startContinuousTracking( 'Lucky Orange' );
+		this.props.loadTrackingTool( 'Lucky Orange' );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
@@ -403,6 +403,6 @@ module.exports = connect(
 		fetchReceiptCompleted,
 		recordApplePayStatus,
 		requestSite,
-		startContinuousTracking
+		loadTrackingTool
 	}
 )( localize( Checkout ) );

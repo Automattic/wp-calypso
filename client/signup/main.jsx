@@ -47,7 +47,7 @@ import { translate } from 'i18n-calypso';
 import SignupActions from 'lib/signup/actions';
 import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-tracking';
 import { disableCart } from 'lib/upgrades/actions';
-import { startContinuousTracking } from 'state/analytics/actions';
+import { loadTrackingTool } from 'state/analytics/actions';
 
 /**
  * Constants
@@ -259,7 +259,7 @@ const Signup = React.createClass( {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
-		this.props.startContinuousTracking( 'Lucky Orange' );
+		this.props.loadTrackingTool( 'Lucky Orange' );
 	},
 
 	componentWillUnmount() {
@@ -462,9 +462,10 @@ const Signup = React.createClass( {
 			<span>
 				<DocumentHead title={ this.pageTitle() } />
 				{
-					! this.state.loadingScreenStartTime && <FlowProgressIndicator
-																positionInFlow={ this.positionInFlow() }
-																flowName={ this.props.flowName } />
+					! this.state.loadingScreenStartTime &&
+					<FlowProgressIndicator
+						positionInFlow={ this.positionInFlow() }
+						flowName={ this.props.flowName } />
 				}
 				<ReactCSSTransitionGroup
 					className="signup__steps"
@@ -484,6 +485,6 @@ export default connect(
 		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true,
 		signupDependencies: getSignupDependencyStore( state ),
 	} ),
-	{ setSurvey, startContinuousTracking },
+	{ setSurvey, loadTrackingTool },
 	undefined,
 	{ pure: false } )( Signup );

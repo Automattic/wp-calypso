@@ -6,5 +6,5 @@
  */
 
 export default function isTracking( state ) {
-	return state.isTracking;
+	return state.analyticsTracking;
 }

@@ -2,20 +2,19 @@
  * Internal dependencies
  */
 import {
-	ANALYTICS_CONTINOUS_MONITOR_ON,
-	ANALYTICS_CONTINOUS_MONITOR_OFF
+	ANALYTICS_TRACKING_ON,
 } from 'state/action-types';
 
-export const isTracking = ( state = false, { type } ) => {
-	if ( ANALYTICS_CONTINOUS_MONITOR_ON === type ) {
+export const analyticsTracking = ( state = false, { type } ) => {
+	if ( ANALYTICS_TRACKING_ON === type ) {
 		return true;
 	}
 
-	if ( ANALYTICS_CONTINOUS_MONITOR_OFF === type ) {
+	if ( ANALYTICS_TRACKING_ON === type ) {
 		return false;
 	}
 
 	return state;
 };
 
-export default isTracking;
+export default analyticsTracking;

@@ -1,17 +1,17 @@
 /**
  * Internal dependencies
  */
-
+const config = require( 'config' );
 import analytics from 'lib/analytics';
 import has from 'lodash/has';
 import invoke from 'lodash/invoke';
-import { isTracking } from 'state/selectors/is-tracking';
+import isTracking from 'state/selectors/is-tracking';
 
 import {
 	ANALYTICS_EVENT_RECORD,
 	ANALYTICS_PAGE_VIEW_RECORD,
 	ANALYTICS_STAT_BUMP,
-	ANALYTICS_CONTINOUS_MONITOR_ON
+	ANALYTICS_TRACKING_ON,
 } from 'state/action-types';
 
 const eventServices = {
@@ -25,7 +25,10 @@ const pageViewServices = {
 };
 
 const loadTrackingTool = ( trackingTool, state ) => {
-	if ( trackingTool === 'Lucky Orange' && isTracking( state ) ) {
+	const trackUser = ! navigator.doNotTrack;
+	const luckyOrangeEnabled = config( 'lucky_orange_enabled' );
+
+	if ( trackingTool === 'Lucky Orange' && isTracking( state ) && luckyOrangeEnabled && trackUser ) {
 		analytics.luckyOrange.addLuckyOrangeScript();
 	}
 };
@@ -46,7 +49,7 @@ export const dispatcher = ( { meta: { analytics } }, state ) => {
 			case ANALYTICS_STAT_BUMP:
 				return statBump( payload );
 
-			case ANALYTICS_CONTINOUS_MONITOR_ON:
+			case ANALYTICS_TRACKING_ON:
 				return loadTrackingTool( payload, state );
 		}
 	} );
