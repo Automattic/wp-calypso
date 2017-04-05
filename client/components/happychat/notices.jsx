@@ -23,10 +23,15 @@ import {
  */
 class Notices extends Component {
 	statusNotice() {
-		const { isConnected, chatStatus, translate } = this.props;
+		const { connectionStatus, chatStatus, translate } = this.props;
 
-		if ( ! isConnected ) {
-			return translate( "We're having trouble connecting to chat. Please check your internet connection and refresh the page." );
+		switch ( connectionStatus ) {
+			case 'uninitialized':
+				return translate( 'Waiting to connect you with a Happiness Engineer…' );
+			case 'connecting':
+				return translate( 'Connecting you with a Happiness Engineer…' );
+			case 'disconnected':
+				return translate( "We're having trouble connecting to chat. Please check your internet connection and refresh the page." );
 		}
 
 		const noticeText = {
@@ -57,8 +62,8 @@ class Notices extends Component {
 }
 
 const mapState = ( state ) => ( {
-	isConnected: getHappychatConnectionStatus( state ) === 'connected',
-	chatStatus: getHappychatStatus( state )
+	chatStatus: getHappychatStatus( state ),
+	connectionStatus: getHappychatConnectionStatus( state ),
 } );
 
 export default localize( connect( mapState )( Notices ) );
