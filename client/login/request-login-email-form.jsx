@@ -121,7 +121,7 @@ class RequestLoginEmailForm extends React.Component {
 					<Notice
 						duration={ 10000 }
 						text={ this.state.errorMessage }
-						className="auth__request-login-email-form-notice"
+						className="login__request-login-email-form-notice"
 						showDismiss={ true }
 						onDismissClick={ this.handleNoticeDismiss }
 						status="is-error" />

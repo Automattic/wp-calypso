@@ -82,10 +82,6 @@ Layout = React.createClass( {
 	},
 
 	renderMasterbar: function() {
-		if ( 'login' === this.props.section.name ) {
-			return null;
-		}
-
 		if ( ! this.props.user ) {
 			return <MasterbarLoggedOut showSignup={ 'signup' !== this.props.section.name } />;
 		}

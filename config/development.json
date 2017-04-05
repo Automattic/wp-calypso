@@ -55,6 +55,7 @@
 		"jetpack/api-cache": true,
 		"keyboard-shortcuts": true,
 		"happychat": true,
+		"magic-login": true,
 		"manage/customize": true,
 		"manage/custom-post-types": true,
 		"manage/drafts": true,
