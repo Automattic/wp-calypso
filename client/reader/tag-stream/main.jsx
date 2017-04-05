@@ -82,12 +82,12 @@ const TagStream = React.createClass( {
 
 	toggleFollowing() {
 		const { tag, decodedTag, unfollowTag, followTag } = this.props;
-		const isFollowing = this.isSubscribed();
+		const isFollowing = this.isSubscribed(); // this is the current state, not the new state
 		const toggleAction = isFollowing ? unfollowTag : followTag;
 		toggleAction( decodedTag );
-		stats.recordAction( isFollowing ? 'followed_topic' : 'unfollowed_topic' );
-		stats.recordGaEvent( isFollowing ? 'Clicked Follow Topic' : 'Clicked Unfollow Topic', tag );
-		stats.recordTrack( isFollowing ? 'calypso_reader_reader_tag_followed' : 'calypso_reader_reader_tag_unfollowed', {
+		stats.recordAction( isFollowing ? 'unfollowed_topic' : 'followed_topic' );
+		stats.recordGaEvent( isFollowing ? 'Clicked Unfollow Topic' : 'Clicked Follow Topic', tag );
+		stats.recordTrack( isFollowing ? 'calypso_reader_reader_tag_unfollowed' : 'calypso_reader_reader_tag_followed', {
 			tag
 		} );
 	},
