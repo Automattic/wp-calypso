@@ -32,7 +32,7 @@
 	"features": {
 		"account-recovery": true,
 		"ad-tracking": false,
-		"automated-transfer": true,
+		"automated-transfer": false,
 		"apple-pay": true,
 		"code-splitting": true,
 		"comments/filters-in-posts": true,

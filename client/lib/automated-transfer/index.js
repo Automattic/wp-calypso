@@ -19,17 +19,18 @@ export function isATEnabledForCurrentSite() {
 		return false;
 	}
 
-	// Feature must be enabled on environment
-	if ( ! isEnabled( 'automated-transfer' ) ) {
-		return false;
-	}
-
 	const site = require( 'lib/sites-list' )().getSelectedSite();
 
 	// Site has already been transferred
 	if ( get( site, 'options.is_automated_transfer' ) ) {
 		return true;
 	}
+
+	// Feature must be enabled on environment
+	if ( ! isEnabled( 'automated-transfer' ) ) {
+		return false;
+	}
+
 	// If it's wpcalypso, this is open
 	if ( config( 'env_id' ) === 'wpcalypso' ) {
 		return true;
