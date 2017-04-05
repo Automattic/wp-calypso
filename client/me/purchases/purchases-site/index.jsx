@@ -11,9 +11,10 @@ import i18n from 'i18n-calypso';
  */
 import PurchaseItem from '../purchase-item';
 import SectionHeader from 'components/section-header';
+import SiteIcon from 'blocks/site-icon';
 
-const PurchasesSite = ( { isDomainOnly, isPlaceholder, name, purchases, slug, domain } ) => {
-	let items, label = name;
+const PurchasesSite = ( { isDomainOnly, isPlaceholder, siteId, name, purchases, slug, domain } ) => {
+	let items, label;
 
 	if ( isPlaceholder ) {
 		items = times( 2, index => (
@@ -21,7 +22,12 @@ const PurchasesSite = ( { isDomainOnly, isPlaceholder, name, purchases, slug, do
 				isPlaceholder key={ index } />
 		) );
 
-		label = i18n.translate( 'Loading…' );
+		label = (
+			<span>
+				<SiteIcon siteId={ siteId } />
+				{ i18n.translate( 'Loading…' ) }
+			</span>
+		);
 	} else {
 		items = purchases.map( purchase => (
 			<PurchaseItem
@@ -29,6 +35,12 @@ const PurchasesSite = ( { isDomainOnly, isPlaceholder, name, purchases, slug, do
 				slug={ slug }
 				purchase={ purchase } />
 		) );
+		label = (
+			<span>
+				<SiteIcon siteId={ siteId } />
+				{ name }
+			</span>
+		);
 	}
 
 	return (

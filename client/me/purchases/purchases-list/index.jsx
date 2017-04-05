@@ -50,6 +50,7 @@ const PurchasesList = React.createClass( {
 				site => (
 					<PurchasesSite
 						key={ site.id }
+						siteId={ site.id }
 						name={ site.title }
 						domain={ site.domain }
 						slug={ site.slug }
