@@ -25,29 +25,27 @@ const Composing = ( {
 	siteIsJetpack
 } ) => {
 	return (
-		<Card className="site-settings">
-			<DefaultPostFormat
-				onChangeField={ onChangeField }
-				eventTracker={ eventTracker }
-				isSavingSettings={ isSavingSettings }
-				isRequestingSettings={ isRequestingSettings }
-				fields={ fields }
-			/>
-			{
-				siteIsJetpack && jetpackSettingsUISupported && (
-					<div>
-						<hr />
-						<AfterTheDeadline
-							handleToggle={ handleToggle }
-							setFieldValue={ setFieldValue }
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-							fields={ fields }
-						/>
-					</div>
-				)
+		<div>
+			<Card className="composing__card site-settings">
+				<DefaultPostFormat
+					onChangeField={ onChangeField }
+					eventTracker={ eventTracker }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
+			</Card>
+
+			{ siteIsJetpack && jetpackSettingsUISupported &&
+				<AfterTheDeadline
+					handleToggle={ handleToggle }
+					setFieldValue={ setFieldValue }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
 			}
-		</Card>
+		</div>
 	);
 };
 
