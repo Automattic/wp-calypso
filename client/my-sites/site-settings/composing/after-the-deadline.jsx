@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
+import FoldableCard from 'components/foldable-card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -39,20 +40,8 @@ class AfterTheDeadline extends Component {
 		fields: PropTypes.object,
 	};
 
-	state = {
-		advancedOptionsVisible: false,
-	};
-
 	onChangeIgnoredPhrases = ( phrases ) => {
 		this.props.setFieldValue( 'ignored_phrases', phrases.join( ',' ) );
-	};
-
-	onAdvancedOptionsClick = ( event ) => {
-		event.preventDefault();
-
-		this.setState( {
-			advancedOptionsVisible: ! this.state.advancedOptionsVisible,
-		} );
 	};
 
 	renderToggle( name, isDisabled, label ) {
@@ -79,6 +68,14 @@ class AfterTheDeadline extends Component {
 
 		return (
 			<div className="composing__module-settings site-settings__child-settings">
+				<div className="composing__info-link-container site-settings__info-link-container">
+					<InfoPopover position={ 'left' }>
+						<ExternalLink href={ 'https://jetpack.com/support/spelling-and-grammar/' } icon target="_blank">
+							{ translate( 'Learn more about After the Deadline.' ) }
+						</ExternalLink>
+					</InfoPopover>
+				</div>
+
 				<FormLegend>
 					{ translate( 'Proofreading' ) }
 				</FormLegend>
@@ -178,40 +175,26 @@ class AfterTheDeadline extends Component {
 			translate
 		} = this.props;
 
+		const atdToggle = (
+			<JetpackModuleToggle
+				siteId={ selectedSiteId }
+				moduleSlug="after-the-deadline"
+				label={ translate( 'Check your spelling, style, and grammar' ) }
+				disabled={ isRequestingSettings || isSavingSettings || moduleUnavailable }
+			/>
+		);
+
 		return (
-			<FormFieldset>
+			<FoldableCard className="composing__foldable-card site-settings__foldable-card" header={ atdToggle }>
 				<QueryJetpackConnection siteId={ selectedSiteId } />
 
-				<div className="composing__info-link-container site-settings__info-link-container">
-					<InfoPopover position={ 'left' }>
-						<ExternalLink href={ 'https://jetpack.com/support/spelling-and-grammar/' } icon target="_blank">
-							{ translate( 'Learn more about After the Deadline.' ) }
-						</ExternalLink>
-					</InfoPopover>
-				</div>
-
-				<JetpackModuleToggle
-					siteId={ selectedSiteId }
-					moduleSlug="after-the-deadline"
-					label={ translate( 'Check your spelling, style, and grammar' ) }
-					disabled={ isRequestingSettings || isSavingSettings || moduleUnavailable }
-					/>
-
-				<div className="composing__module-settings site-settings__child-settings">
-					<a href="#" onClick={ this.onAdvancedOptionsClick }>
-						{ translate( 'Advanced Options' ) }
-					</a>
-				</div>
-
-				{ this.state.advancedOptionsVisible && (
-					<div>
-						{ this.renderProofreadingSection() }
-						{ this.renderAutoLanguageDetectionSection() }
-						{ this.renderEnglishOptionsSection() }
-						{ this.renderIgnoredPhrasesSection() }
-					</div>
-				) }
-			</FormFieldset>
+				<FormFieldset>
+					{ this.renderProofreadingSection() }
+					{ this.renderAutoLanguageDetectionSection() }
+					{ this.renderEnglishOptionsSection() }
+					{ this.renderIgnoredPhrasesSection() }
+				</FormFieldset>
+			</FoldableCard>
 		);
 	}
 }
