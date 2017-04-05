@@ -19,9 +19,10 @@ import {
 	purchaseType,
 	showCreditCardExpiringWarning
 } from 'lib/purchases';
-import { isPlan } from 'lib/products-values';
+import { isPlan, isDomainProduct } from 'lib/products-values';
 import Notice from 'components/notice';
 import PlanIcon from 'components/plans/plan-icon';
+import Gridicon from 'gridicons';
 import paths from '../../paths';
 
 const PurchaseItem = React.createClass( {
@@ -109,27 +110,35 @@ const PurchaseItem = React.createClass( {
 	},
 
 	render() {
-		const { isPlaceholder } = this.props,
-			classes = classNames( 'purchase-item',
-				{ 'is-expired': this.props.purchase && 'expired' === this.props.purchase.expiryStatus },
-				{ 'is-placeholder': isPlaceholder },
-				{ 'is-included-with-plan': this.props.purchase && isIncludedWithPlan( this.props.purchase ) }
+		const { isPlaceholder, purchase } = this.props;
+		const classes = classNames( 'purchase-item',
+			{ 'is-expired': purchase && 'expired' === purchase.expiryStatus },
+			{ 'is-placeholder': isPlaceholder },
+			{ 'is-included-with-plan': purchase && isIncludedWithPlan( purchase ) }
+		);
+
+		let icon;
+		if ( isPlan( purchase ) ) {
+			icon = (
+				<div className="purchase-item__plan-icon">
+					<PlanIcon plan={ purchase.productSlug } />
+				</div>
 			);
+		} else if ( isDomainProduct( purchase ) ) {
+			icon = (
+				<div className="purchase-item__plan-icon">
+					<Gridicon icon="domains" size={ 48 } />
+				</div>
+			);
+		}
 
-		let content,
-			props = {};
-
+		let content;
 		if ( isPlaceholder ) {
 			content = this.placeholder();
 		} else {
 			content = (
 				<span className="purchase-item__wrapper">
-					<div className="purchase-item__plan-icon">
-						{ isPlan( this.props.purchase )
-							? <PlanIcon plan={ this.props.purchase.productSlug } />
-							: null
-						}
-					</div>
+					{ icon }
 					<div className="purchase-item__details">
 						<div className="purchase-item__title">
 							{ getName( this.props.purchase ) }
@@ -143,6 +152,7 @@ const PurchaseItem = React.createClass( {
 			);
 		}
 
+		let props;
 		if ( ! isPlaceholder ) {
 			props = {
 				href: paths.managePurchase( this.props.slug, this.props.purchase.id ),

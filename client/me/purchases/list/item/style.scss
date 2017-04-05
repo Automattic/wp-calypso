@@ -54,6 +54,13 @@
 	margin: 0 12px 0 0;
 	max-width: 60px;
 	width: 60px;
+
+	.gridicons-domains {
+		padding: 6px;
+		border-radius: 100%;
+		background: $blue-medium;
+		fill: white;
+	}
 }
 
 .purchase-item__purchase-date,
