@@ -25,6 +25,7 @@ import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import feedSiteFluxAdapter from 'lib/reader-post-flux-adapter';
 // import { recordTrackForPost, recordAction, recordTrack } from 'reader/stats';
 // import { } from 'reader/follow-button/follow-sources';
+// TODO add stats
 
 const ConnectedFollowListItem = localize( feedSiteFluxAdapter(
 	( { feed, site, translate, url, feedId, siteId } ) => (
@@ -141,16 +142,14 @@ class FollowingManage extends Component {
 		const { query, translate, follows, searchResults } = this.props;
 		const searchPlaceholderText = translate( 'Search millions of sites' );
 		const recommendations = this.state.recommendations;
-		// console.error( follows );
-		// const followsToShow = take( follows, 25 );
 
 		return (
 			<ReaderMain className="following-manage">
+				<DocumentHead title={ 'Manage Following' } />
 				{ this.props.showBack && <HeaderBack /> }
 				{ follows.length === 0 && <QueryReaderFollows /> }
 				{ searchResults.length === 0 && <QueryReaderFeedsSearch query={ query } /> }
-				<h1> Follow Something New </h1>
-				<DocumentHead title={ 'Manage Following' } />
+				<h1 className="following-manage__header"> { translate( 'Follow Something New' ) } </h1>
 				<div ref={ this.handleStreamMounted } />
 				<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<CompactCard className="following-manage__input-card">
