@@ -84,7 +84,7 @@ function generateStaticUrls( request ) {
 	const assets = request.app.get( 'assets' );
 
 	assets.forEach( function( asset ) {
-		let name = asset.name;
+		const name = asset.name;
 		urls[ name ] = asset.url;
 		if ( config( 'env' ) !== 'development' ) {
 			urls[ name + '-min' ] = asset.url.replace( '.js', '.m.js' );
