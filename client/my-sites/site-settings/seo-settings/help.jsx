@@ -26,7 +26,7 @@ const SeoSettingsHelpCard = ( {
 
 	return (
 		<div>
-			<SectionHeader label={ translate( 'Search Engine Optimization' ) } />
+			<SectionHeader label={ translate( 'Search engine optimization' ) } />
 			{
 				hasFeature( FEATURE_ADVANCED_SEO, siteId ) &&
 				<Card>
