@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { flowRight } from 'lodash';
+import { flowRight, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -19,8 +19,10 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSettings, isSavingSiteSettings, isSiteSettingsSaveSuccessful } from 'state/site-settings/selectors';
 import { getSharingButtons, isSavingSharingButtons, isSharingButtonsSaveSuccessful } from 'state/selectors';
 import { isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
+import { isUpdatingJetpackSettings } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { activateModule } from 'state/jetpack/modules/actions';
+import { updateSettings } from 'state/jetpack/settings/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { protectForm } from 'lib/protect-form';
 import DEFAULT_BUTTONS from './default-buttons';
@@ -43,27 +45,28 @@ class SharingButtons extends Component {
 		translate: PropTypes.func,
 	};
 
-	activateSharingIfNeeded = () => {
-		if ( ! this.props.isJetpackSite || this.props.isShareDaddyModuleActive ) {
-			return Promise.resolve( true );
+	activateSharingAndLikesIfNeeded = () => {
+		const settings = {};
+		if ( ! this.props.isJetpackSite ) {
+			return;
 		}
-		return this.props.activateModule( this.props.siteId, 'sharedaddy', true );
-	}
 
-	activateLikesIfNeeded = () => {
-		if ( ! this.props.isJetpackSite || this.props.isLikesModuleActive ) {
-			return Promise.resolve( true );
+		if ( ! this.props.isShareDaddyModuleActive ) {
+			settings.sharedaddy = true;
 		}
-		if ( ! this.isLikeButtonEnabled() ) {
-			return this.props.activateModule( this.props.siteId, 'likes', true );
+		if ( this.isLikeButtonEnabled() && ! this.props.isLikesModuleActive ) {
+			settings.likes = true;
+		}
+
+		if ( ! isEmpty( settings ) ) {
+			return this.props.updateSettings( this.props.siteId, settings );
 		}
 	}
 
 	saveChanges = event => {
 		event.preventDefault();
 
-		this.activateSharingIfNeeded()
-			.then( this.activateLikesIfNeeded )
+		this.activateSharingAndLikesIfNeeded()
 			.then( () => {
 				this.props.saveSiteSettings( this.props.siteId, this.state.values );
 				if ( this.state.buttonsPendingSave ) {
@@ -111,7 +114,8 @@ class SharingButtons extends Component {
 	}
 
 	isLikeButtonEnabled() {
-		return '' === this.state.values.disabled_likes || false === this.state.values.disabled_likes;
+		const updatedSettings = Object.assign( {}, this.props.settings, this.state.values );
+		return '' === updatedSettings.disabled_likes || false === updatedSettings.disabled_likes;
 	}
 
 	render() {
@@ -149,11 +153,12 @@ const connectComponent = connect(
 		const isShareDaddyModuleActive = isJetpack && isJetpackModuleActive( state, siteId, 'sharedaddy' );
 		const isSavingSettings = isSavingSiteSettings( state, siteId );
 		const isSavingButtons = isSavingSharingButtons( state, siteId );
+		const isSavingJetpackSettings = isUpdatingJetpackSettings( state, siteId );
 		const isSaveSettingsSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 		const isSaveButtonsSuccessful = isSharingButtonsSaveSuccessful( state, siteId );
 
 		return {
-			isSaving: isSavingSettings || isSavingButtons,
+			isSaving: isSavingSettings || isSavingButtons || isSavingJetpackSettings,
 			isSaveSettingsSuccessful,
 			isSaveButtonsSuccessful,
 			isJetpackSite: isJetpack,
@@ -164,7 +169,7 @@ const connectComponent = connect(
 			siteId
 		};
 	},
-	{ errorNotice, activateModule, recordGoogleEvent, saveSiteSettings, saveSharingButtons, successNotice }
+	{ errorNotice, activateModule, updateSettings, recordGoogleEvent, saveSiteSettings, saveSharingButtons, successNotice }
 );
 
 export default flowRight(
