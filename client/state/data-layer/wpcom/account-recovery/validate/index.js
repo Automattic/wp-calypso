@@ -8,9 +8,13 @@ import {
 	validateRequestError,
 } from 'state/account-recovery/reset/actions';
 
-export const handleValidateRequest = ( { dispatch }, { request } ) => (
+export const handleValidateRequest = ( { dispatch }, { userData, method, key } ) => (
 	wpcom.req.post( {
-		body: request,
+		body: {
+			...userData,
+			method,
+			key,
+		},
 		apiNamespace: 'wpcom/v2',
 		path: '/account-recovery/validate',
 	} ).then( () => dispatch( validateRequestSuccess() ) )
