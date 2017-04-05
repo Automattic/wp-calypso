@@ -72,14 +72,17 @@ export class UserStep extends Component {
 	};
 
 	submit = ( data ) => {
+		const dependencies = {};
+		if ( this.props.oauth2Signup ) {
+			dependencies.oauth2_redirect = data.queryArgs.oauth2_redirect;
+		}
+
 		SignupActions.submitSignupStep( {
 			processingMessage: this.props.translate( 'Creating your account' ),
 			flowName: this.props.flowName,
 			stepName: this.props.stepName,
 			...data
-		}, null, {
-			oauth2_redirect: data.queryArgs.oauth2_redirect
-		} );
+		}, null, dependencies );
 
 		this.props.goToNextStep();
 	};
