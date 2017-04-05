@@ -143,12 +143,11 @@ export const message = ( state = '', action ) => {
  * @return {Object}        Updated state
  *
  */
-const connectionStatus = ( state = 'disconnected', action ) => {
+const connectionStatus = ( state = 'uninitialized', action ) => {
 	switch ( action.type ) {
-		case SERIALIZE:
-			return 'disconnected';
 		case DESERIALIZE:
-			return state;
+			// Always boot up in the uninitialized state
+			return 'uninitialized';
 		case HAPPYCHAT_CONNECTING:
 			return 'connecting';
 		case HAPPYCHAT_CONNECTED:

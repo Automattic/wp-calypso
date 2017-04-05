@@ -29,60 +29,63 @@ import middleware, {
 } from '../middleware';
 
 describe( 'middleware', () => {
-	describe( 'HAPPYCHAT_CONNECTING action', () => {
+	describe( 'HAPPYCHAT_CONNECT action', () => {
 		// TODO: Add tests for cases outside the happy path
-		const action = { type: HAPPYCHAT_CONNECTING };
-
-		it( 'should do nothing if Happychat is already connected', () => {
-			const getState = stub().returns( { happychat: { connectionStatus: 'connected' } } );
-			const next = stub();
-			const dispatch = stub();
-			middleware( stub() )( { getState, dispatch } )( next )( action );
-			expect( dispatch ).not.to.have.beenCalled;
-			expect( next ).not.to.have.beenCalled;
+		let connection;
+		let dispatch, getState;
+		const uninitializedState = deepFreeze( {
+			currentUser: { id: 1 },
+			happychat: { connectionStatus: 'uninitialized' },
+			users: { items: { 1: {} } }
 		} );
 
-		describe( 'after successful connection', () => {
-			let connection;
-			let dispatch, getState;
-			const state = deepFreeze( {
-				currentUser: { id: 1 },
-				happychat: { connectionStatus: 'disconnected' },
-				users: { items: { 1: {} } }
+		useSandbox( sandbox => {
+			connection = {
+				on: sandbox.stub(),
+				open: sandbox.stub().returns( Promise.resolve() )
+			};
+			// Need to add return value after re-assignment, otherwise it will return
+			// a reference to the previous (undefined) connection variable.
+			connection.on.returns( connection );
+
+			dispatch = sandbox.stub();
+			getState = sandbox.stub();
+			sandbox.stub( wpcom, 'request', ( args, callback ) => callback( null, {} ) );
+		} );
+
+		it( 'should not attempt to connect when Happychat has been initialized', () => {
+			const connectedState = { happychat: { connectionStatus: 'connected' } };
+			const connectingState = { happychat: { connectionStatus: 'connecting' } };
+
+			return Promise.all( [
+				connectChat( connection, { dispatch, getState: getState.returns( connectedState ) } ),
+				connectChat( connection, { dispatch, getState: getState.returns( connectingState ) } ),
+			] ).then( () => expect( connection.on ).not.to.have.been.called );
+		} );
+
+		describe( 'when Happychat is uninitialized', () => {
+			before( () => {
+				getState.returns( uninitializedState );
 			} );
 
-			useSandbox( sandbox => {
-				connection = {
-					on: sandbox.stub(),
-					open: sandbox.stub().returns( Promise.resolve() )
-				};
-				// Need to add return value after re-assignment, otherwise it will return
-				// a reference to the previous (undefined) connection variable.
-				connection.on.returns( connection );
-
-				dispatch = sandbox.stub();
-				getState = sandbox.stub().returns( state );
-				sandbox.stub( wpcom, 'request', ( args, callback ) => callback( null, {} ) );
-			} );
-
-			it( 'should send notice of the connection state', () => {
+			it( 'should attempt to connect', () => {
+				getState.returns( uninitializedState );
 				return connectChat( connection, { dispatch, getState } )
-					.then( () => expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_CONNECTED } ) );
-			} );
-
-			it( 'should fetch transcripts', () => {
-				return connectChat( connection, { dispatch, getState } )
-					.then( () => expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_TRANSCRIPT_REQUEST } ) );
+					.then( () => {
+						expect( connection.open ).to.have.been.calledOnce;
+						expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_CONNECTING } );
+					} );
 			} );
 
 			it( 'should set up listeners for various connection events', () => {
-				connection.on.withArgs( 'accept' );
-				connection.on.withArgs( 'message' );
-				connection.on.withArgs( 'status' );
-
 				return connectChat( connection, { dispatch, getState } )
 					.then( () => {
-						expect( connection.on.callCount ).to.equal( 3 );
+						expect( connection.on.callCount ).to.equal( 4 );
+
+						// Ensure 'connect' listener was connected by executing a fake message event
+						connection.on.withArgs( 'connected' ).firstCall.args[ 1 ]( true );
+						expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_CONNECTED } );
+						expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_TRANSCRIPT_REQUEST } );
 
 						// Ensure 'accept' listener was connected by executing a fake message event
 						connection.on.withArgs( 'accept' ).firstCall.args[ 1 ]( true );

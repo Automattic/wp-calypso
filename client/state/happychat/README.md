@@ -10,7 +10,9 @@ Used in combination with the Redux store instance `dispatch` function, actions c
 
 ### `connectChat()`
 
-Opens Happychat Socket.IO client connection
+Opens Happychat Socket.IO client connection. _Note: Most use cases should use the Query Component
+[`<HappychatConnection />`](../../components/happychat/connection.jsx) instead of dispatching
+this action directly._
 
 ### `setChatMessage( message: String )`
 
