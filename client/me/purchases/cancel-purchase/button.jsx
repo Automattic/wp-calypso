@@ -148,7 +148,7 @@ class CancelPurchaseButton extends Component {
 			next: {
 				action: 'next',
 				disabled: this.state.isRemoving || this.isSurveyIncomplete(),
-				label: translate( 'Next' ),
+				label: translate( 'Next Step' ),
 				onClick: this.changeSurveyStep
 			},
 			prev: {

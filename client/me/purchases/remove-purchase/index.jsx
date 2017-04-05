@@ -322,7 +322,7 @@ class RemovePurchase extends Component {
 				cancel: {
 					action: 'cancel',
 					disabled: this.state.isRemoving,
-					label: translate( 'Cancel' )
+					label: translate( "No, I'll Keep It" )
 				},
 				next: {
 					action: 'next',
@@ -331,20 +331,20 @@ class RemovePurchase extends Component {
 						this.state.survey.questionTwoRadio === null ||
 						( this.state.survey.questionOneRadio === 'anotherReasonOne' && this.state.survey.questionOneText === '' ) ||
 						( this.state.survey.questionTwoRadio === 'anotherReasonTwo' && this.state.survey.questionTwoText === '' ),
-					label: translate( 'Next' ),
+					label: translate( 'Next Step' ),
 					onClick: this.changeSurveyStep
 				},
 				prev: {
 					action: 'prev',
 					disabled: this.state.isRemoving,
-					label: translate( 'Previous' ),
+					label: translate( 'Previous Step' ),
 					onClick: this.changeSurveyStep
 				},
 				remove: {
 					action: 'remove',
 					disabled: this.state.isRemoving,
 					isPrimary: true,
-					label: translate( 'Remove' ),
+					label: translate( 'Yes, Remove Now' ),
 					onClick: this.removePurchase
 				}
 			},
