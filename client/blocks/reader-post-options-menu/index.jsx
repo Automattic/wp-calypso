@@ -21,7 +21,7 @@ import * as stats from 'reader/stats';
 import { getFeed } from 'state/reader/feeds/selectors';
 import { getSite } from 'state/reader/sites/selectors';
 import QueryReaderFeed from 'components/data/query-reader-feed';
-import QueryReaderSite from 'components/data/query-reader-feed';
+import QueryReaderSite from 'components/data/query-reader-site';
 
 class ReaderPostOptionsMenu extends React.Component {
 
