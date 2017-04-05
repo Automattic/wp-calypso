@@ -17,6 +17,7 @@ var HeaderCake = require( 'components/header-cake' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	wpcom = require( 'lib/wp' ).undocumented(),
 	paths = require( 'my-sites/upgrades/paths' );
+import { localize } from 'i18n-calypso';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { isSiteUpgradeable, isSiteVip } from 'state/selectors';
 import { getRawSite } from 'state/sites/selectors';
@@ -103,7 +104,7 @@ var MapDomain = React.createClass( {
 		return (
 			<span>
 				<HeaderCake onClick={ this.goBack }>
-					{ this.translate( 'Map a Domain' ) }
+					{ this.props.translate( 'Map a Domain' ) }
 				</HeaderCake>
 
 				{ this.state.errorMessage && <Notice status="is-error" text={ this.state.errorMessage }/> }
@@ -129,4 +130,4 @@ module.exports = connect( state => (
 		selectedSiteIsVip: isSiteVip( state, getSelectedSiteId( state ) ),
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	}
-) )( MapDomain );
+) )( localize( MapDomain ) );
