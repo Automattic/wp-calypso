@@ -120,6 +120,7 @@ export isSiteBlocked from './is-site-blocked';
 export isSiteOnFreePlan from './is-site-on-free-plan';
 export isSiteSupportingImageEditor from './is-site-supporting-image-editor';
 export isSiteUpgradeable from './is-site-upgradeable';
+export isSiteVip from './is-site-vip';
 export isTransientMedia from './is-transient-media';
 export isUpdatingJetpackSettings from './is-updating-jetpack-settings';
 export isUserRegistrationDaysWithinRange from './is-user-registration-days-within-range';
