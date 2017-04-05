@@ -16,6 +16,7 @@ import {
 	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
 	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
 	ACCOUNT_RECOVERY_RESET_PICK_METHOD,
+	ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY,
 } from 'state/action-types';
 
 import reducer from '../reducer';
@@ -213,5 +214,15 @@ describe( '#account-recovery/reset reducer', () => {
 		} );
 
 		assert.deepEqual( state.requestReset.error, mockError );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY action should set the key field', () => {
+		const key = '5201314';
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY,
+			key,
+		} );
+
+		assert.equal( state.key, key );
 	} );
 } );
