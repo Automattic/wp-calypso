@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, identity } from 'lodash';
+import { get, identity, isEmpty, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +15,11 @@ import { updateEligibility } from 'state/automated-transfer/actions';
 import {
 	eligibilityHolds,
 } from 'state/automated-transfer/constants';
+import {
+	recordTracksEvent,
+	withAnalytics,
+	composeAnalytics,
+} from 'state/analytics/actions';
 
 /**
  * Maps the constants used in the WordPress.com API with
@@ -76,13 +81,54 @@ const fromApi = data => ( {
 } );
 
 /**
+ * Build track events for eligibility status
+ *
+ * @param {Object} data eligibility data from the api
+ * @returns {Object} An analytics event object
+ */
+const trackEligibility = data => {
+	const pluginWarnings = get( data, 'warnings.plugins', [] );
+	const widgetWarnings = get( data, 'warnings.widgets', [] );
+	const hasEligibilityWarnings = ! ( isEmpty( pluginWarnings ) && isEmpty( widgetWarnings ) );
+
+	if ( data.is_eligible && ! hasEligibilityWarnings ) {
+		return recordTracksEvent( 'calypso_automated_transfer_eligiblity_eligible' );
+	}
+
+	let hasHoldsEvent;
+	let hasWarningsEvent;
+
+	if ( ! data.is_eligible ) {
+		hasHoldsEvent = recordTracksEvent( 'calypso_automated_transfer_eligibility_holds', {
+			holds: eligibilityHoldsFromApi( data ).join( ',' )
+		} );
+	}
+
+	if ( hasEligibilityWarnings ) {
+		hasWarningsEvent = recordTracksEvent( 'calypso_automated_transfer_eligibility_warnings', {
+			plugins: map( pluginWarnings, 'id' ).join( ',' ),
+			widgets: map( widgetWarnings, 'id' ).join( ',' ),
+		} );
+	}
+
+	const eligibilityEvents = [ hasHoldsEvent, hasWarningsEvent ].filter( identity );
+
+	return composeAnalytics.apply( null, eligibilityEvents );
+};
+
+/**
  * Dispatches to update eligibility information from API response
  *
  * @param {Function} dispatch action dispatcher
  * @param {number} siteId site for which the update belongs
  * @returns {Function} the handler function with site and dispatch partially applied
  */
-const apiResponse = ( dispatch, siteId ) => data => dispatch( updateEligibility( siteId, fromApi( data ) ) );
+const apiResponse = ( dispatch, siteId ) => data => {
+	dispatch( withAnalytics(
+		trackEligibility( data ),
+		updateEligibility( siteId, fromApi( data ) )
+	) );
+};
 
 /**
  * Respond to API fetch failure
