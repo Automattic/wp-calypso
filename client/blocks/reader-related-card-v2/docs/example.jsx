@@ -25,6 +25,11 @@ const moreOnSameSite = [
 				height: 256,
 				width: 256
 			},
+			canonical_media: {
+				src: 'http://lorempixel.com/256/256/cats/',
+				height: 256,
+				width: 256
+			},
 			site_URL: 'http://discover.wordpress.com',
 			short_excerpt: 'Gumbo beet greens corn soko endive gumbo gourd. Parsley shallot courgette tatsoi pea sprouts fava bean collard greens dandelion okra wakame tomato. Dandelion cucumber earthnut pea peanut soko zucchini.'
 		},
@@ -44,6 +49,11 @@ const moreOnSameSite = [
 			},
 			canonical_image: {
 				uri: 'http://lorempixel.com/1024/256/sports/',
+				height: 256,
+				width: 1024
+			},
+			canonical_media: {
+				src: 'http://lorempixel.com/1024/256/sports/',
 				height: 256,
 				width: 1024
 			},
@@ -73,6 +83,9 @@ const moreOnWordPress = [
 			short_excerpt: "This presidential race has, to be blunt, a cluster bomb of attacks, lies and outright nonsense rhetoric that has astounded many and made people curse at their…",
 			canonical_image: {
 					uri: "https://freedomsandtruth.files.wordpress.com/2016/09/trump-rally-in-vegas-getty-640x480.jpg?w=720&quality=80&strip=info",
+			},
+			canonical_media: {
+					src: "https://freedomsandtruth.files.wordpress.com/2016/09/trump-rally-in-vegas-getty-640x480.jpg?w=720&quality=80&strip=info",
 			}
 		},
 		site: {
@@ -95,6 +108,9 @@ const moreOnWordPress = [
 			short_excerpt: "This presidential race has, to be blunt, a cluster bomb of attacks, lies and outright nonsense rhetoric that has astounded many and made people curse at their…",
 			canonical_image: {
 					uri: "https://lh4.googleusercontent.com/-eXKU4UhFusI/AAAAAAAAAAI/AAAAAAAAATA/1QahWqsqd-I/s0-c-k-no-ns/photo.jpg",
+			},
+			canonical_media: {
+					src: "https://lh4.googleusercontent.com/-eXKU4UhFusI/AAAAAAAAAAI/AAAAAAAAATA/1QahWqsqd-I/s0-c-k-no-ns/photo.jpg",
 			}
 		},
 		site: {
