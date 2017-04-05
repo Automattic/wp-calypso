@@ -13,7 +13,7 @@ import {
 	setChatMessage,
 } from 'state/happychat/actions';
 import {
-	getHappychatConnectionStatus,
+	canUserSendMessages,
 } from 'state/happychat/selectors';
 import {
 	when,
@@ -73,7 +73,7 @@ export const Composer = React.createClass( {
 } );
 
 const mapState = state => ( {
-	disabled: getHappychatConnectionStatus( state ) !== 'connected',
+	disabled: ! canUserSendMessages( state ),
 	message: state.happychat.message,
 } );
 

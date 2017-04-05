@@ -1,7 +1,12 @@
 /**
  * External dependencies
  */
-import { map, head, get } from 'lodash';
+import {
+	get,
+	head,
+	includes,
+	map,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -65,4 +70,15 @@ export const isHappychatAvailable = createSelector(
 export const getHappychatTimeline = createSelector(
 	state => state.happychat.timeline,
 	state => map( state.happychat.timeline, 'id' )
+);
+
+export const canUserSendMessages = createSelector(
+	state => (
+		getHappychatConnectionStatus( state ) === 'connected' &&
+		! includes(
+			[	HAPPYCHAT_CHAT_STATUS_PENDING, HAPPYCHAT_CHAT_STATUS_MISSED, HAPPYCHAT_CHAT_STATUS_ABANDONED ],
+			getHappychatChatStatus( state )
+		)
+	),
+	[ getHappychatConnectionStatus, getHappychatChatStatus ]
 );
