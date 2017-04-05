@@ -337,12 +337,6 @@ module.exports = function() {
 		} );
 	}
 
-	app.get( '/theme', ( req, res ) => res.redirect( '/themes' ) );
-	// Interim redirect before this is handled on server route config level
-	app.get( [ '/design', '/design/*' ], ( req, res ) => {
-		res.redirect( 301, '/themes' + req.originalUrl.slice( '/design'.length ) );
-	} );
-
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {

@@ -49,6 +49,7 @@ function getEnhancedContext( req, res ) {
 	return Object.assign( {}, req.context, {
 		isLoggedIn: req.cookies.wordpress_logged_in,
 		isServerSide: true,
+		originalUrl: req.originalUrl,
 		path: req.url,
 		pathname: req.path,
 		params: req.params,
