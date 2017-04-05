@@ -259,4 +259,35 @@ describe( '#account-recovery/reset reducer', () => {
 
 		assert.isFalse( state.validate.isRequesting );
 	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR action should save the error data in the validate state tree', () => {
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
+			error: mockError,
+		} );
+
+		assert.deepEqual( state.validate.error, mockError );
+	} );
+
+	const validateErrorState = deepFreeze( {
+		validate: {
+			error: mockError,
+		},
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST action should clear the error field of the validate state tree', () => {
+		const state = reducer( validateErrorState, {
+			type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST,
+		} );
+
+		assert.isNull( state.validate.error );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS action should clear the error field of the validate state tree', () => {
+		const state = reducer( validateErrorState, {
+			type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
+		} );
+
+		assert.isNull( state.validate.error );
+	} );
 } );
