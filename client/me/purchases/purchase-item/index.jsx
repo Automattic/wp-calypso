@@ -37,7 +37,7 @@ const PurchaseItem = React.createClass( {
 
 		if ( showCreditCardExpiringWarning( purchase ) ) {
 			return (
-				<Notice isCompact status="is-error" icon="spam">
+				<Notice isCompact status="is-error" icon="notice">
 					{ this.props.translate( 'Credit card expiring soon' ) }
 				</Notice>
 			);
@@ -52,7 +52,7 @@ const PurchaseItem = React.createClass( {
 		if ( isExpiring( purchase ) ) {
 			if ( purchase.expiryMoment < this.moment().add( 30, 'days' ) ) {
 				return (
-					<Notice isCompact status="is-error" icon="spam">
+					<Notice isCompact status="is-error" icon="notice">
 						{ this.props.translate( 'Expires %(timeUntilExpiry)s', {
 							args: {
 								timeUntilExpiry: purchase.expiryMoment.fromNow()
@@ -70,7 +70,7 @@ const PurchaseItem = React.createClass( {
 
 		if ( isExpired( purchase ) ) {
 			return (
-				<Notice isCompact status="is-error" icon="spam">
+				<Notice isCompact status="is-error" icon="notice">
 					{ this.props.translate( 'Expired %(timeSinceExpiry)s', {
 						args: {
 							timeSinceExpiry: purchase.expiryMoment.fromNow()
@@ -127,7 +127,7 @@ const PurchaseItem = React.createClass( {
 		} else if ( purchase && isDomainProduct( purchase ) ) {
 			icon = (
 				<div className="purchase-item__plan-icon">
-					<Gridicon icon="domains" size={ 48 } />
+					<Gridicon icon="domains" size={ 24 } />
 				</div>
 			);
 		}
