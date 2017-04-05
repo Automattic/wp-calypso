@@ -30,6 +30,7 @@ export default class PostLifecycle extends React.PureComponent {
 		postKey: PropTypes.object.isRequired,
 		isDiscoverStream: PropTypes.bool,
 		handleClick: PropTypes.func,
+		recStoreId: PropTypes.string,
 	}
 
 	state = {
@@ -82,14 +83,14 @@ export default class PostLifecycle extends React.PureComponent {
 
 	render() {
 		const post = this.state.post;
-		const { postKey, selectedPostKey } = this.props;
+		const { postKey, selectedPostKey, recStoreId } = this.props;
 
 		if ( postKey.isRecommendationBlock ) {
 			return (
 				<RecommendedPosts
 					recommendations={ postKey.recommendations }
 					index={ postKey.index }
-					storeId={ this.props.store.id }
+					storeId={ recStoreId }
 					followSource={ IN_STREAM_RECOMMENDATION }
 				/>
 			);
