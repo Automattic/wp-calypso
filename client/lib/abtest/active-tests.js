@@ -17,6 +17,14 @@ module.exports = {
 		defaultVariation: 'userLast',
 		allowExistingUsers: false,
 	},
+	signupPlansCallToAction: {
+		datestamp: '20170403',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+	},
 	automatedTransfer2: {
 		datestamp: '20170316',
 		variations: {

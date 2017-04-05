@@ -135,7 +135,7 @@ class PlanFeatures extends Component {
 				newPlan,
 				relatedMonthlyPlan,
 				primaryUpgrade,
-				isPlaceholder
+				isPlaceholder,
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
 
@@ -171,6 +171,8 @@ class PlanFeatures extends Component {
 						isPlaceholder={ isPlaceholder }
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
+						isPopular = { popular }
+						planName ={ planConstantObj.getTitle() }
 					/>
 					<FoldableCard
 						header={ translate( 'Show features' ) }
@@ -269,7 +271,9 @@ class PlanFeatures extends Component {
 				onUpgradeClick,
 				planName,
 				primaryUpgrade,
-				isPlaceholder
+				isPlaceholder,
+				planConstantObj,
+				popular,
 			} = properties;
 
 			const classes = classNames(
@@ -286,9 +290,11 @@ class PlanFeatures extends Component {
 						current={ current }
 						available = { available }
 						primaryUpgrade={ primaryUpgrade }
+						planName ={ planConstantObj.getTitle() }
 						onUpgradeClick={ onUpgradeClick }
 						freePlan={ isFreePlan( planName ) }
 						isPlaceholder={ isPlaceholder }
+						isPopular = { popular }
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
 						manageHref={ `/plans/my-plan/${ site.slug }` }
@@ -337,7 +343,7 @@ class PlanFeatures extends Component {
 				description={ description }
 				hideInfoPopover={ abtest( 'jetpackNewDescriptions' ) === 'showNew' }
 			>
-				<span className="plan_features__item-info">
+				<span className="plan-features__item-info">
 					<span className={ itemClasses }>{ feature.getTitle() }</span>
 					{ abtest( 'jetpackNewDescriptions' ) === 'showNew'
 						? <span className="plan-features__item-description">{ description }</span>
@@ -390,7 +396,9 @@ class PlanFeatures extends Component {
 				onUpgradeClick,
 				planName,
 				primaryUpgrade,
-				isPlaceholder
+				isPlaceholder,
+				planConstantObj,
+				popular,
 			} = properties;
 			const classes = classNames(
 				'plan-features__table-item',
@@ -405,11 +413,13 @@ class PlanFeatures extends Component {
 						current={ current }
 						available = { available }
 						primaryUpgrade={ primaryUpgrade }
+						planName ={ planConstantObj.getTitle() }
 						onUpgradeClick={ onUpgradeClick }
 						freePlan={ isFreePlan( planName ) }
 						isPlaceholder={ isPlaceholder }
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
+						isPopular = { popular }
 						manageHref={ `/plans/my-plan/${ site.slug }` }
 					/>
 				</td>
