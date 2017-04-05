@@ -22,6 +22,7 @@ export const HAPPYCHAT_CHAT_STATUS_ASSIGNING = 'assigning';
 export const HAPPYCHAT_CHAT_STATUS_PENDING = 'pending';
 export const HAPPYCHAT_CHAT_STATUS_MISSED = 'missed';
 export const HAPPYCHAT_CHAT_STATUS_ABANDONED = 'abandoned';
+export const HAPPYCHAT_CHAT_STATUS_BLOCKED = 'blocked';
 
 export const getHappychatChatStatus = createSelector(
 	state => state.happychat.chatStatus
@@ -83,7 +84,8 @@ export const canUserSendMessages = createSelector(
 	state => (
 		getHappychatConnectionStatus( state ) === 'connected' &&
 		! includes(
-			[	HAPPYCHAT_CHAT_STATUS_PENDING, HAPPYCHAT_CHAT_STATUS_MISSED, HAPPYCHAT_CHAT_STATUS_ABANDONED ],
+			[	HAPPYCHAT_CHAT_STATUS_PENDING, HAPPYCHAT_CHAT_STATUS_MISSED,
+				HAPPYCHAT_CHAT_STATUS_ABANDONED, HAPPYCHAT_CHAT_STATUS_BLOCKED ],
 			getHappychatChatStatus( state )
 		)
 	),
