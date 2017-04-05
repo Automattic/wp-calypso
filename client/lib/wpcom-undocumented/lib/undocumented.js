@@ -715,7 +715,7 @@ Undocumented.prototype.getStoredCards = function( fn ) {
 Undocumented.prototype.menus = function( siteId, callback ) {
 	debug( '/sites/:site_id/menus query' );
 
-	return this.wpcom.withLocale().req.get( { path: '/sites/' + siteId + '/menus' }, callback );
+	return this.wpcom.req.get( { path: '/sites/' + siteId + '/menus' }, callback );
 };
 
 /**
@@ -2139,7 +2139,7 @@ Undocumented.prototype.submitSupportForumsTopic = function( subject, message, lo
  * @api public
  */
 Undocumented.prototype.getExportSettings = function( siteId, fn ) {
-	return this.wpcom.withLocale().req.get( {
+	return this.wpcom.req.get( {
 		apiVersion: '1.1',
 		path: `/sites/${ siteId }/exports/settings`
 	}, fn );
@@ -2154,7 +2154,7 @@ Undocumented.prototype.getExportSettings = function( siteId, fn ) {
  * @returns {Promise}                   A promise that resolves when the export started
  */
 Undocumented.prototype.startExport = function( siteId, advancedSettings, fn ) {
-	return this.wpcom.withLocale().req.post( {
+	return this.wpcom.req.post( {
 		apiVersion: '1.1',
 		path: `/sites/${ siteId }/exports/start`
 	}, advancedSettings, fn );
@@ -2169,7 +2169,7 @@ Undocumented.prototype.startExport = function( siteId, advancedSettings, fn ) {
  * @returns {Promise}  promise
  */
 Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
-	return this.wpcom.withLocale().req.get( {
+	return this.wpcom.req.get( {
 		apiVersion: '1.1',
 		path: `/sites/${ siteId }/exports/${ exportId }`
 	}, fn );
