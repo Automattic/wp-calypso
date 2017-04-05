@@ -46,6 +46,7 @@ export getPosterUploadProgress from './get-poster-upload-progress';
 export getPosterUrl from './get-poster-url';
 export getPostLikes from './get-post-likes';
 export getRawOffsets from './get-raw-offsets';
+export getReaderFeedsForQuery from './get-reader-feeds-for-query';
 export getReaderFollowedTags from './get-reader-followed-tags';
 export getReaderFollows from './get-reader-follows';
 export getReaderTags from './get-reader-tags';
