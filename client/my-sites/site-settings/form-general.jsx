@@ -424,7 +424,7 @@ class SiteSettingsFormGeneral extends Component {
 				>
 					{ translate(
 						'Use synchronized data to boost performance'
-					) }
+					) } (a8c-only experimental feature)
 				</CompactFormToggle>
 			</CompactCard>
 		);
