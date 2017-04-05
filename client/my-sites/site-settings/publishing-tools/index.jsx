@@ -79,7 +79,6 @@ class PublishingTools extends Component {
 					value={ email }
 				/>
 				<Button
-					compact
 					onClick={ this.onRegenerateButtonClick }
 					disabled={ isFormPending || regeneratingPostByEmail || ! postByEmailAddressModuleActive || moduleUnavailable }
 				>
