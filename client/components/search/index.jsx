@@ -71,7 +71,8 @@ const Search = React.createClass( {
 		return {
 			keyword: this.props.initialValue || '',
 			isOpen: !! this.props.isOpen,
-			hasFocus: false
+			hasFocus: false,
+			instanceId: 0
 		};
 	},
 
@@ -101,10 +102,6 @@ const Search = React.createClass( {
 	},
 
 	componentWillMount: function() {
-		this.setState( {
-			instanceId: ++Search.instances
-		} );
-
 		this.closeListener = keyListener.bind( this, 'closeSearch' );
 		this.openListener = keyListener.bind( this, 'openSearch' );
 	},
@@ -167,6 +164,16 @@ const Search = React.createClass( {
 			// this hack makes autoFocus work correctly in Dropdown
 			setTimeout( () => this.focus(), 0 );
 		}
+
+		// Setting a unique instance ID lets each component instance have unique HTML id
+		// attributes, needed for proper ARIA support. Unfortunately, setting this before
+		// first render causes reconciliation errors when the component is server-rendered
+		// (it's tough to keep the server and client instance count sync'd). That's why
+		// we're only setting a unique ID after the client has mounted.
+		// eslint-disable-next-line react/no-did-mount-set-state
+		this.setState( {
+			instanceId: ++Search.instances
+		} );
 	},
 
 	scrollOverlay: function() {
