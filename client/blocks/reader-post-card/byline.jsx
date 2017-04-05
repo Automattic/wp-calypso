@@ -22,7 +22,6 @@ import { getStreamUrl } from 'reader/route';
 import ReaderAuthorLink from 'blocks/reader-author-link';
 import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
 
-// A/B test to try showing 3 tags per post instead of 1
 const TAGS_TO_SHOW = 3;
 
 class TagLink extends React.Component {
