@@ -18,10 +18,13 @@ var HeaderCake = require( 'components/header-cake' ),
 	wpcom = require( 'lib/wp' ).undocumented(),
 	paths = require( 'my-sites/upgrades/paths' );
 import { currentUserHasFlag } from 'state/current-user/selectors';
+import { isSiteUpgradeable, isSiteVip } from 'state/selectors';
+import { getRawSite } from 'state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Notice from 'components/notice';
 
 var MapDomain = React.createClass( {
-	mixins: [ observe( 'productsList', 'sites' ) ],
+	mixins: [ observe( 'productsList' ) ],
 
 	propTypes: {
 		query: React.PropTypes.string,
@@ -36,46 +39,31 @@ var MapDomain = React.createClass( {
 	},
 
 	componentWillMount: function() {
-		this.checkSiteIsUpgradeable();
+		this.redirectAwayIfNotUpgradeable( this.props.selectedSiteIsUpgreadable );
 	},
 
-	componentDidMount: function() {
-		if ( this.props.sites ) {
-			this.props.sites.on( 'change', this.checkSiteIsUpgradeable );
-		}
+	componentWillReceiveProps: function( nextProps ) {
+		this.redirectAwayIfNotUpgradeable( nextProps.selectedSiteIsUpgreadable );
 	},
 
-	componentWillUnmount: function() {
-		if ( this.props.sites ) {
-			this.props.sites.off( 'change', this.checkSiteIsUpgradeable );
-		}
-	},
-
-	checkSiteIsUpgradeable: function( ) {
-		if ( ! this.props.sites ) {
-			return;
-		}
-
-		const selectedSite = this.props.sites.getSelectedSite();
-
-		if ( selectedSite && ! selectedSite.isUpgradeable() ) {
+	redirectAwayIfNotUpgradeable: function( isUpgradeable ) {
+		if ( ! isUpgradeable ) {
 			page.redirect( '/domains/add/mapping' );
 		}
 	},
 
 	goBack: function() {
-		const selectedSite = this.props.sites && this.props.sites.getSelectedSite();
-		if ( ! selectedSite ) {
-			page( this.props.path.replace( '/mapping', '' ) );
+		if ( this.props.noSelectedSite ) {
+			page( '/domains/add' );
 			return;
 		}
 
-		if ( selectedSite.is_vip ) {
-			page( paths.domainManagementList( selectedSite.slug ) );
+		if ( this.props.selectedSiteIsVip ) {
+			page( paths.domainManagementList( this.props.selectedSiteSlug ) );
 			return;
 		}
 
-		page( '/domains/add/' + selectedSite.slug );
+		page( '/domains/add/' + this.props.selectedSiteSlug );
 	},
 
 	handleRegisterDomain( suggestion ) {
@@ -87,21 +75,19 @@ var MapDomain = React.createClass( {
 		);
 
 		if ( this.isMounted() ) {
-			page( '/checkout/' + this.props.sites.getSelectedSite().slug );
+			page( '/checkout/' + this.props.selectedSiteSlug );
 		}
 	},
 
 	handleMapDomain( domain ) {
-		const selectedSite = this.props.sites.getSelectedSite();
-
 		this.setState( { errorMessage: null } );
 
 		// For VIP sites we handle domain mappings differently
 		// We don't go through the usual checkout process
 		// Instead, we add the mapping directly
-		if ( selectedSite.is_vip ) {
-			wpcom.addVipDomainMapping( selectedSite.ID, domain ).then( () => {
-				page( paths.domainManagementList( selectedSite.slug ) );
+		if ( this.props.selectedSiteIsVip ) {
+			wpcom.addVipDomainMapping( this.props.selectedSiteId, domain ).then( () => {
+				page( paths.domainManagementList( this.props.selectedSiteSlug ) );
 			}, error => this.setState( { errorMessage: error.message } ) );
 			return;
 		}
@@ -109,17 +95,11 @@ var MapDomain = React.createClass( {
 		upgradesActions.addItem( cartItems.domainMapping( { domain } ) );
 
 		if ( this.isMounted() ) {
-			page( '/checkout/' + selectedSite.slug );
+			page( '/checkout/' + this.props.selectedSiteSlug );
 		}
 	},
 
 	render: function() {
-		let selectedSite;
-
-		if ( this.props.sites ) {
-			selectedSite = this.props.sites.getSelectedSite();
-		}
-
 		return (
 			<span>
 				<HeaderCake onClick={ this.goBack }>
@@ -129,9 +109,8 @@ var MapDomain = React.createClass( {
 				{ this.state.errorMessage && <Notice status="is-error" text={ this.state.errorMessage }/> }
 
 				<MapDomainStep
-					{ ...omit( this.props, [ 'children', 'productsList', 'sites' ] ) }
+					{ ...omit( this.props, [ 'children', 'productsList' ] ) }
 					products={ this.props.productsList.get() }
-					selectedSite={ selectedSite }
 					onRegisterDomain={ this.handleRegisterDomain }
 					onMapDomain={ this.handleMapDomain }
 					analyticsSection="domains"
@@ -143,6 +122,11 @@ var MapDomain = React.createClass( {
 
 module.exports = connect( state => (
 	{
-		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
+		noSelectedSite: ! getRawSite( state, getSelectedSiteId( state ) ),
+		selectedSiteId: getSelectedSiteId( state ),
+		selectedSiteIsUpgreadable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
+		selectedSiteIsVip: isSiteVip( state, getSelectedSiteId( state ) ),
+		selectedSiteSlug: getSelectedSiteSlug( state ),
 	}
 ) )( MapDomain );

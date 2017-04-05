@@ -117,8 +117,7 @@ module.exports = {
 						<MapDomain
 							store={ context.store }
 							productsList={ productsList }
-							initialQuery={ context.query.initialQuery }
-							sites={ sites } />
+							initialQuery={ context.query.initialQuery } />
 					</CartData>
 				</Main>
 			),
