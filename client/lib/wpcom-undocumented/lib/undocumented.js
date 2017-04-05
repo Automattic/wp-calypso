@@ -427,12 +427,9 @@ Undocumented.prototype.settings = function( siteId, method = 'get', data = {}, f
 	}, fn );
 };
 
-Undocumented.prototype._sendRequestWithLocale = function( originalParams, fn ) {
-	const { apiVersion, body = {}, method } = originalParams,
-		locale = i18n.getLocaleSlug(),
+Undocumented.prototype._sendRequest = function( originalParams, fn ) {
+	const { apiVersion, method } = originalParams,
 		updatedParams = omit( originalParams, [ 'apiVersion', 'method' ] );
-
-	updatedParams.body = Object.assign( {}, body, { locale } );
 
 	if ( apiVersion ) {
 		// TODO: temporary solution for apiVersion until https://github.com/Automattic/wpcom.js/issues/152 is resolved
@@ -506,7 +503,7 @@ Undocumented.prototype.setSiteRedirect = function( siteId, location, fn ) {
 Undocumented.prototype.getDomainContactInformation = function( fn ) {
 	debug( '/me/domain-contact-information query' );
 
-	return this._sendRequestWithLocale( {
+	return this._sendRequest( {
 		path: '/me/domain-contact-information',
 		method: 'get'
 	}, function( error, data ) {
@@ -527,7 +524,7 @@ Undocumented.prototype.getDomainContactInformation = function( fn ) {
 Undocumented.prototype.getDomainRegistrationSupportedStates = function( countryCode, fn ) {
 	debug( '/domains/supported-states/ query' );
 
-	return this._sendRequestWithLocale( {
+	return this._sendRequest( {
 		path: '/domains/supported-states/' + countryCode,
 		method: 'get'
 	}, fn );
@@ -536,7 +533,7 @@ Undocumented.prototype.getDomainRegistrationSupportedStates = function( countryC
 Undocumented.prototype.getDomainRegistrationSupportedCountries = function( fn ) {
 	debug( '/domains/supported-countries/ query' );
 
-	return this._sendRequestWithLocale( {
+	return this._sendRequest( {
 		path: '/domains/supported-countries/',
 		method: 'get'
 	}, fn );
@@ -545,7 +542,7 @@ Undocumented.prototype.getDomainRegistrationSupportedCountries = function( fn ) 
 Undocumented.prototype.getPaymentSupportedCountries = function( fn ) {
 	debug( '/me/transactions/supported-countries/ query' );
 
-	return this._sendRequestWithLocale( {
+	return this._sendRequest( {
 		path: '/me/transactions/supported-countries/',
 		method: 'get'
 	}, fn );
@@ -639,7 +636,7 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function( contactI
  */
 Undocumented.prototype.getProducts = function( fn ) {
 	debug( '/products query' );
-	return this._sendRequestWithLocale( {
+	return this._sendRequest( {
 		path: '/products',
 		method: 'get'
 	}, fn );
@@ -660,7 +657,7 @@ Undocumented.prototype.getSitePlans = function( siteDomain, fn ) {
 	// the request
 	siteDomain = encodeURIComponent( siteDomain );
 
-	return this._sendRequestWithLocale( {
+	return this._sendRequest( {
 		path: '/sites/' + siteDomain + '/plans',
 		method: 'get'
 	}, fn );
@@ -686,7 +683,7 @@ Undocumented.prototype.cart = function( cartKey, method, data, fn ) {
 		method = 'GET';
 		data = {};
 	}
-	return this._sendRequestWithLocale( {
+	return this._sendRequest( {
 		path: '/me/shopping-cart/' + cartKey,
 		method: method,
 		body: data
@@ -1032,7 +1029,7 @@ Undocumented.prototype.transactions = function( method, data, fn ) {
 		data = mapKeysRecursively( data, snakeCase );
 	}
 
-	return this._sendRequestWithLocale( {
+	return this._sendRequest( {
 		path: '/me/transactions',
 		method: method,
 		body: data
