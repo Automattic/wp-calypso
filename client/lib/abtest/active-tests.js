@@ -25,6 +25,15 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
+	readerPostCardTagCount: {
+		datestamp: '20170315',
+		variations: {
+			showOne: 50,
+			showThree: 50
+		},
+		defaultVariation: 'showThree',
+		allowExistingUsers: true
+	},
 	automatedTransfer2: {
 		datestamp: '20170316',
 		variations: {
