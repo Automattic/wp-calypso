@@ -22,24 +22,9 @@ import SubscriptionListItem from 'blocks/reader-subscription-list-item/';
 import { getReaderFollows, getReaderFeedsForQuery } from 'state/selectors';
 import QueryReaderFollows from 'components/data/query-reader-follows';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
-import feedSiteFluxAdapter from 'lib/reader-site-feed-flux-adapter';
+import feedSiteFluxAdapter from 'lib/reader-post-flux-adapter';
 // import { recordTrackForPost, recordAction, recordTrack } from 'reader/stats';
 // import { } from 'reader/follow-button/follow-sources';
-
-/*
-	isFollowing,
-	siteUrl,
-	siteTitle,
-	siteAuthor,
-	siteExcerpt,
-	feedId,
-	siteId,
-	className = '',
-	onSiteClick = () => {},
-	followSource,
-	lastUpdated,
-	translate,
-*/
 
 const ConnectedFollowListItem = localize( feedSiteFluxAdapter(
 	( { feed, site, translate, url, feedId, siteId } ) => (
@@ -57,12 +42,13 @@ const ConnectedFollowListItem = localize( feedSiteFluxAdapter(
 		/>
 	)
 ) );
-class FollowingManage extends Component {
 
+class FollowingManage extends Component {
 	static propTypes = {
 		query: React.PropTypes.string,
 	};
 
+	// TODO make this common between our different search pages?
 	updateQuery = ( newValue ) => {
 		this.scrollToTop();
 		const trimmedValue = trim( newValue ).substring( 0, 1024 );

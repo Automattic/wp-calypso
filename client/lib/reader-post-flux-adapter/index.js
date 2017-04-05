@@ -12,6 +12,8 @@ import FeedPostStore from 'lib/feed-post-store';
 import { fetchPost } from 'lib/feed-post-store/actions';
 import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
+import QueryReaderSite from 'components/data/query-reader-site';
+import QueryReaderFeed from 'components/data/query-reader-feed';
 
 /**
  * A HoC function that translates a postKey or postKeys into a post or posts for its child.
@@ -27,7 +29,7 @@ const fluxPostAdapter = Component => {
 
 		getStateFromStores = ( props = this.props ) => {
 			const { postKey } = props;
-			const posts = map(
+			const posts = postKey && postKey.postIds && map(
 				postKey.postIds,
 				postId => {
 					const postKeyForPost = {};
@@ -68,27 +70,41 @@ const fluxPostAdapter = Component => {
 
 		render() {
 			const { post, posts } = this.state;
-			if ( ! post && ! posts ) {
-				return null;
-			}
-			return <Component { ...{ ...this.props, post, posts } } />;
+			return (
+				<div>
+					{ ! this.props.feed && !! this.props.feedId && <QueryReaderFeed feedId={ this.props.feedId } /> }
+					{ ! this.props.site && !! this.props.siteId && <QueryReaderSite siteId={ this.props.siteId } /> }
+					<Component { ...{ ...this.props, post, posts } } />
+				</div>
+			);
 		}
 	}
 
 	return connect(
 		( state, ownProps ) => {
-			const { feedId, blogId } = ownProps.postKey;
+			const { postKey } = ownProps;
+			let { feedId, blogId } = ownProps;
+
+			if ( ! feedId && postKey && postKey.feedId ) {
+				feedId = postKey.feedId;
+			}
+			if ( ! blogId && postKey && postKey.blogId ) {
+				blogId = postKey.blogId;
+			}
+
 			let feed, site;
 			if ( feedId ) {
 				feed = getFeed( state, feedId );
 				site = feed && feed.blog_ID ? getSite( state, feed.blog_ID ) : undefined;
-			} else {
+			} else if ( blogId ) {
 				site = getSite( state, blogId );
 				feed = site && site.feed_ID ? getFeed( state, site.feed_ID ) : undefined;
 			}
 			return {
 				feed,
-				site
+				site,
+				siteId: +blogId,
+				feedId: +feedId,
 			};
 		}
 	)( ReaderPostFluxAdapter );
