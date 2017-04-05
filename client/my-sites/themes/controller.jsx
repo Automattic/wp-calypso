@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { compact, isEmpty, startsWith } from 'lodash';
+import { compact, includes, isEmpty, startsWith } from 'lodash';
 import debugFactory from 'debug';
 import Lru from 'lru';
 import React from 'react';
@@ -136,4 +136,37 @@ export function fetchThemeData( context, next ) {
 			next();
 		} )
 		.catch( () => next() );
+}
+
+// Legacy (Atlas-based Theme Showcase v4) route redirects
+
+export function redirectSearchAndType( { res, params: { site, search, tier } } ) {
+	const target = '/design/' + compact( [ tier, site ] ).join( '/' ); // tier before site!
+	if ( search ) {
+		res.redirect( `${ target }?s=${ search }` );
+	} else {
+		res.redirect( target );
+	}
+}
+
+export function redirectFilterAndType( { res, params: { site, filter, tier } } ) {
+	let parts;
+	if ( filter ) {
+		parts = [ tier, 'filter', filter.replace( '+', ',' ), site ]; // The Atlas Showcase used plusses, we use commas
+	} else {
+		parts = [ tier, site ];
+	}
+	res.redirect( '/design/' + compact( parts ).join( '/' ) );
+}
+
+export function redirectToThemeDetails( { res, params: { site, theme, section } }, next ) {
+	// Make sure we aren't matching a site -- e.g. /design/example.wordpress.com or /design/1234567
+	if ( includes( theme, '.' ) || isFinite( theme ) ) {
+		return next();
+	}
+	let redirectedSection;
+	if ( section === 'support' ) {
+		redirectedSection = 'setup';
+	}
+	res.redirect( '/theme/' + compact( [ theme, redirectedSection, site ] ).join( '/' ) );
 }
