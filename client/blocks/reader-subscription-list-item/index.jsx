@@ -77,7 +77,7 @@ function ReaderSubscriptionListItem( {
 				<div>{ siteExcerpt }</div>
 				<div className="reader-subscription-list-item__site-url">
 					<a href={ siteUrl }> { siteUrl && stripUrl( siteUrl ) } </a>
-					{ moment( lastUpdated ).fromNow() }
+					{ lastUpdated && moment( lastUpdated ).fromNow() }
 				</div>
 			</div>
 			<div className="reader-subscription-list-item__options">
