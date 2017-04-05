@@ -34,10 +34,14 @@ class DesignTypeWithStoreStep extends Component {
 
 	getChoices() {
 		const { translate } = this.props;
-		const blogText = translate( 'To share your ideas, stories, and photographs with your followers.' ), // eslint-disable-line max-len
-			siteText = translate( 'To promote your business, organization, or brand and connect with your audience.' ), // eslint-disable-line max-len
-			gridText = translate( 'To present your creative projects in a visual showcase.' ),
-			storeText = translate( 'To sell your products or services and accept payments.' );
+		const blogText = translate(
+			'To share your ideas, stories, and photographs with your followers.'
+		);
+		const siteText = translate(
+			'To promote your business, organization, or brand and connect with your audience.'
+		);
+		const gridText = translate( 'To present your creative projects in a visual showcase.' );
+		const storeText = translate( 'To sell your products or services and accept payments.' );
 
 		return [
 			{ type: 'blog',
