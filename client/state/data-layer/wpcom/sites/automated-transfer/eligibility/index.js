@@ -95,23 +95,23 @@ const trackEligibility = data => {
 		return recordTracksEvent( 'calypso_automated_transfer_eligiblity_eligible' );
 	}
 
-	let hasHoldsEvent;
-	let hasWarningsEvent;
+	let holdsTracksEvent;
+	let warningsTracksEvent;
 
 	if ( ! data.is_eligible ) {
-		hasHoldsEvent = recordTracksEvent( 'calypso_automated_transfer_eligibility_holds', {
+		holdsTracksEvent = recordTracksEvent( 'calypso_automated_transfer_eligibility_holds', {
 			holds: eligibilityHoldsFromApi( data ).join( ',' )
 		} );
 	}
 
 	if ( hasEligibilityWarnings ) {
-		hasWarningsEvent = recordTracksEvent( 'calypso_automated_transfer_eligibility_warnings', {
+		warningsTracksEvent = recordTracksEvent( 'calypso_automated_transfer_eligibility_warnings', {
 			plugins: map( pluginWarnings, 'id' ).join( ',' ),
 			widgets: map( widgetWarnings, 'id' ).join( ',' ),
 		} );
 	}
 
-	const eligibilityEvents = [ hasHoldsEvent, hasWarningsEvent ].filter( identity );
+	const eligibilityEvents = [ holdsTracksEvent, warningsTracksEvent ].filter( identity );
 
 	return composeAnalytics.apply( null, eligibilityEvents );
 };
