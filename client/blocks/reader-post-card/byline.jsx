@@ -21,8 +21,10 @@ import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import { getStreamUrl } from 'reader/route';
 import ReaderAuthorLink from 'blocks/reader-author-link';
 import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
+import { abtest } from 'lib/abtest';
 
-const TAGS_TO_SHOW = 3;
+// A/B test to try showing 3 tags per post instead of 1
+const TAGS_TO_SHOW = abtest( 'readerPostCardTagCount' ) === 'showThree' ? 3 : 1;
 
 class TagLink extends React.Component {
 	recordSingleTagClick = () => {
