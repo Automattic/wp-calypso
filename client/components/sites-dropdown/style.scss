@@ -24,9 +24,14 @@
 	margin: 0;
 	position: relative;
 	width: 300px;
+	transition: all .15s ease-in-out;
 
 	@include breakpoint( "<660px" ) {
 		width: 100%;
+	}
+
+	&:hover {
+		border-color: lighten( $gray, 10% );
 	}
 }
 
