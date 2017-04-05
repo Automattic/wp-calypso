@@ -32,6 +32,9 @@ import {
 	HAPPYCHAT_SET_CHAT_STATUS,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 } from 'state/action-types';
+import {
+	HAPPYCHAT_CHAT_STATUS_DEFAULT,
+} from './selectors';
 import { HAPPYCHAT_MAX_STORED_MESSAGES } from './constants';
 import { timelineSchema } from './schema';
 
@@ -177,23 +180,25 @@ const connectionError = ( state = null, action ) => {
 };
 
 /**
- * Tracks the state of the happychat chat. Valid states
- *  - default : no chat has been started
- *  - pending : chat has been started but no operator assigned
- *  - assigning : system is assigning to an operator
- *  - assigned : operator has been connected to the chat
- *  - missed : no operator could be assigned
- *  - abandoned : operator was disconnected
+ * Tracks the state of the happychat chat. Valid states are:
+ *
+ *  - HAPPYCHAT_CHAT_STATUS_DEFAULT : no chat has been started
+ *  - HAPPYCHAT_CHAT_STATUS_PENDING : chat has been started but no operator assigned
+ *  - HAPPYCHAT_CHAT_STATUS_ASSIGNING : system is assigning to an operator
+ *  - HAPPYCHAT_CHAT_STATUS_ASSIGNED : operator has been connected to the chat
+ *  - HAPPYCHAT_CHAT_STATUS_MISSED : no operator could be assigned
+ *  - HAPPYCHAT_CHAT_STATUS_ABANDONED : operator was disconnected
+ *  - HAPPYCHAT_CHAT_STATUS_CLOSED : chat was closed
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  *
  */
-const chatStatus = ( state = 'default', action ) => {
+const chatStatus = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
 	switch ( action.type ) {
 		case SERIALIZE:
-			return 'default';
+			return HAPPYCHAT_CHAT_STATUS_DEFAULT;
 		case DESERIALIZE:
 			return state;
 		case HAPPYCHAT_SET_CHAT_STATUS:

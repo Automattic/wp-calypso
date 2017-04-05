@@ -26,6 +26,7 @@ export const HAPPYCHAT_CHAT_STATUS_ASSIGNING = 'assigning';
 export const HAPPYCHAT_CHAT_STATUS_PENDING = 'pending';
 export const HAPPYCHAT_CHAT_STATUS_MISSED = 'missed';
 export const HAPPYCHAT_CHAT_STATUS_ABANDONED = 'abandoned';
+export const HAPPYCHAT_CHAT_STATUS_CLOSED = 'closed';
 
 export const getHappychatChatStatus = createSelector(
 	state => state.happychat.chatStatus
@@ -45,6 +46,12 @@ export const getHappychatConnectionStatus = createSelector(
 );
 
 export const isHappychatConnectionUninitialized = state => getHappychatConnectionStatus( state ) === 'uninitialized';
+
+export const isHappychatClientConnected = state => getHappychatConnectionStatus( state ) === 'connected';
+
+export const isHappychatChatAssigned = createSelector(
+	state => state.happychat.chatStatus === HAPPYCHAT_CHAT_STATUS_ASSIGNED
+);
 
 export const isHappychatChatActive = createSelector(
 	state => state.happychat.chatStatus !== HAPPYCHAT_CHAT_STATUS_DEFAULT,
