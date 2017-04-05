@@ -53,7 +53,9 @@ const SecurePaymentForm = React.createClass( {
 		};
 	},
 
-	getVisiblePaymentBox( cart ) {
+	getVisiblePaymentBox( cart, locale = 'en' ) {
+		const preferredPaymentMethods = this.getLocalizedPaymentMethodDefaults( locale );
+
 		if ( isPaidForFullyInCredits( cart ) ) {
 			return 'credits';
 		} else if ( isFree( cart ) ) {
@@ -62,13 +64,22 @@ const SecurePaymentForm = React.createClass( {
 			return 'free-trial';
 		} else if ( this.state && this.state.userSelectedPaymentBox ) {
 			return this.state.userSelectedPaymentBox;
-		} else if ( cartValues.isCreditCardPaymentsEnabled( cart ) ) {
-			return 'credit-card';
-		} else if ( cartValues.isPayPalExpressEnabled( cart ) ) {
-			return 'paypal';
+		} else if ( cartValues.isPaymentMethodEnabled( cart, preferredPaymentMethods[ 0 ] ) ) {
+			return preferredPaymentMethods[ 0 ];
+		} else if ( cartValues.isPaymentMethodEnabled( cart, preferredPaymentMethods[ 1 ] ) ) {
+			return preferredPaymentMethods[ 1 ];
 		}
 
 		return null;
+	},
+
+	getLocalizedPaymentMethodDefaults( locale ) {
+		const defaults = {
+			de: [ 'paypal', 'credit-card' ],
+			en: [ 'credit-card', 'paypal' ]
+		};
+
+		return defaults[ locale ] || [ 'credit-card', 'paypal' ];
 	},
 
 	componentWillReceiveProps( nextProps ) {
