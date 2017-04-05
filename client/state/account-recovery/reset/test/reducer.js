@@ -17,6 +17,9 @@ import {
 	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
 	ACCOUNT_RECOVERY_RESET_PICK_METHOD,
 	ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY,
+	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST,
+	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
+	ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
 } from 'state/action-types';
 
 import reducer from '../reducer';
@@ -224,5 +227,36 @@ describe( '#account-recovery/reset reducer', () => {
 		} );
 
 		assert.equal( state.key, key );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST action should set the requesting status flag of the validate state tree', () => {
+		const state = reducer( undefined, {
+			type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST,
+		} );
+
+		assert.isTrue( state.validate.isRequesting );
+	} );
+
+	const validatingState = deepFreeze( {
+		validate: {
+			isRequesting: true,
+		},
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS action should unset the requesting status flag of the validate state tree', () => {
+		const state = reducer( validatingState, {
+			type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
+		} );
+
+		assert.isFalse( state.validate.isRequesting );
+	} );
+
+	it( 'ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR action should unset the requesting status flag of the validate state tree', () => {
+		const state = reducer( validatingState, {
+			type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
+			error: {},
+		} );
+
+		assert.isFalse( state.validate.isRequesting );
 	} );
 } );
