@@ -13,6 +13,7 @@ import { get } from 'lodash';
  */
 import wpcom from 'lib/wp';
 import config from 'config';
+import { abtest } from 'lib/abtest';
 import CompactCard from 'components/card/compact';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
@@ -135,7 +136,10 @@ const RemovePurchase = React.createClass( {
 		const purchase = getPurchase( this.props );
 		let newStep;
 
-		if ( isBusiness( purchase ) && this.state.survey.questionOneRadio === 'tooHard' ) {
+		if ( purchase && isBusiness( purchase ) &&
+			this.state.survey.questionOneRadio === 'tooHard' &&
+			abtest( 'conciergeOfferOnCancel' ) === 'showConciergeOffer'
+		) {
 			this.setState( { finalStep: 3 } );
 
 			switch ( this.state.surveyStep ) {

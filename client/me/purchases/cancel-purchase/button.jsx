@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import config from 'config';
+import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import { cancelAndRefundPurchase, cancelPurchase, submitSurvey } from 'lib/upgrades/actions';
 import { clearPurchases } from 'state/purchases/actions';
@@ -84,7 +85,10 @@ class CancelPurchaseButton extends Component {
 		const { purchase } = this.props;
 		let newStep;
 
-		if ( isBusiness( purchase ) && this.state.survey.questionOneRadio === 'tooHard' ) {
+		if ( purchase && isBusiness( purchase ) &&
+			this.state.survey.questionOneRadio === 'tooHard' &&
+			abtest( 'conciergeOfferOnCancel' ) === 'showConciergeOffer'
+		) {
 			this.setState( { finalStep: 3 } );
 
 			switch ( this.state.surveyStep ) {
