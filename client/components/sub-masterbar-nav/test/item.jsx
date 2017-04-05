@@ -40,21 +40,15 @@ describe( 'Item', () => {
 
 	it( 'should display a given gridicon', () => {
 		const item = shallow( <Item label={ 'test item' } icon={ 'globe' } /> );
+		const icon = item.find( Gridicon );
 
-		expect(
-			item.contains(
-				<Gridicon className="sub-masterbar-nav__icon" icon={ 'globe' } size={ 24 } />
-			)
-		).to.equal( true );
+		expect( icon.prop( 'icon' ) ).to.equal( 'globe' );
 	} );
 
 	it( 'should display a \'star\' gridicon by default', () => {
 		const item = shallow( <Item label={ 'test item' } /> );
+		const icon = item.find( Gridicon );
 
-		expect(
-			item.contains(
-				<Gridicon className="sub-masterbar-nav__icon" icon={ 'star' } size={ 24 } />
-			)
-		).to.equal( true );
+		expect( icon.prop( 'icon' ) ).to.equal( 'star' );
 	} );
 } );
