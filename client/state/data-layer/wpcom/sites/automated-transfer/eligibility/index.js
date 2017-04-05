@@ -18,7 +18,6 @@ import {
 import {
 	recordTracksEvent,
 	withAnalytics,
-	composeAnalytics,
 } from 'state/analytics/actions';
 
 /**
@@ -87,33 +86,24 @@ const fromApi = data => ( {
  * @returns {Object} An analytics event object
  */
 const trackEligibility = data => {
+	const isEligible = get( data, 'is_eligible', false );
 	const pluginWarnings = get( data, 'warnings.plugins', [] );
 	const widgetWarnings = get( data, 'warnings.widgets', [] );
 	const hasEligibilityWarnings = ! ( isEmpty( pluginWarnings ) && isEmpty( widgetWarnings ) );
 
-	if ( data.is_eligible && ! hasEligibilityWarnings ) {
-		return recordTracksEvent( 'calypso_automated_transfer_eligiblity_eligible' );
+	const eventProps = {
+		has_warnings: hasEligibilityWarnings,
+		plugins: map( pluginWarnings, 'id' ).join( ',' ),
+		widgets: map( widgetWarnings, 'id' ).join( ',' ),
+	};
+
+	if ( isEligible ) {
+		return recordTracksEvent( 'calypso_automated_transfer_eligibility_eligible', eventProps );
 	}
 
-	let holdsTracksEvent;
-	let warningsTracksEvent;
-
-	if ( ! data.is_eligible ) {
-		holdsTracksEvent = recordTracksEvent( 'calypso_automated_transfer_eligibility_holds', {
-			holds: eligibilityHoldsFromApi( data ).join( ',' )
-		} );
-	}
-
-	if ( hasEligibilityWarnings ) {
-		warningsTracksEvent = recordTracksEvent( 'calypso_automated_transfer_eligibility_warnings', {
-			plugins: map( pluginWarnings, 'id' ).join( ',' ),
-			widgets: map( widgetWarnings, 'id' ).join( ',' ),
-		} );
-	}
-
-	const eligibilityEvents = [ holdsTracksEvent, warningsTracksEvent ].filter( identity );
-
-	return composeAnalytics.apply( null, eligibilityEvents );
+	// add holds to event props if the transfer is ineligible
+	eventProps.holds = eligibilityHoldsFromApi( data ).join( ',' );
+	return recordTracksEvent( 'calypso_automated_transfer_eligibility_ineligible', eventProps );
 };
 
 /**
