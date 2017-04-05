@@ -316,7 +316,8 @@ module.exports = {
 					signup_flow_name: flowName,
 					nux_q_site_type: surveySiteType,
 					nux_q_question_primary: surveyVertical,
-					jetpack_redirect: queryArgs.jetpackRedirect
+					jetpack_redirect: queryArgs.jetpackRedirect,
+					oauth2_redirect: queryArgs.oauth2_redirect,
 				}
 			), ( error, response ) => {
 				const errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
