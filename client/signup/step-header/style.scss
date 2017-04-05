@@ -16,7 +16,8 @@
 	margin: 0 0 5px 0;
 
 	@include breakpoint( "<480px" ) {
-		padding: 0 20px;
+		line-height: 1.2em;
+		padding: 0 10px;
 	}
 }
 
@@ -27,14 +28,5 @@
 	@include breakpoint( "<480px" ) {
 		margin: 0;
 		padding: 0 20px;
-	}
-}
-
-.step-wrapper--mobile-test {
-	@include breakpoint( "<480px" ) {
-		.step-header__title {
-		    line-height: 1.2em;
-		    padding: 0 10px;
-		}
 	}
 }

@@ -9,7 +9,6 @@ import classNames from 'classnames';
  */
 import StepHeader from 'signup/step-header';
 import NavigationLink from 'signup/navigation-link';
-import { abtest } from 'lib/abtest';
 
 export default React.createClass( {
 	displayName: 'StepWrapper',
@@ -77,7 +76,6 @@ export default React.createClass( {
 		const { stepContent, headerButton } = this.props;
 		const classes = classNames( 'step-wrapper', {
 			'is-wide-layout': this.props.isWideLayout,
-			'step-wrapper--mobile-test': abtest( 'signupStepOneMobileOptimize' ) === 'modified',
 		} );
 
 		return (

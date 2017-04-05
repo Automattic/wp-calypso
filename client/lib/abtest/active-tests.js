@@ -17,14 +17,6 @@ module.exports = {
 		defaultVariation: 'userLast',
 		allowExistingUsers: false,
 	},
-	signupStepOneMobileOptimize: {
-		datestamp: '20170322',
-		variations: {
-			original: 50,
-			modified: 50,
-		},
-		defaultVariation: 'original',
-	},
 	automatedTransfer2: {
 		datestamp: '20170316',
 		variations: {
