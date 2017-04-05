@@ -701,10 +701,8 @@ const ManagePurchase = React.createClass( {
 				</Card>
 
 				<PurchasePlanDetails
-					hasLoadedSites={ this.props.hasLoadedSites }
-					hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
 					selectedSite={ this.props.selectedSite }
-					selectedPurchase={ this.props.selectedPurchase }
+					purchaseId={ this.props.purchaseId }
 				/>
 
 				{ expiredRenewNotice }

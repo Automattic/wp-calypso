@@ -13,7 +13,9 @@ import ClipboardButtonInput from 'components/clipboard-button-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
-import { getPurchase, isDataLoading } from '../../utils';
+import { isRequestingSites } from 'state/sites/selectors';
+import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import { getPurchase, isDataLoading } from 'me/purchases/utils';
 import { isJetpackPlan, isFreeJetpackPlan } from 'lib/products-values';
 import { getPluginsForSite } from 'state/plugins/premium/selectors';
 
@@ -28,12 +30,13 @@ class PurchasePlanDetails extends Component {
 	}
 
 	render() {
+		const { selectedSite, pluginList } = this.props;
+		const purchase = getPurchase( this.props );
+
 		if ( isDataLoading( this.props ) || ! this.props.selectedSite ) {
 			return null;
 		}
 
-		const { selectedSite, pluginList } = this.props;
-		const purchase = getPurchase( this.props );
 		if ( ! isJetpackPlan( purchase ) || isFreeJetpackPlan( purchase ) ) {
 			return null;
 		}
@@ -54,8 +57,13 @@ class PurchasePlanDetails extends Component {
 	}
 }
 
+// hasLoadedSites & hasLoadedUserPurchasesFromServer are used in isDataLoading,
+// selectedPurchase is used in getPurchase
 export default connect(
 	( state, props ) => ( {
+		hasLoadedSites: ! isRequestingSites( state ),
+		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
 		pluginList: getPluginsForSite( state, props.selectedSite.ID ),
 	} )
 )( localize( PurchasePlanDetails ) );
