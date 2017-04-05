@@ -3,7 +3,7 @@
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import React, { Component } from 'react';
 
 /**
  * Internal Dependencies
@@ -20,23 +20,14 @@ import QueryUserPurchases from 'components/data/query-user-purchases';
 import userFactory from 'lib/user';
 const user = userFactory();
 
-const PurchasesList = React.createClass( {
-	propTypes: {
-		noticeType: React.PropTypes.string,
-		purchases: React.PropTypes.oneOfType( [
-			React.PropTypes.array,
-			React.PropTypes.bool
-		] ),
-		sites: React.PropTypes.object.isRequired
-	},
-
+class PurchasesList extends Component {
 	isDataLoading() {
 		if ( this.props.isFetchingUserPurchases && ! this.props.hasLoadedUserPurchasesFromServer ) {
 			return true;
 		}
 
 		return ! this.props.sites.initialized;
-	},
+	}
 
 	render() {
 		let content;
@@ -84,7 +75,16 @@ const PurchasesList = React.createClass( {
 			</Main>
 		);
 	}
-} );
+}
+
+PurchasesList.propTypes = {
+	noticeType: React.PropTypes.string,
+	purchases: React.PropTypes.oneOfType( [
+		React.PropTypes.array,
+		React.PropTypes.bool
+	] ),
+	sites: React.PropTypes.object.isRequired
+};
 
 export default connect(
 	state => ( {

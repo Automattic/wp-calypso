@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import React from 'react';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -25,35 +25,29 @@ import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'gridicons';
 import paths from '../paths';
 
-const PurchaseItem = React.createClass( {
-	propTypes: {
-		isPlaceholder: React.PropTypes.bool,
-		purchase: React.PropTypes.object,
-		slug: React.PropTypes.string
-	},
-
+class PurchaseItem extends Component {
 	renewsOrExpiresOn() {
-		const { purchase } = this.props;
+		const { purchase, translate, moment } = this.props;
 
 		if ( showCreditCardExpiringWarning( purchase ) ) {
 			return (
 				<Notice isCompact status="is-error" icon="notice">
-					{ this.props.translate( 'Credit card expiring soon' ) }
+					{ translate( 'Credit card expiring soon' ) }
 				</Notice>
 			);
 		}
 
 		if ( isRenewing( purchase ) ) {
-			return this.props.translate( 'Renews on %s', {
+			return translate( 'Renews on %s', {
 				args: purchase.renewMoment.format( 'LL' )
 			} );
 		}
 
 		if ( isExpiring( purchase ) ) {
-			if ( purchase.expiryMoment < this.moment().add( 30, 'days' ) ) {
+			if ( purchase.expiryMoment < moment().add( 30, 'days' ) ) {
 				return (
 					<Notice isCompact status="is-error" icon="notice">
-						{ this.props.translate( 'Expires %(timeUntilExpiry)s', {
+						{ translate( 'Expires %(timeUntilExpiry)s', {
 							args: {
 								timeUntilExpiry: purchase.expiryMoment.fromNow()
 							},
@@ -63,7 +57,7 @@ const PurchaseItem = React.createClass( {
 				);
 			}
 
-			return this.props.translate( 'Expires on %s', {
+			return translate( 'Expires on %s', {
 				args: purchase.expiryMoment.format( 'LL' )
 			} );
 		}
@@ -71,7 +65,7 @@ const PurchaseItem = React.createClass( {
 		if ( isExpired( purchase ) ) {
 			return (
 				<Notice isCompact status="is-error" icon="notice">
-					{ this.props.translate( 'Expired %(timeSinceExpiry)s', {
+					{ translate( 'Expired %(timeSinceExpiry)s', {
 						args: {
 							timeSinceExpiry: purchase.expiryMoment.fromNow()
 						},
@@ -82,15 +76,15 @@ const PurchaseItem = React.createClass( {
 		}
 
 		if ( isIncludedWithPlan( purchase ) ) {
-			return this.props.translate( 'Included with Plan' );
+			return translate( 'Included with Plan' );
 		}
 
 		if ( isOneTimePurchase( purchase ) ) {
-			return this.props.translate( 'Never Expires' );
+			return translate( 'Never Expires' );
 		}
 
 		return null;
-	},
+	}
 
 	placeholder() {
 		return (
@@ -103,11 +97,11 @@ const PurchaseItem = React.createClass( {
 				</div>
 			</span>
 		);
-	},
+	}
 
 	scrollToTop() {
 		window.scrollTo( 0, 0 );
-	},
+	}
 
 	render() {
 		const { isPlaceholder, purchase } = this.props;
@@ -166,6 +160,12 @@ const PurchaseItem = React.createClass( {
 			</CompactCard>
 		);
 	}
-} );
+}
+
+PurchaseItem.propTypes = {
+	isPlaceholder: React.PropTypes.bool,
+	purchase: React.PropTypes.object,
+	slug: React.PropTypes.string
+};
 
 export default localize( PurchaseItem );
