@@ -18,6 +18,7 @@ import SeoSettingsHelpCard from 'my-sites/site-settings/seo-settings/help';
 import AnalyticsSettings from 'my-sites/site-settings/form-analytics';
 import JetpackSiteStats from 'my-sites/site-settings/jetpack-site-stats';
 import RelatedPosts from 'my-sites/site-settings/related-posts';
+import AmpJetpack from 'my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'my-sites/site-settings/amp/wpcom';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -61,9 +62,9 @@ const SiteSettingsTraffic = ( {
 			isRequestingSettings={ isRequestingSettings }
 			fields={ fields }
 		/>
-		{
-			! isJetpack &&
-			<AmpWpcom
+		{ isJetpack
+			? <AmpJetpack />
+			: <AmpWpcom
 				submitForm={ submitForm }
 				trackEvent={ trackEvent }
 				updateFields={ updateFields }
