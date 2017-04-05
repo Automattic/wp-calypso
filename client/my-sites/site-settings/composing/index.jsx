@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import DefaultPostFormat from './default-post-format';
 import AfterTheDeadline from './after-the-deadline';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
@@ -22,11 +23,12 @@ const Composing = ( {
 	isRequestingSettings,
 	isSavingSettings,
 	jetpackSettingsUISupported,
-	siteIsJetpack
 } ) => {
+	const CardComponent = jetpackSettingsUISupported ? CompactCard : Card;
+
 	return (
 		<div>
-			<Card className="composing__card site-settings">
+			<CardComponent className="composing__card site-settings">
 				<DefaultPostFormat
 					onChangeField={ onChangeField }
 					eventTracker={ eventTracker }
@@ -34,9 +36,9 @@ const Composing = ( {
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
 				/>
-			</Card>
+			</CardComponent>
 
-			{ siteIsJetpack && jetpackSettingsUISupported &&
+			{ jetpackSettingsUISupported &&
 				<AfterTheDeadline
 					handleToggle={ handleToggle }
 					setFieldValue={ setFieldValue }
@@ -68,10 +70,10 @@ Composing.propTypes = {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const siteIsJetpack = isJetpackSite( state, siteId );
 
 		return {
-			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
-			siteIsJetpack: isJetpackSite( state, siteId ),
+			jetpackSettingsUISupported: siteIsJetpack && siteSupportsJetpackSettingsUi( state, siteId ),
 		};
 	}
 )( Composing );
