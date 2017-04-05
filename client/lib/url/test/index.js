@@ -90,7 +90,7 @@ describe( 'isExternal', () => {
 	} );
 
 	it( 'should return true for just external relative // path', () => {
-		const urlWithoutHttp = '//themes';
+		const urlWithoutHttp = '//manage';
 		const actual = isExternal( urlWithoutHttp );
 		expect( actual ).to.be.true;
 	} );
@@ -138,14 +138,13 @@ describe( 'isExternal', () => {
 		} );
 
 		it( 'should return true for internal but legacy path with http', () => {
-			const urlWithoutHttp = 'http://example.com/themes';
+			const urlWithoutHttp = 'http://example.com/manage';
 			const actual = isExternal( urlWithoutHttp );
 			expect( actual ).to.be.true;
 		} );
 
-
 		it( 'should return true for internal but legacy path without http', () => {
-			const urlWithoutHttp = 'example.com/themes';
+			const urlWithoutHttp = 'example.com/manage';
 			const actual = isExternal( urlWithoutHttp );
 			expect( actual ).to.be.true;
 		} );

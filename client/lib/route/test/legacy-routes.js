@@ -24,10 +24,6 @@ describe( 'legacy-routes', function() {
 			config.isEnabled.restore();
 		} );
 
-		it( 'should return true for /themes/sometheme', () => {
-			expect( isLegacyRoute( '/themes/sometheme' ) ).to.be.true;
-		} );
-
 		it( 'should return false for /settings/general', () => {
 			expect( isLegacyRoute( '/settings/general' ) ).to.be.false;
 		} );
