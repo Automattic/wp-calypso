@@ -556,11 +556,11 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			.reader-related-card-v2__site-info {
 
 				@media #{$reader-related-card-v2-breakpoint-small} {
-					margin-top: 50px;
+					margin-top: 20px;
 				}
 
 				@media #{$reader-related-card-v2-breakpoint-medium} {
-					margin-top: 50px;
+					margin-top: 20px;
 				}
 			}
 
