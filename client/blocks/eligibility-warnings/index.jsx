@@ -22,6 +22,7 @@ import Card from 'components/card';
 import HoldList from './hold-list';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import WarningList from './warning-list';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 export const EligibilityWarnings = ( {
 	backUrl,
@@ -31,6 +32,7 @@ export const EligibilityWarnings = ( {
 	isJetpack,
 	isPlaceholder,
 	onProceed,
+	onCancel,
 	siteId,
 	siteSlug,
 	translate,
@@ -114,7 +116,7 @@ export const EligibilityWarnings = ( {
 					) }
 				</div>
 				<div className="eligibility-warnings__confirm-buttons">
-					<Button href={ backUrl }>
+					<Button href={ backUrl } onClick={ onCancel }>
 						{ translate( 'Cancel' ) }
 					</Button>
 
@@ -160,4 +162,8 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( EligibilityWarnings ) );
+const mapDispatchToProps = {
+	onCancel: () => recordTracksEvent( 'calypso_automated_transfer_eligibility_cancel' )
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( EligibilityWarnings ) );
