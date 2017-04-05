@@ -379,6 +379,7 @@ class ReaderStream extends React.Component {
 	}
 
 	renderPost = ( postKey, index ) => {
+		const recStoreId = this.props.recommendationsStore && this.props.recommendationsStore.id;
 		const selectedPostKey = this.props.postsStore.getSelectedPostKey();
 		const isSelected = !! ( selectedPostKey &&
 			selectedPostKey.postId === postKey.postId &&
@@ -414,6 +415,7 @@ class ReaderStream extends React.Component {
 			blockedSites={ this.props.blockedSites }
 			index={ index }
 			selectedPostKey={ selectedPostKey }
+			recStoreId={ recStoreId }
 		/>;
 	}
 
