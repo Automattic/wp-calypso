@@ -14,7 +14,9 @@ import wpcom from 'lib/wp';
 import {
 	HAPPYCHAT_CONNECTED,
 	HAPPYCHAT_CONNECTING,
+	HAPPYCHAT_DISCONNECTED,
 	HAPPYCHAT_RECEIVE_EVENT,
+	HAPPYCHAT_RECONNECTING,
 	HAPPYCHAT_SEND_BROWSER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
@@ -80,12 +82,20 @@ describe( 'middleware', () => {
 			it( 'should set up listeners for various connection events', () => {
 				return connectChat( connection, { dispatch, getState } )
 					.then( () => {
-						expect( connection.on.callCount ).to.equal( 4 );
+						expect( connection.on.callCount ).to.equal( 6 );
 
 						// Ensure 'connect' listener was connected by executing a fake message event
 						connection.on.withArgs( 'connected' ).firstCall.args[ 1 ]( true );
 						expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_CONNECTED } );
 						expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_TRANSCRIPT_REQUEST } );
+
+						// Ensure 'disconnect' listener was connected by executing a fake message event
+						connection.on.withArgs( 'disconnect' ).firstCall.args[ 1 ]( 'abc' );
+						expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_DISCONNECTED, errorStatus: 'abc' } );
+
+						// Ensure 'reconnecting' listener was connected by executing a fake message event
+						connection.on.withArgs( 'reconnecting' ).firstCall.args[ 1 ]();
+						expect( dispatch ).to.have.been.calledWith( { type: HAPPYCHAT_RECONNECTING } );
 
 						// Ensure 'accept' listener was connected by executing a fake message event
 						connection.on.withArgs( 'accept' ).firstCall.args[ 1 ]( true );

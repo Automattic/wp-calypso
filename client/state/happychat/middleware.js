@@ -21,8 +21,10 @@ import {
 	requestChatTranscript,
 	setConnected,
 	setConnecting,
+	setDisconnected,
 	setHappychatAvailable,
 	setHappychatChatStatus,
+	setReconnecting,
 } from './actions';
 import {
 	getHappychatConnectionStatus,
@@ -84,6 +86,8 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 			// The HAPPYCHAT_CONNECTED action should have its own middleware handler that does this.
 			dispatch( requestChatTranscript() );
 		} )
+		.on( 'disconnect', reason => dispatch( setDisconnected( reason ) ) )
+		.on( 'reconnecting', () => dispatch( setReconnecting() ) )
 		.on( 'message', event => dispatch( receiveChatEvent( event ) ) )
 		.on( 'status', status => dispatch( setHappychatChatStatus( status ) ) )
 		.on( 'accept', accept => dispatch( setHappychatAvailable( accept ) ) );

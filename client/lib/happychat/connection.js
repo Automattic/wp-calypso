@@ -31,6 +31,8 @@ class Connection extends EventEmitter {
 						socket.close();
 						debug( 'not authorized' );
 					} )
+					.on( 'disconnect', reason => this.emit( 'disconnect', reason ) )
+					.on( 'reconnecting', () => this.emit( 'reconnecting' ) )
 					// Received a chat message
 					.on( 'message', message => this.emit( 'message', message ) )
 					// Received chat status new/assigning/assigned/missed/pending/abandoned
