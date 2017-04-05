@@ -55,6 +55,13 @@
 		}
 	}
 
+	&.instagram{
+		h2,
+		.sharing-service__logo {
+			color: $color-instagram;
+		}
+	}
+
 	.sharing-service__name {
 		float: left;
 	}
