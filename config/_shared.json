@@ -24,7 +24,6 @@
 	"login_url": null,
 	"logout_url": null,
 	"mc_analytics_enabled": null,
-	"native_login_url": null,
 	"oauth_client_id": false,
 	"olark": {},
 	"port": null,
