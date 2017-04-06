@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,12 +15,18 @@ import Accordion from 'components/accordion';
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
 import FeaturedImage from 'post-editor/editor-featured-image';
 import FeaturedImageDropZone from 'post-editor/editor-featured-image/dropzone';
+import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
 
 class EditorDrawerFeaturedImage extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		post: PropTypes.object,
-		translate: PropTypes.func
+		translate: PropTypes.func,
+		isDrawerHidden: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		isDrawerHidden: false,
 	};
 
 	state = {};
@@ -54,16 +61,17 @@ class EditorDrawerFeaturedImage extends Component {
 	};
 
 	render() {
-		const { translate, site, post } = this.props;
+		const { translate, site, post, isDrawerHidden } = this.props;
 
 		return (
-			<Accordion title={ translate( 'Featured Image' ) } initialExpanded={true}>
+			<Accordion title={ translate( 'Featured Image' ) } initialExpanded={ true }>
 				<EditorDrawerWell
 					label={ translate( 'Set Featured Image' ) }
 					empty={ ! site || ! post || ! getFeaturedImageId( post ) }
 					onClick={ this.startSelecting }
 					customDropZone={ this.getDropZone() }
 					onRemove={ this.removeImage }
+					isHidden={ isDrawerHidden }
 				>
 					<FeaturedImage
 						selecting={ this.state.isSelecting }
@@ -77,4 +85,8 @@ class EditorDrawerFeaturedImage extends Component {
 	}
 }
 
-export default localize( EditorDrawerFeaturedImage );
+export default connect(
+	( state ) => ( {
+		isDrawerHidden: isDropZoneVisible( state )
+	} )
+)( localize( EditorDrawerFeaturedImage ) );

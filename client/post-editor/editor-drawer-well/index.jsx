@@ -17,6 +17,7 @@ class EditorDrawerWell extends Component {
 		disabled: PropTypes.bool,
 		empty: PropTypes.bool,
 		icon: PropTypes.string,
+		isHidden: PropTypes.bool,
 		label: PropTypes.node,
 		onClick: PropTypes.func,
 		customDropZone: PropTypes.node,
@@ -26,16 +27,21 @@ class EditorDrawerWell extends Component {
 
 	static defaultProps = {
 		disabled: false,
+		isHidden: false,
 		onClick: noop,
 		onRemove: noop,
 		translate: identity,
 	};
 
 	render() {
-		const { empty, onRemove, onClick, disabled, icon, label, children } = this.props;
-		const classes = classNames( 'editor-drawer-well', {
-			'is-empty': empty
-		} );
+		const { empty, onRemove, onClick, disabled, icon, label, children, isHidden } = this.props;
+		const classes = classNames(
+			'editor-drawer-well',
+			{
+				'is-empty': empty,
+				'is-hidden': isHidden,
+			},
+		);
 
 		return (
 			<div className={ classes }>

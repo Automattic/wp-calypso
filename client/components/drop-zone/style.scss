@@ -8,7 +8,10 @@
 	visibility: hidden;
 	opacity: 0;
 	transition: 0.3s opacity, 0.3s background-color, 0s visibility 0.3s;
+
 	border: 6px solid $blue-dark;
+	border-radius: 6px;
+
 	background-color: rgba( $blue-wordpress, 0.8 );
 
 	&.is-active {
@@ -63,9 +66,19 @@
 	background-color: rgba( $orange-jazzy, 0.7 );
 	border: 6px solid $orange-jazzy;
 
+	&.is-dragging-over-element {
+		background-color: rgba( lighten( $orange-jazzy, 20 ), 0.8 );
+	}
 
 	.drop-zone__content {
 		color: #542B06;
 
+	}
+}
+
+.is-hidden {
+	.editor-drawer-well__content, .editor-drawer-well__placeholder {
+		opacity: 0;
+		transition: 0.3s opacity;
 	}
 }
