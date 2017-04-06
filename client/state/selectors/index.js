@@ -152,5 +152,6 @@ export isUpdatingSiteMonitorSettings from './is-updating-site-monitor-settings';
 export isUserRegistrationDaysWithinRange from './is-user-registration-days-within-range';
 export isUserSettingUnsaved from './is-user-setting-unsaved';
 export isWordpressUpdateSuccessful from './is-wordpress-update-successful';
+export isValidatingAccountRecoveryKey from './is-validating-account-recovery-key';
 export shouldCloseVideoEditorModal from './should-close-video-editor-modal';
 export shouldShowVideoEditorError from './should-show-video-editor-error';
