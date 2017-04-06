@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-const ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	page = require( 'page' );
+import React from 'react';
+import ReactDom from 'react-dom';
+import debugFactory from 'debug';
+import page from 'page';
 import { debounce, throttle, get } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -20,7 +21,7 @@ const actions = require( 'lib/posts/actions' ),
 	FeaturedImage = require( 'post-editor/editor-featured-image' ),
 	EditorTitle = require( 'post-editor/editor-title' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
-	TinyMCE = require( 'components/tinymce' ),
+	//TinyMCE = require( 'components/tinymce' ),
 	EditorWordCount = require( 'post-editor/editor-word-count' ),
 	SegmentedControl = require( 'components/segmented-control' ),
 	SegmentedControlItem = require( 'components/segmented-control/item' ),
@@ -57,6 +58,8 @@ import { editedPostHasContent } from 'state/selectors';
 import EditorGroundControl from 'post-editor/editor-ground-control';
 import { isMobile } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
+
+const debug = debugFactory( 'blocks:post-editor' );
 
 export const PostEditor = React.createClass( {
 	propTypes: {
@@ -306,7 +309,7 @@ export const PostEditor = React.createClass( {
 								</SegmentedControl>
 							</div>
 							<hr className="editor__header-divider" />
-							<TinyMCE
+							<BlockEditor
 								ref="editor"
 								mode={ mode }
 								tabIndex={ 2 }
@@ -826,6 +829,88 @@ export const PostEditor = React.createClass( {
 	}
 
 } );
+
+//import * as BlocksView from 'components/tinymce/plugins/wpcom-view/views/blocks';
+import { parse } from 'components/tinymce/plugins/wpcom-view/views/blocks/post-parser';
+
+function tryOr( fn, failureValue ) {
+	let result;
+	try {
+		result = fn();
+	} catch ( e ) {
+		result = failureValue;
+	}
+	return result;
+}
+
+class BlockEditor extends React.Component {
+	blockStyle = {
+		margin: '0.2em',
+		padding: '0.3em',
+		border: '1px dashed black',
+	};
+
+	state = {};
+
+	getContent() {
+		return this.state.content;
+	}
+
+	setEditorContent( content, args = {} ) {
+		debug( 'setEditorContent', content, args );
+		this.setState( { ...args, content } );
+	}
+
+	parseContent = () => {
+		return parse( this.state.content );
+	}
+
+	render() {
+		const blocks = tryOr( this.parseContent, [] );
+
+		debug( this.props, this.state );
+		debug( 'blocks', blocks );
+
+		return (
+			<div style={ this.blockStyle }>
+				{ blocks.map( handleBlock ) }
+			</div>
+		);
+	}
+}
+
+function handleBlock( block ) {
+	if ( block.type === 'Text' ) {
+		return <p>{ block.value }</p>;
+	}
+
+	if ( block.type === 'WP_Block' ) {
+		return <Block { ...block } />;
+	}
+
+	return null;
+}
+
+class Block extends React.Component {
+	blockStyle = {
+		margin: '0.2em',
+		padding: '0.3em',
+		border: '1px dashed black',
+	};
+
+	// fake impl
+	innerText() {
+		return this.props.children
+			.filter( c => c && c.type === 'Text' )
+			.map( c => c.value )
+			.join( '\n' );
+	}
+
+	render() {
+		debug( 'block', this.props );
+		return <div style={ this.blockStyle }>{ this.innerText() }</div>;
+	}
+}
 
 export default connect(
 	( state ) => {

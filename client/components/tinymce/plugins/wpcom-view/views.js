@@ -2,10 +2,12 @@
  * External dependencies
  */
 import EventEmitter from 'events/';
-import forEach from 'lodash/forEach';
-import map from 'lodash/map';
-import mapValues from 'lodash/mapValues';
-import values from 'lodash/values';
+import {
+	forEach,
+	map,
+	mapValues,
+	values,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,15 +16,17 @@ import GalleryView from './gallery-view';
 import EmbedViewManager from './views/embed';
 import ContactFormView from './views/contact-form';
 import * as VideoView from './views/video';
+import * as BlocksView from './views/blocks';
 
 /**
  * Module variables
  */
-let views = {
+const views = {
 	gallery: GalleryView,
 	embed: new EmbedViewManager(),
 	contactForm: ContactFormView,
-	video: VideoView
+	video: VideoView,
+	blocks: BlocksView
 };
 
 const components = mapValues( views, ( view ) => {
