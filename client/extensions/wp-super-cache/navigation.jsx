@@ -25,10 +25,6 @@ const Navigation = ( { activeTab, site, translate } ) => {
 				return translate( 'Contents' );
 			case Tabs.PRELOAD:
 				return translate( 'Preload' );
-			case Tabs.PLUGINS:
-				return translate( 'Plugins' );
-			case Tabs.DEBUG:
-				return translate( 'Debug' );
 		}
 	};
 
