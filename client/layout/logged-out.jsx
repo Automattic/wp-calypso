@@ -27,7 +27,7 @@ const LayoutLoggedOut = ( {
 
 	return (
 		<div className={ classes }>
-			<MasterbarLoggedOut title={ section.title } />
+			<MasterbarLoggedOut title={ section.title } sectionName={ section.name } />
 			<div id="content" className="layout__content">
 				<div id="primary" className="layout__primary">
 					{ primary }
