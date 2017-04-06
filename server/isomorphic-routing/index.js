@@ -6,22 +6,32 @@ import { setSection as setSectionMiddlewareFactory } from '../../client/controll
 
 export function serverRouter( expressApp, setUpRoute, section ) {
 	return function( route, ...middlewares ) {
-		expressApp.get(
-			route,
-			setUpRoute,
-			combineMiddlewares(
-				setSectionMiddlewareFactory( section ),
-				...middlewares
-			),
-			serverRender
-		);
+		if ( middlewares.length === 0 && typeof route === 'function' && route.length === 3 ) {
+			// No route def -- the route arg is really an error-handling middleware
+			expressApp.use( ( err, req, res, next ) => {
+				route( err, req.context, next );
+			} );
+			expressApp.use( ( err, req, res, next ) => { // eslint-disable-line no-unused-vars
+				serverRender( req, res.status( err.status ) );
+			} );
+		} else {
+			expressApp.get(
+				route,
+				setUpRoute,
+				combineMiddlewares(
+					setSectionMiddlewareFactory( section ),
+					...middlewares
+				),
+				serverRender
+			);
+		}
 	};
 }
 
 function combineMiddlewares( ...middlewares ) {
 	return function( req, res, next ) {
 		req.context = getEnhancedContext( req, res );
-		applyMiddlewares( req.context, ...middlewares, () => {
+		applyMiddlewares( req.context, next, ...middlewares, () => {
 			next();
 		} );
 	};
@@ -40,11 +50,16 @@ function getEnhancedContext( req, res ) {
 	} );
 }
 
-function applyMiddlewares( context, ...middlewares ) {
-	const liftedMiddlewares = middlewares.map( middleware => next => middleware( context, next ) );
+function applyMiddlewares( context, expressNext, ...middlewares ) {
+	const liftedMiddlewares = middlewares.map( middleware => next => middleware( context, ( err ) => {
+		if ( err ) {
+			expressNext( err ); // Call express' next( err ) for error handling (and bail early from this route)
+		} else {
+			next();
+		}
+	} ) );
 	compose( ...liftedMiddlewares )();
 }
-
 function compose( ...functions ) {
 	return functions.reduceRight( ( composed, f ) => (
 		() => f( composed )
