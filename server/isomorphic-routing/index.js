@@ -12,12 +12,15 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 			// for Express, we want things to be isomorphic, so that should be handled by the `else` branch.
 			// OTOH, if `someMw` takes 3 args `( err, context, next )` instead of the usual 2 `( context, next )`,
 			// it's an error-handling middleware and needs to be handled by this branch.
-			expressApp.use( ( err, req, res, next ) => {
-				route( err, req.context, next );
-			} );
-			expressApp.use( ( err, req, res, next ) => { // eslint-disable-line no-unused-vars
-				serverRender( req, res.status( err.status ) );
-			} );
+			expressApp.use(
+				( err, req, res, next ) => {
+					route( err, req.context, next );
+				},
+				// We need 4 args so Express knows this is an error-handling middleware
+				( err, req, res, next ) => { // eslint-disable-line no-unused-vars
+					serverRender( req, res.status( err.status ) );
+				}
+			);
 		} else {
 			expressApp.get(
 				route,
