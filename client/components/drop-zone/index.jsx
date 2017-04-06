@@ -3,13 +3,16 @@
  */
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
-import without from 'lodash/without';
-import includes from 'lodash/includes';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
-import identity from 'lodash/identity';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import {
+	identity,
+	includes,
+	noop,
+	without,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,10 +32,8 @@ export const DropZone = React.createClass( {
 		icon: PropTypes.node,
 		textLabel: PropTypes.string,
 		translate: PropTypes.func,
-	},
-
-	contextTypes: {
-		store: PropTypes.object
+		showDropZone: PropTypes.func.isRequired,
+		hideDropZone: PropTypes.func.isRequired,
 	},
 
 	getInitialState() {
@@ -160,31 +161,16 @@ export const DropZone = React.createClass( {
 	},
 
 	toggleDropZoneReduxState( isVisible ) {
-		/**
-		 * The DropZone component is included in components/libraries which are not yet reduxified,
-		 * for which `connect` ( from `react-redux` ) complains that it can't find `store`
-		 * in the current context.
-		 *
-		 * For places where the reduxification has happened, this will work.
-		 */
-		if ( this.context.store ) {
-			/**
-			 * Only update the DropZone visible/hidden state if the state is different.
-			 *
-			 * This is a side effect of the mouse actions firing when moving over different
-			 * elements in the document.
-			 */
-			if ( this.state.lastVisibleState !== isVisible ) {
-				if ( isVisible ) {
-					this.context.store.dispatch( showDropZone() );
-				} else {
-					this.context.store.dispatch( hideDropZone() );
-				}
-
-				this.setState( {
-					lastVisibleState: isVisible,
-				} );
+		if ( this.state.lastVisibleState !== isVisible ) {
+			if ( isVisible ) {
+				this.props.showDropZone();
+			} else {
+				this.props.hideDropZone();
 			}
+
+			this.setState( {
+				lastVisibleState: isVisible,
+			} );
 		}
 	},
 
@@ -281,4 +267,9 @@ export const DropZone = React.createClass( {
 	}
 } );
 
-export default localize( DropZone );
+const mapDispatch = {
+	showDropZone,
+	hideDropZone,
+};
+
+export default connect( null, mapDispatch )( localize( DropZone ) );
