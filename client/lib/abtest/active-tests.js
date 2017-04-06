@@ -34,11 +34,11 @@ module.exports = {
 		defaultVariation: 'showThree',
 		allowExistingUsers: true
 	},
-	automatedTransfer2: {
+	automatedTransfer3: {
 		datestamp: '20170316',
 		variations: {
-			enabled: 100,
-			disabled: 0
+			enabled: 50,
+			disabled: 50,
 		},
 		defaultVariation: 'disabled',
 		allowExistingUsers: false
