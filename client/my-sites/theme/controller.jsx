@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
 import debugFactory from 'debug';
 import Lru from 'lru';
 import startsWith from 'lodash/startsWith';
@@ -10,6 +11,8 @@ import startsWith from 'lodash/startsWith';
  * Internal Dependencies
  */
 import ThemeSheetComponent from './main';
+import ThemeNotFoundError from './theme-not-found-error';
+import LayoutLoggedOut from 'layout/logged-out';
 import {
 	receiveTheme,
 	requestTheme,
@@ -47,11 +50,16 @@ export function fetchThemeDetailsData( context, next ) {
 				const error = getThemeRequestErrors( context.store.getState(), themeSlug, 'wpcom' );
 				debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
 				context.renderCacheKey = 'theme not found';
-			} else {
-				debug( 'caching', themeSlug );
-				themeDetails.timestamp = Date.now();
-				context.renderCacheKey = context.path + themeDetails.timestamp;
+				const err = {
+					status: 404,
+					error: 'Theme Not Found',
+					themeSlug
+				};
+				return next( err );
 			}
+			debug( 'caching', themeSlug );
+			themeDetails.timestamp = Date.now();
+			context.renderCacheKey = context.path + themeDetails.timestamp;
 			themeDetailsCache.set( themeSlug, themeDetails );
 			next();
 		} )
@@ -68,4 +76,13 @@ export function details( context, next ) {
 		section={ section } />;
 	context.secondary = null; // When we're logged in, we need to remove the sidebar.
 	next();
+}
+
+export function notFoundError( err, context, next ) {
+	context.layout = (
+		<ReduxProvider store={ context.store }>
+			<LayoutLoggedOut primary={ <ThemeNotFoundError /> } />
+		</ReduxProvider>
+	);
+	next( err );
 }
