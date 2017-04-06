@@ -12,22 +12,10 @@ import moment from 'moment';
  */
 import ReaderAvatar from 'blocks/reader-avatar';
 import FollowButton from 'reader/follow-button';
-import Gridicon from 'gridicons';
 import { getStreamUrl } from 'reader/route';
+import EmailSettings from './email-settings';
 
 const stripUrl = url => url.replace( 'https://', '' ).replace( 'http://', '' ).replace( '/', '' );
-
-function SettingsMenu() {
-	return (
-		<span className="reader-subscription-list-item__settings-menu">
-			<Gridicon
-				icon="cog"
-				size={ 20 }
-			/>
-			Settings
-		</span>
-	);
-}
 
 function ReaderSubscriptionListItem( {
 	isFollowing,
@@ -82,7 +70,7 @@ function ReaderSubscriptionListItem( {
 			</div>
 			<div className="reader-subscription-list-item__options">
 				<FollowButton siteUrl={ siteUrl } followSource={ followSource } />
-				{ isFollowing && <SettingsMenu /> }
+				{ isFollowing && <EmailSettings /> }
 			</div>
 		</div>
 	);
