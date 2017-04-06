@@ -26,7 +26,7 @@ class DisconnectJetpackDialog extends PureComponent {
 		const { plan, translate } = this.props;
 		const features = [];
 		switch ( plan ) {
-			case 'free':
+			case 'is-free-plan':
 				features.push(
 					translate(
 						'{{icon/}} Site stats, related content, and sharing tools',
@@ -40,20 +40,20 @@ class DisconnectJetpackDialog extends PureComponent {
 				features.push( translate( '{{icon/}} Unlimited, high-speed image hosting', this.getIcon( 'image' ) ) );
 				break;
 
-			case 'personal':
+			case 'is-personal-plan':
 				features.push( translate( '{{icon/}} Daily, automated backups (unlimited storage)', this.getIcon( 'history' ) ) );
 				features.push( translate( '{{icon/}} Priority WordPress and security support', this.getIcon( 'chat' ) ) );
 				features.push( translate( '{{icon/}} Spam filtering', this.getIcon( 'spam' ) ) );
 				break;
 
-			case 'premium':
+			case 'is-premium-plan':
 				features.push( translate( '{{icon/}} Daily, automated backups (unlimited storage)', this.getIcon( 'history' ) ) );
 				features.push( translate( '{{icon/}} Daily, automated malware scanning', this.getIcon( 'spam' ) ) );
 				features.push( translate( '{{icon/}} Priority WordPress and security support', this.getIcon( 'chat' ) ) );
 				features.push( translate( '{{icon/}} 13Gb of high-speed video hosting', this.getIcon( 'video' ) ) );
 				break;
 
-			case 'professional':
+			case 'is-business-plan':
 				features.push( translate( '{{icon/}} Daily, automated backups (unlimited storage)', this.getIcon( 'history' ) ) );
 				features.push(
 					translate( '{{icon/}} Daily, automated malware scanning with automated resolution',

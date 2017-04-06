@@ -16,11 +16,6 @@ describe( 'Sites Log Store', () => {
 		assert.lengthOf( LogStore.getErrors(), 0 );
 	} );
 
-	it( 'logs an update error', () => {
-		Dispatcher.handleServerAction( actions.disconnectedSiteError );
-		assert.lengthOf( LogStore.getErrors(), 1 );
-	} );
-
 	it( 'removing an error notice deletes an error', () => {
 		Dispatcher.handleServerAction( actions.removeNotices );
 		assert.lengthOf( LogStore.getErrors(), 0 );
