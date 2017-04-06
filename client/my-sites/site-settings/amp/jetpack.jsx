@@ -17,7 +17,7 @@ const AmpJetpack = ( {
 	translate
 } ) => {
 	return (
-		<div>
+		<div className="amp__jetpack">
 			<SectionHeader label={ translate( 'Accelerated Mobile Pages (AMP)' ) } />
 
 			<CompactCard>
