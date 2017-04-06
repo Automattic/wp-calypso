@@ -115,6 +115,13 @@ const sections = [
 		group: 'sites'
 	},
 	{
+		name: 'settings-discussion',
+		paths: [ '/settings/discussion' ],
+		module: 'my-sites/site-settings/settings-discussion',
+		secondary: true,
+		group: 'sites'
+	},
+	{
 		name: 'settings-traffic',
 		paths: [ '/settings/traffic', '/settings/seo', '/settings/analytics' ],
 		module: 'my-sites/site-settings/traffic',

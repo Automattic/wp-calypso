@@ -17,7 +17,6 @@ import { getSitePurchases, hasLoadedSitePurchasesFromServer, getPurchasesError }
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import GeneralSettings from './section-general';
-import DiscussionSettings from './form-discussion';
 import ImportSettings from './section-import';
 import ExportSettings from './section-export';
 import GuidedTransfer from 'my-sites/guided-transfer';
@@ -61,7 +60,6 @@ export class SiteSettingsComponent extends Component {
 	getStrings() {
 		return {
 			general: i18n.translate( 'General', { context: 'settings screen' } ),
-			discussion: i18n.translate( 'Discussion', { context: 'settings screen' } ),
 			security: i18n.translate( 'Security', { context: 'settings screen' } ),
 			'import': i18n.translate( 'Import', { context: 'settings screen' } ),
 			'export': i18n.translate( 'Export', { context: 'settings screen' } ),
@@ -77,8 +75,6 @@ export class SiteSettingsComponent extends Component {
 				return <GeneralSettings site={ site }
 					sitePurchases={ this.props.sitePurchases }
 					hasLoadedSitePurchasesFromServer={ this.props.hasLoadedSitePurchasesFromServer } />;
-			case 'discussion':
-				return <DiscussionSettings />;
 			case 'security':
 				return <SiteSecurity site={ site } />;
 			case 'import':
