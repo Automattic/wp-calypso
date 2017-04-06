@@ -47,6 +47,6 @@ function applyMiddlewares( context, ...middlewares ) {
 
 function compose( ...functions ) {
 	return functions.reduceRight( ( composed, f ) => (
-		next => f( composed ) // eslint-disable-line no-unused-vars
+		() => f( composed )
 	), () => {} );
 }
