@@ -13,7 +13,7 @@ import { hasGraduatedRecommendations } from 'state/reader/start/selectors';
 import { requestGraduate } from 'state/reader/start/actions';
 
 const FollowingIntro = ( props ) => {
-	if ( hasGraduatedRecommendations || hasGraduatedRecommendations === null ) {
+	if ( props.hasGraduatedRecommendations || props.hasGraduatedRecommendations === null ) {
 		return null;
 	}
 
