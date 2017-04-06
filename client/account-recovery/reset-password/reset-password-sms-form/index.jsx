@@ -41,6 +41,7 @@ class ResetPasswordSmsForm extends Component {
 	render() {
 		const {
 			translate,
+			isValidating,
 		} = this.props;
 
 		return (
@@ -55,8 +56,8 @@ class ResetPasswordSmsForm extends Component {
 					}
 				</p>
 				<form onSubmit={ this.submitValidationCode }>
-					<FormTextInput className="reset-password-sms-form__validation-code-input" />
-					<FormButton className="reset-password-sms-form__submit-button" type="submit">
+					<FormTextInput className="reset-password-sms-form__validation-code-input" disabled={ isValidating } />
+					<FormButton className="reset-password-sms-form__submit-button" type="submit" disabled={ isValidating } >
 						{ translate( 'Continue' ) }
 					</FormButton>
 				</form>
