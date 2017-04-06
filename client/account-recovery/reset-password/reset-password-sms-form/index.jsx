@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
+import ErrorMessage from 'account-recovery/components/account-recovery-error-message';
 
 import {
 	getAccountRecoveryResetUserData,
@@ -42,6 +43,7 @@ class ResetPasswordSmsForm extends Component {
 		const {
 			translate,
 			isValidating,
+			error,
 		} = this.props;
 
 		return (
@@ -57,6 +59,7 @@ class ResetPasswordSmsForm extends Component {
 				</p>
 				<form onSubmit={ this.submitValidationCode }>
 					<FormTextInput className="reset-password-sms-form__validation-code-input" disabled={ isValidating } />
+					{ error && <ErrorMessage /> }
 					<FormButton className="reset-password-sms-form__submit-button" type="submit" disabled={ isValidating } >
 						{ translate( 'Continue' ) }
 					</FormButton>
