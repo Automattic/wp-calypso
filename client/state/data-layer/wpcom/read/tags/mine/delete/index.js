@@ -1,4 +1,8 @@
 /**
+ * External dependencies
+ */
+
+/**
  * Internal dependencies
  */
 import { READER_UNFOLLOW_TAG_REQUEST } from 'state/action-types';
