@@ -37,7 +37,7 @@ describe( 'wpcom-api', () => {
 				.reply( 500, new Error() )
 		) );
 
-		it( 'should pass the action foward', () => {
+		it( 'handleTeamsRequest should pass the action forward', () => {
 			const dispatch = sinon.spy();
 			const action = requestTeams();
 
