@@ -42,10 +42,7 @@ class PurchasesList extends Component {
 					<PurchasesSite
 						key={ site.id }
 						siteId={ site.id }
-						name={ site.title }
-						domain={ site.domain }
 						slug={ site.slug }
-						isDomainOnly={ site.isDomainOnly }
 						purchases={ site.purchases } />
 				)
 			);
