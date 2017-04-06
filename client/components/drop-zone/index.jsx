@@ -38,7 +38,8 @@ export const DropZone = React.createClass( {
 	getInitialState() {
 		return {
 			isDraggingOverDocument: false,
-			isDraggingOverElement: false
+			isDraggingOverElement: false,
+			lastVisibleState: false,
 		};
 	},
 
@@ -155,7 +156,7 @@ export const DropZone = React.createClass( {
 			this.dragEnterNodes = without( this.dragEnterNodes, window );
 		}
 
-		this.toggleDropZoneReduxState( this.state.isDraggingOverDocument || this.state.isDraggingOverElement );
+		this.toggleDropZoneReduxState( !! ( this.state.isDraggingOverDocument || this.state.isDraggingOverElement ) );
 	},
 
 	toggleDropZoneReduxState( isVisible ) {
@@ -167,10 +168,22 @@ export const DropZone = React.createClass( {
 		 * For places where the reduxification has happened, this will work.
 		 */
 		if ( this.context.store ) {
-			if ( isVisible ) {
-				this.context.store.dispatch( showDropZone() );
-			} else {
-				this.context.store.dispatch( hideDropZone() );
+			/**
+			 * Only update the DropZone visible/hidden state if the state is different.
+			 *
+			 * This is a side effect of the mouse actions firing when moving over different
+			 * elements in the document.
+			 */
+			if ( this.state.lastVisibleState !== isVisible ) {
+				if ( isVisible ) {
+					this.context.store.dispatch( showDropZone() );
+				} else {
+					this.context.store.dispatch( hideDropZone() );
+				}
+
+				this.setState( {
+					lastVisibleState: isVisible,
+				} );
 			}
 		}
 	},
