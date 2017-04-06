@@ -30,7 +30,7 @@ import { ACCOUNT_RECOVERY_ROUTES } from 'account-recovery/constants';
 
 export class LostPasswordFormComponent extends Component {
 	submitForm = () => {
-		this.props.fetchResetOptionsByLogin( this.props.userLogin );
+		this.props.fetchResetOptionsByLogin( this.props.userLogin, this.props.redirectToNextPage );
 	};
 
 	onUserLoginChanged = ( event ) => {
@@ -119,6 +119,7 @@ LostPasswordFormComponent.defaultProps = {
 	userLogin: null,
 	requestError: null,
 	translate: identity,
+	redirectToNextPage: identity,
 	fetchResetOptionsByLogin: noop,
 	updatePasswordResetUserData: noop,
 };

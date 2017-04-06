@@ -27,14 +27,16 @@ export const fetchResetOptionsError = ( error ) => ( {
 	error,
 } );
 
-export const fetchResetOptions = ( userData ) => ( {
+export const fetchResetOptions = ( userData, onSuccess ) => ( {
 	type: ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST,
 	userData,
+	onSuccess,
 } );
 
-export const fetchResetOptionsByLogin = ( user ) => fetchResetOptions( { user } );
+export const fetchResetOptionsByLogin = ( user, onSuccess ) => fetchResetOptions( { user }, onSuccess );
 
-export const fetchResetOptionsByNameAndUrl = ( firstname, lastname, url ) => fetchResetOptions( { firstname, lastname, url } );
+export const fetchResetOptionsByNameAndUrl = ( firstname, lastname, url, onSuccess ) =>
+	fetchResetOptions( { firstname, lastname, url }, onSuccess );
 
 export const updatePasswordResetUserData = ( userData ) => ( {
 	type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,

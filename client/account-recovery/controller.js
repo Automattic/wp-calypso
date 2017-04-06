@@ -8,6 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import LostPasswordPage from 'account-recovery/lost-password';
+import LostPasswordForm from 'account-recovery/lost-password/lost-password-form';
 import ForgotUsernamePage from 'account-recovery/forgot-username';
 import ResetPasswordPage from 'account-recovery/reset-password';
 import ResetPasswordForm from 'account-recovery/reset-password/reset-password-form';
@@ -17,10 +18,16 @@ import TransactionIdForm from 'account-recovery/reset-password/transaction-id-fo
 import ResetPasswordConfirmForm from 'account-recovery/reset-password/reset-password-confirm-form';
 import { getCurrentUser } from 'state/current-user/selectors';
 
-export function lostPassword( context, next ) {
-	context.primary = <LostPasswordPage basePath={ context.path } />;
+const createRedirectFunction = ( route ) => () => page( route );
+
+export const lostPassword = ( nextRoute ) => ( context, next ) => {
+	context.primary = (
+		<LostPasswordPage basePath={ context.path }>
+			<LostPasswordForm redirectToNextPage={ createRedirectFunction( nextRoute ) } />
+		</LostPasswordPage>
+	);
 	next();
-}
+};
 
 export function forgotUsername( context, next ) {
 	context.primary = <ForgotUsernamePage basePath={ context.path } />;

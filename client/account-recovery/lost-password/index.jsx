@@ -11,12 +11,11 @@ import classnames from 'classnames';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
-import LostPasswordForm from './lost-password-form';
 
-export default localize( ( { className, translate, basePath } ) => (
+export default localize( ( { className, translate, basePath, children } ) => (
 	<Main className={ classnames( 'lost-password', className ) }>
 		<PageViewTracker path={ basePath } title="Account Recovery > Lost Password" />
 		<DocumentHead title={ translate( 'Lost Password ‹ Account Recovery' ) } />
-		<LostPasswordForm />
+		{ children }
 	</Main>
 ) );
