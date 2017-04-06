@@ -13,6 +13,7 @@ import { getSite } from 'state/sites/selectors';
 import PurchaseItem from '../purchase-item';
 import QuerySites from 'components/data/query-sites';
 import Site from 'blocks/site';
+import CompactCard from 'components/card/compact';
 
 const PurchasesSite = ( { isPlaceholder, siteId, site, purchases, slug } ) => {
 	let items;
@@ -33,7 +34,9 @@ const PurchasesSite = ( { isPlaceholder, siteId, site, purchases, slug } ) => {
 	return (
 		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
 			<QuerySites siteId={ siteId } />
-			<Site site={ site } />
+			<CompactCard className="purchases-site__header">
+				<Site isCompact site={ site } />
+			</CompactCard>
 
 			{ items }
 		</div>

@@ -33,7 +33,7 @@
 	}
 
 	.purchase-item__plan-icon {
-		height: 28px;
+		height: 32px;
 		border-radius: 50%;
 	}
 
@@ -51,12 +51,12 @@
 }
 
 .purchase-item__plan-icon {
-	margin: 0 12px 0 0;
-	max-width: 28px;
-	width: 28px;
+	margin: 0 8px 0 0;
+	max-width: 32px;
+	width: 32px;
 
 	.gridicons-domains {
-		padding: 2px;
+		padding: 4px;
 		border-radius: 50%;
 		background: $blue-medium;
 		fill: $white;
@@ -74,7 +74,7 @@
 	display: block;
 	font-size: 14px;
 	line-height: 1.2em;
-	margin: 0 20px 4px 0;
+	margin: 4px 20px 4px 0;
 	overflow: hidden;
 	position: relative;
 	white-space: nowrap;
