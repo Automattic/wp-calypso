@@ -64,7 +64,7 @@ class ResetPasswordSmsForm extends Component {
 						{ translate( 'Continue' ) }
 					</FormButton>
 				</form>
-				<a href="#" className="reset-password-sms-form__no-sms-link">
+				<a href="/account-recovery/reset-password/" className="reset-password-sms-form__no-sms-link">
 					{ translate( 'No SMS?' ) }
 				</a>
 			</Card>
