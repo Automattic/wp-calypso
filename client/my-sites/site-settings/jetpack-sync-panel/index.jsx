@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import debugModule from 'debug';
 import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -77,15 +78,16 @@ const JetpackSyncPanel = React.createClass( {
 	},
 
 	renderErrorNotice() {
-		const syncRequestError = get( this.props, 'fullSyncRequest.error' ),
-			syncStatusErrorCount = get( this.props, 'syncStatus.errorCounter', 0 );
+		const syncRequestError = get( this.props, 'fullSyncRequest.error' );
+		const syncStatusErrorCount = get( this.props, 'syncStatus.errorCounter', 0 );
+		const { translate } = this.props;
 
 		let errorNotice = null;
 		if ( syncStatusErrorCount >= SYNC_STATUS_ERROR_NOTICE_THRESHOLD ) {
 			const adminUrl = get( this.props, 'site.options.admin_url' );
 			errorNotice = (
 				<Notice isCompact status="is-error" className="jetpack-sync-panel__error-notice">
-					{ this.translate( '%(site)s is unresponsive.', {
+					{ translate( '%(site)s is unresponsive.', {
 						args: {
 							site: get( this.props, 'site.name' )
 						}
@@ -93,7 +95,7 @@ const JetpackSyncPanel = React.createClass( {
 					{
 						adminUrl &&
 						<NoticeAction onClick={ this.onClickDebug } href={ adminUrl + 'admin.php?page=jetpack-debugger' }>
-							{ this.translate( 'Check connection' ) }
+							{ translate( 'Check connection' ) }
 						</NoticeAction>
 					}
 				</Notice>
@@ -104,7 +106,7 @@ const JetpackSyncPanel = React.createClass( {
 					{
 						syncRequestError.message
 						? syncRequestError.message
-						: this.translate( 'There was an error scheduling a full sync.' )
+						: translate( 'There was an error scheduling a full sync.' )
 					}
 					{
 						// We show a Try again action for a generic error on the assumption
@@ -114,7 +116,7 @@ const JetpackSyncPanel = React.createClass( {
 						// a good reason the request failed, such as an unauthorized user.
 						! syncRequestError.message &&
 						<NoticeAction onClick={ this.onTryAgainClick }>
-							{ this.translate( 'Try again' ) }
+							{ translate( 'Try again' ) }
 						</NoticeAction>
 					}
 				</Notice>
@@ -131,15 +133,15 @@ const JetpackSyncPanel = React.createClass( {
 
 		const finished = get( this.props, 'syncStatus.finished' );
 		const finishedTimestamp = this.moment( parseInt( finished, 10 ) * 1000 );
-		const { isPendingSyncStart, isFullSyncing } = this.props;
+		const { isPendingSyncStart, isFullSyncing, translate } = this.props;
 
 		let text = '';
 		if ( isPendingSyncStart ) {
-			text = this.translate( 'Full sync will begin shortly' );
+			text = translate( 'Full sync will begin shortly' );
 		} else if ( isFullSyncing ) {
-			text = this.translate( 'Full sync in progress' );
+			text = translate( 'Full sync in progress' );
 		} else if ( finishedTimestamp.isValid() ) {
-			text = this.translate( 'Last synced %(ago)s', {
+			text = translate( 'Last fully synced %(ago)s', {
 				args: {
 					ago: finishedTimestamp.fromNow()
 				}
@@ -168,11 +170,12 @@ const JetpackSyncPanel = React.createClass( {
 	},
 
 	render() {
+		const { translate } = this.props;
 		return (
 			<CompactCard className="jetpack-sync-panel">
 				<div className="jetpack-sync-panel__action-group">
 					<div className="jetpack-sync-panel__description">
-						{ this.translate(
+						{ translate(
 							'{{strong}}Jetpack Sync keeps your WordPress.com dashboard up to date.{{/strong}} ' +
 							'Data is sent from your site to the WordPress.com dashboard regularly to provide a faster experience. ' +
 							'If you suspect some data is missing, you can initiate a sync manually.',
@@ -186,7 +189,7 @@ const JetpackSyncPanel = React.createClass( {
 
 					<div className="jetpack-sync-panel__action">
 						<Button onClick={ this.onSyncRequestButtonClick } disabled={ this.shouldDisableSync() }>
-							{ this.translate( 'Perform full sync', { context: 'Button' } ) }
+							{ translate( 'Perform full sync', { context: 'Button' } ) }
 						</Button>
 					</div>
 				</div>
@@ -215,4 +218,4 @@ export default connect(
 		};
 	},
 	dispatch => bindActionCreators( { getSyncStatus, scheduleJetpackFullysync }, dispatch )
-)( JetpackSyncPanel );
+)( localize( JetpackSyncPanel ) );
