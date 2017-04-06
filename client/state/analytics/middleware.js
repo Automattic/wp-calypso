@@ -2,10 +2,9 @@
  * Internal dependencies
  */
 const config = require( 'config' );
-import analytics from 'lib/analytics';
 import has from 'lodash/has';
 import invoke from 'lodash/invoke';
-import isTracking from 'state/selectors/is-tracking';
+import { ga, luckyOrange, tracks, pageView, mc } from 'lib/analytics';
 
 import {
 	ANALYTICS_EVENT_RECORD,
@@ -15,27 +14,27 @@ import {
 } from 'state/action-types';
 
 const eventServices = {
-	ga: ( { category, action, label, value } ) => analytics.ga.recordEvent( category, action, label, value ),
-	tracks: ( { name, properties } ) => analytics.tracks.recordEvent( name, properties )
+	ga: ( { category, action, label, value } ) => ga.recordEvent( category, action, label, value ),
+	tracks: ( { name, properties } ) => tracks.recordEvent( name, properties )
 };
 
 const pageViewServices = {
-	ga: ( { url, title } ) => analytics.ga.recordPageView( url, title ),
-	'default': ( { url, title } ) => analytics.pageView.record( url, title ),
+	ga: ( { url, title } ) => ga.recordPageView( url, title ),
+	'default': ( { url, title } ) => pageView.record( url, title ),
 };
 
-const loadTrackingTool = ( trackingTool, state ) => {
+const loadTrackingTool = ( trackingTool ) => {
 	const trackUser = ! navigator.doNotTrack;
 	const luckyOrangeEnabled = config( 'lucky_orange_enabled' );
 
-	if ( trackingTool === 'Lucky Orange' && isTracking( state ) && luckyOrangeEnabled && trackUser ) {
-		analytics.luckyOrange.addLuckyOrangeScript();
+	if ( trackingTool === 'Lucky Orange' && luckyOrangeEnabled && trackUser ) {
+		luckyOrange.addLuckyOrangeScript();
 	}
 };
 
-const statBump = ( { group, name } ) => analytics.mc.bumpStat( group, name );
+const statBump = ( { group, name } ) => mc.bumpStat( group, name );
 
-export const dispatcher = ( { meta: { analytics } }, state ) => {
+export const dispatcher = ( { meta: { analytics } } ) => {
 	analytics.forEach( ( { type, payload } ) => {
 		const { service = 'default' } = payload;
 
@@ -50,14 +49,14 @@ export const dispatcher = ( { meta: { analytics } }, state ) => {
 				return statBump( payload );
 
 			case ANALYTICS_TRACKING_ON:
-				return loadTrackingTool( payload, state );
+				return loadTrackingTool( payload );
 		}
 	} );
 };
 
-export const analyticsMiddleware = store => next => action => {
+export const analyticsMiddleware = () => next => action => {
 	if ( has( action, 'meta.analytics' ) ) {
-		dispatcher( action, store.getState() );
+		dispatcher( action );
 	}
 
 	return next( action );
