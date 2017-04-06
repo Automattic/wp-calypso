@@ -28,7 +28,7 @@ const loadTrackingTool = ( trackingTool, state ) => {
 	const trackUser = ! navigator.doNotTrack;
 	const luckyOrangeEnabled = config( 'lucky_orange_enabled' );
 
-	if ( trackingTool === 'Lucky Orange' && isTracking( state ) && luckyOrangeEnabled && trackUser ) {
+	if ( trackingTool === 'Lucky Orange' && ! isTracking( state ) && luckyOrangeEnabled && trackUser ) {
 		analytics.luckyOrange.addLuckyOrangeScript();
 	}
 };

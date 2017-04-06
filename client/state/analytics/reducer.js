@@ -10,10 +10,6 @@ export const analyticsTracking = ( state = false, { type } ) => {
 		return true;
 	}
 
-	if ( ANALYTICS_TRACKING_ON === type ) {
-		return false;
-	}
-
 	return state;
 };
 
