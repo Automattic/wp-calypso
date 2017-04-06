@@ -67,15 +67,7 @@ class AfterTheDeadline extends Component {
 		const { afterTheDeadlineModuleActive, translate } = this.props;
 
 		return (
-			<div className="composing__module-settings site-settings__child-settings">
-				<div className="composing__info-link-container site-settings__info-link-container">
-					<InfoPopover position={ 'left' }>
-						<ExternalLink href={ 'https://jetpack.com/support/spelling-and-grammar/' } icon target="_blank">
-							{ translate( 'Learn more about After the Deadline.' ) }
-						</ExternalLink>
-					</InfoPopover>
-				</div>
-
+			<FormFieldset>
 				<FormLegend>
 					{ translate( 'Proofreading' ) }
 				</FormLegend>
@@ -94,7 +86,7 @@ class AfterTheDeadline extends Component {
 						'Posts or pages are updated'
 					) )
 				}
-			</div>
+			</FormFieldset>
 		);
 	}
 
@@ -102,7 +94,7 @@ class AfterTheDeadline extends Component {
 		const { afterTheDeadlineModuleActive, translate } = this.props;
 
 		return (
-			<div className="composing__module-settings site-settings__child-settings">
+			<FormFieldset>
 				<FormLegend>
 					{ translate( 'Automatic Language Detection' ) }
 				</FormLegend>
@@ -115,7 +107,7 @@ class AfterTheDeadline extends Component {
 						'Use automatically detected language to proofread posts and pages'
 					) )
 				}
-			</div>
+			</FormFieldset>
 		);
 	}
 
@@ -123,7 +115,7 @@ class AfterTheDeadline extends Component {
 		const { afterTheDeadlineModuleActive, translate } = this.props;
 
 		return (
-			<div className="composing__module-settings site-settings__child-settings">
+			<FormFieldset>
 				<FormLegend>
 					{ translate( 'English Options' ) }
 				</FormLegend>
@@ -141,7 +133,7 @@ class AfterTheDeadline extends Component {
 				{ this.renderToggle( 'Passive voice', ! afterTheDeadlineModuleActive, translate( 'Passive Voice' ) ) }
 				{ this.renderToggle( 'Phrases to Avoid', ! afterTheDeadlineModuleActive, translate( 'Phrases to Avoid' ) ) }
 				{ this.renderToggle( 'Redundant Expression', ! afterTheDeadlineModuleActive, translate( 'Redundant Phrases' ) ) }
-			</div>
+			</FormFieldset>
 		);
 	}
 
@@ -152,7 +144,7 @@ class AfterTheDeadline extends Component {
 			: [];
 
 		return (
-			<div className="composing__module-settings site-settings__child-settings">
+			<FormFieldset>
 				<FormLegend>
 					{ translate( 'Ignored Phrases' ) }
 				</FormLegend>
@@ -162,7 +154,7 @@ class AfterTheDeadline extends Component {
 					value={ ignoredPhrases }
 					disabled={ ! afterTheDeadlineModuleActive || moduleUnavailable }
 				/>
-			</div>
+			</FormFieldset>
 		);
 	}
 
@@ -188,12 +180,20 @@ class AfterTheDeadline extends Component {
 			<FoldableCard className="composing__foldable-card site-settings__foldable-card" header={ atdToggle }>
 				<QueryJetpackConnection siteId={ selectedSiteId } />
 
-				<FormFieldset>
+				<div className="composing__module-settings site-settings__child-settings">
+					<div className="composing__info-link-container site-settings__info-link-container">
+						<InfoPopover position={ 'left' }>
+							<ExternalLink href={ 'https://jetpack.com/support/spelling-and-grammar/' } icon target="_blank">
+								{ translate( 'Learn more about After the Deadline.' ) }
+							</ExternalLink>
+						</InfoPopover>
+					</div>
+
 					{ this.renderProofreadingSection() }
 					{ this.renderAutoLanguageDetectionSection() }
 					{ this.renderEnglishOptionsSection() }
 					{ this.renderIgnoredPhrasesSection() }
-				</FormFieldset>
+				</div>
 			</FoldableCard>
 		);
 	}

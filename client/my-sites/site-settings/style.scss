@@ -364,6 +364,11 @@
 	&.is-expanded.is-top-level .foldable-card__content {
 		padding: 24px;
 	}
+
+	.site-settings__info-link-container {
+		margin-right: -36px;
+		height: 0;
+	}
 }
 
 // Site settings group styles
