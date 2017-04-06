@@ -353,14 +353,7 @@ const analytics = {
 
 	// Lucky Orange tracking
 	luckyOrange: {
-		loaded: false,
-
 		addLuckyOrangeScript: function() {
-			if ( analytics.luckyOrange.loaded ) {
-				return;
-			}
-
-			analytics.luckyOrange.loaded = true;
 			const wa = document.createElement( 'script' );
 			const s = document.getElementsByTagName( 'script' )[ 0 ];
 
