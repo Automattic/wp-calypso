@@ -80,7 +80,7 @@ class PluginAutomatedTransfer extends Component {
 			return translate( "Don't leave quite yet! Just a bit longer." );
 		}
 		if ( transferComplete ) {
-			return translate( 'Activating %(plugin)s...', { args: { plugin: plugin.name } } );
+			return translate( 'Activating %(plugin)s…', { args: { plugin: plugin.name } } );
 		}
 		switch ( transferState ) {
 			case START: return translate( 'Installing %(plugin)s…', { args: { plugin: plugin.name } } );
@@ -137,7 +137,7 @@ class PluginAutomatedTransfer extends Component {
 			<div>
 				<Notice
 					icon={ this.getIcon() }
-					className="plugin-automated-transfer"
+					className="plugin-automated-transfer__notice"
 					showDismiss={ false }
 					status={ this.getStatus() }
 					text={ this.getNoticeText() }
