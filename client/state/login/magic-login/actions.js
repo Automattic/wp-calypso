@@ -14,34 +14,34 @@ import {
 } from 'state/action-types';
 import wpcom from 'lib/wp';
 
-export const showCheckYourEmailPage = () => dispatch => {
-	dispatch( {
+export const showCheckYourEmailPage = () => {
+	return {
 		type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
-	} );
+	};
 };
 
-export const showLinkExpiredPage = () => dispatch => {
-	dispatch( {
+export const showLinkExpiredPage = () => {
+	return {
 		type: MAGIC_LOGIN_SHOW_LINK_EXPIRED,
-	} );
+	};
 };
 
-export const showRequestForm = () => dispatch => {
-	dispatch( {
+export const showRequestForm = () => {
+	return {
 		type: MAGIC_LOGIN_SHOW_REQUEST_FORM,
-	} );
+	};
 };
 
-export const hideRequestForm = () => dispatch => {
-	dispatch( {
+export const hideRequestForm = () => {
+	return {
 		type: MAGIC_LOGIN_HIDE_REQUEST_FORM,
-	} );
+	};
 };
 
-export const hideRequestNotice = () => dispatch => {
-	dispatch( {
+export const hideRequestNotice = () => {
+	return {
 		type: MAGIC_LOGIN_HIDE_REQUEST_NOTICE,
-	} );
+	};
 };
 
 export const fetchRequestEmail = email => dispatch => {
@@ -63,9 +63,9 @@ export const fetchRequestEmail = email => dispatch => {
 	} );
 };
 
-export const setInputEmailAddress = email => dispatch => {
-	dispatch( {
+export const setInputEmailAddress = email => {
+	return {
 		type: MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS,
 		email
-	} );
+	};
 };

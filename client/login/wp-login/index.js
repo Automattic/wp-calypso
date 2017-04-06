@@ -29,6 +29,11 @@ import { isEnabled } from 'config';
 import { localize } from 'i18n-calypso';
 
 class Login extends React.Component {
+	onMagicLoginRequestClick = event => {
+		event.preventDefault();
+		this.props.showMagicLoginRequestForm();
+	}
+
 	magicLoginMainContent() {
 		const {
 			handlingMagicLink,
@@ -63,7 +68,7 @@ class Login extends React.Component {
 			showingCheckYourEmailPage ||
 			showingMagicLoginRequestForm
 		) ) {
-			return <a href="#" onClick={ this.props.onMagicLoginRequestClick }>{ translate( 'Email me a login link' ) }</a>;
+			return <a href="#" onClick={ this.onMagicLoginRequestClick }>{ translate( 'Email me a login link' ) }</a>;
 		}
 	}
 
@@ -128,13 +133,8 @@ const mapState = state => {
 	};
 };
 
-const mapDispatch = dispatch => {
-	return {
-		onMagicLoginRequestClick: event => {
-			event.preventDefault();
-			dispatch( showMagicLoginRequestForm() );
-		}
-	};
+const mapDispatch = {
+	showMagicLoginRequestForm,
 };
 
 export default connect( mapState, mapDispatch )( localize( Login ) );

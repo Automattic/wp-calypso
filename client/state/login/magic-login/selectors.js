@@ -3,10 +3,21 @@
  */
 import { get } from 'lodash';
 
-export const isShowingRequestForm = state => get( state, 'login.magicLogin.isShowingRequestForm', false );
-export const isShowingInterstitialPage = state => get( state, 'login.magicLogin.isShowingInterstitialPage', false );
-export const isShowingExpiredPage = state => get( state, 'login.magicLogin.isShowingExpiredPage', false );
-export const isShowingCheckYourEmailPage = state => get( state, 'login.magicLogin.isShowingCheckYourEmailPage', false );
+/**
+ * Internal dependencies
+ */
+import {
+	CHECK_YOUR_EMAIL_PAGE,
+	INTERSTITIAL_PAGE,
+	LINK_EXPIRED_PAGE,
+	REQUEST_FORM,
+} from './constants';
+
+export const showingView = state => get( state, 'login.magicLogin.showingView', null );
+export const isShowingCheckYourEmailPage = state => showingView( state ) === CHECK_YOUR_EMAIL_PAGE;
+export const isShowingInterstitialPage = state => showingView( state ) === INTERSTITIAL_PAGE;
+export const isShowingExpiredPage = state => showingView( state ) === LINK_EXPIRED_PAGE;
+export const isShowingRequestForm = state => showingView( state ) === REQUEST_FORM;
 
 export const isFetchingEmail = state => get( state, 'login.magicLogin.isFetchingEmail', false );
 export const requestEmailError = state => get( state, 'login.magicLogin.requestEmailError', null );

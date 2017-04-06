@@ -127,13 +127,11 @@ const mapState = state => {
 	};
 };
 
-const mapDispatch = dispatch => {
-	return {
-		onClickEnterPasswordInstead: () => dispatch( hideRequestForm() ),
-		onNoticeDismiss: () => dispatch( hideRequestNotice() ),
-		onSubmit: emailAddress => dispatch( fetchRequestEmail( emailAddress ) ),
-		setInputEmailAddress: emailAddress => dispatch( setInputEmailAddress( emailAddress ) ),
-	};
+const mapDispatch = {
+	onClickEnterPasswordInstead: hideRequestForm,
+	onNoticeDismiss: hideRequestNotice,
+	onSubmit: emailAddress => fetchRequestEmail( emailAddress ),
+	setInputEmailAddress: emailAddress => setInputEmailAddress( emailAddress ),
 };
 
 export default connect( mapState, mapDispatch )( localize( RequestLoginEmailForm ) );

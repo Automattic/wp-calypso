@@ -8,6 +8,14 @@ import emailValidator from 'email-validator';
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
+
+import {
+	CHECK_YOUR_EMAIL_PAGE,
+	INTERSTITIAL_PAGE,
+	LINK_EXPIRED_PAGE,
+	REQUEST_FORM,
+} from './constants';
+
 import {
 	DESERIALIZE,
 	MAGIC_LOGIN_HANDLE_AUTH_TOKEN_FETCH,
@@ -25,47 +33,14 @@ import {
 	SERIALIZE,
 } from 'state/action-types';
 
-export const isShowingRequestForm = createReducer( false, {
-	[ DESERIALIZE ]: () => false,
-	[ SERIALIZE ]: () => false,
-	[ MAGIC_LOGIN_HIDE_REQUEST_FORM ]: () => false,
-	[ MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE ]: () => false,
-	[ MAGIC_LOGIN_SHOW_REQUEST_FORM ]: () => true,
-	[ MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE ]: () => false,
-	[ MAGIC_LOGIN_SHOW_LINK_EXPIRED ]: () => false,
-} );
-
-export const isShowingInterstitialPage = createReducer( false, {
-	[ DESERIALIZE ]: () => false,
-	[ SERIALIZE ]: () => false,
-	[ MAGIC_LOGIN_HIDE_REQUEST_FORM ]: () => false,
-	[ MAGIC_LOGIN_HIDE_REQUEST_NOTICE ]: () => false,
-	[ MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE ]: () => false,
-	[ MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE ]: () => true,
-	[ MAGIC_LOGIN_SHOW_REQUEST_FORM ]: () => false,
-	[ MAGIC_LOGIN_SHOW_LINK_EXPIRED ]: () => false,
-} );
-
-export const isShowingExpiredPage = createReducer( false, {
-	[ DESERIALIZE ]: () => false,
-	[ SERIALIZE ]: () => false,
-	[ MAGIC_LOGIN_HIDE_REQUEST_FORM ]: () => false,
-	[ MAGIC_LOGIN_HIDE_REQUEST_NOTICE ]: () => false,
-	[ MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE ]: () => false,
-	[ MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE ]: () => false,
-	[ MAGIC_LOGIN_SHOW_REQUEST_FORM ]: () => false,
-	[ MAGIC_LOGIN_SHOW_LINK_EXPIRED ]: () => true,
-} );
-
-export const isShowingCheckYourEmailPage = createReducer( false, {
-	[ DESERIALIZE ]: () => false,
-	[ SERIALIZE ]: () => false,
-	[ MAGIC_LOGIN_HIDE_REQUEST_FORM ]: () => false,
-	[ MAGIC_LOGIN_HIDE_REQUEST_NOTICE ]: () => false,
-	[ MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE ]: () => true,
-	[ MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE ]: () => false,
-	[ MAGIC_LOGIN_SHOW_REQUEST_FORM ]: () => false,
-	[ MAGIC_LOGIN_SHOW_LINK_EXPIRED ]: () => false,
+export const showingView = createReducer( null, {
+	[ DESERIALIZE ]: () => null,
+	[ SERIALIZE ]: () => null,
+	[ MAGIC_LOGIN_HIDE_REQUEST_FORM ]: () => null,
+	[ MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE ]: () => CHECK_YOUR_EMAIL_PAGE,
+	[ MAGIC_LOGIN_SHOW_REQUEST_FORM ]: () => REQUEST_FORM,
+	[ MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE ]: () => INTERSTITIAL_PAGE,
+	[ MAGIC_LOGIN_SHOW_LINK_EXPIRED ]: () => LINK_EXPIRED_PAGE,
 } );
 
 export const isFetchingEmail = createReducer( false, {
@@ -145,12 +120,9 @@ export default combineReducers( {
 	emailAddressFormInput,
 	emailAddressFormInputIsValid,
 	isFetchingEmail,
-	isShowingCheckYourEmailPage,
-	isShowingExpiredPage,
-	isShowingInterstitialPage,
-	isShowingRequestForm,
 	requestAuthError,
 	requestAuthSuccess,
 	requestEmailError,
 	requestedEmailSuccessfully,
+	showingView,
 } );

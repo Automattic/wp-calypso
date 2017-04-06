@@ -7,6 +7,13 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	CHECK_YOUR_EMAIL_PAGE,
+	INTERSTITIAL_PAGE,
+	LINK_EXPIRED_PAGE,
+	REQUEST_FORM,
+} from '../constants';
+
+import {
 	emailAddressFormInput,
 	emailAddressFormInputIsValid,
 	//@TODO	isFetchingAuth,
@@ -111,11 +118,11 @@ describe( 'selectors', () => {
 			expect( isShowing ).to.be.false;
 		} );
 
-		it( 'should return false if not showing', () => {
+		it( 'should return false if showing something else', () => {
 			const isShowing = isShowingRequestForm( {
 				login: {
 					magicLogin: {
-						isShowingRequestForm: false,
+						showingView: 'some random view',
 					},
 				},
 			} );
@@ -126,7 +133,7 @@ describe( 'selectors', () => {
 			const isShowing = isShowingRequestForm( {
 				login: {
 					magicLogin: {
-						isShowingRequestForm: true,
+						showingView: REQUEST_FORM,
 					},
 				},
 			} );
@@ -140,11 +147,11 @@ describe( 'selectors', () => {
 			expect( isShowing ).to.be.false;
 		} );
 
-		it( 'should return false if not showing', () => {
+		it( 'should return false showing something else', () => {
 			const isShowing = isShowingInterstitialPage( {
 				login: {
 					magicLogin: {
-						isShowingInterstitialPage: false,
+						showingView: 'some random view',
 					},
 				},
 			} );
@@ -155,7 +162,7 @@ describe( 'selectors', () => {
 			const isShowing = isShowingInterstitialPage( {
 				login: {
 					magicLogin: {
-						isShowingInterstitialPage: true,
+						showingView: INTERSTITIAL_PAGE,
 					},
 				},
 			} );
@@ -169,11 +176,11 @@ describe( 'selectors', () => {
 			expect( isShowing ).to.be.false;
 		} );
 
-		it( 'should return false if not showing', () => {
+		it( 'should return false showing something else', () => {
 			const isShowing = isShowingExpiredPage( {
 				login: {
 					magicLogin: {
-						isShowingExpiredPage: false,
+						showingView: 'some random view',
 					},
 				},
 			} );
@@ -184,7 +191,7 @@ describe( 'selectors', () => {
 			const isShowing = isShowingExpiredPage( {
 				login: {
 					magicLogin: {
-						isShowingExpiredPage: true,
+						showingView: LINK_EXPIRED_PAGE,
 					},
 				},
 			} );
@@ -198,11 +205,11 @@ describe( 'selectors', () => {
 			expect( isShowing ).to.be.false;
 		} );
 
-		it( 'should return false if not showing', () => {
+		it( 'should return false showing something else', () => {
 			const isShowing = isShowingCheckYourEmailPage( {
 				login: {
 					magicLogin: {
-						isShowingCheckYourEmailPage: false,
+						showingView: 'some random view',
 					},
 				},
 			} );
@@ -213,7 +220,7 @@ describe( 'selectors', () => {
 			const isShowing = isShowingCheckYourEmailPage( {
 				login: {
 					magicLogin: {
-						isShowingCheckYourEmailPage: true,
+						showingView: CHECK_YOUR_EMAIL_PAGE,
 					},
 				},
 			} );
