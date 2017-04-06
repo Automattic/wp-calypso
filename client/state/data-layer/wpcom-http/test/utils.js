@@ -1,13 +1,23 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
+import { expect, assert } from 'chai';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { getData, getError, getProgress, dispatchRequest } from '../utils.js';
+import {
+	getData,
+	getError,
+	getProgress,
+	dispatchRequest,
+	isHttpEgress,
+	isHttpIngress,
+	processHttpRequest,
+} from '../utils.js';
+
+import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 
 describe( 'WPCOM HTTP Data Layer', () => {
 	describe( 'Utils', () => {
@@ -121,6 +131,80 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				expect( onSuccess ).to.not.have.beenCalled;
 				expect( onFailure ).to.not.have.beenCalled;
 				expect( onProgress ).to.have.been.calledWith( store, progress, next, progressInfo );
+			} );
+		} );
+
+		const ingressAction = { type: WPCOM_HTTP_REQUEST };
+		const egressAction = { type: 'requestRooster', meta: { dataLayer: { data: 'Astro Chicken' } } };
+		const unrelatedAction = { type: 'unrelated' };
+
+		describe( '#isHttpIngress', () => {
+			it( 'should return true for an action that is going to initiate a http request', () => {
+				assert( isHttpIngress( ingressAction ) );
+			} );
+
+			it( 'should return false for any actions not of type WPCOM_HTTP_REQUEST', () => {
+				assert.isFalse( isHttpIngress( unrelatedAction ) );
+			} );
+		} );
+
+		describe( '#isHttpEgress', () => {
+			it( 'should return true for any action that is the result of an onSuccess http handler', () => {
+				assert( isHttpEgress( egressAction ) );
+			} );
+
+			it( 'should return true for any action that is the result of an onError http handler', () => {
+				const action = { type: 'requestRooster', meta: { dataLayer: { error: 'no chickens' } } };
+				assert( isHttpEgress( action ) );
+			} );
+
+			it( 'should return false for any actions without the onSuccess/onError meta', () => {
+				const httpRequestAction = unrelatedAction;
+
+				assert.isNotOk( isHttpEgress( unrelatedAction ) );
+				assert.isNotOk( isHttpEgress( httpRequestAction ) );
+			} );
+		} );
+
+		describe( '#processHttpRequest', () => {
+			const handleIngress = spy();
+			const handleEgress = spy();
+			const next = spy();
+			const store = spy();
+
+			beforeEach( () => {
+				handleIngress.reset();
+				handleEgress.reset();
+				next.reset();
+			} );
+
+			it( 'should call next if not ingress or egress', () => {
+				processHttpRequest( handleIngress, handleEgress )( store )( next )( unrelatedAction );
+
+				assert.equal( next.callCount, 1 );
+				assert( next.calledWith( unrelatedAction ) );
+			} );
+
+			it( 'should not call next if ingress', () => {
+				processHttpRequest( handleIngress, handleEgress )( store )( next )( ingressAction );
+				assert.equal( next.callCount, 0 );
+			} );
+
+			it( 'should not call next if egress', () => {
+				processHttpRequest( handleIngress, handleEgress )( store )( next )( egressAction );
+				assert.equal( next.callCount, 0 );
+			} );
+
+			it( 'should call ingressProcessor if is ingress', () => {
+				processHttpRequest( handleIngress, handleEgress )( store )( next )( ingressAction );
+				assert.equal( handleIngress.callCount, 1 );
+				assert.equal( handleEgress.callCount, 0 );
+			} );
+
+			it( 'should call egressProcessor if is egress', () => {
+				processHttpRequest( handleIngress, handleEgress )( store )( next )( egressAction );
+				assert.equal( handleEgress.callCount, 1 );
+				assert.equal( handleIngress.callCount, 0 );
 			} );
 		} );
 	} );
