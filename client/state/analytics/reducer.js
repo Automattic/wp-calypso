@@ -3,11 +3,19 @@
  */
 import {
 	ANALYTICS_TRACKING_ON,
+	DESERIALIZE,
+	SERIALIZE,
 } from 'state/action-types';
 
 export const analyticsTracking = ( state = false, { type } ) => {
-	if ( ANALYTICS_TRACKING_ON === type ) {
-		return true;
+	switch ( type ) {
+		case ANALYTICS_TRACKING_ON:
+			return true;
+
+		// We don't want to persist across reloads
+		case SERIALIZE:
+		case DESERIALIZE:
+			return false;
 	}
 
 	return state;
