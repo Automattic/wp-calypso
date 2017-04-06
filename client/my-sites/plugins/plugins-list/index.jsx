@@ -2,16 +2,17 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import page from 'page';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { find, get, includes, isEmpty, isEqual, negate, range, reduce } from 'lodash';
-import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import acceptDialog from 'lib/accept';
-import DisconnectJetpackDialog from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-dialog';
+import { warningNotice } from 'state/notices/actions';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 import PluginsActions from 'lib/plugins/actions';
 import PluginsListHeader from 'my-sites/plugins/plugin-list-header';
@@ -139,13 +140,13 @@ export const PluginsList = React.createClass( {
 
 	filterSelection: {
 		active( plugin ) {
-			if ( this.isSelected( plugin ) ) {
+			if ( this.isSelected( plugin ) && plugin.slug !== 'jetpack' ) {
 				return plugin.sites.some( site => site.plugin && site.plugin.active );
 			}
 			return false;
 		},
 		inactive( plugin ) {
-			if ( this.isSelected( plugin ) ) {
+			if ( this.isSelected( plugin ) && plugin.slug !== 'jetpack' ) {
 				return plugin.sites.some( site => site.plugin && ! site.plugin.active );
 			}
 			return false;
@@ -210,12 +211,14 @@ export const PluginsList = React.createClass( {
 	},
 
 	doActionOverSelected( actionName, action ) {
-		const isDeactivatingAndJetpackSelected = ( { slug } ) => 'deactivating' === actionName && 'jetpack' === slug;
+		const isDeactivatingAndJetpackSelected =
+			( { slug } ) => ( 'deactivating' === actionName || 'activating' === actionName ) && 'jetpack' === slug;
+
 		const flattenArrays = ( full, partial ) => [ ...full, ...partial ];
 		this.removePluginsNotices();
 		this.props.plugins
 			.filter( this.isSelected ) // only use selected sites
-			.filter( negate( isDeactivatingAndJetpackSelected ) ) // ignore sites that are deactiving
+			.filter( negate( isDeactivatingAndJetpackSelected ) ) // ignore sites that are deactiving or activating jetpack
 			.map( p => p.sites ) // list of plugins -> list of list of sites
 			.reduce( flattenArrays, [] ) // flatten the list into one big list of sites
 			.forEach( site => action( site, site.plugin ) );
@@ -252,10 +255,8 @@ export const PluginsList = React.createClass( {
 			PluginsActions.deactivatePlugin( site, plugin );
 		} );
 
-		if ( waitForDeactivate ) {
+		if ( waitForDeactivate && this.props.selectedSite ) {
 			this.setState( { disconnectJetpackDialog: true } );
-		} else {
-			this.refs.dialog.open();
 		}
 
 		this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
@@ -276,8 +277,9 @@ export const PluginsList = React.createClass( {
 			sitesList = {};
 		let pluginName,
 			siteName;
+		const { plugins, translate } = this.props;
 
-		this.props.plugins
+		plugins
 			.filter( this.isSelected )
 			.forEach( ( plugin ) => {
 				pluginsList[ plugin.slug ] = true;
@@ -363,6 +365,8 @@ export const PluginsList = React.createClass( {
 	},
 
 	removePluginDialog() {
+		const { translate } = this.props;
+
 		const message = (
 			<div>
 				<span>{ this.getConfirmationText() }</span>
@@ -385,10 +389,30 @@ export const PluginsList = React.createClass( {
 	},
 
 	showDisconnectDialog() {
+		const { translate } = this.props;
+
 		if ( this.state.disconnectJetpackDialog && ! this.state.notices.inProgress.length ) {
-			this.setState( { disconnectJetpackDialog: false } );
-			this.refs.dialog.open();
+			this.setState( {
+				disconnectJetpackDialog: false,
+			} );
+
+			this.props.warningNotice(
+				translate( 'Jetpack cannot be deactivated from WordPress.com. {{link}}Manage connection{{/link}}', {
+					components: {
+						link: <a href={ '/settings/general/' + this.props.selectedSiteSlug } />
+					}
+				} )
+			);
 		}
+	},
+
+	closeDialog( action ) {
+		if ( 'continue' === action ) {
+			page.redirect( '/settings/general/' + this.props.selectedSiteSlug );
+			return;
+		}
+		this.setState( { showJetpackDisconnectDialog: false } );
+		this.forceUpdate();
 	},
 
 	// Renders
@@ -438,7 +462,7 @@ export const PluginsList = React.createClass( {
 					haveInactiveSelected={ this.props.plugins.some( this.filterSelection.inactive.bind( this ) ) }
 					haveUpdatesSelected= { this.props.plugins.some( this.filterSelection.updates.bind( this ) ) } />
 				<div className={ itemListClasses }>{ this.props.plugins.map( this.renderPlugin ) }</div>
-				<DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" />
+
 			</div>
 		);
 	},
@@ -490,5 +514,8 @@ export default connect(
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
 		};
 	},
-	{ recordGoogleEvent }
-)( PluginsList );
+	{
+		recordGoogleEvent,
+		warningNotice
+	}
+)( localize( PluginsList ) );
