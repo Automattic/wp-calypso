@@ -4,7 +4,7 @@ const path = require( 'path' );
 const child_process = require( 'child_process' );
 
 var argsESLint = [ '--cache', '--quiet', '--ext=.js,.jsx', '--format=json' ];
-var argsESLines = [ ];
+var argsESLines = [ '--quiet' ];
 
 const markerIndex = process.argv.indexOf('--');
 if ( process.argv.length > 2 ) {

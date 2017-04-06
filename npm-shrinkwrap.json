@@ -768,7 +768,7 @@
       "version": "1.0.4"
     },
     "cookiejar": {
-      "version": "2.1.0"
+      "version": "2.1.1"
     },
     "copy-webpack-plugin": {
       "version": "3.0.1",
@@ -1292,7 +1292,7 @@
       "dev": true
     },
     "eslines": {
-      "version": "0.0.12",
+      "version": "0.0.13",
       "dev": true
     },
     "eslint": {
@@ -2174,7 +2174,7 @@
       "version": "3.0.1"
     },
     "js-yaml": {
-      "version": "3.8.2",
+      "version": "3.8.3",
       "dev": true
     },
     "jsdom": {
