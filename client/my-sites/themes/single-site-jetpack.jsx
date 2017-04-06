@@ -45,48 +45,37 @@ const ConnectedThemesSelection = connectOptions(
 	}
 );
 
-const ConnectedSingleSiteJetpack = connectOptions(
-	( props ) => {
+class SingleSiteJetpack extends React.Component {
+	onSelectionRendered = ( selection ) => {
+		this._selection = selection;
+	}
+
+	onResize = () => {
+		if ( ! this._selection ) {
+			return;
+		}
+
+		this._selection.updateListPosition();
+	}
+
+	render() {
 		const {
-			analyticsPath,
-			analyticsPageTitle,
-			canManage,
 			emptyContent,
 			filter,
 			getScreenshotOption,
-			hasJetpackThemes,
 			showWpcomThemesList,
 			search,
 			siteId,
 			vertical,
 			wpcomTier
-		} = props;
-		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
-
-		if ( ! jetpackEnabled ) {
-			return (
-				<JetpackReferrerMessage
-					siteId={ siteId }
-					analyticsPath={ analyticsPath }
-					analyticsPageTitle={ analyticsPageTitle } />
-			);
-		}
-		if ( ! hasJetpackThemes ) {
-			return (
-				<JetpackUpgradeMessage siteId={ siteId } />
-			);
-		}
-		if ( ! canManage ) {
-			return (
-				<JetpackManageDisabledMessage siteId={ siteId } />
-			);
-		}
+		} = this.props;
 
 		return (
 			<div>
 				<SidebarNavigation />
 				<CurrentTheme siteId={ siteId } />
-				<ThemeShowcase { ...props }
+				<ThemeShowcase { ...this.props }
+					onResize={ this.onResize }
 					siteId={ siteId }
 					emptyContent={ showWpcomThemesList ? <div /> : null } >
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
@@ -95,6 +84,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 					{ showWpcomThemesList &&
 						<div>
 							<ConnectedThemesSelection
+								onSelectionRendered={ this.onSelectionRendered }
 								origin="wpcom"
 								defaultOption={ 'activate' }
 								secondaryOption={ 'tryandcustomize' }
@@ -118,7 +108,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 								getActionLabel={ function( theme ) {
 									return getScreenshotOption( theme ).label;
 								} }
-								trackScrollPage={ props.trackScrollPage }
+								trackScrollPage={ this.props.trackScrollPage }
 								source="wpcom"
 								emptyContent={ emptyContent }
 							/>
@@ -126,6 +116,42 @@ const ConnectedSingleSiteJetpack = connectOptions(
 					}
 				</ThemeShowcase>
 			</div>
+		);
+	}
+}
+
+const ConnectedSingleSiteJetpack = connectOptions(
+	( props ) => {
+		const {
+			analyticsPath,
+			analyticsPageTitle,
+			canManage,
+			hasJetpackThemes,
+			siteId
+		} = props;
+		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
+
+		if ( ! jetpackEnabled ) {
+			return (
+				<JetpackReferrerMessage
+					siteId={ siteId }
+					analyticsPath={ analyticsPath }
+					analyticsPageTitle={ analyticsPageTitle } />
+			);
+		}
+		if ( ! hasJetpackThemes ) {
+			return (
+				<JetpackUpgradeMessage siteId={ siteId } />
+			);
+		}
+		if ( ! canManage ) {
+			return (
+				<JetpackManageDisabledMessage siteId={ siteId } />
+			);
+		}
+
+		return (
+			<SingleSiteJetpack { ...props } />
 		);
 	}
 );

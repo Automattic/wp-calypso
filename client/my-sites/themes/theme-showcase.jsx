@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { pickBy } from 'lodash';
+import { pickBy, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -66,6 +66,7 @@ const ThemeShowcase = React.createClass( {
 		secondaryOption: optionShape,
 		getScreenshotOption: PropTypes.func,
 		siteSlug: PropTypes.string,
+		onResize: PropTypes.func
 	},
 
 	getDefaultProps() {
@@ -73,7 +74,8 @@ const ThemeShowcase = React.createClass( {
 			tier: '',
 			search: '',
 			emptyContent: null,
-			showUploadButton: true
+			showUploadButton: true,
+			onResize: noop
 		};
 	},
 
@@ -158,6 +160,7 @@ const ThemeShowcase = React.createClass( {
 				</Button>
 				}
 				<ThemesSelection
+					onThemesLoaded={ this.props.onResize }
 					search={ search }
 					tier={ this.props.tier }
 					filter={ filter }

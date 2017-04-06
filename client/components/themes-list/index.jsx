@@ -34,7 +34,8 @@ export const ThemesList = React.createClass( {
 		isInstalling: React.PropTypes.func,
 		// i18n function provided by localize()
 		translate: React.PropTypes.func,
-		placeholderCount: React.PropTypes.number
+		placeholderCount: React.PropTypes.number,
+		onListRendered: React.PropTypes.func
 	},
 
 	fetchNextPage( options ) {
@@ -52,7 +53,8 @@ export const ThemesList = React.createClass( {
 			getActionLabel: () => '',
 			isActive: () => false,
 			isPurchased: () => false,
-			isInstalling: () => false
+			isInstalling: () => false,
+			onListRendered: noop
 		};
 	},
 
@@ -62,6 +64,8 @@ export const ThemesList = React.createClass( {
 
 	componentDidMount() {
 		this._width = findDOMNode( this ).offsetWidth;
+
+		this.props.onListRendered( this );
 	},
 
 	shouldComponentUpdate( nextProps ) {
@@ -73,12 +77,24 @@ export const ThemesList = React.createClass( {
 			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
 	},
 
+	updatePosition() {
+		if ( ! this._scroller ) {
+			return;
+		}
+
+		this._scroller.updatePosition();
+	},
+
 	getItemsPerRow( rowWidth ) {
 		return Math.floor( ( rowWidth || this._width ) / 250 );
 	},
 
 	loadMoreRows() {
 		return this.fetchNextPage( { triggeredByScroll: true } );
+	},
+
+	onScrollerRendered( scroller ) {
+		this._scroller = scroller;
 	},
 
 	onSectionRendered( { columnStartIndex, columnStopIndex, rowStartIndex, rowStopIndex }, onRowsRendered ) {
@@ -109,7 +125,7 @@ export const ThemesList = React.createClass( {
 					threshold={ 20 }
 				>
 					{ ( { onRowsRendered, registerChild } ) => (
-						<WindowScroller>
+						<WindowScroller ref={ this.onScrollerRendered }>
 							{ ( { height, scrollTop } ) => (
 								<AutoSizer disableHeight onResize={ this.onResize }>
 									{ ( { width } ) => {

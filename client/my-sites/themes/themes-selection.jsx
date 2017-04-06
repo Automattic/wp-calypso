@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { compact, includes, isEqual, property, snakeCase } from 'lodash';
+import { compact, includes, isEqual, property, snakeCase, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -50,12 +50,24 @@ class ThemesSelection extends Component {
 		isThemeActive: PropTypes.func,
 		isThemePurchased: PropTypes.func,
 		isInstallingTheme: PropTypes.func,
-		placeholderCount: PropTypes.number
+		placeholderCount: PropTypes.number,
+		onSelectionRendered: PropTypes.func,
+		onThemesLoaded: PropTypes.func
 	}
 
 	static defaultProps = {
 		emptyContent: null,
-		showUploadButton: true
+		showUploadButton: true,
+		onSelectionRendered: noop,
+		onThemesLoaded: noop
+	}
+
+	componentDidMount() {
+		this.props.onSelectionRendered( this );
+	}
+
+	componentDidUpdate() {
+		this.props.onThemesLoaded();
 	}
 
 	recordSearchResultsClick = ( theme, resultsRank, action ) => {
@@ -90,6 +102,14 @@ class ThemesSelection extends Component {
 			this.recordSearchResultsClick( theme, resultsRank, 'screenshot_info' );
 		}
 		this.props.onScreenshotClick && this.props.onScreenshotClick( theme );
+	}
+
+	updateListPosition() {
+		this._themesList.updatePosition();
+	}
+
+	onListRendered = ( list ) => {
+		this._themesList = list;
 	}
 
 	fetchNextPage = ( options ) => {
@@ -145,7 +165,9 @@ class ThemesSelection extends Component {
 					label={ listLabel }
 					count={ themesCount }
 				/>
-				<ThemesList themes={ this.props.themes }
+				<ThemesList
+					onListRendered={ this.onListRendered }
+					themes={ this.props.themes }
 					themesCount={ themesCount }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
@@ -158,7 +180,8 @@ class ThemesSelection extends Component {
 					isInstalling={ this.props.isInstallingTheme }
 					loading={ this.props.isRequesting }
 					emptyContent={ this.props.emptyContent }
-					placeholderCount={ this.props.placeholderCount } />
+					placeholderCount={ this.props.placeholderCount }
+				/>
 			</div>
 		);
 	}
