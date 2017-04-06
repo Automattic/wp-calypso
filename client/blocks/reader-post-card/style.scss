@@ -392,7 +392,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .reader-post-card__title-link:visited {
 	color: $gray-dark;
 	cursor: pointer;
-	font-size: 18px;
+	font-size: 19px;
 	font-weight: 700;
 	display: block;
 
@@ -401,12 +401,12 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 
 	@include breakpoint( ">480px" ) {
-		font-size: 18px;
+		font-size: 19px;
 	}
 }
 
 .reader-post-card .reader-excerpt {
-	font-size: 15px;
+	font-size: 16px;
 	line-height: 1.6;
 	font-weight: 100;
 	margin-top: 9px;
