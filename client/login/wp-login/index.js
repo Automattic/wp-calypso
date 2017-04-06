@@ -113,7 +113,7 @@ class Login extends React.Component {
 						<div className="wp-login__container">
 							{ magicLoginView === REQUEST_FORM
 								? <RequestLoginEmailForm />
-								: <LoginBlock title={ translate( 'Log in to your account' ) } />
+								: <LoginBlock title={ translate( 'Log in to your account.' ) } />
 							}
 						</div>
 						{ this.footerContent() }

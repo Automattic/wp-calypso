@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormsButton from 'components/forms/form-button';
+import FormPasswordInput from 'components/forms/form-password-input';
 import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import { loginUser } from 'state/login/actions';
@@ -102,10 +103,9 @@ export class Login extends Component {
 							</label>
 							<label className="login__form-userdata-username">
 								{ this.props.translate( 'Password' ) }
-								<input
+								<FormPasswordInput
 									className="login__form-userdata-username-password"
 									onChange={ this.onChangeField }
-									type="password"
 									name="password"
 									value={ this.state.password }
 									{ ...isDisabled } />

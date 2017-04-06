@@ -3,8 +3,6 @@
 }
 
 .login__form-userdata {
-	margin: 5px 0;
-
 	label {
 		display: block;
 		line-height: 2em;
@@ -28,6 +26,8 @@
 }
 
 .login__form-remember-me {
+	margin: 5px 0 15px;
+
 	input {
 		margin-right: 10px;
 	}
