@@ -29,20 +29,18 @@ const user = userFactory();
 const sites = sitesFactory();
 const debug = debugFactory( 'calypso:controller' );
 
-export const ReduxWrappedLayout = ( { store, primary, secondary, tertiary } ) => (
+export const ReduxWrappedLayout = ( { store, primary, secondary } ) => (
 	<ReduxProvider store={ store }>
 		{ getCurrentUser( store.getState() )
 			? <Layout primary={ primary }
 				secondary={ secondary }
-				tertiary={ tertiary }
 				user={ user }
 				sites={ sites }
 				nuxWelcome={ nuxWelcome }
 				translatorInvitation={ translatorInvitation }
 			/>
 			: <LayoutLoggedOut primary={ primary }
-				secondary={ secondary }
-				tertiary={ tertiary } />
+				secondary={ secondary } />
 		}
 	</ReduxProvider>
 );
