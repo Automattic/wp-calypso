@@ -13,7 +13,7 @@ import Card from 'components/card';
 import Button from 'components/button';
 import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import Banner from 'components/banner';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextValidation from 'components/forms/form-input-validation';
@@ -27,7 +27,7 @@ import {
 import { getSiteOption, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
+import { FEATURE_GOOGLE_ANALYTICS, PLAN_BUSINESS } from 'lib/plans/constants';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
 const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
@@ -83,16 +83,15 @@ class GoogleAnalyticsForm extends Component {
 				}
 
 				{ showUpgradeNudge &&
-					<UpgradeNudge
-						title={ translate( 'Add Google Analytics' ) }
-						message={ siteIsJetpack
+					<Banner
+						description={ siteIsJetpack
 							? translate( 'Upgrade to the Professional Plan and include your own analytics tracking ID.' )
 							: translate( 'Upgrade to the Business Plan and include your own analytics tracking ID.' )
 						}
+						event={ 'google_analytics_settings' }
 						feature={ FEATURE_GOOGLE_ANALYTICS }
-						event="google_analytics_settings"
-						icon="stats-alt"
-						jetpack={ siteIsJetpack }
+						plan={ PLAN_BUSINESS }
+						title={ translate( 'Add Google Analytics' ) }
 					/>
 				}
 
