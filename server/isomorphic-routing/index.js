@@ -8,6 +8,10 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 	return function( route, ...middlewares ) {
 		if ( middlewares.length === 0 && typeof route === 'function' && route.length === 3 ) {
 			// No route def -- the route arg is really an error-handling middleware
+			// `page( someMw )` would be a shorthand for `page( '*', someMw )`, even tho the same isn't true
+			// for Express, we want things to be isomorphic, so that should be handled by the `else` branch.
+			// OTOH, if `someMw` takes 3 args `( err, context, next )` instead of the usual 2 `( context, next )`,
+			// it's an error-handling middleware and needs to be handled by this branch.
 			expressApp.use( ( err, req, res, next ) => {
 				route( err, req.context, next );
 			} );
