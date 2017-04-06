@@ -88,6 +88,11 @@ export function multiSite( context, next ) {
 }
 
 export function loggedOut( context, next ) {
+	if ( context.isServerSide && ! isEmpty( context.query ) ) {
+		// Don't server-render URLs with query params
+		return next();
+	}
+
 	const props = getProps( context );
 
 	context.primary = <LoggedOutComponent { ...props } />;
@@ -99,7 +104,11 @@ export function fetchThemeData( context, next ) {
 		return next();
 	}
 
-	const shouldUseCache = isEmpty( context.query ); // Don't cache URLs with query params
+	if ( ! isEmpty( context.query ) ) {
+		// Don't server-render URLs with query params
+		return next();
+	}
+
 	const siteId = 'wpcom';
 	const query = {
 		search: context.query.s,
@@ -113,26 +122,22 @@ export function fetchThemeData( context, next ) {
 	// the same sets of results.
 	const cacheKey = context.pathname;
 
-	if ( shouldUseCache ) {
-		const cachedData = themesQueryCache.get( cacheKey );
-		if ( cachedData ) {
-			debug( `found theme data in cache key=${ cacheKey }` );
-			context.store.dispatch( receiveThemes( cachedData.themes, siteId, query, cachedData.found ) );
-			context.renderCacheKey = cacheKey + cachedData.timestamp;
-			return next();
-		}
+	const cachedData = themesQueryCache.get( cacheKey );
+	if ( cachedData ) {
+		debug( `found theme data in cache key=${ cacheKey }` );
+		context.store.dispatch( receiveThemes( cachedData.themes, siteId, query, cachedData.found ) );
+		context.renderCacheKey = cacheKey + cachedData.timestamp;
+		return next();
 	}
 
 	context.store.dispatch( requestThemes( siteId, query ) )
 		.then( () => {
-			if ( shouldUseCache ) {
-				const themes = getThemesForQuery( context.store.getState(), siteId, query );
-				const found = getThemesFoundForQuery( context.store.getState(), siteId, query );
-				const timestamp = Date.now();
-				themesQueryCache.set( cacheKey, { themes, found, timestamp } );
-				context.renderCacheKey = cacheKey + timestamp;
-				debug( `caching theme data key=${ cacheKey }` );
-			}
+			const themes = getThemesForQuery( context.store.getState(), siteId, query );
+			const found = getThemesFoundForQuery( context.store.getState(), siteId, query );
+			const timestamp = Date.now();
+			themesQueryCache.set( cacheKey, { themes, found, timestamp } );
+			context.renderCacheKey = cacheKey + timestamp;
+			debug( `caching theme data key=${ cacheKey }` );
 			next();
 		} )
 		.catch( () => next() );
