@@ -9,7 +9,7 @@ import React, { PropTypes } from 'react';
 import AdvancedTab from './advanced-tab';
 import CdnTab from './cdn-tab';
 import ContentsTab from './contents-tab';
-import Easy from './easy';
+import EasyTab from './easy-tab';
 import Main from 'components/main';
 import Navigation from './navigation';
 import { Tabs } from './constants';
@@ -30,7 +30,7 @@ const WPSuperCache = ( { site, tab } ) => {
 			case Tabs.DEBUG:
 				break;
 			default:
-				return <Easy site={ site } />;
+				return <EasyTab site={ site } />;
 		}
 	};
 
