@@ -62,7 +62,7 @@ class DisconnectJetpackButton extends Component {
 		recordGAEvent( 'Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog' );
 
 		const { notice } = showInfoNotice(
-			translate( 'Disconnecting %(siteName)s', { args: { siteName: site.title } } )
+			translate( 'Disconnecting %(siteName)s.', { args: { siteName: site.title } } )
 			, { isPersistent: true, showDismiss: false }
 		);
 
@@ -74,7 +74,7 @@ class DisconnectJetpackButton extends Component {
 			disconnectedSiteDeprecated( site );
 			this.props.setAllSitesSelected();
 			removeInfoNotice( notice.noticeId );
-			showSuccessNotice( translate( '%(siteName)s has been successfully disconnected', { args: { siteName: site.title } } ) );
+			showSuccessNotice( translate( 'Successfully disconnected %(siteName)s.', { args: { siteName: site.title } } ) );
 			recordGAEvent( 'Jetpack', 'Successfully Disconnected' );
 		}, () => {
 			removeInfoNotice( notice.noticeId );
