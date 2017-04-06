@@ -251,7 +251,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		margin-top: 40px;
 
 		.reader-related-card-v2__post {
-			max-height: 219px;
+			max-height: 222px;
 
 			@include breakpoint( "<960px" ) {
 				max-height: 249px;
