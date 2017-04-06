@@ -111,10 +111,6 @@ export function createWpcomHttpMiddleware( {
 	}
 
 	function onError( store, action, next, apiResponse ) {
-		if ( process.env.NODE_ENV === 'development' ) {
-			console.error( apiResponse ); // eslint-disable-line no-console
-		}
-
 		mapFailureResponseToActions && mapFailureResponseToActions( { apiResponse, action } )
 			.forEach( store.dispatch );
 	}
