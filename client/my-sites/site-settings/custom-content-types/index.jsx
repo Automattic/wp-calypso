@@ -16,6 +16,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive, isActivatingJetpackModule } from 'state/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import InfoPopover from 'components/info-popover';
+import ExternalLink from 'components/external-link';
 
 class CustomContentTypes extends Component {
 	componentDidUpdate() {
@@ -109,6 +111,14 @@ class CustomContentTypes extends Component {
 
 				<Card className="custom-content-types__card site-settings">
 					<FormFieldset>
+						<div className="custom-content-types__info-link-container site-settings__info-link-container">
+							<InfoPopover position={ 'left' }>
+								<ExternalLink href={ 'https://support.wordpress.com/custom-post-types/' } icon target="_blank">
+									{ translate( 'Learn more about Custom Content Types.' ) }
+								</ExternalLink>
+							</InfoPopover>
+						</div>
+
 						{ this.renderTestimonialSettings() }
 						{ this.renderPortfolioSettings() }
 					</FormFieldset>
