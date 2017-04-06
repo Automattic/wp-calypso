@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import config from 'config';
+import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import { cancelAndRefundPurchase, cancelPurchase, submitSurvey } from 'lib/upgrades/actions';
 import { clearPurchases } from 'state/purchases/actions';
@@ -19,7 +20,7 @@ import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import { getName, getSubscriptionEndDate, isOneTimePurchase, isRefundable, isSubscription } from 'lib/purchases';
 import { enrichedSurveyData } from '../utils';
-import { isDomainRegistration, isJetpackPlan } from 'lib/products-values';
+import { isDomainRegistration, isJetpackPlan, isBusiness } from 'lib/products-values';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
 import { refreshSitePlans } from 'state/sites/plans/actions';
@@ -38,6 +39,7 @@ class CancelPurchaseButton extends Component {
 		showDialog: false,
 		isRemoving: false,
 		surveyStep: 1,
+		finalStep: 2,
 		survey: {
 			questionOneRadio: null,
 			questionTwoRadio: null
@@ -79,8 +81,34 @@ class CancelPurchaseButton extends Component {
 		} );
 	}
 
-	changeSurveyStep = () => {
-		const newStep = this.state.surveyStep === 1 ? 2 : 1;
+	changeSurveyStep = ( direction ) => {
+		const { purchase } = this.props;
+		let newStep;
+
+		if ( purchase && isBusiness( purchase ) &&
+			this.state.survey.questionOneRadio === 'tooHard' &&
+			abtest( 'conciergeOfferOnCancel' ) === 'showConciergeOffer'
+		) {
+			this.setState( { finalStep: 3 } );
+
+			switch ( this.state.surveyStep ) {
+				case 1:
+					newStep = 2;
+					break;
+				case 2:
+					newStep = direction === 'previous' ? 1 : 3;
+					break;
+				case 3:
+					newStep = 2;
+					break;
+				default:
+					newStep = 1;
+					break;
+			}
+		} else {
+			this.setState( { finalStep: 2 } );
+			newStep = this.state.surveyStep === 1 ? 2 : 1;
+		}
 
 		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
 
@@ -116,7 +144,7 @@ class CancelPurchaseButton extends Component {
 				action: 'prev',
 				disabled: this.state.isRemoving,
 				label: translate( 'Previous Step' ),
-				onClick: this.changeSurveyStep
+				onClick: this.changeSurveyStep.bind( null, 'previous' )
 			},
 			cancel: {
 				action: 'cancel',
@@ -127,13 +155,17 @@ class CancelPurchaseButton extends Component {
 			}
 		};
 		const purchaseName = getName( purchase );
-		const inStepOne = this.state.surveyStep === 1;
+		const inFinalStep = ( this.state.surveyStep === this.state.finalStep );
 
 		let buttonsArr;
 		if ( ! config.isEnabled( 'upgrades/removal-survey' ) ) {
 			buttonsArr = [ buttons.close, buttons.cancel ];
+		} else if ( inFinalStep ) {
+			buttonsArr = [ buttons.close, buttons.prev, buttons.cancel ];
 		} else {
-			buttonsArr = inStepOne ? [ buttons.close, buttons.next ] : [ buttons.prev, buttons.close, buttons.cancel ];
+			buttonsArr = this.state.surveyStep === 2
+				? [ buttons.close, buttons.prev, buttons.next ]
+				: [ buttons.close, buttons.next ];
 		}
 
 		return (
@@ -146,6 +178,7 @@ class CancelPurchaseButton extends Component {
 				<CancelPurchaseForm
 					surveyStep={ this.state.surveyStep }
 					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
+					finalStep={ this.state.finalStep }
 					defaultContent={ this.renderCancellationEffect() }
 					onInputChange={ this.onSurveyChange }
 					isJetpack={ isJetpackPlan( purchase ) }

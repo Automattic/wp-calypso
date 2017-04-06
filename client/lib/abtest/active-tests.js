@@ -62,4 +62,12 @@ module.exports = {
 		},
 		defaultVariation: 'hideSurveyStep',
 	},
+	conciergeOfferOnCancel: {
+		datestamp: '20170410',
+		variations: {
+			showConciergeOffer: 50,
+			hideConciergeOffer: 50,
+		},
+		defaultVariation: 'showConciergeOffer',
+	},
 };
