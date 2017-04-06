@@ -62,3 +62,16 @@
 	width: 90px;
 	min-width: 90px;
 }
+
+.reader-subscription-list-item__email-popout-wrapper {
+	display: flex;
+	flex-direction: column;
+}
+
+.reader-subscription-list-item__email-popout-header {
+	font-weight: 600;
+	font-size: 14px;
+	display: flex;
+	padding-left: 15px;
+	justify-content: flex-start;
+}

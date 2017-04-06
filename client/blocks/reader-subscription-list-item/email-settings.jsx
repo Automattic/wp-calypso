@@ -11,7 +11,7 @@ import Gridicon from 'gridicons';
 import Popover from 'components/popover/index';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
-import FormToggle from 'components/forms/form-toggle';
+import FormToggle from 'components/forms/form-toggle/compact';
 
 class ReaderEmailSubscriptionSettingsPopout extends Component {
 	static displayName = 'ReaderEmailSubscriptionSettingsPopout';
@@ -19,7 +19,9 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 		feedId: PropTypes.number,
 		siteId: PropTypes.number,
 	};
-	state = { showPopover: false };
+	state = {
+		showPopover: false,
+	};
 
 	togglePopoverVisibility = () => {
 		this.setState( { showPopover: ! this.state.showPopover } );
@@ -34,6 +36,8 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 	}
 
 	render() {
+		const { translate } = this.props;
+
 		return (
 			<div>
 				<span
@@ -41,7 +45,7 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 					onClick={ this.togglePopoverVisibility }
 					ref={ this.savePopoutSpanRef }
 				>
-					<Gridicon icon="cog" size={ 24 } />
+					<Gridicon icon="cog" size={ 20 } />
 					Settings
 				</span>
 
@@ -51,22 +55,28 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 					context={ this.spanRef }
 					position={ 'bottom left' }
 				>
-					<h3><strong> Email me </strong></h3>
-					<div>
-						<span> New posts</span>
-						<FormToggle />
+					<div className="reader-subscription-list-item__email-popout-wrapper">
+						<h3 className="reader-subscription-list-item__email-popout-header"> { translate( 'Email me' ) } </h3>
+						<div>
+							<span> { translate( 'New posts' ) } </span>
+							<FormToggle />
+						</div>
+						<SegmentedControl compact={ true }>
+							<ControlItem>
+								{ translate( 'Instant' ) }
+							</ControlItem>
+							<ControlItem>
+								{ translate( 'Daily' ) }
+							</ControlItem>
+							<ControlItem>
+								{ translate( 'Weekly' ) }
+							</ControlItem>
+						</SegmentedControl>
+						<div>
+							<span> New comments</span>
+							<FormToggle />
+						</div>
 					</div>
-					<SegmentedControl>
-						<ControlItem>
-							Instant
-						</ControlItem>
-						<ControlItem>
-							Daily
-						</ControlItem>
-						<ControlItem>
-							Weekly
-						</ControlItem>
-					</SegmentedControl>
 				</Popover>
 			</div>
 		);
