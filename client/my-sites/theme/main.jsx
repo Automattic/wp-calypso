@@ -47,7 +47,6 @@ import {
 	getThemeForumUrl,
 } from 'state/themes/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
-import EmptyContentComponent from 'components/empty-content';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
@@ -55,6 +54,7 @@ import { getCanonicalTheme } from 'state/themes/selectors';
 import { isValidTerm } from 'my-sites/themes/theme-filters';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { setThemePreviewOptions } from 'state/themes/actions';
+import ThemeNotFoundError from './theme-not-found-error';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -438,26 +438,6 @@ const ThemeSheet = React.createClass( {
 		return defaultOption.label;
 	},
 
-	renderError() {
-		const emptyContentTitle = i18n.translate( 'Looking for great WordPress designs?', {
-			comment: 'Message displayed when requested theme was not found',
-		} );
-		const emptyContentMessage = i18n.translate( 'Check our theme showcase', {
-			comment: 'Message displayed when requested theme was not found',
-		} );
-
-		return (
-			<Main>
-				<EmptyContentComponent
-					title={ emptyContentTitle }
-					line={ emptyContentMessage }
-					action={ i18n.translate( 'View the showcase' ) }
-					actionURL="/design"
-				/>
-			</Main>
-		);
-	},
-
 	renderRelatedThemes() {
 		return <ThemesRelatedCard currentTheme={ this.props.id } />;
 	},
@@ -554,7 +534,7 @@ const ThemeSheet = React.createClass( {
 
 	render() {
 		if ( this.props.error ) {
-			return this.renderError();
+			return <ThemeNotFoundError />;
 		}
 		return this.renderSheet();
 	},
