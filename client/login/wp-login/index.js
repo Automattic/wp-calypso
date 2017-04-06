@@ -88,18 +88,14 @@ class Login extends React.Component {
 		let loginLink;
 
 		if ( magicLoginEnabled && ! magicLoginView ) {
-			loginLink = <div><a href="#" onClick={ this.props.onMagicLoginRequestClick }>{ translate( 'Email me a login link' ) }</a></div>;
+			loginLink = <a href="#" onClick={ this.props.onMagicLoginRequestClick }>{ translate( 'Email me a login link' ) }</a>;
 		}
 
 		return (
-			<div>
+			<div className="wp-login__footer">
 				{ loginLink }
-
-				<div><a href={ config( 'login_url' ) + '?action=lostpassword' }>{ this.props.translate( 'Lost your password' ) }</a></div>
-
-				<div>
-					<a href="#" onClick={ this.goBack }><Gridicon icon="arrow-left" size={ 18 } /> { this.props.translate( 'Back' ) }</a>
-				</div>
+				<a href={ config( 'login_url' ) + '?action=lostpassword' }>{ this.props.translate( 'Lost your password?' ) }</a>
+				<a href="#" onClick={ this.goBack }><Gridicon icon="arrow-left" size={ 18 } /> { this.props.translate( 'Back' ) }</a>
 			</div>
 		);
 	}
@@ -120,9 +116,7 @@ class Login extends React.Component {
 								: <LoginBlock title={ translate( 'Log in to your account' ) } />
 							}
 						</div>
-						<div className="wp-login__footer">
-							{ this.footerContent() }
-						</div>
+						{ this.footerContent() }
 					</div>
 				) }
 			</Main>

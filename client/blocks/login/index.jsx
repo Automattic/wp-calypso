@@ -89,7 +89,7 @@ export class Login extends Component {
 				</div>
 
 				<form onSubmit={ this.onSubmitForm }>
-					<Card className="login__form-userdata">
+					<Card className="login__form">
 						<div className="login__form-userdata">
 							<label className="login__form-userdata-username">
 								{ this.props.translate( 'Username or Email Address' ) }
@@ -110,9 +110,11 @@ export class Login extends Component {
 									value={ this.state.password }
 									{ ...isDisabled } />
 							</label>
+						</div>
+						<div className="login__form-remember-me">
 							<label>
 								<input type="checkbox" name="rememberme" />
-								{ this.props.translate( 'Stay signed in' ) }
+								{ this.props.translate( 'Stay logged in' ) }
 							</label>
 						</div>
 						<div className="login__form-action">
