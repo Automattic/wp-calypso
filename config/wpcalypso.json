@@ -16,7 +16,7 @@
 	"support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": false,
-		"automated-transfer": true,
+		"automated-transfer": false,
 		"apple-pay": true,
 		"catch-js-errors": true,
 		"code-splitting": true,
