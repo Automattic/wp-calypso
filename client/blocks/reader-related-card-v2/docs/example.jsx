@@ -10,7 +10,7 @@ import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components
 import Card from 'components/card';
 
 const LONGREADS_SITE_ID = 70135762;
-const LONGREADS_POSTID = 65877;
+const LONGREADS_POST_ID = 65877;
 
 class RelatedPostCardv2Example extends React.Component {
 	static displayName = 'RelatedPostCardv2';
@@ -23,16 +23,14 @@ class RelatedPostCardv2Example extends React.Component {
 						<h1 className="reader-related-card-v2__heading">More in <a className="reader-related-card-v2__link">Longreads</a></h1>
 							<RelatedPostsFromSameSite
 								siteId={ LONGREADS_SITE_ID }
-								postId={ LONGREADS_POSTID }
-								key={ '1' }
+								postId={ LONGREADS_POST_ID }
 							/>
 					</div>
 					<div className="reader-related-card-v2__blocks is-other-site">
 						<h1 className="reader-related-card-v2__heading">More in <a className="reader-related-card-v2__link">WordPress.com</a></h1>
 							<RelatedPostsFromOtherSites
 								siteId={ LONGREADS_SITE_ID}
-								postId={ LONGREADS_POSTID }
-								key={ '2' }
+								postId={ LONGREADS_POST_ID }
 							/>
 					</div>
 				</Card>
