@@ -36,10 +36,13 @@ export const mapFailureResponseToActions = ( { action } ) => {
 	];
 };
 
-export default createWpcomHttpMiddleware( {
-	type: READER_UNFOLLOW_TAG_REQUEST,
+const handler = createWpcomHttpMiddleware( {
 	mapActionToHttp,
 	isValidResponse,
 	mapSuccessfulResponseToActions,
 	mapFailureResponseToActions,
 } );
+
+export default {
+	[ READER_UNFOLLOW_TAG_REQUEST ]: [ handler ],
+};

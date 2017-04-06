@@ -100,7 +100,6 @@ export const dispatchRequest = ( initiator, onSuccess, onError, onProgress = nul
  * 	mapFailureResponseToActions: ( { action, apiResponse } ) => [ actions to dispatch ]
  */
 export function createWpcomHttpMiddleware( {
-	type,
 	mapActionToHttp,
 	isValidResponse,
 	mapSuccessfulResponseToActions,
@@ -129,7 +128,5 @@ export function createWpcomHttpMiddleware( {
 			.forEach( store.dispatch );
 	}
 
-	return {
-		[ type ]: [ dispatchRequest( initiator, onSuccess, onError ) ]
-	};
+	return dispatchRequest( initiator, onSuccess, onError );
 }
