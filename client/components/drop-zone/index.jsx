@@ -3,18 +3,25 @@
  */
 import ReactDom from 'react-dom';
 import React, { PropTypes } from 'react';
-import without from 'lodash/without';
-import includes from 'lodash/includes';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
-import identity from 'lodash/identity';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import {
+	identity,
+	includes,
+	noop,
+	without,
+} from 'lodash';
 
 /**
  * Internal dependencies
  */
 import RootChild from 'components/root-child';
+import {
+	hideDropZone,
+	showDropZone,
+} from 'state/ui/drop-zone/actions';
 
 export const DropZone = React.createClass( {
 	propTypes: {
@@ -25,12 +32,15 @@ export const DropZone = React.createClass( {
 		icon: PropTypes.node,
 		textLabel: PropTypes.string,
 		translate: PropTypes.func,
+		showDropZone: PropTypes.func.isRequired,
+		hideDropZone: PropTypes.func.isRequired,
 	},
 
 	getInitialState() {
 		return {
 			isDraggingOverDocument: false,
-			isDraggingOverElement: false
+			isDraggingOverElement: false,
+			lastVisibleState: false,
 		};
 	},
 
@@ -78,6 +88,8 @@ export const DropZone = React.createClass( {
 			isDraggingOverDocument: false,
 			isDraggingOverElement: false
 		} );
+
+		this.toggleDropZoneReduxState( false );
 	},
 
 	toggleMutationObserver() {
@@ -143,6 +155,22 @@ export const DropZone = React.createClass( {
 			// For redirected CustomEvent instances, immediately remove window
 			// from tracked nodes since another "real" event will be triggered.
 			this.dragEnterNodes = without( this.dragEnterNodes, window );
+		}
+
+		this.toggleDropZoneReduxState( !! ( this.state.isDraggingOverDocument || this.state.isDraggingOverElement ) );
+	},
+
+	toggleDropZoneReduxState( isVisible ) {
+		if ( this.state.lastVisibleState !== isVisible ) {
+			if ( isVisible ) {
+				this.props.showDropZone();
+			} else {
+				this.props.hideDropZone();
+			}
+
+			this.setState( {
+				lastVisibleState: isVisible,
+			} );
 		}
 	},
 
@@ -239,4 +267,9 @@ export const DropZone = React.createClass( {
 	}
 } );
 
-export default localize( DropZone );
+const mapDispatch = {
+	showDropZone,
+	hideDropZone,
+};
+
+export default connect( null, mapDispatch )( localize( DropZone ) );

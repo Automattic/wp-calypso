@@ -118,13 +118,14 @@ function mediaButton( editor ) {
 			editor.getContainer().parentNode.insertBefore( nodes.dropzone, editor.getContainer() );
 		}
 
-		ReactDom.render(
+		renderWithReduxStore(
 			<TinyMCEDropZone
 				editor={ editor }
 				sites={ sites }
 				onInsertMedia={ insertMedia }
 				onRenderModal={ renderModal } />,
-			nodes.dropzone
+			nodes.dropzone,
+			store
 		);
 	}
 
