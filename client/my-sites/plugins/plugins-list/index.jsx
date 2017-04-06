@@ -4,15 +4,15 @@
 import React, { PropTypes } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { find, get, includes, isEmpty, isEqual, negate, range, reduce } from 'lodash';
-import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import acceptDialog from 'lib/accept';
-import { infoNotice } from 'state/notices/actions';
+import { warningNotice } from 'state/notices/actions';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 import PluginsActions from 'lib/plugins/actions';
 import PluginsListHeader from 'my-sites/plugins/plugin-list-header';
@@ -277,8 +277,9 @@ export const PluginsList = React.createClass( {
 			sitesList = {};
 		let pluginName,
 			siteName;
+		const { plugins, translate } = this.props;
 
-		this.props.plugins
+		plugins
 			.filter( this.isSelected )
 			.forEach( ( plugin ) => {
 				pluginsList[ plugin.slug ] = true;
@@ -364,6 +365,8 @@ export const PluginsList = React.createClass( {
 	},
 
 	removePluginDialog() {
+		const { translate } = this.props;
+
 		const message = (
 			<div>
 				<span>{ this.getConfirmationText() }</span>
@@ -386,16 +389,20 @@ export const PluginsList = React.createClass( {
 	},
 
 	showDisconnectDialog() {
+		const { translate } = this.props;
+
 		if ( this.state.disconnectJetpackDialog && ! this.state.notices.inProgress.length ) {
 			this.setState( {
 				disconnectJetpackDialog: false,
 			} );
 
-			this.props.infoNotice( 'Disconnect Jetpack from WordPress.com', {
-				button: 'Manage Connection',
-				persistent: true,
-				href: '/settings/general/' + this.props.selectedSiteSlug
-			} );
+			this.props.warningNotice(
+				translate( 'Jetpack cannot be deactivated from WordPress.com {{link}}Manage Connection{{/link}}', {
+					components: {
+						link: <a href={ '/settings/general/' + this.props.selectedSiteSlug } />
+					}
+				} )
+			);
 		}
 	},
 
@@ -509,6 +516,6 @@ export default connect(
 	},
 	{
 		recordGoogleEvent,
-		infoNotice
+		warningNotice
 	}
-)( PluginsList );
+)( localize( PluginsList ) );
