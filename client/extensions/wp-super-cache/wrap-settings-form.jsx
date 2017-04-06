@@ -58,6 +58,9 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		() => {
 			// TODO: Replace with REST API once ready.
 			const settings = {
+				// Easy
+				scrules: true,
+
 				// Caching
 				wp_cache_enabled: true,
 
@@ -93,6 +96,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 					'mwbp, nec-, newt, noki, palm, pana, pant, phil, play, port, prox, qwap, sage, sams, sany, ' +
 					'sch-, sec-, send, seri, sgh-, shar, sie-, siem, smal, smar, sony, sph-, symb, t-mo, teli, ' +
 					'tim-, tosh, tsm-, upg1, upsi, vk-v, voda, wap-, wapa, wapi, wapp, wapr, webc, winw, winw, xda , xda-',
+				wp_cache_mod_rewrite: false,
 				wp_cache_mutex_disabled: false,
 				wp_cache_object_cache: false,
 				wp_cache_refresh_single_only: false,
