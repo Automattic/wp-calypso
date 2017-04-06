@@ -38,13 +38,13 @@ export class PluginInstallButton extends Component {
 		if ( isEmbed ) {
 			recordGAEvent( 'Plugins', 'Install with no selected site', 'Plugin Name', plugin.slug );
 			recordEvent( 'calypso_plugin_install_click_from_sites_list', {
-				site: selectedSite,
+				site: selectedSite.ID,
 				plugin: plugin.slug
 			} );
 		} else {
 			recordGAEvent( 'Plugins', 'Install on selected Site', 'Plugin Name', plugin.slug );
 			recordEvent( 'calypso_plugin_install_click_from_plugin_info', {
-				site: selectedSite,
+				site: selectedSite.ID,
 				plugin: plugin.slug
 			} );
 		}
@@ -59,7 +59,7 @@ export class PluginInstallButton extends Component {
 
 		recordGAEvent( 'Plugins', 'Update jetpack', 'Plugin Name', plugin.slug );
 		recordEvent( 'calypso_plugin_update_jetpack', {
-			site: selectedSite,
+			site: selectedSite.ID,
 			plugin: plugin.slug
 		} );
 	}
