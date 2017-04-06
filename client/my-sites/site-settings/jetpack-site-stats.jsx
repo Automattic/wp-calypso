@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import Gridicon from 'gridicons';
 import FoldableCard from 'components/foldable-card';
 import SectionHeader from 'components/section-header';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -101,7 +102,12 @@ class JetpackSiteStats extends Component {
 			siteRoles,
 			translate
 		} = this.props;
-		const header = translate( 'Collecting valuable traffic stats and insights' );
+		const header = (
+			<div>
+				<Gridicon icon="checkmark" />
+				{ translate( 'Collecting valuable traffic stats and insights' ) }
+			</div>
+		);
 
 		return (
 			<div className="site-settings__traffic-settings">

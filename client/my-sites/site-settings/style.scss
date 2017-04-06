@@ -344,6 +344,12 @@
 
 	.foldable-card__header {
 		padding: 24px;
+
+		.gridicons-checkmark {
+			margin-right: 4px;
+			vertical-align: bottom;
+			color: $alert-green;
+		}
 	}
 
 	.foldable-card__expand {
