@@ -44,13 +44,13 @@ module.exports = React.createClass( {
 			if ( this.props.isEmbed ) {
 				analytics.ga.recordEvent( 'Plugins', 'Remove plugin with no selected site', 'Plugin Name', this.props.plugin.slug );
 				analytics.tracks.recordEvent( 'calypso_plugin_remove_click_from_sites_list', {
-					site: this.props.site,
+					site: this.props.site.ID,
 					plugin: this.props.plugin.slug
 				} );
 			} else {
 				analytics.ga.recordEvent( 'Plugins', 'Remove plugin on selected Site', 'Plugin Name', this.props.plugin.slug );
 				analytics.tracks.recordEvent( 'calypso_plugin_remove_click_from_plugin_info', {
-					site: this.props.site,
+					site: this.props.site.ID,
 					plugin: this.props.plugin.slug
 				} );
 			}
@@ -85,7 +85,7 @@ module.exports = React.createClass( {
 
 		if ( ! this.props.site.canUpdateFiles && this.props.site.options.file_mod_disabled ) {
 			const reasons = utils.getSiteFileModDisableReason( this.props.site, 'modifyFiles' );
-			let html = [];
+			const html = [];
 
 			if ( reasons.length > 1 ) {
 				html.push(
@@ -93,7 +93,7 @@ module.exports = React.createClass( {
 						{ this.translate( '%(pluginName)s cannot be removed:', { args: { pluginName: this.props.plugin.name } } ) }
 					</p>
 				);
-				let list = reasons.map( ( reason, i ) => ( <li key={ 'reason-i' + i + '-' + this.props.site.ID } >{ reason }</li> ) );
+				const list = reasons.map( ( reason, i ) => ( <li key={ 'reason-i' + i + '-' + this.props.site.ID } >{ reason }</li> ) );
 				html.push( <ul className="plugin-action__disabled-info-list" key="reason-shell-list">{ list }</ul> );
 			} else {
 				html.push(
