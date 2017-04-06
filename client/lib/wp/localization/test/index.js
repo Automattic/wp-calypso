@@ -65,7 +65,7 @@ describe( 'index', () => {
 			const wpcom = { request() {} };
 			injectLocalization( wpcom );
 
-			expect( wpcom.withLocale ).to.be.a( 'function' );
+			expect( wpcom.withoutLocale ).to.be.a( 'function' );
 		} );
 
 		it( 'should override the default request method', () => {
@@ -89,7 +89,7 @@ describe( 'index', () => {
 			wpcom.withoutLocale().request( { query: 'search=foo' } );
 		} );
 
-		it( 'should modify params even if `withLocale` is not used', ( done ) => {
+		it( 'should modify params by default', ( done ) => {
 			setLocale( 'fr' );
 			const wpcom = {
 				request( params ) {
@@ -100,19 +100,6 @@ describe( 'index', () => {
 
 			injectLocalization( wpcom );
 			wpcom.request( { query: 'search=foo' } );
-		} );
-
-		it( 'should modify params if `withLocale` is used', ( done ) => {
-			setLocale( 'fr' );
-			const wpcom = {
-				request( params ) {
-					expect( params.query ).to.equal( 'search=foo&locale=fr' );
-					done();
-				}
-			};
-
-			injectLocalization( wpcom );
-			wpcom.withLocale().request( { query: 'search=foo' } );
 		} );
 
 		it( 'should revert back to modifying the request after `withoutLocale` is used', ( done ) => {

@@ -67,11 +67,6 @@ export function injectLocalization( wpcom ) {
 			return this;
 		},
 
-		// Deprecated - all calls localized by default.
-		withLocale: function() {
-			return this;
-		},
-
 		request: function( params, callback ) {
 			if ( ! this.localize ) {
 				this.localize = true;
