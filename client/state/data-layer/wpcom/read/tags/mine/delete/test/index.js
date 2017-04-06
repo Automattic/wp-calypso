@@ -26,14 +26,14 @@ const successfulUnfollowResponse = {
 			slug: 'poetry',
 			title: 'Poetry',
 			display_name: 'poetry',
-			URL: 'https://publicapi.wordpress.com/rest/v1/read/tags/poetry/posts'
+			URL: 'https://public-api.wordpress.com/rest/v1/read/tags/poetry/posts'
 		},
 		{
 			ID: '69750',
 			slug: 'ship',
 			title: 'SHIP',
 			display_name: 'ship',
-			URL: 'https://publicapi.wordpress.com/rest/v1/read/tags/ship/posts'
+			URL: 'https://public-api.wordpress.com/rest/v1/read/tags/ship/posts'
 		},
 	],
 };
