@@ -25,6 +25,7 @@ describe( 'reducer', () => {
 			'selectedSiteId',
 			'guidedTour',
 			'editor',
+			'dropZone',
 			'reader',
 			'olark',
 			'preview',

@@ -10,13 +10,19 @@ import { isDropZoneVisible } from '../';
 
 describe( 'isDropZoneVisible()', () => {
 	it( 'should return false as a default state', () => {
-		expect( isDropZoneVisible( { dropZone: undefined } ) ).to.be.false;
+		expect( isDropZoneVisible( {
+			ui: {
+				dropZone: undefined
+			}
+		} ) ).to.be.false;
 	} );
 
 	it( 'should return isVisible state', () => {
 		expect( isDropZoneVisible( {
-			dropZone: {
-				isVisible: 'myTest'
+			ui: {
+				dropZone: {
+					isVisible: 'myTest'
+				}
 			}
 		} ) ).to.be.eql( 'myTest' );
 	} );
