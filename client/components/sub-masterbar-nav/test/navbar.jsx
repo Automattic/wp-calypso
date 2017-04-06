@@ -17,30 +17,38 @@ describe( 'Navbar', () => {
 		{ label: 'more', uri: '/more', icon: 'star' }
 	];
 
-	const renderItems = () => {
-		return options.map( ( item, index ) => (
-			<Item
-				key={ index }
-				label={ item.label }
-				icon={ item.icon }
-				href={ item.uri }
-			/>
-		) );
-	};
-
-	it( 'should render a navbar containing the children', () => {
+	it( 'should render a navbar given a list of options', () => {
 		const wrapper = shallow(
-			<Navbar>
-				{ renderItems() }
-			</Navbar>
+			<Navbar options={ options } />
 		);
 
 		const items = wrapper.find( Item );
 
 		expect( items.length ).to.equal( 2 );
+
 		expect( items.at( 0 ).prop( 'label' ) ).to.equal( 'sites' );
 		expect( items.at( 1 ).prop( 'label' ) ).to.equal( 'more' );
+
 		expect( items.at( 0 ).prop( 'icon' ) ).to.equal( 'star' );
 		expect( items.at( 1 ).prop( 'icon' ) ).to.equal( 'star' );
+
+		expect( items.at( 0 ).prop( 'isSelected' ) ).to.equal( false );
+		expect( items.at( 1 ).prop( 'isSelected' ) ).to.equal( false );
+	} );
+
+	it( 'should higlight currently selected option', () => {
+		const wrapper = shallow(
+			<Navbar selected={ options[ 1 ] } options={ options } />
+		);
+
+		const items = wrapper.find( Item );
+
+		expect( items.length ).to.equal( 2 );
+
+		expect( items.at( 0 ).prop( 'label' ) ).to.equal( 'sites' );
+		expect( items.at( 1 ).prop( 'label' ) ).to.equal( 'more' );
+
+		expect( items.at( 0 ).prop( 'isSelected' ) ).to.equal( false );
+		expect( items.at( 1 ).prop( 'isSelected' ) ).to.equal( true );
 	} );
 } );

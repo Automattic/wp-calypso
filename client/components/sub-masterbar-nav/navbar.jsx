@@ -9,14 +9,22 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Gridicon from 'gridicons';
+import Item from './item';
 
 const SIDE_PADDING = 50;
 const ITEM_WIDTH = 110;
 
+const OptionShape = PropTypes.shape( {
+	label: PropTypes.string.isRequired,
+	uri: PropTypes.string.isRequired,
+	icon: PropTypes.string
+} );
+
 export default class Navbar extends Component {
 
 	static propTypes = {
-		children: PropTypes.array.isRequired
+		selected: OptionShape,
+		options: PropTypes.arrayOf( OptionShape )
 	};
 
 	state = {
@@ -49,7 +57,7 @@ export default class Navbar extends Component {
 			<div className={ className }>
 				<div className="sub-masterbar-nav__wrapper">
 					<div className="sub-masterbar-nav__items">
-						{ this.props.children }
+						{ this.props.options.map( this.renderItem ) }
 					</div>
 				</div>
 				{ this.state.foldable && (
@@ -58,6 +66,18 @@ export default class Navbar extends Component {
 					</div>
 				)}
 			</div>
+		);
+	}
+
+	renderItem = ( item, index ) => {
+		return (
+			<Item
+				key={ index }
+				isSelected={ item === this.props.selected }
+				label={ item.label }
+				icon={ item.icon }
+				href={ item.uri }
+			/>
 		);
 	}
 
@@ -71,7 +91,7 @@ export default class Navbar extends Component {
 		const width = findDOMNode( this ).offsetWidth;
 
 		this.setState( ( state, props ) => ( {
-			foldable: width < props.children.length * ITEM_WIDTH + SIDE_PADDING
+			foldable: width < props.options.length * ITEM_WIDTH + SIDE_PADDING
 		} ) );
 	}
 }

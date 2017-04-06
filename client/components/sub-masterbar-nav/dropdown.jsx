@@ -10,14 +10,17 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import Item from './item';
 
+const OptionShape = PropTypes.shape( {
+	label: PropTypes.string.isRequired,
+	uri: PropTypes.string.isRequired,
+	icon: PropTypes.string
+} );
+
 export default class Dropdown extends Component {
 
 	static propTypes = {
-		children: PropTypes.func.isRequired,
-		selected: PropTypes.shape( {
-			label: PropTypes.string.isRequired,
-			icon: PropTypes.string.isRequired
-		} )
+		selected: OptionShape,
+		options: PropTypes.arrayOf( OptionShape )
 	};
 
 	state = {
@@ -50,10 +53,22 @@ export default class Dropdown extends Component {
 				</div>
 				<div className="sub-masterbar-nav__wrapper">
 					<div className="sub-masterbar-nav__items">
-						{ this.props.children( { onSelect: this.collapse } ) }
+						{ this.props.options.map( this.renderItem ) }
 					</div>
 				</div>
 			</div>
+		);
+	}
+
+	renderItem = ( item, index ) => {
+		return (
+			<Item
+				key={ index }
+				onClick={ this.collapse }
+				label={ item.label }
+				icon={ item.icon }
+				href={ item.uri }
+			/>
 		);
 	}
 

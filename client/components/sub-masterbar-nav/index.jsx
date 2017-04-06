@@ -2,14 +2,13 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { find, noop } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Navbar from './navbar';
 import Dropdown from './dropdown';
-import Item from './item';
 
 const OptionShape = PropTypes.shape( {
 	label: PropTypes.string.isRequired,
@@ -31,36 +30,13 @@ export default class SubMasterbarNav extends Component {
 	render() {
 		return (
 			<div className="sub-masterbar-nav">
-				<Dropdown selected={ this.getSelected() }>
-					{ ( { onSelect } ) => (
-						this.renderItems( onSelect )
-					) }
-				</Dropdown>
-				<Navbar>
-					{ this.renderItems( noop ) }
-				</Navbar>
+				<Dropdown selected={ this.getSelected() || this.props.fallback } options={ this.props.options } />
+				<Navbar selected={ this.getSelected() } options={ this.props.options } />
 			</div>
 		);
 	}
 
-	renderItems( onSelect ) {
-		return this.props.options.map( ( item, index ) =>
-			<Item
-				key={ index }
-				isSelected={ this.isSelected( item ) }
-				onClick={ onSelect }
-				label={ item.label }
-				icon={ item.icon }
-				href={ item.uri }
-			/>
-		);
-	}
-
-	isSelected( option ) {
-		return option.uri === this.props.uri;
-	}
-
 	getSelected() {
-		return find( this.props.options, ( option ) => this.isSelected( option ) ) || this.props.fallback;
+		return find( this.props.options, ( option ) => option.uri === this.props.uri );
 	}
 }

@@ -4,7 +4,6 @@
 import { expect } from 'chai';
 import React from 'react';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,23 +17,9 @@ describe( 'Dropdown', () => {
 		{ label: 'more', uri: '/more', icon: 'star' }
 	];
 
-	const renderItems = ( onSelect ) => {
-		return options.map( ( item, index ) => (
-			<Item
-				key={ index }
-				onClick={ onSelect || noop }
-				label={ item.label }
-				icon={ item.icon }
-				href={ item.uri }
-			/>
-		) );
-	};
-
-	it( 'should render a dropdown given a child rendering function and the current selection', () => {
+	it( 'should render a dropdown given a list of options and the current selection', () => {
 		const wrapper = shallow(
-			<Dropdown selected={ { label: 'Select option', icon: 'home' } }>
-				{ () => renderItems() }
-			</Dropdown>
+			<Dropdown selected={ { label: 'Select option', icon: 'home' } } options={ options } />
 		);
 
 		const select = wrapper.find( '.sub-masterbar-nav__select' );
@@ -55,9 +40,7 @@ describe( 'Dropdown', () => {
 
 	it( 'should be toggled by clicking the selected item', () => {
 		const wrapper = shallow(
-			<Dropdown selected={ { label: 'Select option', icon: 'home' } }>
-				{ () => renderItems() }
-			</Dropdown>
+			<Dropdown selected={ { label: 'Select option', icon: 'home' } } options={ options } />
 		);
 
 		expect( wrapper.hasClass( 'is-collapsed' ) ).to.equal( true );
@@ -73,9 +56,7 @@ describe( 'Dropdown', () => {
 
 	it( 'should close after invoking onSelect from its children', () => {
 		const wrapper = shallow(
-			<Dropdown selected={ { label: 'Select option', icon: 'home' } }>
-				{ ( { onSelect } ) => renderItems( onSelect ) }
-			</Dropdown>
+			<Dropdown selected={ { label: 'Select option', icon: 'home' } } options={ options } />
 		);
 
 		wrapper.find( '.sub-masterbar-nav__select' ).simulate( 'click' );
