@@ -7,15 +7,19 @@ import {
 	SERIALIZE,
 } from 'state/action-types';
 
-export const analyticsTracking = ( state = false, { type } ) => {
+export const analyticsTracking = ( state = {}, { type, meta } ) => {
 	switch ( type ) {
 		case ANALYTICS_TRACKING_ON:
-			return true;
+			return meta.analytics.reduce( ( newState, { payload: trackingTool } ) => {
+				return { ...newState, [ trackingTool ]: true };
+			}, state );
 
-		// We don't want to persist across reloads
+		// This is for tracking tools that get attached to the DOM once on component mount, and
+		// monitor continuously then. Since we need to re-attach them when the user reloads a page,
+		// we don't want to serialize state but always start initialized as 'not tracking'.
 		case SERIALIZE:
 		case DESERIALIZE:
-			return false;
+			return {};
 	}
 
 	return state;
