@@ -18,7 +18,6 @@ import { sectionify } from 'lib/route/path';
 import SiteSettingsComponent from 'my-sites/site-settings/main';
 import sitesFactory from 'lib/sites-list';
 import StartOver from './start-over';
-import Taxonomies from './taxonomies';
 import ThemeSetup from './theme-setup';
 import DateTimeFormat from './date-time-format';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
@@ -171,13 +170,6 @@ module.exports = {
 		renderPage(
 			context,
 			<StartOver path={ context.path } />
-		);
-	},
-
-	taxonomies( context ) {
-		renderPage(
-			context,
-			<Taxonomies taxonomy={ context.params.taxonomy } postType="post" />
 		);
 	},
 

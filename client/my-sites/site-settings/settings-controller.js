@@ -50,5 +50,10 @@ export default {
 		analytics.pageView.record( basePath + '/:site', analyticsPageTitle );
 
 		next();
+	},
+
+	setScroll( context, next ) {
+		window.scroll( 0, 0 );
+		next();
 	}
 };
