@@ -27,7 +27,7 @@ export const isValidResponse = apiResponse =>
 	apiResponse && apiResponse.removed_tag && ! apiResponse.subscribed;
 
 export const mapSuccessfulResponseToActions = ( { apiResponse } ) => [
-	receiveUnfollowTagAction( apiResponse.removed_tag ),
+	receiveUnfollowTagAction( { payload: apiResponse.removed_tag } ),
 ];
 
 export const mapFailureResponseToActions = ( { action } ) => {
