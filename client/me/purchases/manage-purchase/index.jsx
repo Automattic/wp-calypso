@@ -535,6 +535,19 @@ const ManagePurchase = React.createClass( {
 		}
 	},
 
+	renderPlanDetails() {
+		if ( ! config.isEnabled( 'me/purchases-v2' ) ) {
+			return null;
+		}
+
+		return (
+			<PurchasePlanDetails
+				selectedSite={ this.props.selectedSite }
+				purchaseId={ this.props.purchaseId }
+			/>
+		);
+	},
+
 	renderEditPaymentMethodNavItem() {
 		const purchase = getPurchase( this.props );
 		const { translate } = this.props;
@@ -700,10 +713,7 @@ const ManagePurchase = React.createClass( {
 					{ contactSupportToRenewMessage }
 				</Card>
 
-				<PurchasePlanDetails
-					selectedSite={ this.props.selectedSite }
-					purchaseId={ this.props.purchaseId }
-				/>
+				{ this.renderPlanDetails() }
 
 				{ expiredRenewNotice }
 				{ editPaymentMethodNavItem }
