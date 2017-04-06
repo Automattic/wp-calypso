@@ -10,14 +10,34 @@ import { connect } from 'react-redux';
  */
 import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getPluginOnSite } from 'state/plugins/installed/selectors';
 
 const AmpJetpack = ( {
+	ampPluginInstalled,
+	site,
+	siteId,
 	siteSlug,
 	translate
 } ) => {
+	let linkUrl, linkText;
+	if ( ampPluginInstalled && ampPluginInstalled.active ) {
+		linkUrl = site.URL + '/wp-admin/customize.php?autofocus%5Bpanel%5D=amp_panel&customize_amp=1';
+		linkText = translate( 'Edit the design of your Accelerated Mobile Pages' );
+	} else {
+		linkUrl = '/plugins/amp/' + siteSlug;
+		if ( ampPluginInstalled ) {
+			linkText = translate( 'Activate the AMP plugin' );
+		} else {
+			linkText = translate( 'Install the AMP plugin' );
+		}
+	}
+
 	return (
 		<div className="amp__jetpack">
+			{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
+
 			<SectionHeader label={ translate( 'Accelerated Mobile Pages (AMP)' ) } />
 
 			<CompactCard>
@@ -29,15 +49,22 @@ const AmpJetpack = ( {
 				</p>
 			</CompactCard>
 
-			<CompactCard href={ '/plugins/amp/' + siteSlug }>
-				{ translate( 'Install the AMP plugin' ) }
+			<CompactCard href={ linkUrl }>
+				{ linkText }
 			</CompactCard>
 		</div>
 	);
 };
 
 export default connect(
-	( state ) => ( {
-		siteSlug: getSelectedSiteSlug( state ),
-	} )
+	( state ) => {
+		const site = getSelectedSite( state );
+
+		return {
+			site,
+			siteId: getSelectedSiteId( state ),
+			ampPluginInstalled: getPluginOnSite( state, site, 'amp' ),
+			siteSlug: getSelectedSiteSlug( state ),
+		};
+	}
 )( localize( AmpJetpack ) );
