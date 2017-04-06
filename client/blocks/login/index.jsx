@@ -82,13 +82,14 @@ export class Login extends Component {
 
 				{ this.renderNotices() }
 
+				<div className="login__form-header">
+					<div className="login__form-header-title">
+						{ this.props.title }
+					</div>
+				</div>
+
 				<form onSubmit={ this.onSubmitForm }>
 					<Card className="login__form-userdata">
-						<div className="login__form-header">
-							<div className="login__form-header-title">
-								{ this.props.title }
-							</div>
-						</div>
 						<div className="login__form-userdata">
 							<label className="login__form-userdata-username">
 								{ this.props.translate( 'Username or Email Address' ) }
