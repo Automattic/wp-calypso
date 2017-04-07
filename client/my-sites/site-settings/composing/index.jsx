@@ -12,7 +12,11 @@ import CompactCard from 'components/card/compact';
 import DefaultPostFormat from './default-post-format';
 import AfterTheDeadline from './after-the-deadline';
 import DateTimeFormat from '../date-time-format';
-import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import {
+	isJetpackSite,
+	isJetpackMinimumVersion,
+	siteSupportsJetpackSettingsUi,
+} from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const Composing = ( {
@@ -22,6 +26,7 @@ const Composing = ( {
 	onChangeField,
 	setFieldValue,
 	eventTracker,
+	hasDateTimeFormats,
 	isRequestingSettings,
 	isSavingSettings,
 	jetpackSettingsUISupported,
@@ -50,13 +55,15 @@ const Composing = ( {
 					fields={ fields }
 				/>
 			}
-			<DateTimeFormat
-				handleSelect={ handleSelect }
-				isSavingSettings={ isSavingSettings }
-				isRequestingSettings={ isRequestingSettings }
-				fields={ fields }
-				updateFields={ updateFields }
-			/>
+			{ hasDateTimeFormats &&
+				<DateTimeFormat
+					fields={ fields }
+					handleSelect={ handleSelect }
+					isRequestingSettings={ isRequestingSettings }
+					isSavingSettings={ isSavingSettings }
+					updateFields={ updateFields }
+				/>
+			}
 		</div>
 	);
 };
@@ -86,6 +93,7 @@ export default connect(
 
 		return {
 			jetpackSettingsUISupported: siteIsJetpack && siteSupportsJetpackSettingsUi( state, siteId ),
+			hasDateTimeFormats: ! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '4.7' ),
 		};
 	}
 )( Composing );
