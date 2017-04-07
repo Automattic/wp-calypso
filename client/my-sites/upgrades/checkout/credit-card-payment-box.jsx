@@ -16,6 +16,7 @@ var PayButton = require( './pay-button' ),
 	cartValues = require( 'lib/cart-values' ),
 	transactionStepTypes = require( 'lib/store-transactions/step-types' );
 
+import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/upgrades/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import config from 'config';
@@ -94,7 +95,9 @@ var CreditCardPaymentBox = React.createClass( {
 	paymentButtons: function() {
 		const cart = this.props.cart,
 			hasBusinessPlanInCart = some( cart.products, { product_slug: PLAN_BUSINESS } ),
-			showPaymentChatButton = config.isEnabled( 'upgrades/presale-chat' ) && hasBusinessPlanInCart,
+			showPaymentChatButton = config.isEnabled( 'upgrades/presale-chat' ) &&
+				abtest( 'presaleChatButton' ) === 'showChatButton' &&
+				hasBusinessPlanInCart,
 			paypalButtonClasses = classnames( 'credit-card-payment-box__switch-link', {
 				'credit-card-payment-box__switch-link-left': showPaymentChatButton
 			} );

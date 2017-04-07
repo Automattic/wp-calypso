@@ -19,6 +19,7 @@ var analytics = require( 'lib/analytics' ),
 	TermsOfService = require( './terms-of-service' ),
 	wpcom = require( 'lib/wp' ).undocumented();
 
+import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/upgrades/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import config from 'config';
@@ -140,6 +141,7 @@ module.exports = React.createClass( {
 		const hasBusinessPlanInCart = some( this.props.cart.products, { product_slug: PLAN_BUSINESS } );
 		const showPaymentChatButton =
 			config.isEnabled( 'upgrades/presale-chat' ) &&
+			abtest( 'presaleChatButton' ) === 'showChatButton' &&
 			hasBusinessPlanInCart;
 		const creditCardButtonClasses = classnames( 'credit-card-payment-box__switch-link', {
 			'credit-card-payment-box__switch-link-left': showPaymentChatButton
