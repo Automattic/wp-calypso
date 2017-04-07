@@ -3,11 +3,13 @@
  */
 import debugFactory from 'debug';
 import wpcom from 'lib/wp';
+import { random } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
+	NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING,
 	NPS_SURVEY_SUBMIT_REQUESTING,
 	NPS_SURVEY_SUBMIT_REQUEST_FAILURE,
 	NPS_SURVEY_SUBMIT_REQUEST_SUCCESS,
@@ -15,8 +17,19 @@ import {
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_FAILURE,
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_SUCCESS,
 } from 'state/action-types';
+import {
+	NPS_SURVEY_RAND_MAX,
+} from './constants';
 
 const debug = debugFactory( 'calypso:nps-survey' );
+
+export function setupNpsSurveyEligibility() {
+	// TODO: add calls to API once eligibility endpoint is in
+	return {
+		type: NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING,
+		isSessionPicked: 1 === random( 1, NPS_SURVEY_RAND_MAX ),
+	};
+}
 
 export function submitNpsSurvey( surveyName, score ) {
 	return ( dispatch ) => {

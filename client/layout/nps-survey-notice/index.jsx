@@ -11,15 +11,19 @@ import Dialog from 'components/dialog';
 import NpsSurvey from 'blocks/nps-survey';
 import { getSectionName } from 'state/ui/selectors';
 import {
-	showNpsSurveyNoticeIfEligible,
+	showNpsSurveyNotice,
 	setNpsSurveyDialogShowing,
 	setupNpsSurveyDevTrigger,
 } from 'state/ui/nps-survey-notice/actions';
 import { isNpsSurveyDialogShowing } from 'state/ui/nps-survey-notice/selectors';
-import { submitNpsSurveyWithNoScore } from 'state/nps-survey/actions';
+import {
+	submitNpsSurveyWithNoScore,
+	setupNpsSurveyEligibility,
+} from 'state/nps-survey/actions';
 import {
 	hasAnsweredNpsSurvey,
 	hasAnsweredNpsSurveyWithNoScore,
+	isSessionEligibleForNpsSurvey,
 } from 'state/nps-survey/selectors';
 
 const SURVEY_NAME = 'calypso-global-notice-radio-buttons-v1';
@@ -43,13 +47,18 @@ class NpsSurveyNotice extends Component {
 	}
 
 	componentDidMount() {
+		this.props.setupNpsSurveyEligibility();
 		this.props.setupNpsSurveyDevTrigger();
+	}
 
-		// wait a little bit before showing the notice, so that
-		// (1) the user gets a chance to look briefly at the uncluttered screen, and
-		// (2) the user notices the notice more, since it will cause a change to the
-		//     screen they are already looking at
-		setTimeout( this.props.showNpsSurveyNoticeIfEligible, 3000 );
+	componentDidUpdate() {
+		if ( this.props.isSessionEligible ) {
+			// wait a little bit before showing the notice, so that
+			// (1) the user gets a chance to look briefly at the uncluttered screen, and
+			// (2) the user notices the notice more, since it will cause a change to the
+			//     screen they are already looking at
+			setTimeout( this.props.showNpsSurveyNotice, 3000 );
+		}
 	}
 
 	render() {
@@ -73,15 +82,17 @@ const mapStateToProps = ( state ) => {
 		hasAnswered: hasAnsweredNpsSurvey( state ),
 		hasAnsweredWithNoScore: hasAnsweredNpsSurveyWithNoScore( state ),
 		sectionName: getSectionName( state ),
+		isSessionEligible: isSessionEligibleForNpsSurvey( state ),
 	};
 };
 
 export default connect(
 	mapStateToProps,
 	{
-		showNpsSurveyNoticeIfEligible,
+		showNpsSurveyNotice,
 		setNpsSurveyDialogShowing,
 		submitNpsSurveyWithNoScore,
 		setupNpsSurveyDevTrigger,
+		setupNpsSurveyEligibility,
 	}
 )( NpsSurveyNotice );

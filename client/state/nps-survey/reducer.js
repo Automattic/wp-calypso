@@ -7,6 +7,7 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
+	NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING,
 	NPS_SURVEY_SUBMIT_REQUESTING,
 	NPS_SURVEY_SUBMIT_REQUEST_FAILURE,
 	NPS_SURVEY_SUBMIT_REQUEST_SUCCESS,
@@ -21,6 +22,10 @@ import {
 	SUBMIT_FAILURE,
 	SUBMITTED,
 } from './constants';
+
+export const isSessionEligible = createReducer( false, {
+	[ NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING ]: ( state, action ) => action.isSessionPicked,
+} );
 
 export const surveyState = createReducer( NOT_SUBMITTED, {
 	[ NPS_SURVEY_SUBMIT_REQUESTING ]: () => SUBMITTING,
@@ -47,6 +52,7 @@ export const score = createReducer( null, {
 } );
 
 export default combineReducers( {
+	isSessionEligible,
 	surveyState,
 	surveyName,
 	score,

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { random } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,19 +9,8 @@ import { random } from 'lodash';
 import config from 'config';
 import notices from 'notices';
 import {
-	NPS_SURVEY_RAND_MAX,
-} from './constants';
-import {
 	NPS_SURVEY_DIALOG_IS_SHOWING,
 } from 'state/action-types';
-
-export function showNpsSurveyNoticeIfEligible() {
-	return ( dispatch ) => {
-		if ( 1 === random( 1, NPS_SURVEY_RAND_MAX ) ) {
-			dispatch( showNpsSurveyNotice() );
-		}
-	};
-}
 
 export function showNpsSurveyNotice() {
 	return ( dispatch ) => {

@@ -13,6 +13,10 @@ import {
 	SUBMITTED,
 } from './constants';
 
+export function isSessionEligibleForNpsSurvey( state ) {
+	return get( state.npsSurvey, 'isSessionEligible', false );
+}
+
 function getNpsSurveyState( state ) {
 	return get( state.npsSurvey, 'surveyState', NOT_SUBMITTED );
 }

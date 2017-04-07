@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	isSessionEligibleForNpsSurvey,
 	isNpsSurveyNotSubmitted,
 	isNpsSurveySubmitting,
 	isNpsSurveySubmitted,
@@ -22,6 +23,28 @@ import {
 	SUBMIT_FAILURE,
 	SUBMITTED,
 } from '../constants';
+
+describe( 'isSessionEligibleForNpsSurvey', () => {
+	it( 'should return true if the session is eligible for the NPS survey', () => {
+		const isEligible = isSessionEligibleForNpsSurvey( {
+			npsSurvey: {
+				isSessionEligible: true,
+			}
+		} );
+
+		expect( isEligible ).to.be.true;
+	} );
+
+	it( 'should return false if the session is not eligible for the NPS survey', () => {
+		const isEligible = isSessionEligibleForNpsSurvey( {
+			npsSurvey: {
+				isSessionEligible: false,
+			}
+		} );
+
+		expect( isEligible ).to.be.false;
+	} );
+} );
 
 describe( 'isNpsSurveyNotSubmitted', () => {
 	it( 'should return true if the NPS survey has not been submitted', () => {
