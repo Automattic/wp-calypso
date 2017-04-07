@@ -11,7 +11,10 @@ import notices from 'notices';
 import {
 	NPS_SURVEY_DIALOG_IS_SHOWING,
 } from 'state/action-types';
-import { forceNpsSurveyEligibility } from 'state/nps-survey/actions';
+import {
+	forceNpsSurveyEligibility,
+	markNpsSurveyShownThisSession,
+} from 'state/nps-survey/actions';
 
 export function showNpsSurveyNotice() {
 	return ( dispatch ) => {
@@ -27,6 +30,8 @@ export function showNpsSurveyNotice() {
 		// but that currently doesn't support notices with `button` and `onClick`
 		// options.
 		notices.new( translate( 'Would you mind answering a question about WordPress.com?' ), options, 'is-info' );
+
+		dispatch( markNpsSurveyShownThisSession() );
 	};
 }
 

@@ -24,6 +24,7 @@ import {
 	hasAnsweredNpsSurvey,
 	hasAnsweredNpsSurveyWithNoScore,
 	isSessionEligibleForNpsSurvey,
+	wasNpsSurveyShownThisSession,
 } from 'state/nps-survey/selectors';
 
 const SURVEY_NAME = 'calypso-global-notice-radio-buttons-v1';
@@ -52,7 +53,7 @@ class NpsSurveyNotice extends Component {
 	}
 
 	componentDidUpdate() {
-		if ( this.props.isSessionEligible ) {
+		if ( this.props.isSessionEligible && ! this.props.wasShownThisSession ) {
 			// wait a little bit before showing the notice, so that
 			// (1) the user gets a chance to look briefly at the uncluttered screen, and
 			// (2) the user notices the notice more, since it will cause a change to the
@@ -84,6 +85,7 @@ const mapStateToProps = ( state ) => {
 		hasAnsweredWithNoScore: hasAnsweredNpsSurveyWithNoScore( state ),
 		sectionName: getSectionName( state ),
 		isSessionEligible: isSessionEligibleForNpsSurvey( state ),
+		wasShownThisSession: wasNpsSurveyShownThisSession( state ),
 	};
 };
 

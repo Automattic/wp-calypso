@@ -8,6 +8,7 @@ import { combineReducers } from 'redux';
  */
 import {
 	NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING,
+	NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
 	NPS_SURVEY_SUBMIT_REQUESTING,
 	NPS_SURVEY_SUBMIT_REQUEST_FAILURE,
 	NPS_SURVEY_SUBMIT_REQUEST_SUCCESS,
@@ -25,6 +26,10 @@ import {
 
 export const isSessionEligible = createReducer( false, {
 	[ NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING ]: ( state, action ) => action.isSessionPicked,
+} );
+
+export const wasShownThisSession = createReducer( false, {
+	[ NPS_SURVEY_MARK_SHOWN_THIS_SESSION ]: () => true,
 } );
 
 export const surveyState = createReducer( NOT_SUBMITTED, {
@@ -53,6 +58,7 @@ export const score = createReducer( null, {
 
 export default combineReducers( {
 	isSessionEligible,
+	wasShownThisSession,
 	surveyState,
 	surveyName,
 	score,

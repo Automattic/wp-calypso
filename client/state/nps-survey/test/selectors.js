@@ -8,6 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	isSessionEligibleForNpsSurvey,
+	wasNpsSurveyShownThisSession,
 	isNpsSurveyNotSubmitted,
 	isNpsSurveySubmitting,
 	isNpsSurveySubmitted,
@@ -43,6 +44,28 @@ describe( 'isSessionEligibleForNpsSurvey', () => {
 		} );
 
 		expect( isEligible ).to.be.false;
+	} );
+} );
+
+describe( 'wasNpsSurveyShownThisSession', () => {
+	it( 'should return true if the NPS survey was shown this session', () => {
+		const wasShown = wasNpsSurveyShownThisSession( {
+			npsSurvey: {
+				wasShownThisSession: true,
+			}
+		} );
+
+		expect( wasShown ).to.be.true;
+	} );
+
+	it( 'should return false if the session is not eligible for the NPS survey', () => {
+		const wasShown = wasNpsSurveyShownThisSession( {
+			npsSurvey: {
+				wasShownThisSession: false,
+			}
+		} );
+
+		expect( wasShown ).to.be.false;
 	} );
 } );
 

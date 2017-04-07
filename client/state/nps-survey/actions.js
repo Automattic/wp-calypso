@@ -10,6 +10,7 @@ import { random } from 'lodash';
  */
 import {
 	NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING,
+	NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
 	NPS_SURVEY_SUBMIT_REQUESTING,
 	NPS_SURVEY_SUBMIT_REQUEST_FAILURE,
 	NPS_SURVEY_SUBMIT_REQUEST_SUCCESS,
@@ -35,6 +36,12 @@ export function setupNpsSurveyEligibility() {
 	return {
 		type: NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING,
 		isSessionPicked: 1 === random( 1, NPS_SURVEY_RAND_MAX ),
+	};
+}
+
+export function markNpsSurveyShownThisSession() {
+	return {
+		type: NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
 	};
 }
 

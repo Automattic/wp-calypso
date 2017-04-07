@@ -17,6 +17,10 @@ export function isSessionEligibleForNpsSurvey( state ) {
 	return get( state.npsSurvey, 'isSessionEligible', false );
 }
 
+export function wasNpsSurveyShownThisSession( state ) {
+	return get( state.npsSurvey, 'wasShownThisSession', false );
+}
+
 function getNpsSurveyState( state ) {
 	return get( state.npsSurvey, 'surveyState', NOT_SUBMITTED );
 }
