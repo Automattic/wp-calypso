@@ -1,39 +1,177 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import page from 'page';
+import { capitalize, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import DateTimeFormatOptions from './date-time-format-options';
-import DocumentHead from 'components/data/document-head';
-import HeaderCake from 'components/header-cake';
-import { getSelectedSite } from 'state/ui/selectors';
+import FoldableCard from 'components/foldable-card';
+import DateFormatOption from './date-format-option';
+import StartOfWeekOption from './start-of-week-option';
+import TimeFormatOption from './time-format-option';
+import { defaultDateFormats, defaultTimeFormats } from './default-formats';
+import {
+	getLocalizedDate,
+	phpToMomentDatetimeFormat,
+} from './utils';
 
-export const DateTimeFormat = ( { translate, site } ) => {
-	const goBack = () => {
-		page( '/settings/general/' + site.slug );
+export class DateTimeFormat extends Component {
+	static propTypes = {
+		handleSelect: PropTypes.func,
+		fields: PropTypes.object,
+		isRequestingSettings: PropTypes.bool,
+		isSavingSettings: PropTypes.bool,
 	};
 
-	return (
-		<div className="main main-column date-time-format" role="main">
-			<DocumentHead title={ translate( 'Manage Date and Time Format' ) } />
-			<HeaderCake onClick={ goBack }>
-				<h1>
+	static defaultProps = {
+		fields: {
+			date_format: '',
+			start_of_week: 0,
+			time_format: '',
+			timezone_string: '',
+		},
+		isRequestingSettings: true,
+		isSavingSettings: false,
+	};
+
+	state = {
+		customDateFormat: false,
+		customTimeFormat: false,
+		isLoadingSettings: true,
+	};
+
+	componentWillReceiveProps( nextProps ) {
+		const {
+			fields: {
+				date_format: dateFormat,
+				time_format: timeFormat,
+			},
+		} = nextProps;
+
+		if ( ! this.state.isLoadingSettings || '' === dateFormat || '' === timeFormat ) {
+			return;
+		}
+
+		this.setState( {
+			customDateFormat: ! includes( defaultDateFormats, dateFormat ),
+			customTimeFormat: ! includes( defaultTimeFormats, timeFormat ),
+			isLoadingSettings: false,
+		} );
+	}
+
+	setFormat = ( name, defaultFormats ) => event => {
+		const { value: format } = event.currentTarget;
+		this.props.updateFields( { [ `${ name }_format` ]: format } );
+		this.setState( {
+			[ `custom${ capitalize( name ) }Format` ]: ! includes( defaultFormats, format ),
+		} );
+	};
+
+	setDateFormat = this.setFormat( 'date', defaultDateFormats );
+
+	setTimeFormat = this.setFormat( 'time', defaultTimeFormats );
+
+	setCustomFormat = name => event => {
+		const { value: format } = event.currentTarget;
+		this.props.updateFields( { [ `${ name }_format` ]: format } );
+		this.setState( {
+			[ `custom${ capitalize( name ) }Format` ]: true,
+		} );
+	};
+
+	setCustomDateFormat = this.setCustomFormat( 'date' );
+
+	setCustomTimeFormat = this.setCustomFormat( 'time' );
+
+	getCardHeader = () => {
+		const {
+			fields: {
+				date_format: dateFormat,
+				start_of_week: startOfWeek,
+				time_format: timeFormat,
+				timezone_string: timezoneString,
+			},
+			moment,
+			translate,
+		} = this.props;
+
+		const localizedDate = getLocalizedDate( timezoneString );
+		const weekday = startOfWeek
+			? moment.weekdays( parseInt( startOfWeek, 10 ) )
+			: moment.weekdays( 0 );
+
+		return (
+			<div>
+				<h2 className="date-time-format__title">
 					{ translate( 'Date and Time Format' ) }
-				</h1>
-			</HeaderCake>
-			<DateTimeFormatOptions />
-		</div>
-	);
-};
+				</h2>
+				<div className="date-time-format__info">
+					{
+						dateFormat &&
+							phpToMomentDatetimeFormat( localizedDate, dateFormat )
+					} &bull; {
+						timeFormat &&
+							phpToMomentDatetimeFormat( localizedDate, timeFormat )
+					} &bull; {
+						translate( 'Week starts on %s', { args: weekday } )
+					}
+				</div>
+			</div>
+		);
+	};
 
-const mapStateToProps = state => ( {
-	site: getSelectedSite( state ),
-} );
+	render() {
+		const {
+			fields: {
+				date_format: dateFormat,
+				start_of_week: startOfWeek,
+				time_format: timeFormat,
+				timezone_string: timezoneString,
+			},
+			handleSelect,
+			isRequestingSettings,
+			isSavingSettings,
+		} = this.props;
 
-export default connect( mapStateToProps )( localize( DateTimeFormat ) );
+		const {
+			customDateFormat,
+			customTimeFormat,
+		} = this.state;
+
+		const localizedDate = getLocalizedDate( timezoneString );
+
+		return (
+			<FoldableCard
+				className="date-time-format"
+				header={ this.getCardHeader() }
+			>
+				<DateFormatOption
+					dateFormat={ dateFormat }
+					disabled={ isRequestingSettings || isSavingSettings }
+					isCustom={ customDateFormat }
+					localizedDate={ localizedDate }
+					setCustomDateFormat={ this.setCustomDateFormat }
+					setDateFormat={ this.setDateFormat }
+				/>
+				<TimeFormatOption
+					disabled={ isRequestingSettings || isSavingSettings }
+					isCustom={ customTimeFormat }
+					localizedDate={ localizedDate }
+					setCustomTimeFormat={ this.setCustomTimeFormat }
+					setTimeFormat={ this.setTimeFormat }
+					timeFormat={ timeFormat }
+				/>
+				<StartOfWeekOption
+					disabled={ isRequestingSettings || isSavingSettings }
+					onChange={ handleSelect }
+					startOfWeek={ startOfWeek }
+				/>
+			</FoldableCard>
+		);
+	}
+}
+
+export default localize( DateTimeFormat );

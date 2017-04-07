@@ -11,18 +11,21 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import DefaultPostFormat from './default-post-format';
 import AfterTheDeadline from './after-the-deadline';
+import DateTimeFormat from '../date-time-format';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const Composing = ( {
 	fields,
 	handleToggle,
+	handleSelect,
 	onChangeField,
 	setFieldValue,
 	eventTracker,
 	isRequestingSettings,
 	isSavingSettings,
 	jetpackSettingsUISupported,
+	updateFields,
 } ) => {
 	const CardComponent = jetpackSettingsUISupported ? CompactCard : Card;
 
@@ -47,6 +50,13 @@ const Composing = ( {
 					fields={ fields }
 				/>
 			}
+			<DateTimeFormat
+				handleSelect={ handleSelect }
+				isSavingSettings={ isSavingSettings }
+				isRequestingSettings={ isRequestingSettings }
+				fields={ fields }
+				updateFields={ updateFields }
+			/>
 		</div>
 	);
 };
@@ -58,10 +68,12 @@ Composing.defaultProps = {
 };
 
 Composing.propTypes = {
+	handleSelect: PropTypes.func.isRequired,
 	handleToggle: PropTypes.func.isRequired,
 	onChangeField: PropTypes.func.isRequired,
 	setFieldValue: PropTypes.func.isRequired,
 	eventTracker: PropTypes.func.isRequired,
+	updateFields: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
 	fields: PropTypes.object,

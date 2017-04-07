@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, partialRight, pick } from 'lodash';
+import { flowRight, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,6 +47,7 @@ class SiteSettingsFormWriting extends Component {
 		const {
 			eventTracker,
 			fields,
+			handleSelect,
 			handleToggle,
 			handleAutosavingToggle,
 			isRequestingSettings,
@@ -54,7 +55,8 @@ class SiteSettingsFormWriting extends Component {
 			onChangeField,
 			setFieldValue,
 			siteId,
-			translate
+			translate,
+			updateFields,
 		} = this.props;
 
 		return (
@@ -73,6 +75,7 @@ class SiteSettingsFormWriting extends Component {
 
 				{ this.renderSectionHeader( translate( 'Composing' ) ) }
 				<Composing
+					handleSelect={ handleSelect }
 					handleToggle={ handleToggle }
 					onChangeField={ onChangeField }
 					setFieldValue={ setFieldValue }
@@ -80,6 +83,7 @@ class SiteSettingsFormWriting extends Component {
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
+					updateFields={ updateFields }
 				/>
 				{
 					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
@@ -161,39 +165,60 @@ const connectComponent = connect(
 	{ pure: false }
 );
 
-const getFormSettings = partialRight( pick, [
-	'default_post_format',
-	'custom-content-types',
-	'jetpack_testimonial',
-	'jetpack_portfolio',
-	'infinite-scroll',
-	'infinite_scroll',
-	'infinite_scroll_google_analytics',
-	'minileven',
-	'wp_mobile_excerpt',
-	'wp_mobile_featured_images',
-	'wp_mobile_app_promos',
-	'post_by_email_address',
-	'after-the-deadline',
-	'onpublish',
-	'onupdate',
-	'guess_lang',
-	'Bias Language',
-	'Cliches',
-	'Complex Expression',
-	'Diacritical Marks',
-	'Double Negative',
-	'Hidden Verbs',
-	'Jargon Language',
-	'Passive voice',
-	'Phrases to Avoid',
-	'Redundant Expression',
-	'ignored_phrases',
-	'photon',
-	'carousel',
-	'carousel_background_color',
-	'carousel_display_exif'
-] );
+const getFormSettings = settings => {
+	const formSettings = pick( settings, [
+		'default_post_format',
+		'custom-content-types',
+		'jetpack_testimonial',
+		'jetpack_portfolio',
+		'infinite-scroll',
+		'infinite_scroll',
+		'infinite_scroll_google_analytics',
+		'minileven',
+		'wp_mobile_excerpt',
+		'wp_mobile_featured_images',
+		'wp_mobile_app_promos',
+		'post_by_email_address',
+		'after-the-deadline',
+		'onpublish',
+		'onupdate',
+		'guess_lang',
+		'Bias Language',
+		'Cliches',
+		'Complex Expression',
+		'Diacritical Marks',
+		'Double Negative',
+		'Hidden Verbs',
+		'Jargon Language',
+		'Passive voice',
+		'Phrases to Avoid',
+		'Redundant Expression',
+		'ignored_phrases',
+		'photon',
+		'carousel',
+		'carousel_background_color',
+		'carousel_display_exif',
+		'date_format',
+		'start_of_week',
+		'time_format',
+		'timezone_string',
+	] );
+
+	// handling `gmt_offset` and `timezone_string` values
+	const gmt_offset = settings.gmt_offset;
+
+	if (
+		! settings.timezone_string &&
+		typeof gmt_offset === 'string' &&
+		gmt_offset.length
+	) {
+		formSettings.timezone_string = 'UTC' +
+			( /\-/.test( gmt_offset ) ? '' : '+' ) +
+			gmt_offset;
+	}
+
+	return formSettings;
+};
 
 export default flowRight(
 	connectComponent,
