@@ -20,6 +20,7 @@ import JetpackSiteStats from 'my-sites/site-settings/jetpack-site-stats';
 import RelatedPosts from 'my-sites/site-settings/related-posts';
 import AmpJetpack from 'my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'my-sites/site-settings/amp/wpcom';
+import Sitemaps from 'my-sites/site-settings/sitemaps';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
@@ -75,6 +76,10 @@ const SiteSettingsTraffic = ( {
 		<AnalyticsSettings />
 		<SeoSettingsHelpCard />
 		<SeoSettingsMain upgradeToBusiness={ upgradeToBusiness } />
+		<Sitemaps
+			isSavingSettings={ isSavingSettings }
+			isRequestingSettings={ isRequestingSettings }
+		/>
 	</Main>
 );
 
