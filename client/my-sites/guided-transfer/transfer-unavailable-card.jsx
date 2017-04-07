@@ -46,7 +46,7 @@ class TransferUnavailableCard extends Component {
 							{ translate( `Premium Themes can't be
 								transferred to an external site. Please {{a}}choose a free theme{{/a}}
 								to continue.`,
-								{ components: { a: <a href={ `/design/free/${ siteSlug }` } /> } } ) }
+								{ components: { a: <a href={ `/themes/free/${ siteSlug }` } /> } } ) }
 						</Issue>
 					}
 					{ customFontIssue &&

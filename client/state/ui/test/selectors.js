@@ -259,7 +259,7 @@ describe( 'selectors', () => {
 				isomorphic: true,
 				module: 'my-sites/themes',
 				name: 'themes',
-				paths: [ '/design' ],
+				paths: [ '/themes' ],
 				secondary: false
 			};
 

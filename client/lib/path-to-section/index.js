@@ -15,7 +15,6 @@ const sections = config( 'project' ) === 'wordpress-com'
  * wordpress-com-aware implementation where
  *
  *  f( '/' ) === 'reader"
- *  f( '/design' ) === 'themes'
  *  f( '/me' ) === 'me"
  *  f( '/me/account' ) === 'me"
  *  f( '/read' ) === 'reader'

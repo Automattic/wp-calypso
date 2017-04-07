@@ -227,7 +227,7 @@ class PlansFeaturesMain extends Component {
 						' by our team and represent the highest quality. The business plan even supports' +
 						' unlimited premium theme access.',
 						{
-							components: { a: <a href={ `/design/${ site.slug }` } /> }
+							components: { a: <a href={ `/themes/${ site.slug }` } /> }
 						}
 					) }
 				/>

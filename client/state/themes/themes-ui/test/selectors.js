@@ -15,19 +15,19 @@ describe( 'selectors', () => {
 			const state = {
 				themes: {
 					themesUI: {
-						backPath: '/design',
+						backPath: '/themes',
 					}
 				},
 				ui: {}
 			};
-			expect( getBackPath( state ) ).to.eql( '/design' );
+			expect( getBackPath( state ) ).to.eql( '/themes' );
 		} );
 
 		it( 'should return stored path if it includes current selected site', () => {
 			const state = {
 				themes: {
 					themesUI: {
-						backPath: '/design/premium/example.wordpress.com?s=blue',
+						backPath: '/themes/premium/example.wordpress.com?s=blue',
 					}
 				},
 				sites: {
@@ -42,14 +42,14 @@ describe( 'selectors', () => {
 					selectedSiteId: 2916284,
 				}
 			};
-			expect( getBackPath( state ) ).to.eql( '/design/premium/example.wordpress.com?s=blue' );
+			expect( getBackPath( state ) ).to.eql( '/themes/premium/example.wordpress.com?s=blue' );
 		} );
 
 		it( 'should return default path with selected site if selected site not in stored path', () => {
 			const state = {
 				themes: {
 					themesUI: {
-						backPath: '/design/premium',
+						backPath: '/themes/premium',
 					}
 				},
 				sites: {
@@ -64,7 +64,7 @@ describe( 'selectors', () => {
 					selectedSiteId: 2916284,
 				}
 			};
-			expect( getBackPath( state ) ).to.eql( '/design/example.wordpress.com' );
+			expect( getBackPath( state ) ).to.eql( '/themes/example.wordpress.com' );
 		} );
 	} );
 } );

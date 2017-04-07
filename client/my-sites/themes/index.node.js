@@ -20,26 +20,26 @@ export default function( router ) {
 	const verticals = getSubjects().join( '|' );
 
 	if ( config.isEnabled( 'manage/themes' ) ) {
-		router( `/design/:vertical(${ verticals })?/:tier(free|premium)?`, fetchThemeData, loggedOut, makeLayout );
+		router( `/themes/:vertical(${ verticals })?/:tier(free|premium)?`, fetchThemeData, loggedOut, makeLayout );
 		router(
-			`/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`,
+			`/themes/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`,
 			fetchThemeData,
 			loggedOut,
 			makeLayout
 		);
-		router( '/design/upload/*', makeLayout );
+		router( '/themes/upload/*', makeLayout );
 		// Redirect legacy (Atlas-based Theme Showcase v4) routes
 		router( [
-			'/design/:site?/search/:search',
-			'/design/:site?/type/:tier(free|premium)',
-			'/design/:site?/search/:search/type/:tier(free|premium)'
+			'/themes/:site?/search/:search',
+			'/themes/:site?/type/:tier(free|premium)',
+			'/themes/:site?/search/:search/type/:tier(free|premium)'
 		], redirectSearchAndType );
 		router( [
-			'/design/:site?/filter/:filter',
-			'/design/:site?/filter/:filter/type/:tier(free|premium)'
+			'/themes/:site?/filter/:filter',
+			'/themes/:site?/filter/:filter/type/:tier(free|premium)'
 		], redirectFilterAndType );
-		router( '/design/:site?/:theme/:section(support)?', redirectToThemeDetails );
-		// The following route definition is needed so direct hits on `/design/<mysite>` don't result in a 404.
-		router( '/design/*', fetchThemeData, loggedOut, makeLayout );
+		router( '/themes/:site?/:theme/:section(support)?', redirectToThemeDetails );
+		// The following route definition is needed so direct hits on `/themes/<mysite>` don't result in a 404.
+		router( '/themes/*', fetchThemeData, loggedOut, makeLayout );
 	}
 }

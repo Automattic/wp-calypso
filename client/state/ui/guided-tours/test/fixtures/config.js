@@ -1,4 +1,8 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
+import { stubTrue } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +25,7 @@ export const MainTour = makeTour(
 );
 
 export const ThemesTour = makeTour(
-	<Tour name="themes" version="test" path="/design" when={ () => true } >
+	<Tour name="themes" version="test" path="/themes" when={ stubTrue } >
 		<Step name="init" placement="right" when={ inSection( 'themes' ) } >
 			Hey there! Want me to show you how to find a great theme for your site?
 		</Step>
@@ -37,7 +41,7 @@ export const StatsTour = makeTour(
 );
 
 export const TestTour = makeTour(
-	<Tour name="test" version="test" path={ [ '/test', '/foo' ] } when={ () => true } />
+	<Tour name="test" version="test" path={ [ '/test', '/foo' ] } when={ stubTrue } />
 );
 
 export default combineTours( {

@@ -24,7 +24,7 @@ function ThemeNotFoundError( { translate } ) {
 				title={ emptyContentTitle }
 				line={ emptyContentMessage }
 				action={ translate( 'View the showcase' ) }
-				actionURL="/design" />
+				actionURL="/themes" />
 		</Main>
 	);
 }

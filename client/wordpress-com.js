@@ -150,22 +150,24 @@ const sections = [
 		secondary: true,
 		group: 'sites'
 	},
+	// Since we're using find() and startsWith() on paths, 'themes' needs to go before 'theme',
+	// or it'll be falsely associated with the latter section.
+	{
+		name: 'themes',
+		paths: [ '/themes' ],
+		module: 'my-sites/themes',
+		enableLoggedOut: true,
+		secondary: true,
+		group: 'sites',
+		isomorphic: true,
+		title: 'Themes'
+	},
 	{
 		name: 'theme',
 		paths: [ '/theme' ],
 		module: 'my-sites/theme',
 		enableLoggedOut: true,
 		secondary: false,
-		group: 'sites',
-		isomorphic: true,
-		title: 'Themes'
-	},
-	{
-		name: 'themes',
-		paths: [ '/design' ],
-		module: 'my-sites/themes',
-		enableLoggedOut: true,
-		secondary: true,
 		group: 'sites',
 		isomorphic: true,
 		title: 'Themes'

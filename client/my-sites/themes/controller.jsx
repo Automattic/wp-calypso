@@ -56,8 +56,8 @@ function getProps( context ) {
 
 export function upload( context, next ) {
 	// Store previous path to return to only if it was main showcase page
-	if ( startsWith( context.prevPath, '/design' ) &&
-		! startsWith( context.prevPath, '/design/upload' ) ) {
+	if ( startsWith( context.prevPath, '/themes' ) &&
+		! startsWith( context.prevPath, '/themes/upload' ) ) {
 		context.store.dispatch( setBackPath( context.prevPath ) );
 	}
 
@@ -141,7 +141,7 @@ export function fetchThemeData( context, next ) {
 // Legacy (Atlas-based Theme Showcase v4) route redirects
 
 export function redirectSearchAndType( { res, params: { site, search, tier } } ) {
-	const target = '/design/' + compact( [ tier, site ] ).join( '/' ); // tier before site!
+	const target = '/themes/' + compact( [ tier, site ] ).join( '/' ); // tier before site!
 	if ( search ) {
 		res.redirect( `${ target }?s=${ search }` );
 	} else {
@@ -156,11 +156,11 @@ export function redirectFilterAndType( { res, params: { site, filter, tier } } 
 	} else {
 		parts = [ tier, site ];
 	}
-	res.redirect( '/design/' + compact( parts ).join( '/' ) );
+	res.redirect( '/themes/' + compact( parts ).join( '/' ) );
 }
 
 export function redirectToThemeDetails( { res, params: { site, theme, section } }, next ) {
-	// Make sure we aren't matching a site -- e.g. /design/example.wordpress.com or /design/1234567
+	// Make sure we aren't matching a site -- e.g. /themes/example.wordpress.com or /themes/1234567
 	if ( includes( theme, '.' ) || isFinite( theme ) ) {
 		return next();
 	}
