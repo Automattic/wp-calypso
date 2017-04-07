@@ -1,20 +1,15 @@
 /**
  * External dependencies
  */
-import { filter } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import createSelector from 'lib/create-selector';
+import { values } from 'lodash';
 
 /*
  * Get all sites/feeds the user follows.
+ * Includes those that are no longer followed but in the state tree (unfollowed this session)
  *
  * @param  {Object}  state  Global state tree
- * @return {Integer} Follow count
+ * @return {Integer} followed sites/feeds
  */
-export default createSelector(
-	state => filter( state.reader.follows.items, [ 'is_following', true ] ),
-	state => [ state.reader.follows.items ],
-);
+const getReaderFollows = state => values( state.reader.follows.items );
+
+export default getReaderFollows;

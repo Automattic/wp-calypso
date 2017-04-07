@@ -16,13 +16,11 @@ class QueryFeedSearch extends Component {
 	}
 
 	componentWillMount() {
-		const { searchFeeds, query } = this.props;
-		searchFeeds( query );
+		this.props.requestFeedSearch( this.props.query );
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { searchFeeds, query } = nextProps;
-		searchFeeds( query );
+		nextProps.requestFeedSearch( nextProps.query );
 	}
 
 	render() {

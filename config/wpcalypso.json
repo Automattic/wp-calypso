@@ -93,6 +93,7 @@
 		"reader": true,
 		"reader/combined-cards": true,
 		"reader/full-errors": true,
+		"reader/following-manage-refresh": true,
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
 		"reader/search": true,
