@@ -21,7 +21,6 @@ describe( 'edits-reducer', () => {
 	it( 'should create "updates" upon first edit', () => {
 		const product = { id: 1 };
 		const edits = reducer( undefined, editExistingProduct( product, { name: 'A Product' } ) );
-
 		expect( edits ).to.not.equal( null );
 		expect( edits.updates ).to.exist;
 		expect( edits.updates[ 0 ] ).to.eql( { id: 1, name: 'A Product' } );
