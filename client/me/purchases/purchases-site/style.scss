@@ -1,16 +1,6 @@
 .purchases-site {
 	margin-bottom: 15px;
 
-	.section-header {
-		@include breakpoint( "<660px" ) {
-			display: block;
-		}
-
-		&.card {
-			align-items: stretch;
-		}
-	}
-
 	.site-icon {
 		display: inline-block;
 		margin-right: 12px;
@@ -23,7 +13,6 @@
 	font-size: 12px;
 }
 
-.section-header__label,
 .purchases-site__slug {
 	white-space: nowrap;
 
@@ -32,10 +21,20 @@
 	}
 }
 
-.purchases-site__header.card.is-compact {
-	padding: 0;
-}
+.purchases-site__header {
+	&.card.is-compact {
+		padding: 0;
+	}
 
-.purchases-site__header .site .site__content {
-	padding: 11px 24px;
+	.site.is-loading {
+		.site-icon,
+		.site__title,
+		.site__domain {
+			@include placeholder( 23% );
+		}
+	}
+
+	.site .site__content {
+		padding: 11px 24px;
+	}
 }

@@ -13,15 +13,19 @@ import { getSite } from 'state/sites/selectors';
 import PurchaseItem from '../purchase-item';
 import QuerySites from 'components/data/query-sites';
 import Site from 'blocks/site';
+import SitePlaceholder from 'blocks/site/placeholder';
 import CompactCard from 'components/card/compact';
 
 const PurchasesSite = ( { isPlaceholder, siteId, site, purchases, slug } ) => {
-	let items;
+	let items, header;
 
 	if ( isPlaceholder ) {
 		items = times( 2, index => (
 			<PurchaseItem isPlaceholder key={ index } />
 		) );
+		header = (
+			<SitePlaceholder />
+		);
 	} else {
 		items = purchases.map( purchase => (
 			<PurchaseItem
@@ -29,13 +33,16 @@ const PurchasesSite = ( { isPlaceholder, siteId, site, purchases, slug } ) => {
 				slug={ slug }
 				purchase={ purchase } />
 		) );
+		header = (
+			<Site isCompact site={ site } />
+		);
 	}
 
 	return (
 		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
 			<QuerySites siteId={ siteId } />
 			<CompactCard className="purchases-site__header">
-				<Site isCompact site={ site } />
+				{ header }
 			</CompactCard>
 
 			{ items }
