@@ -15,8 +15,6 @@ import {
 
 import {
 	DESERIALIZE,
-	//MAGIC_LOGIN_HANDLE_AUTH_TOKEN_FETCH,
-	//MAGIC_LOGIN_HANDLE_AUTH_TOKEN_RECEIVE,
 	MAGIC_LOGIN_HIDE_REQUEST_FORM,
 	MAGIC_LOGIN_HIDE_REQUEST_NOTICE,
 	MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS,
@@ -27,6 +25,9 @@ import {
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
+	MAGIC_LOGIN_REQUEST_AUTH_ERROR,
+	MAGIC_LOGIN_REQUEST_AUTH_FETCH,
+	MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
 	SERIALIZE,
 } from 'state/action-types';
 
@@ -34,22 +35,22 @@ import reducer, {
 	emailAddressFormInput,
 	isFetchingEmail,
 	currentView,
-	//requestAuthError,
-	//requestAuthSuccess,
+	requestAuthError,
+	requestAuthSuccess,
 	requestEmailError,
-	requestedEmailSuccessfully,
+	requestEmailSuccess,
 } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'currentView',
 			'emailAddressFormInput',
 			'isFetchingEmail',
 			'requestAuthError',
 			'requestAuthSuccess',
 			'requestEmailError',
-			'requestedEmailSuccessfully',
-			'currentView',
+			'requestEmailSuccess',
 		] );
 	} );
 
@@ -139,6 +140,96 @@ describe( 'reducer', () => {
 		} );
 	} );
 
+	describe( 'requestAuthSuccess', () => {
+		it( 'should default to false', () => {
+			const state = requestAuthSuccess( undefined, {} );
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should be false on DESERIALIZE', () => {
+			const state = requestAuthSuccess( undefined, {
+				type: DESERIALIZE,
+			} );
+
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should be false on SERIALIZE', () => {
+			const state = requestAuthSuccess( undefined, {
+				type: SERIALIZE,
+			} );
+
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should be false on fetch', () => {
+			const state = requestAuthSuccess( undefined, {
+				type: MAGIC_LOGIN_REQUEST_AUTH_FETCH,
+			} );
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should be false on error', () => {
+			const state = requestAuthSuccess( undefined, {
+				type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
+				error: 'foo bar',
+			} );
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should be true on success', () => {
+			const state = requestAuthSuccess( undefined, {
+				type: MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
+			} );
+			expect( state ).to.be.true;
+		} );
+	} );
+
+	describe( 'requestAuthError', () => {
+		it( 'should default to null', () => {
+			const state = requestAuthError( undefined, {} );
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should be null on DESERIALIZE', () => {
+			const state = requestAuthError( undefined, {
+				type: DESERIALIZE,
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should be null on SERIALIZE', () => {
+			const state = requestAuthError( undefined, {
+				type: SERIALIZE,
+			} );
+
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should be null on fetch', () => {
+			const state = requestAuthError( undefined, {
+				type: MAGIC_LOGIN_REQUEST_AUTH_FETCH,
+			} );
+			expect( state ).to.be.null;
+		} );
+
+		it( 'should be error on error', () => {
+			const state = requestAuthError( undefined, {
+				type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
+				error: 'foo bar',
+			} );
+			expect( state ).to.equal( 'foo bar' );
+		} );
+
+		it( 'should be null on success', () => {
+			const state = requestAuthError( undefined, {
+				type: MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
+			} );
+			expect( state ).to.be.null;
+		} );
+	} );
+
 	describe( 'requestEmailError', () => {
 		it( 'should default to null', () => {
 			const state = requestEmailError( undefined, {} );
@@ -191,14 +282,14 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'requestedEmailSuccessfully', () => {
+	describe( 'requestEmailSuccess', () => {
 		it( 'should default to false', () => {
-			const state = requestedEmailSuccessfully( undefined, {} );
+			const state = requestEmailSuccess( undefined, {} );
 			expect( state ).to.be.false;
 		} );
 
 		it( 'should be false on DESERIALIZE', () => {
-			const state = requestedEmailSuccessfully( undefined, {
+			const state = requestEmailSuccess( undefined, {
 				type: DESERIALIZE,
 			} );
 
@@ -206,7 +297,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should be false on SERIALIZE', () => {
-			const state = requestedEmailSuccessfully( undefined, {
+			const state = requestEmailSuccess( undefined, {
 				type: SERIALIZE,
 			} );
 
@@ -214,21 +305,21 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should be false on fetch action', () => {
-			const state = requestedEmailSuccessfully( undefined, {
+			const state = requestEmailSuccess( undefined, {
 				type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
 			} );
 			expect( state ).to.be.false;
 		} );
 
 		it( 'should be false on error', () => {
-			const state = requestedEmailSuccessfully( undefined, {
+			const state = requestEmailSuccess( undefined, {
 				type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
 			} );
 			expect( state ).to.be.false;
 		} );
 
 		it( 'should be true on success', () => {
-			const state = requestedEmailSuccessfully( undefined, {
+			const state = requestEmailSuccess( undefined, {
 				type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
 			} );
 			expect( state ).to.be.true;

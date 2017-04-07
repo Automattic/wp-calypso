@@ -39,8 +39,8 @@ export getJetpackSettingsSaveRequestStatus from './get-jetpack-settings-save-req
 export getMagicLoginCurrentView from './get-magic-login-current-view';
 export getMagicLoginEmailAddressFormInput from './get-magic-login-email-address-form-input';
 export getMagicLoginEmailAddressFormInputIsValid from './get-magic-login-email-address-form-input-is-valid';
+export getMagicLoginRequestedAuthSuccessfully from './get-magic-login-requested-auth-successfully';
 export getMagicLoginRequestAuthError from './get-magic-login-request-auth-error';
-export getMagicLoginRequestAuthStatus from './get-magic-login-request-auth-status';
 export getMagicLoginRequestEmailError from './get-magic-login-request-email-error';
 export getMagicLoginRequestedEmailSuccessfully from './get-magic-login-requested-email-successfully';
 export getMedia from './get-media';
