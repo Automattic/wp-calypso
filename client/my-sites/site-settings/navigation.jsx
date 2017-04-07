@@ -75,12 +75,14 @@ export default React.createClass( {
 
 					<NavItem
 						path={ `/settings/writing/${ site.slug }` }
+						preloadSectionName="settings-writing"
 						selected={ section === 'writing' } >
 							{ strings.writing }
 					</NavItem>
 
 					<NavItem
 						path={ `/settings/discussion/${ site.slug }` }
+						preloadSectionName="settings-discussion"
 						selected={ section === 'discussion' } >
 							{ strings.discussion }
 					</NavItem>
