@@ -48,6 +48,7 @@ import PurchasePlanDetails from './plan-details';
 import PaymentLogo from 'components/payment-logo';
 import ProductLink from 'me/purchases/product-link';
 import PurchaseNotice from './notices';
+import PurchaseSiteHeader from '../purchases-site/header';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import RemovePurchase from '../remove-purchase';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -531,6 +532,11 @@ const ManagePurchase = React.createClass( {
 
 		return (
 			<div>
+				<PurchaseSiteHeader
+					siteId={ this.props.selectedSite.ID }
+					name={ siteName }
+					domain={ siteDomain }
+					isPlaceholder={ isDataLoading( this.props ) } />
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
 						<strong className="manage-purchase__content manage-purchase__title">{ purchaseTitleText }</strong>
