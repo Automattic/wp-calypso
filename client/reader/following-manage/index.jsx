@@ -88,7 +88,7 @@ class FollowingManage extends Component {
 						key={ `feedresult-${ feed.URL }` }
 						url={ feed.URL }
 						feedId={ +feed.feed_ID }
-						blogId={ +feed.blog_ID }
+						siteId={ +feed.blog_ID }
 					/>
 			</div>
 		);

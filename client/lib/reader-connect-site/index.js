@@ -43,19 +43,13 @@ const connectSite = Component => {
 
 	return connect(
 		( state, ownProps ) => {
-			let { feedId, blogId } = ownProps;
-			let feed, site;
+			let { feedId, siteId } = ownProps;
+			let feed = !! feedId ? getFeed( state, feedId ) : undefined;
+			let site = !! siteId ? getSite( state, siteId ) : undefined;
 
-			if ( feedId ) {
-				feed = getFeed( state, feedId );
-			}
-			if ( blogId ) {
-				site = getSite( state, blogId );
-			}
-
-			if ( feed && ! blogId ) {
-				blogId = feed.blog_ID !== 0 && feed.blog_ID;
-				site = !! blogId ? getSite( state, feed.blog_ID ) : undefined;
+			if ( feed && ! siteId ) {
+				siteId = feed.blog_ID !== 0 && feed.blog_ID;
+				site = !! siteId ? getSite( state, feed.blog_ID ) : undefined;
 			}
 			if ( site && ! feedId ) {
 				feedId = site.feed_ID;
@@ -65,8 +59,8 @@ const connectSite = Component => {
 			return {
 				feed,
 				site,
-				siteId: +blogId,
-				feedId: +feedId,
+				siteId,
+				feedId,
 			};
 		}
 	)( connectSiteFetcher );
