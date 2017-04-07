@@ -26,7 +26,7 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Card from 'components/card';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isUserPaid } from 'state/purchases/selectors';
@@ -76,7 +76,7 @@ const ThemeSheet = React.createClass( {
 		isLoggedIn: React.PropTypes.bool,
 		isActive: React.PropTypes.bool,
 		isPurchased: React.PropTypes.bool,
-		selectedSite: React.PropTypes.object,
+		siteId: React.PropTypes.number,
 		siteSlug: React.PropTypes.string,
 		backPath: React.PropTypes.string,
 		isWpcomTheme: React.PropTypes.bool,
@@ -470,10 +470,10 @@ const ThemeSheet = React.createClass( {
 
 	renderSheet() {
 		const section = this.validateSection( this.props.section );
-		const siteID = this.props.selectedSite && this.props.selectedSite.ID;
+		const { siteId } = this.props;
 
-		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
-		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
+		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteId ? '/:site_id' : '' }`;
+		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteId ? ' > Site' : '' }`;
 
 		const { canonicalUrl, currentUserId, description, name: themeName } = this.props;
 		const title = themeName && i18n.translate( '%(themeName)s Theme', {
@@ -498,17 +498,17 @@ const ThemeSheet = React.createClass( {
 
 		return (
 			<Main className="theme__sheet">
-				<QueryCanonicalTheme themeId={ this.props.id } siteId={ siteID } />
+				<QueryCanonicalTheme themeId={ this.props.id } siteId={ siteId } />
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
-				{ siteID && <QuerySitePurchases siteId={ siteID } /> }
-				{ siteID && <QuerySitePlans siteId={ siteID } /> }
+				{ siteId && <QuerySitePurchases siteId={ siteId } /> /* TODO: Make QuerySitePurchases handle falsey siteId */ }
+				{ <QuerySitePlans siteId={ siteId } /> /* QuerySitePlans can handle a falsey siteId */ }
 				<DocumentHead
 					title={ title }
 					meta={ metas }
 					link={ links } />
 				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
 				{ this.renderBar() }
-				{ siteID && <QueryActiveTheme siteId={ siteID } /> }
+				{ siteId && <QueryActiveTheme siteId={ siteId } /> /* TODO: Make QueryActiveTheme handle falsey siteId */ }
 				<ThanksModal source={ 'details' } />
 				<HeaderCake className="theme__sheet-action-bar"
 					backHref={ this.props.backPath }
@@ -542,7 +542,7 @@ const ThemeSheet = React.createClass( {
 
 const ConnectedThemeSheet = connectOptions(
 	( props ) => {
-		if ( ! props.isLoggedIn || props.selectedSite ) {
+		if ( ! props.isLoggedIn || props.siteId ) {
 			return <ThemeSheet { ...props } />;
 		}
 
@@ -557,13 +557,12 @@ const ConnectedThemeSheet = connectOptions(
 
 const ThemeSheetWithOptions = ( props ) => {
 	const {
-		selectedSite: site,
+		siteId,
 		isActive,
 		isLoggedIn,
 		isPremium,
 		isPurchased,
 	} = props;
-	const siteId = site ? site.ID : null;
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
@@ -590,32 +589,32 @@ const ThemeSheetWithOptions = ( props ) => {
 
 export default connect(
 	( state, { id } ) => {
-		const selectedSite = getSelectedSite( state );
-		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
+		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSiteSlug( state, siteId );
 		const isWpcomTheme = isThemeWpcom( state, id );
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
-		const theme = getCanonicalTheme( state, selectedSite && selectedSite.ID, id );
-		const siteIdOrWpcom = selectedSite ? selectedSite.ID : 'wpcom';
+		const theme = getCanonicalTheme( state, siteId, id );
+		const siteIdOrWpcom = siteId || 'wpcom';
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
 
 		return {
 			...theme,
 			id,
 			error,
-			selectedSite,
+			siteId,
 			siteSlug,
 			backPath,
 			currentUserId,
 			isCurrentUserPaid,
 			isWpcomTheme,
 			isLoggedIn: !! currentUserId,
-			isActive: selectedSite && isThemeActive( state, id, selectedSite.ID ),
-			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
+			isActive: isThemeActive( state, id, siteId ),
+			isJetpack: isJetpackSite( state, siteId ),
 			isPremium: isThemePremium( state, id ),
-			isPurchased: selectedSite && isPremiumThemeAvailable( state, id, selectedSite.ID ),
-			forumUrl: getThemeForumUrl( state, id, selectedSite && selectedSite.ID ),
+			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
+			forumUrl: getThemeForumUrl( state, id, siteId ),
 			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ) // No siteId specified since we want the *canonical* URL :-)
 		};
 	},
