@@ -85,8 +85,13 @@ class CustomContentTypes extends Component {
 		const { translate } = this.props;
 		const fieldLabel = translate( 'Testimonials' );
 		const fieldDescription = translate(
-			'Add, organize, and display testimonials. If your theme doesn’t support testimonials yet, ' +
-			'you can display them using the shortcode ( [testimonials] ).'
+			'Add, organize, and display {{link}}testimonials{{/link}}. If your theme doesn’t support testimonials yet, ' +
+			'you can display them using the shortcode ( [testimonials] ).',
+			{
+				components: {
+					link: <a href="https://support.wordpress.com/testimonials/" />
+				}
+			}
 		);
 
 		return this.renderContentTypeSettings( 'jetpack_testimonial', fieldLabel, fieldDescription );
@@ -96,8 +101,13 @@ class CustomContentTypes extends Component {
 		const { translate } = this.props;
 		const fieldLabel = translate( 'Portfolios' );
 		const fieldDescription = translate(
-			'Add, organize, and display portfolios. If your theme doesn’t support portfolios yet, ' +
-			'you can display them using the shortcode ( [portfolios] ).'
+			'Add, organize, and display {{link}}portfolios{{/link}}. If your theme doesn’t support portfolios yet, ' +
+			'you can display them using the shortcode ( [portfolios] ).',
+			{
+				components: {
+					link: <a href="https://support.wordpress.com/portfolios/" />
+				}
+			}
 		);
 
 		return this.renderContentTypeSettings( 'jetpack_portfolio', fieldLabel, fieldDescription );
