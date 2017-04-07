@@ -1,8 +1,7 @@
 /**
  * Module dependencies
  */
-var os = require( 'os' ),
-	fs = require( 'fs' ),
+const fs = require( 'fs' ),
 	path = require( 'path' ),
 	spawn = require( 'child_process' ).spawn,
 	debug = require( 'debug' )( 'calypso:bundler:css-hot-reload' ),
@@ -23,7 +22,6 @@ function setup( io ) {
 	const PUBLIC_DIR = path.join( ROOT_DIR, 'public' );
 
 	var cssMake = null,
-		cores = os.cpus().length,
 		errors = '',
 		scheduleBuild = false,
 		publicCssFiles = {}; // { path, hash } dictionary
@@ -38,8 +36,9 @@ function setup( io ) {
 		io.of( '/css-hot-reload' ).emit( 'css-hot-reload',
 			{ status: 'building' } );
 
-		debug( 'spawning %o', 'make build-css --jobs ' + cores );
-		cssMake = spawn( 'make', [ 'build-css', '--jobs', cores ], {
+		debug( 'spawning %o', 'npm run build-css' );
+		cssMake = spawn( 'npm', [ 'run', 'build-css' ], {
+			shell: true,
 			cwd: ROOT_DIR,
 			stdio: [ 'ignore', 'pipe', 'pipe' ]
 		} );

@@ -25,7 +25,7 @@ let prepareFuse;
 
 function parseSelectorFile( file ) {
 	return new Promise( ( resolve, reject ) => {
-		fs.readFile( SELECTORS_DIR + '/' + file, 'utf8', ( error, contents ) => {
+		fs.readFile( path.join( SELECTORS_DIR, file ), 'utf8', ( error, contents ) => {
 			if ( error ) {
 				return reject( error );
 			}

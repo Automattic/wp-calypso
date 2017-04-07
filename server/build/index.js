@@ -1,8 +1,7 @@
 /**
  * Module dependencies
  */
-var os = require( 'os' ),
-	path = require( 'path' ),
+var path = require( 'path' ),
 	spawn = require( 'child_process' ).spawn,
 	debug = require( 'debug' )( 'build' );
 
@@ -16,13 +15,13 @@ var os = require( 'os' ),
 function setup() {
 
 	var build = null,
-		cores = os.cpus().length,
 		errors = '',
 		rootdir = path.resolve( __dirname, '..', '..' );
 
 	function spawnMake() {
-		debug( 'spawning %o', 'make build-css --jobs ' + cores );
-		build = spawn( 'make', [ 'build-css', '--jobs', cores ], {
+		debug( 'spawning %o', 'npm run build-css' );
+		build = spawn( 'npm', [ 'run', 'build-css' ], {
+			shell: true,
 			cwd: rootdir,
 			stdio: [ 'ignore', 'pipe', 'pipe']
 		} );

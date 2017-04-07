@@ -8,9 +8,10 @@
 
 var async = require( 'async' ),
 	camelCase = require( 'lodash/camelCase' ),
-	config = require( 'config' ),
+	config = require( '../../config' ),
 	fs = require( 'fs' ),
 	fspath = require( 'path' ),
+	globby = require( 'globby' ),
 	root = fspath.dirname( fspath.join( __dirname, '..', '..' ) ),
 
 	// Copyright (c) 2014-present, Facebook, Inc. See CREDITS.md#facebook/node-hastemodules
@@ -24,15 +25,8 @@ var async = require( 'async' ),
 
 function main() {
 	// extract list of files to index and remove leading ./'s
-	var fileList,
-		outFilePath = 'server/devdocs/components-usage-stats.json';
-
-	fileList = process.
-		argv.
-		splice( 2, process.argv.length ).
-		map( function( fileWithPath ) {
-			return fileWithPath.replace( /^\.\//, '' );
-		} );
+	var outFilePath = 'server/devdocs/components-usage-stats.json';
+	const fileList = globby.sync( process.argv.slice( 2 ) );
 
 	if ( fileList.length === 0 ) {
 		process.stderr.write( 'You must pass a list of files to process (try "make server/devdocs/components-usage-stats.js"' );
