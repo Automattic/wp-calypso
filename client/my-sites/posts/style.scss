@@ -323,7 +323,7 @@
 	}
 }
 .post__site-title {
-	color: darken( $gray, 20 );
+	color: $gray-dark;
 	display: block;
 	font-size: 14px;
 	line-height: 38px;
@@ -331,7 +331,7 @@
 	padding-left: 48px;
 
 	a {
-		color: darken( $gray, 20 );
+		color: $gray-dark;
 	}
 }
 .post__header.has-author {
@@ -342,7 +342,7 @@
 }
 .post__author {
 	display: block;
-	color: $gray;
+	color: $gray-text-min;
 	font-size: 12px;
 	padding-left: 48px;
 }
@@ -432,12 +432,12 @@
 		}
 		a {
 			display: block;
-			color: darken( $gray, 10% );
+			color: $gray-text-min;
 			box-sizing: border-box;
 			font-size: inherit;
 			padding: (11 / 14) * 1em 0;
 			&:hover {
-				color: darken( $gray, 20% );
+				color: $gray-dark;
 				cursor: pointer;
 			}
 			.gridicon{
