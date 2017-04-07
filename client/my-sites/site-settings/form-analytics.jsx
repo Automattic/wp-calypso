@@ -74,6 +74,9 @@ class GoogleAnalyticsForm extends Component {
 
 		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
 		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsModule;
+		const analyticsSupportUrl = siteIsJetpack
+			? 'https://jetpack.com/support/google-analytics/'
+			: 'https://support.wordpress.com/google-analytics/';
 
 		return (
 			<form id="site-settings" onSubmit={ handleSubmitForm }>
@@ -176,7 +179,7 @@ class GoogleAnalyticsForm extends Component {
 					{ translate( 'Learn more about using {{a}}Google Analytics with WordPress.com{{/a}}.',
 						{
 							components: {
-								a: <a href="http://en.support.wordpress.com/google-analytics/" target="_blank" rel="noopener noreferrer" />
+								a: <a href={ analyticsSupportUrl } target="_blank" rel="noopener noreferrer" />
 							}
 						}
 					) }
