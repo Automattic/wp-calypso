@@ -24,7 +24,7 @@ import { getRawSite } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Notice from 'components/notice';
 
-var MapDomain = React.createClass( {
+export const MapDomain = React.createClass( {
 	mixins: [ observe( 'productsList' ) ],
 
 	propTypes: {
@@ -121,7 +121,7 @@ var MapDomain = React.createClass( {
 	}
 } );
 
-module.exports = connect( state => (
+export default connect( state => (
 	{
 		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 		noSelectedSite: ! getRawSite( state, getSelectedSiteId( state ) ),
