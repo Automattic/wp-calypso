@@ -11,8 +11,8 @@ import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 import { extendAction } from 'state/utils';
 
 import {
-	processInbound,
-	processOutbound,
+	processInbound as inboundProcessor,
+	processOutbound as outboundProcessor,
 } from './pipeline';
 
 /**
@@ -81,5 +81,5 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 };
 
 export default {
-	[ WPCOM_HTTP_REQUEST ]: [ queueRequest( processOutbound, processInbound ) ],
+	[ WPCOM_HTTP_REQUEST ]: [ queueRequest( outboundProcessor, inboundProcessor ) ],
 };
