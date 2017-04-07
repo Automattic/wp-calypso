@@ -109,11 +109,8 @@ const Account = React.createClass( {
 		const originalLanguage = this.props.userSettings.getOriginalSetting( 'language' );
 
 		this.updateUserSetting( 'language', value );
-		if ( value !== originalLanguage ) {
-			this.setState( { redirect: '/me/account' } );
-		} else {
-			this.setState( { redirect: false } );
-		}
+		const redirect = value !== originalLanguage ? '/me/account' : false;
+		this.setState( { redirect } );
 	},
 
 	getEmailAddress() {
@@ -124,13 +121,12 @@ const Account = React.createClass( {
 
 	updateEmailAddress( event ) {
 		const { value } = event.target;
-		if ( '' === value ) {
-			this.setState( { emailValidationError: 'empty' } );
-		} else if ( ! emailValidator.validate( value ) ) {
-			this.setState( { emailValidationError: 'invalid' } );
-		} else {
-			this.setState( { emailValidationError: false } );
-		}
+		const emailValidationError = (
+			( '' === value && 'empty' ) ||
+			( ! emailValidator.validate( value ) && 'invalid' ) ||
+			false
+		);
+		this.setState( { emailValidationError } );
 		this.updateUserSetting( 'user_email', value );
 	},
 
