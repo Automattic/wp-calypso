@@ -2,36 +2,20 @@
  * Internal dependencies
  */
 import {
-	WOOCOMMERCE_EDIT_PRODUCT,
-	WOOCOMMERCE_EDIT_VARIATION_TYPE,
-	WOOCOMMERCE_EDIT_VARIATION,
+	WOOCOMMERCE_EDIT_EXISTING_PRODUCT,
+	WOOCOMMERCE_EDIT_NEW_PRODUCT,
 } from '../../action-types';
 
-export function editProduct( productId, data ) {
+export function editExistingProduct( product, data ) {
 	return {
-		type: WOOCOMMERCE_EDIT_PRODUCT,
-		payload: { productId, data },
+		type: WOOCOMMERCE_EDIT_EXISTING_PRODUCT,
+		payload: { product, data },
 	};
 }
 
-export function editNewProduct( newProductIndex, data ) {
+export function editNewProduct( newProductIndex, product, data ) {
 	return {
-		type: WOOCOMMERCE_EDIT_PRODUCT,
-		payload: { newProductIndex, data },
+		type: WOOCOMMERCE_EDIT_NEW_PRODUCT,
+		payload: { newProductIndex, product, data },
 	};
 }
-
-export function editVariationType( productId, variationTypeIndex, data ) {
-	return {
-		type: WOOCOMMERCE_EDIT_VARIATION_TYPE,
-		payload: { productId, variationTypeIndex, data },
-	};
-}
-
-export function editNewProductVariationType( newProductIndex, variationTypeIndex, data ) {
-	return {
-		type: WOOCOMMERCE_EDIT_VARIATION_TYPE,
-		payload: { newProductIndex, variationTypeIndex, data },
-	};
-}
-
