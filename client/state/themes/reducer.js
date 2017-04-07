@@ -377,7 +377,7 @@ export const themePreviewVisibility = createReducer( null, {
 	[ THEME_PREVIEW_STATE ]: ( state, { themeId } ) => ( themeId )
 } );
 
-export const themeFilters = createReducer( null, {
+export const themeFilters = createReducer( {}, {
 	[ THEME_FILTERS_ADD ]: ( state, { filters } ) => ( filters )
 }, themeFiltersSchema );
 
