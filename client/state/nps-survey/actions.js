@@ -23,6 +23,13 @@ import {
 
 const debug = debugFactory( 'calypso:nps-survey' );
 
+export function forceNpsSurveyEligibility( isEligible ) {
+	return {
+		type: NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING,
+		isSessionPicked: isEligible,
+	};
+}
+
 export function setupNpsSurveyEligibility() {
 	// TODO: add calls to API once eligibility endpoint is in
 	return {

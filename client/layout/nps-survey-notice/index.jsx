@@ -63,6 +63,7 @@ class NpsSurveyNotice extends Component {
 
 	render() {
 		return (
+			this.props.isSessionEligible &&
 			<Dialog
 				additionalClassNames="nps-survey-notice"
 				isVisible={ this.props.isNpsSurveyDialogShowing }

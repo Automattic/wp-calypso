@@ -11,6 +11,7 @@ import notices from 'notices';
 import {
 	NPS_SURVEY_DIALOG_IS_SHOWING,
 } from 'state/action-types';
+import { forceNpsSurveyEligibility } from 'state/nps-survey/actions';
 
 export function showNpsSurveyNotice() {
 	return ( dispatch ) => {
@@ -40,7 +41,7 @@ export function setupNpsSurveyDevTrigger() {
 	return ( dispatch ) => {
 		if ( config.isEnabled( 'nps-survey/dev-trigger' ) ) {
 			window.npsSurvey = function() {
-				dispatch( showNpsSurveyNotice() );
+				dispatch( forceNpsSurveyEligibility( true ) );
 			};
 		}
 	};
