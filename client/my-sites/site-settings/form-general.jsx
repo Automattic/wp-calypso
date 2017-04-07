@@ -32,8 +32,10 @@ import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { phpToMomentDatetimeFormat } from 'lib/formatting';
-import { getLocalizedDate } from './date-time-format/utils';
+import {
+	getLocalizedDate,
+	phpToMomentDatetimeFormat,
+} from './date-time-format/utils';
 
 class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
@@ -383,10 +385,10 @@ class SiteSettingsFormGeneral extends Component {
 				<div className="site-settings__date-time-format-info">
 					{
 						dateFormat &&
-							localizedDate.format( phpToMomentDatetimeFormat( dateFormat ) )
+							phpToMomentDatetimeFormat( localizedDate, dateFormat )
 					} &bull; {
 						timeFormat &&
-							localizedDate.format( phpToMomentDatetimeFormat( timeFormat ) )
+							phpToMomentDatetimeFormat( localizedDate, timeFormat )
 					} &bull; {
 						translate( 'Week starts on %s', { args: weekday } )
 					}
