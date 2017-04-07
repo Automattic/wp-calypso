@@ -40,7 +40,7 @@ import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
 import { isDomainOnlySite } from 'state/selectors';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { getGeoCountry } from 'state/geo/selectors';
+import { getGeoCountryShort } from 'state/geo/selectors';
 import QueryGeo from 'components/data/query-geo';
 import {
 	getSelectedSite,
@@ -401,7 +401,7 @@ module.exports = connect(
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
-			userCountryCode: getGeoCountry( state, 'short' ),
+			userCountryCode: getGeoCountryShort( state ),
 			userLocale: getCurrentUserLocale( state ),
 		};
 	},
