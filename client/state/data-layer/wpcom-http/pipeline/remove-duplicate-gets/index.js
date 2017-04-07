@@ -80,9 +80,8 @@ export const addResponder = ( list, item ) => ( {
  *
  * @see applyDuplicateHandlers
  *
- * @type OutboundProcessor
- * @param {OutboundData} outboundData
- * @returns {OutboundData}
+ * @param {OutboundData} outboundData request info
+ * @returns {OutboundData} filtered request info
  */
 export const removeDuplicateGets = outboundData => {
 	const { nextRequest } = outboundData;
@@ -109,9 +108,8 @@ export const removeDuplicateGets = outboundData => {
  *
  * @see removeDuplicateGets
  *
- * @type InboundProcessor
- * @param {InboundData} inboundData
- * @returns {InboundData}
+ * @param {InboundData} inboundData request info
+ * @returns {InboundData} processed request info
  */
 export const applyDuplicatesHandlers = inboundData => {
 	const { originalRequest } = inboundData;
