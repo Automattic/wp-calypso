@@ -23,7 +23,10 @@ module.exports = function validateFilter( context, next ) {
 			`/filter/${ filterParam }`,
 			sortedValidFilters ? `/filter/${ sortedValidFilters }` : ''
 		);
-		page.redirect( newPath );
+		if ( context.isServerSide ) {
+			return context.res.redirect( newPath );
+		}
+		return page.redirect( newPath );
 	}
 
 	next();
