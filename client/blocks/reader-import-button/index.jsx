@@ -29,14 +29,14 @@ class ReaderImportButton extends React.Component {
 	state = { disabled: false };
 
 	onClick = ( event ) => {
-		// Don't kick off a new export request if there's one in progress
+		// Don't allow picking of a new file if there's an import in progress
 		if ( this.state.disabled ) {
 			event.preventDefault();
 		}
 	}
 
 	onPick = ( files ) => {
-		// we only care about the first file in the list
+		// We only care about the first file in the list
 		const file = files[ 0 ];
 		if ( ! file ) {
 			return;
@@ -59,7 +59,7 @@ class ReaderImportButton extends React.Component {
 		if ( err ) {
 			this.props.onError( err );
 		} else {
-			// tack on the file name since it will be displayed in the UI
+			// Tack on the file name since it will be displayed in the UI
 			data.fileName = this.fileName;
 			this.props.onImport( data );
 		}
