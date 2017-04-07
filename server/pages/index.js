@@ -3,12 +3,12 @@
  */
 import express from 'express';
 import fs from 'fs';
-import crypto from 'crypto';
+import { createHash } from 'crypto';
 import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get } from 'lodash';
+import { get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +19,9 @@ import utils from 'bundler/utils';
 import sectionsModule from '../../client/sections';
 import { serverRouter } from 'isomorphic-routing';
 import { serverRender } from 'render';
-import { createReduxStore } from 'state';
+import stateCache from 'state-cache';
+import { createReduxStore, reducer } from 'state';
+import { DESERIALIZE } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -38,13 +40,19 @@ const staticFiles = [
 
 const sections = sectionsModule.get();
 
+function getInitialServerState( serializedServerState ) {
+	// Bootstrapped state from a server-render
+	const serverState = reducer( serializedServerState, { type: DESERIALIZE } );
+	return pick( serverState, Object.keys( serializedServerState ) );
+}
+
 /**
  * Generates a hash of a files contents to be used as a version parameter on asset requests.
  * @param {String} path Path to file we want to hash
  * @returns {String} A shortened md5 hash of the contents of the file file or a timestamp in the case of failure.
  **/
 function hashFile( path ) {
-	const md5 = crypto.createHash( 'md5' );
+	const md5 = createHash( 'md5' );
 	let data, hash;
 
 	try {
@@ -111,6 +119,10 @@ function getCurrentCommitShortChecksum() {
 }
 
 function getDefaultContext( request ) {
+	// context.path is set to req.url, see server/isomorphic-routing#getEnhancedContext()
+	const serializeCachedServerState = stateCache.get( request.url ) || {};
+	const cachedServerState = reducer( getInitialServerState( serializeCachedServerState ), { type: DESERIALIZE } );
+
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
 		urls: generateStaticUrls( request ),
@@ -126,7 +138,7 @@ function getDefaultContext( request ) {
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
-		store: createReduxStore()
+		store: createReduxStore( cachedServerState )
 	} );
 
 	context.app = {

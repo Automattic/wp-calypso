@@ -17,6 +17,9 @@ import {
 	getDocumentHeadMeta,
 	getDocumentHeadLink
 } from 'state/document-head/selectors';
+import { reducer } from 'state';
+import { SERIALIZE } from 'state/action-types';
+import stateCache from 'state-cache';
 
 const debug = debugFactory( 'calypso:server-render' );
 const markupCache = new Lru( { max: 3000 } );
@@ -77,7 +80,7 @@ export function serverRender( req, res ) {
 	}
 
 	if ( config.isEnabled( 'server-side-rendering' ) && context.layout && ! context.user ) {
-		const key = context.renderCacheKey || JSON.stringify( context.layout );
+		const key = context.path || JSON.stringify( context.layout );
 		Object.assign( context, render( context.layout, key ) );
 	}
 
@@ -91,7 +94,12 @@ export function serverRender( req, res ) {
 			reduxSubtrees = reduxSubtrees.concat( [ 'ui', 'themes' ] );
 		}
 
+		// Send state to client. Don't we need to serialize here?
 		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
+		// And cache on the server, too
+		const serverState = reducer( context.initialReduxState, { type: SERIALIZE } );
+		// context.pathname is the path void of the query string, which seems a good choice for a cache key
+		stateCache.set( context.pathname, serverState );
 	}
 
 	context.head = { title, metas, links };
