@@ -11,8 +11,8 @@ import Card from 'components/card';
 import { posts } from 'blocks/reader-post-card/docs/fixtures';
 
 const ReaderShareExample = () => (
-	<div className="design-assets__group">
-		<ReaderShare post={ posts[0] } />
+	<div className="design-assets__group" style={ { width: '100px' } }>
+		<ReaderShare post={ posts[0] } tagName="div" />
 	</div>
 );
 
