@@ -56,7 +56,6 @@ Layout = React.createClass( {
 	propTypes: {
 		primary: React.PropTypes.element,
 		secondary: React.PropTypes.element,
-		tertiary: React.PropTypes.element,
 		sites: React.PropTypes.object,
 		user: React.PropTypes.object,
 		nuxWelcome: React.PropTypes.object,
@@ -161,9 +160,6 @@ Layout = React.createClass( {
 					<div id="secondary" className="layout__secondary">
 						{ this.props.secondary }
 					</div>
-				</div>
-				<div id="tertiary">
-					{ this.props.tertiary }
 				</div>
 				<TranslatorLauncher
 					isEnabled={ translator.isEnabled() }

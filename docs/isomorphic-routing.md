@@ -24,7 +24,7 @@ The contract is that at the end of each route's middleware chain, `context.layou
 should contain the React render tree to be rendered, which will be done magically
 by either the client or the server render, as appropriate. (This is clearly
 different from the previous client-side-only routing approach where you'd have
-to render to `#primary`/`#secondary`/`#tertiary` DOM elements.)
+to render to `#primary`/`#secondary` DOM elements.)
 
 To facilitate that, you can (but don't have to) use the `makeLayout`
 generic middleware found in `client/controller`. So in the above example, the
