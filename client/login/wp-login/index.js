@@ -9,14 +9,24 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import {
-	showRequestForm as showMagicLoginRequestForm,
+	showMagicLoginInterstitialPage,
+	showMagicLoginRequestForm,
 } from 'state/login/magic-login/actions';
+
+/**
+ * Internal dependencies
+ */
 import {
-	emailAddressFormInput,
-	isShowingRequestForm as isShowingMagicLoginRequestForm,
-	isShowingExpiredPage as isShowingMagicLoginExpiredPage,
-	isShowingCheckYourEmailPage,
-} from 'state/login/magic-login/selectors';
+	CHECK_YOUR_EMAIL_PAGE,
+	INTERSTITIAL_PAGE,
+	LINK_EXPIRED_PAGE,
+	REQUEST_FORM,
+} from 'state/login/magic-login/constants';
+
+import {
+	getMagicLoginEmailAddressFormInput,
+	getMagicLoginCurrentView,
+} from 'state/selectors';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
 
 import Main from 'components/main';
@@ -36,45 +46,46 @@ class Login extends React.Component {
 
 	magicLoginMainContent() {
 		const {
-			handlingMagicLink,
+			magicLoginView,
 			magicLoginEmailAddress,
-			showingCheckYourEmailPage,
-			showingMagicLoginExpiredPage,
 		} = this.props;
 
-		if ( showingMagicLoginExpiredPage ) {
-			return <EmailedLoginLinkExpired />;
-		}
-
-		if ( showingCheckYourEmailPage ) {
-			return <EmailedLoginLinkSuccessfully emailAddress={ magicLoginEmailAddress } />;
-		}
-
-		if ( handlingMagicLink ) {
-			return <HandleEmailedLinkForm />;
+		switch ( magicLoginView ) {
+			case LINK_EXPIRED_PAGE:
+				return <EmailedLoginLinkExpired />;
+			case CHECK_YOUR_EMAIL_PAGE:
+				return <EmailedLoginLinkSuccessfully emailAddress={ magicLoginEmailAddress } />;
+			case INTERSTITIAL_PAGE:
+				return <HandleEmailedLinkForm />;
 		}
 	}
 
 	footerContent() {
 		const {
-			handlingMagicLink,
-			showingCheckYourEmailPage,
-			showingMagicLoginRequestForm,
+			magicLoginEnabled,
+			magicLoginView,
 			translate,
 		} = this.props;
 
-		if ( ! (
-			handlingMagicLink ||
-			showingCheckYourEmailPage ||
-			showingMagicLoginRequestForm
-		) ) {
+		if ( magicLoginEnabled && ! magicLoginView ) {
 			return <a href="#" onClick={ this.onMagicLoginRequestClick }>{ translate( 'Email me a login link' ) }</a>;
+		}
+	}
+
+	componentWillMount() {
+		const {
+			magicLoginEnabled,
+			queryArguments,
+		} = this.props;
+
+		if ( magicLoginEnabled && queryArguments && queryArguments.action === 'handleLoginEmail' ) {
+			this.props.showMagicLoginInterstitialPage();
 		}
 	}
 
 	render() {
 		const {
-			showingMagicLoginRequestForm,
+			magicLoginView,
 			translate,
 		} = this.props;
 
@@ -90,7 +101,7 @@ class Login extends React.Component {
 							}</div>
 						</div>
 						<div className="wp-login__container">
-							{ showingMagicLoginRequestForm
+							{ magicLoginView === REQUEST_FORM
 								? <RequestLoginEmailForm />
 								: <LoginBlock title={ translate( 'Sign in to WordPress.com' ) } />
 							}
@@ -107,33 +118,16 @@ class Login extends React.Component {
 
 const mapState = state => {
 	const magicLoginEnabled = isEnabled( 'magic-login' );
-	const queryArguments = getCurrentQueryArguments( state );
-
-	const {
-		action,
-		client_id: clientId,
-		email,
-		token,
-		tt: tokenTime,
-	} = queryArguments;
-
 	return {
-		handlingMagicLink: (
-			magicLoginEnabled &&
-			action === 'handleLoginEmail' &&
-			clientId &&
-			email &&
-			token &&
-			tokenTime
-		),
-		magicLoginEmailAddress: emailAddressFormInput( state ),
-		showingMagicLoginExpiredPage: magicLoginEnabled && isShowingMagicLoginExpiredPage( state ),
-		showingMagicLoginRequestForm: magicLoginEnabled && isShowingMagicLoginRequestForm( state ),
-		showingCheckYourEmailPage: magicLoginEnabled && isShowingCheckYourEmailPage( state ),
+		magicLoginEnabled,
+		magicLoginEmailAddress: getMagicLoginEmailAddressFormInput( state ),
+		magicLoginView: magicLoginEnabled ? getMagicLoginCurrentView( state ) : null,
+		queryArguments: getCurrentQueryArguments( state ),
 	};
 };
 
 const mapDispatch = {
+	showMagicLoginInterstitialPage,
 	showMagicLoginRequestForm,
 };
 

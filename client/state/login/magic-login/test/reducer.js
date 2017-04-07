@@ -32,9 +32,8 @@ import {
 
 import reducer, {
 	emailAddressFormInput,
-	emailAddressFormInputIsValid,
 	isFetchingEmail,
-	showingView,
+	currentView,
 	//requestAuthError,
 	//requestAuthSuccess,
 	requestEmailError,
@@ -45,13 +44,12 @@ describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'emailAddressFormInput',
-			'emailAddressFormInputIsValid',
 			'isFetchingEmail',
 			'requestAuthError',
 			'requestAuthSuccess',
 			'requestEmailError',
 			'requestedEmailSuccessfully',
-			'showingView',
+			'currentView',
 		] );
 	} );
 
@@ -94,45 +92,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.equal( '' );
-		} );
-	} );
-
-	describe( 'emailAddressFormInputIsValid', () => {
-		it( 'should default to false', () => {
-			const state = emailAddressFormInputIsValid( undefined, {} );
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on DESERIALIZE', () => {
-			const state = emailAddressFormInputIsValid( undefined, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on SERIALIZE', () => {
-			const state = emailAddressFormInputIsValid( undefined, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on invalid email address', () => {
-			const state = emailAddressFormInputIsValid( undefined, {
-				type: MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS,
-				email: '',
-			} );
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be true on invalid email address', () => {
-			const state = emailAddressFormInputIsValid( undefined, {
-				type: MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS,
-				email: 'claudemonet@example.com',
-			} );
-			expect( state ).to.be.true;
 		} );
 	} );
 
@@ -276,14 +235,14 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'showingView', () => {
+	describe( 'currentView', () => {
 		it( 'should default to null', () => {
-			const state = showingView( undefined, {} );
+			const state = currentView( undefined, {} );
 			expect( state ).to.be.null;
 		} );
 
 		it( 'should be null on DESERIALIZE', () => {
-			const state = showingView( undefined, {
+			const state = currentView( undefined, {
 				type: DESERIALIZE,
 			} );
 
@@ -291,7 +250,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should be null on SERIALIZE', () => {
-			const state = showingView( undefined, {
+			const state = currentView( undefined, {
 				type: SERIALIZE,
 			} );
 
@@ -299,35 +258,35 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should be check email page on show check email', () => {
-			const state = showingView( undefined, {
+			const state = currentView( undefined, {
 				type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 			} );
 			expect( state ).to.equal( CHECK_YOUR_EMAIL_PAGE );
 		} );
 
 		it( 'should be interstitial page on show interstitial', () => {
-			const state = showingView( undefined, {
+			const state = currentView( undefined, {
 				type: MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE,
 			} );
 			expect( state ).to.equal( INTERSTITIAL_PAGE );
 		} );
 
 		it( 'should be null on hide request form', () => {
-			const state = showingView( undefined, {
+			const state = currentView( undefined, {
 				type: MAGIC_LOGIN_HIDE_REQUEST_FORM,
 			} );
 			expect( state ).to.be.null;
 		} );
 
 		it( 'should be expired page on show expired', () => {
-			const state = showingView( undefined, {
+			const state = currentView( undefined, {
 				type: MAGIC_LOGIN_SHOW_LINK_EXPIRED,
 			} );
 			expect( state ).to.equal( LINK_EXPIRED_PAGE );
 		} );
 
 		it( 'should be request form on show request form', () => {
-			const state = showingView( undefined, {
+			const state = currentView( undefined, {
 				type: MAGIC_LOGIN_SHOW_REQUEST_FORM,
 			} );
 			expect( state ).to.equal( REQUEST_FORM );

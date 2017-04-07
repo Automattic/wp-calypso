@@ -8,18 +8,18 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import {
-	fetchRequestEmail,
-	hideRequestForm,
-	hideRequestNotice,
-	setInputEmailAddress,
+	fetchMagicLoginRequestEmail,
+	hideMagicLoginRequestForm,
+	hideMagicLoginRequestNotice,
+	setMagicLoginInputEmailAddress,
 } from 'state/login/magic-login/actions';
 import {
-	emailAddressFormInput,
-	emailAddressFormInputIsValid,
-	isFetchingEmail,
-	requestEmailError,
-	requestedEmailSuccessfully,
-} from 'state/login/magic-login/selectors';
+	getMagicLoginEmailAddressFormInput,
+	getMagicLoginEmailAddressFormInputIsValid,
+	isFetchingMagicLoginEmail,
+	getMagicLoginRequestEmailError,
+	getMagicLoginRequestedEmailSuccessfully,
+} from 'state/selectors';
 
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -34,13 +34,22 @@ import { localize } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 class RequestLoginEmailForm extends React.Component {
-	onEmailAddressFieldChange = event => {
-		this.props.setInputEmailAddress( event.target.value );
+	onClickEnterPasswordInstead = event => {
+		event.preventDefault();
+		this.props.hideMagicLoginRequestForm();
 	};
 
-	onSubmitBound = event => {
+	onEmailAddressFieldChange = event => {
+		this.props.setMagicLoginInputEmailAddress( event.target.value );
+	};
+
+	onNoticeDismiss = () => {
+		this.props.hideMagicLoginRequestNotice();
+	}
+
+	onSubmit = event => {
 		event.preventDefault();
-		this.props.onSubmit( this.props.emailAddress );
+		this.props.fetchMagicLoginRequestEmail( this.props.emailAddress );
 	};
 
 	render() {
@@ -49,8 +58,6 @@ class RequestLoginEmailForm extends React.Component {
 			requestError,
 			isFetching,
 			isValidEmailAddress,
-			onNoticeDismiss,
-			onClickEnterPasswordInstead,
 			emailRequested,
 			translate,
 		} = this.props;
@@ -73,10 +80,10 @@ class RequestLoginEmailForm extends React.Component {
 						text={ errorText }
 						className="magic-login__request-login-email-form-notice"
 						showDismiss={ true }
-						onDismissClick={ onNoticeDismiss }
+						onDismissClick={ this.onNoticeDismiss }
 						status="is-error" />
 				}
-				<LoggedOutForm onSubmit={ this.onSubmitBound }>
+				<LoggedOutForm onSubmit={ this.onSubmit }>
 					<p>{
 						translate( 'Get a link sent to the email address associated ' +
 							'with your account to log in instantly without your password.' )
@@ -107,7 +114,7 @@ class RequestLoginEmailForm extends React.Component {
 					</FormFieldset>
 				</LoggedOutForm>
 				<LoggedOutFormLinks>
-					<LoggedOutFormLinkItem onClick={ onClickEnterPasswordInstead }>
+					<LoggedOutFormLinkItem onClick={ this.onClickEnterPasswordInstead }>
 						{ translate( 'Enter a password instead' ) }
 					</LoggedOutFormLinkItem>
 				</LoggedOutFormLinks>
@@ -119,19 +126,19 @@ class RequestLoginEmailForm extends React.Component {
 const mapState = state => {
 	return {
 		currentUser: getCurrentUser( state ),
-		emailAddress: emailAddressFormInput( state ),
-		isFetching: isFetchingEmail( state ),
-		isValidEmailAddress: emailAddressFormInputIsValid( state ),
-		requestError: requestEmailError( state ),
-		emailRequested: requestedEmailSuccessfully( state ),
+		emailAddress: getMagicLoginEmailAddressFormInput( state ),
+		isFetching: isFetchingMagicLoginEmail( state ),
+		isValidEmailAddress: getMagicLoginEmailAddressFormInputIsValid( state ),
+		requestError: getMagicLoginRequestEmailError( state ),
+		emailRequested: getMagicLoginRequestedEmailSuccessfully( state ),
 	};
 };
 
 const mapDispatch = {
-	onClickEnterPasswordInstead: hideRequestForm,
-	onNoticeDismiss: hideRequestNotice,
-	onSubmit: emailAddress => fetchRequestEmail( emailAddress ),
-	setInputEmailAddress: emailAddress => setInputEmailAddress( emailAddress ),
+	fetchMagicLoginRequestEmail,
+	hideMagicLoginRequestForm,
+	hideMagicLoginRequestNotice,
+	setMagicLoginInputEmailAddress,
 };
 
 export default connect( mapState, mapDispatch )( localize( RequestLoginEmailForm ) );
