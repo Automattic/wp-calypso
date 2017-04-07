@@ -8,6 +8,8 @@ import { expect } from 'chai';
  */
 import {
 	isSessionEligibleForNpsSurvey,
+	isSectionEligibleForNpsSurvey,
+	isSectionAndSessionEligibleForNpsSurvey,
 	wasNpsSurveyShownThisSession,
 	isNpsSurveyNotSubmitted,
 	isNpsSurveySubmitting,
@@ -41,6 +43,94 @@ describe( 'isSessionEligibleForNpsSurvey', () => {
 			npsSurvey: {
 				isSessionEligible: false,
 			}
+		} );
+
+		expect( isEligible ).to.be.false;
+	} );
+} );
+
+describe( 'isSectionEligibleForNpsSurvey', () => {
+	it( 'should return true if the section is eligible for the NPS survey', () => {
+		const isEligible = isSectionEligibleForNpsSurvey( {
+			ui: {
+				section: {
+					name: 'stats',
+				}
+			}
+		} );
+
+		expect( isEligible ).to.be.true;
+	} );
+
+	it( 'should return false if the section is not eligible for the NPS survey', () => {
+		const isEligible = isSectionEligibleForNpsSurvey( {
+			ui: {
+				section: {
+					name: 'plans',
+				}
+			}
+		} );
+
+		expect( isEligible ).to.be.false;
+	} );
+} );
+
+describe( 'isSectionAndSessionEligibleForNpsSurvey', () => {
+	it( 'should return true if the section and session is eligible for the NPS survey', () => {
+		const isEligible = isSectionAndSessionEligibleForNpsSurvey( {
+			ui: {
+				section: {
+					name: 'stats',
+				}
+			},
+			npsSurvey: {
+				isSessionEligible: true,
+			},
+		} );
+
+		expect( isEligible ).to.be.true;
+	} );
+
+	it( 'should return false if the section is eligible but the session is not for the NPS survey', () => {
+		const isEligible = isSectionAndSessionEligibleForNpsSurvey( {
+			ui: {
+				section: {
+					name: 'stats',
+				}
+			},
+			npsSurvey: {
+				isSessionEligible: false,
+			},
+		} );
+
+		expect( isEligible ).to.be.false;
+	} );
+
+	it( 'should return false if the section is not eligible but the session is for the NPS survey', () => {
+		const isEligible = isSectionAndSessionEligibleForNpsSurvey( {
+			ui: {
+				section: {
+					name: 'upgrades',
+				}
+			},
+			npsSurvey: {
+				isSessionEligible: true,
+			},
+		} );
+
+		expect( isEligible ).to.be.false;
+	} );
+
+	it( 'should return false if the section and the session are not eligible for the NPS survey', () => {
+		const isEligible = isSectionAndSessionEligibleForNpsSurvey( {
+			ui: {
+				section: {
+					name: 'upgrades',
+				}
+			},
+			npsSurvey: {
+				isSessionEligible: false,
+			},
 		} );
 
 		expect( isEligible ).to.be.false;

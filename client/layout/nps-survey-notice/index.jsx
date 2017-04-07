@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
  */
 import Dialog from 'components/dialog';
 import NpsSurvey from 'blocks/nps-survey';
-import { getSectionName } from 'state/ui/selectors';
 import {
 	showNpsSurveyNotice,
 	setNpsSurveyDialogShowing,
@@ -23,7 +22,7 @@ import {
 import {
 	hasAnsweredNpsSurvey,
 	hasAnsweredNpsSurveyWithNoScore,
-	isSessionEligibleForNpsSurvey,
+	isSectionAndSessionEligibleForNpsSurvey,
 	wasNpsSurveyShownThisSession,
 } from 'state/nps-survey/selectors';
 
@@ -53,7 +52,7 @@ class NpsSurveyNotice extends Component {
 	}
 
 	componentDidUpdate() {
-		if ( this.props.isSessionEligible && ! this.props.wasShownThisSession ) {
+		if ( this.props.isSectionAndSessionEligible && ! this.props.wasShownThisSession ) {
 			// wait a little bit before showing the notice, so that
 			// (1) the user gets a chance to look briefly at the uncluttered screen, and
 			// (2) the user notices the notice more, since it will cause a change to the
@@ -64,7 +63,7 @@ class NpsSurveyNotice extends Component {
 
 	render() {
 		return (
-			this.props.isSessionEligible &&
+			this.props.isSectionAndSessionEligible &&
 			<Dialog
 				additionalClassNames="nps-survey-notice"
 				isVisible={ this.props.isNpsSurveyDialogShowing }
@@ -83,8 +82,7 @@ const mapStateToProps = ( state ) => {
 		isNpsSurveyDialogShowing: isNpsSurveyDialogShowing( state ),
 		hasAnswered: hasAnsweredNpsSurvey( state ),
 		hasAnsweredWithNoScore: hasAnsweredNpsSurveyWithNoScore( state ),
-		sectionName: getSectionName( state ),
-		isSessionEligible: isSessionEligibleForNpsSurvey( state ),
+		isSectionAndSessionEligible: isSectionAndSessionEligibleForNpsSurvey( state ),
 		wasShownThisSession: wasNpsSurveyShownThisSession( state ),
 	};
 };

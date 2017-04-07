@@ -12,9 +12,36 @@ import {
 	SUBMIT_FAILURE,
 	SUBMITTED,
 } from './constants';
+import { getSectionName } from 'state/ui/selectors';
+
+const SECTION_NAME_WHITELIST = [
+	'discover',
+	'menus',
+	'people',
+	'plugins',
+	'posts-pages',
+	'reader',
+	'reader-activities',
+	'reader-list',
+	'reader-recommendations',
+	'reader-tags',
+	'settings',
+	'sharing',
+	'stats',
+];
 
 export function isSessionEligibleForNpsSurvey( state ) {
 	return get( state.npsSurvey, 'isSessionEligible', false );
+}
+
+export function isSectionEligibleForNpsSurvey( state ) {
+	const sectionName = getSectionName( state );
+	return SECTION_NAME_WHITELIST.indexOf( sectionName ) > -1;
+}
+
+export function isSectionAndSessionEligibleForNpsSurvey( state ) {
+	return isSectionEligibleForNpsSurvey( state ) &&
+		isSessionEligibleForNpsSurvey( state );
 }
 
 export function wasNpsSurveyShownThisSession( state ) {
