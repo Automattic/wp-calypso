@@ -204,13 +204,13 @@
 }
 
 .reader-combined-card__post .reader-excerpt {
-	font-size: 14px;
+	font-size: 15px;
 	font-weight: 100;
 	overflow: hidden;
 	max-height: 16px * 1.4 * 1;
 	word-wrap: break-word;
 	position: relative;
-	margin-top: 5px;
+	margin-top: 4px;
 
 	&:not( .is-placeholder )::after {
 		@include long-content-fade( $size: 20% );
