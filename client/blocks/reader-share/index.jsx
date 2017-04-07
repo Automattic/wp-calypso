@@ -19,10 +19,10 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'gridicons';
 import * as stats from 'reader/stats';
 import SitesPopover from 'components/sites-popover';
+import { preload as preloadSection } from 'sections-preload';
 
 // remove me
 const sitesList = require( 'lib/sites-list' )();
-const sections = require( 'sections-preload' );
 
 const actionMap = {
 	twitter( post ) {
@@ -79,43 +79,41 @@ function buildQuerystringForPost( post ) {
 	return qs.stringify( args );
 }
 
-const ReaderShare = React.createClass( {
+class ReaderShare extends React.Component {
 
-	propTypes: {
+	static propTypes = {
 		iconSize: React.PropTypes.number
-	},
+	}
 
-	getInitialState() {
-		return { showingMenu: false };
-	},
+	static defaultProps = {
+		position: 'top',
+		tagName: 'li',
+		iconSize: 24
+	}
 
-	getDefaultProps() {
-		return {
-			position: 'top',
-			tagName: 'li',
-			iconSize: 24
-		};
-	},
+	state = {
+		showingMenu: false,
+	};
 
 	componentWillUnmount() {
-		if ( this._closeHandle ) {
-			clearTimeout( this._closeHandle );
-			this._closeHandle = null;
+		if ( this.closeHandle ) {
+			clearTimeout( this.closeHandle );
+			this.closeHandle = null;
 		}
-	},
+	}
 
-	_deferMenuChange( showing ) {
-		if ( this._closeHandle ) {
-			clearTimeout( this._closeHandle );
+	deferMenuChange( showing ) {
+		if ( this.closeHandle ) {
+			clearTimeout( this.closeHandle );
 		}
 
-		this._closeHandle = defer( () => {
-			this._closeHandle = null;
+		this.closeHandle = defer( () => {
+			this.closeHandle = null;
 			this.setState( { showingMenu: showing } );
 		} );
-	},
+	}
 
-	toggle( event ) {
+	toggle = ( event ) => {
 		event.preventDefault();
 		if ( ! this.state.showingMenu ) {
 			const target = !! sitesList.getPrimary() ? 'wordpress' : 'external';
@@ -125,17 +123,17 @@ const ReaderShare = React.createClass( {
 				target
 			} );
 		}
-		this._deferMenuChange( ! this.state.showingMenu );
-	},
+		this.deferMenuChange( ! this.state.showingMenu );
+	}
 
-	closeMenu() {
+	closeMenu = () => {
 		// have to defer this to let the mouseup / click escape.
 		// If we don't defer and remove the DOM node on this turn of the event loop,
 		// Chrome (at least) will not fire the click
 		if ( this.isMounted() ) {
-			this._deferMenuChange( false );
+			this.deferMenuChange( false );
 		}
-	},
+	}
 
 	pickSiteToShareTo( slug ) {
 		stats.recordAction( 'share_wordpress' );
@@ -143,7 +141,7 @@ const ReaderShare = React.createClass( {
 		stats.recordTrack( 'calypso_reader_share_to_site' );
 		page( `/post/${ slug }?` + buildQuerystringForPost( this.props.post ) );
 		return true;
-	},
+	}
 
 	closeExternalShareMenu( action ) {
 		this.closeMenu();
@@ -156,11 +154,11 @@ const ReaderShare = React.createClass( {
 			} );
 			actionFunc( this.props.post );
 		}
-	},
+	}
 
 	preloadEditor() {
-		sections.preload( 'post-editor' );
-	},
+		preloadSection( 'post-editor' );
+	}
 
 	render() {
 		const canShareToWordpress = !! sitesList.getPrimary(),
@@ -209,7 +207,6 @@ const ReaderShare = React.createClass( {
 			]
 		);
 	}
-
-} );
+}
 
 export default localize( ReaderShare );
