@@ -410,7 +410,6 @@ export const SeoForm = React.createClass( {
 		const isVerificationDisabled = isDisabled || isVerificationToolsActive === false;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
-		const sitemapUrl = `${ siteUrl }/sitemap.xml`;
 		const generalTabUrl = getGeneralTabUrl( slug );
 		const jetpackUpdateUrl = getJetpackPluginUrl( slug );
 		const placeholderTagContent = '1234';
@@ -711,20 +710,6 @@ export const SeoForm = React.createClass( {
 								placeholder={ getMetaTag( 'yandex', placeholderTagContent ) }
 								onChange={ this.changeYandexCode } />
 							{ hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
-						</FormFieldset>
-						<FormFieldset>
-							<FormLabel htmlFor="seo_sitemap">{ translate( 'XML Sitemap' ) }</FormLabel>
-							<ExternalLink
-								className="seo-settings__seo-sitemap"
-								icon={ true }
-								href={ sitemapUrl }
-								target="_blank"
-							>
-								{ sitemapUrl }
-							</ExternalLink>
-							<FormSettingExplanation>
-								{ translate( 'Your site\'s sitemap is automatically sent to all major search engines for indexing.' ) }
-							</FormSettingExplanation>
 						</FormFieldset>
 					</Card>
 				</form>
