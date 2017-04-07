@@ -9,7 +9,12 @@ import { connect } from 'react-redux';
  */
 import Dialog from 'components/dialog';
 import NpsSurvey from 'blocks/nps-survey';
-import { showNpsSurveyNoticeIfEligible, setNpsSurveyDialogShowing } from 'state/ui/nps-survey-notice/actions';
+import { getSectionName } from 'state/ui/selectors';
+import {
+	showNpsSurveyNoticeIfEligible,
+	setNpsSurveyDialogShowing,
+	setupNpsSurveyDevTrigger,
+} from 'state/ui/nps-survey-notice/actions';
 import { isNpsSurveyDialogShowing } from 'state/ui/nps-survey-notice/selectors';
 import { submitNpsSurveyWithNoScore } from 'state/nps-survey/actions';
 import {
@@ -38,6 +43,8 @@ class NpsSurveyNotice extends Component {
 	}
 
 	componentDidMount() {
+		this.props.setupNpsSurveyDevTrigger();
+
 		// wait a little bit before showing the notice, so that
 		// (1) the user gets a chance to look briefly at the uncluttered screen, and
 		// (2) the user notices the notice more, since it will cause a change to the
@@ -65,10 +72,16 @@ const mapStateToProps = ( state ) => {
 		isNpsSurveyDialogShowing: isNpsSurveyDialogShowing( state ),
 		hasAnswered: hasAnsweredNpsSurvey( state ),
 		hasAnsweredWithNoScore: hasAnsweredNpsSurveyWithNoScore( state ),
+		sectionName: getSectionName( state ),
 	};
 };
 
 export default connect(
 	mapStateToProps,
-	{ showNpsSurveyNoticeIfEligible, setNpsSurveyDialogShowing, submitNpsSurveyWithNoScore }
+	{
+		showNpsSurveyNoticeIfEligible,
+		setNpsSurveyDialogShowing,
+		submitNpsSurveyWithNoScore,
+		setupNpsSurveyDevTrigger,
+	}
 )( NpsSurveyNotice );
