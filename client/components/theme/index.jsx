@@ -142,7 +142,6 @@ const Theme = React.createClass( {
 			return this.renderPlaceholder();
 		}
 
-		const screenshotWidth = typeof window !== 'undefined' && window.devicePixelRatio > 1 ? 680 : 340;
 		return (
 			<Card className={ themeClass }>
 				<div className="theme__content">
@@ -153,7 +152,11 @@ const Theme = React.createClass( {
 						{ this.renderInstalling() }
 						{ screenshot
 							? <img className="theme__img"
-								src={ screenshot + '?w=' + screenshotWidth }
+								src={ screenshot + '?w=340' }
+								srcSet={
+									screenshot + '?w=340 1x, ' +
+									screenshot + '?w=680 2x'
+								}
 								onClick={ this.onScreenshotClick }
 								id={ screenshotID } />
 							: <div className="theme__no-screenshot" >
