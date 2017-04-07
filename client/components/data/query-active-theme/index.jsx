@@ -12,7 +12,7 @@ import { isRequestingActiveTheme } from 'state/themes/selectors';
 
 class QueryActiveTheme extends Component {
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
+		siteId: PropTypes.number,
 		// Connected props
 		isRequesting: PropTypes.bool.isRequired,
 		requestActiveTheme: PropTypes.func.isRequired,
@@ -30,7 +30,7 @@ class QueryActiveTheme extends Component {
 	}
 
 	request( props ) {
-		if ( ! props.isRequesting ) {
+		if ( props.siteId && ! props.isRequesting ) {
 			props.requestActiveTheme( props.siteId );
 		}
 	}
