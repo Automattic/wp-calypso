@@ -105,9 +105,9 @@ export class DateTimeFormat extends Component {
 
 		return (
 			<div>
-				<h2 className="date-time-format__title">
+				<div className="date-time-format__title">
 					{ translate( 'Date and Time Format' ) }
-				</h2>
+				</div>
 				<div className="date-time-format__info">
 					{
 						dateFormat &&
