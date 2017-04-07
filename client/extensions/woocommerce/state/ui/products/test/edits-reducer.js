@@ -11,6 +11,8 @@ import reducer from '../edits-reducer';
 import {
 	editExistingProduct,
 	editNewProduct,
+	editExistingProductVariationType,
+	editNewProductVariationType,
 } from '../actions';
 
 describe( 'edits-reducer', () => {
@@ -98,5 +100,124 @@ describe( 'edits-reducer', () => {
 
 		expect( edits2.creates[ 0 ].name ).to.eql( 'First product' );
 		expect( edits2.creates[ 1 ].name ).to.eql( 'Second product' );
+	} );
+
+	it( 'should create new product in "creates" when editing variation type the first time', () => {
+		const edits = reducer( undefined, editNewProductVariationType( null, null, null, {
+			name: 'New Variation Type',
+		} ) );
+
+		expect( edits ).to.not.equal( null );
+		expect( edits.creates ).to.exist;
+		expect( edits.creates[ 0 ].attributes ).to.exist;
+		expect( edits.creates[ 0 ].attributes[ 0 ].name ).to.eql( 'New Variation Type' );
+		expect( edits.creates[ 0 ].attributes[ 0 ].variation ).to.be.true;
+		expect( edits.creates[ 0 ].attributes[ 0 ].options ).to.eql( [] );
+	} );
+
+	it( 'should modify product in "creates" when editing variation type a second time', () => {
+		const edits1 = reducer( undefined, editNewProductVariationType( null, null, null, {
+			name: 'Edited once',
+		} ) );
+
+		const edits2 = reducer( edits1, editNewProductVariationType( 0, edits1.creates[ 0 ], 0, {
+			name: 'Edited twice',
+		} ) );
+
+		expect( edits2.creates[ 0 ].attributes[ 0 ].name ).to.eql( 'Edited twice' );
+		expect( edits2.creates[ 0 ].attributes[ 0 ].variation ).to.be.true;
+		expect( edits2.creates[ 0 ].attributes[ 0 ].options ).to.eql( [] );
+	} );
+
+	it( 'should create more than one variation type for a newly created product', () => {
+		const edits1 = reducer( undefined, editNewProductVariationType( null, null, null, {
+			name: 'Variation Type One',
+		} ) );
+
+		expect( edits1.creates[ 0 ].attributes[ 0 ].name ).to.eql( 'Variation Type One' );
+		expect( edits1.creates[ 0 ].attributes[ 0 ].variation ).to.be.true;
+		expect( edits1.creates[ 0 ].attributes[ 0 ].options ).to.eql( [] );
+
+		const edits2 = reducer( edits1, editNewProductVariationType( 0, edits1.creates[ 0 ], null, {
+			name: 'Variation Type Two',
+		} ) );
+
+		expect( edits2.creates[ 0 ].attributes[ 1 ].name ).to.eql( 'Variation Type Two' );
+		expect( edits2.creates[ 0 ].attributes[ 1 ].variation ).to.be.true;
+		expect( edits2.creates[ 0 ].attributes[ 1 ].options ).to.eql( [] );
+	} );
+
+	it( 'should add product to "updates" when editing variation type the first time', () => {
+		const product = {
+			id: 1,
+		};
+		const edits = reducer( undefined, editExistingProductVariationType( product, null, {
+			name: 'New Variation Type',
+		} ) );
+
+		expect( edits ).to.not.equal( null );
+		expect( edits.updates ).to.exist;
+		expect( edits.updates[ 0 ].attributes ).to.exist;
+		expect( edits.updates[ 0 ].attributes[ 0 ].name ).to.eql( 'New Variation Type' );
+		expect( edits.updates[ 0 ].attributes[ 0 ].variation ).to.be.true;
+		expect( edits.updates[ 0 ].attributes[ 0 ].options ).to.eql( [] );
+	} );
+
+	it( 'should modify product in "updates" when editing variation type a second time', () => {
+		const product = {
+			id: 1,
+		};
+		const edits1 = reducer( undefined, editExistingProductVariationType( product, null, {
+			name: 'Edited once',
+		} ) );
+
+		const edits2 = reducer( edits1, editExistingProductVariationType( edits1.updates[ 0 ], 0, {
+			name: 'Edited twice',
+		} ) );
+
+		expect( edits2.updates[ 0 ].attributes[ 0 ].name ).to.eql( 'Edited twice' );
+		expect( edits2.updates[ 0 ].attributes[ 0 ].variation ).to.be.true;
+		expect( edits2.updates[ 0 ].attributes[ 0 ].options ).to.eql( [] );
+	} );
+
+	it( 'should create more than one variation type for an existing product', () => {
+		const product = {
+			id: 1,
+		};
+		const edits1 = reducer( undefined, editExistingProductVariationType( product, null, {
+			name: 'Variation Type One',
+		} ) );
+
+		expect( edits1.updates[ 0 ].attributes[ 0 ].name ).to.eql( 'Variation Type One' );
+		expect( edits1.updates[ 0 ].attributes[ 0 ].variation ).to.be.true;
+		expect( edits1.updates[ 0 ].attributes[ 0 ].options ).to.eql( [] );
+
+		const edits2 = reducer( edits1, editExistingProductVariationType( edits1.updates[ 0 ], null, {
+			name: 'Variation Type Two',
+		} ) );
+
+		expect( edits2.updates[ 0 ].attributes[ 1 ].name ).to.eql( 'Variation Type Two' );
+		expect( edits2.updates[ 0 ].attributes[ 1 ].variation ).to.be.true;
+		expect( edits2.updates[ 0 ].attributes[ 1 ].options ).to.eql( [] );
+	} );
+
+	it( 'should not edit a non-variation attribute as a variation type', () => {
+		const product = {
+			attributes: [
+				{ name: 'Not a variation', variation: false },
+			],
+		};
+
+		const state = {
+			creates: [
+				product
+			]
+		};
+
+		const edits = reducer( state, editNewProductVariationType( 0, product, 0, {
+			name: 'Attempted variation overwrite',
+		} ) );
+
+		expect( edits.creates[ 0 ].attributes[ 0 ].name ).to.eql( 'Not a variation' );
 	} );
 } );

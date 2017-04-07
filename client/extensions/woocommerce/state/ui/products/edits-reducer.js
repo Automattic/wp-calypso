@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { isNumber } from 'lodash';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -9,7 +10,11 @@ import { isNumber } from 'lodash';
 import {
 	WOOCOMMERCE_EDIT_EXISTING_PRODUCT,
 	WOOCOMMERCE_EDIT_NEW_PRODUCT,
+	WOOCOMMERCE_EDIT_EXISTING_PRODUCT_VARIATION_TYPE,
+	WOOCOMMERCE_EDIT_NEW_PRODUCT_VARIATION_TYPE,
 } from '../../action-types';
+
+const debug = debugFactory( 'woocommerce:state:ui:products' );
 
 const initialState = null;
 
@@ -17,6 +22,8 @@ export default function( state = initialState, action ) {
 	const handlers = {
 		[ WOOCOMMERCE_EDIT_EXISTING_PRODUCT ]: editExistingProductAction,
 		[ WOOCOMMERCE_EDIT_NEW_PRODUCT ]: editNewProductAction,
+		[ WOOCOMMERCE_EDIT_EXISTING_PRODUCT_VARIATION_TYPE ]: editExistingProductVariationTypeAction,
+		[ WOOCOMMERCE_EDIT_NEW_PRODUCT_VARIATION_TYPE ]: editNewProductVariationTypeAction,
 	};
 
 	const handler = handlers[ action.type ];
@@ -37,6 +44,28 @@ function editNewProductAction( edits, action ) {
 
 	const prevEdits = edits || {};
 	const creates = editNewProduct( prevEdits.creates, newProductIndex, data );
+	return { ...prevEdits, creates };
+}
+
+function editExistingProductVariationTypeAction( edits, action ) {
+	const { product, attributeIndex, data } = action.payload;
+	const attributes = product && product.attributes;
+
+	const _attributes = editProductVariationType( attributes, attributeIndex, data );
+
+	const prevEdits = edits || {};
+	const updates = editExistingProduct( prevEdits.updates, product, { attributes: _attributes } );
+	return { ...prevEdits, updates };
+}
+
+function editNewProductVariationTypeAction( edits, action ) {
+	const { newProductIndex, product, attributeIndex, data } = action.payload;
+	const attributes = product && product.attributes;
+
+	const _attributes = editProductVariationType( attributes, attributeIndex, data );
+
+	const prevEdits = edits || {};
+	const creates = editNewProduct( prevEdits.creates, newProductIndex, { attributes: _attributes } );
 	return { ...prevEdits, creates };
 }
 
@@ -71,4 +100,20 @@ function editNewProduct( creates, newProductIndex, data ) {
 	_creates[ index ] = { ...prevCreate, ...data };
 
 	return _creates;
+}
+
+function editProductVariationType( attributes, attributeIndex, data ) {
+	const prevAttributes = attributes || [];
+	const index = ( isNumber( attributeIndex ) ? attributeIndex : prevAttributes.length );
+
+	const _attributes = [ ...prevAttributes ];
+	const prevAttribute = prevAttributes[ index ] || { variation: true, options: [] };
+
+	if ( prevAttribute.variation ) {
+		_attributes[ index ] = { ...prevAttribute, ...data };
+	} else {
+		debug( 'WARNING: Attempting to edit a non-variation attribute as a variation type.' );
+	}
+
+	return _attributes;
 }
