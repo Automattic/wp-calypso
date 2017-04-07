@@ -65,14 +65,14 @@ class JetpackModuleToggle extends Component {
 					disabled={ this.props.disabled || this.props.toggleDisabled }
 				>
 					{ this.props.label }
-					{
-						this.props.description && (
-							<FormSettingExplanation>
-								{ this.props.description }
-							</FormSettingExplanation>
-						)
-					}
 				</CompactFormToggle>
+				{
+					this.props.description && (
+						<FormSettingExplanation isIndented>
+							{ this.props.description }
+						</FormSettingExplanation>
+					)
+				}
 			</span>
 		);
 	}

@@ -191,10 +191,10 @@ class SiteSettingsFormGeneral extends Component {
 						disabled={ isRequestingSettings }
 						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) } />
 					<span>{ translate( 'Public' ) }</span>
-					<FormSettingExplanation isIndented>
-						{ translate( 'Your site is visible to everyone, and it may be indexed by search engines.' ) }
-					</FormSettingExplanation>
 				</FormLabel>
+				<FormSettingExplanation isIndented>
+					{ translate( 'Your site is visible to everyone, and it may be indexed by search engines.' ) }
+				</FormSettingExplanation>
 
 				<FormLabel>
 					<FormRadio
@@ -205,25 +205,27 @@ class SiteSettingsFormGeneral extends Component {
 						disabled={ isRequestingSettings }
 						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) } />
 					<span>{ translate( 'Hidden' ) }</span>
-					<FormSettingExplanation isIndented>
-						{ translate( 'Your site is visible to everyone, but we ask search engines to not index your site.' ) }
-					</FormSettingExplanation>
 				</FormLabel>
+				<FormSettingExplanation isIndented>
+					{ translate( 'Your site is visible to everyone, but we ask search engines to not index your site.' ) }
+				</FormSettingExplanation>
 
 				{ ! site.jetpack &&
-					<FormLabel>
-						<FormRadio
-							name="blog_public"
-							value="-1"
-							checked={ -1 === parseInt( fields.blog_public, 10 ) }
-							onChange={ handleRadio }
-							disabled={ isRequestingSettings }
-							onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) } />
-						<span>{ translate( 'Private' ) }</span>
+					<div>
+						<FormLabel>
+							<FormRadio
+								name="blog_public"
+								value="-1"
+								checked={ -1 === parseInt( fields.blog_public, 10 ) }
+								onChange={ handleRadio }
+								disabled={ isRequestingSettings }
+								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) } />
+							<span>{ translate( 'Private' ) }</span>
+						</FormLabel>
 						<FormSettingExplanation isIndented>
 							{ translate( 'Your site is only visible to you and users you approve.' ) }
 						</FormSettingExplanation>
-					</FormLabel>
+					</div>
 				}
 
 			</FormFieldset>
@@ -263,7 +265,7 @@ class SiteSettingsFormGeneral extends Component {
 									'Allow synchronization of Posts and Pages with non-public post statuses'
 								) }
 							</CompactFormToggle>
-							<FormSettingExplanation>
+							<FormSettingExplanation isIndented>
 								{ translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }
 							</FormSettingExplanation>
 						</li>

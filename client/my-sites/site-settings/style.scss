@@ -84,9 +84,14 @@
 		font-style: italic;
 		font-weight: 400;
 		color: $gray-text-min;
+
 		&.is-indented {
 			margin-left: 24px;
 		}
+	}
+
+	.form-toggle__wrapper + p.form-setting-explanation.is-indented {
+		margin-left: 36px;
 	}
 
 	p.settings-alert {
