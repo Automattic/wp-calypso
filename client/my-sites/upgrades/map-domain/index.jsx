@@ -40,11 +40,11 @@ export const MapDomain = React.createClass( {
 	},
 
 	componentWillMount: function() {
-		this.redirectAwayIfNotUpgradeable( this.props.selectedSiteIsUpgreadable );
+		this.redirectAwayIfNotUpgradeable( this.props.selectedSiteIsUpgradeable );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		this.redirectAwayIfNotUpgradeable( nextProps.selectedSiteIsUpgreadable );
+		this.redirectAwayIfNotUpgradeable( nextProps.selectedSiteIsUpgradeable );
 	},
 
 	redirectAwayIfNotUpgradeable: function( isUpgradeable ) {
@@ -126,7 +126,7 @@ export default connect( state => (
 		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 		noSelectedSite: ! getRawSite( state, getSelectedSiteId( state ) ),
 		selectedSiteId: getSelectedSiteId( state ),
-		selectedSiteIsUpgreadable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
+		selectedSiteIsUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
 		selectedSiteIsVip: isSiteVip( state, getSelectedSiteId( state ) ),
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	}
