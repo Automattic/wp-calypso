@@ -1,14 +1,14 @@
 Reader Connect Site
 =======
 This is a HoC that takes in a component and wraps it with one that knows how to fetch sites and feeds.
-The output component expects to be handed either a feedId or a blogId.  It will only initiate network requests if the feed/site is not already part of the state tree.
+The output component expects to be handed either a feedId or a siteId.  It will only initiate network requests if the feed/site is not already part of the state tree.
 
 ## Example
 
 ```js
 import connectSite from 'lib/reader-connect-site';
 
-const SiteInfo = => {
+const SiteInfo = () => {
 	if ( ! this.props.site ) {
 		return null;
 	}
