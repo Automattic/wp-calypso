@@ -9,7 +9,7 @@ import React, { PureComponent } from 'react';
 import ReaderSubscriptionListItem from '../';
 import Card from 'components/card';
 import { getCurrentUser } from 'state/current-user/selectors';
-import feedSiteFluxAdapter from 'lib/reader-post-flux-adapter';
+import connectSite from 'lib/reader-connect-site';
 import { localize } from 'i18n-calypso';
 
 
@@ -21,7 +21,7 @@ const items = [
 	{ feedId: 19850964 },
 ];
 
-const ConnectedListItem = localize( feedSiteFluxAdapter(
+const ConnectedListItem = localize( connectSite(
 	( { feed, site, translate, url, feedId, siteId } ) => (
 		<ReaderSubscriptionListItem
 			siteUrl={ url }
