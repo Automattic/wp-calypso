@@ -15,7 +15,7 @@ You can try out the user-side of Calypso on [WordPress.com](https://wordpress.co
 1.	Make sure you have `git`, `node`, and `npm` installed.
 2.	Clone this repository locally.
 3.	Add `127.0.0.1 calypso.localhost` to your local `hosts` file.
-4.	Execute `make run` or `make dashboard` (for a more visually-oriented interface) from the root directory of the repository.
+4.	Execute `npm start` or `npm run dashboard` (for a more visually-oriented interface) from the root directory of the repository.
 5.	Open [`calypso.localhost:3000`](http://calypso.localhost:3000/) in your browser.
 
 Need more detailed installation instructions? [We have them](docs/install.md).

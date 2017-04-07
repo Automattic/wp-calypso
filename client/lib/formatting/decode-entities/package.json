@@ -3,8 +3,5 @@
   "version": "1.0.0",
   "description": "Decode HTML entities",
   "main": "node.js",
-  "scripts": {
-    "test": "cd .. && make test"
-  },
   "browser": "./browser.js"
 }

@@ -92,7 +92,7 @@ Calypso already provides helpers for many common solutions. Please, use them! We
 
 ## Sass Guidelines
 
-Currently, all component based Sass files are imported in `assets/stylesheets/_components`. They are compiled as part of `make build` into a single file together with the other general purpose stylesheets: `public/style.css`. Remember that all styles end up in a single file, so **all styles will apply to every page, all the time**. Make sure you namespace your styles for the page you are working on.
+Currently, all component based Sass files are imported in `assets/stylesheets/_components`. They are compiled as part of `npm run build-css` into a single file together with the other general purpose stylesheets: `public/style.css`. Remember that all styles end up in a single file, so **all styles will apply to every page, all the time**. Make sure you namespace your styles for the page you are working on.
 Under the hood, we are using `node-sass` to handle the compiling of Sass, which is working on parity with the reference ruby implementation.
 
 The structure of files will be changing as we move remaining section-specific code to their relevant components. In the end, the only Sass files living in a general assets folder would be style-guide related.
@@ -142,7 +142,7 @@ Good:
 }
 ```
 
-The value passed to this mixin is actually a string rather than a pixel value. Accepted values are: `"<X"`, `">X"`, or `"X-Y"` — where `X` and `Y` are valid breakpoints, for example `480px`. If you provide any other value to the mixin it will fail and give you a warning in the output from `make run`.
+The value passed to this mixin is actually a string rather than a pixel value. Accepted values are: `"<X"`, `">X"`, or `"X-Y"` — where `X` and `Y` are valid breakpoints, for example `480px`. If you provide any other value to the mixin it will fail and give you a warning in the output from `npm start`.
 
 Adding additional breakpoints should not be undertaken lightly.
 
@@ -205,7 +205,7 @@ Add as much comments as needed to your Sass file, especially around clever code.
 
 ## Right-To-Left (RTL)
 
-We're using [RTLCSS](https://github.com/MohammadYounes/rtlcss) to convert `public/style.css` to rtl. This happens automatically during `make build`.
+We're using [RTLCSS](https://github.com/MohammadYounes/rtlcss) to convert `public/style.css` to rtl. This happens automatically during `npm run build-css`.
 
 - If your css code refers to a filename with ‘left’ or ‘right’ in it, for example background: `url(arrow-left.png)`: the RTL version will reference a different file, e.g. `background: url(arrow-right.png)`. Please make sure that file exists.
 - Same goes for ‘ltr’ and ‘rtl’ in it, for example background: url(icons-ltr.png): the RTL version will link to the other direction, e.g `background: url(icons-ltr.png)`. Please make sure that file exists.

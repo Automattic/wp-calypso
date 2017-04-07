@@ -30,7 +30,7 @@ function setup() {
 	if ( 'development' === config( 'env' ) ) {
 		// use legacy CSS rebuild system if css-hot-reload is disabled
 		if ( ! config.isEnabled( 'css-hot-reload' ) ) {
-			// only do `make build` upon every request in "development"
+			// only do `build` upon every request in "development"
 			app.use( build() );
 		}
 
