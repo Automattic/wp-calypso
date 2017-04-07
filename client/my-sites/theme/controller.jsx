@@ -52,7 +52,7 @@ export function fetchThemeDetailsData( context, next ) {
 				context.renderCacheKey = 'theme not found';
 				const err = {
 					status: 404,
-					error: 'Theme Not Found',
+					message: 'Theme Not Found',
 					themeSlug
 				};
 				return next( err );

@@ -82,7 +82,7 @@ function details( context, next ) ) {
   if ( ! theme ) {
     const err = {
       status: 404,
-      error: 'Theme Not Found',
+      message: 'Theme Not Found',
       context.params.slug
     };
     return next( err );
