@@ -47,14 +47,16 @@ const SecurePaymentForm = React.createClass( {
 
 	getInitialState() {
 		return {
+			previousCart: null,
 			userSelectedPaymentBox: null,
-			visiblePaymentBox: this.getVisiblePaymentBox( this.props.cart, this.props.userLocale ),
-			previousCart: null
+			visiblePaymentBox: this.getVisiblePaymentBox(
+				this.props.cart, this.props.userLocale, this.props.userCountryCode
+			)
 		};
 	},
 
-	getVisiblePaymentBox( cart, locale = 'en' ) {
-		const preferredPaymentMethods = this.getLocalizedPaymentMethodDefaults( locale );
+	getVisiblePaymentBox( cart, locale, countryCode ) {
+		const preferredPaymentMethods = this.getLocalizedPaymentMethodDefaults( locale, countryCode );
 
 		if ( isPaidForFullyInCredits( cart ) ) {
 			return 'credits';
@@ -64,22 +66,24 @@ const SecurePaymentForm = React.createClass( {
 			return 'free-trial';
 		} else if ( this.state && this.state.userSelectedPaymentBox ) {
 			return this.state.userSelectedPaymentBox;
-		} else if ( cartValues.isPaymentMethodEnabled( cart, preferredPaymentMethods[ 0 ] ) ) {
-			return preferredPaymentMethods[ 0 ];
-		} else if ( cartValues.isPaymentMethodEnabled( cart, preferredPaymentMethods[ 1 ] ) ) {
-			return preferredPaymentMethods[ 1 ];
+		} else if ( cartValues.isPaymentMethodEnabled( cart, preferredPaymentMethods.primary ) ) {
+			return preferredPaymentMethods.primary;
+		} else if ( cartValues.isPaymentMethodEnabled( cart, preferredPaymentMethods.secondary ) ) {
+			return preferredPaymentMethods.secondary;
 		}
 
 		return null;
 	},
 
-	getLocalizedPaymentMethodDefaults( locale ) {
+	getLocalizedPaymentMethodDefaults( locale, countryCode ) {
+		const default_payment_methods = { primary: 'credit-card', secondary: 'paypal' };
 		const defaults = {
-			de: [ 'paypal', 'credit-card' ],
-			en: [ 'credit-card', 'paypal' ]
+			de: { primary: 'paypal', secondary: 'credit-card' },
+			en_US: default_payment_methods,
 		};
+		const generated_locale = locale + '_' + countryCode;
 
-		return defaults[ locale ] || [ 'credit-card', 'paypal' ];
+		return defaults[ generated_locale ] || defaults[ locale ] || default_payment_methods;
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -88,7 +92,9 @@ const SecurePaymentForm = React.createClass( {
 		}
 
 		this.setState( {
-			visiblePaymentBox: this.getVisiblePaymentBox( nextProps.cart, nextProps.userLocale )
+			visiblePaymentBox: this.getVisiblePaymentBox(
+				nextProps.cart, nextProps.userLocale, nextProps.userCountryCode
+			)
 		} );
 	},
 
