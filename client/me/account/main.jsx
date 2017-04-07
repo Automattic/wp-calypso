@@ -4,7 +4,7 @@
 import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import i18n, { localize } from 'i18n-calypso';
-import Debug from 'debug';
+import debugFactory from 'debug';
 import emailValidator from 'email-validator';
 import {
 	debounce,
@@ -55,7 +55,7 @@ const user = _user();
 /**
  * Debug instance
  */
-const debug = new Debug( 'calypso:me:account' );
+const debug = debugFactory( 'calypso:me:account' );
 
 const Account = React.createClass( {
 
