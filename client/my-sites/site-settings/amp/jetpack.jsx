@@ -12,10 +12,11 @@ import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getPluginOnSite } from 'state/plugins/installed/selectors';
+import { isRequesting, getPluginOnSite } from 'state/plugins/installed/selectors';
 
 const AmpJetpack = ( {
 	ampPluginInstalled,
+	requestingPlugins,
 	site,
 	siteId,
 	siteSlug,
@@ -49,9 +50,12 @@ const AmpJetpack = ( {
 				</p>
 			</CompactCard>
 
-			<CompactCard href={ linkUrl }>
-				{ linkText }
-			</CompactCard>
+			{
+				! requestingPlugins &&
+				<CompactCard href={ linkUrl }>
+					{ linkText }
+				</CompactCard>
+			}
 		</div>
 	);
 };
@@ -59,11 +63,13 @@ const AmpJetpack = ( {
 export default connect(
 	( state ) => {
 		const site = getSelectedSite( state );
+		const siteId = getSelectedSiteId( state );
 
 		return {
 			site,
-			siteId: getSelectedSiteId( state ),
+			siteId,
 			ampPluginInstalled: getPluginOnSite( state, site, 'amp' ),
+			requestingPlugins: isRequesting( state, siteId ),
 			siteSlug: getSelectedSiteSlug( state ),
 		};
 	}
