@@ -62,6 +62,7 @@ import PostLikes from 'blocks/post-likes/docs/example';
 import ReaderFeaturedVideo from 'blocks/reader-featured-video/docs/example';
 import NpsSurvey from 'blocks/nps-survey/docs/example';
 import ReaderExportButton from 'blocks/reader-export-button/docs/example';
+import ReaderImportButton from 'blocks/reader-import-button/docs/example';
 import SharingPreviewPane from 'blocks/sharing-preview-pane/docs/example';
 
 export default React.createClass( {
@@ -144,6 +145,7 @@ export default React.createClass( {
 					<ReaderFeaturedVideo />
 					{ isEnabled( 'nps-survey/devdocs' ) && <NpsSurvey /> }
 					<ReaderExportButton />
+					<ReaderImportButton />
 					<SharingPreviewPane />
 				</Collection>
 			</Main>
