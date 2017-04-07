@@ -92,7 +92,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			.reader-post-card__post-details {
 				flex: 0 auto; // IE11 Photo card actions hidden
 				margin: 0;
-				padding-top: 11px;
+				padding-top: 8px;
 			}
 
 			.reader-post-card__title {
@@ -107,7 +107,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 				text-overflow: ellipsis;
 				overflow: hidden;
 				z-index: z-index( 'root', '.reader-post-card__title' );
-				margin-bottom: -16px; // relative elements need a negative margin so they don't create bottom padding
+				margin-bottom: -15px; // relative elements need a negative margin so they don't create bottom padding
 				height: 19px;
 			}
 
@@ -160,7 +160,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	&.is-photo {
 
 		.reader-post-card__post {
-			margin-top: 17px;
+			margin-top: 16px;
 		}
 	}
 
