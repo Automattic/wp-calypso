@@ -98,7 +98,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			.reader-post-card__title {
 				color: $white;
 				font-family: $sans;
-				font-size: 10px;
 				position: relative;
 					bottom: 30px;
 					left: 20px;
@@ -109,11 +108,12 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 				overflow: hidden;
 				z-index: z-index( 'root', '.reader-post-card__title' );
 				margin-bottom: -15px; // relative elements need a negative margin so they don't create bottom padding
-				height: 15px;
+				height: 18px;
 			}
 
 			.reader-post-card__title .reader-post-card__title-link {
 				color: $white;
+				display: inline;
 				font-size: 12px;
 				letter-spacing: 0.01em;
 			}
