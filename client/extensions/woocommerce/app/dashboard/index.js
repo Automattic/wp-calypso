@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import Main from 'components/main';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
+import MyCoolComponent from '../stats/my-cool-component';
 
 export default class Dashboard extends Component {
 
@@ -19,6 +20,9 @@ export default class Dashboard extends Component {
 				<Card>
 					<p>This is the start of something great!</p>
 					<p>This will be the home for your WooCommerce Store integration with WordPress.com.</p>
+				</Card>
+				<Card>
+					<MyCoolComponent/>
 				</Card>
 			</Main>
 		);
