@@ -35,8 +35,8 @@ const loadTrackingTool = ( trackingTool, state ) => {
 
 const statBump = ( { group, name } ) => analytics.mc.bumpStat( group, name );
 
-export const dispatcher = ( { meta: { analytics } }, state ) => {
-	analytics.forEach( ( { type, payload } ) => {
+export const dispatcher = ( { meta: { analytics: analyticsMeta } }, state ) => {
+	analyticsMeta.forEach( ( { type, payload } ) => {
 		const { service = 'default' } = payload;
 
 		switch ( type ) {
