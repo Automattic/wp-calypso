@@ -52,7 +52,7 @@ class CurrentTheme extends Component {
 
 		return (
 			<Card className="current-theme">
-				{ siteId && <QueryActiveTheme siteId={ siteId } /> }
+				<QueryActiveTheme siteId={ siteId } />
 				{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 				<div className="current-theme__current">
 					{ showScreenshotPlaceholder && <div className="current-theme__img-placeholder" /> }
