@@ -85,7 +85,8 @@ describe( 'reducer', () => {
 			'themesUI',
 			'uploadTheme',
 			'themePreviewOptions',
-			'themePreviewVisibility'
+			'themePreviewVisibility',
+			'themeFilters',
 		] );
 	} );
 
