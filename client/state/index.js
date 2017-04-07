@@ -126,6 +126,14 @@ const reducers = {
 
 export const reducer = combineReducers( reducers );
 
+/**
+ * @typedef {Object} ReduxStore
+ * @property {!Function} dispatch dispatches actions
+ * @property {!Function} getState returns the current state tree
+ * @property {Function} replaceReducers replaces the state reducers
+ * @property {Function} subscribe attaches an event listener to state changes
+ */
+
 export function createReduxStore( initialState = {} ) {
 	const isBrowser = typeof window === 'object';
 	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
