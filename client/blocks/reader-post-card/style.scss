@@ -107,8 +107,8 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 				text-overflow: ellipsis;
 				overflow: hidden;
 				z-index: z-index( 'root', '.reader-post-card__title' );
-				margin-bottom: -15px; // relative elements need a negative margin so they don't create bottom padding
-				height: 18px;
+				margin-bottom: -16px; // relative elements need a negative margin so they don't create bottom padding
+				height: 19px;
 			}
 
 			.reader-post-card__title .reader-post-card__title-link {
