@@ -11,6 +11,7 @@ import {
 	redirectFilterAndType,
 	redirectToThemeDetails
 } from './controller';
+import validateFilters from './validate-filters';
 
 // `logged-out` middleware isn't SSR-compliant yet, but we can at least render
 // the layout.
@@ -28,6 +29,7 @@ export default function( router ) {
 		router( `/themes/:vertical(${ verticals })?/:tier(free|premium)?`, fetchThemeData, loggedOut, makeLayout );
 		router(
 			`/themes/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`,
+			validateFilters,
 			fetchThemeData,
 			loggedOut,
 			makeLayout
