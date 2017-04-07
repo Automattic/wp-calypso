@@ -25,6 +25,7 @@ import config from 'config';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import SegmentedControl from 'components/segmented-control';
 
 class StatsSite extends Component {
 	constructor( props ) {
@@ -73,6 +74,7 @@ class StatsSite extends Component {
 		const moduleStrings = statsStrings();
 		let videoList;
 		let podcastList;
+		let storeStatsControl;
 
 		const query = {
 			period: period,
@@ -105,10 +107,23 @@ class StatsSite extends Component {
 			);
 		}
 
+		if ( config.isEnabled( 'woocommerce/extension/stats' ) ) { // Check also that site has a Jetpack store
+			storeStatsControl = (
+				<SegmentedControl
+					initialSelected="site"
+					options={ [
+						{ value: 'site', label: 'Site' },
+						{ value: 'store', label: 'Store', path: '/store/stats/piwakawaka.mystagingwebsite.com' },
+					] }
+				/>
+			);
+		}
+
 		return (
 			<Main wideLayout={ true }>
 				<StatsFirstView />
 				<SidebarNavigation />
+				{ storeStatsControl }
 				<StatsNavigation section={ period } />
 				<div id="my-stats-content">
 					<ChartTabs
@@ -196,7 +211,8 @@ export default connect(
 		return {
 			isJetpack: isJetpackSite( state, siteId ),
 			hasPodcasts: getSiteOption( state, siteId, 'podcasting_archive' ),
-			slug: getSelectedSiteSlug( state )
+			slug: getSelectedSiteSlug( state ),
+			siteId,
 		};
 	},
 	{  recordGoogleEvent }
