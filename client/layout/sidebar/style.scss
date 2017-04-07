@@ -265,7 +265,8 @@ form.sidebar__button {
 	&:not(.selected) {
 		background-color: lighten( $sidebar-bg-color, 3% );
 
-		a {
+		a,
+		form {
 			color: $blue-medium;
 
 			&:first-child:after {
@@ -289,7 +290,8 @@ form.sidebar__button {
 	@include breakpoint( "<660px" ) {
 		background-color: $gray-light;
 
-		a {
+		a,
+		form {
 			color: $blue-medium;
 
 			&:first-child:after {
@@ -311,9 +313,16 @@ form.sidebar__button {
 	}
 }
 
-.notouch .sidebar__menu li:not(.selected) a, form {
-	&.sidebar__button:hover {
-		color: $blue-medium;
+.notouch .sidebar__menu li:not(.selected) {
+	a,
+	form {
+		&.sidebar__button:hover {
+			color: $blue-medium;
+		}
+	}
+
+	form.sidebar__button:hover {
+		border-color: darken( $sidebar-bg-color, 10% );
 	}
 }
 
