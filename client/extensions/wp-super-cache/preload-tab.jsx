@@ -12,11 +12,31 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle/compact';
-import FormLabel from 'components/forms/form-label';
+import FormLegend from 'components/forms/form-legend';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import WrapSettingsForm from './wrap-settings-form';
+
+/**
+ * Render Cache preload interval number input
+ * @returns {Jsx} the preload interval number input
+ */
+const renderCachePreloadInterval = ( {
+	preload_interval,
+	handleChange
+} ) => {
+	return (
+		<FormTextInput
+			name="preload_interval"
+			type="number"
+			step="1"
+			min="0"
+			className="wp-super-cache__preload-interval"
+			onChange={ handleChange( 'preload_interval' ) }
+			value={ preload_interval || '' } />
+	);
+};
 
 /**
  * Preload Tab
@@ -25,18 +45,16 @@ import WrapSettingsForm from './wrap-settings-form';
 const PreloadTab = ( {
 	fields: {
 		minimum_preload_interval,
-		wp_cache_preload_interval,
-		wp_cache_preload_posts,
-		wp_cache_preload_on,
-		wp_cache_preload_taxonomies,
-		wp_cache_preload_email_volume,
+		preload_interval,
+		preload_on,
+		preload_taxonomies,
+		preload_email_volume,
 	},
 	translate,
 	handleToggle,
 	handleChange,
 	handleSelect,
 } ) => {
-	const preloadPostsSelectValues = [ 17, 34, 51, 68, 85, 102, 119 ];
 	const statusEmailAmountSelectValues = [
 		{ value: 'none', description: translate( 'No emails' ) },
 		{ value: 'many', description: translate( 'High (two emails per 100 posts)' ) },
@@ -58,57 +76,10 @@ const PreloadTab = ( {
 			<Card>
 				<form>
 					<FormFieldset>
-						<div className="wp-super-cache__wp-cache-preload-posts">
-							<FormLabel htmlFor="wp_cache_preload_interval">
-								{ translate( 'Refresh preloaded cache interval' ) }
-							</FormLabel>
-
-							<FormTextInput
-								className="wp-super-cache__wp-cache-preload-interval"
-								onChange={ handleChange( 'wp_cache_preload_interval' ) }
-								value={ wp_cache_preload_interval || '' } />
-							{ translate( 'minutes' ) }
-							<FormSettingExplanation>
-								{
-									translate(
-										'Refresh preloaded cache files every %(value) minutes. (0 to disable, minimum %(minimum) minutes.)',
-										{
-											args: {
-												value: wp_cache_preload_interval,
-												minimum: minimum_preload_interval
-											}
-										}
-									)
-								}
-							</FormSettingExplanation>
-						</div>
-
-						<div className="wp-super-cache__wp-cache-preload-posts">
-							<FormLabel htmlFor="wp_cache_preload_posts">
-								{ translate( 'Preload Posts' ) }
-							</FormLabel>
-
-							<FormSelect
-								id="wp_cache_preload_posts"
-								name="wp_cache_preload_posts"
-								onChange={ handleSelect }
-								value={ wp_cache_preload_posts || 'all' }>
-								<option key="all" value="all">{translate( 'all' )}</option>
-								{
-									preloadPostsSelectValues.map( value => {
-										return <option key={ value } value={ value }>{ value }</option>;
-									} )
-								}
-							</FormSelect>
-							<FormSettingExplanation>
-								{ translate( 'How many Posts to preload' ) }
-							</FormSettingExplanation>
-						</div>
-
 						<div className="wp-super-cache__wp-cache-preload-on">
 							<FormToggle
-								checked={ !! wp_cache_preload_on }
-								onChange={ handleToggle( 'wp_cache_preload_on' ) }>
+								checked={ !! preload_on }
+								onChange={ handleToggle( 'preload_on' ) }>
 								<span>
 								{
 									translate( 'Preload mode (garbage collection only on legacy cache files. {{em}}(Recommended){{/em}})',
@@ -120,24 +91,50 @@ const PreloadTab = ( {
 							</FormToggle>
 						</div>
 
-						<div className="wp-super-cache__wp-cache-preload-taxonomies">
+						<div className="wp-super-cache__wp-cache-preload-posts">
 							<FormToggle
-								checked={ !! wp_cache_preload_taxonomies }
-								onChange={ handleToggle( 'wp_cache_preload_taxonomies' ) }>
-								<span>{ translate( 'Preload tags, categories and other taxonomies.' ) }</span>
+								checked={ preload_interval > 0 }>
+								<span>{
+									translate(
+										'Refresh preloaded cache files every {{number /}} minute. (minimum %s minutes.)',
+										'Refresh preloaded cache files every {{number /}} minutes. (minimum %s minutes.)',
+										{
+											args: [
+												minimum_preload_interval
+											],
+											count: preload_interval,
+											components: {
+												number: renderCachePreloadInterval( {
+													preload_interval,
+													minimum_preload_interval,
+													handleChange
+												} )
+											}
+										}
+									)
+								}</span>
 							</FormToggle>
 						</div>
 
-						<div className="wp-super-cache__wp-cache-preload-email-volume">
-							<FormLabel htmlFor="wp_cache_preload_email_volume">
-								{ translate( 'Preload Email Volume' ) }
-							</FormLabel>
+						<div className="wp-super-cache__wp-cache-preload-taxonomies">
+							<FormToggle
+								checked={ !! preload_taxonomies }
+								onChange={ handleToggle( 'preload_taxonomies' ) }>
+								<span>{ translate( 'Preload tags, categories and other taxonomies.' ) }</span>
+							</FormToggle>
+						</div>
+					</FormFieldset>
 
+					<hr />
+
+					<FormFieldset>
+						<FormLegend>{ translate( 'Status Emails' ) }</FormLegend>
+						<div className="wp-super-cache__wp-cache-preload-email-volume">
 							<FormSelect
-								id="wp_cache_preload_email_volume"
-								name="wp_cache_preload_email_volume"
+								id="preload_email_volume"
+								name="preload_email_volume"
 								onChange={ handleSelect }
-								value={ wp_cache_preload_email_volume || 'none' }>
+								value={ preload_email_volume || 'none' }>
 								{
 									statusEmailAmountSelectValues.map( ( { value, description } ) => {
 										return <option key={ value } value={ value }>{ description }</option>;
@@ -145,6 +142,9 @@ const PreloadTab = ( {
 								}
 							</FormSelect>
 						</div>
+						<FormSettingExplanation>{
+							translate( 'Send me status emails when files are refreshed during preload' )
+						}</FormSettingExplanation>
 					</FormFieldset>
 				</form>
 			</Card>
@@ -162,13 +162,12 @@ const PreloadTab = ( {
 
 const preloadSettingsDefaults = {
 	is_preload_enabled: true,
-	wp_cache_preload_interval: 30,
+	preload_interval: 30,
 	minimum_preload_interval: 30,
-	wp_cache_preload_posts: 'all',
-	wp_cache_preload_on: false,
-	wp_cache_preload_taxonomies: false,
-	wp_cache_preload_email_me: false,
-	wp_cache_preload_email_volume: 'none',
+	preload_on: false,
+	preload_taxonomies: false,
+	preload_email_me: false,
+	preload_email_volume: 'none',
 };
 
 const settingsKeys = Object.keys( preloadSettingsDefaults );
