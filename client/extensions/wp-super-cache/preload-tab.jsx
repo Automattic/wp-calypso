@@ -39,9 +39,9 @@ const PreloadTab = ( {
 	const preloadPostsSelectValues = [ 17, 34, 51, 68, 85, 102, 119 ];
 	const statusEmailAmountSelectValues = [
 		{ value: 'none', description: translate( 'No emails' ) },
-		{ value: 'many', description: translate( 'Many emails, 2 emails per 100 posts.' ) },
-		{ value: 'medium', description: translate( 'Medium, 1 email per 100 posts.' ) },
-		{ value: 'less', description: translate( 'Less emails, 1 at the start and 1 at the end of preloading all posts.' ) }
+		{ value: 'many', description: translate( 'High (two emails per 100 posts)' ) },
+		{ value: 'medium', description: translate( 'Medium (one email per 100 posts)' ) },
+		{ value: 'less', description: translate( 'Low (one email at the start and one at the end of preloading all posts)' ) }
 	];
 
 	return (
