@@ -35,7 +35,7 @@ export const requesting = createReducer( {}, {
  * @param  {Object} action Action object
  * @return {String} Updated settings
  */
-const settings = ( state = {}, { type, siteId, data } ) => {
+export const settings = ( state = {}, { type, siteId, data } ) => {
 	if ( WP_SUPER_CACHE_RECEIVE_SETTINGS === type ) {
 		return { ...state, [ siteId ]: data };
 	}
