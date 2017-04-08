@@ -22,7 +22,7 @@ import {
  * @param  {Object} action Action object
  * @return {Object} Updated requesting state
  */
-export const requesting = createReducer( {}, {
+const requesting = createReducer( {}, {
 	[ WP_SUPER_CACHE_REQUEST_SETTINGS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
 	[ WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
 	[ WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
@@ -35,7 +35,7 @@ export const requesting = createReducer( {}, {
  * @param  {Object} action Action object
  * @return {String} Updated settings
  */
-export const settings = ( state = {}, { type, siteId, data } ) => {
+const settings = ( state = {}, { type, siteId, data } ) => {
 	if ( WP_SUPER_CACHE_RECEIVE_SETTINGS === type ) {
 		return { ...state, [ siteId ]: data };
 	}
