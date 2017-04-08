@@ -1,7 +1,7 @@
 version: '2'
 services:
   calypso:
-    image: node:6.10.0
+    image: node:6.10.2
     extra_hosts:
       - 'calypso.localhost:0.0.0.0'
     environment:
