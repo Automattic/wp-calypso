@@ -1,0 +1,159 @@
+/**
+ * External dependencies
+ */
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
+
+/**
+ * Internal Dependencies
+ */
+import config from 'config';
+import {
+	creditCardExpiresBeforeSubscription,
+	getName,
+	isExpired,
+	isExpiring,
+	isIncludedWithPlan,
+	isOneTimePurchase,
+	showCreditCardExpiringWarning
+} from 'lib/purchases';
+import { getPurchase, getSelectedSite } from '../utils';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
+import { isMonthly } from 'lib/plans/constants';
+
+class PurchaseNotice extends Component {
+	getExpiringText( purchase ) {
+		const { translate, moment } = this.props;
+		if ( purchase.expiryStatus === 'manualRenew' ) {
+			return translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
+				'Please, add a credit card if you want it to autorenew. ',
+				{
+					args: {
+						purchaseName: getName( purchase ),
+						expiry: moment( purchase.expiryMoment ).fromNow()
+					}
+				}
+			);
+		}
+		if ( isMonthly( purchase.productSlug ) ) {
+			const expiryMoment = moment( purchase.expiryMoment );
+			const daysToExpiry = moment( expiryMoment.diff( moment() ) ).format( 'D' );
+
+			return translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s days. ',
+				{
+					args: {
+						purchaseName: getName( purchase ),
+						expiry: daysToExpiry
+					}
+				}
+			);
+		}
+
+		return translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s.',
+			{
+				args: {
+					purchaseName: getName( purchase ),
+					expiry: moment( purchase.expiryMoment ).fromNow()
+				}
+			}
+		);
+	}
+
+	renderRenewNoticeAction() {
+		const { translate, handleRenew } = this.props;
+		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! getSelectedSite( this.props ) ) {
+			return null;
+		}
+
+		return (
+			<NoticeAction onClick={ handleRenew }>
+				{ translate( 'Renew Now' ) }
+			</NoticeAction>
+		);
+	}
+
+	renderPurchaseExpiringNotice() {
+		const { moment } = this.props;
+		const purchase = getPurchase( this.props );
+		let noticeStatus = 'is-info';
+		if ( ! isExpiring( purchase ) ) {
+			return null;
+		}
+
+		if ( purchase.expiryMoment < moment().add( 90, 'days' ) ) {
+			noticeStatus = 'is-error';
+		}
+
+		return (
+			<Notice
+				className="manage-purchase__purchase-expiring-notice"
+				showDismiss={ false }
+				status={ noticeStatus }
+				text={ this.getExpiringText( purchase ) }>
+				{ this.renderRenewNoticeAction() }
+			</Notice>
+		);
+	}
+
+	renderCreditCardExpiringNotice() {
+		const { translate, editCardDetailsPath } = this.props;
+		const purchase = getPurchase( this.props ),
+			{ payment: { creditCard } } = purchase;
+
+		if ( isExpired( purchase ) || isOneTimePurchase( purchase ) || isIncludedWithPlan( purchase ) || ! getSelectedSite( this.props ) ) {
+			return null;
+		}
+
+		if ( creditCardExpiresBeforeSubscription( purchase ) ) {
+			return (
+				<Notice
+					className="manage-purchase__expiring-credit-card-notice"
+					showDismiss={ false }
+					status={ showCreditCardExpiringWarning( purchase ) ? 'is-error' : 'is-info' }>
+					{
+						translate( 'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s ' +
+							'– before the next renewal. Please {{a}}update your payment information{{/a}}.', {
+								args: {
+									cardType: creditCard.type.toUpperCase(),
+									cardNumber: creditCard.number,
+									cardExpiry: creditCard.expiryMoment.format( 'MMMM YYYY' )
+								},
+								components: {
+									a: editCardDetailsPath
+										? <a href={ editCardDetailsPath } />
+										: <span />
+								}
+							}
+						)
+					}
+				</Notice>
+			);
+		}
+	}
+
+	render() {
+		if ( this.props.isDataLoading ) {
+			return null;
+		}
+
+		return this.renderPurchaseExpiringNotice() || this.renderCreditCardExpiringNotice();
+	}
+}
+
+PurchaseNotice.propTypes = {
+	isDataLoading: React.PropTypes.bool,
+	handleRenew: React.PropTypes.func,
+	selectedPurchase: React.PropTypes.object,
+	selectedSite: React.PropTypes.oneOfType( [
+		React.PropTypes.object,
+		React.PropTypes.bool,
+		React.PropTypes.undefined
+	] ),
+	editCardDetailsPath: React.PropTypes.oneOfType( [
+		React.PropTypes.string,
+		React.PropTypes.bool
+	] )
+};
+
+export default localize( PurchaseNotice );
