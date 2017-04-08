@@ -7,6 +7,7 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
+import { settingsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_RECEIVE_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS,
@@ -35,13 +36,9 @@ const requesting = createReducer( {}, {
  * @param  {Object} action Action object
  * @return {String} Updated settings
  */
-const settings = ( state = {}, { type, siteId, data } ) => {
-	if ( WP_SUPER_CACHE_RECEIVE_SETTINGS === type ) {
-		return { ...state, [ siteId ]: data };
-	}
-
-	return state;
-};
+const settings = createReducer( {}, {
+	[ WP_SUPER_CACHE_RECEIVE_SETTINGS ]: ( state, { siteId, data } ) => ( { ...state, [ siteId ]: data } )
+}, settingsSchema );
 
 export default combineReducers( {
 	requesting,
