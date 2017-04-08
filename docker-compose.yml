@@ -16,7 +16,7 @@ services:
       - node_modules_volume:/calypso/node_modules
       - hooks_volume:/calypso/.git/hooks
     working_dir: /calypso
-    command: make run
+    command: ["make", "run"]
     tty: true # colors!
 volumes:
   node_modules_volume:
