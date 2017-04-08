@@ -801,7 +801,7 @@ export const PostEditor = React.createClass( {
 	},
 
 	switchEditorMode: function( mode ) {
-		var content = this.editor.getContent();
+		const content = this.editor.getContent();
 
 		if ( mode === 'html' ) {
 			this.editor.setEditorContent( content );
