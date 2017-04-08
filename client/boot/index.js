@@ -2,6 +2,10 @@
 require( 'lib/local-storage' )();
 if ( process.env.NODE_ENV === 'development' ) {
 	require( 'lib/wrap-es6-functions' )();
+
+	var Perf = require('react-addons-perf');
+	// Expose the React Performance Tools on the`window` object
+	window.Perf = Perf;
 }
 
 /**
