@@ -42,6 +42,17 @@ JS_FILES := $(shell \
 		-type f \
 		\( -name '*.js' -or -name '*.jsx' \) \
 )
+# same as JS_FILES, but excludes extensions
+JS_FILES_FOR_TRANSLATE := $(shell \
+	find . \
+		-not \( -path './.git' -prune \) \
+		-not \( -path './build' -prune \) \
+		-not \( -path './node_modules' -prune \) \
+		-not \( -path './public' -prune \) \
+		-not \( -path './client/extensions' -prune \) \
+		-type f \
+		\( -name '*.js' -or -name '*.jsx' \) \
+)
 MD_FILES := $(shell \
 	find . \
 		-not \( -path './.git' -prune \) \
@@ -192,7 +203,7 @@ distclean: clean
 
 # create list of translations, saved as `./calypso-strings.pot`
 translate: node_modules
-	$(I18N_CALYPSO) --format pot --output-file ./calypso-strings.pot $(JS_FILES) -e date
+	$(I18N_CALYPSO) --format pot --output-file ./calypso-strings.pot $(JS_FILES_FOR_TRANSLATE) -e date
 
 # install all git hooks
 githooks: githooks-commit githooks-push
