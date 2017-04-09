@@ -7,11 +7,13 @@ import {
 	noop,
 	pick,
 	pickBy,
+	without,
 	negate,
 	isEmpty,
 	take,
 	sortBy,
-	partition
+	partition,
+	includes,
 } from 'lodash';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
@@ -188,6 +190,17 @@ class Suggestions extends React.Component {
 		}
 
 		const filtered = {};
+
+		//If this is valid full taxonomy:filter we want to show alternatives instead of suggestions
+		if ( filter !== undefined && includes( terms[ taxonomy ], filter ) ) {
+			// remove what is already in input - so we can add it to the beggining of the list
+			const otherSuggestions = without( terms[ taxonomy ], filter );
+			// add back at the beggining of the list so it will showup first.
+			otherSuggestions.unshift( filter );
+			// limit or show all
+			filtered[ taxonomy ] = showAll === taxonomy ? otherSuggestions : take( otherSuggestions, limit );
+			return filtered;
+		}
 
 		// store filtering term for highlithing
 		this.setState( { filterTerm } );
