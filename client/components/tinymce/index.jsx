@@ -13,6 +13,7 @@ require( 'tinymce/themes/modern/theme.js' );
 
 // TinyMCE plugins
 require( 'tinymce/plugins/colorpicker/plugin.js' );
+require( 'tinymce/plugins/directionality/plugin.js' );
 require( 'tinymce/plugins/hr/plugin.js' );
 require( 'tinymce/plugins/lists/plugin.js' );
 require( 'tinymce/plugins/media/plugin.js' );
@@ -32,6 +33,7 @@ import wplinkPlugin from './plugins/wplink/plugin.js';
 import mediaPlugin from './plugins/media/plugin';
 import advancedPlugin from './plugins/advanced/plugin';
 import wpcomTabindexPlugin from './plugins/wpcom-tabindex/plugin';
+import wpcomTrackPaste from './plugins/wpcom-track-paste/plugin';
 import touchScrollToolbarPlugin from './plugins/touch-scroll-toolbar/plugin';
 import editorButtonAnalyticsPlugin from './plugins/editor-button-analytics/plugin';
 import calypsoAlertPlugin from './plugins/calypso-alert/plugin';
@@ -40,6 +42,9 @@ import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
 import wptextpatternPlugin from './plugins/wptextpattern/plugin';
 import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
 import insertMenuPlugin from './plugins/insert-menu/plugin';
+import embedReversalPlugin from './plugins/embed-reversal/plugin';
+import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
+import mentionsPlugin from './plugins/mentions/plugin';
 
 [
 	wpcomPlugin,
@@ -54,13 +59,15 @@ import insertMenuPlugin from './plugins/insert-menu/plugin';
 	mediaPlugin,
 	advancedPlugin,
 	wpcomTabindexPlugin,
+	wpcomTrackPaste,
 	touchScrollToolbarPlugin,
 	editorButtonAnalyticsPlugin,
 	calypsoAlertPlugin,
 	contactFormPlugin,
 	afterTheDeadlinePlugin,
 	wptextpatternPlugin,
-	toolbarPinPlugin
+	toolbarPinPlugin,
+	embedReversalPlugin,
 ].forEach( ( initializePlugin ) => initializePlugin() );
 
 /**
@@ -111,6 +118,7 @@ const PLUGINS = [
 	'wpeditimage',
 	'wplink',
 	'AtD',
+	'directionality',
 	'wpcom/autoresize',
 	'wpcom/media',
 	'wpcom/advanced',
@@ -125,17 +133,19 @@ const PLUGINS = [
 	'wpcom/toolbarpin',
 	'wpcom/contactform',
 	'wpcom/sourcecode',
+	'wpcom/embedreversal',
+	'wpcom/trackpaste',
+	'wpcom/insertmenu',
 ];
 
-if ( config.isEnabled( 'post-editor/insert-menu' ) ) {
-	PLUGINS.push( 'wpcom/insertmenu' );
-}
+mentionsPlugin();
+PLUGINS.push( 'wpcom/mentions' );
 
 const CONTENT_CSS = [
 	window.app.tinymceWpSkin,
 	'//s1.wp.com/wp-includes/css/dashicons.css',
 	window.app.tinymceEditorCss,
-	'//s1.wp.com/i/fonts/merriweather/merriweather.css',
+	'//fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese',
 ];
 
 module.exports = React.createClass( {
@@ -220,11 +230,13 @@ module.exports = React.createClass( {
 
 		this.localize();
 
+		const ltrButton = user.isRTL() ? 'ltr,' : '';
+
 		tinymce.init( {
 			selector: '#' + this._id,
 			skin_url: '//s1.wp.com/wp-includes/js/tinymce/skins/lightgray',
 			skin: 'lightgray',
-			content_css: CONTENT_CSS.join( ',' ),
+			content_css: CONTENT_CSS,
 			language: user.get() ? user.get().localeSlug : 'en',
 			language_url: DUMMY_LANG_URL,
 			directionality: user.isRTL() ? 'rtl' : 'ltr',
@@ -271,6 +283,7 @@ module.exports = React.createClass( {
 			keep_styles: false,
 			wpeditimage_html5_captions: true,
 			redux_store: this.context.store,
+			textarea: this.refs.text,
 
 			// Limit the preview styles in the menu/toolbar
 			preview_styles: 'font-family font-size font-weight font-style text-decoration text-transform',
@@ -289,10 +302,9 @@ module.exports = React.createClass( {
 			// minus the surrounding editor chrome to avoid scrollbars. In the
 			// future, we should calculate from the rendered editor bounds.
 			autoresize_min_height: Math.max( document.documentElement.clientHeight - 300, 300 ),
+			autoresize_bottom_margin: viewport.isMobile() ? 10 : 50,
 
-			toolbar1: config.isEnabled( 'post-editor/insert-menu' )
-				? 'wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_advanced'
-				: 'wpcom_add_media,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_add_contact_form,wpcom_advanced',
+			toolbar1: `wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,${ ltrButton }wpcom_advanced`,
 			toolbar2: 'strikethrough,underline,hr,alignjustify,forecolor,pastetext,removeformat,wp_charmap,outdent,indent,undo,redo,wp_help',
 			toolbar3: '',
 			toolbar4: '',
@@ -372,7 +384,11 @@ module.exports = React.createClass( {
 
 			// Collapse selection to avoid scrolling to the bottom of the textarea
 			textNode.setSelectionRange( 0, 0 );
-			textNode.focus();
+
+			// Browser is not Internet Explorer 11
+			if ( 11 !== tinymce.Env.ie ) {
+				textNode.focus();
+			}
 		} else if ( this._editor ) {
 			this._editor.focus();
 		}
@@ -435,6 +451,14 @@ module.exports = React.createClass( {
 		this.setState( { content: content }, this.doAutosizeUpdate );
 	},
 
+	onToolbarChangeContent: function( content ) {
+		if ( this.props.onTextEditorChange ) {
+			this.props.onTextEditorChange( content );
+		}
+
+		this.setState( { content }, this.doAutosizeUpdate );
+	},
+
 	localize: function() {
 		const userData = user.get();
 		let i18nStrings = i18n;
@@ -454,20 +478,29 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
+		const { mode } = this.props;
 		const className = classnames( {
 			tinymce: true,
-			'is-visible': this.props.mode === 'html'
+			'is-visible': mode === 'html'
 		} );
 
 		return (
-			<textarea
-				ref="text"
-				className={ className }
-				id={ this._id }
-				onChange={ this.onTextAreaChange }
-				tabIndex={ this.props.tabIndex }
-				value={ this.state.content }
-			/>
+			<div>
+				{ 'html' === mode && config.isEnabled( 'post-editor/html-toolbar' ) &&
+					<EditorHtmlToolbar
+						content={ this.refs.text }
+						onToolbarChangeContent={ this.onToolbarChangeContent }
+					/>
+				}
+				<textarea
+					ref="text"
+					className={ className }
+					id={ this._id }
+					onChange={ this.onTextAreaChange }
+					tabIndex={ this.props.tabIndex }
+					value={ this.state.content }
+				/>
+			</div>
 		);
 	}
 } );

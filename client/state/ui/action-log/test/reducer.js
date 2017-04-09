@@ -26,11 +26,11 @@ describe( 'reducer', () => {
 		const actions = [
 			{
 				type: ROUTE_SET,
-				path: '/design/77203074',
+				path: '/themes/77203074',
 			},
 			{
 				type: ROUTE_SET,
-				path: '/design/foobar',
+				path: '/themes/foobar',
 			},
 		];
 		const state = actions.reduce( reducer, undefined );
@@ -55,5 +55,74 @@ describe( 'reducer', () => {
 		const state = actions.reduce( reducer, undefined );
 
 		expect( state ).to.eql( [] );
+	} );
+
+	it( 'should log actions with relevant analytics meta', () => {
+		const actions = [
+			{
+				type: ROUTE_SET,
+				path: '/themes/77203074',
+				meta: { analytics: [ {
+					type: 'ANALYTICS_EVENT_RECORD',
+					payload: {
+						service: 'tracks',
+						name: 'calypso_themeshowcase_theme_click',
+						properties: {}
+					}
+				} ] }
+			},
+			{
+				type: COMMENTS_LIKE,
+				path: '/menus/foobar',
+				meta: { analytics: [ {
+					type: 'ANALYTICS_EVENT_RECORD',
+					payload: {
+						service: 'tracks',
+						name: 'calypso_themeshowcase_theme_click',
+						properties: {}
+					}
+				} ] }
+			},
+		];
+		const state = actions.reduce( reducer, undefined );
+
+		expect( state ).to.eql( [
+			{ ...actions[ 0 ], timestamp: 1337 },
+			{ ...actions[ 1 ], timestamp: 1337 },
+		] );
+	} );
+
+	it( 'should discard actions with irrelevant analytics meta', () => {
+		const actions = [
+			{
+				type: ROUTE_SET,
+				path: '/themes/77203074',
+				meta: { analytics: [ {
+					type: 'ANALYTICS_EVENT_RECORD',
+					payload: {
+						service: 'tracks',
+						name: 'calypso_all_your_base_are_belong_to_us',
+						properties: {}
+					}
+				} ] }
+			},
+			{
+				type: COMMENTS_LIKE,
+				path: '/menus/foobar',
+				meta: { analytics: [ {
+					type: 'ANALYTICS_EVENT_RECORD',
+					payload: {
+						service: 'tracks',
+						name: 'calypso_all_your_base_are_belong_to_us',
+						properties: {}
+					}
+				} ] }
+			},
+		];
+		const state = actions.reduce( reducer, undefined );
+
+		expect( state ).to.eql( [
+			{ ...actions[ 0 ], timestamp: 1337 },
+		] );
 	} );
 } );

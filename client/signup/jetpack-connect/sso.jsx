@@ -7,13 +7,14 @@ import { bindActionCreators } from 'redux';
 import debugModule from 'debug';
 import get from 'lodash/get';
 import map from 'lodash/map';
+import Gridicon from 'gridicons';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
 import StepHeader from '../step-header';
-import observe from 'lib/mixins/data-observe';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Gravatar from 'components/gravatar';
@@ -30,7 +31,6 @@ import NoticeAction from 'components/notice/notice-action';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import { decodeEntities } from 'lib/formatting';
-import Gridicon from 'components/gridicon';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
@@ -45,8 +45,6 @@ const debug = debugModule( 'calypso:jetpack-connect:sso' );
 
 const JetpackSSOForm = React.createClass( {
 	displayName: 'JetpackSSOForm',
-
-	mixins: [ observe( 'userModule' ) ],
 
 	getInitialState() {
 		return {
@@ -80,6 +78,12 @@ const JetpackSSOForm = React.createClass( {
 
 		const { siteId, ssoNonce } = this.props;
 		const siteUrl = get( this.props, 'blogDetails.URL' );
+		const cookieOptions = {
+			maxAge: 300,
+			path: '/',
+		};
+		document.cookie = cookie.serialize( 'jetpack_sso_approved', siteId, cookieOptions );
+
 		debug( 'Approving sso' );
 		this.props.authorizeSSO( siteId, ssoNonce, siteUrl );
 	},

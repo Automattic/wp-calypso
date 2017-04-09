@@ -29,16 +29,6 @@ var Emojify = require( 'components/emojify' ),
 
 Typically a string that you want to search for UTF emoji
 
-### `size`
-
-<table>
-	<tr><th>Type</th><td>String</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
-	<tr><th>Default</th><td><code>32x32</code></td></tr>
-</table>
-
-The size of emoji image to use - determined by CDN support
-
 ### `className`
 
 <table>

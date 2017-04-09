@@ -3,11 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 
 export default React.createClass( {
 	displayName: 'StatsTabsTab',
@@ -20,6 +16,7 @@ export default React.createClass( {
 		loading: PropTypes.bool,
 		selected: PropTypes.bool,
 		tabClick: PropTypes.func,
+		compact: PropTypes.bool,
 		value: PropTypes.oneOfType( [
 			PropTypes.number,
 			PropTypes.string
@@ -42,7 +39,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { className, children, gridicon, href, label, loading, selected, tabClick, value } = this.props;
+		const { className, compact, children, gridicon, href, label, loading, selected, tabClick, value } = this.props;
 
 		const tabClass = classNames(
 			'stats-tab',
@@ -50,7 +47,8 @@ export default React.createClass( {
 			{
 				'is-selected': selected,
 				'is-loading': loading,
-				'is-low': ! value
+				'is-low': ! value,
+				'is-compact': compact
 			} );
 
 		const tabIcon = gridicon ? <Gridicon icon={ gridicon } size={ 18 } /> : null;

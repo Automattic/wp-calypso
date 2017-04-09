@@ -2,13 +2,14 @@
  * External dependencies
  */
 import React, { PropTypes, Component } from 'react';
-import i18n from 'i18n-calypso';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import InputChrono from 'components/input-chrono';
 import DatePicker from 'components/date-picker';
+import QuerySiteSettings from 'components/data/query-site-settings';
 import User from 'lib/user';
 
 /**
@@ -18,20 +19,15 @@ import Clock from './clock';
 import Header from './header';
 import utils from './utils';
 
-var user = new User(),
-	noop = () => {};
+const user = new User();
+const noop = () => {};
 
 class PostSchedule extends Component {
-	constructor( props ) {
-		super( props );
-
-		// bounds
-		this.updateDate = this.updateDate.bind( this );
-		this.setViewDate = this.setViewDate.bind( this );
-		this.setCurrentMonth = this.setCurrentMonth.bind( this );
+	constructor() {
+		super( ...arguments );
 
 		this.state = {
-			calendarViewDate: i18n.moment(
+			calendarViewDate: moment(
 				this.props.selectedDay
 					? this.props.selectedDay
 					: new Date()
@@ -79,7 +75,7 @@ class PostSchedule extends Component {
 
 	getEventsFromPosts( postsList = [] ) {
 		return postsList.map( post => {
-			let localDate = this.getDateToUserLocation( post.date );
+			const localDate = this.getDateToUserLocation( post.date );
 
 			return {
 				id: post.ID,
@@ -97,21 +93,21 @@ class PostSchedule extends Component {
 		);
 	}
 
-	setCurrentMonth( date ) {
-		date = i18n.moment( date );
+	setCurrentMonth = ( date ) => {
+		date = moment( date );
 		this.props.onMonthChange( date );
 		this.setState( { calendarViewDate: date } );
 	}
 
-	setViewDate( date ) {
-		this.setState( { calendarViewDate: i18n.moment( date ) } );
+	setViewDate = ( date ) => {
+		this.setState( { calendarViewDate: moment( date ) } );
 	}
 
 	getCurrentDate() {
-		return i18n.moment( this.state.localizedDate || this.getDateToUserLocation() );
+		return moment( this.state.localizedDate || this.getDateToUserLocation() );
 	}
 
-	updateDate( date ) {
+	updateDate = ( date ) => {
 		this.setState( { calendarViewDate: date } );
 
 		this.props.onDateChange( utils.convertDateToGivenOffset(
@@ -121,17 +117,15 @@ class PostSchedule extends Component {
 		) );
 	}
 
-	/** Renders **/
-
 	renderInputChrono() {
-		var lang = user.getLanguage(),
-			date = this.getCurrentDate(),
-			chronoText;
+		const lang = user.getLanguage();
+		const date = this.getCurrentDate();
+		let chronoText;
 
 		if ( this.state.localizedDate ) {
-			let today = i18n.moment().startOf( 'day' ),
-				selected = i18n.moment( date ).startOf( 'day' ),
-				diffInMinutes = selected.diff( today, 'days' );
+			const today = moment().startOf( 'day' );
+			const selected = moment( date ).startOf( 'day' );
+			const diffInMinutes = selected.diff( today, 'days' );
 
 			if ( -7 <= diffInMinutes && diffInMinutes <= 6 ) {
 				chronoText = date.calendar();
@@ -141,7 +135,7 @@ class PostSchedule extends Component {
 		}
 
 		return (
-			<div className="chrono__container">
+			<div className="post-schedule__input-chrono">
 				<InputChrono
 					value={ chronoText }
 					placeholder={ date.calendar() }
@@ -166,6 +160,8 @@ class PostSchedule extends Component {
 				date={ date }
 				timezone={ this.props.timezone }
 				gmtOffset={ this.props.gmtOffset }
+				siteId={ this.props.site ? this.props.site.ID : null }
+				siteSlug={ this.props.site ? this.props.site.slug : null }
 				onChange={ this.updateDate }
 			/>
 		);
@@ -173,7 +169,11 @@ class PostSchedule extends Component {
 
 	render() {
 		return (
-			<div className="post-schedule" >
+			<div className="post-schedule">
+				{
+					// Used by Clock for now, likely others in the future.
+					this.props.site && <QuerySiteSettings siteId={ this.props.site.ID } />
+				}
 				<Header
 					date={ this.state.calendarViewDate }
 					onDateChange={ this.setViewDate }
@@ -212,7 +212,7 @@ PostSchedule.propTypes = {
 	posts: PropTypes.array,
 	timezone: PropTypes.string,
 	gmtOffset: PropTypes.number,
-
+	site: PropTypes.object,
 	onDateChange: PropTypes.func,
 	onMonthChange: PropTypes.func
 };

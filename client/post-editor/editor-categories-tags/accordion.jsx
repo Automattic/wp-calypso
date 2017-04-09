@@ -13,7 +13,6 @@ import { get, toArray } from 'lodash';
 import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
-import Gridicon from 'components/gridicon';
 import TermSelector from 'post-editor/editor-term-selector';
 import TermTokenField from 'post-editor/term-token-field';
 import unescapeString from 'lodash/unescape';
@@ -63,7 +62,7 @@ export class EditorCategoriesTagsAccordion extends Component {
 					helpText={ translate( 'Use categories to group your posts by topic.' ) }
 					labelText={ translate( 'Categories' ) } />
 				{ isTermsSupported
-					? <TermSelector taxonomyName="category" />
+					? <TermSelector compact taxonomyName="category" />
 					: this.renderJetpackNotice()
 				}
 			</AccordionSection>
@@ -179,7 +178,6 @@ export class EditorCategoriesTagsAccordion extends Component {
 			<Accordion
 				title={ this.getTitle() }
 				subtitle={ this.getSubtitle() }
-				icon={ <Gridicon icon="tag" /> }
 				className={ classes }
 			>
 				{ this.renderCategories() }

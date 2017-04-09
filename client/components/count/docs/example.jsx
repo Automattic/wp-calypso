@@ -1,20 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
-
+import React from 'react';
 /**
  * Internal dependencies
  */
-var Count = require( 'components/count' );
+import Count from 'components/count';
 
-module.exports = React.createClass( {
-	displayName: 'Count',
+const count = () => (
+	<Count count={ 65365 } />
+)
 
-	mixins: [ PureRenderMixin ],
+count.displayName = 'Count';
 
-	render: function() {
-		return <Count count={ 65365 } />;
-	}
-} );
+export default count;

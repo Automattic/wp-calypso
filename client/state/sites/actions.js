@@ -3,6 +3,7 @@
  */
 import wpcom from 'lib/wp';
 import {
+	SITE_DELETE_RECEIVE,
 	SITE_FRONT_PAGE_SET,
 	SITE_FRONT_PAGE_SET_FAILURE,
 	SITE_FRONT_PAGE_SET_SUCCESS,
@@ -13,13 +14,28 @@ import {
 	SITES_RECEIVE,
 	SITES_REQUEST,
 	SITES_REQUEST_SUCCESS,
-	SITES_REQUEST_FAILURE
+	SITES_REQUEST_FAILURE,
+	SITES_UPDATE
 } from 'state/action-types';
 import {
 	bumpStat,
 	recordTracksEvent,
 } from 'state/analytics/actions';
 import { omit } from 'lodash';
+
+/**
+ * Returns an action object to be used in signalling that a site has been
+ * deleted.
+ *
+ * @param  {Object} site Site received
+ * @return {Object}      Action object
+ */
+export function receiveDeletedSite( site ) {
+	return {
+		type: SITE_DELETE_RECEIVE,
+		site
+	};
+}
 
 /**
  * Returns an action object to be used in signalling that a site object has
@@ -36,15 +52,29 @@ export function receiveSite( site ) {
 }
 
 /**
- * Returns an action object to be used in signalling that a sites object has
+ * Returns an action object to be used in signalling that site objects have
  * been received.
  *
- * @param  {Object} sites Sites received
- * @return {Object}       Action object
+ * @param  {Object[]} sites Sites received
+ * @return {Object}         Action object
  */
 export function receiveSites( sites ) {
 	return {
 		type: SITES_RECEIVE,
+		sites
+	};
+}
+
+/**
+ * Returns an action object to be used in signalling that sites objects have
+ * been updated.
+ *
+ * @param  {Object[]} sites Sites updated
+ * @return {Object}         Action object
+ */
+export function receiveSiteUpdates( sites ) {
+	return {
+		type: SITES_UPDATE,
 		sites
 	};
 }
@@ -58,7 +88,7 @@ export function requestSites() {
 		dispatch( {
 			type: SITES_REQUEST
 		} );
-		return wpcom.me().sites( { site_visibility: 'all' } ).then( ( response ) => {
+		return wpcom.me().sites( { site_visibility: 'all', include_domain_only: true } ).then( ( response ) => {
 			dispatch( receiveSites( response.sites ) );
 			dispatch( {
 				type: SITES_REQUEST_SUCCESS

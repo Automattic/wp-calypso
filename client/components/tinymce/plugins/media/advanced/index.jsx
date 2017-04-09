@@ -4,16 +4,16 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import ReactDomServer from 'react-dom/server';
-import { Provider as ReduxProvider } from 'react-redux';
 import i18n from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import * as MediaSerialization from 'lib/media-serialization';
 import config from 'config';
-import Gridicon from 'components/gridicon';
 import EditorMediaAdvanced from 'post-editor/editor-media-advanced';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 export default function( editor ) {
 	const store = editor.getParam( 'redux_store' );
@@ -33,14 +33,13 @@ export default function( editor ) {
 			return unmount();
 		}
 
-		ReactDom.render(
-			<ReduxProvider store={ store }>
-				<EditorMediaAdvanced
-					{ ...{ visible, item } }
-					onClose={ hideModal }
-					insertMedia={ insertMedia } />
-			</ReduxProvider>,
-			container
+		renderWithReduxStore(
+			<EditorMediaAdvanced
+				{ ...{ visible, item } }
+				onClose={ hideModal }
+				insertMedia={ insertMedia } />,
+			container,
+			store
 		);
 	}
 

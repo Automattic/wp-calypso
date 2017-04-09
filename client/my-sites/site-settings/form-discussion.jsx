@@ -1,175 +1,137 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import debugFactory from 'debug';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { flowRight, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import formBase from './form-base';
+import Button from 'components/button';
+import Card from 'components/card';
+import CommentDisplaySettings from './comment-display-settings';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import FormToggle from 'components/forms/form-toggle';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import Card from 'components/card';
-import Button from 'components/button';
+import FormTextarea from 'components/forms/form-textarea';
+import FormTextInput from 'components/forms/form-text-input';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SectionHeader from 'components/section-header';
-import { protectForm } from 'lib/protect-form';
+import Subscriptions from './subscriptions';
+import wrapSettingsForm from './wrap-settings-form';
+import {
+	isJetpackSite,
+	siteSupportsJetpackSettingsUi
+} from 'state/sites/selectors';
+import { isJetpackModuleActive } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
-const debug = debugFactory( 'calypso:my-sites:site-settings' );
-
-const SiteSettingsFormDiscussion = protectForm( React.createClass( {
-	mixins: [ formBase ],
-
-	discussionAttributes: [
-		'default_pingback_flag',
-		'default_ping_status',
-		'default_comment_status',
-		'require_name_email',
-		'comment_registration',
-		'close_comments_for_old_posts',
-		'close_comments_days_old',
-		'thread_comments',
-		'thread_comments_depth',
-		'page_comments',
-		'comments_per_page',
-		'default_comments_page',
-		'comment_order',
-		'comments_notify',
-		'moderation_notify',
-		'social_notifications_like',
-		'social_notifications_reblog',
-		'social_notifications_subscribe',
-		'comment_moderation',
-		'comment_whitelist',
-		'comment_max_links',
-		'moderation_keys',
-		'blacklist_keys',
-		'admin_url',
-		'wpcom_publish_comments_with_markdown',
-		'markdown_supported',
-	],
-
-	getSettingsFromSite( siteInstance ) {
-		const site = siteInstance || this.props.site,
-			settings = {};
-
-		if ( site.settings ) {
-			this.discussionAttributes.map( attribute => {
-				settings[ attribute ] = site.settings[ attribute ];
-			} );
-		}
-
-		settings.fetchingSettings = site.fetchingSettings;
-
-		return settings;
-	},
-
-	resetState() {
-		const clearSettings = { fetchingSettings: true };
-		this.discussionAttributes.forEach( attribute => {
-			clearSettings[ attribute ] = '';
+class SiteSettingsFormDiscussion extends Component {
+	handleCommentOrder = () => {
+		this.props.trackEvent( 'Toggled Comment Order on Page' );
+		this.props.updateFields( {
+			comment_order: this.props.fields.comment_order === 'desc' ? 'asc' : 'desc'
+		}, () => {
+			this.props.submitForm();
 		} );
-		this.replaceState( clearSettings );
-		debug( 'resetting state' );
-	},
-
-	setDirtyField( key ) {
-		const newState = {};
-		const dirtyFields = this.state.dirtyFields || [];
-		if ( dirtyFields.indexOf( key ) === -1 ) {
-			newState.dirtyFields = [ ...dirtyFields, key ];
-		}
-		this.setState( newState );
-	},
-
-	handleText( event ) {
-		const currentTargetName = event.currentTarget.name,
-			currentTargetValue = event.currentTarget.value;
-
-		this.setDirtyField( currentTargetName );
-		this.setState( { [ currentTargetName ]: currentTargetValue } );
-	},
-
-	handleToggle( name ) {
-		return () => {
-			this.recordEvent.bind( this, `Toggled ${ name }` );
-			this.setDirtyField( name );
-			this.setState( { [ name ]: ! this.state[ name ] } );
-		};
-	},
-
-	handleCommentOrder() {
-		this.recordEvent.bind( this, 'Toggled Comment Order on Page' );
-		this.setDirtyField( 'comment_order' );
-		this.setState( { comment_order: this.state.comment_order === 'desc' ? 'asc' : 'desc' } );
-	},
+	}
 
 	defaultArticleSettings() {
+		const {
+			fields,
+			handleAutosavingToggle,
+			isRequestingSettings,
+			isSavingSettings,
+			translate
+		} = this.props;
 		return (
 			<FormFieldset>
-				<FormToggle
-					className="is-compact"
-					checked={ !! this.state.default_pingback_flag }
-					disabled={ this.state.fetchingSettings }
-					onChange={ this.handleToggle( 'default_pingback_flag' ) }>
-					<span>{ this.translate( 'Attempt to notify any blogs linked to from the article' ) }</span>
-				</FormToggle>
-				<FormToggle
-					className="is-compact"
-					checked={ !! this.state.default_ping_status }
-					disabled={ this.state.fetchingSettings }
-					onChange={ this.handleToggle( 'default_ping_status' ) }>
-					<span>{ this.translate( 'Allow link notifications from other blogs (pingbacks and trackbacks)' ) }</span>
-				</FormToggle>
-				<FormToggle
-					className="is-compact"
-					checked={ !! this.state.default_comment_status }
-					disabled={ this.state.fetchingSettings }
-					onChange={ this.handleToggle( 'default_comment_status' ) }>
-					<span>{ this.translate( 'Allow people to post comments on new articles' ) }</span>
-				</FormToggle>
+				<CompactFormToggle
+					checked={ !! fields.default_pingback_flag }
+					disabled={ isRequestingSettings || isSavingSettings }
+					onChange={ handleAutosavingToggle( 'default_pingback_flag' ) }>
+					<span>{ translate( 'Attempt to notify any blogs linked to from the article' ) }</span>
+				</CompactFormToggle>
+				<CompactFormToggle
+					checked={ !! fields.default_ping_status }
+					disabled={ isRequestingSettings || isSavingSettings }
+					onChange={ handleAutosavingToggle( 'default_ping_status' ) }>
+					<span>{ translate( 'Allow link notifications from other blogs (pingbacks and trackbacks)' ) }</span>
+				</CompactFormToggle>
+				<CompactFormToggle
+					checked={ !! fields.default_comment_status }
+					disabled={ isRequestingSettings || isSavingSettings }
+					onChange={ handleAutosavingToggle( 'default_comment_status' ) }>
+					<span>{ translate( 'Allow people to post comments on new articles' ) }</span>
+				</CompactFormToggle>
 				<FormSettingExplanation>
-					{ this.translate( '(These settings may be overridden for individual articles.)' ) }
+					{ translate( 'These settings may be overridden for individual articles.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
 		);
-	},
+	}
+
+	commentDisplaySettings() {
+		const { isJetpack, jetpackSettingsUISupported } = this.props;
+		if ( ! isJetpack || ! jetpackSettingsUISupported ) {
+			return null;
+		}
+
+		const { fields, isRequestingSettings, isSavingSettings, onChangeField } = this.props;
+
+		const commentDisplaySettingsFields = {
+			highlander_comment_form_prompt: fields.highlander_comment_form_prompt,
+			jetpack_comment_form_color_scheme: fields.jetpack_comment_form_color_scheme,
+		};
+
+		return (
+			<div>
+				<QueryJetpackModules siteId={ this.props.siteId } />
+				<CommentDisplaySettings
+					onChangeField={ onChangeField }
+					submittingForm={ isRequestingSettings || isSavingSettings }
+					fields={ commentDisplaySettingsFields } />
+				<hr />
+			</div>
+		);
+	}
 
 	otherCommentSettings() {
-		const markdownSupported = this.state.markdown_supported;
+		const {
+			fields,
+			handleAutosavingToggle,
+			isRequestingSettings,
+			isSavingSettings,
+			translate
+		} = this.props;
 		return (
 			<FormFieldset className="site-settings__other-comment-settings">
-				<FormToggle
-					className="is-compact"
-					checked={ !! this.state.require_name_email }
-					disabled={ this.state.fetchingSettings }
-					onChange={ this.handleToggle( 'require_name_email' ) }>
-					<span>{ this.translate( 'Comment author must fill out name and e-mail' ) }</span>
-				</FormToggle>
-				<FormToggle
-					className="is-compact"
-					checked={ !! this.state.comment_registration }
-					disabled={ this.state.fetchingSettings }
-					onChange={ this.handleToggle( 'comment_registration' ) }>
-					<span>{ this.translate( 'Users must be registered and logged in to comment' ) }</span>
-				</FormToggle>
-				<FormToggle
-					className="is-compact"
-					checked={ !! this.state.close_comments_for_old_posts }
-					disabled={ this.state.fetchingSettings }
-					onChange={ this.handleToggle( 'close_comments_for_old_posts' ) }>
+				<CompactFormToggle
+					checked={ !! fields.require_name_email }
+					disabled={ isRequestingSettings || isSavingSettings }
+					onChange={ handleAutosavingToggle( 'require_name_email' ) }>
+					<span>{ translate( 'Comment author must fill out name and e-mail' ) }</span>
+				</CompactFormToggle>
+				<CompactFormToggle
+					checked={ !! fields.comment_registration }
+					disabled={ isRequestingSettings || isSavingSettings }
+					onChange={ handleAutosavingToggle( 'comment_registration' ) }>
+					<span>{ translate( 'Users must be registered and logged in to comment' ) }</span>
+				</CompactFormToggle>
+				<CompactFormToggle
+					checked={ !! fields.close_comments_for_old_posts }
+					disabled={ isRequestingSettings || isSavingSettings }
+					onChange={ handleAutosavingToggle( 'close_comments_for_old_posts' ) }>
 					<span>
 						{
-							this.translate(
+							translate(
 								'Automatically close comments on articles older than {{numberOfDays /}} day',
 								'Automatically close comments on articles older than {{numberOfDays /}} days', {
-									count: this.state.close_comments_days_old || 2,
+									count: fields.close_comments_days_old || 2,
 									components: {
 										numberOfDays: this.renderInputNumberDays()
 									}
@@ -177,30 +139,28 @@ const SiteSettingsFormDiscussion = protectForm( React.createClass( {
 							)
 						}
 					</span>
-				</FormToggle>
-				<FormToggle
-					className="is-compact"
-					checked={ !! this.state.thread_comments }
-					disabled={ this.state.fetchingSettings }
-					onChange={ this.handleToggle( 'thread_comments' ) }>
+				</CompactFormToggle>
+				<CompactFormToggle
+					checked={ !! fields.thread_comments }
+					disabled={ isRequestingSettings || isSavingSettings }
+					onChange={ handleAutosavingToggle( 'thread_comments' ) }>
 					<span>
 						{
-							this.translate( 'Enable threaded (nested) comments up to {{number /}} levels deep', {
+							translate( 'Enable threaded (nested) comments up to {{number /}} levels deep', {
 								components: {
 									number: this.renderInputThreadDepth()
 								}
 							} )
 						}
 					</span>
-				</FormToggle>
-				<FormToggle
-					className="is-compact"
-					checked={ !! this.state.page_comments }
-					disabled={ this.state.fetchingSettings }
-					onChange={ this.handleToggle( 'page_comments' ) }>
+				</CompactFormToggle>
+				<CompactFormToggle
+					checked={ !! fields.page_comments }
+					disabled={ isRequestingSettings || isSavingSettings }
+					onChange={ handleAutosavingToggle( 'page_comments' ) }>
 					<span>
 						{
-							this.translate(
+							translate(
 								'Break comments into pages with {{numComments /}} top level comments per page and the ' +
 								'{{firstOrLast /}} page displayed by default',
 								{
@@ -212,39 +172,26 @@ const SiteSettingsFormDiscussion = protectForm( React.createClass( {
 							)
 						}
 					</span>
-				</FormToggle>
-				{ markdownSupported &&
-					<FormToggle
-						className="is-compact"
-						checked={ !! this.state.wpcom_publish_comments_with_markdown }
-						disabled={ this.state.fetchingSettings }
-						onChange={ this.handleToggle( 'wpcom_publish_comments_with_markdown' ) }>
-						<span>
-							{
-								this.translate( 'Enable Markdown for comments. {{a}}Learn more about markdown{{/a}}.', {
-									components: {
-										a: <a
-											href="http://en.support.wordpress.com/markdown-quick-reference/"
-											target="_blank"
-											rel="noopener noreferrer" />
-									}
-								} )
-							}
-						</span>
-					</FormToggle>
-				}
-				<FormToggle
-					className="is-compact"
-					checked={ 'asc' === this.state.comment_order }
-					disabled={ this.state.fetchingSettings }
+				</CompactFormToggle>
+				<CompactFormToggle
+					checked={ 'asc' === fields.comment_order }
+					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ this.handleCommentOrder }>
-					<span>{ this.translate( 'Comments should be displayed with the older comments at the top of each page' ) }</span>
-				</FormToggle>
+					<span>{ translate( 'Comments should be displayed with the older comments at the top of each page' ) }</span>
+				</CompactFormToggle>
 			</FormFieldset>
 		);
-	},
+	}
 
 	renderInputNumberDays() {
+		const {
+			eventTracker,
+			fields,
+			isRequestingSettings,
+			isSavingSettings,
+			onChangeField,
+			uniqueEventTracker
+		} = this.props;
 		return (
 			<FormTextInput
 				name="close_comments_days_old"
@@ -253,35 +200,47 @@ const SiteSettingsFormDiscussion = protectForm( React.createClass( {
 				step="1"
 				id="close_comments_days_old"
 				className="small-text"
-				value={ 'undefined' === typeof this.state.close_comments_days_old ? 14 : this.state.close_comments_days_old }
-				onChange={ this.handleText }
-				disabled={ this.state.fetchingSettings }
-				onClick={ this.recordEvent.bind( this, 'Clicked Automatically Close Days Field' ) }
-				onKeyPress={ this.recordEventOnce.bind(
-					this,
-					'typedAutoCloseDays',
-					'Typed in Automatically Close Days Field'
-				) } />
+				value={ 'undefined' === typeof fields.close_comments_days_old ? 14 : fields.close_comments_days_old }
+				onChange={ onChangeField( 'close_comments_days_old' ) }
+				disabled={ isRequestingSettings || isSavingSettings }
+				onClick={ eventTracker( 'Clicked Automatically Close Days Field' ) }
+				onKeyPress={ uniqueEventTracker( 'Typed in Automatically Close Days Field' ) }
+			/>
 		);
-	},
+	}
 
 	renderInputThreadDepth() {
+		const {
+			eventTracker,
+			fields,
+			isRequestingSettings,
+			isSavingSettings,
+			onChangeField
+		} = this.props;
 		return (
 			<FormSelect
 				className="is-compact"
 				name="thread_comments_depth"
-				value={ this.state.thread_comments_depth }
-				onChange={ this.handleText }
-				disabled={ this.state.fetchingSettings }
-				onClick={ this.recordClickEventAndStop.bind( this, 'Selected Comment Nesting Level' ) }>
+				value={ fields.thread_comments_depth }
+				onChange={ onChangeField( 'thread_comments_depth' ) }
+				disabled={ isRequestingSettings || isSavingSettings }
+				onClick={ eventTracker( 'Selected Comment Nesting Level' ) }>
 					{ [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ].map( level =>
 						<option value={ level } key={ 'comment-depth-' + level }>{ level }</option>
 					) }
 			</FormSelect>
 		);
-	},
+	}
 
 	renderInputNumComments() {
+		const {
+			eventTracker,
+			fields,
+			isRequestingSettings,
+			isSavingSettings,
+			onChangeField,
+			uniqueEventTracker
+		} = this.props;
 		return (
 			<FormTextInput
 				name="comments_per_page"
@@ -289,139 +248,184 @@ const SiteSettingsFormDiscussion = protectForm( React.createClass( {
 				step="1"
 				min="0"
 				id="comments_per_page"
-				value={ 'undefined' === typeof this.state.comments_per_page ? 50 : this.state.comments_per_page }
-				onChange={ this.handleText }
+				value={ 'undefined' === typeof fields.comments_per_page ? 50 : fields.comments_per_page }
+				onChange={ onChangeField( 'comments_per_page' ) }
 				className="small-text"
-				disabled={ this.state.fetchingSettings }
-				onClick={ this.recordEvent.bind( this, 'Clicked Comments Per Page Field' ) }
-				onKeyPress={ this.recordEventOnce.bind(
-					this,
-					'typedCommentsPerPage',
-					'Typed in Comments Per Page Field'
-				) } />
+				disabled={ isRequestingSettings || isSavingSettings }
+				onClick={ eventTracker( 'Clicked Comments Per Page Field' ) }
+				onKeyPress={ uniqueEventTracker( 'Typed in Comments Per Page Field' ) } />
 		);
-	},
+	}
 
 	renderInputDisplayDefault() {
+		const {
+			eventTracker,
+			fields,
+			isRequestingSettings,
+			onChangeField,
+			translate,
+			isSavingSettings
+		} = this.props;
 		return (
 			<FormSelect
 				className="is-compact"
 				name="default_comments_page"
 				style={ { marginTop: '4px' } }
-				value={ this.state.default_comments_page }
-				onChange={ this.handleText }
-				disabled={ this.state.fetchingSettings }
-				onClick={ this.recordClickEventAndStop.bind( this, 'Selected Comment Page Display Default' ) }>
-					<option value="newest">{ this.translate( 'last' ) }</option>
-					<option value="oldest">{ this.translate( 'first' ) }</option>
+				value={ fields.default_comments_page }
+				onChange={ onChangeField( 'default_comments_page' ) }
+				disabled={ isRequestingSettings || isSavingSettings }
+				onClick={ eventTracker( 'Selected Comment Page Display Default' ) }>
+					<option value="newest">{ translate( 'last' ) }</option>
+					<option value="oldest">{ translate( 'first' ) }</option>
 			</FormSelect>
 		);
-	},
+	}
 
 	emailMeSettings() {
+		const {
+			fields,
+			handleAutosavingToggle,
+			isRequestingSettings,
+			isSavingSettings,
+			translate
+		} = this.props;
 		return (
 			<FormFieldset>
-				<FormLegend>{ this.translate( 'E-mail me whenever' ) }</FormLegend>
-				<FormToggle
-					className="is-compact"
-					checked={ !! this.state.comments_notify }
-					disabled={ this.state.fetchingSettings }
-					onChange={ this.handleToggle( 'comments_notify' ) }>
-					<span>{ this.translate( 'Anyone posts a comment' ) }</span>
-				</FormToggle>
-				<FormToggle
-					className="is-compact"
-					checked={ !! this.state.moderation_notify }
-					disabled={ this.state.fetchingSettings }
-					onChange={ this.handleToggle( 'moderation_notify' ) }>
-					<span>{ this.translate( 'A comment is held for moderation' ) }</span>
-				</FormToggle>
+				<FormLegend>{ translate( 'E-mail me whenever' ) }</FormLegend>
+				<CompactFormToggle
+					checked={ !! fields.comments_notify }
+					disabled={ isRequestingSettings || isSavingSettings }
+					onChange={ handleAutosavingToggle( 'comments_notify' ) }>
+					<span>{ translate( 'Anyone posts a comment' ) }</span>
+				</CompactFormToggle>
+				<CompactFormToggle
+					checked={ !! fields.moderation_notify }
+					disabled={ isRequestingSettings || isSavingSettings }
+					onChange={ handleAutosavingToggle( 'moderation_notify' ) }>
+					<span>{ translate( 'A comment is held for moderation' ) }</span>
+				</CompactFormToggle>
 				{ this.emailMeLikes() }
 				{ this.emailMeReblogs() }
 				{ this.emailMeFollows() }
 			</FormFieldset>
 		);
-	},
+	}
 
 	emailMeLikes() {
+		const {
+			fields,
+			handleAutosavingToggle,
+			isJetpack,
+			isLikesModuleActive,
+			isRequestingSettings,
+			isSavingSettings,
+			translate
+		} = this.props;
 		// likes are only supported on jetpack sites with the Likes module activated
-		if ( this.props.site.jetpack && ! this.props.site.isModuleActive( 'likes' ) ) {
+		if ( isJetpack && ! isLikesModuleActive ) {
 			return null;
 		}
 
 		return (
-			<FormToggle
-				className="is-compact"
-				checked={ !! this.state.social_notifications_like }
-				disabled={ this.state.fetchingSettings }
-				onChange={ this.handleToggle( 'social_notifications_like' ) }>
-				<span>{ this.translate( 'Someone likes one of my posts' ) }</span>
-			</FormToggle>
+			<CompactFormToggle
+				checked={ !! fields.social_notifications_like }
+				disabled={ isRequestingSettings || isSavingSettings }
+				onChange={ handleAutosavingToggle( 'social_notifications_like' ) }>
+				<span>{ translate( 'Someone likes one of my posts' ) }</span>
+			</CompactFormToggle>
 		);
-	},
+	}
 
 	emailMeReblogs() {
+		const {
+			fields,
+			handleAutosavingToggle,
+			isJetpack,
+			isRequestingSettings,
+			isSavingSettings,
+			translate
+		} = this.props;
 		// reblogs are not supported on Jetpack sites
-		if ( this.props.site.jetpack ) {
+		if ( isJetpack ) {
 			return null;
 		}
 
 		return (
-			<FormToggle
-				className="is-compact"
-				checked={ !! this.state.social_notifications_reblog }
-				disabled={ this.state.fetchingSettings }
-				onChange={ this.handleToggle( 'social_notifications_reblog' ) }>
-				<span>{ this.translate( 'Someone reblogs one of my posts' ) }</span>
-			</FormToggle>
+			<CompactFormToggle
+				checked={ !! fields.social_notifications_reblog }
+				disabled={ isRequestingSettings || isSavingSettings }
+				onChange={ handleAutosavingToggle( 'social_notifications_reblog' ) }>
+				<span>{ translate( 'Someone reblogs one of my posts' ) }</span>
+			</CompactFormToggle>
 		);
-	},
+	}
 
 	emailMeFollows() {
+		const {
+			fields,
+			handleAutosavingToggle,
+			isJetpack,
+			isRequestingSettings,
+			isSavingSettings,
+			translate
+		} = this.props;
 		// follows are not supported on Jetpack sites
-		if ( this.props.site.jetpack ) {
+		if ( isJetpack ) {
 			return null;
 		}
 
 		return (
-			<FormToggle
-				className="is-compact"
-				checked={ !! this.state.social_notifications_subscribe }
-				disabled={ this.state.fetchingSettings }
-				onChange={ this.handleToggle( 'social_notifications_subscribe' ) }>
-				<span>{ this.translate( 'Someone follows my blog' ) }</span>
-			</FormToggle>
+			<CompactFormToggle
+				checked={ !! fields.social_notifications_subscribe }
+				disabled={ isRequestingSettings || isSavingSettings }
+				onChange={ handleAutosavingToggle( 'social_notifications_subscribe' ) }>
+				<span>{ translate( 'Someone follows my blog' ) }</span>
+			</CompactFormToggle>
 		);
-	},
+	}
 
 	beforeCommentSettings() {
+		const {
+			fields,
+			handleAutosavingToggle,
+			isRequestingSettings,
+			isSavingSettings,
+			translate
+		} = this.props;
 		return (
 			<FormFieldset>
-				<FormLegend>{ this.translate( 'Before a comment appears' ) }</FormLegend>
-				<FormToggle
-					className="is-compact"
-					checked={ !! this.state.comment_moderation }
-					disabled={ this.state.fetchingSettings }
-					onChange={ this.handleToggle( 'comment_moderation' ) }>
-					<span>{ this.translate( 'Comment must be manually approved' ) }</span>
-				</FormToggle>
-				<FormToggle
-					className="is-compact"
-					checked={ !! this.state.comment_whitelist }
-					disabled={ this.state.fetchingSettings }
-					onChange={ this.handleToggle( 'comment_whitelist' ) }>
-					<span>{ this.translate( 'Comment author must have a previously approved comment' ) }</span>
-				</FormToggle>
+				<FormLegend>{ translate( 'Before a comment appears' ) }</FormLegend>
+				<CompactFormToggle
+					checked={ !! fields.comment_moderation }
+					disabled={ isRequestingSettings || isSavingSettings }
+					onChange={ handleAutosavingToggle( 'comment_moderation' ) }>
+					<span>{ translate( 'Comment must be manually approved' ) }</span>
+				</CompactFormToggle>
+				<CompactFormToggle
+					checked={ !! fields.comment_whitelist }
+					disabled={ isRequestingSettings || isSavingSettings }
+					onChange={ handleAutosavingToggle( 'comment_whitelist' ) }>
+					<span>{ translate( 'Comment author must have a previously approved comment' ) }</span>
+				</CompactFormToggle>
 			</FormFieldset>
 		);
-	},
+	}
 
 	commentModerationSettings() {
+		const {
+			eventTracker,
+			fields,
+			isRequestingSettings,
+			isSavingSettings,
+			onChangeField,
+			translate,
+			uniqueEventTracker
+		} = this.props;
 		return (
-			<FormFieldset>
-				<FormLegend>{ this.translate( 'Comment Moderation' ) }</FormLegend>
+			<FormFieldset className="site-settings__moderation-settings">
+				<FormLegend>{ translate( 'Comment Moderation' ) }</FormLegend>
 				<p>{
-					this.translate(
+					translate(
 						'Hold a comment in the queue if it contains {{numberOfLinks /}} or more links. ' +
 						'(A common characteristic of comment spam is a large number of hyperlinks.)',
 						{
@@ -432,14 +436,14 @@ const SiteSettingsFormDiscussion = protectForm( React.createClass( {
 					)
 				}</p>
 				<FormLabel htmlFor="moderation_keys">{
-					this.translate(
+					translate(
 						'When a comment contains any of these words in its content, name, URL, e-mail, or IP, it will be ' +
 						'held in the {{link}}moderation queue{{/link}}. One word or IP per line. It will match inside words, so "press" ' +
 						'will match "WordPress".',
 						{
 							components: {
 								link: <a
-									href={ this.state.admin_url + 'edit-comments.php?comment_status=moderated' }
+									href={ fields.admin_url + 'edit-comments.php?comment_status=moderated' }
 									target="_blank"
 									rel="noopener noreferrer" />
 							}
@@ -449,40 +453,57 @@ const SiteSettingsFormDiscussion = protectForm( React.createClass( {
 				<FormTextarea
 					name="moderation_keys"
 					id="moderation_keys"
-					value={ this.state.moderation_keys }
-					onChange={ this.handleText }
-					disabled={ this.state.fetchingSettings }
+					value={ fields.moderation_keys }
+					onChange={ onChangeField( 'moderation_keys' ) }
+					disabled={ isRequestingSettings || isSavingSettings }
 					autoCapitalize="none"
-					onClick={ this.recordEvent.bind( this, 'Clicked Moderation Queue Field' ) }
-					onKeyPress={ this.recordEventOnce.bind( this, 'typedModerationKeys', 'Typed In Moderation Queue Field' ) }>
+					onClick={ eventTracker( 'Clicked Moderation Queue Field' ) }
+					onKeyPress={ uniqueEventTracker( 'Typed in Moderation Queue Field' ) }>
 				</FormTextarea>
 			</FormFieldset>
 		);
-	},
+	}
 
 	commentBlacklistSettings() {
+		const {
+			eventTracker,
+			fields,
+			isRequestingSettings,
+			isSavingSettings,
+			onChangeField,
+			translate,
+			uniqueEventTracker
+		} = this.props;
 		return (
 			<FormFieldset>
-				<FormLegend>{ this.translate( 'Comment Blacklist' ) }</FormLegend>
-				<FormLabel htmlFor="blacklist_keys">{ this.translate(
-					'When a comment contains any of these words in its content, name, URL, e-mail, or IP, it will be marked as spam. ' +
+				<FormLegend>{ translate( 'Comment Blacklist' ) }</FormLegend>
+				<FormLabel htmlFor="blacklist_keys">{ translate(
+					'When a comment contains any of these words in its content, name, URL, e-mail, or IP, it will be put in the trash. ' +
 					'One word or IP per line. It will match inside words, so "press" will match "WordPress".'
 				) }</FormLabel>
 				<FormTextarea
 					name="blacklist_keys"
 					id="blacklist_keys"
-					value={ this.state.blacklist_keys }
-					onChange={ this.handleText }
-					disabled={ this.state.fetchingSettings }
+					value={ fields.blacklist_keys }
+					onChange={ onChangeField( 'blacklist_keys' ) }
+					disabled={ isRequestingSettings || isSavingSettings }
 					autoCapitalize="none"
-					onClick={ this.recordEvent.bind( this, 'Clicked Blacklist Field' ) }
-					onKeyPress={ this.recordEventOnce.bind( this, 'typedBlacklistKeys', 'Typed In Blacklist Field' ) }>
+					onClick={ eventTracker( 'Clicked Blacklist Field' ) }
+					onKeyPress={ uniqueEventTracker( 'Typed in Blacklist Field' ) }>
 				</FormTextarea>
 			</FormFieldset>
 		);
-	},
+	}
 
 	renderInputNumLinks() {
+		const {
+			eventTracker,
+			fields,
+			isRequestingSettings,
+			isSavingSettings,
+			onChangeField,
+			uniqueEventTracker
+		} = this.props;
 		return (
 			<FormTextInput
 				name="comment_max_links"
@@ -490,40 +511,53 @@ const SiteSettingsFormDiscussion = protectForm( React.createClass( {
 				step="1"
 				min="0"
 				className="small-text"
-				value={ 'undefined' === typeof this.state.comment_max_links ? 2 : this.state.comment_max_links }
-				onChange={ this.handleText }
-				disabled={ this.state.fetchingSettings }
-				onClick={ this.recordEvent.bind( this, 'Clicked Comment Queue Link Count Field' ) }
-				onKeyPress={ this.recordEventOnce.bind( this, 'typedCommentQueue', 'Typed In Comment Queue Link Count Field' ) } />
+				value={ 'undefined' === typeof fields.comment_max_links ? 2 : fields.comment_max_links }
+				onChange={ onChangeField( 'comment_max_links' ) }
+				disabled={ isRequestingSettings || isSavingSettings }
+				onClick={ eventTracker( 'Clicked Comment Queue Link Count Field' ) }
+				onKeyPress={ uniqueEventTracker( 'Typed in Comment Queue Link Count Field' ) } />
 		);
-	},
+	}
 
 	renderSectionHeader( title, showButton = true ) {
+		const { handleSubmitForm, isRequestingSettings, isSavingSettings, translate } = this.props;
 		return (
 			<SectionHeader label={ title }>
 				{ showButton &&
 					<Button
 						compact
 						primary
-						onClick={ this.handleSubmitForm }
-						disabled={ this.state.fetchingSettings || this.state.submittingForm }>
-						{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
+						onClick={ handleSubmitForm }
+						disabled={ isRequestingSettings || isSavingSettings }>
+						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 					</Button>
 				}
 			</SectionHeader>
 		);
-	},
+	}
 
 	render() {
+		const {
+			fields,
+			handleSubmitForm,
+			handleAutosavingToggle,
+			siteId,
+			isRequestingSettings,
+			isSavingSettings,
+			isJetpack,
+			jetpackSettingsUISupported,
+			translate
+		} = this.props;
 		return (
-			<form id="site-settings" onSubmit={ this.handleSubmitForm } onChange={ this.props.markChanged }>
-				{ this.renderSectionHeader( this.translate( 'Default Article Settings' ) ) }
+			<form id="site-settings" onSubmit={ handleSubmitForm }>
+				{ this.renderSectionHeader( translate( 'Default Article Settings' ), false ) }
 				<Card className="site-settings__discussion-settings">
 					{ this.defaultArticleSettings() }
 				</Card>
 
-				{ this.renderSectionHeader( this.translate( 'Comments' ) ) }
+				{ this.renderSectionHeader( translate( 'Comments' ) ) }
 				<Card className="site-settings__discussion-settings">
+					{ this.commentDisplaySettings() }
 					{ this.otherCommentSettings() }
 					<hr />
 					{ this.emailMeSettings() }
@@ -534,9 +568,85 @@ const SiteSettingsFormDiscussion = protectForm( React.createClass( {
 					<hr />
 					{ this.commentBlacklistSettings() }
 				</Card>
+
+				{
+					isJetpack && jetpackSettingsUISupported && (
+						<div>
+							<QueryJetpackModules siteId={ siteId } />
+
+							{ this.renderSectionHeader( translate( 'Subscriptions' ), false ) }
+
+							<Subscriptions
+								onSubmitForm={ handleSubmitForm }
+								handleAutosavingToggle={ handleAutosavingToggle }
+								isSavingSettings={ isSavingSettings }
+								isRequestingSettings={ isRequestingSettings }
+								fields={ fields }
+							/>
+						</div>
+					)
+				}
 			</form>
 		);
 	}
-} ) );
+}
 
-export default SiteSettingsFormDiscussion;
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		const isJetpack = isJetpackSite( state, siteId );
+		const jetpackSettingsUISupported = siteSupportsJetpackSettingsUi( state, siteId );
+		const isLikesModuleActive = isJetpackModuleActive( state, siteId, 'likes' );
+		const isSubscriptionsModuleActive = isJetpackModuleActive( state, siteId, 'subscriptions' );
+
+		return {
+			siteId,
+			isJetpack,
+			jetpackSettingsUISupported,
+			isLikesModuleActive,
+			isSubscriptionsModuleActive,
+		};
+	}
+);
+
+const getFormSettings = settings => {
+	return pick( settings, [
+		'default_pingback_flag',
+		'default_ping_status',
+		'default_comment_status',
+		'require_name_email',
+		'comments',
+		'comment_registration',
+		'close_comments_for_old_posts',
+		'close_comments_days_old',
+		'thread_comments',
+		'thread_comments_depth',
+		'page_comments',
+		'comments_per_page',
+		'default_comments_page',
+		'comment_order',
+		'comments_notify',
+		'moderation_notify',
+		'likes',
+		'social_notifications_like',
+		'social_notifications_reblog',
+		'social_notifications_subscribe',
+		'comment_moderation',
+		'comment_whitelist',
+		'comment_max_links',
+		'moderation_keys',
+		'blacklist_keys',
+		'admin_url',
+		'highlander_comment_form_prompt',
+		'jetpack_comment_form_color_scheme',
+		'subscriptions',
+		'stb_enabled',
+		'stc_enabled',
+	] );
+};
+
+export default flowRight(
+	connectComponent,
+	wrapSettingsForm( getFormSettings )
+)( SiteSettingsFormDiscussion );

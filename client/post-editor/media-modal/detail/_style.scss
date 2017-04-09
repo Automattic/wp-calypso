@@ -1,6 +1,8 @@
 .editor-media-modal-detail .header-cake.card {
 	padding-top: 0;
 	padding-bottom: 0;
+	height: 50px;
+	line-height: 1;
 
 	@include breakpoint( "<660px" ) {
 		margin-bottom: 0;
@@ -11,36 +13,15 @@
 	padding: 6px;
 }
 
-.editor-media-modal-detail .editor-media-modal-detail__title-input {
-	width: 100%;
-	color: inherit;
-	word-break: normal;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	border-color: transparent;
-	outline: none;
-	text-align: center;
-
-	&[readonly]:hover,
-	&[readonly]:focus {
-		box-shadow: none;
-		border-color: transparent;
-	}
-
-	&:focus {
-		text-overflow: clip;
-	}
-}
-
 .editor-media-modal-detail__preview-wrapper {
-	flex: 2 0 0%;
+	flex: 0 0 35%;
 	position: relative;
 	border-bottom: 1px solid lighten( $gray, 20% );
 	background-color: $gray-light;
 	box-shadow: inset 0 0 2px 2px rgba( lighten( $gray, 10 ), 0.1 );
 
 	@include breakpoint( ">660px" ) {
+		flex: 2 0 0%;
 		margin: 0 0 16px 24px;
 		border: 0;
 	}
@@ -65,6 +46,13 @@
 		width: auto;
 		height: auto;
 		transition: opacity 200ms ease-in-out;
+	}
+
+	&.is-video {
+		display: flex;
+		align-items: center;
+		height: 100%;
+		width: 100%;
 	}
 
 	&.is-uploading,
@@ -117,35 +105,29 @@
 		@include breakpoint( ">480px" ) {
 			display: block;
 			position: absolute;
-			    top: 8px;
-			    right: 8px;
+				top: 8px;
+				right: 8px;
 
-		    button {
-		    	margin-left: 8px;
-		    }
+			button {
+				margin-left: 8px;
+			}
 		}
 	}
 
 	&.is-mobile {
 		@include breakpoint( "<480px" ) {
 			display: block;
+			text-align: right;
+
 			button {
-				width: 48%;
-	 			margin-bottom: 8px;
+				margin-bottom: 16px;
+				margin-left: 8px;
 
-	 			&:first-child {
-	 				margin-right: 2%;
-	 			}
-
-	 			&:last-child {
-	 				margin-left: 2%;
-	 			}
-	 		}
+				&:first-child {
+					margin-left: 0;
+				}
+			}
 		}
-	}
-
-	button {
-		font-weight: bold;
 	}
 }
 

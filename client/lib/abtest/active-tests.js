@@ -1,20 +1,4 @@
 module.exports = {
-	// `browserNotifications` controls whether or not users see the
-	// nudge notice to enable browser notifications at the top of
-	// some Calypso screens; any users with this enabled will also
-	// have the preference available in /me/notifications;
-	// note: not renaming this test at this point in time so that we don't
-	// mess with any users that were put in the `enabled` variation -- don't
-	// want to take their browser notifications preference away from them!
-	browserNotifications: {
-		datestamp: '20160628',
-		variations: {
-			disabled: 95,
-			enabled: 5,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',
 		variations: {
@@ -24,99 +8,75 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
-	signupStore: {
-		datestamp: '20160927',
-		variations: {
-			designTypeWithoutStore: 0,
-			designTypeWithStore: 100,
-		},
-		defaultVariation: 'designTypeWithStore',
-		allowExistingUsers: false,
-	},
-	signupStoreBenchmarking: {
-		datestamp: '20160927',
-		variations: {
-			pressable: 97,
-			bluehost: 1,
-			bluehostWithWoo: 1,
-			siteground: 1
-		},
-		defaultVariation: 'pressable',
-		allowExistingUsers: false,
-	},
-	signupThemeUpload: {
-		datestamp: '20160928',
-		variations: {
-			showThemeUpload: 10,
-			hideThemeUpload: 90,
-		},
-		defaultVariation: 'hideThemeUpload',
-		allowExistingUsers: false,
-	},
-	domainSuggestionPopover: {
-		datestamp: '20160809',
-		variations: {
-			showPopover: 80,
-			hidePopover: 20,
-		},
-		defaultVariation: 'showPopover',
-		allowExistingUsers: false,
-	},
-	designShowcaseWelcomeTour: {
-		datestamp: '20161206',
-		variations: {
-			enabled: 0,
-			disabled: 100,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
-	themeSheetWelcomeTour: {
-		datestamp: '20161206',
-		variations: {
-			enabled: 0,
-			disabled: 100,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
-	siteTitleStep: {
-		datestamp: '20170102',
-		variations: {
-			showSiteTitleStep: 5,
-			hideSiteTitleStep: 95,
-		},
-		defaultVariation: 'hideSiteTitleStep',
-		allowExistingUsers: false
-	},
-
-	jetpackConnectPlansFirst: {
-		datestamp: '20161024',
-		variations: {
-			showPlansBeforeAuth: 50,
-			showPlansAfterAuth: 50
-		},
-		defaultVariation: 'showPlansAfterAuth',
-		allowExistingUsers: true
-	},
-
-	siteTitleTour: {
-		datestamp: '20161207',
-		variations: {
-			disabled: 100,
-			enabled: 0,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
-
 	userFirstSignup: {
-		datestamp: '20161223',
+		datestamp: '20160124',
 		variations: {
-			userLast: 99,
-			userFirst: 1,
+			userLast: 100,
+			userFirst: 0,
 		},
 		defaultVariation: 'userLast',
 		allowExistingUsers: false,
+	},
+	signupStepOneMobileOptimize: {
+		datestamp: '20170322',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+	},
+	automatedTransfer2: {
+		datestamp: '20170316',
+		variations: {
+			enabled: 100,
+			disabled: 0
+		},
+		defaultVariation: 'disabled',
+		allowExistingUsers: false
+	},
+	domainSuggestionNudgeLabels: {
+		datestamp: '20170327',
+		variations: {
+			original: 50,
+			withLabels: 50
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: false
+	},
+	jetpackNewDescriptions: {
+		datestamp: '20170327',
+		variations: {
+			showNew: 0,
+			showOld: 100 /* test completed. I'm disabling it here first because
+						it need some work to remove the added code for the
+						new variation that's not going to be used */
+		},
+		defaultVariation: 'showOld',
+		allowExistingUsers: true
+	},
+	signupSurveyStep: {
+		datestamp: '20170329',
+		variations: {
+			showSurveyStep: 20,
+			hideSurveyStep: 80,
+		},
+		defaultVariation: 'hideSurveyStep',
+	},
+	conciergeOfferOnCancel: {
+		datestamp: '20170410',
+		variations: {
+			showConciergeOffer: 50,
+			hideConciergeOffer: 50,
+		},
+		defaultVariation: 'showConciergeOffer',
+	},
+	presaleChatButton: {
+		datestamp: '20170328',
+		variations: {
+			showChatButton: 20,
+			original: 80
+		},
+		defaultVariation: 'original',
+		allowAnyLocale: true,
 	},
 };

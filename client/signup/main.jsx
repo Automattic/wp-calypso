@@ -18,6 +18,7 @@ import assign from 'lodash/assign';
 import matchesProperty from 'lodash/matchesProperty';
 import indexOf from 'lodash/indexOf';
 import { setSurvey } from 'state/signup/steps/survey/actions';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,6 +45,8 @@ import * as oauthToken from 'lib/oauth-token';
 import DocumentHead from 'components/data/document-head';
 import { translate } from 'i18n-calypso';
 import SignupActions from 'lib/signup/actions';
+import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-tracking';
+import { disableCart } from 'lib/upgrades/actions';
 
 /**
  * Constants
@@ -119,11 +122,26 @@ const Signup = React.createClass( {
 			flow: this.props.flowName,
 			ref: this.props.refParameter
 		} );
+		recordSignupStart();
+
+		// Signup updates the cart through `SignupCart`. To prevent
+		// synchronization issues and unnecessary polling, the cart is disabled
+		// here.
+		disableCart();
 
 		this.submitQueryDependencies();
 
+		const flow = flows.getFlow( this.props.flowName );
+
+		let providedDependencies;
+
+		if ( flow.providesDependenciesInQuery ) {
+			providedDependencies = pick( this.props.queryObject, flow.providesDependenciesInQuery );
+		}
+
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
+			providedDependencies,
 			reduxStore: this.context.store,
 			onComplete: function( dependencies, destination ) {
 				const timeSinceLoading = this.state.loadingScreenStartTime
@@ -143,7 +161,7 @@ const Signup = React.createClass( {
 
 		this.loadProgressFromStore();
 
-		const flowSteps = flows.getFlow( this.props.flowName ).steps;
+		const flowSteps = flow.steps;
 		const flowStepsInProgressStore = filter(
 			SignupProgressStore.get(),
 			step => ( -1 !== flowSteps.indexOf( step.stepName ) ),
@@ -201,6 +219,7 @@ const Signup = React.createClass( {
 		debug( 'The flow is completed. Logging you in...' );
 
 		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
+		recordSignupCompletion();
 
 		this.signupFlowController.reset();
 		if ( dependencies.cartItem || dependencies.domainItem || this.signupFlowController.shouldAutoContinue() ) {
@@ -292,50 +311,59 @@ const Signup = React.createClass( {
 		) );
 	},
 
-	goToNextStep() {
+	goToStep( stepName, stepSectionName ) {
 		if ( this.state.scrolling ) {
 			return;
 		}
 
-		this.setState( { scrolling: true } );
+		// animate the scroll position to the top
+		const scrollPromise = new Promise( resolve => {
+			this.setState( { scrolling: true } );
 
-		this.windowScroller = setInterval( () => {
-			if ( window.pageYOffset > 0 ) {
-				window.scrollBy( 0, -10 );
-			} else {
-				this.setState( { scrolling: false } );
-				this.loadNextStep();
+			const scrollIntervalId = setInterval( () => {
+				if ( window.pageYOffset > 0 ) {
+					window.scrollBy( 0, -10 );
+				} else {
+					this.setState( { scrolling: false } );
+					resolve( clearInterval( scrollIntervalId ) );
+				}
+			}, 1 );
+		} );
+
+		// redirect the user to the next step
+		scrollPromise.then( () => {
+			if ( ! this.isEveryStepSubmitted() ) {
+				page( utils.getStepUrl( this.props.flowName, stepName, stepSectionName, this.props.locale ) );
+			} else if ( this.isEveryStepSubmitted() ) {
+				this.goToFirstInvalidStep();
 			}
-		}, 1 );
+		} );
 	},
 
-	loadNextStep() {
+	goToNextStep() {
 		const flowSteps = flows.getFlow( this.props.flowName, this.props.stepName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
 			nextProgressItem = this.state.progress[ currentStepIndex + 1 ],
 			nextStepSection = nextProgressItem && nextProgressItem.stepSectionName || '';
+
 		this.goToStep( nextStepName, nextStepSection );
 	},
 
-	goToStep( stepName, stepSection ) {
-		clearInterval( this.windowScroller );
-
-		if ( ! this.isEveryStepSubmitted() && stepName ) {
-			page( utils.getStepUrl( this.props.flowName, stepName, stepSection, this.props.locale ) );
-		} else if ( this.isEveryStepSubmitted() ) {
-			this.goToFirstInvalidStep();
-		}
-	},
-
 	goToFirstInvalidStep() {
-		var firstInvalidStep = find( SignupProgressStore.get(), { status: 'invalid' } );
+		const firstInvalidStep = find( SignupProgressStore.get(), { status: 'invalid' } );
 
 		if ( firstInvalidStep ) {
 			analytics.tracks.recordEvent( 'calypso_signup_goto_invalid_step', {
 				step: firstInvalidStep.stepName,
 				flow: this.props.flowName
 			} );
+
+			if ( firstInvalidStep.stepName === this.props.stepName ) {
+				// No need to redirect
+				return;
+			}
+
 			page( utils.getStepUrl( this.props.flowName, firstInvalidStep.stepName, this.props.locale ) );
 		}
 	},
@@ -410,7 +438,7 @@ const Signup = React.createClass( {
 						goToNextStep={ this.goToNextStep }
 						goToStep={ this.goToStep }
 						flowName={ this.props.flowName }
-						signupProgressStore={ this.state.progress }
+						signupProgress={ this.state.progress }
 						signupDependencies={ this.props.signupDependencies }
 						stepSectionName={ this.props.stepSectionName }
 						positionInFlow={ this.positionInFlow() }

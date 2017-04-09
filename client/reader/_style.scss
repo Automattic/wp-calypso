@@ -2,13 +2,14 @@
 	padding-top: 47px;
 }
 
+.is-group-reader .async-load {
+	margin: 30px auto;
+	width: 50%
+}
+
 .is-reader-page .reader__content,
 .is-reader-page .reader-start {
 	margin-top: 0;
-
-	@include breakpoint( ">660px" ) {
-		margin-top: 30px;
-	}
 }
 
 .is-reader-page .recommended-for-you.main,
@@ -21,16 +22,6 @@
 
 .is-reader-page .reader-full-post__story-content {
 	margin-top: 0;
-}
-
-.reader__content {
-	a {
-		color: $blue-medium;
-
-		&:hover {
-			color: $blue-light;
-		}
-	}
 }
 
 .reader__content {
@@ -195,7 +186,7 @@
 		font-family: $sans;
 		font-size: 15px;
 		padding-top: 5px;
-		border-top: 1px solid lighten( $gray, 30% );
+		border-top: 1px solid lighten( $gray, 20% );
 
 		a {
 			padding: 5px 10px;

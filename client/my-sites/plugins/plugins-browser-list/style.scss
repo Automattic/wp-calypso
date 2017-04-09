@@ -29,10 +29,8 @@
 	}
 	.gridicon {
 		float: right;
-		top: 5px;
+		top: 2px;
 		margin-left: 3px;
-		width: 12px;
-		height: 12px;
 	}
 }
 
@@ -41,7 +39,7 @@
 }
 
 .plugins-browser-list__elements {
-	min-height: 50px;
-	overflow: hidden; // lazy clearfix
+	display: flex;
+	flex-wrap: wrap;
 	padding: 0;
 }

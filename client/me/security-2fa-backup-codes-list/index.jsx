@@ -1,20 +1,27 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+const React = require( 'react' ),
+	ReactDom = require( 'react-dom' ),
+	Clipboard = require( 'clipboard' ),
+	userFactory = require( 'lib/user' ),
+	Gridicon = require( 'gridicons' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-backup-codes-list' );
 
+import { saveAs } from 'browser-filesaver';
 /**
  * Internal dependencies
  */
-var	FormButton = require( 'components/forms/form-button' ),
+const FormButton = require( 'components/forms/form-button' ),
 	analytics = require( 'lib/analytics' ),
 	FormButtonBar = require( 'components/forms/form-buttons-bar' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	FormLabel = require( 'components/forms/form-label' ),
-	config = require( 'config' );
-
-import Notice from 'components/notice';
+	config = require( 'config' ),
+	Notice = require( 'components/notice' ),
+	ButtonGroup = require( 'components/button-group' ),
+	Button = require( 'components/button' ),
+	Tooltip = require( 'components/tooltip' );
 
 module.exports = React.createClass( {
 
@@ -24,10 +31,21 @@ module.exports = React.createClass( {
 
 	componentDidMount: function() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
+
+		// Configure clipboard to be triggered on clipboard button press
+		const button = ReactDom.findDOMNode( this.refs.copyCodesBtn );
+		this.clipboard = new Clipboard( button, {
+			text: () => this.getBackupCodePlainText( this.props.backupCodes )
+		} );
+		this.clipboard.on( 'success', this.onCopy );
 	},
 
 	componentWillUnmount: function() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
+
+		// Cleanup clipboard object
+		this.clipboard.destroy();
+		delete this.clipboard;
 	},
 
 	getDefaultProps: function() {
@@ -42,7 +60,10 @@ module.exports = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			userAgrees: false
+			userAgrees: false,
+			printCodesTooltip: false,
+			downloadCodesTooltip: false,
+			copyCodesTooltip: false
 		};
 	},
 
@@ -62,14 +83,62 @@ module.exports = React.createClass( {
 		return true;
 	},
 
-	onPrint: function( event ) {
-		event.preventDefault();
+	onPrint: function() {
+		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Print Backup Codes Button' );
 
 		if ( config.isEnabled( 'desktop' ) ) {
-			require( 'lib/desktop' ).print( this.translate( 'Backup verification codes' ), this.getBackupCodeHTML( this.props.backupCodes ) );
+			require( 'lib/desktop' ).print(
+				this.translate( 'Backup verification codes' ),
+				this.getBackupCodeHTML( this.props.backupCodes )
+			);
 		} else if ( this.openPopup() ) {
 			this.doPopup( this.props.backupCodes );
 		}
+	},
+
+	onCopy: function() {
+		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Copy to clipboard Button' );
+		this.setState( { isCopied: true } );
+	},
+
+	saveCodesToFile: function() {
+		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Save Backup Codes Button' );
+		const user = userFactory();
+		const username = user.get().username;
+
+		const backupCodes = this.props.backupCodes.join( '\n' );
+		const toSave = new Blob( [ backupCodes ], { type: 'text/plain;charset=utf-8' } );
+		saveAs( toSave, `${username}-backup-codes.txt` );
+	},
+
+	getBackupCodePlainText: function( backupCodes ) {
+		if ( backupCodes.length > 0 ) {
+			return backupCodes.join( '\n' );
+		}
+	},
+
+	enableDownloadCodesTooltip() {
+		this.setState( { downloadCodesTooltip: true } );
+	},
+
+	disableDownloadCodesTooltip() {
+		this.setState( { downloadCodesTooltip: false } );
+	},
+
+	enablePrintCodesTooltip() {
+		this.setState( { printCodesTooltip: true } );
+	},
+
+	disablePrintCodesTooltip() {
+		this.setState( { printCodesTooltip: false } );
+	},
+
+	enableCopyCodesTooltip() {
+		this.setState( { copyCodesTooltip: true } );
+	},
+
+	disableCopyCodesTooltip() {
+		this.setState( { copyCodesTooltip: false } );
 	},
 
 	getBackupCodeHTML: function( codes ) {
@@ -143,8 +212,8 @@ module.exports = React.createClass( {
 	},
 
 	getPlaceholders: function() {
-		var i,
-			placeholders = [];
+		let i;
+		const placeholders = [];
 
 		for ( i = 0; i < 10; i++ ) {
 			placeholders.push( ' ' );
@@ -162,7 +231,9 @@ module.exports = React.createClass( {
 	},
 
 	renderList: function() {
-		var backupCodes = this.props.backupCodes.length ? this.props.backupCodes : this.getPlaceholders();
+		const backupCodes = this.props.backupCodes.length
+							? this.props.backupCodes
+							: this.getPlaceholders();
 
 		return (
 			<div>
@@ -176,7 +247,7 @@ module.exports = React.createClass( {
 				</p>
 				<ol className="security-2fa-backup-codes-list__codes">
 					{ backupCodes.map( function( backupCode, index ) {
-						var spacedCode = backupCode.concat( ' ' );
+						let spacedCode = backupCode.concat( ' ' );
 						// we add a space to each backup code so that if the user wants to copy and paste the entire list
 						// the backup codes aren't placed in the clipboard as a single long number
 						return (
@@ -202,7 +273,12 @@ module.exports = React.createClass( {
 							defaultChecked={ this.state.userAgrees }
 							onChange={ this.onUserAgreesChange }
 						/>
-						<span>{ this.translate( 'I have printed or saved these codes', { context: 'The codes are the backup codes for Two-Step Authentication.' } ) }</span>
+						<span>
+							{
+								this.translate( 'I have printed or saved these codes',
+								{ context: 'The codes are the backup codes for Two-Step Authentication.' } )
+							}
+						</span>
 					</FormLabel>
 
 					<FormButton
@@ -213,19 +289,63 @@ module.exports = React.createClass( {
 						}.bind( this ) }
 						disabled={ this.getSubmitDisabled() }
 					>
-						{ this.translate( 'All Finished!', { context: 'The user presses the All Finished button at the end of Two-Step setup.' } ) }
+						{
+							this.translate( 'All Finished!',
+							{ context: 'The user presses the All Finished button at the end of Two-Step setup.' } )
+						}
 					</FormButton>
+					<ButtonGroup className="security-2fa-backup-codes-list__btn-group">
+						<Button
+							className="security-2fa-backup-codes-list__copy"
+							disabled={ ! this.props.backupCodes.length }
+							onMouseEnter={ this.enableCopyCodesTooltip }
+							onMouseLeave={ this.disableCopyCodesTooltip }
+							ref="copyCodesBtn"
+						>
+							<Gridicon icon="clipboard" />
+							<Tooltip
+								context={ this.refs && this.refs.copyCodesBtn }
+								isVisible={ this.state.copyCodesTooltip }
+								position="top"
+							>
+								{ this.translate( 'Copy Codes' ) }
+							</Tooltip>
+						</Button>
 
-					<FormButton
-						className="security-2fa-backup-codes-list__print"
-						isPrimary={ false }
-						onClick={ function( event ) {
-							analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Print Backup Codes Button' );
-							this.onPrint( event );
-						}.bind( this ) }
-					>
-						{ this.translate( 'Print', { context: 'The user presses the print button during Two-Step setup to print their backup codes.' } ) }
-					</FormButton>
+						<Button className="security-2fa-backup-codes-list__print"
+							disabled={ ! this.props.backupCodes.length }
+							onClick={ this.onPrint }
+							onMouseEnter={ this.enablePrintCodesTooltip }
+							onMouseLeave={ this.disablePrintCodesTooltip }
+							ref="printCodesBtn"
+						>
+							<Gridicon icon="print" />
+							<Tooltip
+								context={ this.refs && this.refs.printCodesBtn }
+								isVisible={ this.state.printCodesTooltip }
+								position="top"
+							>
+								{ this.translate( 'Print Codes' ) }
+							</Tooltip>
+						</Button>
+
+						<Button className="security-2fa-backup-codes-list__download"
+							disabled={ ! this.props.backupCodes.length }
+							onClick={ this.saveCodesToFile }
+							onMouseEnter={ this.enableDownloadCodesTooltip }
+							onMouseLeave={ this.disableDownloadCodesTooltip }
+							ref="downloadCodesBtn"
+						>
+							<Gridicon icon="cloud-download" />
+							<Tooltip
+								context={ this.refs && this.refs.downloadCodesBtn }
+								isVisible={ this.state.downloadCodesTooltip }
+								position="top"
+							>
+								{ this.translate( 'Download Codes' ) }
+							</Tooltip>
+						</Button>
+					</ButtonGroup>
 				</FormButtonBar>
 			</div>
 		);

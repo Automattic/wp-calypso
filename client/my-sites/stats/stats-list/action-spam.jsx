@@ -10,7 +10,7 @@ var React = require( 'react' ),
  */
 var wpcom = require( 'lib/wp' ),
 	analytics = require( 'lib/analytics' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'gridicons' );
 
 module.exports = React.createClass( {
 	displayName: 'StatsActionSpam',

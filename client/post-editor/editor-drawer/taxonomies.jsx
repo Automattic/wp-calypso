@@ -17,7 +17,6 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostTypeTaxonomies } from 'state/post-types/taxonomies/selectors';
 import { isJetpackMinimumVersion } from 'state/sites/selectors';
 import Accordion from 'components/accordion';
-import Gridicon from 'components/gridicon';
 import TermTokenField from 'post-editor/term-token-field';
 import TermSelector from 'post-editor/editor-term-selector';
 
@@ -71,10 +70,9 @@ function EditorDrawerTaxonomies( { translate, siteId, postType, isSupported, tax
 						key={ name }
 						title={ label }
 						subtitle={ subtitle }
-						icon={ <Gridicon icon={ hierarchical ? 'folder' : 'tag' } /> }
 					>
 					{ hierarchical
-						? <TermSelector taxonomyName={ name } />
+						? <TermSelector compact taxonomyName={ name } />
 						: <TermTokenField taxonomyName={ name } />
 					}
 					</Accordion>

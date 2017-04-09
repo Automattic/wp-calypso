@@ -15,9 +15,10 @@ import {
 	cloneDeep,
 	pickBy,
 	isString,
-	every
+	every,
+	unset,
+	xor,
 } from 'lodash';
-import { dissocPath } from 'lodash/fp';
 
 /**
  * Internal dependencies
@@ -166,6 +167,7 @@ export function normalizePostForEditing( post ) {
  * @return {Object}      Normalized post object
  */
 export function normalizePostForState( post ) {
+	const normalizedPost = cloneDeep( post );
 	return reduce( [
 		[],
 		...reduce( post.terms, ( memo, terms, taxonomy ) => (
@@ -174,7 +176,10 @@ export function normalizePostForState( post ) {
 		...map( post.categories, ( category, slug ) => [ 'categories', slug ] ),
 		...map( post.tags, ( tag, slug ) => [ 'tags', slug ] ),
 		...map( post.attachments, ( attachment, id ) => [ 'attachments', id ] )
-	], ( memo, path ) => dissocPath( path.concat( 'meta' ), memo ), post );
+	], ( memo, path ) => {
+		unset( memo, path.concat( 'meta' ) );
+		return memo;
+	}, normalizedPost );
 }
 
 /**
@@ -234,6 +239,24 @@ export function normalizeTermsForApi( post ) {
 			return terms.length && every( terms, isString );
 		} )
 	};
+}
+
+/**
+ * Returns truthy if local terms object is the same as the API response
+ *
+ * @param  {Object}  localTermEdits local state of term edits
+ * @param  {Object}  savedTerms     term object returned from API POST
+ * @return {Boolean}                are there differences in local edits vs saved terms
+ */
+export function isTermsEqual( localTermEdits, savedTerms ) {
+	return every( localTermEdits, ( terms, taxonomy ) => {
+		const termsArray = toArray( terms );
+		const isHierarchical = isPlainObject( termsArray[ 0 ] );
+		const normalizedEditedTerms = isHierarchical ? map( termsArray, 'ID' ) : termsArray;
+		const normalizedKey = isHierarchical ? 'ID' : 'name';
+		const normalizedSavedTerms = map( savedTerms[ taxonomy ], normalizedKey );
+		return ! xor( normalizedEditedTerms, normalizedSavedTerms ).length;
+	} );
 }
 
 /**

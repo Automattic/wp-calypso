@@ -25,7 +25,7 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__mobile {
-	color: $gray;
+	color: $gray-text-min;
 	margin: 0 16px;
 	display: block;
 
@@ -70,7 +70,7 @@ $plan-features-sidebar-width: 272px;
 .plan-features__mobile-plan {
 	font-size: 14px;
 	border: solid 1px lighten( $gray, 27% );
-	background-color: lighten( $gray, 35% );
+	background-color: $white;
 	margin-bottom: 24px;
 }
 
@@ -83,7 +83,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__table {
 	font-size: 14px;
-	color: $gray;
+	color: $gray-text-min;
 	border-spacing: 16px 0;
 	margin-top: -16px;
 	display: none;
@@ -107,7 +107,7 @@ $plan-features-sidebar-width: 272px;
 .plan-features__table-item {
 	border-right: solid 1px lighten( $gray, 27% );
 	border-left: solid 1px lighten( $gray, 27% );
-	background-color: lighten( $gray, 35% );
+	background-color: $white;
 	position: relative;
 
 	&.is-highlighted {
@@ -200,18 +200,16 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__header-figure {
 	position: relative;
-	width: 50px;
-	height: 50px;
+	width: 56px;
+	height: 56px;
 	margin-right: 15px;
-	border: solid 6px $gray-light;
 	border-radius: 50%;
 }
 
 .is-section-plans .plan-features__header-figure {
 	@include breakpoint( "<1280px" ) {
-		width: 20px;
-		height: 20px;
-		border: solid 2px $gray-light;
+		width: 24px;
+		height: 24px;
 		margin-right: 10px;
 	}
 }
@@ -226,7 +224,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__header-checkmark {
 	position: absolute;
-	top: -3px;
+	top: 0;
 	right: -3px;
 	transform: translate( 25%, -25% );
 	fill: $alert-green;
@@ -261,7 +259,7 @@ $plan-features-sidebar-width: 272px;
 	font-size: 12px;
 	font-style: italic;
 	font-weight: 400;
-	color: $gray;
+	color: $gray-text-min;
 	line-height: .6;
 	white-space: nowrap;
 
@@ -275,6 +273,19 @@ $plan-features-sidebar-width: 272px;
 			margin-bottom: 9px;
 		}
 	}
+}
+
+.info-popover.plan-features__header-tip-info {
+	position: relative;
+	top: 4px;
+	left: 3px;
+	margin-top: -10px;
+	margin-bottom: -10px;
+	display: inline-block;
+}
+
+.popover.plan-features__header-tip-info .popover__inner {
+	white-space: nowrap;
 }
 
 .plan-features__price {
@@ -351,42 +362,35 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__item {
-	position: relative;
+	display: flex;
 	margin: 0 24px;
-	padding: 12px 20px 12px 30px;
+	padding: 12px 0;
 	font-size: 14px;
 	color: $gray-dark;
-
-	@include breakpoint( "<1040px" ) {
-		margin: 0 12px;
-	}
 
 	@include breakpoint( "<960px" ) {
 		font-size: 12px;
 	}
+
+	@include breakpoint( "<1040px" ) {
+		margin: 0 12px;
+	}
+}
+
+.plan-features__item-title {
+	flex: 1 0 0;
+	margin-left: 10px;
+	width: 100%;
 }
 
 .plan-features__item-checkmark {
-	position: absolute;
-	left: 0;
-	top: 14px;
+	flex: 0 1 auto;
 	fill: $blue-wordpress;
 }
 
 .plan-features__item-tip-info {
-	position: absolute;
-	right: 0;
-	top: 14px;
-	width: 18px;
-	height: 18px;
-	margin-top: 0px;
-	color: lighten( $gray, 20% );
-	cursor: pointer;
-
-	&:hover,
-	&:focus {
-		color: $gray-dark;
-	}
+	flex: 0 1 auto;
+	align-self: center;
 }
 
 .popover__plan-features {
@@ -433,3 +437,18 @@ $plan-features-sidebar-width: 272px;
 		margin-top: 20px;
 	}
 }
+
+.plan_features__item-info {
+	flex: 1 0 0;
+	width: 100%;
+}
+
+.plan-features__item-title-outlined {
+	font-weight: bold;
+	display: block;
+}
+
+.plan-features__item-description {
+	display: inline-block;
+	margin-left: 10px;
+ }

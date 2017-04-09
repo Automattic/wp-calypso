@@ -3,12 +3,12 @@
  */
 import React from 'react';
 import noop from 'lodash/noop';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import SidebarHeading from 'layout/sidebar/heading';
-import Gridicon from 'components/gridicon';
 import Count from 'components/count';
 
 const ExpandableSidebarHeading = ( { title, count, onClick } ) => (

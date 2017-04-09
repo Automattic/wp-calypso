@@ -22,7 +22,7 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 
 <JetpackManageErrorPage
     template="updateJetpack"
-    site={ JetpackSite }
+    siteId={ jetpackSiteId }
     version="3.4"
 />
 ```
@@ -34,7 +34,7 @@ To display a page that will prompt the user to opt-in to Jetpack manage:
 ```jsx
 <JetpackManageErrorPage
     template="optInManage"
-    site={ this.props.site }
+    siteId={ this.props.siteId }
 />
 ```
 

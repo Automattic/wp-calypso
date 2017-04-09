@@ -8,11 +8,18 @@ function getAssets( stats ) {
 			hash: chunk.hash,
 			file: filename,
 			url: stats.publicPath + filename,
+			size: chunk.size
 		};
 	} );
 }
 
+// Adapts route paths to also include wildcard
+// subroutes under the root level section.
 function pathToRegExp( path ) {
+	// Prevents root level double dash urls from being validated.
+	if ( path === '/' ) {
+		return path;
+	}
 	return new RegExp( '^' + path + '(/.*)?$' );
 }
 

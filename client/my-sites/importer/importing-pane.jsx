@@ -4,8 +4,8 @@
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
-import has from 'lodash/has';
-import omit from 'lodash/omit';
+import { numberFormat, translate } from 'i18n-calypso';
+import { has, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -107,34 +107,30 @@ export const ImportingPane = React.createClass( {
 
 	getErrorMessage( { description } ) {
 		if ( ! description ) {
-			return this.translate( 'An unspecified error occured during the import.' );
+			return translate( 'An unspecified error occured during the import.' );
 		}
 
 		return description;
 	},
 
 	getHeadingText: function() {
-		return this.translate(
-			'Importing may take a while, but you can ' +
-			'safely navigate away from this page if you need ' +
-			'to. If you {{b}}stop the import{{/b}}, your site ' +
-			'will be {{b2}}partially imported{{/b2}}.', {
-				components: {
-					b: <strong />,
-					b2: <strong />
-				}
-			}
+		return translate(
+			'Importing takes 15 minutes or a while longer if your site has a lot of media. ' +
+			'You can safely navigate away from this page if you need to: we\'ll send you a notification when it\'s done.'
 		);
 	},
 
 	getSuccessText: function() {
 		const { site: { slug }, progress: { page, post } } = this.props.importerStatus,
 			pageLink = <a href={ '/pages/' + slug } />,
-			pageText = this.translate( 'Pages', { context: 'noun' } ),
+			pageText = translate( 'Pages', { context: 'noun' } ),
 			postLink = <a href={ '/posts/' + slug } />,
-			postText = this.translate( 'Posts', { context: 'noun' } );
+			postText = translate( 'Posts', { context: 'noun' } );
 
-		if ( page && post ) {
+		const pageCount = page.total;
+		const postCount = post.total;
+
+		if ( pageCount && postCount ) {
 			return this.translate(
 				'All done! Check out {{a}}Posts{{/a}} or ' +
 				'{{b}}Pages{{/b}} to see your imported content.', {
@@ -146,30 +142,30 @@ export const ImportingPane = React.createClass( {
 			);
 		}
 
-		if ( page || post ) {
+		if ( pageCount || postCount ) {
 			return this.translate(
 				'All done! Check out {{a}}%(articles)s{{/a}} ' +
 				'to see your imported content.', {
-					components: { a: page ? pageLink : postLink },
-					args: { articles: page ? pageText : postText }
+					components: { a: pageCount ? pageLink : postLink },
+					args: { articles: pageCount ? pageText : postText }
 				}
 			);
 		}
 
-		return this.translate( 'Import complete!' );
+		return translate( 'Import complete!' );
 	},
 
 	getImportMessage( numResources ) {
 		if ( 0 === numResources ) {
-			return this.translate( 'Finishing up the import' );
+			return translate( 'Finishing up the import' );
 		}
 
-		return this.translate(
-			'Waiting on %(numResources)d resource to import',
-			'Waiting on %(numResources)d resources to import',
+		return translate(
+			'Waiting on %(numResources)s resource to import',
+			'Waiting on %(numResources)s resources to import',
 			{
 				count: numResources,
-				args: { numResources }
+				args: { numResources: numberFormat( numResources ) }
 			}
 		);
 	},
@@ -239,7 +235,7 @@ export const ImportingPane = React.createClass( {
 						onStartImport={ () => startImporting( this.props.importerStatus ) }
 						{ ...{ siteId } }
 						sourceAuthors={ customData.sourceAuthors }
-						sourceTitle={ customData.siteTitle || this.translate( 'Original Site' ) }
+						sourceTitle={ customData.siteTitle || translate( 'Original Site' ) }
 						targetTitle={ siteName }
 					/>
 				}

@@ -14,7 +14,7 @@ export default localize( ( { isBusinessPlan, translate } ) => {
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon="speaker"
-				title={ translate( 'Advertising Removed' ) }
+				title={ translate( 'Advertising removed' ) }
 				description={ isBusinessPlan
 					? translate( 'With your plan, all WordPress.com advertising has been removed from your site.' )
 					: translate( 'With your plan, all WordPress.com advertising has been removed from your site.' +

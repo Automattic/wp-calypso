@@ -2,12 +2,53 @@
 /* eslint-disable */
 module.exports = {
 	countries: {
-		ac: {
-			isoCode: "ac",
+		KV: {
+			isoCode: "KV",
+			dialCode: "383",
+			nationalPrefix: "0"
+		},
+		UM: {
+			isoCode: "UM",
+			dialCode: "1",
+			nationalPrefix: "",
+			patternRegion: "us",
+			priority: -99
+		},
+		BV: {
+			isoCode: "BV",
+			dialCode: "47",
+			nationalPrefix: "",
+			priority: -99
+		},
+		TF: {
+			isoCode: "TF",
+			dialCode: "262",
+			nationalPrefix: "0"
+		},
+		HM: {
+			isoCode: "HM",
+			dialCode: "61",
+			nationalPrefix: "0",
+			priority: -99
+		},
+		PN: {
+			isoCode: "PN",
+			dialCode: "64",
+			nationalPrefix: "0",
+			priority: -99
+		},
+		GS: {
+			isoCode: "GS",
+			nationalPrefix: "",
+			dialCode: "500",
+			priority: -99
+		},
+		AC: {
+			isoCode: "AC",
 			dialCode: "247"
 		},
-		ad: {
-			isoCode: "ad",
+		AD: {
+			isoCode: "AD",
 			dialCode: "376",
 			patterns: [
 				{
@@ -27,8 +68,8 @@ module.exports = {
 				}
 			]
 		},
-		ae: {
-			isoCode: "ae",
+		AE: {
+			isoCode: "AE",
 			dialCode: "971",
 			nationalPrefix: "0",
 			patterns: [
@@ -58,8 +99,8 @@ module.exports = {
 				}
 			]
 		},
-		af: {
-			isoCode: "af",
+		AF: {
+			isoCode: "AF",
 			dialCode: "93",
 			nationalPrefix: "0",
 			patterns: [
@@ -71,18 +112,22 @@ module.exports = {
 				}
 			]
 		},
-		ag: {
-			isoCode: "ag",
+		AG: {
+			isoCode: "AG",
 			dialCode: "1268",
+			countryDialCode: "1",
+			regionCode: "268",
 			nationalPrefix: "1"
 		},
-		ai: {
-			isoCode: "ai",
+		AI: {
+			isoCode: "AI",
 			dialCode: "1264",
+			countryDialCode: "1",
+			regionCode: "264",
 			nationalPrefix: "1"
 		},
-		al: {
-			isoCode: "al",
+		AL: {
+			isoCode: "AL",
 			dialCode: "355",
 			nationalPrefix: "0",
 			patterns: [
@@ -112,8 +157,8 @@ module.exports = {
 				}
 			]
 		},
-		am: {
-			isoCode: "am",
+		AM: {
+			isoCode: "AM",
 			dialCode: "374",
 			nationalPrefix: "0",
 			patterns: [
@@ -143,8 +188,8 @@ module.exports = {
 				}
 			]
 		},
-		ao: {
-			isoCode: "ao",
+		AO: {
+			isoCode: "AO",
 			dialCode: "244",
 			patterns: [
 				{
@@ -153,8 +198,8 @@ module.exports = {
 				}
 			]
 		},
-		ar: {
-			isoCode: "ar",
+		AR: {
+			isoCode: "AR",
 			dialCode: "54",
 			nationalPrefix: "0",
 			patterns: [
@@ -267,13 +312,15 @@ module.exports = {
 				}
 			]
 		},
-		as: {
-			isoCode: "as",
+		AS: {
+			isoCode: "AS",
 			dialCode: "1684",
+			countryDialCode: "1",
+			regionCode: "684",
 			nationalPrefix: "1"
 		},
-		at: {
-			isoCode: "at",
+		AT: {
+			isoCode: "AT",
 			dialCode: "43",
 			nationalPrefix: "0",
 			patterns: [
@@ -321,8 +368,8 @@ module.exports = {
 				}
 			]
 		},
-		au: {
-			isoCode: "au",
+		AU: {
+			isoCode: "AU",
 			dialCode: "61",
 			nationalPrefix: "0",
 			patterns: [
@@ -377,8 +424,8 @@ module.exports = {
 			],
 			priority: 10
 		},
-		aw: {
-			isoCode: "aw",
+		AW: {
+			isoCode: "AW",
 			dialCode: "297",
 			patterns: [
 				{
@@ -387,15 +434,15 @@ module.exports = {
 				}
 			]
 		},
-		ax: {
-			isoCode: "ax",
+		AX: {
+			isoCode: "AX",
 			dialCode: "358",
 			nationalPrefix: "0",
 			priority: 1,
-			patternRegion: "fi"
+			patternRegion: "FI"
 		},
-		az: {
-			isoCode: "az",
+		AZ: {
+			isoCode: "AZ",
 			dialCode: "994",
 			nationalPrefix: "0",
 			patterns: [
@@ -419,8 +466,8 @@ module.exports = {
 				}
 			]
 		},
-		ba: {
-			isoCode: "ba",
+		BA: {
+			isoCode: "BA",
 			dialCode: "387",
 			nationalPrefix: "0",
 			patterns: [
@@ -444,13 +491,15 @@ module.exports = {
 				}
 			]
 		},
-		bb: {
-			isoCode: "bb",
+		BB: {
+			isoCode: "BB",
 			dialCode: "1246",
+			countryDialCode: "1",
+			regionCode: "246",
 			nationalPrefix: "1"
 		},
-		bd: {
-			isoCode: "bd",
+		BD: {
+			isoCode: "BD",
 			dialCode: "880",
 			nationalPrefix: "0",
 			patterns: [
@@ -480,8 +529,8 @@ module.exports = {
 				}
 			]
 		},
-		be: {
-			isoCode: "be",
+		BE: {
+			isoCode: "BE",
 			dialCode: "32",
 			nationalPrefix: "0",
 			patterns: [
@@ -511,8 +560,8 @@ module.exports = {
 				}
 			]
 		},
-		bf: {
-			isoCode: "bf",
+		BF: {
+			isoCode: "BF",
 			dialCode: "226",
 			patterns: [
 				{
@@ -521,8 +570,8 @@ module.exports = {
 				}
 			]
 		},
-		bg: {
-			isoCode: "bg",
+		BG: {
+			isoCode: "BG",
 			dialCode: "359",
 			nationalPrefix: "0",
 			patterns: [
@@ -576,8 +625,8 @@ module.exports = {
 				}
 			]
 		},
-		bh: {
-			isoCode: "bh",
+		BH: {
+			isoCode: "BH",
 			dialCode: "973",
 			patterns: [
 				{
@@ -586,8 +635,8 @@ module.exports = {
 				}
 			]
 		},
-		bi: {
-			isoCode: "bi",
+		BI: {
+			isoCode: "BI",
 			dialCode: "257",
 			patterns: [
 				{
@@ -596,8 +645,8 @@ module.exports = {
 				}
 			]
 		},
-		bj: {
-			isoCode: "bj",
+		BJ: {
+			isoCode: "BJ",
 			dialCode: "229",
 			patterns: [
 				{
@@ -606,20 +655,22 @@ module.exports = {
 				}
 			]
 		},
-		bl: {
-			isoCode: "bl",
+		BL: {
+			isoCode: "BL",
 			dialCode: "590",
 			nationalPrefix: "0",
 			priority: 1,
-			patternRegion: "gp"
+			patternRegion: "GP"
 		},
-		bm: {
-			isoCode: "bm",
+		BM: {
+			isoCode: "BM",
 			dialCode: "1441",
+			countryDialCode: "1",
+			regionCode: "441",
 			nationalPrefix: "1"
 		},
-		bn: {
-			isoCode: "bn",
+		BN: {
+			isoCode: "BN",
 			dialCode: "673",
 			patterns: [
 				{
@@ -628,8 +679,8 @@ module.exports = {
 				}
 			]
 		},
-		bo: {
-			isoCode: "bo",
+		BO: {
+			isoCode: "BO",
 			dialCode: "591",
 			nationalPrefix: "0",
 			patterns: [
@@ -645,14 +696,14 @@ module.exports = {
 				}
 			]
 		},
-		bq: {
-			isoCode: "bq",
+		BQ: {
+			isoCode: "BQ",
 			dialCode: "599",
 			priority: 1,
-			patternRegion: "cw"
+			patternRegion: "CW"
 		},
-		br: {
-			isoCode: "br",
+		BR: {
+			isoCode: "BR",
 			dialCode: "55",
 			nationalPrefix: "0",
 			patterns: [
@@ -675,16 +726,16 @@ module.exports = {
 					leadingDigitPattern: "1[125689]"
 				},
 				{
-					match: "(\\d{2})(\\d{5})(\\d{4})",
-					replace: "$1 $2-$3",
-					nationalFormat: "($1)",
-					leadingDigitPattern: "(?:[14689][1-9]|2[12478]|3[1-578]|5[1-5]|7[13-579])9"
-				},
-				{
 					match: "(\\d{2})(\\d{4})(\\d{4})",
 					replace: "$1 $2-$3",
 					nationalFormat: "($1)",
 					leadingDigitPattern: "[1-9][1-9]"
+				},
+				{
+					match: "(\\d{2})(\\d{5})(\\d{4})",
+					replace: "$1 $2-$3",
+					nationalFormat: "($1)",
+					leadingDigitPattern: "(?:[14689][1-9]|2[12478]|3[1-578]|5[1-5]|7[13-579])9"
 				},
 				{
 					match: "(\\d{4})(\\d{4})",
@@ -700,16 +751,16 @@ module.exports = {
 			],
 			internationalPatterns: [
 				{
-					match: "(\\d{2})(\\d{5})(\\d{4})",
-					replace: "$1 $2-$3",
-					nationalFormat: "($1)",
-					leadingDigitPattern: "(?:[14689][1-9]|2[12478]|3[1-578]|5[1-5]|7[13-579])9"
-				},
-				{
 					match: "(\\d{2})(\\d{4})(\\d{4})",
 					replace: "$1 $2-$3",
 					nationalFormat: "($1)",
 					leadingDigitPattern: "[1-9][1-9]"
+				},
+				{
+					match: "(\\d{2})(\\d{5})(\\d{4})",
+					replace: "$1 $2-$3",
+					nationalFormat: "($1)",
+					leadingDigitPattern: "(?:[14689][1-9]|2[12478]|3[1-578]|5[1-5]|7[13-579])9"
 				},
 				{
 					match: "(\\d{4})(\\d{4})",
@@ -724,13 +775,15 @@ module.exports = {
 				}
 			]
 		},
-		bs: {
-			isoCode: "bs",
+		BS: {
+			isoCode: "BS",
 			dialCode: "1242",
+			countryDialCode: "1",
+			regionCode: "242",
 			nationalPrefix: "1"
 		},
-		bt: {
-			isoCode: "bt",
+		BT: {
+			isoCode: "BT",
 			dialCode: "975",
 			patterns: [
 				{
@@ -745,8 +798,8 @@ module.exports = {
 				}
 			]
 		},
-		bw: {
-			isoCode: "bw",
+		BW: {
+			isoCode: "BW",
 			dialCode: "267",
 			patterns: [
 				{
@@ -766,8 +819,8 @@ module.exports = {
 				}
 			]
 		},
-		by: {
-			isoCode: "by",
+		BY: {
+			isoCode: "BY",
 			dialCode: "375",
 			nationalPrefix: "8",
 			patterns: [
@@ -815,8 +868,8 @@ module.exports = {
 				}
 			]
 		},
-		bz: {
-			isoCode: "bz",
+		BZ: {
+			isoCode: "BZ",
 			dialCode: "501",
 			patterns: [
 				{
@@ -831,8 +884,8 @@ module.exports = {
 				}
 			]
 		},
-		ca: {
-			isoCode: "ca",
+		CA: {
+			isoCode: "CA",
 			dialCode: "1",
 			areaCodes: [
 				"204",
@@ -879,17 +932,17 @@ module.exports = {
 			],
 			nationalPrefix: "1",
 			priority: 5,
-			patternRegion: "us"
+			patternRegion: "US"
 		},
-		cc: {
-			isoCode: "cc",
+		CC: {
+			isoCode: "CC",
 			dialCode: "61",
 			nationalPrefix: "0",
 			priority: 1,
-			patternRegion: "au"
+			patternRegion: "AU"
 		},
-		cd: {
-			isoCode: "cd",
+		CD: {
+			isoCode: "CD",
 			dialCode: "243",
 			nationalPrefix: "0",
 			patterns: [
@@ -919,8 +972,8 @@ module.exports = {
 				}
 			]
 		},
-		cf: {
-			isoCode: "cf",
+		CF: {
+			isoCode: "CF",
 			dialCode: "236",
 			patterns: [
 				{
@@ -929,8 +982,8 @@ module.exports = {
 				}
 			]
 		},
-		cg: {
-			isoCode: "cg",
+		CG: {
+			isoCode: "CG",
 			dialCode: "242",
 			patterns: [
 				{
@@ -945,8 +998,8 @@ module.exports = {
 				}
 			]
 		},
-		ch: {
-			isoCode: "ch",
+		CH: {
+			isoCode: "CH",
 			dialCode: "41",
 			nationalPrefix: "0",
 			patterns: [
@@ -970,8 +1023,8 @@ module.exports = {
 				}
 			]
 		},
-		ci: {
-			isoCode: "ci",
+		CI: {
+			isoCode: "CI",
 			dialCode: "225",
 			patterns: [
 				{
@@ -980,8 +1033,8 @@ module.exports = {
 				}
 			]
 		},
-		ck: {
-			isoCode: "ck",
+		CK: {
+			isoCode: "CK",
 			dialCode: "682",
 			patterns: [
 				{
@@ -990,8 +1043,8 @@ module.exports = {
 				}
 			]
 		},
-		cl: {
-			isoCode: "cl",
+		CL: {
+			isoCode: "CL",
 			dialCode: "56",
 			nationalPrefix: "0",
 			patterns: [
@@ -1101,8 +1154,8 @@ module.exports = {
 				}
 			]
 		},
-		cm: {
-			isoCode: "cm",
+		CM: {
+			isoCode: "CM",
 			dialCode: "237",
 			patterns: [
 				{
@@ -1122,8 +1175,8 @@ module.exports = {
 				}
 			]
 		},
-		cn: {
-			isoCode: "cn",
+		CN: {
+			isoCode: "CN",
 			dialCode: "86",
 			nationalPrefix: "0",
 			patterns: [
@@ -1277,8 +1330,8 @@ module.exports = {
 				}
 			]
 		},
-		co: {
-			isoCode: "co",
+		CO: {
+			isoCode: "CO",
 			dialCode: "57",
 			nationalPrefix: "0",
 			patterns: [
@@ -1319,8 +1372,8 @@ module.exports = {
 				}
 			]
 		},
-		cr: {
-			isoCode: "cr",
+		CR: {
+			isoCode: "CR",
 			dialCode: "506",
 			patterns: [
 				{
@@ -1335,8 +1388,8 @@ module.exports = {
 				}
 			]
 		},
-		cu: {
-			isoCode: "cu",
+		CU: {
+			isoCode: "CU",
 			dialCode: "53",
 			nationalPrefix: "0",
 			patterns: [
@@ -1360,8 +1413,8 @@ module.exports = {
 				}
 			]
 		},
-		cv: {
-			isoCode: "cv",
+		CV: {
+			isoCode: "CV",
 			dialCode: "238",
 			patterns: [
 				{
@@ -1370,8 +1423,8 @@ module.exports = {
 				}
 			]
 		},
-		cw: {
-			isoCode: "cw",
+		CW: {
+			isoCode: "CW",
 			dialCode: "599",
 			patterns: [
 				{
@@ -1387,15 +1440,15 @@ module.exports = {
 			],
 			priority: 10
 		},
-		cx: {
-			isoCode: "cx",
+		CX: {
+			isoCode: "CX",
 			dialCode: "61",
 			nationalPrefix: "0",
 			priority: 5,
-			patternRegion: "au"
+			patternRegion: "AU"
 		},
-		cy: {
-			isoCode: "cy",
+		CY: {
+			isoCode: "CY",
 			dialCode: "357",
 			patterns: [
 				{
@@ -1404,8 +1457,8 @@ module.exports = {
 				}
 			]
 		},
-		cz: {
-			isoCode: "cz",
+		CZ: {
+			isoCode: "CZ",
 			dialCode: "420",
 			patterns: [
 				{
@@ -1425,8 +1478,8 @@ module.exports = {
 				}
 			]
 		},
-		de: {
-			isoCode: "de",
+		DE: {
+			isoCode: "DE",
 			dialCode: "49",
 			nationalPrefix: "0",
 			patterns: [
@@ -1540,8 +1593,8 @@ module.exports = {
 				}
 			]
 		},
-		dj: {
-			isoCode: "dj",
+		DJ: {
+			isoCode: "DJ",
 			dialCode: "253",
 			patterns: [
 				{
@@ -1550,8 +1603,8 @@ module.exports = {
 				}
 			]
 		},
-		dk: {
-			isoCode: "dk",
+		DK: {
+			isoCode: "DK",
 			dialCode: "45",
 			patterns: [
 				{
@@ -1560,14 +1613,18 @@ module.exports = {
 				}
 			]
 		},
-		dm: {
-			isoCode: "dm",
+		DM: {
+			isoCode: "DM",
 			dialCode: "1767",
+			countryDialCode: "1",
+			regionCode: "767",
 			nationalPrefix: "1"
 		},
-		"do": {
-			isoCode: "do",
+		DO: {
+			isoCode: "DO",
 			dialCode: "18[024]9",
+			countryDialCode: "1",
+			regionCode: "8[024]9",
 			areaCodes: [
 				"809",
 				"829",
@@ -1575,10 +1632,10 @@ module.exports = {
 			],
 			nationalPrefix: "1",
 			priority: 3,
-			patternRegion: "do"
+			patternRegion: "DO"
 		},
-		dz: {
-			isoCode: "dz",
+		DZ: {
+			isoCode: "DZ",
 			dialCode: "213",
 			nationalPrefix: "0",
 			patterns: [
@@ -1602,8 +1659,8 @@ module.exports = {
 				}
 			]
 		},
-		ec: {
-			isoCode: "ec",
+		EC: {
+			isoCode: "EC",
 			dialCode: "593",
 			nationalPrefix: "0",
 			patterns: [
@@ -1646,8 +1703,8 @@ module.exports = {
 				}
 			]
 		},
-		ee: {
-			isoCode: "ee",
+		EE: {
+			isoCode: "EE",
 			dialCode: "372",
 			patterns: [
 				{
@@ -1672,8 +1729,8 @@ module.exports = {
 				}
 			]
 		},
-		eg: {
-			isoCode: "eg",
+		EG: {
+			isoCode: "EG",
 			dialCode: "20",
 			nationalPrefix: "0",
 			patterns: [
@@ -1697,13 +1754,15 @@ module.exports = {
 				}
 			]
 		},
-		eh: {
-			isoCode: "eh",
+		EH: {
+			isoCode: "EH",
 			dialCode: "212528[89]",
+			countryDialCode: "212",
+			regionCode: "528[89]",
 			nationalPrefix: "0"
 		},
-		er: {
-			isoCode: "er",
+		ER: {
+			isoCode: "ER",
 			dialCode: "291",
 			nationalPrefix: "0",
 			patterns: [
@@ -1714,8 +1773,8 @@ module.exports = {
 				}
 			]
 		},
-		es: {
-			isoCode: "es",
+		ES: {
+			isoCode: "ES",
 			dialCode: "34",
 			patterns: [
 				{
@@ -1730,8 +1789,8 @@ module.exports = {
 				}
 			]
 		},
-		et: {
-			isoCode: "et",
+		ET: {
+			isoCode: "ET",
 			dialCode: "251",
 			nationalPrefix: "0",
 			patterns: [
@@ -1742,8 +1801,8 @@ module.exports = {
 				}
 			]
 		},
-		fi: {
-			isoCode: "fi",
+		FI: {
+			isoCode: "FI",
 			dialCode: "358",
 			nationalPrefix: "0",
 			patterns: [
@@ -1774,8 +1833,8 @@ module.exports = {
 			],
 			priority: 10
 		},
-		fj: {
-			isoCode: "fj",
+		FJ: {
+			isoCode: "FJ",
 			dialCode: "679",
 			patterns: [
 				{
@@ -1790,12 +1849,14 @@ module.exports = {
 				}
 			]
 		},
-		fk: {
-			isoCode: "fk",
-			dialCode: "500"
+		FK: {
+			isoCode: "FK",
+			dialCode: "500",
+			priority: 10,
+			patternRegion: "FK"
 		},
-		fm: {
-			isoCode: "fm",
+		FM: {
+			isoCode: "FM",
 			dialCode: "691",
 			patterns: [
 				{
@@ -1804,8 +1865,8 @@ module.exports = {
 				}
 			]
 		},
-		fo: {
-			isoCode: "fo",
+		FO: {
+			isoCode: "FO",
 			dialCode: "298",
 			patterns: [
 				{
@@ -1814,8 +1875,8 @@ module.exports = {
 				}
 			]
 		},
-		fr: {
-			isoCode: "fr",
+		FR: {
+			isoCode: "FR",
 			dialCode: "33",
 			nationalPrefix: "0",
 			patterns: [
@@ -1853,8 +1914,8 @@ module.exports = {
 				}
 			]
 		},
-		ga: {
-			isoCode: "ga",
+		GA: {
+			isoCode: "GA",
 			dialCode: "241",
 			patterns: [
 				{
@@ -1870,8 +1931,8 @@ module.exports = {
 				}
 			]
 		},
-		gb: {
-			isoCode: "gb",
+		GB: {
+			isoCode: "GB",
 			dialCode: "44",
 			nationalPrefix: "0",
 			patterns: [
@@ -1938,13 +1999,15 @@ module.exports = {
 			],
 			priority: 10
 		},
-		gd: {
-			isoCode: "gd",
+		GD: {
+			isoCode: "GD",
 			dialCode: "1473",
+			countryDialCode: "1",
+			regionCode: "473",
 			nationalPrefix: "1"
 		},
-		ge: {
-			isoCode: "ge",
+		GE: {
+			isoCode: "GE",
 			dialCode: "995",
 			nationalPrefix: "0",
 			patterns: [
@@ -1968,8 +2031,8 @@ module.exports = {
 				}
 			]
 		},
-		gf: {
-			isoCode: "gf",
+		GF: {
+			isoCode: "GF",
 			dialCode: "594",
 			nationalPrefix: "0",
 			patterns: [
@@ -1980,15 +2043,15 @@ module.exports = {
 				}
 			]
 		},
-		gg: {
-			isoCode: "gg",
+		GG: {
+			isoCode: "GG",
 			dialCode: "44",
 			nationalPrefix: "0",
 			priority: 1,
-			patternRegion: "gb"
+			patternRegion: "GB"
 		},
-		gh: {
-			isoCode: "gh",
+		GH: {
+			isoCode: "GH",
 			dialCode: "233",
 			nationalPrefix: "0",
 			patterns: [
@@ -2006,8 +2069,8 @@ module.exports = {
 				}
 			]
 		},
-		gi: {
-			isoCode: "gi",
+		GI: {
+			isoCode: "GI",
 			dialCode: "350",
 			patterns: [
 				{
@@ -2017,8 +2080,8 @@ module.exports = {
 				}
 			]
 		},
-		gl: {
-			isoCode: "gl",
+		GL: {
+			isoCode: "GL",
 			dialCode: "299",
 			patterns: [
 				{
@@ -2027,8 +2090,8 @@ module.exports = {
 				}
 			]
 		},
-		gm: {
-			isoCode: "gm",
+		GM: {
+			isoCode: "GM",
 			dialCode: "220",
 			patterns: [
 				{
@@ -2037,8 +2100,8 @@ module.exports = {
 				}
 			]
 		},
-		gn: {
-			isoCode: "gn",
+		GN: {
+			isoCode: "GN",
 			dialCode: "224",
 			patterns: [
 				{
@@ -2053,8 +2116,8 @@ module.exports = {
 				}
 			]
 		},
-		gp: {
-			isoCode: "gp",
+		GP: {
+			isoCode: "GP",
 			dialCode: "590",
 			nationalPrefix: "0",
 			patterns: [
@@ -2066,8 +2129,8 @@ module.exports = {
 			],
 			priority: 10
 		},
-		gq: {
-			isoCode: "gq",
+		GQ: {
+			isoCode: "GQ",
 			dialCode: "240",
 			patterns: [
 				{
@@ -2082,8 +2145,8 @@ module.exports = {
 				}
 			]
 		},
-		gr: {
-			isoCode: "gr",
+		GR: {
+			isoCode: "GR",
 			dialCode: "30",
 			patterns: [
 				{
@@ -2103,8 +2166,8 @@ module.exports = {
 				}
 			]
 		},
-		gt: {
-			isoCode: "gt",
+		GT: {
+			isoCode: "GT",
 			dialCode: "502",
 			patterns: [
 				{
@@ -2119,13 +2182,15 @@ module.exports = {
 				}
 			]
 		},
-		gu: {
-			isoCode: "gu",
+		GU: {
+			isoCode: "GU",
 			dialCode: "1671",
+			countryDialCode: "1",
+			regionCode: "671",
 			nationalPrefix: "1"
 		},
-		gw: {
-			isoCode: "gw",
+		GW: {
+			isoCode: "GW",
 			dialCode: "245",
 			patterns: [
 				{
@@ -2140,8 +2205,8 @@ module.exports = {
 				}
 			]
 		},
-		gy: {
-			isoCode: "gy",
+		GY: {
+			isoCode: "GY",
 			dialCode: "592",
 			patterns: [
 				{
@@ -2150,8 +2215,8 @@ module.exports = {
 				}
 			]
 		},
-		hk: {
-			isoCode: "hk",
+		HK: {
+			isoCode: "HK",
 			dialCode: "852",
 			patterns: [
 				{
@@ -2176,8 +2241,8 @@ module.exports = {
 				}
 			]
 		},
-		hn: {
-			isoCode: "hn",
+		HN: {
+			isoCode: "HN",
 			dialCode: "504",
 			patterns: [
 				{
@@ -2186,8 +2251,8 @@ module.exports = {
 				}
 			]
 		},
-		hr: {
-			isoCode: "hr",
+		HR: {
+			isoCode: "HR",
 			dialCode: "385",
 			nationalPrefix: "0",
 			patterns: [
@@ -2259,8 +2324,8 @@ module.exports = {
 				}
 			]
 		},
-		ht: {
-			isoCode: "ht",
+		HT: {
+			isoCode: "HT",
 			dialCode: "509",
 			patterns: [
 				{
@@ -2269,8 +2334,8 @@ module.exports = {
 				}
 			]
 		},
-		hu: {
-			isoCode: "hu",
+		HU: {
+			isoCode: "HU",
 			dialCode: "36",
 			nationalPrefix: "06",
 			patterns: [
@@ -2288,8 +2353,8 @@ module.exports = {
 				}
 			]
 		},
-		id: {
-			isoCode: "id",
+		ID: {
+			isoCode: "ID",
 			dialCode: "62",
 			nationalPrefix: "0",
 			patterns: [
@@ -2343,8 +2408,8 @@ module.exports = {
 				}
 			]
 		},
-		ie: {
-			isoCode: "ie",
+		IE: {
+			isoCode: "IE",
 			dialCode: "353",
 			nationalPrefix: "0",
 			patterns: [
@@ -2404,8 +2469,8 @@ module.exports = {
 				}
 			]
 		},
-		il: {
-			isoCode: "il",
+		IL: {
+			isoCode: "IL",
 			dialCode: "972",
 			nationalPrefix: "0",
 			patterns: [
@@ -2459,15 +2524,15 @@ module.exports = {
 				}
 			]
 		},
-		im: {
-			isoCode: "im",
+		IM: {
+			isoCode: "IM",
 			dialCode: "44",
 			nationalPrefix: "0",
 			priority: 3,
-			patternRegion: "gb"
+			patternRegion: "GB"
 		},
-		"in": {
-			isoCode: "in",
+		IN: {
+			isoCode: "IN",
 			dialCode: "91",
 			nationalPrefix: "0",
 			patterns: [
@@ -2475,7 +2540,7 @@ module.exports = {
 					match: "(\\d{5})(\\d{5})",
 					replace: "$1 $2",
 					nationalFormat: "0$1",
-					leadingDigitPattern: "7(?:0|19[0-5]|2(?:[0235679]|[14][017-9]|8(?:[0-569]|78|8[089])|9[389])|3(?:[05-8]|1(?:[089]|7[5-9])|2(?:[5-8]|[0-49][089])|3[017-9]|4(?:[07-9]|11)|9(?:[01689]|[2345][089]|40|7[0189]))|4(?:[056]|1(?:[0135-9]|[23][089]|2[089]|4[089])|2(?:0[089]|[1-7][089]|[89])|3(?:[0-8][089]|9)|4(?:[089]|11|7[02-8])|7(?:[089]|11|7[02-8])|8(?:[0-24-7][089]|[389])|9(?:[0-7][089]|[89]))|5(?:[0346-9]|1[019]|2(?:[03-9]|[12][089])|5[017-9])|6(?:[06-9]|1[0-257-9]|2[0-5]|3[19]|5[4589])|7(?:0(?:[02-9]|10)|[1-9])|8(?:[0-79]|8(?:0[0189]|11|8[013-9]|9[012]))|9(?:0|7(?:[2-8]|9[7-9])|8[0246-9]|9(?:[04-9]|11|2[234])))|8(?:0(?:[01589]|6[67]|7(?:[2-7]|86|90))|1(?:[02-57-9]|1(?:[0135-9]|22|44)|6[089])|2(?:0[08]|[236-9]|5[1-9])|3(?:[0357-9]|170|28[0-6]|4[1-9])|[45]|6(?:[02457-9]|6(?:[08]|7[02-8]|9[01]))|7(?:0[07]|[1-69])|8(?:[0-26-9]|44|5[2-9])|9(?:[035-9]|19|2[2-9]|4[0-8]))|9"
+					leadingDigitPattern: "7(?:0|19[0-5]|2(?:[0235679]|[14][017-9]|8(?:[0-569]|[78][089])|9[389])|3(?:[05-8]|1(?:[089]|7[5-9])|2(?:[5-8]|[0-49][089])|3[017-9]|4(?:[07-9]|11)|9(?:[01689]|[2345][089]|40|7[0189]))|4(?:[056]|1(?:[0135-9]|[23][089]|2[089]|4[089])|2(?:0[089]|[1-7][089]|[89])|3(?:[0-8][089]|9)|4(?:[089]|11|7[02-8])|7(?:[089]|11|7[02-8])|8(?:[0-24-7][089]|[389])|9(?:[0-7][089]|[89]))|5(?:[0346-9]|1(?:[019]|7[02-9])|2(?:[03-9]|[12][089])|5[017-9])|6(?:[06-9]|1[0-257-9]|2[0-5]|3[19]|4(?:6[89]|[7-9][089])|5(?:[0-367][089]|[4589]))|7(?:0(?:[02-9]|1[089])|[1-9])|8(?:[0-79]|8(?:0[0189]|11|8[013-9]|9[012]))|9(?:0|7(?:[2-8]|9[7-9])|8[0246-9]|9(?:[03-9]|11|2[234])))|8(?:0(?:[01589]|6[67]|7(?:[2-8]|9[056]))|1(?:[02-57-9]|1(?:[0135-9]|22|44)|6[089])|2(?:0[08]|[236-9]|5[1-9])|3(?:[0357-9]|1(?:7[02]|[89])|2(?:[09]|8[0-6])|4[1-9]|60)|[45]|6(?:[02457-9]|1[089]|3[89]|6(?:[08]|7[02-8]|9[01]))|7(?:0[07]|[1-69])|8(?:[0-26-9]|44|5[2-9])|9(?:[035-9]|19|2[2-9]|4[0-8]))|9"
 				},
 				{
 					match: "(\\d{2})(\\d{4})(\\d{4})",
@@ -2545,8 +2610,8 @@ module.exports = {
 				}
 			]
 		},
-		io: {
-			isoCode: "io",
+		IO: {
+			isoCode: "IO",
 			dialCode: "246",
 			patterns: [
 				{
@@ -2555,8 +2620,8 @@ module.exports = {
 				}
 			]
 		},
-		iq: {
-			isoCode: "iq",
+		IQ: {
+			isoCode: "IQ",
 			dialCode: "964",
 			nationalPrefix: "0",
 			patterns: [
@@ -2580,8 +2645,8 @@ module.exports = {
 				}
 			]
 		},
-		ir: {
-			isoCode: "ir",
+		IR: {
+			isoCode: "IR",
 			dialCode: "98",
 			nationalPrefix: "0",
 			patterns: [
@@ -2617,8 +2682,8 @@ module.exports = {
 				}
 			]
 		},
-		is: {
-			isoCode: "is",
+		IS: {
+			isoCode: "IS",
 			dialCode: "354",
 			patterns: [
 				{
@@ -2633,8 +2698,8 @@ module.exports = {
 				}
 			]
 		},
-		it: {
-			isoCode: "it",
+		IT: {
+			isoCode: "IT",
 			dialCode: "39",
 			patterns: [
 				{
@@ -2690,20 +2755,22 @@ module.exports = {
 			],
 			priority: 10
 		},
-		je: {
-			isoCode: "je",
+		JE: {
+			isoCode: "JE",
 			dialCode: "44",
 			nationalPrefix: "0",
 			priority: 5,
-			patternRegion: "gb"
+			patternRegion: "GB"
 		},
-		jm: {
-			isoCode: "jm",
+		JM: {
+			isoCode: "JM",
 			dialCode: "1876",
+			countryDialCode: "1",
+			regionCode: "876",
 			nationalPrefix: "1"
 		},
-		jo: {
-			isoCode: "jo",
+		JO: {
+			isoCode: "JO",
 			dialCode: "962",
 			nationalPrefix: "0",
 			patterns: [
@@ -2727,8 +2794,8 @@ module.exports = {
 				}
 			]
 		},
-		jp: {
-			isoCode: "jp",
+		JP: {
+			isoCode: "JP",
 			dialCode: "81",
 			nationalPrefix: "0",
 			patterns: [
@@ -2886,8 +2953,8 @@ module.exports = {
 				}
 			]
 		},
-		ke: {
-			isoCode: "ke",
+		KE: {
+			isoCode: "KE",
 			dialCode: "254",
 			nationalPrefix: "0",
 			patterns: [
@@ -2911,8 +2978,8 @@ module.exports = {
 				}
 			]
 		},
-		kg: {
-			isoCode: "kg",
+		KG: {
+			isoCode: "KG",
 			dialCode: "996",
 			nationalPrefix: "0",
 			patterns: [
@@ -2936,8 +3003,8 @@ module.exports = {
 				}
 			]
 		},
-		kh: {
-			isoCode: "kh",
+		KH: {
+			isoCode: "KH",
 			dialCode: "855",
 			nationalPrefix: "0",
 			patterns: [
@@ -2954,12 +3021,12 @@ module.exports = {
 				}
 			]
 		},
-		ki: {
-			isoCode: "ki",
+		KI: {
+			isoCode: "KI",
 			dialCode: "686"
 		},
-		km: {
-			isoCode: "km",
+		KM: {
+			isoCode: "KM",
 			dialCode: "269",
 			patterns: [
 				{
@@ -2968,13 +3035,15 @@ module.exports = {
 				}
 			]
 		},
-		kn: {
-			isoCode: "kn",
+		KN: {
+			isoCode: "KN",
 			dialCode: "1869",
+			countryDialCode: "1",
+			regionCode: "869",
 			nationalPrefix: "1"
 		},
-		kp: {
-			isoCode: "kp",
+		KP: {
+			isoCode: "KP",
 			dialCode: "850",
 			nationalPrefix: "0",
 			patterns: [
@@ -2998,8 +3067,8 @@ module.exports = {
 				}
 			]
 		},
-		kr: {
-			isoCode: "kr",
+		KR: {
+			isoCode: "KR",
 			dialCode: "82",
 			nationalPrefix: "0",
 			patterns: [
@@ -3139,8 +3208,8 @@ module.exports = {
 				}
 			]
 		},
-		kw: {
-			isoCode: "kw",
+		KW: {
+			isoCode: "KW",
 			dialCode: "965",
 			patterns: [
 				{
@@ -3155,20 +3224,22 @@ module.exports = {
 				}
 			]
 		},
-		ky: {
-			isoCode: "ky",
+		KY: {
+			isoCode: "KY",
 			dialCode: "1345",
+			countryDialCode: "1",
+			regionCode: "345",
 			nationalPrefix: "1"
 		},
-		kz: {
-			isoCode: "kz",
+		KZ: {
+			isoCode: "KZ",
 			dialCode: "7",
 			nationalPrefix: "8",
 			priority: 1,
-			patternRegion: "ru"
+			patternRegion: "RU"
 		},
-		la: {
-			isoCode: "la",
+		LA: {
+			isoCode: "LA",
 			dialCode: "856",
 			nationalPrefix: "0",
 			patterns: [
@@ -3192,8 +3263,8 @@ module.exports = {
 				}
 			]
 		},
-		lb: {
-			isoCode: "lb",
+		LB: {
+			isoCode: "LB",
 			dialCode: "961",
 			nationalPrefix: "0",
 			patterns: [
@@ -3210,13 +3281,15 @@ module.exports = {
 				}
 			]
 		},
-		lc: {
-			isoCode: "lc",
+		LC: {
+			isoCode: "LC",
 			dialCode: "1758",
+			countryDialCode: "1",
+			regionCode: "758",
 			nationalPrefix: "1"
 		},
-		li: {
-			isoCode: "li",
+		LI: {
+			isoCode: "LI",
 			dialCode: "423",
 			nationalPrefix: "0",
 			patterns: [
@@ -3237,8 +3310,8 @@ module.exports = {
 				}
 			]
 		},
-		lk: {
-			isoCode: "lk",
+		LK: {
+			isoCode: "LK",
 			dialCode: "94",
 			nationalPrefix: "0",
 			patterns: [
@@ -3256,8 +3329,8 @@ module.exports = {
 				}
 			]
 		},
-		lr: {
-			isoCode: "lr",
+		LR: {
+			isoCode: "LR",
 			dialCode: "231",
 			nationalPrefix: "0",
 			patterns: [
@@ -3281,8 +3354,8 @@ module.exports = {
 				}
 			]
 		},
-		ls: {
-			isoCode: "ls",
+		LS: {
+			isoCode: "LS",
 			dialCode: "266",
 			patterns: [
 				{
@@ -3291,8 +3364,8 @@ module.exports = {
 				}
 			]
 		},
-		lt: {
-			isoCode: "lt",
+		LT: {
+			isoCode: "LT",
 			dialCode: "370",
 			nationalPrefix: "8",
 			patterns: [
@@ -3322,8 +3395,8 @@ module.exports = {
 				}
 			]
 		},
-		lu: {
-			isoCode: "lu",
+		LU: {
+			isoCode: "LU",
 			dialCode: "352",
 			patterns: [
 				{
@@ -3373,8 +3446,8 @@ module.exports = {
 				}
 			]
 		},
-		lv: {
-			isoCode: "lv",
+		LV: {
+			isoCode: "LV",
 			dialCode: "371",
 			patterns: [
 				{
@@ -3383,8 +3456,8 @@ module.exports = {
 				}
 			]
 		},
-		ly: {
-			isoCode: "ly",
+		LY: {
+			isoCode: "LY",
 			dialCode: "218",
 			nationalPrefix: "0",
 			patterns: [
@@ -3395,8 +3468,8 @@ module.exports = {
 				}
 			]
 		},
-		ma: {
-			isoCode: "ma",
+		MA: {
+			isoCode: "MA",
 			dialCode: "212",
 			nationalPrefix: "0",
 			patterns: [
@@ -3432,8 +3505,8 @@ module.exports = {
 				}
 			]
 		},
-		mc: {
-			isoCode: "mc",
+		MC: {
+			isoCode: "MC",
 			dialCode: "377",
 			nationalPrefix: "0",
 			patterns: [
@@ -3463,8 +3536,8 @@ module.exports = {
 				}
 			]
 		},
-		md: {
-			isoCode: "md",
+		MD: {
+			isoCode: "MD",
 			dialCode: "373",
 			nationalPrefix: "0",
 			patterns: [
@@ -3488,8 +3561,8 @@ module.exports = {
 				}
 			]
 		},
-		me: {
-			isoCode: "me",
+		ME: {
+			isoCode: "ME",
 			dialCode: "382",
 			nationalPrefix: "0",
 			patterns: [
@@ -3507,15 +3580,15 @@ module.exports = {
 				}
 			]
 		},
-		mf: {
-			isoCode: "mf",
+		MF: {
+			isoCode: "MF",
 			dialCode: "590",
 			nationalPrefix: "0",
 			priority: 5,
-			patternRegion: "gp"
+			patternRegion: "GP"
 		},
-		mg: {
-			isoCode: "mg",
+		MG: {
+			isoCode: "MG",
 			dialCode: "261",
 			nationalPrefix: "0",
 			patterns: [
@@ -3526,8 +3599,8 @@ module.exports = {
 				}
 			]
 		},
-		mh: {
-			isoCode: "mh",
+		MH: {
+			isoCode: "MH",
 			dialCode: "692",
 			nationalPrefix: "1",
 			patterns: [
@@ -3537,8 +3610,8 @@ module.exports = {
 				}
 			]
 		},
-		mk: {
-			isoCode: "mk",
+		MK: {
+			isoCode: "MK",
 			dialCode: "389",
 			nationalPrefix: "0",
 			patterns: [
@@ -3562,8 +3635,8 @@ module.exports = {
 				}
 			]
 		},
-		ml: {
-			isoCode: "ml",
+		ML: {
+			isoCode: "ML",
 			dialCode: "223",
 			patterns: [
 				{
@@ -3585,8 +3658,8 @@ module.exports = {
 				}
 			]
 		},
-		mm: {
-			isoCode: "mm",
+		MM: {
+			isoCode: "MM",
 			dialCode: "95",
 			nationalPrefix: "0",
 			patterns: [
@@ -3646,8 +3719,8 @@ module.exports = {
 				}
 			]
 		},
-		mn: {
-			isoCode: "mn",
+		MN: {
+			isoCode: "MN",
 			dialCode: "976",
 			nationalPrefix: "0",
 			patterns: [
@@ -3683,8 +3756,8 @@ module.exports = {
 				}
 			]
 		},
-		mo: {
-			isoCode: "mo",
+		MO: {
+			isoCode: "MO",
 			dialCode: "853",
 			patterns: [
 				{
@@ -3693,13 +3766,15 @@ module.exports = {
 				}
 			]
 		},
-		mp: {
-			isoCode: "mp",
+		MP: {
+			isoCode: "MP",
 			dialCode: "1670",
+			countryDialCode: "1",
+			regionCode: "670",
 			nationalPrefix: "1"
 		},
-		mq: {
-			isoCode: "mq",
+		MQ: {
+			isoCode: "MQ",
 			dialCode: "596",
 			nationalPrefix: "0",
 			patterns: [
@@ -3710,8 +3785,8 @@ module.exports = {
 				}
 			]
 		},
-		mr: {
-			isoCode: "mr",
+		MR: {
+			isoCode: "MR",
 			dialCode: "222",
 			patterns: [
 				{
@@ -3720,13 +3795,15 @@ module.exports = {
 				}
 			]
 		},
-		ms: {
-			isoCode: "ms",
+		MS: {
+			isoCode: "MS",
 			dialCode: "1664",
+			countryDialCode: "1",
+			regionCode: "664",
 			nationalPrefix: "1"
 		},
-		mt: {
-			isoCode: "mt",
+		MT: {
+			isoCode: "MT",
 			dialCode: "356",
 			patterns: [
 				{
@@ -3735,8 +3812,8 @@ module.exports = {
 				}
 			]
 		},
-		mu: {
-			isoCode: "mu",
+		MU: {
+			isoCode: "MU",
 			dialCode: "230",
 			patterns: [
 				{
@@ -3751,8 +3828,8 @@ module.exports = {
 				}
 			]
 		},
-		mv: {
-			isoCode: "mv",
+		MV: {
+			isoCode: "MV",
 			dialCode: "960",
 			patterns: [
 				{
@@ -3767,8 +3844,8 @@ module.exports = {
 				}
 			]
 		},
-		mw: {
-			isoCode: "mw",
+		MW: {
+			isoCode: "MW",
 			dialCode: "265",
 			nationalPrefix: "0",
 			patterns: [
@@ -3792,8 +3869,8 @@ module.exports = {
 				}
 			]
 		},
-		mx: {
-			isoCode: "mx",
+		MX: {
+			isoCode: "MX",
 			dialCode: "52",
 			nationalPrefix: "01",
 			patterns: [
@@ -3847,8 +3924,8 @@ module.exports = {
 				}
 			]
 		},
-		my: {
-			isoCode: "my",
+		MY: {
+			isoCode: "MY",
 			dialCode: "60",
 			nationalPrefix: "0",
 			patterns: [
@@ -3889,8 +3966,8 @@ module.exports = {
 				}
 			]
 		},
-		mz: {
-			isoCode: "mz",
+		MZ: {
+			isoCode: "MZ",
 			dialCode: "258",
 			patterns: [
 				{
@@ -3905,8 +3982,8 @@ module.exports = {
 				}
 			]
 		},
-		na: {
-			isoCode: "na",
+		NA: {
+			isoCode: "NA",
 			dialCode: "264",
 			nationalPrefix: "0",
 			patterns: [
@@ -3936,8 +4013,8 @@ module.exports = {
 				}
 			]
 		},
-		nc: {
-			isoCode: "nc",
+		NC: {
+			isoCode: "NC",
 			dialCode: "687",
 			patterns: [
 				{
@@ -3947,8 +4024,8 @@ module.exports = {
 				}
 			]
 		},
-		ne: {
-			isoCode: "ne",
+		NE: {
+			isoCode: "NE",
 			dialCode: "227",
 			patterns: [
 				{
@@ -3963,8 +4040,8 @@ module.exports = {
 				}
 			]
 		},
-		nf: {
-			isoCode: "nf",
+		NF: {
+			isoCode: "NF",
 			dialCode: "672",
 			patterns: [
 				{
@@ -3979,8 +4056,8 @@ module.exports = {
 				}
 			]
 		},
-		ng: {
-			isoCode: "ng",
+		NG: {
+			isoCode: "NG",
 			dialCode: "234",
 			nationalPrefix: "0",
 			patterns: [
@@ -4000,7 +4077,7 @@ module.exports = {
 					match: "(\\d{3})(\\d{3})(\\d{3,4})",
 					replace: "$1 $2 $3",
 					nationalFormat: "0$1",
-					leadingDigitPattern: "70|8[01]|90[2357-9]"
+					leadingDigitPattern: "70|8[01]|90[235-9]"
 				},
 				{
 					match: "([78]00)(\\d{4})(\\d{4,5})",
@@ -4022,8 +4099,8 @@ module.exports = {
 				}
 			]
 		},
-		ni: {
-			isoCode: "ni",
+		NI: {
+			isoCode: "NI",
 			dialCode: "505",
 			patterns: [
 				{
@@ -4032,8 +4109,8 @@ module.exports = {
 				}
 			]
 		},
-		nl: {
-			isoCode: "nl",
+		NL: {
+			isoCode: "NL",
 			dialCode: "31",
 			nationalPrefix: "0",
 			patterns: [
@@ -4075,8 +4152,8 @@ module.exports = {
 				}
 			]
 		},
-		no: {
-			isoCode: "no",
+		NO: {
+			isoCode: "NO",
 			dialCode: "47",
 			patterns: [
 				{
@@ -4092,8 +4169,8 @@ module.exports = {
 			],
 			priority: 10
 		},
-		np: {
-			isoCode: "np",
+		NP: {
+			isoCode: "NP",
 			dialCode: "977",
 			nationalPrefix: "0",
 			patterns: [
@@ -4117,8 +4194,8 @@ module.exports = {
 				}
 			]
 		},
-		nr: {
-			isoCode: "nr",
+		NR: {
+			isoCode: "NR",
 			dialCode: "674",
 			patterns: [
 				{
@@ -4127,12 +4204,12 @@ module.exports = {
 				}
 			]
 		},
-		nu: {
-			isoCode: "nu",
+		NU: {
+			isoCode: "NU",
 			dialCode: "683"
 		},
-		nz: {
-			isoCode: "nz",
+		NZ: {
+			isoCode: "NZ",
 			dialCode: "64",
 			nationalPrefix: "0",
 			patterns: [
@@ -4172,10 +4249,11 @@ module.exports = {
 					nationalFormat: "0$1",
 					leadingDigitPattern: "2(?:10|74)|5|[89]0"
 				}
-			]
+			],
+			priority: 10
 		},
-		om: {
-			isoCode: "om",
+		OM: {
+			isoCode: "OM",
 			dialCode: "968",
 			patterns: [
 				{
@@ -4195,8 +4273,8 @@ module.exports = {
 				}
 			]
 		},
-		pa: {
-			isoCode: "pa",
+		PA: {
+			isoCode: "PA",
 			dialCode: "507",
 			patterns: [
 				{
@@ -4211,8 +4289,8 @@ module.exports = {
 				}
 			]
 		},
-		pe: {
-			isoCode: "pe",
+		PE: {
+			isoCode: "PE",
 			dialCode: "51",
 			nationalPrefix: "0",
 			patterns: [
@@ -4242,8 +4320,8 @@ module.exports = {
 				}
 			]
 		},
-		pf: {
-			isoCode: "pf",
+		PF: {
+			isoCode: "PF",
 			dialCode: "689",
 			patterns: [
 				{
@@ -4258,8 +4336,8 @@ module.exports = {
 				}
 			]
 		},
-		pg: {
-			isoCode: "pg",
+		PG: {
+			isoCode: "PG",
 			dialCode: "675",
 			patterns: [
 				{
@@ -4274,8 +4352,8 @@ module.exports = {
 				}
 			]
 		},
-		ph: {
-			isoCode: "ph",
+		PH: {
+			isoCode: "PH",
 			dialCode: "63",
 			nationalPrefix: "0",
 			patterns: [
@@ -4327,8 +4405,8 @@ module.exports = {
 				}
 			]
 		},
-		pk: {
-			isoCode: "pk",
+		PK: {
+			isoCode: "PK",
 			dialCode: "92",
 			nationalPrefix: "0",
 			patterns: [
@@ -4382,8 +4460,8 @@ module.exports = {
 				}
 			]
 		},
-		pl: {
-			isoCode: "pl",
+		PL: {
+			isoCode: "PL",
 			dialCode: "48",
 			patterns: [
 				{
@@ -4413,8 +4491,8 @@ module.exports = {
 				}
 			]
 		},
-		pm: {
-			isoCode: "pm",
+		PM: {
+			isoCode: "PM",
 			dialCode: "508",
 			nationalPrefix: "0",
 			patterns: [
@@ -4425,19 +4503,21 @@ module.exports = {
 				}
 			]
 		},
-		pr: {
-			isoCode: "pr",
+		PR: {
+			isoCode: "PR",
 			dialCode: "1787|939",
+			countryDialCode: "1",
+			regionCode: "787|939",
 			areaCodes: [
 				"787",
 				"939"
 			],
 			nationalPrefix: "1",
 			priority: 1,
-			patternRegion: "pr"
+			patternRegion: "PR"
 		},
-		ps: {
-			isoCode: "ps",
+		PS: {
+			isoCode: "PS",
 			dialCode: "970",
 			nationalPrefix: "0",
 			patterns: [
@@ -4461,8 +4541,8 @@ module.exports = {
 				}
 			]
 		},
-		pt: {
-			isoCode: "pt",
+		PT: {
+			isoCode: "PT",
 			dialCode: "351",
 			patterns: [
 				{
@@ -4477,8 +4557,8 @@ module.exports = {
 				}
 			]
 		},
-		pw: {
-			isoCode: "pw",
+		PW: {
+			isoCode: "PW",
 			dialCode: "680",
 			patterns: [
 				{
@@ -4487,8 +4567,8 @@ module.exports = {
 				}
 			]
 		},
-		py: {
-			isoCode: "py",
+		PY: {
+			isoCode: "PY",
 			dialCode: "595",
 			nationalPrefix: "0",
 			patterns: [
@@ -4535,8 +4615,8 @@ module.exports = {
 				}
 			]
 		},
-		qa: {
-			isoCode: "qa",
+		QA: {
+			isoCode: "QA",
 			dialCode: "974",
 			patterns: [
 				{
@@ -4551,9 +4631,11 @@ module.exports = {
 				}
 			]
 		},
-		re: {
-			isoCode: "re",
+		RE: {
+			isoCode: "RE",
 			dialCode: "262262|6[49]|8",
+			countryDialCode: "262",
+			regionCode: "262|6[49]|8",
 			nationalPrefix: "0",
 			patterns: [
 				{
@@ -4563,8 +4645,8 @@ module.exports = {
 				}
 			]
 		},
-		ro: {
-			isoCode: "ro",
+		RO: {
+			isoCode: "RO",
 			dialCode: "40",
 			nationalPrefix: "0",
 			patterns: [
@@ -4594,8 +4676,8 @@ module.exports = {
 				}
 			]
 		},
-		rs: {
-			isoCode: "rs",
+		RS: {
+			isoCode: "RS",
 			dialCode: "381",
 			nationalPrefix: "0",
 			patterns: [
@@ -4637,8 +4719,8 @@ module.exports = {
 				}
 			]
 		},
-		ru: {
-			isoCode: "ru",
+		RU: {
+			isoCode: "RU",
 			dialCode: "7",
 			nationalPrefix: "8",
 			patterns: [
@@ -4677,8 +4759,8 @@ module.exports = {
 			],
 			priority: 10
 		},
-		rw: {
-			isoCode: "rw",
+		RW: {
+			isoCode: "RW",
 			dialCode: "250",
 			nationalPrefix: "0",
 			patterns: [
@@ -4701,8 +4783,8 @@ module.exports = {
 				}
 			]
 		},
-		sa: {
-			isoCode: "sa",
+		SA: {
+			isoCode: "SA",
 			dialCode: "966",
 			nationalPrefix: "0",
 			patterns: [
@@ -4744,8 +4826,8 @@ module.exports = {
 				}
 			]
 		},
-		sb: {
-			isoCode: "sb",
+		SB: {
+			isoCode: "SB",
 			dialCode: "677",
 			patterns: [
 				{
@@ -4755,15 +4837,10 @@ module.exports = {
 				}
 			]
 		},
-		sc: {
-			isoCode: "sc",
+		SC: {
+			isoCode: "SC",
 			dialCode: "248",
 			patterns: [
-				{
-					match: "(\\d{3})(\\d{3})",
-					replace: "$1 $2",
-					leadingDigitPattern: "8"
-				},
 				{
 					match: "(\\d)(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
@@ -4771,8 +4848,8 @@ module.exports = {
 				}
 			]
 		},
-		sd: {
-			isoCode: "sd",
+		SD: {
+			isoCode: "SD",
 			dialCode: "249",
 			nationalPrefix: "0",
 			patterns: [
@@ -4783,8 +4860,8 @@ module.exports = {
 				}
 			]
 		},
-		se: {
-			isoCode: "se",
+		SE: {
+			isoCode: "SE",
 			dialCode: "46",
 			nationalPrefix: "0",
 			patterns: [
@@ -4913,8 +4990,8 @@ module.exports = {
 				}
 			]
 		},
-		sg: {
-			isoCode: "sg",
+		SG: {
+			isoCode: "SG",
 			dialCode: "65",
 			patterns: [
 				{
@@ -4939,14 +5016,14 @@ module.exports = {
 				}
 			]
 		},
-		sh: {
-			isoCode: "sh",
+		SH: {
+			isoCode: "SH",
 			dialCode: "290",
 			priority: 10,
-			patternRegion: "sh"
+			patternRegion: "SH"
 		},
-		si: {
-			isoCode: "si",
+		SI: {
+			isoCode: "SI",
 			dialCode: "386",
 			nationalPrefix: "0",
 			patterns: [
@@ -4976,22 +5053,22 @@ module.exports = {
 				}
 			]
 		},
-		sj: {
-			isoCode: "sj",
+		SJ: {
+			isoCode: "SJ",
 			dialCode: "47",
 			priority: 1,
-			patternRegion: "no"
+			patternRegion: "NO"
 		},
-		sk: {
-			isoCode: "sk",
+		SK: {
+			isoCode: "SK",
 			dialCode: "421",
 			nationalPrefix: "0",
 			patterns: [
 				{
-					match: "(2)(16)(\\d{3,4})",
+					match: "(2)(1[67])(\\d{3,4})",
 					replace: "$1 $2 $3",
 					nationalFormat: "0$1",
-					leadingDigitPattern: "216"
+					leadingDigitPattern: "21[67]"
 				},
 				{
 					match: "([3-5]\\d)(16)(\\d{2,3})",
@@ -5025,8 +5102,8 @@ module.exports = {
 				}
 			]
 		},
-		sl: {
-			isoCode: "sl",
+		SL: {
+			isoCode: "SL",
 			dialCode: "232",
 			nationalPrefix: "0",
 			patterns: [
@@ -5037,8 +5114,8 @@ module.exports = {
 				}
 			]
 		},
-		sm: {
-			isoCode: "sm",
+		SM: {
+			isoCode: "SM",
 			dialCode: "378",
 			patterns: [
 				{
@@ -5075,8 +5152,8 @@ module.exports = {
 				}
 			]
 		},
-		sn: {
-			isoCode: "sn",
+		SN: {
+			isoCode: "SN",
 			dialCode: "221",
 			patterns: [
 				{
@@ -5091,11 +5168,16 @@ module.exports = {
 				}
 			]
 		},
-		so: {
-			isoCode: "so",
+		SO: {
+			isoCode: "SO",
 			dialCode: "252",
 			nationalPrefix: "0",
 			patterns: [
+				{
+					match: "(\\d{6})",
+					replace: "$1",
+					leadingDigitPattern: "[134]"
+				},
 				{
 					match: "(\\d)(\\d{6})",
 					replace: "$1 $2",
@@ -5107,19 +5189,24 @@ module.exports = {
 					leadingDigitPattern: "24|[67]"
 				},
 				{
+					match: "(\\d{2})(\\d{4})",
+					replace: "$1 $2",
+					leadingDigitPattern: "8[125]"
+				},
+				{
 					match: "(\\d{2})(\\d{5,7})",
 					replace: "$1 $2",
 					leadingDigitPattern: "15|28|6[1-35-9]|799|9[2-9]"
 				},
 				{
-					match: "(90\\d)(\\d{3})(\\d{3})",
+					match: "(\\d{3})(\\d{3})(\\d{3})",
 					replace: "$1 $2 $3",
-					leadingDigitPattern: "90"
+					leadingDigitPattern: "3[59]|4[89]|6[24-6]|79|8[08]|90"
 				}
 			]
 		},
-		sr: {
-			isoCode: "sr",
+		SR: {
+			isoCode: "SR",
 			dialCode: "597",
 			patterns: [
 				{
@@ -5139,8 +5226,8 @@ module.exports = {
 				}
 			]
 		},
-		ss: {
-			isoCode: "ss",
+		SS: {
+			isoCode: "SS",
 			dialCode: "211",
 			nationalPrefix: "0",
 			patterns: [
@@ -5151,8 +5238,8 @@ module.exports = {
 				}
 			]
 		},
-		st: {
-			isoCode: "st",
+		ST: {
+			isoCode: "ST",
 			dialCode: "239",
 			patterns: [
 				{
@@ -5161,8 +5248,8 @@ module.exports = {
 				}
 			]
 		},
-		sv: {
-			isoCode: "sv",
+		SV: {
+			isoCode: "SV",
 			dialCode: "503",
 			patterns: [
 				{
@@ -5182,13 +5269,15 @@ module.exports = {
 				}
 			]
 		},
-		sx: {
-			isoCode: "sx",
+		SX: {
+			isoCode: "SX",
 			dialCode: "1721",
+			countryDialCode: "1",
+			regionCode: "721",
 			nationalPrefix: "1"
 		},
-		sy: {
-			isoCode: "sy",
+		SY: {
+			isoCode: "SY",
 			dialCode: "963",
 			nationalPrefix: "0",
 			patterns: [
@@ -5206,8 +5295,8 @@ module.exports = {
 				}
 			]
 		},
-		sz: {
-			isoCode: "sz",
+		SZ: {
+			isoCode: "SZ",
 			dialCode: "268",
 			patterns: [
 				{
@@ -5217,19 +5306,21 @@ module.exports = {
 				}
 			]
 		},
-		ta: {
-			isoCode: "ta",
+		TA: {
+			isoCode: "TA",
 			dialCode: "290",
 			priority: 1,
-			patternRegion: "sh"
+			patternRegion: "SH"
 		},
-		tc: {
-			isoCode: "tc",
+		TC: {
+			isoCode: "TC",
 			dialCode: "1649",
+			countryDialCode: "1",
+			regionCode: "649",
 			nationalPrefix: "1"
 		},
-		td: {
-			isoCode: "td",
+		TD: {
+			isoCode: "TD",
 			dialCode: "235",
 			patterns: [
 				{
@@ -5238,8 +5329,8 @@ module.exports = {
 				}
 			]
 		},
-		tg: {
-			isoCode: "tg",
+		TG: {
+			isoCode: "TG",
 			dialCode: "228",
 			patterns: [
 				{
@@ -5248,8 +5339,8 @@ module.exports = {
 				}
 			]
 		},
-		th: {
-			isoCode: "th",
+		TH: {
+			isoCode: "TH",
 			dialCode: "66",
 			nationalPrefix: "0",
 			patterns: [
@@ -5273,8 +5364,8 @@ module.exports = {
 				}
 			]
 		},
-		tj: {
-			isoCode: "tj",
+		TJ: {
+			isoCode: "TJ",
 			dialCode: "992",
 			nationalPrefix: "8",
 			patterns: [
@@ -5304,12 +5395,12 @@ module.exports = {
 				}
 			]
 		},
-		tk: {
-			isoCode: "tk",
+		TK: {
+			isoCode: "TK",
 			dialCode: "690"
 		},
-		tl: {
-			isoCode: "tl",
+		TL: {
+			isoCode: "TL",
 			dialCode: "670",
 			patterns: [
 				{
@@ -5324,8 +5415,8 @@ module.exports = {
 				}
 			]
 		},
-		tm: {
-			isoCode: "tm",
+		TM: {
+			isoCode: "TM",
 			dialCode: "993",
 			nationalPrefix: "8",
 			patterns: [
@@ -5349,8 +5440,8 @@ module.exports = {
 				}
 			]
 		},
-		tn: {
-			isoCode: "tn",
+		TN: {
+			isoCode: "TN",
 			dialCode: "216",
 			patterns: [
 				{
@@ -5359,8 +5450,8 @@ module.exports = {
 				}
 			]
 		},
-		to: {
-			isoCode: "to",
+		TO: {
+			isoCode: "TO",
 			dialCode: "676",
 			patterns: [
 				{
@@ -5380,8 +5471,8 @@ module.exports = {
 				}
 			]
 		},
-		tr: {
-			isoCode: "tr",
+		TR: {
+			isoCode: "TR",
 			dialCode: "90",
 			nationalPrefix: "0",
 			patterns: [
@@ -5410,17 +5501,19 @@ module.exports = {
 				}
 			]
 		},
-		tt: {
-			isoCode: "tt",
+		TT: {
+			isoCode: "TT",
 			dialCode: "1868",
+			countryDialCode: "1",
+			regionCode: "868",
 			nationalPrefix: "1"
 		},
-		tv: {
-			isoCode: "tv",
+		TV: {
+			isoCode: "TV",
 			dialCode: "688"
 		},
-		tw: {
-			isoCode: "tw",
+		TW: {
+			isoCode: "TW",
 			dialCode: "886",
 			nationalPrefix: "0",
 			patterns: [
@@ -5456,8 +5549,8 @@ module.exports = {
 				}
 			]
 		},
-		tz: {
-			isoCode: "tz",
+		TZ: {
+			isoCode: "TZ",
 			dialCode: "255",
 			nationalPrefix: "0",
 			patterns: [
@@ -5481,8 +5574,8 @@ module.exports = {
 				}
 			]
 		},
-		ua: {
-			isoCode: "ua",
+		UA: {
+			isoCode: "UA",
 			dialCode: "380",
 			nationalPrefix: "0",
 			patterns: [
@@ -5490,7 +5583,7 @@ module.exports = {
 					match: "([3-9]\\d)(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
 					nationalFormat: "0$1",
-					leadingDigitPattern: "[38]9|4(?:[45][0-5]|87)|5(?:0|6(?:3[14-7]|7)|7[37])|6[36-8]|73|9[1-9]"
+					leadingDigitPattern: "[38]9|4(?:[45][0-5]|87)|5(?:0|6(?:3[14-7]|7)|7[37])|6[36-8]|7|9[1-9]"
 				},
 				{
 					match: "([3-689]\\d{2})(\\d{3})(\\d{3})",
@@ -5506,8 +5599,8 @@ module.exports = {
 				}
 			]
 		},
-		ug: {
-			isoCode: "ug",
+		UG: {
+			isoCode: "UG",
 			dialCode: "256",
 			nationalPrefix: "0",
 			patterns: [
@@ -5531,8 +5624,8 @@ module.exports = {
 				}
 			]
 		},
-		us: {
-			isoCode: "us",
+		US: {
+			isoCode: "US",
 			dialCode: "1",
 			nationalPrefix: "1",
 			patterns: [
@@ -5553,8 +5646,8 @@ module.exports = {
 			],
 			priority: 10
 		},
-		uy: {
-			isoCode: "uy",
+		UY: {
+			isoCode: "UY",
 			dialCode: "598",
 			nationalPrefix: "0",
 			patterns: [
@@ -5577,8 +5670,8 @@ module.exports = {
 				}
 			]
 		},
-		uz: {
-			isoCode: "uz",
+		UZ: {
+			isoCode: "UZ",
 			dialCode: "998",
 			nationalPrefix: "8",
 			patterns: [
@@ -5589,19 +5682,21 @@ module.exports = {
 				}
 			]
 		},
-		va: {
-			isoCode: "va",
+		VA: {
+			isoCode: "VA",
 			dialCode: "39",
 			priority: 1,
-			patternRegion: "it"
+			patternRegion: "IT"
 		},
-		vc: {
-			isoCode: "vc",
+		VC: {
+			isoCode: "VC",
 			dialCode: "1784",
+			countryDialCode: "1",
+			regionCode: "784",
 			nationalPrefix: "1"
 		},
-		ve: {
-			isoCode: "ve",
+		VE: {
+			isoCode: "VE",
 			dialCode: "58",
 			nationalPrefix: "0",
 			patterns: [
@@ -5612,18 +5707,22 @@ module.exports = {
 				}
 			]
 		},
-		vg: {
-			isoCode: "vg",
+		VG: {
+			isoCode: "VG",
 			dialCode: "1284",
+			countryDialCode: "1",
+			regionCode: "284",
 			nationalPrefix: "1"
 		},
-		vi: {
-			isoCode: "vi",
+		VI: {
+			isoCode: "VI",
 			dialCode: "1340",
+			countryDialCode: "1",
+			regionCode: "340",
 			nationalPrefix: "1"
 		},
-		vn: {
-			isoCode: "vn",
+		VN: {
+			isoCode: "VN",
 			dialCode: "84",
 			nationalPrefix: "0",
 			patterns: [
@@ -5683,8 +5782,8 @@ module.exports = {
 				}
 			]
 		},
-		vu: {
-			isoCode: "vu",
+		VU: {
+			isoCode: "VU",
 			dialCode: "678",
 			patterns: [
 				{
@@ -5694,8 +5793,8 @@ module.exports = {
 				}
 			]
 		},
-		wf: {
-			isoCode: "wf",
+		WF: {
+			isoCode: "WF",
 			dialCode: "681",
 			patterns: [
 				{
@@ -5704,8 +5803,8 @@ module.exports = {
 				}
 			]
 		},
-		ws: {
-			isoCode: "ws",
+		WS: {
+			isoCode: "WS",
 			dialCode: "685",
 			patterns: [
 				{
@@ -5725,8 +5824,8 @@ module.exports = {
 				}
 			]
 		},
-		ye: {
-			isoCode: "ye",
+		YE: {
+			isoCode: "YE",
 			dialCode: "967",
 			nationalPrefix: "0",
 			patterns: [
@@ -5744,13 +5843,15 @@ module.exports = {
 				}
 			]
 		},
-		yt: {
-			isoCode: "yt",
+		YT: {
+			isoCode: "YT",
 			dialCode: "262269|63",
+			countryDialCode: "262",
+			regionCode: "269|63",
 			nationalPrefix: "0"
 		},
-		za: {
-			isoCode: "za",
+		ZA: {
+			isoCode: "ZA",
 			dialCode: "27",
 			nationalPrefix: "0",
 			patterns: [
@@ -5764,7 +5865,7 @@ module.exports = {
 					match: "(\\d{2})(\\d{3})(\\d{4})",
 					replace: "$1 $2 $3",
 					nationalFormat: "0$1",
-					leadingDigitPattern: "[1-79]|8(?:[0-47]|6[1-9])"
+					leadingDigitPattern: "[1-79]|8(?:[0-57]|6[1-9])"
 				},
 				{
 					match: "(\\d{2})(\\d{3,4})",
@@ -5780,8 +5881,8 @@ module.exports = {
 				}
 			]
 		},
-		zm: {
-			isoCode: "zm",
+		ZM: {
+			isoCode: "ZM",
 			dialCode: "260",
 			nationalPrefix: "0",
 			patterns: [
@@ -5799,8 +5900,8 @@ module.exports = {
 				}
 			]
 		},
-		zw: {
-			isoCode: "zw",
+		ZW: {
+			isoCode: "ZW",
 			dialCode: "263",
 			nationalPrefix: "0",
 			patterns: [
@@ -5866,8 +5967,8 @@ module.exports = {
 				}
 			]
 		},
-		uk: {
-			isoCode: "gb",
+		UK: {
+			isoCode: "GB",
 			dialCode: "44",
 			nationalPrefix: "0",
 			patterns: [
@@ -5937,816 +6038,827 @@ module.exports = {
 	},
 	dialCodeMap: {
 		1: [
-			"us",
-			"ca"
+			"US",
+			"CA",
+			"UM"
 		],
 		7: [
-			"ru",
-			"kz"
+			"RU",
+			"KZ"
 		],
 		20: [
-			"eg"
+			"EG"
 		],
 		27: [
-			"za"
+			"ZA"
 		],
 		30: [
-			"gr"
+			"GR"
 		],
 		31: [
-			"nl"
+			"NL"
 		],
 		32: [
-			"be"
+			"BE"
 		],
 		33: [
-			"fr"
+			"FR"
 		],
 		34: [
-			"es"
+			"ES"
 		],
 		36: [
-			"hu"
+			"HU"
 		],
 		39: [
-			"it",
-			"va"
+			"IT",
+			"VA"
 		],
 		40: [
-			"ro"
+			"RO"
 		],
 		41: [
-			"ch"
+			"CH"
 		],
 		43: [
-			"at"
+			"AT"
 		],
 		44: [
-			"gb",
-			"je",
-			"im",
-			"gg"
+			"GB",
+			"JE",
+			"IM",
+			"GG"
 		],
 		45: [
-			"dk"
+			"DK"
 		],
 		46: [
-			"se"
+			"SE"
 		],
 		47: [
-			"no",
-			"sj"
+			"NO",
+			"SJ",
+			"BV"
 		],
 		48: [
-			"pl"
+			"PL"
 		],
 		49: [
-			"de"
+			"DE"
 		],
 		51: [
-			"pe"
+			"PE"
 		],
 		52: [
-			"mx"
+			"MX"
 		],
 		53: [
-			"cu"
+			"CU"
 		],
 		54: [
-			"ar"
+			"AR"
 		],
 		55: [
-			"br"
+			"BR"
 		],
 		56: [
-			"cl"
+			"CL"
 		],
 		57: [
-			"co"
+			"CO"
 		],
 		58: [
-			"ve"
+			"VE"
 		],
 		60: [
-			"my"
+			"MY"
 		],
 		61: [
-			"au",
-			"cx",
-			"cc"
+			"AU",
+			"CX",
+			"CC",
+			"HM"
 		],
 		62: [
-			"id"
+			"ID"
 		],
 		63: [
-			"ph"
+			"PH"
 		],
 		64: [
-			"nz"
+			"NZ",
+			"PN"
 		],
 		65: [
-			"sg"
+			"SG"
 		],
 		66: [
-			"th"
+			"TH"
 		],
 		81: [
-			"jp"
+			"JP"
 		],
 		82: [
-			"kr"
+			"KR"
 		],
 		84: [
-			"vn"
+			"VN"
 		],
 		86: [
-			"cn"
+			"CN"
 		],
 		90: [
-			"tr"
+			"TR"
 		],
 		91: [
-			"in"
+			"IN"
 		],
 		92: [
-			"pk"
+			"PK"
 		],
 		93: [
-			"af"
+			"AF"
 		],
 		94: [
-			"lk"
+			"LK"
 		],
 		95: [
-			"mm"
+			"MM"
 		],
 		98: [
-			"ir"
+			"IR"
 		],
 		211: [
-			"ss"
+			"SS"
 		],
 		212: [
-			"ma"
+			"MA"
 		],
 		213: [
-			"dz"
+			"DZ"
 		],
 		216: [
-			"tn"
+			"TN"
 		],
 		218: [
-			"ly"
+			"LY"
 		],
 		220: [
-			"gm"
+			"GM"
 		],
 		221: [
-			"sn"
+			"SN"
 		],
 		222: [
-			"mr"
+			"MR"
 		],
 		223: [
-			"ml"
+			"ML"
 		],
 		224: [
-			"gn"
+			"GN"
 		],
 		225: [
-			"ci"
+			"CI"
 		],
 		226: [
-			"bf"
+			"BF"
 		],
 		227: [
-			"ne"
+			"NE"
 		],
 		228: [
-			"tg"
+			"TG"
 		],
 		229: [
-			"bj"
+			"BJ"
 		],
 		230: [
-			"mu"
+			"MU"
 		],
 		231: [
-			"lr"
+			"LR"
 		],
 		232: [
-			"sl"
+			"SL"
 		],
 		233: [
-			"gh"
+			"GH"
 		],
 		234: [
-			"ng"
+			"NG"
 		],
 		235: [
-			"td"
+			"TD"
 		],
 		236: [
-			"cf"
+			"CF"
 		],
 		237: [
-			"cm"
+			"CM"
 		],
 		238: [
-			"cv"
+			"CV"
 		],
 		239: [
-			"st"
+			"ST"
 		],
 		240: [
-			"gq"
+			"GQ"
 		],
 		241: [
-			"ga"
+			"GA"
 		],
 		242: [
-			"cg"
+			"CG"
 		],
 		243: [
-			"cd"
+			"CD"
 		],
 		244: [
-			"ao"
+			"AO"
 		],
 		245: [
-			"gw"
+			"GW"
 		],
 		246: [
-			"io"
+			"IO"
 		],
 		247: [
-			"ac"
+			"AC"
 		],
 		248: [
-			"sc"
+			"SC"
 		],
 		249: [
-			"sd"
+			"SD"
 		],
 		250: [
-			"rw"
+			"RW"
 		],
 		251: [
-			"et"
+			"ET"
 		],
 		252: [
-			"so"
+			"SO"
 		],
 		253: [
-			"dj"
+			"DJ"
 		],
 		254: [
-			"ke"
+			"KE"
 		],
 		255: [
-			"tz"
+			"TZ"
 		],
 		256: [
-			"ug"
+			"UG"
 		],
 		257: [
-			"bi"
+			"BI"
 		],
 		258: [
-			"mz"
+			"MZ"
 		],
 		260: [
-			"zm"
+			"ZM"
 		],
 		261: [
-			"mg"
+			"MG"
+		],
+		262: [
+			"TF"
 		],
 		263: [
-			"zw"
+			"ZW"
 		],
 		264: [
-			"na"
+			"NA"
 		],
 		265: [
-			"mw"
+			"MW"
 		],
 		266: [
-			"ls"
+			"LS"
 		],
 		267: [
-			"bw"
+			"BW"
 		],
 		268: [
-			"sz"
+			"SZ"
 		],
 		269: [
-			"km"
+			"KM"
 		],
 		290: [
-			"sh",
-			"ta"
+			"SH",
+			"TA"
 		],
 		291: [
-			"er"
+			"ER"
 		],
 		297: [
-			"aw"
+			"AW"
 		],
 		298: [
-			"fo"
+			"FO"
 		],
 		299: [
-			"gl"
+			"GL"
 		],
 		350: [
-			"gi"
+			"GI"
 		],
 		351: [
-			"pt"
+			"PT"
 		],
 		352: [
-			"lu"
+			"LU"
 		],
 		353: [
-			"ie"
+			"IE"
 		],
 		354: [
-			"is"
+			"IS"
 		],
 		355: [
-			"al"
+			"AL"
 		],
 		356: [
-			"mt"
+			"MT"
 		],
 		357: [
-			"cy"
+			"CY"
 		],
 		358: [
-			"fi",
-			"ax"
+			"FI",
+			"AX"
 		],
 		359: [
-			"bg"
+			"BG"
 		],
 		370: [
-			"lt"
+			"LT"
 		],
 		371: [
-			"lv"
+			"LV"
 		],
 		372: [
-			"ee"
+			"EE"
 		],
 		373: [
-			"md"
+			"MD"
 		],
 		374: [
-			"am"
+			"AM"
 		],
 		375: [
-			"by"
+			"BY"
 		],
 		376: [
-			"ad"
+			"AD"
 		],
 		377: [
-			"mc"
+			"MC"
 		],
 		378: [
-			"sm"
+			"SM"
 		],
 		380: [
-			"ua"
+			"UA"
 		],
 		381: [
-			"rs"
+			"RS"
 		],
 		382: [
-			"me"
+			"ME"
+		],
+		383: [
+			"KV"
 		],
 		385: [
-			"hr"
+			"HR"
 		],
 		386: [
-			"si"
+			"SI"
 		],
 		387: [
-			"ba"
+			"BA"
 		],
 		389: [
-			"mk"
+			"MK"
 		],
 		420: [
-			"cz"
+			"CZ"
 		],
 		421: [
-			"sk"
+			"SK"
 		],
 		423: [
-			"li"
+			"LI"
 		],
 		500: [
-			"fk"
+			"FK",
+			"GS"
 		],
 		501: [
-			"bz"
+			"BZ"
 		],
 		502: [
-			"gt"
+			"GT"
 		],
 		503: [
-			"sv"
+			"SV"
 		],
 		504: [
-			"hn"
+			"HN"
 		],
 		505: [
-			"ni"
+			"NI"
 		],
 		506: [
-			"cr"
+			"CR"
 		],
 		507: [
-			"pa"
+			"PA"
 		],
 		508: [
-			"pm"
+			"PM"
 		],
 		509: [
-			"ht"
+			"HT"
 		],
 		590: [
-			"gp",
-			"mf",
-			"bl"
+			"GP",
+			"MF",
+			"BL"
 		],
 		591: [
-			"bo"
+			"BO"
 		],
 		592: [
-			"gy"
+			"GY"
 		],
 		593: [
-			"ec"
+			"EC"
 		],
 		594: [
-			"gf"
+			"GF"
 		],
 		595: [
-			"py"
+			"PY"
 		],
 		596: [
-			"mq"
+			"MQ"
 		],
 		597: [
-			"sr"
+			"SR"
 		],
 		598: [
-			"uy"
+			"UY"
 		],
 		599: [
-			"cw",
-			"bq"
+			"CW",
+			"BQ"
 		],
 		670: [
-			"tl"
+			"TL"
 		],
 		672: [
-			"nf"
+			"NF"
 		],
 		673: [
-			"bn"
+			"BN"
 		],
 		674: [
-			"nr"
+			"NR"
 		],
 		675: [
-			"pg"
+			"PG"
 		],
 		676: [
-			"to"
+			"TO"
 		],
 		677: [
-			"sb"
+			"SB"
 		],
 		678: [
-			"vu"
+			"VU"
 		],
 		679: [
-			"fj"
+			"FJ"
 		],
 		680: [
-			"pw"
+			"PW"
 		],
 		681: [
-			"wf"
+			"WF"
 		],
 		682: [
-			"ck"
+			"CK"
 		],
 		683: [
-			"nu"
+			"NU"
 		],
 		685: [
-			"ws"
+			"WS"
 		],
 		686: [
-			"ki"
+			"KI"
 		],
 		687: [
-			"nc"
+			"NC"
 		],
 		688: [
-			"tv"
+			"TV"
 		],
 		689: [
-			"pf"
+			"PF"
 		],
 		690: [
-			"tk"
+			"TK"
 		],
 		691: [
-			"fm"
+			"FM"
 		],
 		692: [
-			"mh"
+			"MH"
 		],
 		850: [
-			"kp"
+			"KP"
 		],
 		852: [
-			"hk"
+			"HK"
 		],
 		853: [
-			"mo"
+			"MO"
 		],
 		855: [
-			"kh"
+			"KH"
 		],
 		856: [
-			"la"
+			"LA"
 		],
 		880: [
-			"bd"
+			"BD"
 		],
 		886: [
-			"tw"
+			"TW"
 		],
 		960: [
-			"mv"
+			"MV"
 		],
 		961: [
-			"lb"
+			"LB"
 		],
 		962: [
-			"jo"
+			"JO"
 		],
 		963: [
-			"sy"
+			"SY"
 		],
 		964: [
-			"iq"
+			"IQ"
 		],
 		965: [
-			"kw"
+			"KW"
 		],
 		966: [
-			"sa"
+			"SA"
 		],
 		967: [
-			"ye"
+			"YE"
 		],
 		968: [
-			"om"
+			"OM"
 		],
 		970: [
-			"ps"
+			"PS"
 		],
 		971: [
-			"ae"
+			"AE"
 		],
 		972: [
-			"il"
+			"IL"
 		],
 		973: [
-			"bh"
+			"BH"
 		],
 		974: [
-			"qa"
+			"QA"
 		],
 		975: [
-			"bt"
+			"BT"
 		],
 		976: [
-			"mn"
+			"MN"
 		],
 		977: [
-			"np"
+			"NP"
 		],
 		992: [
-			"tj"
+			"TJ"
 		],
 		993: [
-			"tm"
+			"TM"
 		],
 		994: [
-			"az"
+			"AZ"
 		],
 		995: [
-			"ge"
+			"GE"
 		],
 		996: [
-			"kg"
+			"KG"
 		],
 		998: [
-			"uz"
+			"UZ"
 		],
 		1204: [
-			"ca"
+			"CA"
 		],
 		1236: [
-			"ca"
+			"CA"
 		],
 		1242: [
-			"bs"
+			"BS"
 		],
 		1246: [
-			"bb"
+			"BB"
 		],
 		1249: [
-			"ca"
+			"CA"
 		],
 		1250: [
-			"ca"
+			"CA"
 		],
 		1264: [
-			"ai"
+			"AI"
 		],
 		1268: [
-			"ag"
+			"AG"
 		],
 		1284: [
-			"vg"
+			"VG"
 		],
 		1289: [
-			"ca"
+			"CA"
 		],
 		1306: [
-			"ca"
+			"CA"
 		],
 		1340: [
-			"vi"
+			"VI"
 		],
 		1343: [
-			"ca"
+			"CA"
 		],
 		1345: [
-			"ky"
+			"KY"
 		],
 		1365: [
-			"ca"
+			"CA"
 		],
 		1387: [
-			"ca"
+			"CA"
 		],
 		1403: [
-			"ca"
+			"CA"
 		],
 		1416: [
-			"ca"
+			"CA"
 		],
 		1418: [
-			"ca"
+			"CA"
 		],
 		1431: [
-			"ca"
+			"CA"
 		],
 		1437: [
-			"ca"
+			"CA"
 		],
 		1438: [
-			"ca"
+			"CA"
 		],
 		1441: [
-			"bm"
+			"BM"
 		],
 		1450: [
-			"ca"
+			"CA"
 		],
 		1473: [
-			"gd"
+			"GD"
 		],
 		1506: [
-			"ca"
+			"CA"
 		],
 		1514: [
-			"ca"
+			"CA"
 		],
 		1519: [
-			"ca"
+			"CA"
 		],
 		1548: [
-			"ca"
+			"CA"
 		],
 		1579: [
-			"ca"
+			"CA"
 		],
 		1581: [
-			"ca"
+			"CA"
 		],
 		1587: [
-			"ca"
+			"CA"
 		],
 		1604: [
-			"ca"
+			"CA"
 		],
 		1613: [
-			"ca"
+			"CA"
 		],
 		1639: [
-			"ca"
+			"CA"
 		],
 		1647: [
-			"ca"
+			"CA"
 		],
 		1649: [
-			"tc"
+			"TC"
 		],
 		1664: [
-			"ms"
+			"MS"
 		],
 		1670: [
-			"mp"
+			"MP"
 		],
 		1671: [
-			"gu"
+			"GU"
 		],
 		1672: [
-			"ca"
+			"CA"
 		],
 		1684: [
-			"as"
+			"AS"
 		],
 		1705: [
-			"ca"
+			"CA"
 		],
 		1709: [
-			"ca"
+			"CA"
 		],
 		1721: [
-			"sx"
+			"SX"
 		],
 		1742: [
-			"ca"
+			"CA"
 		],
 		1758: [
-			"lc"
+			"LC"
 		],
 		1767: [
-			"dm"
+			"DM"
 		],
 		1778: [
-			"ca"
+			"CA"
 		],
 		1780: [
-			"ca"
+			"CA"
 		],
 		1782: [
-			"ca"
+			"CA"
 		],
 		1784: [
-			"vc"
+			"VC"
 		],
 		1807: [
-			"ca"
+			"CA"
 		],
 		1819: [
-			"ca"
+			"CA"
 		],
 		1825: [
-			"ca"
+			"CA"
 		],
 		1867: [
-			"ca"
+			"CA"
 		],
 		1868: [
-			"tt"
+			"TT"
 		],
 		1869: [
-			"kn"
+			"KN"
 		],
 		1873: [
-			"ca"
+			"CA"
 		],
 		1876: [
-			"jm"
+			"JM"
 		],
 		1902: [
-			"ca"
+			"CA"
 		],
 		1905: [
-			"ca"
+			"CA"
 		]
 	}
 };

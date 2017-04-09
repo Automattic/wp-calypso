@@ -24,6 +24,7 @@ import {
 	isSitePreviewable,
 	isRequestingSites,
 	isRequestingSite,
+	getSiteBySlug,
 	getSiteByUrl,
 	getSitePlan,
 	isCurrentSitePlan,
@@ -40,13 +41,15 @@ import {
 	hasJetpackSiteJetpackThemesExtendedFeatures,
 	isJetpackSiteSecondaryNetworkSite,
 	verifyJetpackModulesActive,
-	getJetpackSiteRemoteManagementURL,
+	getJetpackSiteRemoteManagementUrl,
 	hasJetpackSiteCustomDomain,
 	getJetpackSiteUpdateFilesDisabledReasons,
 	siteHasMinimumJetpackVersion,
 	isJetpackSiteMainNetworkSite,
 	getSiteAdminUrl,
-	getCustomizerUrl
+	getCustomizerUrl,
+	getJetpackComputedAttributes,
+	siteSupportsJetpackSettingsUi
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -747,6 +750,50 @@ describe( 'selectors', () => {
 			}, 2916284 );
 
 			expect( isRequesting ).to.be.false;
+		} );
+	} );
+
+	describe( '#getSiteBySlug()', () => {
+		it( 'should return null if a site cannot be found', () => {
+			const site = getSiteBySlug( {
+				sites: {
+					items: {}
+				}
+			}, 'testtwosites2014.wordpress.com' );
+
+			expect( site ).to.be.null;
+		} );
+
+		it( 'should return a matched site', () => {
+			const state = {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://testtwosites2014.wordpress.com'
+						}
+					}
+				}
+			};
+			const site = getSiteBySlug( state, 'testtwosites2014.wordpress.com' );
+
+			expect( site ).to.equal( state.sites.items[ 77203199 ] );
+		} );
+
+		it( 'should return a matched site with nested path', () => {
+			const state = {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://testtwosites2014.wordpress.com/path/to/site'
+						}
+					}
+				}
+			};
+			const site = getSiteBySlug( state, 'testtwosites2014.wordpress.com::path::to::site' );
+
+			expect( site ).to.equal( state.sites.items[ 77203199 ] );
 		} );
 	} );
 
@@ -1689,7 +1736,7 @@ describe( 'selectors', () => {
 			expect( hasThemesExtendedFeatures ).to.be.null;
 		} );
 
-		it( 'it should return `false` if jetpack version is smaller than 4.4.2', () => {
+		it( 'it should return `false` if jetpack version is smaller than 4.7', () => {
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
@@ -1705,14 +1752,14 @@ describe( 'selectors', () => {
 			expect( hasThemesExtendedFeatures ).to.be.false;
 		} );
 
-		it( 'it should return `true` if jetpack version is greater or equal to 4.4.2', () => {
+		it( 'it should return `true` if jetpack version is greater or equal to 4.7', () => {
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
 					URL: 'https://jetpacksite.me',
 					jetpack: true,
 					options: {
-						jetpack_version: '4.4.2'
+						jetpack_version: '4.7'
 					}
 				}
 			} );
@@ -1865,9 +1912,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getJetpackSiteRemoteManagementURL()', () => {
+	describe( '#getJetpackSiteRemoteManagementUrl()', () => {
 		it( 'should return `null` for a non-existing site', () => {
-			const managementUrl = getJetpackSiteRemoteManagementURL( stateWithNoItems, nonExistingSiteId );
+			const managementUrl = getJetpackSiteRemoteManagementUrl( stateWithNoItems, nonExistingSiteId );
 			expect( managementUrl ).to.equal( null );
 		} );
 
@@ -1879,7 +1926,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			const managementUrl = getJetpackSiteRemoteManagementURL( state, siteId );
+			const managementUrl = getJetpackSiteRemoteManagementUrl( state, siteId );
 			expect( managementUrl ).to.equal( null );
 		} );
 
@@ -1897,8 +1944,8 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			const managementUrl = getJetpackSiteRemoteManagementURL( state, siteId );
-			expect( managementUrl ).to.equal( 'https://jetpacksite.me/wp-admin/admin.php?page=jetpack&configure=manage' );
+			const managementUrl = getJetpackSiteRemoteManagementUrl( state, siteId );
+			expect( managementUrl ).to.equal( 'https://jetpacksite.me/wp-admin/admin.php?page=jetpack&configure=json-api' );
 		} );
 
 		it( 'it should return the correct url for versions of jetpack greater than or equal to 3.4', () => {
@@ -1915,8 +1962,8 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			const managementUrl = getJetpackSiteRemoteManagementURL( state, siteId );
-			expect( managementUrl ).to.equal( 'https://jetpacksite.me/wp-admin/admin.php?page=jetpack&configure=json-api' );
+			const managementUrl = getJetpackSiteRemoteManagementUrl( state, siteId );
+			expect( managementUrl ).to.equal( 'https://jetpacksite.me/wp-admin/admin.php?page=jetpack&configure=manage' );
 		} );
 	} );
 
@@ -2180,14 +2227,14 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCustomizerUrl()', () => {
-		it( 'should return null if slug for WordPress.com site is not known', () => {
+		it( 'should return root path if slug for WordPress.com site is not known', () => {
 			const customizerUrl = getCustomizerUrl( {
 				sites: {
 					items: {}
 				}
 			}, 77203199 );
 
-			expect( customizerUrl ).to.be.null;
+			expect( customizerUrl ).to.equal( '/customize' );
 		} );
 
 		it( 'should return customizer URL for WordPress.com site', () => {
@@ -2222,9 +2269,67 @@ describe( 'selectors', () => {
 			expect( customizerUrl ).to.be.null;
 		} );
 
+		it( 'should return customizer URL for Jetpack site', () => {
+			const customizerUrl = getCustomizerUrl( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								admin_url: 'https://example.com/wp-admin/'
+							}
+						}
+					}
+				}
+			}, 77203199 );
+
+			expect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php' );
+		} );
+
+		it( 'should prepend panel path parameter for WordPress.com site', () => {
+			const customizerUrl = getCustomizerUrl( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							jetpack: false
+						}
+					}
+				}
+			}, 77203199, 'identity' );
+
+			expect( customizerUrl ).to.equal( '/customize/identity/example.com' );
+		} );
+
+		it( 'should prepend panel path parameter for Jetpack site', () => {
+			const customizerUrl = getCustomizerUrl( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								admin_url: 'https://example.com/wp-admin/'
+							}
+						}
+					}
+				}
+			}, 77203199, 'identity' );
+
+			expect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php?autofocus%5Bsection%5D=title_tagline' );
+		} );
+
 		context( 'browser', () => {
 			before( () => {
-				global.window = { location: 'https://wordpress.com' };
+				global.window = {
+					location: {
+						href: 'https://wordpress.com'
+					}
+				};
 			} );
 
 			after( () => {
@@ -2247,7 +2352,7 @@ describe( 'selectors', () => {
 					}
 				}, 77203199 );
 
-				expect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php?return=https%253A%252F%252Fwordpress.com' );
+				expect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com' );
 			} );
 		} );
 
@@ -2270,6 +2375,133 @@ describe( 'selectors', () => {
 
 				expect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php' );
 			} );
+		} );
+	} );
+
+	describe( 'siteSupportsJetpackSettingsUi()', () => {
+		it( 'should return null if the Jetpack version is not known', () => {
+			const supportsJetpackSettingsUI = siteSupportsJetpackSettingsUi( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+							jetpack: true,
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( supportsJetpackSettingsUI ).to.be.null;
+		} );
+
+		it( 'should return null if the site is not a Jetpack site', () => {
+			const supportsJetpackSettingsUI = siteSupportsJetpackSettingsUi( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( supportsJetpackSettingsUI ).to.be.null;
+		} );
+
+		it( 'should return false if the Jetpack version is older than 4.5', () => {
+			const supportsJetpackSettingsUI = siteSupportsJetpackSettingsUi( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								jetpack_version: '4.4.0'
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( supportsJetpackSettingsUI ).to.be.false;
+		} );
+
+		it( 'should return true if the Jetpack version is 4.5', () => {
+			const supportsJetpackSettingsUI = siteSupportsJetpackSettingsUi( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								jetpack_version: '4.5.0'
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( supportsJetpackSettingsUI ).to.be.true;
+		} );
+
+		it( 'should return true if the Jetpack version is newer than 4.5', () => {
+			const supportsJetpackSettingsUI = siteSupportsJetpackSettingsUi( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								jetpack_version: '4.6.0'
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( supportsJetpackSettingsUI ).to.be.true;
+		} );
+	} );
+
+	describe( 'getJetpackComputedAttributes()', () => {
+		it( 'should return undefined attributes if a site is not Jetpack', () => {
+			const state = {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							jetpack: false,
+						}
+					}
+				}
+			};
+
+			const noNewAttributes = getJetpackComputedAttributes( state, 77203074 );
+			expect( noNewAttributes.hasMinimumJetpackVersion ).to.equal( undefined );
+			expect( noNewAttributes.canAutoupdateFiles ).to.equal( undefined );
+			expect( noNewAttributes.canUpdateFiles ).to.equal( undefined );
+		} );
+
+		it( 'should return exists for attributes if a site is Jetpack', () => {
+			const state = {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							jetpack: true,
+						}
+					}
+				}
+			};
+			const noNewAttributes = getJetpackComputedAttributes( state, 77203074 );
+			expect( noNewAttributes.hasMinimumJetpackVersion ).to.have.property;
+			expect( noNewAttributes.canAutoupdateFiles ).to.have.property;
+			expect( noNewAttributes.canUpdateFiles ).to.have.property;
 		} );
 	} );
 } );

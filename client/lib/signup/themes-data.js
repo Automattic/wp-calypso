@@ -19,20 +19,20 @@ export const themes = [
 	},
 	{
 		name: 'Baskerville',
-		slug: 'baskerville',
+		slug: 'baskerville-2',
 		repo: 'pub',
 		fallback: false,
 		design: 'grid',
-		demo_uri: 'https://baskervilledemo.wordpress.com',
+		demo_uri: 'https://baskerville2demo.wordpress.com',
 		verticals: []
 	},
 	{
 		name: 'Button',
-		slug: 'button',
+		slug: 'button-2',
 		repo: 'pub',
 		fallback: false,
 		design: 'blog',
-		demo_uri: 'https://buttondemo.wordpress.com',
+		demo_uri: 'https://button2demo.wordpress.com',
 		verticals: []
 	},
 	{
@@ -145,11 +145,11 @@ export const themes = [
 	},
 	{
 		name: 'Libre',
-		slug: 'libre',
+		slug: 'libre-2',
 		repo: 'pub',
 		fallback: false,
 		design: 'blog',
-		demo_uri: 'https://libredemo.wordpress.com',
+		demo_uri: 'https://libre2demo.wordpress.com',
 		verticals: []
 	},
 	{
@@ -163,11 +163,11 @@ export const themes = [
 	},
 	{
 		name: 'Penscratch',
-		slug: 'penscratch',
+		slug: 'penscratch-2',
 		repo: 'pub',
 		fallback: true,
 		design: 'blog',
-		demo_uri: 'https://penscratchdemo.wordpress.com',
+		demo_uri: 'https://penscratch2demo.wordpress.com',
 		verticals: []
 	},
 	{
@@ -234,12 +234,12 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Sela',
-		slug: 'sela',
+		name: 'Dara',
+		slug: 'dara',
 		repo: 'pub',
 		fallback: true,
 		design: 'page',
-		demo_uri: 'https://selademo.wordpress.com',
+		demo_uri: 'https://darademo.wordpress.com',
 		verticals: []
 	},
 	{

@@ -192,7 +192,7 @@ export const PLAN_1009 = {
 		},
 		{
 			title : "Included with all plans:",
-			items: ["free-blog"]
+			items: [ "free-blog" ]
 		}
 	],
 	bill_period: 365,

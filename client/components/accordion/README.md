@@ -28,3 +28,9 @@ The following props are available to customize the accordion:
 - `title`: Main heading shown in the always-visible toggle button
 - `subtitle`: Subheading shown in the always-visible toggle button
 - `icon`: React element to be shown as an icon adjacent to the headings in the always-visible toggle button.
+- `status`: Optional object describing a status to be shown in accordion toggle, of shape:
+  - `type`: `"info"`, `"warning"`, `"error"`
+  - `text`: `string` for tooltip
+  - `url`: `string` for click navigation
+  - `position`: `string`, refer to [`<Tooltip />` documentation](../tooltip)
+  - `onClick`: `function` callback on status click

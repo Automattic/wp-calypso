@@ -1,12 +1,14 @@
 .reader-avatar {
 	margin: 0 auto;
 	max-height: 105px;
+
+	&.is-compact {
+		max-height: 32px;
+	}
 }
 
 .reader-avatar {
-
 	&.has-site-and-author-icon {
-
 		.site-icon {
 			height: 96px;
 			width: 96px;
@@ -24,6 +26,33 @@
 				left: 30px;
 				top: -75px;
 			width: 80px;
+			background-color: $white;
+		}
+	}
+
+	&.is-compact {
+		&.has-gravatar {
+			min-width: 32px;
+			min-height: 32px;
+		}
+
+		&.has-site-and-author-icon {
+			.site-icon {
+				height: 32px;
+				width: 32px;
+
+				.gridicon {
+					height: 32px;
+					width: 32px;
+				}
+			}
+
+			.gravatar {
+				height: 24px;
+				left: 12px;
+				top: -22px;
+				width: 24px;
+			}
 		}
 	}
 }

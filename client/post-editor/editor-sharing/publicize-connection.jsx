@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import includes from 'lodash/includes';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -12,7 +13,7 @@ import PostMetadata from 'lib/post-metadata';
 import PostActions from 'lib/posts/actions';
 import * as PostStats from 'lib/posts/stats';
 import Notice from 'components/notice';
-import Gridicon from 'components/gridicon';
+import NoticeAction from 'components/notice/notice-action';
 
 export default React.createClass( {
 	displayName: 'EditorSharingPublicizeConnection',
@@ -70,21 +71,9 @@ export default React.createClass( {
 		}
 
 		return (
-			<Notice className="editor-sharing__broken-publicize-connection" status="is-warning" showDismiss={ false }>
-				{ this.translate( 'There is an issue connecting to %s. {{button}}Reconnect {{icon/}}{{/button}}', {
-					args: connection.label,
-					components: {
-						button: (
-							<button
-								type="button"
-								onClick={ this.props.onRefresh }
-								className="editor-sharing__broken-publicize-connection-button" />
-						),
-						icon: (
-							<Gridicon icon="external" size={ 18 } />
-						)
-					}
-				} ) }
+			<Notice isCompact className="editor-sharing__broken-publicize-connection" status="is-warning" showDismiss={ false }>
+				{ this.translate( 'There is an issue connecting to %s.', { args: connection.label } ) }
+				<NoticeAction onClick={ this.props.onRefresh }>Reconnect <Gridicon icon="external" size={ 18 } /></NoticeAction>
 			</Notice>
 		);
 	},

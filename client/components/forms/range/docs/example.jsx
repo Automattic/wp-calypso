@@ -8,6 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var FormRange = require( 'components/forms/range' );
+var Gridicon = require( 'gridicons' );
 
 module.exports = React.createClass( {
 	displayName: 'Ranges',
@@ -29,8 +30,8 @@ module.exports = React.createClass( {
 	render: function() {
 		return (
 			<FormRange
-				minContent={ <span className="noticon noticon-minus" /> }
-				maxContent={ <span className="noticon noticon-plus" /> }
+				minContent={ <Gridicon icon="minus-small" /> }
+				maxContent={ <Gridicon icon="plus-small" /> }
 				max="100"
 				value={ this.state.rangeValue }
 				onChange={ this.onChange }

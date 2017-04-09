@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:analytics' ),
+const debug = require( 'debug' ),
 	assign = require( 'lodash/assign' ),
+	isObjectLike = require( 'lodash/isObjectLike' ),
 	times = require( 'lodash/times' ),
 	omit = require( 'lodash/omit' ),
 	pickBy = require( 'lodash/pickBy' ),
@@ -11,15 +12,22 @@ var debug = require( 'debug' )( 'calypso:analytics' ),
 	url = require( 'url' ),
 	qs = require( 'qs' );
 
+import cookie from 'cookie';
+
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	loadScript = require( 'lib/load-script' ).loadScript,
-	_superProps,
+const config = require( 'config' ),
+	loadScript = require( 'lib/load-script' ).loadScript;
+
+let _superProps,
 	_user;
 
-import { retarget } from 'lib/analytics/ad-tracking';
+import { retarget, recordAliasInFloodlight, recordPageViewInFloodlight } from 'lib/analytics/ad-tracking';
+const mcDebug = debug( 'calypso:analytics:mc' );
+const gaDebug = debug( 'calypso:analytics:ga' );
+const tracksDebug = debug( 'calypso:analytics:tracks' );
+
 import emitter from 'lib/mixins/emitter';
 
 // Load tracking scripts
@@ -29,36 +37,32 @@ window.ga = window.ga || function() {
 };
 window.ga.l = +new Date();
 
-loadScript( '//stats.wp.com/w.js?55' ); // W_JS_VER
+loadScript( '//stats.wp.com/w.js?56' ); // W_JS_VER
 loadScript( '//www.google-analytics.com/analytics.js' );
 
 function buildQuerystring( group, name ) {
-	var uriComponent = '';
+	let uriComponent = '';
 
 	if ( 'object' === typeof group ) {
-		for ( var key in group ) {
+		for ( const key in group ) {
 			uriComponent += '&x_' + encodeURIComponent( key ) + '=' + encodeURIComponent( group[ key ] );
 		}
-		debug( 'Bumping stats %o', group );
 	} else {
 		uriComponent = '&x_' + encodeURIComponent( group ) + '=' + encodeURIComponent( name );
-		debug( 'Bumping stat "%s" in group "%s"', name, group );
 	}
 
 	return uriComponent;
 }
 
 function buildQuerystringNoPrefix( group, name ) {
-	var uriComponent = '';
+	let uriComponent = '';
 
 	if ( 'object' === typeof group ) {
-		for ( var key in group ) {
+		for ( const key in group ) {
 			uriComponent += '&' + encodeURIComponent( key ) + '=' + encodeURIComponent( group[ key ] );
 		}
-		debug( 'Built stats %o', group );
 	} else {
 		uriComponent = '&' + encodeURIComponent( group ) + '=' + encodeURIComponent( name );
-		debug( 'Built stat "%s" in group "%s"', name, group );
 	}
 
 	return uriComponent;
@@ -67,15 +71,16 @@ function buildQuerystringNoPrefix( group, name ) {
 // we use this variable to track URL paths submitted to analytics.pageView.record
 // so that analytics.pageLoading.record can re-use the urlPath parameter.
 // this helps avoid some nasty coupling, but it's not the cleanest code - sorry.
-var mostRecentUrlPath = null;
+let mostRecentUrlPath = null;
 
-window.addEventListener('popstate', function() {
-	// throw away our URL value if the user used the back/forward buttons
-	mostRecentUrlPath = null;
-});
+if ( typeof window !== 'undefined' ) {
+	window.addEventListener( 'popstate', function() {
+		// throw away our URL value if the user used the back/forward buttons
+		mostRecentUrlPath = null;
+	} );
+}
 
-var analytics = {
-
+const analytics = {
 	initialize: function( user, superProps ) {
 		analytics.setUser( user );
 		analytics.setSuperProps( superProps );
@@ -92,16 +97,28 @@ var analytics = {
 
 	mc: {
 		bumpStat: function( group, name ) {
-			var uriComponent = buildQuerystring( group, name ); // prints debug info
+			if ( 'object' === typeof group ) {
+				mcDebug( 'Bumping stats %o', group );
+			} else {
+				mcDebug( 'Bumping stat %s:%s', group, name );
+			}
+
 			if ( config( 'mc_analytics_enabled' ) ) {
+				const uriComponent = buildQuerystring( group, name );
 				new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + uriComponent + '&t=' + Math.random();
 			}
 		},
 
 		bumpStatWithPageView: function( group, name ) {
 			// this function is fairly dangerous, as it bumps page views for wpcom and should only be called in very specific cases.
-			var uriComponent = buildQuerystringNoPrefix( group, name ); // prints debug info
+			if ( 'object' === typeof group ) {
+				mcDebug( 'Bumping page view with props %o', group );
+			} else {
+				mcDebug( 'Bumping page view %s:%s', group, name );
+			}
+
 			if ( config( 'mc_analytics_enabled' ) ) {
+				const uriComponent = buildQuerystringNoPrefix( group, name );
 				new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom' + uriComponent + '&t=' + Math.random();
 			}
 		}
@@ -119,7 +136,7 @@ var analytics = {
 
 	timing: {
 		record: function( eventType, duration, triggerName ) {
-			var urlPath = mostRecentUrlPath || 'unknown';
+			const urlPath = mostRecentUrlPath || 'unknown';
 			analytics.ga.recordTiming( urlPath, eventType, duration, triggerName );
 			analytics.statsd.recordTiming( urlPath, eventType, duration, triggerName );
 		}
@@ -127,20 +144,29 @@ var analytics = {
 
 	tracks: {
 		recordEvent: function( eventName, eventProperties ) {
-			var superProperties;
+			let superProperties;
 
 			eventProperties = eventProperties || {};
 
-			debug( 'Record event "%s" called with props %o', eventName, eventProperties );
+			if ( process.env.NODE_ENV !== 'production' ) {
+				for ( const key in eventProperties ) {
+					if ( isObjectLike( eventProperties[ key ] ) && typeof console !== 'undefined' ) {
+						console.error( `Unable to record event "${ eventName }" because nested properties are not supported by Tracks. Check '${ key }' on`, eventProperties ); //eslint-disable-line no-console
+
+						return;
+					}
+				}
+			}
+
+			tracksDebug( 'Record event "%s" called with props %o', eventName, eventProperties );
 
 			if ( eventName.indexOf( 'calypso_' ) !== 0 ) {
-				debug( '- Event name must be prefixed by "calypso_"' );
+				tracksDebug( '- Event name must be prefixed by "calypso_"' );
 				return;
 			}
 
 			if ( _superProps ) {
 				superProperties = _superProps.getAll();
-				debug( '- Super Props: %o', superProperties );
 				eventProperties = assign( {}, eventProperties, superProperties ); // assign to a new object so we don't modify the argument
 			}
 
@@ -148,7 +174,7 @@ var analytics = {
 			// This allows a caller to easily remove properties from the recorded set by setting them to undefined
 			eventProperties = omit( eventProperties, isUndefined );
 
-			debug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
+			tracksDebug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
 
 			window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
 			analytics.emit( 'record-event', eventName, eventProperties );
@@ -175,11 +201,14 @@ var analytics = {
 
 			// Ensure every Calypso user is added to our retargeting audience via the AdWords retargeting tag
 			retarget();
+
+			// Track the page view with DCM Floodlight as well
+			recordPageViewInFloodlight( urlPath );
 		},
 
-		createRandomId:  function() {
-			var randomBytesLength = 9, // 9 * 4/3 = 12 - this is to avoid getting padding of a random byte string when it is base64 encoded
-					randomBytes = [];
+		createRandomId: function() {
+			const randomBytesLength = 9; // 9 * 4/3 = 12 - this is to avoid getting padding of a random byte string when it is base64 encoded
+			let randomBytes;
 
 			if ( window.crypto && window.crypto.getRandomValues ) {
 				randomBytes = new Uint8Array( randomBytesLength );
@@ -189,8 +218,18 @@ var analytics = {
 			}
 
 			return btoa( String.fromCharCode.apply( String, randomBytes ) );
-		}
+		},
 
+		/**
+		 * Returns the anoymous id stored in the `tk_ai` cookie
+		 *
+		 * @returns {String} - The Tracks anonymous user id
+		 */
+		anonymousUserId: function() {
+			const cookies = cookie.parse( document.cookie );
+
+			return cookies.tk_ai;
+		}
 	},
 
 	statsd: {
@@ -200,8 +239,8 @@ var analytics = {
 		/* eslint-enable no-unused-vars */
 
 			if ( config( 'boom_analytics_enabled' ) ) {
-				var featureSlug = pageUrl === '/' ? 'homepage' : pageUrl.replace(/^\//, '').replace(/\.|\/|:/g, '_');
-				var matched;
+				let featureSlug = pageUrl === '/' ? 'homepage' : pageUrl.replace( /^\//, '' ).replace( /\.|\/|:/g, '_' );
+				let matched;
 				// prevent explosion of read list metrics
 				// this is a hack - ultimately we want to report this URLs in a more generic way to
 				// google analytics
@@ -222,16 +261,16 @@ var analytics = {
 				} else if ( startsWith( featureSlug, 'read_post_id_' ) ) {
 					featureSlug = 'read_post_id__id';
 				} else if ( ( matched = featureSlug.match( /^start_(.*)_(..)$/ ) ) != null ) {
-					featureSlug = `start_${matched[1]}`;
+					featureSlug = `start_${ matched[ 1 ] }`;
 				}
 
-				var json = JSON.stringify({
-					beacons:[
-						'calypso.' + config( 'boom_analytics_key' ) + '.' + featureSlug + '.' + eventType.replace('-', '_') + ':' + duration + '|ms'
+				const json = JSON.stringify( {
+					beacons: [
+						'calypso.' + config( 'boom_analytics_key' ) + '.' + featureSlug + '.' + eventType.replace( '-', '_' ) + ':' + duration + '|ms'
 					]
-				});
+				} );
 
-				new Image().src = 'https://pixel.wp.com/boom.gif?v=calypso&u=' + encodeURIComponent(pageUrl) + '&json=' + encodeURIComponent(json);
+				new Image().src = 'https://pixel.wp.com/boom.gif?v=calypso&u=' + encodeURIComponent( pageUrl ) + '&json=' + encodeURIComponent( json );
 			}
 		}
 	},
@@ -242,13 +281,12 @@ var analytics = {
 		initialized: false,
 
 		initialize: function() {
-			var parameters = {};
+			const parameters = {};
 			if ( ! analytics.ga.initialized ) {
 				if ( _user && _user.get() ) {
-					parameters = {
-						'userId': 'u-' + _user.get().ID
-					};
+					parameters.userId = 'u-' + _user.get().ID;
 				}
+
 				window.ga( 'create', config( 'google_analytics_key' ), 'auto', parameters );
 
 				// Load the Ecommerce Plugin
@@ -261,16 +299,16 @@ var analytics = {
 		recordPageView: function( urlPath, pageTitle ) {
 			analytics.ga.initialize();
 
-			debug( 'Recording Page View ~ [URL: ' + urlPath + '] [Title: ' + pageTitle + ']' );
+			gaDebug( 'Recording Page View ~ [URL: ' + urlPath + '] [Title: ' + pageTitle + ']' );
 
 			if ( config( 'google_analytics_enabled' ) ) {
 				// Set the current page so all GA events are attached to it.
 				window.ga( 'set', 'page', urlPath );
 
 				window.ga( 'send', {
-					'hitType': 'pageview',
-					'page': urlPath,
-					'title': pageTitle
+					hitType: 'pageview',
+					page: urlPath,
+					title: pageTitle
 				} );
 			}
 		},
@@ -278,7 +316,7 @@ var analytics = {
 		recordEvent: function( category, action, label, value ) {
 			analytics.ga.initialize();
 
-			var debugText = 'Recording Event ~ [Category: ' + category + '] [Action: ' + action + ']';
+			let debugText = 'Recording Event ~ [Category: ' + category + '] [Action: ' + action + ']';
 
 			if ( 'undefined' !== typeof label ) {
 				debugText += ' [Option Label: ' + label + ']';
@@ -288,7 +326,7 @@ var analytics = {
 				debugText += ' [Option Value: ' + value + ']';
 			}
 
-			debug( debugText );
+			gaDebug( debugText );
 
 			if ( config( 'google_analytics_enabled' ) ) {
 				window.ga( 'send', 'event', category, action, label, value );
@@ -298,17 +336,23 @@ var analytics = {
 		recordTiming: function( urlPath, eventType, duration, triggerName ) {
 			analytics.ga.initialize();
 
-			debug( 'Recording Timing ~ [URL: ' + urlPath + '] [Duration: ' + duration + ']' );
+			gaDebug( 'Recording Timing ~ [URL: ' + urlPath + '] [Duration: ' + duration + ']' );
 
 			if ( config( 'google_analytics_enabled' ) ) {
-				window.ga( 'send', 'timing', urlPath, eventType, duration, triggerName);
+				window.ga( 'send', 'timing', urlPath, eventType, duration, triggerName );
 			}
 		}
 	},
 
 	identifyUser: function() {
+		const anonymousUserId = this.tracks.anonymousUserId();
+
 		// Don't identify the user if we don't have one
 		if ( _user && _user.initialized ) {
+			if ( anonymousUserId ) {
+				recordAliasInFloodlight();
+			}
+
 			window._tkq.push( [ 'identifyUser', _user.get().ID, _user.get().username ] );
 		}
 	},

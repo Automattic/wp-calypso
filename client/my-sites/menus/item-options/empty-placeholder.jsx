@@ -1,77 +1,86 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Component
  */
-const EmptyPlaceholder = React.createClass( {
-	propTypes: {
+class EmptyPlaceholder extends Component {
+	static propTypes = {
 		typeName: PropTypes.string.isRequired,
 		createLink: PropTypes.string.isRequired,
-		notFoundLabel: PropTypes.string.isRequired,
+		notFoundLabel: PropTypes.string,
 		isSearch: PropTypes.bool
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			isSearch: false
-		};
-	},
+	static defaultProps = {
+		isSearch: false
+	};
 
 	createOptionMessage() {
-		switch ( this.props.typeName ) {
+		const { createLink, translate, typeName } = this.props;
+		switch ( typeName ) {
 			case 'category':
-				return this.translate( 'You may want to {{a}}create a new category{{/a}}.', {
+				return translate( 'You may want to {{a}}create a new category{{/a}}.', {
 					context: 'Menus: item search/listing results',
 					comment: 'Used when no categories match the given search, or if there are no categories at all.',
 					components: {
-						a: <a className="create-link" href={ this.props.createLink } target="_blank" rel="noopener noreferrer" />
+						a: <a className="create-link" href={ createLink } target="_blank" rel="noopener noreferrer" />
 					}
 				} );
 			case 'post_tag':
-				return this.translate( 'You may want to {{a}}create a new tag{{/a}}.', {
+				return translate( 'You may want to {{a}}create a new tag{{/a}}.', {
 					context: 'Menus: item search/listing results',
 					comment: 'Used when no tags match the given search, or if there are no tags at all.',
 					components: {
-						a: <a className="create-link" href={ this.props.createLink } target="_blank" rel="noopener noreferrer" />
+						a: <a className="create-link" href={ createLink } target="_blank" rel="noopener noreferrer" />
 					}
 				} );
 			case 'post':
-				return this.translate( 'You may want to {{a}}create a new post{{/a}}.', {
+				return translate( 'You may want to {{a}}create a new post{{/a}}.', {
 					context: 'Menus: item search/listing results',
 					comment: 'Used when no posts match the given search, or if there are no posts at all.',
 					components: {
-						a: <a className="create-link" href={ this.props.createLink } />
+						a: <a className="create-link" href={ createLink } />
 					}
 				} );
 			case 'page':
-				return this.translate( 'You may want to {{a}}create a new page{{/a}}.', {
+				return translate( 'You may want to {{a}}create a new page{{/a}}.', {
 					context: 'Menus: item search/listing results',
 					comment: 'Used when no pages match the given search, or if there are no pages at all.',
 					components: {
-						a: <a className="create-link" href={ this.props.createLink } />
+						a: <a className="create-link" href={ createLink } />
 					}
 				} );
 			default:
-				return this.translate( 'You may want to {{a}}create a new one{{/a}}.', {
+				return translate( 'You may want to {{a}}create a new one{{/a}}.', {
 					context: 'Menus: item search/listing results',
 					comment: 'Used when no results are found for the given search, or if there are no results of the given item type.',
 					components: {
-						a: <a className="create-link" href={ this.props.createLink } />
+						a: <a className="create-link" href={ createLink } />
 					}
 				} );
 		}
-	},
+	}
 
 	noOptionsMessage() {
-		return this.props.notFoundLabel;
-	},
+		const { notFoundLabel, translate, typeName } = this.props;
+		const messages = {
+			page: translate( 'No pages found.' ),
+			category: translate( 'No categories found.' ),
+			post_tag: translate( 'No tags found.' ),
+			post_format: translate( 'No post formats found.' ),
+			post: translate( 'No posts found.' ),
+		};
+
+		return typeName in messages ? messages[ typeName ] : notFoundLabel;
+	}
 
 	noSearchResultsMessage() {
-		return this.translate( 'No results. Please try a different search.' );
-	},
+		return this.props.translate( 'No results. Please try a different search.' );
+	}
 
 	render() {
 		return (
@@ -84,7 +93,7 @@ const EmptyPlaceholder = React.createClass( {
 				{ this.props.typeName !== 'post_tag' && this.createOptionMessage() }
 			</span>
 		);
-	},
-} );
+	}
+}
 
-export default EmptyPlaceholder;
+export default localize( EmptyPlaceholder );

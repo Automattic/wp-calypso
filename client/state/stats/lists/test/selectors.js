@@ -13,7 +13,9 @@ import {
 	getSiteStatsPostsCountByDay,
 	getSiteStatsTotalPostsForStreakQuery,
 	getSiteStatsNormalizedData,
-	isRequestingSiteStatsForQuery
+	isRequestingSiteStatsForQuery,
+	getSiteStatsCSVData,
+	hasSiteStatsQueryFailed,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -29,7 +31,7 @@ describe( 'selectors', () => {
 			const requesting = isRequestingSiteStatsForQuery( {
 				stats: {
 					lists: {
-						requesting: {}
+						requests: {}
 					}
 				}
 			}, 2916284, 'statsStreak', {} );
@@ -41,10 +43,10 @@ describe( 'selectors', () => {
 			const requesting = isRequestingSiteStatsForQuery( {
 				stats: {
 					lists: {
-						requesting: {
+						requests: {
 							2916284: {
 								statsStreak: {
-									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': false
+									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': { requesting: false }
 								}
 							}
 						}
@@ -59,10 +61,10 @@ describe( 'selectors', () => {
 			const requesting = isRequestingSiteStatsForQuery( {
 				stats: {
 					lists: {
-						requesting: {
+						requests: {
 							2916284: {
 								statsStreak: {
-									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': true
+									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': { requesting: true }
 								}
 							}
 						}
@@ -71,6 +73,56 @@ describe( 'selectors', () => {
 			}, 2916284, 'statsStreak', { startDate: '2015-06-01', endDate: '2016-06-01' } );
 
 			expect( requesting ).to.be.true;
+		} );
+	} );
+
+	describe( 'hasSiteStatsQueryFailed()', () => {
+		it( 'should return false if no request exists', () => {
+			const hasFailed = hasSiteStatsQueryFailed( {
+				stats: {
+					lists: {
+						requests: {}
+					}
+				}
+			}, 2916284, 'statsStreak', {} );
+
+			expect( hasFailed ).to.be.false;
+		} );
+
+		it( 'should return false if the request status is success', () => {
+			const hasFailed = hasSiteStatsQueryFailed( {
+				stats: {
+					lists: {
+						requests: {
+							2916284: {
+								statsStreak: {
+									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': { requesting: false, status: 'success' }
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'statsStreak', { startDate: '2015-06-01', endDate: '2016-06-01' } );
+
+			expect( hasFailed ).to.be.false;
+		} );
+
+		it( 'should return true if the request status is error', () => {
+			const hasFailed = hasSiteStatsQueryFailed( {
+				stats: {
+					lists: {
+						requests: {
+							2916284: {
+								statsStreak: {
+									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': { requesting: false, status: 'error' }
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'statsStreak', { startDate: '2015-06-01', endDate: '2016-06-01' } );
+
+			expect( hasFailed ).to.be.true;
 		} );
 	} );
 
@@ -395,6 +447,9 @@ describe( 'selectors', () => {
 					lists: {
 						items: {}
 					}
+				},
+				sites: {
+					items: {}
 				}
 			}, 2916284, 'stats', {} );
 
@@ -415,6 +470,9 @@ describe( 'selectors', () => {
 							}
 						}
 					}
+				},
+				sites: {
+					items: {}
 				}
 			}, 2916284, 'notReallyStats', {} );
 
@@ -443,6 +501,9 @@ describe( 'selectors', () => {
 							}
 						}
 					}
+				},
+				sites: {
+					items: {}
 				}
 			}, 2916284, 'stats', {} );
 
@@ -453,6 +514,67 @@ describe( 'selectors', () => {
 				viewsBestDay: '2010-09-29',
 				viewsBestDayTotal: 100
 			} );
+		} );
+	} );
+
+	describe( 'getSiteStatsCSVData()', () => {
+		it( 'should return an empty array if no matching query results exist', () => {
+			const stats = getSiteStatsCSVData( {
+				stats: {
+					lists: {
+						items: {}
+					}
+				},
+				sites: {
+					items: {}
+				}
+			}, 2916284, 'stats', {} );
+
+			expect( stats ).to.eql( [] );
+		} );
+
+		it( 'should return normalized data, if normalizer exists', () => {
+			const stats = getSiteStatsCSVData( {
+				stats: {
+					lists: {
+						items: {
+							2916284: {
+								statsCountryViews: {
+									'[["date","2015-12-25"],["period","day"]]': {
+										date: '2015-12-25',
+										days: {
+											'2015-12-25': {
+												views: [ {
+													country_code: 'US',
+													views: 1
+												} ],
+												other_views: 0,
+												total_views: 1
+											}
+										},
+										'country-info': {
+											US: {
+												flag_icon: 'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+												flat_flag_icon: 'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48',
+												country_full: 'United States',
+												map_region: '021'
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				sites: {
+					items: {}
+				}
+			}, 2916284, 'statsCountryViews', {
+				date: '2015-12-25',
+				period: 'day',
+			} );
+
+			expect( stats ).to.eql( [ [ '"United States"', 1 ] ] );
 		} );
 	} );
 } );

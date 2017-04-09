@@ -5,15 +5,11 @@ This module provides a React component to visualize frequency of posting in a Gi
 #### How to use:
 
 ```js
-var PostTrends = require( 'post-trends' );
+import PostTrends from 'my-sites/stats/post-trends';
 
-render: function() {
+const MyComponent = () => {
     return (
-  		<PostTrends streakList={ streakList } />
+  		<PostTrends />
     );
-}
+};
 ```
-
-#### Required Props
-
-* `streakList`: A `StatsList` object containing the parsed response to the streak api.

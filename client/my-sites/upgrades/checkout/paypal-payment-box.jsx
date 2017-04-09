@@ -19,6 +19,7 @@ var analytics = require( 'lib/analytics' ),
 	TermsOfService = require( './terms-of-service' ),
 	wpcom = require( 'lib/wp' ).undocumented();
 
+import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/upgrades/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import config from 'config';
@@ -79,10 +80,18 @@ module.exports = React.createClass( {
 			disabled: true
 		} );
 
+		let cancelUrl = origin + '/checkout/';
+
+		if ( this.props.selectedSite ) {
+			cancelUrl += this.props.selectedSite.slug;
+		} else {
+			cancelUrl += 'no-site';
+		}
+
 		dataForApi = assign( {}, this.state, {
 			successUrl: origin + this.props.redirectTo(),
-			cancelUrl: origin + '/checkout/' + this.props.selectedSite.slug,
-			cart: cart,
+			cancelUrl,
+			cart,
 			domainDetails: transaction.domainDetails
 		} );
 
@@ -132,6 +141,7 @@ module.exports = React.createClass( {
 		const hasBusinessPlanInCart = some( this.props.cart.products, { product_slug: PLAN_BUSINESS } );
 		const showPaymentChatButton =
 			config.isEnabled( 'upgrades/presale-chat' ) &&
+			abtest( 'presaleChatButton' ) === 'showChatButton' &&
 			hasBusinessPlanInCart;
 		const creditCardButtonClasses = classnames( 'credit-card-payment-box__switch-link', {
 			'credit-card-payment-box__switch-link-left': showPaymentChatButton

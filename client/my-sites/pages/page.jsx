@@ -8,16 +8,17 @@ var React = require( 'react' ),
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	CompactCard = require( 'components/card/compact' ),
-	Gridicon = require( 'components/gridicon' ),
+	Gridicon = require( 'gridicons' ),
 	PopoverMenu = require( 'components/popover/menu' ),
 	PopoverMenuItem = require( 'components/popover/menu-item' ),
-	SiteIcon = require( 'components/site-icon' ),
+	SiteIcon = require( 'blocks/site-icon' ),
 	helpers = require( './helpers' ),
 	analytics = require( 'lib/analytics' ),
 	utils = require( 'lib/posts/utils' ),
@@ -26,7 +27,7 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 
 import MenuSeparator from 'components/popover/menu-separator';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { hasStaticFrontPage } from 'state/sites/selectors';
+import { hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
 import {
 	isFrontPage,
 	isPostsPage,
@@ -34,6 +35,9 @@ import {
 import { setFrontPage } from 'state/sites/actions';
 import { userCan } from 'lib/site/utils';
 import { updateSitesList } from './helpers';
+import { setPreviewUrl } from 'state/ui/preview/actions';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getPreviewURL } from 'lib/posts/utils';
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Pages', eventAction );
@@ -134,11 +138,24 @@ const Page = React.createClass( {
 		);
 	},
 
-	viewPage: function() {
-		window.open( this.props.page.URL );
+	viewPage: function( event ) {
+		event.preventDefault();
+		const { isPreviewable, previewURL } = this.props;
+
+		if ( this.props.page.status && this.props.page.status === 'publish' ) {
+			this.analyticsEvents.viewPage();
+		}
+
+		if ( ! isPreviewable ) {
+			return window.open( previewURL );
+		}
+
+		this.props.setPreviewUrl( previewURL );
+		this.props.setLayoutFocus( 'preview' );
 	},
 
 	getViewItem: function() {
+		const { isPreviewable } = this.props;
 		if ( this.props.page.status === 'trash' ) {
 			return null;
 		}
@@ -150,7 +167,7 @@ const Page = React.createClass( {
 		if ( this.props.page.status !== 'publish' ) {
 			return (
 				<PopoverMenuItem onClick={ this.viewPage }>
-					<Gridicon icon="external" size={ 18 } />
+					<Gridicon icon={ isPreviewable ? 'visible' : 'external' } size={ 18 } />
 					{ this.translate( 'Preview' ) }
 				</PopoverMenuItem>
 			);
@@ -158,7 +175,7 @@ const Page = React.createClass( {
 
 		return (
 			<PopoverMenuItem onClick={ this.viewPage }>
-				<Gridicon icon="external" size={ 18 } />
+				<Gridicon icon={ isPreviewable ? 'visible' : 'external' } size={ 18 } />
 				{ this.translate( 'View Page' ) }
 			</PopoverMenuItem>
 		);
@@ -265,6 +282,22 @@ const Page = React.createClass( {
 		}
 	},
 
+	getCopyItem: function() {
+		const { page: post, site } = this.props;
+		if (
+			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
+			! utils.userCan( 'edit_post', post )
+		) {
+			return null;
+		}
+		return (
+			<PopoverMenuItem onClick={ this.copyPage } href={ `/page/${ site.slug }?copy=${ post.ID }` }>
+				<Gridicon icon="clipboard" size={ 18 } />
+				{ this.translate( 'Copy' ) }
+			</PopoverMenuItem>
+		);
+	},
+
 	getRestoreItem: function() {
 		if ( this.props.page.status !== 'trash' || ! utils.userCan( 'delete_post', this.props.page ) ) {
 			return null;
@@ -327,6 +360,7 @@ const Page = React.createClass( {
 		const editItem = this.getEditItem();
 		const restoreItem = this.getRestoreItem();
 		const sendToTrashItem = this.getSendToTrashItem();
+		const copyItem = this.getCopyItem();
 		const moreInfoItem = this.popoverMoreInfo();
 		const hasSeparatedItems = (
 			viewItem || publishItem || editItem ||
@@ -346,6 +380,7 @@ const Page = React.createClass( {
 				{ viewItem }
 				{ publishItem }
 				{ editItem }
+				{ copyItem }
 				{ restoreItem }
 				{ sendToTrashItem }
 				{ moreInfoItem }
@@ -413,7 +448,11 @@ const Page = React.createClass( {
 		this.setState( { showPageActions: false } );
 		this.updatePostStatus( 'delete' );
 		recordEvent( 'Clicked Delete Page' );
-	}
+	},
+
+	copyPage: function() {
+		recordEvent( 'Clicked Copy Page' );
+	},
 } );
 
 export default connect(
@@ -423,9 +462,13 @@ export default connect(
 			hasStaticFrontPage: hasStaticFrontPage( state, props.page.site_ID ),
 			isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID ),
 			isPostsPage: isPostsPage( state, props.page.site_ID, props.page.ID ),
+			isPreviewable: false !== isSitePreviewable( state, props.site.ID ),
+			previewURL: getPreviewURL( props.page ),
 		};
 	},
 	( dispatch ) => bindActionCreators( {
-		setFrontPage
+		setFrontPage,
+		setPreviewUrl,
+		setLayoutFocus
 	}, dispatch )
 )( Page );

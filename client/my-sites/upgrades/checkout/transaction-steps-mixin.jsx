@@ -1,24 +1,23 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ), // eslint-disable-line no-unused-vars
-	debug = require( 'debug' )( 'calypso:my-sites:upgrades:checkout:transaction-steps-mixin' ),
-	pick = require( 'lodash/pick' ),
-	defer = require( 'lodash/defer' ),
-	isEqual = require( 'lodash/isEqual' ),
-	page = require( 'page' );
+import React from 'react'; // eslint-disable-line no-unused-vars
+import debugFactory from 'debug';
+import { defer, isEqual, pick } from 'lodash';
+
+const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:transaction-steps-mixin' );
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	adTracking = require( 'lib/analytics/ad-tracking' ),
-	isFree = require( 'lib/cart-values' ).isFree,
-	cartItems = require( 'lib/cart-values' ).cartItems,
-	upgradesNotices = require( 'lib/upgrades/notices' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+import analytics from 'lib/analytics';
+import adTracking from 'lib/analytics/ad-tracking';
+import { cartItems } from 'lib/cart-values';
+import { displayError, clear } from 'lib/upgrades/notices';
+import upgradesActions from 'lib/upgrades/actions';
+import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
 
-var TransactionStepsMixin = {
+const TransactionStepsMixin = {
 	submitTransaction: function( event ) {
 		event.preventDefault();
 
@@ -28,7 +27,7 @@ var TransactionStepsMixin = {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		var prevStep = this.props.transaction.step,
+		const prevStep = this.props.transaction.step,
 			nextStep = nextProps.transaction.step;
 
 		if ( ! isEqual( prevStep, nextStep ) ) {
@@ -37,7 +36,7 @@ var TransactionStepsMixin = {
 	},
 
 	_handleTransactionStep: function( { cart, selectedSite, transaction } ) {
-		var step = transaction.step;
+		const step = transaction.step;
 
 		debug( 'transaction step: ' + step.name );
 
@@ -49,25 +48,19 @@ var TransactionStepsMixin = {
 
 	_displayNotices: function( cart, step ) {
 		if ( step.error ) {
-			upgradesNotices.displayError( step.error );
+			displayError( step.error );
 			return;
 		}
 
 		switch ( step.name ) {
-			case 'input-validation':
-				if ( ! cartItems.hasFreeTrial( cart ) ) {
-					upgradesNotices.displaySubmitting( { isFreeCart: isFree( cart ) } );
-				}
-				break;
-
 			case 'received-wpcom-response':
-				upgradesNotices.clear();
+				clear();
 				break;
 		}
 	},
 
 	_recordAnalytics: function( step ) {
-		var cartValue = this.props.cart;
+		const cartValue = this.props.cart;
 
 		switch ( step.name ) {
 			case 'input-validation':
@@ -104,7 +97,7 @@ var TransactionStepsMixin = {
 					} );
 
 					cartValue.products.forEach( function( cartItem ) {
-						analytics.tracks.recordEvent( 'calypso_checkout_product_purchase', cartItem );
+						analytics.tracks.recordEvent( 'calypso_checkout_product_purchase', removeNestedProperties( cartItem ) );
 					} );
 
 					this._recordDomainRegistrationAnalytics( {
@@ -122,7 +115,7 @@ var TransactionStepsMixin = {
 	},
 
 	_recordDomainRegistrationAnalytics: function( parameters ) {
-		var cart = parameters.cart,
+		const cart = parameters.cart,
 			success = parameters.success;
 
 		cartItems.getDomainRegistrations( cart ).forEach( function( cartItem ) {
@@ -140,9 +133,9 @@ var TransactionStepsMixin = {
 
 		defer( () => {
 			// The Thank You page throws a rendering error if this is not in a defer.
-			page( this.props.redirectTo() );
+			this.props.handleCheckoutCompleteRedirect();
 		} );
 	}
 };
 
-module.exports = TransactionStepsMixin;
+export default TransactionStepsMixin;

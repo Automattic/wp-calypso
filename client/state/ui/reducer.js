@@ -15,6 +15,7 @@ import {
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
 import editor from './editor/reducer';
+import dropZone from './drop-zone/reducer';
 import guidedTour from './guided-tours/reducer';
 import queryArguments from './query-arguments/reducer';
 import reader from './reader/reducer';
@@ -24,6 +25,8 @@ import layoutFocus from './layout-focus/reducer';
 import preview from './preview/reducer';
 import happychat from './happychat/reducer';
 import mediaModal from './media-modal/reducer';
+import themeSetup from './theme-setup/reducers';
+import npsSurveyNotice from './nps-survey-notice/reducer';
 
 /**
  * Tracks the currently selected site ID.
@@ -79,6 +82,7 @@ const reducer = combineReducers( {
 	isPreviewShowing,
 	queryArguments,
 	selectedSiteId,
+	dropZone,
 	guidedTour,
 	editor,
 	reader,
@@ -86,7 +90,9 @@ const reducer = combineReducers( {
 	preview,
 	actionLog,
 	happychat,
-	mediaModal
+	mediaModal,
+	themeSetup,
+	npsSurveyNotice,
 } );
 
 export default function( state, action ) {

@@ -70,7 +70,7 @@ function replaceItem( node, newNode, predicate ) {
 function mapFindAny( array, fn ) {
 	var i, result, length = array.length;
 	for ( i = 0; i < length; i++ ) {
-		if ( result = fn( array[i] ) ) { // eslint-disable-line no-cond-assign
+		if ( result = fn( array[ i ] ) ) { // eslint-disable-line no-cond-assign
 			return result;
 		}
 	}

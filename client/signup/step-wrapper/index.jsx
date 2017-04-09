@@ -9,12 +9,19 @@ import classNames from 'classnames';
  */
 import StepHeader from 'signup/step-header';
 import NavigationLink from 'signup/navigation-link';
-import config from 'config';
+import { abtest } from 'lib/abtest';
 
 export default React.createClass( {
 	displayName: 'StepWrapper',
 
+	propTypes: {
+		shouldHideNavButtons: React.PropTypes.bool
+	},
+
 	renderBack: function() {
+		if ( this.props.shouldHideNavButtons ) {
+			return null;
+		}
 		return (
 			<NavigationLink
 				direction="back"
@@ -23,12 +30,12 @@ export default React.createClass( {
 				stepName={ this.props.stepName }
 				stepSectionName={ this.props.stepSectionName }
 				backUrl={ this.props.backUrl }
-				signupProgressStore={ this.props.signupProgressStore } />
+				signupProgress={ this.props.signupProgress } />
 		);
 	},
 
 	renderSkip: function() {
-		if ( this.props.goToNextStep ) {
+		if ( ! this.props.shouldHideNavButtons && this.props.goToNextStep ) {
 			return (
 				<NavigationLink
 					direction="forward"
@@ -69,7 +76,8 @@ export default React.createClass( {
 	render: function() {
 		const { stepContent, headerButton } = this.props;
 		const classes = classNames( 'step-wrapper', {
-			'is-wide-layout': this.props.isWideLayout
+			'is-wide-layout': this.props.isWideLayout,
+			'step-wrapper--mobile-test': abtest( 'signupStepOneMobileOptimize' ) === 'modified',
 		} );
 
 		return (
@@ -77,9 +85,7 @@ export default React.createClass( {
 				<StepHeader
 					headerText={ this.headerText() }
 					subHeaderText={ this.subHeaderText() }>
-					{ config.isEnabled( 'jetpack/connect' )
-						? ( headerButton )
-						: null }
+					{ ( headerButton ) }
 				</StepHeader>
 				<div className="step-wrapper__content is-animated-content">
 					{ stepContent }

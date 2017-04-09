@@ -9,13 +9,18 @@ $gray:                   #87a6bc;
 $gray-light:             lighten( $gray, 33% ); //#f3f6f8
 $gray-dark:              darken( $gray, 38% ); //#2e4453
 
+// $gray-text: ideal for standard, non placeholder text
+// $gray-text-min: minimum contrast needed for WCAG 2.0 AA on white background
+$gray-text:              $gray-dark;
+$gray-text-min:          darken( $gray, 18% ); //#537994
+
 // $gray color functions:
-// lighten( $gray, 10% )
-// lighten( $gray, 20% )
-// lighten( $gray, 30% )
-// darken( $gray, 10% )
-// darken( $gray, 20% )
-// darken( $gray, 30% )
+// lighten( $gray, 10% ) //#a8bece
+// lighten( $gray, 20% ) //#c8d7e1
+// lighten( $gray, 30% ) //#e9eff3
+// darken( $gray, 10% ) //#668eaa
+// darken( $gray, 20% ) //#4f748e
+// darken( $gray, 30% ) //#3d596d
 //
 // See wordpress.com/design-handbook/colors/ for more info.
 
@@ -43,7 +48,7 @@ $border-ultra-light-gray: #e8f0f5;
 $masterbar-color:          $blue-wordpress;
 $sidebar-bg-color:         lighten( $gray, 30% );
 $sidebar-text-color:       $gray-dark;
-$sidebar-selected-color:   $gray;
+$sidebar-selected-color:   $gray-text-min;
 
 
 //Social media colors
@@ -64,5 +69,3 @@ $color-print: #f8f8f8;
 $color-skype: #00AFF0;
 $color-telegram: #0088cc;
 $color-whatsapp: #43d854;
-
-

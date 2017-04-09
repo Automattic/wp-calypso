@@ -39,7 +39,6 @@ export default React.createClass( {
 
 	render() {
 		const defaultJetpackSite = { jetpack: true, plan: {}, isUpgradeable: () => true };
-
 		return (
 			<Main wideLayout>
 				<div className="jetpack-connect__plans">
@@ -52,7 +51,8 @@ export default React.createClass( {
 							basePlansPath={ this.props.basePlansPath }
 							onUpgradeClick={ this.props.onSelect }
 							intervalType={ this.props.intervalType }
-							hideFreePlan={ this.props.hideFreePlan } />
+							hideFreePlan={ this.props.hideFreePlan }
+							displayJetpackPlans={ true } />
 					</div>
 				</div>
 			</Main>

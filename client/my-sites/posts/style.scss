@@ -2,9 +2,9 @@
 	display: block;
 	max-width: 720px;
 
-	@include breakpoint( ">1040px" ) {
+	@include breakpoint( ">1280px" ) {
 		display: flex;
-		max-width: 1040px;
+		max-width: 1440px;
 		justify-content: center;
 	}
 }
@@ -12,118 +12,19 @@
 .posts__primary {
 	flex-grow: 1;
 	max-width: 720px;
+
+	@include breakpoint( ">1280px" ) {
+		min-width: 520px;
+	}
 }
 
 .posts__list {
-
-	.posts__post-share-main {
-		border-top: solid 1px transparentize( lighten( $gray, 20% ), .5 );
-		display: flex;
-		flex-direction: column-reverse;
-		padding: 0 24px 24px;
-
-		@include breakpoint( ">480px" ) {
-			flex-direction: row;
-		}
-	}
-	.posts__post-share-head {
-		padding: 0 24px;
-	}
-
-	.posts__post-share-form {
-		flex: 3;
-	}
-
-	.posts__post-share-services {
-		flex: 2;
-		flex-direction: column;
-		justify-content: flex-start;
-		display: flex;
-		flex-wrap: wrap;
-		margin-top: 16px;
-
-		@include breakpoint( ">480px" ) {
-			margin-left: 20px;
-		}
-	}
-
-	.posts__post-share-services-header {
-		font-weight: 600;
-		margin-bottom: 4px;
-	}
-	.posts__post-share-services-add {
-		text-align: center
-	}
-
-	.posts__post-share-service {
-		cursor: pointer;
-		display: flex;
-		justify-content: left;
-		padding: 0 0 12px 4px;
-		color: lighten( $gray, 20% );
-		.social-logo {
-			padding-left: 4px;
-		}
-
-		&:first-of-type {
-			margin-top: 8px;
-		}
-
-		&.is-broken {
-			cursor: not-allowed;
-		}
-
-		&.is-active {
-			color: black;
-
-			.social-logo.twitter{
-				color: $color-twitter;
-			}
-
-			.social-logo.facebook{
-				color: $color-facebook;
-			}
-
-			.social-logo.google-plus {
-				color: $color-gplus;
-			}
-
-			.social-logo.linkedin {
-				color: $color-linkedin;
-			}
-
-			.social-logo.tumblr {
-				color: $color-tumblr;
-			}
-
-			.social-logo.path {
-				color: $color-path;
-			}
-
-			.social-logo.eventbrite {
-				color: $color-eventbrite;
-			}
-		}
-	}
-	.posts__post-share-service-account-name {
-		line-height: 24px;
-		padding-left: 4px;
-	}
-
 	.post {
 		position: relative;
 		padding: 0;
 		margin-bottom: (24 / 15) * 1em;
 		@include breakpoint( "<660px" ) {
 			font-size: 13px;
-		}
-		.posts__post-share-wrapper .notice {
-			margin-top: 4px;
-			margin-bottom: 0px;
-
-			&:first-of-type {
-				margin-top: 0px;
-			}
 		}
 	}
 
@@ -483,21 +384,6 @@
 	margin-top: 15px;
 }
 
-.post .posts__post-share {
-	margin: 0;
-	animation: appear .3s ease-in-out;
-	border-top: solid 1px transparentize( lighten( $gray, 20% ), .5 );
-}
-
-.posts__post-share-title {
-	margin: 24px 0 0 0;
-	font-weight: 600;
-}
-
-.posts__post-share-subtitle {
-	margin-bottom: 24px;
-}
-
 .post-controls {
 	box-sizing: border-box;
 	background-color: $white;
@@ -563,6 +449,12 @@
 	}
 }
 
+.post-controls__disabled {
+	cursor: not-allowed;
+	pointer-events: none;
+	opacity: 0.5;
+}
+
 .post-controls__more-options {
 	transform: scale(0);
 	opacity: 0;
@@ -602,11 +494,32 @@
 .posts__recent-drafts {
 	flex-grow: 1;
 	margin: 0 0 24px 24px;
-	max-width: 296px;
 	display: none;
 
-	@include breakpoint( ">1040px" ) {
+	@include breakpoint( ">1280px" ) {
 		display: block;
+		max-width: 400px;
+	}
+
+	@include breakpoint( ">1600px" ) {
+		max-width: 600px;
+
+		.post-item.is-mini.card.is-compact {
+			padding: 16px 24px;
+
+			.post-item__meta {
+				display: block;
+			}
+
+			.post-item__title {
+				font-size: 15px;
+				margin-bottom: 2px;
+			}
+
+			.post-actions-ellipsis-menu {
+				margin-left: 8px;
+			}
+		}
 	}
 
 	.draft__actions {
@@ -615,25 +528,13 @@
 }
 
 .posts__recent-drafts .posts__drafts-header.card.is-compact {
-	margin-bottom: 16px;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 3px 16px;
 	color: $gray-dark;
-	font-size: 14px;
 
 	&::after {
 		display: none;
-	}
-}
-
-.posts.is-single-site .section-nav-tab.is-draft {
-	@include breakpoint( ">1040px" ) {
-		display: none;
-		&.is-selected {
-			display: block;
-		}
 	}
 }
 
@@ -657,5 +558,15 @@
 
 	@include breakpoint( ">480px" ) {
 		width: auto;
+	}
+}
+
+.post__total-views {
+	display: inline-flex;
+	align-content: center;
+
+	.stat-update-indicator {
+		font-size: 14px;
+		padding-top: 2px;
 	}
 }

@@ -1,0 +1,113 @@
+.wp-super-cache__main .form-toggle__label {
+	display: flex;
+	align-items: center;
+	margin-bottom: 5px;
+	font-size: 14px;
+}
+
+.wp-super-cache__main .form-toggle__switch {
+	flex: 1 0 auto;
+	margin-top: 3px;
+}
+
+.wp-super-cache__main .button {
+	margin-right: 8px;
+}
+
+.wp-super-cache__cache-timeout.form-text-input {
+	width: 100px;
+	margin-right: 10px;
+}
+
+.wp-super-cache__scheduler .form-radio {
+	margin-top: 12px;
+}
+
+.wp-super-cache__scheduler .form-text-input {
+	width: 100px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.wp-super-cache__clock {
+	margin-top: 5px;
+}
+
+.wp-super-cache__interval {
+	margin: 10px 0 0 24px;
+}
+
+.wp-super-cache__directly-cached-files .form-text-input,
+.wp-super-cache__directly-cached-files .form-text-input-with-action {
+	width: 300px;
+}
+
+// Contents Tab
+.wp-super-cache__cache-stat {
+	margin-bottom: 20px;
+}
+
+.wp-super-cache__cache-stat-label {
+	display: block;
+	font-size: 14px;
+	font-weight: 600;
+	margin-bottom: 5px;
+}
+
+.wp-super-cache__cache-stat-item {
+	display: block;
+}
+
+.wp-super-cache__cache-stat-refresh {
+	font-style: italic;
+	font-size: 13px;
+}
+
+.wp-super-cache__foldable-card.is-compact .foldable-card__header {
+	padding: 24px;
+}
+
+.wp-super-cache__contents-list {
+	padding: 0;
+	margin: 0 0 .5em;
+	list-style-type: none;
+}
+
+.wp-super-cache__contents-list-legend {
+	padding-top: .5em;
+	margin-bottom: 0;
+}
+
+.wp-super-cache__contents-list-legend .wp-super-cache__contents-list-item-value,
+.wp-super-cache__contents-list-legend .wp-super-cache__contents-list-item-label {
+	color: $gray;
+	font-weight: bold;
+}
+
+.wp-super-cache__contents-list-item {
+	font-size: 14px;
+	line-height: 28px;
+	margin-bottom: 5px;
+}
+
+.wp-super-cache__contents-list-item-right {
+	float: right;
+}
+
+.wp-super-cache__contents-list-item-label {
+	display: block;
+	overflow: hidden;
+	word-break: break-all;
+}
+
+.wp-super-cache__contents-list-item-value {
+	display: inline-block;
+	min-width: 44px;
+	margin: 0 1em 0 0;
+	text-align: right;
+}
+
+.wp-super-cache__contents-list-item-action {
+	display: inline-block;
+	width: 60px;
+}

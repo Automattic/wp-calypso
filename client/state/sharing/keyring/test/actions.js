@@ -8,12 +8,13 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	KEYRING_CONNECTION_DELETE,
 	KEYRING_CONNECTIONS_RECEIVE,
 	KEYRING_CONNECTIONS_REQUEST,
 	KEYRING_CONNECTIONS_REQUEST_FAILURE,
 	KEYRING_CONNECTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { requestKeyringConnections } from '../actions';
+import { requestKeyringConnections, deleteKeyringConnection } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -90,6 +91,19 @@ describe( 'actions', () => {
 						error: sinon.match( { message: 'A server error occurred' } )
 					} );
 				} );
+			} );
+		} );
+	} );
+
+	describe( 'deleteKeyringConnection()', () => {
+		it( 'should dispatch delete action', () => {
+			deleteKeyringConnection( { ID: 2 } )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: KEYRING_CONNECTION_DELETE,
+				connection: {
+					ID: 2,
+				},
 			} );
 		} );
 	} );

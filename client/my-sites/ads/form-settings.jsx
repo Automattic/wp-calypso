@@ -5,6 +5,8 @@ var React = require( 'react' ),
 	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	notices = require( 'notices' ),
 	debug = require( 'debug' )( 'calypso:my-sites:ads-settings' );
+import { localize } from 'i18n-calypso';
+import { flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -194,9 +196,11 @@ const AdsFormSettings = React.createClass( {
 	},
 
 	showAdsToOptions: function() {
+		const { translate } = this.props;
+
 		return (
 			<FormFieldset>
-				<FormLegend>{ this.translate( 'Ads Visibility' ) }</FormLegend>
+				<FormLegend>{ translate( 'Ads Visibility' ) }</FormLegend>
 				<FormLabel>
 					<FormRadio
 						name="show_to_logged_in"
@@ -204,7 +208,7 @@ const AdsFormSettings = React.createClass( {
 						checked={ 'yes' === this.state.show_to_logged_in }
 						onChange={ this.handleRadio }
 						disabled={ this.state.isLoading } />
-					<span>{ this.translate( 'Run ads for all users' ) }</span>
+					<span>{ translate( 'Run ads for all users' ) }</span>
 				</FormLabel>
 
 				<FormLabel>
@@ -214,7 +218,7 @@ const AdsFormSettings = React.createClass( {
 						checked={ 'no' === this.state.show_to_logged_in }
 						onChange={ this.handleRadio }
 						disabled={ this.state.isLoading } />
-					<span>{ this.translate( 'Run ads only for logged-out users (less revenue)' ) }</span>
+					<span>{ translate( 'Run ads only for logged-out users (less revenue)' ) }</span>
 				</FormLabel>
 
 				<FormLabel>
@@ -224,25 +228,27 @@ const AdsFormSettings = React.createClass( {
 						checked={ 'pause' === this.state.show_to_logged_in }
 						onChange={ this.handleRadio }
 						disabled={ this.state.isLoading } />
-					<span>{ this.translate( 'Pause ads (no revenue)' ) }</span>
+					<span>{ translate( 'Pause ads (no revenue)' ) }</span>
 				</FormLabel>
 			</FormFieldset>
 		);
 	},
 
 	additionalAdsOption: function() {
+		const { translate } = this.props;
+
 		return (
 			<FormFieldset>
-				<FormLegend>{ this.translate( 'Additional Ads' ) }</FormLegend>
+				<FormLegend>{ translate( 'Additional Ads' ) }</FormLegend>
 				<FormLabel>
 					<FormCheckbox
 						name="optimized_ads"
 						checkedLink={ this.linkState( 'optimized_ads' ) }
 						disabled={ this.state.isLoading } />
 					<span>
-						{ this.translate( 'Show optimized ads. ' ) }
+						{ translate( 'Show optimized ads. ' ) }
 						<a target="_blank" rel="noopener noreferrer" href="https://wordads.co/optimized-ads/">
-							{ this.translate( 'Learn More' ) }
+							{ translate( 'Learn More' ) }
 						</a>
 					</span>
 				</FormLabel>
@@ -251,10 +257,12 @@ const AdsFormSettings = React.createClass( {
 	},
 
 	siteOwnerOptions: function() {
+		const { translate } = this.props;
+
 		return (
 			<div>
 				<FormFieldset>
-					<FormLabel htmlFor="paypal">{ this.translate( 'PayPal E-mail Address' ) }</FormLabel>
+					<FormLabel htmlFor="paypal">{ translate( 'PayPal E-mail Address' ) }</FormLabel>
 					<FormTextInput
 						name="paypal"
 						id="paypal"
@@ -262,18 +270,18 @@ const AdsFormSettings = React.createClass( {
 						disabled={ this.state.isLoading } />
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="who_owns">{ this.translate( 'Who owns this site?' ) }</FormLabel>
+					<FormLabel htmlFor="who_owns">{ translate( 'Who owns this site?' ) }</FormLabel>
 					<FormSelect
 						name="who_owns"
 						id="who_owns"
 						valueLink={ this.linkState( 'who_owns' ) }
 						disabled={ this.state.isLoading }>
-							<option value="">{ this.translate( 'Select who owns this site' ) }</option>
-							<option value="person">{ this.translate( 'An Individual/Sole Proprietor' ) }</option>
-							<option value="corp">{ this.translate( 'A Corporation' ) }</option>
-							<option value="partnership">{ this.translate( 'A Partnership' ) }</option>
-							<option value="llc">{ this.translate( 'An LLC' ) }</option>
-							<option value="tax_exempt">{ this.translate( 'A Tax-Exempt Entity' ) }</option>
+							<option value="">{ translate( 'Select who owns this site' ) }</option>
+							<option value="person">{ translate( 'An Individual/Sole Proprietor' ) }</option>
+							<option value="corp">{ translate( 'A Corporation' ) }</option>
+							<option value="partnership">{ translate( 'A Partnership' ) }</option>
+							<option value="llc">{ translate( 'An LLC' ) }</option>
+							<option value="tax_exempt">{ translate( 'A Tax-Exempt Entity' ) }</option>
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
@@ -283,7 +291,7 @@ const AdsFormSettings = React.createClass( {
 							checked={ this.state.us_checked }
 							disabled={ this.state.isLoading }
 							onChange={ this.handleResidentCheckbox } />
-						<span>{ this.translate( 'US Resident or based in the US' ) }</span>
+						<span>{ translate( 'US Resident or based in the US' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 			</div>
@@ -291,11 +299,13 @@ const AdsFormSettings = React.createClass( {
 	},
 
 	taxOptions: function() {
+		const { translate } = this.props;
+
 		return (
 			<div>
-				<FormSectionHeading>{ this.translate( 'Tax Reporting Information' ) }</FormSectionHeading>
+				<FormSectionHeading>{ translate( 'Tax Reporting Information' ) }</FormSectionHeading>
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="taxid">{ this.translate( 'Social Security Number or US Tax ID' ) }</FormLabel>
+					<FormLabel htmlFor="taxid">{ translate( 'Social Security Number or US Tax ID' ) }</FormLabel>
 					<FormTextInput
 						name="taxid"
 						id="taxid"
@@ -305,7 +315,7 @@ const AdsFormSettings = React.createClass( {
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="name">{ this.translate( 'Full Name or Business / Non-profit Name' ) }</FormLabel>
+					<FormLabel htmlFor="name">{ translate( 'Full Name or Business / Non-profit Name' ) }</FormLabel>
 					<FormTextInput
 						name="name"
 						id="name"
@@ -314,7 +324,7 @@ const AdsFormSettings = React.createClass( {
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="addr1">{ this.translate( 'Postal Address' ) }</FormLabel>
+					<FormLabel htmlFor="addr1">{ translate( 'Postal Address' ) }</FormLabel>
 					<FormTextInput
 						name="addr1"
 						id="addr1"
@@ -342,7 +352,7 @@ const AdsFormSettings = React.createClass( {
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="state">{ this.translate( 'State / Territory' ) }</FormLabel>
+					<FormLabel htmlFor="state">{ translate( 'State / Territory' ) }</FormLabel>
 					<StateSelector
 						name="state"
 						id="state"
@@ -352,7 +362,7 @@ const AdsFormSettings = React.createClass( {
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="zip">{ this.translate( 'Zip Code' ) }</FormLabel>
+					<FormLabel htmlFor="zip">{ translate( 'Zip Code' ) }</FormLabel>
 					<FormTextInput
 						name="zip"
 						id="zip"
@@ -371,8 +381,8 @@ const AdsFormSettings = React.createClass( {
 						name="tos"
 						checkedLink={ this.linkState( 'tos' ) }
 						disabled={ this.state.isLoading || 'signed' === this.state.tos } />
-					<span>{ this.translate( 'I have read and agree to the {{a}}WordAds Terms of Service{{/a}}.', {
-						components: { a: <a href="https://wordpress.com/tos-wordads/" target="_blank" rel="noopener noreferrer" /> }
+					<span>{ this.props.translate( 'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}.', {
+						components: { a: <a href="https://wordpress.com/automattic-ads-tos/" target="_blank" rel="noopener noreferrer" /> }
 					} ) }</span>
           <span>{ this.translate( 'Bogus test string' ) }</span>
 				</FormLabel>
@@ -381,26 +391,28 @@ const AdsFormSettings = React.createClass( {
 	},
 
 	render: function() {
+		const { translate } = this.props;
+
 		return (
 			<Card className="settings">
 				<form id="wordads-settings" onSubmit={ this.submitForm } onChange={ this.props.markChanged }>
 					<FormButtonsBar>
 						<FormButton
 							disabled={ this.state.isLoading || this.state.isSubmitting }>
-								{ this.state.isSubmitting ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
+								{ this.state.isSubmitting ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 						</FormButton>
 					</FormButtonsBar>
 					{ ! this.props.site.jetpack ? this.showAdsToOptions() : null }
 					{ ! this.props.site.jetpack ? this.additionalAdsOption() : null }
-					<FormSectionHeading>{ this.translate( 'Site Owner Information' ) }</FormSectionHeading>
+					<FormSectionHeading>{ translate( 'Site Owner Information' ) }</FormSectionHeading>
 					{ this.siteOwnerOptions() }
 					{ this.state.us_checked ? this.taxOptions() : null }
-					<FormSectionHeading>{ this.translate( 'Terms of Service' ) }</FormSectionHeading>
+					<FormSectionHeading>{ translate( 'Terms of Service' ) }</FormSectionHeading>
 					{ this.acceptCheckbox() }
 					<FormButtonsBar>
 						<FormButton
 							disabled={ this.state.isLoading || this.state.isSubmitting }>
-								{ this.state.isSubmitting ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
+								{ this.state.isSubmitting ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 						</FormButton>
 					</FormButtonsBar>
 				</form>
@@ -409,4 +421,11 @@ const AdsFormSettings = React.createClass( {
 	}
 } );
 
-export default connect( null, { dismissWordAdsSuccess } )( protectForm( AdsFormSettings ) );
+export default compose(
+	connect(
+		null,
+		{ dismissWordAdsSuccess },
+	),
+	localize,
+	protectForm,
+)( AdsFormSettings );

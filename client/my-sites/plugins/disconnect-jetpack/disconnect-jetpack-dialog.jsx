@@ -54,7 +54,7 @@ class DisconnectJetpackDialog extends Component {
 
 		if ( site ) {
 			SitesListActions.disconnect( site );
-			if ( selectedSite === site && this.props.redirect ) {
+			if ( selectedSite.ID === site.ID && this.props.redirect ) {
 				page.redirect( this.props.redirect );
 				return;
 			}
@@ -62,7 +62,7 @@ class DisconnectJetpackDialog extends Component {
 			this.props.sites.getSelectedOrAllWithPlugins().forEach( siteItem => SitesListActions.disconnect( siteItem ) );
 		}
 
-		if ( selectedSite === site ) {
+		if ( selectedSite.ID === site.ID ) {
 			page.redirect( '/sites' );
 		}
 	}
@@ -101,8 +101,7 @@ class DisconnectJetpackDialog extends Component {
 			<Dialog
 				isVisible={ this.state.showJetpackDisconnectDialog }
 				buttons={ deactivationButtons }
-				onClose={ this.close }
-				transitionLeave={ false }>
+				onClose={ this.close }>
 				<h1>{ translate( 'Disconnect Jetpack' ) }</h1>
 				<p>{ this.renderInfo() }</p>
 			</Dialog>

@@ -7,6 +7,7 @@ This component renders a customizable banner.
 - *callToAction* - shows a CTA text.
 - *className* - any additional CSS classes.
 - *description* - the banner description.
+- *disableHref* - when true, prevent the Banner to be linked either via the `href` props or as a side effect of the `siteSlug` connected prop.
 - *dismissPreferenceName*: the user preference name that we store a boolean against, prefixed with 'dismissible-card-' to avoid namespace collisions.
 - *dismissTemporary*: when true, clicking on the cross will dismiss the card for the current page load.
 - *event* - event to distinguish the nudge in tracks. Used as `cta_name` event property.
@@ -27,7 +28,7 @@ If `dismissPreferenceName` is provided, `href` is only applied if `callToAction`
 
 ## Usage:
 
-```js
+```jsx
 import { PLAN_BUSINESS, FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
 import Banner from 'components/banner';
 
@@ -36,8 +37,9 @@ render() {
 		<Banner
 			callToAction="Upgrade now!"
 			description="Obtain more features."
+			disableHref
 			dismissPreferenceName="example-banner"
-			dismissTemporary={ true }
+			dismissTemporary
 			event="track_event"
 			feature={ FEATURE_ADVANCED_SEO }
 			href="https://wordpress.com/"

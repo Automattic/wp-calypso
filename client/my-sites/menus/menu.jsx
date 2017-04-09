@@ -38,8 +38,6 @@ var Menu = React.createClass( {
 			this.dragStart( x, y, item );
 		} else if ( 'over' === action ) {
 			this.dragOver( x, y, item );
-		} else if ( 'getDraggedItem' === action ) {
-			return this.state.draggedItem;
 		} else if ( 'end' === action ) {
 			this.draggedItem = null;
 			if ( this.state.draggedItem ) {
@@ -226,8 +224,9 @@ var Menu = React.createClass( {
 			menuItemList = (
 				<MenuItemList items={ this.props.selectedMenu.items }
 						setEditItem={ this.setEditItem }
-						getEditItem={ this.getEditItem }
+						editedItem={ this.getEditItem() }
 						moveState={ this.state.moveState }
+						draggedItem={ this.state.draggedItem }
 						doMoveItem={ this.doMoveItem }
 						addState={ this.state.addState }
 						doAddItem={ this.doAddItem }

@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import noop from 'lodash/noop';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,38 +13,30 @@ import classNames from 'classnames';
 import analytics from 'lib/analytics';
 import FormTextInput from 'components/forms/form-text-input';
 import MediaActions from 'lib/media/actions';
-import Gridicon from 'components/gridicon';
 
-export default React.createClass( {
-	displayName: 'MediaLibraryUploadUrl',
+class MediaLibraryUploadUrl extends Component {
+	static propTypes = {
+		className: PropTypes.string,
+		site: PropTypes.object,
+		onAddMedia: PropTypes.func,
+		onClose: PropTypes.func,
+	};
 
-	propTypes: {
-		site: React.PropTypes.object,
-		onAddMedia: React.PropTypes.func,
-		onClose: React.PropTypes.func,
-		className: React.PropTypes.string
-	},
+	static defaultProps = {
+		onAddMedia: noop,
+		onClose: noop,
+	};
 
-	getInitialState() {
-		return {
-			value: '',
-			isError: false
-		};
-	},
+	state = {
+		value: '',
+		isError: false,
+	};
 
-	getDefaultProps() {
-		return {
-			onAddMedia: noop,
-			onClose: noop
-		};
-	},
+	upload = event => {
+		event.preventDefault();
 
-	upload( event ) {
-		var isError = ! event.target.checkValidity();
-
-		this.setState( {
-			isError: isError
-		} );
+		const isError = ! event.target.checkValidity();
+		this.setState( { isError } );
 
 		if ( isError || ! this.props.site ) {
 			return;
@@ -51,33 +45,37 @@ export default React.createClass( {
 		MediaActions.clearValidationErrors( this.props.site.ID );
 		MediaActions.add( this.props.site.ID, this.state.value );
 
-		this.replaceState( this.getInitialState() );
+		this.setState( { value: '', isError: false } );
 		this.props.onAddMedia();
 		this.props.onClose();
 		analytics.mc.bumpStat( 'editor_upload_via', 'url' );
-		event.preventDefault();
-	},
+	};
 
-	onChange( event ) {
+	onChange = event => {
 		this.setState( {
+			isError: false,
 			value: event.target.value,
-			isError: false
 		} );
-	},
+	};
 
-	onKeyDown( event ) {
+	onKeyDown = event => {
+		if ( event.key === 'Escape' ) {
+			return this.props.onClose( event );
+		}
+
 		if ( event.key !== 'Enter' ) {
 			return;
 		}
 
 		this.upload( event );
-	},
+	};
 
 	render() {
 		const classes = classNames( 'media-library__upload-url', this.props.className );
+		const { onClose, translate } = this.props;
 
 		return (
-			<form className={ classes } onSubmit={ this.upload }>
+			<form className={ classes } onSubmit={ this.upload } noValidate>
 				<FormTextInput
 					type="url"
 					value={ this.state.value }
@@ -87,13 +85,15 @@ export default React.createClass( {
 					isError={ this.state.isError }
 					autoFocus
 					required />
+
 				<div className="media-library__upload-url-button-group">
 					<button type="submit" className="button is-primary">
-						{ this.translate( 'Upload', { context: 'verb' } ) }
+						{ translate( 'Upload', { context: 'verb' } ) }
 					</button>
-					<button type="button" className="media-library__upload-url-cancel" onClick={ this.props.onClose }>
+
+					<button type="button" className="media-library__upload-url-cancel" onClick={ onClose }>
 						<span className="screen-reader-text">
-							{ this.translate( 'Cancel' ) }
+							{ translate( 'Cancel' ) }
 						</span>
 						<Gridicon icon="cross" />
 					</button>
@@ -101,4 +101,7 @@ export default React.createClass( {
 			</form>
 		);
 	}
-} );
+}
+
+export default localize( MediaLibraryUploadUrl );
+

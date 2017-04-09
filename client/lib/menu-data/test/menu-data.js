@@ -79,12 +79,12 @@ describe( 'MenuData', function() {
 		describe ( 'interceptSaveForHomepageLink', function () {
 			it( 'should convert the home item to link', function () {
 				var item = this.menuData.generateHomePageMenuItem(),
-					menu = { items: [item] },
+					menu = { items: [ item ] },
 					interceptedMenu = this.menuData.interceptSaveForHomepageLink( menu );
 
-				expect( interceptedMenu.items[0].type ).to.equal( 'custom' );
-				expect( interceptedMenu.items[0].type_family ).to.equal( 'custom' );
-				expect( interceptedMenu.items[0].url ).to.equal( 'http://example.com/' );
+				expect( interceptedMenu.items[ 0 ].type ).to.equal( 'custom' );
+				expect( interceptedMenu.items[ 0 ].type_family ).to.equal( 'custom' );
+				expect( interceptedMenu.items[ 0 ].url ).to.equal( 'http://example.com/' );
 			} );
 
 		} );
@@ -92,11 +92,11 @@ describe( 'MenuData', function() {
 		describe( 'interceptLoadForHomepageLink', function () {
 			beforeEach( function () {
 				this.menuItem = this.menuData.generateHomePageMenuItem();
-				this.menu = { items: [this.menuItem] };
+				this.menu = { items: [ this.menuItem ] };
 			} );
 			it( 'should convert the home link to page item', function () {
 				var pageItemOriginal = this.menuData.generateHomePageMenuItem(),
-					interceptedItem = this.menuData.interceptLoadForHomepageLink( this.menu ).items[0];
+					interceptedItem = this.menuData.interceptLoadForHomepageLink( this.menu ).items[ 0 ];
 
 				expect( interceptedItem.type ).to.equal( 'page' );
 				expect( interceptedItem.type_family ).to.equal( 'post_type' );
@@ -107,7 +107,7 @@ describe( 'MenuData', function() {
 			it( 'should match home link ending without /', function () {
 				var interceptedItem;
 				this.menuItem.url = this.menuData.site.URL.replace( /\/$/, '' );
-				interceptedItem = this.menuData.interceptLoadForHomepageLink( this.menu ).items[0];
+				interceptedItem = this.menuData.interceptLoadForHomepageLink( this.menu ).items[ 0 ];
 
 				expect( interceptedItem.type ).to.equal( 'page' );
 
@@ -116,7 +116,7 @@ describe( 'MenuData', function() {
 			it( 'should match home link ending with /', function () {
 				var interceptedItem;
 				this.menuItem.url = this.menuData.site.URL + '/';
-				interceptedItem = this.menuData.interceptLoadForHomepageLink( this.menu ).items[0];
+				interceptedItem = this.menuData.interceptLoadForHomepageLink( this.menu ).items[ 0 ];
 
 				expect( interceptedItem.type ).to.equal( 'page' );
 
@@ -150,12 +150,12 @@ describe( 'MenuData', function() {
 
 		it ( 'should decode HTML entities', function() {
 			this.menuData.fetch();
-			assert( this.menuData.data.menus[1].name === 'Menu 2 &c.', 'Ampersand in menu name not decoded' );
-			assert( this.menuData.data.menus[2].description === 'The third menu is dull & boring', 'Ampersand in menu description not decoded' );
-			assert( this.menuData.data.menus[1].items[0].name === 'Item 21 & counting', 'Ampersand in menu item name not decoded' );
+			assert( this.menuData.data.menus[ 1 ].name === 'Menu 2 &c.', 'Ampersand in menu name not decoded' );
+			assert( this.menuData.data.menus[ 2 ].description === 'The third menu is dull & boring', 'Ampersand in menu description not decoded' );
+			assert( this.menuData.data.menus[ 1 ].items[ 0 ].name === 'Item 21 & counting', 'Ampersand in menu item name not decoded' );
 
-			assert( this.menuData.data.locations[2].name === 'social&lite', 'Ampersand in location name not decoded' );
-			assert( this.menuData.data.locations[0].description === 'Top & Primary Menu', 'Ampersand in location description not decoded' );
+			assert( this.menuData.data.locations[ 2 ].name === 'social&lite', 'Ampersand in location name not decoded' );
+			assert( this.menuData.data.locations[ 0 ].description === 'Top & Primary Menu', 'Ampersand in location description not decoded' );
 
 		} );
 	} );
@@ -195,7 +195,7 @@ describe( 'MenuData', function() {
 
 			// Update an item
 			var menu = this.menuData.getMenu( 'primary' ),
-					item = menu.items[0];
+					item = menu.items[ 0 ];
 			this.itemID = item.id;
 
 			item.name = 'Homer';
@@ -217,14 +217,14 @@ describe( 'MenuData', function() {
 	describe( 'moveItemsToParent', function() {
 		it( 'should move one item to a different parent', function() {
 			var menu = this.menuData.getMenu( 'primary' ),
-				itemToMove = menu.items[1].items[0].items[1].items[0],
-				itemToMoveTo = menu.items[1].items[1];
+				itemToMove = menu.items[ 1 ].items[ 0 ].items[ 1 ].items[ 0 ],
+				itemToMoveTo = menu.items[ 1 ].items[ 1 ];
 
 			this.menuData.moveItemsToParent( itemToMove, itemToMoveTo );
 
 			menu = this.menuData.getMenu( 'primary' );
 
-			expect( find( menu.items[1].items[1].items, { name: 'Space invader designs' } ) ).to.be.ok;
+			expect( find( menu.items[ 1 ].items[ 1 ].items, { name: 'Space invader designs' } ) ).to.be.ok;
 		} );
 	} );
 
@@ -232,66 +232,66 @@ describe( 'MenuData', function() {
 
 		it( 'should move an item and insert it before a target', function() {
 			var menu = this.menuData.getMenu( 'primary' ),
-				itemToMove = menu.items[2], // About us
-				itemToMoveTo = menu.items[0], // Home
+				itemToMove = menu.items[ 2 ], // About us
+				itemToMoveTo = menu.items[ 0 ], // Home
 				items;
 
 			this.menuData.moveItem( itemToMove.id, itemToMoveTo.id, 'before' );
 
 			items = this.menuData.getMenu( 'primary' ).items;
-			expect( items[0] ).to.have.property( 'name', 'About us' );
-			expect( items[1] ).to.have.property( 'name', 'Home' );
-			expect( items[2] ).to.have.property( 'name', 'Products' );
+			expect( items[ 0 ] ).to.have.property( 'name', 'About us' );
+			expect( items[ 1 ] ).to.have.property( 'name', 'Home' );
+			expect( items[ 2 ] ).to.have.property( 'name', 'Products' );
 		} );
 
 		it( 'should move an item and insert it after a target', function() {
 			var menu = this.menuData.getMenu( 'primary' ),
-				itemToMove = menu.items[1], // Products
-				itemToMoveTo = menu.items[2], // About us
+				itemToMove = menu.items[ 1 ], // Products
+				itemToMoveTo = menu.items[ 2 ], // About us
 				items;
 
 			this.menuData.moveItem( itemToMove.id, itemToMoveTo.id, 'after' );
 
 			items = this.menuData.getMenu( 'primary' ).items;
-			expect( items[0] ).to.have.property( 'name', 'Home' );
-			expect( items[1] ).to.have.property( 'name', 'About us' );
-			expect( items[2] ).to.have.property( 'name', 'Products' );
+			expect( items[ 0 ] ).to.have.property( 'name', 'Home' );
+			expect( items[ 1 ] ).to.have.property( 'name', 'About us' );
+			expect( items[ 2 ] ).to.have.property( 'name', 'Products' );
 		} );
 
 		it( 'should move an item to a different parent', function() {
 			var menu = this.menuData.getMenu( 'primary' ),
 				// Products > Socks > 80s socks > Space invader designs
-				itemToMove = menu.items[1].items[0].items[1].items[0],
-				itemToMoveTo = menu.items[2].items[0]; // Location
+				itemToMove = menu.items[ 1 ].items[ 0 ].items[ 1 ].items[ 0 ],
+				itemToMoveTo = menu.items[ 2 ].items[ 0 ]; // Location
 
 			this.menuData.moveItem( itemToMove.id, itemToMoveTo.id, 'child' );
 
 			menu = this.menuData.getMenu( 'primary' );
-			expect( menu.items[1].items[0].items[1].items ).to.be.empty;
-			expect( menu.items[2].items[0].items[0] ).to.have.property( 'name', 'Space invader designs' );
+			expect( menu.items[ 1 ].items[ 0 ].items[ 1 ].items ).to.be.empty;
+			expect( menu.items[ 2 ].items[ 0 ].items[ 0 ] ).to.have.property( 'name', 'Space invader designs' );
 		} );
 
 		it( 'should move subtree of an item', function() {
 			var menu = this.menuData.getMenu( 'primary' ),
-				itemToMove = menu.items[1], // Products
-				itemToMoveTo = menu.items[0], // Home
+				itemToMove = menu.items[ 1 ], // Products
+				itemToMoveTo = menu.items[ 0 ], // Home
 				items;
 
 			this.menuData.moveItem( itemToMove.id, itemToMoveTo.id, 'before' );
 			items = this.menuData.getMenu( 'primary' ).items;
-			expect( items[0].items[0] ).to.have.property( 'name', 'Socks' );
+			expect( items[ 0 ].items[ 0 ] ).to.have.property( 'name', 'Socks' );
 		} );
 
 		it ( 'should insert child item as last child', function() {
 			var menu = this.menuData.getMenu( 'primary' ),
 				// Products > Socks > 80s socks > Space invader designs
-				itemToMove = menu.items[1].items[0].items[1].items[0],
-				itemToMoveTo = menu.items[2]; // About us
+				itemToMove = menu.items[ 1 ].items[ 0 ].items[ 1 ].items[ 0 ],
+				itemToMoveTo = menu.items[ 2 ]; // About us
 
 				this.menuData.moveItem( itemToMove.id, itemToMoveTo.id, 'child' );
 
 				menu = this.menuData.getMenu( 'primary' );
-				expect( menu.items[2].items[1] ).to.have.property( 'name', 'Space invader designs' );
+				expect( menu.items[ 2 ].items[ 1 ] ).to.have.property( 'name', 'Space invader designs' );
 		} );
 
 		it ( 'should be able to move an item into its own descendent subtree', function() {
@@ -333,7 +333,7 @@ describe( 'MenuData', function() {
 			} );
 
 			it( 'should add the item', function() {
-				expect( this.menu.items[1].name ).to.equal( 'Newsletter' );
+				expect( this.menu.items[ 1 ].name ).to.equal( 'Newsletter' );
 			} );
 
 			it( 'should raise a change event', function() {
@@ -350,7 +350,7 @@ describe( 'MenuData', function() {
 			} );
 
 			it( 'should add the item', function() {
-				expect( this.menu.items[1].items[0].items[1].name ).to.equal( 'Socks with polka dots' );
+				expect( this.menu.items[ 1 ].items[ 0 ].items[ 1 ].name ).to.equal( 'Socks with polka dots' );
 			} );
 
 			it( 'should raise a change event', function() {
@@ -367,7 +367,7 @@ describe( 'MenuData', function() {
 			} );
 
 			it( 'should add the item', function() {
-				expect( this.aboutUs.items[1] ).to.have.property( 'name', 'The Search for Sock' );
+				expect( this.aboutUs.items[ 1 ] ).to.have.property( 'name', 'The Search for Sock' );
 			} );
 
 			it( 'should raise a change event', function() {
@@ -385,7 +385,7 @@ describe( 'MenuData', function() {
 		context( 'when the item has no children', function() {
 			beforeEach( function() {
 				var menu = this.menuData.getMenu( 'primary' ),
-					item = menu.items[0];
+					item = menu.items[ 0 ];
 
 				this.menuData.deleteMenuItem( item );
 			} );
@@ -393,7 +393,7 @@ describe( 'MenuData', function() {
 			it( 'should delete the item', function() {
 				var menu = this.menuData.getMenu( 'primary' );
 
-				expect( menu.items[0].name ).not.to.equal( 'Home' );
+				expect( menu.items[ 0 ].name ).not.to.equal( 'Home' );
 			} );
 
 			it( 'should raise a change event', function() {
@@ -455,7 +455,7 @@ describe( 'MenuData', function() {
 		} );
 
 		it( 'should add a new menu', function() {
-			var newName = this.menuData.get().menus[3].name;
+			var newName = this.menuData.get().menus[ 3 ].name;
 
 			expect( newName ).to.equal( 'Foo' );
 		} );
@@ -467,7 +467,7 @@ describe( 'MenuData', function() {
 		} );
 
 		it( 'should return an incremented new menu name', function() {
-			var newName = this.menuData.get().menus[3].name;
+			var newName = this.menuData.get().menus[ 3 ].name;
 
 			expect( newName ).to.equal( 'Menu 4' );
 		} );
@@ -477,7 +477,7 @@ describe( 'MenuData', function() {
 
 			this.menuData.data.menus = [];
 			this.menuData.addNewMenu( 'Menu' );
-			newName = this.menuData.get().menus[0].name;
+			newName = this.menuData.get().menus[ 0 ].name;
 
 			expect( newName ).to.equal( 'Menu 1' );
 		} );
@@ -504,7 +504,7 @@ describe( 'MenuData', function() {
 
 	describe( 'allocateClientIDs', function() {
 		it( 'should populate all item.id fields in a menu with new values', function() {
-			var originalMenu = fixtures.menusFlat.menus[0],
+			var originalMenu = fixtures.menusFlat.menus[ 0 ],
 				menu = this.menuData.allocateClientIDs( cloneDeep( originalMenu ) );
 
 			deepMapValues( menu.items, function( value, propertyPath ) {
@@ -515,7 +515,7 @@ describe( 'MenuData', function() {
 		} );
 
 		it( 'should store original id in server_id field', function() {
-			var originalMenu = fixtures.menusFlat.menus[0],
+			var originalMenu = fixtures.menusFlat.menus[ 0 ],
 				menu = this.menuData.allocateClientIDs( cloneDeep( originalMenu ) );
 
 			deepMapValues( menu.items, function( value, propertyPath ) {
@@ -527,7 +527,7 @@ describe( 'MenuData', function() {
 		} );
 
 		it( 'should leave the menu\'s own ID untouched', function() {
-			var originalMenu = fixtures.menusFlat.menus[0],
+			var originalMenu = fixtures.menusFlat.menus[ 0 ],
 				menu = this.menuData.allocateClientIDs( cloneDeep( originalMenu ) );
 
 			expect( menu.id ).to.equal( originalMenu.id );
@@ -536,11 +536,11 @@ describe( 'MenuData', function() {
 
 	describe( 'restoreServerIDs', function() {
 		it( 'should populate item.id fields with original values', function() {
-			var originalMenu = fixtures.menusFlat.menus[0];
+			var originalMenu = fixtures.menusFlat.menus[ 0 ];
 
-			this.menuData.restoreServerIDs( this.menuData.data.menus[0] );
+			this.menuData.restoreServerIDs( this.menuData.data.menus[ 0 ] );
 
-			deepMapValues( this.menuData.data.menus[0].items, function( value, propertyPath ) {
+			deepMapValues( this.menuData.data.menus[ 0 ].items, function( value, propertyPath ) {
 				if ( 'id' === last( propertyPath ) ) {
 					expect( value ).to.equal( get( originalMenu.items, propertyPath ) );
 				}
@@ -548,11 +548,11 @@ describe( 'MenuData', function() {
 		} );
 
 		it( 'should leave the menu\'s own ID untouched', function() {
-			var originalMenu = fixtures.menusFlat.menus[0];
+			var originalMenu = fixtures.menusFlat.menus[ 0 ];
 
-			this.menuData.restoreServerIDs( this.menuData.data.menus[0] );
+			this.menuData.restoreServerIDs( this.menuData.data.menus[ 0 ] );
 
-			expect( this.menuData.data.menus[0].id ).to.equal( originalMenu.id );
+			expect( this.menuData.data.menus[ 0 ].id ).to.equal( originalMenu.id );
 		} );
 	} );
 

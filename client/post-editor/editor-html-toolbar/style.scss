@@ -1,0 +1,239 @@
+.editor-html-toolbar {
+	height: 39px;
+	position: relative;
+	z-index: z-index( 'root', '.editor-html-toolbar' );
+
+	.editor-html-toolbar__wrapper {
+		background-color: rgba( $white, 0.92 );
+		border-color: lighten( $gray, 20% );
+		border-style: solid;
+		border-left-width: 1px;
+		border-right-width: 1px;
+		border-bottom-width: 1px;
+		box-sizing: border-box;
+		margin: 0 auto;
+		max-width: 700px;
+		position: relative;
+		width: 100%;
+
+		@media ( max-width: 700px ) {
+			border-left-width: 0;
+			border-right-width: 0;
+		}
+
+		.focus-sidebar & {
+			@media screen and ( max-width: ( 700px + $sidebar-width-min ) ) {
+				border-left-width: 0;
+				border-right-width: 0;
+			}
+  		}
+	}
+
+	&.is-pinned .editor-html-toolbar__wrapper {
+		border-left-width: 0;
+		border-right-width: 0;
+		border-top-width: 0;
+		max-width: none;
+		position: fixed;
+		top: 94px;
+		width: 100%;
+		z-index: 2;
+
+		.focus-sidebar &,
+		.has-chat & {
+			width: calc( 100% - ( #{ $sidebar-width-max + 1 } ) );
+		}
+
+		.focus-sidebar.has-chat & {
+			width: calc( 100% - ( #{ ( $sidebar-width-max * 2 ) + 1 } ) );
+			left: 0;
+		}
+
+		@include breakpoint( "660px-960px" ) {
+			.focus-sidebar &,
+			.has-chat & {
+				width: calc( 100% - ( #{ $sidebar-width-min + 1 } ) );
+			}
+
+			.focus-sidebar.has-chat & {
+				width: calc( 100% - ( #{ ( $sidebar-width-min * 2 ) + 1 } ) );
+			}
+		}
+	}
+
+	.editor-html-toolbar__wrapper-buttons {
+		margin: 0 auto;
+		max-width: 700px;
+		position: relative;
+		width: 100%;
+	}
+
+	.editor-html-toolbar__buttons {
+		overflow-x: auto;
+		white-space: nowrap;
+		width: 100%;
+	}
+
+	&.is-scrollable .editor-html-toolbar__buttons::after {
+		@include long-content-fade();
+
+		height: 36px;
+		margin-top: 1px;
+		transition: width 0.2s;
+	}
+	&.is-scrollable.is-scrolled-full .editor-html-toolbar__buttons::after {
+		width: 0;
+	}
+
+	.button {
+		border-right: 1px solid lighten( $gray, 30% );
+		color: darken( $gray, 20% );
+		height: 26px;
+		margin: 6px 0;
+		padding: 4px 12px;
+		position: relative;
+		text-transform: lowercase;
+		min-width: 30px;
+
+		&.is-tag-open {
+			padding-left: 16px;
+			padding-right: 8px;
+			&::before {
+				content: '/';
+				left: 12px;
+				position: absolute;
+			}
+		}
+
+		&:hover {
+			color: $gray-dark;
+		}
+
+		&:last-child {
+			border: none;
+		}
+	}
+}
+
+.editor-html-toolbar__button-insert-content {
+	display: inline-block;
+	height: 38px;
+
+	.editor-html-toolbar__button-insert-media.button {
+		border-right-color: transparent;
+		height: 38px;
+		margin: 0;
+		padding: 6px 7px 8px 7px;
+		.gridicon {
+			height: 24px;
+			width: 24px;
+		}
+	}
+
+	.editor-html-toolbar__button-insert-content-dropdown.button {
+		border-right: 1px solid lighten( $gray, 30% );
+		height: 38px;
+		margin: 0;
+		min-width: auto;
+		padding: 10px 5px 14px 5px;
+		.gridicon {
+			color: $gray;
+			height: 14px;
+			width: 14px;
+		}
+	}
+
+	&:hover {
+		.editor-html-toolbar__button-insert-media.button {
+			border-right-color: lighten( $gray, 30% );
+		}
+		.button .gridicon {
+			color: lighten( $gray, 10% );
+		}
+		.button:hover .gridicon {
+			color: $gray-dark;
+		}
+	}
+}
+
+.editor-html-toolbar__insert-content-dropdown {
+	background-color: $white;
+	border: 1px solid lighten( $gray, 20% );
+	border-radius: 0 0 4px 4px;
+	display: none;
+	left: 0;
+	position: absolute;
+	top: 38px;
+	min-width: 185px;
+
+	&.is-visible {
+		display: block;
+	}
+
+	.editor-html-toolbar__insert-content-dropdown-item {
+		cursor: pointer;
+		height: 24px;
+		padding: 9px 16px;
+
+		.gridicon {
+			color: $gray;
+		}
+		span {
+			color: darken( $gray, 30% );
+			display: inline-block;
+			font-size: 14px;
+			margin-left: 8px;
+			margin-top: 2px;
+			vertical-align: top;
+		}
+
+		&:hover {
+			.gridicon, span {
+				color: $blue-medium;
+			}
+		}
+	}
+}
+
+.editor-html-toolbar__button-strong {
+	font-weight: bold;
+}
+.editor-html-toolbar__button-em {
+	font-style: italic;
+}
+.editor-html-toolbar__button-a.button {
+	color: $blue-wordpress;
+	text-decoration: underline;
+}
+.editor-html-toolbar__button-del {
+	text-decoration: line-through;
+}
+.editor-html-toolbar__button-ins {
+	text-decoration: underline;
+}
+.editor-html-toolbar__button-code {
+	font-family: $code;
+}
+.editor-html-toolbar__button-close-tags.button[disabled]:hover {
+	color: lighten( $gray, 30% );
+}
+
+.editor-html-toolbar__dialog {
+	max-height: 90%;
+	overflow-y: auto;
+
+	.dialog__content {
+		min-width: 40vw;
+	}
+	.post-selector {
+		margin-bottom: 16px;
+	}
+
+	@include breakpoint( "<660px" ) {
+		width: 90%;
+
+		.dialog__content {
+			min-width: none;
+		}
+	}
+}

@@ -7,19 +7,18 @@ import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
 import config from 'config';
-import twemoji from 'twemoji';
 import { get } from 'lodash';
 
 /**
  * Internal Dependencies
  */
+import PostStore from 'lib/feed-post-store';
 import AutoDirection from 'components/auto-direction';
 import ReaderMain from 'components/reader-main';
 import EmbedContainer from 'components/embed-container';
 import PostExcerpt from 'components/post-excerpt';
 import { setSection } from 'state/ui/actions';
 import smartSetState from 'lib/react-smart-set-state';
-import PostStore from 'lib/feed-post-store';
 import { fetchPost } from 'lib/feed-post-store/actions';
 import ReaderFullPostHeader from './header';
 import AuthorCompactProfile from 'blocks/author-compact-profile';
@@ -36,9 +35,9 @@ import Comments from 'blocks/comments';
 import scrollTo from 'lib/scroll-to';
 import PostExcerptLink from 'reader/post-excerpt-link';
 import { siteNameFromSiteAndPost } from 'reader/utils';
+import { keyForPost } from 'lib/feed-stream-store/post-key';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import ReaderPostActions from 'blocks/reader-post-actions';
-import { state as SiteState } from 'lib/reader-site-store/constants';
 import PostStoreActions from 'lib/feed-post-store/actions';
 import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts-v2';
 import { getStreamUrlFromPost } from 'reader/route';
@@ -55,22 +54,32 @@ import ReaderFullPostUnavailable from './unavailable';
 import ReaderFullPostBack from './back';
 import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
+import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
+import { getLastStore } from 'reader/controller-helper';
+import { showSelectedPost } from 'reader/utils';
 
 export class FullPostView extends React.Component {
-	constructor( props ) {
-		super( props );
-		this.hasScrolledToCommentAnchor = false;
-	}
-
 	static propTypes = {
 		post: React.PropTypes.object.isRequired,
 		onClose: React.PropTypes.func.isRequired,
 		referralPost: React.PropTypes.object,
 	}
 
+	hasScrolledToCommentAnchor = false;
+
+	componentWillMount() {
+		const self = this;
+		asyncRequire( 'twemoji', ( twemoji ) => {
+			self.setState( { twemoji }, self.parseEmoji.bind( self ) );
+		} );
+	}
+
 	componentDidMount() {
 		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
 		KeyboardShortcuts.on( 'like-selection', this.handleLike );
+		KeyboardShortcuts.on( 'move-selection-down', this.goToNextPost );
+		KeyboardShortcuts.on( 'move-selection-up', this.goToPreviousPost );
+
 		this.parseEmoji();
 
 		// Send page view
@@ -116,6 +125,8 @@ export class FullPostView extends React.Component {
 	componentWillUnmount() {
 		KeyboardShortcuts.off( 'close-full-post', this.handleBack );
 		KeyboardShortcuts.off( 'like-selection', this.handleLike );
+		KeyboardShortcuts.off( 'move-selection-down', this.goToNextPost );
+		KeyboardShortcuts.off( 'move-selection-up', this.goToPreviousPost );
 	}
 
 	handleBack = ( event ) => {
@@ -165,7 +176,7 @@ export class FullPostView extends React.Component {
 	}
 
 	// Does the URL contain the anchor #comments? If so, scroll to comments if we're not already there.
-	checkForCommentAnchor() {
+	checkForCommentAnchor = () => {
 		const hash = window.location.hash.substr( 1 );
 		if ( hash.indexOf( 'comments' ) > -1 ) {
 			this.hasCommentAnchor = true;
@@ -173,7 +184,7 @@ export class FullPostView extends React.Component {
 	}
 
 	// Scroll to the top of the comments section.
-	scrollToComments() {
+	scrollToComments = () => {
 		if ( ! this.props.post ) {
 			return;
 		}
@@ -208,29 +219,51 @@ export class FullPostView extends React.Component {
 		}, 0 );
 	}
 
-	parseEmoji() {
+	parseEmoji = () => {
 		if ( ! this.refs.article ) {
 			return;
 		}
 
-		twemoji.parse( this.refs.article, {
+		this.state && this.state.twemoji && this.state.twemoji.parse( this.refs.article, {
 			base: config( 'twemoji_cdn_url' )
 		} );
 	}
 
-	attemptToSendPageView() {
+	attemptToSendPageView = () => {
 		const { post, site } = this.props;
 
 		if ( post && post._state !== 'pending' &&
-			site && site.state === SiteState.COMPLETE &&
+			site && site.ID &&
 			! this.hasSentPageView ) {
-			PostStoreActions.markSeen( post );
+			PostStoreActions.markSeen( post, site );
 			this.hasSentPageView = true;
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
 			recordTrackForPost( 'calypso_reader_article_opened', post );
 			this.hasLoaded = true;
+		}
+	}
+
+	goToNextPost = () => {
+		const store = getLastStore();
+		if ( store ) {
+			if ( ! store.getSelectedPostKey() ) {
+				store.selectItem( keyForPost( this.props.post ), store.id );
+			}
+			FeedStreamStoreActions.selectNextItem( store.getID() );
+			showSelectedPost( { store, postKey: store.getSelectedPostKey() } );
+		}
+	}
+
+	goToPreviousPost = () => {
+		const store = getLastStore();
+		if ( store ) {
+			if ( ! store.getSelectedPostKey() ) {
+				store.selectItem( keyForPost( this.props.post ), store.id );
+			}
+			FeedStreamStoreActions.selectPrevItem( store.getID() );
+			showSelectedPost( { store, postKey: store.getSelectedPostKey() } );
 		}
 	}
 
@@ -261,7 +294,7 @@ export class FullPostView extends React.Component {
 		}
 
 		const externalHref = isDiscoverPost( referralPost ) ? referralPost.URL : post.URL;
-		const isLoading = ! post || post._state === 'pending';
+		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
 
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
@@ -287,7 +320,7 @@ export class FullPostView extends React.Component {
 								author={ post.author }
 								siteIcon={ get( site, 'icon.img' ) }
 								feedIcon={ get( feed, 'image' ) }
-								siteName={ post.site_name }
+								siteName={ siteName }
 								siteUrl={ post.site_URL }
 								feedUrl= { get( feed, 'feed_URL' ) }
 								followCount={ site && site.subscribers_count }
@@ -337,10 +370,10 @@ export class FullPostView extends React.Component {
 									followUrl={ getSourceFollowUrl( post ) } />
 						}
 						{ isDailyPostChallengeOrPrompt( post ) &&
-							<DailyPostButton post={ post } tagName="span" />
+							<DailyPostButton post={ post } site={ site } tagName="span" />
 						}
 
-						<ReaderPostActions post={ post } site={ site } onCommentClick={ this.handleCommentClick } />
+						<ReaderPostActions post={ post } site={ site } onCommentClick={ this.handleCommentClick } fullPost={ true } />
 
 						{ showRelatedPosts &&
 							<RelatedPostsFromSameSite siteId={ +post.site_ID } postId={ +post.ID }

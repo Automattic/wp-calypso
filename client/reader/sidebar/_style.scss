@@ -3,6 +3,10 @@
 
 	overflow-x: hidden;
 
+	@include breakpoint( "<660px" ) {
+		z-index: z-index( 'root', '.reader-mobile-sidebar' );
+	}
+
 	.sidebar__menu {
 		margin-bottom: 8px;
 
@@ -170,6 +174,7 @@
 
 	.sidebar__menu-empty,
 	.sidebar__menu-empty:hover {
+		max-width: 60%;
 		padding-right: 32px;
 		padding-left: 55px;
 		font-size: 13px;

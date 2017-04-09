@@ -8,7 +8,7 @@ var React = require( 'react' );
  */
 var SidebarNavigation = require( 'components/sidebar-navigation' ),
 	AllSitesIcon = require( 'my-sites/all-sites-icon' ),
-	SiteIcon = require( 'components/site-icon' ),
+	SiteIcon = require( 'blocks/site-icon' ),
 	sites = require( 'lib/sites-list' )();
 
 module.exports = React.createClass( {
@@ -30,7 +30,7 @@ module.exports = React.createClass( {
 				sectionName="site"
 				sectionTitle={ currentSiteTitle }>
 				{ site ?
-					<SiteIcon site={ site } size={ 30 } /> :
+					<SiteIcon site={ site } /> :
 					<AllSitesIcon sites={ sites.get() } /> }
 			</SidebarNavigation>
 		);

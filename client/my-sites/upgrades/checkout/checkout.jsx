@@ -3,7 +3,7 @@
  */
 import { connect } from 'react-redux';
 import { flatten, find, isEmpty, isEqual, reduce, startsWith } from 'lodash';
-import i18n from 'i18n-calypso';
+import { i18n, localize } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
 
@@ -30,7 +30,6 @@ const analytics = require( 'lib/analytics' ),
 	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
 import { getStoredCards } from 'state/stored-cards/selectors';
-
 import {
 	isValidFeatureKey,
 	getUpgradePlanSlugFromPath
@@ -38,11 +37,15 @@ import {
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
+import { requestSite } from 'state/sites/actions';
+import { isDomainOnlySite } from 'state/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'state/ui/selectors';
+import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
+import { fetchSitesAndUser } from 'lib/signup/step-actions';
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'productsList' ) ],
@@ -137,7 +140,7 @@ const Checkout = React.createClass( {
 	},
 
 	redirectIfEmptyCart: function() {
-		const { selectedSiteSlug } = this.props;
+		const { selectedSiteSlug, transaction } = this.props;
 		let redirectTo = '/plans/';
 
 		if ( ! this.state.previousCart && this.props.product ) {
@@ -149,7 +152,14 @@ const Checkout = React.createClass( {
 			return false;
 		}
 
-		if ( this.props.transaction.step.name === transactionStepTypes.SUBMITTING_WPCOM_REQUEST ) {
+		if ( transactionStepTypes.SUBMITTING_WPCOM_REQUEST === transaction.step.name ) {
+			return false;
+		}
+
+		if ( transactionStepTypes.RECEIVED_WPCOM_RESPONSE === transaction.step.name && isEmpty( transaction.errors ) ) {
+			// If the cart is emptied by the server after the transaction is
+			// complete without errors, do not redirect as we're waiting for
+			// some post-transaction requests to complete.
 			return false;
 		}
 
@@ -174,18 +184,65 @@ const Checkout = React.createClass( {
 	},
 
 	getCheckoutCompleteRedirectPath: function() {
+		let renewalItem;
+		const {
+			cart,
+			selectedSiteSlug,
+			transaction: {
+				step: {
+					data: receipt
+				}
+			}
+		} = this.props;
+
+		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
+		const receiptId = receipt ? receipt.receipt_id : ':receiptId';
+
+		if ( cartItems.hasRenewalItem( cart ) ) {
+			renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
+
+			return purchasePaths.managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
+		} else if ( cartItems.hasFreeTrial( cart ) ) {
+			return selectedSiteSlug
+				? `/plans/${ selectedSiteSlug }/thank-you`
+				: '/checkout/thank-you/plans';
+		} else if ( cart.create_new_blog ) {
+			return `/checkout/thank-you/no-site/${ receiptId }`;
+		}
+
+		if ( ! selectedSiteSlug ) {
+			return '/checkout/thank-you/features';
+		}
+
+		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
+			? `/checkout/thank-you/features/${ this.props.selectedFeature }/${ selectedSiteSlug }/${ receiptId }`
+			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
+	},
+
+	handleCheckoutCompleteRedirect: function() {
 		let product,
 			purchasedProducts,
-			renewalItem,
-			receiptId = ':receiptId';
+			renewalItem;
 
-		const { selectedSiteId, selectedSiteSlug } = this.props;
-		const receipt = this.props.transaction.step.data;
+		const {
+			cart,
+			isDomainOnly,
+			selectedSiteId,
+			transaction: {
+				step: {
+					data: receipt
+				}
+			},
+			translate
+		} = this.props;
+		const redirectPath = this.getCheckoutCompleteRedirectPath();
 
 		this.props.clearPurchases();
 
-		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
-			renewalItem = cartItems.getRenewalItems( this.props.cart )[ 0 ];
+		if ( cartItems.hasRenewalItem( cart ) ) {
+			// checkouts for renewals redirect back to `/purchases` with a notice
+
+			renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
 			// group all purchases into an array
 			purchasedProducts = reduce( receipt && receipt.purchases || {}, function( result, value ) {
 				return result.concat( value );
@@ -197,7 +254,7 @@ const Checkout = React.createClass( {
 
 			if ( product && product.will_auto_renew ) {
 				notices.success(
-					this.translate( '%(productName)s has been renewed and will now auto renew in the future. ' +
+					translate( '%(productName)s has been renewed and will now auto renew in the future. ' +
 						'{{a}}Learn more{{/a}}', {
 							args: {
 								productName: renewalItem.product_name
@@ -211,7 +268,7 @@ const Checkout = React.createClass( {
 				);
 			} else if ( product ) {
 				notices.success(
-					this.translate( 'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
+					translate( 'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
 						'We sent your receipt to %(email)s.', {
 							args: {
 								productName: renewalItem.product_name,
@@ -224,33 +281,44 @@ const Checkout = React.createClass( {
 					{ persistent: true }
 				);
 			}
-
-			return purchasePaths.managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
-		} else if ( cartItems.hasFreeTrial( this.props.cart ) ) {
+		} else if ( cartItems.hasFreeTrial( cart ) ) {
 			this.props.clearSitePlans( selectedSiteId );
-
-			return selectedSiteSlug
-				? `/plans/${ selectedSiteSlug }/thank-you`
-				: '/checkout/thank-you/plans';
 		}
 
 		if ( receipt && receipt.receipt_id ) {
-			receiptId = receipt.receipt_id;
+			const receiptId = receipt.receipt_id;
 
 			this.props.fetchReceiptCompleted( receiptId, {
-				receiptId: receiptId,
+				...receipt,
 				purchases: this.flattenPurchases( this.props.transaction.step.data.purchases ),
-				failedPurchases: this.flattenPurchases( this.props.transaction.step.data.failed_purchases ),
+				failedPurchases: this.flattenPurchases( this.props.transaction.step.data.failed_purchases )
 			} );
 		}
 
-		if ( ! selectedSiteSlug ) {
-			return '/checkout/thank-you/features';
+		if (
+			( cart.create_new_blog && receipt && isEmpty( receipt.failed_purchases ) ) ||
+			( isDomainOnly && cartItems.hasPlan( cart ) )
+		) {
+			notices.info(
+				translate( 'Almost done…' )
+			);
+
+			const domainName = getDomainNameFromReceiptOrCart( receipt, cart );
+
+			if ( domainName ) {
+				fetchSitesAndUser( domainName, () => {
+					page( redirectPath );
+				} );
+
+				return;
+			}
+
+			if ( selectedSiteId ) {
+				this.props.requestSite( selectedSiteId );
+			}
 		}
 
-		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
-			? `/checkout/thank-you/features/${ this.props.selectedFeature }/${ selectedSiteSlug }/${ receiptId }`
-			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
+		page( redirectPath );
 	},
 
 	content: function() {
@@ -277,7 +345,9 @@ const Checkout = React.createClass( {
 				cards={ this.props.cards }
 				products={ this.props.productsList.get() }
 				selectedSite={ selectedSite }
-				redirectTo={ this.getCheckoutCompleteRedirectPath } />
+				redirectTo={ this.getCheckoutCompleteRedirectPath }
+				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
+			/>
 		);
 	},
 
@@ -296,7 +366,9 @@ const Checkout = React.createClass( {
 			return false;
 		}
 
-		return cart && cartItems.hasDomainRegistration( cart ) && ! hasDomainDetails( transaction );
+		return cart &&
+			! hasDomainDetails( transaction ) &&
+			( cartItems.hasDomainRegistration( cart ) || cartItems.hasGoogleApps( cart ) );
 	},
 
 	render: function() {
@@ -313,16 +385,22 @@ const Checkout = React.createClass( {
 } );
 
 module.exports = connect(
-	state => ( {
-		cards: getStoredCards( state ),
-		selectedSite: getSelectedSite( state ),
-		selectedSiteId: getSelectedSiteId( state ),
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-	} ),
+	state => {
+		const selectedSiteId = getSelectedSiteId( state );
+
+		return {
+			cards: getStoredCards( state ),
+			isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
+			selectedSite: getSelectedSite( state ),
+			selectedSiteId,
+			selectedSiteSlug: getSelectedSiteSlug( state ),
+		};
+	},
 	{
 		clearPurchases,
 		clearSitePlans,
 		fetchReceiptCompleted,
-		recordApplePayStatus
+		recordApplePayStatus,
+		requestSite
 	}
-)( Checkout );
+)( localize( Checkout ) );

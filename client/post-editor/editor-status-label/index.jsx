@@ -4,11 +4,11 @@
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import postUtils from 'lib/posts/utils';
 import EditorStatusLabelPlaceholder from './placeholder';
 
@@ -125,7 +125,7 @@ export default React.createClass( {
 				} );
 				break;
 			case 'draft':
-				label = this.translate( '{{strong}}Draft saved{{/strong}} %(relativeTimeFromNow)s', {
+				label = this.translate( '{{strong}}Saved{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
 						strong: <strong />

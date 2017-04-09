@@ -4,12 +4,12 @@
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 
 export const PurchaseButton = ( {
 	href,

@@ -1,0 +1,19 @@
+.stats-post-likes {
+	.count {
+		margin-left: 8px;
+	}
+
+	.stats-post-likes__content {
+		box-sizing: border-box;
+		padding: 8px 24px 16px;
+		color: $gray-dark;
+	}
+
+	&.is-loading .stats-post-likes__content {
+		display: none;
+	}
+
+	.module-content-text-info {
+		padding: 16px;
+	}
+}

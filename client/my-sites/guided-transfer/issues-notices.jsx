@@ -32,7 +32,7 @@ class IssuesNotices extends Component {
 						transferred. Continuing will automatically activate the
 						default theme, or you can
 						{{a}}choose a free theme{{/a}}.`,
-						{ components: { a: <a href={ `/design/free/${ siteSlug }` } /> } } ) }
+						{ components: { a: <a href={ `/themes/free/${ siteSlug }` } /> } } ) }
 				</Notice>
 			}
 
@@ -42,7 +42,7 @@ class IssuesNotices extends Component {
 						transferred. Continuing will automatically activate the
 						default font, or you can
 						{{a}}choose a free theme{{/a}}.`,
-						{ components: { a: <a href={ `/design/free/${ siteSlug }` } /> } } )
+						{ components: { a: <a href={ `/themes/free/${ siteSlug }` } /> } } )
 					}
 				</Notice>
 			}

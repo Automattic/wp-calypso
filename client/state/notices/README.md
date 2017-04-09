@@ -54,4 +54,7 @@ The first argument is the text to be displayed on the notice. The second argumen
 * `showDismiss` (default true) To indicate if dismiss button should be rendered within the overlay.
 * `isPersistent` (default false - notices disappear when navigating route) - should notice be persistent between route changes?
 * `displayOnNextPage` (default false) - should notice appear on next route change?
+* `button` (default undefined) - Text label to display on action button
+* `href` (optional, requires button to be set as well) - Url to be used for the button action.
+* `onClick` (optional, requires button to be set as well) - Function to be invoked for the button action.
 

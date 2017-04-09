@@ -19,6 +19,7 @@
 	flex: 1;
 	display: flex;
 	justify-content: center;
+	min-height: 60px;
 	position: relative;
 	bottom: 0;
 	width: 100%;
@@ -62,7 +63,7 @@
 
 .image-editor__crop {
 	position: absolute;
-	border: 1px solid $gray;
+	border: 1px solid $white;
 	cursor: move;
 }
 

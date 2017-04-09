@@ -56,7 +56,8 @@ const TermTreeSelectorList = React.createClass( {
 		lastPage: PropTypes.number,
 		onSearch: PropTypes.func,
 		onChange: PropTypes.func,
-		isError: PropTypes.bool
+		isError: PropTypes.bool,
+		height: PropTypes.number,
 	},
 
 	getInitialState() {
@@ -75,7 +76,8 @@ const TermTreeSelectorList = React.createClass( {
 			terms: [],
 			onSearch: () => {},
 			onChange: () => {},
-			onNextPage: () => {}
+			onNextPage: () => {},
+			height: 300
 		};
 	},
 
@@ -126,9 +128,9 @@ const TermTreeSelectorList = React.createClass( {
 
 		this.list.recomputeRowHeights();
 
-		// Compact mode passes the height of the scrollable region as a derived
+		// Small mode passes the height of the scrollable region as a derived
 		// number, and will not be updated unless our component re-renders
-		if ( this.isCompact() ) {
+		if ( this.isSmall() ) {
 			this.forceUpdate();
 		}
 	},
@@ -200,7 +202,7 @@ const TermTreeSelectorList = React.createClass( {
 		}
 	},
 
-	isCompact() {
+	isSmall() {
 		if ( ! this.props.terms || this.state.searchTerm ) {
 			return false;
 		}
@@ -398,15 +400,16 @@ const TermTreeSelectorList = React.createClass( {
 
 	render() {
 		const rowCount = this.getRowCount();
-		const isCompact = this.isCompact();
+		const isSmall = this.isSmall();
 		const searchLength = this.state.searchTerm.length;
-		const showSearch = ( searchLength > 0 || ! isCompact ) &&
+		const showSearch = ( searchLength > 0 || ! isSmall ) &&
 			( this.props.terms || ( ! this.props.terms && searchLength > 0 ) );
-		const { className, isError, loading, siteId, taxonomy, query } = this.props;
+		const { className, isError, loading, siteId, taxonomy, query, height } = this.props;
 		const classes = classNames( 'term-tree-selector', className, {
 			'is-loading': loading,
-			'is-compact': isCompact,
-			'is-error': isError
+			'is-small': isSmall,
+			'is-error': isError,
+			'is-compact': this.props.compact,
 		} );
 
 		return (
@@ -426,7 +429,7 @@ const TermTreeSelectorList = React.createClass( {
 				<List
 					ref={ this.setListRef }
 					width={ this.getResultsWidth() }
-					height={ isCompact ? this.getCompactContainerHeight() : 300 }
+					height={ isSmall ? this.getCompactContainerHeight() : height }
 					onRowsRendered={ this.setRequestedPages }
 					rowCount={ rowCount }
 					estimatedRowSize={ ITEM_HEIGHT }

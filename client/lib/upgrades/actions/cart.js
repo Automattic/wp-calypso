@@ -14,6 +14,10 @@ import { cartItems } from 'lib/cart-values';
 // dispatcher even though it's not used directly here
 import 'lib/cart/store';
 
+function disableCart() {
+	Dispatcher.handleViewAction( { type: ActionTypes.CART_DISABLE } );
+}
+
 function openCartPopup( options ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_POPUP_OPEN,
@@ -72,6 +76,13 @@ function addDomainToCart( domainSuggestion ) {
 	} ) );
 }
 
+function addGoogleAppsRegistrationData( registrationData ) {
+	Dispatcher.handleViewAction( {
+		type: ActionTypes.GOOGLE_APPS_REGISTRATION_DATA_ADD,
+		registrationData: registrationData
+	} );
+}
+
 function removeDomainFromCart( domainSuggestion ) {
 	removeItem( cartItems.domainRegistration( {
 		domain: domainSuggestion.domain_name,
@@ -88,11 +99,13 @@ function applyCoupon( coupon ) {
 
 export {
 	addDomainToCart,
+	addGoogleAppsRegistrationData,
 	addItem,
 	addItems,
 	addPrivacyToAllDomains,
 	applyCoupon,
 	closeCartPopup,
+	disableCart,
 	openCartPopup,
 	removeDomainFromCart,
 	removeItem,

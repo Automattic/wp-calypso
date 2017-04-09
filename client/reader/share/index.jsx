@@ -9,7 +9,7 @@ import SocialLogo from 'social-logos';
 
 var PopoverMenu = require( 'components/popover/menu' ),
 	PopoverMenuItem = require( 'components/popover/menu-item' ),
-	Gridicon = require( 'components/gridicon' ),
+	Gridicon = require( 'gridicons' ),
 	sitesList = require( 'lib/sites-list' )(),
 	stats = require( 'reader/stats' ),
 	SitesPopover = require( 'components/sites-popover' ),
@@ -119,10 +119,6 @@ const ReaderShare = React.createClass( {
 		this._deferMenuChange( ! this.state.showingMenu );
 	},
 
-	killClick( event ) {
-		event.preventDefault();
-	},
-
 	closeMenu() {
 		// have to defer this to let the mouseup / click escape.
 		// If we don't defer and remove the DOM node on this turn of the event loop,
@@ -167,8 +163,7 @@ const ReaderShare = React.createClass( {
 
 		return React.createElement( this.props.tagName, {
 			className: 'reader-share',
-			onClick: this.killClick,
-			onTouchTap: this.toggle,
+			onClick: this.toggle,
 			onTouchStart: this.preloadEditor,
 			onMouseEnter: this.preloadEditor,
 			ref: 'shareButton' },

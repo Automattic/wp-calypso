@@ -18,6 +18,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import userFactory from 'lib/user';
 import sitesFactory from 'lib/sites-list';
 import debugFactory from 'debug';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 /**
  * Re-export
@@ -28,20 +29,18 @@ const user = userFactory();
 const sites = sitesFactory();
 const debug = debugFactory( 'calypso:controller' );
 
-export const ReduxWrappedLayout = ( { store, primary, secondary, tertiary } ) => (
+export const ReduxWrappedLayout = ( { store, primary, secondary } ) => (
 	<ReduxProvider store={ store }>
 		{ getCurrentUser( store.getState() )
 			? <Layout primary={ primary }
 				secondary={ secondary }
-				tertiary={ tertiary }
 				user={ user }
 				sites={ sites }
 				nuxWelcome={ nuxWelcome }
 				translatorInvitation={ translatorInvitation }
 			/>
 			: <LayoutLoggedOut primary={ primary }
-				secondary={ secondary }
-				tertiary={ tertiary } />
+				secondary={ secondary } />
 		}
 	</ReduxProvider>
 );
@@ -89,12 +88,7 @@ function renderPrimary( context ) {
 
 	if ( primary ) {
 		debug( 'Rendering primary', primary );
-		ReactDom.render(
-			<ReduxProvider store={ store }>
-				{ primary }
-			</ReduxProvider>,
-			document.getElementById( 'primary' )
-		);
+		renderWithReduxStore( primary, 'primary', store );
 	}
 }
 
@@ -106,11 +100,6 @@ function renderSecondary( context ) {
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 	} else if ( secondary !== undefined ) {
 		debug( 'Rendering secondary' );
-		ReactDom.render(
-			<ReduxProvider store={ store }>
-				{ secondary }
-			</ReduxProvider>,
-			document.getElementById( 'secondary' )
-		);
+		renderWithReduxStore( secondary, 'secondary', store );
 	}
 }

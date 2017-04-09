@@ -1,0 +1,31 @@
+.press-this {
+	/* press this isn't functional on a touch device */
+	.touch & {
+		display: none;
+	}
+
+	p.pressthis {
+		margin: 20px 0;
+
+		a,
+		a:hover,
+		a:focus,
+		a:active {
+			display: inline-flex;
+			align-items: center;
+			cursor: move;
+			padding: 10px;
+			font-style: normal;
+			font-size: 14px;
+			text-decoration: none;
+			color: $gray-dark;
+			background: lighten( $gray, 30% );
+			border-radius: 3px;
+			border: 1px solid lighten( $gray, 20% );
+		}
+
+		a .gridicon {
+			margin: 0 10px 0 0;
+		}
+	}
+}

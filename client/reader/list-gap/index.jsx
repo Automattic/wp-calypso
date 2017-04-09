@@ -1,51 +1,44 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' );
+import React from 'react';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-var FeedStreamStoreActions = require( 'lib/feed-stream-store/actions' ),
-	stats = require( 'reader/stats' );
+import { handleGapClicked } from 'reader/utils';
 
-var Gap = React.createClass( {
+class Gap extends React.Component {
 
-	propTypes: {
+	static propTypes = {
 		gap: React.PropTypes.object.isRequired,
 		store: React.PropTypes.object.isRequired,
 		selected: React.PropTypes.bool
-	},
+	};
 
-	getInitialState: function() {
-		return { isFilling: false };
-	},
+	state = { isFilling: false };
 
-	render: function() {
-		var classes = classnames( {
+	handleClick = () => {
+		this.setState( { isFilling: true } );
+		handleGapClicked( this.props.gap, this.props.store.id );
+	}
+
+	render() {
+		const classes = classnames( {
 			'reader-list-gap': true,
 			'is-filling': this.state.isFilling,
 			'is-selected': this.props.selected
 		} );
+		const { translate } = this.props;
 
 		return (
-			<div className={ classes } onTouchTap={ this.handleClick } >
-				<button type="button" className="button reader-list-gap__button">{ this.translate( 'Load More Posts' ) }</button>
+			<div className={ classes } onClick={ this.handleClick } >
+				<button type="button" className="button reader-list-gap__button">{ translate( 'Load More Posts' ) }</button>
 			</div>
 		);
-	},
-
-	handleClick: function() {
-		FeedStreamStoreActions.fillGap( this.props.store.id, this.props.gap );
-		this.setState( { isFilling: true } );
-		stats.recordAction( 'fill_gap' );
-		stats.recordGaEvent( 'Clicked Fill Gap' );
-		stats.recordTrack( 'calypso_reader_filled_gap', {
-			stream: this.props.store.id
-		} );
 	}
+}
 
-} );
-
-module.exports = Gap;
+export default localize( Gap );

@@ -6,7 +6,6 @@ import React from 'react';
 import qs from 'qs';
 import debounce from 'lodash/debounce';
 import page from 'page';
-import { Provider as ReduxProvider } from 'react-redux';
 import url from 'url';
 
 /**
@@ -22,6 +21,7 @@ import DevWelcome from './welcome';
 import Sidebar from './sidebar';
 import FormStateExamplesComponent from './form-state-examples';
 import EmptyContent from 'components/empty-content';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const devdocs = {
 
@@ -93,37 +93,34 @@ const devdocs = {
 
 	// UI components
 	design: function( context ) {
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( DesignAssetsComponent, {
-					component: context.params.component
-				} )
-			),
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			React.createElement( DesignAssetsComponent, {
+				component: context.params.component
+			} ),
+			'primary',
+			context.store
 		);
 	},
 
 	// App Blocks
 	blocks: function( context ) {
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( Blocks, {
-					component: context.params.component
-				} )
-			),
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			React.createElement( Blocks, {
+				component: context.params.component
+			} ),
+			'primary',
+			context.store
 		);
 	},
 
 	selectors: function( context ) {
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( DocsSelectors, {
-					selector: context.params.selector,
-					search: context.query.search
-				} )
-			),
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			React.createElement( DocsSelectors, {
+				selector: context.params.selector,
+				search: context.query.search
+			} ),
+			'primary',
+			context.store
 		);
 	},
 

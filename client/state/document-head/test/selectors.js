@@ -146,7 +146,7 @@ describe( 'selectors', () => {
 						selectedSiteId: null,
 						section: {
 							name: 'themes',
-							paths: [ '/design' ],
+							paths: [ '/themes' ],
 							module: 'my-sites/themes',
 							group: 'sites',
 							secondary: true
@@ -171,7 +171,7 @@ describe( 'selectors', () => {
 						selectedSiteId: null,
 						section: {
 							name: 'themes',
-							paths: [ '/design' ],
+							paths: [ '/themes' ],
 							module: 'my-sites/themes',
 							group: 'sites',
 							secondary: true
@@ -195,7 +195,7 @@ describe( 'selectors', () => {
 						selectedSiteId: 2916284,
 						section: {
 							name: 'themes',
-							paths: [ '/design' ],
+							paths: [ '/themes' ],
 							module: 'my-sites/themes',
 							group: 'sites',
 							secondary: true
@@ -220,7 +220,7 @@ describe( 'selectors', () => {
 						selectedSiteId: 2916284,
 						section: {
 							name: 'themes',
-							paths: [ '/design' ],
+							paths: [ '/themes' ],
 							module: 'my-sites/themes',
 							group: 'sites',
 							secondary: true

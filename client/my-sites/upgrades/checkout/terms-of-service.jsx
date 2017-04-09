@@ -8,7 +8,7 @@ var React = require( 'react' );
  */
 var analytics = require( 'lib/analytics' ),
 	support = require( 'lib/url/support' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'gridicons' );
 
 module.exports = React.createClass( {
 	displayName: 'TermsOfService',

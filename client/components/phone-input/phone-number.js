@@ -13,6 +13,13 @@ import { countries, dialCodeMap } from './data';
  * Internal Dependencies
  */
 
+/**
+ * @typedef {object} countryMetadata
+ * @property {string} isoCode
+ * @property {string} dialCode
+ * @property {string} nationalPrefix
+ */
+
 const debug = debugFactory( 'phone-input:metadata' );
 
 export const DIGIT_PLACEHOLDER = '\u7003';
@@ -20,7 +27,7 @@ const STANDALONE_DIGIT_PATTERN = /\d(?=[^,}][^,}])/g;
 const CHARACTER_CLASS_PATTERN = /\[([^\[\]])*\]/g;
 const LONGEST_NUMBER = '999999999999999';
 const LONGEST_NUMBER_MATCH = /9/g;
-const MIN_LENGTH_TO_FORMAT = 3;
+export const MIN_LENGTH_TO_FORMAT = 3;
 
 /**
  * Removes non digit characters from the string
@@ -156,7 +163,7 @@ export function applyTemplate( phoneNumber, template, positionTracking = { pos: 
  * @returns {{nationalNumber: string, prefix: string}} - Phone is the national phone number and prefix is to be
  *   shown before the phone number
  */
-function processNumber( inputNumber, numberRegion ) {
+export function processNumber( inputNumber, numberRegion ) {
 	let prefix = numberRegion.nationalPrefix || '';
 	const nationalNumber = stripNonDigits( inputNumber )
 		.replace( new RegExp( '^(' + numberRegion.dialCode + ')?(' + numberRegion.nationalPrefix + ')?' ), '' );
@@ -235,6 +242,8 @@ export function toE164( inputNumber, country ) {
 }
 
 export function toIcannFormat( inputNumber, country ) {
-	const { nationalNumber } = processNumber( inputNumber, country );
-	return '+' + country.dialCode + '.' + nationalNumber;
+	const { nationalNumber } = processNumber( inputNumber, country ),
+		countryCode = country.countryDialCode || country.dialCode,
+		dialCode = country.countryDialCode && country.regionCode ? country.regionCode : '';
+	return '+' + countryCode + '.' + dialCode + nationalNumber;
 }

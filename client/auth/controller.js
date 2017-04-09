@@ -9,7 +9,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import LoginComponent from './login';
+import OAuthLogin from './login';
 import ConnectComponent from './connect';
 import * as OAuthToken from 'lib/oauth-token';
 import wpcom from 'lib/wp';
@@ -20,22 +20,25 @@ import userFactory from 'lib/user';
 import Main from 'components/main';
 import PulsingDot from 'components/pulsing-dot';
 
-module.exports = {
+export default {
 
-	// Login screen used by the desktop application
-	login: function() {
-		if ( OAuthToken.getToken() ) {
-			page( '/' );
-		} else {
-			ReactDom.render(
-				React.createElement( LoginComponent, {} ),
-				document.getElementById( 'primary' )
-			);
+	oauthLogin: function() {
+		if ( config.isEnabled( 'oauth' ) ) {
+			// hack to keep the blue background for Desktop login
+			document.querySelector( '.layout' ).style.backgroundColor = '#0087be';
+			if ( OAuthToken.getToken() ) {
+				page( '/' );
+			} else {
+				ReactDom.render(
+					<OAuthLogin />,
+					document.getElementById( 'primary' )
+				);
+			}
 		}
 	},
 
 	checkToken: function( context, next ) {
-		const loggedOutRoutes = [ '/login', '/oauth', '/start', '/authorize', '/api/oauth/token' ],
+		const loggedOutRoutes = [ '/oauth-login', '/oauth', '/start', '/authorize', '/api/oauth/token' ],
 			isValidSection = loggedOutRoutes.some( route => startsWith( context.path, route ) );
 
 		// Check we have an OAuth token, otherwise redirect to auth/login page

@@ -1,6 +1,8 @@
 /**
  * Internal dependencies
  */
+import { ANALYTICS_EVENT_RECORD, EDITOR_PASTE_EVENT } from 'state/action-types';
+import { SOURCE_GOOGLE_DOCS } from 'components/tinymce/plugins/wpcom-track-paste/sources';
 import config from 'config';
 import { abtest } from 'lib/abtest';
 import {
@@ -11,7 +13,10 @@ import {
 import { getLastAction } from 'state/ui/action-log/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { canCurrentUser } from 'state/selectors';
-import { hasDefaultSiteTitle } from 'state/sites/selectors';
+import {
+	hasDefaultSiteTitle,
+	isCurrentPlanPaid,
+} from 'state/sites/selectors';
 
 const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 
@@ -80,16 +85,26 @@ export const hasUserRegisteredBefore = date => state => {
 	return ( registrationDate < compareDate );
 };
 
+/*
+ * Deprecated.
+ */
+export const hasUserInteractedWithComponent = () => () => false;
+
 /**
- * Returns a selector that tests whether the user has interacted with a given component.
+ * Returns a selector that tests whether a certain analytics event has been
+ * fired.
  *
- * @see client/components/track-interactions
+ * @see client/state/analytics
  *
- * @param {String} componentName Name of component to test
+ * @param {String} eventName Name of analytics event
  * @return {Function} Selector function
  */
-export const hasUserInteractedWithComponent = componentName => state =>
-	getLastAction( state ).component === componentName;
+export const hasAnalyticsEventFired = eventName => state => {
+	const last = getLastAction( state );
+	return ( last.type === ANALYTICS_EVENT_RECORD ) &&
+		last.meta.analytics.some( record =>
+			record.payload.name === eventName );
+};
 
 /**
  * Returns true if the selected site can be previewed
@@ -130,6 +145,28 @@ export const isAbTestInVariant = ( testName, variant ) => () =>
 export const hasSelectedSiteDefaultSiteTitle = state => {
 	const siteId = getSelectedSiteId( state );
 	return siteId ? hasDefaultSiteTitle( state, siteId ) : false;
+};
+
+/**
+ * Returns true if the selected site has a paid plan
+ *
+ * @param {Object} state Global state tree
+ * @return {Boolean} True if selected site is on a paid plan, false otherwise.
+ */
+export const isSelectedSitePlanPaid = state => {
+	const siteId = getSelectedSiteId( state );
+	return siteId ? isCurrentPlanPaid( state, siteId ) : false;
+};
+
+/**
+ * Returns true if user has just pasted something from Google Docs.
+ *
+ * @param {Object} state Global state tree
+ * @return {Boolean} True if user has just pasted something from Google Docs, false otherwise.
+ */
+export const hasUserPastedFromGoogleDocs = state => {
+	const action = getLastAction( state ) || false;
+	return action && ( action.type === EDITOR_PASTE_EVENT ) && ( action.source === SOURCE_GOOGLE_DOCS );
 };
 
 /**

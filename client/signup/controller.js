@@ -3,7 +3,6 @@
  */
 import ReactDom from 'react-dom';
 import React from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
 import qs from 'qs';
 import isEmpty from 'lodash/isEmpty';
@@ -18,6 +17,7 @@ import SignupComponent from './main';
 import utils from './utils';
 import userModule from 'lib/user';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const user = userModule();
 
@@ -67,8 +67,8 @@ export default {
 	},
 
 	redirectToFlow( context, next ) {
-		if ( context.path !== utils.getValidPath( context.params ) ) {
-			return page.redirect( utils.getValidPath( context.params ) );
+		if ( context.pathname !== utils.getValidPath( context.params ) ) {
+			return page.redirect( utils.getValidPath( context.params ) + ( context.querystring ? '?' + context.querystring : '' ) );
 		}
 
 		next();
@@ -85,19 +85,18 @@ export default {
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( SignupComponent, {
-					path: context.path,
-					refParameter,
-					queryObject,
-					locale: utils.getLocale( context.params ),
-					flowName: flowName,
-					stepName: stepName,
-					stepSectionName: stepSectionName
-				} )
-			),
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			React.createElement( SignupComponent, {
+				path: context.path,
+				refParameter,
+				queryObject,
+				locale: utils.getLocale( context.params ),
+				flowName: flowName,
+				stepName: stepName,
+				stepSectionName: stepSectionName
+			} ),
+			'primary',
+			context.store
 		);
 	}
 };

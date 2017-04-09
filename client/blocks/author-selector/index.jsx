@@ -5,6 +5,7 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import debugModule from 'debug';
 import { trim } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import Popover from 'components/popover';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SiteUsersFetcher from 'components/site-users-fetcher';
 import UserItem from 'components/user';
-import Gridicon from 'components/gridicon';
 import InfiniteList from 'components/infinite-list';
 import UsersActions from 'lib/users/actions';
 import Search from 'components/search';
@@ -94,6 +94,7 @@ const SwitcherShell = React.createClass( {
 					ignoreContext={ this.props.ignoreContext } >
 					{ ( this.props.fetchOptions.search || users.length > 10 ) &&
 						<Search
+							compact
 							onSearch={ this._onSearch }
 							placeholder={ this.translate( 'Find Author...', { context: 'search label' } ) }
 							delaySearch={ true }

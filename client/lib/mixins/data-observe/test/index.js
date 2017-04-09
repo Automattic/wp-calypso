@@ -24,7 +24,7 @@ describe( 'observe()', function() {
 			var mixin = observe( 'baba', 'dyado' ),
 				context = mockContext( 'baba', 'dyado', 'pancho' );
 			mixin.componentDidMount.call( context );
-			assert.deepEqual( ['baba', 'dyado'], context.onCalls );
+			assert.deepEqual( [ 'baba', 'dyado' ], context.onCalls );
 			assert.deepEqual( [], context.offCalls );
 		} );
 		it( 'should not call .on() if the props are missing', function() {
@@ -42,7 +42,7 @@ describe( 'observe()', function() {
 				context = mockContext( 'baba', 'non-existant' );
 				mixin.componentWillUnmount.call( context );
 			assert.deepEqual( [], context.onCalls );
-			assert.deepEqual( ['baba'], context.offCalls );
+			assert.deepEqual( [ 'baba' ], context.offCalls );
 		} );
 		it( 'should not call .off() on the props if the props are missing', function() {
 			var mixin = observe( 'baba', 'dyado' ),
@@ -65,21 +65,21 @@ describe( 'observe()', function() {
 			var mixin = observe( 'baba', 'dyado' ),
 				context = mockContext( 'baba', 'dyado' );
 				mixin.componentWillReceiveProps.call( context, {baba: context.props.baba, dyado: mockEventEmitter( context, 'dyado' )} );
-			assert.deepEqual( ['dyado'], context.onCalls );
-			assert.deepEqual( ['dyado'], context.offCalls );
+			assert.deepEqual( [ 'dyado' ], context.onCalls );
+			assert.deepEqual( [ 'dyado' ], context.offCalls );
 		} );
 		it( 'should only unbind the event if the prop goes missing, but not bind it', function() {
 			var mixin = observe( 'baba', 'dyado' ),
 				context = mockContext( 'baba', 'dyado' );
 				mixin.componentWillReceiveProps.call( context, {baba: context.props.baba} );
 			assert.deepEqual( [], context.onCalls );
-			assert.deepEqual( ['dyado'], context.offCalls );
+			assert.deepEqual( [ 'dyado' ], context.offCalls );
 		} );
 		it( 'should only bind the event if the prop appears, but not unbind it', function() {
 			var mixin = observe( 'baba', 'dyado' ),
 				context = mockContext();
 				mixin.componentWillReceiveProps.call( context, {baba: mockEventEmitter( context, 'baba' )} );
-			assert.deepEqual( ['baba'], context.onCalls );
+			assert.deepEqual( [ 'baba' ], context.onCalls );
 			assert.deepEqual( [], context.offCalls );
 		} );
 	} );
@@ -94,7 +94,7 @@ function mockContext() {
 			update: 'callback'
 		};
 	propNames.forEach( function( name ) {
-		context.props[name] = mockEventEmitter( context, name );
+		context.props[ name ] = mockEventEmitter( context, name );
 	} );
 	return context;
 }
@@ -119,4 +119,3 @@ function assertMixin( mixin ) {
 	assert.isFunction( mixin.componentWillUnmount );
 	assert.isFunction( mixin.componentWillReceiveProps );
 }
-

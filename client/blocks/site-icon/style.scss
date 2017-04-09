@@ -1,0 +1,37 @@
+.site-icon {
+	position: relative;
+	overflow: hidden;
+	align-self: center;
+	margin: 0;
+	text-align: center;
+
+	// Globe icon for sites without an icon
+	&.is-blank {
+		background: lighten( $gray, 20% );
+		.gridicon {
+			color: $white;
+			z-index: z-index( 'root', '.site-icon.is-blank .gridicon' );
+		}
+	}
+}
+
+.site-icon.is-transient .spinner {
+	position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	background-color: rgba( $white, 0.75 );
+
+	.spinner__image {
+		position: absolute;
+			top: 50%;
+			left: 50%;
+		transform: translate( -50%, -50% );
+	}
+}
+
+.site-icon__img {
+	background: $transparent;
+	position: relative;
+}

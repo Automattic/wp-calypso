@@ -48,6 +48,16 @@ function Undocumented( wpcom ) {
 	this.wpcom = wpcom;
 }
 
+Undocumented.prototype.timezones = function( params, fn ) {
+	if ( typeof params === 'function' ) {
+		fn = params;
+		params = {};
+	}
+
+	let query = Object.assign( {}, params, { apiNamespace: 'wpcom/v2' } );
+	return this.wpcom.req.get( '/timezones', query, fn );
+};
+
 Undocumented.prototype.site = function( id ) {
 	return new Site( id, this.wpcom );
 };
@@ -72,7 +82,6 @@ Undocumented.prototype.accountRecoveryReset = function( userData ) {
  * @api public
  */
 Undocumented.prototype.getJetpackJumpstart = function( siteId, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/jetpack/v4/jumpstart/' }, fn );
 };
 
@@ -85,7 +94,6 @@ Undocumented.prototype.getJetpackJumpstart = function( siteId, fn ) {
  * @api public
  */
 Undocumented.prototype.updateJetpackJumpstart = function( siteId, active, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.post(
 		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
 		{ path: '/jetpack/v4/jumpstart/', body: JSON.stringify( { active } ) },
@@ -114,7 +122,6 @@ Undocumented.prototype.jetpackModules = function( siteId, fn ) {
  * @api public
  */
 Undocumented.prototype.getJetpackModules = function( siteId, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/jetpack/v4/module/all/' }, fn );
 };
 
@@ -141,7 +148,6 @@ Undocumented.prototype.jetpackModulesActivate = function( siteId, moduleSlug, fn
  * @api public
  */
 Undocumented.prototype.jetpackModuleActivate = function( siteId, moduleSlug, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.post(
 		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
 		{ path: '/jetpack/v4/module/' + moduleSlug + '/active/', body: JSON.stringify( { active: true } ) },
@@ -172,41 +178,9 @@ Undocumented.prototype.jetpackModulesDeactivate = function( siteId, moduleSlug, 
  * @api public
  */
 Undocumented.prototype.jetpackModuleDeactivate = function( siteId, moduleSlug, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.post(
 		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
 		{ path: '/jetpack/v4/module/' + moduleSlug + '/active/', body: JSON.stringify( { active: false } ) },
-		fn
-	);
-};
-
-/*
- * Retrieve the settings of a Jetpack module with moduleSlug on the site with id siteId
- *
- * @param {int} [siteId]
- * @param {string} [moduleSlug]
- * @param {Function} fn
- * @api public
- */
-Undocumented.prototype.fetchJetpackModuleSettings = function( siteId, moduleSlug, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
-	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/jetpack/v4/module/' + moduleSlug }, fn );
-};
-
-/*
- * Update the settings of a Jetpack module with moduleSlug on the site with id siteId to the specified settings
- *
- * @param {int} [siteId]
- * @param {string} [moduleSlug]
- * @param {object} [settings]
- * @param {Function} fn
- * @api public
- */
-Undocumented.prototype.updateJetpackModuleSettings = function( siteId, moduleSlug, settings, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
-	return this.wpcom.req.post(
-		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{ path: '/jetpack/v4/module/' + moduleSlug, body: JSON.stringify( settings ) },
 		fn
 	);
 };
@@ -219,7 +193,6 @@ Undocumented.prototype.updateJetpackModuleSettings = function( siteId, moduleSlu
  * @api public
  */
 Undocumented.prototype.fetchJetpackSettings = function( siteId, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/rest-api/' }, { path: '/jetpack/v4/settings/' }, fn );
 };
 
@@ -232,7 +205,6 @@ Undocumented.prototype.fetchJetpackSettings = function( siteId, fn ) {
  * @api public
  */
 Undocumented.prototype.updateJetpackSettings = function( siteId, settings, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.post(
 		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
 		{ path: '/jetpack/v4/settings/', body: JSON.stringify( settings ), json: true },
@@ -325,7 +297,6 @@ Undocumented.prototype.testConnectionJetpack = function( siteId, fn ) {
  * @api public
  */
 Undocumented.prototype.getJetpackConnectionStatus = function( siteId, fn ) {
-	//@TODO: implement and test this endpoint, it's currently not working
 	return this.wpcom.req.get( {
 		path: '/jetpack-blogs/' + siteId + '/rest-api/',
 		body: {
@@ -411,7 +382,8 @@ Undocumented.prototype.getInvite = function( siteId, inviteKey, fn ) {
 Undocumented.prototype.acceptInvite = function( invite, fn ) {
 	debug( '/sites/:site_id:/invites/:inviteKey:/accept query' );
 	return this.wpcom.req.get( '/sites/' + invite.site.ID + '/invites/' + invite.inviteKey + '/accept', {
-		activate: invite.activationKey
+		activate: invite.activationKey,
+		include_domain_only: true
 	}, fn );
 };
 
@@ -471,29 +443,17 @@ Undocumented.prototype._sendRequestWithLocale = function( originalParams, fn ) {
 };
 
 /**
- * Determine whether a domain name can be mapped
- *
- * @param {string} domain - The domain name to check.
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.isDomainMappable = function( domain, fn ) {
-	domain = encodeURIComponent( domain );
-
-	return this.wpcom.req.get( { path: '/domains/' + domain + '/is-mappable' }, fn );
-};
-
-/**
  * Determine whether a domain name is available for registration
  *
  * @param {string} domain - The domain name to check.
  * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
  * @api public
  */
 Undocumented.prototype.isDomainAvailable = function( domain, fn ) {
-	domain = encodeURIComponent( domain );
-
-	return this.wpcom.req.get( { path: '/domains/' + domain + '/is-available' }, fn );
+	return this.wpcom.req.get( `/domains/${ encodeURIComponent( domain ) }/is-available`, {
+		apiVersion: '1.2'
+	}, fn );
 };
 
 /**
@@ -645,6 +605,33 @@ Undocumented.prototype.validateDomainContactInformation = function( contactInfor
 };
 
 /**
+ * Validates the specified Google Apps contact information
+ *
+ * @param {Object} contactInformation - user's contact information
+ * @param {Function} callback The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.validateGoogleAppsContactInformation = function( contactInformation, callback ) {
+	const data = mapKeysRecursively( { contactInformation }, snakeCase );
+
+	return this.wpcom.req.post(
+		{ path: '/me/google-apps/validate' },
+		data, ( error, successData ) => {
+			if ( error ) {
+				return callback( error );
+			}
+
+			const newData = mapKeysRecursively( successData, ( key ) => {
+				return ( key === '_headers' ) ? key : camelCase( key );
+			} );
+
+			callback( null, newData );
+		}
+	);
+};
+
+/**
  * Get a list of WordPress.com products
  *
  * @param {Function} fn The callback function
@@ -682,14 +669,14 @@ Undocumented.prototype.getSitePlans = function( siteDomain, fn ) {
 /**
  * GET/POST cart
  *
- * @param {string} [siteDomain] The site's slug
+ * @param {string} [cartKey] The cart's key
  * @param {string} [method] The request method
  * @param {object} [data] The REQUEST data
  * @param {Function} fn The callback function
  * @api public
  */
-Undocumented.prototype.cart = function( siteDomain, method, data, fn ) {
-	debug( '/sites/:site_id:/shopping-cart query' );
+Undocumented.prototype.cart = function( cartKey, method, data, fn ) {
+	debug( '/me/shopping-cart/:cart-key query' );
 	if ( arguments.length === 2 ) {
 		fn = method;
 		method = 'GET';
@@ -700,7 +687,7 @@ Undocumented.prototype.cart = function( siteDomain, method, data, fn ) {
 		data = {};
 	}
 	return this._sendRequestWithLocale( {
-		path: '/sites/' + siteDomain + '/shopping-cart',
+		path: '/me/shopping-cart/' + cartKey,
 		method: method,
 		body: data
 	}, fn );
@@ -1214,17 +1201,6 @@ Undocumented.prototype.readSearch = function( query, fn ) {
 	return this.wpcom.req.get( '/read/search', params, fn );
 };
 
-Undocumented.prototype.readTag = function( query, fn ) {
-	var params = omit( query, 'slug' );
-	debug( '/read/tag/' + query.slug );
-	return this.wpcom.req.get( '/read/tags/' + query.slug, params, fn );
-};
-
-Undocumented.prototype.readTags = function( fn ) {
-	debug( '/read/tags' );
-	return this.wpcom.req.get( '/read/tags', fn );
-};
-
 Undocumented.prototype.readTagPosts = function( query, fn ) {
 	var params = omit( query, 'tag' );
 	debug( '/read/tags/' + query.tag + '/posts' );
@@ -1343,16 +1319,12 @@ Undocumented.prototype.readListItems = function( query, fn ) {
 };
 
 Undocumented.prototype.followReaderFeed = function( query, fn ) {
+	query = Object.assign( { source: config( 'readerFollowingSource' ) }, query );
 	return this.wpcom.req.post( '/read/following/mine/new', query, {}, fn );
 };
 
 Undocumented.prototype.unfollowReaderFeed = function( query, fn ) {
 	return this.wpcom.req.post( '/read/following/mine/delete', query, {}, fn );
-};
-
-Undocumented.prototype.readTeams = function( fn ) {
-	debug( '/read/teams' );
-	return this.wpcom.req.get( '/read/teams', { apiVersion: '1.2' }, fn );
 };
 
 Undocumented.prototype.readSite = function( query, fn ) {
@@ -1471,6 +1443,29 @@ Undocumented.prototype.usersNew = function( query, fn ) {
 		path: '/users/new',
 		body: query
 	};
+	return this.wpcom.req.post( args, fn );
+};
+
+/**
+ * Sign up for a new account with a social service (e.g. Google/Facebook).
+ *
+ * @param {string} service - Social service associated with token, e.g. google.
+ * @param {string} token - Token returned from service.
+ * @param {Function} fn - callback
+ *
+ * @return {Promise} A promise for the request
+ */
+Undocumented.prototype.usersSocialNew = function( service, token, fn ) {
+	const body = { service, token, locale: i18n.getLocaleSlug() };
+
+	// This API call is restricted to these OAuth keys
+	restrictByOauthKeys( body );
+
+	const args = {
+		path: '/users/social/new',
+		body
+	};
+
 	return this.wpcom.req.post( args, fn );
 };
 
@@ -1608,6 +1603,19 @@ Undocumented.prototype.validateNewUser = function( data, fn ) {
 	data.locale = i18n.getLocaleSlug();
 
 	return this.wpcom.req.post( '/signups/validation/user/', null, data, fn );
+};
+
+/**
+ * Request a "Magic Login" email be sent to a user so they can use it to log in
+ * @param  {object} data - object containing an email address
+ * @param  {Function} fn - Function to invoke when request is complete
+ * @returns {Promise} promise
+ */
+Undocumented.prototype.requestMagicLoginEmail = function( data, fn ) {
+	restrictByOauthKeys( data );
+	return this.wpcom.req.post( '/auth/send-login-email', {
+		apiVersion: '1.2',
+	}, data, fn );
 };
 
 /**
@@ -2054,7 +2062,7 @@ Undocumented.prototype.cancelAndRefundPurchase = function( purchaseId, data, fn 
 	}, fn );
 };
 
-Undocumented.prototype.cancelPrivateRegistration = function( purchaseId, fn ) {
+Undocumented.prototype.cancelPrivacyProtection = function( purchaseId, fn ) {
 	debug( 'upgrades/{purchaseId}/cancel-privacy-protection' );
 
 	return this.wpcom.req.post( {
@@ -2068,6 +2076,20 @@ Undocumented.prototype.cancelPlanTrial = function( planId, fn ) {
 
 	return this.wpcom.req.post( {
 		path: `/upgrades/${planId}/cancel-plan-trial`
+	}, fn );
+};
+
+/**
+ * Get the Directly configuration for the current user
+ *
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.getDirectlyConfiguration = function( fn ) {
+	return this.wpcom.req.get( {
+		apiVersion: '1.1',
+		path: '/help/directly/mine'
 	}, fn );
 };
 
@@ -2354,6 +2376,27 @@ Undocumented.prototype.transferStatus = function( siteId, transferId ) {
 	return this.wpcom.req.get( {
 		path: `/sites/${ siteId }/automated-transfers/status/${ transferId }`
 	} );
+};
+
+/**
+ * Submit a response to the NPS Survey.
+ * @param {string}     surveyName     The name of the NPS survey being submitted
+ * @param {int}        score          The value for the survey response
+ * @param {Function}   fn             The callback function
+ * @returns {Promise}
+ */
+Undocumented.prototype.submitNPSSurvey = function( surveyName, score, fn ) {
+	return this.wpcom.req.post( { path: `/nps/${ surveyName }` }, { apiVersion: '1.2' }, { score }, fn );
+};
+
+/**
+ * Dismiss the NPS Survey.
+ * @param {string}     surveyName     The name of the NPS survey being submitted
+ * @param {Function}   fn             The callback function
+ * @returns {Promise}
+ */
+Undocumented.prototype.dismissNPSSurvey = function( surveyName, fn ) {
+	return this.wpcom.req.post( { path: `/nps/${ surveyName }` }, { apiVersion: '1.2' }, { dismissed: true }, fn );
 };
 
 /**

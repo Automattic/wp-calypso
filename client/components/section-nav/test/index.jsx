@@ -29,11 +29,10 @@ describe( 'section-nav', function() {
 		ReactDom = require( 'react-dom' );
 		React = require( 'react' );
 		TestUtils = require( 'react-addons-test-utils' );
-		require( 'react-tap-event-plugin' )();
 
 		const EMPTY_COMPONENT = require( 'test/helpers/react/empty-component' );
 
-		mockery.registerMock( 'components/gridicon', EMPTY_COMPONENT );
+		mockery.registerMock( 'gridicons', EMPTY_COMPONENT );
 		mockery.registerMock( 'lib/analytics', { ga: { recordEvent: noop } } );
 
 		SectionNav = require( '../' );
@@ -85,7 +84,7 @@ describe( 'section-nav', function() {
 			}, ( <p>placeholder</p> ) );
 			const tree = TestUtils.renderIntoDocument( elem );
 			assert( ! tree.state.mobileOpen );
-			TestUtils.Simulate.touchTap( ReactDom.findDOMNode(
+			TestUtils.Simulate.click( ReactDom.findDOMNode(
 				TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
 			) );
 			assert( tree.state.mobileOpen );
@@ -100,15 +99,15 @@ describe( 'section-nav', function() {
 			const tree = TestUtils.renderIntoDocument( elem );
 
 			assert( ! tree.state.mobileOpen );
-			TestUtils.Simulate.touchTap( ReactDom.findDOMNode(
+			TestUtils.Simulate.click( ReactDom.findDOMNode(
 				TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
 			) );
 			assert( tree.state.mobileOpen );
-			TestUtils.Simulate.touchTap( ReactDom.findDOMNode(
+			TestUtils.Simulate.click( ReactDom.findDOMNode(
 				TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
 			) );
 			assert( ! tree.state.mobileOpen );
-			TestUtils.Simulate.touchTap( ReactDom.findDOMNode(
+			TestUtils.Simulate.click( ReactDom.findDOMNode(
 				TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
 			) );
 			assert( tree.state.mobileOpen );

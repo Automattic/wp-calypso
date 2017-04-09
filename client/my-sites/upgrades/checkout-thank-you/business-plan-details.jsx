@@ -12,10 +12,9 @@ import analytics from 'lib/analytics';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import { isBusiness } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
-import support from 'lib/url/support';
 
-function trackCoursesButtonClick() {
-	analytics.tracks.recordEvent( 'calypso_checkout_thank_you_courses_click' );
+function trackOnboardingButtonClick() {
+	analytics.tracks.recordEvent( 'calypso_checkout_thank_you_onboarding_click' );
 }
 
 const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
@@ -30,13 +29,13 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 
 			<PurchaseDetail
 				icon="help"
-				title={ i18n.translate( 'Attend a live course' ) }
-				description={ i18n.translate( 'Register for one of our live courses led by Happiness Engineers ' +
-					'to get the most out of your site.'
+				title={ i18n.translate( 'Get personalized help' ) }
+				description={ i18n.translate( 'Schedule a one-on-one orientation with a Happiness Engineer to set up ' +
+					'your site and learn more about WordPress.com.'
 				) }
-				buttonText={ i18n.translate( 'Register for a course' ) }
-				href={ support.CALYPSO_COURSES }
-				onClick={ trackCoursesButtonClick } />
+				buttonText={ i18n.translate( 'Schedule a session' ) }
+				href={ 'https://calendly.com/wordpressdotcom/wordpress-com-business-site-setup/' }
+				onClick={ trackOnboardingButtonClick } />
 
 			{ ! selectedFeature &&
 				<PurchaseDetail
@@ -44,7 +43,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 					title={ i18n.translate( 'Find a new theme' ) }
 					description={ i18n.translate( 'All our premium themes are now available at no extra cost. Try them out now.' ) }
 					buttonText={ i18n.translate( 'Browse premium themes' ) }
-					href={ '/design/' + selectedSite.slug } />
+					href={ '/themes/' + selectedSite.slug } />
 			}
 
 			<PurchaseDetail

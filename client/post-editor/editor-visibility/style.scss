@@ -1,10 +1,22 @@
-.editor-visibility.button {
+.editor-visibility {
+	display: flex;
+	font-size: 13px;
+	justify-content: space-between;
+	align-items: center;
+	margin: 8px 0 0;
+}
+
+.editor-visibility .button {
 	&.is-dialog-open,
 	&.is-touch,
 	&:hover {
 		.editor-visibility__label {
 			color: darken( $gray, 10% );
 		}
+	}
+
+	.gridicon {
+		margin-right: 4px;
 	}
 }
 

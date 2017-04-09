@@ -22,7 +22,7 @@ import { getSectionName } from 'state/ui/selectors';
 import { decodeEntities } from 'lib/formatting';
 import analytics from 'lib/analytics';
 import QueryPosts from 'components/data/query-posts';
-import SiteIcon from 'components/site-icon';
+import SiteIcon from 'blocks/site-icon';
 import sitesList from 'lib/sites-list';
 import Dispatcher from 'dispatcher';
 

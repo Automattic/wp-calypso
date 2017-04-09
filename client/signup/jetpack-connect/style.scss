@@ -511,4 +511,9 @@
 	.plan-price.is-discounted {
 		margin-right: 0;
 	}
+
+	.step-header,
+	.step-header.is-without-subhead {
+		margin-bottom: 8px;
+	}
 }

@@ -156,11 +156,19 @@ const EVENTS = {
 				suggestion.domain_name
 			);
 
-			analytics.tracks.recordEvent( 'calypso_domain_search_submit_step', {
+			const tracksObjects = {
 				domain_name: suggestion.domain_name,
 				section,
 				type: domainType
-			} );
+			};
+			if ( suggestion.isRecommended ) {
+				tracksObjects.label = 'recommended';
+			}
+			if ( suggestion.isBestAlternative ) {
+				tracksObjects.label = 'best-alternative';
+			}
+
+			analytics.tracks.recordEvent( 'calypso_domain_search_submit_step', tracksObjects );
 		}
 	},
 

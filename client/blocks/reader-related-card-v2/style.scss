@@ -19,7 +19,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 }
 
 .reader-related-card-v2__heading {
-	color: lighten( $gray, 10% );
+	color: $gray;
 	font-size: 14px;
 	font-weight: 600;
 	margin-bottom: 20px;
@@ -59,7 +59,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	padding: 0;
 
 	@media #{$reader-related-card-v2-breakpoint-medium} {
-		flex-direction: column;
+		display: block;
 	}
 
 	@include breakpoint( "<660px" ) {
@@ -67,7 +67,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	@media #{$reader-related-card-v2-breakpoint-small} {
-		flex-direction: column;
+		display: block;
 	}
 }
 
@@ -143,6 +143,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		display: flex;
 		margin-bottom: 13px;
 		z-index: z-index( '.reader-related-card-v2.card', '.reader-related-card-v2__meta' );
+		width: 100%;
 	}
 
 	.reader-related-card-v2__post {
@@ -168,30 +169,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 	&.has-thumbnail {
 
-		.reader-related-card-v2__meta {
-
-			@media #{$reader-related-card-v2-breakpoint-medium} {
-				margin-top: -4px;
-				position: absolute;
-				right: 0;
-				width: calc( 100% - 28% );
-			}
-
-			@media #{$reader-related-card-v2-breakpoint-small} {
-				margin-top: -4px;
-				position: absolute;
-				right: 0;
-				width: calc( 100% - 29% );
-			}
-
-			@include breakpoint( "<480px" ) {
-				margin-top: -4px;
-				position: absolute;
-				right: 0;
-				width: calc( 100% - 28% );
-			}
-		}
-
 		.reader-related-card-v2__site-info {
 
 			@media #{$reader-related-card-v2-breakpoint-small} {
@@ -204,11 +181,11 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		}
 
 		.reader-related-card-v2__title {
-			font-size: 16px;
+			font-size: 17px;
 		}
 
 		.reader-related-card-v2__excerpt {
-			font-size: 14px;
+			font-size: 15px;
 		}
 	}
 
@@ -225,7 +202,11 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	padding-top: 11px;
 
 	.reader-related-card-v2__post {
-		max-height: 120px;
+		max-height: 127px;
+
+		@include breakpoint( "<480px" ) {
+			max-height: 126px;
+		}
 
 		&::after {
 			@include long-content-fade( $size: 30% );
@@ -249,18 +230,18 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		.has-thumbnail {
 
 			.reader-related-card-v2__post {
-				max-height: 200px;
+				max-height: 219px;
 
 				@include breakpoint( "<960px" ) {
 					max-height: 240px;
 				}
 
 				@media #{$reader-related-card-v2-breakpoint-medium} {
-					max-height: 120px;
+					max-height: 126px;
 				}
 
 				@media #{$reader-related-card-v2-breakpoint-small} {
-					max-height: 120px;
+					max-height: 126px;
 				}
 			}
 		}
@@ -270,14 +251,14 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		margin-top: 40px;
 
 		.reader-related-card-v2__post {
-			max-height: 211px;
+			max-height: 222px;
 
 			@include breakpoint( "<960px" ) {
 				max-height: 249px;
 			}
 
 			@media #{$reader-related-card-v2-breakpoint-medium} {
-				max-height: 165px;
+				max-height: 155px;
 			}
 
 			@media #{$reader-related-card-v2-breakpoint-small} {
@@ -290,23 +271,23 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			.reader-related-card-v2__site-info {
 
 				@media #{$reader-related-card-v2-breakpoint-medium} {
-					margin-top: 50px;
+					margin-top: 20px;
 				}
 
 				@media #{$reader-related-card-v2-breakpoint-small} {
-					margin-top: 50px;
+					margin-top: 20px;
 				}
 			}
 
 			.reader-related-card-v2__post {
-				max-height: 205px;
+				max-height: 219px;
 
 				@media #{$reader-related-card-v2-breakpoint-medium} {
-					max-height: 150px;
+					max-height: 170px;
 				}
 
 				@media #{$reader-related-card-v2-breakpoint-small} {
-					max-height: 150px;
+					max-height: 162px;
 				}
 			}
 		}
@@ -316,12 +297,12 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		}
 
 		.reader-related-card-v2__featured-image {
-			margin: 4px 0 19px;
+			margin: 0 0 19px;
 		}
 	}
 
-	&.is-same-site,
 	&.is-other-site {
+
 		.reader-related-card-v2__featured-image {
 
 			@media #{$reader-related-card-v2-breakpoint-medium} {
@@ -348,6 +329,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	flex-direction: column;
 	font-size: 14px;
 	margin-top: 3px;
+	min-height: 38px;
 }
 
 .reader-related-card-v2__byline-author {
@@ -380,7 +362,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	border: 0;
 	border-radius: 0;
 	margin-bottom: 12px;
-	margin-top: -4px;
+	margin-top: -6px;
 	padding: 0;
 	z-index: z-index( '.reader-related-card-v2__meta', '.follow-button' );
 
@@ -411,9 +393,8 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 }
 
 .reader-related-card-v2__featured-image {
-	border: 1px solid lighten( $gray, 20% );
-	display: block;
-	height: 80px;
+	border: 1px solid lighten( $gray, 30% );
+	min-height: 90px;
 
 	@media #{$reader-related-card-v2-breakpoint-small} {
 		flex: 1;
@@ -434,10 +415,40 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	font-family: $serif;
 }
 
+.reader-related-card-v2__site-info {
+	position: relative;
+}
+
 .reader-related-card-v2__title {
-	font-size: 16px;
+	font-size: 17px;
 	font-weight: 700;
 	line-height: 1.4;
+
+	// Clamp to 2 lines on narrow viewports
+	@include breakpoint( "<660px" ) {
+		overflow: hidden;
+		max-height: 16px * 1.4 * 2;
+		word-wrap: break-word;
+
+		&::after {
+			@include long-content-fade( $size: 20% );
+			top: 16px * 1.4;
+			height: 16px * 1.4;
+		}
+	}
+
+	// Clamp to 3 lines on larger viewports
+	@include breakpoint( ">660px" ) {
+		overflow: hidden;
+		max-height: 16px * 1.4 * 3;
+		word-wrap: break-word;
+
+		&::after {
+			@include long-content-fade( $size: 20% );
+			top: 16px * 1.4 * 2;
+			height: 16px * 1.4;
+		}
+	}
 }
 
 .reader-related-card-v2__excerpt {
@@ -451,7 +462,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	&.post-excerpt {
-		font-size: 14px;
+		font-size: 15px;
 		overflow : hidden;
 		text-overflow: ellipsis;
 		display: -webkit-box;

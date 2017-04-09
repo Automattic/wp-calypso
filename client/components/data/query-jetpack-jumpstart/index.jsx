@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingJumpstartStatus } from 'state/jetpack-settings/jumpstart/selectors';
-import { requestJumpstartStatus } from 'state/jetpack-settings/jumpstart/actions';
+import { isRequestingJetpackJumpstartStatus } from 'state/selectors';
+import { requestJumpstartStatus } from 'state/jetpack/jumpstart/actions';
 
 class QueryJetpackJumpstart extends Component {
 	static propTypes = {
@@ -43,7 +43,7 @@ class QueryJetpackJumpstart extends Component {
 export default connect(
 	( state, ownProps ) => {
 		return {
-			requestingJumpstartStatus: isRequestingJumpstartStatus( state, ownProps.siteId )
+			requestingJumpstartStatus: isRequestingJetpackJumpstartStatus( state, ownProps.siteId )
 		};
 	},
 	{ requestJumpstartStatus }

@@ -9,13 +9,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import PurchaseDetails from 'components/purchase-detail';
 import PurchaseButton from 'components/purchase-detail/purchase-button';
 import TipInfo from 'components/purchase-detail/tip-info';
 import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
-import termsAndConditions from './terms-and-conditions';
+import TermsAndConditions from './terms-and-conditions';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
 import {
 	assignSiteVoucher as assignVoucher
@@ -111,10 +112,10 @@ class GoogleVoucherDetails extends Component {
 			<div className="google-voucher__initial-step">
 				<PurchaseButton
 					onClick={ this.onGenerateCode }
-					text={ this.props.translate( 'Generate Code' ) } />
+					text={ this.props.translate( 'Generate code' ) } />
 
 				<TipInfo
-					info={ this.props.translate( 'Offer valid in US and Canada after spending the first $25 on Google AdWords.' ) } />
+					info={ this.props.translate( 'Offer valid in US after spending the first $25 on Google AdWords.' ) } />
 			</div>
 		);
 	}
@@ -138,20 +139,24 @@ class GoogleVoucherDetails extends Component {
 				</div>
 
 				<div className="google-voucher-dialog__body">
-					{ termsAndConditions() }
+					<TermsAndConditions />
 				</div>
 
 				<div className="google-voucher-dialog__footer">
-					<PurchaseButton
+					<Button
 						className="google-vouchers-dialog__cancel-button"
-						primary={ false }
 						onClick={ this.onDialogCancel }
-						text={ this.props.translate( 'Cancel' ) } />
+					>
+						{ this.props.translate( 'Cancel' ) }
+					</Button>
 
-					<PurchaseButton
+					<Button
 						className="google-vouchers-dialog__agree-button"
 						onClick={ this.onAcceptTermsAndConditions }
-						text={ this.props.translate( 'Agree' ) } />
+						primary={ true }
+					>
+						{ this.props.translate( 'Agree' ) }
+					</Button>
 				</div>
 			</Dialog>
 		);
@@ -194,7 +199,7 @@ class GoogleVoucherDetails extends Component {
 
 				<TipInfo
 					className="google-voucher-advice"
-					info={ this.props.translate( 'Offer valid in US and Canada after spending the first $25 on Google AdWords.' ) } />
+					info={ this.props.translate( 'Offer valid in US after spending the first $25 on Google AdWords.' ) } />
 			</div>
 		);
 	}

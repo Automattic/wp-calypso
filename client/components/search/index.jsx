@@ -7,13 +7,13 @@ import classNames from 'classnames';
 import debounce from 'lodash/debounce';
 import noop from 'lodash/noop';
 import i18n from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
 import Spinner from 'components/spinner';
-import Gridicon from 'components/gridicon';
 import { isMobile } from 'lib/viewport';
 
 /**
@@ -41,6 +41,7 @@ const Search = React.createClass( {
 	propTypes: {
 		additionalClasses: PropTypes.string,
 		initialValue: PropTypes.string,
+		value: PropTypes.string,
 		placeholder: PropTypes.string,
 		pinned: PropTypes.bool,
 		delaySearch: PropTypes.bool,
@@ -62,7 +63,8 @@ const Search = React.createClass( {
 		dir: PropTypes.oneOf( [ 'ltr', 'rtl' ] ),
 		fitsContainer: PropTypes.bool,
 		maxLength: PropTypes.number,
-		hideClose: PropTypes.bool
+		hideClose: PropTypes.bool,
+		compact: PropTypes.bool
 	},
 
 	getInitialState: function() {
@@ -93,7 +95,8 @@ const Search = React.createClass( {
 			isOpen: false,
 			dir: undefined,
 			fitsContainer: false,
-			hideClose: false
+			hideClose: false,
+			compact: false
 		};
 	},
 
@@ -120,9 +123,8 @@ const Search = React.createClass( {
 			this.setState( { isOpen: nextProps.isOpen } );
 		}
 
-		if ( nextProps.initialValue !== this.props.initialValue &&
-				( this.state.keyword === this.props.initialValue || this.state.keyword === '' ) ) {
-			this.setState( { keyword: nextProps.initialValue || '' } );
+		if ( this.props.value !== nextProps.value && nextProps.value && nextProps.value !== this.state.keyword ) {
+			this.setState( { keyword: nextProps.value } );
 		}
 	},
 
@@ -320,6 +322,7 @@ const Search = React.createClass( {
 			'is-expanded-to-container': this.props.fitsContainer,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
+			'is-compact': this.props.compact,
 			'has-focus': this.state.hasFocus,
 			search: true
 		} );
@@ -333,7 +336,7 @@ const Search = React.createClass( {
 				<div
 					className="search__icon-navigation"
 					ref="openIcon"
-					onTouchTap={ enableOpenIcon ? this.openSearch : this.focus }
+					onClick={ enableOpenIcon ? this.openSearch : this.focus }
 					tabIndex={ enableOpenIcon ? '0' : null }
 					onKeyDown={ enableOpenIcon
 						? this.openListener
@@ -352,7 +355,7 @@ const Search = React.createClass( {
 						role="search"
 						value={ searchValue }
 						ref="searchInput"
-						onInput={ this.onChange }
+						onInput={ this.onChange /* onChange has bug IE11 React15 https://github.com/facebook/react/issues/7027 */ }
 						onKeyUp={ this.keyUp }
 						onKeyDown={ this.keyDown }
 						onMouseUp={ this.props.onClick }
@@ -385,7 +388,7 @@ const Search = React.createClass( {
 			return (
 				<div
 					className="search__icon-navigation"
-					onTouchTap={ this.closeSearch }
+					onClick={ this.closeSearch }
 					tabIndex="0"
 					onKeyDown={ this.closeListener }
 					aria-controls={ 'search-component-' + this.state.instanceId }

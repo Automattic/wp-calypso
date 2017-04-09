@@ -8,7 +8,8 @@ import {
 	forEach,
 	get,
 	map,
-	noop
+	noop,
+	defer,
 } from 'lodash';
 import moment from 'moment';
 import url from 'url';
@@ -25,6 +26,8 @@ import * as FeedStreamActions from './actions';
 import { action as ActionTypes } from './constants';
 import PollerPool from 'lib/data-poller';
 import XPostHelper from 'reader/xpost-helper';
+import { setLastStoreId } from 'reader/controller-helper';
+import * as stats from 'reader/stats';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
 
@@ -60,7 +63,7 @@ export default class FeedStream {
 			perPage: 7,
 			selectedIndex: -1,
 			xPostedByURL: {},
-			maxUpdates: 40,
+			maxUpdates: spec.maxUpdates || 40,
 			gapFillCount: 21,
 			orderBy: 'date',
 			_isLastPage: false,
@@ -114,13 +117,16 @@ export default class FeedStream {
 				this.setIsFetchingNextPage( true );
 				break;
 			case ActionTypes.SELECT_ITEM:
-				this.selectItem( action.selectedIndex );
+				this.selectItem( action.postKey, action.id );
 				break;
 			case ActionTypes.SELECT_NEXT_ITEM:
-				this.selectNextItem( action.selectedIndex );
+				this.selectNextItem( action.postKey );
 				break;
 			case ActionTypes.SELECT_PREV_ITEM:
-				this.selectPrevItem( action.selectedIndex );
+				this.selectPrevItem( action.postKey );
+				break;
+			case ActionTypes.SELECT_FIRST_ITEM:
+				this.selectFirstItem();
 				break;
 		}
 	}
@@ -151,15 +157,11 @@ export default class FeedStream {
 		return this.pendingPostKeys.length;
 	}
 
-	getSelectedPost() {
+	getSelectedPostKey() {
 		if ( this.selectedIndex >= 0 && this.selectedIndex < this.postKeys.length ) {
 			return this.postKeys[ this.selectedIndex ];
 		}
 		return null;
-	}
-
-	getSelectedIndex() {
-		return this.selectedIndex;
 	}
 
 	isLastPage() {
@@ -188,6 +190,19 @@ export default class FeedStream {
 			this.selectedIndex = nextIndex;
 			this.emitChange();
 		}
+
+		const PREFETCH_THRESHOLD = 10;
+		// If we are getting close to the end of the loaded stream, or are already at the end,
+		// start fetching new posts
+		if ( nextIndex + PREFETCH_THRESHOLD > this.postKeys.length || nextIndex === -1 ) {
+			const fetchNextPage = () => FeedStreamActions.fetchNextPage( this.getID() );
+			defer( fetchNextPage );
+			this.onKeyboardFetchPerformed();
+		}
+	}
+
+	onKeyboardFetchPerformed() {
+		stats.recordTrack( 'calypso_reader_fullpost_keyboard_fetch' );
 	}
 
 	selectPrevItem() {
@@ -201,16 +216,26 @@ export default class FeedStream {
 		}
 	}
 
-	selectItem( selectedIndex ) {
-		if ( selectedIndex >= 0 &&
-			selectedIndex < this.postKeys.length &&
-			this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) ) {
+	selectFirstItem() {
+		if ( this.selectedIndex !== 0 ) {
+			this.selectedIndex = 0;
+			this.emitChange();
+		}
+	}
+
+	selectItem( postKey, id ) {
+		const selectedIndex = findIndex( this.postKeys, postKey );
+		if ( this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) && selectedIndex !== this.selectedIndex ) {
 			this.selectedIndex = selectedIndex;
+			setLastStoreId( id );
 			this.emitChange();
 		}
 	}
 
 	getLastItemWithDate() {
+		if ( this.oldestPostDate ) {
+			return this.oldestPostDate;
+		}
 		let i = this.postKeys.length - 1;
 		if ( i === -1 ) {
 			return;
@@ -401,6 +426,7 @@ export default class FeedStream {
 		debug( 'receiving page in %s', this.id );
 
 		this._isFetchingNextPage = false;
+		this.oldestPostDate = get( data, [ 'date_range', 'after' ] );
 
 		if ( error ) {
 			debug( 'Error fetching posts from API:', error );
@@ -413,6 +439,7 @@ export default class FeedStream {
 		const posts = data && data.posts;
 
 		if ( ! posts ) {
+			this.emitChange();
 			return;
 		}
 
@@ -430,9 +457,10 @@ export default class FeedStream {
 				postById.add( postKey.postId );
 			} );
 			this.postKeys = this.postKeys.concat( postKeys );
-			this.page++;
-			this.emitChange();
 		}
+
+		this.page++;
+		this.emitChange( );
 	}
 
 	receiveUpdates( id, error, data ) {

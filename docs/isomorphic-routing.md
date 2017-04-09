@@ -24,7 +24,7 @@ The contract is that at the end of each route's middleware chain, `context.layou
 should contain the React render tree to be rendered, which will be done magically
 by either the client or the server render, as appropriate. (This is clearly
 different from the previous client-side-only routing approach where you'd have
-to render to `#primary`/`#secondary`/`#tertiary` DOM elements.)
+to render to `#primary`/`#secondary` DOM elements.)
 
 To facilitate that, you can (but don't have to) use the `makeLayout`
 generic middleware found in `client/controller`. So in the above example, the
@@ -36,4 +36,59 @@ as that has a lot of dependencies that aren't ready for server-side rendering.
 * Realistically, you will probably need to write separate `index.node.js` and
 `index.web.js` files for the server and client side inside your section, as many
 components needed on the client side aren't server-side ready yet. For more on
-that, see [Server-side Rendering docs](../docs/server-side-rendering.md).
+that, see [Server-side Rendering docs](server-side-rendering.md).
+* Keep in mind that a lot of sections still render directly to the `#primary` and
+`#secondary` `<div />`s. Unfortunately, React cannot handle switching between those
+sections and a section that renders its entire component tree at once (a _single-tree
+rendered_ section). For this reason, we have to unmount and re-render component
+trees when switching between these two types of sections. We do this in a `page()`
+handler in [`client/boot`](../client/boot/index.js). You'll have to locate that
+handler and add your isomorphic section to the `singleTreeSections` whitelist array.
+* Behind the scenes, we're using a [util](../server/isomorphic-routing/README.md) that adapts `page.js` style middleware to [Express](https://expressjs.com/en/guide/routing.html)',
+our server router's middleware signatures. We might want to switch to an isomorphic
+router in the future.
+
+# Error Handling
+
+We support error handling middleware on the server side. Among other things, this is
+so that server-side rendered sections can set an HTTP error status, such as 404 if something isn't found.
+
+An error handling middleware takes three instead of just two arguments, `err, context, next`.
+Invoke it with `router` at the end of your route definitions:
+
+```js
+export function notFoundError( err, context, next ) {
+	context.layout = (
+		<ReduxProvider store={ context.store }>
+			<LayoutLoggedOut primary={ <ThemeNotFoundError /> } />
+		</ReduxProvider>
+	);
+	next( err );
+}
+
+export default function( router ) {
+  router( '/themes/:slug/:section?/:site_id?', details, makeLayout );
+  router( themeNotFound );
+}
+```
+
+Note that in `notFoundError`, `err` is passed as an argument to `next`. This is how error middleware chains skip skip regular middlewares. The rendering middleware that is implicitly called on the server after all other middlewares are invoked uses `err.status` to set the HTTP error status.
+
+On the other hand, an error-handling middleware like `themeNotFound` will be called if any other middleware before it calls `next` with an error object:
+
+```js
+function details( context, next ) ) {
+  const theme = fetchThemeSomehow( context.params.slug );
+  if ( ! theme ) {
+    const err = {
+      status: 404,
+      message: 'Theme Not Found',
+      context.params.slug
+    };
+    return next( err );
+  }
+  /* Render theme section */
+  next();
+  }
+}
+```

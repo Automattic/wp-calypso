@@ -4,7 +4,6 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
-import { Provider as ReduxProvider } from 'react-redux';
 import i18n from 'i18n-calypso';
 
 /**
@@ -23,7 +22,7 @@ import {
 import { recordTrack } from 'reader/stats';
 import { preload } from 'sections-preload';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import ReaderSidebarComponent from 'reader/sidebar';
+import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
@@ -128,9 +127,7 @@ module.exports = {
 
 	sidebar( context, next ) {
 		renderWithReduxStore(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( ReaderSidebarComponent, { path: context.path } )
-			),
+			<AsyncLoad require="reader/sidebar" path={ context.path } />,
 			document.getElementById( 'secondary' ),
 			context.store
 		);
@@ -160,25 +157,25 @@ module.exports = {
 
 		setPageTitle( context, i18n.translate( 'Following' ) );
 
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( StreamComponent, {
-					key: 'following',
-					listName: i18n.translate( 'Followed Sites' ),
-					store: followingStore,
-					recommendationsStore,
-					showPrimaryFollowButtonOnCards: false,
-					trackScrollPage: trackScrollPage.bind(
-						null,
-						basePath,
-						fullAnalyticsPageTitle,
-						analyticsPageTitle,
-						mcKey
-					),
-					onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
-				} )
-			),
-			document.getElementById( 'primary' )
+		// warn: don't async load this only. we need it to keep feed-post-store in the reader bundle
+		renderWithReduxStore(
+			React.createElement( StreamComponent, {
+				key: 'following',
+				listName: i18n.translate( 'Followed Sites' ),
+				postsStore: followingStore,
+				recommendationsStore,
+				showPrimaryFollowButtonOnCards: false,
+				trackScrollPage: trackScrollPage.bind(
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					analyticsPageTitle,
+					mcKey
+				),
+				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
+			} ),
+			'primary',
+			context.store
 		);
 	},
 
@@ -199,8 +196,7 @@ module.exports = {
 	},
 
 	feedListing( context ) {
-		const FeedStream = require( 'reader/feed-stream' ),
-			basePath = '/read/feeds/:feed_id',
+		const basePath = '/read/feeds/:feed_id',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Feed > ' + context.params.feed_id,
 			feedStore = feedStreamFactory( 'feed:' + context.params.feed_id ),
 			mcKey = 'blog';
@@ -213,30 +209,29 @@ module.exports = {
 		} );
 
 		renderWithReduxStore(
-			React.createElement( FeedStream, {
-				key: 'feed-' + context.params.feed_id,
-				store: feedStore,
-				feedId: +context.params.feed_id,
-				trackScrollPage: trackScrollPage.bind(
+			<AsyncLoad require="reader/feed-stream"
+				key={ 'feed-' + context.params.feed_id }
+				postsStore={ feedStore }
+				feedId={ +context.params.feed_id }
+				trackScrollPage={ trackScrollPage.bind(
 					null,
 					basePath,
 					fullAnalyticsPageTitle,
 					analyticsPageTitle,
 					mcKey
-				),
-				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
-				showPrimaryFollowButtonOnCards: false,
-				suppressSiteNameLink: true,
-				showBack: userHasHistory( context )
-			} ),
+				) }
+				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+				showPrimaryFollowButtonOnCards={ false }
+				suppressSiteNameLink={ true }
+				showBack={ userHasHistory( context ) }
+			/>,
 			document.getElementById( 'primary' ),
 			context.store
 		);
 	},
 
 	blogListing( context ) {
-		const SiteStream = require( 'reader/site-stream' ),
-			basePath = '/read/blogs/:blog_id',
+		const basePath = '/read/blogs/:blog_id',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Site > ' + context.params.blog_id,
 			feedStore = feedStreamFactory( 'site:' + context.params.blog_id ),
 			mcKey = 'blog';
@@ -249,30 +244,29 @@ module.exports = {
 		} );
 
 		renderWithReduxStore(
-			React.createElement( SiteStream, {
-				key: 'site-' + context.params.blog_id,
-				store: feedStore,
-				siteId: +context.params.blog_id,
-				trackScrollPage: trackScrollPage.bind(
+			<AsyncLoad require="reader/site-stream"
+				key={ 'site-' + context.params.blog_id }
+				postsStore={ feedStore }
+				siteId={ +context.params.blog_id }
+				trackScrollPage={ trackScrollPage.bind(
 					null,
 					basePath,
 					fullAnalyticsPageTitle,
 					analyticsPageTitle,
 					mcKey
-				),
-				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
-				showPrimaryFollowButtonOnCards: false,
-				suppressSiteNameLink: true,
-				showBack: userHasHistory( context )
-			} ),
+				) }
+				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+				showPrimaryFollowButtonOnCards={ false }
+				suppressSiteNameLink={ true }
+				showBack={ userHasHistory( context ) }
+			/>,
 			document.getElementById( 'primary' ),
 			context.store
 		);
 	},
 
 	readA8C( context ) {
-		const StreamComponent = require( 'reader/stream' ),
-			basePath = route.sectionify( context.path ),
+		const basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > A8C',
 			feedStore = feedStreamFactory( 'a8c' ),
 			mcKey = 'a8c';
@@ -283,25 +277,24 @@ module.exports = {
 
 		setPageTitle( context, 'Automattic' );
 
-		ReactDom.render(
-			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( StreamComponent, {
-					key: 'read-a8c',
-					className: 'is-a8c',
-					listName: 'Automattic',
-					store: feedStore,
-					trackScrollPage: trackScrollPage.bind(
-						null,
-						basePath,
-						fullAnalyticsPageTitle,
-						analyticsPageTitle,
-						mcKey
-					),
-					showPrimaryFollowButtonOnCards: false,
-					onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
-				} ),
-			),
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			<AsyncLoad require="reader/team/main"
+				key='read-a8c'
+				className='is-a8c'
+				listName='Automattic'
+				postsStore={ feedStore }
+				trackScrollPage={ trackScrollPage.bind(
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					analyticsPageTitle,
+					mcKey
+				) }
+				showPrimaryFollowButtonOnCards={ false }
+				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+			/>,
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

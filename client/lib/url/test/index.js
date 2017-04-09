@@ -71,6 +71,30 @@ describe( 'isExternal', () => {
 		expect( actual ).to.be.false;
 	} );
 
+	it( 'should return true for url without http', () => {
+		const urlWithoutHttp = 'en.support.wordpress.com';
+		const actual = isExternal( urlWithoutHttp );
+		expect( actual ).to.be.true;
+	} );
+
+	it( 'should return true for url without http and path', () => {
+		const urlWithoutHttp = 'en.support.wordpress.com/start';
+		const actual = isExternal( urlWithoutHttp );
+		expect( actual ).to.be.true;
+	} );
+
+	it( 'should return true for url without http and // path', () => {
+		const urlWithoutHttp = 'en.support.wordpress.com//start';
+		const actual = isExternal( urlWithoutHttp );
+		expect( actual ).to.be.true;
+	} );
+
+	it( 'should return true for just external relative // path', () => {
+		const urlWithoutHttp = '//manage';
+		const actual = isExternal( urlWithoutHttp );
+		expect( actual ).to.be.true;
+	} );
+
 	describe( 'with global.window (test against window.location.hostname)', () => {
 		// window.location.hostname === 'example.com'
 		useFakeDom();
@@ -104,6 +128,30 @@ describe( 'isExternal', () => {
 
 			const actual = isExternal( source );
 
+			expect( actual ).to.be.true;
+		} );
+
+		it( 'should return false for internal path without http', () => {
+			const urlWithoutHttp = 'example.com//me';
+			const actual = isExternal( urlWithoutHttp );
+			expect( actual ).to.be.false;
+		} );
+
+		it( 'should return true for internal but legacy path with http', () => {
+			const urlWithoutHttp = 'http://example.com/manage';
+			const actual = isExternal( urlWithoutHttp );
+			expect( actual ).to.be.true;
+		} );
+
+		it( 'should return true for internal but legacy path without http', () => {
+			const urlWithoutHttp = 'example.com/manage';
+			const actual = isExternal( urlWithoutHttp );
+			expect( actual ).to.be.true;
+		} );
+
+		it( 'should return true for subdomains', () => {
+			const source = '//ns1.example.com';
+			const actual = isExternal( source );
 			expect( actual ).to.be.true;
 		} );
 	} );

@@ -51,13 +51,11 @@
 	}
 }
 
-.global-notices .notice__text {
-	padding-left: 16px;
+.global-notices .notice__content {
 	flex-basis: auto;
 	flex-grow: 1;
 
 	@include breakpoint( ">660px" ) {
-		flex-grow: 0;
 		padding: 9px 13px;
 	}
 }

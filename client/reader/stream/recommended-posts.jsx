@@ -4,13 +4,13 @@
 import React, { PropTypes } from 'react';
 import { map, partial, some } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
  */
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
 import PostStore from 'lib/feed-post-store';
-import Gridicon from 'components/gridicon';
 import * as stats from 'reader/stats';
 import Button from 'components/button';
 import { dismissPost } from 'lib/feed-stream-store/actions';
@@ -80,7 +80,7 @@ export class RecommendedPosts extends React.PureComponent {
 		return (
 			<div className="reader-stream__recommended-posts">
 				<h1 className="reader-stream__recommended-posts-header">
-					<Gridicon icon="thumbs-up" size={ 18 }/>&nbsp;{ this.props.translate( 'Recommended Posts' ) }
+					<Gridicon icon="thumbs-up" size={ 18 } />&nbsp;{ this.props.translate( 'Recommended Posts' ) }
 				</h1>
 				<ul className="reader-stream__recommended-posts-list">
 					{
@@ -113,8 +113,8 @@ export class RecommendedPosts extends React.PureComponent {
 
 RecommendedPosts.propTypes = {
 	index: PropTypes.number,
-	translate: PropTypes.function,
-	recommendations: PropTypes.object,
+	translate: PropTypes.func,
+	recommendations: PropTypes.array,
 };
 
 export default localize( RecommendedPosts );

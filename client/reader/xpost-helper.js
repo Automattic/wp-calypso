@@ -6,6 +6,7 @@ import url from 'url';
 /**
  * Internal dependencies
  */
+import { X_POST } from 'lib/feed-post-store/display-types';
 
 export default {
 	/**
@@ -43,3 +44,7 @@ export default {
 		return xPostMetadata;
 	}
 };
+
+export function isXPost( post ) {
+	return post && post.display_type & X_POST;
+}

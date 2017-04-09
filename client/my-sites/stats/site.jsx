@@ -2,12 +2,14 @@
  * External dependencies
  */
 import page from 'page';
-import React from 'react';
-import debugFactory from 'debug';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import StatsPeriodNavigation from './stats-period-navigation';
 import Main from 'components/main';
 import StatsNavigation from './stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -17,199 +19,185 @@ import ChartTabs from './stats-chart-tabs';
 import StatsModule from './stats-module';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
-import analytics from 'lib/analytics';
 import StatsFirstView from './stats-first-view';
+import StickyPanel from 'components/sticky-panel';
 import config from 'config';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-const debug = debugFactory( 'calypso:stats:site' );
-
-module.exports = React.createClass( {
-	displayName: 'StatsSite',
-
-	getInitialState: function() {
-		const scrollPosition = this.props.context.state.scrollPosition || 0;
-
-		return {
-			date: this.props.date,
-			chartDate: this.props.date,
+class StatsSite extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
 			chartTab: this.props.chartTab,
-			tabSwitched: false,
-			period: this.props.period.period,
-			scrollPosition: scrollPosition
+			tabSwitched: false
 		};
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
-		const newDate = this.moment( nextProps.date );
-		const newState = {
-			date: newDate,
-			chartDate: newDate
-		};
-
-		if ( ! this.state.tabSwitched || ( this.state.period !== nextProps.period.period ) ) {
-			newState.chartTab = nextProps.chartTab;
-			newState.period = nextProps.period.period;
-			newState.tabSwitched = true;
+	componentWillReceiveProps( nextProps ) {
+		if ( ! this.state.tabSwitched && this.state.chartTab !== nextProps.chartTab ) {
+			this.setState( {
+				tabSwitched: true,
+				chartTab: nextProps.chartTab
+			} );
 		}
+	}
 
-		this.setState( newState );
-	},
-
-	scrollTop: function() {
-		if ( window.pageYOffset ) {
-			return window.pageYOffset;
-		}
-		return document.documentElement.clientHeight ? document.documentElement.scrollTop : document.body.scrollTop;
-	},
-
-	componentDidMount: function() {
-		const scrollPosition = this.state.scrollPosition;
-
-		setTimeout( function() {
-			window.scrollTo( 0, scrollPosition );
-		} );
-	},
-
-	updateScrollPosition: function() {
-		this.props.context.state.scrollPosition = this.scrollTop();
-		this.props.context.save();
-	},
-
-	// When user clicks on a bar, set the date to the bar's period
-	chartBarClick: function( bar ) {
-		page.redirect( this.props.path + '?startDate=' + bar.period );
-	},
-
-	barClick: function( bar ) {
-		analytics.ga.recordEvent( 'Stats', 'Clicked Chart Bar' );
+	barClick = ( bar ) => {
+		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
 		page.redirect( this.props.path + '?startDate=' + bar.data.period );
-	},
+	};
 
-	switchChart: function( tab ) {
+	switchChart = ( tab ) => {
 		if ( ! tab.loading && tab.attr !== this.state.chartTab ) {
-			analytics.ga.recordEvent( 'Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
+			this.props.recordGoogleEvent( 'Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
 			this.setState( {
 				chartTab: tab.attr,
 				tabSwitched: true
 			} );
 		}
-	},
+	};
 
-	render: function() {
-		const site = this.props.sites.getSite( this.props.siteId );
-		const charts = this.props.charts();
-		const queryDate = this.props.date.format( 'YYYY-MM-DD' );
-		const period = this.props.period.period;
+	render() {
+		const { date, isJetpack, hasPodcasts, slug, translate } = this.props;
+		const charts = [
+			{ attr: 'views', legendOptions: [ 'visitors' ], gridicon: 'visible',
+				label: translate( 'Views', { context: 'noun' } ) },
+			{ attr: 'visitors', gridicon: 'user', label: translate( 'Visitors', { context: 'noun' } ) },
+			{ attr: 'likes', gridicon: 'star', label: translate( 'Likes', { context: 'noun' } ) },
+			{ attr: 'comments', gridicon: 'comment', label: translate( 'Comments', { context: 'noun' } ) }
+		];
+		const queryDate = date.format( 'YYYY-MM-DD' );
+		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
-		let nonPeriodicModules;
 		let videoList;
 		let podcastList;
 
-		debug( 'Rendering site stats component', this.props );
+		const query = {
+			period: period,
+			date: endOf.format( 'YYYY-MM-DD' )
+		};
 
-		if ( site ) {
-			// Video plays, and tags and categories are not supported in JetPack Stats
-			if ( ! site.jetpack ) {
-				videoList = <StatsModule
-					path={ 'videoplays' }
+		// Video plays, and tags and categories are not supported in JetPack Stats
+		if ( ! isJetpack ) {
+			videoList = (
+				<StatsModule
+					path="videoplays"
 					moduleStrings={ moduleStrings.videoplays }
-					site={ site }
-					dataList={ this.props.videoPlaysList }
 					period={ this.props.period }
-					date={ queryDate }
-					beforeNavigate={ this.updateScrollPosition } />;
-			}
-			if ( config.isEnabled( 'manage/stats/podcasts' ) && site.options.podcasting_archive ) {
-				podcastList = <StatsModule
-					path={ 'podcastdownloads' }
+					query={ query }
+					statType="statsVideoPlays"
+					showSummaryLink
+				/>
+			);
+		}
+		if ( config.isEnabled( 'manage/stats/podcasts' ) && hasPodcasts ) {
+			podcastList = (
+				<StatsModule
+					path="podcastdownloads"
 					moduleStrings={ moduleStrings.podcastdownloads }
-					site={ site }
-					dataList={ this.props.podcastDownloadsList }
 					period={ this.props.period }
-					date={ queryDate }
-					beforeNavigate={ this.updateScrollPosition } />;
-			}
+					query={ query }
+					statType="statsPodcastDownloads"
+					showSummaryLink
+				/>
+			);
 		}
 
 		return (
 			<Main wideLayout={ true }>
 				<StatsFirstView />
 				<SidebarNavigation />
-				<StatsNavigation
-					section={ period }
-					site={ site } />
+				<StatsNavigation section={ period } />
 				<div id="my-stats-content">
 					<ChartTabs
-						visitsList={ this.props.visitsList }
-						activeTabVisitsList={ this.props.activeTabVisitsList }
 						barClick={ this.barClick }
 						switchTab={ this.switchChart }
 						charts={ charts }
 						queryDate={ queryDate }
 						period={ this.props.period }
 						chartTab={ this.state.chartTab } />
-					<DatePicker
-						period={ period }
-						date={ this.state.chartDate } />
+					<StickyPanel className="stats__sticky-navigation">
+						<StatsPeriodNavigation
+							date={ date }
+							period={ period }
+							url={ `/stats/${ period }/${ slug }` }
+						>
+							<DatePicker
+								period={ period }
+								date={ date }
+								query={ query }
+								statsType="statsTopPosts"
+								showQueryDate
+							/>
+						</StatsPeriodNavigation>
+					</StickyPanel>
 					<div className="stats__module-list is-events">
 						<div className="stats__module-column">
 							<StatsModule
-								path={ 'posts' }
+								path="posts"
 								moduleStrings={ moduleStrings.posts }
-								site={ site }
-								dataList={ this.props.postsPagesList }
 								period={ this.props.period }
-								date={ queryDate }
-								beforeNavigate={ this.updateScrollPosition } />
+								query={ query }
+								statType="statsTopPosts"
+								showSummaryLink />
 							<StatsModule
-								path={ 'referrers' }
-								moduleStrings={ moduleStrings.referrers }
-								site={ site }
-								dataList={ this.props.referrersList }
+								path="searchterms"
+								moduleStrings={ moduleStrings.search }
 								period={ this.props.period }
-								date={ queryDate }
-								beforeNavigate={ this.updateScrollPosition } />
-							<StatsModule
-								path={ 'clicks' }
-								moduleStrings={ moduleStrings.clicks }
-								site={ site }
-								dataList={ this.props.clicksList }
-								period={ this.props.period }
-								date={ queryDate }
-								beforeNavigate={ this.updateScrollPosition } />
-							<StatsModule
-								path={ 'authors' }
-								moduleStrings={ moduleStrings.authors }
-								site={ site }
-								dataList={ this.props.authorsList }
-								period={ this.props.period }
-								date={ queryDate }
-								followList={ this.props.followList }
-								className="stats__author-views"
-								beforeNavigate={ this.updateScrollPosition } />
+								query={ query }
+								statType="statsSearchTerms"
+								showSummaryLink />
+							{ videoList }
 						</div>
 						<div className="stats__module-column">
 							<Countries
-								path={ 'countries' }
-								site={ site }
-								dataList={ this.props.countriesList }
+								path="countries"
 								period={ this.props.period }
-								date={ queryDate } />
+								query={ query }
+								summary={ false } />
 							<StatsModule
-								path={ 'searchterms' }
-								moduleStrings={ moduleStrings.search }
-								site={ site }
-								dataList={ this.props.searchTermsList }
+								path="clicks"
+								moduleStrings={ moduleStrings.clicks }
 								period={ this.props.period }
-								date={ queryDate }
-								beforeNavigate={ this.updateScrollPosition } />
-							{ videoList }
+								query={ query }
+								statType="statsClicks"
+								showSummaryLink />
+						</div>
+						<div className="stats__module-column">
+							<StatsModule
+								path="referrers"
+								moduleStrings={ moduleStrings.referrers }
+								period={ this.props.period }
+								query={ query }
+								statType="statsReferrers"
+								showSummaryLink />
+							<StatsModule
+								path="authors"
+								moduleStrings={ moduleStrings.authors }
+								period={ this.props.period }
+								query={ query }
+								statType="statsTopAuthors"
+								className="stats__author-views"
+								showSummaryLink />
 							{ podcastList }
 						</div>
 					</div>
-					{ nonPeriodicModules }
 				</div>
 			</Main>
 		);
 	}
-} );
+}
+
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			isJetpack: isJetpackSite( state, siteId ),
+			hasPodcasts: getSiteOption( state, siteId, 'podcasting_archive' ),
+			slug: getSelectedSiteSlug( state )
+		};
+	},
+	{  recordGoogleEvent }
+)( localize( StatsSite ) );

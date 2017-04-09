@@ -4,12 +4,12 @@
 import React from 'react';
 import classNames from 'classnames';
 import endsWith from 'lodash/endsWith';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import { isBeingProcessed } from 'lib/domains/dns';
 
 const DnsRecord = React.createClass( {

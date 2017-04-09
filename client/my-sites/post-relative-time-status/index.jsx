@@ -7,7 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Gridicon = require( 'components/gridicon' );
+var Gridicon = require( 'gridicons' );
 
 module.exports = React.createClass( {
 
@@ -105,7 +105,8 @@ module.exports = React.createClass( {
 			details;
 
 		if ( this.props.link ) {
-			details = ( <p className={ realtiveTimeClass }><a href={ this.props.link } target={ this.props.target } onClick={ this.props.onClick }>{ innerText }</a></p> );
+			const rel = this.props.target === '_blank' ? 'noopener noreferrer' : null;
+			details = ( <p className={ realtiveTimeClass }><a href={ this.props.link } target={ this.props.target } rel={ rel } onClick={ this.props.onClick }>{ innerText }</a></p> );
 		} else {
 			details = ( <p className={ realtiveTimeClass }>{ innerText }</p> );
 		}

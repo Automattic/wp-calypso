@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import tinymce from 'tinymce/tinymce';
 import { connect } from 'react-redux';
 import find from 'lodash/find';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -18,7 +19,6 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import Gridicon from 'components/gridicon';
 import PostSelector from 'my-sites/post-selector';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSitePosts } from 'state/posts/selectors';

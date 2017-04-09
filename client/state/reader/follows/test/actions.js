@@ -10,7 +10,7 @@ import { expect } from 'chai';
  */
 import {
 	READER_FOLLOW,
-	READER_UNFOLLOW
+	READER_UNFOLLOW,
 } from 'state/action-types';
 
 describe( 'actions', () => {
@@ -29,31 +29,30 @@ describe( 'actions', () => {
 	} );
 
 	const spy = sinon.spy();
+	const dispatchSpy = sinon.stub();
+	dispatchSpy.withArgs( sinon.match.instanceOf( Promise ) ).returnsArg( 0 );
 
 	beforeEach( () => {
 		spy.reset();
+		dispatchSpy.reset();
 	} );
 
 	describe( '#recordFollow', () => {
 		it( 'should dispatch an action when a URL is followed', () => {
-			const dispatchSpy = sinon.stub();
-			dispatchSpy.withArgs( sinon.match.instanceOf( Promise ) ).returnsArg( 0 );
 			recordFollow( 'http://discover.wordpress.com' )( dispatchSpy );
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: READER_FOLLOW,
-				url: 'http://discover.wordpress.com'
+				payload: { url: 'http://discover.wordpress.com' },
 			} );
 		} );
 	} );
 
 	describe( '#recordUnfollow', () => {
 		it( 'should dispatch an action when a URL is unfollowed', () => {
-			const dispatchSpy = sinon.stub();
-			dispatchSpy.withArgs( sinon.match.instanceOf( Promise ) ).returnsArg( 0 );
 			recordUnfollow( 'http://discover.wordpress.com' )( dispatchSpy );
 			expect( dispatchSpy ).to.have.been.calledWith( {
 				type: READER_UNFOLLOW,
-				url: 'http://discover.wordpress.com'
+				payload: { url: 'http://discover.wordpress.com' }
 			} );
 		} );
 	} );

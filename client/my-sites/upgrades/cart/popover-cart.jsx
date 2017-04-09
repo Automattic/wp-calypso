@@ -5,6 +5,7 @@ import React from 'react';
 import reject from 'lodash/reject';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -16,9 +17,7 @@ import CartButtons from './cart-buttons';
 import Popover from 'components/popover';
 import CartEmpty from './cart-empty';
 import CartPlanAd from './cart-plan-ad';
-import CartTrialAd from './cart-trial-ad';
 import { isCredits } from 'lib/products-values';
-import Gridicon from 'components/gridicon';
 
 const PopoverCart = React.createClass( {
 	propTypes: {
@@ -113,8 +112,6 @@ const PopoverCart = React.createClass( {
 
 		return (
 			<div>
-				<CartTrialAd cart={ this.props.cart } />
-
 				<CartPlanAd
 					cart={ this.props.cart }
 					selectedSite={ this.props.selectedSite } />

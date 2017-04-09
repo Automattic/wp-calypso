@@ -5,12 +5,12 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { debounce, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import FormRange from 'components/forms/range';
-import Gridicon from 'components/gridicon';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 import { setPreference, savePreference } from 'state/preferences/actions';
@@ -125,7 +125,7 @@ class MediaLibraryScale extends Component {
 						<span className="media-library__scale-toggle-label">
 							{ translate( 'Grid' ) }
 						</span>
-						<Gridicon icon="grid" />
+						<Gridicon icon="grid" size={ 18 } />
 					</SegmentedControlItem>
 					<SegmentedControlItem
 						selected={ 1 === scale }
@@ -133,7 +133,7 @@ class MediaLibraryScale extends Component {
 						<span className="media-library__scale-toggle-label">
 							{ translate( 'List' ) }
 						</span>
-						<Gridicon icon="menu" />
+						<Gridicon icon="menu" size={ 18 } />
 					</SegmentedControlItem>
 				</SegmentedControl>
 				<FormRange

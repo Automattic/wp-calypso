@@ -14,7 +14,7 @@ RUN     apt-get -y update && apt-get -y install \
           make \
           build-essential
 
-ENV NODE_VERSION 6.9.1
+ENV NODE_VERSION 6.10.2
 
 RUN     wget https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz && \
           tar -zxf node-v$NODE_VERSION-linux-x64.tar.gz -C /usr/local && \
@@ -38,12 +38,8 @@ RUN     npm install --production || npm install --production
 
 COPY     . /calypso
 
-# Build javascript bundles for each environment and change ownership
-RUN     CALYPSO_ENV=wpcalypso make build-wpcalypso && \
-          CALYPSO_ENV=horizon make build-horizon && \
-          CALYPSO_ENV=stage make build-stage && \
-          CALYPSO_ENV=production make build-production && \
-          chown -R nobody /calypso
+# Build javascript bundles and change ownership
+RUN	CALYPSO_ENV=production make build && chown -R nobody /calypso
 
 USER    nobody
-CMD     NODE_ENV=production node build/bundle-$CALYPSO_ENV.js
+CMD     NODE_ENV=production node build/bundle.js

@@ -6,78 +6,41 @@ import React, { PropTypes, PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import humanDate from 'lib/human-date';
+import DisplayTypes from 'state/reader/posts/display-types';
+import ReaderPostCard from 'blocks/reader-post-card';
 
 export class ReaderPreview extends PureComponent {
 	render() {
 		const {
-			siteTitle,
-			siteSlug,
-			siteIcon,
-			postTitle,
+			site,
+			post,
 			postExcerpt,
 			postImage,
-			postDate,
-			authorName,
-			authorIcon
 		} = this.props;
 
+		// Add some ReaderPost specific properties that are necessary
+		const readerPost = Object.assign(
+			post,
+			{ better_excerpt: postExcerpt },
+			postImage && { canonical_media: { src: postImage } },
+			( postImage && ! postExcerpt ) && { display_type: DisplayTypes.PHOTO_ONLY },
+			{ author: Object.assign(
+				post.author,
+				{ has_avatar: true }
+			) }
+		);
+
 		return (
-			<article className="reader-preview">
-				<div className="reader__post-header">
-					<div className="site has-edit-capabilities">
-						<div className="site__content" title={ siteTitle }>
-							<div className="site-icon">
-								<img className="site-icon__img" src={ siteIcon } />
-							</div>
-							<div className="site__info">
-								<div className="site__title">{ siteTitle }</div>
-								<div className="site__domain">{ siteSlug }</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				{ postImage &&
-					<div className="reader__post-featured-image">
-						<img className="reader__post-featured-image-image" src={ postImage } />
-					</div>
-				}
-				<div className="reader-preview__text">
-				{ postTitle &&
-					<h1 className="reader__post-title">{ postTitle }</h1>
-				}
-				{ authorName &&
-					<ul className="reader-post-byline">
-						<li className="reader-post-byline__author">
-							<a href="#" className="external-link">
-								<img className="gravatar" src={ authorIcon } width="16" height="16" />
-								<span className="byline__author-name">{ authorName }</span>
-							</a>
-						</li>
-						<li className="reader-post-byline__date">
-							<a className="reader-post-byline__date-link" href="#">{ humanDate( postDate ) }</a>
-						</li>
-					</ul>
-				}
-				{ postExcerpt &&
-					<div className="post-excerpt"><p>{ postExcerpt }</p></div>
-				}
-				</div>
-			</article>
+			<ReaderPostCard site={ site } post={ readerPost } />
 		);
 	}
 }
 
 ReaderPreview.propTypes = {
-	siteTitle: PropTypes.string,
-	siteSlug: PropTypes.string,
-	siteIcon: PropTypes.string,
-	postTitle: PropTypes.string,
+	site: PropTypes.object,
+	post: PropTypes.object,
 	postExcerpt: PropTypes.string,
-	postImage: PropTypes.string,
-	postDate: PropTypes.string,
-	authorName: PropTypes.string,
-	authorIcon: PropTypes.string
+	postImage: PropTypes.string
 };
 
 export default ReaderPreview;

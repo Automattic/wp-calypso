@@ -65,6 +65,18 @@
 	&:last-child {
 		border-bottom: none;
 	}
+
+	&.is-placeholder {
+		height: auto;
+
+		td {
+			padding: 24px;
+		}
+
+		.billing-history__transaction-text {
+			@include placeholder();
+		}
+	}
 }
 
 .billing-history__header-row {
@@ -354,6 +366,10 @@
 		font-size: 20px;
 	}
 
+	.billing-history__receipt-loading {
+		color: $gray;
+	}
+
 	.billing-history__receipt-line-items {
 		margin: 0;
 		padding: 0;
@@ -447,6 +463,43 @@
 
 .billing-history .search-card.card {
 	margin: 0;
+}
+
+.billing-history__receipt-card.is-placeholder {
+	.billing-history__app-overview {
+		display: flex;
+		margin-bottom: 16px;
+
+		.billing-history__placeholder-image,
+		.billing-history__placeholder-title {
+			@include placeholder();
+			height: 65px;
+		}
+
+		.billing-history__placeholder-image {
+			flex-shrink: 0;
+			width: 65px;
+			margin-right: 26px;
+		}
+
+		.billing-history__placeholder-title {
+			flex-shrink: 1;
+			width: 100%;
+		}
+	}
+
+	.billing-history__receipt-links {
+		padding: 0 40px 10px;
+
+		.billing-history__placeholder-link {
+			@include placeholder();
+			margin-bottom: 12px;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
 }
 
 @media print {

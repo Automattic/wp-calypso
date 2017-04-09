@@ -1,0 +1,64 @@
+
+.reader-subscription-list-item__by-text {
+	color: $gray;
+}
+
+.reader-subscription-list-item .gravatar {
+	float: left;
+	margin: 2px 6px 0 0;
+	height: 32px;
+	min-height: 32px;
+	width: 32px;
+	min-width: 32px;
+}
+
+.reader-subscription-list-item {
+	font-size: 14px;
+	padding-bottom: 20px;
+	display: flex;
+}
+
+.reader-subscription-list-item .follow-button {
+	border: 0;
+	border-radius: 0;
+	float: right;
+	padding: 0;
+
+	.gridicon {
+		fill: $blue-medium;
+	}
+
+	.follow-button__label {
+		color: $blue-medium;
+	}
+
+	&.is-following {
+
+		.gridicon {
+			fill: $alert-green;
+		}
+
+		.follow-button__label {
+			color: $alert-green;
+		}
+	}
+}
+
+.reader-subscription-list-item__settings-menu {
+	color: $gray;
+	float: right;
+}
+.reader-subscription-list-item__site-url, .reader-subscription-list-item__site-url a {
+	color: $gray;
+}
+.reader-subscription-list-item__site-title {
+	font-weight: 600;
+}
+
+.reader-subscription-list-item__options {
+	display: flex;
+	flex-direction: column;
+	margin-left: auto;
+	width: 90px;
+	min-width: 90px;
+}

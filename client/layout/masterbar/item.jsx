@@ -5,11 +5,7 @@ import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import isFunction from 'lodash/isFunction';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 
 export default React.createClass( {
 	displayName: 'MasterbarItem',

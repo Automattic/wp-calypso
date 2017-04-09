@@ -11,19 +11,20 @@ import { includes, reduce } from 'lodash';
  */
 import Accordion from 'components/accordion';
 import FormTextInput from 'components/forms/form-text-input';
-import Gridicon from 'components/gridicon';
 import PostMetadata from 'lib/post-metadata';
 import Sharing from './';
 import AccordionSection from 'components/accordion/section';
 import postUtils from 'lib/posts/utils';
+import { isMobile } from 'lib/viewport';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
-import { isJetpackModuleActive, getSiteOption } from 'state/sites/selectors';
+import { isJetpackModuleActive } from 'state/sites/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
-import { postTypeSupports } from 'state/post-types/selectors';
+import { hasBrokenSiteUserConnection, isPublicizeEnabled } from 'state/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const EditorSharingAccordion = React.createClass( {
 	propTypes: {
@@ -31,6 +32,7 @@ const EditorSharingAccordion = React.createClass( {
 		post: PropTypes.object,
 		isNew: PropTypes.bool,
 		connections: PropTypes.array,
+		hasBrokenConnection: PropTypes.bool,
 		isPublicizeEnabled: PropTypes.bool,
 		isSharingActive: PropTypes.bool,
 		isLikesActive: PropTypes.bool
@@ -100,11 +102,24 @@ const EditorSharingAccordion = React.createClass( {
 			return null;
 		}
 
+		let status;
+		if ( this.props.hasBrokenConnection ) {
+			status = {
+				type: 'warning',
+				text: this.translate( 'A broken connection requires repair', {
+					comment: 'Publicize connection deauthorized, needs user action to fix'
+				} ),
+				url: `/sharing/${ this.props.site.slug }`,
+				position: isMobile() ? 'top left' : 'top',
+				onClick: this.props.onStatusClick
+			};
+		}
+
 		return (
 			<Accordion
 				title={ this.translate( 'Sharing' ) }
 				subtitle={ this.getSubtitle() }
-				icon={ <Gridicon icon="share" /> }
+				status={ status }
 				className={ classes }>
 				{ this.props.site && (
 					<QueryPublicizeConnections siteId={ this.props.site.ID } />
@@ -126,19 +141,18 @@ export default connect(
 		const userId = getCurrentUserId( state );
 		const postId = getEditorPostId( state );
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );
-		const isPublicizeEnabled = (
-			false !== isJetpackModuleActive( state, siteId, 'publicize' ) &&
-			true !== getSiteOption( state, siteId, 'publicize_permanently_disabled' ) &&
-			postTypeSupports( state, siteId, postType, 'publicize' )
-		);
 		const isSharingActive = false !== isJetpackModuleActive( state, siteId, 'sharedaddy' );
 		const isLikesActive = false !== isJetpackModuleActive( state, siteId, 'likes' );
 
 		return {
 			connections: getSiteUserConnections( state, siteId, userId ),
+			hasBrokenConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
 			isSharingActive,
 			isLikesActive,
-			isPublicizeEnabled
+			isPublicizeEnabled: isPublicizeEnabled( state, siteId, postType ),
 		};
 	},
+	{
+		onStatusClick: () => recordGoogleEvent( 'Editor', 'Clicked Accordion Broken Status' )
+	}
 )( EditorSharingAccordion );

@@ -100,6 +100,14 @@ const Help = React.createClass( {
 						</p>
 					</div>
 				</CompactCard>
+				<CompactCard className="help__support-link" href="https://en.support.wordpress.com/video-tutorials/" target="__blank">
+					<div className="help__support-link-section">
+						<h2 className="help__support-link-title">{ this.translate( 'Quick help video tutorials' ) }</h2>
+						<p className="help__support-link-content">
+							{ this.translate( 'These short videos will demonstrate some of our most popular features.' ) }
+						</p>
+					</div>
+				</CompactCard>
 				<CompactCard className="help__support-link" href="https://dailypost.wordpress.com/blogging-university/" target="__blank">
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">

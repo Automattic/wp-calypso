@@ -4,15 +4,18 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
 import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
-import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
-import { isGuidedTransferAvailableForAllSites } from 'state/sites/guided-transfer/selectors';
+import {
+	isGuidedTransferAvailableForAllSites,
+	isRequestingGuidedTransferStatus,
+} from 'state/sites/guided-transfer/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getProductDisplayCost } from 'state/products-list/selectors';
@@ -27,8 +30,8 @@ const Feature = ( { children } ) =>
 		</span>
 	</li>;
 
-const PurchaseButton = localize( ( { siteSlug, translate } ) =>
-	<Button href={ `/settings/export/guided/${ siteSlug }` } isPrimary={ true } >
+const PurchaseButton = localize( ( { siteSlug, translate, disabled } ) =>
+	<Button href={ `/settings/export/guided/${ siteSlug }` } isPrimary={ true } disabled={ disabled } >
 		{ translate( 'Purchase a Guided Transfer' ) }
 	</Button>
 );
@@ -52,6 +55,7 @@ class GuidedTransferCard extends Component {
 		const {
 			translate,
 			isAvailable,
+			isRequestingStatus,
 			siteId,
 			cost,
 		} = this.props;
@@ -73,8 +77,8 @@ class GuidedTransferCard extends Component {
 						</h2>
 					</div>
 					<div className="guided-transfer-card__options-header-button-container">
-						{ isAvailable
-							? <PurchaseButton siteSlug={ this.props.siteSlug } />
+						{ isAvailable || isRequestingStatus
+							? <PurchaseButton siteSlug={ this.props.siteSlug } disabled={ isRequestingStatus } />
 							: <UnavailableInfo />
 						}
 					</div>
@@ -117,6 +121,7 @@ const mapStateToProps = state => ( {
 	cost: getProductDisplayCost( state, 'guided_transfer' ),
 	siteId: getSelectedSiteId( state ),
 	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
+	isRequestingStatus: isRequestingGuidedTransferStatus( state, getSelectedSiteId( state ) ),
 	isAvailable: isGuidedTransferAvailableForAllSites( state, getSelectedSiteId( state ) ),
 } );
 

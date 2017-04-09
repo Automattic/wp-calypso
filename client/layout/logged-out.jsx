@@ -14,7 +14,6 @@ import { getSection } from 'state/ui/selectors';
 const LayoutLoggedOut = ( {
 	primary,
 	secondary,
-	tertiary,
 	section,
 } ) => {
 	const classes = classNames( 'layout', {
@@ -36,9 +35,6 @@ const LayoutLoggedOut = ( {
 					{ secondary }
 				</div>
 			</div>
-			<div id="tertiary">
-				{ tertiary }
-			</div>
 		</div>
 	);
 };
@@ -47,7 +43,6 @@ LayoutLoggedOut.displayName = 'LayoutLoggedOut';
 LayoutLoggedOut.propTypes = {
 	primary: React.PropTypes.element,
 	secondary: React.PropTypes.element,
-	tertiary: React.PropTypes.element,
 	section: React.PropTypes.oneOfType( [
 		React.PropTypes.bool,
 		React.PropTypes.object,

@@ -12,6 +12,9 @@ import readerController from 'reader/controller';
 import config from 'config';
 
 export default function() {
+	// Cold Start no longer exists - redirect to /
+	page( '/recommendations/start', '/' );
+
 	// Blog Recommendations
 	page( '/recommendations',
 		readerController.preloadReaderBundle,

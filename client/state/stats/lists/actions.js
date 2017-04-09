@@ -47,13 +47,20 @@ export function requestSiteStats( siteId, statType, query ) {
 			query
 		} );
 
-		return wpcom.site( siteId )[ statType ]( query ).then( data => {
+		const isUndocumented = 'statsPodcastDownloads' === statType;
+		const options = 'statsVideo' === statType ? query.postId : query;
+		const site = isUndocumented
+			? wpcom.undocumented().site( siteId )
+			: wpcom.site( siteId );
+
+		return site[ statType ]( options ).then( data => {
 			dispatch( receiveSiteStats( siteId, statType, query, data ) );
 			dispatch( {
 				type: SITE_STATS_REQUEST_SUCCESS,
 				statType,
 				siteId,
-				query
+				query,
+				date: Date.now()
 			} );
 		} ).catch( error => {
 			dispatch( {

@@ -1,53 +1,31 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:sites-list:actions' );
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:sites-list:actions' );
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	wpcom = require( 'lib/wp' ).undocumented();
+import Dispatcher from 'dispatcher';
+import wpcom from 'lib/wp';
 
-var SitesListActions = {
-
-	removeSitesNotices: function( logs ) {
+const SitesListActions = {
+	removeSitesNotices( logs ) {
 		Dispatcher.handleViewAction( {
 			type: 'REMOVE_SITES_NOTICES',
-			logs: logs
+			logs
+		} );
+	},
+	// A way to remove a Disconnected Site from the old list store
+	disconnectedSite( site ) {
+		Dispatcher.handleViewAction( {
+			type: 'DISCONNECT_SITE',
+			site
 		} );
 	},
 
-	disconnect: function( site ) {
-		debug( 'disconnect site', site );
-
-		if ( site.capabilities && site.capabilities.manage_options ) {
-			Dispatcher.handleViewAction( {
-				type: 'DISCONNECT_SITE',
-				action: 'DISCONNECT_SITE',
-				site: site
-			} );
-
-			wpcom.disconnectJetpack( site.ID, function( error, data ) {
-				Dispatcher.handleViewAction( {
-					type: 'RECEIVE_DISCONNECTED_SITE',
-					action: 'DISCONNECT_SITE',
-					site: site,
-					error: error,
-					data: data
-				} );
-			} );
-		} else {
-			Dispatcher.handleViewAction( {
-				type: 'DISCONNECTING_SITE_ERROR',
-				action: 'DISCONNECT_SITE',
-				site: site,
-				error: { error: 'unauthorized_access' }
-			} );
-		}
-	},
-
-	deleteSite: function( site, onComplete ) {
+	deleteSite( site, onComplete ) {
 		Dispatcher.handleViewAction( {
 			type: 'DELETE_SITE',
 			site: site
@@ -55,33 +33,30 @@ var SitesListActions = {
 
 		debug( 'Deleting site', site );
 
-		wpcom.deleteSite( site.ID, function( error ) {
+		wpcom.undocumented().deleteSite( site.ID, function( error ) {
 			if ( error ) {
 				Dispatcher.handleServerAction( {
 					type: 'RECEIVE_DELETED_SITE_ERROR',
-					error: error
+					error
 				} );
 			} else {
-				Dispatcher.handleServerAction( {
-					type: 'RECEIVE_DELETED_SITE',
-					site: site
-				} );
+				SitesListActions.receiveDeletedSite( site );
 			}
 
 			onComplete( error );
 		} );
 	},
 
-	receiveDeletedSite: function( error, data ) {
+	receiveDeletedSite( site ) {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_DELETED_SITE',
-			site: data
+			site
 		} );
 	},
 
-	clearDeleteSiteStore: function() {
+	clearDeleteSiteStore() {
 		Dispatcher.handleViewAction( { type: 'CLEAR_DELETED_SITE' } );
 	}
 };
 
-module.exports = SitesListActions;
+export default SitesListActions;

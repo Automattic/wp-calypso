@@ -35,6 +35,30 @@
 		}
 
 	}
+
+	&.is-compact {
+		.site__content {
+			padding: 0 16px;
+		}
+
+		.site__domain {
+			display: none;
+		}
+
+		.site__title {
+			line-height: 46px;
+		}
+
+		.site__home {
+			top: 11px;
+			line-height: 18px;
+		}
+
+		.site__home .gridicon {
+			margin-top: 0;
+		}
+
+	}
 }
 
 // Wraps the anchor element
@@ -55,12 +79,12 @@
 // within a Site item
 .site .site-icon {
 	position: relative;
-	border: 1px solid $transparent;
 	height: 30px;
 	width: 30px;
 	overflow: hidden;
 	align-self: center;
 	margin-right: 8px;
+	flex: 0 0 auto;
 }
 
 // The group of site title and domain
@@ -78,7 +102,7 @@
 }
 
 .site__domain {
-	color: $gray;
+	color: $gray-text-min;
 	display: block;
 	max-width: 95%;
 	font-size: 11px;
@@ -107,12 +131,17 @@
 	transition: opacity 0.2s;
 	transform: translate3d(0, 0, 0);
 	position: absolute;
-		left: 17px;
+		left: 16px;
 		top: 17px;
 
 	.gridicon {
 		margin-top: 5px;
 		vertical-align: middle;
+	}
+
+	.site.is-compact & {
+		width: 24px;
+		height: 24px;
 	}
 
 	&:hover {

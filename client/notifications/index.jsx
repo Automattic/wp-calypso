@@ -1,58 +1,86 @@
 /**
+ * Loads the notifications client into Calypso and
+ * connects the messaging and interactive elements
+ *
+ *  - messages through iframe
+ *  - keyboard hotkeys
+ *  - window/pane scrolling
+ *  - service worker
+ *
+ * @module notifications
+ */
+
+/**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:notifications' ),
-	assign = require( 'lodash/assign' ),
-	oAuthToken = require( 'lib/oauth-token' );
+import React, { Component } from 'react';
+import classNames from 'classnames';
+import oAuthToken from 'lib/oauth-token';
+import { compact, get, invoke } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	config = require( 'config' ),
-	user = require( 'lib/user' )();
+import analytics from 'lib/analytics';
+import config from 'config';
+import userLib from 'lib/user';
 
 /**
  * Module variables
  */
-var widgetDomain = 'https://widgets.wp.com';
+const NOTIFICATIONS_CLIENT_VERSION = 'beta-r152164-wpcom-38-gbf2d7f1';
 
-var Notifications = React.createClass( {
-	getInitialState: function() {
-		return {
-			'loaded': true,
-			'iframeLoaded': false,
-			'shownOnce': false,
-			'widescreen': false
-		};
-	},
+const user = userLib();
+const widgetDomain = 'https://widgets.wp.com';
 
-	preventDefault: function( event ) {
-		event.preventDefault();
-	},
+/**
+ * Attempts to parse a JSON string
+ *
+ * @param {String} input
+ * @returns {*} parsed data on success and `null` on failure
+ */
+const parseJson = input => {
+	try {
+		return JSON.parse( input );
+	} catch ( e ) {
+		return null;
+	}
+};
 
-	enableMainWindowScroll: function() {
-		document.body.removeEventListener( 'mousewheel', this.preventDefault, false );
-	},
+/**
+ * Prevents default action on an input event
+ *
+ * @param {Object} event
+ * @returns {undefined}
+ */
+const preventDefault = event => event.preventDefault();
 
-	disableMainWindowScroll: function() {
-		document.body.addEventListener( 'mousewheel', this.preventDefault, false );
-	},
+/**
+ * Encapsulates the notifications client
+ *
+ * @extends Component
+ */
+export class Notifications extends Component {
+	state = {
+		loaded: true,
+		iframeLoaded: false,
+		shownOnce: false,
+		widescreen: false,
+	};
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.visible && ! this.state.loaded ) {
-			this.setState( { 'loaded': true } );
+			this.setState( { loaded: true } );
 		} else if ( ! nextProps.visible && ! this.state.iframeLoaded && this.state.shownOnce ) {
 			// for cases where iframe is stuck loading, this will remove it from
 			// the DOM so we can try reloading it next time
-			this.setState( { 'loaded': false } );
+			this.setState( { loaded: false } );
 		}
 
 		// tell the iframe if we're changing visible status
 		if ( nextProps.visible !== this.props.visible ) {
-			this.postMessage( { 'action': 'togglePanel', 'showing': nextProps.visible } );
-			this.setState( { 'shownOnce': true, 'widescreen': false } );
+			this.postMessage( { action: 'togglePanel', showing: nextProps.visible } );
+			this.setState( { shownOnce: true, widescreen: false } );
 		}
 
 		if ( document.documentElement.classList.contains( 'touch' ) ) {
@@ -63,20 +91,17 @@ var Notifications = React.createClass( {
 				document.body.addEventListener( 'touchmove', this.preventDefault, false );
 			}
 		}
-	},
+	}
 
-	componentDidUpdate: function( prevProps ) {
-		var frameNode;
-		if ( this.props.visible && ! prevProps.visible ) {
-			// showing the panel, focus so we can use shortcuts
-			frameNode = this.refs.widgetFrame;
-			if ( frameNode ) {
-				frameNode.contentWindow.focus();
-			}
+	componentDidUpdate( { visible } ) {
+		// focus notes frame when it opens to
+		// enable notes keyboard shortcuts
+		if ( visible && ! this.props.visible ) {
+			invoke( this, 'notesFrame.contentWindow.focus' );
 		}
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
 		window.addEventListener( 'message', this.receiveMessage );
 		window.addEventListener( 'mousedown', this.props.checkToggle );
 		window.addEventListener( 'touchstart', this.props.checkToggle );
@@ -90,9 +115,9 @@ var Notifications = React.createClass( {
 			window.navigator.serviceWorker.addEventListener( 'message', this.receiveServiceWorkerMessage );
 			this.postServiceWorkerMessage( { action: 'sendQueuedMessages' } );
 		}
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		window.removeEventListener( 'message', this.receiveMessage );
 		window.removeEventListener( 'mousedown', this.props.checkToggle );
 		window.removeEventListener( 'touchstart', this.props.checkToggle );
@@ -107,9 +132,13 @@ var Notifications = React.createClass( {
 		if ( 'serviceWorker' in window.navigator && 'removeEventListener' in window.navigator.serviceWorker ) {
 			window.navigator.serviceWorker.removeEventListener( 'message', this.receiveServiceWorkerMessage );
 		}
-	},
+	}
 
-	handleKeyPress: function( event ) {
+	enableMainWindowScroll = () => document.body.removeEventListener( 'mousewheel', preventDefault );
+
+	disableMainWindowScroll = () => document.body.addEventListener( 'mousewheel', preventDefault );
+
+	handleKeyPress = event => {
 		if ( event.target !== document.body && event.target.tagName !== 'A' ) {
 			return;
 		}
@@ -123,70 +152,95 @@ var Notifications = React.createClass( {
 			event.preventDefault();
 			this.props.checkToggle( null, true );
 		}
-	},
+	};
 
-	handleVisibilityChange: function() {
-		this.postMessage( {
-			'action': 'toggleVisibility',
-			'hidden': document.hidden ? true : false
-		} );
-	},
+	handleVisibilityChange = () => this.postMessage( {
+		action: 'toggleVisibility',
+		hidden: !! document.hidden,
+	} );
 
-	postAuth: function() {
-		if ( config.isEnabled( 'oauth' ) ) {
-			const token = oAuthToken.getToken();
-
-			if ( token !== false ) {
-				this.postMessage( {
-					action: 'setAuthToken',
-					token: token
-				} );
-			}
+	/**
+	 * Sends the current oAuth token to the notifications client
+	 *
+	 * Calypso utilizes the browser cookie when making HTTP
+	 * requests and because the notifications client exists in
+	 * the same cookie domain it can make requests without
+	 * needing specific authentication.
+	 *
+	 * However, in the desktop the oAuth token plays a more
+	 * important role in authentication and thus we need to
+	 * pass it into the notifications client so that it can
+	 * make the authenticated calls it needs to.
+	 */
+	postAuth = () => {
+		if ( ! config.isEnabled( 'oauth' ) ) {
+			return;
 		}
-	},
 
-	receiveMessage: function( event ) {
+		const token = oAuthToken.getToken();
+
+		if ( token === false ) {
+			return;
+		}
+
+		this.postMessage( {
+			action: 'setAuthToken',
+			token: token
+		} );
+	};
+
+	receiveMessage = event => {
 		// Receives messages from the notifications widget
 		if ( event.origin !== widgetDomain ) {
 			return;
 		}
 
-		var data = event.data;
-		if ( typeof data === 'string' ) {
-			data = JSON.parse( data );
-		}
+		const data = 'string' === typeof event.data
+			? parseJson( event.data )
+			: event.data;
 
-		if ( data.type !== 'notesIframeMessage' ) {
+		// silently ignore messages which don't belong here
+		// they probably are bound for another event handler
+		if ( ! data || data.type !== 'notesIframeMessage' ) {
 			return;
 		}
 
-		if ( data.action === 'togglePanel' ) {
-			this.props.checkToggle();
-		} else if ( data.action === 'render' ) {
-			this.props.setIndicator( data.num_new );
-		} else if ( data.action === 'iFrameReady' ) {
-			// the iframe is loaded, send any pending messages
-			this.setState( { 'iframeLoaded': true } );
-			debug( 'notifications iframe loaded' );
+		switch ( data.action ) {
+			case 'iFrameReady':
+				if ( ! this.state.iframeLoaded ) {
+					this.setState( { iframeLoaded: true } );
+				}
 
-			// We always want this to happen, in addition to whatever may be queued
-			this.postAuth();
+				this.postAuth();
 
-			if ( this.queuedMessage ) {
-				this.postMessage( this.queuedMessage );
-				this.queuedMessage = null;
-			}
-		} else if ( data.action === 'renderAllSeen' ) {
-			// user has seen the notes, no longer new
-			this.props.setIndicator( 0 );
-		} else if ( data.action === 'widescreen' ) {
-			this.setState( { widescreen: data.widescreen } );
-		} else {
-			debug( 'unknown message from iframe: %s', event.data );
+				if ( this.queuedMessage ) {
+					this.postMessage( this.queuedMessage );
+					this.queuedMessage = null;
+				}
+
+				return;
+
+			case 'render':
+				return this.props.setIndicator( data.num_new );
+
+			case 'renderAllSeen':
+				return this.props.setIndicator( 0 );
+
+			case 'togglePanel':
+				return this.props.checkToggle();
+
+			case 'widescreen':
+				return this.setState( { widescreen: data.widescreen } );
 		}
-	},
 
-	receiveServiceWorkerMessage: function( event ) {
+		throw new TypeError(
+			'Cannot handles message received from notifications client\n' +
+			`Action type unknown: ${ data.action }\n` +
+			`Received message: ${ data }`
+		);
+	};
+
+	receiveServiceWorkerMessage = event => {
 		// Receives messages from the service worker
 		// Older Firefox versions (pre v48) set event.origin to "" for service worker messages
 		// Firefox does not support document.origin; we can use location.origin instead
@@ -206,80 +260,98 @@ var Notifications = React.createClass( {
 				this.props.checkToggle( null, true );
 				// force refresh the panel
 				this.postMessage( { action: 'refreshNotes' } );
-				break;
+
+				return;
+
 			case 'trackClick':
 				analytics.tracks.recordEvent( 'calypso_web_push_notification_clicked', {
 					push_notification_note_id: event.data.notification.note_id,
 					push_notification_type: event.data.notification.type
 				} );
-				break;
+
+				return;
 		}
-	},
+	};
 
-	postMessage: function( message ) {
-		var iframeMessage = { 'type': 'notesIframeMessage' };
-		iframeMessage = assign( {}, iframeMessage, message );
-
-		if ( this.refs.widgetFrame && this.state.iframeLoaded ) {
-			var widgetWindow = this.refs.widgetFrame.contentWindow;
-			widgetWindow.postMessage( JSON.stringify( iframeMessage ), widgetDomain );
-		} else {
-			// save only the latest message to send when iframe is loaded
-			this.queuedMessage = message;
-		}
-	},
-
-	postServiceWorkerMessage: function( message ) {
-		if ( 'serviceWorker' in window.navigator ) {
-			window.navigator.serviceWorker.ready.then( ( serviceWorkerRegistration ) => {
-				if ( 'active' in serviceWorkerRegistration ) {
-					serviceWorkerRegistration.active.postMessage( message );
-				}
-			} );
-		}
-	},
-
-	render: function() {
-		var userData = user.get(),
-			localeSlug = userData.localeSlug || config( 'i18n_default_locale_slug' ),
-			widgetURL = widgetDomain,
-			frameClasses = [ 'wide' ],
-			panelClasses = [ 'wide' ],
-			now = new Date();
-
-		if ( config.isEnabled( 'notifications2beta' ) ) {
-			widgetURL = widgetURL + '/notificationsbeta/';
-		} else {
-			widgetURL = widgetURL + '/notifications/';
-		}
-		if ( user.isRTL() ) {
-			widgetURL += 'rtl.html';
-		}
-		widgetURL += '?locale=' + localeSlug;
-
-		// cache buster
-		widgetURL += '&' + now.getFullYear() + ( now.getMonth() + 1 ) + now.getDate() + ( now.getHours() + 10 );
-
-		if ( this.state.widescreen && this.props.visible ) {
-			frameClasses.push( 'widescreen' );
+	/**
+	 * Sends a message to the notifications client
+	 *
+	 * @param {!Object} message data to send
+	 * @param {!String} message.action name of action for notes app to dispatch
+	 * @returns {*} please ignore return value
+	 */
+	postMessage = message => {
+		// save only the latest message to send when iframe is loaded
+		if ( ! ( this.notesFrame && this.state.iframeLoaded ) ) {
+			return this.queuedMessage = message;
 		}
 
-		if ( this.props.visible ) {
-			panelClasses.push( 'wpnt-open' );
-		} else {
-			panelClasses.push( 'wpnt-closed' );
+		const data = JSON.stringify( {
+			...message,
+			type: 'notesIframeMessage',
+		} );
+
+		this.notesFrame.contentWindow.postMessage( data, widgetDomain );
+	};
+
+	postServiceWorkerMessage = message => {
+		if ( ! ( 'serviceWorker' in window.navigator ) ) {
+			return;
 		}
 
+		window.navigator.serviceWorker.ready.then(
+			registration => ( 'active' in registration ) && registration.active.postMessage( message )
+		);
+	};
+
+	storeNotesFrame = ref => this.notesFrame = ref;
+
+	render() {
 		if ( ! this.props.visible && ! this.state.loaded ) {
+			// @TODO we need a good loading message
 			return <div />;
 		}
 
+		const localeSlug = get( user.get(), 'localeSlug', config( 'i18n_default_locale_slug' ) );
+
+		/** * @type {string} holds the URL for the notifications client for the iframe */
+		const widgetUrl = compact( [
+			widgetDomain,
+			'/notifications',
+			// we deploy to beta before pushing to production
+			config.isEnabled( 'notifications2beta' ) && 'beta',
+			'/',
+			// default app is at index.html
+			// auto-rtl is used to generate
+			// the flipped copy
+			user.isRTL() && 'rtl.html',
+			`?locale=${ localeSlug }`,
+			`&cache_buster=${ NOTIFICATIONS_CLIENT_VERSION }`,
+		] ).join( '' );
+
 		return (
-			<div id="wpnt-notes-panel2" className={ panelClasses.join( ' ' ) } onMouseEnter={ this.disableMainWindowScroll } onMouseLeave={ this.enableMainWindowScroll }>
-				<iframe ref="widgetFrame" id="wpnt-notes-iframe2" className={ frameClasses.join( ' ' ) } src={ widgetURL } frameBorder="0" allowTransparency="true"></iframe>
+			<div
+				id="wpnt-notes-panel2"
+				className={ classNames( 'wide', {
+					'wpnt-open': this.props.visible,
+					'wpnt-closed': ! this.props.visible,
+				} ) }
+				onMouseEnter={ this.disableMainWindowScroll }
+				onMouseLeave={ this.enableMainWindowScroll }
+			>
+				<iframe
+					ref={ this.storeNotesFrame }
+					id="wpnt-notes-iframe2"
+					className={ classNames( 'wide', {
+						widescreen: this.state.widescreen && this.props.visible,
+					} ) }
+					src={ widgetUrl }
+					frameBorder="0"
+					allowTransparency="true"
+				/>
 			</div>
 		);
 	}
-} );
+}
 
-module.exports = Notifications;
+export default Notifications;

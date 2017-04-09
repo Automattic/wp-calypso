@@ -10,7 +10,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
-import Gridicon from 'components/gridicon';
 import QueryPostFormats from 'components/data/query-post-formats';
 import siteUtils from 'lib/site/utils';
 import PostFormats from './';
@@ -68,7 +67,6 @@ const EditorPostFormatsAccordion = React.createClass( {
 					<Accordion
 						title={ this.translate( 'Post Format' ) }
 						subtitle={ this.getSubtitle() }
-						icon={ <Gridicon icon="types" /> }
 						className={ classes }>
 						<PostFormats value={ this.getFormatValue() } />
 					</Accordion>

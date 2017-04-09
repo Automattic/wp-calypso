@@ -82,7 +82,7 @@ var MapDomain = React.createClass( {
 		upgradesActions.addItem(
 			cartItems.domainRegistration( {
 				productSlug: suggestion.product_slug,
-				domain: suggestion.domain
+				domain: suggestion.domain_name
 			} )
 		);
 

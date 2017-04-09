@@ -53,8 +53,10 @@ SignupDependencyStore.dispatchToken = Dispatcher.register( function( payload ) {
 	if ( SignupDependencyStore.reduxStore ) {
 		switch ( action.type ) {
 			case 'PROCESSED_SIGNUP_STEP':
+			case 'PROVIDE_SIGNUP_DEPENDENCIES':
 			case 'SUBMIT_SIGNUP_STEP':
-				if ( assertValidDependencies( action ) ) {
+				if ( action.type === 'PROVIDE_SIGNUP_DEPENDENCIES' || assertValidDependencies( action ) ) {
+					// any dependency from `PROVIDE_SIGNUP_DEPENDENCIES` is valid as it is not associated with a step
 					SignupDependencyStore.reduxStore.dispatch( {
 						type: SIGNUP_DEPENDENCY_STORE_UPDATE,
 						data: action.providedDependencies

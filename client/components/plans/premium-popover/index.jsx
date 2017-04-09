@@ -5,12 +5,12 @@ import React from 'react';
 import omit from 'lodash/omit';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Popover from 'components/popover';
-import Gridicon from 'components/gridicon';
 import PlanPrice from 'components/plans/plan-price';
 import { getSitePlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';

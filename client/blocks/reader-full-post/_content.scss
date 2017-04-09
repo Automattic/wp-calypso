@@ -3,7 +3,7 @@
 	margin: 0;
 	padding-top: 16px;
 	position: relative;
-	font-size: 16px;
+	font-size: 17px;
 	line-height: 1.7;
 	overflow-wrap: break-word;
 	word-wrap: break-word;
@@ -162,7 +162,8 @@
 
 	.wp-caption-text,
 	figure figcaption,
-	figure .caption {
+	figure .caption,
+	.wp-caption .wp-media-credit {
 		padding: 12px;
 		margin: 0;
 		font-size: 13px;

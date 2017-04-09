@@ -63,7 +63,7 @@ var MenuName = React.createClass( {
 			);
 		} else {
 			menuEditable = (
-				<span className={ this.props.className } onTouchTap={ this.toggleEdit }>
+				<span className={ this.props.className } onClick={ this.toggleEdit }>
 					<span>{ this.state.value }</span>
 					<a className="edit" />
 				</span>

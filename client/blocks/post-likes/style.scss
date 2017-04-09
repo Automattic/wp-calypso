@@ -1,0 +1,25 @@
+.post-likes {
+	font-size: 13px;
+
+	.post-likes__item {
+		display: inline-block;
+		margin: 2px 8px 2px 0;
+		vertical-align: top;
+		.gravatar {
+			display: block;
+		}
+	}
+
+	.post-likes__placeholder {
+		vertical-align: top;
+		margin-top: 6px;
+		line-height: 14px;
+		border-radius: 12px;
+		display: inline-block;
+		border: solid 1px $gray;
+		color: $gray-text-min;
+		padding: 1px 6px;
+		font-weight: 600;
+		font-size: 11px;
+	}
+}

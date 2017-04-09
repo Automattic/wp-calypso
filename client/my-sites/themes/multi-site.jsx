@@ -15,8 +15,10 @@ const MultiSiteThemeShowcase = connectOptions(
 	( props ) => (
 		<div>
 			<SidebarNavigation />
-			<ThemesSiteSelectorModal { ...props } sourcePath="/design">
-				<ThemeShowcase source="showcase" showUploadButton={ false } />
+			<ThemesSiteSelectorModal { ...props } sourcePath="/themes">
+				<ThemeShowcase
+					source="showcase"
+					showUploadButton={ false } />
 			</ThemesSiteSelectorModal>
 		</div>
 	)
@@ -24,16 +26,7 @@ const MultiSiteThemeShowcase = connectOptions(
 
 export default ( props ) => (
 	<MultiSiteThemeShowcase { ...props }
-		options={ [
-			'preview',
-			'purchase',
-			'activate',
-			'tryandcustomize',
-			'separator',
-			'info',
-			'support',
-			'help',
-		] }
+		origin="wpcom"
 		defaultOption="activate"
 		secondaryOption="tryandcustomize"
 		getScreenshotOption={ function() {

@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:steps:test' );
+import React from 'react';
+const debug = require( 'debug' )( 'calypso:steps:test' );
 
 /**
  * Internal dependencies
  */
-var StepWrapper = require( 'signup/step-wrapper' ),
-	SubmitStepButton = require( 'signup/submit-step-button' );
+import StepWrapper from 'signup/step-wrapper';
+import SubmitStepButton from 'signup/submit-step-button';
 
 module.exports = React.createClass( {
 	displayName: 'TestStep',
@@ -24,7 +24,7 @@ module.exports = React.createClass( {
 					positionInFlow={ this.props.positionInFlow }
 					headerText="This is a test step"
 					subHeaderText="Go ahead and click the button to continue. It'll blow your mind!"
-					signupProgressStore={ this.props.signupProgressStore }
+					signupProgress={ this.props.signupProgress }
 					goToNextStep={ this.props.goToNextStep } />
 				<SubmitStepButton
 						buttonText="Click to continue"

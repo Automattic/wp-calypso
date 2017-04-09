@@ -1,31 +1,31 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React, { Component } from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Count = require( 'components/count' );
+import Count from 'components/count';
 
-var SelectDropdownItem = React.createClass( {
-	propTypes: {
+class SelectDropdownItem extends Component {
+	static propTypes = {
 		children: React.PropTypes.string.isRequired,
 		path: React.PropTypes.string,
+		isDropdownOpen: React.PropTypes.bool,
 		selected: React.PropTypes.bool,
 		onClick: React.PropTypes.func,
 		count: React.PropTypes.number
-	},
+	}
 
-	getDefaultProps: function() {
-		return {
-			selected: false
-		};
-	},
+	static defaultProps = {
+		isDropdownOpen: false,
+		selected: false
+	}
 
-	render: function() {
-		var optionClassName = classNames( this.props.className, {
+	render() {
+		const optionClassName = classNames( this.props.className, {
 			'select-dropdown__item': true,
 			'is-selected': this.props.selected,
 			'is-disabled': this.props.disabled
@@ -40,7 +40,7 @@ var SelectDropdownItem = React.createClass( {
 					onClick={ this.props.disabled ? null : this.props.onClick }
 					data-bold-text={ this.props.value || this.props.children }
 					role="menuitem"
-					tabIndex={ 0 }
+					tabIndex={ this.props.isDropdownOpen ? 0 : '' }
 					aria-selected={ this.props.selected } >
 					<span className="select-dropdown__item-text">
 						{ this.props.children }
@@ -60,6 +60,6 @@ var SelectDropdownItem = React.createClass( {
 			</li>
 		);
 	}
-} );
+}
 
-module.exports = SelectDropdownItem;
+export default SelectDropdownItem;

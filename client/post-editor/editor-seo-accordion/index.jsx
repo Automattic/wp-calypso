@@ -13,7 +13,6 @@ import Accordion from 'components/accordion';
 import Button from 'components/button';
 import AccordionSection from 'components/accordion/section';
 import CountedTextarea from 'components/forms/counted-textarea';
-import Gridicon from 'components/gridicon';
 import PostActions from 'lib/posts/actions';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import WebPreview from 'components/web-preview';
@@ -55,7 +54,6 @@ class EditorSeoAccordion extends Component {
 		return (
 			<Accordion
 				title={ translate( 'SEO Description' ) }
-				icon={ <Gridicon icon="search" /> }
 				className="editor-seo-accordion"
 			>
 				<AccordionSection>

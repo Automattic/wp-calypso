@@ -1,14 +1,9 @@
 /**
  * External Dependencies
  */
-const assign = require( 'lodash/assign' ),
-	config = require( 'config' ),
-	debug = require( 'debug' )( 'calypso:feed-post-store' ),
-	forEach = require( 'lodash/forEach' ),
-	isEqual = require( 'lodash/isEqual' ),
-	forOwn = require( 'lodash/forOwn' ),
-	clone = require( 'lodash/clone' ),
-	defer = require( 'lodash/defer' );
+import config from 'config';
+import { get, assign, forEach, isEqual, defer } from 'lodash';
+import debugModule from 'debug';
 
 /**
  * Internal dependencies
@@ -18,10 +13,13 @@ const Dispatcher = require( 'dispatcher' ),
 	{ runFastRules, runSlowRules } = require( 'state/reader/posts/normalization-rules' ),
 	FeedPostActionType = require( './constants' ).action,
 	FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action,
-	ReaderSiteBlockActionType = require( 'lib/reader-site-blocks/constants' ).action,
-	SiteStore = require( 'lib/reader-site-store' ),
-	SiteState = require( 'lib/reader-site-store/constants' ).state,
+	mc = require( 'lib/analytics' ).mc,
 	stats = require( 'reader/stats' );
+
+/**
+ * Module variables
+ */
+const debug = debugModule( 'calypso:feed-post-store' );
 
 let _posts = {},
 	_postsForBlogs = {};
@@ -104,19 +102,7 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 			break;
 
 		case FeedPostActionType.MARK_FEED_POST_SEEN:
-			markPostSeen( action.data.post, action.data.source );
-			break;
-		case ReaderSiteBlockActionType.BLOCK_SITE:
-			markBlockedSitePosts( action.siteId, true );
-			break;
-		case ReaderSiteBlockActionType.RECEIVE_BLOCK_SITE:
-			markBlockedSitePosts( action.siteId, action.data && action.data.success );
-			break;
-		case ReaderSiteBlockActionType.UNBLOCK_SITE:
-			markBlockedSitePosts( action.siteId, false );
-			break;
-		case ReaderSiteBlockActionType.RECEIVE_UNBLOCK_SITE:
-			markBlockedSitePosts( action.siteId, ! ( action.data && action.data.success ) );
+			markPostSeen( action.data.post, action.data.site, action.data.source );
 			break;
 	}
 } );
@@ -284,23 +270,24 @@ function normalizePost( feedId, postId, post ) {
 	} );
 }
 
-function markPostSeen( post ) {
+function markPostSeen( post, site ) {
 	if ( ! post ) {
 		return;
 	}
+
 	const originalPost = post;
 
 	if ( ! post._seen ) {
-		post = Object.assign( { _seen: true }, post );
+		post = Object.assign( {}, post, { _seen: true } );
 	}
 
 	if ( post.site_ID ) {
 		// they have a site ID, let's try to push a page view
-		const site = SiteStore.get( post.site_ID );
-		const isNotAdmin = ! ( site && site.getIn( [ 'capabilities', 'manage_options' ], false ) );
-		if ( site && site.get( 'state' ) === SiteState.COMPLETE ) {
-			if ( site.get( 'is_private' ) || isNotAdmin ) {
-				stats.pageViewForPost( site.get( 'ID' ), site.get( 'URL' ), post.ID, site.get( 'is_private' ) );
+		const isAdmin = !! get( site, 'capabilities.manage_options', false );
+		if ( site && site.ID ) {
+			if ( site.is_private || ! isAdmin ) {
+				stats.pageViewForPost( site.ID, site.URL, post.ID, site.is_private );
+				mc.bumpStat( 'reader_pageviews', site.is_private ? 'private_view' : 'public_view' );
 			}
 		}
 	}
@@ -308,16 +295,6 @@ function markPostSeen( post ) {
 	if ( originalPost !== post ) {
 		setPost( post.feed_item_ID, post );
 	}
-}
-
-function markBlockedSitePosts( siteId, isSiteBlocked ) {
-	forOwn( _postsForBlogs, function( post ) {
-		if ( post.site_ID === siteId && post.is_site_blocked !== isSiteBlocked ) {
-			const newPost = clone( post );
-			newPost.is_site_blocked = isSiteBlocked;
-			setPost( newPost.feed_item_ID, newPost );
-		}
-	} );
 }
 
 module.exports = FeedPostStore;

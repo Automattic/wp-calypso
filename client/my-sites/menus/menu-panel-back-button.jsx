@@ -11,29 +11,32 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' );
+import { recordGoogleEvent } from 'state/analytics/actions';
+import MenuItemTypeLabel from './menu-item-type-label';
 
-var MenuPanelBackButton = React.createClass( {
+const MenuPanelBackButton = ( props ) => {
+	const { label, name, onClick } = props;
+	const clickHandler = () => {
+		props. recordGoogleEvent( 'Menus', 'Clicked Mobile Menu Item Types Back' );
+		onClick();
+	};
 
-	onClick: function() {
-		analytics.ga.recordEvent( 'Menus', 'Clicked Mobile Menu Item Types Back' );
-		this.props.onClick();
-	},
+	return (
+		<div className="menu-item-back-button">
+			<a onClick={ clickHandler } className="noticon noticon-previous">
+				<MenuItemTypeLabel name={ name } label={ label } />
+			</a>
+		</div>
+	);
+};
 
-	render: function() {
-		return (
-			<div className="menu-item-back-button">
-				<a onClick={ this.onClick } className="noticon noticon-previous">{ this.props.label }</a>
-			</div>
-		);
-	}
-
-} );
-
-
-module.exports = MenuPanelBackButton;
+export default connect(
+	() => ( {} ),
+	{ recordGoogleEvent }
+)( MenuPanelBackButton );

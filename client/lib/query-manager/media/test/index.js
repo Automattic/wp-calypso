@@ -234,13 +234,13 @@ describe( 'MediaQueryManager', () => {
 		} );
 	} );
 
-	describe( '#sort()', () => {
+	describe( '#compare()', () => {
 		context( 'query.order', () => {
 			it( 'should sort descending by default', () => {
 				const sorted = [
 					{ ID: 200 },
 					{ ID: 400 }
-				].sort( manager.sort.bind( manager, {
+				].sort( manager.compare.bind( manager, {
 					order_by: 'ID'
 				} ) );
 
@@ -254,7 +254,7 @@ describe( 'MediaQueryManager', () => {
 				const sorted = [
 					{ ID: 400 },
 					{ ID: 200 }
-				].sort( manager.sort.bind( manager, {
+				].sort( manager.compare.bind( manager, {
 					order_by: 'ID',
 					order: 'ASC'
 				} ) );
@@ -283,7 +283,7 @@ describe( 'MediaQueryManager', () => {
 					const sorted = [
 						olderMedia,
 						newerMedia
-					].sort( manager.sort.bind( manager, {} ) );
+					].sort( manager.compare.bind( manager, {} ) );
 
 					expect( sorted ).to.eql( [
 						newerMedia,
@@ -308,7 +308,7 @@ describe( 'MediaQueryManager', () => {
 					const sorted = [
 						aaMedia,
 						abMedia
-					].sort( manager.sort.bind( manager, {
+					].sort( manager.compare.bind( manager, {
 						order_by: 'title'
 					} ) );
 
@@ -324,7 +324,7 @@ describe( 'MediaQueryManager', () => {
 					const sorted = [
 						{ ID: 200 },
 						{ ID: 400 }
-					].sort( manager.sort.bind( manager, {
+					].sort( manager.compare.bind( manager, {
 						order_by: 'ID'
 					} ) );
 

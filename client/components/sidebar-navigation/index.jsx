@@ -3,11 +3,11 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
  */
-import Gridicon from 'components/gridicon';
 import { getDocumentHeadTitle } from 'state/document-head/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
@@ -25,7 +25,7 @@ class SidebarNavigation extends React.Component {
 	render() {
 		return (
 			<header className="current-section">
-				<a onTouchTap={ this.toggleSidebar } className={ this.props.linkClassName }>
+				<a onClick={ this.toggleSidebar } className={ this.props.linkClassName }>
 					<Gridicon icon="chevron-left" />
 					{ this.props.children }
 					<div>

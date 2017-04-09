@@ -8,6 +8,7 @@ import {
 	noop,
 	size,
 } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -23,9 +24,9 @@ import { getValidFeatureKeys } from 'lib/plans';
 import Button from 'components/button';
 import Card from 'components/card';
 import DismissibleCard from 'blocks/dismissible-card';
-import Gridicon from 'components/gridicon';
 import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
 class Banner extends Component {
 
@@ -33,6 +34,7 @@ class Banner extends Component {
 		callToAction: PropTypes.string,
 		className: PropTypes.string,
 		description: PropTypes.string,
+		disableHref: PropTypes.bool,
 		dismissPreferenceName: PropTypes.string,
 		dismissTemporary: PropTypes.bool,
 		event: PropTypes.string,
@@ -48,6 +50,7 @@ class Banner extends Component {
 	};
 
 	static defaultProps = {
+		disableHref: false,
 		dismissTemporary: false,
 		onClick: noop,
 	};
@@ -117,6 +120,8 @@ class Banner extends Component {
 		const {
 			callToAction,
 			description,
+			event,
+			feature,
 			list,
 			price,
 			title,
@@ -126,6 +131,18 @@ class Banner extends Component {
 
 		return (
 			<div className="banner__content">
+				{
+					event && <TrackComponentView
+						eventName={ 'calypso_banner_cta_impression' }
+						eventProperties={
+							{
+								cta_name: event,
+								cta_feature: feature,
+								cta_size: 'regular'
+							}
+						}
+					/>
+				}
 				<div className="banner__info">
 					<div className="banner__title">
 						{ title }
@@ -177,6 +194,7 @@ class Banner extends Component {
 		const {
 			callToAction,
 			className,
+			disableHref,
 			dismissPreferenceName,
 			dismissTemporary,
 			plan,
@@ -208,7 +226,7 @@ class Banner extends Component {
 		return (
 			<Card
 				className={ classes }
-				href={ callToAction ? null : this.getHref() }
+				href={ disableHref || callToAction ? null : this.getHref() }
 				onClick={ callToAction ? noop : this.handleClick }
 			>
 				{ this.getIcon() }
@@ -219,8 +237,8 @@ class Banner extends Component {
 
 }
 
-const mapStateToProps = state => ( {
-	siteSlug: getSelectedSiteSlug( state ),
+const mapStateToProps = ( state, ownProps ) => ( {
+	siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 } );
 
 export default connect(

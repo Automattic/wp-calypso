@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import find from 'lodash/find';
 import debounce from 'lodash/debounce';
 import { localize } from 'i18n-calypso';
@@ -14,17 +15,22 @@ import ThemesSelectDropdown from './select-dropdown';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import { getExternalThemesUrl, trackClick } from '../helpers';
+import { trackClick } from '../helpers';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import { oldShowcaseUrl } from 'state/themes/utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const ThemesSearchCard = React.createClass( {
 	propTypes: {
 		tier: React.PropTypes.string,
 		select: React.PropTypes.func.isRequired,
-		site: React.PropTypes.object,
+		siteId: React.PropTypes.number,
 		onSearch: React.PropTypes.func.isRequired,
-		search: React.PropTypes.string
+		search: React.PropTypes.string,
+		externalUrl: React.PropTypes.string,
+		isJetpack: React.PropTypes.bool
 	},
 
 	trackClick: trackClick.bind( null, 'search bar' ),
@@ -71,29 +77,33 @@ const ThemesSearchCard = React.createClass( {
 	},
 
 	renderMobile( tiers ) {
-		const isJetpack = this.props.site && this.props.site.jetpack;
+		const { isJetpack } = this.props;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 		const selectedTiers = isPremiumThemesEnabled ? tiers : [ find( tiers, tier => tier.value === 'free' ) ];
 
 		return (
 			<div className="themes__search-card" data-tip-target="themes-search-card">
 				<SectionNav selectedText={ this.getSelectedTierFormatted( tiers ) }>
+					{ ! isJetpack &&
 					<NavTabs>
-						{ ! isJetpack && this.getTierNavItems( selectedTiers ) }
+						{ this.getTierNavItems( selectedTiers ) }
 
 						{ isPremiumThemesEnabled && <hr className="section-nav__hr" /> }
 
 						{ isPremiumThemesEnabled && <NavItem
-							path={ getExternalThemesUrl( this.props.site ) }
+							path={ this.props.externalUrl }
 							onClick={ this.onMore }
 							isExternalLink={ true }>
 							{ this.props.translate( 'More' ) + ' ' }
 						</NavItem> }
 					</NavTabs>
+					}
 
 					<Search
 						pinned
 						fitsContainer
+						isOpen={ isJetpack }
+						hideClose={ isJetpack }
 						onSearch={ this.props.onSearch }
 						initialValue={ this.props.search }
 						ref="url-search"
@@ -107,7 +117,7 @@ const ThemesSearchCard = React.createClass( {
 	},
 
 	render() {
-		const isJetpack = this.props.site && this.props.site.jetpack;
+		const { isJetpack } = this.props;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 
 		const tiers = [
@@ -131,21 +141,33 @@ const ThemesSearchCard = React.createClass( {
 					delaySearch={ true }
 				/>
 
-				{ isPremiumThemesEnabled && ! isJetpack && <ThemesSelectDropdown
-										tier={ this.props.tier }
-										options={ tiers }
-										onSelect={ this.props.select } /> }
-				{ isPremiumThemesEnabled && <a className="button more"
-												href={ getExternalThemesUrl( this.props.site ) }
-												target="_blank"
-												rel="noopener noreferrer"
-												onClick={ this.onMore }>
+				{ isPremiumThemesEnabled && ! isJetpack &&
+					<ThemesSelectDropdown
+						tier={ this.props.tier }
+						options={ tiers }
+						onSelect={ this.props.select } /> }
+				{ config.isEnabled( 'manage/themes/upload' ) && ! isJetpack &&
+					<a className="button more"
+						href={ this.props.externalUrl }
+						target="_blank"
+						rel="noopener noreferrer"
+						onClick={ this.onMore }>
 
-												{ this.props.translate( 'More' ) }
-											</a> }
+						{ this.props.translate( 'More' ) }
+					</a> }
 			</div>
 		);
 	}
 } );
 
-export default localize( ThemesSearchCard );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSiteSlug( state, siteId ) || '';
+
+		return {
+			externalUrl: oldShowcaseUrl + siteSlug,
+			isJetpack: isJetpackSite( state, siteId )
+		};
+	}
+)( localize( ThemesSearchCard ) );

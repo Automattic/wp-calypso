@@ -41,6 +41,7 @@ function getPurchasesBySite( purchases, sites ) {
 				 * there will be no site with this ID in `sites`, so
 				 * we fall back on the domain. */
 				slug: siteObject ? siteObject.slug : currentValue.domain,
+				isDomainOnly: siteObject ? siteObject.options.is_domain_only : false,
 				title: currentValue.siteName || currentValue.domain || '',
 				purchases: [ currentValue ],
 				domain: siteObject ? siteObject.domain : currentValue.domain
@@ -71,8 +72,8 @@ function hasPaymentMethod( purchase ) {
 	return isPaidWithPaypal( purchase ) || isPaidWithCreditCard( purchase ) || isPaidWithPayPalDirect( purchase );
 }
 
-function hasPrivateRegistration( purchase ) {
-	return purchase.hasPrivateRegistration;
+function hasPrivacyProtection( purchase ) {
+	return purchase.hasPrivacyProtection;
 }
 
 /**
@@ -257,7 +258,7 @@ export {
 	getSubscriptionEndDate,
 	hasIncludedDomain,
 	hasPaymentMethod,
-	hasPrivateRegistration,
+	hasPrivacyProtection,
 	isCancelable,
 	isPaidWithCreditCard,
 	isPaidWithPayPalDirect,

@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import compact from 'lodash/compact';
+import { compact, includes, isEmpty, startsWith } from 'lodash';
 import debugFactory from 'debug';
 import Lru from 'lru';
 import React from 'react';
@@ -15,8 +15,8 @@ import LoggedOutComponent from './logged-out';
 import Upload from 'my-sites/themes/theme-upload';
 import trackScrollPage from 'lib/track-scroll-page';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
-import { requestThemes, receiveThemes } from 'state/themes/actions';
-import { getThemesForQuery } from 'state/themes/selectors';
+import { requestThemes, receiveThemes, setBackPath } from 'state/themes/actions';
+import { getThemesForQuery, getThemesFoundForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 
 const debug = debugFactory( 'calypso:themes' );
@@ -55,6 +55,12 @@ function getProps( context ) {
 }
 
 export function upload( context, next ) {
+	// Store previous path to return to only if it was main showcase page
+	if ( startsWith( context.prevPath, '/themes' ) &&
+		! startsWith( context.prevPath, '/themes/upload' ) ) {
+		context.store.dispatch( setBackPath( context.prevPath ) );
+	}
+
 	context.primary = <Upload />;
 	next();
 }
@@ -82,14 +88,24 @@ export function multiSite( context, next ) {
 }
 
 export function loggedOut( context, next ) {
+	if ( context.isServerSide && ! isEmpty( context.query ) ) {
+		// Don't server-render URLs with query params
+		return next();
+	}
+
 	const props = getProps( context );
 
 	context.primary = <LoggedOutComponent { ...props } />;
 	next();
 }
 
-export function fetchThemeData( context, next, shouldUseCache = false ) {
+export function fetchThemeData( context, next ) {
 	if ( ! context.isServerSide ) {
+		return next();
+	}
+
+	if ( ! isEmpty( context.query ) ) {
+		// Don't server-render URLs with query params
 		return next();
 	}
 
@@ -101,37 +117,61 @@ export function fetchThemeData( context, next, shouldUseCache = false ) {
 		page: 1,
 		number: DEFAULT_THEME_QUERY.number,
 	};
-	const cacheKey = context.path;
+	// context.pathname includes tier, filter, and verticals, but not the query string, so it's a suitable cacheKey
+	// However, we can't guarantee it's normalized -- filters can be in any order, resulting in multiple possible cacheKeys for
+	// the same sets of results.
+	const cacheKey = context.pathname;
 
-	if ( shouldUseCache ) {
-		const cachedData = themesQueryCache.get( cacheKey );
-		if ( cachedData ) {
-			debug( `found theme data in cache key=${ cacheKey }` );
-			context.store.dispatch( receiveThemes( cachedData.themes ), siteId );
-			context.renderCacheKey = context.path + cachedData.timestamp;
-			return next();
-		}
+	const cachedData = themesQueryCache.get( cacheKey );
+	if ( cachedData ) {
+		debug( `found theme data in cache key=${ cacheKey }` );
+		context.store.dispatch( receiveThemes( cachedData.themes, siteId, query, cachedData.found ) );
+		context.renderCacheKey = cacheKey + cachedData.timestamp;
+		return next();
 	}
 
 	context.store.dispatch( requestThemes( siteId, query ) )
 		.then( () => {
-			if ( shouldUseCache ) {
-				const themes = getThemesForQuery( context.store.getState(), siteId, query );
-				const timestamp = Date.now();
-				themesQueryCache.set( cacheKey, { themes, timestamp } );
-				context.renderCacheKey = context.path + timestamp;
-				debug( `caching theme data key=${ cacheKey }` );
-			}
+			const themes = getThemesForQuery( context.store.getState(), siteId, query );
+			const found = getThemesFoundForQuery( context.store.getState(), siteId, query );
+			const timestamp = Date.now();
+			themesQueryCache.set( cacheKey, { themes, found, timestamp } );
+			context.renderCacheKey = cacheKey + timestamp;
+			debug( `caching theme data key=${ cacheKey }` );
 			next();
 		} )
 		.catch( () => next() );
 }
 
-export function fetchThemeDataWithCaching( context, next ) {
-	if ( Object.keys( context.query ).length > 0 ) {
-		// Don't cache URLs with query params for now
-		return fetchThemeData( context, next, false );
-	}
+// Legacy (Atlas-based Theme Showcase v4) route redirects
 
-	return fetchThemeData( context, next, true );
+export function redirectSearchAndType( { res, params: { site, search, tier } } ) {
+	const target = '/themes/' + compact( [ tier, site ] ).join( '/' ); // tier before site!
+	if ( search ) {
+		res.redirect( `${ target }?s=${ search }` );
+	} else {
+		res.redirect( target );
+	}
+}
+
+export function redirectFilterAndType( { res, params: { site, filter, tier } } ) {
+	let parts;
+	if ( filter ) {
+		parts = [ tier, 'filter', filter.replace( '+', ',' ), site ]; // The Atlas Showcase used plusses, we use commas
+	} else {
+		parts = [ tier, site ];
+	}
+	res.redirect( '/themes/' + compact( parts ).join( '/' ) );
+}
+
+export function redirectToThemeDetails( { res, params: { site, theme, section } }, next ) {
+	// Make sure we aren't matching a site -- e.g. /themes/example.wordpress.com or /themes/1234567
+	if ( includes( theme, '.' ) || isFinite( theme ) ) {
+		return next();
+	}
+	let redirectedSection;
+	if ( section === 'support' ) {
+		redirectedSection = 'setup';
+	}
+	res.redirect( '/theme/' + compact( [ theme, redirectedSection, site ] ).join( '/' ) );
 }

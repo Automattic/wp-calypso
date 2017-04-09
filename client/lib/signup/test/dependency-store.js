@@ -49,4 +49,15 @@ describe( 'dependency-store', function() {
 
 		assert.deepEqual( SignupDependencyStore.get(), { bearer_token: 'TOKEN2' } );
 	} );
+
+	it( 'should store dependencies if they are provided in the `PROVIDE_SIGNUP_DEPENDENCIES` action', () => {
+		const dependencies = {
+			foo: 'bar',
+			baz: 'test'
+		};
+
+		SignupActions.provideDependencies( dependencies );
+
+		assert.deepEqual( SignupDependencyStore.get(), { bearer_token: 'TOKEN2', ...dependencies } );
+	} );
 } );

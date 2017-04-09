@@ -4,8 +4,11 @@
 	clear: both;
 	margin: 36px 0 0;
 	padding-top: 11px;
-}
 
+	.segmented-control {
+		margin: 20px;
+	}
+}
 
 // Comment Counter
 .comments__count {
@@ -139,6 +142,88 @@
 	}
 }
 
+// Add a New Comment Form
+.comments__edit-form {
+	position: relative;
+	padding: 0;
+	margin-top: 5px;
+
+	input {
+		font-size: 14px;
+		padding: 5px 10px;
+	}
+
+	// The inner working of these styles is covered here: http://alistapart.com/article/expanding-text-areas-made-elegant
+	.expanding-area {
+		position: relative;
+		$initial-focused-height: 70px;
+
+		pre,
+		textarea {
+			max-height: 400px;
+			min-height: 33px;
+			margin: 0;
+			padding: 5px 60px 5px 5px;
+			font-size: 14px;
+			font-family: $serif;
+			line-height: 21px;
+
+			white-space: pre-wrap;
+			word-wrap: break-word;
+		}
+
+		textarea {
+			position: absolute;
+				top: 0;
+				left: 0;
+			height: 100%;
+			resize: none;
+		}
+
+		pre {
+			border: 1px solid $gray;
+			box-sizing: border-box;
+			display: block;
+			visibility: hidden;
+		}
+
+		&.focused {
+			min-height: $initial-focused-height;
+		}
+	}
+
+	button {
+		opacity: 0;
+		position: absolute;
+		  top: 4px;
+		  right: 16px;
+		padding: 4px;
+		font-size: 12px;
+		font-weight: 600;
+		text-transform: uppercase;
+		color: lighten( $gray, 10% );
+		transition: all 0.2s ease-in-out;
+
+		&.is-active {
+			color: $blue-medium;
+			cursor: pointer;
+		}
+
+		&.is-visible {
+			opacity: 1;
+		}
+	}
+
+	button:focus {
+		outline: dotted 1px $blue-medium;
+		color: $blue-wordpress;
+	}
+
+	.comments__cancel-reply {
+		font-size: 12px;
+		cursor: pointer;
+	}
+}
 
 // Individual Comment
 .comments__comment {
@@ -252,7 +337,7 @@ a.comments__comment-username {
 .comments__comment-content {
 	@extend %content-font;
 	padding-top: 4px;
-	font-size: 14px;
+	font-size: 15px;
 	line-height: 1.8;
 	word-break: break-word;
 
@@ -289,22 +374,25 @@ a.comments__comment-username {
 		cursor: pointer;
 		font-size: 14px;
 
+		.gridicon {
+			position: relative;
+			top: 4px;
+			margin-right: 4px;
+		}
+
 		.like-button__like-icons {
 			margin-right: 18px;
 		}
 
 		&.comments__comment-actions-reply {
 			.gridicon {
-				position: relative;
-					top: 4px;
-				margin-right: 4px;
 				transform: rotate( 180deg );
 			}
 		}
 
 		&.like-button {
 			.gridicon {
-				top: 4px;
+				position: absolute;
 			}
 		}
 
@@ -319,11 +407,42 @@ a.comments__comment-username {
 		}
 	}
 
+	.comments__comment-actions-approve,
+	.comments__comment-actions-trash,
+	.comments__comment-actions-spam,
+	.comments__comment-actions-edit {
+		display: none;
+	}
+
+	@include breakpoint( ">660px" ) {
+		.comments__comment-actions-approve,
+		.comments__comment-actions-trash,
+		.comments__comment-actions-spam,
+		.comments__comment-actions-edit {
+			display: inline;
+		}
+
+		.ellipsis-menu {
+			display: none;
+		}
+	}
+
 	@include breakpoint( "<480px" ) {
 		.like-button .like-button__label-status {
 			display: inline;
 		}
 	}
+}
+
+.comments__comment-actions-approve {
+	.gridicon .gridicon-checkmark,
+	&.is-approved {
+		color: $orange-jazzy;
+	}
+}
+
+.comments__comment-actions-moderation-tools {
+	display: inline-block;
 }
 
 .comments__info-bar {
@@ -366,7 +485,7 @@ a.comments__comment-username {
 }
 
 .comments__comment-count {
-	color: lighten( $gray, 10% );
+	color: $gray;
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 1;

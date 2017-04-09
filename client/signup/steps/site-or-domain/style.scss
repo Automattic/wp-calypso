@@ -1,0 +1,29 @@
+.site-or-domain__choices {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: center;
+}
+
+.site-or-domain__choice {
+	padding: 0;
+	margin: 10px;
+	min-width: 230px;
+	max-width: 330px;
+	flex-grow: 1;
+	transition: box-shadow 100ms ease-in-out;
+	cursor: pointer;
+
+	a, svg {
+		display: block;
+		width: 100%;
+	}
+
+	&:hover {
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
+	}
+
+	h2 {
+		border-top: solid 1px $gray-light;
+		padding: 10px 15px;
+	}
+}

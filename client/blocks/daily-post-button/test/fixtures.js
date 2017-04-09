@@ -35,7 +35,7 @@ export const discoverChallengePost = {
 };
 
 export const sites = [
-	{ ID: 72386110, name: 'Calypso Project P2', slug: 'calypsop2.wordpress.com' },
+	{ ID: 108068616, name: 'WordPress.com Apps', slug: 'apps.wordpress.com' },
 	{ ID: 108516984, name: 'Join the Narwhal Club', slug: 'jointhnarwhal.club' },
-	{ ID: 6200060, name: '"I expected:"', slug: 'iexpected' }
+	{ ID: 79092314, name: '"Bob Test 2"', slug: 'bobinprogress2' }
 ];

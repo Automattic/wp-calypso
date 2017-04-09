@@ -70,9 +70,9 @@ class StateSelect extends Component {
 								<option key={ state.code } value={ state.code }>{ state.name }</option>
 							) }
 						</FormSelect>
+						{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
 					</div>
 				}
-				{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
 			</div>
 		);
 	}

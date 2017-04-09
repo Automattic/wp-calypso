@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import React, { Component, PropTypes } from 'react';
 import { isEmpty } from 'lodash';
 import classNames from 'classnames';
@@ -11,6 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
+import { getSiteBySlug } from 'state/sites/selectors';
 import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
@@ -21,6 +23,7 @@ class PlansStep extends Component {
 		super( props );
 
 		this.onSelectPlan = this.onSelectPlan.bind( this );
+		this.plansFeaturesSelection = this.plansFeaturesSelection.bind( this );
 	}
 
 	onSelectPlan( cartItem ) {
@@ -46,7 +49,7 @@ class PlansStep extends Component {
 			} );
 		}
 
-		SignupActions.submitSignupStep( {
+		const step = {
 			processingMessage: isEmpty( cartItem )
 				? translate( 'Free plan selected' )
 				: translate( 'Adding your plan' ),
@@ -55,23 +58,29 @@ class PlansStep extends Component {
 			cartItem,
 			privacyItem,
 			...additionalStepData
-		}, [], { cartItem, privacyItem } );
+		};
+
+		const providedDependencies = { cartItem, privacyItem };
+
+		SignupActions.submitSignupStep( step, [], providedDependencies );
 
 		goToNextStep();
 	}
 
 	plansFeaturesList() {
-		const {	hideFreePlan } = this.props;
+		const {	hideFreePlan, selectedSite } = this.props;
 
 		return (
 			<div>
 				<QueryPlans />
 
 				<PlansFeaturesMain
+					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
 					onUpgradeClick={ this.onSelectPlan }
 					showFAQ={ false }
+					displayJetpackPlans={ false }
 				/>
 			</div>
 		);
@@ -82,7 +91,7 @@ class PlansStep extends Component {
 			flowName,
 			stepName,
 			positionInFlow,
-			signupProgressStore,
+			signupProgress,
 			translate
 		} = this.props;
 
@@ -95,7 +104,7 @@ class PlansStep extends Component {
 				positionInFlow={ positionInFlow }
 				headerText={ headerText }
 				fallbackHeaderText={ headerText }
-				signupProgressStore={ signupProgressStore }
+				signupProgress={ signupProgress }
 				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() } />
 		);
@@ -107,10 +116,8 @@ class PlansStep extends Component {
 			'is-wide-layout': true
 		} );
 
-		const renderPlansFeatures = () => ( this.plansFeaturesSelection() );
-
 		return <div className={ classes }>
-			{ renderPlansFeatures() }
+			{ this.plansFeaturesSelection() }
 		</div>;
 	}
 }
@@ -119,9 +126,17 @@ PlansStep.propTypes = {
 	additionalStepData: PropTypes.object,
 	goToNextStep: PropTypes.func.isRequired,
 	hideFreePlan: PropTypes.bool,
+	selectedSite: PropTypes.object,
 	stepName: PropTypes.string.isRequired,
 	stepSectionName: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 };
 
-export default localize( PlansStep );
+export default connect(
+	( state, { signupDependencies: { siteSlug } } ) => ( {
+		// This step could be used to set up an existing site, in which case
+		// some descendants of this component may display discounted prices if
+		// they apply to the given site.
+		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null
+	} )
+)( localize( PlansStep ) );

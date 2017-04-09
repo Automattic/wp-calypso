@@ -9,12 +9,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { cartItems } from 'lib/cart-values';
-import { getFixedDomainSearch, canMap, canRegister, getTld } from 'lib/domains';
+import { getFixedDomainSearch, checkDomainAvailability } from 'lib/domains';
+import { domainAvailability } from 'lib/domains/constants';
+import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainProductPrice from 'components/domains/domain-product-price';
 import analyticsMixin from 'lib/mixins/analytics';
 import { getCurrentUser } from 'state/current-user/selectors';
-import support from 'lib/url/support';
 import Notice from 'components/notice';
 
 const MapDomainStep = React.createClass( {
@@ -58,9 +59,10 @@ const MapDomainStep = React.createClass( {
 	},
 
 	render: function() {
-		const suggestion = { cost: this.props.products.domain_map.cost_display, product_slug: this.props.products.domain_map.product_slug },
-			price = this.props.products.domain_map ? this.props.products.domain_map.cost_display : null,
-			translate = this.props.translate;
+		const suggestion = this.props.products.domain_map
+				? { cost: this.props.products.domain_map.cost_display, product_slug: this.props.products.domain_map.product_slug }
+				: { cost: null, product_slug: '' },
+			{ translate } = this.props;
 
 		return (
 			<div className="map-domain-step">
@@ -80,16 +82,17 @@ const MapDomainStep = React.createClass( {
 						rule={ cartItems.getDomainPriceRule(
 							this.props.domainsWithPlansOnly,
 							this.props.selectedSite,
-							this.props.cart, suggestion
+							this.props.cart,
+							suggestion
 						) }
-						price={ price } />
+						price={ suggestion.cost } />
 
 					<div className="map-domain-step__add-domain" role="group">
 						<input
 							className="map-domain-step__external-domain"
 							type="text"
 							value={ this.state.searchQuery }
-							placeholder={ translate( 'Enter a domain', { textOnly: true } ) }
+							placeholder={ translate( 'Enter a domain' ) }
 							onBlur={ this.save }
 							onChange={ this.setSearchQuery }
 							onClick={ this.recordInputFocus }
@@ -109,7 +112,7 @@ const MapDomainStep = React.createClass( {
 	},
 
 	domainRegistrationUpsell: function() {
-		const suggestion = this.state.suggestion;
+		const { suggestion } = this.state;
 		if ( ! suggestion ) {
 			return;
 		}
@@ -158,111 +161,31 @@ const MapDomainStep = React.createClass( {
 	},
 
 	handleFormSubmit: function( event ) {
-		const domain = getFixedDomainSearch( this.state.searchQuery );
-
 		event.preventDefault();
+
+		const domain = getFixedDomainSearch( this.state.searchQuery );
 		this.recordEvent( 'formSubmit', this.state.searchQuery );
 		this.setState( { suggestion: null, notice: null } );
 
-		canMap( domain, error => {
-			if ( error ) {
-				this.handleValidationErrorMessage( domain, error );
-				return;
+		checkDomainAvailability( domain, ( error, result ) => {
+			const status = result && result.status ? result.status : error;
+			switch ( status ) {
+				case domainAvailability.MAPPABLE:
+				case domainAvailability.UNKNOWN:
+					this.props.onMapDomain( domain );
+					return;
+
+				case domainAvailability.AVAILABLE:
+					this.setState( { suggestion: result } );
+					return;
+
+				default:
+					const { message, severity } = getAvailabilityNotice( domain, status );
+					this.setState( { notice: message, noticeSeverity: severity } );
+					return;
 			}
-
-			return this.props.onMapDomain( domain );
-		} );
-
-		canRegister( domain, ( error, result ) => {
-			if ( error ) {
-				return;
-			}
-
-			result.domain_name = domain;
-			this.setState( { suggestion: result } );
 		} );
 	},
-
-	handleValidationErrorMessage: function( domain, error ) {
-		let message;
-		const severity = 'error',
-			tld = getTld( domain ),
-			translate = this.props.translate;
-
-		switch ( error.code ) {
-			case 'tld_in_maintenance':
-				if ( tld ) {
-					message = translate( 'Sorry, .%(tld)s TLD is in maintenance, and we cannot check availability for it.', {
-						args: { tld }
-					} );
-				}
-				break;
-
-			case 'not_mappable':
-				message = translate( 'Sorry, %(domain)s has not been registered yet therefore cannot be mapped.', {
-					args: { domain }
-				} );
-				break;
-
-			case 'invalid_domain':
-				message = translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
-					args: { domain }
-				} );
-				break;
-
-			case 'mapped_domain':
-				message = translate( 'Sorry, %(domain)s is already mapped to a WordPress.com blog.', {
-					args: { domain }
-				} );
-				break;
-
-			case 'restricted_domain':
-				message = translate( 'Sorry, WordPress.com domains cannot be mapped to a WordPress.com blog.' );
-				break;
-
-			case 'blacklisted_domain':
-				if ( domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
-					message = translate(
-						'Due to {{a1}}trademark policy{{/a1}}, we are not able to allow domains containing ' +
-						'{{strong}}WordPress{{/strong}} to be registered or mapped here. ' +
-						'Please {{a2}}contact support{{/a2}} if you have any questions.',
-						{
-							components: {
-								strong: <strong />,
-								a1: <a target="_blank" rel="noopener noreferrer" href="http://wordpressfoundation.org/trademark-policy/" />,
-								a2: <a href={ support.CALYPSO_CONTACT } />
-							}
-						}
-					);
-				} else {
-					message = translate( 'Sorry, %(domain)s cannot be mapped to a WordPress.com blog.', {
-						args: { domain }
-					} );
-				}
-				break;
-
-			case 'forbidden_domain':
-				message = translate( 'Only the owner of the domain can map its subdomains.' );
-				break;
-
-			case 'invalid_tld':
-				message = translate( 'Sorry, %(domain)s does not end with a valid domain extension.', {
-					args: { domain }
-				} );
-				break;
-
-			case 'empty_query':
-				message = translate( 'Please enter a domain name or keyword.' );
-				break;
-
-			default:
-				message = translate( 'Sorry, there was a problem processing your request. Please try again in a few minutes.' );
-		}
-
-		if ( message ) {
-			this.setState( { notice: message, noticeSeverity: severity } );
-		}
-	}
 } );
 
 module.exports = connect( state => ( { currentUser: getCurrentUser( state ) } ) )( localize( MapDomainStep ) );

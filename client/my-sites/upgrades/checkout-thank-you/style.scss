@@ -42,7 +42,7 @@
 	}
 }
 
-.checkout-thank-you__domain-mapping-details {
+.checkout-thank-you__domain-mapping-details, .checkout-thank-you__failed-purchases-details {
 	.purchase-detail__icon {
 		top: 30%;
 	}
@@ -52,7 +52,7 @@
 	}
 }
 
-.checkout-thank-you__domain-mapping-details-nameservers {
+.checkout-thank-you__domain-mapping-details-nameservers, .checkout-thank-you__failed-purchases-details-list {
 	border-left: solid 5px lighten( $gray, 25% );
 	list-style: none;
 	margin-left: 0;
@@ -230,4 +230,64 @@
 
 .checkout-thank-you__verification-notice-email {
 	word-break: break-word;
+}
+
+// Jetpack thank you styles
+.checkout-thank-you__jetpack {
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+.checkout-thank-you__jetpack-plugins {
+	margin: 0 auto;
+}
+
+.checkout-thank-you__jetpack-features {
+	display: inline-block;
+	margin: 0 auto;
+}
+
+.checkout-thank-you__jetpack-feature {
+	display: flex;
+	margin-bottom: 4px;
+
+	&.is-placeholder {
+		@include placeholder();
+	}
+}
+
+.checkout-thank-you__jetpack-feature-status-icon {
+	align-items: center;
+	display: flex;
+	margin-right: 8px;
+}
+
+.checkout-thank-you__jetpack-feature-status-text {
+	font-size: 16px;
+	text-align: left;
+}
+
+.checkout-thank-you__jetpack-feature-status-icon .spinner,
+.checkout-thank-you__jetpack-feature-status-icon .spinner__image {
+	display: inline;
+}
+
+.checkout-thank-you__jetpack {
+	&.is-personal-plan {
+		.checkout-thank-you__jetpack-feature-status-icon .gridicons-checkmark {
+			color: $alert-yellow;
+		}
+	}
+
+	&.is-premium-plan {
+		.checkout-thank-you__jetpack-feature-status-icon .gridicons-checkmark {
+			color: $alert-green;
+		}
+	}
+
+	&.is-business-plan {
+		.checkout-thank-you__jetpack-feature-status-icon .gridicons-checkmark {
+			color: $alert-purple;
+		}
+	}
 }

@@ -12,7 +12,7 @@ import DnsAddNew from './dns-add-new';
 import DnsDetails from './dns-details';
 import DnsList from './dns-list';
 import DomainMainPlaceholder from 'my-sites/upgrades/domain-management/components/domain/main-placeholder';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 import Header from 'my-sites/upgrades/domain-management/components/header';
 import Main from 'components/main';
 import Office365 from './office-365';

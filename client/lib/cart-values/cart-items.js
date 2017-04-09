@@ -19,7 +19,7 @@ var productsValues = require( 'lib/products-values' ),
 	isNoAds = productsValues.isNoAds,
 	isPlan = productsValues.isPlan,
 	isPremium = productsValues.isPremium,
-	isPrivateRegistration = productsValues.isPrivateRegistration,
+	isPrivacyProtection = productsValues.isPrivacyProtection,
 	isSiteRedirect = productsValues.isSiteRedirect,
 	isSpaceUpgrade = productsValues.isSpaceUpgrade,
 	isUnlimitedSpace = productsValues.isUnlimitedSpace,
@@ -71,7 +71,7 @@ function add( newCartItem ) {
 /**
  * Determines if the given cart item should replace the cart.
  * This can happen if the given item:
- * - will result in mixed renewals/non-renewals or multiple renewals (excluding private registration).
+ * - will result in mixed renewals/non-renewals or multiple renewals (excluding privacy protection).
  * - is a free trial plan
  *
  * @param {Object} cartItem - `CartItemValue` object
@@ -79,8 +79,8 @@ function add( newCartItem ) {
  * @returns {Boolean} whether or not the item should replace the cart
  */
 function cartItemShouldReplaceCart( cartItem, cart ) {
-	if ( isRenewal( cartItem ) && ! isPrivateRegistration( cartItem ) && ! isDomainRedemption( cartItem ) ) {
-		// adding a renewal replaces the cart unless it is a private registration
+	if ( isRenewal( cartItem ) && ! isPrivacyProtection( cartItem ) && ! isDomainRedemption( cartItem ) ) {
+		// adding a renewal replaces the cart unless it is a privacy protection
 		return true;
 	}
 
@@ -458,6 +458,18 @@ function googleAppsExtraLicenses( properties ) {
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
 
+function fillGoogleAppsRegistrationData( cart, registrationData ) {
+	const googleAppsItems = filter( getAll( cart ), isGoogleApps );
+	return flow.apply( null, googleAppsItems.map( function( item ) {
+		item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
+		return add( item )
+	} ) );
+}
+
+function hasGoogleApps( cart ) {
+	return some( getAll( cart ), isGoogleApps );
+}
+
 function customDesignItem() {
 	return {
 		product_slug: 'custom-design'
@@ -668,12 +680,12 @@ function getDomainRegistrationsWithoutPrivacy( cart ) {
 }
 
 /**
- * Changes presence of a private registration for the given domain cart items.
+ * Changes presence of a privacy protection for the given domain cart items.
  *
  * @param {Object} cart - cart as `CartValue` object
  * @param {Object[]} domainItems - the list of `CartItemValue` objects for domain registrations
- * @param {Function} changeFunction - the function that adds/removes the private registration to a shopping cart
- * @returns {Function} the function that adds/removes private registrations from the shopping cart
+ * @param {Function} changeFunction - the function that adds/removes the privacy protection to a shopping cart
+ * @returns {Function} the function that adds/removes privacy protections from the shopping cart
  */
 function changePrivacyForDomains( cart, domainItems, changeFunction ) {
 	return flow.apply( null, domainItems.map( function( item ) {
@@ -764,6 +776,7 @@ module.exports = {
 	domainPrivacyProtection,
 	domainRedemption,
 	domainRegistration,
+	fillGoogleAppsRegistrationData,
 	findFreeTrial,
 	getAll,
 	getAllSorted,
@@ -788,6 +801,7 @@ module.exports = {
 	hasDomainMapping,
 	hasDomainRegistration,
 	hasFreeTrial,
+	hasGoogleApps,
 	hasNlTld,
 	hasOnlyFreeTrial,
 	hasOnlyProductsOf,

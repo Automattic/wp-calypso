@@ -6,13 +6,13 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { identity, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 import { getValidFeatureKeys, hasFeature } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
@@ -69,7 +69,10 @@ const UpgradeNudge = React.createClass( {
 		if ( shouldDisplay ) {
 			return shouldDisplay();
 		}
-		if ( ! site ) {
+		if ( ! site ||
+			typeof site !== 'object' ||
+			typeof site.jetpack !== 'boolean'
+		) {
 			return false;
 		}
 		if ( feature && hasFeature( feature, site.ID ) ) {

@@ -2,9 +2,16 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import get from 'lodash/get';
-import find from 'lodash/find';
-import concat from 'lodash/concat';
+import {
+	concat,
+	filter,
+	find,
+	map,
+	get,
+	sortBy,
+	takeRight,
+} from 'lodash';
+import validator from 'is-my-json-valid';
 
 /**
  * Internal dependencies
@@ -12,13 +19,19 @@ import concat from 'lodash/concat';
 import {
 	SERIALIZE,
 	DESERIALIZE,
+	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_AVAILABLE,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_CONNECTED,
-	HAPPYCHAT_SET_CHAT_STATUS
+	HAPPYCHAT_DISCONNECTED,
+	HAPPYCHAT_RECONNECTING,
+	HAPPYCHAT_SET_CHAT_STATUS,
+	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 } from 'state/action-types';
+import { HAPPYCHAT_MAX_STORED_MESSAGES } from './constants';
+import { timelineSchema } from './schema';
 
 /**
  * Returns a timeline event from the redux action
@@ -34,9 +47,11 @@ const timeline_event = ( state = {}, action ) => {
 			const event = action.event;
 			return Object.assign( {}, {
 				id: event.id,
+				source: event.source,
 				message: event.text,
 				name: event.user.name,
 				image: event.user.avatarURL,
+				timestamp: event.timestamp,
 				user_id: event.user.id,
 				type: get( event, 'type', 'message' ),
 				links: get( event, 'meta.links' )
@@ -44,6 +59,9 @@ const timeline_event = ( state = {}, action ) => {
 	}
 	return state;
 };
+
+const validateTimeline = validator( timelineSchema );
+const sortTimeline = timeline => sortBy( timeline, event => parseInt( event.timestamp, 10 ) );
 
 /**
  * Adds timeline events for happychat
@@ -56,13 +74,47 @@ const timeline_event = ( state = {}, action ) => {
 const timeline = ( state = [], action ) => {
 	switch ( action.type ) {
 		case SERIALIZE:
-			return [];
+			return takeRight( state, HAPPYCHAT_MAX_STORED_MESSAGES );
 		case DESERIALIZE:
-			return state;
+			const valid = validateTimeline( state );
+			if ( valid ) {
+				return state;
+			}
+			return [];
 		case HAPPYCHAT_RECEIVE_EVENT:
+			// if meta.forOperator is set, skip so won't show to user
+			if ( get( action, 'event.meta.forOperator', false ) ) {
+				return state;
+			}
 			const event = timeline_event( {}, action );
 			const existing = find( state, ( { id } ) => event.id === id );
 			return existing ? state : concat( state, [ event ] );
+		case HAPPYCHAT_TRANSCRIPT_RECEIVE:
+			const messages = filter( action.messages, message => {
+				if ( ! message.id ) {
+					return false;
+				}
+
+				// if meta.forOperator is set, skip so won't show to user
+				if ( get( message, 'meta.forOperator', false ) ) {
+					return false;
+				}
+
+				return ! find( state, { id: message.id } );
+			} );
+			return sortTimeline( state.concat( map( messages, message => {
+				return Object.assign( {
+					id: message.id,
+					source: message.source,
+					message: message.text,
+					name: message.user.name,
+					image: message.user.picture,
+					timestamp: message.timestamp,
+					user_id: message.user.id,
+					type: get( message, 'type', 'message' ),
+					links: get( message, 'meta.links' )
+				} );
+			} ) ) );
 	}
 	return state;
 };
@@ -75,8 +127,10 @@ const timeline = ( state = [], action ) => {
  * @return {Object}        Updated state
  *
  */
-const message = ( state = '', action ) => {
+export const message = ( state = '', action ) => {
 	switch ( action.type ) {
+		case HAPPYCHAT_SEND_MESSAGE:
+			return '';
 		case HAPPYCHAT_SET_MESSAGE:
 			return action.message;
 	}
@@ -91,16 +145,31 @@ const message = ( state = '', action ) => {
  * @return {Object}        Updated state
  *
  */
-const connectionStatus = ( state = 'disconnected', action ) => {
+const connectionStatus = ( state = 'uninitialized', action ) => {
 	switch ( action.type ) {
-		case SERIALIZE:
-			return 'disconnected';
 		case DESERIALIZE:
-			return state;
+			// Always boot up in the uninitialized state
+			return 'uninitialized';
 		case HAPPYCHAT_CONNECTING:
 			return 'connecting';
 		case HAPPYCHAT_CONNECTED:
 			return 'connected';
+		case HAPPYCHAT_DISCONNECTED:
+			return 'disconnected';
+		case HAPPYCHAT_RECONNECTING:
+			return 'reconnecting';
+	}
+	return state;
+};
+
+const connectionError = ( state = null, action ) => {
+	switch ( action.type ) {
+		case DESERIALIZE:
+			return null;
+		case HAPPYCHAT_CONNECTED:
+			return null;
+		case HAPPYCHAT_DISCONNECTED:
+			return action.errorStatus;
 	}
 	return state;
 };
@@ -150,4 +219,11 @@ const isAvailable = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducers( { timeline, message, connectionStatus, chatStatus, isAvailable } );
+export default combineReducers( {
+	chatStatus,
+	connectionError,
+	connectionStatus,
+	isAvailable,
+	message,
+	timeline,
+} );

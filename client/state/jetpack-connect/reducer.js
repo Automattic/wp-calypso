@@ -14,7 +14,6 @@ import {
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_QUERY_SET,
-	JETPACK_CONNECT_QUERY_UPDATE,
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
@@ -207,14 +206,6 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 				buildDefaultAuthorizeState(),
 				{ queryObject: queryObject }
 			);
-		case JETPACK_CONNECT_QUERY_UPDATE:
-			return Object.assign(
-				{},
-				state,
-				{
-					queryObject: Object.assign( {}, state.queryObject, { [ action.property ]: action.value } )
-				}
-			);
 		case JETPACK_CONNECT_CREATE_ACCOUNT:
 			return Object.assign(
 				{},
@@ -291,9 +282,9 @@ export function jetpackAuthAttempts( state = {}, action ) {
 export function jetpackSSO( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_SSO_VALIDATION_REQUEST:
-			return Object.assign( state, { isValidating: true } );
+			return Object.assign( {}, state, { isValidating: true } );
 		case JETPACK_CONNECT_SSO_VALIDATION_SUCCESS:
-			return Object. assign( state, {
+			return Object. assign( {}, state, {
 				isValidating: false,
 				validationError: false,
 				nonceValid: action.success,
@@ -301,28 +292,16 @@ export function jetpackSSO( state = {}, action ) {
 				sharedDetails: action.sharedDetails
 			} );
 		case JETPACK_CONNECT_SSO_VALIDATION_ERROR:
-			return Object. assign( state, { isValidating: false, validationError: action.error, nonceValid: false } );
+			return Object.assign( {}, state, { isValidating: false, validationError: action.error, nonceValid: false } );
 		case JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST:
-			return Object.assign( state, { isAuthorizing: true } );
+			return Object.assign( {}, state, { isAuthorizing: true } );
 		case JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS:
-			return Object. assign( state, { isAuthorizing: false, authorizationError: false, ssoUrl: action.ssoUrl } );
+			return Object.assign( {}, state, { isAuthorizing: false, authorizationError: false, ssoUrl: action.ssoUrl } );
 		case JETPACK_CONNECT_SSO_AUTHORIZE_ERROR:
-			return Object. assign( state, { isAuthorizing: false, authorizationError: action.error, ssoUrl: false } );
+			return Object.assign( {}, state, { isAuthorizing: false, authorizationError: action.error, ssoUrl: false } );
 		case SERIALIZE:
 		case DESERIALIZE:
 			return {};
-	}
-	return state;
-}
-
-export function jetpackSSOSessions( state = {}, action ) {
-	switch ( action.type ) {
-		case JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS:
-			return Object.assign( {}, state, buildUrlSessionObj( action.siteUrl ) );
-		case SERIALIZE:
-			return state;
-		case DESERIALIZE:
-			return ! isStale( state.timestamp ) ? state : {};
 	}
 	return state;
 }
@@ -345,7 +324,6 @@ export function jetpackConnectSelectedPlans( state = {}, action ) {
 
 export default combineReducers( {
 	jetpackConnectSite,
-	jetpackSSOSessions,
 	jetpackSSO,
 	jetpackConnectAuthorize,
 	jetpackConnectSessions,

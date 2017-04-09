@@ -95,12 +95,36 @@ export default class QueryManager {
 	 * @return {Number}       0 if equal, less than 0 if itemA is first,
 	 *                        greater than 0 if itemB is first.
 	 */
-	sort( query, itemA, itemB ) {
+	compare( query, itemA, itemB ) {
 		if ( itemA === itemB ) {
 			return 0;
 		}
 
 		return itemB - itemA;
+	}
+
+	/**
+	 * A sorting function that defines the sort order of items under
+	 * consideration of the specified query. This mutates the keys argument and
+	 * doesn't have a return value (because that's how Array.prototype.sort works, see
+	 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort ).
+	 *
+	 * @param  {Array}  keys  Keys to be sorted
+	 * @param  {Array}  items Items by which to sort
+	 * @param  {Object} query Query object
+	 */
+	sort( keys, items, query ) {
+		keys.sort( ( keyA, keyB ) => {
+			if ( ! items[ keyA ] || ! items[ keyB ] ) {
+				// One of the items has yet to be removed from the
+				// set at this point in iteration, so don't bother
+				// trying to sort.
+				// This is just an optimization, so implementers of an extending class's `sort`
+				// method aren't required to implement this check.
+				return 0;
+			}
+			return this.compare( query, items[ keyA ], items[ keyB ] );
+		} );
 	}
 
 	/**
@@ -344,16 +368,7 @@ export default class QueryManager {
 					memo[ queryKey ].itemKeys = get( memo, [ queryKey, 'itemKeys' ], [] ).concat( receivedItemKey );
 
 					// Re-sort the set
-					memo[ queryKey ].itemKeys.sort( ( keyA, keyB ) => {
-						if ( ! nextItems[ keyA ] || ! nextItems[ keyB ] ) {
-							// One of the items has yet to be removed from the
-							// set at this point in iteration, so don't bother
-							// trying to sort.
-							return 0;
-						}
-
-						return this.sort( query, nextItems[ keyA ], nextItems[ keyB ] );
-					} );
+					this.sort( memo[ queryKey ].itemKeys, nextItems, query );
 				}
 			} );
 

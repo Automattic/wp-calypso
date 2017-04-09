@@ -18,6 +18,7 @@ var Sites = React.createClass( {
 			<div>
 				<Card style={ { padding: 0 } }>
 					<Site site={ sites.getPrimary() } />
+					<Site compact site={ sites.getPrimary() } />
 				</Card>
 				<Card style={ { padding: 0 } }>
 					<AllSites sites={ sites.get() } />

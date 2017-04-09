@@ -4,6 +4,8 @@
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
+
 
 /**
  * Internal dependencies
@@ -11,7 +13,6 @@ import { connect } from 'react-redux';
 import Card from 'components/card';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
-import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
 import {
 	getStatus,

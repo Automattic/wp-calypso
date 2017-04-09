@@ -1,6 +1,5 @@
 // External Dependencies
-@import '../../node_modules/react-virtualized/styles';
-@import '../../node_modules/draft-js/dist/Draft';
+@import 'vendor';
 
 // Shared
 @import 'shared/reset';                        // css reset before the rest of the styles are defined
@@ -28,6 +27,10 @@
 
 // Components
 @import 'components';
+
+// Extensions
+@import 'extensions/woocommerce/style';
+@import 'extensions/wp-super-cache/style';
 
 // Devdocs
 @import 'devdocs/design/style';

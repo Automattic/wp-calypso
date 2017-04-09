@@ -4,7 +4,14 @@
 import config from 'config';
 import { makeLayout } from 'controller';
 import { getSubjects } from './theme-filters.js';
-import { fetchThemeDataWithCaching, fetchThemeData, loggedOut } from './controller';
+import {
+	fetchThemeData,
+	loggedOut,
+	redirectSearchAndType,
+	redirectFilterAndType,
+	redirectToThemeDetails
+} from './controller';
+import validateFilters from './validate-filters';
 
 // `logged-out` middleware isn't SSR-compliant yet, but we can at least render
 // the layout.
@@ -14,17 +21,35 @@ export default function( router ) {
 	const verticals = getSubjects().join( '|' );
 
 	if ( config.isEnabled( 'manage/themes' ) ) {
-		if ( config.isEnabled( 'manage/themes-ssr' ) ) {
-			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?$`, fetchThemeDataWithCaching, loggedOut, makeLayout );
-			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?`, fetchThemeData, loggedOut, makeLayout );
-			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`, fetchThemeData, loggedOut, makeLayout );
-			router( '/design/upload/*', makeLayout );
-			router( '/design/*', fetchThemeData, loggedOut, makeLayout ); // Needed so direct hits don't result in a 404.
-		} else {
-			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?`, makeLayout );
-			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`, makeLayout );
-			router( '/design/upload/*', makeLayout );
-			router( '/design/*', makeLayout ); // Needed so direct hits don't result in a 404.
-		}
+		// Redirect interim showcase route to permanent one
+		router( [ '/design', '/design/*' ], ( { originalUrl, res } ) => {
+			res.redirect( 301, '/themes' + originalUrl.slice( '/design'.length ) );
+		} );
+
+		router( `/themes/:vertical(${ verticals })?/:tier(free|premium)?`, fetchThemeData, loggedOut, makeLayout );
+		router(
+			`/themes/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`,
+			validateFilters,
+			fetchThemeData,
+			loggedOut,
+			makeLayout
+		);
+		router( '/themes/upload/*', makeLayout );
+		// Redirect legacy (Atlas-based Theme Showcase v4) routes
+		router( [
+			'/themes/:site?/search/:search',
+			'/themes/:site?/type/:tier(free|premium)',
+			'/themes/:site?/search/:search/type/:tier(free|premium)'
+		], redirectSearchAndType );
+		router( [
+			'/themes/:site?/filter/:filter',
+			'/themes/:site?/filter/:filter/type/:tier(free|premium)'
+		], redirectFilterAndType );
+		router( [
+			'/themes/:theme/:section(support)?',
+			'/themes/:site/:theme/:section(support)?'
+		], redirectToThemeDetails );
+		// The following route definition is needed so direct hits on `/themes/<mysite>` don't result in a 404.
+		router( '/themes/*', fetchThemeData, loggedOut, makeLayout );
 	}
 }

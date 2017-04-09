@@ -18,3 +18,23 @@
 		}
 	}
 }
+
+.signup-form__social {
+	display: flex;
+	align-items: center;
+	margin: 0 -5px;
+
+	> button {
+		flex: 1;
+		box-sizing: border-box;
+		margin: 0 5px;
+	}
+
+	button {
+		width: 100%;
+	}
+}
+
+.signup-form__notice.notice {
+	margin-bottom: 10px;
+}

@@ -7,10 +7,13 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 /**
  * Internal dependencies
  */
+import sitesSync from './sites/enhancer';
 import noticesMiddleware from './notices/middleware';
+import extensionsModule from 'extensions';
 import application from './application/reducer';
 import accountRecovery from './account-recovery/reducer';
 import automatedTransfer from './automated-transfer/reducer';
+import billingTransactions from './billing-transactions/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
 import consoleDispatcher from './console-dispatch';
@@ -22,12 +25,14 @@ import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import help from './help/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
-import jetpackSettings from './jetpack-settings/reducer';
+import jetpack from './jetpack/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
+import login from './login/reducer';
 import media from './media/reducer';
 import notices from './notices/reducer';
+import npsSurvey from './nps-survey/reducer';
 import pageTemplates from './page-templates/reducer';
 import plans from './plans/reducer';
 import plugins from './plugins/reducer';
@@ -51,34 +56,44 @@ import stats from './stats/reducer';
 import storedCards from './stored-cards/reducer';
 import support from './support/reducer';
 import terms from './terms/reducer';
+import timezones from './timezones/reducer';
 import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
 import wordads from './wordads/reducer';
+import config from 'config';
 
 /**
  * Module variables
  */
-export const reducer = combineReducers( {
+
+// Consolidate the extension reducers under 'extensions' for namespacing.
+const extensions = combineReducers( extensionsModule.reducers() );
+
+const reducers = {
 	application,
 	accountRecovery,
 	automatedTransfer,
+	billingTransactions,
 	comments,
 	componentsUsageStats,
 	countryStates,
 	currentUser,
 	documentHead,
 	domains,
+	extensions,
 	geo,
 	googleAppsUsers,
 	happinessEngineers,
 	happychat,
 	help,
 	jetpackConnect,
-	jetpackSettings,
+	jetpack,
 	jetpackSync,
+	login,
 	media,
 	notices,
+	npsSurvey,
 	pageTemplates,
 	plugins,
 	plans,
@@ -102,36 +117,43 @@ export const reducer = combineReducers( {
 	storedCards,
 	support,
 	terms,
+	timezones,
 	themes,
 	ui,
 	users,
 	wordads,
-} );
+};
 
-const middleware = [ thunkMiddleware, noticesMiddleware ];
+export const reducer = combineReducers( reducers );
 
-if ( typeof window === 'object' ) {
-	// Browser-specific middlewares
-	middleware.push(
-		require( './analytics/middleware.js' ).analyticsMiddleware,
-		require( './data-layer/wpcom-api-middleware.js' ).middleware,
-	);
-}
-
-let createStoreWithMiddleware = applyMiddleware.apply( null, middleware );
+/**
+ * @typedef {Object} ReduxStore
+ * @property {!Function} dispatch dispatches actions
+ * @property {!Function} getState returns the current state tree
+ * @property {Function} replaceReducers replaces the state reducers
+ * @property {Function} subscribe attaches an event listener to state changes
+ */
 
 export function createReduxStore( initialState = {} ) {
-	if (
-		typeof window === 'object' &&
-		window.app &&
-		window.app.isDebug &&
-		window.devToolsExtension
-	) {
-		createStoreWithMiddleware = compose(
-			consoleDispatcher,
-			createStoreWithMiddleware,
-			window.devToolsExtension(),
-		);
-	}
-	return createStoreWithMiddleware( createStore )( reducer, initialState );
+	const isBrowser = typeof window === 'object';
+	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
+
+	const middlewares = [
+		thunkMiddleware,
+		noticesMiddleware,
+		isBrowser && require( './happychat/middleware.js' ).default(),
+		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
+		isBrowser && require( './data-layer/wpcom-api-middleware.js' ).default,
+		isAudioSupported && require( './audio/middleware.js' ).default,
+		isBrowser && config.isEnabled( 'automated-transfer' ) && require( './automated-transfer/middleware.js' ).default,
+	].filter( Boolean );
+
+	const enhancers = [
+		isBrowser && window.app && window.app.isDebug && consoleDispatcher,
+		applyMiddleware( ...middlewares ),
+		isBrowser && sitesSync,
+		isBrowser && window.devToolsExtension && window.devToolsExtension()
+	].filter( Boolean );
+
+	return compose( ...enhancers )( createStore )( reducer, initialState );
 }

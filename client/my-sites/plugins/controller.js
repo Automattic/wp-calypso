@@ -3,7 +3,6 @@
  */
 import ReactDom from 'react-dom';
 import React from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
 import some from 'lodash/some';
 import capitalize from 'lodash/capitalize';
@@ -88,18 +87,17 @@ function renderPluginList( context, basePath ) {
 	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );
 	lastPluginsQuerystring = context.querystring;
 
-	ReactDom.render(
-		React.createElement( ReduxProvider, { store: context.store },
-			React.createElement( PluginListComponent, {
-				path: basePath,
-				context,
-				filter: context.params.pluginFilter,
-				category: context.params.category,
-				sites,
-				search
-			} )
-		),
-		document.getElementById( 'primary' )
+	renderWithReduxStore(
+		React.createElement( PluginListComponent, {
+			path: basePath,
+			context,
+			filter: context.params.pluginFilter,
+			category: context.params.category,
+			sites,
+			search
+		} ),
+		'primary',
+		context.store
 	);
 
 	if ( search ) {

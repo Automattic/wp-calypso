@@ -129,18 +129,13 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		it( 'should dispatch fetch action and an optimistic update when thunk triggered', () => {
+		it( 'should dispatch fetch action when thunk triggered', () => {
 			saveSiteSettings( 2916284, { settingKey: 'chicken' } )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: SITE_SETTINGS_SAVE,
 				siteId: 2916284
 			} );
-			expect( spy ).to.have.been.calledWith(
-				updateSiteSettings( 2916284, {
-					settingKey: 'chicken'
-				} )
-			);
 		} );
 
 		it( 'should dispatch update action when request completes', () => {

@@ -4,8 +4,6 @@
 import startsWith from 'lodash/startsWith';
 import {
 	every,
-	endsWith,
-	filter,
 	get,
 	includes,
 	map,
@@ -19,7 +17,6 @@ import {
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
@@ -100,9 +97,19 @@ export function normalizeWporgTheme( theme ) {
 		download_link: 'download'
 	};
 
-	const normalizedTheme = mapKeys( theme, ( value, key ) => (
+	const normalizedTheme = mapKeys( omit( theme, [ 'sections', 'author' ] ), ( value, key ) => (
 		get( attributesMap, key, key )
 	) );
+
+	const description = get( theme, [ 'sections', 'description' ] );
+	if ( description ) {
+		normalizedTheme.description = description;
+	}
+
+	const author = get( theme, [ 'author', 'display_name' ] );
+	if ( author ) {
+		normalizedTheme.author = author;
+	}
 
 	if ( ! normalizedTheme.tags ) {
 		return normalizedTheme;
@@ -192,43 +199,20 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
 }
 
 /**
- * Check if theme is a wpcom theme
- * checking is done based on existance of -wpcom suffix
+ * Check if theme is a wpcom theme.
  *
- * @param  {string}  themeId Theme id
- * @return {Boolean}         Wheter theme is a wpcom theme
+ * For wpcom theme zips, the theme_uri field is
+ * set in style.css by the bundling script.
+ *
+ * For AT themes, the wpcomsh plugin sets the theme_uri
+ * field to contain 'wordpress.com' for Jetpack API
+ * requests.
+ *
+ * @param  {Object} theme Theme object
+ * @return {Boolean}      Whether theme is a wpcom theme
  */
-export function isWpcomTheme( themeId ) {
-	return endsWith( themeId, '-wpcom' );
-}
-
-/**
- * Returns a filtered themes array. Filtering is done based on particular themes
- * matching provided query and isWpocmTheme predicate.
- * Themes on Jetpack installed from WordPress.com have -wpcom suffix
- * We filter out all those themes because they will also be visible on
- * second list specific to WordPress.com. This may be too simple aproach
- * so it may revisit it again later.
- *
- * TODO Veriy that wpcom filtering is sufficien.
- *
- * @param  {Array}  themes Array of theme objects
- * @param  {Object} query  Themes query
- * @return {Array}         Filtered themes
- */
-export function filterThemesForJetpack( themes, query ) {
-	// we can filter wpcom only if we have two lists
-	if ( config.isEnabled( 'manage/themes/upload' ) ) {
-		return filter(
-			themes,
-			theme => ! isWpcomTheme( theme.id ) && isThemeMatchingQuery( query, theme )
-		);
-	}
-
-	return filter(
-		themes,
-		theme => isThemeMatchingQuery( query, theme )
-	);
+export function isThemeFromWpcom( theme ) {
+	return includes( theme.theme_uri, 'wordpress.com' );
 }
 
 /**
@@ -256,6 +240,7 @@ export function isThemeMatchingQuery( query, theme ) {
 				) );
 
 				return foundInTaxonomies || (
+					( theme.id && includes( theme.id.toLowerCase(), search ) ) ||
 					( theme.name && includes( theme.name.toLowerCase(), search ) ) ||
 					( theme.author && includes( theme.author.toLowerCase(), search ) ) ||
 					( theme.descriptionLong && includes( theme.descriptionLong.toLowerCase(), search ) )

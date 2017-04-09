@@ -3,22 +3,13 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import {
-	overSome,
-	partial
-} from 'lodash';
+import { partial } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import Gridicon from 'components/gridicon';
-import { isBusiness, isEnterprise } from 'lib/products-values';
 import { localize } from 'i18n-calypso';
-import { getSelectedSite } from 'state/ui/selectors';
-
-const hasBusinessPlan = overSome( isBusiness, isEnterprise );
 
 const possibleDevices = [
 	'computer',
@@ -140,14 +131,4 @@ PreviewToolbar.defaultProps = {
 	showSEO: true
 };
 
-const mapStateToProps = ( state, ownProps ) => {
-	const site = getSelectedSite( state );
-	const showSEO = ownProps.showSEO && (
-		( site && site.plan && hasBusinessPlan( site.plan ) && isEnabled( 'manage/advanced-seo' ) ) ||
-		( isEnabled( 'manage/advanced-seo' ) && isEnabled( 'manage/advanced-seo/preview-nudge' ) )
-	);
-
-	return { showSEO };
-};
-
-export default connect( mapStateToProps )( localize( PreviewToolbar ) );
+export default localize( PreviewToolbar );

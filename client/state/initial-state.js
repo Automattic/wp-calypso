@@ -24,8 +24,7 @@ const debug = debugModule( 'calypso:state' );
 
 const DAY_IN_HOURS = 24;
 const HOUR_IN_MS = 3600000;
-const MINUTE_IN_MS = 1000 * 60;
-export const SERIALIZE_THROTTLE = MINUTE_IN_MS;
+export const SERIALIZE_THROTTLE = 5000;
 export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
 
 function getInitialServerState() {
@@ -70,7 +69,8 @@ function loadInitialStateFailed( error ) {
 
 export function persistOnChange( reduxStore, serializeState = serialize ) {
 	let state;
-	reduxStore.subscribe( throttle( function() {
+
+	const throttledSaveState = throttle( function() {
 		const nextState = reduxStore.getState();
 		if ( state && nextState === state ) {
 			return;
@@ -82,7 +82,13 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 			.catch( ( setError ) => {
 				debug( 'failed to set redux-store state', setError );
 			} );
-	}, SERIALIZE_THROTTLE, { leading: false, trailing: true } ) );
+	}, SERIALIZE_THROTTLE, { leading: false, trailing: true } );
+
+	if ( global.window ) {
+		global.window.addEventListener( 'beforeunload', throttledSaveState.flush );
+	}
+
+	reduxStore.subscribe( throttledSaveState );
 
 	return reduxStore;
 }

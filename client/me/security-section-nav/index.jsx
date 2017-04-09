@@ -10,8 +10,7 @@ var React = require( 'react' ),
  */
 var SectionNav = require( 'components/section-nav' ),
 	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' ),
-	config = require( 'config' );
+	NavItem = require( 'components/section-nav/item' );
 
 module.exports = React.createClass( {
 	propTypes: {
@@ -31,15 +30,12 @@ module.exports = React.createClass( {
 			{
 				title: i18n.translate( 'Connected Applications', { textOnly: true } ),
 				path: '/me/security/connected-applications',
-			}
+			},
+			{
+				title: i18n.translate( 'Account Recovery', { textOnly: true } ),
+				path: '/me/security/account-recovery',
+			},
 		];
-
-		if ( config.isEnabled( 'me/security/checkup' ) ) {
-			tabs.push( {
-				title: i18n.translate( 'Checkup', { textOnly: true } ),
-				path: '/me/security/checkup',
-			} );
-		}
 
 		return tabs;
 	},

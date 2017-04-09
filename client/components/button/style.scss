@@ -58,13 +58,15 @@ button {
 			border-width: 1px 1px 2px;
 		}
 	}
-	&:focus {
-		border-color: $blue-medium;
-		box-shadow: 0 0 0 2px $blue-light;
+	.accessible-focus & {
+		&:focus {
+			border-color: $blue-medium;
+			box-shadow: 0 0 0 2px $blue-light;
+		}
 	}
 	&.is-compact {
 		padding: 7px;
-		color: darken( $gray, 10% );
+		color: $gray-text-min;
 		font-size: 11px;
 		line-height: 1;
 		text-transform: uppercase;
@@ -89,6 +91,11 @@ button {
 			margin-left: -4px;
 		}
 	}
+	&.is-busy {
+		animation: button__busy-animation 3000ms infinite linear;
+		background-size: 120px 100%;
+		background-image: linear-gradient( -45deg, lighten( $gray, 30% ) 28%, $white 28%, $white 72%, lighten( $gray, 30% ) 72%);
+	}
 	&.hidden {
 		display: none;
 	}
@@ -102,7 +109,7 @@ button {
 }
 
 // Primary buttons
-@mixin button-is-primary {
+.button.is-primary {
 	background: $blue-medium;
 	border-color: darken( $blue-medium, 8% );
 	color: $white;
@@ -112,19 +119,19 @@ button {
 		border-color: $blue-dark;
 		color: $white;
 	}
-	&[disabled],
-	&:disabled {
-		background: tint( $blue-light, 50% );
-		border-color: tint( $blue-wordpress, 55% );
-		color: $white;
-	}
 	&.is-compact {
 		color: $white;
 	}
-}
-
-.button.is-primary {
-	@include button-is-primary;
+	&[disabled],
+	&:disabled {
+		color: lighten( $gray, 30% );
+		background: $white;
+		border-color: lighten( $gray, 30% );
+	}
+	&.is-busy {
+		background-size: 120px 100%;
+		background-image: linear-gradient( -45deg, $blue-medium 28%, darken( $blue-medium, 5% ) 28%, darken( $blue-medium, 5% ) 72%, $blue-medium 72%);
+	}
 }
 
 // Scary buttons
@@ -164,7 +171,7 @@ button {
 .button.is-borderless {
 	border: none;
 	background: none;
-	color: darken( $gray, 10% );
+	color: $gray-text-min;
 	padding-left: 0;
 	padding-right: 0;
 	border-radius: 0;
@@ -228,7 +235,8 @@ button {
 // ==========================================================================
 
 // Turn Reset 'buttons' into regular text links
-.layout__content input {
+.layout__content input,
+.dialog__content input {
 	&[type=reset],
 	&[type=reset]:hover,
 	&[type=reset]:active,
@@ -242,7 +250,8 @@ button {
 }
 
 // Buttons within sentences sit on the text baseline.
-.layout__content p .button {
+.layout__content p .button,
+.dialog__content p .button {
 	vertical-align: baseline;
 }
 
@@ -250,7 +259,11 @@ button {
 .layout__content button::-moz-focus-inner,
 .layout__content input[type=reset]::-moz-focus-inner,
 .layout__content input[type=button]::-moz-focus-inner,
-.layout__content input[type=submit]::-moz-focus-inner {
+.layout__content input[type=submit]::-moz-focus-inner ,
+.dialog__content button::-moz-focus-inner,
+.dialog__content input[type=reset]::-moz-focus-inner,
+.dialog__content input[type=button]::-moz-focus-inner,
+.dialog__content input[type=submit]::-moz-focus-inner {
 	border: 0;
 	padding: 0;
 }
@@ -289,4 +302,9 @@ button {
 		font-style: normal;
 		font-weight: normal;
 	}
+}
+
+
+@keyframes button__busy-animation {
+  0%   { background-position: 240px 0; }
 }

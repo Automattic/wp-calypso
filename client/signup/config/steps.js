@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
 */
 import stepActions from 'lib/signup/step-actions';
 
-module.exports = {
+export default {
 	survey: {
 		stepName: 'survey',
 		props: {
@@ -21,7 +21,27 @@ module.exports = {
 	themes: {
 		stepName: 'themes',
 		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'theme' ]
+		providesDependencies: [ 'themeSlugWithRepo' ]
+	},
+
+	// `themes` does not update the theme for an existing site as we normally
+	// do this when the site is created. In flows where a site is merely being
+	// updated, we need to use a different API request function.
+	'themes-site-selected': {
+		stepName: 'themes-site-selected',
+		dependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
+		providesDependencies: [ 'themeSlugWithRepo' ],
+		apiRequestFunction: stepActions.setThemeOnSite,
+		props: {
+			headerText: i18n.translate( 'Choose a theme for your new site.' ),
+		}
+	},
+
+	'plans-site-selected': {
+		stepName: 'plans-site-selected',
+		apiRequestFunction: stepActions.addPlanToCart,
+		dependencies: [ 'siteSlug', 'siteId' ],
+		providesDependencies: [ 'cartItem', 'privacyItem' ]
 	},
 
 	'design-type': {
@@ -47,6 +67,16 @@ module.exports = {
 		providesDependencies: [ 'bearer_token', 'username' ]
 	},
 
+	'user-social': {
+		stepName: 'user-social',
+		apiRequestFunction: stepActions.createAccount,
+		providesToken: true,
+		providesDependencies: [ 'bearer_token', 'username' ],
+		props: {
+			isSocialSignupEnabled: true
+		},
+	},
+
 	'site-title': {
 		stepName: 'site-title',
 		providesDependencies: [ 'siteTitle' ]
@@ -59,7 +89,7 @@ module.exports = {
 	plans: {
 		stepName: 'plans',
 		apiRequestFunction: stepActions.addPlanToCart,
-		dependencies: [ 'siteSlug', 'domainItem' ],
+		dependencies: [ 'siteSlug', 'siteId', 'domainItem' ],
 		providesDependencies: [ 'cartItem', 'privacyItem' ]
 	},
 
@@ -67,15 +97,10 @@ module.exports = {
 		stepName: 'domains',
 		apiRequestFunction: stepActions.createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
-		dependencies: [ 'theme' ],
-		delayApiRequestUntilComplete: true
-	},
-
-	'domains-with-plan': {
-		stepName: 'domains-with-plan',
-		apiRequestFunction: stepActions.createSiteWithCartAndStartFreeTrial,
-		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
-		dependencies: [ 'theme' ],
+		props: {
+			isDomainOnly: false
+		},
+		dependencies: [ 'themeSlugWithRepo' ],
 		delayApiRequestUntilComplete: true
 	},
 
@@ -83,16 +108,9 @@ module.exports = {
 		stepName: 'domains-theme-preselected',
 		apiRequestFunction: stepActions.createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
-		delayApiRequestUntilComplete: true
-	},
-
-	'domain-only': {
-		stepName: 'domain-only',
-		apiRequestFunction: stepActions.createSiteWithCart,
 		props: {
-			isDomainOnly: true
+			isDomainOnly: false
 		},
-		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		delayApiRequestUntilComplete: true
 	},
 
@@ -120,6 +138,19 @@ module.exports = {
 			designType: 'blog'
 		},
 		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'theme' ]
+		providesDependencies: [ 'themeSlugWithRepo' ]
+	},
+
+	// Currently, this step explicitly submits other steps to skip them, and
+	// should not be used outside of the `domain-first` flow.
+	'site-or-domain': {
+		stepName: 'site-or-domain',
+		apiRequestFunction: stepActions.createSiteOrDomain,
+		props: {
+			headerText: i18n.translate( 'Do you want to use this domain yet?' ),
+			subHeaderText: i18n.translate( "Don't worry you can easily add a site later if you're not ready" )
+		},
+		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
+		delayApiRequestUntilComplete: true
 	},
 };

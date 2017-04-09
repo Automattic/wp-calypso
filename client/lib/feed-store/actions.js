@@ -1,23 +1,26 @@
-var ActionType = require( './constants' ).action,
-	Dispatcher = require( 'dispatcher' ),
-	inflight = require( 'lib/inflight' ),
-	wpcom = require( 'lib/wp' );
+/**
+ * External Dependencies
+ */
+import { action as ActionType } from './constants';
+import Dispatcher from 'dispatcher';
+import { isRequestInflight, requestTracker } from 'lib/inflight';
+import wpcom from 'lib/wp';
 
 function requestKey( feedId ) {
-	return `feed-${feedId}`;
+	return `feed-${ feedId }`;
 }
 
 const FeedStoreActions = {
 	fetch: function( feedId ) {
 		const key = requestKey( feedId );
 
-		if ( inflight.requestInflight( key ) ) {
+		if ( isRequestInflight( key ) ) {
 			return;
 		}
 
 		wpcom.undocumented().readFeed(
 			{ ID: feedId, meta: 'site' },
-			inflight.requestTracker( key, FeedStoreActions.receiveFeedFetch.bind( FeedStoreActions, feedId ) )
+			requestTracker( key, FeedStoreActions.receiveFeedFetch.bind( FeedStoreActions, feedId ) )
 		);
 	},
 

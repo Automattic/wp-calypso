@@ -1,18 +1,19 @@
-/***
+/**
  * External dependencies
  */
 import React from 'react';
 import { noop } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
-/***
+/**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import {
 	getCurrentUser
 } from 'state/current-user/selectors';
-import Gridicon from 'components/gridicon';
 import PostTime from 'reader/post-time';
 import Gravatar from 'components/gravatar';
 import {
@@ -21,13 +22,14 @@ import {
 	recordTrack
 } from 'reader/stats';
 import { getStreamUrl } from 'reader/route';
-import CommentLikeButtonContainer from './comment-likes';
 import PostCommentContent from './post-comment-content';
 import PostCommentForm from './form';
+import CommentEditForm from './comment-edit-form';
 import { PLACEHOLDER_STATE } from 'state/comments/constants';
 import { decodeEntities } from 'lib/formatting';
 import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback.jsx';
+import CommentActions from './comment-actions';
 
 class PostComment extends React.Component {
 	constructor() {
@@ -108,7 +110,7 @@ class PostComment extends React.Component {
 				? <ol className="comments__list">
 					{
 						commentChildrenIds.reverse().map( ( childId ) =>
-							<PostComment { ...this.props } depth={ this.props.depth + 1 } key={ childId } commentId={ childId }/>
+							<PostComment { ...this.props } depth={ this.props.depth + 1 } key={ childId } commentId={ childId } />
 						)
 					}
 				</ol>
@@ -131,39 +133,12 @@ class PostComment extends React.Component {
 			onCommentSubmit={ this.props.onCommentSubmit } />;
 	}
 
-	renderCommentActions( comment ) {
-		const post = this.props.post;
-		const showReplyButton = post && post.discussion && post.discussion.comments_open === true;
-		const showCancelReplyButton = this.props.activeReplyCommentID === this.props.commentId;
-
-		// Only render actions for non placeholders and approved
-		if ( comment.isPlaceholder || comment.status !== 'approved' ) {
-			return null;
-		}
-
-		return (
-			<div className="comments__comment-actions">
-				{ showReplyButton
-					? <button className="comments__comment-actions-reply" onClick={ this.handleReply }>
-						<Gridicon icon="reply" size={ 18 } />
-						<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
-					</button>
-					: null }
-				{ showCancelReplyButton && <button className="comments__comment-actions-cancel-reply" onClick={ this.props.onReplyCancel }>{ translate( 'Cancel reply' ) }</button> }
-				<CommentLikeButtonContainer
-					className="comments__comment-actions-like"
-					tagName="button"
-					siteId={ this.props.post.site_ID }
-					postId={ this.props.post.ID }
-					commentId={ comment.ID }
-				/>
-			</div>
-		);
-	}
-
 	render() {
+		// todo: connect this constants to the state (new selector)
 		const commentsTree = this.props.commentsTree;
 		const comment = commentsTree.getIn( [ this.props.commentId, 'data' ] ).toJS();
+
+		// todo: connect this constants to the state (new selector)
 		const haveReplyWithError = commentsTree.getIn( [ this.props.commentId, 'children' ] )
 			.some( ( childId ) => commentsTree.getIn( [ childId, 'data', 'placeholderState' ] ) === PLACEHOLDER_STATE.ERROR );
 
@@ -216,9 +191,30 @@ class PostComment extends React.Component {
 					? <p className="comments__comment-moderation">{ translate( 'Your comment is awaiting moderation.' ) }</p>
 					: null }
 
-				<PostCommentContent content={ comment.content } isPlaceholder={ comment.isPlaceholder } />
+				{ this.props.activeEditCommentId !== this.props.commentId &&
+					<PostCommentContent content={ comment.content } isPlaceholder={ comment.isPlaceholder } />
+				}
 
-				{ this.renderCommentActions( comment ) }
+				{ isEnabled( 'comments/moderation-tools-in-posts' ) && this.props.activeEditCommentId === this.props.commentId &&
+					<CommentEditForm
+						post={ this.props.post }
+						commentId={ this.props.commentId }
+						commentText={ comment.content }
+						onCommentSubmit={ this.props.onEditCommentCancel } />
+				}
+
+				<CommentActions
+					post={ this.props.post }
+					comment={ comment }
+					showModerationTools={ this.props.showModerationTools }
+					activeEditCommentId={ this.props.activeEditCommentId }
+					activeReplyCommentID={ this.props.activeReplyCommentID }
+					commentId={ this.props.commentId }
+					editComment={ this.props.onEditCommentClick }
+					editCommentCancel={ this.props.onEditCommentCancel }
+					handleReply={ this.handleReply }
+					onReplyCancel={ this.props.onReplyCancel } />
+
 				{ haveReplyWithError ? null : this.renderCommentForm() }
 				{ this.renderRepliesList() }
 			</li>

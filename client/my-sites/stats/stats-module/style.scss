@@ -2,6 +2,12 @@
 @import 'placeholder';
 @import 'expand';
 
+.stats-module {
+	.upgrade-nudge.card {
+		margin: 16px;
+	}
+}
+
 // Select Dropdown
 .stats-module__select-dropdown-wrapper {
 	padding: 16px;
@@ -19,7 +25,7 @@
 
 .card.stats-module {
 	padding: 0;
-	margin-bottom: 16px;
+	margin-bottom: 10px;
 }
 // Site sections
 .stats__module-list {
@@ -45,6 +51,11 @@
 }
 
 // Section title
+@keyframes stats-date-picker__spin {
+	100% {
+		transform: rotate( 360deg );
+	}
+}
 
 .stats-section-title {
 	@include heading;
@@ -511,4 +522,21 @@ ul.module-header-actions {
 		width: 60px; // 2
 		@include long-content-fade( $color: $white, $size: 15% );
 	}
+}
+
+.stats-module__all-time-nav{
+	.stats-section-title {
+		margin: 0 16px 16px 16px;
+	}
+}
+
+.stats-module__footer-actions {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
+.stats-module__header.is-refreshing {
+	animation: loading-fade 1.6s ease-in-out infinite;
 }

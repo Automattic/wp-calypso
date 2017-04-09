@@ -35,13 +35,13 @@ function setup( io ) {
 			return;
 		}
 
-		io.of( '/css-hot-reload' ).emit( 'css-hot-reload', 
+		io.of( '/css-hot-reload' ).emit( 'css-hot-reload',
 			{ status: 'building' } );
 
 		debug( 'spawning %o', 'make build-css --jobs ' + cores );
 		cssMake = spawn( 'make', [ 'build-css', '--jobs', cores ], {
 			cwd: ROOT_DIR,
-			stdio: [ 'ignore', 'pipe', 'pipe']
+			stdio: [ 'ignore', 'pipe', 'pipe' ]
 		} );
 
 		errors = '';
@@ -82,17 +82,17 @@ function setup( io ) {
 			changedFiles = updateChangedCssFiles();
 			if ( 0 !== changedFiles.length ) {
 				debug( chalk.green( 'css reload' ) );
-				io.of( '/css-hot-reload' ).emit( 'css-hot-reload', 
+				io.of( '/css-hot-reload' ).emit( 'css-hot-reload',
 					{ status: 'reload', changedFiles: changedFiles } );
 			} else {
 				debug( chalk.green( 'css up to date' ) );
-				io.of( '/css-hot-reload' ).emit( 'css-hot-reload', 
+				io.of( '/css-hot-reload' ).emit( 'css-hot-reload',
 					{ status: 'up-to-date' } );
 			}
 		} else {
 			// 'make build-css' failed
 			debug( chalk.red( 'css build failed' ) );
-			io.of( '/css-hot-reload' ).emit( 'css-hot-reload', 
+			io.of( '/css-hot-reload' ).emit( 'css-hot-reload',
 				{ status: 'build-failed', error: errors } );
 		}
 	}
@@ -115,24 +115,24 @@ function setup( io ) {
 	}
 
 	// Initialize publicCssFiles
-	
+
 	fs.readdirSync( PUBLIC_DIR ).forEach( function( file ) {
 		if ( '.css' === file.slice( -4 ) ) {
 			var fullPath = path.join( PUBLIC_DIR, file );
 			publicCssFiles[ fullPath ] = md5File.sync( fullPath );
 		}
 	} );
-	
+
 	// Watch .scss files
 
-	var watcher = chokidar.watch( SCSS_PATHS, { 
-		ignored: /^.*\.(js[x]?|md|json)$/,
+	var watcher = chokidar.watch( SCSS_PATHS, {
+		ignored: /^.*\.(js[x]?|md|json|unison\.tmp)$/,
 		usePolling: false,
 		persistent: true
 	} );
 
-	// The add/addDir events are fired during initialization generating an 
-	// avalanche of refreshes on the client so we stick to the change events 
+	// The add/addDir events are fired during initialization generating an
+	// avalanche of refreshes on the client so we stick to the change events
 	// only for now until we can exclude the initial add/addDir events.
 	watcher.on( 'all', function( event, path ) {
 		if ( 'change' === event && path.match( /^.*\.scss$/ ) ) {

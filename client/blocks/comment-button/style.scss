@@ -1,7 +1,7 @@
 .comment-button {
 	align-items: center;
 	box-sizing: border-box;
-	color: lighten( $gray, 10% );
+	color: $gray;
 	cursor: pointer;
 	display: inline-flex;
 	list-style-type: none;
@@ -11,7 +11,7 @@
 	&:hover,
 	&:focus,
 	&:active {
-		color: $blue-light;
+		color: $blue-medium;
 	}
 
 	.comment-button__label-count {
@@ -32,10 +32,6 @@
 }
 
 .comment-button__icon {
-	fill: lighten( $gray, 10% );
 	position: relative;
 		top: 1px;
-	&:hover {
-		fill: $blue-light;
-	}
 }

@@ -18,9 +18,9 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
-	THEME_ACTIVATE_REQUEST,
-	THEME_ACTIVATE_REQUEST_SUCCESS,
-	THEME_ACTIVATE_REQUEST_FAILURE,
+	THEME_ACTIVATE,
+	THEME_ACTIVATE_SUCCESS,
+	THEME_ACTIVATE_FAILURE,
 	THEME_CLEAR_ACTIVATED,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
@@ -83,7 +83,9 @@ describe( 'reducer', () => {
 			'activationRequests',
 			'completedActivationRequests',
 			'themesUI',
-			'uploadTheme'
+			'uploadTheme',
+			'themePreviewOptions',
+			'themePreviewVisibility'
 		] );
 	} );
 
@@ -565,6 +567,20 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#themeRequestErrors()', () => {
+		const themeError = deepFreeze( {
+			wpcom: {
+				blah: {
+					path: '\rest\v1.2\themes\blah',
+					method: 'GET',
+					name: 'ThemeNotFoundError',
+					statusCode: 404,
+					status: 404,
+					message: 'The specified theme was not found',
+					error: 'theme_not_found',
+				}
+			}
+		} );
+
 		it( 'should default to an empty object', () => {
 			const state = themeRequestErrors( undefined, {} );
 
@@ -634,28 +650,20 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'never persists state', () => {
-			const state = themeRequestErrors( deepFreeze( {
-				2916284: {
-					twentysixteen: null
-				}
-			} ), {
+		it( 'persists state', () => {
+			const state = themeRequestErrors( themeError, {
 				type: SERIALIZE
 			} );
 
-			expect( state ).to.deep.equal( {} );
+			expect( state ).to.deep.equal( themeError );
 		} );
 
-		it( 'never loads persisted state', () => {
-			const state = themeRequestErrors( deepFreeze( {
-				2916284: {
-					twentysixteen: null
-				}
-			} ), {
+		it( 'loads persisted state', () => {
+			const state = themeRequestErrors( themeError, {
 				type: DESERIALIZE
 			} );
 
-			expect( state ).to.deep.equal( {} );
+			expect( state ).to.deep.equal( themeError );
 		} );
 	} );
 
@@ -670,12 +678,14 @@ describe( 'reducer', () => {
 			const state = activeThemes( deepFreeze( {} ), {
 				type: ACTIVE_THEME_REQUEST_SUCCESS,
 				siteId: 2211667,
-				themeId: 'rebalance',
-				themeName: 'Rebalance',
-				themeCost: {
-					currency: 'USD',
-					number: 0,
-					display: ''
+				theme: {
+					id: 'rebalance',
+					name: 'Rebalance',
+					cost: {
+						currency: 'USD',
+						number: 0,
+						display: ''
+					}
 				}
 			} );
 
@@ -687,12 +697,14 @@ describe( 'reducer', () => {
 			const state = activeThemes( deepFreeze( { 2211667: 'rebalance' } ), {
 				type: ACTIVE_THEME_REQUEST_SUCCESS,
 				siteId: 2211667,
-				themeId: 'twentysixteen',
-				themeName: 'Twentysixteen',
-				themeCost: {
-					currency: 'USD',
-					number: 0,
-					display: ''
+				theme: {
+					id: 'twentysixteen',
+					name: 'Twenty Sixteen',
+					cost: {
+						currency: 'USD',
+						number: 0,
+						display: ''
+					}
 				}
 			} );
 
@@ -702,7 +714,7 @@ describe( 'reducer', () => {
 
 		it( 'should track theme activate request success', () => {
 			const state = activeThemes( deepFreeze( {} ), {
-				type: THEME_ACTIVATE_REQUEST_SUCCESS,
+				type: THEME_ACTIVATE_SUCCESS,
 				themeStylesheet: 'twentysixteen',
 				siteId: 2211888,
 			} );
@@ -744,7 +756,7 @@ describe( 'reducer', () => {
 
 		it( 'should map site ID to true value if request in progress', () => {
 			const state = activationRequests( deepFreeze( {} ), {
-				type: THEME_ACTIVATE_REQUEST,
+				type: THEME_ACTIVATE,
 				siteId: 2916284,
 			} );
 
@@ -759,7 +771,7 @@ describe( 'reducer', () => {
 					2916284: true
 				} ),
 				{
-					type: THEME_ACTIVATE_REQUEST,
+					type: THEME_ACTIVATE,
 					siteId: 2916285,
 				}
 			);
@@ -776,7 +788,7 @@ describe( 'reducer', () => {
 					2916284: true
 				} ),
 				{
-					type: THEME_ACTIVATE_REQUEST_SUCCESS,
+					type: THEME_ACTIVATE_SUCCESS,
 					siteId: 2916284,
 					themeStylesheet: 'twentysixteen',
 				}
@@ -791,7 +803,7 @@ describe( 'reducer', () => {
 			const state = activationRequests( deepFreeze( {
 				2916284: true
 			} ), {
-				type: THEME_ACTIVATE_REQUEST_FAILURE,
+				type: THEME_ACTIVATE_FAILURE,
 				siteId: 2916284,
 				themeId: 'twentysixteen',
 				error: 'Unknown blog',
@@ -936,7 +948,7 @@ describe( 'reducer', () => {
 
 		it( 'should track theme activate request success', () => {
 			const state = completedActivationRequests( deepFreeze( {} ), {
-				type: THEME_ACTIVATE_REQUEST_SUCCESS,
+				type: THEME_ACTIVATE_SUCCESS,
 				siteId: 2211667,
 			} );
 

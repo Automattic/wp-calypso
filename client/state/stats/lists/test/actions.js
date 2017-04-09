@@ -21,6 +21,7 @@ import {
 
 const SITE_ID = 2916284;
 const STAT_TYPE = 'statsStreak';
+const STAT_TYPE_VIDEO = 'statsVideo';
 const STREAK_RESPONSE = {
 	streak: {},
 	data: {
@@ -30,6 +31,12 @@ const STREAK_RESPONSE = {
 	}
 };
 const STREAK_QUERY = { startDate: '2015-06-01', endDate: '2016-06-01' };
+const VIDEO_RESPONSE = {
+	data: [
+		[ '2016-11-12', 1 ],
+		[ '2016-11-13', 0 ],
+	]
+};
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -66,7 +73,9 @@ describe( 'actions', () => {
 				.get( `/rest/v1.1/sites/${ SITE_ID }/stats/country-views` )
 				.reply( 404, {
 					error: 'not_found'
-				} );
+				} )
+				.get( `/rest/v1.1/sites/${ SITE_ID }/stats/video/31533` )
+				.reply( 200, VIDEO_RESPONSE );
 		} );
 
 		it( 'should dispatch a SITE_STATS_REQUEST', () => {
@@ -94,11 +103,23 @@ describe( 'actions', () => {
 
 		it( 'should dispatch SITE_STATS_REQUEST_SUCCESS action when request succeeds', () => {
 			return requestSiteStats( SITE_ID, STAT_TYPE, STREAK_QUERY )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).to.have.been.calledWithMatch( {
 					type: SITE_STATS_REQUEST_SUCCESS,
 					siteId: SITE_ID,
 					statType: STAT_TYPE,
-					query: STREAK_QUERY
+					query: STREAK_QUERY,
+				} );
+			} );
+		} );
+
+		it( 'should dispatch SITE_STATS_REQUEST_SUCCESS action when video stats request succeeds', () => {
+			return requestSiteStats( SITE_ID, STAT_TYPE_VIDEO, { postId: 31533 } )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: SITE_STATS_RECEIVE,
+					siteId: SITE_ID,
+					statType: STAT_TYPE_VIDEO,
+					data: VIDEO_RESPONSE,
+					query: { postId: 31533 }
 				} );
 			} );
 		} );

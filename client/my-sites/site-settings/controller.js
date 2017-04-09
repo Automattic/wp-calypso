@@ -18,7 +18,8 @@ import { sectionify } from 'lib/route/path';
 import SiteSettingsComponent from 'my-sites/site-settings/main';
 import sitesFactory from 'lib/sites-list';
 import StartOver from './start-over';
-import Taxonomies from './taxonomies';
+import ThemeSetup from './theme-setup';
+import DateTimeFormat from './date-time-format';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import titlecase from 'to-title-case';
 import utils from 'lib/site/utils';
@@ -168,14 +169,40 @@ module.exports = {
 
 		renderPage(
 			context,
-			<StartOver sites={ sites } path={ context.path } />
+			<StartOver path={ context.path } />
 		);
 	},
 
-	taxonomies( context ) {
+	themeSetup( context ) {
+		let site = sites.getSelectedSite();
+
+		if ( sites.initialized ) {
+			if ( site.jetpack ) {
+				return page( '/settings/general/' + site.slug );
+			}
+		} else {
+			sites.once( 'change', function() {
+				site = sites.getSelectedSite();
+				if ( site.jetpack ) {
+					return page( '/settings/general/' + site.slug );
+				}
+			} );
+		}
+
+		if ( ! config.isEnabled( 'settings/theme-setup' ) ) {
+			return page( '/settings/general/' + site.slug );
+		}
+
 		renderPage(
 			context,
-			<Taxonomies taxonomy={ context.params.taxonomy } postType="post" />
+			<ThemeSetup activeSiteDomain={ context.params.site_id } />
+		);
+	},
+
+	dateTimeFormat( context ) {
+		renderPage(
+			context,
+			<DateTimeFormat />
 		);
 	},
 

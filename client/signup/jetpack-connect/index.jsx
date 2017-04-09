@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -25,7 +26,6 @@ import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import Gridicon from 'components/gridicon';
 import MainWrapper from './main-wrapper';
 import StepHeader from '../step-header';
 import HelpButton from './help-button';
@@ -70,6 +70,7 @@ const JetpackConnectMain = React.createClass( {
 	getInitialState() {
 		return {
 			currentUrl: '',
+			waitingForSites: false
 		};
 	},
 
@@ -108,7 +109,7 @@ const JetpackConnectMain = React.createClass( {
 			jetpack_url: this.state.currentUrl
 		} );
 		if ( this.props.isRequestingSites ) {
-			this.waitingForSites = true;
+			this.setState( { waitingForSites: true } );
 		} else {
 			this.props.checkUrl(
 				this.state.currentUrl,
@@ -156,8 +157,8 @@ const JetpackConnectMain = React.createClass( {
 			return this.props.goToPlans( this.state.currentUrl );
 		}
 
-		if ( this.waitingForSites && ! this.props.isRequestingSites ) {
-			this.waitingForSites = false;
+		if ( this.state.waitingForSites && ! this.props.isRequestingSites ) {
+			this.setState( { waitingForSites: false } );
 			this.props.checkUrl(
 				this.state.currentUrl,
 				!! this.props.getJetpackSiteByUrl( this.state.currentUrl ),
@@ -323,7 +324,7 @@ const JetpackConnectMain = React.createClass( {
 					onClick={ this.onURLEnter }
 					onDismissClick={ this.onDismissClick }
 					isError={ this.getStatus() }
-					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() || this.waitingForSites }
+					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() || this.state.waitingForSites }
 					isInstall={ this.isInstall() } />
 			</Card>
 		);

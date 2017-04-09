@@ -3,14 +3,15 @@
  */
 import React from 'react';
 import find from 'lodash/find';
+import findIndex from 'lodash/findIndex';
 import i18n from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import { submitSignupStep } from 'lib/signup/actions';
 import signupUtils from 'signup/utils';
 import { get } from 'lodash';
@@ -22,8 +23,24 @@ const NavigationLink = React.createClass( {
 		flowName: React.PropTypes.string.isRequired,
 		positionInFlow: React.PropTypes.number,
 		previousPath: React.PropTypes.string,
-		signupProgressStore: React.PropTypes.array,
+		signupProgress: React.PropTypes.array,
 		stepName: React.PropTypes.string.isRequired
+	},
+
+	/**
+	 * Returns the previous step name, skipping over steps with the
+	 * `wasSkipped` property.
+	 *
+	 * @return {string|null} The previous step name
+	 */
+	getPreviousStepName() {
+		const { stepName, signupProgress } = this.props;
+
+		const currentStepIndex = findIndex( signupProgress, { stepName } );
+
+		const previousStep = find( signupProgress.slice( 0, currentStepIndex ).reverse(), step => ! step.wasSkipped );
+
+		return previousStep ? previousStep.stepName : null;
 	},
 
 	getBackUrl() {
@@ -35,9 +52,9 @@ const NavigationLink = React.createClass( {
 			return this.props.backUrl;
 		}
 
-		const previousStepName = signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName );
+		const previousStepName = this.getPreviousStepName();
 
-		const stepSectionName = get( find( this.props.signupProgressStore, { stepName: previousStepName } ), 'stepSectionName', '' );
+		const stepSectionName = get( find( this.props.signupProgress, { stepName: previousStepName } ), 'stepSectionName', '' );
 
 		return signupUtils.getStepUrl( this.props.flowName, previousStepName, stepSectionName, i18n.getLocaleSlug() );
 	},

@@ -23,7 +23,7 @@ export default React.createClass( {
 
 	render() {
 		if ( this.props.devices.get().length === 1 ) {
-			return ( <StreamHeader title={ this.props.devices.get()[0].device_name } /> );
+			return ( <StreamHeader title={ this.props.devices.get()[ 0 ].device_name } /> );
 		}
 
 		return (

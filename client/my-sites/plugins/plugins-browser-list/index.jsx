@@ -8,7 +8,7 @@ import React from 'react'
  */
 import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item'
 import Card from 'components/card'
-import Gridicon from 'components/gridicon'
+import Gridicon from 'gridicons'
 import SectionHeader from 'components/section-header'
 
 export default React.createClass( {
@@ -58,7 +58,7 @@ export default React.createClass( {
 		if ( this.props.expandedListLink ) {
 			return <a className="button is-link plugins-browser-list__select-all" href={ this.props.expandedListLink + ( this.props.site || '' ) }>
 				{ this.translate( 'See All' ) }
-				<Gridicon icon="chevron-right" size={ 12 } />
+				<Gridicon icon="chevron-right" size={ 18 } />
 			</a>;
 		}
 	},

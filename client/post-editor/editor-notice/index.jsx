@@ -16,6 +16,8 @@ import { getEditedPost } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { isMobile } from 'lib/viewport';
+import { isSitePreviewable } from 'state/sites/selectors';
 
 export class EditorNotice extends Component {
 	static propTypes = {
@@ -28,13 +30,15 @@ export class EditorNotice extends Component {
 		status: PropTypes.string,
 		action: PropTypes.string,
 		link: PropTypes.string,
+		onViewClick: PropTypes.func,
+		isSitePreviewable: PropTypes.bool,
 		onDismissClick: PropTypes.func,
 		error: PropTypes.object
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ( ! this.props.message && nextProps.message ) ||
-			( ! this.props.error && nextProps.error ) ) {
+		if ( isMobile() &&
+			( ( ! this.props.message && nextProps.message ) || ( ! this.props.error && nextProps.error ) ) ) {
 			// If we are showing a notice that didn't exist before, switch to the main editor view to show it
 			this.props.setLayoutFocus( 'content' );
 		}
@@ -56,6 +60,8 @@ export class EditorNotice extends Component {
 		const { translate, type, typeObject, site } = this.props;
 
 		switch ( key ) {
+			case 'warnPublishDateChange':
+				return translate( 'Are you sure about that? If you change the date, existing links to your post will stop working.' );
 			case 'publishFailure':
 				if ( 'page' === type ) {
 					return translate( 'Publishing of page failed.' );
@@ -83,9 +89,10 @@ export class EditorNotice extends Component {
 				}
 
 				if ( 'page' === type ) {
-					return translate( 'Page published on {{siteLink/}}!', {
+					return translate( 'Page published on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 						components: {
-							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>
+							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>,
+							a: <a href={ `/page/${ site.slug }` } />,
 						},
 						comment: 'Editor: Message displayed when a page is published, with a link to the site it was published on.'
 					} );
@@ -108,9 +115,10 @@ export class EditorNotice extends Component {
 				}
 
 				if ( 'page' === type ) {
-					return translate( 'Page scheduled on {{siteLink/}}!', {
+					return translate( 'Page scheduled on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 						components: {
-							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>
+							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>,
+							a: <a href={ `/page/${ site.slug }` } />,
 						},
 						comment: 'Editor: Message displayed when a page is scheduled, with a link to the site it was scheduled on.'
 					} );
@@ -133,9 +141,10 @@ export class EditorNotice extends Component {
 				}
 
 				if ( 'page' === type ) {
-					return translate( 'Page privately published on {{siteLink/}}!', {
+					return translate( 'Page privately published on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 						components: {
-							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>
+							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>,
+							a: <a href={ `/page/${ site.slug }` } />,
 						},
 						comment: 'Editor: Message displayed when a page is published privately,' +
 							' with a link to the site it was published on.'
@@ -172,9 +181,10 @@ export class EditorNotice extends Component {
 				}
 
 				if ( 'page' === type ) {
-					return translate( 'Page updated on {{siteLink/}}!', {
+					return translate( 'Page updated on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 						components: {
-							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>
+							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>,
+							a: <a href={ `/page/${ site.slug }` } />,
 						},
 						comment: 'Editor: Message displayed when a page is updated, with a link to the site it was updated on.'
 					} );
@@ -189,8 +199,32 @@ export class EditorNotice extends Component {
 		}
 	}
 
+	renderNoticeAction() {
+		const {
+			action,
+			isSitePreviewable: isPreviewable,
+			link,
+			onViewClick,
+		} = this.props;
+		if ( onViewClick && isPreviewable && link ) {
+			return (
+				<NoticeAction onClick={ onViewClick }>
+					{ this.getText( action ) }
+				</NoticeAction>
+			);
+		}
+
+		return (
+			link && (
+				<NoticeAction href={ link } external>
+					{ this.getText( action ) }
+				</NoticeAction>
+			)
+		);
+	}
+
 	render() {
-		const { siteId, message, status, action, link, onDismissClick } = this.props;
+		const { siteId, message, status, onDismissClick } = this.props;
 		const text = this.getErrorMessage() || this.getText( message );
 
 		return (
@@ -199,12 +233,9 @@ export class EditorNotice extends Component {
 				{ text && (
 					<Notice
 						{ ...{ status, text, onDismissClick } }
-						showDismiss={ 'is-success' !== status }>
-						{ link && (
-							<NoticeAction href={ link } external>
-								{ this.getText( action ) }
-							</NoticeAction>
-						) }
+						showDismiss={ true }
+					>
+						{ this.renderNoticeAction() }
 					</Notice>
 				) }
 			</div>
@@ -223,6 +254,7 @@ export default connect( ( state ) => {
 		siteId,
 		site: getSelectedSite( state ),
 		type: post.type,
-		typeObject: getPostType( state, siteId, post.type )
+		typeObject: getPostType( state, siteId, post.type ),
+		isSitePreviewable: isSitePreviewable( state, siteId ),
 	};
 }, { setLayoutFocus } )( localize( EditorNotice ) );

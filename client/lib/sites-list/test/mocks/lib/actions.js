@@ -1,20 +1,6 @@
-var site = require( '../../fixtures/site' );
+const site = require( '../../fixtures/site' );
 
-var Actions = {
-
-	disconnectSite: {
-		type: 'DISCONNECT_SITE',
-		action: 'DISCONNECT_SITE',
-		site: site
-	},
-
-	disconnectedSiteError: {
-		type: 'RECEIVE_DISCONNECTED_SITE',
-		action: 'DISCONNECT_SITE',
-		site: site,
-		data: {},
-		error: { error: 'unauthorized_access' }
-	},
+const Actions = {
 
 	removeNotices: {
 		type: 'REMOVE_SITES_NOTICES',

@@ -22,7 +22,7 @@ describe( 'actions', () => {
 		siteId = 1234,
 		purchaseId = 31337;
 
-	let cancelPrivateRegistration,
+	let cancelPrivacyProtection,
 		clearPurchases,
 		fetchSitePurchases,
 		fetchUserPurchases,
@@ -34,7 +34,7 @@ describe( 'actions', () => {
 
 		const actions = require( '../actions' );
 
-		cancelPrivateRegistration = actions.cancelPrivateRegistration;
+		cancelPrivacyProtection = actions.cancelPrivacyProtection;
 		clearPurchases = actions.clearPurchases;
 		fetchSitePurchases = actions.fetchSitePurchases;
 		fetchUserPurchases = actions.fetchUserPurchases;
@@ -55,7 +55,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#cancelPrivateRegistration', () => {
+	describe( '#cancelPrivacyProtection', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( `/rest/v1.1/upgrades/${ purchaseId }/cancel-privacy-protection` )
@@ -63,7 +63,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fetch/complete actions', () => {
-			const promise = cancelPrivateRegistration( purchaseId )( spy );
+			const promise = cancelPrivacyProtection( purchaseId )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PRIVACY_PROTECTION_CANCEL,

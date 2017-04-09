@@ -42,12 +42,13 @@ const messageParagraph = ( { message, key } ) => <p key={ key }>{ message }</p>;
  */
 const messageWithLinks = ( { message, key, links } ) => {
 	const children = links.reduce( ( { parts, last }, [ url, startIndex, length ] ) => {
+		const text = url;
 		let href = url;
 		let rel = null;
 		let target = null;
 
-		if ( isExternal( url ) ) {
-			href = addSchemeIfMissing( href, 'http' );
+		href = addSchemeIfMissing( href, 'http' );
+		if ( isExternal( href ) ) {
 			rel = 'noopener noreferrer';
 			target = '_blank';
 		} else if ( typeof window !== 'undefined' ) {
@@ -60,7 +61,7 @@ const messageWithLinks = ( { message, key, links } ) => {
 			parts = parts.concat( <span key={ parts.length }>{ message.slice( last, startIndex ) }</span> );
 		}
 
-		parts = parts.concat( <a key={ parts.length } href={ href } rel={ rel } target={ target }>{ href }</a> );
+		parts = parts.concat( <a key={ parts.length } href={ href } rel={ rel } target={ target }>{ text }</a> );
 
 		return { parts, last: startIndex + length };
 	}, { parts: [], last: 0 } );
@@ -110,19 +111,22 @@ const renderGroupedTimelineItem = first(
 );
 
 const groupMessages = messages => {
-	const grouped = messages.reduce( ( { user_id, type, group, groups }, message ) => {
+	const grouped = messages.reduce( ( { user_id, type, group, groups, source }, message ) => {
 		const message_user_id = message.user_id;
 		const message_type = message.type;
-		if ( user_id !== message_user_id || message_type !== type ) {
+		const message_source = message.source;
+		debug( 'compare source', message_source, message.source );
+		if ( user_id !== message_user_id || message_type !== type || message_source !== source ) {
 			return {
 				user_id: message_user_id,
 				type: message_type,
+				source: message_source,
 				group: [ message ],
 				groups: group ? groups.concat( [ group ] ) : groups
 			};
 		}
 		// it's the same user so group it together
-		return { user_id, group: group.concat( [ message ] ), groups, type };
+		return { user_id, group: group.concat( [ message ] ), groups, type, source };
 	}, { groups: [] } );
 
 	return grouped.groups.concat( [ grouped.group ] );
@@ -176,7 +180,9 @@ const mapProps = state => {
 	return {
 		connectionStatus: getHappychatConnectionStatus( state ),
 		timeline: getHappychatTimeline( state ),
-		isCurrentUser: ( { user_id } ) => user_id === current_user.ID,
+		isCurrentUser: ( { user_id, source } ) => {
+			return user_id.toString() === current_user.ID.toString() && source === 'customer';
+		},
 		currentUserEmail: current_user.email
 	};
 };

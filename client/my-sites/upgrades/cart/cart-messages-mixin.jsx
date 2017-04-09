@@ -11,6 +11,12 @@ import notices from 'notices';
 import { getNewMessages } from 'lib/cart-values';
 
 module.exports = {
+	componentDidMount() {
+		// Makes sure that we display any messages from the current cart
+		// that might have been delivered when the cart was unmounted
+		this.displayCartMessages( this.props.cart );
+	},
+
 	componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.cart.hasLoadedFromServer ) {
 			return;

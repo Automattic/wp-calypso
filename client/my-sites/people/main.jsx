@@ -63,7 +63,7 @@ export default React.createClass( {
 					<SidebarNavigation />
 					<JetpackManageErrorPage
 						template="updateJetpack"
-						site={ site }
+						siteId={ site.ID }
 						version="3.7"
 					/>
 				</Main>

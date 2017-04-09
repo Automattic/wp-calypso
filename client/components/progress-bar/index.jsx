@@ -26,12 +26,19 @@ module.exports = React.createClass( {
 		isPulsing: React.PropTypes.bool
 	},
 
+	getCompletionPercentage() {
+		const percentage = Math.ceil( this.props.value / this.props.total * 100 );
+
+		// The percentage should not be allowed to be more than 100
+		return Math.min( percentage, 100 );
+	},
+
 	renderBar() {
 		const title = this.props.title
 				? <span className="screen-reader-text">{ this.props.title }</span>
 				: null;
 
-		let styles = { width: Math.ceil( this.props.value / this.props.total * 100 ) + '%' };
+		const styles = { width: this.getCompletionPercentage() + '%' };
 		if ( this.props.color ) {
 			styles.backgroundColor = this.props.color;
 		}

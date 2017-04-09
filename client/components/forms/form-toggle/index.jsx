@@ -31,6 +31,7 @@ export default class FormToggle extends PureComponent {
 
 		this.onKeyDown = this.onKeyDown.bind( this );
 		this.onClick = this.onClick.bind( this );
+		this.onLabelClick = this.onLabelClick.bind( this );
 	}
 
 	componentWillMount() {
@@ -56,14 +57,29 @@ export default class FormToggle extends PureComponent {
 		}
 	}
 
+	onLabelClick( event ) {
+		if ( this.props.disabled ) {
+			return;
+		}
+
+		const nodeName = event.target.nodeName.toLowerCase();
+		if ( nodeName !== 'a' && nodeName !== 'input' && nodeName !== 'select' ) {
+			event.preventDefault();
+			this.props.onChange();
+		}
+	}
+
 	render() {
 		const id = this.props.id || 'toggle-' + this.id;
+		const wrapperClasses = classNames( 'form-toggle__wrapper', {
+			'is-disabled': this.props.disabled,
+		} );
 		const toggleClasses = classNames( 'form-toggle', this.props.className, {
 			'is-toggling': this.props.toggling
 		} );
 
 		return (
-			<span>
+			<span className={ wrapperClasses }>
 				<input
 					className={ toggleClasses }
 					type="checkbox"
@@ -73,7 +89,6 @@ export default class FormToggle extends PureComponent {
 					/>
 				<label className="form-toggle__label" htmlFor={ id } >
 					<span className="form-toggle__switch"
-						disabled={ this.props.disabled }
 						id={ id }
 						onClick={ this.onClick }
 						onKeyDown={ this.onKeyDown }
@@ -82,7 +97,9 @@ export default class FormToggle extends PureComponent {
 						aria-label={ this.props[ 'aria-label' ] }
 						tabIndex={ this.props.disabled ? -1 : 0 }
 						></span>
-					{ this.props.children }
+					<span className="form-toggle__label-content" onClick={ this.onLabelClick }>
+						{ this.props.children }
+					</span>
 				</label>
 			</span>
 		);

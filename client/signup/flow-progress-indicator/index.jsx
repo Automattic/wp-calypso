@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var flows = require( 'signup/config/flows' );
+import flows from 'signup/config/flows';
 
 module.exports = React.createClass( {
 	displayName: 'FlowProgressIndicator',

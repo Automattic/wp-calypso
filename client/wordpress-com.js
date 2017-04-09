@@ -1,15 +1,7 @@
 /**
- * External dependencies
- */
-var config = require( 'config' );
-
-/**
  * Module variables
  */
-var sections,
-	editorPaths;
-
-sections = [
+const sections = [
 	{
 		name: 'sites',
 		paths: [ '/sites' ],
@@ -116,9 +108,23 @@ sections = [
 		group: 'sites'
 	},
 	{
-		name: 'settings-seo',
-		paths: [ '/settings/seo' ],
-		module: 'my-sites/site-settings/seo-settings',
+		name: 'settings-writing',
+		paths: [ '/settings/writing', '/settings/taxonomies' ],
+		module: 'my-sites/site-settings/settings-writing',
+		secondary: true,
+		group: 'sites'
+	},
+	{
+		name: 'settings-discussion',
+		paths: [ '/settings/discussion' ],
+		module: 'my-sites/site-settings/settings-discussion',
+		secondary: true,
+		group: 'sites'
+	},
+	{
+		name: 'settings-traffic',
+		paths: [ '/settings/traffic', '/settings/seo', '/settings/analytics' ],
+		module: 'my-sites/site-settings/traffic',
 		secondary: true,
 		group: 'sites'
 	},
@@ -144,22 +150,24 @@ sections = [
 		secondary: true,
 		group: 'sites'
 	},
+	// Since we're using find() and startsWith() on paths, 'themes' needs to go before 'theme',
+	// or it'll be falsely associated with the latter section.
+	{
+		name: 'themes',
+		paths: [ '/themes', '/design' ],
+		module: 'my-sites/themes',
+		enableLoggedOut: true,
+		secondary: true,
+		group: 'sites',
+		isomorphic: true,
+		title: 'Themes'
+	},
 	{
 		name: 'theme',
 		paths: [ '/theme' ],
 		module: 'my-sites/theme',
 		enableLoggedOut: true,
 		secondary: false,
-		group: 'sites',
-		isomorphic: true,
-		title: 'Themes'
-	},
-	{
-		name: 'themes',
-		paths: [ '/design' ],
-		module: 'my-sites/themes',
-		enableLoggedOut: config.isEnabled( 'manage/themes/logged-out' ),
-		secondary: true,
 		group: 'sites',
 		isomorphic: true,
 		title: 'Themes'
@@ -177,210 +185,172 @@ sections = [
 		module: 'my-sites/plans',
 		secondary: true,
 		group: 'sites'
-	}
-];
-
-editorPaths = [ '/post', '/page' ];
-if ( config.isEnabled( 'manage/custom-post-types' ) ) {
-	editorPaths.push( '/edit' );
-}
-
-sections.push( {
-	name: 'post-editor',
-	paths: editorPaths,
-	module: 'post-editor',
-	group: 'editor',
-	secondary: true
-} );
-
-if ( config.isEnabled( 'account-recovery' ) ) {
-	sections.push( {
-		name: 'account-recovery',
-		paths: [ '/account-recovery' ],
-		module: 'account-recovery',
-		secondary: false,
-		enableLoggedOut: true,
-	} );
-}
-
-if ( config.isEnabled( 'manage/ads' ) ) {
-	sections.push( {
+	},
+	{
+		name: 'accept-invite',
+		paths: [ '/accept-invite' ],
+		module: 'my-sites/invites',
+		enableLoggedOut: true
+	},
+	{
 		name: 'ads',
 		paths: [ '/ads' ],
 		module: 'my-sites/ads',
 		secondary: true,
 		group: 'sites'
-	} );
-}
-
-if ( config.isEnabled( 'manage/drafts' ) ) {
-	sections.push( {
-		name: 'posts-pages',
-		paths: [ '/drafts' ],
-		module: 'my-sites/drafts',
-		secondary: true,
-		group: 'sites'
-	} );
-}
-
-if ( config.isEnabled( 'reader' ) ) {
-	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
-	sections.push( {
-		name: 'reader',
-		paths: [ '/', '/read' ],
-		module: 'reader',
-		secondary: true,
-		group: 'reader',
-	} );
-
-	sections.push( {
-		name: 'reader',
-		paths: [ '/read/feeds/[^\\/]+/posts/[^\\/]+', '/read/blogs/[^\\/]+/posts/[^\\/]+' ],
-		module: 'reader/full-post',
-		secondary: false,
-		group: 'reader'
-	} );
-
-	sections.push( {
-		name: 'reader-post-recomendations',
-		paths: [ '/recommendations/posts' ],
-		module: 'reader/recommendations',
-		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
-		name: 'reader-recomendations',
-		paths: [ '/recommendations' ],
-		module: 'reader/recommendations',
-		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
-		name: 'discover',
-		paths: [ '/discover' ],
-		module: 'reader/discover',
-		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
-		name: 'reader-following',
-		paths: [ '/following' ],
-		module: 'reader/following',
-		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
-		name: 'reader-tags',
-		paths: [ '/tags', '/tag' ],
-		module: 'reader/tag-stream',
-		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
-		name: 'reader-activities',
-		paths: [ '/activities' ],
-		module: 'reader/liked-stream',
-		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
-		name: 'reader-search',
-		paths: [ '/read/search' ],
-		module: 'reader/search',
-		secondary: true,
-		group: 'reader'
-	} );
-
-	sections.push( {
-		name: 'reader-list',
-		paths: [ '/read/list' ],
-		module: 'reader/list',
-		secondary: true,
-		group: 'reader'
-	} );
-
-	if ( config.isEnabled( 'reader/start' ) ) {
-		sections.push( {
-			name: 'reader-start',
-			paths: [ '/recommendations/start' ],
-			module: 'reader/start',
-			secondary: true,
-			group: 'reader'
-		} );
-	}
-}
-
-if ( config.isEnabled( 'vip' ) ) {
-	sections.push( {
-		name: 'vip',
-		paths: [ '/vip', '/vip/deploys', '/vip/billing', '/vip/support', '/vip/backups', '/vip/logs' ],
-		module: 'vip',
-		secondary: true
-	} );
-}
-
-if ( config.isEnabled( 'help' ) ) {
-	sections.push( {
-		name: 'help',
-		paths: [ '/help' ],
-		module: 'me/help',
-		secondary: true,
-		group: 'me'
-	} );
-}
-
-if ( config.isEnabled( 'accept-invite' ) ) {
-	sections.push( {
-		name: 'accept-invite',
-		paths: [ '/accept-invite' ],
-		module: 'my-sites/invites',
-		enableLoggedOut: true
-	} );
-}
-
-if ( config.isEnabled( 'oauth' ) ) {
-	sections.push( {
-		name: 'auth',
-		paths: [ '/login', '/authorize', '/api/oauth/token' ],
-		module: 'auth',
-		secondary: false,
-		enableLoggedOut: true
-	} );
-}
-
-if ( config.isEnabled( 'mailing-lists/unsubscribe' ) ) {
-	sections.push( {
+	},
+	{
 		name: 'mailing-lists',
-		paths: [ '/mailing-lists' ],
+		paths: [ '/mailing-lists/unsubscribe' ],
 		module: 'mailing-lists',
 		enableLoggedOut: true
-	} );
-}
+	}
+];
 
-if ( config.isEnabled( 'manage/custom-post-types' ) ) {
-	sections.push( {
-		name: 'posts-custom',
-		paths: [ '/types' ],
-		module: 'my-sites/types',
-		secondary: true,
-		group: 'sites'
-	} );
-}
+sections.push( {
+	name: 'post-editor',
+	paths: [ '/post', '/page', '/edit' ],
+	module: 'post-editor',
+	group: 'editor',
+	secondary: true
+} );
 
-if ( config.isEnabled( 'happychat' ) ) {
-	sections.push( {
-		name: 'happychat',
-		paths: [ '/me/chat' ],
-		module: 'me/happychat',
-		group: 'me',
-		secondary: true
-	} );
-}
+sections.push( {
+	name: 'account-recovery',
+	paths: [ '/account-recovery' ],
+	module: 'account-recovery',
+	secondary: false,
+	enableLoggedOut: true,
+} );
+
+sections.push( {
+	name: 'posts-pages',
+	paths: [ '/drafts' ],
+	module: 'my-sites/drafts',
+	secondary: true,
+	group: 'sites'
+} );
+
+// this MUST be the first section for /read paths so subsequent sections under /read can override settings
+sections.push( {
+	name: 'reader',
+	paths: [ '/', '/read' ],
+	module: 'reader',
+	secondary: true,
+	group: 'reader',
+} );
+
+sections.push( {
+	name: 'reader',
+	paths: [ '/read/feeds/[^\\/]+/posts/[^\\/]+', '/read/blogs/[^\\/]+/posts/[^\\/]+' ],
+	module: 'reader/full-post',
+	secondary: false,
+	group: 'reader'
+} );
+
+sections.push( {
+	name: 'reader',
+	paths: [ '/recommendations/posts' ],
+	module: 'reader/recommendations',
+	secondary: true,
+	group: 'reader'
+} );
+
+sections.push( {
+	name: 'reader',
+	paths: [ '/recommendations' ],
+	module: 'reader/recommendations',
+	secondary: true,
+	group: 'reader'
+} );
+
+sections.push( {
+	name: 'reader',
+	paths: [ '/discover' ],
+	module: 'reader/discover',
+	secondary: true,
+	group: 'reader'
+} );
+
+sections.push( {
+	name: 'reader',
+	paths: [ '/following' ],
+	module: 'reader/following',
+	secondary: true,
+	group: 'reader'
+} );
+
+sections.push( {
+	name: 'reader',
+	paths: [ '/tags', '/tag' ],
+	module: 'reader/tag-stream',
+	secondary: true,
+	group: 'reader'
+} );
+
+sections.push( {
+	name: 'reader',
+	paths: [ '/activities' ],
+	module: 'reader/liked-stream',
+	secondary: true,
+	group: 'reader'
+} );
+
+sections.push( {
+	name: 'reader',
+	paths: [ '/read/search' ],
+	module: 'reader/search',
+	secondary: true,
+	group: 'reader'
+} );
+
+sections.push( {
+	name: 'reader',
+	paths: [ '/read/list' ],
+	module: 'reader/list',
+	secondary: true,
+	group: 'reader'
+} );
+
+sections.push( {
+	name: 'help',
+	paths: [ '/help' ],
+	module: 'me/help',
+	secondary: true,
+	enableLoggedOut: true,
+	group: 'me'
+} );
+
+sections.push( {
+	name: 'login',
+	paths: [ '/login' ],
+	module: 'login',
+	secondary: false,
+	enableLoggedOut: true
+} );
+
+sections.push( {
+	name: 'auth',
+	paths: [ '/oauth-login', '/authorize', '/api/oauth/token' ],
+	module: 'auth',
+	secondary: false,
+	enableLoggedOut: true
+} );
+
+sections.push( {
+	name: 'posts-custom',
+	paths: [ '/types' ],
+	module: 'my-sites/types',
+	secondary: true,
+	group: 'sites'
+} );
+
+sections.push( {
+	name: 'happychat',
+	paths: [ '/me/chat' ],
+	module: 'me/happychat',
+	group: 'me',
+	secondary: true
+} );
 
 module.exports = sections;

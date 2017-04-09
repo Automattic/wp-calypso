@@ -40,8 +40,8 @@ module.exports = function() {
 		page( '/stats/page/:post_id/:site_id', controller.siteSelection, controller.navigation, statsController.post );
 
 		// Stat Follows Page
-		page( '/stats/follows/:follow_type/:site_id', controller.siteSelection, controller.navigation, statsController.follows );
-		page( '/stats/follows/:follow_type/:page_num/:site_id', controller.siteSelection, controller.navigation, statsController.follows );
+		page( '/stats/follows/comment/:site_id', controller.siteSelection, controller.navigation, statsController.follows );
+		page( '/stats/follows/comment/:page_num/:site_id', controller.siteSelection, controller.navigation, statsController.follows );
 
 		// Reset first view
 		if ( config.isEnabled( 'ui/first-view/reset-route' ) ) {

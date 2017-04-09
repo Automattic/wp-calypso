@@ -2,27 +2,22 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { findDOMNode } from 'react-dom';
 /**
  * Internal dependencies
  */
 import viewport from 'lib/viewport';
-import { connectChat } from 'state/happychat/actions';
-import { openChat } from 'state/ui/happychat/actions';
-import { getHappychatConnectionStatus } from 'state/happychat/selectors';
-import { timeline, composer } from 'components/happychat/helpers';
+import HappychatConnection from 'components/happychat/connection';
+import Composer from 'components/happychat/composer';
+import Notices from 'components/happychat/notices';
+import Timeline from 'components/happychat/timeline';
 
 /**
  * React component for rendering a happychat client as a full page
  */
 class HappychatPage extends Component {
-	componentDidMount() {
-		this.props.openChat();
-		this.props.connectChat();
-	}
-
 	onFocus() {
+		// TODO: Is this function ever called? I can't seem to get it to trigger --mattwondra
 		const composerNode = findDOMNode( this.refs.composer );
 
 		if ( viewport.isMobile() ) {
@@ -32,18 +27,15 @@ class HappychatPage extends Component {
 	}
 
 	render() {
-		const { connectionStatus } = this.props;
 		return (
 			<div className="happychat__page" aria-live="polite" aria-relevant="additions">
-				{ timeline( { connectionStatus } ) }
-				{ composer( { connectionStatus } ) }
+				<HappychatConnection />
+				<Timeline />
+				<Notices />
+				<Composer />
 			</div>
 		);
 	}
 }
 
-const mapState = state => ( {
-	connectionStatus: getHappychatConnectionStatus( state )
-} );
-
-export default connect( mapState, { connectChat, openChat } )( HappychatPage );
+export default HappychatPage;

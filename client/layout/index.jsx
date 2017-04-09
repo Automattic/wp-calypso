@@ -10,7 +10,8 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
+var AsyncLoad = require( 'components/async-load' ),
+	MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	MasterbarLoggedOut = require( 'layout/masterbar/logged-out' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	GlobalNotices = require( 'components/global-notices' ),
@@ -18,22 +19,18 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	translator = require( 'lib/translator-jumpstart' ),
 	TranslatorInvitation = require( './community-translator/invitation' ),
 	TranslatorLauncher = require( './community-translator/launcher' ),
-	PushNotificationPrompt = require( 'components/push-notification/prompt' ),
 	Welcome = require( 'my-sites/welcome/welcome' ),
 	WelcomeMessage = require( 'layout/nux-welcome/welcome-message' ),
 	GuidedTours = require( 'layout/guided-tours' ),
 	analytics = require( 'lib/analytics' ),
 	config = require( 'config' ),
-	abtest = require( 'lib/abtest' ).abtest,
 	PulsingDot = require( 'components/pulsing-dot' ),
 	SitesListNotices = require( 'lib/sites-list/notices' ),
 	OfflineStatus = require( 'layout/offline-status' ),
-	PollerPool = require( 'lib/data-poller' ),
 	QueryPreferences = require( 'components/data/query-preferences' ),
 	KeyboardShortcutsMenu,
 	Layout,
-	SupportUser,
-	Happychat = require( 'components/happychat' );
+	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
@@ -41,6 +38,7 @@ import { isHappychatOpen } from 'state/ui/happychat/selectors';
 import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
+import NpsSurveyNotice from 'layout/nps-survey-notice';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -55,12 +53,9 @@ Layout = React.createClass( {
 
 	mixins: [ SitesListNotices, observe( 'user', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
 
-	_sitesPoller: null,
-
 	propTypes: {
 		primary: React.PropTypes.element,
 		secondary: React.PropTypes.element,
-		tertiary: React.PropTypes.element,
 		sites: React.PropTypes.object,
 		user: React.PropTypes.object,
 		nuxWelcome: React.PropTypes.object,
@@ -76,33 +71,6 @@ Layout = React.createClass( {
 		isOffline: React.PropTypes.bool,
 	},
 
-	componentWillUpdate: function( nextProps ) {
-		if ( this.props.section.group !== nextProps.section.group ) {
-			if ( nextProps.section.group === 'sites' ) {
-				setTimeout( function() {
-					if ( ! this.isMounted() || this._sitesPoller ) {
-						return;
-					}
-					this._sitesPoller = PollerPool.add( this.props.sites, 'fetchAvailableUpdates', { interval: 900000 } );
-				}.bind( this ), 0 );
-			} else {
-				this.removeSitesPoller();
-			}
-		}
-	},
-
-	componentWillUnmount: function() {
-		this.removeSitesPoller();
-	},
-
-	removeSitesPoller: function() {
-		if ( ! this._sitesPoller ) {
-			return;
-		}
-
-		PollerPool.remove( this._sitesPoller );
-		this._sitesPoller = null;
-	},
 	closeWelcome: function() {
 		this.props.nuxWelcome.closeWelcome();
 		analytics.ga.recordEvent( 'Welcome Box', 'Clicked Close Button' );
@@ -112,24 +80,7 @@ Layout = React.createClass( {
 		return sortBy( this.props.sites.get(), property( 'ID' ) ).pop();
 	},
 
-	renderPushNotificationPrompt: function() {
-		const participantInAbTest = abtest( 'browserNotifications' ) === 'enabled';
-		if ( ! ( config.isEnabled( 'push-notifications' ) && participantInAbTest ) ) {
-			return null;
-		}
-
-		if ( ! this.props.user ) {
-			return null;
-		}
-
-		return <PushNotificationPrompt user={ this.props.user } section={ this.props.section } isLoading={ this.props.isLoading } />;
-	},
-
 	renderMasterbar: function() {
-		if ( 'login' === this.props.section.name ) {
-			return null;
-		}
-
 		if ( ! this.props.user ) {
 			return <MasterbarLoggedOut showSignup={ 'signup' !== this.props.section.name } />;
 		}
@@ -193,7 +144,8 @@ Layout = React.createClass( {
 			<div className={ sectionClass }>
 				<DocumentHead />
 				<QueryPreferences />
-				{ config.isEnabled( 'guided-tours' ) ? <GuidedTours /> : null }
+				{ <GuidedTours /> }
+				{ config.isEnabled( 'nps-survey/notice' ) && <NpsSurveyNotice /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
@@ -201,7 +153,6 @@ Layout = React.createClass( {
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ this.renderWelcome() }
-					{ this.renderPushNotificationPrompt() }
 					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
 					<div id="primary" className="layout__primary">
 						{ this.props.primary }
@@ -210,14 +161,11 @@ Layout = React.createClass( {
 						{ this.props.secondary }
 					</div>
 				</div>
-				<div id="tertiary">
-					{ this.props.tertiary }
-				</div>
 				<TranslatorLauncher
 					isEnabled={ translator.isEnabled() }
 					isActive={ translator.isActivated() }/>
 				{ this.renderPreview() }
-				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <Happychat /> }
+				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
 			</div>
 		);
 	}

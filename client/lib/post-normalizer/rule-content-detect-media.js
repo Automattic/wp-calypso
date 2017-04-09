@@ -7,7 +7,7 @@ import getEmbedMetadata from 'get-video-id';
 /**
  * Internal Dependencies
  */
-import { iframeIsWhitelisted, maxWidthPhotonishURL } from './utils';
+import { iframeIsWhitelisted, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
 import { READER_CONTENT_WIDTH } from 'state/reader/posts/normalization-rules';
 
 /** Checks whether or not an image is a tracking pixel
@@ -52,10 +52,11 @@ function isCandidateForContentImage( image ) {
 */
 const detectImage = ( image ) => {
 	if ( isCandidateForContentImage( image ) ) {
+		const { width, height } = deduceImageWidthAndHeight( image ) || { width: 0, height: 0 };
 		return {
 			src: maxWidthPhotonishURL( image.getAttribute( 'src' ), READER_CONTENT_WIDTH ),
-			width: image.width,
-			height: image.height,
+			width: width,
+			height: height,
 			mediaType: 'image',
 		};
 	}

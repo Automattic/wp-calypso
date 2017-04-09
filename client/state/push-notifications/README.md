@@ -31,7 +31,6 @@ function mapStateToProps( state ) => {
 	};
 }
 const mapDispatchToProps = {
-	dismissNotice,
 	toggleEnabled
 };
 

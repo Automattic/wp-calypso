@@ -27,6 +27,7 @@ class SharingConnection extends Component {
 		recordGoogleEvent: PropTypes.func,
 		service: PropTypes.object.isRequired,       // The service to which the connection is made
 		showDisconnect: PropTypes.bool,             // Display an inline disconnect button
+		siteId: PropTypes.number,                   // The Id of the current site.
 		translate: PropTypes.func,
 		userHasCaps: PropTypes.bool,                // Whether the current users has the caps to delete a connection.
 		userId: PropTypes.number,                   // The Id of the current user.
@@ -40,6 +41,7 @@ class SharingConnection extends Component {
 		onToggleSitewideConnection: () => {},
 		recordGoogleEvent: () => {},
 		showDisconnect: false,
+		siteId: 0,
 		translate: identity,
 		userHasCaps: false,
 		userId: 0,
@@ -47,7 +49,7 @@ class SharingConnection extends Component {
 
 	disconnect = () => {
 		if ( ! this.props.isDisconnecting ) {
-			this.props.onDisconnect( this.props.connection );
+			this.props.onDisconnect( [ this.props.connection ] );
 		}
 	};
 
@@ -124,12 +126,13 @@ class SharingConnection extends Component {
 	}
 
 	getConnectionKeyringUserLabel() {
-		const keyringUser = site().getUser( this.props.connection.keyring_connection_user_ID );
+		const { connection, siteId, translate, userId } = this.props;
+		const keyringUser = site( { ID: siteId } ).getUser( connection.keyring_connection_user_ID );
 
-		if ( keyringUser && this.props.userId !== keyringUser.ID ) {
+		if ( keyringUser && userId !== keyringUser.ID ) {
 			return (
 				<aside className="sharing-connection__keyring-user">
-					{ this.props.translate( 'Connected by %(username)s', {
+					{ translate( 'Connected by %(username)s', {
 						args: { username: keyringUser.nice_name },
 						context: 'Sharing: connections'
 					} ) }
@@ -194,9 +197,14 @@ class SharingConnection extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		userHasCaps: canCurrentUser( state, getSelectedSiteId( state ), 'edit_others_posts' ),
-		userId: getCurrentUserId( state ),
-	} ),
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			siteId,
+			userHasCaps: canCurrentUser( state, siteId, 'edit_others_posts' ),
+			userId: getCurrentUserId( state ),
+		};
+	},
 	{ recordGoogleEvent },
 )( localize( SharingConnection ) );

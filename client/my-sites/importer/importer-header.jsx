@@ -75,11 +75,11 @@ export const ImporterHeader = React.createClass( {
 		}
 
 		if ( includes( cancelStates, importerState ) ) {
-			return this.translate( 'Cancel', { context: 'verb' } );
+			return this.translate( 'Close', { context: 'verb, to Close a dialog' } );
 		}
 
 		if ( includes( stopStates, importerState ) ) {
-			return this.translate( 'Stop Import', { context: 'verb' } );
+			return this.translate( 'Importing...' );
 		}
 
 		if ( includes( doneStates, importerState ) ) {
@@ -89,9 +89,8 @@ export const ImporterHeader = React.createClass( {
 
 	render: function() {
 		const { importerStatus: { importerState }, icon, isEnabled, title, description } = this.props;
-		const canCancel = isEnabled && ! includes( [ appStates.UPLOADING ], importerState );
-		const isScary = includes( [ ...stopStates, ...cancelStates ], importerState );
-
+		const canCancel = isEnabled && ! includes( [ appStates.UPLOADING, ...stopStates ], importerState );
+		const isScary = includes( [ ...cancelStates ], importerState );
 		return (
 			<header className="importer-service">
 				{ includes( [ 'wordpress', 'medium' ], icon )
@@ -100,7 +99,7 @@ export const ImporterHeader = React.createClass( {
 				<Button
 					className="importer__master-control"
 					disabled={ ! canCancel }
-					isPrimary={ false }
+					isPrimary={ true }
 					scary={ isScary }
 					onClick={ this.controlButtonClicked }
 				>

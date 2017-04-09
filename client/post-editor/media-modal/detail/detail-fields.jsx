@@ -1,145 +1,165 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	debounce = require( 'lodash/debounce' ),
-	assign = require( 'lodash/assign' ),
-	debug = require( 'debug' )( 'calypso:editor-media-modal' );
+import ReactDom from 'react-dom';
+import React, { Component, PropTypes } from 'react';
+import debounce from 'lodash/debounce';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
-	MediaUtils = require( 'lib/media/utils' ),
-	MediaActions = require( 'lib/media/actions' ),
-	ClipboardButtonInput = require( 'components/clipboard-button-input' ),
-	FormTextarea = require( 'components/forms/form-textarea' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	TrackInputChanges = require( 'components/track-input-changes' ),
-	EditorMediaModalFieldset = require( '../fieldset' );
+import analytics from 'lib/analytics';
+import MediaUtils from 'lib/media/utils';
+import MediaActions from 'lib/media/actions';
+import ClipboardButtonInput from 'components/clipboard-button-input';
+import FormTextarea from 'components/forms/form-textarea';
+import FormTextInput from 'components/forms/form-text-input';
+import TrackInputChanges from 'components/track-input-changes';
+import EditorMediaModalFieldset from '../fieldset';
 
-module.exports = React.createClass( {
-	displayName: 'EditorMediaModalDetailFields',
+class EditorMediaModalDetailFields extends Component {
+	static propTypes = {
+		site: PropTypes.object,
+		item: PropTypes.object
+	};
 
-	propTypes: {
-		site: React.PropTypes.object,
-		item: React.PropTypes.object
-	},
-
-	getInitialState: function() {
-		return {};
-	},
-
-	componentWillMount: function() {
+	constructor() {
+		super( ...arguments );
 		this.persistChange = debounce( this.persistChange, 1000 );
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
-		if ( this.props.item && nextProps.item && nextProps.item.ID !== this.props.item.ID ) {
-			this.setState( {
-				modifiedItem: null
-			} );
-
+	componentWillReceiveProps( nextProps ) {
+		if (
+			this.props.item &&
+			nextProps.item &&
+			nextProps.item.ID !== this.props.item.ID
+		) {
+			this.setState( { modifiedItem: null } );
 			this.persistChange.cancel();
 		}
-	},
+	}
 
-	bumpStat: function( stat ) {
-		switch ( stat ) {
-			case 'alt':
-				analytics.ga.recordEvent( 'Media', 'Changed Image Alt' );
-				break;
+	bumpTitleStat = () => {
+		analytics.ga.recordEvent( 'Media', 'Changed Item Title' );
+		analytics.mc.bumpStat( 'calypso_media_edit_details', 'title' );
+	};
 
-			case 'caption':
-				analytics.ga.recordEvent( 'Media', 'Changed Item Caption' );
-				break;
+	bumpAltStat = () => {
+		analytics.ga.recordEvent( 'Media', 'Changed Image Alt' );
+		analytics.mc.bumpStat( 'calypso_media_edit_details', 'alt' );
+	};
 
-			case 'description':
-				analytics.ga.recordEvent( 'Media', 'Changed Item Description' );
-				break;
-		}
+	bumpCaptionStat = () => {
+		analytics.ga.recordEvent( 'Media', 'Changed Item Caption' );
+		analytics.mc.bumpStat( 'calypso_media_edit_details', 'caption' );
+	};
 
-		analytics.mc.bumpStat( 'calypso_media_edit_details', stat );
-	},
+	bumpDescriptionStat = () => {
+		analytics.ga.recordEvent( 'Media', 'Changed Item Description' );
+		analytics.mc.bumpStat( 'calypso_media_edit_details', 'description' );
+	};
 
-	isMimePrefix: function( prefix ) {
+	isMimePrefix( prefix ) {
 		return MediaUtils.getMimePrefix( this.props.item ) === prefix;
-	},
+	}
 
-	persistChange: function() {
+	persistChange() {
 		if ( ! this.props.site || ! this.state.modifiedItem ) {
 			return;
 		}
 
-		debug( 'Update media to %o', this.state.modifiedItem );
 		MediaActions.update( this.props.site.ID, this.state.modifiedItem );
-	},
+	}
 
-	onChange: function( event ) {
-		var modifiedItem = assign( {
-			ID: this.props.item.ID
-		}, this.state.modifiedItem, {
-			[ event.target.name ]: event.target.value
-		} );
+	setFieldValue = ( { target } ) => {
+		const modifiedItem = Object.assign(
+			{ ID: this.props.item.ID },
+			get( this.state, 'modifiedItem', {} ),
+			{ [ target.name ]: target.value }
+		);
 
-		this.setState( {
-			modifiedItem: modifiedItem
-		} );
-
+		this.setState( { modifiedItem } );
 		this.persistChange();
-	},
+	};
 
-	getItemValue: function( attribute ) {
-		if ( this.state.modifiedItem && attribute in this.state.modifiedItem ) {
-			return this.state.modifiedItem[ attribute ];
+	getItemValue( attribute ) {
+		const modifiedValue = get( this.state, [ 'modifiedItem', attribute ], null );
+		if ( modifiedValue !== null ) {
+			return modifiedValue;
 		}
 
 		if ( this.props.item ) {
 			return this.props.item[ attribute ];
 		}
-	},
+	}
 
-	scrollToShowVisibleDropdown: function( event ) {
+	scrollToShowVisibleDropdown = ( event ) => {
 		if ( ! event.open || ! ( 'scrollIntoView' in window.Element.prototype ) ) {
 			return;
 		}
 
 		ReactDom.findDOMNode( event.target ).scrollIntoView();
-	},
+	}
 
-	renderImageAltText: function() {
+	renderImageAltText() {
 		if ( ! this.isMimePrefix( 'image' ) ) {
-			return;
+			return null;
 		}
 
 		return (
-			<EditorMediaModalFieldset legend={ this.translate( 'Alt text' ) }>
-				<TrackInputChanges onNewValue={ this.bumpStat.bind( this, 'alt' ) }>
-					<FormTextInput name="alt" value={ this.getItemValue( 'alt' ) } onChange={ this.onChange } />
+			<EditorMediaModalFieldset legend={ this.props.translate( 'Alt text' ) }>
+				<TrackInputChanges onNewValue={ this.bumpAltStat }>
+					<FormTextInput
+						name="alt"
+						value={ this.getItemValue( 'alt' ) }
+						onChange={ this.setFieldValue } />
 				</TrackInputChanges>
 			</EditorMediaModalFieldset>
 		);
-	},
+	}
 
-	render: function() {
+	render() {
+		const { translate } = this.props;
 		return (
 			<div className="editor-media-modal-detail__fields">
-				<EditorMediaModalFieldset legend={ this.translate( 'Caption' ) }>
-					<TrackInputChanges onNewValue={ this.bumpStat.bind( this, 'caption' ) }>
-						<FormTextarea name="caption" value={ this.getItemValue( 'caption' ) } onChange={ this.onChange } />
+				<EditorMediaModalFieldset legend={ translate( 'Title' ) }>
+					<TrackInputChanges onNewValue={ this.bumpTitleStat }>
+						<FormTextInput
+							name="title"
+							value={ this.getItemValue( 'title' ) }
+							onChange={ this.setFieldValue } />
 					</TrackInputChanges>
 				</EditorMediaModalFieldset>
+
+				<EditorMediaModalFieldset legend={ translate( 'Caption' ) }>
+					<TrackInputChanges onNewValue={ this.bumpCaptionStat }>
+						<FormTextarea
+							name="caption"
+							value={ this.getItemValue( 'caption' ) }
+							onChange={ this.setFieldValue } />
+					</TrackInputChanges>
+				</EditorMediaModalFieldset>
+
 				{ this.renderImageAltText() }
-				<EditorMediaModalFieldset legend={ this.translate( 'Description' ) }>
-					<TrackInputChanges onNewValue={ this.bumpStat.bind( this, 'description' ) }>
-						<FormTextInput name="description" value={ this.getItemValue( 'description' ) } onChange={ this.onChange } />
+
+				<EditorMediaModalFieldset legend={ translate( 'Description' ) }>
+					<TrackInputChanges onNewValue={ this.bumpDescriptionStat }>
+						<FormTextarea
+							name="description"
+							value={ this.getItemValue( 'description' ) }
+							onChange={ this.setFieldValue } />
 					</TrackInputChanges>
 				</EditorMediaModalFieldset>
-				<EditorMediaModalFieldset legend={ this.translate( 'URL' ) }>
+
+				<EditorMediaModalFieldset legend={ translate( 'URL' ) }>
 					<ClipboardButtonInput value={ MediaUtils.url( this.props.item ) } />
 				</EditorMediaModalFieldset>
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( EditorMediaModalDetailFields );
+

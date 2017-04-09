@@ -6,7 +6,7 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var Gridicon = require( 'components/gridicon' );
+var Gridicon = require( 'gridicons' );
 
 module.exports = React.createClass( {
 	displayName: 'MediaLibraryListItemFileDetails',

@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,18 +27,17 @@ import GoogleVouchers from './google-vouchers';
 import CustomizeTheme from './customize-theme';
 import VideoAudioPosts from './video-audio-posts';
 import MonetizeSite from './monetize-site';
-import LiveCourses from './live-courses';
+import BusinessOnboarding from './business-onboarding';
 import CustomDomain from './custom-domain';
 import GoogleAnalyticsStats from './google-analytics-stats';
 import JetpackAntiSpam from './jetpack-anti-spam';
 import JetpackBackupSecurity from './jetpack-backup-security';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
-import JetpackSurveysPolls from './jetpack-surveys-polls';
 import JetpackWordPressCom from './jetpack-wordpress-com';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
-import { isPressableSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {
@@ -66,14 +66,12 @@ class ProductPurchaseFeaturesList extends Component {
 		const {
 			selectedSite,
 			planHasDomainCredit,
-			isPressableSite
 		} = this.props;
 
 		return [
 			<CustomDomain
 				selectedSite={ selectedSite }
 				hasDomainCredit={ planHasDomainCredit }
-				isPressableSite={ isPressableSite }
 				key="customDomainFeature"
 			/>,
 			<AdvertisingRemoved
@@ -88,8 +86,9 @@ class ProductPurchaseFeaturesList extends Component {
 				selectedSite={ selectedSite }
 				key="customizeThemeFeature"
 			/>,
-			<LiveCourses
-				key="attendLiveCourses"
+			<BusinessOnboarding
+				key="businessOnboarding"
+				onClick={ this.props.recordBusinessOnboardingClick }
 			/>,
 			<VideoAudioPosts
 				selectedSite={ selectedSite }
@@ -235,9 +234,6 @@ class ProductPurchaseFeaturesList extends Component {
 			<JetpackAntiSpam
 				key="jetpackAntiSpam"
 			/>,
-			<JetpackSurveysPolls
-				key="jetpackSurveysPolls"
-			/>,
 			<JetpackWordPressCom
 				selectedSite={ selectedSite }
 				key="jetpackWordPressCom"
@@ -295,8 +291,10 @@ export default connect(
 
 		return {
 			selectedSite,
-			isPressableSite: !! isPressableSite( state, selectedSiteId ),
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId )
 		};
+	},
+	{
+		recordBusinessOnboardingClick: partial( recordTracksEvent, 'calypso_plan_features_onboarding_click' )
 	}
 )( ProductPurchaseFeaturesList );

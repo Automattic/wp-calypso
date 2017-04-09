@@ -25,7 +25,6 @@ describe( 'main', function() {
 
 		before( function() {
 			mockery.registerMock( 'my-sites/themes/theme-preview', EmptyComponent );
-			mockery.registerMock( 'my-sites/themes/thanks-modal', EmptyComponent );
 			mockery.registerMock( 'my-sites/themes/themes-site-selector-modal', EmptyComponent );
 			mockery.registerMock( 'components/data/query-user-purchases', EmptyComponent );
 			mockery.registerMock( 'components/data/query-site-purchases', EmptyComponent );

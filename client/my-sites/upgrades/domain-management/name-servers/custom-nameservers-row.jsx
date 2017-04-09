@@ -2,13 +2,13 @@
  * External dependencies
  */
 import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import analyticsMixin from 'lib/mixins/analytics';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 
 const CustomNameserversRow = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'nameServers' ) ],

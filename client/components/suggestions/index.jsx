@@ -7,88 +7,108 @@ import {
 	noop,
 	pick,
 	pickBy,
+	without,
 	negate,
 	isEmpty,
-	take
+	take,
+	sortBy,
+	partition,
+	includes,
 } from 'lodash';
 import classNames from 'classnames';
+import i18n from 'i18n-calypso';
 
-const Suggestions = React.createClass( {
+function SuggestionsButtonAll( props ) {
+	function click() {
+		return props.onClick( props.category );
+	}
 
-	propTypes: {
+	return <span
+		className="suggestions__category-show-all"
+		onClick={ click }>
+		{ props.label }
+	</span>;
+}
+
+class Suggestions extends React.Component {
+
+	static propTypes = {
 		suggest: React.PropTypes.func,
 		terms: React.PropTypes.object,
 		input: React.PropTypes.string,
-	},
+	}
 
-	getDefaultProps() {
-		return {
-			welcomeSign: noop,
-			suggest: noop,
-			terms: {},
-			input: '',
-		};
-	},
+	static defaultProps = {
+		suggest: noop,
+		terms: {},
+		input: '',
+	}
 
-	getInitialState() {
-		return {
-			taxonomySuggestionsArray: [],
-			suggestionPosition: -1,
-			suggestions: {},
-			filterTerm: ''
-		};
-	},
+	state = {
+		suggestionPosition: 0,
+		currentSuggestion: null,
+		suggestions: {},
+		filterTerm: '',
+		showAll: ''
+	}
+
+	setInitialState = ( input ) => {
+		const suggestions = this.narrowDownAndSort( input, this.state.showAll );
+		const taxonomySuggestionsArray = this.createTaxonomySuggestionsArray( suggestions );
+		this.setState( {
+			suggestions,
+			taxonomySuggestionsArray,
+			suggestionPosition: 0,
+			currentSuggestion: taxonomySuggestionsArray[ 0 ],
+		} );
+	}
 
 	componentWillMount() {
-		const suggestions = this.narrowDown( this.props.input );
-		this.setState( {
-			suggestions: suggestions,
-			taxonomySuggestionsArray: this.createTaxonomySuggestionsArray( suggestions ),
-			currentSuggestion: '',
-		} );
-	},
+		this.setInitialState( this.props.input );
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.input !== this.props.input ) {
-			const suggestions = this.narrowDown( nextProps.input );
-			this.setState( {
-				suggestions: suggestions,
-				taxonomySuggestionsArray: this.createTaxonomySuggestionsArray( suggestions ),
-				suggestionPosition: -1,
-				currentSuggestion: '',
-			} );
+			this.setInitialState( nextProps.input );
 		}
-	},
+	}
 
-	countSuggestions() {
+	countSuggestions = () => {
 		return this.state.taxonomySuggestionsArray.length;
-	},
+	}
 
-	getSuggestionForPosition( position ) {
+	getSuggestionForPosition = ( position ) => {
 		return this.state.taxonomySuggestionsArray[ position ];
-	},
+	}
 
-	getPositionForSuggestion( suggestion ) {
+	getPositionForSuggestion = ( suggestion ) => {
 		return this.state.taxonomySuggestionsArray.indexOf( suggestion );
-	},
+	}
 
-	incPosition() {
+	incPosition = () => {
 		const position = ( this.state.suggestionPosition + 1 ) % this.countSuggestions();
 		this.setState( {
 			suggestionPosition: position,
 			currentSuggestion: this.getSuggestionForPosition( position ),
 		} );
-	},
+	}
 
-	decPosition() {
-		const position = ( this.state.suggestionPosition - 1 ) % this.countSuggestions();
+	decPosition = () => {
+		const position = this.state.suggestionPosition - 1;
 		this.setState( {
-			suggestionPosition: position,
+			suggestionPosition: position < 0 ? this.countSuggestions() - 1 : position,
 			currentSuggestion: this.getSuggestionForPosition( position )
 		} );
-	},
+	}
 
-	handleKeyEvent( event ) {
+	/**
+	 * Provides keybord support for suggestings component by managing items highlith position
+	 * and calling suggestion callback when user hits Enter
+	 *
+	 * @param  {Object} event  Keybord event
+	 * @return {Bool}          true indicates suggestion was chosen and send to parent using suggest prop callback
+	 */
+	handleKeyEvent = ( event ) => {
 		switch ( event.key ) {
 			case 'ArrowDown' :
 				this.incPosition();
@@ -99,29 +119,45 @@ const Suggestions = React.createClass( {
 				event.preventDefault();
 				break;
 			case 'Enter' :
-				if ( this.state.suggestionPosition !== -1 ) {
-					this.props.suggest( this.state.currentSuggestion );
+				if ( !! this.state.currentSuggestion ) {
+					this.props.suggest( this.state.currentSuggestion + ' ' );
+					return true;
 				}
 				break;
 		}
-	},
+		return false;
+	}
 
-	onMouseDown( event ) {
-		this.props.suggest( event.target.textContent );
-	},
+	onMouseDown = ( event ) => {
+		event.stopPropagation();
+		event.preventDefault();
+		//Additional empty space at the end adds fluidity to workflow
+		this.props.suggest( event.target.textContent + ' ' );
+	}
 
-	onMouseOver( event ) {
+	onMouseOver = ( event ) => {
 		this.setState( {
 			suggestionPosition: this.getPositionForSuggestion( event.target.textContent ),
 			currentSuggestion: event.target.textContent,
 		} );
-	},
+	}
 
-	removeEmptySuggestions( suggestions ) {
+	removeEmptySuggestions = ( suggestions ) => {
 		return pickBy( suggestions, negate( isEmpty ) );
-	},
+	}
 
-	narrowDown( input ) {
+	/**
+	 * Returns an object containing lists of fliters keyed by taxnomies.
+	 * This function takes all available taxonomies and removes the ones that
+	 * do not match provided input param. At the end keys that have empty lists are removed.
+	 * showAll parameter if provided sidesteps the matching logic for the key value in showAll
+	 * and passes all filters for that key. For showAll also soome reordering happens - explained in code
+	 *
+	 * @param  {String}  input   text that will be matched against the taxonomies
+	 * @param  {String}  showAll taxonomy for which we want all filters
+	 * @return {Object}          filtered taxonomy:[ terms ] object
+	 */
+	narrowDownAndSort = ( input, showAll = '' ) => {
 		const [ taxonomy, filter ] = input.split( ':' );
 		if ( taxonomy === '' ) {
 			// empty string or just ":" or ":filter" -
@@ -155,6 +191,17 @@ const Suggestions = React.createClass( {
 
 		const filtered = {};
 
+		//If this is valid full taxonomy:filter we want to show alternatives instead of suggestions
+		if ( filter !== undefined && includes( terms[ taxonomy ], filter ) ) {
+			// remove what is already in input - so we can add it to the beggining of the list
+			const otherSuggestions = without( terms[ taxonomy ], filter );
+			// add back at the beggining of the list so it will showup first.
+			otherSuggestions.unshift( filter );
+			// limit or show all
+			filtered[ taxonomy ] = showAll === taxonomy ? otherSuggestions : take( otherSuggestions, limit );
+			return filtered;
+		}
+
 		// store filtering term for highlithing
 		this.setState( { filterTerm } );
 
@@ -163,16 +210,26 @@ const Suggestions = React.createClass( {
 				continue;
 			}
 
-			filtered[ key ] = take(
-				terms[ key ].filter( term => term.indexOf( filterTerm ) !== -1 ),
-				limit
-			);
+			//check if we have showAll key match. If we have then don't filter, use all and reorder.
+			if ( showAll === key ) {
+				// split to terms matching an non matching to the input
+				const parts = partition( terms[ key ], term => term.indexOf( filterTerm ) !== -1 );
+				// sort matching so that the best hit is first
+				const matchingSorted = sortBy( parts[ 0 ], term => term.indexOf( filterTerm ) );
+				// concatenate mathing and non matchin - this is full set of filters just reordered.
+				filtered[ key ] = [ ...matchingSorted, ...parts[ 1 ] ];
+			} else {
+				filtered[ key ] = take(
+					terms[ key ].filter( term => term.indexOf( filterTerm ) !== -1 ),
+					limit
+				);
+			}
 		}
 
 		return this.removeEmptySuggestions( filtered );
-	},
+	}
 
-	createTaxonomySuggestionsArray( suggestions ) {
+	createTaxonomySuggestionsArray = ( suggestions ) => {
 		const taxonomySuggestionsArray = [];
 
 		for ( const key in suggestions ) {
@@ -183,9 +240,9 @@ const Suggestions = React.createClass( {
 		}
 
 		return taxonomySuggestionsArray;
-	},
+	}
 
-	createTextWithHighlight( text, highlightedText ) {
+	createTextWithHighlight = ( text, highlightedText ) => {
 		const re = new RegExp( '(' + highlightedText + ')', 'g' );
 		const parts = text.split( re );
 		const token = parts.map( ( part, i ) => {
@@ -197,9 +254,18 @@ const Suggestions = React.createClass( {
 		} );
 
 		return token;
-	},
+	}
 
-	createSuggestions( suggestions ) {
+	onShowAllClick = ( category ) => {
+		const suggestions = this.narrowDownAndSort( this.props.input, category );
+		this.setState( {
+			showAll: category,
+			suggestions,
+			taxonomySuggestionsArray: this.createTaxonomySuggestionsArray( suggestions )
+		} );
+	}
+
+	createSuggestions = ( suggestions ) => {
 		let noOfSuggestions = 0;
 		const rendered = [];
 
@@ -215,10 +281,20 @@ const Suggestions = React.createClass( {
 				<div className="suggestions__category" key={ key }>
 					<span className="suggestions__category-name">{ key }</span>
 					<span className="suggestions__category-counter">
-						{ this.translate( '%(filtered)s of %(total)s', {
+						{ i18n.translate( '%(filtered)s of %(total)s', {
 							args: { filtered, total }
 						} ) }
 					</span>
+					{ this.props.terms[ key ].length > suggestions[ key ].length &&
+						<SuggestionsButtonAll
+							onClick={ this.onShowAllClick }
+							category={ key }
+							label={ i18n.translate( 'Show all' ) } /> }
+					{ key === this.state.showAll &&
+						<SuggestionsButtonAll
+							onClick={ this.onShowAllClick }
+							category={ '' }
+							label={ i18n.translate( 'Show less' ) } /> }
 				</div>
 			);
 			//Add values
@@ -237,21 +313,14 @@ const Suggestions = React.createClass( {
 		}
 
 		return <div className="suggestions__suggestions">{ rendered }</div>;
-	},
+	}
 
 	render() {
-		let suggestion;
-		if ( this.props.input === '' ) {
-			suggestion = this.props.welcomeSign;
-		} else {
-			suggestion = this.createSuggestions( this.state.suggestions );
-		}
-
 		return (
-			<div className="suggestions">{ suggestion }</div>
+			<div className="suggestions">{ this.createSuggestions( this.state.suggestions ) }</div>
 		);
 	}
 
-} );
+}
 
 export default Suggestions;

@@ -5,13 +5,13 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import PluginsActions from 'lib/plugins/actions';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import utils from 'lib/site/utils';
@@ -38,13 +38,13 @@ export class PluginInstallButton extends Component {
 		if ( isEmbed ) {
 			recordGAEvent( 'Plugins', 'Install with no selected site', 'Plugin Name', plugin.slug );
 			recordEvent( 'calypso_plugin_install_click_from_sites_list', {
-				site: selectedSite,
+				site: selectedSite.ID,
 				plugin: plugin.slug
 			} );
 		} else {
 			recordGAEvent( 'Plugins', 'Install on selected Site', 'Plugin Name', plugin.slug );
 			recordEvent( 'calypso_plugin_install_click_from_plugin_info', {
-				site: selectedSite,
+				site: selectedSite.ID,
 				plugin: plugin.slug
 			} );
 		}
@@ -59,7 +59,7 @@ export class PluginInstallButton extends Component {
 
 		recordGAEvent( 'Plugins', 'Update jetpack', 'Plugin Name', plugin.slug );
 		recordEvent( 'calypso_plugin_update_jetpack', {
-			site: selectedSite,
+			site: selectedSite.ID,
 			plugin: plugin.slug
 		} );
 	}
@@ -202,7 +202,7 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderButton() {
-		const { translate, isInstalling, isEmbed } = this.props;
+		const { translate, isInstalling, isEmbed, disabled } = this.props;
 		const label = isInstalling ? translate( 'Installing…' ) : translate( 'Install' );
 
 		if ( isEmbed ) {
@@ -210,7 +210,7 @@ export class PluginInstallButton extends Component {
 				<span className="plugin-install-button__install embed">
 					{ isInstalling
 						? <span className="plugin-install-button__installing">{ label }</span>
-						: <Button compact={ true } onClick={ this.installAction } >
+						: <Button compact={ true } onClick={ this.installAction } disabled={ disabled }>
 							<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
 							<Gridicon icon="plugins" size={ 18 } />
 							{ translate( 'Install' ) }
@@ -222,7 +222,11 @@ export class PluginInstallButton extends Component {
 
 		return (
 			<span className="plugin-install-button__install">
-				<Button onClick={ this.installAction } primary={ true } disabled={ isInstalling } >
+				<Button
+					onClick={ this.installAction }
+					primary={ true }
+					disabled={ isInstalling || disabled }
+				>
 					{ label }
 				</Button>
 			</span>

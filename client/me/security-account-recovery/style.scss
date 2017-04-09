@@ -1,0 +1,127 @@
+.security-account-recovery__text {
+	margin-bottom: 0;
+}
+
+.security-account-recovery-contact__detail .form-phone-input {
+	display: flex;
+	flex-direction: column;
+
+	@include breakpoint( ">480px" ) {
+		flex-direction: row;
+	}
+}
+
+.security-account-recovery-contact__detail .form-fieldset__country {
+	padding-right: 0;
+
+	@include breakpoint( ">480px" ) {
+		flex: 1;
+		padding-right: 20px;
+		margin-bottom: 0;
+	}
+}
+
+.security-account-recovery-contact__detail .form-country-select {
+	width: 100%;
+
+	@include breakpoint( ">480px" ) {
+		min-width: 0;
+		width: 100%;
+		max-width: 200px;
+	}
+}
+
+.security-account-recovery-contact__detail .form-fieldset__phone-number {
+	margin-bottom: 0;
+
+	@include breakpoint( ">480px" ) {
+		flex: 2 0px;
+	}
+}
+
+.security-account-recovery-contact .notice {
+	margin-top: 8px;
+}
+
+.security-account-recovery-contact__placeholder-heading,
+.security-account-recovery-contact__placeholder-text {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background-color: lighten( $gray, 30% );
+	line-height: 1;
+	margin-bottom: .5em;
+}
+
+.security-account-recovery-contact__placeholder-heading {
+	line-height: 2.4;
+	margin-bottom: 1em;
+	@include breakpoint( '>480px' ) {
+		width: 45%;
+	}
+}
+
+.security-account-recovery-contact__header {
+	display: flex;
+	flex-direction: row;
+}
+
+.security-account-recovery-contact__header-info {
+	flex: 2;
+}
+
+.security-account-recovery-contact__header-title {
+	font-size: 1em;
+	line-height: 1em;
+}
+
+.security-account-recovery-contact__header-subtitle {
+	display: block;
+	font-size: 1em;
+	font-style: italic;
+	color: $gray;
+}
+
+.security-account-recovery-contact__detail {
+	margin-top: 8px;
+}
+
+.security-account-recovery-contact__remove {
+	color: $gray;
+	float: left;
+	cursor: pointer;
+	padding: 9px 0;
+
+	&:hover {
+		color: darken( $gray, 20% );
+	}
+
+	.gridicon {
+		vertical-align: bottom;
+		margin-right: 2px;
+
+		@include breakpoint( ">480px" ) {
+			width: 16px;
+			height: 16px;
+		}
+	}
+
+	span {
+		display: none;
+
+		@include breakpoint( ">480px" ) {
+			display: inline;
+		}
+	}
+}
+
+.security-account-recovery__validation-notice {
+	margin-top: 4px;
+	margin-bottom: 12px;
+}
+
+.security-account-recovery__recovery-phone-validation-buttons {
+	margin-top: 12px;
+}
+
+.security-account-recovery__recovery-phone-validation-label {
+	margin-top: 12px;
+}

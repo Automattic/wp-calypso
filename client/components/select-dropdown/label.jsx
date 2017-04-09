@@ -1,23 +1,26 @@
 /**
  * External Dependencies
  */
-import React from 'react'
+import React from 'react';
 
 /**
  * Module variables
  */
-const { Component } = React;
+
+/**
+ * Prevents the event from bubbling up the DOM tree
+ * @param {SyntheticEvent} event - Browser's native event wrapper
+ * @return {void}
+ */
 const stopPropagation = event => event.stopPropagation();
 
-export default class SelectDropdownLabel extends Component {
-	render() {
-		return (
-			<li
-				onClick= { stopPropagation }
-				className="select-dropdown__label"
-			>
-				<label>{ this.props.children }</label>
-			</li>
-		);
-	}
-};
+export default function SelectDropdownLabel( props ) {
+	return (
+		<li
+			onClick= { stopPropagation }
+			className="select-dropdown__label"
+		>
+			<label>{ props.children }</label>
+		</li>
+	);
+}

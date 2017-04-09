@@ -5,11 +5,7 @@ import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import noop from 'lodash/noop';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 
 export const Notice = React.createClass( {
 	dismissTimeout: null,
@@ -50,29 +46,6 @@ export const Notice = React.createClass( {
 		}
 	},
 
-	renderChildren() {
-		let content, text;
-
-		if ( typeof this.props.children === 'string' ) {
-			return <span className="notice__text"><span>{ this.props.children }</span></span>;
-		}
-
-		if ( this.props.text ) {
-			if ( typeof this.props.text === 'string' ) {
-				text = <span>{ this.props.text }</span>;
-			} else {
-				text = this.props.text;
-			}
-
-			content = [ this.props.children ];
-			content.unshift( <span key="notice_text" className="notice__text">{ text }</span> );
-		} else {
-			content = <span key="notice_text" className="notice__text">{ this.props.children }</span>;
-		}
-
-		return content;
-	},
-
 	getIcon() {
 		let icon;
 
@@ -98,35 +71,29 @@ export const Notice = React.createClass( {
 	},
 
 	render() {
-		let dismiss;
+		const { status, className, isCompact, showDismiss } = this.props;
+		const classes = classnames( 'notice', status, className, {
+			'is-compact': isCompact,
+			'is-dismissable': showDismiss
+		} );
 
-		// The class determines the nature of a notice
-		// and its status.
-		let noticeClass = classnames( 'notice', this.props.status );
-
-		if ( this.props.isCompact ) {
-			noticeClass = classnames( noticeClass, 'is-compact' );
-		}
-
-		// By default, a dismiss button is rendered to
-		// allow the user to hide the notice
-		if ( this.props.showDismiss ) {
-			noticeClass = classnames( noticeClass, 'is-dismissable' );
-			dismiss = (
-				<span tabIndex="0" className="notice__dismiss" onClick={ this.props.onDismissClick } >
-					<Gridicon icon="cross" size={ 24 } />
-					<span className="screen-reader-text">{ this.props.translate( 'Dismiss' ) }</span>
-				</span>
-				);
-		}
+		const { icon, text, children, onDismissClick, translate } = this.props;
 
 		return (
-			<div className={ classnames( this.props.className, noticeClass ) }>
-				<Gridicon className="notice__icon" icon={ this.props.icon || this.getIcon() } size={ 24 } />
-				<div className="notice__content">
-					{ this.renderChildren() }
-				</div>
-				{ dismiss }
+			<div className={ classes }>
+				<Gridicon className="notice__icon" icon={ icon || this.getIcon() } size={ 24 } />
+				<span className="notice__content">
+					<span className="notice__text">
+						{ text ? text : children }
+					</span>
+				</span>
+				{ text ? children : null }
+				{ showDismiss && (
+					<span tabIndex="0" className="notice__dismiss" onClick={ onDismissClick } >
+						<Gridicon icon="cross" size={ 24 } />
+						<span className="screen-reader-text">{ translate( 'Dismiss' ) }</span>
+					</span>
+				) }
 			</div>
 		);
 	}

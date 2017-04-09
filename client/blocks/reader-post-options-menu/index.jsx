@@ -2,84 +2,51 @@
  * External dependencies
  */
 import React from 'react';
-import { noop, get } from 'lodash';
+import { noop } from 'lodash';
 import page from 'page';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
-import SiteStore from 'lib/reader-site-store';
-import SiteBlockStore from 'lib/reader-site-blocks';
-import SiteBlockActions from 'lib/reader-site-blocks/actions';
+import { requestSiteBlock } from 'state/reader/site-blocks/actions';
 import PostUtils from 'lib/posts/utils';
 import FollowButton from 'reader/follow-button';
 import * as DiscoverHelper from 'reader/discover/helper';
-import smartSetState from 'lib/react-smart-set-state';
 import * as stats from 'reader/stats';
 import { getFeed } from 'state/reader/feeds/selectors';
+import { getSite } from 'state/reader/sites/selectors';
 import QueryReaderFeed from 'components/data/query-reader-feed';
+import QueryReaderSite from 'components/data/query-reader-site';
 
-const ReaderPostOptionsMenu = React.createClass( {
+class ReaderPostOptionsMenu extends React.Component {
 
-	propTypes: {
+	static propTypes = {
 		post: React.PropTypes.object.isRequired,
 		feed: React.PropTypes.object,
 		onBlock: React.PropTypes.func,
 		showFollow: React.PropTypes.bool
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onBlock: noop,
-			position: 'top left',
-			showFollow: true
-		};
-	},
+	static defaultProps = {
+		onBlock: noop,
+		position: 'top left',
+		showFollow: true
+	};
 
-	smartSetState: smartSetState,
-
-	getInitialState() {
-		const state = this.getStateFromStores();
-		state.popoverPosition = this.props.position;
-		return state;
-	},
-
-	componentDidMount() {
-		SiteBlockStore.on( 'change', this.updateState );
-		FeedSubscriptionStore.on( 'change', this.updateState );
-	},
-
-	componentWillUnmount() {
-		SiteBlockStore.off( 'change', this.updateState );
-		FeedSubscriptionStore.off( 'change', this.updateState );
-	},
-
-	getStateFromStores() {
-		const siteId = this.props.post.site_ID;
-
-		return {
-			isBlocked: SiteBlockStore.getIsBlocked( siteId )
-		};
-	},
-
-	updateState() {
-		this.smartSetState( this.getStateFromStores() );
-	},
-
-	blockSite() {
+	blockSite = () => {
 		stats.recordAction( 'blocked_blog' );
 		stats.recordGaEvent( 'Clicked Block Site' );
 		stats.recordTrackForPost( 'calypso_reader_block_site', this.props.post );
-		SiteBlockActions.block( this.props.post.site_ID );
+		this.props.requestSiteBlock( this.props.post.site_ID );
 		this.props.onBlock();
-	},
+	};
 
-	reportPost() {
+	reportPost = () => {
 		if ( ! this.props.post || ! this.props.post.URL ) {
 			return;
 		}
@@ -89,25 +56,24 @@ const ReaderPostOptionsMenu = React.createClass( {
 		stats.recordTrackForPost( 'calypso_reader_post_reported', this.props.post );
 
 		window.open( 'https://wordpress.com/abuse/?report_url=' + encodeURIComponent( this.props.post.URL ), '_blank' );
-	},
+	};
 
-	getFollowUrl() {
-		return this.props.feed ? this.props.feed.feed_URL : this.props.post.site_URL;
-	},
+	getFollowUrl = () => {
+		return this.props.feed ? this.props.feed.feed_URL : ( this.props.post.feed_URL || this.props.post.site_URL );
+	};
 
-	onMenuToggle( isMenuVisible ) {
+	onMenuToggle = ( isMenuVisible ) => {
 		stats.recordAction( isMenuVisible ? 'open_post_options_menu' : 'close_post_options_menu' );
 		stats.recordGaEvent( isMenuVisible ? 'Open Post Options Menu' : 'Close Post Options Menu' );
 		stats.recordTrackForPost( 'calypso_reader_post_options_menu_' + ( isMenuVisible ? 'opened' : 'closed' ), this.props.post );
-	},
+	};
 
-	editPost() {
-		const post = this.props.post,
-			site = SiteStore.get( this.props.post.site_ID );
+	editPost = () => {
+		const { post, site } = this.props;
 		let editUrl = '//wordpress.com/post/' + post.site_ID + '/' + post.ID + '/';
 
-		if ( site && site.get( 'slug' ) ) {
-			editUrl = PostUtils.getEditURL( post, site.toJS() );
+		if ( site && site.slug ) {
+			editUrl = PostUtils.getEditURL( post, site );
 		}
 
 		stats.recordAction( 'edit_post' );
@@ -121,13 +87,14 @@ const ReaderPostOptionsMenu = React.createClass( {
 				page( editUrl );
 			}
 		}, 100 );
-	},
+	};
 
 	render() {
 		const post = this.props.post,
 			isEditPossible = PostUtils.userCan( 'edit_post', post ),
 			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
 			followUrl = this.getFollowUrl();
+		const { site, feed } = this.props;
 
 		let isBlockPossible = false;
 
@@ -140,7 +107,8 @@ const ReaderPostOptionsMenu = React.createClass( {
 
 		return (
 			<span className={ classes }>
-				{ post && post.feed_ID && <QueryReaderFeed feedId={ post.feed_ID } /> }
+				{ ! feed && post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
+				{ ! site && post && post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
 				<EllipsisMenu
 					className="reader-post-options-menu__ellipsis-menu"
 					popoverClassName="reader-post-options-menu__popover"
@@ -148,27 +116,36 @@ const ReaderPostOptionsMenu = React.createClass( {
 					{ this.props.showFollow && <FollowButton tagName={ PopoverMenuItem } siteUrl={ followUrl } /> }
 
 					{ isEditPossible ? <PopoverMenuItem onClick={ this.editPost } icon="pencil">
-						{ this.translate( 'Edit Post' ) }
+						{ this.props.translate( 'Edit Post' ) }
 					</PopoverMenuItem> : null }
 
 					{ ( this.props.showFollow || isEditPossible ) && ( isBlockPossible || isDiscoverPost ) &&
 						<hr className="reader-post-options-menu__hr" /> }
-					{ isBlockPossible ? <PopoverMenuItem onClick={ this.blockSite }>{ this.translate( 'Block Site' ) }</PopoverMenuItem> : null }
-					{ isBlockPossible || isDiscoverPost ? <PopoverMenuItem onClick={ this.reportPost }>{ this.translate( 'Report this Post' ) }</PopoverMenuItem> : null }
+					{ isBlockPossible
+						? <PopoverMenuItem onClick={ this.blockSite }>{ this.props.translate( 'Block Site' ) }</PopoverMenuItem>
+						: null
+					}
+					{ isBlockPossible || isDiscoverPost
+						? <PopoverMenuItem onClick={ this.reportPost }>{ this.props.translate( 'Report this Post' ) }</PopoverMenuItem>
+						: null
+					}
 				</EllipsisMenu>
 			</span>
 		);
 	}
 
-} );
+}
 
 export default connect(
 	( state, ownProps ) => {
-		const props = {};
-		const feedId = get( ownProps, 'post.feed_ID' );
-		if ( feedId && feedId > 0 ) {
-			props.feed = getFeed( state, feedId );
-		}
-		return props;
+		const feedId = ownProps.post.feed_ID;
+		const siteId = ownProps.post.is_external ? null : ownProps.post.site_ID;
+		return {
+			feed: ( feedId && feedId > 0 ) ? getFeed( state, feedId ) : undefined,
+			site: ( siteId && siteId > 0 ) ? getSite( state, siteId ) : undefined,
+		};
+	},
+	{
+		requestSiteBlock,
 	}
-)( ReaderPostOptionsMenu );
+)( localize( ReaderPostOptionsMenu ) );

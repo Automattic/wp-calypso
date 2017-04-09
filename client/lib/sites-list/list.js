@@ -70,7 +70,7 @@ SitesList.prototype.get = function() {
  * @api public
  */
 SitesList.prototype.fetch = function() {
-	if ( ! userUtils.isLoggedIn() || this.fetching ) {
+	if ( ! userUtils.isLoggedIn() || this.fetching || this.ignoreUpdates ) {
 		return;
 	}
 
@@ -78,7 +78,7 @@ SitesList.prototype.fetch = function() {
 
 	debug( 'getting SitesList from api' );
 
-	wpcom.me().sites( { site_visibility: 'all' }, function( error, data ) {
+	wpcom.me().sites( { site_visibility: 'all', include_domain_only: true }, function( error, data ) {
 		if ( error ) {
 			debug( 'error fetching SitesList from api', error );
 			this.fetching = false;
@@ -86,9 +86,23 @@ SitesList.prototype.fetch = function() {
 			return;
 		}
 
+		if ( this.ignoreUpdates ) {
+			this.fetching = false;
+			return;
+		}
+
 		this.sync( data );
 		this.fetching = false;
 	}.bind( this ) );
+};
+
+// FOR NUCLEAR AUTOMATED TRANSFER OPTION
+// See: https://github.com/Automattic/wp-calypso/pull/10986
+SitesList.prototype.pauseFetching = function() {
+	this.ignoreUpdates = true;
+};
+SitesList.prototype.resumeFetching = function() {
+	this.ignoreUpdates = false;
 };
 
 SitesList.prototype.sync = function( data ) {
@@ -199,9 +213,31 @@ SitesList.prototype.update = function( sites ) {
 		var siteObj, result;
 
 		if ( sitesMap[ site.ID ] ) {
+			// Since updates are applied as a patch, ensure key is present for
+			// properties which can be intentionally omitted from site payload.
+			if ( ! site.hasOwnProperty( 'icon' ) ) {
+				site.icon = undefined;
+			}
+
 			// Update existing Site object
 			siteObj = sitesMap[ site.ID ];
-			result = siteObj.set( site );
+
+			//Assign old URL because new url is broken because the site response caches domains
+			//and we have trouble getting over it.
+			if ( site.options.is_automated_transfer && site.URL.match( '.wordpress.com' ) ) {
+				return siteObj;
+			}
+
+			if ( site.options.is_automated_transfer && ! siteObj.jetpack && site.jetpack ) {
+				//We have a site that was not jetpack and now is.
+				siteObj.off( 'change', this.propagateChange );
+				siteObj = this.createSiteObject( site );
+				siteObj.on( 'change', this.propagateChange );
+				changed = true;
+			} else {
+				result = siteObj.set( site );
+			}
+
 			if ( result ) {
 				changed = true;
 			}
@@ -470,12 +506,6 @@ SitesList.prototype.hasSiteWithPlugins = function() {
 	return ! isEmpty( this.getSelectedOrAllWithPlugins() );
 };
 
-SitesList.prototype.fetchAvailableUpdates = function() {
-	this.getJetpack().forEach( function( site ) {
-		site.fetchAvailableUpdates();
-	}, this );
-};
-
 SitesList.prototype.removeSite = function( site ) {
 	var sites, changed;
 	if ( this.isSelected( site ) ) {
@@ -545,15 +575,11 @@ SitesList.prototype.onUpdatedPlugin = function( site ) {
 	}
 	site = this.getSite( site.slug );
 
-	if ( site.update && site.update.plugins ) {
-		let siteUpdateInfo = assign( {}, site.update );
+	if ( site.updates && site.updates.plugins ) {
+		let siteUpdateInfo = assign( {}, site.updates );
 		siteUpdateInfo.plugins--;
 		siteUpdateInfo.total--;
-		site.set( { update: siteUpdateInfo } );
-
-		if ( site.update.plugins <= 0 ) {
-			site.fetchAvailableUpdates();
-		}
+		site.set( { updates: siteUpdateInfo } );
 	}
 };
 

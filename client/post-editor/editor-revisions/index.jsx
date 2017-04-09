@@ -3,11 +3,7 @@
  */
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
 
 export default React.createClass( {
 
@@ -27,11 +23,11 @@ export default React.createClass( {
 	},
 
 	render() {
-		if ( ! this.props.revisions.length ) {
+		if ( ! this.props.revisions || ! this.props.revisions.length ) {
 			return null;
 		}
 
-		const lastRevision = this.props.revisions[0];
+		const lastRevision = this.props.revisions[ 0 ];
 		const revisionsLink = this.props.adminUrl + 'revision.php?revision=' + lastRevision;
 
 		return (

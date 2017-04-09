@@ -113,6 +113,12 @@ UndocumentedSite.prototype.embeds = function( attributes, callback ) {
 	return this.wpcom.req.get( url, attributes, callback );
 };
 
+UndocumentedSite.prototype.embedReversal = function( markup, callback ) {
+	return this.wpcom.req.post( `/sites/${ this._id }/embeds/reversal`, {
+		maybe_embed: markup
+	}, callback );
+};
+
 UndocumentedSite.prototype.shortcodes = function( attributes, callback ) {
 	return this.wpcom.req.get( '/sites/' + this._id + '/shortcodes/render', attributes, callback );
 };
@@ -153,6 +159,14 @@ UndocumentedSite.prototype.removeFollower = function( followerId, callback ) {
 	return this.wpcom.req.post( {
 		path: '/sites/' + this._id + '/followers/' + followerId + '/delete'
 	}, callback );
+};
+
+UndocumentedSite.prototype.fetchFollowers = function( fetchOptions, callback ) {
+	return this.wpcom.req.get(
+		'/sites/' + this._id + '/followers/',
+		fetchOptions,
+		callback
+	);
 };
 
 UndocumentedSite.prototype.removeEmailFollower = function( followerId, callback ) {
@@ -235,6 +249,18 @@ UndocumentedSite.prototype.getConnection = function( connectionId ) {
 	return this.wpcom.req.get( {
 		path: '/sites/' + this._id + '/publicize-connections/' + connectionId,
 		apiVersion: '1.1',
+	} );
+};
+
+/**
+ * Runs Theme Setup (Headstart).
+ *
+ * @return {Promise} A Promise to resolve when complete.
+ */
+UndocumentedSite.prototype.runThemeSetup = function() {
+	return this.wpcom.req.post( {
+		path: '/sites/' + this._id + '/theme-setup',
+		apiNamespace: 'wpcom/v2',
 	} );
 };
 

@@ -3,14 +3,17 @@
  */
 import React from 'react';
 import async from 'async';
-import flatten from 'lodash/flatten';
-import reject from 'lodash/reject';
-import find from 'lodash/find';
-import uniqBy from 'lodash/uniqBy';
-import times from 'lodash/times';
-import compact from 'lodash/compact';
-import noop from 'lodash/noop';
-import startsWith from 'lodash/startsWith';
+import {
+	compact,
+	find,
+	flatten,
+	includes,
+	noop,
+	reject,
+	startsWith,
+	times,
+	uniqBy
+} from 'lodash';
 import page from 'page';
 import qs from 'qs';
 import { connect } from 'react-redux';
@@ -19,9 +22,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import wpcom from 'lib/wp';
 import Notice from 'components/notice';
-import { getFixedDomainSearch, canRegister, getTld } from 'lib/domains';
+import { checkDomainAvailability, getFixedDomainSearch } from 'lib/domains';
+import { domainAvailability } from 'lib/domains/constants';
+import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import SearchCard from 'components/search-card';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
@@ -35,7 +41,6 @@ import {
 	getDomainsSuggestions,
 	getDomainsSuggestionsError
 } from 'state/domains/suggestions/selectors';
-import support from 'lib/url/support';
 
 const domains = wpcom.domains();
 
@@ -135,10 +140,9 @@ const RegisterDomainStep = React.createClass( {
 
 		return {
 			clickedExampleSuggestion: false,
-			dotBlogNotice: true,
 			lastQuery: suggestion,
 			lastDomainSearched: null,
-			lastDomainError: null,
+			lastDomainStatus: null,
 			loadingResults: Boolean( suggestion ),
 			notice: null,
 			searchResults: null
@@ -216,10 +220,6 @@ const RegisterDomainStep = React.createClass( {
 		return ! this.props.defaultSuggestions && ! this.props.defaultSuggestionsError;
 	},
 
-	dismissDotBlogNotice() {
-		this.setState( { dotBlogNotice: false } );
-	},
-
 	render: function() {
 		const queryObject = getQueryObject( this.props );
 		return (
@@ -232,7 +232,7 @@ const RegisterDomainStep = React.createClass( {
 							onSearch={ this.onSearch }
 							onSearchChange={ this.onSearchChange }
 							onBlur={ this.save }
-							placeholder={ this.props.translate( 'Enter a domain or keyword', { textOnly: true } ) }
+							placeholder={ this.props.translate( 'Enter a name or keyword' ) }
 							autoFocus={ true }
 							delaySearch={ true }
 							delayTimeout={ 1000 }
@@ -240,18 +240,6 @@ const RegisterDomainStep = React.createClass( {
 							maxLength={ 60 }
 						/>
 					</div>
-				{
-					this.state.dotBlogNotice && ! this.props.isSignupStep &&
-					<Notice
-						text={ this.props.translate(
-							'New! {{strong}}.blog{{/strong}} domains are now available for registration.',
-							{ components: { strong: <strong /> } }
-						) }
-						status={ 'is-info' }
-						showDismiss={ true }
-						onDismissClick={ this.dismissDotBlogNotice }
-					/>
-				}
 				{
 					this.state.notice &&
 					<Notice text={ this.state.notice } status={ `is-${ this.state.noticeSeverity }` } showDismiss={ false } />
@@ -315,8 +303,7 @@ const RegisterDomainStep = React.createClass( {
 
 		this.setState( {
 			lastDomainSearched: domain,
-			searchResults: [],
-			lastDomainError: null
+			searchResults: []
 		} );
 
 		async.parallel(
@@ -330,23 +317,23 @@ const RegisterDomainStep = React.createClass( {
 						return callback();
 					}
 
-					canRegister( domain, ( error, result ) => {
-						const timeDiff = Date.now() - timestamp;
-						if ( error ) {
-							this.showValidationErrorMessage( domain, error );
-							this.setState( { lastDomainError: error } );
-						} else {
+					checkDomainAvailability( domain, ( error, result ) => {
+						const timeDiff = Date.now() - timestamp,
+							status = result && result.status ? result.status : error,
+							{ AVAILABLE, UNKNOWN } = domainAvailability,
+							isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
+
+						this.setState( { lastDomainStatus: status } );
+						if ( isDomainAvailable ) {
 							this.setState( { notice: null } );
-							if ( result ) {
-								result.domain_name = domain;
-							}
+						} else {
+							this.showValidationErrorMessage( domain, status );
 						}
 
-						const analyticsResult = ( error && error.code ) || 'available';
-						this.recordEvent( 'domainAvailabilityReceive', domain, analyticsResult, timeDiff, this.props.analyticsSection );
+						this.recordEvent( 'domainAvailabilityReceive', domain, status, timeDiff, this.props.analyticsSection );
 
 						this.props.onDomainsAvailabilityChange( true );
-						callback( null, result );
+						callback( null, isDomainAvailable ? result : null );
 					} );
 				},
 				callback => {
@@ -395,12 +382,52 @@ const RegisterDomainStep = React.createClass( {
 					return suggestion.domain_name;
 				} );
 
+				if ( abtest( 'domainSuggestionNudgeLabels' ) === 'withLabels' ) {
+					const isFreeOrUnknown = ( suggestion ) => (
+							suggestion.is_free === true ||
+							suggestion.status === domainAvailability.UNKNOWN
+						),
+						strippedDomainBase = this.getStrippedDomainBase( domain ),
+						exactMatchBeforeTld = ( suggestion ) => (
+							startsWith( suggestion.domain_name, `${ strippedDomainBase }.` )
+						),
+						bestAlternative = ( suggestion ) => (
+							! exactMatchBeforeTld( suggestion ) &&
+							suggestion.isRecommended !== true
+						),
+						availableSuggestions = reject( suggestions, isFreeOrUnknown );
+
+					const recommendedSuggestion = find( availableSuggestions, exactMatchBeforeTld );
+					if ( recommendedSuggestion ) {
+						recommendedSuggestion.isRecommended = true;
+					} else if ( availableSuggestions.length > 0 ) {
+						availableSuggestions[ 0 ].isRecommended = true;
+					}
+
+					const bestAlternativeSuggestion = find( availableSuggestions, bestAlternative );
+					if ( bestAlternativeSuggestion ) {
+						bestAlternativeSuggestion.isBestAlternative = true;
+					} else if ( availableSuggestions.length > 1 ) {
+						availableSuggestions[ 1 ].isBestAlternative = true;
+					}
+				}
+
 				this.setState( {
 					searchResults: suggestions,
 					loadingResults: false
 				}, this.save );
 			}
 		);
+	},
+
+	getStrippedDomainBase( domain ) {
+		let strippedDomainBase = domain;
+		const lastIndexOfDot = strippedDomainBase.lastIndexOf( '.' );
+
+		if ( lastIndexOfDot !== -1 ) {
+			strippedDomainBase = strippedDomainBase.substring( 0, lastIndexOfDot );
+		}
+		return strippedDomainBase.replace( /[ .]/g, '' );
 	},
 
 	initialSuggestions: function() {
@@ -424,7 +451,7 @@ const RegisterDomainStep = React.createClass( {
 						cart={ this.props.cart }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						onButtonClick={ this.addRemoveDomainToCart.bind( null, suggestion ) } />
+						onButtonClick={ this.props.onAddDomain.bind( null, suggestion ) } />
 				);
 			}, this );
 
@@ -448,11 +475,9 @@ const RegisterDomainStep = React.createClass( {
 	},
 
 	allSearchResults: function() {
-		const lastDomainSearched = this.state.lastDomainSearched,
-			matchesSearchedDomain = function( suggestion ) {
-				return suggestion.domain_name === lastDomainSearched;
-			},
-			availableDomain = this.state.lastDomainError ? undefined : find( this.state.searchResults, matchesSearchedDomain ),
+		const { lastDomainSearched, lastDomainStatus } = this.state,
+			matchesSearchedDomain = ( suggestion ) => ( suggestion.domain_name === lastDomainSearched ),
+			availableDomain = lastDomainStatus === domainAvailability.AVAILABLE && find( this.state.searchResults, matchesSearchedDomain ),
 			onAddMapping = ( domain ) => this.props.onAddMapping( domain, this.state );
 
 		let suggestions = reject( this.state.searchResults, matchesSearchedDomain );
@@ -479,9 +504,9 @@ const RegisterDomainStep = React.createClass( {
 				availableDomain={ availableDomain }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				lastDomainSearched={ lastDomainSearched }
-				lastDomainError = { this.state.lastDomainError }
+				lastDomainStatus = { lastDomainStatus }
 				onAddMapping={ onAddMapping }
-				onClickResult={ this.addRemoveDomainToCart }
+				onClickResult={ this.props.onAddDomain }
 				onClickMapping={ this.goToMapDomainStep }
 				suggestions={ suggestions }
 				products={ this.props.products }
@@ -516,126 +541,9 @@ const RegisterDomainStep = React.createClass( {
 		page( this.getMapDomainUrl() );
 	},
 
-	addRemoveDomainToCart: function( suggestion, event ) {
-		event.preventDefault();
-		return this.props.onAddDomain( suggestion );
-	},
-
 	showValidationErrorMessage: function( domain, error ) {
-		let message,
-			severity = 'error';
-		const tld = getTld( domain ),
-			translate = this.props.translate;
-
-		switch ( error.code ) {
-			case 'available_but_not_registrable':
-				if ( tld ) {
-					message = translate(
-						'To use a domain ending with {{strong}}.%(tld)s{{/strong}} on your site, ' +
-						'you can register it elsewhere first and then add it here. {{a}}Learn more{{/a}}.',
-						{
-							args: { tld },
-							components: {
-								strong: <strong />,
-								a: <a target="_blank" rel="noopener noreferrer" href={ support.MAP_EXISTING_DOMAIN } />
-							}
-						}
-					);
-					severity = 'info';
-				}
-				break;
-			case 'tld_in_maintenance':
-				if ( tld ) {
-					message = translate(
-						'Domains ending with {{strong}}.%(tld)s{{/strong}} are undergoing maintenance. Please check back shortly.',
-						{
-							args: { tld },
-							components: {
-								strong: <strong />
-							}
-						}
-					);
-					severity = 'info';
-				}
-				break;
-			case 'not_available_but_mappable':
-			case 'domain_registration_unavailable':
-				// unavailable domains are displayed in the search results, not as a notice OR
-				// domain registrations are closed, in which case it is handled in parent
-				message = null;
-				break;
-
-			case 'not_mappable_blacklisted_domain':
-				if ( domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
-					message = translate(
-						'Due to {{a1}}trademark policy{{/a1}}, ' +
-						'we are not able to allow domains containing {{strong}}WordPress{{/strong}} to be registered or mapped here. ' +
-						'Please {{a2}}contact support{{/a2}} if you have any questions.',
-						{
-							components: {
-								strong: <strong />,
-								a1: <a target="_blank" rel="noopener noreferrer" href="http://wordpressfoundation.org/trademark-policy/" />,
-								a2: <a href={ support.CALYPSO_CONTACT } />
-							}
-						}
-					);
-				} else {
-					message = translate( 'Domain cannot be mapped to a WordPress.com blog because of blacklisted term.' );
-				}
-				break;
-
-			case 'not_mappable_forbidden_subdomain':
-				message = translate( 'Subdomains starting with \'www.\' cannot be mapped to a WordPress.com blog' );
-				break;
-
-			case 'not_mappable_forbidden_domain':
-				message = translate( 'Only the owner of the domain can map its subdomains.' );
-				break;
-
-			case 'not_mappable_invalid_tld':
-			case 'invalid_query':
-				message = translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
-					args: { domain: domain }
-				} );
-				break;
-
-			case 'not_mappable_mapped_domain':
-				message = translate( 'This domain is already mapped to a WordPress.com site.' );
-				break;
-
-			case 'not_mappable_restricted_domain':
-				message = translate(
-					'You cannot map another WordPress.com subdomain - try creating a new site or one of the custom domains below.'
-				);
-				break;
-
-			case 'not_mappable_recently_mapped':
-				message = translate( 'This domain was recently in use by someone else and is not available to map yet. ' +
-					'Please try again later or contact support.' );
-				break;
-
-			// Generic error message when domain is not mappable without an explicit unmappability reason
-			case 'not_mappable':
-				message = translate( 'Sorry, this domain cannot be mapped.' );
-				break;
-
-			case 'empty_query':
-				message = translate( 'Please enter a domain name or keyword.' );
-				break;
-
-			case 'empty_results':
-				message = translate( "We couldn't find any available domains for: %(domain)s", {
-					args: { domain }
-				} );
-				break;
-
-			default:
-				message = translate( 'Sorry, there was a problem processing your request. Please try again in a few minutes.' );
-		}
-
-		if ( message ) {
-			this.setState( { notice: message, noticeSeverity: severity } );
-		}
+		const { message, severity } = getAvailabilityNotice( domain, error );
+		this.setState( { notice: message, noticeSeverity: severity } );
 	}
 } );
 

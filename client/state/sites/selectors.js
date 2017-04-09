@@ -31,7 +31,7 @@ import createSelector from 'lib/create-selector';
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import versionCompare from 'lib/version-compare';
 import getComputedAttributes from 'lib/site/computed-attributes';
-import { PRESSABLE_STATE_TRANSFERED, PRESSABLE_STATE_IN_TRANSFER } from './constants';
+import { getCustomizerFocus } from 'my-sites/customize/panels';
 
 /**
  * Returns a raw site object by its ID.
@@ -82,6 +82,7 @@ export function getJetpackComputedAttributes( state, siteId ) {
 	return {
 		hasMinimumJetpackVersion: siteHasMinimumJetpackVersion( state, siteId ),
 		canAutoupdateFiles: canJetpackSiteAutoUpdateFiles( state, siteId ),
+		canUpdateFiles: canJetpackSiteUpdateFiles( state, siteId ),
 	};
 }
 
@@ -145,32 +146,6 @@ export function isJetpackSite( state, siteId ) {
 	}
 
 	return site.jetpack;
-}
-
-/**
- * Returns true if site is a Pressable Jetpack site or site during a transfer, false if the site is hosted on
- * WordPress.com or is a regular Jetpack, or null if the site is unknown.
- *
- * @param  {Object}   state  Global state tree
- * @param  {Number}   siteId Site ID
- * @return {?Boolean}        Whether site is a Pressable site
- */
-export function isPressableSite( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site ) {
-		return null;
-	}
-
-	return site.options.pressable === PRESSABLE_STATE_TRANSFERED || isPressableSiteInTransfer( state, siteId );
-}
-
-export function isPressableSiteInTransfer( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site ) {
-		return null;
-	}
-
-	return site.options.pressable === PRESSABLE_STATE_IN_TRANSFER;
 }
 
 /**
@@ -434,6 +409,22 @@ export const getSeoTitle = ( state, type, data ) => {
 };
 
 /**
+ * Returns a site object by its slug.
+ *
+ * @param  {Object}  state     Global state tree
+ * @param  {String}  siteSlug  Site URL
+ * @return {?Object}           Site object
+ */
+export const getSiteBySlug = createSelector(
+	( state, siteSlug ) => (
+		find( state.sites.items, ( item, siteId ) => (
+			getSiteSlug( state, siteId ) === siteSlug
+		) ) || null
+	),
+	( state ) => state.sites.items
+);
+
+/**
  * Returns a site object by its URL.
  *
  * @param  {Object}  state Global state tree
@@ -442,15 +433,8 @@ export const getSeoTitle = ( state, type, data ) => {
  */
 export function getSiteByUrl( state, url ) {
 	const slug = urlToSlug( url );
-	const site = find( state.sites.items, ( item, siteId ) => {
-		return getSiteSlug( state, siteId ) === slug;
-	} );
 
-	if ( ! site ) {
-		return null;
-	}
-
-	return site;
+	return getSiteBySlug( state, slug );
 }
 
 /**
@@ -518,6 +502,10 @@ export function getSitePlan( state, siteId ) {
 	}
 
 	return site.plan;
+}
+
+export function getSitePlanSlug( state, siteId ) {
+	return get( getSitePlan( state, siteId ), 'product_slug' );
 }
 
 /**
@@ -754,7 +742,25 @@ export function hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) {
 	}
 
 	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
-	return versionCompare( siteJetpackVersion, '4.4.2' ) >= 0;
+	return versionCompare( siteJetpackVersion, '4.7' ) >= 0;
+}
+
+/**
+ * Determines if the Jetpack site is part of multi-site.
+ * Returns null if the site is not known or is not a Jetpack site.
+ *
+ * @param  {Object}   state  Global state tree
+ * @param  {Number}   siteId Site ID
+ * @return {?Boolean}        true if the site is multi-site
+ */
+export function isJetpackSiteMultiSite( state, siteId ) {
+	const site = getRawSite( state, siteId );
+
+	if ( ! site || ! isJetpackSite( state, siteId ) ) {
+		return null;
+	}
+
+	return site.is_multisite === true;
 }
 
 /**
@@ -856,14 +862,14 @@ export function verifyJetpackModulesActive( state, siteId, moduleIds ) {
  * @param {Number} siteId Site ID
  * @return {?String} the remote management url for the site
  */
-export function getJetpackSiteRemoteManagementURL( state, siteId ) {
+export function getJetpackSiteRemoteManagementUrl( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {
 		return null;
 	}
 
 	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' ),
 		siteAdminUrl = getSiteOption( state, siteId, 'admin_url' ),
-		configure = versionCompare( siteJetpackVersion, '3.4' ) < 0 ? 'manage' : 'json-api';
+		configure = versionCompare( siteJetpackVersion, '3.4', '>=' ) ? 'manage' : 'json-api';
 
 	return siteAdminUrl + 'admin.php?page=jetpack&configure=' + configure;
 }
@@ -977,16 +983,13 @@ export function getSiteAdminUrl( state, siteId, path = '' ) {
  *
  * @param  {Object} state  Global state tree
  * @param  {Number} siteId Site ID
+ * @param  {String} panel  Optional panel to autofocus
  * @return {String}        Customizer URL
  */
-export function getCustomizerUrl( state, siteId ) {
+export function getCustomizerUrl( state, siteId, panel ) {
 	if ( ! isJetpackSite( state, siteId ) ) {
 		const siteSlug = getSiteSlug( state, siteId );
-		if ( ! siteSlug ) {
-			return null;
-		}
-
-		return `/customize/${ siteSlug }`;
+		return [ '' ].concat( compact( [ 'customize', panel, siteSlug ] ) ).join( '/' );
 	}
 
 	const adminUrl = getSiteAdminUrl( state, siteId, 'customize.php' );
@@ -996,11 +999,12 @@ export function getCustomizerUrl( state, siteId ) {
 
 	let returnUrl;
 	if ( 'undefined' !== typeof window ) {
-		returnUrl = encodeURIComponent( window.location );
+		returnUrl = window.location.href;
 	}
 
 	return addQueryArgs( {
-		'return': returnUrl
+		'return': returnUrl,
+		...getCustomizerFocus( panel )
 	}, adminUrl );
 }
 
@@ -1019,4 +1023,16 @@ export const hasDefaultSiteTitle = ( state, siteId ) => {
 	const slug = getSiteSlug( state, siteId );
 	// we are using startsWith here, as getSiteSlug returns "slug.wordpress.com"
 	return site.name === i18n.translate( 'Site Title' ) || startsWith( slug, site.name );
+};
+
+/**
+ * Returns true if the site supports managing Jetpack settings remotely.
+ * False otherwise.
+ *
+ * @param {Object} state  Global state tree
+ * @param {Object} siteId Site ID
+ * @return {?Boolean}     Whether site supports managing Jetpack settings remotely.
+ */
+export const siteSupportsJetpackSettingsUi = ( state, siteId ) => {
+	return isJetpackMinimumVersion( state, siteId, '4.5.0' );
 };

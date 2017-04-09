@@ -86,6 +86,35 @@ describe( 'utils', () => {
 				}
 			} );
 		} );
+
+		it( 'should return an updated nested action thunk, merging data on dispatch', () => {
+			const dispatch = spy();
+			const action = extendAction(
+				( thunkDispatch ) => thunkDispatch(
+					( nestedThunkDispatch ) => nestedThunkDispatch( {
+						type: 'ACTION_TEST',
+						meta: {
+							preserve: true
+						}
+					} )
+				),
+				{
+					meta: {
+						ok: true
+					}
+				}
+			);
+
+			action( dispatch );
+			dispatch.getCall( 0 ).args[ 0 ]( dispatch );
+			expect( dispatch ).to.have.been.calledWithExactly( {
+				type: 'ACTION_TEST',
+				meta: {
+					preserve: true,
+					ok: true
+				}
+			} );
+		} );
 	} );
 
 	describe( '#createReducer()', () => {

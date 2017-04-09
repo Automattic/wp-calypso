@@ -10,6 +10,11 @@
 	&.is-error {
 		color: $alert-red;
 	}
+
+	&.is-warning{
+		color: $alert-yellow;
+	}
+
 	.gridicon {
 		float: left;
 		margin-left: -34px;

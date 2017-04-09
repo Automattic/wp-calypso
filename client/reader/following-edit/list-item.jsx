@@ -93,7 +93,7 @@ const SubscriptionListItem = React.createClass( {
 		var subscription = this.props.subscription,
 			siteData = this.state.site,
 			feedData = this.state.feed,
-			iconUrl = siteData && siteData.get( 'icon' ),
+			iconUrl = siteData && siteData.getIn( [ 'icon', 'img' ] ),
 			siteUrl = FeedDisplayHelper.getSiteUrl( siteData, feedData, subscription ),
 			displayUrl = FeedDisplayHelper.formatUrlForDisplay( siteUrl ),
 			isFollowing = this.isFollowing(),
@@ -102,7 +102,7 @@ const SubscriptionListItem = React.createClass( {
 		/* eslint-disable react/jsx-no-target-blank */
 		const cardHeader = (
 			<div className="subscription-list-item__header-content">
-				<Icon>{ iconUrl ? <img src={ iconUrl.get( 'img' ) } alt="Feed icon" /> : null }</Icon>
+				<Icon>{ iconUrl ? <img src={ iconUrl } alt="Feed icon" /> : null }</Icon>
 				<Title>
 					<a href={ FeedDisplayHelper.getFeedStreamUrl( siteData, feedData, displayUrl ) }>{ feedTitle }</a>
 				</Title>

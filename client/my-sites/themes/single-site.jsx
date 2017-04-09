@@ -11,67 +11,40 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import SingleSiteThemeShowcaseWpcom from './single-site-wpcom';
 import SingleSiteThemeShowcaseJetpack from './single-site-jetpack';
-import sitesFactory from 'lib/sites-list';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isThemeActive } from 'state/themes/selectors';
-import { canCurrentUser } from 'state/selectors';
 
 const SingleSiteThemeShowcaseWithOptions = ( props ) => {
-	const { isJetpack, translate } = props;
-	const sites = sitesFactory();
-	const site = sites.getSelectedSite();
+	const { isJetpack, siteId, translate } = props;
 
 	// If we've only just switched from single to multi-site, there's a chance
 	// this component is still being rendered with site unset, so we need to guard
 	// against that case.
-	if ( ! site ) {
+	if ( ! siteId ) {
 		return <Main className="themes" />;
 	}
 
 	if ( isJetpack ) {
 		return (
 			<SingleSiteThemeShowcaseJetpack { ...props }
-				site={ site }
-				siteId={ site.ID }
-				options={ [
-					'customize',
-					'preview',
-					'purchase',
-					'activate',
-					'tryandcustomize',
-					'separator',
-					'info',
-					'support',
-					'help'
-				] }
+				siteId={ siteId }
 				defaultOption="activate"
 				secondaryOption="tryandcustomize"
 				source="showcase"
-				listLabel={ translate( 'Custom themes' ) }
+				listLabel={ translate( 'Uploaded themes' ) }
+				placeholderCount={ 5 }
 			/>
 		);
 	}
 
 	return (
 		<SingleSiteThemeShowcaseWpcom { ...props }
-			site={ site }
-			siteId={ site.ID }
-			options={ [
-				'customize',
-				'preview',
-				'purchase',
-				'activate',
-				'tryandcustomize',
-				'separator',
-				'info',
-				'support',
-				'help'
-			] }
+			origin="wpcom"
+			siteId={ siteId }
 			defaultOption="activate"
 			secondaryOption="tryandcustomize"
 			source="showcase"
-			listLabel={ translate( 'WordPress.com themes' ) }
 		/>
 	);
 };
@@ -80,9 +53,9 @@ export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		return {
+			siteId: selectedSiteId,
 			isJetpack: isJetpackSite( state, selectedSiteId ),
-			isCustomizable: canCurrentUser( state, selectedSiteId, 'edit_theme_options' ),
-			getScreenshotOption: ( theme ) => isThemeActive( state, theme.id, selectedSiteId ) ? 'customize' : 'info'
+			getScreenshotOption: ( themeId ) => isThemeActive( state, themeId, selectedSiteId ) ? 'customize' : 'info'
 		};
 	}
 )( localize( SingleSiteThemeShowcaseWithOptions ) );

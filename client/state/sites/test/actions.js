@@ -19,11 +19,13 @@ import {
 	SITES_RECEIVE,
 	SITES_REQUEST,
 	SITES_REQUEST_FAILURE,
-	SITES_REQUEST_SUCCESS
+	SITES_REQUEST_SUCCESS,
+	SITES_UPDATE
 } from 'state/action-types';
 import {
 	receiveSite,
 	receiveSites,
+	receiveSiteUpdates,
 	requestSites,
 	requestSite,
 	setFrontPage
@@ -63,12 +65,26 @@ describe( 'actions', () => {
 			} );
 		} );
 	} );
+
+	describe( 'receiveSiteUpdates()', () => {
+		it( 'should return an action object', () => {
+			const sites = [ { ID: 2916284, name: 'WordPress.com Example Blog' } ];
+
+			const action = receiveSiteUpdates( sites );
+
+			expect( action ).to.eql( {
+				type: SITES_UPDATE,
+				sites
+			} );
+		} );
+	} );
+
 	describe( '#requestSites()', () => {
 		describe( 'success', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/sites?site_visibility=all' )
+					.get( '/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true' )
 					.reply( 200, {
 						sites: [
 							{ ID: 2916284, name: 'WordPress.com Example Blog' },
@@ -106,7 +122,7 @@ describe( 'actions', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/sites?site_visibility=all' )
+					.get( '/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true' )
 					.reply( 403, {
 						error: 'authorization_required',
 						message: 'An active access token must be used to access sites.'

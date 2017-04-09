@@ -27,40 +27,30 @@ describe( 'parser', () => {
 		mockery.resetCache(); // reset require cache
 	} );
 
-	it( 'should return empty object for invalid path', () => {
+	it( 'should return empty objects for an invalid path', () => {
 		mockery.registerMock( 'fs', mocks.INVALID_PATH );
 		parser = require( 'config/parser' );
 
-		let data = parser( '/invalid-path' );
+		const data = parser( '/invalid-path' );
 
-		expect( data ).to.eql( {} );
+		expect( data ).to.eql( { serverData: {}, clientData: {} } );
 	} );
 
-	it( 'should not include secrets by default', () => {
+	it( 'server should have secrets and client should not', () => {
 		mockery.registerMock( 'fs', mocks.VALID_SECRETS );
 		parser = require( 'config/parser' );
 
-		let data = parser( '/valid-path' );
+		const data = parser( '/valid-path' );
 
-		expect( data ).to.not.have.property( 'secret' );
-	} );
-
-	it( 'should include secrets when `includeSecrets` is true', () => {
-		mockery.registerMock( 'fs', mocks.VALID_SECRETS );
-		parser = require( 'config/parser' );
-
-		let data = parser( '/valid-path', {
-			includeSecrets: true
-		} );
-
-		expect( data ).to.have.property( 'secret', 'very' );
+		expect( data.clientData ).to.not.have.property( 'secret' );
+		expect( data.serverData ).to.have.property( 'secret' );
 	} );
 
 	it( 'should cascade configs', () => {
 		mockery.registerMock( 'fs', mocks.VALID_ENV_FILES );
 		parser = require( 'config/parser' );
 
-		let data = parser( '/valid-path', {
+		const { serverData: data } = parser( '/valid-path', {
 			env: 'myenv'
 		} );
 
@@ -83,7 +73,7 @@ describe( 'parser', () => {
 		mockery.registerMock( 'fs', mocks.VALID_ENV_FILES );
 		parser = require( 'config/parser' );
 
-		let data = parser( '/valid-path', {
+		const { serverData: data } = parser( '/valid-path', {
 			env: 'myenv',
 			disabledFeatures: 'enabledFeature2'
 		} );
@@ -95,7 +85,7 @@ describe( 'parser', () => {
 		mockery.registerMock( 'fs', mocks.VALID_ENV_FILES );
 		parser = require( 'config/parser' );
 
-		let data = parser( '/valid-path', {
+		const { serverData: data } = parser( '/valid-path', {
 			env: 'myenv',
 			enabledFeatures: 'disabledFeature2'
 		} );

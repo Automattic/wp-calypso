@@ -58,7 +58,7 @@ const MeSidebar = React.createClass( {
 			'/me': 'profile',
 			'/me/security/two-step': 'security',
 			'/me/security/connected-applications': 'security',
-			'/me/security/checkup': 'security',
+			'/me/security/account-recovery': 'security',
 			'/me/notifications/comments': 'notifications',
 			'/me/notifications/updates': 'notifications',
 			'/me/notifications/subscriptions': 'notifications',
@@ -127,7 +127,7 @@ const MeSidebar = React.createClass( {
 
 						<SidebarItem
 							selected={ selected === 'security' }
-							link={ config.isEnabled( 'me/security' ) ? '/me/security' : '//wordpress.com/me/security' }
+							link={ '/me/security' }
 							label={ this.translate( 'Security' ) }
 							icon="lock"
 							onNavigate={ this.onNavigate }

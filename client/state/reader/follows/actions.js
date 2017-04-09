@@ -8,7 +8,9 @@ import debugModule from 'debug';
  */
 import {
 	READER_FOLLOW,
-	READER_UNFOLLOW
+	READER_UNFOLLOW,
+	READER_FOLLOWS_RECEIVE,
+	READER_FOLLOWS_SYNC_START,
 } from 'state/action-types';
 
 /**
@@ -27,7 +29,7 @@ export function recordFollow( url ) {
 		debug( 'User followed ' + url );
 		dispatch( {
 			type: READER_FOLLOW,
-			url
+			payload: { url }
 		} );
 	};
 }
@@ -43,7 +45,31 @@ export function recordUnfollow( url ) {
 		debug( 'User unfollowed ' + url );
 		dispatch( {
 			type: READER_UNFOLLOW,
-			url
+			payload: { url }
 		} );
+	};
+}
+
+/**
+ * Returns an action object to signal that followed sites have been received.
+ *
+ * @param  {Array}  follows Follows received
+ * @return {Object} 		Action object
+ */
+export function receiveFollows( follows ) {
+	return {
+		type: READER_FOLLOWS_RECEIVE,
+		payload: { follows }
+	};
+}
+
+/**
+ * Returns an action object to signal that follows have been requested.
+ *
+ * @return {Object} 		Action object
+ */
+export function requestFollows() {
+	return {
+		type: READER_FOLLOWS_SYNC_START,
 	};
 }

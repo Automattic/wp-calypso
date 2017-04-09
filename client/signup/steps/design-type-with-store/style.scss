@@ -3,7 +3,16 @@
 	text-align: center;
 }
 
-.design-type-with-store__section-wrapper {
+.design-type-with-store__substep-wrapper {
+	position: relative;
+}
+
+.design-type-with-store__list {
+	margin: 0 auto;
+	display: flex;
+	flex-flow: row wrap;
+	max-width: 640px;
+
 	opacity: 1;
 	filter: blur( 0 );
 	transform: translateZ( 0 ) translateX( 0 );
@@ -19,7 +28,6 @@
 .design-type-with-store__store-wrapper {
 	position: absolute;
 	width: 100%;
-
 	opacity: 1;
 	filter: blur( 0 );
 	transform: translateZ( 0 ) translateX( 0 );
@@ -32,30 +40,18 @@
 	}
 }
 
-.design-type-with-store__list {
-	margin: 0 auto;
-	display: flex;
-	flex-flow: row wrap;
-	max-width: 640px;
-}
-
 .design-type-with-store__choice {
 	padding: 0;
 	margin: 0 10px 20px 10px;
 	width: 230px;
 	flex-grow: 1;
 	transition: all 100ms ease-in-out;
+	position: relative;
+	text-align: center;
 
 	a, svg {
 		display: block;
 		width: 100%; // Safari fix
-	}
-
-	h2 {
-		color: darken( $gray, 20% );
-		padding-left: 15px;
-		border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
-		line-height: 54px;
 	}
 
 	&:hover {
@@ -63,146 +59,130 @@
 	}
 }
 
-.design-type-with-store__flex-container {
-	display: inline-flex;
-	flex-flow: row wrap;
-	border-top: 1px solid #c8d7e1;
-	border-left: 1px solid #c8d7e1;
-	margin: 0 auto;
+.design-type-with-store__choice-copy {
+	padding: 15px;
+	border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
 }
 
-.design-type-with-store__vertical-center {
+.design-type-with-store__choice-label {
+	color: darken( $gray, 20% );
+	padding: 0;
+}
+
+.design-type-with-store__choice-label--test {
+	color: $blue-wordpress;
 	position: relative;
-	top: 50%;
-	transform: translateY(-50%);
 }
 
-.design-type-with-store__copy {
-	flex-grow: 1;
-	border-right: 1px solid #c8d7e1;
-	border-bottom: 1px solid #c8d7e1;
-	padding: 32px;
-	background-color: white;
-	text-align: left;
-	font-size: 15px;
-	font-weight: 400;
-	line-height: 1.4;
-	color: #3d596d;
-	max-width: 402px;
+.design-type-with-store__choice-description {
+	margin: 10px 0 0;
+	color: $gray;
+	font-size: 0.875em;
+}
+
+.button.design-type-with-store__cta {
+	color: $blue-wordpress;
+}
+
+.design-type-with-store__disclaimer {
+	text-align: center;
+	padding: 0 15px;
+	color: darken( $gray, 20 );
+	font-size: 0.875em;
+	width: 100%;
 	box-sizing: border-box;
-	margin: 0 auto;
-	height: 195px;
 }
 
-.design-type-with-store__price-box {
-	border-right: 1px solid #c8d7e1;
-	border-bottom: 1px solid #c8d7e1;
-	border-left: hidden;
-	flex-grow: 1;
-	margin: 0 auto;
-	padding: 32px 24px;
-	background-color: #f3f6f8;
-	box-sizing: border-box;
-	height: 195px;
-}
-
-@include breakpoint( "<480px" ) {
-	.design-type-with-store__copy {
-		text-align: center;
-	}
-}
-
-@include breakpoint( "<660px" ) {
-	.design-type-with-store__copy {
-		max-width: none;
-	}
-
-	.design-type-with-store__bluehost-logo {
-		margin: 0 auto 18px auto;
-	}
-
-	.design-type-with-store__siteground-logo {
-		margin: 0 auto 18px auto;
-	}
-}
-
-@media only screen and (min-width: 480px) and (max-width : 660px) {
-	.design-type-with-store__price-box {
+.design-type-with-store__choice--mobile-test {
+	@include breakpoint( "<480px" ) {
+		margin-bottom: 0;
+		text-align: left;
 		position: relative;
-		height: 90px;
-		padding: 0;
+		border: 1px solid lighten( $gray, 20% );
+		border-bottom: 0;
+		box-shadow: none;
+
+		&:first-child {
+			border-top-right-radius: 6px;
+			border-top-left-radius: 6px;
+		}
+		
+		&:last-of-type {
+			margin-bottom: 20px;
+			border: 1px solid lighten( $gray, 20% );
+			border-bottom-right-radius: 6px;
+			border-bottom-left-radius: 6px;
+		}
+
+		&:hover {
+			box-shadow: none;
+		}
+
+		&:active {
+			.design-type-with-store__cta {
+				color: $blue-dark;
+			}
+
+			.design-type-with-store__choice-link:after {
+				border-top-color: $blue-dark;
+				border-right-color: $blue-dark;
+			}
+		}
+
+		.design-type-with-store__choice-link {
+			padding-right: 40px;
+			display: block;
+			box-sizing: border-box;
+
+			&:after {
+				content: '';
+				display: block;
+				width: 8px; //Match the size of the cta copy
+				height: 8px; //Match the size of the cta copy
+				position: absolute;
+				top: 20px;
+				right: 15px;
+				border-top: 2px solid lighten( $gray, 20% );
+				border-right: 2px solid lighten( $gray, 20% );
+				transform: rotate(45deg);
+			}
+		}
+
+		.design-type-with-store__image {
+			display: none;
+		}
+
+		.design-type-with-store__choice-copy {
+			border-top: 0;
+		}
+
+		//Reset button for now. If this test passes, we should remove button class.
+		.design-type-with-store__cta {
+			background: none;
+			font-size: 1.1em;
+			border: 0;
+			padding: 0;
+			text-transform: none;
+			margin: 0;
+			line-height: 1.1em;
+		}
+
+		.design-type-with-store__choice-description {
+			margin-top: 0;
+		}
 	}
 
-	.design-type-with-store__price-text {
-		text-align: left;
+	@include breakpoint( ">480px" ) {
+		.design-type-with-store__image {
+			display: block;
+		}
 	}
+}
 
-	.design-type-with-store__price {
-		text-align: left;
+.step-wrapper--mobile-test {
+	@include breakpoint( "<480px" ) {
+		.design-type-with-store__disclaimer {
+			padding: 0 20px;
+		}
 	}
-
-	.design-type-with-store__price-left {
-		position: absolute;
-		left: 32px;
-		top: 22px;
-	}
-
-	.design-type-with-store__button {
-		position: absolute;
-		right: 32px;
-		top: 25px;
-	}
-
-	.design-type-with-store__price-box
-	.design-type-with-store__vertical-center {
-		top: 0;
-	}
-
-}
-
-.design-type-with-store__price-text {
-	display: block;
-	margin: 0 auto 3px auto;
-	line-height: 14px;
-	font-size: 12px;
-	font-weight: 400;
-	color: #668eaa;
-}
-
-.design-type-with-store__price {
-	display: block;
-	margin: 0 auto 21px auto;
-	line-height: 29px;
-	font-size: 24px;
-	color: #4ab866;
-}
-
-.design-type-with-store__price b {
-	font-weight: 700;
-}
-
-.design-type-with-store__button {
-	float: none;
-	margin: 0;
-	width: 120px;
-	height: 40px;
-	white-space: nowrap;
-}
-
-.design-type-with-store__back-button-wrapper {
-	margin: 32px;
-}
-
-.design-type-with-store__bluehost-logo {
-	width: 184px;
-	height: 30px;
-	display: block;
-	margin-bottom: 18px;
-}
-
-.design-type-with-store__siteground-logo {
-	width: 145px;
-	height: 30px;
-	display: block;
-	margin-bottom: 18px;
 }

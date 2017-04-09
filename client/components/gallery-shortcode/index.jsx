@@ -65,7 +65,7 @@ export default React.createClass( {
 			assign( filtered, {
 				scripts: {
 					'jquery-cycle': {
-						src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/jquery.cycle.js'
+						src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/jquery.cycle.min.js'
 					},
 					'jetpack-slideshow': {
 						src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/slideshow-shortcode.js',

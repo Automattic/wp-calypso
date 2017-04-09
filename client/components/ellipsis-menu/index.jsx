@@ -5,11 +5,11 @@ import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 import PopoverMenu from 'components/popover/menu';
 

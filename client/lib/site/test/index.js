@@ -11,13 +11,23 @@ describe( 'Calypso Site', () => {
 		const mockSiteData = {
 			ID: 1234,
 			name: 'Hello',
-			description: 'Hunting bugs is fun.'
-		}
+			description: 'Hunting bugs is fun.',
+			icon: {
+				img: 'https://secure.gravatar.com/blavatar/0d6c430459af115394a012d20b6711d6',
+				ico: 'https://secure.gravatar.com/blavatar/662db33e9076ddbb8852ae35a845bfb4'
+			}
+		};
 
 		it( 'attribute changed', () => {
 			const site = Site( mockSiteData );
 			site.set( { name: 'Goodbye' } );
 			expect( site.name ).to.equal( 'Goodbye' );
+		} );
+
+		it( 'attribute unset', () => {
+			const site = Site( mockSiteData );
+			site.set( { icon: undefined } );
+			expect( site ).to.not.have.key( 'icon' );
 		} );
 
 		it( 'change event fires on attribute change', () => {
@@ -60,6 +70,18 @@ describe( 'Calypso Site', () => {
 			site.once( 'change', changeCallback );
 			site.set( { arr: [ 1, 2, 3 ] } );
 			expect( changeCallback.called ).to.be.false;
+		} );
+
+		it( '`set` returns `true` when an attribute is updated', () => {
+			const site = Site( mockSiteData );
+
+			expect( site.set( { description: 'new description' } ) ).to.be.true;
+		} );
+
+		it( '`set` returns `false` when no attribute is updated', () => {
+			const site = Site( mockSiteData );
+
+			expect( site.set( { description: mockSiteData.description } ) ).to.be.false;
 		} );
 	} );
 } );

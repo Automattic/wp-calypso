@@ -12,7 +12,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {
-		const { store, primary, secondary, tertiary } = context;
+		const { store, primary, secondary } = context;
 
 		// On server, only render LoggedOutLayout when logged-out.
 		if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
@@ -20,7 +20,6 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 				<LayoutComponent store={ store }
 					primary={ primary }
 					secondary={ secondary }
-					tertiary={ tertiary }
 				/>
 			);
 		}

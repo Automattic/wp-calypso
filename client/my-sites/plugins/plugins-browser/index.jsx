@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import config from 'config';
 import { connect } from 'react-redux';
 
 /**
@@ -30,6 +29,7 @@ import { hasTouch } from 'lib/touch-detect';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isJetpackSite, canJetpackSiteManage } from 'state/sites/selectors';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 const PluginsBrowser = React.createClass( {
 	_SHORT_LIST_LENGTH: 6,
@@ -301,7 +301,7 @@ const PluginsBrowser = React.createClass( {
 				<JetpackManageErrorPage
 					template="optInManage"
 					title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
-					site={ selectedSite }
+					siteId={ selectedSite.ID }
 					section="plugins"
 					illustration="/calypso/images/jetpack/jetpack-manage.svg"
 					featureExample={ this.getMockPluginItems() } />
@@ -324,7 +324,7 @@ const PluginsBrowser = React.createClass( {
 				// If automated transfer is _off_ then behave
 				// as normal. If it's on, then only show if we
 				// are getting an error on a Jetpack site
-				! config.isEnabled( 'automated-transfer' ) ||
+				! isATEnabledForCurrentSite() ||
 				( selectedSite && selectedSite.jetpack )
 			)
 		) {
@@ -332,7 +332,7 @@ const PluginsBrowser = React.createClass( {
 		}
 
 		return (
-			<MainComponent>
+			<MainComponent className="is-wide-layout">
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
 				{ this.getPageHeaderView() }

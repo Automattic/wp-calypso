@@ -23,7 +23,7 @@ function createPurchaseObject( purchase ) {
 		expiryDate: purchase.expiry_date,
 		expiryMoment: purchase.expiry_date ? i18n.moment( purchase.expiry_date ) : null,
 		expiryStatus: camelCase( purchase.expiry_status ),
-		hasPrivateRegistration: Boolean( purchase.has_private_registration ),
+		hasPrivacyProtection: Boolean( purchase.has_private_registration ),
 		includedDomain: purchase.included_domain,
 		isCancelable: Boolean( purchase.is_cancelable ),
 		isDomainRegistration: Boolean( purchase.is_domain_registration ),

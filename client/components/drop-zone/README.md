@@ -17,7 +17,7 @@ class MyComponent extends Component {
 	onFilesDrop( files ) {
 		console.log( 'You dropped some files: %s', files.map( function( file ) {
 			return file.name;
-		}.join( ', ' ) );
+		}.join( ', ' ) ) );
 	}
 
 	render() {
@@ -49,3 +49,7 @@ A function to be invoked when a user drops a file into the rendered Drop Zone el
 ### `fullScreen`
 
 Pass true to have the droppable area occupy the entire screen, regardless of whether the component is rendered in the context of a `relative` positioned element. Defaults to `false`.
+
+### `icon`
+
+Pass a React Node to set a custom icon. Defaults to `<Gridicon icon="cloud-upload" size={ 48 } />`.

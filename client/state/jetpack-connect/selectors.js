@@ -11,6 +11,14 @@ import { isStale } from './utils';
 import { urlToSlug } from 'lib/url';
 import { AUTH_ATTEMPS_TTL } from './constants';
 
+const getJetpackSiteByUrl = ( state, url ) => {
+	const site = getSiteByUrl( state, url );
+	if ( site && ! site.jetpack ) {
+		return null;
+	}
+	return site;
+};
+
 const getConnectingSite = ( state ) => {
 	return get( state, [ 'jetpackConnect', 'jetpackConnectSite' ] );
 };
@@ -34,7 +42,7 @@ const isRemoteSiteOnSitesList = ( state ) => {
 		return false;
 	}
 
-	return !! getSiteByUrl( state, remoteUrl );
+	return !! getJetpackSiteByUrl( state, remoteUrl );
 };
 
 const getSessions = ( state ) => {
@@ -76,14 +84,6 @@ const getFlowType = function( state, siteSlug ) {
 		return sessions[ siteSlug ].flowType;
 	}
 	return false;
-};
-
-const getJetpackSiteByUrl = ( state, url ) => {
-	const site = getSiteByUrl( state, url );
-	if ( site && ! site.jetpack ) {
-		return null;
-	}
-	return site;
 };
 
 const getAuthAttempts = ( state, slug ) => {

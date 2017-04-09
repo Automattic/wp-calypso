@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import Hashes from 'jshashes';
+import sha1 from 'js-sha1';
 import qs from 'querystring';
 import deterministicStringify from 'lib/deterministic-stringify';
+
 
 /**
  * Internal dependencies
@@ -26,7 +27,9 @@ export const generateKey = ( params, applyHash = true ) => {
 	}
 
 	if ( applyHash ) {
-		key = new Hashes.SHA1().hex( key );
+		const hash = sha1.create();
+		hash.update( key );
+		key = hash.hex();
 	}
 
 	key = SYNC_RECORD_NAMESPACE + key;

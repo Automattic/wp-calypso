@@ -61,16 +61,16 @@ describe( 'Theme', function() {
 				assert( this.themeNode.nodeName === 'DIV', 'nodeName doesn\'t equal "DIV"' );
 				assert.include( this.themeNode.className, 'theme is-actionable', 'className does not contain "theme is-actionable"' );
 
-				assert( this.themeNode.getElementsByTagName( 'h2' )[0].textContent === 'Theme name' );
+				assert( this.themeNode.getElementsByTagName( 'h2' )[ 0 ].textContent === 'Theme name' );
 			} );
 
 			it( 'should render a screenshot', function() {
-				var imgNode = this.themeNode.getElementsByTagName( 'img' )[0];
+				var imgNode = this.themeNode.getElementsByTagName( 'img' )[ 0 ];
 				assert.include( imgNode.getAttribute( 'src' ), '/theme/screenshot.png' );
 			} );
 
 			it( 'should call onScreenshotClick() on click on screenshot', function() {
-				var imgNode = this.themeNode.getElementsByTagName( 'img' )[0];
+				var imgNode = this.themeNode.getElementsByTagName( 'img' )[ 0 ];
 				TestUtils.Simulate.click( imgNode );
 				assert( this.props.onScreenshotClick.calledOnce, 'onClick did not trigger onScreenshotClick' );
 			} );
@@ -83,8 +83,8 @@ describe( 'Theme', function() {
 				var more = this.themeNode.getElementsByClassName( 'theme__more-button' );
 
 				assert( more.length === 1, 'More button container not found' );
-				assert( more[0].getElementsByTagName( 'button' ).length === 1, 'More button not found' );
-				TestUtils.Simulate.click( more[0].getElementsByTagName( 'button' )[0] );
+				assert( more[ 0 ].getElementsByTagName( 'button' ).length === 1, 'More button not found' );
+				TestUtils.Simulate.click( more[ 0 ].getElementsByTagName( 'button' )[ 0 ] );
 				assert( togglePopoverStub.calledOnce, 'More button press does not trigger state toggle' );
 			} );
 		} );
@@ -128,7 +128,7 @@ describe( 'Theme', function() {
 		} );
 
 		it( 'should show a price', function() {
-			assert( this.themeNode.getElementsByClassName( 'price' )[0].textContent === '$50' );
+			assert( this.themeNode.getElementsByClassName( 'theme-badge__price' )[ 0 ].textContent === '$50' );
 		} );
 	} );
 } );

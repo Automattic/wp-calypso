@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	ReactDomServer = require( 'react-dom/server' ),
-	React = require( 'react' ),
-	i18n = require( 'i18n-calypso' ),
-	page = require( 'page' ),
-	ReduxProvider = require( 'react-redux' ).Provider,
-	qs = require( 'querystring' ),
-	isValidUrl = require( 'valid-url' ).isWebUri;
+import ReactDom from 'react-dom';
+import ReactDomServer from 'react-dom/server';
+import React from 'react';
+import i18n from 'i18n-calypso';
+import page from 'page';
+import { Provider as ReduxProvider } from 'react-redux';
+import qs from 'querystring';
+import { isWebUri as isValidUrl } from 'valid-url';
 import { map, pick, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var actions = require( 'lib/posts/actions' ),
-	route = require( 'lib/route' ),
-	sites = require( 'lib/sites-list' )(),
-	user = require( 'lib/user' )(),
-	userUtils = require( 'lib/user/utils' ),
-	analytics = require( 'lib/analytics' );
+import actions from 'lib/posts/actions';
+import route from 'lib/route';
+import SitesList from 'lib/sites-list';
+import User from 'lib/user';
+import userUtils from 'lib/user/utils';
+import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 import PostEditor from './post-editor';
 import { startEditingPost, stopEditingPost } from 'state/ui/editor/actions';
@@ -28,6 +28,10 @@ import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { editPost } from 'state/posts/actions';
 import wpcom from 'lib/wp';
 import Dispatcher from 'dispatcher';
+import { getFeaturedImageId } from 'lib/posts/utils';
+
+const sites = SitesList();
+const user = User();
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -127,15 +131,17 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 			'metadata',
 			'post_thumbnail',
 			'terms',
+			'title',
 			'type'
 		);
 		postAttributes.tags = map( postToCopy.tags, 'name' );
 		postAttributes.title = decodeEntities( postAttributes.title );
+		postAttributes.featured_image = getFeaturedImageId( postToCopy );
 
 		actions.startEditingNew( siteId, {
 			content: postToCopy.content,
 			title: postToCopy.title,
-			type: 'post',
+			type: postToCopy.type,
 		} );
 		context.store.dispatch( editPost( siteId, null, postAttributes ) );
 		actions.edit( postAttributes );
@@ -180,7 +186,7 @@ module.exports = {
 				actions.startEditingExisting( siteId, postID );
 				analytics.pageView.record( '/' + postType + '/:blogid/:postid', gaTitle + ' > Edit' );
 			} else {
-				let postOptions = { type: postType };
+				const postOptions = { type: postType };
 
 				// handle press-this params if applicable
 				if ( context.query.url ) {
@@ -207,16 +213,24 @@ module.exports = {
 		//    have permission to view the site)
 		//  - Sites are initialized _and_ fetched, but the selected site has
 		//    not yet been selected, so is not available in global state yet
+		let unsubscribe;
 		function startEditingOnSiteSelected() {
 			const siteId = getSelectedSiteId( context.store.getState() );
-
-			if ( siteId ) {
-				startEditing( siteId );
-			} else {
-				sites.once( 'change', startEditingOnSiteSelected );
+			if ( ! siteId ) {
+				return false;
 			}
+
+			if ( unsubscribe ) {
+				unsubscribe();
+			}
+
+			startEditing( siteId );
+			return true;
 		}
-		startEditingOnSiteSelected();
+
+		if ( ! startEditingOnSiteSelected() ) {
+			unsubscribe = context.store.subscribe( startEditingOnSiteSelected );
+		}
 
 		renderEditor( context, postType );
 	},

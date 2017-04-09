@@ -49,7 +49,7 @@ var utils = {
 			}
 			if ( site.options && site.options.frame_nonce ) {
 				parsed = url.parse( previewUrl, true );
-				parsed.query['frame-nonce'] = site.options.frame_nonce;
+				parsed.query[ 'frame-nonce' ] = site.options.frame_nonce;
 				delete parsed.search;
 				previewUrl = url.format( parsed );
 			}
@@ -136,7 +136,8 @@ var utils = {
 				postNormalizer.safeImageProperties( imageWidth ),
 				postNormalizer.withContentDOM( [
 					postNormalizer.content.removeStyles,
-					postNormalizer.content.makeImagesSafe( imageWidth )
+					postNormalizer.content.makeImagesSafe( imageWidth ),
+					postNormalizer.content.detectMedia,
 				] ),
 				postNormalizer.pickCanonicalImage,
 			],

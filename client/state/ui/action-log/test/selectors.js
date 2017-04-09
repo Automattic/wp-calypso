@@ -57,12 +57,12 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( action ).to.be.undefined;
+			expect( action ).to.be.false;
 		} );
 
 		it( 'should retrieve the last action from the action log', () => {
 			const navToMenus = { type: 'ROUTE_SET', path: '/menus', timestamp: 0 };
-			const navToDesign = { type: 'ROUTE_SET', path: '/design', timestamp: 1 };
+			const navToDesign = { type: 'ROUTE_SET', path: '/themes', timestamp: 1 };
 			const action = getLastAction( {
 				ui: {
 					actionLog: [ navToMenus, navToDesign ],

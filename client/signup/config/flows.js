@@ -7,7 +7,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest, getABTestVariation } from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
@@ -34,7 +34,7 @@ function getSiteDestination( dependencies ) {
 	 *
 	 * Redirect them
 	 */
-	if ( ! dependencies.siteSlug.match(/wordpress\.[a-z]+$/i) ) {
+	if ( ! dependencies.siteSlug.match( /wordpress\.[a-z]+$/i ) ) {
 		protocol = 'http';
 	}
 
@@ -116,24 +116,21 @@ const flows = {
 		lastModified: '2016-05-23'
 	},
 
-	sitetitle: {
-		steps: [ 'site-title', 'design-type', 'themes', 'domains', 'plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'The current best performing flow in AB tests',
-		lastModified: '2016-05-23'
-	},
-
 	website: {
 		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
-		description: 'This flow was originally used for the users who clicked "Create Website" on the two-button homepage. It is now linked to from the default homepage CTA as the main flow was slightly behind given translations.',
+		description: 'This flow was originally used for the users who clicked "Create Website" ' +
+			'on the two-button homepage. It is now linked to from the default homepage CTA as ' +
+			'the main flow was slightly behind given translations.',
 		lastModified: '2016-05-23'
 	},
 
 	blog: {
 		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
-		description: 'This flow was originally used for the users who clicked "Create Blog" on the two-button homepage. It is now used from blog-specific landing pages so that verbiage in survey steps refers to "blog" instead of "website".',
+		description: 'This flow was originally used for the users who clicked "Create Blog" on ' +
+			'the two-button homepage. It is now used from blog-specific landing pages so that ' +
+			'verbiage in survey steps refers to "blog" instead of "website".',
 		lastModified: '2016-05-23'
 	},
 
@@ -156,21 +153,24 @@ const flows = {
 	'delta-discover': {
 		steps: [ 'user' ],
 		destination: '/',
-		description: 'A copy of the `account` flow for the Delta email campaigns. Half of users who go through this flow receive a reader-specific drip email series.',
+		description: 'A copy of the `account` flow for the Delta email campaigns. Half of users who ' +
+			'go through this flow receive a reader-specific drip email series.',
 		lastModified: '2016-05-03'
 	},
 
 	'delta-blog': {
 		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
-		description: 'A copy of the `blog` flow for the Delta email campaigns. Half of users who go through this flow receive a blogging-specific drip email series.',
+		description: 'A copy of the `blog` flow for the Delta email campaigns. Half of users who go ' +
+			'through this flow receive a blogging-specific drip email series.',
 		lastModified: '2016-03-09'
 	},
 
 	'delta-site': {
 		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
-		description: 'A copy of the `website` flow for the Delta email campaigns. Half of users who go through this flow receive a website-specific drip email series.',
+		description: 'A copy of the `website` flow for the Delta email campaigns. Half of users who go ' +
+			'through this flow receive a website-specific drip email series.',
 		lastModified: '2016-03-09'
 	},
 
@@ -207,28 +207,39 @@ const flows = {
 		lastModified: '2016-11-14'
 	},
 
-	userfirst: {
-		steps: [ 'user' ],
-		destination: '/start/userfirst-secondary',
+	'user-first': {
+		steps: [ 'user', 'design-type', 'themes', 'domains', 'plans' ],
+		destination: getSiteDestination,
 		description: 'User-first signup flow',
-		lastModified: '2016-12-23',
-		autoContinue: true,
-	},
-
-	'userfirst-secondary': {
-		steps: [ 'design-type', 'themes', 'domains', 'plans' ],
-		destination: getSiteDestination,
-		description: 'Secondary flow for User First signup',
-		lastModified: '2016-12-23'
-	},
-
-	'domain-first': {
-		steps: [ 'domain-only', 'user' ],
-		destination: getSiteDestination,
-		description: 'An experimental approach for WordPress.com/domains',
-		lastModified: '2017-01-03'
+		lastModified: '2016-01-18',
 	},
 };
+
+if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
+	flows[ 'domain-first' ] = {
+		steps: [ 'site-or-domain', 'themes', 'plans', 'user' ],
+		destination: getSiteDestination,
+		description: 'An experimental approach for WordPress.com/domains',
+		lastModified: '2017-01-16'
+	};
+
+	flows[ 'site-selected' ] = {
+		steps: [ 'themes-site-selected', 'plans-site-selected' ],
+		destination: getSiteDestination,
+		providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
+		description: 'A flow to test updating an existing site with `Signup`',
+		lastModified: '2017-01-19'
+	};
+}
+
+if ( config.isEnabled( 'signup/social' ) ) {
+	flows.social = {
+		steps: [ 'user-social' ],
+		destination: '/',
+		description: 'Create an account without a blog with social signup enabled.',
+		lastModified: '2017-03-16'
+	};
+}
 
 if ( config( 'env' ) === 'development' ) {
 	flows[ 'test-plans' ] = {
@@ -254,7 +265,7 @@ function filterDesignTypeInFlow( flow ) {
 		return;
 	}
 
-	if ( ! includes( flow.steps, 'design-type' ) || 'designTypeWithStore' !== abtest( 'signupStore' ) ) {
+	if ( ! includes( flow.steps, 'design-type' ) ) {
 		return flow;
 	}
 
@@ -271,22 +282,14 @@ function filterFlowName( flowName ) {
 	 */
 	if ( ! user.get() ) {
 		if ( includes( defaultFlows, flowName ) && abtest( 'userFirstSignup' ) === 'userFirst' ) {
-			return 'userfirst';
-		}
-
-		/**
-		 * Users should not be able to reach `userfirst-secondary` without being logged in, since
-		 * it doesn't contain the `user` step to register a user and site respectively.
- 		 */
-		if ( flowName === 'userfirst-secondary' ) {
-			return 'userfirst';
+			return 'user-first';
 		}
 	}
 
 	return flowName;
 }
 
-function filterDestination( destination, dependencies, flowName ) {
+function filterDestination( destination ) {
 	return destination;
 }
 
@@ -322,6 +325,7 @@ const Flows = {
 			flow = removeUserStepFromFlow( flow );
 		}
 
+		// Show design type with store option only to new users with EN locale.
 		if ( ! user.get() && 'en' === i18n.getLocaleSlug() ) {
 			flow = filterDesignTypeInFlow( flow );
 		}
@@ -368,7 +372,7 @@ const Flows = {
 		 */
 		if ( 'main' === flowName ) {
 			if ( '' === stepName ) {
-				abtest( 'siteTitleStep' );
+				abtest( 'signupSurveyStep' );
 			}
 		}
 	},
@@ -388,8 +392,8 @@ const Flows = {
 	getABTestFilteredFlow( flowName, flow ) {
 		// Only do this on the main flow
 		if ( 'main' === flowName ) {
-			if ( getABTestVariation( 'siteTitleStep' ) === 'showSiteTitleStep' ) {
-				return Flows.insertStepIntoFlow( 'site-title', flow );
+			if ( abtest( 'signupSurveyStep' ) === 'showSurveyStep' ) {
+				return Flows.insertStepIntoFlow( 'survey', flow );
 			}
 		}
 

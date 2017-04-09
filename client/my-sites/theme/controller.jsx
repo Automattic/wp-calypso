@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
 import debugFactory from 'debug';
 import Lru from 'lru';
 import startsWith from 'lodash/startsWith';
@@ -10,12 +11,14 @@ import startsWith from 'lodash/startsWith';
  * Internal Dependencies
  */
 import ThemeSheetComponent from './main';
+import ThemeNotFoundError from './theme-not-found-error';
+import LayoutLoggedOut from 'layout/logged-out';
 import {
 	receiveTheme,
-	themeRequestFailure,
+	requestTheme,
 	setBackPath
 } from 'state/themes/actions';
-import wpcom from 'lib/wp';
+import { getTheme, getThemeRequestErrors } from 'state/themes/selectors';
 import config from 'config';
 
 const debug = debugFactory( 'calypso:themes' );
@@ -40,26 +43,32 @@ export function fetchThemeDetailsData( context, next ) {
 		return next();
 	}
 
-	wpcom.undocumented().themeDetails( themeSlug )
-		.then( themeDetails => {
+	context.store.dispatch( requestTheme( themeSlug, 'wpcom' ) )
+		.then( () => {
+			const themeDetails = getTheme( context.store.getState(), 'wpcom', themeSlug );
+			if ( ! themeDetails ) {
+				const error = getThemeRequestErrors( context.store.getState(), themeSlug, 'wpcom' );
+				debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
+				context.renderCacheKey = 'theme not found';
+				const err = {
+					status: 404,
+					message: 'Theme Not Found',
+					themeSlug
+				};
+				return next( err );
+			}
 			debug( 'caching', themeSlug );
 			themeDetails.timestamp = Date.now();
-			themeDetailsCache.set( themeSlug, themeDetails );
-			context.store.dispatch( receiveTheme( themeDetails, 'wpcom' ) );
 			context.renderCacheKey = context.path + themeDetails.timestamp;
+			themeDetailsCache.set( themeSlug, themeDetails );
 			next();
 		} )
-		.catch( error => {
-			debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
-			context.store.dispatch( themeRequestFailure( 'wpcom', themeSlug, error ) );
-			context.renderCacheKey = 'theme not found';
-			next();
-		} );
+		.catch( next );
 }
 
 export function details( context, next ) {
 	const { slug, section } = context.params;
-	if ( startsWith( context.prevPath, '/design' ) ) {
+	if ( startsWith( context.prevPath, '/themes' ) ) {
 		context.store.dispatch( setBackPath( context.prevPath ) );
 	}
 
@@ -67,4 +76,13 @@ export function details( context, next ) {
 		section={ section } />;
 	context.secondary = null; // When we're logged in, we need to remove the sidebar.
 	next();
+}
+
+export function notFoundError( err, context, next ) {
+	context.layout = (
+		<ReduxProvider store={ context.store }>
+			<LayoutLoggedOut primary={ <ThemeNotFoundError /> } />
+		</ReduxProvider>
+	);
+	next( err );
 }

@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import trim from 'lodash/trim';
+import { trim } from 'lodash';
 import stripTags from 'striptags';
 
 /**
@@ -333,5 +333,5 @@ module.exports = {
 	removep: removep,
 	capitalPDangit: capitalPDangit,
 	parseHtml: parseHtml,
-	unescapeAndFormatSpaces: unescapeAndFormatSpaces
+	unescapeAndFormatSpaces: unescapeAndFormatSpaces,
 };

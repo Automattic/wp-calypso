@@ -218,7 +218,6 @@
 	float: left;
 	width: 125px;
 	height: 125px;
-	border-right: 1px solid #E1E8ED;
 }
 
 .twitter-card-preview__large_image_summary
@@ -242,6 +241,8 @@
 .twitter-card-preview__summary
 .twitter-card-preview__body {
 	margin-left: 125px;
+	border-left: 1px solid #E1E8ED;
+	height: 100%;
 }
 
 .twitter-card-preview__large_image_summary
@@ -275,45 +276,4 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	margin-top: 0.32333em;
-}
-
-
-// Overrides a few styles from the Reader post component
-.reader-preview {
-	max-width: 540px;
-	pointer-events: none;
-
-	.site__content {
-		padding: 16px 4px 0 16px
-	}
-
-	.reader__post-header {
-		margin: 0;
-	}
-
-	.reader__post-featured-image {
-		margin-top: 16px;
-		left: 0;
-		width: 100%;
-	}
-
-	.reader-post-byline {
-		margin: 8px 0;
-		padding: 0;
-		font-size: 14px;
-
-		a {
-			color: $blue-medium;
-		}
-
-		.reader-post-byline__author .gravatar {
-			height: 16px;
-			width: 16px;
-			top: 4px;
-		}
-	}
-}
-
-.reader-preview__text {
-	padding: 0 16px 16px;
 }

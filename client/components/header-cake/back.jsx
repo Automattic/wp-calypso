@@ -4,12 +4,12 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import ObserveWindowSizeMixin from 'lib/mixins/observe-window-resize';
-import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 import viewport from 'lib/viewport';
 
@@ -56,15 +56,16 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { text = i18n.translate( 'Back' ), href, onClick, spacer } = this.props;
+		const { text = i18n.translate( 'Back' ), href, onClick, spacer, icon } = this.props;
 		const linkClasses = classNames( {
 			'header-cake__back': true,
-			'is-spacer': spacer
+			'is-spacer': spacer,
+			'is-action': !! icon
 		} );
 
 		return (
 			<Button compact borderless className={ linkClasses } href={ href } onClick={ onClick } disabled={ spacer }>
-				<Gridicon icon="arrow-left" size={ 18 } />
+				<Gridicon icon={ icon || 'arrow-left' } size={ 18 } />
 				{ ! this.hideText( text ) && text }
 			</Button>
 		);

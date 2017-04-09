@@ -33,16 +33,16 @@ Shortcode.parseAttributes = memoize( function( text ) {
 
 	// Match and normalize attributes.
 	while ( ( match = REGEXP_ATTR_STRING.exec( text ) ) ) {
-		if ( match[1] ) {
-			named[ match[1].toLowerCase() ] = match[2];
-		} else if ( match[3] ) {
-			named[ match[3].toLowerCase() ] = match[4];
-		} else if ( match[5] ) {
-			named[ match[5].toLowerCase() ] = match[6];
-		} else if ( match[7] ) {
-			numeric.push( match[7] );
-		} else if ( match[8] ) {
-			numeric.push( match[8] );
+		if ( match[ 1 ] ) {
+			named[ match[ 1 ].toLowerCase() ] = match[ 2 ];
+		} else if ( match[ 3 ] ) {
+			named[ match[ 3 ].toLowerCase() ] = match[ 4 ];
+		} else if ( match[ 5 ] ) {
+			named[ match[ 5 ].toLowerCase() ] = match[ 6 ];
+		} else if ( match[ 7 ] ) {
+			numeric.push( match[ 7 ] );
+		} else if ( match[ 8 ] ) {
+			numeric.push( match[ 8 ] );
 		}
 	}
 
@@ -210,25 +210,25 @@ Shortcode.next = function( tag, text, index ) {
 	}
 
 	// If we matched an escaped shortcode, try again.
-	if ( '[' === match[1] && ']' === match[7] ) {
+	if ( '[' === match[ 1 ] && ']' === match[ 7 ] ) {
 		return Shortcode.next( tag, text, re.lastIndex );
 	}
 
 	result = {
 		index: match.index,
-		content: match[0],
-		shortcode: Shortcode.parse( match[0] )
+		content: match[ 0 ],
+		shortcode: Shortcode.parse( match[ 0 ] )
 	};
 
 	// If we matched a leading `[`, strip it from the match
 	// and increment the index accordingly.
-	if ( match[1] ) {
+	if ( match[ 1 ] ) {
 		result.content = result.content.slice( 1 );
 		result.index++;
 	}
 
 	// If we matched a trailing `]`, strip it from the match.
-	if ( match[7] ) {
+	if ( match[ 7 ] ) {
 		result.content = result.content.slice( 0, -1 );
 	}
 

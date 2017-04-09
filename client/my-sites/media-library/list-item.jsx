@@ -12,8 +12,7 @@ var React = require( 'react' ),
  * External dependencies
  */
 var Spinner = require( 'components/spinner' ),
-	Gridicon = require( 'components/gridicon' ),
-	Button = require( 'components/button' ),
+	Gridicon = require( 'gridicons' ),
 	ListItemImage = require( './list-item-image' ),
 	ListItemVideo = require( './list-item-video' ),
 	ListItemAudio = require( './list-item-audio' ),
@@ -58,13 +57,6 @@ export default React.createClass( {
 
 	clickItem: function( event ) {
 		this.props.onToggle( this.props.media, event.shiftKey );
-	},
-
-	editItem: function( event ) {
-		this.props.onEditItem( this.props.media );
-
-		// Prevent default list item toggle behavior
-		event.stopPropagation();
 	},
 
 	renderItem: function() {
@@ -125,12 +117,6 @@ export default React.createClass( {
 					{ this.renderItem() }
 					{ this.renderSpinner() }
 					{ this.props.showGalleryHelp && <EditorMediaModalGalleryHelp /> }
-					<Button type="button" className="media-library__list-item-edit" onClick={ this.editItem }>
-						<span className="screen-reader-text">
-							{ this.translate( 'Edit', { context: 'verb' } ) }
-						</span>
-						<Gridicon icon="pencil" />
-					</Button>
 				</figure>
 			</div>
 		);

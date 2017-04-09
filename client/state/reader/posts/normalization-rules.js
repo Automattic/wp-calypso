@@ -30,23 +30,24 @@ import keepValidImages from 'lib/post-normalizer/rule-keep-valid-images';
 import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-load';
 import pickCanonicalMedia from 'lib/post-normalizer/rule-pick-canonical-media';
 import removeElementsBySelector from 'lib/post-normalizer/rule-content-remove-elements-by-selector';
+import addDiscoverProperties from 'lib/post-normalizer/rule-add-discover-properties';
+import linkJetpackCarousels from 'lib/post-normalizer/rule-content-link-jetpack-carousels';
 
 /**
  * Module vars
  */
 export const
-	READER_CONTENT_WIDTH = 720,
-	PHOTO_ONLY_MIN_WIDTH = 480,
-	DISCOVER_BLOG_ID = 53424024,
+	READER_CONTENT_WIDTH = 800,
+	PHOTO_ONLY_MIN_WIDTH = 440,
 	GALLERY_MIN_IMAGES = 4,
 	GALLERY_MIN_IMAGE_WIDTH = 350;
 
 function getCharacterCount( post ) {
-	if ( ! post || ! post.better_excerpt_no_html ) {
+	if ( ! post || ! post.content_no_html ) {
 		return 0;
 	}
 
-	return post.better_excerpt_no_html.length;
+	return post.content_no_html.length;
 }
 
 export function imageIsBigEnoughForGallery( image ) {
@@ -60,16 +61,18 @@ const hasShortContent = post => getCharacterCount( post ) <= 100;
  * @param  {object}   post     A post to classify
  * @return {object}            The classified post
  */
-function classifyPost( post ) {
+export function classifyPost( post ) {
 	const canonicalImage = post.canonical_image;
+	const imagesForGallery = filter( post.content_images, imageIsBigEnoughForGallery );
 	let displayType = DISPLAY_TYPES.UNCLASSIFIED,
 		canonicalAspect;
 
-	if ( post.canonical_media &&
-			post.canonical_media.mediaType === 'image' &&
-			( ! post.content_images || post.content_images.length < GALLERY_MIN_IMAGES ) &&
-			post.canonical_media.width >= PHOTO_ONLY_MIN_WIDTH &&
-			hasShortContent( post ) ) {
+	if ( imagesForGallery.length >= GALLERY_MIN_IMAGES ) {
+		displayType ^= DISPLAY_TYPES.GALLERY;
+	} else if ( post.canonical_media &&
+				post.canonical_media.mediaType === 'image' &&
+				post.canonical_media.width >= PHOTO_ONLY_MIN_WIDTH &&
+				hasShortContent( post ) ) {
 		displayType ^= DISPLAY_TYPES.PHOTO_ONLY;
 	}
 
@@ -94,10 +97,6 @@ function classifyPost( post ) {
 
 	if ( post.canonical_media && post.canonical_media.mediaType === 'video' ) {
 		displayType ^= DISPLAY_TYPES.FEATURED_VIDEO;
-	}
-
-	if ( post.content_images && filter( post.content_images, imageIsBigEnoughForGallery ).length >= GALLERY_MIN_IMAGES ) {
-		displayType ^= DISPLAY_TYPES.GALLERY;
 	}
 
 	if ( post.tags && post.tags[ 'p2-xpost' ] ) {
@@ -125,11 +124,13 @@ const fastPostNormalizationRules = flow( [
 		disableAutoPlayOnMedia,
 		detectMedia,
 		detectPolls,
+		linkJetpackCarousels,
 	] ),
 	createBetterExcerpt,
 	pickCanonicalImage,
 	pickCanonicalMedia,
 	classifyPost,
+	addDiscoverProperties,
 ] );
 
 export function runFastRules( post ) {

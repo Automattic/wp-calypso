@@ -2,13 +2,13 @@
  * External dependencies
  */
 import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
 import accept from 'lib/accept';
-import Gridicon from 'components/gridicon';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
 import PluginsActions from 'lib/plugins/actions';
@@ -44,13 +44,13 @@ module.exports = React.createClass( {
 			if ( this.props.isEmbed ) {
 				analytics.ga.recordEvent( 'Plugins', 'Remove plugin with no selected site', 'Plugin Name', this.props.plugin.slug );
 				analytics.tracks.recordEvent( 'calypso_plugin_remove_click_from_sites_list', {
-					site: this.props.site,
+					site: this.props.site.ID,
 					plugin: this.props.plugin.slug
 				} );
 			} else {
 				analytics.ga.recordEvent( 'Plugins', 'Remove plugin on selected Site', 'Plugin Name', this.props.plugin.slug );
 				analytics.tracks.recordEvent( 'calypso_plugin_remove_click_from_plugin_info', {
-					site: this.props.site,
+					site: this.props.site.ID,
 					plugin: this.props.plugin.slug
 				} );
 			}
@@ -85,7 +85,7 @@ module.exports = React.createClass( {
 
 		if ( ! this.props.site.canUpdateFiles && this.props.site.options.file_mod_disabled ) {
 			const reasons = utils.getSiteFileModDisableReason( this.props.site, 'modifyFiles' );
-			let html = [];
+			const html = [];
 
 			if ( reasons.length > 1 ) {
 				html.push(
@@ -93,12 +93,12 @@ module.exports = React.createClass( {
 						{ this.translate( '%(pluginName)s cannot be removed:', { args: { pluginName: this.props.plugin.name } } ) }
 					</p>
 				);
-				let list = reasons.map( ( reason, i ) => ( <li key={ 'reason-i' + i + '-' + this.props.site.ID } >{ reason }</li> ) );
+				const list = reasons.map( ( reason, i ) => ( <li key={ 'reason-i' + i + '-' + this.props.site.ID } >{ reason }</li> ) );
 				html.push( <ul className="plugin-action__disabled-info-list" key="reason-shell-list">{ list }</ul> );
 			} else {
 				html.push(
 					<p key="reason-shell">
-						{ this.translate( '%(pluginName)s cannot be removed. %(reason)s', { args: { pluginName: this.props.plugin.name, reason: reasons[0] } } ) }
+						{ this.translate( '%(pluginName)s cannot be removed. %(reason)s', { args: { pluginName: this.props.plugin.name, reason: reasons[ 0 ] } } ) }
 					</p>
 				);
 			}
@@ -161,4 +161,3 @@ module.exports = React.createClass( {
 		return this.renderButton();
 	}
 } );
-

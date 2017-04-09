@@ -11,9 +11,11 @@ import page from 'page';
  * Internal dependencies
  */
 import Button from 'components/button';
+import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getEligibility } from 'state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'state/themes/actions';
+import { transferStates } from 'state/automated-transfer/constants';
 
 export const WpcomPluginInstallButton = props => {
 	const {
@@ -24,21 +26,28 @@ export const WpcomPluginInstallButton = props => {
 		siteId,
 		eligibilityData,
 		navigateTo,
-		initiateTransfer
+		initiateTransfer,
+		transferState
 	} = props;
+
+	if ( transferStates.COMPLETE === transferState ) {
+		return null;
+	}
 
 	function installButtonAction( event ) {
 		event.preventDefault();
 
-		const hasErrors = !! get( eligibilityData, 'eligibilityHolds', [] ).length;
-		const hasWarnings = !! get( eligibilityData, 'eligibilityWarnings', [] ).length;
+		const eligibilityHolds = get( eligibilityData, 'eligibilityHolds', [] );
+		const eligibilityWarnings = get( eligibilityData, 'eligibilityWarnings', [] );
 
+		const hasErrors = !! eligibilityHolds.length;
+		const hasWarnings = !! eligibilityWarnings.length;
 		if ( ! hasErrors && ! hasWarnings ) {
 			// No need to show eligibility warnings page, initiate transfer immediately
 			initiateTransfer( siteId, null, plugin.slug );
 		} else {
 			// Show eligibility warnings before proceeding
-			navigateTo( `/plugins/${ plugin.slug }/${ siteSlug }/eligibility` );
+			navigateTo( `/plugins/${ plugin.slug }/eligibility/${ siteSlug }` );
 		}
 	}
 
@@ -59,7 +68,8 @@ const mapStateToProps = state => {
 	return {
 		siteId: site.ID,
 		siteSlug: site.slug,
-		eligibilityData: getEligibility( state, site.ID )
+		eligibilityData: getEligibility( state, site.ID ),
+		transferState: getAutomatedTransferStatus( state, site.ID ),
 	};
 };
 

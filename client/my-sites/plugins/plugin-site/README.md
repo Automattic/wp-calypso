@@ -6,9 +6,9 @@ This component is used to represent the state of a single instance of a plugin i
 #### How to use:
 
 ```js
-var PluginSite = require( 'my-sites/plugins/plugin-site/plugin-site' );
+import PluginSite from 'my-sites/plugins/plugin-site/plugin-site';
 
-render: function() {
+render() {
     return <PluginSite
             site={ site }
             secondarySites={ this.getSecondaryPluginSites( site ) }

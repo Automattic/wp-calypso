@@ -12,14 +12,13 @@ var React = require( 'react' ),
  */
 var siteMenus = require( 'lib/menu-data' ),
 	MenuUtils = require( './menu-utils' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	TaxonomyList = require( './item-options/taxonomy-list' ),
-	CategoryOptions = require( './item-options/category-options' ),
+	TaxonomyOptions = require( './item-options/taxonomy-options' ),
 	PostList = require( './item-options/post-list' ),
 	MenuPanelBackButton = require( './menu-panel-back-button' ),
 	analytics = require( 'lib/analytics' ),
-	Gridicon = require( 'components/gridicon' );
+	Gridicon = require( 'gridicons' );
 
+import MenuItemTypeLabel from './menu-item-type-label';
 import { isInjectedNewPageItem } from 'lib/menu-data/menu-data';
 import has from 'lodash/has';
 /**
@@ -44,8 +43,6 @@ var Button = React.createClass( {
 } );
 
 var MenuEditableItem = React.createClass( {
-	mixins: [ observe( 'itemTypes' ) ],
-
 	componentWillMount: function() {
 		this.initializeItemType();
 	},
@@ -73,7 +70,7 @@ var MenuEditableItem = React.createClass( {
 
 	initializeItemType: function() {
 		this.setState( {
-			itemType: find( this.props.itemTypes.get(), { name: this.state.item.type } )
+			itemType: find( this.props.itemTypes, { name: this.state.item.type } )
 		} );
 	},
 
@@ -192,13 +189,13 @@ var MenuEditableItem = React.createClass( {
 	},
 
 	renderItemOptions: function() {
-		return this.state.itemType && this[this.state.itemType.renderer]( this.state.itemType );
+		return this.state.itemType && this[ this.state.itemType.renderer ]( this.state.itemType );
 	},
 
 	renderLinkOptions: function( itemType ) {
 		return (
 			<div className="menu-item-options menu-item-url">
-				<MenuPanelBackButton label={ itemType.label } onClick={ this.showLeftPanel } />
+				<MenuPanelBackButton name={ itemType.name } label={ itemType.label } onClick={ this.showLeftPanel } />
 				<label className="menu-item-form-label">{ this.translate( 'Link address (URL)' ) }</label>
 				<input className="menu-item-form-address" type="text" value={ this.state.item.url } onChange={ this.updateUrlValue } />
 				<input id="menu-flag-open-in-new-window" type="checkbox" defaultChecked={ this.state.item.link_target } onChange={ this.toggleUrlTarget } />
@@ -220,24 +217,8 @@ var MenuEditableItem = React.createClass( {
 	},
 
 	renderTaxonomyOptions: function( itemType ) {
-		var contentsList = itemType.contentsList;
-
-		if ( contentsList.page === 0 ) {
-			contentsList.fetchNextPage();
-		}
-
-		return  (
-			<TaxonomyList contents={ contentsList }
-				item={ this.state.item }
-				back={ this.showLeftPanel }
-				onChange={ this.setItemContent }
-				itemType={ itemType } />
-		);
-	},
-
-	renderCategoryOptions: function( itemType ) {
 		return (
-			<CategoryOptions
+			<TaxonomyOptions
 				siteId={ siteMenus.siteID }
 				selected={ this.state.item }
 				onBackClick={ this.showLeftPanel }
@@ -249,7 +230,7 @@ var MenuEditableItem = React.createClass( {
 	renderItemTypes: function() {
 		return (
 			<ul className="menus__menu-item-form-types">
-				{ this.props.itemTypes.get().map( function( itemType ) {
+				{ this.props.itemTypes.map( function( itemType ) {
 					var isSelected;
 
 					if ( ! itemType.show ) {
@@ -262,7 +243,7 @@ var MenuEditableItem = React.createClass( {
 						<li key={ itemType.name } className={ isSelected }
 									onClick={ this.changeItemType.bind( null, itemType ) } >
 							<label className={ 'noticon noticon-' + ( itemType.icon || 'cog' ) } >
-								{ itemType.label }
+								<MenuItemTypeLabel name={ itemType.name } label={ itemType.label } />
 							</label>
 						</li>
 						);
@@ -306,7 +287,7 @@ var MenuEditableItem = React.createClass( {
 		if ( ! this.state.itemType ) {
 			return false;
 		}
-		var itemType = find( this.props.itemTypes.get(), { name: this.state.item.type } );
+		var itemType = find( this.props.itemTypes, { name: this.state.item.type } );
 		return itemType && itemType.show;
 	},
 

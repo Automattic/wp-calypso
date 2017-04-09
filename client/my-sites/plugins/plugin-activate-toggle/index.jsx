@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -11,7 +12,6 @@ import { localize } from 'i18n-calypso';
 import PluginsActions from 'lib/plugins/actions';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
-import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 export class PluginActivateToggle extends Component {
@@ -47,8 +47,39 @@ export class PluginActivateToggle extends Component {
 		}
 	};
 
+	trackManageConnectionLink = () => {
+		const { recordGoogleEvent: recordGAEvent } = this.props;
+		recordGAEvent( 'Plugins', 'Clicked Manage Jetpack Connection Link', 'Plugin Name', 'jetpack' );
+	}
+
+	manageConnectionLink() {
+		const { disabled, translate, site } = this.props;
+		if ( disabled ) {
+			return (
+				<span className="plugin-activate-toggle__disabled">
+					{ translate( 'Manage Connection', { comment: 'manage Jetpack connnection settings link' } ) }
+					<span className="plugin-activate-toggle__icon"><Gridicon icon="cog" size={ 18 } /></span>
+				</span>
+			);
+		}
+
+		return (
+			<span className="plugin-activate-toggle__link">
+				<a onClick={ this.trackManageConnectionLink }
+					href={ '/settings/general/' + site.slug } >
+					{ translate( 'Manage Connection ', { comment: 'manage Jetpack connnection settings link' } ) }
+				</a>
+				<a className="plugin-activate-toggle__icon"
+					onClick={ this.trackManageConnectionLink }
+					href={ '/settings/general/' + site.slug } >
+					<Gridicon icon="cog" size={ 18 } />
+				</a>
+			</span>
+		);
+	}
+
 	render() {
-		const { site, plugin, isMock, disabled, translate } = this.props;
+		const { site, plugin, disabled, translate } = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -64,13 +95,7 @@ export class PluginActivateToggle extends Component {
 				<PluginAction
 					className="plugin-activate-toggle"
 					htmlFor={ 'disconnect-jetpack-' + site.ID }
-					>
-					<DisconnectJetpackButton
-						disabled={ disabled || ! plugin }
-						site={ site }
-						redirect="/plugins/jetpack"
-						isMock={ isMock }
-						/>
+					>{ this.manageConnectionLink() }
 				</PluginAction>
 			);
 		}

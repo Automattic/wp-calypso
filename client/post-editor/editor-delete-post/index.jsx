@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -11,8 +12,6 @@ import actions from 'lib/posts/actions';
 import accept from 'lib/accept';
 import utils from 'lib/posts/utils';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
-import Tooltip from 'components/tooltip';
 
 export default React.createClass( {
 	displayName: 'EditorDeletePost',
@@ -26,7 +25,6 @@ export default React.createClass( {
 	getInitialState: function() {
 		return {
 			isTrashing: false,
-			tooltip: false
 		};
 	},
 
@@ -38,7 +36,9 @@ export default React.createClass( {
 				this.setState( { isTrashing: false } );
 			}
 
-			this.props.onTrashingPost( error );
+			if ( this.props.onTrashingPost ) {
+				this.props.onTrashingPost( error );
+			}
 		}.bind( this );
 
 		if ( utils.userCan( 'delete_post', this.props.post ) ) {
@@ -72,33 +72,21 @@ export default React.createClass( {
 			return null;
 		}
 
-		const classes = classnames( 'editor-delete-post', { 'is-trashing': this.state.isTrashing } );
-		let tooltipText = this.translate( 'Send post to the trash' );
-
-		if ( post.type === 'page' ) {
-			tooltipText = this.translate( 'Send page to the trash' );
-		}
+		const classes = classnames( 'editor-delete-post__button', { 'is-trashing': this.state.isTrashing } );
+		const label = this.state.isTrashing ? this.translate( 'Trashing...' ) : this.translate( 'Move to trash' );
 
 		return (
-			<Button
-				borderless
-				className={ classes }
-				onClick={ this.onSendToTrash }
-				onMouseEnter={ () => this.setState( { tooltip: true } ) }
-				onMouseLeave={ () => this.setState( { tooltip: false } ) }
-				aria-label={ tooltipText }
-				ref="deletePostTooltip"
-			>
-				<Gridicon icon="trash" />
-				<Tooltip
-					className="editor-delete-post__tooltip"
-					context={ this.refs && this.refs.deletePostTooltip }
-					isVisible={ this.state.tooltip }
-					position="bottom left"
+			<div className="editor-delete-post">
+				<Button
+					borderless
+					className={ classes }
+					onClick={ this.onSendToTrash }
+					aria-label={ label }
 				>
-					{ tooltipText }
-				</Tooltip>
-			</Button>
+					<Gridicon icon="trash" size={ 18 } />
+					{ label }
+				</Button>
+			</div>
 		);
 	}
 } );

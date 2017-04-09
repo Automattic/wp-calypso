@@ -1,9 +1,17 @@
-import flowRight from 'lodash/flowRight';
+/**
+ * External dependencies
+ */
+import { flowRight } from 'lodash';
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
-import { ANALYTICS_MULTI_TRACK } from 'state/action-types';
-
+/**
+ * Internal dependencies
+ */
+import {
+	ANALYTICS_MULTI_TRACK,
+	ANALYTICS_STAT_BUMP,
+} from 'state/action-types';
 import {
 	composeAnalytics,
 	withAnalytics,
@@ -35,9 +43,20 @@ describe( 'middleware', () => {
 				bumpStat( 'spline_types', 'ocean' ),
 				bumpStat( 'spline_types', 'river' )
 			);
+			const expected = [
+				{
+					type: ANALYTICS_STAT_BUMP,
+					payload: { group: 'spline_types', name: 'ocean' }
+				},
+				{
+					type: ANALYTICS_STAT_BUMP,
+					payload: { group: 'spline_types', name: 'river' }
+				}
+			];
 
 			expect( composite.type ).to.equal( ANALYTICS_MULTI_TRACK );
 			expect( composite.meta.analytics ).to.have.lengthOf( 2 );
+			expect( composite.meta.analytics ).to.deep.equal( expected );
 		} );
 
 		it( 'should compose multiple analytics calls without other actions', () => {

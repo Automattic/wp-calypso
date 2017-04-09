@@ -1,0 +1,74 @@
+.facebook-share-preview {
+	background-color: $white;
+	border: 1px solid;
+	border-color: #e5e6e9 #dfe0e4 #d0d1d5;
+	border-radius: 3px;
+	color: #1d2129;
+	margin: 0 auto;
+	max-width: 486px;
+	padding: 12px;
+	-webkit-overflow-scrolling: touch;
+}
+
+.facebook-share-preview a {
+	color: #365899;
+}
+
+.facebook-share-preview__header {
+	display: flex;
+	margin-bottom: 6px;
+}
+
+.facebook-share-preview__profile-picture-part {
+	flex: 0 0 40px;
+	margin-right: 8px;
+	width: 40px;
+}
+
+.facebook-share-preview__profile-picture,
+.facebook-share-preview__image {
+	display: block;
+}
+
+.facebook-share-preview__profile-line,
+.facebook-share-preview__body {
+	font-size: 14px;
+	line-height: 1.38;
+}
+
+.facebook-share-preview__profile-line {
+	color: #90949c;
+	margin-bottom: 2px;
+}
+
+.facebook-share-preview__profile-name {
+	font-weight: bold;
+	margin-right: 5px;
+}
+
+.facebook-share-preview__meta-line {
+	color: #90949c;
+	font-size: 12px;
+	line-height: 1.34;
+}
+
+.facebook-share-preview .facebook-share-preview__meta-line a {
+	color: #90949c;
+}
+
+.facebook-share-preview__message p {
+	margin-bottom: 6px;
+}
+
+.facebook-share-preview__message p:last-child {
+	margin-bottom: 0;
+}
+
+.facebook-share-preview__article-url-line {
+	margin-top: 6px;
+	word-break: break-word;
+}
+
+.facebook-share-preview__image-wrapper {
+	margin-top: 10px;
+}

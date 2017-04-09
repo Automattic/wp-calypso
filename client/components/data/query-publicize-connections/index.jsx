@@ -3,29 +3,25 @@
  */
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
 import { isFetchingConnections as isRequestingConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class QueryPublicizeConnections extends Component {
-	componentWillMount() {
+	componentDidMount() {
 		if ( ! this.props.requestingConnections && this.props.siteId ) {
 			this.props.requestConnections( this.props.siteId );
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.requestingConnections ||
-				! nextProps.siteId ||
-				( this.props.siteId === nextProps.siteId ) ) {
-			return;
+	componentDidUpdate( { siteId } ) {
+		if ( this.props.siteId && siteId !== this.props.siteId && ! this.props.requestingConnections ) {
+			this.props.requestConnections( this.props.siteId );
 		}
-
-		nextProps.requestConnections( nextProps.siteId );
 	}
 
 	render() {
@@ -34,24 +30,29 @@ class QueryPublicizeConnections extends Component {
 }
 
 QueryPublicizeConnections.propTypes = {
-	siteId: PropTypes.number,
+	requestConnections: PropTypes.func,
 	requestingConnections: PropTypes.bool,
-	requestConnections: PropTypes.func
+	selectedSite: PropTypes.bool,
+	siteId: PropTypes.number,
 };
 
 QueryPublicizeConnections.defaultProps = {
-	requestConnections: () => {}
+	requestConnections: () => {},
+	requestingConnections: false,
+	selectedSite: false,
+	siteId: 0,
 };
 
 export default connect(
-	( state, ownProps ) => {
+	( state, { siteId, selectedSite } ) => {
+		siteId = siteId || ( selectedSite && getSelectedSiteId( state ) );
+
 		return {
-			requestingConnections: isRequestingConnections( state, ownProps.siteId )
+			requestingConnections: isRequestingConnections( state, siteId ),
+			siteId,
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			requestConnections
-		}, dispatch );
+	{
+		requestConnections,
 	}
 )( QueryPublicizeConnections );

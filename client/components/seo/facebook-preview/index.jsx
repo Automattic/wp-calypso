@@ -42,9 +42,11 @@ export class FacebookPreview extends PureComponent {
 		return (
 			<div className={ `facebook-preview facebook-preview__${ type }` }>
 				<div className="facebook-preview__content">
-					<div className="facebook-preview__image">
-						<img src={ image } />
-					</div>
+					{ image &&
+						<div className="facebook-preview__image">
+							<img src={ image } />
+						</div>
+					}
 					<div className="facebook-preview__body">
 						<div className="facebook-preview__title">
 							{ facebookTitle( title || '' ) }

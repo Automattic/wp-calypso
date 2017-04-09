@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-'use strict'; // eslint-disable-line strict
-var files;
+/* eslint-disable strict, no-process-exit */
+'use strict';
+let files;
 
 require( 'babel-register' );
 
@@ -8,11 +9,13 @@ require( 'babel-register' );
  * External dependencies
  */
 const debug = require( 'debug' )( 'test-runner' ),
+	fs = require( 'fs' ),
 	glob = require( 'glob' ),
 	Mocha = require( 'mocha' ),
 	path = require( 'path' ),
 	program = require( 'commander' ),
-	chalk = require( 'chalk' );
+	chalk = require( 'chalk' ),
+	readlineSync = require( 'readline-sync' );
 
 /**
  * Internal dependencies
@@ -65,6 +68,47 @@ files = files.reduce( ( memo, filePath ) => {
 
 	// Append individual file argument
 	if ( /\.jsx?$/i.test( filePath ) ) {
+		if ( ! filePath.includes( '/test/' ) ) {
+			// did we just forget the test directory?
+			const pathGuess = path.join(
+				path.dirname( filePath ),
+				'test',
+				path.basename( filePath )
+			);
+
+			if ( fs.existsSync( pathGuess ) ) {
+				console.warn(
+					chalk.red.bold( 'WARNING:' ),
+					chalk.yellow(
+						'It appears that you\'re trying to use the test runner ' +
+						'on a file under test, not the test file itself.'
+					),
+					chalk.green( '\n Did you mean to run against…\n  ' ),
+					chalk.blue( pathGuess ),
+					chalk.green( '\n …instead of…\n  ' ),
+					chalk.blue( filePath )
+				);
+
+				// if we are in an interactive shell
+				// then ask the developer if the guessed file
+				// was the intended file and allow that guess
+				// to replace the accidentally-requested file
+				if ( process.stdout.isTTY && true === readlineSync.keyInYN( 'Y to continue, any other key to abort: ' ) ) {
+					return memo.concat( pathGuess );
+				}
+
+				process.exit( 1 );
+			}
+
+			console.warn(
+				chalk.red.bold( 'ERROR:' ),
+				chalk.yellow( 'Could not find chosen test file.\n\t' ),
+				chalk.blue( filePath )
+			);
+
+			process.exit( 1 );
+		}
+
 		return memo.concat( filePath );
 	}
 
@@ -91,6 +135,6 @@ mocha.addFile( path.join( __dirname, 'load-suite.js' ) );
 
 mocha.run( function( failures ) {
 	process.on( 'exit', function() {
-		process.exit( failures ); //eslint-disable-line no-process-exit
+		process.exit( failures );
 	} );
 } );

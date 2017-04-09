@@ -17,7 +17,6 @@ import PageParent from 'post-editor/editor-page-parent';
 import PageTemplates from 'post-editor/editor-page-templates';
 import PageOrder from 'post-editor/editor-page-order';
 import Accordion from 'components/accordion';
-import Gridicon from 'components/gridicon';
 
 function EditorDrawerPageOptions( { translate, postType, hierarchical } ) {
 	let title;
@@ -28,7 +27,7 @@ function EditorDrawerPageOptions( { translate, postType, hierarchical } ) {
 	}
 
 	return (
-		<Accordion title={ title } icon={ <Gridicon icon="pages" /> }>
+		<Accordion title={ title }>
 			{ hierarchical && (
 				<PageParent />
 			) }

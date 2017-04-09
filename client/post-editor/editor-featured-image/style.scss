@@ -1,6 +1,6 @@
 .editor-featured-image {
 	width: 100%;
-	padding: 0;
+	padding: 0 0 7px 0;
 	text-align: center;
 	line-height: 0;
 }
@@ -11,16 +11,21 @@
 	vertical-align: top;
 	max-width: 100%;
 
-	.button.is-borderless & .editor-featured-image__edit-icon {
+	&.button {
+		padding-bottom: 0;
+	}
+
+	&.button.is-borderless .editor-featured-image__edit-icon {
 		position: absolute;
 			top: auto;
 			bottom: 8px;
 			right: 8px;
+		padding: 0;
 		color: $white;
 		opacity: 0.9;
 	}
 
-	.button.is-borderless &:hover .editor-featured-image__edit-icon {
+	&.button.is-borderless:hover .editor-featured-image__edit-icon {
 		opacity: 1;
 	}
 }

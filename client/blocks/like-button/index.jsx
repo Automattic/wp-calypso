@@ -1,37 +1,39 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PureComponent } from 'react';
 import { omit, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import smartSetState from 'lib/react-smart-set-state';
 import LikeActions from 'lib/like-store/actions';
 import LikeButton from './button';
 import LikeStore from 'lib/like-store/like-store';
 
-const LikeButtonContainer = React.createClass( {
-	propTypes: {
+class LikeButtonContainer extends PureComponent {
+
+	static propTypes = {
 		siteId: React.PropTypes.number.isRequired,
 		postId: React.PropTypes.number.isRequired,
 		showZeroCount: React.PropTypes.bool,
 		tagName: React.PropTypes.string,
 		onLikeToggle: React.PropTypes.func
-	},
+	}
 
-	mixins: [ PureRenderMixin ],
+	static defaultProps = {
+		onLikeToggle: noop
+	}
 
-	getDefaultProps() {
-		return {
-			onLikeToggle: noop
-		};
-	},
+	constructor( props ) {
+		super( props );
 
-	getInitialState() {
-		return this.getStateFromStores();
-	},
+		this.handleLikeToggle = this.handleLikeToggle.bind( this );
+
+		this.state = this.getStateFromStores( props );
+		this.smartSetState = smartSetState;
+	}
 
 	getStateFromStores( props = this.props, animateLike = true ) {
 		return {
@@ -39,45 +41,36 @@ const LikeButtonContainer = React.createClass( {
 			iLike: LikeStore.isPostLikedByCurrentUser( props.siteId, props.postId ),
 			animateLike: animateLike
 		};
-	},
+	}
+
+	updateState = ( newState = this.getStateFromStores() ) => {
+		this.smartSetState( newState );
+	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ||
-				this.props.postId !== nextProps.postId ) {
-			const newState = this.getStateFromStores( nextProps, false );
-			this.setState( newState );
-		}
-	},
-
+		this.updateState( this.getStateFromStores( nextProps ) );
+	}
 	componentDidMount() {
-		LikeStore.on( 'change', this.onStoreChange );
-	},
+		LikeStore.on( 'change', this.updateState );
+	}
 
 	componentWillUnmount() {
-		LikeStore.off( 'change', this.onStoreChange );
-	},
-
-	onStoreChange() {
-		const newState = this.getStateFromStores();
-		if ( newState.likeCount !== this.state.likeCount ||
-				newState.iLike !== this.state.iLike ) {
-			this.setState( newState );
-		}
-	},
+		LikeStore.off( 'change', this.updateState );
+	}
 
 	handleLikeToggle( liked ) {
 		LikeActions[ liked ? 'likePost' : 'unlikePost' ]( this.props.siteId, this.props.postId );
 		this.props.onLikeToggle( liked );
-	},
+	}
 
 	render() {
-		const props = omit( this.props, [ 'siteId', 'postId' ] );
+		const props = omit( this.props, [ 'siteId' ] );
 		return <LikeButton { ...props }
 				likeCount={ this.state.likeCount }
 				liked={ this.state.iLike }
 				animateLike={ this.state.animateLike }
 				onLikeToggle={ this.handleLikeToggle } />;
 	}
-} );
+}
 
 export default LikeButtonContainer;

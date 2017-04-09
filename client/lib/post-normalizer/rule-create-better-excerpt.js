@@ -8,7 +8,6 @@ import { trim, toArray, forEach } from 'lodash';
  * Internal Dependencies
  */
 import { domForHtml } from './utils';
-import { stripHTML } from 'lib/formatting';
 
 /**
  *  removes an html element from the dom
@@ -44,21 +43,23 @@ function firstElementIsBreakline( dom ) {
 	return firstElementIsBreakline( dom.firstChild );
 }
 
+function buildStrippedDom( content ) {
+	// Spin up a new DOM for the linebreak markup
+	const dom = domForHtml( content );
+
+	// Ditch any photo captions, styles, scripts
+	const stripSelectors = '.wp-caption, style, script, blockquote[class^="instagram-"], figure, .tiled-gallery';
+	forEach( dom.querySelectorAll( stripSelectors ), removeElement );
+	return dom.innerHTML;
+}
+
 export function formatExcerpt( content ) {
 	if ( ! content ) {
 		return '';
 	}
 
-	// Spin up a new DOM for the linebreak markup
-	const dom = domForHtml( content );
+	const dom = domForHtml( striptags( content, [ 'p', 'br', 'sup', 'sub' ] ) );
 	dom.id = '__better_excerpt__';
-	dom.innerHTML = content;
-
-	// Ditch any photo captions with the wp-caption-text class, styles, scripts
-	forEach( dom.querySelectorAll( '.wp-caption-text, style, script, blockquote[class^="instagram-"], figure' ), removeElement );
-
-	// limit to paras and brs
-	dom.innerHTML = striptags( dom.innerHTML, [ 'p', 'br', 'sup', 'sub' ] );
 
 	// strip any p's that are empty
 	toArray( dom.querySelectorAll( 'p' ) )
@@ -89,8 +90,12 @@ export default function createBetterExcerpt( post ) {
 		return post;
 	}
 
-	post.better_excerpt = formatExcerpt( post.content );
-	post.better_excerpt_no_html = stripHTML( post.better_excerpt );
+	const strippedDom = buildStrippedDom( post.content );
+
+	post.content_no_html = trim( striptags( strippedDom ) );
+
+	post.better_excerpt = formatExcerpt( strippedDom );
+	post.better_excerpt_no_html = trim( striptags( post.better_excerpt ) );
 
 	// also make a shorter excerpt...
 	if ( post.better_excerpt_no_html ) {

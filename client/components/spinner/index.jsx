@@ -10,10 +10,8 @@ import classNames from 'classnames';
 
 /**
  * Defines whether the current browser supports CSS animations for SVG
- * elements. Specifically, this returns false for Internet Explorer versions
- * 11 and below.
+ * elements. Specifically, this returns false for Internet Explorer and Edge.
  *
- * @see http://dev.modern.ie/platform/status/csstransitionsanimationsforsvgelements/
  * @type {Boolean} True if the browser supports CSS animations for SVG
  *                 elements, or false otherwise.
  */
@@ -22,7 +20,7 @@ const isSVGCSSAnimationSupported = ( () => {
 		return false;
 	}
 
-	return ! /(MSIE |Trident\/)/.test( global.window.navigator.userAgent );
+	return ! /(MSIE |Trident\/|Edge\/)/.test( global.window.navigator.userAgent );
 } )();
 
 export default class Spinner extends PureComponent {

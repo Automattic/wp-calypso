@@ -71,6 +71,7 @@ TwoStepAuthorization.prototype.validateCode = function( args, callback ) {
 				userSettings.fetchSettings();
 				applicationPasswords.fetch();
 				connectedApplications.fetch();
+				profileLinks.reAuthRequired = false;
 				profileLinks.fetchProfileLinks();
 			}
 

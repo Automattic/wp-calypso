@@ -8,10 +8,6 @@
 		border-bottom: none;
 	}
 
-	.button:not(.clipboard-button) {
-		width: 80%;
-	}
-
 	@include breakpoint( ">660px" ) {
 		border: 1px solid lighten( $gray, 30% );
 		border-radius: 3px;
@@ -40,10 +36,6 @@
 		.purchase-detail__button {
 			border: none;
 			width: 40%;
-
-			@include breakpoint( "<660px" ) {
-				margin: 0 auto;
-			}
 		}
 
 		.purchase-detail__description {
@@ -71,8 +63,7 @@
 }
 
 .purchase-detail__description {
-	color: darken( $gray, 10% );
-	font-size: 16px;
+	color: $gray-text-min;
 	margin: 8px 0 16px 0;
 }
 
@@ -80,12 +71,11 @@
 	background: darken( $gray, 20% );
 	border-radius: 50%;
 	color: $white;
-	margin: 0 auto;
-	margin-bottom: 10px;
+	margin: 0 auto 10px;
 	padding: 16px;
 
 	@include breakpoint( ">660px" ) {
-		margin-top: -36px;
+		margin-top: -40px;
 		position: absolute;
 			right: 32px;
 			top: 50%;
@@ -128,20 +118,19 @@
 
 .purchase-detail__title {
 	clear: none;
-	color: darken( $gray, 20% );
+	color: darken( $gray, 10% );
 	font-size: 21px;
 }
 
 .purchase-detail__info {
 	flex: 1;
 	margin-left: 8px;
-	margin-top: 0;
+	margin-top: 8px;
 	max-width: 260px;
 	display: inline-block;
-	margin-top: 8px;
 
 	@include breakpoint( ">660px" ) {
-		margin-top: 0px;
+		margin-top: 0;
 	}
 }
 
@@ -151,4 +140,17 @@
 	margin-right: 4px;
 	float: left;
 	height: 14px;
+}
+
+.purchase-detail__button {
+	text-align: center;
+
+	&:not(.clipboard-button) {
+		width: 80%;
+	}
+
+	@include breakpoint( "<660px" ) {
+		display: block;
+		margin: 0 auto;
+	}
 }

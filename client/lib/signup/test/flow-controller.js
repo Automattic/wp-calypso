@@ -34,10 +34,7 @@ describe( 'flow-controller', function() {
 	} );
 
 	afterEach( function() {
-		if ( signupFlowController ) {
-			signupFlowController.reset();
-		}
-
+		signupFlowController.reset();
 		SignupDependencyStore.reset();
 		SignupProgressStore.reset();
 	} );
@@ -157,6 +154,28 @@ describe( 'flow-controller', function() {
 					// …but submitting it should
 					SignupActions.submitSignupStep( { stepName: 'stepA' } );
 				} );
+			} );
+		} );
+	} );
+
+	describe( 'controlling a flow w/ dependencies provided in query', function() {
+		it( 'should throw an error if the given flow requires dependencies from query but none are given', function() {
+			assert.throws( function() {
+				SignupFlowController( {
+					flowName: 'flowWithProvidedDependencies'
+				} );
+			} );
+		} );
+
+		it( 'should run `onComplete` once all steps are submitted without an error', function( done ) {
+			signupFlowController = SignupFlowController( {
+				flowName: 'flowWithProvidedDependencies',
+				providedDependencies: { siteSlug: 'foo' },
+				onComplete: ary( done, 0 )
+			} );
+
+			SignupActions.submitSignupStep( {
+				stepName: 'stepRequiringSiteSlug'
 			} );
 		} );
 	} );

@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
+import { find, findIndex, times } from 'lodash';
+import Gridicon from 'gridicons';
+import moment from 'moment';
 import page from 'page';
 import React from 'react';
-import times from 'lodash/times';
-import findIndex from 'lodash/findIndex';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,6 +14,7 @@ import { connect } from 'react-redux';
 import analyticsMixin from 'lib/mixins/analytics';
 import config from 'config';
 import DomainWarnings from 'my-sites/upgrades/components/domain-warnings';
+import DomainOnly from './domain-only';
 import ListItem from './item';
 import ListItemPlaceholder from './item-placeholder';
 import Main from 'components/main';
@@ -21,7 +23,6 @@ import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Gridicon from 'components/gridicon';
 import { setPrimaryDomain } from 'lib/upgrades/actions/domain-management';
 import DomainListNotice from './domain-list-notice';
 import {
@@ -35,8 +36,10 @@ import NoticeAction from 'components/notice/notice-action';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { isDomainOnlySite } from 'state/selectors';
 import { isPlanFeaturesEnabled } from 'lib/plans';
 import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
+import { type } from 'lib/domains/constants';
 
 export const List = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'list' ) ],
@@ -87,11 +90,24 @@ export const List = React.createClass( {
 	},
 
 	render() {
-		const headerText = this.translate( 'Domains', { context: 'A navigation label.' } );
-
 		if ( ! this.props.domains ) {
 			return null;
 		}
+
+		if ( this.props.isDomainOnly ) {
+			return (
+				<Main>
+					<SidebarNavigation />
+					<DomainOnly
+						domainName={ this.props.selectedSite.domain }
+						hasNotice={ this.isFreshDomainOnlyRegistration() }
+						siteId={ this.props.selectedSite.ID }
+					/>
+				</Main>
+			);
+		}
+
+		const headerText = this.translate( 'Domains', { context: 'A navigation label.' } );
 
 		return (
 			<Main wideLayout={ isPlanFeaturesEnabled() }>
@@ -116,6 +132,15 @@ export const List = React.createClass( {
 				<DomainToPlanNudge />
 			</Main>
 		);
+	},
+
+	isFreshDomainOnlyRegistration() {
+		const domainName = this.props.selectedSite.domain;
+		const domain = this.props.domains.hasLoadedFromServer &&
+			find( this.props.domains.list, ( { name } ) => name === domainName );
+
+		return domain && domain.registrationMoment &&
+			moment().subtract( 1, 'day' ).isBefore( domain.registrationMoment );
 	},
 
 	hideNotice() {
@@ -201,6 +226,10 @@ export const List = React.createClass( {
 	},
 
 	headerButtons() {
+		if ( this.props.selectedSite && this.props.selectedSite.jetpack ) {
+			return null;
+		}
+
 		if ( this.state.changePrimaryDomainModeEnabled ) {
 			return (
 				<Button
@@ -315,7 +344,10 @@ export const List = React.createClass( {
 			return times( 3, n => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
-		return this.props.domains.list.map( ( domain, index ) => {
+		const domains = this.props.selectedSite.jetpack
+			? this.props.domains.list.filter( domain => domain.type !== type.WPCOM )
+			: this.props.domains.list;
+		return domains.map( ( domain, index ) => {
 			return (
 				<ListItem
 					key={ domain.name }
@@ -338,8 +370,11 @@ export const List = React.createClass( {
 } );
 
 export default connect( ( state, ownProps ) => {
+	const siteId = ownProps.selectedSite.ID;
+
 	return {
-		hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, ownProps.selectedSite.ID )
+		hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
+		isDomainOnly: isDomainOnlySite( state, siteId ),
 	};
 }, ( dispatch ) => {
 	return {

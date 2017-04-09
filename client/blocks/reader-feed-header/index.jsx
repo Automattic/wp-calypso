@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import ReaderFollowButton from 'reader/follow-button';
 import Site from 'blocks/site';
-import { state as feedState } from 'lib/feed-store/constants';
 import HeaderBack from 'reader/header-back';
 
 class FeedHeader extends Component {
@@ -21,35 +20,26 @@ class FeedHeader extends Component {
 		showBack: React.PropTypes.bool
 	};
 
-	componentWillReceiveProps = ( nextProps ) => {
-		if ( nextProps.site !== this.props.site || nextProps.feed !== this.props.feed ) {
-			this.setState( {
-				siteish: this.buildSiteish( nextProps.site, nextProps.feed )
-			} );
-		}
-	}
-
 	buildSiteish = ( site, feed ) => {
 		// a siteish (site-ish) is our little lie to the <Site /> component
 		// If we only have a feed, we make up an object that looks enough like a site to pass muster
-		let siteish = site && site.toJS();
+		let siteish = site;
 		if ( ! siteish && feed ) {
 			siteish = {
-				title: feed.name || ( feed.URL && url.parse( feed.URL ).hostname ) || ( feed.feed_URL && url.parse( feed.feed_URL ).hostname ),
-				domain: ( feed.URL && url.parse( feed.URL ).hostname ) || ( feed.feed_URL && url.parse( feed.feed_URL ).hostname ),
-				URL: feed.feed_URL || feed.URL
+				title: feed.name ||
+					( feed.URL && url.parse( feed.URL ).hostname ) ||
+					( feed.feed_URL && url.parse( feed.feed_URL ).hostname ),
+				domain: ( feed.URL && url.parse( feed.URL ).hostname ) ||
+					( feed.feed_URL && url.parse( feed.feed_URL ).hostname ),
+				URL: feed.URL || feed.feed_URL
 			};
 		}
 		return siteish;
 	}
 
-	state = {
-		siteish: this.buildSiteish( this.props.site, this.props.feed )
-	}
-
 	getFollowerCount = ( feed, site ) => {
-		if ( site && site.get( 'subscribers_count' ) ) {
-			return site.get( 'subscribers_count' );
+		if ( site && site.subscribers_count ) {
+			return site.subscribers_count;
 		}
 
 		if ( feed && feed.subscribers_count > 0 ) {
@@ -60,14 +50,15 @@ class FeedHeader extends Component {
 	}
 
 	render() {
-		const site = this.props.site,
-			feed = this.props.feed,
-			followerCount = this.getFollowerCount( feed, site ),
-			ownerDisplayName = site && site.getIn( [ 'owner', 'name' ] );
+		const { site, feed } = this.props;
+		const followerCount = this.getFollowerCount( feed, site );
+		const ownerDisplayName = site && site.owner && site.owner.name;
+		const siteish = this.buildSiteish( site, feed );
+		const description = site && site.description;
 
 		const classes = classnames( {
 			'reader-feed-header': true,
-			'is-placeholder': ! this.state.siteish,
+			'is-placeholder': ! siteish,
 			'has-back-button': this.props.showBack,
 		} );
 
@@ -80,22 +71,24 @@ class FeedHeader extends Component {
 						this.props.translate( '%s follower', '%s followers',
 						{ count: followerCount, args: [ this.props.numberFormat( followerCount ) ] } ) }
 						</span> : null }
-						{ this.props.feed && this.props.feed.state === feedState.COMPLETE ? <div className="reader-feed-header__follow-button">
-							<ReaderFollowButton siteUrl={ this.props.feed.feed_URL } iconSize={ 24 } />
-						</div> : null }
+						{ this.props.feed && ! this.props.feed.is_error &&
+							<div className="reader-feed-header__follow-button">
+								<ReaderFollowButton siteUrl={ this.props.feed.feed_URL } iconSize={ 24 } />
+							</div>
+						}
 					</div>
 				</div>
 				<Card className="reader-feed-header__site">
-					{ this.state.siteish &&
+					{ siteish &&
 						<Site
-							site={ this.state.siteish }
+							site={ siteish }
 							homeLink={ true }
 							showHomeIcon={ false }
-							href={ this.state.siteish.URL }
+							href={ siteish.URL }
 							indicator={ false } />
 					}
 					<div className="reader-feed-header__details">
-						<span className="reader-feed-header__description">{ ( site && site.get( 'description' ) ) }</span>
+						<span className="reader-feed-header__description">{ description }</span>
 						{ ownerDisplayName && <span className="reader-feed-header__byline">
 							{ this.props.translate(
 								'by %(author)s',

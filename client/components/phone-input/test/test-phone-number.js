@@ -12,6 +12,7 @@ import {
 	formatNumber,
 	makeTemplate,
 	findPattern,
+	toIcannFormat,
 	DIGIT_PLACEHOLDER,
 	applyTemplate,
 	toE164
@@ -38,14 +39,14 @@ describe( 'metadata:', () => {
 
 	describe( 'findPattern( number, patterns )', () => {
 		it( 'should be able to find a pattern', () => {
-			ok( findPattern( '4259999999', countries.us.patterns ) );
+			ok( findPattern( '4259999999', countries.US.patterns ) );
 		} );
 	} );
 
 	describe( 'makeTemplate( pattern )', () => {
 		it( 'should be able to make templates', () => {
-			equal( makeTemplate( '4259999999', countries.us.patterns ), '(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ) );
-			equal( makeTemplate( '4259999', countries.us.patterns ), '...-....'.replace( /\./g, DIGIT_PLACEHOLDER ) );
+			equal( makeTemplate( '4259999999', countries.US.patterns ), '(...) ...-....'.replace( /\./g, DIGIT_PLACEHOLDER ) );
+			equal( makeTemplate( '4259999', countries.US.patterns ), '...-....'.replace( /\./g, DIGIT_PLACEHOLDER ) );
 		} );
 	} );
 
@@ -76,143 +77,143 @@ describe( 'metadata:', () => {
 
 	describe( 'findCountryFromNumber( number )', () => {
 		it( 'should guess a dial code with explicit dial code', () => {
-			equal( findCountryFromNumber( '+90' ).isoCode, 'tr' );
-			equal( findCountryFromNumber( '0090' ).isoCode, 'tr' );
+			equal( findCountryFromNumber( '+90' ).isoCode, 'TR' );
+			equal( findCountryFromNumber( '0090' ).isoCode, 'TR' );
 		} );
 
 		it( 'should guess a shared dial code with area code', () => {
-			equal( findCountryFromNumber( '+1604' ).isoCode, 'ca', 'Failed to figure out Canadian' );
-			equal( findCountryFromNumber( '+1425' ).isoCode, 'us', 'Failed to figure out U.S.' );
-			equal( findCountryFromNumber( '+14' ).isoCode, 'us', 'Failed to figure out U.S.' );
+			equal( findCountryFromNumber( '+1604' ).isoCode, 'CA', 'Failed to figure out Canadian' );
+			equal( findCountryFromNumber( '+1425' ).isoCode, 'US', 'Failed to figure out U.S.' );
+			equal( findCountryFromNumber( '+14' ).isoCode, 'US', 'Failed to figure out U.S.' );
 		} );
 
 		it( 'should guess a country as soon as possible', () => {
-			equal( findCountryFromNumber( '+1' ).isoCode, 'us' );
-			equal( findCountryFromNumber( '+14' ).isoCode, 'us' );
-			equal( findCountryFromNumber( '+142' ).isoCode, 'us' );
-			equal( findCountryFromNumber( '+1425' ).isoCode, 'us' );
+			equal( findCountryFromNumber( '+1' ).isoCode, 'US' );
+			equal( findCountryFromNumber( '+14' ).isoCode, 'US' );
+			equal( findCountryFromNumber( '+142' ).isoCode, 'US' );
+			equal( findCountryFromNumber( '+1425' ).isoCode, 'US' );
 
-			equal( findCountryFromNumber( '+1' ).isoCode, 'us' );
-			equal( findCountryFromNumber( '+16' ).isoCode, 'us' );
-			equal( findCountryFromNumber( '+160' ).isoCode, 'us' );
-			equal( findCountryFromNumber( '+1604' ).isoCode, 'ca' );
+			equal( findCountryFromNumber( '+1' ).isoCode, 'US' );
+			equal( findCountryFromNumber( '+16' ).isoCode, 'US' );
+			equal( findCountryFromNumber( '+160' ).isoCode, 'US' );
+			equal( findCountryFromNumber( '+1604' ).isoCode, 'CA' );
 		} );
 
 		it( 'should guess countries with full numbers', () => {
-			equal( findCountryFromNumber( '+14255222222' ).isoCode, 'us' );
-			equal( findCountryFromNumber( '+16043412222' ).isoCode, 'ca' );
-			equal( findCountryFromNumber( '+905333239999' ).isoCode, 'tr' );
-			equal( findCountryFromNumber( '+493033239999' ).isoCode, 'de' );
-			equal( findCountryFromNumber( '+61215369851' ).isoCode, 'au' );
+			equal( findCountryFromNumber( '+14255222222' ).isoCode, 'US' );
+			equal( findCountryFromNumber( '+16043412222' ).isoCode, 'CA' );
+			equal( findCountryFromNumber( '+905333239999' ).isoCode, 'TR' );
+			equal( findCountryFromNumber( '+493033239999' ).isoCode, 'DE' );
+			equal( findCountryFromNumber( '+61215369851' ).isoCode, 'AU' );
 		} );
 	} );
 
 	describe( 'formatNumber', () => {
 		describe( 'In international format', () => {
 			it( 'should format full length numbers', () => {
-				equal( formatNumber( '+14252222222', countries.us ), '+1 425-222-2222' );
-				equal( formatNumber( '+905325555555', countries.tr ), '+90 532 555 55 55' );
+				equal( formatNumber( '+14252222222', countries.US ), '+1 425-222-2222' );
+				equal( formatNumber( '+905325555555', countries.TR ), '+90 532 555 55 55' );
 			} );
 
 			it( 'should format as you type', () => {
-				equal( formatNumber( '+1', countries.us ), '+1' );
-				equal( formatNumber( '+14', countries.us ), '+14' );
-				equal( formatNumber( '+142', countries.us ), '+1 42' );
-				equal( formatNumber( '+1425', countries.us ), '+1 425' );
-				equal( formatNumber( '+14256', countries.us ), '+1 425-6' );
-				equal( formatNumber( '+142565', countries.us ), '+1 425-65' );
-				equal( formatNumber( '+1425655', countries.us ), '+1 425-655' );
-				equal( formatNumber( '+14256559', countries.us ), '+1 425-655-9' );
-				equal( formatNumber( '+142565599', countries.us ), '+1 425-655-99' );
-				equal( formatNumber( '+1425655999', countries.us ), '+1 425-655-999' );
-				equal( formatNumber( '+14256559999', countries.us ), '+1 425-655-9999' );
+				equal( formatNumber( '+1', countries.US ), '+1' );
+				equal( formatNumber( '+14', countries.US ), '+14' );
+				equal( formatNumber( '+142', countries.US ), '+1 42' );
+				equal( formatNumber( '+1425', countries.US ), '+1 425' );
+				equal( formatNumber( '+14256', countries.US ), '+1 425-6' );
+				equal( formatNumber( '+142565', countries.US ), '+1 425-65' );
+				equal( formatNumber( '+1425655', countries.US ), '+1 425-655' );
+				equal( formatNumber( '+14256559', countries.US ), '+1 425-655-9' );
+				equal( formatNumber( '+142565599', countries.US ), '+1 425-655-99' );
+				equal( formatNumber( '+1425655999', countries.US ), '+1 425-655-999' );
+				equal( formatNumber( '+14256559999', countries.US ), '+1 425-655-9999' );
 
-				equal( formatNumber( '+1', countries.ca ), '+1' );
-				equal( formatNumber( '+16', countries.ca ), '+16' );
-				equal( formatNumber( '+160', countries.ca ), '+1 60' );
-				equal( formatNumber( '+1604', countries.ca ), '+1 604' );
-				equal( formatNumber( '+16046', countries.ca ), '+1 604-6' );
-				equal( formatNumber( '+160465', countries.ca ), '+1 604-65' );
-				equal( formatNumber( '+1604655', countries.ca ), '+1 604-655' );
-				equal( formatNumber( '+16046559', countries.ca ), '+1 604-655-9' );
-				equal( formatNumber( '+160465599', countries.ca ), '+1 604-655-99' );
-				equal( formatNumber( '+1604655999', countries.ca ), '+1 604-655-999' );
-				equal( formatNumber( '+16046559999', countries.ca ), '+1 604-655-9999' );
+				equal( formatNumber( '+1', countries.CA ), '+1' );
+				equal( formatNumber( '+16', countries.CA ), '+16' );
+				equal( formatNumber( '+160', countries.CA ), '+1 60' );
+				equal( formatNumber( '+1604', countries.CA ), '+1 604' );
+				equal( formatNumber( '+16046', countries.CA ), '+1 604-6' );
+				equal( formatNumber( '+160465', countries.CA ), '+1 604-65' );
+				equal( formatNumber( '+1604655', countries.CA ), '+1 604-655' );
+				equal( formatNumber( '+16046559', countries.CA ), '+1 604-655-9' );
+				equal( formatNumber( '+160465599', countries.CA ), '+1 604-655-99' );
+				equal( formatNumber( '+1604655999', countries.CA ), '+1 604-655-999' );
+				equal( formatNumber( '+16046559999', countries.CA ), '+1 604-655-9999' );
 
-				equal( formatNumber( '+90', countries.tr ), '+90' );
-				equal( formatNumber( '+905', countries.tr ), '+90 5' );
-				equal( formatNumber( '+9055', countries.tr ), '+90 55' );
-				equal( formatNumber( '+90555', countries.tr ), '+90 555' );
-				equal( formatNumber( '+905558', countries.tr ), '+90 555 8' );
-				equal( formatNumber( '+9055588', countries.tr ), '+90 555 88' );
-				equal( formatNumber( '+90555888', countries.tr ), '+90 555 888' );
-				equal( formatNumber( '+905558889', countries.tr ), '+90 555 888 9' );
-				equal( formatNumber( '+9055588899', countries.tr ), '+90 555 888 99' );
-				equal( formatNumber( '+90555888999', countries.tr ), '+90 555 888 99 9' );
-				equal( formatNumber( '+905558889999', countries.tr ), '+90 555 888 99 99' );
+				equal( formatNumber( '+90', countries.TR ), '+90' );
+				equal( formatNumber( '+905', countries.TR ), '+90 5' );
+				equal( formatNumber( '+9055', countries.TR ), '+90 55' );
+				equal( formatNumber( '+90555', countries.TR ), '+90 555' );
+				equal( formatNumber( '+905558', countries.TR ), '+90 555 8' );
+				equal( formatNumber( '+9055588', countries.TR ), '+90 555 88' );
+				equal( formatNumber( '+90555888', countries.TR ), '+90 555 888' );
+				equal( formatNumber( '+905558889', countries.TR ), '+90 555 888 9' );
+				equal( formatNumber( '+9055588899', countries.TR ), '+90 555 888 99' );
+				equal( formatNumber( '+90555888999', countries.TR ), '+90 555 888 99 9' );
+				equal( formatNumber( '+905558889999', countries.TR ), '+90 555 888 99 99' );
 			} );
 		} );
 
 		describe( 'In national format', () => {
 			it( 'should format full length numbers', () => {
-				equal( formatNumber( '4252222222', countries.us ), '(425) 222-2222' );
-				equal( formatNumber( '05325555555', countries.tr ), '0532 555 55 55' );
-				equal( formatNumber( '0215369851', countries.au ), '02 1536 9851' );
+				equal( formatNumber( '4252222222', countries.US ), '(425) 222-2222' );
+				equal( formatNumber( '05325555555', countries.TR ), '0532 555 55 55' );
+				equal( formatNumber( '0215369851', countries.AU ), '02 1536 9851' );
 			} );
 
 			it( 'should format as you type', () => {
-				equal( formatNumber( '4', countries.us ), '4' );
-				equal( formatNumber( '42', countries.us ), '42' );
-				equal( formatNumber( '425', countries.us ), '425' );
-				equal( formatNumber( '4256', countries.us ), '425-6' );
-				equal( formatNumber( '42565', countries.us ), '425-65' );
-				equal( formatNumber( '425655', countries.us ), '425-655' );
-				equal( formatNumber( '4256559', countries.us ), '425-6559' );
-				equal( formatNumber( '42565599', countries.us ), '(425) 655-99' );
-				equal( formatNumber( '425655999', countries.us ), '(425) 655-999' );
-				equal( formatNumber( '4256559999', countries.us ), '(425) 655-9999' );
+				equal( formatNumber( '4', countries.US ), '4' );
+				equal( formatNumber( '42', countries.US ), '42' );
+				equal( formatNumber( '425', countries.US ), '425' );
+				equal( formatNumber( '4256', countries.US ), '425-6' );
+				equal( formatNumber( '42565', countries.US ), '425-65' );
+				equal( formatNumber( '425655', countries.US ), '425-655' );
+				equal( formatNumber( '4256559', countries.US ), '425-6559' );
+				equal( formatNumber( '42565599', countries.US ), '(425) 655-99' );
+				equal( formatNumber( '425655999', countries.US ), '(425) 655-999' );
+				equal( formatNumber( '4256559999', countries.US ), '(425) 655-9999' );
 
-				equal( formatNumber( '6', countries.us ), '6' );
-				equal( formatNumber( '60', countries.us ), '60' );
-				equal( formatNumber( '604', countries.us ), '604' );
-				equal( formatNumber( '6046', countries.us ), '604-6' );
-				equal( formatNumber( '60465', countries.us ), '604-65' );
-				equal( formatNumber( '604655', countries.us ), '604-655' );
-				equal( formatNumber( '6046559', countries.us ), '604-6559' );
-				equal( formatNumber( '60465599', countries.us ), '(604) 655-99' );
-				equal( formatNumber( '604655999', countries.us ), '(604) 655-999' );
-				equal( formatNumber( '6046559999', countries.us ), '(604) 655-9999' );
+				equal( formatNumber( '6', countries.US ), '6' );
+				equal( formatNumber( '60', countries.US ), '60' );
+				equal( formatNumber( '604', countries.US ), '604' );
+				equal( formatNumber( '6046', countries.US ), '604-6' );
+				equal( formatNumber( '60465', countries.US ), '604-65' );
+				equal( formatNumber( '604655', countries.US ), '604-655' );
+				equal( formatNumber( '6046559', countries.US ), '604-6559' );
+				equal( formatNumber( '60465599', countries.US ), '(604) 655-99' );
+				equal( formatNumber( '604655999', countries.US ), '(604) 655-999' );
+				equal( formatNumber( '6046559999', countries.US ), '(604) 655-9999' );
 			} );
 
 			it( 'should not add a prefix when the country does not have national prefix', () => {
-				equal( formatNumber( '9876543210', countries.is ), '9876543210' );
-				equal( formatNumber( '+96', countries.iq ), '+96' );
-				equal( formatNumber( '+126', countries.ag ), '+126' );
+				equal( formatNumber( '9876543210', countries.IS ), '9876543210' );
+				equal( formatNumber( '+96', countries.IQ ), '+96' );
+				equal( formatNumber( '+126', countries.AG ), '+126' );
 			} );
 		} );
 
 		describe( 'NANPA', () => {
 			it( 'should format full length numbers', () => {
-				equal( formatNumber( '14252222222', countries.us ), '1 425-222-2222' );
+				equal( formatNumber( '14252222222', countries.US ), '1 425-222-2222' );
 			} );
 			it( 'should format as you type', () => {
-				equal( formatNumber( '14', countries.us ), '14' );
-				equal( formatNumber( '142', countries.us ), '1 42' );
-				equal( formatNumber( '1425', countries.us ), '1 425' );
-				equal( formatNumber( '14256', countries.us ), '1 425-6' );
-				equal( formatNumber( '142565', countries.us ), '1 425-65' );
-				equal( formatNumber( '1425655', countries.us ), '1 425-655' );
-				equal( formatNumber( '14256559', countries.us ), '1 425-655-9' );
-				equal( formatNumber( '142565599', countries.us ), '1 425-655-99' );
-				equal( formatNumber( '1425655999', countries.us ), '1 425-655-999' );
-				equal( formatNumber( '14256559999', countries.us ), '1 425-655-9999' );
+				equal( formatNumber( '14', countries.US ), '14' );
+				equal( formatNumber( '142', countries.US ), '1 42' );
+				equal( formatNumber( '1425', countries.US ), '1 425' );
+				equal( formatNumber( '14256', countries.US ), '1 425-6' );
+				equal( formatNumber( '142565', countries.US ), '1 425-65' );
+				equal( formatNumber( '1425655', countries.US ), '1 425-655' );
+				equal( formatNumber( '14256559', countries.US ), '1 425-655-9' );
+				equal( formatNumber( '142565599', countries.US ), '1 425-655-99' );
+				equal( formatNumber( '1425655999', countries.US ), '1 425-655-999' );
+				equal( formatNumber( '14256559999', countries.US ), '1 425-655-9999' );
 			} );
 		} );
 
 		describe( 'sanitization', () => {
 			it( 'should strip non-digits on <3 length strings', () => {
-				equal( formatNumber( '1aaaa', countries.us ), '1' );
-				equal( formatNumber( '1a', countries.us ), '1' );
+				equal( formatNumber( '1aaaa', countries.US ), '1' );
+				equal( formatNumber( '1a', countries.US ), '1' );
 			} );
 		} );
 	} );
@@ -220,14 +221,30 @@ describe( 'metadata:', () => {
 	describe( 'toE164', () => {
 		describe( 'from national formats', () => {
 			it( 'should be able to handle NANPA', () => {
-				equal( toE164( '14256559999', countries.us ), '+14256559999' );
-				equal( toE164( '4256559999', countries.us ), '+14256559999' );
+				equal( toE164( '14256559999', countries.US ), '+14256559999' );
+				equal( toE164( '4256559999', countries.US ), '+14256559999' );
 			} );
 			it( 'should be able to handle Europe', () => {
-				equal( toE164( '05325556677', countries.tr ), '+905325556677' );
-				equal( toE164( '01234567890', countries.gb ), '+441234567890' );
-				equal( toE164( '012345678', countries.it ), '+39012345678' );
+				equal( toE164( '05325556677', countries.TR ), '+905325556677' );
+				equal( toE164( '01234567890', countries.GB ), '+441234567890' );
+				equal( toE164( '012345678', countries.IT ), '+39012345678' );
 			} );
+		} );
+	} );
+
+
+	describe( 'toIcannFormat', () => {
+		it( 'should be able to handle NANPA', () => {
+			equal( toIcannFormat( '14256559999', countries.US ), '+1.4256559999' );
+			equal( toIcannFormat( '4256559999', countries.US ), '+1.4256559999' );
+		} );
+		it( 'should be able to handle Europe', () => {
+			equal( toIcannFormat( '05325556677', countries.TR ), '+90.5325556677' );
+			equal( toIcannFormat( '01234567890', countries.GB ), '+44.1234567890' );
+			equal( toIcannFormat( '012345678', countries.IT ), '+39.012345678' );
+		} );
+		it( 'should separate country codes properly for countries with +1 and a separate leading digit', () => {
+			equal( toIcannFormat( '+18686559999', countries.TT ), '+1.8686559999' );
 		} );
 	} );
 } );

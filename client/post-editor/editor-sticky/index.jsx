@@ -4,12 +4,12 @@
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Tooltip from 'components/tooltip';
-import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import { editPost } from 'state/posts/actions';
@@ -70,22 +70,16 @@ const EditorSticky = React.createClass( {
 				ref="stickyPostButton"
 			>
 				<Gridicon icon="bookmark" />
-				<Tooltip
-					className="editor-sticky__tooltip"
-					context={ this.refs && this.refs.stickyPostButton }
-					isVisible={ this.state.tooltip }
-					position="bottom left"
-				>
-					{ this.props.sticky
-						? <span>{ this.translate( 'Marked as sticky' ) }</span>
-						: <div>
-							{ this.translate( 'Mark as sticky' ) }
-							<span className="editor-sticky__explanation">
-								{ this.translate( 'Displayed at top' ) }
-							</span>
-						</div>
-					}
-				</Tooltip>
+				{ this.props.sticky &&
+					<Tooltip
+						className="editor-sticky__tooltip"
+						context={ this.refs && this.refs.stickyPostButton }
+						isVisible={ this.state.tooltip }
+						position="bottom left"
+					>
+						<span>{ this.translate( 'Marked as sticky' ) }</span>
+					</Tooltip>
+				}
 			</Button>
 		);
 	}

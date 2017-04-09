@@ -19,22 +19,3 @@
 	border-radius: 0;
 	margin: 0;
 }
-
-.product-purchase-features-list__item .purchase-detail .purchase-detail__content {
-	@include breakpoint( "1040px-1280px" ) {
-		padding-right: 87px;
-	}
-}
-
-.product-purchase-features-list__item .purchase-detail .purchase-detail__icon {
-	@include breakpoint( "1040px-1280px" ) {
-		right: 4px;
-	}
-}
-
-.product-purchase-features-list__item .purchase-detail .button:not( .clipboard-button ) {
-	@include breakpoint( "<660px" ) {
-		width: 100%;
-		text-align: center;
-	}
-}

@@ -5,14 +5,14 @@ import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import { isEmpty, isEqual } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 import ThemeMoreButton from './more-button';
-import Gridicon from 'components/gridicon';
-import TrackInteractions from 'components/track-interactions';
+import PulsingDot from 'components/pulsing-dot';
 
 /**
  * Component
@@ -67,6 +67,7 @@ const Theme = React.createClass( {
 		return nextProps.theme.id !== this.props.theme.id ||
 			( nextProps.active !== this.props.active ) ||
 			( nextProps.purchased !== this.props.purchased ) ||
+			( nextProps.installing !== this.props.installing ) ||
 			! isEqual( Object.keys( nextProps.buttonContents ), Object.keys( this.props.buttonContents ) ) ||
 			( nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ) ||
 			( nextProps.onScreenshotClick !== this.props.onScreenshotClick ) ||
@@ -84,7 +85,7 @@ const Theme = React.createClass( {
 	},
 
 	onScreenshotClick() {
-		this.props.onScreenshotClick( this.props.theme, this.props.index );
+		this.props.onScreenshotClick( this.props.theme.id, this.props.index );
 	},
 
 	renderPlaceholder() {
@@ -105,6 +106,16 @@ const Theme = React.createClass( {
 						{ this.props.actionLabel }
 					</span>
 				</a>
+			);
+		}
+	},
+
+	renderInstalling() {
+		if ( this.props.installing ) {
+			return (
+				<div className="theme__installing" >
+					<PulsingDot active={ true } />
+				</div>
 			);
 		}
 	},
@@ -131,15 +142,21 @@ const Theme = React.createClass( {
 			return this.renderPlaceholder();
 		}
 
-		const screenshotWidth = typeof window !== 'undefined' && window.devicePixelRatio > 1 ? 680 : 340;
 		return (
 			<Card className={ themeClass }>
 				<div className="theme__content">
+
 					{ this.renderHover() }
+
 					<a href={ this.props.screenshotClickUrl }>
+						{ this.renderInstalling() }
 						{ screenshot
 							? <img className="theme__img"
-								src={ screenshot + '?w=' + screenshotWidth }
+								src={ screenshot + '?w=340' }
+								srcSet={
+									screenshot + '?w=340 1x, ' +
+									screenshot + '?w=680 2x'
+								}
 								onClick={ this.onScreenshotClick }
 								id={ screenshotID } />
 							: <div className="theme__no-screenshot" >
@@ -147,26 +164,28 @@ const Theme = React.createClass( {
 							</div>
 						}
 					</a>
+
 					<div className="theme__info" >
-						<h2>{ name }</h2>
+						<h2 className="theme__info-title">{ name }</h2>
 						{ active &&
-							<span className="theme__active-label">{ this.translate( 'Active', {
+							<span className="theme-badge__active">{ this.translate( 'Active', {
 								context: 'singular noun, the currently active theme'
 							} ) }</span>
 						}
 						{ price && ! purchased &&
-							<span className="price">{ price }</span>
+							<span className="theme-badge__price">{ price }</span>
 						}
 						{ ! isEmpty( this.props.buttonContents )
-							? <TrackInteractions fields="theme.id" >
-								<ThemeMoreButton
-									index={ this.props.index }
-									theme={ this.props.theme }
-									active={ this.props.active }
-									onClick={ this.props.onMoreButtonClick }
-									options={ this.props.buttonContents } />
-							</TrackInteractions> : null }
+							? <ThemeMoreButton
+								index={ this.props.index }
+								theme={ this.props.theme }
+								active={ this.props.active }
+								onMoreButtonClick={ this.props.onMoreButtonClick }
+								options={ this.props.buttonContents } />
+							: null
+						}
 					</div>
+
 				</div>
 			</Card>
 		);

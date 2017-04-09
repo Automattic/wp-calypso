@@ -5,12 +5,12 @@ import React, { PropTypes, Component } from 'react';
 import EmailValidator from 'email-validator';
 import { connect } from 'react-redux';
 import { invoke } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 
-import Gridicon from 'components/gridicon';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
@@ -20,7 +20,6 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import StepHeader from 'signup/step-header';
 import Button from 'components/button';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -141,10 +140,6 @@ class PressableStoreStep extends Component {
 
 		return (
 			<div className="pressable-store">
-				<StepHeader
-					headerText={ translate( 'Create your WordPress Store' ) }
-					subHeaderText={ translate( 'Our partners at Pressable and WooCommerce are here for you.' ) }
-				/>
 				{ this.renderStoreForm() }
 				<div className="pressable-store__back-button-wrapper">
 					<Button compact={ true } borderless={ true } onClick={ this.props.onBackClick }>

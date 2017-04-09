@@ -4,25 +4,31 @@
 import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
-import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import PostControls from './post-controls';
 import PostHeader from './post-header';
 import PostImage from '../post/post-image';
 import PostExcerpt from 'components/post-excerpt';
-import PostTotalViews from 'my-sites/posts/post-total-views';
 import utils from 'lib/posts/utils';
 import updatePostStatus from 'lib/mixins/update-post-status';
 import analytics from 'lib/analytics';
 import config from 'config';
+import { setPreviewUrl } from 'state/ui/preview/actions';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getPreviewURL } from 'lib/posts/utils';
+import { isSitePreviewable } from 'state/sites/selectors';
 
 import Comments from 'blocks/comments';
-import PostShare from './post-share';
+import PostShare from 'my-sites/post-share';
+
+import PostActions from 'blocks/post-actions';
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Posts', eventAction );
@@ -38,7 +44,7 @@ function checkPropsChange( currentProps, nextProps, propArr ) {
 	return false;
 }
 
-module.exports = React.createClass( {
+const Post = React.createClass( {
 
 	displayName: 'Post',
 
@@ -48,7 +54,8 @@ module.exports = React.createClass( {
 		return {
 			showMoreOptions: false,
 			showComments: false,
-			showShare: false
+			showShare: false,
+			commentsFilter: 'all'
 		};
 	},
 
@@ -124,18 +131,20 @@ module.exports = React.createClass( {
 	},
 
 	componentWillMount() {
+		const { translate } = this.props;
+
 		this.strings = {
-			trashing: this.translate( 'Trashing Post' ),
-			deleting: this.translate( 'Deleting Post' ),
-			trashed: this.translate( 'Moved to Trash' ),
-			undo: this.translate( 'undo?' ),
-			deleted: this.translate( 'Post Deleted' ),
-			updating: this.translate( 'Updating Post' ),
-			error: this.translate( 'Error' ),
-			updated: this.translate( 'Updated' ),
-			deleteWarning: this.translate( 'Delete this post permanently?' ),
-			restoring: this.translate( 'Restoring' ),
-			restored: this.translate( 'Restored' )
+			trashing: translate( 'Trashing Post' ),
+			deleting: translate( 'Deleting Post' ),
+			trashed: translate( 'Moved to Trash' ),
+			undo: translate( 'undo?' ),
+			deleted: translate( 'Post Deleted' ),
+			updating: translate( 'Updating Post' ),
+			error: translate( 'Error' ),
+			updated: translate( 'Updated' ),
+			deleteWarning: translate( 'Delete this post permanently?' ),
+			restoring: translate( 'Restoring' ),
+			restored: translate( 'Restored' )
 		};
 	},
 
@@ -155,7 +164,11 @@ module.exports = React.createClass( {
 	getTitle() {
 		if ( this.props.post.title ) {
 			return (
-				<a href={ this.getContentLinkURL() } className="post__title-link post__content-link" target={ this.getContentLinkTarget() } onClick={ this.analyticsEvents.postTitleClick }>
+				<a
+					href={ this.getContentLinkURL() }
+					className="post__title-link post__content-link"
+					target={ this.getContentLinkTarget() }
+					onClick={ this.analyticsEvents.postTitleClick }>
 					<h4 className="post__title">{ this.props.post.title }</h4>
 				</a>
 			);
@@ -227,106 +240,6 @@ module.exports = React.createClass( {
 		}
 	},
 
-	getMeta() {
-		// @todo Let's make these separate components
-		const post = this.props.post;
-		const postId = this.props.post.ID;
-		const site = this.getSite();
-		const isJetpack = site.jetpack;
-		let showComments = ! isJetpack || site.isModuleActive( 'comments' );
-		let showLikes = ! isJetpack || site.isModuleActive( 'likes' );
-		const showStats = site.capabilities && site.capabilities.view_stats && ( ! isJetpack || site.isModuleActive( 'stats' ) );
-		const metaItems = [];
-		let commentCountDisplay, commentTitle, commentMeta,
-			likeCountDisplay, likeTitle, likeMeta, footerMetaItems;
-
-		if ( showComments ) {
-			if ( post.discussion && post.discussion.comment_count > 0 ) {
-				commentTitle = this.translate( '%(count)s Comment', '%(count)s Comments', {
-					count: post.discussion.comment_count,
-					args: {
-						count: post.discussion.comment_count
-					}
-				} );
-				commentCountDisplay = this.numberFormat( post.discussion.comment_count );
-			} else if ( post.discussion.comments_open ) {
-				commentTitle = this.translate( 'Comments' );
-			} else {
-				// No comments recorded & they're disabled, don't show the icon
-				showComments = false;
-			}
-			if ( showComments ) {
-				commentMeta = (
-					<a
-						className={
-							classNames( {
-								post__comments: true,
-								'is-empty': ! commentCountDisplay
-							} )
-						}
-						title={ commentTitle }
-						onClick={ this.toggleComments }
-					>
-					<Gridicon icon="comment" size={ 24 } />
-
-					<span>{ commentCountDisplay }</span></a>
-				);
-				metaItems.push( commentMeta );
-			}
-		}
-
-		if ( showLikes ) {
-			if ( post.like_count > 0 ) {
-				likeTitle = this.translate( '%(count)s Like', '%(count)s Likes', {
-					count: post.like_count,
-					args: {
-						count: post.like_count
-					}
-				} );
-				likeCountDisplay = this.numberFormat( post.like_count );
-			} else if ( post.likes_enabled ) {
-				likeTitle = this.translate( 'Likes' );
-			} else {
-				// No likes recorded & they're disabled, don't show the icon
-				showLikes = false;
-			}
-			if ( showLikes ) {
-				likeMeta = (
-					<a
-						href={ post.URL }
-						className={ classNames( {
-							post__likes: true,
-							'is-empty': ! likeCountDisplay
-						} ) }
-						target="_blank"
-						rel="noopener noreferrer"
-						title={ likeTitle }
-						onClick={ this.analyticsEvents.likeIconClick }
-					>
-					<Gridicon icon="star" size={ 24 } />
-					<span>{ likeCountDisplay }</span></a>
-				);
-				metaItems.push( likeMeta );
-			}
-		}
-
-		// If the user can see stats, show how many total views this post has received
-		if ( showStats ) {
-			metaItems.push( (
-				<PostTotalViews post={ post } clickHandler={ this.analyticsEvents.viewStats } />
-			) );
-		}
-
-		if ( metaItems.length ) {
-			footerMetaItems = metaItems.map( function( item, i ) {
-				const itemKey = 'meta-' + postId + '-' + i;
-				return ( <li key={ itemKey }><span>{ item }</span></li> );
-			}, this );
-
-			return ( <ul className="post__meta">{ footerMetaItems }</ul> );
-		}
-	},
-
 	getContentLinkURL() {
 		const post = this.props.post;
 		const site = this.getSite();
@@ -368,6 +281,24 @@ module.exports = React.createClass( {
 		this.setState( { showShare: ! this.state.showShare } );
 	},
 
+	viewPost( event ) {
+		event.preventDefault();
+		const { isPreviewable, previewURL } = this.props;
+
+		if ( this.props.post.status && this.props.post.status === 'future' ) {
+			this.analyticsEvents.previewPost;
+		} else {
+			this.analyticsEvents.viewPost;
+		}
+
+		if ( ! isPreviewable ) {
+			return window.open( previewURL );
+		}
+
+		this.props.setPreviewUrl( previewURL );
+		this.props.setLayoutFocus( 'preview' );
+	},
+
 	render() {
 		const site = this.getSite();
 
@@ -377,13 +308,7 @@ module.exports = React.createClass( {
 					{ this.getHeader() }
 					{ this.getPostImage() }
 					{ this.getContent() }
-					<footer className="post__info">
-						<PostRelativeTimeStatus post={ this.props.post } link={ this.getContentLinkURL() } target={ this.getContentLinkTarget() } onClick={ this.analyticsEvents.dateClick }/>
-						{
-							// Only show meta items for non-drafts
-							( this.props.post.status === 'draft' ) ? null : this.getMeta()
-						}
-					</footer>
+					<PostActions { ...{ site, post: this.props.post, toggleComments: this.toggleComments } } />
 				</div>
 				<PostControls
 					post={ this.props.post }
@@ -396,6 +321,7 @@ module.exports = React.createClass( {
 					onDelete={ this.deletePost }
 					onRestore={ this.restorePost }
 					onToggleShare={ this.toggleShare }
+					onViewPost={ this.viewPost }
 					site={ site }
 				/>
 				<ReactCSSTransitionGroup
@@ -404,10 +330,29 @@ module.exports = React.createClass( {
 					transitionLeaveTimeout={ 300 }>
 					{ this.buildUpdateTemplate() }
 				</ReactCSSTransitionGroup>
-				{ this.state.showComments && <Comments showCommentCount={ false } post={ this.props.post } onCommentsUpdate={ () => {} } /> }
+				{ this.state.showComments &&
+					<Comments
+						showCommentCount={ false }
+						post={ this.props.post }
+						showFilters={ isEnabled( 'comments/filters-in-posts' ) }
+						showModerationTools={ isEnabled( 'comments/moderation-tools-in-posts' ) }
+						commentsFilter={ config.isEnabled( 'comments/filters-in-posts' ) ? this.state.commentsFilter : 'approved' }
+						onFilterChange={ commentsFilter => this.setState( { commentsFilter } ) }
+						onCommentsUpdate={ () => {} } />
+				}
 				{ this.state.showShare && config.isEnabled( 'republicize' ) && <PostShare post={ this.props.post } site={ site } /> }
 			</Card>
 		);
 	}
 
 } );
+
+export default connect(
+	( state, props ) => {
+		return {
+			isPreviewable: false !== isSitePreviewable( state, props.post.site_ID ),
+			previewURL: getPreviewURL( props.post ),
+		};
+	},
+	{ setPreviewUrl, setLayoutFocus }
+)( localize( Post ) );

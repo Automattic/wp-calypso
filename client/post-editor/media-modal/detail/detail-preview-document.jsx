@@ -2,18 +2,21 @@
  * External dependencies
  */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'gridicons';
+import classNames from 'classnames';
 
 export default React.createClass( {
 	displayName: 'EditorMediaModalDetailPreviewDocument',
 
+	propTypes: {
+		className: React.PropTypes.string,
+	},
+
 	render() {
+		const classes = classNames( this.props.className, 'is-document' );
+
 		return (
-			<div className="editor-media-modal-detail__preview is-document">
+			<div className={ classes }>
 				<Gridicon icon="pages" size={ 120 } />
 			</div>
 		);

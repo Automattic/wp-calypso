@@ -53,7 +53,7 @@ module.exports = {
 					}
 				} ),
 				buttonText: i18n.translate( 'Select a Theme' ),
-				buttonURL: '/design/' + ( site ? site.slug : '' )
+				buttonURL: '/themes/' + ( site ? site.slug : '' )
 			},
 
 			customize: {

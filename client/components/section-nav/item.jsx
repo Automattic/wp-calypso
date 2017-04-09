@@ -8,8 +8,7 @@ var React = require( 'react' ),
 /**
  * Internal Dependencies
  */
-var Count = require( 'components/count' );
-
+import Count from 'components/count';
 /**
  * Main
  */
@@ -58,7 +57,7 @@ var NavItem = React.createClass( {
 					href={ this.props.path }
 					target={ target }
 					className={ 'section-nav-' + itemClassPrefix + '__link' }
-					onTouchTap={ onClick }
+					onClick={ onClick }
 					tabIndex={ this.props.tabIndex || 0 }
 					aria-selected={ this.props.selected }
 					disabled={ this.props.disabled }

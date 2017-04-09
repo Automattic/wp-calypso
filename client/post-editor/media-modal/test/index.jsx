@@ -30,19 +30,20 @@ const EMPTY_COMPONENT = React.createClass( {
 } );
 
 describe( 'EditorMediaModal', function() {
-	let spy, i18n, deleteMedia, accept, EditorMediaModal;
+	let spy, translate, deleteMedia, accept, EditorMediaModal, setLibrarySelectedItems;
+
+	translate = require( 'i18n-calypso' ).translate;
 
 	useMockery();
 	useFakeDom();
 	useSandbox( ( sandbox ) => {
 		spy = sandbox.spy();
+		setLibrarySelectedItems = sandbox.stub();
 		deleteMedia = sandbox.stub();
 		accept = sandbox.stub().callsArgWithAsync( 1, true );
 	} );
 
 	before( function() {
-		i18n = require( 'i18n-calypso' );
-
 		// Mockery
 		mockery.registerMock( 'my-sites/media-library', EMPTY_COMPONENT );
 		mockery.registerMock( './detail', { 'default': EMPTY_COMPONENT } );
@@ -54,7 +55,7 @@ describe( 'EditorMediaModal', function() {
 		mockery.registerMock( 'lib/accept', accept );
 		mockery.registerMock( 'lib/analytics', { mc: { bumpStat: noop } } );
 		mockery.registerMock( 'component-closest', {} );
-		mockery.registerMock( 'lib/media/actions', { delete: deleteMedia } );
+		mockery.registerMock( 'lib/media/actions', { 'delete': deleteMedia, setLibrarySelectedItems: setLibrarySelectedItems } );
 		mockery.registerMock( 'lib/posts/actions', { blockSave: noop } );
 		mockery.registerMock( 'lib/posts/stats', {
 			recordEvent: noop,
@@ -62,7 +63,6 @@ describe( 'EditorMediaModal', function() {
 		} );
 
 		EditorMediaModal = require( '../' ).EditorMediaModal;
-		EditorMediaModal.prototype.translate = i18n.translate;
 	} );
 
 	it( 'should prompt to delete a single item from the list view', function( done ) {
@@ -70,7 +70,7 @@ describe( 'EditorMediaModal', function() {
 			tree;
 
 		tree = shallow(
-			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ media } />
+			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ media } translate={ translate } />
 		).instance();
 		tree.deleteMedia();
 
@@ -83,7 +83,7 @@ describe( 'EditorMediaModal', function() {
 
 	it( 'should prompt to delete multiple items from the list view', function( done ) {
 		var tree = shallow(
-			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA } />
+			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA } translate={ translate } />
 		).instance();
 		tree.deleteMedia();
 

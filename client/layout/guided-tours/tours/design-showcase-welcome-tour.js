@@ -7,11 +7,11 @@ import {
 	overEvery as and,
 	negate as not,
 } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import {
 	makeTour,
 	Tour,
@@ -22,22 +22,22 @@ import {
 	Continue,
 } from 'layout/guided-tours/config-elements';
 import {
+	hasAnalyticsEventFired,
 	isAbTestInVariant,
 	inSection,
 	isNewUser,
 	isEnabled,
 	selectedSiteIsCustomizable,
-	hasUserInteractedWithComponent,
 } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
 
-const anyThemeMoreButtonClicked = hasUserInteractedWithComponent( 'ThemeMoreButton' );
+const anyThemeMoreButtonClicked = hasAnalyticsEventFired( 'calypso_themeshowcase_theme_click' );
 
 export const DesignShowcaseWelcomeTour = makeTour(
 	<Tour
 		name="designShowcaseWelcome"
 		version="20161206"
-		path="/design"
+		path="/themes"
 		when={ and(
 			isNewUser,
 			isEnabled( 'guided-tours/design-showcase-welcome' ),

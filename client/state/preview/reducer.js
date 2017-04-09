@@ -43,8 +43,7 @@ function siteReducer( newState = siteInitialState, action ) {
 	return state;
 }
 
-export default function( newState = initialState, action ) {
-	const state = Object.assign( {}, initialState, newState );
+export default function( state = initialState, action ) {
 	switch ( action.type ) {
 		case ActionTypes.PREVIEW_MARKUP_RECEIVE:
 		case ActionTypes.PREVIEW_CUSTOMIZATIONS_CLEAR:

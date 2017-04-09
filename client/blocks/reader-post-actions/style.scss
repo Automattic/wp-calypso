@@ -15,29 +15,12 @@
 	&.reader-post-actions__visit {
 		flex: 1;
 
-		.reader-post-actions__visit-label {
-			color: lighten( $gray, 10% );
-		}
-
-		.external-link {
+		.reader-visit-link {
 			align-items: center;
 			box-sizing: border-box;
 			display: inline-flex;
 			padding: 4px 4px 4px 0;
 			position: relative;
-		}
-
-		.external-link:hover,
-		.external-link:focus,
-		.external-link:active {
-
-			.gridicon {
-				fill: $blue-light;
-			}
-
-			.reader-post-actions__visit-label {
-				color: $blue-light;
-			}
 		}
 	}
 

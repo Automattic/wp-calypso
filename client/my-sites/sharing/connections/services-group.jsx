@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
-import classNames from 'classnames';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { times } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getEligibleKeyringServices } from 'state/sharing/services/selectors';
+import { getEligibleKeyringServices, isKeyringServicesFetching } from 'state/sharing/services/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import SectionHeader from 'components/section-header';
 import Service from './service';
+import * as Components from './services';
 import ServicePlaceholder from './service-placeholder';
 
 /**
@@ -20,48 +20,45 @@ import ServicePlaceholder from './service-placeholder';
  */
 const NUMBER_OF_PLACEHOLDERS = 4;
 
-class SharingServicesGroup extends Component {
-	static propTypes = {
-		connections: PropTypes.object,
-		description: PropTypes.string,
-		services: PropTypes.array,
-		title: PropTypes.string.isRequired,
-		type: PropTypes.string.isRequired,
-	};
-
-	static defaultProps = {
-		connections: Object.freeze( {} ),
-		description: '',
-		services: Object.freeze( [] ),
-	};
-
-	render() {
-		const classes = classNames( 'sharing-services-group', {
-			'is-empty': ! this.props.services.length
-		} );
-
-		return (
-			<div className={ classes }>
-				<SectionHeader label={ this.props.title } />
-				<ul className="sharing-services-group__services">
-					{ this.props.services.length
-						? this.props.services.map( ( service ) =>
-							<Service
-								key={ service.ID }
-								connections={ this.props.connections }
-								service={ service } /> )
-						: times( NUMBER_OF_PLACEHOLDERS, ( index ) =>
-							<ServicePlaceholder
-								key={ 'service-placeholder-' + index } /> )
-					}
-				</ul>
-			</div>
-		);
+const SharingServicesGroup = ( { isFetching, services, title } ) => {
+	if ( ! services.length && ! isFetching ) {
+		return null;
 	}
-}
+
+	return (
+		<div className="sharing-services-group">
+			<SectionHeader label={ title } />
+			<ul className="sharing-services-group__services">
+				{ services.length
+					? services.map( ( service ) => {
+						const Component = Components.hasOwnProperty( service.ID ) ? Components[ service.ID ] : Service;
+
+						return <Component key={ service.ID } service={ service } />;
+					} )
+					: times( NUMBER_OF_PLACEHOLDERS, ( index ) => (
+						<ServicePlaceholder key={ 'service-placeholder-' + index } />
+					) )
+				}
+			</ul>
+		</div>
+	);
+};
+
+SharingServicesGroup.propTypes = {
+	isFetching: PropTypes.bool,
+	services: PropTypes.array,
+	title: PropTypes.string.isRequired,
+	type: PropTypes.string.isRequired,
+};
+
+SharingServicesGroup.defaultProps = {
+	isFetching: false,
+	services: [],
+};
 
 export default connect(
 	( state, { type } ) => ( {
+		isFetching: isKeyringServicesFetching( state ),
 		services: getEligibleKeyringServices( state, getSelectedSiteId( state ), type )
 	} ),
 )( SharingServicesGroup );

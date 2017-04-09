@@ -42,7 +42,7 @@ function canRemoveFromCart( cart, cartItem ) {
 		return false;
 	}
 
-	if ( cartItems.hasRenewalItem( cart ) && productsValues.isPrivateRegistration( cartItem ) ) {
+	if ( cartItems.hasRenewalItem( cart ) && productsValues.isPrivacyProtection( cartItem ) ) {
 		return false;
 	}
 

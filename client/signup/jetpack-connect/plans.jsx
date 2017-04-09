@@ -36,6 +36,7 @@ import {
 	isCalypsoStartedConnection
 } from 'state/jetpack-connect/selectors';
 import { mc } from 'lib/analytics';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 const CALYPSO_PLANS_PAGE = '/plans/my-plan/';
@@ -69,6 +70,11 @@ class Plans extends Component {
 	}
 
 	componentDidUpdate() {
+		if ( this.props.isAutomatedTransfer && ! this.redirecting && this.props.selectedSite ) {
+			this.redirecting = true;
+			this.props.goBackToWpAdmin( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
+		}
+
 		if ( this.hasPlan( this.props.selectedSite ) && ! this.redirecting ) {
 			this.redirect( CALYPSO_PLANS_PAGE );
 		}
@@ -201,7 +207,7 @@ class Plans extends Component {
 		// clears whatever we had stored in local cache
 		this.props.selectPlanInAdvance( null, this.props.selectedSiteSlug );
 
-		if ( cartItem.product_slug === PLAN_JETPACK_FREE ) {
+		if ( ! cartItem || cartItem.product_slug === PLAN_JETPACK_FREE ) {
 			return this.selectFreeJetpackPlan();
 		}
 		if ( cartItem.product_slug === PLAN_JETPACK_PERSONAL ) {
@@ -297,6 +303,7 @@ export default connect(
 			selectedSite,
 			selectedSiteSlug,
 			selectedPlan,
+			isAutomatedTransfer: selectedSite ? isSiteAutomatedTransfer( state, selectedSite.ID ) : false,
 			sitePlans: getPlansBySite( state, selectedSite ),
 			jetpackConnectAuthorize: getAuthorizationData( state ),
 			userId: user ? user.ID : null,

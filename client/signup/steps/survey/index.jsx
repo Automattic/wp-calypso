@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { find, get } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -14,7 +15,6 @@ import SignupActions from 'lib/signup/actions';
 import analytics from 'lib/analytics';
 import verticals from './verticals';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import signupUtils from 'signup/utils';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 
@@ -41,7 +41,7 @@ const SurveyStep = React.createClass( {
 
 	getOtherWriteIn() {
 		return this.state.otherWriteIn ||
-			get( find( this.props.signupProgressStore, { stepName: this.props.stepName } ), 'otherWriteIn', '' );
+			get( find( this.props.signupProgress, { stepName: this.props.stepName } ), 'otherWriteIn', '' );
 	},
 
 	renderVertical( vertical ) {
@@ -112,7 +112,7 @@ const SurveyStep = React.createClass( {
 					positionInFlow={ this.props.positionInFlow }
 					headerText={ this.props.surveySiteType === 'blog' ? blogHeaderText : siteHeaderText }
 					subHeaderText={ this.props.surveySiteType === 'blog' ? blogSubHeaderText : siteSubHeaderText }
-					signupProgressStore={ this.props.signupProgressStore }
+					signupProgress={ this.props.signupProgress }
 					stepContent={ this.props.stepSectionName === 'other' ? this.renderOther() : this.renderOptionList() } />
 		);
 	},

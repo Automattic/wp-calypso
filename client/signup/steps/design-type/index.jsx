@@ -1,72 +1,105 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { identity, memoize, transform } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import analytics from 'lib/analytics';
 import Card from 'components/card';
 
-export default React.createClass( {
-	displayName: 'DesignType',
+import BlogImage from '../design-type-with-store/blog-image';
+import PageImage from '../design-type-with-store/page-image';
+import GridImage from '../design-type-with-store/grid-image';
+
+import { recordTracksEvent } from 'state/analytics/actions';
+
+class DesignTypeStep extends Component {
+	static propTypes = {
+		translate: PropTypes.func
+	};
+
+	static defaultProps = {
+		translate: identity
+	};
+
+	getChoiceHandlers = memoize( ( ) =>
+		transform( this.getChoices(), ( handlers, choice ) => {
+			handlers[ choice.type ] = ( event ) => this.handleChoiceClick( event, choice.type );
+		}, {} )
+	);
 
 	getChoices() {
-		return [
-			{ type: 'blog', label: this.translate( 'A list of my latest posts' ), image: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 230"><rect x="15" y="15" fill="#E8F0F5" width="280" height="70"/><rect x="15" y="98" fill="#C3EF96" width="194" height="85"/><rect x="15" y="195" fill="#C3EF96" width="194" height="35"/></svg> },
-			{ type: 'page', label: this.translate( 'A welcome page for my site' ), image: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 230"><rect fill="#E8F0F5" width="310" height="110"/><rect x="114" y="205" fill="#E8F0F5" width="82" height="25"/><rect x="15" y="205" fill="#E8F0F5" width="82" height="25"/><rect x="213" y="205" fill="#E8F0F5" width="82" height="25"/><rect x="15" y="36" fill="#D2DEE6" width="153" height="13"/><rect x="15" y="59" fill="#D2DEE6" width="113" height="13"/><rect x="15" y="82" fill="#C3EF96" width="30" height="13"/><rect x="15" y="125" fill="#C3EF96" width="280" height="65"/></svg> },
-			{ type: 'grid', label: this.translate( 'A grid of my latest posts' ), image: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 230"><rect x="15" y="15" fill="#E8F0F5" width="280" height="40"/><rect x="114" y="70" fill="#C3EF96" width="82" height="65"/><rect x="15" y="70" fill="#C3EF96" width="82" height="65"/><rect x="213" y="70" fill="#C3EF96" width="82" height="65"/><rect x="114" y="150" fill="#C3EF96" width="82" height="65"/><rect x="15" y="150" fill="#C3EF96" width="82" height="65"/><rect x="213" y="150" fill="#C3EF96" width="82" height="65"/></svg> },
-		];
-	},
+		const { translate } = this.props;
 
-	renderChoice( choice ) {
-		return (
-			<Card className="design-type__choice" key={ choice.type }>
-				<a className="design-type__choice__link" href="#" onClick={ ( event ) => this.handleChoiceClick( event, choice.type ) }>
-					{ choice.image }
-					<h2>{ choice.label }</h2>
-				</a>
-			</Card>
-		);
-	},
+		return [
+			{ type: 'blog', label: translate( 'A list of my latest posts' ), image: <BlogImage /> },
+			{ type: 'page', label: translate( 'A welcome page for my site' ), image: <PageImage /> },
+			{ type: 'grid', label: translate( 'A grid of my latest posts' ), image: <GridImage /> },
+		];
+	}
 
 	renderChoices() {
+		const choiceHandlers = this.getChoiceHandlers();
+
 		return (
 			<div className="design-type__list">
-				{ this.getChoices().map( this.renderChoice ) }
+				{ this.getChoices().map( ( choice ) => (
+						<Card className="design-type__choice" key={ choice.type }>
+							<a
+								className="design-type__choice-link"
+								onClick={ choiceHandlers[ choice.type ] }
+							>
+								{ choice.image }
+								<h2>{ choice.label }</h2>
+							</a>
+						</Card>
+					)
+				) }
 				<div className="design-type__choice is-spacergif" />
 			</div>
 		);
-	},
+	}
 
 	render() {
+		const { translate } = this.props;
 		return (
-			<div className="design-type__section-wrapper">
+			<div className="design-type">
 				<StepWrapper
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
 					positionInFlow={ this.props.positionInFlow }
-					fallbackHeaderText={ this.translate( 'What would you like your homepage to look like?' ) }
-					fallbackSubHeaderText={ this.translate( 'This will help us figure out what kinds of designs to show you.' ) }
-					signupProgressStore={ this.props.signupProgressStore }
+					fallbackHeaderText={ translate( 'What would you like your homepage to look like?' ) }
+					fallbackSubHeaderText={ translate( 'This will help us figure out what kinds of designs to show you.' ) }
+					subHeaderText={ translate( 'First up, what would you like your homepage to look like?' ) }
+					signupProgress={ this.props.signupProgress }
 					stepContent={ this.renderChoices() } />
 			</div>
 		);
-	},
+	}
 
 	handleChoiceClick( event, type ) {
 		event.preventDefault();
 		event.stopPropagation();
 		this.handleNextStep( type );
-	},
+	}
 
 	handleNextStep( designType ) {
-		analytics.tracks.recordEvent( 'calypso_triforce_select_design', { category: designType } );
+		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
 
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
 		this.props.goToNextStep();
 	}
-} );
+}
+
+export default connect(
+	null,
+	{
+		recordTracksEvent
+	}
+)( localize( DesignTypeStep ) );

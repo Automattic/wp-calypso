@@ -62,6 +62,10 @@ export const fetchingConnections = createReducer( {}, {
 	[ PUBLICIZE_CONNECTIONS_REQUEST_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
 } );
 
+export const fetchedConnections = createReducer( {}, {
+	[ PUBLICIZE_CONNECTIONS_RECEIVE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+} );
+
 // Tracks all known connection objects, indexed by connection ID.
 export const connections = createReducer( {}, {
 	[ PUBLICIZE_CONNECTIONS_RECEIVE ]: ( state, action ) => ( {
@@ -77,6 +81,7 @@ export const connections = createReducer( {}, {
 export default combineReducers( {
 	fetchingConnection,
 	fetchingConnections,
+	fetchedConnections,
 	connections,
 	sharePostStatus
 } );

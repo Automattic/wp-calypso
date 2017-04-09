@@ -1,0 +1,10 @@
+.following .search {
+	margin-bottom: 0;
+}
+
+.following__search.card.is-compact {
+	padding: 0;
+	margin-bottom: 16px;
+	box-shadow: 0 0 0 2px lighten( $gray, 20% ), 0 1px 2px lighten( $gray, 20% );
+	z-index: z-index( 'root', '.reader-following-search' );
+}

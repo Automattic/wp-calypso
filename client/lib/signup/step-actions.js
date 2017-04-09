@@ -4,20 +4,19 @@
 import assign from 'lodash/assign';
 import defer from 'lodash/defer';
 import isEmpty from 'lodash/isEmpty';
+import pick from 'lodash/pick';
 import async from 'async';
 import { parse as parseURL } from 'url';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
 import wpcom from 'lib/wp' ;
 const sites = require( 'lib/sites-list' )();
 const user = require( 'lib/user' )();
 import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
-import { startFreeTrial } from 'lib/upgrades/actions';
-import { PLAN_PREMIUM } from 'lib/plans/constants';
 import analytics from 'lib/analytics';
 
 import {
@@ -27,27 +26,47 @@ import {
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 
+function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
+	const { designType, domainItem } = data;
+
+	if ( designType === 'domain' ) {
+		const cartKey = 'no-site';
+		const providedDependencies = {
+			siteId: null,
+			siteSlug: cartKey,
+			themeSlugWithRepo: null,
+			domainItem,
+		};
+
+		SignupCart.createCart( cartKey, [ domainItem ], error => callback( error, providedDependencies ) );
+	} else {
+		createSiteWithCart( ( errors, providedDependencies ) => {
+			callback( errors, pick( providedDependencies, [ 'siteId', 'siteSlug', 'themeSlugWithRepo', 'domainItem' ] ) );
+		}, dependencies, data, reduxStore );
+	}
+}
+
 function createSiteWithCart( callback, dependencies, {
 	cartItem,
 	domainItem,
-	isDomainOnly,
 	googleAppsCartItem,
 	isPurchasingItem,
 	siteUrl,
-	themeSlug,
 	themeSlugWithRepo,
 	themeItem
-} ) {
-	const siteTitle = getSiteTitle( this._reduxStore.getState() ).trim();
-	const surveyVertical = getSurveyVertical( this._reduxStore.getState() ).trim();
+}, reduxStore ) {
+	const siteTitle = getSiteTitle( reduxStore.getState() ).trim();
+	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 
 	wpcom.undocumented().sitesNew( {
 		blog_name: siteUrl,
 		blog_title: siteTitle,
 		options: {
-			theme: dependencies.theme || themeSlugWithRepo,
+			// the theme can be provided in this step's dependencies or the
+			// step object itself depending on if the theme is provided in a
+			// query. See `getThemeSlug` in `DomainsStep`.
+			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
 			vertical: surveyVertical || undefined,
-			is_domain_only: isDomainOnly
 		},
 		validate: false,
 		find_available_url: isPurchasingItem
@@ -62,7 +81,7 @@ function createSiteWithCart( callback, dependencies, {
 
 		const siteSlug = parsedBlogURL.hostname;
 		const siteId = response.blog_details.blogid;
-		const isFreeThemePreselected = themeSlug && ! themeItem;
+		const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
 		const providedDependencies = {
 			siteId,
 			siteSlug,
@@ -78,7 +97,7 @@ function createSiteWithCart( callback, dependencies, {
 			].filter( item => item );
 
 			if ( newCartItems.length ) {
-				SignupCart.addToCart( siteSlug, newCartItems, function( cartError ) {
+				SignupCart.addToCart( siteId, newCartItems, function( cartError ) {
 					callback( cartError, providedDependencies );
 				} );
 			} else {
@@ -87,9 +106,9 @@ function createSiteWithCart( callback, dependencies, {
 		};
 
 		if ( ! user.get() && isFreeThemePreselected ) {
-			setThemeOnSite( addToCartAndProceed, { siteSlug }, { themeSlug } );
+			setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
 		} else if ( user.get() && isFreeThemePreselected ) {
-			fetchSitesAndUser( siteSlug, setThemeOnSite.bind( this, addToCartAndProceed, { siteSlug }, { themeSlug } ) );
+			fetchSitesAndUser( siteSlug, setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ) );
 		} else if ( user.get() ) {
 			fetchSitesAndUser( siteSlug, addToCartAndProceed );
 		} else {
@@ -98,33 +117,14 @@ function createSiteWithCart( callback, dependencies, {
 	} );
 }
 
-/**
- * Adds a Premium with free trial to the shopping cart.
- *
- * @param {function} callback - function to execute when action completes
- * @param {object} dependencies - data provided to the current step
- * @param {object} data - additional data provided by the current step
- */
-function startFreePremiumTrial( callback, dependencies, data ) {
-	const { siteId } = dependencies;
-
-	startFreeTrial( siteId, cartItems.planItem( PLAN_PREMIUM ), ( error ) => {
-		if ( error ) {
-			callback( error, dependencies );
-		} else {
-			callback( error, dependencies, data );
-		}
-	} );
-}
-
 function fetchSitesUntilSiteAppears( siteSlug, callback ) {
+	if ( sites.select( siteSlug ) ) {
+		callback();
+		return;
+	}
+
 	sites.once( 'change', function() {
-		if ( ! sites.select( siteSlug ) ) {
-			// if the site isn't in the list then bind to change and fetch again again
-			fetchSitesUntilSiteAppears( siteSlug, callback );
-		} else {
-			callback();
-		}
+		fetchSitesUntilSiteAppears( siteSlug, callback );
 	} );
 
 	// this call is deferred because sites.fetching is not set to false until
@@ -144,14 +144,14 @@ function fetchSitesAndUser( siteSlug, onComplete ) {
 	], onComplete );
 }
 
-function setThemeOnSite( callback, { siteSlug }, { themeSlug } ) {
-	if ( isEmpty( themeSlug ) ) {
+function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
+	if ( isEmpty( themeSlugWithRepo ) ) {
 		defer( callback );
 
 		return;
 	}
 
-	wpcom.undocumented().changeTheme( siteSlug, { theme: themeSlug }, function( errors ) {
+	wpcom.undocumented().changeTheme( siteSlug, { theme: themeSlugWithRepo.split( '/' )[ 1 ] }, function( errors ) {
 		callback( isEmpty( errors ) ? undefined : [ errors ] );
 	} );
 }
@@ -219,19 +219,11 @@ function getUsernameSuggestion( username, reduxState ) {
 }
 
 module.exports = {
-	createSiteWithCart: createSiteWithCart,
+	createSiteOrDomain,
 
-	createSiteWithCartAndStartFreeTrial( callback, dependencies, data ) {
-		createSiteWithCart( ( error, providedDependencies ) => {
-			if ( error ) {
-				callback( error, providedDependencies );
-			} else {
-				startFreePremiumTrial( callback, providedDependencies, data );
-			}
-		}, dependencies, data );
-	},
+	createSiteWithCart,
 
-	addPlanToCart( callback, { siteSlug }, { cartItem, privacyItem } ) {
+	addPlanToCart( callback, { siteId }, { cartItem, privacyItem } ) {
 		if ( isEmpty( cartItem ) ) {
 			// the user selected the free plan
 			defer( callback );
@@ -241,41 +233,54 @@ module.exports = {
 
 		const newCartItems = [ cartItem, privacyItem ].filter( item => item );
 
-		SignupCart.addToCart( siteSlug, newCartItems, callback );
+		SignupCart.addToCart( siteId, newCartItems, error => callback( error, { cartItem, privacyItem } ) );
 	},
 
-	createAccount( callback, dependencies, { userData, flowName, queryArgs } ) {
-		const surveyVertical = getSurveyVertical( this._reduxStore.getState() ).trim();
-		const surveySiteType = getSurveySiteType( this._reduxStore.getState() ).trim();
+	createAccount( callback, dependencies, { userData, flowName, queryArgs, service, token }, reduxStore ) {
+		const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
+		const surveySiteType = getSurveySiteType( reduxStore.getState() ).trim();
 
-		wpcom.undocumented().usersNew( assign(
-			{}, userData, {
-				ab_test_variations: getSavedVariations(),
-				validate: false,
-				signup_flow_name: flowName,
-				nux_q_site_type: surveySiteType,
-				nux_q_question_primary: surveyVertical,
-				jetpack_redirect: queryArgs.jetpackRedirect
-			}
-		), ( error, response ) => {
-			var errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
-				bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
+		if ( service ) {
+			// We're creating a new social account
+			wpcom.undocumented().usersSocialNew( service, token, ( error, response ) => {
+				const errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined;
 
-			if ( ! errors ) {
-				// Fire after a new user registers.
-				analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
-				analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
-			}
+				if ( errors ) {
+					callback( errors );
+				} else {
+					callback( undefined, response );
+				}
+			} );
+		} else {
+			wpcom.undocumented().usersNew( assign(
+				{}, userData, {
+					ab_test_variations: getSavedVariations(),
+					validate: false,
+					signup_flow_name: flowName,
+					nux_q_site_type: surveySiteType,
+					nux_q_question_primary: surveyVertical,
+					jetpack_redirect: queryArgs.jetpackRedirect
+				}
+			), ( error, response ) => {
+				const errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
+					bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
 
-			callback( errors, assign( {}, { username: userData.username }, bearerToken ) );
-		} );
+				if ( ! errors ) {
+					// Fire after a new user registers.
+					analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
+					analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
+				}
+
+				callback( errors, assign( {}, { username: userData.username }, bearerToken ) );
+			} );
+		}
 	},
 
-	createSite( callback, { theme }, { site } ) {
+	createSite( callback, { themeSlugWithRepo }, { site } ) {
 		var data = {
 			blog_name: site,
 			blog_title: '',
-			options: { theme },
+			options: { theme: themeSlugWithRepo },
 			validate: false
 		};
 
@@ -298,6 +303,8 @@ module.exports = {
 			}
 		} );
 	},
+
+	fetchSitesAndUser: fetchSitesAndUser,
 
 	setThemeOnSite: setThemeOnSite,
 

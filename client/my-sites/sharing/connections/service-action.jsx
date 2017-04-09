@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -9,79 +10,85 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import { getRemovableConnections } from 'state/sharing/publicize/selectors';
 
-class SharingServiceAction extends Component {
-	static propTypes = {
-		connections: PropTypes.array,
-		isConnecting: PropTypes.bool,
-		isDisconnecting: PropTypes.bool,
-		isRefreshing: PropTypes.bool,
-		onAction: PropTypes.func,
-		removableConnections: PropTypes.array,
-		service: PropTypes.object.isRequired,
-		status: PropTypes.string,
-		translate: PropTypes.func,
-	};
+const SharingServiceAction = ( {
+	isConnecting,
+	isDisconnecting,
+	isRefreshing,
+	onAction,
+	removableConnections,
+	status,
+	translate,
+} ) => {
+	let primary = false,
+		warning = false,
+		label;
 
-	static defaultProps = {
-		connections: Object.freeze( [] ),
-		isConnecting: false,
-		isDisconnecting: false,
-		isRefreshing: false,
-		onAction: () => {},
-		removableConnections: Object.freeze( [] ),
-		status: 'unknown',
-		translate: identity,
-	};
-
-	onActionClick = ( event ) => {
+	const isPending = 'unknown' === status || isDisconnecting || isRefreshing || isConnecting;
+	const onClick = ( event ) => {
 		event.stopPropagation();
-		this.props.onAction();
+		onAction();
 	};
 
-	render() {
-		let primary = false,
-			warning = false,
-			label;
-
-		const { translate } = this.props,
-			isPending = 'unknown' === this.props.status || this.props.isDisconnecting ||
-				this.props.isRefreshing || this.props.isConnecting;
-
-		if ( 'unknown' === this.props.status ) {
-			label = translate( 'Loading…', { context: 'Sharing: Publicize status pending button label' } );
-		} else if ( this.props.isDisconnecting ) {
-			label = translate( 'Disconnecting…', { context: 'Sharing: Publicize disconnect pending button label' } );
-		} else if ( this.props.isRefreshing ) {
-			label = translate( 'Reconnecting…', { context: 'Sharing: Publicize reconnect pending button label' } );
-			warning = true;
-		} else if ( this.props.isConnecting ) {
-			label = translate( 'Connecting…', { context: 'Sharing: Publicize connect pending button label' } );
-		} else if ( 'connected' === this.props.status ) {
-			if ( this.props.removableConnections.length > 1 ) {
-				label = translate( 'Disconnect All', { context: 'Sharing: Publicize disconnect button label' } );
-			} else {
-				label = translate( 'Disconnect', { context: 'Sharing: Publicize disconnect button label' } );
-			}
-		} else if ( 'reconnect' === this.props.status ) {
-			label = translate( 'Reconnect', { context: 'Sharing: Publicize reconnect pending button label' } );
-			warning = true;
+	if ( 'unknown' === status ) {
+		label = translate( 'Loading…', { context: 'Sharing: Publicize status pending button label' } );
+	} else if ( isDisconnecting ) {
+		label = translate( 'Disconnecting…', { context: 'Sharing: Publicize disconnect pending button label' } );
+	} else if ( isRefreshing ) {
+		label = translate( 'Reconnecting…', { context: 'Sharing: Publicize reconnect pending button label' } );
+		warning = true;
+	} else if ( isConnecting ) {
+		label = translate( 'Connecting…', { context: 'Sharing: Publicize connect pending button label' } );
+	} else if ( 'connected' === status ) {
+		if ( removableConnections.length > 1 ) {
+			label = translate( 'Disconnect All', { context: 'Sharing: Publicize disconnect button label' } );
 		} else {
-			label = translate( 'Connect', { context: 'Sharing: Publicize connect pending button label' } );
-			primary = true;
+			label = translate( 'Disconnect', { context: 'Sharing: Publicize disconnect button label' } );
 		}
-
-		return (
-			<Button
-				primary={ primary }
-				scary={ warning }
-				compact
-				onClick={ this.onActionClick }
-				disabled={ isPending }>
-				{ label }
-			</Button>
-		);
+	} else if ( 'reconnect' === status ) {
+		label = translate( 'Reconnect', { context: 'Sharing: Publicize reconnect pending button label' } );
+		warning = true;
+	} else {
+		label = translate( 'Connect', { context: 'Sharing: Publicize connect pending button label' } );
+		primary = true;
 	}
-}
 
-export default localize( SharingServiceAction );
+	return (
+		<Button
+			primary={ primary }
+			scary={ warning }
+			compact
+			onClick={ onClick }
+			disabled={ isPending }>
+			{ label }
+		</Button>
+	);
+};
+
+SharingServiceAction.propTypes = {
+	isConnecting: PropTypes.bool,
+	isDisconnecting: PropTypes.bool,
+	isRefreshing: PropTypes.bool,
+	onAction: PropTypes.func,
+	removableConnections: PropTypes.arrayOf( PropTypes.object ),
+	service: PropTypes.object.isRequired,
+	status: PropTypes.string,
+	translate: PropTypes.func,
+};
+
+SharingServiceAction.defaultProps = {
+	isConnecting: false,
+	isDisconnecting: false,
+	isRefreshing: false,
+	onAction: () => {},
+	removableConnections: [],
+	status: 'unknown',
+	translate: identity,
+};
+
+export default connect(
+	( state, { service } ) => ( {
+		removableConnections: getRemovableConnections( state, service.ID ),
+	} ),
+)( localize( SharingServiceAction ) );

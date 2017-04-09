@@ -9,21 +9,17 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { defer, startsWith, identity, every } from 'lodash';
 import store from 'store';
+import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
  */
-import ReaderTagsSubscriptionStore from 'lib/reader-tags/subscriptions';
-import ReaderListsSubscriptionsStore from 'lib/reader-lists/subscriptions';
 import ReaderListsStore from 'lib/reader-lists/lists';
-import ReaderTeams from 'lib/reader-teams';
 import Sidebar from 'layout/sidebar';
-import SidebarActions from 'lib/reader-sidebar/actions';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
-import Gridicon from 'components/gridicon';
 import { isDiscoverEnabled } from 'reader/discover/helper';
 import ReaderSidebarTags from './reader-sidebar-tags';
 import ReaderSidebarLists from './reader-sidebar-lists';
@@ -31,7 +27,9 @@ import ReaderSidebarTeams from './reader-sidebar-teams';
 import ReaderSidebarHelper from './helper';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
 import { getSubscribedLists } from 'state/reader/lists/selectors';
+import { getReaderTeams } from 'state/selectors';
 import QueryReaderLists from 'components/data/query-reader-lists';
+import QueryReaderTeams from 'components/data/query-reader-teams';
 import observe from 'lib/mixins/data-observe';
 import config from 'config';
 import userSettings from 'lib/user-settings';
@@ -40,6 +38,7 @@ import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import userUtils from 'lib/user/utils';
 import viewport from 'lib/viewport';
 import { localize } from 'i18n-calypso';
+import { getTagStreamUrl } from 'reader/route';
 
 export const ReaderSidebar = React.createClass( {
 
@@ -47,47 +46,13 @@ export const ReaderSidebar = React.createClass( {
 		observe( 'userSettings' ),
 	],
 
-	componentDidMount() {
-		ReaderTagsSubscriptionStore.on( 'change', this.updateState );
-		ReaderTagsSubscriptionStore.on( 'add', this.highlightNewTag );
-		ReaderListsStore.on( 'change', this.updateState );
-		ReaderListsSubscriptionsStore.on( 'change', this.updateState );
-		ReaderListsSubscriptionsStore.on( 'create', this.highlightNewList );
-		ReaderTeams.on( 'change', this.updateState );
+	getInitialState() {
+		return {};
+	},
 
+	componentDidMount() {
 		// If we're browsing a tag or list, open the sidebar menu
 		this.openExpandableMenuForCurrentTagOrList();
-	},
-
-	componentWillUnmount() {
-		ReaderTagsSubscriptionStore.off( 'change', this.updateState );
-		ReaderTagsSubscriptionStore.off( 'add', this.highlightNewTag );
-		ReaderListsStore.off( 'change', this.updateState );
-		ReaderListsSubscriptionsStore.off( 'change', this.updateState );
-		ReaderListsSubscriptionsStore.off( 'create', this.highlightNewList );
-		ReaderTeams.off( 'change', this.updateState );
-	},
-
-	getInitialState() {
-		return this.getStateFromStores();
-	},
-
-	getStateFromStores() {
-		const tags = ReaderTagsSubscriptionStore.get();
-		const teams = ReaderTeams.get();
-
-		if ( ! ( tags && teams ) ) {
-			SidebarActions.fetch();
-		}
-
-		return {
-			tags,
-			teams
-		};
-	},
-
-	updateState() {
-		this.setState( this.getStateFromStores() );
 	},
 
 	handleClick( event ) {
@@ -102,11 +67,11 @@ export const ReaderSidebar = React.createClass( {
 		window.location.href = url.resolve( 'https://wordpress.com', list.URL + '/edit' );
 	},
 
-	highlightNewTag( tag ) {
-		const tagUrl = `/tag/${ tag.slug }`;
-		if ( tagUrl !== page.current ) {
+	highlightNewTag( tagSlug ) {
+		const tagStreamUrl = getTagStreamUrl( tagSlug );
+		if ( tagStreamUrl !== page.current ) {
 			defer( function() {
-				page( tagUrl );
+				page( tagStreamUrl );
 				window.scrollTo( 0, 0 );
 			} );
 		}
@@ -154,7 +119,7 @@ export const ReaderSidebar = React.createClass( {
 							<a href="/following/edit" className="sidebar__button">{ this.props.translate( 'Manage' ) }</a>
 						</li>
 
-						<ReaderSidebarTeams teams={ this.state.teams } path={ this.props.path } />
+						<ReaderSidebarTeams teams={ this.props.teams } path={ this.props.path } />
 
 						{
 							isDiscoverEnabled()
@@ -189,6 +154,7 @@ export const ReaderSidebar = React.createClass( {
 				</SidebarMenu>
 
 				<QueryReaderLists />
+				<QueryReaderTeams />
 				{ this.props.subscribedLists && this.props.subscribedLists.length
 				? <ReaderSidebarLists
 						lists={ this.props.subscribedLists }
@@ -201,11 +167,11 @@ export const ReaderSidebar = React.createClass( {
 				: null
 				}
 				<ReaderSidebarTags
-					tags={ this.state.tags }
+					tags={ this.props.followedTags }
 					path={ this.props.path }
 					isOpen={ this.props.isTagsOpen }
 					onClick={ this.props.toggleTagsVisibility }
-					onTagExists={ this.highlightNewTag }
+					onFollowTag={ this.highlightNewTag }
 					currentTag={ this.state.currentTag } />
 			</SidebarRegion>
 
@@ -259,6 +225,7 @@ export default connect(
 			isTagsOpen: state.ui.reader.sidebar.isTagsOpen,
 			subscribedLists: getSubscribedLists( state ),
 			shouldRenderAppPromo: shouldRenderAppPromo(),
+			teams: getReaderTeams( state ),
 		};
 	},
 	( dispatch ) => {

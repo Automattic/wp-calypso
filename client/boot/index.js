@@ -17,7 +17,6 @@ var React = require( 'react' ),
 	page = require( 'page' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' ),
-	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
 	i18n = require( 'i18n-calypso' ),
 	includes = require( 'lodash/includes' );
 
@@ -79,9 +78,6 @@ function init() {
 	} else {
 		document.documentElement.classList.add( 'notouch' );
 	}
-
-	// Initialize touch
-	injectTapEventPlugin();
 
 	// Add accessible-focus listener
 	accessibleFocus();
@@ -195,6 +191,9 @@ function reduxStoreReady( reduxStore ) {
 
 		// Set current user in Redux store
 		reduxStore.dispatch( receiveUser( user.get() ) );
+		user.on( 'change', function() {
+			reduxStore.dispatch( receiveUser( user.get() ) );
+		} );
 		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
 		reduxStore.dispatch( setCurrentUserFlags( user.get().meta.data.flags.active_flags ) );
 
@@ -207,11 +206,11 @@ function reduxStoreReady( reduxStore ) {
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
-		require( 'lib/network-connection' ).init( reduxStore );
+		asyncRequire( 'lib/network-connection', netConn => netConn.init( reduxStore ) );
 	}
 
 	if ( config.isEnabled( 'css-hot-reload' ) ) {
-		require( 'lib/css-hot-reload' )();
+		asyncRequire( 'lib/css-hot-reload', cssHotReload => cssHotReload() );
 	}
 
 	// Render Layout only for non-isomorphic sections.
@@ -377,7 +376,7 @@ function reduxStoreReady( reduxStore ) {
 	page( '*', require( 'notices' ).clearNoticesOnNavigation );
 
 	if ( config.isEnabled( 'olark' ) ) {
-		require( 'lib/olark' ).initialize( reduxStore.dispatch );
+		asyncRequire( 'lib/olark', olark => olark.initialize( reduxStore.dispatch ) );
 	}
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
@@ -389,11 +388,15 @@ function reduxStoreReady( reduxStore ) {
 	}
 
 	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {
-		require( 'lib/rubberband-scroll-disable' )( document.body );
+		asyncRequire( 'lib/rubberband-scroll-disable', ( disableRubberbandScroll ) => {
+			disableRubberbandScroll( document.body );
+		} );
 	}
 
 	if ( config.isEnabled( 'dev/test-helper' ) && document.querySelector( '.environment.is-tests' ) ) {
-		require( 'lib/abtest/test-helper' )( document.querySelector( '.environment.is-tests' ) );
+		asyncRequire( 'lib/abtest/test-helper', ( testHelper ) => {
+			testHelper( document.querySelector( '.environment.is-tests' ) );
+		} );
 	}
 
 	/*
@@ -414,7 +417,7 @@ function reduxStoreReady( reduxStore ) {
 
 		if ( isMultiTreeLayout && previousLayoutIsSingleTree ) {
 			debug( 'Re-rendering multi-tree layout' );
-
+			ReactDom.unmountComponentAtNode( document.getElementById( 'wpcom' ) );
 			renderLayout( context.store );
 		} else if ( ! isMultiTreeLayout && ! previousLayoutIsSingleTree ) {
 			debug( 'Unmounting multi-tree layout' );

@@ -17,6 +17,7 @@ import {
 	normalizePostForEditing,
 	normalizePostForDisplay
 } from './utils';
+import { getSite } from 'state/sites/selectors';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import addQueryArgs from 'lib/route/add-query-args';
 
@@ -445,6 +446,13 @@ export function getPostPreviewUrl( state, siteId, postId ) {
 		previewUrl = addQueryArgs( {
 			preview: true
 		}, previewUrl );
+	}
+
+	// Support mapped domains https
+	const site = getSite( state, siteId );
+	if ( site && site.options ) {
+		const { is_mapped_domain, unmapped_url } = site.options;
+		previewUrl = is_mapped_domain ? previewUrl.replace( site.URL, unmapped_url ) : previewUrl;
 	}
 
 	return previewUrl;

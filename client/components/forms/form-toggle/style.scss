@@ -15,6 +15,7 @@
 	width: 40px;
 	height: 24px;
 	vertical-align: middle;
+	align-self: flex-start;
 	outline: 0;
 	cursor: pointer;
 	transition: all .4s ease, box-shadow 0s;
@@ -46,6 +47,11 @@
 
 	.is-disabled & {
 		cursor: default;
+	}
+
+	.form-toggle__label-content {
+		flex: 0 1 100%;
+		margin-left: 12px;
 	}
 }
 

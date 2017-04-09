@@ -12,6 +12,7 @@ import wpcomUndocumented from 'lib/wpcom-undocumented';
 import config from 'config';
 import wpcomSupport from 'lib/wp/support';
 import { injectLocalization } from './localization';
+import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket';
 
 const addSyncHandlerWrapper = config.isEnabled( 'sync-handler' );
 let wpcom;
@@ -57,7 +58,9 @@ if ( 'development' === config( 'env' ) ) {
 }
 
 // Inject localization helpers to `wpcom` instance
-wpcom = injectLocalization( wpcom );
+injectLocalization( wpcom );
+
+injectGuestSandboxTicketHandler( wpcom );
 
 /**
  * Expose `wpcom`

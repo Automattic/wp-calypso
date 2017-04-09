@@ -5,30 +5,22 @@ $theme-info-height: 54px;
 	margin: 0 10px 20px 10px;
 	width: 230px; // Fixed width gives desired wrapping...
 	flex-grow: 1; // ...grow allows expansion to fill space after wrap.
+	overflow: hidden;
 	transition: all 100ms ease-in-out;
-
-	h2 {
-		display: inline-block;
-		color: black;
-		font-weight: 600;
-		padding: 15px 0 15px 15px;
-		margin: inherit;
-		font-family: inherit;
-		font-size: inherit;
-	}
-
-	.price {
-		padding-left: 10px;
-		color: #4FB769;
-		font-size: 90%;
-		font-weight: 600;
-	}
 
 	&.is-active {
 		background: $blue-medium;
 
-		h2 {
+		.theme__info {
+			background: $blue-medium;
+		}
+
+		.theme__info-title {
 			color: $white;
+
+			&:before {
+				@include long-content-fade( $color: $blue-medium );
+			}
 		}
 
 		button {
@@ -59,6 +51,50 @@ $theme-info-height: 54px;
 		background-color: lighten( $gray, 20% );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
+}
+
+.theme__info {
+	position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	height: $theme-info-height;
+	display: flex;
+	background: $white;
+}
+
+.theme__info-title {
+	flex: 1 1 auto;
+	position: relative;
+	color: $gray-dark;
+	font-size: 14px;
+	font-weight: 600;
+	padding: 16px 14px;
+	margin: inherit;
+	font-family: inherit;
+	overflow: hidden;
+	white-space: nowrap;
+
+	&:before {
+		@include long-content-fade( $color: $white );
+	}
+}
+
+.theme-badge__price {
+	flex: 0 0 auto;
+	padding: 18px 10px 0;
+	color: $alert-green;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.theme-badge__active {
+	flex: 0 0 auto;
+	padding: 18px 10px 0;
+	color: lighten( $blue-light, 10% );
+	text-transform: uppercase;
+	font-size: 12px;
+	font-weight: 600;
 }
 
 .theme__active-focus {
@@ -110,14 +146,6 @@ $theme-info-height: 54px;
 	}
 }
 
-.theme__active-label {
-	margin-left: 10px;
-	color: lighten( $blue-light, 10% );
-	text-transform: uppercase;
-	font-size: 0.8em;
-	font-weight: 600;
-}
-
 // Calc height according to .theme width
 .theme__content {
 	padding-top: 75%; // 4:3 screenshot ratio
@@ -150,19 +178,24 @@ $theme-info-height: 54px;
 	}
 }
 
-.theme__info {
+.theme__installing {
+	background: transparentize($gray-dark, 0.5);
+	width: 100%;
+	left: 0;
+	top: 0;
+	bottom: $theme-info-height;
 	position: absolute;
-		bottom: 0;
-		left: 0;
-		right: 0;
-	height: $theme-info-height;
+	z-index: z-index( 'root', '.is-installing .theme' );
+	.pulsing-dot {
+		top: 50%;
+	}
 }
 
 .theme__more-button {
-	float: right;
 	border-left: 1px solid $gray-light;
 	height: $theme-info-height;
 	display: flex;
+	flex: 0 0 auto;
 	transition: all 100ms ease-in-out;
 
 	button {

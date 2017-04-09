@@ -30,7 +30,7 @@ var SegmentedControlItem = React.createClass( {
 		} );
 
 		const linkClassName = classNames( 'segmented-control__link', {
-			[ `item-index-${this.props.index}` ]: this.props.index != null,
+			[ `item-index-${ this.props.index }` ]: this.props.index != null,
 		} );
 
 		return (
@@ -39,7 +39,7 @@ var SegmentedControlItem = React.createClass( {
 					href={ this.props.path }
 					className={ linkClassName }
 					ref="itemLink"
-					onTouchTap={ this.props.onClick }
+					onClick={ this.props.onClick }
 					title={ this.props.title }
 					role="radio"
 					tabIndex={ 0 }

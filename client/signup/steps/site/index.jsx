@@ -1,26 +1,26 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	includes = require( 'lodash/includes' ),
-	map = require( 'lodash/map' ),
-	debug = require( 'debug' )( 'calypso:steps:site' ); // eslint-disable-line no-unused-vars
+import React from 'react';
+import isEmpty from 'lodash/isEmpty';
+import includes from 'lodash/includes';
+import map from 'lodash/map';
+const debug = require( 'debug' )( 'calypso:steps:site' ); // eslint-disable-line no-unused-vars
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	config = require( 'config' ),
-	analytics = require( 'lib/analytics' ),
-	formState = require( 'lib/form-state' ),
-	SignupActions = require( 'lib/signup/actions' ),
-	ValidationFieldset = require( 'signup/validation-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	StepWrapper = require( 'signup/step-wrapper' ),
-	LoggedOutForm = require( 'components/logged-out-form' ),
-	LoggedOutFormFooter = require( 'components/logged-out-form/footer' );
+import wpcom from 'lib/wp';
+import config from 'config';
+import analytics from 'lib/analytics';
+import formState from 'lib/form-state';
+import SignupActions from 'lib/signup/actions';
+import ValidationFieldset from 'signup/validation-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormButton from 'components/forms/form-button';
+import FormTextInput from 'components/forms/form-text-input';
+import StepWrapper from 'signup/step-wrapper';
+import LoggedOutForm from 'components/logged-out-form';
+import LoggedOutFormFooter from 'components/logged-out-form/footer';
 
 /**
  * Constants
@@ -270,7 +270,7 @@ module.exports = React.createClass( {
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.translate( 'Create your site.' ) }
-				signupProgressStore={ this.props.signupProgressStore }
+				signupProgress={ this.props.signupProgress }
 				stepContent={ this.renderSiteForm() } />
 		);
 	}

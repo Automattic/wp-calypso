@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { assign, filter, findIndex, forEach, last, map } from 'lodash';
+import { assign, filter, findIndex, findLastIndex, forEach, last, map, defer } from 'lodash';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
@@ -13,6 +13,8 @@ import Dispatcher from 'dispatcher';
 import Emitter from 'lib/mixins/emitter';
 import FeedPostStore from 'lib/feed-post-store';
 import { action as ActionTypes } from './constants';
+import { setLastStoreId } from 'reader/controller-helper';
+import * as FeedStreamActions from './actions';
 
 export default class PagedStream {
 	constructor( spec ) {
@@ -82,6 +84,9 @@ export default class PagedStream {
 			case ActionTypes.SELECT_PREV_ITEM:
 				this.selectPrevItem( action.selectedIndex );
 				break;
+			case ActionTypes.SELECT_FIRST_ITEM:
+				this.selectFirstItem();
+				break;
 			case ActionTypes.DISMISS_FEED_STREAM_POST:
 				this.dismissPost( action.postKey );
 				break;
@@ -114,7 +119,7 @@ export default class PagedStream {
 		return 0;
 	}
 
-	getSelectedPost() {
+	getSelectedPostKey() {
 		if ( this.selectedIndex >= 0 && this.selectedIndex < this.postKeys.length ) {
 			return this.postKeys[ this.selectedIndex ];
 		}
@@ -139,32 +144,50 @@ export default class PagedStream {
 			post._state !== 'minimal';
 	}
 
-	selectNextItem( selectedIndex ) {
-		const nextIndex = selectedIndex + 1;
-		if ( nextIndex > -1 && nextIndex < this.postKeys.length ) {
-			if ( this.isValidPostOrGap( this.postKeys[ nextIndex ] ) ) {
-				this.selectedIndex = nextIndex;
-				this.emitChange();
-			} else {
-				this.selectNextItem( nextIndex );
-			}
+	selectNextItem() {
+		if ( this.selectedIndex === -1 ) {
+			return;
+		}
+		const nextIndex = findIndex( this.postKeys, this.isValidPostOrGap, this.selectedIndex + 1 );
+		if ( nextIndex !== -1 ) {
+			this.selectedIndex = nextIndex;
+			this.emitChange();
+		}
+
+		const PREFETCH_THRESHOLD = 10;
+		// If we are getting close to the end of the loaded stream, or are already at the end,
+		// start fetching new posts
+		if ( nextIndex + PREFETCH_THRESHOLD > this.postKeys.length || nextIndex === -1 ) {
+			const fetchNextPage = () => FeedStreamActions.fetchNextPage( this.getID() );
+			defer( fetchNextPage );
 		}
 	}
 
-	selectPrevItem( selectedIndex ) {
-		const nextIndex = selectedIndex - 1;
-		if ( nextIndex > -1 && nextIndex < this.postKeys.length ) {
-			if ( this.isValidPostOrGap( this.postKeys[ nextIndex ] ) ) {
-				this.selectedIndex = nextIndex;
-				this.emitChange();
-			} else {
-				this.selectPrevItem( nextIndex );
-			}
+	selectPrevItem() {
+		if ( this.selectedIndex < 1 ) { // this also captures a selectedIndex of 0, and that's intentional
+			return;
+		}
+		const prevIndex = findLastIndex( this.postKeys, this.isValidPostOrGap, this.selectedIndex - 1 );
+		if ( prevIndex !== -1 ) {
+			this.selectedIndex = prevIndex;
+			this.emitChange();
 		}
 	}
 
-	selectItem( selectedIndex ) {
-		this.selectNextItem( selectedIndex - 1 );
+	selectFirstItem() {
+		if ( this.selectedIndex !== 0 ) {
+			this.selectedIndex = 0;
+			this.emitChange();
+		}
+	}
+
+	selectItem( postKey, id ) {
+		const selectedIndex = findIndex( this.postKeys, postKey );
+		if ( this.isValidPostOrGap( this.postKeys[ selectedIndex ] ) && selectedIndex !== this.selectedIndex ) {
+			this.selectedIndex = selectedIndex;
+			setLastStoreId( id );
+			this.emitChange();
+		}
 	}
 
 	onNextPageFetch( params ) {

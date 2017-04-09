@@ -3,13 +3,13 @@
  */
 import ReactDom from 'react-dom';
 import ReactDomServer from 'react-dom/server';
-import { Provider as ReduxProvider } from 'react-redux';
 import React from 'react';
 import tinymce from 'tinymce/tinymce';
 import { assign, debounce, find, findLast, pick, values } from 'lodash';
 import i18n from 'i18n-calypso';
 import Shortcode from 'lib/shortcode';
 import closest from 'component-closest';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -28,11 +28,11 @@ import notices from 'notices';
 import TinyMCEDropZone from './drop-zone';
 import restrictSize from './restrict-size';
 import advanced from './advanced';
-import Gridicon from 'components/gridicon';
 import config from 'config';
 import { getSelectedSite } from 'state/ui/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 /**
  * Module variables
@@ -89,17 +89,18 @@ function mediaButton( editor ) {
 			store.dispatch( setEditorMediaModalView( view ) );
 		}
 
-		ReactDom.render(
-			<ReduxProvider store={ store }>
-				<EditorMediaModal
-					{ ...props }
-					onClose={ renderModal.bind( null, { visible: false } ) }
-					onInsertMedia={ ( markup ) => {
-						insertMedia( markup );
-						renderModal( { visible: false } );
-					} } />
-			</ReduxProvider>,
-			nodes.modal
+		renderWithReduxStore(
+			<EditorMediaModal
+				{ ...props }
+				/* eslint-disable react/jsx-no-bind */
+				onClose={ renderModal.bind( null, { visible: false } ) }
+				/* eslint-disable react/jsx-no-bind */
+				onInsertMedia={ ( markup ) => {
+					insertMedia( markup );
+					renderModal( { visible: false } );
+				} } />,
+			nodes.modal,
+			store
 		);
 	}
 
@@ -117,13 +118,14 @@ function mediaButton( editor ) {
 			editor.getContainer().parentNode.insertBefore( nodes.dropzone, editor.getContainer() );
 		}
 
-		ReactDom.render(
+		renderWithReduxStore(
 			<TinyMCEDropZone
 				editor={ editor }
 				sites={ sites }
 				onInsertMedia={ insertMedia }
 				onRenderModal={ renderModal } />,
-			nodes.dropzone
+			nodes.dropzone,
+			store
 		);
 	}
 

@@ -7,6 +7,7 @@ import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
 import analytics from 'lib/analytics';
 import isEqual from 'lodash/isEqual';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -14,7 +15,6 @@ import isEqual from 'lodash/isEqual';
 import SectionHeader from 'components/section-header';
 import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import DropdownSeparator from 'components/select-dropdown/separator';
@@ -65,7 +65,8 @@ export default React.createClass( {
 	},
 
 	shouldComponentUpdate( nextProps, nextState ) {
-		const propsToCheck = [ 'label', 'isBulkManagementActive', 'haveUpdatesSelected', 'pluginUpdateCount', 'haveActiveSelected', 'haveInactiveSelected', 'bulkManagement' ];
+		const propsToCheck = [ 'label', 'isBulkManagementActive', 'haveUpdatesSelected',
+				'pluginUpdateCount', 'haveActiveSelected', 'haveInactiveSelected', 'bulkManagement' ];
 		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
 			return true;
 		}
@@ -233,25 +234,22 @@ export default React.createClass( {
 					{ this.translate( 'Activate' ) }
 				</Button>
 			);
-			const deactivateButton = isJetpackSelected
-				? (
-					<Button compact
-						key="plugin-list-header__buttons-deactivate"
-						disabled={ ! this.props.haveActiveSelected }
-						onClick={ this.props.deactiveAndDisconnectSelected }>
-						{ this.translate( 'Disconnect' ) }
-					</Button>
-				)
-				: (
-					<Button compact
-						key="plugin-list-header__buttons-disable"
-						disabled={ ! this.props.haveActiveSelected }
-						onClick={ this.props.deactivateSelected }>
-						{ this.translate( 'Deactivate' ) }
-					</Button>
-				);
-			activateButtons.push( deactivateButton );
-			leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-activate-buttons">{ activateButtons }</ButtonGroup> );
+
+			activateButtons.push(
+				<Button compact
+					key="plugin-list-header__buttons-deactivate"
+					disabled={ ! this.props.haveActiveSelected }
+					onClick={ isJetpackSelected
+						? this.props.deactiveAndDisconnectSelected
+						: this.props.deactivateSelected
+						} >
+					{ this.translate( 'Deactivate' ) }
+				</Button>
+			);
+
+			if ( ! ( isJetpackSelected && this.props.selected.length === 1 ) ) {
+				leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-activate-buttons">{ activateButtons }</ButtonGroup> );
+			}
 
 			autoupdateButtons.push(
 				<Button key="plugin-list-header__buttons-autoupdate-on"
@@ -302,9 +300,9 @@ export default React.createClass( {
 			return null;
 		}
 
-		const isJetpackSelected = this.props.selected.some( plugin => 'jetpack' === plugin.slug ),
-			needsRemoveButton = !! this.props.selected.length && this.canUpdatePlugins() && ! isJetpackSelected;
-
+		const isJetpackSelected = this.props.selected.some( plugin => 'jetpack' === plugin.slug );
+		const needsRemoveButton = !! this.props.selected.length && this.canUpdatePlugins() && ! isJetpackSelected;
+		const isJetpackOnlySelected = ! ( isJetpackSelected && this.props.selected.length === 1 );
 		return (
 			<SelectDropdown compact
 					className="plugin-list-header__actions_dropdown"
@@ -324,22 +322,19 @@ export default React.createClass( {
 				</DropdownItem>
 
 				<DropdownSeparator key="plugin__actions_separator_1" />
-
-				<DropdownItem key="plugin__actions_activate"
-						disabled={ ! this.props.haveInactiveSelected }
-						onClick={ this.props.activateSelected }>
-					{ this.translate( 'Activate' ) }
-				</DropdownItem>
-
-				{ isJetpackSelected
-					? <DropdownItem key="plugin__actions_disconnect"
-							disabled={ ! this.props.haveActiveSelected }
-							onClick={ this.props.deactiveAndDisconnectSelected }>
-						{ this.translate( 'Disconnect' ) }
+				{ isJetpackOnlySelected &&
+					<DropdownItem key="plugin__actions_activate"
+							disabled={ ! this.props.haveInactiveSelected }
+							onClick={ this.props.activateSelected }>
+						{ this.translate( 'Activate' ) }
 					</DropdownItem>
-					: <DropdownItem key="plugin__actions_deactivate"
+				}
+				{ isJetpackOnlySelected &&
+					<DropdownItem key="plugin__actions_disconnect"
 							disabled={ ! this.props.haveActiveSelected }
-							onClick={ this.props.deactivateSelected }>
+							onClick={ isJetpackSelected
+								? this.props.deactiveAndDisconnectSelected
+								: this.props.deactivateSelected }>
 						{ this.translate( 'Deactivate' ) }
 					</DropdownItem>
 				}

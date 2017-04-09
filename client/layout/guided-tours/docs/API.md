@@ -4,21 +4,21 @@ Guided Tours are declared in JSX as a tree of elements. All of them are availabl
 
 ## Tour
 
-Tour is a React component that declares the top-level of a tour. It defines conditions for starting a tour and contains `<Step>` elements as children (at least one is required).
+Tour is a React component that declares the top-level of a tour. It consists of a series of Step elements and defines when a tour should start by setting appropriate props.
 
 ### Props
 
 * `name`: (string) Unique name of tour in camelCase.
 * `version` (string): Version identifier. We use date string like "20161224".
-* `path` (string or array, optional): Use this prop to limit tour only to some path prefix (or more prefixes if array). Example: `[ '/stats', '/settings' ]`
-* `when` (function, optional): This is a Redux selector function. Use this to define conditions for the tour to start.
+* `path` (string or array, optional): Use this prop to limit tour only to some path prefix (or more prefixes if array). Example: `path={ [ '/stats', '/settings' ] }`
+* `when` (function, optional): This is a Redux selector function. Use this to define conditions for the tour to start. Can be overridden by adding a `tour` query argument to the URL like so: `?tour=tourName`, in which case the tour will be triggered even if `when` would evaluate to `false`. This is useful for sending along a tour via email or chat. On the other hand, the framework will try to not trigger a tour multiple times (see `toursSeen` in [ARCHITECTURE.md](./ARCHITECTURE.md)).
 * `children` (nodes): only supported type is `<Step>`
 
 ### Example
 
 ```jsx
 // tour with a single step
-<Tour path="/me" name="exampleTour">
+<Tour path="/me" name="exampleTour" when={ isNewUser }>
   <Step>
     …
   </Step>
@@ -34,11 +34,11 @@ Step is a React component that defines a single Step of a tour. It is represente
 ### Props
 
 * `name`: (string) Unique identifier of the step, used for addressing a step from `Next` or `Continue`. Use `init` to indicate the step that the tour should start with.
-* `target`: (string, optional) Target which this step belongs to and which will be used for positioning. The value of this prop is used to look up the corresponding DOM node. By default, the query used is `[data-tip-target="${target}"]`. However, if `target` starts with a dot or a space character, it will be treated like a standard selector and be passed directly to `document.querySelector`, thereby allowing you to target elements that do no set a `data-tip-target` attribute.
+* `target`: (string, optional) Target which this step belongs to and which will be used for positioning. See [Targeting elements in Calypso](#targeting-elements-in-calypso) for more info about the format.
 * `placement`: (string, optional) Placement. Possible values: `below`, `above`, `beside`, `center`, `middle`, `right`.
 * `arrow`: (string, optional) If defined, the step will be rendered with an arrow on its border pointing in a given direction. Available: 'top-left', 'top-center', 'top-right', 'right-top', 'right-middle', 'right-bottom', 'bottom-left', 'bottom-center', 'bottom-right', 'left-top', 'left-middle', 'left-bottom'.
 * `style`: (object, optional) Will be used as the step's inline style. Use sparingly and with caution for minor tweaks in positioning or z-indexes and avoid changing the look and feel of Guided Tours. If you use this in a way that could benefit all of Guided Tours globally, please consider creating an issue. Example: `style={{backgroundColor: 'red'}}`
-* `when`: (function, optional) This is a Redux selector that can prevent a step from showing when it evaluates to false. When using `when` you should also set the `next` prop to tell Guided Tours the name of the step it should skip to. If you omit this prop, step will be rendered as expected.
+* `when`: (function, optional) This is a Redux selector that can prevent a step from showing when it evaluates to false. When using `when` you should also set the `next` prop to tell Guided Tours the name of the step it should skip to. If you omit this prop, step will be rendered as expected. Example usage would be to show a certain step only for non-mobile environments: `when={ not( isMobile ) }`
 * `next`: (string, optional) Define this to tell Guided Tours the name of the step it should skip to when `when` evaluates to false.
 * `children`: (node) Contents of the step. Usually a paragraph of instructions and some controls for the tour. See below for available options. Note that all text content needs to be wrapped in `<p>` so it gets proper styling.
 
@@ -88,7 +88,7 @@ Continue is a React component that you can use in Step to programmatically conti
 ### Props
 
 * `step`: (string) Name of the step the tour will advance to.
-* `target`: (string, optional) Name of `[data-tip-target]` that would be watched.
+* `target`: (string, optional) DOM node that would be watched. See [Targeting elements in Calypso](#targeting-elements-in-calypso) for more info about the format.
 * `click`: (bool, optional) If true, `onClick` will be listened on `target` DOM node.
 * `hidden`: (bool, optional) If true, this will not render anything in Step, while functionality remains.
 * `icon`: (string, optional) Name of Gridicon to show in custom message.
@@ -216,3 +216,59 @@ combineTours( {
   thirdTour: ThirdTour,
 } );
 ```
+
+## Targeting elements in Calypso
+
+One of the features of Guided Tours is the ability to target DOM elements in Calypso. Targeting can be achieved in two ways:
+
+- `data-tip-target` attribute on the target element (recommended)
+- using any CSS selector
+
+To find the DOM node, `document.querySelector` is used. By default, the query used is `[data-tip-target="${target}"]`. However, if `target` contains a `.`, `#`, or a space character, we assume it's a CSS selector and it will be treated like a standard selector and be passed directly to the function, thereby allowing you to target elements that do no set a `data-tip-target` attribute. We run the query selector on every render so it possible to move elements around.
+
+### [data-tip-target]
+
+Mark a target by adding `data-tip-target="some-name"` attribute to it with your value. Please be specific to avoid conflicts and use dash-case. In your tour, just insert the value of your desired `[data-tip-target]` into the `target` prop.
+
+Using this method over CSS classes has several benefits, some of them are more explicit tagging of elements and decoupling the logic from CSS which should generally be used for styling. It is also less likely to be changed by somebody else as it has uncommon name and can be easily traced to Guided Tours Framework.
+
+Example: you want to position a step of your tour to point to some input element.
+
+```jsx
+// code somewhere in Calypso
+<input type="text" name="example" value={ … } data-tip-target="my-example-input" />
+
+// in your tour
+<Step name="example-step" target="my-example-input">…</Step>
+```
+
+### CSS selector
+
+There are cases when it might be a better idea to target an element by a CSS selector. You might use some classes to get elements in certain state or you might not be 100% in control of the markup (think controls of an external library).
+
+We treat the `target` prop as a CSS selector if it contains `.`, `#`, or a space character.
+
+#### Some examples
+
+```jsx
+// select by class
+<Step target=".sidebar-activity__likes">
+
+// use a combo of classes to determine state - this selects the active item from masterbar
+<Step target=".masterbar__item.is-active">
+
+// detect state (has-thumbnail) and select a child (featured image)
+<Step target=".reader-post-card.has-thumbnail .reader-post-card__featured-image">
+
+// target id
+<Step target="#header">
+```
+
+#### One special case
+
+```jsx
+// target element
+<Step target=" body">
+```
+
+Notice the space before "body" in the last example. **This is a hack** that forces the framework to use the value directly as a CSS selector and not as `[data-tip-target="body"]`. Please consider using any other way (CSS class, ID, custom attribute…) before settling with this one.

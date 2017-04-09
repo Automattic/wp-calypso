@@ -5,12 +5,14 @@ import React, { Component, PropTypes } from 'react';
 import noop from 'lodash/noop';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
  **/
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import InfoPopover from 'components/info-popover';
+import { isMobile } from 'lib/viewport';
 import Ribbon from 'components/ribbon';
 import PlanPrice from 'my-sites/plan-price';
 import {
@@ -33,6 +35,7 @@ import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 class PlanFeaturesHeader extends Component {
 
@@ -73,18 +76,32 @@ class PlanFeaturesHeader extends Component {
 			billingTimeFrame,
 			discountPrice,
 			isPlaceholder,
-			site
+			site,
+			translate,
+			isSiteAT
 		} = this.props;
+
 		const isDiscounted = !! discountPrice;
 		const timeframeClasses = classNames( 'plan-features__header-timeframe', {
 			'is-discounted': isDiscounted,
 			'is-placeholder': isPlaceholder
 		} );
 
-		if ( ! site.jetpack || this.props.planType === PLAN_JETPACK_FREE ) {
+		if (
+			isSiteAT ||
+			! site.jetpack ||
+			this.props.planType === PLAN_JETPACK_FREE
+		) {
 			return (
-				<p className={ timeframeClasses } >
+				<p className={ timeframeClasses }>
 					{ ! isPlaceholder ? billingTimeFrame : '' }
+					{ isDiscounted && ! isPlaceholder &&
+						<InfoPopover
+							className="plan-features__header-tip-info"
+							position={ isMobile() ? 'top' : 'left bottom' }>
+							{ translate( 'Discount for first year' ) }
+						</InfoPopover>
+					}
 				</p>
 			);
 		}
@@ -167,7 +184,6 @@ class PlanFeaturesHeader extends Component {
 				<div className={ classes } ></div>
 			);
 		}
-
 		if ( discountPrice ) {
 			return (
 				<span className="plan-features__header-price-group">
@@ -222,7 +238,8 @@ PlanFeaturesHeader.propTypes = {
 	site: PropTypes.object,
 	isInJetpackConnect: PropTypes.bool,
 	currentSitePlan: PropTypes.object,
-	relatedMonthlyPlan: PropTypes.object
+	relatedMonthlyPlan: PropTypes.object,
+	isSiteAT: PropTypes.bool
 };
 
 PlanFeaturesHeader.defaultProps = {
@@ -234,16 +251,19 @@ PlanFeaturesHeader.defaultProps = {
 	intervalType: 'yearly',
 	site: {},
 	basePlansPath: null,
-	currentSitePlan: {}
+	currentSitePlan: {},
+	isSiteAT: false
 };
 
 export default connect( ( state, ownProps ) => {
 	const { isInSignup } = ownProps;
 	const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
 	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
-
 	return Object.assign( {},
 		ownProps,
-		{ currentSitePlan }
+		{
+			currentSitePlan,
+			isSiteAT: isSiteAutomatedTransfer( state, selectedSiteId )
+		}
 	);
 } )( localize( PlanFeaturesHeader ) );

@@ -4,6 +4,7 @@
 	padding-top: 11px;
 	padding-bottom: 11px;
 	position: relative;
+	line-height: 28px;
 
 	&:after {
 		content: '';
@@ -14,9 +15,8 @@
 	display: flex;
 		align-items: center;
 	flex-grow: 1;
-	line-height: 28px;
 	position: relative;
-
+	overflow: hidden;
 
 	&:before {
 		@include long-content-fade( $color : $white );
@@ -35,7 +35,7 @@
 }
 
 .section-header__label {
-	color: $gray;
+	color: $gray-dark;
 	font-size: 14px;
 }
 

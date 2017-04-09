@@ -61,10 +61,10 @@ export default function() {
 	);
 
 	page(
-		paths.cancelPrivateRegistration(),
+		paths.cancelPrivacyProtection(),
 		meController.sidebar,
 		controller.noSitesMessage,
-		controller.cancelPrivateRegistration
+		controller.cancelPrivacyProtection
 	);
 
 	page(
@@ -103,7 +103,7 @@ export default function() {
 	);
 	page(
 		'/purchases/:siteName/:purchaseId/cancel-private-registration',
-		( { params: { siteName, purchaseId } } ) => page.redirect( paths.cancelPrivateRegistration( siteName, purchaseId ) )
+		( { params: { siteName, purchaseId } } ) => page.redirect( paths.cancelPrivacyProtection( siteName, purchaseId ) )
 	);
 	page(
 		'/purchases/:siteName/:purchaseId/confirm-cancel-domain',

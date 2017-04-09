@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import config from 'config';
 import { localize } from 'i18n-calypso';
 import {
 	find,
@@ -12,6 +11,7 @@ import {
 	overSome,
 	some,
 } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -21,7 +21,6 @@ import CompactCard from 'components/card/compact';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 import JetpackPluginItem from './jetpack-plugin-item';
 import SectionHeader from 'components/section-header';
 import SectionNav from 'components/section-nav';
@@ -30,6 +29,7 @@ import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 import jetpackPlugins from './jetpack-plugins';
 import Tooltip from 'components/tooltip';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 const filterGroup = category => group => {
 	if ( category && category !== 'all' ) {
@@ -174,7 +174,7 @@ class JetpackPluginsPanel extends Component {
 				</SectionNav>
 
 				<SectionHeader label={ translate( 'Plugins' ) }>
-					{ config.isEnabled( 'automated-transfer' ) &&
+					{ isATEnabledForCurrentSite() &&
 						<ButtonGroup key="plugin-list-header__buttons-browser">
 							<Button
 								compact
@@ -204,7 +204,7 @@ class JetpackPluginsPanel extends Component {
 								{ translate( 'Jetpack by WordPress.com' ) }
 							</div>
 							<div className="plugins-wpcom__plugin-description">
-								{ translate( 'Jetpack essential features are included with every plan' ) }
+								{ translate( 'Jetpack simplifies managing WordPress sites by giving you visitor stats, security services, SEO tools, and more.' ) }
 							</div>
 						</div>
 					</div>

@@ -14,6 +14,7 @@ import paths from 'lib/paths';
 import viewport from 'lib/viewport';
 import { preload } from 'sections-preload';
 import { getSelectedSite } from 'state/ui/selectors';
+import AsyncLoad from 'components/async-load';
 
 const MasterbarItemNew = React.createClass( {
 	propTypes: {
@@ -39,11 +40,7 @@ const MasterbarItemNew = React.createClass( {
 	},
 
 	toggleSitesPopover( isShowingPopover = ! this.state.isShowingPopover ) {
-		// Setting state in the context of a touchTap event (i.e. SitePicker
-		// Site onSelect) prevents link navigation from proceeding
-		setTimeout( this.setState.bind( this, {
-			isShowingPopover: isShowingPopover
-		} ), 0 );
+		this.setState( { isShowingPopover } );
 	},
 
 	onClick( event ) {
@@ -75,26 +72,29 @@ const MasterbarItemNew = React.createClass( {
 		const newPostPath = paths.newPost( currentSite );
 
 		return (
-			<MasterbarItem
-				ref={ this.setPostButtonContext }
-				url={ newPostPath }
-				icon="create"
-				onClick={ this.onClick }
-				isActive={ this.props.isActive }
-				tooltip={ this.props.tooltip }
-				className={ classes }
-				preloadSection={ () => preload( 'post-editor' ) }
-			>
-				{ this.props.children }
-				<SitesPopover
-					id="popover__sites-popover-masterbar"
-					sites={ this.props.sites }
-					visible={ this.state.isShowingPopover }
-					context={ this.state.postButtonContext }
-					onClose={ this.toggleSitesPopover.bind( this, false ) }
-					groups={ true }
-					position={ this.getPopoverPosition() } />
-			</MasterbarItem>
+			<div className="masterbar__publish">
+				<MasterbarItem
+					ref={ this.setPostButtonContext }
+					url={ newPostPath }
+					icon="create"
+					onClick={ this.onClick }
+					isActive={ this.props.isActive }
+					tooltip={ this.props.tooltip }
+					className={ classes }
+					preloadSection={ () => preload( 'post-editor' ) }
+				>
+					{ this.props.children }
+					<SitesPopover
+						id="popover__sites-popover-masterbar"
+						sites={ this.props.sites }
+						visible={ this.state.isShowingPopover }
+						context={ this.state.postButtonContext }
+						onClose={ this.toggleSitesPopover.bind( this, false ) }
+						groups={ true }
+						position={ this.getPopoverPosition() } />
+				</MasterbarItem>
+				<AsyncLoad require="layout/masterbar/drafts" />
+			</div>
 		);
 	}
 } );

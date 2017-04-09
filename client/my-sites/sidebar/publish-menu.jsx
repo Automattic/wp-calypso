@@ -3,11 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import includes from 'lodash/includes';
-import omit from 'lodash/omit';
-import map from 'lodash/map';
-import get from 'lodash/get';
-import mapValues from 'lodash/mapValues';
+import { includes, omit, reduce, get, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +17,7 @@ import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
+import MediaLibraryUploadButton from 'my-sites/media-library/upload-button';
 
 const PublishMenu = React.createClass( {
 	propTypes: {
@@ -90,6 +87,7 @@ const PublishMenu = React.createClass( {
 				queryable: true,
 				config: 'manage/media',
 				link: '/media',
+				buttonLink: '/media/' + site.slug,
 				wpAdminLink: 'upload.php',
 				showOnAllMySites: false,
 			} );
@@ -143,6 +141,7 @@ const PublishMenu = React.createClass( {
 			case 'page': icon = 'pages'; break;
 			case 'jetpack-portfolio': icon = 'folder'; break;
 			case 'jetpack-testimonial': icon = 'quote'; break;
+			case 'media': icon = 'image'; break;
 			default: icon = 'custom-post-type';
 		}
 
@@ -161,22 +160,31 @@ const PublishMenu = React.createClass( {
 				icon={ icon }
 				preloadSectionName={ preload }
 			>
-				<SidebarButton href={ menuItem.buttonLink } preloadSectionName="post-editor">
-					{ this.translate( 'Add' ) }
-				</SidebarButton>
+				{ menuItem.name === 'media' && (
+					<MediaLibraryUploadButton className="sidebar__button" site={ site } href={ menuItem.buttonLink }>{ this.translate( 'Add' ) }</MediaLibraryUploadButton>
+				) }
+				{ menuItem.name !== 'media' && (
+					<SidebarButton href={ menuItem.buttonLink } preloadSectionName="post-editor">{ this.translate( 'Add' ) }</SidebarButton>
+				) }
 			</SidebarItem>
 		);
 	},
 
 	getCustomMenuItems() {
 		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page' ] );
-		return map( customPostTypes, ( postType, postTypeSlug ) => {
+		return reduce( customPostTypes, ( memo, postType, postTypeSlug ) => {
+			// `show_ui` was added in Jetpack 4.5, so explicitly check false
+			// value in case site on earlier version where property is omitted
+			if ( false === postType.show_ui ) {
+				return memo;
+			}
+
 			let buttonLink;
 			if ( config.isEnabled( 'manage/custom-post-types' ) && postType.api_queryable ) {
 				buttonLink = this.props.postTypeLinks[ postTypeSlug ];
 			}
 
-			return {
+			return memo.concat( {
 				name: postType.name,
 				label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
 				className: postType.name,
@@ -193,8 +201,8 @@ const PublishMenu = React.createClass( {
 				wpAdminLink: 'edit.php?post_type=' + postType.name,
 				showOnAllMySites: false,
 				buttonLink
-			};
-		} );
+			} );
+		}, [] );
 	},
 
 	render() {

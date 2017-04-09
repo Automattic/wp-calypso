@@ -1,12 +1,13 @@
 .version {
 	text-transform: uppercase;
 	font-size: 11px;
-	color: $gray;
+	color: $gray-text-min;
 	line-height: 18px;
 	@include clear-fix;
 
 	.gridicon {
 		float: left;
 		margin-right: 4px;
+		fill: $gray;
 	}
 }

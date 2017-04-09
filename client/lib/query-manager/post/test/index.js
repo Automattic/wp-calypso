@@ -622,13 +622,13 @@ describe( 'PostQueryManager', () => {
 		} );
 	} );
 
-	describe( '#sort()', () => {
+	describe( '#compare()', () => {
 		context( 'query.order', () => {
 			it( 'should sort descending by default', () => {
 				const sorted = [
 					{ ID: 200 },
 					{ ID: 400 }
-				].sort( manager.sort.bind( manager, {
+				].sort( manager.compare.bind( manager, {
 					order_by: 'ID'
 				} ) );
 
@@ -642,7 +642,7 @@ describe( 'PostQueryManager', () => {
 				const sorted = [
 					{ ID: 200 },
 					{ ID: 400 }
-				].sort( manager.sort.bind( manager, {
+				].sort( manager.compare.bind( manager, {
 					order_by: 'ID',
 					order: 'ASC'
 				} ) );
@@ -669,7 +669,7 @@ describe( 'PostQueryManager', () => {
 					const sorted = [
 						olderPost,
 						newerPost
-					].sort( manager.sort.bind( manager, {} ) );
+					].sort( manager.compare.bind( manager, {} ) );
 
 					expect( sorted ).to.eql( [
 						newerPost,
@@ -692,7 +692,7 @@ describe( 'PostQueryManager', () => {
 					const sorted = [
 						olderPost,
 						newerPost
-					].sort( manager.sort.bind( manager, {
+					].sort( manager.compare.bind( manager, {
 						order_by: 'modified'
 					} ) );
 
@@ -717,7 +717,7 @@ describe( 'PostQueryManager', () => {
 					const sorted = [
 						aPost,
 						zPost
-					].sort( manager.sort.bind( manager, {
+					].sort( manager.compare.bind( manager, {
 						order_by: 'title'
 					} ) );
 
@@ -746,7 +746,7 @@ describe( 'PostQueryManager', () => {
 					const sorted = [
 						unpopularPost,
 						popularPost
-					].sort( manager.sort.bind( manager, {
+					].sort( manager.compare.bind( manager, {
 						order_by: 'comment_count'
 					} ) );
 
@@ -762,7 +762,7 @@ describe( 'PostQueryManager', () => {
 					const sorted = [
 						{ ID: 200 },
 						{ ID: 400 }
-					].sort( manager.sort.bind( manager, {
+					].sort( manager.compare.bind( manager, {
 						order_by: 'ID'
 					} ) );
 

@@ -101,11 +101,11 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should detect extension from HTML5 File object', function() {
-			expect( MediaUtils.getFileExtension( new window.File( [''], 'example.gif' ) ) ).to.equal( 'gif' );
+			expect( MediaUtils.getFileExtension( new window.File( [ '' ], 'example.gif' ) ) ).to.equal( 'gif' );
 		} );
 
 		it( 'should detect extension from HTML5 File object with reserved url chars', function() {
-			expect( MediaUtils.getFileExtension( new window.File( [''], 'example#?#?.gif' ) ) ).to.equal( 'gif' );
+			expect( MediaUtils.getFileExtension( new window.File( [ '' ], 'example#?#?.gif' ) ) ).to.equal( 'gif' );
 		} );
 
 		it( 'should detect extension from object file property', function() {
@@ -366,22 +366,31 @@ describe( 'MediaUtils', function() {
 	} );
 
 	describe( '#isExceedingSiteMaxUploadSize()', function() {
-		var site = {
+		const site = {
+			jetpack: false,
 			options: {
 				max_upload_size: 1024
 			}
 		};
+		const jetpackSite = new JetpackSite( {
+			jetpack: true,
+			modules: [ 'videopress' ],
+			options: {
+				jetpack_version: '4.5',
+				max_upload_size: 1024,
+			}
+		} );
 
 		it( 'should return null if the provided `bytes` are not numeric', function() {
-			expect( MediaUtils.isExceedingSiteMaxUploadSize( undefined, site ) ).to.be.null;
+			expect( MediaUtils.isExceedingSiteMaxUploadSize( {}, site ) ).to.be.null;
 		} );
 
 		it( 'should return null if the site `options` are `undefined`', function() {
-			expect( MediaUtils.isExceedingSiteMaxUploadSize( 1024, {} ) ).to.be.null;
+			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024 }, {} ) ).to.be.null;
 		} );
 
 		it( 'should return null if the site `max_upload_size` is `false`', function() {
-			var isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize( 1024, {
+			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024 }, {
 				options: {
 					max_upload_size: false
 				}
@@ -390,13 +399,46 @@ describe( 'MediaUtils', function() {
 			expect( isAcceptableSize ).to.be.null;
 		} );
 
+		it( 'should return null if a video is being uploaded for a Jetpack site with VideoPress enabled', function() {
+			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, mime_type: 'video/mp4' }, jetpackSite ) ).to.be.null;
+		} );
+
+		it( 'should not return null if a video is being uploaded for a pre-4.5 Jetpack site with VideoPress enabled', function() {
+			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, mime_type: 'video/mp4' }, new JetpackSite( {
+				jetpack: true,
+				modules: [ 'videopress' ],
+				options: {
+					jetpack_version: '3.8.1',
+					max_upload_size: 1024,
+				}
+			} ) );
+
+			expect( isAcceptableSize ).to.not.be.null;
+		} );
+
+		it( 'should not return null if an image is being uploaded for a Jetpack site with VideoPress enabled', function() {
+			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, mime_type: 'image/jpeg' }, jetpackSite ) ).to.not.be.null;
+		} );
+
+		it( 'should not return null if a video is being uploaded for a Jetpack site with VideoPress disabled', function() {
+			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024, mime_type: 'video/mp4' }, new JetpackSite( {
+				jetpack: true,
+				options: {
+					jetpack_version: '4.5',
+					max_upload_size: 1024,
+				}
+			} ) );
+
+			expect( isAcceptableSize ).to.not.be.null;
+		} );
+
 		it( 'should return false if the provided `bytes` are less than or equal to `max_upload_size`', function() {
-			expect( MediaUtils.isExceedingSiteMaxUploadSize( 512, site ) ).to.be.false;
-			expect( MediaUtils.isExceedingSiteMaxUploadSize( 1024, site ) ).to.be.false;
+			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 512 }, site ) ).to.be.false;
+			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 1024 }, site ) ).to.be.false;
 		} );
 
 		it( 'should return true if the provided `bytes` are greater than `max_upload_size`', function() {
-			expect( MediaUtils.isExceedingSiteMaxUploadSize( 1025, site ) ).to.be.true;
+			expect( MediaUtils.isExceedingSiteMaxUploadSize( { size: 1025 }, site ) ).to.be.true;
 		} );
 	} );
 

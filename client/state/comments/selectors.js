@@ -48,7 +48,7 @@ export const getPostTotalCommentsCount = ( state, siteId, postId ) => state.comm
 export const getPostMostRecentCommentDate = createSelector(
 	( state, siteId, postId ) => {
 		const items = getPostCommentItems( state, siteId, postId );
-		return items && items.first() ? new Date( items.first().get( 'date' ) ) : undefined
+		return items && items.first() ? new Date( items.first().get( 'date' ) ) : undefined;
 	},
 	getPostCommentItems
 );
@@ -63,7 +63,7 @@ export const getPostMostRecentCommentDate = createSelector(
 export const getPostOldestCommentDate = createSelector(
 	( state, siteId, postId ) => {
 		const items = getPostCommentItems( state, siteId, postId );
-		return items && items.last() ? new Date( items.last().get( 'date' ) ) : undefined
+		return items && items.last() ? new Date( items.last().get( 'date' ) ) : undefined;
 	},
 	getPostCommentItems
 );
@@ -76,9 +76,9 @@ export const getPostOldestCommentDate = createSelector(
  * @return {Immutable.Map<CommentId, CommentNode>} comments tree in the form of immutable map<CommentId, CommentNode>, and in addition a children array
  */
 export const getPostCommentsTree = createSelector(
-	( state, siteId, postId ) => {
+	( state, siteId, postId, status ) => {
 		const items = getPostCommentItems( state, siteId, postId );
-		return items ? buildCommentsTree( items ) : undefined;
+		return items ? buildCommentsTree( items, status ) : undefined;
 	},
 	getPostCommentItems
 );

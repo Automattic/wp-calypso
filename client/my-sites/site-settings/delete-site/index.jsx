@@ -7,6 +7,8 @@ import debugFactory from 'debug';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import page from 'page';
 import { some } from 'lodash';
+import Gridicon from 'gridicons';
+
 /**
  * Internal dependencies
  */
@@ -22,7 +24,6 @@ import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-
 import Dialog from 'components/dialog';
 import { getSitePurchases, hasLoadedSitePurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
 import notices from 'notices';
 import purchasesPaths from 'me/purchases/paths';

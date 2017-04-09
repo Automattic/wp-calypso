@@ -22,7 +22,7 @@ describe( 'PaginatedQueryManager', () => {
 
 	useSandbox( ( _sandbox ) => {
 		sandbox = _sandbox;
-		sandbox.stub( PaginatedQueryManager.prototype, 'sort', ( query, a, b ) => a.ID - b.ID );
+		sandbox.stub( PaginatedQueryManager.prototype, 'compare', ( query, a, b ) => a.ID - b.ID );
 	} );
 
 	beforeEach( () => {

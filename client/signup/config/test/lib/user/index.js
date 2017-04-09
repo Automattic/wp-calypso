@@ -2,7 +2,7 @@
  * User stub
  */
 
-module.exports = () => {
+export default () => {
 	return {
 		get() {
 			return {};

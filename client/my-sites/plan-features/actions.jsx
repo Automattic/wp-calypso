@@ -5,12 +5,12 @@ import { localize } from 'i18n-calypso';
 import noop from 'lodash/noop';
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
 
 const PlanFeaturesActions = ( {
 	canPurchase,

@@ -15,11 +15,10 @@ import LayoutLoggedOut from 'layout/logged-out';
  */
 export { setSection } from './shared.js';
 
-const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, tertiary } ) => (
+const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary } ) => (
 	<ReduxProvider store={ store }>
 		<LayoutLoggedOut primary={ primary }
-			secondary={ secondary }
-			tertiary={ tertiary } />
+			secondary={ secondary } />
 	</ReduxProvider>
 );
 
@@ -28,6 +27,6 @@ const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, tertiary } ) 
  * @param { function } next -- Call next middleware in chain
  *
  * Produce a `LayoutLoggedOut` element in `context.layout`, using
- * `context.primary`, `context.secondary`, and `context.tertiary` to populate it.
+ * `context.primary` and `context.secondary` to populate it.
 */
 export const makeLayout = makeLayoutMiddleware( ReduxWrappedLoggedOutLayout );
