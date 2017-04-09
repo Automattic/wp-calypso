@@ -58,22 +58,22 @@ export function addLocaleQueryParam( params ) {
  * @return {Object}       Modified WPCOM instance with localization helpers
  */
 export function injectLocalization( wpcom ) {
-	const request = wpcom.request.bind( wpcom );
+	const originalRequest = wpcom.request.bind( wpcom );
 	return Object.assign( wpcom, {
-		localize: true,
+		skipLocalizationOnce: false,
 
 		withoutLocale: function() {
-			this.localize = false;
+			this.skipLocalizationOnce = true;
 			return this;
 		},
 
 		request: function( params, callback ) {
-			if ( ! this.localize ) {
-				this.localize = true;
-				return request( params, callback );
+			if ( this.skipLocalizationOnce ) {
+				this.skipLocalizationOnce = false;
+				return originalRequest( params, callback );
 			}
 
-			return request( addLocaleQueryParam( params ), callback );
+			return originalRequest( addLocaleQueryParam( params ), callback );
 		}
 	} );
 }
