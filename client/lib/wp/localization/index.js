@@ -52,7 +52,7 @@ export function addLocaleQueryParam( params ) {
 /**
  * Modifies a WPCOM instance, returning an updated instance with included
  * localization helpers. Specifically, this adds a locale query parameter
- * by default, and adds a `withoutLocale` method to skip it.
+ * by default.
  *
  * @param  {Object} wpcom Original WPCOM instance
  * @return {Object}       Modified WPCOM instance with localization helpers
@@ -60,19 +60,9 @@ export function addLocaleQueryParam( params ) {
 export function injectLocalization( wpcom ) {
 	const originalRequest = wpcom.request.bind( wpcom );
 	return Object.assign( wpcom, {
-		skipLocalizationOnce: false,
-
-		withoutLocale: function() {
-			this.skipLocalizationOnce = true;
-			return this;
-		},
+		localized: true,
 
 		request: function( params, callback ) {
-			if ( this.skipLocalizationOnce ) {
-				this.skipLocalizationOnce = false;
-				return originalRequest( params, callback );
-			}
-
 			return originalRequest( addLocaleQueryParam( params ), callback );
 		}
 	} );
