@@ -145,7 +145,9 @@ class ThemesMagicSearchCard extends React.Component {
 		// Get rid of empty match at end
 		tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
 		const tokenIndex = this.findEditedTokenIndex( tokens, this.state.cursorPosition );
-		tokens[ tokenIndex ] = suggestion;
+		// Check if we want to add additional sapce after suggestion so next suggestions card can be opened immediately
+		const hasNextTokenFirstSpace = tokens[ tokenIndex + 1 ] && tokens[ tokenIndex + 1 ][ 0 ] === ' ';
+		tokens[ tokenIndex ] = hasNextTokenFirstSpace ? suggestion : suggestion + ' ';
 		return tokens.join( '' );
 	}
 

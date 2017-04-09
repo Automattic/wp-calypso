@@ -120,7 +120,7 @@ class Suggestions extends React.Component {
 				break;
 			case 'Enter' :
 				if ( !! this.state.currentSuggestion ) {
-					this.props.suggest( this.state.currentSuggestion + ' ' );
+					this.props.suggest( this.state.currentSuggestion );
 					return true;
 				}
 				break;
@@ -132,7 +132,7 @@ class Suggestions extends React.Component {
 		event.stopPropagation();
 		event.preventDefault();
 		//Additional empty space at the end adds fluidity to workflow
-		this.props.suggest( event.target.textContent + ' ' );
+		this.props.suggest( event.target.textContent );
 	}
 
 	onMouseOver = ( event ) => {
