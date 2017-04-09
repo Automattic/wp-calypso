@@ -17,6 +17,7 @@ describe( 'MapDomain component', () => {
 	pageSpy.redirect = spy();
 	let MapDomain, MapDomainStep;
 
+	// needed, because some dependency of dependency uses `window`
 	useFakeDom();
 
 	useMockery( ( mockery ) => {
