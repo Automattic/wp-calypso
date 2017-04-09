@@ -24,6 +24,8 @@ import { getRawSite } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Notice from 'components/notice';
 
+// Disable ES6 class rule until we switch the mixin to just using redux for products
+// eslint-disable-next-line react/prefer-es6-class
 export const MapDomain = React.createClass( {
 	mixins: [ observe( 'productsList' ) ],
 
