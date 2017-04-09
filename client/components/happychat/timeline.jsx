@@ -17,6 +17,7 @@ import {
 	forEach
 } from './functional';
 import autoscroll from './autoscroll';
+import Emojify from 'components/emojify';
 import scrollbleed from './scrollbleed';
 import { translate } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -34,7 +35,7 @@ const debug = require( 'debug' )( 'calypso:happychat:timeline' );
 
 const linksNotEmpty = ( { links } ) => ! isEmpty( links );
 
-const messageParagraph = ( { message, key } ) => <p key={ key }>{ message }</p>;
+const messageParagraph = ( { message, key } ) => <p key={ key }><Emojify>{ message }</Emojify></p>;
 
 /*
  * Given a message and array of links contained within that message, returns the message
