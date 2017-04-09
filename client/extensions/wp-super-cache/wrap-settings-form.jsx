@@ -2,14 +2,18 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { flowRight } from 'lodash';
+import { flowRight, isEqual, omit, pick } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import { protectForm } from 'lib/protect-form';
 import trackForm from 'lib/track-form';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSettings } from './state/selectors';
+import QuerySettings from './query-settings';
 
 const wrapSettingsForm = getFormSettings => SettingsForm => {
 	class WrappedSettingsForm extends Component {
@@ -17,6 +21,45 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			if ( getFormSettings ) {
 				this.props.replaceFields( getFormSettings( this.props.settings ) );
 			}
+		}
+
+		componentDidUpdate( prevProps ) {
+			if ( prevProps.siteId !== this.props.siteId ) {
+				const newSiteFields = getFormSettings( this.props.settings );
+
+				this.props.clearDirtyFields();
+				this.props.replaceFields( newSiteFields );
+			} else if (
+				! isEqual( prevProps.settings, this.props.settings ) ||
+				! isEqual( prevProps.fields, this.props.fields )
+			) {
+				this.updateDirtyFields();
+			}
+		}
+
+		updateDirtyFields() {
+			const currentFields = this.props.fields;
+			const persistedFields = getFormSettings( this.props.settings );
+
+			// Compute the dirty fields by comparing the persisted and the current fields
+			const previousDirtyFields = this.props.dirtyFields;
+			/*eslint-disable eqeqeq*/
+			const nextDirtyFields = previousDirtyFields.filter( field => ! ( currentFields[ field ] == persistedFields[ field ] ) );
+			/*eslint-enable eqeqeq*/
+
+			// Update the dirty fields state without updating their values
+			if ( 0 === nextDirtyFields.length ) {
+				this.props.markSaved();
+			} else {
+				this.props.markChanged();
+			}
+
+			this.props.clearDirtyFields();
+			this.props.updateFields( pick( currentFields, nextDirtyFields ) );
+
+			// Set the new non dirty fields
+			const nextNonDirtyFields = omit( persistedFields, nextDirtyFields );
+			this.props.replaceFields( nextNonDirtyFields );
 		}
 
 		handleChange = field => event => {
@@ -50,16 +93,22 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				handleToggle: this.handleToggle,
 			};
 
-			return <SettingsForm { ...this.props } { ...utils } />;
+			return (
+				<div>
+					<QuerySettings siteId={ this.props.siteId } />
+					<SettingsForm { ...this.props } { ...utils } />
+				</div>
+			);
 		}
 	}
 
 	const connectComponent = connect(
-		() => {
-			// TODO: Replace with REST API once ready.
-			const settings = {
+		state => {
+			const siteId = getSelectedSiteId( state );
+			const settings = Object.assign( {}, getSettings( state, siteId ), {
 				// Easy
-				scrules: true,
+				// http_only setting is not persisted, but is needed for the "Test Cache" action.
+				http_only: true,
 
 				// Caching
 				wp_cache_enabled: true,
@@ -205,18 +254,20 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 						fsize: '32.18KB',
 					},
 				},
-			};
+			} );
 
 			return {
 				settings,
+				siteId,
 			};
-		}
+		},
 	);
 
 	return flowRight(
 		connectComponent,
 		localize,
 		trackForm,
+		protectForm,
 	)( WrappedSettingsForm );
 };
 
