@@ -28,10 +28,7 @@ import { isATEnabled } from 'lib/automated-transfer';
 import { getThemeShowcaseDescription } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
-
-const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
-	? require( './themes-magic-search-card' )
-	: require( './themes-search-card' );
+import ThemesSearchCard from './themes-magic-search-card';
 
 function getThemeShowcaseTitle( tier ) {
 	const titles = {
