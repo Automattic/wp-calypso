@@ -39,7 +39,7 @@ describe( 'MapDomain component', () => {
 
 	it( 'does not blow up with default props', () => {
 		const wrapper = shallow( <MapDomain { ...defaultProps } /> );
-		expect( wrapper.length ).to.eql( 1 );
+		expect( wrapper ).to.have.length( 1 );
 	} );
 
 	it( 'redirects if site cannot be upgraded at mounting', () => {
