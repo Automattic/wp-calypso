@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { random } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,25 +9,12 @@ import { random } from 'lodash';
 import config from 'config';
 import notices from 'notices';
 import {
-	NPS_SURVEY_RAND_MAX,
-} from './constants';
-import {
 	NPS_SURVEY_DIALOG_IS_SHOWING,
 } from 'state/action-types';
-
-export function showNpsSurveyNoticeIfEligible() {
-	return ( dispatch ) => {
-		if ( 1 === random( 1, NPS_SURVEY_RAND_MAX ) ) {
-			dispatch( showNpsSurveyNotice() );
-		}
-
-		if ( config.isEnabled( 'nps-survey/dev-trigger' ) ) {
-			window.npsSurvey = function() {
-				dispatch( showNpsSurveyNotice() );
-			};
-		}
-	};
-}
+import {
+	forceNpsSurveyEligibility,
+	markNpsSurveyShownThisSession,
+} from 'state/nps-survey/actions';
 
 export function showNpsSurveyNotice() {
 	return ( dispatch ) => {
@@ -44,6 +30,8 @@ export function showNpsSurveyNotice() {
 		// but that currently doesn't support notices with `button` and `onClick`
 		// options.
 		notices.new( translate( 'Would you mind answering a question about WordPress.com?' ), options, 'is-info' );
+
+		dispatch( markNpsSurveyShownThisSession() );
 	};
 }
 
@@ -51,5 +39,15 @@ export function setNpsSurveyDialogShowing( isShowing ) {
 	return {
 		type: NPS_SURVEY_DIALOG_IS_SHOWING,
 		isShowing,
+	};
+}
+
+export function setupNpsSurveyDevTrigger() {
+	return ( dispatch ) => {
+		if ( config.isEnabled( 'nps-survey/dev-trigger' ) ) {
+			window.npsSurvey = function() {
+				dispatch( forceNpsSurveyEligibility( true ) );
+			};
+		}
 	};
 }

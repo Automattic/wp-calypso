@@ -7,6 +7,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING,
+	NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
 	NPS_SURVEY_SUBMIT_REQUESTING,
 	NPS_SURVEY_SUBMIT_REQUEST_FAILURE,
 	NPS_SURVEY_SUBMIT_REQUEST_SUCCESS,
@@ -20,15 +22,59 @@ import {
 	SUBMIT_FAILURE,
 	SUBMITTED,
 } from '../constants';
-import reducer, { surveyState, surveyName, score } from '../reducer';
+import reducer, { isSessionEligible, wasShownThisSession, surveyState, surveyName, score } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'isSessionEligible',
+			'wasShownThisSession',
 			'surveyState',
 			'surveyName',
 			'score',
 		] );
+	} );
+
+	describe( '#isSessionEligible()', () => {
+		it( 'should default to not eligible', () => {
+			const state = isSessionEligible( undefined, {} );
+
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should track if session is eligible', () => {
+			const state = isSessionEligible( undefined, {
+				type: NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING,
+				isSessionPicked: true,
+			} );
+
+			expect( state ).to.be.true;
+		} );
+
+		it( 'should track if session is not eligible', () => {
+			const state = isSessionEligible( undefined, {
+				type: NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING,
+				isSessionPicked: false,
+			} );
+
+			expect( state ).to.be.false;
+		} );
+	} );
+
+	describe( '#wasShownThisSession()', () => {
+		it( 'should default to not shown', () => {
+			const state = wasShownThisSession( undefined, {} );
+
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should track if survey was shown', () => {
+			const state = wasShownThisSession( undefined, {
+				type: NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
+			} );
+
+			expect( state ).to.be.true;
+		} );
 	} );
 
 	describe( '#surveyState()', () => {
