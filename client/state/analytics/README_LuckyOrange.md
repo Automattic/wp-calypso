@@ -1,7 +1,11 @@
 Lucky Orange Analytics
 ========
 
-Lucky Orange is an analytics platform that offers a suite of tools that helps you understand your users better. It's a research tool that offers insight into visitor behaviour. Out of the box, all data sent to Lucky Orange is anonymous. It does not capture keystroke data. Every character from every field on every page is replaced with an asterisk before any data is recorded. This is to keep all data anonymous.
+Lucky Orange is an analytics platform that offers a suite of tools that helps you understand your users better. It offers insight into visitor behaviour by providing you with [heat mpas](https://help.luckyorange.com/article/78-what-makes-lucky-orange-heat-maps-more-accurate), [session recordings](https://help.luckyorange.com/article/73-what-are-dynamic-recordings), and [form analytics](http://www.luckyorange.com/form-analytics.php). Furthermore, Lucky Orange also offers you the ability to [poll](http://www.luckyorange.com/polls.php) and [chat](http://www.luckyorange.com/chat.php) with visitors in real time. 
+
+Out of the box, all data sent to Lucky Orange is anonymous. It does not capture keystroke data. Every character from every field on every page is replaced with an asterisk before any data is recorded. This is to keep all data anonymous.
+
+With Lucky Orange we can collect information from our users, communicate with them in real time, and observe how they interact with parts of our site. It will allow us to identify problem areas of our site and help us identify new tests for improvement. 
 
 ## Docs
 - [Luck Orange site](http://www.luckyorange.com)
