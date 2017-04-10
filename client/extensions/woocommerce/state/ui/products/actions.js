@@ -2,20 +2,13 @@
  * Internal dependencies
  */
 import {
-	WOOCOMMERCE_EDIT_EXISTING_PRODUCT,
-	WOOCOMMERCE_EDIT_NEW_PRODUCT,
+	WOOCOMMERCE_EDIT_PRODUCT,
 } from '../../action-types';
 
-export function editExistingProduct( product, data ) {
+export function editProduct( product, data ) {
 	return {
-		type: WOOCOMMERCE_EDIT_EXISTING_PRODUCT,
+		type: WOOCOMMERCE_EDIT_PRODUCT,
 		payload: { product, data },
 	};
 }
 
-export function editNewProduct( product, data ) {
-	return {
-		type: WOOCOMMERCE_EDIT_NEW_PRODUCT,
-		payload: { product, data },
-	};
-}

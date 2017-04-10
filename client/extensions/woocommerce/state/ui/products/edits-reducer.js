@@ -7,16 +7,14 @@ import { isNumber } from 'lodash';
  * Internal dependencies
  */
 import {
-	WOOCOMMERCE_EDIT_EXISTING_PRODUCT,
-	WOOCOMMERCE_EDIT_NEW_PRODUCT,
+	WOOCOMMERCE_EDIT_PRODUCT,
 } from '../../action-types';
 
 const initialState = null;
 
 export default function( state = initialState, action ) {
 	const handlers = {
-		[ WOOCOMMERCE_EDIT_EXISTING_PRODUCT ]: editExistingProductAction,
-		[ WOOCOMMERCE_EDIT_NEW_PRODUCT ]: editNewProductAction,
+		[ WOOCOMMERCE_EDIT_PRODUCT ]: editProductAction,
 	};
 
 	const handler = handlers[ action.type ];
@@ -24,51 +22,38 @@ export default function( state = initialState, action ) {
 	return ( handler && handler( state, action ) ) || state;
 }
 
-function editExistingProductAction( edits, action ) {
+function editProductAction( edits, action ) {
 	const { product, data } = action.payload;
 
 	const prevEdits = edits || {};
-	const updates = editExistingProduct( prevEdits.updates, product, data );
-	return { ...prevEdits, updates };
+	const bucket = product && isNumber( product.id ) && 'updates' || 'creates';
+	const array = editProduct( prevEdits[ bucket ], product, data );
+
+	return { ...prevEdits, [ bucket ]: array };
 }
 
-function editNewProductAction( edits, action ) {
-	const { product, data } = action.payload;
-
-	const prevEdits = edits || {};
-	const creates = editNewProduct( prevEdits.creates, product, data );
-	return { ...prevEdits, creates };
-}
-
-function editExistingProduct( updates, product, data ) {
-	const prevUpdates = updates || [];
+function editProduct( array, product, data ) {
+	// Use the existing product id (real or placeholder), or creates.length if no product.
+	const prevArray = array || [];
+	const productId = ( product ? product.id : { index: prevArray.length } );
 
 	let found = false;
 
-	const _updates = prevUpdates.map( ( prevUpdate ) => {
-		if ( product.id === prevUpdate.id ) {
+	// Look for this object in the appropriate create or edit array first.
+	const _array = prevArray.map( ( p ) => {
+		if ( productId === p.id ) {
 			found = true;
-			return { ...prevUpdate, ...data };
+			return { ...p, ...data };
 		}
 
-		return prevUpdate;
+		return p;
 	} );
 
 	if ( ! found ) {
-		_updates.push( { id: product.id, ...data } );
+		// update or create not already in edit state, so add it now.
+		_array.push( { id: productId, ...data } );
 	}
 
-	return _updates;
+	return _array;
 }
 
-function editNewProduct( creates, product, data ) {
-	const prevCreates = creates || [];
-	const index = ( product && product.id !== null ? product.id.index : prevCreates.length );
-
-	const _creates = [ ...prevCreates ];
-	const prevCreate = prevCreates[ index ] || {};
-
-	_creates[ index ] = { ...prevCreate, ...data, id: { index } };
-
-	return _creates;
-}
