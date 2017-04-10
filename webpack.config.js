@@ -1,5 +1,4 @@
-/***** WARNING: ES5 code only here. Not transpiled! *****/
-/* eslint-disable no-var */
+/***** WARNING: No ES6 modules here. Not transpiled! *****/
 
 /**
  * External dependencies
@@ -94,7 +93,8 @@ const webpackConfig = {
 		new webpack.DefinePlugin( {
 			'process.env': {
 				NODE_ENV: JSON.stringify( bundleEnv )
-			}
+			},
+			'PROJECT_NAME': JSON.stringify( config( 'project' ) )
 		} ),
 		new WebpackStableBuildPlugin( {
 			seed: 0
@@ -216,5 +216,3 @@ if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 webpackConfig.module.loaders = [ jsLoader ].concat( webpackConfig.module.loaders );
 
 module.exports = webpackConfig;
-
-/* eslint-enable no-var */

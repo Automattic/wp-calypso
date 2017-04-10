@@ -14,7 +14,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import {
 	configureReduxStore,
 	locales,
@@ -30,7 +29,7 @@ const debug = debugFactory( 'calypso' );
 const boot = currentUser => {
 	debug( "Starting Calypso. Let's do this." );
 
-	const project = require( `./project/${ config( 'project' ) }` );
+	const project = require( `./project/${ PROJECT_NAME }` );
 
 	locales( currentUser );
 	invoke( project, 'locales', currentUser );

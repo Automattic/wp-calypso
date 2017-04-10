@@ -1,9 +1,9 @@
-/***** WARNING: ES5 code only here. Not transpiled! *****/
+/***** WARNING: No ES6 modules here. Not transpiled! *****/
 
 /**
  * External dependencies
  */
-var webpack = require( 'webpack' ),
+const webpack = require( 'webpack' ),
 	path = require( 'path' ),
 	HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' ),
 	fs = require( 'fs' );
@@ -11,7 +11,7 @@ var webpack = require( 'webpack' ),
 /**
  * Internal dependencies
  */
-var config = require( 'config' );
+const config = require( 'config' );
 
 /**
  * This lists modules that must use commonJS `require()`s
@@ -20,7 +20,7 @@ var config = require( 'config' );
  * @returns { object } list of externals
 */
 function getExternals() {
-	var externals = {};
+	const externals = {};
 
 	// Don't bundle any node_modules, both to avoid a massive bundle, and problems
 	// with modules that are incompatible with webpack bundling.
@@ -53,7 +53,7 @@ function getExternals() {
 	return externals;
 }
 
-var webpackConfig = {
+const webpackConfig = {
 	devtool: 'source-map',
 	entry: 'index.js',
 	target: 'node',
@@ -105,6 +105,9 @@ var webpackConfig = {
 	plugins: [
 		// Require source-map-support at the top, so we get source maps for the bundle
 		new webpack.BannerPlugin( 'require( "source-map-support" ).install();', { raw: true, entryOnly: false } ),
+		new webpack.DefinePlugin( {
+			'PROJECT_NAME': JSON.stringify( config( 'project' ) )
+		} ),
 		new webpack.NormalModuleReplacementPlugin( /^lib\/analytics$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib\/sites-list$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib\/olark$/, 'lodash/noop' ), // Depends on DOM
@@ -119,7 +122,7 @@ var webpackConfig = {
 };
 
 if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
-	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'server-records.json' ),
+	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'server-records.json' );
 	webpackConfig.plugins.unshift( new HardSourceWebpackPlugin( { cacheDirectory: path.join( __dirname, '.webpack-cache', 'server' ) } ) );
 }
 
