@@ -93,14 +93,14 @@ export class LostPasswordFormComponent extends Component {
 					<form onSubmit={ this.submitForm }>
 						<FormLabel>
 							{ translate( 'Username or Email' ) }
+							<FormInput
+								className="lost-password-form__user-login-input"
+								onChange={ this.onUserLoginChanged }
+								value={ userLogin || '' }
+								disabled={ isRequesting }
+								autoFocus
+							/>
 						</FormLabel>
-						<FormInput
-							className="lost-password-form__user-login-input"
-							onChange={ this.onUserLoginChanged }
-							value={ userLogin || '' }
-							disabled={ isRequesting }
-							autoFocus
-						/>
 						{
 							requestError && (
 							<p className="lost-password-form__error-message">
