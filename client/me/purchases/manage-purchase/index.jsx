@@ -45,7 +45,6 @@ import { isDomainRegistration } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import PurchasePlanDetails from './plan-details';
-import Notice from 'components/notice';
 import PaymentLogo from 'components/payment-logo';
 import ProductLink from 'me/purchases/product-link';
 import PurchaseNotice from './notices';
@@ -318,28 +317,6 @@ const ManagePurchase = React.createClass( {
 		);
 	},
 
-	renderExpiredRenewNotice() {
-		const purchase = getPurchase( this.props );
-		const { translate } = this.props;
-
-		if ( ! isRenewable( purchase ) && ! isRedeemable( purchase ) ) {
-			return null;
-		}
-
-		if ( ! isExpired( purchase ) ) {
-			return null;
-		}
-
-		return (
-			<Notice
-				showDismiss={ false }
-				status="is-error"
-				text={ translate( 'This purchase has expired and is no longer in use.' ) }>
-				{ this.renderRenewNoticeAction() }
-			</Notice>
-		);
-	},
-
 	renderRenewsOrExpiresOnLabel() {
 		const purchase = getPurchase( this.props );
 		const { translate } = this.props;
@@ -531,7 +508,6 @@ const ManagePurchase = React.createClass( {
 			renewsOrExpiresOnLabel,
 			renewsOrExpiresOn,
 			renewButton,
-			expiredRenewNotice,
 			editPaymentMethodNavItem,
 			cancelPurchaseNavItem,
 			cancelPrivacyProtectionNavItem,
@@ -559,7 +535,6 @@ const ManagePurchase = React.createClass( {
 			renewsOrExpiresOn = this.renderRenewsOrExpiresOn();
 			renewButton = this.renderRenewButton();
 			contactSupportToRenewMessage = this.renderContactSupportToRenewMessage();
-			expiredRenewNotice = this.renderExpiredRenewNotice();
 			editPaymentMethodNavItem = this.renderEditPaymentMethodNavItem();
 			cancelPurchaseNavItem = this.renderCancelPurchaseNavItem();
 			cancelPrivacyProtectionNavItem = this.renderCancelPrivacyProtection();
@@ -600,7 +575,6 @@ const ManagePurchase = React.createClass( {
 
 				{ this.renderPlanDetails() }
 
-				{ expiredRenewNotice }
 				{ editPaymentMethodNavItem }
 				{ cancelPurchaseNavItem }
 				{ cancelPrivacyProtectionNavItem }

@@ -15,6 +15,8 @@ import {
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
+	isRedeemable,
+	isRenewable,
 	showCreditCardExpiringWarning
 } from 'lib/purchases';
 import { getPurchase, getSelectedSite } from '../utils';
@@ -132,12 +134,34 @@ class PurchaseNotice extends Component {
 		}
 	}
 
+	renderExpiredRenewNotice() {
+		const purchase = getPurchase( this.props );
+		const { translate } = this.props;
+
+		if ( ! isRenewable( purchase ) && ! isRedeemable( purchase ) ) {
+			return null;
+		}
+
+		if ( ! isExpired( purchase ) ) {
+			return null;
+		}
+
+		return (
+			<Notice
+				showDismiss={ false }
+				status="is-error"
+				text={ translate( 'This purchase has expired and is no longer in use.' ) }>
+				{ this.renderRenewNoticeAction() }
+			</Notice>
+		);
+	}
+
 	render() {
 		if ( this.props.isDataLoading ) {
 			return null;
 		}
 
-		return this.renderPurchaseExpiringNotice() || this.renderCreditCardExpiringNotice();
+		return this.renderExpiredRenewNotice() || this.renderPurchaseExpiringNotice() || this.renderCreditCardExpiringNotice();
 	}
 }
 
