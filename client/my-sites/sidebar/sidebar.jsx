@@ -225,7 +225,7 @@ export class MySitesSidebar extends Component {
 
 	menus() {
 		const site = this.getSelectedSite();
-		const menusLink = '/customize/menus' + this.siteSuffix();
+		let menusLink = '/customize/menus' + this.siteSuffix();
 
 		if ( ! site ) {
 			return null;
@@ -241,6 +241,10 @@ export class MySitesSidebar extends Component {
 
 		if ( ! this.isSingle() ) {
 			return null;
+		}
+
+		if ( site.jetpack ) {
+			menusLink = site.options.admin_url + 'customize.php';
 		}
 
 		return (
