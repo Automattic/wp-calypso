@@ -1,84 +1,69 @@
 /**
  * External dependencies
  */
-var page = require( 'page' ),
-	React = require( 'react' ),
-	omit = require( 'lodash/omit' ),
-	{ connect } = require( 'react-redux' );
+import page from 'page';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var HeaderCake = require( 'components/header-cake' ),
-	MapDomainStep = require( 'components/domains/map-domain-step' ),
-	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
-	cartItems = require( 'lib/cart-values' ).cartItems,
-	upgradesActions = require( 'lib/upgrades/actions' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	wpcom = require( 'lib/wp' ).undocumented(),
-	paths = require( 'my-sites/upgrades/paths' );
-import { currentUserHasFlag } from 'state/current-user/selectors';
+import HeaderCake from 'components/header-cake';
+import MapDomainStep from 'components/domains/map-domain-step';
+import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { cartItems } from 'lib/cart-values';
+import upgradesActions from 'lib/upgrades/actions';
+import wp from 'lib/wp';
+import paths from 'my-sites/upgrades/paths';
 import Notice from 'components/notice';
+import { currentUserHasFlag } from 'state/current-user/selectors';
+import { isSiteUpgradeable } from 'state/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import QueryProductsList from 'components/data/query-products-list';
 
-var MapDomain = React.createClass( {
-	mixins: [ observe( 'productsList', 'sites' ) ],
+const wpcom = wp.undocumented();
 
-	propTypes: {
-		query: React.PropTypes.string,
-		productsList: React.PropTypes.object.isRequired,
-		domainsWithPlansOnly: React.PropTypes.bool.isRequired
-	},
+export class MapDomain extends Component {
+	static propTypes = {
+		initialQuery: PropTypes.string,
+		query: PropTypes.string,
+		cart: PropTypes.object.isRequired,
+		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		isSiteUpgradeable: PropTypes.bool,
+		productsList: PropTypes.object.isRequired,
+		selectedSite: PropTypes.object,
+		selectedSiteId: PropTypes.number,
+		selectedSiteSlug: PropTypes.string,
+		translate: PropTypes.func.isRequired,
+	};
 
-	getInitialState: function() {
-		return {
-			errorMessage: null
-		};
-	},
+	state = {
+		errorMessage: null
+	};
 
-	componentWillMount: function() {
-		this.checkSiteIsUpgradeable();
-	},
+	goBack = () => {
+		const {
+			selectedSite,
+			selectedSiteSlug,
+		} = this.props;
 
-	componentDidMount: function() {
-		if ( this.props.sites ) {
-			this.props.sites.on( 'change', this.checkSiteIsUpgradeable );
-		}
-	},
-
-	componentWillUnmount: function() {
-		if ( this.props.sites ) {
-			this.props.sites.off( 'change', this.checkSiteIsUpgradeable );
-		}
-	},
-
-	checkSiteIsUpgradeable: function( ) {
-		if ( ! this.props.sites ) {
-			return;
-		}
-
-		const selectedSite = this.props.sites.getSelectedSite();
-
-		if ( selectedSite && ! selectedSite.isUpgradeable() ) {
-			page.redirect( '/domains/add/mapping' );
-		}
-	},
-
-	goBack: function() {
-		const selectedSite = this.props.sites && this.props.sites.getSelectedSite();
 		if ( ! selectedSite ) {
-			page( this.props.path.replace( '/mapping', '' ) );
+			page( '/domains/add' );
 			return;
 		}
 
 		if ( selectedSite.is_vip ) {
-			page( paths.domainManagementList( selectedSite.slug ) );
+			page( paths.domainManagementList( selectedSiteSlug ) );
 			return;
 		}
 
-		page( '/domains/add/' + selectedSite.slug );
-	},
+		page( '/domains/add/' + selectedSiteSlug );
+	};
 
-	handleRegisterDomain( suggestion ) {
+	handleRegisterDomain = ( suggestion ) => {
+		const { selectedSiteSlug } = this.props;
+
 		upgradesActions.addItem(
 			cartItems.domainRegistration( {
 				productSlug: suggestion.product_slug,
@@ -86,13 +71,11 @@ var MapDomain = React.createClass( {
 			} )
 		);
 
-		if ( this.isMounted() ) {
-			page( '/checkout/' + this.props.sites.getSelectedSite().slug );
-		}
-	},
+		page( '/checkout/' + selectedSiteSlug );
+	};
 
-	handleMapDomain( domain ) {
-		const selectedSite = this.props.sites.getSelectedSite();
+	handleMapDomain = ( domain ) => {
+		const { selectedSite, selectedSiteSlug } = this.props;
 
 		this.setState( { errorMessage: null } );
 
@@ -100,37 +83,64 @@ var MapDomain = React.createClass( {
 		// We don't go through the usual checkout process
 		// Instead, we add the mapping directly
 		if ( selectedSite.is_vip ) {
-			wpcom.addVipDomainMapping( selectedSite.ID, domain ).then( () => {
-				page( paths.domainManagementList( selectedSite.slug ) );
-			}, error => this.setState( { errorMessage: error.message } ) );
+			wpcom.addVipDomainMapping( selectedSite.ID, domain )
+				.then(
+					() => page( paths.domainManagementList( selectedSiteSlug ) ),
+					( error ) => this.setState( { errorMessage: error.message } )
+				);
 			return;
 		}
 
 		upgradesActions.addItem( cartItems.domainMapping( { domain } ) );
 
-		if ( this.isMounted() ) {
-			page( '/checkout/' + selectedSite.slug );
-		}
-	},
+		page( '/checkout/' + selectedSiteSlug );
+	};
 
-	render: function() {
-		let selectedSite;
+	componentWillMount() {
+		this.checkSiteIsUpgradeable( this.props );
+	}
 
-		if ( this.props.sites ) {
-			selectedSite = this.props.sites.getSelectedSite();
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.selectedSiteId !== this.props.selectedSiteId ) {
+			this.checkSiteIsUpgradeable( nextProps );
 		}
+	}
+
+	checkSiteIsUpgradeable( props ) {
+		if ( props.selectedSite && ! props.isSiteUpgradeable ) {
+			page.redirect( '/domains/add/mapping' );
+		}
+	}
+
+	render() {
+		const {
+			cart,
+			domainsWithPlansOnly,
+			initialQuery,
+			productsList,
+			selectedSite,
+			translate,
+		} = this.props;
+
+		const {
+			errorMessage
+		} = this.state;
 
 		return (
 			<span>
+				<QueryProductsList />
+
 				<HeaderCake onClick={ this.goBack }>
-					{ this.translate( 'Map a Domain' ) }
+					{ translate( 'Map a Domain' ) }
 				</HeaderCake>
 
-				{ this.state.errorMessage && <Notice status="is-error" text={ this.state.errorMessage }/> }
+				{ errorMessage && <Notice status="is-error" text={ errorMessage } /> }
 
 				<MapDomainStep
-					{ ...omit( this.props, [ 'children', 'productsList', 'sites' ] ) }
-					products={ this.props.productsList.get() }
+					cart={ cart }
+					domainsWithPlansOnly={ domainsWithPlansOnly }
+					initialQuery={ initialQuery }
+					products={ productsList }
 					selectedSite={ selectedSite }
 					onRegisterDomain={ this.handleRegisterDomain }
 					onMapDomain={ this.handleMapDomain }
@@ -139,10 +149,15 @@ var MapDomain = React.createClass( {
 			</span>
 		);
 	}
-} );
+}
 
-module.exports = connect( state => (
-	{
-		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
-	}
-) )( MapDomain );
+export default connect(
+	( state ) => ( {
+		selectedSite: getSelectedSite( state ),
+		selectedSiteId: getSelectedSiteId( state ),
+		selectedSiteSlug: getSelectedSiteSlug( state ),
+		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
+		isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
+		productsList: state.productsList.items,
+	} )
+)( localize( MapDomain ) );
