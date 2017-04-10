@@ -6,7 +6,7 @@ import React from 'react';
 export default () => (
 	<svg width="55" height="42" viewBox="0 0 55 42" xmlns="http://www.w3.org/2000/svg">
 		<title>Featured Image</title>
-		<g fill-rule="nonzero" fill="#542B06">
+		<g fillRule="nonzero" fill="#542B06">
 			<path
 				d="M22 11c0-1.656 1.344-3 3-3s3 1.344 3 3-1.344 3-3 3-3-1.344-3-3zm18-7v12.33l-3.173
 				8.29-12.01.637L31.992 32H4c-2.21 0-4-1.79-4-4V4c0-2.21 1.79-4 4-4h32c2.21 0 4 1.79 4
