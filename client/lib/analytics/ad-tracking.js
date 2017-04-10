@@ -290,26 +290,33 @@ function retarget() {
 }
 
 /**
- * Fire ad tracking events for selected vertical
+ * Fire custom facebook conversion tracking event.
  *
- * @param {String} vertical - The name of the selected vertical
+ * @param {String} eventName - The name of the custom event.
+ * @param {Object} attributes - The custom event attributes.
  * @returns {void}
  */
-function recordSelectedVertical( vertical ) {
-	// Facebook
+function trackCustomFacebookConversionEvent( eventName, attributes ) {
 	if ( window.fbq ) {
 		window.fbq(
 			'trackCustom',
-			'VerticalSelectedEvent',
-			{ vertical }
+			event,
+			attributes
 		);
 	}
+}
 
-	// Adwords
+/**
+ * Fire custom adwords conversation tracking event.
+ *
+ * @param {Object} attributes - The custom event attributes.
+ * @returns {void}
+ */
+function trackCustomAdWordsRemarketingEvent( attributes ) {
 	if ( window.google_trackConversion ) {
 		window.google_trackConversion( {
 			google_conversion_id: GOOGLE_CONVERSION_ID,
-			google_custom_params: { vertical },
+			google_custom_params: attributes,
 			google_remarketing_only: true
 		} );
 	}
@@ -1016,7 +1023,8 @@ module.exports = {
 	recordAddToCart,
 	recordViewCheckout,
 	recordOrder,
-	recordSelectedVertical,
 	recordSignupStart,
-	recordSignupCompletion
+	recordSignupCompletion,
+	trackCustomFacebookConversionEvent,
+	trackCustomAdWordsRemarketingEvent,
 };
