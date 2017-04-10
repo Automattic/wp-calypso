@@ -13,9 +13,9 @@ export function editExistingProduct( product, data ) {
 	};
 }
 
-export function editNewProduct( newProductIndex, product, data ) {
+export function editNewProduct( product, data ) {
 	return {
 		type: WOOCOMMERCE_EDIT_NEW_PRODUCT,
-		payload: { newProductIndex, product, data },
+		payload: { product, data },
 	};
 }

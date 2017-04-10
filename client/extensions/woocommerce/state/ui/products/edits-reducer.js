@@ -33,10 +33,10 @@ function editExistingProductAction( edits, action ) {
 }
 
 function editNewProductAction( edits, action ) {
-	const { data, newProductIndex } = action.payload;
+	const { product, data } = action.payload;
 
 	const prevEdits = edits || {};
-	const creates = editNewProduct( prevEdits.creates, newProductIndex, data );
+	const creates = editNewProduct( prevEdits.creates, product, data );
 	return { ...prevEdits, creates };
 }
 
@@ -61,14 +61,14 @@ function editExistingProduct( updates, product, data ) {
 	return _updates;
 }
 
-function editNewProduct( creates, newProductIndex, data ) {
+function editNewProduct( creates, product, data ) {
 	const prevCreates = creates || [];
-	const index = ( isNumber( newProductIndex ) ? newProductIndex : prevCreates.length );
+	const index = ( product && product.id !== null ? product.id.index : prevCreates.length );
 
 	const _creates = [ ...prevCreates ];
 	const prevCreate = prevCreates[ index ] || {};
 
-	_creates[ index ] = { ...prevCreate, ...data };
+	_creates[ index ] = { ...prevCreate, ...data, id: { index } };
 
 	return _creates;
 }
