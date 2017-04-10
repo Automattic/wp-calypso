@@ -10,6 +10,7 @@ import { get, pick } from 'lodash';
 import { isHttps } from 'lib/url';
 import Button from 'components/button';
 import Card from 'components/card';
+import Notice from 'components/notice';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
@@ -25,6 +26,13 @@ const EasyTab = ( {
 	site,
 	translate,
 } ) => {
+	const enableCacheNotice = translate(
+		'PHP caching is enabled but Supercache mod_rewrite rules were ' +
+		'detected. Cached files will be served using those rules. If your site is working ok, ' +
+		'please ignore this message. Otherwise, you can edit the .htaccess file in the root of your ' +
+		'install and remove the SuperCache rules.'
+	);
+
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Caching' ) }>
@@ -34,35 +42,22 @@ const EasyTab = ( {
 			</SectionHeader>
 			<Card>
 				<form>
-					<FormFieldset>
-						<FormToggle
-							checked={ wp_cache_enabled }
-							onChange={ handleToggle( 'wp_cache_enabled' ) }>
-							<span>
-								{ translate( 'Caching On {{em}}(Recommended){{/em}}',
-									{
-										components: { em: <em /> }
-									}
-								) }
-							</span>
-						</FormToggle>
-					</FormFieldset>
-
-					{ wp_cache_enabled && ! wp_cache_mod_rewrite && scrules &&
-					<p>
-						{ translate( '{{strong}}Notice:{{/strong}} PHP caching enabled but Supercache mod_rewrite rules ' +
-							'detected. Cached files will be served using those rules. If your site is working ok, ' +
-							'please ignore this message. Otherwise, you can edit the .htaccess file in the root of your ' +
-							'install and remove the SuperCache rules.',
-							{
-								components: { strong: <strong /> }
-							}
-						) }
-					</p>
-					}
+					<FormToggle
+						checked={ wp_cache_enabled }
+						onChange={ handleToggle( 'wp_cache_enabled' ) }>
+						<span>
+							{ translate( 'Caching On {{em}}(Recommended){{/em}}',
+								{
+									components: { em: <em /> }
+								}
+							) }
+						</span>
+					</FormToggle>
 				</form>
 			</Card>
-
+			{ wp_cache_enabled && ! wp_cache_mod_rewrite && scrules &&
+				<Notice text={ enableCacheNotice } showDismiss={ false } className="wp-super-cache__notice-hug-card" />
+			}
 			{ wp_cache_enabled &&
 				<div>
 					<SectionHeader label={ translate( 'Cache Tester' ) } />
