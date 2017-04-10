@@ -244,7 +244,7 @@ export class MySitesSidebar extends Component {
 		}
 
 		if ( site.jetpack ) {
-			menusLink = site.options.admin_url + 'customize.php';
+			menusLink = site.options.admin_url + 'customize.php?autofocus[panel]=nav_menus';
 		}
 
 		return (
