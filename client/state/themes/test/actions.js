@@ -18,6 +18,7 @@ import {
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE_SUCCESS,
 	THEME_DELETE_FAILURE,
+	THEME_FILTERS_REQUEST,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
@@ -51,6 +52,7 @@ import {
 	tryAndCustomizeTheme,
 	tryAndCustomize,
 	deleteTheme,
+	requestThemeFilters,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import ThemeQueryManager from 'lib/query-manager/theme';
@@ -1064,6 +1066,13 @@ describe( 'actions', () => {
 					} );
 				} );
 			} );
+		} );
+	} );
+
+	describe( '#requestThemeFilters', () => {
+		it( 'should return THEME_FILTERS_REQUEST action', () => {
+			const action = requestThemeFilters();
+			expect( action ).to.deep.equal( { type: THEME_FILTERS_REQUEST } );
 		} );
 	} );
 } );
