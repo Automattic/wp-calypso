@@ -11,6 +11,7 @@ import { spy } from 'sinon';
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import mockDataPoller from 'test/helpers/mocks/data-poller';
 import paths from 'my-sites/upgrades/paths';
 
 describe( 'MapDomain component', () => {
@@ -22,6 +23,9 @@ describe( 'MapDomain component', () => {
 	useFakeDom();
 
 	useMockery( ( mockery ) => {
+		// some deeper dependency was loading sites-lists, which triggers the data poller
+		// and tests were hanging forever
+		mockDataPoller( mockery );
 		mockery.registerMock( 'page', pageSpy );
 		MapDomain = require( '../' ).MapDomain;
 		MapDomainStep = require( 'components/domains/map-domain-step' );
