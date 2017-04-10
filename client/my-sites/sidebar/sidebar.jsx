@@ -225,7 +225,7 @@ export class MySitesSidebar extends Component {
 
 	menus() {
 		const site = this.getSelectedSite();
-		const menusLink = '/customize' + this.siteSuffix();
+		const menusLink = '/customize/menus' + this.siteSuffix();
 
 		if ( ! site ) {
 			return null;
