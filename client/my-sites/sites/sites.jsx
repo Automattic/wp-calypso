@@ -3,6 +3,8 @@
  */
 import React from 'react';
 import page from 'page';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,13 +14,15 @@ import Main from 'components/main';
 import observe from 'lib/mixins/data-observe';
 import SiteSelector from 'components/site-selector';
 import { addSiteFragment } from 'lib/route';
+import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 
-export default React.createClass( {
+const Sites = React.createClass( {
 	displayName: 'Sites',
 
 	mixins: [ observe( 'sites', 'user' ) ],
 
 	propTypes: {
+		isSiteUpgradeable: React.PropTypes.func.isRequired,
 		path: React.PropTypes.string.isRequired
 	},
 
@@ -44,7 +48,7 @@ export default React.createClass( {
 
 		// Filter out sites with no upgrades on particular routes
 		if ( /^\/domains/.test( path ) || /^\/plans/.test( this.props.sourcePath ) ) {
-			return site.isUpgradeable();
+			return this.props.isSiteUpgradeable( site ) !== false;
 		}
 
 		return site;
@@ -65,7 +69,7 @@ export default React.createClass( {
 
 		const path = this.props.path.split( '?' )[ 0 ].replace( /\//g, ' ' );
 
-		return this.translate( 'Please select a site to open {{strong}}%(path)s{{/strong}}', {
+		return this.props.translate( 'Please select a site to open {{strong}}%(path)s{{/strong}}', {
 			args: {
 				path: path
 			},
@@ -94,3 +98,9 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => ( {
+		isSiteUpgradeable: ( site ) => isSiteUpgradeable( state, site.ID )
+	} )
+)( localize( Sites ) );
