@@ -24,7 +24,6 @@ import { isDomainRegistration, isJetpackPlan, isBusiness } from 'lib/products-va
 import notices from 'notices';
 import paths from 'me/purchases/paths';
 import { refreshSitePlans } from 'state/sites/plans/actions';
-import FormSectionHeading from 'components/forms/form-section-heading';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
 
@@ -184,12 +183,6 @@ class CancelPurchaseButton extends Component {
 				buttons={ buttonsArr }
 				onClose={ this.closeDialog }
 				className="cancel-purchase__button-warning-dialog">
-				<FormSectionHeading>
-					{ translate( 'Your thoughts are needed.' ) }
-				</FormSectionHeading>
-				<p>
-					{ translate( 'Before you go, please answer a few quick questions to help us improve WordPress.com.' ) }
-				</p>
 				<CancelPurchaseForm
 					surveyStep={ this.state.surveyStep }
 					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }

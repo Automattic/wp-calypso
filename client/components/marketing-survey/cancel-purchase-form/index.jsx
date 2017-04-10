@@ -15,6 +15,7 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
+import FormSectionHeading from 'components/forms/form-section-heading';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
 
@@ -442,9 +443,6 @@ const CancelPurchaseForm = React.createClass( {
 		const { translate } = this.props;
 		return (
 			<FormFieldset>
-				<FormLabel>
-					{ translate( 'Let us help you setup your site!' ) }
-				</FormLabel>
 				<p>
 					{
 						translate(
@@ -464,10 +462,17 @@ const CancelPurchaseForm = React.createClass( {
 	},
 
 	render() {
+		const { translate } = this.props;
 		if ( this.props.showSurvey ) {
 			if ( this.props.surveyStep === 1 ) {
 				return (
 					<div>
+						<FormSectionHeading>
+							{ translate( 'Your thoughts are needed.' ) }
+						</FormSectionHeading>
+						<p>
+							{ translate( 'Before you go, please answer a few quick questions to help us improve WordPress.com.' ) }
+						</p>
 						{ this.renderQuestionOne() }
 						{ this.renderQuestionTwo() }
 					</div>
@@ -478,6 +483,9 @@ const CancelPurchaseForm = React.createClass( {
 			if ( this.props.surveyStep === 2 && this.props.finalStep === 3 ) {
 				return (
 					<div>
+						<FormSectionHeading>
+							{ translate( 'Let us help you setup your site!' ) }
+						</FormSectionHeading>
 						{ this.renderConciergeOffer() }
 					</div>
 				);
@@ -486,6 +494,9 @@ const CancelPurchaseForm = React.createClass( {
 			// Render cancellation step
 			return (
 				<div>
+					<FormSectionHeading>
+						{ translate( 'One more question before you go.' ) }
+					</FormSectionHeading>
 					{ this.renderFreeformQuestion() }
 					{ this.props.defaultContent }
 				</div>
