@@ -297,13 +297,11 @@ function retarget() {
  * @returns {void}
  */
 function trackCustomFacebookConversionEvent( eventName, attributes ) {
-	if ( window.fbq ) {
-		window.fbq(
-			'trackCustom',
-			event,
-			attributes
-		);
-	}
+	window.fbw && window.fbq(
+		'trackCustom',
+		event,
+		attributes
+	);
 }
 
 /**
@@ -313,13 +311,11 @@ function trackCustomFacebookConversionEvent( eventName, attributes ) {
  * @returns {void}
  */
 function trackCustomAdWordsRemarketingEvent( attributes ) {
-	if ( window.google_trackConversion ) {
-		window.google_trackConversion( {
-			google_conversion_id: GOOGLE_CONVERSION_ID,
-			google_custom_params: attributes,
-			google_remarketing_only: true
-		} );
-	}
+	window.google_trackConversion && window.google_trackConversion( {
+		google_conversion_id: GOOGLE_CONVERSION_ID,
+		google_custom_params: attributes,
+		google_remarketing_only: true
+	} );
 }
 
 /**
