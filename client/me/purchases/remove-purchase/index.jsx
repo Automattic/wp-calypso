@@ -260,7 +260,7 @@ class RemovePurchase extends Component {
 			<HappychatButton
 				className="remove-purchase__chat-button"
 				onClick={ this.chatButtonClicked }>
-				{ this.translate( 'Need help? Chat with us' ) }
+				{ this.props.translate( 'Need help? Chat with us' ) }
 			</HappychatButton>
 		);
 	}
