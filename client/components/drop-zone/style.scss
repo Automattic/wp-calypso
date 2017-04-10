@@ -4,6 +4,9 @@
 		right: 0;
 		bottom: 0;
 		left: 0;
+
+	margin: 15px;
+
 	z-index: z-index( 'root', '.drop-zone' );
 	visibility: hidden;
 	opacity: 0;
@@ -62,9 +65,11 @@
 	font-size: 30px;
 }
 
-.drop-zone__custom-featured-image {
+.drop-zone.drop-zone__custom-featured-image {
 	background-color: rgba( $orange-jazzy, 0.7 );
 	border: 6px solid $orange-jazzy;
+
+	margin: 0;
 
 	&.is-dragging-over-element {
 		background-color: rgba( lighten( $orange-jazzy, 20 ), 0.8 );
