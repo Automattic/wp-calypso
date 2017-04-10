@@ -24,8 +24,6 @@ export default {
 
 	oauthLogin: function() {
 		if ( config.isEnabled( 'oauth' ) ) {
-			// hack to keep the blue background for Desktop login
-			document.querySelector( '.layout' ).style.backgroundColor = '#0087be';
 			if ( OAuthToken.getToken() ) {
 				page( '/' );
 			} else {
