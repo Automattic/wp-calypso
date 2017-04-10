@@ -11,7 +11,7 @@ var shared = require( './webpack.shared' );
 var options = {
 	entry: './desktop/test/boot.js',
 	output: {
-		path: path.join( __dirname, 'build' ),
+		path: path.join( __dirname, 'build', 'desktop' ),
 		filename: 'desktop-test.js',
 		libraryTarget: 'commonjs2'
 	}

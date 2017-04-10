@@ -14,7 +14,7 @@ NPM_BIN = $(shell npm bin)
 RED=`tput setaf 1`
 RESET=`tput sgr0`
 
-START_APP := @$(NPM_BIN)/electron .
+START_APP := @$(NPM_BIN)/electron build/
 ELECTRON_TEST := ELECTRON_PATH=$(NPM_BIN)/electron $(NPM_BIN)/electron-mocha
 CONFIG := $(THIS_DIR)/desktop/config.json
 DESKTOP_CONFIG := $(THIS_DIR)/desktop-config
@@ -92,20 +92,23 @@ endif
 endif
 
 # Packagers
-package: build
+package: build-if-changed
 	@echo "Bundling app and server"
-	@rm -rf $(BUILD_DIR)/public_desktop $(BUILD_DIR)/calypso
+	@rm -rf $(BUILD_DIR)/desktop $(BUILD_DIR)/public $(BUILD_DIR)/server $(BUILD_DIR)/config
 	@NODE_PATH=../server$(ENV_PATH_SEP)../client $(WEBPACK_BIN) --config $(THIS_DIR)/webpack.config.js
 	@echo "Copying Calypso client and public files"
 	@sed -e 's/build\///' $(THIS_DIR)/package.json >$(BUILD_DIR)/package.json
-	@mkdir $(BUILD_DIR)/calypso $(BUILD_DIR)/calypso/config $(BUILD_DIR)/calypso/server
-	@cp -R $(THIS_DIR)/public_desktop $(BUILD_DIR)
-	@cp -R $(CALYPSO_DIR)/public $(BUILD_DIR)/calypso/public
-	@cp -R $(CALYPSO_DIR)/server/pages $(BUILD_DIR)/calypso/server/pages
-	@if [ -f $(CALYPSO_DIR)/config/secrets.json ]; then cp $(CALYPSO_DIR)/config/secrets.json $(BUILD_DIR)/calypso/config/secrets.json; else cp $(CALYPSO_DIR)/config/empty-secrets.json $(BUILD_DIR)/calypso/config/secrets.json; fi;
-	@cp $(CALYPSO_DIR)/config/_shared.json $(BUILD_DIR)/calypso/config/
-	@cp $(CALYPSO_DIR)/config/desktop.json $(BUILD_DIR)/calypso/config/
-	@rm $(BUILD_DIR)/calypso/public/style-debug.css*
+	@mkdir -p $(BUILD_DIR)/public $(BUILD_DIR)/server $(BUILD_DIR)/config $(BUILD_DIR)/desktop
+	@cp -R $(THIS_DIR)/public_desktop $(BUILD_DIR)/desktop
+	@cp -R $(CALYPSO_DIR)/public $(BUILD_DIR)
+	@cp -R $(CALYPSO_DIR)/server/pages $(BUILD_DIR)/server
+	@if [ -f $(CALYPSO_DIR)/config/secrets.json ]; then cp $(CALYPSO_DIR)/config/secrets.json $(BUILD_DIR)/config/secrets.json; else cp $(CALYPSO_DIR)/config/empty-secrets.json $(BUILD_DIR)/config/secrets.json; fi;
+	@cp $(CALYPSO_DIR)/config/_shared.json $(BUILD_DIR)/config/
+	@cp $(CALYPSO_DIR)/config/desktop.json $(BUILD_DIR)/config/
+	@rm $(BUILD_DIR)/public/style-debug.css*
+	@mv $(BUILD_DIR)/public/build.m.js $(BUILD_DIR)/public/build.js
+	@rm -rf $(BUILD_DIR)/server/pages/test $(BUILD_DIR)/server/pages/Makefile $(BUILD_DIR)/server/pages/README.md
+	@cd $(BUILD_DIR); $(NPM) install --production --no-optional; $(NPM) prune
 
 package-win32: win32 verify-makensis
 	@$(PACKAGE_WIN32) ./release/WordPress.com-win32-ia32 --platform=win --out=./release --config=./resource/build-config/win32-package.json
