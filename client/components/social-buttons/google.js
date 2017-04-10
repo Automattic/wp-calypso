@@ -14,7 +14,7 @@ export default class GoogleLoginButton extends Component {
 	};
 
 	static defaultProps = {
-		scope: 'profile',
+		scope: 'https://www.googleapis.com/auth/plus.login',
 		fetchBasicProfile: true,
 	};
 
