@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
