@@ -8,7 +8,7 @@
   },
   "private": true,
   "description": "Desktop version of WordPress.com",
-  "main": "build/desktop.js",
+  "main": "build/desktop/desktop.js",
   "scripts": {
     "start": "make run",
     "build": "make build",

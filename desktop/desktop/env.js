@@ -29,6 +29,10 @@ var apppath = app.getAppPath();
 if ( path.extname( apppath ) === '.asar' ) {
 	apppath = path.dirname( apppath );
 }
+
+// Run the app from /desktop so that relative paths in /server are in order.
+apppath = path.resolve( apppath, 'desktop' );
+
 process.chdir( apppath );
 
 process.env.CALYPSO_ENV = config.calypso_config;
