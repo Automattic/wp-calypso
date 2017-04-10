@@ -11,7 +11,7 @@ import { identity, noop } from 'lodash';
  */
 import support from 'lib/url/support';
 import Card from 'components/card';
-import Button from 'components/button';
+import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
 
@@ -29,8 +29,10 @@ import {
 import { ACCOUNT_RECOVERY_ROUTES } from 'account-recovery/constants';
 
 export class LostPasswordFormComponent extends Component {
-	submitForm = () => {
-		this.props.fetchResetOptionsByLogin( this.props.userLogin, this.props.redirectToNextPage );
+	submitForm = ( event ) => {
+		this.props.fetchResetOptionsByLogin( this.props.userLogin );
+
+		event.preventDefault();
 	};
 
 	onUserLoginChanged = ( event ) => {
@@ -81,30 +83,33 @@ export class LostPasswordFormComponent extends Component {
 					</p>
 				</Card>
 				<Card compact>
-					<FormLabel>
-						{ translate( 'Username or Email' ) }
-
+					<form onSubmit={ this.submitForm }>
+						<FormLabel>
+							{ translate( 'Username or Email' ) }
+						</FormLabel>
 						<FormInput
 							className="lost-password-form__user-login-input"
 							onChange={ this.onUserLoginChanged }
 							value={ userLogin || '' }
-							disabled={ isRequesting } />
-					</FormLabel>
-					{
-						requestError && (
-						<p className="lost-password-form__error-message">
-							{ translate( 'We encountered some problems with that login information. ' +
-								'Please provide another one or try again later.' ) }
-						</p> )
-					}
-					<Button
-						className="lost-password-form__submit-button"
-						onClick={ this.submitForm }
-						disabled={ isPrimaryButtonDisabled }
-						primary
-					>
-						{ translate( 'Get New Password' ) }
-					</Button>
+							disabled={ isRequesting }
+							autoFocus
+						/>
+						{
+							requestError && (
+							<p className="lost-password-form__error-message">
+								{ translate( 'We encountered some problems with that login information. ' +
+									'Please provide another one or try again later.' ) }
+							</p> )
+						}
+						<FormButton
+							className="lost-password-form__submit-button"
+							type="submit"
+							disabled={ isPrimaryButtonDisabled }
+							primary
+						>
+							{ translate( 'Get New Password' ) }
+						</FormButton>
+					</form>
 					<a href={ ACCOUNT_RECOVERY_ROUTES.FORGOT_USERNAME } className="lost-password-form__forgot-username-link">
 						{ translate( 'Forgot your username?' ) }
 					</a>
