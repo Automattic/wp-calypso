@@ -2400,6 +2400,15 @@ Undocumented.prototype.dismissNPSSurvey = function( surveyName, fn ) {
 };
 
 /**
+ * Check the eligibility status for the NPS Survey.
+ * @param {Function}   fn             The callback function
+ * @returns {Promise}
+ */
+Undocumented.prototype.checkNPSSurveyEligibility = function( fn ) {
+	return this.wpcom.req.get( { path: '/nps' }, { apiVersion: '1.2' }, {}, fn );
+};
+
+/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;

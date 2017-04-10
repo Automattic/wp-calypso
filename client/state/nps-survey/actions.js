@@ -32,10 +32,25 @@ export function forceNpsSurveyEligibility( isEligible ) {
 }
 
 export function setupNpsSurveyEligibility() {
-	// TODO: add calls to API once eligibility endpoint is in
-	return {
-		type: NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING,
-		isSessionPicked: 1 === random( 1, NPS_SURVEY_RAND_MAX ),
+	return ( dispatch ) => {
+		debug( 'Checking NPS eligibility...' );
+
+		if ( 1 === random( 1, NPS_SURVEY_RAND_MAX ) ) {
+			return wpcom
+				.undocumented()
+				.checkNPSSurveyEligibility()
+				.then( ( data ) => {
+					debug( '...Eligibility returned from endpoint.', data );
+					dispatch( forceNpsSurveyEligibility( data.display_survey ) );
+				} )
+				.catch( ( err ) => {
+					debug( '...Error querying NPS survey eligibility.', err );
+					dispatch( forceNpsSurveyEligibility( false ) );
+				} );
+		}
+
+		debug( '...Session was not lucky' );
+		return dispatch( forceNpsSurveyEligibility( false ) );
 	};
 }
 
