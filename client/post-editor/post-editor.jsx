@@ -801,7 +801,9 @@ export const PostEditor = React.createClass( {
 	},
 
 	switchEditorMode: function( mode ) {
-		var content = this.refs.editor.getContent();
+		const content = this.refs.editor.getContent();
+		const textarea = get( this.refs, 'editor.refs.text', {} );
+		const { selectionEnd, selectionStart } = textarea;
 
 		if ( mode === 'html' ) {
 			this.refs.editor.setEditorContent( content );
@@ -822,6 +824,9 @@ export const PostEditor = React.createClass( {
 			} else {
 				this.saveRawContent();
 			}
+
+			textarea.selectionEnd = selectionEnd;
+			textarea.selectionStart = selectionStart;
 		}.bind( this ), 0 );
 	}
 
