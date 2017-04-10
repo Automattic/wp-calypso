@@ -25,6 +25,7 @@ export getAccountRecoveryResetOptionsError from './get-account-recovery-reset-op
 export getAccountRecoveryResetRequestError from './get-account-recovery-reset-request-error';
 export getBlockedSites from './get-blocked-sites';
 export getBillingTransactions from './get-billing-transactions';
+export getCountries from './get-countries';
 export getFollowCount from './get-follow-count';
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';
 export getJetpackConnectionStatus from './get-jetpack-connection-status';
@@ -103,6 +104,7 @@ export isRegeneratingJetpackPostByEmail from './is-regenerating-jetpack-post-by-
 export isRequestingAccountRecoveryResetOptions from './is-requesting-account-recovery-reset-options';
 export isRequestingAccountRecoveryReset from './is-requesting-account-recovery-reset';
 export isRequestingBillingTransactions from './is-requesting-billing-transactions';
+export isRequestingCountries from './is-requesting-countries';
 export isRequestingJetpackConnectionStatus from './is-requesting-jetpack-connection-status';
 export isRequestingJetpackJumpstartStatus from './is-requesting-jetpack-jumpstart-status';
 export isRequestingJetpackSettings from './is-requesting-jetpack-settings';
