@@ -10,6 +10,7 @@ import page from 'page';
 import LostPasswordPage from 'account-recovery/lost-password';
 import LostPasswordForm from 'account-recovery/lost-password/lost-password-form';
 import ForgotUsernamePage from 'account-recovery/forgot-username';
+import ForgotUsernameForm from 'account-recovery/forgot-username/forgot-username-form';
 import ResetPasswordPage from 'account-recovery/reset-password';
 import ResetPasswordForm from 'account-recovery/reset-password/reset-password-form';
 import ResetPasswordSmsForm from 'account-recovery/reset-password/reset-password-sms-form';
@@ -29,8 +30,12 @@ export const lostPassword = ( nextRoute ) => ( context, next ) => {
 	next();
 };
 
-export function forgotUsername( context, next ) {
-	context.primary = <ForgotUsernamePage basePath={ context.path } />;
+export const forgotUsername = ( nextRoute ) => ( context, next ) => {
+	context.primary = (
+		<ForgotUsernamePage basePath={ context.path }>
+			<ForgotUsernameForm redirectToNextPage={ createRedirectFunction( nextRoute ) } />
+		</ForgotUsernamePage>
+	);
 	next();
 }
 

@@ -19,7 +19,7 @@ export default function( router ) {
 	// Main route for account recovery is the lost password page
 	if ( config.isEnabled( 'account-recovery' ) ) {
 		router( ROUTES.ROOT, redirectLoggedIn, lostPassword( ROUTES.RESET_PASSWORD ) );
-		router( ROUTES.FORGOT_USERNAME, redirectLoggedIn, forgotUsername );
+		router( ROUTES.FORGOT_USERNAME, redirectLoggedIn, forgotUsername( ROUTES.RESET_PASSWORD ) );
 		router( ROUTES.RESET_PASSWORD, redirectLoggedIn, resetPassword );
 		router( ROUTES.RESET_PASSWORD_EMAIL_FORM, redirectLoggedIn, resetPasswordEmailForm );
 		router( ROUTES.RESET_PASSWORD_SMS_FORM, redirectLoggedIn, resetPasswordSmsForm );
