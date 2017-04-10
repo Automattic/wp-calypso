@@ -13,6 +13,7 @@ import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextarea from 'components/forms/form-textarea';
+import FormLabel from 'components/forms/form-label';
 import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
@@ -55,6 +56,28 @@ const AcceptedFilenames = ( {
 			</SectionHeader>
 			<Card>
 				<form>
+					<FormLabel>
+						{ translate( 'Do not cache these page types.' ) }
+					</FormLabel>
+
+					<FormSettingExplanation className="wp-super-cache__condition-settings-explaination">
+						{ translate(
+							' See the {{a}}Conditional Tags{{/a}} ' +
+							'documentation for a complete discussion on each type.',
+							{
+								components: {
+									a: (
+										<ExternalLink
+											icon={ true }
+											target="_blank"
+											href="http://codex.wordpress.org/Conditional_Tags"
+										/>
+									),
+								}
+							}
+						) }
+					</FormSettingExplanation>
+
 					<FormFieldset>
 						<FormToggle
 							checked={ !! single }
@@ -145,26 +168,12 @@ const AcceptedFilenames = ( {
 								{ translate( 'Author Pages (is_author)' ) }
 							</span>
 						</FormToggle>
-						<FormSettingExplanation>
-							{ translate(
-								'Do not cache these page types. See the {{a}}Conditional Tags{{/a}} ' +
-								'documentation for a complete discussion on each type.',
-								{
-									components: {
-										a: (
-											<ExternalLink
-												icon={ true }
-												target="_blank"
-												href="http://codex.wordpress.org/Conditional_Tags"
-											/>
-										),
-									}
-								}
-							) }
-						</FormSettingExplanation>
 					</FormFieldset>
 
 					<FormFieldset>
+						<FormLabel>
+							{ translate( 'Do not cache pages that contain the following strings:' ) }
+						</FormLabel>
 						<FormTextarea
 							disabled={ isRequesting || isSaving }
 							onChange={ handleChange( 'wp_rejected_uri' ) }
@@ -180,6 +189,9 @@ const AcceptedFilenames = ( {
 					</FormFieldset>
 
 					<FormFieldset>
+						<FormLabel>
+							{ translate( 'Whitelisted filenames:' ) }
+						</FormLabel>
 						<FormTextarea
 							disabled={ isRequesting || isSaving }
 							onChange={ handleChange( 'wp_accepted_files' ) }
