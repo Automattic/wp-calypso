@@ -28,7 +28,7 @@ var rule = require( '../../../lib/rules/i18n-no-this-translate' ),
 		{
 			code: 'this.translate(\'hello\')',
 			errors: [ {
-				message: 'Use localize( ReactComponent ) instead of this.translate'
+				message: 'Use localize( ReactComponent ) instead of this.translate. See https://git.io/vSwRi'
 			} ]
 		}
 	]

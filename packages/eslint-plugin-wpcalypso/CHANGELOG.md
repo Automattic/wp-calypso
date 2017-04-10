@@ -1,3 +1,7 @@
+#### v3.1.1 (2017-04-08)
+
+- Fix: added a documentation link to the `i18n-no-this-translate` error message
+
 #### v3.1.0 (2017-01-26)
 
  - New rule: [`post-message-no-wildcard-targets`](docs/rules/post-message-no-wildcard-targets.md)

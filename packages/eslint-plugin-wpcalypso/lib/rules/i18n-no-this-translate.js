@@ -10,7 +10,7 @@
 // Rule Definition
 //------------------------------------------------------------------------------
 
-const ERROR_MESSAGE = 'Use localize( ReactComponent ) instead of this.translate';
+const ERROR_MESSAGE = 'Use localize( ReactComponent ) instead of this.translate. See https://git.io/vSwRi';
 
 module.exports = {
 	meta: {
