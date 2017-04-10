@@ -223,43 +223,6 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
-	menus() {
-		var site = this.getSelectedSite(),
-			menusLink = '/menus' + this.siteSuffix(),
-			showClassicLink = ! config.isEnabled( 'manage/menus' );
-
-		if ( ! site ) {
-			return null;
-		}
-
-		if ( ! site.capabilities ) {
-			return null;
-		}
-
-		if ( site.capabilities && ! site.capabilities.edit_theme_options ) {
-			return null;
-		}
-
-		if ( ! this.isSingle() ) {
-			return null;
-		}
-
-		if ( showClassicLink ) {
-			menusLink = site.options.admin_url + 'nav-menus.php';
-		}
-
-		return (
-			<SidebarItem
-				tipTarget="menus"
-				label={ this.props.translate( 'Menus' ) }
-				className={ this.itemLinkClass( '/menus', 'menus' ) }
-				link={ menusLink }
-				onNavigate={ this.onNavigate }
-				icon="menus"
-				preloadSectionName="menus" />
-		);
-	}
-
 	plugins() {
 		var site = this.getSelectedSite(),
 			pluginsLink = '/plugins' + this.siteSuffix(),
@@ -591,7 +554,7 @@ export class MySitesSidebar extends Component {
 		}
 
 		const publish = !! this.publish(),
-			appearance = ( !! this.themes() || !! this.menus() ),
+			appearance = ( !! this.themes() ),
 			configuration = ( !! this.sharing() || !! this.users() || !! this.siteSettings() || !! this.plugins() || !! this.upgrades() );
 
 		return (
@@ -616,7 +579,6 @@ export class MySitesSidebar extends Component {
 						<SidebarHeading>{ this.props.translate( 'Personalize' ) }</SidebarHeading>
 						<ul>
 							{ this.themes() }
-							{ this.menus() }
 						</ul>
 					</SidebarMenu>
 					: null
