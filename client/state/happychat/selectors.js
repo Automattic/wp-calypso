@@ -44,7 +44,7 @@ export const getHappychatConnectionStatus = createSelector(
 export const isHappychatUninitialized = state => getHappychatConnectionStatus( state ) === 'uninitialized';
 
 export const isHappychatChatActive = createSelector(
-	state => state.happychat.chatStatus !== HAPPYCHAT_CHAT_STATUS_DEFAULT,
+	state => ! includes( [ HAPPYCHAT_CHAT_STATUS_DEFAULT, HAPPYCHAT_CHAT_STATUS_BLOCKED ], state.happychat.chatStatus ),
 	state => state.happychat.chatStatus
 );
 
