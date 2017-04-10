@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
 import {
 	POST_REVISIONS_RECEIVE,
 	POST_REVISIONS_REQUEST,
@@ -9,46 +8,55 @@ import {
 	POST_REVISIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
 
-export function receiveRevisions( siteId, postId, revisions ) {
+/**
+ * Action creator function: POST_REVISIONS_REQUEST
+ *
+ * @param {String} siteId of the revisions
+ * @param {String} postId of the revisions
+ * @return {Object} action object
+ */
+export const requestPostRevisions = ( siteId, postId ) => ( {
+	type: POST_REVISIONS_REQUEST,
+	siteId, postId,
+} );
+
+/**
+ * Action creator function: POST_REVISIONS_REQUEST_SUCCESS
+ *
+ * @param {String} siteId of the revisions
+ * @param {String} postId of the revisions
+ * @return {Object} action object
+ */
+export const receivePostRevisionsSuccess = ( siteId, postId ) => ( {
+	type: POST_REVISIONS_REQUEST_SUCCESS,
+	siteId, postId,
+} );
+
+/**
+ * Action creator function: POST_REVISIONS_REQUEST_FAILURE
+ *
+ * @param {String} siteId of the revisions
+ * @param {String} postId of the revisions
+ * @param {Object} error raw error
+ * @return {Object} action object
+ */
+export const receivePostRevisionsFailure = ( siteId, postId, error ) => ( {
+	type: POST_REVISIONS_REQUEST_FAILURE,
+	siteId, postId, error
+} );
+
+/**
+ * Action creator function: POST_REVISIONS_RECEIVE
+ *
+ * @param {String} siteId of the revisions
+ * @param {String} postId of the revisions
+ * @param {Object} revisions data received
+ * @return {Object} action object
+ */
+export const receivePostRevisions = ( siteId, postId, revisions ) => ( {
 	// NOTE: We expect all revisions to be on the same post, thus highly
 	// coupling it to how the WP-API returns revisions, instead of being able
 	// to "receive" large (possibly unrelated) batch of revisions.
-
-	return {
-		type: POST_REVISIONS_RECEIVE,
-		siteId,
-		postId,
-		revisions
-	};
-}
-
-export function requestSitePostRevisions( siteId, postId ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: POST_REVISIONS_REQUEST,
-			siteId,
-			postId
-		} );
-
-		const query = {
-			apiNamespace: 'wp/v2'
-		};
-
-		return wpcom.req.get( `/sites/${ siteId }/posts/${ postId }/revisions`, query )
-			.then( ( revisions ) => {
-				dispatch( receiveRevisions( siteId, postId, revisions ) );
-				dispatch( {
-					type: POST_REVISIONS_REQUEST_SUCCESS,
-					siteId,
-					postId
-				} );
-			} ).catch( ( error ) => {
-				dispatch( {
-					type: POST_REVISIONS_REQUEST_FAILURE,
-					siteId,
-					postId,
-					error
-				} );
-			} );
-	};
-}
+	type: POST_REVISIONS_RECEIVE,
+	siteId, postId, revisions,
+} );

@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestSitePostRevisions } from 'state/posts/revisions/actions';
+import { requestPostRevisions } from 'state/posts/revisions/actions';
 
 class QueryPostRevisions extends Component {
 	componentWillMount() {
@@ -24,7 +24,7 @@ class QueryPostRevisions extends Component {
 	}
 
 	request( props ) {
-		props.requestSitePostRevisions( props.siteId, props.postId );
+		props.requestPostRevisions( props.siteId, props.postId );
 	}
 
 	render() {
@@ -35,12 +35,10 @@ class QueryPostRevisions extends Component {
 QueryPostRevisions.propTypes = {
 	postId: PropTypes.number,
 	siteId: PropTypes.number,
-	requestSitePostRevisions: PropTypes.func,
+	requestPostRevisions: PropTypes.func,
 };
 
 export default connect(
-	() => {
-		return {};
-	},
-	{ requestSitePostRevisions }
+	() => ( {} ),
+	{ requestPostRevisions }
 )( QueryPostRevisions );
