@@ -22,6 +22,7 @@ import {
 
 import {
 	isRequestingAccountRecoveryResetOptions,
+	isAccountRecoveryResetOptionsReady,
 	getAccountRecoveryResetUserData,
 	getAccountRecoveryResetOptionsError,
 } from 'state/selectors';
@@ -39,6 +40,12 @@ export class LostPasswordFormComponent extends Component {
 		this.props.updatePasswordResetUserData( {
 			user: event.target.value
 		} );
+	};
+
+	componentDidUpdate = () => {
+		if ( this.props.isResetOptionsReady ) {
+			this.props.redirectToNextPage();
+		}
 	};
 
 	render() {
@@ -134,6 +141,7 @@ export default connect(
 		isRequesting: isRequestingAccountRecoveryResetOptions( state ),
 		userLogin: getAccountRecoveryResetUserData( state ).user,
 		requestError: getAccountRecoveryResetOptionsError( state ),
+		isResetOptionsReady: isAccountRecoveryResetOptionsReady( state ),
 	} ),
 	{
 		fetchResetOptionsByLogin,

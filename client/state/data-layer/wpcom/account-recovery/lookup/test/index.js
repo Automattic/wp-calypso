@@ -21,8 +21,6 @@ import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 } from 'state/action-types';
 
-import { ACCOUNT_RECOVERY_ROUTES } from 'account-recovery/constants';
-
 const validResponse = {
 	primary_email: 'a****@example.com',
 	secondary_email: 'b*****@example.com',
@@ -52,9 +50,6 @@ describe( 'validate()', () => {
 } );
 
 describe( 'handleRequestResetOptions()', () => {
-	const dispatch = sinon.spy();
-	const transit = sinon.spy();
-
 	const apiBaseUrl = 'https://public-api.wordpress.com:443';
 	const endpoint = '/wpcom/v2/account-recovery/lookup';
 
@@ -69,15 +64,17 @@ describe( 'handleRequestResetOptions()', () => {
 				.reply( 200, validResponse )
 		) );
 
-		it( 'should dispatch RECEIVE action on success', () => {
-			return handleRequestResetOptions( { dispatch }, { userData }, noop, transit ).then( () => {
+		it( 'should dispatch RECEIVE action on success', ( done ) => {
+			const dispatch = sinon.spy( () => {
 				assert.isTrue( dispatch.calledWith( {
 					type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 					items: fromApi( validResponse ),
 				} ) );
 
-				assert.isTrue( transit.calledWith( ACCOUNT_RECOVERY_ROUTES.RESET_PASSWORD ) );
+				done();
 			} );
+
+			handleRequestResetOptions( { dispatch }, { userData }, noop );
 		} );
 	} );
 
@@ -93,13 +90,17 @@ describe( 'handleRequestResetOptions()', () => {
 				.reply( errorResponse.status, errorResponse )
 		) );
 
-		it( 'should dispatch ERROR action on failure', () => {
-			return handleRequestResetOptions( { dispatch }, { userData } ).then( () =>
+		it( 'should dispatch ERROR action on failure', ( done ) => {
+			const dispatch = sinon.spy( () => {
 				assert.isTrue( dispatch.calledWithMatch( {
 					type: ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 					error: errorResponse,
-				} ) )
-			);
+				} ) );
+
+				done();
+			} );
+
+			handleRequestResetOptions( { dispatch }, { userData }, noop );
 		} );
 	} );
 } );

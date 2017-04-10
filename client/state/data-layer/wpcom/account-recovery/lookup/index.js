@@ -32,17 +32,18 @@ export const validate = ( { primary_email, primary_sms, secondary_email, seconda
 	}
 };
 
-export const handleRequestResetOptions = ( { dispatch }, { userData, onSuccess } ) => (
+export const handleRequestResetOptions = ( { dispatch }, action, next ) => {
 	wpcom.req.get( {
-		body: userData,
+		body: action.userData,
 		apiNamespace: 'wpcom/v2',
 		path: '/account-recovery/lookup',
 	} ).then( data => {
 		dispatch( fetchResetOptionsSuccess( fromApi( tap( data, validate ) ) ) );
-		onSuccess && onSuccess();
 	} )
-	.catch( error => dispatch( fetchResetOptionsError( error ) ) )
-);
+	.catch( error => dispatch( fetchResetOptionsError( error ) ) );
+
+	return next( action );
+};
 
 export default {
 	[ ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST ]: [ handleRequestResetOptions ],
