@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import i18n, { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -66,6 +66,12 @@ const Account = React.createClass( {
 		observe( 'userSettings', 'username' ),
 		eventRecorder
 	],
+
+	propTypes: {
+		userSettings: PropTypes.object.isRequired,
+		username: PropTypes.object.isRequired,
+		showNoticeInitially: PropTypes.bool,
+	},
 
 	componentWillMount() {
 		// Clear any username changes that were previously made
