@@ -16,7 +16,7 @@ describe( 'WordPress.com API Middleware', () => {
 	let store;
 
 	useMockery( ( mockery ) => {
-		mockery.registerMock( 'lib/analytics/ad-tracking', {} );
+		mockery.registerMock( './analytics', {} );
 	} );
 
 	beforeEach( () => {
