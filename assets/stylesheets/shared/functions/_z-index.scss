@@ -64,7 +64,6 @@ $z-layers: (
 		'.chart__empty': 1,
 		'.chart__bar-marker': 1,
 		'.chart__bar-section.is-ghost::after': 1,
-		'.billing-history-page .filter-popover-content': 1,
 		'.module-content-table::after': 1,
 		'.stats-popular__empty': 1,
 		'.menus__menu-item.is-lander': 1,
@@ -107,6 +106,7 @@ $z-layers: (
 		//'tinymce-toolbar': 20, client/components/tinymce/index.jsx
 		'.search': 22,
 		'.editor-ground-control': 22,
+		'.billing-history-page .filter-popover-content': 23,
 		'.reader-mobile-sidebar': 23,
 		'.community-translator': 99,
 		'.author-selector__popover.popover': 100,
