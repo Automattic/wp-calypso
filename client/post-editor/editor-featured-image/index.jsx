@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
+import { isNumber } from 'lodash';
 
 /**
  * Internal dependencies
@@ -120,7 +121,11 @@ class EditorFeaturedImage extends Component {
 
 		return (
 			<div className={ classes }>
-				{ site && featuredImageId && <QueryMedia siteId={ site.ID } mediaId={ featuredImageId } /> }
+				{
+					site && featuredImageId && isNumber( featuredImageId )
+						? <QueryMedia siteId={ site.ID } mediaId={ featuredImageId } />
+						: null
+				}
 				{ this.renderMediaModal() }
 				<Button
 						className="editor-featured-image__current-image"
