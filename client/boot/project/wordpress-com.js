@@ -19,7 +19,7 @@ const config = require( 'config' ),
 	route = require( 'lib/route' ),
 	normalize = require( 'lib/route/normalize' ),
 	{ isLegacyRoute } = require( 'lib/route/legacy-routes' ),
-	sitesFactory = require( 'lib/sites-list' ),
+	sitesFactory = require( 'lib/sites-list' ), // eslint-disable-line no-restricted-modules
 	superProps = require( 'lib/analytics/super-props' ),
 	translatorJumpstart = require( 'lib/translator-jumpstart' ),
 	nuxWelcome = require( 'layout/nux-welcome' ),
@@ -103,7 +103,10 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 				};
 			} );
 			errorLogger.saveDiagnosticReducer( () => ( { tests: getSavedVariations() } ) );
-			analytics.on( 'record-event', ( eventName, eventProperties ) => errorLogger.saveExtraData( { lastTracksEvent: eventProperties } ) );
+			analytics.on(
+				'record-event',
+				( eventName, eventProperties ) => errorLogger.saveExtraData( { lastTracksEvent: eventProperties } )
+			);
 			page( '*', function( context, next ) {
 				errorLogger.saveNewPath( context.canonicalPath.replace( route.getSiteFragment( context.canonicalPath ), ':siteId' ) );
 				next();
