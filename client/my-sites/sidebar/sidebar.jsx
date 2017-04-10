@@ -224,9 +224,8 @@ export class MySitesSidebar extends Component {
 	}
 
 	menus() {
-		var site = this.getSelectedSite(),
-			menusLink = '/menus' + this.siteSuffix(),
-			showClassicLink = ! config.isEnabled( 'manage/menus' );
+		const site = this.getSelectedSite();
+		const menusLink = '/customize' + this.siteSuffix();
 
 		if ( ! site ) {
 			return null;
@@ -242,10 +241,6 @@ export class MySitesSidebar extends Component {
 
 		if ( ! this.isSingle() ) {
 			return null;
-		}
-
-		if ( showClassicLink ) {
-			menusLink = site.options.admin_url + 'nav-menus.php';
 		}
 
 		return (
