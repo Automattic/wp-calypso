@@ -119,7 +119,6 @@
 }
 
 .site__link-hint {
-	//width: auto;
 	flex: 0 1 auto;
 	position: relative;
 
@@ -145,6 +144,11 @@
 		margin: 10px 10px 0 0;
 	}
 	// /a.sidebar-button
+}
+
+.site__content:hover .site__link-hint {
+	background-color: lighten( $sidebar-bg-color, 10% );
+	color: $sidebar-text-color;
 }
 
 .site__home {
