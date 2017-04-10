@@ -121,6 +121,11 @@ class Site extends Component {
 						</div>
 						<div className="site__domain">{ site.domain }</div>
 					</div>
+					{ this.props.homeLink &&
+						<div className="site__link-hint">
+							{ this.props.translate( 'View' ) }
+						</div>
+					}
 					{ this.props.homeLink && this.props.showHomeIcon &&
 						<span className="site__home">
 							<Gridicon icon="house" size={ 18 } />
