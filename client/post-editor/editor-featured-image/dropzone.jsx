@@ -23,11 +23,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 
 class FeaturedImageDropZone extends Component {
-	static propTypes = {
-		site: PropTypes.object.isRequired,
-		post: PropTypes.object.isRequired,
-	};
-
 	static contextTypes = {
 		store: PropTypes.object
 	};
@@ -45,17 +40,17 @@ class FeaturedImageDropZone extends Component {
 		}
 
 		const transientMediaId = uniqueId( 'featured-image' );
-		const siteID = this.props.siteId;
+		const { siteId } = this.props;
 
 		const handleFeaturedImageUpload = () => {
-			const media = MediaStore.get( siteID, transientMediaId );
+			const media = MediaStore.get( siteId, transientMediaId );
 			const isUploadInProgress = media && MediaUtils.isItemBeingUploaded( media );
 			const isFailedUpload = ! media;
 
 			if ( isFailedUpload ) {
-				this.props.deleteMedia( siteID, transientMediaId );
+				this.props.deleteMedia( siteId, transientMediaId );
 			} else {
-				this.props.receiveMedia( siteID, media );
+				this.props.receiveMedia( siteId, media );
 			}
 
 			/**
@@ -72,7 +67,7 @@ class FeaturedImageDropZone extends Component {
 			 *
 			 * Right now `PostActions.edit` seems to be the best way to approach the problem.
 			 */
-			// this.props.editPost( siteID, this.props.postId, { featured_image: media.ID } );
+			// this.props.editPost( siteId, this.props.postId, { featured_image: media.ID } );
 
 			// Cannot dispatch an action while in a dispatched action. Temporary(tm).
 			setTimeout( () => {
@@ -84,7 +79,7 @@ class FeaturedImageDropZone extends Component {
 
 		MediaStore.on( 'change', handleFeaturedImageUpload );
 
-		MediaActions.add( this.props.site.ID, {
+		MediaActions.add( siteId, {
 			ID: transientMediaId,
 			fileContents: droppedImage,
 			fileName: droppedImage.name

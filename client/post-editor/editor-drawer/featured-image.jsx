@@ -51,15 +51,6 @@ class EditorDrawerFeaturedImage extends Component {
 		stats.recordEvent( 'Featured image removed' );
 	}
 
-	getDropZone = () => {
-		return (
-			<FeaturedImageDropZone
-				site={ this.props.site }
-				post={ this.props.post }
-			/>
-		);
-	};
-
 	render() {
 		const { translate, site, post, isDrawerHidden } = this.props;
 
@@ -69,7 +60,7 @@ class EditorDrawerFeaturedImage extends Component {
 					label={ translate( 'Set Featured Image' ) }
 					empty={ ! site || ! post || ! getFeaturedImageId( post ) }
 					onClick={ this.startSelecting }
-					customDropZone={ this.getDropZone() }
+					customDropZone={ <FeaturedImageDropZone /> }
 					onRemove={ this.removeImage }
 					isHidden={ isDrawerHidden }
 				>
