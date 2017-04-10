@@ -119,6 +119,7 @@ export isJetpackSiteInDevelopmentMode from './is-jetpack-site-in-development-mod
 export isJetpackSiteInStagingMode from './is-jetpack-site-in-staging-mode';
 export isMappedDomainSite from './is-mapped-domain-site';
 export isPendingEmailChange from './is-pending-email-change';
+export isPluginActive from './is-plugin-active';
 export isPrivateSite from './is-private-site';
 export isPublicizeEnabled from './is-publicize-enabled';
 export isReaderCardExpanded from './is-reader-card-expanded';
