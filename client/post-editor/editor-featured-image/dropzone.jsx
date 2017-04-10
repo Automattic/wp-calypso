@@ -61,7 +61,7 @@ class FeaturedImageDropZone extends Component {
 			/**
 			 * File uploaded successfully, there is no longer need to listen for the changes.
 			 */
-			if ( media && ! isUploadInProgress ) {
+			if ( ! isUploadInProgress ) {
 				MediaStore.off( 'change', handleFeaturedImageUpload );
 			}
 
