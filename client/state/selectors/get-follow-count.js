@@ -3,7 +3,7 @@
  */
 import { size, filter } from 'lodash';
 
-/*
+/**
  * How many sites has the user followed?
  *
  * @param  {Object}  state  Global state tree

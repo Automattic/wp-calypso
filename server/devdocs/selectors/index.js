@@ -2,14 +2,14 @@
  * External dependencies
  */
 const chalk = require( 'chalk' );
+const espree = require( 'espree' );
 const fs = require( 'fs' );
 const jsdoc = require( 'jsdoc-api' );
 const path = require( 'path' );
 const express = require( 'express' );
 const Fuse = require( 'fuse.js' );
 const camelCase = require( 'lodash/camelCase' );
-const find = require( 'lodash/find' );
-const matchesProperty = require( 'lodash/matchesProperty' );
+const get = require( 'lodash/get' );
 
 /**
  * Constants
@@ -24,47 +24,150 @@ const SELECTORS_DIR = path.resolve( __dirname, '../../../client/state/selectors'
 const router = express.Router();
 let prepareFuse;
 
-const parseSelectorFile = file =>
-	jsdoc.explain( { cache: true, files: path.resolve( SELECTORS_DIR, file ) } )
-		.then( ast => {
-			const expectedExport = camelCase( path.basename( file, '.js' ) );
+const defaultExportOf = ast => ast.body.find( ( { type } ) => type === 'ExportDefaultDeclaration' );
+const functionByName = ( ast, name ) => {
+	const exports = ast
+		.body
+		.filter( ( { type } ) => type === 'ExportNamedDeclaration' )
+		.find( ( { declaration } ) => (
+			( 'FunctionDeclaration' === declaration.type && name === declaration.id.name ) ||
+			(
+				'VariableDeclaration' === declaration.type &&
+				declaration.declarations && declaration.declarations[ 0 ] &&
+				declaration.declarations[ 0 ].id.name === name
+			)
+		) );
 
-			const actualExport = find( ast, matchesProperty( 'alias', expectedExport ) );
+	if ( exports ) {
+		return exports;
+	}
 
-			if ( ! actualExport ) {
-				console.warn(
-					chalk.red( '\nWARNING: ' ) +
-					chalk.yellow( 'Could not find expected exported function.\n' ) +
-					chalk.yellow( 'Based on the filename: ' ) +
-					chalk.blue( path.basename( file ) ) +
-					chalk.yellow( '\nWe expected to find a function with ' ) +
-					chalk.blue( '@alias ' + expectedExport ) +
-					chalk.yellow( ' in its JSDoc header\n' )
-				);
+	// find non-exported function declarations
+	return ast
+		.body
+		.filter( ( { type } ) => (
+			( type === 'VariableDeclaration' ) ||
+			( type === 'VariableDeclarator' )
+		) )
+		.find( ( { declarations } ) => (
+			declarations && declarations[ 0 ] &&
+			declarations[ 0 ].id === name
+		) );
+};
 
-				throw new Error( 'Could not find expected selector' );
+const jsParse = contents => {
+	try {
+		return espree.parse( contents, {
+			attachComment: true,
+			ecmaVersion: 6,
+			sourceType: 'module',
+			ecmaFeatures: {
+				experimentalObjectRestSpread: true,
 			}
-
-			return actualExport;
-		} )
-		.catch( error => {
-			console.warn( error );
-			return null;
 		} );
+	} catch ( e ) {
+		console.log( e.message );
+		return null;
+	}
+};
+
+const defaultExportFunctionOf = ast => {
+	const defaultExport = defaultExportOf( ast );
+	const exportType = get( defaultExport, 'declaration.type' );
+
+	if ( 'FunctionDeclaration' === exportType ) {
+		return defaultExport;
+	}
+
+	if ( 'ArrowFunctionExpression' === exportType ) {
+		return defaultExport;
+	}
+
+	if ( 'Identifier' === exportType ) {
+		return functionByName( ast, defaultExport.declaration.name );
+	}
+
+	if ( 'CallExpression' === exportType ) {
+		return functionByName( ast, defaultExport.declaration.callee.name );
+	}
+
+	return null;
+};
+
+const parseSelectorFile = file => new Promise( resolve => {
+	const contents = fs.readFileSync( path.resolve( SELECTORS_DIR, file ), { encoding: 'utf8' } );
+	const ast = jsParse( contents );
+
+	if ( ! ast ) {
+		console.warn(
+			chalk.red( '\nWARNING: ' ) +
+			chalk.yellow( 'Could not parse file: ' ) +
+			chalk.blue( path.basename( file ) )
+		);
+		return resolve( null );
+	}
+
+	const expectedExport = camelCase( path.basename( file, '.js' ) );
+	const defaultExport = defaultExportFunctionOf( ast );
+	if ( ! defaultExport ) {
+		console.log( JSON.stringify( defaultExport, null, 2 ) );
+		console.warn(
+			chalk.red( '\nWARNING: ' ) +
+			chalk.yellow( 'Could not find default-exported function' ) +
+			chalk.yellow( '\nBased on the filename: ' ) +
+			chalk.blue( path.basename( file ) ) +
+			chalk.yellow( '\nWe expected to find an exported function with name ' ) +
+			chalk.blue( expectedExport )
+		);
+		return resolve( null );
+	}
+
+	const { leadingComments: comments } = defaultExport;
+	if ( ! comments || ! comments[ 0 ] || 'Block' !== comments[ 0 ].type ) {
+		console.warn(
+			chalk.red( '\nWARNING: ' ) +
+			chalk.yellow( 'Found no JSDoc block comments for selector in ' ) +
+			chalk.blue( path.basename( file ) )
+		);
+		return resolve( null );
+	}
+
+	// add a dummy export so that JSDoc parses the block
+	const source = `/*${ comments[ 0 ].value }*/function ${ expectedExport }() {}`;
+	try {
+		const [ docblock, /* module info */ ] = jsdoc.explainSync( { source } );
+
+		return resolve( docblock );
+	} catch ( e ) {
+		console.warn(
+			chalk.red( '\nWARNING: ' ) +
+			chalk.yellow( 'Could not parse JSDoc block comment in ' ) +
+			chalk.blue( path.basename( file ) )
+		);
+
+		return resolve( null );
+	}
+} );
 
 function prime() {
+	if ( prepareFuse ) {
+		return prepareFuse;
+	}
+
 	prepareFuse = new Promise( ( resolve, reject ) => {
 		fs.readdir( SELECTORS_DIR, ( error, files ) => {
 			if ( error ) {
 				files = [];
 			}
+			console.warn( chalk.red( '\nPRIMING' ) );
 
 			// Omit index, system files, and subdirectories
 			files = files.filter( ( file ) => 'index.js' !== file && /\.js$/.test( file ) );
 
-			Promise.all( files.map( parseSelectorFile ) ).then( ( selectors ) => {
+			Promise.all( files.map( parseSelectorFile ) ).then( rawSelectors => {
 				// Sort selectors by name alphabetically
-				selectors.filter( a => a ).sort( ( a, b ) => a.name > b.name );
+				const selectors = rawSelectors.filter( a => a ).sort( ( a, b ) => a.name > b.name );
+				console.log( chalk.yellow( `Found ${ selectors.length } selectors` ) );
 
 				resolve( new Fuse( selectors, {
 					keys: [ {
@@ -77,7 +180,10 @@ function prime() {
 					threshold: 0.4,
 					distance: 20
 				} ) );
-			} ).catch( () => reject( 'Parse failure' ) );
+			} ).catch( e => {
+				console.error( e );
+				reject( 'Parse failure' );
+			} );
 		} );
 	} ).then( ( fuse ) => {
 		prepareFuse = Promise.resolve( fuse );

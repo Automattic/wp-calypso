@@ -16,7 +16,7 @@ import { parseTransactionDate } from 'state/billing-transactions/util';
  * @param  {Object}  state   Global state tree
  * @return {?Object}         Billing transactions
  */
-const getBillingTransactions = createSelector(
+export const getBillingTransactions = createSelector(
 	( state ) => {
 		const allTransactions = get( state, 'billingTransactions.items', null );
 		if ( ! allTransactions ) {
