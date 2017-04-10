@@ -1,10 +1,8 @@
-/**
- * External dependencies
- */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import {
+	get,
 	head,
 	map,
 	max,
@@ -12,11 +10,6 @@ import {
 	noop,
 } from 'lodash';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 // The following polyfills exist for the draft-js editor, since
 // we are unable to change its codebase and yet we are waiting
@@ -397,8 +390,7 @@ export class TitleFormatEditor extends Component {
 const mapStateToProps = ( state, ownProps ) => {
 	const site = getSelectedSite( state );
 	const { translate } = ownProps;
-	const userLocale = getCurrentUserLocale( state );
-	const formattedDate = moment().locale( userLocale ).format( 'MMMM YYYY' );
+	const formattedDate = moment().locale( get( site, 'lang', '' ) ).format( 'MMMM YYYY' );
 
 	// Add example content for post/page title, tag name and archive dates
 	return ( {
