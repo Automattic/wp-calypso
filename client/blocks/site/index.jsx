@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import { noop } from 'lodash';
 import Gridicon from 'gridicons';
@@ -11,60 +11,55 @@ import Gridicon from 'gridicons';
  */
 import SiteIcon from 'blocks/site-icon';
 import SiteIndicator from 'my-sites/site-indicator';
+import { localize } from 'i18n-calypso';
 
-export default React.createClass( {
-	displayName: 'Site',
+class Site extends Component {
 
-	getDefaultProps() {
-		return {
-			// onSelect callback
-			onSelect: noop,
-			// mouse event callbacks
-			onMouseEnter: noop,
-			onMouseLeave: noop,
+	static defaultProps = {
+		// onSelect callback
+		onSelect: noop,
+		// mouse event callbacks
+		onMouseEnter: noop,
+		onMouseLeave: noop,
 
-			// Set a href attribute to the anchor
-			href: null,
+		// Set a href attribute to the anchor
+		href: null,
 
-			// Choose to show the SiteIndicator
-			indicator: true,
+		// Choose to show the SiteIndicator
+		indicator: true,
 
-			// Mark as selected or not
-			isSelected: false,
+		// Mark as selected or not
+		isSelected: false,
 
-			homeLink: false,
-			// if homeLink is enabled
-			showHomeIcon: true,
-			compact: false
-		};
-	},
+		homeLink: false,
+		// if homeLink is enabled
+		showHomeIcon: true,
+		compact: false
+	}
 
-	propTypes: {
-		href: React.PropTypes.string,
-		externalLink: React.PropTypes.bool,
-		indicator: React.PropTypes.bool,
-		onSelect: React.PropTypes.func,
-		onMouseEnter: React.PropTypes.func,
-		onMouseLeave: React.PropTypes.func,
-		isSelected: React.PropTypes.bool,
-		isHighlighted: React.PropTypes.bool,
-		site: React.PropTypes.object,
-		homeLink: React.PropTypes.bool,
-		showHomeIcon: React.PropTypes.bool,
-		compact: React.PropTypes.bool
-	},
+	static propTypes = {
+		href: PropTypes.string,
+		externalLink: PropTypes.bool,
+		indicator: PropTypes.bool,
+		onSelect: PropTypes.func,
+		onMouseEnter: PropTypes.func,
+		onMouseLeave: PropTypes.func,
+		isSelected: PropTypes.bool,
+		isHighlighted: PropTypes.bool,
+		site: PropTypes.object,
+		homeLink: PropTypes.bool,
+		showHomeIcon: PropTypes.bool,
+		compact: PropTypes.bool,
 
-	onSelect( event ) {
-		this.props.onSelect( event, this.props.site.slug );
-	},
+		// from localize()
+		translate: PropTypes.func.isRequired
+	}
 
-	onMouseEnter( event ) {
-		this.props.onMouseEnter( event, this.props.site.slug );
-	},
+	onSelect = ( event ) => this.props.onSelect( event, this.props.site.slug );
 
-	onMouseLeave( event ) {
-		this.props.onMouseLeave( event, this.props.site.slug );
-	},
+	onMouseEnter = ( event ) => this.props.onMouseEnter( event, this.props.site.slug );
+
+	onMouseLeave = ( event ) => this.props.onMouseLeave( event, this.props.site.slug );
 
 	render() {
 		const site = this.props.site;
@@ -92,17 +87,17 @@ export default React.createClass( {
 					data-tip-target={ this.props.tipTarget }
 					target={ this.props.externalLink && '_blank' }
 					title={ this.props.homeLink
-						? this.translate( 'View this site' )
-						: this.translate( 'Select this site' )
+						? this.props.translate( 'View this site' )
+						: this.props.translate( 'Select this site' )
 					}
 					onClick={ this.onSelect }
 					onMouseEnter={ this.onMouseEnter }
 					onMouseLeave={ this.onMouseLeave }
 					aria-label={ this.props.homeLink && site.is_previewable
-						? this.translate( 'Open site %(domain)s in a preview', {
+						? this.props.translate( 'Open site %(domain)s in a preview', {
 							args: { domain: site.domain }
 						} )
-						: this.translate( 'Open site %(domain)s in new tab', {
+						: this.props.translate( 'Open site %(domain)s in new tab', {
 							args: { domain: site.domain }
 						} )
 					}
@@ -139,4 +134,6 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( Site );
