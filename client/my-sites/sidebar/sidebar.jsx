@@ -224,9 +224,8 @@ export class MySitesSidebar extends Component {
 	}
 
 	menus() {
-		var site = this.getSelectedSite(),
-			menusLink = '/menus' + this.siteSuffix(),
-			showClassicLink = ! config.isEnabled( 'manage/menus' );
+		const site = this.getSelectedSite();
+		let menusLink = '/customize/menus' + this.siteSuffix();
 
 		if ( ! site ) {
 			return null;
@@ -244,8 +243,8 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( showClassicLink ) {
-			menusLink = site.options.admin_url + 'nav-menus.php';
+		if ( site.jetpack ) {
+			menusLink = site.options.admin_url + 'customize.php?autofocus[panel]=nav_menus';
 		}
 
 		return (

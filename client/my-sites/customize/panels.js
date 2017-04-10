@@ -8,7 +8,8 @@ export const PANEL_MAPPINGS = {
 	fonts: [ 'section', 'jetpack_fonts' ],
 	identity: [ 'section', 'title_tagline' ],
 	'custom-css': [ 'section', 'jetpack_custom_css' ],
-	amp: [ 'section', 'amp_design' ]
+	amp: [ 'section', 'amp_design' ],
+	menus: [ 'panel', 'nav_menus' ],
 };
 
 /**
