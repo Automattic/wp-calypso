@@ -26,7 +26,7 @@ const EasyTab = ( {
 	site,
 	translate,
 } ) => {
-	const enable_cache_notice = translate(
+	const enableCacheNotice = translate(
 		'PHP caching is enabled but Supercache mod_rewrite rules were ' +
 		'detected. Cached files will be served using those rules. If your site is working ok, ' +
 		'please ignore this message. Otherwise, you can edit the .htaccess file in the root of your ' +
@@ -56,7 +56,7 @@ const EasyTab = ( {
 				</form>
 			</Card>
 			{ wp_cache_enabled && ! wp_cache_mod_rewrite && scrules &&
-				<Notice text={ enable_cache_notice } showDismiss={ false } className="wp-super-cache__notice-hug-card" />
+				<Notice text={ enableCacheNotice } showDismiss={ false } className="wp-super-cache__notice-hug-card" />
 			}
 			{ wp_cache_enabled &&
 				<div>
