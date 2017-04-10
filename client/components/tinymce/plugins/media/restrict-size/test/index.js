@@ -83,5 +83,12 @@ describe( 'restrictSize', () => {
 			const value = setImages( '<p><img src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail wp-image-5823" data-mce-selected="1"></p>' );
 			expect( value ).to.equal( '<p><img src="https://wordpress.com/2015/11/forest.jpg?w=680" data-wpmedia-src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail wp-image-5823" data-mce-selected="1"></p>' );
 		} );
+
+		it( 'should not replace external images (those without media ID)', () => {
+			const markup = '<p><img src="https://wordpress.com/2015/11/forest.jpg" alt="forest" class="alignnone size-thumbnail"></p>';
+
+			const value = setImages( markup );
+			expect( value ).to.equal( markup );
+		} );
 	} );
 } );
