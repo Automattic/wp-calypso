@@ -87,7 +87,7 @@ export const DropZone = React.createClass( {
 		}
 
 		this.setState( {
-			isDraggingOverDocument: true,
+			isDraggingOverDocument: false,
 			isDraggingOverElement: false
 		} );
 
