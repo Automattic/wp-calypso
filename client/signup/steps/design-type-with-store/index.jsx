@@ -19,7 +19,6 @@ import BlogImage from './blog-image';
 import PageImage from './page-image';
 import GridImage from './grid-image';
 import StoreImage from './store-image';
-import { abtest } from 'lib/abtest';
 
 class DesignTypeWithStoreStep extends Component {
 	constructor( props ) {
@@ -103,14 +102,8 @@ class DesignTypeWithStoreStep extends Component {
 	};
 
 	renderChoice = ( choice ) => {
-		let choiceCardClass = 'design-type-with-store__choice';
-
-		if ( abtest( 'signupStepOneMobileOptimize' ) === 'modified' ) {
-			choiceCardClass += ' design-type-with-store__choice--mobile-test';
-		}
-
 		return (
-			<Card className={ choiceCardClass } key={ choice.type }>
+			<Card className="design-type-with-store__choice" key={ choice.type }>
 				<a className="design-type-with-store__choice-link"
 					href="#"
 					onClick={ this.handleChoiceClick( choice.type ) }>
