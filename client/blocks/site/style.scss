@@ -91,6 +91,7 @@
 .site__info {
 	width: 0; // Firefox needs explicit width (even 0)
 	flex: 1 0 auto;
+	position: relative;
 }
 
 .site__title {
