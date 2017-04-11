@@ -595,7 +595,7 @@ const ManagePurchase = React.createClass( {
 		}
 		const { selectedSite, selectedPurchase } = this.props;
 		let editCardDetailsPath;
-		if ( ! isDataLoading( this.props ) ) {
+		if ( ! isDataLoading( this.props ) && selectedSite ) {
 			editCardDetailsPath = canEditPaymentDetails( selectedPurchase ) && getEditCardDetailsPath( selectedSite, selectedPurchase );
 		}
 

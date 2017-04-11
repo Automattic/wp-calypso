@@ -26,8 +26,8 @@ import { isMonthly } from 'lib/plans/constants';
 
 class PurchaseNotice extends Component {
 	getExpiringText( purchase ) {
-		const { translate, moment } = this.props;
-		if ( purchase.expiryStatus === 'manualRenew' ) {
+		const { translate, moment, selectedSite } = this.props;
+		if ( selectedSite && purchase.expiryStatus === 'manualRenew' ) {
 			return translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
 				'Please, add a credit card if you want it to autorenew. ',
 				{
