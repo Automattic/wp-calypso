@@ -11,18 +11,26 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import DefaultPostFormat from './default-post-format';
 import AfterTheDeadline from './after-the-deadline';
-import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import DateTimeFormat from '../date-time-format';
+import {
+	isJetpackSite,
+	isJetpackMinimumVersion,
+	siteSupportsJetpackSettingsUi,
+} from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const Composing = ( {
 	fields,
 	handleToggle,
+	handleSelect,
 	onChangeField,
 	setFieldValue,
 	eventTracker,
+	hasDateTimeFormats,
 	isRequestingSettings,
 	isSavingSettings,
 	jetpackSettingsUISupported,
+	updateFields,
 } ) => {
 	const CardComponent = jetpackSettingsUISupported ? CompactCard : Card;
 
@@ -47,6 +55,15 @@ const Composing = ( {
 					fields={ fields }
 				/>
 			}
+			{ hasDateTimeFormats &&
+				<DateTimeFormat
+					fields={ fields }
+					handleSelect={ handleSelect }
+					isRequestingSettings={ isRequestingSettings }
+					isSavingSettings={ isSavingSettings }
+					updateFields={ updateFields }
+				/>
+			}
 		</div>
 	);
 };
@@ -58,10 +75,12 @@ Composing.defaultProps = {
 };
 
 Composing.propTypes = {
+	handleSelect: PropTypes.func.isRequired,
 	handleToggle: PropTypes.func.isRequired,
 	onChangeField: PropTypes.func.isRequired,
 	setFieldValue: PropTypes.func.isRequired,
 	eventTracker: PropTypes.func.isRequired,
+	updateFields: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
 	fields: PropTypes.object,
@@ -74,6 +93,7 @@ export default connect(
 
 		return {
 			jetpackSettingsUISupported: siteIsJetpack && siteSupportsJetpackSettingsUi( state, siteId ),
+			hasDateTimeFormats: ! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '4.7' ),
 		};
 	}
 )( Composing );

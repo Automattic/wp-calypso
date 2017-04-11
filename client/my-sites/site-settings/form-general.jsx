@@ -32,10 +32,6 @@ import Banner from 'components/banner';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import {
-	getLocalizedDate,
-	phpToMomentDatetimeFormat,
-} from './date-time-format/utils';
 
 class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
@@ -354,51 +350,6 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	dateTimeFormat() {
-		if ( ! config.isEnabled( 'manage/site-settings/date-time-format' ) ) {
-			return null;
-		}
-
-		const {
-			fields: {
-				date_format: dateFormat,
-				start_of_week: startOfWeek,
-				time_format: timeFormat,
-				timezone_string: timezoneString,
-			},
-			moment,
-			site,
-			translate,
-		} = this.props;
-
-		const localizedDate = getLocalizedDate( timezoneString );
-		const weekday = startOfWeek
-			? moment.weekdays( parseInt( startOfWeek, 10 ) )
-			: moment.weekdays( 0 );
-
-		return (
-			<Card
-				className="site-settings__date-time-format"
-				href={ `/settings/date-time-format/${ site.slug }` }
-			>
-				<h2 className="site-settings__date-time-format-title">
-					{ translate( 'Date and Time Format' ) }
-				</h2>
-				<div className="site-settings__date-time-format-info">
-					{
-						dateFormat &&
-							phpToMomentDatetimeFormat( localizedDate, dateFormat )
-					} &bull; {
-						timeFormat &&
-							phpToMomentDatetimeFormat( localizedDate, timeFormat )
-					} &bull; {
-						translate( 'Week starts on %s', { args: weekday } )
-					}
-				</div>
-			</Card>
-		);
-	}
-
 	renderJetpackSyncPanel() {
 		const { site } = this.props;
 		if ( ! site.jetpack || site.versionCompare( '4.2-alpha', '<' ) ) {
@@ -487,8 +438,6 @@ class SiteSettingsFormGeneral extends Component {
 						{ this.holidaySnowOption() }
 					</form>
 				</Card>
-
-				{ this.dateTimeFormat() }
 
 				<SectionHeader label={ translate( 'Privacy' ) }>
 					<Button
@@ -593,9 +542,6 @@ export default wrapSettingsForm( settings => {
 		blogdescription: '',
 		lang_id: '',
 		timezone_string: '',
-		date_format: '',
-		time_format: '',
-		start_of_week: 0,
 		blog_public: '',
 		admin_url: '',
 		jetpack_sync_non_public_post_stati: false,
@@ -614,9 +560,6 @@ export default wrapSettingsForm( settings => {
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
 		timezone_string: settings.timezone_string,
-		date_format: settings.date_format,
-		time_format: settings.time_format,
-		start_of_week: settings.start_of_week,
 		jetpack_sync_non_public_post_stati: settings.jetpack_sync_non_public_post_stati,
 
 		holidaysnow: !! settings.holidaysnow,
