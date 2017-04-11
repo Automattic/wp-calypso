@@ -13,16 +13,12 @@
 var path = require( 'path' );
 
 //------------------------------------------------------------------------------
-// Constants
-//------------------------------------------------------------------------------
-
-var REGEXP_INDEX_PATH = /(\\|\/)index\.jsx?$/;
-
-//------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
 
 var rule = module.exports = function( context ) {
+	const rootFiles = ( context.options[ 0 ] || {} ).rootFiles || rule.DEFAULT_ROOT_FILES;
+
 	function isModuleExportNode( node ) {
 		return (
 			'ExpressionStatement' === node.type &&
@@ -117,13 +113,13 @@ var rule = module.exports = function( context ) {
 		return nodeA.name === nodeB.name;
 	}
 
-	function isRootRenderedElement( node, filename ) {
+	function isFolderRootFile( filename ) {
+		return rootFiles.indexOf( path.basename( filename ) ) !== -1;
+	}
+
+	function isRootElementInFile( node ) {
 		var element, isElementReturnArg, elementAssignedIdentifier, parent,
 			functionExpression, functionName, isRoot;
-
-		if ( ! REGEXP_INDEX_PATH.test( filename ) ) {
-			return false;
-		}
 
 		element = node.parent.parent;
 
@@ -235,8 +231,8 @@ var rule = module.exports = function( context ) {
 
 	return {
 		JSXAttribute: function( node ) {
-			var rawClassName, filename, isRoot, classNames, namespace,
-				prefixPattern, isError, expected;
+			var rawClassName, filename, isRootElement, isRootFile, classNames,
+				namespace, prefixPattern, isError, expected;
 
 			if ( 'className' !== node.name.name ) {
 				return;
@@ -253,10 +249,11 @@ var rule = module.exports = function( context ) {
 			}
 
 			filename = context.getFilename();
-			isRoot = isRootRenderedElement( node, filename );
+			isRootFile = isFolderRootFile( filename );
+			isRootElement = isRootElementInFile( node );
 
 			// `null` return value indicates intent to abort validation
-			if ( null === isRoot ) {
+			if ( null === isRootElement ) {
 				return;
 			}
 
@@ -265,7 +262,7 @@ var rule = module.exports = function( context ) {
 			prefixPattern = new RegExp( `^${ namespace }__[a-z0-9-]+$` );
 
 			isError = ! classNames.some( function( className ) {
-				if ( isRoot ) {
+				if ( isRootElement && isRootFile ) {
 					return className === namespace;
 				}
 
@@ -279,21 +276,38 @@ var rule = module.exports = function( context ) {
 			}
 
 			expected = namespace;
-			if ( ! isRoot ) {
+			if ( ! ( isRootElement && isRootFile ) ) {
 				expected += '__ prefix';
+			}
+
+			if ( isRootElement && ! isRootFile ) {
+				expected += ` or to be in ${ rootFiles.length > 1 ? 'one of ' : '' }${ rootFiles.join( ', ' ) }`;
 			}
 
 			context.report( {
 				node: node,
 				message: rule.ERROR_MESSAGE,
-				data: {
-					expected: expected
-				}
+				data: { expected },
 			} );
 		}
 	};
 };
 
 rule.ERROR_MESSAGE = 'className should follow CSS namespace guidelines (expected {{expected}})';
+rule.DEFAULT_ROOT_FILES = [ 'index.js', 'index.jsx' ];
 
-rule.schema = [];
+rule.schema = [
+	{
+		type: 'object',
+		properties: {
+			rootFiles: {
+				type: 'array',
+				minItems: 1,
+				items: {
+					type: 'string',
+				},
+			},
+		},
+		additionalProperties: false,
+	},
+];

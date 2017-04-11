@@ -203,6 +203,12 @@ EXPECTED_FOO_PREFIX_ERROR = formatMessage( rule.ERROR_MESSAGE, { expected: 'foo_
 			code: 'export default function() { return <div className="foo__child-example2" />; }',
 			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
 			filename: '/tmp/foo/foo-child.js'
+		},
+		{
+			code: 'export default function() { return <div className="foo"></div>; }',
+			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
+			filename: '/tmp/foo/foo.js',
+			options: [ { rootFiles: [ 'foo.js' ] } ],
 		}
 	],
 
@@ -436,7 +442,22 @@ EXPECTED_FOO_PREFIX_ERROR = formatMessage( rule.ERROR_MESSAGE, { expected: 'foo_
 			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
 			filename: '/tmp/foo/foo-child.js',
 			errors: [ {
-				message: EXPECTED_FOO_PREFIX_ERROR
+				message: formatMessage(
+					rule.ERROR_MESSAGE,
+					{ expected: `foo__ prefix or to be in one of ${ rule.DEFAULT_ROOT_FILES.join( ', ' ) }` }
+				)
+			} ]
+		},
+		{
+			code: 'export default function() { return <div className="foo" />; }',
+			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
+			filename: '/tmp/foo/foo-child.js',
+			options: [ { rootFiles: [ 'one.js' ] } ],
+			errors: [ {
+				message: formatMessage(
+					rule.ERROR_MESSAGE,
+					{ expected: 'foo__ prefix or to be in one.js' }
+				)
 			} ]
 		},
 		{
@@ -453,6 +474,14 @@ EXPECTED_FOO_PREFIX_ERROR = formatMessage( rule.ERROR_MESSAGE, { expected: 'foo_
 			env: { es6: true },
 			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
 			filename: '/tmp/foo/index.js',
+			errors: [ {
+				message: EXPECTED_FOO_PREFIX_ERROR
+			} ]
+		},
+		{
+			code: 'export default function() { return <div><div className="foo" /></div>; }',
+			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
+			filename: '/tmp/foo/foo-child.js',
 			errors: [ {
 				message: EXPECTED_FOO_PREFIX_ERROR
 			} ]
