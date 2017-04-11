@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { map, omit, isArray } from 'lodash';
+import { map, omitBy, isArray, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,6 +18,13 @@ import { errorNotice } from 'state/notices/actions';
 
 const ITEMS_PER_PAGE = 200;
 const MAX_ITEMS = 2000;
+
+function toNumberOrUndefined( val ) {
+	if ( val ) {
+		return Number( val );
+	}
+	return undefined;
+}
 
 export const requestPageAction = ( page = 1, number = ITEMS_PER_PAGE, meta = '' )=> ( {
 	type: READER_FOLLOWS_SYNC_PAGE,
@@ -35,9 +42,17 @@ export const subscriptionsFromApi = apiResponse => {
 		return [];
 	}
 
-	return map( apiResponse.subscriptions, subscription =>
-		omit( subscription, 'meta' )
-	);
+	return map( apiResponse.subscriptions, subscription => {
+		return omitBy( {
+			ID: Number( subscription.ID ),
+			URL: subscription.URL,
+			blog_ID: toNumberOrUndefined( subscription.blog_ID ),
+			feed_ID: toNumberOrUndefined( subscription.feed_ID ),
+			date_subscribed: Date.parse( subscription.date_subscribed ),
+			delivery_methods: subscription.delivery_methods,
+			is_owner: subscription.is_owner,
+		}, isUndefined );
+	} );
 };
 
 let syncingFollows = false;
