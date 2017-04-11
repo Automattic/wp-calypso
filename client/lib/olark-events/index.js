@@ -7,7 +7,6 @@ import debugModule from 'debug';
  * Internal dependencies
  */
 import emitter from 'lib/mixins/emitter';
-import olarkApi from 'lib/olark-api';
 
 /**
  * Module variables
@@ -67,9 +66,6 @@ var OlarkEventEmitter = {
 
 		// Keep track of what olark events we're listening to
 		boundEvents[ event ] = true;
-
-		// Listen to the olark api event
-		olarkApi( event, ( ...args ) => this.olarkEventListener( event, ...args ) );
 	},
 
 	/**

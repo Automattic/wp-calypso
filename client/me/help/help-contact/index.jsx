@@ -17,7 +17,6 @@ import OlarkChatbox from 'components/olark-chatbox';
 import olarkStore from 'lib/olark-store';
 import olarkActions from 'lib/olark-store/actions';
 import olarkEvents from 'lib/olark-events';
-import olarkApi from 'lib/olark-api';
 import HelpContactForm from 'me/help/help-contact-form';
 import HelpContactClosed from 'me/help/help-contact-closed';
 import HelpContactConfirmation from 'me/help/help-contact-confirmation';
@@ -58,12 +57,6 @@ const SUPPORT_TICKET = 'SUPPORT_TICKET';
 const SUPPORT_FORUM = 'SUPPORT_FORUM';
 
 const HelpContact = React.createClass( {
-
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.olarkTimedOut && this.olarkTimedOut !== nextProps.olarkTimedOut && ! this.shouldUseHappychat() ) {
-			this.onOlarkUnavailable();
-		}
-	},
 
 	componentDidMount: function() {
 		this.prepareDirectlyWidget();
@@ -347,17 +340,6 @@ const HelpContact = React.createClass( {
 		}
 
 		analytics.tracks.recordEvent( 'calypso_help_contact_chatbox_mistaken_display', tracksData );
-
-		// Lets call the olark API directly to see if the value we get differs from what our olark store has.
-		olarkApi( 'api.visitor.getDetails', ( details ) => {
-			const data = {
-				olark_event: olarkEvent,
-				olark_is_conversing: details.isConversing,
-			};
-
-			// This does a separate tracks ping just incase the error is occuring in the olark api call
-			analytics.tracks.recordEvent( 'calypso_help_contact_chatbox_mistaken_display_got_details', data );
-		} );
 	},
 
 	trackContactFormAndFillSubject() {
@@ -368,11 +350,6 @@ const HelpContact = React.createClass( {
 			} );
 		}
 		this.autofillSubject();
-	},
-
-	onOlarkUnavailable() {
-		this.trackContactFormAndFillSubject();
-		this.showTimeoutNotice();
 	},
 
 	onOperatorsAway: function() {
@@ -399,18 +376,6 @@ const HelpContact = React.createClass( {
 		} else {
 			notices.warning( this.props.translate( 'Sorry! We just missed you as our Happiness Engineers stepped away.' ) );
 		}
-	},
-
-	showTimeoutNotice() {
-		const { isUserEligible, isOlarkReady } = this.state.olark;
-
-		if ( ! isUserEligible || isOlarkReady ) {
-			return;
-		}
-		notices.warning( this.props.translate(
-			'Our chat tools did not load. If you have an adblocker ' +
-			'please disable it and refresh this page.'
-		) );
 	},
 
 	/**

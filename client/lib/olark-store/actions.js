@@ -7,7 +7,6 @@ import dispatcher from 'dispatcher';
  * Internal dependencies
  */
 import { action as ActionTypes } from 'lib/olark-store/constants';
-import olarkApi from 'lib/olark-api';
 
 /**
  * Module variables
@@ -60,41 +59,31 @@ const olarkActions = {
 	},
 
 	updateDetails() {
-		olarkApi( 'api.visitor.getDetails', ( details ) => {
-			dispatcher.handleServerAction( {
-				details,
-				type: ActionTypes.OLARK_DETAILS,
-			} );
-		} );
+		// Do nothing since olark is deprecated
 	},
 
-	sendNotificationToVisitor( body ) {
-		olarkApi( 'api.chat.sendNotificationToVisitor', { body } );
+	sendNotificationToVisitor() {
+		// Do nothing since olark is deprecated
 	},
 
-	sendNotificationToOperator( body ) {
-		olarkApi( 'api.chat.sendNotificationToOperator', { body } );
+	sendNotificationToOperator() {
+		// Do nothing since olark is deprecated
 	},
 
 	expandBox() {
-		olarkApi( 'api.box.expand' );
+		// Do nothing since olark is deprecated
 	},
 
 	shrinkBox() {
-		olarkApi( 'api.box.shrink' );
+		// Do nothing since olark is deprecated
 	},
 
 	hideBox() {
-		olarkApi( 'api.box.hide' );
+		// Do nothing since olark is deprecated
 	},
 
 	focusBox() {
-		if ( ! document ) {
-			return;
-		}
-
-		const chatInput = document.querySelector( '#habla_wcsend_input' );
-		chatInput && chatInput.focus();
+		// Do nothing since olark is deprecated
 	}
 };
 
