@@ -104,11 +104,21 @@ class ReaderShare extends React.Component {
 		showingMenu: false,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.mounted = false;
+	}
+
+	componentWillMount() {
+		this.mounted = true;
+	}
+
 	componentWillUnmount() {
 		if ( this.closeHandle ) {
 			clearTimeout( this.closeHandle );
 			this.closeHandle = null;
 		}
+		this.mounted = false;
 	}
 
 	deferMenuChange = ( showing ) => {
@@ -139,7 +149,7 @@ class ReaderShare extends React.Component {
 		// have to defer this to let the mouseup / click escape.
 		// If we don't defer and remove the DOM node on this turn of the event loop,
 		// Chrome (at least) will not fire the click
-		if ( this.isMounted() ) {
+		if ( this.mounted ) {
 			this.deferMenuChange( false );
 		}
 	}
