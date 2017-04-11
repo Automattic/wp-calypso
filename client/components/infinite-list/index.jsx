@@ -292,7 +292,8 @@ module.exports = React.createClass( {
 
 	boundsForRef( ref ) {
 		if ( ref in this.refs ) {
-			return ReactDom.findDOMNode( this.refs[ ref ] ).getBoundingClientRect();
+			const node = this.refs[ ref ];
+			return node.getBoundingClientRect ? node.getBoundingClientRect() : ReactDom.findDOMNode( node ).getBoundingClientRect();
 		}
 		return null;
 	},
