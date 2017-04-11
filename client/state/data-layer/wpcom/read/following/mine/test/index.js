@@ -19,6 +19,7 @@ import {
 	isValidApiResponse,
 	syncReaderFollows,
 	resetSyncingFollows,
+	toValidId,
 } from '../';
 import { receiveFollows as receiveFollowsAction } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -161,6 +162,29 @@ describe( 'get follow subscriptions', () => {
 		it( 'should return an empty list from invalid apiResponse', () => {
 			expect( subscriptionsFromApi( { notExpected: 'true' } ) ).eql( [] );
 			expect( subscriptionsFromApi( { subscriptions: 'true' } ) ).eql( [] );
+		} );
+	} );
+
+	describe( 'toValidId', () => {
+		const testCases = [
+			[ undefined, undefined ],
+			[ null, undefined ],
+			[ 0, undefined ],
+			[ '0', undefined ],
+			[ false, undefined ],
+			[ true, undefined ],
+			[ 1, 1 ],
+			[ '1', 1 ],
+			[ 4, 4 ],
+			[ '4', 4 ],
+			[ '4.8', undefined ],
+		];
+
+		testCases.forEach( function( testCase ) {
+			const [ provided, expected ] = testCase;
+			it( `'${ provided }' should yield '${ expected }'`, () => {
+				expect( toValidId( provided ) ).to.equal( expected );
+			} );
 		} );
 	} );
 } );

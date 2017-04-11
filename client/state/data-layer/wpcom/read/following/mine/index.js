@@ -19,11 +19,17 @@ import { errorNotice } from 'state/notices/actions';
 const ITEMS_PER_PAGE = 200;
 const MAX_ITEMS = 2000;
 
-function toNumberOrUndefined( val ) {
-	if ( val ) {
-		return Number( val );
+export function toValidId( val ) {
+	if ( val === true ) {
+		return undefined;
 	}
-	return undefined;
+	const id = Number( val );
+	if ( Math.floor( id ) !== id ) {
+		return undefined;
+	}
+	return id !== 0 && ! isNaN( id )
+		? id
+		: undefined;
 }
 
 export const requestPageAction = ( page = 1, number = ITEMS_PER_PAGE, meta = '' )=> ( {
@@ -46,8 +52,8 @@ export const subscriptionsFromApi = apiResponse => {
 		return omitBy( {
 			ID: Number( subscription.ID ),
 			URL: subscription.URL,
-			blog_ID: toNumberOrUndefined( subscription.blog_ID ),
-			feed_ID: toNumberOrUndefined( subscription.feed_ID ),
+			blog_ID: toValidId( subscription.blog_ID ),
+			feed_ID: toValidId( subscription.feed_ID ),
 			date_subscribed: Date.parse( subscription.date_subscribed ),
 			delivery_methods: subscription.delivery_methods,
 			is_owner: subscription.is_owner,
