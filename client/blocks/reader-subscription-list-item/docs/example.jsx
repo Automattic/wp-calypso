@@ -10,12 +10,23 @@ import ConnectedReaderSubscriptionListItem from 'reader/following-manage/connect
 import Card from 'components/card';
 
 
+const longreads = { siteId: 70135762 };
+const wordpress = { feedId: 25823 };
+const bestBlogInTheWorldAAA = { siteId: 77147075 };
+const mathWithBadDrawings = { feedId: 10056049 };
+const uproxx = { feedId: 19850964 };
+const atlantic = { feedId: 49548095 };
+const fourthGenerationFarmGirl = { feedId: 24393283 };
+
+
 const items = [
-	{ feedId: 21587482 },
-	{ feedId: 24393283 },
-	{ feedId: 10056049 },
-	{ siteId: 77147075 },
-	{ feedId: 19850964 },
+	longreads,
+	wordpress,
+	bestBlogInTheWorldAAA,
+	fourthGenerationFarmGirl,
+	atlantic,
+	mathWithBadDrawings,
+	uproxx,
 ];
 
 export default class ReaderSubscriptionListItemExample extends PureComponent {
