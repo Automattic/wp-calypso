@@ -32,7 +32,7 @@ function getHoldMessages( siteSlug, translate ) {
 		},
 		SITE_PRIVATE: {
 			title: translate( 'Private site not supported' ),
-			description: translate( 'Make your site public to resolve.' ),
+			description: translate( 'Make your site public or hidden to resolve.' ),
 			supportUrl: `/settings/general/${ siteSlug }`,
 		},
 		SITE_GRAYLISTED: {
