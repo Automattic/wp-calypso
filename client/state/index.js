@@ -145,7 +145,7 @@ export function createReduxStore( initialState = {} ) {
 		noticesMiddleware,
 		isBrowser && require( './happychat/middleware.js' ).default(),
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
-		isBrowser && require( './data-layer/wpcom-api-middleware.js' ).default,
+		require( './data-layer/wpcom-api-middleware.js' ).default,
 		isBrowser && require( './lib/middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
 		isBrowser && config.isEnabled( 'automated-transfer' ) && require( './automated-transfer/middleware.js' ).default,
