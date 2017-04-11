@@ -9,12 +9,21 @@ import { connect } from 'react-redux';
  */
 import Dialog from 'components/dialog';
 import NpsSurvey from 'blocks/nps-survey';
-import { showNpsSurveyNoticeIfEligible, setNpsSurveyDialogShowing } from 'state/ui/nps-survey-notice/actions';
+import {
+	showNpsSurveyNotice,
+	setNpsSurveyDialogShowing,
+	setupNpsSurveyDevTrigger,
+} from 'state/ui/nps-survey-notice/actions';
 import { isNpsSurveyDialogShowing } from 'state/ui/nps-survey-notice/selectors';
-import { submitNpsSurveyWithNoScore } from 'state/nps-survey/actions';
+import {
+	submitNpsSurveyWithNoScore,
+	setupNpsSurveyEligibility,
+} from 'state/nps-survey/actions';
 import {
 	hasAnsweredNpsSurvey,
 	hasAnsweredNpsSurveyWithNoScore,
+	isSectionAndSessionEligibleForNpsSurvey,
+	wasNpsSurveyShownThisSession,
 } from 'state/nps-survey/selectors';
 
 const SURVEY_NAME = 'calypso-global-notice-radio-buttons-v1';
@@ -38,15 +47,23 @@ class NpsSurveyNotice extends Component {
 	}
 
 	componentDidMount() {
-		// wait a little bit before showing the notice, so that
-		// (1) the user gets a chance to look briefly at the uncluttered screen, and
-		// (2) the user notices the notice more, since it will cause a change to the
-		//     screen they are already looking at
-		setTimeout( this.props.showNpsSurveyNoticeIfEligible, 3000 );
+		this.props.setupNpsSurveyEligibility();
+		this.props.setupNpsSurveyDevTrigger();
+	}
+
+	componentDidUpdate() {
+		if ( this.props.isSectionAndSessionEligible && ! this.props.wasShownThisSession ) {
+			// wait a little bit before showing the notice, so that
+			// (1) the user gets a chance to look briefly at the uncluttered screen, and
+			// (2) the user notices the notice more, since it will cause a change to the
+			//     screen they are already looking at
+			setTimeout( this.props.showNpsSurveyNotice, 3000 );
+		}
 	}
 
 	render() {
 		return (
+			this.props.isSectionAndSessionEligible &&
 			<Dialog
 				additionalClassNames="nps-survey-notice"
 				isVisible={ this.props.isNpsSurveyDialogShowing }
@@ -65,10 +82,18 @@ const mapStateToProps = ( state ) => {
 		isNpsSurveyDialogShowing: isNpsSurveyDialogShowing( state ),
 		hasAnswered: hasAnsweredNpsSurvey( state ),
 		hasAnsweredWithNoScore: hasAnsweredNpsSurveyWithNoScore( state ),
+		isSectionAndSessionEligible: isSectionAndSessionEligibleForNpsSurvey( state ),
+		wasShownThisSession: wasNpsSurveyShownThisSession( state ),
 	};
 };
 
 export default connect(
 	mapStateToProps,
-	{ showNpsSurveyNoticeIfEligible, setNpsSurveyDialogShowing, submitNpsSurveyWithNoScore }
+	{
+		showNpsSurveyNotice,
+		setNpsSurveyDialogShowing,
+		submitNpsSurveyWithNoScore,
+		setupNpsSurveyDevTrigger,
+		setupNpsSurveyEligibility,
+	}
 )( NpsSurveyNotice );

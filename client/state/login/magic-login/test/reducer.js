@@ -7,6 +7,13 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	CHECK_YOUR_EMAIL_PAGE,
+	INTERSTITIAL_PAGE,
+	LINK_EXPIRED_PAGE,
+	REQUEST_FORM,
+} from '../constants';
+
+import {
 	DESERIALIZE,
 	//MAGIC_LOGIN_HANDLE_AUTH_TOKEN_FETCH,
 	//MAGIC_LOGIN_HANDLE_AUTH_TOKEN_RECEIVE,
@@ -25,12 +32,8 @@ import {
 
 import reducer, {
 	emailAddressFormInput,
-	emailAddressFormInputIsValid,
 	isFetchingEmail,
-	isShowingCheckYourEmailPage,
-	isShowingExpiredPage,
-	isShowingInterstitialPage,
-	isShowingRequestForm,
+	currentView,
 	//requestAuthError,
 	//requestAuthSuccess,
 	requestEmailError,
@@ -41,16 +44,12 @@ describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'emailAddressFormInput',
-			'emailAddressFormInputIsValid',
 			'isFetchingEmail',
-			'isShowingCheckYourEmailPage',
-			'isShowingExpiredPage',
-			'isShowingInterstitialPage',
-			'isShowingRequestForm',
 			'requestAuthError',
 			'requestAuthSuccess',
 			'requestEmailError',
 			'requestedEmailSuccessfully',
+			'currentView',
 		] );
 	} );
 
@@ -93,45 +92,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.equal( '' );
-		} );
-	} );
-
-	describe( 'emailAddressFormInputIsValid', () => {
-		it( 'should default to false', () => {
-			const state = emailAddressFormInputIsValid( undefined, {} );
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on DESERIALIZE', () => {
-			const state = emailAddressFormInputIsValid( undefined, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on SERIALIZE', () => {
-			const state = emailAddressFormInputIsValid( undefined, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on invalid email address', () => {
-			const state = emailAddressFormInputIsValid( undefined, {
-				type: MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS,
-				email: '',
-			} );
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be true on invalid email address', () => {
-			const state = emailAddressFormInputIsValid( undefined, {
-				type: MAGIC_LOGIN_SET_INPUT_EMAIL_ADDRESS,
-				email: 'claudemonet@example.com',
-			} );
-			expect( state ).to.be.true;
 		} );
 	} );
 
@@ -275,235 +235,61 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'isShowingCheckYourEmailPage', () => {
-		it( 'should default to false', () => {
-			const state = isShowingCheckYourEmailPage( undefined, {} );
-			expect( state ).to.be.false;
+	describe( 'currentView', () => {
+		it( 'should default to null', () => {
+			const state = currentView( undefined, {} );
+			expect( state ).to.be.null;
 		} );
 
-		it( 'should be false on DESERIALIZE', () => {
-			const state = isShowingCheckYourEmailPage( undefined, {
+		it( 'should be null on DESERIALIZE', () => {
+			const state = currentView( undefined, {
 				type: DESERIALIZE,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).to.be.null;
 		} );
 
-		it( 'should be false on SERIALIZE', () => {
-			const state = isShowingCheckYourEmailPage( undefined, {
+		it( 'should be null on SERIALIZE', () => {
+			const state = currentView( undefined, {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).to.be.null;
 		} );
 
-		it( 'should be true on show check email', () => {
-			const state = isShowingCheckYourEmailPage( undefined, {
+		it( 'should be check email page on show check email', () => {
+			const state = currentView( undefined, {
 				type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 			} );
-			expect( state ).to.be.true;
+			expect( state ).to.equal( CHECK_YOUR_EMAIL_PAGE );
 		} );
 
-		it( 'should be false on show interstitial', () => {
-			const state = isShowingCheckYourEmailPage( undefined, {
+		it( 'should be interstitial page on show interstitial', () => {
+			const state = currentView( undefined, {
 				type: MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE,
 			} );
-			expect( state ).to.be.false;
+			expect( state ).to.equal( INTERSTITIAL_PAGE );
 		} );
 
-		it( 'should be false on hide request form', () => {
-			const state = isShowingCheckYourEmailPage( undefined, {
+		it( 'should be null on hide request form', () => {
+			const state = currentView( undefined, {
 				type: MAGIC_LOGIN_HIDE_REQUEST_FORM,
 			} );
-			expect( state ).to.be.false;
+			expect( state ).to.be.null;
 		} );
 
-		it( 'should be false on show expired', () => {
-			const state = isShowingCheckYourEmailPage( undefined, {
+		it( 'should be expired page on show expired', () => {
+			const state = currentView( undefined, {
 				type: MAGIC_LOGIN_SHOW_LINK_EXPIRED,
 			} );
-			expect( state ).to.be.false;
+			expect( state ).to.equal( LINK_EXPIRED_PAGE );
 		} );
 
-		it( 'should be false on show request form', () => {
-			const state = isShowingCheckYourEmailPage( undefined, {
+		it( 'should be request form on show request form', () => {
+			const state = currentView( undefined, {
 				type: MAGIC_LOGIN_SHOW_REQUEST_FORM,
 			} );
-			expect( state ).to.be.false;
-		} );
-	} );
-
-	describe( 'isShowingExpiredPage', () => {
-		it( 'should default to false', () => {
-			const state = isShowingExpiredPage( undefined, {} );
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on DESERIALIZE', () => {
-			const state = isShowingExpiredPage( undefined, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on SERIALIZE', () => {
-			const state = isShowingExpiredPage( undefined, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on show check email', () => {
-			const state = isShowingExpiredPage( undefined, {
-				type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
-			} );
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on show interstitial', () => {
-			const state = isShowingExpiredPage( undefined, {
-				type: MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE,
-			} );
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be true on show expired', () => {
-			const state = isShowingExpiredPage( undefined, {
-				type: MAGIC_LOGIN_SHOW_LINK_EXPIRED,
-			} );
-			expect( state ).to.be.true;
-		} );
-
-		it( 'should be false on show request form', () => {
-			const state = isShowingExpiredPage( undefined, {
-				type: MAGIC_LOGIN_SHOW_REQUEST_FORM,
-			} );
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on hide request form', () => {
-			const state = isShowingExpiredPage( undefined, {
-				type: MAGIC_LOGIN_HIDE_REQUEST_FORM,
-			} );
-			expect( state ).to.be.false;
-		} );
-	} );
-
-	describe( 'isShowingInterstitialPage', () => {
-		it( 'should default to false', () => {
-			const state = isShowingInterstitialPage( undefined, {} );
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on DESERIALIZE', () => {
-			const state = isShowingInterstitialPage( undefined, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on SERIALIZE', () => {
-			const state = isShowingInterstitialPage( undefined, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on show check email', () => {
-			const state = isShowingInterstitialPage( undefined, {
-				type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
-			} );
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be true on show interstitial', () => {
-			const state = isShowingInterstitialPage( undefined, {
-				type: MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE,
-			} );
-			expect( state ).to.be.true;
-		} );
-
-		it( 'should be false on show expired', () => {
-			const state = isShowingInterstitialPage( undefined, {
-				type: MAGIC_LOGIN_SHOW_LINK_EXPIRED,
-			} );
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on show request form', () => {
-			const state = isShowingInterstitialPage( undefined, {
-				type: MAGIC_LOGIN_SHOW_REQUEST_FORM,
-			} );
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on hide request form', () => {
-			const state = isShowingInterstitialPage( undefined, {
-				type: MAGIC_LOGIN_HIDE_REQUEST_FORM,
-			} );
-			expect( state ).to.be.false;
-		} );
-	} );
-
-	describe( 'isShowingRequestForm', () => {
-		it( 'should default to false', () => {
-			const state = isShowingRequestForm( undefined, {} );
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on DESERIALIZE', () => {
-			const state = isShowingRequestForm( undefined, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on SERIALIZE', () => {
-			const state = isShowingRequestForm( undefined, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on show check email', () => {
-			const state = isShowingRequestForm( undefined, {
-				type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
-			} );
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on show interstitial', () => {
-			const state = isShowingRequestForm( undefined, {
-				type: MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE,
-			} );
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be false on show expired', () => {
-			const state = isShowingRequestForm( undefined, {
-				type: MAGIC_LOGIN_SHOW_LINK_EXPIRED,
-			} );
-			expect( state ).to.be.false;
-		} );
-
-		it( 'should be true on show request form', () => {
-			const state = isShowingRequestForm( undefined, {
-				type: MAGIC_LOGIN_SHOW_REQUEST_FORM,
-			} );
-			expect( state ).to.be.true;
-		} );
-
-		it( 'should be false on hide request form', () => {
-			const state = isShowingRequestForm( undefined, {
-				type: MAGIC_LOGIN_HIDE_REQUEST_FORM,
-			} );
-			expect( state ).to.be.false;
+			expect( state ).to.equal( REQUEST_FORM );
 		} );
 	} );
 } );

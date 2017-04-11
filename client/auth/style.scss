@@ -10,9 +10,7 @@
 		margin: 0 auto;
 		overflow: hidden;
 		max-width: none;
-		padding-top: 32px;
-		padding-left: 0;
-		padding-right: 0;
+		padding: 0;
 	}
 
 	.layout__content::after {
@@ -29,15 +27,19 @@
 }
 
 .auth.main {
+	background: $blue-wordpress;
 	float: none;
 	height: 100%;
-	margin: 0 auto;
-	text-align: center;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-content: center;
-	background: none;
+	max-width: 100%;
+}
+
+.auth__content {
+	margin: 0 auto;
+	text-align: center;
 
 	.notice {
 		width: calc( 100% - 20px );

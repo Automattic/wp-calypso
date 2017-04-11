@@ -3,11 +3,14 @@
  */
 import debugFactory from 'debug';
 import wpcom from 'lib/wp';
+import { random } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
+	NPS_SURVEY_SET_ELIGIBILITY,
+	NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
 	NPS_SURVEY_SUBMIT_REQUESTING,
 	NPS_SURVEY_SUBMIT_REQUEST_FAILURE,
 	NPS_SURVEY_SUBMIT_REQUEST_SUCCESS,
@@ -15,8 +18,47 @@ import {
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_FAILURE,
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_SUCCESS,
 } from 'state/action-types';
+import {
+	NPS_SURVEY_RAND_MAX,
+} from './constants';
 
 const debug = debugFactory( 'calypso:nps-survey' );
+
+export function setNpsSurveyEligibility( isEligible ) {
+	return {
+		type: NPS_SURVEY_SET_ELIGIBILITY,
+		isSessionPicked: isEligible,
+	};
+}
+
+export function setupNpsSurveyEligibility() {
+	return ( dispatch ) => {
+		debug( 'Checking NPS eligibility...' );
+
+		if ( 1 === random( 1, NPS_SURVEY_RAND_MAX ) ) {
+			return wpcom
+				.undocumented()
+				.checkNPSSurveyEligibility()
+				.then( ( data ) => {
+					debug( '...Eligibility returned from endpoint.', data );
+					dispatch( setNpsSurveyEligibility( data.display_survey ) );
+				} )
+				.catch( ( err ) => {
+					debug( '...Error querying NPS survey eligibility.', err );
+					dispatch( setNpsSurveyEligibility( false ) );
+				} );
+		}
+
+		debug( '...Session was not lucky' );
+		return dispatch( setNpsSurveyEligibility( false ) );
+	};
+}
+
+export function markNpsSurveyShownThisSession() {
+	return {
+		type: NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
+	};
+}
 
 export function submitNpsSurvey( surveyName, score ) {
 	return ( dispatch ) => {

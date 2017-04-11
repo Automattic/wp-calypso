@@ -1,24 +1,34 @@
 .card.login__form {
-	border-bottom: 0;
 	margin-bottom: 0;
 }
 
 .login__form-userdata {
-	margin: 5px 0;
-
 	label {
 		display: block;
-		font-size: 16px;
+		line-height: 2em;
+		font-weight: 500;
 		padding-bottom: 8px;
-		margin: 10px 0;
 	}
 }
 
 .login__form-action {
 	margin-top: 10px;
+
+	button {
+		width: 100%;
+	}
 }
 
 .login__form-header-title {
-	font-size: 20px;
+	font-size: 22px;
 	margin-bottom: 16px;
+	text-align: center;
+}
+
+.login__form-remember-me {
+	margin: 5px 0 15px;
+
+	input {
+		margin-right: 10px;
+	}
 }

@@ -501,14 +501,14 @@ const ThemeSheet = React.createClass( {
 				<QueryCanonicalTheme themeId={ this.props.id } siteId={ siteId } />
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> /* TODO: Make QuerySitePurchases handle falsey siteId */ }
-				{ <QuerySitePlans siteId={ siteId } /> /* QuerySitePlans can handle a falsey siteId */ }
+				<QuerySitePlans siteId={ siteId } />
 				<DocumentHead
 					title={ title }
 					meta={ metas }
 					link={ links } />
 				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
 				{ this.renderBar() }
-				{ siteId && <QueryActiveTheme siteId={ siteId } /> /* TODO: Make QueryActiveTheme handle falsey siteId */ }
+				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal source={ 'details' } />
 				<HeaderCake className="theme__sheet-action-bar"
 					backHref={ this.props.backPath }

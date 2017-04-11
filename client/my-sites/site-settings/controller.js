@@ -19,7 +19,6 @@ import SiteSettingsComponent from 'my-sites/site-settings/main';
 import sitesFactory from 'lib/sites-list';
 import StartOver from './start-over';
 import ThemeSetup from './theme-setup';
-import DateTimeFormat from './date-time-format';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import titlecase from 'to-title-case';
 import utils from 'lib/site/utils';
@@ -196,13 +195,6 @@ module.exports = {
 		renderPage(
 			context,
 			<ThemeSetup activeSiteDomain={ context.params.site_id } />
-		);
-	},
-
-	dateTimeFormat( context ) {
-		renderPage(
-			context,
-			<DateTimeFormat />
 		);
 	},
 

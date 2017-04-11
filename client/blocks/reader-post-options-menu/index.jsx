@@ -59,7 +59,7 @@ class ReaderPostOptionsMenu extends React.Component {
 	};
 
 	getFollowUrl = () => {
-		return this.props.feed ? this.props.feed.feed_URL : this.props.post.site_URL;
+		return this.props.feed ? this.props.feed.feed_URL : ( this.props.post.feed_URL || this.props.post.site_URL );
 	};
 
 	onMenuToggle = ( isMenuVisible ) => {
@@ -121,8 +121,14 @@ class ReaderPostOptionsMenu extends React.Component {
 
 					{ ( this.props.showFollow || isEditPossible ) && ( isBlockPossible || isDiscoverPost ) &&
 						<hr className="reader-post-options-menu__hr" /> }
-					{ isBlockPossible ? <PopoverMenuItem onClick={ this.blockSite }>{ this.props.translate( 'Block Site' ) }</PopoverMenuItem> : null }
-					{ isBlockPossible || isDiscoverPost ? <PopoverMenuItem onClick={ this.reportPost }>{ this.props.translate( 'Report this Post' ) }</PopoverMenuItem> : null }
+					{ isBlockPossible
+						? <PopoverMenuItem onClick={ this.blockSite }>{ this.props.translate( 'Block Site' ) }</PopoverMenuItem>
+						: null
+					}
+					{ isBlockPossible || isDiscoverPost
+						? <PopoverMenuItem onClick={ this.reportPost }>{ this.props.translate( 'Report this Post' ) }</PopoverMenuItem>
+						: null
+					}
 				</EllipsisMenu>
 			</span>
 		);
@@ -132,8 +138,8 @@ class ReaderPostOptionsMenu extends React.Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const feedId = ownProps.post.feedID;
-		const siteId = ownProps.post.site_ID;
+		const feedId = ownProps.post.feed_ID;
+		const siteId = ownProps.post.is_external ? null : ownProps.post.site_ID;
 		return {
 			feed: ( feedId && feedId > 0 ) ? getFeed( state, feedId ) : undefined,
 			site: ( siteId && siteId > 0 ) ? getSite( state, siteId ) : undefined,

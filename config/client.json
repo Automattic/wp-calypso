@@ -21,6 +21,7 @@
   "languages",
   "login_url",
   "logout_url",
+  "lucky_orange_enabled",
   "mc_analytics_enabled",
   "oauth_client_id",
   "oauth_response_type",

@@ -17,6 +17,7 @@
 	"google_analytics_enabled": false,
 	"google_analytics_key": "UA-10673494-15",
 	"google_adwords_conversion_id": 1067250390,
+	"lucky_orange_enabled": true,
 	"olark": {
 		"business_account_id": "3146-815-10-9343",
 		"business_group_id": false

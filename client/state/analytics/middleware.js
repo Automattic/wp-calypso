@@ -1,11 +1,17 @@
+/**
+ * Internal dependencies
+ */
+const config = require( 'config' );
 import analytics from 'lib/analytics';
 import has from 'lodash/has';
 import invoke from 'lodash/invoke';
+import isTracking from 'state/selectors/is-tracking';
 
 import {
 	ANALYTICS_EVENT_RECORD,
 	ANALYTICS_PAGE_VIEW_RECORD,
-	ANALYTICS_STAT_BUMP
+	ANALYTICS_STAT_BUMP,
+	ANALYTICS_TRACKING_ON,
 } from 'state/action-types';
 
 const eventServices = {
@@ -15,13 +21,22 @@ const eventServices = {
 
 const pageViewServices = {
 	ga: ( { url, title } ) => analytics.ga.recordPageView( url, title ),
-	default: ( { url, title } ) => analytics.pageView.record( url, title )
+	'default': ( { url, title } ) => analytics.pageView.record( url, title ),
+};
+
+const loadTrackingTool = ( trackingTool, state ) => {
+	const trackUser = ! navigator.doNotTrack;
+	const luckyOrangeEnabled = config( 'lucky_orange_enabled' );
+
+	if ( trackingTool === 'Lucky Orange' && ! isTracking( state, 'Lucky Orange' ) && luckyOrangeEnabled && trackUser ) {
+		analytics.luckyOrange.addLuckyOrangeScript();
+	}
 };
 
 const statBump = ( { group, name } ) => analytics.mc.bumpStat( group, name );
 
-export const dispatcher = ( { meta: { analytics } } ) => {
-	analytics.forEach( ( { type, payload } ) => {
+export const dispatcher = ( { meta: { analytics: analyticsMeta } }, state ) => {
+	analyticsMeta.forEach( ( { type, payload } ) => {
 		const { service = 'default' } = payload;
 
 		switch ( type ) {
@@ -33,13 +48,16 @@ export const dispatcher = ( { meta: { analytics } } ) => {
 
 			case ANALYTICS_STAT_BUMP:
 				return statBump( payload );
+
+			case ANALYTICS_TRACKING_ON:
+				return loadTrackingTool( payload, state );
 		}
-	} )
+	} );
 };
 
-export const analyticsMiddleware = () => next => action => {
+export const analyticsMiddleware = store => next => action => {
 	if ( has( action, 'meta.analytics' ) ) {
-		dispatcher( action );
+		dispatcher( action, store.getState() );
 	}
 
 	return next( action );

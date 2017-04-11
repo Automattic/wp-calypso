@@ -1,0 +1,47 @@
+.purchases-site {
+	margin-bottom: 15px;
+
+	.site-icon {
+		display: inline-block;
+		margin-right: 12px;
+		vertical-align: middle;
+	}
+}
+
+.purchases-site__slug {
+	color: darken( $gray, 15% );
+	font-size: 12px;
+}
+
+.purchases-site__slug {
+	white-space: nowrap;
+
+	@include breakpoint( "<660px" ) {
+		line-height: 15px;
+	}
+}
+
+.purchases-site__header {
+	&.card.is-compact {
+		padding: 0;
+	}
+
+	.site.is-loading {
+		.site-icon,
+		.site__title,
+		.site__domain {
+			@include placeholder( 23% );
+		}
+	}
+
+	.site.is-disconnected .site-icon {
+		height: 32px;
+		width: 32px;
+		line-height: 32px;
+		font-size: 32px;
+	}
+
+	.site .site__content {
+		padding: 11px 24px;
+	}
+}

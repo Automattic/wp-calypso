@@ -18,6 +18,7 @@
 	"google_analytics_enabled": false,
 	"google_analytics_key": "UA-10673494-15",
 	"google_adwords_conversion_id": 1067250390,
+	"lucky_orange_enabled": true,
 	"olark": {
 		"business_account_id": "3146-815-10-9343",
 		"business_group_id": false
@@ -82,9 +83,7 @@
 		"manage/security": true,
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/categories": true,
-		"manage/site-settings/date-time-format": true,
 		"manage/site-settings/delete-site": true,
-		"manage/site-settings/date-time-format": true,
 		"manage/stats": true,
 		"manage/stats/podcasts": true,
 		"manage/themes": true,
@@ -154,6 +153,8 @@
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
 		"webpack/persistent-caching": false,
+		"woocommerce/extension-dashboard": true,
+		"woocommerce/extension-stats": true,
 		"wp-login": true
 	}
 }

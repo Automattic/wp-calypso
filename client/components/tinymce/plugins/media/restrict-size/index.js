@@ -35,7 +35,7 @@ function setImageSrc( img, opening, src, closing ) {
 	}
 
 	const parsed = deserialize( img );
-	if ( parsed.media.transient ) {
+	if ( parsed.media.transient || ! parsed.media.ID ) {
 		return img;
 	}
 

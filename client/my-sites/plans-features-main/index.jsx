@@ -45,7 +45,12 @@ class PlansFeaturesMain extends Component {
 
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 		if ( displayJetpackPlans && intervalType === 'monthly' ) {
-			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL_MONTHLY, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ];
+			const jetpackPlans = [
+				PLAN_JETPACK_FREE,
+				PLAN_JETPACK_PERSONAL_MONTHLY,
+				PLAN_JETPACK_PREMIUM_MONTHLY,
+				PLAN_JETPACK_BUSINESS_MONTHLY
+			];
 			if ( hideFreePlan ) {
 				jetpackPlans.shift();
 			}

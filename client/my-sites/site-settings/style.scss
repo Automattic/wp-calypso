@@ -84,9 +84,14 @@
 		font-style: italic;
 		font-weight: 400;
 		color: $gray-text-min;
+
 		&.is-indented {
 			margin-left: 24px;
 		}
+	}
+
+	.form-toggle__wrapper + p.form-setting-explanation.is-indented {
+		margin-left: 36px;
 	}
 
 	p.settings-alert {
@@ -364,6 +369,11 @@
 	&.is-expanded.is-top-level .foldable-card__content {
 		padding: 24px;
 	}
+
+	.site-settings__info-link-container {
+		margin-right: -36px;
+		height: 0;
+	}
 }
 
 // Site settings group styles
@@ -385,20 +395,4 @@
 
 .site-settings__add-to-whitelist {
 	margin-top: 3px;
-}
-
-.site-settings__date-time-format {
-	margin-top: -16px;
-
-	.site-settings__date-time-format-title {
-		color: $gray-text;
-		font-size: 16px;
-		line-height: 24px;
-		padding-bottom: 10px;
-	}
-	.site-settings__date-time-format-info {
-		color: $gray-text-min;
-		font-size: 13px;
-		font-style: italic;
-	}
 }

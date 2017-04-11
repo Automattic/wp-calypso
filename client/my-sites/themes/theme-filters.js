@@ -113,8 +113,6 @@ const taxonomies = {
         "journal",
         "lifestream",
         "magazine",
-        "major-league-baseball",
-        "mlb",
         "music",
         "nature",
         "news",

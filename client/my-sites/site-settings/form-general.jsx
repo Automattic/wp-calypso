@@ -28,14 +28,10 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
 import JetpackSyncPanel from './jetpack-sync-panel';
 import SiteIconSetting from './site-icon-setting';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import Banner from 'components/banner';
 import { isBusiness } from 'lib/products-values';
-import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
+import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import {
-	getLocalizedDate,
-	phpToMomentDatetimeFormat,
-} from './date-time-format/utils';
 
 class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
@@ -191,10 +187,10 @@ class SiteSettingsFormGeneral extends Component {
 						disabled={ isRequestingSettings }
 						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) } />
 					<span>{ translate( 'Public' ) }</span>
-					<FormSettingExplanation isIndented>
-						{ translate( 'Your site is visible to everyone, and it may be indexed by search engines.' ) }
-					</FormSettingExplanation>
 				</FormLabel>
+				<FormSettingExplanation isIndented>
+					{ translate( 'Your site is visible to everyone, and it may be indexed by search engines.' ) }
+				</FormSettingExplanation>
 
 				<FormLabel>
 					<FormRadio
@@ -205,25 +201,27 @@ class SiteSettingsFormGeneral extends Component {
 						disabled={ isRequestingSettings }
 						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) } />
 					<span>{ translate( 'Hidden' ) }</span>
-					<FormSettingExplanation isIndented>
-						{ translate( 'Your site is visible to everyone, but we ask search engines to not index your site.' ) }
-					</FormSettingExplanation>
 				</FormLabel>
+				<FormSettingExplanation isIndented>
+					{ translate( 'Your site is visible to everyone, but we ask search engines to not index your site.' ) }
+				</FormSettingExplanation>
 
 				{ ! site.jetpack &&
-					<FormLabel>
-						<FormRadio
-							name="blog_public"
-							value="-1"
-							checked={ -1 === parseInt( fields.blog_public, 10 ) }
-							onChange={ handleRadio }
-							disabled={ isRequestingSettings }
-							onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) } />
-						<span>{ translate( 'Private' ) }</span>
+					<div>
+						<FormLabel>
+							<FormRadio
+								name="blog_public"
+								value="-1"
+								checked={ -1 === parseInt( fields.blog_public, 10 ) }
+								onChange={ handleRadio }
+								disabled={ isRequestingSettings }
+								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) } />
+							<span>{ translate( 'Private' ) }</span>
+						</FormLabel>
 						<FormSettingExplanation isIndented>
 							{ translate( 'Your site is only visible to you and users you approve.' ) }
 						</FormSettingExplanation>
-					</FormLabel>
+					</div>
 				}
 
 			</FormFieldset>
@@ -263,7 +261,7 @@ class SiteSettingsFormGeneral extends Component {
 									'Allow synchronization of Posts and Pages with non-public post statuses'
 								) }
 							</CompactFormToggle>
-							<FormSettingExplanation>
+							<FormSettingExplanation isIndented>
 								{ translate( '(e.g. drafts, scheduled, private, etc\u2026)' ) }
 							</FormSettingExplanation>
 						</li>
@@ -352,51 +350,6 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	dateTimeFormat() {
-		if ( ! config.isEnabled( 'manage/site-settings/date-time-format' ) ) {
-			return null;
-		}
-
-		const {
-			fields: {
-				date_format: dateFormat,
-				start_of_week: startOfWeek,
-				time_format: timeFormat,
-				timezone_string: timezoneString,
-			},
-			moment,
-			site,
-			translate,
-		} = this.props;
-
-		const localizedDate = getLocalizedDate( timezoneString );
-		const weekday = startOfWeek
-			? moment.weekdays( parseInt( startOfWeek, 10 ) )
-			: moment.weekdays( 0 );
-
-		return (
-			<Card
-				className="site-settings__date-time-format"
-				href={ `/settings/date-time-format/${ site.slug }` }
-			>
-				<h2 className="site-settings__date-time-format-title">
-					{ translate( 'Date and Time Format' ) }
-				</h2>
-				<div className="site-settings__date-time-format-info">
-					{
-						dateFormat &&
-							phpToMomentDatetimeFormat( localizedDate, dateFormat )
-					} &bull; {
-						timeFormat &&
-							phpToMomentDatetimeFormat( localizedDate, timeFormat )
-					} &bull; {
-						translate( 'Week starts on %s', { args: weekday } )
-					}
-				</div>
-			</Card>
-		);
-	}
-
 	renderJetpackSyncPanel() {
 		const { site } = this.props;
 		if ( ! site.jetpack || site.versionCompare( '4.2-alpha', '<' ) ) {
@@ -424,7 +377,7 @@ class SiteSettingsFormGeneral extends Component {
 				>
 					{ translate(
 						'Use synchronized data to boost performance'
-					) }
+					) } (a8c-only experimental feature)
 				</CompactFormToggle>
 			</CompactCard>
 		);
@@ -486,8 +439,6 @@ class SiteSettingsFormGeneral extends Component {
 					</form>
 				</Card>
 
-				{ this.dateTimeFormat() }
-
 				<SectionHeader label={ translate( 'Privacy' ) }>
 					<Button
 						compact={ true }
@@ -521,13 +472,15 @@ class SiteSettingsFormGeneral extends Component {
 								</Button>
 							</div>
 						</CompactCard>
-						{ ! isBusiness( site.plan ) && <UpgradeNudge
-							className="site-settings__footer-credit-nudge"
-							feature={ FEATURE_NO_BRANDING }
-							title={ translate( 'Remove the footer credit entirely with WordPress.com Business' ) }
-							message={ translate( 'Upgrade to remove the footer credit, add Google Analytics and more' ) }
-							icon="customize"
-						/> }
+						{
+							! isBusiness( site.plan ) &&
+							<Banner
+								feature={ FEATURE_NO_BRANDING }
+								plan={ PLAN_BUSINESS }
+								title={ translate( 'Remove the footer credit entirely with WordPress.com Business' ) }
+								description={ translate( 'Upgrade to remove the footer credit, add Google Analytics and more' ) }
+							/>
+						}
 					</div>
 				}
 
@@ -589,9 +542,6 @@ export default wrapSettingsForm( settings => {
 		blogdescription: '',
 		lang_id: '',
 		timezone_string: '',
-		date_format: '',
-		time_format: '',
-		start_of_week: 0,
 		blog_public: '',
 		admin_url: '',
 		jetpack_sync_non_public_post_stati: false,
@@ -610,9 +560,6 @@ export default wrapSettingsForm( settings => {
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
 		timezone_string: settings.timezone_string,
-		date_format: settings.date_format,
-		time_format: settings.time_format,
-		start_of_week: settings.start_of_week,
 		jetpack_sync_non_public_post_stati: settings.jetpack_sync_non_public_post_stati,
 
 		holidaysnow: !! settings.holidaysnow,

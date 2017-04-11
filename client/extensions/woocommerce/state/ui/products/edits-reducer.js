@@ -8,10 +8,9 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import {
-	WOOCOMMERCE_EDIT_EXISTING_PRODUCT,
-	WOOCOMMERCE_EDIT_NEW_PRODUCT,
 	WOOCOMMERCE_EDIT_EXISTING_PRODUCT_VARIATION_TYPE,
 	WOOCOMMERCE_EDIT_NEW_PRODUCT_VARIATION_TYPE,
+	WOOCOMMERCE_EDIT_PRODUCT,
 } from '../../action-types';
 
 const debug = debugFactory( 'woocommerce:state:ui:products' );
@@ -20,10 +19,9 @@ const initialState = null;
 
 export default function( state = initialState, action ) {
 	const handlers = {
-		[ WOOCOMMERCE_EDIT_EXISTING_PRODUCT ]: editExistingProductAction,
-		[ WOOCOMMERCE_EDIT_NEW_PRODUCT ]: editNewProductAction,
 		[ WOOCOMMERCE_EDIT_EXISTING_PRODUCT_VARIATION_TYPE ]: editExistingProductVariationTypeAction,
 		[ WOOCOMMERCE_EDIT_NEW_PRODUCT_VARIATION_TYPE ]: editNewProductVariationTypeAction,
+		[ WOOCOMMERCE_EDIT_PRODUCT ]: editProductAction,
 	};
 
 	const handler = handlers[ action.type ];
@@ -31,20 +29,39 @@ export default function( state = initialState, action ) {
 	return ( handler && handler( state, action ) ) || state;
 }
 
-function editExistingProductAction( edits, action ) {
+function editProductAction( edits, action ) {
 	const { product, data } = action.payload;
 
 	const prevEdits = edits || {};
-	const updates = editExistingProduct( prevEdits.updates, product, data );
-	return { ...prevEdits, updates };
+	const bucket = product && isNumber( product.id ) && 'updates' || 'creates';
+	const array = editProduct( prevEdits[ bucket ], product, data );
+
+	return { ...prevEdits, [ bucket ]: array };
 }
 
-function editNewProductAction( edits, action ) {
-	const { data, newProductIndex } = action.payload;
+function editProduct( array, product, data ) {
+	// Use the existing product id (real or placeholder), or creates.length if no product.
+	const prevArray = array || [];
+	const productId = ( product ? product.id : { index: prevArray.length } );
 
-	const prevEdits = edits || {};
-	const creates = editNewProduct( prevEdits.creates, newProductIndex, data );
-	return { ...prevEdits, creates };
+	let found = false;
+
+	// Look for this object in the appropriate create or edit array first.
+	const _array = prevArray.map( ( p ) => {
+		if ( productId === p.id ) {
+			found = true;
+			return { ...p, ...data };
+		}
+
+		return p;
+	} );
+
+	if ( ! found ) {
+		// update or create not already in edit state, so add it now.
+		_array.push( { id: productId, ...data } );
+	}
+
+	return _array;
 }
 
 function editExistingProductVariationTypeAction( edits, action ) {
@@ -67,39 +84,6 @@ function editNewProductVariationTypeAction( edits, action ) {
 	const prevEdits = edits || {};
 	const creates = editNewProduct( prevEdits.creates, newProductIndex, { attributes: _attributes } );
 	return { ...prevEdits, creates };
-}
-
-function editExistingProduct( updates, product, data ) {
-	const prevUpdates = updates || [];
-
-	let found = false;
-
-	const _updates = prevUpdates.map( ( prevUpdate ) => {
-		if ( product.id === prevUpdate.id ) {
-			found = true;
-			return { ...prevUpdate, ...data };
-		}
-
-		return prevUpdate;
-	} );
-
-	if ( ! found ) {
-		_updates.push( { id: product.id, ...data } );
-	}
-
-	return _updates;
-}
-
-function editNewProduct( creates, newProductIndex, data ) {
-	const prevCreates = creates || [];
-	const index = ( isNumber( newProductIndex ) ? newProductIndex : prevCreates.length );
-
-	const _creates = [ ...prevCreates ];
-	const prevCreate = prevCreates[ index ] || {};
-
-	_creates[ index ] = { ...prevCreate, ...data };
-
-	return _creates;
 }
 
 function editProductVariationType( attributes, attributeIndex, data ) {

@@ -17,8 +17,8 @@ module.exports = {
 		defaultVariation: 'userLast',
 		allowExistingUsers: false,
 	},
-	signupStepOneMobileOptimize: {
-		datestamp: '20170322',
+	signupPlansCallToAction: {
+		datestamp: '20170403',
 		variations: {
 			original: 50,
 			modified: 50,
@@ -32,15 +32,6 @@ module.exports = {
 			disabled: 0
 		},
 		defaultVariation: 'disabled',
-		allowExistingUsers: false
-	},
-	domainSuggestionNudgeLabels: {
-		datestamp: '20170327',
-		variations: {
-			original: 50,
-			withLabels: 50
-		},
-		defaultVariation: 'original',
 		allowExistingUsers: false
 	},
 	jetpackNewDescriptions: {
