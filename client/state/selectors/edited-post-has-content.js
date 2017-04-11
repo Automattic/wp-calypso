@@ -28,7 +28,7 @@ export function isEmptyContent( content ) {
   * @param  {Number}  siteId Site ID
   * @param  {Number}  postId Post ID
   * @return {Boolean}        Whether the edited post has content or not
-  */
+ */
 export default function editedPostHasContent( state, siteId, postId ) {
 	const editedPost = getEditedPost( state, siteId, postId );
 	return (
