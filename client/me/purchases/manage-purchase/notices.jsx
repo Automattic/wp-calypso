@@ -176,7 +176,22 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		return this.renderExpiredRenewNotice() || this.renderPurchaseExpiringNotice() || this.renderCreditCardExpiringNotice();
+		const expiredNotice = this.renderExpiredRenewNotice();
+		if ( expiredNotice ) {
+			return expiredNotice;
+		}
+
+		const expiringNotice = this.renderPurchaseExpiringNotice();
+		if ( expiringNotice ) {
+			return expiringNotice;
+		}
+
+		const expiringCreditCardNotice = this.renderCreditCardExpiringNotice();
+		if ( expiringCreditCardNotice ) {
+			return expiringCreditCardNotice;
+		}
+
+		return null;
 	}
 }
 
