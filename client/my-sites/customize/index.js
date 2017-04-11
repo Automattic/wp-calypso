@@ -1,18 +1,14 @@
 /**
- * External dependencies
- */
-import page from 'page';
-
-/**
  * Internal dependencies
  */
-import { siteSelection, sites, navigation } from 'my-sites/controller';
+import { makeLayout } from 'controller';
+import { siteSelection, makeSites, makeNavigation } from 'my-sites/controller';
 import { customize } from './controller';
 import config from 'config';
 
-export default function() {
+export default function( router ) {
 	if ( config.isEnabled( 'manage/customize' ) ) {
-		page( '/customize/:panel([^\.]+)?', siteSelection, sites );
-		page( '/customize/:panel?/:domain', siteSelection, navigation, customize );
+		router( '/customize/:panel([^\.]+)?', siteSelection, makeSites );
+		router( '/customize/:panel?/:domain', siteSelection, makeNavigation, customize, makeLayout );
 	}
 }
