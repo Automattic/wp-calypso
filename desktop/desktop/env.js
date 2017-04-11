@@ -23,15 +23,21 @@ require( './app-handlers/exceptions' )();
 /**
  * Module variables
  */
+var apppath;
 
-// if app path set to asar, switch to the dir, not file
-var apppath = app.getAppPath();
-if ( path.extname( apppath ) === '.asar' ) {
-	apppath = path.dirname( apppath );
+if ( process.env.DESKTOP_APP_PATH ) {
+	apppath = process.env.DESKTOP_APP_PATH;
+} else {
+	apppath = app.getAppPath();
+
+	// if app path set to asar, switch to the dir, not file
+	if ( path.extname( apppath ) === '.asar' ) {
+		apppath = path.dirname( apppath );
+	}
+
+	// Run the app from /desktop so that relative paths in /server are in order.
+	apppath = path.resolve( apppath, 'desktop' );
 }
-
-// Run the app from /desktop so that relative paths in /server are in order.
-apppath = path.resolve( apppath, 'desktop' );
 
 process.chdir( apppath );
 

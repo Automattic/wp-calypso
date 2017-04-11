@@ -174,7 +174,7 @@ eslint: lint
 # Testing
 test: config-test package
 	@NODE_PATH=../server$(ENV_PATH_SEP)../client $(WEBPACK_BIN) --config ./webpack.config.test.js
-	@CALYPSO_PATH=`pwd` $(ELECTRON_TEST) --inline-diffs --timeout 15000 build/desktop-test.js
+	@DESKTOP_APP_PATH=$(BUILD_DIR)/desktop $(ELECTRON_TEST) --inline-diffs --timeout 15000 build/desktop/desktop-test.js
 
 test-osx: osx
 	@rm -rf ./release/WordPress.com-darwin-x64-unpacked

@@ -11,7 +11,7 @@ const expect = require( 'chai' ).expect;
  */
 const boot = require( '../app' );
 
-process.chdir( process.env.CALYPSO_PATH );
+process.chdir( process.env.DESKTOP_APP_PATH );
 
 describe( 'check app loads', function() {
 	it( 'should have calypso in DOM', function( done ) {
