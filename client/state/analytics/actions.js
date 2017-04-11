@@ -82,8 +82,8 @@ export const recordTracksEvent = ( name, properties ) =>
 export const recordCustomFacebookConversionEvent = ( name, properties ) =>
 	recordEvent( 'fb', { name, properties } );
 
-export const recordCustomAdWordsRemarketingEvent = ( name, properties ) =>
-	recordEvent( 'adwords', { name, properties } );
+export const recordCustomAdWordsRemarketingEvent = ( properties ) =>
+	recordEvent( 'adwords', { properties } );
 
 export const recordPageView = ( url, title, service ) => ( {
 	type: ANALYTICS_PAGE_VIEW_RECORD,
