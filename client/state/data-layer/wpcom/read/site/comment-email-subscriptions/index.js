@@ -32,7 +32,7 @@ export function receiveCommentEmailSubscription( store, action, next, response )
 	const subscribed = !! ( response && response.subscribed );
 	if ( ! subscribed ) {
 		// shoot. something went wrong.
-		next( unsubscribeToNewCommentEmail( action.payload.blogId ) );
+		receiveCommentEmailSubscriptionError( store, action, next );
 		return;
 	}
 }
@@ -61,7 +61,7 @@ export function receiveCommentEmailUnsubscription( store, action, next, response
 	const subscribed = !! ( response && response.subscribed );
 	if ( subscribed ) {
 		// shoot. something went wrong.
-		next( subscribeToNewCommentEmail( action.payload.blogId ) );
+		receiveCommentEmailUnsubscriptionError( store, action, next );
 		return;
 	}
 }

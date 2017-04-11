@@ -67,12 +67,18 @@ describe( 'comment-email-subscriptions', () => {
 
 		it( 'should dispatch an unsubscribe if it fails using next', () => {
 			const nextSpy = spy();
+			const dispatch = spy();
 			receivePostEmailSubscription(
-				null,
+				{ dispatch },
 				{ payload: { blogId: 1234 } },
 				nextSpy,
 				{ subscribed: false }
 			);
+			expect( dispatch ).to.have.been.calledWithMatch( {
+				notice: {
+					text: 'Sorry, we had a problem subscribing. Please try again.'
+				}
+			} );
 			expect( nextSpy ).to.have.been.calledWith(
 				unsubscribeToNewPostEmail( 1234 )
 			);
@@ -81,14 +87,14 @@ describe( 'comment-email-subscriptions', () => {
 
 	describe( 'receivePostEmailSubscriptionError', () => {
 		it( 'should dispatch an error notice and unsubscribe action', () => {
-			const dispatchSpy = spy();
+			const dispatch = spy();
 			const nextSpy = spy();
 			receivePostEmailSubscriptionError(
-				{ dispatch: dispatchSpy },
+				{ dispatch },
 				{ payload: { blogId: 1234 } },
 				nextSpy
 			);
-			expect( dispatchSpy ).to.have.been.calledWithMatch( {
+			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
 					text: 'Sorry, we had a problem subscribing. Please try again.'
 				}
@@ -132,12 +138,19 @@ describe( 'comment-email-subscriptions', () => {
 
 		it( 'should dispatch a subscribe if it fails using next', () => {
 			const nextSpy = spy();
+			const dispatch = spy();
 			receivePostEmailUnsubscription(
-				null,
+				{ dispatch },
 				{ payload: { blogId: 1234 } },
 				nextSpy,
 				{ subscribed: true }
 			);
+
+			expect( dispatch ).to.have.been.calledWithMatch( {
+				notice: {
+					text: 'Sorry, we had a problem unsubscribing. Please try again.'
+				}
+			} );
 			expect( nextSpy ).to.have.been.calledWith(
 				subscribeToNewPostEmail( 1234 )
 			);
@@ -146,14 +159,14 @@ describe( 'comment-email-subscriptions', () => {
 
 	describe( 'receivePostEmailUnsubscriptionError', () => {
 		it( 'should dispatch an error notice and subscribe action', () => {
-			const dispatchSpy = spy();
+			const dispatch = spy();
 			const nextSpy = spy();
 			receivePostEmailUnsubscriptionError(
-				{ dispatch: dispatchSpy },
+				{ dispatch },
 				{ payload: { blogId: 1234 } },
 				nextSpy
 			);
-			expect( dispatchSpy ).to.have.been.calledWithMatch( {
+			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
 					text: 'Sorry, we had a problem unsubscribing. Please try again.'
 				}

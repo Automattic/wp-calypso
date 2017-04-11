@@ -55,8 +55,9 @@ describe( 'comment-email-subscriptions', () => {
 
 		it( 'should dispatch an unsubscribe if it fails using next', () => {
 			const nextSpy = spy();
+			const dispatch = spy();
 			receiveCommentEmailSubscription(
-				null,
+				{ dispatch },
 				{ payload: { blogId: 1234 } },
 				nextSpy,
 				{ subscribed: false }
@@ -64,19 +65,24 @@ describe( 'comment-email-subscriptions', () => {
 			expect( nextSpy ).to.have.been.calledWith(
 				unsubscribeToNewCommentEmail( 1234 )
 			);
+			expect( dispatch ).to.have.been.calledWithMatch( {
+				notice: {
+					text: 'Sorry, we had a problem subscribing. Please try again.'
+				}
+			} );
 		} );
 	} );
 
 	describe( 'receiveCommentEmailSubscriptionError', () => {
 		it( 'should dispatch an error notice and unsubscribe action', () => {
-			const dispatchSpy = spy();
+			const dispatch = spy();
 			const nextSpy = spy();
 			receiveCommentEmailSubscriptionError(
-				{ dispatch: dispatchSpy },
+				{ dispatch },
 				{ payload: { blogId: 1234 } },
 				nextSpy
 			);
-			expect( dispatchSpy ).to.have.been.calledWithMatch( {
+			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
 					text: 'Sorry, we had a problem subscribing. Please try again.'
 				}
@@ -109,6 +115,7 @@ describe( 'comment-email-subscriptions', () => {
 	describe( 'receiveCommentEmailUnsubscription', () => {
 		it( 'should do nothing if successful', () => {
 			const nextSpy = spy();
+
 			receiveCommentEmailUnsubscription(
 				null,
 				null,
@@ -120,12 +127,18 @@ describe( 'comment-email-subscriptions', () => {
 
 		it( 'should dispatch a subscribe if it fails using next', () => {
 			const nextSpy = spy();
+			const dispatch = spy();
 			receiveCommentEmailUnsubscription(
-				null,
+				{ dispatch },
 				{ payload: { blogId: 1234 } },
 				nextSpy,
 				{ subscribed: true }
 			);
+			expect( dispatch ).to.have.been.calledWithMatch( {
+				notice: {
+					text: 'Sorry, we had a problem unsubscribing. Please try again.'
+				}
+			} );
 			expect( nextSpy ).to.have.been.calledWith(
 				subscribeToNewCommentEmail( 1234 )
 			);
@@ -134,14 +147,14 @@ describe( 'comment-email-subscriptions', () => {
 
 	describe( 'receiveCommentEmailUnsubscriptionError', () => {
 		it( 'should dispatch an error notice and subscribe action', () => {
-			const dispatchSpy = spy();
+			const dispatch = spy();
 			const nextSpy = spy();
 			receiveCommentEmailUnsubscriptionError(
-				{ dispatch: dispatchSpy },
+				{ dispatch },
 				{ payload: { blogId: 1234 } },
 				nextSpy
 			);
-			expect( dispatchSpy ).to.have.been.calledWithMatch( {
+			expect( dispatch ).to.have.been.calledWithMatch( {
 				notice: {
 					text: 'Sorry, we had a problem unsubscribing. Please try again.'
 				}

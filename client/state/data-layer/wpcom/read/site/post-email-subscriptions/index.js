@@ -51,7 +51,7 @@ export function receivePostEmailSubscription( store, action, next, response ) {
 	const subscribed = !! ( response && response.subscribed );
 	if ( ! subscribed ) {
 		// shoot. something went wrong.
-		next( unsubscribeToNewPostEmail( action.payload.blogId ) );
+		receivePostEmailSubscriptionError( store, action, next );
 		return;
 	}
 	// pass this on, but tack in the delivery_frequency that we got back from the API
@@ -89,15 +89,10 @@ export function requestUpdatePostEmailSubscription( { dispatch, getState }, acti
 	next( action );
 }
 
-export function receiveUpdatePostEmailSubscription( { dispatch }, { payload: { blogId }, meta: { previousState } }, next, response ) {
+export function receiveUpdatePostEmailSubscription( store, action, next, response ) {
 	if ( ! ( response && response.success ) ) {
 		// revert
-		next(
-			updateNewPostEmailSubscription(
-				blogId,
-				previousState
-			)
-		);
+		receiveUpdatePostEmailSubscriptionError( store, action, next );
 	}
 }
 
@@ -126,7 +121,7 @@ export function receivePostEmailUnsubscription( store, action, next, response ) 
 	const subscribed = !! ( response && response.subscribed );
 	if ( subscribed ) {
 		// shoot. something went wrong.
-		next( subscribeToNewPostEmail( action.payload.blogId ) );
+		receivePostEmailUnsubscriptionError( store, action, next );
 		return;
 	}
 }
