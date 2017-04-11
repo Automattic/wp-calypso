@@ -9,7 +9,12 @@ const path = require( 'path' );
 const express = require( 'express' );
 const Fuse = require( 'fuse.js' );
 const camelCase = require( 'lodash/camelCase' );
-const get = require( 'lodash/get' );
+
+/**
+ * Internal dependencies
+ */
+import { defaultExport, defaultFunction } from './default-exports';
+import { getComment } from './function-comments';
 
 /**
  * Constants
@@ -23,37 +28,6 @@ const SELECTORS_DIR = path.resolve( __dirname, '../../../client/state/selectors'
 
 const router = express.Router();
 let prepareFuse;
-
-const defaultExportOf = ast => ast.body.find( ( { type } ) => type === 'ExportDefaultDeclaration' );
-const functionByName = ( ast, name ) => {
-	const exports = ast
-		.body
-		.filter( ( { type } ) => type === 'ExportNamedDeclaration' )
-		.find( ( { declaration } ) => (
-			( 'FunctionDeclaration' === declaration.type && name === declaration.id.name ) ||
-			(
-				'VariableDeclaration' === declaration.type &&
-				declaration.declarations && declaration.declarations[ 0 ] &&
-				declaration.declarations[ 0 ].id.name === name
-			)
-		) );
-
-	if ( exports ) {
-		return exports;
-	}
-
-	// find non-exported function declarations
-	return ast
-		.body
-		.filter( ( { type } ) => (
-			( type === 'VariableDeclaration' ) ||
-			( type === 'VariableDeclarator' )
-		) )
-		.find( ( { declarations } ) => (
-			declarations && declarations[ 0 ] &&
-			declarations[ 0 ].id === name
-		) );
-};
 
 const jsParse = contents => {
 	try {
@@ -71,29 +45,6 @@ const jsParse = contents => {
 	}
 };
 
-const defaultExportFunctionOf = ast => {
-	const defaultExport = defaultExportOf( ast );
-	const exportType = get( defaultExport, 'declaration.type' );
-
-	if ( 'FunctionDeclaration' === exportType ) {
-		return defaultExport;
-	}
-
-	if ( 'ArrowFunctionExpression' === exportType ) {
-		return defaultExport;
-	}
-
-	if ( 'Identifier' === exportType ) {
-		return functionByName( ast, defaultExport.declaration.name );
-	}
-
-	if ( 'CallExpression' === exportType ) {
-		return functionByName( ast, defaultExport.declaration.callee.name );
-	}
-
-	return null;
-};
-
 const parseSelectorFile = file => new Promise( resolve => {
 	const contents = fs.readFileSync( path.resolve( SELECTORS_DIR, file ), { encoding: 'utf8' } );
 	const ast = jsParse( contents );
@@ -107,23 +58,30 @@ const parseSelectorFile = file => new Promise( resolve => {
 		return resolve( null );
 	}
 
-	const expectedExport = camelCase( path.basename( file, '.js' ) );
-	const defaultExport = defaultExportFunctionOf( ast );
-	if ( ! defaultExport ) {
-		console.log( JSON.stringify( defaultExport, null, 2 ) );
+	const expectedName = camelCase( path.basename( file, '.js' ) );
+
+	// if the default export has a comment attached to it
+	// then we don't need to jump to the referenced declaration
+	const moduleExport = defaultExport( ast );
+	const defaultComment = getComment( moduleExport );
+	const defaultNode = defaultComment
+		? moduleExport
+		: defaultFunction( ast );
+
+	if ( ! defaultNode ) {
 		console.warn(
 			chalk.red( '\nWARNING: ' ) +
 			chalk.yellow( 'Could not find default-exported function' ) +
 			chalk.yellow( '\nBased on the filename: ' ) +
 			chalk.blue( path.basename( file ) ) +
 			chalk.yellow( '\nWe expected to find an exported function with name ' ) +
-			chalk.blue( expectedExport )
+			chalk.blue( expectedName )
 		);
 		return resolve( null );
 	}
 
-	const { leadingComments: comments } = defaultExport;
-	if ( ! comments || ! comments[ 0 ] || 'Block' !== comments[ 0 ].type ) {
+	const comment = getComment( defaultNode );
+	if ( ! comment ) {
 		console.warn(
 			chalk.red( '\nWARNING: ' ) +
 			chalk.yellow( 'Found no JSDoc block comments for selector in ' ) +
@@ -133,7 +91,7 @@ const parseSelectorFile = file => new Promise( resolve => {
 	}
 
 	// add a dummy export so that JSDoc parses the block
-	const source = `/*${ comments[ 0 ].value }*/function ${ expectedExport }() {}`;
+	const source = `/*${ comment }*/function ${ expectedName }() {}`;
 	try {
 		const [ docblock, /* module info */ ] = jsdoc.explainSync( { source } );
 
@@ -164,10 +122,12 @@ function prime() {
 			// Omit index, system files, and subdirectories
 			files = files.filter( ( file ) => 'index.js' !== file && /\.js$/.test( file ) );
 
+			const ticBeforeParsing = process.hrtime();
 			Promise.all( files.map( parseSelectorFile ) ).then( rawSelectors => {
+				const [ parseDuration, /* ns */ ] = process.hrtime( ticBeforeParsing );
 				// Sort selectors by name alphabetically
 				const selectors = rawSelectors.filter( a => a ).sort( ( a, b ) => a.name > b.name );
-				console.log( chalk.yellow( `Found ${ selectors.length } selectors` ) );
+				console.log( chalk.yellow( `Found ${ selectors.length } selectors in ${ parseDuration }s` ) );
 
 				resolve( new Fuse( selectors, {
 					keys: [ {

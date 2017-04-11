@@ -16,5 +16,5 @@ import createSelector from 'lib/create-selector';
  */
 export default createSelector(
 	state => filter( state.reader.follows.items, [ 'is_following', true ] ),
-	state => [ state.reader.follows.items ],
+	state => [ state.reader.follows.items ]
 );
