@@ -1,6 +1,17 @@
+.reader-subscription-list-item__byline {
+	color: darken( $gray, 30% );
+}
 
-.reader-subscription-list-item__by-text {
-	color: $gray;
+.reader-subscription-list-item__link {
+	color: $blue-medium;
+
+	&:hover {
+		color: $blue-light;
+	}
+}
+
+.reader-subscription-list-item__by-text .reader-subscription-list-item__link {
+	color: darken( $gray, 30% );
 }
 
 .reader-subscription-list-item .gravatar {
@@ -48,9 +59,7 @@
 	color: $gray;
 	float: right;
 }
-.reader-subscription-list-item__site-url, .reader-subscription-list-item__site-url a {
-	color: $gray;
-}
+
 .reader-subscription-list-item__site-title {
 	font-weight: 600;
 }

@@ -251,14 +251,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	height: 20px;
 	width: calc( 100% - 25px );
 
-	a, a:visited {
-		color: $blue-medium;
-	}
-
-	a:hover {
-		color: $blue-light;
-	}
-
 	&::after {
 		@include long-content-fade( $size: 10% );
 	}
@@ -346,10 +338,17 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	display: none;
 }
 
-.reader-post-card__link,
-.reader-post-card__link:visited {
+.reader-post-card__link {
 	color: $blue-medium;
 	cursor: pointer;
+
+	&:hover {
+		color: $blue-light;
+	}
+
+	&:visited {
+		color: $blue-medium;
+	}
 }
 
 .reader-post-card__post {

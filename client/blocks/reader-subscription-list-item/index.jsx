@@ -5,7 +5,6 @@ import React from 'react';
 import classnames from 'classnames';
 import { trim, isEmpty, get } from 'lodash';
 import { localize } from 'i18n-calypso';
-import moment from 'moment';
 
 /**
  * Internal Dependencies
@@ -15,8 +14,6 @@ import FollowButton from 'reader/follow-button';
 import { getStreamUrl } from 'reader/route';
 import EmailSettings from './email-settings';
 
-const stripUrl = url => url.replace( 'https://', '' ).replace( 'http://', '' ).replace( '/', '' );
-
 function ReaderSubscriptionListItem( {
 	url,
 	feedId,
@@ -25,8 +22,6 @@ function ReaderSubscriptionListItem( {
 	site,
 	className = '',
 	followSource,
-	lastUpdated,
-	translate,
 } ) {
 	const siteTitle = feed && feed.name;
 	const siteAuthor = site && site.owner;
@@ -56,20 +51,15 @@ function ReaderSubscriptionListItem( {
 				/>
 			</div>
 			<div className="reader-subscription-list-item__byline">
-				<span className="reader-subscription-list-item__site-title">{ <a href={ streamUrl }> { siteTitle } </a> }</span>
+				<span className="reader-subscription-list-item__site-title">
+					{ <a href={ streamUrl } className="reader-subscription-list-item__link"> { siteTitle } </a> }
+				</span>
+				<div>{ siteExcerpt }</div>
 				{ ! isEmpty( authorName ) &&
-					<span>
-						<span className="reader-subscription-list-item__by-text">
-							{ translate( 'by' ) }
-						</span>
-						<span><a href={ streamUrl }> { authorName } </a></span>
+					<span className="reader-subscription-list-item__by-text">
+						by <a href={ streamUrl } className="reader-subscription-list-item__link"> { authorName } </a>
 					</span>
 				}
-				<div>{ siteExcerpt }</div>
-				<div className="reader-subscription-list-item__site-url">
-					<a href={ siteUrl }> { siteUrl && stripUrl( siteUrl ) } </a>
-					{ lastUpdated && moment( lastUpdated ).fromNow() }
-				</div>
 			</div>
 			<div className="reader-subscription-list-item__options">
 				<FollowButton siteUrl={ siteUrl } followSource={ followSource } />
