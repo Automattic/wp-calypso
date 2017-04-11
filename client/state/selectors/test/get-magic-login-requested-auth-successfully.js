@@ -14,7 +14,7 @@ describe( 'getMagicLoginRequestedAuthSuccessfully()', () => {
 		expect( status ).to.be.false;
 	} );
 
-	it( 'should return true if true', () => {
+	it( 'should return true if requested auth succeeded', () => {
 		const status = getMagicLoginRequestedAuthSuccessfully( {
 			login: {
 				magicLogin: {
@@ -25,7 +25,7 @@ describe( 'getMagicLoginRequestedAuthSuccessfully()', () => {
 		expect( status ).to.be.true;
 	} );
 
-	it( 'should return false if false', () => {
+	it( 'should return false if requested auth failed', () => {
 		const status = getMagicLoginRequestedAuthSuccessfully( {
 			login: {
 				magicLogin: {
