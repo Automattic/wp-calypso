@@ -27,7 +27,7 @@ import versionCompare from 'lib/version-compare';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import MainWrapper from './main-wrapper';
-import StepHeader from '../step-header';
+import StepHeader from 'signup/step-header';
 import HelpButton from './help-button';
 import untrailingslashit from 'lib/route/untrailingslashit';
 import {

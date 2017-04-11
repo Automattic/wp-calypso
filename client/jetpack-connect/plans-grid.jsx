@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Main from 'components/main';
-import StepHeader from '../step-header';
+import StepHeader from 'signup/step-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 
 export default React.createClass( {

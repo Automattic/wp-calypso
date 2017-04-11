@@ -16,7 +16,7 @@ import cookie from 'cookie';
  */
 import addQueryArgs from 'lib/route/add-query-args';
 import Main from 'components/main';
-import StepHeader from '../step-header';
+import StepHeader from 'signup/step-header';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import SignupForm from 'components/signup-form';
