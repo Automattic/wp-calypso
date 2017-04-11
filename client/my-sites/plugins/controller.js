@@ -258,10 +258,9 @@ const controller = {
 		renderPluginWarnings( context );
 	},
 
-	resetHistory( context, next ) {
+	resetHistory() {
 		lastPluginsListVisited = null;
 		lastPluginsQuerystring = null;
-		next();
 	}
 };
 
