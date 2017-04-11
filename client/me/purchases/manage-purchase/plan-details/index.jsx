@@ -41,6 +41,10 @@ class PurchasePlanDetails extends Component {
 			return null;
 		}
 
+		if ( pluginList.length < 1 ) {
+			return null;
+		}
+
 		return (
 			<Card>
 				<QueryPluginKeys siteId={ selectedSite.ID } />
@@ -64,6 +68,6 @@ export default connect(
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
-		pluginList: getPluginsForSite( state, props.selectedSite.ID ),
+		pluginList: props.selectedSite ? getPluginsForSite( state, props.selectedSite.ID ) : [],
 	} )
 )( localize( PurchasePlanDetails ) );
