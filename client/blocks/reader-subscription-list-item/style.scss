@@ -66,6 +66,8 @@
 .reader-subscription-list-item__email-popout-wrapper {
 	display: flex;
 	flex-direction: column;
+	min-width: 200px;
+	min-height: 150px;
 }
 
 .reader-subscription-list-item__email-popout-header {
@@ -75,3 +77,14 @@
 	padding-left: 15px;
 	justify-content: flex-start;
 }
+
+.reader-subscription-list-item__settings-menu-popout {
+	background-color: blue;
+}
+
+.reader-subscription-list-item__email-popout-toggle {
+	display: flex;
+	justify-content: space-between;
+	padding-left: 15px;
+}
+

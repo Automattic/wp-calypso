@@ -54,10 +54,11 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 					isVisible={ this.state.showPopover }
 					context={ this.spanRef }
 					position={ 'bottom left' }
+					className="reader-subscription-list-item__settings-menu-popout"
 				>
 					<div className="reader-subscription-list-item__email-popout-wrapper">
 						<h3 className="reader-subscription-list-item__email-popout-header"> { translate( 'Email me' ) } </h3>
-						<div>
+						<div className="reader-subscription-list-item__email-popout-toggle">
 							<span> { translate( 'New posts' ) } </span>
 							<FormToggle />
 						</div>
@@ -72,7 +73,7 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 								{ translate( 'Weekly' ) }
 							</ControlItem>
 						</SegmentedControl>
-						<div>
+						<div className="reader-subscription-list-item__email-popout-toggle">
 							<span> New comments</span>
 							<FormToggle />
 						</div>
