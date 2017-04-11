@@ -8,16 +8,11 @@ import { spy, stub } from 'sinon';
  * Internal dependencies
  */
 import { local, mergeHandlers } from '../utils';
-import useMockery from 'test/helpers/use-mockery';
 
 describe( 'WordPress.com API Middleware', () => {
 	let middleware;
 	let next;
 	let store;
-
-	useMockery( ( mockery ) => {
-		mockery.registerMock( './analytics', {} );
-	} );
 
 	beforeEach( () => {
 		middleware = require( '../wpcom-api-middleware' ).middleware;
