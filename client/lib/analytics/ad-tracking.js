@@ -292,28 +292,28 @@ function retarget() {
 /**
  * Fire custom facebook conversion tracking event.
  *
- * @param {String} eventName - The name of the custom event.
- * @param {Object} attributes - The custom event attributes.
+ * @param {String} name - The name of the custom event.
+ * @param {Object} properties - The custom event attributes.
  * @returns {void}
  */
-function trackCustomFacebookConversionEvent( eventName, attributes ) {
+function trackCustomFacebookConversionEvent( name, properties ) {
 	window.fbw && window.fbq(
 		'trackCustom',
-		event,
-		attributes
+		name,
+		properties
 	);
 }
 
 /**
  * Fire custom adwords conversation tracking event.
  *
- * @param {Object} attributes - The custom event attributes.
+ * @param {Object} properties - The custom event attributes.
  * @returns {void}
  */
-function trackCustomAdWordsRemarketingEvent( attributes ) {
+function trackCustomAdWordsRemarketingEvent( properties ) {
 	window.google_trackConversion && window.google_trackConversion( {
 		google_conversion_id: GOOGLE_CONVERSION_ID,
-		google_custom_params: attributes,
+		google_custom_params: properties,
 		google_remarketing_only: true
 	} );
 }
