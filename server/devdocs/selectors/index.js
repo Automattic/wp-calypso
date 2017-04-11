@@ -51,7 +51,7 @@ const parseSelectorFile = file => new Promise( resolve => {
 
 	if ( ! ast ) {
 		console.warn(
-			chalk.red( '\nWARNING: ' ) +
+			chalk.red( '\nWarning: ' ) +
 			chalk.yellow( 'Could not parse file: ' ) +
 			chalk.blue( path.basename( file ) )
 		);
@@ -70,7 +70,7 @@ const parseSelectorFile = file => new Promise( resolve => {
 
 	if ( ! defaultNode ) {
 		console.warn(
-			chalk.red( '\nWARNING: ' ) +
+			chalk.red( '\nWarning: ' ) +
 			chalk.yellow( 'Could not find default-exported function' ) +
 			chalk.yellow( '\nBased on the filename: ' ) +
 			chalk.blue( path.basename( file ) ) +
@@ -83,7 +83,7 @@ const parseSelectorFile = file => new Promise( resolve => {
 	const comment = getComment( defaultNode );
 	if ( ! comment ) {
 		console.warn(
-			chalk.red( '\nWARNING: ' ) +
+			chalk.red( '\nWarning: ' ) +
 			chalk.yellow( 'Found no JSDoc block comments for selector in ' ) +
 			chalk.blue( path.basename( file ) )
 		);
@@ -98,7 +98,7 @@ const parseSelectorFile = file => new Promise( resolve => {
 		return resolve( docblock );
 	} catch ( e ) {
 		console.warn(
-			chalk.red( '\nWARNING: ' ) +
+			chalk.red( '\nWarning: ' ) +
 			chalk.yellow( 'Could not parse JSDoc block comment in ' ) +
 			chalk.blue( path.basename( file ) )
 		);
@@ -117,7 +117,7 @@ function prime() {
 			if ( error ) {
 				files = [];
 			}
-			console.warn( chalk.red( '\nPRIMING' ) );
+			console.warn( chalk.yellow( '\nPriming selector search cache' ) );
 
 			// Omit index, system files, and subdirectories
 			files = files.filter( ( file ) => 'index.js' !== file && /\.js$/.test( file ) );
@@ -142,7 +142,7 @@ function prime() {
 				} ) );
 			} ).catch( e => {
 				console.error( e );
-				reject( 'Parse failure' );
+				reject( 'Could not parse selectors' );
 			} );
 		} );
 	} ).then( ( fuse ) => {

@@ -16,7 +16,7 @@ import {
  * @param {Object} moment Current moment for determination of elapsed days since registration
  * @return {?Boolean} True if the user can participate in the free to paid upsell
  */
-export const eligibleForFreeToPaidUpsell = ( state, siteId, moment ) => {
+const eligibleForFreeToPaidUpsell = ( state, siteId, moment ) => {
 	const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 	const siteHasMappedDomain = isMappedDomainSite( state, siteId );
 	const siteIsOnFreePlan = isSiteOnFreePlan( state, siteId );
