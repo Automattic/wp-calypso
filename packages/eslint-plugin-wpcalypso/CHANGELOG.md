@@ -1,10 +1,15 @@
+#### v3.2.0 (2017-04-11)
+
+- Updated: jsx-classname-namespace: New "rootFiles" option to specify files in which components are to be considered as root (defaults to "index.js", "index.jsx") ([#34](https://github.com/Automattic/eslint-plugin-wpcalypso/pull/34), thanks @bperson)
+- Updated: jsx-classname-namespace: Improved error messaging for root components in non-root files
+
 #### v3.1.1 (2017-04-08)
 
 - Fix: added a documentation link to the `i18n-no-this-translate` error message
 
 #### v3.1.0 (2017-01-26)
 
- - New rule: [`post-message-no-wildcard-targets`](docs/rules/post-message-no-wildcard-targets.md)
+- New rule: [`post-message-no-wildcard-targets`](docs/rules/post-message-no-wildcard-targets.md)
 
 #### v3.0.2 (2016-10-24)
 
