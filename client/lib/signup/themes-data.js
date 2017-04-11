@@ -127,11 +127,11 @@ export const themes = [
 	},
 	{
 		name: 'Independent Publisher',
-		slug: 'independent-publisher',
+		slug: 'independent-publisher-2',
 		repo: 'pub',
 		fallback: false,
 		design: '',
-		demo_uri: 'http://independentpublisherdemo.wordpress.com',
+		demo_uri: 'http://independentpublisher2demo.wordpress.com',
 		verticals: []
 	},
 	{
