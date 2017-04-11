@@ -128,18 +128,21 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			script(type='text/javascript')!= config
 		if i18nLocaleScript
 			script(src=i18nLocaleScript)
-		if 'development' === env || isDebug
+		if 'development' === env || 'wpcalypso' === env || isDebug
 			script(defer, src=urls[ 'manifest' ])
 			script(defer, src=urls[ 'vendor' ])
-			script(defer, src=urls[ jsFile ])
 			if chunk
+				script(defer, src=urls[ jsFile ])
 				script(defer, src=urls[ chunk ] onload='window.AppBoot()')
+			else
+				script(defer, src=urls[ jsFile ] onload='window.AppBoot()')
 		else
-			script(defer, src=urls[ 'manifest-min' ])
-			script(defer, src=urls[ 'vendor-min' ])
-			script(defer, src=urls[ jsFile + '-min' ])
+			script(src=urls[ 'manifest-min' ])
+			script(src=urls[ 'vendor-min' ])
+			script(src=urls[ jsFile + '-min' ])
 			if chunk
-				script(src=urls[ chunk + '-min' ] onload='window.AppBoot()')
+				script(src=urls[ chunk + '-min' ])
+			script(type='text/javascript')!='window.AppBoot();'
 
 		noscript.wpcom-site__global-noscript
 			|Please enable JavaScript in your browser to enjoy WordPress.com.
