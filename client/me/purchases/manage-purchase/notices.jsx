@@ -25,6 +25,21 @@ import NoticeAction from 'components/notice/notice-action';
 import { isMonthly } from 'lib/plans/constants';
 
 class PurchaseNotice extends Component {
+	static propTypes = {
+		isDataLoading: React.PropTypes.bool,
+		handleRenew: React.PropTypes.func,
+		selectedPurchase: React.PropTypes.object,
+		selectedSite: React.PropTypes.oneOfType( [
+			React.PropTypes.object,
+			React.PropTypes.bool,
+			React.PropTypes.undefined
+		] ),
+		editCardDetailsPath: React.PropTypes.oneOfType( [
+			React.PropTypes.string,
+			React.PropTypes.bool
+		] )
+	}
+
 	getExpiringText( purchase ) {
 		const { translate, moment, selectedSite } = this.props;
 		if ( selectedSite && purchase.expiryStatus === 'manualRenew' ) {
@@ -164,20 +179,5 @@ class PurchaseNotice extends Component {
 		return this.renderExpiredRenewNotice() || this.renderPurchaseExpiringNotice() || this.renderCreditCardExpiringNotice();
 	}
 }
-
-PurchaseNotice.propTypes = {
-	isDataLoading: React.PropTypes.bool,
-	handleRenew: React.PropTypes.func,
-	selectedPurchase: React.PropTypes.object,
-	selectedSite: React.PropTypes.oneOfType( [
-		React.PropTypes.object,
-		React.PropTypes.bool,
-		React.PropTypes.undefined
-	] ),
-	editCardDetailsPath: React.PropTypes.oneOfType( [
-		React.PropTypes.string,
-		React.PropTypes.bool
-	] )
-};
 
 export default localize( PurchaseNotice );
