@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormsButton from 'components/forms/form-button';
+import FormPasswordInput from 'components/forms/form-password-input';
 import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import { loginUser } from 'state/login/actions';
@@ -82,16 +83,17 @@ export class Login extends Component {
 
 				{ this.renderNotices() }
 
+				<div className="login__form-header">
+					<div className="login__form-header-title">
+						{ this.props.title }
+					</div>
+				</div>
+
 				<form onSubmit={ this.onSubmitForm }>
-					<Card className="login__form-userdata">
-						<div className="login__form-header">
-							<div className="login__form-header-title">
-								{ this.props.title }
-							</div>
-						</div>
+					<Card className="login__form">
 						<div className="login__form-userdata">
 							<label className="login__form-userdata-username">
-								{ this.props.translate( 'Username or Email' ) }
+								{ this.props.translate( 'Username or Email Address' ) }
 								<FormTextInput
 									className="login__form-userdata-username-input"
 									onChange={ this.onChangeField }
@@ -101,18 +103,23 @@ export class Login extends Component {
 							</label>
 							<label className="login__form-userdata-username">
 								{ this.props.translate( 'Password' ) }
-								<input
+								<FormPasswordInput
 									className="login__form-userdata-username-password"
 									onChange={ this.onChangeField }
-									type="password"
 									name="password"
 									value={ this.state.password }
 									{ ...isDisabled } />
 							</label>
 						</div>
+						<div className="login__form-remember-me">
+							<label>
+								<input type="checkbox" name="rememberme" />
+								{ this.props.translate( 'Stay logged in' ) }
+							</label>
+						</div>
 						<div className="login__form-action">
 							<FormsButton primary { ...isDisabled }>
-								{ this.props.translate( 'Sign in' ) }
+								{ this.props.translate( 'Log in' ) }
 							</FormsButton>
 						</div>
 					</Card>
