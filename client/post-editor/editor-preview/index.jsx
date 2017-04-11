@@ -92,7 +92,7 @@ const EditorPreview = React.createClass( {
 			return null;
 		}
 		const parsed = url.parse( externalUrl, true );
-		parsed.query = omit( parsed.query, 'preview', 'iframe', 'frame-nonce' );
+		parsed.query = omit( parsed.query, 'iframe', 'frame-nonce' );
 		delete parsed.search;
 		return url.format( parsed );
 	},
