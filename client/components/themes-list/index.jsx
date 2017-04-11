@@ -4,7 +4,7 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import { localize } from 'i18n-calypso';
-import { isEqual, noop } from 'lodash';
+import { isEqual, noop, debounce } from 'lodash';
 import { InfiniteLoader, WindowScroller, AutoSizer, Grid } from 'react-virtualized';
 
 /**
@@ -91,8 +91,20 @@ export const ThemesList = React.createClass( {
 		} );
 	},
 
+	onScrollerRendered( scroller ) {
+		this._updatePosition = debounce(
+			() => scroller.updatePosition(),
+			1000,
+			{ leading: true }
+		);
+	},
+
 	onResize( { width } ) {
 		this._width = width;
+	},
+
+	onScroll() {
+		this._updatePosition();
 	},
 
 	render() {
@@ -109,7 +121,7 @@ export const ThemesList = React.createClass( {
 					threshold={ 20 }
 				>
 					{ ( { onRowsRendered, registerChild } ) => (
-						<WindowScroller>
+						<WindowScroller ref={ this.onScrollerRendered } onScroll={ this.onScroll }>
 							{ ( { height, scrollTop } ) => (
 								<AutoSizer disableHeight onResize={ this.onResize }>
 									{ ( { width } ) => {
