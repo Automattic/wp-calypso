@@ -9,9 +9,8 @@ import { expect } from 'chai';
 import reducer from '../edits-reducer';
 
 import {
-	editExistingProductVariationType,
-	editNewProductVariationType,
 	editProduct,
+	editProductVariationType,
 } from '../actions';
 
 describe( 'edits-reducer', () => {
@@ -107,7 +106,7 @@ describe( 'edits-reducer', () => {
 	} );
 
 	it( 'should create new product in "creates" when editing variation type the first time', () => {
-		const edits = reducer( undefined, editNewProductVariationType( null, null, null, {
+		const edits = reducer( undefined, editProductVariationType( null, null, {
 			name: 'New Variation Type',
 		} ) );
 
@@ -120,11 +119,11 @@ describe( 'edits-reducer', () => {
 	} );
 
 	it( 'should modify product in "creates" when editing variation type a second time', () => {
-		const edits1 = reducer( undefined, editNewProductVariationType( null, null, null, {
+		const edits1 = reducer( undefined, editProductVariationType( null, null, {
 			name: 'Edited once',
 		} ) );
 
-		const edits2 = reducer( edits1, editNewProductVariationType( 0, edits1.creates[ 0 ], 0, {
+		const edits2 = reducer( edits1, editProductVariationType( edits1.creates[ 0 ], 0, {
 			name: 'Edited twice',
 		} ) );
 
@@ -134,7 +133,7 @@ describe( 'edits-reducer', () => {
 	} );
 
 	it( 'should create more than one variation type for a newly created product', () => {
-		const edits1 = reducer( undefined, editNewProductVariationType( null, null, null, {
+		const edits1 = reducer( undefined, editProductVariationType( null, null, {
 			name: 'Variation Type One',
 		} ) );
 
@@ -142,7 +141,7 @@ describe( 'edits-reducer', () => {
 		expect( edits1.creates[ 0 ].attributes[ 0 ].variation ).to.be.true;
 		expect( edits1.creates[ 0 ].attributes[ 0 ].options ).to.eql( [] );
 
-		const edits2 = reducer( edits1, editNewProductVariationType( 0, edits1.creates[ 0 ], null, {
+		const edits2 = reducer( edits1, editProductVariationType( edits1.creates[ 0 ], null, {
 			name: 'Variation Type Two',
 		} ) );
 
@@ -155,7 +154,7 @@ describe( 'edits-reducer', () => {
 		const product = {
 			id: 1,
 		};
-		const edits = reducer( undefined, editExistingProductVariationType( product, null, {
+		const edits = reducer( undefined, editProductVariationType( product, null, {
 			name: 'New Variation Type',
 		} ) );
 
@@ -171,11 +170,11 @@ describe( 'edits-reducer', () => {
 		const product = {
 			id: 1,
 		};
-		const edits1 = reducer( undefined, editExistingProductVariationType( product, null, {
+		const edits1 = reducer( undefined, editProductVariationType( product, null, {
 			name: 'Edited once',
 		} ) );
 
-		const edits2 = reducer( edits1, editExistingProductVariationType( edits1.updates[ 0 ], 0, {
+		const edits2 = reducer( edits1, editProductVariationType( edits1.updates[ 0 ], 0, {
 			name: 'Edited twice',
 		} ) );
 
@@ -188,7 +187,7 @@ describe( 'edits-reducer', () => {
 		const product = {
 			id: 1,
 		};
-		const edits1 = reducer( undefined, editExistingProductVariationType( product, null, {
+		const edits1 = reducer( undefined, editProductVariationType( product, null, {
 			name: 'Variation Type One',
 		} ) );
 
@@ -196,7 +195,7 @@ describe( 'edits-reducer', () => {
 		expect( edits1.updates[ 0 ].attributes[ 0 ].variation ).to.be.true;
 		expect( edits1.updates[ 0 ].attributes[ 0 ].options ).to.eql( [] );
 
-		const edits2 = reducer( edits1, editExistingProductVariationType( edits1.updates[ 0 ], null, {
+		const edits2 = reducer( edits1, editProductVariationType( edits1.updates[ 0 ], null, {
 			name: 'Variation Type Two',
 		} ) );
 
@@ -218,7 +217,7 @@ describe( 'edits-reducer', () => {
 			]
 		};
 
-		const edits = reducer( state, editNewProductVariationType( 0, product, 0, {
+		const edits = reducer( state, editProductVariationType( product, 0, {
 			name: 'Attempted variation overwrite',
 		} ) );
 
