@@ -21,7 +21,8 @@ import { prepareComparableUrl } from './utils';
 import { createReducer } from 'state/utils';
 
 function updatePostSubscription( state, payload, shouldSkipUpdate, newProps ) {
-	const follow = find( state, item => item.blog_ID == payload.blogId ); //eslint-disable-line eqeqeq
+	const blogId = Number( payload.blogId );
+	const follow = find( state, item => +item.blog_ID === blogId );
 	if ( ! follow ) {
 		return state;
 	}
