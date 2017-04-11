@@ -68,9 +68,12 @@ describe( 'findOutermostNode', () => {
 		pass( `export const ${ name } = () => {}` );
 	} );
 
+	it( 'should handle curried calls', () => {
+		pass( `export const ${ name } = curried()` );
+	} );
+
 	it( 'should reject non-function exports', () => {
 		fail( `export const ${ name } = 14` );
-		fail( `export const ${ name } = curried()` );
 		fail( `export const ${ name } = condition ? ifTrue : ifFalse` );
 	} );
 } );
