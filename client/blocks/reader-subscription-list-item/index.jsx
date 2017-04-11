@@ -21,6 +21,7 @@ function ReaderSubscriptionListItem( {
 	siteId,
 	site,
 	className = '',
+	translate,
 	followSource,
 } ) {
 	const siteTitle = feed && feed.name;
@@ -57,7 +58,10 @@ function ReaderSubscriptionListItem( {
 				<div>{ siteExcerpt }</div>
 				{ ! isEmpty( authorName ) &&
 					<span className="reader-subscription-list-item__by-text">
-						by <a href={ streamUrl } className="reader-subscription-list-item__link"> { authorName } </a>
+						<span>
+							{ translate( 'by' ) }
+						</span>
+						<a href={ streamUrl } className="reader-subscription-list-item__link"> { authorName } </a>
 					</span>
 				}
 			</div>
