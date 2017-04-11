@@ -15,9 +15,10 @@ import LoggedOutComponent from './logged-out';
 import Upload from 'my-sites/themes/theme-upload';
 import trackScrollPage from 'lib/track-scroll-page';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
-import { requestThemes, receiveThemes, setBackPath } from 'state/themes/actions';
+import { requestThemes, requestThemeFilters, receiveThemes, setBackPath } from 'state/themes/actions';
 import { getThemesForQuery, getThemesFoundForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
+import { getThemeFilters } from 'state/selectors';
 
 const debug = debugFactory( 'calypso:themes' );
 const HOUR_IN_MS = 3600000;
@@ -141,6 +142,18 @@ export function fetchThemeData( context, next ) {
 			next();
 		} )
 		.catch( () => next() );
+}
+
+export function fetchThemeFilters( context, next ) {
+	const { store } = context;
+	const unsubscribe = store.subscribe( () => {
+		const filters = getThemeFilters( store.getState() );
+		if ( ! isEmpty( filters ) ) {
+			unsubscribe();
+			return next();
+		}
+	} );
+	store.dispatch( requestThemeFilters() );
 }
 
 // Legacy (Atlas-based Theme Showcase v4) route redirects

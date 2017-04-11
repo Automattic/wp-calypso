@@ -6,6 +6,7 @@ import { makeLayout } from 'controller';
 import { getSubjects } from './theme-filters.js';
 import {
 	fetchThemeData,
+	fetchThemeFilters,
 	loggedOut,
 	redirectSearchAndType,
 	redirectFilterAndType,
@@ -22,9 +23,10 @@ export default function( router ) {
 			res.redirect( 301, '/themes' + originalUrl.slice( '/design'.length ) );
 		} );
 
-		router( `/themes/:vertical(${ verticals })?/:tier(free|premium)?`, fetchThemeData, loggedOut, makeLayout );
+		router( `/themes/:vertical(${ verticals })?/:tier(free|premium)?`, fetchThemeFilters, fetchThemeData, loggedOut, makeLayout );
 		router(
 			`/themes/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`,
+			fetchThemeFilters,
 			validateFilters,
 			fetchThemeData,
 			loggedOut,
