@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import page from 'page';
 import { slugToCamelCase } from 'devdocs/docs-example/util';
 import trim from 'lodash/trim';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SearchCard from 'components/search-card';
+import StickyPanel from 'components/sticky-panel';
 
 /**
  * Docs examples
@@ -70,6 +72,7 @@ import FAQ from 'components/faq/docs/example';
 import VerticalMenu from 'components/vertical-menu/docs/example';
 import Banner from 'components/banner/docs/example';
 import EmojifyExample from 'components/emojify/docs/example';
+import StickyPanelExample from 'components/sticky-panel/docs/example';
 
 let DesignAssets = React.createClass( {
 	displayName: 'DesignAssets',
@@ -93,23 +96,31 @@ let DesignAssets = React.createClass( {
 		page( '/devdocs/design/' );
 	},
 
-	render() {
-		const { componentsUsageStats = {}, component } = this.props;
-		const { filter } = this.state;
-
+	renderHeader( component, filter ) {
 		return (
-			<Main className="design">
-				{ component
-					? <HeaderCake onClick={ this.backToComponents } backText="All Components">
-						{ slugToCamelCase( component ) }
-					</HeaderCake>
+			component
+				? <HeaderCake onClick={ this.backToComponents } backText="All Components">
+					{ slugToCamelCase( component ) }
+				</HeaderCake>
 
-					: <SearchCard
+				: <StickyPanel>
+					<SearchCard
 						onSearch={ this.onSearch }
 						initialValue={ filter }
 						placeholder="Search components…"
 						analyticsGroup="Docs" />
-				}
+				</StickyPanel>
+		);
+	},
+
+	render() {
+		const { componentsUsageStats = {}, component } = this.props;
+		const { filter } = this.state;
+		const classes = classNames( 'design', { 'is-single-example': !! component } );
+
+		return (
+			<Main className={ classes }>
+				{ this.renderHeader( component, filter ) }
 
 				<Collection
 					component={ component }
@@ -160,10 +171,12 @@ let DesignAssets = React.createClass( {
 					<Spinner searchKeywords="loading" />
 					<SpinnerButton searchKeywords="loading input submit" />
 					<SpinnerLine searchKeywords="loading" />
+					<StickyPanelExample />
 					<Timezone />
 					<TokenFields />
 					<VerticalMenu />
 					<Version />
+					<StickyPanelExample />
 				</Collection>
 			</Main>
 		);

@@ -1,114 +1,138 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	throttle = require( 'lodash/throttle' ),
-	classNames = require( 'classnames' );
+import React, { Component, PropTypes } from 'react';
+import ReactDom from 'react-dom';
+import throttle from 'lodash/throttle';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var viewport = require( 'lib/viewport' );
+import viewport from 'lib/viewport';
 
-module.exports = React.createClass( {
-	displayName: 'StickyPanel',
+class StickyPanel extends Component {
+	static propTypes = {
+		className: PropTypes.string,
+		offset: PropTypes.number,
+		stickyTo: PropTypes.string,
+	};
 
-	propTypes: {
-		minLimit: React.PropTypes.oneOfType( [
-			React.PropTypes.bool,
-			React.PropTypes.number,
-		] ),
-	},
+	static defaultProps = {
+		offset: 10,
+		stickyTo: 'header',
+	}
 
-	getDefaultProps: function() {
-		return {
-			minLimit: false,
-		};
-	},
+	state = { isSticky: false };
 
-	getInitialState: function() {
-		return {
-			isSticky: false,
-			spacerHeight: 0,
-			blockWidth: 0,
-		};
-	},
+	componentDidMount() {
+		if ( viewport.isMobile() ) {
+			return null;
+		}
 
-	componentDidMount: function() {
-		// Determine and cache vertical threshold from rendered element's
-		// offset relative the document
-		this.threshold = ReactDom.findDOMNode( this ).offsetTop;
 		this.throttleOnResize = throttle( this.onWindowResize, 200 );
-
 		window.addEventListener( 'scroll', this.onWindowScroll );
 		window.addEventListener( 'resize', this.throttleOnResize );
-		this.updateIsSticky();
-	},
 
-	componentWillUnmount: function() {
+		this.stickyDomElement = ReactDom.findDOMNode( this );
+
+		this.computeHeightFakeElement();
+		this.updateIsSticky();
+	}
+
+	componentWillUnmount() {
 		window.removeEventListener( 'scroll', this.onWindowScroll );
 		window.removeEventListener( 'resize', this.throttleOnResize );
 		window.cancelAnimationFrame( this.rafHandle );
-	},
+	}
 
-	onWindowScroll: function() {
+	onWindowScroll = () => {
 		this.rafHandle = window.requestAnimationFrame( this.updateIsSticky );
-	},
+	};
 
-	onWindowResize: function() {
-		this.setState( {
-			spacerHeight: this.state.isSticky ? ReactDom.findDOMNode( this ).clientHeight : 0,
-			blockWidth: this.state.isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0
-		} );
-	},
+	onWindowResize = () => {
+		this.computeHeightFakeElement();
+		this.updateIsSticky();
+	};
 
-	updateIsSticky: function() {
-		var isSticky = window.pageYOffset > this.threshold;
+	computeHeightFakeElement() {
+		this.fakeElementHeigth = this.stickyDomElement.offsetHeight;
 
-		if (
-			this.props.minLimit !== false && this.props.minLimit >= window.innerWidth ||
-			viewport.isMobile()
-		) {
+		// be dure that a child element exists
+		if ( ! (
+			this.stickyDomElement.children &&
+			this.stickyDomElement.children[ 0 ] &&
+			this.stickyDomElement.children[ 0 ].children &&
+			this.stickyDomElement.children[ 0 ].children[ 0 ]
+		) ) {
+			return null;
+		}
+
+		// adjust fake element height considering margins of the wrapper element to stick
+		this.childDomElement = this.stickyDomElement.children[ 0 ].children[ 0 ];
+		const childStyles = this.childDomElement.currentStyle || window.getComputedStyle( this.childDomElement );
+		this.fakeElementHeigth += parseInt( childStyles.marginTop ) + parseInt( childStyles.marginBottom );
+	}
+
+	updateIsSticky = () => {
+		if ( viewport.isMobile() ) {
 			return this.setState( { isSticky: false } );
 		}
 
-		if ( isSticky !== this.state.isSticky ) {
-			this.setState( {
-				isSticky: isSticky,
-				spacerHeight: isSticky ? ReactDom.findDOMNode( this ).clientHeight : 0,
-				blockWidth: isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0
-			} );
+		let threshold = this.stickyDomElement.offsetTop;
+		this.stickAt = this.props.offset;
+
+		if ( this.props.stickyTo ) {
+			const elementToStick = document.getElementById( this.props.stickyTo );
+
+			if ( elementToStick ) {
+				this.stickAt += elementToStick.offsetTop + elementToStick.offsetHeight;
+			}
 		}
-	},
 
-	getBlockStyle: function() {
-		var offset;
+		threshold -= this.stickAt;
 
-		if ( this.state.isSticky ) {
-			// Offset to account for Master Bar by finding body visual top
-			// relative the current scroll position
-			offset = document.getElementById( 'header' ).getBoundingClientRect().height;
+		this.setState( { isSticky: window.pageYOffset > threshold } );
+	};
 
-			return {
-				top: offset,
-				width: this.state.blockWidth
-			};
+	setPositionByStyles() {
+		if ( ! this.state.isSticky ) {
+			return null;
 		}
-	},
 
-	render: function() {
-		var classes = classNames( 'sticky-panel', this.props.className, {
-			'is-sticky': this.state.isSticky
-		} );
+		return {
+			top: this.stickAt,
+			width: this.stickyDomElement.offsetWidth,
+		};
+	}
+
+	showFakePanelByStyles() {
+		if ( ! this.state.isSticky ) {
+			return null;
+		}
+
+		return {
+			height: this.fakeElementHeigth,
+		};
+	}
+
+	render() {
+		const classes = classNames(
+			'sticky-panel',
+			this.props.className,
+			{ 'is-sticky': this.state.isSticky }
+		);
 
 		return (
 			<div className={ classes }>
-				<div className="sticky-panel__content" style={ this.getBlockStyle() }>
+				<div className="sticky-panel__content" style={ this.setPositionByStyles() }>
 					{ this.props.children }
 				</div>
-				<div className="sticky-panel__spacer" style={ { height: this.state.spacerHeight } } />
+				<div className="sticky-panel__fake" style={ this.showFakePanelByStyles() } />
 			</div>
 		);
 	}
-} );
+}
+
+export default StickyPanel;
+
