@@ -15,6 +15,13 @@ import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 
 class PurchaseSiteHeader extends Component {
+	static propTypes = {
+		isPlaceholder: React.PropTypes.bool,
+		siteId: React.PropTypes.number,
+		name: React.PropTypes.string,
+		domain: React.PropTypes.string,
+	}
+
 	// Disconnected sites can't render the `Site` component, but there can be
 	// purchases from disconnected sites. Here we spoof the Site header.
 	renderFauxSite() {
@@ -61,13 +68,6 @@ class PurchaseSiteHeader extends Component {
 		);
 	}
 }
-
-PurchaseSiteHeader.propTypes = {
-	isPlaceholder: React.PropTypes.bool,
-	siteId: React.PropTypes.number,
-	name: React.PropTypes.string,
-	domain: React.PropTypes.string,
-};
 
 export default connect(
 	( state, { siteId } ) => ( {
