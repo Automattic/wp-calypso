@@ -45,89 +45,21 @@ const ConnectedThemesSelection = connectOptions(
 	}
 );
 
-class SingleSiteJetpack extends React.Component {
-	onSelectionRendered = ( selection ) => {
-		this._selection = selection;
-	}
-
-	onResize = () => {
-		if ( ! this._selection ) {
-			return;
-		}
-
-		this._selection.updateListPosition();
-	}
-
-	render() {
-		const {
-			emptyContent,
-			filter,
-			getScreenshotOption,
-			showWpcomThemesList,
-			search,
-			siteId,
-			vertical,
-			wpcomTier
-		} = this.props;
-
-		return (
-			<div>
-				<SidebarNavigation />
-				<CurrentTheme siteId={ siteId } />
-				<ThemeShowcase { ...this.props }
-					onResize={ this.onResize }
-					siteId={ siteId }
-					emptyContent={ showWpcomThemesList ? <div /> : null } >
-					{ siteId && <QuerySitePlans siteId={ siteId } /> }
-					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-					<ThanksModal source={ 'list' } />
-					{ showWpcomThemesList &&
-						<div>
-							<ConnectedThemesSelection
-								onSelectionRendered={ this.onSelectionRendered }
-								origin="wpcom"
-								defaultOption={ 'activate' }
-								secondaryOption={ 'tryandcustomize' }
-								search={ search }
-								tier={ wpcomTier }
-								filter={ filter }
-								vertical={ vertical }
-								siteId={ siteId /* This is for the options in the '...' menu only */ }
-								getScreenshotUrl={ function( theme ) {
-									if ( ! getScreenshotOption( theme ).getUrl ) {
-										return null;
-									}
-									return getScreenshotOption( theme ).getUrl( theme );
-								} }
-								onScreenshotClick={ function( theme ) {
-									if ( ! getScreenshotOption( theme ).action ) {
-										return;
-									}
-									getScreenshotOption( theme ).action( theme );
-								} }
-								getActionLabel={ function( theme ) {
-									return getScreenshotOption( theme ).label;
-								} }
-								trackScrollPage={ this.props.trackScrollPage }
-								source="wpcom"
-								emptyContent={ emptyContent }
-							/>
-						</div>
-					}
-				</ThemeShowcase>
-			</div>
-		);
-	}
-}
-
 const ConnectedSingleSiteJetpack = connectOptions(
 	( props ) => {
 		const {
 			analyticsPath,
 			analyticsPageTitle,
 			canManage,
+			emptyContent,
+			filter,
+			getScreenshotOption,
 			hasJetpackThemes,
-			siteId
+			showWpcomThemesList,
+			search,
+			siteId,
+			vertical,
+			wpcomTier
 		} = props;
 		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
@@ -151,7 +83,49 @@ const ConnectedSingleSiteJetpack = connectOptions(
 		}
 
 		return (
-			<SingleSiteJetpack { ...props } />
+			<div>
+				<SidebarNavigation />
+				<CurrentTheme siteId={ siteId } />
+				<ThemeShowcase { ...props }
+					siteId={ siteId }
+					emptyContent={ showWpcomThemesList ? <div /> : null } >
+					{ siteId && <QuerySitePlans siteId={ siteId } /> }
+					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
+					<ThanksModal source={ 'list' } />
+					{ showWpcomThemesList &&
+						<div>
+							<ConnectedThemesSelection
+								origin="wpcom"
+								defaultOption={ 'activate' }
+								secondaryOption={ 'tryandcustomize' }
+								search={ search }
+								tier={ wpcomTier }
+								filter={ filter }
+								vertical={ vertical }
+								siteId={ siteId /* This is for the options in the '...' menu only */ }
+								getScreenshotUrl={ function( theme ) {
+									if ( ! getScreenshotOption( theme ).getUrl ) {
+										return null;
+									}
+									return getScreenshotOption( theme ).getUrl( theme );
+								} }
+								onScreenshotClick={ function( theme ) {
+									if ( ! getScreenshotOption( theme ).action ) {
+										return;
+									}
+									getScreenshotOption( theme ).action( theme );
+								} }
+								getActionLabel={ function( theme ) {
+									return getScreenshotOption( theme ).label;
+								} }
+								trackScrollPage={ props.trackScrollPage }
+								source="wpcom"
+								emptyContent={ emptyContent }
+							/>
+						</div>
+					}
+				</ThemeShowcase>
+			</div>
 		);
 	}
 );
