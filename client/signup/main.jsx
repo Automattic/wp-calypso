@@ -47,6 +47,7 @@ import { translate } from 'i18n-calypso';
 import SignupActions from 'lib/signup/actions';
 import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-tracking';
 import { disableCart } from 'lib/upgrades/actions';
+import { loadTrackingTool } from 'state/analytics/actions';
 
 /**
  * Constants
@@ -76,7 +77,7 @@ const Signup = React.createClass( {
 	},
 
 	loadProgressFromStore() {
-		var newProgress = SignupProgressStore.get(),
+		const newProgress = SignupProgressStore.get(),
 			invalidSteps = some( newProgress, matchesProperty( 'status', 'invalid' ) ),
 			waitingForServer = ! invalidSteps && this.isEveryStepSubmitted(),
 			startLoadingScreen = waitingForServer && ! this.state.loadingScreenStartTime;
@@ -258,6 +259,7 @@ const Signup = React.createClass( {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
+		this.props.loadTrackingTool( 'Lucky Orange' );
 	},
 
 	componentWillUnmount() {
@@ -266,7 +268,7 @@ const Signup = React.createClass( {
 	},
 
 	loginRedirectTo( path ) {
-		var redirectTo;
+		let redirectTo;
 
 		if ( startsWith( path, 'https://' ) || startsWith( path, 'http://' ) ) {
 			return path;
@@ -373,8 +375,8 @@ const Signup = React.createClass( {
 		const signupProgress = filter(
 				SignupProgressStore.get(),
 				step => (
-					-1 !== flowSteps.indexOf( step.stepName )
-					&& 'in-progress' !== step.status
+					-1 !== flowSteps.indexOf( step.stepName ) &&
+					'in-progress' !== step.status
 				),
 			);
 
@@ -386,18 +388,18 @@ const Signup = React.createClass( {
 	},
 
 	localeSuggestions() {
-		return 0 === this.positionInFlow() && ! user.get() ?
-			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } /> :
-			null;
+		return 0 === this.positionInFlow() && ! user.get()
+			? <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
+			: null;
 	},
 
 	loginForm() {
-		return this.state.bearerToken ?
-			<WpcomLoginForm
+		return this.state.bearerToken
+			? <WpcomLoginForm
 				authorization={ 'Bearer ' + this.state.bearerToken }
 				log={ this.state.username }
-				redirectTo={ this.state.redirectTo } /> :
-			null;
+				redirectTo={ this.state.redirectTo } />
+			: null;
 	},
 
 	pageTitle() {
@@ -406,7 +408,7 @@ const Signup = React.createClass( {
 	},
 
 	currentStep() {
-		let currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
+		const currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
 			CurrentComponent = stepComponents[ this.props.stepName ],
 			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
 			stepKey = this.state.loadingScreenStartTime ? 'processing' : this.props.stepName,
@@ -460,8 +462,7 @@ const Signup = React.createClass( {
 			<span>
 				<DocumentHead title={ this.pageTitle() } />
 				{
-					this.state.loadingScreenStartTime ?
-					null :
+					! this.state.loadingScreenStartTime &&
 					<FlowProgressIndicator
 						positionInFlow={ this.positionInFlow() }
 						flowName={ this.props.flowName } />
@@ -484,6 +485,6 @@ export default connect(
 		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true,
 		signupDependencies: getSignupDependencyStore( state ),
 	} ),
-	{ setSurvey },
+	{ setSurvey, loadTrackingTool },
 	undefined,
 	{ pure: false } )( Signup );

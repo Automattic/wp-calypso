@@ -14,7 +14,8 @@ import {
 	ANALYTICS_EVENT_RECORD,
 	ANALYTICS_MULTI_TRACK,
 	ANALYTICS_PAGE_VIEW_RECORD,
-	ANALYTICS_STAT_BUMP
+	ANALYTICS_STAT_BUMP,
+	ANALYTICS_TRACKING_ON,
 } from 'state/action-types';
 
 const mergedMetaData = ( a, b ) => [
@@ -55,6 +56,16 @@ export const recordEvent = ( service, args ) => ( {
 		analytics: [ {
 			type: ANALYTICS_EVENT_RECORD,
 			payload: Object.assign( {}, { service }, args )
+		} ]
+	}
+} );
+
+export const loadTrackingTool = ( trackingTool ) => ( {
+	type: ANALYTICS_TRACKING_ON,
+	meta: {
+		analytics: [ {
+			type: ANALYTICS_TRACKING_ON,
+			payload: trackingTool,
 		} ]
 	}
 } );

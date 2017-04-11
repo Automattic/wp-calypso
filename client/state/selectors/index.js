@@ -121,7 +121,9 @@ export isSiteOnFreePlan from './is-site-on-free-plan';
 export isSiteSupportingImageEditor from './is-site-supporting-image-editor';
 export isSiteUpgradeable from './is-site-upgradeable';
 export isTransientMedia from './is-transient-media';
+export isTracking from './is-tracking';
 export isUpdatingJetpackSettings from './is-updating-jetpack-settings';
 export isUserRegistrationDaysWithinRange from './is-user-registration-days-within-range';
 export shouldCloseVideoEditorModal from './should-close-video-editor-modal';
 export shouldShowVideoEditorError from './should-show-video-editor-error';
+
