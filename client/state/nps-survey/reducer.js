@@ -7,7 +7,7 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
-	NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING,
+	NPS_SURVEY_SET_ELIGIBILITY,
 	NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
 	NPS_SURVEY_SUBMIT_REQUESTING,
 	NPS_SURVEY_SUBMIT_REQUEST_FAILURE,
@@ -25,7 +25,7 @@ import {
 } from './constants';
 
 export const isSessionEligible = createReducer( false, {
-	[ NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING ]: ( state, action ) => action.isSessionPicked,
+	[ NPS_SURVEY_SET_ELIGIBILITY ]: ( state, action ) => action.isSessionPicked,
 } );
 
 export const wasShownThisSession = createReducer( false, {
