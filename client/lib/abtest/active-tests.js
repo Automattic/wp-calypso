@@ -25,15 +25,13 @@ module.exports = {
 		defaultVariation: 'disabled',
 		allowExistingUsers: false
 	},
-	jetpackNewDescriptions: {
-		datestamp: '20170327',
+	jetpackNoMonthly: {
+		datestamp: '20170410',
 		variations: {
-			showNew: 0,
-			showOld: 100 /* test completed. I'm disabling it here first because
-						it need some work to remove the added code for the
-						new variation that's not going to be used */
+			showMonthly: 50,
+			dontShowMonthly: 50
 		},
-		defaultVariation: 'showOld',
+		defaultVariation: 'showMonthly',
 		allowExistingUsers: true
 	},
 	signupSurveyStep: {

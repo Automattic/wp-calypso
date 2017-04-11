@@ -115,10 +115,13 @@ class PlanFeaturesHeader extends Component {
 			rawPrice,
 			intervalType,
 			site,
-			basePlansPath
+			basePlansPath,
+			hideMonthly
 		} = this.props;
 
-		if ( ! rawPrice || this.isPlanCurrent() ) {
+		if ( hideMonthly ||
+			! rawPrice ||
+			this.isPlanCurrent() ) {
 			return (
 				<div className="plan-features__interval-type is-placeholder">
 				</div>
