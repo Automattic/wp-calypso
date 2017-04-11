@@ -203,7 +203,7 @@ const ThemeSheet = React.createClass( {
 		}
 		const img = screenshot && <img className="theme__sheet-img" src={ screenshot + '?w=680' } />;
 		return (
-			<div className="theme__sheet-screenshot">
+			<div className="theme__sheet-screenshot" onClick={ this.previewAction }>
 				{ this.props.demo_uri && this.renderPreviewButton() }
 				{ img }
 			</div>
