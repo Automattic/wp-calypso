@@ -28,9 +28,9 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
 import JetpackSyncPanel from './jetpack-sync-panel';
 import SiteIconSetting from './site-icon-setting';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import Banner from 'components/banner';
 import { isBusiness } from 'lib/products-values';
-import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
+import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import {
 	getLocalizedDate,
@@ -523,13 +523,15 @@ class SiteSettingsFormGeneral extends Component {
 								</Button>
 							</div>
 						</CompactCard>
-						{ ! isBusiness( site.plan ) && <UpgradeNudge
-							className="site-settings__footer-credit-nudge"
-							feature={ FEATURE_NO_BRANDING }
-							title={ translate( 'Remove the footer credit entirely with WordPress.com Business' ) }
-							message={ translate( 'Upgrade to remove the footer credit, add Google Analytics and more' ) }
-							icon="customize"
-						/> }
+						{
+							! isBusiness( site.plan ) &&
+							<Banner
+								feature={ FEATURE_NO_BRANDING }
+								plan={ PLAN_BUSINESS }
+								title={ translate( 'Remove the footer credit entirely with WordPress.com Business' ) }
+								description={ translate( 'Upgrade to remove the footer credit, add Google Analytics and more' ) }
+							/>
+						}
 					</div>
 				}
 
