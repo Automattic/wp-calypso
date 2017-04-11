@@ -82,8 +82,8 @@ module.exports = function() {
 			pluginsController.eligibility
 		);
 
-		page.exit( '/plugins*', ( context, next ) => {
-			if ( 0 !== page.current.indexOf( '/plugins' ) ) {
+		page.exit( '/plugins/*', ( context, next ) => {
+			if ( 0 !== page.current.indexOf( '/plugins/' ) ) {
 				pluginsController.resetHistory();
 			}
 
