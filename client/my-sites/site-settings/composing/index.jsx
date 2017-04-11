@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import DefaultPostFormat from './default-post-format';
 import AfterTheDeadline from './after-the-deadline';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
@@ -22,32 +23,31 @@ const Composing = ( {
 	isRequestingSettings,
 	isSavingSettings,
 	jetpackSettingsUISupported,
-	siteIsJetpack
 } ) => {
+	const CardComponent = jetpackSettingsUISupported ? CompactCard : Card;
+
 	return (
-		<Card className="site-settings">
-			<DefaultPostFormat
-				onChangeField={ onChangeField }
-				eventTracker={ eventTracker }
-				isSavingSettings={ isSavingSettings }
-				isRequestingSettings={ isRequestingSettings }
-				fields={ fields }
-			/>
-			{
-				siteIsJetpack && jetpackSettingsUISupported && (
-					<div>
-						<hr />
-						<AfterTheDeadline
-							handleToggle={ handleToggle }
-							setFieldValue={ setFieldValue }
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-							fields={ fields }
-						/>
-					</div>
-				)
+		<div>
+			<CardComponent className="composing__card site-settings">
+				<DefaultPostFormat
+					onChangeField={ onChangeField }
+					eventTracker={ eventTracker }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
+			</CardComponent>
+
+			{ jetpackSettingsUISupported &&
+				<AfterTheDeadline
+					handleToggle={ handleToggle }
+					setFieldValue={ setFieldValue }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
 			}
-		</Card>
+		</div>
 	);
 };
 
@@ -70,10 +70,10 @@ Composing.propTypes = {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const siteIsJetpack = isJetpackSite( state, siteId );
 
 		return {
-			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
-			siteIsJetpack: isJetpackSite( state, siteId ),
+			jetpackSettingsUISupported: siteIsJetpack && siteSupportsJetpackSettingsUi( state, siteId ),
 		};
 	}
 )( Composing );
