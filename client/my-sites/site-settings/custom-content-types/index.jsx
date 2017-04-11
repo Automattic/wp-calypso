@@ -59,17 +59,18 @@ class CustomContentTypes extends Component {
 			handleAutosavingToggle
 		} = this.props;
 		return (
-			<CompactFormToggle
-				checked={ !! fields[ name ] }
-				disabled={ this.isFormPending() || activatingCustomContentTypesModule }
-				onChange={ handleAutosavingToggle( name ) }
-			>
-				{ label }
-				<FormSettingExplanation>
+			<div>
+				<CompactFormToggle
+					checked={ !! fields[ name ] }
+					disabled={ this.isFormPending() || activatingCustomContentTypesModule }
+					onChange={ handleAutosavingToggle( name ) }
+				>
+					{ label }
+				</CompactFormToggle>
+				<FormSettingExplanation isIndented>
 					{ description }
 				</FormSettingExplanation>
-
-			</CompactFormToggle>
+			</div>
 		);
 	}
 
