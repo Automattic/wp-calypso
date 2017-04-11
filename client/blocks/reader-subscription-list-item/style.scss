@@ -74,8 +74,8 @@
 	font-size: 14px;
 	display: flex;
 	padding-left: 15px;
-	padding-bottom: 10px;
-	padding-top: 10px;
+	padding-bottom: 5px;
+	padding-top: 5px;
 	justify-content: flex-start;
 	color: $gray-dark;
 }
@@ -97,10 +97,11 @@
 .reader-subscription-list-item__email-popout-toggle {
 	display: flex;
 	justify-content: space-between;
-	// padding-left: 15px;
 	padding-top: 15px;
 	padding-left: 15px;
 	color: darken( $gray, 20% );
+	font-size: 14px;
+	color: $gray-dark;
 }
 
 .reader-subscription-list-item__email-popout-wrapper .segmented-control {
