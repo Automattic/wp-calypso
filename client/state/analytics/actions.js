@@ -10,6 +10,9 @@ import {
 	property,
 } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import {
 	ANALYTICS_EVENT_RECORD,
 	ANALYTICS_MULTI_TRACK,
@@ -75,6 +78,12 @@ export const recordGoogleEvent = ( category, action, label, value ) =>
 
 export const recordTracksEvent = ( name, properties ) =>
 	recordEvent( 'tracks', { name, properties } );
+
+export const recordCustomFacebookConversionEvent = ( name, properties ) =>
+	recordEvent( 'fb', { name, properties } );
+
+export const recordCustomAdWordsRemarketingEvent = ( name, properties ) =>
+	recordEvent( 'adwords', { name, properties } );
 
 export const recordPageView = ( url, title, service ) => ( {
 	type: ANALYTICS_PAGE_VIEW_RECORD,

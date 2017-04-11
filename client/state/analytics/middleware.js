@@ -1,22 +1,32 @@
+ * External dependencies
+ */
+import {
+	has,
+	invoke,
+} from 'lodash';
+
 /**
  * Internal dependencies
  */
-const config = require( 'config' );
 import analytics from 'lib/analytics';
-import has from 'lodash/has';
-import invoke from 'lodash/invoke';
-import isTracking from 'state/selectors/is-tracking';
-
+import {
+	trackCustomAdWordsRemarketingEvent,
+	trackCustomFacebookConversionEvent,
+} from 'lib/analytics/ad-tracking';
 import {
 	ANALYTICS_EVENT_RECORD,
 	ANALYTICS_PAGE_VIEW_RECORD,
 	ANALYTICS_STAT_BUMP,
 	ANALYTICS_TRACKING_ON,
 } from 'state/action-types';
+import isTracking from 'state/selectors/is-tracking';
+const config = require( 'config' );
 
 const eventServices = {
-	ga: ( { category, action, label, value } ) => analytics.ga.recordEvent( category, action, label, value ),
-	tracks: ( { name, properties } ) => analytics.tracks.recordEvent( name, properties )
+	ga: ( { category, action, label, value } ) => ga.recordEvent( category, action, label, value ),
+	tracks: ( { name, properties } ) => tracks.recordEvent( name, properties ),
+	fb: ( { name, properties } ) => trackCustomFacebookConversionEvent( name, properties ),
+	adwords: ( { properties } ) => trackCustomAdWordsRemarketingEvent( properties ),
 };
 
 const pageViewServices = {
@@ -31,9 +41,8 @@ const loadTrackingTool = ( trackingTool, state ) => {
 	if ( trackingTool === 'Lucky Orange' && ! isTracking( state, 'Lucky Orange' ) && luckyOrangeEnabled && trackUser ) {
 		analytics.luckyOrange.addLuckyOrangeScript();
 	}
-};
 
-const statBump = ( { group, name } ) => analytics.mc.bumpStat( group, name );
+const statBump = ( { group, name } ) => mc.bumpStat( group, name );
 
 export const dispatcher = ( { meta: { analytics: analyticsMeta } }, state ) => {
 	analyticsMeta.forEach( ( { type, payload } ) => {
