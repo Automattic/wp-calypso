@@ -187,7 +187,7 @@ const analytics = {
 		recordPageView: function( urlPath ) {
 			let eventProperties = {
 				path: urlPath,
-				doNotTrack: '1' === navigator.doNotTrack ? 1 : 0
+				do_not_track: '1' === navigator.doNotTrack ? 1 : 0
 			};
 
 			// Record all `utm` marketing parameters as event properties on the page view event
