@@ -120,6 +120,8 @@
 		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
+		"woocommerce/extension-dashboard": true,
+		"woocommerce/extension-stats": true,
 		"wp-login": true
 	},
 	"siftscience_key": "e00e878351",
