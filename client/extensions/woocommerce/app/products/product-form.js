@@ -3,6 +3,8 @@
  */
 import React, { Component, PropTypes } from 'react';
 import i18n from 'i18n-calypso';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -10,31 +12,29 @@ import i18n from 'i18n-calypso';
 import FoldableCard from 'components/foldable-card';
 import ProductVariationTypesForm from './product-variation-types-form';
 import FormToggle from 'components/forms/form-toggle';
+import { editProduct } from '../../state/products/actions';
 
-export default class ProductForm extends Component {
+class ProductForm extends Component {
 
 	static propTypes = {
-		product: PropTypes.shape( {
-			id: PropTypes.number.isRequired,
-			name: PropTypes.string.isRequired,
-			type: PropTypes.string.isRequired,
-		} )
+		product: PropTypes.object.isRequired,
+		editProduct: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {
 		super( props );
 
-		this.state = {
-			isVariation: props.product && 'variable' === props.product.type ? true : false,
-		};
-
-		this.handleToggle = this.handleToggle.bind( this );
+		this.handleVariationToggle = this.handleVariationToggle.bind( this );
 	}
 
-	handleToggle() {
-		this.setState( ( prevState ) => ( {
-			isVariation: ! prevState.isVariation,
-		} ) );
+	handleVariationToggle() {
+		const { product } = this.props;
+		if ( product.type && 'variable' === product.type ) {
+			// @Todo Simple is default. This check will change once options for the other product types are added.
+			this.props.editProduct( product.id, 'type', 'simple' );
+		} else {
+			this.props.editProduct( product.id, 'type', 'variable' );
+		}
 	}
 
 	render() {
@@ -51,16 +51,38 @@ export default class ProductForm extends Component {
 				icon=""
 				expanded={ true }
 				className="product-variations"
-				header={ ( <FormToggle onChange={ this.handleToggle } checked={ this.state.isVariation }>
+				header={ ( <FormToggle onChange={ this.handleVariationToggle } checked={ 'variable' === product.type }>
 				{variationToggleDescription}
 				</FormToggle>
 				) }
 			>
-				{ this.state.isVariation && (
-					<ProductVariationTypesForm />
+				{ 'variable' === product.type && (
+					<ProductVariationTypesForm
+						product={ product }
+						editProduct={ this.props.editProduct }
+					/>
 				) }
 			</FoldableCard>
 		);
 	}
 
 }
+
+function mapStateToProps( state ) {
+	const { products } = state.extensions.woocommerce;
+	// @TODO Load in proper product when editing an existing product.
+	return {
+		product: products.edits.add,
+	};
+}
+
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			editProduct,
+		},
+		dispatch
+	);
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( ProductForm );
