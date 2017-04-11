@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
  */
 import {
 	fetchMagicLoginRequestEmail,
-	hideMagicLoginRequestForm,
 	hideMagicLoginRequestNotice,
 	setMagicLoginInputEmailAddress,
 } from 'state/login/magic-login/actions';
@@ -25,8 +24,6 @@ import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
 import LoggedOutForm from 'components/logged-out-form';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import Notice from 'components/notice';
 import { localize } from 'i18n-calypso';
 
@@ -34,11 +31,6 @@ import { localize } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 class RequestLoginEmailForm extends React.Component {
-	onClickEnterPasswordInstead = event => {
-		event.preventDefault();
-		this.props.hideMagicLoginRequestForm();
-	};
-
 	onEmailAddressFieldChange = event => {
 		this.props.setMagicLoginInputEmailAddress( event.target.value );
 	};
@@ -113,11 +105,6 @@ class RequestLoginEmailForm extends React.Component {
 						</div>
 					</FormFieldset>
 				</LoggedOutForm>
-				<LoggedOutFormLinks>
-					<LoggedOutFormLinkItem onClick={ this.onClickEnterPasswordInstead }>
-						{ translate( 'Enter a password instead' ) }
-					</LoggedOutFormLinkItem>
-				</LoggedOutFormLinks>
 			</div>
 		);
 	}
@@ -136,7 +123,6 @@ const mapState = state => {
 
 const mapDispatch = {
 	fetchMagicLoginRequestEmail,
-	hideMagicLoginRequestForm,
 	hideMagicLoginRequestNotice,
 	setMagicLoginInputEmailAddress,
 };
