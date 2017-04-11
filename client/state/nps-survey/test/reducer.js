@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING,
+	NPS_SURVEY_SET_ELIGIBILITY,
 	NPS_SURVEY_MARK_SHOWN_THIS_SESSION,
 	NPS_SURVEY_SUBMIT_REQUESTING,
 	NPS_SURVEY_SUBMIT_REQUEST_FAILURE,
@@ -44,7 +44,7 @@ describe( 'reducer', () => {
 
 		it( 'should track if session is eligible', () => {
 			const state = isSessionEligible( undefined, {
-				type: NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING,
+				type: NPS_SURVEY_SET_ELIGIBILITY,
 				isSessionPicked: true,
 			} );
 
@@ -53,7 +53,7 @@ describe( 'reducer', () => {
 
 		it( 'should track if session is not eligible', () => {
 			const state = isSessionEligible( undefined, {
-				type: NPS_SURVEY_SETUP_ELIGIBILITY_REQUESTING,
+				type: NPS_SURVEY_SET_ELIGIBILITY,
 				isSessionPicked: false,
 			} );
 

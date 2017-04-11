@@ -12,7 +12,7 @@ import {
 	NPS_SURVEY_DIALOG_IS_SHOWING,
 } from 'state/action-types';
 import {
-	forceNpsSurveyEligibility,
+	setNpsSurveyEligibility,
 	markNpsSurveyShownThisSession,
 } from 'state/nps-survey/actions';
 
@@ -46,7 +46,7 @@ export function setupNpsSurveyDevTrigger() {
 	return ( dispatch ) => {
 		if ( config.isEnabled( 'nps-survey/dev-trigger' ) ) {
 			window.npsSurvey = function() {
-				dispatch( forceNpsSurveyEligibility( true ) );
+				dispatch( setNpsSurveyEligibility( true ) );
 			};
 		}
 	};
