@@ -55,12 +55,10 @@ function ReaderSubscriptionListItem( {
 				<span className="reader-subscription-list-item__site-title">
 					{ <a href={ streamUrl } className="reader-subscription-list-item__link"> { siteTitle } </a> }
 				</span>
-				<div>{ siteExcerpt }</div>
+				<div className="reader-subscription-list-item__site-excerpt">{ siteExcerpt }</div>
 				{ ! isEmpty( authorName ) &&
 					<span className="reader-subscription-list-item__by-text">
-						<span>
-							{ translate( 'by' ) }
-						</span>
+						{ translate( 'by' ) }
 						<a href={ streamUrl } className="reader-subscription-list-item__link"> { authorName } </a>
 					</span>
 				}

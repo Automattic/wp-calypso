@@ -1,5 +1,45 @@
+.reader-subscription-list-item {
+	display: flex;
+	flex-direction: row;
+}
+
 .reader-subscription-list-item__byline {
 	color: darken( $gray, 30% );
+	flex: 1 0 0;
+}
+
+.reader-subscription-list-item__options {
+	display: flex;
+	flex-direction: column;
+}
+
+.reader-subscription-list-item__site-title {
+	display: block;
+	font-weight: 600;
+	height: 20px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	position: relative;
+	width: 100%;
+
+	&::after{
+		@include long-content-fade( $size: 20% );
+	}
+}
+
+.reader-subscription-list-item__site-excerpt {
+	display: block;
+	max-height: 65px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	position: relative;
+	width: 100%;
+
+	&::after{
+		@include long-content-fade( $size: 20% );
+		height: 16px * 1.4;
+		top: auto;
+	}
 }
 
 .reader-subscription-list-item__link {
@@ -31,8 +71,6 @@
 
 .reader-subscription-list-item .follow-button {
 	border: 0;
-	border-radius: 0;
-	float: right;
 	padding: 0;
 
 	.gridicon {
@@ -118,4 +156,3 @@
 	padding-right: 15px;
 	background-color: inherit;
 }
-
