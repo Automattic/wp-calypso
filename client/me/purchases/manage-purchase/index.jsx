@@ -37,7 +37,7 @@ import {
 	paymentLogoType,
 	purchaseType,
 } from 'lib/purchases';
-import { getPurchase, getSelectedSite, goToList, recordPageView } from '../utils';
+import { isDataLoading, getPurchase, getSelectedSite, goToList, recordPageView } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
@@ -74,17 +74,6 @@ function getEditCardDetailsPath( site, purchase ) {
 		return paths.editCardDetails( site.slug, purchase.id, creditCard.id );
 	}
 	return paths.addCardDetails( site.slug, purchase.id );
-}
-
-/**
- * Determines if data is being fetched. This is different than `isDataLoading` in `PurchasesUtils`
- * because this page can be rendered without a selected site.
- *
- * @param {object} props The props passed to `ManagePurchase`
- * @return {boolean} Whether or not the data is loading
- */
-function isDataLoading( props ) {
-	return ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
 }
 
 const ManagePurchase = React.createClass( {
