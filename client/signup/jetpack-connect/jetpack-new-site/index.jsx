@@ -30,9 +30,9 @@ const JetpackNewSite = React.createClass( {
 		return config( 'signup_url' ) + '?ref=calypso-selector';
 	},
 
-	onURLEnter() {
+	onURLEnter( url ) {
 		this.props.recordTracksEvent( 'calypso_jetpack_new_site_connect_click' );
-		page( '/jetpack/connect?url=' + this.refs.siteUrlInputRef.state.value.toLowerCase() );
+		page( '/jetpack/connect?url=' + url );
 	},
 
 	handleOnClickTos() {
