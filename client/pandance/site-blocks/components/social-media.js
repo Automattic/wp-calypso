@@ -10,8 +10,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 
 
-export default props => <div>
-	<SectionHeader label="Find Us On Social Media"></SectionHeader>
+export const SocialMedia = props => <div>
 	<Card>
 		<a href="https://facebook.com/manuel"><SocialLogo size="48" icon="facebook" /></a>
 		<a href="https://twitter.com/manuel"><SocialLogo size="48" icon="twitter-alt" /></a>

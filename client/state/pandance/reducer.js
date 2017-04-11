@@ -18,7 +18,7 @@ export default createReducer( {
 		name: null,
 		description: null,
 	},
-	selected: [ 1, 2, 3, 4, 5, 6, 7 ],
+	selected: [],
 }, {
 	[PANDANCE_SELECTED_TOGGLE]: (state, action) => {
 		const nextSelected = state.selected.includes( action.id ) ?

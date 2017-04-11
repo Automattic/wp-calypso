@@ -7,10 +7,6 @@
 	padding: 15px;
 }
 
-.pandance button {
-	color: red; /* :-) */
-}
-
 .content-preview {
 	margin-left: -15px;
 	margin-right: -15px;
@@ -23,7 +19,7 @@
 
 /* Blocks */
 
-.card {
+.content-preview .card {
 	box-shadow: none;
 	margin-bottom: 0;
 }

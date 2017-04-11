@@ -52,7 +52,7 @@ export class Blocks extends React.Component {
 						onBlockToggle={ this.boundOnBlockToggle } />
 					)
 				}
-			<Button primary={ true } onClick={ () => page( '/pandance/content-preview' ) }>Continue</Button>
+			<Button primary={ true } onClick={ () => page( '/pandance/info' ) }>Continue</Button>
 		</div>;
 	}
 }

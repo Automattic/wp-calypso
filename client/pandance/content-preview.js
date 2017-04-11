@@ -14,6 +14,7 @@ import Card from 'components/card';
 import SITE_BLOCKS from './site-blocks';
 
 const PreviewBlock = props => {
+	console.log( SITE_BLOCKS, props );
 	const Component = find( SITE_BLOCKS, block => block.id === props.id ).component;
 
 	if ( ! Component ) {

@@ -13,8 +13,8 @@ import ImageEditor from 'blocks/image-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 
-export default props => <div className="logo">
-	
+export const Logo = props => <div className="logo">
+
 </div>;
 
 class ImageEditorExample extends Component {

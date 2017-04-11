@@ -30,12 +30,12 @@ function wrap( component ) {
 	return <div className="pandance">{ component }</div>;
 }
 // last handler don't call next()
-export function index( context ) {
+export function businessInfo( context ) {
 	renderPage( context, wrap( <BusinessInfo /> ));
 }
 
 // last handler don't call next()
-export function blocks( context ) {
+export function index( context ) {
 	renderPage( context, wrap( <Blocks /> ) );
 }
 
@@ -63,7 +63,7 @@ export function customizeBlock( context ) {
 
 	if ( editComponent ) {
 		return renderPage( context, wrap(
-			<CustomizeBlock editComponent={ editComponent } nextBlockId={ nextBlockId } />
+			<CustomizeBlock editComponent={ editComponent } nextBlockId={ nextBlockId } component={block.component} />
 		) );
 	}
 

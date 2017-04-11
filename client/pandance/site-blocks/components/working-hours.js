@@ -14,9 +14,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import Button from 'components/button';
 import { enterBusinessName, enterBusinessDescription } from 'state/pandance/actions';
 
-export default props => <div>
-	<SectionHeader label="We’re Open"></SectionHeader>
-export default props => <div className="hours section">
+export const WorkingHours = props => <div className="hours section">
 	<Card>
 		<h3 className="section-title">Hours</h3>
 		<dl>

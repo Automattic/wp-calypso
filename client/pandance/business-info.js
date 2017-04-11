@@ -28,7 +28,7 @@ export const BusinessInfo  = props => <div>
 					   onChange={ event => props.enterBusinessDescription( event.target.value ) } />
 	</FormFieldset>
 
-	<Button primary={ true } onClick={ () => page( '/pandance/blocks' ) }>Create Site</Button>
+	<Button primary={ true } onClick={ () => page( '/pandance/content-preview' ) }>Create Site</Button>
 </div>;
 
 export default connect( ( state, props ) => ( {

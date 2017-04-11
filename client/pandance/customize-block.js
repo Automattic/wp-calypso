@@ -12,10 +12,12 @@ import Button from 'components/button';
 export default props => {
 	const {
 		editComponent,
-		nextBlockId
+		nextBlockId,
+		component
 	} = props;
 
 	const EditComponent = editComponent;
+	const Component = component;
 
 	const next = () => {
 		if ( nextBlockId ) {
@@ -23,12 +25,10 @@ export default props => {
 		} else {
 			page( '/pandance/content-preview' );
 		}
-	}
+	};
 
 	return <div>
-
 		<EditComponent next={ next }/>
-
 		<Button
 			primary={ true }
 			onClick={ next }
