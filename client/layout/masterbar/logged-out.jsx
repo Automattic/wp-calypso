@@ -11,6 +11,14 @@ import { localize } from 'i18n-calypso';
 import Item from './item';
 import config from 'config';
 
+function getLoginUrl() {
+	let loginUrl = config( 'login_url' );
+	if ( typeof window !== 'undefined' ) {
+		loginUrl += `?redirect_to=${ encodeURIComponent( window.location.href ) }`;
+	}
+	return loginUrl;
+}
+
 const MasterbarLoggedOut = ( { title, sectionName, translate } ) => (
 	<Masterbar>
 		<Item className="masterbar__item-logo">
@@ -31,7 +39,7 @@ const MasterbarLoggedOut = ( { title, sectionName, translate } ) => (
 			}
 
 			{ 'login' !== sectionName
-			?	<Item url={ config( 'login_url' ) }>
+			?	<Item url={ getLoginUrl() }>
 					{ translate( 'Log In', {
 						context: 'Toolbar',
 						comment: 'Should be shorter than ~12 chars',
