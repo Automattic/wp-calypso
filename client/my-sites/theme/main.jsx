@@ -201,9 +201,18 @@ const ThemeSheet = React.createClass( {
 			screenshot = this.getFullLengthScreenshot();
 		}
 		const img = screenshot && <img className="theme__sheet-img" src={ screenshot + '?w=680' } />;
+
+		if ( this.props.demo_uri ) {
+			return (
+				<div className="theme__sheet-screenshot is-active" onClick={ this.previewAction }>
+					{ this.renderPreviewButton() }
+					{ img }
+				</div>
+			);
+		}
+
 		return (
-			<div className="theme__sheet-screenshot" onClick={ this.previewAction }>
-				{ this.props.demo_uri && this.renderPreviewButton() }
+			<div className="theme__sheet-screenshot">
 				{ img }
 			</div>
 		);
