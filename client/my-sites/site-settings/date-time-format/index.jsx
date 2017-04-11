@@ -20,10 +20,11 @@ import {
 
 export class DateTimeFormat extends Component {
 	static propTypes = {
-		handleSelect: PropTypes.func,
+		handleSelect: PropTypes.func.isRequired,
 		fields: PropTypes.object,
 		isRequestingSettings: PropTypes.bool,
 		isSavingSettings: PropTypes.bool,
+		updateFields: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {

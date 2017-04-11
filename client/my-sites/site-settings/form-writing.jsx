@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, pick } from 'lodash';
+import { flowRight, get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -205,10 +205,11 @@ const getFormSettings = settings => {
 	] );
 
 	// handling `gmt_offset` and `timezone_string` values
-	const gmt_offset = settings.gmt_offset;
+	const gmt_offset = get( settings, 'gmt_offset' );
+	const timezone_string = get( settings, 'timezone_string' );
 
 	if (
-		! settings.timezone_string &&
+		! timezone_string &&
 		typeof gmt_offset === 'string' &&
 		gmt_offset.length
 	) {
