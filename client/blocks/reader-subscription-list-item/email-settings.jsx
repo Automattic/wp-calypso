@@ -51,7 +51,7 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 					ref={ this.savePopoutSpanRef }
 				>
 					<Gridicon icon="cog" size={ 24 } />
-					Settings
+					<span className="reader-subscription-list-item__settings-label">Settings</span>
 				</span>
 
 				<Popover

@@ -93,9 +93,30 @@
 	}
 }
 
-.reader-subscription-list-item__settings-menu {
+.reader-subscription-list-item .gridicons-cog {
+	height: 18px;
+	padding-right: 7px;
+	position: relative;
+		left: 2px;
+		top: 4px;
+	width: 18px;
+}
+
+.reader-subscription-list-item .follow-button__label,
+.reader-subscription-list-item .reader-subscription-list-item__settings-label {
+
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
+}
+
+.reader-subscription-list-item__settings {
 	color: $gray;
-	float: right;
+	padding-left: 8px;
+
+	@include breakpoint( "<660px" ) {
+		padding-left: 0;
+	}
 }
 
 .reader-subscription-list-item__site-title {
