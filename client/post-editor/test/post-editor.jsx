@@ -96,9 +96,9 @@ describe( 'PostEditor', function() {
 			const stub = sandbox.stub( PostEditStore, 'isNew' );
 			stub.returns( true );
 
-			tree.refs.editor.setEditorContent = sandbox.spy();
+			tree.editor.setEditorContent = sandbox.spy();
 			tree.onEditedPostChange();
-			expect( tree.refs.editor.setEditorContent ).to.have.been.calledWith( '' );
+			expect( tree.editor.setEditorContent ).to.have.been.calledWith( '' );
 		} );
 
 		it( 'should not clear content when store state already isNew()', function() {
@@ -112,10 +112,10 @@ describe( 'PostEditor', function() {
 
 			const stub = sandbox.stub( PostEditStore, 'isNew' );
 			stub.returns( true );
-			tree.refs.editor.setEditorContent = sandbox.spy();
+			tree.editor.setEditorContent = sandbox.spy();
 			tree.setState( { isNew: true } );
 			tree.onEditedPostChange();
-			expect( tree.refs.editor.setEditorContent ).to.not.have.been.called;
+			expect( tree.editor.setEditorContent ).to.not.have.been.called;
 		} );
 
 		it( 'should clear content when loading', function() {
@@ -129,9 +129,9 @@ describe( 'PostEditor', function() {
 
 			const stub = sandbox.stub( PostEditStore, 'isLoading' );
 			stub.returns( true );
-			tree.refs.editor.setEditorContent = sandbox.spy();
+			tree.editor.setEditorContent = sandbox.spy();
 			tree.onEditedPostChange();
-			expect( tree.refs.editor.setEditorContent ).to.have.been.calledWith( '' );
+			expect( tree.editor.setEditorContent ).to.have.been.calledWith( '' );
 		} );
 
 		it( 'should set content after load', function() {
@@ -148,10 +148,10 @@ describe( 'PostEditor', function() {
 			stub.returns( {
 				content: content
 			} );
-			tree.refs.editor.setEditorContent = sandbox.spy();
+			tree.editor.setEditorContent = sandbox.spy();
 			tree.setState( { isLoading: true } );
 			tree.onEditedPostChange();
-			expect( tree.refs.editor.setEditorContent ).to.have.been.calledWith( content );
+			expect( tree.editor.setEditorContent ).to.have.been.calledWith( content );
 		} );
 
 		it( 'a normal content change should not clear content', function() {
@@ -168,11 +168,11 @@ describe( 'PostEditor', function() {
 			stub.returns( {
 				content: content
 			} );
-			tree.refs.editor.setEditorContent = sandbox.spy();
+			tree.editor.setEditorContent = sandbox.spy();
 			tree.setState( { post: { content: 'old content' } } );
 			tree.onEditedPostChange();
 
-			expect( tree.refs.editor.setEditorContent ).to.not.have.been.called;
+			expect( tree.editor.setEditorContent ).to.not.have.been.called;
 		} );
 
 		it( 'is a copy and it should set the copied content', function() {
@@ -193,10 +193,10 @@ describe( 'PostEditor', function() {
 
 			sandbox.stub( PostEditStore, 'get' ).returns( { content: content } );
 
-			tree.refs.editor.setEditorContent = sandbox.spy();
+			tree.editor.setEditorContent = sandbox.spy();
 			tree.onEditedPostChange();
 
-			expect( tree.refs.editor.setEditorContent ).to.have.been.calledWith( content );
+			expect( tree.editor.setEditorContent ).to.have.been.calledWith( content );
 		} );
 
 		it( 'should not set the copied content more than once', function() {
@@ -217,10 +217,10 @@ describe( 'PostEditor', function() {
 
 			sandbox.stub( PostEditStore, 'get' ).returns( { content: content } );
 
-			tree.refs.editor.setEditorContent = sandbox.spy();
+			tree.editor.setEditorContent = sandbox.spy();
 			tree.onEditedPostChange();
 
-			expect( tree.refs.editor.setEditorContent ).to.not.have.been.called;
+			expect( tree.editor.setEditorContent ).to.not.have.been.called;
 		} );
 	} );
 } );
