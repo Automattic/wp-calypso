@@ -11,14 +11,13 @@ First, the component that wants to send notices must be connected to Redux.
 
 ```javascript
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { successNotice, errorNotice } from 'state/notices/actions';
 
 ...
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
+	{ successNotice, errorNotice },
 )( Component );
 ```
 

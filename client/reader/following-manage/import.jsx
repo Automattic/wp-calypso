@@ -4,7 +4,6 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal Dependencies
@@ -47,5 +46,5 @@ class FollowingManageImport extends Component {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
+	{ successNotice, errorNotice },
 )( localize( FollowingManageImport ) );
