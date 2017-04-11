@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes, Component } from 'react';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,6 +36,10 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 		this.spanRef = spanRef;
 	}
 
+	setSelected = text => () => {
+		this.setState( { selected: text } );
+	}
+
 	render() {
 		const { translate } = this.props;
 
@@ -57,25 +62,43 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 					className="reader-subscription-list-item__settings-menu-popout"
 				>
 					<div className="reader-subscription-list-item__email-popout-wrapper">
-						<h3 className="reader-subscription-list-item__email-popout-header"> { translate( 'Email me' ) } </h3>
+						<h3 className="reader-subscription-list-item__email-popout-header">
+							{ translate( 'Email me' ) }
+						</h3>
+						<hr className="reader-subscription-list-item__header-separator" />
 						<div className="reader-subscription-list-item__email-popout-toggle">
-							<span> { translate( 'New posts' ) } </span>
-							<FormToggle />
+							{ translate( 'New posts' ) }
+							<FormToggle
+								onChange={ noop /* fire off dispatch */ }
+								checked={ true /* get from selector*/ }
+							/>
 						</div>
 						<SegmentedControl compact={ true }>
-							<ControlItem>
+							<ControlItem
+								selected={ this.state.selected === 'instant' }
+								onClick={ this.setSelected( 'instant' ) }
+							>
 								{ translate( 'Instant' ) }
 							</ControlItem>
-							<ControlItem>
+							<ControlItem
+								selected={ this.state.selected === 'daily' }
+								onClick={ this.setSelected( 'daily' ) }
+							>
 								{ translate( 'Daily' ) }
 							</ControlItem>
-							<ControlItem>
+							<ControlItem
+								selected={ this.state.selected === 'weekly' }
+								onClick={ this.setSelected( 'weekly' ) }
+							>
 								{ translate( 'Weekly' ) }
 							</ControlItem>
 						</SegmentedControl>
 						<div className="reader-subscription-list-item__email-popout-toggle">
-							<span> New comments</span>
-							<FormToggle />
+							New comments
+							<FormToggle
+								onChange={ noop /* fire off dispatch */ }
+								checked={ false /* get from selector*/ }
+							/>
 						</div>
 					</div>
 				</Popover>
