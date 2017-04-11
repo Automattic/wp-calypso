@@ -16,7 +16,7 @@ class FollowingManageImport extends Component {
 
 	onImportSuccess = ( feedImport ) => {
 		const message = this.props.translate(
-			'{{em}}%(name)s{{/em}} has been received. You`ll get an email when your import is complete.',
+			'{{em}}%(name)s{{/em}} has been received. You\'ll get an email when your import is complete.',
 			{
 				args: { name: feedImport.fileName },
 				components: { em: <em /> },
