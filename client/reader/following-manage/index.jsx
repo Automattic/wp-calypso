@@ -20,6 +20,7 @@ import ReaderMain from 'components/reader-main';
 import { getReaderFeedsForQuery } from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import ConnectedSubscriptionListItem from './connected-subscription-list-item';
+import FollowingManageSubscriptions from './subscriptions';
 
 class FollowingManage extends Component {
 	static propTypes = {
@@ -134,6 +135,7 @@ class FollowingManage extends Component {
 						)}
 					</WindowScroller>
 				}
+				<FollowingManageSubscriptions />
 			</ReaderMain>
 		);
 	}

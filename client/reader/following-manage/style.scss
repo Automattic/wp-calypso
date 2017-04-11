@@ -1,7 +1,13 @@
 .following-manage .search {
-	margin: 0px;
+	margin: 0;
 }
 
 .following-manage .following-manage__input-card {
-	padding: 0px;
+	padding: 0;
+}
+
+.following-manage__subscriptions {
+	margin-top: 20px;
+	padding-top: 10px;
+	border-top: 1px solid $gray-light;
 }
