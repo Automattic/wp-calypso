@@ -6,11 +6,8 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import ReaderSubscriptionListItem from '../';
+import ConnectedReaderSubscriptionListItem from 'reader/following-manage/connected-subscription-list-item';
 import Card from 'components/card';
-import { getCurrentUser } from 'state/current-user/selectors';
-import connectSite from 'lib/reader-connect-site';
-import { localize } from 'i18n-calypso';
 
 
 const items = [
@@ -21,22 +18,6 @@ const items = [
 	{ feedId: 19850964 },
 ];
 
-const ConnectedListItem = localize( connectSite(
-	( { feed, site, translate, url, feedId, siteId } ) => (
-		<ReaderSubscriptionListItem
-			siteUrl={ url }
-			siteTitle={ feed && feed.name }
-			siteAuthor={ site && site.owner }
-			siteExcerpt={ feed && feed.description }
-			translate={ translate }
-			feedId={ feedId }
-			siteId={ siteId }
-			site={ site }
-			feed={ feed }
-		/>
-	)
-) );
-
 export default class ReaderSubscriptionListItemExample extends PureComponent {
 	static displayName = 'ReaderSubscriptionListItem';
 
@@ -44,7 +25,7 @@ export default class ReaderSubscriptionListItemExample extends PureComponent {
 		return (
 			<Card>
 				{ items.map( item =>
-						<ConnectedListItem
+						<ConnectedReaderSubscriptionListItem
 							key={ item.feedId || item.siteId }
 							{ ...item }
 						/>
