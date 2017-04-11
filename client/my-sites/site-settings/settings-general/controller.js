@@ -13,7 +13,6 @@ import SiteSettingsGeneral from 'my-sites/site-settings/settings-general/main';
 import DeleteSite from 'my-sites/site-settings/delete-site';
 import StartOver from 'my-sites/site-settings/start-over';
 import ThemeSetup from 'my-sites/site-settings/theme-setup';
-import DateTimeFormat from 'my-sites/site-settings/date-time-format';
 import sitesFactory from 'lib/sites-list';
 
 const sites = sitesFactory();
@@ -122,13 +121,6 @@ export default {
 		renderPage(
 			context,
 			<ThemeSetup activeSiteDomain={ context.params.site_id } />
-		);
-	},
-
-	dateTimeFormat( context ) {
-		renderPage(
-			context,
-			<DateTimeFormat />
 		);
 	},
 };

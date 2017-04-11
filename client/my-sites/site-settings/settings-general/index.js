@@ -44,14 +44,4 @@ export default function() {
 			controller.themeSetup
 		);
 	}
-
-	if ( config.isEnabled( 'manage/site-settings/date-time-format' ) ) {
-		page(
-			'/settings/date-time-format/:site_id',
-			mySitesController.siteSelection,
-			mySitesController.navigation,
-			settingsController.setScroll,
-			controller.dateTimeFormat
-		);
-	}
 }
