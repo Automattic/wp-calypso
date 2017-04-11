@@ -7,15 +7,14 @@ import { spy, stub } from 'sinon';
 /**
  * Internal dependencies
  */
+import { middleware } from '../wpcom-api-middleware';
 import { local, mergeHandlers } from '../utils';
 
 describe( 'WordPress.com API Middleware', () => {
-	let middleware;
 	let next;
 	let store;
 
 	beforeEach( () => {
-		middleware = require( '../wpcom-api-middleware' ).middleware;
 		next = spy();
 
 		store = {
