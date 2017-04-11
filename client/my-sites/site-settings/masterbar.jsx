@@ -33,7 +33,7 @@ const Masterbar = ( {
 					<div className="masterbar__info-link-container site-settings__info-link-container">
 						<InfoPopover position={ 'left' }>
 							<ExternalLink href={ 'https://jetpack.com/support/masterbar/' } icon target="_blank">
-								{ translate( 'Learn more about WordPress.com Toolbar.' ) }
+								{ translate( 'Learn more about the WordPress.com Toolbar.' ) }
 							</ExternalLink>
 						</InfoPopover>
 					</div>
