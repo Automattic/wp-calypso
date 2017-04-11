@@ -186,7 +186,6 @@ const ThemeSheet = React.createClass( {
 	renderPreviewButton() {
 		return (
 			<a className="theme__sheet-preview-link" onClick={ this.previewAction } data-tip-target="theme-sheet-preview">
-				<Gridicon icon="themes" size={ 18 } />
 				<span className="theme__sheet-preview-link-text">
 					{ i18n.translate( 'Open Live Demo', { context: 'Individual theme live preview button' } ) }
 				</span>

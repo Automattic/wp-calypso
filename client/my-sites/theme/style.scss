@@ -135,6 +135,35 @@
 	width: 100%;
 }
 
+.theme__sheet-preview-link {
+	display: flex;
+	position: absolute;
+		top: -24px;
+	color: lighten( $gray, 30% );
+	cursor: pointer;
+	transition: all ease-in-out 100ms;
+
+	&:hover {
+		color: $white;
+	}
+
+	.theme__sheet-preview-link-text {
+		font-size: 12px;
+		margin-top: 2px;
+	}
+
+	@include breakpoint( "<960px" ) {
+		color: $gray-text-min;
+		top: 90%;
+		left: 0;
+		right: 0;
+
+		.theme__sheet-preview-link-text {
+			margin: 0 auto;
+		}
+	}
+}
+
 .theme__sheet-content {
 	padding: 20px;
 	font-size: 14px;
@@ -382,48 +411,6 @@
 	small {
 		display: block;
 		color: $gray;
-	}
-}
-
-.theme__sheet-preview-link {
-	display: flex;
-	position: absolute;
-		top: -28px;
-	color: lighten( $gray, 30% );
-	cursor: pointer;
-	transition: all ease-in-out 100ms;
-
-	&:hover {
-		color: $white;
-	}
-
-	.gridicon {
-		margin: 0 8px 0 -4px;
-	}
-
-	.theme__sheet-preview-link-text {
-		font-size: 12px;
-		margin-top: 2px;
-		text-transform: uppercase;
-	}
-
-	@include breakpoint( "<960px" ) {
-		color: transparentize( $gray, 0.2 );
-		top: 90%;
-		margin-left: 30px;
-
-		&:hover {
-			color: $gray-dark;
-		}
-
-		.gridicon {
-			width: 24px;
-			height: 24px;
-		}
-
-		.theme__sheet-preview-link-text {
-			display: none;
-		}
 	}
 }
 
