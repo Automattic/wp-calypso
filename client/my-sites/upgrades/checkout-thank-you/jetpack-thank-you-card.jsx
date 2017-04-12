@@ -281,7 +281,7 @@ class JetpackThankYouCard extends Component {
 	isErrored() {
 		const { selectedSite, plugins } = this.props;
 		return ( selectedSite && ! selectedSite.canUpdateFiles ) ||
-			some( plugins, ( plugin ) => 'error' === plugin.status );
+			some( plugins, ( plugin ) => plugin.hasOwnProperty( 'error' ) && plugin.error );
 	}
 
 	renderFeatures() {
@@ -473,15 +473,15 @@ class JetpackThankYouCard extends Component {
 
 		const plugins = selectedSite && ! selectedSite.canUpdateFiles
 			? [
-				{ slug: 'vaultpress', status: 'error' },
-				{ slug: 'akismet', status: 'error' }
+				{ slug: 'vaultpress', status: 'wait', error: true },
+				{ slug: 'akismet', status: 'wait', error: true }
 			]
 			: this.props.plugins;
 
 		const pluginsStatus = reduce( plugins, ( completed, plugin ) => {
 			if ( 'done' === plugin.status ) {
 				completed[ plugin.slug ] = 'done';
-			} else if ( 'error' === plugin.status ) {
+			} else if ( plugin.hasOwnProperty( 'error' ) && plugin.error ) {
 				completed[ plugin.slug ] = 'error';
 			} else {
 				completed[ plugin.slug ] = 'wait';
