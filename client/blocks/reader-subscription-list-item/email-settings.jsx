@@ -55,7 +55,7 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 				</span>
 
 				<Popover
-					onClose={ this.props.onClose }
+					onClose={ this.closePopover }
 					isVisible={ this.state.showPopover }
 					context={ this.spanRef }
 					position={ 'bottom left' }
