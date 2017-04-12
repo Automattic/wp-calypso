@@ -250,7 +250,8 @@ export const PLANS_LIST = {
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getPathSlug: () => 'premium',
 		getDescription: () => i18n.translate(
-				'Earn income and reduce costs.'
+				'Generate income and save on video hosting costs. ' +
+				'Improve security with daily backups, malware scanning, and spam defense.'
 		),
 		getFeatures: () => compact( [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
