@@ -3,56 +3,60 @@
  */
 import { mergeHandlers } from './utils';
 import { middleware } from './wpcom-api-middleware';
-import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:state:data-layer' );
-let extensionHandlers = Object.create( null );
-let handlerMiddleware = buildMiddleware( extensionHandlers );
+const configuration = configureMiddleware( Object.create( null ), Object.create( null ) );
 
-export function addHandlers( extensionName, handlers, existingHandlers = extensionHandlers ) {
-	if ( Object.keys( existingHandlers ).includes( extensionName ) ) {
-		throw new Error( `Handlers for extension ${ extensionName } already present.` );
-	}
-
-	// Set the module globals for convenience
-	extensionHandlers = { ...existingHandlers, [ extensionName ]: handlers };
-	handlerMiddleware = buildMiddleware( extensionHandlers );
-
-	return extensionHandlers;
+/**
+ * Changes configuration to build middleware from new handlers.
+ *
+ * @param {object} handlers The mapping of extension names to sets of handlers.
+ * @param {object} config The config to be modified (defaults to module instance)
+ * @returns {object} The config that was given, with modifications.
+ */
+export function configureMiddleware( handlers, config = configuration ) {
+	config.handlers = handlers;
+	config.middleware = buildMiddleware( handlers );
+	return config;
 }
 
-export function removeHandlers( extensionName, existingHandlers = extensionHandlers ) {
-	const { [ extensionName ]: omitted, ...remainingHandlers } = existingHandlers;
-
-	if ( ! omitted ) {
-		debug( `Trying to remove nonexistent handlers for ${ extensionName }` );
+/**
+ * Adds an extension's handlers to the middleware.
+ *
+ * @param {string} name The name of the extension.
+ * @param {object} handlers A mapping of action types to arrays of handlers.
+ * @param {object} config The config to be modified (defaults to module instance)
+ * @return {boolean} True upon success, false if name is already taken.
+ */
+export function addHandlers( name, handlers, config = configuration ) {
+	if ( config.handlers && undefined !== config.handlers[ name ] ) {
+		return false;
 	}
 
-	// Set the module globals for convenience
-	extensionHandlers = remainingHandlers;
-	handlerMiddleware = buildMiddleware( extensionHandlers );
+	configureMiddleware( { ...config.handlers, [ name ]: handlers }, config );
+	return true;
+}
 
-	return extensionHandlers;
+/**
+ * Removes an extension's handlers from the middleware.
+ *
+ * @param {string} name The name of the extension.
+ * @param {object} config The config to be modified (defaults to module instance)
+ * @return {boolean} True upon success, false if name not found.
+ */
+export function removeHandlers( name, config = configuration ) {
+	const { [ name ]: omitted, ...remainingHandlers } = config.handlers || {};
+
+	return Boolean( omitted && configureMiddleware( remainingHandlers, config ) );
 }
 
 export function buildMiddleware( handlersByExtension ) {
-	const allHandlers = Object.values( handlersByExtension ).reduce(
-		( accumulated, handlers ) => {
-			return mergeHandlers( accumulated, handlers );
-		},
-		{}
-	);
+	const allHandlers = Object.values( handlersByExtension ).reduce( mergeHandlers, Object.create( null ) );
 
 	return middleware( allHandlers );
 }
 
 /**
  * Extensions Middleware
- * @function
- * @param {Object} store The store for the middleware chain.
- * @returns {Function} The next => action part of the middleware.
  */
-export default store => next => action => {
-	return handlerMiddleware( store )( next )( action );
-};
+export default configuration.middleware;
 
