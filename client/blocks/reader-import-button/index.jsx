@@ -5,24 +5,22 @@ import React from 'react';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
 import FilePicker from 'components/file-picker';
+import { successNotice, errorNotice } from 'state/notices/actions';
 
 class ReaderImportButton extends React.Component {
 
 	static propTypes = {
-		onError: React.PropTypes.func,
-		onImport: React.PropTypes.func,
 		onProgress: React.PropTypes.func,
 	}
 
 	static defaultProps = {
-		onError: noop,
-		onImport: noop,
 		onProgress: noop,
 	}
 
@@ -57,16 +55,38 @@ class ReaderImportButton extends React.Component {
 		} );
 
 		if ( err ) {
-			this.props.onError( err );
+			this.onImportFailure( err );
 		} else {
 			// Tack on the file name since it will be displayed in the UI
 			data.fileName = this.fileName;
-			this.props.onImport( data );
+			this.onImportSuccess( data );
 		}
 	}
 
 	onImportProgress = ( event ) => {
 		this.props.onProgress( event );
+	}
+
+	onImportSuccess = ( feedImport ) => {
+		const message = this.props.translate(
+			'{{em}}%(name)s{{/em}} has been received. You\'ll get an email when your import is complete.',
+			{
+				args: { name: feedImport.fileName },
+				components: { em: <em /> },
+			}
+		);
+		this.props.successNotice( message );
+	}
+
+	onImportFailure = ( error ) => {
+		if ( ! error ) {
+			return null;
+		}
+
+		const message = this.props.translate( 'Whoops, something went wrong. %(message)s. Please try again.', {
+			args: { message: error.message }
+		} );
+		this.props.errorNotice( message );
 	}
 
 	render() {
@@ -83,4 +103,7 @@ class ReaderImportButton extends React.Component {
 	}
 }
 
-export default localize( ReaderImportButton );
+export default connect(
+	null,
+	{ successNotice, errorNotice },
+)( localize( ReaderImportButton ) );
