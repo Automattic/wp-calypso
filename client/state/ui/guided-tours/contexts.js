@@ -12,7 +12,7 @@ import {
 } from 'state/ui/selectors';
 import { getLastAction } from 'state/ui/action-log/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { canCurrentUser } from 'state/selectors';
+import { canCurrentUser, isSiteCustomizable } from 'state/selectors';
 import {
 	hasDefaultSiteTitle,
 	isCurrentPlanPaid,
@@ -122,7 +122,7 @@ export const isSelectedSitePreviewable = state =>
  * @return {Boolean} True if user can run customizer, false otherwise.
  */
 export const isSelectedSiteCustomizable = state =>
-	getSelectedSite( state ) && getSelectedSite( state ).is_customizable;
+	isSiteCustomizable( state, getSelectedSiteId( state ) );
 
 /**
  * Returns a selector that tests whether an A/B test is in a given variant.

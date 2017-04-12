@@ -31,7 +31,7 @@ import createSelector from 'lib/create-selector';
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import versionCompare from 'lib/version-compare';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
-import canCurrentUser from 'state/selectors/can-current-user';
+import { isSiteCustomizable } from 'state/selectors';
 
 /**
  * Returns a raw site object by its ID.
@@ -302,24 +302,6 @@ export function isSitePreviewable( state, siteId ) {
 
 	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
 	return !! unmappedUrl && isHttps( unmappedUrl );
-}
-
-/**
- * Returns true if the site can be customized by the user, false if the
- * site cannot be customized, or null if customizing ability cannot be
- * determined.
- *
- * @param  {Object}   state  Global state tree
- * @param  {Number}   siteId Site ID
- * @return {?Boolean}        Whether site is customizable
- */
-export function isSiteCustomizable( state, siteId ) {
-	// Cannot determine site customizing ability if there is no current user
-	if ( ! state.currentUser ) {
-		return null;
-	}
-
-	return canCurrentUser( state, siteId, 'edit_theme_options' );
 }
 
 /**
