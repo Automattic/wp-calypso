@@ -48,7 +48,6 @@ describe( 'selectors', () => {
 				URL: 'https://example.com',
 				domain: 'example.com',
 				hasConflict: false,
-				is_customizable: null,
 				is_previewable: false,
 				options: {
 					default_post_format: 'standard',

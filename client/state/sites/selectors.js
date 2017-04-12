@@ -31,7 +31,6 @@ import createSelector from 'lib/create-selector';
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import versionCompare from 'lib/version-compare';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
-import { isSiteCustomizable } from 'state/selectors';
 
 /**
  * Returns a raw site object by its ID.
@@ -69,7 +68,6 @@ export const getSite = createSelector(
 			slug: getSiteSlug( state, siteId ),
 			domain: getSiteDomain( state, siteId ),
 			is_previewable: isSitePreviewable( state, siteId ),
-			is_customizable: isSiteCustomizable( state, siteId ),
 			options: getSiteOptions( state, siteId ),
 		};
 	},
