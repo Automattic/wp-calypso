@@ -9,12 +9,12 @@ import classnames from 'classnames';
  */
 import CommentButton from 'blocks/comment-button';
 import LikeButton from 'reader/like-button';
-import ShareButton from 'reader/share';
+import ShareButton from 'blocks/reader-share';
 import PostEditButton from 'blocks/post-edit-button';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 import { shouldShowComments } from 'blocks/comments/helper';
 import { shouldShowLikes } from 'reader/like-helper';
-import { shouldShowShare } from 'reader/share/helper';
+import { shouldShowShare } from 'blocks/reader-share/helper';
 import { userCan } from 'lib/posts/utils';
 import * as stats from 'reader/stats';
 import { localize } from 'i18n-calypso';

@@ -1,4 +1,4 @@
-.reader-share_button {
+.reader-share__button {
 	align-items: center;
 	box-sizing: border-box;
 	color: $gray;
@@ -94,6 +94,6 @@
 	}
 }
 
-.sites-popover.is-reader .site-selector__sites {
+.sites-popover.reader-share__sites-popover .site-selector__sites {
 	max-height: 25vh;
 }

@@ -1,23 +1,37 @@
-var React = require( 'react' ),
-	url = require( 'url' ),
-	defer = require( 'lodash/defer' ),
-	config = require( 'config' ),
-	classnames = require( 'classnames' ),
-	qs = require( 'qs' ),
-	page = require( 'page' );
+/**
+ * External dependencies
+ */
+import React from 'react';
+import url from 'url';
+import { defer } from 'lodash';
+import config from 'config';
+import classnames from 'classnames';
+import qs from 'qs';
+import page from 'page';
 import SocialLogo from 'social-logos';
+import { localize } from 'i18n-calypso';
 
-var PopoverMenu = require( 'components/popover/menu' ),
-	PopoverMenuItem = require( 'components/popover/menu-item' ),
-	Gridicon = require( 'gridicons' ),
-	sitesList = require( 'lib/sites-list' )(),
-	stats = require( 'reader/stats' ),
-	SitesPopover = require( 'components/sites-popover' ),
-	sections = require( 'sections-preload' );
+/**
+ * Internal dependencies
+ */
+import PopoverMenu from 'components/popover/menu';
+import PopoverMenuItem from 'components/popover/menu-item';
+import Gridicon from 'gridicons';
+import * as stats from 'reader/stats';
+import SitesPopover from 'components/sites-popover';
+import { preload as preloadSection } from 'sections-preload';
+import User from 'lib/user';
 
-var actionMap = {
-	twitter: function( post ) {
-		var twitterUrl = {
+/**
+ * Local variables
+ */
+// Remove me
+const sitesList = require( 'lib/sites-list' )(); // eslint-disable-line no-restricted-modules
+
+const user = User();
+const actionMap = {
+	twitter( post ) {
+		const twitterUrlProperties = {
 			scheme: 'https',
 			hostname: 'twitter.com',
 			pathname: '/intent/tweet',
@@ -28,12 +42,12 @@ var actionMap = {
 			}
 		};
 
-		twitterUrl = url.format( twitterUrl );
+		const twitterUrl = url.format( twitterUrlProperties );
 
 		window.open( twitterUrl, 'twitter', 'width=550,height=420,resizeable,scrollbars' );
 	},
-	facebook: function( post ) {
-		var fackbookUrl = {
+	facebook( post ) {
+		const facebookUrlProperties = {
 			scheme: 'https',
 			hostname: 'www.facebook.com',
 			pathname: '/sharer.php',
@@ -43,9 +57,9 @@ var actionMap = {
 			}
 		};
 
-		fackbookUrl = url.format( fackbookUrl );
+		const facebookUrl = url.format( facebookUrlProperties );
 
-		window.open( fackbookUrl, 'facebook', 'width=626,height=436,resizeable,scrollbars' );
+		window.open( facebookUrl, 'facebook', 'width=626,height=436,resizeable,scrollbars' );
 	}
 };
 
@@ -70,73 +84,85 @@ function buildQuerystringForPost( post ) {
 	return qs.stringify( args );
 }
 
-const ReaderShare = React.createClass( {
+function canShareToWordPress() {
+	return !! user.get().primarySiteSlug;
+}
 
-	propTypes: {
+class ReaderShare extends React.Component {
+
+	static propTypes = {
 		iconSize: React.PropTypes.number
-	},
+	}
 
-	getInitialState() {
-		return { showingMenu: false };
-	},
+	static defaultProps = {
+		position: 'bottom',
+		tagName: 'li',
+		iconSize: 24
+	}
 
-	getDefaultProps() {
-		return {
-			position: 'top',
-			tagName: 'li',
-			iconSize: 24
-		};
-	},
+	state = {
+		showingMenu: false,
+	};
+
+	constructor( props ) {
+		super( props );
+		this.mounted = false;
+	}
+
+	componentWillMount() {
+		this.mounted = true;
+	}
 
 	componentWillUnmount() {
-		if ( this._closeHandle ) {
-			clearTimeout( this._closeHandle );
-			this._closeHandle = null;
+		if ( this.closeHandle ) {
+			clearTimeout( this.closeHandle );
+			this.closeHandle = null;
 		}
-	},
+		this.mounted = false;
+	}
 
-	_deferMenuChange( showing ) {
-		if ( this._closeHandle ) {
-			clearTimeout( this._closeHandle );
+	deferMenuChange = ( showing ) => {
+		if ( this.closeHandle ) {
+			clearTimeout( this.closeHandle );
 		}
 
-		this._closeHandle = defer( () => {
-			this._closeHandle = null;
+		this.closeHandle = defer( () => {
+			this.closeHandle = null;
 			this.setState( { showingMenu: showing } );
 		} );
-	},
+	}
 
-	toggle( event ) {
+	toggle = ( event ) => {
 		event.preventDefault();
 		if ( ! this.state.showingMenu ) {
-			const target = !! sitesList.getPrimary() ? 'wordpress' : 'external';
+			const target = canShareToWordPress() ? 'wordpress' : 'external';
 			stats.recordAction( 'open_share' );
 			stats.recordGaEvent( 'Opened Share to ' + target );
 			stats.recordTrack( 'calypso_reader_share_opened', {
 				target
 			} );
 		}
-		this._deferMenuChange( ! this.state.showingMenu );
-	},
+		this.deferMenuChange( ! this.state.showingMenu );
+	}
 
-	closeMenu() {
+	closeMenu = () => {
 		// have to defer this to let the mouseup / click escape.
 		// If we don't defer and remove the DOM node on this turn of the event loop,
 		// Chrome (at least) will not fire the click
-		if ( this.isMounted() ) {
-			this._deferMenuChange( false );
+		if ( this.mounted ) {
+			this.deferMenuChange( false );
 		}
-	},
+	}
 
-	pickSiteToShareTo( slug ) {
+	pickSiteToShareTo = ( slug ) => {
 		stats.recordAction( 'share_wordpress' );
 		stats.recordGaEvent( 'Clicked on Share to WordPress' );
 		stats.recordTrack( 'calypso_reader_share_to_site' );
-		page( `/post/${slug}?` + buildQuerystringForPost( this.props.post ) );
+		page( `/post/${ slug }?` + buildQuerystringForPost( this.props.post ) );
 		return true;
-	},
+	}
 
-	closeExternalShareMenu( action ) {
+	closeExternalShareMenu = ( action ) => {
 		this.closeMenu();
 		const actionFunc = actionMap[ action ];
 		if ( actionFunc ) {
@@ -147,19 +173,18 @@ const ReaderShare = React.createClass( {
 			} );
 			actionFunc( this.props.post );
 		}
-	},
+	}
 
 	preloadEditor() {
-		sections.preload( 'post-editor' );
-	},
+		preloadSection( 'post-editor' );
+	}
 
 	render() {
-		const canShareToWordpress = !! sitesList.getPrimary(),
-			buttonClasses = classnames( {
-				'reader-share_button': true,
-				'ignore-click': true,
-				'is-active': this.state.showingMenu
-			} );
+		const buttonClasses = classnames( {
+			'reader-share__button': true,
+			'ignore-click': true,
+			'is-active': this.state.showingMenu
+		} );
 
 		return React.createElement( this.props.tagName, {
 			className: 'reader-share',
@@ -170,13 +195,13 @@ const ReaderShare = React.createClass( {
 			[
 				( <span key="button" ref="shareButton" className={ buttonClasses }>
 					<Gridicon icon="share" size={ this.props.iconSize } />
-					<span className="reader-share__button-label">{ this.translate( 'Share', { comment: 'Share the post' } ) }</span>
+					<span className="reader-share__button-label">{ this.props.translate( 'Share', { comment: 'Share the post' } ) }</span>
 				</span> ),
 				( this.state.showingMenu &&
-						( canShareToWordpress
+						( canShareToWordPress()
 						? <SitesPopover
 								key="menu"
-								header={ <div>{ this.translate( 'Share on:' ) }</div> }
+								header={ <div>{ this.props.translate( 'Share on:' ) }</div> }
 								sites={ sitesList }
 								context={ this.refs && this.refs.shareButton }
 								visible={ this.state.showingMenu }
@@ -184,7 +209,7 @@ const ReaderShare = React.createClass( {
 								onSiteSelect={ this.pickSiteToShareTo }
 								onClose={ this.closeMenu }
 								position={ this.props.position }
-								className="is-reader"/>
+								className="reader-share__sites-popover" />
 						: <PopoverMenu key="menu" context={ this.refs && this.refs.shareButton }
 								isVisible={ this.state.showingMenu }
 								onClose={ this.closeExternalShareMenu }
@@ -200,7 +225,6 @@ const ReaderShare = React.createClass( {
 			]
 		);
 	}
+}
 
-} );
-
-module.exports = ReaderShare;
+export default localize( ReaderShare );
