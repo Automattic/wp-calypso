@@ -102,13 +102,13 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 					bottom: 30px;
 					left: 20px;
 				text-shadow: 0 1px rgba(0, 0, 0, 0.3);
-				white-space: nowrap;
 				width: calc( 100% - 44px );
 				text-overflow: ellipsis;
 				overflow: hidden;
 				z-index: z-index( 'root', '.reader-post-card__title' );
 				margin-bottom: -15px; // relative elements need a negative margin so they don't create bottom padding
 				height: 19px;
+				white-space: nowrap;
 			}
 
 			.reader-post-card__title .reader-post-card__title-link {
@@ -355,7 +355,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .reader-post-card__post {
 	clear: both;
 	display: flex;
-	flex-wrap: wrap;
 	flex-direction: row;
 	margin-top: 14px;
 
