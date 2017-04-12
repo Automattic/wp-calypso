@@ -18,9 +18,8 @@ import { subscribeToNewPostEmail, unsubscribeToNewPostEmail, updateNewPostEmailS
 import { errorNotice } from 'state/notices/actions';
 import { getReaderFollowForBlog } from 'state/selectors';
 
-function validateParameters( params ) {
-	// the only valid param is delivery_frequency
-	const frequency = params.deliveryFrequency;
+function buildBody( frequency ) {
+	// the only valid param is deliveryFrequency
 	const validFrequencies = [
 		'instantly',
 		'daily',
@@ -38,7 +37,7 @@ export function requestPostEmailSubscription( { dispatch }, action, next ) {
 	dispatch( http( {
 		method: 'POST',
 		path: `/read/site/${ action.payload.blogId }/post_email_subscriptions/new`,
-		body: validateParameters( action.payload ), // have to have an empty body to make wpcom-http happy
+		body: buildBody( get( action, [ 'payload', 'deliveryFrequency' ] ) ),
 		apiVersion: '1.2',
 		onSuccess: action,
 		onFailure: action,
@@ -82,7 +81,7 @@ export function requestUpdatePostEmailSubscription( { dispatch, getState }, acti
 		method: 'POST',
 		path: `/read/site/${ action.payload.blogId }/post_email_subscriptions/update`,
 		apiVersion: '1.2',
-		body: validateParameters( action.payload ),
+		body: buildBody( get( action, [ 'payload', 'deliveryFrequency' ] ) ),
 		onSuccess: actionWithRevert,
 		onFailure: actionWithRevert,
 	} ) );
