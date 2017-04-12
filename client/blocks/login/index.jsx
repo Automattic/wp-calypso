@@ -8,17 +8,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import FormsButton from 'components/forms/form-button';
 import FormPasswordInput from 'components/forms/form-password-input';
 import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import { loginUser } from 'state/login/actions';
 import Notice from 'components/notice';
-import { externalRedirect } from 'lib/route/path';
-
+import postForm from 'lib/form/post';
 import {
 	isRequestingLogin,
-	isLoginSuccessful,
 	getError
 } from 'state/login/selectors';
 
@@ -27,7 +26,6 @@ export class Login extends Component {
 		isRequestingLogin: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
-		isLoginSuccessful: PropTypes.bool,
 		loginError: PropTypes.string,
 		redirectLocation: PropTypes.string,
 		title: PropTypes.string,
@@ -47,12 +45,6 @@ export class Login extends Component {
 		this.onSubmitForm = this.onSubmitForm.bind( this );
 	}
 
-	componentDidUpdate() {
-		if ( this.props.isLoginSuccessful ) {
-			externalRedirect( this.props.redirectLocation || '/' );
-		}
-	}
-
 	onChangeField( event ) {
 		this.setState( {
 			[ event.target.name ]: event.target.value
@@ -61,7 +53,14 @@ export class Login extends Component {
 
 	onSubmitForm( event ) {
 		event.preventDefault();
-		this.props.loginUser( this.state.usernameOrEmail, this.state.password );
+		this.props.loginUser( this.state.usernameOrEmail, this.state.password ).then( () => {
+			postForm( config( 'login_url' ), {
+				log: this.state.usernameOrEmail,
+				pwd: this.state.password,
+				redirect_to: this.props.redirectLocation || window.location.origin,
+				rememberme: 'forever',
+			} );
+		} );
 	}
 
 	renderNotices() {
@@ -132,7 +131,6 @@ export class Login extends Component {
 export default connect( state => {
 	return {
 		isRequestingLogin: isRequestingLogin( state ),
-		isLoginSuccessful: isLoginSuccessful( state ),
 		loginError: getError( state )
 	};
 }, {

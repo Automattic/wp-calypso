@@ -23,6 +23,7 @@
 	"i18n_default_locale_slug": "en",
 	"jetpack_min_version": false,
 	"login_url": false,
+	"login_url_xhr": "https://wordpress.com/wp-login.php?action=login-endpoint",
 	"logout_url": false,
 	"mc_analytics_enabled": false,
 	"oauth_client_id": false,
