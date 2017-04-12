@@ -339,7 +339,7 @@ class PlanFeatures extends Component {
 				description={ description }
 				hideInfoPopover={ false }
 			>
-				<span className="plan_features__item-info">
+				<span className="plan-features__item-info">
 					<span className="plan-features__item-title">{ feature.getTitle() }</span>
 				</span>
 			</PlanFeaturesItem>
