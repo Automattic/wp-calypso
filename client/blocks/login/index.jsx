@@ -10,9 +10,10 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import FormsButton from 'components/forms/form-button';
-import FormPasswordInput from 'components/forms/form-password-input';
 import Card from 'components/card';
+import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
+import FormCheckbox from 'components/forms/form-checkbox';
 import { loginUser } from 'state/login/actions';
 import Notice from 'components/notice';
 import postForm from 'lib/form/post';
@@ -40,6 +41,7 @@ export class Login extends Component {
 		this.state = {
 			usernameOrEmail: '',
 			password: '',
+			rememberme: false,
 		};
 		this.onChangeField = this.onChangeField.bind( this );
 		this.onSubmitForm = this.onSubmitForm.bind( this );
@@ -58,7 +60,7 @@ export class Login extends Component {
 				log: this.state.usernameOrEmail,
 				pwd: this.state.password,
 				redirect_to: this.props.redirectLocation || window.location.origin,
-				rememberme: 'forever',
+				rememberme: this.state.rememberme ? 1 : 0,
 			} );
 		} );
 	}
@@ -112,7 +114,11 @@ export class Login extends Component {
 						</div>
 						<div className="login__form-remember-me">
 							<label>
-								<input type="checkbox" name="rememberme" />
+								<FormCheckbox
+									name="rememberme"
+									checked={ this.state.rememberme }
+									onChange={ this.onChangeField }
+									{ ...isDisabled } />
 								{ this.props.translate( 'Stay logged in' ) }
 							</label>
 						</div>
