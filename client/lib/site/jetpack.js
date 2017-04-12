@@ -262,24 +262,6 @@ JetpackSite.prototype.updateMonitorSettings = function( emailNotifications, wpNo
 	}.bind( this ) );
 };
 
-JetpackSite.prototype.updateSshCredentials = function( query, callback ) {
-	wpcom.undocumented().site( this.ID ).sshCredentialsNew( query, function( error, data ) {
-		this.emit( 'change' );
-
-		if ( error ) {
-			debug( 'error updating SSH credentials', error );
-			callback && callback( error );
-			return;
-		}
-
-		debug( 'updated SSH credentials', data );
-
-		callback && callback( null, data );
-	}.bind( this ) );
-
-	this.emit( 'change' );
-};
-
 JetpackSite.prototype.getOption = function( query, callback ) {
 	wpcom.undocumented().site( this.ID ).getOption( query, function( error, data ) {
 		this.emit( 'change' );
