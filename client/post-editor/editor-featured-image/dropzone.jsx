@@ -99,12 +99,10 @@ class FeaturedImageDropZone extends Component {
 }
 
 export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
-
-		return { siteId, postId };
-	},
+	( state ) => ( {
+		siteId: getSelectedSiteId( state ),
+		postId: getEditorPostId( state ),
+	} ),
 	{
 		editPost,
 		deleteMedia,
