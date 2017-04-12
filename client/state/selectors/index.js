@@ -79,6 +79,7 @@ export isAccountRecoveryResetOptionsReady from './is-account-recovery-reset-opti
 export isActivatingJetpackJumpstart from './is-activating-jetpack-jumpstart';
 export isActivatingJetpackModule from './is-activating-jetpack-module';
 export isAutomatedTransferActive from './is-automated-transfer-active';
+export isAutomatedTransferFailed from './is-automated-transfer-failed';
 export isDeactivatingJetpackJumpstart from './is-deactivating-jetpack-jumpstart';
 export isDeactivatingJetpackModule from './is-deactivating-jetpack-module';
 export isDirectlyFailed from './is-directly-failed';
@@ -126,4 +127,3 @@ export isUpdatingJetpackSettings from './is-updating-jetpack-settings';
 export isUserRegistrationDaysWithinRange from './is-user-registration-days-within-range';
 export shouldCloseVideoEditorModal from './should-close-video-editor-modal';
 export shouldShowVideoEditorError from './should-show-video-editor-error';
-
