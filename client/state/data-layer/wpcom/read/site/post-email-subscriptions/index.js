@@ -19,7 +19,6 @@ import { errorNotice } from 'state/notices/actions';
 import { getReaderFollowForBlog } from 'state/selectors';
 
 function buildBody( frequency ) {
-	// the only valid param is deliveryFrequency
 	const validFrequencies = [
 		'instantly',
 		'daily',
