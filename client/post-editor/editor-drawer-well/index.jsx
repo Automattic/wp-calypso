@@ -80,10 +80,7 @@ class EditorDrawerWell extends Component {
 						</span>
 					</button>
 				) }
-				{ this.props.customDropZone
-					? this.props.customDropZone
-					: null
-				}
+				{ this.props.customDropZone }
 			</div>
 		);
 	}
