@@ -51,7 +51,7 @@ const jetpackNewSiteSelector = ( context ) => {
 		document.getElementById( 'primary' ),
 		context.store
 	);
-}
+};
 
 const jetpackConnectFirstStep = ( context, type ) => {
 	removeSidebar( context );
