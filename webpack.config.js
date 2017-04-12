@@ -1,5 +1,5 @@
 /***** WARNING: ES5 code only here. Not transpiled! *****/
-/* eslint-disable no-var */
+/* eslint-disable no-var, import/no-commonjs */
 
 /**
  * External dependencies
@@ -69,15 +69,7 @@ const webpackConfig = {
 			}
 		]
 	},
-	resolve: {
-		extensions: [ '', '.json', '.js', '.jsx' ],
-		root: [ path.join( __dirname, 'client' ), path.join( __dirname, 'client', 'extensions' ) ],
-		modulesDirectories: [ 'node_modules' ],
-		alias: {
-			'react-virtualized': 'react-virtualized/dist/commonjs',
-			'social-logos/example': 'social-logos/build/example'
-		}
-	},
+	resolve: require( 'webpack.config.resolve' ).client,
 	resolveLoader: {
 		root: [ __dirname ]
 	},

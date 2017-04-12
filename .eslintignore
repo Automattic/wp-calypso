@@ -5,4 +5,5 @@ build/
 docs/
 public/
 !.eslintrc.js
+!.eslint-resolver.js
 server/devdocs/search-index.js

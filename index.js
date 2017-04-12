@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable import/no-commonjs, no-console */
 
 /**
  * External dependencies.

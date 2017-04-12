@@ -1,5 +1,10 @@
 {
 	"rules": {
+		"import/default": 1,
+		"import/export": 1,
+		"import/named": 1,
+		"import/namespace": 1,
+		"import/no-commonjs": 0,
 		"no-console": 0
 	}
 }
