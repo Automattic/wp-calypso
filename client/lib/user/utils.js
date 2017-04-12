@@ -55,14 +55,10 @@ var userUtils = {
 	},
 
 	logout: function( redirect ) {
-		var logoutUrl = userUtils.getLogoutUrl( redirect );
+		const logoutUrl = userUtils.getLogoutUrl( redirect );
 
 		// Clear any data stored locally within the user data module or localStorage
-		user.clear();
-		debug( 'User stored data cleared' );
-
-		// Forward user to WordPress.com to be logged out
-		location.href = logoutUrl;
+		user.clear( () => location.href = logoutUrl );
 	},
 
 	getLocaleSlug: function() {
