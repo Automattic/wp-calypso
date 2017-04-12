@@ -40,28 +40,38 @@
 .reader-combined-card__post-details {
 	font-family: $serif;
 	width: 100%;
+
+	@include breakpoint( "<960px" ) {
+		width: calc( 100% - 100px );
+	}
+
+	@include breakpoint( "<660px" ) {
+		width: calc( 100% - 75px );
+	}
 }
 
 .reader-combined-card__post-title-link,
 .reader-combined-card__post-title-link:visited {
 	color: $gray-dark;
 	cursor: pointer;
+	display: block;
 	font-size: 17px;
 	font-weight: 700;
 	line-height: 1.4;
-	display: block;
-	position: relative;
-	max-height: 16px * 1.4 * 1;
-	word-wrap: break-word;
-	overflow: hidden;
 	margin-top: -2px;
+	max-height: 16px * 1.4 * 1;
+	overflow: hidden;
+	position: relative;
+	word-wrap: break-word;
+	white-space: nowrap;
 
-	&:hover, &:focus {
+	&:hover,
+	&:focus {
 		color: $gray-dark;
 	}
 
 	&::after {
-		@include long-content-fade( $size: 20% );
+		@include long-content-fade( $size: 10% );
 		height: 16px * 1.4;
 	}
 }
@@ -213,7 +223,7 @@
 	margin-top: 4px;
 
 	&:not( .is-placeholder )::after {
-		@include long-content-fade( $size: 20% );
+		@include long-content-fade( $size: 10% );
 	}
 }
 
