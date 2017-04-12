@@ -42,6 +42,7 @@ export class Login extends Component {
 			usernameOrEmail: '',
 			password: '',
 			rememberme: false,
+			submitting: false,
 		};
 		this.onChangeField = this.onChangeField.bind( this );
 		this.onSubmitForm = this.onSubmitForm.bind( this );
@@ -56,6 +57,9 @@ export class Login extends Component {
 	onSubmitForm( event ) {
 		event.preventDefault();
 		this.props.loginUser( this.state.usernameOrEmail, this.state.password ).then( () => {
+			this.setState( {
+				submitting: true
+			} );
 			postForm( config( 'login_url' ), {
 				log: this.state.usernameOrEmail,
 				pwd: this.state.password,
@@ -75,7 +79,7 @@ export class Login extends Component {
 
 	render() {
 		const isDisabled = {};
-		if ( this.props.isRequestingLogin ) {
+		if ( this.props.isRequestingLogin || this.state.submitting ) {
 			isDisabled.disabled = true;
 		}
 
