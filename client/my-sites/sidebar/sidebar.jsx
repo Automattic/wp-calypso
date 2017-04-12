@@ -243,6 +243,10 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		if ( ! this.props.currentUser.email_verified ) {
+			menusLink = '/customize' + this.siteSuffix();
+		}
+
 		if ( site.jetpack ) {
 			menusLink = site.options.admin_url + 'customize.php?autofocus[panel]=nav_menus';
 		}
