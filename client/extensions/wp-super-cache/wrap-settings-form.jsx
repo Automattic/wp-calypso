@@ -106,10 +106,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		state => {
 			const siteId = getSelectedSiteId( state );
 			const settings = Object.assign( {}, getSettings( state, siteId ), {
-				// Easy
-				// http_only setting is not persisted, but is needed for the "Test Cache" action.
-				http_only: true,
-
 				// Caching
 				wp_cache_enabled: true,
 
