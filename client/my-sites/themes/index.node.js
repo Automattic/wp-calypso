@@ -13,10 +13,6 @@ import {
 } from './controller';
 import validateFilters from './validate-filters';
 
-// `logged-out` middleware isn't SSR-compliant yet, but we can at least render
-// the layout.
-// FIXME: Also create loggedOut/multiSite/singleSite elements, depending on route.
-
 export default function( router ) {
 	const verticals = getSubjects().join( '|' );
 
