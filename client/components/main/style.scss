@@ -2,6 +2,7 @@
 	margin: auto;
 	max-width: 720px;
 	z-index: z-index( 'root', '.main' );
+	backface-visibility: hidden;
 
 	// Themes is a great example of using all this new space ;)
 	&.themes {
