@@ -36,6 +36,7 @@ const options = combineReducers( {
 		[ ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE ]: ( state, { items } ) => items,
 		[ ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST ]: () => [],
 		[ ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR ]: () => [],
+		[ ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA ]: () => [],
 	} ),
 } );
 

@@ -8,7 +8,9 @@ import page from 'page';
  * Internal dependencies
  */
 import LostPasswordPage from 'account-recovery/lost-password';
+import LostPasswordForm from 'account-recovery/lost-password/lost-password-form';
 import ForgotUsernamePage from 'account-recovery/forgot-username';
+import ForgotUsernameForm from 'account-recovery/forgot-username/forgot-username-form';
 import ResetPasswordPage from 'account-recovery/reset-password';
 import ResetPasswordForm from 'account-recovery/reset-password/reset-password-form';
 import ResetPasswordSmsForm from 'account-recovery/reset-password/reset-password-sms-form';
@@ -17,13 +19,23 @@ import TransactionIdForm from 'account-recovery/reset-password/transaction-id-fo
 import ResetPasswordConfirmForm from 'account-recovery/reset-password/reset-password-confirm-form';
 import { getCurrentUser } from 'state/current-user/selectors';
 
-export function lostPassword( context, next ) {
-	context.primary = <LostPasswordPage basePath={ context.path } />;
-	next();
-}
+const createRedirectFunction = ( route ) => () => page( route );
 
-export function forgotUsername( context, next ) {
-	context.primary = <ForgotUsernamePage basePath={ context.path } />;
+export const lostPassword = ( nextRoute ) => ( context, next ) => {
+	context.primary = (
+		<LostPasswordPage basePath={ context.path }>
+			<LostPasswordForm redirectToNextPage={ createRedirectFunction( nextRoute ) } />
+		</LostPasswordPage>
+	);
+	next();
+};
+
+export const forgotUsername = ( nextRoute ) => ( context, next ) => {
+	context.primary = (
+		<ForgotUsernamePage basePath={ context.path }>
+			<ForgotUsernameForm redirectToNextPage={ createRedirectFunction( nextRoute ) } />
+		</ForgotUsernamePage>
+	);
 	next();
 }
 
