@@ -191,6 +191,7 @@
     "supertest": "2.0.0",
     "webpack-bundle-analyzer": "2.2.1",
     "webpack-dashboard": "0.2.0",
-    "webpack-dev-server": "1.11.0"
+    "webpack-dev-server": "1.11.0",
+    "wp-prettier": "0.22.2"
   }
 }

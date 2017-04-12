@@ -1,0 +1,15 @@
+{
+    // wp-prettier run on current file
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "0.1.0",
+    "command": "node",
+		"args": [
+			"${workspaceRoot}/node_modules/wp-prettier/bin/prettier.js",
+			"--write",
+			"${file}"
+		],
+    "isShellCommand": true,
+    "showOutput": "never",
+		"suppressTaskName": true
+}

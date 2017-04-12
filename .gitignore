@@ -6,7 +6,6 @@
 .env
 .DS_Store
 .idea
-.vscode
 *.iml
 *.iws
 /tags
