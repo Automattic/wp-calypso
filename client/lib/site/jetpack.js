@@ -292,13 +292,4 @@ JetpackSite.prototype.setOption = function( query, callback ) {
 	this.emit( 'change' );
 };
 
-JetpackSite.prototype.fetchJetpackKeys = function( callback ) {
-	wpcom.undocumented().fetchJetpackKeys( this.ID, function( error, data ) {
-		if ( error ) {
-			debug( 'error getting Jetpack registration keys', error );
-		}
-		callback && callback( error, data );
-	}.bind( this ) );
-};
-
 module.exports = JetpackSite;
