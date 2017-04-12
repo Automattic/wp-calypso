@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { makeLayout } from 'controller';
 import config from 'config';
 import {
 	lostPassword,
@@ -12,7 +11,7 @@ import {
 	resetPasswordByTransactionId,
 	resetPasswordConfirmForm
 } from './controller';
-import redirectLoggedIn from 'lib/controller/redirectLoggedIn';
+import { makeLayout, redirectLoggedIn } from 'controller';
 
 export default function( router ) {
 	// Main route for account recovery is the lost password page
