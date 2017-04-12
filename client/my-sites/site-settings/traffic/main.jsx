@@ -79,6 +79,7 @@ const SiteSettingsTraffic = ( {
 		<Sitemaps
 			isSavingSettings={ isSavingSettings }
 			isRequestingSettings={ isRequestingSettings }
+			fields={ fields }
 		/>
 	</Main>
 );
@@ -114,6 +115,7 @@ const getFormSettings = partialRight( pick, [
 	'jetpack_relatedposts_show_thumbnails',
 	'amp_is_supported',
 	'amp_is_enabled',
+	'blog_public',
 ] );
 
 export default flowRight(

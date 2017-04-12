@@ -16,7 +16,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getJetpackModule, isActivatingJetpackModule, isJetpackModuleActive } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
@@ -24,12 +24,19 @@ class Sitemaps extends Component {
 	static defaultProps = {
 		isSavingSettings: false,
 		isRequestingSettings: true,
+		fields: {},
 	};
 
 	static propTypes = {
 		isSavingSettings: PropTypes.bool,
 		isRequestingSettings: PropTypes.bool,
+		fields: PropTypes.object,
 	};
+
+	isSitePublic() {
+		const { fields } = this.props;
+		return parseInt( fields.blog_public ) === 1;
+	}
 
 	renderSitemapLink( sitemapUrl ) {
 		return (
@@ -65,6 +72,29 @@ class Sitemaps extends Component {
 		);
 	}
 
+	renderNonPublicExplanation() {
+		const {
+			siteSlug,
+			translate
+		} = this.props;
+
+		return (
+			<FormSettingExplanation>
+				{
+					translate(
+						'Your site is currently not accessible to search engines. ' +
+						'It is possible that "Privacy" is not set to "Public" in your {{a}}General{{/a}} settings.',
+						{
+							components: {
+								a: <a href={ '/settings/general/' + siteSlug } />,
+							}
+						}
+					)
+				}
+			</FormSettingExplanation>
+		);
+	}
+
 	renderWpcomSettings() {
 		const { site } = this.props;
 		const sitemapTypes = [
@@ -76,13 +106,19 @@ class Sitemaps extends Component {
 			<div>
 				{ this.renderInfoLink( 'https://support.wordpress.com/sitemaps/' ) }
 
-				{ this.renderSitemapExplanation() }
-
-				{
-					sitemapTypes.map( ( sitemapType ) => {
-						const sitemapUrl = site.URL + '/' + sitemapType + '.xml';
-						return this.renderSitemapLink( sitemapUrl );
-					} )
+				{ this.isSitePublic()
+					? (
+						<div>
+							{ this.renderSitemapExplanation() }
+							{
+								sitemapTypes.map( ( sitemapType ) => {
+									const sitemapUrl = site.URL + '/' + sitemapType + '.xml';
+									return this.renderSitemapLink( sitemapUrl );
+								} )
+							}
+						</div>
+					)
+					: this.renderNonPublicExplanation()
 				}
 			</div>
 		);
@@ -104,18 +140,21 @@ class Sitemaps extends Component {
 			'sitemap_url',
 			'news_sitemap_url',
 		];
+		const isSitePublic = this.isSitePublic();
 
 		return (
 			<div className="sitemaps__module-settings site-settings__child-settings">
+				{ ! isSitePublic && this.renderNonPublicExplanation() }
+
 				{
-					activatingSitemapsModule &&
+					isSitePublic && activatingSitemapsModule &&
 					<FormSettingExplanation>
 						{ translate( 'Generating sitemap…' ) }
 					</FormSettingExplanation>
 				}
 
 				{
-					sitemapsModuleActive &&
+					isSitePublic && sitemapsModuleActive &&
 					<div>
 						{ this.renderSitemapExplanation() }
 
@@ -148,7 +187,7 @@ class Sitemaps extends Component {
 					siteId={ siteId }
 					moduleSlug="sitemaps"
 					label={ translate( 'Generate XML sitemaps' ) }
-					disabled={ isRequestingSettings || isSavingSettings }
+					disabled={ isRequestingSettings || isSavingSettings || ! this.isSitePublic() }
 				/>
 
 				{ this.renderJetpackSettingsContent() }
@@ -188,6 +227,7 @@ export default connect(
 			siteId,
 			activatingSitemapsModule: !! isActivatingJetpackModule( state, siteId, 'sitemaps' ),
 			site: getSelectedSite( state ),
+			siteSlug: getSelectedSiteSlug( state ),
 			siteIsJetpack: isJetpackSite( state, siteId ),
 			sitemapsModule: getJetpackModule( state, siteId, 'sitemaps' ),
 			sitemapsModuleActive: !! isJetpackModuleActive( state, siteId, 'sitemaps' ),
