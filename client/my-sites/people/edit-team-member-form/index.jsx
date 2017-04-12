@@ -251,7 +251,7 @@ module.exports = protectForm( React.createClass( {
 		UsersStore.on( 'change', this.refreshUser );
 		PeopleLog.on( 'change', this.checkRemoveUser );
 		if ( ! this.state.user && this.props.siteId ) {
-			UsersActions.fetchUser( { siteId: this.props.siteId }, this.props.userLogin );
+			UsersActions.fetchUserByLogin( { siteId: this.props.siteId }, this.props.userLogin );
 		}
 	},
 
