@@ -11,3 +11,11 @@
 	padding-top: 10px;
 	border-top: 1px solid $gray-light;
 }
+
+.following-manage__subscriptions-controls {
+	display: flex;
+
+	.reader-import-button, .reader-export-button {
+		margin-right: 10px;
+	}
+}
