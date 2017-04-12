@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { makeLayout } from 'controller';
+import config from 'config';
 import {
 	lostPassword,
 	forgotUsername,
@@ -9,10 +10,9 @@ import {
 	resetPasswordSmsForm,
 	resetPasswordEmailForm,
 	resetPasswordByTransactionId,
-	resetPasswordConfirmForm,
-	redirectLoggedIn
+	resetPasswordConfirmForm
 } from './controller';
-import config from 'config';
+import redirectLoggedIn from 'lib/controller/redirectLoggedIn';
 
 export default function( router ) {
 	// Main route for account recovery is the lost password page

@@ -7,10 +7,11 @@ import page from 'page';
  * Internal dependencies
  */
 import config from 'config';
-import controller from './controller';
+import { login } from './controller';
+import redirectLoggedIn from 'lib/controller/redirectLoggedIn';
 
 export default () => {
 	if ( config.isEnabled( 'wp-login' ) ) {
-		page( '/login', controller.login );
+		page( '/login', redirectLoggedIn, login );
 	}
 };
