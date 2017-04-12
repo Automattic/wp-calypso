@@ -8,7 +8,8 @@ module.exports = {
 		node: true
 	},
 	globals: {
-		asyncRequire: true
+		asyncRequire: true,
+		PROJECT_NAME: true
 	},
 	rules: {
 		camelcase: 0, // REST API objects include underscores

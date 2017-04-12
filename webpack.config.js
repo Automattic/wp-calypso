@@ -1,5 +1,4 @@
-/***** WARNING: ES5 code only here. Not transpiled! *****/
-/* eslint-disable no-var */
+/***** WARNING: No ES6 modules here. Not transpiled! *****/
 
 /**
  * External dependencies
@@ -94,7 +93,8 @@ const webpackConfig = {
 		new webpack.DefinePlugin( {
 			'process.env': {
 				NODE_ENV: JSON.stringify( bundleEnv )
-			}
+			},
+			'PROJECT_NAME': JSON.stringify( config( 'project' ) )
 		} ),
 		new WebpackStableBuildPlugin( {
 			seed: 0
@@ -179,7 +179,7 @@ if ( calypsoEnv === 'development' ) {
 	webpackConfig.entry.build = [
 		'webpack-dev-server/client?/',
 		'webpack/hot/only-dev-server',
-		path.join( __dirname, 'client', 'boot' )
+		path.join( __dirname, 'client', 'boot', 'app' )
 	];
 
 	if ( config.isEnabled( 'use-source-maps' ) ) {
@@ -196,7 +196,7 @@ if ( calypsoEnv === 'development' ) {
 		jsLoader.loaders = [ 'react-hot' ].concat( jsLoader.loaders );
 	}
 } else {
-	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot' );
+	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot', 'app' );
 	webpackConfig.debug = false;
 	webpackConfig.devtool = false;
 }
@@ -216,5 +216,3 @@ if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 webpackConfig.module.loaders = [ jsLoader ].concat( webpackConfig.module.loaders );
 
 module.exports = webpackConfig;
-
-/* eslint-enable no-var */
