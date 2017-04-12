@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { compact } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -9,6 +10,7 @@ import { connect } from 'react-redux';
  */
 import config from 'config';
 import {
+	hideMagicLoginRequestForm,
 	showMagicLoginInterstitialPage,
 	showMagicLoginRequestForm,
 } from 'state/login/magic-login/actions';
@@ -39,6 +41,11 @@ import { isEnabled } from 'config';
 import { localize } from 'i18n-calypso';
 
 class Login extends React.Component {
+	onClickEnterPasswordInstead = event => {
+		event.preventDefault();
+		this.props.hideMagicLoginRequestForm();
+	};
+
 	onMagicLoginRequestClick = event => {
 		event.preventDefault();
 		this.props.showMagicLoginRequestForm();
@@ -79,25 +86,29 @@ class Login extends React.Component {
 		}
 	}
 
-	footerContent() {
+	footerLinks() {
 		const {
 			magicLoginEnabled,
 			magicLoginView,
 			translate,
 		} = this.props;
-		let loginLink;
 
-		if ( magicLoginEnabled && ! magicLoginView ) {
-			loginLink = <a href="#" onClick={ this.props.onMagicLoginRequestClick }>{ translate( 'Email me a login link' ) }</a>;
+		if ( magicLoginEnabled && magicLoginView === REQUEST_FORM ) {
+			return <a href="#" onClick={ this.onClickEnterPasswordInstead }>{ translate( 'Enter a password instead' ) }</a>;
 		}
 
-		return (
-			<div className="wp-login__footer">
-				{ loginLink }
-				<a href={ config( 'login_url' ) + '?action=lostpassword' }>{ this.props.translate( 'Lost your password?' ) }</a>
-				<a href="#" onClick={ this.goBack }><Gridicon icon="arrow-left" size={ 18 } /> { this.props.translate( 'Back' ) }</a>
-			</div>
-		);
+		const showMagicLoginLink = magicLoginEnabled && ! magicLoginView &&
+			<a href="#" onClick={ this.onMagicLoginRequestClick }>{ translate( 'Email me a login link' ) }</a>;
+		const resetPasswordLink = ! magicLoginView &&
+			<a href={ config( 'login_url' ) + '?action=lostpassword' }>{ this.props.translate( 'Lost your password?' ) }</a>;
+		const goBackLink = ! magicLoginView &&
+			<a href="#" onClick={ this.goBack }><Gridicon icon="arrow-left" size={ 18 } /> { this.props.translate( 'Back' ) }</a>;
+
+		return compact( [
+			showMagicLoginLink,
+			resetPasswordLink,
+			goBackLink,
+		] );
 	}
 
 	render() {
@@ -116,7 +127,9 @@ class Login extends React.Component {
 								: <LoginBlock title={ translate( 'Log in to your account.' ) } />
 							}
 						</div>
-						{ this.footerContent() }
+						<div className="wp-login__footer">
+							{ this.footerLinks() }
+						</div>
 					</div>
 				) }
 			</Main>
@@ -135,6 +148,7 @@ const mapState = state => {
 };
 
 const mapDispatch = {
+	hideMagicLoginRequestForm,
 	showMagicLoginInterstitialPage,
 	showMagicLoginRequestForm,
 };

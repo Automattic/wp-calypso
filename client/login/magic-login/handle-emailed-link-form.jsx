@@ -2,75 +2,28 @@
  * External dependencies
  */
 import React from 'react';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import emailValidator from 'email-validator';
-import request from 'superagent';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import EmptyContent from 'components/empty-content';
-
 import config from 'config';
-import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import {
+	fetchMagicLoginAuthenticate,
+	showMagicLoginLinkExpiredPage,
+} from 'state/login/magic-login/actions';
+import {
+	getMagicLoginRequestAuthError,
+	getMagicLoginRequestedAuthSuccessfully,
+	isFetchingMagicLoginAuth,
+} from 'state/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
-import { localize } from 'i18n-calypso';
-
-const debug = debugFactory( 'calypso:magic-login' );
-
-/**
- * Provide the "Magic Login" token to get logged in (or get the credentials to do so ourself)
- * @param  {object} data - object containing an email address & token
- * @param  {Function} fn - Function to invoke when request is complete
- * @returns {Promise} promise
- */
-function postToMagicLoginTokenHandler( data ) {
-	data.client_id = config( 'wpcom_signup_id' );
-	data.client_secret = config( 'wpcom_signup_key' );
-
-	return request
-		.post( 'https://wordpress.com/wp-login.php?action=magic-login' )
-		.withCredentials()
-		.send( data )
-		.set( {
-			Accept: 'application/json',
-			'Content-Type': 'application/x-www-form-urlencoded',
-		} )
-		.end( responseHandler );
-}
-
-function responseHandler( error, response ) {
-	response = response || {};
-
-	const { status, body } = response;
-
-	if ( ! status || 400 <= status && status < 500 ) {
-		debug( 'unsuccessful status: ' + status );
-		window.location.replace( '/login/link-has-expired' );
-		return;
-	}
-
-	if ( error || ! ( body && body.data && body.success ) ) {
-		debug( 'error: ' + JSON.stringify( error ) );
-		debug( 'body: ' + JSON.stringify( body ) );
-
-		// @TODO This is most likely a server or network error, maybe show a notice instead?
-		window.location.replace( '/login/link-has-expired' );
-		return;
-	}
-
-	const { data } = body;
-	const { redirect_to } = data;
-
-	if ( redirect_to.match( /^(https:\/\/wordpress\.com|http:\/\/calypso\.localhost:3000)(\/|$)/ ) ) {
-		debug( 'redirecting: ' + redirect_to );
-		window.location.replace( redirect_to );
-	} else {
-		window.location.replace( '/' );
-	}
-}
 
 class HandleEmailedLinkForm extends React.Component {
 	state = {
@@ -80,21 +33,11 @@ class HandleEmailedLinkForm extends React.Component {
 	handleSubmit = event => {
 		event.preventDefault();
 
-		debug( 'form submitted!' );
-
 		this.setState( {
 			hasSubmitted: true,
 		} );
 
-		const postData = {
-			email: this.props.emailAddress,
-			token: this.props.token,
-			tt: this.props.tokenTime,
-		};
-
-		debug( '`POST`ing credentials to WPCOM', postData );
-
-		postToMagicLoginTokenHandler( postData );
+		this.props.fetchMagicLoginAuthenticate( this.props.emailAddress, this.props.token, this.props.tokenTime );
 	};
 
 	componentWillMount() {
@@ -104,13 +47,37 @@ class HandleEmailedLinkForm extends React.Component {
 			return;
 		}
 
-		window.location.replace( '/login/link-has-expired' );
+		this.props.showMagicLoginLinkExpiredPage();
+	}
+
+	componentWillUpdate( nextProps, nextState ) {
+		if ( ! nextState.hasSubmitted ) {
+			return;
+		}
+
+		if ( nextProps.authError ) {
+			// @TODO if this is a 5XX, or timeout, show an error...?
+			this.props.showMagicLoginLinkExpiredPage();
+			return;
+		}
+
+		if ( nextProps.isAuthenticated ) {
+			// @TODO avoid full reload
+			window.location.replace( '/' );
+			return;
+		}
 	}
 
 	render() {
-		const { currentUser, emailAddress, translate } = this.props;
+		const {
+			currentUser,
+			emailAddress,
+			isFetching,
+			translate,
+		} = this.props;
+
 		const action = (
-			<Button primary disabled={ !! this.state.hasSubmitted } onClick={ this.handleSubmit }>
+			<Button primary disabled={ this.state.hasSubmitted } onClick={ this.handleSubmit }>
 				{ translate( 'Finish Login' ) }
 			</Button>
 		);
@@ -142,6 +109,9 @@ class HandleEmailedLinkForm extends React.Component {
 		return (
 			<EmptyContent
 				action={ action }
+				className={ classNames( {
+					'magic-login__is-fetching-auth': isFetching,
+				} ) }
 				illustration={ '/calypso/images/drake/drake-nosites.svg' }
 				illustrationWidth={ 500 }
 				line={ line }
@@ -161,6 +131,9 @@ const mapState = state => {
 	} = queryArguments;
 
 	return {
+		authError: getMagicLoginRequestAuthError( state ),
+		isAuthenticated: getMagicLoginRequestedAuthSuccessfully( state ),
+		isFetching: isFetchingMagicLoginAuth( state ),
 		currentUser: getCurrentUser( state ),
 		clientId,
 		emailAddress,
@@ -169,4 +142,9 @@ const mapState = state => {
 	};
 };
 
-export default connect( mapState )( localize( HandleEmailedLinkForm ) );
+const mapDispatch = {
+	fetchMagicLoginAuthenticate,
+	showMagicLoginLinkExpiredPage,
+};
+
+export default connect( mapState, mapDispatch )( localize( HandleEmailedLinkForm ) );
