@@ -68,7 +68,9 @@ export default React.createClass( {
 				title={ this.getLabel() }
 				line={ line }
 				action={ action }
-				illustration={ '/calypso/images/drake/drake-nomedia.svg' } />
+				illustration={ '/calypso/images/media/illustration-media.svg' }
+				illustrationWidth={ 150 }
+			/>
 		);
 	}
 } );
