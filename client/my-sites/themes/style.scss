@@ -96,5 +96,9 @@
 }
 
 .is-section-themes.has-no-sidebar .themes__content {
-	padding: 32px;
+	padding: 0 0 32px;
+
+	@include breakpoint( ">480px" ) {
+		padding: 32px;
+	}
 }
