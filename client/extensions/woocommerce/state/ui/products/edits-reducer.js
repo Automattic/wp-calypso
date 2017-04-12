@@ -29,9 +29,14 @@ function editProductAction( edits, action ) {
 
 	const prevEdits = edits || {};
 	const bucket = product && isNumber( product.id ) && 'updates' || 'creates';
-	const _array = editProduct( prevEdits[ bucket ], product, data );
+	const _product = product || { id: { index: ( prevEdits[ bucket ] || [] ).length } };
+	const _array = editProduct( prevEdits[ bucket ], _product, data );
 
-	return { ...prevEdits, [ bucket ]: _array };
+	return {
+		...prevEdits,
+		[ bucket ]: _array,
+		currentlyEditingId: _product.id,
+	};
 }
 
 function editProductAttributeAction( edits, action ) {
@@ -41,21 +46,25 @@ function editProductAttributeAction( edits, action ) {
 	const prevEdits = edits || {};
 	const bucket = product && isNumber( product.id ) && 'updates' || 'creates';
 	const _attributes = editProductAttribute( attributes, attribute, data );
-	const _array = editProduct( prevEdits[ bucket ], product, { attributes: _attributes } );
+	const _product = product || { id: { index: ( prevEdits[ bucket ] || [] ).length } };
+	const _array = editProduct( prevEdits[ bucket ], _product, { attributes: _attributes } );
 
-	return { ...prevEdits, [ bucket ]: _array };
+	return {
+		...prevEdits,
+		[ bucket ]: _array,
+		currentlyEditingId: _product.id,
+	};
 }
 
 function editProduct( array, product, data ) {
 	// Use the existing product id (real or placeholder), or creates.length if no product.
 	const prevArray = array || [];
-	const productId = ( product ? product.id : { index: prevArray.length } );
 
 	let found = false;
 
 	// Look for this object in the appropriate create or edit array first.
 	const _array = prevArray.map( ( p ) => {
-		if ( productId === p.id ) {
+		if ( product.id === p.id ) {
 			found = true;
 			return { ...p, ...data };
 		}
@@ -65,7 +74,7 @@ function editProduct( array, product, data ) {
 
 	if ( ! found ) {
 		// update or create not already in edit state, so add it now.
-		_array.push( { id: productId, ...data } );
+		_array.push( { id: product.id, ...data } );
 	}
 
 	return _array;
