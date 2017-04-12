@@ -162,7 +162,7 @@ export class EditGravatar extends Component {
 			translate,
 			user
 		} = this.props;
-		const gravatarLink = `//gravatar.com/${ user.username || '' }`;
+		const gravatarLink = `https://gravatar.com/${ user.username || '' }`;
 		return (
 			<div className="edit-gravatar">
 				{ this.renderImageEditor() }

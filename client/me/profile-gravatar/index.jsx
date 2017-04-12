@@ -34,7 +34,7 @@ class ProfileGravatar extends Component {
 	};
 
 	render() {
-		const profileURL = `//gravatar.com/${ this.props.user.username }`;
+		const profileURL = `https://gravatar.com/${ this.props.user.username }`;
 
 		if ( isEnabled( 'me/edit-gravatar' ) ) {
 			return (
