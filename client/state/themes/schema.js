@@ -114,7 +114,17 @@ export const themeFiltersSchema = {
 	patternProperties: {
 		'^\\w+$': {
 			type: 'array',
-			items: { type: 'string' },
+			items: {
+				type: 'object',
+				patternProperties: {
+					'^\\w+$': {
+						properties: {
+							name: { type: 'string' },
+							description: { type: 'string' },
+						}
+					}
+				}
+			},
 			uniqueItems: true
 		},
 	},
