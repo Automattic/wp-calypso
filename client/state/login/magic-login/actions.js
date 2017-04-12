@@ -6,6 +6,8 @@ import request from 'superagent';
 /**
  * Internal dependencies
  */
+import config from 'config';
+import wpcom from 'lib/wp';
 import { AUTHENTICATE_URL } from './constants';
 import {
 	MAGIC_LOGIN_HIDE_REQUEST_FORM,
@@ -22,9 +24,6 @@ import {
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 	MAGIC_LOGIN_SHOW_REQUEST_FORM,
 } from 'state/action-types';
-
-import config from 'config';
-import wpcom from 'lib/wp';
 
 export const showMagicLoginCheckYourEmailPage = () => {
 	return {
@@ -81,14 +80,14 @@ export const fetchMagicLoginRequestEmail = email => dispatch => {
 	} );
 };
 
-export const authError = error => {
+const authError = error => {
 	return {
 		type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
 		error,
 	};
 };
 
-export const authSuccess = () => {
+const authSuccess = () => {
 	return {
 		type: MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
 	};

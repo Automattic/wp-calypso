@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { compact } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -92,24 +93,22 @@ class Login extends React.Component {
 			translate,
 		} = this.props;
 
-		const footerLinks = [];
-
-		if ( magicLoginEnabled ) {
-			if ( magicLoginView === REQUEST_FORM ) {
-				return <a href="#" onClick={ this.onClickEnterPasswordInstead }>{ translate( 'Enter a password instead' ) }</a>;
-			}
-			if ( magicLoginView ) {
-				return;
-			}
-			footerLinks.push( <a href="#" onClick={ this.onMagicLoginRequestClick }>{ translate( 'Email me a login link' ) }</a> );
+		if ( magicLoginEnabled && magicLoginView === REQUEST_FORM ) {
+			return <a href="#" onClick={ this.onClickEnterPasswordInstead }>{ translate( 'Enter a password instead' ) }</a>;
 		}
 
-		footerLinks.push(
-			<a href={ config( 'login_url' ) + '?action=lostpassword' }>{ this.props.translate( 'Lost your password?' ) }</a>,
-			<a href="#" onClick={ this.goBack }><Gridicon icon="arrow-left" size={ 18 } /> { this.props.translate( 'Back' ) }</a>
-		);
+		const showMagicLoginLink = magicLoginEnabled && ! magicLoginView &&
+			<a href="#" onClick={ this.onMagicLoginRequestClick }>{ translate( 'Email me a login link' ) }</a>;
+		const resetPasswordLink = ! magicLoginView &&
+			<a href={ config( 'login_url' ) + '?action=lostpassword' }>{ this.props.translate( 'Lost your password?' ) }</a>;
+		const goBackLink = ! magicLoginView &&
+			<a href="#" onClick={ this.goBack }><Gridicon icon="arrow-left" size={ 18 } /> { this.props.translate( 'Back' ) }</a>;
 
-		return footerLinks;
+		return compact( [
+			showMagicLoginLink,
+			resetPasswordLink,
+			goBackLink,
+		] );
 	}
 
 	render() {
