@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
@@ -19,58 +19,86 @@ import ThankYouCard from 'components/thank-you-card';
 import PlanIcon from 'components/plans/plan-icon';
 import { getPlanClass } from 'lib/plans/constants';
 
-const PlanThankYouCard = ( {
-	plan,
-	translate,
-	siteId,
-	siteUrl,
-	action,
-	description
-} ) => {
-	const name = plan && translate( '%(planName)s Plan', {
-		args: { planName: getPlan( plan.productSlug ).getTitle() }
-	} );
-	const price = plan && formatCurrency( plan.rawPrice, plan.currencyCode );
-	const productSlug = plan && plan.productSlug;
-	const planClass = productSlug
-		? getPlanClass( productSlug )
-		: '';
-	const planIcon = productSlug
-		? <PlanIcon plan={ productSlug } />
-		: null;
-	const renderAction = () => {
+class PlanThankYouCard extends Component {
+	getPlanClass() {
+		const { plan } = this.props;
+		if ( ! plan || ! plan.productSlug ) {
+			return '';
+		}
+
+		return getPlanClass( plan.productSlug );
+	}
+
+	renderPlanName() {
+		const { plan, translate } = this.props;
+		if ( ! plan ) {
+			return '';
+		}
+
+		return translate( '%(planName)s Plan', {
+			args: { planName: getPlan( plan.productSlug ).getTitle() }
+		} );
+	}
+
+	renderPlanPrice() {
+		const { plan } = this.props;
+		if ( ! plan || ! plan.rawPrice || ! plan.currencyCode ) {
+			return '';
+		}
+
+		return formatCurrency( plan.rawPrice, plan.currencyCode );
+	}
+
+	renderPlanIcon() {
+		const { plan } = this.props;
+		if ( ! plan || ! plan.productSlug ) {
+			return null;
+		}
+
+		return <PlanIcon plan={ plan.productSlug } />;
+	}
+
+	renderAction() {
+		const { action } = this.props;
 		if ( action ) {
 			return action;
 		}
 
 		return null;
-	};
-	const renderDescription = () => {
+	}
+
+	renderDescription() {
+		const { description, translate } = this.props;
 		if ( description ) {
 			return description;
 		}
 
-		return translate( "Now that we've taken care of the plan, it's time to see your new site." );
-	};
+		return translate(
+			"Now that we've taken care of the plan, it's time to see your new site."
+		);
+	}
 
-	return (
-		<div className={ classnames( 'plan-thank-you-card', planClass ) }>
-			<QuerySites siteId={ siteId } />
-			<QuerySitePlans siteId={ siteId } />
+	render() {
+		const { siteUrl, siteId, translate } = this.props;
+		return (
+			<div className={ classnames( 'plan-thank-you-card', this.getPlanClass() ) }>
+				<QuerySites siteId={ siteId } />
+				<QuerySitePlans siteId={ siteId } />
 
-			<ThankYouCard
-				name={ name }
-				price={ price }
-				heading={ translate( 'Thank you for your purchase!' ) }
-				description={ renderDescription() }
-				buttonUrl={ siteUrl }
-				buttonText={ translate( 'Visit Your Site' ) }
-				icon={ planIcon }
-				action={ renderAction() }
-			/>
-		</div>
-	);
-};
+				<ThankYouCard
+					name={ this.renderPlanName() }
+					price={ this.renderPlanPrice() }
+					heading={ translate( 'Thank you for your purchase!' ) }
+					description={ this.renderDescription() }
+					buttonUrl={ siteUrl }
+					buttonText={ translate( 'Visit Your Site' ) }
+					icon={ this.renderPlanIcon() }
+					action={ this.renderAction() }
+				/>
+			</div>
+		);
+	}
+}
 
 PlanThankYouCard.propTypes = {
 	plan: PropTypes.object,
