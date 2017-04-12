@@ -2,10 +2,15 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { findDOMNode } from 'react-dom';
 /**
  * Internal dependencies
  */
+import {
+	blur,
+	focus,
+} from 'state/happychat/actions';
 import viewport from 'lib/viewport';
 import HappychatConnection from 'components/happychat/connection';
 import Composer from 'components/happychat/composer';
@@ -16,6 +21,14 @@ import Timeline from 'components/happychat/timeline';
  * React component for rendering a happychat client as a full page
  */
 class HappychatPage extends Component {
+	componentDidMount() {
+		this.props.setFocused();
+	}
+
+	componentWillUnmount() {
+		this.props.setBlurred();
+	}
+
 	onFocus() {
 		// TODO: Is this function ever called? I can't seem to get it to trigger --mattwondra
 		const composerNode = findDOMNode( this.refs.composer );
@@ -38,4 +51,15 @@ class HappychatPage extends Component {
 	}
 }
 
-export default HappychatPage;
+const mapDispatch = ( dispatch ) => {
+	return {
+		setBlurred() {
+			dispatch( blur() );
+		},
+		setFocused() {
+			dispatch( focus() );
+		},
+	};
+};
+
+export default connect( null, mapDispatch )( HappychatPage );

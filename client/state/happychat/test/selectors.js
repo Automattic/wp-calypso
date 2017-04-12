@@ -8,7 +8,9 @@ import { expect } from 'chai';
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
-	wasHappychatRecentlyActive
+	getLostFocusTimestamp,
+	hasUnreadMessages,
+	wasHappychatRecentlyActive,
 } from '../selectors';
 
 const TIME_SECOND = 1000;
@@ -52,6 +54,58 @@ describe( 'selectors', () => {
 			} );
 
 			expect( result ).to.be.true;
+		} );
+	} );
+
+	describe( '#getLostFocusTimestamp', () => {
+		it( 'returns the current timestamp', () => {
+			const NOW = Date.now();
+			const state = { happychat: { lostFocusAt: NOW } };
+			expect( getLostFocusTimestamp( state ) ).to.eql( NOW );
+		} );
+	} );
+
+	describe( '#hasUnreadMessages', () => {
+		const NOW = Date.now();
+		const ONE_MINUTE = 1000 * 60;
+		const FIVE_MINUTES = ONE_MINUTE * 5;
+
+		// Need to convert timestamps to seconds, instead of milliseconds, because
+		// that's what the Happychat service provides
+		const timeline = [
+			{ timestamp: ( NOW - FIVE_MINUTES ) / 1000 },
+			{ timestamp: ( NOW - ONE_MINUTE ) / 1000 },
+			{ timestamp: ( NOW ) / 1000 },
+		];
+
+		it( 'returns false if Happychat is focused', () => {
+			const state = {
+				happychat: {
+					timeline,
+					lostFocusAt: null
+				}
+			};
+			expect( hasUnreadMessages( state ) ).to.be.false;
+		} );
+
+		it( 'returns false if there are no new messages since the Happychat was blurred', () => {
+			const state = {
+				happychat: {
+					timeline,
+					lostFocusAt: NOW + ONE_MINUTE
+				}
+			};
+			expect( hasUnreadMessages( state ) ).to.be.false;
+		} );
+
+		it( 'returns true if there are one or more messages after Happychat was blurred', () => {
+			const state = {
+				happychat: {
+					timeline,
+					lostFocusAt: NOW - ONE_MINUTE - ONE_MINUTE
+				}
+			};
+			expect( hasUnreadMessages( state ) ).to.be.true;
 		} );
 	} );
 } );

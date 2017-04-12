@@ -5,6 +5,7 @@ import {
 	get,
 	head,
 	includes,
+	last,
 	map,
 } from 'lodash';
 
@@ -101,3 +102,22 @@ export const wasHappychatRecentlyActive = state => {
 
 	return ( now - lastActive ) < HAPPYCHAT_INACTIVE_TIMEOUT_MS;
 };
+
+export const getLostFocusTimestamp = createSelector(
+	state => state.happychat.lostFocusAt
+);
+
+export const hasUnreadMessages = createSelector(
+	state => {
+		// Message timestamps are reported in seconds. We need to multiply by 1000 to convert
+		// to milliseconds, so we can compare it to other JS-generated timestamps
+		const lastMessageTimestamp = get( last( getHappychatTimeline( state ) ), 'timestamp' ) * 1000;
+		const lostFocusAt = getLostFocusTimestamp( state );
+
+		return (
+			typeof lostFocusAt === 'number' &&
+			lastMessageTimestamp >= lostFocusAt
+		);
+	},
+	[ getHappychatTimeline, getLostFocusTimestamp ]
+);

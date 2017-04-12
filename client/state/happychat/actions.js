@@ -9,11 +9,13 @@
  * Internal dependencies
  */
 import {
+	HAPPYCHAT_BLUR,
 	HAPPYCHAT_CONNECT,
 	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_CONNECTED,
 	HAPPYCHAT_DISCONNECTED,
 	HAPPYCHAT_INITIALIZE,
+	HAPPYCHAT_FOCUS,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_RECONNECTING,
 	HAPPYCHAT_SEND_BROWSER_INFO,
@@ -34,6 +36,9 @@ export const receiveChatTranscript = ( messages, timestamp ) => ( {
 } );
 
 export const initialize = () => ( { type: HAPPYCHAT_INITIALIZE } );
+
+export const blur = () => ( { type: HAPPYCHAT_BLUR } );
+export const focus = () => ( { type: HAPPYCHAT_FOCUS } );
 
 export const connectChat = () => ( { type: HAPPYCHAT_CONNECT } );
 export const setConnected = () => ( { type: HAPPYCHAT_CONNECTED } );

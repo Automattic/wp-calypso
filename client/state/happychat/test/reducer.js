@@ -9,11 +9,15 @@ import { expect } from 'chai';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	HAPPYCHAT_RECEIVE_EVENT,
+	HAPPYCHAT_BLUR,
+	HAPPYCHAT_FOCUS,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
+	SERIALIZE,
 } from 'state/action-types';
 import {
 	lastActivityTimestamp,
+	lostFocusAt,
 	message,
 } from '../reducer';
 
@@ -39,6 +43,28 @@ describe( 'reducers', () => {
 
 			result = lastActivityTimestamp( null, { type: HAPPYCHAT_SEND_MESSAGE } );
 			expect( result ).to.equal( NOW );
+		} );
+	} );
+
+	describe( '#lostFocusAt', () => {
+		useSandbox( sandbox => {
+			sandbox.stub( Date, 'now' ).returns( NOW );
+		} );
+
+		it( 'defaults to null', () => {
+			expect( lostFocusAt( undefined, {} ) ).to.be.null;
+		} );
+
+		it( 'SERIALIZEs to Date.now() if state is null', () => {
+			expect( lostFocusAt( null, { type: SERIALIZE } ) ).to.eql( NOW );
+		} );
+
+		it( 'returns Date.now() on HAPPYCHAT_BLUR actions', () => {
+			expect( lostFocusAt( null, { type: HAPPYCHAT_BLUR } ) ).to.eql( NOW );
+		} );
+
+		it( 'returns null on HAPPYCHAT_FOCUS actions', () => {
+			expect( lostFocusAt( 12345, { type: HAPPYCHAT_FOCUS } ) ).to.be.null;
 		} );
 	} );
 
