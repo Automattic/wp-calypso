@@ -20,13 +20,18 @@ class FollowingManageSubscriptions extends Component {
 	}
 
 	render() {
-		const { follows, width } = this.props;
+		const { follows, width, translate } = this.props;
 		return (
 			<div className="following-manage__subscriptions">
 				<QueryReaderFollows />
 				<div className="following-manage__subscriptions-controls">
 					<ReaderImportButton />
 					<ReaderExportButton />
+					{
+						translate( '%(num)s Followed Sites', {
+							args: { num: follows.length }
+						} )
+					}
 				</div>
 				<div className="following-manage__subscriptions-list">
 					<SitesWindowScroller

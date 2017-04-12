@@ -14,8 +14,9 @@
 
 .following-manage__subscriptions-controls {
 	display: flex;
+	padding-bottom: 20px;
+}
 
-	.reader-import-button, .reader-export-button {
-		margin-right: 10px;
-	}
+.reader-import-button, .reader-export-button {
+	margin-right: 10px;
 }

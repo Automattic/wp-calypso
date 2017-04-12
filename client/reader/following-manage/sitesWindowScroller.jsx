@@ -38,7 +38,7 @@ class SitesWindowScroller extends Component {
 							autoHeight
 							height={ height }
 							rowCount={ sites.length }
-							rowHeight={ 83 }
+							rowHeight={ 83 } // TODO: figure out what should really go here...
 							rowRenderer={ this.sitesRowRenderer }
 							scrollTop={ scrollTop }
 							width={ width }
