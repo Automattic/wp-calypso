@@ -191,7 +191,7 @@
     "dashboard": "webpack-dashboard -- npm start",
     "precommit": "npm run install-if-needed && node bin/pre-commit-hook.js",
     "prepush": "npm run install-if-needed && node bin/pre-push-hook.js",
-    "translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -e date \"**/*.js\" \"**/*.jsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\"",
+    "translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -e date \"**/*.js\" \"**/*.jsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\" \"!client/extensions/**\"",
     "preanalyze-bundles": "cross-env WEBPACK_OUTPUT_JSON=1 CALYPSO_ENV=production npm run build",
     "analyze-bundles": "webpack-bundle-analyzer stats.json public -p 9898",
     "build-docker": "docker build -t wp-calypso .",
