@@ -36,12 +36,15 @@ class ProfileGravatar extends Component {
 
 	render() {
 		const profileURL = `https://gravatar.com/${ this.props.user.username }`;
+		// use imgSize = 400 for caching
+		// it's the popular value for large Gravatars in Calypso
+		const GRAVATAR_IMG_SIZE = 400;
 
 		if ( isEnabled( 'me/edit-gravatar' ) ) {
 			return (
 				<div className="profile-gravatar">
 					<div className="profile-gravatar__gravatar-container" onClick={ this.handleImageClick }>
-						<Gravatar user={ this.props.user } size={ 150 } imgSize={ 400 } />
+						<Gravatar user={ this.props.user } size={ 150 } imgSize={ GRAVATAR_IMG_SIZE } />
 					</div>
 					<h2 className="profile-gravatar__user-display-name">{ this.props.user.display_name }</h2>
 					<div className="profile-gravatar__user-secondary-info">
@@ -66,7 +69,7 @@ class ProfileGravatar extends Component {
 						className="profile-gravatar__edit"
 						onClick={ this.handleExternalLinkClick } >
 
-						<Gravatar user={ this.props.user } size={ 150 } imgSize={ 400 } />
+						<Gravatar user={ this.props.user } size={ 150 } imgSize={ GRAVATAR_IMG_SIZE } />
 
 						<span className="profile-gravatar__edit-label-wrap">
 							<span className="profile-gravatar__edit-label">

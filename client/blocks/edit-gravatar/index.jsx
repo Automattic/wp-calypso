@@ -164,6 +164,9 @@ export class EditGravatar extends Component {
 			user
 		} = this.props;
 		const gravatarLink = `https://gravatar.com/${ user.username || '' }`;
+		// use imgSize = 400 for caching
+		// it's the popular value for large Gravatars in Calypso
+		const GRAVATAR_IMG_SIZE = 400;
 		return (
 			<div className="edit-gravatar">
 				{ this.renderImageEditor() }
@@ -176,7 +179,7 @@ export class EditGravatar extends Component {
 						}
 					>
 						<Gravatar
-							imgSize={ 400 }
+							imgSize={ GRAVATAR_IMG_SIZE }
 							size={ 150 }
 							user={ user }
 						/>
