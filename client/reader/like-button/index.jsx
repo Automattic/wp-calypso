@@ -1,10 +1,14 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
 import postStore from 'lib/feed-post-store';
-
 import LikeButtonContainer from 'blocks/like-button';
 import { markSeen } from 'lib/feed-post-store/actions';
-
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 
 const ReaderLikeButton = React.createClass( {

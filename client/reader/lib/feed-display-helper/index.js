@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { getSiteUrl as getSiteUrlFromRoute, getFeedUrl } from 'reader/route';
 import { withoutHttp } from 'lib/url';
 

@@ -1,9 +1,13 @@
-// External dependencies
+/**
+ * External dependencies
+ */
 import React from 'react';
 import url from 'url';
 import noop from 'lodash/noop';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import SearchCard from 'components/search-card';
 import FollowingEditSubscribeFormResult from './subscribe-form-result';
 import FeedSubscriptionActions from 'lib/reader-feed-subscriptions/actions';

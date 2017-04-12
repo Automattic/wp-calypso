@@ -1,10 +1,12 @@
-//const debug = require( 'debug' )( 'calypso:reader:following:edit' );
-
-// External dependencies
+/**
+ * External dependencies
+ */
 import React from 'react';
 import classnames from 'classnames';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import Card from 'components/card';
 import FormToggle from 'components/forms/form-toggle';
 import SegmentedControl from 'components/segmented-control';

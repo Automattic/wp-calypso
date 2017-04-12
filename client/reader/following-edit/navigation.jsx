@@ -1,4 +1,6 @@
-// External dependencies
+/**
+ * External dependencies
+ */
 import React from 'react';
 
 var FollowingEditNavigation = React.createClass( {
