@@ -28,6 +28,10 @@ export const state = {
 					name: 'Clean',
 					description: ''
 				},
+				minimal: {
+					name: 'Minimal',
+					description: 'Whether you\'re minimalist at heart, like keeping things clean, or just want to focus — ...'
+				},
 			}
 		}
 	},
