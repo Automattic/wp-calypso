@@ -29,15 +29,9 @@ class EditorDrawerFeaturedImage extends Component {
 		isDrawerHidden: false,
 	};
 
-	state = {};
-
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			isSelecting: false
-		};
-	}
+	state = {
+		isSelecting: false
+	};
 
 	startSelecting = () => this.setState( { isSelecting: true } );
 	endSelecting = () => this.setState( { isSelecting: false } );
