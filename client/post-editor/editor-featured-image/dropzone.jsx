@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { head, uniqueId } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -23,10 +23,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 
 class FeaturedImageDropZone extends Component {
-	static contextTypes = {
-		store: PropTypes.object
-	};
-
 	onFilesDrop = ( files ) => {
 		/**
 		 * Filter files for `image` media prefix and return the first image.
