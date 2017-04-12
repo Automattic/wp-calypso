@@ -186,7 +186,6 @@ const ThemeSheet = React.createClass( {
 	renderPreviewButton() {
 		return (
 			<a className="theme__sheet-preview-link" onClick={ this.previewAction } data-tip-target="theme-sheet-preview">
-				<Gridicon icon="themes" size={ 18 } />
 				<span className="theme__sheet-preview-link-text">
 					{ i18n.translate( 'Open Live Demo', { context: 'Individual theme live preview button' } ) }
 				</span>
@@ -201,10 +200,19 @@ const ThemeSheet = React.createClass( {
 		} else {
 			screenshot = this.getFullLengthScreenshot();
 		}
-		const img = screenshot && <img className="theme__sheet-img" src={ screenshot + '?=w680' } />;
+		const img = screenshot && <img className="theme__sheet-img" src={ screenshot + '?w=680' } />;
+
+		if ( this.props.demo_uri ) {
+			return (
+				<div className="theme__sheet-screenshot is-active" onClick={ this.previewAction }>
+					{ this.renderPreviewButton() }
+					{ img }
+				</div>
+			);
+		}
+
 		return (
 			<div className="theme__sheet-screenshot">
-				{ this.props.demo_uri && this.renderPreviewButton() }
 				{ img }
 			</div>
 		);
