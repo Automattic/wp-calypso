@@ -92,28 +92,28 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			.reader-post-card__post-details {
 				flex: 0 auto; // IE11 Photo card actions hidden
 				margin: 0;
-				padding-top: 11px;
+				padding-top: 8px;
 			}
 
 			.reader-post-card__title {
 				color: $white;
 				font-family: $sans;
-				font-size: 10px;
 				position: relative;
 					bottom: 30px;
 					left: 20px;
 				text-shadow: 0 1px rgba(0, 0, 0, 0.3);
-				white-space: nowrap;
 				width: calc( 100% - 44px );
 				text-overflow: ellipsis;
 				overflow: hidden;
 				z-index: z-index( 'root', '.reader-post-card__title' );
 				margin-bottom: -15px; // relative elements need a negative margin so they don't create bottom padding
-				height: 15px;
+				height: 19px;
+				white-space: nowrap;
 			}
 
 			.reader-post-card__title .reader-post-card__title-link {
 				color: $white;
+				display: inline;
 				font-size: 12px;
 				letter-spacing: 0.01em;
 			}
@@ -160,7 +160,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	&.is-photo {
 
 		.reader-post-card__post {
-			margin-top: 17px;
+			margin-top: 16px;
 		}
 	}
 
@@ -355,7 +355,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .reader-post-card__post {
 	clear: both;
 	display: flex;
-	flex-wrap: wrap;
 	flex-direction: row;
 	margin-top: 14px;
 
