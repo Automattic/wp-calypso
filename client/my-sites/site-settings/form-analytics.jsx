@@ -107,7 +107,7 @@ class GoogleAnalyticsForm extends Component {
 					</Notice>
 				}
 
-				<SectionHeader label={ translate( 'Analytics Settings' ) }>
+				<SectionHeader label={ translate( 'Analytics settings' ) }>
 					{
 						! showUpgradeNudge &&
 						<Button
