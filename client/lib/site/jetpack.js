@@ -196,23 +196,6 @@ JetpackSite.prototype.callHome = function() {
 	}.bind( this ) );
 };
 
-JetpackSite.prototype.activateModule = function( moduleId, callback ) {
-	debug( 'activate module', moduleId );
-
-	if ( ! moduleId ) {
-		callback && callback( new Error( 'No id' ) );
-		return;
-	}
-
-	if ( this.isModuleActive( moduleId ) ) {
-		// Nothing to do
-		callback();
-		return;
-	}
-
-	this.toggleModule( moduleId, callback );
-};
-
 JetpackSite.prototype.deactivateModule = function( moduleId, callback ) {
 	debug( 'deactivate module', moduleId );
 
