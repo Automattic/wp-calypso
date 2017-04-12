@@ -30,6 +30,11 @@ var feeds = {},
 function setFeed( feedId, feed ) {
 	if ( feed !== feeds[ feedId ] ) {
 		feeds[ feedId ] = feed;
+
+		if ( feedId !== feed.feed_ID ) {
+			feeds[ feed.feed_ID ] = feed;
+		}
+
 		FeedStore.emit( 'change' );
 	}
 }
