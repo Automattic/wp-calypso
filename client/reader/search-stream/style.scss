@@ -96,11 +96,11 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		max-height: 205px;
 
 		@media #{$reader-related-card-v2-breakpoint-small} {
-			max-height: 100px;
+			max-height: 103px;
 		}
 
 		@media #{$reader-related-card-v2-breakpoint-medium} {
-			max-height: 100px;
+			max-height: 103px;
 		}
 
 		.reader-related-card-v2__excerpt {
