@@ -25,7 +25,7 @@ import {
 
 export const DropZone = React.createClass( {
 	propTypes: {
-		customClass: PropTypes.string,
+		className: PropTypes.string,
 		fullScreen: PropTypes.bool,
 		icon: PropTypes.node,
 		onDrop: PropTypes.func,
@@ -47,7 +47,7 @@ export const DropZone = React.createClass( {
 
 	getDefaultProps() {
 		return {
-			customClass: null,
+			className: null,
 			onDrop: noop,
 			onVerifyValidTransfer: () => true,
 			onFilesDrop: noop,
@@ -254,7 +254,7 @@ export const DropZone = React.createClass( {
 			'is-dragging-over-document': this.state.isDraggingOverDocument,
 			'is-dragging-over-element': this.state.isDraggingOverElement,
 			'is-full-screen': this.props.fullScreen,
-			[ this.props.customClass ]: true,
+			[ this.props.className ]: true,
 		} );
 
 		const element = (
