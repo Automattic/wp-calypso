@@ -249,12 +249,11 @@ export const DropZone = React.createClass( {
 	},
 
 	render() {
-		const classes = classNames( 'drop-zone', {
+		const classes = classNames( 'drop-zone', this.props.className, {
 			'is-active': this.state.isDraggingOverDocument || this.state.isDraggingOverElement,
 			'is-dragging-over-document': this.state.isDraggingOverDocument,
 			'is-dragging-over-element': this.state.isDraggingOverElement,
 			'is-full-screen': this.props.fullScreen,
-			[ this.props.className ]: true,
 		} );
 
 		const element = (
