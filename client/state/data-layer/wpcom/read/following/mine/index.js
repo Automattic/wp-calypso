@@ -15,22 +15,10 @@ import { receiveFollows as receiveFollowsAction } from 'state/reader/follows/act
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
+import { toValidId } from 'reader/id-helpers';
 
 const ITEMS_PER_PAGE = 200;
 const MAX_ITEMS = 2000;
-
-export function toValidId( val ) {
-	if ( val === true ) {
-		return undefined;
-	}
-	const id = Number( val );
-	if ( Math.floor( id ) !== id ) {
-		return undefined;
-	}
-	return id !== 0 && ! isNaN( id )
-		? id
-		: undefined;
-}
 
 export const requestPageAction = ( page = 1, number = ITEMS_PER_PAGE, meta = '' )=> ( {
 	type: READER_FOLLOWS_SYNC_PAGE,
