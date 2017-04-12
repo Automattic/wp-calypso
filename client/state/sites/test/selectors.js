@@ -2485,6 +2485,9 @@ describe( 'selectors', () => {
 			expect( noNewAttributes.hasMinimumJetpackVersion ).to.equal( undefined );
 			expect( noNewAttributes.canAutoupdateFiles ).to.equal( undefined );
 			expect( noNewAttributes.canUpdateFiles ).to.equal( undefined );
+			expect( noNewAttributes.canManage ).to.equal( undefined );
+			expect( noNewAttributes.isMainNetworkSite ).to.equal( undefined );
+			expect( noNewAttributes.isSecondaryNetworkSite ).to.equal( undefined );
 		} );
 
 		it( 'should return exists for attributes if a site is Jetpack', () => {
@@ -2502,6 +2505,9 @@ describe( 'selectors', () => {
 			expect( noNewAttributes.hasMinimumJetpackVersion ).to.have.property;
 			expect( noNewAttributes.canAutoupdateFiles ).to.have.property;
 			expect( noNewAttributes.canUpdateFiles ).to.have.property;
+			expect( noNewAttributes.canManage ).to.have.property;
+			expect( noNewAttributes.isMainNetworkSite ).to.have.property;
+			expect( noNewAttributes.isSecondaryNetworkSite ).to.have.property;
 		} );
 	} );
 } );
