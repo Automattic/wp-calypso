@@ -3,7 +3,7 @@
  */
 import {
 	WOOCOMMERCE_EDIT_PRODUCT,
-	WOOCOMMERCE_EDIT_PRODUCT_VARIATION_TYPE,
+	WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE,
 } from '../../action-types';
 
 export function editProduct( product, data ) {
@@ -13,9 +13,9 @@ export function editProduct( product, data ) {
 	};
 }
 
-export function editProductVariationType( product, attributeIndex, data ) {
+export function editProductAttribute( product, attributeIndex, data ) {
 	return {
-		type: WOOCOMMERCE_EDIT_PRODUCT_VARIATION_TYPE,
+		type: WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE,
 		payload: { product, attributeIndex, data },
 	};
 }

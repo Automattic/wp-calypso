@@ -2,24 +2,21 @@
  * External dependencies
  */
 import { isNumber } from 'lodash';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import {
 	WOOCOMMERCE_EDIT_PRODUCT,
-	WOOCOMMERCE_EDIT_PRODUCT_VARIATION_TYPE,
+	WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE,
 } from '../../action-types';
-
-const debug = debugFactory( 'woocommerce:state:ui:products' );
 
 const initialState = null;
 
 export default function( state = initialState, action ) {
 	const handlers = {
 		[ WOOCOMMERCE_EDIT_PRODUCT ]: editProductAction,
-		[ WOOCOMMERCE_EDIT_PRODUCT_VARIATION_TYPE ]: editProductVariationTypeAction,
+		[ WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE ]: editProductAttributeAction,
 	};
 
 	const handler = handlers[ action.type ];
@@ -37,13 +34,13 @@ function editProductAction( edits, action ) {
 	return { ...prevEdits, [ bucket ]: _array };
 }
 
-function editProductVariationTypeAction( edits, action ) {
+function editProductAttributeAction( edits, action ) {
 	const { product, attributeIndex, data } = action.payload;
 	const attributes = product && product.attributes;
 
 	const prevEdits = edits || {};
 	const bucket = product && isNumber( product.id ) && 'updates' || 'creates';
-	const _attributes = editProductVariationType( attributes, attributeIndex, data );
+	const _attributes = editProductAttribute( attributes, attributeIndex, data );
 	const _array = editProduct( prevEdits[ bucket ], product, { attributes: _attributes } );
 
 	return { ...prevEdits, [ bucket ]: _array };
@@ -74,18 +71,14 @@ function editProduct( array, product, data ) {
 	return _array;
 }
 
-function editProductVariationType( attributes, attributeIndex, data ) {
+function editProductAttribute( attributes, attributeIndex, data ) {
 	const prevAttributes = attributes || [];
 	const index = ( isNumber( attributeIndex ) ? attributeIndex : prevAttributes.length );
 
 	const _attributes = [ ...prevAttributes ];
-	const prevAttribute = prevAttributes[ index ] || { variation: true, options: [] };
+	const prevAttribute = prevAttributes[ index ] || {};
 
-	if ( prevAttribute.variation ) {
-		_attributes[ index ] = { ...prevAttribute, ...data };
-	} else {
-		debug( 'WARNING: Attempting to edit a non-variation attribute as a variation type.' );
-	}
+	_attributes[ index ] = { ...prevAttribute, ...data };
 
 	return _attributes;
 }
