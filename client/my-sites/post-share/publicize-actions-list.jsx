@@ -76,45 +76,37 @@ class PublicizeActionsList extends PureComponent {
 		);
 	}
 
-	renderScheduledList() {
-		if ( this.props.section !== SCHEDULED ) {
+	renderActionsList( status = SCHEDULED ) {
+		if ( this.props.section !== status ) {
 			return null;
 		}
 
 		const {
 			postId,
 			scheduledActions,
+			publishedActions,
 			siteId,
 		} = this.props;
 
+		const actions = status === SCHEDULED ? scheduledActions : publishedActions;
+
 		return (
 			<div>
-				<QuerySharePostActions siteId={ siteId } postId={ postId } status="scheduled" />
-				{
-					scheduledActions.map( ( item, index ) => this.renderFooterSectionItem( item, index ) )
-				}
+				<QuerySharePostActions siteId={ siteId } postId={ postId } status={ status } />
+				{ actions.map( ( item, index ) => this.renderFooterSectionItem( item, index ) ) }
 			</div>
 		);
-	}
-
-	renderPublishedList() {
-		if ( this.props.section !== PUBLISHED ) {
-			return null;
-		}
-
-		// TBI
-		return 'published';
 	}
 
 	render() {
 		return (
 			<div className="post-share__actions-list">
 				<div className="post-share__scheduled-list">
-					{ this.renderScheduledList() }
+					{ this.renderActionsList( SCHEDULED ) }
 				</div>
 
 				<div className="post-share__published-list">
-					{ this.renderPublishedList() }
+					{ this.renderActionsList( PUBLISHED ) }
 				</div>
 			</div>
 		);
