@@ -13,10 +13,14 @@ import {
 	WP_SUPER_CACHE_REQUEST_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS,
+
+	WP_SUPER_CACHE_SETTINGS_UPDATE,
+	WP_SUPER_CACHE_SETTINGS_SAVE_FAILURE,
 } from '../action-types';
 import {
 	receiveSettings,
 	requestSettings,
+	saveSettings,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -91,6 +95,54 @@ describe( 'actions', () => {
 			return requestSettings( failedSiteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
+					siteId: failedSiteId,
+					error: sinon.match( { message: 'User cannot access this private blog.' } ),
+				} );
+			} );
+		} );
+	} );
+
+	describe( 'saveSettings()', () => {
+		const failedSiteId = 666666;
+		const updatedSettings = {
+			is_cache_enabled: true,
+			is_super_cache_enabled: true,
+		};
+		const settingsSaveResult = {
+			updated: {
+				is_cache_enabled: true,
+				is_super_cache_enabled: true,
+			}
+		};
+
+		useNock( nock => {
+			nock( 'https://public-api.wordpress.com' )
+				.persist()
+				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
+				.query( { path: '/wp-super-cache/v1/settings' } )
+				.reply( 200, settingsSaveResult )
+				.post( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/` )
+				.query( { path: '/wp-super-cache/v1/settings' } )
+				.reply( 403, {
+					error: 'authorization_required',
+					message: 'User cannot access this private blog.'
+				} );
+		} );
+
+		it( 'should dispatch update action when request completes', () => {
+			return saveSettings( siteId, updatedSettings )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: WP_SUPER_CACHE_SETTINGS_UPDATE,
+					siteId,
+					settings: updatedSettings
+				} );
+			} );
+		} );
+
+		it( 'should dispatch fail action when request fails', () => {
+			return saveSettings( failedSiteId, updatedSettings )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: WP_SUPER_CACHE_SETTINGS_SAVE_FAILURE,
 					siteId: failedSiteId,
 					error: sinon.match( { message: 'User cannot access this private blog.' } ),
 				} );

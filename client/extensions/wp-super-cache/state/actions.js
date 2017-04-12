@@ -7,6 +7,11 @@ import {
 	WP_SUPER_CACHE_REQUEST_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS,
+
+	WP_SUPER_CACHE_SETTINGS_SAVE,
+	WP_SUPER_CACHE_SETTINGS_SAVE_FAILURE,
+	WP_SUPER_CACHE_SETTINGS_SAVE_SUCCESS,
+	WP_SUPER_CACHE_SETTINGS_UPDATE,
 } from './action-types';
 
 /**
@@ -42,6 +47,51 @@ export const requestSettings = ( siteId ) => {
 			.catch( error => {
 				dispatch( {
 					type: WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
+					siteId,
+					error,
+				} );
+			} );
+	};
+};
+
+/**
+ * Returns an action object to be used in signalling that some wpsc settings have been updated
+ *
+ * @param  {Number} siteId Site ID
+ * @param  {Object} settings The updated site settings
+ * @return {Object}        Action object
+ */
+export const updateSettings = ( siteId, settings ) => {
+	return {
+		type: WP_SUPER_CACHE_SETTINGS_UPDATE,
+		siteId,
+		settings
+	};
+};
+
+/**
+ * @param  {Number} siteId Site ID
+ * @param  {Object} updatedSettings the updated settings
+ * @returns {Function} Action thunk that updates the settings for a given site
+ */
+export const saveSettings = ( siteId, updatedSettings ) => {
+	return ( dispatch ) => {
+		dispatch( {
+			type: WP_SUPER_CACHE_SETTINGS_SAVE,
+			siteId,
+		} );
+
+		return wp.req.post( { path: `/jetpack-blogs/${ siteId }/rest-api/` }, { path: '/wp-super-cache/v1/settings', ...updatedSettings } )
+			.then( ( { updated } ) => {
+				dispatch( updateSettings( siteId, updated ) );
+				dispatch( {
+					type: WP_SUPER_CACHE_SETTINGS_SAVE_SUCCESS,
+					siteId,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: WP_SUPER_CACHE_SETTINGS_SAVE_FAILURE,
 					siteId,
 					error,
 				} );
