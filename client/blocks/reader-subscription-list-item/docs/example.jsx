@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,24 +11,15 @@ import ConnectedReaderSubscriptionListItem from 'reader/following-manage/connect
 import Card from 'components/card';
 
 
-const longreads = { siteId: 70135762 };
-const wordpress = { feedId: 25823 };
-const bestBlogInTheWorldAAA = { siteId: 77147075 };
-const mathWithBadDrawings = { feedId: 10056049 };
-const uproxx = { feedId: 19850964 };
-const atlantic = { feedId: 49548095 };
-const fourthGenerationFarmGirl = { feedId: 24393283 };
-
-
-const items = [
-	longreads,
-	wordpress,
-	bestBlogInTheWorldAAA,
-	fourthGenerationFarmGirl,
-	atlantic,
-	mathWithBadDrawings,
-	uproxx,
-];
+const sites = {
+	'longreads': { siteId: 70135762 },
+	'wordpress': { feedId: 25823 },
+	'bestBlogInTheWorldAAA': { siteId: 77147075 },
+	'mathWithBadDrawings': { feedId: 10056049 },
+	'uproxx': { feedId: 19850964 },
+	'atlantic': { feedId: 49548095 },
+	'fourthGenerationFarmGirl': { feedId: 24393283 },
+}
 
 export default class ReaderSubscriptionListItemExample extends PureComponent {
 	static displayName = 'ReaderSubscriptionListItem';
@@ -35,10 +27,10 @@ export default class ReaderSubscriptionListItemExample extends PureComponent {
 	render() {
 		return (
 			<Card>
-				{ items.map( item =>
+				{ map( sites, site =>
 						<ConnectedReaderSubscriptionListItem
-							key={ item.feedId || item.siteId }
-							{ ...item }
+							key={ site.feedId || site.siteId }
+							{ ...site }
 						/>
 				) }
 			</Card>
