@@ -196,35 +196,6 @@ JetpackSite.prototype.callHome = function() {
 	}.bind( this ) );
 };
 
-JetpackSite.prototype.activateModule = function( moduleId, callback ) {
-	debug( 'activate module', moduleId );
-
-	if ( ! moduleId ) {
-		callback && callback( new Error( 'No id' ) );
-		return;
-	}
-
-	if ( this.isModuleActive( moduleId ) ) {
-		// Nothing to do
-		callback();
-		return;
-	}
-
-	this.toggleModule( moduleId, callback );
-};
-
-JetpackSite.prototype.deactivateModule = function( moduleId, callback ) {
-	debug( 'deactivate module', moduleId );
-
-	if ( ! this.isModuleActive( moduleId ) ) {
-		// Nothing to do
-		callback();
-		return;
-	}
-
-	this.toggleModule( moduleId, callback );
-};
-
 JetpackSite.prototype.toggleModule = function( moduleId, callback ) {
 	const isActive = this.isModuleActive( moduleId ),
 		method = isActive ? 'jetpackModulesDeactivate' : 'jetpackModulesActivate',
@@ -291,60 +262,6 @@ JetpackSite.prototype.updateMonitorSettings = function( emailNotifications, wpNo
 	}.bind( this ) );
 };
 
-JetpackSite.prototype.toggleSshScan = function( query, callback ) {
-	wpcom.undocumented().site( this.ID ).sshScanToggle( query, function( error, data ) {
-		this.emit( 'change' );
-
-		if ( error ) {
-			debug( 'error toggling SSH scan', error );
-			callback && callback( error );
-			return;
-		}
-
-		debug( 'toggled SSH scan', data );
-
-		callback && callback( null, data );
-	}.bind( this ) );
-
-	this.emit( 'change' );
-};
-
-JetpackSite.prototype.fetchSshCredentials = function( callback ) {
-	wpcom.undocumented().site( this.ID ).sshCredentialsMine( {}, function( error, data ) {
-		this.emit( 'change' );
-
-		if ( error ) {
-			debug( 'error fetching SSH from api', error );
-			callback && callback( error );
-			return;
-		}
-
-		debug( 'retrieved SSH credentials', data );
-
-		callback && callback( null, data );
-	}.bind( this ) );
-
-	this.emit( 'change' );
-};
-
-JetpackSite.prototype.updateSshCredentials = function( query, callback ) {
-	wpcom.undocumented().site( this.ID ).sshCredentialsNew( query, function( error, data ) {
-		this.emit( 'change' );
-
-		if ( error ) {
-			debug( 'error updating SSH credentials', error );
-			callback && callback( error );
-			return;
-		}
-
-		debug( 'updated SSH credentials', data );
-
-		callback && callback( null, data );
-	}.bind( this ) );
-
-	this.emit( 'change' );
-};
-
 JetpackSite.prototype.getOption = function( query, callback ) {
 	wpcom.undocumented().site( this.ID ).getOption( query, function( error, data ) {
 		this.emit( 'change' );
@@ -373,15 +290,6 @@ JetpackSite.prototype.setOption = function( query, callback ) {
 	}.bind( this ) );
 
 	this.emit( 'change' );
-};
-
-JetpackSite.prototype.fetchJetpackKeys = function( callback ) {
-	wpcom.undocumented().fetchJetpackKeys( this.ID, function( error, data ) {
-		if ( error ) {
-			debug( 'error getting Jetpack registration keys', error );
-		}
-		callback && callback( error, data );
-	}.bind( this ) );
 };
 
 module.exports = JetpackSite;
