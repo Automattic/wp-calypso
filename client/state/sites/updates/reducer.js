@@ -48,20 +48,11 @@ export const items = createReducer(
 	itemsSchema
 );
 
-export const requesting = ( state = false, { type } ) => {
-	switch ( type ) {
-		case SITE_UPDATES_REQUEST:
-		case SITE_UPDATES_REQUEST_SUCCESS:
-		case SITE_UPDATES_REQUEST_FAILURE:
-			return type === SITE_UPDATES_REQUEST;
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return false;
-	}
-
-	return state;
-};
+export const requesting = createReducer( {}, {
+	[ SITE_UPDATES_REQUEST ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+	[ SITE_UPDATES_REQUEST_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+	[ SITE_UPDATES_REQUEST_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+} );
 
 export const errors = ( state = false, { type } ) => {
 	switch ( type ) {
