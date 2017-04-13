@@ -99,29 +99,29 @@ describe( 'edits-reducer', () => {
 		expect( edits2[ 1 ].creates[ 0 ] ).to.eql( { id: { index: 0 }, regular_price: '2.99' } );
 	} );
 
-	it( 'should set currentlyEditing when editing a new variation', () => {
+	it( 'should set currentlyEditingId when editing a new variation', () => {
 		const product = { id: 48 };
 
 		const edits1 = reducer( undefined, editProductVariation( product, null, { regular_price: '1.99' } ) );
-		const _edits1 = edits1.find( function( p ) {
+		const productEdits1 = edits1.find( function( p ) {
 			if ( product.id === p.productId ) {
 				return p;
 			}
 		} );
 
-		expect( _edits1.currentlyEditing ).to.eql( { index: 0 } );
+		expect( productEdits1.currentlyEditingId ).to.eql( productEdits1.creates[ 0 ].id );
 
 		const edits2 = reducer( edits1, editProductVariation( product, null, { regular_price: '2.99' } ) );
-		const _edits2 = edits2.find( function( p ) {
+		const productEdits2 = edits2.find( function( p ) {
 			if ( product.id === p.productId ) {
 				return p;
 			}
 		} );
 
-		expect( _edits2.currentlyEditing ).to.eql( { index: 1 } );
+		expect( productEdits2.currentlyEditingId ).to.eql( productEdits2.creates[ 1 ].id );
 	} );
 
-	it( 'should set currentlyEditing when editing an existing variation', () => {
+	it( 'should set currentlyEditingId when editing an existing variation', () => {
 		const product = { id: 48 };
 		const variation1 = { id: 23, regular_price: '0.99', attributes: [ { name: 'Color', option: 'Red' } ] };
 
@@ -132,6 +132,6 @@ describe( 'edits-reducer', () => {
 			}
 		} );
 
-		expect( _edits1.currentlyEditing ).to.eql( 23 );
+		expect( _edits1.currentlyEditingId ).to.eql( variation1.id );
 	} );
 } );

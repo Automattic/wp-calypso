@@ -39,7 +39,7 @@ function editProductVariationAction( edits, action ) {
 			return {
 				...productEdits,
 				[ bucket ]: _array,
-				currentlyEditing: variationId,
+				currentlyEditingId: variationId,
 			};
 		}
 
@@ -55,7 +55,7 @@ function editProductVariationAction( edits, action ) {
 		_edits.push( {
 			productId,
 			[ bucket ]: _array,
-			currentlyEditing: variationId,
+			currentlyEditingId: variationId,
 		} );
 	}
 
