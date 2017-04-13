@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { isEmpty } from 'lodash';
+import { isEmpty, stubFalse, stubTrue } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { createReducer, keyedReducer } from 'state/utils';
 
 import {
 	SITE_RECEIVE,
@@ -42,17 +42,17 @@ export const items = createReducer(
 	itemsSchema
 );
 
-export const requesting = createReducer( {}, {
-	[ SITE_UPDATES_REQUEST ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
-	[ SITE_UPDATES_REQUEST_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-	[ SITE_UPDATES_REQUEST_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-} );
+export const requesting = keyedReducer( 'siteId', createReducer( undefined, {
+	[ SITE_UPDATES_REQUEST ]: stubTrue,
+	[ SITE_UPDATES_REQUEST_SUCCESS ]: stubFalse,
+	[ SITE_UPDATES_REQUEST_FAILURE ]: stubFalse,
+} ) );
 
-export const errors = createReducer( {}, {
-	[ SITE_UPDATES_REQUEST ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-	[ SITE_UPDATES_REQUEST_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
-	[ SITE_UPDATES_REQUEST_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
-} );
+export const errors = keyedReducer( 'siteId', createReducer( undefined, {
+	[ SITE_UPDATES_REQUEST ]: stubFalse,
+	[ SITE_UPDATES_REQUEST_SUCCESS ]: stubFalse,
+	[ SITE_UPDATES_REQUEST_FAILURE ]: stubTrue,
+} ) );
 
 export default combineReducers( {
 	items,
