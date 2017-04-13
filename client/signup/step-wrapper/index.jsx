@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -11,15 +11,13 @@ import classNames from 'classnames';
 import StepHeader from 'signup/step-header';
 import NavigationLink from 'signup/navigation-link';
 
-export default localize( React.createClass( {
-	displayName: 'StepWrapper',
+class StepWrapper extends Component {
+	static propTypes = {
+		shouldHideNavButtons: PropTypes.bool,
+		translate: PropTypes.func.isRequired,
+	};
 
-	propTypes: {
-		shouldHideNavButtons: React.PropTypes.bool,
-		translate: React.PropTypes.func.isRequired
-	},
-
-	renderBack: function() {
+	renderBack() {
 		if ( this.props.shouldHideNavButtons ) {
 			return null;
 		}
@@ -33,9 +31,9 @@ export default localize( React.createClass( {
 				backUrl={ this.props.backUrl }
 				signupProgress={ this.props.signupProgress } />
 		);
-	},
+	}
 
-	renderSkip: function() {
+	renderSkip() {
 		if ( ! this.props.shouldHideNavButtons && this.props.goToNextStep ) {
 			return (
 				<NavigationLink
@@ -46,9 +44,9 @@ export default localize( React.createClass( {
 					stepName={ this.props.stepName } />
 			);
 		}
-	},
+	}
 
-	headerText: function() {
+	headerText() {
 		if ( this.props.positionInFlow === 0 ) {
 			if ( this.props.headerText ) {
 				return this.props.headerText;
@@ -59,9 +57,9 @@ export default localize( React.createClass( {
 		if ( this.props.fallbackHeaderText ) {
 			return this.props.fallbackHeaderText;
 		}
-	},
+	}
 
-	render: function() {
+	render() {
 		const { stepContent, headerButton } = this.props;
 		const classes = classNames( 'step-wrapper', {
 			'is-wide-layout': this.props.isWideLayout,
@@ -83,4 +81,6 @@ export default localize( React.createClass( {
 			</div>
 		);
 	}
-} ) );
+}
+
+export default localize( StepWrapper );
