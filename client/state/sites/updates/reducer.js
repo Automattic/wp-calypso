@@ -34,7 +34,7 @@ const receiveUpdatesForSites = ( state, sites ) => {
 export const items = createReducer(
 	{},
 	{
-		[ SITE_UPDATES_RECEIVE ]: ( state, { siteId, updates } ) => Object.assign( {}, state, { [ siteId ]: updates } ),
+		[ SITE_UPDATES_RECEIVE ]: ( state, { siteId, updates } ) => ( { ...state, [ siteId ]: updates } ),
 		[ SITE_RECEIVE ]: ( state, { site } ) => receiveUpdatesForSites( state, [ site ] ),
 		[ SITES_RECEIVE ]: ( state, { sites } ) => receiveUpdatesForSites( state, sites ),
 		[ SITES_UPDATE ]: ( state, { sites } ) => receiveUpdatesForSites( state, sites ),
