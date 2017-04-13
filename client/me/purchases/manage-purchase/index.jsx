@@ -39,7 +39,10 @@ import {
 } from 'lib/purchases';
 import { isDataLoading, getPurchase, getSelectedSite, goToList, recordPageView } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
+import {
+	getSelectedSite as getSelectedSiteSelector,
+	getSelectedSiteId,
+} from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
 import { isDomainRegistration } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
@@ -48,6 +51,7 @@ import PurchasePlanDetails from './plan-details';
 import PaymentLogo from 'components/payment-logo';
 import ProductLink from 'me/purchases/product-link';
 import PurchaseNotice from './notices';
+import PurchaseSiteHeader from '../purchases-site/header';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import RemovePurchase from '../remove-purchase';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -531,6 +535,11 @@ const ManagePurchase = React.createClass( {
 
 		return (
 			<div>
+				<PurchaseSiteHeader
+					siteId={ this.props.selectedSiteId }
+					name={ siteName }
+					domain={ siteDomain }
+					isPlaceholder={ isDataLoading( this.props ) } />
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
 						<strong className="manage-purchase__content manage-purchase__title">{ purchaseTitleText }</strong>
@@ -613,6 +622,7 @@ export default connect(
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
-		selectedSite: getSelectedSiteSelector( state )
+		selectedSite: getSelectedSiteSelector( state ),
+		selectedSiteId: getSelectedSiteId( state ),
 	} )
 )( localize( ManagePurchase ) );
