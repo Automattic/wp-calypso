@@ -82,12 +82,7 @@ const PreloadTab = ( {
 								checked={ !! preload_on }
 								onChange={ handleToggle( 'preload_on' ) }>
 								<span>
-									{ translate(
-										'Preload mode (garbage collection only on legacy cache files. {{em}}(Recommended){{/em}})',
-										{
-											components: { em: <em /> }
-										} )
-								}
+									{ translate( 'Preload mode. (Garbage collection only on legacy cache files. Recommended.)' ) }
 								</span>
 							</FormToggle>
 						</div>
@@ -98,12 +93,9 @@ const PreloadTab = ( {
 								onChange={ handleToggle( 'preload_refresh' ) }>
 								<span>
 									{ translate(
-										'Refresh preloaded cache files every {{number /}} minute. (minimum %s minutes.)',
-										'Refresh preloaded cache files every {{number /}} minutes. (minimum %s minutes.)',
+										'Refresh preloaded cache files every {{number /}} minute. ',
+										'Refresh preloaded cache files every {{number /}} minutes. ',
 										{
-											args: [
-												minimum_preload_interval
-											],
 											count: preload_interval,
 											components: {
 												number: renderCachePreloadInterval( {
@@ -112,8 +104,17 @@ const PreloadTab = ( {
 												} )
 											}
 										}
-									)
-								}</span>
+									) }
+
+									{ translate(
+										'(minimum %d minute)',
+										'(minimum %d minutes)',
+										{
+											args: minimum_preload_interval,
+											count: minimum_preload_interval,
+										}
+									) }
+								</span>
 							</FormToggle>
 						</div>
 
@@ -148,7 +149,7 @@ const PreloadTab = ( {
 							</FormSelect>
 						</div>
 						<FormSettingExplanation>
-							{ translate( 'Send me status emails when files are refreshed during preload' ) }
+							{ translate( 'Send me status emails when files are refreshed during preload.' ) }
 						</FormSettingExplanation>
 					</FormFieldset>
 				</form>
