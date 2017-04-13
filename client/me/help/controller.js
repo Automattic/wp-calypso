@@ -24,9 +24,17 @@ export default {
 			return next();
 		}
 
-		const url = ( context.path === '/help' )
-			? support.SUPPORT_ROOT
-			: userUtils.getLoginUrl( window.location.href );
+		let url;
+		switch ( context.path ) {
+			case '/help':
+				url = support.SUPPORT_ROOT;
+				break;
+			case '/help/contact':
+				url = support.CONTACT;
+				break;
+			default:
+				url = userUtils.getLoginUrl( window.location.href );
+		}
 
 		// Not using the page library here since this is an external URL
 		window.location.href = url;
