@@ -223,14 +223,6 @@ sections.push( {
 	enableLoggedOut: true,
 } );
 
-sections.push( {
-	name: 'posts-pages',
-	paths: [ '/drafts' ],
-	module: 'my-sites/drafts',
-	secondary: true,
-	group: 'sites'
-} );
-
 // this MUST be the first section for /read paths so subsequent sections under /read can override settings
 sections.push( {
 	name: 'reader',

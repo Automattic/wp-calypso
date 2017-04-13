@@ -61,7 +61,6 @@ describe( 'PostEditor', function() {
 		mockery.registerMock( 'post-editor/editor-sidebar', MOCK_COMPONENT );
 		mockery.registerMock( 'post-editor/editor-status-label', MOCK_COMPONENT );
 		mockery.registerMock( './editor-preview', MOCK_COMPONENT );
-		mockery.registerMock( 'my-sites/drafts/draft-list', MOCK_COMPONENT );
 		mockery.registerMock( 'lib/preferences/actions', { set() {} } );
 		mockery.registerMock( 'lib/wp', {
 			me: () => ( {
