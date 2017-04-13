@@ -21,6 +21,7 @@ describe( 'toValidId', () => {
 			[ 4, 4 ],
 			[ '4', 4 ],
 			[ '4.8', undefined ],
+			[ 1 / 0, undefined ],
 	];
 
 	testCases.forEach( function( testCase ) {
