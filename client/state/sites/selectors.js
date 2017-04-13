@@ -83,6 +83,9 @@ export function getJetpackComputedAttributes( state, siteId ) {
 		hasMinimumJetpackVersion: siteHasMinimumJetpackVersion( state, siteId ),
 		canAutoupdateFiles: canJetpackSiteAutoUpdateFiles( state, siteId ),
 		canUpdateFiles: canJetpackSiteUpdateFiles( state, siteId ),
+		canManage: canJetpackSiteManage( state, siteId ),
+		isMainNetworkSite: isJetpackSiteMainNetworkSite( state, siteId ),
+		isSecondaryNetworkSite: isJetpackSiteSecondaryNetworkSite( state, siteId ),
 	};
 }
 
