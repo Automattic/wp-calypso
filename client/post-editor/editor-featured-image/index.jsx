@@ -22,6 +22,7 @@ import { getMediaItem } from 'state/selectors';
 import { getFeaturedImageId } from 'lib/posts/utils';
 import QueryMedia from 'components/data/query-media';
 import { localize } from 'i18n-calypso';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class EditorFeaturedImage extends Component {
 	static propTypes = {
@@ -74,6 +75,11 @@ class EditorFeaturedImage extends Component {
 
 		stats.recordStat( 'featured_image_set' );
 		stats.recordEvent( 'Featured image set' );
+
+		this.props.recordTracksEvent( 'calypso_editor_featured_image_upload', {
+			source: 'medialibrary',
+			type: 'click'
+		} );
 	};
 
 	renderMediaModal = () => {
@@ -152,4 +158,7 @@ export default connect(
 			featuredImage: getMediaItem( state, siteId, featuredImageId ),
 		};
 	},
+	{
+		recordTracksEvent
+	}
 )( localize( EditorFeaturedImage ) );

@@ -22,6 +22,8 @@ import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 
+import { recordTracksEvent } from 'state/analytics/actions';
+
 class FeaturedImageDropZone extends Component {
 	onFilesDrop = ( files ) => {
 		/**
@@ -50,10 +52,18 @@ class FeaturedImageDropZone extends Component {
 			}
 
 			/**
-			 * File uploaded successfully, there is no longer need to listen for the changes.
+			 * File upload finished. No need to listen for changes anymore.
 			 */
 			if ( ! isUploadInProgress ) {
 				MediaStore.off( 'change', handleFeaturedImageUpload );
+
+				// Successful image upload.
+				if ( media ) {
+					this.props.recordTracksEvent( 'calypso_editor_featured_image_upload', {
+						source: 'dropzone',
+						type: 'dragdrop'
+					} );
+				}
 			}
 
 			/**
@@ -102,6 +112,7 @@ export default connect(
 	{
 		editPost,
 		deleteMedia,
-		receiveMedia
+		receiveMedia,
+		recordTracksEvent,
 	}
 )( localize( FeaturedImageDropZone ) );
