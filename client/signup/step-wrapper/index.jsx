@@ -51,24 +51,11 @@ export default React.createClass( {
 			if ( this.props.headerText ) {
 				return this.props.headerText;
 			}
-			return this.translate( 'Let\'s get started.' );
+			return this.translate( 'Create your account.' );
 		}
 
 		if ( this.props.fallbackHeaderText ) {
 			return this.props.fallbackHeaderText;
-		}
-	},
-
-	subHeaderText: function() {
-		if ( this.props.positionInFlow === 0 ) {
-			if ( this.props.subHeaderText ) {
-				return this.props.subHeaderText;
-			}
-			return this.translate( 'Welcome to the best place for your WordPress website.' );
-		}
-
-		if ( this.props.fallbackSubHeaderText ) {
-			return this.props.fallbackSubHeaderText;
 		}
 	},
 
@@ -81,8 +68,7 @@ export default React.createClass( {
 		return (
 			<div className={ classes }>
 				<StepHeader
-					headerText={ this.headerText() }
-					subHeaderText={ this.subHeaderText() }>
+					headerText={ this.headerText() }>
 					{ ( headerButton ) }
 				</StepHeader>
 				<div className="step-wrapper__content is-animated-content">
