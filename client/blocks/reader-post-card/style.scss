@@ -78,10 +78,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			}
 		}
 
-		&.is-expanded-video .reader-post-card__post {
-			flex-direction: column;
-		}
-
 		&.is-photo {
 
 			.reader-post-card__post {
