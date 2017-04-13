@@ -35,8 +35,7 @@
 }
 
 // <Page> component
-.page,
-.pages__blog-posts-page {
+.page {
 
 	.site-icon {
 		display: none;
@@ -51,9 +50,7 @@
 }
 
 .page__title,
-.page__title:visited,
-.pages__blog-posts-page__title,
-.pages__blog-posts-page__title:visited {
+.page__title:visited {
 	display: inline;
 	color: $gray-dark;
 	font-weight: 500;
@@ -97,7 +94,106 @@
 	}
 }
 
-.page__popover-more-info,
+.page__popover-more-info {
+	color: $gray;
+	padding: 4px 16px 8px;
+	font-size: 12px;
+	max-width: 150px;
+	text-align: left;
+}
+
+.page__delete-item.popover__menu-item {
+	&:hover,
+	&:focus {
+		background-color: $alert-red;
+		border: 0;
+		box-shadow: none;
+		color: $white;
+	}
+}
+
+.page .updated-confirmation .conf-alert {
+	width: auto;
+	.undo {
+		display: inline;
+	}
+}
+
+
+// <BlogPostsPage> component
+.pages__blog-posts-page {
+	display: flex;
+	align-items: center;
+}
+
+.pages__blog-posts-page__home-badge {
+	flex: 0 0 auto;
+	margin: 2px 8px 0 0;
+	color: $gray;
+	align-self: flex-start;
+}
+
+.pages__blog-posts-page__not-used-badge {
+	flex: 0 0 auto;
+	margin: 0 24px 0 0;
+	padding: 5px 16px;
+	background-color: $gray;
+	border-radius: 3px;
+	color: $white;
+	font-size: 12px;
+}
+
+.pages__blog-posts-page__details {
+	flex: 1 1 auto;
+
+	.pages__blog-posts-page__title {
+		display: inline;
+		color: $gray-dark;
+		font-weight: 500;
+		font-family: $serif;
+		margin-right: 33px;
+	}
+
+	.pages__blog-posts-page__info {
+		color: $gray;
+		font-size: 12px;
+		margin: 0 33px 0 0;
+	}
+}
+
+.pages__blog-posts-page__actions {
+	flex: 0 0 auto;
+}
+
+
+/*.pages__blog-posts-page {
+
+	.site-icon {
+		display: none;
+
+		@include breakpoint( ">660px" ) {
+			display: block;
+			float: left;
+			margin-right: 10px;
+		}
+	}
+
+}
+
+.pages__blog-posts-page__title,
+.pages__blog-posts-page__title:visited {
+	display: inline;
+	color: $gray-dark;
+	font-weight: 500;
+	font-family: $serif;
+	margin-right: 33px;
+
+	.gridicon {
+		color: $gray;
+		margin: 2px 8px -2px 0;
+	}
+}
+
 .pages__blog-posts-page__popover-more-info {
 	color: $gray;
 	padding: 4px 16px 8px;
@@ -125,21 +221,4 @@
 	font-size: 12px;
 	max-width: 300px;
 	margin: 0px 33px 0px 26px;
-}
-
-.page__delete-item.popover__menu-item {
-	&:hover,
-	&:focus {
-		background-color: $alert-red;
-		border: 0;
-		box-shadow: none;
-		color: $white;
-	}
-}
-
-.page .updated-confirmation .conf-alert {
-	width: auto;
-	.undo {
-		display: inline;
-	}
-}
+}*/

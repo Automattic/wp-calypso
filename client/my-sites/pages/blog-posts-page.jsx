@@ -62,31 +62,27 @@ const BlogPostsPage = React.createClass( {
 			return null;
 		}
 
-		let notUsedLabel = null;
-		if ( isStaticHomePageWithNoPostsPage ) {
-			notUsedLabel =
-				<div className="pages__blog-posts-page__not-used-label">
-					{ this.translate( 'Not Used' ) }
-				</div>;
-		}
-
 		return (
 			<CompactCard className="pages__blog-posts-page">
-				{ notUsedLabel }
-				<span className="pages__blog-posts-page__title" href="">
-					{ isCurrentlySetAsHomepage ? <Gridicon icon="house" size={ 18 } /> : null }
-					{ this.translate( 'Blog Posts' ) }
-				</span>
-				<div className="pages__blog-posts-page__info">
-					{
-						isCurrentlySetAsHomepage
-						? this.translate( 'Your latest posts, shown on homepage' )
-						: this.translate( 'Your latest posts' )
-					}
+				{ isStaticHomePageWithNoPostsPage &&
+					<div className="pages__blog-posts-page__not-used-badge">{ this.translate( 'Not Used' ) }</div> }
+				{ isCurrentlySetAsHomepage &&
+					<Gridicon icon="house" size={ 18 } className="pages__blog-posts-page__home-badge" /> }
+				<div className="pages__blog-posts-page__details">
+					<div className="pages__blog-posts-page__title">
+						{ this.translate( 'Blog Posts' ) }
+					</div>
+					<div className="pages__blog-posts-page__info">
+						{
+							isCurrentlySetAsHomepage
+							? this.translate( 'Your latest posts, shown on homepage' )
+							: this.translate( 'Your latest posts' )
+						}
+					</div>
 				</div>
 				{
 					shouldShowPageActions
-					? <div>
+					? <div className="pages__blog-posts-page__actions">
 							<Gridicon
 								icon="ellipsis"
 								className={ classNames( {
