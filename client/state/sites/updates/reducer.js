@@ -17,8 +17,6 @@ import {
 	SITE_UPDATES_REQUEST,
 	SITE_UPDATES_REQUEST_SUCCESS,
 	SITE_UPDATES_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 
 import { itemsSchema } from './schema';
@@ -54,22 +52,11 @@ export const requesting = createReducer( {}, {
 	[ SITE_UPDATES_REQUEST_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
 } );
 
-export const errors = ( state = false, { type } ) => {
-	switch ( type ) {
-		case SITE_UPDATES_REQUEST:
-		case SITE_UPDATES_REQUEST_SUCCESS:
-			return false;
-
-		case SITE_UPDATES_REQUEST_FAILURE:
-			return true;
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return false;
-	}
-
-	return state;
-};
+export const errors = createReducer( {}, {
+	[ SITE_UPDATES_REQUEST ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+	[ SITE_UPDATES_REQUEST_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+	[ SITE_UPDATES_REQUEST_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+} );
 
 export default combineReducers( {
 	items,
