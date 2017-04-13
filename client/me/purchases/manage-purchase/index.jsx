@@ -104,32 +104,6 @@ const ManagePurchase = React.createClass( {
 		return Boolean( getPurchase( props ) );
 	},
 
-	renderContactSupportToRenewMessage() {
-		const purchase = getPurchase( this.props );
-		const { translate } = this.props;
-
-		if ( getSelectedSite( this.props ) ) {
-			return null;
-		}
-
-		return (
-			<div className="manage-purchase__contact-support">
-				{ translate( 'You are the owner of %(purchaseName)s but because you are no longer a user on %(siteSlug)s, ' +
-				'renewing it will require staff assistance. Please {{contactSupportLink}}contact support{{/contactSupportLink}}, ' +
-				'and consider transferring this purchase to another active user on %(siteSlug)s to avoid this issue in the future.',
-					{
-						args: {
-							purchaseName: getName( purchase ),
-							siteSlug: this.props.selectedPurchase.domain
-						},
-						components: {
-							contactSupportLink: <a href={ support.CALYPSO_CONTACT } />
-						}
-					} ) }
-			</div>
-		);
-	},
-
 	handleRenew() {
 		const purchase = getPurchase( this.props ),
 			renewItem = cartItems.getRenewalItemFromProduct( purchase, {
@@ -294,8 +268,7 @@ const ManagePurchase = React.createClass( {
 			renewButton,
 			editPaymentMethodNavItem,
 			cancelPurchaseNavItem,
-			cancelPrivacyProtectionNavItem,
-			contactSupportToRenewMessage;
+			cancelPrivacyProtectionNavItem;
 
 		if ( isDataLoading( this.props ) ) {
 			classes = 'manage-purchase__info is-placeholder';
@@ -315,7 +288,6 @@ const ManagePurchase = React.createClass( {
 				<ProductLink selectedPurchase={ purchase } selectedSite={ this.props.selectedSite } />
 			);
 			renewButton = this.renderRenewButton();
-			contactSupportToRenewMessage = this.renderContactSupportToRenewMessage();
 			editPaymentMethodNavItem = this.renderEditPaymentMethodNavItem();
 			cancelPurchaseNavItem = this.renderCancelPurchaseNavItem();
 			cancelPrivacyProtectionNavItem = this.renderCancelPrivacyProtection();
@@ -342,7 +314,6 @@ const ManagePurchase = React.createClass( {
 					<PurchaseMeta purchaseId={ isDataLoading( this.props ) ? false : this.props.selectedPurchase.id } />
 
 					{ renewButton }
-					{ contactSupportToRenewMessage }
 				</Card>
 
 				{ this.renderPlanDetails() }

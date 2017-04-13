@@ -10,6 +10,7 @@ import { times } from 'lodash';
  * Internal Dependencies
  */
 import {
+	getName,
 	creditCardExpiresBeforeSubscription,
 	isExpired,
 	isExpiring,
@@ -30,6 +31,7 @@ import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import { getUser } from 'state/users/selectors';
 import paths from '../paths';
 import PaymentLogo from 'components/payment-logo';
+import support from 'lib/url/support';
 import UserItem from 'components/user';
 import {
 	canEditPaymentDetails,
@@ -245,6 +247,32 @@ class PurchaseMeta extends Component {
 		);
 	}
 
+	renderContactSupportToRenewMessage() {
+		const purchase = getPurchase( this.props );
+		const { translate } = this.props;
+
+		if ( getSelectedSite( this.props ) ) {
+			return null;
+		}
+
+		return (
+			<div className="manage-purchase__contact-support">
+				{ translate( 'You are the owner of %(purchaseName)s but because you are no longer a user on %(siteSlug)s, ' +
+				'renewing it will require staff assistance. Please {{contactSupportLink}}contact support{{/contactSupportLink}}, ' +
+				'and consider transferring this purchase to another active user on %(siteSlug)s to avoid this issue in the future.',
+					{
+						args: {
+							purchaseName: getName( purchase ),
+							siteSlug: this.props.selectedPurchase.domain
+						},
+						components: {
+							contactSupportLink: <a href={ support.CALYPSO_CONTACT } />
+						}
+					} ) }
+			</div>
+		);
+	}
+
 	renderOwner() {
 		const { translate, owner } = this.props;
 		if ( ! owner ) {
@@ -284,18 +312,21 @@ class PurchaseMeta extends Component {
 		}
 
 		return (
-			<ul className="manage-purchase__meta">
-				{ this.renderOwner() }
-				<li>
-					<em className="manage-purchase__content manage-purchase__detail-label">{ translate( 'Price' ) }</em>
-					<span className="manage-purchase__content manage-purchase__detail">{ this.renderPrice() }</span>
-				</li>
-				<li>
-					<em className="manage-purchase__content manage-purchase__detail-label">{ this.renderRenewsOrExpiresOnLabel() }</em>
-					<span className="manage-purchase__content manage-purchase__detail">{ this.renderRenewsOrExpiresOn() }</span>
-				</li>
-				{ this.renderPaymentDetails() }
-			</ul>
+			<div>
+				<ul className="manage-purchase__meta">
+					{ this.renderOwner() }
+					<li>
+						<em className="manage-purchase__content manage-purchase__detail-label">{ translate( 'Price' ) }</em>
+						<span className="manage-purchase__content manage-purchase__detail">{ this.renderPrice() }</span>
+					</li>
+					<li>
+						<em className="manage-purchase__content manage-purchase__detail-label">{ this.renderRenewsOrExpiresOnLabel() }</em>
+						<span className="manage-purchase__content manage-purchase__detail">{ this.renderRenewsOrExpiresOn() }</span>
+					</li>
+					{ this.renderPaymentDetails() }
+				</ul>
+				{ this.renderContactSupportToRenewMessage() }
+			</div>
 		);
 	}
 }
