@@ -140,21 +140,26 @@ class Sitemaps extends Component {
 			'sitemap_url',
 			'news_sitemap_url',
 		];
-		const isSitePublic = this.isSitePublic();
+
+		if ( ! this.isSitePublic() ) {
+			return (
+				<div className="sitemaps__module-settings site-settings__child-settings">
+					{ this.renderNonPublicExplanation() }
+				</div>
+			);
+		}
 
 		return (
 			<div className="sitemaps__module-settings site-settings__child-settings">
-				{ ! isSitePublic && this.renderNonPublicExplanation() }
-
 				{
-					isSitePublic && activatingSitemapsModule &&
+					activatingSitemapsModule &&
 					<FormSettingExplanation>
 						{ translate( 'Generating sitemap…' ) }
 					</FormSettingExplanation>
 				}
 
 				{
-					isSitePublic && sitemapsModuleActive &&
+					sitemapsModuleActive &&
 					<div>
 						{ this.renderSitemapExplanation() }
 
