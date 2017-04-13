@@ -160,11 +160,6 @@
 }
 
 .editor-media-modal .media-library__content .empty-content__illustration {
-	width: 65vh;
-	min-width: 300px;
-	max-width: 37.5vw;
-	margin: -5% 0;
-
 	@media ( max-height: 470px ) {
 		display: none;
 	}
