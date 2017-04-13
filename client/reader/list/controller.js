@@ -14,7 +14,7 @@ import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
-export default {
+const exported = {
 	listListing( context ) {
 		const basePath = '/read/list/:owner/:slug',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > List > ' + context.params.user + ' - ' + context.params.list,
@@ -50,3 +50,9 @@ export default {
 		);
 	}
 };
+
+export default exported;
+
+export const {
+    listListing
+} = exported;

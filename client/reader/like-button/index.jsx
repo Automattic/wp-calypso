@@ -1,10 +1,14 @@
-const React = require( 'react' );
+/**
+ * External dependencies
+ */
+import React from 'react';
 
-const postStore = require( 'lib/feed-post-store' );
-
-const LikeButtonContainer = require( 'blocks/like-button' );
-const { markSeen } = require( 'lib/feed-post-store/actions' );
-
+/**
+ * Internal dependencies
+ */
+import postStore from 'lib/feed-post-store';
+import LikeButtonContainer from 'blocks/like-button';
+import { markSeen } from 'lib/feed-post-store/actions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 
 const ReaderLikeButton = React.createClass( {
@@ -32,4 +36,4 @@ const ReaderLikeButton = React.createClass( {
 
 } );
 
-module.exports = ReaderLikeButton;
+export default ReaderLikeButton;

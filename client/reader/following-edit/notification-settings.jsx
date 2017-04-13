@@ -1,20 +1,22 @@
-//const debug = require( 'debug' )( 'calypso:reader:following:edit' );
+/**
+ * External dependencies
+ */
+import React from 'react';
+import classnames from 'classnames';
 
-// External dependencies
-const React = require( 'react' ),
-	classnames = require( 'classnames' );
-
-// Internal dependencies
-const Card = require( 'components/card' ),
-	FormToggle = require( 'components/forms/form-toggle' ),
-	SegmentedControl = require( 'components/segmented-control' ),
-	ControlItem = require( 'components/segmented-control/item' ),
-	PostEmailSubscriptionStore = require( 'lib/reader-post-email-subscriptions' ),
-	CommentEmailSubscriptionStore = require( 'lib/reader-comment-email-subscriptions' ),
-	PostEmailSubscriptionActions = require( 'lib/reader-post-email-subscriptions/actions' ),
-	CommentEmailSubscriptionActions = require( 'lib/reader-comment-email-subscriptions/actions' ),
-	FormInputValidation = require( 'components/forms/form-input-validation' ),
-	smartSetState = require( 'lib/react-smart-set-state' );
+/**
+ * Internal dependencies
+ */
+import Card from 'components/card';
+import FormToggle from 'components/forms/form-toggle';
+import SegmentedControl from 'components/segmented-control';
+import ControlItem from 'components/segmented-control/item';
+import PostEmailSubscriptionStore from 'lib/reader-post-email-subscriptions';
+import CommentEmailSubscriptionStore from 'lib/reader-comment-email-subscriptions';
+import PostEmailSubscriptionActions from 'lib/reader-post-email-subscriptions/actions';
+import CommentEmailSubscriptionActions from 'lib/reader-comment-email-subscriptions/actions';
+import FormInputValidation from 'components/forms/form-input-validation';
+import smartSetState from 'lib/react-smart-set-state';
 
 const DELIVERY_FREQUENCY_INSTANTLY = 'instantly',
 	DELIVERY_FREQUENCY_DAILY = 'daily',
@@ -191,4 +193,4 @@ var FollowingEditNotificationSettings = React.createClass( {
 
 } );
 
-module.exports = FollowingEditNotificationSettings;
+export default FollowingEditNotificationSettings;

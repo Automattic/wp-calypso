@@ -1,8 +1,18 @@
-var React = require( 'react' );
+/**
+ * External dependencies
+ */
+import React from 'react';
 
-var EmptyContent = require( 'components/empty-content' ),
-	stats = require( 'reader/stats' ),
-	discoverHelper = require( 'reader/discover/helper' );
+/**
+ * Internal dependencies
+ */
+import EmptyContent from 'components/empty-content';
+import {
+	recordAction,
+	recordGaEvent,
+	recordTrack,
+} from 'reader/stats';
+import { isDiscoverEnabled } from 'reader/discover/helper';
 
 var RecommendedPostsEmptyContent = React.createClass( {
 	shouldComponentUpdate: function() {
@@ -10,15 +20,15 @@ var RecommendedPostsEmptyContent = React.createClass( {
 	},
 
 	recordAction: function() {
-		stats.recordAction( 'clicked_following_on_empty_recommended_posts' );
-		stats.recordGaEvent( 'Clicked Following on Empty Recommended Posts Stream' );
-		stats.recordTrack( 'calypso_reader_following_on_empty_Posts_stream_clicked' );
+		recordAction( 'clicked_following_on_empty_recommended_posts' );
+		recordGaEvent( 'Clicked Following on Empty Recommended Posts Stream' );
+		recordTrack( 'calypso_reader_following_on_empty_Posts_stream_clicked' );
 	},
 
 	recordSecondaryAction: function() {
-		stats.recordAction( 'clicked_discover_on_empty_recommended_posts' );
-		stats.recordGaEvent( 'Clicked Discover on Empty Recommended Posts Stream' );
-		stats.recordTrack( 'calypso_reader_discover_on_empty_Posts_stream_clicked' );
+		recordAction( 'clicked_discover_on_empty_recommended_posts' );
+		recordGaEvent( 'Clicked Discover on Empty Recommended Posts Stream' );
+		recordTrack( 'calypso_reader_discover_on_empty_Posts_stream_clicked' );
 	},
 
 	render: function() {
@@ -26,7 +36,7 @@ var RecommendedPostsEmptyContent = React.createClass( {
 			className="empty-content__action button is-primary"
 			onClick={ this.recordAction }
 			href="/">{ this.translate( 'Back to Following' ) }</a> ),
-			secondaryAction = discoverHelper.isDiscoverEnabled()
+			secondaryAction = isDiscoverEnabled()
 			? ( <a
 				className="empty-content__action button"
 				onClick={ this.recordSecondaryAction }
@@ -43,4 +53,4 @@ var RecommendedPostsEmptyContent = React.createClass( {
 	}
 } );
 
-module.exports = RecommendedPostsEmptyContent;
+export default RecommendedPostsEmptyContent;

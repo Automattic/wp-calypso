@@ -11,10 +11,12 @@ import i18n from 'i18n-calypso';
  */
 import { abtest } from 'lib/abtest';
 import route from 'lib/route';
+import feedLookup from 'lib/feed-lookup';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage, setPageTitle } from './controller-helper';
 import FeedError from 'reader/feed-error';
 import FeedSubscriptionActions from 'lib/reader-feed-subscriptions/actions';
+import StreamComponent from 'reader/following/main';
 import {
 	getPrettyFeedUrl,
 	getPrettySiteUrl
@@ -23,6 +25,11 @@ import { recordTrack } from 'reader/stats';
 import { preload } from 'sections-preload';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
+
+// these three are included to ensure that the stores required have been loaded and can accept actions
+import FeedSubscriptionStore from 'lib/reader-feed-subscriptions'; // eslint-disable-line no-unused-vars
+import PostEmailSubscriptionStore from 'lib/reader-post-email-subscriptions'; // eslint-disable-line no-unused-vars
+import CommentEmailSubscriptionStore from 'lib/reader-comment-email-subscriptions'; // eslint-disable-line no-unused-vars
 
 const analyticsPageTitle = 'Reader';
 
@@ -43,7 +50,7 @@ function renderFeedError( context ) {
 	);
 }
 
-module.exports = {
+const exported = {
 	initAbTests( context, next ) {
 		// spin up the ab tests that are currently active for the reader
 		activeAbTests.forEach( test => abtest( test ) );
@@ -117,10 +124,6 @@ module.exports = {
 	},
 
 	loadSubscriptions( context, next ) {
-		// these three are included to ensure that the stores required have been loaded and can accept actions
-		const FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions' ), // eslint-disable-line no-unused-vars
-			PostEmailSubscriptionStore = require( 'lib/reader-post-email-subscriptions' ), // eslint-disable-line no-unused-vars
-			CommentEmailSubscriptionStore = require( 'lib/reader-comment-email-subscriptions' ); // eslint-disable-line no-unused-vars
 		FeedSubscriptionActions.fetchAll();
 		next();
 	},
@@ -141,8 +144,7 @@ module.exports = {
 	},
 
 	following( context ) {
-		const StreamComponent = require( 'reader/following/main' ),
-			basePath = route.sectionify( context.path ),
+		const basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Following',
 			followingStore = feedStreamFactory( 'following' ),
 			mcKey = 'following';
@@ -180,8 +182,6 @@ module.exports = {
 	},
 
 	feedDiscovery( context, next ) {
-		const feedLookup = require( 'lib/feed-lookup' );
-
 		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
 			feedLookup( context.params.feed_id )
 				.then( function( feedId ) {
@@ -298,3 +298,20 @@ module.exports = {
 		);
 	}
 };
+
+export const {
+    initAbTests,
+    prettyRedirects,
+    legacyRedirects,
+    updateLastRoute,
+    incompleteUrlRedirects,
+    preloadReaderBundle,
+    loadSubscriptions,
+    sidebar,
+    unmountSidebar,
+    following,
+    feedDiscovery,
+    feedListing,
+    blogListing,
+    readA8C
+} = exported;

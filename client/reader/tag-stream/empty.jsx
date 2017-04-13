@@ -7,7 +7,11 @@ import React from 'react';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import * as stats from 'reader/stats';
+import {
+	recordAction,
+	recordGaEvent,
+	recordTrack,
+} from 'reader/stats';
 import { isDiscoverEnabled } from 'reader/discover/helper';
 
 const TagEmptyContent = React.createClass( {
@@ -20,15 +24,15 @@ const TagEmptyContent = React.createClass( {
 	},
 
 	recordAction() {
-		stats.recordAction( 'clicked_following_on_empty' );
-		stats.recordGaEvent( 'Clicked Following on EmptyContent' );
-		stats.recordTrack( 'calypso_reader_following_on_empty_tag_stream_clicked' );
+		recordAction( 'clicked_following_on_empty' );
+		recordGaEvent( 'Clicked Following on EmptyContent' );
+		recordTrack( 'calypso_reader_following_on_empty_tag_stream_clicked' );
 	},
 
 	recordSecondaryAction() {
-		stats.recordAction( 'clicked_discover_on_empty' );
-		stats.recordGaEvent( 'Clicked Discover on EmptyContent' );
-		stats.recordTrack( 'calypso_reader_discover_on_empty_tag_stream_clicked' );
+		recordAction( 'clicked_discover_on_empty' );
+		recordGaEvent( 'Clicked Discover on EmptyContent' );
+		recordTrack( 'calypso_reader_discover_on_empty_tag_stream_clicked' );
 	},
 
 	render() {

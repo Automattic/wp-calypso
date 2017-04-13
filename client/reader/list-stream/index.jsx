@@ -16,7 +16,11 @@ import ListStreamHeader from './header';
 import { followList, unfollowList } from 'state/reader/lists/actions';
 import { getListByOwnerAndSlug, isSubscribedByOwnerAndSlug, isMissingByOwnerAndSlug } from 'state/reader/lists/selectors';
 import QueryReaderList from 'components/data/query-reader-list';
-import * as stats from 'reader/stats';
+import {
+	recordAction,
+	recordGaEvent,
+	recordTrack,
+} from 'reader/stats';
 
 const ListStream = React.createClass( {
 
@@ -29,9 +33,9 @@ const ListStream = React.createClass( {
 			this.props.unfollowList( list.owner, list.slug );
 		}
 
-		stats.recordAction( isFollowRequested ? 'followed_list' : 'unfollowed_list' );
-		stats.recordGaEvent( isFollowRequested ? 'Clicked Follow List' : 'Clicked Unfollow List', list.owner + ':' + list.slug );
-		stats.recordTrack( isFollowRequested ? 'calypso_reader_reader_list_followed' : 'calypso_reader_reader_list_unfollowed', {
+		recordAction( isFollowRequested ? 'followed_list' : 'unfollowed_list' );
+		recordGaEvent( isFollowRequested ? 'Clicked Follow List' : 'Clicked Unfollow List', list.owner + ':' + list.slug );
+		recordTrack( isFollowRequested ? 'calypso_reader_reader_list_followed' : 'calypso_reader_reader_list_unfollowed', {
 			list_owner: list.owner,
 			list_slug: list.slug
 		} );
