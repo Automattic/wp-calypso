@@ -113,6 +113,10 @@ var CreditCardPaymentBox = React.createClass( {
 					: null
 				}
 
+				<CartCoupon cart={ cart } />
+
+				<a className="checkout__summary-toggle" href="">Show order summary</a>
+
 				{
 					showPaymentChatButton &&
 					<PaymentChatButton
@@ -158,8 +162,6 @@ var CreditCardPaymentBox = React.createClass( {
 
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) } />
-
-				<CartCoupon cart={ cart } />
 
 				{ this.paymentBoxActions() }
 			</form>

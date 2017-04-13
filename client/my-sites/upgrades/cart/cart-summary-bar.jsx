@@ -3,12 +3,14 @@
  */
 var React = require( 'react' );
 
+import SectionHeader from 'components/section-header';
+
 var CartSummaryBar = React.createClass( {
 	render: function() {
 		var itemCount = this.props.itemCount,
 			text;
 
-		text = this.translate( 'Cart' );
+		text = this.translate( 'Order Summary' );
 		if ( this.props.showItemCount && itemCount ) {
 			text = this.translate(
 				'Cart - %(count)d item',
@@ -21,8 +23,8 @@ var CartSummaryBar = React.createClass( {
 		}
 
 		return (
-			<div className={ 'cart-summary-bar ' + this.props.additionalClasses } onClick={ this.toggleVisibility }>
-				{ text }
+			<div>
+				<SectionHeader className="cart__header" label={ text } />
 			</div>
 		);
 	},
