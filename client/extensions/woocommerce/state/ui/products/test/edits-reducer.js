@@ -121,11 +121,17 @@ describe( 'edits-reducer', () => {
 			name: 'Edited once',
 		} ) );
 
-		const edits2 = reducer( edits1, editProductAttribute( edits1.creates[ 0 ], 0, {
+		let product = edits1.creates[ 0 ];
+		let attribute = product.attributes[ 0 ];
+
+		const edits2 = reducer( edits1, editProductAttribute( product, attribute, {
 			name: 'Edited twice',
 		} ) );
 
-		expect( edits2.creates[ 0 ].attributes[ 0 ].name ).to.eql( 'Edited twice' );
+		product = edits2.creates[ 0 ];
+		attribute = product.attributes[ 0 ];
+
+		expect( attribute.name ).to.eql( 'Edited twice' );
 	} );
 
 	it( 'should create more than one attribute for a newly created product', () => {
@@ -133,17 +139,23 @@ describe( 'edits-reducer', () => {
 			name: 'Attribute One',
 		} ) );
 
-		expect( edits1.creates[ 0 ].attributes[ 0 ].name ).to.eql( 'Attribute One' );
+		let product = edits1.creates[ 0 ];
+		let attribute1 = product.attributes[ 0 ];
 
-		const edits2 = reducer( edits1, editProductAttribute( edits1.creates[ 0 ], null, {
+		const edits2 = reducer( edits1, editProductAttribute( product, null, {
 			name: 'Attribute Two',
 		} ) );
 
-		expect( edits2.creates[ 0 ].attributes[ 1 ].name ).to.eql( 'Attribute Two' );
+		product = edits2.creates[ 0 ];
+		attribute1 = product.attributes[ 0 ];
+		const attribute2 = product.attributes[ 1 ];
+
+		expect( attribute1.name ).to.eql( 'Attribute One' );
+		expect( attribute2.name ).to.eql( 'Attribute Two' );
 	} );
 
 	it( 'should add product to "updates" when editing attribute the first time', () => {
-		const product = {
+		let product = {
 			id: 1,
 		};
 		const edits = reducer( undefined, editProductAttribute( product, null, {
@@ -152,39 +164,55 @@ describe( 'edits-reducer', () => {
 
 		expect( edits ).to.not.equal( null );
 		expect( edits.updates ).to.exist;
-		expect( edits.updates[ 0 ].attributes ).to.exist;
-		expect( edits.updates[ 0 ].attributes[ 0 ].name ).to.eql( 'New Attribute' );
+
+		product = edits.updates[ 0 ];
+		expect( product.attributes ).to.exist;
+
+		const attribute = product.attributes[ 0 ];
+		expect( attribute.name ).to.eql( 'New Attribute' );
 	} );
 
 	it( 'should modify product in "updates" when editing attribute a second time', () => {
-		const product = {
+		let product = {
 			id: 1,
 		};
 		const edits1 = reducer( undefined, editProductAttribute( product, null, {
 			name: 'Edited once',
 		} ) );
 
-		const edits2 = reducer( edits1, editProductAttribute( edits1.updates[ 0 ], 0, {
+		product = edits1.updates[ 0 ];
+		let attribute = product.attributes[ 0 ];
+
+		const edits2 = reducer( edits1, editProductAttribute( product, attribute, {
 			name: 'Edited twice',
 		} ) );
 
-		expect( edits2.updates[ 0 ].attributes[ 0 ].name ).to.eql( 'Edited twice' );
+		product = edits2.updates[ 0 ];
+		attribute = product.attributes[ 0 ];
+
+		expect( attribute.name ).to.eql( 'Edited twice' );
 	} );
 
 	it( 'should create more than one attribute for an existing product', () => {
-		const product = {
+		let product = {
 			id: 1,
 		};
 		const edits1 = reducer( undefined, editProductAttribute( product, null, {
 			name: 'Attribute One',
 		} ) );
 
-		expect( edits1.updates[ 0 ].attributes[ 0 ].name ).to.eql( 'Attribute One' );
+		product = edits1.updates[ 0 ];
+		let attribute1 = product.attributes[ 0 ];
 
-		const edits2 = reducer( edits1, editProductAttribute( edits1.updates[ 0 ], null, {
+		const edits2 = reducer( edits1, editProductAttribute( product, null, {
 			name: 'Attribute Two',
 		} ) );
 
-		expect( edits2.updates[ 0 ].attributes[ 1 ].name ).to.eql( 'Attribute Two' );
+		product = edits2.updates[ 0 ];
+		attribute1 = product.attributes[ 0 ];
+		const attribute2 = product.attributes[ 1 ];
+
+		expect( attribute1.name ).to.eql( 'Attribute One' );
+		expect( attribute2.name ).to.eql( 'Attribute Two' );
 	} );
 } );

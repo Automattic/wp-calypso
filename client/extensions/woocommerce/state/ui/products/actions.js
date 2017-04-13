@@ -13,10 +13,10 @@ export function editProduct( product, data ) {
 	};
 }
 
-export function editProductAttribute( product, attributeIndex, data ) {
+export function editProductAttribute( product, attribute, data ) {
 	return {
 		type: WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE,
-		payload: { product, attributeIndex, data },
+		payload: { product, attribute, data },
 	};
 }
 
