@@ -125,7 +125,7 @@ class StatsPostDetail extends Component {
 						actionURL="https://en.support.wordpress.com/getting-more-views-and-traffic/"
 						actionTarget="blank"
 						illustration="/calypso/images/stats/illustration-stats.svg"
-						illustrationWidth={ 250 }
+						illustrationWidth={ 150 }
 					/>
 				}
 
