@@ -45,6 +45,7 @@ const renderCachePreloadInterval = ( {
 const PreloadTab = ( {
 	fields: {
 		is_preload_enabled,
+		is_preloading,
 		minimum_preload_interval,
 		preload_email_volume,
 		preload_interval,
@@ -184,10 +185,10 @@ const PreloadTab = ( {
 
 			<SectionHeader label={ translate( 'Preload Cache' ) } />
 			<Card>
-				<Button
-					type="submit">
-						{ translate( 'Preload Cache Now' ) }
-				</Button>
+			{ is_preloading
+				? <Button compact>{ translate( 'Cancel Cache Preload' ) }</Button>
+				: <Button compact>{ translate( 'Preload Cache Now' ) }</Button>
+			}
 			</Card>
 		</div>
 	);
@@ -196,6 +197,7 @@ const PreloadTab = ( {
 const getFormSettings = settings => {
 	return pick( settings, [
 		'is_preload_enabled',
+		'is_preloading',
 		'minimum_preload_interval',
 		'preload_email_volume',
 		'preload_interval',
