@@ -162,7 +162,7 @@ const PluginsMain = React.createClass( {
 	},
 
 	getEmptyContentUpdateData() {
-		const emptyContentData = { illustration: '/calypso/images/drake/drake-ok.svg' },
+		const emptyContentData = { illustration: '/calypso/images/illustrations/illustration-ok.svg' },
 			{ selectedSite } = this.props;
 
 		if ( selectedSite ) {
