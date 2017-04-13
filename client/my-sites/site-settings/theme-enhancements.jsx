@@ -19,6 +19,20 @@ import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 
 class ThemeEnhancements extends Component {
+	static defaultProps = {
+		isSavingSettings: false,
+		isRequestingSettings: true,
+		fields: {}
+	};
+
+	static propTypes = {
+		onSubmitForm: PropTypes.func.isRequired,
+		handleAutosavingToggle: PropTypes.func.isRequired,
+		isSavingSettings: PropTypes.bool,
+		isRequestingSettings: PropTypes.bool,
+		fields: PropTypes.object,
+	};
+
 	isFormPending() {
 		const {
 			isRequestingSettings,
@@ -150,20 +164,6 @@ class ThemeEnhancements extends Component {
 		);
 	}
 }
-
-ThemeEnhancements.defaultProps = {
-	isSavingSettings: false,
-	isRequestingSettings: true,
-	fields: {}
-};
-
-ThemeEnhancements.propTypes = {
-	onSubmitForm: PropTypes.func.isRequired,
-	handleAutosavingToggle: PropTypes.func.isRequired,
-	isSavingSettings: PropTypes.bool,
-	isRequestingSettings: PropTypes.bool,
-	fields: PropTypes.object,
-};
 
 export default connect(
 	( state ) => {
