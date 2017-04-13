@@ -20,6 +20,10 @@ import {
 	minimizedChat
 } from 'state/ui/happychat/actions';
 import {
+	blur,
+	focus,
+} from 'state/happychat/actions';
+import {
 	isHappychatMinimizing,
 	isHappychatOpen,
 } from 'state/ui/happychat/selectors';
@@ -44,6 +48,14 @@ const Title = localize( ( { onCloseChat, translate } ) => (
  * Main chat UI component
  */
 class Happychat extends React.Component {
+	componentDidMount() {
+		this.props.setFocused();
+	}
+
+	componentWillUnmount() {
+		this.props.setBlurred();
+	}
+
 	render() {
 		const {
 			isChatOpen,
@@ -90,6 +102,12 @@ const mapDispatch = ( dispatch ) => {
 				dispatch( minimizedChat() );
 				dispatch( closeChat() );
 			}, 500 );
+		},
+		setBlurred() {
+			dispatch( blur() );
+		},
+		setFocused() {
+			dispatch( focus() );
 		},
 	};
 };

@@ -14,6 +14,7 @@ import classnames from 'classnames';
  */
 import viewport from 'lib/viewport';
 import {
+	hasUnreadMessages,
 	isHappychatAvailable,
 	isHappychatChatActive,
 } from 'state/happychat/selectors';
@@ -61,8 +62,11 @@ class HappychatButton extends Component {
 	}
 
 	render() {
-		const { translate, children, className, borderless, isChatAvailable, isChatActive } = this.props;
+		const { translate, children, className, borderless, hasUnread, isChatAvailable, isChatActive } = this.props;
 		const showButton = isChatAvailable || isChatActive;
+		const classes = classnames( 'happychat__button', className, {
+			'has-unread': hasUnread
+		} );
 
 		if ( ! showButton ) {
 			return null;
@@ -70,7 +74,7 @@ class HappychatButton extends Component {
 
 		return (
 			<Button
-				className={ classnames( 'happychat__button', className ) }
+				className={ classes }
 				borderless={ borderless }
 				onClick={ this.onClick }
 				title={ translate( 'Support Chat' ) }>
@@ -82,6 +86,7 @@ class HappychatButton extends Component {
 
 export default connect(
 	state => ( {
+		hasUnread: hasUnreadMessages( state ),
 		isChatAvailable: isHappychatAvailable( state ),
 		isChatActive: isHappychatChatActive( state ),
 	} ),
