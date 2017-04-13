@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { reduce } from 'lodash';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,17 +22,13 @@ import {
 import { itemsSchema } from './schema';
 
 const receiveUpdatesForSites = ( state, sites ) => {
-	return reduce( sites, ( memo, site ) => {
-		if ( memo === state ) {
-			memo = { ...state };
-		}
-
-		if ( site.updates ) {
-			memo[ site.ID ] = site.updates;
-		}
-
-		return memo;
-	}, state );
+	const updatedSites = sites.filter( ( site ) => site.updates );
+	return isEmpty( updatedSites )
+		? state
+		: sites.reduce( ( newState, site ) => {
+			newState[ site.ID ] = site.updates;
+			return newState;
+		}, { ...state } );
 };
 
 export const items = createReducer(
