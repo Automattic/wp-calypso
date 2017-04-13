@@ -141,6 +141,15 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should not store updates if missing when receiving a site', () => {
+			const state = items( undefined, {
+				type: SITE_RECEIVE,
+				site: { ID: 2916284 }
+			} );
+
+			expect( state ).to.eql( {} );
+		} );
+
 		it( 'should store all updates when receiving sites', () => {
 			const state = items( undefined, {
 				type: SITES_RECEIVE,
@@ -191,6 +200,17 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should not store updates if missing when receiving sites', () => {
+			const state = items( undefined, {
+				type: SITES_RECEIVE,
+				sites: [
+					{ ID: 2916284 }
+				]
+			} );
+
+			expect( state ).to.eql( {} );
+		} );
+
 		it( 'should store all updates when updating sites', () => {
 			const state = items( undefined, {
 				type: SITES_UPDATE,
@@ -239,6 +259,17 @@ describe( 'reducer', () => {
 				2916284: someOtherUpdates,
 				77203074: exampleUpdates,
 			} );
+		} );
+
+		it( 'should not store updates if missing when updating sites', () => {
+			const state = items( undefined, {
+				type: SITES_UPDATE,
+				sites: [
+					{ ID: 2916284 }
+				]
+			} );
+
+			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should persist state', () => {
