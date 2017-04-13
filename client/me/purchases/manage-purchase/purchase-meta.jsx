@@ -245,6 +245,22 @@ class PurchaseMeta extends Component {
 		);
 	}
 
+	renderOwner() {
+		const { translate, owner } = this.props;
+		if ( ! owner ) {
+			return null;
+		}
+
+		return (
+			<li>
+				<em className="manage-purchase__content manage-purchase__detail-label">{ translate( 'Owner' ) }</em>
+				<span className="manage-purchase__content manage-purchase__detail">
+					<UserItem user={ { ...owner, name: owner.display_name } } />
+				</span>
+			</li>
+		);
+	}
+
 	renderPlaceholder() {
 		return (
 			<ul className="manage-purchase__meta">
@@ -261,22 +277,15 @@ class PurchaseMeta extends Component {
 	}
 
 	render() {
-		const { translate, purchaseId, owner } = this.props;
+		const { translate, purchaseId } = this.props;
 
 		if ( isDataLoading( this.props ) || ! purchaseId ) {
 			return this.renderPlaceholder();
 		}
 
-		const displayUser = Object.assign( {}, owner, { name: owner.display_name } );
-
 		return (
 			<ul className="manage-purchase__meta">
-				<li>
-					<em className="manage-purchase__content manage-purchase__detail-label">{ translate( 'Owner' ) }</em>
-					<span className="manage-purchase__content manage-purchase__detail">
-						<UserItem user={ displayUser } />
-					</span>
-				</li>
+				{ this.renderOwner() }
 				<li>
 					<em className="manage-purchase__content manage-purchase__detail-label">{ translate( 'Price' ) }</em>
 					<span className="manage-purchase__content manage-purchase__detail">{ this.renderPrice() }</span>
