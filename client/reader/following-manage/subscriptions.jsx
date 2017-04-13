@@ -4,84 +4,52 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import escapeRegexp from 'escape-string-regexp';
+import { getReaderFollows } from 'state/selectors';
 
 /**
  * Internal Dependencies
  */
-import ReaderImportButton from 'blocks/reader-import-button';
-import ReaderExportButton from 'blocks/reader-export-button';
 import SitesWindowScroller from './sites-window-scroller';
 import QueryReaderFollows from 'components/data/query-reader-follows';
+import FollowingManageSortControls from './sort-controls';
 import FollowingManageSearchFollowed from './search-followed';
-import { getFeed as getReaderFeed } from 'state/reader/feeds/selectors';
-import { getSite as getReaderSite } from 'state/reader/sites/selectors';
-import { getReaderFollows } from 'state/selectors';
-import UrlSearch from 'lib/url-search';
-import { getSiteName, getSiteUrl, getSiteDescription, getSiteAuthorName } from 'reader/get-helpers';
+import Gridicon from 'gridicons';
 
 class FollowingManageSubscriptions extends Component {
 	static propTypes = {
 		follows: PropTypes.array.isRequired,
-		doSearch: PropTypes.func.isRequired,
 	};
 
-	filterFollowsByQuery( query ) {
-		const { getFeed, getSite, follows } = this.props;
-		const phraseRe = new RegExp( escapeRegexp( query ), 'i' );
-
-		return follows.filter( follow => {
-			const feed = getFeed( follow.feed_ID ); // todo grab feed and site for current sub
-			const site = getSite( follow.site_ID );
-			const siteName = getSiteName( { feed, site } );
-			const siteUrl = getSiteUrl( { feed, site } );
-			const siteDescription = getSiteDescription( { feed, site } );
-			const siteAuthor = getSiteAuthorName( site );
-
-			return (
-				`${ follow.URL }${ siteName }${ siteUrl }${ siteDescription }${ siteAuthor }`
-			).search( phraseRe ) !== -1;
-		} );
-	}
-
 	render() {
-		const { follows, width, translate, query } = this.props;
-		const filteredFollows = this.filterFollowsByQuery( query );
-
+		const { follows, width, translate } = this.props;
 		return (
 			<div className="following-manage__subscriptions">
 				<QueryReaderFollows />
 				<div className="following-manage__subscriptions-controls">
-					{
-						translate( '%(num)s Followed Sites', {
-							args: { num: follows.length }
-						} )
-					}
-					<ReaderImportButton />
-					<ReaderExportButton />
-					<FollowingManageSearchFollowed onSearch={ this.props.doSearch } initialValue={ query } />
+					<h1 className="following-manage__subscriptions-controls-heading">
+						{
+							translate( '%(num)s Followed Sites', {
+								args: { num: follows.length }
+							} )
+						}
+						</h1>
+					<FollowingManageSortControls />
+					<div className="following-manage__subscriptions-controls-search">
+						<FollowingManageSearchFollowed />
+					</div>
+					<Gridicon icon="ellipsis" size={ 24 } />
 				</div>
 				<div className="following-manage__subscriptions-list">
-					{ follows &&
-						<SitesWindowScroller
-							sites={ filteredFollows }
-							width={ width }
-						/>
-					}
+					<SitesWindowScroller
+						sites={ follows }
+						width={ width }
+					/>
 				</div>
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = state => {
-	const follows = getReaderFollows( state );
-	const getFeed = feedId => getReaderFeed( state, feedId );
-	const getSite = siteId => getReaderSite( state, siteId );
-
-	return { follows, getFeed, getSite };
-};
-
 export default connect(
-	mapStateToProps,
-)( localize( UrlSearch( FollowingManageSubscriptions ) ) );
+	state => ( { follows: getReaderFollows( state ) } ),
+)( localize( FollowingManageSubscriptions ) );
