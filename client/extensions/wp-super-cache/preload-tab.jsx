@@ -16,6 +16,7 @@ import FormLegend from 'components/forms/form-legend';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
+import Notice from 'components/notice';
 import WrapSettingsForm from './wrap-settings-form';
 
 /**
@@ -48,6 +49,7 @@ const PreloadTab = ( {
 		preload_on,
 		preload_refresh,
 		preload_taxonomies,
+		wp_cache_enabled,
 	},
 	handleChange,
 	handleSelect,
@@ -60,6 +62,14 @@ const PreloadTab = ( {
 		{ value: 'medium', description: translate( 'Medium (one email per 100 posts)' ) },
 		{ value: 'less', description: translate( 'Low (one email at the start and one at the end of preloading all posts)' ) },
 	];
+
+	if ( ! wp_cache_enabled ) {
+		return (
+			<Notice
+				text={ translate( 'Caching must be enabled to use this feature.' ) }
+				showDismiss={ false } />
+		);
+	}
 
 	return (
 		<div>
@@ -156,25 +166,16 @@ const PreloadTab = ( {
 	);
 };
 
-const preloadSettingsDefaults = {
-	is_preload_enabled: true,
-	minimum_preload_interval: 30,
-	preload_email_me: false,
-	preload_email_volume: 'none',
-	preload_interval: 30,
-	preload_on: false,
-	preload_refresh: true,
-	preload_taxonomies: false,
-};
-
-const settingsKeys = Object.keys( preloadSettingsDefaults );
-
 const getFormSettings = settings => {
-	if ( ! settings ) {
-		return preloadSettingsDefaults;
-	}
-
-	return Object.assign( {}, preloadSettingsDefaults, pick( settings, settingsKeys ) );
+	return pick( settings, [
+		'minimum_preload_interval',
+		'preload_email_volume',
+		'preload_interval',
+		'preload_on',
+		'preload_refresh',
+		'preload_taxonomies',
+		'wp_cache_enabled',
+	] );
 };
 
 export default WrapSettingsForm( getFormSettings )( PreloadTab );
