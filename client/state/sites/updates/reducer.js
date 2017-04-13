@@ -25,6 +25,10 @@ import { itemsSchema } from './schema';
 
 const receiveUpdatesForSites = ( state, sites ) => {
 	return reduce( sites, ( memo, site ) => {
+		if ( memo === state ) {
+			memo = { ...state };
+		}
+
 		if ( site.updates ) {
 			memo[ site.ID ] = site.updates;
 		}
