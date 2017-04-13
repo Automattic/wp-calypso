@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
  */
 import config from 'config';
 import { connectChat } from 'state/happychat/actions';
-import { isHappychatUninitialized } from 'state/happychat/selectors';
+import { isHappychatConnectionUninitialized } from 'state/happychat/selectors';
 
 class HappychatConnection extends Component {
 	componentDidMount() {
@@ -25,7 +25,7 @@ class HappychatConnection extends Component {
 
 export default connect(
 	state => ( {
-		isUninitialized: isHappychatUninitialized( state )
+		isUninitialized: isHappychatConnectionUninitialized( state )
 	} ),
 	{ connectChat }
 )( HappychatConnection );

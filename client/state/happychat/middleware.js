@@ -10,6 +10,7 @@ import throttle from 'lodash/throttle';
 import wpcom from 'lib/wp';
 import {
 	HAPPYCHAT_CONNECT,
+	HAPPYCHAT_INITIALIZE,
 	HAPPYCHAT_SEND_BROWSER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
@@ -27,8 +28,9 @@ import {
 	setReconnecting,
 } from './actions';
 import {
-	getHappychatConnectionStatus,
 	getHappychatTranscriptTimestamp,
+	isHappychatConnectionUninitialized,
+	wasHappychatRecentlyActive,
 } from './selectors';
 import {
 	getCurrentUser,
@@ -64,7 +66,7 @@ const startSession = () => request( {
 
 export const connectChat = ( connection, { getState, dispatch } ) => {
 	const state = getState();
-	if ( getHappychatConnectionStatus( state ) !== 'uninitialized' ) {
+	if ( ! isHappychatConnectionUninitialized( state ) ) {
 		// If chat has already initialized, do nothing
 		return;
 	}
@@ -135,6 +137,12 @@ const sendBrowserInfo = ( connection, siteUrl ) => {
 	connection.info( msg );
 };
 
+export const connectIfRecentlyActive = ( connection, store ) => {
+	if ( wasHappychatRecentlyActive( store.getState() ) ) {
+		connectChat( connection, store );
+	}
+};
+
 export default function( connection = null ) {
 	// Allow a connection object to be specified for
 	// testing. If blank, use a real connection.
@@ -146,6 +154,10 @@ export default function( connection = null ) {
 		switch ( action.type ) {
 			case HAPPYCHAT_CONNECT:
 				connectChat( connection, store );
+				break;
+
+			case HAPPYCHAT_INITIALIZE:
+				connectIfRecentlyActive( connection, store );
 				break;
 
 			case HAPPYCHAT_SEND_BROWSER_INFO:

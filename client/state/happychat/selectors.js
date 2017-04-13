@@ -16,6 +16,9 @@ import {
 	HAPPYCHAT_CONNECTION_ERROR_PING_TIMEOUT
 } from './constants';
 
+// How much time needs to pass before we consider the session inactive:
+const HAPPYCHAT_INACTIVE_TIMEOUT_MS = 1000 * 60 * 10;
+
 export const HAPPYCHAT_CHAT_STATUS_DEFAULT = 'default';
 export const HAPPYCHAT_CHAT_STATUS_ASSIGNED = 'assigned';
 export const HAPPYCHAT_CHAT_STATUS_ASSIGNING = 'assigning';
@@ -40,7 +43,7 @@ export const getHappychatConnectionStatus = createSelector(
 	state => state.happychat.connectionStatus
 );
 
-export const isHappychatUninitialized = state => getHappychatConnectionStatus( state ) === 'uninitialized';
+export const isHappychatConnectionUninitialized = state => getHappychatConnectionStatus( state ) === 'uninitialized';
 
 export const isHappychatChatActive = createSelector(
 	state => state.happychat.chatStatus !== HAPPYCHAT_CHAT_STATUS_DEFAULT,
@@ -89,3 +92,12 @@ export const canUserSendMessages = createSelector(
 	),
 	[ getHappychatConnectionStatus, getHappychatChatStatus ]
 );
+
+export const getHappychatLastActivityTimestamp = state => state.happychat.lastActivityTimestamp;
+
+export const wasHappychatRecentlyActive = state => {
+	const lastActive = getHappychatLastActivityTimestamp( state );
+	const now = Date.now();
+
+	return ( now - lastActive ) < HAPPYCHAT_INACTIVE_TIMEOUT_MS;
+};

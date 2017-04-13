@@ -219,11 +219,25 @@ const isAvailable = ( state = false, action ) => {
 	return state;
 };
 
+export const lastActivityTimestamp = ( state = null, action ) => {
+	switch ( action.type ) {
+		case SERIALIZE:
+		case DESERIALIZE:
+			return state;
+		case HAPPYCHAT_SEND_MESSAGE:
+		case HAPPYCHAT_RECEIVE_EVENT:
+			return Date.now();
+	}
+
+	return state;
+};
+
 export default combineReducers( {
 	chatStatus,
 	connectionError,
 	connectionStatus,
 	isAvailable,
+	lastActivityTimestamp,
 	message,
 	timeline,
 } );
