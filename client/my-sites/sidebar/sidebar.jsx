@@ -641,10 +641,12 @@ export class MySitesSidebar extends Component {
 }
 
 function mapStateToProps( state ) {
+	const currentUser = getCurrentUser( state );
 	const selectedSiteId = getSelectedSiteId( state );
-	const singleSiteId = selectedSiteId || getPrimarySiteId( state );
+	const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
+	const singleSiteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) );
 	return {
-		currentUser: getCurrentUser( state ),
+		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack: isJetpackSite( state, selectedSiteId ),
