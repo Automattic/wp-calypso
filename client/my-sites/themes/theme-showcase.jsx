@@ -158,13 +158,13 @@ const ThemeShowcase = React.createClass( {
 
 		const headerIcons = [ {
 			label: 'new',
-			uri: '/design',
+			uri: '/themes',
 			icon: 'star'
 		} ].concat(
 			getSubjects()
 				.map( subject => subjectsMeta[ subject ] && {
 					label: subject,
-					uri: `/design/${ subject }`,
+					uri: `/themes/${ subject }`,
 					icon: subjectsMeta[ subject ].icon,
 					order: subjectsMeta[ subject ].order
 				} )
@@ -183,7 +183,7 @@ const ThemeShowcase = React.createClass( {
 					<SubMasterbarNav
 						options={ headerIcons }
 						fallback={ headerIcons[ 0 ] }
-						uri={ `/design${ verticalSection }` } />
+						uri={ `/themes${ verticalSection }` } />
 				)}
 				<div className="themes__content">
 					<ThemesSearchCard
