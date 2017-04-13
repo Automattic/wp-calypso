@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
 /**
@@ -10,11 +11,12 @@ import classNames from 'classnames';
 import StepHeader from 'signup/step-header';
 import NavigationLink from 'signup/navigation-link';
 
-export default React.createClass( {
+export default localize( React.createClass( {
 	displayName: 'StepWrapper',
 
 	propTypes: {
-		shouldHideNavButtons: React.PropTypes.bool
+		shouldHideNavButtons: React.PropTypes.bool,
+		translate: React.PropTypes.func.isRequired
 	},
 
 	renderBack: function() {
@@ -51,7 +53,7 @@ export default React.createClass( {
 			if ( this.props.headerText ) {
 				return this.props.headerText;
 			}
-			return this.translate( 'Create your account.' );
+			return this.props.translate( 'Create your account.' );
 		}
 
 		if ( this.props.fallbackHeaderText ) {
@@ -81,4 +83,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );
