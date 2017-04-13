@@ -91,7 +91,7 @@ export default () => {
 };
 ```
 
-`page()` will set up the route `/hello-world` and run some functions when it's matched. The `:domain?` is because we want to support site specific pages for our hello-world route. We are passing the `siteSelection` function from the main "My Sites" controller, which handles the site selection process. The last function is our newly created controller handler.
+`page()` will set up the route `/hello-world` and run some functions when it's matched. The `:domain?` is because we want to support site specific pages for our hello-world route. We are passing the `siteSelection` function from the main "My Sites" controller, which handles the site selection process. Next, we are passing the `navigation` function, also from the main "My Sites" controller, which renders the sidebar navigation. The last function is our newly created controller handler.
 
 ### 5. Register section
 
