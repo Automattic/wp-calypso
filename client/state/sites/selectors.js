@@ -58,7 +58,7 @@ export const getSite = createSelector(
 		const site = getRawSite( state, siteId );
 
 		if ( ! site ) {
-			return null;
+			return false;
 		}
 
 		return {

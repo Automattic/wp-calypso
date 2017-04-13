@@ -32,6 +32,7 @@ var AsyncLoad = require( 'components/async-load' ),
 	Layout,
 	SupportUser;
 
+import QuerySites from 'components/data/query-sites';
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
 import { isHappychatOpen } from 'state/ui/happychat/selectors';
@@ -51,12 +52,11 @@ if ( config.isEnabled( 'support-user' ) ) {
 Layout = React.createClass( {
 	displayName: 'Layout',
 
-	mixins: [ SitesListNotices, observe( 'user', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
+	mixins: [ SitesListNotices, observe( 'user', 'nuxWelcome', 'translatorInvitation' ) ],
 
 	propTypes: {
 		primary: React.PropTypes.element,
 		secondary: React.PropTypes.element,
-		sites: React.PropTypes.object,
 		user: React.PropTypes.object,
 		nuxWelcome: React.PropTypes.object,
 		translatorInvitation: React.PropTypes.object,
@@ -77,7 +77,7 @@ Layout = React.createClass( {
 	},
 
 	newestSite: function() {
-		return sortBy( this.props.sites.get(), property( 'ID' ) ).pop();
+		return sortBy( this.props.sites, property( 'ID' ) ).pop();
 	},
 
 	renderMasterbar: function() {
@@ -127,9 +127,9 @@ Layout = React.createClass( {
 	render: function() {
 		const sectionClass = classnames(
 				'layout',
-				`is-group-${this.props.section.group}`,
-				`is-section-${this.props.section.name}`,
-				`focus-${this.props.currentLayoutFocus}`,
+				`is-group-${ this.props.section.group }`,
+				`is-section-${ this.props.section.name }`,
+				`focus-${ this.props.currentLayoutFocus }`,
 				{ 'is-support-user': this.props.isSupportUser },
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
 				{ 'wp-singletree-layout': !! this.props.primary },
@@ -143,6 +143,7 @@ Layout = React.createClass( {
 		return (
 			<div className={ sectionClass }>
 				<DocumentHead />
+				<QuerySites allSites />
 				<QueryPreferences />
 				{ <GuidedTours /> }
 				{ config.isEnabled( 'nps-survey/notice' ) && <NpsSurveyNotice /> }
@@ -163,7 +164,7 @@ Layout = React.createClass( {
 				</div>
 				<TranslatorLauncher
 					isEnabled={ translator.isEnabled() }
-					isActive={ translator.isActivated() }/>
+					isActive={ translator.isActivated() } />
 				{ this.renderPreview() }
 				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
 			</div>

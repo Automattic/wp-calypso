@@ -25,6 +25,7 @@ import { getStatsPathForTab } from 'lib/route/path';
 import { getCurrentUser } from 'state/current-user/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { domainManagementList } from 'my-sites/upgrades/paths';
+import { getSite } from 'state/sites/selectors';
 
 const MasterbarLoggedIn = React.createClass( {
 	propTypes: {
@@ -94,7 +95,6 @@ const MasterbarLoggedIn = React.createClass( {
 				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
 				{ ! domainOnlySite &&
 					<Publish
-						sites={ this.props.sites }
 						user={ this.props.user }
 						isActive={ this.isActive( 'post' ) }
 						className="masterbar__item-new"
@@ -133,14 +133,11 @@ const MasterbarLoggedIn = React.createClass( {
 	}
 } );
 
-// TODO: make this pure when sites can be retrieved from the Redux state
-export default connect( ( state, { sites } ) => {
-	let siteId = getSelectedSiteId( state );
-
-	if ( ! siteId ) {
-		// Falls back to using the user's primary site if no site has been selected by the user yet
-		siteId = get( getCurrentUser( state ), 'primary_blog' );
-	}
+export default connect( ( state ) => {
+	// Falls back to using the user's primary site if no site has been selected
+	// by the user yet
+	const siteId = getSelectedSiteId( state ) ||
+		get( getCurrentUser( state ), 'primary_blog' );
 
 	let siteSlug = getSiteSlug( state, siteId );
 	let domainOnlySite = false;
@@ -149,7 +146,7 @@ export default connect( ( state, { sites } ) => {
 		domainOnlySite = isDomainOnlySite( state, siteId );
 	} else {
 		// Retrieves the site from the Sites store when the global state tree doesn't contain the list of sites yet
-		const site = sites.getSite( siteId );
+		const site = getSite( state, siteId );
 
 		if ( site ) {
 			siteSlug = site.slug;
@@ -162,4 +159,4 @@ export default connect( ( state, { sites } ) => {
 		siteSlug,
 		domainOnlySite
 	};
-}, { setNextLayoutFocus }, null, { pure: false } )( localize( MasterbarLoggedIn ) );
+}, { setNextLayoutFocus } )( localize( MasterbarLoggedIn ) );
