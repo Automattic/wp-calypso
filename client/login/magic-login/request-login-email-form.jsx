@@ -92,6 +92,7 @@ class RequestLoginEmailForm extends React.Component {
 						<FormTextInput
 							autoCapitalize="off"
 							autoFocus="true"
+							disabled={ isFetching || emailRequested }
 							name="emailAddress"
 							placeholder="Email address"
 							value={ this.props.emailAddress }
