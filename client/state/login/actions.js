@@ -57,7 +57,7 @@ export const loginUser = ( usernameOrEmail, password ) => dispatch => {
 			if ( errorKeys ) {
 				errorMessage = errorKeys.map( errorKey => loginErrorMessages[ errorKey ] ).join( ' ' );
 			} else {
-				errorMessage = error.message;
+				errorMessage = get( error, 'response.body.data' ) || error.message;
 			}
 			dispatch( {
 				type: LOGIN_REQUEST_FAILURE,
