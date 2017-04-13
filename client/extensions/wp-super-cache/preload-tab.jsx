@@ -25,18 +25,16 @@ import WrapSettingsForm from './wrap-settings-form';
 const renderCachePreloadInterval = ( {
 	handleChange,
 	preload_interval,
-} ) => {
-	return (
-		<FormTextInput
-			className="wp-super-cache__preload-interval"
-			min="0"
-			name="preload_interval"
-			onChange={ handleChange( 'preload_interval' ) }
-			step="1"
-			type="number"
-			value={ preload_interval || '' } />
-	);
-};
+} ) => (
+	<FormTextInput
+		className="wp-super-cache__preload-interval"
+		min="0"
+		name="preload_interval"
+		onChange={ handleChange( 'preload_interval' ) }
+		step="1"
+		type="number"
+		value={ preload_interval || '' } />
+);
 
 /**
  * The settings for the preload tab
