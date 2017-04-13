@@ -83,8 +83,8 @@ class ReaderImportButton extends React.Component {
 			return null;
 		}
 
-		const message = this.props.translate( 'Whoops, something went wrong. %(message)s. Please try again.', {
-			args: { message: error.message }
+		const message = this.props.translate( 'Whoops, something went wrong. %(message)s Please try again.', {
+			args: { message: error.message ? error.message + '.' : null }
 		} );
 		this.props.errorNotice( message );
 	}
