@@ -10,14 +10,13 @@
 }
 
 .wp-login__footer {
-	text-align: center;
-
 	a {
 		border-bottom: 1px solid lighten( $gray, 20% );
 		color: $gray;
 		display: block;
 		font-weight: 500;
 		line-height: 4em;
+		padding: 0 24px;
 		text-decoration: none;
 	}
 
