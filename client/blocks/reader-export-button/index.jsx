@@ -3,26 +3,23 @@
  */
 import React from 'react';
 import Blob from 'blob';
-import { noop } from 'lodash';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
+import { errorNotice } from 'state/notices/actions';
 
 class ReaderExportButton extends React.Component {
 	static propTypes = {
-		onError: React.PropTypes.func,
-		onExport: React.PropTypes.func,
-		saveAs: React.PropTypes.string
+		saveAs: React.PropTypes.string,
 	}
 
 	static defaultProps = {
-		onError: noop,
-		onExport: noop,
 		saveAs: 'wpcom-subscriptions.opml',
 	}
 
@@ -46,16 +43,14 @@ class ReaderExportButton extends React.Component {
 		} );
 
 		if ( ! err && ! data.success ) {
-			err = new Error( this.props.translate( 'Error exporting Reader feed' ) );
+			this.props.errorNotice(
+				this.props.translate( 'Sorry, there was a problem creating your export file.' )
+			);
+			return;
 		}
 
-		if ( err ) {
-			this.props.onError( err );
-		} else {
-			const blob = new Blob( [ data.opml ], { type: 'text/xml;charset=utf-8' } );
-			saveAs( blob, this.props.saveAs );
-			this.props.onExport( this.props.saveAs );
-		}
+		const blob = new Blob( [ data.opml ], { type: 'text/xml;charset=utf-8' } );
+		saveAs( blob, this.props.saveAs );
 	}
 
 	render() {
@@ -70,4 +65,7 @@ class ReaderExportButton extends React.Component {
 	}
 }
 
-export default localize( ReaderExportButton );
+export default connect(
+	null,
+	{ errorNotice },
+)( localize( ReaderExportButton ) );
