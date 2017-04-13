@@ -533,7 +533,7 @@ const ManagePurchase = React.createClass( {
 		return (
 			<div>
 				<PurchaseSiteHeader
-					siteId={ this.props.selectedSite.ID }
+					siteId={ this.props.selectedSite && this.props.selectedSite.ID }
 					name={ siteName }
 					domain={ siteDomain }
 					isPlaceholder={ isDataLoading( this.props ) } />
