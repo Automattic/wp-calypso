@@ -19,7 +19,7 @@ import ReaderMain from 'components/reader-main';
 import { getReaderFeedsForQuery } from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import FollowingManageSubscriptions from './subscriptions';
-import SitesWindowScroller from './sitesWindowScroller';
+import SitesWindowScroller from './sites-window-scroller';
 
 class FollowingManage extends Component {
 	static propTypes = {

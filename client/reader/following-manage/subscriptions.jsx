@@ -11,7 +11,7 @@ import { getReaderFollows } from 'state/selectors';
  */
 import ReaderImportButton from 'blocks/reader-import-button';
 import ReaderExportButton from 'blocks/reader-export-button';
-import SitesWindowScroller from './sitesWindowScroller';
+import SitesWindowScroller from './sites-window-scroller';
 import QueryReaderFollows from 'components/data/query-reader-follows';
 
 class FollowingManageSubscriptions extends Component {
