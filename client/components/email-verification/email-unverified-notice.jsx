@@ -7,34 +7,24 @@ import * as React from 'react';
  * Internal dependencies
  */
 
-import userUtils from 'lib/user/utils';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Spinner from 'components/spinner';
 import i18n from 'i18n-calypso';
-import sitesFactory from 'lib/sites-list';
 import userFactory from 'lib/user';
 
-const sites = sitesFactory();
-const user = userFactory();
+const userLib = userFactory();
 
 export default class EmailUnverifiedNotice extends React.Component {
-	constructor( props ) {
-		super( props );
 
-		this.updateVerificationState = this.updateVerificationState.bind( this );
-		this.handleDismiss = this.handleDismiss.bind( this );
-		this.handleSendVerificationEmail = this.handleSendVerificationEmail.bind( this );
-
-		this.state = {
-			needsVerification: userUtils.needsVerificationForSite( sites.getSelectedSite() ),
-			pendingRequest: false,
-			emailSent: false,
-			error: null,
-		};
-	}
+	state = {
+		pendingRequest: false,
+		emailSent: false,
+		error: null,
+	};
 
 	static propTypes = {
+		userEmail: React.PropTypes.string,
 		noticeText: React.PropTypes.node,
 		noticeStatus: React.PropTypes.string
 	};
@@ -44,29 +34,11 @@ export default class EmailUnverifiedNotice extends React.Component {
 		noticeStatus: ''
 	};
 
-	componentWillMount() {
-		user.on( 'change', this.updateVerificationState );
-		user.on( 'verify', this.updateVerificationState );
-		sites.on( 'change', this.updateVerificationState );
-	}
-
-	componentWillUnmount() {
-		user.off( 'change', this.updateVerificationState );
-		user.off( 'verify', this.updateVerificationState );
-		sites.off( 'change', this.updateVerificationState );
-	}
-
-	updateVerificationState() {
-		this.setState( {
-			needsVerification: userUtils.needsVerificationForSite( sites.getSelectedSite() ),
-		} );
-	}
-
-	handleDismiss() {
+	handleDismiss = () => {
 		this.setState( { error: null, emailSent: false } );
-	}
+	};
 
-	handleSendVerificationEmail( e ) {
+	handleSendVerificationEmail = ( e ) => {
 		e.preventDefault();
 
 		if ( this.state.pendingRequest ) {
@@ -77,14 +49,14 @@ export default class EmailUnverifiedNotice extends React.Component {
 			pendingRequest: true
 		} );
 
-		user.sendVerificationEmail( ( error, response ) => {
+		userLib.sendVerificationEmail( ( error, response ) => {
 			this.setState( {
 				emailSent: response && response.success,
 				error: error,
 				pendingRequest: false,
 			} );
 		} );
-	}
+	};
 
 	renderEmailSendPending() {
 		return (
@@ -100,7 +72,7 @@ export default class EmailUnverifiedNotice extends React.Component {
 	renderEmailSendSuccess() {
 		const noticeText = i18n.translate(
 			'We sent another confirmation email to %(email)s.',
-			{ args: { email: user.get().email } }
+			{ args: { email: this.props.userEmail } }
 		);
 
 		return (
@@ -159,7 +131,7 @@ export default class EmailUnverifiedNotice extends React.Component {
 								'To post and keep using WordPress.com you need to confirm your email address. ' +
 								'Please click the link in the email we sent at %(email)s.', {
 									args: {
-										email: user.get().email
+										email: this.props.userEmail
 									}
 								}
 							)
