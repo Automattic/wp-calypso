@@ -71,7 +71,7 @@
 }
 
 .spinner__progress {
-	animation: 3s linear infinite;
+	animation: 3s infinite;
 	transform-origin: 50px 50px;
 	fill: $blue-medium;
 }
@@ -119,10 +119,12 @@
 
 .spinner__progress.is-left,
 .spinner.is-fallback .spinner__progress.is-left::before {
+	animation-timing-function: ease-in;
 	animation-name: rotate-spinner__left;
 }
 
 .spinner__progress.is-right,
 .spinner.is-fallback .spinner__progress.is-right::before {
+	animation-timing-function: ease-out;
 	animation-name: rotate-spinner__right;
 }
