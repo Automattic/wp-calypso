@@ -65,7 +65,7 @@
 		"me/trophies": false,
 		"nps-survey/devdocs": false,
 		"nps-survey/dev-trigger": false,
-		"nps-survey/notice": false,
+		"nps-survey/notice": true,
 		"olark": true,
 		"perfmon": true,
 		"persist-redux": true,
