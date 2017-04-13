@@ -7,6 +7,7 @@ var React = require( 'react' ),
 	cloneDeep = require( 'lodash/cloneDeep' ),
 	connect = require( 'react-redux' ).connect,
 	debug = require( 'debug' )( 'calypso:my-sites:customize' );
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,6 +20,7 @@ var notices = require( 'notices' ),
 	Actions = require( 'my-sites/customize/actions' ),
 	themeActivated = require( 'state/themes/actions' ).themeActivated;
 import { getCustomizerFocus } from './panels';
+import { getMenusUrl } from 'state/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 
 var loadingTimer;
@@ -51,6 +53,7 @@ var Customize = React.createClass( {
 	},
 
 	componentWillMount: function() {
+		this.redirectIfNeeded( this.props.menusUrl, this.props.site );
 		this.listenToCustomizer();
 		this.waitForLoading();
 		window.scrollTo( 0, 0 );
@@ -59,6 +62,16 @@ var Customize = React.createClass( {
 	componentWillUnmount: function() {
 		window.removeEventListener( 'message', this.onMessage, false );
 		this.cancelWaitingTimer();
+	},
+
+	componentWillReceiveProps: function( nextProps ) {
+		this.redirectIfNeeded( nextProps.menusUrl, nextProps.site );
+	},
+
+	redirectIfNeeded: function( menusUrl, site ) {
+		if ( site && menusUrl !== '/customize/menus/' + site.slug ) {
+			page( menusUrl );
+		}
 	},
 
 	canUserCustomizeDomain: function() {
@@ -301,8 +314,12 @@ var Customize = React.createClass( {
 } );
 
 export default connect(
-	( state ) => ( {
-		site: getSelectedSite( state )
-	} ),
+	( state ) => {
+		const site = getSelectedSite( state );
+		return {
+			site,
+			menusUrl: getMenusUrl( state, get( site, 'ID' ) )
+		};
+	},
 	{ themeActivated }
 )( Customize );
