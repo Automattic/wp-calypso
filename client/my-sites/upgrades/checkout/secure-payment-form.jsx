@@ -49,14 +49,12 @@ const SecurePaymentForm = React.createClass( {
 		return {
 			previousCart: null,
 			userSelectedPaymentBox: null,
-			visiblePaymentBox: this.getVisiblePaymentBox(
-				this.props.cart, this.props.userLocale, this.props.userCountryCode
-			)
+			visiblePaymentBox: this.getVisiblePaymentBox( this.props.cart, this.props.paymentMethods )
 		};
 	},
 
-	getVisiblePaymentBox( cart, locale, countryCode ) {
-		const preferredPaymentMethods = this.getLocalizedPaymentMethodDefaults( locale, countryCode );
+	getVisiblePaymentBox( cart, paymentMethods ) {
+		const primary = 0, secondary = 1;
 
 		if ( isPaidForFullyInCredits( cart ) ) {
 			return 'credits';
@@ -66,24 +64,13 @@ const SecurePaymentForm = React.createClass( {
 			return 'free-trial';
 		} else if ( this.state && this.state.userSelectedPaymentBox ) {
 			return this.state.userSelectedPaymentBox;
-		} else if ( cartValues.isPaymentMethodEnabled( cart, preferredPaymentMethods.primary ) ) {
-			return preferredPaymentMethods.primary;
-		} else if ( cartValues.isPaymentMethodEnabled( cart, preferredPaymentMethods.secondary ) ) {
-			return preferredPaymentMethods.secondary;
+		} else if ( cartValues.isPaymentMethodEnabled( cart, paymentMethods[ primary ] ) ) {
+			return paymentMethods[ primary ];
+		} else if ( cartValues.isPaymentMethodEnabled( cart, paymentMethods[ secondary ] ) ) {
+			return paymentMethods[ secondary ];
 		}
 
 		return null;
-	},
-
-	getLocalizedPaymentMethodDefaults( locale, countryCode ) {
-		const default_payment_methods = { primary: 'credit-card', secondary: 'paypal' };
-		const defaults = {
-			de: { primary: 'paypal', secondary: 'credit-card' },
-			en_US: default_payment_methods,
-		};
-		const generated_locale = locale + '_' + countryCode;
-
-		return defaults[ generated_locale ] || defaults[ locale ] || default_payment_methods;
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -92,9 +79,7 @@ const SecurePaymentForm = React.createClass( {
 		}
 
 		this.setState( {
-			visiblePaymentBox: this.getVisiblePaymentBox(
-				nextProps.cart, nextProps.userLocale, nextProps.userCountryCode
-			)
+			visiblePaymentBox: this.getVisiblePaymentBox( nextProps.cart, nextProps.paymentMethods )
 		} );
 	},
 

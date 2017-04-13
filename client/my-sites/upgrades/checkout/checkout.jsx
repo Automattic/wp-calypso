@@ -39,9 +39,10 @@ import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
 import { isDomainOnlySite } from 'state/selectors';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { getGeoCountryShort } from 'state/geo/selectors';
-import QueryGeo from 'components/data/query-geo';
+import {
+	getCurrentUserLocalizedPaymentMethods
+} from 'state/selectors/get-current-user-localized-payment-methods';
+import QueryLocalizedPaymentMethods from 'components/data/query-localized-payment-methods';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -347,10 +348,9 @@ const Checkout = React.createClass( {
 				cart={ this.props.cart }
 				transaction={ this.props.transaction }
 				cards={ this.props.cards }
+				paymentMethods={ this.props.paymentMethods }
 				products={ this.props.productsList.get() }
 				selectedSite={ selectedSite }
-				userCountryCode={ this.props.userCountryCode }
-				userLocale={ this.props.userLocale }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 			/>
@@ -382,7 +382,7 @@ const Checkout = React.createClass( {
 			<div className="main main-column" role="main">
 				<div className="checkout">
 					<QueryStoredCards />
-					<QueryGeo />
+					<QueryLocalizedPaymentMethods />
 
 					{ this.content() }
 				</div>
@@ -397,12 +397,11 @@ module.exports = connect(
 
 		return {
 			cards: getStoredCards( state ),
+			paymentMethods: getCurrentUserLocalizedPaymentMethods( state ),
 			isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
-			userCountryCode: getGeoCountryShort( state ),
-			userLocale: getCurrentUserLocale( state ),
 		};
 	},
 	{
