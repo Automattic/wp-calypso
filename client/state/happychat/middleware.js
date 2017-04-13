@@ -137,7 +137,7 @@ const sendBrowserInfo = ( connection, siteUrl ) => {
 	connection.info( msg );
 };
 
-export const checkForRecentActivity = ( connection, store ) => {
+export const connectIfRecentlyActive = ( connection, store ) => {
 	if ( wasHappychatRecentlyActive( store.getState() ) ) {
 		connectChat( connection, store );
 	}
@@ -157,7 +157,7 @@ export default function( connection = null ) {
 				break;
 
 			case HAPPYCHAT_INITIALIZE:
-				checkForRecentActivity( connection, store );
+				connectIfRecentlyActive( connection, store );
 				break;
 
 			case HAPPYCHAT_SEND_BROWSER_INFO:
