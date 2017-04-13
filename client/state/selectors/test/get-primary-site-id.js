@@ -16,7 +16,7 @@ describe( 'getPrimarySiteId()', () => {
 		expect( siteId ).to.be.null;
 	} );
 
-	it( 'should return current user\'s primary site\s ID', () => {
+	it( 'should return current user\'s primary site\'s ID', () => {
 		const siteId = getPrimarySiteId( {
 			currentUser: {
 				id: 12345678
