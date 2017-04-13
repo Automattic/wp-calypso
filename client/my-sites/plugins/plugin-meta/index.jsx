@@ -75,9 +75,10 @@ const PluginMeta = React.createClass( {
 	displayBanner() {
 		if ( this.props.plugin && this.props.plugin.banners && ( this.props.plugin.banners.high || this.props.plugin.banners.low ) ) {
 			return <div className="plugin-meta__banner">
-						<img className="plugin-meta__banner-image"
-						src={ this.props.plugin.banners.high || this.props.plugin.banners.low } />
-					</div>;
+					<div
+						className="plugin-meta__banner-image"
+						style={ { backgroundImage: `url(${ this.props.plugin.banners.high || this.props.plugin.banners.low })` } } />
+				</div>;
 		}
 	},
 

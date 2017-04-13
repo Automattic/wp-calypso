@@ -121,8 +121,12 @@
 	}
 
 	.plugin-information__external-link,
-	.version{
+	.version {
 		color: transparent;
+
+		svg {
+			fill: transparent;
+		}
 	}
 
 	.plugin-information__version-limit,

@@ -24,6 +24,12 @@
 	}
 }
 
+.plugin-meta__banner-image {
+	background-size: cover;
+	background-repeat:no-repeat;
+	padding-top: 32.4%;
+}
+
 .plugin-meta__information {
 	display: flex;
 	flex-direction: column;
