@@ -43,12 +43,14 @@ const renderCachePreloadInterval = ( {
  */
 const PreloadTab = ( {
 	fields: {
+		is_preload_enabled,
 		minimum_preload_interval,
 		preload_email_volume,
 		preload_interval,
 		preload_on,
 		preload_refresh,
 		preload_taxonomies,
+		super_cache_enabled,
 		wp_cache_enabled,
 	},
 	handleChange,
@@ -67,6 +69,14 @@ const PreloadTab = ( {
 		return (
 			<Notice
 				text={ translate( 'Caching must be enabled to use this feature.' ) }
+				showDismiss={ false } />
+		);
+	}
+
+	if ( ( '0' === super_cache_enabled ) || ! is_preload_enabled ) {
+		return (
+			<Notice
+				text={ translate( 'Preloading of cache disabled. Please disable legacy page caching or talk to your host administrator.' ) }
 				showDismiss={ false } />
 		);
 	}
@@ -168,12 +178,14 @@ const PreloadTab = ( {
 
 const getFormSettings = settings => {
 	return pick( settings, [
+		'is_preload_enabled',
 		'minimum_preload_interval',
 		'preload_email_volume',
 		'preload_interval',
 		'preload_on',
 		'preload_refresh',
 		'preload_taxonomies',
+		'super_cache_enabled',
 		'wp_cache_enabled',
 	] );
 };
