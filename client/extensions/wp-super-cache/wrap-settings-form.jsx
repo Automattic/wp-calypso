@@ -257,6 +257,8 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				preload_email_volume: 'none',
 				preload_interval: 30,
 				preload_on: false,
+				preload_posts: 'all',
+				preload_posts_options: [ 'all', '161', '322' ],
 				preload_refresh: true,
 				preload_taxonomies: false,
 			} );

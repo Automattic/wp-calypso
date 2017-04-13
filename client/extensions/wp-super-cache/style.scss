@@ -119,6 +119,10 @@
 }
 
 // Preload Tab
+.wp-super-cache__preload-posts {
+	text-transform: capitalize;
+}
+
 .wp-super-cache__preload-interval.form-text-input {
 	padding: 0;
 	width: 50px;

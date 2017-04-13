@@ -9,14 +9,15 @@ import { pick } from 'lodash';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import SectionHeader from 'components/section-header';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormToggle from 'components/forms/form-toggle/compact';
+import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
+import FormToggle from 'components/forms/form-toggle/compact';
 import Notice from 'components/notice';
+import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 
 /**
@@ -48,6 +49,8 @@ const PreloadTab = ( {
 		preload_email_volume,
 		preload_interval,
 		preload_on,
+		preload_posts,
+		preload_posts_options,
 		preload_refresh,
 		preload_taxonomies,
 		super_cache_enabled,
@@ -141,6 +144,20 @@ const PreloadTab = ( {
 						</FormToggle>
 					</FormFieldset>
 
+					<FormFieldset>
+						<FormLabel htmlFor="preload_posts">
+							{ translate( 'Preload Posts' ) }
+						</FormLabel>
+						<FormSelect
+							className="wp-super-cache__preload-posts"
+							id="preload_posts"
+							name="preload_posts"
+							onChange={ handleSelect }
+							value={ preload_posts || 'all' }>
+							{ preload_posts_options.map( ( option ) => <option key={ option } value={ option }>{ option }</option> ) }
+						</FormSelect>
+					</FormFieldset>
+
 					<hr />
 
 					<FormFieldset>
@@ -183,6 +200,8 @@ const getFormSettings = settings => {
 		'preload_email_volume',
 		'preload_interval',
 		'preload_on',
+		'preload_posts',
+		'preload_posts_options',
 		'preload_refresh',
 		'preload_taxonomies',
 		'super_cache_enabled',
