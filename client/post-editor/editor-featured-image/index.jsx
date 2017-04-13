@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
+import { isNumber } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +22,7 @@ import { getMediaItem } from 'state/selectors';
 import { getFeaturedImageId } from 'lib/posts/utils';
 import QueryMedia from 'components/data/query-media';
 import { localize } from 'i18n-calypso';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class EditorFeaturedImage extends Component {
 	static propTypes = {
@@ -73,6 +75,11 @@ class EditorFeaturedImage extends Component {
 
 		stats.recordStat( 'featured_image_set' );
 		stats.recordEvent( 'Featured image set' );
+
+		this.props.recordTracksEvent( 'calypso_editor_featured_image_upload', {
+			source: 'medialibrary',
+			type: 'click'
+		} );
 	};
 
 	renderMediaModal = () => {
@@ -120,7 +127,11 @@ class EditorFeaturedImage extends Component {
 
 		return (
 			<div className={ classes }>
-				{ site && featuredImageId && <QueryMedia siteId={ site.ID } mediaId={ featuredImageId } /> }
+				{
+					site && featuredImageId && isNumber( featuredImageId )
+						? <QueryMedia siteId={ site.ID } mediaId={ featuredImageId } />
+						: null
+				}
 				{ this.renderMediaModal() }
 				<Button
 						className="editor-featured-image__current-image"
@@ -147,4 +158,7 @@ export default connect(
 			featuredImage: getMediaItem( state, siteId, featuredImageId ),
 		};
 	},
+	{
+		recordTracksEvent
+	}
 )( localize( EditorFeaturedImage ) );

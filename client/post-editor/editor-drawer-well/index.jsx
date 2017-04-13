@@ -1,42 +1,47 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
+import { noop, identity } from 'lodash';
 import Gridicon from 'gridicons';
-
+import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 
-export default React.createClass( {
-	displayName: 'EditorDrawerWell',
-
-	propTypes: {
-		icon: PropTypes.string,
-		label: PropTypes.node,
-		empty: PropTypes.bool,
+class EditorDrawerWell extends Component {
+	static propTypes = {
+		children: PropTypes.node,
 		disabled: PropTypes.bool,
+		empty: PropTypes.bool,
+		icon: PropTypes.string,
+		isHidden: PropTypes.bool,
+		label: PropTypes.node,
 		onClick: PropTypes.func,
+		customDropZone: PropTypes.node,
 		onRemove: PropTypes.func,
-		children: PropTypes.node
-	},
+		translate: PropTypes.func
+	};
 
-	getDefaultProps() {
-		return {
-			disabled: false,
-			onClick: noop,
-			onRemove: noop
-		};
-	},
+	static defaultProps = {
+		disabled: false,
+		isHidden: false,
+		onClick: noop,
+		onRemove: noop,
+		translate: identity,
+	};
 
 	render() {
-		const { empty, onRemove, onClick, disabled, icon, label, children } = this.props;
-		const classes = classNames( 'editor-drawer-well', {
-			'is-empty': empty
-		} );
+		const { empty, onRemove, onClick, disabled, icon, label, children, isHidden } = this.props;
+		const classes = classNames(
+			'editor-drawer-well',
+			{
+				'is-empty': empty,
+				'is-hidden': isHidden,
+			},
+		);
 
 		return (
 			<div className={ classes }>
@@ -48,12 +53,13 @@ export default React.createClass( {
 							compact
 							className="editor-drawer-well__remove">
 							<span className="screen-reader-text">
-								{ this.translate( 'Remove' ) }
+								{ this.props.translate( 'Remove' ) }
 							</span>
 							<Gridicon
 								icon="cross"
 								size={ 24 }
-								className="editor-drawer-well__remove-icon" />
+								className="editor-drawer-well__remove-icon"
+							/>
 						</Button>
 					) }
 				</div>
@@ -66,14 +72,18 @@ export default React.createClass( {
 						{ icon && (
 							<Gridicon
 								icon={ icon }
-								className="editor-drawer-well__icon" />
+								className="editor-drawer-well__icon"
+							/>
 						) }
 						<span className="editor-drawer-well__button button is-secondary is-compact">
 							{ label }
 						</span>
 					</button>
 				) }
+				{ this.props.customDropZone }
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( EditorDrawerWell );

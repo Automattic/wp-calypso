@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,14 +14,27 @@ import { getFeaturedImageId } from 'lib/posts/utils';
 import Accordion from 'components/accordion';
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
 import FeaturedImage from 'post-editor/editor-featured-image';
+import FeaturedImageDropZone from 'post-editor/editor-featured-image/dropzone';
+import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
 
 class EditorDrawerFeaturedImage extends Component {
-	constructor( props ) {
-		super( props );
-		this.startSelecting = () => this.setState( { isSelecting: true } );
-		this.endSelecting = () => this.setState( { isSelecting: false } );
-		this.state = { isSelecting: false };
-	}
+	static propTypes = {
+		site: PropTypes.object,
+		post: PropTypes.object,
+		translate: PropTypes.func,
+		isDrawerHidden: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		isDrawerHidden: false,
+	};
+
+	state = {
+		isSelecting: false
+	};
+
+	startSelecting = () => this.setState( { isSelecting: true } );
+	endSelecting = () => this.setState( { isSelecting: false } );
 
 	removeImage() {
 		PostActions.edit( {
@@ -32,7 +46,7 @@ class EditorDrawerFeaturedImage extends Component {
 	}
 
 	render() {
-		const { translate, site, post } = this.props;
+		const { translate, site, post, isDrawerHidden } = this.props;
 
 		return (
 			<Accordion title={ translate( 'Featured Image' ) }>
@@ -40,22 +54,24 @@ class EditorDrawerFeaturedImage extends Component {
 					label={ translate( 'Set Featured Image' ) }
 					empty={ ! site || ! post || ! getFeaturedImageId( post ) }
 					onClick={ this.startSelecting }
-					onRemove={ this.removeImage }>
+					customDropZone={ <FeaturedImageDropZone /> }
+					onRemove={ this.removeImage }
+					isHidden={ isDrawerHidden }
+				>
 					<FeaturedImage
 						selecting={ this.state.isSelecting }
 						onImageSelected={ this.endSelecting }
 						site={ site }
-						post={ post } />
+						post={ post }
+					/>
 				</EditorDrawerWell>
 			</Accordion>
 		);
 	}
 }
 
-EditorDrawerFeaturedImage.propTypes = {
-	site: PropTypes.object,
-	post: PropTypes.object,
-	translate: PropTypes.func
-};
-
-export default localize( EditorDrawerFeaturedImage );
+export default connect(
+	( state ) => ( {
+		isDrawerHidden: isDropZoneVisible( state )
+	} )
+)( localize( EditorDrawerFeaturedImage ) );
