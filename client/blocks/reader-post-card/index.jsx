@@ -120,7 +120,7 @@ class ReaderPostCard extends React.Component {
 
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY );
-		const isExpandedVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO );
+		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO );
 		const isDiscover = post.is_discover;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const classes = classnames( 'reader-post-card', {
@@ -129,7 +129,7 @@ class ReaderPostCard extends React.Component {
 			'is-gallery': isGalleryPost,
 			'is-selected': isSelected,
 			'is-discover': isDiscover,
-			'is-expanded-video': isExpandedVideo,
+			'is-expanded-video': isVideo && isExpanded,
 		} );
 
 		let discoverFollowButton;
