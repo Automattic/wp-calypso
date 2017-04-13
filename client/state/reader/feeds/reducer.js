@@ -94,6 +94,9 @@ export function queuedRequests( state = {}, action ) {
 		case READER_FEED_REQUEST_SUCCESS:
 		case READER_FEED_REQUEST_FAILURE:
 			return omit( state, action.payload.feed_ID );
+		case SERIALIZE:
+		case DESERIALIZE:
+			return {};
 	}
 	return state;
 }
