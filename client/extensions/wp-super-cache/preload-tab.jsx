@@ -77,56 +77,50 @@ const PreloadTab = ( {
 			<Card>
 				<form>
 					<FormFieldset>
-						<div className="wp-super-cache__wp-cache-preload-on">
-							<FormToggle
-								checked={ !! preload_on }
-								onChange={ handleToggle( 'preload_on' ) }>
-								<span>
-									{ translate( 'Preload mode. (Garbage collection only on legacy cache files. Recommended.)' ) }
-								</span>
-							</FormToggle>
-						</div>
+						<FormToggle
+							checked={ !! preload_on }
+							onChange={ handleToggle( 'preload_on' ) }>
+							<span>
+								{ translate( 'Preload mode. (Garbage collection only on legacy cache files. Recommended.)' ) }
+							</span>
+						</FormToggle>
 
-						<div className="wp-super-cache__wp-cache-preload-posts">
-							<FormToggle
-								checked={ preload_refresh }
-								onChange={ handleToggle( 'preload_refresh' ) }>
-								<span>
-									{ translate(
-										'Refresh preloaded cache files every {{number /}} minute. ',
-										'Refresh preloaded cache files every {{number /}} minutes. ',
-										{
-											count: preload_interval,
-											components: {
-												number: renderCachePreloadInterval( {
-													handleChange,
-													preload_interval,
-												} )
-											}
+						<FormToggle
+							checked={ preload_refresh }
+							onChange={ handleToggle( 'preload_refresh' ) }>
+							<span>
+								{ translate(
+									'Refresh preloaded cache files every {{number /}} minute. ',
+									'Refresh preloaded cache files every {{number /}} minutes. ',
+									{
+										count: preload_interval,
+										components: {
+											number: renderCachePreloadInterval( {
+												handleChange,
+												preload_interval,
+											} )
 										}
-									) }
+									}
+								) }
 
-									{ translate(
-										'(minimum %d minute)',
-										'(minimum %d minutes)',
-										{
-											args: minimum_preload_interval,
-											count: minimum_preload_interval,
-										}
-									) }
-								</span>
-							</FormToggle>
-						</div>
+								{ translate(
+									'(minimum %d minute)',
+									'(minimum %d minutes)',
+									{
+										args: minimum_preload_interval,
+										count: minimum_preload_interval,
+									}
+								) }
+							</span>
+						</FormToggle>
 
-						<div className="wp-super-cache__wp-cache-preload-taxonomies">
-							<FormToggle
-								checked={ !! preload_taxonomies }
-								onChange={ handleToggle( 'preload_taxonomies' ) }>
-								<span>
-									{ translate( 'Preload tags, categories and other taxonomies.' ) }
-								</span>
-							</FormToggle>
-						</div>
+						<FormToggle
+							checked={ !! preload_taxonomies }
+							onChange={ handleToggle( 'preload_taxonomies' ) }>
+							<span>
+								{ translate( 'Preload tags, categories and other taxonomies.' ) }
+							</span>
+						</FormToggle>
 					</FormFieldset>
 
 					<hr />
@@ -135,19 +129,17 @@ const PreloadTab = ( {
 						<FormLegend>
 							{ translate( 'Status Emails' ) }
 						</FormLegend>
-						<div className="wp-super-cache__wp-cache-preload-email-volume">
-							<FormSelect
-								id="preload_email_volume"
-								name="preload_email_volume"
-								onChange={ handleSelect }
-								value={ preload_email_volume || 'none' }>
-								{
-									statusEmailAmountSelectValues.map( ( { value, description } ) => {
-										return <option key={ value } value={ value }>{ description }</option>;
-									} )
-								}
-							</FormSelect>
-						</div>
+						<FormSelect
+							id="preload_email_volume"
+							name="preload_email_volume"
+							onChange={ handleSelect }
+							value={ preload_email_volume || 'none' }>
+							{
+								statusEmailAmountSelectValues.map( ( { value, description } ) => {
+									return <option key={ value } value={ value }>{ description }</option>;
+								} )
+							}
+						</FormSelect>
 						<FormSettingExplanation>
 							{ translate( 'Send me status emails when files are refreshed during preload.' ) }
 						</FormSettingExplanation>
