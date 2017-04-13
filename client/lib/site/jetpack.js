@@ -72,20 +72,6 @@ JetpackSite.prototype.isModuleActive = function( moduleId ) {
 	return this.modules && this.modules.indexOf( moduleId ) > -1;
 };
 
-JetpackSite.prototype.verifyModulesActive = function( moduleIds, callback ) {
-	var modulesActive;
-
-	if ( ! Array.isArray( moduleIds ) ) {
-		moduleIds = [ moduleIds ];
-	}
-
-	modulesActive = moduleIds.every( function( moduleId ) {
-		return this.isModuleActive( moduleId );
-	}, this );
-
-	callback( null, modulesActive );
-};
-
 JetpackSite.prototype.getRemoteManagementURL = function() {
 	var configure = versionCompare( this.options.jetpack_version, 3.4, '>=' ) ? 'manage' : 'json-api';
 	return this.options.admin_url + 'admin.php?page=jetpack&configure=' + configure;
