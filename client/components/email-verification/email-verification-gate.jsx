@@ -64,6 +64,7 @@ export default class EmailVerificationGate extends React.Component {
 			return (
 				<div tabIndex="-1" className="email-verification-gate" onFocus={ this.handleFocus }>
 					<EmailUnverifiedNotice
+						userEmail={ user.get().email }
 						noticeText={ this.props.noticeText }
 						noticeStatus={ this.props.noticeStatus } />
 					<div className="email-verification-gate__content">
