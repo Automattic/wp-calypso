@@ -118,7 +118,7 @@ class Login extends React.Component {
 				href="#"
 				key="back-link"
 				onClick={ this.goBack }>
-					<Gridicon icon="arrow-left" size={ 18 } /> { this.props.translate( 'Back' ) }
+					<Gridicon icon="arrow-left" size={ 18 } /> { this.props.translate( 'Return' ) }
 				</a>;
 
 		return compact( [
