@@ -51,15 +51,9 @@ class HappychatPage extends Component {
 	}
 }
 
-const mapDispatch = ( dispatch ) => {
-	return {
-		setBlurred() {
-			dispatch( blur() );
-		},
-		setFocused() {
-			dispatch( focus() );
-		},
-	};
+const mapDispatch = {
+	setBlurred: blur,
+	setFocused: focus,
 };
 
 export default connect( null, mapDispatch )( HappychatPage );
