@@ -128,15 +128,15 @@ class PurchaseMeta extends Component {
 		}
 
 		if ( isDomainRegistration( purchase ) ) {
-			return translate( 'Domain auto-renews on' );
+			return translate( 'Domain renews on' );
 		}
 
 		if ( isSubscription( purchase ) ) {
-			return translate( 'Subscription auto-renews on' );
+			return translate( 'Subscription renews on' );
 		}
 
 		if ( isOneTimePurchase( purchase ) ) {
-			return translate( 'Auto-renews on' );
+			return translate( 'Renews on' );
 		}
 
 		return null;
