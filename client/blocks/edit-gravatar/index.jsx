@@ -226,7 +226,7 @@ export class EditGravatar extends Component {
 
 export default connect(
 	state => ( {
-		user: getCurrentUser( state ),
+		user: getCurrentUser( state ) || {},
 		isUploading: isCurrentUserUploadingGravatar( state ),
 	} ),
 	{
