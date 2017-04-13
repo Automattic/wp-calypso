@@ -59,14 +59,12 @@ describe( 'selectors', () => {
 
 	describe( '#getLostFocusTimestamp', () => {
 		it( 'returns the current timestamp', () => {
-			const NOW = Date.now();
 			const state = { happychat: { lostFocusAt: NOW } };
 			expect( getLostFocusTimestamp( state ) ).to.eql( NOW );
 		} );
 	} );
 
 	describe( '#hasUnreadMessages', () => {
-		const NOW = Date.now();
 		const ONE_MINUTE = 1000 * 60;
 		const FIVE_MINUTES = ONE_MINUTE * 5;
 
