@@ -31,6 +31,10 @@ export default class Emojify extends PureComponent {
 			size: '72x72',
 			className: className
 		} );
+
+		if ( ! this.refs.emojified.textContent ) {
+			this.refs.emojified.className = 'emojify__solo';
+		}
 	}
 
 	render() {
