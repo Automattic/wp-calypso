@@ -8,15 +8,6 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
-	userFirstSignup: {
-		datestamp: '20160124',
-		variations: {
-			userLast: 100,
-			userFirst: 0,
-		},
-		defaultVariation: 'userLast',
-		allowExistingUsers: false,
-	},
 	signupPlansCallToAction: {
 		datestamp: '20170403',
 		variations: {

@@ -56,10 +56,7 @@ export class UserStep extends Component {
 		/**
 		 * Update the step sub-header if they only want to create an account, without a site.
 		 */
-		if (
-			1 === signupUtils.getFlowSteps( props.flowName ).length &&
-			'userfirst' !== props.flowName
-		) {
+		if ( 1 === signupUtils.getFlowSteps( props.flowName ).length ) {
 			subHeaderText = this.props.translate( 'Welcome to the wonderful WordPress.com community' );
 		}
 
