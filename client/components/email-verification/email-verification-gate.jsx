@@ -9,9 +9,8 @@ import { connect } from 'react-redux';
  */
 
 import EmailUnverifiedNotice from './email-unverified-notice.jsx';
-import userUtils from 'lib/user/utils';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 
 export class EmailVerificationGate extends React.Component {
 	static propTypes = {
@@ -53,10 +52,9 @@ export class EmailVerificationGate extends React.Component {
 export default connect(
 	( state ) => {
 		const user = getCurrentUser( state );
-		const site = getSelectedSite( state );
 		return {
 			userEmail: user && user.email,
-			needsVerification: userUtils.needsVerificationForSite( site )
+			needsVerification: ! isCurrentUserEmailVerified( state )
 		};
 	}
 )( EmailVerificationGate );
