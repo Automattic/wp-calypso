@@ -25,8 +25,7 @@ const WPSuperCache = ( { site, tab } ) => {
 			case Tabs.CONTENTS:
 				return <ContentsTab isMultisite={ site.is_multisite } />;
 			case Tabs.PRELOAD:
-				return <PreloadTab site={ site } />;
-				break;
+				return <PreloadTab />;
 			default:
 				return <EasyTab site={ site } />;
 		}
