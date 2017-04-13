@@ -10,7 +10,7 @@ import config from 'config';
  */
 import { navigation, siteSelection } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import ProductForm from './app/products/product-form';
+import ProductCreate from './app/products/product-create';
 import Dashboard from './app/dashboard';
 import Stats from './app/stats';
 
@@ -25,7 +25,7 @@ const Controller = {
 
 	addProduct: function( context ) {
 		renderWithReduxStore(
-			React.createElement( ProductForm, { } ),
+			React.createElement( ProductCreate, { } ),
 			document.getElementById( 'primary' ),
 			context.store
 		);
