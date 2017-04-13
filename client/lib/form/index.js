@@ -3,7 +3,7 @@
  */
 import { forOwn } from 'lodash';
 
-export default function postForm( url, formData ) {
+export function createFormAndSubmit( url, formData ) {
 	const form = document.createElement( 'form' );
 	form.setAttribute( 'method', 'POST' );
 	form.setAttribute( 'action', url );

@@ -16,7 +16,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { loginUser } from 'state/login/actions';
 import Notice from 'components/notice';
-import postForm from 'lib/form/post';
+import { createFormAndSubmit } from 'lib/form';
 import {
 	isRequestingLogin,
 	getError
@@ -60,7 +60,7 @@ export class Login extends Component {
 			submitting: true
 		} );
 		this.props.loginUser( this.state.usernameOrEmail, this.state.password ).then( () => {
-			postForm( config( 'login_url' ), {
+			createFormAndSubmit( config( 'login_url' ), {
 				log: this.state.usernameOrEmail,
 				pwd: this.state.password,
 				redirect_to: this.props.redirectLocation || window.location.origin,
