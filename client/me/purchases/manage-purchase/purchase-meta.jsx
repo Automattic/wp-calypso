@@ -154,9 +154,8 @@ class PurchaseMeta extends Component {
 
 			return (
 				<span>
-					{ translate( 'Renews with Plan' ) }
 					<a href={ attachedPlanUrl }>
-						{ translate( 'View Plan' ) }
+						{ translate( 'Renews with Plan' ) }
 					</a>
 				</span>
 			);
