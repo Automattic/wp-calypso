@@ -48,6 +48,7 @@ const PreloadTab = ( {
 		preload_email_volume,
 		preload_interval,
 		preload_on,
+		preload_refresh,
 		preload_taxonomies,
 	},
 	handleChange,
@@ -93,7 +94,8 @@ const PreloadTab = ( {
 
 						<div className="wp-super-cache__wp-cache-preload-posts">
 							<FormToggle
-								checked={ preload_interval > 0 }>
+								checked={ preload_refresh }
+								onChange={ handleToggle( 'preload_refresh' ) }>
 								<span>
 									{ translate(
 										'Refresh preloaded cache files every {{number /}} minute. (minimum %s minutes.)',
@@ -105,9 +107,8 @@ const PreloadTab = ( {
 											count: preload_interval,
 											components: {
 												number: renderCachePreloadInterval( {
+													handleChange,
 													preload_interval,
-													minimum_preload_interval,
-													handleChange
 												} )
 											}
 										}
@@ -171,6 +172,7 @@ const preloadSettingsDefaults = {
 	preload_email_volume: 'none',
 	preload_interval: 30,
 	preload_on: false,
+	preload_refresh: true,
 	preload_taxonomies: false,
 };
 
