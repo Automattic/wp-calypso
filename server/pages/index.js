@@ -337,6 +337,14 @@ module.exports = function() {
 		} );
 	}
 
+	// Redirect legacy `/menus` routes to the corresponding Customizer panel
+	// TODO: Move to `my-sites/customize` route defs once that section is isomorphic
+	app.get( [ '/menus', '/menus/:site?' ], ( req, res ) => {
+		const siteSlug = get( req.params, 'site', '' );
+		const newRoute = '/customize/menus/' + siteSlug;
+		res.redirect( 301, newRoute );
+	} );
+
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {
