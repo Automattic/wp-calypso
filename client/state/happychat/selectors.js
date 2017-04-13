@@ -109,14 +109,15 @@ export const getLostFocusTimestamp = createSelector(
 
 export const hasUnreadMessages = createSelector(
 	state => {
-		// Message timestamps are reported in seconds. We need to multiply by 1000 to convert
-		// to milliseconds, so we can compare it to other JS-generated timestamps
-		const lastMessageTimestamp = get( last( getHappychatTimeline( state ) ), 'timestamp' ) * 1000;
+		const lastMessageTimestamp = get( last( getHappychatTimeline( state ) ), 'timestamp' );
 		const lostFocusAt = getLostFocusTimestamp( state );
 
 		return (
+			typeof lastMessageTimestamp === 'number' &&
 			typeof lostFocusAt === 'number' &&
-			lastMessageTimestamp >= lostFocusAt
+			// Message timestamps are reported in seconds. We need to multiply by 1000 to convert
+			// to milliseconds, so we can compare it to other JS-generated timestamps
+			lastMessageTimestamp * 1000 >= lostFocusAt
 		);
 	},
 	[ getHappychatTimeline, getLostFocusTimestamp ]
