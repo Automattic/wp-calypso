@@ -19,7 +19,10 @@ import {
 } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { isFinished as isJetpackPluginsFinished } from 'state/plugins/premium/selectors';
+import {
+	isStarted as isJetpackPluginsStarted,
+	isFinished as isJetpackPluginsFinished
+} from 'state/plugins/premium/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
 const SiteNotice = React.createClass( {
@@ -139,7 +142,7 @@ export default connect( ( state, ownProps ) => {
 		eligibleForFreeToPaidUpsell: eligibleForFreeToPaidUpsell( state, siteId, i18n.moment() ),
 		hasDomainCredit: hasDomainCredit( state, siteId ),
 		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
-		pausedJetpackPluginsSetup: ! isJetpackPluginsFinished( state, siteId )
+		pausedJetpackPluginsSetup: isJetpackPluginsStarted( state, siteId ) && ! isJetpackPluginsFinished( state, siteId )
 	};
 }, ( dispatch ) => {
 	return {
