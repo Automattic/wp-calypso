@@ -11,6 +11,10 @@
 		margin: -3px 0 0 0;
 		vertical-align: middle;
 	}
+
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
 }
 
 .cart-header {
@@ -346,6 +350,11 @@ div.popover-cart__popover {
 
 .secondary-cart {
 	background: $white;
+	
+	@include breakpoint( "<660px" ) {
+		left: 0;
+		position: relative;
+	}
 }
 
 .cart-item__loading-placeholder {

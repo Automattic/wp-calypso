@@ -217,7 +217,6 @@
 		color: darken( $gray, 10% );
 		margin: 16px 0;
 		padding: 0;
-		text-align: center;
 
 		@include breakpoint( ">660px" ) {
 			padding: 0;
@@ -789,11 +788,6 @@
 }
 
 // If there's no sidebar, we don't show the cart on the checkout page.
-@include breakpoint( "<660px" ) {
-	.secondary-cart {
-		display: none;
-	}
-}
 
 @include breakpoint( ">660px" ) {
 	.pay-button {
