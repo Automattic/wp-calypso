@@ -34,14 +34,18 @@ const ConnectedSingleSiteWpcom = connectOptions(
 				{ ( currentPlanSlug === PLAN_FREE || currentPlanSlug === PLAN_PERSONAL ) && <Banner
 					plan={ PLAN_PREMIUM }
 					title={ translate( 'Access all our premium themes with our Premium and Business plans!' ) }
-					description={ translate( 'Get also advanced customization, more space, and video support.' ) }
+					description={
+						translate( 'Get advanced customization, more storage space, and video support along with all your new themes.' )
+					}
 					event="themes_custom_design"
 				/>
 				}
 				{ ( currentPlanSlug === PLAN_PREMIUM ) && <Banner
 					plan={ PLAN_BUSINESS }
 					title={ translate( 'Why not upgrade to Business?' ) }
-					description={ translate( 'Get Google Analytics integration, more SEO tools, personalized help, and more.' ) }
+					description={
+						translate( 'Get Google Analytics integration, advanced SEO tools, personalized help, and more.' )
+					}
 					event="themes_custom_design"
 				/>
 				}
