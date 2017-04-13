@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { map, omit, isArray } from 'lodash';
+import { map, omitBy, isArray, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +15,7 @@ import { receiveFollows as receiveFollowsAction } from 'state/reader/follows/act
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
+import { toValidId } from 'reader/id-helpers';
 
 const ITEMS_PER_PAGE = 200;
 const MAX_ITEMS = 2000;
@@ -35,9 +36,17 @@ export const subscriptionsFromApi = apiResponse => {
 		return [];
 	}
 
-	return map( apiResponse.subscriptions, subscription =>
-		omit( subscription, 'meta' )
-	);
+	return map( apiResponse.subscriptions, subscription => {
+		return omitBy( {
+			ID: Number( subscription.ID ),
+			URL: subscription.URL,
+			blog_ID: toValidId( subscription.blog_ID ),
+			feed_ID: toValidId( subscription.feed_ID ),
+			date_subscribed: Date.parse( subscription.date_subscribed ),
+			delivery_methods: subscription.delivery_methods,
+			is_owner: subscription.is_owner,
+		}, isUndefined );
+	} );
 };
 
 let syncingFollows = false;
