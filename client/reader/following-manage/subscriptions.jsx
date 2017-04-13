@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 /**
  * Internal Dependencies
  */
-import FollowingManageImport from './import';
+import ReaderImportButton from 'blocks/reader-import-button';
 import ReaderExportButton from 'blocks/reader-export-button';
 
 class FollowingManageSubscriptions extends Component {
@@ -14,7 +14,7 @@ class FollowingManageSubscriptions extends Component {
 		return (
 			<div className="following-manage__subscriptions">
 				<div className="following-manage__subscriptions-controls">
-					<FollowingManageImport />
+					<ReaderImportButton />
 					<ReaderExportButton />
 				</div>
 			</div>
