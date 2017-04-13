@@ -5,7 +5,6 @@ var React = require( 'react' ),
 	url = require( 'url' ),
 	Qs = require( 'qs' ),
 	cloneDeep = require( 'lodash/cloneDeep' ),
-	bindActionCreators = require( 'redux' ).bindActionCreators,
 	connect = require( 'react-redux' ).connect,
 	debug = require( 'debug' )( 'calypso:my-sites:customize' );
 
@@ -318,6 +317,6 @@ var Customize = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => props,
-	bindActionCreators.bind( null, { themeActivated } )
+	null,
+	{ themeActivated }
 )( Customize );
