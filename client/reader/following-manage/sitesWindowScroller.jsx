@@ -12,6 +12,8 @@ import ConnectedSubscriptionListItem from './connected-subscription-list-item';
 /**
  * SitesWindowScroller is a component that takes in a list of site/feed objects.
  * It renders a react-virtualized WindowScroller containing a list of the sites.
+ *
+ * @returns {object} SitesWindowScroller React Component
  */
 class SitesWindowScroller extends Component {
 	static propTypes = {
