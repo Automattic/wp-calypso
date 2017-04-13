@@ -37,7 +37,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#siteUpdatesReceiveAction()', () => {
+	describe( '#siteUpdatesRequestAction()', () => {
 		it( 'should return a site updates request action object', () => {
 			const action = siteUpdatesRequestAction( siteId );
 
@@ -48,7 +48,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#siteUpdatesReceiveAction()', () => {
+	describe( '#siteUpdatesRequestSuccessAction()', () => {
 		it( 'should return a site updates request success action object', () => {
 			const action = siteUpdatesRequestSuccessAction( siteId );
 
@@ -59,7 +59,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#siteUpdatesReceiveAction()', () => {
+	describe( '#siteUpdatesRequestFailureAction()', () => {
 		it( 'should return a site updates request failure action object', () => {
 			const error = 'There was an error while getting the update data for this site.';
 			const action = siteUpdatesRequestFailureAction( siteId, error );
