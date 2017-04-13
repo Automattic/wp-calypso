@@ -5,7 +5,6 @@ var React = require( 'react' ),
 	url = require( 'url' ),
 	Qs = require( 'qs' ),
 	cloneDeep = require( 'lodash/cloneDeep' ),
-	bindActionCreators = require( 'redux' ).bindActionCreators,
 	connect = require( 'react-redux' ).connect,
 	debug = require( 'debug' )( 'calypso:my-sites:customize' );
 
@@ -20,6 +19,7 @@ var notices = require( 'notices' ),
 	Actions = require( 'my-sites/customize/actions' ),
 	themeActivated = require( 'state/themes/actions' ).themeActivated;
 import { getCustomizerFocus } from './panels';
+import { getSelectedSite } from 'state/ui/selectors';
 
 var loadingTimer;
 
@@ -28,7 +28,7 @@ var Customize = React.createClass( {
 
 	propTypes: {
 		domain: React.PropTypes.string.isRequired,
-		sites: React.PropTypes.object.isRequired,
+		site: React.PropTypes.object.isRequired,
 		prevPath: React.PropTypes.string,
 		query: React.PropTypes.object,
 		themeActivated: React.PropTypes.func.isRequired,
@@ -44,7 +44,6 @@ var Customize = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			isWaitingForSiteData: true,
 			iframeLoaded: false,
 			errorFromIframe: false,
 			timeoutError: false
@@ -52,32 +51,18 @@ var Customize = React.createClass( {
 	},
 
 	componentWillMount: function() {
-		this.props.sites.on( 'change', this.sitesDidUpdate );
 		this.listenToCustomizer();
 		this.waitForLoading();
-		this.sitesDidUpdate();
 		window.scrollTo( 0, 0 );
 	},
 
 	componentWillUnmount: function() {
-		this.props.sites.off( 'change', this.sitesDidUpdate );
 		window.removeEventListener( 'message', this.onMessage, false );
 		this.cancelWaitingTimer();
 	},
 
-	sitesDidUpdate: function() {
-		if ( this.props.sites.fetched === true ) {
-			this.props.sites.off( 'change', this.sitesDidUpdate );
-			this.setState( { isWaitingForSiteData: false } );
-		}
-	},
-
-	getSite: function() {
-		return this.props.sites.getSite( this.props.domain );
-	},
-
 	canUserCustomizeDomain: function() {
-		var site = this.getSite();
+		const { site } = this.props;
 		if ( ! site ) {
 			debug( 'domain is not in the user\'s site list', this.props.domain );
 			return false;
@@ -130,7 +115,7 @@ var Customize = React.createClass( {
 	},
 
 	getUrl: function() {
-		var site = this.getSite();
+		const { site } = this.props;
 		if ( ! site ) {
 			return false;
 		}
@@ -149,8 +134,7 @@ var Customize = React.createClass( {
 	buildCustomizerQuery: function() {
 		const { protocol, host } = window.location;
 		const query = cloneDeep( this.props.query );
-		const site = this.getSite();
-		const { panel } = this.props;
+		const { panel, site } = this.props;
 
 		query.return = protocol + '//' + host + this.getPreviousPath();
 		query.calypso = true;
@@ -177,15 +161,14 @@ var Customize = React.createClass( {
 	},
 
 	onMessage: function( event ) {
-		var message, themeSlug, parsedOrigin, parsedSite,
-			site = this.getSite();
+		const { site } = this.props;
 		if ( ! site || ! site.options ) {
 			debug( 'ignoring message received from iframe because the site data cannot be found' );
 			return;
 		}
 
-		parsedOrigin = url.parse( event.origin, true );
-		parsedSite = url.parse( site.options.unmapped_url );
+		const parsedOrigin = url.parse( event.origin, true );
+		const parsedSite = url.parse( site.options.unmapped_url );
 
 		if ( parsedOrigin.hostname !== this.props.domain && parsedOrigin.hostname !== parsedSite.hostname ) {
 			debug( 'ignoring message received from iframe with incorrect origin', event.origin );
@@ -196,7 +179,7 @@ var Customize = React.createClass( {
 			debug( 'ignoring message received from iframe with bad data', event.data );
 			return;
 		}
-		message = JSON.parse( event.data );
+		const message = JSON.parse( event.data );
 		if ( message.calypso && message.command ) {
 			switch ( message.command ) {
 				case 'back':
@@ -229,7 +212,7 @@ var Customize = React.createClass( {
 					Actions.activated( message.theme.stylesheet, site, this.props.themeActivated );
 					break;
 				case 'purchased':
-					themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
+					const themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
 					Actions.purchase( themeSlug, site );
 					break;
 			}
@@ -272,7 +255,7 @@ var Customize = React.createClass( {
 			} );
 		}
 
-		if ( this.props.sites.fetched !== true ) {
+		if ( ! this.props.site ) {
 			return (
 				<div className="main main-column customize is-iframe" role="main">
 					<CustomizerLoadingPanel />
@@ -318,6 +301,8 @@ var Customize = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => props,
-	bindActionCreators.bind( null, { themeActivated } )
+	( state ) => ( {
+		site: getSelectedSite( state )
+	} ),
+	{ themeActivated }
 )( Customize );

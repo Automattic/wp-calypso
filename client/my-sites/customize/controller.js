@@ -9,12 +9,9 @@ import { Provider as ReduxProvider } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import sitesFactory from 'lib/sites-list';
 import { sectionify } from 'lib/route/path';
 import analytics from 'lib/analytics';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-
-const sites = sitesFactory();
 
 export function customize( context ) {
 	const CustomizeComponent = require( 'my-sites/customize/main' ),
@@ -29,7 +26,6 @@ export function customize( context ) {
 		React.createElement( ReduxProvider, { store: context.store },
 			React.createElement( CustomizeComponent, {
 				domain: context.params.domain || '',
-				sites: sites,
 				prevPath: context.prevPath || '',
 				query: context.query,
 				panel: context.params.panel
