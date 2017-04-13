@@ -56,15 +56,19 @@ export class Login extends Component {
 
 	onSubmitForm( event ) {
 		event.preventDefault();
+		this.setState( {
+			submitting: true
+		} );
 		this.props.loginUser( this.state.usernameOrEmail, this.state.password ).then( () => {
-			this.setState( {
-				submitting: true
-			} );
 			postForm( config( 'login_url' ), {
 				log: this.state.usernameOrEmail,
 				pwd: this.state.password,
 				redirect_to: this.props.redirectLocation || window.location.origin,
 				rememberme: this.state.rememberme ? 1 : 0,
+			} );
+		} ).catch( () => {
+			this.setState( {
+				submitting: false
 			} );
 		} );
 	}

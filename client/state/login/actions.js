@@ -47,5 +47,7 @@ export const loginUser = ( usernameOrEmail, password ) => dispatch => {
 				usernameOrEmail,
 				error: error.message
 			} );
+
+			return Promise.reject();
 		} );
 };
