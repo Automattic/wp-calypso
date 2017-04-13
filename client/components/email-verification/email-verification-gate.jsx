@@ -2,6 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -9,16 +10,16 @@ import * as React from 'react';
 
 import EmailUnverifiedNotice from './email-unverified-notice.jsx';
 import userUtils from 'lib/user/utils';
-import sitesFactory from 'lib/sites-list';
-import userFactory from 'lib/user';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
-const sites = sitesFactory();
-const user = userFactory();
-
-export default class EmailVerificationGate extends React.Component {
+export class EmailVerificationGate extends React.Component {
 	static propTypes = {
 		noticeText: React.PropTypes.node,
-		noticeStatus: React.PropTypes.string
+		noticeStatus: React.PropTypes.string,
+		//connected
+		userEmail: React.PropTypes.string,
+		needsVerification: React.PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -26,45 +27,16 @@ export default class EmailVerificationGate extends React.Component {
 		noticeStatus: ''
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.updateVerificationState = this.updateVerificationState.bind( this );
-		this.handleFocus = this.handleFocus.bind( this );
-
-		this.state = {
-			needsVerification: userUtils.needsVerificationForSite( sites.getSelectedSite() ),
-		};
-	}
-
-	componentWillMount() {
-		user.on( 'change', this.updateVerificationState );
-		user.on( 'verify', this.updateVerificationState );
-		sites.on( 'change', this.updateVerificationState );
-	}
-
-	componentWillUnmount() {
-		user.off( 'change', this.updateVerificationState );
-		user.off( 'verify', this.updateVerificationState );
-		sites.off( 'change', this.updateVerificationState );
-	}
-
-	updateVerificationState() {
-		this.setState( {
-			needsVerification: userUtils.needsVerificationForSite( sites.getSelectedSite() ),
-		} );
-	}
-
-	handleFocus( e ) {
+	handleFocus = ( e ) => {
 		e.target.blur();
-	}
+	};
 
 	render() {
-		if ( this.state.needsVerification ) {
+		if ( this.props.needsVerification ) {
 			return (
 				<div tabIndex="-1" className="email-verification-gate" onFocus={ this.handleFocus }>
 					<EmailUnverifiedNotice
-						userEmail={ user.get().email }
+						userEmail={ this.props.userEmail }
 						noticeText={ this.props.noticeText }
 						noticeStatus={ this.props.noticeStatus } />
 					<div className="email-verification-gate__content">
@@ -77,3 +49,14 @@ export default class EmailVerificationGate extends React.Component {
 		return <div>{ this.props.children }</div>;
 	}
 }
+
+export default connect(
+	( state ) => {
+		const user = getCurrentUser( state );
+		const site = getSelectedSite( state );
+		return {
+			userEmail: user && user.email,
+			needsVerification: userUtils.needsVerificationForSite( site )
+		};
+	}
+)( EmailVerificationGate );
