@@ -65,7 +65,7 @@ export default React.createClass( {
 
 			memo[ snakeCase( key ) ] = value;
 			return memo;
-		}, {} );
+		}, { apiVersion: '1.2' } );
 	},
 
 	render() {
