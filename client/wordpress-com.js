@@ -325,8 +325,9 @@ sections.push( {
 	name: 'login',
 	paths: [ '/login' ],
 	module: 'login',
+	enableLoggedOut: true,
 	secondary: false,
-	enableLoggedOut: true
+	isomorphic: true
 } );
 
 sections.push( {

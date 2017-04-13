@@ -1,16 +1,12 @@
 /**
- * External dependencies
- */
-import page from 'page';
-
-/**
  * Internal dependencies
  */
 import config from 'config';
-import controller from './controller';
+import { login } from './controller';
+import { makeLayout, redirectLoggedIn } from 'controller';
 
-export default () => {
+export default router => {
 	if ( config.isEnabled( 'wp-login' ) ) {
-		page( '/login', controller.login );
+		router( '/login', redirectLoggedIn, login, makeLayout );
 	}
 };

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -15,7 +14,6 @@ import ResetPasswordSmsForm from 'account-recovery/reset-password/reset-password
 import ResetPasswordEmailForm from 'account-recovery/reset-password/reset-password-email-form';
 import TransactionIdForm from 'account-recovery/reset-password/transaction-id-form';
 import ResetPasswordConfirmForm from 'account-recovery/reset-password/reset-password-confirm-form';
-import { getCurrentUser } from 'state/current-user/selectors';
 
 export function lostPassword( context, next ) {
 	context.primary = <LostPasswordPage basePath={ context.path } />;
@@ -73,17 +71,6 @@ export function resetPasswordConfirmForm( context, next ) {
 			<ResetPasswordConfirmForm />
 		</ResetPasswordPage>
 	);
-
-	next();
-}
-
-export function redirectLoggedIn( context, next ) {
-	const currentUser = getCurrentUser( context.store.getState() );
-
-	if ( currentUser ) {
-		page.redirect( '/' );
-		return;
-	}
 
 	next();
 }

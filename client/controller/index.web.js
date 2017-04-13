@@ -62,6 +62,17 @@ export function clientRouter( route, ...middlewares ) {
 	page( route, ...middlewares, render );
 }
 
+export function redirectLoggedIn( context, next ) {
+	const currentUser = getCurrentUser( context.store.getState() );
+
+	if ( currentUser ) {
+		page.redirect( '/' );
+		return;
+	}
+
+	next();
+}
+
 function render( context ) {
 	ReactDom.render(
 		context.layout,
