@@ -19,47 +19,47 @@ import FormTextInput from 'components/forms/form-text-input';
 import WrapSettingsForm from './wrap-settings-form';
 
 /**
- * Render Cache preload interval number input
- * @returns {Jsx} the preload interval number input
+ * Render cache preload interval number input
+ * @returns { object } React element containing the preload interval number input
  */
 const renderCachePreloadInterval = ( {
+	handleChange,
 	preload_interval,
-	handleChange
 } ) => {
 	return (
 		<FormTextInput
-			name="preload_interval"
-			type="number"
-			step="1"
-			min="0"
 			className="wp-super-cache__preload-interval"
+			min="0"
+			name="preload_interval"
 			onChange={ handleChange( 'preload_interval' ) }
+			step="1"
+			type="number"
 			value={ preload_interval || '' } />
 	);
 };
 
 /**
- * Preload Tab
- * @returns {Jsx} the template
+ * The settings for the preload tab
+ * @returns { object } React element containing the settings for the Preload tab
  */
 const PreloadTab = ( {
 	fields: {
 		minimum_preload_interval,
+		preload_email_volume,
 		preload_interval,
 		preload_on,
 		preload_taxonomies,
-		preload_email_volume,
 	},
-	translate,
-	handleToggle,
 	handleChange,
 	handleSelect,
+	handleToggle,
+	translate,
 } ) => {
 	const statusEmailAmountSelectValues = [
 		{ value: 'none', description: translate( 'No emails' ) },
 		{ value: 'many', description: translate( 'High (two emails per 100 posts)' ) },
 		{ value: 'medium', description: translate( 'Medium (one email per 100 posts)' ) },
-		{ value: 'less', description: translate( 'Low (one email at the start and one at the end of preloading all posts)' ) }
+		{ value: 'less', description: translate( 'Low (one email at the start and one at the end of preloading all posts)' ) },
 	];
 
 	return (
@@ -81,8 +81,8 @@ const PreloadTab = ( {
 								checked={ !! preload_on }
 								onChange={ handleToggle( 'preload_on' ) }>
 								<span>
-								{
-									translate( 'Preload mode (garbage collection only on legacy cache files. {{em}}(Recommended){{/em}})',
+									{ translate(
+										'Preload mode (garbage collection only on legacy cache files. {{em}}(Recommended){{/em}})',
 										{
 											components: { em: <em /> }
 										} )
@@ -94,8 +94,8 @@ const PreloadTab = ( {
 						<div className="wp-super-cache__wp-cache-preload-posts">
 							<FormToggle
 								checked={ preload_interval > 0 }>
-								<span>{
-									translate(
+								<span>
+									{ translate(
 										'Refresh preloaded cache files every {{number /}} minute. (minimum %s minutes.)',
 										'Refresh preloaded cache files every {{number /}} minutes. (minimum %s minutes.)',
 										{
@@ -120,7 +120,9 @@ const PreloadTab = ( {
 							<FormToggle
 								checked={ !! preload_taxonomies }
 								onChange={ handleToggle( 'preload_taxonomies' ) }>
-								<span>{ translate( 'Preload tags, categories and other taxonomies.' ) }</span>
+								<span>
+									{ translate( 'Preload tags, categories and other taxonomies.' ) }
+								</span>
 							</FormToggle>
 						</div>
 					</FormFieldset>
@@ -128,7 +130,9 @@ const PreloadTab = ( {
 					<hr />
 
 					<FormFieldset>
-						<FormLegend>{ translate( 'Status Emails' ) }</FormLegend>
+						<FormLegend>
+							{ translate( 'Status Emails' ) }
+						</FormLegend>
 						<div className="wp-super-cache__wp-cache-preload-email-volume">
 							<FormSelect
 								id="preload_email_volume"
@@ -142,9 +146,9 @@ const PreloadTab = ( {
 								}
 							</FormSelect>
 						</div>
-						<FormSettingExplanation>{
-							translate( 'Send me status emails when files are refreshed during preload' )
-						}</FormSettingExplanation>
+						<FormSettingExplanation>
+							{ translate( 'Send me status emails when files are refreshed during preload' ) }
+						</FormSettingExplanation>
 					</FormFieldset>
 				</form>
 			</Card>
@@ -162,12 +166,12 @@ const PreloadTab = ( {
 
 const preloadSettingsDefaults = {
 	is_preload_enabled: true,
-	preload_interval: 30,
 	minimum_preload_interval: 30,
-	preload_on: false,
-	preload_taxonomies: false,
 	preload_email_me: false,
 	preload_email_volume: 'none',
+	preload_interval: 30,
+	preload_on: false,
+	preload_taxonomies: false,
 };
 
 const settingsKeys = Object.keys( preloadSettingsDefaults );
