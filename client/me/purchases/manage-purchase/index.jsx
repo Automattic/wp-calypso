@@ -39,7 +39,10 @@ import {
 } from 'lib/purchases';
 import { isDataLoading, getPurchase, getSelectedSite, goToList, recordPageView } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
+import {
+	getSelectedSite as getSelectedSiteSelector,
+	getSelectedSiteId,
+} from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
 import { isDomainRegistration } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
@@ -533,7 +536,7 @@ const ManagePurchase = React.createClass( {
 		return (
 			<div>
 				<PurchaseSiteHeader
-					siteId={ this.props.selectedSite && this.props.selectedSite.ID }
+					siteId={ this.props.selectedSiteId }
 					name={ siteName }
 					domain={ siteDomain }
 					isPlaceholder={ isDataLoading( this.props ) } />
@@ -619,6 +622,7 @@ export default connect(
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
-		selectedSite: getSelectedSiteSelector( state )
+		selectedSite: getSelectedSiteSelector( state ),
+		selectedSiteId: getSelectedSiteId( state ),
 	} )
 )( localize( ManagePurchase ) );
