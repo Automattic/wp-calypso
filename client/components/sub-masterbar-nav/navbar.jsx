@@ -28,12 +28,13 @@ export default class Navbar extends Component {
 	};
 
 	state = {
-		collapsed: true,
+		collapsed: false,
 		foldable: false
 	};
 
 	componentDidMount() {
 		this.onResize();
+		this.setListCollapsed( true );
 
 		window.addEventListener( 'resize', this.onResize );
 	}
@@ -62,7 +63,9 @@ export default class Navbar extends Component {
 				</div>
 				{ this.state.foldable && (
 					<div className="sub-masterbar-nav__switch">
-						<Gridicon icon="ellipsis" className={ ellipsisClass } onClick={ this.toggleList } />
+						<Gridicon
+							icon="ellipsis"
+							className={ ellipsisClass } onClick={ this.toggleList } />
 					</div>
 				)}
 			</div>
@@ -82,8 +85,12 @@ export default class Navbar extends Component {
 	}
 
 	toggleList = () => {
-		this.setState( ( state ) => ( {
-			collapsed: ! state.collapsed
+		this.setListCollapsed( ! this.state.collapsed );
+	}
+
+	setListCollapsed( collapsed ) {
+		this.setState( () => ( {
+			collapsed: collapsed
 		} ) );
 	}
 
@@ -91,7 +98,7 @@ export default class Navbar extends Component {
 		const width = findDOMNode( this ).offsetWidth;
 
 		this.setState( ( state, props ) => ( {
-			foldable: width < props.options.length * ITEM_WIDTH + SIDE_PADDING
+			foldable: window !== undefined && width < props.options.length * ITEM_WIDTH + SIDE_PADDING
 		} ) );
 	}
 }
