@@ -52,6 +52,7 @@ export getPastBillingTransactions from './get-past-billing-transactions';
 export getPosterUploadProgress from './get-poster-upload-progress';
 export getPosterUrl from './get-poster-url';
 export getPostLikes from './get-post-likes';
+export getPrimarySiteId from './get-primary-site-id';
 export getRawOffsets from './get-raw-offsets';
 export getReaderFeedsForQuery from './get-reader-feeds-for-query';
 export getReaderFollowedTags from './get-reader-followed-tags';
@@ -126,4 +127,3 @@ export isUpdatingJetpackSettings from './is-updating-jetpack-settings';
 export isUserRegistrationDaysWithinRange from './is-user-registration-days-within-range';
 export shouldCloseVideoEditorModal from './should-close-video-editor-modal';
 export shouldShowVideoEditorError from './should-show-video-editor-error';
-
