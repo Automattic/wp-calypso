@@ -4,6 +4,8 @@
 import i18n from 'i18n-calypso';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
+import { get } from 'lodash';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -29,4 +31,15 @@ export function customize( context ) {
 			panel: context.params.panel
 		} )
 	);
+}
+
+// Redirect legacy `/menus` routes to the corresponding Customizer panel
+export function redirectMenus( context ) {
+	const siteSlug = get( context.params, 'site', '' );
+	const newRoute = '/customize/menus/' + siteSlug;
+
+	if ( context.isServerSide ) {
+		return context.res.redirect( 301, newRoute );
+	}
+	page.redirect( newRoute );
 }
