@@ -80,10 +80,3 @@
 
 	}
 }
-
-.is-hidden {
-	.editor-drawer-well__content, .editor-drawer-well__placeholder {
-		opacity: 0;
-		transition: 0.3s opacity;
-	}
-}

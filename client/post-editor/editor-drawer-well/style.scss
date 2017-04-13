@@ -64,3 +64,10 @@
 	margin: 0;
 	color: lighten( $gray, 10% );
 }
+
+.editor-drawer-well.is-hidden {
+	.editor-drawer-well__content, .editor-drawer-well__placeholder {
+		opacity: 0;
+		transition: 0.3s opacity;
+	}
+}
