@@ -66,13 +66,6 @@ const sections = [
 		secondary: true
 	},
 	{
-		name: 'menus',
-		paths: [ '/menus' ],
-		module: 'my-sites/menus',
-		secondary: true,
-		group: 'sites'
-	},
-	{
 		name: 'people',
 		paths: [ '/people' ],
 		module: 'my-sites/people',
