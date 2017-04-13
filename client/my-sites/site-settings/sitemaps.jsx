@@ -82,8 +82,8 @@ class Sitemaps extends Component {
 			<FormSettingExplanation>
 				{
 					translate(
-						'Your site is currently not accessible to search engines. ' +
-						'It is possible that "Privacy" is not set to "Public" in your {{a}}General{{/a}} settings.',
+						'Your site is not currently accessible to search engines. ' +
+						'You must set your {{a}}privacy settings{{/a}} to "public".',
 						{
 							components: {
 								a: <a href={ '/settings/general/' + siteSlug } />,
