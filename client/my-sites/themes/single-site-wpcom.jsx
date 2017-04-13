@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -62,9 +63,9 @@ const ConnectedSingleSiteWpcom = connectOptions(
 
 export default connect(
 	( state, { siteId } ) => {
-		const currentPlan = getCurrentPlan( state, siteId ) || null;
+		const currentPlan = getCurrentPlan( state, siteId );
 		return {
-			currentPlanSlug: currentPlan && currentPlan.productSlug,
+			currentPlanSlug: get( currentPlan, 'productSlug', null ),
 		};
 	}
 )( ConnectedSingleSiteWpcom );
