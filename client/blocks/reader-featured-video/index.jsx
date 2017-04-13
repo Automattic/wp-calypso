@@ -83,6 +83,10 @@ class ReaderFeaturedVideo extends React.Component {
 		}
 	}
 
+	componentWillReceiveProps() {
+		this.throttledUpdateVideoSize();
+	}
+
 	render() {
 		const { thumbnailUrl, autoplayIframe, iframe, translate, allowPlaying, className, href, isExpanded } = this.props;
 

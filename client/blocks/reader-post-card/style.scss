@@ -78,7 +78,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			}
 		}
 
-		&.is-video-expanded {
+		&.is-expanded-video .reader-post-card__post {
 			flex-direction: column;
 		}
 
