@@ -1,23 +1,21 @@
 /**
  * External dependencies
  */
-var config = require( 'config' ),
-	assign = require( 'lodash/assign' );
+import config from 'config';
+import { assign } from 'lodash';
 /**
  * Internal dependencies
  */
-var sites = require( 'lib/sites-list' )();
 
 module.exports = {
-	getAll: function() {
-		var selectedSite = sites.getSelectedSite(),
-			siteProps = {},
-			defaultProps = {
-				environment: config( 'env' ),
-				site_count: sites.data ? sites.data.length : 0,
-				site_id_label: 'wpcom',
-				client: config( 'client_slug' )
-			};
+	getAll: function( selectedSite, siteCount ) {
+		let siteProps = {};
+		const defaultProps = {
+			environment: config( 'env' ),
+			site_count: siteCount || 0,
+			site_id_label: 'wpcom',
+			client: config( 'client_slug' )
+		};
 
 		if ( selectedSite ) {
 			siteProps = {
