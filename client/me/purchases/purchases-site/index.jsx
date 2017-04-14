@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import React from 'react';
 import times from 'lodash/times';
@@ -8,10 +9,12 @@ import times from 'lodash/times';
 /**
  * Internal dependencies
  */
+import { getSite, isRequestingSites } from 'state/sites/selectors';
+import QuerySites from 'components/data/query-sites';
 import PurchaseItem from '../purchase-item';
 import PurchaseSiteHeader from './header';
 
-const PurchasesSite = ( { isPlaceholder, siteId, purchases, name, domain, slug } ) => {
+const PurchasesSite = ( { isPlaceholder, site, siteId, purchases, name, domain, slug } ) => {
 	let items;
 
 	if ( isPlaceholder ) {
@@ -29,6 +32,7 @@ const PurchasesSite = ( { isPlaceholder, siteId, purchases, name, domain, slug }
 
 	return (
 		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
+			<QuerySites siteId={ siteId } />
 			<PurchaseSiteHeader
 				siteId={ siteId }
 				name={ name }
@@ -49,4 +53,9 @@ PurchasesSite.propTypes = {
 	slug: React.PropTypes.string,
 };
 
-export default PurchasesSite;
+export default connect(
+	( state, { siteId } ) => ( {
+		site: getSite( state, siteId ),
+		hasLoadedSites: ! isRequestingSites( state ),
+	} )
+)( PurchasesSite );
