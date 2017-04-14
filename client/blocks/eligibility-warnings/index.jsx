@@ -11,18 +11,19 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import TrackComponentView from 'lib/analytics/track-component-view';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
 import { isBusiness, isEnterprise } from 'lib/products-values';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import Banner from 'components/banner';
 import Button from 'components/button';
 import Card from 'components/card';
-import HoldList from './hold-list';
 import QueryEligibility from 'components/data/query-atat-eligibility';
+import HoldList from './hold-list';
 import WarningList from './warning-list';
-import { recordTracksEvent } from 'state/analytics/actions';
 
 export const EligibilityWarnings = ( {
 	backUrl,
@@ -54,7 +55,10 @@ export const EligibilityWarnings = ( {
 	return (
 		<div className={ classes }>
 			<QueryEligibility siteId={ siteId } />
-
+			<TrackComponentView
+				eventName="calypso_automated_transfer_eligibility_warnings"
+				eventProperties={ { context } }
+			/>
 			{ ! hasBusinessPlan && ! isJetpack &&
 				<Banner
 					description={ translate( 'Also get unlimited themes, advanced customization, no ads, live chat support, and more.' ) }
