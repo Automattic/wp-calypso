@@ -11,9 +11,14 @@ import { uniq, some, startsWith } from 'lodash';
  * Internal Dependencies
  */
 import userFactory from 'lib/user';
-import sitesFactory from 'lib/sites-list';
-import { receiveSite } from 'state/sites/actions';
-import { getSite } from 'state/sites/selectors';
+import { receiveSite, requestSite } from 'state/sites/actions';
+import {
+	getSite,
+	isJetpackModuleActive,
+	isJetpackSite,
+	isRequestingSite,
+} from 'state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import {
 	setSelectedSiteId,
 	setSection,
@@ -26,10 +31,15 @@ import route from 'lib/route';
 import notices from 'notices';
 import config from 'config';
 import analytics from 'lib/analytics';
-import utils from 'lib/site/utils';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import {
+	canCurrentUser,
+	getPrimarySiteId,
+	getSites,
+	getVisibleSites,
+	isDomainOnlySite,
+} from 'state/selectors';
 import {
 	domainManagementAddGoogleApps,
 	domainManagementContactsPrivacy,
@@ -49,11 +59,18 @@ import {
 import SitesComponent from 'my-sites/sites';
 import { isATEnabled } from 'lib/automated-transfer';
 
+/*
+ * @FIXME Shorthand, but I might get rid of this.
+ */
+const getStore = ( context ) => ( {
+	getState: () => context.store.getState(),
+	dispatch: ( action ) => context.store.dispatch( action ),
+} );
+
 /**
  * Module vars
  */
 const user = userFactory();
-const sites = sitesFactory();
 const sitesPageTitleForAnalytics = 'Sites';
 
 /*
@@ -179,8 +196,8 @@ function isPathAllowedForDomainOnlySite( path, domainName ) {
 }
 
 function onSelectedSiteAvailable( context ) {
-	const selectedSite = sites.getSelectedSite();
-	const getState = () => context.store.getState();
+	const { getState } = getStore( context );
+	const selectedSite = getSelectedSite( getState() );
 
 	// Currently, sites are only made available in Redux state by the receive
 	// here (i.e. only selected sites). If a site is already known in state,
@@ -228,7 +245,6 @@ function createSitesComponent( context ) {
 
 	return (
 		<SitesComponent
-			sites={ sites }
 			path={ context.path }
 			sourcePath={ sourcePath }
 			user={ user }
@@ -248,14 +264,20 @@ module.exports = {
 	 * Set up site selection based on last URL param and/or handle no-sites error cases
 	 */
 	siteSelection( context, next ) {
+		const { getState, dispatch } = getStore( context );
 		const siteID = context.params.site || route.getSiteFragment( context.path );
 		const basePath = route.sectionify( context.path );
 		const currentUser = user.get();
 		const hasOneSite = currentUser.visible_site_count === 1;
 		const allSitesPath = route.sectionify( context.path );
+		const primaryId = getPrimarySiteId( getState() );
+		const primary = getSite( getState(), primaryId ) || '';
+
+		// @FIXME this is not good
+		const hasInitialized = !! getSites( getState() );
 
 		const redirectToPrimary = () => {
-			let redirectPath = `${ context.pathname }/${ sites.getPrimary().slug }`;
+			let redirectPath = `${ context.pathname }/${ primary.slug }`;
 
 			redirectPath = context.querystring
 				? `${ redirectPath }?${ context.querystring }`
@@ -284,7 +306,7 @@ module.exports = {
 		// If the user has only one site, redirect to the single site
 		// context instead of rendering the all-site views.
 		if ( hasOneSite && ! siteID ) {
-			if ( sites.initialized ) {
+			if ( hasInitialized ) {
 				redirectToPrimary();
 				return;
 			}
@@ -293,14 +315,15 @@ module.exports = {
 
 		// If the path fragment does not resemble a site, set all sites to visible
 		if ( ! siteID ) {
-			sites.selectAll();
-			context.store.dispatch( setAllSitesSelected() );
+			dispatch( setAllSitesSelected() );
 			return next();
 		}
 
 		// If there's a valid site from the url path
 		// set site visibility to just that site on the picker
-		if ( sites.select( siteID ) ) {
+		const didFindSite = !! getSite( getState(), siteID );
+		dispatch( setSelectedSiteId( siteID ) );
+		if ( didFindSite ) {
 			const selectionComplete = onSelectedSiteAvailable( context );
 
 			// if there was a redirect, we should terminate processing of next routes
@@ -311,20 +334,22 @@ module.exports = {
 		} else {
 			// if sites has fresh data and siteID is invalid
 			// redirect to allSitesPath
-			if ( sites.fetched || ! sites.fetching ) {
+			if ( ! isRequestingSite( getState(), siteID ) ) {
 				return page.redirect( allSitesPath );
 			}
 
 			let waitingNotice;
 			const selectOnSitesChange = () => {
 				// if sites have loaded, but siteID is invalid, redirect to allSitesPath
-				if ( sites.select( siteID ) ) {
+				const didFindSite = !! getSite( getState(), siteID );
+				dispatch( setSelectedSiteId( siteID ) );
+				if ( didFindSite ) {
 					sites.initialized = true;
 					onSelectedSiteAvailable( context );
 					if ( waitingNotice ) {
 						notices.removeNotice( waitingNotice );
 					}
-				} else if ( ( currentUser.visible_site_count !== sites.getVisible().length ) ) {
+				} else if ( ( currentUser.visible_site_count !== getVisibleSites( getState() ).length ) ) {
 					sites.initialized = false;
 					waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), { showDismiss: false } );
 					sites.once( 'change', selectOnSitesChange );
@@ -351,13 +376,19 @@ module.exports = {
 
 	jetpackModuleActive( moduleId, redirect ) {
 		return function( context, next ) {
-			const site = sites.getSelectedSite();
+			const { getState } = getStore( context );
+			const siteId = getSelectedSiteId( getState() );
+			const isJetpack = isJetpackSite( getState(), siteId );
+			const isModuleActive = isJetpackModuleActive(
+					getState(),
+					siteId,
+					moduleId );
 
-			if ( ! site.jetpack ) {
+			if ( ! isJetpack ) {
 				return next();
 			}
 
-			if ( site.isModuleActive( moduleId ) || false === redirect ) {
+			if ( isModuleActive || false === redirect ) {
 				next();
 			} else {
 				page.redirect( 'string' === typeof redirect ? redirect : '/stats' );
@@ -374,12 +405,22 @@ module.exports = {
 			return;
 		}
 
+		// @FIXME the following construct seems to allow infinite loops
+		// wherein, if `siteFragment` is invalid, `checkSiteShouldFetch` will
+		// be readded as a handler for `once`.
 		function checkSiteShouldFetch() {
-			const site = sites.getSite( siteFragment );
+			const { getState, dispatch } = getStore( context );
+			const site = getSite( getState(), siteFragment );
+			const isJetpack = site && isJetpackSite( getState(), site.ID );
+			const userHasCapability = site && canCurrentUser(
+					getState(),
+					site.ID,
+					'manage_options' );
+
 			if ( ! site ) {
 				sites.once( 'change', checkSiteShouldFetch );
-			} else if ( site.jetpack && utils.userCan( 'manage_options', site ) ) {
-				site.fetchSettings();
+			} else if ( isJetpack && userHasCapability ) {
+				dispatch( requestSite( site.ID ) );
 			}
 		}
 
@@ -402,17 +443,18 @@ module.exports = {
 	},
 
 	jetPackWarning( context, next ) {
+		const { getState } = getStore( context );
 		const Main = require( 'components/main' );
 		const JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
 		const basePath = route.sectionify( context.path );
-		const selectedSite = sites.getSelectedSite();
+		const selectedSite = getSelectedSite( getState() );
 
 		if ( selectedSite && selectedSite.jetpack && ! isATEnabled( selectedSite ) ) {
 			renderWithReduxStore( (
 				<Main>
 					<JetpackManageErrorPage
 						template="noDomainsOnJetpack"
-						siteId={ sites.getSelectedSite().ID }
+						siteId={ selectedSite.ID }
 					/>
 				</Main>
 			), document.getElementById( 'primary' ), context.store );
@@ -424,6 +466,7 @@ module.exports = {
 	},
 
 	sites( context ) {
+		const { dispatch } = getStore( context );
 		if ( context.query.verified === '1' ) {
 			notices.success(
 				i18n.translate(
@@ -435,7 +478,7 @@ module.exports = {
 		 * Sites is rendered on #primary but it doesn't expect a sidebar to exist
 		 */
 		removeSidebar( context );
-		context.store.dispatch( setLayoutFocus( 'content' ) );
+		dispatch( setLayoutFocus( 'content' ) );
 
 		renderWithReduxStore(
 			createSitesComponent( context ),

@@ -58,8 +58,7 @@ export const getSite = createSelector(
 		const site = getRawSite( state, siteId ) ||
 			// Support for non-ID site retrieval
 			// Replaces SitesList#getSite
-			getSiteBySlug( state, siteId ) ||
-			getSiteByUrl( state, siteId );
+			getSiteBySlug( state, siteId );
 
 		if ( ! site ) {
 			return false;
