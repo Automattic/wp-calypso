@@ -23,7 +23,6 @@ class Media extends Component {
 
 	static propTypes = {
 		selectedSite: PropTypes.object,
-		selectedSiteSlug: PropTypes.string,
 		filter: PropTypes.string,
 		search: PropTypes.string
 	};
@@ -47,8 +46,8 @@ class Media extends Component {
 			redirect += '/' + filter;
 		}
 
-		if ( this.props.selectedSiteSlug ) {
-			redirect += '/' + this.props.selectedSiteSlug;
+		if ( this.props.selectedSite ) {
+			redirect += '/' + this.props.selectedSite.slug;
 		}
 
 		page( redirect );

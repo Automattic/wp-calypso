@@ -11,11 +11,7 @@ import route from 'lib/route';
 import analytics from 'lib/analytics';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import {
-	getSelectedSiteId,
-	getSelectedSite
-} from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 module.exports = {
 
@@ -26,9 +22,7 @@ module.exports = {
 			baseAnalyticsPath = route.sectionify( context.path );
 
 		const state = context.store.getState();
-		const selectedSiteId = getSelectedSiteId( state );
 		const selectedSite = getSelectedSite( state );
-		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 
 		// Analytics
 		if ( selectedSite ) {
@@ -44,7 +38,6 @@ module.exports = {
 		renderWithReduxStore(
 			React.createElement( MediaComponent, {
 				selectedSite,
-				selectedSiteSlug,
 				filter: filter,
 				search: search
 			} ),
