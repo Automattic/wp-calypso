@@ -120,6 +120,7 @@ class ReaderPostCard extends React.Component {
 
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY );
+		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO );
 		const isDiscover = post.is_discover;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const classes = classnames( 'reader-post-card', {
@@ -127,7 +128,8 @@ class ReaderPostCard extends React.Component {
 			'is-photo': isPhotoPost,
 			'is-gallery': isGalleryPost,
 			'is-selected': isSelected,
-			'is-discover': isDiscover
+			'is-discover': isDiscover,
+			'is-expanded-video': isVideo && isExpanded,
 		} );
 
 		let discoverFollowButton;
@@ -172,11 +174,21 @@ class ReaderPostCard extends React.Component {
 					{ readerPostActions }
 				</GalleryPost>;
 		} else {
-			readerPostCard = <StandardPost post={ post } title={ title } isDiscover={ isDiscover }>
+			readerPostCard = (
+				<StandardPost
+					post={ post }
+					title={ title }
+					isDiscover={ isDiscover }
+					isExpanded={ isExpanded }
+					expandCard={ expandCard }
+					site={ site }
+					postKey={ postKey }
+				>
 					{ isDailyPostChallengeOrPrompt( post ) && site && <DailyPostButton post={ post } site={ site } tagName="span" /> }
 					{ discoverFollowButton }
 					{ readerPostActions }
-				</StandardPost>;
+				</StandardPost>
+			);
 		}
 
 		// set up post byline
