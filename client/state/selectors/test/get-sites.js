@@ -27,57 +27,26 @@ describe( 'getSites()', () => {
 						ID: 2916284,
 						visible: true,
 						name: 'WordPress.com Example Blog',
-						URL: 'http://example.com',
+						URL: 'https://example.wordpress.com',
 						options: {
-							unmapped_url: 'http://example.com'
+							unmapped_url: 'https://example.wordpress.com'
 						}
 					},
 					2916285: {
 						ID: 2916285,
 						visible: false,
 						name: 'WordPress.com Way Better Example Blog',
-						URL: 'https://example2.com',
+						URL: 'https://example2.wordpress.com',
 						options: {
-							unmapped_url: 'https://example2.com'
+							unmapped_url: 'https://example2.wordpress.com'
 						}
 					}
 				}
 			}
 		};
 		const sites = getSites( state );
-		expect( sites ).to.eql( [
-			{
-				ID: 2916284,
-				visible: true,
-				name: 'WordPress.com Example Blog',
-				URL: 'http://example.com',
-				title: 'WordPress.com Example Blog',
-				domain: 'example.com',
-				slug: 'example.com',
-				hasConflict: false,
-				is_customizable: false,
-				is_previewable: false,
-				options: {
-					default_post_format: 'standard',
-					unmapped_url: 'http://example.com'
-				}
-			},
-			{
-				ID: 2916285,
-				visible: false,
-				name: 'WordPress.com Way Better Example Blog',
-				URL: 'https://example2.com',
-				title: 'WordPress.com Way Better Example Blog',
-				domain: 'example2.com',
-				slug: 'example2.com',
-				hasConflict: false,
-				is_customizable: false,
-				is_previewable: false,
-				options: {
-					default_post_format: 'standard',
-					unmapped_url: 'https://example2.com'
-				}
-			}
-		] );
+		expect( sites ).to.have.length( 2 );
+		expect( sites[ 0 ] ).to.have.property( 'name', 'WordPress.com Example Blog' );
+		expect( sites[ 1 ] ).to.have.property( 'name', 'WordPress.com Way Better Example Blog' );
 	} );
 } );
