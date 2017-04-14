@@ -8,7 +8,7 @@ import { last, isEqual } from 'lodash';
  * Internal dependencies
  */
 import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
-import { requestKeyringConnections, deleteKeyringConnection } from 'state/sharing/keyring/actions';
+import { deleteKeyringConnection } from 'state/sharing/keyring/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 
 export class Eventbrite extends SharingService {
@@ -94,11 +94,11 @@ export default connectFor(
 			...props,
 			saveRequests: state.siteSettings.saveRequests,
 			removableConnections: props.keyringConnections,
+			fetchConnection: props.requestKeyringConnections,
 		};
 	},
 	{
 		saveSiteSettings,
 		deleteKeyringConnection,
-		fetchConnection: requestKeyringConnections,
 	}
 );

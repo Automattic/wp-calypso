@@ -7,7 +7,7 @@ import { last } from 'lodash';
 /**
  * Internal dependencies
  */
-import { requestKeyringConnections, deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
+import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
 import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
 
 export class Instagram extends SharingService {
@@ -78,10 +78,10 @@ export default connectFor(
 		return {
 			...props,
 			removableConnections: props.keyringConnections,
+			fetchConnection: props.requestKeyringConnections,
 		};
 	},
 	{
 		deleteStoredKeyringConnection,
-		fetchConnection: requestKeyringConnections,
 	}
 );

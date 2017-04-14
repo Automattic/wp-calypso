@@ -34,6 +34,7 @@ import {
 import { getSelectedSiteId } from 'state/ui/selectors';
 import PopupMonitor from 'lib/popup-monitor';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
 import ServiceDescription from './service-description';
@@ -460,6 +461,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 			failCreateConnection,
 			fetchConnection,
 			recordGoogleEvent,
+			requestKeyringConnections,
 			updateSiteConnection,
 			warningNotice,
 			...mapDispatchToProps
