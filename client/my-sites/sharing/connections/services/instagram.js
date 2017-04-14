@@ -7,7 +7,7 @@ import { last } from 'lodash';
 /**
  * Internal dependencies
  */
-import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
+import { requestKeyringConnections, deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
 import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
 
 export class Instagram extends SharingService {
@@ -22,22 +22,6 @@ export class Instagram extends SharingService {
 	};
 
 	createOrUpdateConnection = () => { };
-
-	/**
-	 * Fetch connections
-	 */
-	fetchConnection = () => {
-		this.props.requestKeyringConnections();
-	};
-
-	/**
-	 * Checks whether any connection can be removed.
-	 *
-	 * @return {boolean} true if there's any removable; otherwise, false.
-	 */
-	canRemoveConnection = () => {
-		return this.props.keyringConnections.length > 0;
-	};
 
 	/**
 	 * Deletes the passed connections.
@@ -58,19 +42,21 @@ export class Instagram extends SharingService {
 			} );
 		}
 
-		if ( this.state.isAwaitingConnections ) {
-			this.setState( {
-				isAwaitingConnections: false,
-				isRefreshing: false,
-			} );
+		if ( ! this.state.isAwaitingConnections ) {
+			return;
+		}
 
-			if ( this.didKeyringConnectionSucceed( availableExternalAccounts ) ) {
-				this.setState( { isConnecting: false } );
-				this.props.successNotice( this.props.translate( 'The %(service)s account was successfully connected.', {
-					args: { service: this.props.service.label },
-					context: 'Sharing: Publicize connection confirmation',
-				} ), { id: 'publicize' } );
-			}
+		this.setState( {
+			isAwaitingConnections: false,
+			isRefreshing: false,
+		} );
+
+		if ( this.didKeyringConnectionSucceed( availableExternalAccounts ) ) {
+			this.setState( { isConnecting: false } );
+			this.props.successNotice( this.props.translate( 'The %(service)s account was successfully connected.', {
+				args: { service: this.props.service.label },
+				context: 'Sharing: Publicize connection confirmation',
+			} ), { id: 'publicize' } );
 		}
 	}
 
@@ -88,6 +74,14 @@ export class Instagram extends SharingService {
 
 export default connectFor(
 	Instagram,
-	null,
-	{ deleteStoredKeyringConnection }
+	( state, props ) => {
+		return {
+			...props,
+			removableConnections: props.keyringConnections,
+		};
+	},
+	{
+		deleteStoredKeyringConnection,
+		fetchConnection: requestKeyringConnections,
+	}
 );

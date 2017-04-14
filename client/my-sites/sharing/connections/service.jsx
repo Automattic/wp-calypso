@@ -34,7 +34,6 @@ import {
 import { getSelectedSiteId } from 'state/ui/selectors';
 import PopupMonitor from 'lib/popup-monitor';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
 import ServiceDescription from './service-description';
@@ -54,7 +53,6 @@ export class SharingService extends Component {
 		keyringConnections: PropTypes.arrayOf( PropTypes.object ),
 		recordGoogleEvent: PropTypes.func,
 		removableConnections: PropTypes.arrayOf( PropTypes.object ),
-		requestKeyringConnections: PropTypes.func,
 		service: PropTypes.object.isRequired,       // The single service object
 		siteId: PropTypes.number,                   // The site ID for which connections are created
 		siteUserConnections: PropTypes.arrayOf( PropTypes.object ),
@@ -442,9 +440,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 		( state, { service } ) => {
 			const siteId = getSelectedSiteId( state );
 			const userId = getCurrentUserId( state );
-			const props = isFunction( mapStateToProps ) ? mapStateToProps( state, service.ID ) : {};
-
-			return Object.assign( {
+			const props = {
 				availableExternalAccounts: getAvailableExternalAccounts( state, service.ID ),
 				brokenConnections: getBrokenSiteUserConnectionsForService( state, siteId, userId, service.ID ),
 				isFetching: isFetchingConnections( state, siteId ),
@@ -452,7 +448,9 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				removableConnections: getRemovableConnections( state, service.ID ),
 				siteId,
 				siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
-			}, props );
+			};
+
+			return isFunction( mapStateToProps ) ? mapStateToProps( state, props ) : props;
 		},
 		{
 			createSiteConnection,
@@ -462,7 +460,6 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 			failCreateConnection,
 			fetchConnection,
 			recordGoogleEvent,
-			requestKeyringConnections,
 			updateSiteConnection,
 			warningNotice,
 			...mapDispatchToProps

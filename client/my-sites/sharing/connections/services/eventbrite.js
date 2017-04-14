@@ -8,39 +8,25 @@ import { last, isEqual } from 'lodash';
  * Internal dependencies
  */
 import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
-import { deleteKeyringConnection } from 'state/sharing/keyring/actions';
+import { requestKeyringConnections, deleteKeyringConnection } from 'state/sharing/keyring/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 
 export class Eventbrite extends SharingService {
 	static propTypes = {
 		...SharingService.propTypes,
+		saveRequests: PropTypes.object,
 		saveSiteSettings: PropTypes.func,
 		deleteKeyringConnection: PropTypes.func,
 	};
 
 	static defaultProps = {
 		...SharingService.defaultProps,
+		saveRequests: {},
 		saveSiteSettings: () => {},
 		deleteKeyringConnection: () => {},
 	};
 
 	createOrUpdateConnection = () => { };
-
-	/**
-	 * Fetch connections
-	 */
-	fetchConnection = () => {
-		this.props.requestKeyringConnections();
-	};
-
-	/**
-	 * Checks whether any connection can be removed.
-	 *
-	 * @return {boolean} true if there's any removable; otherwise, false.
-	 */
-	canRemoveConnection = () => {
-		return this.props.keyringConnections.length > 0;
-	};
 
 	/**
 	 * Deletes the passed connections.
@@ -102,12 +88,17 @@ export class Eventbrite extends SharingService {
 }
 
 export default connectFor(
-	Evenrbrite,
-	( state ) => {
-		return { saveRequests: state.siteSettings.saveRequests };
+	Eventbrite,
+	( state, props ) => {
+		return {
+			...props,
+			saveRequests: state.siteSettings.saveRequests,
+			removableConnections: props.keyringConnections,
+		};
 	},
 	{
 		saveSiteSettings,
 		deleteKeyringConnection,
+		fetchConnection: requestKeyringConnections,
 	}
 );
