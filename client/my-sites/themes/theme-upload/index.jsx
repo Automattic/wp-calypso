@@ -133,7 +133,7 @@ class Upload extends React.Component {
 		const errorCauses = {
 			exists: translate( 'Upload problem: Theme already installed on site.' ),
 			already_installed: translate( 'Upload problem: Theme already installed on site.' ),
-			'too large': translate( 'Upload problem: Zip file too large to upload.' ),
+			'too large': translate( 'Upload problem: Theme zip must be under 10MB.' ),
 			incompatible: translate( 'Upload problem: Incompatible theme.' ),
 			unsupported_mime_type: translate( 'Upload problem: Not a valid zip file' ),
 			initiate_failure: translate( 'Upload problem: Theme may not be valid' ),
