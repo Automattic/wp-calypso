@@ -82,7 +82,6 @@ module.exports = {
 				siteID: siteID,
 				author: author,
 				statusSlug: statusSlug,
-				sites: sites,
 				search: search,
 				trackScrollPage: trackScrollPage.bind(
 					null,
