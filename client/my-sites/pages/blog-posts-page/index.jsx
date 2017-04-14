@@ -19,7 +19,7 @@ import { isEnabled } from 'config';
 import { getSiteFrontPageType, getSitePostsPage } from 'state/sites/selectors';
 import { setFrontPage } from 'state/sites/actions';
 import { userCan } from 'lib/site/utils';
-import { updateSitesList } from './helpers';
+import { updateSitesList } from 'my-sites/pages/helpers';
 
 const BlogPostsPage = React.createClass( {
 	propTypes() {
@@ -73,16 +73,16 @@ const BlogPostsPage = React.createClass( {
 		}
 
 		return (
-			<CompactCard className="pages__blog-posts-page">
+			<CompactCard className="blog-posts-page">
 				{ isStaticHomePageWithNoPostsPage &&
-					<div className="pages__blog-posts-page-not-used-badge">{ translate( 'Not Used' ) }</div> }
+					<div className="blog-posts-page__not-used-badge">{ translate( 'Not Used' ) }</div> }
 				{ isCurrentlySetAsHomepage &&
-					<Gridicon icon="house" size={ 18 } className="pages__blog-posts-page-home-badge" /> }
-				<div className="pages__blog-posts-page-details">
-					<div className="pages__blog-posts-page-title">
+					<Gridicon icon="house" size={ 18 } className="blog-posts-page__home-badge" /> }
+				<div className="blog-posts-page__details">
+					<div className="blog-posts-page__title">
 						{ translate( 'Blog Posts' ) }
 					</div>
-					<div className="pages__blog-posts-page-info">
+					<div className="blog-posts-page__info">
 						{
 							isCurrentlySetAsHomepage
 							? translate( 'Your latest posts, shown on homepage' )
@@ -92,7 +92,7 @@ const BlogPostsPage = React.createClass( {
 				</div>
 				{
 					shouldShowPageActions
-					? <div className="pages__blog-posts-page-actions">
+					? <div className="blog-posts-page__actions">
 							<Gridicon
 								icon="ellipsis"
 								className={ classNames( {
