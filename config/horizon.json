@@ -35,7 +35,6 @@
 		"manage/import/medium": true,
 		"manage/jetpack": true,
 		"manage/media": true,
-		"manage/menus-jetpack": true,
 		"manage/pages": true,
 		"manage/payment-methods": true,
 		"manage/people": true,
