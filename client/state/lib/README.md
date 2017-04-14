@@ -39,7 +39,7 @@ import library from 'lib/example'
 
 case MY_EXAMPLE_LIBRARY_ACTION:
 	const state = getState();
-    const selectedSite = getSelectedSite( state );
+	const selectedSite = getSelectedSite( state );
 	library.doSomething( selectedSite );
 ```
 
@@ -68,7 +68,7 @@ case SITE_RECEIVE:
 case SITES_RECEIVE:
 case SITES_UPDATE:
 	const state = getState();
-    const selectedSite = getSelectedSite( state );
+	const selectedSite = getSelectedSite( state );
 	library.setSelectedSite( selectedSite );
 ```
 
