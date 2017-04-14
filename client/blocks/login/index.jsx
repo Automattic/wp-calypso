@@ -8,26 +8,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import FormsButton from 'components/forms/form-button';
-import FormPasswordInput from 'components/forms/form-password-input';
 import Card from 'components/card';
+import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
+import FormCheckbox from 'components/forms/form-checkbox';
 import { loginUser } from 'state/login/actions';
 import Notice from 'components/notice';
-import { externalRedirect } from 'lib/route/path';
-
-import {
-	isRequestingLogin,
-	isLoginSuccessful,
-	getError
-} from 'state/login/selectors';
+import { createFormAndSubmit } from 'lib/form';
 
 export class Login extends Component {
 	static propTypes = {
-		isRequestingLogin: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
-		isLoginSuccessful: PropTypes.bool,
 		loginError: PropTypes.string,
 		redirectLocation: PropTypes.string,
 		title: PropTypes.string,
@@ -42,15 +36,12 @@ export class Login extends Component {
 		this.state = {
 			usernameOrEmail: '',
 			password: '',
+			rememberme: false,
+			submitting: false,
+			errorMessage: '',
 		};
 		this.onChangeField = this.onChangeField.bind( this );
 		this.onSubmitForm = this.onSubmitForm.bind( this );
-	}
-
-	componentDidUpdate() {
-		if ( this.props.isLoginSuccessful ) {
-			externalRedirect( this.props.redirectLocation || '/' );
-		}
 	}
 
 	onChangeField( event ) {
@@ -61,20 +52,38 @@ export class Login extends Component {
 
 	onSubmitForm( event ) {
 		event.preventDefault();
-		this.props.loginUser( this.state.usernameOrEmail, this.state.password );
+		this.setState( {
+			submitting: true
+		} );
+		this.props.loginUser( this.state.usernameOrEmail, this.state.password ).then( () => {
+			this.setState( {
+				errorMessage: ''
+			} );
+			createFormAndSubmit( config( 'login_url' ), {
+				log: this.state.usernameOrEmail,
+				pwd: this.state.password,
+				redirect_to: this.props.redirectLocation || window.location.origin,
+				rememberme: this.state.rememberme ? 1 : 0,
+			} );
+		} ).catch( errorMessage => {
+			this.setState( {
+				submitting: false,
+				errorMessage
+			} );
+		} );
 	}
 
 	renderNotices() {
-		if ( this.props.loginError ) {
+		if ( this.state.errorMessage ) {
 			return (
-				<Notice status="is-error" text={ this.props.loginError } />
+				<Notice status="is-error" text={ this.state.errorMessage } />
 			);
 		}
 	}
 
 	render() {
 		const isDisabled = {};
-		if ( this.props.isRequestingLogin ) {
+		if ( this.state.submitting ) {
 			isDisabled.disabled = true;
 		}
 
@@ -113,7 +122,11 @@ export class Login extends Component {
 						</div>
 						<div className="login__form-remember-me">
 							<label>
-								<input type="checkbox" name="rememberme" />
+								<FormCheckbox
+									name="rememberme"
+									checked={ this.state.rememberme }
+									onChange={ this.onChangeField }
+									{ ...isDisabled } />
 								{ this.props.translate( 'Stay logged in' ) }
 							</label>
 						</div>
@@ -129,12 +142,9 @@ export class Login extends Component {
 	}
 }
 
-export default connect( state => {
-	return {
-		isRequestingLogin: isRequestingLogin( state ),
-		isLoginSuccessful: isLoginSuccessful( state ),
-		loginError: getError( state )
-	};
-}, {
-	loginUser
-} )( localize( Login ) );
+export default connect(
+	null,
+	{
+		loginUser,
+	}
+)( localize( Login ) );
