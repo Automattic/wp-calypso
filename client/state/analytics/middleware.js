@@ -1,4 +1,4 @@
- * External dependencies
+/** External dependencies
  */
 import {
 	has,
@@ -20,11 +20,11 @@ import {
 	ANALYTICS_TRACKING_ON,
 } from 'state/action-types';
 import isTracking from 'state/selectors/is-tracking';
-const config = require( 'config' );
+import config from 'config';
 
 const eventServices = {
-	ga: ( { category, action, label, value } ) => ga.recordEvent( category, action, label, value ),
-	tracks: ( { name, properties } ) => tracks.recordEvent( name, properties ),
+	ga: ( { category, action, label, value } ) => analytics.ga.recordEvent( category, action, label, value ),
+	tracks: ( { name, properties } ) => analytics.tracks.recordEvent( name, properties ),
 	fb: ( { name, properties } ) => trackCustomFacebookConversionEvent( name, properties ),
 	adwords: ( { properties } ) => trackCustomAdWordsRemarketingEvent( properties ),
 };
@@ -41,8 +41,9 @@ const loadTrackingTool = ( trackingTool, state ) => {
 	if ( trackingTool === 'Lucky Orange' && ! isTracking( state, 'Lucky Orange' ) && luckyOrangeEnabled && trackUser ) {
 		analytics.luckyOrange.addLuckyOrangeScript();
 	}
+};
 
-const statBump = ( { group, name } ) => mc.bumpStat( group, name );
+const statBump = ( { group, name } ) => analytics.mc.bumpStat( group, name );
 
 export const dispatcher = ( { meta: { analytics: analyticsMeta } }, state ) => {
 	analyticsMeta.forEach( ( { type, payload } ) => {
