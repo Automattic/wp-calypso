@@ -14,7 +14,7 @@ import {
 	some,
 	split,
 	includes,
-	startsWith,
+	startsWith
 } from 'lodash';
 import i18n from 'i18n-calypso';
 
@@ -30,7 +30,6 @@ import { isHttps, withoutHttp, addQueryArgs, urlToSlug } from 'lib/url';
 import createSelector from 'lib/create-selector';
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import versionCompare from 'lib/version-compare';
-import getComputedAttributes from 'lib/site/computed-attributes';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
 
 /**
@@ -63,17 +62,39 @@ export const getSite = createSelector(
 
 		return {
 			...site,
-			...getComputedAttributes( site ),
 			...getJetpackComputedAttributes( state, siteId ),
 			hasConflict: isSiteConflicting( state, siteId ),
 			title: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			domain: getSiteDomain( state, siteId ),
-			is_previewable: isSitePreviewable( state, siteId )
+			is_previewable: isSitePreviewable( state, siteId ),
+			options: getSiteOptions( state, siteId ),
 		};
 	},
 	( state ) => state.sites.items
 );
+
+export function getSiteOptions( state, siteId ) {
+	const site = getRawSite( state, siteId );
+	if ( ! site ) {
+		return null;
+	}
+
+	const isWpcomMappedDomain = getSiteOption( state, siteId, 'is_mapped_domain' ) && ! isJetpackSite( state, siteId );
+	const wpcomUrl = withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
+
+	// The 'standard' post format is saved as an option of '0'
+	let defaultPostFormat = getSiteOption( state, siteId, 'default_post_format' );
+	if ( ! defaultPostFormat || defaultPostFormat === '0' ) {
+		defaultPostFormat = 'standard';
+	}
+
+	return {
+		...site.options,
+		...isWpcomMappedDomain && { wpcom_url: wpcomUrl },
+		default_post_format: defaultPostFormat
+	};
+}
 
 export function getJetpackComputedAttributes( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {

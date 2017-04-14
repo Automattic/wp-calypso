@@ -4,7 +4,6 @@
 var debug = require( 'debug' )( 'calypso:site' ),
 	i18n = require( 'i18n-calypso' ),
 	isEqual = require( 'lodash/isEqual' ),
-	find = require( 'lodash/find' ),
 	omit = require( 'lodash/omit' );
 
 /**
@@ -169,57 +168,8 @@ Site.prototype.saveSettings = function( newSettings, callback ) {
 
 };
 
-/**
- * Returns a site user object by user ID
- *
- * @param  {int} userId The user ID to retrieve
- */
-Site.prototype.getUser = function( userId ) {
-	return find( this.getUsers(), { ID: userId } );
-};
-
-/**
- * Returns all of the site's users. Triggers a fetch if user data doesn't
- * already exist.
- */
-Site.prototype.getUsers = function() {
-	if ( ! this.users ) {
-		this.users = [];
-		this.fetchUsers();
-	}
-
-	return this.users;
-};
-
-/**
- * Triggers a network request to fetch all users for the current site. Emits a
- * "change" event when the users have been fetched.
- */
-Site.prototype.fetchUsers = function() {
-	if ( this.fetchingUsers ) {
-		return;
-	}
-
-	this.fetchingUsers = true;
-
-	wpcom.site( this.ID ).usersList( function( error, data ) {
-		if ( error || ! data.users ) {
-			debug( 'error fetching site users data from api', error );
-			return;
-		}
-
-		this.set( { users: data.users } );
-		this.fetchingUsers = false;
-		this.emit( 'usersFetched' );
-	}.bind( this ) );
-};
-
 Site.prototype.isUpgradeable = function() {
 	return this.capabilities && this.capabilities.manage_options;
-};
-
-Site.prototype.isCustomizable = function() {
-	return !! ( this.capabilities && this.capabilities.edit_theme_options );
 };
 
 module.exports = Site;

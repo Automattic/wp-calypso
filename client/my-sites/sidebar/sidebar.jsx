@@ -31,7 +31,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { userCan } from 'lib/site/utils';
-import { isDomainOnlySite } from 'state/selectors';
+import { isDomainOnlySite, isSiteCustomizable } from 'state/selectors';
 import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { getStatsPathForTab } from 'lib/route/path';
@@ -190,7 +190,7 @@ export class MySitesSidebar extends Component {
 			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' ),
 			themesLink;
 
-		if ( site && ! site.isCustomizable() ) {
+		if ( site && ! this.props.isSiteCustomizable ) {
 			return null;
 		}
 
@@ -670,6 +670,7 @@ function mapStateToProps( state ) {
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack: isJetpackSite( state, selectedSiteId ),
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
+		isSiteCustomizable: !! isSiteCustomizable( state, selectedSiteId ),
 	};
 }
 
