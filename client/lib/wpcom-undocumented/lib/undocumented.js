@@ -702,53 +702,6 @@ Undocumented.prototype.getStoredCards = function( fn ) {
 };
 
 /**
- * GET site menus
- *
- * @param {int|string} [siteId] The site ID
- * @param {Function} [callback] The callback function called with arguments error, data
- * @api public
- * @return {Promise} A Promise to resolve when complete
- */
-Undocumented.prototype.menus = function( siteId, callback ) {
-	debug( '/sites/:site_id/menus query' );
-
-	return this.wpcom.req.get( { path: '/sites/' + siteId + '/menus' }, callback );
-};
-
-/**
- * Update site menus
- *
- * @param {int|string} siteId the ID of the site.
- * @param {int|string} menuId use 0 to create a new menu
- * @param {object} [data] menus & locations data
- * @param {Function} [callback] called with arguments error, data
- * @api public
- */
-Undocumented.prototype.menusUpdate = function( siteId, menuId, data, callback ) {
-	debug( '/sites/:site_id/menus/:menu_id query' );
-
-	if ( menuId === 0 ) {
-		menuId = 'new';
-	}
-
-	return this.wpcom.req.post( { path: '/sites/' + siteId + '/menus/' + menuId }, data, callback );
-};
-
-/**
- * Delete a navigation menu
- *
- * @param {int|string} siteId The site ID
- * @param {int|string} menuId The menu ID
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.menusDelete = function( siteId, menuId, fn ) {
-	debug( '/sites/:site_id/menus/:menu_id/delete query' );
-
-	return this.wpcom.req.post( { path: '/sites/' + siteId + '/menus/' + menuId + '/delete' }, fn );
-};
-
-/**
  * Return a list of third-party services that WordPress.com can integrate with
  *
  * @param {Function} fn The callback function
