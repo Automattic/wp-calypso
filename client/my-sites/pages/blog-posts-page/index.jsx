@@ -19,7 +19,7 @@ import { isEnabled } from 'config';
 import { getSiteFrontPageType, getSitePostsPage } from 'state/sites/selectors';
 import { setFrontPage } from 'state/sites/actions';
 import { userCan } from 'lib/site/utils';
-import { updateSitesList } from 'my-sites/pages/helpers';
+import { updateSitesList } from '../helpers';
 
 const BlogPostsPage = React.createClass( {
 	propTypes() {
