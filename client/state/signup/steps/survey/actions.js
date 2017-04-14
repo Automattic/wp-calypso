@@ -6,19 +6,19 @@ import {
 	composeAnalytics,
 	recordCustomAdWordsRemarketingEvent,
 	recordCustomFacebookConversionEvent,
-	joinAnalytics
+	withAnalytics
 } from 'state/analytics/actions';
 
 export function setSurvey( survey ) {
 	const vertical = survey.vertical;
 	const attributes = { vertical };
-	const compositeAnalytics = composeAnalytics(
-		recordCustomAdWordsRemarketingEvent( attributes ),
-		recordCustomFacebookConversionEvent( 'VerticalSelectedEvent', attributes )
-	);
 
-	return joinAnalytics(
-		compositeAnalytics,
+	return withAnalytics(
+		composeAnalytics(
+			recordCustomAdWordsRemarketingEvent( attributes ),
+			recordCustomFacebookConversionEvent( 'VerticalSelectedEvent', attributes )
+		)
+	)(
 		{
 			type: SIGNUP_STEPS_SURVEY_SET,
 			survey
