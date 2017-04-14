@@ -10,7 +10,6 @@ var page = require( 'page' ),
  * Internal Dependencies
  */
 var user = require( 'lib/user' )(),
-	sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
 	analytics = require( 'lib/analytics' ),
 	titlecase = require( 'to-title-case' ),
@@ -18,6 +17,9 @@ var user = require( 'lib/user' )(),
 	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle;
 
 import { renderWithReduxStore } from 'lib/react-helpers';
+import { areAllSitesSingleUser } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 
 module.exports = {
 
@@ -31,15 +33,17 @@ module.exports = {
 			analyticsPageTitle = 'Blog Posts',
 			baseAnalyticsPath;
 
-		function shouldRedirectMyPosts( author, sites ) {
-			var selectedSite = sites.getSelectedSite() || {};
+		function shouldRedirectMyPosts( author ) {
+			const state = context.store.getState();
+			const siteId = getSelectedSiteId( state );
+
 			if ( ! author ) {
 				return false;
 			}
-			if ( sites.fetched && sites.allSingleSites ) {
+			if ( areAllSitesSingleUser( state ) ) {
 				return true;
 			}
-			if ( selectedSite.single_user_site || selectedSite.jetpack ) {
+			if ( isSingleUserSite( state, siteId ) || isJetpackSite( state, siteId ) ) {
 				return true;
 			}
 		}
@@ -55,12 +59,13 @@ module.exports = {
 		search = ( 'undefined' !== typeof search ) ? search : '';
 		debug( 'search: `%s`', search );
 
-		if ( shouldRedirectMyPosts( author, sites ) ) {
+		if ( shouldRedirectMyPosts( author ) ) {
 			page.redirect( context.path.replace( /\/my\b/, '' ) );
 			return;
 		}
 
-		context.store.dispatch( setTitle( i18n.translate( 'Blog Posts', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Blog Posts', { textOnly: true } ) ) );
 
 		if ( siteID ) {
 			baseAnalyticsPath = basePath + '/:site';
