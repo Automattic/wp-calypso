@@ -4,16 +4,7 @@
 import React from 'react';
 import { compact } from 'lodash';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import config from 'config';
-import {
-	hideMagicLoginRequestForm,
-	showMagicLoginInterstitialPage,
-	showMagicLoginRequestForm,
-} from 'state/login/magic-login/actions';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -24,21 +15,24 @@ import {
 	LINK_EXPIRED_PAGE,
 	REQUEST_FORM,
 } from 'state/login/magic-login/constants';
-
+import config, { isEnabled } from 'config';
+import EmailedLoginLinkSuccessfully from '../magic-login/emailed-login-link-successfully';
+import EmailedLoginLinkExpired from '../magic-login/emailed-login-link-expired';
 import {
 	getMagicLoginEmailAddressFormInput,
 	getMagicLoginCurrentView,
 } from 'state/selectors';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
 import Gridicon from 'gridicons';
+import HandleEmailedLinkForm from '../magic-login/handle-emailed-link-form';
+import {
+	hideMagicLoginRequestForm,
+	showMagicLoginInterstitialPage,
+	showMagicLoginRequestForm,
+} from 'state/login/magic-login/actions';
 import Main from 'components/main';
 import LoginBlock from 'blocks/login';
 import RequestLoginEmailForm from '../magic-login/request-login-email-form';
-import HandleEmailedLinkForm from '../magic-login/handle-emailed-link-form';
-import EmailedLoginLinkSuccessfully from '../magic-login/emailed-login-link-successfully';
-import EmailedLoginLinkExpired from '../magic-login/emailed-login-link-expired';
-import { isEnabled } from 'config';
-import { localize } from 'i18n-calypso';
 
 class Login extends React.Component {
 	onClickEnterPasswordInstead = event => {
@@ -49,7 +43,7 @@ class Login extends React.Component {
 	onMagicLoginRequestClick = event => {
 		event.preventDefault();
 		this.props.showMagicLoginRequestForm();
-	}
+	};
 
 	magicLoginMainContent() {
 		const {
@@ -114,6 +108,7 @@ class Login extends React.Component {
 	render() {
 		const {
 			magicLoginView,
+			queryArguments,
 			translate,
 		} = this.props;
 
@@ -124,7 +119,9 @@ class Login extends React.Component {
 						<div className="wp-login__container">
 							{ magicLoginView === REQUEST_FORM
 								? <RequestLoginEmailForm />
-								: <LoginBlock title={ translate( 'Log in to your account.' ) } />
+								: <LoginBlock
+									redirectLocation={ queryArguments.redirect_to }
+									title={ translate( 'Log in to your account.' ) } />
 							}
 						</div>
 						<div className="wp-login__footer">
