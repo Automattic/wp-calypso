@@ -18,8 +18,8 @@ import { getGeoCountryShort } from 'state/geo/selectors';
 const default_payment_methods = [ 'credit-card', 'paypal' ];
 
 const paymentMethodsByLocale = {
-	"de": [ 'paypal', 'credit-card' ],
-	"en-US": default_payment_methods,
+	de: [ 'paypal', 'credit-card' ],
+	'en-US': default_payment_methods,
 };
 
 /**
