@@ -778,6 +778,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledThrice;
 
 				expect( spy ).to.have.been.calledWith( {
+					meta: sinon.match.object,
 					type: THEME_TRANSFER_INITIATE_REQUEST,
 					siteId,
 				} );
