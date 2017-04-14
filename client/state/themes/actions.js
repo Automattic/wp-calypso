@@ -633,10 +633,15 @@ export function clearThemeUpload( siteId ) {
 export function initiateThemeTransfer( siteId, file, plugin ) {
 	const context = !! plugin ? 'plugin' : 'theme';
 	return dispatch => {
-		dispatch( {
+		const themeInitiateRequest = {
 			type: THEME_TRANSFER_INITIATE_REQUEST,
 			siteId,
-		} );
+		};
+
+		dispatch( withAnalytics(
+			recordTracksEvent( 'calypso_automated_transfer_inititate_request', { plugin, context } ),
+			themeInitiateRequest
+		) );
 		return wpcom.undocumented().initiateTransfer( siteId, plugin, file, ( event ) => {
 			dispatch( {
 				type: THEME_TRANSFER_INITIATE_PROGRESS,
