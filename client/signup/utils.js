@@ -12,8 +12,7 @@ import merge from 'lodash/merge';
  */
 import i18nUtils from 'lib/i18n-utils';
 import steps from 'signup/config/steps';
-import flows from 'signup/config/flows';
-import { defaultFlowName } from 'signup/config/flows';
+import flows, { defaultFlowName } from 'signup/config/flows';
 import formState from 'lib/form-state';
 const user = require( 'lib/user' )();
 
