@@ -17,7 +17,6 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { loginUser } from 'state/login/actions';
 import Notice from 'components/notice';
 import { createFormAndSubmit } from 'lib/form';
-import { getError } from 'state/login/selectors';
 
 export class Login extends Component {
 	static propTypes = {
@@ -39,6 +38,7 @@ export class Login extends Component {
 			password: '',
 			rememberme: false,
 			submitting: false,
+			errorMessage: '',
 		};
 		this.onChangeField = this.onChangeField.bind( this );
 		this.onSubmitForm = this.onSubmitForm.bind( this );
@@ -56,23 +56,27 @@ export class Login extends Component {
 			submitting: true
 		} );
 		this.props.loginUser( this.state.usernameOrEmail, this.state.password ).then( () => {
+			this.setState( {
+				errorMessage: ''
+			} );
 			createFormAndSubmit( config( 'login_url' ), {
 				log: this.state.usernameOrEmail,
 				pwd: this.state.password,
 				redirect_to: this.props.redirectLocation || window.location.origin,
 				rememberme: this.state.rememberme ? 1 : 0,
 			} );
-		} ).catch( () => {
+		} ).catch( errorMessage => {
 			this.setState( {
-				submitting: false
+				submitting: false,
+				errorMessage
 			} );
 		} );
 	}
 
 	renderNotices() {
-		if ( this.props.loginError ) {
+		if ( this.state.errorMessage ) {
 			return (
-				<Notice status="is-error" text={ this.props.loginError } />
+				<Notice status="is-error" text={ this.state.errorMessage } />
 			);
 		}
 	}
@@ -138,10 +142,9 @@ export class Login extends Component {
 	}
 }
 
-export default connect( state => {
-	return {
-		loginError: getError( state )
-	};
-}, {
-	loginUser
-} )( localize( Login ) );
+export default connect(
+	null,
+	{
+		loginUser,
+	}
+)( localize( Login ) );
