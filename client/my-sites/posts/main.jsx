@@ -138,31 +138,33 @@ const PostsMain = React.createClass( {
 
 } );
 
-export default connect(
-	( state, { author } ) => {
-		const siteId = getSelectedSiteId( state );
-		const draftsQuery = {
-			author,
-			number: 6,
-			order_by: 'modified',
-			status: 'draft',
-			type: 'post',
-		};
+function mapStateToProps( state, { author } ) {
+	const siteId = getSelectedSiteId( state );
+	const draftsQuery = {
+		author,
+		number: 6,
+		order_by: 'modified',
+		status: 'draft',
+		type: 'post',
+	};
 
-		return {
-			adminUrl: getSiteAdminUrl( state, siteId, 'plugins.php?plugin_status=upgrade' ),
-			drafts: getSitePostsForQueryIgnoringPage( state, siteId, draftsQuery ),
-			draftCount: getAllPostCount( state, siteId, 'post', 'draft' ),
-			draftsQuery,
-			hasMinimumJetpackVersion: siteHasMinimumJetpackVersion( state, siteId ),
-			isJetpack: isJetpackSite( state, siteId ),
-			loadingDrafts: isRequestingSitePostsForQuery( state, siteId, draftsQuery ),
-			myDraftCount: getMyPostCount( state, siteId, 'post', 'draft' ),
-			newPostPath: getEditorNewPostPath( state, siteId ),
-			siteId,
-			siteSlug: getSiteSlug( state, siteId )
-		};
-	},
+	return {
+		adminUrl: getSiteAdminUrl( state, siteId, 'plugins.php?plugin_status=upgrade' ),
+		drafts: getSitePostsForQueryIgnoringPage( state, siteId, draftsQuery ),
+		draftCount: getAllPostCount( state, siteId, 'post', 'draft' ),
+		draftsQuery,
+		hasMinimumJetpackVersion: siteHasMinimumJetpackVersion( state, siteId ),
+		isJetpack: isJetpackSite( state, siteId ),
+		loadingDrafts: isRequestingSitePostsForQuery( state, siteId, draftsQuery ),
+		myDraftCount: getMyPostCount( state, siteId, 'post', 'draft' ),
+		newPostPath: getEditorNewPostPath( state, siteId ),
+		siteId,
+		siteSlug: getSiteSlug( state, siteId )
+	};
+}
+
+export default connect(
+	mapStateToProps,
 	{
 		warningNotice,
 	},
