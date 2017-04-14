@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { PropTypes } from 'react';
-import { last } from 'lodash';
+import { last, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,7 +35,7 @@ export class Instagram extends SharingService {
 	};
 
 	componentWillReceiveProps( { availableExternalAccounts } ) {
-		if ( this.props.availableExternalAccounts.length !== availableExternalAccounts.length ) {
+		if ( ! isEqual( this.props.availableExternalAccounts, availableExternalAccounts ) ) {
 			this.setState( {
 				isConnecting: false,
 				isDisconnecting: false,
@@ -59,17 +59,6 @@ export class Instagram extends SharingService {
 			} ), { id: 'publicize' } );
 		}
 	}
-
-	/**
-	 * Get connections to render
-	 *
-	 * @return {array} connections.
-	 */
-	getConnections() {
-		return this.props.keyringConnections.map( connection => {
-			return { ...connection, keyring_connection_ID: connection.ID };
-		} );
-	}
 }
 
 export default connectFor(
@@ -79,6 +68,7 @@ export default connectFor(
 			...props,
 			removableConnections: props.keyringConnections,
 			fetchConnection: props.requestKeyringConnections,
+			siteUserConnections: props.keyringConnections.map( conn => ( { ...conn, keyring_connection_ID: conn.ID } ) ),
 		};
 	},
 	{

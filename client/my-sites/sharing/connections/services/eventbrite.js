@@ -74,17 +74,6 @@ export class Eventbrite extends SharingService {
 			} ), { id: 'publicize' } );
 		}
 	}
-
-	/**
-	 * Get connections to render
-	 *
-	 * @return {array} connections.
-	 */
-	getConnections() {
-		return this.props.keyringConnections.map( connection => {
-			return { ...connection, keyring_connection_ID: connection.ID };
-		} );
-	}
 }
 
 export default connectFor(
@@ -95,6 +84,7 @@ export default connectFor(
 			saveRequests: state.siteSettings.saveRequests,
 			removableConnections: props.keyringConnections,
 			fetchConnection: props.requestKeyringConnections,
+			siteUserConnections: props.keyringConnections.map( conn => ( { ...conn, keyring_connection_ID: conn.ID } ) ),
 		};
 	},
 	{
