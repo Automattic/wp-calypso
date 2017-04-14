@@ -47,6 +47,7 @@ export getMedia from './get-media';
 export getMediaItem from './get-media-item';
 export getMediaUrl from './get-media-url';
 export getMenuItemTypes from './get-menu-item-types';
+export getMenusUrl from './get-menus-url';
 export getPastBillingTransaction from './get-past-billing-transaction';
 export getPastBillingTransactions from './get-past-billing-transactions';
 export getPosterUploadProgress from './get-poster-upload-progress';

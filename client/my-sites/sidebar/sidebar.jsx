@@ -31,7 +31,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { userCan } from 'lib/site/utils';
-import { isDomainOnlySite } from 'state/selectors';
+import { getMenusUrl, getPrimarySiteId, isDomainOnlySite } from 'state/selectors';
 import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { getStatsPathForTab } from 'lib/route/path';
@@ -224,31 +224,9 @@ export class MySitesSidebar extends Component {
 	}
 
 	menus() {
-		const site = this.getSelectedSite();
-		let menusLink = '/customize/menus' + this.siteSuffix();
-
-		if ( ! site ) {
+		const { menusUrl } = this.props;
+		if ( ! menusUrl ) {
 			return null;
-		}
-
-		if ( ! site.capabilities ) {
-			return null;
-		}
-
-		if ( site.capabilities && ! site.capabilities.edit_theme_options ) {
-			return null;
-		}
-
-		if ( ! this.isSingle() ) {
-			return null;
-		}
-
-		if ( ! this.props.currentUser.email_verified ) {
-			menusLink = '/customize' + this.siteSuffix();
-		}
-
-		if ( site.jetpack ) {
-			menusLink = site.options.admin_url + 'customize.php?autofocus[panel]=nav_menus';
 		}
 
 		return (
@@ -256,7 +234,7 @@ export class MySitesSidebar extends Component {
 				tipTarget="menus"
 				label={ this.props.translate( 'Menus' ) }
 				className={ this.itemLinkClass( '/menus', 'menus' ) }
-				link={ menusLink }
+				link={ menusUrl }
 				onNavigate={ this.onNavigate }
 				icon="menus"
 				preloadSectionName="menus" />
@@ -663,13 +641,17 @@ export class MySitesSidebar extends Component {
 }
 
 function mapStateToProps( state ) {
+	const currentUser = getCurrentUser( state );
 	const selectedSiteId = getSelectedSiteId( state );
+	const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
+	const singleSiteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) );
 	return {
-		currentUser: getCurrentUser( state ),
+		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack: isJetpackSite( state, selectedSiteId ),
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
+		menusUrl: getMenusUrl( state, singleSiteId ),
 	};
 }
 
