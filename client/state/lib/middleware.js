@@ -19,7 +19,7 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 /**
- * Sets the currentSite and siteCount for lib/analytics. This is used to
+ * Sets the selectedSite and siteCount for lib/analytics. This is used to
  * populate extra fields on tracks analytics calls.
  *
  * @param {function} dispatch - redux dispatch function
@@ -36,7 +36,7 @@ const updateSelectedSiteForAnalytics = ( dispatch, action, getState ) => {
 };
 
 /**
- * Sets the currentSite for lib/cart/store
+ * Sets the selectedSiteId for lib/cart/store
  *
  * @param {function} dispatch - redux dispatch function
  * @param {object}   action   - the dispatched action

@@ -47,7 +47,7 @@ case MY_EXAMPLE_LIBRARY_ACTION:
 ### Use Redux Middleware to setCurrentSite
 
 For libraries that are too large to port, or have too many usages, 
-we can try working around this by setting the selectedSite when it
+we can try working around this by setting the selectedSite when
 sites change (eg fetches complete or user sets another site).
 
 First add a new setter function to the library, for example:
@@ -57,7 +57,6 @@ library.setSelectedSite( selectedSite );
 ```
 
 Then add a handler in this middleware:
-And in this middleware, we can create a handler:
 ```jsx
 import library from 'lib/example'
 //... 
