@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, includes, noop, partition } from 'lodash';
+import { get, includes, noop, partition, flow } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -167,7 +167,14 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	onCancel: () => recordTracksEvent( 'calypso_automated_transfer_eligibility_cancel' )
+	trackCancel: () => recordTracksEvent( 'calypso_automated_transfer_eligibility_cancel' ),
+	trackProceed: () => recordTracksEvent( 'calypso_automated_transfer_eligibilty_proceed' ),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( EligibilityWarnings ) );
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const onCancel = dispatchProps.trackCancel;
+	const onProceed = flow( ownProps.onProceed, dispatchProps.trackProceed );
+	return Object.assign( {}, ownProps, stateProps, dispatchProps, { onCancel, onProceed } );
+};
+
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( localize( EligibilityWarnings ) );
