@@ -23,7 +23,8 @@ import config from 'config';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getPreviewURL } from 'lib/posts/utils';
-import { isSitePreviewable } from 'state/sites/selectors';
+import { getSite, isSitePreviewable } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 import Comments from 'blocks/comments';
 import PostShare from 'my-sites/post-share';
@@ -217,14 +218,18 @@ const Post = React.createClass( {
 	},
 
 	getHeader() {
-		const selectedSite = this.props.sites.getSelectedSite();
-		const site = this.getSite();
+		const { postSite: site } = this.props;
 
-		if ( selectedSite && site.single_user_site ) {
+		if ( this.props.selectedSiteId && site.single_user_site ) {
 			return null;
 		}
 
-		return <PostHeader site={ site } author={ this.props.post.author ? this.props.post.author.name : '' } path={ this.props.path } showAuthor={ ! site.single_user_site } />;
+		return (
+			<PostHeader site={ site }
+				author={ this.props.post.author ? this.props.post.author.name : '' }
+				path={ this.props.path }
+				showAuthor={ ! site.single_user_site } />
+		);
 	},
 
 	getContent() {
@@ -242,7 +247,7 @@ const Post = React.createClass( {
 
 	getContentLinkURL() {
 		const post = this.props.post;
-		const site = this.getSite();
+		const { postSite: site } = this.props;
 
 		if ( utils.userCan( 'edit_post', post ) ) {
 			return utils.getEditURL( post, site );
@@ -264,10 +269,6 @@ const Post = React.createClass( {
 		this.setState( {
 			showMoreOptions: ( visibility === 'show' )
 		} );
-	},
-
-	getSite() {
-		return this.props.sites.getSite( this.props.post.site_ID );
 	},
 
 	toggleComments() {
@@ -300,7 +301,7 @@ const Post = React.createClass( {
 	},
 
 	render() {
-		const site = this.getSite();
+		const { postSite: site } = this.props;
 
 		return (
 			<Card tagName="article" className={ this.getPostClass() }>
@@ -348,10 +349,12 @@ const Post = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => {
+	( state, { post } ) => {
 		return {
-			isPreviewable: false !== isSitePreviewable( state, props.post.site_ID ),
-			previewURL: getPreviewURL( props.post ),
+			isPreviewable: false !== isSitePreviewable( state, post.site_ID ),
+			postSite: getSite( state, post.site_ID ),
+			previewURL: getPreviewURL( post ),
+			selectedSiteId: getSelectedSiteId( state )
 		};
 	},
 	{ setPreviewUrl, setLayoutFocus }

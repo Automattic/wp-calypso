@@ -230,7 +230,6 @@ var Posts = React.createClass( {
 				key={ post.global_ID }
 				post={ post }
 				postImages={ postImages }
-				sites={ this.props.sites }
 				fullWidthPost={ this.state.postsAtFullWidth }
 				path={ route.sectionify( this.props.context.pathname ) }
 			/>
