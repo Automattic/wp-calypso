@@ -11,7 +11,7 @@ import { SharingService, connectFor } from '../service';
 import { deleteKeyringConnection } from 'state/sharing/keyring/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 
-export class Evenrbrite extends SharingService {
+export class Eventbrite extends SharingService {
 	static propTypes = {
 		...SharingService.propTypes,
 		saveSiteSettings: PropTypes.func,
