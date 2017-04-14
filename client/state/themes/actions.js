@@ -631,6 +631,7 @@ export function clearThemeUpload( siteId ) {
  * @returns {Promise} for testing purposes only
  */
 export function initiateThemeTransfer( siteId, file, plugin ) {
+	const context = !! plugin ? 'plugin' : 'theme';
 	return dispatch => {
 		dispatch( {
 			type: THEME_TRANSFER_INITIATE_REQUEST,
@@ -656,7 +657,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 					transferId: transfer_id,
 				};
 				dispatch( withAnalytics(
-					recordTracksEvent( 'calypso_automated_transfer_inititate_success', { plugin } ),
+					recordTracksEvent( 'calypso_automated_transfer_inititate_success', { plugin, context } ),
 					themeInitiateSuccessAction
 				) );
 				dispatch( pollThemeTransferStatus( siteId, transfer_id ) );
@@ -691,6 +692,7 @@ function transferStatusFailure( siteId, transferId, error ) {
 
 // receive a transfer initiation failure
 function transferInitiateFailure( siteId, error, plugin ) {
+	const context = !! plugin ? 'plugin' : 'theme';
 	return dispatch => {
 		const themeInitiateFailureAction = {
 			type: THEME_TRANSFER_INITIATE_FAILURE,
@@ -698,7 +700,7 @@ function transferInitiateFailure( siteId, error, plugin ) {
 			error,
 		};
 		dispatch( withAnalytics(
-			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', { plugin } ),
+			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', { plugin, context } ),
 			themeInitiateFailureAction
 		) );
 	};
