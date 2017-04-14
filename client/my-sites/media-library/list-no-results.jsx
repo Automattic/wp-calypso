@@ -55,7 +55,7 @@ module.exports = React.createClass( {
 					components: {
 						searchTerm: <em>{ this.props.search }</em>
 					},
-					context: 'Media no search results'
+					context: 'Media search results'
 				} );
 				break;
 			default:

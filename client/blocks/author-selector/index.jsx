@@ -96,7 +96,7 @@ const SwitcherShell = React.createClass( {
 						<Search
 							compact
 							onSearch={ this._onSearch }
-							placeholder={ this.translate( 'Find Author…', { context: 'search label' } ) }
+							placeholder={ this.translate( 'Find Author...', { context: 'search label' } ) }
 							delaySearch={ true }
 							ref="authorSelectorSearch"
 						/>

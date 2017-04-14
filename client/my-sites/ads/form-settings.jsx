@@ -343,7 +343,7 @@ const AdsFormSettings = React.createClass( {
 				</FormFieldset>
 
 				<FormFieldset disabled={ 'yes' !== this.state.us_resident }>
-					<FormLabel htmlFor="city">{ translate( 'City' ) }</FormLabel>
+					<FormLabel htmlFor="city">{ this.translate( 'Country' ) }</FormLabel>
 					<FormTextInput
 						name="city"
 						id="city"
@@ -384,6 +384,7 @@ const AdsFormSettings = React.createClass( {
 					<span>{ this.props.translate( 'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}.', {
 						components: { a: <a href="https://wordpress.com/automattic-ads-tos/" target="_blank" rel="noopener noreferrer" /> }
 					} ) }</span>
+          <span>{ this.translate( 'Bogus test string' ) }</span>
 				</FormLabel>
 			</FormFieldset>
 		);

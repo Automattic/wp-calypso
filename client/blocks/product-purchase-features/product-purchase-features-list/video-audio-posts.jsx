@@ -16,6 +16,9 @@ export default localize( ( { selectedSite, translate } ) => {
 			<PurchaseDetail
 				icon="image-multiple"
 				title={ translate( 'Video and audio posts' ) }
+				trailing_space_test={ translate( 'Just a random string with trailing space ' ) }
+				leading_space_test={ translate( ' A completely different string with space that is leading' ) }
+				trailing_leadin_space_test={ translate( '  this is a test string, that has both leading AND trailing space ' ) }
 				description={
 					translate(
 						'Enrich your posts with video and audio, uploaded directly on your site. ' +

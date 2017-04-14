@@ -172,8 +172,8 @@ export default React.createClass( {
 						<Button compact primary onClick={ this.props.updateAllPlugins } >
 							{
 								this.translate(
-									'Update %(numUpdates)d Plugin',
-									'Update %(numUpdates)d Plugins',
+									'Updated %(numUpdates)d Plugin',
+									'Updated %(numUpdates)d Plugins',
 									{
 										context: 'button label',
 										count: this.props.pluginUpdateCount,
@@ -307,7 +307,7 @@ export default React.createClass( {
 			<SelectDropdown compact
 					className="plugin-list-header__actions_dropdown"
 					key="plugin-list-header__actions_dropdown"
-					selectedText={ this.translate( 'Actions' ) } >
+					selectedText={ this.translate( 'Actions', { context: 'context added' }) } >
 
 				<DropdownItem key="plugin__actions_title" selected={ true } value="Actions">
 					{ this.translate( 'Actions' ) }
