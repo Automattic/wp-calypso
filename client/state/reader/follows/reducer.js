@@ -21,8 +21,7 @@ import { prepareComparableUrl } from './utils';
 import { createReducer } from 'state/utils';
 
 function updatePostSubscription( state, payload, shouldSkipUpdate, newProps ) {
-	const blogId = Number( payload.blogId );
-	const follow = find( state, item => +item.blog_ID === blogId );
+	const follow = find( state, { blog_ID: +payload.blogId } );
 	if ( ! follow ) {
 		return state;
 	}
@@ -59,7 +58,7 @@ function skipPostUnsubscription( current ) {
 }
 
 function updateCommentSubscription( state, blogId, value ) {
-	const follow = find( state, item => item.blog_ID == blogId ); //eslint-disable-line eqeqeq
+	const follow = find( state, { blog_ID: +blogId } ); //eslint-disable-line eqeqeq
 	if ( ! follow ) {
 		return state;
 	}

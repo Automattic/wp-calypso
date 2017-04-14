@@ -72,7 +72,7 @@ describe( 'comment-email-subscriptions', () => {
 	} );
 
 	describe( 'receiveCommentEmailUnsubscriptionError', () => {
-		it( 'should dispatch an error notice and subscribe action', () => {
+		it( 'should dispatch an error notice and subscribe action through next', () => {
 			const dispatch = spy();
 			const nextSpy = spy();
 			receiveCommentEmailUnsubscriptionError(

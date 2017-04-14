@@ -47,7 +47,6 @@ export function receivePostEmailSubscription( store, action, next, response ) {
 
 export function receivePostEmailSubscriptionError( { dispatch }, action, next ) {
 	dispatch( errorNotice( translate( 'Sorry, we had a problem subscribing. Please try again.' ) ) );
-	// dispatch an unsubscribe
 	next( unsubscribeToNewPostEmail( action.payload.blogId ) );
 }
 

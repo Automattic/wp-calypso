@@ -30,7 +30,6 @@ export function receiveCommentEmailSubscription( store, action, next, response )
 	// validate that it worked
 	const subscribed = !! ( response && response.subscribed );
 	if ( ! subscribed ) {
-		// shoot. something went wrong.
 		receiveCommentEmailSubscriptionError( store, action, next );
 		return;
 	}
@@ -38,7 +37,6 @@ export function receiveCommentEmailSubscription( store, action, next, response )
 
 export function receiveCommentEmailSubscriptionError( { dispatch }, action, next ) {
 	dispatch( errorNotice( translate( 'Sorry, we had a problem subscribing. Please try again.' ) ) );
-	// dispatch an unsubscribe
 	next( unsubscribeToNewCommentEmail( action.payload.blogId ) );
 }
 
