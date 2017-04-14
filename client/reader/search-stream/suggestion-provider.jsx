@@ -11,6 +11,7 @@ import { map, sampleSize } from 'lodash';
 import i18nUtils from 'lib/i18n-utils';
 import { suggestions } from 'reader/search-stream/suggestions';
 import { getReaderFollowedTags } from 'state/selectors';
+import analytics from 'lib/analytics';
 
 /**
  * Build suggestions from subscribed tags
@@ -30,9 +31,24 @@ function suggestionsFromTags( count, tags ) {
 
 function suggestionsFromPicks( count ) {
 	const lang = i18nUtils.getLocaleSlug().split( '-' )[ 0 ];
+	const pickSuggestions = [];
+	let sampleSuggestions = {};
 
 	if ( suggestions[ lang ] ) {
-		return sampleSize( suggestions[ lang ], count );
+		sampleSuggestions = sampleSize( suggestions[ lang ], count );
+
+		for ( let i = 0; i < sampleSuggestions.length; i++ ) {
+			pickSuggestions.push( {
+				suggestion: sampleSuggestions[ i ],
+				railcar: {
+					railcar: analytics.tracks.createRandomId() + '-' + i,
+					ui_algo: 'suggestions-from-picks-1',
+					ui_position: i,
+				}
+			} );
+		}
+
+		return pickSuggestions;
 	}
 	return null;
 }
