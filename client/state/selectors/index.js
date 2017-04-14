@@ -13,6 +13,7 @@
  * to its individual file.
  */
 
+export areAllSitesSingleUser from './are-all-sites-single-user';
 export areSitePermalinksEditable from './are-site-permalinks-editable';
 export canCurrentUser from './can-current-user';
 export countPostLikes from './count-post-likes';
