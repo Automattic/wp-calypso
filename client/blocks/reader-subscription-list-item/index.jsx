@@ -24,9 +24,9 @@ function ReaderSubscriptionListItem( {
 	translate,
 	followSource,
 } ) {
-	const siteTitle = feed && feed.name;
+	const siteTitle = ( feed && feed.name ) || ( site && site.title );
 	const siteAuthor = site && site.owner;
-	const siteExcerpt = feed && feed.description;
+	const siteExcerpt = ( feed && feed.description ) || ( site && site.description );
 	// prefer a users name property
 	// if that doesn't exist settle for combining first and last name
 	const authorName = siteAuthor && ( siteAuthor.name ||
