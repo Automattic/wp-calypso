@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { List, WindowScroller } from 'react-virtualized';
 import ConnectedSubscriptionListItem from './connected-subscription-list-item';
 
 /**
@@ -11,26 +10,13 @@ import ConnectedSubscriptionListItem from './connected-subscription-list-item';
 
 /**
  * SitesWindowScroller is a component that takes in a list of site/feed objects.
- * It renders a react-virtualized WindowScroller containing a list of the sites.
+ * It renders a list of the sites/feeds.
  *
  * @returns {object} SitesWindowScroller React Component
  */
 class SitesWindowScroller extends Component {
 	static propTypes = {
 		sites: PropTypes.array.isRequired,
-	}
-
-	sitesRowRenderer = ( { index, key, style } ) => {
-		const site = this.props.sites[ index ];
-		return (
-			<div key={ key } style={ style }>
-					<ConnectedSubscriptionListItem
-						url={ site.URL }
-						feedId={ +site.feed_ID }
-						siteId={ +site.blog_ID }
-					/>
-			</div>
-		);
 	};
 
 	render() {
@@ -38,19 +24,13 @@ class SitesWindowScroller extends Component {
 
 		return (
 			<div className="following-manage__sites-window-scroller">
-				<WindowScroller>
-					{ ( { height, scrollTop } ) => (
-						<List
-							autoHeight
-							height={ height }
-							rowCount={ sites.length }
-							rowHeight={ 83 } // TODO: figure out what should really go here...
-							rowRenderer={ this.sitesRowRenderer }
-							scrollTop={ scrollTop }
-							width={ width }
-						/>
-					)}
-				</WindowScroller>
+				{ sites.map( site => {
+					return (
+						<div key={ site.URL } style={ { width } }>
+							<ConnectedSubscriptionListItem url={ site.URL } feedId={ +site.feed_ID } siteId={ +site.blog_ID } />
+						</div>
+					);
+				} ) }
 			</div>
 		);
 	}
