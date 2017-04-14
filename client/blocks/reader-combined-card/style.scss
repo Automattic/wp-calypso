@@ -36,9 +36,11 @@
 	margin-top: 4px;
 }
 
-/* Posts */
+// Posts
 .reader-combined-card__post-details {
 	font-family: $serif;
+	overflow: hidden;
+	white-space: nowrap;
 	width: 100%;
 
 	@include breakpoint( "<960px" ) {
@@ -71,7 +73,7 @@
 	}
 
 	&::after {
-		@include long-content-fade( $size: 10% );
+		@include long-content-fade( $size: 5% );
 		height: 16px * 1.4;
 	}
 }
