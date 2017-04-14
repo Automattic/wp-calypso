@@ -21,42 +21,37 @@ import { setFrontPage } from 'state/sites/actions';
 import { userCan } from 'lib/site/utils';
 import { updateSitesList } from '../helpers';
 
-const BlogPostsPage = React.createClass( {
-	propTypes() {
-		return {
-			site: React.PropTypes.object,
-		};
-	},
+class BlogPostsPage extends React.Component {
 
-	getDefaultProps: function() {
-		return {
-			translate: identity,
-		};
-	},
+	static propTypes = {
+		site: React.PropTypes.object,
+	}
 
-	getInitialState: function() {
-		return {
-			showPageActions: false
-		};
-	},
+	static defaultProps = {
+		translate: identity,
+	}
 
-	togglePageActions: function() {
+	state = {
+		showPageActions: false,
+	}
+
+	togglePageActions = () => {
 		this.setState( { showPageActions: ! this.state.showPageActions } );
-	},
+	}
 
-	setAsHomepage: function() {
+	setAsHomepage = () => {
 		this.setState( { showPageActions: false } );
 		this.props.setFrontPage( this.props.site.ID, 0, updateSitesList );
-	},
+	}
 
-	getSetAsHomepageItem: function() {
+	renderSetAsHomepageItem() {
 		return (
 			<PopoverMenuItem onClick={ this.setAsHomepage }>
 				<Gridicon icon="house" size={ 18 } />
 				{ this.props.translate( 'Set as Homepage' ) }
 			</PopoverMenuItem>
 		);
-	},
+	}
 
 	render() {
 		const { translate } = this.props;
@@ -107,7 +102,7 @@ const BlogPostsPage = React.createClass( {
 								position={ 'bottom left' }
 								context={ this.refs && this.refs.popoverMenuButton }
 							>
-								{ this.getSetAsHomepageItem() }
+								{ this.renderSetAsHomepageItem() }
 							</PopoverMenu>
 						</div>
 					: null
@@ -116,7 +111,7 @@ const BlogPostsPage = React.createClass( {
 			</CompactCard>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state, props ) => {
