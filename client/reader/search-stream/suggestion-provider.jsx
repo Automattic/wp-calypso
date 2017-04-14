@@ -20,11 +20,27 @@ import analytics from 'lib/analytics';
  * @return {Array}       An array of suggestions, or null if no tags where provided
  */
 function suggestionsFromTags( count, tags ) {
+	const tagSuggestions = [];
+	let sampleSuggestions = {};
 	if ( tags ) {
 		if ( tags.length <= count ) {
 			return [];
 		}
-		return map( sampleSize( tags, count ), tag => ( tag.displayName || tag.slug ).replace( /-/g, ' ' ) );
+		sampleSuggestions = map( sampleSize( tags, count ), tag => ( tag.displayName || tag.slug ).replace( /-/g, ' ' ) );
+
+		for ( let i = 0; i < sampleSuggestions.length; i++ ) {
+			tagSuggestions.push( {
+				text: sampleSuggestions[ i ],
+				railcar: {
+					railcar: analytics.tracks.createRandomId() + '-' + i,
+					ui_algo: 'read:search-suggestions:tags/1',
+					ui_position: i,
+					rec_result: sampleSuggestions[ i ],
+				}
+			} );
+		}
+
+		return tagSuggestions;
 	}
 	return null;
 }
@@ -39,11 +55,12 @@ function suggestionsFromPicks( count ) {
 
 		for ( let i = 0; i < sampleSuggestions.length; i++ ) {
 			pickSuggestions.push( {
-				suggestion: sampleSuggestions[ i ],
+				text: sampleSuggestions[ i ],
 				railcar: {
 					railcar: analytics.tracks.createRandomId() + '-' + i,
-					ui_algo: 'suggestions-from-picks-1',
+					ui_algo: 'read:search-suggestions:picks/1',
 					ui_position: i,
+					rec_result: sampleSuggestions[ i ],
 				}
 			} );
 		}
@@ -54,17 +71,24 @@ function suggestionsFromPicks( count ) {
 }
 
 function getSuggestions( count, tags ) {
-	const tagSuggestions = suggestionsFromTags( count, tags );
-	if ( tagSuggestions === null ) {
+	let currentSuggestions = suggestionsFromTags( count, tags );
+	if ( currentSuggestions === null ) {
 		// return null to supperess showing any suggestions until tag subscriptions load
 		return null;
 	}
 
-	if ( tagSuggestions.length ) {
-		return tagSuggestions;
+	if ( ! currentSuggestions.length ) {
+		currentSuggestions = suggestionsFromPicks( count );
 	}
 
-	return suggestionsFromPicks( count );
+	trackSuggestionRailcarRender( currentSuggestions );
+	return currentSuggestions;
+}
+
+function trackSuggestionRailcarRender( suggestionsToTrack ) {
+	for ( let i = 0; i < suggestionsToTrack.length; i++ ) {
+		analytics.tracks.recordEvent( 'calypso_traintracks_render', suggestionsToTrack[ i ].railcar );
+	}
 }
 
 const SuggestionsProvider = ( Element, count = 3 ) => class extends Component {
