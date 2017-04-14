@@ -18,7 +18,7 @@ Great question. In some cases, multiple users will connect their WordPress.com a
 
 #### API Communications
 
-1. We learn if the Jetpack module is active or not via the `verifyModulesActive` method on the Jetpack site component. This communicates directly with the site via a GET request to a Jetpack endpoint `/sites/:site_id:/jetpack/modules/`.
+1. We learn if the Jetpack module is active or not via the `isModuleActive` method on the Jetpack site component. This communicates directly with the site via a GET request to a Jetpack endpoint `/sites/:site_id:/jetpack/modules/`.
 
 2. We activate / deactivate the module by a POST request to a Jetpack endpoint `/sites/:site_id:/jetpack/modules/monitor`.
 

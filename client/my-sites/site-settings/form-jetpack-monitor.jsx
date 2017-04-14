@@ -55,13 +55,9 @@ module.exports = protectForm( React.createClass( {
 			}
 		} ).bind( this ) );
 
-		site.verifyModulesActive( [ 'monitor' ], ( function( error, moduleStatus ) {
-			if ( ! error ) {
-				this.setState( { enabled: moduleStatus } );
-			} else {
-				debug( 'error getting module status', error );
-			}
-		} ).bind( this ) );
+		this.setState( {
+			enabled: site.isModuleActive( 'monitor' )
+		} );
 	},
 
 	prompt: function() {

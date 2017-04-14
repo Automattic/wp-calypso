@@ -336,7 +336,7 @@ module.exports = {
 		}
 	},
 
-	jetpackModuleActive( moduleIds, redirect ) {
+	jetpackModuleActive( moduleId, redirect ) {
 		return function( context, next ) {
 			const site = sites.getSelectedSite();
 
@@ -344,13 +344,11 @@ module.exports = {
 				return next();
 			}
 
-			site.verifyModulesActive( moduleIds, function( error, supported ) {
-				if ( supported || false === redirect ) {
-					next();
-				} else {
-					page.redirect( 'string' === typeof redirect ? redirect : '/stats' );
-				}
-			} );
+			if ( site.isModuleActive( moduleId ) || false === redirect ) {
+				next();
+			} else {
+				page.redirect( 'string' === typeof redirect ? redirect : '/stats' );
+			}
 		};
 	},
 
