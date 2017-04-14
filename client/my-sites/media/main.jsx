@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import page from 'page';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import MediaLibrary from 'my-sites/media-library';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import observe from 'lib/mixins/data-observe';
 import Dialog from 'components/dialog';
 import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
 import ImageEditor from 'blocks/image-editor';
@@ -19,76 +19,74 @@ import MediaLibrarySelectedData from 'components/data/media-library-selected-dat
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import accept from 'lib/accept';
 
-export default React.createClass( {
-	displayName: 'Media',
+class Media extends Component {
 
-	mixins: [ observe( 'sites' ) ],
+	static propTypes = {
+		selectedSite: PropTypes.object,
+		selectedSiteSlug: PropTypes.string,
+		filter: PropTypes.string,
+		search: PropTypes.string
+	};
 
-	propTypes: {
-		sites: React.PropTypes.object
-	},
+	state = {
+		editedItem: null,
+		currentDetail: null,
+		selectedImages: [],
+	};
 
-	getInitialState: function() {
-		return {
-			editedItem: null,
-			currentDetail: null,
-			selectedImages: [],
-		};
-	},
-
-	componentDidMount: function() {
+	componentDidMount() {
 		this.setState( {
 			containerWidth: this.refs.container.clientWidth
 		} );
-	},
+	}
 
-	onFilterChange: function( filter ) {
+	onFilterChange = ( filter ) => {
 		let redirect = '/media';
 
 		if ( filter ) {
 			redirect += '/' + filter;
 		}
 
-		if ( this.props.sites.selected ) {
-			redirect += '/' + this.props.sites.selected;
+		if ( this.props.selectedSiteSlug ) {
+			redirect += '/' + this.props.selectedSiteSlug;
 		}
 
 		page( redirect );
-	},
+	};
 
-	openDetailsModalForASingleImage( image ) {
+	openDetailsModalForASingleImage = ( image ) => {
 		this.setState( {
 			currentDetail: 0,
 			selectedImages: [ image ],
 		} );
-	},
+	};
 
-	openDetailsModalForAllSelected() {
-		const site = this.props.sites.getSelectedSite();
+	openDetailsModalForAllSelected = () => {
+		const site = this.props.selectedSite;
 		const selected = MediaLibrarySelectedStore.getAll( site.ID );
 
 		this.setState( {
 			currentDetail: 0,
 			selectedImages: selected
 		} );
-	},
+	};
 
-	closeDetailsModal() {
+	closeDetailsModal = () => {
 		this.setState( { editedItem: null, currentDetail: null, selectedImages: [] } );
-	},
+	};
 
-	editImage() {
+	editImage = () => {
 		this.setState( { currentDetail: null, editedItem: this.state.currentDetail } );
-	},
+	};
 
-	onImageEditorCancel: function( imageEditorProps ) {
+	onImageEditorCancel = ( imageEditorProps ) => {
 		const {	resetAllImageEditorState } = imageEditorProps;
 		this.setState( { currentDetail: this.state.editedItem, editedItem: null } );
 
 		resetAllImageEditorState();
-	},
+	};
 
-	onImageEditorDone( error, blob, imageEditorProps ) {
+	onImageEditorDone = ( error, blob, imageEditorProps ) => {
 		if ( error ) {
 			this.onEditImageCancel( imageEditorProps );
 
@@ -116,7 +114,7 @@ export default React.createClass( {
 		MediaActions.update( site.ID, item, true );
 		resetAllImageEditorState();
 		this.setState( { currentDetail: null, editedItem: null, selectedImages: [] } );
-	},
+	};
 
 	getModalButtons() {
 		// do not render buttons if the media image editor is opened
@@ -124,36 +122,38 @@ export default React.createClass( {
 			return null;
 		}
 
+		const { translate } = this.props;
+
 		return [
 			{
 				action: 'delete',
 				additionalClassNames: 'media__modal-delete-item-button is-link',
-				label: this.translate( 'Delete' ),
+				label: translate( 'Delete' ),
 				isPrimary: false,
 				disabled: false,
 				onClick: this.deleteMediaByItemDetail,
 			},
 			{
 				action: 'confirm',
-				label: this.translate( 'Done' ),
+				label: translate( 'Done' ),
 				isPrimary: true,
 				disabled: false,
 				onClose: this.closeDetailsModal,
 			}
 		];
-	},
+	}
 
-	restoreOriginalMedia: function( siteId, item ) {
+	restoreOriginalMedia = ( siteId, item ) => {
 		if ( ! siteId || ! item ) {
 			return;
 		}
 		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
 		this.setState( { currentDetail: null, editedItem: null, selectedImages: [] } );
-	},
+	};
 
-	setDetailSelectedIndex: function( index ) {
+	setDetailSelectedIndex = ( index ) => {
 		this.setState( { currentDetail: index } );
-	},
+	};
 
 	/**
 	 * Start the process to delete media items.
@@ -162,11 +162,11 @@ export default React.createClass( {
 	 *
 	 * @param  {Function} [callback] - callback function
 	 */
-	deleteMedia: function( callback ) {
-		const site = this.props.sites.getSelectedSite();
+	deleteMedia( callback ) {
+		const site = this.props.selectedSite;
 		const selected = MediaLibrarySelectedStore.getAll( site.ID );
 		const selectedCount = selected.length;
-		const confirmMessage = this.translate(
+		const confirmMessage = this.props.translate(
 			'Are you sure you want to permanently delete this item?',
 			'Are you sure you want to permanently delete these items?',
 			{ count: selectedCount }
@@ -182,18 +182,18 @@ export default React.createClass( {
 				callback();
 			}
 		} );
-	},
+	}
 
-	handleDeleteMediaEvent() {
+	handleDeleteMediaEvent = () => {
 		this.deleteMedia();
-	},
+	};
 
-	deleteMediaByItemDetail() {
+	deleteMediaByItemDetail = () => {
 		this.deleteMedia( () => this.closeDetailsModal() );
-	},
+	};
 
-	confirmDeleteMedia: function() {
-		const site = this.props.sites.getSelectedSite();
+	confirmDeleteMedia = () => {
+		const site = this.props.selectedSite;
 
 		if ( ! site ) {
 			return;
@@ -204,10 +204,10 @@ export default React.createClass( {
 			: MediaLibrarySelectedStore.getAll( site.ID );
 
 		MediaActions.delete( site.ID, selected );
-	},
+	};
 
-	render: function() {
-		const site = this.props.sites.getSelectedSite();
+	render() {
+		const site = this.props.selectedSite;
 		return (
 			<div ref="container" className="main main-column media" role="main">
 				<SidebarNavigation />
@@ -258,4 +258,6 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( Media );
