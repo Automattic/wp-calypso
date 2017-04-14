@@ -1,5 +1,5 @@
 Library Middleware
-===========
+==================
 
 With the deprecation of SitesList, our `client/lib` libraries no longer 
 have easy access to the current user site. Since libraries are not react 
