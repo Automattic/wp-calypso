@@ -698,23 +698,6 @@ export function canJetpackSiteAutoUpdateCore( state, siteId ) {
 }
 
 /**
- * Determines if the Jetpack plugin of a Jetpack Site has menus.
- * Returns null if the site is not known or is not a Jetpack site.
- *
- * @param {Object} state Global state tree
- * @param {Number} siteId Site ID
- * @return {?Boolean} true if the site has Jetpack menus management
- */
-export function hasJetpackSiteJetpackMenus( state, siteId ) {
-	if ( ! isJetpackSite( state, siteId ) ) {
-		return null;
-	}
-
-	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
-	return versionCompare( siteJetpackVersion, '3.5-alpha' ) >= 0;
-}
-
-/**
  * Determines if the Jetpack plugin of a Jetpack Site has themes.
  * Returns null if the site is not known or is not a Jetpack site.
  *
