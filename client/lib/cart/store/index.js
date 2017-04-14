@@ -34,15 +34,15 @@ var CartStore = {
 			hasPendingServerUpdates: hasPendingServerUpdates()
 		} );
 	},
-	setSelectedSite( selectedSite ) {
-		if ( selectedSite && _cartKey === selectedSite.ID ) {
+	setSelectedSiteId( selectedSiteId ) {
+		if ( selectedSiteId && _cartKey === selectedSiteId ) {
 			return;
 		}
 
-		if ( ! selectedSite ) {
+		if ( ! selectedSiteId ) {
 			_cartKey = 'no-site';
 		} else {
-			_cartKey = selectedSite.ID;
+			_cartKey = selectedSiteId;
 		}
 
 		if ( _synchronizer && _poller ) {

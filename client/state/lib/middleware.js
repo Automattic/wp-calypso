@@ -15,7 +15,7 @@ import {
 } from 'state/action-types';
 import analytics from 'lib/analytics';
 import cartStore from 'lib/cart/store';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 /**
@@ -44,8 +44,8 @@ const updateSelectedSiteForAnalytics = ( dispatch, action, getState ) => {
  */
 const updateSelectedSiteForCart = ( dispatch, action, getState ) => {
 	const state = getState();
-	const selectedSite = getSelectedSite( state );
-	cartStore.setSelectedSite( selectedSite );
+	const selectedSiteId = getSelectedSiteId( state );
+	cartStore.setSelectedSiteId( selectedSiteId );
 };
 
 const handler = ( dispatch, action, getState ) => {
