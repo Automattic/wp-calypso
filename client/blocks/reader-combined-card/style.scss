@@ -40,7 +40,7 @@
 .reader-combined-card__post-details {
 	font-family: $serif;
 	overflow: hidden;
-    white-space: nowrap;
+	white-space: nowrap;
 	width: 100%;
 
 	@include breakpoint( "<960px" ) {
