@@ -70,7 +70,6 @@
 }
 
 .reader-subscription-list-item {
-	border-bottom: 1px solid lighten( $gray, 30% );
 	display: flex;
 	font-size: 14px;
 	padding: 15px 0;
@@ -80,8 +79,12 @@
 	}
 }
 
-.following-manage__subscriptions-list > div:last-child {
-	border-bottom: 0;
+.following-manage__subscriptions-list .following-manage__sites-window-scroller > div {
+	border-bottom: 1px solid lighten( $gray, 30% );
+
+	&:last-child {
+		border: 0;
+	}
 }
 
 .reader-subscription-list-item .follow-button {
