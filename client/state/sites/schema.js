@@ -57,7 +57,8 @@ export const sitesSchema = {
 						is_free: { type: 'boolean' }
 					}
 				},
-				single_user_site: { type: 'boolean' }
+				single_user_site: { type: 'boolean' },
+				updates: { type: 'object' },
 			}
 		}
 	},

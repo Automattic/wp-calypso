@@ -2,60 +2,57 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
+import { isEmpty, stubFalse, stubTrue } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { createReducer, keyedReducer } from 'state/utils';
 
 import {
+	SITE_RECEIVE,
+	SITES_RECEIVE,
+	SITES_UPDATE,
 	SITE_UPDATES_RECEIVE,
 	SITE_UPDATES_REQUEST,
 	SITE_UPDATES_REQUEST_SUCCESS,
 	SITE_UPDATES_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
 
 import { itemsSchema } from './schema';
 
+const receiveUpdatesForSites = ( state, sites ) => {
+	const updatedSites = sites.filter( ( site ) => site.updates );
+	return isEmpty( updatedSites )
+		? state
+		: sites.reduce( ( newState, site ) => {
+			newState[ site.ID ] = site.updates;
+			return newState;
+		}, { ...state } );
+};
+
 export const items = createReducer(
 	{},
-	{ [ SITE_UPDATES_RECEIVE ]: ( state, { siteId, updates } ) => Object.assign( {}, state, { [ siteId ]: updates } ) },
+	{
+		[ SITE_UPDATES_RECEIVE ]: ( state, { siteId, updates } ) => ( { ...state, [ siteId ]: updates } ),
+		[ SITE_RECEIVE ]: ( state, { site } ) => receiveUpdatesForSites( state, [ site ] ),
+		[ SITES_RECEIVE ]: ( state, { sites } ) => receiveUpdatesForSites( state, sites ),
+		[ SITES_UPDATE ]: ( state, { sites } ) => receiveUpdatesForSites( state, sites ),
+	},
 	itemsSchema
 );
 
-export const requesting = ( state = false, { type } ) => {
-	switch ( type ) {
-		case SITE_UPDATES_REQUEST:
-		case SITE_UPDATES_REQUEST_SUCCESS:
-		case SITE_UPDATES_REQUEST_FAILURE:
-			return type === SITE_UPDATES_REQUEST;
+export const requesting = keyedReducer( 'siteId', createReducer( undefined, {
+	[ SITE_UPDATES_REQUEST ]: stubTrue,
+	[ SITE_UPDATES_REQUEST_SUCCESS ]: stubFalse,
+	[ SITE_UPDATES_REQUEST_FAILURE ]: stubFalse,
+} ) );
 
-		case SERIALIZE:
-		case DESERIALIZE:
-			return false;
-	}
-
-	return state;
-};
-
-export const errors = ( state = false, { type } ) => {
-	switch ( type ) {
-		case SITE_UPDATES_REQUEST:
-		case SITE_UPDATES_REQUEST_SUCCESS:
-			return false;
-
-		case SITE_UPDATES_REQUEST_FAILURE:
-			return true;
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return false;
-	}
-
-	return state;
-};
+export const errors = keyedReducer( 'siteId', createReducer( undefined, {
+	[ SITE_UPDATES_REQUEST ]: stubFalse,
+	[ SITE_UPDATES_REQUEST_SUCCESS ]: stubFalse,
+	[ SITE_UPDATES_REQUEST_FAILURE ]: stubTrue,
+} ) );
 
 export default combineReducers( {
 	items,
