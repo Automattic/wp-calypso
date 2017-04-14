@@ -8,6 +8,8 @@ var React = require( 'react' ),
 	omit = require( 'lodash/omit' ),
 	isEqual = require( 'lodash/isEqual' );
 
+import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
@@ -15,7 +17,6 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	Post = require( './post' ),
 	PostPlaceholder = require( './post-placeholder' ),
 	actions = require( 'lib/posts/actions' ),
-	observe = require( 'lib/mixins/data-observe' ),
 	EmptyContent = require( 'components/empty-content' ),
 	InfiniteList = require( 'components/infinite-list' ),
 	NoResults = require( 'my-sites/no-results' ),
@@ -23,6 +24,8 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	mapStatus = route.mapPostStatus;
 
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { getSites } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 var GUESSED_POST_HEIGHT = 250;
 
@@ -33,7 +36,7 @@ var PostList = React.createClass( {
 	propTypes: {
 		context: React.PropTypes.object,
 		search: React.PropTypes.string,
-		sites: React.PropTypes.object,
+		haveSites: React.PropTypes.bool,
 		statusSlug: React.PropTypes.string,
 		siteID: React.PropTypes.any,
 		author: React.PropTypes.number
@@ -69,7 +72,7 @@ var Posts = React.createClass( {
 		posts: React.PropTypes.array.isRequired,
 		search: React.PropTypes.string,
 		siteID: React.PropTypes.any,
-		sites: React.PropTypes.object.isRequired,
+		haveSites: React.PropTypes.bool.isRequired,
 		statusSlug: React.PropTypes.string,
 		trackScrollPage: React.PropTypes.func.isRequired
 	},
@@ -85,8 +88,6 @@ var Posts = React.createClass( {
 			trackScrollPage: function() {}
 		};
 	},
-
-	mixins: [ observe( 'sites' ) ],
 
 	getInitialState: function() {
 		return {
@@ -235,7 +236,7 @@ var Posts = React.createClass( {
 			/>
 		);
 
-		if ( index === 2 && this.props.sites.getSelectedSite() && ! this.props.statusSlug ) {
+		if ( index === 2 && this.props.selectedSiteId && ! this.props.statusSlug ) {
 			return (
 				<div key={ post.global_ID }>
 					<UpgradeNudge
@@ -260,7 +261,7 @@ var Posts = React.createClass( {
 			i;
 
 		// posts have loaded, sites have loaded, and we have a site instance or are viewing all-sites
-		if ( posts.length && this.props.sites.initialized ) {
+		if ( posts.length && this.props.haveSites ) {
 			postList = (
 				<InfiniteList
 					key={ 'list-' + this.props.listId } // to reset scroll for new list
@@ -276,7 +277,7 @@ var Posts = React.createClass( {
 				/>
 			);
 		} else {
-			if ( this.props.loading || ! this.props.sites.fetched ) {
+			if ( this.props.loading || ! this.props.haveSites ) {
 				for ( i = 0; i < placeholderCount; i++ ) {
 					placeholders.push( <PostPlaceholder key={ 'placeholder-' + i } /> );
 				}
@@ -300,4 +301,9 @@ var Posts = React.createClass( {
 	}
 } );
 
-module.exports = PostList;
+export default connect(
+	( state ) => ( {
+		selectedSiteId: getSelectedSiteId( state ),
+		haveSites: !! getSites( state ).length
+	} )
+)( PostList );
