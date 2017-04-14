@@ -13,6 +13,7 @@ import { getSite, isRequestingSites } from 'state/sites/selectors';
 import QuerySites from 'components/data/query-sites';
 import PurchaseItem from '../purchase-item';
 import PurchaseSiteHeader from './header';
+import PurchaseReconnectNotice from './reconnect-notice';
 
 const PurchasesSite = ( { isPlaceholder, site, siteId, purchases, name, domain, slug } ) => {
 	let items;
@@ -40,6 +41,13 @@ const PurchasesSite = ( { isPlaceholder, site, siteId, purchases, name, domain, 
 				isPlaceholder={ isPlaceholder } />
 
 			{ items }
+
+			{ ( ! isPlaceholder && ! site )
+				? <PurchaseReconnectNotice
+					name={ name }
+					domain={ domain } />
+				: null
+			}
 		</div>
 	);
 };
