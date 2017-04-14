@@ -75,14 +75,14 @@ const BlogPostsPage = React.createClass( {
 		return (
 			<CompactCard className="pages__blog-posts-page">
 				{ isStaticHomePageWithNoPostsPage &&
-					<div className="pages__blog-posts-page__not-used-badge">{ translate( 'Not Used' ) }</div> }
+					<div className="pages__blog-posts-page-not-used-badge">{ translate( 'Not Used' ) }</div> }
 				{ isCurrentlySetAsHomepage &&
-					<Gridicon icon="house" size={ 18 } className="pages__blog-posts-page__home-badge" /> }
-				<div className="pages__blog-posts-page__details">
-					<div className="pages__blog-posts-page__title">
+					<Gridicon icon="house" size={ 18 } className="pages__blog-posts-page-home-badge" /> }
+				<div className="pages__blog-posts-page-details">
+					<div className="pages__blog-posts-page-title">
 						{ translate( 'Blog Posts' ) }
 					</div>
-					<div className="pages__blog-posts-page__info">
+					<div className="pages__blog-posts-page-info">
 						{
 							isCurrentlySetAsHomepage
 							? translate( 'Your latest posts, shown on homepage' )
@@ -92,7 +92,7 @@ const BlogPostsPage = React.createClass( {
 				</div>
 				{
 					shouldShowPageActions
-					? <div className="pages__blog-posts-page__actions">
+					? <div className="pages__blog-posts-page-actions">
 							<Gridicon
 								icon="ellipsis"
 								className={ classNames( {
