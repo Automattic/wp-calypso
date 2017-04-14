@@ -58,8 +58,13 @@ function ReaderSubscriptionListItem( {
 				<div className="reader-subscription-list-item__site-excerpt">{ siteExcerpt }</div>
 				{ ! isEmpty( authorName ) &&
 					<span className="reader-subscription-list-item__by-text">
-						{ translate( 'by' ) }
-						<a href={ streamUrl } className="reader-subscription-list-item__link"> { authorName } </a>
+						{
+							translate( 'by {{author/}}', {
+								components: {
+									author: <a href={ streamUrl } className="reader-subscription-list-item__link"> { authorName } </a>
+								}
+							} )
+						}
 					</span>
 				}
 			</div>
