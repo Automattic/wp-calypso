@@ -17,14 +17,10 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { loginUser } from 'state/login/actions';
 import Notice from 'components/notice';
 import { createFormAndSubmit } from 'lib/form';
-import {
-	isRequestingLogin,
-	getError
-} from 'state/login/selectors';
+import { getError } from 'state/login/selectors';
 
 export class Login extends Component {
 	static propTypes = {
-		isRequestingLogin: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		loginError: PropTypes.string,
@@ -83,7 +79,7 @@ export class Login extends Component {
 
 	render() {
 		const isDisabled = {};
-		if ( this.props.isRequestingLogin || this.state.submitting ) {
+		if ( this.state.submitting ) {
 			isDisabled.disabled = true;
 		}
 
@@ -144,7 +140,6 @@ export class Login extends Component {
 
 export default connect( state => {
 	return {
-		isRequestingLogin: isRequestingLogin( state ),
 		loginError: getError( state )
 	};
 }, {
