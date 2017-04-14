@@ -12,7 +12,7 @@ import Gridicon from 'gridicons';
 import Popover from 'components/popover/index';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
-import FormToggle from 'components/forms/form-toggle/compact';
+import FormToggle from 'components/forms/form-toggle';
 
 class ReaderEmailSubscriptionSettingsPopout extends Component {
 	static displayName = 'ReaderEmailSubscriptionSettingsPopout';
@@ -65,7 +65,6 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 						<h3 className="reader-subscription-list-item__email-popout-header">
 							{ translate( 'Email me' ) }
 						</h3>
-						<hr className="reader-subscription-list-item__header-separator" />
 						<div className="reader-subscription-list-item__email-popout-toggle">
 							{ translate( 'New posts' ) }
 							<FormToggle
@@ -73,7 +72,7 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 								checked={ true /* get from selector*/ }
 							/>
 						</div>
-						<SegmentedControl compact={ true }>
+						<SegmentedControl compact={ false }>
 							<ControlItem
 								selected={ this.state.selected === 'instant' }
 								onClick={ this.setSelected( 'instant' ) }
