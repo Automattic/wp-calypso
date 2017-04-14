@@ -37,7 +37,6 @@ JetpackSite.prototype.updateComputedAttributes = function() {
 	// Since there is no primary network we disable updates for that case
 	this.canUpdateFiles = SiteUtils.canUpdateFiles( this );
 	this.canAutoupdateFiles = SiteUtils.canAutoupdateFiles( this );
-	this.hasJetpackMenus = versionCompare( this.options.jetpack_version, '3.5-alpha' ) >= 0;
 };
 
 JetpackSite.prototype.versionCompare = function( compare, operator ) {

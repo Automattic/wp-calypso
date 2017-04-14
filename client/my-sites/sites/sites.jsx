@@ -38,7 +38,7 @@ export default React.createClass( {
 		}
 
 		// Filter out jetpack sites when on particular routes
-		if ( /^\/menus/.test( path ) || /^\/customize/.test( path ) ) {
+		if ( /^\/customize/.test( path ) ) {
 			return ! site.jetpack;
 		}
 
