@@ -81,15 +81,26 @@ class CancelPurchaseButton extends Component {
 		} );
 	}
 
+	recordSurveyStepChange = ( currentStep, nextStep, finalStep ) => {
+		if ( nextStep === 1 ) {
+			this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: 'initial_step' } );
+		} else if ( nextStep === 2 && finalStep === 3 ) {
+			this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: 'concierge_step' } );
+		} else {
+			this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: 'cancellation_step' } );
+		}
+	}
+
 	changeSurveyStep = ( direction ) => {
 		const { purchase } = this.props;
-		let newStep;
+		let newStep, finalStep;
 
 		if ( purchase && isBusiness( purchase ) &&
 			this.state.survey.questionOneRadio === 'tooHard' &&
 			abtest( 'conciergeOfferOnCancel' ) === 'showConciergeOffer'
 		) {
-			this.setState( { finalStep: 3 } );
+			finalStep = 3;
+			this.setState( { finalStep: finalStep } );
 
 			switch ( this.state.surveyStep ) {
 				case 1:
@@ -106,12 +117,12 @@ class CancelPurchaseButton extends Component {
 					break;
 			}
 		} else {
-			this.setState( { finalStep: 2 } );
+			finalStep = 2;
 			newStep = this.state.surveyStep === 1 ? 2 : 1;
+			this.setState( { finalStep: finalStep } );
 		}
 
-		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
-
+		this.recordSurveyStepChange( this.state.surveyStep, newStep, finalStep );
 		this.setState( { surveyStep: newStep } );
 	}
 
