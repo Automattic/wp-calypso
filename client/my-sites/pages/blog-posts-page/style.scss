@@ -1,0 +1,43 @@
+.blog-posts-page {
+	display: flex;
+	align-items: center;
+}
+
+.blog-posts-page__home-badge {
+	flex: 0 0 auto;
+	margin: 2px 8px 0 0;
+	color: $gray;
+	align-self: flex-start;
+}
+
+.blog-posts-page__not-used-badge {
+	flex: 0 0 auto;
+	margin: 0 24px 0 0;
+	padding: 5px 16px;
+	background-color: $gray;
+	border-radius: 3px;
+	color: $white;
+	font-size: 12px;
+}
+
+.blog-posts-page__details {
+	flex: 1 1 auto;
+}
+
+.blog-posts-page__actions {
+	flex: 0 0 auto;
+}
+
+.blog-posts-page__title {
+	display: inline;
+	color: $gray-dark;
+	font-weight: 500;
+	font-family: $serif;
+	margin-right: 33px;
+}
+
+.blog-posts-page__info {
+	color: $gray;
+	font-size: 12px;
+	margin: 0 33px 0 0;
+}

@@ -4,6 +4,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { identity } from 'lodash';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -17,40 +19,43 @@ import { isEnabled } from 'config';
 import { getSiteFrontPageType, getSitePostsPage } from 'state/sites/selectors';
 import { setFrontPage } from 'state/sites/actions';
 import { userCan } from 'lib/site/utils';
-import { updateSitesList } from './helpers';
+import { updateSitesList } from '../helpers';
 
-const BlogPostsPage = React.createClass( {
-	propTypes() {
-		return {
-			site: React.PropTypes.object
-		};
-	},
+class BlogPostsPage extends React.Component {
 
-	getInitialState: function() {
-		return {
-			showPageActions: false
-		};
-	},
+	static propTypes = {
+		site: React.PropTypes.object,
+	}
 
-	togglePageActions: function() {
+	static defaultProps = {
+		translate: identity,
+	}
+
+	state = {
+		showPageActions: false,
+	}
+
+	togglePageActions = () => {
 		this.setState( { showPageActions: ! this.state.showPageActions } );
-	},
+	}
 
-	setAsHomepage: function() {
+	setAsHomepage = () => {
 		this.setState( { showPageActions: false } );
 		this.props.setFrontPage( this.props.site.ID, 0, updateSitesList );
-	},
+	}
 
-	getSetAsHomepageItem: function() {
+	renderSetAsHomepageItem() {
 		return (
 			<PopoverMenuItem onClick={ this.setAsHomepage }>
 				<Gridicon icon="house" size={ 18 } />
-				{ this.translate( 'Set as Homepage' ) }
+				{ this.props.translate( 'Set as Homepage' ) }
 			</PopoverMenuItem>
 		);
-	},
+	}
 
 	render() {
+		const { translate } = this.props;
+
 		const isStaticHomePageWithNoPostsPage = this.props.frontPageType === 'page' && ! this.props.postsPage;
 		const isCurrentlySetAsHomepage = this.props.frontPageType === 'posts';
 		const shouldShow = this.props.isFrontPage ||
@@ -62,31 +67,27 @@ const BlogPostsPage = React.createClass( {
 			return null;
 		}
 
-		let notUsedLabel = null;
-		if ( isStaticHomePageWithNoPostsPage ) {
-			notUsedLabel =
-				<div className="pages__blog-posts-page__not-used-label">
-					{ this.translate( 'Not Used' ) }
-				</div>;
-		}
-
 		return (
-			<CompactCard className="pages__blog-posts-page">
-				{ notUsedLabel }
-				<span className="pages__blog-posts-page__title" href="">
-					{ isCurrentlySetAsHomepage ? <Gridicon icon="house" size={ 18 } /> : null }
-					{ this.translate( 'Blog Posts' ) }
-				</span>
-				<div className="pages__blog-posts-page__info">
-					{
-						isCurrentlySetAsHomepage
-						? this.translate( 'Your latest posts, shown on homepage' )
-						: this.translate( 'Your latest posts' )
-					}
+			<CompactCard className="blog-posts-page">
+				{ isStaticHomePageWithNoPostsPage &&
+					<div className="blog-posts-page__not-used-badge">{ translate( 'Not Used' ) }</div> }
+				{ isCurrentlySetAsHomepage &&
+					<Gridicon icon="house" size={ 18 } className="blog-posts-page__home-badge" /> }
+				<div className="blog-posts-page__details">
+					<div className="blog-posts-page__title">
+						{ translate( 'Blog Posts' ) }
+					</div>
+					<div className="blog-posts-page__info">
+						{
+							isCurrentlySetAsHomepage
+							? translate( 'Your latest posts, shown on homepage' )
+							: translate( 'Your latest posts' )
+						}
+					</div>
 				</div>
 				{
 					shouldShowPageActions
-					? <div>
+					? <div className="blog-posts-page__actions">
 							<Gridicon
 								icon="ellipsis"
 								className={ classNames( {
@@ -101,7 +102,7 @@ const BlogPostsPage = React.createClass( {
 								position={ 'bottom left' }
 								context={ this.refs && this.refs.popoverMenuButton }
 							>
-								{ this.getSetAsHomepageItem() }
+								{ this.renderSetAsHomepageItem() }
 							</PopoverMenu>
 						</div>
 					: null
@@ -110,7 +111,7 @@ const BlogPostsPage = React.createClass( {
 			</CompactCard>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state, props ) => {
@@ -123,4 +124,4 @@ export default connect(
 	( dispatch ) => bindActionCreators( {
 		setFrontPage
 	}, dispatch )
-)( BlogPostsPage );
+)( localize( BlogPostsPage ) );
