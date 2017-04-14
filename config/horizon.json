@@ -29,7 +29,6 @@
 		"keyboard-shortcuts": true,
 		"manage/custom-post-types": true,
 		"manage/customize": true,
-		"manage/drafts": true,
 		"manage/edit-user": true,
 		"manage/export": true,
 		"manage/export/guided-transfer": true,
