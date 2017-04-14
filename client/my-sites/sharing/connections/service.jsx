@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { identity, isEqual, find, replace, some } from 'lodash';
+import { identity, isEqual, find, replace, some, isFunction } from 'lodash';
 import { localize } from 'i18n-calypso';
 import SocialLogo from 'social-logos';
 
@@ -19,7 +19,7 @@ import {
 	fetchConnection,
 	updateSiteConnection,
 } from 'state/sharing/publicize/actions';
-import { errorNotice, warningNotice } from 'state/notices/actions';
+import { successNotice, errorNotice, warningNotice } from 'state/notices/actions';
 import Connection from './connection';
 import FoldableCard from 'components/foldable-card';
 import { getAvailableExternalAccounts } from 'state/sharing/selectors';
@@ -431,17 +431,20 @@ export class SharingService extends Component {
 /**
  * Connect a SharingService component to a Redux store.
  *
- * @param  {component} sharingService          A SharingService component
- * @param  {object}    extraMapDispatchToProps Optional. An object that contains additional action creators. Default: {}
+ * @param  {component} sharingService     A SharingService component
+ * @param  {function}  mapStateToProps    Optional. A function to pick props from the state.
+ *                                        It should return a plain object, which will be merged into the component's props.
+ * @param  {object}    mapDispatchToProps Optional. An object that contains additional action creators. Default: {}
  * @return {component} A highter-order service component
  */
-export function connectFor( sharingService, extraMapDispatchToProps = {} ) {
+export function connectFor( sharingService, mapStateToProps, mapDispatchToProps = {} ) {
 	return connect(
 		( state, { service } ) => {
 			const siteId = getSelectedSiteId( state );
 			const userId = getCurrentUserId( state );
+			const props = isFunction( mapStateToProps ) ? mapStateToProps( state, service.ID ) : {};
 
-			return {
+			return Object.assign( {
 				availableExternalAccounts: getAvailableExternalAccounts( state, service.ID ),
 				brokenConnections: getBrokenSiteUserConnectionsForService( state, siteId, userId, service.ID ),
 				isFetching: isFetchingConnections( state, siteId ),
@@ -449,11 +452,12 @@ export function connectFor( sharingService, extraMapDispatchToProps = {} ) {
 				removableConnections: getRemovableConnections( state, service.ID ),
 				siteId,
 				siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
-			};
+			}, props );
 		},
 		{
 			createSiteConnection,
 			deleteSiteConnection,
+			successNotice,
 			errorNotice,
 			failCreateConnection,
 			fetchConnection,
@@ -461,7 +465,7 @@ export function connectFor( sharingService, extraMapDispatchToProps = {} ) {
 			requestKeyringConnections,
 			updateSiteConnection,
 			warningNotice,
-			...extraMapDispatchToProps
+			...mapDispatchToProps
 		}
 	)( localize( sharingService ) );
 }

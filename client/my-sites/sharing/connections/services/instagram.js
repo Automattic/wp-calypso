@@ -88,5 +88,6 @@ export class Instagram extends SharingService {
 
 export default connectFor(
 	Instagram,
+	null,
 	{ deleteStoredKeyringConnection }
 );

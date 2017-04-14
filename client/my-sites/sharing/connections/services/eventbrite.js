@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { PropTypes } from 'react';
-import { last, some } from 'lodash';
+import { last, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -54,27 +54,38 @@ export class Evenrbrite extends SharingService {
 		this.props.deleteKeyringConnection( last( this.props.keyringConnections ) );
 	};
 
-	componentWillReceiveProps( { availableExternalAccounts } ) {
-		if ( this.props.availableExternalAccounts.length !== availableExternalAccounts.length ) {
+	componentWillReceiveProps( { availableExternalAccounts, saveRequests } ) {
+		if ( ! isEqual( this.props.availableExternalAccounts, availableExternalAccounts ) ) {
 			this.setState( {
 				isConnecting: false,
 				isDisconnecting: false,
 			} );
 		}
 
-		if ( this.state.isAwaitingConnections ) {
-			this.setState( {
-				isAwaitingConnections: false,
-				isRefreshing: false,
-			} );
+		if ( ! this.state.isAwaitingConnections ) {
+			return;
+		}
 
-			if ( this.didKeyringConnectionSucceed( availableExternalAccounts ) ) {
-				this.setState( { isConnecting: false } );
-				this.props.successNotice( this.props.translate( 'The %(service)s account was successfully connected.', {
-					args: { service: this.props.service.label },
-					context: 'Sharing: Publicize connection confirmation',
-				} ), { id: 'publicize' } );
+		this.setState( {
+			isAwaitingConnections: false,
+			isRefreshing: false,
+		} );
+
+		if ( this.didKeyringConnectionSucceed( availableExternalAccounts ) ) {
+			const savingSiteSettings = saveRequests[ this.props.siteId ] && saveRequests[ this.props.siteId ].saving;
+
+			if ( ! savingSiteSettings ) {
+				this.props.saveSiteSettings(
+					this.props.siteId,
+					{ eventbrite_api_token: last( availableExternalAccounts ).keyringConnectionId }
+				);
 			}
+
+			this.setState( { isConnecting: false } );
+			this.props.successNotice( this.props.translate( 'The %(service)s account was successfully connected.', {
+				args: { service: this.props.service.label },
+				context: 'Sharing: Publicize connection confirmation',
+			} ), { id: 'publicize' } );
 		}
 	}
 
@@ -88,20 +99,15 @@ export class Evenrbrite extends SharingService {
 			return { ...connection, keyring_connection_ID: connection.ID };
 		} );
 	}
-
-	didKeyringConnectionSucceed( externalAccounts ) {
-		const hasAnyConnectionOptions = some( externalAccounts, { isConnected: false } );
-		const result = super.didKeyringConnectionSucceed( externalAccounts );
-
-		if ( externalAccounts.length && hasAnyConnectionOptions ) {
-			this.props.saveSiteSettings( this.props.siteId, { eventbrite_api_token: last( externalAccounts ).keyringConnectionId } );
-		}
-
-		return result;
-	}
 }
 
 export default connectFor(
 	Evenrbrite,
-	{ saveSiteSettings, deleteKeyringConnection }
+	( state ) => {
+		return { saveRequests: state.siteSettings.saveRequests };
+	},
+	{
+		saveSiteSettings,
+		deleteKeyringConnection,
+	}
 );
