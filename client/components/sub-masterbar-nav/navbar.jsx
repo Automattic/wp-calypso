@@ -28,13 +28,12 @@ export default class Navbar extends Component {
 	};
 
 	state = {
-		collapsed: false,
+		collapsed: true,
 		foldable: false
 	};
 
 	componentDidMount() {
 		this.onResize();
-		this.setListCollapsed( true );
 
 		window.addEventListener( 'resize', this.onResize );
 	}
@@ -87,20 +86,16 @@ export default class Navbar extends Component {
 	}
 
 	toggleList = () => {
-		this.setListCollapsed( ! this.state.collapsed );
-	}
-
-	setListCollapsed( collapsed ) {
-		this.setState( {
-			collapsed: collapsed
-		} );
+		this.setState( ( state ) => ( {
+			collapsed: ! state.collapsed
+		} ) );
 	}
 
 	onResize = () => {
 		const width = findDOMNode( this ).offsetWidth;
 
 		this.setState( ( state, props ) => ( {
-			foldable: window !== undefined && width < props.options.length * ITEM_WIDTH + SIDE_PADDING
+			foldable: width < props.options.length * ITEM_WIDTH + SIDE_PADDING
 		} ) );
 	}
 }
