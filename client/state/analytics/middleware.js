@@ -1,11 +1,16 @@
 /**
+ * External dependencies
+ */
+import { has, invoke, get } from 'lodash';
+
+/**
  * Internal dependencies
  */
 const config = require( 'config' );
 import analytics from 'lib/analytics';
-import has from 'lodash/has';
-import invoke from 'lodash/invoke';
 import isTracking from 'state/selectors/is-tracking';
+import { getSelectedSite } from 'state/ui/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 import {
 	ANALYTICS_EVENT_RECORD,
@@ -16,7 +21,7 @@ import {
 
 const eventServices = {
 	ga: ( { category, action, label, value } ) => analytics.ga.recordEvent( category, action, label, value ),
-	tracks: ( { name, properties } ) => analytics.tracks.recordEvent( name, properties )
+	tracks: ( { name, properties, selectedSite, siteCount } ) => analytics.tracks.recordEvent( name, properties, selectedSite, siteCount )
 };
 
 const pageViewServices = {
@@ -41,6 +46,12 @@ export const dispatcher = ( { meta: { analytics: analyticsMeta } }, state ) => {
 
 		switch ( type ) {
 			case ANALYTICS_EVENT_RECORD:
+				if ( payload.service === 'tracks' ) {
+					const selectedSite = getSelectedSite( state );
+					const user = getCurrentUser( state );
+					const siteCount = get( user, 'site_count', 0 );
+					return invoke( eventServices, service, { ...payload, selectedSite, siteCount } );
+				}
 				return invoke( eventServices, service, payload );
 
 			case ANALYTICS_PAGE_VIEW_RECORD:

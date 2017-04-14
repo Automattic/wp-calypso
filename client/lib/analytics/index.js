@@ -21,13 +21,9 @@ const config = require( 'config' ),
 	loadScript = require( 'lib/load-script' ).loadScript;
 
 let _superProps,
-	_user,
-	_selectedSite,
-	_siteCount,
-	_dispatch;
+	_user;
 
 import { retarget, recordAliasInFloodlight, recordPageViewInFloodlight } from 'lib/analytics/ad-tracking';
-import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
 const mcDebug = debug( 'calypso:analytics:mc' );
 const gaDebug = debug( 'calypso:analytics:ga' );
 const tracksDebug = debug( 'calypso:analytics:tracks' );
@@ -99,18 +95,6 @@ const analytics = {
 		_superProps = superProps;
 	},
 
-	setSelectedSite: function( selectedSite ) {
-		_selectedSite = selectedSite;
-	},
-
-	setSiteCount: function( siteCount ) {
-		_siteCount = siteCount;
-	},
-
-	setDispatch: function( dispatch ) {
-		_dispatch = dispatch;
-	},
-
 	mc: {
 		bumpStat: function( group, name ) {
 			if ( 'object' === typeof group ) {
@@ -159,7 +143,7 @@ const analytics = {
 	},
 
 	tracks: {
-		recordEvent: function( eventName, eventProperties ) {
+		recordEvent: function( eventName, eventProperties, selectedSite, siteCount ) {
 			let superProperties;
 
 			eventProperties = eventProperties || {};
@@ -186,8 +170,7 @@ const analytics = {
 			}
 
 			if ( _superProps ) {
-				_dispatch && _dispatch( { type: ANALYTICS_SUPER_PROPS_UPDATE } );
-				superProperties = _superProps.getAll( _selectedSite, _siteCount );
+				superProperties = _superProps.getAll( selectedSite, siteCount );
 				eventProperties = assign( {}, eventProperties, superProperties ); // assign to a new object so we don't modify the argument
 			}
 
