@@ -44,7 +44,6 @@ export function requestPostTypeTaxonomies( siteId, postType ) {
 		} );
 
 		return wpcom
-			.withLocale()
 			.site( siteId )
 			.postType( postType )
 			.taxonomiesList()

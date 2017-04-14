@@ -62,36 +62,23 @@ describe( 'index', () => {
 
 	describe( '#injectLocalization()', () => {
 		it( 'should return a modified object', () => {
-			let wpcom = { request() {} };
+			const wpcom = { request() {} };
 			injectLocalization( wpcom );
 
-			expect( wpcom.withLocale ).to.be.a( 'function' );
+			expect( wpcom.localized ).to.exist;
 		} );
 
 		it( 'should override the default request method', () => {
 			const request = () => {};
-			let wpcom = { request };
+			const wpcom = { request };
 			injectLocalization( wpcom );
 
 			expect( wpcom.request ).to.not.equal( request );
 		} );
 
-		it( 'should not modify params if `withLocale` not used', ( done ) => {
+		it( 'should modify params by default', ( done ) => {
 			setLocale( 'fr' );
-			let wpcom = {
-				request( params ) {
-					expect( params.query ).to.equal( 'search=foo' );
-					done();
-				}
-			};
-
-			injectLocalization( wpcom );
-			wpcom.request( { query: 'search=foo' } );
-		} );
-
-		it( 'should modify params if `withLocale` is used', ( done ) => {
-			setLocale( 'fr' );
-			let wpcom = {
+			const wpcom = {
 				request( params ) {
 					expect( params.query ).to.equal( 'search=foo&locale=fr' );
 					done();
@@ -99,26 +86,6 @@ describe( 'index', () => {
 			};
 
 			injectLocalization( wpcom );
-			wpcom.withLocale().request( { query: 'search=foo' } );
-		} );
-
-		it( 'should not modify the request after `withLocale` is used', ( done ) => {
-			setLocale( 'fr' );
-			let assert = false;
-			let wpcom = {
-				request( params ) {
-					if ( ! assert ) {
-						return;
-					}
-
-					expect( params.query ).to.equal( 'search=foo' );
-					done();
-				}
-			};
-
-			injectLocalization( wpcom );
-			wpcom.withLocale().request( { query: 'search=foo' } );
-			assert = true;
 			wpcom.request( { query: 'search=foo' } );
 		} );
 	} );
