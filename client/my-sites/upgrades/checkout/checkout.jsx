@@ -38,7 +38,10 @@ import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
-import { isDomainOnlySite } from 'state/selectors';
+import {
+	isDomainOnlySite,
+	getCurrentUserPaymentMethods
+} from 'state/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -344,6 +347,7 @@ const Checkout = React.createClass( {
 				cart={ this.props.cart }
 				transaction={ this.props.transaction }
 				cards={ this.props.cards }
+				paymentMethods={ this.props.paymentMethods }
 				products={ this.props.productsList.get() }
 				selectedSite={ selectedSite }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
@@ -391,6 +395,7 @@ module.exports = connect(
 
 		return {
 			cards: getStoredCards( state ),
+			paymentMethods: getCurrentUserPaymentMethods( state ),
 			isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,

@@ -48,12 +48,14 @@ const SecurePaymentForm = React.createClass( {
 	getInitialState() {
 		return {
 			userSelectedPaymentBox: null,
-			visiblePaymentBox: this.getVisiblePaymentBox( this.props.cart ),
+			visiblePaymentBox: this.getVisiblePaymentBox( this.props.cart, this.props.paymentMethods ),
 			previousCart: null
 		};
 	},
 
-	getVisiblePaymentBox( cart ) {
+	getVisiblePaymentBox( cart, paymentMethods ) {
+		const primary = 0, secondary = 1;
+
 		if ( isPaidForFullyInCredits( cart ) ) {
 			return 'credits';
 		} else if ( isFree( cart ) ) {
@@ -62,10 +64,10 @@ const SecurePaymentForm = React.createClass( {
 			return 'free-trial';
 		} else if ( this.state && this.state.userSelectedPaymentBox ) {
 			return this.state.userSelectedPaymentBox;
-		} else if ( cartValues.isCreditCardPaymentsEnabled( cart ) ) {
-			return 'credit-card';
-		} else if ( cartValues.isPayPalExpressEnabled( cart ) ) {
-			return 'paypal';
+		} else if ( cartValues.isPaymentMethodEnabled( cart, paymentMethods[ primary ] ) ) {
+			return paymentMethods[ primary ];
+		} else if ( cartValues.isPaymentMethodEnabled( cart, paymentMethods[ secondary ] ) ) {
+			return paymentMethods[ secondary ];
 		}
 
 		return null;
@@ -77,7 +79,7 @@ const SecurePaymentForm = React.createClass( {
 		}
 
 		this.setState( {
-			visiblePaymentBox: this.getVisiblePaymentBox( nextProps.cart )
+			visiblePaymentBox: this.getVisiblePaymentBox( nextProps.cart, nextProps.paymentMethods )
 		} );
 	},
 
