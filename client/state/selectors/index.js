@@ -66,6 +66,7 @@ export getSiteIconUrl from './get-site-icon-url';
 export getSiteSetting from './get-site-setting';
 export getSiteStatsQueryDate from './get-site-stats-query-date';
 export getSiteStatsViewSummary from './get-site-stats-view-summary';
+export getSites from './get-sites';
 export getTimezones from './get-timezones';
 export getSiteTimezoneName from './get-site-timezone-name';
 export getSiteTimezoneValue from './get-site-timezone-value';
