@@ -14,7 +14,7 @@ import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'PostEditor', function() {
-	let sandbox, TestUtils, PostEditor, SitesList, PostEditStore;
+	let sandbox, TestUtils, PostEditor, PostEditStore;
 	const defaultProps = {
 		translate: string => string,
 		markSaved: () => {},
@@ -73,7 +73,6 @@ describe( 'PostEditor', function() {
 			connect: () => ( component ) => component
 		} );
 
-		SitesList = require( 'lib/sites-list/list' );
 		PostEditStore = require( 'lib/posts/post-edit-store' );
 		PostEditor = require( '../post-editor' ).PostEditor;
 	} );
@@ -87,7 +86,6 @@ describe( 'PostEditor', function() {
 			const tree = TestUtils.renderIntoDocument(
 				<PostEditor
 					preferences={ {} }
-					sites={ new SitesList() }
 					{ ...defaultProps }
 				/>
 			);
@@ -104,7 +102,6 @@ describe( 'PostEditor', function() {
 			const tree = TestUtils.renderIntoDocument(
 				<PostEditor
 					preferences={ {} }
-					sites={ new SitesList() }
 					{ ...defaultProps }
 				/>
 			);
@@ -121,7 +118,6 @@ describe( 'PostEditor', function() {
 			const tree = TestUtils.renderIntoDocument(
 				<PostEditor
 					preferences={ {} }
-					sites={ new SitesList() }
 					{ ...defaultProps }
 				/>
 			);
@@ -137,7 +133,6 @@ describe( 'PostEditor', function() {
 			const tree = TestUtils.renderIntoDocument(
 				<PostEditor
 					preferences={ {} }
-					sites={ new SitesList() }
 					{ ...defaultProps }
 				/>
 			);
@@ -157,7 +152,6 @@ describe( 'PostEditor', function() {
 			const tree = TestUtils.renderIntoDocument(
 				<PostEditor
 					preferences={ {} }
-					sites={ new SitesList() }
 					{ ...defaultProps }
 				/>
 			);
@@ -178,7 +172,6 @@ describe( 'PostEditor', function() {
 			const tree = TestUtils.renderIntoDocument(
 				<PostEditor
 					preferences={ {} }
-					sites={ new SitesList() }
 					{ ...defaultProps }
 				/>
 			);
@@ -202,7 +195,6 @@ describe( 'PostEditor', function() {
 			const tree = TestUtils.renderIntoDocument(
 				<PostEditor
 					preferences={ {} }
-					sites={ new SitesList() }
 					{ ...defaultProps }
 				/>
 			);

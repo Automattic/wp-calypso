@@ -16,7 +16,6 @@ import { map, pick, startsWith } from 'lodash';
  */
 import actions from 'lib/posts/actions';
 import route from 'lib/route';
-import SitesList from 'lib/sites-list';
 import User from 'lib/user';
 import userUtils from 'lib/user/utils';
 import analytics from 'lib/analytics';
@@ -30,7 +29,6 @@ import wpcom from 'lib/wp';
 import Dispatcher from 'dispatcher';
 import { getFeaturedImageId } from 'lib/posts/utils';
 
-const sites = SitesList();
 const user = User();
 
 function getPostID( context ) {
@@ -61,7 +59,6 @@ function renderEditor( context, postType ) {
 			React.createElement( PostEditor, {
 				user: user,
 				userUtils: userUtils,
-				sites: sites,
 				type: postType
 			} )
 		),

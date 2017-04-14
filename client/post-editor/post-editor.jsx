@@ -24,7 +24,6 @@ const actions = require( 'lib/posts/actions' ),
 	EditorWordCount = require( 'post-editor/editor-word-count' ),
 	SegmentedControl = require( 'components/segmented-control' ),
 	SegmentedControlItem = require( 'components/segmented-control/item' ),
-	observe = require( 'lib/mixins/data-observe' ),
 	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
 	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
 	VerifyEmailDialog = require( 'post-editor/verify-email-dialog' ),
@@ -33,7 +32,7 @@ const actions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
 	analytics = require( 'lib/analytics' );
 
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { receivePost, savePostSuccess } from 'state/posts/actions';
@@ -67,7 +66,6 @@ export const PostEditor = React.createClass( {
 		setLayoutFocus: React.PropTypes.func.isRequired,
 		editorModePreference: React.PropTypes.string,
 		editorSidebarPreference: React.PropTypes.string,
-		sites: React.PropTypes.object,
 		user: React.PropTypes.object,
 		userUtils: React.PropTypes.object,
 		editPath: React.PropTypes.string,
@@ -78,10 +76,6 @@ export const PostEditor = React.createClass( {
 	},
 
 	_previewWindow: null,
-
-	mixins: [
-		observe( 'sites' )
-	],
 
 	getInitialState() {
 		return {
@@ -206,13 +200,13 @@ export const PostEditor = React.createClass( {
 	},
 
 	render: function() {
-		var site = this.props.sites.getSelectedSite() || undefined,
-			mode = this.getEditorMode(),
-			isInvalidURL = this.state.loadingError,
-			siteURL = site ? site.URL + '/' : null,
-			isPage,
-			isTrashed,
-			hasAutosave;
+		const site = this.props.selectedSite || undefined;
+		const mode = this.getEditorMode();
+		const isInvalidURL = this.state.loadingError;
+		const siteURL = site ? site.URL + '/' : null;
+		let isPage;
+		let isTrashed;
+		let hasAutosave;
 
 		if ( this.state.post ) {
 			isPage = utils.isPage( this.state.post );
@@ -418,7 +412,7 @@ export const PostEditor = React.createClass( {
 		} else {
 			postEditState = this.getPostEditState();
 			post = postEditState.post;
-			site = post ? this.props.sites.getSite( post.site_ID ) : false;
+			site = this.props.selectedSite;
 			if ( didLoad && site && ( this.props.type === 'page' ) !== utils.isPage( post ) ) {
 				// incorrect post type in URL
 				page.redirect( utils.getEditURL( post, site ) );
@@ -502,8 +496,8 @@ export const PostEditor = React.createClass( {
 	},
 
 	getAllPostsUrl: function() {
-		const { type, sites } = this.props;
-		const site = sites.getSelectedSite();
+		const { type, selectedSite } = this.props;
+		const site = selectedSite;
 
 		let path;
 		switch ( type ) {
@@ -836,6 +830,7 @@ export default connect(
 		return {
 			siteId,
 			postId,
+			selectedSite: getSelectedSite( state ),
 			editorModePreference: getPreference( state, 'editor-mode' ),
 			editorSidebarPreference: getPreference( state, 'editor-sidebar' ) || 'open',
 			editPath: getEditorPath( state, siteId, postId ),
