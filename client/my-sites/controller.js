@@ -74,8 +74,7 @@ function createNavigation( context ) {
 		<NavigationComponent path={ context.path }
 			allSitesPath={ basePath }
 			siteBasePath={ basePath }
-			user={ user }
-			sites={ sites } />
+			user={ user } />
 	);
 }
 
