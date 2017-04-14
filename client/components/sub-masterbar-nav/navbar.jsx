@@ -65,7 +65,9 @@ export default class Navbar extends Component {
 					<div className="sub-masterbar-nav__switch">
 						<Gridicon
 							icon="ellipsis"
-							className={ ellipsisClass } onClick={ this.toggleList } />
+							className={ ellipsisClass }
+							onClick={ this.toggleList }
+						/>
 					</div>
 				)}
 			</div>
@@ -89,9 +91,9 @@ export default class Navbar extends Component {
 	}
 
 	setListCollapsed( collapsed ) {
-		this.setState( () => ( {
+		this.setState( {
 			collapsed: collapsed
-		} ) );
+		} );
 	}
 
 	onResize = () => {
