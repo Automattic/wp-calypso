@@ -140,10 +140,16 @@ export function setFrontPage( siteId, pageId, successCallback ) {
 			pageId
 		} );
 
+		const isSettingBlogPostsAsFrontPage = pageId === 0;
+
 		const requestData = {
-			is_page_on_front: true,
+			is_page_on_front: ! isSettingBlogPostsAsFrontPage,
 			page_on_front_id: pageId,
 		};
+
+		if ( isSettingBlogPostsAsFrontPage ) {
+			requestData.page_for_posts_id = 0;
+		}
 
 		return wpcom.undocumented().setSiteHomepageSettings( siteId, requestData ).then( ( response ) => {
 			const updatedOptions = {
