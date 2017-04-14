@@ -90,6 +90,10 @@
 
 	.gridicon {
 		fill: $blue-medium;
+
+		@include breakpoint( "<660px" ) {
+			left: 6px;
+		}
 	}
 
 	.follow-button__label {
@@ -113,9 +117,13 @@
 	height: 18px;
 	padding-right: 7px;
 	position: relative;
-		left: 1px;
+		left: 7px;
 		top: 4px;
 	width: 18px;
+
+	@include breakpoint( ">660px" ) {
+		left: 1px;
+	}
 }
 
 .reader-subscription-list-item .follow-button__label,
