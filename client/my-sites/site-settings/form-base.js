@@ -3,6 +3,7 @@
  */
 import debugFactory from 'debug';
 import omit from 'lodash/omit';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -107,6 +108,67 @@ module.exports = {
 		this.setState( { [ currentTargetName ]: currentTargetValue } );
 	},
 
+	handleToggleJetpackModuleError( error, action, module ) {
+		if ( ! error.error ) {
+			return;
+		}
+
+		const remoteManagementUrl = this.props.site.getRemoteManagementURL();
+		const buttonRemoteManagement = {
+			button: translate( 'Turn On.' ),
+			href: remoteManagementUrl
+		};
+		let moduleTranslationArgs = {};
+
+		if ( module ) {
+			moduleTranslationArgs = { args: { module: module, site: this.props.site.domain } };
+		}
+
+		if ( 'activateModule' === action ) {
+			switch ( error.error ) {
+				case 'unauthorized_full_access':
+					notices.error(
+						translate(
+							'Error activating the Jetpack %(module)s feature on %(site)s, remote management is off.',
+							moduleTranslationArgs
+						),
+						buttonRemoteManagement
+					);
+					break;
+				default:
+					notices.error(
+						translate(
+							'An error occurred while activating the Jetpack %(module)s feature on %(site)s.',
+							moduleTranslationArgs
+						)
+					);
+					break;
+			}
+		}
+
+		if ( 'deactivateModule' === action ) {
+			switch ( error.error ) {
+				case 'unauthorized_full_access':
+					notices.error(
+						translate(
+							'Error deactivating the Jetpack %(module)s feature on %(site)s, remote management is off.',
+							moduleTranslationArgs
+						),
+						buttonRemoteManagement
+					);
+					break;
+				default:
+					notices.error(
+						translate(
+							'An error occurred while deactivating the Jetpack %(module)s feature on %(site)s.',
+							moduleTranslationArgs
+						)
+					);
+					break;
+			}
+		}
+	},
+
 	toggleJetpackModule( module ) {
 		const event = this.props.site.isModuleActive( module ) ? 'deactivate' : 'activate';
 		notices.clearNotices( 'notices' );
@@ -116,10 +178,9 @@ module.exports = {
 			if ( error ) {
 				debug( 'jetpack module toggle error', error );
 				this.handleError();
-				this.props.site.handleError(
+				this.handleToggleJetpackModuleError(
 					error,
 					this.props.site.isModuleActive( module ) ? 'deactivateModule' : 'activateModule',
-					{},
 					module
 				);
 			} else {
@@ -154,14 +215,14 @@ module.exports = {
 				// handle error case here
 				switch ( error.error ) {
 					case 'invalid_ip':
-						notices.error( this.translate( 'One of your IP Addresses was invalid. Please, try again.' ) );
+						notices.error( translate( 'One of your IP Addresses was invalid. Please, try again.' ) );
 						break;
 					default:
-						notices.error( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
+						notices.error( translate( 'There was a problem saving your changes. Please, try again.' ) );
 				}
 				this.setState( { submittingForm: false } );
 			} else {
-				notices.success( this.translate( 'Settings saved!' ) );
+				notices.success( translate( 'Settings saved!' ) );
 				this.props.markSaved && this.props.markSaved();
 				//for dirtyFields, see lib/mixins/dirty-linked-state
 				this.setState( { submittingForm: false, dirtyFields: [] } );

@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:site:jetpack' ),
-	i18n = require( 'i18n-calypso' );
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -10,12 +9,13 @@ var debug = require( 'debug' )( 'calypso:site:jetpack' ),
 var wpcom = require( 'lib/wp' ),
 	Site = require( 'lib/site' ),
 	inherits = require( 'inherits' ),
-	notices = require( 'notices' ),
 	versionCompare = require( 'lib/version-compare' ),
 	SiteUtils = require( 'lib/site/utils' ),
 	config = require( 'config' );
 
 inherits( JetpackSite, Site );
+
+const debug = debugFactory( 'calypso:site:jetpack' );
 
 function JetpackSite( attributes ) {
 	if ( ! ( this instanceof JetpackSite ) ) {
@@ -75,71 +75,6 @@ JetpackSite.prototype.isModuleActive = function( moduleId ) {
 JetpackSite.prototype.getRemoteManagementURL = function() {
 	var configure = versionCompare( this.options.jetpack_version, 3.4, '>=' ) ? 'manage' : 'json-api';
 	return this.options.admin_url + 'admin.php?page=jetpack&configure=' + configure;
-};
-
-JetpackSite.prototype.handleError = function( error, action, plugin, module ) {
-	var moduleTranslationArgs = {},
-		buttonRemoteManagement,
-		remoteManagementUrl;
-
-	if ( ! error.error ) {
-		return;
-	}
-
-	if ( module ) {
-		moduleTranslationArgs = { args: { module: module, site: this.domain } };
-	}
-
-	remoteManagementUrl = this.getRemoteManagementURL();
-
-	buttonRemoteManagement = {
-		button: i18n.translate( 'Turn On.' ),
-		href: remoteManagementUrl
-	};
-
-	if ( 'activateModule' === action ) {
-		switch ( error.error ) {
-			case 'unauthorized_full_access':
-				notices.error(
-					i18n.translate(
-						'Error activating the Jetpack %(module)s feature on %(site)s, remote management is off.',
-						moduleTranslationArgs
-					),
-					buttonRemoteManagement
-				);
-				break;
-			default:
-				notices.error(
-					i18n.translate(
-						'An error occurred while activating the Jetpack %(module)s feature on %(site)s.',
-						moduleTranslationArgs
-					)
-				);
-				break;
-		}
-	}
-
-	if ( 'deactivateModule' === action ) {
-		switch ( error.error ) {
-			case 'unauthorized_full_access':
-				notices.error(
-					i18n.translate(
-						'Error deactivating the Jetpack %(module)s feature on %(site)s, remote management is off.',
-						moduleTranslationArgs
-					),
-					buttonRemoteManagement
-				);
-				break;
-			default:
-				notices.error(
-					i18n.translate(
-						'An error occurred while deactivating the Jetpack %(module)s feature on %(site)s.',
-						moduleTranslationArgs
-					)
-				);
-				break;
-		}
-	}
 };
 
 JetpackSite.prototype.updateWordPress = function( onError, onSuccess ) {
