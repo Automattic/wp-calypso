@@ -7,7 +7,6 @@ var React = require( 'react' );
  * Internal Dependencies
  */
 var SidebarNavigation = require( 'components/sidebar-navigation' ),
-	AllSitesIcon = require( 'my-sites/all-sites-icon' ),
 	SiteIcon = require( 'blocks/site-icon' ),
 	sites = require( 'lib/sites-list' )();
 
@@ -29,9 +28,7 @@ module.exports = React.createClass( {
 				linkClassName={ allSitesClass }
 				sectionName="site"
 				sectionTitle={ currentSiteTitle }>
-				{ site ?
-					<SiteIcon site={ site } /> :
-					<AllSitesIcon sites={ sites.get() } /> }
+				{ site && <SiteIcon site={ site } /> }
 			</SidebarNavigation>
 		);
 	}
