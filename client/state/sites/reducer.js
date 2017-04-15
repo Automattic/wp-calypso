@@ -8,6 +8,7 @@ import { pick, omit, merge, get, includes, reduce, isEqual } from 'lodash';
  * Internal dependencies
  */
 import { plans } from './plans/reducer';
+import connection from './connection/reducer';
 import domains from './domains/reducer';
 import guidedTransfer from './guided-transfer/reducer';
 import vouchers from './vouchers/reducer';
@@ -261,6 +262,7 @@ export const requesting = createReducer( {}, {
 } );
 
 export default combineReducers( {
+	connection,
 	domains,
 	requestingAll,
 	items,
