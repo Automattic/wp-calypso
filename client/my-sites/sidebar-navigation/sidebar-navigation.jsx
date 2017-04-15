@@ -1,35 +1,36 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-var SidebarNavigation = require( 'components/sidebar-navigation' ),
-	SiteIcon = require( 'blocks/site-icon' ),
-	sites = require( 'lib/sites-list' )();
+import SidebarNavigation from 'components/sidebar-navigation';
+import SiteIcon from 'blocks/site-icon';
+import sitesFactory from 'lib/sites-list';
 
-module.exports = React.createClass( {
-	displayName: 'SidebarNavigation',
+const sites = sitesFactory();
 
-	render: function() {
-		var site = sites.getSelectedSite(),
-			currentSiteTitle = site.title,
-			allSitesClass;
+const MySitesSidebarNavigation = ( { translate } ) => {
+	const site = sites.getSelectedSite();
+	let currentSiteTitle = site.title,
+		allSitesClass;
 
-		if ( ! site ) {
-			currentSiteTitle = this.translate( 'All Sites' );
-			allSitesClass = 'all-sites';
-		}
-
-		return (
-			<SidebarNavigation
-				linkClassName={ allSitesClass }
-				sectionName="site"
-				sectionTitle={ currentSiteTitle }>
-				{ site && <SiteIcon site={ site } /> }
-			</SidebarNavigation>
-		);
+	if ( ! site ) {
+		currentSiteTitle = translate( 'All Sites' );
+		allSitesClass = 'all-sites';
 	}
-} );
+
+	return (
+		<SidebarNavigation
+			linkClassName={ allSitesClass }
+			sectionName="site"
+			sectionTitle={ currentSiteTitle }>
+			{ site && <SiteIcon site={ site } /> }
+		</SidebarNavigation>
+	);
+};
+
+export default localize( MySitesSidebarNavigation );
