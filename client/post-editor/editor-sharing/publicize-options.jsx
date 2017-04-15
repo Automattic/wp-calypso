@@ -108,7 +108,7 @@ const EditorSharingPublicizeOptions = React.createClass( {
 		// possible state.  Also prevents a possible infinite loading state due
 		// to connections previously returning a 400 error
 		this.props.site.once( 'change', () => {
-			if ( this.props.site.isModuleActive( 'publicize' ) ) {
+			if ( this.props.isPublicizeEnabled ) {
 				this.props.requestConnections( this.props.site.ID );
 			}
 		} );
@@ -194,7 +194,7 @@ const EditorSharingPublicizeOptions = React.createClass( {
 			);
 		}
 
-		if ( this.props.site && this.props.site.jetpack && ! this.props.site.isModuleActive( 'publicize' ) ) {
+		if ( this.props.site && this.props.site.jetpack && ! this.props.isPublicizeEnabled ) {
 			return (
 				<div className="editor-sharing__publicize-disabled">
 					<p><span>{ this.translate( 'Enable the Publicize module to automatically share new posts to social networks.' ) }</span></p>
