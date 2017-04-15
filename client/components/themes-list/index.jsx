@@ -5,11 +5,12 @@ import React from 'react';
 import { findDOMNode } from 'react-dom';
 import { localize } from 'i18n-calypso';
 import { isEqual, noop, debounce } from 'lodash';
-import { InfiniteLoader, WindowScroller, AutoSizer, Grid } from 'react-virtualized';
+import { InfiniteLoader, WindowScroller } from 'react-virtualized';
 
 /**
  * Internal dependencies
  */
+import FlexboxGrid from 'components/flexbox-grid';
 import Theme from 'components/theme';
 import EmptyContent from 'components/empty-content';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
@@ -61,7 +62,13 @@ export const ThemesList = React.createClass( {
 	},
 
 	componentDidMount() {
-		this._width = findDOMNode( this ).offsetWidth;
+		this.onResize();
+
+		window.addEventListener( 'resize', this.onResize );
+	},
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.onResize );
 	},
 
 	shouldComponentUpdate( nextProps ) {
@@ -99,8 +106,8 @@ export const ThemesList = React.createClass( {
 		);
 	},
 
-	onResize( { width } ) {
-		this._width = width;
+	onResize() {
+		this._width = findDOMNode( this ).offsetWidth;
 	},
 
 	onScroll() {
@@ -122,13 +129,9 @@ export const ThemesList = React.createClass( {
 				>
 					{ ( { onRowsRendered, registerChild } ) => (
 						<WindowScroller ref={ this.onScrollerRendered } onScroll={ this.onScroll }>
-							{ ( { height, scrollTop } ) => (
-								<AutoSizer disableHeight onResize={ this.onResize }>
-									{ ( { width } ) => {
-										return this.renderGrid( width, height, scrollTop, registerChild, onRowsRendered );
-									} }
-								</AutoSizer>
-							) }
+							{ ( { scrollTop } ) => {
+								return this.renderGrid( scrollTop, registerChild, onRowsRendered );
+							} }
 						</WindowScroller>
 					) }
 				</InfiniteLoader>
@@ -136,32 +139,32 @@ export const ThemesList = React.createClass( {
 		);
 	},
 
-	renderGrid( width, height, scrollTop, registerChild, onRowsRendered ) {
-		const columnCount = this.getItemsPerRow( width );
+	renderGrid( scrollTop, registerChild, onRowsRendered ) {
+		const minColumnWidth = 250;
+
+		const columnCount = Math.floor( this._width / minColumnWidth );
 		const rowCount = Math.ceil( this.props.themesCount / columnCount );
 
-		const onSectionRendered = ( args ) => this.onSectionRendered( args, onRowsRendered );
+		const columnWidth = Math.floor( this._width / columnCount );
+		const rowHeight = Math.floor( ( columnWidth - 20 ) * 0.75 ) + 74;
 
 		return (
-			<Grid
-				width={ width }
-				height={ height }
-				autoHeight={ true }
+			<FlexboxGrid
+				width={ this._width }
+				minColumnWidth={ minColumnWidth }
 				columnCount={ columnCount }
-				columnWidth={ Math.floor( width / columnCount ) }
 				rowCount={ rowCount }
-				rowHeight={ Math.floor( ( ( width / columnCount ) - 20 ) * 0.75 ) + 74 }
+				rowHeight={ rowHeight }
 				scrollTop={ scrollTop }
-				overscanRowCount={ 3 }
 				cellRenderer={ this.renderCell }
-				onSectionRendered={ onSectionRendered }
+				overscanRowCount={ 3 }
+				onCellsRendered={ onRowsRendered }
 				ref={ registerChild }
 			/>
 		);
 	},
 
-	renderCell( { rowIndex, columnIndex, key, style } ) {
-		const index = rowIndex * this.getItemsPerRow() + columnIndex;
+	renderCell( { index, key, style } ) {
 		const theme = this.props.themes[ index ];
 
 		return (
