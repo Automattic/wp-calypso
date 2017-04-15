@@ -27,7 +27,7 @@ import { getPostStat, isRequestingPostStats } from 'state/stats/posts/selectors'
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Button from 'components/button';
 import WebPreview from 'components/web-preview';
-import { getSiteSlug, isJetpackSite, getSite } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'state/sites/selectors';
 import { getSitePost, isRequestingSitePost, getPostPreviewUrl } from 'state/posts/selectors';
 
 class StatsPostDetail extends Component {
@@ -176,7 +176,7 @@ const connectComponent = connect(
 	( state, { postId } ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
-		const site = getSite( state, siteId );
+		const isPreviewable = isSitePreviewable( state, siteId );
 
 		return {
 			post: getSitePost( state, siteId, postId ),
@@ -184,7 +184,7 @@ const connectComponent = connect(
 			countViews: getPostStat( state, siteId, postId, 'views' ),
 			isRequestingStats: isRequestingPostStats( state, siteId, postId ),
 			siteSlug: getSiteSlug( state, siteId ),
-			showViewLink: ! isJetpack && site.is_previewable,
+			showViewLink: ! isJetpack && isPreviewable,
 			previewUrl: getPostPreviewUrl( state, siteId, postId ),
 			siteId,
 		};
