@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { find, defer } from 'lodash';
+import { get, find, defer } from 'lodash';
 
 /**
  * Internal dependencies
@@ -64,9 +64,9 @@ const SecurePaymentForm = React.createClass( {
 			return 'free-trial';
 		} else if ( this.state && this.state.userSelectedPaymentBox ) {
 			return this.state.userSelectedPaymentBox;
-		} else if ( cartValues.isPaymentMethodEnabled( cart, paymentMethods[ primary ] ) ) {
+		} else if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ primary ] ) ) ) {
 			return paymentMethods[ primary ];
-		} else if ( cartValues.isPaymentMethodEnabled( cart, paymentMethods[ secondary ] ) ) {
+		} else if ( cartValues.isPaymentMethodEnabled( cart, get( paymentMethods, [ secondary ] ) ) ) {
 			return paymentMethods[ secondary ];
 		}
 
