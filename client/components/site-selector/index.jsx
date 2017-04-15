@@ -25,8 +25,11 @@ import { getPreference } from 'state/preferences/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteBySlug } from 'state/sites/selectors';
-import getSites from 'state/selectors/get-sites';
-import getVisibleSites from 'state/selectors/get-visible-sites';
+import {
+	areAllSitesSingleUser,
+	getSites,
+	getVisibleSites,
+} from 'state/selectors';
 import AllSites from 'my-sites/all-sites';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
@@ -269,13 +272,9 @@ const SiteSelector = React.createClass( {
 		const site = this.props.getSiteBySlug( slug );
 		console.warn( 'getSiteBySlug', site, slug );
 
-		// @FIXME move to selector
-		const allSitesSingleUser = this.props.sites &&
-			! this.props.sites.some( ( s ) => ! s.single_user_site );
-
 		if ( slug === ALL_SITES ) {
 			// default posts links to /posts/my when possible and /posts when not
-			const postsBase = allSitesSingleUser ? '/posts' : '/posts/my';
+			const postsBase = this.props.allSitesSingleUser ? '/posts' : '/posts/my';
 			const allSitesPath = this.props.allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
 
 			// There is currently no "all sites" version of the insights page
@@ -466,5 +465,6 @@ export default connect( ( state ) => {
 		getSiteBySlug: getSiteBySlug.bind( null, state ),
 		selectedSite: getSelectedSite( state ),
 		visibleSites: getVisibleSites( state ),
+		allSitesSingleUser: areAllSitesSingleUser( state ),
 	};
 } )( SiteSelector );
