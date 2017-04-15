@@ -3,14 +3,29 @@
  */
 import React from 'react';
 import { times } from 'lodash';
-import createCallbackMemoizer from 'react-virtualized/utils/createCallbackMemoizer';
+
+function createOnCellsRenderedMemoizer() {
+	let cachedStartIndex = -1;
+	let cachedStopIndex = -1;
+
+	return ( callback, { startIndex, stopIndex } ) => {
+		if ( startIndex === cachedStartIndex && stopIndex === cachedStopIndex ) {
+			return;
+		}
+
+		cachedStartIndex = startIndex;
+		cachedStopIndex = stopIndex;
+
+		callback( { startIndex, stopIndex } );
+	};
+}
 
 export default class FlexboxGrid extends React.PureComponent {
 
 	constructor() {
 		super();
 
-		this._onGridRenderedMemoizer = createCallbackMemoizer();
+		this.onCellsRenderedMemoizer = createOnCellsRenderedMemoizer();
 	}
 
 	render() {
@@ -27,16 +42,13 @@ export default class FlexboxGrid extends React.PureComponent {
 		const start = this.firstVisibleIndex();
 		const end = this.lastVisibleIndex();
 
-		this.invokeOnGridRenderedHelper( {
-			columnOverscanStartIndex: 0,
-			columnOverscanStopIndex: this.props.columnCount,
-			columnStartIndex: 0,
-			columnStopIndex: this.props.columnCount,
-			rowOverscanStartIndex: start / this.props.columnCount,
-			rowOverscanStopIndex: end / this.props.columnCount,
-			rowStartIndex: start / this.props.columnCount,
-			rowStopIndex: end / this.props.columnCount
-		} );
+		this.onCellsRenderedMemoizer(
+			this.props.onCellsRendered,
+			{
+				startIndex: start,
+				stopIndex: end
+			}
+		);
 
 		return times( end - start, idx => this.props.cellRenderer( {
 			index: start + idx,
@@ -47,18 +59,8 @@ export default class FlexboxGrid extends React.PureComponent {
 
 	invokeOnGridRenderedHelper( renderedIndices ) {
 		this._onGridRenderedMemoizer( {
-			callback: this.onSectionRendered,
+			callback: this.props.onCellsRendered,
 			indices: renderedIndices
-		} );
-	}
-
-	onSectionRendered = ( { columnStartIndex, columnStopIndex, rowStartIndex, rowStopIndex } ) => {
-		const startIndex = rowStartIndex * this.props.columnCount + columnStartIndex;
-		const stopIndex = rowStopIndex * this.props.columnCount + columnStopIndex;
-
-		this.props.onCellsRendered( {
-			startIndex,
-			stopIndex
 		} );
 	}
 
