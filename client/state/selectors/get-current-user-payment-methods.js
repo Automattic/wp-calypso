@@ -15,7 +15,7 @@ import { getGeoCountryShort } from 'state/geo/selectors';
  * Payment methods can be targeted via a WP.com locale code (actually
  * a two letter lang usually) or by a full lang-CC locale.
  */
-const default_payment_methods = [ 'credit-card', 'paypal' ];
+const DEFAULT_PAYMENT_METHODS = [ 'credit-card', 'paypal' ];
 
 const paymentMethodsByLocale = {
 	de: [ 'paypal', 'credit-card' ],
@@ -29,11 +29,11 @@ const paymentMethodsByLocale = {
  * @return {Array}               Preferred payment methods
  */
 export default function getCurrentUserPaymentMethods( state ) {
-	const countryCode = getGeoCountryShort( state ),
-		locale = getCurrentUserLocale( state ),
-		generated_locale = kebabCase( locale ) + '-' + upperCase( countryCode );
+	const countryCode = getGeoCountryShort( state );
+	const locale = getCurrentUserLocale( state );
+	const generatedLocale = kebabCase( locale ) + '-' + upperCase( countryCode );
 
-	return paymentMethodsByLocale[ generated_locale ] ||
+	return paymentMethodsByLocale[ generatedLocale ] ||
 		paymentMethodsByLocale[ locale ] ||
-		default_payment_methods;
+		[ ...DEFAULT_PAYMENT_METHODS ];
 }
