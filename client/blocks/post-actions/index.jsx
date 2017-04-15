@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { partial } from 'lodash';
+import { get, partial } from 'lodash';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -17,6 +17,8 @@ import CommentButton from 'blocks/comment-button';
 import LikeButton from 'my-sites/post-like-button';
 import PostTotalViews from 'my-sites/posts/post-total-views';
 import utils from 'lib/posts/utils';
+import { canCurrentUser } from 'state/selectors';
+import { isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
 
 const getContentLink = ( site, post ) => {
 	let contentLinkURL = post.URL;
@@ -34,18 +36,17 @@ const getContentLink = ( site, post ) => {
 
 const recordEvent = partial( recordGoogleEvent, 'Posts' );
 
-const showComments = ( site, post ) =>
-	( ! site.jetpack || site.isModuleActive( 'comments' ) ) &&
-	post.discussion &&
-	post.discussion.comments_open;
-
-const showLikes = site => ! site.jetpack || site.isModuleActive( 'likes' );
-
-const showStats = site => site.capabilities	&&
-	site.capabilities.view_stats &&
-	( ! site.jetpack || site.isModuleActive( 'stats' ) );
-
-const PostActions = ( { className, post, site, toggleComments, trackRelativeTimeStatusOnClick, trackTotalViewsOnClick } ) => {
+const PostActions = ( {
+	className,
+	post,
+	showComments,
+	showLikes,
+	showStats,
+	site,
+	toggleComments,
+	trackRelativeTimeStatusOnClick,
+	trackTotalViewsOnClick
+} ) => {
 	const { contentLinkURL, contentLinkTarget } = getContentLink( site, post );
 	const isDraft = post.status === 'draft';
 
@@ -58,7 +59,7 @@ const PostActions = ( { className, post, site, toggleComments, trackRelativeTime
 					target={ contentLinkTarget }
 					onClick={ trackRelativeTimeStatusOnClick } />
 			</li>
-			{ ! isDraft && showComments( site, post ) &&
+			{ ! isDraft && showComments &&
 				<li className="post-actions__item">
 					<CommentButton
 						key="comment-button"
@@ -69,7 +70,7 @@ const PostActions = ( { className, post, site, toggleComments, trackRelativeTime
 						tagName="div" />
 				</li>
 			}
-			{ ! isDraft && showLikes( site ) &&
+			{ ! isDraft && showLikes &&
 				<li className="post-actions__item">
 					<LikeButton
 						key="like-button"
@@ -79,7 +80,7 @@ const PostActions = ( { className, post, site, toggleComments, trackRelativeTime
 						site={ site } />
 				</li>
 			}
-			{ ! isDraft && showStats( site ) &&
+			{ ! isDraft && showStats &&
 				<li className="post-actions__item post-actions__total-views">
 					<PostTotalViews
 						post={ post }
@@ -99,9 +100,26 @@ PostActions.propTypes = {
 	trackTotalViewsOnClick: React.PropTypes.func,
 };
 
+const mapStateToProps = ( state, { site, post } ) => {
+	const siteId = get( site, 'ID' );
+	const isJetpack = isJetpackSite( state, siteId );
+
+	const showComments = ( ! isJetpack || isJetpackModuleActive( state, siteId, 'comments' ) ) &&
+		post.discussion && post.discussion.comments_open;
+	const showLikes = ! isJetpack || isJetpackModuleActive( state, siteId, 'likes' );
+	const showStats = canCurrentUser( state, siteId, 'view_stats' ) &&
+		( ! isJetpack || isJetpackModuleActive( state, siteId, 'stats' ) );
+
+	return {
+		showComments,
+		showLikes,
+		showStats
+	};
+};
+
 const mapDispatchToProps = dispatch => bindActionCreators( {
 	trackRelativeTimeStatusOnClick: () => recordEvent( 'Clicked Post Date' ),
 	trackTotalViewsOnClick: () => recordEvent( 'Clicked View Post Stats' )
 }, dispatch );
 
-export default connect( null, mapDispatchToProps )( localize( PostActions ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PostActions ) );
