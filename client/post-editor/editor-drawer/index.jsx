@@ -27,7 +27,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
-import { isJetpackMinimumVersion } from 'state/sites/selectors';
+import {
+	isJetpackMinimumVersion,
+	isJetpackModuleActive,
+	isJetpackSite,
+} from 'state/sites/selectors';
 import config from 'config';
 import { isPrivateSite } from 'state/selectors';
 import { isHiddenSite } from 'state/selectors';
@@ -202,7 +206,7 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderLocation: function() {
-		if ( ! this.props.site || this.props.site.jetpack ) {
+		if ( ! this.props.site || this.props.isJetpack ) {
 			return;
 		}
 
@@ -245,8 +249,8 @@ const EditorDrawer = React.createClass( {
 			return;
 		}
 
-		if ( this.props.site.jetpack ) {
-			if ( ! this.props.site.isModuleActive( 'seo-tools' ) ||	! jetpackVersionSupportsSeo ) {
+		if ( this.props.isJetpack ) {
+			if ( ! this.props.isSeoToolsModuleActive || ! jetpackVersionSupportsSeo ) {
 				return;
 			}
 		}
@@ -361,6 +365,8 @@ export default connect(
 
 		return {
 			canJetpackUseTaxonomies: isJetpackMinimumVersion( state, siteId, '4.1' ),
+			isJetpack: isJetpackSite( state, siteId ),
+			isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
 			typeObject: getPostType( state, siteId, type ),
 			isPrivate: isPrivateSite( state, siteId ),
