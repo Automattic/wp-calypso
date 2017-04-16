@@ -11,6 +11,7 @@ import { plans } from './plans/reducer';
 import connection from './connection/reducer';
 import domains from './domains/reducer';
 import guidedTransfer from './guided-transfer/reducer';
+import monitor from './monitor/reducer';
 import vouchers from './vouchers/reducer';
 import updates from './updates/reducer';
 import sharingButtons from './sharing-buttons/reducer';
@@ -269,6 +270,7 @@ export default combineReducers( {
 	mediaStorage,
 	plans,
 	guidedTransfer,
+	monitor,
 	vouchers,
 	updates,
 	requesting,
