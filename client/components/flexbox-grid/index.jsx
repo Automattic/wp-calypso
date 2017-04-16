@@ -28,6 +28,14 @@ export default class FlexboxGrid extends React.PureComponent {
 		this.onCellsRenderedMemoizer = createOnCellsRenderedMemoizer();
 	}
 
+	componentDidMount() {
+		this.invokeOnCellsRendered();
+	}
+
+	componentDidUpdate() {
+		this.invokeOnCellsRendered();
+	}
+
 	render() {
 		return (
 			<div className={ 'flexbox-grid' } style={ this.gridStyle() }>
@@ -42,26 +50,11 @@ export default class FlexboxGrid extends React.PureComponent {
 		const start = this.firstVisibleIndex();
 		const end = this.lastVisibleIndex();
 
-		this.onCellsRenderedMemoizer(
-			this.props.onCellsRendered,
-			{
-				startIndex: start,
-				stopIndex: end
-			}
-		);
-
 		return times( end - start, idx => this.props.cellRenderer( {
 			index: start + idx,
 			key: idx,
 			style: { flex: `1 0 ${ this.props.minColumnWidth }px` }
 		} ) );
-	}
-
-	invokeOnGridRenderedHelper( renderedIndices ) {
-		this._onGridRenderedMemoizer( {
-			callback: this.props.onCellsRendered,
-			indices: renderedIndices
-		} );
 	}
 
 	gridStyle() {
@@ -101,7 +94,7 @@ export default class FlexboxGrid extends React.PureComponent {
 
 	lastVisibleIndex() {
 		if ( this.props.width === undefined ) {
-			return 1000;
+           return 1000;
 		}
 
 		let rowIdx = 0;
@@ -118,5 +111,15 @@ export default class FlexboxGrid extends React.PureComponent {
 		}
 
 		return this.firstVisibleIndex() / this.props.columnCount * this.props.rowHeight;
+	}
+
+	invokeOnCellsRendered() {
+		this.onCellsRenderedMemoizer(
+			this.props.onCellsRendered,
+			{
+				startIndex: this.firstVisibleIndex(),
+				stopIndex: this.lastVisibleIndex()
+			}
+		);
 	}
 }
