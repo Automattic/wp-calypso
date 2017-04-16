@@ -84,22 +84,8 @@ export const ThemesList = React.createClass( {
 			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
 	},
 
-	getItemsPerRow( rowWidth ) {
-		return Math.floor( ( rowWidth || this._width ) / 250 );
-	},
-
 	loadMoreRows() {
 		this.props.fetchNextPage( { triggeredByScroll: true } );
-	},
-
-	onSectionRendered( { columnStartIndex, columnStopIndex, rowStartIndex, rowStopIndex }, onRowsRendered ) {
-		const startIndex = rowStartIndex * this.getItemsPerRow() + columnStartIndex;
-		const stopIndex = rowStopIndex * this.getItemsPerRow() + columnStopIndex;
-
-		onRowsRendered( {
-			startIndex,
-			stopIndex
-		} );
 	},
 
 	onScrollerRendered( scroller ) {
