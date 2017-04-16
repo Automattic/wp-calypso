@@ -147,6 +147,7 @@ export isTracking from './is-tracking';
 export isTwoStepEnabled from './is-two-step-enabled';
 export isTwoStepSmsEnabled from './is-two-step-sms-enabled';
 export isUpdatingJetpackSettings from './is-updating-jetpack-settings';
+export isUpdatingSiteMonitorSettings from './is-updating-site-monitor-settings';
 export isUserRegistrationDaysWithinRange from './is-user-registration-days-within-range';
 export isUserSettingUnsaved from './is-user-setting-unsaved';
 export shouldCloseVideoEditorModal from './should-close-video-editor-modal';
