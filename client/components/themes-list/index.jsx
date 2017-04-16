@@ -38,10 +38,6 @@ export const ThemesList = React.createClass( {
 		placeholderCount: React.PropTypes.number
 	},
 
-	fetchNextPage( options ) {
-		this.props.fetchNextPage( options );
-	},
-
 	getDefaultProps() {
 		return {
 			loading: false,
@@ -71,6 +67,14 @@ export const ThemesList = React.createClass( {
 		window.removeEventListener( 'resize', this.onResize );
 	},
 
+	componentWillReceiveProps( nextProps ) {
+		if ( this._grid === undefined || isEqual( nextProps.themes, this.props.themes ) ) {
+			return;
+		}
+
+		this._grid.forceUpdate();
+	},
+
 	shouldComponentUpdate( nextProps ) {
 		return nextProps.loading !== this.props.loading ||
 			! isEqual( nextProps.themes, this.props.themes ) ||
@@ -85,7 +89,7 @@ export const ThemesList = React.createClass( {
 	},
 
 	loadMoreRows() {
-		return this.fetchNextPage( { triggeredByScroll: true } );
+		this.props.fetchNextPage( { triggeredByScroll: true } );
 	},
 
 	onSectionRendered( { columnStartIndex, columnStopIndex, rowStartIndex, rowStopIndex }, onRowsRendered ) {
@@ -104,6 +108,10 @@ export const ThemesList = React.createClass( {
 			1000,
 			{ leading: true }
 		);
+	},
+
+	onGridRendered( grid ) {
+		this._grid = grid;
 	},
 
 	onResize() {
@@ -127,10 +135,10 @@ export const ThemesList = React.createClass( {
 					rowCount={ 1000 }
 					threshold={ 20 }
 				>
-					{ ( { onRowsRendered, registerChild } ) => (
+					{ ( { onRowsRendered } ) => (
 						<WindowScroller ref={ this.onScrollerRendered } onScroll={ this.onScroll }>
 							{ ( { scrollTop } ) => {
-								return this.renderGrid( scrollTop, registerChild, onRowsRendered );
+								return this.renderGrid( scrollTop, onRowsRendered );
 							} }
 						</WindowScroller>
 					) }
@@ -139,7 +147,7 @@ export const ThemesList = React.createClass( {
 		);
 	},
 
-	renderGrid( scrollTop, registerChild, onRowsRendered ) {
+	renderGrid( scrollTop, onRowsRendered ) {
 		const minColumnWidth = 250;
 		const ssrSpacers = 20;
 
@@ -162,7 +170,7 @@ export const ThemesList = React.createClass( {
 				cellRenderer={ this.renderCell }
 				overscanRowCount={ 3 }
 				onCellsRendered={ onRowsRendered }
-				ref={ registerChild }
+				ref={ this.onGridRendered }
 			/>
 		);
 	},
