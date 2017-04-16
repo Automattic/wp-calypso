@@ -19,6 +19,12 @@ class SidebarNavigation extends React.Component {
 
 	toggleSidebar( event ) {
 		event.preventDefault();
+
+		if ( this.props.backToSites ) {
+			this.props.setLayoutFocus( 'sites' );
+			return; 
+		}
+
 		this.props.setLayoutFocus( 'sidebar' );
 	}
 
@@ -39,6 +45,7 @@ class SidebarNavigation extends React.Component {
 }
 
 SidebarNavigation.propTypes = {
+	backToSites: PropTypes.bool,
 	title: PropTypes.string,
 	linkClassName: PropTypes.string,
 	sectionTitle: PropTypes.string,

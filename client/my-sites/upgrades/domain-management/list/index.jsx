@@ -97,7 +97,7 @@ export const List = React.createClass( {
 		if ( this.props.isDomainOnly ) {
 			return (
 				<Main>
-					<SidebarNavigation />
+					<SidebarNavigation backToSites={ true } />
 					<DomainOnly
 						domainName={ this.props.selectedSite.domain }
 						hasNotice={ this.isFreshDomainOnlyRegistration() }
