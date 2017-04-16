@@ -141,9 +141,12 @@ export const ThemesList = React.createClass( {
 
 	renderGrid( scrollTop, registerChild, onRowsRendered ) {
 		const minColumnWidth = 250;
+		const ssrSpacers = 20;
 
-		const columnCount = Math.floor( this._width / minColumnWidth );
-		const rowCount = Math.ceil( this.props.themesCount / columnCount );
+		const columnCount = this._width === undefined ? 1 : Math.floor( this._width / minColumnWidth );
+		const rowCount = this._width === undefined
+			? this.props.themes.length + ssrSpacers
+			: Math.ceil( this.props.themesCount / columnCount );
 
 		const columnWidth = Math.floor( this._width / columnCount );
 		const rowHeight = Math.floor( ( columnWidth - 20 ) * 0.75 ) + 74;
@@ -166,6 +169,15 @@ export const ThemesList = React.createClass( {
 
 	renderCell( { index, key, style } ) {
 		const theme = this.props.themes[ index ];
+
+		if (
+			( this._width === undefined && index >= this.props.themes.length ) ||
+			( this._width !== undefined && index >= this.props.themesCount )
+		) {
+			return (
+				<div key={ key } className="themes-list__spacer" style={ style }></div>
+			);
+		}
 
 		return (
 			<div key={ key } className="themes-list__cell" style={ style }>
