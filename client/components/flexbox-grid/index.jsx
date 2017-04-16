@@ -94,7 +94,7 @@ export default class FlexboxGrid extends React.PureComponent {
 
 	lastVisibleIndex() {
 		if ( this.props.width === undefined ) {
-           return 1000;
+			return this.props.rowCount * this.props.columnCount;
 		}
 
 		let rowIdx = 0;
