@@ -88,12 +88,16 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 		expect( getCurrentUserPaymentMethods( enLangUsCountryState ) ).to.eql( creditCardPaypal );
 	} );
 
+	it( 'en-DE should return PayPal primary, credit card secondary', () => {
+		expect( getCurrentUserPaymentMethods( deLangDeCountryState ) ).to.eql( paypalCreditCard );
+	} );
+
 	it( 'de-DE should return PayPal primary, credit card secondary', () => {
 		expect( getCurrentUserPaymentMethods( deLangDeCountryState ) ).to.eql( paypalCreditCard );
 	} );
 
-	it( 'de-JP should return PayPal primary, credit card secondary', () => {
-		expect( getCurrentUserPaymentMethods( deLangJpCountryState ) ).to.eql( paypalCreditCard );
+	it( 'de-JP should return credit card primary, PayPal secondary', () => {
+		expect( getCurrentUserPaymentMethods( deLangJpCountryState ) ).to.eql( creditCardPaypal );
 	} );
 
 	it( 'fr-DE should return credit card primary, PayPal secondary', () => {

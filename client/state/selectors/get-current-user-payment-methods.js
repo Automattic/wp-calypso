@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { kebabCase, upperCase } from 'lodash';
+import { lowerCase, upperCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,14 +12,23 @@ import { getGeoCountryShort } from 'state/geo/selectors';
 /**
  * Constants
  *
- * Payment methods can be targeted via a WP.com locale code (actually
- * a two letter lang usually) or by a full lang-CC locale.
+ * Payment methods can be targeted via a full lang-CC locale, a two
+ * digit GeoIP country code, or a WP.com "locale" code (more of a
+ * two letter lang code really). Return value precedence is in that order.
  */
 const DEFAULT_PAYMENT_METHODS = [ 'credit-card', 'paypal' ];
 
-const paymentMethodsByLocale = {
-	de: [ 'paypal', 'credit-card' ],
-	'en-US': default_payment_methods,
+const paymentMethods = {
+	byLocale: {
+		'de-DE': [ 'paypal', 'credit-card' ],
+		'en-DE': [ 'paypal', 'credit-card' ]
+	},
+
+	byCountry: {
+		US: DEFAULT_PAYMENT_METHODS
+	},
+
+	byWpcomLang: {}
 };
 
 /**
@@ -30,10 +39,11 @@ const paymentMethodsByLocale = {
  */
 export default function getCurrentUserPaymentMethods( state ) {
 	const countryCode = getGeoCountryShort( state );
-	const locale = getCurrentUserLocale( state );
-	const generatedLocale = kebabCase( locale ) + '-' + upperCase( countryCode );
+	const wpcomLang = getCurrentUserLocale( state );
+	const generatedLocale = lowerCase( wpcomLang ) + '-' + upperCase( countryCode );
 
-	return paymentMethodsByLocale[ generatedLocale ] ||
-		paymentMethodsByLocale[ locale ] ||
+	return paymentMethods.byLocale[ generatedLocale ] ||
+		paymentMethods.byCountry[ countryCode ] ||
+		paymentMethods.byWpcomLang[ wpcomLang ] ||
 		[ ...DEFAULT_PAYMENT_METHODS ];
 }
