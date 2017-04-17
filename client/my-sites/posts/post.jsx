@@ -23,7 +23,7 @@ import config from 'config';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getPreviewURL } from 'lib/posts/utils';
-import { getSite, isSitePreviewable } from 'state/sites/selectors';
+import { getSite, isSingleUserSite, isSitePreviewable } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 import Comments from 'blocks/comments';
@@ -220,7 +220,7 @@ const Post = React.createClass( {
 	getHeader() {
 		const { postSite: site } = this.props;
 
-		if ( this.props.selectedSiteId && site.single_user_site ) {
+		if ( this.props.selectedSiteId && this.props.isPostFromSingleUserSite ) {
 			return null;
 		}
 
@@ -228,7 +228,7 @@ const Post = React.createClass( {
 			<PostHeader site={ site }
 				author={ this.props.post.author ? this.props.post.author.name : '' }
 				path={ this.props.path }
-				showAuthor={ ! site.single_user_site } />
+				showAuthor={ ! this.props.isPostFromSingleUserSite } />
 		);
 	},
 
@@ -351,6 +351,7 @@ const Post = React.createClass( {
 export default connect(
 	( state, { post } ) => {
 		return {
+			isPostFromSingleUserSite: isSingleUserSite( state, post.site_ID ),
 			isPreviewable: false !== isSitePreviewable( state, post.site_ID ),
 			postSite: getSite( state, post.site_ID ),
 			previewURL: getPreviewURL( post ),
