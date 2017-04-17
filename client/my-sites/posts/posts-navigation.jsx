@@ -157,9 +157,7 @@ const PostsNavigation = React.createClass( {
 
 			let textItem = this.filterStatuses[ status ];
 
-			let count = false !== this.state.counts[ status ]
-				? this.state.counts[ status ]
-				: false;
+			let count = this.state.counts[ status ];
 
 			if ( path === this.props.context.pathname ) {
 				selectedText = textItem;
