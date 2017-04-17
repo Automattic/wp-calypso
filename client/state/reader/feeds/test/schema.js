@@ -61,7 +61,7 @@ describe( 'schema', () => {
 		assert.isFalse(
 			validator( {
 				1234: {
-					feed_ID: '1',
+					feed_ID: '1', // feed_ID should be an actual integer, not a string
 					blog_ID: 2,
 					name: null,
 					URL: null,
