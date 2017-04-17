@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import debugModule from 'debug';
 import omit from 'lodash/omit';
@@ -9,6 +9,7 @@ import assign from 'lodash/assign';
 import filter from 'lodash/filter';
 import pick from 'lodash/pick';
 import page from 'page';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -31,6 +32,10 @@ import PeopleNotices from 'my-sites/people/people-notices';
 import PeopleLog from 'lib/people/log-store';
 import analytics from 'lib/analytics';
 import RoleSelect from 'my-sites/people/role-select';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import PeopleLogStore from 'lib/people/log-store';
 
 /**
  * Module Variables
@@ -235,44 +240,66 @@ const EditUserForm = React.createClass( {
 	}
 } );
 
-module.exports = protectForm( React.createClass( {
-	displayName: 'EditTeamMemberForm',
+export class EditTeamMemberForm extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
+			user: UsersStore.getUserByLogin( props.siteId, props.userLogin ),
+			removingUser: false,
+			requestedUser: false
+		};
+	}
 
-	mixins: [ PureRenderMixin ],
-
-	getInitialState() {
-		return ( {
-			user: UsersStore.getUserByLogin( this.props.siteId, this.props.userLogin ),
-			removingUser: false
-		} );
-	},
+	componentWillMount() {
+		this.refreshUser();
+	}
 
 	componentDidMount() {
 		UsersStore.on( 'change', this.refreshUser );
 		PeopleLog.on( 'change', this.checkRemoveUser );
-		if ( ! this.state.user && this.props.siteId ) {
-			UsersActions.fetchUser( { siteId: this.props.siteId }, this.props.userLogin );
-		}
-	},
+		PeopleLog.on( 'change', this.redirectIfError );
+	}
 
 	componentWillUnmount() {
 		UsersStore.removeListener( 'change', this.refreshUser );
 		PeopleLog.removeListener( 'change', this.checkRemoveUser );
-	},
+		PeopleLog.removeListener( 'change', this.redirectIfError );
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.refreshUser( nextProps );
-	},
+	}
 
-	refreshUser( nextProps ) {
+	refreshUser = ( nextProps ) => {
 		const siteId = nextProps && nextProps.siteId ? nextProps.siteId : this.props.siteId;
 
-		this.setState( {
-			user: UsersStore.getUserByLogin( siteId, this.props.userLogin )
-		} );
-	},
+		const peopleUser = UsersStore.getUserByLogin( siteId, this.props.userLogin );
 
-	checkRemoveUser() {
+		let requestedUser = this.state.requestedUser;
+
+		if ( ! peopleUser && siteId && ! requestedUser ) {
+			UsersActions.fetchUser( { siteId }, this.props.userLogin );
+			requestedUser = true;
+		}
+
+		this.setState( {
+			user: peopleUser,
+			requestedUser
+		} );
+	};
+
+	redirectIfError = () => {
+		if ( this.props.siteId ) {
+			const fetchUserError = PeopleLogStore.getErrors(
+				log => this.props.siteId === log.siteId && 'RECEIVE_USER_FAILED' === log.action && this.props.userLogin === log.user
+			);
+			if ( fetchUserError.length ) {
+				page.redirect( `/people/team/${ this.props.siteSlug }` );
+			}
+		}
+	};
+
+	checkRemoveUser = () => {
 		if ( ! this.props.siteId ) {
 			return;
 		}
@@ -300,9 +327,9 @@ module.exports = protectForm( React.createClass( {
 				removingUser: ! this.state.removingUser
 			} );
 		}
-	},
+	};
 
-	goBack() {
+	goBack = () => {
 		analytics.ga.recordEvent( 'People', 'Clicked Back Button on User Edit' );
 		if ( this.props.siteSlug ) {
 			const teamBack = '/people/team/' + this.props.siteSlug,
@@ -317,7 +344,7 @@ module.exports = protectForm( React.createClass( {
 			return;
 		}
 		page( '/people/team' );
-	},
+	};
 
 	renderNotices() {
 		if ( ! this.state.user ) {
@@ -326,11 +353,12 @@ module.exports = protectForm( React.createClass( {
 		return (
 			<PeopleNotices user={ this.state.user } />
 		);
-	},
+	}
 
 	render() {
 		return (
 			<Main className="edit-team-member-form">
+				<PageViewTracker path="people/edit/:user_login/:site" title="View Team Member" />
 				<HeaderCake onClick={ this.goBack } isCompact />
 				{ this.renderNotices() }
 				<Card className="edit-team-member-form__user-profile">
@@ -355,4 +383,18 @@ module.exports = protectForm( React.createClass( {
 			</Main>
 		);
 	}
-} ) );
+}
+
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const site = getSelectedSite( state );
+
+		return {
+			siteId,
+			siteSlug: getSiteSlug( state, siteId ),
+			isJetpack: site && site.jetpack,
+			isMultisite: site && site.is_multisite,
+		};
+	}
+)( protectForm( EditTeamMemberForm ) );

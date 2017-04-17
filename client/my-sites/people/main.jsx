@@ -4,6 +4,7 @@
 import React from 'react';
 import omit from 'lodash/omit';
 import debugModule from 'debug';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -18,17 +19,19 @@ import PeopleNotices from 'my-sites/people/people-notices';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:my-sites:people:main' );
 
-export default React.createClass( {
+// TODO: port to es6 once we remove the last observe
+export const People = React.createClass( { // eslint-disable-line react/prefer-es6-class
 
 	displayName: 'People',
 
-	mixins: [ observe( 'sites', 'peopleLog' ) ],
+	mixins: [ observe( 'peopleLog' ) ],
 
 	componentDidMount: function() {
 		debug( 'PeopleList React component mounted.' );
@@ -54,7 +57,7 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		const site = this.props.sites.getSelectedSite();
+		const site = this.props.selectedSite;
 
 		// Jetpack 3.7 is necessary to manage people
 		if ( site && site.jetpack && site.versionCompare( '3.7.0-beta', '<' ) ) {
@@ -92,3 +95,9 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => ( {
+		selectedSite: getSelectedSite( state )
+	} )
+)( People );

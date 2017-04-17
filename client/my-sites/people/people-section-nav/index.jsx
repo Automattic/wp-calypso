@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	config = require( 'config' ),
-	find = require( 'lodash/find' ),
-	includes = require( 'lodash/includes' );
+import React, { Component } from 'react';
+import config from 'config';
+import { find, get, includes } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -53,11 +53,13 @@ let PeopleNavTabs = React.createClass( {
 	}
 } );
 
-module.exports = React.createClass( {
+class PeopleSectionNav extends Component {
 
-	displayName: 'PeopleSectionNav',
+	canSearch() {
+		if ( ! this.props.site ) {
+			return false;
+		}
 
-	canSearch: function() {
 		// Disable search for wpcom followers and viewers
 		if ( this.props.filter ) {
 			if ( 'followers' === this.props.filter || 'viewers' === this.props.filter ) {
@@ -76,37 +78,38 @@ module.exports = React.createClass( {
 		}
 
 		return true;
-	},
+	}
 
-	getFilters: function() {
-		var siteFilter = this.props.site.slug,
-			filters = [
-				{
-					title: this.translate( 'Team', { context: 'Filter label for people list' } ),
-					path: '/people/team/' + siteFilter,
-					id: 'team'
-				},
-				{
-					title: this.translate( 'Followers', { context: 'Filter label for people list' } ),
-					path: '/people/followers/' + siteFilter,
-					id: 'followers'
-				},
-				{
-					title: this.translate( 'Email Followers', { context: 'Filter label for people list' } ),
-					path: '/people/email-followers/' + siteFilter,
-					id: 'email-followers'
-				},
-				{
-					title: this.translate( 'Viewers', { context: 'Filter label for people list' } ),
-					path: '/people/viewers/' + siteFilter,
-					id: 'viewers'
-				}
-			];
+	getFilters() {
+		const siteFilter = get( this.props.site, 'slug', '' );
+		const { translate } = this.props;
+		const filters = [
+			{
+				title: translate( 'Team', { context: 'Filter label for people list' } ),
+				path: '/people/team/' + siteFilter,
+				id: 'team'
+			},
+			{
+				title: translate( 'Followers', { context: 'Filter label for people list' } ),
+				path: '/people/followers/' + siteFilter,
+				id: 'followers'
+			},
+			{
+				title: translate( 'Email Followers', { context: 'Filter label for people list' } ),
+				path: '/people/email-followers/' + siteFilter,
+				id: 'email-followers'
+			},
+			{
+				title: translate( 'Viewers', { context: 'Filter label for people list' } ),
+				path: '/people/viewers/' + siteFilter,
+				id: 'viewers'
+			}
+		];
 
 		return filters;
-	},
+	}
 
-	getNavigableFilters: function() {
+	getNavigableFilters() {
 		var allowedFilterIds = [ 'team' ];
 		if ( config.isEnabled( 'manage/people/readers' ) ) {
 			allowedFilterIds.push( 'followers' );
@@ -118,16 +121,20 @@ module.exports = React.createClass( {
 		}
 
 		return this.getFilters().filter( filter => this.props.filter === filter.id || includes( allowedFilterIds, filter.id ) );
-	},
+	}
 
-	shouldDisplayViewers: function() {
+	shouldDisplayViewers() {
+		if ( ! this.props.site ) {
+			return false;
+		}
+
 		if ( 'viewers' === this.props.filter || ( ! this.props.site.jetpack && this.props.site.is_private ) ) {
 			return true;
 		}
 		return false;
-	},
+	}
 
-	render: function() {
+	render() {
 		var selectedText,
 			hasPinnedItems = false,
 			search = null;
@@ -149,4 +156,6 @@ module.exports = React.createClass( {
 			</SectionNav>
 		);
 	}
-} );
+}
+
+export default localize( PeopleSectionNav );
