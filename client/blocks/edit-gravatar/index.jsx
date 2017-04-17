@@ -31,6 +31,8 @@ import {
 	uploadGravatar
 } from 'state/current-user/gravatar-status/actions';
 import ImageEditor from 'blocks/image-editor';
+import InfoPopover from 'components/info-popover';
+import ExternalLink from 'components/external-link';
 
 /**
  * Module dependencies
@@ -158,8 +160,13 @@ export class EditGravatar extends Component {
 	render() {
 		const {
 			isUploading,
+			translate,
 			user
 		} = this.props;
+		const gravatarLink = `https://gravatar.com/${ user.username || '' }`;
+		// use imgSize = 400 for caching
+		// it's the popular value for large Gravatars in Calypso
+		const GRAVATAR_IMG_SIZE = 400;
 		return (
 			<div className="edit-gravatar">
 				{ this.renderImageEditor() }
@@ -172,7 +179,7 @@ export class EditGravatar extends Component {
 						}
 					>
 						<Gravatar
-							imgSize={ 400 }
+							imgSize={ GRAVATAR_IMG_SIZE }
 							size={ 150 }
 							user={ user }
 						/>
@@ -187,6 +194,31 @@ export class EditGravatar extends Component {
 						{ isUploading && <Spinner className="edit-gravatar__spinner" /> }
 						</div>
 				</FilePicker>
+				<div>
+					<p className="edit-gravatar__explanation">Your profile photo is public.</p>
+					<InfoPopover
+						className="edit-gravatar__pop-over"
+						position="left" >
+						{ translate( '{{p}}The avatar you use on WordPress.com comes ' +
+							'from {{ExternalLink}}Gravatar{{/ExternalLink}} - a universal avatar service.{{/p}}' +
+							'{{p}}Your photo may be displayed on other sites where ' +
+							'you use your email address %(email)s.{{/p}}',
+							{
+								components: {
+									ExternalLink: <ExternalLink
+										href={ gravatarLink }
+										target="_blank"
+										rel="noopener noreferrer"
+										icon={ true } />,
+									p: <p />
+								},
+								args: {
+									email: user.email
+								}
+							}
+						) }
+					</InfoPopover>
+				</div>
 			</div>
 		);
 	}
@@ -194,7 +226,7 @@ export class EditGravatar extends Component {
 
 export default connect(
 	state => ( {
-		user: getCurrentUser( state ),
+		user: getCurrentUser( state ) || {},
 		isUploading: isCurrentUserUploadingGravatar( state ),
 	} ),
 	{
