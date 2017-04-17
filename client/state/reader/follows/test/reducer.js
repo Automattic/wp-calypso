@@ -13,8 +13,13 @@ import {
 	READER_FOLLOWS_RECEIVE,
 } from 'state/action-types';
 import {
-	items
-} from '../reducer';
+	subscribeToNewPostEmail,
+	updateNewPostEmailSubscription,
+	unsubscribeToNewPostEmail,
+	subscribeToNewCommentEmail,
+	unsubscribeToNewCommentEmail,
+} from '../actions';
+import { items } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
@@ -70,6 +75,330 @@ describe( 'reducer', () => {
 			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).to.eql(
 				{ is_following: true, blog_ID: 126, URL: 'https://postcardsfromthereader.wordpress.com' }
 			);
+		} );
+
+		it( 'should update when passed new post subscription info', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: false
+						}
+					}
+				}
+			} );
+			const state = items( original, subscribeToNewPostEmail( 123 ) );
+			expect( state ).to.eql( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: true
+						}
+					}
+				}
+			} );
+		} );
+
+		it( 'should not update when passed identical new post subscription info', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: true
+						}
+					}
+				}
+			} );
+			const state = items( original, subscribeToNewPostEmail( 123 ) );
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should not update when passed bad new post subscription info', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: false
+						}
+					}
+				}
+			} );
+			const state = items( original, subscribeToNewPostEmail( 456 ) );
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should update when passed updated post subscription info', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: true
+						}
+					}
+				}
+			} );
+
+			[ 'instantly', 'daily', 'weekly' ].forEach( frequency => {
+				const state = items( original, updateNewPostEmailSubscription( 123, frequency ) );
+				expect( state ).to.eql( {
+					'example.com': {
+						is_following: true,
+						blog_ID: 123,
+						URL: 'http://example.com',
+						delivery_methods: {
+							email: {
+								send_posts: true,
+								post_delivery_frequency: frequency,
+							}
+						}
+					}
+				} );
+			} );
+		} );
+
+		it( 'should not update when passed identical updated post subscription info', () => {
+			[ 'instantly', 'daily', 'weekly' ].forEach( frequency => {
+				const original = deepFreeze( {
+					'example.com': {
+						is_following: true,
+						blog_ID: 123,
+						URL: 'http://example.com',
+						delivery_methods: {
+							email: {
+								send_posts: true,
+								post_delivery_frequency: frequency,
+							}
+						}
+					}
+				} );
+				const state = items( original, updateNewPostEmailSubscription( 123, frequency ) );
+				expect( state ).to.equal( original );
+			} );
+		} );
+
+		it( 'should not update when passed bad updated post subscription info', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: true
+						}
+					}
+				}
+			} );
+
+			[ 'instantly', 'daily', 'weekly' ].forEach( frequency => {
+				const state = items( original, updateNewPostEmailSubscription( 456, frequency ) );
+				expect( state ).to.equal( original );
+			} );
+		} );
+
+		it( 'should update when passed post unsubscription info', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: true,
+							post_delivery_frequency: 'instantly',
+						}
+					}
+				}
+			} );
+			const state = items( original, unsubscribeToNewPostEmail( 123 ) );
+			expect( state ).to.eql( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: false,
+							post_delivery_frequency: 'instantly',
+						}
+					}
+				}
+			} );
+		} );
+
+		it( 'should not update when passed identical post unsubscription info', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: false,
+							post_delivery_frequency: 'instantly',
+						}
+					}
+				}
+			} );
+			const state = items( original, unsubscribeToNewPostEmail( 123 ) );
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should not update when passed bad post unsubscription info', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: true,
+							post_delivery_frequency: 'instantly',
+						}
+					}
+				}
+			} );
+			const state = items( original, unsubscribeToNewPostEmail( 456 ) );
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should update when passed comment subscription info', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_comments: false
+						}
+					}
+				}
+			} );
+			const state = items( original, subscribeToNewCommentEmail( 123 ) );
+			expect( state ).to.eql( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_comments: true
+						}
+					}
+				}
+			} );
+		} );
+
+		it( 'should not update when passed identical comment subscription info', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_comments: true
+						}
+					}
+				}
+			} );
+			const state = items( original, subscribeToNewCommentEmail( 123 ) );
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should not update when passed comment sub info about a missing sub', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_comments: true
+						}
+					}
+				}
+			} );
+			const state = items( original, subscribeToNewCommentEmail( 456 ) );
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should update when passed comment unsubscription info', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_comments: true
+						}
+					}
+				}
+			} );
+			const state = items( original, unsubscribeToNewCommentEmail( 123 ) );
+			expect( state ).to.eql( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_comments: false
+						}
+					}
+				}
+			} );
+		} );
+
+		it( 'should not update when passed identical comment unsubscription info', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_comments: false
+						}
+					}
+				}
+			} );
+			const state = items( original, unsubscribeToNewCommentEmail( 123 ) );
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should not update when passed bad comment unsubscription info', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_comments: true
+						}
+					}
+				}
+			} );
+			const state = items( original, unsubscribeToNewCommentEmail( 456 ) );
+			expect( state ).to.equal( original );
 		} );
 	} );
 } );

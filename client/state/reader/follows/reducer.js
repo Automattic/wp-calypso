@@ -37,7 +37,7 @@ function updatePostSubscription( state, payload, shouldSkipUpdate, newProps ) {
 			delivery_methods: {
 				email: {
 					...get( follow, [ 'delivery_methods', 'email' ], {} ),
-					newProps
+					...newProps
 				}
 			}
 		}
@@ -120,10 +120,7 @@ export const items = createReducer( {}, {
 		state,
 		payload,
 		skipNewPostSubscription,
-		{
-			send_posts: true,
-			post_delivery_frequency: payload.deliveryFrequency
-		},
+		{ send_posts: true },
 		),
 	[ READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION ]: ( state, { payload } ) => updatePostSubscription(
 		state,
