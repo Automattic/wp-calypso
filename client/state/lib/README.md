@@ -44,7 +44,7 @@ case MY_EXAMPLE_LIBRARY_ACTION:
 ```
 
 
-### Use Redux Middleware to setCurrentSite
+### Use Redux Middleware to setSelectedSite
 
 For libraries that are too large to port, or have too many usages, 
 we can try working around this by setting the selectedSite when
