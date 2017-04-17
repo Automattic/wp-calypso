@@ -321,7 +321,7 @@ const Post = React.createClass( {
 					onRestore={ this.restorePost }
 					onToggleShare={ this.toggleShare }
 					onViewPost={ this.viewPost }
-					site={ site }
+					siteId={ this.props.post.site_ID }
 				/>
 				<ReactCSSTransitionGroup
 					transitionName="updated-trans"
