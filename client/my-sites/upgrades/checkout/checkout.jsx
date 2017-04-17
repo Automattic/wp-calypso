@@ -23,6 +23,7 @@ const analytics = require( 'lib/analytics' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	purchasePaths = require( 'me/purchases/paths' ),
 	QueryStoredCards = require( 'components/data/query-stored-cards' ),
+	QueryGeo = require( 'components/data/query-geo' ),
 	SecurePaymentForm = require( './secure-payment-form' ),
 	SecurePaymentFormPlaceholder = require( './secure-payment-form-placeholder' ),
 	supportPaths = require( 'lib/url/support' ),
@@ -381,6 +382,7 @@ const Checkout = React.createClass( {
 			<div className="main main-column" role="main">
 				<div className="checkout">
 					<QueryStoredCards />
+					<QueryGeo />
 
 					{ this.content() }
 				</div>
