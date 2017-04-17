@@ -23,6 +23,7 @@ import {
 	THEME_DELETE,
 	THEME_DELETE_SUCCESS,
 	THEME_DELETE_FAILURE,
+	THEME_FILTERS_REQUEST,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
@@ -831,6 +832,17 @@ export function hideThemePreview() {
 	return {
 		type: THEME_PREVIEW_STATE,
 		themeId: null
+	};
+}
+
+/**
+ * Triggers a network request to fetch all available theme filters.
+ *
+ * @return {Object} A nested list of theme filters, keyed by filter slug
+ */
+export function requestThemeFilters() {
+	return {
+		type: THEME_FILTERS_REQUEST,
 	};
 }
 

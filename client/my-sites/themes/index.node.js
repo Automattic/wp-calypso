@@ -6,16 +6,13 @@ import { makeLayout } from 'controller';
 import { getSubjects } from './theme-filters.js';
 import {
 	fetchThemeData,
+	fetchThemeFilters,
 	loggedOut,
 	redirectSearchAndType,
 	redirectFilterAndType,
 	redirectToThemeDetails
 } from './controller';
 import validateFilters from './validate-filters';
-
-// `logged-out` middleware isn't SSR-compliant yet, but we can at least render
-// the layout.
-// FIXME: Also create loggedOut/multiSite/singleSite elements, depending on route.
 
 export default function( router ) {
 	const verticals = getSubjects().join( '|' );
@@ -26,9 +23,10 @@ export default function( router ) {
 			res.redirect( 301, '/themes' + originalUrl.slice( '/design'.length ) );
 		} );
 
-		router( `/themes/:vertical(${ verticals })?/:tier(free|premium)?`, fetchThemeData, loggedOut, makeLayout );
+		router( `/themes/:vertical(${ verticals })?/:tier(free|premium)?`, fetchThemeFilters, fetchThemeData, loggedOut, makeLayout );
 		router(
 			`/themes/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`,
+			fetchThemeFilters,
 			validateFilters,
 			fetchThemeData,
 			loggedOut,

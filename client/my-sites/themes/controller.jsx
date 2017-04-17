@@ -15,9 +15,11 @@ import LoggedOutComponent from './logged-out';
 import Upload from 'my-sites/themes/theme-upload';
 import trackScrollPage from 'lib/track-scroll-page';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
-import { requestThemes, receiveThemes, setBackPath } from 'state/themes/actions';
+import { requestThemes, requestThemeFilters, receiveThemes, setBackPath } from 'state/themes/actions';
 import { getThemesForQuery, getThemesFoundForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
+import { getThemeFilters } from 'state/selectors';
+import { THEME_FILTERS_ADD } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:themes' );
 const HOUR_IN_MS = 3600000;
@@ -25,6 +27,10 @@ const themesQueryCache = new Lru( {
 	max: 500,
 	maxAge: HOUR_IN_MS
 } );
+
+// The filters cache is straight-forward since requestThemeFilters() always returns the same
+// list of all available filters.
+let filters = {};
 
 function getProps( context ) {
 	const { tier, filter, vertical, site_id: siteId } = context.params;
@@ -141,6 +147,24 @@ export function fetchThemeData( context, next ) {
 			next();
 		} )
 		.catch( () => next() );
+}
+
+export function fetchThemeFilters( context, next ) {
+	const { store } = context;
+	if ( ! isEmpty( filters ) ) {
+		debug( 'found theme filters in cache' );
+		store.dispatch( { type: THEME_FILTERS_ADD, filters } );
+		return next();
+	}
+
+	const unsubscribe = store.subscribe( () => {
+		filters = getThemeFilters( store.getState() );
+		if ( ! isEmpty( filters ) ) {
+			unsubscribe();
+			return next();
+		}
+	} );
+	store.dispatch( requestThemeFilters() );
 }
 
 // Legacy (Atlas-based Theme Showcase v4) route redirects

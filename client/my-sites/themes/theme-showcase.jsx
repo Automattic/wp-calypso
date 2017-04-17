@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { pickBy } from 'lodash';
+import { includes, pickBy } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -24,29 +24,27 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
 import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
+import { getThemeShowcaseDescription } from 'state/selectors';
 
 const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
 	? require( './themes-magic-search-card' )
 	: require( './themes-search-card' );
 
-const themesMeta = {
-	'': {
-		title: 'WordPress Themes',
-		description: 'Beautiful, responsive, free and premium WordPress themes ' +
-			'for your photography site, portfolio, magazine, business website, or blog.',
-		canonicalUrl: 'https://wordpress.com/themes',
-	},
-	free: {
-		title: 'Free WordPress Themes',
-		description: 'Discover Free WordPress Themes on the WordPress.com Theme Showcase.',
-		canonicalUrl: 'https://wordpress.com/themes/free',
-	},
-	premium: {
-		title: 'Premium WordPress Themes',
-		description: 'Discover Premium WordPress Themes on the WordPress.com Theme Showcase.',
-		canonicalUrl: 'https://wordpress.com/themes/premium',
+function getThemeShowcaseTitle( tier ) {
+	const titles = {
+		'': 'WordPress Themes',
+		free: 'Free WordPress Themes',
+		premium: 'Premium WordPress Themes',
+	};
+	return titles[ tier ];
+}
+
+function getThemeShowcaseCanonicalUrl( tier ) {
+	if ( includes( [ 'free', 'premium' ], tier ) ) {
+		return 'https://wordpress.com/themes/' + tier;
 	}
-};
+	return 'https://wordpress.com/themes';
+}
 
 const optionShape = PropTypes.shape( {
 	label: PropTypes.string,
@@ -135,15 +133,15 @@ const ThemeShowcase = React.createClass( {
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
 		const metas = [
-			{ name: 'description', property: 'og:description', content: themesMeta[ tier ].description },
-			{ property: 'og:url', content: themesMeta[ tier ].canonicalUrl },
+			{ name: 'description', property: 'og:description', content: this.props.description },
+			{ property: 'og:url', content: getThemeShowcaseCanonicalUrl( tier ) },
 			{ property: 'og:type', content: 'website' }
 		];
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<Main className="themes">
-				<DocumentHead title={ themesMeta[ tier ].title } meta={ metas } />
+				<DocumentHead title={ getThemeShowcaseTitle( tier ) } meta={ metas } />
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle } />
 				<ThemesSearchCard
 					onSearch={ this.doSearch }
@@ -198,9 +196,10 @@ const ThemeShowcase = React.createClass( {
 } );
 
 export default connect(
-	( state, { siteId } ) => ( {
+	( state, { siteId, filter, tier, vertical } ) => ( {
 		isLoggedIn: !! getCurrentUserId( state ),
 		siteSlug: getSiteSlug( state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
+		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
 	} )
 )( localize( ThemeShowcase ) );
