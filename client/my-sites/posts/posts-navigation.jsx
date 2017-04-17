@@ -174,7 +174,7 @@ const PostsNavigation = React.createClass( {
 					className={ 'is-' + status }
 					key={ 'statusTabs' + path }
 					path={ path }
-					count={ null === this.props.siteId || count }
+					count={ this.props.siteId && count }
 					value={ textItem }
 					selected={ path === this.props.context.pathname }>
 					{ textItem }
