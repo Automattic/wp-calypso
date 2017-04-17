@@ -73,6 +73,9 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 export function setupMiddlewares( currentUser, reduxStore ) {
 	debug( 'Executing WordPress.com setup middlewares.' );
 
+	const sites = sitesFactory();
+	sites.setReduxStore( reduxStore );
+
 	analytics.setDispatch( reduxStore.dispatch );
 
 	if ( currentUser.get() ) {
@@ -219,7 +222,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 	reduxStore.dispatch( initializeHappychat() );
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
-		require( 'lib/keyboard-shortcuts/global' )( sitesFactory() );
+		require( 'lib/keyboard-shortcuts/global' )( sites );
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {

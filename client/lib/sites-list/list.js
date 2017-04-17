@@ -22,6 +22,13 @@ import { withoutHttp } from 'lib/url';
 
 const debug = debugModule( 'calypso:sites-list' );
 
+import {
+	getSite,
+	getSiteByDomain,
+	getSiteBySlug,
+	getSiteByUrl,
+} from 'state/sites/selectors';
+
 /**
  * SitesList component
  *
@@ -44,6 +51,14 @@ function SitesList() {
  */
 Emitter( SitesList.prototype );
 Searchable( SitesList.prototype, [ 'name', 'URL' ] );
+
+SitesList.prototype.setReduxStore = function( reduxStore ) {
+	this.reduxStore = reduxStore;
+};
+
+SitesList.prototype.getState = function() {
+	return this.reduxStore.getState();
+};
 
 /**
  * Get list of sites from current object or store,
@@ -402,13 +417,16 @@ SitesList.prototype.getSite = function( siteID ) {
 		return false;
 	}
 
-	return find( this.get(), function( site ) {
-		// We need to check `slug` before `domain` to grab the correct site on certain
-		// clashes between a domain redirect and a Jetpack site, as well as domains
-		// on subfolders, but we also need to look for the `domain` as a last resort
-		// to cover mapped domains for regular WP.com sites.
-		return site.ID === siteID || site.slug === siteID || site.domain === siteID || site.wpcom_url === siteID;
-	} );
+	const state = this.getState();
+	let siteFromState;
+
+	if ( Number.isInteger( siteID ) ) {
+		siteFromState = getSite( state, siteID );
+	} else {
+		siteFromState = getSiteBySlug( state, siteID ) || getSiteByDomain( state, siteID ) || getSiteByUrl( state, siteID );
+	}
+
+	return siteFromState && this.createSiteObject( siteFromState );
 };
 
 /**
