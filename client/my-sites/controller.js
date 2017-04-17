@@ -231,6 +231,13 @@ function createSitesComponent( context ) {
 }
 
 module.exports = {
+
+	// Clears selected site from global redux state
+	noSite( context, next ) {
+		context.store.dispatch( setSelectedSiteId( null ) );
+		return next();
+	},
+
 	/*
 	 * Set up site selection based on last URL param and/or handle no-sites error cases
 	 */
