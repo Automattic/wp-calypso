@@ -76,8 +76,7 @@ const PostActions = ( {
 						key="like-button"
 						siteId={ +post.site_ID }
 						postId={ +post.ID }
-						post={ post }
-						site={ site } />
+						post={ post } />
 				</li>
 			}
 			{ ! isDraft && showStats &&
