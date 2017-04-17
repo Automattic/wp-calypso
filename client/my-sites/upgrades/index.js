@@ -235,6 +235,7 @@ module.exports = function() {
 	if ( config.isEnabled( 'upgrades/checkout' ) ) {
 		page(
 			'/checkout/thank-you/no-site/:receiptId?',
+			controller.noSite,
 			upgradesController.checkoutThankYou
 		);
 
@@ -258,6 +259,7 @@ module.exports = function() {
 
 		page(
 			'/checkout/no-site',
+			controller.noSite,
 			upgradesController.sitelessCheckout
 		);
 

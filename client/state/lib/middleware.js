@@ -11,8 +11,7 @@ import {
 	SELECTED_SITE_SET,
 	SITE_RECEIVE,
 	SITES_RECEIVE,
-	SITES_UPDATE,
-	ROUTE_SET
+	SITES_UPDATE
 } from 'state/action-types';
 import analytics from 'lib/analytics';
 import cartStore from 'lib/cart/store';
@@ -63,13 +62,6 @@ const handler = ( dispatch, action, getState ) => {
 				updateSelectedSiteForCart( dispatch, action, getState );
 			}, 0 );
 			return;
-
-		case ROUTE_SET:
-			// Special case, no site actions are dispatched at all for no-site
-			// checkout flow
-			if ( action.path === '/checkout/no-site' ) {
-				cartStore.setSelectedSiteId( null );
-			}
 	}
 };
 
