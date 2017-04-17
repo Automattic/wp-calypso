@@ -218,14 +218,12 @@ const Post = React.createClass( {
 	},
 
 	getHeader() {
-		const { postSite: site } = this.props;
-
 		if ( this.props.selectedSiteId && this.props.isPostFromSingleUserSite ) {
 			return null;
 		}
 
 		return (
-			<PostHeader site={ site }
+			<PostHeader siteId={ this.props.post.site_ID }
 				author={ this.props.post.author ? this.props.post.author.name : '' }
 				path={ this.props.path }
 				showAuthor={ ! this.props.isPostFromSingleUserSite } />

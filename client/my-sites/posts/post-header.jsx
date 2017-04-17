@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -9,6 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import SiteIcon from 'blocks/site-icon';
+import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 
 class PostHeader extends PureComponent {
 	static defaultProps = {
@@ -32,8 +34,8 @@ class PostHeader extends PureComponent {
 			<div className={ classes }>
 				<SiteIcon site={ this.props.site } size={ 32 } />
 				<h4 className="post__site-title">
-					<a href={ this.props.path + '/' + this.props.site.slug }>
-						{ this.props.site.title }
+					<a href={ this.props.path + '/' + this.props.siteSlug }>
+						{ this.props.siteTitle }
 					</a>
 				</h4>
 				{ this.props.showAuthor ? <span className="post__author">{ this.getAuthor() }</span> : null }
@@ -42,4 +44,9 @@ class PostHeader extends PureComponent {
 	}
 }
 
-export default localize( PostHeader );
+export default connect(
+	( state, { siteId } ) => ( {
+		siteSlug: getSiteSlug( state, siteId ),
+		siteTitle: getSiteTitle( state, siteId ),
+	} )
+)( localize( PostHeader ) );
