@@ -10,6 +10,7 @@ import AdvancedTab from './advanced-tab';
 import CdnTab from './cdn-tab';
 import ContentsTab from './contents-tab';
 import EasyTab from './easy-tab';
+import PreloadTab from './preload-tab';
 import Main from 'components/main';
 import Navigation from './navigation';
 import { Tabs } from './constants';
@@ -24,7 +25,7 @@ const WPSuperCache = ( { site, tab } ) => {
 			case Tabs.CONTENTS:
 				return <ContentsTab isMultisite={ site.is_multisite } />;
 			case Tabs.PRELOAD:
-				break;
+				return <PreloadTab />;
 			default:
 				return <EasyTab site={ site } />;
 		}

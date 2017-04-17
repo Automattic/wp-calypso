@@ -250,6 +250,18 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 						fsize: '32.18KB',
 					},
 				},
+
+				// Preload
+				is_preload_enabled: true,
+				is_preloading: false,
+				minimum_preload_interval: 30,
+				preload_email_volume: 'none',
+				preload_interval: 30,
+				preload_on: false,
+				preload_posts: 'all',
+				preload_posts_options: [ 'all', '161', '322' ],
+				preload_refresh: true,
+				preload_taxonomies: false,
 			} );
 
 			return {
