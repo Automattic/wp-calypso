@@ -55,7 +55,7 @@ export const EligibilityWarnings = ( {
 		<div className={ classes }>
 			<QueryEligibility siteId={ siteId } />
 			<TrackComponentView
-				eventName="calypso_automated_transfer_eligibility_warnings"
+				eventName="calypso_automated_transfer_eligibility_show_warnings"
 				eventProperties={ { context } }
 			/>
 			{ ! hasBusinessPlan && ! isJetpack &&
@@ -166,8 +166,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	trackCancel: ( eventProperties = {} ) => recordTracksEvent( 'calypso_automated_transfer_eligibility_cancel', eventProperties ),
-	trackProceed: ( eventProperties = {} ) => recordTracksEvent( 'calypso_automated_transfer_eligibilty_proceed', eventProperties ),
+	trackCancel: ( eventProperties = {} ) => recordTracksEvent( 'calypso_automated_transfer_eligibility_click_cancel', eventProperties ),
+	trackProceed: ( eventProperties = {} ) => recordTracksEvent( 'calypso_automated_transfer_eligibilty_click_proceed', eventProperties ),
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
