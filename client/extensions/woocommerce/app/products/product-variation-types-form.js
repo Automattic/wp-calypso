@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import i18n from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,80 +17,84 @@ export default class ProductVariationTypesForm extends Component {
 
 	static propTypes = {
 		product: PropTypes.shape( {
-			id: PropTypes.number.isRequired,
-			name: PropTypes.string.isRequired,
+			id: PropTypes.isRequired,
 			type: PropTypes.string.isRequired,
+			name: PropTypes.string,
+			attributes: PropTypes.array,
 		} ),
-		variations: PropTypes.arrayOf( PropTypes.shape( {
-			type: PropTypes.string.isRequired,
-			values: PropTypes.arrayOf( PropTypes.string )
-		} ) ),
+		editProductAttribute: PropTypes.func.isRequired,
 	};
+
+	componentWillMount() {
+		const { product } = this.props;
+
+		if ( ! product.attributes ) {
+			this.addType();
+		}
+	}
 
 	constructor( props ) {
 		super( props );
 
-		this.state = {
-			variations: this.props.variations || this.getInitialFields(),
-		};
-
-		this.addVariation = this.addVariation.bind( this );
-		this.updateType = this.updateType.bind( this );
+		this.addType = this.addType.bind( this );
+		this.updateName = this.updateName.bind( this );
 		this.updateValues = this.updateValues.bind( this );
-	}
-
-	getInitialFields() {
-		return [ this.getNewFields() ];
 	}
 
 	getNewFields() {
 		return {
-			type: '',
-			values: [],
+			name: '',
+			options: [],
+			variation: true,
 		};
 	}
 
-	updateType( index, event ) {
-		event.preventDefault();
-		const updatedVariations = [ ...this.state.variations ];
-		updatedVariations[ index ] = { ...updatedVariations[ index ], type: event.target.value };
-		this.setState( { variations: updatedVariations } );
+	addType() {
+		const { product, editProductAttribute } = this.props;
+		editProductAttribute( product, null, this.getNewFields() );
 	}
 
-	updateValues( index, value ) {
-		const updatedVariations = [ ...this.state.variations ];
-		updatedVariations[ index ] = { ...updatedVariations[ index ], values: value };
-		this.setState( { variations: updatedVariations } );
+	updateName( e ) {
+		const { product, editProductAttribute } = this.props;
+		const attribute = product.attributes && find( product.attributes, function( a ) {
+			return a.uid === e.target.id;
+		} );
+		editProductAttribute( product, attribute, { name: e.target.value } );
 	}
 
-	renderInputs( variation, index ) {
+	updateValues( values, attribute ) {
+		const { product, editProductAttribute } = this.props;
+		editProductAttribute( product, attribute, { options: values } );
+	}
+
+	renderInputs( attribute ) {
 		return (
-			<div key={ index } className="products__variation-types-form-fieldset">
+			<div key={ attribute.uid } className="products__variation-types-form-fieldset">
 				<FormTextInput
 					placeholder={ i18n.translate( 'Color' ) }
-					value={ variation.type }
+					value={ attribute.name }
+					id={ attribute.uid }
 					name="type"
-					onChange={ ( e ) => this.updateType( index, e ) }
 					className="products__variation-types-form-field"
+					onChange={ this.updateName }
 				/>
 				<TokenField
 					placeholder={ i18n.translate( 'Comma separate these' ) }
-					value={ variation.values }
+					value={ attribute.options }
 					name="values"
-					onChange={ ( value ) => this.updateValues( index, value ) }
+					/* eslint-disable react/jsx-no-bind */
+					onChange={ ( values ) => this.updateValues( values, attribute ) }
 				/>
 			</div>
 		);
 	}
 
-	addVariation( event ) {
-		event.preventDefault();
-		const updatedVariations = [ ...this.state.variations, this.getNewFields() ];
-		this.setState( { variations: updatedVariations } );
-	}
-
 	render() {
-		const inputs = this.state.variations.map( this.renderInputs, this );
+		const { product } = this.props;
+		const { attributes } = product;
+		const variationTypes = ( attributes && attributes.filter( attribute => attribute.variation ) ) || [];
+		const inputs = variationTypes.map( this.renderInputs, this );
+
 		return (
 			<div className="products__variation-types-form-wrapper">
 				<strong>{ i18n.translate( 'Variation types' ) }</strong>
@@ -109,7 +114,7 @@ export default class ProductVariationTypesForm extends Component {
 					{inputs}
 				</div>
 
-				<Button onClick={ this.addVariation }>{ i18n.translate( 'Add another variation' ) }</Button>
+				<Button onClick={ this.addType }>{ i18n.translate( 'Add another variation' ) }</Button>
 		</div>
 		);
 	}
