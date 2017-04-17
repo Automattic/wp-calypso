@@ -23,7 +23,7 @@ import config from 'config';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getPreviewURL } from 'lib/posts/utils';
-import { getSite, isSingleUserSite, isSitePreviewable } from 'state/sites/selectors';
+import { isSingleUserSite, isSitePreviewable } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
@@ -299,8 +299,6 @@ const Post = React.createClass( {
 	},
 
 	render() {
-		const { postSite: site } = this.props;
-
 		return (
 			<Card tagName="article" className={ this.getPostClass() }>
 				<div className="post__body">
@@ -341,7 +339,9 @@ const Post = React.createClass( {
 						onFilterChange={ commentsFilter => this.setState( { commentsFilter } ) }
 						onCommentsUpdate={ () => {} } />
 				}
-				{ this.state.showShare && config.isEnabled( 'republicize' ) && <PostShare post={ this.props.post } site={ site } /> }
+				{ this.state.showShare && config.isEnabled( 'republicize' ) &&
+					<PostShare post={ this.props.post } siteId={ this.props.post.site_ID } />
+				}
 			</Card>
 		);
 	}
@@ -355,7 +355,6 @@ export default connect(
 			editUrl: getEditorPath( state, post.site_ID, post.ID, 'post' ),
 			isPostFromSingleUserSite: isSingleUserSite( state, post.site_ID ),
 			isPreviewable: false !== isSitePreviewable( state, post.site_ID ),
-			postSite: getSite( state, post.site_ID ),
 			previewURL: getPreviewURL( post ),
 			selectedSiteId
 		};

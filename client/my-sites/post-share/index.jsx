@@ -33,7 +33,6 @@ import { isEnabled } from 'config';
 class PostShare extends Component {
 	static propTypes = {
 		siteSlug: PropTypes.string,
-		site: PropTypes.object,
 		post: PropTypes.object,
 		siteId: PropTypes.number,
 		isPublicizeEnabled: PropTypes.bool,
@@ -77,7 +76,7 @@ class PostShare extends Component {
 	}
 
 	renderServices() {
-		if ( ! this.props.site || ! this.hasConnections() ) {
+		if ( ! this.props.siteId || ! this.hasConnections() ) {
 			return;
 		}
 
@@ -263,7 +262,7 @@ class PostShare extends Component {
 					}
 				</div>
 
-				{ this.props.site && <QueryPublicizeConnections siteId={ this.props.site.ID } /> }
+				{ this.props.siteId && <QueryPublicizeConnections siteId={ this.props.siteId } /> }
 				<SharingPreviewModal
 					siteId={ this.props.siteId }
 					postId={ this.props.postId }
@@ -277,9 +276,8 @@ class PostShare extends Component {
 }
 
 export default connect(
-	( state, props ) => {
-		const siteId = props.site.ID;
-		const postId = props.post.ID;
+	( state, { post, siteId } ) => {
+		const postId = post.ID;
 		const userId = getCurrentUserId( state );
 
 		return {
@@ -287,12 +285,12 @@ export default connect(
 			siteSlug: getSiteSlug( state, siteId ),
 			siteId,
 			postId,
-			isPublicizeEnabled: isPublicizeEnabled( state, siteId, props.post.type ),
+			isPublicizeEnabled: isPublicizeEnabled( state, siteId, post.type ),
 			connections: getSiteUserConnections( state, siteId, userId ),
 			hasFetchedConnections: hasFetchedConnections( state, siteId ),
-			requesting: isRequestingSharePost( state, siteId, props.post.ID ),
-			failed: sharePostFailure( state, siteId, props.post.ID ),
-			success: sharePostSuccessMessage( state, siteId, props.post.ID )
+			requesting: isRequestingSharePost( state, siteId, post.ID ),
+			failed: sharePostFailure( state, siteId, post.ID ),
+			success: sharePostSuccessMessage( state, siteId, post.ID )
 		};
 	},
 	{ requestConnections, sharePost, dismissShareConfirmation }
