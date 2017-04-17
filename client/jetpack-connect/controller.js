@@ -158,8 +158,6 @@ export default {
 
 		removeSidebar( context );
 
-		userModule.fetch();
-
 		let intervalType = context.params.intervalType;
 		let locale = context.params.locale;
 		if ( context.params.localeOrInterval ) {
@@ -175,8 +173,7 @@ export default {
 			<JetpackConnectAuthorizeForm
 				path={ context.path }
 				intervalType={ intervalType }
-				locale={ locale }
-				userModule={ userModule } />,
+				locale={ locale } />,
 			document.getElementById( 'primary' ),
 			context.store
 		);
