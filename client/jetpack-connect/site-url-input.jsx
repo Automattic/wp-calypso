@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import i18n from 'i18n-calypso';
+import React, { Component } from 'react';
+import i18n, { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
 /**
@@ -15,8 +15,11 @@ import FormTextInput from 'components/forms/form-text-input';
 import Spinner from 'components/spinner';
 import untrailingslashit from 'lib/route/untrailingslashit';
 
-export default React.createClass( {
-	displayName: 'JetpackConnectSiteURLInput',
+class JetpackConnectSiteURLInput extends Component {
+
+	state = {
+		value: ''
+	}
 
 	componentDidUpdate() {
 		if ( ! this.props.isError ) {
@@ -28,44 +31,38 @@ export default React.createClass( {
 		}
 
 		this.refs.siteUrl.refs.textField.focus();
-	},
+	}
 
-	getInitialState() {
-		return {
-			value: ''
-		};
-	},
-
-	onChange( event ) {
+	onChange = ( event ) => {
 		this.setState( {
 			value: untrailingslashit( event.target.value )
 		}, this.props.onChange );
-	},
+	}
 
 	renderButtonLabel() {
 		if ( ! this.props.isFetching ) {
 			if ( ! this.props.isInstall ) {
-				return this.translate( 'Connect Now' );
+				return this.props.translate( 'Connect Now' );
 			}
-			return this.translate( 'Start Installation' );
+			return this.props.translate( 'Start Installation' );
 		}
-		return this.translate( 'Connecting…' );
-	},
+		return this.props.translate( 'Connecting…' );
+	}
 
-	handleKeyPress( event ) {
+	handleKeyPress = ( event ) => {
 		if ( 13 === event.keyCode ) {
 			this.props.onClick();
 		}
-	},
+	}
 
 	getTermsOfServiceUrl() {
 		return 'https://' + i18n.getLocaleSlug() + '.wordpress.com/tos/';
-	},
+	}
 
 	renderTermsOfServiceLink() {
 		return (
 			<p className="jetpack-connect__tos-link">{
-				this.translate(
+				this.props.translate(
 					'By connecting your site you agree to our fascinating {{a}}Terms of Service{{/a}}.',
 					{
 						components: {
@@ -80,13 +77,13 @@ export default React.createClass( {
 				)
 			}</p>
 		);
-	},
+	}
 
 	render() {
 		const hasError = this.props.isError && ( 'notExists' !== this.props.isError );
 		return (
 			<div>
-				<FormLabel htmlFor="siteUrl">{ this.translate( 'Site Address' ) }</FormLabel>
+				<FormLabel htmlFor="siteUrl">{ this.props.translate( 'Site Address' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon
 						size={ 24 }
@@ -98,7 +95,7 @@ export default React.createClass( {
 						autoFocus="autofocus"
 						onChange={ this.onChange }
 						disabled={ this.props.isFetching }
-						placeholder={ this.translate( 'http://www.yoursite.com' ) }
+						placeholder={ this.props.translate( 'http://www.yoursite.com' ) }
 						onKeyUp={ this.handleKeyPress } />
 					{ this.props.isFetching
 						? ( <Spinner duration={ 30 } /> )
@@ -114,4 +111,6 @@ export default React.createClass( {
 		);
 	}
 
-} );
+}
+
+export default localize( JetpackConnectSiteURLInput );
