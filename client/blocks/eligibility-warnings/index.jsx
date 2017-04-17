@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, includes, noop, partition, flow } from 'lodash';
+import { get, includes, noop, partition } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -27,6 +27,7 @@ import WarningList from './warning-list';
 
 export const EligibilityWarnings = ( {
 	backUrl,
+	context,
 	eligibilityData,
 	hasBusinessPlan,
 	isEligible,
@@ -38,8 +39,6 @@ export const EligibilityWarnings = ( {
 	siteSlug,
 	translate,
 } ) => {
-	const context = includes( backUrl, 'plugins' ) ? 'plugins' : 'themes';
-
 	const warnings = get( eligibilityData, 'eligibilityWarnings', [] );
 
 	const [ bannerHolds, listHolds ] = partition(
@@ -167,14 +166,18 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	trackCancel: () => recordTracksEvent( 'calypso_automated_transfer_eligibility_cancel' ),
-	trackProceed: () => recordTracksEvent( 'calypso_automated_transfer_eligibilty_proceed' ),
+	trackCancel: ( eventProperties = {} ) => recordTracksEvent( 'calypso_automated_transfer_eligibility_cancel', eventProperties ),
+	trackProceed: ( eventProperties = {} ) => recordTracksEvent( 'calypso_automated_transfer_eligibilty_proceed', eventProperties ),
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const onCancel = dispatchProps.trackCancel;
-	const onProceed = flow( ownProps.onProceed, dispatchProps.trackProceed );
-	return Object.assign( {}, ownProps, stateProps, dispatchProps, { onCancel, onProceed } );
+	const context = includes( ownProps.backUrl, 'plugins' ) ? 'plugins' : 'themes';
+	const onCancel = () => dispatchProps.trackCancel( { context } );
+	const onProceed = () => {
+		ownProps.onProceed();
+		dispatchProps.trackProceed( { context } );
+	};
+	return Object.assign( {}, ownProps, stateProps, dispatchProps, { onCancel, onProceed, context } );
 };
 
 export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( localize( EligibilityWarnings ) );
