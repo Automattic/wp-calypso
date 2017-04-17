@@ -78,7 +78,8 @@ class PlanFeaturesHeader extends Component {
 			isPlaceholder,
 			site,
 			translate,
-			isSiteAT
+			isSiteAT,
+			hideMonthly
 		} = this.props;
 
 		const isDiscounted = !! discountPrice;
@@ -90,7 +91,8 @@ class PlanFeaturesHeader extends Component {
 		if (
 			isSiteAT ||
 			! site.jetpack ||
-			this.props.planType === PLAN_JETPACK_FREE
+			this.props.planType === PLAN_JETPACK_FREE ||
+			hideMonthly
 		) {
 			return (
 				<p className={ timeframeClasses }>

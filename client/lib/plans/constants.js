@@ -267,7 +267,7 @@ export const PLANS_LIST = {
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
 		] ),
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
+		getBillingTimeFrame: () => i18n.translate( 'per year' )
 	},
 
 	[ PLAN_JETPACK_PREMIUM_MONTHLY ]: {
@@ -316,7 +316,7 @@ export const PLANS_LIST = {
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT
 		],
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
+		getBillingTimeFrame: () => i18n.translate( 'per year' )
 	},
 
 	[ PLAN_JETPACK_PERSONAL_MONTHLY ]: {
@@ -374,7 +374,7 @@ export const PLANS_LIST = {
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING
 		] ),
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
+		getBillingTimeFrame: () => i18n.translate( 'per year' )
 	},
 	[ PLAN_JETPACK_BUSINESS_MONTHLY ]: {
 		getTitle: () => i18n.translate( 'Professional' ),
