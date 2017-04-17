@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { find, get, merge, reduce } from 'lodash';
+import { find, get, isEqual, merge, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,7 +36,14 @@ function updatePostSubscription( state, payload, isEqualToCurrentState, newProps
 		return state;
 	}
 
-	if ( isEqualToCurrentState( follow, payload ) ) {
+	const currentFollowState = get( follow, [ 'delivery_methods', 'email' ], {} );
+
+	const newFollowState = {
+		...currentFollowState,
+		...newProps,
+	};
+
+	if ( isEqual( currentFollowState, newFollowState ) ) {
 		return state;
 	}
 
@@ -45,26 +52,10 @@ function updatePostSubscription( state, payload, isEqualToCurrentState, newProps
 		[ prepareComparableUrl( follow.URL ) ]: {
 			...follow,
 			delivery_methods: {
-				email: {
-					...get( follow, [ 'delivery_methods', 'email' ], {} ),
-					...newProps
-				}
+				email: newFollowState
 			}
 		}
 	};
-}
-
-function isEqualToNewPostSubscription( current, next ) {
-	return get( current, [ 'delivery_methods', 'email', 'send_posts' ], false ) &&
-			get( current, [ 'delivery_methods', 'email', 'post_delivery_frequency' ] ) === next.deliveryFrequency;
-}
-
-function isEqualToUpdatePostSubscription( current, next ) {
-	return get( current, [ 'delivery_methods', 'email', 'post_delivery_frequency' ] ) === next.deliveryFrequency;
-}
-
-function isEqualToPostUnsubscription( current ) {
-	return get( current, [ 'delivery_methods', 'email', 'send_posts' ], true ) === false;
 }
 
 /**
