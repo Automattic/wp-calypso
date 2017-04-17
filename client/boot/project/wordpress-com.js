@@ -73,8 +73,6 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 export function setupMiddlewares( currentUser, reduxStore ) {
 	debug( 'Executing WordPress.com setup middlewares.' );
 
-	analytics.setDispatch( reduxStore.dispatch );
-
 	if ( currentUser.get() ) {
 		// When logged in the analytics module requires user and superProps objects
 		// Inject these here

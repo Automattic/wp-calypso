@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import { spy } from 'sinon';
+import { noop } from 'lodash';
 
 import useMockery from 'test/helpers/use-mockery';
 
@@ -20,6 +21,8 @@ describe( 'middleware', () => {
 
 		useMockery( mockery => {
 			mockery.registerMock( 'lib/analytics', analyticsMock( mock ) );
+			mockery.registerMock( 'state/ui/selectors', { getSelectedSite: noop } );
+			mockery.registerMock( 'state/current-user/selectors', { getCurrentUser: noop } );
 
 			dispatch = require( '../middleware.js' ).dispatcher;
 		} );
