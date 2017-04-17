@@ -639,7 +639,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 		};
 
 		dispatch( withAnalytics(
-			recordTracksEvent( 'calypso_automated_transfer_inititate_request', { plugin, context } ),
+			recordTracksEvent( 'calypso_automated_transfer_initiate_request', { plugin, context } ),
 			themeInitiateRequest
 		) );
 		return wpcom.undocumented().initiateTransfer( siteId, plugin, file, ( event ) => {
@@ -662,7 +662,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 					transferId: transfer_id,
 				};
 				dispatch( withAnalytics(
-					recordTracksEvent( 'calypso_automated_transfer_inititate_success', { plugin, context } ),
+					recordTracksEvent( 'calypso_automated_transfer_initiate_success', { plugin, context } ),
 					themeInitiateSuccessAction
 				) );
 				dispatch( pollThemeTransferStatus( siteId, transfer_id ) );
@@ -705,7 +705,7 @@ function transferInitiateFailure( siteId, error, plugin ) {
 			error,
 		};
 		dispatch( withAnalytics(
-			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', { plugin, context } ),
+			recordTracksEvent( 'calypso_automated_transfer_initiate_failure', { plugin, context } ),
 			themeInitiateFailureAction
 		) );
 	};
