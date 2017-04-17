@@ -13,6 +13,7 @@ import Animate from 'components/animate';
 import Gravatar from 'components/gravatar';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { isEnabled } from 'config';
+import ExternalLink from 'components/external-link';
 
 const debug = debugFactory( 'calypso:me:sidebar-gravatar' );
 
@@ -44,7 +45,12 @@ class ProfileGravatar extends Component {
 					</div>
 					<h2 className="profile-gravatar__user-display-name">{ this.props.user.display_name }</h2>
 					<div className="profile-gravatar__user-secondary-info">
-						<a href={ profileURL } target="_blank" rel="noopener noreferrer">@{ this.props.user.username }</a>
+						<ExternalLink
+							href={ profileURL }
+							target="_blank"
+							rel="noopener noreferrer" >
+							@{ this.props.user.username }
+						</ExternalLink>
 					</div>
 				</div>
 			);
@@ -53,7 +59,7 @@ class ProfileGravatar extends Component {
 		return (
 			<div className="profile-gravatar">
 				<Animate type="appear">
-					<a
+					<ExternalLink
 						href="https://secure.gravatar.com/site/wpcom?wpcc-no-close"
 						target="_blank"
 						rel="noopener noreferrer"
@@ -67,11 +73,16 @@ class ProfileGravatar extends Component {
 								{ this.props.translate( 'Update Profile Photo' ) }
 							</span>
 						</span>
-					</a>
+					</ExternalLink>
 				</Animate>
 				<h2 className="profile-gravatar__user-display-name">{ this.props.user.display_name }</h2>
 				<div className="profile-gravatar__user-secondary-info">
-					<a href={ profileURL } target="_blank" rel="noopener noreferrer">@{ this.props.user.username }</a>
+					<ExternalLink
+						href={ profileURL }
+						target="_blank"
+						rel="noopener noreferrer" >
+						@{ this.props.user.username }
+					</ExternalLink>
 				</div>
 			</div>
 		);
