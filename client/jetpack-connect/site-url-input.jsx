@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import i18n, { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -16,6 +16,11 @@ import Spinner from 'components/spinner';
 import untrailingslashit from 'lib/route/untrailingslashit';
 
 class JetpackConnectSiteURLInput extends Component {
+
+	static propTypes = {
+		onURLChange: PropTypes.func.isRequired,
+		onURLEnter: PropTypes.func.isRequired,
+	}
 
 	state = {
 		value: ''
@@ -34,9 +39,8 @@ class JetpackConnectSiteURLInput extends Component {
 	}
 
 	onChange = ( event ) => {
-		this.setState( {
-			value: untrailingslashit( event.target.value )
-		}, this.props.onChange );
+		const value = untrailingslashit( event.target.value );
+		this.setState( { value }, () => this.props.onURLChange( value ) );
 	}
 
 	renderButtonLabel() {
@@ -51,7 +55,7 @@ class JetpackConnectSiteURLInput extends Component {
 
 	handleKeyPress = ( event ) => {
 		if ( 13 === event.keyCode ) {
-			this.props.onClick();
+			this.props.onURLEnter();
 		}
 	}
 
@@ -105,7 +109,7 @@ class JetpackConnectSiteURLInput extends Component {
 					{ this.renderTermsOfServiceLink() }
 					<Button primary
 						disabled={ ( ! this.state.value || this.props.isFetching || hasError ) }
-						onClick={ this.props.onClick }>{ this.renderButtonLabel() }</Button>
+						onClick={ this.props.onURLEnter }>{ this.renderButtonLabel() }</Button>
 				</Card>
 			</div>
 		);

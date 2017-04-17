@@ -88,16 +88,16 @@ class JetpackConnectSiteURLStep extends Component {
 			this.props.jetpackConnectSite.isFetching;
 	}
 
-	getCurrentUrl = () => {
-		let url = this.refs.siteUrlInputRef.state.value.toLowerCase();
+	cleanInputURL( inputUrl ) {
+		let url = inputUrl.toLowerCase();
 		if ( url && url.substr( 0, 4 ) !== 'http' ) {
 			url = 'http://' + url;
 		}
 		return untrailingslashit( url );
 	}
 
-	onURLChange = () => {
-		this.setState( { currentUrl: this.getCurrentUrl() } );
+	onURLChange = ( url ) => {
+		this.setState( { currentUrl: this.cleanInputURL( url ) } );
 		this.dismissUrl();
 	}
 
@@ -318,10 +318,10 @@ class JetpackConnectSiteURLStep extends Component {
 					: null
 				}
 
-				<SiteURLInput ref="siteUrlInputRef"
+				<SiteURLInput
 					onTosClick={ this.handleOnClickTos }
-					onChange={ this.onURLChange }
-					onClick={ this.onURLEnter }
+					onURLChange={ this.onURLChange }
+					onURLEnter={ this.onURLEnter }
 					onDismissClick={ this.onDismissClick }
 					isError={ this.getStatus() }
 					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() || this.state.waitingForSites }
