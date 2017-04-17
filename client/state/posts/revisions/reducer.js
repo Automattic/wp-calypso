@@ -2,7 +2,9 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { keyBy, map } from 'lodash';
+import { flow, keyBy, map } from 'lodash';
+import mapValues from 'lodash/fp/mapValues';
+import pick from 'lodash/fp/pick';
 
 /**
  * Internal dependencies
@@ -16,7 +18,7 @@ import {
 	DESERIALIZE
 } from 'state/action-types';
 
-function requesting( state = {}, action ) {
+export function requesting( state = {}, action ) {
 	switch ( action.type ) {
 		case POST_REVISIONS_REQUEST:
 		case POST_REVISIONS_REQUEST_FAILURE:
@@ -64,8 +66,9 @@ function normalizeRevisionForState( revision ) {
 
 	return {
 		...revision,
-		title: revision.title.rendered,
-		content: revision.content.rendered,
-		excerpt: revision.excerpt.rendered,
+		...flow(
+			pick( [ 'title', 'content', 'excerpt' ] ),
+			mapValues( ( val = {} ) => val.rendered )
+		)( revision )
 	};
 }
