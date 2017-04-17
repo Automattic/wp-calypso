@@ -22,7 +22,6 @@ import userUtils from 'lib/user/utils';
 import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 import PostEditor from './post-editor';
-import PostRevision from './post-revision';
 import { startEditingPost, stopEditingPost } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
@@ -64,18 +63,6 @@ function renderEditor( context, postType ) {
 				userUtils: userUtils,
 				sites: sites,
 				type: postType
-			} )
-		),
-		document.getElementById( 'primary' )
-	);
-}
-
-function renderRevision( context, siteId, postId ) {
-	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-	ReactDom.render(
-		React.createElement( ReduxProvider, { store: context.store },
-			React.createElement( PostRevision, {
-				postId, siteId
 			} )
 		),
 		document.getElementById( 'primary' )
@@ -246,13 +233,6 @@ module.exports = {
 		}
 
 		renderEditor( context, postType );
-	},
-
-	revision: function( context ) {
-		const siteId = getSelectedSiteId( context.store.getState() );
-		const postId = getPostID( context );
-
-		renderRevision( context, siteId, postId );
 	},
 
 	exitPost: function( context, next ) {
