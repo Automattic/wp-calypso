@@ -25,12 +25,10 @@ import { createReducer } from 'state/utils';
  *
  * @param {object} state The current state from the items reducer
  * @param {object} payload the payload from the subscribe / update / unsubscribe action
- * @param {function} isEqualToCurrentState A function that determines if the payload will actually change the current state.
- * Returns true if the state would not change.
  * @param {object} newProps The new props to set on the delivery_methods.email object if the state will change
  * @returns {object} the next state
  */
-function updatePostSubscription( state, payload, isEqualToCurrentState, newProps ) {
+function updatePostSubscription( state, payload, newProps ) {
 	const follow = find( state, { blog_ID: +payload.blogId } );
 	if ( ! follow ) {
 		return state;
@@ -128,19 +126,16 @@ export const items = createReducer( {}, {
 	[ READER_SUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, { payload } ) => updatePostSubscription(
 		state,
 		payload,
-		isEqualToNewPostSubscription,
 		{ send_posts: true },
 		),
 	[ READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION ]: ( state, { payload } ) => updatePostSubscription(
 		state,
 		payload,
-		isEqualToUpdatePostSubscription,
 		{ post_delivery_frequency: payload.deliveryFrequency },
 		),
 	[ READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, { payload } ) => updatePostSubscription(
 		state,
 		payload,
-		isEqualToPostUnsubscription,
 		{ send_posts: false },
 		),
 	[ READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, { payload: { blogId } } ) => updateCommentSubscription( state, blogId, true ),
