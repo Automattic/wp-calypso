@@ -136,9 +136,9 @@ class PlanFeatures extends Component {
 				relatedMonthlyPlan,
 				primaryUpgrade,
 				isPlaceholder,
+				hideMonthly
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
-
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
@@ -151,6 +151,7 @@ class PlanFeatures extends Component {
 						rawPrice={ rawPrice }
 						discountPrice={ discountPrice }
 						billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
+						hideMonthly={ hideMonthly }
 						isPlaceholder={ isPlaceholder }
 						intervalType={ intervalType }
 						site={ site }
@@ -203,7 +204,8 @@ class PlanFeatures extends Component {
 				popular,
 				newPlan,
 				relatedMonthlyPlan,
-				isPlaceholder
+				isPlaceholder,
+				hideMonthly
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
@@ -223,6 +225,7 @@ class PlanFeatures extends Component {
 						isPlaceholder={ isPlaceholder }
 						intervalType={ intervalType }
 						site={ site }
+						hideMonthly={ hideMonthly }
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 					/>
@@ -330,25 +333,14 @@ class PlanFeatures extends Component {
 		const description = feature.getDescription
 					? feature.getDescription( abtest )
 					: null;
-		const itemClasses = classNames(
-			'plan-features__item-title',
-			abtest( 'jetpackNewDescriptions' ) === 'showNew'
-			? 'plan-features__item-title-outlined'
-			: null
-		);
-
 		return (
 			<PlanFeaturesItem
 				key={ index }
 				description={ description }
-				hideInfoPopover={ abtest( 'jetpackNewDescriptions' ) === 'showNew' }
+				hideInfoPopover={ false }
 			>
 				<span className="plan-features__item-info">
-					<span className={ itemClasses }>{ feature.getTitle() }</span>
-					{ abtest( 'jetpackNewDescriptions' ) === 'showNew'
-						? <span className="plan-features__item-description">{ description }</span>
-						: null
-					}
+					<span className="plan-features__item-title">{ feature.getTitle() }</span>
 				</span>
 			</PlanFeaturesItem>
 		);
@@ -480,7 +472,6 @@ export default connect(
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
 					isPlaceholder = true;
 				}
-
 				return {
 					isPlaceholder,
 					isLandingPage,
@@ -513,6 +504,7 @@ export default connect(
 					planObject: planObject,
 					popular: popular,
 					newPlan: newPlan,
+					hideMonthly: isInSignup && abtest( 'jetpackNoMonthly' ) === 'dontShowMonthly',
 					primaryUpgrade: (
 						( currentPlan === PLAN_PERSONAL && plan === PLAN_PREMIUM ) ||
 						( currentPlan === PLAN_PREMIUM && plan === PLAN_BUSINESS ) ||
