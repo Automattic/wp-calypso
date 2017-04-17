@@ -282,7 +282,7 @@ const Post = React.createClass( {
 
 	viewPost( event ) {
 		event.preventDefault();
-		const { isPreviewable, previewURL } = this.props;
+		const { isPreviewable, previewUrl } = this.props;
 
 		if ( this.props.post.status && this.props.post.status === 'future' ) {
 			this.analyticsEvents.previewPost;
@@ -291,10 +291,10 @@ const Post = React.createClass( {
 		}
 
 		if ( ! isPreviewable ) {
-			return window.open( previewURL );
+			return window.open( previewUrl );
 		}
 
-		this.props.setPreviewUrl( previewURL );
+		this.props.setPreviewUrl( previewUrl );
 		this.props.setLayoutFocus( 'preview' );
 	},
 
@@ -355,7 +355,7 @@ export default connect(
 			editUrl: getEditorPath( state, post.site_ID, post.ID, 'post' ),
 			isPostFromSingleUserSite: isSingleUserSite( state, post.site_ID ),
 			isPreviewable: false !== isSitePreviewable( state, post.site_ID ),
-			previewURL: getPostPreviewUrl( state, post.site_ID, post.ID ),
+			previewUrl: getPostPreviewUrl( state, post.site_ID, post.ID ),
 			selectedSiteId
 		};
 	},
