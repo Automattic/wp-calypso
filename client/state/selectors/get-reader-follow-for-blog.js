@@ -3,10 +3,6 @@
  */
 import { find } from 'lodash';
 
-/**
- * Internal dependencies
- */
-
 /*
  * Find the first follow for a given blog ID
  *
