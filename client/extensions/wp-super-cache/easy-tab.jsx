@@ -18,9 +18,9 @@ import WrapSettingsForm from './wrap-settings-form';
 
 const EasyTab = ( {
 	fields: {
-		scrules,
-		wp_cache_enabled,
-		wp_cache_mod_rewrite,
+		cache_mod_rewrite,
+		http_only,
+		is_cache_enabled,
 	},
 	handleToggle,
 	site,
@@ -43,8 +43,8 @@ const EasyTab = ( {
 			<Card>
 				<form>
 					<FormToggle
-						checked={ wp_cache_enabled }
-						onChange={ handleToggle( 'wp_cache_enabled' ) }>
+						checked={ is_cache_enabled }
+						onChange={ handleToggle( 'is_cache_enabled' ) }>
 						<span>
 							{ translate( 'Caching On {{em}}(Recommended){{/em}}',
 								{
@@ -55,10 +55,12 @@ const EasyTab = ( {
 					</FormToggle>
 				</form>
 			</Card>
-			{ wp_cache_enabled && ! wp_cache_mod_rewrite && scrules &&
+
+			{ is_cache_enabled && ! cache_mod_rewrite &&
 				<Notice text={ enableCacheNotice } showDismiss={ false } className="wp-super-cache__notice-hug-card" />
 			}
-			{ wp_cache_enabled &&
+
+			{ is_cache_enabled &&
 				<div>
 					<SectionHeader label={ translate( 'Cache Tester' ) } />
 					<Card>
@@ -70,8 +72,8 @@ const EasyTab = ( {
 							<form>
 								<FormFieldset>
 									<FormToggle
-										checked={ true }
-										onChange={ handleToggle( 'wp_cache_enabled' ) }>
+										checked={ http_only }
+										onChange={ handleToggle( 'http_only' ) }>
 										<span>
 											{ translate( 'Send non-secure (non https) request for homepage' ) }
 										</span>
@@ -112,9 +114,9 @@ const EasyTab = ( {
 
 const getFormSettings = settings => {
 	return pick( settings, [
-		'scrules',
-		'wp_cache_enabled',
-		'wp_cache_mod_rewrite',
+		'cache_mod_rewrite',
+		'http_only',
+		'is_cache_enabled',
 	] );
 };
 
