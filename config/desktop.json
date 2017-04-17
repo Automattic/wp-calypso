@@ -6,7 +6,7 @@
 	"i18n_default_locale_slug": "en",
 	"wpcom_user_bootstrap": false,
 	"signup_url": "/start/desktop",
-	"login_url": "/login",
+	"login_url": "/oauth-login",
 	"logout_url": "/logout",
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "/",
