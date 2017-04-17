@@ -99,6 +99,7 @@ class FollowingManage extends Component {
 							delaySearch={ true }
 							delayTimeout={ 500 }
 							placeholder={ searchPlaceholderText }
+							additionalClasses="following-manage__search-new"
 							initialValue={ query }
 							value={ query }>
 						</SearchInput>
