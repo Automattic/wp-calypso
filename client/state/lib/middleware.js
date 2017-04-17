@@ -12,6 +12,7 @@ import {
 	SITE_RECEIVE,
 	SITES_RECEIVE,
 	SITES_UPDATE,
+	ROUTE_SET
 } from 'state/action-types';
 import analytics from 'lib/analytics';
 import cartStore from 'lib/cart/store';
@@ -57,11 +58,18 @@ const handler = ( dispatch, action, getState ) => {
 		case SITE_RECEIVE:
 		case SITES_RECEIVE:
 		case SITES_UPDATE:
-			//Wait a tick for the reducer to update the state tree
+			// Wait a tick for the reducer to update the state tree
 			setTimeout( () => {
 				updateSelectedSiteForCart( dispatch, action, getState );
 			}, 0 );
 			return;
+
+		case ROUTE_SET:
+			// Special case, no site actions are dispatched at all for no-site
+			// checkout flow
+			if ( action.path === '/checkout/no-site' ) {
+				cartStore.setSelectedSiteId( null );
+			}
 	}
 };
 
