@@ -20,21 +20,21 @@ import {
 import { prepareComparableUrl } from './utils';
 import { createReducer } from 'state/utils';
 
-/**
- * Update a post subscription
- *
- * @param {object} state The current state from the items reducer
- * @param {object} payload the payload from the subscribe / update / unsubscribe action
- * @param {object} newProps The new props to set on the delivery_methods.email object if the state will change
- * @returns {object} the next state
- */
-function updatePostSubscription( state, payload, newProps ) {
+function updatePostSubscription( state, { payload, type } ) {
 	const follow = find( state, { blog_ID: +payload.blogId } );
 	if ( ! follow ) {
 		return state;
 	}
 
 	const currentFollowState = get( follow, [ 'delivery_methods', 'email' ], {} );
+
+	const newProps = {
+		send_posts: ! ( type === READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL )
+	};
+
+	if ( payload.deliveryFrequency ) {
+		newProps.post_delivery_frequency = payload.deliveryFrequency;
+	}
 
 	const newFollowState = {
 		...currentFollowState,
@@ -123,20 +123,17 @@ export const items = createReducer( {}, {
 		}, {} );
 		return merge( {}, state, keyedNewFollows );
 	},
-	[ READER_SUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, { payload } ) => updatePostSubscription(
+	[ READER_SUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, action ) => updatePostSubscription(
 		state,
-		payload,
-		{ send_posts: true },
+		action,
 		),
-	[ READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION ]: ( state, { payload } ) => updatePostSubscription(
+	[ READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION ]: ( state, action ) => updatePostSubscription(
 		state,
-		payload,
-		{ post_delivery_frequency: payload.deliveryFrequency },
+		action,
 		),
-	[ READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, { payload } ) => updatePostSubscription(
+	[ READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, action ) => updatePostSubscription(
 		state,
-		payload,
-		{ send_posts: false },
+		action,
 		),
 	[ READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, { payload: { blogId } } ) => updateCommentSubscription( state, blogId, true ),
 	[ READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, { payload: { blogId } } ) => updateCommentSubscription( state, blogId, false ),
