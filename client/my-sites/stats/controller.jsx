@@ -165,7 +165,6 @@ module.exports = {
 		let chartTab;
 		let period;
 		let siteOffset = 0;
-		let momentSiteZone = i18n.moment();
 		let numPeriodAgo = 0;
 		const basePath = route.sectionify( context.path );
 		let baseAnalyticsPath;
@@ -191,12 +190,12 @@ module.exports = {
 			if ( currentSite && 'object' === typeof currentSite.options && 'undefined' !== typeof currentSite.options.gmt_offset ) {
 				siteOffset = currentSite.options.gmt_offset;
 			}
-			momentSiteZone = i18n.moment().utcOffset( siteOffset );
+			const momentSiteZone = i18n.moment().utcOffset( siteOffset );
 			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid ) {
 				date = i18n.moment( queryOptions.startDate ).locale( 'en' );
 				numPeriodAgo = getNumPeriodAgo( momentSiteZone, date, activeFilter.period );
 			} else {
-				date = rangeOfPeriod( activeFilter.period, momentSiteZone.clone().locale( 'en' ) ).startOf;
+				date = rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
 			}
 
 			numPeriodAgo = parseInt( numPeriodAgo, 10 );
