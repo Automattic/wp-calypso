@@ -12,11 +12,6 @@
 	// places search above filters
 	z-index: z-index( 'root', '.search' );
 	transition: all 0.15s ease-in-out;
-	padding-left: 8px;
-
-	&.has-open-icon {
-		padding-left: 0;
-	}
 
 	.search__icon-navigation {
 		flex: 0 0 auto;
@@ -162,6 +157,14 @@
 				border-radius: inherit;
 			}
 		}
+
+		padding-left: 8px;
+	}
+}
+
+.search.has-open-icon {
+	.search__input-fade {
+		padding-left: 0;
 	}
 }
 
