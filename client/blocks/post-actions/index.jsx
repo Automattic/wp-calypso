@@ -104,6 +104,7 @@ const mapStateToProps = ( state, { site, post } ) => {
 	const siteId = get( site, 'ID' );
 	const isJetpack = isJetpackSite( state, siteId );
 
+	// TODO: Maybe add dedicated selectors for the following.
 	const showComments = ( ! isJetpack || isJetpackModuleActive( state, siteId, 'comments' ) ) &&
 		post.discussion && post.discussion.comments_open;
 	const showLikes = ! isJetpack || isJetpackModuleActive( state, siteId, 'likes' );
