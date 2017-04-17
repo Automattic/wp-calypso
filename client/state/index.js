@@ -25,6 +25,7 @@ import domains from './domains/reducer';
 import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import help from './help/reducer';
+import i18n from './i18n/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
 import jetpack from './jetpack/reducer';
 import jetpackSync from './jetpack-sync/reducer';
@@ -89,6 +90,7 @@ const reducers = {
 	happinessEngineers,
 	happychat,
 	help,
+	i18n,
 	jetpackConnect,
 	jetpack,
 	jetpackSync,

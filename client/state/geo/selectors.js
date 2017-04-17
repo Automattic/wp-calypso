@@ -27,8 +27,18 @@ export function getGeo( state ) {
  * Returns the current browser IP geolocation full country name.
  *
  * @param  {Object}  state Global state tree
- * @return {?String}       Current browser IP geolocation data
+ * @return {?String}       Current browser IP geolocation full country name
  */
 export function getGeoCountry( state ) {
 	return get( getGeo( state ), 'country_long', null );
+}
+
+/**
+ * Returns the current browser IP geolocation abbreviated country name.
+ *
+ * @param  {Object}  state Global state tree
+ * @return {?String}       Current browser IP geolocation short country name
+ */
+export function getGeoCountryShort( state ) {
+	return get( getGeo( state ), 'country_short', null );
 }

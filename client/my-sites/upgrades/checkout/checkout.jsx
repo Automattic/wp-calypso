@@ -40,6 +40,10 @@ import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
 import { isDomainOnlySite } from 'state/selectors';
 import {
+	getCurrentUserLocalizedPaymentMethods
+} from 'state/selectors/get-current-user-localized-payment-methods';
+import QueryLocalizedPaymentMethods from 'components/data/query-localized-payment-methods';
+import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
@@ -344,6 +348,7 @@ const Checkout = React.createClass( {
 				cart={ this.props.cart }
 				transaction={ this.props.transaction }
 				cards={ this.props.cards }
+				paymentMethods={ this.props.paymentMethods }
 				products={ this.props.productsList.get() }
 				selectedSite={ selectedSite }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
@@ -377,6 +382,7 @@ const Checkout = React.createClass( {
 			<div className="main main-column" role="main">
 				<div className="checkout">
 					<QueryStoredCards />
+					<QueryLocalizedPaymentMethods />
 
 					{ this.content() }
 				</div>
@@ -391,6 +397,7 @@ module.exports = connect(
 
 		return {
 			cards: getStoredCards( state ),
+			paymentMethods: getCurrentUserLocalizedPaymentMethods( state ),
 			isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
