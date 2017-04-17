@@ -28,9 +28,17 @@ function updatePostSubscription( state, { payload, type } ) {
 
 	const currentFollowState = get( follow, [ 'delivery_methods', 'email' ], {} );
 
-	const newProps = {
-		send_posts: ! ( type === READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL )
-	};
+	const newProps = {};
+	switch ( type ) {
+		case READER_SUBSCRIBE_TO_NEW_POST_EMAIL:
+		case READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL:
+			newProps.send_posts = ! ( type === READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL );
+			break;
+		case READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL:
+		case READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL:
+			newProps.send_comments = ! ( type === READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL );
+			break;
+	}
 
 	if ( payload.deliveryFrequency ) {
 		newProps.post_delivery_frequency = payload.deliveryFrequency;
@@ -51,38 +59,6 @@ function updatePostSubscription( state, { payload, type } ) {
 			...follow,
 			delivery_methods: {
 				email: newFollowState
-			}
-		}
-	};
-}
-
-/**
- * Updates a comment subscription
- *
- * @param {object} state the current state
- * @param {integer} blogId The blog to update the comment subscription for
- * @param {boolean} value the new value to set
- * @returns {object} the next state
- */
-function updateCommentSubscription( state, blogId, value ) {
-	const follow = find( state, { blog_ID: +blogId } );
-	if ( ! follow ) {
-		return state;
-	}
-
-	if ( get( follow, [ 'delivery_methods', 'email', 'send_comments' ], ! value ) === value ) {
-		return state;
-	}
-
-	return {
-		...state,
-		[ prepareComparableUrl( follow.URL ) ]: {
-			...follow,
-			delivery_methods: {
-				email: {
-					...get( follow, [ 'delivery_methods', 'email' ], {} ),
-					send_comments: value
-				}
 			}
 		}
 	};
@@ -127,16 +103,10 @@ export const items = createReducer( {}, {
 		state,
 		action,
 		),
-	[ READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION ]: ( state, action ) => updatePostSubscription(
-		state,
-		action,
-		),
-	[ READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, action ) => updatePostSubscription(
-		state,
-		action,
-		),
-	[ READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, { payload: { blogId } } ) => updateCommentSubscription( state, blogId, true ),
-	[ READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, { payload: { blogId } } ) => updateCommentSubscription( state, blogId, false ),
+	[ READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION ]: ( state, action ) => updatePostSubscription( state, action ),
+	[ READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, action ) => updatePostSubscription( state, action ),
+	[ READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, action ) => updatePostSubscription( state, action ),
+	[ READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, action ) => updatePostSubscription( state, action ),
 } );
 
 export default combineReducers( {
