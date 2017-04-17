@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { get, partial } from 'lodash';
+import { partial } from 'lodash';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -19,13 +19,14 @@ import PostTotalViews from 'my-sites/posts/post-total-views';
 import utils from 'lib/posts/utils';
 import { canCurrentUser } from 'state/selectors';
 import { isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
+import { getEditorPath } from 'state/ui/editor/selectors';
 
-const getContentLink = ( site, post ) => {
+const getContentLink = ( state, siteId, post ) => {
 	let contentLinkURL = post.URL;
 	let contentLinkTarget = '_blank';
 
 	if ( utils.userCan( 'edit_post', post ) ) {
-		contentLinkURL = utils.getEditURL( post, site );
+		contentLinkURL = getEditorPath( state, siteId, post.ID );
 		contentLinkTarget = null;
 	} else if ( post.status === 'trash' ) {
 		contentLinkURL = null;
@@ -38,16 +39,16 @@ const recordEvent = partial( recordGoogleEvent, 'Posts' );
 
 const PostActions = ( {
 	className,
+	contentLink,
 	post,
 	showComments,
 	showLikes,
 	showStats,
-	site,
 	toggleComments,
 	trackRelativeTimeStatusOnClick,
 	trackTotalViewsOnClick
 } ) => {
-	const { contentLinkURL, contentLinkTarget } = getContentLink( site, post );
+	const { contentLinkURL, contentLinkTarget } = contentLink;
 	const isDraft = post.status === 'draft';
 
 	return (
@@ -93,14 +94,13 @@ const PostActions = ( {
 PostActions.propTypes = {
 	className: React.PropTypes.string,
 	post: React.PropTypes.object.isRequired,
-	site: React.PropTypes.object.isRequired,
+	siteId: React.PropTypes.number.isRequired,
 	toggleComments: React.PropTypes.func.isRequired,
 	trackRelativeTimeStatusOnClick: React.PropTypes.func,
 	trackTotalViewsOnClick: React.PropTypes.func,
 };
 
-const mapStateToProps = ( state, { site, post } ) => {
-	const siteId = get( site, 'ID' );
+const mapStateToProps = ( state, { siteId, post } ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 
 	// TODO: Maybe add dedicated selectors for the following.
@@ -111,6 +111,7 @@ const mapStateToProps = ( state, { site, post } ) => {
 		( ! isJetpack || isJetpackModuleActive( state, siteId, 'stats' ) );
 
 	return {
+		contentLink: getContentLink( state, siteId, post ),
 		showComments,
 		showLikes,
 		showStats

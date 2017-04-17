@@ -307,7 +307,9 @@ const Post = React.createClass( {
 					{ this.getHeader() }
 					{ this.getPostImage() }
 					{ this.getContent() }
-					<PostActions { ...{ site, post: this.props.post, toggleComments: this.toggleComments } } />
+					<PostActions siteId={ this.props.post.site_ID }
+						post={ this.props.post }
+						toggleComments={ this.toggleComments } />
 				</div>
 				<PostControls
 					post={ this.props.post }
