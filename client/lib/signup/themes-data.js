@@ -46,11 +46,11 @@ export const themes = [
 	},
 	{
 		name: 'Dyad',
-		slug: 'dyad',
+		slug: 'dyad-2',
 		repo: 'pub',
 		fallback: true,
 		design: 'grid',
-		demo_uri: 'https://dyaddemo.wordpress.com',
+		demo_uri: 'https://dyad2demo.wordpress.com',
 		verticals: []
 	},
 	{
