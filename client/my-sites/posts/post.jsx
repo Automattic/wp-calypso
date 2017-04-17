@@ -25,6 +25,7 @@ import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getPreviewURL } from 'lib/posts/utils';
 import { getSite, isSingleUserSite, isSitePreviewable } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPath } from 'state/ui/editor/selectors';
 
 import Comments from 'blocks/comments';
 import PostShare from 'my-sites/post-share';
@@ -245,10 +246,9 @@ const Post = React.createClass( {
 
 	getContentLinkURL() {
 		const post = this.props.post;
-		const { postSite: site } = this.props;
 
 		if ( utils.userCan( 'edit_post', post ) ) {
-			return utils.getEditURL( post, site );
+			return this.props.editUrl;
 		} else if ( post.status === 'trash' ) {
 			return null;
 		}
@@ -313,7 +313,7 @@ const Post = React.createClass( {
 				</div>
 				<PostControls
 					post={ this.props.post }
-					editURL={ utils.getEditURL( this.props.post, site ) }
+					editURL={ this.props.editUrl }
 					fullWidth={ this.props.fullWidthPost }
 					onShowMore={ this.toggleMoreControls.bind( this, 'show' ) }
 					onHideMore={ this.toggleMoreControls.bind( this, 'hide' ) }
@@ -350,12 +350,14 @@ const Post = React.createClass( {
 
 export default connect(
 	( state, { post } ) => {
+		const selectedSiteId = getSelectedSiteId( state );
 		return {
+			editUrl: getEditorPath( state, post.site_ID, post.ID, 'post' ),
 			isPostFromSingleUserSite: isSingleUserSite( state, post.site_ID ),
 			isPreviewable: false !== isSitePreviewable( state, post.site_ID ),
 			postSite: getSite( state, post.site_ID ),
 			previewURL: getPreviewURL( post ),
-			selectedSiteId: getSelectedSiteId( state )
+			selectedSiteId
 		};
 	},
 	{ setPreviewUrl, setLayoutFocus }
