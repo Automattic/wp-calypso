@@ -16,7 +16,6 @@ import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import CommentButton from 'blocks/comment-button';
 import LikeButton from 'my-sites/post-like-button';
 import PostTotalViews from 'my-sites/posts/post-total-views';
-import utils from 'lib/posts/utils';
 import { canCurrentUser } from 'state/selectors';
 import { isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
@@ -25,7 +24,7 @@ const getContentLink = ( state, siteId, post ) => {
 	let contentLinkURL = post.URL;
 	let contentLinkTarget = '_blank';
 
-	if ( utils.userCan( 'edit_post', post ) ) {
+	if ( canCurrentUser( state, siteId, 'edit_post' ) && post.status !== 'trash' ) {
 		contentLinkURL = getEditorPath( state, siteId, post.ID );
 		contentLinkTarget = null;
 	} else if ( post.status === 'trash' ) {
