@@ -22,7 +22,7 @@ import analytics from 'lib/analytics';
 import config from 'config';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getPreviewURL } from 'lib/posts/utils';
+import { getPostPreviewUrl } from 'state/posts/selectors';
 import { isSingleUserSite, isSitePreviewable } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
@@ -355,7 +355,7 @@ export default connect(
 			editUrl: getEditorPath( state, post.site_ID, post.ID, 'post' ),
 			isPostFromSingleUserSite: isSingleUserSite( state, post.site_ID ),
 			isPreviewable: false !== isSitePreviewable( state, post.site_ID ),
-			previewURL: getPreviewURL( post ),
+			previewURL: getPostPreviewUrl( state, post.site_ID, post.ID ),
 			selectedSiteId
 		};
 	},
