@@ -74,19 +74,17 @@ export function items( state = {}, action ) {
 			const { siteId, statType, query, data } = action;
 			const queryKey = getSerializedStatsQuery( query );
 
-			const newQueries = {
-				...get( state, [ siteId, statType ], null ),
-				[ queryKey ]: data
-			};
-
-			const newStatType = {
-				...get( state, [ siteId ], null ),
-				[ statType ]: newQueries
-			};
-
+			// Build the items state in a way that will preserve all unmodified parts
+			// and recreate site -> statType -> queryKey that was currently changed.
 			return {
 				...state,
-				[ siteId ]: newStatType
+				[ siteId ]: {
+					...get( state, [ siteId ], null ),
+					[ statType ]: {
+						...get( state, [ siteId, statType ], null ),
+						[ queryKey ]: data
+					}
+				}
 			};
 
 		case DESERIALIZE:
