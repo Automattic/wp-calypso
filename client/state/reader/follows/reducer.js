@@ -20,13 +20,23 @@ import {
 import { prepareComparableUrl } from './utils';
 import { createReducer } from 'state/utils';
 
-function updatePostSubscription( state, payload, shouldSkipUpdate, newProps ) {
+/**
+ * Update a post subscription
+ *
+ * @param {object} state The current state from the items reducer
+ * @param {object} payload the payload from the subscribe / update / unsubscribe action
+ * @param {function} isEqualToCurrentState A function that determines if the payload will actually change the current state.
+ * Returns true if the state would not change.
+ * @param {object} newProps The new props to set on the delivery_methods.email object if the state will change
+ * @returns {object} the next state
+ */
+function updatePostSubscription( state, payload, isEqualToCurrentState, newProps ) {
 	const follow = find( state, { blog_ID: +payload.blogId } );
 	if ( ! follow ) {
 		return state;
 	}
 
-	if ( shouldSkipUpdate( follow, payload ) ) {
+	if ( isEqualToCurrentState( follow, payload ) ) {
 		return state;
 	}
 
@@ -44,21 +54,29 @@ function updatePostSubscription( state, payload, shouldSkipUpdate, newProps ) {
 	};
 }
 
-function skipNewPostSubscription( current, next ) {
+function isEqualToNewPostSubscription( current, next ) {
 	return get( current, [ 'delivery_methods', 'email', 'send_posts' ], false ) &&
 			get( current, [ 'delivery_methods', 'email', 'post_delivery_frequency' ] ) === next.deliveryFrequency;
 }
 
-function skipUpdatePostSubscription( current, next ) {
+function isEqualToUpdatePostSubscription( current, next ) {
 	return get( current, [ 'delivery_methods', 'email', 'post_delivery_frequency' ] ) === next.deliveryFrequency;
 }
 
-function skipPostUnsubscription( current ) {
+function isEqualToPostUnsubscription( current ) {
 	return get( current, [ 'delivery_methods', 'email', 'send_posts' ], true ) === false;
 }
 
+/**
+ * Updates a comment subscription
+ *
+ * @param {object} state the current state
+ * @param {integer} blogId The blog to update the comment subscription for
+ * @param {boolean} value the new value to set
+ * @returns {object} the next state
+ */
 function updateCommentSubscription( state, blogId, value ) {
-	const follow = find( state, { blog_ID: +blogId } ); //eslint-disable-line eqeqeq
+	const follow = find( state, { blog_ID: +blogId } );
 	if ( ! follow ) {
 		return state;
 	}
@@ -119,19 +137,19 @@ export const items = createReducer( {}, {
 	[ READER_SUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, { payload } ) => updatePostSubscription(
 		state,
 		payload,
-		skipNewPostSubscription,
+		isEqualToNewPostSubscription,
 		{ send_posts: true },
 		),
 	[ READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION ]: ( state, { payload } ) => updatePostSubscription(
 		state,
 		payload,
-		skipUpdatePostSubscription,
+		isEqualToUpdatePostSubscription,
 		{ post_delivery_frequency: payload.deliveryFrequency },
 		),
 	[ READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, { payload } ) => updatePostSubscription(
 		state,
 		payload,
-		skipPostUnsubscription,
+		isEqualToPostUnsubscription,
 		{ send_posts: false },
 		),
 	[ READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, { payload: { blogId } } ) => updateCommentSubscription( state, blogId, true ),
