@@ -12,8 +12,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Main from 'components/main';
-import LoggedOutForm from './authorize-form/logged-out-form';
-import LoggedInForm from './authorize-form/logged-in-form';
+import LoggedOutForm from './authorize-form-logged-out-form';
+import LoggedInForm from './authorize-form-logged-in-form';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import {
 	createAccount,

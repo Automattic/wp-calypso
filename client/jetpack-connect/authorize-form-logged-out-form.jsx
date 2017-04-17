@@ -1,6 +1,3 @@
-// @todo fix this lint error
-/* eslint wpcalypso/jsx-classname-namespace: 0 */
-
 /**
  * External dependencies
  */
@@ -20,10 +17,10 @@ import WpcomLoginForm from 'signup/wpcom-login-form';
 import config from 'config';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import versionCompare from 'lib/version-compare';
-import HelpButton from '../help-button';
+import HelpButton from './help-button';
 import SiteCard from './site-card';
 
-class LoggedOutForm extends Component {
+class AuthorizeFormLoggedOutForm extends Component {
 
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
@@ -113,4 +110,4 @@ class LoggedOutForm extends Component {
 	}
 }
 
-export default localize( LoggedOutForm );
+export default localize( AuthorizeFormLoggedOutForm );

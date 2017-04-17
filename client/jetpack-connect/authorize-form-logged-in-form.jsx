@@ -1,6 +1,3 @@
-// @todo fix this lint error
-/* eslint wpcalypso/jsx-classname-namespace: 0 */
-
 /**
  * External dependencies
  */
@@ -18,7 +15,7 @@ import StepHeader from 'signup/step-header';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import config from 'config';
-import JetpackConnectNotices from '../jetpack-connect-notices';
+import JetpackConnectNotices from './jetpack-connect-notices';
 import userUtilities from 'lib/user/utils';
 import Card from 'components/card';
 import Gravatar from 'components/gravatar';
@@ -26,7 +23,7 @@ import Spinner from 'components/spinner';
 import { decodeEntities } from 'lib/formatting';
 import versionCompare from 'lib/version-compare';
 import Button from 'components/button';
-import HelpButton from '../help-button';
+import HelpButton from './help-button';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -41,7 +38,7 @@ import SiteCard from './site-card';
 const PLANS_PAGE = '/jetpack/connect/plans/';
 const MAX_AUTH_ATTEMPTS = 3;
 
-class LoggedInForm extends Component {
+class AuthorizeFormLoggedInForm extends Component {
 
 	state = {
 		haveAuthorized: false,
@@ -493,4 +490,4 @@ class LoggedInForm extends Component {
 	}
 }
 
-export default localize( LoggedInForm );
+export default localize( AuthorizeFormLoggedInForm );

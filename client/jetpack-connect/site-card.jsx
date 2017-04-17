@@ -1,6 +1,3 @@
-// @todo fix this lint error
-/* eslint wpcalypso/jsx-classname-namespace: 0 */
-
 /**
  * External dependencies
  */
@@ -35,8 +32,8 @@ export default function SiteCard( props ) {
 
 	return (
 		<CompactCard className="jetpack-connect__site">
-		<QuerySites allSites />
-		<Site site={ site } />
+			<QuerySites allSites />
+			<Site site={ site } />
 		</CompactCard>
 	);
 }
