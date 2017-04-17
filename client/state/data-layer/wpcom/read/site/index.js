@@ -1,8 +1,4 @@
 /**
- * External Dependencies
- */
-
-/**
  * Internal Dependencies
  */
 import { mergeHandlers } from 'state/data-layer/utils';
