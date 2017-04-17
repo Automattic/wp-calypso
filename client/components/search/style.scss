@@ -12,6 +12,11 @@
 	// places search above filters
 	z-index: z-index( 'root', '.search' );
 	transition: all 0.15s ease-in-out;
+	padding-left: 8px;
+
+	&.has-open-icon {
+		padding-left: 0;
+	}
 
 	.search__icon-navigation {
 		flex: 0 0 auto;

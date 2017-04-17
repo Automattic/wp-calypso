@@ -24,6 +24,7 @@ class SearchCard extends React.Component {
 		disabled: React.PropTypes.bool,
 		dir: React.PropTypes.string,
 		maxLength: React.PropTypes.number,
+		hideOpenIcon: React.PropTypes.bool,
 	}
 
 	render() {

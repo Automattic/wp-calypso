@@ -34,6 +34,7 @@ class FollowingManageSearchFollowed extends Component {
 				onSearch={ this.props.onSearch }
 				initialValue={ this.props.value }
 				delaySearch={ true }
+				hideOpenIcon={ true }
 				ref="url-search" />
 		);
 	}
