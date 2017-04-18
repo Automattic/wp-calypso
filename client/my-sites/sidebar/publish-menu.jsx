@@ -49,6 +49,13 @@ class PublishMenu extends PureComponent {
 			return ( isSingleUser || isJetpack ) ? '' : '/my';
 		}
 
+		// FIXME: If you clear `IndexedDB` and land on a site that has yourself as its only user,
+		// and then navigate to multi-site mode, the `areAllSites` predicate will return true,
+		// as long as no other sites have been fetched into Redux state. As a consequence, the
+		// 'Posts' link will point to `/posts` (instead of `/posts/my` as it should, when you have
+		// sites with other users).
+		// The fix will be to make sure all sites are fetched into Redux state, see
+		// https://github.com/Automattic/wp-calypso/pull/13094
 		return ( allSingleSites ) ? '' : '/my';
 	}
 
