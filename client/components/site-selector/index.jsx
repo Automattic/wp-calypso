@@ -12,7 +12,6 @@ import {
 	get,
 	includes,
 	keyBy,
-	map,
 	noop,
 	size,
 } from 'lodash';
@@ -326,7 +325,7 @@ class SiteSelector extends Component {
 		}
 
 		// Render sites
-		const siteElements = map( sites, this.renderSite, this );
+		const siteElements = sites.map( this.renderSite, this );
 
 		if ( ! siteElements.length ) {
 			return <div className="site-selector__no-results">{ this.props.translate( 'No sites found' ) }</div>;
