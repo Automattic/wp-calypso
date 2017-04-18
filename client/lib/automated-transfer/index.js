@@ -10,15 +10,16 @@ import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { userCan } from 'lib/site/utils';
 
 /**
- * Returns true if Automated Transfer is enabled for the given site
- * @param { object } site - a full site object
- * @returns { boolean } - true if AT is enabled for the site
+ * Returns true if Automated Transfer is enabled for the current site and current user.
+ * @returns {Boolean} true if enabled for the current site and current user
  */
-export function isATEnabled( site ) {
+export function isATEnabledForCurrentSite() {
 	// don't let this explode in SSR'd envs
 	if ( typeof window !== 'object' ) {
 		return false;
 	}
+
+	const site = require( 'lib/sites-list' )().getSelectedSite();
 
 	// Site has already been transferred
 	if ( get( site, 'options.is_automated_transfer' ) ) {

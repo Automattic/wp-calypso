@@ -23,10 +23,9 @@ import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
-import { isATEnabled } from 'lib/automated-transfer';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 import { getThemeShowcaseDescription } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
 
 const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
 	? require( './themes-magic-search-card' )
@@ -110,7 +109,7 @@ const ThemeShowcase = React.createClass( {
 
 	onUploadClick() {
 		trackClick( 'upload theme' );
-		if ( this.props.atEnabled ) {
+		if ( isATEnabledForCurrentSite() ) {
 			this.props.trackATUploadClick();
 		}
 	},
@@ -122,7 +121,7 @@ const ThemeShowcase = React.createClass( {
 			config.isEnabled( 'manage/themes/upload' ) &&
 			isLoggedIn &&
 			! isMultisite &&
-			( isJetpack || this.props.atEnabled )
+			( isJetpack || isATEnabledForCurrentSite() )
 		);
 	},
 
@@ -202,7 +201,6 @@ const ThemeShowcase = React.createClass( {
 } );
 
 const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
-	atEnabled: isATEnabled( getSelectedSite( state ) ),
 	isLoggedIn: !! getCurrentUserId( state ),
 	siteSlug: getSiteSlug( state, siteId ),
 	isJetpack: isJetpackSite( state, siteId ),

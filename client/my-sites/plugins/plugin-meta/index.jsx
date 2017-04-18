@@ -39,10 +39,10 @@ import {
 	isBusiness,
 	isEnterprise
 } from 'lib/products-values';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { isAutomatedTransferActive, isSiteAutomatedTransfer } from 'state/selectors';
 import QueryEligibility from 'components/data/query-atat-eligibility';
-import { isATEnabled } from 'lib/automated-transfer';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 const PluginMeta = React.createClass( {
 	OUT_OF_DATE_YEARS: 2,
@@ -427,7 +427,7 @@ const PluginMeta = React.createClass( {
 
 		return (
 			<div className="plugin-meta">
-				{ this.props.atEnabled && this.props.selectedSite &&
+				{ isATEnabledForCurrentSite() && this.props.selectedSite &&
 					<QueryEligibility siteId={ this.props.selectedSite.ID } />
 				}
 				<Card>
@@ -466,11 +466,11 @@ const PluginMeta = React.createClass( {
 					}
 				</Card>
 
-				{ this.props.atEnabled &&
+				{ isATEnabledForCurrentSite() &&
 					this.maybeDisplayUnsupportedNotice()
 				}
 
-				{ this.props.atEnabled && this.hasBusinessPlan() && ! get( this.props.selectedSite, 'jetpack' ) &&
+				{ isATEnabledForCurrentSite() && this.hasBusinessPlan() && ! get( this.props.selectedSite, 'jetpack' ) &&
 					<PluginAutomatedTransfer plugin={ this.props.plugin } />
 				}
 
@@ -498,10 +498,8 @@ const PluginMeta = React.createClass( {
 
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
-	const selectedSite = getSelectedSite( state );
 
 	return {
-		atEnabled: isATEnabled( selectedSite ),
 		isTransferring: isAutomatedTransferActive( state, siteId ),
 		automatedTransferSite: isSiteAutomatedTransfer( state, siteId ),
 	};

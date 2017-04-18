@@ -47,7 +47,7 @@ import {
 	domainManagementTransferToAnotherUser
 } from 'my-sites/upgrades/paths';
 import SitesComponent from 'my-sites/sites';
-import { isATEnabled } from 'lib/automated-transfer';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 /**
  * Module vars
@@ -401,7 +401,7 @@ module.exports = {
 		const basePath = route.sectionify( context.path );
 		const selectedSite = sites.getSelectedSite();
 
-		if ( selectedSite && selectedSite.jetpack && ! isATEnabled( selectedSite ) ) {
+		if ( selectedSite && selectedSite.jetpack && ! isATEnabledForCurrentSite() ) {
 			renderWithReduxStore( (
 				<Main>
 					<JetpackManageErrorPage

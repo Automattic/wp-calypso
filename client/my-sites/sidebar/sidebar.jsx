@@ -28,14 +28,14 @@ import SidebarRegion from 'layout/sidebar/region';
 import StatsSparkline from 'blocks/stats-sparkline';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { userCan } from 'lib/site/utils';
 import { getMenusUrl, getPrimarySiteId, isDomainOnlySite } from 'state/selectors';
 import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { getStatsPathForTab } from 'lib/route/path';
-import { isATEnabled } from 'lib/automated-transfer';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 /**
  * Module variables
@@ -243,7 +243,7 @@ export class MySitesSidebar extends Component {
 			pluginsLink = '/plugins' + this.siteSuffix(),
 			addPluginsLink;
 
-		if ( this.props.atEnabled ) {
+		if ( isATEnabledForCurrentSite() ) {
 			addPluginsLink = '/plugins/browse' + this.siteSuffix();
 		}
 
@@ -298,7 +298,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( site.jetpack && ! this.props.atEnabled ) {
+		if ( site.jetpack && ! ( isATEnabledForCurrentSite() ) ) {
 			return null;
 		}
 
@@ -642,11 +642,9 @@ function mapStateToProps( state ) {
 	const selectedSiteId = getSelectedSiteId( state );
 	const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
 	const singleSiteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
-	const selectedSite = getSelectedSite( state );
 
 	return {
 		currentUser,
-		atEnabled: isATEnabled( selectedSite ),
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack: isJetpackSite( state, selectedSiteId ),

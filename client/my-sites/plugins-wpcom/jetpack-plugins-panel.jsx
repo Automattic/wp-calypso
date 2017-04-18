@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import {
 	find,
@@ -30,8 +29,7 @@ import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 import jetpackPlugins from './jetpack-plugins';
 import Tooltip from 'components/tooltip';
-import { isATEnabled } from 'lib/automated-transfer';
-import { getSelectedSite } from 'state/ui/selectors';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 const filterGroup = category => group => {
 	if ( category && category !== 'all' ) {
@@ -176,7 +174,7 @@ class JetpackPluginsPanel extends Component {
 				</SectionNav>
 
 				<SectionHeader label={ translate( 'Plugins' ) }>
-					{ this.props.atEnabled &&
+					{ isATEnabledForCurrentSite() &&
 						<ButtonGroup key="plugin-list-header__buttons-browser">
 							<Button
 								compact
@@ -253,11 +251,4 @@ class JetpackPluginsPanel extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const selectedSite = getSelectedSite( state );
-		return {
-			atEnabled: isATEnabled( selectedSite )
-		};
-	}
-)( localize( urlSearch( JetpackPluginsPanel ) ) );
+export default localize( urlSearch( JetpackPluginsPanel ) );
