@@ -11,7 +11,7 @@ import { includes, omit, reduce, get, mapValues } from 'lodash';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarButton from 'layout/sidebar/button';
 import config from 'config';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
@@ -223,7 +223,7 @@ const PublishMenu = React.createClass( {
 } );
 
 export default connect( ( state ) => {
-	const siteId = get( getSelectedSite( state ), 'ID' );
+	const siteId = getSelectedSiteId( state );
 	const postTypes = getPostTypes( state, siteId );
 
 	return {
