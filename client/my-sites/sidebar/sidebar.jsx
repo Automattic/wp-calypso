@@ -29,7 +29,7 @@ import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getMenusUrl, getPrimarySiteId, isDomainOnlySite } from 'state/selectors';
+import { canCurrentUser, getMenusUrl, getPrimarySiteId, getSites, isDomainOnlySite } from 'state/selectors';
 import {
 	getCustomizerUrl,
 	getSite,
@@ -40,7 +40,6 @@ import {
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { getStatsPathForTab } from 'lib/route/path';
 import { isATEnabled } from 'lib/automated-transfer';
-import { canCurrentUser } from 'state/selectors';
 
 /**
  * Module variables
@@ -103,12 +102,6 @@ export class MySitesSidebar extends Component {
 		return paths.some( function( path ) {
 			return path === this.props.path || 0 === this.props.path.indexOf( path + '/' );
 		}, this );
-	}
-
-	hasJetpackSites() {
-		return this.props.sites.get().some( function( site ) {
-			return site.jetpack;
-		} );
 	}
 
 	publish() {
@@ -233,11 +226,11 @@ export class MySitesSidebar extends Component {
 			}
 		}
 
-		if ( ! this.props.sites.canManageSelectedOrAll() ) {
+		if ( ! this.props.canManagePlugins ) {
 			return null;
 		}
 
-		if ( ( this.props.isSingleSite && this.props.isJetpack ) || ( ! this.props.isSingleSite && this.hasJetpackSites() ) ) {
+		if ( ( this.props.isSingleSite && this.props.isJetpack ) || ( ! this.props.isSingleSite && this.props.hasJetpackSites ) ) {
 			addPluginsLink = '/plugins/browse' + this.props.siteSuffix;
 		}
 
@@ -602,9 +595,16 @@ function mapStateToProps( state ) {
 		! isJetpackModuleActive( state, singleSiteId, 'publicize' ) &&
 		( ! isJetpackModuleActive( state, singleSiteId, 'sharedaddy' ) || isJetpackMinimumVersion( state, singleSiteId, '3.4-dev' ) )
 	);
+	// FIXME: Turn into dedicated selector
+	const canManagePlugins = !! getSites( state ).some( ( s ) => (
+		( s.capabilities && s.capabilities.manage_options )
+	) );
+	// FIXME: Turn into dedicated selector
+	const hasJetpackSites = getSites( state ).some( s => s.jetpack );
 
 	return {
 		atEnabled: isATEnabled( site ),
+		canManagePlugins,
 		canUserEditThemeOptions: canCurrentUser( state, singleSiteId, 'edit_theme_options' ),
 		canUserListUsers: canCurrentUser( state, singleSiteId, 'list_users' ),
 		canUserManageOptions: canCurrentUser( state, singleSiteId, 'manage_options' ),
@@ -612,6 +612,7 @@ function mapStateToProps( state ) {
 		canUserViewStats: canCurrentUser( state, singleSiteId, 'view_stats' ),
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
+		hasJetpackSites,
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
 		isSharingEnabledOnJetpackSite,
