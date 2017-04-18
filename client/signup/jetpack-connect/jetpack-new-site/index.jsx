@@ -25,6 +25,7 @@ class JetpackNewSite extends Component {
 		super();
 		this.onURLEnter = this.onURLEnter.bind( this );
 		this.handleOnClickTos = this.handleOnClickTos.bind( this );
+		this.handleBack = this.handleBack.bind( this );
 	}
 
 	componentDidMount() {
@@ -46,10 +47,8 @@ class JetpackNewSite extends Component {
 
 	handleBack( event ) {
 		event.preventDefault();
-
-		// @todo
-		// - Record action that user went back
-		// - Go back in history
+		this.props.recordTracksEvent( 'calypso_jetpack_new_site_back' );
+		page.back();
 	}
 
 	render() {
