@@ -79,9 +79,9 @@ function getSuggestions( count, tags ) {
 }
 
 function trackSuggestionRailcarRender( suggestionsToTrack ) {
-	for ( let i = 0; i < suggestionsToTrack.length; i++ ) {
-		analytics.tracks.recordEvent( 'calypso_traintracks_render', suggestionsToTrack[ i ].railcar );
-	}
+	suggestionsToTrack.forEach( suggestion => {
+		analytics.tracks.recordEvent( 'calypso_traintracks_render', suggestion.railcar );
+	} );
 }
 
 const SuggestionsProvider = ( Element, count = 3 ) => class extends Component {
