@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { compact, includes, omit, reduce, get, mapValues } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -20,8 +21,8 @@ import MediaLibraryUploadButton from 'my-sites/media-library/upload-button';
 import { getSite, getSiteAdminUrl, getSiteSlug, isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 import { areAllSitesSingleUser, canCurrentUser } from 'state/selectors';
 
-const PublishMenu = React.createClass( {
-	propTypes: {
+class PublishMenu extends PureComponent {
+	static propTypes = {
 		itemLinkClass: PropTypes.func,
 		onNavigate: PropTypes.func,
 		siteId: PropTypes.number,
@@ -38,7 +39,7 @@ const PublishMenu = React.createClass( {
 			PropTypes.bool
 		] ),
 		siteSlug: PropTypes.string,
-	},
+	}
 
 	// We default to `/my` posts when appropriate
 	getMyParameter() {
@@ -49,7 +50,7 @@ const PublishMenu = React.createClass( {
 		}
 
 		return ( allSingleSites ) ? '' : '/my';
-	},
+	}
 
 	getDefaultMenuItems() {
 		const { siteSlug } = this.props;
@@ -57,7 +58,7 @@ const PublishMenu = React.createClass( {
 		const items = [
 			{
 				name: 'post',
-				label: this.translate( 'Blog Posts' ),
+				label: this.props.translate( 'Blog Posts' ),
 				className: 'posts',
 				capability: 'edit_posts',
 				config: 'manage/posts',
@@ -70,7 +71,7 @@ const PublishMenu = React.createClass( {
 			},
 			{
 				name: 'page',
-				label: this.translate( 'Pages' ),
+				label: this.props.translate( 'Pages' ),
 				className: 'pages',
 				capability: 'edit_pages',
 				queryable: true,
@@ -85,7 +86,7 @@ const PublishMenu = React.createClass( {
 		if ( config.isEnabled( 'manage/media' ) ) {
 			items.push( {
 				name: 'media',
-				label: this.translate( 'Media' ),
+				label: this.props.translate( 'Media' ),
 				className: 'media-section',
 				capability: 'upload_files',
 				queryable: true,
@@ -97,15 +98,15 @@ const PublishMenu = React.createClass( {
 			} );
 		}
 		return items;
-	},
+	}
 
-	onNavigate( postType ) {
+	onNavigate = ( postType ) => () => {
 		if ( ! includes( [ 'post', 'page' ], postType ) ) {
 			analytics.mc.bumpStat( 'calypso_publish_menu_click', postType );
 		}
 
 		this.props.onNavigate();
-	},
+	}
 
 	renderMenuItem( menuItem ) {
 		const { canUser, site, siteId, siteAdminUrl } = this.props;
@@ -161,19 +162,23 @@ const PublishMenu = React.createClass( {
 				label={ menuItem.label }
 				className={ className }
 				link={ link }
-				onNavigate={ this.onNavigate.bind( this, menuItem.name ) }
+				onNavigate={ this.onNavigate( menuItem.name ) }
 				icon={ icon }
 				preloadSectionName={ preload }
 			>
 				{ menuItem.name === 'media' && (
-					<MediaLibraryUploadButton className="sidebar__button" site={ site } href={ menuItem.buttonLink }>{ this.translate( 'Add' ) }</MediaLibraryUploadButton>
+					<MediaLibraryUploadButton className="sidebar__button" site={ site } href={ menuItem.buttonLink }>
+						{ this.props.translate( 'Add' ) }
+					</MediaLibraryUploadButton>
 				) }
 				{ menuItem.name !== 'media' && (
-					<SidebarButton href={ menuItem.buttonLink } preloadSectionName="post-editor">{ this.translate( 'Add' ) }</SidebarButton>
+					<SidebarButton href={ menuItem.buttonLink } preloadSectionName="post-editor">
+						{ this.props.translate( 'Add' ) }
+					</SidebarButton>
 				) }
 			</SidebarItem>
 		);
-	},
+	}
 
 	getCustomMenuItems() {
 		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page' ] );
@@ -208,7 +213,7 @@ const PublishMenu = React.createClass( {
 				buttonLink
 			} );
 		}, [] );
-	},
+	}
 
 	render() {
 		const menuItems = [
@@ -221,11 +226,11 @@ const PublishMenu = React.createClass( {
 				{ this.props.siteId && (
 					<QueryPostTypes siteId={ this.props.siteId } />
 				) }
-				{ menuItems.map( this.renderMenuItem ) }
+				{ menuItems.map( this.renderMenuItem, this ) }
 			</ul>
 		);
 	}
-} );
+}
 
 export default connect( ( state, { siteId } ) => {
 	const postTypes = getPostTypes( state, siteId );
@@ -244,4 +249,4 @@ export default connect( ( state, { siteId } ) => {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 	};
-} )( PublishMenu );
+} )( localize( PublishMenu ) );
