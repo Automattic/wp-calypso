@@ -60,6 +60,7 @@ export getPrimarySiteId from './get-primary-site-id';
 export getRawOffsets from './get-raw-offsets';
 export getReaderFeedsForQuery from './get-reader-feeds-for-query';
 export getReaderFollowedTags from './get-reader-followed-tags';
+export getReaderFollowForBlog from './get-reader-follow-for-blog';
 export getReaderFollows from './get-reader-follows';
 export getReaderTags from './get-reader-tags';
 export getReaderTeams from './get-reader-teams';
