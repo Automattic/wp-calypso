@@ -32,10 +32,13 @@ import PeopleNotices from 'my-sites/people/people-notices';
 import PeopleLog from 'lib/people/log-store';
 import analytics from 'lib/analytics';
 import RoleSelect from 'my-sites/people/role-select';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PeopleLogStore from 'lib/people/log-store';
+import {
+	isJetpackSiteMultiSite,
+	isJetpackSite,
+} from 'state/sites/selectors';
 
 /**
  * Module Variables
@@ -388,13 +391,12 @@ export class EditTeamMemberForm extends Component {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const site = getSelectedSite( state );
 
 		return {
 			siteId,
-			siteSlug: getSiteSlug( state, siteId ),
-			isJetpack: site && site.jetpack,
-			isMultisite: site && site.is_multisite,
+			siteSlug: getSelectedSiteSlug( state ),
+			isJetpack: isJetpackSite( state, siteId ),
+			isMultisite: isJetpackSiteMultiSite( state, siteId ),
 		};
 	}
 )( protectForm( EditTeamMemberForm ) );
