@@ -249,7 +249,6 @@ export class EditTeamMemberForm extends Component {
 		this.state = {
 			user: UsersStore.getUserByLogin( props.siteId, props.userLogin ),
 			removingUser: false,
-			requestedUser: false
 		};
 	}
 
