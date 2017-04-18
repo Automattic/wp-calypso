@@ -56,23 +56,24 @@ let PeopleNavTabs = React.createClass( {
 class PeopleSectionNav extends Component {
 
 	canSearch() {
+		const { isJetpack, jetpackPeopleSupported, filter } = this.props;
 		if ( ! this.props.site ) {
 			return false;
 		}
 
 		// Disable search for wpcom followers and viewers
-		if ( this.props.filter ) {
-			if ( 'followers' === this.props.filter || 'viewers' === this.props.filter ) {
+		if ( filter ) {
+			if ( 'followers' === filter || 'viewers' === filter ) {
 				return false;
 			}
 		}
 
-		if ( ! this.props.site.jetpack ) {
+		if ( ! isJetpack ) {
 			// wpcom sites will always support search
 			return true;
 		}
 
-		if ( 'team' === this.props.filter && ! this.props.site.versionCompare( '3.7.0-beta', '>=' ) ) {
+		if ( 'team' === filter && ! jetpackPeopleSupported ) {
 			// Jetpack sites can only search team on versions of 3.7.0-beta or later
 			return false;
 		}
@@ -128,7 +129,7 @@ class PeopleSectionNav extends Component {
 			return false;
 		}
 
-		if ( 'viewers' === this.props.filter || ( ! this.props.site.jetpack && this.props.site.is_private ) ) {
+		if ( 'viewers' === this.props.filter || ( ! this.props.isJetpack && this.props.isPrivate ) ) {
 			return true;
 		}
 		return false;
@@ -138,10 +139,6 @@ class PeopleSectionNav extends Component {
 		var selectedText,
 			hasPinnedItems = false,
 			search = null;
-
-		if ( this.props.fetching ) {
-			return <SectionNav></SectionNav>
-		}
 
 		if ( this.canSearch() ) {
 			hasPinnedItems = true;
