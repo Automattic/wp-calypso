@@ -11,20 +11,22 @@ import { requestPostRevisions } from 'state/posts/revisions/actions';
 
 class QueryPostRevisions extends Component {
 	componentWillMount() {
-		this.request( this.props );
+		this.request();
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId &&
-				this.props.postId === nextProps.postId ) {
+	componentDidUpdate( prevProps ) {
+		if (
+			this.props.siteId === prevProps.siteId &&
+			this.props.postId === prevProps.postId
+		) {
 			return;
 		}
 
-		this.request( nextProps );
+		this.request();
 	}
 
-	request( props ) {
-		props.requestPostRevisions( props.siteId, props.postId );
+	request() {
+		this.props.requestPostRevisions( this.props.siteId, this.props.postId );
 	}
 
 	render() {
