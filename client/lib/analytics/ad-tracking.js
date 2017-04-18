@@ -290,6 +290,35 @@ function retarget() {
 }
 
 /**
+ * Fire custom facebook conversion tracking event.
+ *
+ * @param {String} name - The name of the custom event.
+ * @param {Object} properties - The custom event attributes.
+ * @returns {void}
+ */
+function trackCustomFacebookConversionEvent( name, properties ) {
+	window.fbw && window.fbq(
+		'trackCustom',
+		name,
+		properties
+	);
+}
+
+/**
+ * Fire custom adwords conversation tracking event.
+ *
+ * @param {Object} properties - The custom event attributes.
+ * @returns {void}
+ */
+function trackCustomAdWordsRemarketingEvent( properties ) {
+	window.google_trackConversion && window.google_trackConversion( {
+		google_conversion_id: GOOGLE_CONVERSION_ID,
+		google_custom_params: properties,
+		google_remarketing_only: true
+	} );
+}
+
+/**
  * A generic function that we can export and call to track plans page views with our ad partners
  */
 function retargetViewPlans() {
@@ -991,5 +1020,7 @@ module.exports = {
 	recordViewCheckout,
 	recordOrder,
 	recordSignupStart,
-	recordSignupCompletion
+	recordSignupCompletion,
+	trackCustomFacebookConversionEvent,
+	trackCustomAdWordsRemarketingEvent,
 };
