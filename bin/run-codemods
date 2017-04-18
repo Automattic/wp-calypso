@@ -1,0 +1,226 @@
+#!/usr/bin/env node
+
+//
+// External dependencies
+//
+const assign = require( 'lodash/assign' );
+const async = require( 'async' );
+const chalk = require( 'chalk' );
+const child_process = require( 'child_process' );
+const inquirer = require( 'inquirer' );
+const path = require( 'path' );
+const program = require( 'commander' );
+const stripAnsi = require( 'strip-ansi' );
+
+//
+// Program definition for commander
+//
+program
+	.version( '1.0.0' )
+	.usage( '<path>' )
+	.description( 'Interactively execute codemod transformations!' )
+	.arguments( '[path]' )
+	.parse( process.argv );
+
+const pathToTransform = program.args[ 0 ];
+
+// Display help by default (e.g. if no command was provided)
+if ( process.argv.slice( 2 ).length <= 0 ) {
+	program.help();
+}
+
+//
+// Prepare inquirer for user input handling
+//
+const transformChoices = formatChoices( [
+	new inquirer.Separator( chalk.reset( 'ES2015 Codemods' ) ),
+	{
+		'short': 'commonjs-imports',
+		checked: true,
+		name: 'CommonJS to ES Module Imports',
+		value: 'commonjs-imports',
+	},
+	{
+		'short': 'commonjs-exports',
+		checked: true,
+		name: 'CommonJS to ES Module Exports',
+		value: 'commonjs-exports',
+	},
+	{
+		'short': 'named-exports-from-default',
+		checked: true,
+		name: 'Named Export Generation',
+		value: 'named-exports-from-default',
+	},
+	new inquirer.Separator( chalk.reset(
+		`ES2015 Codemods (${ chalk.red( 'Experimental' ) })` )
+	),
+	{
+		'short': 'commonjs-imports-hoist',
+		name: 'CommonJS to ES Module Imports with hoisting',
+		value: 'commonjs-imports-hoist',
+	},
+] );
+
+const questions = [
+	{
+		type: 'checkbox',
+		name: 'transforms',
+		message: 'Select transformations to apply:',
+		choices: transformChoices,
+		validate: transformChoicesValidator,
+	},
+	{
+		'default': true,
+		message: `Transform ${ chalk.blue( pathToTransform ) } with the selected codemods?`,
+		name: 'confirm',
+		type: 'confirm',
+	}
+];
+
+//
+// Handle user input and execute codemods
+//
+
+// Keep track of transformed files
+const transformedFilesSet = new Set();
+
+inquirer.prompt( questions ).then( function( { transforms, confirm } ) {
+	if ( ! confirm ) {
+		process.exit( 0 );
+	}
+	const transformTasks = transforms.map( transform => executeTransformation.bind( null, transform ) );
+	async.waterfall( transformTasks, ( err ) => {
+		if ( err ) {
+			writeErrorLog( 'Transformation failed.' );
+		} else {
+			writeExecutionLog( 'Transformation complete!' );
+		}
+	} );
+} );
+
+//
+// Helper functions for Inquirer setup
+//
+
+function formatName( name, subtitle ) {
+	return `${ name } ${ chalk.gray( `(${ subtitle })` ) }`;
+}
+
+function padWith( length, { leading = true, trailing = true, padding = '-' } = {} ) {
+	return ( string ) => {
+		const paddingLength = length - stripAnsi( string ).length;
+		if ( leading && trailing ) {
+			const startPadding = padding.repeat( Math.floor( paddingLength / 2 ) );
+			const endPadding = padding.repeat( Math.ceil( paddingLength / 2 ) );
+			return `${ startPadding } ${ string } ${ endPadding }`;
+		} else if ( leading ) {
+			const startPadding = padding.repeat( paddingLength );
+			return `${ startPadding } ${ string }`;
+		} else if ( trailing ) {
+			const endPadding = padding.repeat( paddingLength );
+			return `${ string } ${ endPadding }`;
+		}
+
+		return string;
+	};
+}
+
+function formatChoices( choices ) {
+	const isSeparator = ( choice ) => 'type' in choice && choice.type === 'separator';
+
+	const selectableChoices = choices.filter( choice => ! isSeparator( choice ) );
+	const maxNameLength = Math.ceil( 1.1 * Math.max(
+		...selectableChoices.map( value => stripAnsi( value.name ).length )
+	) );
+	const addNamePadding = padWith( maxNameLength, { leading: false, padding: ' ' } );
+
+	const paddedChoices = choices.map( choice => {
+		if ( 'type' in choice && choice.type === 'separator' ) {
+			return choice;
+		}
+
+		return assign( {}, choice, {
+			name: formatName(
+				`(${ selectableChoices.indexOf( choice ) + 1 }) ${ addNamePadding( choice.name ) }`,
+				choice.value
+			),
+		} );
+	} );
+
+	const maxSeparatorLength = Math.ceil( 1.05 * Math.max(
+		...paddedChoices.map( choice => (
+			isSeparator( choice ) ? stripAnsi( choice.line ).length : stripAnsi( choice.name ).length
+		) )
+	) );
+	const addSeparatorPadding = padWith( maxSeparatorLength, { leading: false } );
+
+	return paddedChoices.map( choice => {
+		if ( ! isSeparator( choice ) ) {
+			return choice;
+		}
+
+		return assign( {}, choice, {
+			line: addSeparatorPadding( '----- ' + choice.line ),
+		} );
+	} );
+}
+
+function transformChoicesValidator( input ) {
+	if ( input.length === 0 ) {
+		return 'Please select at least one transformation.';
+	}
+	if ( input.includes( 'commonjs-imports' ) && input.includes( 'commonjs-imports-hoist' ) ) {
+		return (
+			`Please select only ${ chalk.bold( 'one' ) } CommonJS Import transformation.\n   ` +
+			`Both ${ chalk.bold( 'commonjs-imports' ) } and ${ chalk.bold( 'commonjs-imports-hoist' ) } are selected.`
+		);
+	}
+
+	return true;
+}
+
+//
+// Helper functions for child processes execution
+//
+
+function writeExecutionLog( message, prefix = '✓' ) {
+	process.stdout.write(
+		chalk.green( `${ prefix } ` ) + chalk.bold( `${ message }\n` )
+	);
+}
+
+function writeErrorLog( message, prefix = 'X' ) {
+	process.stderr.write(
+		chalk.red( `${ prefix } ` ) + chalk.bold( `${ message }\n` )
+	);
+}
+
+function executeTransformation( name, callback ) {
+	writeExecutionLog( `Executing ${ name } transformation` );
+	const binPath = path.join( '.', 'bin', 'codemods', name );
+	const binArgs = [ pathToTransform ];
+	const options = { stdio: [ 'ipc', 'pipe', 'pipe' ] };
+	const transform = child_process.spawn( binPath, binArgs, options );
+
+	transform.stdout.on( 'data', ( data ) => {
+		process.stdout.write( data );
+	} );
+
+	transform.stderr.on( 'data', ( data ) => {
+		process.stderr.write( data );
+	} );
+
+	transform.on( 'message', ( { processedFiles = [] } = {} ) => {
+		processedFiles.forEach( file => transformedFilesSet.add( file ) );
+	} );
+
+	transform.on( 'exit', ( code ) => {
+		if ( code === 0 ) {
+			callback();
+		} else {
+			writeErrorLog( `Transformation ${ name } failed, exiting` );
+			throw new Error( `Transformation ${ name } failed` );
+		}
+	} );
+}
