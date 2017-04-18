@@ -1,11 +1,68 @@
+.reader-subscription-list-item {
+	display: flex;
+	flex-direction: row;
+}
 
-.reader-subscription-list-item__by-text {
-	color: $gray;
+.reader-subscription-list-item__byline {
+	color: darken( $gray, 30% );
+	flex: 1 0 0;
+	padding-right: 10px;
+}
+
+.reader-subscription-list-item__options {
+	display: flex;
+	flex-direction: column;
+}
+
+.reader-subscription-list-item__site-title {
+	display: block;
+	font-weight: 600;
+	height: 20px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	position: relative;
+	width: 100%;
+
+	&::after{
+		@include long-content-fade( $size: 20% );
+	}
+}
+
+.reader-subscription-list-item__site-excerpt {
+	display: block;
+	max-height: 16px * 1.3;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	position: relative;
+	width: 100%;
+
+	@include breakpoint( "<660px" ) {
+		max-height: 16px * 2.8;
+	}
+
+	&::after{
+		@include long-content-fade( $size: 20% );
+		height: 16px * 1.4;
+		top: auto;
+	}
+}
+
+.reader-subscription-list-item__link,
+.reader-subscription-list-item__link:visited {
+	color: $blue-medium;
+
+	&:hover {
+		color: $blue-light;
+	}
+}
+
+.reader-subscription-list-item__by-text .reader-subscription-list-item__link {
+	color: darken( $gray, 30% );
 }
 
 .reader-subscription-list-item .gravatar {
 	float: left;
-	margin: 2px 6px 0 0;
+	margin: 2px 8px 0 0;
 	height: 32px;
 	min-height: 32px;
 	width: 32px;
@@ -13,19 +70,33 @@
 }
 
 .reader-subscription-list-item {
-	font-size: 14px;
-	padding-bottom: 20px;
 	display: flex;
+	font-size: 14px;
+	padding: 15px 0;
+
+	@include breakpoint( "<660px" ) {
+		margin: 0 15px;
+	}
+}
+
+.following-manage__subscriptions-list .following-manage__sites-window-scroller > div {
+	border-bottom: 1px solid lighten( $gray, 30% );
+
+	&:last-child {
+		border: 0;
+	}
 }
 
 .reader-subscription-list-item .follow-button {
 	border: 0;
-	border-radius: 0;
-	float: right;
 	padding: 0;
 
 	.gridicon {
 		fill: $blue-medium;
+
+		@include breakpoint( "<660px" ) {
+			left: 6px;
+		}
 	}
 
 	.follow-button__label {
@@ -44,13 +115,37 @@
 	}
 }
 
+.reader-subscription-list-item .gridicons-cog {
+	fill: lighten( $gray, 10% );
+	height: 18px;
+	padding-right: 7px;
+	position: relative;
+		left: 7px;
+		top: 4px;
+	width: 18px;
+
+	@include breakpoint( ">660px" ) {
+		left: 4px;
+	}
+}
+
+.reader-subscription-list-item .follow-button__label,
+.reader-subscription-list-item .reader-subscription-list-item__settings-label {
+
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
+}
+
 .reader-subscription-list-item__settings-menu {
 	color: $gray;
-	float: right;
+	padding-left: 0;
+
+	@include breakpoint( ">660px" ) {
+		padding-left: 8px;
+	}
 }
-.reader-subscription-list-item__site-url, .reader-subscription-list-item__site-url a {
-	color: $gray;
-}
+
 .reader-subscription-list-item__site-title {
 	font-weight: 600;
 }
@@ -59,54 +154,60 @@
 	display: flex;
 	flex-direction: column;
 	margin-left: auto;
-	width: 90px;
-	min-width: 90px;
 }
 
+// Settings popover
 .reader-subscription-list-item__email-popout-wrapper {
 	display: flex;
 	flex-direction: column;
-	min-width: 200px;
+	min-width: 250px;
 	min-height: 150px;
 }
 
 .reader-subscription-list-item__email-popout-header {
+	border-bottom: 1px solid lighten( $gray, 20% );
 	font-size: 14px;
 	display: flex;
-	padding-left: 15px;
-	padding-bottom: 5px;
-	padding-top: 5px;
 	justify-content: flex-start;
 	color: $gray-dark;
+	padding: 10px 0 10px 15px;
+}
+
+.reader-subscription-list-item__settings-menu:hover {
+	cursor: pointer;
 }
 
 .reader-subscription-list-item__settings-menu-popout.popover .popover__inner {
 	background-color: $gray-light;
 	border-color: lighten( $gray, 20% );
 }
-.reader-subscription-list-item__settings-menu-popout.popover .popover__arrow:before {
-	// border: 10px solid lighten( $gray-light, 20% ) !important; // this is actually the background of the arrow
-}
 
-.reader-subscription-list-item__header-separator {
-	color: lighten( $gray, 20% );
-	width: 100%;
-	margin-bottom: 0;
+.reader-subscription-list-item__settings-menu-popout.popover.is-bottom-left .popover__arrow::before {
+	top: 2px;
+	border: 10px solid $gray-light;
+	content: " ";
+	position: absolute;
+	left: 50%;
+	margin-left: -10px;
+	border-bottom-style: solid;
+	border-left-color: transparent;
+	border-right-color: transparent;
+	border-top: none;
 }
 
 .reader-subscription-list-item__email-popout-toggle {
+	color: $gray-dark;
 	display: flex;
 	justify-content: space-between;
-	padding-top: 15px;
-	padding-left: 15px;
-	color: darken( $gray, 20% );
 	font-size: 14px;
-	color: $gray-dark;
+	margin: 10px 0 10px 15px;
 }
 
 .reader-subscription-list-item__email-popout-wrapper .segmented-control {
-	padding-left: 15px;
-	padding-right: 15px;
-	background-color: inherit;
+	background: inherit;
+	padding: 0 12px 0 16px;
 }
 
+.reader-subscription-list-item__email-popout-wrapper .segmented-control__link {
+	background: $white;
+}

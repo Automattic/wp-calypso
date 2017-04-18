@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter } from 'lodash';
+import { values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,7 +14,9 @@ import createSelector from 'lib/create-selector';
  * @param  {Object}  state  Global state tree
  * @return {Integer} Follow count
  */
-export default createSelector(
-	state => filter( state.reader.follows.items, [ 'is_following', true ] ),
+const getReaderFollows = createSelector(
+	state => values( state.reader.follows.items ),
 	state => [ state.reader.follows.items ],
 );
+
+export default getReaderFollows;

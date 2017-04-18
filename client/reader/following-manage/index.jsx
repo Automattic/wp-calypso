@@ -7,7 +7,6 @@ import { trim, debounce } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import qs from 'qs';
-import { List, WindowScroller } from 'react-virtualized';
 
 /**
  * Internal Dependencies
@@ -19,8 +18,8 @@ import SearchInput from 'components/search';
 import ReaderMain from 'components/reader-main';
 import { getReaderFeedsForQuery } from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
-import ConnectedSubscriptionListItem from './connected-subscription-list-item';
 import FollowingManageSubscriptions from './subscriptions';
+import SitesWindowScroller from './sites-window-scroller';
 
 class FollowingManage extends Component {
 	static propTypes = {
@@ -80,21 +79,6 @@ class FollowingManage extends Component {
 		window.removeEventListener( 'resize', this.resizeListener );
 	}
 
-	searchResultRowRenderer = ( { index, key, style } ) => {
-		const { searchResults } = this.props;
-		const feed = searchResults[ index ];
-		return (
-			<div key={ key } style={ style }>
-					<ConnectedSubscriptionListItem
-						key={ `feedresult-${ feed.URL }` }
-						url={ feed.URL }
-						feedId={ +feed.feed_ID }
-						siteId={ +feed.blog_ID }
-					/>
-			</div>
-		);
-	};
-
 	render() {
 		const { query, translate, searchResults } = this.props;
 		const searchPlaceholderText = translate( 'Search millions of sites' );
@@ -120,22 +104,8 @@ class FollowingManage extends Component {
 						</SearchInput>
 					</CompactCard>
 				</div>
-				{ !! query &&
-					<WindowScroller>
-						{ ( { height, scrollTop } ) => (
-							<List
-								autoHeight
-								height={ height }
-								rowCount={ searchResults.length }
-								rowHeight={ 83 }
-								rowRenderer={ this.searchResultRowRenderer }
-								scrollTop={ scrollTop }
-								width={ this.state.width }
-							/>
-						)}
-					</WindowScroller>
-				}
-				<FollowingManageSubscriptions />
+				{ ! query && <FollowingManageSubscriptions width={ this.state.width } /> }
+				{ !! query && <SitesWindowScroller sites={ searchResults } width={ this.state.width } /> }
 			</ReaderMain>
 		);
 	}
