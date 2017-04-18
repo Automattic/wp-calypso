@@ -42,7 +42,7 @@ describe( 'eligibleForFreeToPaidUpsell', () => {
 		canCurrentUser.withArgs( state, siteId, 'manage_options' ).returns( true );
 		isMappedDomainSite.withArgs( state, siteId ).returns( false );
 		isSiteOnFreePlan.withArgs( state, siteId ).returns( true );
-		isUserRegistrationDaysWithinRange.withArgs( state, moment, 2, 30 ).returns( true );
+		isUserRegistrationDaysWithinRange.withArgs( state, moment, 0, 180 ).returns( true );
 	};
 
 	it( 'should return false when user can not manage options', () => {
@@ -65,7 +65,7 @@ describe( 'eligibleForFreeToPaidUpsell', () => {
 
 	it( 'should return false when user registration days is not within range', () => {
 		meetAllConditions();
-		isUserRegistrationDaysWithinRange.withArgs( state, moment, 2, 30 ).returns( false );
+		isUserRegistrationDaysWithinRange.withArgs( state, moment, 0, 180 ).returns( false );
 		expect( eligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.false;
 	} );
 

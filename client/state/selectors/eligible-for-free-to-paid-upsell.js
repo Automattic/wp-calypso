@@ -20,7 +20,7 @@ const eligibleForFreeToPaidUpsell = ( state, siteId, moment ) => {
 	const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 	const siteHasMappedDomain = isMappedDomainSite( state, siteId );
 	const siteIsOnFreePlan = isSiteOnFreePlan( state, siteId );
-	const registrationDaysIsWithinRange = isUserRegistrationDaysWithinRange( state, moment, 2, 30 );
+	const registrationDaysIsWithinRange = isUserRegistrationDaysWithinRange( state, moment, 0, 180 );
 
 	return userCanManageOptions && ! siteHasMappedDomain && siteIsOnFreePlan && registrationDaysIsWithinRange;
 };
