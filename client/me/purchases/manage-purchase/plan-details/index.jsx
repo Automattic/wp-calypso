@@ -41,10 +41,6 @@ class PurchasePlanDetails extends Component {
 			return null;
 		}
 
-		if ( pluginList.length < 1 ) {
-			return null;
-		}
-
 		return (
 			<Card>
 				<QueryPluginKeys siteId={ selectedSite.ID } />
