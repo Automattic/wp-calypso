@@ -1,6 +1,57 @@
+.reader-subscription-list-item {
+	display: flex;
+	flex-direction: row;
+}
 
-.reader-subscription-list-item__by-text {
-	color: $gray;
+.reader-subscription-list-item__byline {
+	color: darken( $gray, 30% );
+	flex: 1 0 0;
+}
+
+.reader-subscription-list-item__options {
+	display: flex;
+	flex-direction: column;
+}
+
+.reader-subscription-list-item__site-title {
+	display: block;
+	font-weight: 600;
+	height: 20px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	position: relative;
+	width: 100%;
+
+	&::after{
+		@include long-content-fade( $size: 20% );
+	}
+}
+
+.reader-subscription-list-item__site-excerpt {
+	display: block;
+	max-height: 65px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	position: relative;
+	width: 100%;
+
+	&::after{
+		@include long-content-fade( $size: 20% );
+		height: 16px * 1.4;
+		top: auto;
+	}
+}
+
+.reader-subscription-list-item__link {
+	color: $blue-medium;
+
+	&:hover {
+		color: $blue-light;
+	}
+}
+
+.reader-subscription-list-item__by-text .reader-subscription-list-item__link {
+	color: darken( $gray, 30% );
 }
 
 .reader-subscription-list-item .gravatar {
@@ -20,8 +71,6 @@
 
 .reader-subscription-list-item .follow-button {
 	border: 0;
-	border-radius: 0;
-	float: right;
 	padding: 0;
 
 	.gridicon {
@@ -44,13 +93,32 @@
 	}
 }
 
-.reader-subscription-list-item__settings-menu {
-	color: $gray;
-	float: right;
+.reader-subscription-list-item .gridicons-cog {
+	height: 18px;
+	padding-right: 7px;
+	position: relative;
+		left: 2px;
+		top: 4px;
+	width: 18px;
 }
-.reader-subscription-list-item__site-url, .reader-subscription-list-item__site-url a {
-	color: $gray;
+
+.reader-subscription-list-item .follow-button__label,
+.reader-subscription-list-item .reader-subscription-list-item__settings-label {
+
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
 }
+
+.reader-subscription-list-item__settings {
+	color: $gray;
+	padding-left: 8px;
+
+	@include breakpoint( "<660px" ) {
+		padding-left: 0;
+	}
+}
+
 .reader-subscription-list-item__site-title {
 	font-weight: 600;
 }
@@ -109,4 +177,3 @@
 	padding-right: 15px;
 	background-color: inherit;
 }
-
