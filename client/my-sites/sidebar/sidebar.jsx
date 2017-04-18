@@ -106,7 +106,7 @@ export class MySitesSidebar extends Component {
 
 	publish() {
 		return (
-			<PublishMenu siteId={ this.props.singleSiteId }
+			<PublishMenu siteId={ this.props.siteId }
 				itemLinkClass={ this.itemLinkClass }
 				onNavigate={ this.onNavigate } />
 		);
@@ -586,14 +586,14 @@ function mapStateToProps( state ) {
 	const currentUser = getCurrentUser( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
-	const singleSiteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
-	const site = getSite( state, singleSiteId );
+	const siteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
+	const site = getSite( state, siteId );
 
-	const isJetpack = isJetpackSite( state, singleSiteId );
+	const isJetpack = isJetpackSite( state, siteId );
 	// FIXME: Fun with Boolean algebra :-)
 	const isSharingEnabledOnJetpackSite = ! (
-		! isJetpackModuleActive( state, singleSiteId, 'publicize' ) &&
-		( ! isJetpackModuleActive( state, singleSiteId, 'sharedaddy' ) || isJetpackMinimumVersion( state, singleSiteId, '3.4-dev' ) )
+		! isJetpackModuleActive( state, siteId, 'publicize' ) &&
+		( ! isJetpackModuleActive( state, siteId, 'sharedaddy' ) || isJetpackMinimumVersion( state, siteId, '3.4-dev' ) )
 	);
 	// FIXME: Turn into dedicated selector
 	const canManagePlugins = !! getSites( state ).some( ( s ) => (
@@ -605,11 +605,11 @@ function mapStateToProps( state ) {
 	return {
 		atEnabled: isATEnabled( site ),
 		canManagePlugins,
-		canUserEditThemeOptions: canCurrentUser( state, singleSiteId, 'edit_theme_options' ),
-		canUserListUsers: canCurrentUser( state, singleSiteId, 'list_users' ),
-		canUserManageOptions: canCurrentUser( state, singleSiteId, 'manage_options' ),
-		canUserPublishPosts: canCurrentUser( state, singleSiteId, 'publish_posts' ),
-		canUserViewStats: canCurrentUser( state, singleSiteId, 'view_stats' ),
+		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
+		canUserListUsers: canCurrentUser( state, siteId, 'list_users' ),
+		canUserManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
+		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
+		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		hasJetpackSites,
@@ -618,8 +618,8 @@ function mapStateToProps( state ) {
 		isSharingEnabledOnJetpackSite,
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		isSingleSite,
-		menusUrl: getMenusUrl( state, singleSiteId ),
-		singleSiteId,
+		menusUrl: getMenusUrl( state, siteId ),
+		siteId,
 		site,
 		siteSuffix: isSingleSite ? '/' + site.slug : '',
 	};
