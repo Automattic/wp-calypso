@@ -4,7 +4,6 @@
 import React from 'react';
 import page from 'page';
 import route from 'lib/route';
-import get from 'lodash/get';
 import i18n from 'i18n-calypso';
 
 /**
@@ -21,7 +20,10 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import config from 'config';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import {
+	isJetpackSite,
+} from 'state/sites/selectors';
 
 export default {
 	redirectToTeam,
@@ -75,13 +77,15 @@ function renderPeopleList( filter, context ) {
 
 function renderInvitePeople( context ) {
 	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
-	const isJetpack = get( site, 'jetpack' );
+	const siteSlug = getSelectedSiteSlug( state );
+	const isJetpack = isJetpackSite( state, siteId );
 
 	if ( isJetpack && ! config.isEnabled( 'jetpack/invites' ) ) {
 		const currentLayoutFocus = getCurrentLayoutFocus( state );
 		context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
-		page.redirect( '/people/team/' + site.slug );
+		page.redirect( '/people/team/' + siteSlug );
 		analytics.tracks.recordEvent( 'calypso_invite_people_controller_redirect_to_team' );
 	}
 
