@@ -33,7 +33,7 @@ const DomainRegistrationSuggestion = React.createClass( {
 		let buttonClasses, buttonContent;
 
 		if ( suggestion.domain_name ) {
-			const newTLDs = [];
+			const newTLDs = [ '.uk' ];
 
 			if ( newTLDs.some(
 					( tld ) =>
