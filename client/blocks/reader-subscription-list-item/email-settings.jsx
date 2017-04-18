@@ -72,7 +72,7 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 								checked={ true /* get from selector*/ }
 							/>
 						</div>
-						<SegmentedControl compact={ false }>
+						<SegmentedControl>
 							<ControlItem
 								selected={ this.state.selected === 'instant' }
 								onClick={ this.setSelected( 'instant' ) }
