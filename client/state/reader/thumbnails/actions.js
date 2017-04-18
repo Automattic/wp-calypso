@@ -1,17 +1,12 @@
 /**
  * External dependencies
  */
-import debugModule from 'debug';
 import getEmbedMetadata from 'get-video-id';
-import request from 'superagent';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
-	READER_THUMBNAIL_REQUEST,
-	READER_THUMBNAIL_REQUEST_SUCCESS,
 	READER_THUMBNAIL_REQUEST_FAILURE,
 	READER_THUMBNAIL_RECEIVE,
 } from 'state/action-types';
@@ -19,7 +14,6 @@ import {
 /**
  * Module variables
  */
-const debug = debugModule( 'calypso:redux:reader-service-thumbnails' );
 export const UNSUPPORTED_EMBED = 'UNSUPPORTED_EMBED';
 export const BAD_API_RESPONSE = 'BAD_API_RESPONSE';
 
@@ -35,13 +29,6 @@ export function receiveThumbnail( embedUrl, thumbnailUrl ) {
 		type: READER_THUMBNAIL_RECEIVE,
 		embedUrl,
 		thumbnailUrl,
-	};
-}
-
-function requestSuccessful( embedUrl ) {
-	return {
-		type: READER_THUMBNAIL_REQUEST_SUCCESS,
-		embedUrl,
 	};
 }
 
@@ -74,25 +61,9 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 			return Promise.resolve();
 		}
 		case 'vimeo': {
-			debug( `Requesting thumbnail for embed ${ embedUrl }` );
-			dispatch( {
-				type: READER_THUMBNAIL_REQUEST,
-				embedUrl
-			} );
-
-			const fetchUrl = `https://vimeo.com/api/v2/video/${ id }.json`;
-			return request.get( fetchUrl )
-				.then( response => {
-					const thumbnailUrl = get( response, [ 'body', 0, 'thumbnail_large' ] );
-					if ( thumbnailUrl ) {
-						dispatch( requestSuccessful( embedUrl ) );
-						dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
-					} else {
-						dispatch( requestFailure( embedUrl, { type: BAD_API_RESPONSE, response } ) );
-					}
-				}, error => {
-					dispatch( requestFailure( embedUrl, error ) );
-				} );
+			const thumbnailUrl = `https://i.vimeocdn.com/video/${ id }.jpg`;
+			dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
+			return Promise.resolve();
 		}
 		default:
 			dispatch( requestFailure( embedUrl, { type: UNSUPPORTED_EMBED } ) );
