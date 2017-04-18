@@ -28,7 +28,6 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import { mergeFormWithValue } from 'signup/utils';
 import SocialSignupForm from './social';
-import HrWithText from 'components/hr-with-text';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
@@ -425,7 +424,7 @@ export default React.createClass( {
 
 	formFooter() {
 		return (
-			<LoggedOutFormFooter>
+			<LoggedOutFormFooter className={ classNames( { 'is-blended': this.props.isSocialSignupEnabled } ) }>
 				{ this.termsOfServiceLink() }
 				<FormButton className="signup-form__submit" disabled={ this.state.submitting || this.props.disabled }>
 					{ this.props.submitButtonText }
@@ -467,18 +466,21 @@ export default React.createClass( {
 		return (
 			<div className={ classNames( 'signup-form', this.props.className ) }>
 				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate={ true }>
-					{ this.props.formHeader &&
+					{ this.props.formHeader && (
 						<header className="signup-form__header">
 							{ this.props.formHeader }
 						</header>
-					}
-					{ this.props.isSocialSignupEnabled && <SocialSignupForm handleResponse={ this.props.handleSocialResponse } /> }
-					{ this.props.isSocialSignupEnabled && <HrWithText>
-						{ i18n.translate( 'Or sign up with your email address:' ) }
-					</HrWithText> }
+					) }
+
 					{ this.getNotice() }
+
 					{ this.formFields() }
+
 					{ this.props.formFooter || this.formFooter() }
+
+					{ this.props.isSocialSignupEnabled && (
+						<SocialSignupForm handleResponse={ this.props.handleSocialResponse } />
+					) }
 				</LoggedOutForm>
 
 				{ this.props.footerLink || this.footerLink() }

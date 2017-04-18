@@ -5,6 +5,11 @@
 
 .signup-form .logged-out-form__footer {
 	margin-top: 10px;
+
+	&.is-blended {
+		background: none;
+		border-top: none;
+	}
 }
 
 .signup-form__terms-of-service-link {
@@ -20,6 +25,11 @@
 }
 
 .signup-form__social {
+	margin: 0 -24px -24px -24px;
+	padding: 24px;
+}
+
+.signup-form__social-buttons {
 	display: flex;
 	align-items: center;
 	margin: 0 -5px;
