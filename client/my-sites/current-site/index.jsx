@@ -26,7 +26,6 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
 export class CurrentSite extends Component {
-
 	static propTypes = {
 		isJetpack: React.PropTypes.bool,
 		siteCount: React.PropTypes.number.isRequired,
@@ -35,7 +34,11 @@ export class CurrentSite extends Component {
 		selectedSiteId: React.PropTypes.number,
 		selectedSite: React.PropTypes.object,
 		translate: React.PropTypes.func.isRequired
-	}
+	};
+
+	state = {
+		domainsStore: DomainsStore
+	};
 
 	componentWillMount() {
 		const { selectedSiteId, isJetpack } = this.props;
@@ -48,12 +51,6 @@ export class CurrentSite extends Component {
 
 	componentWillUnmount() {
 		DomainsStore.off( 'change', this.handleStoreChange );
-	}
-
-	getInitialState() {
-		return {
-			domainsStore: DomainsStore
-		};
 	}
 
 	componentDidUpdate( prevProps ) {
