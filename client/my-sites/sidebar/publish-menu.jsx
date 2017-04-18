@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes, omit, reduce, get, mapValues } from 'lodash';
+import { compact, includes, omit, reduce, get, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,13 +11,14 @@ import { includes, omit, reduce, get, mapValues } from 'lodash';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarButton from 'layout/sidebar/button';
 import config from 'config';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 import MediaLibraryUploadButton from 'my-sites/media-library/upload-button';
+import { getSiteAdminUrl, getSiteSlug, isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
+import { areAllSitesSingleUser, canCurrentUser } from 'state/selectors';
 
 const PublishMenu = React.createClass( {
 	propTypes: {
@@ -25,7 +26,6 @@ const PublishMenu = React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ),
-		sites: React.PropTypes.object.isRequired,
 		postTypes: React.PropTypes.object,
 		siteSuffix: React.PropTypes.string,
 		isSingle: React.PropTypes.bool,
@@ -35,20 +35,17 @@ const PublishMenu = React.createClass( {
 
 	// We default to `/my` posts when appropriate
 	getMyParameter() {
-		const { sites, site } = this.props;
-		if ( ! sites.initialized ) {
-			return '';
+		const { allSingleSites, isJetpack, isSingleUser, siteId } = this.props;
+
+		if ( siteId ) {
+			return ( isSingleUser || isJetpack ) ? '' : '/my';
 		}
 
-		if ( site ) {
-			return ( site.single_user_site || site.jetpack ) ? '' : '/my';
-		}
-
-		return ( sites.allSingleSites ) ? '' : '/my';
+		return ( allSingleSites ) ? '' : '/my';
 	},
 
 	getDefaultMenuItems() {
-		const { site } = this.props;
+		const { siteSlug } = this.props;
 
 		const items = [
 			{
@@ -60,7 +57,7 @@ const PublishMenu = React.createClass( {
 				queryable: true,
 				link: '/posts' + this.getMyParameter(),
 				paths: [ '/posts', '/posts/my' ],
-				buttonLink: site ? '/post/' + site.slug : '/post',
+				buttonLink: siteSlug ? '/post/' + siteSlug : '/post',
 				wpAdminLink: 'edit.php',
 				showOnAllMySites: true,
 			},
@@ -72,7 +69,7 @@ const PublishMenu = React.createClass( {
 				queryable: true,
 				config: 'manage/pages',
 				link: '/pages',
-				buttonLink: site ? '/page/' + site.slug : '/page',
+				buttonLink: siteSlug ? '/page/' + siteSlug : '/page',
 				wpAdminLink: 'edit.php?post_type=page',
 				showOnAllMySites: true,
 			}
@@ -87,7 +84,7 @@ const PublishMenu = React.createClass( {
 				queryable: true,
 				config: 'manage/media',
 				link: '/media',
-				buttonLink: '/media/' + site.slug,
+				buttonLink: '/media/' + siteSlug,
 				wpAdminLink: 'upload.php',
 				showOnAllMySites: false,
 			} );
@@ -104,8 +101,8 @@ const PublishMenu = React.createClass( {
 	},
 
 	renderMenuItem( menuItem ) {
-		const { site } = this.props;
-		if ( site.capabilities && ! site.capabilities[ menuItem.capability ] ) {
+		const { canUser, site, siteAdminUrl } = this.props;
+		if ( canUser( menuItem.capability ) ) {
 			return null;
 		}
 
@@ -122,10 +119,10 @@ const PublishMenu = React.createClass( {
 		}
 
 		let link;
-		if ( ( ! isEnabled || ! menuItem.queryable ) && site.options ) {
-			link = this.props.site.options.admin_url + menuItem.wpAdminLink;
+		if ( ( ! isEnabled || ! menuItem.queryable ) && siteAdminUrl ) {
+			link = siteAdminUrl + menuItem.wpAdminLink;
 		} else {
-			link = menuItem.link + this.props.siteSuffix;
+			link = compact( [ menuItem.link, this.props.siteSlug ] ).join( '/' );
 		}
 
 		let preload;
@@ -213,8 +210,8 @@ const PublishMenu = React.createClass( {
 
 		return (
 			<ul>
-				{ this.props.site && (
-					<QueryPostTypes siteId={ this.props.site.ID } />
+				{ this.props.siteId && (
+					<QueryPostTypes siteId={ this.props.siteId } />
 				) }
 				{ menuItems.map( this.renderMenuItem ) }
 			</ul>
@@ -222,14 +219,20 @@ const PublishMenu = React.createClass( {
 	}
 } );
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
+export default connect( ( state, { siteId } ) => {
 	const postTypes = getPostTypes( state, siteId );
 
 	return {
+		allSingleSites: areAllSitesSingleUser( state ),
+		canUser: ( cap ) => canCurrentUser( state, siteId, cap ),
+		isJetpack: isJetpackSite( state, siteId ),
+		isSingleUser: isSingleUserSite( state, siteId ),
 		postTypes,
 		postTypeLinks: mapValues( postTypes, ( postType, postTypeSlug ) => {
 			return getEditorPath( state, siteId, null, postTypeSlug );
-		} )
+		} ),
+		siteAdminUrl: getSiteAdminUrl( state, siteId, ),
+		siteId,
+		siteSlug: getSiteSlug( state, siteId ),
 	};
 }, null, null, { pure: false } )( PublishMenu );
