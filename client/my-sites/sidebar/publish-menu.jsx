@@ -100,7 +100,8 @@ const PublishMenu = React.createClass( {
 
 	renderMenuItem( menuItem ) {
 		const { canUser, site, siteAdminUrl } = this.props;
-		if ( canUser( menuItem.capability ) ) {
+
+		if ( ! canUser( menuItem.capability ) ) {
 			return null;
 		}
 
