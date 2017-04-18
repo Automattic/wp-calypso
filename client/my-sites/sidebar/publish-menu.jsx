@@ -244,6 +244,8 @@ export default connect( ( state, { siteId } ) => {
 
 	return {
 		allSingleSites: areAllSitesSingleUser( state ),
+		// TODO: Instead of passing a canUser function prop, we should compute and filter
+		// the list of menuItems inside `connect` and pass it to `PostList` as a prop.
 		canUser: ( cap ) => canCurrentUser( state, siteId, cap ),
 		isJetpack: isJetpackSite( state, siteId ),
 		isSingleUser: isSingleUserSite( state, siteId ),
