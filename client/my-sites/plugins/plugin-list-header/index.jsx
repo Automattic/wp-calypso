@@ -1,13 +1,11 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PureComponent, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash';
 import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
-import analytics from 'lib/analytics';
-import isEqual from 'lodash/isEqual';
 import Gridicon from 'gridicons';
 
 /**
@@ -21,69 +19,45 @@ import DropdownItem from 'components/select-dropdown/item';
 import DropdownSeparator from 'components/select-dropdown/separator';
 import BulkSelect from 'components/bulk-select';
 import Tooltip from 'components/tooltip';
+import analytics from 'lib/analytics';
 
-const _actionBarVisible = true;
-
-// If the Action
+// Constants help determin if the action bar should be a dropdown
 const MAX_ACTIONBAR_HEIGHT = 50;
 const MIN_ACTIONBAR_WIDTH = 600;
 
-function checkPropsChange( nextProps, propArr ) {
-	for ( let i = 0; i < propArr.length; i++ ) {
-		const prop = propArr[ i ];
+export class PluginsListHeader extends PureComponent {
 
-		if ( nextProps[ prop ] !== this.props[ prop ] ) {
-			return true;
-		}
-	}
-	return false;
-}
-
-export class PluginsListHeader extends Component {
-
-	constructor( props ) {
-		super( props );
-		this.state = {
-			actionBarVisible: _actionBarVisible,
-			addPluginTooltip: false
-		};
-
-		this.toggleBulkManagement = this.toggleBulkManagement.bind( this );
-		this.onBrowserLinkClick = this.onBrowserLinkClick.bind( this );
-		this.afterResize = this.afterResize.bind( this );
-		this.showPluginTooltip = this.showPluginTooltip.bind( this );
-		this.hidePluginTooltip = this.hidePluginTooltip.bind( this );
-		this.unselectOrSelectAll = this.unselectOrSelectAll.bind( this );
+	state = {
+		actionBarVisible: true,
+		addPluginTooltip: false
 	}
 
-	shouldComponentUpdate( nextProps, nextState ) {
-		const propsToCheck = [ 'label', 'isBulkManagementActive', 'haveUpdatesSelected',
-				'pluginUpdateCount', 'haveActiveSelected', 'haveInactiveSelected', 'bulkManagement' ];
-		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
-			return true;
-		}
+	static defaultProps = {
+		isMock: false,
+		disabled: false,
+	}
 
-		if ( this.props.plugins.length !== nextProps.plugins.length ) {
-			return true;
-		}
-
-		if ( ! isEqual( this.props.sites, nextProps.sites ) ) {
-			return true;
-		}
-
-		if ( this.props.selected.length !== nextProps.selected.length ) {
-			return true;
-		}
-
-		if ( this.state.actionBarVisible !== nextState.actionBarVisible ) {
-			return true;
-		}
-
-		if ( this.state.addPluginTooltip !== nextState.addPluginTooltip ) {
-			return true;
-		}
-
-		return false;
+	static propTypes = {
+		label: PropTypes.string,
+		isBulkManagementActive: PropTypes.bool,
+		toggleBulkManagement: PropTypes.func.isRequired,
+		updateAllPlugins: PropTypes.func.isRequired,
+		updateSelected: PropTypes.func.isRequired,
+		haveUpdatesSelected: PropTypes.bool,
+		pluginUpdateCount: PropTypes.number.isRequired,
+		activateSelected: PropTypes.func.isRequired,
+		deactiveAndDisconnectSelected: PropTypes.func.isRequired,
+		deactivateSelected: PropTypes.func.isRequired,
+		setAutoupdateSelected: PropTypes.func.isRequired,
+		setSelectionState: PropTypes.func.isRequired,
+		unsetAutoupdateSelected: PropTypes.func.isRequired,
+		removePluginNotice: PropTypes.func.isRequired,
+		haveActiveSelected: PropTypes.bool,
+		haveInactiveSelected: PropTypes.bool,
+		bulkManagement: PropTypes.bool,
+		selectedSiteSlug: PropTypes.string,
+		plugins: PropTypes.array.isRequired,
+		selected: PropTypes.array.isRequired
 	}
 
 	componentDidMount() {
@@ -93,12 +67,6 @@ export class PluginsListHeader extends Component {
 
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.debouncedAfterResize );
-	}
-
-	afterResize() {
-		if ( this.props.isBulkManagementActive ) {
-			this.maybeMakeActionBarVisible();
-		}
 	}
 
 	maybeMakeActionBarVisible() {
@@ -113,39 +81,53 @@ export class PluginsListHeader extends Component {
 		}, 1 );
 	}
 
-	showPluginTooltip() {
+	showPluginTooltip = () => {
 		this.setState( { addPluginTooltip: true } );
 	}
 
-	hidePluginTooltip() {
+	hidePluginTooltip = () => {
 		this.setState( { addPluginTooltip: false } );
 	}
 
-	toggleBulkManagement() {
+	toggleBulkManagement = () => {
 		this.props.toggleBulkManagement();
 
 		this.maybeMakeActionBarVisible();
 	}
 
-	onBrowserLinkClick() {
+	afterResize = () => {
+		if ( this.props.isBulkManagementActive ) {
+			this.maybeMakeActionBarVisible();
+		}
+	}
+
+	onBrowserLinkClick = () => {
 		analytics.ga.recordEvent( 'Plugins', 'Clicked Add New Plugins' );
 	}
 
-	canUpdatePlugins() {
-		return this.props.selected.some( plugin => plugin.sites.some( site => site.canUpdateFiles ) );
-	}
-
-	unselectOrSelectAll() {
+	unselectOrSelectAll = () => {
 		const { plugins, selected } = this.props;
 		const someSelected = selected.length > 0;
 		this.props.setSelectionState( plugins, ! someSelected );
 		analytics.ga.recordEvent( 'Plugins', someSelected ? 'Clicked to Uncheck All Plugins' : 'Clicked to Check All Plugins' );
 	}
 
+	isJetpackSelected() {
+		return this.props.selected.some( plugin => 'jetpack' === plugin.slug );
+	}
+
+	canUpdatePlugins() {
+		return this.props.selected.some( plugin => plugin.sites.some( site => site.canUpdateFiles ) );
+	}
+
+	needsRemoveButton() {
+		return this.props.selected.length && this.canUpdatePlugins() && ! this.isJetpackSelected();
+	}
+
 	renderCurrentActionButtons() {
-		const { translate, selected } = this.props;
-		const isJetpackSelected = selected.some( plugin => 'jetpack' === plugin.slug );
-		const needsRemoveButton = selected.length && this.canUpdatePlugins() && ! isJetpackSelected;
+		const { translate } = this.props;
+		const isJetpackSelected = this.isJetpackSelected();
+		const needsRemoveButton = this.needsRemoveButton();
 		const buttons = [];
 		const rightSideButtons = [];
 		const leftSideButtons = [];
@@ -305,8 +287,8 @@ export class PluginsListHeader extends Component {
 			return null;
 		}
 
-		const isJetpackSelected = selected.some( plugin => 'jetpack' === plugin.slug );
-		const needsRemoveButton = !! selected.length && this.canUpdatePlugins() && ! isJetpackSelected;
+		const isJetpackSelected = this.isJetpackSelected();
+		const needsRemoveButton = this.needsRemoveButton();
 		const isJetpackOnlySelected = ! ( isJetpackSelected && selected.length === 1 );
 		return (
 			<SelectDropdown compact
@@ -393,33 +375,5 @@ export class PluginsListHeader extends Component {
 		);
 	}
 }
-
-PluginsListHeader.propTypes = {
-	label: PropTypes.string,
-	isBulkManagementActive: PropTypes.bool,
-	toggleBulkManagement: PropTypes.func.isRequired,
-	updateAllPlugins: PropTypes.func.isRequired,
-	updateSelected: PropTypes.func.isRequired,
-	haveUpdatesSelected: PropTypes.bool,
-	pluginUpdateCount: PropTypes.number.isRequired,
-	activateSelected: PropTypes.func.isRequired,
-	deactiveAndDisconnectSelected: PropTypes.func.isRequired,
-	deactivateSelected: PropTypes.func.isRequired,
-	setAutoupdateSelected: PropTypes.func.isRequired,
-	setSelectionState: PropTypes.func.isRequired,
-	unsetAutoupdateSelected: PropTypes.func.isRequired,
-	removePluginNotice: PropTypes.func.isRequired,
-	haveActiveSelected: PropTypes.bool,
-	haveInactiveSelected: PropTypes.bool,
-	bulkManagement: PropTypes.bool,
-	selectedSiteSlug: PropTypes.string,
-	plugins: PropTypes.array.isRequired,
-	selected: PropTypes.array.isRequired
-};
-
-PluginsListHeader.defaultProps = {
-	isMock: false,
-	disabled: false,
-};
 
 export default localize( PluginsListHeader );
