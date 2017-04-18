@@ -16,11 +16,13 @@ import {
 import localforage from 'lib/localforage';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
 import config from 'config';
+import User from 'lib/user';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:state' );
+const user = User();
 
 const DAY_IN_HOURS = 24;
 const HOUR_IN_MS = 3600000;
@@ -71,6 +73,10 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 	let state;
 
 	const throttledSaveState = throttle( function() {
+		if ( ! user.get() ) {
+			return;
+		}
+
 		const nextState = reduxStore.getState();
 		if ( state && nextState === state ) {
 			return;
