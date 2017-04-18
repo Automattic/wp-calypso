@@ -10,8 +10,9 @@ import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { userCan } from 'lib/site/utils';
 
 /**
- * Returns true if Automated Transfer is enabled for the current site and current user.
- * @returns {Boolean} true if enabled for the current site and current user
+ * Returns true if Automated Transfer is enabled for the given site
+ * @param { object } site - a full site object
+ * @returns { boolean } - true if AT is enabled for the site
  */
 export function isATEnabled( site ) {
 	// don't let this explode in SSR'd envs
