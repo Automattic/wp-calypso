@@ -338,7 +338,7 @@ class RemovePurchase extends Component {
 					action: 'prev',
 					disabled: this.state.isRemoving,
 					label: translate( 'Previous Step' ),
-					onClick: this.changeSurveyStep
+					onClick: this.changeSurveyStep.bind( null, 'previous' )
 				},
 				remove: {
 					action: 'remove',
