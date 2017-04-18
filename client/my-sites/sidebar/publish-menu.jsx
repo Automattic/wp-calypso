@@ -99,9 +99,9 @@ const PublishMenu = React.createClass( {
 	},
 
 	renderMenuItem( menuItem ) {
-		const { canUser, site, siteAdminUrl } = this.props;
+		const { canUser, site, siteId, siteAdminUrl } = this.props;
 
-		if ( ! canUser( menuItem.capability ) ) {
+		if ( siteId && ! canUser( menuItem.capability ) ) {
 			return null;
 		}
 
@@ -113,7 +113,7 @@ const PublishMenu = React.createClass( {
 		// Hide the sidebar link for multiple site view if it's not in calypso, or
 		// if it opts not to be shown.
 		const isEnabled = config.isEnabled( menuItem.config );
-		if ( ! this.props.siteId && ( ! isEnabled || ! menuItem.showOnAllMySites ) ) {
+		if ( ! siteId && ( ! isEnabled || ! menuItem.showOnAllMySites ) ) {
 			return null;
 		}
 
