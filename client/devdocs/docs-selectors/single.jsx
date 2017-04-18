@@ -53,7 +53,7 @@ export default class DocsSelectorsSingle extends Component {
 
 	render() {
 		const { selector } = this.props;
-		const { result: { name, description, tags } = {} } = this.state;
+		const { result } = this.state;
 
 		return (
 			<div>
@@ -62,9 +62,7 @@ export default class DocsSelectorsSingle extends Component {
 				</HeaderCake>
 				{ 'result' in this.state && (
 					this.state.result
-						? <DocsSelectorsResult
-							{ ...{ name, description, tags } }
-							expanded />
+						? <DocsSelectorsResult jsDocInfo={ result } expanded />
 						: 'No selector found'
 				) }
 			</div>

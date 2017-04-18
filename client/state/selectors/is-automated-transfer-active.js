@@ -31,7 +31,7 @@ export const isActive = status =>
  */
 export const isAutomatedTransferActive = compose(
 	isActive,
-	getAutomatedTransferStatus,
+	getAutomatedTransferStatus
 );
 
 export default isAutomatedTransferActive;

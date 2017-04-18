@@ -1,19 +1,25 @@
 /**
  * External dependencies
  */
+const chalk = require( 'chalk' );
+const espree = require( 'espree' );
 const fs = require( 'fs' );
+const jsdoc = require( 'jsdoc-api' );
 const path = require( 'path' );
 const express = require( 'express' );
 const Fuse = require( 'fuse.js' );
-const doctrine = require( 'doctrine' );
 const camelCase = require( 'lodash/camelCase' );
-const forEach = require( 'lodash/forEach' );
+
+/**
+ * Internal dependencies
+ */
+import { defaultExport, defaultFunction } from './default-exports';
+import { getComment } from './function-comments';
 
 /**
  * Constants
  */
 
-const REGEXP_DOCBLOCKS = /\/\*\* *\n( *\*.*\n)* *\*\//g;
 const SELECTORS_DIR = path.resolve( __dirname, '../../../client/state/selectors' );
 
 /**
@@ -23,47 +29,105 @@ const SELECTORS_DIR = path.resolve( __dirname, '../../../client/state/selectors'
 const router = express.Router();
 let prepareFuse;
 
-function parseSelectorFile( file ) {
-	return new Promise( ( resolve, reject ) => {
-		fs.readFile( SELECTORS_DIR + '/' + file, 'utf8', ( error, contents ) => {
-			if ( error ) {
-				return reject( error );
+const jsParse = contents => {
+	try {
+		return espree.parse( contents, {
+			attachComment: true,
+			ecmaVersion: 6,
+			sourceType: 'module',
+			ecmaFeatures: {
+				experimentalObjectRestSpread: true,
 			}
-
-			const selector = {
-				name: camelCase( path.basename( file, '.js' ) )
-			};
-
-			forEach( contents.match( REGEXP_DOCBLOCKS ), ( docblock ) => {
-				const doc = doctrine.parse( docblock, { unwrap: true } );
-				if ( doc.tags.length > 0 ) {
-					Object.assign( selector, doc );
-					return false;
-				}
-			} );
-
-			resolve( selector );
 		} );
-	} );
-}
+	} catch ( e ) {
+		console.log( e.message );
+		return null;
+	}
+};
+
+const parseSelectorFile = file => new Promise( resolve => {
+	const contents = fs.readFileSync( path.resolve( SELECTORS_DIR, file ), { encoding: 'utf8' } );
+	const ast = jsParse( contents );
+
+	if ( ! ast ) {
+		console.warn(
+			chalk.red( '\nWarning: ' ) +
+			chalk.yellow( 'Could not parse file: ' ) +
+			chalk.blue( path.basename( file ) )
+		);
+		return resolve( null );
+	}
+
+	const expectedName = camelCase( path.basename( file, '.js' ) );
+
+	// if the default export has a comment attached to it
+	// then we don't need to jump to the referenced declaration
+	const moduleExport = defaultExport( ast );
+	const defaultComment = getComment( moduleExport );
+	const defaultNode = defaultComment
+		? moduleExport
+		: defaultFunction( ast );
+
+	if ( ! defaultNode ) {
+		console.warn(
+			chalk.red( '\nWarning: ' ) +
+			chalk.yellow( 'Could not find default-exported function' ) +
+			chalk.yellow( '\nBased on the filename: ' ) +
+			chalk.blue( path.basename( file ) ) +
+			chalk.yellow( '\nWe expected to find an exported function with name ' ) +
+			chalk.blue( expectedName )
+		);
+		return resolve( null );
+	}
+
+	const comment = getComment( defaultNode );
+	if ( ! comment ) {
+		console.warn(
+			chalk.red( '\nWarning: ' ) +
+			chalk.yellow( 'Found no JSDoc block comments for selector in ' ) +
+			chalk.blue( path.basename( file ) )
+		);
+		return resolve( null );
+	}
+
+	// add a dummy export so that JSDoc parses the block
+	const source = `/*${ comment }*/function ${ expectedName }() {}`;
+	try {
+		const [ docblock, /* module info */ ] = jsdoc.explainSync( { source } );
+
+		return resolve( docblock );
+	} catch ( e ) {
+		console.warn(
+			chalk.red( '\nWarning: ' ) +
+			chalk.yellow( 'Could not parse JSDoc block comment in ' ) +
+			chalk.blue( path.basename( file ) )
+		);
+
+		return resolve( null );
+	}
+} );
 
 function prime() {
 	if ( prepareFuse ) {
-		return;
+		return prepareFuse;
 	}
 
-	prepareFuse = new Promise( ( resolve ) => {
+	prepareFuse = new Promise( ( resolve, reject ) => {
 		fs.readdir( SELECTORS_DIR, ( error, files ) => {
 			if ( error ) {
 				files = [];
 			}
+			console.warn( chalk.yellow( '\nPriming selector search cache' ) );
 
 			// Omit index, system files, and subdirectories
 			files = files.filter( ( file ) => 'index.js' !== file && /\.js$/.test( file ) );
 
-			Promise.all( files.map( parseSelectorFile ) ).then( ( selectors ) => {
+			const ticBeforeParsing = process.hrtime();
+			Promise.all( files.map( parseSelectorFile ) ).then( rawSelectors => {
+				const [ parseDuration, /* ns */ ] = process.hrtime( ticBeforeParsing );
 				// Sort selectors by name alphabetically
-				selectors.sort( ( a, b ) => a.name > b.name );
+				const selectors = rawSelectors.filter( a => a ).sort( ( a, b ) => a.name > b.name );
+				console.log( chalk.yellow( `Found ${ selectors.length } selectors in ${ parseDuration }s` ) );
 
 				resolve( new Fuse( selectors, {
 					keys: [ {
@@ -76,6 +140,9 @@ function prime() {
 					threshold: 0.4,
 					distance: 20
 				} ) );
+			} ).catch( e => {
+				console.error( e );
+				reject( 'Could not parse selectors' );
 			} );
 		} );
 	} ).then( ( fuse ) => {

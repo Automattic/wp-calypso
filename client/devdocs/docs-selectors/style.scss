@@ -84,8 +84,10 @@
 
 .docs-selectors__result-arguments-content {
 	display: flex;
+	width: 100%;
 	font-size: 16px;
 	margin: 0;
+	margin-top: 16px;
 
 	+ .docs-selectors__result-arguments-content {
 		margin-top: 16px;
@@ -111,10 +113,26 @@
 }
 
 .docs-selectors__param-type {
+	margin-left: 16px;
+	margin-bottom: 8px;
+
 	&,
 	& code {
 		font-size: 16px;
 		font-family: $monospace;
+	}
+
+	& .docs-selectors__param-type-separator {
+		font-family: $sans;
+		font-style: italic;
+		margin-left: 16px;
+	}
+
+	& .docs-selectors__param-type-non-nullable {
+		font-family: $sans;
+		font-style: italic;
+		font-size: 13px;
+		color: lighten( $gray, 10% );
 	}
 
 	span {
@@ -123,10 +141,12 @@
 }
 
 .docs-selectors__result-arguments-name {
-	width: 30%;
-	padding-right: 24px;
-	text-align: right;
+	padding-right: 4px;
 	font-family: $monospace;
+}
+
+.docs-selectors__result-arguments-description {
+	padding-top: 2px;
 }
 
 .docs-selectors__result-return {
