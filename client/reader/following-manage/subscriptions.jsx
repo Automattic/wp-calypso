@@ -13,6 +13,7 @@ import ReaderImportButton from 'blocks/reader-import-button';
 import ReaderExportButton from 'blocks/reader-export-button';
 import SitesWindowScroller from './sites-window-scroller';
 import QueryReaderFollows from 'components/data/query-reader-follows';
+import FollowingManageSearchFollowed from './search-followed';
 
 class FollowingManageSubscriptions extends Component {
 	static propTypes = {
@@ -32,6 +33,7 @@ class FollowingManageSubscriptions extends Component {
 					}
 					<ReaderImportButton />
 					<ReaderExportButton />
+					<FollowingManageSearchFollowed />
 				</div>
 				<div className="following-manage__subscriptions-list">
 					<SitesWindowScroller

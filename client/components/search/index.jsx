@@ -64,7 +64,8 @@ const Search = React.createClass( {
 		fitsContainer: PropTypes.bool,
 		maxLength: PropTypes.number,
 		hideClose: PropTypes.bool,
-		compact: PropTypes.bool
+		compact: PropTypes.bool,
+		hideOpenIcon: PropTypes.bool,
 	},
 
 	getInitialState: function() {
@@ -96,7 +97,8 @@ const Search = React.createClass( {
 			dir: undefined,
 			fitsContainer: false,
 			hideClose: false,
-			compact: false
+			compact: false,
+			hideOpenIcon: false,
 		};
 	},
 
@@ -324,6 +326,7 @@ const Search = React.createClass( {
 			'is-searching': this.props.searching,
 			'is-compact': this.props.compact,
 			'has-focus': this.state.hasFocus,
+			'has-open-icon': ! this.props.hideOpenIcon,
 			search: true
 		} );
 
@@ -344,7 +347,7 @@ const Search = React.createClass( {
 					}
 					aria-controls={ 'search-component-' + this.state.instanceId }
 					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }>
-					<Gridicon icon="search" className="search__open-icon" />
+					{ ! this.props.hideOpenIcon && <Gridicon icon="search" className="search__open-icon" /> }
 				</div>
 				<div className={ fadeDivClass }>
 					<input
