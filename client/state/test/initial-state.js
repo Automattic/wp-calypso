@@ -40,6 +40,11 @@ describe( 'initial-state', () => {
 		mockery.registerMock( 'config', configMock );
 		localforage = require( 'lib/localforage/localforage-bypass' );
 		mockery.registerMock( 'lib/localforage', localforage );
+		mockery.registerMock( 'lib/user', () => {
+			return {
+				get: () => true
+			};
+		} );
 		const initialState = require( 'state/initial-state' );
 		createReduxStoreFromPersistedInitialState = initialState.default;
 		persistOnChange = initialState.persistOnChange;
