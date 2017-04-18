@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
 import {
@@ -40,51 +41,47 @@ const ALL_SITES = 'ALL_SITES';
 
 const debug = debugFactory( 'calypso:site-selector' );
 
-const SiteSelector = React.createClass( {
-	propTypes: {
-		sites: React.PropTypes.array,
-		siteBasePath: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
-		showAddNewSite: React.PropTypes.bool,
-		showAllSites: React.PropTypes.bool,
-		indicator: React.PropTypes.bool,
-		autoFocus: React.PropTypes.bool,
-		onClose: React.PropTypes.func,
-		selected: React.PropTypes.string,
-		hideSelected: React.PropTypes.bool,
-		filter: React.PropTypes.func,
-		groups: React.PropTypes.bool,
-		onSiteSelect: React.PropTypes.func,
-		showRecentSites: React.PropTypes.bool,
-		recentSites: React.PropTypes.array,
-		getSiteBySlug: React.PropTypes.func.isRequired,
-		selectedSite: React.PropTypes.object,
-		visibleSites: React.PropTypes.array,
-		allSitesPath: React.PropTypes.string,
-	},
+class SiteSelector extends Component {
+	static propTypes = {
+		sites: PropTypes.array,
+		siteBasePath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		showAddNewSite: PropTypes.bool,
+		showAllSites: PropTypes.bool,
+		indicator: PropTypes.bool,
+		autoFocus: PropTypes.bool,
+		onClose: PropTypes.func,
+		selected: PropTypes.string,
+		hideSelected: PropTypes.bool,
+		filter: PropTypes.func,
+		groups: PropTypes.bool,
+		onSiteSelect: PropTypes.func,
+		showRecentSites: PropTypes.bool,
+		recentSites: PropTypes.array,
+		getSiteBySlug: PropTypes.func.isRequired,
+		selectedSite: PropTypes.object,
+		visibleSites: PropTypes.array,
+		allSitesPath: PropTypes.string,
+	};
 
-	getDefaultProps() {
-		return {
-			sites: {},
-			showAddNewSite: false,
-			showAllSites: false,
-			siteBasePath: false,
-			indicator: false,
-			hideSelected: false,
-			selected: null,
-			onClose: noop,
-			onSiteSelect: noop,
-			groups: false
-		};
-	},
+	static defaultProps = {
+		sites: {},
+		showAddNewSite: false,
+		showAllSites: false,
+		siteBasePath: false,
+		indicator: false,
+		hideSelected: false,
+		selected: null,
+		onClose: noop,
+		onSiteSelect: noop,
+		groups: false
+	};
 
-	getInitialState() {
-		return {
-			search: '',
-			highlightedIndex: -1,
-			showSearch: false,
-			isKeyboardEngaged: false
-		};
-	},
+	state = {
+		search: '',
+		highlightedIndex: -1,
+		showSearch: false,
+		isKeyboardEngaged: false
+	};
 
 	reset() {
 		if ( this.state.search && this.refs.siteSearch ) {
@@ -92,22 +89,22 @@ const SiteSelector = React.createClass( {
 		} else {
 			this.setState( this.getInitialState() );
 		}
-	},
+	}
 
-	onSearch( terms ) {
+	onSearch = ( terms ) => {
 		this.setState( {
 			search: terms,
 			highlightedIndex: ( terms ? 0 : -1 ),
 			showSearch: ( terms ? true : this.state.showSearch ),
 			isKeyboardEngaged: true
 		} );
-	},
+	};
 
 	componentDidUpdate( prevProps, prevState ) {
 		if ( this.state.isKeyboardEngaged && prevState.highlightedIndex !== this.state.highlightedIndex ) {
 			this.scrollToHighlightedSite();
 		}
-	},
+	}
 
 	scrollToHighlightedSite() {
 		const selectorElement = ReactDom.findDOMNode( this.refs.selector );
@@ -121,7 +118,7 @@ const SiteSelector = React.createClass( {
 				selectorElement.scrollTop = 0;
 			}
 		}
-	},
+	}
 
 	computeHighlightedSite() {
 		// site can be highlighted by either keyboard or by mouse and
@@ -143,9 +140,9 @@ const SiteSelector = React.createClass( {
 		}
 
 		return { highlightedSite, highlightedIndex };
-	},
+	}
 
-	onKeyDown( event ) {
+	onKeyDown = ( event ) => {
 		const visibleLength = this.visibleSites.length;
 
 		// ignore keyboard access when there are no results
@@ -188,9 +185,9 @@ const SiteSelector = React.createClass( {
 				isKeyboardEngaged: true,
 			} );
 		}
-	},
+	};
 
-	onSiteSelect( event, siteSlug ) {
+	onSiteSelect = ( event, siteSlug ) => {
 		const handledByHost = this.props.onSiteSelect( siteSlug );
 		this.props.onClose( event );
 
@@ -209,32 +206,32 @@ const SiteSelector = React.createClass( {
 				page( pathname );
 			}
 		}
-	},
+	};
 
-	onAllSitesSelect( event ) {
+	onAllSitesSelect = ( event ) => {
 		this.onSiteSelect( event, ALL_SITES );
-	},
+	};
 
-	onSiteHover( event, siteSlug ) {
+	onSiteHover = ( event, siteSlug ) => {
 		if ( this.lastMouseHover !== siteSlug ) {
 			debug( `${ siteSlug } hovered` );
 			this.lastMouseHover = siteSlug;
 		}
-	},
+	};
 
-	onAllSitesHover() {
+	onAllSitesHover = () => {
 		if ( this.lastMouseHover !== ALL_SITES ) {
 			debug( 'ALL_SITES hovered' );
 			this.lastMouseHover = ALL_SITES;
 		}
-	},
+	};
 
-	onMouseLeave() {
+	onMouseLeave = () => {
 		debug( 'mouse left site selector - nothing hovered anymore' );
 		this.lastMouseHover = null;
-	},
+	};
 
-	onMouseMove( event ) {
+	onMouseMove = ( event ) => {
 		// we need to test here if cursor position was actually moved, because
 		// mouseMove event can also be triggered by scrolling the parent element
 		// and we scroll that element via keyboard access
@@ -247,7 +244,7 @@ const SiteSelector = React.createClass( {
 				this.setState( { isKeyboardEngaged: false } );
 			}
 		}
-	},
+	};
 
 	getSiteBasePath( site ) {
 		let siteBasePath = this.props.siteBasePath;
@@ -266,11 +263,10 @@ const SiteSelector = React.createClass( {
 		}
 
 		return siteBasePath;
-	},
+	}
 
 	getPathnameForSite( slug ) {
 		const site = this.props.getSiteBySlug( slug );
-		console.warn( 'getSiteBySlug', site, slug );
 
 		if ( slug === ALL_SITES ) {
 			// default posts links to /posts/my when possible and /posts when not
@@ -282,7 +278,7 @@ const SiteSelector = React.createClass( {
 		} else if ( this.props.siteBasePath ) {
 			return this.getSiteBasePath( site ) + '/' + site.slug;
 		}
-	},
+	}
 
 	isSelected( site ) {
 		const selectedSite = this.props.selected || this.props.selectedSite;
@@ -291,15 +287,15 @@ const SiteSelector = React.createClass( {
 			( selectedSite === site.domain ) ||
 			( selectedSite === site.slug )
 		);
-	},
+	}
 
 	isHighlighted( site ) {
 		return this.state.isKeyboardEngaged && this.visibleSites.indexOf( site ) === this.state.highlightedIndex;
-	},
+	}
 
 	shouldShowGroups() {
 		return this.props.groups;
-	},
+	}
 
 	renderSites() {
 		let sites;
@@ -310,7 +306,7 @@ const SiteSelector = React.createClass( {
 		}
 
 		if ( this.state.search ) {
-			// @FIXME replace Searchable mixin with new HoC 
+			// @FIXME replace Searchable mixin with new HoC
 			//sites = this.props.sites.search( this.state.search );
 		} else {
 			sites = this.props.visibleSites;
@@ -333,11 +329,11 @@ const SiteSelector = React.createClass( {
 		const siteElements = map( sites, this.renderSite, this );
 
 		if ( ! siteElements.length ) {
-			return <div className="site-selector__no-results">{ this.translate( 'No sites found' ) }</div>;
+			return <div className="site-selector__no-results">{ this.props.translate( 'No sites found' ) }</div>;
 		}
 
 		return siteElements;
-	},
+	}
 
 	renderAllSites() {
 		if ( this.props.showAllSites && ! this.state.search && this.props.allSitesPath ) {
@@ -356,7 +352,7 @@ const SiteSelector = React.createClass( {
 				/>
 			);
 		}
-	},
+	}
 
 	renderSite( site ) {
 		if ( ! site ) {
@@ -378,7 +374,7 @@ const SiteSelector = React.createClass( {
 				ref={ isHighlighted ? 'highlightedSite' : null }
 			/>
 		);
-	},
+	}
 
 	renderRecentSites() {
 		const sitesById = keyBy( this.props.sites, 'ID' );
@@ -395,7 +391,7 @@ const SiteSelector = React.createClass( {
 		}
 
 		return <div className="site-selector__recent">{ recentSites }</div>;
-	},
+	}
 
 	render() {
 		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
@@ -425,7 +421,7 @@ const SiteSelector = React.createClass( {
 					{ this.renderSites() }
 					{ hiddenSitesCount > 0 && ! this.state.search &&
 						<span className="site-selector__hidden-sites-message">
-							{ this.translate(
+							{ this.props.translate(
 								'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
 								'%(hiddenSitesCount)d more hidden sites. {{a}}Change{{/a}}.{{br/}}Use search to access them.',
 								{
@@ -451,7 +447,7 @@ const SiteSelector = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect( ( state ) => {
 	const user = getCurrentUser( state );
@@ -467,4 +463,4 @@ export default connect( ( state ) => {
 		visibleSites: getVisibleSites( state ),
 		allSitesSingleUser: areAllSitesSingleUser( state ),
 	};
-} )( SiteSelector );
+} )( localize( SiteSelector ) );
