@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
 import Dispatcher from 'dispatcher';
 import classNames from 'classnames';
@@ -46,6 +47,13 @@ const SecondaryCart = React.createClass( {
 
 	componentWillUnmount() {
 		Dispatcher.unregister( this.dispatchToken );
+	},
+
+	componentDidUpdate( prevProps, prevState ) {
+		if ( ! prevState.cartVisible && this.state.cartVisible ) {
+			const node = ReactDom.findDOMNode( this );
+			node.scrollIntoView();
+		}
 	},
 
 	render() {
