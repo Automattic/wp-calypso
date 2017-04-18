@@ -21,6 +21,7 @@ import Button from 'components/button';
 
 const CancelPurchaseForm = React.createClass( {
 	propTypes: {
+		productName: React.PropTypes.string.isRequired,
 		translate: React.PropTypes.func,
 		surveyStep: React.PropTypes.number.isRequired,
 		finalStep: React.PropTypes.number.isRequired,
@@ -453,6 +454,38 @@ const CancelPurchaseForm = React.createClass( {
 				</p>
 				<Button
 					onClick={ this.openCalendly }
+					primary
+				>
+					{ translate( 'Schedule a session' ) }
+				</Button>
+			</FormFieldset>
+		);
+	},
+
+	openChat() {
+	},
+
+	renderLiveChat() {
+		const { productName, translate } = this.props;
+		return (
+			<FormFieldset>
+				<FormLabel>
+					{ translate( 'How can we help?' ) }
+				</FormLabel>
+				<p>
+					{
+						translate(
+							'As a %(productName)s user, you have instant access to our team of Happiness ' +
+							'Engineers who can answer your questions and get your site up and running ' +
+							'just as you like! Click the button below to start a chat now.',
+							{
+								args: { productName }
+							}
+						)
+					}
+				</p>
+				<Button
+					onClick={ this.openChat }
 					primary
 				>
 					{ translate( 'Schedule a session' ) }

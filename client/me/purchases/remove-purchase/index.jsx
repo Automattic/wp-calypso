@@ -373,6 +373,7 @@ class RemovePurchase extends Component {
 					isVisible={ this.state.isDialogVisible }
 					onClose={ this.closeDialog }>
 					<CancelPurchaseForm
+						productName={ productName }
 						surveyStep={ this.state.surveyStep }
 						finalStep={ this.state.finalStep }
 						showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
