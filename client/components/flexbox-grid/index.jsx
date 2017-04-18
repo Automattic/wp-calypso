@@ -4,13 +4,18 @@
 import React from 'react';
 import { times } from 'lodash';
 
-function createOnCellsRenderedMemoizer() {
+function createOnCellsRenderedMemoizer( ssrEnabled ) {
 	let cachedStartIndex = -1;
 	let cachedStopIndex = -1;
 
 	return ( callback, { startIndex, stopIndex } ) => {
 		if ( startIndex === cachedStartIndex && stopIndex === cachedStopIndex ) {
 			return;
+		}
+
+		if ( ssrEnabled && cachedStartIndex < 0 && cachedStopIndex < 0 ) {
+			startIndex = 0;
+			stopIndex = 0;
 		}
 
 		cachedStartIndex = startIndex;
@@ -22,10 +27,10 @@ function createOnCellsRenderedMemoizer() {
 
 export default class FlexboxGrid extends React.PureComponent {
 
-	constructor() {
-		super();
+	constructor( props ) {
+		super( props );
 
-		this.onCellsRenderedMemoizer = createOnCellsRenderedMemoizer();
+		this.onCellsRenderedMemoizer = createOnCellsRenderedMemoizer( props.ssrEnabled );
 	}
 
 	componentDidMount() {
@@ -47,8 +52,8 @@ export default class FlexboxGrid extends React.PureComponent {
 	}
 
 	renderVisibleCells() {
-		const start = this.firstVisibleIndex();
-		const end = this.lastVisibleIndex();
+		const start = this.firstOverscanIndex();
+		const end = this.lastOverscanIndex();
 
 		return times( end - start, idx => this.props.cellRenderer( {
 			index: start + idx,
@@ -85,11 +90,18 @@ export default class FlexboxGrid extends React.PureComponent {
 		}
 
 		let rowIdx = 0;
-		while ( rowIdx * this.props.rowHeight <= this.props.scrollTop ) {
+		while ( rowIdx * this.props.rowHeight < this.props.scrollTop ) {
 			++rowIdx;
 		}
 
-		return Math.max( rowIdx - this.props.overscanRowCount - 1, 0 ) * this.props.columnCount;
+		return rowIdx * this.props.columnCount;
+	}
+
+	firstOverscanIndex() {
+		return Math.max(
+			this.firstVisibleIndex() - this.props.overscanRowCount * this.props.columnCount,
+			0
+		);
 	}
 
 	lastVisibleIndex() {
@@ -102,7 +114,14 @@ export default class FlexboxGrid extends React.PureComponent {
 			++rowIdx;
 		}
 
-		return Math.min( rowIdx + this.props.overscanRowCount, this.props.rowCount ) * this.props.columnCount;
+		return Math.min( rowIdx, this.props.rowCount ) * this.props.columnCount;
+	}
+
+	lastOverscanIndex() {
+		return Math.min(
+			this.lastVisibleIndex() + this.props.overscanRowCount * this.props.columnCount,
+			this.props.rowCount * this.props.columnCount
+		);
 	}
 
 	offsetTop() {
@@ -110,15 +129,19 @@ export default class FlexboxGrid extends React.PureComponent {
 			return 0;
 		}
 
-		return this.firstVisibleIndex() / this.props.columnCount * this.props.rowHeight;
+		return this.firstOverscanIndex() / this.props.columnCount * this.props.rowHeight;
 	}
 
 	invokeOnCellsRendered() {
+		if ( this.props.width === undefined ) {
+			return;
+		}
+
 		this.onCellsRenderedMemoizer(
 			this.props.onCellsRendered,
 			{
 				startIndex: this.firstVisibleIndex(),
-				stopIndex: this.lastVisibleIndex()
+				stopIndex: this.lastVisibleIndex() - 1
 			}
 		);
 	}
