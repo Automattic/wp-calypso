@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import { map, forEach, head, includes, isEmpty, keys } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
-import i18n from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -42,7 +42,7 @@ const resetAnalyticsData = () => {
 	timesPasswordValidationFailed = 0;
 };
 
-export default React.createClass( {
+export default localize( React.createClass( {
 
 	displayName: 'SignupForm',
 
@@ -66,6 +66,7 @@ export default React.createClass( {
 		submitButtonText: PropTypes.string.isRequired,
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
+		translate: PropTypes.func.isRequired
 	},
 
 	getDefaultProps() {
@@ -194,7 +195,7 @@ export default React.createClass( {
 						// show an error message.
 						messages = Object.assign( {}, messages, {
 							email: {
-								invalid: this.translate( 'Use a working email address, so you can receive our messages.' )
+								invalid: this.props.translate( 'Use a working email address, so you can receive our messages.' )
 							}
 						} );
 					}
@@ -302,7 +303,7 @@ export default React.createClass( {
 					<span>
 						<p>
 							{ message }&nbsp;
-							{ this.translate( 'If this is you {{a}}log in now{{/a}}.', {
+							{ this.props.translate( 'If this is you {{a}}log in now{{/a}}.', {
 								components: {
 									a: <a href={ link } />
 								}
@@ -319,7 +320,7 @@ export default React.createClass( {
 		return (
 			<div>
 				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'email' ) }>
-					<FormLabel htmlFor="email">{ this.translate( 'Your email address' ) }</FormLabel>
+					<FormLabel htmlFor="email">{ this.props.translate( 'Your email address' ) }</FormLabel>
 					<FormTextInput
 						autoFocus={ isEmpty( this.props.email ) && ! this.props.isSocialSignupEnabled }
 						autoCapitalize="off"
@@ -338,7 +339,7 @@ export default React.createClass( {
 				</ValidationFieldset>
 
 				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'username' ) }>
-					<FormLabel htmlFor="username">{ this.translate( 'Choose a username' ) }</FormLabel>
+					<FormLabel htmlFor="username">{ this.props.translate( 'Choose a username' ) }</FormLabel>
 					<FormTextInput
 						autoFocus={ ! isEmpty( this.props.email ) }
 						autoCapitalize="off"
@@ -355,7 +356,7 @@ export default React.createClass( {
 				</ValidationFieldset>
 
 				<ValidationFieldset errorMessages={ formState.getFieldErrorMessages( this.state.form, 'password' ) }>
-					<FormLabel htmlFor="password">{ this.translate( 'Choose a password' ) }</FormLabel>
+					<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
 					<FormPasswordInput
 						className="signup-form__input"
 						disabled={ this.state.submitting || this.props.disabled }
@@ -368,7 +369,7 @@ export default React.createClass( {
 						onChange={ this.handleChangeEvent }
 						submitting={ this.state.submitting || this.props.submitting } />
 					<FormSettingExplanation>
-						{ this.translate( 'Your password must be at least six characters long.' ) }
+						{ this.props.translate( 'Your password must be at least six characters long.' ) }
 					</FormSettingExplanation>
 				</ValidationFieldset>
 			</div>
@@ -390,7 +391,7 @@ export default React.createClass( {
 	termsOfServiceLink() {
 		return (
 			<p className="signup-form__terms-of-service-link">{
-				this.translate(
+				this.props.translate(
 					'By creating an account you agree to our {{a}}fascinating Terms of Service{{/a}}.',
 					{
 						components: {
@@ -458,7 +459,7 @@ export default React.createClass( {
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href={ logInUrl }>
-					{ this.translate( 'Already have a WordPress.com account? Log in now.' ) }
+					{ this.props.translate( 'Already have a WordPress.com account? Log in now.' ) }
 				</LoggedOutFormLinkItem>
 			</LoggedOutFormLinks>
 		);
@@ -489,4 +490,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );
