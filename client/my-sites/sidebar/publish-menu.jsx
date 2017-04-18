@@ -17,7 +17,7 @@ import QueryPostTypes from 'components/data/query-post-types';
 import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 import MediaLibraryUploadButton from 'my-sites/media-library/upload-button';
-import { getSiteAdminUrl, getSiteSlug, isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
+import { getSite, getSiteAdminUrl, getSiteSlug, isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 import { areAllSitesSingleUser, canCurrentUser } from 'state/selectors';
 
 const PublishMenu = React.createClass( {
@@ -27,8 +27,6 @@ const PublishMenu = React.createClass( {
 			React.PropTypes.bool
 		] ),
 		postTypes: React.PropTypes.object,
-		siteSuffix: React.PropTypes.string,
-		isSingle: React.PropTypes.bool,
 		itemLinkClass: React.PropTypes.func,
 		onNavigate: React.PropTypes.func
 	},
@@ -114,7 +112,7 @@ const PublishMenu = React.createClass( {
 		// Hide the sidebar link for multiple site view if it's not in calypso, or
 		// if it opts not to be shown.
 		const isEnabled = config.isEnabled( menuItem.config );
-		if ( ! this.props.isSingle && ( ! isEnabled || ! menuItem.showOnAllMySites ) ) {
+		if ( ! this.props.siteId && ( ! isEnabled || ! menuItem.showOnAllMySites ) ) {
 			return null;
 		}
 
@@ -233,6 +231,7 @@ export default connect( ( state, { siteId } ) => {
 		} ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId, ),
 		siteId,
+		site: getSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 	};
 } )( PublishMenu );

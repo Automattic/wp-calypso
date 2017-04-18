@@ -133,8 +133,6 @@ export class MySitesSidebar extends Component {
 	publish() {
 		return (
 			<PublishMenu siteId={ this.props.singleSiteId }
-				siteSuffix={ this.siteSuffix() }
-				isSingle={ this.props.isSingleSite }
 				itemLinkClass={ this.itemLinkClass }
 				onNavigate={ this.onNavigate } />
 		);
@@ -644,15 +642,15 @@ function mapStateToProps( state ) {
 	const selectedSiteId = getSelectedSiteId( state );
 	const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
 	const singleSiteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) );
+
 	return {
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack: isJetpackSite( state, selectedSiteId ),
-		isSingleSite,
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		menusUrl: getMenusUrl( state, singleSiteId ),
-		selectedSiteId
+		singleSiteId
 	};
 }
 
