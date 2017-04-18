@@ -238,15 +238,12 @@ export default connect(
 		};
 	},
 	{ requestWordAdsApproval, dismissWordAdsError },
-	( stateProps, dispatchProps, parentProps ) => Object.assign(
-		{},
-		dispatchProps,
-		{
-			requestWordAdsApproval: () => ( ! stateProps.requestingWordAdsApproval )
-				? dispatchProps.requestWordAdsApproval( stateProps.siteId )
-				: null
-		},
-		parentProps,
-		stateProps
-	)
+	( stateProps, dispatchProps, parentProps ) => ( {
+		...dispatchProps,
+		requestWordAdsApproval: () => ( ! stateProps.requestingWordAdsApproval )
+			? dispatchProps.requestWordAdsApproval( stateProps.siteId )
+			: null,
+		...parentProps,
+		...stateProps
+	} )
 )( AdsMain );
