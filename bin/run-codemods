@@ -75,6 +75,12 @@ const questions = [
 		message: `Transform ${ chalk.blue( pathToTransform ) } with the selected codemods?`,
 		name: 'confirm',
 		type: 'confirm',
+	},
+	{
+		'default': true,
+		message: 'Would you like to apply "ESLint --fix" to the transformed files?',
+		name: 'eslint',
+		type: 'confirm',
 	}
 ];
 
@@ -85,7 +91,7 @@ const questions = [
 // Keep track of transformed files
 const transformedFilesSet = new Set();
 
-inquirer.prompt( questions ).then( function( { transforms, confirm } ) {
+inquirer.prompt( questions ).then( function( { transforms, confirm, eslint } ) {
 	if ( ! confirm ) {
 		process.exit( 0 );
 	}
@@ -95,6 +101,9 @@ inquirer.prompt( questions ).then( function( { transforms, confirm } ) {
 			writeErrorLog( 'Transformation failed.' );
 		} else {
 			writeExecutionLog( 'Transformation complete!' );
+			if ( eslint ) {
+				executeESLintFix();
+			}
 		}
 	} );
 } );
@@ -221,6 +230,39 @@ function executeTransformation( name, callback ) {
 		} else {
 			writeErrorLog( `Transformation ${ name } failed, exiting` );
 			throw new Error( `Transformation ${ name } failed` );
+		}
+	} );
+}
+
+function executeESLintFix( callback ) {
+	if ( transformedFilesSet.size === 0 ) {
+		writeExecutionLog( 'No transformed files, skipping ESLint --fix' );
+		callback();
+	}
+
+	writeExecutionLog( 'Executing "ESLint --fix"' );
+	const binPath = path.resolve( __dirname, '..', 'node_modules', '.bin', 'eslint' );
+	const transformedFiles = [ ...transformedFilesSet ].join( ',' );
+	const binArgs = [ '--fix', transformedFiles ];
+	writeExecutionLog( `binPath ${ binPath }` );
+	writeExecutionLog( `binArgs ${ binArgs[ 1 ] }` );
+	const transform = child_process.spawn( binPath, binArgs );
+
+	transform.stdout.on( 'data', ( data ) => {
+		process.stdout.write( data );
+	} );
+
+	transform.stderr.on( 'data', ( data ) => {
+		process.stderr.write( data );
+	} );
+
+	transform.on( 'exit', ( code ) => {
+		if ( code === 0 ) {
+			writeExecutionLog( '"ESLint --fix" complete!' );
+			callback();
+		} else {
+			writeErrorLog( '"ESLint --fix" failed, exiting' );
+			throw new Error( '"ESLint --fix" failed' );
 		}
 	} );
 }
