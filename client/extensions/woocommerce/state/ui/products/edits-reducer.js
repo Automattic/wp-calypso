@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isNumber, uniqueId } from 'lodash';
+import { uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,6 +10,7 @@ import {
 	WOOCOMMERCE_EDIT_PRODUCT,
 	WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE,
 } from '../../action-types';
+import { nextBucketIndex, getBucket } from '../helpers';
 
 const initialState = null;
 
@@ -28,8 +29,8 @@ function editProductAction( edits, action ) {
 	const { product, data } = action.payload;
 
 	const prevEdits = edits || {};
-	const bucket = product && isNumber( product.id ) && 'updates' || 'creates';
-	const _product = product || { id: { index: ( prevEdits[ bucket ] || [] ).length } };
+	const bucket = getBucket( product );
+	const _product = product || { id: nextBucketIndex( prevEdits[ bucket ] ) };
 	const _array = editProduct( prevEdits[ bucket ], _product, data );
 
 	return {
@@ -44,9 +45,9 @@ function editProductAttributeAction( edits, action ) {
 	const attributes = product && product.attributes;
 
 	const prevEdits = edits || {};
-	const bucket = product && isNumber( product.id ) && 'updates' || 'creates';
+	const bucket = getBucket( product );
 	const _attributes = editProductAttribute( attributes, attribute, data );
-	const _product = product || { id: { index: ( prevEdits[ bucket ] || [] ).length } };
+	const _product = product || { id: nextBucketIndex( prevEdits[ bucket ] ) };
 	const _array = editProduct( prevEdits[ bucket ], _product, { attributes: _attributes } );
 
 	return {

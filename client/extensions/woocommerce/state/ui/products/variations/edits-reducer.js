@@ -1,14 +1,10 @@
 /**
- * External dependencies
- */
-import { isNumber } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
 	WOOCOMMERCE_EDIT_PRODUCT_VARIATION,
 } from '../../../action-types';
+import { nextBucketIndex, getBucket } from '../../helpers';
 
 const initialState = null;
 
@@ -26,14 +22,14 @@ function editProductVariationAction( edits, action ) {
 	const { product, variation, data } = action.payload;
 	const prevEdits = edits || [];
 	const productId = product.id;
-	const bucket = variation && isNumber( variation.id ) && 'updates' || 'creates';
+	const bucket = getBucket( variation );
 	let found = false;
 
 	// Look for an existing product edits first.
 	const _edits = prevEdits.map( ( productEdits ) => {
 		if ( productId === productEdits.productId ) {
 			found = true;
-			const variationId = variation && variation.id || { index: ( productEdits[ bucket ] || [] ).length };
+			const variationId = variation && variation.id || nextBucketIndex( productEdits[ bucket ] );
 			const _variation = variation || { id: variationId };
 			const _array = editProductVariation( productEdits[ bucket ], _variation, data );
 			return {
@@ -48,7 +44,7 @@ function editProductVariationAction( edits, action ) {
 
 	if ( ! found ) {
 		// product not in edits, so add it now.
-		const variationId = variation && variation.id || { index: ( prevEdits[ bucket ] || [] ).length };
+		const variationId = variation && variation.id || nextBucketIndex( prevEdits[ bucket ] );
 		const _variation = variation || { id: variationId };
 
 		const _array = editProductVariation( null, _variation, data );
