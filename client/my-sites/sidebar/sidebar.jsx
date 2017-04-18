@@ -166,7 +166,7 @@ export class MySitesSidebar extends Component {
 
 		if ( this.props.isJetpack && ! jetpackEnabled && site.options ) {
 			themesLink = site.options.admin_url + 'themes.php';
-		} else if ( this.props.isSingleSite ) {
+		} else if ( this.props.siteId ) {
 			themesLink = '/themes' + this.props.siteSuffix;
 		} else {
 			themesLink = '/themes';
@@ -217,7 +217,7 @@ export class MySitesSidebar extends Component {
 		}
 
 		if ( ! config.isEnabled( 'manage/plugins' ) ) {
-			if ( ! this.props.isSingleSite ) {
+			if ( ! this.props.siteId ) {
 				return null;
 			}
 
@@ -230,7 +230,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( ( this.props.isSingleSite && this.props.isJetpack ) || ( ! this.props.isSingleSite && this.props.hasJetpackSites ) ) {
+		if ( ( this.props.siteId && this.props.isJetpack ) || ( ! this.props.siteId && this.props.hasJetpackSites ) ) {
 			addPluginsLink = '/plugins/browse' + this.props.siteSuffix;
 		}
 
@@ -255,7 +255,7 @@ export class MySitesSidebar extends Component {
 		const domainsLink = '/domains/manage' + this.props.siteSuffix;
 		const addDomainLink = '/domains/add' + this.props.siteSuffix;
 
-		if ( ! this.props.isSingleSite ) {
+		if ( ! this.props.siteId ) {
 			return null;
 		}
 
@@ -284,7 +284,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	plan() {
-		if ( ! this.props.isSingleSite ) {
+		if ( ! this.props.siteId ) {
 			return null;
 		}
 
@@ -344,7 +344,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( ! this.props.isSingleSite ) {
+		if ( ! this.props.siteId ) {
 			return null;
 		}
 
@@ -372,7 +372,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( ! this.props.isSingleSite ) {
+		if ( ! this.props.siteId ) {
 			return null;
 		}
 
@@ -410,7 +410,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( ! this.props.isSingleSite ) {
+		if ( ! this.props.siteId ) {
 			return null;
 		}
 
@@ -617,11 +617,10 @@ function mapStateToProps( state ) {
 		isJetpack,
 		isSharingEnabledOnJetpackSite,
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
-		isSingleSite,
 		menusUrl: getMenusUrl( state, siteId ),
 		siteId,
 		site,
-		siteSuffix: isSingleSite ? '/' + site.slug : '',
+		siteSuffix: siteId ? '/' + site.slug : '',
 	};
 }
 
