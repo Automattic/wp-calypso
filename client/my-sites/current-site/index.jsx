@@ -102,10 +102,7 @@ class CurrentSite extends Component {
 		);
 	}
 
-	previewSite = ( event ) => {
-		analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site' );
-		this.props.onClick && this.props.onClick( event );
-	}
+	previewSite = ( event ) => this.props.onClick && this.props.onClick( event );
 
 	render() {
 		const { isJetpack, selectedSite, translate, anySiteSelected } = this.props;
