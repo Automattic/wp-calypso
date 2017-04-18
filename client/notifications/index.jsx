@@ -15,6 +15,7 @@
  */
 import React, { Component } from 'react';
 import classNames from 'classnames';
+import debugFactory from 'debug';
 import wpcom from 'lib/wp';
 import { get, invoke } from 'lodash';
 
@@ -30,6 +31,7 @@ import NotificationsPanel from './notifications-panel/src/Notifications';
 /**
  * Module variables
  */
+const debug = debugFactory( 'notifications:wrapper' );
 const user = userLib();
 const widgetDomain = 'https://widgets.wp.com';
 
@@ -202,6 +204,8 @@ export class Notifications extends Component {
 			...message,
 			type: 'notesIframeMessage',
 		} );
+
+		debug( data );
 	};
 
 	postServiceWorkerMessage = message => {
