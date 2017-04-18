@@ -632,11 +632,17 @@ export function clearThemeUpload( siteId ) {
  * @returns {Promise} for testing purposes only
  */
 export function initiateThemeTransfer( siteId, file, plugin ) {
+	const context = !! plugin ? 'plugins' : 'themes';
 	return dispatch => {
-		dispatch( {
+		const themeInitiateRequest = {
 			type: THEME_TRANSFER_INITIATE_REQUEST,
 			siteId,
-		} );
+		};
+
+		dispatch( withAnalytics(
+			recordTracksEvent( 'calypso_automated_transfer_initiate_transfer', { plugin, context } ),
+			themeInitiateRequest
+		) );
 		return wpcom.undocumented().initiateTransfer( siteId, plugin, file, ( event ) => {
 			dispatch( {
 				type: THEME_TRANSFER_INITIATE_PROGRESS,
@@ -657,7 +663,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 					transferId: transfer_id,
 				};
 				dispatch( withAnalytics(
-					recordTracksEvent( 'calypso_automated_transfer_inititate_success', { plugin } ),
+					recordTracksEvent( 'calypso_automated_transfer_initiate_success', { plugin, context } ),
 					themeInitiateSuccessAction
 				) );
 				dispatch( pollThemeTransferStatus( siteId, transfer_id ) );
@@ -692,6 +698,7 @@ function transferStatusFailure( siteId, transferId, error ) {
 
 // receive a transfer initiation failure
 function transferInitiateFailure( siteId, error, plugin ) {
+	const context = !! plugin ? 'plugin' : 'theme';
 	return dispatch => {
 		const themeInitiateFailureAction = {
 			type: THEME_TRANSFER_INITIATE_FAILURE,
@@ -699,7 +706,7 @@ function transferInitiateFailure( siteId, error, plugin ) {
 			error,
 		};
 		dispatch( withAnalytics(
-			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', { plugin } ),
+			recordTracksEvent( 'calypso_automated_transfer_initiate_failure', { plugin, context } ),
 			themeInitiateFailureAction
 		) );
 	};
@@ -732,7 +739,8 @@ export function pollThemeTransferStatus( siteId, transferId, interval = 3000, ti
 					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
 					if ( status === 'complete' ) {
 						// finished, stop polling
-						dispatch( recordTracksEvent( 'calypso_automated_transfer_complete', { transfer_id: transferId } ) );
+						const context = !! uploaded_theme_slug ? 'themes' : 'plugins';
+						dispatch( recordTracksEvent( 'calypso_automated_transfer_complete', { transfer_id: transferId, context } ) );
 						return resolve();
 					}
 					// poll again
