@@ -2,9 +2,10 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { get } from 'lodash';
+import { get, flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,6 +33,8 @@ import Banner from 'components/banner';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
@@ -86,11 +89,11 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	blogAddress() {
-		const { site, translate } = this.props;
+		const { site, siteIsJetpack, translate } = this.props;
 		let customAddress = '',
 			addressDescription = '';
 
-		if ( site.jetpack ) {
+		if ( siteIsJetpack ) {
 			return null;
 		}
 
@@ -148,8 +151,8 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	languageOptions() {
-		const { eventTracker, fields, isRequestingSettings, onChangeField, site, translate } = this.props;
-		if ( site.jetpack ) {
+		const { eventTracker, fields, isRequestingSettings, onChangeField, siteIsJetpack, translate } = this.props;
+		if ( siteIsJetpack ) {
 			return null;
 		}
 		return (
@@ -174,7 +177,7 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	visibilityOptions() {
-		const { fields, handleRadio, isRequestingSettings, eventTracker, site, translate } = this.props;
+		const { fields, handleRadio, isRequestingSettings, eventTracker, siteIsJetpack, translate } = this.props;
 
 		return (
 			<FormFieldset>
@@ -206,7 +209,7 @@ class SiteSettingsFormGeneral extends Component {
 					{ translate( 'Your site is visible to everyone, but we ask search engines to not index your site.' ) }
 				</FormSettingExplanation>
 
-				{ ! site.jetpack &&
+				{ ! siteIsJetpack &&
 					<div>
 						<FormLabel>
 							<FormRadio
@@ -229,12 +232,13 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	showPublicPostTypesCheckbox() {
+		const { supportsPublicPostTypesCheckbox } = this.props;
+
 		if ( ! config.isEnabled( 'manage/option_sync_non_public_post_stati' ) ) {
 			return false;
 		}
 
-		const { site } = this.props;
-		if ( site.jetpack && site.versionCompare( '4.1.1', '>' ) ) {
+		if ( ! supportsPublicPostTypesCheckbox ) {
 			return false;
 		}
 
@@ -272,10 +276,10 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	jetpackDisconnectOption() {
-		const { site, translate } = this.props;
+		const { site, siteIsJetpack, translate } = this.props;
 		const isAutomatedTransfer = get( site, 'options.is_automated_transfer', false );
 
-		if ( ! site.jetpack || isAutomatedTransfer ) {
+		if ( ! siteIsJetpack || isAutomatedTransfer ) {
 			return null;
 		}
 
@@ -292,12 +296,12 @@ class SiteSettingsFormGeneral extends Component {
 
 	holidaySnowOption() {
 		// Note that years and months below are zero indexed
-		const { fields, handleToggle, isRequestingSettings, moment, site, translate } = this.props,
+		const { fields, handleToggle, isRequestingSettings, moment, supportsHolidaySnowOption, translate } = this.props,
 			today = moment(),
 			startDate = moment( { year: today.year(), month: 11, day: 1 } ),
 			endDate = moment( { year: today.year(), month: 0, day: 4 } );
 
-		if ( site.jetpack && site.versionCompare( '4.0', '<' ) ) {
+		if ( ! supportsHolidaySnowOption ) {
 			return null;
 		}
 
@@ -326,8 +330,8 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	Timezone() {
-		const { fields, isRequestingSettings, site, translate } = this.props;
-		if ( site.jetpack ) {
+		const { fields, isRequestingSettings, siteIsJetpack, translate } = this.props;
+		if ( siteIsJetpack ) {
 			return;
 		}
 
@@ -351,8 +355,8 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderJetpackSyncPanel() {
-		const { site } = this.props;
-		if ( ! site.jetpack || site.versionCompare( '4.2-alpha', '<' ) ) {
+		const { supportsJetpackSync } = this.props;
+		if ( ! supportsJetpackSync ) {
 			return null;
 		}
 
@@ -384,12 +388,13 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	showApiCacheCheckbox() {
+		const { supportsApiCacheCheckbox } = this.props;
+
 		if ( ! config.isEnabled( 'jetpack/api-cache' ) ) {
 			return false;
 		}
 
-		const { site } = this.props;
-		if ( ! site.jetpack || site.versionCompare( '4.4', '<=' ) ) {
+		if ( ! supportsApiCacheCheckbox ) {
 			return false;
 		}
 
@@ -402,9 +407,10 @@ class SiteSettingsFormGeneral extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			site,
+			siteIsJetpack,
 			translate
 		} = this.props;
-		if ( site.jetpack && ! site.hasMinimumJetpackVersion ) {
+		if ( siteIsJetpack && ! site.hasMinimumJetpackVersion ) {
 			return this.jetpackDisconnectOption();
 		}
 
@@ -460,7 +466,7 @@ class SiteSettingsFormGeneral extends Component {
 				</Card>
 
 				{
-					! site.jetpack && <div className="site-settings__footer-credit-container">
+					! siteIsJetpack && <div className="site-settings__footer-credit-container">
 						<SectionHeader label={ translate( 'Footer Credit' ) } />
 						<CompactCard className="site-settings__footer-credit-explanation">
 							<p>
@@ -484,7 +490,7 @@ class SiteSettingsFormGeneral extends Component {
 					</div>
 				}
 
-				{ this.props.site.jetpack
+				{ siteIsJetpack
 					? <div>
 						<SectionHeader label={ translate( 'Jetpack' ) }>
 							{ this.jetpackDisconnectOption() }
@@ -518,11 +524,11 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	_showWarning( site ) {
-		const { translate } = this.props;
+		const { siteIsJetpack, translate } = this.props;
 		if ( ! site || ! site.options ) {
 			return;
 		}
-		if ( site.jetpack && ! site.hasMinimumJetpackVersion ) {
+		if ( siteIsJetpack && ! site.hasMinimumJetpackVersion ) {
 			notices.warning(
 				translate( 'Jetpack %(version)s is required to manage Settings', {
 					args: { version: config( 'jetpack_min_version' ) }
@@ -536,7 +542,25 @@ class SiteSettingsFormGeneral extends Component {
 	}
 }
 
-export default wrapSettingsForm( settings => {
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const siteIsJetpack = isJetpackSite( state, siteId );
+
+		return {
+			siteIsJetpack,
+			supportsPublicPostTypesCheckbox: siteIsJetpack && ! isJetpackMinimumVersion( state, siteId, '4.2' ),
+			supportsHolidaySnowOption: siteIsJetpack && isJetpackMinimumVersion( state, siteId, '4.0' ),
+			supportsJetpackSync: siteIsJetpack && isJetpackMinimumVersion( state, siteId, '4.2-alpha' ),
+			supportsApiCacheCheckbox: siteIsJetpack && isJetpackMinimumVersion( state, siteId, '4.4.1' ),
+		};
+	},
+	null,
+	null,
+	{ pure: false }
+);
+
+const getFormSettings = settings => {
 	const defaultSettings = {
 		blogname: '',
 		blogdescription: '',
@@ -581,4 +605,9 @@ export default wrapSettingsForm( settings => {
 	}
 
 	return formSettings;
-} )( SiteSettingsFormGeneral );
+};
+
+export default flowRight(
+	connectComponent,
+	wrapSettingsForm( getFormSettings )
+)( SiteSettingsFormGeneral );

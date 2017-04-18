@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -9,6 +10,7 @@ import React from 'react';
 import GeneralForm from 'my-sites/site-settings/form-general';
 import DeleteSiteOptions from './delete-site-options';
 import config from 'config';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const SiteSettingsGeneral = ( {
 	hasLoadedSitePurchasesFromServer,
@@ -30,4 +32,8 @@ const SiteSettingsGeneral = ( {
 	);
 };
 
-export default SiteSettingsGeneral;
+export default connect(
+	( state ) => ( {
+		site: getSelectedSite( state ),
+	} )
+)( SiteSettingsGeneral );
