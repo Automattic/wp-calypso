@@ -179,6 +179,12 @@ class SiteSettingsFormDiscussion extends Component {
 					onChange={ this.handleCommentOrder }>
 					<span>{ translate( 'Comments should be displayed with the older comments at the top of each page' ) }</span>
 				</CompactFormToggle>
+				<CompactFormToggle
+					checked={ fields[ 'gravatar-hovercards' ] }
+					disabled={ isRequestingSettings || isSavingSettings }
+					onChange={ handleAutosavingToggle( 'gravatar-hovercards' ) }>
+					<span>{ translate( 'Enable pop-up business cards over commenters’ Gravatars' ) }</span>
+				</CompactFormToggle>
 			</FormFieldset>
 		);
 	}
@@ -643,6 +649,7 @@ const getFormSettings = settings => {
 		'subscriptions',
 		'stb_enabled',
 		'stc_enabled',
+		'gravatar-hovercards',
 	] );
 };
 
