@@ -6,6 +6,7 @@ import { values } from 'lodash';
 /**
  * Internal dependencies
  */
+import createSelector from 'lib/create-selector';
 
 /*
  * Get all sites/feeds the user follows.
@@ -13,6 +14,9 @@ import { values } from 'lodash';
  * @param  {Object}  state  Global state tree
  * @return {Integer} Follow count
  */
-const getReaderFollows = state => values( state.reader.follows.items );
+const getReaderFollows = createSelector(
+	state => values( state.reader.follows.items ),
+	state => [ state.reader.follows.items ],
+);
 
 export default getReaderFollows;
