@@ -10,14 +10,6 @@ export default {
 		return site && site.capabilities && site.capabilities[ capability ];
 	},
 
-	isPermalinkEditable( site ) {
-		if ( ! site || ! site.options || ! site.options.permalink_structure ) {
-			return false;
-		}
-
-		return /\/\%postname\%\/?/.test( site.options.permalink_structure );
-	},
-
 	/**
 	 * site's timezone getter
 	 *
