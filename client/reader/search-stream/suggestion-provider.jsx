@@ -63,18 +63,19 @@ function suggestionWithRailcar( text, ui_algo, position ) {
 }
 
 function getSuggestions( count, tags ) {
-	let currentSuggestions = suggestionsFromTags( count, tags );
-	if ( currentSuggestions === null ) {
-		// return null to supperess showing any suggestions until tag subscriptions load
+	const tagSuggestions = suggestionsFromTags( count, tags );
+
+	// return null to suppress showing any suggestions until tag subscriptions load.
+	if ( tagSuggestions === null ) {
 		return null;
 	}
 
-	if ( ! currentSuggestions.length ) {
-		currentSuggestions = suggestionsFromPicks( count );
-	}
+	const newSuggestions = !! tagSuggestions.length
+		? tagSuggestions
+		: suggestionsFromPicks( count );
 
-	trackSuggestionRailcarRender( currentSuggestions );
-	return currentSuggestions;
+	trackSuggestionRailcarRender( newSuggestions );
+	return newSuggestions;
 }
 
 function trackSuggestionRailcarRender( suggestionsToTrack ) {
