@@ -253,14 +253,11 @@ export class EditTeamMemberForm extends Component {
 		};
 	}
 
-	componentWillMount() {
-		this.refreshUser();
-	}
-
 	componentDidMount() {
 		UsersStore.on( 'change', this.refreshUser );
 		PeopleLog.on( 'change', this.checkRemoveUser );
 		PeopleLog.on( 'change', this.redirectIfError );
+		this.requestUser();
 	}
 
 	componentWillUnmount() {
@@ -269,25 +266,29 @@ export class EditTeamMemberForm extends Component {
 		PeopleLog.removeListener( 'change', this.redirectIfError );
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		this.refreshUser( nextProps );
+	componentDidUpdate( lastProps ) {
+		if ( lastProps.siteId !== this.props.siteId || lastProps.userLogin !== this.props.userLogin ) {
+			this.requestUser();
+		}
 	}
 
-	refreshUser = ( nextProps ) => {
-		const siteId = nextProps && nextProps.siteId ? nextProps.siteId : this.props.siteId;
-
-		const peopleUser = UsersStore.getUserByLogin( siteId, this.props.userLogin );
-
-		let requestedUser = this.state.requestedUser;
-
-		if ( ! peopleUser && siteId && ! requestedUser ) {
-			UsersActions.fetchUser( { siteId }, this.props.userLogin );
-			requestedUser = true;
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.siteId !== this.props.siteId || nextProps.userLogin !== this.props.userLogin ) {
+			this.refreshUser( nextProps );
 		}
+	}
+
+	requestUser = () => {
+		if ( this.props.siteId ) {
+			UsersActions.fetchUser( { siteId: this.props.siteId }, this.props.userLogin );
+		}
+	};
+
+	refreshUser = ( props = this.props ) => {
+		const peopleUser = UsersStore.getUserByLogin( props.siteId, props.userLogin );
 
 		this.setState( {
-			user: peopleUser,
-			requestedUser
+			user: peopleUser
 		} );
 	};
 
