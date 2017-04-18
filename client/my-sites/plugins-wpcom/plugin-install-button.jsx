@@ -15,6 +15,7 @@ import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getEligibility } from 'state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'state/themes/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { transferStates } from 'state/automated-transfer/constants';
 
 export const WpcomPluginInstallButton = props => {
@@ -27,7 +28,8 @@ export const WpcomPluginInstallButton = props => {
 		eligibilityData,
 		navigateTo,
 		initiateTransfer,
-		transferState
+		transferState,
+		trackButtonAction,
 	} = props;
 
 	if ( transferStates.COMPLETE === transferState ) {
@@ -36,7 +38,7 @@ export const WpcomPluginInstallButton = props => {
 
 	function installButtonAction( event ) {
 		event.preventDefault();
-
+		trackButtonAction( plugin.slug );
 		const eligibilityHolds = get( eligibilityData, 'eligibilityHolds', [] );
 		const eligibilityWarnings = get( eligibilityData, 'eligibilityWarnings', [] );
 
@@ -74,7 +76,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	initiateTransfer: initiateThemeTransfer
+	initiateTransfer: initiateThemeTransfer,
+	trackButtonAction: ( plugin ) => recordTracksEvent( 'calypso_automated_transfer_click_plugin_install', { plugin } )
 };
 
 const withNavigation = WrappedComponent => props => <WrappedComponent { ...{ ...props, navigateTo: page } } />;
