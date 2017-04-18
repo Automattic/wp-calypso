@@ -59,7 +59,7 @@ function suggestionWithRailcar( text, ui_algo, position ) {
 			ui_position: position,
 			rec_result: text,
 		}
-	}
+	};
 }
 
 function getSuggestions( count, tags ) {
