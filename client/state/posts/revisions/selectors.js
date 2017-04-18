@@ -9,11 +9,13 @@ import createSelector from 'lib/create-selector';
  */
 import { normalizePostForDisplay } from '../utils';
 
-export const getPostRevisions = createSelector(
+export const getNormalizedPostRevisions = createSelector(
 	( state, siteId, postId ) => {
-		return map(
+		const normalizedRevisions = map(
 			get( state.posts.revisions.revisions, [ siteId, postId ], [] ),
-			normalizePostForDisplay );
+			normalizePostForDisplay
+		);
+		return normalizedRevisions;
 	},
 	( state ) => [ state.posts.revisions.revisions ]
 );
