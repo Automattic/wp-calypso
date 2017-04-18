@@ -631,7 +631,7 @@ export function clearThemeUpload( siteId ) {
  * @returns {Promise} for testing purposes only
  */
 export function initiateThemeTransfer( siteId, file, plugin ) {
-	const context = !! plugin ? 'plugin' : 'theme';
+	const context = !! plugin ? 'plugins' : 'themes';
 	return dispatch => {
 		const themeInitiateRequest = {
 			type: THEME_TRANSFER_INITIATE_REQUEST,
