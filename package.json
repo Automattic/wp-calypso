@@ -154,6 +154,7 @@
     "css-lint": "stylelint 'client/**/*.scss' --syntax scss"
   },
   "devDependencies": {
+    "5to6-codemod": "git://github.com/jsnmoon/5to6-codemod#v1.8.0",
     "babel-eslint": "6.1.2",
     "chai": "3.5.0",
     "chai-enzyme": "0.5.2",
@@ -172,6 +173,7 @@
     "eslint-plugin-react": "6.4.1",
     "eslint-plugin-wpcalypso": "3.0.2",
     "glob": "7.0.3",
+    "jscodeshift": "0.3.30",
     "lodash-deep": "1.5.3",
     "md5-file": "3.1.0",
     "mixedindentlint": "1.1.1",
