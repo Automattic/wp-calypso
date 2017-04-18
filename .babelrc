@@ -1,7 +1,8 @@
 {
 	"presets": [
 		"es2015",
-		"stage-2"
+		"stage-2",
+		"flow"
 	],
 	"plugins": [
 		"transform-runtime",
