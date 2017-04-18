@@ -43,3 +43,19 @@ Flux store providing the site-related messages for `notices.js`. Works with the 
 #### notices.js
 
 A mixin that displays site information and error notices via the [notices](/client/notices) module.
+
+#### sites-observer.jsx
+
+A High-Order-Component that mimic the functionality of `data-observer` only specific to SitesList. It listens to `change` event of SitesList and creates a new object that uses the original `SitesList` as prototype thus both `PureComponent` and `react-redux` `connect` are able to detect the data was changed even though `SitesList` mutate in-place.
+
+This component is designed to wrap any React Component or `react-redux` `connect` High-Order-Components that expect to get `sites` prop.
+
+This component expects to get `sites` prop and it passes to the component it wraps `sites` prop that will behave correctly for PureComponent.
+
+```
+import sitesObserver from 'lib/sites-list/sites-observer';
+
+export default sitesObserver(
+    connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus } )( localize( MySitesSidebar ) )
+);
+```
