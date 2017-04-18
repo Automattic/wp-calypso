@@ -37,6 +37,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import EmptyContent from 'components/empty-content';
 import { userCan } from 'lib/site/utils';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Module variables
@@ -127,7 +128,7 @@ const InvitePeople = React.createClass( {
 			success: filteredSuccess,
 			errorToDisplay: includes( filteredTokens, errorToDisplay ) && errorToDisplay
 		} );
-		createInviteValidation( this.props.site.ID, filteredTokens, role );
+		createInviteValidation( this.props.siteId, filteredTokens, role );
 
 		if ( filteredTokens.length > usernamesOrEmails.length ) {
 			analytics.tracks.recordEvent( 'calypso_invite_people_token_added' );
@@ -143,7 +144,7 @@ const InvitePeople = React.createClass( {
 	onRoleChange( event ) {
 		const role = event.target.value;
 		this.setState( { role } );
-		createInviteValidation( this.props.site.ID, this.state.usernamesOrEmails, role );
+		createInviteValidation( this.props.siteId, this.state.usernamesOrEmails, role );
 	},
 
 	onFocusTokenField() {
@@ -167,8 +168,8 @@ const InvitePeople = React.createClass( {
 	},
 
 	refreshValidation() {
-		const errors = InvitesCreateValidationStore.getErrors( this.props.site.ID, this.state.role ) || {},
-			success = InvitesCreateValidationStore.getSuccess( this.props.site.ID, this.state.role ) || [],
+		const errors = InvitesCreateValidationStore.getErrors( this.props.siteId, this.state.role ) || {},
+			success = InvitesCreateValidationStore.getSuccess( this.props.siteId, this.state.role ) || [],
 			errorsKeys = Object.keys( errors ),
 			errorToDisplay = this.state.errorToDisplay || ( errorsKeys.length > 0 && errorsKeys[ 0 ] );
 
@@ -229,7 +230,7 @@ const InvitePeople = React.createClass( {
 
 		this.setState( { sendingInvites: true, formId } );
 		this.props.sendInvites(
-			this.props.site.ID,
+			this.props.siteId,
 			usernamesOrEmails,
 			role,
 			message,
@@ -344,7 +345,7 @@ const InvitePeople = React.createClass( {
 								id="role"
 								name="role"
 								includeFollower
-								siteId={ this.props.site.ID }
+								siteId={ this.props.siteId }
 								onChange={ this.onRoleChange }
 								onFocus={ this.onFocusRoleSelect }
 								value={ this.state.role }
@@ -390,6 +391,8 @@ const InvitePeople = React.createClass( {
 } );
 
 export default connect(
-	null,
+	( state ) => ( {
+		siteId: getSelectedSiteId( state )
+	} ),
 	dispatch => bindActionCreators( { sendInvites }, dispatch )
 )( InvitePeople );

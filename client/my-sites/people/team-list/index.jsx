@@ -140,7 +140,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var fetchOptions = {
-			siteId: this.props.site.ID,
+			siteId: this.props.site && this.props.site.ID,
 			order: 'ASC',
 			order_by: 'display_name',
 			search: ( this.props.search ) ? '*' + this.props.search + '*' : null,
