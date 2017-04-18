@@ -53,10 +53,6 @@ export const ThemesList = React.createClass( {
 		};
 	},
 
-	isRowLoaded( { index } ) {
-		return !! this.props.themes[ index ];
-	},
-
 	componentDidMount() {
 		this.onResize();
 
@@ -84,7 +80,15 @@ export const ThemesList = React.createClass( {
 			( nextProps.onMoreButtonClick !== this.props.onMoreButtonClick );
 	},
 
-	loadMoreRows() {
+	isRowLoaded( { index } ) {
+		return !! this.props.themes[ index ];
+	},
+
+	loadMoreRows( { stopIndex } ) {
+		if ( this.isRowLoaded( { index: stopIndex } ) || this.props.loading ) {
+			return;
+		}
+
 		this.props.fetchNextPage( { triggeredByScroll: true } );
 	},
 
@@ -137,10 +141,12 @@ export const ThemesList = React.createClass( {
 		const minColumnWidth = 250;
 		const ssrSpacers = 20;
 
+		const visibleCellCount = Math.min( this.props.themes.length + 20, this.props.themesCount );
+
 		const columnCount = this._width === undefined ? 1 : Math.floor( this._width / minColumnWidth );
 		const rowCount = this._width === undefined
 			? this.props.themes.length + ssrSpacers
-			: Math.ceil( this.props.themesCount / columnCount );
+			: Math.ceil( visibleCellCount / columnCount );
 
 		const columnWidth = Math.floor( this._width / columnCount );
 		const rowHeight = Math.floor( ( columnWidth - 20 ) * 0.75 ) + 74;
@@ -157,6 +163,7 @@ export const ThemesList = React.createClass( {
 				overscanRowCount={ 3 }
 				onCellsRendered={ onRowsRendered }
 				ref={ this.onGridRendered }
+				ssrEnabled={ true }
 			/>
 		);
 	},
