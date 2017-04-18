@@ -221,29 +221,34 @@ const AdsMain = React.createClass( {
 	}
 } );
 
-export default connect(
-	( state ) => {
-		const site = getSelectedSite( state );
-		const siteId = getSelectedSiteId( state );
+const mapStateToProps = ( state ) => {
+	const site = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
 
-		return {
-			site,
-			siteId,
-			siteSlug: getSelectedSiteSlug( state ),
-			requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, site ),
-			wordAdsError: getWordAdsErrorForSite( state, site ),
-			wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
-			isUnsafe: isSiteWordadsUnsafe( state, siteId ),
-			isRequestingWordadsStatus: isRequestingWordadsStatus( state, siteId )
-		};
-	},
-	{ requestWordAdsApproval, dismissWordAdsError },
-	( stateProps, dispatchProps, parentProps ) => ( {
-		...dispatchProps,
-		requestWordAdsApproval: () => ( ! stateProps.requestingWordAdsApproval )
-			? dispatchProps.requestWordAdsApproval( stateProps.siteId )
-			: null,
-		...parentProps,
-		...stateProps
-	} )
-)( AdsMain );
+	return {
+		site,
+		siteId,
+		siteSlug: getSelectedSiteSlug( state ),
+		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, site ),
+		wordAdsError: getWordAdsErrorForSite( state, site ),
+		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
+		isUnsafe: isSiteWordadsUnsafe( state, siteId ),
+		isRequestingWordadsStatus: isRequestingWordadsStatus( state, siteId ),
+	};
+};
+
+const mapDispatchToProps = {
+	requestWordAdsApproval,
+	dismissWordAdsError,
+};
+
+const mergeProps = ( stateProps, dispatchProps, parentProps ) => ( {
+	...dispatchProps,
+	requestWordAdsApproval: () => ( ! stateProps.requestingWordAdsApproval )
+		? dispatchProps.requestWordAdsApproval( stateProps.siteId )
+		: null,
+	...parentProps,
+	...stateProps
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( AdsMain );
