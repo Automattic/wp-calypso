@@ -277,7 +277,7 @@ const Checkout = React.createClass( {
 						'We sent your receipt to %(email)s.', {
 							args: {
 								productName: renewalItem.product_name,
-								duration: i18n.moment.duration( renewalItem.bill_period, 'days' ).humanize(),
+								duration: i18n.moment.duration( { days: renewalItem.bill_period } ).humanize(),
 								date: i18n.moment( product.expiry ).format( 'MMM DD, YYYY' ),
 								email: product.user_email
 							}
