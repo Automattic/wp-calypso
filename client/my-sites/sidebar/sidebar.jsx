@@ -641,7 +641,7 @@ function mapStateToProps( state ) {
 	const currentUser = getCurrentUser( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
-	const singleSiteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) );
+	const singleSiteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
 
 	return {
 		currentUser,
