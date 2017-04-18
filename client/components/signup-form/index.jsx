@@ -259,12 +259,14 @@ export default React.createClass( {
 				return;
 			}
 
-			let analyticsData = {
+			const analyticsData = {
 				unique_usernames_searched: usernamesSearched.length,
 				times_username_validation_failed: timesUsernameValidationFailed,
 				times_password_validation_failed: timesPasswordValidationFailed
 			};
+
 			this.props.submitForm( this.state.form, this.getUserData(), analyticsData );
+
 			resetAnalyticsData();
 		} );
 	},
