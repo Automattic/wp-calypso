@@ -14,6 +14,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import LostPasswordForm from 'account-recovery/lost-password-form';
+import ForgotUsernameForm from 'account-recovery/forgot-username-form';
 import ResetPasswordForm from 'account-recovery/reset-password-form';
 import { ACCOUNT_RECOVERY_SLUGS as SLUGS } from 'account-recovery/constants';
 import {
@@ -26,6 +27,10 @@ const getPageInfo = ( translate, slug ) => {
 		[ SLUGS.LOST_PASSWORD ]: {
 			trackerTitle: 'Account Recovery > Lost Password',
 			documentHeadTitle: translate( 'Lost Password ‹ Account Recovery' ),
+		},
+		[ SLUGS.FORGOT_USERNAME ]: {
+			trackerTitle: 'Account Recovery > Forgot Username',
+			documentHeadTitle: translate( 'Forgot Username ‹ Account Recovery' ),
 		},
 		[ SLUGS.RESET_PASSWORD ]: {
 			trackerTitle: 'Account Recovery > Reset Password',
@@ -53,6 +58,8 @@ const getForm = ( slug ) => {
 	switch ( slug ) {
 		case SLUGS.LOST_PASSWORD:
 			return <LostPasswordForm />;
+		case SLUGS.FORGOT_USERNAME:
+			return <ForgotUsernameForm />;
 		case SLUGS.RESET_PASSWORD:
 			return <ResetPasswordForm />;
 	}
