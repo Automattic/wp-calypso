@@ -235,4 +235,4 @@ export default connect( ( state, { siteId } ) => {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 	};
-}, null, null, { pure: false } )( PublishMenu );
+} )( PublishMenu );
