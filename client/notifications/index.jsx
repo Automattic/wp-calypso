@@ -17,7 +17,7 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import wpcom from 'lib/wp';
-import { get, invoke } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -60,14 +60,6 @@ export class Notifications extends Component {
 		if ( nextProps.visible !== this.props.visible ) {
 			this.postMessage( { action: 'togglePanel', showing: nextProps.visible } );
 			this.setState( { shownOnce: true, widescreen: false } );
-		}
-	}
-
-	componentDidUpdate( { visible } ) {
-		// focus notes frame when it opens to
-		// enable notes keyboard shortcuts
-		if ( visible && ! this.props.visible ) {
-			invoke( this, 'notesFrame.contentWindow.focus' );
 		}
 	}
 
