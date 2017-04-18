@@ -11,7 +11,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Given a feed, site, or post: return the url. return false if one could not be found.
  *
- * @param {*} options - a feed and/or site
+ * @param {*} options - an object containing a feed, site, and post. all optional.
  * @returns {string} the site url
  */
 export const getSiteUrl = ( { feed, site, post } = {} ) => {
@@ -22,14 +22,13 @@ export const getSiteUrl = ( { feed, site, post } = {} ) => {
 	return siteUrl || feedUrl || postUrl;
 };
 
-// TODO: remove siteNameFromSiteAndPost in followup pr because this should replace it.
 /**
  * Given a feed, site, or post: output the best title to use for the owning site.
  *
- * @param {*} options param.  optional feed, site, and post.
+ * @param {*} options - an object containing a feed, site, and post. all optional
  * @returns {string} the site title
  */
-export const getSiteName = ( { feed, site, post } ) => {
+export const getSiteName = ( { feed, site, post } = {} ) => {
 	let siteName = null;
 
 	if ( site && site.title ) {
@@ -47,7 +46,7 @@ export const getSiteName = ( { feed, site, post } ) => {
 	 */
 	if ( ! siteName ) {
 		if ( ( site && site.is_error ) || ( feed && feed.is_error ) && ( ! post ) ) {
-			siteName = translate( 'Error fetching feed' ); // TODO: remove this and keep logic just in feed/site stream?
+			siteName = translate( 'Error fetching feed' );
 		} else if ( getSiteUrl( { feed, site, post } ) ) {
 			siteName = url.parse( getSiteUrl( { feed, site, post } ) ).hostname;
 		}
