@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
 /**
@@ -9,12 +11,12 @@ import classNames from 'classnames';
  */
 import AllSitesIcon from 'my-sites/all-sites-icon';
 import Count from 'components/count';
+import { getSites } from 'state/selectors';
 import userLib from 'lib/user';
 
 const user = userLib();
 
-export default React.createClass( {
-	displayName: 'AllSites',
+export class AllSites extends Component {
 
 	getDefaultProps() {
 		return {
@@ -25,10 +27,9 @@ export default React.createClass( {
 			showCount: true,
 			domain: ''
 		};
-	},
+	}
 
-	propTypes: {
-		sites: React.PropTypes.array,
+	static propTypes = {
 		onSelect: React.PropTypes.func,
 		href: React.PropTypes.string,
 		isSelected: React.PropTypes.bool,
@@ -39,42 +40,47 @@ export default React.createClass( {
 		domain: React.PropTypes.string,
 		onMouseEnter: React.PropTypes.func,
 		onMouseLeave: React.PropTypes.func
-	},
+	};
 
 	onSelect( event ) {
 		this.props.onSelect( event );
-	},
+	}
 
 	renderSiteCount() {
 		const count = this.props.count || user.get().visible_site_count;
 		return <Count count={ count } />;
-	},
+	}
 
 	render() {
+		const { title, href, domain, sites, translate, isHighlighted, isSelected, showCount } = this.props;
 		const allSitesClass = classNames( {
 			'all-sites': true,
-			'is-selected': this.props.isSelected,
-			'is-highlighted': this.props.isHighlighted
+			'is-selected': isSelected,
+			'is-highlighted': isHighlighted
 		} );
-
-		const title = this.props.title || this.translate( 'All My Sites' );
 
 		return (
 			<div className={ allSitesClass }>
 				<a
 					className="site__content"
-					href={ this.props.href }
+					href={ href }
 					onMouseEnter={ this.props.onMouseEnter }
 					onMouseLeave={ this.props.onMouseLeave }
 					onClick={ this.onSelect }>
-					{ this.props.showCount && this.renderSiteCount() }
+					{ showCount && this.renderSiteCount() }
 					<div className="site__info">
-						<span className="site__title">{ title }</span>
-						{ this.props.domain && <span className="site__domain">{ this.props.domain }</span> }
-						<AllSitesIcon sites={ this.props.sites } />
+						<span className="site__title">{ title || translate( 'All My Sites' ) }</span>
+						{ domain && <span className="site__domain">{ domain }</span> }
+						<AllSitesIcon sites={ sites } />
 					</div>
 				</a>
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	( state ) => ( {
+		sites: getSites( state )
+	} )
+)( localize( AllSites ) );
