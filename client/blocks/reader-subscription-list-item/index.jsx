@@ -24,9 +24,9 @@ function ReaderSubscriptionListItem( {
 	translate,
 	followSource,
 } ) {
-	const siteTitle = ( feed && feed.name ) || ( site && site.title );
+	const siteTitle = ( site && site.title ) || ( feed && feed.name );
 	const siteAuthor = site && site.owner;
-	const siteExcerpt = ( feed && feed.description ) || ( site && site.description );
+	const siteExcerpt = ( site && site.description ) || ( feed && feed.description );
 	// prefer a users name property
 	// if that doesn't exist settle for combining first and last name
 	const authorName = siteAuthor && ( siteAuthor.name ||
@@ -35,9 +35,9 @@ function ReaderSubscriptionListItem( {
 	const feedIcon = get( feed, 'image' );
 	const streamUrl = getStreamUrl( feedId, siteId );
 	const siteUrl = url ||
-		( feed && ( feed.feed_URL || feed.URL ) ) ||
-		( site && site.URL );
-	const isFollowing = ( feed && feed.is_following ) || ( site && site.is_following );
+		( site && site.URL ) ||
+		( feed && ( feed.feed_URL || feed.URL ) );
+	const isFollowing = ( site && site.is_following ) || ( feed && feed.is_following );
 
 	return (
 		<div className={ classnames( 'reader-subscription-list-item', className ) }>
