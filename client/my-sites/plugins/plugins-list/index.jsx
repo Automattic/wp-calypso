@@ -468,7 +468,12 @@ export const PluginsList = React.createClass( {
 	},
 
 	getAllowedPluginActions( plugin ) {
-		const hiddenForAutomatedTransfer = this.props.isSiteAutomatedTransfer && includes( [ 'jetpack', 'vaultpress' ], plugin.slug );
+		const autoManagedPlugins = [
+			'jetpack',
+			'vaultpress',
+			'akismet',
+		];
+		const hiddenForAutomatedTransfer = this.props.isSiteAutomatedTransfer && includes( autoManagedPlugins, plugin.slug );
 
 		return {
 			autoupdate: ! hiddenForAutomatedTransfer,
