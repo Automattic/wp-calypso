@@ -9,6 +9,17 @@ import { expect } from 'chai';
 import { areAllSitesSingleUser } from '../';
 
 describe( 'areAllSitesSingleUser()', () => {
+	it( 'should return false sites haven\'t been fetched yet', () => {
+		const state = {
+			sites: {
+				items: {}
+			}
+		};
+
+		const allAreSingleUser = areAllSitesSingleUser( state );
+		expect( allAreSingleUser ).to.be.false;
+	} );
+
 	it( 'should return false if single_user_site isn\'t true for all sites', () => {
 		const state = {
 			sites: {
