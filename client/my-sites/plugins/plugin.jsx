@@ -33,7 +33,7 @@ import { isJetpackSite, canJetpackSiteManage, getRawSite } from 'state/sites/sel
 import { isSiteAutomatedTransfer } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import QuerySites from 'components/data/query-sites';
-import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
+import { isATEnabled } from 'lib/automated-transfer';
 
 const SinglePlugin = React.createClass( {
 	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
@@ -318,7 +318,7 @@ const SinglePlugin = React.createClass( {
 		if (
 			selectedSite &&
 			! this.props.isJetpackSite( selectedSite.ID ) &&
-			! isATEnabledForCurrentSite()
+			! this.props.atEnabled
 		) {
 			return (
 				<MainComponent>
@@ -428,6 +428,7 @@ export default connect(
 			selectedSite: selectedSite,
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
 			canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
+			atEnabled: isATEnabled( site ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
 		};
 	},
