@@ -9,7 +9,6 @@ import { compact, includes } from 'lodash';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 
 // plans constants
 export const PLAN_BUSINESS = 'business-bundle';
@@ -208,8 +207,6 @@ export const PLANS_LIST = {
 			isEnabled( 'publicize-scheduling' ) && FEATURE_REPUBLICIZE_SCHEDULING,
 			FEATURE_BUSINESS_ONBOARDING,
 			FEATURE_ADVANCED_SEO,
-			isATEnabledForCurrentSite() && FEATURE_UPLOAD_PLUGINS,
-			isATEnabledForCurrentSite() && FEATURE_UPLOAD_THEMES,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING,
 		] ),

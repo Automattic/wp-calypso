@@ -16,7 +16,7 @@ import NavItem from 'components/section-nav/item';
 import viewport from 'lib/viewport';
 import { action as upgradesActionTypes } from 'lib/upgrades/constants';
 import PopoverCart from 'my-sites/upgrades/cart/popover-cart';
-import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
+import { isATEnabled } from 'lib/automated-transfer';
 
 const PlansNavigation = React.createClass( {
 	propTypes: {
@@ -77,7 +77,7 @@ const PlansNavigation = React.createClass( {
 		const sectionTitle = this.getSectionTitle( path );
 		const userCanManageOptions = get( site, 'capabilities.manage_options', false );
 		const canManageDomain = userCanManageOptions &&
-			( isATEnabledForCurrentSite() || ! site.jetpack );
+			( isATEnabled( site ) || ! site.jetpack );
 
 		return (
 			<SectionNav
