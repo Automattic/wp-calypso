@@ -639,7 +639,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 		};
 
 		dispatch( withAnalytics(
-			recordTracksEvent( 'calypso_automated_transfer_initiate_request', { plugin, context } ),
+			recordTracksEvent( 'calypso_automated_transfer_initiate_transfer', { plugin, context } ),
 			themeInitiateRequest
 		) );
 		return wpcom.undocumented().initiateTransfer( siteId, plugin, file, ( event ) => {
@@ -738,7 +738,8 @@ export function pollThemeTransferStatus( siteId, transferId, interval = 3000, ti
 					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
 					if ( status === 'complete' ) {
 						// finished, stop polling
-						dispatch( recordTracksEvent( 'calypso_automated_transfer_complete', { transfer_id: transferId } ) );
+						const context = !! uploaded_theme_slug ? 'themes' : 'plugins';
+						dispatch( recordTracksEvent( 'calypso_automated_transfer_complete', { transfer_id: transferId, context } ) );
 						return resolve();
 					}
 					// poll again
