@@ -21,7 +21,7 @@ const SiteSettingsGeneral = ( {
 		<div className="site-settings__main general-settings">
 			<GeneralForm site={ site } />
 
-			{ config.isEnabled( 'manage/site-settings/delete-site' ) && ! site.jetpack && ! site.is_vip &&
+			{ config.isEnabled( 'manage/site-settings/delete-site' ) && site && ! site.jetpack && ! site.is_vip &&
 				<DeleteSiteOptions
 					site={ site }
 					sitePurchases={ sitePurchases }

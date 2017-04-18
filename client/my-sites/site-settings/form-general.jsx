@@ -34,7 +34,7 @@ import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
@@ -89,17 +89,17 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	blogAddress() {
-		const { site, siteIsJetpack, translate } = this.props;
+		const { site, siteIsJetpack, siteSlug, translate } = this.props;
 		let customAddress = '',
 			addressDescription = '';
 
-		if ( siteIsJetpack ) {
+		if ( ! site || siteIsJetpack ) {
 			return null;
 		}
 
 		if ( config.isEnabled( 'upgrades/domain-search' ) ) {
 			customAddress = (
-				<Button href={ '/domains/add/' + site.slug } onClick={ this.trackUpgradeClick }>
+				<Button href={ '/domains/add/' + siteSlug } onClick={ this.trackUpgradeClick }>
 					<Gridicon icon="plus" /> { translate( 'Add a Custom Address', { context: 'Site address, domain' } ) }
 				</Button>
 			);
@@ -114,13 +114,13 @@ class SiteSettingsFormGeneral extends Component {
 							{
 								components: {
 									domainSearchLink: (
-										<a href={ '/domains/add/' + site.slug } onClick={ this.trackUpgradeClick } />
+										<a href={ '/domains/add/' + siteSlug } onClick={ this.trackUpgradeClick } />
 									),
 									mapDomainLink: (
-										<a href={ '/domains/add/mapping/' + site.slug } onClick={ this.trackUpgradeClick } />
+										<a href={ '/domains/add/mapping/' + siteSlug } onClick={ this.trackUpgradeClick } />
 									),
 									redirectLink: (
-										<a href={ '/domains/add/site-redirect/' + site.slug } onClick={ this.trackUpgradeClick } />
+										<a href={ '/domains/add/site-redirect/' + siteSlug } onClick={ this.trackUpgradeClick } />
 									)
 								}
 							}
@@ -408,6 +408,7 @@ class SiteSettingsFormGeneral extends Component {
 			isSavingSettings,
 			site,
 			siteIsJetpack,
+			siteSlug,
 			translate
 		} = this.props;
 		if ( siteIsJetpack && ! site.hasMinimumJetpackVersion ) {
@@ -473,13 +474,13 @@ class SiteSettingsFormGeneral extends Component {
 								{ translate( 'You can customize your website by changing the footer credit in customizer.' ) }
 							</p>
 							<div>
-								<Button className="site-settings__footer-credit-change" href={ '/customize/identity/' + site.slug }>
+								<Button className="site-settings__footer-credit-change" href={ '/customize/identity/' + siteSlug }>
 									{ translate( 'Change footer credit' ) }
 								</Button>
 							</div>
 						</CompactCard>
 						{
-							! isBusiness( site.plan ) &&
+							site && ! isBusiness( site.plan ) &&
 							<Banner
 								feature={ FEATURE_NO_BRANDING }
 								plan={ PLAN_BUSINESS }
@@ -514,7 +515,7 @@ class SiteSettingsFormGeneral extends Component {
 						{ this.renderApiCache() }
 						{ this.syncNonPublicPostTypes() }
 
-						<CompactCard href={ '../security/' + site.slug }>
+						<CompactCard href={ '../security/' + siteSlug }>
 							{ translate( 'View Jetpack Monitor Settings' ) }
 						</CompactCard>
 					</div>
@@ -549,6 +550,7 @@ const connectComponent = connect(
 
 		return {
 			siteIsJetpack,
+			siteSlug: getSelectedSiteSlug( state ),
 			supportsPublicPostTypesCheckbox: siteIsJetpack && ! isJetpackMinimumVersion( state, siteId, '4.2' ),
 			supportsHolidaySnowOption: siteIsJetpack && isJetpackMinimumVersion( state, siteId, '4.0' ),
 			supportsJetpackSync: siteIsJetpack && isJetpackMinimumVersion( state, siteId, '4.2-alpha' ),
