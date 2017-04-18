@@ -20,54 +20,46 @@ import analytics from 'lib/analytics';
  * @return {Array}       An array of suggestions, or null if no tags where provided
  */
 function suggestionsFromTags( count, tags ) {
-	const tagSuggestions = [];
-	let sampleSuggestions = {};
 	if ( tags ) {
 		if ( tags.length <= count ) {
 			return [];
 		}
-		sampleSuggestions = map( sampleSize( tags, count ), tag => ( tag.displayName || tag.slug ).replace( /-/g, ' ' ) );
-
-		for ( let i = 0; i < sampleSuggestions.length; i++ ) {
-			tagSuggestions.push( {
-				text: sampleSuggestions[ i ],
-				railcar: {
-					railcar: analytics.tracks.createRandomId() + '-' + i,
-					ui_algo: 'read:search-suggestions:tags/1',
-					ui_position: i,
-					rec_result: sampleSuggestions[ i ],
-				}
-			} );
-		}
-
-		return tagSuggestions;
+		return map(
+			sampleSize( tags, count ),
+			( tag, i ) => {
+				const text = ( tag.displayName || tag.slug ).replace( /-/g, ' ' );
+				const ui_algo = 'read:search-suggestions:tags/1';
+				return suggestionWithRailcar( text, ui_algo, i );
+			}
+		);
 	}
 	return null;
 }
 
 function suggestionsFromPicks( count ) {
 	const lang = i18nUtils.getLocaleSlug().split( '-' )[ 0 ];
-	const pickSuggestions = [];
-	let sampleSuggestions = {};
-
 	if ( suggestions[ lang ] ) {
-		sampleSuggestions = sampleSize( suggestions[ lang ], count );
-
-		for ( let i = 0; i < sampleSuggestions.length; i++ ) {
-			pickSuggestions.push( {
-				text: sampleSuggestions[ i ],
-				railcar: {
-					railcar: analytics.tracks.createRandomId() + '-' + i,
-					ui_algo: 'read:search-suggestions:picks/1',
-					ui_position: i,
-					rec_result: sampleSuggestions[ i ],
-				}
-			} );
-		}
-
-		return pickSuggestions;
+		return map(
+			sampleSize( suggestions[ lang ], count ),
+			( tag, i ) => {
+				const ui_algo = 'read:search-suggestions:picks/1';
+				return suggestionWithRailcar( tag, ui_algo, i );
+			}
+		);
 	}
 	return null;
+}
+
+function suggestionWithRailcar( text, ui_algo, position ) {
+	return {
+		text: text,
+		railcar: {
+			railcar: analytics.tracks.createRandomId() + '-' + position,
+			ui_algo: ui_algo,
+			ui_position: position,
+			rec_result: text,
+		}
+	}
 }
 
 function getSuggestions( count, tags ) {
