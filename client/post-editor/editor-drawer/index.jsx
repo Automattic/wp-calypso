@@ -19,7 +19,6 @@ import PostMetadata from 'lib/post-metadata';
 import TrackInputChanges from 'components/track-input-changes';
 import actions from 'lib/posts/actions';
 import { recordStat, recordEvent } from 'lib/posts/stats';
-import siteUtils from 'lib/site/utils';
 import { isBusiness, isEnterprise } from 'lib/products-values';
 import QueryPostTypes from 'components/data/query-post-types';
 import QuerySiteSettings from 'components/data/query-site-settings';
@@ -33,8 +32,11 @@ import {
 	isJetpackSite,
 } from 'state/sites/selectors';
 import config from 'config';
-import { isPrivateSite } from 'state/selectors';
-import { isHiddenSite } from 'state/selectors';
+import {
+	areSitePermalinksEditable,
+	isPrivateSite,
+	isHiddenSite
+} from 'state/selectors';
 
 import EditorDrawerTaxonomies from './taxonomies';
 import EditorDrawerPageOptions from './page-options';
@@ -281,11 +283,13 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderMoreOptions: function() {
+		const { isPermalinkEditable } = this.props;
+
 		if (
 			! this.currentPostTypeSupports( 'excerpt' ) &&
 			! this.currentPostTypeSupports( 'geo-location' ) &&
 			! this.currentPostTypeSupports( 'comments' ) &&
-			! siteUtils.isPermalinkEditable( this.props.site )
+			! isPermalinkEditable
 		) {
 			return;
 		}
@@ -295,7 +299,7 @@ const EditorDrawer = React.createClass( {
 				title={ this.translate( 'More Options' ) }
 				className="editor-drawer__more-options"
 			>
-				{ siteUtils.isPermalinkEditable( this.props.site ) && <EditorMoreOptionsSlug /> }
+				{ isPermalinkEditable && <EditorMoreOptionsSlug /> }
 				{ this.renderExcerpt() }
 				{ this.renderLocation() }
 				{ this.renderDiscussion() }
@@ -364,6 +368,7 @@ export default connect(
 		const type = getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
 
 		return {
+			isPermalinkEditable: areSitePermalinksEditable( state, siteId ),
 			canJetpackUseTaxonomies: isJetpackMinimumVersion( state, siteId, '4.1' ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
