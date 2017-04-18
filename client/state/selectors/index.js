@@ -27,6 +27,7 @@ export getAccountRecoveryResetOptionsError from './get-account-recovery-reset-op
 export getAccountRecoveryResetRequestError from './get-account-recovery-reset-request-error';
 export getBlockedSites from './get-blocked-sites';
 export getBillingTransactions from './get-billing-transactions';
+export getCurrentUserPaymentMethods from './get-current-user-payment-methods';
 export getFollowCount from './get-follow-count';
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';
 export getJetpackConnectionStatus from './get-jetpack-connection-status';
