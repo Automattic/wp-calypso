@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { includes, omit, reduce, get, mapValues } from 'lodash';
+import { compact, includes, omit, reduce, get, mapValues } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,68 +12,79 @@ import { includes, omit, reduce, get, mapValues } from 'lodash';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarButton from 'layout/sidebar/button';
 import config from 'config';
-import { getSelectedSite } from 'state/ui/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 import MediaLibraryUploadButton from 'my-sites/media-library/upload-button';
+import { getSite, getSiteAdminUrl, getSiteSlug, isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
+import { areAllSitesSingleUser, canCurrentUser } from 'state/selectors';
 
-const PublishMenu = React.createClass( {
-	propTypes: {
-		site: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+class PublishMenu extends PureComponent {
+	static propTypes = {
+		itemLinkClass: PropTypes.func,
+		onNavigate: PropTypes.func,
+		siteId: PropTypes.number,
+		// connected props
+		allSingleSites: PropTypes.bool,
+		canUser: PropTypes.func,
+		isJetpack: PropTypes.bool,
+		isSingleUser: PropTypes.bool,
+		postTypes: PropTypes.object,
+		postTypeLinks: PropTypes.object,
+		siteAdminUrl: PropTypes.string,
+		site: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ),
-		sites: React.PropTypes.object.isRequired,
-		postTypes: React.PropTypes.object,
-		siteSuffix: React.PropTypes.string,
-		isSingle: React.PropTypes.bool,
-		itemLinkClass: React.PropTypes.func,
-		onNavigate: React.PropTypes.func
-	},
+		siteSlug: PropTypes.string,
+	}
 
 	// We default to `/my` posts when appropriate
 	getMyParameter() {
-		const { sites, site } = this.props;
-		if ( ! sites.initialized ) {
-			return '';
+		const { allSingleSites, isJetpack, isSingleUser, siteId } = this.props;
+
+		if ( siteId ) {
+			return ( isSingleUser || isJetpack ) ? '' : '/my';
 		}
 
-		if ( site ) {
-			return ( site.single_user_site || site.jetpack ) ? '' : '/my';
-		}
-
-		return ( sites.allSingleSites ) ? '' : '/my';
-	},
+		// FIXME: If you clear `IndexedDB` and land on a site that has yourself as its only user,
+		// and then navigate to multi-site mode, the `areAllSites` predicate will return true,
+		// as long as no other sites have been fetched into Redux state. As a consequence, the
+		// 'Posts' link will point to `/posts` (instead of `/posts/my` as it should, when you have
+		// sites with other users).
+		// The fix will be to make sure all sites are fetched into Redux state, see
+		// https://github.com/Automattic/wp-calypso/pull/13094
+		return ( allSingleSites ) ? '' : '/my';
+	}
 
 	getDefaultMenuItems() {
-		const { site } = this.props;
+		const { siteSlug } = this.props;
 
 		const items = [
 			{
 				name: 'post',
-				label: this.translate( 'Blog Posts' ),
+				label: this.props.translate( 'Blog Posts' ),
 				className: 'posts',
 				capability: 'edit_posts',
 				config: 'manage/posts',
 				queryable: true,
 				link: '/posts' + this.getMyParameter(),
 				paths: [ '/posts', '/posts/my' ],
-				buttonLink: site ? '/post/' + site.slug : '/post',
+				buttonLink: siteSlug ? '/post/' + siteSlug : '/post',
 				wpAdminLink: 'edit.php',
 				showOnAllMySites: true,
 			},
 			{
 				name: 'page',
-				label: this.translate( 'Pages' ),
+				label: this.props.translate( 'Pages' ),
 				className: 'pages',
 				capability: 'edit_pages',
 				queryable: true,
 				config: 'manage/pages',
 				link: '/pages',
-				buttonLink: site ? '/page/' + site.slug : '/page',
+				buttonLink: siteSlug ? '/page/' + siteSlug : '/page',
 				wpAdminLink: 'edit.php?post_type=page',
 				showOnAllMySites: true,
 			}
@@ -81,31 +93,32 @@ const PublishMenu = React.createClass( {
 		if ( config.isEnabled( 'manage/media' ) ) {
 			items.push( {
 				name: 'media',
-				label: this.translate( 'Media' ),
+				label: this.props.translate( 'Media' ),
 				className: 'media-section',
 				capability: 'upload_files',
 				queryable: true,
 				config: 'manage/media',
 				link: '/media',
-				buttonLink: '/media/' + site.slug,
+				buttonLink: '/media/' + siteSlug,
 				wpAdminLink: 'upload.php',
 				showOnAllMySites: false,
 			} );
 		}
 		return items;
-	},
+	}
 
-	onNavigate( postType ) {
+	onNavigate = ( postType ) => () => {
 		if ( ! includes( [ 'post', 'page' ], postType ) ) {
 			analytics.mc.bumpStat( 'calypso_publish_menu_click', postType );
 		}
 
 		this.props.onNavigate();
-	},
+	}
 
 	renderMenuItem( menuItem ) {
-		const { site } = this.props;
-		if ( site.capabilities && ! site.capabilities[ menuItem.capability ] ) {
+		const { canUser, site, siteId, siteAdminUrl } = this.props;
+
+		if ( siteId && ! canUser( menuItem.capability ) ) {
 			return null;
 		}
 
@@ -117,15 +130,15 @@ const PublishMenu = React.createClass( {
 		// Hide the sidebar link for multiple site view if it's not in calypso, or
 		// if it opts not to be shown.
 		const isEnabled = config.isEnabled( menuItem.config );
-		if ( ! this.props.isSingle && ( ! isEnabled || ! menuItem.showOnAllMySites ) ) {
+		if ( ! siteId && ( ! isEnabled || ! menuItem.showOnAllMySites ) ) {
 			return null;
 		}
 
 		let link;
-		if ( ( ! isEnabled || ! menuItem.queryable ) && site.options ) {
-			link = this.props.site.options.admin_url + menuItem.wpAdminLink;
+		if ( ( ! isEnabled || ! menuItem.queryable ) && siteAdminUrl ) {
+			link = siteAdminUrl + menuItem.wpAdminLink;
 		} else {
-			link = menuItem.link + this.props.siteSuffix;
+			link = compact( [ menuItem.link, this.props.siteSlug ] ).join( '/' );
 		}
 
 		let preload;
@@ -156,19 +169,23 @@ const PublishMenu = React.createClass( {
 				label={ menuItem.label }
 				className={ className }
 				link={ link }
-				onNavigate={ this.onNavigate.bind( this, menuItem.name ) }
+				onNavigate={ this.onNavigate( menuItem.name ) }
 				icon={ icon }
 				preloadSectionName={ preload }
 			>
 				{ menuItem.name === 'media' && (
-					<MediaLibraryUploadButton className="sidebar__button" site={ site } href={ menuItem.buttonLink }>{ this.translate( 'Add' ) }</MediaLibraryUploadButton>
+					<MediaLibraryUploadButton className="sidebar__button" site={ site } href={ menuItem.buttonLink }>
+						{ this.props.translate( 'Add' ) }
+					</MediaLibraryUploadButton>
 				) }
 				{ menuItem.name !== 'media' && (
-					<SidebarButton href={ menuItem.buttonLink } preloadSectionName="post-editor">{ this.translate( 'Add' ) }</SidebarButton>
+					<SidebarButton href={ menuItem.buttonLink } preloadSectionName="post-editor">
+						{ this.props.translate( 'Add' ) }
+					</SidebarButton>
 				) }
 			</SidebarItem>
 		);
-	},
+	}
 
 	getCustomMenuItems() {
 		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page' ] );
@@ -203,7 +220,7 @@ const PublishMenu = React.createClass( {
 				buttonLink
 			} );
 		}, [] );
-	},
+	}
 
 	render() {
 		const menuItems = [
@@ -213,23 +230,32 @@ const PublishMenu = React.createClass( {
 
 		return (
 			<ul>
-				{ this.props.site && (
-					<QueryPostTypes siteId={ this.props.site.ID } />
+				{ this.props.siteId && (
+					<QueryPostTypes siteId={ this.props.siteId } />
 				) }
-				{ menuItems.map( this.renderMenuItem ) }
+				{ menuItems.map( this.renderMenuItem, this ) }
 			</ul>
 		);
 	}
-} );
+}
 
-export default connect( ( state ) => {
-	const siteId = get( getSelectedSite( state ), 'ID' );
+export default connect( ( state, { siteId } ) => {
 	const postTypes = getPostTypes( state, siteId );
 
 	return {
+		allSingleSites: areAllSitesSingleUser( state ),
+		// TODO: Instead of passing a canUser function prop, we should compute and filter
+		// the list of menuItems inside `connect` and pass it to `PostList` as a prop.
+		canUser: ( cap ) => canCurrentUser( state, siteId, cap ),
+		isJetpack: isJetpackSite( state, siteId ),
+		isSingleUser: isSingleUserSite( state, siteId ),
 		postTypes,
 		postTypeLinks: mapValues( postTypes, ( postType, postTypeSlug ) => {
 			return getEditorPath( state, siteId, null, postTypeSlug );
-		} )
+		} ),
+		siteAdminUrl: getSiteAdminUrl( state, siteId, ),
+		site: getSite( state, siteId ),
+		siteId,
+		siteSlug: getSiteSlug( state, siteId ),
 	};
-}, null, null, { pure: false } )( PublishMenu );
+} )( localize( PublishMenu ) );

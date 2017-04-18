@@ -12,5 +12,5 @@ import { isSingleUserSite } from 'state/sites/selectors';
  */
 export default createSelector( ( state ) => {
 	const siteIds = Object.keys( state.sites.items );
-	return siteIds && siteIds.every( ( siteId ) => isSingleUserSite( state, siteId ) );
+	return !! siteIds.length && siteIds.every( ( siteId ) => isSingleUserSite( state, siteId ) );
 }, ( state ) => ( state.sites.items ) );
