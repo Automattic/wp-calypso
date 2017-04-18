@@ -61,7 +61,7 @@ export const getSite = createSelector(
 			getSiteBySlug( state, siteId );
 
 		if ( ! site ) {
-			return false;
+			return null;
 		}
 
 		return {
