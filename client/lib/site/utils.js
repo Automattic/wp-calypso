@@ -133,18 +133,6 @@ export default {
 		return true;
 	},
 
-	canAutoupdateCore( site ) {
-		if ( ! this.canAutoupdateFiles( site ) ) {
-			return false;
-		}
-
-		if ( site.options.file_mod_disabled &&
-			-1 < site.options.file_mod_disabled.indexOf( 'automatic_updater_disabled' ) ) {
-			return false;
-		}
-		return true;
-	},
-
 	isMainNetworkSite( site ) {
 		if ( ! site ) {
 			return false;
