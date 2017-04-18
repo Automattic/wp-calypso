@@ -26,7 +26,6 @@ class FollowingManageSearchFollowed extends Component {
 				compact={ true }
 				isOpen={ true }
 				pinned={ false }
-				key="searchFollowed"
 				autoFocus={ false }
 				className="following-manage__search-followed"
 				additionalClasses="following-manage__search-followed-input"
@@ -34,8 +33,7 @@ class FollowingManageSearchFollowed extends Component {
 				onSearch={ this.props.onSearch }
 				initialValue={ this.props.value }
 				delaySearch={ true }
-				hideOpenIcon={ true }
-				ref="url-search" />
+				hideOpenIcon={ true } />
 		);
 	}
 }
