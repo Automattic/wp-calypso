@@ -3,22 +3,19 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
+//import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { hasGraduatedRecommendations } from 'state/reader/start/selectors';
-import { requestGraduate } from 'state/reader/start/actions';
 
+ // @todo Replace hasGraduatedRecommendations with getReaderSetting
+ // and requestGraduate with deleteReaderSetting
 const FollowingIntro = ( props ) => {
-	if ( props.hasGraduatedRecommendations || props.hasGraduatedRecommendations === null ) {
-		return null;
-	}
 
 	const handleIntroClose = () => {
-		props.requestGraduate();
+		//props.requestGraduate();
 	};
 
 	return (
@@ -58,8 +55,4 @@ const FollowingIntro = ( props ) => {
 	);
 };
 
-export default connect( ( state ) => {
-	return {
-		hasGraduatedRecommendations: hasGraduatedRecommendations( state )
-	};
-}, { requestGraduate } )( localize( FollowingIntro ) );
+export default localize( FollowingIntro );

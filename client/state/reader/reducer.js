@@ -9,8 +9,8 @@ import { combineReducers } from 'redux';
 import lists from './lists/reducer';
 import feeds from './feeds/reducer';
 import follows from './follows/reducer';
+import settings from './settings/reducer';
 import sites from './sites/reducer';
-import start from './start/reducer';
 import posts from './posts/reducer';
 import relatedPosts from './related-posts/reducer';
 import siteBlocks from './site-blocks/reducer';
@@ -23,8 +23,8 @@ export default combineReducers( {
 	feeds,
 	follows,
 	lists,
+	settings,
 	sites,
-	start,
 	posts,
 	relatedPosts,
 	siteBlocks,
