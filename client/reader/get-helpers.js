@@ -15,7 +15,7 @@ import { translate } from 'i18n-calypso';
  * @returns {string} the site url
  */
 export const getSiteUrl = ( { feed, site, post } = {} ) => {
-	const siteUrl = ( !! site ) && site.URL;
+	const siteUrl = ( !! site ) && ( site.URL || site.domain );
 	const feedUrl = ( !! feed ) && ( feed.URL || feed.feed_URL );
 	const postUrl = ( !! post ) && ( post.site_URL || post.feed_URL );
 
@@ -32,7 +32,7 @@ export const getSiteUrl = ( { feed, site, post } = {} ) => {
 export const getSiteName = ( { feed, site, post } ) => {
 	let siteName;
 
-	if ( site && ( site.title || site.domain ) ) {
+	if ( site && site.title ) {
 		siteName = site.title || site.domain;
 	} else if ( feed && ( feed.name || feed.title ) ) {
 		siteName = feed.name || feed.title;
@@ -53,6 +53,7 @@ export const getSiteName = ( { feed, site, post } ) => {
 		} else {
 			siteName = translate( '(no title)' );
 			// TODO: when should this exist? ideally never because url should always be a better fallback?
+			// and even if it isn't then lets return null;
 		}
 	}
 
