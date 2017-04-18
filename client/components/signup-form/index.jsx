@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { map, forEach, head, includes, isEmpty, keys } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
@@ -42,11 +42,8 @@ const resetAnalyticsData = () => {
 	timesPasswordValidationFailed = 0;
 };
 
-export default localize( React.createClass( {
-
-	displayName: 'SignupForm',
-
-	propTypes: {
+class SignupForm extends Component {
+	static propTypes = {
 		className: PropTypes.string,
 		disableEmailExplanation: PropTypes.bool,
 		disableEmailInput: PropTypes.bool,
@@ -67,23 +64,31 @@ export default localize( React.createClass( {
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			isSocialSignupEnabled: false,
-		};
-	},
+	static defaultProps = {
+		isSocialSignupEnabled: false,
+	};
 
-	getInitialState() {
-		return {
-			notice: null,
-			submitting: false,
-			form: null,
-			signedUp: false,
-			validationInitialized: false
-		};
-	},
+	state = {
+		notice: null,
+		submitting: false,
+		form: null,
+		signedUp: false,
+		validationInitialized: false
+	};
+
+	constructor( props ) {
+		super( props );
+
+		this.handleBlur = this.handleBlur.bind( this );
+		this.handleChangeEvent = this.handleChangeEvent.bind( this );
+		this.handleOnClickTos = this.handleOnClickTos.bind( this );
+		this.handleSubmit = this.handleSubmit.bind( this );
+		this.sanitize = this.sanitize.bind( this );
+		this.setFormState = this.setFormState.bind( this );
+		this.validate = this.validate.bind( this );
+	}
 
 	getInitialFields() {
 		return {
@@ -91,7 +96,7 @@ export default localize( React.createClass( {
 			username: '',
 			password: ''
 		};
-	},
+	}
 
 	autoFillUsername( form ) {
 		return mergeFormWithValue( {
@@ -99,7 +104,7 @@ export default localize( React.createClass( {
 			fieldName: 'username',
 			fieldValue: this.props.suggestedUsername || ''
 		} );
-	},
+	}
 
 	componentWillMount() {
 		debug( 'Mounting the SignupForm React component.' );
@@ -118,22 +123,22 @@ export default localize( React.createClass( {
 		const stateWithFilledUsername = this.autoFillUsername( initialState );
 
 		this.setState( { form: stateWithFilledUsername } );
-	},
+	}
 
 	componentDidMount() {
 		// If we initialized the form with an email, we need to validate the email
 		if ( this.props.email ) {
 			this.handleBlur();
 		}
-	},
+	}
 
 	sanitizeEmail( email ) {
 		return email && email.replace( /\s+/g, '' ).toLowerCase();
-	},
+	}
 
 	sanitizeUsername( username ) {
 		return username && username.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase();
-	},
+	}
 
 	sanitize( fields, onComplete ) {
 		const sanitizedEmail = this.sanitizeEmail( fields.email ),
@@ -145,7 +150,7 @@ export default localize( React.createClass( {
 				username: sanitizedUsername
 			} );
 		}
-	},
+	}
 
 	validate( fields, onComplete ) {
 		wpcom.undocumented().validateNewUser( fields, ( error, response ) => {
@@ -207,17 +212,17 @@ export default localize( React.createClass( {
 				this.setState( { validationInitialized: true } );
 			}
 		} );
-	},
+	}
 
 	setFormState( state ) {
 		this.setState( { form: state } );
-	},
+	}
 
 	handleFormControllerError( error ) {
 		if ( error ) {
 			throw error;
 		}
-	},
+	}
 
 	handleChangeEvent( event ) {
 		const name = event.target.name,
@@ -229,13 +234,13 @@ export default localize( React.createClass( {
 			name: name,
 			value: value
 		} );
-	},
+	}
 
 	handleBlur() {
 		this.formStateController.sanitize();
 		this.formStateController.validate();
 		this.props.save && this.props.save( this.state.form );
-	},
+	}
 
 	handleSubmit( event ) {
 		event.preventDefault();
@@ -270,7 +275,7 @@ export default localize( React.createClass( {
 
 			resetAnalyticsData();
 		} );
-	},
+	}
 
 	globalNotice( notice ) {
 		return <Notice
@@ -279,7 +284,7 @@ export default localize( React.createClass( {
 			showDismiss={ false }
 			status={ notices.getStatusHelper( notice ) }
 			text={ notice.message } />;
-	},
+	}
 
 	getUserData() {
 		return {
@@ -287,7 +292,7 @@ export default localize( React.createClass( {
 			password: formState.getFieldValue( this.state.form, 'password' ),
 			email: formState.getFieldValue( this.state.form, 'email' )
 		};
-	},
+	}
 
 	getErrorMessagesWithLogin( fieldName ) {
 		const messages = formState.getFieldErrorMessages( this.state.form, fieldName );
@@ -314,7 +319,7 @@ export default localize( React.createClass( {
 			}
 			return message;
 		} );
-	},
+	}
 
 	formFields() {
 		return (
@@ -374,19 +379,19 @@ export default localize( React.createClass( {
 				</ValidationFieldset>
 			</div>
 		);
-	},
+	}
 
 	handleOnClickTos() {
 		analytics.tracks.recordEvent.bind(
 			analytics,
 			'calypso_signup_tos_link_click'
 		);
-	},
+	}
 
 	getTermsOfServiceUrl() {
 		// locales where we don't have translated TOS will simply show the English one
 		return 'https://' + i18n.getLocaleSlug() + '.wordpress.com/tos/';
-	},
+	}
 
 	termsOfServiceLink() {
 		return (
@@ -405,7 +410,7 @@ export default localize( React.createClass( {
 				)
 			}</p>
 		);
-	},
+	}
 
 	getNotice() {
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
@@ -415,7 +420,7 @@ export default localize( React.createClass( {
 			return this.globalNotice( this.state.notice );
 		}
 		return false;
-	},
+	}
 
 	emailDisableExplanation() {
 		if ( this.props.disableEmailInput && this.props.disableEmailExplanation ) {
@@ -423,7 +428,7 @@ export default localize( React.createClass( {
 				<FormSettingExplanation noValidate={ true }>{ this.props.disableEmailExplanation }</FormSettingExplanation>
 			);
 		}
-	},
+	}
 
 	formFooter() {
 		return (
@@ -434,7 +439,7 @@ export default localize( React.createClass( {
 				</FormButton>
 			</LoggedOutFormFooter>
 		);
-	},
+	}
 
 	localizeUrlWithSubdomain( url ) {
 		const urlArray = url.split( '//' );
@@ -443,11 +448,11 @@ export default localize( React.createClass( {
 			returnUrl += this.props.locale + '.';
 		}
 		return returnUrl + urlArray[ 1 ];
-	},
+	}
 
 	localizeUrlWithLastSlug( url ) {
 		return ( this.props.locale ) ? '/log-in/' + this.props.locale : url;
-	},
+	}
 
 	footerLink() {
 		if ( this.props.positionInFlow !== 0 ) {
@@ -463,7 +468,7 @@ export default localize( React.createClass( {
 				</LoggedOutFormLinkItem>
 			</LoggedOutFormLinks>
 		);
-	},
+	}
 
 	render() {
 		return (
@@ -490,4 +495,6 @@ export default localize( React.createClass( {
 			</div>
 		);
 	}
-} ) );
+}
+
+export default localize( SignupForm );
