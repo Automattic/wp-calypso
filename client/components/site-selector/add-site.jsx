@@ -16,6 +16,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
 import sitesFactory from 'lib/sites-list';
+import { abtest } from 'lib/abtest';
 
 const sites = sitesFactory();
 
@@ -37,7 +38,8 @@ class SiteSelectorAddSite extends Component {
 	}
 
 	getAddNewSiteUrl() {
-		if ( sites.getJetpack().length ) {
+		if ( sites.getJetpack().length ||
+			abtest( 'newSiteWithJetpack' ) === 'showNewJetpackSite' ) {
 			return '/jetpack/new/?ref=calypso-selector';
 		}
 		return config( 'signup_url' ) + '?ref=calypso-selector';
