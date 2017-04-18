@@ -22,30 +22,36 @@ import {
 
 import {
 	isRequestingAccountRecoveryResetOptions,
-	getAccountRecoveryResetUserData,
 	getAccountRecoveryResetOptionsError,
 } from 'state/selectors';
 
 export class LostPasswordFormComponent extends Component {
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			userLoginFormValue: '',
+		};
+	}
+
 	submitForm = () => {
-		this.props.fetchResetOptionsByLogin( this.props.userLogin );
+		this.props.fetchResetOptionsByLogin( this.state.userLoginFormValue );
 	};
 
 	onUserLoginChanged = ( event ) => {
-		this.props.updatePasswordResetUserData( {
-			user: event.target.value
-		} );
+		this.setState( { userLoginFormValue: event.target.value } );
 	};
 
 	render() {
 		const {
 			translate,
-			userLogin,
 			isRequesting,
 			requestError,
 		} = this.props;
 
-		const isPrimaryButtonDisabled = ! userLogin || isRequesting;
+		const { userLoginFormValue } = this.state;
+
+		const isPrimaryButtonDisabled = ! userLoginFormValue || isRequesting;
 
 		return (
 			<div>
@@ -85,7 +91,7 @@ export class LostPasswordFormComponent extends Component {
 						<FormInput
 							className="lost-password-form__user-login-input"
 							onChange={ this.onUserLoginChanged }
-							value={ userLogin || '' }
+							value={ userLoginFormValue }
 							disabled={ isRequesting } />
 					</FormLabel>
 					{
@@ -114,7 +120,6 @@ export class LostPasswordFormComponent extends Component {
 
 LostPasswordFormComponent.defaultProps = {
 	isRequesting: false,
-	userLogin: null,
 	requestError: null,
 	translate: identity,
 	fetchResetOptionsByLogin: noop,
@@ -124,7 +129,6 @@ LostPasswordFormComponent.defaultProps = {
 export default connect(
 	( state ) => ( {
 		isRequesting: isRequestingAccountRecoveryResetOptions( state ),
-		userLogin: getAccountRecoveryResetUserData( state ).user,
 		requestError: getAccountRecoveryResetOptionsError( state ),
 	} ),
 	{
