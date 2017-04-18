@@ -21,9 +21,7 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import config from 'config';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	isJetpackSite,
-} from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 export default {
 	redirectToTeam,
