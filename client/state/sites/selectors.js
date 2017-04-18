@@ -45,6 +45,22 @@ export const getRawSite = ( state, siteId ) => {
 };
 
 /**
+ * Returns a site object by its slug.
+ *
+ * @param  {Object}  state     Global state tree
+ * @param  {String}  siteSlug  Site URL
+ * @return {?Object}           Site object
+ */
+export const getSiteBySlug = createSelector(
+	( state, siteSlug ) => (
+		find( state.sites.items, ( item, siteId ) => (
+			getSiteSlug( state, siteId ) === siteSlug
+		) ) || null
+	),
+	( state ) => state.sites.items
+);
+
+/**
  * Returns a normalized site object by its ID. Intends to replicate
  * the site object returned from the legacy `sites-list` module.
  *
@@ -429,22 +445,6 @@ export const getSeoTitle = ( state, type, data ) => {
 
 	return buildSeoTitle( titleFormats, type, data );
 };
-
-/**
- * Returns a site object by its slug.
- *
- * @param  {Object}  state     Global state tree
- * @param  {String}  siteSlug  Site URL
- * @return {?Object}           Site object
- */
-export const getSiteBySlug = createSelector(
-	( state, siteSlug ) => (
-		find( state.sites.items, ( item, siteId ) => (
-			getSiteSlug( state, siteId ) === siteSlug
-		) ) || null
-	),
-	( state ) => state.sites.items
-);
 
 /**
  * Returns a site object by its URL.
