@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -17,17 +18,14 @@ import userLib from 'lib/user';
 const user = userLib();
 
 export class AllSites extends Component {
-
-	getDefaultProps() {
-		return {
-			onSelect: function() {},
-			href: null,
-			isSelected: false,
-			isHighlighted: false,
-			showCount: true,
-			domain: ''
-		};
-	}
+	static defaultProps = {
+		onSelect: noop,
+		href: null,
+		isSelected: false,
+		isHighlighted: false,
+		showCount: true,
+		domain: ''
+	};
 
 	static propTypes = {
 		onSelect: React.PropTypes.func,
