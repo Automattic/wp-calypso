@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { compact, includes, omit, reduce, get, mapValues } from 'lodash';
 
@@ -22,13 +22,22 @@ import { areAllSitesSingleUser, canCurrentUser } from 'state/selectors';
 
 const PublishMenu = React.createClass( {
 	propTypes: {
-		site: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
+		itemLinkClass: PropTypes.func,
+		onNavigate: PropTypes.func,
+		siteId: PropTypes.number,
+		// connected props
+		allSingleSites: PropTypes.bool,
+		canUser: PropTypes.func,
+		isJetpack: PropTypes.bool,
+		isSingleUser: PropTypes.bool,
+		postTypes: PropTypes.object,
+		postTypeLinks: PropTypes.object,
+		siteAdminUrl: PropTypes.string,
+		site: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
 		] ),
-		postTypes: React.PropTypes.object,
-		itemLinkClass: React.PropTypes.func,
-		onNavigate: React.PropTypes.func
+		siteSlug: PropTypes.string,
 	},
 
 	// We default to `/my` posts when appropriate
@@ -231,8 +240,8 @@ export default connect( ( state, { siteId } ) => {
 			return getEditorPath( state, siteId, null, postTypeSlug );
 		} ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId, ),
-		siteId,
 		site: getSite( state, siteId ),
+		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 	};
 } )( PublishMenu );
