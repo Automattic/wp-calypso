@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { trim, debounce } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -23,7 +23,7 @@ import SitesWindowScroller from './sites-window-scroller';
 
 class FollowingManage extends Component {
 	static propTypes = {
-		query: React.PropTypes.string,
+		query: PropTypes.string,
 	};
 	state = { width: 800 };
 

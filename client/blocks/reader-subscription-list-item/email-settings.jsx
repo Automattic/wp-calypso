@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { PropTypes, Component } from 'react';
-import { noop } from 'lodash';
+import { connect } from 'react-redux';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,13 +14,21 @@ import Popover from 'components/popover/index';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
 import FormToggle from 'components/forms/form-toggle';
+import { getReaderFollows } from 'state/selectors';
+import {
+	subscribeToNewPostEmail,
+	updateNewPostEmailSubscription,
+	unsubscribeToNewPostEmail,
+	subscribeToNewCommentEmail,
+	unsubscribeToNewCommentEmail,
+} from 'state/reader/follows/actions';
 
 class ReaderEmailSubscriptionSettingsPopout extends Component {
 	static displayName = 'ReaderEmailSubscriptionSettingsPopout';
 	static propTypes = {
-		feedId: PropTypes.number,
 		siteId: PropTypes.number,
 	};
+
 	state = {
 		showPopover: false,
 	};
@@ -37,11 +46,37 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 	}
 
 	setSelected = text => () => {
+		const { siteId } = this.props;
 		this.setState( { selected: text } );
+		this.props.updateNewPostEmailSubscription( siteId, text );
+	}
+
+	toggleNewPostEmail = () => {
+		const { notifyOnNewPosts, siteId } = this.props;
+
+		if ( notifyOnNewPosts ) {
+			this.props.unsubscribeToNewPostEmail( siteId );
+		} else {
+			this.props.subscribeToNewPostEmail( siteId );
+		}
+	}
+
+	toggleNewCommentEmail = () => {
+		const { notifyOnNewComments, siteId } = this.props;
+
+		if ( notifyOnNewComments ) {
+			this.props.unsubscribeToNewCommentEmail( siteId );
+		} else {
+			this.props.subscribeToNewCommentEmail( siteId );
+		}
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, notifyOnNewComments, notifyOnNewPosts } = this.props;
+
+		if ( ! this.props.siteId ) {
+			return null;
+		}
 
 		return (
 			<div>
@@ -68,16 +103,16 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 						<div className="reader-subscription-list-item__email-popout-toggle">
 							{ translate( 'New posts' ) }
 							<FormToggle
-								onChange={ noop /* fire off dispatch */ }
-								checked={ true /* get from selector*/ }
+								onChange={ this.toggleNewPostEmail }
+								checked={ notifyOnNewPosts }
 							/>
 						</div>
 						<SegmentedControl>
 							<ControlItem
-								selected={ this.state.selected === 'instant' }
-								onClick={ this.setSelected( 'instant' ) }
+								selected={ this.state.selected === 'instantly' }
+								onClick={ this.setSelected( 'instantly' ) }
 							>
-								{ translate( 'Instant' ) }
+								{ translate( 'Instantly' ) }
 							</ControlItem>
 							<ControlItem
 								selected={ this.state.selected === 'daily' }
@@ -95,8 +130,8 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 						<div className="reader-subscription-list-item__email-popout-toggle">
 							New comments
 							<FormToggle
-								onChange={ noop /* fire off dispatch */ }
-								checked={ false /* get from selector*/ }
+								onChange={ this.toggleNewCommentEmail }
+								checked={ notifyOnNewComments }
 							/>
 						</div>
 					</div>
@@ -106,5 +141,29 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 	}
 }
 
-export default localize( ReaderEmailSubscriptionSettingsPopout );
+const mapStateToProps = ( state, ownProps ) => {
+	const follow = find( getReaderFollows( state ), { blog_ID: ownProps.siteId } );
+
+	const currentDeliveryMethods = get( follow, [ 'delivery_methods', 'email' ], {} );
+	const notifyOnNewPosts = !! currentDeliveryMethods.send_posts;
+	const deliveryFrequency = currentDeliveryMethods.post_delivery_frequency;
+	const notifyOnNewComments = !! currentDeliveryMethods.send_comments;
+
+	return {
+		notifyOnNewComments,
+		notifyOnNewPosts,
+		deliveryFrequency
+	};
+};
+
+export default connect(
+	mapStateToProps,
+	{
+		subscribeToNewPostEmail,
+		unsubscribeToNewPostEmail,
+		updateNewPostEmailSubscription,
+		subscribeToNewCommentEmail,
+		unsubscribeToNewCommentEmail,
+	}
+)( localize( ReaderEmailSubscriptionSettingsPopout ) );
 

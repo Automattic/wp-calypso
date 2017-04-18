@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import connectSite from 'lib/reader-connect-site';
 import SubscriptionListItem from 'blocks/reader-subscription-list-item/';
+import userSettings from 'lib/user-settings';
 
 export default localize( connectSite(
 	( { feed, site, translate, url, feedId, siteId } ) => (
@@ -19,6 +20,7 @@ export default localize( connectSite(
 			site={ site }
 			feed={ feed }
 			url={ url }
+			isEmailBlocked={ userSettings.getSetting( 'subscription_delivery_email_blocked' ) }
 		/>
 	)
 ) );
