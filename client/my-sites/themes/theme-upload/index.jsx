@@ -20,7 +20,7 @@ import ProgressBar from 'components/progress-bar';
 import Button from 'components/button';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
-import { isATEnabled } from 'lib/automated-transfer';
+import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
 // Necessary for ThanksModal
 import QueryActiveTheme from 'components/data/query-active-theme';
 import { localize } from 'i18n-calypso';
@@ -312,7 +312,7 @@ class Upload extends React.Component {
 			return this.renderNotAvailableForMultisite();
 		}
 
-		if ( ! isJetpack && ! this.props.atEnabled ) {
+		if ( ! isJetpack && ! isATEnabledForCurrentSite() ) {
 			return this.renderNotAvailable();
 		}
 
@@ -381,8 +381,7 @@ export default connect(
 			backPath: getBackPath( state ),
 			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
-			siteAdminUrl: getSiteAdminUrl( state, siteId ),
-			atEnabled: isATEnabled( site )
+			siteAdminUrl: getSiteAdminUrl( state, siteId )
 		};
 	},
 	{ uploadTheme, clearThemeUpload, initiateThemeTransfer },
