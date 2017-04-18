@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { get } from 'lodash';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -14,6 +15,7 @@ import {
 	SITE_RECEIVE,
 	SITES_RECEIVE,
 	SITES_UPDATE,
+	SITES_ONCE_CHANGED,
 } from 'state/action-types';
 import analytics from 'lib/analytics';
 import cartStore from 'lib/cart/store';
@@ -21,6 +23,8 @@ import { isNotificationsOpen } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import keyboardShortcuts from 'lib/keyboard-shortcuts';
+
+const debug = debugFactory( 'calypso:state:middleware' );
 
 /**
  * Module variables
@@ -132,6 +136,21 @@ const handler = ( dispatch, action, getState ) => {
 			}, 0 );
 			return;
 	}
+};
+
+/*
+ * Here be dragons.
+ */
+let _queue = [];
+const receiveSitesChangeListener = ( dispatch, { listener } ) => {
+	debug( 'receiveSitesChangeListener' );
+	_queue.push( listener );
+};
+
+const fireChangeListeners = () => {
+	debug( 'firing', _queue.length, 'emitters' );
+	_queue.forEach( ( listener ) => listener() );
+	_queue = [];
 };
 
 export const libraryMiddleware = ( { dispatch, getState } ) => ( next ) => ( action ) => {

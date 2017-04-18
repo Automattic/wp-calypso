@@ -10,8 +10,9 @@ import { uniq, some, startsWith } from 'lodash';
 /**
  * Internal Dependencies
  */
+import { SITES_ONCE_CHANGED } from 'state/action-types';
 import userFactory from 'lib/user';
-import { receiveSite, requestSite } from 'state/sites/actions';
+import { receiveSite, requestSites } from 'state/sites/actions';
 import {
 	getSite,
 	isJetpackModuleActive,
@@ -34,9 +35,7 @@ import analytics from 'lib/analytics';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import {
-	canCurrentUser,
 	getPrimarySiteId,
-	getSites,
 	getVisibleSites,
 	isDomainOnlySite,
 } from 'state/selectors';
@@ -273,9 +272,6 @@ module.exports = {
 		const primaryId = getPrimarySiteId( getState() );
 		const primary = getSite( getState(), primaryId ) || '';
 
-		// @FIXME this is not good
-		const hasInitialized = !! getSites( getState() );
-
 		const redirectToPrimary = () => {
 			let redirectPath = `${ context.pathname }/${ primary.slug }`;
 
@@ -306,11 +302,10 @@ module.exports = {
 		// If the user has only one site, redirect to the single site
 		// context instead of rendering the all-site views.
 		if ( hasOneSite && ! siteID ) {
-			if ( hasInitialized ) {
-				redirectToPrimary();
-				return;
-			}
-			sites.once( 'change', redirectToPrimary );
+			dispatch( {
+				type: SITES_ONCE_CHANGED,
+				listener: redirectToPrimary,
+			} );
 		}
 
 		// If the path fragment does not resemble a site, set all sites to visible
@@ -341,37 +336,30 @@ module.exports = {
 			let waitingNotice;
 			const selectOnSitesChange = () => {
 				// if sites have loaded, but siteID is invalid, redirect to allSitesPath
-				const didFindSite = !! getSite( getState(), siteID );
 				dispatch( setSelectedSiteId( siteID ) );
-				if ( didFindSite ) {
-					sites.initialized = true;
+				if ( getSite( getState(), siteID ) ) {
 					onSelectedSiteAvailable( context );
 					if ( waitingNotice ) {
 						notices.removeNotice( waitingNotice );
 					}
 				} else if ( ( currentUser.visible_site_count !== getVisibleSites( getState() ).length ) ) {
-					sites.initialized = false;
 					waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), { showDismiss: false } );
-					sites.once( 'change', selectOnSitesChange );
-					sites.fetch();
+					dispatch( {
+						type: SITES_ONCE_CHANGED,
+						listener: selectOnSitesChange,
+					} );
+					dispatch( requestSites() );
 				} else {
 					page.redirect( allSitesPath );
 				}
 			};
 			// Otherwise, check when sites has loaded
-			sites.once( 'change', selectOnSitesChange );
+			dispatch( {
+				type: SITES_ONCE_CHANGED,
+				listener: selectOnSitesChange,
+			} );
 		}
 		next();
-	},
-
-	awaitSiteLoaded( context, next ) {
-		const siteUrl = route.getSiteFragment( context.path );
-
-		if ( siteUrl && ! sites.initialized ) {
-			sites.once( 'change', next );
-		} else {
-			next();
-		}
 	},
 
 	jetpackModuleActive( moduleId, redirect ) {
@@ -394,37 +382,6 @@ module.exports = {
 				page.redirect( 'string' === typeof redirect ? redirect : '/stats' );
 			}
 		};
-	},
-
-	fetchJetpackSettings( context, next ) {
-		const siteFragment = route.getSiteFragment( context.path );
-
-		next();
-
-		if ( ! siteFragment ) {
-			return;
-		}
-
-		// @FIXME the following construct seems to allow infinite loops
-		// wherein, if `siteFragment` is invalid, `checkSiteShouldFetch` will
-		// be readded as a handler for `once`.
-		function checkSiteShouldFetch() {
-			const { getState, dispatch } = getStore( context );
-			const site = getSite( getState(), siteFragment );
-			const isJetpack = site && isJetpackSite( getState(), site.ID );
-			const userHasCapability = site && canCurrentUser(
-					getState(),
-					site.ID,
-					'manage_options' );
-
-			if ( ! site ) {
-				sites.once( 'change', checkSiteShouldFetch );
-			} else if ( isJetpack && userHasCapability ) {
-				dispatch( requestSite( site.ID ) );
-			}
-		}
-
-		checkSiteShouldFetch();
 	},
 
 	makeNavigation: function( context, next ) {
