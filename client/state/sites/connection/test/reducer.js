@@ -165,5 +165,23 @@ describe( 'reducer', () => {
 				77203074: false
 			} );
 		} );
+
+		it( 'should not persist state', () => {
+			const original = deepFreeze( {
+				2916284: true
+			} );
+			const state = requesting( original, { type: SERIALIZE } );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should not load persisted state', () => {
+			const original = deepFreeze( {
+				2916284: true
+			} );
+			const state = requesting( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( {} );
+		} );
 	} );
 } );
