@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import url from 'url';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -18,6 +17,7 @@ import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
+import { getSiteName } from 'reader/get-helpers';
 
 // If the blog_ID of a reader feed is 0, that means no site exists for it.
 const getReaderSiteId = feed => feed && feed.blog_ID === 0
@@ -37,48 +37,12 @@ class FeedStream extends React.Component {
 		className: 'is-site-stream',
 	};
 
-	getTitle = ( feed, site ) => {
-		let title;
-
-		if ( ! feed && ! site ) {
-			return this.props.translate( 'Loading Feed' );
-		}
-
-		if ( feed.is_error ) {
-			title = this.props.translate( 'Error fetching feed' );
-		} else if ( feed ) {
-			title = feed.name;
-		}
-
-		if ( ! title && site ) {
-			title = site.name;
-		}
-
-		if ( ! title && feed ) {
-			title = feed.URL || feed.feed_URL;
-			if ( title ) {
-				title = url.parse( title ).hostname;
-			}
-		}
-
-		if ( ! title && site ) {
-			title = site.URL;
-			if ( title ) {
-				title = url.parse( title ).hostname;
-			}
-		}
-
-		if ( ! title ) {
-			title = this.props.translate( 'Loading Feed' );
-		}
-
-		return title;
-	}
-
 	render() {
 		const { feed, site, siteId } = this.props;
 		const emptyContent = ( <EmptyContent /> );
-		const title = this.getTitle( feed, site );
+		const title = (
+			getSiteName( { feed, site } ) || this.props.translate( 'Loading Feed' )
+		);
 
 		if ( feed && feed.is_error ) {
 			return <FeedError sidebarTitle={ title } />;

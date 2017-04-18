@@ -30,7 +30,7 @@ export const getSiteUrl = ( { feed, site, post } = {} ) => {
  * @returns {string} the site title
  */
 export const getSiteName = ( { feed, site, post } ) => {
-	let siteName;
+	let siteName = null;
 
 	if ( site && site.title ) {
 		siteName = site.title || site.domain;
@@ -43,17 +43,13 @@ export const getSiteName = ( { feed, site, post } ) => {
 	/* less happy cases
 	 * 1. error occured loading feed/site. only applies when not given a post.
 	 * 2. there is genuinely no title, fallback to url
-	 * 3. there isn't even a url, fall back to '(no title)'?
+	 * 3. can't find anything, return null
 	 */
 	if ( ! siteName ) {
 		if ( ( site && site.is_error ) || ( feed && feed.is_error ) && ( ! post ) ) {
 			siteName = translate( 'Error fetching feed' ); // TODO: remove this and keep logic just in feed/site stream?
 		} else if ( getSiteUrl( { feed, site, post } ) ) {
 			siteName = url.parse( getSiteUrl( { feed, site, post } ) ).hostname;
-		} else {
-			siteName = translate( '(no title)' );
-			// TODO: when should this exist? ideally never because url should always be a better fallback?
-			// and even if it isn't then lets return null;
 		}
 	}
 
