@@ -38,20 +38,6 @@ export default {
 		return site && site.options ? site.options.gmt_offset : null;
 	},
 
-	getDefaultCategory( site ) {
-		if ( ! site ) {
-			return;
-		}
-
-		if ( site.settings ) {
-			return site.settings.default_category;
-		}
-
-		if ( site.options ) {
-			return site.options.default_category;
-		}
-	},
-
 	getDefaultPostFormat( site ) {
 		if ( ! site ) {
 			return;
