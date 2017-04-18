@@ -74,14 +74,7 @@ function getSuggestions( count, tags ) {
 		? tagSuggestions
 		: suggestionsFromPicks( count );
 
-	trackSuggestionRailcarRender( newSuggestions );
 	return newSuggestions;
-}
-
-function trackSuggestionRailcarRender( suggestionsToTrack ) {
-	suggestionsToTrack.forEach( suggestion => {
-		analytics.tracks.recordEvent( 'calypso_traintracks_render', suggestion.railcar );
-	} );
 }
 
 const SuggestionsProvider = ( Element, count = 3 ) => class extends Component {
