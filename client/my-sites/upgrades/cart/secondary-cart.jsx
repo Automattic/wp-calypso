@@ -3,6 +3,8 @@
  */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import Dispatcher from 'dispatcher';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -15,6 +17,7 @@ import CartPlanDiscountAd from './cart-plan-discount-ad';
 import Sidebar from 'layout/sidebar';
 import observe from 'lib/mixins/data-observe';
 import CartBodyLoadingPlaceholder from 'my-sites/upgrades/cart/cart-body/loading-placeholder';
+import { action as upgradesActionTypes } from 'lib/upgrades/constants';
 
 const SecondaryCart = React.createClass( {
 	propTypes: {
@@ -27,12 +30,34 @@ const SecondaryCart = React.createClass( {
 
 	mixins: [ CartMessagesMixin, observe( 'sites' ) ],
 
+	getInitialState() {
+		return {
+			cartVisible: false,
+		};
+	},
+
+	componentWillMount() {
+		this.dispatchToken = Dispatcher.register( function( payload ) {
+			if ( payload.action.type === upgradesActionTypes.CART_ON_MOBILE_SHOW ) {
+				this.setState( { cartVisible: payload.action.show } );
+			}
+		}.bind( this ) );
+	},
+
+	componentWillUnmount() {
+		Dispatcher.unregister( this.dispatchToken );
+	},
+
 	render() {
 		const { cart, selectedSite } = this.props;
+		const cartClasses = classNames( {
+			'secondary-cart': true,
+			'secondary-cart__hidden': ! this.state.cartVisible,
+		} );
 
 		if ( ! cart.hasLoadedFromServer ) {
 			return (
-				<Sidebar className="secondary-cart">
+				<Sidebar className={ cartClasses }>
 					<CartSummaryBar additionalClasses="cart-header" />
 					<CartBodyLoadingPlaceholder />
 				</Sidebar>
@@ -40,7 +65,7 @@ const SecondaryCart = React.createClass( {
 		}
 
 		return (
-			<Sidebar className="secondary-cart">
+			<Sidebar className={ cartClasses }>
 				<CartSummaryBar additionalClasses="cart-header" />
 				<CartPlanAd
 					selectedSite={ selectedSite }

@@ -22,6 +22,7 @@ import PaymentChatButton from './payment-chat-button';
 import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import ProgressBar from 'components/progress-bar';
+import CartToggle from './cart-toggle';
 
 var CreditCardPaymentBox = React.createClass( {
 	getInitialState: function() {
@@ -115,7 +116,7 @@ var CreditCardPaymentBox = React.createClass( {
 
 				<CartCoupon cart={ cart } />
 
-				<a className="checkout__summary-toggle" href="">Show order summary</a>
+				<CartToggle />
 
 				{
 					showPaymentChatButton &&

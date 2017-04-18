@@ -352,6 +352,12 @@ div.popover-cart__popover {
 	}
 }
 
+@include breakpoint( "<660px" ) {
+	.secondary-cart__hidden {
+		display: none;
+	}
+}
+
 .cart-item__loading-placeholder {
 	span {
 		@include placeholder(23%);
