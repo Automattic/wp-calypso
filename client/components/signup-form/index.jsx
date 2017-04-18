@@ -154,7 +154,7 @@ class SignupForm extends Component {
 
 	validate( fields, onComplete ) {
 		wpcom.undocumented().validateNewUser( fields, ( error, response ) => {
-			if ( this.state.readyToLogin || this.props.submitting ) {
+			if ( this.props.submitting ) {
 				// this is a stale callback, we have already signed up or are logging in
 				return;
 			}
@@ -448,10 +448,6 @@ class SignupForm extends Component {
 			returnUrl += this.props.locale + '.';
 		}
 		return returnUrl + urlArray[ 1 ];
-	}
-
-	localizeUrlWithLastSlug( url ) {
-		return ( this.props.locale ) ? '/log-in/' + this.props.locale : url;
 	}
 
 	footerLink() {
