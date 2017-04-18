@@ -4,9 +4,9 @@
 import React, { Component, PropTypes } from 'react';
 import SocialLogo from 'social-logos';
 import { loadScript } from 'lib/load-script';
+import { localize } from 'i18n-calypso';
 
-export default class FacebookLoginButton extends Component {
-
+class FacebookLoginButton extends Component {
 	// See: https://developers.facebook.com/docs/javascript/reference/FB.init/v2.8
 	static propTypes = {
 		appId: PropTypes.string.isRequired,
@@ -16,6 +16,7 @@ export default class FacebookLoginButton extends Component {
 		xfbml: PropTypes.bool,
 		responseHandler: PropTypes.func.isRequired,
 		scope: PropTypes.string,
+		translate: PropTypes.func.isRequired
 	};
 
 	static defaultProps = {
@@ -91,10 +92,15 @@ export default class FacebookLoginButton extends Component {
 					<SocialLogo className="social-buttons__logo" icon="facebook" size={ 24 } />
 
 					<span className="social-buttons__service-name">
-						Facebook
+						{ this.props.translate( 'Continue with %(service)s', {
+							args: { service: 'Facebook' },
+							comment: '%(service)s is the name of a Social Network, e.g. "Google", "Facebook", "Twitter" ...'
+						} ) }
 					</span>
 				</span>
 			</button>
 		);
 	}
 }
+
+export default localize( FacebookLoginButton );
