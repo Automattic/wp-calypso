@@ -322,6 +322,8 @@ class SignupForm extends Component {
 	}
 
 	formFields() {
+		const isEmailValid = ! this.props.disableEmailInput && formState.isFieldValid( this.state.form, 'email' );
+
 		return (
 			<div>
 				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'email' ) }>
@@ -337,7 +339,7 @@ class SignupForm extends Component {
 						type="email"
 						value={ formState.getFieldValue( this.state.form, 'email' ) }
 						isError={ formState.isFieldInvalid( this.state.form, 'email' ) }
-						isValid={ ! this.props.disableEmailInput && this.state.validationInitialized && formState.isFieldValid( this.state.form, 'email' ) }
+						isValid={ this.state.validationInitialized && isEmailValid }
 						onBlur={ this.handleBlur }
 						onChange={ this.handleChangeEvent } />
 					{ this.emailDisableExplanation() }

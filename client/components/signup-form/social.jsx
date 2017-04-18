@@ -57,7 +57,9 @@ class SocialSignupForm extends Component {
 				</div>
 
 				<p>
-					{ this.props.translate( 'Connect to your existing social profile to get started faster. We\'ll never post without your permission.' ) }
+					{ this.props.translate(
+						"Connect to your existing social profile to get started faster. We'll never post without your permission."
+					) }
 				</p>
 			</div>
 		);
