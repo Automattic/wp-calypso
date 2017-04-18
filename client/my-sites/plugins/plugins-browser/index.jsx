@@ -25,11 +25,13 @@ import URLSearch from 'lib/mixins/url-search';
 import infiniteScroll from 'lib/mixins/infinite-scroll';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import FeatureExample from 'components/feature-example';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import { hasTouch } from 'lib/touch-detect';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
-import { isJetpackSite, canJetpackSiteManage } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { isATEnabledForCurrentSite } from 'lib/automated-transfer';
+import { isJetpackModuleActive } from 'state/selectors';
 
 const PluginsBrowser = React.createClass( {
 	_SHORT_LIST_LENGTH: 6,
@@ -278,11 +280,17 @@ const PluginsBrowser = React.createClass( {
 		return <DocumentHead title={ this.translate( 'Plugin Browser', { textOnly: true } ) } />;
 	},
 
+	renderQueryJetpackModules() {
+		const { selectedSite } = this.props;
+		return selectedSite && <QueryJetpackModules siteId={ selectedSite.ID } />;
+	},
+
 	renderAccessError() {
 		if ( this.state.accessError ) {
 			return (
 				<MainComponent>
 					{ this.renderDocumentHead() }
+					{ this.renderQueryJetpackModules() }
 					<SidebarNavigation />
 					<EmptyContent { ...this.state.accessError } />
 					{ this.state.accessError.featureExample
@@ -334,6 +342,7 @@ const PluginsBrowser = React.createClass( {
 		return (
 			<MainComponent className="is-wide-layout">
 				{ this.renderDocumentHead() }
+				{ this.renderQueryJetpackModules() }
 				<SidebarNavigation />
 				{ this.getPageHeaderView() }
 				{ this.getPluginBrowserContent() }
@@ -346,7 +355,7 @@ export default connect(
 	state => ( {
 		selectedSite: getSelectedSite( state ),
 		isJetpackSite: siteId => isJetpackSite( state, siteId ),
-		canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
+		canJetpackSiteManage: siteId => isJetpackModuleActive( state, siteId, 'manage' ),
 	} ),
 	{
 		recordTracksEvent

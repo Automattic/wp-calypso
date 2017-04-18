@@ -28,8 +28,10 @@ import PluginsList from './plugins-list';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import WpcomPluginPanel from 'my-sites/plugins-wpcom';
 import PluginsBrowser from './plugins-browser';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite, canJetpackSiteManage, canJetpackSiteUpdateFiles } from 'state/sites/selectors';
+import { isJetpackSite, canJetpackSiteUpdateFiles } from 'state/sites/selectors';
+import { isJetpackModuleActive } from 'state/selectors';
 
 const PluginsMain = React.createClass( {
 	mixins: [ URLSearch ],
@@ -367,12 +369,28 @@ const PluginsMain = React.createClass( {
 				<Main>
 					{ this.renderDocumentHead() }
 					<SidebarNavigation />
-					<JetpackManageErrorPage
-						template="optInManage"
-						siteId={ selectedSiteId }
-						title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
-						section="plugins"
-						featureExample={ this.getMockPluginItems() } />
+					<QueryJetpackModules siteId={ selectedSiteId } />
+					{ this.props.canSelectedJetpackSiteManage === false
+						? (
+							<JetpackManageErrorPage
+								template="optInManage"
+								siteId={ selectedSiteId }
+								title={ this.translate( 'Looking to manage this site\'s plugins?' ) }
+								section="plugins"
+								featureExample={ this.getMockPluginItems() } />
+						)
+						: (
+							<div>
+								<EmptyContent
+									title=""
+									section="plugins"
+									illustration=""
+									/>
+								<FeatureExample>{ this.getMockPluginItems() }</FeatureExample>
+							</div>
+						)
+					}
+
 				</Main>
 			);
 		}
@@ -386,6 +404,7 @@ const PluginsMain = React.createClass( {
 		return (
 			<Main className={ containerClass }>
 				{ this.renderDocumentHead() }
+				<QueryJetpackModules siteId={ selectedSiteId } />
 				<SidebarNavigation />
 				<SectionNav selectedText={ this.getSelectedText() }>
 					<NavTabs>
@@ -435,7 +454,7 @@ export default connect(
 			selectedSiteId: selectedSite && selectedSite.ID,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
-			canSelectedJetpackSiteManage: selectedSite && canJetpackSiteManage( state, selectedSite.ID ),
+			canSelectedJetpackSiteManage: isJetpackModuleActive( state, selectedSite.ID, 'manage' ),
 			canSelectedJetpackSiteUpdateFiles: selectedSite && canJetpackSiteUpdateFiles( state, selectedSite.ID ),
 			canJetpackSiteUpdateFiles: siteId => canJetpackSiteUpdateFiles( state, siteId ),
 			isJetpackSite: siteId => isJetpackSite( state, siteId ),
