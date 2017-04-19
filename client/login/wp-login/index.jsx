@@ -33,7 +33,8 @@ import {
 import Main from 'components/main';
 import LoginBlock from 'blocks/login';
 import RequestLoginEmailForm from '../magic-login/request-login-email-form';
-import { recordTracksEvent, recordPageView } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class Login extends React.Component {
 	onClickEnterPasswordInstead = event => {
@@ -76,10 +77,6 @@ class Login extends React.Component {
 		if ( magicLoginEnabled && queryArguments && queryArguments.action === 'handleLoginEmail' ) {
 			this.props.showMagicLoginInterstitialPage();
 		}
-	}
-
-	componentDidMount() {
-		this.props.recordPageView( document.location.pathname, document.title );
 	}
 
 	goBack = event => {
@@ -140,6 +137,7 @@ class Login extends React.Component {
 
 		return (
 			<Main className="wp-login">
+				<PageViewTracker path="/login" title="Login" />
 				{ this.magicLoginMainContent() || (
 					<div>
 						<div className="wp-login__container">
@@ -175,7 +173,6 @@ const mapDispatch = {
 	showMagicLoginInterstitialPage,
 	showMagicLoginRequestForm,
 	recordTracksEvent,
-	recordPageView,
 };
 
 export default connect( mapState, mapDispatch )( localize( Login ) );
