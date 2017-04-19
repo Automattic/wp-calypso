@@ -7,7 +7,7 @@ var React = require( 'react' ),
 	cloneDeep = require( 'lodash/cloneDeep' ),
 	connect = require( 'react-redux' ).connect,
 	debug = require( 'debug' )( 'calypso:my-sites:customize' );
-import { get } from 'lodash';
+import { get, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -70,7 +70,7 @@ var Customize = React.createClass( {
 	},
 
 	redirectIfNeeded: function( menusUrl, pathname ) {
-		if ( menusUrl !== pathname ) {
+		if ( startsWith( pathname, '/customize/menus' ) && pathname !== menusUrl ) {
 			page( menusUrl );
 		}
 	},
