@@ -3,12 +3,12 @@
  */
 import React, { PropTypes } from 'react';
 import noop from 'lodash/noop';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import observe from 'lib/mixins/data-observe';
 import PostActions from 'lib/posts/actions';
 import MediaDropZone from 'my-sites/media-library/drop-zone';
 import MediaActions from 'lib/media/actions';
@@ -16,12 +16,9 @@ import MediaUtils from 'lib/media/utils';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaValidationStore from 'lib/media/validation-store';
 import markup from 'post-editor/media-modal/markup';
+import { getSelectedSite } from 'state/ui/selectors';
 
-export default React.createClass( {
-	displayName: 'TinyMCEDropZone',
-
-	mixins: [ observe( 'sites' ) ],
-
+export const TinyMCEDropZone = React.createClass( {
 	propTypes: {
 		editor: PropTypes.object,
 		sites: PropTypes.object,
@@ -92,8 +89,7 @@ export default React.createClass( {
 	},
 
 	insertMedia() {
-		const { sites, onInsertMedia, onRenderModal } = this.props;
-		const site = sites.getSelectedSite();
+		const { site, onInsertMedia, onRenderModal } = this.props;
 
 		if ( ! site ) {
 			return;
@@ -122,8 +118,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { sites } = this.props;
-		const site = sites.getSelectedSite();
+		const { site } = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -138,3 +133,9 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state ) => {
+	return {
+		site: getSelectedSite( state ),
+	};
+} )( TinyMCEDropZone );
