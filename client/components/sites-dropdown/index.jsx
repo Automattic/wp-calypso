@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import Gridicon from 'gridicons';
@@ -12,11 +13,12 @@ import Gridicon from 'gridicons';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import SiteSelector from 'components/site-selector';
-import sitesList from 'lib/sites-list';
+import { getSite } from 'state/sites/selectors';
+import {
+	getPrimarySiteId,
+} from 'state/selectors';
 
-const sites = sitesList();
-
-export default class SitesDropdown extends PureComponent {
+class SitesDropdown extends PureComponent {
 
 	static propTypes = {
 		selectedSiteId: React.PropTypes.number,
@@ -42,8 +44,8 @@ export default class SitesDropdown extends PureComponent {
 		this.onClose = this.onClose.bind( this );
 
 		const selectedSite = props.selectedSiteId
-			? sites.getSite( props.selectedSiteId )
-			: sites.getPrimary();
+			? props.getSite( props.selectedSiteId )
+			: props.getSite( props.primarySiteId );
 
 		this.state = {
 			selectedSiteSlug: selectedSite && selectedSite.slug
@@ -51,7 +53,7 @@ export default class SitesDropdown extends PureComponent {
 	}
 
 	getSelectedSite() {
-		return sites.getSite( this.state.selectedSiteSlug );
+		return this.props.getSite( this.state.selectedSiteSlug );
 	}
 
 	selectSite( siteSlug ) {
@@ -87,7 +89,6 @@ export default class SitesDropdown extends PureComponent {
 					</div>
 					{ this.state.open &&
 						<SiteSelector
-							sites={ sites }
 							autoFocus={ true }
 							onClose={ this.onClose }
 							onSiteSelect={ this.selectSite }
@@ -101,3 +102,10 @@ export default class SitesDropdown extends PureComponent {
 		);
 	}
 }
+
+export default connect( ( state ) => {
+	return {
+		getSite: getSite.bind( null, state ),
+		primarySiteId: getPrimarySiteId( state ),
+	};
+} )( SitesDropdown );
