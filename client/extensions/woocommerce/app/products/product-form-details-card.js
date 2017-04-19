@@ -54,8 +54,8 @@ export default class ProductFormDetailsCard extends Component {
 		const __ = i18n.translate;
 		return (
 			<Card className="products__product-form-details">
-				<div>
-					<FormLabel className="products__product-form-featured">
+				<div className="products__product-form-details-featured">
+					<FormLabel>
 						{ __( 'Featured' ) }
 						<CompactFormToggle
 							onChange={ this.toggleFeatured }
@@ -63,15 +63,20 @@ export default class ProductFormDetailsCard extends Component {
 						/>
 					</FormLabel>
 				</div>
-				<div>
-					<FormLabel className="products__product-form-name">
-						<span>{ __( 'Product name' ) }</span>
-						<FormTextInput value={ product.name || '' } onChange={ this.setName } />
-					</FormLabel>
-					<FormLabel className="products__product-form-description">
-						<span>{ __( 'Description' ) }</span>
-						<FormTextArea value={ product.description || '' } onChange={ this.setDescription } />
-					</FormLabel>
+				<div className="products__product-form-details-wrapper">
+					<div className="products__product-form-details-images">
+
+					</div>
+					<div className="products__product-form-details-basic">
+						<FormLabel>
+							<span>{ __( 'Product name' ) }</span>
+							<FormTextInput value={ product.name || '' } onChange={ this.setName } />
+						</FormLabel>
+						<FormLabel>
+							<span>{ __( 'Description' ) }</span>
+							<FormTextArea value={ product.description || '' } onChange={ this.setDescription } />
+						</FormLabel>
+					</div>
 				</div>
 			</Card>
 		);

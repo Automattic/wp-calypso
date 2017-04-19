@@ -5,6 +5,30 @@
 		border: 0;
 	}
 
+	.products__product-form-details {
+		.products__product-form-details-featured {
+			text-align: right;
+
+			.form-toggle__wrapper {
+				margin-left: 10px;
+			}
+		}
+
+		.products__product-form-details-wrapper {
+			display: flex;
+		}
+
+		.products__product-form-details-images,
+		.products__product-form-details-basic {
+			flex: 1;
+			margin-right: 10px;
+
+			&:last-child {
+				margin-right: 0;
+			}
+		}
+	}
+
 	.products__variation-types-form-wrapper {
 		padding: 24px;
 		border-top: 1px solid $gray-light;
