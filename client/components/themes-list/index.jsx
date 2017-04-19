@@ -63,14 +63,6 @@ export const ThemesList = React.createClass( {
 		window.removeEventListener( 'resize', this.onResize );
 	},
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this._grid === undefined || isEqual( nextProps.themes, this.props.themes ) ) {
-			return;
-		}
-
-		this._grid.forceUpdate();
-	},
-
 	shouldComponentUpdate( nextProps ) {
 		return nextProps.loading !== this.props.loading ||
 			! isEqual( nextProps.themes, this.props.themes ) ||
@@ -100,12 +92,9 @@ export const ThemesList = React.createClass( {
 		);
 	},
 
-	onGridRendered( grid ) {
-		this._grid = grid;
-	},
-
 	onResize() {
 		this._width = findDOMNode( this ).offsetWidth;
+		this.forceUpdate();
 	},
 
 	onScroll() {
@@ -125,10 +114,10 @@ export const ThemesList = React.createClass( {
 					rowCount={ 1000 }
 					threshold={ 20 }
 				>
-					{ ( { onRowsRendered } ) => (
+					{ ( { onRowsRendered, registerChild } ) => (
 						<WindowScroller ref={ this.onScrollerRendered } onScroll={ this.onScroll }>
 							{ ( { scrollTop } ) => {
-								return this.renderGrid( scrollTop, onRowsRendered );
+								return this.renderGrid( scrollTop, onRowsRendered, registerChild );
 							} }
 						</WindowScroller>
 					) }
@@ -137,7 +126,7 @@ export const ThemesList = React.createClass( {
 		);
 	},
 
-	renderGrid( scrollTop, onRowsRendered ) {
+	renderGrid( scrollTop, onRowsRendered, registerChild ) {
 		const minColumnWidth = 250;
 		const ssrSpacers = 20;
 
@@ -152,12 +141,11 @@ export const ThemesList = React.createClass( {
 		const onCellsRendered = ( { stopIndex } ) => {
 			if (
 				! this.props.loading &&
-				stopIndex < this.props.themesCount &&
 				! this.isRowLoaded( stopIndex )
 			) {
 				onRowsRendered( {
 					startIndex: Math.min( this.props.themes.length, stopIndex ),
-					stopIndex: Math.min( this.props.themes.length + 19, stopIndex )
+					stopIndex: Math.min( this.props.themes.length + 19, this.props.themesCount - 1, stopIndex )
 				} );
 			}
 		};
@@ -173,7 +161,7 @@ export const ThemesList = React.createClass( {
 				cellRenderer={ this.renderCell }
 				overscanRowCount={ 3 }
 				onCellsRendered={ onCellsRendered }
-				ref={ this.onGridRendered }
+				ref={ registerChild }
 			/>
 		);
 	},
