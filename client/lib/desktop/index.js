@@ -123,10 +123,10 @@ var Desktop = {
 	onShowMySites: function() {
 		debug( 'Showing my sites' );
 		const site = this.selectedSite;
-		const siteId = this.isSingle() ? site.slug : null;
+		const siteSlug = site ? site.slug : null;
 
 		this.clearNotificationBar();
-		page( getStatsPathForTab( 'day', siteId ) );
+		page( getStatsPathForTab( 'day', siteSlug ) );
 	},
 
 	onShowReader: function() {
