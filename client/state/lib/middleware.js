@@ -60,7 +60,7 @@ const updateSelectedSiteForCart = ( dispatch, action, getState ) => {
 };
 
 /**
- * Sets the selectedSiteId for lib/keyboard-shortcuts/global
+ * Sets the selectedSite for lib/keyboard-shortcuts/global
  *
  * @param {function} dispatch - redux dispatch function
  * @param {object}   action   - the dispatched action
