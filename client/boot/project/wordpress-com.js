@@ -20,7 +20,6 @@ const config = require( 'config' ),
 	route = require( 'lib/route' ),
 	normalize = require( 'lib/route/normalize' ),
 	{ isLegacyRoute } = require( 'lib/route/legacy-routes' ),
-	sitesFactory = require( 'lib/sites-list' ), // eslint-disable-line no-restricted-modules
 	superProps = require( 'lib/analytics/super-props' ),
 	translatorJumpstart = require( 'lib/translator-jumpstart' ),
 	nuxWelcome = require( 'layout/nux-welcome' ),
@@ -219,7 +218,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 	reduxStore.dispatch( initializeHappychat() );
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
-		require( 'lib/keyboard-shortcuts/global' )( sitesFactory() );
+		require( 'lib/keyboard-shortcuts/global' )();
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
