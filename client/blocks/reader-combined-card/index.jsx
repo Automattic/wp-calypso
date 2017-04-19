@@ -12,12 +12,12 @@ import Card from 'components/card';
 import { getStreamUrl } from 'reader/route';
 import ReaderAvatar from 'blocks/reader-avatar';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
-import { siteNameFromSiteAndPost } from 'reader/utils';
 import ReaderCombinedCardPost from './post';
 import { keysAreEqual, keyForPost } from 'lib/feed-stream-store/post-key';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import { recordTrack } from 'reader/stats';
+import { getSiteName } from 'reader/get-helpers';
 import FollowButton from 'reader/follow-button';
 
 class ReaderCombinedCard extends React.Component {
@@ -68,7 +68,7 @@ class ReaderCombinedCard extends React.Component {
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
 		const streamUrl = getStreamUrl( feedId, siteId );
-		const siteName = siteNameFromSiteAndPost( site, posts[ 0 ] );
+		const siteName = getSiteName( { site, post: posts[ 0 ] } );
 		const isSelectedPost = post => keysAreEqual( keyForPost( post ), selectedPostKey );
 		const followUrl = feed && feed.URL || site && site.URL;
 		const mediaCount = filter( posts, post => ! isEmpty( post.canonical_media ) ).length;

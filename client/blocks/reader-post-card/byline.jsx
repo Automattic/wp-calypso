@@ -10,7 +10,7 @@ import Gridicon from 'gridicons';
  */
 import ReaderAvatar from 'blocks/reader-avatar';
 import PostTime from 'reader/post-time';
-import { siteNameFromSiteAndPost } from 'reader/utils';
+import { getSiteName } from 'reader/get-helpers';
 import {
 	recordAction,
 	recordGaEvent,
@@ -70,7 +70,7 @@ class PostByline extends React.Component {
 		const { post, site, feed, isDiscoverPost, showSiteName } = this.props;
 		const feedId = get( post, 'feed_ID' );
 		const siteId = get( site, 'ID' );
-		const siteName = siteNameFromSiteAndPost( site, post );
+		const siteName = getSiteName( { site, feed, post } );
 		const hasAuthorName = has( post, 'author.name' );
 		const hasMatchingAuthorAndSiteNames = hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
 		const shouldDisplayAuthor = ! isDiscoverPost && hasAuthorName && ( ! hasMatchingAuthorAndSiteNames || ! showSiteName );

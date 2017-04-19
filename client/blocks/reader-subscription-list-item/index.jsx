@@ -13,6 +13,7 @@ import ReaderAvatar from 'blocks/reader-avatar';
 import FollowButton from 'reader/follow-button';
 import { getStreamUrl } from 'reader/route';
 import EmailSettings from './email-settings';
+import { getSiteName, getSiteUrl } from 'reader/get-helpers';
 
 function ReaderSubscriptionListItem( {
 	url,
@@ -24,7 +25,7 @@ function ReaderSubscriptionListItem( {
 	translate,
 	followSource,
 } ) {
-	const siteTitle = ( site && site.title ) || ( feed && feed.name );
+	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
 	const siteExcerpt = ( site && site.description ) || ( feed && feed.description );
 	// prefer a users name property
@@ -34,9 +35,7 @@ function ReaderSubscriptionListItem( {
 	const siteIcon = get( site, 'icon.img' );
 	const feedIcon = get( feed, 'image' );
 	const streamUrl = getStreamUrl( feedId, siteId );
-	const siteUrl = url ||
-		( site && site.URL ) ||
-		( feed && ( feed.feed_URL || feed.URL ) );
+	const siteUrl = url || getSiteUrl( { feed, site } );
 	const isFollowing = ( site && site.is_following ) || ( feed && feed.is_following );
 
 	return (

@@ -34,7 +34,7 @@ import { recordAction, recordGaEvent, recordTrackForPost, recordPermalinkClick }
 import Comments from 'blocks/comments';
 import scrollTo from 'lib/scroll-to';
 import PostExcerptLink from 'reader/post-excerpt-link';
-import { siteNameFromSiteAndPost } from 'reader/utils';
+import { getSiteName } from 'reader/get-helpers';
 import { keyForPost } from 'lib/feed-stream-store/post-key';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import ReaderPostActions from 'blocks/reader-post-actions';
@@ -274,7 +274,7 @@ export class FullPostView extends React.Component {
 			return <ReaderFullPostUnavailable post={ post } onBackClick={ this.handleBack } />;
 		}
 
-		const siteName = siteNameFromSiteAndPost( site, post );
+		const siteName = getSiteName( { site, post } );
 		const classes = { 'reader-full-post': true };
 		const showRelatedPosts = ! post.is_external && post.site_ID;
 		const relatedPostsFromOtherSitesTitle = translate(
