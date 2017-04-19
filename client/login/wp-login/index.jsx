@@ -33,15 +33,18 @@ import {
 import Main from 'components/main';
 import LoginBlock from 'blocks/login';
 import RequestLoginEmailForm from '../magic-login/request-login-email-form';
+import { recordTracksEvent, recordPageView } from 'state/analytics/actions';
 
 class Login extends React.Component {
 	onClickEnterPasswordInstead = event => {
 		event.preventDefault();
+		this.props.recordTracksEvent( 'calypso_login_enterpasswordinstead_click' );
 		this.props.hideMagicLoginRequestForm();
 	};
 
 	onMagicLoginRequestClick = event => {
 		event.preventDefault();
+		this.props.recordTracksEvent( 'calypso_login_magicloginrequest_click' );
 		this.props.showMagicLoginRequestForm();
 	};
 
@@ -53,10 +56,13 @@ class Login extends React.Component {
 
 		switch ( magicLoginView ) {
 			case LINK_EXPIRED_PAGE:
+				this.props.recordTracksEvent( 'calypso_login_magiclink_expiredlink_view' );
 				return <EmailedLoginLinkExpired />;
 			case CHECK_YOUR_EMAIL_PAGE:
+				this.props.recordTracksEvent( 'calypso_login_magiclink_linksent_view' );
 				return <EmailedLoginLinkSuccessfully emailAddress={ magicLoginEmailAddress } />;
 			case INTERSTITIAL_PAGE:
+				this.props.recordTracksEvent( 'calypso_login_magiclink_interstitial_view' );
 				return <HandleEmailedLinkForm />;
 		}
 	}
@@ -72,8 +78,14 @@ class Login extends React.Component {
 		}
 	}
 
+	componentDidMount() {
+		this.props.recordPageView( document.location.pathname, document.title );
+	}
+
 	goBack( event ) {
 		event.preventDefault();
+
+		this.props.recordTracksEvent( 'calypso_login_goback_click' );
 
 		if ( typeof window !== 'undefined' ) {
 			window.history.back();
@@ -148,6 +160,8 @@ const mapDispatch = {
 	hideMagicLoginRequestForm,
 	showMagicLoginInterstitialPage,
 	showMagicLoginRequestForm,
+	recordTracksEvent,
+	recordPageView,
 };
 
 export default connect( mapState, mapDispatch )( localize( Login ) );

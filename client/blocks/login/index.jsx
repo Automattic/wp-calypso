@@ -17,6 +17,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { loginUser } from 'state/login/actions';
 import Notice from 'components/notice';
 import { createFormAndSubmit } from 'lib/form';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 export class Login extends Component {
 	static propTypes = {
@@ -46,6 +47,7 @@ export class Login extends Component {
 	};
 
 	onChangeField = ( event ) => {
+		this.props.recordTracksEvent( 'calypso_loginblock_rememberme_change', { new_value: event.target.value } );
 		this.setState( {
 			[ event.target.name ]: event.target.value
 		} );
@@ -56,7 +58,11 @@ export class Login extends Component {
 		this.setState( {
 			submitting: true
 		} );
+
+		this.props.recordTracksEvent( 'calypso_loginblock_login_submit' );
+
 		this.props.loginUser( this.state.usernameOrEmail, this.state.password ).then( () => {
+			this.props.recordTracksEvent( 'calypso_loginblock_login_success' );
 			this.dismissNotice();
 			createFormAndSubmit( config( 'login_url' ), {
 				log: this.state.usernameOrEmail,
@@ -65,6 +71,10 @@ export class Login extends Component {
 				rememberme: this.state.rememberme ? 1 : 0,
 			} );
 		} ).catch( errorMessage => {
+			this.props.recordTracksEvent( 'calypso_loginblock_login_failure', {
+				error_message: errorMessage
+			} );
+
 			this.setState( {
 				submitting: false,
 				errorMessage
@@ -147,5 +157,6 @@ export default connect(
 	null,
 	{
 		loginUser,
+		recordTracksEvent
 	}
 )( localize( Login ) );
