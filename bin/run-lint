@@ -7,7 +7,7 @@ var argsESLint = [ '--cache', '--quiet', '--ext=.js,.jsx', '--format=json' ];
 var argsESLines = [ '--quiet' ];
 
 const markerIndex = process.argv.indexOf('--');
-if ( process.argv.length > 2 ) {
+if ( process.argv.length > 2 && ( -1 === markerIndex || 2 < markerIndex ) ) {
 	// use -- as a marker for end of options,
 	// so any value that follows the marker is considered an option for ESLines.
 	if ( markerIndex > -1 ) {

@@ -198,7 +198,7 @@
     "docker": "docker run -it --name wp-calypso --rm -p 80:3000 -e NODE_ENV='wpcalypso' -e CALYPSO_ENV='wpcalypso' wp-calypso",
     "rm": "node bin/rm.js",
     "clean": "run-p clean:*",
-    "clean:public": "npm run rm -- public .css .css.map .js",
+    "clean:public": "npm run rm -- public .css .css.map .js .js.map",
     "clean:devdocs": "npm run rm -- server/devdocs/search-index.js && npm run rm -- server/devdocs/proptypes-index.json && npm run rm -- server/devdocs/components-usage-stats.json",
     "clean:build": "npm run rm -- build && npm run rm -- server/bundler .json && npm run rm -- .babel-cache",
     "distclean": "npm run clean && npm run rm -- node_modules"
