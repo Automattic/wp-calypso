@@ -38,7 +38,7 @@ const ConnectedSingleSiteWpcom = connectOptions(
 					description={
 						translate( 'Get advanced customization, more storage space, and video support along with all your new themes.' )
 					}
-					event="themes_custom_design"
+					event="themes_plans_free_personal"
 				/>
 				}
 				{ ( currentPlanSlug === PLAN_PREMIUM ) && <Banner
@@ -47,7 +47,7 @@ const ConnectedSingleSiteWpcom = connectOptions(
 					description={
 						translate( 'Get Google Analytics integration, advanced SEO tools, personalized help, and more.' )
 					}
-					event="themes_custom_design"
+					event="themes_plans_premium"
 				/>
 				}
 
