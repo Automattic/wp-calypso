@@ -22,10 +22,10 @@ import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route/path';
-import { getCurrentUser } from 'state/current-user/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { domainManagementList } from 'my-sites/upgrades/paths';
 import { getSite } from 'state/sites/selectors';
+import { getPrimarySiteId } from 'state/selectors';
 
 const MasterbarLoggedIn = React.createClass( {
 	propTypes: {
@@ -136,8 +136,7 @@ const MasterbarLoggedIn = React.createClass( {
 export default connect( ( state ) => {
 	// Falls back to using the user's primary site if no site has been selected
 	// by the user yet
-	const siteId = getSelectedSiteId( state ) ||
-		get( getCurrentUser( state ), 'primary_blog' );
+	const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
 
 	let siteSlug = getSiteSlug( state, siteId );
 	let domainOnlySite = false;
