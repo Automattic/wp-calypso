@@ -57,7 +57,7 @@ export function getFeatureTitle( feature ) {
 	return invoke( FEATURES_LIST, [ feature, 'getTitle' ] );
 }
 
-export function canUpgradeToPlan( planKey, site = sitesList.getSelectedSite() ) {
+export function canUpgradeToPlan( planKey, site ) {
 	const plan = get( site, [ 'plan', 'expired' ], false ) ? PLAN_FREE : get( site, [ 'plan', 'product_slug' ], PLAN_FREE );
 	return get( getPlan( planKey ), 'availableFor', () => false )( plan );
 }
