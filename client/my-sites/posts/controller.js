@@ -33,7 +33,7 @@ module.exports = {
 			analyticsPageTitle = 'Blog Posts',
 			baseAnalyticsPath;
 
-		function shouldRedirectMyPosts( author ) {
+		function shouldRedirectMyPosts() {
 			const state = context.store.getState();
 			const siteId = getSelectedSiteId( state );
 
@@ -59,7 +59,7 @@ module.exports = {
 		search = ( 'undefined' !== typeof search ) ? search : '';
 		debug( 'search: `%s`', search );
 
-		if ( shouldRedirectMyPosts( author ) ) {
+		if ( shouldRedirectMyPosts() ) {
 			page.redirect( context.path.replace( /\/my\b/, '' ) );
 			return;
 		}
