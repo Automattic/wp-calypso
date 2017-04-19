@@ -69,20 +69,22 @@ export const updateSettings = ( siteId, settings ) => {
 };
 
 /**
+ * Saves settings for a site.
+ *
  * @param  {Number} siteId Site ID
- * @param  {Object} updatedSettings the updated settings
+ * @param  {Object} settings Updated settings
  * @returns {Function} Action thunk that updates the settings for a given site
  */
-export const saveSettings = ( siteId, updatedSettings ) => {
+export const saveSettings = ( siteId, settings ) => {
 	return ( dispatch ) => {
 		dispatch( {
 			type: WP_SUPER_CACHE_SAVE_SETTINGS,
 			siteId,
 		} );
 
-		return wp.req.post( { path: `/jetpack-blogs/${ siteId }/rest-api/` }, { path: '/wp-super-cache/v1/settings', ...updatedSettings } )
-			.then( ( { updated } ) => {
-				dispatch( updateSettings( siteId, updated ) );
+		return wp.req.post( { path: `/jetpack-blogs/${ siteId }/rest-api/` }, {}, { path: '/wp-super-cache/v1/settings', ...settings } )
+			.then( () => {
+				dispatch( updateSettings( siteId, settings ) );
 				dispatch( {
 					type: WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 					siteId,
