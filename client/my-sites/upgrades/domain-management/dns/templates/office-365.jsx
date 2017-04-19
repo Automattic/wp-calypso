@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty, replace } from 'lodash';
 import React, { Component } from 'react';
 
 /**
@@ -32,11 +32,14 @@ class Office365 extends Component {
 		event.preventDefault();
 		this.setState( { submitting: true } );
 
-		const variables = {
-			token: this.state.token
-		};
+		const domain = this.props.selectedDomainName,
+			variables = {
+				token: this.state.token,
+				domain,
+				mxdata: replace( domain, '.', '-' ) + '.mail.protection.outlook.com.'
+			};
 
-		upgradesActions.applyDnsTemplate( this.props.selectedDomainName, 'microsoft-office365', variables, ( error ) => {
+		upgradesActions.applyDnsTemplate( domain, 'microsoft-office365', variables, ( error ) => {
 			if ( error ) {
 				notices.error( error.message || this.props.translate( 'The DNS record has not been added.' ) );
 				this.setState( { submitting: false } );
