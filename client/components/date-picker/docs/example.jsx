@@ -15,6 +15,7 @@ var Card = require( 'components/card' ),
  */
 var datePicker = React.createClass( {
 	mixins: [ PureRenderMixin ],
+	displayName: 'DatePicker',
 
 	getInitialState: function() {
 		var date = new Date();

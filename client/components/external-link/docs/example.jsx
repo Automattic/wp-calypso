@@ -10,7 +10,6 @@ import ExternalLink from 'components/external-link';
 import Card from 'components/card';
 
 export default React.createClass( {
-
 	displayName: 'ExternalLink',
 
 	render() {
