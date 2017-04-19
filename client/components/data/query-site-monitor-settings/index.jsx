@@ -17,7 +17,7 @@ class QuerySiteMonitorSettings extends Component {
 		requestSiteMonitorSettings: PropTypes.func
 	};
 
-	componentWillMount() {
+	componentDidMount() {
 		this.request( this.props );
 	}
 
