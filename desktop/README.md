@@ -17,7 +17,8 @@ Need more detailed instructions? [We have them.](docs/install.md)
 
 # Development
 
-The app is split between Electron code and Calypso code, and so the [development guide](docs/development.md) may help you find where to change stuff.
+The desktop app is split between Electron code and Calypso code.
+We've put together a desktop-specific [development guide](docs/development.md) to give a walkthrough of how each of the pieces slot together and how to develop and debug the app.
 
 # Building a Release
 
@@ -27,16 +28,9 @@ While running the app locally in a development environment is great, you will ev
 
 The final stage takes a released version and [packages it in a platform specific way](docs/packaging.md). This is only necessary if you are going to distribute publicly.
 
-# Contributing
-
-If this sparks your interest don't hesitate to send a pull request, send a suggestion, file a bug, or just ask a question. Don't forget
-to check out our [CONTRIBUTING](CONTRIBUTING.md) doc.
-
-Do be aware that this repository is just for the WordPress.com desktop wrapper. If you have something to contribute for Calypso (the app that runs inside of the desktop wrapper and on WordPress.com) then please add it in the [Calypso](https://github.com/Automattic/wp-calypso) repository.
-
 # Troubleshooting
 
-If you have any problems running the app please see the [most common issues](docs/troubleshooting.md).
+If you have any problems running the desktop app please see the [most common issues](docs/troubleshooting.md).
 
 # License
 

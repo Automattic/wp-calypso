@@ -39,7 +39,7 @@ All app code is contained in `desktop`. Any changes you make there will run the 
 
 - [Config](../desktop-config/README.md) - app configuration values
 - [Libraries](../desktop/lib/README.md) - details of the local libraries used
-- [App Handlers](.,/desktop/app-handlers/README.md) - handlers that run before the main window is created
+- [App Handlers](../desktop/app-handlers/README.md) - handlers that run before the main window is created
 - [Window Handlers](../desktop/window-handlers/README.md) - handlers that run after the main window is created
 
 Note that currently we do not compile or transpile the app code.
@@ -54,7 +54,7 @@ Instead, during the app's startup process, we fork a child process to load up Ca
 
 ## Debugging
 
-The main process will output debug to the console when debug mode is enabled (found under the app menu). You can also explicitly enable debug mode when running the app:
+The main process will output debug messages to the terminal when debug mode is enabled (found under the app menu). You can also explicitly enable debug mode when running the app:
 
 ```
 $ DEBUG=* make run
@@ -65,7 +65,8 @@ desktop:server Checking server port: 41050 on host 127.0.0.1 +63ms
 desktop:server Server started +6ms
 ```
 
-Debug from Calypso will appear inside the renderer. To enable, open Chrome dev tools from the View menu and enable debug:
+Because Electron uses [Chromium](http://www.chromium.org/), you'll have access to a familiar set of developer tools for debugging the renderer process - these tools can be accessed from the menu bar or with the `CMD+ALT+I` hot key.  
+Much like [debugging the web client](../../docs/development-workflow.md#debugging) you'll have granular access to Calypso's debug messaging from the console.
 
 ```js
 localStorage.setItem( 'debug', '*' );
