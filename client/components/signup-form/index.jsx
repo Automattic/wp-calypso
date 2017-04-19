@@ -422,7 +422,7 @@ class SignupForm extends Component {
 
 	formFooter() {
 		return (
-			<LoggedOutFormFooter className={ classNames( { 'is-blended': this.props.isSocialSignupEnabled } ) }>
+			<LoggedOutFormFooter isBlended={ this.props.isSocialSignupEnabled }>
 				{ this.termsOfServiceLink() }
 				<FormButton className="signup-form__submit" disabled={ this.state.submitting || this.props.disabled }>
 					{ this.props.submitButtonText }

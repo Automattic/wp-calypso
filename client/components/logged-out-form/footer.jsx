@@ -14,12 +14,13 @@ export default React.createClass( {
 
 	propTypes: {
 		children: React.PropTypes.node.isRequired,
-		className: React.PropTypes.string
+		className: React.PropTypes.string,
+		isBlended: React.PropTypes.bool
 	},
 
 	render() {
 		return (
-			<Card className={ classnames( 'logged-out-form__footer', this.props.className ) } >
+			<Card className={ classnames( 'logged-out-form__footer', this.props.className, { 'is-blended': this.props.isBlended } ) } >
 				{ this.props.children }
 			</Card>
 		);
