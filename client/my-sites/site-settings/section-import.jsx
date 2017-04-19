@@ -25,11 +25,7 @@ class SiteSettingsImport extends Component {
 		site: PropTypes.object,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = getImporterState();
-	}
+	state = getImporterState();
 
 	componentDidMount() {
 		ImporterStore.on( 'change', this.updateState );
