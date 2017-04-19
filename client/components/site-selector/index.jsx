@@ -24,7 +24,7 @@ import debugFactory from 'debug';
 import { getPreference } from 'state/preferences/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getSiteBySlug } from 'state/sites/selectors';
+import { getSite } from 'state/sites/selectors';
 import {
 	areAllSitesSingleUser,
 	getSites,
@@ -57,7 +57,7 @@ class SiteSelector extends Component {
 		onSiteSelect: PropTypes.func,
 		showRecentSites: PropTypes.bool,
 		recentSites: PropTypes.array,
-		getSiteBySlug: PropTypes.func.isRequired,
+		getSite: PropTypes.func.isRequired,
 		selectedSite: PropTypes.object,
 		visibleSites: PropTypes.array,
 		allSitesPath: PropTypes.string,
@@ -131,7 +131,7 @@ class SiteSelector extends Component {
 		} else if ( this.lastMouseHover ) {
 			debug( `restoring highlight from last mouse hover (${ this.lastMouseHover })` );
 			// @FIXME
-			highlightedSite = this.props.getSiteBySlug( this.lastMouseHover ) || this.lastMouseHover;
+			highlightedSite = this.props.getSite( this.lastMouseHover ) || this.lastMouseHover;
 			highlightedIndex = this.visibleSites.indexOf( highlightedSite );
 		} else {
 			debug( 'reseting highlight as mouse left site selector' );
@@ -266,7 +266,7 @@ class SiteSelector extends Component {
 	}
 
 	getPathnameForSite( slug ) {
-		const site = this.props.getSiteBySlug( slug );
+		const site = this.props.getSite( slug );
 
 		if ( slug === ALL_SITES ) {
 			// default posts links to /posts/my when possible and /posts when not
@@ -459,7 +459,7 @@ export default connect( ( state ) => {
 		recentSites: getPreference( state, 'recentSites' ),
 		siteCount: get( user, 'site_count', 0 ),
 		visibleSiteCount: visibleSiteCount,
-		getSiteBySlug: getSiteBySlug.bind( null, state ),
+		getSite: getSite.bind( null, state ),
 		selectedSite: getSelectedSite( state ),
 		visibleSites: getVisibleSites( state ),
 		allSitesSingleUser: areAllSitesSingleUser( state ),
