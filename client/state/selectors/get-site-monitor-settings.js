@@ -12,5 +12,5 @@ import { get } from 'lodash';
  * @return {?Object}           The monitor settings of that site
  */
 export default function getSiteMonitorSettings( state, siteId ) {
-	return get( state.sites.monitor.items, [ siteId ], null );
+	return get( state, [ 'sites', 'monitor', 'items', siteId ], null );
 }

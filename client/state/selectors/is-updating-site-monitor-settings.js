@@ -12,5 +12,5 @@ import { get } from 'lodash';
  * @return {Boolean}             Whether monitor settings are currently being updated for that site.
  */
 export default function isUpdatingSiteMonitorSettings( state, siteId ) {
-	return get( state.sites.monitor.updating, [ siteId ], false );
+	return get( state, [ 'sites', 'monitor', 'updating', siteId ], false );
 }

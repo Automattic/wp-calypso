@@ -12,5 +12,5 @@ import { get } from 'lodash';
  * @return {Boolean}             Whether monitor settings is currently being requested for that site.
  */
 export default function isRequestingSiteMonitorSettings( state, siteId ) {
-	return get( state.sites.monitor.requesting, [ siteId ], false );
+	return get( state, [ 'sites', 'monitor', 'requesting', siteId ], false );
 }
