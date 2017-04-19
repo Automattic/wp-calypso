@@ -9,6 +9,12 @@ import config, { isEnabled } from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { userCan } from 'lib/site/utils';
 
+let _selectedSite;
+
+export function setSelectedSite( selectedSite ) {
+	_selectedSite = selectedSite;
+}
+
 /**
  * Returns true if Automated Transfer is enabled for the given site
  * @param { object } site - a full site object
@@ -21,7 +27,7 @@ export function isATEnabled( site ) {
 	}
 
 	// Site has already been transferred
-	if ( get( site, 'options.is_automated_transfer' ) ) {
+	if ( get( _selectedSite, 'options.is_automated_transfer' ) ) {
 		return true;
 	}
 
@@ -36,13 +42,13 @@ export function isATEnabled( site ) {
 	}
 
 	// Site has Business plan
-	const planSlug = get( site, 'plan.product_slug' );
+	const planSlug = get( _selectedSite, 'plan.product_slug' );
 	if ( planSlug !== PLAN_BUSINESS ) {
 		return false;
 	}
 
 	// Current User can manage site
-	const canManageSite = userCan( 'manage_options', site );
+	const canManageSite = userCan( 'manage_options', _selectedSite );
 	if ( ! canManageSite ) {
 		return false;
 	}
