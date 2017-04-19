@@ -26,5 +26,5 @@ export function isRequestingSettings( reduxState, siteId ) {
 export function getSettings( reduxState, siteId ) {
 	const state = reduxState.extensions.wpSuperCache;
 
-	return state ? get( state.settings, [ siteId ], null ) : null;
+	return state ? get( state.items, [ siteId ], null ) : null;
 }

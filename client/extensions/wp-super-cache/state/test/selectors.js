@@ -74,7 +74,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSettings()', () => {
-		const primaryData = { is_cache_enabled: true };
+		const primarySettings = { is_cache_enabled: true };
 
 		it( 'should return null if no state exists', () => {
 			const state = {
@@ -91,8 +91,8 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						settings: {
-							[ primarySiteId ]: primaryData,
+						items: {
+							[ primarySiteId ]: primarySettings,
 						}
 					}
 				}
@@ -106,15 +106,15 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						settings: {
-							[ primarySiteId ]: primaryData,
+						items: {
+							[ primarySiteId ]: primarySettings,
 						}
 					}
 				}
 			};
 			const settings = getSettings( state, primarySiteId );
 
-			expect( settings ).to.eql( primaryData );
+			expect( settings ).to.eql( primarySettings );
 		} );
 	} );
 } );

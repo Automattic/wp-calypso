@@ -92,77 +92,77 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'settings()', () => {
-		const primaryData = { is_cache_enabled: true };
-		const secondaryData = { is_cache_enabled: false };
+	describe( 'items()', () => {
+		const primarySettings = { is_cache_enabled: true };
+		const secondarySettings = { is_cache_enabled: false };
 
 		it( 'should default to an empty object', () => {
 			const state = reducer( undefined, {} );
 
-			expect( state.settings ).to.eql( {} );
+			expect( state.items ).to.eql( {} );
 		} );
 
 		it( 'should index settings by site ID', () => {
 			const state = reducer( undefined, {
 				type: WP_SUPER_CACHE_RECEIVE_SETTINGS,
 				siteId: primarySiteId,
-				data: primaryData,
+				settings: primarySettings,
 			} );
 
-			expect( state.settings ).to.eql( {
-				[ primarySiteId ]: primaryData,
+			expect( state.items ).to.eql( {
+				[ primarySiteId ]: primarySettings,
 			} );
 		} );
 
 		it( 'should accumulate settings', () => {
 			const previousState = deepFreeze( {
-				settings: {
-					[ primarySiteId ]: primaryData,
+				items: {
+					[ primarySiteId ]: primarySettings,
 				}
 			} );
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_RECEIVE_SETTINGS,
 				siteId: secondarySiteId,
-				data: secondaryData,
+				settings: secondarySettings,
 			} );
 
-			expect( state.settings ).to.eql( {
-				[ primarySiteId ]: primaryData,
-				[ secondarySiteId ]: secondaryData,
+			expect( state.items ).to.eql( {
+				[ primarySiteId ]: primarySettings,
+				[ secondarySiteId ]: secondarySettings,
 			} );
 		} );
 
 		it( 'should override previous settings of same site ID', () => {
 			const previousState = deepFreeze( {
-				settings: {
-					[ primarySiteId ]: primaryData,
+				items: {
+					[ primarySiteId ]: primarySettings,
 				}
 			} );
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_RECEIVE_SETTINGS,
 				siteId: primarySiteId,
-				data: secondaryData,
+				settings: secondarySettings,
 			} );
 
-			expect( state.settings ).to.eql( {
-				[ primarySiteId ]: secondaryData,
+			expect( state.items ).to.eql( {
+				[ primarySiteId ]: secondarySettings,
 			} );
 		} );
 
 		it( 'should accumulate new settings and overwrite existing ones for the same site ID', () => {
-			const newData = { is_cache_enabled: false, is_super_cache_enabled: true };
+			const newSettings = { is_cache_enabled: false, is_super_cache_enabled: true };
 			const previousState = deepFreeze( {
-				settings: {
-					[ primarySiteId ]: primaryData,
+				items: {
+					[ primarySiteId ]: primarySettings,
 				}
 			} );
 			const state = reducer( previousState, {
 				type: WP_SUPER_CACHE_RECEIVE_SETTINGS,
 				siteId: primarySiteId,
-				data: newData,
+				settings: newSettings,
 			} );
 
-			expect( state.settings ).to.eql( {
+			expect( state.items ).to.eql( {
 				[ primarySiteId ]: { is_cache_enabled: false, is_super_cache_enabled: true },
 			} );
 		} );

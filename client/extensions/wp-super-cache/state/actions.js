@@ -17,10 +17,10 @@ import {
  * Returns an action object to be used in signalling that settings have been received.
  *
  * @param  {Number} siteId Site ID
- * @param  {Object} data Settings object
+ * @param  {Object} settings Settings object
  * @return {Object} Action object
  */
-export const receiveSettings = ( siteId, data ) => ( { type: WP_SUPER_CACHE_RECEIVE_SETTINGS, siteId, data } );
+export const receiveSettings = ( siteId, settings ) => ( { type: WP_SUPER_CACHE_RECEIVE_SETTINGS, siteId, settings } );
 
 /*
  * Retrieves settings for a site.

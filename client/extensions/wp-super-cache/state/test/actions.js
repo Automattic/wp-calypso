@@ -41,7 +41,7 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: WP_SUPER_CACHE_RECEIVE_SETTINGS,
-				data: settings.data,
+				settings: settings.data,
 				siteId,
 			} );
 		} );

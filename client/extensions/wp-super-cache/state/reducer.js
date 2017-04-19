@@ -36,11 +36,11 @@ const requesting = createReducer( {}, {
  * @param  {Object} action Action object
  * @return {String} Updated settings
  */
-const settings = createReducer( {}, {
-	[ WP_SUPER_CACHE_RECEIVE_SETTINGS ]: ( state, { siteId, data } ) => ( { ...state, [ siteId ]: data } )
+const items = createReducer( {}, {
+	[ WP_SUPER_CACHE_RECEIVE_SETTINGS ]: ( state, { siteId, settings } ) => ( { ...state, [ siteId ]: settings } )
 }, settingsSchema );
 
 export default combineReducers( {
+	items,
 	requesting,
-	settings,
 } );
