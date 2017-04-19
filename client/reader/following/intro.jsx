@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-//import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 
 /**
@@ -11,12 +10,11 @@ import Gridicon from 'gridicons';
  */
 
 const FollowingIntro = ( props ) => {
-	// if ( props.hasGraduatedRecommendations || props.hasGraduatedRecommendations === null ) {
-	// 	return null;
-	// }
+
+	// @todo Return null if the user does not have is_new_reader = true in preferences
 
 	const handleIntroClose = () => {
-		// props.requestGraduate();
+		// @todo Remove is_new_reader from preferences
 	};
 
 	return (
