@@ -1,14 +1,10 @@
 /**
- * External dependencies
- */
-import { isNumber } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
 	WOOCOMMERCE_EDIT_PRODUCT_VARIATION,
 } from '../../../action-types';
+import { nextBucketIndex, getBucket } from '../../helpers';
 
 const initialState = null;
 
@@ -26,16 +22,21 @@ function editProductVariationAction( edits, action ) {
 	const { product, variation, data } = action.payload;
 	const prevEdits = edits || [];
 	const productId = product.id;
-	const bucket = variation && isNumber( variation.id ) && 'updates' || 'creates';
-
+	const bucket = getBucket( variation );
 	let found = false;
 
 	// Look for an existing product edits first.
 	const _edits = prevEdits.map( ( productEdits ) => {
 		if ( productId === productEdits.productId ) {
 			found = true;
-			const _array = editProductVariation( productEdits[ bucket ], variation, data );
-			return { ...productEdits, [ bucket ]: _array };
+			const variationId = variation && variation.id || nextBucketIndex( productEdits[ bucket ] );
+			const _variation = variation || { id: variationId };
+			const _array = editProductVariation( productEdits[ bucket ], _variation, data );
+			return {
+				...productEdits,
+				[ bucket ]: _array,
+				currentlyEditingId: variationId,
+			};
 		}
 
 		return productEdits;
@@ -43,8 +44,15 @@ function editProductVariationAction( edits, action ) {
 
 	if ( ! found ) {
 		// product not in edits, so add it now.
-		const _array = editProductVariation( null, variation, data );
-		_edits.push( { productId, [ bucket ]: _array } );
+		const variationId = variation && variation.id || nextBucketIndex( prevEdits[ bucket ] );
+		const _variation = variation || { id: variationId };
+
+		const _array = editProductVariation( null, _variation, data );
+		_edits.push( {
+			productId,
+			[ bucket ]: _array,
+			currentlyEditingId: variationId,
+		} );
 	}
 
 	return _edits;
@@ -53,13 +61,12 @@ function editProductVariationAction( edits, action ) {
 function editProductVariation( array, variation, data ) {
 	// Use the existing variation id (real or placeholder), or creates.length if no product.
 	const prevArray = array || [];
-	const variationId = ( variation ? variation.id : { index: prevArray.length } );
 
 	let found = false;
 
 	// Look for this object in the appropriate create or edit array first.
 	const _array = prevArray.map( ( v ) => {
-		if ( variationId === v.id ) {
+		if ( variation.id === v.id ) {
 			found = true;
 			return { ...v, ...data };
 		}
@@ -69,9 +76,8 @@ function editProductVariation( array, variation, data ) {
 
 	if ( ! found ) {
 		// update or create not already in edit state, so add it now.
-		_array.push( { id: variationId, ...data } );
+		_array.push( { id: variation.id, ...data } );
 	}
 
 	return _array;
 }
-

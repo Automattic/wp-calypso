@@ -98,5 +98,40 @@ describe( 'edits-reducer', () => {
 		expect( edits2[ 1 ].productId ).to.eql( 49 );
 		expect( edits2[ 1 ].creates[ 0 ] ).to.eql( { id: { index: 0 }, regular_price: '2.99' } );
 	} );
-} );
 
+	it( 'should set currentlyEditingId when editing a new variation', () => {
+		const product = { id: 48 };
+
+		const edits1 = reducer( undefined, editProductVariation( product, null, { regular_price: '1.99' } ) );
+		const productEdits1 = edits1.find( function( p ) {
+			if ( product.id === p.productId ) {
+				return p;
+			}
+		} );
+
+		expect( productEdits1.currentlyEditingId ).to.eql( productEdits1.creates[ 0 ].id );
+
+		const edits2 = reducer( edits1, editProductVariation( product, null, { regular_price: '2.99' } ) );
+		const productEdits2 = edits2.find( function( p ) {
+			if ( product.id === p.productId ) {
+				return p;
+			}
+		} );
+
+		expect( productEdits2.currentlyEditingId ).to.eql( productEdits2.creates[ 1 ].id );
+	} );
+
+	it( 'should set currentlyEditingId when editing an existing variation', () => {
+		const product = { id: 48 };
+		const variation1 = { id: 23, regular_price: '0.99', attributes: [ { name: 'Color', option: 'Red' } ] };
+
+		const edits1 = reducer( undefined, editProductVariation( product, variation1, { regular_price: '1.99' } ) );
+		const _edits1 = edits1.find( function( p ) {
+			if ( product.id === p.productId ) {
+				return p;
+			}
+		} );
+
+		expect( _edits1.currentlyEditingId ).to.eql( variation1.id );
+	} );
+} );
