@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, replace } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import React, { Component } from 'react';
 
 /**
@@ -31,15 +31,7 @@ class Office365 extends Component {
 	onAddDnsRecords = ( event ) => {
 		event.preventDefault();
 		this.setState( { submitting: true } );
-
-		const domain = this.props.selectedDomainName,
-			variables = {
-				token: this.state.token,
-				domain,
-				mxdata: replace( domain, '.', '-' ) + '.mail.protection.outlook.com.'
-			};
-
-		upgradesActions.applyDnsTemplate( domain, 'microsoft-office365', variables, ( error ) => {
+		upgradesActions.addDnsOffice( this.props.selectedDomainName, this.state.token, ( error ) => {
 			if ( error ) {
 				notices.error( error.message || this.props.translate( 'The DNS record has not been added.' ) );
 				this.setState( { submitting: false } );
@@ -52,7 +44,7 @@ class Office365 extends Component {
 	}
 
 	render() {
-		const isDataValid = this.state.token.match( /^MS=ms\d{4,20}$/ );
+		const isDataValid = this.state.token.match( /^MS=ms\d+$/ );
 
 		return (
 			<form className="dns__office365">
@@ -65,7 +57,7 @@ class Office365 extends Component {
 							onChange={ this.onChange }
 							placeholder="MS=ms..." />
 						{ this.state.token && ! isDataValid &&
-							<FormInputValidation text={ this.props.translate( 'Invalid Token' ) } isError={ true } /> }
+						<FormInputValidation text={ this.props.translate( 'Invalid Token' ) } isError={ true } /> }
 					</FormFieldset>
 
 					<FormFooter>
