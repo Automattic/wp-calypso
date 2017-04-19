@@ -7,7 +7,7 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import FormButton from 'components/forms/form-button';
+import Button from 'components/button';
 import notices from 'notices';
 import * as upgradesActions from 'lib/upgrades/actions';
 
@@ -38,11 +38,11 @@ class GoDaddyMail extends Component {
 
 	render() {
 		return (
-			<FormButton
+			<Button
 				disabled={ this.state.submitting }
 				onClick={ this.onAddDnsRecords }>
-				{ this.props.translate( 'Set up GoDaddy E-Mail' ) }
-			</FormButton>
+				{ this.props.translate( 'GoDaddy' ) }
+			</Button>
 		);
 	}
 }
