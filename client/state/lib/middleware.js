@@ -19,8 +19,13 @@ import cartStore from 'lib/cart/store';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 
+/**
+ * Module variables
+ */
+const keyBoardShortcutsEnabled = config.isEnabled( 'keyboard-shortcuts' );
 let keyboardShortcuts;
-if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
+
+if ( keyBoardShortcutsEnabled ) {
 	keyboardShortcuts = require( 'lib/keyboard-shortcuts/global' )();
 }
 
@@ -79,7 +84,7 @@ const handler = ( dispatch, action, getState ) => {
 			// Wait a tick for the reducer to update the state tree
 			setTimeout( () => {
 				updateSelectedSiteForCart( dispatch, action, getState );
-				if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
+				if ( keyBoardShortcutsEnabled ) {
 					updatedSelectedSiteForKeyboardShortcuts( dispatch, action, getState );
 				}
 			}, 0 );
