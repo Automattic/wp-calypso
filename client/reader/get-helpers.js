@@ -15,7 +15,7 @@ import { translate } from 'i18n-calypso';
  * @returns {string} the site url
  */
 export const getSiteUrl = ( { feed, site, post } = {} ) => {
-	const siteUrl = ( !! site ) && ( site.URL || site.domain );
+	const siteUrl = ( !! site ) && ( site.URL );
 	const feedUrl = ( !! feed ) && ( feed.URL || feed.feed_URL );
 	const postUrl = ( !! post ) && ( post.site_URL || post.feed_URL );
 
@@ -32,24 +32,18 @@ export const getSiteName = ( { feed, site, post } = {} ) => {
 	let siteName = null;
 
 	if ( site && site.title ) {
-		siteName = site.title || site.domain;
+		siteName = site.title;
 	} else if ( feed && ( feed.name || feed.title ) ) {
 		siteName = feed.name || feed.title;
 	} else if ( post && post.site_name ) {
 		siteName = post.site_name;
-	}
-
-	/* less happy cases
-	 * 1. error occured loading feed/site. only applies when not given a post.
-	 * 2. there is genuinely no title, fallback to url
-	 * 3. can't find anything, return null
-	 */
-	if ( ! siteName ) {
-		if ( ( site && site.is_error ) || ( feed && feed.is_error ) && ( ! post ) ) {
-			siteName = translate( 'Error fetching feed' );
-		} else if ( getSiteUrl( { feed, site, post } ) ) {
-			siteName = url.parse( getSiteUrl( { feed, site, post } ) ).hostname;
-		}
+	} else if ( ( site && site.is_error ) || ( feed && feed.is_error ) && ( ! post ) ) {
+		siteName = translate( 'Error fetching feed' );
+	} else if ( site && site.domain ) {
+		siteName = site.domain;
+	} else {
+		const siteUrl = getSiteUrl( { feed, site, post } );
+		siteName = ( !! siteUrl ) ? url.parse( siteUrl ).hostname : null;
 	}
 
 	return siteName;
