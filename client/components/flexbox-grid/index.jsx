@@ -4,34 +4,7 @@
 import React from 'react';
 import { times } from 'lodash';
 
-function createOnCellsRenderedMemoizer( ssrEnabled ) {
-	let cachedStartIndex = -1;
-	let cachedStopIndex = -1;
-
-	return ( callback, { startIndex, stopIndex } ) => {
-		if ( startIndex === cachedStartIndex && stopIndex === cachedStopIndex ) {
-			return;
-		}
-
-		if ( ssrEnabled && cachedStartIndex < 0 && cachedStopIndex < 0 ) {
-			startIndex = 0;
-			stopIndex = 0;
-		}
-
-		cachedStartIndex = startIndex;
-		cachedStopIndex = stopIndex;
-
-		callback( { startIndex, stopIndex } );
-	};
-}
-
 export default class FlexboxGrid extends React.PureComponent {
-
-	constructor( props ) {
-		super( props );
-
-		this.onCellsRenderedMemoizer = createOnCellsRenderedMemoizer( props.ssrEnabled );
-	}
 
 	componentDidMount() {
 		this.invokeOnCellsRendered();
@@ -137,12 +110,9 @@ export default class FlexboxGrid extends React.PureComponent {
 			return;
 		}
 
-		this.onCellsRenderedMemoizer(
-			this.props.onCellsRendered,
-			{
-				startIndex: this.firstVisibleIndex(),
-				stopIndex: this.lastVisibleIndex() - 1
-			}
-		);
+		this.props.onCellsRendered( {
+			startIndex: this.firstVisibleIndex(),
+			stopIndex: this.lastVisibleIndex() - 1
+		} );
 	}
 }
