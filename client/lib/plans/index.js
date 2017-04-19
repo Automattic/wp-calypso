@@ -57,16 +57,6 @@ export function getFeatureTitle( feature ) {
 	return invoke( FEATURES_LIST, [ feature, 'getTitle' ] );
 }
 
-export function getSitePlanSlug( siteID ) {
-	let site;
-	if ( siteID ) {
-		site = sitesList.getSite( siteID );
-	} else {
-		site = sitesList.getSelectedSite();
-	}
-	return get( site, 'plan.product_slug' );
-}
-
 export function canUpgradeToPlan( planKey, site = sitesList.getSelectedSite() ) {
 	const plan = get( site, [ 'plan', 'expired' ], false ) ? PLAN_FREE : get( site, [ 'plan', 'product_slug' ], PLAN_FREE );
 	return get( getPlan( planKey ), 'availableFor', () => false )( plan );
@@ -86,10 +76,6 @@ export function getPlanPath( plan ) {
 
 export function planHasFeature( plan, feature ) {
 	return includes( get( getPlan( plan ), 'getFeatures', () => [] )(), feature );
-}
-
-export function hasFeature( feature, siteID ) {
-	return planHasFeature( getSitePlanSlug( siteID ), feature );
 }
 
 export function getCurrentTrialPeriodInDays( plan ) {
