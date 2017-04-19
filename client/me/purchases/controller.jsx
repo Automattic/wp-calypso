@@ -22,13 +22,11 @@ import PurchasesList from './purchases-list';
 import { receiveSite } from 'state/sites/actions';
 import { concatTitle, recordPageView, renderPage } from 'lib/react-helpers';
 import { setAllSitesSelected, setSelectedSiteId } from 'state/ui/actions';
-import sitesFactory from 'lib/sites-list';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 import titles from './titles';
 import userFactory from 'lib/user';
 
 const recordPurchasesPageView = partial( recordPageView, partial.placeholder, 'Purchases' );
-const sites = sitesFactory();
 const user = userFactory();
 
 // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
@@ -190,10 +188,7 @@ export default {
 
 		renderPage(
 			context,
-			<PurchasesList
-				sites={ sites }
-				noticeType={ context.params.noticeType }
-			/>
+			<PurchasesList noticeType={ context.params.noticeType } />
 		);
 	},
 

@@ -10,7 +10,12 @@ import React, { Component } from 'react';
  */
 import CompactCard from 'components/card';
 import EmptyContent from 'components/empty-content';
-import { getUserPurchases, hasLoadedUserPurchasesFromServer, isFetchingUserPurchases } from 'state/purchases/selectors';
+import {
+	getUserPurchases,
+	hasLoadedUserPurchasesFromServer,
+	isFetchingUserPurchases
+} from 'state/purchases/selectors';
+import { getSites } from 'state/selectors';
 import { getPurchasesBySite } from 'lib/purchases';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
@@ -26,7 +31,7 @@ class PurchasesList extends Component {
 			return true;
 		}
 
-		return ! this.props.sites.initialized;
+		return ! this.props.sites.length;
 	}
 
 	render() {
@@ -37,7 +42,7 @@ class PurchasesList extends Component {
 		}
 
 		if ( this.props.hasLoadedUserPurchasesFromServer && this.props.purchases.length ) {
-			content = getPurchasesBySite( this.props.purchases, this.props.sites.get() ).map(
+			content = getPurchasesBySite( this.props.purchases, this.props.sites ).map(
 				site => (
 					<PurchasesSite
 						key={ site.id }
@@ -82,14 +87,15 @@ PurchasesList.propTypes = {
 		React.PropTypes.array,
 		React.PropTypes.bool
 	] ),
-	sites: React.PropTypes.object.isRequired
+	sites: React.PropTypes.array.isRequired
 };
 
 export default connect(
 	state => ( {
 		purchases: getUserPurchases( state, user.get().ID ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		isFetchingUserPurchases: isFetchingUserPurchases( state )
+		isFetchingUserPurchases: isFetchingUserPurchases( state ),
+		getSites: getSites( state ),
 	} ),
 	undefined
 )( localize( PurchasesList ) );
