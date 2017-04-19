@@ -116,7 +116,8 @@ const webpackConfig = {
 		new webpack.NormalModuleReplacementPlugin( /^components\/seo\/reader-preview$/, 'components/empty-component' ), // Conflicts with component-closest module
 		new webpack.NormalModuleReplacementPlugin( /^components\/popover$/, 'components/null-component' ), // Depends on BOM and interactions don't work without JS
 		new webpack.NormalModuleReplacementPlugin( /^my-sites\/themes\/theme-upload$/, 'components/empty-component' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^client\/layout\/guided-tours\/config$/, 'components/empty-component' ) // should never be required server side
+		new webpack.NormalModuleReplacementPlugin( /^client\/layout\/guided-tours\/config$/, 'components/empty-component' ), // should never be required server side
+		new webpack.NormalModuleReplacementPlugin( /^components\/site-selector$/, 'components/null-component' ), // Depends on BOM
 	],
 	externals: getExternals()
 };
