@@ -17,7 +17,7 @@ import userLib from 'lib/user';
 
 const user = userLib();
 
-export class AllSites extends Component {
+class AllSites extends Component {
 	static defaultProps = {
 		onSelect: noop,
 		href: null,

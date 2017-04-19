@@ -26,7 +26,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedOrAllSites } from 'state/selectors';
 
-export class CurrentSite extends Component {
+class CurrentSite extends Component {
 	static propTypes = {
 		isJetpack: React.PropTypes.bool,
 		siteCount: React.PropTypes.number.isRequired,
