@@ -12,5 +12,5 @@ import { get } from 'lodash';
  * @return {?Boolean}          Whether WordPress core update was successful.
  */
 export default function getSiteCoreUpdateStatus( state, siteId ) {
-	return get( state.sites.updates.wordpressUpdateStatus, siteId, null );
+	return get( state, [ 'sites', 'updates', 'wordpressUpdateStatus', siteId ], null );
 }
