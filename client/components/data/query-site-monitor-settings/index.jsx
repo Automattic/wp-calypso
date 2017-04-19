@@ -13,6 +13,7 @@ import { requestSiteMonitorSettings } from 'state/sites/monitor/actions';
 class QuerySiteMonitorSettings extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
+		// Connected props
 		requestingSiteMonitorSettings: PropTypes.bool,
 		requestSiteMonitorSettings: PropTypes.func
 	};
@@ -41,10 +42,8 @@ class QuerySiteMonitorSettings extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		return {
-			requestingSiteMonitorSettings: isRequestingSiteMonitorSettings( state, ownProps.siteId )
-		};
-	},
+	( state, { siteId } ) => ( {
+		requestingSiteMonitorSettings: isRequestingSiteMonitorSettings( state, siteId ),
+	} ),
 	{ requestSiteMonitorSettings }
 )( QuerySiteMonitorSettings );
