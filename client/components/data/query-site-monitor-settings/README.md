@@ -9,9 +9,12 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import React from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import QuerySiteMonitorSettings from 'components/data/query-site-monitor-settings';
+import { getSiteMonitorSettings } from 'state/selectors';
 
-export default function ExampleSiteComponent( { siteMonitorSettings, translate } ) {
+function ExampleSiteComponent( { siteMonitorSettings, translate } ) {
 	return (
 		<div>
 			<QuerySiteMonitorSettings siteId={ 12345678 } />
@@ -23,6 +26,12 @@ export default function ExampleSiteComponent( { siteMonitorSettings, translate }
 		</div>
 	);
 }
+
+export default connect(
+	( state ) => ( {
+		siteMonitorSettings: getSiteMonitorSettings( state, 12345678 )
+	} )
+)( localize( ExampleSiteComponent ) );
 ```
 
 ## Props
