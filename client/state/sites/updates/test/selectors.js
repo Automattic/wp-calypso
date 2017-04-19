@@ -55,7 +55,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getUpdatesBySiteId()', () => {
-		it( 'should return an empty object if site updates have not been fetched yet', () => {
+		it( 'should return null if site updates have not been fetched yet', () => {
 			const updates = getUpdatesBySiteId( {
 				sites: {
 					updates: {
@@ -64,7 +64,7 @@ describe( 'selectors', () => {
 				}
 			}, 12345678 );
 
-			expect( updates ).to.eql( {} );
+			expect( updates ).to.be.null;
 		} );
 
 		it( 'should return the updates for an existing site', () => {
