@@ -22,6 +22,7 @@ import ThemeSetup from './theme-setup';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import titlecase from 'to-title-case';
 import utils from 'lib/site/utils';
+import { getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Module vars
@@ -151,19 +152,9 @@ module.exports = {
 	},
 
 	startOver( context ) {
-		let site = sites.getSelectedSite();
-
-		if ( sites.initialized ) {
-			if ( ! canDeleteSite( site ) ) {
-				return page( '/settings/general/' + site.slug );
-			}
-		} else {
-			sites.once( 'change', function() {
-				site = sites.getSelectedSite();
-				if ( ! canDeleteSite( site ) ) {
-					return page( '/settings/general/' + site.slug );
-				}
-			} );
+		const site = getSelectedSite( context.store.getState() );
+		if ( site && ! canDeleteSite( site ) ) {
+			return page( '/settings/general/' + site.slug );
 		}
 
 		renderPage(
@@ -173,19 +164,9 @@ module.exports = {
 	},
 
 	themeSetup( context ) {
-		let site = sites.getSelectedSite();
-
-		if ( sites.initialized ) {
-			if ( site.jetpack ) {
-				return page( '/settings/general/' + site.slug );
-			}
-		} else {
-			sites.once( 'change', function() {
-				site = sites.getSelectedSite();
-				if ( site.jetpack ) {
-					return page( '/settings/general/' + site.slug );
-				}
-			} );
+		const site = getSelectedSite( context.store.getState() );
+		if ( site && site.jetpack ) {
+			return page( '/settings/general/' + site.slug );
 		}
 
 		if ( ! config.isEnabled( 'settings/theme-setup' ) ) {
