@@ -620,7 +620,7 @@ function mapStateToProps( state ) {
 		menusUrl: getMenusUrl( state, siteId ),
 		siteId,
 		site,
-		siteSuffix: siteId ? '/' + site.slug : '',
+		siteSuffix: site ? '/' + site.slug : '',
 	};
 }
 
