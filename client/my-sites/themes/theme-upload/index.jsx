@@ -167,7 +167,7 @@ class Upload extends React.Component {
 		const file = files[ 0 ] || files.item( 0 );
 		debug( 'zip file:', file );
 
-		if ( file.size && file.size > MAX_UPLOADED_THEME_SIZE ) {
+		if ( file.size > MAX_UPLOADED_THEME_SIZE ) {
 			notices.error(
 				translate( 'Theme zip is too big. Max theme size is 50 MB.' )
 			);
