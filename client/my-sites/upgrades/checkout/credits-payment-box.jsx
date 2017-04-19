@@ -50,10 +50,6 @@ var CreditsPaymentBox = React.createClass( {
 
 				<TermsOfService />
 
-				<CartCoupon cart={ cart } />
-
-				<CartToggle />
-
 				<div className="payment-box-actions">
 					<PayButton
 						cart={ this.props.cart }
@@ -66,6 +62,10 @@ var CreditsPaymentBox = React.createClass( {
 							transactionStep={ transactionStep } />
 					}
 				</div>
+
+				<CartCoupon cart={ cart } />
+
+				<CartToggle />
 			</form>
 		);
 	},

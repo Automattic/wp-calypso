@@ -1,7 +1,7 @@
 .checkout {
 	position: relative;
 
-	.payment-box {
+	.checkout__payment-box-container {
 		margin-bottom: 0;
 		padding: 0;
 		width: 100%;
@@ -124,9 +124,12 @@
 		}
 	}
 
+	.payment-box {
+		padding: 0;
+	}
+
 	.payment-box__content {
 		min-height: 140px;
-		margin-top: 10px;
 	}
 
 	h5 {
@@ -208,6 +211,10 @@
 
 	.form-button {
 		margin-top: 20px;
+
+		@include breakpoint( "<660px" ) {
+			margin-bottom: 20px;
+		}
 	}
 
 	// Payment Boxes
@@ -243,6 +250,7 @@
 	}
 
 	.cart-coupon {
+		cursor: pointer;
 		display: none;
 		font-size: 14px;
 		margin: 5px 0 0;
@@ -372,6 +380,7 @@
 	}
 
 	.checkout__summary-toggle {
+		cursor: pointer;
 		display: block;
 		font-size: 14px;
 		padding: 10px;

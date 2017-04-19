@@ -14,7 +14,7 @@ module.exports = React.createClass( {
 		var cardClass = classNames( 'payment-box', this.props.classSet ),
 			contentClass = classNames( 'payment-box__content', this.props.contentClassSet );
 		return (
-			<div>
+			<div className="checkout__payment-box-container">
 				<SectionHeader label={ this.props.title } />
 				<Card className={ cardClass }>
 					<div className="checkout__box-padding">
