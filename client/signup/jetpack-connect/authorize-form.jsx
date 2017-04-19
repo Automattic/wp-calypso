@@ -292,8 +292,12 @@ const LoggedInForm = React.createClass( {
 
 	activateManageAndRedirect() {
 		const { queryObject, activateManageSecret } = this.props.jetpackConnectAuthorize;
-		debug( 'Activating Manage module and calculating redirection', queryObject );
-		this.props.activateManage( queryObject.client_id, queryObject.state, activateManageSecret );
+
+		if ( versionCompare( queryObject.jp_version, '4.4', '<' ) ) {
+			debug( 'Activating Manage module and calculating redirection', queryObject );
+			this.props.activateManage( queryObject.client_id, queryObject.state, activateManageSecret );
+		}
+
 		if ( 'jpo' === queryObject.from || this.props.isSSO ) {
 			debug( 'Going back to WP Admin.', 'Connection initiated via: ', queryObject.from, 'SSO found:', this.props.isSSO );
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
