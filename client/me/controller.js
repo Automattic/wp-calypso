@@ -75,7 +75,7 @@ export default {
 
 	nextSteps( context ) {
 		const analyticsBasePath = route.sectionify( context.path ),
-			NextSteps = require( './next-steps' ),
+			NextSteps = require( './next-steps' ).default,
 			trophiesData = require( 'lib/trophies-data' ),
 			isWelcome = 'welcome' === context.params.welcome;
 
