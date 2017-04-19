@@ -88,6 +88,15 @@ const loggedOutMiddleware = currentUser => {
 	);
 
 	page( '*', ( context, next ) => {
+		if ( '/' === context.pathname && config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
+			if ( config.isEnabled( 'oauth' ) ) {
+				page.redirect( '/authorize' );
+			} else {
+				page.redirect( '/devdocs/start' );
+			}
+			return;
+		}
+
 		if ( isValidSection( context.path ) ) {
 			next();
 		}

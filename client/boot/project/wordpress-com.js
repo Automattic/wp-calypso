@@ -184,15 +184,6 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 	if ( ! currentUser.get() ) {
 		// Dead-end the sections the user can't access when logged out
 		page( '*', function( context, next ) {
-			if ( '/' === context.pathname && config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
-				if ( config.isEnabled( 'oauth' ) ) {
-					page.redirect( '/authorize' );
-				} else {
-					page.redirect( '/devdocs/start' );
-				}
-				return;
-			}
-
 			//see server/pages/index for prod redirect
 			if ( '/plans' === context.pathname ) {
 				const queryFor = context.query && context.query.for;
