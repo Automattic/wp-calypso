@@ -2,37 +2,60 @@
  * External dependencies
  */
 import React from 'react';
+import debugModule from 'debug';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import { doSearch, getSearchOpen } from 'lib/mixins/url-search';
+import buildUrl from 'lib/mixins/url-search/build-url';
 
-export default function( Component ) {
-	const componentName = Component.displayName || Component.name || '';
+const debug = debugModule( 'calypso:url-search' );
 
-	return class extends React.Component {
-		state = {
-			searchOpen: false
-		};
+const UrlSearch = Component => class extends Component {
+	static displayName = Component.displayName || Component.name || '';
 
-		displayName = 'Searchable' + componentName;
+	state = {
+		searchOpen: false
+	};
 
-		constructor(props) {
-			super(props);
+	componentWillReceiveProps = ( { search } ) => ! search && this.setState( { searchOpen: false } );
 
-			this.doSearch = doSearch.bind( this );
-			this.getSearchOpen = getSearchOpen.bind( this );
+	doSearch = ( keywords ) => {
+		this.setState( {
+			searchOpen: ( false !== keywords )
+		} );
+
+		if ( this.onSearch ) {
+			this.onSearch( keywords );
+			return;
 		}
 
-		componentWillReceiveProps = ( { search } ) => ! search && this.setState( { searchOpen: false } );
+		const searchURL = buildUrl( window.location.href, keywords );
 
-		render() {
-			return <Component { ...{
-				...this.props,
-				doSearch: this.doSearch,
-				getSearchOpen: this.getSearch,
-			} } />
+		debug( 'search posts for:', keywords );
+		if ( this.props.search && keywords ) {
+			debug( 'replacing URL: ' + searchURL );
+			page.replace( searchURL );
+		} else {
+			debug( 'setting URL: ' + searchURL );
+			page( searchURL );
 		}
 	};
-}
+
+	getSearchOpen = () => {
+		return ( this.state.searchOpen !== false || this.props.search );
+	}
+
+	render() {
+		return (
+			<Component
+				{ ...this.props }
+				doSearch = { this.doSearch }
+				getSearchOpen={ this.getSearch }
+			/>
+		);
+	}
+};
+
+export default UrlSearch;
