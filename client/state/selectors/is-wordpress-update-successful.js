@@ -11,6 +11,6 @@ import { get } from 'lodash';
  * @param  {Number}    siteId  The ID of the site we're querying
  * @return {?Boolean}          Whether WordPress core update was successful.
  */
-export default function getSiteCoreUpdateStatus( state, siteId ) {
+export default function isWordpressUpdateSuccesful( state, siteId ) {
 	return get( state, [ 'sites', 'updates', 'wordpressUpdateStatus', siteId ], null );
 }

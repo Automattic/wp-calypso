@@ -6,9 +6,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSiteCoreUpdateStatus } from '../';
+import { isWordpressUpdateSuccesful } from '../';
 
-describe( 'getSiteCoreUpdateStatus()', () => {
+describe( 'isWordpressUpdateSuccesful()', () => {
 	const siteId = 2916284;
 
 	it( 'should return wordpress core update status for a known site', () => {
@@ -21,7 +21,7 @@ describe( 'getSiteCoreUpdateStatus()', () => {
 				}
 			}
 		};
-		const output = getSiteCoreUpdateStatus( state, siteId );
+		const output = isWordpressUpdateSuccesful( state, siteId );
 		expect( output ).to.be.true;
 	} );
 
@@ -35,7 +35,7 @@ describe( 'getSiteCoreUpdateStatus()', () => {
 				}
 			}
 		};
-		const output = getSiteCoreUpdateStatus( state, siteId );
+		const output = isWordpressUpdateSuccesful( state, siteId );
 		expect( output ).to.be.null;
 	} );
 } );
