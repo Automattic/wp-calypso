@@ -78,18 +78,6 @@ class SignupForm extends Component {
 		validationInitialized: false
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.handleBlur = this.handleBlur.bind( this );
-		this.handleChangeEvent = this.handleChangeEvent.bind( this );
-		this.handleOnClickTos = this.handleOnClickTos.bind( this );
-		this.handleSubmit = this.handleSubmit.bind( this );
-		this.sanitize = this.sanitize.bind( this );
-		this.setFormState = this.setFormState.bind( this );
-		this.validate = this.validate.bind( this );
-	}
-
 	getInitialFields() {
 		return {
 			email: this.props.email || '',
@@ -140,7 +128,7 @@ class SignupForm extends Component {
 		return username && username.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase();
 	}
 
-	sanitize( fields, onComplete ) {
+	sanitize = ( fields, onComplete ) => {
 		const sanitizedEmail = this.sanitizeEmail( fields.email ),
 			sanitizedUsername = this.sanitizeUsername( fields.username );
 
@@ -150,9 +138,9 @@ class SignupForm extends Component {
 				username: sanitizedUsername
 			} );
 		}
-	}
+	};
 
-	validate( fields, onComplete ) {
+	validate = ( fields, onComplete ) => {
 		wpcom.undocumented().validateNewUser( fields, ( error, response ) => {
 			if ( this.props.submitting ) {
 				// this is a stale callback, we have already signed up or are logging in
@@ -212,11 +200,11 @@ class SignupForm extends Component {
 				this.setState( { validationInitialized: true } );
 			}
 		} );
-	}
+	};
 
-	setFormState( state ) {
+	setFormState = ( state ) => {
 		this.setState( { form: state } );
-	}
+	};
 
 	handleFormControllerError( error ) {
 		if ( error ) {
@@ -224,7 +212,7 @@ class SignupForm extends Component {
 		}
 	}
 
-	handleChangeEvent( event ) {
+	handleChangeEvent = ( event ) => {
 		const name = event.target.name,
 			value = event.target.value;
 
@@ -234,15 +222,15 @@ class SignupForm extends Component {
 			name: name,
 			value: value
 		} );
-	}
+	};
 
-	handleBlur() {
+	handleBlur = () => {
 		this.formStateController.sanitize();
 		this.formStateController.validate();
 		this.props.save && this.props.save( this.state.form );
-	}
+	};
 
-	handleSubmit( event ) {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 
 		if ( this.state.submitting ) {
@@ -275,7 +263,7 @@ class SignupForm extends Component {
 
 			resetAnalyticsData();
 		} );
-	}
+	};
 
 	globalNotice( notice ) {
 		return <Notice
@@ -383,12 +371,12 @@ class SignupForm extends Component {
 		);
 	}
 
-	handleOnClickTos() {
+	handleOnClickTos = () => {
 		analytics.tracks.recordEvent.bind(
 			analytics,
 			'calypso_signup_tos_link_click'
 		);
-	}
+	};
 
 	getTermsOfServiceUrl() {
 		// locales where we don't have translated TOS will simply show the English one
