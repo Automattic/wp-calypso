@@ -26,6 +26,7 @@ import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import StatsSparkline from 'blocks/stats-sparkline';
+import JetpackLogo from 'components/jetpack-logo';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
@@ -360,7 +361,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<li className={ this.itemLinkClass( [ '/plans' ], linkClass ) }>
 				<a onClick={ this.trackUpgradeClick } href={ planLink }>
-					<Gridicon icon="clipboard" size={ 24 } />
+					<JetpackLogo size={ 24 } />
 					<span className="menu-link-text">{ this.props.translate( 'Plan', { context: 'noun' } ) }</span>
 				</a>
 				<a href={ planLink } className="plan-name" onClick={ this.trackUpgradeClick }>{ planName }</a>

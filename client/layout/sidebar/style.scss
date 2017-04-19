@@ -164,7 +164,8 @@
 		}
 	}
 
-	.gridicon {
+	.gridicon,
+	.jetpack-logo {
 		position: absolute;
 			top: 11px;
 			left: 20px;
@@ -244,7 +245,8 @@ form.sidebar__button {
 			border: 1px solid darken( $sidebar-selected-color, 10% );
 		}
 
-		.gridicon {
+		.gridicon,
+		.jetpack-logo {
 			fill: $white;
 		}
 
@@ -282,7 +284,8 @@ form.sidebar__button {
 			}
 		}
 
-		.gridicon {
+		.gridicon,
+		.jetpack-logo {
 			fill: $blue-medium;
 		}
 	}
