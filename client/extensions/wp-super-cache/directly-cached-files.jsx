@@ -44,10 +44,10 @@ class DirectlyCachedFiles extends Component {
 			translate
 		} = this.props;
 		const {
-			wp_cache_direct_pages = [],
-			wp_cache_path,
-			wp_cache_readonly,
-			wp_cache_writable,
+			cache_direct_pages = [],
+			cache_path,
+			cache_readonly,
+			cache_writable,
 		} = fields;
 
 		return (
@@ -65,25 +65,25 @@ class DirectlyCachedFiles extends Component {
 					</Button>
 				</SectionHeader>
 				<Card className="wp-super-cache__directly-cached-files">
-					{ !! wp_cache_readonly &&
+					{ cache_readonly &&
 					<p>
 					{ translate(
-						'{{strong}}Warning!{{/strong}} You must make %(wp_cache_path)s wp_cache_writable to enable this feature. ' +
+						'{{strong}}Warning!{{/strong}} You must make %(cache_path)s writable to enable this feature. ' +
 						'As this is a security risk, please make it read-only after your page is generated.',
 						{
-							args: { wp_cache_path: wp_cache_path },
+							args: { cache_path: cache_path },
 							components: { strong: <strong /> },
 						}
 					) }
 					</p>
 					}
-					{ !! wp_cache_writable &&
+					{ cache_writable &&
 					<p>
 					{ translate(
-						'{{strong}}Warning!{{/strong}} %(wp_cache_path)s is wp_cache_writable. Please make it wp_cache_readonly ' +
+						'{{strong}}Warning!{{/strong}} %(cache_path)s is writable. Please make it readonly ' +
 						'after your page is generated as this is a security risk.',
 						{
-							args: { wp_cache_path: wp_cache_path },
+							args: { cache_path: cache_path },
 							components: { strong: <strong /> },
 						}
 					) }
@@ -91,14 +91,14 @@ class DirectlyCachedFiles extends Component {
 					}
 					<p>
 						{ translate(
-							'Directly cached files are files created directly off %(wp_cache_path)s where your blog lives. This ' +
+							'Directly cached files are files created directly off %(cache_path)s where your blog lives. This ' +
 							'feature is only useful if you are expecting a major Digg or Slashdot level of traffic to one post or page.',
 							{
-								args: { wp_cache_path: wp_cache_path },
+								args: { cache_path: cache_path },
 							}
 						) }
 					</p>
-						{ ! wp_cache_readonly &&
+						{ ! cache_readonly &&
 						<div>
 							<p>
 								{ translate(
@@ -119,27 +119,27 @@ class DirectlyCachedFiles extends Component {
 										ref="newDirectPage" />
 								</FormFieldset>
 
-								{ wp_cache_direct_pages.length > 0 &&
+								{ cache_direct_pages.length > 0 &&
 								<FormLabel>
 									{ translate(
 										'Existing Direct Page',
 										'Existing Direct Pages',
-										{ count: wp_cache_direct_pages.length }
+										{ count: cache_direct_pages.length }
 									) }
 								</FormLabel>
 								}
 
-								{ wp_cache_direct_pages.map( ( page, index ) => (
+								{ cache_direct_pages.map( ( page, index ) => (
 									<FormFieldset key={ index }>
 										<FormTextInput
 											disabled={ isRequesting || isSaving }
 											key={ index }
-											onChange={ setFieldArrayValue( 'wp_cache_direct_pages', index ) }
+											onChange={ setFieldArrayValue( 'cache_direct_pages', index ) }
 											value={ page || '' } />
 									</FormFieldset>
 								) ) }
 
-								{ wp_cache_direct_pages.length > 0 &&
+								{ cache_direct_pages.length > 0 &&
 								<FormSettingExplanation>
 									{ translate(
 										'Make the textbox blank to remove it from the list of direct pages and delete the cached file.'
@@ -157,10 +157,10 @@ class DirectlyCachedFiles extends Component {
 
 const getFormSettings = settings => {
 	return pick( settings, [
-		'wp_cache_direct_pages',
-		'wp_cache_path',
-		'wp_cache_readonly',
-		'wp_cache_writable',
+		'cache_direct_pages',
+		'cache_path',
+		'cache_readonly',
+		'cache_writable',
 	] );
 };
 

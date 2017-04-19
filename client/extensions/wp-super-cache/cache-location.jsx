@@ -17,7 +17,7 @@ import WrapSettingsForm from './wrap-settings-form';
 
 const CacheLocation = ( {
 	fields: {
-		wp_cache_location,
+		cache_path,
 	},
 	handleChange,
 	handleSubmitForm,
@@ -44,15 +44,15 @@ const CacheLocation = ( {
 					<FormFieldset>
 						<FormTextInput
 							disabled={ isRequesting || isSaving }
-							onChange={ handleChange( 'wp_cache_location' ) }
-							value={ wp_cache_location || '' } />
+							onChange={ handleChange( 'cache_path' ) }
+							value={ cache_path || '' } />
 						<FormSettingExplanation>
 							{ translate(
 								'Change the location of your cache files. The default is WP_CONTENT_DIR . ' +
 								'/cache/ which translates to {{cacheLocation/}}',
 								{
 									components: {
-										cacheLocation: <span>{ wp_cache_location || '' }</span>,
+										cacheLocation: <span>{ cache_path || '' }</span>,
 									}
 								}
 							) }
@@ -66,7 +66,7 @@ const CacheLocation = ( {
 
 const getFormSettings = settings => {
 	return pick( settings, [
-		'wp_cache_location',
+		'cache_path',
 	] );
 };
 
