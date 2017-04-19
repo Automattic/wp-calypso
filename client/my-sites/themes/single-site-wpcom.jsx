@@ -17,7 +17,6 @@ import {
 	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
-	PLAN_BUSINESS,
 } from 'lib/plans/constants';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -39,15 +38,6 @@ const ConnectedSingleSiteWpcom = connectOptions(
 						translate( 'Get advanced customization, more storage space, and video support along with all your new themes.' )
 					}
 					event="themes_plans_free_personal"
-				/>
-				}
-				{ ( currentPlanSlug === PLAN_PREMIUM ) && <Banner
-					plan={ PLAN_BUSINESS }
-					title={ translate( 'Why not upgrade to Business?' ) }
-					description={
-						translate( 'Get Google Analytics integration, advanced SEO tools, personalized help, and more.' )
-					}
-					event="themes_plans_premium"
 				/>
 				}
 
