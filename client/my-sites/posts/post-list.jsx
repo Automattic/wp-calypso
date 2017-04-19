@@ -3,12 +3,10 @@
  */
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	debug = require( 'debug' )( 'calypso:my-sites:posts' ),
-	debounce = require( 'lodash/debounce' ),
-	omit = require( 'lodash/omit' ),
-	isEqual = require( 'lodash/isEqual' );
+	debug = require( 'debug' )( 'calypso:my-sites:posts' );
 
 import { connect } from 'react-redux';
+import { debounce, isEmpty, isEqual, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,7 +22,6 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	mapStatus = route.mapPostStatus;
 
 import UpgradeNudge from 'my-sites/upgrade-nudge';
-import { getSites } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 var GUESSED_POST_HEIGHT = 250;
@@ -304,6 +301,6 @@ var Posts = React.createClass( {
 export default connect(
 	( state ) => ( {
 		selectedSiteId: getSelectedSiteId( state ),
-		hasSites: !! getSites( state ).length
+		hasSites: ! isEmpty( state.sites.items )
 	} )
 )( PostList );
