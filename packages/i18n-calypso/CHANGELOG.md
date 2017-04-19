@@ -1,3 +1,7 @@
+1.7.3
+-----
+Improve input file pattern support, see [#25](https://github.com/Automattic/i18n-calypso/pull/25).
+
 1.7.2
 -----
 Update `moment-timezone` to version `0.5.11`. 

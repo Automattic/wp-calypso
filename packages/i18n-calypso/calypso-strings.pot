@@ -1,0 +1,3897 @@
+# THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY.
+
+msgid ""
+msgstr ""
+"Project-Id-Version: _s \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-04-19T11:56:24.877Z\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2014-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: wp-calypso-master/build/bundle-development.js:85676
+#: wp-calypso-master/client/components/tinymce/plugins/contact-form/dialog/locales.js:20
+#: wp-calypso-master/client/state/ui/editor/contact-form/constants.js:42
+msgid "Text"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:85669
+#: wp-calypso-master/client/state/ui/editor/contact-form/constants.js:34
+msgid "Comment"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:85666
+#: wp-calypso-master/client/state/ui/editor/contact-form/constants.js:30
+msgid "Website"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:85662
+#: wp-calypso-master/client/me/notification-settings/settings-form/locales.js:5
+#: wp-calypso-master/client/state/ui/editor/contact-form/constants.js:25
+msgid "Email"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:85658
+#: wp-calypso-master/client/components/tinymce/plugins/contact-form/dialog/locales.js:5
+#: wp-calypso-master/client/state/ui/editor/contact-form/constants.js:20
+msgid "Name"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:85591
+#: wp-calypso-master/client/state/ui/editor/contact-form/reducer.js:52
+#. Default options for drop down lists and radio buttons. Must be separated by a comma without extra spaces.
+msgid "Option One,Option Two"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:82892
+#: wp-calypso-master/client/state/stats/lists/utils.js:698
+msgid "Unknown Search Terms"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66739
+#: wp-calypso-master/client/state/notices/jetpack-modules/constants.js:21
+msgid "Infinite scroll could not be switched off."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66739
+#: wp-calypso-master/client/state/notices/jetpack-modules/constants.js:20
+msgid "Infinite scroll could not be switched on."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66739
+#: wp-calypso-master/client/state/notices/jetpack-modules/constants.js:19
+msgid "Infinite scroll is now off."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66739
+#: wp-calypso-master/client/state/notices/jetpack-modules/constants.js:18
+msgid "Infinite scroll is now on."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66687
+#: wp-calypso-master/client/state/notices/jetpack-modules/index.js:41
+msgid "An error occurred during deactivation."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66683
+#: wp-calypso-master/client/state/notices/jetpack-modules/index.js:37
+msgid "An error occurred during activation."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66679
+#: wp-calypso-master/client/state/notices/jetpack-modules/index.js:33
+msgid "Turned off successfully."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66675
+#: wp-calypso-master/client/state/notices/jetpack-modules/index.js:29
+msgid "Turned on successfully."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66562
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:135
+msgid ""
+"There was a problem validating your recovery SMS number. Please try again "
+"later."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66558
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:132
+msgid "Your recovery SMS number has been validated successfully."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66525
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:110
+msgid "An error occurred while fetching your account recovery settings."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66521
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:105
+msgid "We've encountered a problem. Please try again later."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66519
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:103
+msgid ""
+"We've encountered a problem sending you the validation email. Please try "
+"again later."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66517
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:101
+msgid ""
+"We've encountered a problem sending you the validation code. Please try "
+"again later."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66510
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:94
+msgid "The validation has been resent successfully."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66508
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:92
+msgid ""
+"The validation email has been resent successfully. Please check your mailbox."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66506
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:90
+msgid ""
+"The validation code has been resent successfully. Please check your phone."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66497
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:81
+#. Recovery option: generic term for methods of account recovery, i.e emails or sms.
+msgid "An error occurred while deleting your account recovery options."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66495
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:79
+msgid "An error occurred while deleting your account recovery email."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66493
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:77
+msgid "An error occurred while deleting your account recovery phone number."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66484
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:68
+#. Recovery option: generic term for methods of account recovery, i.e emails or sms.
+msgid "Successfully removed the recovery option."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66482
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:66
+msgid "Successfully removed recovery email address."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66480
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:64
+msgid "Successfully removed recovery SMS number."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66471
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:55
+#. Recovery option: generic term for methods of account recovery, i.e emails or sms.
+msgid "An error occurred while updating your account recovery options."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66469
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:53
+msgid "An error occurred while updating your account recovery email."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66467
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:51
+msgid "An error occurred while updating your account recovery phone number."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66453
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:42
+#. Recovery option: generic term for methods of account recovery, i.e emails or sms.
+msgid "Successfully updated the recovery option."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66450
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:39
+msgid ""
+"Successfully updated. Please check your mailbox for the validation email."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66447
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:36
+msgid "Successfully added. Please check your mailbox for the validation email."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66441
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:30
+msgid "Successfully updated. Please check your phone for the validation code."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66438
+#: wp-calypso-master/client/state/notices/account-recovery/index.js:27
+msgid "Successfully added. Please check your phone for the validation code."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66056
+#: wp-calypso-master/client/state/notices/middleware.js:232
+msgid "Customize error, please retry or contact support"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66056
+#: wp-calypso-master/client/state/notices/middleware.js:229
+msgid "An error occurred while setting the homepage"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66056
+#: wp-calypso-master/client/state/notices/middleware.js:228
+msgid "Thanks for confirming those details!"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66056
+#: wp-calypso-master/client/state/notices/middleware.js:218
+msgid "Post successfully restored"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66056
+#: wp-calypso-master/client/state/notices/middleware.js:216
+msgid "Post successfully deleted"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66056
+#: wp-calypso-master/client/state/notices/middleware.js:209
+msgid "New Gravatar uploaded successfully!"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66056
+#: wp-calypso-master/client/state/notices/middleware.js:208
+msgid "New Gravatar was not saved."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66054
+#: wp-calypso-master/client/state/notices/middleware.js:204
+msgid "Your receipt was sent by email successfully."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66054
+#: wp-calypso-master/client/state/notices/middleware.js:201
+msgid ""
+"There was a problem sending your receipt. Please try again later or contact "
+"support."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66044
+#: wp-calypso-master/client/state/notices/middleware.js:181
+msgctxt "Themes: Theme delete failure"
+msgid "Problem deleting %(themeId)s. Check theme is not active."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66036
+#: wp-calypso-master/client/state/notices/middleware.js:174
+msgctxt "Themes: Theme delete confirmation"
+msgid "Deleted theme %(themeName)s."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66028
+#: wp-calypso-master/client/state/notices/middleware.js:167
+msgctxt "Sharing: Publicize reconnection confirmation"
+msgid "The %(service)s account was unable to be updated."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66020
+#: wp-calypso-master/client/state/notices/middleware.js:160
+msgctxt "Sharing: Publicize connection confirmation"
+msgid "The %(service)s account was successfully updated."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66012
+#: wp-calypso-master/client/state/notices/middleware.js:153
+msgctxt "Sharing: Publicize reconnection confirmation"
+msgid "The %(service)s account was unable to be reconnected."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:66004
+#: wp-calypso-master/client/state/notices/middleware.js:146
+msgctxt "Sharing: Publicize connection confirmation"
+msgid "The %(service)s account was successfully reconnected."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:65996
+#: wp-calypso-master/client/state/notices/middleware.js:139
+msgctxt "Sharing: Publicize connection confirmation"
+msgid "The %(service)s account was unable to be disconnected."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:65988
+#: wp-calypso-master/client/state/notices/middleware.js:132
+msgctxt "Sharing: Publicize connection confirmation"
+msgid "The %(service)s account was successfully disconnected."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:65981
+#: wp-calypso-master/client/state/notices/middleware.js:126
+msgctxt "Sharing: Publicize connection confirmation"
+msgid "An error occurred while connecting the account."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:65973
+#: wp-calypso-master/client/state/notices/middleware.js:119
+msgctxt "Sharing: Publicize connection confirmation"
+msgid "The %(service)s account was successfully connected."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:65962
+#: wp-calypso-master/client/state/notices/middleware.js:109
+msgid "Post successfully published"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:65958
+#: wp-calypso-master/client/state/notices/middleware.js:105
+msgid "Post successfully moved to trash"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:65948
+#: wp-calypso-master/client/state/notices/middleware.js:95
+msgid "An error occurred while restoring the post"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:65944
+#: wp-calypso-master/client/state/notices/middleware.js:91
+msgid "An error occurred while restoring \"%s\""
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:65933
+#: wp-calypso-master/client/state/notices/middleware.js:80
+msgid "An error occurred while deleting the post"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:65929
+#: wp-calypso-master/client/state/notices/middleware.js:76
+msgid "An error occurred while deleting \"%s\""
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:64103
+#: wp-calypso-master/build/bundle-development.js:8615
+#: wp-calypso-master/client/lib/site/utils.js:91
+#: wp-calypso-master/client/state/sites/selectors.js:930
+msgid "Core autoupdates are explicitly disabled by a site administrator."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:64099
+#: wp-calypso-master/build/bundle-development.js:8611
+#: wp-calypso-master/client/lib/site/utils.js:86
+#: wp-calypso-master/client/state/sites/selectors.js:925
+msgid "Any autoupdates are explicitly disabled by a site administrator."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:64094
+#: wp-calypso-master/build/bundle-development.js:8606
+#: wp-calypso-master/client/lib/site/utils.js:80
+#: wp-calypso-master/client/state/sites/selectors.js:919
+msgid "File modifications are explicitly disabled by a site administrator."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:64091
+#: wp-calypso-master/build/bundle-development.js:8603
+#: wp-calypso-master/client/lib/site/utils.js:77
+#: wp-calypso-master/client/state/sites/selectors.js:916
+msgid "The file permissions on this host prevent editing files."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:63761
+#: wp-calypso-master/client/lib/site/jetpack.js:165
+msgid ""
+"An error occurred while deactivating the Jetpack %(module)s feature on "
+"%(site)s."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:63758
+#: wp-calypso-master/client/lib/site/jetpack.js:156
+msgid ""
+"Error deactivating the Jetpack %(module)s feature on %(site)s, remote "
+"management is off."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:63750
+#: wp-calypso-master/client/lib/site/jetpack.js:143
+msgid ""
+"An error occurred while activating the Jetpack %(module)s feature on "
+"%(site)s."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:63747
+#: wp-calypso-master/client/lib/site/jetpack.js:134
+msgid ""
+"Error activating the Jetpack %(module)s feature on %(site)s, remote "
+"management is off."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:63740
+#: wp-calypso-master/client/lib/site/jetpack.js:126
+msgid "Turn On."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:62886
+#: wp-calypso-master/client/lib/site/index.js:42
+#: wp-calypso-master/client/my-sites/menus/controller.js:30
+msgid "You are not authorized to manage settings for this site."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:62883
+#: wp-calypso-master/client/lib/site/index.js:39
+msgid "You must be logged in to manage site settings."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:62878
+#: wp-calypso-master/client/lib/site/index.js:34
+msgid "Make sure your Jetpack is up to date"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:62877
+#: wp-calypso-master/client/lib/site/index.js:33
+msgid "There was an error retrieving your site settings."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:62874
+#: wp-calypso-master/client/lib/site/index.js:30
+msgid ""
+"There was an error retrieving your site settings. Please check your internet "
+"connection."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:40997
+#: wp-calypso-master/build/bundle-development.js:40947
+#: wp-calypso-master/client/my-sites/sharing/buttons/preview-widget.js:32
+msgid "More"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:40982
+#: wp-calypso-master/build/bundle-development.js:39883
+msgid "What kind of theme are you looking for?"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:40969
+#: wp-calypso-master/build/bundle-development.js:39869
+#: wp-calypso-master/build/bundle-development.js:25815
+#: wp-calypso-master/build/bundle-development.js:25790
+#: wp-calypso-master/build/bundle-development.js:25699
+#: wp-calypso-master/client/lib/plans/constants.js:257
+#: wp-calypso-master/client/lib/plans/constants.js:231
+#: wp-calypso-master/client/lib/plans/constants.js:134
+msgid "Premium"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:40969
+#: wp-calypso-master/build/bundle-development.js:39869
+#: wp-calypso-master/build/bundle-development.js:25771
+#: wp-calypso-master/build/bundle-development.js:25644
+#: wp-calypso-master/build/bundle-development.js:15521
+#: wp-calypso-master/client/lib/plans/constants.js:215
+#: wp-calypso-master/client/lib/plans/constants.js:90
+msgid "Free"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:40969
+#: wp-calypso-master/build/bundle-development.js:39869
+msgid "All"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:40958
+msgid "Search themes…"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:40734
+msgid "Search by"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:40540
+msgid "%(filtered)s of %(total)s"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:39421
+msgid "WordPress.com themes"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:38505
+msgctxt "singular noun, the currently active theme"
+msgid "Active"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:38201
+#: wp-calypso-master/build/bundle-development.js:37501
+msgid "Upload Theme"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:38192
+msgid "I already have a theme I'd like to use for my website."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:38176
+msgid "Try a different search or more filters?"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:38175
+msgid "Sorry, no themes found."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:35829
+#: wp-calypso-master/client/state/purchases/actions.js:46
+msgid ""
+"There was a problem canceling this privacy protection. Please try again "
+"later or contact support."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:35807
+#: wp-calypso-master/client/state/purchases/actions.js:25
+msgid "There was an error removing the purchase."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:35806
+#: wp-calypso-master/client/state/purchases/actions.js:24
+msgid "There was an error retrieving purchases."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:35625
+#: wp-calypso-master/client/state/sites/plans/actions.js:100
+msgid ""
+"There was a problem fetching site plans. Please try again later or contact "
+"support."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:35579
+#: wp-calypso-master/client/state/sites/plans/actions.js:52
+msgid ""
+"There was a problem canceling the plan trial. Please try again later or "
+"contact support."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:35254
+msgid "Back to themes"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:35253
+msgid "Activating theme…"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:35253
+msgid "Visit site"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:35230
+msgid "Thanks for choosing {{br/}} %(themeName)s {{br/}} by %(themeAuthor)s"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:35208
+msgid "Have questions? {{a}}Contact the theme author.{{/a}}"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:35199
+msgid "Have questions? Stop by our {{a}}support forums{{/a}}."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:35187
+msgid "{{a}}Customize{{/a}} this design."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:35179
+msgid "{{a}}Learn more about{{/a}} this theme."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:35075
+msgctxt "button label"
+msgid "Close Search"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:35025
+msgctxt "button label"
+msgid "Open Search"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:34990
+msgid "Search…"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:33370
+msgid "WordPress.com Reader"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:33369
+msgid "Twitter card"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:33368
+msgid "LinkedIn share"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:33367
+msgid "Google search"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:33366
+msgid "Facebook feed"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:32509
+msgid "Search Preview"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:32162
+#: wp-calypso-master/client/lib/human-date/index.js:40
+#. example for a resulting string: 4d ago
+msgid "%(days)dd ago"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:32152
+#: wp-calypso-master/client/lib/human-date/index.js:30
+#. example for a resulting string: 5h ago
+msgid "%(hours)dh ago"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:32142
+#: wp-calypso-master/client/lib/human-date/index.js:20
+#. example for a resulting string: 2m ago
+msgid "%(minutes)dm ago"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:32137
+#: wp-calypso-master/client/lib/human-date/index.js:15
+msgid "just now"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:31780
+msgid ""
+"Below you'll find previews that represent how your post will look when it's "
+"found or shared across a variety of networks."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:31775
+msgid "External previews"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:31636
+msgid "Coming Soon!"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:31140
+msgid "SEO"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:31129
+msgid "Show SEO and search previews"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:31081
+msgid "Close preview"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30956
+msgid "Preview"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30137
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:131
+msgid "Support"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30128
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:124
+msgid "Setup"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30120
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:116
+#. label for displaying the theme info sheet
+msgid "Info"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30105
+#: wp-calypso-master/build/bundle-development.js:15488
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:101
+#. when signing up for a WordPress.com account with a selected theme
+msgid "Pick this design"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30099
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:95
+#. label for previewing the theme demo website
+msgid "Live demo"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30086
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:86
+#. label in the dialog for opening the Customizer with the theme in preview
+msgid "Try & Customize on:"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30085
+#: wp-calypso-master/build/bundle-development.js:30084
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:85
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:84
+msgid "Try & Customize"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30072
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:76
+#. label in the dialog for selecting a site for which to customize a theme
+msgid "Customize on:"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30071
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:75
+msgid "Customize this design"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30070
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:74
+msgid "Customize"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30059
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:67
+msgid "Delete"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30051
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:58
+#. label for selecting a site on which to activate a theme
+msgid "Activate on:"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30050
+#: wp-calypso-master/build/bundle-development.js:15490
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:57
+msgid "Activate this design"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30049
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:56
+msgid "Activate"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30030
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:41
+#. label for selecting a site for which to purchase a theme
+msgctxt "verb"
+msgid "Purchase on:"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30029
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:40
+msgid "Purchase this design"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:30026
+#: wp-calypso-master/client/my-sites/themes/theme-options.js:37
+msgctxt "verb"
+msgid "Purchase"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:29319
+msgid "You might also like"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:29221
+msgid "Download"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:29204
+msgid ""
+"This theme is available for download to be used on your {{a}}WordPress "
+"self-hosted{{/a}} installation."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:28420
+msgid "Back"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:27646
+#: wp-calypso-master/client/components/tinymce/i18n.js:55
+msgid "OK"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:27643
+#: wp-calypso-master/client/components/tinymce/i18n.js:56
+#: wp-calypso-master/client/layout/guided-tours/tours/site-title-tour.js:108
+#: wp-calypso-master/client/layout/guided-tours/tours/site-title-tour.js:91
+msgid "Cancel"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26452
+#: wp-calypso-master/client/lib/plans/constants.js:777
+msgid ""
+"Custom polls, surveys, ratings, and quizzes for the ultimate in customer and "
+"reader engagement."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26449
+#: wp-calypso-master/client/lib/plans/constants.js:776
+msgid "Advanced Polls and Ratings"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26442
+#: wp-calypso-master/client/lib/plans/constants.js:770
+msgid "Repair any security issues found on your site with just a single click."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26439
+#: wp-calypso-master/client/lib/plans/constants.js:769
+msgid "One-click Threat Resolution"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26432
+#: wp-calypso-master/client/lib/plans/constants.js:763
+msgid ""
+"Automated security scanning with the option to run complete site scans at "
+"any time."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26429
+#: wp-calypso-master/client/lib/plans/constants.js:762
+msgid "Daily and On-demand Malware Scanning"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26422
+#: wp-calypso-master/client/lib/plans/constants.js:756
+msgid ""
+"Comprehensive and automated scanning for any security vulnerabilities or "
+"threats on your site."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26419
+#: wp-calypso-master/client/lib/plans/constants.js:755
+msgid "Daily Malware Scanning"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26412
+#: wp-calypso-master/client/lib/plans/constants.js:751
+msgid "Easily and quickly move or duplicate your site to any location."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26409
+#: wp-calypso-master/client/lib/plans/constants.js:750
+msgid "Easy Site Migration"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26402
+#: wp-calypso-master/client/lib/plans/constants.js:746
+msgid "Restore your site from any available backup with a single click."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26399
+#: wp-calypso-master/client/lib/plans/constants.js:745
+msgid "Automated Restores"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26392
+#: wp-calypso-master/client/lib/plans/constants.js:741
+msgid "Absolutely no limits on storage space for your backups."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26389
+#: wp-calypso-master/client/lib/plans/constants.js:740
+msgid "Unlimited Backup Storage Space"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26382
+#: wp-calypso-master/client/lib/plans/constants.js:734
+msgid "Browse or restore any backup made since you activated the service."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26379
+#: wp-calypso-master/client/lib/plans/constants.js:733
+msgid "Unlimited Backup Archive"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26372
+#: wp-calypso-master/client/lib/plans/constants.js:729
+msgid "Browse or restore any backup made within the past 15 days."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26369
+#: wp-calypso-master/client/lib/plans/constants.js:728
+msgid "15-day Backup Archive"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26362
+#: wp-calypso-master/client/lib/plans/constants.js:724
+msgid "Browse or restore any backup made within the past 30 days."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26359
+#: wp-calypso-master/client/lib/plans/constants.js:723
+msgid "30-day Backup Archive"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26352
+#: wp-calypso-master/client/lib/plans/constants.js:716
+msgid ""
+"Automatic realtime backups of every single aspect of your site. Stored "
+"safely and optimized for WordPress."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26349
+#: wp-calypso-master/client/lib/plans/constants.js:715
+msgid "Real-time Offsite Backups"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26342
+#: wp-calypso-master/client/lib/plans/constants.js:708
+msgid ""
+"Automatic daily backups of every single aspect of your site. Stored safely "
+"and optimized for WordPress."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26339
+#: wp-calypso-master/client/lib/plans/constants.js:707
+msgid "Daily Offsite Backups"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26332
+#: wp-calypso-master/client/lib/plans/constants.js:703
+msgid "State-of-the-art spam defense powered by Akismet."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26329
+#: wp-calypso-master/client/lib/plans/constants.js:702
+msgid "Spam Protection"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26322
+#: wp-calypso-master/client/lib/plans/constants.js:698
+msgid "Manage all of your WordPress sites from one location."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26319
+#: wp-calypso-master/client/lib/plans/constants.js:697
+msgid "Centralized Dashboard"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26312
+#: wp-calypso-master/client/lib/plans/constants.js:693
+msgid ""
+"Build and engage your audience with more than a dozen optimization tools."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26309
+#: wp-calypso-master/client/lib/plans/constants.js:692
+msgid "Traffic and Promotion Tools"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26302
+#: wp-calypso-master/client/lib/plans/constants.js:688
+msgid "The most important metrics for your site."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26299
+#: wp-calypso-master/client/lib/plans/constants.js:687
+msgid "Site Stats and Analytics"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26292
+#: wp-calypso-master/client/lib/plans/constants.js:680
+msgid ""
+"Brute force protection, uptime monitoring, secure sign on, and automatic "
+"updates for your plugins."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26289
+#: wp-calypso-master/client/lib/plans/constants.js:679
+msgid "Standard Security Tools"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26282
+#: wp-calypso-master/build/bundle-development.js:26272
+#: wp-calypso-master/client/lib/plans/constants.js:671
+#: wp-calypso-master/client/lib/plans/constants.js:662
+msgid ""
+"High quality support to help you get your website up and running and working "
+"how you want it."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26279
+#: wp-calypso-master/client/lib/plans/constants.js:670
+msgid "Priority Support"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26269
+#: wp-calypso-master/client/lib/plans/constants.js:661
+msgid "Email & Live Chat Support"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26262
+#: wp-calypso-master/client/lib/plans/constants.js:653
+msgid "Get support through our user community forums."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26259
+#: wp-calypso-master/client/lib/plans/constants.js:652
+msgid "Community support"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26252
+#: wp-calypso-master/build/bundle-development.js:25956
+#: wp-calypso-master/client/lib/plans/constants.js:644
+#: wp-calypso-master/client/lib/plans/constants.js:410
+msgid ""
+"With increased storage space you'll be able to upload more images, videos, "
+"audio, and documents to your website."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26245
+#: wp-calypso-master/client/lib/plans/constants.js:639
+msgid "{{strong}}13GB{{/strong}} Storage Space"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26238
+#: wp-calypso-master/client/lib/plans/constants.js:631
+msgid ""
+"With increased storage space you'll be able to upload more images, audio, "
+"and documents to your website."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26231
+#: wp-calypso-master/client/lib/plans/constants.js:626
+msgid "{{strong}}6GB{{/strong}} Storage Space"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26224
+#: wp-calypso-master/client/lib/plans/constants.js:619
+msgid "Storage space for adding images and documents to your website."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26221
+#: wp-calypso-master/client/lib/plans/constants.js:618
+msgid "3GB Storage Space"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26214
+#: wp-calypso-master/client/lib/plans/constants.js:610
+msgid ""
+"Access to a wide range of professional theme templates for your website so "
+"you can find the exact design you're looking for."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26211
+#: wp-calypso-master/client/lib/plans/constants.js:609
+msgid "Hundreds of Free Themes"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26204
+#: wp-calypso-master/client/lib/plans/constants.js:602
+msgid ""
+"Your site address will use a WordPress.com subdomain "
+"(sitename.wordpress.com)."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26201
+#: wp-calypso-master/client/lib/plans/constants.js:601
+msgid "WordPress.com Subdomain"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26194
+#: wp-calypso-master/client/lib/plans/constants.js:594
+msgid ""
+"Add advertising to your site through our WordAds program and earn money from "
+"impressions."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26191
+#: wp-calypso-master/client/lib/plans/constants.js:593
+msgid "Monetize Your Site"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26184
+#: wp-calypso-master/client/lib/plans/constants.js:588
+msgid "Upload custom themes on your site."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26181
+#: wp-calypso-master/client/lib/plans/constants.js:587
+msgid "Upload themes"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26174
+#: wp-calypso-master/client/lib/plans/constants.js:582
+msgid "Install custom plugins on your site."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26171
+#: wp-calypso-master/client/lib/plans/constants.js:581
+msgid "Install Plugins"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26164
+#: wp-calypso-master/client/lib/plans/constants.js:574
+msgid ""
+"Adds tools to enhance your site's content for better results on search "
+"engines and social media."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26161
+#: wp-calypso-master/client/lib/plans/constants.js:573
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:184
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:19
+msgid "SEO Tools"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26154
+#: wp-calypso-master/client/lib/plans/constants.js:566
+msgid ""
+"Schedule a one-on-one orientation with a Happiness Engineer to set up your "
+"site and learn more about WordPress.com."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26151
+#: wp-calypso-master/client/lib/plans/constants.js:565
+msgid "Get Personalized Help"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26141
+#: wp-calypso-master/client/lib/plans/constants.js:557
+msgid ""
+"Keep the focus on your site's brand by removing the WordPress.com footer "
+"branding."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26138
+#: wp-calypso-master/client/lib/plans/constants.js:556
+msgid "Remove WordPress.com Branding"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26131
+#: wp-calypso-master/client/lib/plans/constants.js:550
+msgid ""
+"Share your posts as many times as you like on all your connected social "
+"media accounts using Publicize."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26128
+#: wp-calypso-master/client/lib/plans/constants.js:549
+msgid "Targeted Social Media"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26118
+#: wp-calypso-master/client/lib/plans/constants.js:541
+msgid ""
+"Allow your visitors to visit and read your website without seeing any "
+"WordPress.com advertising."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26115
+#: wp-calypso-master/client/lib/plans/constants.js:540
+msgid "Remove WordPress.com Ads"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26105
+#: wp-calypso-master/client/lib/plans/constants.js:531
+msgid ""
+"Customize your selected theme template with extended color schemes, "
+"background designs, and complete control over website CSS."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26098
+#: wp-calypso-master/client/lib/plans/constants.js:526
+msgid "{{strong}}Advanced{{/strong}} Design Customization"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26088
+#: wp-calypso-master/client/lib/plans/constants.js:517
+msgid ""
+"Customize your selected theme template with pre-set color schemes, "
+"background designs, and font styles."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26085
+#: wp-calypso-master/client/lib/plans/constants.js:516
+msgid "Basic Design Customization"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26075
+#: wp-calypso-master/client/lib/plans/constants.js:508
+msgid ""
+"The easiest way to upload audio files that use any major audio file format. "
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26072
+#: wp-calypso-master/client/lib/plans/constants.js:507
+msgid "Audio Upload Support"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26062
+#: wp-calypso-master/client/lib/plans/constants.js:497
+msgid ""
+"The easiest way to upload videos to your website and display them using a "
+"fast, unbranded, customizable player with rich stats (unlimited storage "
+"space)."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26059
+#: wp-calypso-master/build/bundle-development.js:26046
+#: wp-calypso-master/build/bundle-development.js:26033
+#: wp-calypso-master/client/lib/plans/constants.js:496
+#: wp-calypso-master/client/lib/plans/constants.js:485
+#: wp-calypso-master/client/lib/plans/constants.js:475
+msgid "VideoPress Support"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26049
+#: wp-calypso-master/client/lib/plans/constants.js:486
+msgid ""
+"The easiest way to upload videos to your website and display them using a "
+"fast, unbranded, customizable player with rich stats (13GB storage space)."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26036
+#: wp-calypso-master/client/lib/plans/constants.js:476
+msgid ""
+"The easiest way to upload videos to your website and display them using a "
+"fast, unbranded, customizable player with rich stats."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26023
+#: wp-calypso-master/client/lib/plans/constants.js:466
+msgid ""
+"Access a selection of our advanced premium theme templates, including "
+"templates specifically tailored for businesses."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26020
+#: wp-calypso-master/client/lib/plans/constants.js:465
+msgid "Select Premium Themes"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26010
+#: wp-calypso-master/build/bundle-development.js:25993
+#: wp-calypso-master/client/lib/plans/constants.js:456
+#: wp-calypso-master/client/lib/plans/constants.js:442
+msgid ""
+"Unlimited access to all of our advanced premium theme templates, including "
+"templates specifically tailored for businesses."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:26003
+#: wp-calypso-master/client/lib/plans/constants.js:451
+msgid "{{strong}}All{{/strong}} Premium Themes"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25986
+#: wp-calypso-master/client/lib/plans/constants.js:437
+msgid "{{strong}}Unlimited{{/strong}} Premium Themes"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25979
+#: wp-calypso-master/client/lib/plans/constants.js:429
+msgid ""
+"Jetpack is a powerful plugin that includes SEO, spam protection, social "
+"sharing, site stats, and more."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25976
+#: wp-calypso-master/client/lib/plans/constants.js:428
+msgid "Jetpack Essential Features"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25969
+#: wp-calypso-master/client/lib/plans/constants.js:420
+msgid ""
+"Get a free custom domain name (example.com) with this plan to use for your "
+"website."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25966
+#: wp-calypso-master/client/lib/plans/constants.js:419
+msgid "Custom Domain Name"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25949
+#: wp-calypso-master/client/lib/plans/constants.js:405
+msgid "{{strong}}Unlimited{{/strong}} Storage Space"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25942
+#: wp-calypso-master/client/lib/plans/constants.js:397
+msgid ""
+"Track website statistics with Google Analytics for a deeper understanding of "
+"your website visitors and customers."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25939
+#: wp-calypso-master/client/lib/plans/constants.js:396
+msgid "Google Analytics Integration"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25930
+#: wp-calypso-master/build/bundle-development.js:25908
+#: wp-calypso-master/build/bundle-development.js:25861
+#: wp-calypso-master/build/bundle-development.js:25811
+#: wp-calypso-master/build/bundle-development.js:25767
+#: wp-calypso-master/build/bundle-development.js:25731
+#: wp-calypso-master/build/bundle-development.js:25695
+#: wp-calypso-master/client/lib/plans/constants.js:389
+#: wp-calypso-master/client/lib/plans/constants.js:356
+#: wp-calypso-master/client/lib/plans/constants.js:300
+#: wp-calypso-master/client/lib/plans/constants.js:253
+#: wp-calypso-master/client/lib/plans/constants.js:211
+#: wp-calypso-master/client/lib/plans/constants.js:165
+#: wp-calypso-master/client/lib/plans/constants.js:130
+msgid "per month, billed yearly"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25924
+#: wp-calypso-master/build/bundle-development.js:25902
+#: wp-calypso-master/client/lib/plans/constants.js:369
+#: wp-calypso-master/client/lib/plans/constants.js:336
+msgid ""
+"Real-time backups, unlimited archives, and one-click threat resolution. Also "
+"includes SEO tools, and unlimited video hosting."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25912
+#: wp-calypso-master/build/bundle-development.js:25890
+#: wp-calypso-master/client/lib/plans/constants.js:359
+#: wp-calypso-master/client/lib/plans/constants.js:326
+msgid "Professional"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25886
+#: wp-calypso-master/build/bundle-development.js:25836
+#: wp-calypso-master/client/lib/plans/constants.js:322
+#: wp-calypso-master/client/lib/plans/constants.js:278
+msgid "per month, billed monthly"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25880
+#: wp-calypso-master/build/bundle-development.js:25855
+#: wp-calypso-master/client/lib/plans/constants.js:309
+#: wp-calypso-master/client/lib/plans/constants.js:287
+msgid ""
+"Essentials for every site. The most affordable solution to keep your "
+"personal or small business site backed up and spam-free."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25865
+#: wp-calypso-master/build/bundle-development.js:25840
+#: wp-calypso-master/build/bundle-development.js:25670
+#: wp-calypso-master/client/lib/plans/constants.js:304
+#: wp-calypso-master/client/lib/plans/constants.js:282
+#: wp-calypso-master/client/lib/plans/constants.js:109
+msgid "Personal"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25830
+#: wp-calypso-master/client/lib/plans/constants.js:262
+msgid "Protection, speed, and revenue."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25805
+#: wp-calypso-master/client/lib/plans/constants.js:236
+msgid ""
+"Generate income and save on video hosting costs. Improve security with daily "
+"backups, malware scanning, and spam defense."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25786
+#: wp-calypso-master/build/bundle-development.js:25666
+#: wp-calypso-master/client/lib/plans/constants.js:228
+#: wp-calypso-master/client/lib/plans/constants.js:105
+msgid "for life"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25780
+#: wp-calypso-master/client/lib/plans/constants.js:218
+msgid ""
+"The features most needed by WordPress sites — perfectly packaged and "
+"optimized for everyone."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25753
+#: wp-calypso-master/client/lib/plans/constants.js:175
+msgid ""
+"{{strong}}Best for Small Business:{{/strong}} Power your business website "
+"with unlimited premium and business theme templates, Google Analytics "
+"support, unlimited storage, and the ability to remove WordPress.com branding."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25738
+#: wp-calypso-master/client/lib/plans/constants.js:170
+msgid "$299 per year"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25735
+#: wp-calypso-master/client/lib/plans/constants.js:169
+msgid "Business"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25717
+#: wp-calypso-master/client/lib/plans/constants.js:140
+msgid ""
+"{{strong}}Best for Entrepreneurs & Freelancers:{{/strong}} Build a unique "
+"website with advanced design tools, CSS editing, lots of space for audio and "
+"video, and the ability to monetize your site with ads."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25702
+#: wp-calypso-master/client/lib/plans/constants.js:135
+msgid "$99 per year"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25685
+#: wp-calypso-master/client/lib/plans/constants.js:114
+msgid ""
+"{{strong}}Best for Personal Use:{{/strong}} Boost your website with a custom "
+"domain name, and remove all WordPress.com advertising. Get access to high "
+"quality email and live chat support."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25659
+#: wp-calypso-master/client/lib/plans/constants.js:95
+msgid ""
+"Get a free website and be on your way to publishing your first post in less "
+"than five minutes."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25647
+#: wp-calypso-master/client/lib/plans/constants.js:91
+msgid "Free for life"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25096
+#: wp-calypso-master/client/lib/purchases/index.js:232
+msgid "Site Plan"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:25092
+#: wp-calypso-master/client/lib/purchases/index.js:228
+msgid "Premium Theme"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:16971
+#: wp-calypso-master/client/state/themes/actions.js:802
+msgctxt "go back (like the back button in a browser)"
+msgid "Back"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:16971
+#: wp-calypso-master/client/state/themes/actions.js:798
+#. Themes: theme delete dialog confirm button
+msgid "Delete %(themeName)s"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:16969
+#: wp-calypso-master/client/state/themes/actions.js:791
+#. Themes: theme delete confirmation dialog
+msgid "Are you sure you want to delete %(themeName)s from %(siteTitle)s?"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15599
+msgid "All Themes"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15561
+msgid "%(themeName)s Theme"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15508
+msgid "View the showcase"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15498
+#. Message displayed when requested theme was not found
+msgid "Check our theme showcase"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15495
+#. Message displayed when requested theme was not found
+msgid "Looking for great WordPress designs?"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15453
+msgid "Features"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15415
+msgctxt "Logged out theme support message"
+msgid "Pick this design and start a site with us, we can help!"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15411
+#: wp-calypso-master/build/bundle-development.js:15322
+msgid "Have a question about this theme?"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15397
+msgctxt "Support message when we no support links are available"
+msgid "Maybe it's a custom theme? Sorry about that."
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15393
+msgid "This theme is unsupported"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15360
+#: wp-calypso-master/build/bundle-development.js:15335
+msgid "Visit forum"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15351
+msgid "Get help from the experts in our CSS forum"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15347
+msgid "Need CSS help? "
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15313
+msgid "Get help from volunteers and staff"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15313
+msgid "Get in touch with the theme author"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15304
+msgid "Contact us"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15295
+msgid "Get in touch with our support team"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15291
+msgid "Need extra help?"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15211
+msgctxt "Filter label for theme content"
+msgid "Support"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15210
+msgctxt "Filter label for theme content"
+msgid "Setup"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15209
+msgctxt "Filter label for theme content"
+msgid "Overview"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15188
+msgctxt "Individual theme live preview button"
+msgid "Open Live Demo"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:15151
+msgid "by %(author)s"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:8706
+#: wp-calypso-master/client/state/sites/selectors.js:1020
+msgid "Site Title"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:6985
+#. Should be shorter than ~12 chars
+msgctxt "Toolbar"
+msgid "Log In"
+msgstr ""
+
+#: wp-calypso-master/build/bundle-development.js:6977
+#. Should be shorter than ~12 chars
+msgctxt "Toolbar"
+msgid "Sign Up"
+msgstr ""
+
+#: wp-calypso-master/client/components/email-verification/index.js:33
+msgid ""
+"Email confirmed! Now that you've confirmed your email address you can "
+"publish posts on your blog."
+msgstr ""
+
+#: wp-calypso-master/client/components/email-verification/index.js:32
+msgid "Email confirmed!"
+msgstr ""
+
+#: wp-calypso-master/client/components/signup-site-title/index.js:66
+msgid "Continue"
+msgstr ""
+
+#: wp-calypso-master/client/components/signup-site-title/index.js:62
+msgid "Give your site a title"
+msgstr ""
+
+#: wp-calypso-master/client/components/site-title-example/index.js:11
+msgid ""
+"Your Site Title is the name of your Blog or Website. It's often displayed at "
+"the top of your site."
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:78
+msgid "Paste as text"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:77
+msgid "Text color"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:76
+msgid "Horizontal line"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:75
+msgid "Edit"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:73
+#: wp-calypso-master/client/components/tinymce/plugins/wpcom-view/plugin.js:847
+msgid "Remove"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:71
+msgid "No alignment"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:69
+msgid "Insert Page Break tag"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:68
+#: wp-calypso-master/client/components/tinymce/plugins/wpcom/plugin.js:171
+#: wp-calypso-master/client/components/tinymce/plugins/wpcom/plugin.js:139
+msgid "Insert Read More tag"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:67
+msgid "Toolbar Toggle"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:65
+msgid "Numbered list"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:64
+msgid "Bulleted list"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:63
+msgid ""
+"Your browser does not support direct access to the clipboard. Please use "
+"keyboard shortcuts or your browser’s edit menu instead."
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:62
+msgid "The changes you made will be lost if you navigate away from this page."
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:61
+msgid "Rich Text Area. Press Alt-Shift-H for help"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:60
+msgid ""
+"If you’re looking to paste rich content from Microsoft Word, try turning "
+"this option off. The editor will clean up text pasted from Word "
+"automatically."
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:60
+msgid ""
+"Paste is now in plain text mode. Contents will now be pasted as plain text "
+"until you toggle this option off."
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:58
+msgid "Visual aids"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:57
+msgid "Close"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:53
+msgid "Redo"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:52
+msgid "Undo"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:51
+msgid "Select all"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:50
+msgid "Paste"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:49
+msgid "Copy"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:48
+msgid "Cut"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:46
+msgid "Decrease indent"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:45
+msgid "Increase indent"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:44
+msgid "Justify"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:43
+msgid "Align left"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:42
+msgid "Align right"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:41
+msgid "Align center"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:39
+msgid "Font Sizes"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:38
+msgid "Font Family"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:37
+msgid "Source code"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:36
+msgid "Italic"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:35
+msgid "Bold"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:34
+msgid "Clear formatting"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:33
+msgid "Superscript"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:32
+msgid "Subscript"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:31
+msgid "Strikethrough"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:30
+msgid "Underline"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:29
+msgctxt "HTML elements"
+msgid "Inline"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:27
+msgctxt "HTML tag"
+msgid "Address"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:26
+msgctxt "HTML tag"
+msgid "Preformatted"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:25
+msgctxt "HTML tag"
+msgid "Pre"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:24
+msgctxt "HTML tag"
+msgid "Div"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:23
+msgid "Blockquote"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:22
+msgid "Paragraph"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:21
+#. block tags
+msgctxt "TinyMCE"
+msgid "Blocks"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:19
+msgid "Heading 6"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:18
+msgid "Heading 5"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:17
+msgid "Heading 4"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:16
+msgid "Heading 3"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:15
+msgid "Heading 2"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:14
+msgid "Heading 1"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:13
+msgctxt "TinyMCE"
+msgid "Headings"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/i18n.js:12
+msgctxt "TinyMCE"
+msgid "Formats"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/after-the-deadline/core.js:242
+#. Proofreading error description
+msgid "Did you mean…"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/after-the-deadline/core.js:238
+#. Proofreading error description
+msgid "Repeated Word"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/after-the-deadline/core.js:234
+#. Proofreading error description
+msgid "Spelling"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/after-the-deadline/plugin.js:474
+#: wp-calypso-master/client/components/tinymce/plugins/after-the-deadline/plugin.js:461
+#. Editor proofreading button tooltip
+#. Editor proofreading toolbar tooltip
+msgid "Proofread Writing"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/after-the-deadline/plugin.js:396
+#. Editor proofreading success prompt
+msgid "No writing errors were found."
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/after-the-deadline/plugin.js:372
+#. Editor proofreading error
+msgid ""
+"There was a problem communicating with the Proofreading service. Try again "
+"in one minute."
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/after-the-deadline/plugin.js:323
+#. Editor proofreading menu item
+msgid "Ignore all"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/after-the-deadline/plugin.js:315
+#. Editor proofreading menu item
+msgid "Ignore always"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/after-the-deadline/plugin.js:306
+#. Editor proofreading menu item
+msgid "Ignore suggestion"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/after-the-deadline/plugin.js:293
+#: wp-calypso-master/client/components/tinymce/plugins/after-the-deadline/plugin.js:290
+#. Editor proofreading menu item
+msgid "Explain…"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/after-the-deadline/plugin.js:260
+#. Editor proofreading no suggestions
+msgid "No suggestions"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/contact-form/dialog/locales.js:26
+msgid "Web Address"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/contact-form/dialog/locales.js:23
+msgid "Text Area"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/contact-form/dialog/locales.js:17
+msgid "Radio Button"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/contact-form/dialog/locales.js:14
+msgid "Dropdown"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/contact-form/dialog/locales.js:11
+msgid "Checkbox"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/contact-form/dialog/locales.js:8
+msgid "Email Address"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/wpcom-view/plugin.js:820
+msgctxt "verb"
+msgid "Edit"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/wpcom/plugin.js:181
+#: wp-calypso-master/client/components/tinymce/plugins/wpcom/plugin.js:146
+#: wp-calypso-master/client/components/tinymce/plugins/wpcom/plugin.js:45
+msgid "Page break"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/wpcom/plugin.js:164
+msgid "Code"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/wpcom/plugin.js:159
+msgid "Special Characters"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/wpcom/plugin.js:153
+msgid "Keyboard Shortcuts"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/wpcom/plugin.js:99
+msgid "Next page"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/wpcom/plugin.js:98
+#: wp-calypso-master/client/components/tinymce/plugins/wpcom/plugin.js:36
+msgid "Read more…"
+msgstr ""
+
+#: wp-calypso-master/client/components/tinymce/plugins/wplink/plugin.js:79
+#: wp-calypso-master/client/components/tinymce/plugins/wplink/plugin.js:66
+msgid "Insert/edit link"
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/config-elements/continue.js:84
+msgid "Click to continue."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/config-elements/continue.js:81
+msgid "Click the {{icon/}} to continue."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/config-elements/link-quit.js:48
+#: wp-calypso-master/client/layout/guided-tours/config-elements/quit.js:37
+msgid "Quit"
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/config-elements/next.js:35
+msgid "Next"
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/design-showcase-welcome-tour.js:111
+#: wp-calypso-master/client/layout/guided-tours/tours/main-tour.js:188
+#: wp-calypso-master/client/layout/guided-tours/tours/site-title-tour.js:131
+msgid "We're all done!"
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/design-showcase-welcome-tour.js:107
+msgid ""
+"This menu lets you preview and set up any theme, or learn more about it."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/design-showcase-welcome-tour.js:87
+msgid ""
+"Scroll down to discover more themes. Found anything you like? Try clicking "
+"the three dots — {{icon/}} — for more theme options."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/design-showcase-welcome-tour.js:70
+msgid ""
+"Search for your ideal theme by feature, look, or topic — you can use words "
+"like \"business\", \"photography\", or \"food\"."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/design-showcase-welcome-tour.js:59
+#: wp-calypso-master/client/layout/guided-tours/tours/site-title-tour.js:58
+#: wp-calypso-master/client/layout/guided-tours/tours/theme-sheet-welcome-tour.js:49
+#: wp-calypso-master/client/layout/guided-tours/tours/tutorial-site-preview-tour.js:65
+msgid "No, thanks."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/design-showcase-welcome-tour.js:58
+#: wp-calypso-master/client/layout/guided-tours/tours/main-tour.js:54
+#: wp-calypso-master/client/layout/guided-tours/tours/theme-sheet-welcome-tour.js:48
+msgid "Let's go!"
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/design-showcase-welcome-tour.js:53
+msgid ""
+"On this page, you can explore our many themes. Want to learn how to find the "
+"design that fits the site you're building?"
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/editor-insert-menu-tour.js:78
+msgid "Got it"
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/editor-insert-menu-tour.js:72
+#. Refers to the Insert Content button and dropdown in the post editor.
+msgid "Click {{icon/}} to add media and other kinds of content."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/editor-insert-menu-tour.js:64
+#. Title of the Guided Tour for the Editor Insert Menu button.
+msgid "{{strong}}Add Media{{/strong}} has moved to a new button."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/main-tour.js:192
+#: wp-calypso-master/client/layout/guided-tours/tours/site-title-tour.js:134
+msgid "Learn more about WordPress.com"
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/main-tour.js:179
+msgid ""
+"{{strong}}That's it!{{/strong}} Now that you know a few of the basics, feel "
+"free to wander around."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/main-tour.js:161
+msgid ""
+"Change your {{strong}}Theme{{/strong}} to choose a new layout, or "
+"{{strong}}Customize{{/strong}} your theme's colors, fonts, and more."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/main-tour.js:146
+msgid ""
+"Take a look at your site — and then close the site preview. You can come "
+"back here anytime."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/main-tour.js:125
+msgid ""
+"This is your site's {{strong}}Preview{{/strong}}. From here you can see how "
+"your site looks to others."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/main-tour.js:110
+#: wp-calypso-master/client/layout/guided-tours/tours/tutorial-site-preview-tour.js:57
+msgid "Click {{strong}}your site's name{{/strong}} to continue."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/main-tour.js:101
+#: wp-calypso-master/client/layout/guided-tours/tours/tutorial-site-preview-tour.js:48
+msgid ""
+"This shows your currently {{strong}}selected site{{/strong}}'s name and "
+"address."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/main-tour.js:84
+msgid ""
+"This menu lets you navigate around, and will adapt to give you the tools you "
+"need when you need them."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/main-tour.js:66
+msgid ""
+"{{strong}}First things first.{{/strong}} Up here, you'll find tools for "
+"managing your site's content and design."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/main-tour.js:55
+msgid "No thanks."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/main-tour.js:44
+msgid ""
+"{{strong}}Need a hand?{{/strong}} We'd love to show you around the place,and "
+"give you some ideas for what to do next."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/site-title-tour.js:124
+msgid ""
+"{{strong}}That's it!{{/strong}} Your visitors can now easily identify your "
+"website by its title."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/site-title-tour.js:118
+msgid "Don't forget to save your changes."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/site-title-tour.js:107
+msgid "Great!"
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/site-title-tour.js:102
+msgid ""
+"While you're at it, why not add a tagline? It should explain what your site "
+"is about in a few words. It usually appears right below your site title."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/site-title-tour.js:90
+msgid "Looks Good!"
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/site-title-tour.js:87
+msgid ""
+"You can change the site title here. A good title can help others find your "
+"site."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/site-title-tour.js:71
+msgid "Click {{strong}}{{icon/}} Settings{{/strong}} to continue."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/site-title-tour.js:57
+msgid "Yes, please!"
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/site-title-tour.js:54
+msgid ""
+"The site title appears in places like the top of your web browser and in "
+"search results."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/site-title-tour.js:50
+msgid ""
+"Hey there! We noticed you haven't changed the title of your site yet. Want "
+"to change it?"
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/theme-sheet-welcome-tour.js:135
+msgid "Done"
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/theme-sheet-welcome-tour.js:128
+msgid ""
+"That's it! You can click on {{strong}}All Themes{{/strong}} at any time to "
+"return to our design showcase."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/theme-sheet-welcome-tour.js:115
+msgid "Maybe later"
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/theme-sheet-welcome-tour.js:112
+msgid ""
+"Is this the right theme for you? This button would pick the design for your "
+"site."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/theme-sheet-welcome-tour.js:96
+msgid ""
+"Each theme comes with a range of powerful features. Learn more about "
+"unlocking its full potential and setting it up on your site."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/theme-sheet-welcome-tour.js:81
+msgid "Tap {{icon/}} to close the live demo."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/theme-sheet-welcome-tour.js:75
+msgid ""
+"This is what this theme looks like in action. Move around, click on things. "
+"Do you like what you're seeing?"
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/theme-sheet-welcome-tour.js:60
+msgid "Nothing beats seeing a theme in action. Try the live demo!"
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/theme-sheet-welcome-tour.js:43
+msgid ""
+"This page shows all the details about a specific theme. Ready for a little "
+"tour?"
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/tutorial-site-preview-tour.js:82
+msgid "Got it."
+msgstr ""
+
+#: wp-calypso-master/client/layout/guided-tours/tours/tutorial-site-preview-tour.js:74
+msgid ""
+"Take a look around — and when you're done, close the site preview using the "
+"{{icon/}}. You can come back here anytime."
+msgstr ""
+
+#: wp-calypso-master/client/lib/ads/settings-store.js:91
+msgid "WordAds settings saved successfully!"
+msgstr ""
+
+#: wp-calypso-master/client/lib/ads/tos-store.js:80
+msgid "Thank you for accepting WordAds Terms of Service."
+msgstr ""
+
+#: wp-calypso-master/client/lib/credit-card-details/validation.js:79
+msgid "Missing required %(description)s field"
+msgstr ""
+
+#: wp-calypso-master/client/lib/credit-card-details/validation.js:66
+msgid "%(description)s is invalid"
+msgstr ""
+
+#: wp-calypso-master/client/lib/credit-card-details/validation.js:48
+msgctxt "Upgrades: Postal code on credit card form"
+msgid "Postal Code"
+msgstr ""
+
+#: wp-calypso-master/client/lib/credit-card-details/validation.js:43
+msgid "Country"
+msgstr ""
+
+#: wp-calypso-master/client/lib/credit-card-details/validation.js:38
+msgid "Credit Card CVV Code"
+msgstr ""
+
+#: wp-calypso-master/client/lib/credit-card-details/validation.js:33
+msgid "Credit Card Expiration Date"
+msgstr ""
+
+#: wp-calypso-master/client/lib/credit-card-details/validation.js:25
+msgctxt "Upgrades: Card number label on credit card form"
+msgid "Card Number"
+msgstr ""
+
+#: wp-calypso-master/client/lib/credit-card-details/validation.js:17
+msgctxt "Upgrades: Card holder name label on credit card form"
+msgid "Name on Card"
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/google-apps-users/index.js:44
+msgid "Please provide a valid email address."
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/google-apps-users/index.js:42
+msgid ""
+"Only number, letters, dashes, underscores, apostrophes and periods are "
+"allowed."
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/google-apps-users/index.js:38
+msgid "This field can't be longer than 60 characters."
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/google-apps-users/index.js:35
+msgid "This field is required."
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/registration/availability-messages.js:122
+msgid ""
+"Sorry, there was a problem processing your request. Please try again in a "
+"few minutes."
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/registration/availability-messages.js:116
+msgid "We couldn't find any available domains for: %(domain)s"
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/registration/availability-messages.js:112
+msgid "Please enter a domain name or keyword."
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/registration/availability-messages.js:108
+msgid "Sorry, this domain cannot be mapped."
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/registration/availability-messages.js:102
+msgid ""
+"This domain was recently in use by someone else and is not available to map "
+"yet. Please try again later or contact support."
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/registration/availability-messages.js:96
+msgid ""
+"You cannot map another WordPress.com subdomain - try creating a new site or "
+"one of the custom domains below."
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/registration/availability-messages.js:92
+msgid "This domain is already mapped to a WordPress.com site."
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/registration/availability-messages.js:86
+msgid "Sorry, %(domain)s does not appear to be a valid domain name."
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/registration/availability-messages.js:81
+msgid "Only the owner of the domain can map its subdomains."
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/registration/availability-messages.js:77
+msgid ""
+"Subdomains starting with 'www.' cannot be mapped to a WordPress.com blog"
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/registration/availability-messages.js:72
+msgid ""
+"Domain cannot be mapped to a WordPress.com blog because of blacklisted term."
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/registration/availability-messages.js:59
+msgid ""
+"Due to {{a1}}trademark policy{{/a1}}, we are not able to allow domains "
+"containing {{strong}}WordPress{{/strong}} to be registered or mapped here. "
+"Please {{a2}}contact support{{/a2}} if you have any questions."
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/registration/availability-messages.js:38
+msgid ""
+"Domains ending with {{strong}}.%(tld)s{{/strong}} are undergoing "
+"maintenance. Please check back shortly."
+msgstr ""
+
+#: wp-calypso-master/client/lib/domains/registration/availability-messages.js:22
+msgid ""
+"To use a domain ending with {{strong}}.%(tld)s{{/strong}} on your site, you "
+"can register it elsewhere first and then add it here. {{a}}Learn more{{/a}}."
+msgstr ""
+
+#: wp-calypso-master/client/lib/invites/actions.js:172
+msgid "Invitation sent successfully"
+msgid_plural "Invitations sent successfully"
+msgstr[0] ""
+msgstr[1] ""
+
+#: wp-calypso-master/client/lib/invites/actions.js:160
+msgid "An invitation failed to send"
+msgid_plural "Some invitations failed to send"
+msgstr[0] ""
+msgstr[1] ""
+
+#: wp-calypso-master/client/lib/invites/actions.js:152
+msgid "Invitation failed to send"
+msgid_plural "Invitations failed to send"
+msgstr[0] ""
+msgstr[1] ""
+
+#: wp-calypso-master/client/lib/keyboard-shortcuts/key-bindings.js:185
+msgid "Go to DevDocs"
+msgstr ""
+
+#: wp-calypso-master/client/lib/keyboard-shortcuts/key-bindings.js:173
+msgid "Open stats page"
+msgstr ""
+
+#: wp-calypso-master/client/lib/keyboard-shortcuts/key-bindings.js:165
+msgid "Edit selection"
+msgstr ""
+
+#: wp-calypso-master/client/lib/keyboard-shortcuts/key-bindings.js:154
+msgid "Close full post"
+msgstr ""
+
+#: wp-calypso-master/client/lib/keyboard-shortcuts/key-bindings.js:146
+msgid "Like post"
+msgstr ""
+
+#: wp-calypso-master/client/lib/keyboard-shortcuts/key-bindings.js:126
+msgid "Open Notifications"
+msgstr ""
+
+#: wp-calypso-master/client/lib/keyboard-shortcuts/key-bindings.js:118
+msgid "Go to Pages"
+msgstr ""
+
+#: wp-calypso-master/client/lib/keyboard-shortcuts/key-bindings.js:109
+msgid "Go to Blog Posts"
+msgstr ""
+
+#: wp-calypso-master/client/lib/keyboard-shortcuts/key-bindings.js:100
+msgid "Go to Stats"
+msgstr ""
+
+#: wp-calypso-master/client/lib/keyboard-shortcuts/key-bindings.js:91
+msgid "Go to My Likes"
+msgstr ""
+
+#: wp-calypso-master/client/lib/keyboard-shortcuts/key-bindings.js:82
+msgid "Go to Reader"
+msgstr ""
+
+#: wp-calypso-master/client/lib/keyboard-shortcuts/key-bindings.js:73
+msgid "This menu"
+msgstr ""
+
+#: wp-calypso-master/client/lib/keyboard-shortcuts/key-bindings.js:56
+msgid "Go to top"
+msgstr ""
+
+#: wp-calypso-master/client/lib/keyboard-shortcuts/key-bindings.js:48
+msgid "Open selection"
+msgstr ""
+
+#: wp-calypso-master/client/lib/keyboard-shortcuts/key-bindings.js:40
+msgid "Move selection up"
+msgstr ""
+
+#: wp-calypso-master/client/lib/keyboard-shortcuts/key-bindings.js:32
+msgid "Move selection down"
+msgstr ""
+
+#: wp-calypso-master/client/lib/menu-data/menu-data.js:1057
+#: wp-calypso-master/client/lib/menu-data/menu-data.js:995
+msgid "Default Menu"
+msgstr ""
+
+#: wp-calypso-master/client/lib/menu-data/menu-data.js:986
+#: wp-calypso-master/client/lib/menu-data/menu-data.js:77
+msgid "Home"
+msgstr ""
+
+#: wp-calypso-master/client/lib/menu-data/menu-data.js:952
+msgid "There was a problem loading the default menu."
+msgstr ""
+
+#: wp-calypso-master/client/lib/menu-data/menu-data.js:858
+msgid "Menu"
+msgstr ""
+
+#: wp-calypso-master/client/lib/menu-data/menu-data.js:848
+msgid "Sorry, we couldn't create this menu."
+msgstr ""
+
+#: wp-calypso-master/client/lib/menu-data/menu-data.js:507
+msgid "Sorry, we couldn't delete this menu."
+msgstr ""
+
+#: wp-calypso-master/client/lib/menu-data/menu-data.js:490
+msgid "This menu is invalid and can't be deleted."
+msgstr ""
+
+#: wp-calypso-master/client/lib/menu-data/menu-data.js:481
+#: wp-calypso-master/client/lib/menu-data/menu-data.js:426
+msgid "There was a problem saving your menu."
+msgstr ""
+
+#: wp-calypso-master/client/lib/menu-data/menu-data.js:173
+msgid "There must be at least one location for a menu in your theme."
+msgstr ""
+
+#: wp-calypso-master/client/lib/menu-data/menu-data.js:145
+msgid "There was a problem fetching your menu data."
+msgstr ""
+
+#: wp-calypso-master/client/lib/menu-data/menu-data.js:90
+msgid "Create a new page for this menu item"
+msgstr ""
+
+#: wp-calypso-master/client/lib/menu-data/menu-data.js:80
+msgid "site"
+msgstr ""
+
+#: wp-calypso-master/client/lib/network-connection/index.js:45
+msgid "Not connected. Some information may be out of sync."
+msgstr ""
+
+#: wp-calypso-master/client/lib/network-connection/index.js:43
+msgid "Connection restored."
+msgstr ""
+
+#: wp-calypso-master/client/lib/olark/index.js:223
+msgid "staff"
+msgstr ""
+
+#: wp-calypso-master/client/lib/olark/index.js:144
+msgid "Your live chat has ended. We'll send a transcript to %(email)s."
+msgstr ""
+
+#: wp-calypso-master/client/lib/post-normalizer/rule-content-detect-polls.js:34
+msgid "Take our poll"
+msgstr ""
+
+#: wp-calypso-master/client/lib/sites-list/notices.js:137
+msgid "Error disconnecting %(numberOfSites)d site: %(siteNames)s."
+msgid_plural "Error disconnecting %(numberOfSites)d sites: %(siteNames)s."
+msgstr[0] ""
+msgstr[1] ""
+
+#: wp-calypso-master/client/lib/sites-list/notices.js:135
+msgid "Error disconnecting %(siteName)s."
+msgstr ""
+
+#: wp-calypso-master/client/lib/sites-list/notices.js:128
+msgid ""
+"You don't have permission to disconnect %(numberOfSites)d site: "
+"%(siteNames)s."
+msgid_plural ""
+"You don't have permission to disconnect %(numberOfSites)d sites: "
+"%(siteNames)s."
+msgstr[0] ""
+msgstr[1] ""
+
+#: wp-calypso-master/client/lib/sites-list/notices.js:126
+msgid "You don't have permission to disconnect %(siteName)s."
+msgstr ""
+
+#: wp-calypso-master/client/lib/sites-list/notices.js:116
+msgid "Error fetching plugins on %(numberOfSites)d site: %(siteNames)s."
+msgid_plural ""
+"Error fetching plugins on %(numberOfSites)d sites: %(siteNames)s."
+msgstr[0] ""
+msgstr[1] ""
+
+#: wp-calypso-master/client/lib/sites-list/notices.js:114
+msgid "Error fetching plugins on %(siteName)s."
+msgstr ""
+
+#: wp-calypso-master/client/lib/sites-list/notices.js:100
+#. %(completedMessage)s %(errorMessage)s are complete sentences.
+msgctxt ""
+"The success message and the error message after the disconnection success "
+"and failure."
+msgid "%(completedMessage)s %(errorMessage)s"
+msgstr ""
+
+#: wp-calypso-master/client/lib/sites-list/notices.js:89
+msgid "Disconnecting %(numberOfSites)d site."
+msgid_plural "Disconnecting %(numberOfSites)d sites."
+msgstr[0] ""
+msgstr[1] ""
+
+#: wp-calypso-master/client/lib/sites-list/notices.js:87
+msgid "Disconnecting %(siteName)s."
+msgstr ""
+
+#: wp-calypso-master/client/lib/sites-list/notices.js:75
+msgid "Successfully disconnected %(numberOfSites)d site."
+msgid_plural "Successfully disconnected %(numberOfSites)d sites."
+msgstr[0] ""
+msgstr[1] ""
+
+#: wp-calypso-master/client/lib/sites-list/notices.js:73
+msgid "Successfully disconnected %(siteName)s."
+msgstr ""
+
+#: wp-calypso-master/client/lib/upgrades/actions/domain-management.js:430
+msgid ""
+"There was a problem updating the redirect settings. Please try again later "
+"or contact support."
+msgstr ""
+
+#: wp-calypso-master/client/lib/upgrades/actions/domain-management.js:417
+msgid "The redirect settings were updated successfully."
+msgstr ""
+
+#: wp-calypso-master/client/lib/upgrades/actions/domain-management.js:396
+msgid ""
+"There was a problem retrieving the redirect settings. Please try again later "
+"or contact support."
+msgstr ""
+
+#: wp-calypso-master/client/lib/upgrades/actions/domain-management.js:42
+msgid ""
+"There was a problem setting the primary domain. Please try again later or "
+"contact support."
+msgstr ""
+
+#: wp-calypso-master/client/lib/username/index.js:39
+msgid "Usernames can only contain lowercase letters (a-z) and numbers."
+msgstr ""
+
+#: wp-calypso-master/client/lib/username/index.js:32
+msgid "Usernames must be at least 4 characters."
+msgstr ""
+
+#: wp-calypso-master/client/me/account/controller.js:25
+msgid "Account Settings"
+msgstr ""
+
+#: wp-calypso-master/client/me/constants.js:9
+#: wp-calypso-master/client/me/constants.js:8
+#: wp-calypso-master/client/me/constants.js:7
+msgid "e.g. %(example)s"
+msgstr ""
+
+#: wp-calypso-master/client/me/controller.js:82
+msgid "Next Steps"
+msgstr ""
+
+#: wp-calypso-master/client/me/controller.js:60
+msgid "Get Apps"
+msgstr ""
+
+#: wp-calypso-master/client/me/controller.js:40
+msgid "My Profile"
+msgstr ""
+
+#: wp-calypso-master/client/me/form-base/index.js:76
+msgid "There was a problem saving your changes."
+msgstr ""
+
+#: wp-calypso-master/client/me/form-base/index.js:48
+msgid "Settings saved successfully!"
+msgstr ""
+
+#: wp-calypso-master/client/me/help/controller.js:41
+msgid "Help"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:129
+#: wp-calypso-master/client/me/next-steps/steps.js:121
+msgid "Follow Some Blogs"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:122
+#. p1 and p2 are paragraph tags.
+msgid ""
+"{{p1}}Follow some other sites to stay informed and find inspiration.{{/"
+"p1}}{{p2}}All of the content you follow shows up in your Reader.{{/p2}}"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:117
+#: wp-calypso-master/client/me/next-steps/steps.js:109
+msgid "Complete Your Profile"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:110
+#. p1 and p2 are paragraph tags.
+msgid ""
+"{{p1}}Your profile is how other users see you.{{/p1}}{{p2}}Share a blurb "
+"about yourself to let others know what you're all about.{{/p2}}"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:105
+#: wp-calypso-master/client/me/next-steps/steps.js:97
+msgid "Create a Site"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:98
+#. p1 and p2 are paragraph tags.
+msgid ""
+"{{p1}}Start a new WordPress site or blog.{{/p1}}{{p2}}Your own WordPress is "
+"free and a great way to create a home on the web.{{/p2}}"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:93
+#: wp-calypso-master/client/me/next-steps/steps.js:85
+msgid "Create a Page"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:86
+#. p1 and p2 are paragraph tags.
+msgid ""
+"{{p1}}Pages are sections of your site that contain information for your "
+"visitors.{{/p1}}{{p2}}Think about creating an About or Contact Us page to "
+"get started.{{/p2}}"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:81
+msgid "Add a Plan"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:74
+#. p1 and p2 are paragraph tags
+msgid ""
+"{{p1}}Plans upgrade your WordPress with storage, design options, and a "
+"custom domain.{{/p1}}{{p2}}A plan will also remove ads and enable audio and "
+"video uploads.{{/p2}}"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:73
+msgid "Add Features with a Plan"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:68
+#: wp-calypso-master/client/me/next-steps/steps.js:60
+msgid "Customize Your Site"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:61
+#. p1 and p2 are paragraph tags.
+msgid ""
+"{{p1}}You can use the Customizer to add header and background images, or "
+"tweak your theme.  {{/p1}}{{p2}}You can find the Customizer in My Sites.{{/"
+"p2}}"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:55
+#: wp-calypso-master/client/me/next-steps/steps.js:47
+msgid "Select a Theme"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:48
+#. p1 and p2 are paragraph tags.
+msgid ""
+"{{p1}}The theme is the look and feel of your WordPress. A theme doesn't "
+"change your content, just the way it is presented.{{/p1}}{{p2}}Choose a "
+"theme based on your taste. You can always change it later.{{/p2}}"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:42
+msgid "Start a Post"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:34
+#. p1 and p2 are paragraph tags.
+msgid ""
+"{{p1}}Start blogging right away by writing your first post.{{/p1}}{{p2}}You "
+"can create new posts by clicking the {{pencil}}{{/pencil}} at the top of the "
+"screen.{{/p2}}"
+msgstr ""
+
+#: wp-calypso-master/client/me/next-steps/steps.js:33
+msgid "Start Your First Post"
+msgstr ""
+
+#: wp-calypso-master/client/me/notification-settings/controller.js:91
+#: wp-calypso-master/client/me/notification-settings/controller.js:28
+msgid "Notifications"
+msgstr ""
+
+#: wp-calypso-master/client/me/notification-settings/controller.js:70
+msgid "Updates from WordPress.com"
+msgstr ""
+
+#: wp-calypso-master/client/me/notification-settings/controller.js:49
+msgid "Comments on other sites"
+msgstr ""
+
+#: wp-calypso-master/client/me/notification-settings/settings-form/locales.js:16
+msgid "Username mentions"
+msgstr ""
+
+#: wp-calypso-master/client/me/notification-settings/settings-form/locales.js:15
+msgid "Site achievements"
+msgstr ""
+
+#: wp-calypso-master/client/me/notification-settings/settings-form/locales.js:14
+msgid "Site follows"
+msgstr ""
+
+#: wp-calypso-master/client/me/notification-settings/settings-form/locales.js:13
+msgid "Likes on my posts"
+msgstr ""
+
+#: wp-calypso-master/client/me/notification-settings/settings-form/locales.js:12
+msgid "Comments on my site"
+msgstr ""
+
+#: wp-calypso-master/client/me/notification-settings/settings-form/locales.js:10
+msgid "Replies to my comments"
+msgstr ""
+
+#: wp-calypso-master/client/me/notification-settings/settings-form/locales.js:9
+msgid "Likes on my comments"
+msgstr ""
+
+#: wp-calypso-master/client/me/notification-settings/settings-form/locales.js:4
+msgid "Timeline"
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/confirm-cancel-domain/cancellation-reasons.js:61
+#: wp-calypso-master/client/me/purchases/confirm-cancel-domain/cancellation-reasons.js:55
+msgid "Please provide a brief description of your reasons for canceling:"
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/confirm-cancel-domain/cancellation-reasons.js:60
+msgid "Something not listed here"
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/confirm-cancel-domain/cancellation-reasons.js:54
+msgid "I meant to get a free blog"
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/confirm-cancel-domain/cancellation-reasons.js:47
+#: wp-calypso-master/client/me/purchases/confirm-cancel-domain/cancellation-reasons.js:16
+msgid ""
+"If you misspelled the domain name you were attempting to purchase, it’s "
+"likely that others will as well, and you might want to consider keeping the "
+"misspelled domain."
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/confirm-cancel-domain/cancellation-reasons.js:46
+msgid "The service isn’t what I expected"
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/confirm-cancel-domain/cancellation-reasons.js:35
+msgid ""
+"You may not transfer a domain name for 60 days after its purchase, renewal, "
+"name server change, or any contact information change. This is a rule set by "
+"the Internet Corporation for Assigned Names and Numbers (ICANN) and standard "
+"across all registrars. You will need to {{a}}update your name servers{{/a}} "
+"instead."
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/confirm-cancel-domain/cancellation-reasons.js:34
+msgid "I want to transfer my domain to another registrar"
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/confirm-cancel-domain/cancellation-reasons.js:24
+msgid ""
+"Canceling a domain name causes the domain to become unavailable for a brief "
+"period. Afterward, anyone can repurchase. If you wish to use the domain with "
+"another service, you’ll want to {{a}}update your name servers{{/a}} instead."
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/confirm-cancel-domain/cancellation-reasons.js:23
+msgid "I want to use the domain with another service or host"
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/confirm-cancel-domain/cancellation-reasons.js:15
+msgid "I misspelled the domain"
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/titles.js:15
+msgid "Purchases"
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/titles.js:14
+msgid "Manage Purchase"
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/titles.js:13
+msgid "Edit Payment Method"
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/titles.js:12
+#. Credit card
+msgid "Add Card Details"
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/titles.js:11
+#. Credit card
+msgid "Edit Card Details"
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/titles.js:10
+msgid "Cancel Domain"
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/titles.js:9
+msgid "Cancel Purchase"
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/titles.js:8
+msgid "Cancel Privacy Protection"
+msgstr ""
+
+#: wp-calypso-master/client/me/purchases/titles.js:7
+msgid "Add Credit Card"
+msgstr ""
+
+#: wp-calypso-master/client/me/security/controller.js:96
+msgid "Account Recovery"
+msgstr ""
+
+#: wp-calypso-master/client/me/security/controller.js:75
+msgid "Connected Applications"
+msgstr ""
+
+#: wp-calypso-master/client/me/security/controller.js:53
+msgid "Two-Step Authentication"
+msgstr ""
+
+#: wp-calypso-master/client/me/security/controller.js:28
+msgid "Your password was saved successfully."
+msgstr ""
+
+#: wp-calypso-master/client/me/security/controller.js:25
+msgid "Password"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/ads/controller.js:35
+msgid "%(wordads)s Settings"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/ads/controller.js:33
+msgid "%(wordads)s Earnings"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/controller.js:389
+msgid ""
+"Email verified! Now that you've confirmed your email address you can publish "
+"posts on your blog."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/controller.js:287
+msgid "Finishing set up…"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/controller.js:127
+msgid "Manage Domain"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/controller.js:125
+msgid "Create Site"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/controller.js:124
+msgid ""
+"Your domain is only set up with a temporary page. Start a site now to unlock "
+"everything WordPress.com can offer."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/controller.js:123
+msgid "Add a site to start using this feature."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/controller.js:107
+msgid "Create New Site"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/controller.js:105
+msgid "Change Visibility"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/controller.js:101
+msgid "To manage it here, set it to visible."
+msgid_plural "To manage them here, set them to visible."
+msgstr[0] ""
+msgstr[1] ""
+
+#: wp-calypso-master/client/my-sites/controller.js:96
+msgid "You have %(hidden)d hidden WordPress site."
+msgid_plural "You have %(hidden)d hidden WordPress sites."
+msgstr[0] ""
+msgstr[1] ""
+
+#: wp-calypso-master/client/my-sites/customize/controller.js:25
+msgid "Customizer"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/design-preview/index.js:170
+msgid "EDIT"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/design-preview/index.js:116
+msgid "You have unsaved changes. Are you sure you want to close the preview?"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/drafts/controller.js:24
+msgid "Drafts"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/invites/controller.js:52
+msgid "Accept Invite"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/invites/utils.js:109
+msgid "You're now a Subscriber of: {{site/}}"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/invites/utils.js:101
+msgid ""
+"This is your site dashboard where you can write and manage your own posts."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/invites/utils.js:96
+msgid "You're now a Contributor of: {{site/}}"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/invites/utils.js:86
+msgid ""
+"This is your site dashboard where you can publish and edit your own posts as "
+"well as upload media."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/invites/utils.js:81
+msgid "You're now an Author of: {{site/}}"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/invites/utils.js:71
+msgid ""
+"This is your site dashboard where you can publish and manage your own posts "
+"and the posts of others, as well as upload media."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/invites/utils.js:66
+msgid "You're now an Editor of: {{site/}}"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/invites/utils.js:54
+msgid ""
+"This is your site dashboard where you will be able to manage all aspects of "
+"%(site)s"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/invites/utils.js:49
+msgid "You're now an Administrator of: {{site/}}"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/invites/utils.js:39
+#: wp-calypso-master/client/my-sites/invites/utils.js:25
+msgid "Visit Site"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/invites/utils.js:33
+msgid "You are now a viewer of: {{site/}}"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/invites/utils.js:19
+msgid "You are now following {{site/}}"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/media-library/list-plan-promo.js:71
+msgid "See Plans"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/media-library/list-plan-promo.js:54
+msgctxt "Media upgrade promo"
+msgid "To upload audio and video files to your site, upgrade your plan."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/media-library/list-plan-promo.js:47
+msgctxt "Media upgrade promo"
+msgid "To upload audio files to your site, upgrade your plan."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/media-library/list-plan-promo.js:40
+msgctxt "Media upgrade promo"
+msgid "To upload video files to your site, upgrade your plan."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/media-library/list-plan-promo.js:32
+msgctxt "Media upload plan needed"
+msgid "Upload Media"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/media-library/list-plan-promo.js:29
+msgctxt "Media upload plan needed"
+msgid "Upload Audio"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/media-library/list-plan-promo.js:26
+msgctxt "Media upload plan needed"
+msgid "Upload Videos"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/media/controller.js:34
+msgid "Media"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/menus/controller.js:45
+msgid "Open Classic Menu Editor"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/menus/controller.js:35
+msgid "Menus"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/menus/menu-utils.js:22
+msgid "Untitled"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/pages/controller.js:31
+msgid "Pages"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/people/controller.js:123
+msgid "View Team Member"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/people/controller.js:99
+msgid "Invite People"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/people/controller.js:69
+msgid "People"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:195
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:28
+msgid ""
+"Advanced features to complement WordPress.com stats. Funnel reports, goal "
+"conversion, and more."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:191
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:26
+msgid "Google Analytics"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:188
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:21
+msgid "Custom meta descriptions, social media previews, and more."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:175
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:159
+msgid "Upload and host your video files on your site with VideoPress."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:171
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:157
+msgid "Video Uploads"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:168
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:115
+msgid "Customize your blog's look with custom fonts, a CSS editor, and more."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:164
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:113
+msgid "Custom Design"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:161
+msgid "Remove WordPress.com ads from your site."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:157
+msgid "No Advertising"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:148
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:134
+msgid "Faster image loading and editing."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:144
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:132
+msgid "Photon CDN"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:141
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:65
+msgid "Comment likes, user mentions, notifications, and more."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:137
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:63
+msgid "Advanced Comments"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:134
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:59
+msgid "Engage readers with a Like button on your posts."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:130
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:57
+msgid "Likes"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:127
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:178
+msgid "Text formatting using a lightweight markup language."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:123
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:176
+msgid "Markdown"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:120
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:172
+msgid "Add polls and surveys to your site."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:116
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:170
+msgid "Polls & Surveys"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:113
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:53
+msgid ""
+"Pulls relevant content from your blog to display at the bottom of your posts."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:109
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:51
+msgid "Related Posts"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:106
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:128
+msgid "Load more posts when you reach the bottom of a page on your site."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:102
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:126
+msgid "Infinite Scroll"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:99
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:166
+msgid "Import your blog content from a variety of other blogging platforms."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:95
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:164
+msgid "Importer"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:92
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:153
+msgid "YouTube, Twitter, Instagram, Spotify, and more."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:88
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:151
+msgid "Extended Shortcodes"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:85
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:90
+msgid "Advanced anti-spam security."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:81
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:88
+msgid "Akismet"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:78
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:84
+msgid "24/7 backup of your entire site. Export everything."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:74
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:82
+msgid "Backup & Export"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:71
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:122
+msgid "Eventbrite, Flickr, Google Calendar, and more."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:67
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:120
+msgid "Extended Widgets"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:64
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:109
+msgid "Edit colors and backgrounds."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:60
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:107
+msgid "Extended Customizer"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:57
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:47
+msgid "Enables your readers to sign up to receive your posts via email."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:53
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:45
+msgid "Email Subscriptions"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:50
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:41
+msgid "Automatically share your posts on Facebook, Twitter, Tumblr, and more."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:46
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:39
+msgid "Publicize"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:43
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:147
+msgid "Build contact forms so visitors can get in touch."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:39
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:145
+msgid "Form Builder"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:36
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:35
+msgid "Add social media buttons to your posts and pages."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:32
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:33
+msgid "Social Media"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:29
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:103
+msgid "Tiled, mosaic, slideshows, and more."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:25
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:101
+msgid "Advanced Galleries"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:22
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:78
+msgid "Constant monitoring of your site for threats."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:18
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:76
+msgid "Security Scanning"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:15
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:15
+msgid "View your site's visits, referrers, and more."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/default-plugins.js:11
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:13
+msgid "Stats"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:141
+msgid "Writing"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:97
+msgid "Appearance"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:72
+msgid "Security"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins-wpcom/jetpack-plugins.js:9
+msgid "Engagement"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins/access-control.js:51
+msgid "Update now"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins/access-control.js:44
+msgid ""
+"Jetpack %(version)s is required to take full advantage of plugin management "
+"in %(site)s."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins/access-control.js:38
+msgid "The page you requested could not be found"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins/access-control.js:37
+msgid "Not Available"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins/access-control.js:26
+msgid ""
+"This site doesn't support installing plugins. Switch to a self-hosted site "
+"to install and manage plugins"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/plugins/access-control.js:25
+msgid "Oops! Not supported"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/posts/controller.js:64
+msgid "Blog Posts"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/sharing/controller.js:93
+msgid ""
+"This page is only available to Jetpack sites running version 3.4 or higher "
+"with the Sharing module activated."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/sharing/controller.js:89
+#: wp-calypso-master/client/my-sites/sharing/controller.js:56
+msgid "You are not authorized to manage sharing settings for this site."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/sharing/controller.js:26
+msgid "Sharing"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/site-settings/controller.js:71
+#: wp-calypso-master/client/my-sites/site-settings/seo-settings/controller.js:29
+msgid "Site Settings"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/site-settings/form-base.js:164
+msgid "Settings saved!"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/site-settings/form-base.js:160
+msgid "There was a problem saving your changes. Please, try again."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/site-settings/form-base.js:157
+msgid "One of your IP Addresses was invalid. Please, try again."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:76
+msgctxt "Stats: Info box label when the publicize module is empty"
+msgid "No publicize followers recorded"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:75
+msgctxt "Stats: module row header for number of followers on the service."
+msgid "Followers"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:74
+msgctxt "Stats: module row header for publicize service."
+msgid "Service"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:73
+msgctxt "Stats: title of module"
+msgid "Publicize"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:69
+msgctxt "Stats: Info box label when the Tags module is empty"
+msgid "No tagged posts or pages viewed"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:68
+msgctxt "Stats: module row header for number of views per tag or category."
+msgid "Views"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:67
+msgctxt "Stats: module row header for tags and categories."
+msgid "Topic"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:66
+msgctxt "Stats: title of module"
+msgid "Tags & Categories"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:62
+msgctxt "Stats: Info box label when the Podcasts module is empty"
+msgid "No episodes downloaded"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:61
+msgctxt "Stats: module row header for number of downloads per podcast episode."
+msgid "Downloads"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:60
+msgctxt "Stats: module row header for podcast."
+msgid "Episodes"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:59
+msgctxt "Stats: title of module"
+msgid "Podcasts"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:55
+msgctxt "Stats: Info box label when the Videos module is empty"
+msgid "No videos played"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:54
+msgctxt "Stats: module row header for number of plays per video."
+msgid "Plays"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:53
+msgctxt "Stats: module row header for videos."
+msgid "Video"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:52
+msgctxt "Stats: title of module"
+msgid "Videos"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:48
+msgctxt "Stats: Info box label when the Authors module is empty"
+msgid "No posts or pages viewed"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:47
+msgctxt "Stats: module row header for number of views per author."
+msgid "Views"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:46
+msgctxt "Stats: module row header for authors."
+msgid "Author"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:45
+msgctxt "Stats: title of module"
+msgid "Authors"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:41
+msgctxt "Stats: Info box label when the Search Terms module is empty"
+msgid "No search terms recorded"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:40
+msgctxt "Stats: module row header for views of a given search in search terms."
+msgid "Views"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:39
+msgctxt "Stats: module row header for search in search terms."
+msgid "Search Term"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:38
+msgctxt "Stats: title of module"
+msgid "Search Terms"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:34
+msgctxt "Stats: Info box label when the Countries module is empty"
+msgid "No countries recorded"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:33
+msgctxt "Stats: module row header for number of views from a country."
+msgid "Views"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:32
+msgctxt "Stats: module row header for views by country."
+msgid "Country"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:31
+msgctxt "Stats: title of module"
+msgid "Countries"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:27
+msgctxt "Stats: Info box label when the Clicks module is empty"
+msgid "No clicks recorded"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:26
+msgctxt ""
+"Stats: module row header for number of clicks on a given link in a post."
+msgid "Clicks"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:25
+msgctxt "Stats: module row header for links in posts."
+msgid "Link"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:24
+msgctxt "Stats: title of module"
+msgid "Clicks"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:20
+msgctxt "Stats: Info box label when the Referrers module is empty"
+msgid "No referrers recorded"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:19
+msgctxt "Stats: module row header for number of post views by referrer."
+msgid "Views"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:18
+msgctxt "Stats: module row header for post referrer."
+msgid "Referrer"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:17
+msgctxt "Stats: title of module"
+msgid "Referrers"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:13
+msgctxt "Stats: Info box label when the Posts & Pages module is empty"
+msgid "No posts or pages viewed"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:12
+msgctxt "Stats: module row header for number of post views."
+msgid "Views"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:11
+msgctxt "Stats: module row header for post title."
+msgid "Title"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/stats/stats-strings.js:10
+msgctxt "Stats: title of module"
+msgid "Posts & Pages"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/upgrades/checkout/free-trial-confirmation-box.js:29
+msgid ""
+"Enjoy your free trial with no strings attached: your site will simply revert "
+"to the free plan when the period is over."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/upgrades/checkout/free-trial-confirmation-box.js:23
+msgid "Get started with %(productName)s"
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/upgrades/domain-management/transfer/transfer-out/shared.js:76
+msgid ""
+"We have sent the transfer authorization code to the domain registrant's "
+"email address. If you don't receive the email shortly, please check your "
+"spam folder."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/upgrades/domain-management/transfer/transfer-out/shared.js:68
+msgid ""
+"The registry for your domain requires a special process for transfers. Our "
+"Happiness Engineers have been notified about your transfer request and will "
+"be in touch shortly to help you complete the process."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/upgrades/domain-management/transfer/transfer-out/shared.js:46
+msgid ""
+"An error occurred while trying to send the Domain Transfer code. Please try "
+"again or {{a}}Contact Support{{/a}} if you continue to have trouble."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/upgrades/domain-management/transfer/transfer-out/shared.js:32
+msgid ""
+"An error occurred while trying to send the Domain Transfer code: "
+"{{strong}}%s{{/strong}} Please {{a}}Contact Support{{/a}}."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/upgrades/domain-management/transfer/transfer-out/shared.js:24
+msgid ""
+"Privacy Protection could not be disabled. The transfer will most likely fail "
+"due to this error."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/upgrades/domain-management/transfer/transfer-out/shared.js:20
+msgid ""
+"The domain could not be unlocked. The transfer will most likely fail due to "
+"this error."
+msgstr ""
+
+#: wp-calypso-master/client/my-sites/upgrades/domain-management/transfer/transfer-out/shared.js:15
+msgid ""
+"The domain could not be unlocked. Additionally, Privacy Protection could not "
+"be disabled. The transfer will most likely fail due to these errors."
+msgstr ""
+
+#: wp-calypso-master/client/post-editor/controller.js:244
+msgid "Select a site to start writing"
+msgstr ""
+
+#: wp-calypso-master/client/post-editor/controller.js:100
+msgid "via {{anchor/}}"
+msgstr ""
+
+#: wp-calypso-master/client/reader/controller-helper.js:69
+msgid "%s ‹ Reader"
+msgstr ""
+
+#: wp-calypso-master/client/reader/controller.js:166
+msgid "Followed Sites"
+msgstr ""
+
+#: wp-calypso-master/client/reader/controller.js:159
+msgid "Following"
+msgstr ""
+
+#: wp-calypso-master/client/reader/following/controller.js:25
+msgid "Manage Followed Sites"
+msgstr ""
+
+#: wp-calypso-master/client/reader/full-post/controller.js:28
+msgid "Post Not Found"
+msgstr ""
+
+#: wp-calypso-master/client/reader/full-post/controller.js:23
+msgid "Post not found"
+msgstr ""
+
+#: wp-calypso-master/client/reader/recommendations/controller.js:42
+msgid "Recommended Sites For You ‹ Reader"
+msgstr ""
+
+#: wp-calypso-master/client/reader/utils.js:35
+msgid "(no title)"
+msgstr ""
+
+#: wp-calypso-master/client/signup/config/steps.js:148
+msgid "Don't worry you can easily add a site later if you're not ready"
+msgstr ""
+
+#: wp-calypso-master/client/signup/config/steps.js:147
+msgid "Do you want to use this domain yet?"
+msgstr ""
+
+#: wp-calypso-master/client/signup/config/steps.js:121
+msgid "You're moments away from connecting Jetpack."
+msgstr ""
+
+#: wp-calypso-master/client/signup/config/steps.js:120
+msgid "Create an account for Jetpack"
+msgstr ""
+
+#: wp-calypso-master/client/signup/jetpack-connect/controller.js:237
+#: wp-calypso-master/client/signup/jetpack-connect/controller.js:68
+msgid "Plans"
+msgstr ""
+
+#: wp-calypso-master/client/signup/steps/survey/verticals.js:24
+msgid "Government / Politics"
+msgstr ""
+
+#: wp-calypso-master/client/signup/steps/survey/verticals.js:23
+msgid "Sports / Recreation"
+msgstr ""
+
+#: wp-calypso-master/client/signup/steps/survey/verticals.js:22
+msgid "Religion / Spirituality"
+msgstr ""
+
+#: wp-calypso-master/client/signup/steps/survey/verticals.js:21
+msgid "Health / Wellness"
+msgstr ""
+
+#: wp-calypso-master/client/signup/steps/survey/verticals.js:20
+msgid "Lifestyle / Inspiration"
+msgstr ""
+
+#: wp-calypso-master/client/signup/steps/survey/verticals.js:19
+msgid "Fashion / Beauty"
+msgstr ""
+
+#: wp-calypso-master/client/signup/steps/survey/verticals.js:18
+msgid "Education"
+msgstr ""
+
+#: wp-calypso-master/client/signup/steps/survey/verticals.js:17
+msgid "Art"
+msgstr ""
+
+#: wp-calypso-master/client/signup/steps/survey/verticals.js:16
+msgid "Personal / Random Thoughts"
+msgstr ""
+
+#: wp-calypso-master/client/signup/steps/survey/verticals.js:15
+msgid "Technology"
+msgstr ""
+
+#: wp-calypso-master/client/signup/steps/survey/verticals.js:14
+msgid "Family / Parenting"
+msgstr ""
+
+#: wp-calypso-master/client/signup/steps/survey/verticals.js:13
+msgid "Professional Services"
+msgstr ""
+
+#: wp-calypso-master/client/signup/steps/survey/verticals.js:12
+msgid "Photography"
+msgstr ""
+
+#: wp-calypso-master/client/signup/steps/survey/verticals.js:11
+msgid "Food / Drink"
+msgstr ""
+
+#: wp-calypso-master/client/signup/steps/survey/verticals.js:10
+msgid "Music"
+msgstr ""
+
+#: wp-calypso-master/client/signup/steps/survey/verticals.js:9
+msgid "Travel"
+msgstr ""
+
+#: wp-calypso-master/client/signup/steps/survey/verticals.js:8
+msgid "Wedding"
+msgstr ""
+
+#: wp-calypso-master/client/state/reader/site-blocks/actions.js:91
+msgid "Sorry, there was a problem unblocking that site."
+msgstr ""
+
+#: wp-calypso-master/client/state/reader/site-blocks/actions.js:52
+msgid "Sorry, there was a problem blocking that site."
+msgstr ""
+
+#: wp-calypso-master/client/state/receipts/actions.js:27
+msgid "There was a problem retrieving your receipt."
+msgstr ""
+
+#: wp-calypso-master/client/state/stored-cards/actions.js:68
+msgid "There was a problem deleting the stored card."
+msgstr ""
+
+#: wp-calypso-master/client/state/stored-cards/actions.js:46
+msgid "There was a problem retrieving stored cards."
+msgstr ""
+
+#: wp-calypso-master/client/vip/controller.js:118
+msgid "VIP Logs"
+msgstr ""
+
+#: wp-calypso-master/client/vip/controller.js:98
+msgid "VIP Backups"
+msgstr ""
+
+#: wp-calypso-master/client/vip/controller.js:80
+msgid "VIP Support"
+msgstr ""
+
+#: wp-calypso-master/client/vip/controller.js:62
+msgid "VIP Billing"
+msgstr ""
+
+#: wp-calypso-master/client/vip/controller.js:44
+msgid "VIP Deploys"
+msgstr ""
+
+#: wp-calypso-master/client/vip/controller.js:26
+msgid "VIP"
+msgstr ""
+
+#: extras/date.js:19
+msgid "number_format_decimal_point"
+msgstr ""
+
+#: extras/date.js:17
+msgid "number_format_thousands_sep"
+msgstr ""
+
+#: extras/date.js:13
+msgid "%d years"
+msgstr ""
+
+#: extras/date.js:12
+msgid "a year"
+msgstr ""
+
+#: extras/date.js:11
+msgid "%d months"
+msgstr ""
+
+#: extras/date.js:10
+msgid "a month"
+msgstr ""
+
+#: extras/date.js:9
+msgid "%d days"
+msgstr ""
+
+#: extras/date.js:8
+msgid "%d hours"
+msgstr ""
+
+#: extras/date.js:7
+msgid "%d minutes"
+msgstr ""
+
+#: extras/date.js:6
+msgid "a minute"
+msgstr ""
+
+#: extras/date.js:5
+msgid "a few seconds"
+msgstr ""
+
+#: extras/date.js:4
+msgctxt "future time"
+msgid "in %s"
+msgstr ""
+
+# THIS IS THE END OF THE GENERATED FILE.
