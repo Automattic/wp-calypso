@@ -30,6 +30,7 @@ env-config.sh
 /build
 
 /public/*.js
+/public/*.js.map
 /public/style*.css
 /public/style*.css.map
 /public/editor*.css

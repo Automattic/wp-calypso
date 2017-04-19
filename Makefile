@@ -195,7 +195,7 @@ build-desktop: build-server build-css
 # the `clean` rule deletes all the files created from `make build`, but not
 # those created by `make install`
 clean:
-	@rm -rf public/style*.css public/style-debug.css.map public/*.js server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json public/directly.css public/editor.css build/* server/bundler/*.json .babel-cache
+	@rm -rf public/style*.css public/style-debug.css.map public/*.js public/*.js.map server/devdocs/search-index.js server/devdocs/proptypes-index.json server/devdocs/components-usage-stats.json public/directly.css public/editor.css build/* server/bundler/*.json .babel-cache
 
 # the `distclean` rule deletes all the files created from `make install`
 distclean: clean

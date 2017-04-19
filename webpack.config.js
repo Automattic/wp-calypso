@@ -215,7 +215,7 @@ if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 
 webpackConfig.module.loaders = [ jsLoader ].concat( webpackConfig.module.loaders );
 
-if ( calypsoEnv !== 'development' ) {
+if ( process.env.WEBPACK_OUTPUT_JSON ) {
 	webpackConfig.devtool = 'source-map';
 	webpackConfig.plugins.push( new webpack.optimize.UglifyJsPlugin( {
 		minimize: true,
