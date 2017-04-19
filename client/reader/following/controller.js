@@ -41,10 +41,11 @@ const exported = {
 	},
 
 	followingManage( context ) {
-		const basePath = route.sectionify( context.path ),
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage Followed Sites',
-			mcKey = 'following_manage',
-			query = context.query.q;
+		const basePath = route.sectionify( context.path );
+		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage Followed Sites';
+		const mcKey = 'following_manage';
+		const sitesQuery = context.query.q;
+		const subsQuery = context.query.s;
 
 		setPageTitle( context, i18n.translate( 'Manage Followed Sites' ) );
 
@@ -55,7 +56,8 @@ const exported = {
 				require="reader/following-manage"
 				key="following-manage"
 				initialFollowUrl={ context.query.follow }
-				query={ query }
+				sitesQuery={ sitesQuery }
+				subsQuery={ subsQuery }
 				context={ context }
 				userSettings={ userSettings }
 			/>,

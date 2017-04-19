@@ -3,6 +3,7 @@
  */
 import url from 'url';
 import { translate } from 'i18n-calypso';
+import { trim } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -47,4 +48,16 @@ export const getSiteName = ( { feed, site, post } = {} ) => {
 	}
 
 	return siteName;
+};
+
+export const getSiteDescription = ( { site, feed } ) => {
+	return ( site && site.description ) || ( feed && feed.description );
+};
+
+export const getSiteAuthorName = site => {
+	const siteAuthor = site && site.owner;
+	return siteAuthor && (
+		siteAuthor.name ||
+		trim( `${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }` )
+	);
 };
