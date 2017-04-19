@@ -23,7 +23,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 class SiteSettingsImport extends Component {
 	static propTypes = {
 		site: PropTypes.object,
-	};
+	}
 
 	state = getImporterState();
 
@@ -66,11 +66,11 @@ class SiteSettingsImport extends Component {
 
 	updateFromAPI = () => {
 		fetchState( this.props.site.ID );
-	};
+	}
 
 	updateState = () => {
 		this.setState( getImporterState() );
-	};
+	}
 
 	render() {
 		const { site, translate } = this.props;
