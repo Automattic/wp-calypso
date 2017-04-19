@@ -65,7 +65,7 @@ class CurrentSite extends Component {
 		this.setState( { domainsStore: DomainsStore } );
 	}
 
-	switchSites( event ) {
+	switchSites = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.setLayoutFocus( 'sites' );
