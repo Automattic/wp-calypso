@@ -13,9 +13,8 @@ import {
 	WP_SUPER_CACHE_REQUEST_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS,
-
-	WP_SUPER_CACHE_SETTINGS_UPDATE,
-	WP_SUPER_CACHE_SETTINGS_SAVE_FAILURE,
+	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
+	WP_SUPER_CACHE_UPDATE_SETTINGS,
 } from '../action-types';
 import {
 	receiveSettings,
@@ -132,7 +131,7 @@ describe( 'actions', () => {
 		it( 'should dispatch update action when request completes', () => {
 			return saveSettings( siteId, updatedSettings )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: WP_SUPER_CACHE_SETTINGS_UPDATE,
+					type: WP_SUPER_CACHE_UPDATE_SETTINGS,
 					siteId,
 					settings: updatedSettings
 				} );
@@ -142,7 +141,7 @@ describe( 'actions', () => {
 		it( 'should dispatch fail action when request fails', () => {
 			return saveSettings( failedSiteId, updatedSettings )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: WP_SUPER_CACHE_SETTINGS_SAVE_FAILURE,
+					type: WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 					siteId: failedSiteId,
 					error: sinon.match( { message: 'User cannot access this private blog.' } ),
 				} );

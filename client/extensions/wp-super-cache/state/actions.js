@@ -7,11 +7,10 @@ import {
 	WP_SUPER_CACHE_REQUEST_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS,
-
-	WP_SUPER_CACHE_SETTINGS_SAVE,
-	WP_SUPER_CACHE_SETTINGS_SAVE_FAILURE,
-	WP_SUPER_CACHE_SETTINGS_SAVE_SUCCESS,
-	WP_SUPER_CACHE_SETTINGS_UPDATE,
+	WP_SUPER_CACHE_SAVE_SETTINGS,
+	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
+	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
+	WP_SUPER_CACHE_UPDATE_SETTINGS,
 } from './action-types';
 
 /**
@@ -63,7 +62,7 @@ export const requestSettings = ( siteId ) => {
  */
 export const updateSettings = ( siteId, settings ) => {
 	return {
-		type: WP_SUPER_CACHE_SETTINGS_UPDATE,
+		type: WP_SUPER_CACHE_UPDATE_SETTINGS,
 		siteId,
 		settings
 	};
@@ -77,7 +76,7 @@ export const updateSettings = ( siteId, settings ) => {
 export const saveSettings = ( siteId, updatedSettings ) => {
 	return ( dispatch ) => {
 		dispatch( {
-			type: WP_SUPER_CACHE_SETTINGS_SAVE,
+			type: WP_SUPER_CACHE_SAVE_SETTINGS,
 			siteId,
 		} );
 
@@ -85,13 +84,13 @@ export const saveSettings = ( siteId, updatedSettings ) => {
 			.then( ( { updated } ) => {
 				dispatch( updateSettings( siteId, updated ) );
 				dispatch( {
-					type: WP_SUPER_CACHE_SETTINGS_SAVE_SUCCESS,
+					type: WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 					siteId,
 				} );
 			} )
 			.catch( error => {
 				dispatch( {
-					type: WP_SUPER_CACHE_SETTINGS_SAVE_FAILURE,
+					type: WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 					siteId,
 					error,
 				} );
