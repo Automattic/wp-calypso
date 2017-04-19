@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { isEmpty, stubFalse, stubTrue } from 'lodash';
+import { isEmpty, merge, stubFalse, stubTrue } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +17,7 @@ import {
 	SITE_UPDATES_REQUEST,
 	SITE_UPDATES_REQUEST_SUCCESS,
 	SITE_UPDATES_REQUEST_FAILURE,
+	SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 import { itemsSchema } from './schema';
@@ -38,6 +39,18 @@ export const items = createReducer(
 		[ SITE_RECEIVE ]: ( state, { site } ) => receiveUpdatesForSites( state, [ site ] ),
 		[ SITES_RECEIVE ]: ( state, { sites } ) => receiveUpdatesForSites( state, sites ),
 		[ SITES_UPDATE ]: ( state, { sites } ) => receiveUpdatesForSites( state, sites ),
+		[ SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS ]: ( state, { siteId } ) => {
+			if ( ! state[ siteId ] ) {
+				return state;
+			}
+
+			return merge( {}, state, {
+				[ siteId ]: {
+					wordpress: state[ siteId ].wordpress - 1,
+					total: state[ siteId ].total - 1,
+				}
+			} );
+		}
 	},
 	itemsSchema
 );

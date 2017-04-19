@@ -16,6 +16,7 @@ import {
 	SITE_UPDATES_REQUEST,
 	SITE_UPDATES_REQUEST_SUCCESS,
 	SITE_UPDATES_REQUEST_FAILURE,
+	SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -270,6 +271,34 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should reduce wordpress and total updates count after successful wordpress update', () => {
+			const original = deepFreeze( {
+				2916284: {
+					plugins: 1,
+					themes: 1,
+					total: 4,
+					translations: 1,
+					wordpress: 1,
+				},
+				77203074: exampleUpdates,
+			} );
+			const state = items( original, {
+				type: SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS,
+				siteId: 2916284,
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					plugins: 1,
+					themes: 1,
+					total: 3,
+					translations: 1,
+					wordpress: 0,
+				},
+				77203074: exampleUpdates,
+			} );
 		} );
 
 		it( 'should persist state', () => {
