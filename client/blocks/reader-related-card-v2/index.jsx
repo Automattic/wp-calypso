@@ -43,7 +43,7 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card-v2__link">{ siteName }</a>
 				</span>
 			</div>
-			<FollowButton siteUrl={ post.site_URL } followSource={ followSource } />
+			<FollowButton siteUrl={ post.site_URL } followSource={ followSource } railcar= { post.railcar } />
 		</div>
 	);
 }
