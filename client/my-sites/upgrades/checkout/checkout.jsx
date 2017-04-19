@@ -120,7 +120,7 @@ const Checkout = React.createClass( {
 	},
 
 	addProductToCart: function() {
-		const planSlug = getUpgradePlanSlugFromPath( this.props.product );
+		const planSlug = getUpgradePlanSlugFromPath( this.props.product, this.props.selectedSite );
 
 		let cartItem,
 			cartMeta;

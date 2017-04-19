@@ -25,12 +25,10 @@ import {
 	PLAN_JETPACK_FREE,
 	PLAN_PERSONAL
 } from 'lib/plans/constants';
-import SitesList from 'lib/sites-list';
 
 /**
  * Module vars
  */
-const sitesList = SitesList();
 const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 
 export function isFreePlan( plan ) {
@@ -62,8 +60,7 @@ export function canUpgradeToPlan( planKey, site ) {
 	return get( getPlan( planKey ), 'availableFor', () => false )( plan );
 }
 
-export function getUpgradePlanSlugFromPath( path, siteID ) {
-	const site = siteID ? sitesList.getSite( siteID ) : sitesList.getSelectedSite();
+export function getUpgradePlanSlugFromPath( path, site ) {
 	return find( Object.keys( PLANS_LIST ), planKey => (
 		( planKey === path || getPlanPath( planKey ) === path ) &&
 		canUpgradeToPlan( planKey, site )
