@@ -15,7 +15,7 @@ import DomainMainPlaceholder from 'my-sites/upgrades/domain-management/component
 import Gridicon from 'gridicons';
 import Header from 'my-sites/upgrades/domain-management/components/header';
 import Main from 'components/main';
-import Office365 from './templates/office-365';
+import Office365 from './office-365';
 import paths from 'my-sites/upgrades/paths';
 import { getSelectedDomain, isRegisteredDomain } from 'lib/domains';
 import Card from 'components/card/compact';
