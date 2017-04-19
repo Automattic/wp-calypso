@@ -67,6 +67,7 @@ export getReaderTags from './get-reader-tags';
 export getReaderTeams from './get-reader-teams';
 export getSharingButtons from './get-sharing-buttons';
 export getSiteConnectionStatus from './get-site-connection-status';
+export getSiteCoreUpdateStatus from './get-site-core-update-status';
 export getSiteGmtOffset from './get-site-gmt-offset';
 export getSiteIconId from './get-site-icon-id';
 export getSiteIconUrl from './get-site-icon-url';
