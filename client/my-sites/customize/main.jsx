@@ -54,7 +54,7 @@ var Customize = React.createClass( {
 	},
 
 	componentWillMount: function() {
-		this.redirectIfNeeded( this.props.menusUrl, this.props.pathname );
+		this.redirectIfNeeded( this.props.pathname );
 		this.listenToCustomizer();
 		this.waitForLoading();
 		window.scrollTo( 0, 0 );
@@ -66,10 +66,11 @@ var Customize = React.createClass( {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		this.redirectIfNeeded( nextProps.menusUrl, nextProps.pathname );
+		this.redirectIfNeeded( nextProps.pathname );
 	},
 
-	redirectIfNeeded: function( menusUrl, pathname ) {
+	redirectIfNeeded: function( pathname ) {
+		const { menusUrl } = this.props;
 		if ( startsWith( pathname, '/customize/menus' ) && pathname !== menusUrl ) {
 			page( menusUrl );
 		}
