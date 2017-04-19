@@ -232,12 +232,12 @@ User.prototype.clear = function( onClear ) {
 	 * Clear internal user data and empty localStorage cache
 	 * to discard any user reference that the application may hold
 	 */
-	const persistedDataKey = 'redux-state-' + this.data.ID;
+	const userID = this.data.ID;
 	this.data = [];
 	delete this.settings;
 	store.clear();
 	if ( config.isEnabled( 'persist-redux' ) ) {
-		localforage.removeItem( persistedDataKey, onClear );
+		localforage.removeItem( 'redux-state-' + userID, onClear );
 	}
 };
 
