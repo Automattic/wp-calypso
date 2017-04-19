@@ -9,8 +9,7 @@ var page = require( 'page' ),
 /**
  * Internal Dependencies
  */
-var user = require( 'lib/user' )(),
-	route = require( 'lib/route' ),
+const route = require( 'lib/route' ),
 	analytics = require( 'lib/analytics' ),
 	titlecase = require( 'to-title-case' ),
 	trackScrollPage = require( 'lib/track-scroll-page' ),
@@ -20,13 +19,17 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import { areAllSitesSingleUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 module.exports = {
 
 	posts: function( context ) {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+
 		var Posts = require( 'my-sites/posts/main' ),
 			siteID = route.getSiteFragment( context.path ),
-			author = ( context.params.author === 'my' ) ? user.get().ID : null,
+			author = ( context.params.author === 'my' ) ? getCurrentUserId( state ) : null,
 			statusSlug = ( author ) ? context.params.status : context.params.author,
 			search = context.query.s,
 			basePath = route.sectionify( context.path ),
@@ -34,9 +37,6 @@ module.exports = {
 			baseAnalyticsPath;
 
 		function shouldRedirectMyPosts() {
-			const state = context.store.getState();
-			const siteId = getSelectedSiteId( state );
-
 			if ( ! author ) {
 				return false;
 			}
