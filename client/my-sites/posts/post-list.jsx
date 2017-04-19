@@ -261,7 +261,7 @@ var Posts = React.createClass( {
 			i;
 
 		// posts have loaded, sites have loaded, and we have a site instance or are viewing all-sites
-		if ( posts.length && this.props.haveSites ) {
+		if ( posts.length ) {
 			postList = (
 				<InfiniteList
 					key={ 'list-' + this.props.listId } // to reset scroll for new list
