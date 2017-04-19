@@ -41,13 +41,15 @@ const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
 };
 
 const UrlSearch = Component => class extends Component {
-	static displayName = Component.displayName || Component.name || '';
+	static displayName = `UrlSearch(${ Component.displayName || Component.name || '' })`;
 
 	state = {
 		searchOpen: false
 	};
 
-	componentWillReceiveProps = ( { search } ) => ! search && this.setState( { searchOpen: false } );
+	componentWillReceiveProps( { search } ) {
+		return ! search && this.setState( { searchOpen: false } );
+	}
 
 	doSearch = ( query ) => {
 		this.setState( {
@@ -84,7 +86,7 @@ const UrlSearch = Component => class extends Component {
 			<Component
 				{ ...this.props }
 				doSearch = { this.doSearch }
-				getSearchOpen={ this.getSearch }
+				getSearchOpen={ this.getSearchOpen }
 			/>
 		);
 	}
