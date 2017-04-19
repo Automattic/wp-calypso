@@ -9,18 +9,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-var SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' ),
-	Main = require( 'components/main' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	AdsEarnings = require( 'my-sites/ads/form-earnings' ),
-	AdsSettings = require( 'my-sites/ads/form-settings' ),
-	AdsUtils = require( 'lib/ads/utils' ),
-	sites = require( 'lib/sites-list' )();
-
+import SectionNav from 'components/section-nav';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
+import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import AdsEarnings from 'my-sites/ads/form-earnings';
+import AdsSettings from 'my-sites/ads/form-settings';
+import { canAccessWordads, isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import FeatureExample from 'components/feature-example';
-import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import FormButton from 'components/forms/form-button';
 import Card from 'components/card';
 import { requestWordAdsApproval, dismissWordAdsError } from 'state/wordads/approve/actions';
@@ -34,6 +31,7 @@ import NoticeAction from 'components/notice/notice-action';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
 import { isSiteWordadsUnsafe, isRequestingWordadsStatus } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 const AdsMain = React.createClass( {
 
@@ -64,11 +62,11 @@ const AdsMain = React.createClass( {
 	},
 
 	getFilters: function() {
-		var site = sites.getSelectedSite(),
-			pathSuffix = sites.selected ? '/' + sites.selected : '',
+		const { site, siteSlug } = this.props,
+			pathSuffix = siteSlug ? '/' + siteSlug : '',
 			filters = [];
 
-		if ( AdsUtils.canAccessWordads( site ) ) {
+		if ( canAccessWordads( site ) ) {
 			filters.push( {
 				title: this.translate( 'Earnings' ),
 				path: '/ads/earnings' + pathSuffix,
@@ -90,20 +88,21 @@ const AdsMain = React.createClass( {
 			case 'earnings':
 				return <AdsEarnings site={ this.props.site } />;
 			case 'settings':
-				return <AdsSettings site={ this.props.site } />;
+				return <AdsSettings />;
 			default:
 				return null;
 		}
 	},
 
 	dismissWordAdsError() {
-		const siteId = this.props.site ? this.props.site.ID : null;
+		const { siteId } = this.props;
 		this.props.dismissWordAdsError( siteId );
 	},
 
 	renderInstantActivationToggle: function( component ) {
+		const { siteId } = this.props;
 		return ( <div>
-			<QueryWordadsStatus siteId={ this.props.site.ID } />
+			<QueryWordadsStatus siteId={ siteId } />
 			<Card className="rads__activate-wrapper">
 				<div className="rads__activate-header">
 					<h2 className="rads__activate-header-title">{ this.translate( 'WordAds Disabled' ) }</h2>
@@ -151,7 +150,7 @@ const AdsMain = React.createClass( {
 						showDismiss={ false }
 						text={ this.translate( 'Your site is marked as private. It needs to be public so that visitors can see the ads.' ) }
 					>
-						<NoticeAction href={ '/settings/general/' + this.props.site.slug }>
+						<NoticeAction href={ '/settings/general/' + this.props.siteSlug }>
 							{ this.translate( 'Change privacy settings' ) }
 						</NoticeAction>
 					</Notice>
@@ -222,20 +221,34 @@ const AdsMain = React.createClass( {
 	}
 } );
 
-export default connect(
-	( state, ownProps ) => ( {
-		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, ownProps.site ),
-		wordAdsError: getWordAdsErrorForSite( state, ownProps.site ),
-		wordAdsSuccess: getWordAdsSuccessForSite( state, ownProps.site ),
-		isUnsafe: isSiteWordadsUnsafe( state, ownProps.site.ID ),
-		isRequestingWordadsStatus: isRequestingWordadsStatus( state, ownProps.site.ID )
-	} ),
-	{ requestWordAdsApproval, dismissWordAdsError },
-	( stateProps, dispatchProps, parentProps ) => Object.assign(
-		{},
-		dispatchProps,
-		{ requestWordAdsApproval: () => ( ! stateProps.requestingWordAdsApproval ) ? dispatchProps.requestWordAdsApproval( parentProps.site.ID ) : null },
-		parentProps,
-		stateProps
-	)
-)( AdsMain );
+const mapStateToProps = ( state ) => {
+	const site = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		site,
+		siteId,
+		siteSlug: getSelectedSiteSlug( state ),
+		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, site ),
+		wordAdsError: getWordAdsErrorForSite( state, site ),
+		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
+		isUnsafe: isSiteWordadsUnsafe( state, siteId ),
+		isRequestingWordadsStatus: isRequestingWordadsStatus( state, siteId ),
+	};
+};
+
+const mapDispatchToProps = {
+	requestWordAdsApproval,
+	dismissWordAdsError,
+};
+
+const mergeProps = ( stateProps, dispatchProps, parentProps ) => ( {
+	...dispatchProps,
+	requestWordAdsApproval: () => ( ! stateProps.requestingWordAdsApproval )
+		? dispatchProps.requestWordAdsApproval( stateProps.siteId )
+		: null,
+	...parentProps,
+	...stateProps
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( AdsMain );
