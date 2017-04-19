@@ -36,6 +36,7 @@ import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import Search from 'components/search';
 import SiteSelectorAddSite from './add-site';
+import searchSites from 'components/search-sites';
 
 const ALL_SITES = 'ALL_SITES';
 
@@ -77,14 +78,13 @@ class SiteSelector extends Component {
 	};
 
 	state = {
-		search: '',
 		highlightedIndex: -1,
 		showSearch: false,
 		isKeyboardEngaged: false
 	};
 
 	reset() {
-		if ( this.state.search && this.refs.siteSearch ) {
+		if ( this.props.sitesFound && this.refs.siteSearch ) {
 			this.refs.siteSearch.clear();
 		} else {
 			this.setState( this.getInitialState() );
@@ -92,8 +92,9 @@ class SiteSelector extends Component {
 	}
 
 	onSearch = ( terms ) => {
+		this.props.searchSites( terms );
+
 		this.setState( {
-			search: terms,
 			highlightedIndex: ( terms ? 0 : -1 ),
 			showSearch: ( terms ? true : this.state.showSearch ),
 			isKeyboardEngaged: true
@@ -305,9 +306,8 @@ class SiteSelector extends Component {
 			return <SitePlaceholder key="site-placeholder" />;
 		}
 
-		if ( this.state.search ) {
-			// @FIXME replace Searchable mixin with new HoC
-			//sites = this.props.sites.search( this.state.search );
+		if ( this.props.sitesFound ) {
+			sites = this.props.sitesFound;
 		} else {
 			sites = this.props.visibleSites;
 
@@ -336,7 +336,7 @@ class SiteSelector extends Component {
 	}
 
 	renderAllSites() {
-		if ( this.props.showAllSites && ! this.state.search && this.props.allSitesPath ) {
+		if ( this.props.showAllSites && ! this.props.sitesFound && this.props.allSitesPath ) {
 			this.visibleSites.push( ALL_SITES );
 
 			const isHighlighted = this.isHighlighted( ALL_SITES );
@@ -380,7 +380,7 @@ class SiteSelector extends Component {
 		const sitesById = keyBy( this.props.sites, 'ID' );
 		const sites = this.props.recentSites.map( siteId => sitesById[ siteId ] );
 
-		if ( ! sites || this.state.search || ! this.shouldShowGroups() || this.props.visibleSiteCount <= 11 ) {
+		if ( ! sites || this.props.sitesFound || ! this.shouldShowGroups() || this.props.visibleSiteCount <= 11 ) {
 			return null;
 		}
 
@@ -419,7 +419,7 @@ class SiteSelector extends Component {
 					{ this.renderAllSites() }
 					{ this.renderRecentSites() }
 					{ this.renderSites() }
-					{ hiddenSitesCount > 0 && ! this.state.search &&
+					{ hiddenSitesCount > 0 && ! this.props.sitesFound &&
 						<span className="site-selector__hidden-sites-message">
 							{ this.props.translate(
 								'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
@@ -465,4 +465,4 @@ export default connect( ( state ) => {
 		allSitesSingleUser: areAllSitesSingleUser( state ),
 		isRequestingMissingSites: isRequestingMissingSites( state ),
 	};
-} )( localize( SiteSelector ) );
+} )( searchSites( localize( SiteSelector ) ) );
