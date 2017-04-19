@@ -13,13 +13,16 @@ import {
 	WP_SUPER_CACHE_REQUEST_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_REQUEST_SETTINGS_SUCCESS,
+	WP_SUPER_CACHE_SAVE_SETTINGS,
 	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
+	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 	WP_SUPER_CACHE_UPDATE_SETTINGS,
 } from '../action-types';
 import {
 	receiveSettings,
 	requestSettings,
 	saveSettings,
+	updateSettings,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -28,6 +31,7 @@ describe( 'actions', () => {
 	useSandbox( ( sandbox ) => spy = sandbox.spy() );
 
 	const siteId = 123456;
+	const failedSiteId = 456789;
 	const settings = {
 		data: {
 			is_cache_enabled: true,
@@ -48,8 +52,6 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSettings()', () => {
-		const failedSiteId = 456789;
-
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
@@ -101,16 +103,26 @@ describe( 'actions', () => {
 		} );
 	} );
 
+	describe( '#updateSettings()', () => {
+		it( 'should return an action object', () => {
+			const action = updateSettings( siteId, settings.data );
+
+			expect( action ).to.eql( {
+				type: WP_SUPER_CACHE_UPDATE_SETTINGS,
+				settings: settings.data,
+				siteId,
+			} );
+		} );
+	} );
+
 	describe( 'saveSettings()', () => {
-		const failedSiteId = 666666;
 		const updatedSettings = {
-			is_cache_enabled: true,
-			is_super_cache_enabled: true,
+			is_cache_enabled: false,
+			is_super_cache_enabled: false,
 		};
-		const settingsSaveResult = {
-			updated: {
-				is_cache_enabled: true,
-				is_super_cache_enabled: true,
+		const apiResponse = {
+			data: {
+				updated: true,
 			}
 		};
 
@@ -119,7 +131,7 @@ describe( 'actions', () => {
 				.persist()
 				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
 				.query( { path: '/wp-super-cache/v1/settings' } )
-				.reply( 200, settingsSaveResult )
+				.reply( 200, apiResponse )
 				.post( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/` )
 				.query( { path: '/wp-super-cache/v1/settings' } )
 				.reply( 403, {
@@ -128,12 +140,30 @@ describe( 'actions', () => {
 				} );
 		} );
 
+		it( 'should dispatch save action when thunk triggered', () => {
+			saveSettings( siteId, updatedSettings )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: WP_SUPER_CACHE_SAVE_SETTINGS,
+				siteId,
+			} );
+		} );
+
 		it( 'should dispatch update action when request completes', () => {
 			return saveSettings( siteId, updatedSettings )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_UPDATE_SETTINGS,
+					settings: updatedSettings,
 					siteId,
-					settings: updatedSettings
+				} );
+			} );
+		} );
+
+		it( 'should dispatch save success action when request completes', () => {
+			return saveSettings( siteId, updatedSettings )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
+					siteId,
 				} );
 			} );
 		} );
