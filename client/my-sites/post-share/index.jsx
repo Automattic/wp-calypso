@@ -112,11 +112,11 @@ class PostShare extends Component {
 	}
 
 	dismiss = () => {
-		this.props.dismissShareConfirmation( this.props.siteId, this.props.post.ID );
+		this.props.dismissShareConfirmation( this.props.siteId, this.props.postId );
 	};
 
 	sharePost = () => {
-		this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message );
+		this.props.sharePost( this.props.siteId, this.props.postId, this.state.skipped, this.state.message );
 	};
 
 	isButtonDisabled() {
@@ -288,9 +288,9 @@ export default connect(
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, post.type ),
 			connections: getSiteUserConnections( state, siteId, userId ),
 			hasFetchedConnections: hasFetchedConnections( state, siteId ),
-			requesting: isRequestingSharePost( state, siteId, post.ID ),
-			failed: sharePostFailure( state, siteId, post.ID ),
-			success: sharePostSuccessMessage( state, siteId, post.ID )
+			requesting: isRequestingSharePost( state, siteId, postId ),
+			failed: sharePostFailure( state, siteId, postId ),
+			success: sharePostSuccessMessage( state, siteId, postId )
 		};
 	},
 	{ requestConnections, sharePost, dismissShareConfirmation }
