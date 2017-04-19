@@ -141,15 +141,26 @@ export const ThemesList = React.createClass( {
 		const minColumnWidth = 250;
 		const ssrSpacers = 20;
 
-		const visibleCellCount = Math.min( this.props.themes.length + 20, this.props.themesCount );
-
 		const columnCount = this._width === undefined ? 1 : Math.floor( this._width / minColumnWidth );
 		const rowCount = this._width === undefined
 			? this.props.themes.length + ssrSpacers
-			: Math.ceil( visibleCellCount / columnCount );
+			: Math.ceil( this.props.themesCount / columnCount );
 
 		const columnWidth = Math.floor( this._width / columnCount );
 		const rowHeight = Math.floor( ( columnWidth - 20 ) * 0.75 ) + 74;
+
+		const onCellsRendered = ( { stopIndex } ) => {
+			if (
+				! this.props.loading &&
+				stopIndex < this.props.themesCount &&
+				! this.isRowLoaded( stopIndex )
+			) {
+				onRowsRendered( {
+					startIndex: Math.min( this.props.themes.length, stopIndex ),
+					stopIndex: Math.min( this.props.themes.length + 19, stopIndex )
+				} );
+			}
+		};
 
 		return (
 			<FlexboxGrid
@@ -161,9 +172,8 @@ export const ThemesList = React.createClass( {
 				scrollTop={ scrollTop }
 				cellRenderer={ this.renderCell }
 				overscanRowCount={ 3 }
-				onCellsRendered={ onRowsRendered }
+				onCellsRendered={ onCellsRendered }
 				ref={ this.onGridRendered }
-				ssrEnabled={ true }
 			/>
 		);
 	},
