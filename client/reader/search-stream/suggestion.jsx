@@ -1,37 +1,51 @@
 /**
  * External Dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 import { stringify } from 'qs';
 
 /**
  * Internal Dependencies
  */
-import { recordTrack } from 'reader/stats';
+import { recordTrack, recordTracksRailcarInteract } from 'reader/stats';
+import analytics from 'lib/analytics';
 
-export function Suggestion( { suggestion, source, sort } ) {
-	const handleSuggestionClick = () => {
+export class Suggestion extends Component {
+	static propTypes = {
+		suggestion: PropTypes.string.isRequired,
+		source: PropTypes.string,
+		sort: PropTypes.string,
+		railcar: PropTypes.object
+	};
+
+	componentWillMount() {
+		const { railcar } = this.props;
+		analytics.tracks.recordEvent( 'calypso_traintracks_render', railcar );
+	}
+
+	handleSuggestionClick = () => {
+		const { suggestion, source, railcar } = this.props;
 		recordTrack( 'calypso_reader_search_suggestion_click', { suggestion, source } );
+		recordTracksRailcarInteract( 'search_suggestion_click', railcar );
 	};
 
-	const args = {
-		isSuggestion: 1,
-		q: suggestion,
-		sort
-	};
+	render() {
+		const { suggestion, sort } = this.props;
+		const args = {
+			isSuggestion: 1,
+			q: suggestion,
+			sort
+		};
 
-	const searchUrl = '/read/search?' + stringify( args );
+		const searchUrl = '/read/search?' + stringify( args );
 
-	return (
-		<a onClick={ handleSuggestionClick }
-			href={ searchUrl } >
-			{ suggestion }
-		</a>
-	);
+		return (
+			<a onClick={ this.handleSuggestionClick }
+				href={ searchUrl } >
+				{ suggestion }
+			</a>
+		);
+	}
 }
-
-Suggestion.propTypes = {
-	suggestion: PropTypes.string.isRequired
-};
 
 export default Suggestion;

@@ -11,6 +11,7 @@ import { map, sampleSize } from 'lodash';
 import i18nUtils from 'lib/i18n-utils';
 import { suggestions } from 'reader/search-stream/suggestions';
 import { getReaderFollowedTags } from 'state/selectors';
+import analytics from 'lib/analytics';
 
 /**
  * Build suggestions from subscribed tags
@@ -23,32 +24,57 @@ function suggestionsFromTags( count, tags ) {
 		if ( tags.length <= count ) {
 			return [];
 		}
-		return map( sampleSize( tags, count ), tag => ( tag.displayName || tag.slug ).replace( /-/g, ' ' ) );
+		return map(
+			sampleSize( tags, count ),
+			( tag, i ) => {
+				const text = ( tag.displayName || tag.slug ).replace( /-/g, ' ' );
+				const ui_algo = 'read:search-suggestions:tags/1';
+				return suggestionWithRailcar( text, ui_algo, i );
+			}
+		);
 	}
 	return null;
 }
 
 function suggestionsFromPicks( count ) {
 	const lang = i18nUtils.getLocaleSlug().split( '-' )[ 0 ];
-
 	if ( suggestions[ lang ] ) {
-		return sampleSize( suggestions[ lang ], count );
+		return map(
+			sampleSize( suggestions[ lang ], count ),
+			( tag, i ) => {
+				const ui_algo = 'read:search-suggestions:picks/1';
+				return suggestionWithRailcar( tag, ui_algo, i );
+			}
+		);
 	}
 	return null;
 }
 
+function suggestionWithRailcar( text, ui_algo, position ) {
+	return {
+		text: text,
+		railcar: {
+			railcar: analytics.tracks.createRandomId() + '-' + position,
+			ui_algo: ui_algo,
+			ui_position: position,
+			rec_result: text,
+		}
+	};
+}
+
 function getSuggestions( count, tags ) {
 	const tagSuggestions = suggestionsFromTags( count, tags );
+
+	// return null to suppress showing any suggestions until tag subscriptions load.
 	if ( tagSuggestions === null ) {
-		// return null to supperess showing any suggestions until tag subscriptions load
 		return null;
 	}
 
-	if ( tagSuggestions.length ) {
-		return tagSuggestions;
-	}
+	const newSuggestions = !! tagSuggestions.length
+		? tagSuggestions
+		: suggestionsFromPicks( count );
 
-	return suggestionsFromPicks( count );
+	return newSuggestions;
 }
 
 const SuggestionsProvider = ( Element, count = 3 ) => class extends Component {
