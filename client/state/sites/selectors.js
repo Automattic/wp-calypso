@@ -428,6 +428,22 @@ export const getSiteBySlug = createSelector(
 );
 
 /**
+ * Returns a site object by its Domain.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {String}  domain Site domain
+ * @return {?Object}       Site object
+ */
+export const getSiteByDomain = createSelector(
+	( state, domain ) => (
+		find( state.sites.items, ( item, siteId ) => (
+			getSiteDomain( state, siteId ) === domain
+		) ) || null
+	),
+	( state ) => state.sites.items
+);
+
+/**
  * Returns a site object by its URL.
  *
  * @param  {Object}  state Global state tree

@@ -24,6 +24,7 @@ import {
 	isSitePreviewable,
 	isRequestingSites,
 	isRequestingSite,
+	getSiteByDomain,
 	getSiteBySlug,
 	getSiteByUrl,
 	getSitePlan,
@@ -749,6 +750,34 @@ describe( 'selectors', () => {
 			}, 2916284 );
 
 			expect( isRequesting ).to.be.false;
+		} );
+	} );
+
+	describe( '#getSiteByDomain()', () => {
+		it( 'should return null if a site cannot be found', () => {
+			const site = getSiteByDomain( {
+				sites: {
+					items: {}
+				}
+			}, 'testtwosites2014.com' );
+
+			expect( site ).to.be.null;
+		} );
+
+		it( 'should return a matched site', () => {
+			const state = {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							domain: 'testtwosites2014.com'
+						}
+					}
+				}
+			};
+			const site = getSiteByDomain( state, 'testtwosites2014.com' );
+
+			expect( site ).to.equal( state.sites.items[ 77203199 ] );
 		} );
 	} );
 

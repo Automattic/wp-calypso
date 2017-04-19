@@ -90,15 +90,6 @@ export function items( state = {}, action ) {
 			const initialNextState = SITES_RECEIVE === action.type ? {} : state;
 
 			return reduce( sites, ( memo, site ) => {
-				// If we're not already tracking the site upon an update, don't
-				// merge into state (we only currently maintain sites which
-				// have at one point been selected in state)
-				//
-				// TODO: Consider dropping condition once sites-list abolished
-				if ( SITES_UPDATE === action.type && ! memo[ site.ID ] ) {
-					return memo;
-				}
-
 				// Bypass if site object hasn't change
 				const transformedSite = pick( site, VALID_SITE_KEYS );
 				if ( isEqual( memo[ site.ID ], transformedSite ) ) {
