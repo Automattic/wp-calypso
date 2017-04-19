@@ -14,7 +14,8 @@ const sections = [
 		paths: [ '/customize' ],
 		module: 'my-sites/customize',
 		group: 'sites',
-		secondary: true
+		secondary: true,
+		isomorphic: true
 	},
 	{
 		name: 'paladin',
