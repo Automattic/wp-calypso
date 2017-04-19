@@ -169,7 +169,7 @@ class Upload extends React.Component {
 
 		if ( file.size > MAX_UPLOADED_THEME_SIZE ) {
 			notices.error(
-				translate( 'Theme zip is too big. Max theme size is 50 MB.' )
+				translate( 'Theme zip is too large. Please upload a theme under 50 MB.' )
 			);
 
 			return;
