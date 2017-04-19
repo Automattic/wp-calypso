@@ -18,7 +18,7 @@ import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconn
 import analytics from 'lib/analytics';
 import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
 import QuerySiteUpdates from 'components/data/query-site-updates';
-import { userCan } from 'lib/site/utils';
+import { canCurrentUser } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getUpdatesBySiteId } from 'state/sites/updates/selectors';
 import { updateWordPress } from 'state/sites/updates/actions';
@@ -70,11 +70,11 @@ class SiteIndicator extends Component {
 	}
 
 	showIndicator() {
-		const { site, siteIsJetpack } = this.props;
+		const { siteIsJetpack, userCanManage } = this.props;
 
 		// Until WP.com sites have indicators (upgrades expiring, etc) we only show them for Jetpack sites
 		return (
-			userCan( 'manage_options', site ) &&
+			userCanManage &&
 			siteIsJetpack &&
 			! get( site, 'options.is_automated_transfer' ) &&
 			( this.hasUpdate() || this.hasError() || this.hasWarning() || this.state.updateError )
@@ -382,6 +382,7 @@ export default connect(
 			siteIsConnected: site && getSiteConnectionStatus( state, site.ID ),
 			siteIsJetpack: site && isJetpackSite( state, site.ID ),
 			siteUpdates: site && getUpdatesBySiteId( state, site.ID ),
+			userCanManage: site && canCurrentUser( state, site.ID, 'manage_options' ),
 		};
 	},
 	{
