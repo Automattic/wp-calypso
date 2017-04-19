@@ -42,7 +42,9 @@ describe( 'initial-state', () => {
 		mockery.registerMock( 'lib/localforage', localforage );
 		mockery.registerMock( 'lib/user', () => {
 			return {
-				get: () => true
+				get: () => {
+					return { ID: 123456789 };
+				}
 			};
 		} );
 		const initialState = require( 'state/initial-state' );
@@ -397,8 +399,8 @@ describe( 'initial-state', () => {
 			clock.tick( SERIALIZE_THROTTLE );
 
 			expect( localforage.setItem ).to.have.been.calledTwice;
-			expect( localforage.setItem ).to.have.been.calledWith( 'redux-state', 3 );
-			expect( localforage.setItem ).to.have.been.calledWith( 'redux-state', 5 );
+			expect( localforage.setItem ).to.have.been.calledWith( 'redux-state-123456789', 3 );
+			expect( localforage.setItem ).to.have.been.calledWith( 'redux-state-123456789', 5 );
 		} );
 	} );
 } );
