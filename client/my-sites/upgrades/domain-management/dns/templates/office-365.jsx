@@ -31,7 +31,12 @@ class Office365 extends Component {
 	onAddDnsRecords = ( event ) => {
 		event.preventDefault();
 		this.setState( { submitting: true } );
-		upgradesActions.addDnsOffice( this.props.selectedDomainName, this.state.token, ( error ) => {
+
+		const variables = {
+			token: this.state.token
+		};
+
+		upgradesActions.applyDnsTemplate( this.props.selectedDomainName, 'office365', variables, ( error ) => {
 			if ( error ) {
 				notices.error( error.message || this.props.translate( 'The DNS record has not been added.' ) );
 				this.setState( { submitting: false } );
@@ -44,7 +49,7 @@ class Office365 extends Component {
 	}
 
 	render() {
-		const isDataValid = this.state.token.match( /^MS=ms\d+$/ );
+		const isDataValid = this.state.token.match( /^MS=ms\d{4,20}$/ );
 
 		return (
 			<form className="dns__office365">
