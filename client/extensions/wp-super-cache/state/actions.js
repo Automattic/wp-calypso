@@ -54,19 +54,13 @@ export const requestSettings = ( siteId ) => {
 };
 
 /**
- * Returns an action object to be used in signalling that some wpsc settings have been updated
+ * Returns an action object to be used in signalling that settings have been updated.
  *
  * @param  {Number} siteId Site ID
- * @param  {Object} settings The updated site settings
- * @return {Object}        Action object
+ * @param  {Object} settings Updated settings
+ * @return {Object} Action object
  */
-export const updateSettings = ( siteId, settings ) => {
-	return {
-		type: WP_SUPER_CACHE_UPDATE_SETTINGS,
-		siteId,
-		settings
-	};
-};
+export const updateSettings = ( siteId, settings ) => ( { type: WP_SUPER_CACHE_UPDATE_SETTINGS, siteId, settings } );
 
 /**
  * Saves settings for a site.
