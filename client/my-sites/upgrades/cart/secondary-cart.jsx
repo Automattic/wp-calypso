@@ -19,6 +19,7 @@ import Sidebar from 'layout/sidebar';
 import observe from 'lib/mixins/data-observe';
 import CartBodyLoadingPlaceholder from 'my-sites/upgrades/cart/cart-body/loading-placeholder';
 import { action as upgradesActionTypes } from 'lib/upgrades/constants';
+import scrollIntoViewport from 'lib/scroll-into-viewport';
 
 const SecondaryCart = React.createClass( {
 	propTypes: {
@@ -51,8 +52,8 @@ const SecondaryCart = React.createClass( {
 
 	componentDidUpdate( prevProps, prevState ) {
 		if ( ! prevState.cartVisible && this.state.cartVisible ) {
-			const node = ReactDom.findDOMNode( this );
-			node.scrollIntoView();
+			const node = ReactDom.findDOMNode( this.refs.cartBody );
+			scrollIntoViewport( node );
 		}
 	},
 
@@ -79,6 +80,7 @@ const SecondaryCart = React.createClass( {
 					selectedSite={ selectedSite }
 					cart={ cart } />
 				<CartBody
+					ref="cartBody"
 					cart={ cart }
 					selectedSite={ selectedSite }
 					showCoupon={ true } />
