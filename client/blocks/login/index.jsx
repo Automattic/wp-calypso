@@ -47,15 +47,17 @@ export class Login extends Component {
 	};
 
 	onChangeField = ( event ) => {
-		const target = event.target;
-		const value = target.type === 'checkbox' ? target.checked : target.value;
-		const name = target.name;
-
-		if ( name === 'rememberme' ) {
-			this.props.recordTracksEvent( 'calypso_loginblock_rememberme_change', { new_value: value } );
-		}
+		const { name, value } = event.target;
 
 		this.setState( { [ name ]: value } );
+	};
+
+	onChangeRememberMe = ( event ) => {
+		const { name, checked } = event.target;
+
+		this.props.recordTracksEvent( 'calypso_loginblock_rememberme_change', { new_value: checked } );
+
+		this.setState( { [ name ]: checked } );
 	};
 
 	onSubmitForm = ( event ) => {
@@ -141,7 +143,7 @@ export class Login extends Component {
 								<FormCheckbox
 									name="rememberme"
 									checked={ this.state.rememberme }
-									onChange={ this.onChangeField }
+									onChange={ this.onChangeRememberMe }
 									{ ...isDisabled } />
 								{ this.props.translate( 'Stay logged in' ) }
 							</label>
