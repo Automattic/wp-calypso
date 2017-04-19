@@ -29,11 +29,9 @@ class QuerySiteMonitorSettings extends Component {
 	}
 
 	request( props ) {
-		if ( props.requestingSiteMonitorSettings ) {
-			return;
+		if ( props.siteId && ! props.requestingSiteMonitorSettings ) {
+			props.requestSiteMonitorSettings( props.siteId );
 		}
-
-		props.requestSiteMonitorSettings( props.siteId );
 	}
 
 	render() {
