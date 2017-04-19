@@ -58,6 +58,9 @@ import {
 } from 'state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
+import {
+	MAX_UPLOADED_THEME_SIZE
+} from 'lib/automated-transfer/constants';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -160,6 +163,14 @@ class Upload extends React.Component {
 		// DropZone supplies an array, FilePicker supplies a FileList
 		const file = files[ 0 ] || files.item( 0 );
 		debug( 'zip file:', file );
+
+		if ( file.size && file.size > MAX_UPLOADED_THEME_SIZE ) {
+			notices.error(
+				translate( 'Theme zip is too big. Max theme size is 50 MB.' )
+			);
+
+			return;
+		}
 
 		const action = this.props.isJetpack
 			? this.props.uploadTheme : this.props.initiateThemeTransfer;
