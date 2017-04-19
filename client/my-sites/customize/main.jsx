@@ -24,6 +24,7 @@ import { getMenusUrl } from 'state/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 
 var loadingTimer;
+let isRedirecting = false;
 
 var Customize = React.createClass( {
 	displayName: 'Customize',
@@ -69,8 +70,13 @@ var Customize = React.createClass( {
 	},
 
 	redirectIfNeeded: function( menusUrl, site ) {
+		if ( isRedirecting ) {
+			return;
+		}
 		if ( site && menusUrl !== '/customize/menus/' + site.slug ) {
+			isRedirecting = true;
 			page( menusUrl );
+			isRedirecting = false;
 		}
 	},
 
