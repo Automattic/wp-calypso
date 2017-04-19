@@ -46,13 +46,13 @@ class PluginAutomatedTransfer extends Component {
 		const { COMPLETE } = transferStates;
 		const {
 			isTransferring,
-			isTransferFailed,
+			isFailedTransfer,
 			transferState,
 		} = this.props;
 
 		if ( COMPLETE === transferState ) {
 			this.setState( { transferComplete: true } );
-		} else if ( isTransferring || isTransferFailed ) {
+		} else if ( isTransferring || isFailedTransfer ) {
 			this.setState( { shouldDisplay: true } );
 		}
 	}
@@ -72,7 +72,7 @@ class PluginAutomatedTransfer extends Component {
 				newState.shouldDisplay = true;
 			}
 		} else if ( ! transferComplete ) {
-			newState.shouldDisplay = nextProps.isTransferring || nextProps.isTransferFailed;
+			newState.shouldDisplay = nextProps.isTransferring || nextProps.isFailedTransfer;
 		}
 
 		this.setState( newState );
@@ -97,26 +97,26 @@ class PluginAutomatedTransfer extends Component {
 	}
 
 	getStatus = () => {
-		const { isTransferFailed } = this.props;
+		const { isFailedTransfer } = this.props;
 		const { clickOutside } = this.state;
 
 		if ( clickOutside ) {
 			return 'is-info';
 		}
-		if ( isTransferFailed ) {
+		if ( isFailedTransfer ) {
 			return 'is-error';
 		}
 		return 'is-info';
 	}
 
 	getIcon = () => {
-		const { isTransferFailed } = this.props;
+		const { isFailedTransfer } = this.props;
 		const { clickOutside } = this.state;
 
 		if ( clickOutside ) {
 			return 'sync';
 		}
-		if ( isTransferFailed ) {
+		if ( isFailedTransfer ) {
 			return 'notice';
 		}
 		return 'sync';
@@ -168,7 +168,7 @@ const mapStateToProps = state => {
 	return {
 		transferState: getAutomatedTransferStatus( state, siteId ),
 		isTransferring: isAutomatedTransferActive( state, siteId ),
-		isTransferFailed: isAutomatedTransferFailed( state, siteId ),
+		isFailedTransfer: isAutomatedTransferFailed( state, siteId ),
 		site: getSite( state, siteId ),
 	};
 };
