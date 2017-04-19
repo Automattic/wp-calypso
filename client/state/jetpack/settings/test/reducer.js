@@ -207,7 +207,7 @@ describe( 'reducer', () => {
 							active: true,
 							options: {
 								wp_mobile_excerpt: {
-									current_value: 'enabled',
+									current_value: true,
 								},
 								some_other_option: {
 									current_value: '123',
