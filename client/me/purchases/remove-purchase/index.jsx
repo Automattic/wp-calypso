@@ -3,9 +3,9 @@
  */
 import { connect } from 'react-redux';
 import page from 'page';
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import Gridicon from 'gridicons';
-import { moment } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 import { get } from 'lodash';
 
 /**
@@ -40,33 +40,31 @@ const user = userFactory();
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:purchases:survey' );
 
-const RemovePurchase = React.createClass( {
-	propTypes: {
-		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
-		isDomainOnlySite: React.PropTypes.bool,
-		receiveDeletedSite: React.PropTypes.func.isRequired,
-		removePurchase: React.PropTypes.func.isRequired,
-		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool,
-			React.PropTypes.undefined
+class RemovePurchase extends Component {
+	static propTypes = {
+		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		isDomainOnlySite: PropTypes.bool,
+		receiveDeletedSite: PropTypes.func.isRequired,
+		removePurchase: PropTypes.func.isRequired,
+		selectedPurchase: PropTypes.object,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool,
+			PropTypes.undefined
 		] ),
-		setAllSitesSelected: React.PropTypes.func.isRequired,
-	},
+		setAllSitesSelected: PropTypes.func.isRequired,
+	}
 
-	getInitialState() {
-		return {
-			isDialogVisible: false,
-			isRemoving: false,
-			surveyStep: 1,
-			finalStep: 2,
-			survey: {
-				questionOneRadio: null,
-				questionTwoRadio: null
-			}
-		};
-	},
+	state = {
+		isDialogVisible: false,
+		isRemoving: false,
+		surveyStep: 1,
+		finalStep: 2,
+		survey: {
+			questionOneRadio: null,
+			questionTwoRadio: null
+		}
+	}
 
 	recordChatEvent( eventAction ) {
 		const purchase = this.props.selectedPurchase;
@@ -77,18 +75,18 @@ const RemovePurchase = React.createClass( {
 			is_domain_registration: isDomainRegistration( purchase ),
 			has_included_domain: hasIncludedDomain( purchase ),
 		} );
-	},
+	}
 
-	recordEvent( name, properties = {} ) {
+	recordEvent = ( name, properties = {} ) => {
 		const product_slug = get( this.props, 'selectedPurchase.productSlug' );
 		const cancellation_flow = 'remove';
 		this.props.recordTracksEvent(
 			name,
 			Object.assign( { cancellation_flow, product_slug }, properties )
 		);
-	},
+	}
 
-	closeDialog() {
+	closeDialog = () => {
 		this.recordEvent( 'calypso_purchases_cancel_form_close' );
 		this.setState( {
 			isDialogVisible: false,
@@ -98,23 +96,23 @@ const RemovePurchase = React.createClass( {
 				questionTwoRadio: null
 			}
 		} );
-	},
+	}
 
-	openDialog( event ) {
+	openDialog = ( event ) => {
 		this.recordEvent( 'calypso_purchases_cancel_form_start' );
 		event.preventDefault();
 
 		this.setState( { isDialogVisible: true } );
-	},
+	}
 
-	chatButtonClicked( event ) {
+	chatButtonClicked = ( event ) => {
 		this.recordChatEvent( 'calypso_precancellation_chat_click' );
 		event.preventDefault();
 
 		this.setState( { isDialogVisible: false } );
-	},
+	}
 
-	recordSurveyStepChange( currentStep, nextStep, finalStep ) {
+	recordSurveyStepChange = ( currentStep, nextStep, finalStep ) => {
 		if ( nextStep === 1 ) {
 			this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: 'initial_step' } );
 		} else if ( nextStep === 2 && finalStep === 3 ) {
@@ -122,9 +120,9 @@ const RemovePurchase = React.createClass( {
 		} else {
 			this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: 'cancellation_step' } );
 		}
-	},
+	}
 
-	changeSurveyStep( direction ) {
+	changeSurveyStep = ( direction ) => {
 		const purchase = getPurchase( this.props );
 		let newStep, finalStep;
 
@@ -157,19 +155,19 @@ const RemovePurchase = React.createClass( {
 
 		this.recordSurveyStepChange( this.state.surveyStep, newStep, finalStep );
 		this.setState( { surveyStep: newStep } );
-	},
+	}
 
-	onSurveyChange( update ) {
+	onSurveyChange = ( update ) => {
 		this.setState( {
 			survey: update,
 		} );
-	},
+	}
 
-	removePurchase( closeDialog ) {
+	removePurchase = ( closeDialog ) => {
 		this.setState( { isRemoving: true } );
 
 		const purchase = getPurchase( this.props );
-		const { isDomainOnlySite, setAllSitesSelected, selectedSite } = this.props;
+		const { isDomainOnlySite, selectedSite, translate } = this.props;
 
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
 			this.recordEvent( 'calypso_purchases_cancel_form_submit' );
@@ -213,18 +211,18 @@ const RemovePurchase = React.createClass( {
 						// exists in `sites-list` as well as the global store.
 						receiveDeletedSiteDeprecated( selectedSite );
 						this.props.receiveDeletedSite( selectedSite );
-						setAllSitesSelected();
+						this.props.setAllSitesSelected();
 					}
 
 					notices.success(
-						this.translate( 'The domain {{domain/}} was removed from your account.', {
+						translate( 'The domain {{domain/}} was removed from your account.', {
 							components: { domain: <em>{ productName }</em> }
 						} ),
 						{ persistent: true }
 					);
 				} else {
 					notices.success(
-						this.translate( '%(productName)s was removed from {{siteName/}}.', {
+						translate( '%(productName)s was removed from {{siteName/}}.', {
 							args: { productName },
 							components: { siteName: <em>{ selectedSite.domain }</em> }
 						} ),
@@ -241,42 +239,44 @@ const RemovePurchase = React.createClass( {
 
 				notices.error( this.props.selectedPurchase.error );
 			} );
-	},
+	}
 
-	renderCard() {
+	renderCard = () => {
+		const { translate } = this.props;
 		const productName = getName( getPurchase( this.props ) );
 
 		return (
 			<CompactCard className="remove-purchase__card" onClick={ this.openDialog }>
 				<a href="#">
 					<Gridicon icon="trash" />
-					{ this.translate( 'Remove %(productName)s', { args: { productName } } ) }
+					{ translate( 'Remove %(productName)s', { args: { productName } } ) }
 				</a>
 			</CompactCard>
 		);
-	},
+	}
 
-	getChatButton() {
+	getChatButton = () => {
 		return (
 			<HappychatButton
 				className="remove-purchase__chat-button"
 				onClick={ this.chatButtonClicked }>
-				{ this.translate( 'Need help? Chat with us' ) }
+				{ this.props.translate( 'Need help? Chat with us' ) }
 			</HappychatButton>
 		);
-	},
+	}
 
-	renderDomainDialog() {
+	renderDomainDialog = () => {
+		const { translate } = this.props;
 		const buttons = [ {
 				action: 'cancel',
 				disabled: this.state.isRemoving,
-				label: this.translate( 'Cancel' )
+				label: translate( 'Cancel' )
 			},
 			{
 				action: 'remove',
 				disabled: this.state.isRemoving,
 				isPrimary: true,
-				label: this.translate( 'Remove Now' ),
+				label: translate( 'Remove Now' ),
 				onClick: this.removePurchase
 			} ],
 			productName = getName( getPurchase( this.props ) );
@@ -291,20 +291,21 @@ const RemovePurchase = React.createClass( {
 				className="remove-purchase__dialog"
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }>
-				<FormSectionHeading>{ this.translate( 'Remove %(productName)s', { args: { productName } } ) }</FormSectionHeading>
+				<FormSectionHeading>{ translate( 'Remove %(productName)s', { args: { productName } } ) }</FormSectionHeading>
 				{ this.renderDomainDialogText() }
 			</Dialog>
 		);
-	},
+	}
 
-	renderDomainDialogText() {
+	renderDomainDialogText = () => {
+		const { translate } = this.props;
 		const purchase = getPurchase( this.props ),
 			productName = getName( purchase );
 
 		return (
 			<p>
 				{
-					this.translate(
+					translate(
 						'This will remove %(domain)s from your account. By removing, ' +
 							'you are canceling the domain registration. This may stop ' +
 							'you from using it again, even with another service.',
@@ -313,14 +314,15 @@ const RemovePurchase = React.createClass( {
 				}
 			</p>
 		);
-	},
+	}
 
-	renderPlanDialogs() {
+	renderPlanDialogs = () => {
+		const { translate } = this.props;
 		const buttons = {
 				cancel: {
 					action: 'cancel',
 					disabled: this.state.isRemoving,
-					label: this.translate( 'Cancel' )
+					label: translate( "No, I'll Keep It" )
 				},
 				next: {
 					action: 'next',
@@ -329,24 +331,23 @@ const RemovePurchase = React.createClass( {
 						this.state.survey.questionTwoRadio === null ||
 						( this.state.survey.questionOneRadio === 'anotherReasonOne' && this.state.survey.questionOneText === '' ) ||
 						( this.state.survey.questionTwoRadio === 'anotherReasonTwo' && this.state.survey.questionTwoText === '' ),
-					label: this.translate( 'Next' ),
+					label: translate( 'Next Step' ),
 					onClick: this.changeSurveyStep
 				},
 				prev: {
 					action: 'prev',
 					disabled: this.state.isRemoving,
-					label: this.translate( 'Previous' ),
+					label: translate( 'Previous Step' ),
 					onClick: this.changeSurveyStep.bind( null, 'previous' )
 				},
 				remove: {
 					action: 'remove',
 					disabled: this.state.isRemoving,
 					isPrimary: true,
-					label: this.translate( 'Remove' ),
+					label: translate( 'Yes, Remove Now' ),
 					onClick: this.removePurchase
 				}
 			},
-			productName = getName( getPurchase( this.props ) ),
 			inFinalStep = ( this.state.surveyStep === this.state.finalStep );
 
 		let buttonsArr;
@@ -371,7 +372,6 @@ const RemovePurchase = React.createClass( {
 					className="remove-purchase__dialog"
 					isVisible={ this.state.isDialogVisible }
 					onClose={ this.closeDialog }>
-					<FormSectionHeading>{ this.translate( 'Remove %(productName)s', { args: { productName } } ) }</FormSectionHeading>
 					<CancelPurchaseForm
 						surveyStep={ this.state.surveyStep }
 						finalStep={ this.state.finalStep }
@@ -383,15 +383,16 @@ const RemovePurchase = React.createClass( {
 				</Dialog>
 			</div>
 		);
-	},
+	}
 
-	renderPlanDialogsText() {
+	renderPlanDialogsText = () => {
+		const { translate } = this.props;
 		const purchase = getPurchase( this.props ),
 			productName = getName( purchase ),
 			includedDomainText = (
 				<p>
 					{
-						this.translate(
+						translate(
 							'The domain associated with this plan, {{domain/}}, will not be removed. ' +
 								'It will remain active on your site, unless also removed.',
 							{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
@@ -404,7 +405,7 @@ const RemovePurchase = React.createClass( {
 			<div>
 				<p>
 					{
-						this.translate(
+						translate(
 							'Are you sure you want to remove %(productName)s from {{siteName/}}?',
 							{
 								args: { productName },
@@ -414,11 +415,11 @@ const RemovePurchase = React.createClass( {
 					}
 					{ ' ' }
 					{ isGoogleApps( purchase )
-						? this.translate(
+						? translate(
 							'Your G Suite account will continue working without interruption. ' +
 								'You will be able to manage your G Suite billing directly through Google.'
 						)
-						: this.translate(
+						: translate(
 							'You will not be able to reuse it again without purchasing a new subscription.',
 							{ comment: "'it' refers to a product purchased by a user" }
 						)
@@ -429,7 +430,7 @@ const RemovePurchase = React.createClass( {
 				{ ( isPlan( purchase ) && hasIncludedDomain( purchase ) ) && includedDomainText }
 			</div>
 		);
-	},
+	}
 
 	render() {
 		if ( isDataLoading( this.props ) || ! this.props.selectedSite ) {
@@ -448,7 +449,7 @@ const RemovePurchase = React.createClass( {
 			</span>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state, { selectedSite } ) => ( {
@@ -460,4 +461,4 @@ export default connect(
 		removePurchase,
 		setAllSitesSelected,
 	}
-)( RemovePurchase );
+)( localize( RemovePurchase ) );

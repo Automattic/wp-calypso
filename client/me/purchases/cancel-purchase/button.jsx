@@ -24,7 +24,6 @@ import { isDomainRegistration, isJetpackPlan, isBusiness } from 'lib/products-va
 import notices from 'notices';
 import paths from 'me/purchases/paths';
 import { refreshSitePlans } from 'state/sites/plans/actions';
-import FormSectionHeading from 'components/forms/form-section-heading';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
 
@@ -148,7 +147,7 @@ class CancelPurchaseButton extends Component {
 			next: {
 				action: 'next',
 				disabled: this.state.isRemoving || this.isSurveyIncomplete(),
-				label: translate( 'Next' ),
+				label: translate( 'Next Step' ),
 				onClick: this.changeSurveyStep
 			},
 			prev: {
@@ -165,7 +164,6 @@ class CancelPurchaseButton extends Component {
 				onClick: this.submitCancelAndRefundPurchase
 			}
 		};
-		const purchaseName = getName( purchase );
 		const inFinalStep = ( this.state.surveyStep === this.state.finalStep );
 
 		let buttonsArr;
@@ -185,7 +183,6 @@ class CancelPurchaseButton extends Component {
 				buttons={ buttonsArr }
 				onClose={ this.closeDialog }
 				className="cancel-purchase__button-warning-dialog">
-				<FormSectionHeading>{ translate( 'Cancel %(purchaseName)s', { args: { purchaseName } } ) }</FormSectionHeading>
 				<CancelPurchaseForm
 					surveyStep={ this.state.surveyStep }
 					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
