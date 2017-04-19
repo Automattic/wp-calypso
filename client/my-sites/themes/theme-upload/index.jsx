@@ -139,7 +139,10 @@ class Upload extends React.Component {
 			'too large': translate( 'Upload problem: Theme zip must be under 10MB.' ),
 			incompatible: translate( 'Upload problem: Incompatible theme.' ),
 			unsupported_mime_type: translate( 'Upload problem: Not a valid zip file' ),
-			initiate_failure: translate( 'Upload problem: Theme may not be valid' ),
+			initiate_failure: translate(
+				'Upload problem: Theme may not be valid. Check that your zip file contains only the theme ' +
+				'you are trying to upload.'
+			),
 		};
 
 		const errorString = JSON.stringify( error ).toLowerCase();
