@@ -73,13 +73,6 @@ function isLoggedIn() {
 	return !! user.get() && user.get().ID;
 }
 
-export function getPersistedStorageKey() {
-	if ( ! isLoggedIn() ) {
-		return null;
-	}
-	return 'redux-state-' + user.get().ID;
-}
-
 export function persistOnChange( reduxStore, serializeState = serialize ) {
 	let state;
 
@@ -95,7 +88,7 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 
 		state = nextState;
 
-		localforage.setItem( getPersistedStorageKey(), serializeState( state ) )
+		localforage.setItem( 'redux-state-' + user.get().ID, serializeState( state ) )
 			.catch( ( setError ) => {
 				debug( 'failed to set redux-store state', setError );
 			} );
@@ -112,9 +105,9 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 
 export default function createReduxStoreFromPersistedInitialState( reduxStoreReady ) {
 	if ( config.isEnabled( 'persist-redux' ) && isLoggedIn() && ! isSupportUserSession() ) {
-		// clear storage with old-style key
+		// clear storage any storage that used the old-style key
 		localforage.removeItem( 'redux-state' );
-		localforage.getItem( getPersistedStorageKey() )
+		localforage.getItem( 'redux-state-' + user.get().ID )
 			.then( loadInitialState )
 			.catch( loadInitialStateFailed )
 			.then( persistOnChange )
