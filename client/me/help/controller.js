@@ -8,6 +8,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { login } from 'lib/paths';
 import route from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import config from 'config';
@@ -15,7 +16,6 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import HelpComponent from './main';
 import CoursesComponent from './help-courses';
 import ContactComponent from './help-contact';
-import userUtils from 'lib/user/utils';
 import support from 'lib/url/support';
 
 export default {
@@ -33,7 +33,7 @@ export default {
 				url = support.CONTACT;
 				break;
 			default:
-				url = userUtils.getLoginUrl( window.location.href );
+				url = login( { redirectTo: window.location.href } );
 		}
 
 		// Not using the page library here since this is an external URL

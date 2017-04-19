@@ -8,7 +8,6 @@ import debugModule from 'debug';
  */
 import config from 'config';
 import userModule from 'lib/user';
-import { addQueryArgs } from 'lib/url';
 
 /**
  * Module Variables
@@ -16,18 +15,10 @@ import { addQueryArgs } from 'lib/url';
 const user = userModule();
 const debug = debugModule( 'calypso:user:utilities' );
 
-var userUtils = {
-	getLoginUrl: function( redirect ) {
-		const url = config( 'login_url' );
-
-		return redirect
-			? addQueryArgs( { redirect_to: redirect }, url )
-			: url;
-	},
-
-	getLogoutUrl: function( redirect ) {
-		var url = '/logout',
-			userData = user.get(),
+export default {
+	getLogoutUrl( redirect ) {
+		const userData = user.get();
+		let url = '/logout',
 			subdomain = '';
 
 		// If logout_URL isn't set, then go ahead and return the logout URL
@@ -54,26 +45,24 @@ var userUtils = {
 		return url;
 	},
 
-	logout: function( redirect ) {
-		const logoutUrl = userUtils.getLogoutUrl( redirect );
+	logout( redirect ) {
+		const logoutUrl = this.getLogoutUrl( redirect );
 
 		// Clear any data stored locally within the user data module or localStorage
 		user.clear( () => location.href = logoutUrl );
 	},
 
-	getLocaleSlug: function() {
+	getLocaleSlug() {
 		return user.get().localeSlug;
 	},
 
-	isLoggedIn: function() {
+	isLoggedIn() {
 		return Boolean( user.data );
 	},
 
-	needsVerificationForSite: function( site ) {
+	needsVerificationForSite( site ) {
 		// do not allow publish for unverified e-mails,
 		// but allow if the site is VIP
 		return !user.get().email_verified && !( site && site.is_vip );
 	},
 };
-
-module.exports = userUtils;

@@ -12,9 +12,9 @@ import debugModule from 'debug';
  */
 import SignupForm from 'components/signup-form';
 import InviteFormHeader from 'my-sites/invites/invite-form-header';
+import { login } from 'lib/paths';
 import { createAccount, acceptInvite } from 'lib/invites/actions';
 import WpcomLoginForm from 'signup/wpcom-login-form';
-import config from 'config';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import analytics from 'lib/analytics';
@@ -46,7 +46,7 @@ let InviteAcceptLoggedOut = React.createClass( {
 	},
 
 	clickSignInLink() {
-		let signInLink = config( 'login_url' ) + '?redirect_to=' + encodeURIComponent( window.location.href );
+		const signInLink = login( { redirectTo: window.location.href } );
 		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_out_sign_in_link_click' );
 		window.location = signInLink;
 	},

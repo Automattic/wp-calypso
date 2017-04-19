@@ -21,6 +21,7 @@ import Gravatar from 'components/gravatar';
 import Button from 'components/button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import { login } from 'lib/paths';
 import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
 import { getSSO } from 'state/jetpack-connect/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
@@ -135,8 +136,7 @@ const JetpackSSOForm = React.createClass( {
 	},
 
 	getSignInLink() {
-		const loginUrl = config( 'login_url' ) || 'https://wordpress.com/wp-login.php';
-		return addQueryArgs( { redirect_to: window.location.href }, loginUrl );
+		return login( { redirectTo: window.location.href } );
 	},
 
 	maybeValidateSSO( props = this.props ) {
