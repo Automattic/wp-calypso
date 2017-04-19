@@ -31,6 +31,7 @@ var Customize = React.createClass( {
 	propTypes: {
 		domain: React.PropTypes.string.isRequired,
 		site: React.PropTypes.object.isRequired,
+		pathname: React.PropTypes.string.isRequired,
 		prevPath: React.PropTypes.string,
 		query: React.PropTypes.object,
 		themeActivated: React.PropTypes.func.isRequired,
@@ -53,7 +54,7 @@ var Customize = React.createClass( {
 	},
 
 	componentWillMount: function() {
-		this.redirectIfNeeded( this.props.menusUrl, this.props.site );
+		this.redirectIfNeeded( this.props.menusUrl, this.props.pathname );
 		this.listenToCustomizer();
 		this.waitForLoading();
 		window.scrollTo( 0, 0 );
@@ -65,11 +66,11 @@ var Customize = React.createClass( {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		this.redirectIfNeeded( nextProps.menusUrl, nextProps.site );
+		this.redirectIfNeeded( nextProps.menusUrl, nextProps.pathname );
 	},
 
-	redirectIfNeeded: function( menusUrl, site ) {
-		if ( site && menusUrl !== '/customize/menus/' + site.slug ) {
+	redirectIfNeeded: function( menusUrl, pathname ) {
+		if ( menusUrl !== pathname ) {
 			page( menusUrl );
 		}
 	},
