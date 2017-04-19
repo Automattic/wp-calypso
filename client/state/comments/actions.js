@@ -1,3 +1,8 @@
+/***
+ * External dependencies
+ */
+import { get } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -55,7 +60,9 @@ function commentsRequestSuccess( options ) {
 
 	dispatch( {
 		type: COMMENTS_REQUEST_SUCCESS,
-		requestId: requestId
+		siteId,
+		postId,
+		requestId
 	} );
 
 	dispatch( {
@@ -85,10 +92,12 @@ function commentsRequestSuccess( options ) {
  * @param {String} requestId request identifier
  * @param {Object} err error object
  */
-function commentsRequestFailure( dispatch, requestId, err ) {
+function commentsRequestFailure( dispatch, siteId, postId, requestId, err ) {
 	dispatch( {
 		type: COMMENTS_REQUEST_FAILURE,
-		requestId: requestId,
+		siteId,
+		postId,
+		requestId,
 		error: err
 	} );
 }
@@ -122,7 +131,7 @@ export function requestPostComments( siteId, postId, status = 'approved' ) {
 		const requestId = createRequestId( siteId, postId, query );
 
 		// if the request status is in-flight or completed successfully, no need to re-fetch it
-		if ( postCommentRequests && [ COMMENTS_REQUEST, COMMENTS_REQUEST_SUCCESS ].indexOf( postCommentRequests.get( requestId ) ) !== -1 ) {
+		if ( postCommentRequests && [ COMMENTS_REQUEST, COMMENTS_REQUEST_SUCCESS ].indexOf( get( postCommentRequests, [ requestId ] ) ) !== -1 ) {
 			return;
 		}
 
@@ -137,7 +146,7 @@ export function requestPostComments( siteId, postId, status = 'approved' ) {
 					.comment()
 					.replies( query )
 					.then( ( { comments, found } ) => commentsRequestSuccess( { dispatch, requestId, siteId, postId, comments, totalCommentsCount: found } ) )
-					.catch( ( err ) => commentsRequestFailure( dispatch, requestId, err ) );
+					.catch( ( err ) => commentsRequestFailure( dispatch, siteId, postId, requestId, err ) );
 	};
 }
 
@@ -241,7 +250,7 @@ export function writeComment( commentText, siteId, postId, parentCommentId ) {
 				.comment()
 				.replies()
 				.then( ( { found: totalCommentsCount } ) => dispatch( { type: COMMENTS_COUNT_RECEIVE, siteId, postId, totalCommentsCount } ) )
-				.catch( ( err ) => commentsRequestFailure( dispatch, requestId, err ) );
+				.catch( ( err ) => commentsRequestFailure( dispatch, siteId, postId, requestId, err ) );
 
 			return comment;
 		} )
