@@ -82,7 +82,7 @@ class Login extends React.Component {
 		this.props.recordPageView( document.location.pathname, document.title );
 	}
 
-	goBack( event ) {
+	goBack = event => {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_goback_click' );
@@ -90,7 +90,7 @@ class Login extends React.Component {
 		if ( typeof window !== 'undefined' ) {
 			window.history.back();
 		}
-	}
+	};
 
 	footerLinks() {
 		const {
