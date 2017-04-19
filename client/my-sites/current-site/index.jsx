@@ -24,16 +24,17 @@ import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedOrAllSites } from 'state/selectors';
 
 export class CurrentSite extends Component {
 	static propTypes = {
 		isJetpack: React.PropTypes.bool,
 		siteCount: React.PropTypes.number.isRequired,
-		sites: React.PropTypes.object.isRequired,
 		setLayoutFocus: React.PropTypes.func.isRequired,
 		selectedSiteId: React.PropTypes.number,
 		selectedSite: React.PropTypes.object,
-		translate: React.PropTypes.func.isRequired
+		translate: React.PropTypes.func.isRequired,
+		anySiteSelected: React.PropTypes.array
 	};
 
 	state = {
@@ -107,9 +108,9 @@ export class CurrentSite extends Component {
 	}
 
 	render() {
-		const { isJetpack, selectedSite, translate } = this.props;
+		const { isJetpack, selectedSite, translate, anySiteSelected } = this.props;
 
-		if ( ! selectedSite ) {
+		if ( ! anySiteSelected.length ) {
 			return (
 				<Card className="current-site is-loading">
 					{ this.props.siteCount > 1 &&
@@ -155,14 +156,15 @@ export class CurrentSite extends Component {
 
 export default connect(
 	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state ),
-			user = getCurrentUser( state );
+		const selectedSiteId = getSelectedSiteId( state );
+		const user = getCurrentUser( state );
 
 		return {
 			isJetpack: isJetpackSite( state, selectedSiteId ),
 			selectedSiteId,
 			selectedSite: getSelectedSite( state ),
-			siteCount: get( user, 'visible_site_count', 0 )
+			anySiteSelected: getSelectedOrAllSites( state ),
+			siteCount: get( user, 'visible_site_count', 0 ),
 		};
 	},
 	{ setLayoutFocus },
