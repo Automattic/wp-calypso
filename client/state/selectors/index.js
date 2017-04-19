@@ -144,6 +144,7 @@ export isRequestingJetpackJumpstartStatus from './is-requesting-jetpack-jumpstar
 export isRequestingJetpackSettings from './is-requesting-jetpack-settings';
 export isRequestingMedia from './is-requesting-media';
 export isRequestingMediaItem from './is-requesting-media-item';
+export isRequestingMissingSites from './is-requesting-missing-sites';
 export isRequestingPostLikes from './is-requesting-post-likes';
 export isRequestingReaderTeams from './is-requesting-reader-teams';
 export isRequestingSharingButtons from './is-requesting-sharing-buttons';

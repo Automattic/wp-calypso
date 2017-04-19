@@ -29,6 +29,7 @@ import {
 	areAllSitesSingleUser,
 	getSites,
 	getVisibleSites,
+	isRequestingMissingSites,
 } from 'state/selectors';
 import AllSites from 'my-sites/all-sites';
 import Site from 'blocks/site';
@@ -300,7 +301,7 @@ class SiteSelector extends Component {
 		let sites;
 
 		// Assume that `sites` is falsy when loading
-		if ( ! this.props.sites ) {
+		if ( this.props.isRequestingMissingSites ) {
 			return <SitePlaceholder key="site-placeholder" />;
 		}
 
@@ -451,6 +452,7 @@ class SiteSelector extends Component {
 export default connect( ( state ) => {
 	const user = getCurrentUser( state );
 	const visibleSiteCount = get( user, 'visible_site_count', 0 );
+
 	return {
 		sites: getSites( state ),
 		showRecentSites: get( user, 'visible_site_count', 0 ) > 11,
@@ -461,5 +463,6 @@ export default connect( ( state ) => {
 		selectedSite: getSelectedSite( state ),
 		visibleSites: getVisibleSites( state ),
 		allSitesSingleUser: areAllSitesSingleUser( state ),
+		isRequestingMissingSites: isRequestingMissingSites( state ),
 	};
 } )( localize( SiteSelector ) );
