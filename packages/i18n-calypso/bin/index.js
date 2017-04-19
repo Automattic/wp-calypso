@@ -5,7 +5,7 @@
  */
 var flatten = require( 'lodash.flatten' ),
 	fs = require( 'fs' ),
-	glob = require( 'glob' ),
+	globby = require( 'globby' ),
 	path = require( 'path' ),
 	program = require( 'commander' );
 
@@ -57,14 +57,7 @@ if ( inputFiles.length === 0 ) {
 	throw new Error( 'Error: You must enter the input file. Run `i18n-calypso -h` for examples.' );
 }
 
-if ( outputFile ) {
-	outputFile = path.resolve( process.env.PWD, outputFile );
-}
-
-// files relative to terminal location
-inputPaths = flatten( inputFiles.map( function( fileName ) {
-	return glob.sync( fileName, { cwd: process.env.PWD } );
-} ) );
+inputPaths = globby.sync( inputFiles );
 
 console.log( 'Reading inputFiles:\n\t- ' + inputPaths.join( '\n\t- ' ) );
 

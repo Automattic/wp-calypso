@@ -23,7 +23,7 @@
     "async": "^1.5.2",
     "commander": "^2.9.0",
     "debug": "2.2.0",
-    "glob": "^7.0.6",
+    "globby": "^6.1.0",
     "interpolate-components": "1.1.0",
     "jed": "1.0.2",
     "jstimezonedetect": "1.0.5",
