@@ -1,10 +1,32 @@
+h1, h2, h3, h4, h5, p {
+	line-height: 1.2em;
+	margin-bottom: 15px;
+}
+
+h1 {
+	font-size: 30px;
+}
+
+h2 {
+	font-size: 24px;
+}
+
+h3 {
+	font-size: 18px;
+}
+
+p {
+	font-size: 16px;
+	line-height: 1.4em;
+}
+
 #content {
 	padding-left: 0;
 	padding-right: 0;
 }
 
 .pandance {
-	padding: 15px;
+	padding: 30px 15px;
 }
 
 .content-preview {
