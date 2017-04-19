@@ -61,7 +61,7 @@ class CurrentSite extends Component {
 		}
 	}
 
-	handleStoreChange() {
+	handleStoreChange = () => {
 		this.setState( { domainsStore: DomainsStore } );
 	}
 
@@ -102,7 +102,7 @@ class CurrentSite extends Component {
 		);
 	}
 
-	previewSite( event ) {
+	previewSite = ( event ) => {
 		analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site' );
 		this.props.onClick && this.props.onClick( event );
 	}

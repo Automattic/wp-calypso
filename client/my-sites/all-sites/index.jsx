@@ -40,7 +40,7 @@ class AllSites extends Component {
 		onMouseLeave: React.PropTypes.func
 	};
 
-	onSelect( event ) {
+	onSelect = ( event ) => {
 		this.props.onSelect( event );
 	}
 

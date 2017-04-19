@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 
 /**
@@ -12,11 +13,12 @@ import Main from 'components/main';
 import observe from 'lib/mixins/data-observe';
 import SiteSelector from 'components/site-selector';
 import { addSiteFragment } from 'lib/route';
+import { getSites, isSiteUpgradeable } from 'state/selectors';
 
-export default React.createClass( {
+export const Sites = React.createClass( {
 	displayName: 'Sites',
 
-	mixins: [ observe( 'sites', 'user' ) ],
+	mixins: [ observe( 'user' ) ],
 
 	propTypes: {
 		path: React.PropTypes.string.isRequired
@@ -44,7 +46,7 @@ export default React.createClass( {
 
 		// Filter out sites with no upgrades on particular routes
 		if ( /^\/domains/.test( path ) || /^\/plans/.test( this.props.sourcePath ) ) {
-			return site.isUpgradeable();
+			return this.props.isSiteUpgradeable( site.ID );
 		}
 
 		return site;
@@ -84,7 +86,7 @@ export default React.createClass( {
 				<Card className="sites__selector-wrapper">
 					<SiteSelector
 						autoFocus={ true }
-						filter={ ( site ) => this.filterSites( site ) }
+						filter={ this.filterSites }
 						onSiteSelect={ this.onSiteSelect }
 						sites={ this.props.sites }
 						groups={ true }
@@ -94,3 +96,12 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		return {
+			sites: getSites( state ),
+			isSiteUpgradeable: isSiteUpgradeable.bind( null, state ),
+		};
+	}
+)( Sites );
