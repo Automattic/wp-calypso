@@ -215,4 +215,26 @@ describe( 'edits-reducer', () => {
 		expect( attribute1.name ).to.eql( 'Attribute One' );
 		expect( attribute2.name ).to.eql( 'Attribute Two' );
 	} );
+
+	it( 'should set currentlyEditingId when editing a new product', () => {
+		const edits1 = reducer( undefined, editProduct( null, {
+			name: 'A new product',
+		} ) );
+
+		expect( edits1.currentlyEditingId ).to.eql( edits1.creates[ 0 ].id );
+
+		const edits2 = reducer( edits1, editProduct( null, {
+			name: 'Second product',
+		} ) );
+
+		expect( edits2.currentlyEditingId ).to.eql( edits2.creates[ 1 ].id );
+	} );
+
+	it( 'should set currentlyEditingId when editing an existing product', () => {
+		const product1 = { id: 1 };
+		const edits1 = reducer( undefined, editProduct( product1, {
+			name: 'First product',
+		} ) );
+		expect( edits1.currentlyEditingId ).to.eql( edits1.updates[ 0 ].id );
+	} );
 } );
