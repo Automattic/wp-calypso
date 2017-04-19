@@ -36,7 +36,7 @@ class Office365 extends Component {
 			token: this.state.token
 		};
 
-		upgradesActions.applyDnsTemplate( this.props.selectedDomainName, 'office365', variables, ( error ) => {
+		upgradesActions.applyDnsTemplate( this.props.selectedDomainName, 'microsoft-office365', variables, ( error ) => {
 			if ( error ) {
 				notices.error( error.message || this.props.translate( 'The DNS record has not been added.' ) );
 				this.setState( { submitting: false } );
