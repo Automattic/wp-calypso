@@ -36,7 +36,7 @@ var PostList = React.createClass( {
 	propTypes: {
 		context: React.PropTypes.object,
 		search: React.PropTypes.string,
-		haveSites: React.PropTypes.bool,
+		hasSites: React.PropTypes.bool,
 		statusSlug: React.PropTypes.string,
 		siteID: React.PropTypes.any,
 		author: React.PropTypes.number
@@ -72,7 +72,7 @@ var Posts = React.createClass( {
 		posts: React.PropTypes.array.isRequired,
 		search: React.PropTypes.string,
 		siteID: React.PropTypes.any,
-		haveSites: React.PropTypes.bool.isRequired,
+		hasSites: React.PropTypes.bool.isRequired,
 		statusSlug: React.PropTypes.string,
 		trackScrollPage: React.PropTypes.func.isRequired
 	},
@@ -277,7 +277,7 @@ var Posts = React.createClass( {
 				/>
 			);
 		} else {
-			if ( this.props.loading || ! this.props.haveSites ) {
+			if ( this.props.loading || ! this.props.hasSites ) {
 				for ( i = 0; i < placeholderCount; i++ ) {
 					placeholders.push( <PostPlaceholder key={ 'placeholder-' + i } /> );
 				}
@@ -304,6 +304,6 @@ var Posts = React.createClass( {
 export default connect(
 	( state ) => ( {
 		selectedSiteId: getSelectedSiteId( state ),
-		haveSites: !! getSites( state ).length
+		hasSites: !! getSites( state ).length
 	} )
 )( PostList );
