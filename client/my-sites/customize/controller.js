@@ -26,7 +26,7 @@ export function customize( context ) {
 		React.createElement( ReduxProvider, { store: context.store },
 			React.createElement( CustomizeComponent, {
 				domain: context.params.domain || '',
-				pathname: context.params.pathname,
+				pathname: context.pathname,
 				prevPath: context.prevPath || '',
 				query: context.query,
 				panel: context.params.panel
