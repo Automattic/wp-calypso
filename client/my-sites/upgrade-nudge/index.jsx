@@ -13,11 +13,12 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import { getValidFeatureKeys, hasFeature } from 'lib/plans';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { getValidFeatureKeys } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const UpgradeNudge = React.createClass( {
 
@@ -75,7 +76,7 @@ const UpgradeNudge = React.createClass( {
 		) {
 			return false;
 		}
-		if ( feature && hasFeature( feature, site.ID ) ) {
+		if ( feature && this.props.planHasFeature ) {
 			return false;
 		}
 		if ( ! feature && ! isFreePlan( site.plan ) ) {
@@ -147,8 +148,12 @@ const UpgradeNudge = React.createClass( {
 } );
 
 export default connect(
-	state => ( {
-		site: getSelectedSite( state ),
-	} ),
+	( state, ownProps ) => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			site: getSelectedSite( state ),
+			planHasFeature: hasFeature( state, siteId, ownProps.feature )
+		};
+	},
 	{ recordTracksEvent }
 )( localize( UpgradeNudge ) );

@@ -10,13 +10,13 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import { hasFeature } from 'lib/plans';
+import { hasFeature } from 'state/sites/plans/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
 
 const SeoSettingsHelpCard = ( {
-	siteId,
+	hasAdvancedSEOFeature,
 	siteIsJetpack,
 	translate
 } ) => {
@@ -28,7 +28,7 @@ const SeoSettingsHelpCard = ( {
 		<div>
 			<SectionHeader label={ translate( 'Search engine optimization' ) } />
 			{
-				hasFeature( FEATURE_ADVANCED_SEO, siteId ) &&
+				hasAdvancedSEOFeature &&
 				<Card>
 					<p>
 						{ translate(
@@ -54,10 +54,11 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteIsJetpack = isJetpackSite( state, siteId );
+		const hasAdvancedSEOFeature = hasFeature( state, siteId, FEATURE_ADVANCED_SEO );
 
 		return {
-			siteId,
 			siteIsJetpack,
+			hasAdvancedSEOFeature
 		};
 	}
 )( localize( SeoSettingsHelpCard ) );

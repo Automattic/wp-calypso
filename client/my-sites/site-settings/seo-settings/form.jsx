@@ -53,7 +53,7 @@ import {
 	isEnterprise,
 	isJetpackBusiness
 } from 'lib/products-values';
-import { hasFeature } from 'lib/plans';
+import { hasFeature } from 'state/sites/plans/selectors';
 import { FEATURE_ADVANCED_SEO, PLAN_BUSINESS } from 'lib/plans/constants';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
@@ -493,7 +493,7 @@ export const SeoForm = React.createClass( {
 					</Notice>
 				}
 
-				{ ! hasFeature( FEATURE_ADVANCED_SEO, site.ID ) &&
+				{ ! this.props.hasAdvancedSEOFeature &&
 					<Banner
 						description={ translate( 'Adds tools to optimize your site for search engines and social media sharing.' ) }
 						event={ 'calypso_seo_settings_upgrade_nudge' }
@@ -758,6 +758,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		isFetchingSite: isRequestingSite( state, siteId ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isVerificationToolsActive: isJetpackModuleActive( state, siteId, 'verification-tools' ),
+		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 	};
 };
 
