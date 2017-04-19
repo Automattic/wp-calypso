@@ -4,7 +4,7 @@
 
 1.	Check that you have all prerequisites (Git, Node, NPM). See below for more details.
 2. Create a /config/secrets.json file and fill it with [secrets](../secrets.md)
-3. `make run` to build and run the app
+3. `make desktop-run` to build and run the app
 
 ## Prerequisites
 

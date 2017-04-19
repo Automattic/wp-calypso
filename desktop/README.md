@@ -1,19 +1,14 @@
 # WordPress.com for Desktop
 
-WordPress.com for Desktop is an [Electron](https://github.com/atom/electron) wrapper for [Calypso](https://github.com/Automattic/wp-calypso), the new WordPress.com front-end. It works on Mac, Windows, and Linux.
+WordPress.com for Desktop is an [Electron](https://github.com/atom/electron) wrapper for Calypso, allowing WordPress.com to be installed and run as a dedicated app for Mac, Windows, and Linux.
 
 ![WordPress.com for Desktop](https://en-blog.files.wordpress.com/2015/12/01-writing-with-dock.png?w=1150)
 
 # Getting Started & Running Locally
 
-1. Clone this repository locally
-1. Update the Calypso submodule with:
- - `git submodule init`
- - `git submodule update`
-1. Create a `calypso/config/secrets.json` file and fill it with [secrets](docs/secrets.md)
-1. `make run` to build and run the app
-
-Need more detailed instructions? [We have them.](docs/install.md)
+1. [Clone & install](../docs/install.md) this repository locally
+1. Create a `config/secrets.json` file and fill it with [secrets](docs/secrets.md)
+1. `make desktop-run` to build and run the desktop app
 
 # Development
 
