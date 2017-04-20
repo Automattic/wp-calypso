@@ -55,7 +55,7 @@ export class Login extends Component {
 	onChangeRememberMe = ( event ) => {
 		const { name, checked } = event.target;
 
-		this.props.recordTracksEvent( 'calypso_loginblock_rememberme_change', { new_value: checked } );
+		this.props.recordTracksEvent( 'calypso_login_block_remember_me_change', { new_value: checked } );
 
 		this.setState( { [ name ]: checked } );
 	};
@@ -66,10 +66,10 @@ export class Login extends Component {
 			submitting: true
 		} );
 
-		this.props.recordTracksEvent( 'calypso_loginblock_login_submit' );
+		this.props.recordTracksEvent( 'calypso_login_block_login_submit' );
 
 		this.props.loginUser( this.state.usernameOrEmail, this.state.password ).then( () => {
-			this.props.recordTracksEvent( 'calypso_loginblock_login_success' );
+			this.props.recordTracksEvent( 'calypso_login_block_login_success' );
 			this.dismissNotice();
 			createFormAndSubmit( config( 'login_url' ), {
 				log: this.state.usernameOrEmail,
@@ -78,7 +78,7 @@ export class Login extends Component {
 				rememberme: this.state.rememberme ? 1 : 0,
 			} );
 		} ).catch( errorMessage => {
-			this.props.recordTracksEvent( 'calypso_loginblock_login_failure', {
+			this.props.recordTracksEvent( 'calypso_login_block_login_failure', {
 				error_message: errorMessage
 			} );
 

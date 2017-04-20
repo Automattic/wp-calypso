@@ -39,13 +39,13 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 class Login extends React.Component {
 	onClickEnterPasswordInstead = event => {
 		event.preventDefault();
-		this.props.recordTracksEvent( 'calypso_login_enterpasswordinstead_click' );
+		this.props.recordTracksEvent( 'calypso_login_enter_password_instead_click' );
 		this.props.hideMagicLoginRequestForm();
 	};
 
 	onMagicLoginRequestClick = event => {
 		event.preventDefault();
-		this.props.recordTracksEvent( 'calypso_login_magicloginrequest_click' );
+		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' );
 		this.props.showMagicLoginRequestForm();
 	};
 
@@ -57,13 +57,13 @@ class Login extends React.Component {
 
 		switch ( magicLoginView ) {
 			case LINK_EXPIRED_PAGE:
-				this.props.recordTracksEvent( 'calypso_login_magiclink_expiredlink_view' );
+				this.props.recordTracksEvent( 'calypso_login_magic_link_expired_link_view' );
 				return <EmailedLoginLinkExpired />;
 			case CHECK_YOUR_EMAIL_PAGE:
-				this.props.recordTracksEvent( 'calypso_login_magiclink_linksent_view' );
+				this.props.recordTracksEvent( 'calypso_login_magic_link_link_sent_view' );
 				return <EmailedLoginLinkSuccessfully emailAddress={ magicLoginEmailAddress } />;
 			case INTERSTITIAL_PAGE:
-				this.props.recordTracksEvent( 'calypso_login_magiclink_interstitial_view' );
+				this.props.recordTracksEvent( 'calypso_login_magic_link_interstitial_view' );
 				return <HandleEmailedLinkForm />;
 		}
 	}
@@ -82,7 +82,7 @@ class Login extends React.Component {
 	goBack = event => {
 		event.preventDefault();
 
-		this.props.recordTracksEvent( 'calypso_login_goback_click' );
+		this.props.recordTracksEvent( 'calypso_login_go_back_click' );
 
 		if ( typeof window !== 'undefined' ) {
 			window.history.back();
