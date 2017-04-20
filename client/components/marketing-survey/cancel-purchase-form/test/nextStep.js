@@ -15,13 +15,17 @@ import {
 } from '../steps';
 
 describe( 'nextStep', function() {
-	const productValues = {};
-	const product = 'the product';
+	const product = {};
 	const survey = { questionOneRadio: 'tooHard' };
 
 	let nextStep;
 
 	useMockery( ( mockery ) => {
+		const productValues = {
+			isBusiness: ( arg ) => arg.isBusiness(),
+			isPersonal: ( arg ) => arg.isPersonal(),
+			isPremium: ( arg ) => arg.isPremium(),
+		};
 		mockery.registerMock( 'lib/product-values', productValues );
 	} );
 
@@ -30,9 +34,9 @@ describe( 'nextStep', function() {
 	} );
 
 	beforeEach( function() {
-		productValues.isBusiness = () => false;
-		productValues.isPersonal = () => false;
-		productValues.isPremium = () => false;
+		product.isBusiness = () => false;
+		product.isPersonal = () => false;
+		product.isPremium = () => false;
 	} );
 
 	it( 'should default to returning initial step', function() {
@@ -48,17 +52,17 @@ describe( 'nextStep', function() {
 	} );
 
 	it( 'should return concierge step from initial step when question one answer is "too hard" and business product', function() {
-		productValues.isBusiness = () => true;
+		product.isBusiness = () => true;
 		expect( nextStep( INITIAL_STEP, survey, product ) ).to.equal( CONCIERGE_STEP );
 	} );
 
 	it( 'should return happychat step from initial step when question one answer is "too hard" and personal product', function() {
-		productValues.isPersonal = () => true;
+		product.isPersonal = () => true;
 		expect( nextStep( INITIAL_STEP, survey, product ) ).to.equal( HAPPYCHAT_STEP );
 	} );
 
 	it( 'should return happychat step from initial step when question one answer is "too hard" and premium product', function() {
-		productValues.isPremium = () => true;
+		product.isPremium = () => true;
 		expect( nextStep( INITIAL_STEP, survey, product ) ).to.equal( HAPPYCHAT_STEP );
 	} );
 } );
