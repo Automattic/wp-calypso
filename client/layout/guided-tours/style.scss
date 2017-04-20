@@ -13,6 +13,10 @@
 	animation-name: guided-tours__step-fadein;
 	animation-timing-function: ease-in-out;
 
+	&.is-scrolling {
+		z-index: z-index( 'root', '.guided-tours__step.is-scrolling' );
+	}
+
 	p {
 		color: lighten( $gray, 30 );
 		margin-bottom: 16px;

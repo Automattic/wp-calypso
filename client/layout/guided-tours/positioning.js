@@ -1,7 +1,10 @@
 /**
  * External dependencies
  */
-import startsWith from 'lodash/startsWith';
+import {
+	includes,
+	startsWith,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -171,4 +174,11 @@ function scrollIntoView( target, scrollContainer ) {
 
 	scrollTo( { y, container } );
 	return y;
+}
+
+export function isInScrollableContent( { scrollContainer } ) {
+	return includes( [
+		'body',
+		'.sidebar__region',
+	], scrollContainer );
 }
