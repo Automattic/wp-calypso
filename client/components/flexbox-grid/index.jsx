@@ -1,10 +1,25 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { times } from 'lodash';
 
 export default class FlexboxGrid extends React.PureComponent {
+	static propTypes = {
+		width: PropTypes.number,
+		minColumnWidth: PropTypes.number.isRequired,
+		columnCount: PropTypes.number.isRequired,
+		rowHeight: PropTypes.number,
+		rowCount: PropTypes.number.isRequired,
+		scrollTop: PropTypes.number,
+		cellRenderer: PropTypes.func.isRequired,
+		overscanRowCount: PropTypes.number,
+		onCellsRendered: PropTypes.func,
+	};
+
+	static defaultProps = {
+		overscanRowCount: 0
+	};
 
 	componentDidMount() {
 		this.invokeOnCellsRendered();
@@ -41,7 +56,7 @@ export default class FlexboxGrid extends React.PureComponent {
 		}
 
 		return {
-			height: this.props.rowCount * this.props.rowHeight
+			height: `${ this.props.rowCount * this.props.rowHeight }px`
 		};
 	}
 
@@ -63,7 +78,7 @@ export default class FlexboxGrid extends React.PureComponent {
 		}
 
 		let rowIdx = 0;
-		while ( rowIdx * this.props.rowHeight < this.props.scrollTop ) {
+		while ( ( rowIdx + 1 ) * this.props.rowHeight < this.props.scrollTop ) {
 			++rowIdx;
 		}
 
