@@ -70,7 +70,7 @@ function ReaderSubscriptionListItem( {
 			</div>
 			<div className="reader-subscription-list-item__options">
 				<FollowButton siteUrl={ siteUrl } followSource={ followSource } />
-				{ isFollowing && isEmailBlocked !== true && <EmailSettings siteId={ siteId } /> }
+				{ isFollowing && ! isEmailBlocked && <EmailSettings siteId={ siteId } /> }
 			</div>
 		</div>
 	);
