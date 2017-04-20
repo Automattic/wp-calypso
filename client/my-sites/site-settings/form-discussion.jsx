@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, pick } from 'lodash';
+import { flowRight, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,6 +29,7 @@ import {
 } from 'state/sites/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import JetpackModuleToggle from './jetpack-module-toggle';
 
 class SiteSettingsFormDiscussion extends Component {
 	handleCommentOrder = () => {
@@ -106,6 +107,7 @@ class SiteSettingsFormDiscussion extends Component {
 			handleAutosavingToggle,
 			isRequestingSettings,
 			isSavingSettings,
+			siteId,
 			translate
 		} = this.props;
 		return (
@@ -173,6 +175,12 @@ class SiteSettingsFormDiscussion extends Component {
 					onChange={ this.handleCommentOrder }>
 					{ translate( 'Comments should be displayed with the older comments at the top of each page' ) }
 				</CompactFormToggle>
+				<JetpackModuleToggle
+					disabled={ isRequestingSettings || isSavingSettings }
+					label={ translate( 'Enable pop-up business cards over commenters’ Gravatars' ) }
+					moduleSlug="gravatar-hovercards"
+					siteId={ siteId }
+				/>
 			</FormFieldset>
 		);
 	}
