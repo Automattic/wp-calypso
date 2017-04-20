@@ -36,6 +36,7 @@ import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import {
 	getPrimarySiteId,
+	getSiteId,
 	getVisibleSites,
 	isDomainOnlySite,
 } from 'state/selectors';
@@ -264,7 +265,8 @@ module.exports = {
 	 */
 	siteSelection( context, next ) {
 		const { getState, dispatch } = getStore( context );
-		const siteID = context.params.site || route.getSiteFragment( context.path );
+		const siteFragment = context.params.site || route.getSiteFragment( context.path );
+		const siteID = getSiteId( getState(), siteFragment );
 		const basePath = route.sectionify( context.path );
 		const currentUser = user.get();
 		const hasOneSite = currentUser.visible_site_count === 1;
@@ -301,7 +303,7 @@ module.exports = {
 
 		// If the user has only one site, redirect to the single site
 		// context instead of rendering the all-site views.
-		if ( hasOneSite && ! siteID ) {
+		if ( hasOneSite && ! siteFragment ) {
 			dispatch( {
 				type: SITES_ONCE_CHANGED,
 				listener: redirectToPrimary,
@@ -309,16 +311,15 @@ module.exports = {
 		}
 
 		// If the path fragment does not resemble a site, set all sites to visible
-		if ( ! siteID ) {
+		if ( ! siteFragment ) {
 			dispatch( setAllSitesSelected() );
 			return next();
 		}
 
 		// If there's a valid site from the url path
 		// set site visibility to just that site on the picker
-		const didFindSite = !! getSite( getState(), siteID );
 		dispatch( setSelectedSiteId( siteID ) );
-		if ( didFindSite ) {
+		if ( siteID ) {
 			const selectionComplete = onSelectedSiteAvailable( context );
 
 			// if there was a redirect, we should terminate processing of next routes
