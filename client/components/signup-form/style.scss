@@ -20,17 +20,25 @@
 }
 
 .signup-form__social {
-	display: flex;
-	align-items: center;
-	margin: 0 -5px;
+	background-color: #f6f9fa;
+	border-top: 1px solid #e9eff3;
+	margin: 24px -24px -24px -24px;
+	padding: 24px;
 
-	> button {
-		flex: 1;
-		box-sizing: border-box;
-		margin: 0 5px;
+	p {
+		font-size: 11px;
+		margin: 0 0 20px 0;
+		text-align: center;
+
+		&:last-child {
+			margin: 10px 0 0;
+		}
 	}
+}
 
+.signup-form__social-buttons {
 	button {
+		margin: 0 0 10px;
 		width: 100%;
 	}
 }

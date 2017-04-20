@@ -16,6 +16,12 @@
 		padding: 24px;
 	}
 
+	&.is-blended {
+		background: none;
+		border-top: none;
+		padding-top: 0;
+	}
+
 	.button.is-primary {
 		float: none;
 		margin: 0;

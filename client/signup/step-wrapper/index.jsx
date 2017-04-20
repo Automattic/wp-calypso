@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
 /**
@@ -10,14 +11,13 @@ import classNames from 'classnames';
 import StepHeader from 'signup/step-header';
 import NavigationLink from 'signup/navigation-link';
 
-export default React.createClass( {
-	displayName: 'StepWrapper',
+class StepWrapper extends Component {
+	static propTypes = {
+		shouldHideNavButtons: PropTypes.bool,
+		translate: PropTypes.func.isRequired,
+	};
 
-	propTypes: {
-		shouldHideNavButtons: React.PropTypes.bool
-	},
-
-	renderBack: function() {
+	renderBack() {
 		if ( this.props.shouldHideNavButtons ) {
 			return null;
 		}
@@ -31,9 +31,9 @@ export default React.createClass( {
 				backUrl={ this.props.backUrl }
 				signupProgress={ this.props.signupProgress } />
 		);
-	},
+	}
 
-	renderSkip: function() {
+	renderSkip() {
 		if ( ! this.props.shouldHideNavButtons && this.props.goToNextStep ) {
 			return (
 				<NavigationLink
@@ -44,35 +44,22 @@ export default React.createClass( {
 					stepName={ this.props.stepName } />
 			);
 		}
-	},
+	}
 
-	headerText: function() {
+	headerText() {
 		if ( this.props.positionInFlow === 0 ) {
 			if ( this.props.headerText ) {
 				return this.props.headerText;
 			}
-			return this.translate( 'Let\'s get started.' );
+			return this.props.translate( 'Create your account.' );
 		}
 
 		if ( this.props.fallbackHeaderText ) {
 			return this.props.fallbackHeaderText;
 		}
-	},
+	}
 
-	subHeaderText: function() {
-		if ( this.props.positionInFlow === 0 ) {
-			if ( this.props.subHeaderText ) {
-				return this.props.subHeaderText;
-			}
-			return this.translate( 'Welcome to the best place for your WordPress website.' );
-		}
-
-		if ( this.props.fallbackSubHeaderText ) {
-			return this.props.fallbackSubHeaderText;
-		}
-	},
-
-	render: function() {
+	render() {
 		const { stepContent, headerButton } = this.props;
 		const classes = classNames( 'step-wrapper', {
 			'is-wide-layout': this.props.isWideLayout,
@@ -81,8 +68,7 @@ export default React.createClass( {
 		return (
 			<div className={ classes }>
 				<StepHeader
-					headerText={ this.headerText() }
-					subHeaderText={ this.subHeaderText() }>
+					headerText={ this.headerText() }>
 					{ ( headerButton ) }
 				</StepHeader>
 				<div className="step-wrapper__content is-animated-content">
@@ -95,4 +81,6 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( StepWrapper );
