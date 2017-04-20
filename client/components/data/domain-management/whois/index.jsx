@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,6 +12,8 @@ var StoreConnection = require( 'components/data/store-connection' ),
 	WhoisStore = require( 'lib/domains/whois/store' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
+
+import { getSelectedSite } from 'state/ui/selectors';
 
 var stores = [
 	DomainsStore,
@@ -34,15 +37,13 @@ function getStateFromStores( props ) {
 	};
 }
 
-module.exports = React.createClass( {
-	displayName: 'WhoisData',
+const WhoisData = React.createClass( {
 
 	propTypes: {
 		component: React.PropTypes.func.isRequired,
 		context: React.PropTypes.object.isRequired,
 		productsList: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		sites: React.PropTypes.object.isRequired
+		selectedDomainName: React.PropTypes.string.isRequired
 	},
 
 	mixins: [ observe( 'productsList' ) ],
@@ -58,7 +59,7 @@ module.exports = React.createClass( {
 	},
 
 	loadDomains() {
-		const selectedSite = this.props.sites.getSelectedSite();
+		const selectedSite = this.props.selectedSite;
 
 		if ( this.prevSelectedSite !== selectedSite ) {
 			upgradesActions.fetchDomains( selectedSite.ID );
@@ -79,8 +80,14 @@ module.exports = React.createClass( {
 				getStateFromStores={ getStateFromStores }
 				products={ this.props.productsList.get() }
 				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.sites.getSelectedSite() }
+				selectedSite={ this.props.selectedSite }
 				context={ this.props.context } />
 		);
 	}
 } );
+
+export default connect( ( state ) => {
+	return {
+		selectedSite: getSelectedSite( state )
+	};
+} )( WhoisData );
