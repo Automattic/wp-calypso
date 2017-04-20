@@ -62,14 +62,16 @@ const i18nUtils = {
 	 * @returns {string} original path minus locale slug
 	 */
 	removeLocaleFromPath: function( path ) {
-		const parts = getPathParts( path );
+		const urlParts = url.parse( path );
+		const queryString = urlParts.search || '';
+		const parts = getPathParts( urlParts.pathname );
 		const locale = parts.pop();
 
 		if ( 'undefined' === typeof i18nUtils.getLanguage( locale ) ) {
 			parts.push( locale );
 		}
 
-		return parts.join( '/' );
+		return parts.join( '/' ) + queryString;
 	}
 };
 export default i18nUtils;
