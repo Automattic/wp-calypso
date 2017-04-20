@@ -37,16 +37,16 @@ export default function sendRequest( params, query, body, fn ) {
 		body = null;
 	}
 
-	// query could be `null`
-	query = query || {};
+	// query could be `null`. the object is copied so we are not mutating
+	// original arguments in code below
+	query = query ? { ...query } : {};
 
 	// Handle special query parameters
 	// - `apiVersion`
 	if ( query.apiVersion ) {
 		params.apiVersion = query.apiVersion;
 		debug( 'apiVersion: %o', params.apiVersion );
-		// copying object here so we are not mutating original arguments
-		query = { ...query, { apiVersion: undefined } };
+		delete query.apiVersion;
 	} else {
 		params.apiVersion = this.apiVersion;
 	}
