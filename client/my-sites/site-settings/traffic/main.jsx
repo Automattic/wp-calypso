@@ -34,7 +34,6 @@ const SiteSettingsTraffic = ( {
 	isSavingSettings,
 	setFieldValue,
 	site,
-	sites,
 	submitForm,
 	trackEvent,
 	translate,
@@ -75,12 +74,11 @@ const SiteSettingsTraffic = ( {
 		}
 		<AnalyticsSettings />
 		<SeoSettingsHelpCard />
-		<SeoSettingsMain sites={ sites } upgradeToBusiness={ upgradeToBusiness } />
+		<SeoSettingsMain upgradeToBusiness={ upgradeToBusiness } />
 	</Main>
 );
 
 SiteSettingsTraffic.propTypes = {
-	sites: PropTypes.object.isRequired,
 	upgradeToBusiness: PropTypes.func.isRequired,
 };
 

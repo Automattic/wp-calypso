@@ -44,7 +44,7 @@ export default {
 
 		renderWithReduxStore(
 			React.createElement( TrafficMain, {
-				...{ sites, upgradeToBusiness }
+				...{ upgradeToBusiness }
 			} ),
 			document.getElementById( 'primary' ),
 			context.store
