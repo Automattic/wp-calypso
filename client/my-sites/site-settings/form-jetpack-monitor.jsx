@@ -1,74 +1,74 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:site-settings:security:monitor' );
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { localize } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	Card = require( 'components/card' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	formBase = require( './form-base' ),
-	notices = require( 'notices' ),
-	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
-	SectionHeader = require( 'components/section-header' ),
-	Button = require( 'components/button' );
+import config from 'config';
+import Card from 'components/card';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
+import notices from 'notices';
+import SectionHeader from 'components/section-header';
+import Button from 'components/button';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import QuerySiteMonitorSettings from 'components/data/query-site-monitor-settings';
 import { protectForm } from 'lib/protect-form';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { activateModule, deactivateModule } from 'state/jetpack/modules/actions';
+import { updateSiteMonitorSettings } from 'state/sites/monitor/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import {
+	getSiteMonitorSettings,
+	isActivatingJetpackModule,
+	isDeactivatingJetpackModule,
+	isFetchingJetpackModules,
+	isJetpackModuleActive,
+	isMonitorSettingsUpdateSuccessful,
+	isRequestingSiteMonitorSettings,
+	isUpdatingSiteMonitorSettings
+} from 'state/selectors';
 
-module.exports = protectForm( React.createClass( {
+class SiteSettingsFormJetpackMonitor extends Component {
+	state = {};
 
-	displayName: 'SiteSettingsFormJetpackMonitor',
+	componentWillReceiveProps( nextProps ) {
+		if ( isEmpty( this.state ) && nextProps.monitorSettings ) {
+			this.setState( nextProps.monitorSettings );
+		}
+	}
 
-	mixins: [ dirtyLinkedState, formBase ],
+	recordEvent = ( event ) => {
+		return () => {
+			this.props.trackEvent( event );
+		};
+	}
 
-	getSettingsFromSite: function( site ) {
-		var settings = {};
-
-		site = site || this.props.site;
-		settings.fetchingSettings = site.fetchingSettings;
-
-		return settings;
-	},
-
-	resetState: function() {
-		this.replaceState( {
-			togglingModule: false,
-			emailNotifications: false,
-			wpNoteNotifications: false
-		} );
-	},
-
-	getModuleStatus: function( site ) {
-		site = site || this.props.site;
-
-		site.fetchMonitorSettings( ( function( error, data ) {
-			if ( ! error ) {
-				this.setState( {
-					emailNotifications: data.settings.email_notifications,
-					wpNoteNotifications: data.settings.wp_note_notifications
-				} );
-			} else {
-				debug( 'error getting Monitor settings', error );
-			}
-		} ).bind( this ) );
-
+	handleToggle = name => () => {
+		this.props.trackEvent( `Toggled ${ name }` );
 		this.setState( {
-			enabled: site.isModuleActive( 'monitor' )
+			...this.state,
+			[ name ]: ! this.state[ name ],
 		} );
-	},
+		this.saveSettings();
+	}
 
-	prompt: function() {
+	prompt() {
+		const { translate } = this.props;
+
 		return (
 			<div className="site-settings__jetpack-prompt">
 				<img src="/calypso/images/jetpack/illustration-jetpack-monitor.svg" width="128" height="128" />
 
 				<div className="site-settings__jetpack-prompt-text">
-					<p>{ this.translate( "Automatically monitor your website and make sure it's online." ) }</p>
+					<p>{ translate( "Automatically monitor your website and make sure it's online." ) }</p>
 					<p>
-						{ this.translate(
+						{ translate(
 							"We'll periodically check your site from our global network of servers to make sure it's online, and email you if it looks like your site is not responding for any reason."
 						) }
 					</p>
@@ -76,137 +76,183 @@ module.exports = protectForm( React.createClass( {
 
 			</div>
 		);
-	},
+	}
 
-	saveSettings: function() {
-		this.setState( { submitingForm: true } );
+	saveSettings = () => {
+		const { monitorSettingsUpdateSuccessful, siteId, translate } = this.props;
 		notices.clearNotices( 'notices' );
-		this.props.site.updateMonitorSettings( this.state.emailNotifications, this.state.wpNoteNotifications, ( function( error ) {
-			if ( error ) {
+		this.props.updateSiteMonitorSettings( siteId, this.state ).then( () => {
+			if ( ! monitorSettingsUpdateSuccessful ) {
 				this.handleError();
-				notices.error( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
+				notices.error( translate( 'There was a problem saving your changes. Please, try again.' ) );
 				return;
 			}
-			notices.success( this.translate( 'Settings saved successfully!' ) );
+			notices.success( translate( 'Settings saved successfully!' ) );
 			this.props.markSaved();
-			this.setState( { submittingForm: false } );
-		} ).bind( this ) );
-	},
+		} );
+	}
 
-	settings: function() {
+	settings() {
+		const { translate } = this.props;
+
 		return (
 			<div>
-				<p>{ this.translate( "Jetpack is currently monitoring your site's uptime." ) }</p>
+				<p>{ translate( "Jetpack is currently monitoring your site's uptime." ) }</p>
 				{ this.settingsMonitorEmailCheckbox() }
 				{ config.isEnabled( 'settings/security/monitor/wp-note' ) ? this.settingsMonitorWpNoteCheckbox() : '' }
 			</div>
 		);
-	},
+	}
 
-	settingsMonitorEmailCheckbox: function() {
-		return (
-			<FormLabel>
-				<FormCheckbox
-					disabled={ this.disableForm() }
-					onClick={ this.recordEvent.bind( this, 'Clicked on Monitor email checkbox' ) }
-					id="jetpack_monitor_email"
-					checkedLink={ this.linkState( 'emailNotifications' ) }
-					name="jetpack_monitor_email" />
-				<span>
-					{ this.translate( 'Send notifications to your {{a}}WordPress.com email address{{/a}}.', {
-						components: {
-							a: <a href="/me/account" onClick={ this.recordEvent.bind( this, 'Clicked on Monitor Link to WordPress.com Email Address' ) } />
-						}
-					} ) }
-				</span>
-			</FormLabel>
-		);
-	},
+	settingsMonitorEmailCheckbox() {
+		const { translate } = this.props;
 
-	settingsMonitorWpNoteCheckbox: function() {
 		return (
-				<FormLabel>
-					<FormCheckbox
-						disabled={ this.disableForm() }
-						onClick={ this.recordEvent.bind( this, 'Clicked on Monitor wp-note checkbox' ) }
-						id="jetpack_monitor_wp_note"
-						checkedLink={ this.linkState( 'wpNoteNotifications' ) }
-						name="jetpack_monitor_wp_note" />
-					<span>
-						{ this.translate( 'Send notifications via WordPress.com notification.' ) }
-					</span>
-				</FormLabel>
+			<CompactFormToggle
+				disabled={ this.disableForm() }
+				onChange={ this.handleToggle( 'email_notifications' ) }
+				checked={ !! this.state.email_notifications }
+			>
+				{ translate( 'Send notifications to your {{a}}WordPress.com email address{{/a}}.', {
+					components: {
+						a: (
+							<a
+								href="/me/account"
+								onClick={ this.recordEvent( 'Clicked on Monitor Link to WordPress.com Email Address' ) }
+							/>
+						)
+					}
+				} ) }
+			</CompactFormToggle>
 		);
-	},
+	}
+
+	settingsMonitorWpNoteCheckbox() {
+		const { translate } = this.props;
+		return (
+			<CompactFormToggle
+				disabled={ this.disableForm() }
+				onChange={ this.handleToggle( 'wp_note_notifications' ) }
+				checked={ !! this.state.wp_note_notifications }
+			>
+				{ translate( 'Send notifications via WordPress.com notification.' ) }
+			</CompactFormToggle>
+		);
+	}
 
 	// updates the state when an error occurs
-	handleError: function() {
-		this.setState( { submittingForm: false, togglingModule: false } );
+	handleError() {
+		this.setState( { submittingForm: false } );
 		this.props.markSaved();
-	},
+	}
 
-	disableForm: function() {
-		return this.state.fetchingSettings || this.state.submittingForm || this.props.site.fetchingModules || this.state.togglingModule;
-	},
+	disableForm() {
+		return (
+			this.props.activatingMonitor ||
+			this.props.deactivatingMonitor ||
+			this.props.updatingMonitorSettings ||
+			this.props.fetchingJetpackModules ||
+			this.props.requestingMonitorSettings
+		);
+	}
 
-	activateFormButtons: function() {
-		return(
+	handleActivationButtonClick = () => {
+		const { siteId } = this.props;
+		this.props.activateModule( siteId, 'monitor', true );
+	}
+
+	handleDeactivationButtonClick = () => {
+		const { siteId } = this.props;
+		this.props.deactivateModule( siteId, 'monitor', true );
+	}
+
+	activateFormButtons() {
+		const { activatingMonitor, translate } = this.props;
+
+		return (
 			<Button
 				compact
 				primary
-				onClick={ this.toggleJetpackModule.bind( this, 'monitor' ) }
+				onClick={ this.handleActivationButtonClick }
 				disabled={ this.disableForm() }
-				>
-				{ this.state.togglingModule ? this.translate( 'Activating…' ) : this.translate( 'Activate' ) }
+			>
+				{ activatingMonitor ? translate( 'Activating…' ) : translate( 'Activate' ) }
 			</Button>
 		);
-	},
+	}
 
-	deactivateFormButtons: function() {
-		return(
-			<div>
-				<Button
-					compact
-					className="jetpack-monitor__deactivate"
-					onClick={ this.toggleJetpackModule.bind( this, 'monitor' ) }
-					>
-					{ this.state.togglingModule ? this.translate( 'Deactivating…' ) : this.translate( 'Deactivate' ) }
-				</Button>
-				<Button
-					compact
-					primary
-					onClick={ this.saveSettings }
-					>
-					{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
-				</Button>
-			</div>
+	deactivateFormButtons() {
+		const { deactivatingMonitor, translate } = this.props;
+		return (
+			<Button
+				compact
+				onClick={ this.handleDeactivationButtonClick }
+				disabled={ this.disableForm() }
+			>
+				{ deactivatingMonitor ? translate( 'Deactivating…' ) : translate( 'Deactivate' ) }
+			</Button>
 		);
-	},
+	}
 
-	render: function() {
+	render() {
+		const { monitorActive, siteId, translate } = this.props;
+
 		if ( ! config.isEnabled( 'settings/security/monitor' ) ) {
 			return null;
 		}
 
 		return (
-			<div>
-				<SectionHeader label={ this.translate( 'Jetpack Monitor' ) }>
-					{ this.state.enabled
-						? this.deactivateFormButtons()
-						: this.activateFormButtons()
+			<div className="site-settings__security-settings">
+				<QueryJetpackModules siteId={ siteId } />
+				<QuerySiteMonitorSettings siteId={ siteId } />
 
+				<SectionHeader label={ translate( 'Jetpack Monitor' ) }>
+					{
+						monitorActive
+							? this.deactivateFormButtons()
+							: this.activateFormButtons()
 					}
 				</SectionHeader>
 				<Card className="jetpack-monitor-settings">
 					{
-						this.state.enabled
-						? this.settings()
-						: this.prompt()
+						monitorActive
+							? this.settings()
+							: this.prompt()
 					}
 				</Card>
 			</div>
 
 		);
 	}
+}
 
-} ) );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			siteId,
+			monitorActive: isJetpackModuleActive( state, siteId, 'monitor' ),
+			activatingMonitor: isActivatingJetpackModule( state, siteId, 'monitor' ),
+			fetchingJetpackModules: isFetchingJetpackModules( state, siteId ),
+			deactivatingMonitor: isDeactivatingJetpackModule( state, siteId, 'monitor' ),
+			monitorSettings: getSiteMonitorSettings( state, siteId ),
+			monitorSettingsUpdateSuccessful: isMonitorSettingsUpdateSuccessful( state, siteId ),
+			requestingMonitorSettings: isRequestingSiteMonitorSettings( state, siteId ),
+			updatingMonitorSettings: isUpdatingSiteMonitorSettings( state, siteId ),
+		};
+	},
+	( dispatch ) => {
+		const trackEvent = name => dispatch( recordGoogleEvent( 'Site Settings', name ) );
+		const boundActionCreators = bindActionCreators( {
+			activateModule,
+			deactivateModule,
+			updateSiteMonitorSettings,
+		}, dispatch );
+
+		return {
+			...boundActionCreators,
+			trackEvent,
+		};
+	}
+)( protectForm( localize( SiteSettingsFormJetpackMonitor ) ) );
