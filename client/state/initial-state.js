@@ -16,11 +16,13 @@ import {
 import localforage from 'lib/localforage';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
 import config from 'config';
+import User from 'lib/user';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:state' );
+const user = User();
 
 const DAY_IN_HOURS = 24;
 const HOUR_IN_MS = 3600000;
@@ -67,10 +69,19 @@ function loadInitialStateFailed( error ) {
 	return createReduxStore();
 }
 
+function isLoggedIn() {
+	const userData = user.get();
+	return !! userData && userData.ID;
+}
+
 export function persistOnChange( reduxStore, serializeState = serialize ) {
 	let state;
 
 	const throttledSaveState = throttle( function() {
+		if ( ! isLoggedIn() ) {
+			return;
+		}
+
 		const nextState = reduxStore.getState();
 		if ( state && nextState === state ) {
 			return;
@@ -78,7 +89,7 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 
 		state = nextState;
 
-		localforage.setItem( 'redux-state', serializeState( state ) )
+		localforage.setItem( 'redux-state-' + user.get().ID, serializeState( state ) )
 			.catch( ( setError ) => {
 				debug( 'failed to set redux-store state', setError );
 			} );
@@ -94,8 +105,8 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 }
 
 export default function createReduxStoreFromPersistedInitialState( reduxStoreReady ) {
-	if ( config.isEnabled( 'persist-redux' ) && ! isSupportUserSession() ) {
-		localforage.getItem( 'redux-state' )
+	if ( config.isEnabled( 'persist-redux' ) && isLoggedIn() && ! isSupportUserSession() ) {
+		localforage.getItem( 'redux-state-' + user.get().ID )
 			.then( loadInitialState )
 			.catch( loadInitialStateFailed )
 			.then( persistOnChange )

@@ -236,7 +236,7 @@ User.prototype.clear = function( onClear ) {
 	delete this.settings;
 	store.clear();
 	if ( config.isEnabled( 'persist-redux' ) ) {
-		localforage.removeItem( 'redux-state', onClear );
+		localforage.clear( onClear );
 	}
 };
 
