@@ -7,20 +7,14 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import Main from 'components/main';
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
+import StatsNavigation from './stats-navigation';
 
 export default class Stats extends Component {
-
 	render() {
 		return (
-			<Main className="stats woocommerce">
-				<SectionHeader label="WooCommerce Store - Stats" />
-				<Card>
-					<p>This will be the home for your WooCommerce Store Stats</p>
-				</Card>
+			<Main className="woocommerce stats" wideLayout={ true }>
+				<StatsNavigation />
 			</Main>
 		);
 	}
-
 }
