@@ -80,10 +80,10 @@ export default function() {
 	);
 
 	page(
-		sitesController.siteSelection,
 		paths.addCardDetails(),
 		meController.sidebar,
 		controller.noSitesMessage,
+		sitesController.siteSelection,
 		controller.addCardDetails
 	);
 
