@@ -9,7 +9,7 @@ The grid is initially rendered as a static flexbox layout and switches to virtua
 | Property | Type | Required? | Description |
 |:---|:---|:---|:---|
 | width | Number |  | The total width of the grid component. This is necessery for the component to switch to virtual scroll. |
-| maxColumnWidth | Number | ✓ | The minimum column width. Used for cells flex-base. |
+| minColumnWidth | Number | ✓ | The minimum column width. Used for cells flex-base. |
 | columnCount | Number | ✓ | The number of columns in a row. Used only for determining currently visible cells. Doesn't affect the view. |
 | rowHeight | Number |  | Used to determine the total height of the grid. |
 | rowCount | Number | ✓ | The number of rows in the grid. Used only for determining currently visible cells. Doesn't affect the view. |
@@ -20,7 +20,7 @@ The grid is initially rendered as a static flexbox layout and switches to virtua
 
 **Important:** When providing a **width** property, **rowHeight** and **scrollTop** must also be provided for virtual scrolling to work.
 
-Cell inices start from `0` and go from left to right and from top to bottom.
+Cell indexes start from `0` and go from left to right and from top to bottom.
 
 ### Example
 
