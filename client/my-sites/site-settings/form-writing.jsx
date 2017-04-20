@@ -62,6 +62,7 @@ class SiteSettingsFormWriting extends Component {
 			siteId,
 			translate,
 			updateFields,
+			submitForm
 		} = this.props;
 
 		return (
@@ -137,9 +138,12 @@ class SiteSettingsFormWriting extends Component {
 							<ThemeEnhancements
 								onSubmitForm={ this.props.handleSubmitForm }
 								handleAutosavingToggle={ handleAutosavingToggle }
+								onChangeField={ onChangeField }
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
 								fields={ fields }
+								updateFields={ updateFields }
+								submitForm={ submitForm }
 							/>
 
 							{ config.isEnabled( 'press-this' ) &&

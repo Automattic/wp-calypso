@@ -4,14 +4,18 @@
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import SectionHeader from 'components/section-header';
+import Button from 'components/button';
 import Card from 'components/card';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormRadio from 'components/forms/form-radio';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
@@ -30,7 +34,26 @@ class ThemeEnhancements extends Component {
 		handleAutosavingToggle: PropTypes.func.isRequired,
 		isSavingSettings: PropTypes.bool,
 		isRequestingSettings: PropTypes.bool,
-		fields: PropTypes.object,
+		fields: PropTypes.object
+	};
+
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			infinite_mode: ''
+		};
+	}
+
+	/**
+	 * Update the state for infinite scroll options and prepare options to submit
+	 *
+	 * @param {string} radio Update options to save when Infinite Scroll options change.
+	 */
+	updateInfiniteMode = ( radio ) => {
+		this.setState( {
+			infinite_mode: radio
+		} );
 	};
 
 	isFormPending() {
@@ -55,43 +78,71 @@ class ThemeEnhancements extends Component {
 		);
 	}
 
+	componentWillReceiveProps() {
+		if ( ! get( this.props.fields, 'infinite-scroll', '' ) ) {
+			this.setState( {
+				infinite_mode: 'infinite_default'
+			} );
+		} else if ( get( this.props.fields, 'infinite_scroll', 'infinite-scroll' ) ) {
+			this.setState( {
+				infinite_mode: 'infinite_scroll'
+			} );
+		} else {
+			this.setState( {
+				infinite_mode: 'infinite_button'
+			} );
+		}
+	}
+
+	handleInfiniteDefault = () => {
+		this.updateInfiniteMode( 'infinite_default' );
+	};
+
+	handleInfiniteButton = () => {
+		this.updateInfiniteMode( 'infinite_button' );
+	};
+
+	handleInfiniteScroll = () => {
+		this.updateInfiniteMode( 'infinite_scroll' );
+	};
+
 	renderInfiniteScrollSettings() {
-		const {
-			selectedSiteId,
-			infiniteScrollModuleActive,
-			translate
-		} = this.props;
-		const formPending = this.isFormPending();
+		const { isRequestingSettings, isSavingSettings, translate } = this.props;
 
 		return (
 			<FormFieldset>
-				<div className="theme-enhancements__info-link-container site-settings__info-link-container">
-					<InfoPopover position={ 'left' }>
-						<ExternalLink href={ 'https://jetpack.com/support/infinite-scroll' } icon target="_blank">
-							{ translate( 'Learn more about Infinite Scroll.' ) }
-						</ExternalLink>
-					</InfoPopover>
-				</div>
+				<FormLabel>
+					<FormRadio
+						name="infinite_mode"
+						value="infinite_default"
+						checked={ 'infinite_default' === this.state.infinite_mode }
+						onChange={ this.handleInfiniteDefault }
+						disabled={ isRequestingSettings || isSavingSettings }
+						/>
+					<span>{ translate( 'Load more posts using the default theme behavior' ) }</span>
+				</FormLabel>
 
-				<JetpackModuleToggle
-					siteId={ selectedSiteId }
-					moduleSlug="infinite-scroll"
-					label={ translate( 'Add support for infinite scroll to your theme' ) }
-					disabled={ formPending }
-					/>
+				<FormLabel>
+					<FormRadio
+						name="infinite_mode"
+						value="infinite_button"
+						checked={ 'infinite_button' === this.state.infinite_mode }
+						onChange={ this.handleInfiniteButton }
+						disabled={ isRequestingSettings || isSavingSettings }
+						/>
+					<span>{ translate( 'Load more posts in page with a button' ) }</span>
+				</FormLabel>
 
-				<div className="theme-enhancements__module-settings site-settings__child-settings">
-					{
-						this.renderToggle( 'infinite_scroll', ! infiniteScrollModuleActive, translate(
-							'Scroll infinitely (Shows 7 posts on each load)'
-						) )
-					}
-					{
-						this.renderToggle( 'infinite_scroll_google_analytics', ! infiniteScrollModuleActive, translate(
-							'Track each infinite Scroll post load as a page view in Google Analytics'
-						) )
-					}
-				</div>
+				<FormLabel>
+					<FormRadio
+						name="infinite_mode"
+						value="infinite_scroll"
+						checked={ 'infinite_scroll' === this.state.infinite_mode }
+						onChange={ this.handleInfiniteScroll }
+						disabled={ isRequestingSettings || isSavingSettings }
+						/>
+					<span>{ translate( 'Load more posts as the reader scrolls down' ) }</span>
+				</FormLabel>
 			</FormFieldset>
 		);
 	}
@@ -147,11 +198,47 @@ class ThemeEnhancements extends Component {
 		);
 	}
 
+	translateAndSubmit = () => {
+		let fieldsToSubmit = {};
+
+		if ( 'infinite_default' === this.state.infinite_mode ) {
+			fieldsToSubmit = {
+				'infinite-scroll': false
+			};
+		} else if ( 'infinite_scroll' === this.state.infinite_mode || 'infinite_button' === this.state.infinite_mode ) {
+			fieldsToSubmit = {
+				'infinite-scroll': true,
+				infinite_scroll: 'infinite_scroll' === this.state.infinite_mode
+			};
+		}
+
+		this.props.updateFields( fieldsToSubmit, () => {
+			this.props.submitForm();
+		} );
+	};
+
 	render() {
-		const { translate } = this.props;
+		const {
+			translate,
+			isRequestingSettings,
+			isSavingSettings
+		} = this.props;
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Theme Enhancements' ) } />
+				<SectionHeader label={ translate( 'Theme Enhancements' ) }>
+					<Button
+						compact={ true }
+						onClick={ this.translateAndSubmit }
+						primary={ true }
+
+						type="submit"
+						disabled={ isRequestingSettings || isSavingSettings }>
+						{ isSavingSettings
+							? translate( 'Saving…' )
+							: translate( 'Save Settings' )
+						}
+					</Button>
+				</SectionHeader>
 
 				<Card className="theme-enhancements__card site-settings">
 					{ this.renderInfiniteScrollSettings() }
