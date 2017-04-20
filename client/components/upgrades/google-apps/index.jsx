@@ -1,46 +1,47 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 var cartItems = require( 'lib/cart-values' ).cartItems,
 	GoogleAppsDialog = require( './dialog' ),
-	HeaderCake = require( 'components/header-cake' ),
-	observe = require( 'lib/mixins/data-observe' );
+	HeaderCake = require( 'components/header-cake' );
 
-var GoogleApps = React.createClass( {
-	mixins: [ observe( 'sites' ) ],
+import { getSelectedSite } from 'state/ui/selectors';
 
-	propTypes: {
-		sites: React.PropTypes.object,
-		cart: React.PropTypes.object,
-		domain: React.PropTypes.string.isRequired,
-		onGoBack: React.PropTypes.func.isRequired,
-		productsList: React.PropTypes.object.isRequired,
-		onAddGoogleApps: React.PropTypes.func.isRequired,
-		onClickSkip: React.PropTypes.func.isRequired,
-		onSave: React.PropTypes.func,
-		initialState: React.PropTypes.object,
-		analyticsSection: React.PropTypes.string,
-		initialGoogleAppsCartItem: React.PropTypes.object
-	},
+class GoogleApps extends Component {
 
-	getDefaultProps: function() {
+	static propTypes = {
+		cart: PropTypes.object,
+		domain: PropTypes.string.isRequired,
+		onGoBack: PropTypes.func.isRequired,
+		productsList: PropTypes.object.isRequired,
+		onAddGoogleApps: PropTypes.func.isRequired,
+		onClickSkip: PropTypes.func.isRequired,
+		onSave: PropTypes.func,
+		initialState: PropTypes.object,
+		analyticsSection: PropTypes.string,
+		initialGoogleAppsCartItem: PropTypes.object
+	};
+
+	getDefaultProps() {
 		return { analyticsSection: 'domains' };
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.checkDomainInCart();
-	},
+	}
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		this.checkDomainInCart();
-	},
+	}
 
-	checkDomainInCart: function() {
+	checkDomainInCart() {
 		if ( ! this.props.cart || ! this.props.cart.hasLoadedFromServer ) {
 			return;
 		}
@@ -49,14 +50,13 @@ var GoogleApps = React.createClass( {
 			// Should we handle this more gracefully?
 			this.props.onGoBack();
 		}
-	},
+	}
 
-	render: function() {
-		var selectedSite = this.props.sites ? this.props.sites.getSelectedSite() : null;
+	render() {
 		return (
 			<div>
 				<HeaderCake onClick={ this.props.onGoBack }>
-					{ this.translate( 'Register %(domain)s', { args: { domain: this.props.domain } } ) }
+					{ this.props.translate( 'Register %(domain)s', { args: { domain: this.props.domain } } ) }
 				</HeaderCake>
 
 				<GoogleAppsDialog
@@ -65,7 +65,7 @@ var GoogleApps = React.createClass( {
 					onClickSkip={ this.props.onClickSkip }
 					onGoBack={ this.props.onGoBack }
 					onAddGoogleApps={ this.props.onAddGoogleApps }
-					selectedSite={ selectedSite }
+					selectedSite={ this.props.selectedSite }
 					analyticsSection={ this.props.analyticsSection }
 					onSave={ this.props.onSave }
 					initialState={ this.props.initialState }
@@ -73,6 +73,10 @@ var GoogleApps = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
-module.exports = GoogleApps;
+export default connect( ( state ) => {
+	return {
+		selectedSite: getSelectedSite( state )
+	};
+} )( localize( GoogleApps ) );
