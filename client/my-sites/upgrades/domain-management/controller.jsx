@@ -117,9 +117,7 @@ module.exports = {
 			<WhoisData
 				component={ DomainManagement.ContactsPrivacy }
 				context={ pageContext }
-				productsList={ productsList }
-				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+				selectedDomainName={ pageContext.params.domain } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -140,9 +138,7 @@ module.exports = {
 			<WhoisData
 				component={ DomainManagement.EditContactInfo }
 				context={ pageContext }
-				productsList={ productsList }
-				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+				selectedDomainName={ pageContext.params.domain } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -248,9 +244,7 @@ module.exports = {
 			<WhoisData
 				component={ DomainManagement.PrivacyProtection }
 				context={ pageContext }
-				productsList={ productsList }
-				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+				selectedDomainName={ pageContext.params.domain } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -293,8 +287,7 @@ module.exports = {
 		renderWithReduxStore(
 			<SiteRedirectData
 				component={ DomainManagement.SiteRedirect }
-				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+				selectedDomainName={ pageContext.params.domain } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -313,9 +306,7 @@ module.exports = {
 		renderWithReduxStore(
 			<TransferData
 				component={ DomainManagement.Transfer }
-				selectedDomainName={ pageContext.params.domain }
-				sites={ sites }
-			/>,
+				selectedDomainName={ pageContext.params.domain } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -339,8 +330,7 @@ module.exports = {
 		renderWithReduxStore(
 			<TransferData
 				component={ DomainManagement.TransferToOtherUser }
-				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+				selectedDomainName={ pageContext.params.domain } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -355,8 +345,7 @@ module.exports = {
 		renderWithReduxStore(
 			<TransferData
 				component={ DomainManagement.TransferOut }
-				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+				selectedDomainName={ pageContext.params.domain } />,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);

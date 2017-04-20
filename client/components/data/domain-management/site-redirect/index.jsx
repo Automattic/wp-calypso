@@ -24,11 +24,10 @@ function getStateFromStores( props ) {
 }
 
 class SiteRedirectData extends Component {
-
 	static propTypes = {
 		component: PropTypes.func.isRequired,
 		selectedDomainName: PropTypes.string.isRequired
-	}
+	};
 
 	render() {
 		return (
@@ -37,7 +36,7 @@ class SiteRedirectData extends Component {
 				stores={ stores }
 				getStateFromStores={ getStateFromStores }
 				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.sites.getSelectedSite() } />
+				selectedSite={ this.props.selectedSite } />
 		);
 	}
 }

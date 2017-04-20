@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -39,9 +39,9 @@ function getStateFromStores( props ) {
 }
 
 class TransferData extends Component {
-	propTypes: {
-		component: React.PropTypes.func.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired
+	static propTypes = {
+		component: PropTypes.func.isRequired,
+		selectedDomainName: PropTypes.string.isRequired
 	};
 
 	componentWillMount() {

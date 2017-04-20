@@ -1,21 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var StoreConnection = require( 'components/data/store-connection' ),
-	DomainsStore = require( 'lib/domains/store' ),
-	WhoisStore = require( 'lib/domains/whois/store' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
-
 import { getSelectedSite } from 'state/ui/selectors';
+import DomainsStore from 'lib/domains/store';
+import StoreConnection from 'components/data/store-connection';
+import upgradesActions from 'lib/upgrades/actions';
+import WhoisStore from 'lib/domains/whois/store';
 
-var stores = [
+const stores = [
 	DomainsStore,
 	WhoisStore
 ];
@@ -37,26 +35,22 @@ function getStateFromStores( props ) {
 	};
 }
 
-const WhoisData = React.createClass( {
-
-	propTypes: {
-		component: React.PropTypes.func.isRequired,
-		context: React.PropTypes.object.isRequired,
-		productsList: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired
-	},
-
-	mixins: [ observe( 'productsList' ) ],
+class WhoisData extends Component {
+	static propTypes = {
+		component: PropTypes.func.isRequired,
+		context: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string.isRequired
+	};
 
 	componentWillMount() {
 		this.loadDomains();
 		this.loadWhois();
-	},
+	}
 
 	componentWillUpdate() {
 		this.loadDomains();
 		this.loadWhois();
-	},
+	}
 
 	loadDomains() {
 		const selectedSite = this.props.selectedSite;
@@ -66,11 +60,11 @@ const WhoisData = React.createClass( {
 
 			this.prevSelectedSite = selectedSite;
 		}
-	},
+	}
 
 	loadWhois() {
 		upgradesActions.fetchWhois( this.props.selectedDomainName );
-	},
+	}
 
 	render() {
 		return (
@@ -78,16 +72,17 @@ const WhoisData = React.createClass( {
 				component={ this.props.component }
 				stores={ stores }
 				getStateFromStores={ getStateFromStores }
-				products={ this.props.productsList.get() }
+				products={ this.props.products }
 				selectedDomainName={ this.props.selectedDomainName }
 				selectedSite={ this.props.selectedSite }
 				context={ this.props.context } />
 		);
 	}
-} );
+}
 
 export default connect( ( state ) => {
 	return {
+		products: state.productsList.items,
 		selectedSite: getSelectedSite( state )
 	};
 } )( WhoisData );
