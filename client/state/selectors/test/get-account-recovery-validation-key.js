@@ -22,4 +22,8 @@ describe( 'getAccountRecoveryValidationKey()', () => {
 
 		assert.equal( getAccountRecoveryValidationKey( state ), key );
 	} );
+
+	it( 'should return null as the default value.', () => {
+		assert.isNull( getAccountRecoveryValidationKey( undefined ) );
+	} );
 } );
