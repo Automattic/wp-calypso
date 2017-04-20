@@ -46,8 +46,10 @@ import SitesDropdown from 'components/sites-dropdown';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLanguage } from 'lib/i18n-utils';
 
+import _sites from 'lib/sites-list';
 import _user from 'lib/user';
 
+const sites = _sites();
 const user = _user();
 
 /**
@@ -268,9 +270,10 @@ const Account = React.createClass( {
 		} );
 	},
 
-	onSiteSelect( siteId ) {
-		if ( siteId ) {
-			this.updateUserSetting( 'primary_site_ID', siteId );
+	onSiteSelect( siteSlug ) {
+		const selectedSite = sites.getSite( siteSlug );
+		if ( selectedSite ) {
+			this.updateUserSetting( 'primary_site_ID', selectedSite.ID );
 		}
 	},
 

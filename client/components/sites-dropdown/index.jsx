@@ -2,9 +2,8 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { get, noop } from 'lodash';
+import noop from 'lodash/noop';
 import Gridicon from 'gridicons';
 
 /**
@@ -14,11 +13,11 @@ import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import SiteSelector from 'components/site-selector';
 import sitesList from 'lib/sites-list';
-import { getPrimarySiteId } from 'state/selectors';
 
 const sites = sitesList();
 
-export class SitesDropdown extends PureComponent {
+export default class SitesDropdown extends PureComponent {
+
 	static propTypes = {
 		selectedSiteId: React.PropTypes.number,
 		showAllSites: React.PropTypes.bool,
@@ -39,36 +38,28 @@ export class SitesDropdown extends PureComponent {
 		super( props );
 
 		this.selectSite = this.selectSite.bind( this );
-		this.getSelectedSite = this.getSelectedSite.bind( this );
-		this.siteFilter = this.siteFilter.bind( this );
 		this.toggleOpen = this.toggleOpen.bind( this );
 		this.onClose = this.onClose.bind( this );
 
+		const selectedSite = props.selectedSiteId
+			? sites.getSite( props.selectedSiteId )
+			: sites.getPrimary();
+
 		this.state = {
-			selectedSiteId: this.props.selectedSiteId || this.props.primarySiteId
+			selectedSiteSlug: selectedSite && selectedSite.slug
 		};
 	}
 
+	getSelectedSite() {
+		return sites.getSite( this.state.selectedSiteSlug );
+	}
+
 	selectSite( siteSlug ) {
-		// SiteSelector gives us a slug, but we want to pass an ID to our onSiteSelect
-		// callback prop so it's consistent with the selectedSiteId prop. We also use
-		// a siteId for our internal state.
-		// TODO: Change SiteSelector to also use site IDs instead of slugs and objects.
-		const siteId = get( sites.getSite( siteSlug ), 'ID' );
-		this.props.onSiteSelect( siteId );
+		this.props.onSiteSelect( siteSlug );
 		this.setState( {
-			selectedSiteId: siteId,
+			selectedSiteSlug: siteSlug,
 			open: false
 		} );
-	}
-
-	getSelectedSite() {
-		return sites.getSite( this.state.selectedSiteId );
-	}
-
-	// Our filter prop handles siteIds, while SiteSelector's filter prop needs objects
-	siteFilter( site ) {
-		return this.props.filter( site.ID );
 	}
 
 	toggleOpen() {
@@ -100,9 +91,9 @@ export class SitesDropdown extends PureComponent {
 							autoFocus={ true }
 							onClose={ this.onClose }
 							onSiteSelect={ this.selectSite }
-							selected={ get( this.getSelectedSite(), 'slug' ) }
+							selected={ this.state.selectedSiteSlug }
 							hideSelected={ true }
-							filter={ this.props.filter && this.siteFilter }
+							filter={ this.props.filter }
 						/>
 					}
 				</div>
@@ -110,9 +101,3 @@ export class SitesDropdown extends PureComponent {
 		);
 	}
 }
-
-export default connect(
-	( state ) => ( {
-		primarySiteId: getPrimarySiteId( state ),
-	} )
-)( SitesDropdown );

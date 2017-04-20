@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -14,7 +13,6 @@ import Dialog from 'components/dialog';
 import Button from 'components/button';
 import SitesDropdown from 'components/sites-dropdown';
 import sitesListFactory from 'lib/sites-list';
-import { getPrimarySiteId } from 'state/selectors';
 
 const sitesList = sitesListFactory();
 
@@ -37,46 +35,45 @@ class SiteSelectorModal extends Component {
 		// className: class name(s) to be added to the Dialog
 		className: PropTypes.string,
 		// from localize()
-		translate: PropTypes.func.isRequired,
-		// connected props
-		primarySiteId: PropTypes.number
+		translate: PropTypes.func.isRequired
 	}
 
 	constructor( props ) {
 		super( props );
 
-		const { primarySiteId } = this.props;
-		let filteredSiteIds = sitesList.getVisible().map( ( site ) => site.ID );
+		const primarySite = sitesList.getPrimary();
+		let filteredSites = sitesList.getVisible();
 
 		if ( props.filter ) {
-			filteredSiteIds = filteredSiteIds.filter( props.filter );
+			filteredSites = filteredSites.filter( props.filter );
 		}
 
 		this.state = {
-			siteId: includes( filteredSiteIds, primarySiteId )
-				? primarySiteId
-				: filteredSiteIds[ 0 ]
+			site: includes( filteredSites, primarySite )
+				? primarySite
+				: filteredSites[ 0 ]
 		};
 	}
 
-	setSite = ( siteId ) => {
-		this.setState( { siteId } );
+	setSite = ( slug ) => {
+		const site = sitesList.getSite( slug );
+		this.setState( { site } );
 	}
 
 	onClose = ( action ) => {
 		if ( 'mainAction' === action ) {
-			this.props.mainAction( this.state.siteId );
+			this.props.mainAction( this.state.site );
 		}
 
 		this.props.hide();
 	}
 
 	onButtonClick = () => {
-		this.props.mainAction( this.state.siteId );
+		this.props.mainAction( this.state.site );
 	}
 
 	getMainLink() {
-		const url = this.props.getMainUrl && this.props.getMainUrl( this.state.siteId );
+		const url = this.props.getMainUrl && this.props.getMainUrl( this.state.site );
 
 		return url
 			? <Button primary href={ url } onClick={ this.onButtonClick } >{ this.props.mainActionLabel }</Button>
@@ -101,15 +98,11 @@ class SiteSelectorModal extends Component {
 				</div>
 				<SitesDropdown
 					onSiteSelect={ this.setSite }
-					selectedSiteId={ this.state.siteId }
+					selectedSiteId={ this.state.site && this.state.site.ID }
 					filter={ this.props.filter } />
 			</Dialog>
 		);
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		primarySiteId: getPrimarySiteId( state )
-	} )
-)( localize( SiteSelectorModal ) );
+export default localize( SiteSelectorModal );
