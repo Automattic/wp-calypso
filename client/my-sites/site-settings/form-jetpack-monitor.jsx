@@ -59,28 +59,9 @@ class SiteSettingsFormJetpackMonitor extends Component {
 		this.saveSettings();
 	}
 
-	prompt() {
-		const { translate } = this.props;
-
-		return (
-			<div className="site-settings__jetpack-prompt">
-				<img src="/calypso/images/jetpack/illustration-jetpack-monitor.svg" width="128" height="128" />
-
-				<div className="site-settings__jetpack-prompt-text">
-					<p>{ translate( "Automatically monitor your website and make sure it's online." ) }</p>
-					<p>
-						{ translate(
-							"We'll periodically check your site from our global network of servers to make sure it's online, and email you if it looks like your site is not responding for any reason."
-						) }
-					</p>
-				</div>
-
-			</div>
-		);
-	}
-
 	saveSettings = () => {
 		const { monitorSettingsUpdateSuccessful, siteId, translate } = this.props;
+
 		notices.clearNotices( 'notices' );
 		this.props.updateSiteMonitorSettings( siteId, this.state ).then( () => {
 			this.props.markSaved();
@@ -92,40 +73,12 @@ class SiteSettingsFormJetpackMonitor extends Component {
 		} );
 	}
 
-	settings() {
-		const { siteId, translate } = this.props;
-
-		return (
-			<div>
-				<div className="site-settings__info-link-container">
-					<InfoPopover position={ 'left' }>
-						<ExternalLink href={ 'https://jetpack.com/support/monitor/' } icon target="_blank">
-							{ translate( 'Learn more about Monitor.' ) }
-						</ExternalLink>
-					</InfoPopover>
-				</div>
-
-				<JetpackModuleToggle
-					siteId={ siteId }
-					moduleSlug="monitor"
-					label={ translate( 'Monitor your site\'s uptime' ) }
-					disabled={ this.disableForm() }
-				/>
-
-				<div className="site-settings__child-settings">
-					{ this.settingsMonitorEmailCheckbox() }
-					{ config.isEnabled( 'settings/security/monitor/wp-note' ) ? this.settingsMonitorWpNoteCheckbox() : '' }
-				</div>
-			</div>
-		);
-	}
-
 	settingsMonitorEmailCheckbox() {
-		const { translate } = this.props;
+		const { monitorActive, translate } = this.props;
 
 		return (
 			<CompactFormToggle
-				disabled={ this.disableForm() }
+				disabled={ this.disableForm() || ! monitorActive }
 				onChange={ this.handleToggle( 'email_notifications' ) }
 				checked={ !! this.state.email_notifications }
 			>
@@ -144,10 +97,10 @@ class SiteSettingsFormJetpackMonitor extends Component {
 	}
 
 	settingsMonitorWpNoteCheckbox() {
-		const { translate } = this.props;
+		const { monitorActive, translate } = this.props;
 		return (
 			<CompactFormToggle
-				disabled={ this.disableForm() }
+				disabled={ this.disableForm() || ! monitorActive }
 				onChange={ this.handleToggle( 'wp_note_notifications' ) }
 				checked={ !! this.state.wp_note_notifications }
 			>
@@ -177,7 +130,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 	}
 
 	render() {
-		const { monitorActive, siteId, translate } = this.props;
+		const { siteId, translate } = this.props;
 
 		if ( ! config.isEnabled( 'settings/security/monitor' ) ) {
 			return null;
@@ -189,12 +142,27 @@ class SiteSettingsFormJetpackMonitor extends Component {
 				<QuerySiteMonitorSettings siteId={ siteId } />
 
 				<SectionHeader label={ translate( 'Jetpack Monitor' ) } />
+
 				<Card className="jetpack-monitor-settings">
-					{
-						monitorActive
-							? this.settings()
-							: this.prompt()
-					}
+					<div className="site-settings__info-link-container">
+						<InfoPopover position={ 'left' }>
+							<ExternalLink href={ 'https://jetpack.com/support/monitor/' } icon target="_blank">
+								{ translate( 'Learn more about Monitor.' ) }
+							</ExternalLink>
+						</InfoPopover>
+					</div>
+
+					<JetpackModuleToggle
+						siteId={ siteId }
+						moduleSlug="monitor"
+						label={ translate( 'Monitor your site\'s uptime' ) }
+						disabled={ this.disableForm() }
+					/>
+
+					<div className="site-settings__child-settings">
+						{ this.settingsMonitorEmailCheckbox() }
+						{ config.isEnabled( 'settings/security/monitor/wp-note' ) && this.settingsMonitorWpNoteCheckbox() }
+					</div>
 				</Card>
 			</div>
 
@@ -210,8 +178,8 @@ export default connect(
 			siteId,
 			monitorActive: isJetpackModuleActive( state, siteId, 'monitor' ),
 			activatingMonitor: isActivatingJetpackModule( state, siteId, 'monitor' ),
-			fetchingJetpackModules: isFetchingJetpackModules( state, siteId ),
 			deactivatingMonitor: isDeactivatingJetpackModule( state, siteId, 'monitor' ),
+			fetchingJetpackModules: isFetchingJetpackModules( state, siteId ),
 			monitorSettings: getSiteMonitorSettings( state, siteId ),
 			monitorSettingsUpdateSuccessful: isMonitorSettingsUpdateSuccessful( state, siteId ),
 			requestingMonitorSettings: isRequestingSiteMonitorSettings( state, siteId ),
