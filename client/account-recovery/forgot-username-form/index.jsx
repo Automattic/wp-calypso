@@ -14,35 +14,46 @@ import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
 
-import {
-	fetchResetOptionsByNameAndUrl,
-	updatePasswordResetUserData,
-} from 'state/account-recovery/reset/actions';
+import { fetchResetOptionsByNameAndUrl } from 'state/account-recovery/reset/actions';
 
 import {
 	isRequestingAccountRecoveryResetOptions,
-	getAccountRecoveryResetUserData,
 	getAccountRecoveryResetOptionsError,
 } from 'state/selectors';
 
 export class ForgotUsernameFormComponent extends Component {
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			firstName: '',
+			lastName: '',
+			url: '',
+		};
+	}
+
 	submitForm = ( event ) => {
-		const { userData } = this.props;
-		this.props.fetchResetOptionsByNameAndUrl( userData.firstName, userData.lastName, userData.url );
+		const {
+			firstName,
+			lastName,
+			url,
+		} = this.state;
+
+		this.props.fetchResetOptionsByNameAndUrl( firstName, lastName, url );
 
 		event.preventDefault();
 	};
 
 	firstNameUpdated = ( event ) => {
-		this.props.updatePasswordResetUserData( { firstName: event.target.value } );
+		this.setState( { firstName: event.target.value } );
 	};
 
 	lastNameUpdated = ( event ) => {
-		this.props.updatePasswordResetUserData( { lastName: event.target.value } );
+		this.setState( { lastName: event.target.value } );
 	};
 
 	siteUrlUpdated = ( event ) => {
-		this.props.updatePasswordResetUserData( { url: event.target.value } );
+		this.setState( { url: event.target.value } );
 	};
 
 	getErrorMessage = ( requestError ) => {
@@ -63,16 +74,15 @@ export class ForgotUsernameFormComponent extends Component {
 	render() {
 		const {
 			translate,
-			userData,
 			isRequesting,
 			requestError,
 		} = this.props;
 
 		const {
-			firstName = '',
-			lastName = '',
-			url = '',
-		} = userData;
+			firstName,
+			lastName,
+			url,
+		} = this.state;
 
 		const isPrimaryButtonEnabled = firstName && lastName && url && ! isRequesting;
 
@@ -82,7 +92,7 @@ export class ForgotUsernameFormComponent extends Component {
 					{ translate( 'Forgot your username?' ) }
 				</h2>
 				<p>{ translate( 'Enter your full name and URL instead.' ) }</p>
-				<form onSubmit={ this.onSubmit }>
+				<form onSubmit={ this.submitForm }>
 					<FormLabel>
 						{ translate( 'First Name' ) }
 						<FormInput
@@ -128,21 +138,17 @@ export class ForgotUsernameFormComponent extends Component {
 
 ForgotUsernameFormComponent.defaultProps = {
 	isRequesting: false,
-	userData: {},
 	requestError: null,
 	translate: identity,
 	fetchResetOptionsByNameAndUrl: noop,
-	updatePasswordResetUserData: noop,
 };
 
 export default connect(
 	( state ) => ( {
 		isRequesting: isRequestingAccountRecoveryResetOptions( state ),
-		userData: getAccountRecoveryResetUserData( state ),
 		requestError: getAccountRecoveryResetOptionsError( state ),
 	} ),
 	{
 		fetchResetOptionsByNameAndUrl,
-		updatePasswordResetUserData,
 	}
 )( localize( ForgotUsernameFormComponent ) );

@@ -15,10 +15,7 @@ import FormButton from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
 
-import {
-	fetchResetOptionsByLogin,
-	updatePasswordResetUserData,
-} from 'state/account-recovery/reset/actions';
+import { fetchResetOptionsByLogin } from 'state/account-recovery/reset/actions';
 
 import {
 	isRequestingAccountRecoveryResetOptions,
@@ -127,7 +124,6 @@ LostPasswordFormComponent.defaultProps = {
 	requestError: null,
 	translate: identity,
 	fetchResetOptionsByLogin: noop,
-	updatePasswordResetUserData: noop,
 };
 
 export default connect(
@@ -137,6 +133,5 @@ export default connect(
 	} ),
 	{
 		fetchResetOptionsByLogin,
-		updatePasswordResetUserData,
 	}
 )( localize( LostPasswordFormComponent ) );
