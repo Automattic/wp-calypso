@@ -881,13 +881,19 @@ ul.email-forwarding__list {
 		padding-right: 15px;
 	}
 
+	.name-servers__dns-templates-buttons {
+		button {
+			margin: 5px 5px 5px 0;
+		}
+	}
+
 	&.is-placeholder {
 		.name-servers__dns, .name-servers__dns_templates {
 			.name-servers__title {
 				@include placeholder();
 			}
 
-			.name-servers__toggle {
+			.name-servers__toggle, .name-servers__dns-templates-buttons {
 				display: none;
 			}
 

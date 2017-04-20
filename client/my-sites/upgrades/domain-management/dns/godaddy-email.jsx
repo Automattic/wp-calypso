@@ -41,7 +41,7 @@ class GoDaddyMail extends Component {
 			<Button
 				disabled={ this.state.submitting }
 				onClick={ this.onAddDnsRecords }>
-				{ this.props.translate( 'GoDaddy' ) }
+				{ this.props.translate( 'Setup GoDaddy E-Mail' ) }
 			</Button>
 		);
 	}
