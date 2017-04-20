@@ -27,6 +27,7 @@ let _superProps,
 	_dispatch;
 
 import { retarget, recordAliasInFloodlight, recordPageViewInFloodlight } from 'lib/analytics/ad-tracking';
+import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
 import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
 const mcDebug = debug( 'calypso:analytics:mc' );
 const gaDebug = debug( 'calypso:analytics:ga' );
@@ -42,7 +43,29 @@ window.ga = window.ga || function() {
 window.ga.l = +new Date();
 
 loadScript( '//stats.wp.com/w.js?56' ); // W_JS_VER
-loadScript( '//www.google-analytics.com/analytics.js' );
+
+// Google Analytics
+
+// Load GA only if enabled in the config.
+// Note that doNotTrack() and isPiiUrl() can change at any time so they shouldn't be stored in a variable.
+if ( config( 'google_analytics_enabled' ) ) {
+	loadScript( '//www.google-analytics.com/analytics.js' );
+}
+
+/**
+ * Returns whether Google Analytics is allowed.
+ *
+ * This function returns false if:
+ *
+ * 1. `google_analytics_enabled` is disabled
+ * 2. `Do Not Track` is enabled
+ * 3. `document.location.href` may contain personally identifiable information
+ *
+ * @returns {Boolean} true if GA is allowed.
+ */
+function isGoogleAnalyticsAllowed() {
+	return config( 'google_analytics_enabled' ) && ! doNotTrack() && ! isPiiUrl();
+}
 
 function buildQuerystring( group, name ) {
 	let uriComponent = '';
@@ -204,7 +227,7 @@ const analytics = {
 		recordPageView: function( urlPath ) {
 			let eventProperties = {
 				path: urlPath,
-				do_not_track: '1' === navigator.doNotTrack ? 1 : 0
+				do_not_track: doNotTrack() ? 1 : 0
 			};
 
 			// Record all `utm` marketing parameters as event properties on the page view event
@@ -322,23 +345,29 @@ const analytics = {
 		},
 
 		recordPageView: function( urlPath, pageTitle ) {
+			if ( ! isGoogleAnalyticsAllowed() ) {
+				return;
+			}
+
 			analytics.ga.initialize();
 
 			gaDebug( 'Recording Page View ~ [URL: ' + urlPath + '] [Title: ' + pageTitle + ']' );
 
-			if ( config( 'google_analytics_enabled' ) ) {
-				// Set the current page so all GA events are attached to it.
-				window.ga( 'set', 'page', urlPath );
+			// Set the current page so all GA events are attached to it.
+			window.ga( 'set', 'page', urlPath );
 
-				window.ga( 'send', {
-					hitType: 'pageview',
-					page: urlPath,
-					title: pageTitle
-				} );
-			}
+			window.ga( 'send', {
+				hitType: 'pageview',
+				page: urlPath,
+				title: pageTitle
+			} );
 		},
 
 		recordEvent: function( category, action, label, value ) {
+			if ( ! isGoogleAnalyticsAllowed() ) {
+				return;
+			}
+
 			analytics.ga.initialize();
 
 			let debugText = 'Recording Event ~ [Category: ' + category + '] [Action: ' + action + ']';
@@ -353,19 +382,19 @@ const analytics = {
 
 			gaDebug( debugText );
 
-			if ( config( 'google_analytics_enabled' ) ) {
-				window.ga( 'send', 'event', category, action, label, value );
-			}
+			window.ga( 'send', 'event', category, action, label, value );
 		},
 
 		recordTiming: function( urlPath, eventType, duration, triggerName ) {
+			if ( ! isGoogleAnalyticsAllowed() ) {
+				return;
+			}
+
 			analytics.ga.initialize();
 
 			gaDebug( 'Recording Timing ~ [URL: ' + urlPath + '] [Duration: ' + duration + ']' );
 
-			if ( config( 'google_analytics_enabled' ) ) {
-				window.ga( 'send', 'timing', urlPath, eventType, duration, triggerName );
-			}
+			window.ga( 'send', 'timing', urlPath, eventType, duration, triggerName );
 		}
 	},
 
