@@ -11,16 +11,35 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
 
-function EditorSidebarHeader( { translate, toggleSidebar } ) {
+function EditorSidebarHeader( { childSidebar = null, toggleSidebar, translate } ) {
 	return (
 		<div className="editor-sidebar__header">
-			<EditorPostType isSettings />
+			{ childSidebar === 'revisions' && (
+				<span>
+					<Button
+						borderless
+						className="editor-sidebar__parent-title"
+						onClick={ toggleSidebar }
+						title={ translate( 'Close sidebar' ) }
+					>
+						<EditorPostType isSettings />
+					</Button>
+					<span>
+						→ { translate( 'Revisions' ) }
+					</span>
+				</span>
+			) }
+
+			{ childSidebar === null && (
+				<EditorPostType isSettings />
+			) }
+
 			<Button
 				compact borderless
 				className="editor-sidebar__back"
 				onClick={ toggleSidebar }
 				title={ translate( 'Close sidebar' ) }
-				aria-label={ translate( 'Close sidebar' ) }>
+			>
 				<Gridicon icon="cross" />
 			</Button>
 		</div>
@@ -28,8 +47,9 @@ function EditorSidebarHeader( { translate, toggleSidebar } ) {
 }
 
 EditorSidebarHeader.propTypes = {
-	translate: PropTypes.func,
+	childSidebar: PropTypes.string,
 	toggleSidebar: PropTypes.func,
+	translate: PropTypes.func,
 };
 
 export default localize( EditorSidebarHeader );

@@ -9,6 +9,7 @@
 	border-right: none;
 	top: 93px;
 	transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
+	overflow-x: hidden;
 
 	.focus-sidebar & {
 		transform: translateX(-273px);
@@ -68,4 +69,54 @@
 	@include breakpoint( ">660px" ) {
 		display: none;
 	}
+}
+
+.editor-sidebar__parent {
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	top: 47px;
+	bottom: 0;
+	width: 100%;
+	transition: all 150ms cubic-bezier(0.075, 0.82, 0.165, 1);
+
+	.focus-child & {
+		transform: translateX( - ( $sidebar-width-max + 1 ) );
+	}
+
+	@include breakpoint( '<660px' ) {
+		position: relative;
+		top: 0;
+		left: 0;
+		transition: none;
+
+		.focus-child & {
+			transform: none;
+			display: none;
+		}
+	}
+}
+
+.editor-sidebar__child {
+	transform: translateX( $sidebar-width-max + 1 );
+	transition: all 150ms cubic-bezier( 0.075, 0.82, 0.165, 1 );
+
+	.focus-child & {
+		transform: translateX( 0 );
+	}
+
+	@include breakpoint( '<660px' ) {
+		display: none;
+		transition: none;
+
+		.focus-child & {
+			display: block;
+		}
+	}
+}
+
+.editor-sidebar__parent-title {
+	padding: 0;
+	font-size: 13px;
+	line-height: inherit;
 }
