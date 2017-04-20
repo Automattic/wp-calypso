@@ -53,14 +53,15 @@ export class UserStep extends Component {
 	setSubHeaderText( props ) {
 		let subHeaderText = props.subHeaderText;
 
-		/**
-		 * Update the step sub-header if they only want to create an account, without a site.
-		 */
-		if ( 1 === signupUtils.getFlowSteps( props.flowName ).length ) {
+		if ( props.flowName === 'social' ) {
+			// Hides sub header for this particular flow
+			subHeaderText = '';
+		} else if ( 1 === signupUtils.getFlowSteps( props.flowName ).length ) {
+			// Displays specific sub header if users only want to create an account, without a site
 			subHeaderText = this.props.translate( 'Welcome to the wonderful WordPress.com community' );
 		}
 
-		this.setState( { subHeaderText: subHeaderText } );
+		this.setState( { subHeaderText } );
 	}
 
 	save = ( form ) => {

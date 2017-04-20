@@ -48,28 +48,28 @@ class StepWrapper extends Component {
 
 	headerText() {
 		if ( this.props.positionInFlow === 0 ) {
-			if ( this.props.headerText ) {
+			if ( this.props.headerText !== undefined ) {
 				return this.props.headerText;
 			}
 
 			return this.props.translate( "Let's get started." );
 		}
 
-		if ( this.props.fallbackHeaderText ) {
+		if ( this.props.fallbackHeaderText !== undefined ) {
 			return this.props.fallbackHeaderText;
 		}
 	}
 
 	subHeaderText() {
 		if ( this.props.positionInFlow === 0 ) {
-			if ( this.props.subHeaderText ) {
+			if ( this.props.subHeaderText !== undefined ) {
 				return this.props.subHeaderText;
 			}
 
 			return this.props.translate( 'Welcome to the best place for your WordPress website.' );
 		}
 
-		if ( this.props.fallbackSubHeaderText ) {
+		if ( this.props.fallbackSubHeaderText !== undefined ) {
 			return this.props.fallbackSubHeaderText;
 		}
 	}
