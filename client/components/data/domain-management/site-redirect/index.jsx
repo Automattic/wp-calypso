@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var StoreConnection = require( 'components/data/store-connection' ),
-	SiteRedirectStore = require( 'lib/domains/site-redirect/store' ),
-	observe = require( 'lib/mixins/data-observe' );
+import StoreConnection from 'components/data/store-connection';
+import SiteRedirectStore from 'lib/domains/site-redirect/store';
+import { getSelectedSite } from 'state/ui/selectors';
 
-var stores = [
+const stores = [
 	SiteRedirectStore
 ];
 
@@ -22,16 +23,12 @@ function getStateFromStores( props ) {
 	};
 }
 
-module.exports = React.createClass( {
-	displayName: 'SiteRedirectData',
+class SiteRedirectData extends Component {
 
-	propTypes: {
-		component: React.PropTypes.func.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		sites: React.PropTypes.object.isRequired
-	},
-
-	mixins: [ observe( 'sites' ) ],
+	static propTypes = {
+		component: PropTypes.func.isRequired,
+		selectedDomainName: PropTypes.string.isRequired
+	}
 
 	render() {
 		return (
@@ -43,4 +40,10 @@ module.exports = React.createClass( {
 				selectedSite={ this.props.sites.getSelectedSite() } />
 		);
 	}
-} );
+}
+
+export default connect( ( state ) => {
+	return {
+		selectedSite: getSelectedSite( state )
+	};
+} )( SiteRedirectData );
