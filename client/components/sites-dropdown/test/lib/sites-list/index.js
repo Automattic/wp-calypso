@@ -11,10 +11,6 @@ const sites = {
 };
 
 class SiteList {
-	getPrimary() {
-		return sites[ '1' ];
-	}
-
 	getSite( siteId ) {
 		if ( sites[ siteId ] ) {
 			return sites[ siteId ];

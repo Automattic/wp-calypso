@@ -65,6 +65,7 @@ export getReaderFollowForBlog from './get-reader-follow-for-blog';
 export getReaderFollows from './get-reader-follows';
 export getReaderTags from './get-reader-tags';
 export getReaderTeams from './get-reader-teams';
+export getSelectedOrPrimarySiteId from './get-selected-or-primary-site-id';
 export getSharingButtons from './get-sharing-buttons';
 export getSiteConnectionStatus from './get-site-connection-status';
 export getSiteGmtOffset from './get-site-gmt-offset';
