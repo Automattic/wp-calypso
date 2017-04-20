@@ -24,16 +24,18 @@ const Caching = ( {
 	},
 	handleRadio,
 	handleToggle,
+	isRequesting,
 	translate,
 } ) => {
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Caching' ) }>
 				<Button
-					compact={ true }
-					primary={ true }
+					compact
+					primary
+					disabled={ isRequesting }
 					type="submit">
-						{ translate( 'Save Settings' ) }
+					{ translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>
 			<Card>
@@ -41,6 +43,7 @@ const Caching = ( {
 					<FormFieldset>
 						<FormToggle
 							checked={ !! wp_cache_enabled }
+							disabled={ isRequesting }
 							onChange={ handleToggle( 'wp_cache_enabled' ) }>
 							<span>
 								{ translate( 'Caching On {{em}}(Recommended){{/em}}',
@@ -56,6 +59,7 @@ const Caching = ( {
 						<FormLabel>
 							<FormRadio
 								checked={ '1' === super_cache_enabled }
+								disabled={ isRequesting }
 								name="super_cache_enabled"
 								onChange={ handleRadio }
 								value="1" />
@@ -67,6 +71,7 @@ const Caching = ( {
 						<FormLabel>
 							<FormRadio
 								checked={ '2' === super_cache_enabled }
+								disabled={ isRequesting }
 								name="super_cache_enabled"
 								onChange={ handleRadio }
 								value="2" />
@@ -83,6 +88,7 @@ const Caching = ( {
 						<FormLabel>
 							<FormRadio
 								checked={ '0' === super_cache_enabled }
+								disabled={ isRequesting }
 								name="super_cache_enabled"
 								onChange={ handleRadio }
 								value="0" />

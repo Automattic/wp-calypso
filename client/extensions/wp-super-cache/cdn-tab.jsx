@@ -29,6 +29,7 @@ const CdnTab = ( {
 	},
 	handleChange,
 	handleToggle,
+	isRequesting,
 	siteUrl,
 	translate,
 } ) => {
@@ -36,10 +37,11 @@ const CdnTab = ( {
 		<div>
 			<SectionHeader label={ translate( 'CDN' ) }>
 				<Button
-					compact={ true }
-					primary={ true }
+					compact
+					primary
+					disabled={ isRequesting }
 					type="submit">
-						{ translate( 'Save Settings' ) }
+					{ translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>
 
@@ -48,6 +50,7 @@ const CdnTab = ( {
 					<FormFieldset>
 						<FormToggle
 							checked={ !! ossdlcdn }
+							disabled={ isRequesting }
 							onChange={ handleToggle( 'ossdlcdn' ) }>
 							<span>
 								{ translate( 'Enable CDN Support' ) }
@@ -61,6 +64,7 @@ const CdnTab = ( {
 						</FormLabel>
 
 						<FormTextInput
+							disabled={ isRequesting }
 							id="ossdl_off_cdn_url"
 							onChange={ handleChange( 'ossdl_off_cdn_url' ) }
 							value={ ossdl_off_cdn_url || '' } />
@@ -81,6 +85,7 @@ const CdnTab = ( {
 						</FormLabel>
 
 						<FormTextInput
+							disabled={ isRequesting }
 							id="ossdl_off_include_dirs"
 							onChange={ handleChange( 'ossdl_off_include_dirs' ) }
 							value={ ossdl_off_include_dirs || '' } />
@@ -102,6 +107,7 @@ const CdnTab = ( {
 						</FormLabel>
 
 						<FormTextInput
+							disabled={ isRequesting }
 							id="ossdl_off_exclude"
 							onChange={ handleChange( 'ossdl_off_exclude' ) }
 							value={ ossdl_off_exclude || '' } />
@@ -124,6 +130,7 @@ const CdnTab = ( {
 						</FormLabel>
 
 						<FormTextInput
+							disabled={ isRequesting }
 							id="ossdl_cname"
 							onChange={ handleChange( 'ossdl_cname' ) }
 							value={ ossdl_cname || '' } />
@@ -154,6 +161,7 @@ const CdnTab = ( {
 					<FormFieldset>
 						<FormToggle
 							checked={ !! ossdl_https }
+							disabled={ isRequesting }
 							onChange={ handleToggle( 'ossdl_https' ) }>
 							<span>
 								{ translate( 'Skip https URLs to avoid "mixed content" errors' ) }

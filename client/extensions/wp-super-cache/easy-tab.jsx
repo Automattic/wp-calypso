@@ -23,6 +23,7 @@ const EasyTab = ( {
 		is_cache_enabled,
 	},
 	handleToggle,
+	isRequesting,
 	site,
 	translate,
 } ) => {
@@ -36,7 +37,10 @@ const EasyTab = ( {
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Caching' ) }>
-				<Button compact primary>
+				<Button
+					compact
+					primary
+					disabled={ isRequesting }>
 					{ translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>
@@ -44,6 +48,7 @@ const EasyTab = ( {
 				<form>
 					<FormToggle
 						checked={ is_cache_enabled }
+						disabled={ isRequesting }
 						onChange={ handleToggle( 'is_cache_enabled' ) }>
 						<span>
 							{ translate( 'Caching On {{em}}(Recommended){{/em}}',

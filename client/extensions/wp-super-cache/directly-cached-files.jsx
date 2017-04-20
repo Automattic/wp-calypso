@@ -24,6 +24,7 @@ const DirectlyCachedFiles = ( {
 		wp_cache_writable,
 	},
 	handleChange,
+	isRequesting,
 	siteUrl,
 	translate,
 } ) => {
@@ -33,10 +34,11 @@ const DirectlyCachedFiles = ( {
 		<div>
 			<SectionHeader label={ translate( 'Directly Cached Files' ) }>
 				<Button
-					compact={ true }
-					primary={ true }
+					compact
+					primary
+					disabled={ isRequesting }
 					type="submit">
-						{ translate( 'Save Settings' ) }
+					{ translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>
 			<Card className="wp-super-cache__directly-cached-files">
@@ -93,6 +95,7 @@ const DirectlyCachedFiles = ( {
 						<form>
 							<FormFieldset>
 								<FormTextInput
+									disabled={ isRequesting }
 									onChange={ handleChange( 'new_direct_page' ) } />
 							</FormFieldset>
 
@@ -110,6 +113,7 @@ const DirectlyCachedFiles = ( {
 									<FormTextInputWithAction
 										action={ translate( 'Delete Cached File' ) }
 										defaultValue={ page }
+										disabled={ isRequesting }
 										key={ page } />
 								</FormFieldset>
 							) ) }

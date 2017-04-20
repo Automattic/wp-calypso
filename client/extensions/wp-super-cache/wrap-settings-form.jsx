@@ -11,9 +11,12 @@ import { localize } from 'i18n-calypso';
  */
 import { protectForm } from 'lib/protect-form';
 import trackForm from 'lib/track-form';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSettings } from './state/selectors';
 import QuerySettings from './query-settings';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	getSettings,
+	isRequestingSettings,
+} from './state/selectors';
 
 const wrapSettingsForm = getFormSettings => SettingsForm => {
 	class WrappedSettingsForm extends Component {
@@ -263,8 +266,10 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				preload_refresh: true,
 				preload_taxonomies: false,
 			} );
+			const isRequesting = isRequestingSettings( state, siteId ) && ! settings;
 
 			return {
+				isRequesting,
 				settings,
 				siteId,
 			};

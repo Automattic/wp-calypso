@@ -55,9 +55,9 @@ const LockDown = ( {
 					</p>
 					<div>
 						<Button
-							compact={ true }
+							compact
 							type="submit">
-								{ ! wp_lock_down ? translate( 'Enable Lock Down' ) : translate( 'Disable Lock Down' ) }
+							{ ! wp_lock_down ? translate( 'Enable Lock Down' ) : translate( 'Disable Lock Down' ) }
 						</Button>
 					</div>
 				</form>
