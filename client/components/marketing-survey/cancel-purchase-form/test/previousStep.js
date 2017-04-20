@@ -27,11 +27,11 @@ describe( 'previousStep', function() {
 		previousStep = require( '../previousStep' );
 	} );
 
-	it( 'should returning false if current step is unknown', function() {
+	it( 'should return false if current step is unknown', function() {
 		expect( previousStep( 'unknown', survey, product ) ).to.equal( false );
 	} );
 
-	it( 'should returning false if current step is initial step', function() {
+	it( 'should return false if current step is initial step', function() {
 		expect( previousStep( 'a', survey, product ) ).to.equal( false );
 	} );
 
