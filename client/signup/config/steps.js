@@ -73,6 +73,7 @@ export default {
 		providesToken: true,
 		providesDependencies: [ 'bearer_token', 'username' ],
 		props: {
+			headerText: i18n.translate( 'Create your account.' ),
 			isSocialSignupEnabled: true
 		},
 	},
