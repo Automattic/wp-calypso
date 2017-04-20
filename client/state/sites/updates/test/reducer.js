@@ -17,10 +17,11 @@ import {
 	SITE_UPDATES_REQUEST_SUCCESS,
 	SITE_UPDATES_REQUEST_FAILURE,
 	SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS,
+	SITE_WORDPRESS_UPDATE_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import reducer, { items, requesting, errors } from '../reducer';
+import reducer, { items, requesting, wordpressUpdateStatus, errors } from '../reducer';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {
@@ -31,6 +32,7 @@ describe( 'reducer', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'items',
 			'requesting',
+			'wordpressUpdateStatus',
 			'errors'
 		] );
 	} );
@@ -390,6 +392,44 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: false,
+				77203074: false
+			} );
+		} );
+	} );
+
+	describe( 'wordpressUpdateStatus()', () => {
+		it( 'should default to an empty object', () => {
+			const state = wordpressUpdateStatus( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should track site wordpress core update status request succeeded', () => {
+			const original = deepFreeze( {
+				77203074: true
+			} );
+			const state = wordpressUpdateStatus( original, {
+				type: SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS,
+				siteId: 2916284
+			} );
+
+			expect( state ).to.eql( {
+				2916284: true,
+				77203074: true
+			} );
+		} );
+
+		it( 'should track site wordpress core update status request failed', () => {
+			const original = deepFreeze( {
+				2916284: true,
+			} );
+			const state = wordpressUpdateStatus( original, {
+				type: SITE_WORDPRESS_UPDATE_REQUEST_FAILURE,
+				siteId: 77203074
+			} );
+
+			expect( state ).to.eql( {
+				2916284: true,
 				77203074: false
 			} );
 		} );
