@@ -93,14 +93,14 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	.reader-related-card-v2__post {
-		max-height: 205px;
+		max-height: 130px;
 
 		@media #{$reader-related-card-v2-breakpoint-small} {
-			max-height: 100px;
+			max-height: 103px;
 		}
 
 		@media #{$reader-related-card-v2-breakpoint-medium} {
-			max-height: 100px;
+			max-height: 103px;
 		}
 
 		.reader-related-card-v2__excerpt {
@@ -111,39 +111,20 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	 .has-thumbnail {
 
 		.reader-related-card-v2__post {
-			max-height: 205px;
+			max-height: 130px;
 
 			@media #{$reader-related-card-v2-breakpoint-small} {
-				max-height: 145px;
+				max-height: 152px;
 			}
 
 			@media #{$reader-related-card-v2-breakpoint-medium} {
-				max-height: 145px;
-			}
-		}
-
-		.reader-related-card-v2__site-info {
-
-			@media #{$reader-related-card-v2-breakpoint-small} {
-				margin-top: 20px;
-			}
-
-			@media #{$reader-related-card-v2-breakpoint-medium} {
-				margin-top: 20px;
+				max-height: 152px;
 			}
 		}
 	}
 
 	.reader-related-card-v2__featured-image {
 		margin: 0 0 17px;
-
-		@media #{$reader-related-card-v2-breakpoint-medium} {
-			margin: 0 15px 0 0;
-		}
-
-		@media #{$reader-related-card-v2-breakpoint-small} {
-			margin: 0 15px 0 0;
-		}
 	}
 
 	.reader-related-card-v2__meta {
