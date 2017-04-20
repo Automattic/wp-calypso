@@ -1,12 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import debounce from 'lodash/debounce';
+import React, { PureComponent, PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
-import analytics from 'lib/analytics';
-import isEqual from 'lodash/isEqual';
 import Gridicon from 'gridicons';
 
 /**
@@ -20,101 +19,55 @@ import DropdownItem from 'components/select-dropdown/item';
 import DropdownSeparator from 'components/select-dropdown/separator';
 import BulkSelect from 'components/bulk-select';
 import Tooltip from 'components/tooltip';
+import analytics from 'lib/analytics';
 
-const _actionBarVisible = true;
-
-// If the Action
+// Constants help determin if the action bar should be a dropdown
 const MAX_ACTIONBAR_HEIGHT = 50;
 const MIN_ACTIONBAR_WIDTH = 600;
 
-function checkPropsChange( nextProps, propArr ) {
-	for ( let i = 0; i < propArr.length; i++ ) {
-		const prop = propArr[ i ];
+export class PluginsListHeader extends PureComponent {
 
-		if ( nextProps[ prop ] !== this.props[ prop ] ) {
-			return true;
-		}
+	state = {
+		actionBarVisible: true,
+		addPluginTooltip: false
 	}
-	return false;
-}
 
-export default React.createClass( {
-	displayName: 'Plugins-list-header',
+	static defaultProps = {
+		isMock: false,
+		disabled: false,
+	}
 
-	propTypes: {
-		label: React.PropTypes.string,
-		isBulkManagementActive: React.PropTypes.bool,
-		toggleBulkManagement: React.PropTypes.func.isRequired,
-		updateAllPlugins: React.PropTypes.func.isRequired,
-		updateSelected: React.PropTypes.func.isRequired,
-		haveUpdatesSelected: React.PropTypes.bool,
-		pluginUpdateCount: React.PropTypes.number.isRequired,
-		activateSelected: React.PropTypes.func.isRequired,
-		deactiveAndDisconnectSelected: React.PropTypes.func.isRequired,
-		deactivateSelected: React.PropTypes.func.isRequired,
-		setAutoupdateSelected: React.PropTypes.func.isRequired,
-		setSelectionState: React.PropTypes.func.isRequired,
-		unsetAutoupdateSelected: React.PropTypes.func.isRequired,
-		removePluginNotice: React.PropTypes.func.isRequired,
-		haveActiveSelected: React.PropTypes.bool,
-		haveInactiveSelected: React.PropTypes.bool,
-		bulkManagement: React.PropTypes.bool,
-		selectedSiteSlug: React.PropTypes.string,
-		plugins: React.PropTypes.array.isRequired,
-		selected: React.PropTypes.array.isRequired
-	},
-
-	shouldComponentUpdate( nextProps, nextState ) {
-		const propsToCheck = [ 'label', 'isBulkManagementActive', 'haveUpdatesSelected',
-				'pluginUpdateCount', 'haveActiveSelected', 'haveInactiveSelected', 'bulkManagement' ];
-		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
-			return true;
-		}
-
-		if ( this.props.plugins.length !== nextProps.plugins.length ) {
-			return true;
-		}
-
-		if ( ! isEqual( this.props.sites, nextProps.sites ) ) {
-			return true;
-		}
-
-		if ( this.props.selected.length !== nextProps.selected.length ) {
-			return true;
-		}
-
-		if ( this.state.actionBarVisible !== nextState.actionBarVisible ) {
-			return true;
-		}
-
-		if ( this.state.addPluginTooltip !== nextState.addPluginTooltip ) {
-			return true;
-		}
-
-		return false;
-	},
-
-	getInitialState() {
-		return {
-			actionBarVisible: _actionBarVisible,
-			addPluginTooltip: false
-		};
-	},
+	static propTypes = {
+		label: PropTypes.string,
+		isBulkManagementActive: PropTypes.bool,
+		toggleBulkManagement: PropTypes.func.isRequired,
+		updateAllPlugins: PropTypes.func.isRequired,
+		updateSelected: PropTypes.func.isRequired,
+		haveUpdatesSelected: PropTypes.bool,
+		pluginUpdateCount: PropTypes.number.isRequired,
+		activateSelected: PropTypes.func.isRequired,
+		deactiveAndDisconnectSelected: PropTypes.func.isRequired,
+		deactivateSelected: PropTypes.func.isRequired,
+		setAutoupdateSelected: PropTypes.func.isRequired,
+		setSelectionState: PropTypes.func.isRequired,
+		unsetAutoupdateSelected: PropTypes.func.isRequired,
+		removePluginNotice: PropTypes.func.isRequired,
+		haveActiveSelected: PropTypes.bool,
+		haveInactiveSelected: PropTypes.bool,
+		bulkManagement: PropTypes.bool,
+		selectedSiteSlug: PropTypes.string,
+		plugins: PropTypes.array.isRequired,
+		selected: PropTypes.array.isRequired
+	}
 
 	componentDidMount() {
 		this.debouncedAfterResize = debounce( this.afterResize, 100 );
 		window.addEventListener( 'resize', this.debouncedAfterResize );
-	},
+	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.debouncedAfterResize );
-	},
-
-	afterResize() {
-		if ( this.props.isBulkManagementActive ) {
-			this.maybeMakeActionBarVisible();
-		}
-	},
+	}
 
 	maybeMakeActionBarVisible() {
 		const actionBarDomElement = findDOMNode( this );
@@ -126,44 +79,60 @@ export default React.createClass( {
 			const actionBarVisible = actionBarDomElement.offsetHeight <= MAX_ACTIONBAR_HEIGHT;
 			this.setState( { actionBarVisible } );
 		}, 1 );
-	},
+	}
 
-	showPluginTooltip() {
+	showPluginTooltip = () => {
 		this.setState( { addPluginTooltip: true } );
-	},
+	}
 
-	hidePluginTooltip() {
+	hidePluginTooltip = () => {
 		this.setState( { addPluginTooltip: false } );
-	},
+	}
 
-	toggleBulkManagement() {
+	toggleBulkManagement = () => {
 		this.props.toggleBulkManagement();
 
 		this.maybeMakeActionBarVisible();
-	},
+	}
 
-	onBrowserLinkClick() {
+	afterResize = () => {
+		if ( this.props.isBulkManagementActive ) {
+			this.maybeMakeActionBarVisible();
+		}
+	}
+
+	onBrowserLinkClick = () => {
 		analytics.ga.recordEvent( 'Plugins', 'Clicked Add New Plugins' );
-	},
+	}
+
+	unselectOrSelectAll = () => {
+		const { plugins, selected } = this.props;
+		const someSelected = selected.length > 0;
+		this.props.setSelectionState( plugins, ! someSelected );
+		analytics.ga.recordEvent( 'Plugins', someSelected ? 'Clicked to Uncheck All Plugins' : 'Clicked to Check All Plugins' );
+	}
+
+	isJetpackSelected() {
+		return this.props.selected.some( plugin => 'jetpack' === plugin.slug );
+	}
 
 	canUpdatePlugins() {
 		return this.props.selected.some( plugin => plugin.sites.some( site => site.canUpdateFiles ) );
-	},
+	}
 
-	unselectOrSelectAll() {
-		const someSelected = this.props.selected.length > 0;
-		this.props.setSelectionState( this.props.plugins, ! someSelected );
-		analytics.ga.recordEvent( 'Plugins', someSelected ? 'Clicked to Uncheck All Plugins' : 'Clicked to Check All Plugins' );
-	},
+	needsRemoveButton() {
+		return this.props.selected.length && this.canUpdatePlugins() && ! this.isJetpackSelected();
+	}
 
 	renderCurrentActionButtons() {
-		const isJetpackSelected = this.props.selected.some( plugin => 'jetpack' === plugin.slug ),
-			needsRemoveButton = this.props.selected.length && this.canUpdatePlugins() && ! isJetpackSelected,
-			buttons = [],
-			rightSideButtons = [],
-			leftSideButtons = [],
-			autoupdateButtons = [],
-			activateButtons = [];
+		const { translate } = this.props;
+		const isJetpackSelected = this.isJetpackSelected();
+		const needsRemoveButton = this.needsRemoveButton();
+		const buttons = [];
+		const rightSideButtons = [];
+		const leftSideButtons = [];
+		const autoupdateButtons = [];
+		const activateButtons = [];
 
 		if ( ! this.props.isBulkManagementActive ) {
 			if ( 0 < this.props.pluginUpdateCount ) {
@@ -171,7 +140,7 @@ export default React.createClass( {
 					<ButtonGroup key="plugin-list-header__buttons-update-all">
 						<Button compact primary onClick={ this.props.updateAllPlugins } >
 							{
-								this.translate(
+								translate(
 									'Update %(numUpdates)d Plugin',
 									'Update %(numUpdates)d Plugins',
 									{
@@ -190,7 +159,7 @@ export default React.createClass( {
 			rightSideButtons.push(
 				<ButtonGroup key="plugin-list-header__buttons-bulk-management">
 					<Button compact onClick={ this.toggleBulkManagement }>
-						{ this.translate( 'Edit All', { context: 'button label' } ) }
+						{ translate( 'Edit All', { context: 'button label' } ) }
 					</Button>
 				</ButtonGroup>
 			);
@@ -206,13 +175,13 @@ export default React.createClass( {
 						onMouseEnter={ this.showPluginTooltip }
 						onMouseLeave={ this.hidePluginTooltip }
 						ref="addPluginButton"
-						aria-label={ this.translate( 'Browse all plugins', { context: 'button label' } ) }>
+						aria-label={ translate( 'Browse all plugins', { context: 'button label' } ) }>
 						<Gridicon key="plus-icon" icon="plus-small" size={ 18 } /><Gridicon key="plugins-icon" icon="plugins" size={ 18 } />
 						<Tooltip
 							isVisible={ this.state.addPluginTooltip }
 							context={ this.refs && this.refs.addPluginButton }
 							position="bottom">
-							{ this.translate( 'Browse all plugins', { context: 'button tooltip' } ) }
+							{ translate( 'Browse all plugins', { context: 'button tooltip' } ) }
 						</Tooltip>
 					</Button>
 				</ButtonGroup>
@@ -224,14 +193,18 @@ export default React.createClass( {
 					disabled={ ! this.props.haveUpdatesSelected }
 					compact primary
 					onClick={ this.props.updateSelected }>
-					{ this.translate( 'Update' ) }
+					{ translate( 'Update' ) }
 				</Button>
 			);
 			leftSideButtons.push( <ButtonGroup key="plugin-list-header__buttons-update-button">{ updateButton }</ButtonGroup> );
 
 			activateButtons.push(
-				<Button key="plugin-list-header__buttons-activate" disabled={ ! this.props.haveInactiveSelected } compact onClick={ this.props.activateSelected }>
-					{ this.translate( 'Activate' ) }
+				<Button
+					key="plugin-list-header__buttons-activate"
+					disabled={ ! this.props.haveInactiveSelected }
+					onClick={ this.props.activateSelected }
+					compact >
+					{ translate( 'Activate' ) }
 				</Button>
 			);
 
@@ -243,7 +216,7 @@ export default React.createClass( {
 						? this.props.deactiveAndDisconnectSelected
 						: this.props.deactivateSelected
 						} >
-					{ this.translate( 'Deactivate' ) }
+					{ translate( 'Deactivate' ) }
 				</Button>
 			);
 
@@ -256,7 +229,7 @@ export default React.createClass( {
 					disabled={ ! this.canUpdatePlugins() }
 					compact
 					onClick={ this.props.setAutoupdateSelected }>
-					{ this.translate( 'Autoupdate' ) }
+					{ translate( 'Autoupdate' ) }
 				</Button>
 			);
 			autoupdateButtons.push(
@@ -264,7 +237,7 @@ export default React.createClass( {
 					disabled={ ! this.canUpdatePlugins() }
 					compact
 					onClick={ this.props.unsetAutoupdateSelected }>
-					{ this.translate( 'Disable Autoupdates' ) }
+					{ translate( 'Disable Autoupdates' ) }
 				</Button>
 			);
 
@@ -274,7 +247,7 @@ export default React.createClass( {
 					<Button compact scary
 						disabled={ ! needsRemoveButton }
 						onClick={ this.props.removePluginNotice }>
-						{ this.translate( 'Remove' ) }
+						{ translate( 'Remove' ) }
 					</Button>
 				</ButtonGroup>
 			);
@@ -283,34 +256,48 @@ export default React.createClass( {
 				<button key="plugin-list-header__buttons-close-button"
 					className="plugin-list-header__section-actions-close"
 					onClick={ this.props.toggleBulkManagement }>
-					<span className="screen-reader-text">{ this.translate( 'Close' ) }</span>
+					<span className="plugin-list-header__screen-reader-text">{ translate( 'Close' ) }</span>
 					<Gridicon icon="cross" />
 				</button>
 			);
 		}
 
-		buttons.push( <span key="plugin-list-header__buttons-action-buttons" className="plugin-list-header__action-buttons">{ leftSideButtons }</span> );
-		buttons.push( <span key="plugin-list-header__buttons-global-buttons" className="plugin-list-header__mode-buttons">{ rightSideButtons }</span> );
+		buttons.push(
+			<span
+				key="plugin-list-header__buttons-action-buttons"
+				className="plugin-list-header__action-buttons">
+				{ leftSideButtons }
+			</span>
+		);
+
+		buttons.push(
+			<span
+				key="plugin-list-header__buttons-global-buttons"
+				className="plugin-list-header__mode-buttons">
+				{ rightSideButtons }
+			</span>
+		);
 
 		return buttons;
-	},
+	}
 
 	renderCurrentActionDropdown() {
-		if ( ! this.props.isBulkManagementActive ) {
+		const { translate, selected, isBulkManagementActive } = this.props;
+		if ( ! isBulkManagementActive ) {
 			return null;
 		}
 
-		const isJetpackSelected = this.props.selected.some( plugin => 'jetpack' === plugin.slug );
-		const needsRemoveButton = !! this.props.selected.length && this.canUpdatePlugins() && ! isJetpackSelected;
-		const isJetpackOnlySelected = ! ( isJetpackSelected && this.props.selected.length === 1 );
+		const isJetpackSelected = this.isJetpackSelected();
+		const needsRemoveButton = this.needsRemoveButton();
+		const isJetpackOnlySelected = ! ( isJetpackSelected && selected.length === 1 );
 		return (
 			<SelectDropdown compact
-					className="plugin-list-header__actions_dropdown"
-					key="plugin-list-header__actions_dropdown"
-					selectedText={ this.translate( 'Actions' ) } >
+				className="plugin-list-header__actions-dropdown"
+				key="plugin-list-header__actions_dropdown"
+				selectedText={ translate( 'Actions' ) } >
 
 				<DropdownItem key="plugin__actions_title" selected={ true } value="Actions">
-					{ this.translate( 'Actions' ) }
+					{ translate( 'Actions' ) }
 				</DropdownItem>
 
 				<DropdownSeparator key="plugin__actions_separator_1" />
@@ -318,7 +305,7 @@ export default React.createClass( {
 				<DropdownItem key="plugin__actions_activate"
 						disabled={ ! this.props.haveUpdatesSelected }
 						onClick={ this.props.updateSelected }>
-					{ this.translate( 'Update' ) }
+					{ translate( 'Update' ) }
 				</DropdownItem>
 
 				<DropdownSeparator key="plugin__actions_separator_1" />
@@ -326,7 +313,7 @@ export default React.createClass( {
 					<DropdownItem key="plugin__actions_activate"
 							disabled={ ! this.props.haveInactiveSelected }
 							onClick={ this.props.activateSelected }>
-						{ this.translate( 'Activate' ) }
+						{ translate( 'Activate' ) }
 					</DropdownItem>
 				}
 				{ isJetpackOnlySelected &&
@@ -335,7 +322,7 @@ export default React.createClass( {
 							onClick={ isJetpackSelected
 								? this.props.deactiveAndDisconnectSelected
 								: this.props.deactivateSelected }>
-						{ this.translate( 'Deactivate' ) }
+						{ translate( 'Deactivate' ) }
 					</DropdownItem>
 				}
 
@@ -344,36 +331,42 @@ export default React.createClass( {
 				<DropdownItem key="plugin__actions_autoupdate"
 						disabled={ ! this.canUpdatePlugins() }
 						onClick={ this.props.setAutoupdateSelected }>
-					{ this.translate( 'Autoupdate' ) }
+					{ translate( 'Autoupdate' ) }
 				</DropdownItem>
 
 				<DropdownItem key="plugin__actions_disable_autoupdate"
 						disabled={ ! this.canUpdatePlugins() }
 						onClick={ this.props.unsetAutoupdateSelected }>
-					{ this.translate( 'Disable Autoupdates' ) }
+					{ translate( 'Disable Autoupdates' ) }
 				</DropdownItem>
 
 				<DropdownSeparator key="plugin__actions_separator_3" />
 
-				<DropdownItem key="plugin__actions_remove"
-						className="plugin-list-header__actions_remove_item"
-						disabled={ ! needsRemoveButton }
-						onClick={ this.props.removePluginNotice } >
-					{ this.translate( 'Remove' ) }
+				<DropdownItem
+					key="plugin__actions_remove"
+					className="plugin-list-header__actions-remove-item"
+					disabled={ ! needsRemoveButton }
+					onClick={ this.props.removePluginNotice } >
+					{ translate( 'Remove' ) }
 				</DropdownItem>
 			</SelectDropdown>
 		);
-	},
+	}
 
 	render() {
-		const sectionClasses = classNames( 'plugin-list-header', { 'is-bulk-editing': this.props.isBulkManagementActive, 'is-action-bar-visible': this.state.actionBarVisible } );
+		const { label, selected, plugins, isBulkManagementActive } = this.props;
+		const sectionClasses = classNames( {
+			'plugin-list-header': true,
+			'is-bulk-editing': isBulkManagementActive,
+			'is-action-bar-visible': this.state.actionBarVisible
+		} );
 		return (
-			<SectionHeader label={ this.props.label } className={ sectionClasses }>
+			<SectionHeader label={ label } className={ sectionClasses }>
 				{
-					this.props.isBulkManagementActive &&
+					isBulkManagementActive &&
 						<BulkSelect key="plugin-list-header__bulk-select"
-							totalElements={ this.props.plugins.length }
-							selectedElements={ this.props.selected.length }
+							totalElements={ plugins.length }
+							selectedElements={ selected.length }
 							onToggle={ this.unselectOrSelectAll } />
 				}
 				{ this.renderCurrentActionDropdown() }
@@ -381,4 +374,6 @@ export default React.createClass( {
 			</SectionHeader>
 		);
 	}
-} );
+}
+
+export default localize( PluginsListHeader );

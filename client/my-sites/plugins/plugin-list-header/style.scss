@@ -36,7 +36,7 @@
 	}
 	@include breakpoint( '>960px' ) {
 		&.is-action-bar-visible {
-			.plugin-list-header__actions_dropdown {
+			.plugin-list-header__actions-dropdown {
 				display: none;
 			}
 			.plugin-list-header__action-buttons {
@@ -58,11 +58,11 @@
 	}
 }
 
-.plugin-list-header__actions_dropdown {
+.plugin-list-header__actions-dropdown {
 	display: inline-block;
 }
 
-.plugin-list-header__actions_remove_item {
+.plugin-list-header__actions-remove-item {
 	color: $alert-red;
 
 	&.is-disabled {
@@ -81,4 +81,8 @@
 	align-items: center;
 	display: none;
 	flex-grow: 1;
+}
+
+.plugin-list-header__screen-reader-text {
+	@extend .screen-reader-text;
 }
