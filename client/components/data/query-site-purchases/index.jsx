@@ -12,7 +12,9 @@ import { fetchSitePurchases } from 'state/purchases/actions';
 
 class QuerySitePurchases extends Component {
 	requestSitePurchases( props = this.props ) {
-		this.props.fetchSitePurchases( props.siteId );
+		if ( props.siteId ) {
+			this.props.fetchSitePurchases( props.siteId );
+		}
 	}
 
 	componentWillMount() {
@@ -34,8 +36,8 @@ class QuerySitePurchases extends Component {
 }
 
 QuerySitePurchases.propTypes = {
-	siteId: PropTypes.number.isRequired,
-	requesting: PropTypes.bool.isRequired,
+	siteId: PropTypes.number,
+	requesting: PropTypes.bool,
 	fetchSitePurchases: PropTypes.func.isRequired
 };
 
