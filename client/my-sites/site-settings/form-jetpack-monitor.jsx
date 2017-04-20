@@ -14,7 +14,6 @@ import config from 'config';
 import Card from 'components/card';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import notices from 'notices';
 import SectionHeader from 'components/section-header';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
@@ -23,6 +22,7 @@ import QuerySiteMonitorSettings from 'components/data/query-site-monitor-setting
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { updateSiteMonitorSettings } from 'state/sites/monitor/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { errorNotice, successNotice } from 'state/notices/actions';
 import {
 	getSiteMonitorSettings,
 	isActivatingJetpackModule,
@@ -61,13 +61,12 @@ class SiteSettingsFormJetpackMonitor extends Component {
 	saveSettings = () => {
 		const { monitorSettingsUpdateSuccessful, siteId, translate } = this.props;
 
-		notices.clearNotices( 'notices' );
 		this.props.updateSiteMonitorSettings( siteId, this.state ).then( () => {
 			if ( ! monitorSettingsUpdateSuccessful ) {
-				notices.error( translate( 'There was a problem saving your changes. Please, try again.' ) );
+				this.props.errorNotice( translate( 'There was a problem saving your changes. Please, try again.' ) );
 				return;
 			}
-			notices.success( translate( 'Settings saved successfully!' ) );
+			this.props.successNotice( translate( 'Settings saved successfully!' ) );
 		} );
 	}
 
@@ -187,6 +186,8 @@ export default connect(
 	( dispatch ) => {
 		const trackEvent = name => dispatch( recordGoogleEvent( 'Site Settings', name ) );
 		const boundActionCreators = bindActionCreators( {
+			errorNotice,
+			successNotice,
 			updateSiteMonitorSettings,
 		}, dispatch );
 
