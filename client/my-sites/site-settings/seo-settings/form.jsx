@@ -164,13 +164,7 @@ export const SeoForm = React.createClass( {
 		// save error
 		if ( this.state.isSubmittingForm && nextProps.saveError ) {
 			this.setState( { isSubmittingForm: false } );
-			switch ( nextProps.saveError.error ) {
-				case 'invalid_ip':
-					notices.error( translate( 'One of your IP Addresses was invalid. Please, try again.' ) );
-					break;
-				default:
-					notices.error( translate( 'There was a problem saving your changes. Please, try again.' ) );
-			}
+			notices.error( translate( 'There was a problem saving your changes. Please, try again.' ) );
 		}
 
 		// if we are changing sites, everything goes
