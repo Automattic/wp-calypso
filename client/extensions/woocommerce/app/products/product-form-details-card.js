@@ -72,7 +72,7 @@ export default class ProductFormDetailsCard extends Component {
 							<span>{ __( 'Product name' ) }</span>
 							<FormTextInput value={ product.name || '' } onChange={ this.setName } />
 						</FormLabel>
-						<FormLabel>
+						<FormLabel className="products__product-form-details-basic-description">
 							<span>{ __( 'Description' ) }</span>
 							<FormTextArea value={ product.description || '' } onChange={ this.setDescription } />
 						</FormLabel>

@@ -1,5 +1,9 @@
 .woocommerce {
 
+	.form-label {
+		margin-bottom: 16px;
+	}
+
 	.foldable-card.products__variation-card .foldable-card__content {
 		padding: 0;
 		border: 0;
@@ -16,16 +20,35 @@
 
 		.products__product-form-details-wrapper {
 			display: flex;
+			flex-direction: column;
+			@include breakpoint( ">960px" ) {
+				flex-direction: row;
+			}
+		}
+		/* TODO: remove placeholder styles once implemented */
+		.products__product-form-details-images {
+			background: $gray-light;
+			height: 200px;
+			margin-bottom: 16px;
+			@include breakpoint( ">960px" ) {
+				margin-bottom: 0;
+			}
 		}
 
 		.products__product-form-details-images,
 		.products__product-form-details-basic {
 			flex: 1;
-			margin-right: 10px;
+			@include breakpoint( ">960px" ) {
+				margin-right: 32px;
+			}
 
 			&:last-child {
 				margin-right: 0;
 			}
+		}
+
+		.products__product-form-details-basic__description textarea{
+			resize: vertical;
 		}
 	}
 
