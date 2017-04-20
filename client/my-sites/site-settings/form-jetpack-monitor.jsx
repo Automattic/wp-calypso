@@ -20,7 +20,6 @@ import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QuerySiteMonitorSettings from 'components/data/query-site-monitor-settings';
-import { protectForm } from 'lib/protect-form';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { updateSiteMonitorSettings } from 'state/sites/monitor/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -64,7 +63,6 @@ class SiteSettingsFormJetpackMonitor extends Component {
 
 		notices.clearNotices( 'notices' );
 		this.props.updateSiteMonitorSettings( siteId, this.state ).then( () => {
-			this.props.markSaved();
 			if ( ! monitorSettingsUpdateSuccessful ) {
 				notices.error( translate( 'There was a problem saving your changes. Please, try again.' ) );
 				return;
@@ -197,4 +195,4 @@ export default connect(
 			trackEvent,
 		};
 	}
-)( protectForm( localize( SiteSettingsFormJetpackMonitor ) ) );
+)( localize( SiteSettingsFormJetpackMonitor ) );
