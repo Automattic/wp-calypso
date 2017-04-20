@@ -490,39 +490,41 @@ const LoggedInForm = React.createClass( {
 		}
 	},
 
-	onClickDisclaimerLink() {
-		this.props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click' );
+	getTermsOfServiceUrl() {
+		return 'https://' + i18n.getLocaleSlug() + '.wordpress.com/tos/';
+	},
+
+	onClickShareDetailsLink() {
+		this.props.recordTracksEvent( 'calypso_jpc_share_details_link_click' );
 	},
 
 	getDisclaimerText() {
-		const { queryObject } = this.props.jetpackConnectAuthorize;
-		const { blogname } = queryObject;
-
-		const detailsLink = (
+		const shareDetailsLink = (
 			<a
 				target="_blank"
 				rel="noopener noreferrer"
-				onClick={ this.onClickDisclaimerLink }
+				onClick={ this.onClickShareDetailsLink }
 				href="https://jetpack.com/support/what-data-does-jetpack-sync/"
 				className="jetpack-connect__sso-actions-modal-link" />
 		);
 
-		const text = this.translate(
-			'By connecting your site, you agree to {{detailsLink}}share details{{/detailsLink}} between WordPress.com and %(siteName)s.',
-			{
-				components: {
-					detailsLink
-				},
-				args: {
-					siteName: decodeEntities( blogname )
-				}
-			}
-		);
-
 		return (
-			<p className="jetpack-connect__tos-link">
-				{ text }
-			</p>
+			<p className="jetpack-connect__tos-link">{
+				this.translate(
+					'By connecting your site you agree to our fascinating {{tosLink}}Terms of Service{{/tosLink}} and to {{shareDetailsLink}}share details{{/shareDetailsLink}} with WordPress.com',
+					{
+						components: {
+							shareDetailsLink,
+							tosLink: <a
+								className="jetpack-connect__tos-link-text"
+								href={ this.getTermsOfServiceUrl() }
+								onClick={ this.props.handleOnClickTos }
+								target="_blank"
+								rel="noopener noreferrer" />
+						}
+					}
+				)
+			}</p>
 		);
 	},
 
@@ -620,7 +622,6 @@ const LoggedInForm = React.createClass( {
 		}
 		return (
 			<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
-				{ this.getDisclaimerText() }
 				<Button
 					primary
 					disabled={ this.isAuthorizing() || this.props.requestHasXmlrpcError() }
@@ -628,6 +629,7 @@ const LoggedInForm = React.createClass( {
 				>
 					{ this.getButtonText() }
 				</Button>
+				{ this.getDisclaimerText() }
 			</LoggedOutFormFooter>
 
 		);
