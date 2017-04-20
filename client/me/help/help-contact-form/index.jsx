@@ -21,14 +21,8 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
-import siteList from 'lib/sites-list';
 import ChatClosureNotice from '../chat-closure-notice';
 import { getSelectedOrPrimarySiteId } from 'state/selectors';
-
-/**
- * Module variables
- */
-const sites = siteList();
 
 export const HelpContactForm = React.createClass( {
 	mixins: [ LinkedStateMixin, PureRenderMixin ],
@@ -93,9 +87,8 @@ export const HelpContactForm = React.createClass( {
 		this.props.valueLink.requestChange( this.state );
 	},
 
-	setSite( siteSlug ) {
-		const site = sites.getSite( siteSlug );
-		this.setState( { siteId: site.ID } );
+	setSite( siteId ) {
+		this.setState( { siteId } );
 	},
 
 	trackClickStats( selectionName, selectedOption ) {
