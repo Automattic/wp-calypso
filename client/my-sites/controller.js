@@ -242,7 +242,7 @@ module.exports = {
 	 * Set up site selection based on last URL param and/or handle no-sites error cases
 	 */
 	siteSelection( context, next ) {
-		const siteID = route.getSiteFragment( context.path );
+		const siteID = context.params.site || route.getSiteFragment( context.path );
 		const basePath = route.sectionify( context.path );
 		const currentUser = user.get();
 		const hasOneSite = currentUser.visible_site_count === 1;

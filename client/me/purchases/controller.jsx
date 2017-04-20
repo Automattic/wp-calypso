@@ -19,16 +19,12 @@ import NoSitesMessage from 'components/empty-content/no-sites-message';
 import paths from './paths';
 import PurchasesHeader from './purchases-list/header';
 import PurchasesList from './purchases-list';
-import { receiveSite } from 'state/sites/actions';
 import { concatTitle, recordPageView, renderPage } from 'lib/react-helpers';
-import { setAllSitesSelected, setSelectedSiteId } from 'state/ui/actions';
-import sitesFactory from 'lib/sites-list';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 import titles from './titles';
 import userFactory from 'lib/user';
 
 const recordPurchasesPageView = partial( recordPageView, partial.placeholder, 'Purchases' );
-const sites = sitesFactory();
 const user = userFactory();
 
 // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
@@ -37,32 +33,6 @@ function setTitle( context, ...title ) {
 		concatTitle( titles.purchases, ...title )
 	) );
 }
-
-/**
- * Populates `state.sites` and `state.ui` with the currently selected site.
- * TODO: Remove this once `sites-list` is removed from Calypso.
- *
- * @param {String} siteSlug - The slug of a site.
- * @param {Function} dispatch - Redux dispatcher
- */
-const setSelectedSite = ( siteSlug, dispatch ) => {
-	const setSelectedSiteCalls = () => {
-		sites.setSelectedSite( siteSlug );
-		const selectedSite = sites.getSelectedSite();
-		dispatch( receiveSite( selectedSite ) );
-		dispatch( setSelectedSiteId( selectedSite.ID ) );
-	};
-
-	if ( sites.select( siteSlug ) ) {
-		setSelectedSiteCalls();
-	} else if ( ! sites.initialized ) {
-		sites.once( 'change', setSelectedSiteCalls );
-	} else {
-		// this is an edge case where the user has a purchase on a site they no
-		// longer have access to.
-		dispatch( setAllSitesSelected() );
-	}
-};
 
 export default {
 	addCardDetails( context ) {
@@ -75,8 +45,6 @@ export default {
 			paths.addCardDetails(),
 			'Add Card Details'
 		);
-
-		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
 			context,
@@ -108,8 +76,6 @@ export default {
 			'Cancel Privacy Protection'
 		);
 
-		setSelectedSite( context.params.site, context.store.dispatch );
-
 		renderPage(
 			context,
 			<CancelPrivacyProtection
@@ -128,8 +94,6 @@ export default {
 			paths.cancelPurchase(),
 			'Cancel Purchase'
 		);
-
-		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
 			context,
@@ -150,8 +114,6 @@ export default {
 			'Confirm Cancel Domain'
 		);
 
-		setSelectedSite( context.params.site, context.store.dispatch );
-
 		renderPage(
 			context,
 			<ConfirmCancelDomain
@@ -171,8 +133,6 @@ export default {
 			'Edit Card Details'
 		);
 
-		setSelectedSite( context.params.site, context.store.dispatch );
-
 		renderPage(
 			context,
 			<EditCardDetails
@@ -190,10 +150,7 @@ export default {
 
 		renderPage(
 			context,
-			<PurchasesList
-				sites={ sites }
-				noticeType={ context.params.noticeType }
-			/>
+			<PurchasesList noticeType={ context.params.noticeType } />
 		);
 	},
 
@@ -207,8 +164,6 @@ export default {
 			paths.managePurchase(),
 			'Manage Purchase'
 		);
-
-		setSelectedSite( context.params.site, context.store.dispatch );
 
 		renderPage(
 			context,
