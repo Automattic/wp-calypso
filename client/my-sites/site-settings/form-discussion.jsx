@@ -105,7 +105,6 @@ class SiteSettingsFormDiscussion extends Component {
 		const {
 			fields,
 			handleAutosavingToggle,
-			isJetpack,
 			isRequestingSettings,
 			isSavingSettings,
 			siteId,
@@ -184,7 +183,6 @@ class SiteSettingsFormDiscussion extends Component {
 				</CompactFormToggle>
 				<JetpackModuleToggle
 					disabled={ isRequestingSettings || isSavingSettings }
-					isJetpackSite={ isJetpack }
 					label={ translate( 'Enable pop-up business cards over commenters’ Gravatars' ) }
 					moduleSlug="gravatar-hovercards"
 					siteId={ siteId }
