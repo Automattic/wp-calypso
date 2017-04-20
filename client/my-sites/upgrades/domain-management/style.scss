@@ -888,7 +888,7 @@ ul.email-forwarding__list {
 	}
 
 	&.is-placeholder {
-		.name-servers__dns, .name-servers__dns_templates {
+		.name-servers__dns, .name-servers__dns-templates {
 			.name-servers__title {
 				@include placeholder();
 			}

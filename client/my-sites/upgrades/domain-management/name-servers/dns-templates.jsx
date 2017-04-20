@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import DnsTemplateButton from './dns-template-button';
 import GoDaddyMail from '../dns/godaddy-email';
 import Office365 from '../dns/office-365';
@@ -49,7 +50,7 @@ class DnsTemplates extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div className="name-servers__dns_templates is-compact card">
+			<Card compact className="name-servers__dns-templates">
 				<span className="name-servers__title">
 					{ translate( 'If you have already bought an e-mail service for the domain, ' +
 						'you can set it up with us easily:' ) }
@@ -71,7 +72,7 @@ class DnsTemplates extends Component {
 				<div className="name-servers__dns-templates-forms">
 					{ this.showCurrentTemplate() }
 				</div>
-			</div>
+			</Card>
 		);
 	}
 }
