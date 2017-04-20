@@ -1,0 +1,29 @@
+.editor-revisions-list__date {
+	font-weight: bold;
+}
+
+.editor-revisions-list__additions {
+	color: $alert-green;
+}
+
+.editor-revisions-list__deletions {
+	color: $alert-red;
+}
+
+.editor-revisions-list__list,
+.editor-revisions-list__header {
+	background: $white;
+	border-top: 1px solid darken( $sidebar-bg-color, 5% );
+	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
+	font-size: 13px;
+	padding: 1rem;
+}
+
+.editor-revisions-list__header {
+	margin-bottom: 10px;
+}
+
+.editor-revisions-list__restore-revision {
+	margin-top: 5px;
+	width: 100%;
+}
