@@ -72,9 +72,12 @@ export class SiteSettingsComponent extends Component {
 
 		switch ( section ) {
 			case 'general':
-				return <GeneralSettings site={ site }
-					sitePurchases={ this.props.sitePurchases }
-					hasLoadedSitePurchasesFromServer={ this.props.hasLoadedSitePurchasesFromServer } />;
+				return (
+					<GeneralSettings
+						sitePurchases={ this.props.sitePurchases }
+						hasLoadedSitePurchasesFromServer={ this.props.hasLoadedSitePurchasesFromServer }
+					/>
+				);
 			case 'security':
 				return <SiteSecurity site={ site } />;
 			case 'import':
