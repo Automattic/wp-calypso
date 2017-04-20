@@ -32,6 +32,14 @@ describe( 'utils', function() {
 			assert.equal( removeLocaleFromPath( '/start/flow/step' ), '/start/flow/step' );
 		} );
 
+		it( 'should remove the :lang part of the URL, keeping any query string', function() {
+			assert.equal( removeLocaleFromPath( '/start/flow/step/fr?foo=bar' ), '/start/flow/step?foo=bar' );
+		} );
+
+		it( 'should not change the URL if no lang is present', function() {
+			assert.equal( removeLocaleFromPath( '/start/flow/step?foo=bar' ), '/start/flow/step?foo=bar' );
+		} );
+
 		it( 'should not remove the :flow part of the URL', function() {
 			assert.equal( removeLocaleFromPath( '/start' ), '/start' );
 			assert.equal( removeLocaleFromPath( '/start/flow' ), '/start/flow' );
