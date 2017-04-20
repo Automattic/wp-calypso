@@ -11,7 +11,8 @@ import {
 	isString,
 	omit,
 	overSome,
-	pickBy
+	pickBy,
+	partial
 } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -42,6 +43,10 @@ import {
 	isJetpackSite,
 	isRequestingSite,
 } from 'state/sites/selectors';
+import {
+	isSiteSettingsSaveSuccessful,
+	getSiteSettingsSaveError,
+} from 'state/site-settings/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
@@ -56,6 +61,10 @@ import {
 import { hasFeature } from 'state/sites/plans/selectors';
 import { FEATURE_ADVANCED_SEO, PLAN_BUSINESS } from 'lib/plans/constants';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import {
+	requestSiteSettings,
+	saveSiteSettings
+} from 'state/site-settings/actions';
 
 const serviceIds = {
 	google: 'google-site-verification',
@@ -140,9 +149,29 @@ export const SeoForm = React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		const { selectedSite: prevSite, isFetchingSite } = this.props;
+		const { selectedSite: prevSite, isFetchingSite, translate } = this.props;
 		const { selectedSite: nextSite } = nextProps;
 		const { dirtyFields } = this.state;
+
+		// save success
+		if ( this.state.isSubmittingForm && nextProps.isSaveSuccess ) {
+			this.props.markSaved();
+			this.props.requestSiteSettings( nextProps.siteId );
+			this.refreshCustomTitles();
+			this.setState( { isSubmittingForm: false } );
+		}
+
+		// save error
+		if ( this.state.isSubmittingForm && nextProps.saveError ) {
+			this.setState( { isSubmittingForm: false } );
+			switch ( nextProps.saveError.error ) {
+				case 'invalid_ip':
+					notices.error( translate( 'One of your IP Addresses was invalid. Please, try again.' ) );
+					break;
+				default:
+					notices.error( translate( 'There was a problem saving your changes. Please, try again.' ) );
+			}
+		}
 
 		// if we are changing sites, everything goes
 		if ( prevSite.ID !== nextSite.ID ) {
@@ -229,7 +258,7 @@ export const SeoForm = React.createClass( {
 
 	submitSeoForm( event ) {
 		const {
-			site,
+			siteId,
 			storedTitleFormats,
 			showAdvancedSeo,
 			showWebsiteMeta,
@@ -290,25 +319,7 @@ export const SeoForm = React.createClass( {
 			updatedOptions.advanced_seo_front_page_description = this.state.frontPageMetaDescription;
 		}
 
-		site.saveSettings( updatedOptions, error => {
-			if ( error ) {
-				switch ( error.error ) {
-					case 'invalid_ip':
-						notices.error( translate( 'One of your IP Addresses was invalid. Please, try again.' ) );
-						break;
-					default:
-						notices.error( translate( 'There was a problem saving your changes. Please, try again.' ) );
-				}
-				this.setState( { isSubmittingForm: false } );
-			} else {
-				notices.success( translate( 'Settings saved!' ) );
-				this.props.markSaved();
-				this.setState( { isSubmittingForm: false } );
-
-				site.fetchSettings();
-				this.refreshCustomTitles();
-			}
-		} );
+		this.props.saveSiteSettings( siteId, updatedOptions );
 
 		this.trackSubmission();
 	},
@@ -759,15 +770,19 @@ const mapStateToProps = ( state, ownProps ) => {
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isVerificationToolsActive: isJetpackModuleActive( state, siteId, 'verification-tools' ),
 		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
+		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
+		saveError: getSiteSettingsSaveError( state, siteId ),
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
-	refreshSiteData: siteId => dispatch( requestSite( siteId ) ),
-	trackFormSubmitted: () => dispatch( recordTracksEvent( 'calypso_seo_settings_form_submit', {} ) ),
-	trackTitleFormatsUpdated: () => dispatch( recordTracksEvent( 'calypso_seo_tools_title_formats_updated', {} ) ),
-	trackFrontPageMetaUpdated: () => dispatch( recordTracksEvent( 'calypso_seo_tools_front_page_meta_updated', {} ) )
-} );
+const mapDispatchToProps = {
+	refreshSiteData: requestSite,
+	requestSiteSettings,
+	saveSiteSettings,
+	trackFormSubmitted: partial( recordTracksEvent, 'calypso_seo_settings_form_submit' ),
+	trackTitleFormatsUpdated: partial( recordTracksEvent, 'calypso_seo_tools_title_formats_updated' ),
+	trackFrontPageMetaUpdated: partial( recordTracksEvent, 'calypso_seo_tools_front_page_meta_updated' ),
+};
 
 export default connect(
 	mapStateToProps,
