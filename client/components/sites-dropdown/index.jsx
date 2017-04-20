@@ -14,7 +14,7 @@ import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import SiteSelector from 'components/site-selector';
 import sitesList from 'lib/sites-list';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSite } from 'state/sites/selectors';
 import { getSelectedOrPrimarySiteId } from 'state/selectors';
 
 const sites = sitesList();
@@ -67,7 +67,7 @@ export class SitesDropdown extends PureComponent {
 						{
 							this.props.isPlaceholder
 							? <SitePlaceholder />
-							: <Site site={ this.props.selectedSite } indicator={ false } />
+							: <Site site={ this.props.getSite( this.state.selectedSiteId ) } indicator={ false } />
 						}
 						<Gridicon icon="chevron-down" />
 					</div>
@@ -90,7 +90,7 @@ export class SitesDropdown extends PureComponent {
 
 export default connect(
 	( state ) => ( {
-		selectedSite: getSelectedSite( state ),
+		getSite: ( siteId ) => getSite( state, siteId ),
 		selectedOrPrimarySiteId: getSelectedOrPrimarySiteId( state ),
 	} )
 )( SitesDropdown );
