@@ -105,8 +105,6 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 
 export default function createReduxStoreFromPersistedInitialState( reduxStoreReady ) {
 	if ( config.isEnabled( 'persist-redux' ) && isLoggedIn() && ! isSupportUserSession() ) {
-		// clear storage any storage that used the old-style key
-		localforage.removeItem( 'redux-state' );
 		localforage.getItem( 'redux-state-' + user.get().ID )
 			.then( loadInitialState )
 			.catch( loadInitialStateFailed )
