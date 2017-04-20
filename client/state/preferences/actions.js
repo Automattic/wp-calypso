@@ -38,7 +38,7 @@ export function fetchPreferences() {
 
 		return wpcom.me().settings().get().then( ( data ) => {
 			dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
-			dispatch( { type: PREFERENCES_FETCH_SUCCESS } );
+			dispatch( { type: PREFERENCES_FETCH_SUCCESS, data } );
 		} ).catch( ( data, error ) => {
 			dispatch( {
 				type: PREFERENCES_FETCH_FAILURE,
