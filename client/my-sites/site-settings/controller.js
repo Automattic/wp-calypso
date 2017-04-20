@@ -99,21 +99,21 @@ module.exports = {
 	importSite( context ) {
 		renderPage(
 			context,
-			<SiteSettingsComponent sites={ sites } section="import" />
+			<SiteSettingsComponent section="import" />
 		);
 	},
 
 	exportSite( context ) {
 		renderPage(
 			context,
-			<SiteSettingsComponent sites={ sites } section="export" />
+			<SiteSettingsComponent section="export" />
 		);
 	},
 
 	guidedTransfer( context ) {
 		renderPage(
 			context,
-			<SiteSettingsComponent sites={ sites } section="guidedTransfer" hostSlug={ context.params.host_slug } />
+			<SiteSettingsComponent section="guidedTransfer" hostSlug={ context.params.host_slug } />
 		);
 	},
 
