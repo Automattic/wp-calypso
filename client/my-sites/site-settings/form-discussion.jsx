@@ -592,14 +592,12 @@ const connectComponent = connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const jetpackSettingsUISupported = siteSupportsJetpackSettingsUi( state, siteId );
 		const isLikesModuleActive = isJetpackModuleActive( state, siteId, 'likes' );
-		const isSubscriptionsModuleActive = isJetpackModuleActive( state, siteId, 'subscriptions' );
 
 		return {
 			siteId,
 			isJetpack,
 			jetpackSettingsUISupported,
 			isLikesModuleActive,
-			isSubscriptionsModuleActive,
 		};
 	}
 );
