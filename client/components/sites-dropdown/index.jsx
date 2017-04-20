@@ -40,10 +40,15 @@ export class SitesDropdown extends PureComponent {
 		selectedSiteId: this.props.selectedOrPrimarySiteId,
 	}
 
-	selectSite = ( siteID ) => {
-		this.props.onSiteSelect( siteID );
+	selectSite = ( siteSlug ) => {
+		// SiteSelector gives us a slug, but we want to pass an ID to our onSiteSelect
+		// callback prop so it's consistent with the selectedSiteId prop. We also use
+		// a siteId for our internal state.
+		// TODO: Change SiteSelector to also use site IDs instead of slugs and objects.
+		const siteId = sites.getSite( siteSlug );
+		this.props.onSiteSelect( siteId );
 		this.setState( {
-			selectedSiteId: siteID,
+			selectedSiteId: siteId,
 			open: false
 		} );
 	}
