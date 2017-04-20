@@ -228,6 +228,14 @@ SitesList.prototype.update = function( sites ) {
 				return siteObj;
 			}
 
+			// When we set a new front page, we clear out SitesList. On accounts with a large
+			// number of sites, the resulting fetch can take time resulting in incorrect data
+			// being displayed. This uses the correct siteObj as the source of truth in case
+			// of a mismatch. See #13143.
+			if ( siteObj.options.page_on_front !== site.options.page_on_front ) {
+				return siteObj;
+			}
+
 			if ( site.options.is_automated_transfer && ! siteObj.jetpack && site.jetpack ) {
 				//We have a site that was not jetpack and now is.
 				siteObj.off( 'change', this.propagateChange );
