@@ -68,7 +68,7 @@ module.exports = React.createClass( {
 	},
 
 	getPathWithLocale: function( locale ) {
-		return i18nUtils.removeLocaleFromPath( this.props.path ) + '/' + locale;
+		return i18nUtils.addLocaleToPath( this.props.path, locale );
 	},
 
 	updateLocales: function() {
