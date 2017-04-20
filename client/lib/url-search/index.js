@@ -13,8 +13,13 @@ import { pick } from 'lodash';
 const debug = debugFactory( 'calypso:url-search' );
 
 /**
- * Function for constructing the url to page to. e.g.
- * { uri: 'google.com', search:'hello' } --> 'google.com?s=hello'
+ * Function for constructing the url to page to. Here are some examples:
+ * 1. { uri: 'google.com', search:'hello' } --> 'google.com?s=hello'
+ * 2. {
+ *     uri: 'wordpress.com/read/search?q=reader+is+awesome',
+ *     search: 'reader is super awesome'
+ *     queryKey: 'q',
+ *    } --> 'wordpress.com/read/search?q=reader+is+super+awesome'
  *
  * @param {Object} options the options object
  * @param {string} options.uri the base uri to modify and add a query to
@@ -23,7 +28,7 @@ const debug = debugFactory( 'calypso:url-search' );
  *
  * @returns {string} The built search url
  */
-const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
+export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
 	const parsedUrl = pick(
 		url.parse( uri, true ),
 		'pathname',
