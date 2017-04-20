@@ -21,8 +21,14 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
+import siteList from 'lib/sites-list';
 import ChatClosureNotice from '../chat-closure-notice';
-import { getSelectedOrPrimarySiteId } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+
+/**
+ * Module variables
+ */
+const sites = siteList();
 
 export const HelpContactForm = React.createClass( {
 	mixins: [ LinkedStateMixin, PureRenderMixin ],
@@ -71,7 +77,7 @@ export const HelpContactForm = React.createClass( {
 			howYouFeel: 'unspecified',
 			message: '',
 			subject: '',
-			siteId: this.props.siteId
+			siteId: this.getSiteId()
 		};
 	},
 
@@ -87,8 +93,22 @@ export const HelpContactForm = React.createClass( {
 		this.props.valueLink.requestChange( this.state );
 	},
 
-	setSite( siteId ) {
-		this.setState( { siteId } );
+	getSiteId() {
+		if ( this.props.selectedSiteId ) {
+			return this.props.selectedSiteId;
+		}
+
+		const primarySite = sites.getPrimary();
+		if ( primarySite ) {
+			return primarySite.ID;
+		}
+
+		return null;
+	},
+
+	setSite( siteSlug ) {
+		const site = sites.getSite( siteSlug );
+		this.setState( { siteId: site.ID } );
 	},
 
 	trackClickStats( selectionName, selectedOption ) {
@@ -253,8 +273,10 @@ export const HelpContactForm = React.createClass( {
 	}
 } );
 
-const mapStateToProps = ( state ) => ( {
-	siteId: getSelectedOrPrimarySiteId( state )
-} );
+const mapStateToProps = ( state ) => {
+	return {
+		selectedSiteId: getSelectedSiteId( state )
+	};
+};
 
 export default connect( mapStateToProps )( localize( HelpContactForm ) );
