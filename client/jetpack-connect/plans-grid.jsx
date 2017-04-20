@@ -1,31 +1,30 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
-import StepHeader from '../step-header';
+import StepHeader from 'signup/step-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 
-export default React.createClass( {
-	displayName: 'JetpackPlansGrid',
-
+class JetpackPlansGrid extends Component {
 	renderConnectHeader() {
-		let headerText = this.translate( 'Your site is now connected!' );
-		let subheaderText = this.translate( 'Now pick a plan that\'s right for you.' );
+		let headerText = this.props.translate( 'Your site is now connected!' );
+		let subheaderText = this.props.translate( 'Now pick a plan that\'s right for you.' );
 		if ( this.props.showFirst ) {
-			headerText = this.translate( 'You are moments away from connecting your site' );
+			headerText = this.props.translate( 'You are moments away from connecting your site' );
 		}
 		if ( this.props.isLanding ) {
-			headerText = this.translate( 'Pick a plan that\'s right for you.' );
+			headerText = this.props.translate( 'Pick a plan that\'s right for you.' );
 			subheaderText = '';
 
 			if ( this.props.landingType === 'vaultpress' ) {
-				headerText = this.translate( 'Select your VaultPress plan.' );
-				subheaderText = this.translate( 'VaultPress backup and security plans are now cheaper as part of Jetpack.' );
+				headerText = this.props.translate( 'Select your VaultPress plan.' );
+				subheaderText = this.props.translate( 'VaultPress backup and security plans are now cheaper as part of Jetpack.' );
 			}
 		}
 		return (
@@ -35,7 +34,7 @@ export default React.createClass( {
 				step={ 1 }
 				steps={ 3 } />
 		);
-	},
+	}
 
 	render() {
 		const defaultJetpackSite = { jetpack: true, plan: {}, isUpgradeable: () => true };
@@ -58,4 +57,6 @@ export default React.createClass( {
 			</Main>
 		);
 	}
-} );
+}
+
+export default localize( JetpackPlansGrid );
