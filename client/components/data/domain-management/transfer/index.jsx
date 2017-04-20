@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,6 +13,7 @@ import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
 import UsersStore from 'lib/users/store';
 import { fetchUsers } from 'lib/users/actions';
 import { fetchDomains, fetchWapiDomainInfo } from 'lib/upgrades/actions';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const stores = [
 	DomainsStore,
@@ -36,23 +38,22 @@ function getStateFromStores( props ) {
 	};
 }
 
-const TransferData = React.createClass( {
+class TransferData extends Component {
 	propTypes: {
 		component: React.PropTypes.func.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		sites: React.PropTypes.object.isRequired
-	},
+		selectedDomainName: React.PropTypes.string.isRequired
+	};
 
 	componentWillMount() {
 		this.loadData();
-	},
+	}
 
 	componentWillUpdate() {
 		this.loadData();
-	},
+	}
 
 	loadData() {
-		const selectedSite = this.props.sites.getSelectedSite();
+		const selectedSite = this.props.selectedSite;
 
 		if ( this.prevSelectedSite !== selectedSite ) {
 			fetchDomains( selectedSite.ID );
@@ -61,7 +62,7 @@ const TransferData = React.createClass( {
 			this.prevSelectedSite = selectedSite;
 		}
 		fetchWapiDomainInfo( this.props.selectedDomainName );
-	},
+	}
 
 	render() {
 		return (
@@ -70,9 +71,13 @@ const TransferData = React.createClass( {
 				stores={ stores }
 				getStateFromStores={ getStateFromStores }
 				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.sites.getSelectedSite() } />
+				selectedSite={ this.props.selectedSite } />
 		);
 	}
-} );
+}
 
-export default TransferData;
+export default connect( ( state ) => {
+	return {
+		selectedSite: getSelectedSite( state )
+	};
+} )( TransferData );
