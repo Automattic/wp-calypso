@@ -10,7 +10,7 @@ import { identity, noop } from 'lodash';
  * Internal dependencies
  */
 import Card from 'components/card';
-import Button from 'components/button';
+import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
 
@@ -26,10 +26,11 @@ import {
 } from 'state/selectors';
 
 export class ForgotUsernameFormComponent extends Component {
-	submitForm = () => {
+	submitForm = ( event ) => {
 		const { userData } = this.props;
-
 		this.props.fetchResetOptionsByNameAndUrl( userData.firstName, userData.lastName, userData.url );
+
+		event.preventDefault();
 	};
 
 	firstNameUpdated = ( event ) => {
@@ -81,43 +82,45 @@ export class ForgotUsernameFormComponent extends Component {
 					{ translate( 'Forgot your username?' ) }
 				</h2>
 				<p>{ translate( 'Enter your full name and URL instead.' ) }</p>
-				<FormLabel>
-					{ translate( 'First Name' ) }
-					<FormInput
-						className="forgot-username-form__first-name-input"
-						onChange={ this.firstNameUpdated }
-						value={ firstName }
-						disabled={ isRequesting } />
-				</FormLabel>
-				<FormLabel>
-					{ translate( 'Last Name' ) }
-					<FormInput
-						className="forgot-username-form__last-name-input"
-						onChange={ this.lastNameUpdated }
-						value={ lastName }
-						disabled={ isRequesting } />
-				</FormLabel>
-				<FormLabel>
-					{ translate( "Your site's URL" ) }
-					<FormInput
-						className="forgot-username-form__site-url-input"
-						onChange={ this.siteUrlUpdated }
-						value={ url }
-						disabled={ isRequesting } />
-				</FormLabel>
-				{
-					requestError && (
-					<p className="forgot-username-form__error-message">
-						{ this.getErrorMessage( requestError ) }
-					</p> )
-				}
-				<Button
-					className="forgot-username-form__submit-button"
-					onClick={ this.submitForm }
-					disabled={ ! isPrimaryButtonEnabled }
-					primary>
-					{ translate( 'Continue' ) }
-				</Button>
+				<form onSubmit={ this.onSubmit }>
+					<FormLabel>
+						{ translate( 'First Name' ) }
+						<FormInput
+							className="forgot-username-form__first-name-input"
+							onChange={ this.firstNameUpdated }
+							value={ firstName }
+							disabled={ isRequesting } />
+					</FormLabel>
+					<FormLabel>
+						{ translate( 'Last Name' ) }
+						<FormInput
+							className="forgot-username-form__last-name-input"
+							onChange={ this.lastNameUpdated }
+							value={ lastName }
+							disabled={ isRequesting } />
+					</FormLabel>
+					<FormLabel>
+						{ translate( "Your site's URL" ) }
+						<FormInput
+							className="forgot-username-form__site-url-input"
+							onChange={ this.siteUrlUpdated }
+							value={ url }
+							disabled={ isRequesting } />
+					</FormLabel>
+					{
+						requestError && (
+						<p className="forgot-username-form__error-message">
+							{ this.getErrorMessage( requestError ) }
+						</p> )
+					}
+					<FormButton
+						className="forgot-username-form__submit-button"
+						type="submit"
+						disabled={ ! isPrimaryButtonEnabled }
+						primary>
+						{ translate( 'Continue' ) }
+					</FormButton>
+				</form>
 			</Card>
 		);
 	}
