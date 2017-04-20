@@ -171,10 +171,6 @@ module.exports = React.createClass( {
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( this.props.cart ) } />
 
-				<CartCoupon cart={ this.props.cart } />
-
-				<CartToggle />
-
 				<div className="payment-box-actions">
 					<div className="pay-button">
 						<button type="submit" className="button is-primary button-pay" disabled={ this.state.formDisabled }>
@@ -198,6 +194,10 @@ module.exports = React.createClass( {
 							cart={ this.props.cart } />
 					}
 				</div>
+
+				<CartCoupon cart={ this.props.cart } />
+
+				<CartToggle />
 			</form>
 		);
 	},
