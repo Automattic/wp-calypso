@@ -56,6 +56,11 @@ export class SitesDropdown extends PureComponent {
 		return sites.getSite( this.state.selectedSiteId );
 	}
 
+	// Our filter prop handles siteIds, while SiteSelector's filter prop needs objects
+	siteFilter = ( site ) => {
+		return this.props.filter( site.ID );
+	}
+
 	toggleOpen = () => {
 		this.setState( { open: ! this.state.open } );
 	}
@@ -87,7 +92,7 @@ export class SitesDropdown extends PureComponent {
 							onSiteSelect={ this.selectSite }
 							selected={ get( this.getSelectedSite(), 'slug' ) }
 							hideSelected={ true }
-							filter={ this.props.filter }
+							filter={ this.props.filter && this.siteFilter }
 						/>
 					}
 				</div>
