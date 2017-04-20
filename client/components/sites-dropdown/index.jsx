@@ -4,7 +4,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
+import { get, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -15,7 +15,7 @@ import SitePlaceholder from 'blocks/site/placeholder';
 import SiteSelector from 'components/site-selector';
 import sitesList from 'lib/sites-list';
 import { getSite } from 'state/sites/selectors';
-import { getSelectedOrPrimarySiteId } from 'state/selectors';
+import { getPrimarySiteId } from 'state/selectors';
 
 const sites = sitesList();
 
@@ -37,7 +37,7 @@ export class SitesDropdown extends PureComponent {
 	}
 
 	state = {
-		selectedSiteId: this.props.selectedOrPrimarySiteId,
+		selectedSiteId: this.props.selectedSiteId || this.props.primarySiteId,
 	}
 
 	selectSite = ( siteSlug ) => {
@@ -45,7 +45,7 @@ export class SitesDropdown extends PureComponent {
 		// callback prop so it's consistent with the selectedSiteId prop. We also use
 		// a siteId for our internal state.
 		// TODO: Change SiteSelector to also use site IDs instead of slugs and objects.
-		const siteId = sites.getSite( siteSlug );
+		const siteId = get( sites.getSite( siteSlug ), 'ID' );
 		this.props.onSiteSelect( siteId );
 		this.setState( {
 			selectedSiteId: siteId,
@@ -96,6 +96,6 @@ export class SitesDropdown extends PureComponent {
 export default connect(
 	( state ) => ( {
 		getSite: ( siteId ) => getSite( state, siteId ),
-		selectedOrPrimarySiteId: getSelectedOrPrimarySiteId( state ),
+		primarySiteId: getPrimarySiteId( state ),
 	} )
 )( SitesDropdown );
