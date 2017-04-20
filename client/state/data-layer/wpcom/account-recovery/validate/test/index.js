@@ -3,6 +3,7 @@
  */
 import { assert } from 'chai';
 import sinon from 'sinon';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,8 +18,6 @@ import {
 } from 'state/action-types';
 
 describe( 'handleValidateRequest()', () => {
-	const dispatch = sinon.spy();
-
 	const apiBaseUrl = 'https://public-api.wordpress.com:443';
 	const endpoint = '/wpcom/v2/account-recovery/validate';
 
@@ -35,12 +34,16 @@ describe( 'handleValidateRequest()', () => {
 				.reply( 200, { success: true } )
 		) );
 
-		it( 'should dispatch SUCCESS action on success', () => {
-			return handleValidateRequest( { dispatch }, { request } ).then( () =>
+		it( 'should dispatch SUCCESS action on success', ( done ) => {
+			const dispatch = sinon.spy( () => {
 				assert.isTrue( dispatch.calledWith( {
 					type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_SUCCESS,
-				} ) )
-			);
+				} ) );
+
+				done();
+			} );
+
+			handleValidateRequest( { dispatch }, { request }, noop );
 		} );
 	} );
 
@@ -56,13 +59,17 @@ describe( 'handleValidateRequest()', () => {
 				.reply( errorResponse.status, errorResponse )
 		) );
 
-		it( 'should dispatch ERROR action on failure', () => {
-			return handleValidateRequest( { dispatch }, { request } ).then( () =>
+		it( 'should dispatch ERROR action on failure', ( done ) => {
+			const dispatch = sinon.spy( () => {
 				assert.isTrue( dispatch.calledWithMatch( {
 					type: ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST_ERROR,
 					error: errorResponse,
 				} ) )
-			);
+
+				done();
+			} );
+
+			handleValidateRequest( { dispatch }, { request }, noop );
 		} );
 	} );
 } );
