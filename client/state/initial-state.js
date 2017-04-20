@@ -70,7 +70,8 @@ function loadInitialStateFailed( error ) {
 }
 
 function isLoggedIn() {
-	return !! user.get() && user.get().ID;
+	const userData = user.get();
+	return !! userData && userData.ID;
 }
 
 export function persistOnChange( reduxStore, serializeState = serialize ) {
