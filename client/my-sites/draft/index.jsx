@@ -5,6 +5,7 @@ var React = require( 'react' ),
 	classnames = require( 'classnames' ),
 	noop = require( 'lodash/noop' ),
 	url = require( 'url' );
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -24,10 +25,10 @@ var CompactCard = require( 'components/card/compact' ),
 import Gravatar from 'components/gravatar';
 import photon from 'photon';
 import Notice from 'components/notice';
+import { getSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
-module.exports = React.createClass( {
-
-	displayName: 'Draft',
+const Draft = React.createClass( {
 
 	mixins: [ updatePostStatus ],
 
@@ -35,7 +36,6 @@ module.exports = React.createClass( {
 		showAllActions: React.PropTypes.bool,
 		post: React.PropTypes.object,
 		isPlaceholder: React.PropTypes.bool,
-		sites: React.PropTypes.object,
 		onTitleClick: React.PropTypes.func,
 		postImages: React.PropTypes.object,
 		selected: React.PropTypes.bool,
@@ -146,7 +146,7 @@ module.exports = React.createClass( {
 			return this.postPlaceholder();
 		}
 
-		site = this.props.sites.getSite( post.site_ID );
+		site = this.props.site;
 
 		if ( utils.userCan( 'edit_post', post ) ) {
 			editPostURL = utils.getEditURL( post, site );
@@ -197,7 +197,7 @@ module.exports = React.createClass( {
 						<a href={ editPostURL } onClick={ this.props.onTitleClick }>{ post.excerpt }</a>
 					</span>
 				}
-				{ this.props.sites.selected ? this.draftActions() : <SiteIcon site={ site } size={ 32 } /> }
+				{ this.props.selectedSiteId ? this.draftActions() : <SiteIcon site={ site } size={ 32 } /> }
 				{ image ? this.renderImage( imageUrl ) : null }
 				{ this.props.post.status === 'trash' ? this.restoreButton() : null }
 			</CompactCard>
@@ -308,3 +308,10 @@ module.exports = React.createClass( {
 		return this.props.showAllActions ? this.renderAllActions() : this.renderTrashAction();
 	}
 } );
+
+export default connect( ( state, { siteId } ) => {
+	return {
+		site: getSite( siteId ),
+		selectedSiteId: getSelectedSiteId( state ),
+	};
+} )( Draft );
