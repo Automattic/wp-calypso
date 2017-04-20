@@ -20,22 +20,25 @@ const RejectedUserAgents = ( {
 		wp_rejected_user_agent,
 	},
 	handleChange,
+	isRequesting,
 	translate,
 } ) => {
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Rejected User Agents' ) }>
 				<Button
-					compact={ true }
-					primary={ true }
+					compact
+					primary
+					disabled={ isRequesting }
 					type="submit">
-						{ translate( 'Save Settings' ) }
+					{ translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>
 			<Card>
 				<form>
 					<FormFieldset>
 						<FormTextarea
+							disabled={ isRequesting }
 							onChange={ handleChange( 'wp_rejected_user_agent' ) }
 							value={ wp_rejected_user_agent || '' } />
 						<FormSettingExplanation>

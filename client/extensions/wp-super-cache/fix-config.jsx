@@ -19,9 +19,9 @@ const FixConfig = ( { translate } ) => {
 				<form>
 					<div>
 						<Button
-							compact={ true }
+							compact
 							type="submit">
-								{ translate( 'Restore Default Configuration' ) }
+							{ translate( 'Restore Default Configuration' ) }
 						</Button>
 					</div>
 				</form>

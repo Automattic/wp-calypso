@@ -26,10 +26,12 @@ import WrapSettingsForm from './wrap-settings-form';
  */
 const renderCachePreloadInterval = ( {
 	handleChange,
+	isRequesting,
 	preload_interval,
 } ) => (
 	<FormTextInput
 		className="wp-super-cache__preload-interval"
+		disabled={ isRequesting }
 		min="0"
 		name="preload_interval"
 		onChange={ handleChange( 'preload_interval' ) }
@@ -60,6 +62,7 @@ const PreloadTab = ( {
 	handleChange,
 	handleSelect,
 	handleToggle,
+	isRequesting,
 	translate,
 } ) => {
 	const statusEmailAmountSelectValues = [
@@ -89,10 +92,11 @@ const PreloadTab = ( {
 		<div>
 			<SectionHeader label={ ( 'Preload' ) }>
 				<Button
-					compact={ true }
-					primary={ true }
+					compact
+					primary
+					disabled={ isRequesting }
 					type="submit">
-						{ translate( 'Save Settings' ) }
+					{ translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>
 
@@ -101,6 +105,7 @@ const PreloadTab = ( {
 					<FormFieldset>
 						<FormToggle
 							checked={ !! preload_on }
+							disabled={ isRequesting }
 							onChange={ handleToggle( 'preload_on' ) }>
 							<span>
 								{ translate( 'Preload mode. (Garbage collection only on legacy cache files. Recommended.)' ) }
@@ -109,6 +114,7 @@ const PreloadTab = ( {
 
 						<FormToggle
 							checked={ preload_refresh }
+							disabled={ isRequesting }
 							onChange={ handleToggle( 'preload_refresh' ) }>
 							<span>
 								{ translate(
@@ -119,6 +125,7 @@ const PreloadTab = ( {
 										components: {
 											number: renderCachePreloadInterval( {
 												handleChange,
+												isRequesting,
 												preload_interval,
 											} )
 										}
@@ -138,6 +145,7 @@ const PreloadTab = ( {
 
 						<FormToggle
 							checked={ !! preload_taxonomies }
+							disabled={ isRequesting }
 							onChange={ handleToggle( 'preload_taxonomies' ) }>
 							<span>
 								{ translate( 'Preload tags, categories and other taxonomies.' ) }
@@ -151,6 +159,7 @@ const PreloadTab = ( {
 						</FormLabel>
 						<FormSelect
 							className="wp-super-cache__preload-posts"
+							disabled={ isRequesting }
 							id="preload_posts"
 							name="preload_posts"
 							onChange={ handleSelect }
@@ -166,6 +175,7 @@ const PreloadTab = ( {
 							{ translate( 'Status Emails' ) }
 						</FormLegend>
 						<FormSelect
+							disabled={ isRequesting }
 							id="preload_email_volume"
 							name="preload_email_volume"
 							onChange={ handleSelect }

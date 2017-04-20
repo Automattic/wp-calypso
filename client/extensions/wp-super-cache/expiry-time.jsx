@@ -35,6 +35,7 @@ const ExpiryTime = ( {
 	handleRadio,
 	handleSelect,
 	handleToggle,
+	isRequesting,
 	translate,
 } ) => {
 	const renderCacheTimeout = () => {
@@ -46,6 +47,7 @@ const ExpiryTime = ( {
 
 				<FormTextInput
 					className="wp-super-cache__cache-timeout"
+					disabled={ isRequesting }
 					onChange={ handleChange( 'cache_max_time' ) }
 					value={ cache_max_time || '' } />
 				{ translate( 'seconds' ) }
@@ -71,13 +73,14 @@ const ExpiryTime = ( {
 				<FormLabel>
 					<FormRadio
 						checked={ 'interval' === cache_schedule_type }
+						disabled={ isRequesting }
 						name="cache_schedule_type"
 						onChange={ handleRadio }
 						value="interval" />
 					<span>
 						{ translate( 'Timer' ) }
 						<FormTextInput
-							disabled={ 'interval' !== cache_schedule_type }
+							disabled={ isRequesting || ( 'interval' !== cache_schedule_type ) }
 							onChange={ handleChange( 'cache_time_interval' ) }
 							value={ cache_time_interval || '' } />
 						{ translate( 'seconds' ) }
@@ -90,13 +93,14 @@ const ExpiryTime = ( {
 				<FormLabel className="wp-super-cache__clock">
 					<FormRadio
 						checked={ 'time' === cache_schedule_type }
+						disabled={ isRequesting }
 						name="cache_schedule_type"
 						onChange={ handleRadio }
 						value="time" />
 					<span>
 						{ translate( 'Clock' ) }
 						<FormTextInput
-							disabled={ 'time' !== cache_schedule_type }
+							disabled={ isRequesting || ( 'time' !== cache_schedule_type ) }
 							onChange={ handleChange( 'cache_scheduled_time' ) }
 							value={ cache_scheduled_time || '' } />
 						{ translate( 'HH:MM' ) }
@@ -113,8 +117,8 @@ const ExpiryTime = ( {
 					</FormLabel>
 
 					<FormSelect
+						disabled={ isRequesting || ( 'time' !== cache_schedule_type ) }
 						id="cache_schedule_interval"
-						disabled={ 'time' !== cache_schedule_type }
 						name="cache_schedule_interval"
 						onChange={ handleSelect }
 						value={ cache_schedule_interval || 'five_minutes_interval' }>
@@ -140,6 +144,7 @@ const ExpiryTime = ( {
 
 				<FormToggle
 					checked={ !! cache_gc_email_me }
+					disabled={ isRequesting }
 					id="cache_gc_email_me"
 					onChange={ handleToggle( 'cache_gc_email_me' ) }>
 					<span>
@@ -154,10 +159,11 @@ const ExpiryTime = ( {
 		<div>
 			<SectionHeader label={ translate( 'Expiry Time & Garbage Collection' ) }>
 				<Button
-					compact={ true }
-					primary={ true }
+					compact
+					primary
+					disabled={ isRequesting }
 					type="submit">
-						{ translate( 'Save Settings' ) }
+					{ translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>
 			<Card>

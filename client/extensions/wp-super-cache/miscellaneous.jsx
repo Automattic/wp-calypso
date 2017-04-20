@@ -29,16 +29,18 @@ const Miscellaneous = ( {
 		wp_supercache_304,
 	},
 	handleToggle,
+	isRequesting,
 	translate,
 } ) => {
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Miscellaneous' ) }>
 				<Button
-					compact={ true }
-					primary={ true }
+					compact
+					primary
+					disabled={ isRequesting }
 					type="submit">
-						{ translate( 'Save Settings' ) }
+					{ translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>
 			<Card>
@@ -57,6 +59,7 @@ const Miscellaneous = ( {
 						{ ! wp_cache_compression_disabled &&
 						<FormToggle
 							checked={ !! cache_compression }
+							disabled={ isRequesting }
 							onChange={ handleToggle( 'cache_compression' ) }>
 							<span>
 								{ translate(
@@ -71,6 +74,7 @@ const Miscellaneous = ( {
 
 						<FormToggle
 							checked={ !! wp_cache_not_logged_in }
+							disabled={ isRequesting }
 							onChange={ handleToggle( 'wp_cache_not_logged_in' ) }>
 							<span>
 								{ translate(
@@ -84,6 +88,7 @@ const Miscellaneous = ( {
 
 						<FormToggle
 							checked={ !! cache_rebuild_files }
+							disabled={ isRequesting }
 							onChange={ handleToggle( 'cache_rebuild_files' ) }>
 							<span>
 								{ translate(
@@ -98,7 +103,7 @@ const Miscellaneous = ( {
 
 						<FormToggle
 							checked={ !! wp_supercache_304 }
-							disabled={ '1' === super_cache_enabled }
+							disabled={ isRequesting || ( '1' === super_cache_enabled ) }
 							onChange={ handleToggle( 'wp_supercache_304' ) }>
 							<span>
 								{ translate(
@@ -132,6 +137,7 @@ const Miscellaneous = ( {
 
 						<FormToggle
 							checked={ !! wp_cache_no_cache_for_get }
+							disabled={ isRequesting }
 							onChange={ handleToggle( 'wp_cache_no_cache_for_get' ) }>
 							<span>
 								{ translate( 'Don’t cache pages with GET parameters. (?x=y at the end of a url)' ) }
@@ -140,6 +146,7 @@ const Miscellaneous = ( {
 
 						<FormToggle
 							checked={ !! wp_cache_make_known_anon }
+							disabled={ isRequesting }
 							onChange={ handleToggle( 'wp_cache_make_known_anon' ) }>
 							<span>
 								{ translate( 'Make known users anonymous so they’re served supercached static files.' ) }
@@ -148,6 +155,7 @@ const Miscellaneous = ( {
 
 						<FormToggle
 							checked={ !! wp_cache_hello_world }
+							disabled={ isRequesting }
 							onChange={ handleToggle( 'wp_cache_hello_world' ) }>
 							<span>
 								{ translate( 'Proudly tell the world your server is {{fry}}Stephen Fry proof{{/fry}}! ' +

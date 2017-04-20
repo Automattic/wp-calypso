@@ -20,22 +20,25 @@ const CacheLocation = ( {
 		wp_cache_location,
 	},
 	handleChange,
+	isRequesting,
 	translate,
 } ) => {
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Cache Location' ) }>
 				<Button
-					compact={ true }
-					primary={ true }
+					compact
+					primary
+					disabled={ isRequesting }
 					type="submit">
-						{ translate( 'Save Settings' ) }
+					{ translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>
 			<Card>
 				<form>
 					<FormFieldset>
 						<FormTextInput
+							disabled={ isRequesting }
 							onChange={ handleChange( 'wp_cache_location' ) }
 							value={ wp_cache_location || '' } />
 						<FormSettingExplanation>
