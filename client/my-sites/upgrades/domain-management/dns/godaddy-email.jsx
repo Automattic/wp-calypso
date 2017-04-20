@@ -6,8 +6,9 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
 import Button from 'components/button';
+import { dnsTemplates } from 'lib/domains/constants';
+import { localize } from 'i18n-calypso';
 import notices from 'notices';
 import * as upgradesActions from 'lib/upgrades/actions';
 
@@ -23,7 +24,7 @@ class GoDaddyMail extends Component {
 
 		const { domain, translate } = this.props;
 
-		upgradesActions.applyDnsTemplate( domain, 'godaddy-mail', { domain }, ( error ) => {
+		upgradesActions.applyDnsTemplate( domain, dnsTemplates.GODADDY_EMAIL, { domain }, ( error ) => {
 			if ( error ) {
 				notices.error( error.message || translate( 'The DNS records have not been added.' ) );
 			} else {

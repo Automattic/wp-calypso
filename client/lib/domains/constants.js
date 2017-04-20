@@ -67,9 +67,15 @@ const domainAvailability = {
 	RECENTLY_UNMAPPED: 'recently_mapped',
 };
 
+const dnsTemplates = {
+	GODADDY_EMAIL: 'godaddy-mail',
+	MICROSOFT_OFFICE365: 'microsoft-office365',
+};
+
 export default {
-	type,
+	dnsTemplates,
+	domainAvailability,
 	registrar,
 	tlds,
-	domainAvailability,
+	type,
 };

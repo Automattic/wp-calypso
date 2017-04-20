@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { dnsTemplates } from 'lib/domains/constants';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormFooter from 'my-sites/upgrades/domain-management/components/form-footer';
@@ -39,7 +40,7 @@ class Office365 extends Component {
 				mxdata: replace( domain, '.', '-' ) + '.mail.protection.outlook.com.'
 			};
 
-		upgradesActions.applyDnsTemplate( domain, 'microsoft-office365', variables, ( error ) => {
+		upgradesActions.applyDnsTemplate( domain, dnsTemplates.MICROSOFT_OFFICE365, variables, ( error ) => {
 			if ( error ) {
 				notices.error( error.message || translate( 'The DNS records have not been added.' ) );
 			} else {
