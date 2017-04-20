@@ -51,11 +51,26 @@ class StepWrapper extends Component {
 			if ( this.props.headerText ) {
 				return this.props.headerText;
 			}
-			return this.props.translate( 'Create your account.' );
+
+			return this.props.translate( "Let's get started." );
 		}
 
 		if ( this.props.fallbackHeaderText ) {
 			return this.props.fallbackHeaderText;
+		}
+	}
+
+	subHeaderText() {
+		if ( this.props.positionInFlow === 0 ) {
+			if ( this.props.subHeaderText ) {
+				return this.props.subHeaderText;
+			}
+
+			return this.props.translate( 'Welcome to the best place for your WordPress website.' );
+		}
+
+		if ( this.props.fallbackSubHeaderText ) {
+			return this.props.fallbackSubHeaderText;
 		}
 	}
 
@@ -68,11 +83,14 @@ class StepWrapper extends Component {
 		return (
 			<div className={ classes }>
 				<StepHeader
-					headerText={ this.headerText() }>
+					headerText={ this.headerText() }
+					subHeaderText={ this.subHeaderText() }>
 					{ ( headerButton ) }
 				</StepHeader>
+
 				<div className="step-wrapper__content is-animated-content">
 					{ stepContent }
+
 					<div className="step-wrapper__buttons">
 						{ this.renderBack() }
 						{ this.renderSkip() }
