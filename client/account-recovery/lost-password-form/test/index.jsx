@@ -23,7 +23,8 @@ describe( 'LostPassword', () => {
 		useFakeDom();
 
 		it( 'submit button should be disabled if user login is blank', function() {
-			const wrapper = mount( <LostPasswordFormComponent className="test__test" userLogin="" /> );
+			const wrapper = mount( <LostPasswordFormComponent className="test__test" /> );
+			wrapper.setState( { userLoginFormValue: '' } );
 
 			wrapper.find( '.lost-password-form__user-login-input' ).node.value = '';
 			expect( wrapper.find( '.lost-password-form__user-login-input' ).prop( 'disabled' ) ).to.not.be.ok;
