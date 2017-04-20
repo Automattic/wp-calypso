@@ -13,6 +13,10 @@
 		margin-bottom: 16px;
 	}
 
+	.form-label {
+		margin-bottom: 16px;
+	}
+
 	.foldable-card.products__variation-card .foldable-card__content {
 		padding: 0;
 		border: 0;
@@ -52,6 +56,10 @@
 
 		&:last-child {
 			margin-right: 0;
+		}
+
+		.products__product-form-details-basic__description textarea{
+			resize: vertical;
 		}
 	}
 
