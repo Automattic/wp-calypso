@@ -27,11 +27,19 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 	static displayName = 'ReaderEmailSubscriptionSettingsPopout';
 	static propTypes = {
 		siteId: PropTypes.number,
+		deliveryFrequency: PropTypes.string,
 	};
 
 	state = {
 		showPopover: false,
+		selected: this.props.deliveryFrequency,
 	};
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.deliveryFrequency !== this.props.deliveryFrequency ) {
+			this.setState( { selected: nextProps.deliveryFrequency } );
+		}
+	}
 
 	togglePopoverVisibility = () => {
 		this.setState( { showPopover: ! this.state.showPopover } );
@@ -107,26 +115,28 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 								checked={ notifyOnNewPosts }
 							/>
 						</div>
-						<SegmentedControl>
-							<ControlItem
-								selected={ this.state.selected === 'instantly' }
-								onClick={ this.setSelected( 'instantly' ) }
-							>
-								{ translate( 'Instantly' ) }
-							</ControlItem>
-							<ControlItem
-								selected={ this.state.selected === 'daily' }
-								onClick={ this.setSelected( 'daily' ) }
-							>
-								{ translate( 'Daily' ) }
-							</ControlItem>
-							<ControlItem
-								selected={ this.state.selected === 'weekly' }
-								onClick={ this.setSelected( 'weekly' ) }
-							>
-								{ translate( 'Weekly' ) }
-							</ControlItem>
-						</SegmentedControl>
+						{ notifyOnNewPosts && (
+							<SegmentedControl>
+								<ControlItem
+									selected={ this.state.selected === 'instantly' }
+									onClick={ this.setSelected( 'instantly' ) }
+								>
+									{ translate( 'Instantly' ) }
+								</ControlItem>
+								<ControlItem
+									selected={ this.state.selected === 'daily' }
+									onClick={ this.setSelected( 'daily' ) }
+								>
+									{ translate( 'Daily' ) }
+								</ControlItem>
+								<ControlItem
+									selected={ this.state.selected === 'weekly' }
+									onClick={ this.setSelected( 'weekly' ) }
+								>
+									{ translate( 'Weekly' ) }
+								</ControlItem>
+							</SegmentedControl>
+						) }
 						<div className="reader-subscription-list-item__email-popout-toggle">
 							New comments
 							<FormToggle
