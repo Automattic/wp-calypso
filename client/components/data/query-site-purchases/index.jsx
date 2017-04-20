@@ -36,8 +36,8 @@ class QuerySitePurchases extends Component {
 }
 
 QuerySitePurchases.propTypes = {
-	siteId: PropTypes.number.isRequired,
-	requesting: PropTypes.bool.isRequired,
+	siteId: PropTypes.number,
+	requesting: PropTypes.bool,
 	fetchSitePurchases: PropTypes.func.isRequired
 };
 
