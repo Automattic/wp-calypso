@@ -120,7 +120,7 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/combined-cards": true,
-		"reader/following-intro": true,
+		"reader/following-intro": false,
 		"reader/following-manage-refresh": true,
 		"reader/full-errors": true,
 		"reader/list-management": false,
