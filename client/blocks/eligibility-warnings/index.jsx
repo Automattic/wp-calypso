@@ -11,21 +11,23 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import TrackComponentView from 'lib/analytics/track-component-view';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
 import { isBusiness, isEnterprise } from 'lib/products-values';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import Banner from 'components/banner';
 import Button from 'components/button';
 import Card from 'components/card';
-import HoldList from './hold-list';
 import QueryEligibility from 'components/data/query-atat-eligibility';
+import HoldList from './hold-list';
 import WarningList from './warning-list';
-import { recordTracksEvent } from 'state/analytics/actions';
 
 export const EligibilityWarnings = ( {
 	backUrl,
+	context,
 	eligibilityData,
 	hasBusinessPlan,
 	isEligible,
@@ -37,8 +39,6 @@ export const EligibilityWarnings = ( {
 	siteSlug,
 	translate,
 } ) => {
-	const context = includes( backUrl, 'plugins' ) ? 'plugins' : 'themes';
-
 	const warnings = get( eligibilityData, 'eligibilityWarnings', [] );
 
 	const [ bannerHolds, listHolds ] = partition(
@@ -54,7 +54,10 @@ export const EligibilityWarnings = ( {
 	return (
 		<div className={ classes }>
 			<QueryEligibility siteId={ siteId } />
-
+			<TrackComponentView
+				eventName="calypso_automated_transfer_eligibility_show_warnings"
+				eventProperties={ { context } }
+			/>
 			{ ! hasBusinessPlan && ! isJetpack &&
 				<Banner
 					description={ translate( 'Also get unlimited themes, advanced customization, no ads, live chat support, and more.' ) }
@@ -163,7 +166,18 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	onCancel: () => recordTracksEvent( 'calypso_automated_transfer_eligibility_cancel' )
+	trackCancel: ( eventProperties = {} ) => recordTracksEvent( 'calypso_automated_transfer_eligibility_click_cancel', eventProperties ),
+	trackProceed: ( eventProperties = {} ) => recordTracksEvent( 'calypso_automated_transfer_eligibilty_click_proceed', eventProperties ),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( EligibilityWarnings ) );
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const context = includes( ownProps.backUrl, 'plugins' ) ? 'plugins' : 'themes';
+	const onCancel = () => dispatchProps.trackCancel( { context } );
+	const onProceed = () => {
+		ownProps.onProceed();
+		dispatchProps.trackProceed( { context } );
+	};
+	return Object.assign( {}, ownProps, stateProps, dispatchProps, { onCancel, onProceed, context } );
+};
+
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( localize( EligibilityWarnings ) );
