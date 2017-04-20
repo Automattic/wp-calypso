@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { times } from 'lodash';
+import { times, noop } from 'lodash';
 
 export default class FlexboxGrid extends React.PureComponent {
 	static propTypes = {
@@ -18,7 +18,8 @@ export default class FlexboxGrid extends React.PureComponent {
 	};
 
 	static defaultProps = {
-		overscanRowCount: 0
+		overscanRowCount: 0,
+		onCellsRendered: noop
 	};
 
 	componentDidMount() {
