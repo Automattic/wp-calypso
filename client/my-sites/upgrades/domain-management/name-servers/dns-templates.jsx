@@ -60,6 +60,7 @@ class DnsTemplates extends Component {
 							const { name } = template;
 							return (
 								<DnsTemplateButton
+									key={ `dns-templates-button-${ name }` }
 									name={ name }
 									onTemplateClick={ this.onTemplateClick }
 								/>
