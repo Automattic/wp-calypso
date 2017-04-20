@@ -7,6 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import AddButton from './add-button';
+import QueryProductsList from 'components/data/query-products-list';
 
 const Header = React.createClass( {
 	propTypes: {
@@ -22,7 +23,7 @@ const Header = React.createClass( {
 		const displayCost = this.props.products && this.props.products.private_whois && this.props.products.private_whois.cost_display;
 
 		if ( ! displayCost ) {
-			return null;
+			return <QueryProductsList />;
 		}
 
 		return (
