@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { noop } from 'lodash';
+import { isNumber, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -11,8 +12,9 @@ import Gridicon from 'gridicons';
  */
 import SiteIcon from 'blocks/site-icon';
 import SiteIndicator from 'my-sites/site-indicator';
+import { getSite } from 'state/sites/selectors';
 
-export default React.createClass( {
+const Site = React.createClass( {
 	displayName: 'Site',
 
 	getDefaultProps() {
@@ -145,3 +147,10 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state, { site } ) => {
+	if ( isNumber( site ) ) { // Accept site IDs
+		return { site: getSite( state, site ) };
+	}
+	return { site };
+} )( Site );
