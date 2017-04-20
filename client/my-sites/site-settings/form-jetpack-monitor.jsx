@@ -13,14 +13,15 @@ import { isEmpty } from 'lodash';
 import config from 'config';
 import Card from 'components/card';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
+import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import notices from 'notices';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
+import InfoPopover from 'components/info-popover';
+import ExternalLink from 'components/external-link';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QuerySiteMonitorSettings from 'components/data/query-site-monitor-settings';
 import { protectForm } from 'lib/protect-form';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { activateModule, deactivateModule } from 'state/jetpack/modules/actions';
 import { updateSiteMonitorSettings } from 'state/sites/monitor/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import {
@@ -82,24 +83,39 @@ class SiteSettingsFormJetpackMonitor extends Component {
 		const { monitorSettingsUpdateSuccessful, siteId, translate } = this.props;
 		notices.clearNotices( 'notices' );
 		this.props.updateSiteMonitorSettings( siteId, this.state ).then( () => {
+			this.props.markSaved();
 			if ( ! monitorSettingsUpdateSuccessful ) {
-				this.handleError();
 				notices.error( translate( 'There was a problem saving your changes. Please, try again.' ) );
 				return;
 			}
 			notices.success( translate( 'Settings saved successfully!' ) );
-			this.props.markSaved();
 		} );
 	}
 
 	settings() {
-		const { translate } = this.props;
+		const { siteId, translate } = this.props;
 
 		return (
 			<div>
-				<p>{ translate( "Jetpack is currently monitoring your site's uptime." ) }</p>
-				{ this.settingsMonitorEmailCheckbox() }
-				{ config.isEnabled( 'settings/security/monitor/wp-note' ) ? this.settingsMonitorWpNoteCheckbox() : '' }
+				<div className="site-settings__info-link-container">
+					<InfoPopover position={ 'left' }>
+						<ExternalLink href={ 'https://jetpack.com/support/monitor/' } icon target="_blank">
+							{ translate( 'Learn more about Monitor.' ) }
+						</ExternalLink>
+					</InfoPopover>
+				</div>
+
+				<JetpackModuleToggle
+					siteId={ siteId }
+					moduleSlug="monitor"
+					label={ translate( 'Monitor your site\'s uptime' ) }
+					disabled={ this.disableForm() }
+				/>
+
+				<div className="site-settings__child-settings">
+					{ this.settingsMonitorEmailCheckbox() }
+					{ config.isEnabled( 'settings/security/monitor/wp-note' ) ? this.settingsMonitorWpNoteCheckbox() : '' }
+				</div>
 			</div>
 		);
 	}
@@ -140,12 +156,6 @@ class SiteSettingsFormJetpackMonitor extends Component {
 		);
 	}
 
-	// updates the state when an error occurs
-	handleError() {
-		this.setState( { submittingForm: false } );
-		this.props.markSaved();
-	}
-
 	disableForm() {
 		return (
 			this.props.activatingMonitor ||
@@ -166,34 +176,6 @@ class SiteSettingsFormJetpackMonitor extends Component {
 		this.props.deactivateModule( siteId, 'monitor', true );
 	}
 
-	activateFormButtons() {
-		const { activatingMonitor, translate } = this.props;
-
-		return (
-			<Button
-				compact
-				primary
-				onClick={ this.handleActivationButtonClick }
-				disabled={ this.disableForm() }
-			>
-				{ activatingMonitor ? translate( 'Activating…' ) : translate( 'Activate' ) }
-			</Button>
-		);
-	}
-
-	deactivateFormButtons() {
-		const { deactivatingMonitor, translate } = this.props;
-		return (
-			<Button
-				compact
-				onClick={ this.handleDeactivationButtonClick }
-				disabled={ this.disableForm() }
-			>
-				{ deactivatingMonitor ? translate( 'Deactivating…' ) : translate( 'Deactivate' ) }
-			</Button>
-		);
-	}
-
 	render() {
 		const { monitorActive, siteId, translate } = this.props;
 
@@ -206,13 +188,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 				<QueryJetpackModules siteId={ siteId } />
 				<QuerySiteMonitorSettings siteId={ siteId } />
 
-				<SectionHeader label={ translate( 'Jetpack Monitor' ) }>
-					{
-						monitorActive
-							? this.deactivateFormButtons()
-							: this.activateFormButtons()
-					}
-				</SectionHeader>
+				<SectionHeader label={ translate( 'Jetpack Monitor' ) } />
 				<Card className="jetpack-monitor-settings">
 					{
 						monitorActive
@@ -245,8 +221,6 @@ export default connect(
 	( dispatch ) => {
 		const trackEvent = name => dispatch( recordGoogleEvent( 'Site Settings', name ) );
 		const boundActionCreators = bindActionCreators( {
-			activateModule,
-			deactivateModule,
 			updateSiteMonitorSettings,
 		}, dispatch );
 
