@@ -7,23 +7,18 @@ import { last, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
+import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
 import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
-import { deleteKeyringConnection } from 'state/sharing/keyring/actions';
-import { saveSiteSettings } from 'state/site-settings/actions';
 
-export class Eventbrite extends SharingService {
+export class Instagram extends SharingService {
 	static propTypes = {
 		...SharingService.propTypes,
-		saveRequests: PropTypes.object,
-		saveSiteSettings: PropTypes.func,
-		deleteKeyringConnection: PropTypes.func,
+		deleteStoredKeyringConnection: PropTypes.func,
 	};
 
 	static defaultProps = {
 		...SharingService.defaultProps,
-		saveRequests: {},
-		saveSiteSettings: () => {},
-		deleteKeyringConnection: () => {},
+		deleteStoredKeyringConnection: () => {},
 	};
 
 	createOrUpdateConnection = () => { };
@@ -36,11 +31,10 @@ export class Eventbrite extends SharingService {
 	 */
 	removeConnection = () => {
 		this.setState( { isDisconnecting: true } );
-		this.props.saveSiteSettings( this.props.siteId, { eventbrite_api_token: null } );
-		this.props.deleteKeyringConnection( last( this.props.keyringConnections ) );
+		this.props.deleteStoredKeyringConnection( last( this.props.keyringConnections ) );
 	};
 
-	componentWillReceiveProps( { availableExternalAccounts, saveRequests } ) {
+	componentWillReceiveProps( { availableExternalAccounts } ) {
 		if ( ! isEqual( this.props.availableExternalAccounts, availableExternalAccounts ) ) {
 			this.setState( {
 				isConnecting: false,
@@ -58,15 +52,6 @@ export class Eventbrite extends SharingService {
 		} );
 
 		if ( this.didKeyringConnectionSucceed( availableExternalAccounts ) ) {
-			const savingSiteSettings = saveRequests[ this.props.siteId ] && saveRequests[ this.props.siteId ].saving;
-
-			if ( ! savingSiteSettings ) {
-				this.props.saveSiteSettings(
-					this.props.siteId,
-					{ eventbrite_api_token: last( availableExternalAccounts ).keyringConnectionId }
-				);
-			}
-
 			this.setState( { isConnecting: false } );
 			this.props.successNotice( this.props.translate( 'The %(service)s account was successfully connected.', {
 				args: { service: this.props.service.label },
@@ -77,18 +62,16 @@ export class Eventbrite extends SharingService {
 }
 
 export default connectFor(
-	Eventbrite,
+	Instagram,
 	( state, props ) => {
 		return {
 			...props,
-			saveRequests: state.siteSettings.saveRequests,
 			removableConnections: props.keyringConnections,
 			fetchConnection: props.requestKeyringConnections,
 			siteUserConnections: props.keyringConnections.map( conn => ( { ...conn, keyring_connection_ID: conn.ID } ) ),
 		};
 	},
 	{
-		saveSiteSettings,
-		deleteKeyringConnection,
+		deleteStoredKeyringConnection,
 	}
 );
