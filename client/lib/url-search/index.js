@@ -76,12 +76,12 @@ const UrlSearch = Component => class extends React.Component {
 			queryKey: this.props.queryKey
 		} );
 
-		debug( 'search for:', query );
+		debug( 'search for: %s', query );
 		if ( this.props.search && query ) {
-			debug( 'replacing URL: ' + searchURL );
+			debug( 'replacing URL: %s', searchURL );
 			page.replace( searchURL );
 		} else {
-			debug( 'setting URL: ' + searchURL );
+			debug( 'setting URL: %s', searchURL );
 			page( searchURL );
 		}
 	};
