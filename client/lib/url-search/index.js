@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import debugModule from 'debug';
+import debugFactory from 'debug';
 import page from 'page';
 import url from 'url';
 import { pick } from 'lodash';
@@ -10,7 +10,7 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-const debug = debugModule( 'calypso:url-search' );
+const debug = debugFactory( 'calypso:url-search' );
 
 /**
  * Function for constructing the url to page to. e.g.
@@ -40,8 +40,12 @@ const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
 	return url.format( parsedUrl ).replace( /\%20/g, '+' );
 };
 
-const UrlSearch = Component => class extends Component {
+const UrlSearch = Component => class extends React.Component {
 	static displayName = `UrlSearch(${ Component.displayName || Component.name || '' })`;
+	static defaultProps = {
+		search: '',
+		queryKey: 's',
+	}
 
 	state = {
 		searchOpen: false
