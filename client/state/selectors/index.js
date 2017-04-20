@@ -97,6 +97,7 @@ export hasBrokenSiteUserConnection from './has-broken-site-user-connection';
 export hasUnsavedUserSettings from './has-unsaved-user-settings';
 export hasUserSettings from './has-user-settings';
 export isAccountRecoveryResetOptionsReady from './is-account-recovery-reset-options-ready';
+export isAccountRecoveryUserDataReady from './is-account-recovery-user-data-ready';
 export isActivatingJetpackJumpstart from './is-activating-jetpack-jumpstart';
 export isActivatingJetpackModule from './is-activating-jetpack-module';
 export isAutomatedTransferActive from './is-automated-transfer-active';

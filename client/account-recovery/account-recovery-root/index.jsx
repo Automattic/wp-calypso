@@ -5,7 +5,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
-import { isString } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +18,7 @@ import ResetPasswordForm from 'account-recovery/reset-password-form';
 import { ACCOUNT_RECOVERY_STEPS as STEPS } from 'account-recovery/constants';
 import {
 	isAccountRecoveryResetOptionsReady,
-	getAccountRecoveryResetUserData,
+	isAccountRecoveryUserDataReady,
 } from 'state/selectors';
 
 const getPageInfo = ( translate, step ) => {
@@ -42,12 +41,8 @@ const getPageInfo = ( translate, step ) => {
 	return pageInfo[ step ];
 };
 
-const isUserDataReady = ( userData ) => (
-	isString( userData.user ) || [ userData.firstName, userData.lastName, userData.url ].every( isString )
-);
-
-const getCurrentStep = ( { firstStep, userData, isResetOptionsReady } ) => {
-	if ( isUserDataReady( userData ) && isResetOptionsReady ) {
+const getCurrentStep = ( { firstStep, isUserDataReady, isResetOptionsReady } ) => {
+	if ( isUserDataReady && isResetOptionsReady ) {
 		return STEPS.RESET_PASSWORD;
 	}
 
@@ -89,6 +84,6 @@ const AccountRecoveryRoot = ( props ) => {
 export default connect(
 	( state ) => ( {
 		isResetOptionsReady: isAccountRecoveryResetOptionsReady( state ),
-		userData: getAccountRecoveryResetUserData( state ),
+		isUserDataReady: isAccountRecoveryUserDataReady( state ),
 	} )
 )( localize( AccountRecoveryRoot ) );
