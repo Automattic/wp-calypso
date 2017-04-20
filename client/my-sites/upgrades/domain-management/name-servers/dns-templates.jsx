@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import DnsTemplateButton from './dns-template-button';
 import GoDaddyMail from '../dns/godaddy-email';
 import Office365 from '../dns/office-365';
 
@@ -19,16 +19,16 @@ class DnsTemplates extends Component {
 			currentComponentName: null,
 			templates: [
 				{ name: 'GoDaddy', Component: GoDaddyMail },
-				{ name: 'Office365', Component: Office365 }
+				{ name: 'Office 365', Component: Office365 }
 			]
 		};
 	}
 
-	onTemplateClick( name ) {
+	onTemplateClick = ( name ) => {
 		this.setState(
 			{ currentComponentName: name }
 		);
-	}
+	};
 
 	showCurrentTemplate() {
 		if ( ! this.state.currentComponentName ) {
@@ -59,12 +59,10 @@ class DnsTemplates extends Component {
 						this.state.templates.map( ( template ) => {
 							const { name } = template;
 							return (
-								<Button
-									key={ `dns-templates-button-${ name }` }
-									onClick={ this.onTemplateClick.bind( this, name ) }
-								>
-									{ name }
-								</Button>
+								<DnsTemplateButton
+									name={ name }
+									onTemplateClick={ this.onTemplateClick }
+								/>
 							);
 						}, this )
 					}
