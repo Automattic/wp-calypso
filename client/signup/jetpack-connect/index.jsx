@@ -48,6 +48,17 @@ const MINIMUM_JETPACK_VERSION = '3.9.6';
 const JetpackConnectMain = React.createClass( {
 	displayName: 'JetpackConnectSiteURLStep',
 
+	componentWillMount() {
+		if ( this.props.url ) {
+			let url = this.props.url;
+			if ( url && url.substr( 0, 4 ) !== 'http' ) {
+				url = 'http://' + url;
+			}
+			this.setState( { currentUrl: untrailingslashit( url ), initialUrl: url } );
+			this.checkUrl( url );
+		}
+	},
+
 	componentDidMount() {
 		let from = 'direct';
 		if ( this.props.type === 'install' ) {
@@ -70,7 +81,8 @@ const JetpackConnectMain = React.createClass( {
 	getInitialState() {
 		return {
 			currentUrl: '',
-			waitingForSites: false
+			waitingForSites: false,
+			initialUrl: null
 		};
 	},
 
@@ -104,6 +116,14 @@ const JetpackConnectMain = React.createClass( {
 		this.dismissUrl();
 	},
 
+	checkUrl( url ) {
+		return this.props.checkUrl(
+			url,
+			!! this.props.getJetpackSiteByUrl( url ),
+			this.props.type
+		);
+	},
+
 	onURLEnter() {
 		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
 			jetpack_url: this.state.currentUrl
@@ -111,11 +131,7 @@ const JetpackConnectMain = React.createClass( {
 		if ( this.props.isRequestingSites ) {
 			this.setState( { waitingForSites: true } );
 		} else {
-			this.props.checkUrl(
-				this.state.currentUrl,
-				!! this.props.getJetpackSiteByUrl( this.state.currentUrl ),
-				this.props.type
-			);
+			this.checkUrl( this.state.currentUrl );
 		}
 	},
 
@@ -159,11 +175,7 @@ const JetpackConnectMain = React.createClass( {
 
 		if ( this.state.waitingForSites && ! this.props.isRequestingSites ) {
 			this.setState( { waitingForSites: false } );
-			this.props.checkUrl(
-				this.state.currentUrl,
-				!! this.props.getJetpackSiteByUrl( this.state.currentUrl ),
-				this.props.type
-			);
+			this.checkUrl( this.state.currentUrl );
 		}
 	},
 
@@ -221,10 +233,6 @@ const JetpackConnectMain = React.createClass( {
 		}
 
 		return false;
-	},
-
-	clearUrl() {
-		this.dismissUrl();
 	},
 
 	handleOnClickTos() {
@@ -319,6 +327,7 @@ const JetpackConnectMain = React.createClass( {
 				}
 
 				<SiteURLInput ref="siteUrlInputRef"
+					url={ this.state.initialUrl }
 					onTosClick={ this.handleOnClickTos }
 					onChange={ this.onURLChange }
 					onClick={ this.onURLEnter }
@@ -371,7 +380,7 @@ const JetpackConnectMain = React.createClass( {
 
 	renderBackButton() {
 		return (
-			<Button compact borderless className="jetpack-connect__back-button" onClick={ this.clearUrl }>
+			<Button compact borderless className="jetpack-connect__back-button" onClick={ this.dismissUrl }>
 				<Gridicon icon="arrow-left" size={ 18 } />
 				{ this.translate( 'Back' ) }
 			</Button>

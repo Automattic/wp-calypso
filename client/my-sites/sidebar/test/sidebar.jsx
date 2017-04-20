@@ -12,6 +12,9 @@ import EmptyComponent from 'test/helpers/react/empty-component';
 describe( 'MySitesSidebar', () => {
 	let MySitesSidebar;
 	useMockery( ( mockery ) => {
+		mockery.registerMock( 'lib/abtest', {
+			abtest: () => ''
+		} );
 		mockery.registerMock( 'page', function() {} );
 		mockery.registerMock( 'lib/analytics', {} );
 		mockery.registerMock( 'lib/products-values', {} );

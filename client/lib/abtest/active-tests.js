@@ -59,4 +59,12 @@ module.exports = {
 		defaultVariation: 'original',
 		allowAnyLocale: true,
 	},
+	newSiteWithJetpack: {
+		datestamp: '20170419',
+		variations: {
+			showNewJetpackSite: 10,
+			onlyDotComSites: 90,
+		},
+		defaultVariation: 'onlyDotComSites',
+	},
 };

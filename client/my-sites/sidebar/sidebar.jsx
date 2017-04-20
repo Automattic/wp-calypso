@@ -41,6 +41,7 @@ import {
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { getStatsPathForTab } from 'lib/route/path';
 import { isATEnabled } from 'lib/automated-transfer';
+import { abtest } from 'lib/abtest';
 
 /**
  * Module variables
@@ -482,6 +483,14 @@ export class MySitesSidebar extends Component {
 		this.props.setLayoutFocus( 'content' );
 	};
 
+	getAddNewSiteUrl() {
+		if ( this.props.sites.getJetpack().length ||
+			abtest( 'newSiteWithJetpack' ) === 'showNewJetpackSite' ) {
+			return '/jetpack/new/?ref=calypso-selector';
+		}
+		return config( 'signup_url' ) + '?ref=calypso-selector';
+	}
+
 	addNewSite() {
 		if ( this.props.currentUser.visible_site_count > 1 ) {
 			return null;
@@ -490,7 +499,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<Button borderless
 				className="my-sites-sidebar__add-new-site"
-				href={ config( 'signup_url' ) + '?ref=calypso-selector' }
+				href={ this.getAddNewSiteUrl() }
 				onClick={ this.focusContent }
 			>
 				<Gridicon icon="add-outline" /> { this.props.translate( 'Add New Site' ) }
