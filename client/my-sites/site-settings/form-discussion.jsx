@@ -54,19 +54,19 @@ class SiteSettingsFormDiscussion extends Component {
 					checked={ !! fields.default_pingback_flag }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'default_pingback_flag' ) }>
-					<span>{ translate( 'Attempt to notify any blogs linked to from the article' ) }</span>
+					{ translate( 'Attempt to notify any blogs linked to from the article' ) }
 				</CompactFormToggle>
 				<CompactFormToggle
 					checked={ !! fields.default_ping_status }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'default_ping_status' ) }>
-					<span>{ translate( 'Allow link notifications from other blogs (pingbacks and trackbacks)' ) }</span>
+					{ translate( 'Allow link notifications from other blogs (pingbacks and trackbacks)' ) }
 				</CompactFormToggle>
 				<CompactFormToggle
 					checked={ !! fields.default_comment_status }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'default_comment_status' ) }>
-					<span>{ translate( 'Allow people to post comments on new articles' ) }</span>
+					{ translate( 'Allow people to post comments on new articles' ) }
 				</CompactFormToggle>
 				<FormSettingExplanation>
 					{ translate( 'These settings may be overridden for individual articles.' ) }
@@ -114,70 +114,64 @@ class SiteSettingsFormDiscussion extends Component {
 					checked={ !! fields.require_name_email }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'require_name_email' ) }>
-					<span>{ translate( 'Comment author must fill out name and e-mail' ) }</span>
+					{ translate( 'Comment author must fill out name and e-mail' ) }
 				</CompactFormToggle>
 				<CompactFormToggle
 					checked={ !! fields.comment_registration }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'comment_registration' ) }>
-					<span>{ translate( 'Users must be registered and logged in to comment' ) }</span>
+					{ translate( 'Users must be registered and logged in to comment' ) }
 				</CompactFormToggle>
 				<CompactFormToggle
 					checked={ !! fields.close_comments_for_old_posts }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'close_comments_for_old_posts' ) }>
-					<span>
-						{
-							translate(
-								'Automatically close comments on articles older than {{numberOfDays /}} day',
-								'Automatically close comments on articles older than {{numberOfDays /}} days', {
-									count: fields.close_comments_days_old || 2,
-									components: {
-										numberOfDays: this.renderInputNumberDays()
-									}
+					{
+						translate(
+							'Automatically close comments on articles older than {{numberOfDays /}} day',
+							'Automatically close comments on articles older than {{numberOfDays /}} days', {
+								count: fields.close_comments_days_old || 2,
+								components: {
+									numberOfDays: this.renderInputNumberDays()
 								}
-							)
-						}
-					</span>
+							}
+						)
+					}
 				</CompactFormToggle>
 				<CompactFormToggle
 					checked={ !! fields.thread_comments }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'thread_comments' ) }>
-					<span>
-						{
-							translate( 'Enable threaded (nested) comments up to {{number /}} levels deep', {
-								components: {
-									number: this.renderInputThreadDepth()
-								}
-							} )
-						}
-					</span>
+					{
+						translate( 'Enable threaded (nested) comments up to {{number /}} levels deep', {
+							components: {
+								number: this.renderInputThreadDepth()
+							}
+						} )
+					}
 				</CompactFormToggle>
 				<CompactFormToggle
 					checked={ !! fields.page_comments }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'page_comments' ) }>
-					<span>
-						{
-							translate(
-								'Break comments into pages with {{numComments /}} top level comments per page and the ' +
-								'{{firstOrLast /}} page displayed by default',
-								{
-									components: {
-										numComments: this.renderInputNumComments(),
-										firstOrLast: this.renderInputDisplayDefault()
-									}
+					{
+						translate(
+							'Break comments into pages with {{numComments /}} top level comments per page and the ' +
+							'{{firstOrLast /}} page displayed by default',
+							{
+								components: {
+									numComments: this.renderInputNumComments(),
+									firstOrLast: this.renderInputDisplayDefault()
 								}
-							)
-						}
-					</span>
+							}
+						)
+					}
 				</CompactFormToggle>
 				<CompactFormToggle
 					checked={ 'asc' === fields.comment_order }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ this.handleCommentOrder }>
-					<span>{ translate( 'Comments should be displayed with the older comments at the top of each page' ) }</span>
+					{ translate( 'Comments should be displayed with the older comments at the top of each page' ) }
 				</CompactFormToggle>
 			</FormFieldset>
 		);
@@ -296,13 +290,13 @@ class SiteSettingsFormDiscussion extends Component {
 					checked={ !! fields.comments_notify }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'comments_notify' ) }>
-					<span>{ translate( 'Anyone posts a comment' ) }</span>
+					{ translate( 'Anyone posts a comment' ) }
 				</CompactFormToggle>
 				<CompactFormToggle
 					checked={ !! fields.moderation_notify }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'moderation_notify' ) }>
-					<span>{ translate( 'A comment is held for moderation' ) }</span>
+					{ translate( 'A comment is held for moderation' ) }
 				</CompactFormToggle>
 				{ this.emailMeLikes() }
 				{ this.emailMeReblogs() }
@@ -331,7 +325,7 @@ class SiteSettingsFormDiscussion extends Component {
 				checked={ !! fields.social_notifications_like }
 				disabled={ isRequestingSettings || isSavingSettings }
 				onChange={ handleAutosavingToggle( 'social_notifications_like' ) }>
-				<span>{ translate( 'Someone likes one of my posts' ) }</span>
+				{ translate( 'Someone likes one of my posts' ) }
 			</CompactFormToggle>
 		);
 	}
@@ -355,7 +349,7 @@ class SiteSettingsFormDiscussion extends Component {
 				checked={ !! fields.social_notifications_reblog }
 				disabled={ isRequestingSettings || isSavingSettings }
 				onChange={ handleAutosavingToggle( 'social_notifications_reblog' ) }>
-				<span>{ translate( 'Someone reblogs one of my posts' ) }</span>
+				{ translate( 'Someone reblogs one of my posts' ) }
 			</CompactFormToggle>
 		);
 	}
@@ -379,7 +373,7 @@ class SiteSettingsFormDiscussion extends Component {
 				checked={ !! fields.social_notifications_subscribe }
 				disabled={ isRequestingSettings || isSavingSettings }
 				onChange={ handleAutosavingToggle( 'social_notifications_subscribe' ) }>
-				<span>{ translate( 'Someone follows my blog' ) }</span>
+				{ translate( 'Someone follows my blog' ) }
 			</CompactFormToggle>
 		);
 	}
@@ -399,13 +393,13 @@ class SiteSettingsFormDiscussion extends Component {
 					checked={ !! fields.comment_moderation }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'comment_moderation' ) }>
-					<span>{ translate( 'Comment must be manually approved' ) }</span>
+					{ translate( 'Comment must be manually approved' ) }
 				</CompactFormToggle>
 				<CompactFormToggle
 					checked={ !! fields.comment_whitelist }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'comment_whitelist' ) }>
-					<span>{ translate( 'Comment author must have a previously approved comment' ) }</span>
+					{ translate( 'Comment author must have a previously approved comment' ) }
 				</CompactFormToggle>
 			</FormFieldset>
 		);
