@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import Debug from 'debug';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -16,6 +17,8 @@ import URLSearch from 'lib/mixins/url-search';
 import PostCountsStore from 'lib/posts/post-counts-store';
 import Gravatar from 'components/gravatar';
 import userLib from 'lib/user';
+import { areAllSitesSingleUser } from 'state/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 const debug = new Debug( 'calypso:posts-navigation' );
 const user = userLib();
@@ -28,12 +31,11 @@ const statusToDescription = {
 	trash: 'trashed'
 };
 
-export default React.createClass( {
+const PostsNavigation = React.createClass( {
 	displayName: 'PostsNavigation',
 
 	propTypes: {
 		context: React.PropTypes.object.isRequired,
-		sites: React.PropTypes.object.isRequired,
 		author: React.PropTypes.number,
 		statusSlug: React.PropTypes.string,
 		search: React.PropTypes.string
@@ -46,12 +48,12 @@ export default React.createClass( {
 			state = {
 				show: true,
 				loading: true,
-				counts: null === this.props.sites.selected ?
+				counts: null === this.props.selectedSiteId ?
 					this._defaultCounts() :
 					this._getCounts()
 			};
 
-		if ( ! this.props.sites.selected || Object.keys( counts ).length ) {
+		if ( ! this.props.selectedSiteId || Object.keys( counts ).length ) {
 			state.loading = false;
 		}
 
@@ -85,8 +87,8 @@ export default React.createClass( {
 
 		let author = this.props.author ? '/my' : '',
 			statusSlug = this.props.statusSlug ? '/' + this.props.statusSlug : '',
-			siteFilter = this.props.sites.selected ? '/' + this.props.sites.selected : '',
-			selectedSite = this.props.sites.getSelectedSite(),
+			siteFilter = this.props.selectedSiteId ? '/' + this.props.selectedSiteId : '',
+			selectedSite = this.props.selectedSite,
 			showMyFilter = true;
 
 		this.filterStatuses = {
@@ -109,11 +111,11 @@ export default React.createClass( {
 		let statusTabs = this._getStatusTabs( author, siteFilter );
 		let authorSegmented = this._getAuthorSegmented( statusSlug, siteFilter );
 
-		if ( this.props.sites.selected ) {
+		if ( this.props.selectedSiteId ) {
 			if ( selectedSite.single_user_site || selectedSite.jetpack ) {
 				showMyFilter = false;
 			}
-		} else if ( this.props.sites.allSingleSites ) {
+		} else if ( this.props.areAllSitesSingleUser ) {
 			showMyFilter = false;
 		}
 
@@ -173,7 +175,7 @@ export default React.createClass( {
 					className={ 'is-' + status }
 					key={ 'statusTabs' + path }
 					path={ path }
-					count={ null === this.props.sites.selected || count }
+					count={ null === this.props.selectedSiteId || count }
 					value={ textItem }
 					selected={ path === this.props.context.pathname }>
 					{ textItem }
@@ -277,7 +279,7 @@ export default React.createClass( {
 	 */
 	_setPostCounts( siteID, scope ) {
 		// print default filters for `All my Sites`
-		if ( ! siteID || null === this.props.sites.selected ) {
+		if ( ! siteID || null === this.props.selectedSiteId ) {
 			return this._defaultStateOptions();
 		}
 
@@ -295,15 +297,15 @@ export default React.createClass( {
 		} );
 	},
 
-	_updatePostCounts( siteID = this.props.sites.selected, scope ) {
+	_updatePostCounts( siteID = this.props.selectedSiteId, scope ) {
 		scope = scope || ( this.props.author ? 'mine' : 'all' );
 
 		// is `All my sites` selected`
-		if ( null === this.props.sites.selected ) {
+		if ( null === this.props.selectedSiteId ) {
 			return this._defaultStateOptions();
 		}
 
-		let state = {
+		const state = {
 			show: true,
 			loading: false,
 			counts: {}
@@ -330,7 +332,7 @@ export default React.createClass( {
 	 * @param {String} [scope] - Optional scope (mine or all)
 	 * @return {Object} counts
 	 */
-	_getCounts( siteID = this.props.sites.selected, scope ) {
+	_getCounts( siteID = this.props.selectedSiteId, scope ) {
 		var counts = {},
 			status;
 
@@ -367,7 +369,15 @@ export default React.createClass( {
 	 * @return {Number|Null} return count of the given status
 	 */
 	getCountByStatus( status ) {
-		let count = this.state.counts[ status ];
+		const count = this.state.counts[ status ];
 		return ( count !== false ) ? count : null;
 	}
 } );
+
+export default connect(
+	( state ) => ( {
+		areAllSitesSingleUser: areAllSitesSingleUser( state ),
+		selectedSiteId: getSelectedSiteId( state ),
+		selectedSite: getSelectedSite( state ),
+	} )
+)( PostsNavigation );
