@@ -26,7 +26,7 @@ describe( 'index', function() {
 	let SitesDropdown;
 
 	before( function() {
-		SitesDropdown = require( '../index.jsx' );
+		SitesDropdown = require( '../index.jsx' ).SitesDropdown;
 	} );
 
 	describe( 'component rendering', function() {
@@ -50,14 +50,9 @@ describe( 'index', function() {
 	} );
 
 	describe( 'component state', function() {
-		it( "should initially consider as selected the user's primary site, when is not specified something different", function() {
-			const sitesDropdown = shallow( <SitesDropdown /> );
-			expect( sitesDropdown.instance().state.selectedSiteSlug ).to.be.equal( 'primary.wordpress.com' );
-		} );
-
-		it( 'should initially consider as selected the site whose id is passed as `selectedSiteId` prop', function() {
-			const sitesDropdown = shallow( <SitesDropdown selectedSiteId={ 42 } /> );
-			expect( sitesDropdown.instance().state.selectedSiteSlug ).to.be.equal( 'foo.wordpress.com' );
+		it( 'should initially consider as selected the selectedOrPrimarySiteId prop', function() {
+			const sitesDropdown = shallow( <SitesDropdown selectedOrPrimarySiteId={ 1234567 } /> );
+			expect( sitesDropdown.instance().state.selectedSiteId ).to.be.equal( 1234567 );
 		} );
 	} );
 

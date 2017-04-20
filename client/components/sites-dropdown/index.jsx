@@ -19,7 +19,7 @@ import { getSelectedOrPrimarySiteId } from 'state/selectors';
 
 const sites = sitesList();
 
-class SitesDropdown extends PureComponent {
+export class SitesDropdown extends PureComponent {
 	static propTypes = {
 		selectedSiteId: React.PropTypes.number,
 		showAllSites: React.PropTypes.bool,
