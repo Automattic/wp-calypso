@@ -17,7 +17,7 @@ describe( 'enrichedSurveyData', function() {
 	} );
 
 	before( function() {
-		enrichedSurveyData = require( '../utils' ).enrichedSurveyData;
+		enrichedSurveyData = require( '../enrichedSurveyData' );
 	} );
 
 	it( 'should duplicate survey data if no site or purchase are provided', function() {

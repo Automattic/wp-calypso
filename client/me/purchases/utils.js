@@ -2,7 +2,6 @@
  * External dependencies
  */
 import page from 'page';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -70,27 +69,6 @@ function recordPageView( trackingSlug, props, nextProps = null ) {
 	analytics.tracks.recordEvent( `calypso_${ trackingSlug }_purchase_view`, { product_slug: productSlug } );
 }
 
-function enrichedSurveyData( surveyData, moment, site, purchase ) {
-	const purchaseStartDate = get( purchase, 'subscribedDate', null );
-	const siteStartDate = get( site, 'options.created_at', null );
-	const purchaseId = get( purchase, 'id', null );
-	const productSlug = get( purchase, 'productSlug', null );
-
-	return Object.assign(
-		{
-			purchase: productSlug,
-			purchaseId,
-		},
-		purchaseStartDate && {
-			daysSincePurchase: moment.diff( purchaseStartDate, 'days', true ),
-		},
-		siteStartDate && {
-			daysSinceSiteCreation: moment.diff( siteStartDate, 'days', true ),
-		},
-		surveyData,
-	);
-}
-
 function canEditPaymentDetails( purchase ) {
 	if ( ! config.isEnabled( 'upgrades/credit-cards' ) ) {
 		return false;
@@ -115,7 +93,6 @@ export {
 	goToManagePurchase,
 	isDataLoading,
 	recordPageView,
-	enrichedSurveyData,
 	canEditPaymentDetails,
 	getEditCardDetailsPath,
 };
