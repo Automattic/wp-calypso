@@ -43,13 +43,8 @@ const options = combineReducers( {
 	} ),
 } );
 
-const validUserDataProps = [ 'user', 'firstName', 'lastName', 'url' ];
-
 const userData = createReducer( {}, {
-	[ ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA ]: ( state, action ) => ( {
-		...state,
-		...pick( action.userData, validUserDataProps ),
-	} ),
+	[ ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA ]: ( state, action ) => action.userData,
 } );
 
 const method = createReducer( null, {

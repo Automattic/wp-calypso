@@ -11,10 +11,10 @@ import { getAccountRecoveryResetUserData } from './';
 export default ( state ) => {
 	const {
 		user,
-		firstName,
-		lastName,
+		firstname,
+		lastname,
 		url,
 	} = getAccountRecoveryResetUserData( state );
 
-	return isString( user ) || [ firstName, lastName, url ].every( isString );
+	return isString( user ) || [ firstname, lastname, url ].every( isString );
 };

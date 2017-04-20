@@ -24,13 +24,13 @@ describe( 'isAccountRecoveryUserDataReady()', () => {
 		assert.isTrue( isAccountRecoveryUserDataReady( state ) );
 	} );
 
-	it( 'should return true if firstName, lastName, and url is set.', () => {
+	it( 'should return true if firstname, lastname, and url is set.', () => {
 		const state = deepFreeze( {
 			accountRecovery: {
 				reset: {
 					userData: {
-						firstName: 'Foo',
-						lastName: 'Bar',
+						firstname: 'Foo',
+						lastname: 'Bar',
 						url: 'example.com',
 					},
 				},
@@ -40,39 +40,39 @@ describe( 'isAccountRecoveryUserDataReady()', () => {
 		assert.isTrue( isAccountRecoveryUserDataReady( state ) );
 	} );
 
-	it( 'should return false if one of ( firstName, lastName, url ) is missing.', () => {
-		const noFirstName = deepFreeze( {
+	it( 'should return false if one of ( firstname, lastname, url ) is missing.', () => {
+		const noFirstname = deepFreeze( {
 			accountRecovery: {
 				reset: {
 					userData: {
-						lastName: 'Bar',
+						lastname: 'Bar',
 						url: 'example.com',
 					},
 				},
 			},
 		} );
 
-		assert.isFalse( isAccountRecoveryUserDataReady( noFirstName ) );
+		assert.isFalse( isAccountRecoveryUserDataReady( noFirstname ) );
 
-		const noLastName = deepFreeze( {
+		const noLastname = deepFreeze( {
 			accountRecovery: {
 				reset: {
 					userData: {
-						firstName: 'Foo',
+						firstname: 'Foo',
 						url: 'example.com',
 					},
 				},
 			},
 		} );
 
-		assert.isFalse( isAccountRecoveryUserDataReady( noLastName ) );
+		assert.isFalse( isAccountRecoveryUserDataReady( noLastname ) );
 
 		const noUrl = deepFreeze( {
 			accountRecovery: {
 				reset: {
 					userData: {
-						firstName: 'Foo',
-						lastName: 'Bar',
+						firstname: 'Foo',
+						lastname: 'Bar',
 					},
 				},
 			},
