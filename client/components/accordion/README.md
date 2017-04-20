@@ -23,7 +23,7 @@ export default function MyComponent() {
 
 The following props are available to customize the accordion:
 
-- `initialExpanded`: Boolean indicating whether the panel should default to expanded with the content visible
+- `isExpanded`: Boolean indicating whether the panel is expanded or not. If the prop is changed, the component will toggle the state accordingly. This will work independently of clicking the accordion title to expand/collapse the element.
 - `onToggle`: Function handler to invoke when the user toggles the accordion. The function will be passed a boolean indicating the expanded state after the toggle.
 - `title`: Main heading shown in the always-visible toggle button
 - `subtitle`: Subheading shown in the always-visible toggle button

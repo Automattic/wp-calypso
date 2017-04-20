@@ -13,16 +13,16 @@ import AccordionStatus from './status';
 
 export default class Accordion extends Component {
 	static propTypes = {
-		initialExpanded: PropTypes.bool,
+		isExpanded: PropTypes.bool,
 		onToggle: PropTypes.func,
 		title: PropTypes.string.isRequired,
 		subtitle: PropTypes.string,
 		status: PropTypes.object,
-		icon: PropTypes.element
+		icon: PropTypes.element,
 	};
 
 	static defaultProps = {
-		initialExpanded: false,
+		isExpanded: false,
 		onToggle: noop
 	};
 
@@ -30,15 +30,24 @@ export default class Accordion extends Component {
 		super( ...arguments );
 
 		this.state = {
-			isExpanded: props.initialExpanded
+			isExpanded: props.isExpanded
 		};
 	}
 
-	toggleExpanded = () => {
-		const isExpanded = ! this.state.isExpanded;
-		this.setState( { isExpanded } );
-		this.props.onToggle( isExpanded );
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isExpanded !== nextProps.isExpanded ) {
+			this.setExpandedStatus( nextProps.isExpanded );
+		}
 	}
+
+	toggleExpanded = () => {
+		this.setExpandedStatus( ! this.state.isExpanded );
+	};
+
+	setExpandedStatus = ( expandedStatus ) => {
+		this.setState( { isExpanded: expandedStatus } );
+		this.props.onToggle( expandedStatus );
+	};
 
 	render() {
 		const { className, icon, title, subtitle, status, children } = this.props;

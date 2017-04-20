@@ -2,10 +2,6 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import {
-	stubTrue,
-	stubFalse,
-} from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,10 +13,16 @@ import {
 
 import { createReducer } from 'state/utils';
 
-const isVisible = createReducer( false,
+const isVisible = createReducer( {},
 	{
-		[ DROPZONE_SHOW ]: stubTrue,
-		[ DROPZONE_HIDE ]: stubFalse,
+		[ DROPZONE_SHOW ]: ( state, { dropZoneName } ) => ( {
+			...state,
+			[ dropZoneName ]: true,
+		} ),
+		[ DROPZONE_HIDE ]: ( state, { dropZoneName } ) => ( {
+			...state,
+			[ dropZoneName ]: false,
+		} ),
 	}
 );
 

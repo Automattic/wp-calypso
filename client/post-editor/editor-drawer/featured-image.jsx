@@ -49,7 +49,7 @@ class EditorDrawerFeaturedImage extends Component {
 		const { translate, site, post, isDrawerHidden } = this.props;
 
 		return (
-			<Accordion title={ translate( 'Featured Image' ) }>
+			<Accordion title={ translate( 'Featured Image' ) } isExpanded={ isDrawerHidden }>
 				<EditorDrawerWell
 					label={ translate( 'Set Featured Image' ) }
 					empty={ ! site || ! post || ! getFeaturedImageId( post ) }
@@ -72,6 +72,6 @@ class EditorDrawerFeaturedImage extends Component {
 
 export default connect(
 	( state ) => ( {
-		isDrawerHidden: isDropZoneVisible( state )
+		isDrawerHidden: isDropZoneVisible( state, 'featuredImage' )
 	} )
 )( localize( EditorDrawerFeaturedImage ) );

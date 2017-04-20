@@ -84,9 +84,9 @@ describe( 'Accordion', function() {
 			}
 		} );
 
-		it( 'should always use the initialExpanded prop, if specified', function( done ) {
+		it( 'should always use the isExpanded prop, if specified', function( done ) {
 			const wrapper = shallow(
-				<Accordion initialExpanded={ true } title="Section" onToggle={ finishTest }>Content</Accordion>
+				<Accordion isExpanded={ true } title="Section" onToggle={ finishTest }>Content</Accordion>
 			);
 
 			simulateClick( wrapper );
