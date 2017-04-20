@@ -317,38 +317,38 @@ class RemovePurchase extends Component {
 	}
 
 	renderPlanDialogs = () => {
-		const { translate } = this.props;
+		const { selectedPurchase, translate } = this.props;
 		const buttons = {
-				cancel: {
-					action: 'cancel',
-					disabled: this.state.isRemoving,
-					label: translate( "No, I'll Keep It" )
-				},
-				next: {
-					action: 'next',
-					disabled: this.state.isRemoving ||
-						this.state.survey.questionOneRadio === null ||
-						this.state.survey.questionTwoRadio === null ||
-						( this.state.survey.questionOneRadio === 'anotherReasonOne' && this.state.survey.questionOneText === '' ) ||
-						( this.state.survey.questionTwoRadio === 'anotherReasonTwo' && this.state.survey.questionTwoText === '' ),
-					label: translate( 'Next Step' ),
-					onClick: this.changeSurveyStep
-				},
-				prev: {
-					action: 'prev',
-					disabled: this.state.isRemoving,
-					label: translate( 'Previous Step' ),
-					onClick: this.changeSurveyStep.bind( null, 'previous' )
-				},
-				remove: {
-					action: 'remove',
-					disabled: this.state.isRemoving,
-					isPrimary: true,
-					label: translate( 'Yes, Remove Now' ),
-					onClick: this.removePurchase
-				}
+			cancel: {
+				action: 'cancel',
+				disabled: this.state.isRemoving,
+				label: translate( "No, I'll Keep It" )
 			},
-			inFinalStep = ( this.state.surveyStep === this.state.finalStep );
+			next: {
+				action: 'next',
+				disabled: this.state.isRemoving ||
+					this.state.survey.questionOneRadio === null ||
+					this.state.survey.questionTwoRadio === null ||
+					( this.state.survey.questionOneRadio === 'anotherReasonOne' && this.state.survey.questionOneText === '' ) ||
+					( this.state.survey.questionTwoRadio === 'anotherReasonTwo' && this.state.survey.questionTwoText === '' ),
+				label: translate( 'Next Step' ),
+				onClick: this.changeSurveyStep
+			},
+			prev: {
+				action: 'prev',
+				disabled: this.state.isRemoving,
+				label: translate( 'Previous Step' ),
+				onClick: this.changeSurveyStep.bind( null, 'previous' )
+			},
+			remove: {
+				action: 'remove',
+				disabled: this.state.isRemoving,
+				isPrimary: true,
+				label: translate( 'Yes, Remove Now' ),
+				onClick: this.removePurchase
+			}
+		};
+		const inFinalStep = ( this.state.surveyStep === this.state.finalStep );
 
 		let buttonsArr;
 		if ( ! config.isEnabled( 'upgrades/removal-survey' ) ) {
@@ -373,7 +373,7 @@ class RemovePurchase extends Component {
 					isVisible={ this.state.isDialogVisible }
 					onClose={ this.closeDialog }>
 					<CancelPurchaseForm
-						productName={ productName }
+						productName={ getName( selectedPurchase ) }
 						surveyStep={ this.state.surveyStep }
 						finalStep={ this.state.finalStep }
 						showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }

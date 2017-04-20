@@ -184,7 +184,7 @@ class CancelPurchaseButton extends Component {
 				onClose={ this.closeDialog }
 				className="cancel-purchase__button-warning-dialog">
 				<CancelPurchaseForm
-					productName={ purchaseName }
+					productName={ getName( purchase ) }
 					surveyStep={ this.state.surveyStep }
 					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
 					finalStep={ this.state.finalStep }
