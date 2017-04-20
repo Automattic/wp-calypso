@@ -35,11 +35,21 @@ export class SitesDropdown extends PureComponent {
 		isPlaceholder: false
 	}
 
-	state = {
-		selectedSiteId: this.props.selectedSiteId || this.props.primarySiteId,
+	constructor( props ) {
+		super( props );
+
+		this.selectSite = this.selectSite.bind( this );
+		this.getSelectedSite = this.getSelectedSite.bind( this );
+		this.siteFilter = this.siteFilter.bind( this );
+		this.toggleOpen = this.toggleOpen.bind( this );
+		this.onClose = this.onClose.bind( this );
+
+		this.state = {
+			selectedSiteId: this.props.selectedSiteId || this.props.primarySiteId
+		};
 	}
 
-	selectSite = ( siteSlug ) => {
+	selectSite( siteSlug ) {
 		// SiteSelector gives us a slug, but we want to pass an ID to our onSiteSelect
 		// callback prop so it's consistent with the selectedSiteId prop. We also use
 		// a siteId for our internal state.
@@ -52,20 +62,20 @@ export class SitesDropdown extends PureComponent {
 		} );
 	}
 
-	getSelectedSite = () => {
+	getSelectedSite() {
 		return sites.getSite( this.state.selectedSiteId );
 	}
 
 	// Our filter prop handles siteIds, while SiteSelector's filter prop needs objects
-	siteFilter = ( site ) => {
+	siteFilter( site ) {
 		return this.props.filter( site.ID );
 	}
 
-	toggleOpen = () => {
+	toggleOpen() {
 		this.setState( { open: ! this.state.open } );
 	}
 
-	onClose = ( e ) => {
+	onClose( e ) {
 		this.setState( { open: false } );
 		this.props.onClose && this.props.onClose( e );
 	}
