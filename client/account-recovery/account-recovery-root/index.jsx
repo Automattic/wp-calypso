@@ -16,51 +16,51 @@ import DocumentHead from 'components/data/document-head';
 import LostPasswordForm from 'account-recovery/lost-password-form';
 import ForgotUsernameForm from 'account-recovery/forgot-username-form';
 import ResetPasswordForm from 'account-recovery/reset-password-form';
-import { ACCOUNT_RECOVERY_SLUGS as SLUGS } from 'account-recovery/constants';
+import { ACCOUNT_RECOVERY_STEPS as STEPS } from 'account-recovery/constants';
 import {
 	isAccountRecoveryResetOptionsReady,
 	getAccountRecoveryResetUserData,
 } from 'state/selectors';
 
-const getPageInfo = ( translate, slug ) => {
+const getPageInfo = ( translate, step ) => {
 	const pageInfo = {
-		[ SLUGS.LOST_PASSWORD ]: {
+		[ STEPS.LOST_PASSWORD ]: {
 			trackerTitle: 'Account Recovery > Lost Password',
 			documentHeadTitle: translate( 'Lost Password ‹ Account Recovery' ),
 		},
-		[ SLUGS.FORGOT_USERNAME ]: {
+		[ STEPS.FORGOT_USERNAME ]: {
 			trackerTitle: 'Account Recovery > Forgot Username',
 			documentHeadTitle: translate( 'Forgot Username ‹ Account Recovery' ),
 		},
-		[ SLUGS.RESET_PASSWORD ]: {
+		[ STEPS.RESET_PASSWORD ]: {
 			trackerTitle: 'Account Recovery > Reset Password',
 			documentHeadTitle: translate( 'Reset Password ‹ Account Recovery' ),
 		},
 
 	};
 
-	return pageInfo[ slug ];
+	return pageInfo[ step ];
 };
 
 const isUserDataReady = ( userData ) => (
 	isString( userData.user ) || [ userData.firstName, userData.lastName, userData.url ].every( isString )
 );
 
-const getCurrentStep = ( { initialSlug, userData, isResetOptionsReady } ) => {
+const getCurrentStep = ( { firstStep, userData, isResetOptionsReady } ) => {
 	if ( isUserDataReady( userData ) && isResetOptionsReady ) {
-		return SLUGS.RESET_PASSWORD;
+		return STEPS.RESET_PASSWORD;
 	}
 
-	return initialSlug;
+	return firstStep;
 };
 
-const getForm = ( slug ) => {
-	switch ( slug ) {
-		case SLUGS.LOST_PASSWORD:
+const getForm = ( step ) => {
+	switch ( step ) {
+		case STEPS.LOST_PASSWORD:
 			return <LostPasswordForm />;
-		case SLUGS.FORGOT_USERNAME:
+		case STEPS.FORGOT_USERNAME:
 			return <ForgotUsernameForm />;
-		case SLUGS.RESET_PASSWORD:
+		case STEPS.RESET_PASSWORD:
 			return <ResetPasswordForm />;
 	}
 
