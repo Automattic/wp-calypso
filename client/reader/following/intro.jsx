@@ -3,22 +3,18 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { hasGraduatedRecommendations } from 'state/reader/start/selectors';
-import { requestGraduate } from 'state/reader/start/actions';
 
 const FollowingIntro = ( props ) => {
-	if ( props.hasGraduatedRecommendations || props.hasGraduatedRecommendations === null ) {
-		return null;
-	}
+
+	// @todo Return null if the user does not have is_new_reader = true in preferences
 
 	const handleIntroClose = () => {
-		props.requestGraduate();
+		// @todo Remove is_new_reader from preferences
 	};
 
 	return (
@@ -58,8 +54,4 @@ const FollowingIntro = ( props ) => {
 	);
 };
 
-export default connect( ( state ) => {
-	return {
-		hasGraduatedRecommendations: hasGraduatedRecommendations( state )
-	};
-}, { requestGraduate } )( localize( FollowingIntro ) );
+export default localize( FollowingIntro );
