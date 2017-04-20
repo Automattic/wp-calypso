@@ -95,7 +95,7 @@ export default connect(
 		purchases: getUserPurchases( state, user.get().ID ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		isFetchingUserPurchases: isFetchingUserPurchases( state ),
-		getSites: getSites( state ),
+		sites: getSites( state ),
 	} ),
 	undefined
 )( localize( PurchasesList ) );
