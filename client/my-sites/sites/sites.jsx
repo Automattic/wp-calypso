@@ -14,6 +14,7 @@ import observe from 'lib/mixins/data-observe';
 import SiteSelector from 'components/site-selector';
 import { addSiteFragment } from 'lib/route';
 import { getSites, isSiteUpgradeable } from 'state/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 export const Sites = React.createClass( {
 	displayName: 'Sites',
@@ -28,8 +29,8 @@ export const Sites = React.createClass( {
 		let path = this.props.path;
 
 		// Override the path to be /sites so that when a site is
-		// selected the filterbar is operates as if we're on /sites
-		if ( this.props.sites.selected ) {
+		// selected the filterbar operates as if we're on /sites
+		if ( this.props.selectedSite ) {
 			path = '/sites';
 		}
 
@@ -100,6 +101,7 @@ export const Sites = React.createClass( {
 export default connect(
 	( state ) => {
 		return {
+			selectedSite: getSelectedSite( state ),
 			sites: getSites( state ),
 			isSiteUpgradeable: isSiteUpgradeable.bind( null, state ),
 		};
