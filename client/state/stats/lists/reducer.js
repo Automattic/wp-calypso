@@ -79,9 +79,9 @@ export function items( state = {}, action ) {
 			return {
 				...state,
 				[ siteId ]: {
-					...get( state, [ siteId ], null ),
+					...get( state, [ siteId ] ),
 					[ statType ]: {
-						...get( state, [ siteId, statType ], null ),
+						...get( state, [ siteId, statType ] ),
 						[ queryKey ]: data
 					}
 				}
