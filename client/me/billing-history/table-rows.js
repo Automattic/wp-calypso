@@ -18,9 +18,9 @@ function formatDate( date ) {
 function getSearchableStrings( transaction ) {
 	const rootStrings = values( omit( transaction, 'items' ) ),
 		transactionItems = transaction.items || [],
-		itemStrings = without( flatten( transactionItems.map( values ) ), null, undefined );
+		itemStrings = flatten( transactionItems.map( values ) );
 
-	return rootStrings.concat( itemStrings );
+	return without( rootStrings.concat( itemStrings ), null, undefined );
 }
 
 function search( transactions, searchQuery ) {
