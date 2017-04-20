@@ -9,7 +9,6 @@ var debug = require( 'debug' )( 'calypso:desktop' ),
  */
 var paths = require( 'lib/paths' ),
 	user = require( 'lib/user' )(),
-	sites = require( 'lib/sites-list' )(),
 	ipc = require( 'electron' ).ipcRenderer,          // From Electron
 	store = require( 'store' ),
 	oAuthToken = require( 'lib/oauth-token' ),
@@ -48,6 +47,12 @@ var Desktop = {
 		location( function( context ) {
 			ipc.send( 'render', context );
 		} );
+	},
+
+	selectedSite: null,
+
+	setSelectedSite: function( site ) {
+		this.selectedSite = site;
 	},
 
 	receiveMessage: function( event ) {
@@ -117,11 +122,11 @@ var Desktop = {
 
 	onShowMySites: function() {
 		debug( 'Showing my sites' );
-		const site = this.getSelectedSite();
-		const siteId = this.isSingle() ? site.slug : null;
+		const site = this.selectedSite;
+		const siteSlug = site ? site.slug : null;
 
 		this.clearNotificationBar();
-		page( getStatsPathForTab( 'day', siteId ) );
+		page( getStatsPathForTab( 'day', siteSlug ) );
 	},
 
 	onShowReader: function() {
@@ -142,7 +147,7 @@ var Desktop = {
 		debug( 'New post' );
 
 		this.clearNotificationBar();
-		page( paths.newPost( sites.getSelectedSite() ) );
+		page( paths.newPost( this.selectedSite ) );
 	},
 
 	// now that our browser session has a valid wordpress.com cookie, let's force

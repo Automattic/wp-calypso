@@ -29,6 +29,12 @@ if ( keyBoardShortcutsEnabled ) {
 	keyboardShortcuts = require( 'lib/keyboard-shortcuts/global' )();
 }
 
+const desktopEnabled = config.isEnabled( 'desktop' );
+let desktop;
+if ( desktopEnabled ) {
+	desktop = require( 'lib/desktop' );
+}
+
 /**
  * Sets the selectedSite and siteCount for lib/analytics. This is used to
  * populate extra fields on tracks analytics calls.
@@ -72,6 +78,19 @@ const updatedSelectedSiteForKeyboardShortcuts = ( dispatch, action, getState ) =
 	keyboardShortcuts.setSelectedSite( selectedSite );
 };
 
+/**
+ * Sets the selected site for lib/desktop
+ *
+ * @param {function} dispatch - redux dispatch function
+ * @param {object}   action   - the dispatched action
+ * @param {function} getState - redux getState function
+ */
+const updateSelectedSiteForDesktop = ( dispatch, action, getState ) => {
+	const state = getState();
+	const selectedSite = getSelectedSite( state );
+	desktop.setSelectedSite( selectedSite );
+};
+
 const handler = ( dispatch, action, getState ) => {
 	switch ( action.type ) {
 		case ANALYTICS_SUPER_PROPS_UPDATE:
@@ -86,6 +105,9 @@ const handler = ( dispatch, action, getState ) => {
 				updateSelectedSiteForCart( dispatch, action, getState );
 				if ( keyBoardShortcutsEnabled ) {
 					updatedSelectedSiteForKeyboardShortcuts( dispatch, action, getState );
+				}
+				if ( desktopEnabled ) {
+					updateSelectedSiteForDesktop( dispatch, action, getState );
 				}
 			}, 0 );
 			return;
