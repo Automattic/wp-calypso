@@ -46,7 +46,7 @@ export default function sendRequest( params, query, body, fn ) {
 		params.apiVersion = query.apiVersion;
 		debug( 'apiVersion: %o', params.apiVersion );
 		// copying object here so we are not mutating original arguments
-		query = Object.assign( {}, query, { apiVersion: undefined } );
+		query = { ...query, { apiVersion: undefined } };
 	} else {
 		params.apiVersion = this.apiVersion;
 	}
