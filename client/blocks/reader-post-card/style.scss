@@ -356,7 +356,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	display: flex;
 	flex-direction: row;
 	margin-top: 14px;
-	flex-wrap: wrap;
 
 	.reader-post-card__post-details {
 		flex: 1 auto;
@@ -374,6 +373,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	@media #{$reader-post-card-breakpoint-small} {
 		flex-direction: column;
 	}
+}
+
+.reader-post-card.is-expanded-video .reader-post-card__post {
+	flex-wrap: wrap;
 }
 
 .reader-post-card__post-details {
