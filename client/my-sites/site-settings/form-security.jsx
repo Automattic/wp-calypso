@@ -16,7 +16,6 @@ import Protect from './protect';
 import Sso from './sso';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import {
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,
@@ -48,7 +47,6 @@ class SiteSettingsFormSecurity extends Component {
 			handleSubmitForm,
 			isRequestingSettings,
 			isSavingSettings,
-			jetpackSettingsUiSupported,
 			onChangeField,
 			protectModuleActive,
 			protectModuleUnavailable,
@@ -56,10 +54,6 @@ class SiteSettingsFormSecurity extends Component {
 			siteId,
 			translate
 		} = this.props;
-
-		if ( ! jetpackSettingsUiSupported ) {
-			return null;
-		}
 
 		const disableProtect = ! protectModuleActive || protectModuleUnavailable;
 
@@ -98,10 +92,8 @@ const connectComponent = connect(
 		const protectModuleActive = !! isJetpackModuleActive( state, siteId, 'protect' );
 		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
 		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode( state, siteId, 'protect' );
-		const jetpackSettingsUiSupported = siteSupportsJetpackSettingsUi( state, siteId );
 
 		return {
-			jetpackSettingsUiSupported,
 			protectModuleActive,
 			protectModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 		};

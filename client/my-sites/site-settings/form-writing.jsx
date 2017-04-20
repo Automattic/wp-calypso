@@ -15,11 +15,7 @@ import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import QueryTaxonomies from 'components/data/query-taxonomies';
 import TaxonomyCard from './taxonomies/taxonomy-card';
-import {
-	isJetpackSite,
-	isJetpackMinimumVersion,
-	siteSupportsJetpackSettingsUi
-} from 'state/sites/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import Composing from './composing';
@@ -107,7 +103,7 @@ class SiteSettingsFormWriting extends Component {
 					updateFields={ updateFields }
 				/>
 				{
-					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
+					this.props.isJetpackSite && (
 						<div>
 							{
 								this.renderSectionHeader( translate( 'Media' ) )
@@ -123,7 +119,7 @@ class SiteSettingsFormWriting extends Component {
 					)
 				}
 				{
-					this.props.isJetpackSite && this.props.jetpackSettingsUISupported && (
+					this.props.isJetpackSite && (
 						<div>
 							<QueryJetpackModules siteId={ this.props.siteId } />
 
@@ -156,7 +152,7 @@ class SiteSettingsFormWriting extends Component {
 					)
 				}
 
-				{ config.isEnabled( 'press-this' ) && ! ( this.props.isJetpackSite || this.props.jetpackSettingsUISupported ) && (
+				{ config.isEnabled( 'press-this' ) && ! this.props.isJetpackSite && (
 					<div>
 						{
 							this.renderSectionHeader( translate( 'Press This', {
@@ -177,7 +173,6 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
 			jetpackMasterbarSupported: isJetpackMinimumVersion( state, siteId, '4.8' ),
 			isJetpackSite: isJetpackSite( state, siteId ),
 			siteId
