@@ -11,33 +11,22 @@ import analytics from 'lib/analytics';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import TrafficMain from 'my-sites/site-settings/traffic/main';
-import sitesFactory from 'lib/sites-list';
-import utils from 'lib/site/utils';
-
-const sites = sitesFactory();
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { canCurrentUser } from 'state/selectors';
 
 export default {
 	traffic( context ) {
 		const analyticsPageTitle = 'Site Settings > Traffic';
 		const basePath = route.sectionify( context.path );
-		const fiveMinutes = 5 * 60 * 1000;
-		let site = sites.getSelectedSite();
+		const state = context.store.getState();
+		const site = getSelectedSite( state );
+		const siteId = getSelectedSiteId( state );
+		const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 
 		// if site loaded, but user cannot manage site, redirect
-		if ( site && ! utils.userCan( 'manage_options', site ) ) {
+		if ( site && ! canManageOptions ) {
 			page.redirect( '/stats' );
 			return;
-		}
-
-		if ( ! site.latestSettings || new Date().getTime() - site.latestSettings > ( fiveMinutes ) ) {
-			if ( sites.initialized ) {
-				site.fetchSettings();
-			} else {
-				sites.once( 'change', function() {
-					site = sites.getSelectedSite();
-					site.fetchSettings();
-				} );
-			}
 		}
 
 		const upgradeToBusiness = () => page( '/checkout/' + site.domain + '/business' );
