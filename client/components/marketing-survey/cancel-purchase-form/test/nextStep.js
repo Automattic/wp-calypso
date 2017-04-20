@@ -13,6 +13,7 @@ import {
 	HAPPYCHAT_STEP,
 	FINAL_STEP,
 } from '../steps';
+import mockProductValues from './mockProductValues';
 
 describe( 'nextStep', function() {
 	const product = {};
@@ -21,12 +22,7 @@ describe( 'nextStep', function() {
 	let nextStep;
 
 	useMockery( ( mockery ) => {
-		const productValues = {
-			isBusiness: ( arg ) => arg.isBusiness(),
-			isPersonal: ( arg ) => arg.isPersonal(),
-			isPremium: ( arg ) => arg.isPremium(),
-		};
-		mockery.registerMock( 'lib/product-values', productValues );
+		mockery.registerMock( 'lib/product-values', mockProductValues() );
 	} );
 
 	before( function() {
@@ -39,8 +35,8 @@ describe( 'nextStep', function() {
 		product.isPremium = () => false;
 	} );
 
-	it( 'should default to returning initial step', function() {
-		expect( nextStep() ).to.equal( INITIAL_STEP );
+	it( 'should return false from unknown step', function() {
+		expect( nextStep( 'unknown_step' ) ).to.equal( false );
 	} );
 
 	it( 'should return false from final step', function() {
