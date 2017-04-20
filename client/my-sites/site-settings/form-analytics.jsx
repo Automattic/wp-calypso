@@ -24,6 +24,7 @@ import {
 	isEnterprise,
 	isJetpackBusiness
 } from 'lib/products-values';
+import { activateModule } from 'state/jetpack/modules/actions';
 import { getSiteOption, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -60,7 +61,6 @@ class GoogleAnalyticsForm extends Component {
 			handleSubmitForm,
 			isRequestingSettings,
 			isSavingSettings,
-			jetpackManagementUrl,
 			jetpackModuleActive,
 			jetpackVersionSupportsModule,
 			showUpgradeNudge,
@@ -71,7 +71,7 @@ class GoogleAnalyticsForm extends Component {
 			translate,
 			uniqueEventTracker,
 		} = this.props;
-
+		const activateGoogleAnalytics = () => this.props.activateModule( siteId, 'google-analytics' );
 		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
 		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsModule;
 		const analyticsSupportUrl = siteIsJetpack
@@ -101,7 +101,7 @@ class GoogleAnalyticsForm extends Component {
 						status="is-warning"
 						showDismiss={ false }
 						text={ translate( 'The Google Analytics module is disabled in Jetpack.' ) } >
-						<NoticeAction href={ jetpackManagementUrl + 'admin.php?page=jetpack#/engagement' }>
+						<NoticeAction onClick={ activateGoogleAnalytics }>
 							{ translate( 'Enable' ) }
 						</NoticeAction>
 					</Notice>
@@ -236,8 +236,9 @@ const mapStateToProps = ( state ) => {
 };
 
 const connectComponent = connect(
-	mapStateToProps,
-	null,
+	mapStateToProps, {
+		activateModule
+	},
 	null,
 	{ pure: false }
 );

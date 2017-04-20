@@ -37,7 +37,6 @@ import CountedTextarea from 'components/forms/counted-textarea';
 import Banner from 'components/banner';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import {
-	getSiteOption,
 	getSeoTitleFormatsForSite,
 	isJetpackMinimumVersion,
 	isJetpackSite,
@@ -54,6 +53,7 @@ import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mapping
 import { recordTracksEvent } from 'state/analytics/actions';
 import WebPreview from 'components/web-preview';
 import { requestSite } from 'state/sites/actions';
+import { activateModule } from 'state/jetpack/modules/actions';
 import {
 	isBusiness,
 	isEnterprise,
@@ -375,7 +375,6 @@ export const SeoForm = React.createClass( {
 		const {
 			siteId,
 			siteIsJetpack,
-			jetpackManagementUrl,
 			jetpackVersionSupportsSeo,
 			showAdvancedSeo,
 			showWebsiteMeta,
@@ -403,6 +402,8 @@ export const SeoForm = React.createClass( {
 
 		let { googleCode, bingCode, pinterestCode, yandexCode } = this.state;
 
+		const activateSeoTools = () => this.props.activateModule( siteId, 'seo-tools' );
+		const activateVerificationServices = () => this.props.activateModule( siteId, 'verification-tools' );
 		const isSitePrivate = siteSettings && parseInt( siteSettings.blog_public, 10 ) !== 1;
 		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsSeo;
 		const isDisabled = isSitePrivate || isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
@@ -492,7 +493,7 @@ export const SeoForm = React.createClass( {
 							'SEO Tools module is disabled in Jetpack.'
 						) }
 					>
-						<NoticeAction href={ jetpackManagementUrl + 'admin.php?page=jetpack#/engagement' }>
+						<NoticeAction onClick={ activateSeoTools }>
 							{ translate( 'Enable' ) }
 						</NoticeAction>
 					</Notice>
@@ -590,7 +591,7 @@ export const SeoForm = React.createClass( {
 								'Site Verification Services are disabled in Jetpack.'
 							) }
 						>
-							<NoticeAction href={ jetpackManagementUrl + 'admin.php?page=jetpack#/engagement' }>
+							<NoticeAction onClick={ activateVerificationServices }>
 								{ translate( 'Enable' ) }
 							</NoticeAction>
 						</Notice>
@@ -733,7 +734,6 @@ const mapStateToProps = ( state, ownProps ) => {
 	const isAdvancedSeoEligible = site && site.plan && hasBusinessPlan( site.plan );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	const jetpackManagementUrl = getSiteOption( state, siteId, 'admin_url' );
 	const jetpackVersionSupportsSeo = isJetpackMinimumVersion( state, siteId, '4.4-beta1' );
 	const isAdvancedSeoSupported = site && ( ! siteIsJetpack || ( siteIsJetpack && jetpackVersionSupportsSeo ) );
 
@@ -745,7 +745,6 @@ const mapStateToProps = ( state, ownProps ) => {
 		siteSettings: getSiteSettings( state, siteId ),
 		showAdvancedSeo: isAdvancedSeoEligible && isAdvancedSeoSupported,
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
-		jetpackManagementUrl,
 		jetpackVersionSupportsSeo: jetpackVersionSupportsSeo,
 		isFetchingSite: isRequestingSite( state, siteId ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
@@ -763,6 +762,7 @@ const mapDispatchToProps = {
 	trackFormSubmitted: partial( recordTracksEvent, 'calypso_seo_settings_form_submit' ),
 	trackTitleFormatsUpdated: partial( recordTracksEvent, 'calypso_seo_tools_title_formats_updated' ),
 	trackFrontPageMetaUpdated: partial( recordTracksEvent, 'calypso_seo_tools_front_page_meta_updated' ),
+	activateModule,
 };
 
 export default connect(
