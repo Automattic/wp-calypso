@@ -33,7 +33,7 @@ class ProductCreate extends Component {
 
 		return (
 			<ProductForm
-				product={ product || {} }
+				product={ product || { type: 'simple' } }
 				editProduct={ this.props.editProduct }
 				editProductAttribute={ editProductAttribute }
 			/>

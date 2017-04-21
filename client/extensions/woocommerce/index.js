@@ -43,7 +43,7 @@ const Controller = {
 export default function() {
 	if ( config.isEnabled( 'woocommerce/extension-dashboard' ) ) {
 		page( '/store/:site?', siteSelection, navigation, Controller.dashboard );
-		page( '/store/products/add/:site?', siteSelection, navigation, Controller.addProduct );
+		page( '/store/:site?/products/add', siteSelection, navigation, Controller.addProduct );
 	}
 
 	if ( config.isEnabled( 'woocommerce/extension-stats' ) ) {
