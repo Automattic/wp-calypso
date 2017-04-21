@@ -11,7 +11,6 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import { isEnabled } from 'config';
 import { getSiteFrontPageType, getSitePostsPage } from 'state/sites/selectors';
 
 class BlogPostsPage extends React.Component {
@@ -37,8 +36,7 @@ class BlogPostsPage extends React.Component {
 
 		const isStaticHomePageWithNoPostsPage = this.props.frontPageType === 'page' && ! this.props.postsPage;
 		const isCurrentlySetAsHomepage = this.props.frontPageType === 'posts';
-		const shouldShow = this.props.isFrontPage ||
-			( isEnabled( 'manage/pages/set-homepage' ) && isStaticHomePageWithNoPostsPage );
+		const shouldShow = this.props.isFrontPage || isStaticHomePageWithNoPostsPage;
 
 		if ( ! shouldShow ) {
 			return null;
