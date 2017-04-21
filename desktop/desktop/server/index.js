@@ -43,6 +43,7 @@ function showAppWindow() {
 
 	mainWindow.webContents.on( 'did-finish-load', function() {
 		mainWindow.webContents.send( 'app-config', Config, Settings.isDebug(), System.getDetails() );
+		mainWindow.webContents.send( 'is-calypso' );
 
 		const ipc = electron.ipcMain;
 		ipc.on( 'mce-contextmenu', function( ev ) {
