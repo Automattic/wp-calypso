@@ -39,8 +39,10 @@
 .signup-form__social-buttons {
 	button {
 		margin: 0 0 10px;
-		padding: 8px 14px;
 		width: 100%;
+	}
+	svg{
+		margin-top: -2px;
 	}
 }
 
