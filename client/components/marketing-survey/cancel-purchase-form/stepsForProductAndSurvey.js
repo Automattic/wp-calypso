@@ -2,23 +2,27 @@
  * Internal dependencies
  */
 import {
+	PLAN_PREMIUM,
+	PLAN_PERSONAL,
+} from 'lib/plans/constants';
+import {
+	includesProduct,
+	isBusiness,
+} from 'lib/products-values';
+import { abtest } from 'lib/abtest';
+import {
 	INITIAL_STEP,
 	CONCIERGE_STEP,
 	HAPPYCHAT_STEP,
 	FINAL_STEP,
 } from './steps';
-import {
-	isBusiness,
-	isPersonal,
-	isPremium,
-} from 'lib/products-values';
 
 export default function stepsForProductAndSurvey( survey, product ) {
 	if ( survey && survey.questionOneRadio === 'tooHard' ) {
-		if ( isBusiness( product ) ) {
+		if ( abtest( 'conciergeOfferOnCancel' ) === 'showConciergeOffer' && isBusiness( product ) ) {
 			return [ INITIAL_STEP, CONCIERGE_STEP, FINAL_STEP ];
 		}
-		if ( isPersonal( product ) || isPremium( product ) ) {
+		if ( abtest( 'chatOfferOnCancel' ) === 'show' && includesProduct( [ PLAN_PERSONAL, PLAN_PREMIUM ], product ) ) {
 			return [ INITIAL_STEP, HAPPYCHAT_STEP, FINAL_STEP ];
 		}
 	}
