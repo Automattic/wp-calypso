@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import DnsTemplateButton from './dns-template-button';
-import GoDaddyMail from '../dns/godaddy-email';
 import Office365 from '../dns/office-365';
 
 class DnsTemplates extends Component {
@@ -19,7 +18,6 @@ class DnsTemplates extends Component {
 		this.state = {
 			currentComponentName: null,
 			templates: [
-				{ name: 'GoDaddy', Component: GoDaddyMail },
 				{ name: 'Office 365', Component: Office365 }
 			]
 		};
