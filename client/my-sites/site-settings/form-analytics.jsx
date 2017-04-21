@@ -85,19 +85,6 @@ class GoogleAnalyticsForm extends Component {
 					<QueryJetpackModules siteId={ siteId } />
 				}
 
-				{ showUpgradeNudge &&
-					<Banner
-						description={ siteIsJetpack
-							? translate( 'Upgrade to the Professional Plan and include your own analytics tracking ID.' )
-							: translate( 'Upgrade to the Business Plan and include your own analytics tracking ID.' )
-						}
-						event={ 'google_analytics_settings' }
-						feature={ FEATURE_GOOGLE_ANALYTICS }
-						plan={ PLAN_BUSINESS }
-						title={ translate( 'Add Google Analytics' ) }
-					/>
-				}
-
 				{ isJetpackUnsupported && ! showUpgradeNudge &&
 					<Notice
 						status="is-warning"
@@ -120,71 +107,92 @@ class GoogleAnalyticsForm extends Component {
 					</Notice>
 				}
 
-				<SectionHeader label={ translate( 'Analytics Settings' ) }>
-					<Button
-						primary
-						compact
-						disabled={ this.isSubmitButtonDisabled() }
-						onClick={ handleSubmitForm }
-					>
-						{
-							isSavingSettings
-									? translate( 'Saving…' )
-									: translate( 'Save Settings' )
-						}
-					</Button>
-				</SectionHeader>
-				<Card className="analytics-settings site-settings__analytics-settings">
-					<fieldset>
-						<FormLabel htmlFor="wgaCode">
-							{ translate( 'Google Analytics Tracking ID', { context: 'site setting' } ) }
-						</FormLabel>
-						<FormTextInput
-							name="wgaCode"
-							id="wgaCode"
-							value={ fields.wga ? fields.wga.code : '' }
-							onChange={ this.handleCodeChange }
-							placeholder={ placeholderText }
-							disabled={ isRequestingSettings || ! enableForm }
-							onClick={ eventTracker( 'Clicked Analytics Key Field' ) }
-							onKeyPress={ uniqueEventTracker( 'Typed In Analytics Key Field' ) }
-							isError={ ! this.state.isCodeValid }
-						/>
-						{
-							! this.state.isCodeValid &&
-							<FormTextValidation isError={ true } text={ translate( 'Invalid Google Analytics Tracking ID.' ) } />
-						}
-						<ExternalLink
-							icon
-							href="https://support.google.com/analytics/answer/1032385?hl=en"
-							target="_blank"
-							rel="noopener noreferrer"
+				<SectionHeader label={ translate( 'Google Analytics' ) }>
+					{
+						! showUpgradeNudge &&
+						<Button
+							primary
+							compact
+							disabled={ this.isSubmitButtonDisabled() }
+							onClick={ handleSubmitForm }
 						>
-							{ translate( 'Where can I find my Tracking ID?' ) }
-						</ExternalLink>
-					</fieldset>
-					<p>
-						{ translate(
-							'Google Analytics is a free service that complements our {{a}}built-in stats{{/a}} with different insights into your traffic.' +
-							' WordPress.com stats and Google Analytics use different methods to identify and track activity on your site, so they will ' +
-							'normally show slightly different totals for your visits, views, etc.',
 							{
-								components: {
-									a: <a href={ '/stats/' + site.domain } />
+								isSavingSettings
+										? translate( 'Saving…' )
+										: translate( 'Save Settings' )
+							}
+						</Button>
+					}
+				</SectionHeader>
+
+				{ showUpgradeNudge
+					? (
+						<Banner
+							description={ siteIsJetpack
+								? translate( 'Upgrade to the Professional Plan and include your own analytics tracking ID.' )
+								: translate( 'Upgrade to the Business Plan and include your own analytics tracking ID.' )
+							}
+							event={ 'google_analytics_settings' }
+							feature={ FEATURE_GOOGLE_ANALYTICS }
+							plan={ PLAN_BUSINESS }
+							title={ translate( 'Add Google Analytics' ) }
+						/>
+					)
+					: (
+						<Card className="analytics-settings site-settings__analytics-settings">
+							<fieldset>
+								<FormLabel htmlFor="wgaCode">
+									{ translate( 'Google Analytics Tracking ID', { context: 'site setting' } ) }
+								</FormLabel>
+								<FormTextInput
+									name="wgaCode"
+									id="wgaCode"
+									value={ fields.wga ? fields.wga.code : '' }
+									onChange={ this.handleCodeChange }
+									placeholder={ placeholderText }
+									disabled={ isRequestingSettings || ! enableForm }
+									onClick={ eventTracker( 'Clicked Analytics Key Field' ) }
+									onKeyPress={ uniqueEventTracker( 'Typed In Analytics Key Field' ) }
+									isError={ ! this.state.isCodeValid }
+								/>
+								{
+									! this.state.isCodeValid &&
+									<FormTextValidation isError={ true } text={ translate( 'Invalid Google Analytics Tracking ID.' ) } />
 								}
-							}
-						) }
-					</p>
-					<p>
-					{ translate( 'Learn more about using {{a}}Google Analytics with WordPress.com{{/a}}.',
-						{
-							components: {
-								a: <a href={ analyticsSupportUrl } target="_blank" rel="noopener noreferrer" />
-							}
-						}
-					) }
-					</p>
-				</Card>
+								<ExternalLink
+									icon
+									href="https://support.google.com/analytics/answer/1032385?hl=en"
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{ translate( 'Where can I find my Tracking ID?' ) }
+								</ExternalLink>
+							</fieldset>
+							<p>
+								{ translate(
+									'Google Analytics is a free service that complements our {{a}}built-in stats{{/a}} ' +
+									'with different insights into your traffic. WordPress.com stats and Google Analytics ' +
+									'use different methods to identify and track activity on your site, so they will ' +
+									'normally show slightly different totals for your visits, views, etc.',
+									{
+										components: {
+											a: <a href={ '/stats/' + site.domain } />
+										}
+									}
+								) }
+							</p>
+							<p>
+							{ translate( 'Learn more about using {{a}}Google Analytics with WordPress.com{{/a}}.',
+								{
+									components: {
+										a: <a href={ analyticsSupportUrl } target="_blank" rel="noopener noreferrer" />
+									}
+								}
+							) }
+							</p>
+						</Card>
+					)
+				}
 			</form>
 		);
 	}
