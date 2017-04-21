@@ -59,9 +59,10 @@ const PreloadTab = ( {
 		super_cache_enabled,
 		wp_cache_enabled,
 	},
+	handleAutosavingToggle,
 	handleChange,
 	handleSelect,
-	handleToggle,
+	handleSubmitForm,
 	isRequesting,
 	translate,
 } ) => {
@@ -95,7 +96,7 @@ const PreloadTab = ( {
 					compact
 					primary
 					disabled={ isRequesting }
-					type="submit">
+					onClick={ handleSubmitForm }>
 					{ translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>
@@ -106,7 +107,7 @@ const PreloadTab = ( {
 						<FormToggle
 							checked={ !! preload_on }
 							disabled={ isRequesting }
-							onChange={ handleToggle( 'preload_on' ) }>
+							onChange={ handleAutosavingToggle( 'preload_on' ) }>
 							<span>
 								{ translate( 'Preload mode. (Garbage collection only on legacy cache files. Recommended.)' ) }
 							</span>
@@ -115,7 +116,7 @@ const PreloadTab = ( {
 						<FormToggle
 							checked={ preload_refresh }
 							disabled={ isRequesting }
-							onChange={ handleToggle( 'preload_refresh' ) }>
+							onChange={ handleAutosavingToggle( 'preload_refresh' ) }>
 							<span>
 								{ translate(
 									'Refresh preloaded cache files every {{number /}} minute. ',
@@ -146,7 +147,7 @@ const PreloadTab = ( {
 						<FormToggle
 							checked={ !! preload_taxonomies }
 							disabled={ isRequesting }
-							onChange={ handleToggle( 'preload_taxonomies' ) }>
+							onChange={ handleAutosavingToggle( 'preload_taxonomies' ) }>
 							<span>
 								{ translate( 'Preload tags, categories and other taxonomies.' ) }
 							</span>
