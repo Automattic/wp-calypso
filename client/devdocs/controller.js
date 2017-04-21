@@ -12,7 +12,6 @@ import url from 'url';
  * Internal dependencies
  */
 import DocsComponent from './main';
-import { login } from 'lib/paths';
 import SingleDocComponent from './doc';
 import DesignAssetsComponent from './design';
 import Blocks from './design/blocks';
@@ -145,7 +144,7 @@ const devdocs = {
 
 	pleaseLogIn: function( context ) { // eslint-disable-line no-unused-vars
 		const currentUrl = url.parse( location.href );
-		const redirectTo = currentUrl.protocol + '//' + currentUrl.host + '/devdocs/welcome';
+		const redirectUrl = currentUrl.protocol + '//' + currentUrl.host + '/devdocs/welcome';
 
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 
@@ -154,7 +153,7 @@ const devdocs = {
 				title: 'Log In to start hacking',
 				line: 'Required to access the WordPress.com API',
 				action: 'Log In to WordPress.com',
-				actionURL: login( { redirectTo } ),
+				actionURL: 'https://wordpress.com/wp-login.php?redirect_to=' + encodeURIComponent( redirectUrl ),
 				secondaryAction: 'Register',
 				secondaryActionURL: '/start/developer',
 				illustration: '/calypso/images/drake/drake-nosites.svg'
