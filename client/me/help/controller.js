@@ -17,6 +17,7 @@ import HelpComponent from './main';
 import CoursesComponent from './help-courses';
 import ContactComponent from './help-contact';
 import support from 'lib/url/support';
+import userUtils from 'lib/user/utils';
 
 export default {
 	loggedOut( context, next ) {
