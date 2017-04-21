@@ -21,7 +21,6 @@ import QuerySiteMonitorSettings from 'components/data/query-site-monitor-setting
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { updateSiteMonitorSettings } from 'state/sites/monitor/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
 import {
 	getSiteMonitorSettings,
 	isActivatingJetpackModule,
@@ -175,8 +174,6 @@ export default connect(
 	},
 	{
 		trackEvent: partial( recordGoogleEvent, 'Site Settings' ),
-		errorNotice,
-		successNotice,
 		updateSiteMonitorSettings
 	}
 )( localize( SiteSettingsFormJetpackMonitor ) );
