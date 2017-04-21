@@ -17,6 +17,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { loginUser } from 'state/login/actions';
 import Notice from 'components/notice';
 import { createFormAndSubmit } from 'lib/form';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 export class Login extends Component {
 	static propTypes = {
@@ -46,9 +47,17 @@ export class Login extends Component {
 	};
 
 	onChangeField = ( event ) => {
-		this.setState( {
-			[ event.target.name ]: event.target.value
-		} );
+		const { name, value } = event.target;
+
+		this.setState( { [ name ]: value } );
+	};
+
+	onChangeRememberMe = ( event ) => {
+		const { name, checked } = event.target;
+
+		this.props.recordTracksEvent( 'calypso_login_block_remember_me_change', { new_value: checked } );
+
+		this.setState( { [ name ]: checked } );
 	};
 
 	onSubmitForm = ( event ) => {
@@ -56,7 +65,11 @@ export class Login extends Component {
 		this.setState( {
 			submitting: true
 		} );
+
+		this.props.recordTracksEvent( 'calypso_login_block_login_submit' );
+
 		this.props.loginUser( this.state.usernameOrEmail, this.state.password ).then( () => {
+			this.props.recordTracksEvent( 'calypso_login_block_login_success' );
 			this.dismissNotice();
 			createFormAndSubmit( config( 'login_url' ), {
 				log: this.state.usernameOrEmail,
@@ -65,6 +78,10 @@ export class Login extends Component {
 				rememberme: this.state.rememberme ? 1 : 0,
 			} );
 		} ).catch( errorMessage => {
+			this.props.recordTracksEvent( 'calypso_login_block_login_failure', {
+				error_message: errorMessage
+			} );
+
 			this.setState( {
 				submitting: false,
 				errorMessage
@@ -126,7 +143,7 @@ export class Login extends Component {
 								<FormCheckbox
 									name="rememberme"
 									checked={ this.state.rememberme }
-									onChange={ this.onChangeField }
+									onChange={ this.onChangeRememberMe }
 									{ ...isDisabled } />
 								{ this.props.translate( 'Stay logged in' ) }
 							</label>
@@ -147,5 +164,6 @@ export default connect(
 	null,
 	{
 		loginUser,
+		recordTracksEvent
 	}
 )( localize( Login ) );

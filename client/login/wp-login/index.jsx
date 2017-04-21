@@ -33,15 +33,19 @@ import {
 import Main from 'components/main';
 import LoginBlock from 'blocks/login';
 import RequestLoginEmailForm from '../magic-login/request-login-email-form';
+import { recordTracksEvent } from 'state/analytics/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class Login extends React.Component {
 	onClickEnterPasswordInstead = event => {
 		event.preventDefault();
+		this.props.recordTracksEvent( 'calypso_login_enter_password_instead_click' );
 		this.props.hideMagicLoginRequestForm();
 	};
 
 	onMagicLoginRequestClick = event => {
 		event.preventDefault();
+		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' );
 		this.props.showMagicLoginRequestForm();
 	};
 
@@ -53,10 +57,13 @@ class Login extends React.Component {
 
 		switch ( magicLoginView ) {
 			case LINK_EXPIRED_PAGE:
+				this.props.recordTracksEvent( 'calypso_login_magic_link_expired_link_view' );
 				return <EmailedLoginLinkExpired />;
 			case CHECK_YOUR_EMAIL_PAGE:
+				this.props.recordTracksEvent( 'calypso_login_magic_link_link_sent_view' );
 				return <EmailedLoginLinkSuccessfully emailAddress={ magicLoginEmailAddress } />;
 			case INTERSTITIAL_PAGE:
+				this.props.recordTracksEvent( 'calypso_login_magic_link_interstitial_view' );
 				return <HandleEmailedLinkForm />;
 		}
 	}
@@ -72,13 +79,15 @@ class Login extends React.Component {
 		}
 	}
 
-	goBack( event ) {
+	goBack = event => {
 		event.preventDefault();
+
+		this.props.recordTracksEvent( 'calypso_login_go_back_click' );
 
 		if ( typeof window !== 'undefined' ) {
 			window.history.back();
 		}
-	}
+	};
 
 	footerLinks() {
 		const {
@@ -88,15 +97,29 @@ class Login extends React.Component {
 		} = this.props;
 
 		if ( magicLoginEnabled && magicLoginView === REQUEST_FORM ) {
-			return <a href="#" onClick={ this.onClickEnterPasswordInstead }>{ translate( 'Enter a password instead' ) }</a>;
+			return <a href="#"
+				key="enter-password-link"
+				onClick={ this.onClickEnterPasswordInstead }>
+					{ translate( 'Enter a password instead' ) }
+				</a>;
 		}
 
-		const showMagicLoginLink = magicLoginEnabled && ! magicLoginView &&
-			<a href="#" onClick={ this.onMagicLoginRequestClick }>{ translate( 'Email me a login link' ) }</a>;
-		const resetPasswordLink = ! magicLoginView &&
-			<a href={ config( 'login_url' ) + '?action=lostpassword' }>{ this.props.translate( 'Lost your password?' ) }</a>;
-		const goBackLink = ! magicLoginView &&
-			<a href="#" onClick={ this.goBack }><Gridicon icon="arrow-left" size={ 18 } /> { this.props.translate( 'Back' ) }</a>;
+		const showMagicLoginLink = magicLoginEnabled && ! magicLoginView && <a href="#"
+			key="magic-login-link"
+			onClick={ this.onMagicLoginRequestClick }>
+				{ translate( 'Email me a login link' ) }
+			</a>;
+		const resetPasswordLink = ! magicLoginView && <a
+				href={ config( 'login_url' ) + '?action=lostpassword' }
+				key="lost-password-link">
+					{ this.props.translate( 'Lost your password?' ) }
+				</a>;
+		const goBackLink = ! magicLoginView && <a
+				href="#"
+				key="back-link"
+				onClick={ this.goBack }>
+					<Gridicon icon="arrow-left" size={ 18 } /> { this.props.translate( 'Back' ) }
+				</a>;
 
 		return compact( [
 			showMagicLoginLink,
@@ -114,6 +137,7 @@ class Login extends React.Component {
 
 		return (
 			<Main className="wp-login">
+				<PageViewTracker path="/login" title="Login" />
 				{ this.magicLoginMainContent() || (
 					<div>
 						<div className="wp-login__container">
@@ -148,6 +172,7 @@ const mapDispatch = {
 	hideMagicLoginRequestForm,
 	showMagicLoginInterstitialPage,
 	showMagicLoginRequestForm,
+	recordTracksEvent,
 };
 
 export default connect( mapState, mapDispatch )( localize( Login ) );
