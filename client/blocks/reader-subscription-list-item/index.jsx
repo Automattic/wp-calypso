@@ -24,6 +24,7 @@ function ReaderSubscriptionListItem( {
 	className = '',
 	translate,
 	followSource,
+	isEmailBlocked,
 } ) {
 	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
@@ -69,7 +70,7 @@ function ReaderSubscriptionListItem( {
 			</div>
 			<div className="reader-subscription-list-item__options">
 				<FollowButton siteUrl={ siteUrl } followSource={ followSource } />
-				{ isFollowing && <EmailSettings /> }
+				{ isFollowing && ! isEmailBlocked && <EmailSettings siteId={ siteId } /> }
 			</div>
 		</div>
 	);

@@ -18,7 +18,7 @@ import FollowingManageSearchFollowed from './search-followed';
 class FollowingManageSubscriptions extends Component {
 	static propTypes = {
 		follows: PropTypes.array.isRequired,
-	}
+	};
 
 	render() {
 		const { follows, width, translate } = this.props;
