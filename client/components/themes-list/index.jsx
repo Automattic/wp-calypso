@@ -129,6 +129,7 @@ export const ThemesList = React.createClass( {
 	renderGrid( scrollTop, onRowsRendered, registerChild ) {
 		const minColumnWidth = 250;
 		const ssrSpacers = 20;
+		const pageLength = 20;
 
 		const columnCount = this._width === undefined ? 1 : Math.floor( this._width / minColumnWidth );
 		const rowCount = this._width === undefined
@@ -136,6 +137,11 @@ export const ThemesList = React.createClass( {
 			: Math.ceil( this.props.themesCount / columnCount );
 
 		const columnWidth = Math.floor( this._width / columnCount );
+
+		// The height of the a theme card is 0.75 times its width
+		// width an additional 54px reserved for theme info.
+		// We also need to account for 10px padding on each side ( columnWidth - 20 )
+		// of the card and 20px at the bottom ( 54 + 20 ).
 		const rowHeight = Math.floor( ( columnWidth - 20 ) * 0.75 ) + 74;
 
 		const onCellsRendered = ( { stopIndex } ) => {
@@ -145,7 +151,11 @@ export const ThemesList = React.createClass( {
 			) {
 				onRowsRendered( {
 					startIndex: Math.min( this.props.themes.length, stopIndex ),
-					stopIndex: Math.min( this.props.themes.length + 19, this.props.themesCount - 1, stopIndex )
+					stopIndex: Math.min(
+						this.props.themes.length + pageLength - 1,
+						this.props.themesCount - 1,
+						stopIndex
+					)
 				} );
 			}
 		};
