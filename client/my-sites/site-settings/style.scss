@@ -302,10 +302,8 @@
 
 .jetpack-protect__deactivate,
 .jetpack-protect__edit-settings,
-.jetpack-monitor__deactivate,
 .disconnect-jetpack-button,
 .jetpack-protect__edit-settings,
-.jetpack-monitor__deactivate,
 .disconnect-jetpack-button {
 	margin-right: 8px;
 }
@@ -321,20 +319,6 @@
 		border-bottom: 0px;
 		padding-bottom: 0px;
 	}
-}
-
-.site-settings__jetpack-prompt {
-	display: flex;
-
-	img {
-		width: 128px;
-		flex: 1;
-		margin-right: 16px;
-	}
-}
-
-.site-settings__jetpack-prompt-text {
-	flex: 4;
 }
 
 .site-settings__taxonomies {
