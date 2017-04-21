@@ -3,9 +3,8 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
+import { isEmpty, partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -54,8 +53,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 		this.setState( {
 			...this.state,
 			[ name ]: ! this.state[ name ],
-		} );
-		this.saveSettings();
+		}, this.saveSettings );
 	}
 
 	saveSettings = () => {
@@ -183,17 +181,10 @@ export default connect(
 			updatingMonitorSettings: isUpdatingSiteMonitorSettings( state, siteId ),
 		};
 	},
-	( dispatch ) => {
-		const trackEvent = name => dispatch( recordGoogleEvent( 'Site Settings', name ) );
-		const boundActionCreators = bindActionCreators( {
-			errorNotice,
-			successNotice,
-			updateSiteMonitorSettings,
-		}, dispatch );
-
-		return {
-			...boundActionCreators,
-			trackEvent,
-		};
+	{
+		trackEvent: partial( recordGoogleEvent, 'Site Settings' ),
+		errorNotice,
+		successNotice,
+		updateSiteMonitorSettings
 	}
 )( localize( SiteSettingsFormJetpackMonitor ) );
