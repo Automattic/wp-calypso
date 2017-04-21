@@ -132,6 +132,14 @@ class Sitemaps extends Component {
 			translate
 		} = this.props;
 
+		if ( ! this.isSitePublic() && ! activatingSitemapsModule ) {
+			return (
+				<div className="sitemaps__module-settings site-settings__child-settings">
+					{ this.renderNonPublicExplanation() }
+				</div>
+			);
+		}
+
 		if ( ! activatingSitemapsModule && ! sitemapsModuleActive ) {
 			return;
 		}
@@ -140,14 +148,6 @@ class Sitemaps extends Component {
 			'sitemap_url',
 			'news_sitemap_url',
 		];
-
-		if ( ! this.isSitePublic() ) {
-			return (
-				<div className="sitemaps__module-settings site-settings__child-settings">
-					{ this.renderNonPublicExplanation() }
-				</div>
-			);
-		}
 
 		return (
 			<div className="sitemaps__module-settings site-settings__child-settings">
