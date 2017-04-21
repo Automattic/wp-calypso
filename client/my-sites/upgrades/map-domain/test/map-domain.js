@@ -27,7 +27,7 @@ describe( 'MapDomain component', () => {
 		// and tests were hanging forever
 		mockDataPoller( mockery );
 		mockery.registerMock( 'page', pageSpy );
-		MapDomain = require( '../' ).MapDomain;
+		MapDomain = require( '..' ).MapDomain;
 		MapDomainStep = require( 'components/domains/map-domain-step' );
 		HeaderCake = require( 'components/header-cake' );
 	} );
@@ -38,10 +38,16 @@ describe( 'MapDomain component', () => {
 	} );
 
 	const defaultProps = {
-		productsList: { get: () => {} },
+		productsList: {},
 		domainsWithPlansOnly: false,
-		translate: () => '',
-		selectedSiteIsUpgradeable: true,
+		translate: string => string,
+		isSiteUpgradeable: true,
+		selectedSite: {
+			ID: 500,
+			slug: 'domain.com',
+		},
+		selectedSiteId: 500,
+		selectedSiteSlug: 'domain.com',
 	};
 
 	it( 'does not blow up with default props', () => {
@@ -50,19 +56,13 @@ describe( 'MapDomain component', () => {
 	} );
 
 	it( 'redirects if site cannot be upgraded at mounting', () => {
-		shallow( <MapDomain { ...defaultProps } selectedSiteIsUpgradeable={ false } /> );
+		shallow( <MapDomain { ...defaultProps } isSiteUpgradeable={ false } /> );
 		expect( pageSpy.redirect ).to.have.been.calledWith( '/domains/add/mapping' );
 	} );
 
 	it( 'redirects if site cannot be upgraded at new props', () => {
-		const wrapper = shallow( <MapDomain selectedSiteIsUpgradeable={ true } { ...defaultProps } /> );
-		wrapper.setProps( { selectedSiteIsUpgradeable: false } );
-		expect( pageSpy.redirect ).to.have.been.calledWith( '/domains/add/mapping' );
-	} );
-
-	it( 'redirects if site cannot be upgraded at new props', () => {
-		const wrapper = shallow( <MapDomain selectedSiteIsUpgradeable={ true } { ...defaultProps } /> );
-		wrapper.setProps( { selectedSiteIsUpgradeable: false } );
+		const wrapper = shallow( <MapDomain { ...defaultProps } isSiteUpgradeable={ true } /> );
+		wrapper.setProps( { selectedSiteId: 501, isSiteUpgradeable: false } );
 		expect( pageSpy.redirect ).to.have.been.calledWith( '/domains/add/mapping' );
 	} );
 
@@ -77,19 +77,20 @@ describe( 'MapDomain component', () => {
 	} );
 
 	it( 'goes back to /domains/add if no selected site', () => {
-		const wrapper = shallow( <MapDomain noSelectedSite={ true } { ...defaultProps } /> );
+		const wrapper = shallow( <MapDomain { ...defaultProps } selectedSite={ null } /> );
 		wrapper.instance().goBack();
 		expect( pageSpy ).to.have.been.calledWith( '/domains/add' );
 	} );
 
 	it( 'goes back to domain management for VIP sites', () => {
-		const wrapper = shallow( <MapDomain selectedSiteIsVip={ true } selectedSiteSlug="baba" { ...defaultProps } /> );
+		const wrapper = shallow( <MapDomain { ...defaultProps } selectedSiteSlug="baba"
+											selectedSite={ { ...defaultProps.selectedSite, is_vip: true } } /> );
 		wrapper.instance().goBack();
 		expect( pageSpy ).to.have.been.calledWith( paths.domainManagementList( 'baba' ) );
 	} );
 
 	it( 'goes back to domain add page if non-VIP site', () => {
-		const wrapper = shallow( <MapDomain selectedSiteSlug="baba" { ...defaultProps } /> );
+		const wrapper = shallow( <MapDomain { ...defaultProps } selectedSiteSlug="baba" /> );
 		wrapper.instance().goBack();
 		expect( pageSpy ).to.have.been.calledWith( '/domains/add/baba' );
 	} );
