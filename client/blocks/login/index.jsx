@@ -31,34 +31,33 @@ export class Login extends Component {
 		title: '',
 	};
 
-	constructor() {
-		super();
-		this.state = {
-			usernameOrEmail: '',
-			password: '',
-			rememberme: false,
-			submitting: false,
-			errorMessage: '',
-		};
-		this.onChangeField = this.onChangeField.bind( this );
-		this.onSubmitForm = this.onSubmitForm.bind( this );
-	}
+	state = {
+		usernameOrEmail: '',
+		password: '',
+		rememberme: false,
+		submitting: false,
+		errorMessage: '',
+	};
 
-	onChangeField( event ) {
+	dismissNotice = () => {
+		this.setState( {
+			errorMessage: ''
+		} );
+	};
+
+	onChangeField = ( event ) => {
 		this.setState( {
 			[ event.target.name ]: event.target.value
 		} );
-	}
+	};
 
-	onSubmitForm( event ) {
+	onSubmitForm = ( event ) => {
 		event.preventDefault();
 		this.setState( {
 			submitting: true
 		} );
 		this.props.loginUser( this.state.usernameOrEmail, this.state.password ).then( () => {
-			this.setState( {
-				errorMessage: ''
-			} );
+			this.dismissNotice();
 			createFormAndSubmit( config( 'login_url' ), {
 				log: this.state.usernameOrEmail,
 				pwd: this.state.password,
@@ -71,12 +70,14 @@ export class Login extends Component {
 				errorMessage
 			} );
 		} );
-	}
+	};
 
 	renderNotices() {
 		if ( this.state.errorMessage ) {
 			return (
-				<Notice status="is-error" text={ this.state.errorMessage } />
+				<Notice status="is-error"
+					text={ this.state.errorMessage }
+					onDismissClick={ this.dismissNotice } />
 			);
 		}
 	}
