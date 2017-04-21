@@ -11,6 +11,7 @@ import config from 'config';
 import { createFormAndSubmit } from 'lib/form';
 import LoginForm from './login-form';
 import TwoFactorAuthentication from './two-factor-authentication';
+import { isTwoFactorEnabled } from 'state/login/selectors';
 
 class Login extends Component {
 	static propTypes = {
@@ -80,7 +81,7 @@ class Login extends Component {
 }
 
 export default connect(
-	() => ( {
-		twoFactorEnabled: true
+	( state ) => ( {
+		twoFactorEnabled: isTwoFactorEnabled( state )
 	} ),
 )( Login );

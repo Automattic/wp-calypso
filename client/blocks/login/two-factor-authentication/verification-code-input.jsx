@@ -17,10 +17,14 @@ import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
+import { loginUserWithTwoFactorVerificationCode } from 'state/login/actions';
+import {
+	getTwoFactorAuthId,
+	getTwoFactorAuthNonce,
+} from 'state/login/selectors';
 
 class VerificationCodeInput extends Component {
 	static propTypes = {
-		isLoginSuccessful: PropTypes.bool,
 		rememberMe: PropTypes.bool.isRequired,
 		twoStepId: PropTypes.string.isRequired,
 		twoStepNonce: PropTypes.string.isRequired,
@@ -105,11 +109,11 @@ class VerificationCodeInput extends Component {
 }
 
 export default connect(
-	() => ( {
-		twoStepId: 11111,
-		twoStepNonce: '5d5e1fgs55160a11ab15',
+	( state ) => ( {
+		twoStepId: getTwoFactorAuthId( state ),
+		twoStepNonce: getTwoFactorAuthNonce( state ),
 	} ),
 	{
-		loginUserWithTwoFactorVerificationCode: new Promise(),
+		loginUserWithTwoFactorVerificationCode,
 	}
 )( localize( VerificationCodeInput ) );

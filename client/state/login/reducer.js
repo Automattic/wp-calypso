@@ -33,9 +33,16 @@ export const requestSuccess = createReducer( null, {
 	[ LOGIN_REQUEST_FAILURE ]: () => false
 } );
 
+export const twoFactorAuth = createReducer( null, {
+	[ LOGIN_REQUEST ]: () => null,
+	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => data || null,
+	[ LOGIN_REQUEST_FAILURE ]: () => null
+} );
+
 export default combineReducers( {
 	isRequesting,
 	magicLogin,
 	requestError,
 	requestSuccess,
+	twoFactorAuth,
 } );
