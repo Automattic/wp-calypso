@@ -1026,15 +1026,3 @@ export const hasDefaultSiteTitle = ( state, siteId ) => {
 	// we are using startsWith here, as getSiteSlug returns "slug.wordpress.com"
 	return site.name === i18n.translate( 'Site Title' ) || startsWith( slug, site.name );
 };
-
-/**
- * Returns true if the site supports managing Jetpack settings remotely.
- * False otherwise.
- *
- * @param {Object} state  Global state tree
- * @param {Object} siteId Site ID
- * @return {?Boolean}     Whether site supports managing Jetpack settings remotely.
- */
-export const siteSupportsJetpackSettingsUi = ( state, siteId ) => {
-	return isJetpackMinimumVersion( state, siteId, '4.5.0' );
-};
