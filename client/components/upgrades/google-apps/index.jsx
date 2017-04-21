@@ -8,10 +8,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-var cartItems = require( 'lib/cart-values' ).cartItems,
-	GoogleAppsDialog = require( './dialog' ),
-	HeaderCake = require( 'components/header-cake' );
-
+import { cartItems } from 'lib/cart-values';
+import GoogleAppsDialog from './dialog';
+import HeaderCake from 'components/header-cake';
 import { getSelectedSite } from 'state/ui/selectors';
 
 class GoogleApps extends Component {
