@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { flow, keyBy, map } from 'lodash';
+import { flow, keyBy, map, merge } from 'lodash';
 import mapValues from 'lodash/fp/mapValues';
 import pick from 'lodash/fp/pick';
 
@@ -23,13 +23,11 @@ export function requesting( state = {}, action ) {
 		case POST_REVISIONS_REQUEST:
 		case POST_REVISIONS_REQUEST_FAILURE:
 		case POST_REVISIONS_REQUEST_SUCCESS:
-			return {
-				...state,
+			return merge( {}, state, {
 				[ action.siteId ]: {
-					...state[ action.siteId ],
 					[ action.postId ]: action.type === POST_REVISIONS_REQUEST,
 				},
-			};
+			} );
 
 		case SERIALIZE:
 		case DESERIALIZE:
@@ -42,13 +40,11 @@ export function requesting( state = {}, action ) {
 export function revisions( state = {}, action ) {
 	if ( action.type === POST_REVISIONS_RECEIVE ) {
 		const { siteId, postId } = action;
-		return {
-			...state,
+		return merge( {}, state, {
 			[ siteId ]: {
-				...state[ siteId ],
 				[ postId ]: keyBy( map( action.revisions, normalizeRevisionForState ), 'id' )
 			}
-		};
+		} );
 	}
 
 	return state;
