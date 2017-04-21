@@ -2263,23 +2263,6 @@ Undocumented.prototype.getWordadsStatus = function( siteId, fn ) {
 };
 
 /**
- * Set site homepage settings
- *
- * @param    {int|string}    siteId     the ID of the site
- * @param    {object}        data       the POST request body data
- * @param    {Function}      fn         the callback function
- * @returns  {Promise}
- */
-Undocumented.prototype.setSiteHomepageSettings = function( siteId, data, fn ) {
-	debug( '/sites/:site:/homepage' );
-
-	return this.wpcom.req.post( {
-			path: '/sites/' + siteId + '/homepage',
-			body: data
-		}, fn );
-};
-
-/**
  * Initiate the Automated Transfer process, uploading a theme and/or selecting
  * a community plugin.
  *
