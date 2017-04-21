@@ -68,13 +68,13 @@ export const getSite = createSelector(
 			slug: getSiteSlug( state, siteId ),
 			domain: getSiteDomain( state, siteId ),
 			is_previewable: isSitePreviewable( state, siteId ),
-			options: getSiteOptions( state, siteId ),
+			options: computeSiteOptions( state, siteId ),
 		};
 	},
 	( state ) => state.sites.items
 );
 
-export function getSiteOptions( state, siteId ) {
+export function computeSiteOptions( state, siteId ) {
 	const site = getRawSite( state, siteId );
 	if ( ! site ) {
 		return null;

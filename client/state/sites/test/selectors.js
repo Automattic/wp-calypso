@@ -11,7 +11,7 @@ import config from 'config';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	getSite,
-	getSiteOptions,
+	computeSiteOptions,
 	getSiteCollisions,
 	isSiteConflicting,
 	isSingleUserSite,
@@ -114,9 +114,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getSiteOptions()', () => {
+	describe( '#computeSiteOptions()', () => {
 		it( 'should return null if the site is not known', () => {
-			const siteOptions = getSiteOptions( {
+			const siteOptions = computeSiteOptions( {
 				sites: {
 					items: {}
 				}
@@ -126,7 +126,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return a the site options along with the computed option wpcom_url', () => {
-			const siteOptions = getSiteOptions( {
+			const siteOptions = computeSiteOptions( {
 				sites: {
 					items: {
 						2916284: {
@@ -150,7 +150,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should fix `default_post_format` if it is equal to \'0\'', () => {
-			const siteOptions = getSiteOptions( {
+			const siteOptions = computeSiteOptions( {
 				sites: {
 					items: {
 						2916284: {
