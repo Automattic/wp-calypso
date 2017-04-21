@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { noop } from 'lodash';
+import { get, noop, some } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -57,7 +57,7 @@ class PostComment extends Component {
 	}
 
 	renderRepliesList() {
-		const commentChildrenIds = this.props.commentsTree.getIn( [ this.props.commentId, 'children' ] ).toJS();
+		const commentChildrenIds = get( this.props.commentsTree, [ this.props.commentId, 'children' ] );
 		// Hide children if more than maxChildrenToShow, but not if replying
 		const exceedsMaxChildrenToShow = commentChildrenIds.length < this.props.maxChildrenToShow;
 		const showReplies = this.state.showReplies || exceedsMaxChildrenToShow;
@@ -126,11 +126,11 @@ class PostComment extends Component {
 	render() {
 		// todo: connect this constants to the state (new selector)
 		const commentsTree = this.props.commentsTree;
-		const comment = commentsTree.getIn( [ this.props.commentId, 'data' ] ).toJS();
+		const comment = get( commentsTree, [ this.props.commentId, 'data' ] );
 
 		// todo: connect this constants to the state (new selector)
-		const haveReplyWithError = commentsTree.getIn( [ this.props.commentId, 'children' ] )
-			.some( ( childId ) => commentsTree.getIn( [ childId, 'data', 'placeholderState' ] ) === PLACEHOLDER_STATE.ERROR );
+		const haveReplyWithError = some( get( commentsTree, [ this.props.commentId, 'children' ] ),
+			( childId ) => get( commentsTree, [ childId, 'data', 'placeholderState' ] ) === PLACEHOLDER_STATE.ERROR );
 
 		// If it's a pending comment, use the current user as the author
 		if ( comment.isPlaceholder ) {

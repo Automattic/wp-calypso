@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, size, take } from 'lodash';
 
 /**
  * Internal dependencies
@@ -163,7 +163,7 @@ class PostCommentList extends React.Component {
 	getCommentsCount( commentIds ) {
 		// we always count prevSum, children sum, and +1 for the current processed comment
 		return commentIds.reduce(
-			( prevSum, commentId ) => prevSum + this.getCommentsCount( this.props.commentsTree.getIn( [ commentId, 'children' ] ) ) + 1,
+			( prevSum, commentId ) => prevSum + this.getCommentsCount( get( this.props.commentsTree, [ commentId, 'children' ] ) ) + 1,
 			0
 		);
 	}
@@ -174,12 +174,12 @@ class PostCommentList extends React.Component {
 	 * @param {Number} take How many top level comments to take
 	 * @returns {Object} that has the displayed comments + total displayed count including children
 	 */
-	getDisplayedComments( commentIds, take ) {
+	getDisplayedComments( commentIds, numberToTake ) {
 		if ( ! commentIds ) {
 			return null;
 		}
 
-		const displayedComments = commentIds.take( take );
+		const displayedComments = take( commentIds, numberToTake );
 
 		return {
 			displayedComments: displayedComments,
@@ -212,35 +212,41 @@ class PostCommentList extends React.Component {
 
 		const {
 			commentsFilter,
+			commentsTree,
+			haveMoreCommentsToFetch,
 			showFilters,
+			totalCommentsCount,
 		} = this.props;
+
+		const {
+			amountOfCommentsToTake
+		} = this.state;
 
 		const {
 			displayedComments,
 			displayedCommentsCount
-		} = this.getDisplayedComments( this.props.commentsTree.get( 'children' ), this.state.amountOfCommentsToTake );
+		} = this.getDisplayedComments( commentsTree.children, amountOfCommentsToTake );
 
 		// Note: we might show fewer comments than totalCommentsCount because some comments might be
 		// orphans (parent deleted/unapproved), that comment will become unreachable but still counted.
-		const showViewEarlier = ( this.props.commentsTree.get( 'children' ).size > this.state.amountOfCommentsToTake ||
-								this.props.haveMoreCommentsToFetch );
+		const showViewEarlier = ( size( commentsTree.children ) > amountOfCommentsToTake || haveMoreCommentsToFetch );
 
 		// If we're not yet fetched all comments from server, we can only rely on server's count.
 		// once we got all the comments tree, we can calculate the count of reachable comments
-		const totalCommentsCount = this.props.haveMoreCommentsToFetch
-									? this.props.totalCommentsCount
-									: this.getCommentsCount( this.props.commentsTree.get( 'children' ) );
+		const actualTotalCommentsCount = haveMoreCommentsToFetch
+									? totalCommentsCount
+									: this.getCommentsCount( commentsTree.children );
 
 		return (
 			<div className="comments__comment-list">
 				{ ( this.props.showCommentCount || showViewEarlier ) && <div className="comments__info-bar">
-					{ this.props.showCommentCount && <CommentCount count={ totalCommentsCount } /> }
+					{ this.props.showCommentCount && <CommentCount count={ actualTotalCommentsCount } /> }
 					{ showViewEarlier ? <span className="comments__view-earlier" onClick={ this.viewEarlierCommentsHandler }>
 						{
 							translate( 'View earlier comments (Showing %(shown)d of %(total)d)', {
 								args: {
 									shown: displayedCommentsCount,
-									total: totalCommentsCount
+									total: actualTotalCommentsCount
 								}
 							} )
 						}</span> : null }
