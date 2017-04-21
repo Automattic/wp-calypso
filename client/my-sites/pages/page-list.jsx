@@ -2,8 +2,13 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	omit = require( 'lodash/omit' );
+	PureRenderMixin = require( 'react-pure-render/mixin' );
+
+import { connect } from 'react-redux';
+import {
+	isEmpty,
+	omit,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,7 +16,6 @@ var React = require( 'react' ),
 var PostListFetcher = require( 'components/post-list-fetcher' ),
 	Page = require( './page' ),
 	infiniteScroll = require( 'lib/mixins/infinite-scroll' ),
-	observe = require( 'lib/mixins/data-observe' ),
 	EmptyContent = require( 'components/empty-content' ),
 	NoResults = require( 'my-sites/no-results' ),
 	actions = require( 'lib/posts/actions' ),
@@ -20,6 +24,10 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	sortPagesHierarchically = require( './helpers' ).sortPagesHierarchically;
 
 import BlogPostsPage from './blog-posts-page';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+} from 'state/ui/selectors';
 
 var PageList = React.createClass( {
 
@@ -28,7 +36,7 @@ var PageList = React.createClass( {
 	propTypes: {
 		context: React.PropTypes.object,
 		search: React.PropTypes.string,
-		sites: React.PropTypes.object,
+		hasSites: React.PropTypes.bool.isRequired,
 		siteID: React.PropTypes.any
 	},
 
@@ -52,7 +60,7 @@ var Pages = React.createClass( {
 
 	displayName: 'Pages',
 
-	mixins: [ infiniteScroll( 'fetchPages' ), observe( 'sites' ) ],
+	mixins: [ infiniteScroll( 'fetchPages' ) ],
 
 	propTypes: {
 		context: React.PropTypes.object.isRequired,
@@ -62,7 +70,7 @@ var Pages = React.createClass( {
 		posts: React.PropTypes.array.isRequired,
 		search: React.PropTypes.string,
 		siteID: React.PropTypes.any,
-		sites: React.PropTypes.object.isRequired,
+		hasSites: React.PropTypes.bool.isRequired,
 		trackScrollPage: React.PropTypes.func.isRequired,
 		hasRecentError: React.PropTypes.bool.isRequired
 	},
@@ -133,7 +141,9 @@ var Pages = React.createClass( {
 					} ) }
 			/>;
 		} else {
-			newPageLink = this.props.siteID ? '/page/' + this.props.siteID : '/page';
+			const { site, siteId } = this.props;
+			const sitePart = site && site.slug || siteId;
+			newPageLink = this.props.siteID ? '/page/' + sitePart : '/page';
 
 			if ( this.props.hasRecentError ) {
 				attributes = {
@@ -211,7 +221,7 @@ var Pages = React.createClass( {
 	},
 
 	renderPagesList: function( { pages } ) {
-		const site = this.props.sites.getSelectedSite();
+		const { site } = this.props;
 		const status = this.props.status || 'published';
 
 		// Pages only display hierarchically for published pages on single-sites when
@@ -252,12 +262,10 @@ var Pages = React.createClass( {
 			if ( ! ( 'site_ID' in page ) ) {
 				return page;
 			}
-			// Get the site the page belongs to
-			const _site = this.props.sites.getSite( page.site_ID );
 
 			// Render each page
 			return (
-				<Page key={ 'page-' + page.global_ID } page={ page } site={ _site } multisite={ this.props.siteID === false } />
+				<Page key={ 'page-' + page.global_ID } page={ page } multisite={ this.props.siteID === false } />
 			);
 		}, this );
 
@@ -287,13 +295,17 @@ var Pages = React.createClass( {
 	},
 
 	render: function() {
-		const pages = this.props.posts;
+		const {
+			hasSites,
+			loading,
+			posts,
+		} = this.props;
 
-		if ( pages.length && this.props.sites.initialized ) {
-			return this.renderPagesList( { pages } );
+		if ( posts.length && hasSites ) {
+			return this.renderPagesList( { pages: posts } );
 		}
 
-		if ( ( ! this.props.loading ) && this.props.sites.initialized ) {
+		if ( ( ! loading ) && hasSites ) {
 			return this.renderNoContent();
 		}
 
@@ -302,4 +314,12 @@ var Pages = React.createClass( {
 
 } );
 
-module.exports = PageList;
+const mapState = state => {
+	return {
+		hasSites: ! isEmpty( state.sites.items ),
+		site: getSelectedSite( state ),
+		siteID: getSelectedSiteId( state ),
+	};
+};
+
+module.exports = connect( mapState )( PageList );

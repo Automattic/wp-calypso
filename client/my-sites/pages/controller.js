@@ -7,8 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	route = require( 'lib/route' ),
+var route = require( 'lib/route' ),
 	analytics = require( 'lib/analytics' ),
 	titlecase = require( 'to-title-case' ),
 	trackScrollPage = require( 'lib/track-scroll-page' ),
@@ -49,7 +48,6 @@ var controller = {
 				context: context,
 				siteID: siteID,
 				status: status,
-				sites: sites,
 				search: search,
 				trackScrollPage: trackScrollPage.bind(
 					null,
