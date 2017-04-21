@@ -60,23 +60,19 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 	}
 
 	toggleNewPostEmail = () => {
-		const { notifyOnNewPosts, siteId } = this.props;
+		const toggleSubscription = this.props.notifyOnNewPosts
+			? this.props.unsubscribeToNewPostEmail
+			: this.props.subscribeToNewPostEmail;
 
-		if ( notifyOnNewPosts ) {
-			this.props.unsubscribeToNewPostEmail( siteId );
-		} else {
-			this.props.subscribeToNewPostEmail( siteId );
-		}
+		toggleSubscription( this.props.siteId );
 	}
 
 	toggleNewCommentEmail = () => {
-		const { notifyOnNewComments, siteId } = this.props;
+		const toggleSubscription = this.props.notifyOnNewComments
+			? this.props.unsubscribeToNewCommentEmail
+			: this.props.subscribeToNewCommentEmail;
 
-		if ( notifyOnNewComments ) {
-			this.props.unsubscribeToNewCommentEmail( siteId );
-		} else {
-			this.props.subscribeToNewCommentEmail( siteId );
-		}
+		toggleSubscription( this.props.siteId );
 	}
 
 	render() {
@@ -154,15 +150,13 @@ class ReaderEmailSubscriptionSettingsPopout extends Component {
 const mapStateToProps = ( state, ownProps ) => {
 	const follow = find( getReaderFollows( state ), { blog_ID: ownProps.siteId } );
 
-	const currentDeliveryMethods = get( follow, [ 'delivery_methods', 'email' ], {} );
-	const notifyOnNewPosts = !! currentDeliveryMethods.send_posts;
-	const deliveryFrequency = currentDeliveryMethods.post_delivery_frequency;
-	const notifyOnNewComments = !! currentDeliveryMethods.send_comments;
+	const deliveryMethods = get( follow, [ 'delivery_methods', 'email' ], {} );
+	const { send_posts, post_delivery_frequency, send_comments } = deliveryMethods;
 
 	return {
-		notifyOnNewComments,
-		notifyOnNewPosts,
-		deliveryFrequency
+		notifyOnNewComments: !! send_comments,
+		notifyOnNewPosts: !! send_posts,
+		deliveryFrequency: post_delivery_frequency,
 	};
 };
 
