@@ -15,6 +15,7 @@ import ClipboardButton from 'components/forms/clipboard-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import WrapSettingsForm from './wrap-settings-form';
+import Notice from 'components/notice';
 
 const LockDown = ( {
 	fields: {
@@ -63,16 +64,14 @@ const LockDown = ( {
 							</ClipboardButton>
 							<p>{ lockdownCodeSnippet }</p>
 						</div>
-						<p>
-							<strong>
-								{ !! wp_lock_down
-									? translate( 'WordPress is locked down. Super Cache static files will not be deleted ' +
-										'when new comments are made.' )
-									: translate( 'WordPress is not locked down. New comments will refresh Super Cache ' +
-										'static files as normal.' )
-								}
-							</strong>
-						</p>
+
+						<Notice isCompact={ true } status={ wp_lock_down ? 'is-warning' : 'is-info' } text={ !! wp_lock_down
+							? translate( 'WordPress is locked down. Super Cache static files will not be deleted ' +
+								'when new comments are made.' )
+							: translate( 'WordPress is not locked down. New comments will refresh Super Cache ' +
+								'static files as normal.' )
+						}
+						/>
 					</FormSettingExplanation>
 				</form>
 			</Card>
