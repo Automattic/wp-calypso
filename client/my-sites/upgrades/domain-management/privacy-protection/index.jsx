@@ -20,7 +20,6 @@ import { type as domainTypes } from 'lib/domains/constants';
 const PrivacyProtection = React.createClass( {
 	propTypes: {
 		domains: React.PropTypes.object.isRequired,
-		products: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
@@ -70,8 +69,7 @@ const PrivacyProtection = React.createClass( {
 				<Card className="privacy-protection-card">
 					<CardHeader
 						selectedDomainName={ this.props.selectedDomainName }
-						selectedSite={ this.props.selectedSite }
-						products={ this.props.products } />
+						selectedSite={ this.props.selectedSite } />
 
 					<CardContent
 						selectedDomainName={ this.props.selectedDomainName }

@@ -2,16 +2,18 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import AddButton from './add-button';
 import QueryProductsList from 'components/data/query-products-list';
+import { getProductDisplayCost } from 'state/products-list/selectors';
 
 const Header = React.createClass( {
 	propTypes: {
-		products: React.PropTypes.object.isRequired,
+		displayCost: React.PropTypes.string,
 		selectedDomainName: React.PropTypes.string.isRequired,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
@@ -20,7 +22,7 @@ const Header = React.createClass( {
 	},
 
 	render() {
-		const displayCost = this.props.products && this.props.products.private_whois && this.props.products.private_whois.cost_display;
+		const { displayCost } = this.props;
 
 		if ( ! displayCost ) {
 			return <QueryProductsList />;
@@ -51,4 +53,8 @@ const Header = React.createClass( {
 	}
 } );
 
-export default Header;
+export default connect(
+	state => ( {
+		displayCost: getProductDisplayCost( state, 'private_whois' ),
+	} )
+)( Header );

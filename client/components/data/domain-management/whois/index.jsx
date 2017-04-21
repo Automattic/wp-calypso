@@ -28,7 +28,6 @@ function getStateFromStores( props ) {
 	return {
 		domains,
 		whois: WhoisStore.getByDomainName( props.selectedDomainName ),
-		products: props.products,
 		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite,
 		context: props.context
@@ -72,7 +71,6 @@ class WhoisData extends Component {
 				component={ this.props.component }
 				stores={ stores }
 				getStateFromStores={ getStateFromStores }
-				products={ this.props.products }
 				selectedDomainName={ this.props.selectedDomainName }
 				selectedSite={ this.props.selectedSite }
 				context={ this.props.context } />
@@ -82,7 +80,6 @@ class WhoisData extends Component {
 
 export default connect( ( state ) => {
 	return {
-		products: state.productsList.items,
 		selectedSite: getSelectedSite( state )
 	};
 } )( WhoisData );

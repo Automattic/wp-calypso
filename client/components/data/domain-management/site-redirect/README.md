@@ -20,8 +20,7 @@ const MyComponent = React.createClass( {
 		return (
 			<SiteRedirectData
 				component={ MyChildComponent }
-				selectedDomainName={ selectedDomainName }
-				sites={ sites } />
+				selectedDomainName={ selectedDomainName } />
 		);
 	}
 } );
@@ -33,7 +32,6 @@ The component expects to receive all listed props:
 
 * `component` - mentioned above
 * `selectedDomainName` - the domain name currently selected 
-* `sites` - a list of user sites 
 
 The child component should receive processed props defined during the render:
 
@@ -44,4 +42,4 @@ As well as:
 
 * `location` - a site redirect's location, it's the result of a call to `SiteRedirectStore.getBySite` for the current site  
 
-It's updated whenever `SiteRedirectStore` or `sites` changes.
+It's updated whenever `SiteRedirectStore` changes.
