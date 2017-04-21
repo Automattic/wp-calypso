@@ -72,9 +72,7 @@ module.exports = {
 				<CartData>
 					<DomainSearch
 						basePath={ basePath }
-						context={ context }
-						sites={ sites }
-						productsList={ productsList } />
+						context={ context } />
 				</CartData>
 			),
 			document.getElementById( 'primary' ),
