@@ -68,7 +68,6 @@ const domainAvailability = {
 };
 
 const dnsTemplates = {
-	GODADDY_EMAIL: 'godaddy-mail',
 	MICROSOFT_OFFICE365: 'microsoft-office365',
 };
 
