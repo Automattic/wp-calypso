@@ -76,4 +76,4 @@ There's one exception to the `-wpcom` suffix, which is Automated Transfer (AT) s
 
 Since our UI for Jetpack sites consists of an 'Uploaded Themes' and a 'WordPress.com Themes' list and we don't want to duplicate themes between them, we filter WP.com themes from a given Jetpack site's installed themes. Unfortunately, we cannot wholly treat this as an implementation detail at view level and filter there (after getting themes from Redux state), but have to do this right after receiving a themes list from the endpoint, in our `requestThemes()` action, _before_ storing it in Redux state (via `ThemeQueryManager`).
 
-The reason is that `ThemeQueryManager` stores themes lists of fixed length for pagination reasons. Filtering themes from those lists when reading _from_ state would change those lengths and mess up pagination.
+The reason is that `ThemeQueryManager` internally stores themes lists of fixed length for pagination reasons. Filtering themes from those lists when reading _from_ state would change those lengths and mess up pagination.
