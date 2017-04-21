@@ -36,6 +36,7 @@
 	input {
 		margin-right: 10px;
 	}
+
 	label{
 		font-size: 14px;
 	}
@@ -52,4 +53,10 @@
 	.gridicon{
 		vertical-align: text-bottom;
 	}
+}
+
+.two-factor-authentication__auth-code-preview {
+	width: 100%;
+	display: block;
+	margin-bottom: 16px;
 }
