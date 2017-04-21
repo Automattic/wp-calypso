@@ -588,7 +588,7 @@ const LoggedInForm = React.createClass( {
 		return (
 			<LoggedOutFormLinks>
 				{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
-				<LoggedOutFormLinkItem href={ login( { redirectTo } ) }>
+				<LoggedOutFormLinkItem href={ login( { legacy: true, redirectTo } ) }>
 					{ this.translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>

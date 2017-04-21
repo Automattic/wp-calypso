@@ -136,7 +136,7 @@ const JetpackSSOForm = React.createClass( {
 	},
 
 	getSignInLink() {
-		return login( { redirectTo: window.location.href } );
+		return login( { legacy: true, redirectTo: window.location.href } );
 	},
 
 	maybeValidateSSO( props = this.props ) {

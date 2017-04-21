@@ -16,6 +16,14 @@ describe( 'index', () => {
 			sandbox.stub( config, 'isEnabled' ).withArgs( 'wp-login' ).returns( true );
 		} );
 
+		it( 'should return the legacy login url', () => {
+			const url = login( { legacy: true } );
+
+			expect( url ).to.equal(
+				'https://wordpress.com/wp-login.php'
+			);
+		} );
+
 		it( 'should return the login url', () => {
 			const url = login();
 
