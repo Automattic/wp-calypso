@@ -230,5 +230,36 @@ describe( 'reducer', () => {
 				},
 			} );
 		} );
+
+		it( 'should discard previous revisions for the same post', () => {
+			const state = revisions( deepFreeze( {
+				12345678: {
+					10: {
+						51: {
+							id: 51,
+						},
+					},
+				}
+			} ), {
+				type: POST_REVISIONS_RECEIVE,
+				siteId: 12345678,
+				postId: 10,
+				revisions: [
+					{
+						id: 52,
+					},
+				],
+			} );
+
+			expect( state ).to.eql( {
+				12345678: {
+					10: {
+						52: {
+							id: 52,
+						},
+					},
+				},
+			} );
+		} );
 	} );
 } );

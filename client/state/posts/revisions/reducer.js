@@ -38,11 +38,13 @@ export function requesting( state = {}, action ) {
 export function revisions( state = {}, action ) {
 	if ( action.type === POST_REVISIONS_RECEIVE ) {
 		const { siteId, postId } = action;
-		return merge( {}, state, {
+		return {
+			...state,
 			[ siteId ]: {
+				...state[ siteId ],
 				[ postId ]: keyBy( action.revisions, 'id' )
 			}
-		} );
+		};
 	}
 
 	return state;
