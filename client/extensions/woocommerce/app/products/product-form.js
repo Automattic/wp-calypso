@@ -7,7 +7,7 @@ import React, { Component, PropTypes } from 'react';
  * Internal dependencies
  */
 import ProductFormDetailsCard from './product-form-details-card';
-import ProductFormVariationCard from './product-form-variation-card';
+import ProductFormVariationsCard from './product-form-variations-card';
 
 export default class ProductForm extends Component {
 
@@ -30,7 +30,7 @@ export default class ProductForm extends Component {
 					editProduct={ this.props.editProduct }
 				/>
 
-				<ProductFormVariationCard
+				<ProductFormVariationsCard
 					product={ product }
 					editProduct={ this.props.editProduct }
 					editProductAttribute={ this.props.editProductAttribute }
