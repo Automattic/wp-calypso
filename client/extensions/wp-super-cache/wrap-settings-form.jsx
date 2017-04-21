@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 import { flowRight, isEqual, omit, pick } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -12,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import { protectForm } from 'lib/protect-form';
 import trackForm from 'lib/track-form';
 import QuerySettings from './query-settings';
+import { saveSettings } from './state/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getSettings,
@@ -88,8 +90,21 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
 		};
 
+		handleAutosavingToggle = name => () => {
+			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] }, () => {
+				this.submitForm();
+			} );
+		};
+
+		submitForm = () => {
+			const { fields, siteId } = this.props;
+
+			this.props.saveSettings( siteId, fields );
+		};
+
 		render() {
 			const utils = {
+				handleAutosavingToggle: this.handleAutosavingToggle,
 				handleChange: this.handleChange,
 				handleRadio: this.handleRadio,
 				handleSelect: this.handleSelect,
@@ -274,6 +289,14 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				siteId,
 			};
 		},
+		dispatch => {
+			const boundActionCreators = bindActionCreators( {
+				saveSettings,
+			}, dispatch );
+			return {
+				...boundActionCreators,
+			};
+		}
 	);
 
 	return flowRight(
