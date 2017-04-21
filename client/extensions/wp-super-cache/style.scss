@@ -151,3 +151,23 @@
 .wp-super-cache__cdn-fieldsets {
 	margin-left: 40px;
 }
+
+.wp-super-cache__main {
+	.wp-super-cache__lock-down-code-snippet {
+		@extend %form-field;
+		overflow: hidden;
+
+		margin-bottom: 1.5em;
+
+		p {
+			font-family: monospace, serif;
+			margin: 0 60px 0 0;
+		}
+
+		button {
+			margin-right: 0;
+
+			float: right;
+		}
+	}
+}

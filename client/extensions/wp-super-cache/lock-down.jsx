@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { pick } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -10,6 +11,7 @@ import { pick } from 'lodash';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import FormToggle from 'components/forms/form-toggle/compact';
+import ClipboardButton from 'components/forms/clipboard-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import WrapSettingsForm from './wrap-settings-form';
@@ -21,6 +23,11 @@ const LockDown = ( {
 	handleToggle,
 	translate,
 } ) => {
+	const lockdownCodeSnippet = translate(
+		'if ( defined( \'WPLOCKDOWN\' ) && constant( \'WPLOCKDOWN\' ) ) { echo ' +
+		'"Sorry. My blog is locked down. Updates will appear shortly"; }'
+	);
+
 	return (
 		<div>
 			<SectionHeader label="Lock Down" />
@@ -48,17 +55,14 @@ const LockDown = ( {
 								'constant. The following code will make sure your plugin respects the WPLOCKDOWN setting.'
 							) }
 						</p>
-						<p>
-							{ translate(
-								'{{code}}if ( defined( \'WPLOCKDOWN\' ) && constant( \'WPLOCKDOWN\' ) ) { echo ' +
-								'"Sorry. My blog is locked down. Updates will appear shortly"; }{{/code}}',
-								{
-									components: {
-										code: <code />,
-									}
-								}
-							) }
-						</p>
+
+						<div className="wp-super-cache__lock-down-code-snippet">
+							<ClipboardButton
+								text={ lockdownCodeSnippet }>
+								<Gridicon icon="clipboard" />
+							</ClipboardButton>
+							<p>{ lockdownCodeSnippet }</p>
+						</div>
 						<p>
 							<strong>
 								{ !! wp_lock_down
