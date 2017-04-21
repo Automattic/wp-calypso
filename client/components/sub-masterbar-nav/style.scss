@@ -99,6 +99,10 @@
 		}
 	}
 
+	&:visited {
+		color: $white; /* Safari fix */
+	}
+
 	&.is-selected {
 			background-color: $blue-dark;
 			color: $white;
