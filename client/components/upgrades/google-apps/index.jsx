@@ -29,9 +29,9 @@ class GoogleApps extends Component {
 		initialGoogleAppsCartItem: PropTypes.object
 	};
 
-	getDefaultProps() {
-		return { analyticsSection: 'domains' };
-	}
+	static defaultProps = {
+		analyticsSection: 'domains',
+	};
 
 	componentDidMount() {
 		this.checkDomainInCart();
