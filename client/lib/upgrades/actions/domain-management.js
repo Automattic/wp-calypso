@@ -12,10 +12,10 @@ import { isInitialized as isDomainInitialized } from 'lib/domains';
 import Dispatcher from 'dispatcher';
 import DnsStore from 'lib/domains/dns/store';
 import domainsAssembler from 'lib/domains/assembler';
+import { domainsPrimarySetCompletedAction } from 'state/sites/domains/actions';
 import DomainsStore from 'lib/domains/store';
 import EmailForwardingStore from 'lib/domains/email-forwarding/store';
 import NameserversStore from 'lib/domains/nameservers/store';
-import sitesFactory from 'lib/sites-list';
 import wapiDomainInfoAssembler from 'lib/domains/wapi-domain-info/assembler';
 import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
 import whoisAssembler from 'lib/domains/whois/assembler';
@@ -26,8 +26,7 @@ import { isBeingProcessed } from 'lib/domains/dns';
 
 const debug = debugFactory( 'actions:domain-management' );
 
-const sites = sitesFactory(),
-	wpcom = wp.undocumented();
+const wpcom = wp.undocumented();
 
 function setPrimaryDomain( siteId, domainName, onComplete = noop ) {
 	debug( 'setPrimaryDomain', siteId, domainName );
@@ -48,22 +47,17 @@ function setPrimaryDomain( siteId, domainName, onComplete = noop ) {
 			return onComplete( error, data );
 		}
 
-		sites.setSelectedSite( siteId );
+		// TODO: do sth here to update site object instead
+		domainsPrimarySetCompletedAction( siteId, domainName );
 
 		Dispatcher.handleServerAction( {
-			type: 'FETCH_SITES'
+			type: ActionTypes.PRIMARY_DOMAIN_SET_COMPLETED,
+			siteId,
+			domainName
 		} );
 
-		sites.once( 'change', () => {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.PRIMARY_DOMAIN_SET_COMPLETED,
-				siteId,
-				domainName
-			} );
-
-			onComplete( null, data );
-			fetchDomains( siteId );
-		} );
+		onComplete( null, data );
+		fetchDomains( siteId );
 	} );
 }
 

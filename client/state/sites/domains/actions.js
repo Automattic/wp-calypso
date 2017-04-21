@@ -14,6 +14,7 @@ import {
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
+	SITE_DOMAINS_PRIMARY_SET_COMPLETED,
 } from 'state/action-types';
 
 /**
@@ -94,6 +95,26 @@ export const domainsRequestFailureAction = ( siteId, error ) => {
 		type: SITE_DOMAINS_REQUEST_FAILURE,
 		siteId,
 		error
+	};
+
+	debug( 'returning action: %o', action );
+	return action;
+};
+
+/**
+ * Action creator function
+ *
+ * Return SITE_DOMAINS_REQUEST_FAILURE action object
+ *
+ * @param {Number} siteId - site identifier
+ * @param {String} primaryDomainName - new primary domain name
+ * @return {Object} action object
+ */
+export const domainsPrimarySetCompletedAction = ( siteId, primaryDomainName ) => {
+	const action = {
+		type: SITE_DOMAINS_PRIMARY_SET_COMPLETED,
+		siteId,
+		primaryDomainName,
 	};
 
 	debug( 'returning action: %o', action );

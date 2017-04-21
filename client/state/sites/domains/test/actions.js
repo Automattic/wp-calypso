@@ -11,6 +11,7 @@ import {
 	domainsRequestAction,
 	domainsRequestSuccessAction,
 	domainsRequestFailureAction,
+	domainsPrimarySetCompletedAction,
 	fetchSiteDomains
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
@@ -27,6 +28,8 @@ import {
 	ACTION_SITE_DOMAIN_REQUEST,
 	ACTION_SITE_DOMAIN_REQUEST_SUCCESS,
 	ACTION_SITE_DOMAIN_REQUEST_FAILURE,
+	ACTION_SITE_DOMAINS_PRIMARY_SET_COMPLETED,
+	DOMAIN_NOT_PRIMARY,
 	ERROR_MESSAGE_RESPONSE as errorResponse
 } from './fixture';
 
@@ -58,6 +61,11 @@ describe( 'actions', () => {
 		it( '#domainsRequestFailureAction()', () => {
 			const action = domainsRequestFailureAction( siteId, errorResponse );
 			expect( action ).to.eql( ACTION_SITE_DOMAIN_REQUEST_FAILURE );
+		} );
+
+		it( '#domainsPrimarySetCompletedAction()', () => {
+			const action = domainsPrimarySetCompletedAction( siteId, DOMAIN_NOT_PRIMARY );
+			expect( action ).to.eql( ACTION_SITE_DOMAINS_PRIMARY_SET_COMPLETED );
 		} );
 	} );
 
