@@ -192,7 +192,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	&.has-excerpt {
 
 		.reader-related-card-v2__title {
-			margin-bottom: 10px;
+			margin-bottom: 9px;
 		}
 	}
 }
@@ -511,7 +511,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 .reader-related-card-v2__title {
 	font-size: 17px;
 	font-weight: 700;
-	line-height: 1.4;
+	line-height: 25px;
 
 	// Clamp to 2 lines on narrow viewports
 	@include breakpoint( "<660px" ) {
