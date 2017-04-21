@@ -66,7 +66,7 @@ Jetpack Sites
 
 Jetpack sites come with a REST API endpoint that triggers installation of a theme from either WordPress.org, or WordPress.com. To tell Jetpack which of either repository to use, we append a `-wpcom` suffix for WP.com themes. The suffix is then also present in the installed theme's ID (and directory name). There's another reason for that, which is to avoid collisions with existing themes in the WordPress.org repository -- otherwise, the WP.com theme would get overridden with a WP.org one of the same name by the self-hosted site's updater. Instead, downloaded WP.com themes include a little plugin that updates them from WP.com.
 
-To the user, we hide the `-wpcom` suffix as much as possible, e.g a selector like `getActiveTheme()` will remove it from its return value. The reason is that we want the UX to be as seamless as possible: When a user is looking at the Theme Details Sheet for a WP.com theme for their Jetpack site, i.e. wordpress.com/theme/ixiom/example.com and press the 'Activate' button, we need the UI to update accordingly, e.g. change the button from to 'Customize' after activation. Scenarios like this wouldn't be possible if we were exposing the suffix.
+To the user, we hide the `-wpcom` suffix as much as possible, e.g a selector like `getActiveTheme()` will remove it from its return value. The reason is that we want the UX to be as seamless as possible: When a user is looking at the Theme Details Sheet for a WP.com theme for their Jetpack site, i.e. wordpress.com/theme/ixiom/example.com, and presses the 'Activate' button, we need the UI to update accordingly, e.g. change the button to 'Customize' after activation. Scenarios like this wouldn't be possible if we were exposing the suffix.
 
 ### Automated Transfer
 
