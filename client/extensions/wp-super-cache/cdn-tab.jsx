@@ -27,8 +27,9 @@ const CdnTab = ( {
 		ossdl_off_include_dirs,
 		ossdlcdn,
 	},
+	handleAutosavingToggle,
 	handleChange,
-	handleToggle,
+	handleSubmitForm,
 	isRequesting,
 	siteUrl,
 	translate,
@@ -40,7 +41,7 @@ const CdnTab = ( {
 					compact
 					primary
 					disabled={ isRequesting }
-					type="submit">
+					onClick={ handleSubmitForm }>
 					{ translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>
@@ -51,7 +52,7 @@ const CdnTab = ( {
 						<FormToggle
 							checked={ !! ossdlcdn }
 							disabled={ isRequesting }
-							onChange={ handleToggle( 'ossdlcdn' ) }>
+							onChange={ handleAutosavingToggle( 'ossdlcdn' ) }>
 							<span>
 								{ translate( 'Enable CDN Support' ) }
 							</span>
@@ -162,7 +163,7 @@ const CdnTab = ( {
 						<FormToggle
 							checked={ !! ossdl_https }
 							disabled={ isRequesting }
-							onChange={ handleToggle( 'ossdl_https' ) }>
+							onChange={ handleAutosavingToggle( 'ossdl_https' ) }>
 							<span>
 								{ translate( 'Skip https URLs to avoid "mixed content" errors' ) }
 							</span>
