@@ -2,9 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { flow, keyBy, map, merge } from 'lodash';
-import mapValues from 'lodash/fp/mapValues';
-import pick from 'lodash/fp/pick';
+import { keyBy, merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,7 +40,7 @@ export function revisions( state = {}, action ) {
 		const { siteId, postId } = action;
 		return merge( {}, state, {
 			[ siteId ]: {
-				[ postId ]: keyBy( map( action.revisions, normalizeRevisionForState ), 'id' )
+				[ postId ]: keyBy( action.revisions, 'id' )
 			}
 		} );
 	}
@@ -54,17 +52,3 @@ export default combineReducers( {
 	requesting,
 	revisions,
 } );
-
-function normalizeRevisionForState( revision ) {
-	if ( ! revision ) {
-		return revision;
-	}
-
-	return {
-		...revision,
-		...flow(
-			pick( [ 'title', 'content', 'excerpt' ] ),
-			mapValues( ( val = {} ) => val.rendered )
-		)( revision )
-	};
-}

@@ -157,41 +157,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should normalize revisions', () => {
-			const state = revisions( undefined, {
-				type: POST_REVISIONS_RECEIVE,
-				siteId: 12345678,
-				postId: 10,
-				revisions: [
-					{
-						id: 11,
-						title: {
-							rendered: 'Foo Bar',
-						},
-						content: {
-							rendered: 'Lorem Ipsum dolor sit amet',
-						},
-						excerpt: {
-							rendered: 'Lorem ipsum',
-						},
-					},
-				],
-			} );
-
-			expect( state ).to.eql( {
-				12345678: {
-					10: {
-						11: {
-							id: 11,
-							title: 'Foo Bar',
-							content: 'Lorem Ipsum dolor sit amet',
-							excerpt: 'Lorem ipsum',
-						},
-					},
-				},
-			} );
-		} );
-
 		it( 'should support multiple sites', () => {
 			const state = revisions( deepFreeze( {
 				12345678: {

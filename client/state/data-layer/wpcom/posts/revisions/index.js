@@ -1,4 +1,11 @@
 /**
+ * External dependencies
+ */
+import { flow, map } from 'lodash';
+import mapValues from 'lodash/fp/mapValues';
+import pick from 'lodash/fp/pick';
+
+/**
  * Internal dependencies
  */
 import {
@@ -10,7 +17,27 @@ import {
 	receivePostRevisions,
 	receivePostRevisionsSuccess,
 	receivePostRevisionsFailure,
-} from 'state/plans/actions';
+} from 'state/posts/revisions/actions';
+
+/**
+ * Normalize a WP REST API Post Revisions ressource for consumption in Calypso
+ *
+ * @param {Object} revision Raw revision from the API
+ * @returns {Object} the normalized revision
+ */
+export function normalizeRevision( revision ) {
+	if ( ! revision ) {
+		return revision;
+	}
+
+	return {
+		...revision,
+		...flow(
+			pick( [ 'title', 'content', 'excerpt' ] ),
+			mapValues( ( val = {} ) => val.rendered )
+		)( revision )
+	};
+}
 
 /**
  * Dispatches returned error from post revisions request
@@ -38,7 +65,7 @@ export const receiveError = ( { dispatch }, { siteId, postId }, next, rawError )
  */
 export const receiveSuccess = ( { dispatch }, { siteId, postId }, next, revisions ) => {
 	dispatch( receivePostRevisionsSuccess( siteId, postId ) );
-	dispatch( receivePostRevisions( siteId, postId, revisions ) );
+	dispatch( receivePostRevisions( siteId, postId, map( revisions, normalizeRevision ) ) );
 };
 
 /**

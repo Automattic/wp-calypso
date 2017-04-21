@@ -50,7 +50,7 @@ export const receivePostRevisionsFailure = ( siteId, postId, error ) => ( {
  *
  * @param {String} siteId of the revisions
  * @param {String} postId of the revisions
- * @param {Object} revisions data received
+ * @param {Object} revisions already normalized
  * @return {Object} action object
  */
 export const receivePostRevisions = ( siteId, postId, revisions ) => ( {
