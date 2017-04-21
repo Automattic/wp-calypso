@@ -202,11 +202,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	padding-top: 11px;
 
 	.reader-related-card-v2__post {
-		max-height: 127px;
-
-		@include breakpoint( "<480px" ) {
-			max-height: 126px;
-		}
+		max-height: 104px;
 
 		&::after {
 			@include long-content-fade( $size: 30% );
@@ -520,7 +516,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	// Clamp to 2 lines on narrow viewports
 	@include breakpoint( "<660px" ) {
 		overflow: hidden;
-		max-height: 16px * 1.4 * 2;
+		max-height: 16px * 1.5 * 2;
 		word-wrap: break-word;
 
 		&::after {
