@@ -38,7 +38,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const defaultJetpackSite = { jetpack: true, plan: {}, isUpgradeable: () => true };
+		const defaultJetpackSite = { jetpack: true, plan: {} };
 		return (
 			<Main wideLayout>
 				<div className="jetpack-connect__plans">

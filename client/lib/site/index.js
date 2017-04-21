@@ -214,10 +214,6 @@ Site.prototype.fetchUsers = function() {
 	}.bind( this ) );
 };
 
-Site.prototype.isUpgradeable = function() {
-	return this.capabilities && this.capabilities.manage_options;
-};
-
 Site.prototype.isCustomizable = function() {
 	return !! ( this.capabilities && this.capabilities.edit_theme_options );
 };

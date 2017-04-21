@@ -486,12 +486,6 @@ SitesList.prototype.getVisible = function() {
 	}, this );
 };
 
-SitesList.prototype.getUpgradeable = function() {
-	return this.get().filter( function( site ) {
-		return site.isUpgradeable();
-	}, this );
-};
-
 SitesList.prototype.getSelectedOrAllJetpackCanManage = function() {
 	return this.getSelectedOrAll().filter( function( site ) {
 		return site.jetpack &&
