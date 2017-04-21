@@ -18,13 +18,17 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
+import {
+	INITIAL_STEP,
+	CONCIERGE_STEP,
+	HAPPYCHAT_STEP,
+} from './steps';
 
 const CancelPurchaseForm = React.createClass( {
 	propTypes: {
 		productName: React.PropTypes.string.isRequired,
 		translate: React.PropTypes.func,
-		surveyStep: React.PropTypes.number.isRequired,
-		finalStep: React.PropTypes.number.isRequired,
+		surveyStep: React.PropTypes.string.isRequired,
 		showSurvey: React.PropTypes.bool.isRequired,
 		defaultContent: React.PropTypes.node.isRequired,
 		onInputChange: React.PropTypes.func.isRequired,
@@ -469,9 +473,6 @@ const CancelPurchaseForm = React.createClass( {
 		const { productName, translate } = this.props;
 		return (
 			<FormFieldset>
-				<FormLabel>
-					{ translate( 'How can we help?' ) }
-				</FormLabel>
 				<p>
 					{
 						translate(
@@ -497,7 +498,7 @@ const CancelPurchaseForm = React.createClass( {
 	render() {
 		const { translate } = this.props;
 		if ( this.props.showSurvey ) {
-			if ( this.props.surveyStep === 1 ) {
+			if ( this.props.surveyStep === INITIAL_STEP ) {
 				return (
 					<div>
 						<FormSectionHeading>
@@ -513,13 +514,24 @@ const CancelPurchaseForm = React.createClass( {
 			}
 
 			// Render concierge offer if appropriate
-			if ( this.props.surveyStep === 2 && this.props.finalStep === 3 ) {
+			if ( this.props.surveyStep === CONCIERGE_STEP ) {
 				return (
 					<div>
 						<FormSectionHeading>
 							{ translate( 'Let us help you setup your site!' ) }
 						</FormSectionHeading>
 						{ this.renderConciergeOffer() }
+					</div>
+				);
+			}
+
+			if ( this.props.surveyStep === HAPPYCHAT_STEP ) {
+				return (
+					<div>
+						<FormSectionHeading>
+							{ translate( 'How can we help?' ) }
+						</FormSectionHeading>
+						{ this.renderLiveChat() }
 					</div>
 				);
 			}
