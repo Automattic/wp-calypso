@@ -1,5 +1,10 @@
+/**
+ * Internal dependencies
+ */
+import { login } from './login';
+
 function editorPathFromSite( site ) {
-	var path = '',
+	let path = '',
 		siteSlug;
 
 	if ( site ) {
@@ -18,10 +23,10 @@ function editorPathFromSite( site ) {
  * @param  {object|string} site Site object or site slug
  * @return {string}      URL to post editor
  */
-module.exports.newPost = function( site ) {
-	var sitePath = editorPathFromSite( site );
+function newPost( site ) {
+	const sitePath = editorPathFromSite( site );
 	return '/post' + sitePath;
-};
+}
 
 /**
  * Returns a URL to the editor for a new page on a given site.
@@ -29,10 +34,10 @@ module.exports.newPost = function( site ) {
  * @param  {object|string} site Site object or site slug
  * @return {string}      URL to page editor
  */
-module.exports.newPage = function( site ) {
-	var sitePath = editorPathFromSite( site );
+function newPage( site ) {
+	const sitePath = editorPathFromSite( site );
 	return '/page' + sitePath;
-};
+}
 
 /**
  * Returns a URL to manage Publicize connections for a given site.
@@ -40,15 +45,15 @@ module.exports.newPage = function( site ) {
  * @param  {object} site Site object
  * @return {string}      URL to manage Publicize connections
  */
-module.exports.publicizeConnections = function( site ) {
-	var url = '/sharing';
+function publicizeConnections( site ) {
+	let url = '/sharing';
 
 	if ( site ) {
 		url += '/' + site.slug;
 	}
 
 	return url;
-};
+}
 
 /**
  * Returns a URL to manage Jetpack modules for a given site.
@@ -57,8 +62,8 @@ module.exports.publicizeConnections = function( site ) {
  * @param  {string} module	Optional module name to link to
  * @return {string}      	URL to manage Jetpack modules
  */
-module.exports.jetpackModules = function( site, module ) {
-	var url = '';
+function jetpackModules( site, module ) {
+	let url = '';
 	if ( ! site.jetpack ) {
 		return url;
 	}
@@ -69,4 +74,12 @@ module.exports.jetpackModules = function( site, module ) {
 	}
 
 	return url;
+}
+
+export default {
+	jetpackModules,
+	login,
+	newPost,
+	newPage,
+	publicizeConnections,
 };

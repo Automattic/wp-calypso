@@ -15,13 +15,13 @@ import cookie from 'cookie';
  * Internal dependencies
  */
 import addQueryArgs from 'lib/route/add-query-args';
+import { login } from 'lib/paths';
 import Main from 'components/main';
 import StepHeader from '../step-header';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
-import config from 'config';
 import QuerySites from 'components/data/query-sites';
 import {
 	createAccount,
@@ -163,10 +163,10 @@ const LoggedOutForm = React.createClass( {
 	renderFooterLink() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		const redirectTo = addQueryArgs( queryObject, window.location.href );
-		const loginUrl = addQueryArgs( { redirect_to: redirectTo }, config( 'login_url' ) );
+
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href={ loginUrl }>
+				<LoggedOutFormLinkItem href={ login( { redirectTo } ) }>
 					{ this.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
 				<HelpButton onClick={ this.clickHelpButton } />
@@ -561,7 +561,6 @@ const LoggedInForm = React.createClass( {
 		} = this.props.jetpackConnectAuthorize;
 		const { blogname, redirect_after_auth } = queryObject;
 		const redirectTo = addQueryArgs( queryObject, window.location.href );
-		const loginUrl = addQueryArgs( { redirect_to: redirectTo }, config( 'login_url' ) );
 		const backToWpAdminLink = (
 			<LoggedOutFormLinkItem icon={ true } href={ redirect_after_auth }>
 				<Gridicon size={ 18 } icon="arrow-left" />
@@ -589,7 +588,7 @@ const LoggedInForm = React.createClass( {
 		return (
 			<LoggedOutFormLinks>
 				{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
-				<LoggedOutFormLinkItem href={ loginUrl }>
+				<LoggedOutFormLinkItem href={ login( { legacy: true, redirectTo } ) }>
 					{ this.translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>

@@ -79,6 +79,16 @@ const loggedOutMiddleware = currentUser => {
 		return;
 	}
 
+	if ( config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
+		page( '/', () => {
+			if ( config.isEnabled( 'oauth' ) ) {
+				page.redirect( '/authorize' );
+			} else {
+				page.redirect( '/devdocs/start' );
+			}
+		} );
+	}
+
 	const sections = require( 'sections' );
 	const validSections = sections.get().reduce( ( acc, section ) => {
 		return section.enableLoggedOut ? acc.concat( section.paths ) : acc;
