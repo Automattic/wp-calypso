@@ -22,7 +22,7 @@ describe( 'stepsForProductAndSurvey', function() {
 	let stepsForProductAndSurvey;
 
 	useMockery( ( mockery ) => {
-		mockery.registerMock( 'lib/product-values', mockProductValues() );
+		mockery.registerMock( 'lib/products-values', mockProductValues() );
 	} );
 
 	before( function() {

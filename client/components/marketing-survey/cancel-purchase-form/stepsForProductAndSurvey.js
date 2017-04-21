@@ -11,7 +11,7 @@ import {
 	isBusiness,
 	isPersonal,
 	isPremium,
-} from 'lib/product-values';
+} from 'lib/products-values';
 
 export default function stepsForProductAndSurvey( survey, product ) {
 	if ( survey && survey.questionOneRadio === 'tooHard' ) {
