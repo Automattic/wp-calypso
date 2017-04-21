@@ -31,7 +31,7 @@ The most important bit is the `queries` subtree. It has one subtree per Jetpack 
 and additionally, one named `wpcom` (for all themes on WordPress.com), and one named `wporg` (for themes found on WordPress.org). These subtrees are populated by querying the corresponding REST API 'themes list/search' endpoints.
 For retired themes, information obtained from the 'active theme' endpoint is stored in the `wpcom` subtree.
 
-The value corresponding to each key is a `ThemeQueryManager`.
+The value corresponding to each key is a [`ThemeQueryManager`](../../lib/query-manager/README.md).
 
 ## `activeThemes`
 
