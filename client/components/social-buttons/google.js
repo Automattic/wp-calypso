@@ -75,7 +75,7 @@ class GoogleLoginButton extends Component {
 	render() {
 		return (
 			<button className="button" onClick={ this.handleClick }>
-				<svg className="social-buttons__logo" width="21" height="21" viewBox="0 0 20 21" xmlns="http://www.w3.org/2000/svg">
+				<svg className="social-buttons__logo" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
 					{ /* eslint-disable max-len */ }
 					<g fill="none" fillRule="evenodd">
 						<path d="M19.6 10.227c0-.709-.064-1.39-.182-2.045H10v3.868h5.382a4.6 4.6 0 0 1-1.996 3.018v2.51h3.232c1.891-1.742 2.982-4.305 2.982-7.35z" fill="#4285F4" />
