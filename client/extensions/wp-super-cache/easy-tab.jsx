@@ -51,7 +51,11 @@ const EasyTab = ( {
 						disabled={ isRequesting }
 						onChange={ handleToggle( 'is_cache_enabled' ) }>
 						<span>
-							{ translate( 'Enable Page Caching' ) }
+							{ translate( 'Enable Page Caching',
+								{
+									components: { em: <em /> }
+								}
+							) }
 						</span>
 					</FormToggle>
 				</form>
