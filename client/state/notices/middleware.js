@@ -45,6 +45,8 @@ import {
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 	SITE_FRONT_PAGE_SET_FAILURE,
+	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
+	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 	THEME_DELETE_FAILURE,
 	THEME_DELETE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
@@ -192,6 +194,14 @@ const onThemeActivateFailure = ( dispatch, { error } ) => {
 	return dispatch( errorNotice( translate( 'Unable to activate theme. Contact support.' ) ) );
 };
 
+const onSiteMonitorSettingsUpdateSuccess = ( dispatch ) => dispatch(
+	successNotice( translate( 'Settings saved successfully!' ) )
+);
+
+const onSiteMonitorSettingsUpdateFailure = ( dispatch ) => dispatch(
+	successNotice( translate( 'There was a problem saving your changes. Please, try again.' ) )
+);
+
 /**
  * Handler action type mapping
  */
@@ -236,6 +246,8 @@ export const handlers = {
 	[ PUBLICIZE_CONNECTION_UPDATE_FAILURE ]: onPublicizeConnectionUpdateFailure,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
 	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) ),
+	[ SITE_MONITOR_SETTINGS_UPDATE_SUCCESS ]: onSiteMonitorSettingsUpdateSuccess,
+	[ SITE_MONITOR_SETTINGS_UPDATE_FAILURE ]: onSiteMonitorSettingsUpdateFailure,
 	[ THEME_DELETE_FAILURE ]: onThemeDeleteFailure,
 	[ THEME_DELETE_SUCCESS ]: onThemeDeleteSuccess,
 	[ THEME_ACTIVATE_FAILURE ]: onThemeActivateFailure,

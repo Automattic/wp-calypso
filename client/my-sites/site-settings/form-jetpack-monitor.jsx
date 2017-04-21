@@ -28,7 +28,6 @@ import {
 	isDeactivatingJetpackModule,
 	isFetchingJetpackModules,
 	isJetpackModuleActive,
-	isMonitorSettingsUpdateSuccessful,
 	isRequestingSiteMonitorSettings,
 	isUpdatingSiteMonitorSettings
 } from 'state/selectors';
@@ -57,15 +56,9 @@ class SiteSettingsFormJetpackMonitor extends Component {
 	}
 
 	saveSettings = () => {
-		const { monitorSettingsUpdateSuccessful, siteId, translate } = this.props;
+		const { siteId } = this.props;
 
-		this.props.updateSiteMonitorSettings( siteId, this.state ).then( () => {
-			if ( ! monitorSettingsUpdateSuccessful ) {
-				this.props.errorNotice( translate( 'There was a problem saving your changes. Please, try again.' ) );
-				return;
-			}
-			this.props.successNotice( translate( 'Settings saved successfully!' ) );
-		} );
+		this.props.updateSiteMonitorSettings( siteId, this.state );
 	}
 
 	settingsMonitorEmailCheckbox() {
@@ -176,7 +169,6 @@ export default connect(
 			deactivatingMonitor: isDeactivatingJetpackModule( state, siteId, 'monitor' ),
 			fetchingJetpackModules: isFetchingJetpackModules( state, siteId ),
 			monitorSettings: getSiteMonitorSettings( state, siteId ),
-			monitorSettingsUpdateSuccessful: isMonitorSettingsUpdateSuccessful( state, siteId ),
 			requestingMonitorSettings: isRequestingSiteMonitorSettings( state, siteId ),
 			updatingMonitorSettings: isUpdatingSiteMonitorSettings( state, siteId ),
 		};
