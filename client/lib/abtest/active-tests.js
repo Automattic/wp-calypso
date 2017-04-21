@@ -75,4 +75,12 @@ module.exports = {
 		},
 		defaultVariation: 'onlyDotComSites',
 	},
+	chatOfferOnCancel: {
+		datestamp: '20170421',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'show',
+	},
 };
