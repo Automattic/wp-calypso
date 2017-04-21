@@ -90,9 +90,9 @@
 
 .theme__sheet-screenshot {
 	display: block;
-	position: relative;
-	top: -156px;
+	margin-top: -156px;
 	width: 98%;
+	z-index: 1;
 	box-shadow: 0 0 0 1px $transparent, 0px 2px 8px 0px transparentize( $gray-dark, 0.5 );
 	background-color: transparentize( white, 0.5 );
 	transition: all 200ms ease-in-out;
@@ -124,10 +124,6 @@
 		&.is-active:hover {
 			cursor: pointer;
 			box-shadow: 0 0 0 1px $gray, 0px 2px 10px 0px transparentize( $gray-dark, 0.5 );
-
-			.theme__sheet-preview-link {
-				color: $white;
-			}
 		}
 	}
 }
@@ -140,17 +136,20 @@
 .theme__sheet-preview-link {
 	display: flex;
 	position: absolute;
-		top: -24px;
-	color: lighten( $gray, 30% );
+		top: 269px;
+		right: calc( 50% + 30px );
+	margin: 0 auto;
+	padding: 10px;
+	color: $blue-wordpress;
+	font-size: 14px;
 	cursor: pointer;
 	transition: all ease-in-out 100ms;
 
 	&:hover {
-		color: $white;
+		color: $blue-medium;
 	}
 
 	.theme__sheet-preview-link-text {
-		font-size: 12px;
 		margin-top: 2px;
 	}
 
@@ -333,6 +332,10 @@
 	color: transparent;
 	background-color: rgba(255, 255, 255, 0.4);
 	animation: loading-fade 1.6s ease-in-out infinite;
+}
+
+.theme__sheet-content .section-nav {
+	height: 50px;
 }
 
 .theme__sheet-features-list {
