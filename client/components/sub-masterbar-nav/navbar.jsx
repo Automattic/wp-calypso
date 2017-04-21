@@ -62,7 +62,11 @@ export default class Navbar extends Component {
 				</div>
 				{ this.state.foldable && (
 					<div className="sub-masterbar-nav__switch">
-						<Gridicon icon="ellipsis" className={ ellipsisClass } onClick={ this.toggleList } />
+						<Gridicon
+							icon="ellipsis"
+							className={ ellipsisClass }
+							onClick={ this.toggleList }
+						/>
 					</div>
 				)}
 			</div>
