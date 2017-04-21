@@ -58,8 +58,8 @@
 			margin-right: 0;
 		}
 
-		.products__product-form-details-basic__description textarea{
-			resize: vertical;
+		&:last-child {
+			margin-right: 0;
 		}
 	}
 
