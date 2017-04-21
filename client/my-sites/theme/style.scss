@@ -33,6 +33,8 @@
 .theme__sheet-columns {
 	display: flex;
 	flex-direction: row;
+	max-width: 1500px;
+	margin: 0 auto;
 
 	@include breakpoint( "<960px" ) {
 		flex-direction: column-reverse;
