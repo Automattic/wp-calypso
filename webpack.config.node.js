@@ -122,6 +122,10 @@ const webpackConfig = {
 	externals: getExternals()
 };
 
+if ( ! config.isEnabled( 'desktop' ) ) {
+	webpackConfig.plugins.push( new webpack.NormalModuleReplacementPlugin( /^lib\/desktop$/, 'lodash/noop' ) );
+}
+
 if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'server-records.json' );
 	webpackConfig.plugins.unshift( new HardSourceWebpackPlugin( { cacheDirectory: path.join( __dirname, '.webpack-cache', 'server' ) } ) );
