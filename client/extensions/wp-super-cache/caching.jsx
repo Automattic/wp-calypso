@@ -46,7 +46,11 @@ const Caching = ( {
 							disabled={ isRequesting }
 							onChange={ handleToggle( 'wp_cache_enabled' ) }>
 							<span>
-								{ translate( 'Enable Page Caching' ) }
+								{ translate( 'Caching On {{em}}(Recommended){{/em}}',
+									{
+										components: { em: <em /> }
+									}
+								) }
 							</span>
 						</FormToggle>
 					</FormFieldset>
