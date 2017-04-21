@@ -10,13 +10,9 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import Main from 'components/main';
-import notices from 'notices';
 import QueryProductsList from 'components/data/query-products-list';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import { getSitePurchases, hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purchases/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
-import GeneralSettings from './section-general';
 import ImportSettings from './section-import';
 import ExportSettings from './section-export';
 import GuidedTransfer from 'my-sites/guided-transfer';
@@ -51,15 +47,8 @@ export class SiteSettingsComponent extends Component {
 		this.props.sites.off( 'change', this.updateSite );
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.purchasesError ) {
-			notices.error( nextProps.purchasesError );
-		}
-	}
-
 	getStrings() {
 		return {
-			general: i18n.translate( 'General', { context: 'settings screen' } ),
 			security: i18n.translate( 'Security', { context: 'settings screen' } ),
 			'import': i18n.translate( 'Import', { context: 'settings screen' } ),
 			'export': i18n.translate( 'Export', { context: 'settings screen' } ),
@@ -71,13 +60,6 @@ export class SiteSettingsComponent extends Component {
 		const { section, hostSlug } = this.props;
 
 		switch ( section ) {
-			case 'general':
-				return (
-					<GeneralSettings
-						sitePurchases={ this.props.sitePurchases }
-						hasLoadedSitePurchasesFromServer={ this.props.hasLoadedSitePurchasesFromServer }
-					/>
-				);
 			case 'security':
 				return <SiteSecurity site={ site } />;
 			case 'import':
@@ -94,7 +76,7 @@ export class SiteSettingsComponent extends Component {
 		const { jetpackSettingsUiSupported, section } = this.props;
 
 		return (
-			<Main className="site-settings">
+			<Main className="site-settings__main site-settings">
 					{
 						jetpackSettingsUiSupported &&
 						<JetpackDevModeNotice />
@@ -102,7 +84,6 @@ export class SiteSettingsComponent extends Component {
 					<SidebarNavigation />
 					{ site && <SiteSettingsNavigation site={ site } section={ section } /> }
 					<QueryProductsList />
-					{ site && <QuerySitePurchases siteId={ site.ID } /> }
 					{ site && this.getSection() }
 			</Main>
 		);
@@ -114,10 +95,7 @@ export class SiteSettingsComponent extends Component {
 }
 
 SiteSettingsComponent.propTypes = {
-	hasLoadedSitePurchasesFromServer: PropTypes.bool.isRequired,
-	purchasesError: PropTypes.object,
 	section: PropTypes.string,
-	sitePurchases: PropTypes.array.isRequired,
 	sites: PropTypes.object.isRequired
 };
 
@@ -133,9 +111,6 @@ export default connect(
 
 		return {
 			siteId,
-			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
-			purchasesError: getPurchasesError( state ),
-			sitePurchases: getSitePurchases( state, getSelectedSiteId( state ) ),
 			jetpackSettingsUiSupported: jetpackSite && jetpackUiSupported,
 		};
 	}

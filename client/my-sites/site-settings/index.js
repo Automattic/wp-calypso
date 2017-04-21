@@ -12,7 +12,6 @@ var config = require( 'config' ),
 
 module.exports = function() {
 	page( '/settings', controller.siteSelection, settingsController.redirectToGeneral );
-	page( '/settings/general/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );
 	page( '/settings/security/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );
 
 	page( '/settings/import/:site_id', controller.siteSelection, controller.navigation, settingsController.importSite );
@@ -23,12 +22,6 @@ module.exports = function() {
 
 	if ( config.isEnabled( 'manage/export' ) ) {
 		page( '/settings/export/:site_id', controller.siteSelection, controller.navigation, settingsController.exportSite );
-	}
-
-	if ( config.isEnabled( 'manage/site-settings/delete-site' ) ) {
-		page( '/settings/delete-site/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.deleteSite );
-		page( '/settings/start-over/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.startOver );
-		page( '/settings/theme-setup/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.themeSetup );
 	}
 
 	page( '/settings/:section', settingsController.legacyRedirects, controller.siteSelection, controller.sites );

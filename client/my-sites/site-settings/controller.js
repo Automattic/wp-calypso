@@ -10,15 +10,12 @@ import React from 'react';
  */
 import analytics from 'lib/analytics';
 import config from 'config';
-import DeleteSite from './delete-site';
 import purchasesPaths from 'me/purchases/paths';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import { sectionify } from 'lib/route/path';
 import SiteSettingsComponent from 'my-sites/site-settings/main';
 import sitesFactory from 'lib/sites-list';
-import StartOver from './start-over';
-import ThemeSetup from './theme-setup';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import titlecase from 'to-title-case';
 import utils from 'lib/site/utils';
@@ -28,25 +25,6 @@ import { getSelectedSite } from 'state/ui/selectors';
  * Module vars
  */
 const sites = sitesFactory();
-
-function canDeleteSite( site ) {
-	if ( ! site.capabilities || ! site.capabilities.manage_options ) {
-		// Current user doesn't have manage options to delete the site
-		return false;
-	}
-
-	// Current user can't delete a jetpack site
-	if ( site.jetpack ) {
-		return false;
-	}
-
-	if ( site.is_vip ) {
-		// Current user can't delete a VIP site
-		return false;
-	}
-
-	return true;
-}
 
 function renderPage( context, component ) {
 	renderWithReduxStore(
@@ -126,56 +104,6 @@ module.exports = {
 		renderPage(
 			context,
 			<SiteSettingsComponent sites={ sites } section="guidedTransfer" hostSlug={ context.params.host_slug } />
-		);
-	},
-
-	deleteSite( context ) {
-		let site = sites.getSelectedSite();
-
-		if ( sites.initialized ) {
-			if ( ! canDeleteSite( site ) ) {
-				return page( '/settings/general/' + site.slug );
-			}
-		} else {
-			sites.once( 'change', function() {
-				site = sites.getSelectedSite();
-				if ( ! canDeleteSite( site ) ) {
-					return page( '/settings/general/' + site.slug );
-				}
-			} );
-		}
-
-		renderPage(
-			context,
-			<DeleteSite sites={ sites } path={ context.path } />
-		);
-	},
-
-	startOver( context ) {
-		const site = getSelectedSite( context.store.getState() );
-		if ( site && ! canDeleteSite( site ) ) {
-			return page( '/settings/general/' + site.slug );
-		}
-
-		renderPage(
-			context,
-			<StartOver path={ context.path } />
-		);
-	},
-
-	themeSetup( context ) {
-		const site = getSelectedSite( context.store.getState() );
-		if ( site && site.jetpack ) {
-			return page( '/settings/general/' + site.slug );
-		}
-
-		if ( ! config.isEnabled( 'settings/theme-setup' ) ) {
-			return page( '/settings/general/' + site.slug );
-		}
-
-		renderPage(
-			context,
-			<ThemeSetup activeSiteDomain={ context.params.site_id } />
 		);
 	},
 
