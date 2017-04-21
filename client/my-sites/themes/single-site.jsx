@@ -31,6 +31,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 				siteId={ siteId }
 				defaultOption="activate"
 				secondaryOption="tryandcustomize"
+				getUnmodifiedScreenshotOption={ props.getScreenshotOption }
 				source="showcase"
 				listLabel={ translate( 'Uploaded themes' ) }
 				placeholderCount={ 5 }

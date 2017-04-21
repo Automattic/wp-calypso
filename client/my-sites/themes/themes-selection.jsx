@@ -149,9 +149,7 @@ class ThemesSelection extends Component {
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }
-					onScreenshotClick={ this.onScreenshotClick }
-					getScreenshotUrl={ this.props.getScreenshotUrl }
-					getActionLabel={ this.props.getActionLabel }
+					getScreenshotOption={ this.props.getScreenshotOption }
 					isActive={ this.props.isThemeActive }
 					isPurchased={ this.props.isThemePurchased }
 					isInstalling={ this.props.isInstallingTheme }
