@@ -69,7 +69,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 				onChange={ this.handleToggle( 'email_notifications' ) }
 				checked={ !! this.state.email_notifications }
 			>
-				{ translate( 'Send notifications to your {{a}}WordPress.com email address{{/a}}.', {
+				{ translate( 'Send notifications to your {{a}}WordPress.com email address{{/a}}', {
 					components: {
 						a: (
 							<a
@@ -91,7 +91,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 				onChange={ this.handleToggle( 'wp_note_notifications' ) }
 				checked={ !! this.state.wp_note_notifications }
 			>
-				{ translate( 'Send notifications via WordPress.com notification.' ) }
+				{ translate( 'Send notifications via WordPress.com notification' ) }
 			</CompactFormToggle>
 		);
 	}
