@@ -22,8 +22,7 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	helpers = require( './helpers' ),
 	analytics = require( 'lib/analytics' ),
 	utils = require( 'lib/posts/utils' ),
-	classNames = require( 'classnames' ),
-	config = require( 'config' );
+	classNames = require( 'classnames' );
 
 import MenuSeparator from 'components/popover/menu-separator';
 import { hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
@@ -181,19 +180,9 @@ const Page = React.createClass( {
 			return null;
 		}
 
-		if ( config.isEnabled( 'manage/pages/set-homepage' ) ) {
-			return ( <div className="page__popover-more-info">{
-				this.translate( 'This page is set as your site\'s homepage' )
-			}</div> );
-		} else {
-			return ( <div className="page__popover-more-info">{
-				this.translate( 'Currently set as {{link}}Front Page{{/link}}', {
-					components: {
-						link: <a target="_blank" rel="noopener noreferrer" href={ this.props.site.options.admin_url + 'options-reading.php' } />
-					}
-				} )
-			}</div> );
-		}
+		return ( <div className="page__popover-more-info">{
+			this.translate( 'This page is set as your site\'s homepage' )
+		}</div> );
 	},
 
 	getPublishItem: function() {
