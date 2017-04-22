@@ -1,22 +1,15 @@
 /**
  * Internal dependencies
  */
+import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_EDIT_PRODUCT_VARIATION,
 } from '../../../action-types';
 import { nextBucketIndex, getBucket } from '../../helpers';
 
-const initialState = null;
-
-export default function( state = initialState, action ) {
-	const handlers = {
-		[ WOOCOMMERCE_EDIT_PRODUCT_VARIATION ]: editProductVariationAction,
-	};
-
-	const handler = handlers[ action.type ];
-
-	return ( handler && handler( state, action ) ) || state;
-}
+export default createReducer( null, {
+	[ WOOCOMMERCE_EDIT_PRODUCT_VARIATION ]: editProductVariationAction,
+} );
 
 function editProductVariationAction( edits, action ) {
 	const { product, variation, data } = action.payload;
