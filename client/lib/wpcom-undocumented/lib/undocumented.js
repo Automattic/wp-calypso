@@ -2342,11 +2342,25 @@ Undocumented.prototype.getActivityLog = function( siteId ) {
 };
 
 /**
+ * Initiate backup restore for a given site.
+ *
+ * @param  {int}    siteId    ID of the site to restore.
+ * @param  {string} timestamp Time stamp that identifies the backup to restore.
+ *
+ * @return {object} Contains path as item.
+ */
+Undocumented.prototype.requestRestore = function( siteId, timestamp ) {
+	return this.wpcom.req.get( {
+		path: `/activity-log/${ siteId }/rewind/${ timestamp }`
+	} );
+};
+
+/**
  * Submit a response to the NPS Survey.
  * @param {string}     surveyName     The name of the NPS survey being submitted
  * @param {int}        score          The value for the survey response
  * @param {Function}   fn             The callback function
- * @returns {Promise}
+ * @returns {Promise} Response
  */
 Undocumented.prototype.submitNPSSurvey = function( surveyName, score, fn ) {
 	return this.wpcom.req.post( { path: `/nps/${ surveyName }` }, { apiVersion: '1.2' }, { score }, fn );

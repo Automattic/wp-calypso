@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-// import { pick } from 'lodash';
+import { pick } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -22,10 +22,8 @@ import {
 	REWIND_STATUS_UPDATE,
 	ACTIVITY_LOG_FETCH,
 	// ACTIVITY_LOG_FETCH_FAILED,
-	// ACTIVITY_LOG_FETCH_SUCCESS,
 	ACTIVITY_LOG_FETCH_SUCCESS,
 } from 'state/action-types';
-import wpcom from 'lib/wp';
 
 /**
  * Turn the 'rewind' feature on for a site.
@@ -168,6 +166,7 @@ const fakebackups = () => {
 
 	return backupLogs;
 };
+
 
 export function getActivityLogData( siteId ) {
 	// const logs = [
@@ -346,3 +345,4 @@ export function getActivityLogData( siteId ) {
 		// 	} );
 	};
 }
+

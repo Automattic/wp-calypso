@@ -20,7 +20,8 @@ import ErrorBanner from '../activity-log-banner/error-banner';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import QueryActivityLog from 'components/data/query-activity-log';
-import { getActivityLog, isFetchingActivityLog } from 'state/activity-log/selectors';
+import { getActivityLog, isFetchingActivityLog, isRestoring, isAnythingRestoring } from 'state/activity-log/selectors';
+import { requestRestore } from 'state/activity-log/actions';
 import ActivityLogBanner from '../activity-log-banner';
 
 class ActivityLog extends Component {
@@ -266,21 +267,20 @@ class ActivityLog extends Component {
 		return log;
 	}
 
-	renderBanner() {
+	renderBanner( isRestoring ) {
 		// FIXME: Logic to select/show 1 banner
-		return <div>
-			<ErrorBanner />
-			<ProgressBanner />
-			<SuccessBanner />
-		</div>;
+		return isRestoring
+			? <ProgressBanner />
+			: '';
 	}
 
 	render() {
 		const {
+			slug,
+			isJetpack,
+			activityLog,
 			moment,
 			siteId,
-			isJetpack,
-			slug
 		} = this.props;
 		const logs = ( activityLog && activityLog.data ? activityLog.data : [] );
 		const logsGroupedByDate = map(
@@ -294,6 +294,8 @@ class ActivityLog extends Component {
 					dateIsoString={ isoString }
 					logs={ daily_logs }
 					siteId={ siteId }
+					requestRestore={ this.props.requestRestore }
+					isRestoring={ this.props.isRestoring }
 					isRewindEnabled={ true }
 				/>
 			)
@@ -308,7 +310,7 @@ class ActivityLog extends Component {
 					slug={ slug }
 					section="activity"
 				/>
-				{ this.renderBanner() }
+				{ this.renderBanner( this.props.isAnythingRestoring ) }
 				<section className="activity-log__wrapper">
 					{ logsGroupedByDate }
 				</section>
@@ -326,7 +328,12 @@ export default connect(
 			isJetpack,
 			slug: getSiteSlug( state, siteId ),
 			activityLog: getActivityLog( state, siteId ),
-			fetchingLog: isFetchingActivityLog( state, siteId )
+			fetchingLog: isFetchingActivityLog( state, siteId ),
+			isRestoring: timestamp => isRestoring( state, siteId, timestamp ),
+			isAnythingRestoring: isAnythingRestoring( state, siteId )
 		};
+	},
+	{
+		requestRestore
 	}
 )( localize( ActivityLog ) );

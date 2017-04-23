@@ -14,20 +14,39 @@ import ActivityLogItem from '../activity-log-item';
 
 const ActivityLogDate = React.createClass( {
 
+	getInitialState() {
+		return {
+			timestamp: this.props.logs[ 0 ].timestamp
+		};
+	},
+
 	/**
 	 * Return a button to rewind to this point.
 	 *
-	 * @param {string} type Whether the button will be a primary or not.
+	 * @param {int} timestamp The index of the backup to restore.
+ 	 * @param {string} type Whether the button will be a primary or not.
 	 * @returns { object } Button to display.
 	 */
-	getRewindButton( type = '' ) {
+	getRewindButton( timestamp, type = '' ) {
 		return (
-			<Button primary={ 'primary' === type } compact>
+			<Button
+				primary={ 'primary' === type }
+				compact
+				onClick={ this.requestRestore }
+				className={ this.props.isRestoring( timestamp )
+					? 'is-busy'
+					: ''
+				}
+			>
 				<Gridicon icon={ 'history' } size={ 18 } /> {
 				this.props.translate( 'Rewind to this day' )
 			}
 			</Button>
 		);
+	},
+
+	requestRestore() {
+		this.props.requestRestore( this.props.siteId, this.state.timestamp );
 	},
 
 	/**
@@ -53,26 +72,32 @@ const ActivityLogDate = React.createClass( {
 		const {
 			logs
 		} = this.props;
+		const mostRecentBackup = logs[ 0 ].timestamp;
 
 		return (
 			<div className="activity-log-date">
 				<FoldableCard
 					header={ this.getEventsHeading() }
-					summary={ this.getRewindButton( 'primary' ) }
-					expandedSummary={ this.getRewindButton() }
+					summary={ this.getRewindButton( mostRecentBackup, 'primary' ) }
+					expandedSummary={ this.getRewindButton( mostRecentBackup ) }
 				>
-					{ logs.map( ( log, index )  => {
-						return <ActivityLogItem
-							title={ log.title }
-							subTitle={ log.subTitle }
-							description={ log.description }
-							icon={ log.icon }
-							timestamp={ log.timestamp }
-							user={ log.user }
-							actionText={ log.actionText }
-							status={ log.status }
-							className={ log.className }
-							key={ 'activity-log' + index } />
+					{ logs.map( ( log, index ) => {
+						return (
+							<ActivityLogItem
+								key={ 'activity-log' + index }
+								title={ log.title }
+								subTitle={ log.subTitle }
+								description={ log.description }
+								icon={ log.icon }
+								siteId={ this.props.siteId }
+								timestamp={ log.timestamp }
+								user={ log.user }
+								actionText={ log.actionText }
+								status={ log.status }
+								className={ log.className }
+								requestRestore={ this.props.requestRestore }
+								/>
+						);
 					} ) }
 				</FoldableCard>
 			</div>

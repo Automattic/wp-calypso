@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { get } from 'lodash';
+import { get, merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,7 +10,10 @@ import { get } from 'lodash';
 import {
 	ACTIVITY_LOG_FETCH,
 	ACTIVITY_LOG_FETCH_FAILED,
-	ACTIVITY_LOG_FETCH_SUCCESS
+	ACTIVITY_LOG_FETCH_SUCCESS,
+	RESTORE_REQUEST,
+	RESTORE_REQUEST_SUCCESS,
+	RESTORE_REQUEST_FAILED
 } from 'state/action-types';
 
 export function requests( state = {}, action ) {
@@ -36,8 +39,21 @@ export function requests( state = {}, action ) {
 				[ action.siteId ]: Object.assign(
 					{},
 					get( state, [ action.siteId ], {} ),
-					{ isRequesting: false },
+					{ isRequesting: false }
 				)
+			} );
+		case RESTORE_REQUEST:
+			return merge( {}, state, {
+				[ action.siteId ]: {
+					isRestoring: action.timestamp
+				}
+			} );
+		case RESTORE_REQUEST_SUCCESS:
+		case RESTORE_REQUEST_FAILED:
+			return merge( {}, state, {
+				[ action.siteId ]: {
+					isRestoring: ''
+				}
 			} );
 	}
 	return state;
