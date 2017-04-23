@@ -1,21 +1,21 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
-	i18n = require( 'i18n-calypso' );
+import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-var route = require( 'lib/route' ),
-	analytics = require( 'lib/analytics' ),
-	titlecase = require( 'to-title-case' ),
-	trackScrollPage = require( 'lib/track-scroll-page' ),
-	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle;
+import route from 'lib/route';
+import analytics from 'lib/analytics';
+import titlecase from 'to-title-case';
+import trackScrollPage from 'lib/track-scroll-page';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
 import { renderWithReduxStore } from 'lib/react-helpers';
 
-var controller = {
+const controller = {
 
 	pages: function( context ) {
 		var Pages = require( 'my-sites/pages/main' ),

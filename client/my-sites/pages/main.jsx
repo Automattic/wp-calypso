@@ -1,86 +1,87 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:pages:pages' );
-
 import { connect } from 'react-redux';
+import React from 'react';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-var PageList = require( './page-list' ),
-	SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' ),
-	Search = require( 'components/search' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	URLSearch = require( 'lib/mixins/url-search' ),
-	config = require( 'config' ),
-	notices = require( 'notices' ),
-	Main = require( 'components/main' );
-
+import { localize } from 'i18n-calypso';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 } from 'state/ui/selectors';
+import config from 'config';
+import notices from 'notices';
+import urlSearch from 'lib/url-search';
+import Main from 'components/main';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import PageList from './page-list';
+import Search from 'components/search';
+import SectionNav from 'components/section-nav';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
+const debug = debugFactory( 'calypso:my-sites:pages:pages' );
 const statuses = [ 'published', 'drafts', 'scheduled', 'trashed' ];
 
-const PagesMain = React.createClass( {
+class PagesMain extends React.Component {
 
-	displayName: 'Pages',
+	static displayName = 'Pages';
 
-	mixins: [ URLSearch ],
-
-	propTypes: {
+	static propTypes = {
 		trackScrollPage: React.PropTypes.func.isRequired
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			perPage: 20
-		};
-	},
+	static defaultProps = {
+		perPage: 20
+	};
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this._setWarning( this.props.siteId );
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( 'Pages React component mounted.' );
-	},
+	}
 
-	componentWillUpdate: function() {
+	componentWillUpdate() {
 		this._setWarning( this.props.siteId );
-	},
+	}
 
-	render: function() {
+	render() {
+		const {
+			doSearch,
+			search,
+			translate,
+		} = this.props;
 		const status = this.props.status || 'published';
 		const filterStrings = {
-			published: this.translate( 'Published', { context: 'Filter label for pages list' } ),
-			drafts: this.translate( 'Drafts', { context: 'Filter label for pages list' } ),
-			scheduled: this.translate( 'Scheduled', { context: 'Filter label for pages list' } ),
-			trashed: this.translate( 'Trashed', { context: 'Filter label for pages list' } )
+			published: translate( 'Published', { context: 'Filter label for pages list' } ),
+			drafts: translate( 'Drafts', { context: 'Filter label for pages list' } ),
+			scheduled: translate( 'Scheduled', { context: 'Filter label for pages list' } ),
+			trashed: translate( 'Trashed', { context: 'Filter label for pages list' } )
 		};
 		const searchStrings = {
-			published: this.translate( 'Search Published…', { context: 'Search placeholder for pages list', textOnly: true } ),
-			drafts: this.translate( 'Search Drafts…', { context: 'Search placeholder for pages list', textOnly: true } ),
-			scheduled: this.translate( 'Search Scheduled…', { context: 'Search placeholder for pages list', textOnly: true } ),
-			trashed: this.translate( 'Search Trashed…', { context: 'Search placeholder for pages list', textOnly: true } )
+			published: translate( 'Search Published…', { context: 'Search placeholder for pages list', textOnly: true } ),
+			drafts: translate( 'Search Drafts…', { context: 'Search placeholder for pages list', textOnly: true } ),
+			scheduled: translate( 'Search Scheduled…', { context: 'Search placeholder for pages list', textOnly: true } ),
+			trashed: translate( 'Search Trashed…', { context: 'Search placeholder for pages list', textOnly: true } )
 		};
 		return (
 			<Main classname="pages">
 				<SidebarNavigation />
 				<SectionNav selectedText={ filterStrings[ status ] }>
-					<NavTabs label={ this.translate( 'Status', { context: 'Filter page group label for tabs' } ) }>
+					<NavTabs label={ translate( 'Status', { context: 'Filter page group label for tabs' } ) }>
 						{ this.getNavItems( filterStrings, status ) }
 					</NavTabs>
 					<Search
 						pinned
 						fitsContainer
-						onSearch={ this.doSearch }
-						initialValue={ this.props.search }
+						onSearch={ doSearch }
+						initialValue={ search }
 						placeholder={ searchStrings[ status ] }
 						analyticsGroup="Pages"
 						delaySearch={ true }
@@ -89,7 +90,7 @@ const PagesMain = React.createClass( {
 				<PageList { ...this.props } />
 			</Main>
 		);
-	},
+	}
 
 	getNavItems( filterStrings, currentStatus ) {
 		const {
@@ -113,17 +114,20 @@ const PagesMain = React.createClass( {
 				</NavItem>
 			);
 		} );
-	},
+	}
 
 	_setWarning( selectedSite ) {
+		const { translate } = this.props;
 		if ( selectedSite && selectedSite.jetpack && ! selectedSite.hasMinimumJetpackVersion ) {
 			notices.warning(
-				this.translate( 'Jetpack %(version)s is required to take full advantage of all page editing features.', { args: { version: config( 'jetpack_min_version' ) } } ),
-				{ button: this.translate( 'Update now' ), href: selectedSite.options.admin_url + 'plugins.php?plugin_status=upgrade' }
+				translate( 'Jetpack %(version)s is required to take full advantage of all page editing features.', {
+					args: { version: config( 'jetpack_min_version' ) }
+				} ),
+				{ button: translate( 'Update now' ), href: selectedSite.options.admin_url + 'plugins.php?plugin_status=upgrade' }
 			);
 		}
 	}
-} );
+}
 
 const mapState = state => {
 	return {
@@ -132,4 +136,4 @@ const mapState = state => {
 	};
 };
 
-export default connect( mapState )( PagesMain );
+export default connect( mapState )( localize( urlSearch( PagesMain ) ) );
