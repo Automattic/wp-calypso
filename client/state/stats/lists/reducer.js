@@ -79,7 +79,7 @@ export function items( state = {}, action ) {
 			return {
 				...state,
 				[ siteId ]: {
-					...get( state, [ siteId ] ),
+					...state[ siteId ],
 					[ statType ]: {
 						...get( state, [ siteId, statType ] ),
 						[ queryKey ]: data
