@@ -32,6 +32,10 @@ import { isDomainRegistration, isPlan, isGoogleApps, isJetpackPlan } from 'lib/p
 import notices from 'notices';
 import purchasePaths from '../paths';
 import { removePurchase } from 'state/purchases/actions';
+import {
+	isHappychatAvailable,
+	isHappychatChatActive,
+} from 'state/happychat/selectors';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import userFactory from 'lib/user';
 import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
@@ -115,9 +119,9 @@ class RemovePurchase extends Component {
 	}
 
 	changeSurveyStep = ( stepFunction ) => {
-		const { selectedPurchase } = this.props;
+		const { selectedPurchase, isChatAvailable, isChatActive } = this.props;
 		const { surveyStep, survey } = this.state;
-		const steps = stepsForProductAndSurvey( survey, selectedPurchase );
+		const steps = stepsForProductAndSurvey( survey, selectedPurchase, isChatAvailable && isChatActive );
 		const newStep = stepFunction( surveyStep, steps );
 		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
 		this.setState( { surveyStep: newStep } );
@@ -429,6 +433,8 @@ class RemovePurchase extends Component {
 export default connect(
 	( state, { selectedSite } ) => ( {
 		isDomainOnlySite: isDomainOnly( state, selectedSite && selectedSite.ID ),
+		isChatAvailable: isHappychatAvailable( state ),
+		isChatActive: isHappychatChatActive( state ),
 	} ),
 	{
 		receiveDeletedSite,

@@ -14,6 +14,10 @@ import config from 'config';
 import Button from 'components/button';
 import { cancelAndRefundPurchase, cancelPurchase, submitSurvey } from 'lib/upgrades/actions';
 import { clearPurchases } from 'state/purchases/actions';
+import {
+	isHappychatAvailable,
+	isHappychatChatActive,
+} from 'state/happychat/selectors';
 import { connect } from 'react-redux';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
@@ -82,9 +86,9 @@ class CancelPurchaseButton extends Component {
 	}
 
 	changeSurveyStep = ( stepFunction ) => {
-		const { purchase } = this.props;
+		const { purchase, isChatAvailable, isChatActive } = this.props;
 		const { surveyStep, survey } = this.state;
-		const steps = stepsForProductAndSurvey( survey, purchase );
+		const steps = stepsForProductAndSurvey( survey, purchase, isChatAvailable && isChatActive );
 		const newStep = stepFunction( surveyStep, steps );
 		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
 		this.setState( { surveyStep: newStep } );
@@ -343,7 +347,10 @@ class CancelPurchaseButton extends Component {
 }
 
 export default connect(
-	null,
+	state => ( {
+		isChatAvailable: isHappychatAvailable( state ),
+		isChatActive: isHappychatChatActive( state ),
+	} ),
 	{
 		clearPurchases,
 		recordTracksEvent,
