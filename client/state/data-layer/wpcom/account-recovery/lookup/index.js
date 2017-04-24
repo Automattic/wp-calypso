@@ -11,6 +11,7 @@ import { ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST } from 'state/action-types';
 import {
 	fetchResetOptionsSuccess,
 	fetchResetOptionsError,
+	updatePasswordResetUserData,
 } from 'state/account-recovery/reset/actions';
 
 export const fromApi = data => ( [
@@ -32,14 +33,21 @@ export const validate = ( { primary_email, primary_sms, secondary_email, seconda
 	}
 };
 
-export const handleRequestResetOptions = ( { dispatch }, { userData } ) => (
+export const handleRequestResetOptions = ( { dispatch }, action, next ) => {
+	const { userData } = action;
+
 	wpcom.req.get( {
 		body: userData,
 		apiNamespace: 'wpcom/v2',
 		path: '/account-recovery/lookup',
-	} ).then( data => dispatch( fetchResetOptionsSuccess( fromApi( tap( data, validate ) ) ) ) )
-	.catch( error => dispatch( fetchResetOptionsError( error ) ) )
-);
+	} ).then( data => {
+		dispatch( fetchResetOptionsSuccess( fromApi( tap( data, validate ) ) ) );
+		dispatch( updatePasswordResetUserData( userData ) );
+	} )
+	.catch( error => dispatch( fetchResetOptionsError( error ) ) );
+
+	return next( action );
+};
 
 export default {
 	[ ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST ]: [ handleRequestResetOptions ],

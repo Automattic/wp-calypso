@@ -10,38 +10,50 @@ import { identity, noop } from 'lodash';
  * Internal dependencies
  */
 import Card from 'components/card';
-import Button from 'components/button';
+import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
 
-import {
-	fetchResetOptionsByNameAndUrl,
-	updatePasswordResetUserData,
-} from 'state/account-recovery/reset/actions';
+import { fetchResetOptionsByNameAndUrl } from 'state/account-recovery/reset/actions';
 
 import {
 	isRequestingAccountRecoveryResetOptions,
-	getAccountRecoveryResetUserData,
 	getAccountRecoveryResetOptionsError,
 } from 'state/selectors';
 
 export class ForgotUsernameFormComponent extends Component {
-	submitForm = () => {
-		const { userData } = this.props;
+	constructor( props ) {
+		super( props );
 
-		this.props.fetchResetOptionsByNameAndUrl( userData.firstName, userData.lastName, userData.url );
+		this.state = {
+			firstName: '',
+			lastName: '',
+			url: '',
+		};
+	}
+
+	submitForm = ( event ) => {
+		const {
+			firstName,
+			lastName,
+			url,
+		} = this.state;
+
+		this.props.fetchResetOptionsByNameAndUrl( firstName, lastName, url );
+
+		event.preventDefault();
 	};
 
 	firstNameUpdated = ( event ) => {
-		this.props.updatePasswordResetUserData( { firstName: event.target.value } );
+		this.setState( { firstName: event.target.value } );
 	};
 
 	lastNameUpdated = ( event ) => {
-		this.props.updatePasswordResetUserData( { lastName: event.target.value } );
+		this.setState( { lastName: event.target.value } );
 	};
 
 	siteUrlUpdated = ( event ) => {
-		this.props.updatePasswordResetUserData( { url: event.target.value } );
+		this.setState( { url: event.target.value } );
 	};
 
 	getErrorMessage = ( requestError ) => {
@@ -62,16 +74,15 @@ export class ForgotUsernameFormComponent extends Component {
 	render() {
 		const {
 			translate,
-			userData,
 			isRequesting,
 			requestError,
 		} = this.props;
 
 		const {
-			firstName = '',
-			lastName = '',
-			url = '',
-		} = userData;
+			firstName,
+			lastName,
+			url,
+		} = this.state;
 
 		const isPrimaryButtonEnabled = firstName && lastName && url && ! isRequesting;
 
@@ -81,43 +92,47 @@ export class ForgotUsernameFormComponent extends Component {
 					{ translate( 'Forgot your username?' ) }
 				</h2>
 				<p>{ translate( 'Enter your full name and URL instead.' ) }</p>
-				<FormLabel>
-					{ translate( 'First Name' ) }
-					<FormInput
-						className="forgot-username-form__first-name-input"
-						onChange={ this.firstNameUpdated }
-						value={ firstName }
-						disabled={ isRequesting } />
-				</FormLabel>
-				<FormLabel>
-					{ translate( 'Last Name' ) }
-					<FormInput
-						className="forgot-username-form__last-name-input"
-						onChange={ this.lastNameUpdated }
-						value={ lastName }
-						disabled={ isRequesting } />
-				</FormLabel>
-				<FormLabel>
-					{ translate( "Your site's URL" ) }
-					<FormInput
-						className="forgot-username-form__site-url-input"
-						onChange={ this.siteUrlUpdated }
-						value={ url }
-						disabled={ isRequesting } />
-				</FormLabel>
-				{
-					requestError && (
-					<p className="forgot-username-form__error-message">
-						{ this.getErrorMessage( requestError ) }
-					</p> )
-				}
-				<Button
-					className="forgot-username-form__submit-button"
-					onClick={ this.submitForm }
-					disabled={ ! isPrimaryButtonEnabled }
-					primary>
-					{ translate( 'Continue' ) }
-				</Button>
+				<form onSubmit={ this.submitForm }>
+					<FormLabel>
+						{ translate( 'First Name' ) }
+						<FormInput
+							className="forgot-username-form__first-name-input"
+							onChange={ this.firstNameUpdated }
+							value={ firstName }
+							disabled={ isRequesting }
+							autoFocus
+						/>
+					</FormLabel>
+					<FormLabel>
+						{ translate( 'Last Name' ) }
+						<FormInput
+							className="forgot-username-form__last-name-input"
+							onChange={ this.lastNameUpdated }
+							value={ lastName }
+							disabled={ isRequesting } />
+					</FormLabel>
+					<FormLabel>
+						{ translate( "Your site's URL" ) }
+						<FormInput
+							className="forgot-username-form__site-url-input"
+							onChange={ this.siteUrlUpdated }
+							value={ url }
+							disabled={ isRequesting } />
+					</FormLabel>
+					{
+						requestError && (
+						<p className="forgot-username-form__error-message">
+							{ this.getErrorMessage( requestError ) }
+						</p> )
+					}
+					<FormButton
+						className="forgot-username-form__submit-button"
+						type="submit"
+						disabled={ ! isPrimaryButtonEnabled }
+						primary>
+						{ translate( 'Continue' ) }
+					</FormButton>
+				</form>
 			</Card>
 		);
 	}
@@ -125,21 +140,17 @@ export class ForgotUsernameFormComponent extends Component {
 
 ForgotUsernameFormComponent.defaultProps = {
 	isRequesting: false,
-	userData: {},
 	requestError: null,
 	translate: identity,
 	fetchResetOptionsByNameAndUrl: noop,
-	updatePasswordResetUserData: noop,
 };
 
 export default connect(
 	( state ) => ( {
 		isRequesting: isRequestingAccountRecoveryResetOptions( state ),
-		userData: getAccountRecoveryResetUserData( state ),
 		requestError: getAccountRecoveryResetOptionsError( state ),
 	} ),
 	{
 		fetchResetOptionsByNameAndUrl,
-		updatePasswordResetUserData,
 	}
 )( localize( ForgotUsernameFormComponent ) );

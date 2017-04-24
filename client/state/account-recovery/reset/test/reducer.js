@@ -114,59 +114,19 @@ describe( '#account-recovery/reset reducer', () => {
 		assert.deepEqual( state.options.error, mockError );
 	} );
 
-	it( 'ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action should populate the user field.', () => {
+	it( 'ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action should populate the userData field.', () => {
+		const userData = deepFreeze( {
+			user: 'userlogin',
+			firstname: 'Foo',
+			lastname: 'Bar',
+			url: 'examples.com',
+		} );
 		const state = reducer( undefined, {
 			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-			userData: {
-				user: 'userlogin',
-			},
+			userData,
 		} );
 
-		assert.equal( state.userData.user, 'userlogin' );
-	} );
-
-	it( 'ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action should populate the firstname field.', () => {
-		const state = reducer( undefined, {
-			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-			userData: {
-				firstName: 'Foo',
-			},
-		} );
-
-		assert.equal( state.userData.firstName, 'Foo' );
-	} );
-
-	it( 'ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action should populate the lastname field.', () => {
-		const state = reducer( undefined, {
-			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-			userData: {
-				lastName: 'Bar',
-			},
-		} );
-
-		assert.equal( state.userData.lastName, 'Bar' );
-	} );
-
-	it( 'ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action should populate the url field.', () => {
-		const state = reducer( undefined, {
-			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-			userData: {
-				url: 'examples.com',
-			},
-		} );
-
-		assert.equal( state.userData.url, 'examples.com' );
-	} );
-
-	it( 'ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action should not populate any unexpected field.', () => {
-		const state = reducer( undefined, {
-			type: ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-			userData: {
-				unexpected: 'random-value',
-			},
-		} );
-
-		assert.deepEqual( state.userData, {} );
+		assert.deepEqual( state.userData, userData );
 	} );
 
 	it( 'ACCOUNT_RECOVERY_RESET_PICK_METHOD action should populate the method field', () => {

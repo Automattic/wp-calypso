@@ -11,41 +11,46 @@ import { identity, noop } from 'lodash';
  */
 import support from 'lib/url/support';
 import Card from 'components/card';
-import Button from 'components/button';
+import FormButton from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
 
-import {
-	fetchResetOptionsByLogin,
-	updatePasswordResetUserData,
-} from 'state/account-recovery/reset/actions';
+import { fetchResetOptionsByLogin } from 'state/account-recovery/reset/actions';
 
 import {
 	isRequestingAccountRecoveryResetOptions,
-	getAccountRecoveryResetUserData,
 	getAccountRecoveryResetOptionsError,
 } from 'state/selectors';
 
 export class LostPasswordFormComponent extends Component {
-	submitForm = () => {
-		this.props.fetchResetOptionsByLogin( this.props.userLogin );
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			userLoginFormValue: '',
+		};
+	}
+
+	submitForm = ( event ) => {
+		this.props.fetchResetOptionsByLogin( this.state.userLoginFormValue );
+
+		event.preventDefault();
 	};
 
 	onUserLoginChanged = ( event ) => {
-		this.props.updatePasswordResetUserData( {
-			user: event.target.value
-		} );
+		this.setState( { userLoginFormValue: event.target.value } );
 	};
 
 	render() {
 		const {
 			translate,
-			userLogin,
 			isRequesting,
 			requestError,
 		} = this.props;
 
-		const isPrimaryButtonDisabled = ! userLogin || isRequesting;
+		const { userLoginFormValue } = this.state;
+
+		const isPrimaryButtonDisabled = ! userLoginFormValue || isRequesting;
 
 		return (
 			<div>
@@ -79,30 +84,33 @@ export class LostPasswordFormComponent extends Component {
 					</p>
 				</Card>
 				<Card compact>
-					<FormLabel>
-						{ translate( 'Username or Email' ) }
-
-						<FormInput
-							className="lost-password-form__user-login-input"
-							onChange={ this.onUserLoginChanged }
-							value={ userLogin || '' }
-							disabled={ isRequesting } />
-					</FormLabel>
-					{
-						requestError && (
-						<p className="lost-password-form__error-message">
-							{ translate( 'We encountered some problems with that login information. ' +
-								'Please provide another one or try again later.' ) }
-						</p> )
-					}
-					<Button
-						className="lost-password-form__submit-button"
-						onClick={ this.submitForm }
-						disabled={ isPrimaryButtonDisabled }
-						primary
-					>
-						{ translate( 'Get New Password' ) }
-					</Button>
+					<form onSubmit={ this.submitForm }>
+						<FormLabel>
+							{ translate( 'Username or Email' ) }
+							<FormInput
+								className="lost-password-form__user-login-input"
+								onChange={ this.onUserLoginChanged }
+								value={ userLoginFormValue }
+								disabled={ isRequesting }
+								autoFocus
+							/>
+						</FormLabel>
+						{
+							requestError && (
+							<p className="lost-password-form__error-message">
+								{ translate( 'We encountered some problems with that login information. ' +
+									'Please provide another one or try again later.' ) }
+							</p> )
+						}
+						<FormButton
+							className="lost-password-form__submit-button"
+							type="submit"
+							disabled={ isPrimaryButtonDisabled }
+							primary
+						>
+							{ translate( 'Get New Password' ) }
+						</FormButton>
+					</form>
 					<a href="/account-recovery/forgot-username" className="lost-password-form__forgot-username-link">
 						{ translate( 'Forgot your username?' ) }
 					</a>
@@ -114,21 +122,17 @@ export class LostPasswordFormComponent extends Component {
 
 LostPasswordFormComponent.defaultProps = {
 	isRequesting: false,
-	userLogin: null,
 	requestError: null,
 	translate: identity,
 	fetchResetOptionsByLogin: noop,
-	updatePasswordResetUserData: noop,
 };
 
 export default connect(
 	( state ) => ( {
 		isRequesting: isRequestingAccountRecoveryResetOptions( state ),
-		userLogin: getAccountRecoveryResetUserData( state ).user,
 		requestError: getAccountRecoveryResetOptionsError( state ),
 	} ),
 	{
 		fetchResetOptionsByLogin,
-		updatePasswordResetUserData,
 	}
 )( localize( LostPasswordFormComponent ) );
