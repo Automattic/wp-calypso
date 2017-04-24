@@ -51,9 +51,9 @@ class PurchasePlanDetails extends Component {
 
 		return (
 			<div>
+				<QueryPluginKeys siteId={ selectedSite.ID } />
 				<SectionHeader label={ headerText } />
 				<Card>
-					<QueryPluginKeys siteId={ selectedSite.ID } />
 					{ pluginList.map( ( plugin, i ) => {
 						return (
 							<FormFieldset key={ i }>
