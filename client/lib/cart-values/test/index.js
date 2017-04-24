@@ -11,14 +11,15 @@ import useFilesystemMocks from 'test/helpers/use-filesystem-mocks';
 
 describe( 'index', function() {
 	const TEST_BLOG_ID = 1;
-	let cartItems, cartValues, DOMAIN_REGISTRATION_PRODUCT, PREMIUM_PRODUCT, THEME_PRODUCT;
+	let cartItems, cartValues, DOMAIN_REGISTRATION_PRODUCT, FR_DOMAIN_REGISTRATION_PRODUCT, PREMIUM_PRODUCT, THEME_PRODUCT;
 
 	useFilesystemMocks( __dirname );
 
 	before( () => {
 		cartValues = require( 'lib/cart-values' );
 		cartItems = cartValues.cartItems;
-		DOMAIN_REGISTRATION_PRODUCT = cartItems.domainRegistration( { productSlug: 'dotcom_domain' } );
+		DOMAIN_REGISTRATION_PRODUCT = cartItems.domainRegistration( { productSlug: 'dotcom_domain', domain: 'testdomain.com' } );
+		FR_DOMAIN_REGISTRATION_PRODUCT = cartItems.domainRegistration( { productSlug: 'dotfr_domain', domain: 'testdomain.fr' } );
 		PREMIUM_PRODUCT = cartItems.premiumPlan( 'value_bundle', { isFreeTrial: false } );
 		THEME_PRODUCT = cartItems.themeItem( 'mood' );
 	} );
@@ -86,6 +87,21 @@ describe( 'index', function() {
 				products: [ DOMAIN_REGISTRATION_PRODUCT ]
 			};
 			assert( ! cartItems.hasProduct( cartWithoutPremium, PREMIUM_PRODUCT ) );
+		} );
+	} );
+
+	describe( 'cartItems.hasTld( cart, tld )', function() {
+		it( 'should return a boolean that says whether a domain with the tld is in the cart items', function() {
+			const cartWithFrTld = {
+					blog_id: TEST_BLOG_ID,
+					products: [ FR_DOMAIN_REGISTRATION_PRODUCT ]
+				}, cartWithoutFrTld = {
+					blog_id: TEST_BLOG_ID,
+					products: [ DOMAIN_REGISTRATION_PRODUCT ]
+				};
+
+			assert( cartItems.hasTld( cartWithFrTld, 'fr' ) );
+			assert( ! cartItems.hasTld( cartWithoutFrTld, 'fr' ) );
 		} );
 	} );
 
