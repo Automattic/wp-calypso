@@ -10,18 +10,17 @@ import { localize } from 'i18n-calypso';
  */
 import purchasesPaths from 'me/purchases/paths';
 import TransactionsTable from './transactions-table';
-import { getSite } from 'state/sites/selectors';
+import { getSitesForUpcomingTransactions } from 'state/selectors';
 
 class UpcomingChargesTable extends Component {
 	static propTypes = {
-		transactions: PropTypes.array,
 		// Computed props
-		getSite: PropTypes.func,
+		sites: PropTypes.object.isRequired,
 	}
 
 	renderTransaction = ( transaction ) => {
 		const { translate } = this.props;
-		const site = this.props.getSite( Number( transaction.blog_id ) );
+		const site = this.props.sites[ Number( transaction.blog_id ) ];
 
 		if ( ! site ) {
 			return null;
@@ -59,6 +58,6 @@ class UpcomingChargesTable extends Component {
 
 export default connect(
 	( state ) => ( {
-		getSite: ( siteId ) => getSite( state, siteId ),
+		sites: getSitesForUpcomingTransactions( state ),
 	} )
 )( localize( UpcomingChargesTable ) );
