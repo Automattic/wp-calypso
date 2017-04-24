@@ -158,13 +158,11 @@ node_modules/%:
 node_modules: package.json
 	@$(NPM) prune
 	@$(NPM) install
-	@touch node_modules
 
 package_modules: package.json
 	@mkdir release
 	@cp resource/build-config/calypso.json release/package.json
 	@cd release; $(NPM) install; $(NPM) prune
-	@touch release/node_modules
 
 lint: node_modules/eslint node_modules/eslint-plugin-react node_modules/babel-eslint
 	@$(NPM_BIN)/eslint ./desktop/
