@@ -27,7 +27,6 @@ import {
 	createAccount,
 	authorize,
 	goBackToWpAdmin,
-	activateManage,
 	retryAuth,
 	goToXmlrpcErrorFallbackUrl
 } from 'state/jetpack-connect/actions';
@@ -226,7 +225,6 @@ const LoggedInForm = React.createClass( {
 	componentWillReceiveProps( props ) {
 		const {
 			siteReceived,
-			isActivating,
 			queryObject,
 			isRedirectingToWpAdmin,
 			authorizeSuccess,
@@ -246,10 +244,10 @@ const LoggedInForm = React.createClass( {
 		) {
 			this.setState( { haveAuthorized: true } );
 			this.props.authorize( queryObject );
-		} else if ( siteReceived && ! isActivating ) {
-			return this.activateManageAndRedirect();
-		} else if ( props.isAlreadyOnSitesList && queryObject.already_authorized && ! isActivating ) {
-			return this.activateManageAndRedirect();
+		} else if ( siteReceived ) {
+			return this.redirect();
+		} else if ( props.isAlreadyOnSitesList && queryObject.already_authorized ) {
+			return this.redirect();
 		}
 		if (
 			authorizeError &&
@@ -290,13 +288,8 @@ const LoggedInForm = React.createClass( {
 		);
 	},
 
-	activateManageAndRedirect() {
-		const { queryObject, activateManageSecret } = this.props.jetpackConnectAuthorize;
-
-		if ( versionCompare( queryObject.jp_version, '4.4', '<' ) ) {
-			debug( 'Activating Manage module and calculating redirection', queryObject );
-			this.props.activateManage( queryObject.client_id, queryObject.state, activateManageSecret );
-		}
+	redirect() {
+		const { queryObject } = this.props.jetpackConnectAuthorize;
 
 		if ( 'jpo' === queryObject.from || this.props.isSSO ) {
 			debug( 'Going back to WP Admin.', 'Connection initiated via: ', queryObject.from, 'SSO found:', this.props.isSSO );
@@ -309,9 +302,8 @@ const LoggedInForm = React.createClass( {
 	handleSubmit() {
 		const {
 			queryObject,
-			manageActivated,
-			activateManageSecret,
-			authorizeError
+			authorizeError,
+			authorizeSuccess
 		} = this.props.jetpackConnectAuthorize;
 
 		if ( ! this.props.isAlreadyOnSitesList &&
@@ -324,12 +316,12 @@ const LoggedInForm = React.createClass( {
 		if ( this.props.isAlreadyOnSitesList &&
 			queryObject.already_authorized ) {
 			this.props.recordTracksEvent( 'calypso_jpc_already_authorized_click' );
-			return this.activateManageAndRedirect();
+			return this.redirect();
 		}
 
-		if ( activateManageSecret && ! manageActivated ) {
+		if ( authorizeSuccess && ! queryObject.already_authorized ) {
 			this.props.recordTracksEvent( 'calypso_jpc_activate_click' );
-			return this.activateManageAndRedirect();
+			return this.redirect();
 		}
 		if ( authorizeError ) {
 			this.props.recordTracksEvent( 'calypso_jpc_try_again_click' );
@@ -337,7 +329,7 @@ const LoggedInForm = React.createClass( {
 		}
 		if ( this.props.isAlreadyOnSitesList ) {
 			this.props.recordTracksEvent( 'calypso_jpc_return_site_click' );
-			return this.activateManageAndRedirect();
+			return this.redirect();
 		}
 
 		this.props.recordTracksEvent( 'calypso_jpc_approve_click' );
@@ -352,8 +344,8 @@ const LoggedInForm = React.createClass( {
 	},
 
 	isAuthorizing() {
-		const { isAuthorizing, isActivating } = this.props.jetpackConnectAuthorize;
-		return ( ! this.props.isAlreadyOnSitesList && ( isAuthorizing || isActivating ) );
+		const { isAuthorizing } = this.props.jetpackConnectAuthorize;
+		return ( ! this.props.isAlreadyOnSitesList && isAuthorizing );
 	},
 
 	handleResolve() {
@@ -771,7 +763,6 @@ export default connect(
 		recordTracksEvent,
 		authorize,
 		createAccount,
-		activateManage,
 		goBackToWpAdmin,
 		retryAuth,
 		goToXmlrpcErrorFallbackUrl

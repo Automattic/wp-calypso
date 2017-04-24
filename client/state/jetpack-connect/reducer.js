@@ -18,8 +18,6 @@ import {
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
-	JETPACK_CONNECT_ACTIVATE_MANAGE,
-	JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
@@ -144,7 +142,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			);
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE:
 			if ( isEmpty( action.error ) && action.data ) {
-				const { plans_url, activate_manage } = action.data;
+				const { plans_url } = action.data;
 				return Object.assign(
 					{},
 					state,
@@ -153,8 +151,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 						authorizeSuccess: true,
 						autoAuthorize: false,
 						plansUrl: plans_url,
-						siteReceived: false,
-						activateManageSecret: activate_manage
+						siteReceived: false
 					}
 				);
 			}
@@ -179,24 +176,6 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 					siteReceived: true,
 					isAuthorizing: false,
 					queryObject: updateQueryObject
-				}
-			);
-		case JETPACK_CONNECT_ACTIVATE_MANAGE:
-			return Object.assign(
-				{},
-				state,
-				{ isActivating: true }
-			);
-		case JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE:
-			const error = action.error;
-			return Object.assign(
-				{},
-				state,
-				{
-					isActivating: false,
-					manageActivated: true,
-					manageActivatedError: error,
-					activateManageSecret: false
 				}
 			);
 		case JETPACK_CONNECT_QUERY_SET:
