@@ -30,7 +30,7 @@ import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { canCurrentUser, getMenusUrl, getPrimarySiteId, getSites, isDomainOnlySite } from 'state/selectors';
+import { canCurrentUser, getPrimarySiteId, getSites, isDomainOnlySite } from 'state/selectors';
 import {
 	getCustomizerUrl,
 	getSite,
@@ -188,24 +188,6 @@ export class MySitesSidebar extends Component {
 					{ this.props.translate( 'Customize' ) }
 				</SidebarButton>
 			</SidebarItem>
-		);
-	}
-
-	menus() {
-		const { menusUrl } = this.props;
-		if ( ! menusUrl ) {
-			return null;
-		}
-
-		return (
-			<SidebarItem
-				tipTarget="menus"
-				label={ this.props.translate( 'Menus' ) }
-				className={ this.itemLinkClass( '/menus', 'menus' ) }
-				link={ menusUrl }
-				onNavigate={ this.onNavigate }
-				icon="menus"
-				preloadSectionName="menus" />
 		);
 	}
 
@@ -524,7 +506,6 @@ export class MySitesSidebar extends Component {
 		}
 
 		const publish = !! this.publish(),
-			appearance = ( !! this.themes() || !! this.menus() ),
 			configuration = ( !! this.sharing() || !! this.users() || !! this.siteSettings() || !! this.plugins() || !! this.upgrades() );
 
 		return (
@@ -544,12 +525,11 @@ export class MySitesSidebar extends Component {
 					: null
 				}
 
-				{ appearance
+				{ !! this.themes()
 					? <SidebarMenu>
 						<SidebarHeading>{ this.props.translate( 'Personalize' ) }</SidebarHeading>
 						<ul>
 							{ this.themes() }
-							{ this.menus() }
 						</ul>
 					</SidebarMenu>
 					: null
@@ -627,7 +607,6 @@ function mapStateToProps( state ) {
 		isJetpack,
 		isSharingEnabledOnJetpackSite,
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
-		menusUrl: getMenusUrl( state, siteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
