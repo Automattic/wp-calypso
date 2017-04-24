@@ -20,7 +20,7 @@ import {
 	getSiteAuthorName
 } from 'reader/get-helpers';
 
-const stripUrl = url => url.replace( 'https://', '' ).replace( 'http://', '' ).replace( '/', '' );
+const stripUrl = url => url.replace( 'https://', '' ).replace( 'http://', '' ).replace( /\/$/, '' );
 
 function ReaderSubscriptionListItem( {
 	url,
