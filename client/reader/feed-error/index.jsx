@@ -50,7 +50,7 @@ const FeedError = React.createClass( {
 					action={ action }
 					secondaryAction={ secondaryAction }
 					title={ this.props.message }
-					illustration={ '/calypso/images/drake/drake-404.svg' }
+					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 					illustrationWidth={ 500 }
 				/>
 			</ReaderMain>

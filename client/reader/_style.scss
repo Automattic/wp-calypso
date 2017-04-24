@@ -353,7 +353,7 @@
 
 .is-group-reader .main .empty-content,
 .is-reader-page .main .empty-content {
-	margin-top: -90px;
+	margin-top: 0;
 	padding-top: 0;
 
 	img {
@@ -361,7 +361,7 @@
 	}
 
 	@include breakpoint( "<480px" ) {
-		margin-top: -72px;
+		margin-top: 0;
 	}
 
 	.empty-content__illustration {
