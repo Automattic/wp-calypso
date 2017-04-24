@@ -1,23 +1,26 @@
 /**
  * External dependencies
  */
-var i18n = require( 'i18n-calypso' ),
-	some = require( 'lodash/some' ),
-	values = require( 'lodash/values' ),
-	isDate = require( 'lodash/isDate' ),
-	omit = require( 'lodash/omit' ),
-	flatten = require( 'lodash/flatten' );
+import { moment } from 'i18n-calypso';
+import {
+	flatten,
+	isDate,
+	omit,
+	some,
+	values,
+	without,
+} from 'lodash';
 
 function formatDate( date ) {
-	return i18n.moment( date ).format( 'MMM D, YYYY' );
+	return moment( date ).format( 'MMM D, YYYY' );
 }
 
 function getSearchableStrings( transaction ) {
-	var rootStrings = values( omit( transaction, 'items' ) ),
+	const rootStrings = values( omit( transaction, 'items' ) ),
 		transactionItems = transaction.items || [],
 		itemStrings = flatten( transactionItems.map( values ) );
 
-	return rootStrings.concat( itemStrings );
+	return without( rootStrings.concat( itemStrings ), null, undefined );
 }
 
 function search( transactions, searchQuery ) {
@@ -47,7 +50,7 @@ function filter( transactions, params ) {
 			transactions = transactions.slice( 0, params.date.newest );
 		} else if ( params.date.month || params.date.before ) {
 			transactions = transactions.filter( function( transaction ) {
-				var date = i18n.moment( transaction.date );
+				const date = moment( transaction.date );
 
 				if ( params.date.month ) {
 					return date.isSame( params.date.month, 'month' );
