@@ -377,6 +377,10 @@
 	float: right;
 }
 
+.form-legend + .site-settings__info-link-container {
+	margin-top: -21px;
+}
+
 .site-settings__add-to-whitelist {
 	margin-top: 3px;
 }
