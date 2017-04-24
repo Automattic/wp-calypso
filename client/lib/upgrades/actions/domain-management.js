@@ -28,7 +28,7 @@ const debug = debugFactory( 'actions:domain-management' );
 
 const wpcom = wp.undocumented();
 
-function setPrimaryDomain( siteId, domainName, onComplete = noop ) {
+const setPrimaryDomain = ( siteId, domainName, onComplete = noop ) => dispatch => {
 	debug( 'setPrimaryDomain', siteId, domainName );
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.PRIMARY_DOMAIN_SET,
@@ -47,8 +47,7 @@ function setPrimaryDomain( siteId, domainName, onComplete = noop ) {
 			return onComplete( error, data );
 		}
 
-		// TODO: do sth here to update site object instead
-		domainsPrimarySetCompletedAction( siteId, domainName );
+		dispatch( domainsPrimarySetCompletedAction( siteId, domainName ) );
 
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.PRIMARY_DOMAIN_SET_COMPLETED,
@@ -59,7 +58,7 @@ function setPrimaryDomain( siteId, domainName, onComplete = noop ) {
 		onComplete( null, data );
 		fetchDomains( siteId );
 	} );
-}
+};
 
 function fetchEmailForwarding( domainName ) {
 	const emailForwarding = EmailForwardingStore.getByDomainName( domainName );
