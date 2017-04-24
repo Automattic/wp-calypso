@@ -18,6 +18,7 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
+import HappychatButton from 'components/happychat/button';
 import {
 	INITIAL_STEP,
 	CONCIERGE_STEP,
@@ -466,9 +467,6 @@ const CancelPurchaseForm = React.createClass( {
 		);
 	},
 
-	openChat() {
-	},
-
 	renderLiveChat() {
 		const { productName, translate } = this.props;
 		return (
@@ -485,12 +483,9 @@ const CancelPurchaseForm = React.createClass( {
 						)
 					}
 				</p>
-				<Button
-					onClick={ this.openChat }
-					primary
-				>
-					{ translate( 'Schedule a session' ) }
-				</Button>
+				<HappychatButton>
+					{ translate( 'Start a chat' ) }
+				</HappychatButton>
 			</FormFieldset>
 		);
 	},
