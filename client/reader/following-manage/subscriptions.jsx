@@ -17,7 +17,7 @@ import FollowingManageSearchFollowed from './search-followed';
 import FollowingManageSortControls from './sort-controls';
 import { getFeed as getReaderFeed } from 'state/reader/feeds/selectors';
 import { getSite as getReaderSite } from 'state/reader/sites/selectors';
-import { getReaderFollows } from 'state/selectors';
+import { getReaderFollows, getReaderFollowsCount } from 'state/selectors';
 import UrlSearch from 'lib/url-search';
 import { getSiteName, getSiteUrl, getSiteDescription, getSiteAuthorName } from 'reader/get-helpers';
 import EllipsisMenu from 'components/ellipsis-menu';
@@ -48,7 +48,7 @@ class FollowingManageSubscriptions extends Component {
 	}
 
 	render() {
-		const { follows, width, translate, query } = this.props;
+		const { follows, width, translate, query, followsCount } = this.props;
 		const filteredFollows = this.filterFollowsByQuery( query );
 
 		return (
@@ -58,7 +58,7 @@ class FollowingManageSubscriptions extends Component {
 					<h1 className="following-manage__subscriptions-header">
 						{
 							translate( '%(num)s Followed Sites', {
-								args: { num: follows.length }
+								args: { num: followsCount }
 							} )
 						}
 						</h1>
@@ -83,7 +83,9 @@ class FollowingManageSubscriptions extends Component {
 					{ follows &&
 						<SitesWindowScroller
 							sites={ filteredFollows }
-							width={ width } />
+							width={ width }
+							remoteTotalCount={ followsCount }
+						/>
 					}
 				</div>
 			</div>
@@ -93,10 +95,11 @@ class FollowingManageSubscriptions extends Component {
 
 const mapStateToProps = state => {
 	const follows = getReaderFollows( state );
+	const followsCount = getReaderFollowsCount( state );
 	const getFeed = feedId => getReaderFeed( state, feedId );
 	const getSite = siteId => getReaderSite( state, siteId );
 
-	return { follows, getFeed, getSite };
+	return { follows, followsCount, getFeed, getSite };
 };
 
 export default connect(

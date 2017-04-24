@@ -63,7 +63,7 @@ describe( 'reducer', () => {
 			];
 			const state = items( original, {
 				type: READER_FOLLOWS_RECEIVE,
-				payload: { follows: incomingFollows }
+				payload: { follows: incomingFollows, followCount: 20 }
 			} );
 
 			// Updated follow
@@ -75,6 +75,8 @@ describe( 'reducer', () => {
 			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).to.eql(
 				{ is_following: true, blog_ID: 126, URL: 'https://postcardsfromthereader.wordpress.com' }
 			);
+
+			expect( state.itemsCount ).eql( 20 );
 		} );
 
 		it( 'should update when passed new post subscription info', () => {

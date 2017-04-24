@@ -20,6 +20,7 @@ import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import FollowingManageSubscriptions from './subscriptions';
 import SitesWindowScroller from './sites-window-scroller';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
+import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 
 class FollowingManage extends Component {
 	static propTypes = {
@@ -115,7 +116,16 @@ class FollowingManage extends Component {
 					</CompactCard>
 				</div>
 				{ ! sitesQuery && <FollowingManageSubscriptions width={ this.state.width } query={ subsQuery } /> }
-				{ !! sitesQuery && <SitesWindowScroller sites={ searchResults } width={ this.state.width } /> }
+				{ !! sitesQuery && (
+					<SitesWindowScroller
+						sites={ searchResults }
+						width={ this.state.width }
+						fetchNextPage={
+							() => this.props.requestFeedSearch( sitesQuery, searchResults.length )
+						}
+						remoteTotalCount={ 200 }
+					/>
+				) }
 			</ReaderMain>
 		);
 	}
@@ -125,4 +135,5 @@ export default connect(
 	( state, ownProps ) => ( {
 		searchResults: getReaderFeedsForQuery( state, ownProps.sitesQuery ) || [],
 	} ),
+	{ requestFeedSearch }
 )( localize( FollowingManage ) );

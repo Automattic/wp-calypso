@@ -92,7 +92,10 @@ export function receivePage( store, action, next, apiResponse ) {
 	const { page, number } = apiResponse;
 
 	store.dispatch(
-		receiveFollowsAction( subscriptionsFromApi( apiResponse ) )
+		receiveFollowsAction( {
+			follows: subscriptionsFromApi( apiResponse ),
+			totalCount: apiResponse.total_subscriptions,
+		} )
 	);
 
 	// Fetch the next page of subscriptions where applicable

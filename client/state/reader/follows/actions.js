@@ -61,10 +61,10 @@ export function recordUnfollow( url ) {
  * @param  {Array}  follows Follows received
  * @return {Object} 		Action object
  */
-export function receiveFollows( follows ) {
+export function receiveFollows( { follows, totalCount } ) {
 	return {
 		type: READER_FOLLOWS_RECEIVE,
-		payload: { follows }
+		payload: { follows, totalCount }
 	};
 }
 

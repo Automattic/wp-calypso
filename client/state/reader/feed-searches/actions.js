@@ -6,9 +6,9 @@ import {
 	READER_FEED_SEARCH_RECEIVE,
 } from 'state/action-types';
 
-export const requestFeedSearch = ( query ) => ( {
+export const requestFeedSearch = ( query, offset = 0 ) => ( {
 	type: READER_FEED_SEARCH_REQUEST,
-	payload: { query },
+	payload: { query, offset },
 } );
 
 export const receiveFeedSearch = ( query, feeds ) => ( {

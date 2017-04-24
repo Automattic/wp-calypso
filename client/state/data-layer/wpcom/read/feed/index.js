@@ -18,7 +18,7 @@ export function initiateFeedSearch( store, action, next ) {
 		path,
 		method: 'GET',
 		apiVersion: '1.1',
-		query: { q: action.payload.query },
+		query: { q: action.payload.query, offset: action.payload.offset },
 		onSuccess: action,
 		onFailure: action,
 	} ) );

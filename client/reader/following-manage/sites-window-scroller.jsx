@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { List, WindowScroller, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
+import { List, WindowScroller, CellMeasurerCache, CellMeasurer, InfiniteLoader } from 'react-virtualized';
 import { debounce, defer } from 'lodash';
 
 /**
@@ -19,6 +19,8 @@ import ConnectedSubscriptionListItem from './connected-subscription-list-item';
 class SitesWindowScroller extends Component {
 	static propTypes = {
 		sites: PropTypes.array.isRequired,
+		fetchNextPage: PropTypes.func,
+		remoteTotalCount: PropTypes.number.isRequired,
 	};
 
 	heightCache = new CellMeasurerCache( {
@@ -60,6 +62,12 @@ class SitesWindowScroller extends Component {
 		defer( () => this.listRef && this.listRef.recomputeRowHeights( 0 ) );
 	}, 50, { trailing: true } );
 
+	isRowLoaded = ( { index } ) => {
+		return !! this.props.sites[ index ];
+	}
+
+	loadMoreRows = () => this.props.fetchNextPage && this.props.fetchNextPage();
+
 	componentWillMount() {
 		window.addEventListener( 'resize', this.handleResize );
 	}
@@ -68,24 +76,33 @@ class SitesWindowScroller extends Component {
 	}
 
 	render() {
-		const { sites, width } = this.props;
+		const { width, remoteTotalCount } = this.props;
 
 		return (
 			<div className="following-manage__sites-window-scroller">
-				<WindowScroller>
-					{ ( { height, scrollTop } ) => (
-						<List
-							autoHeight
-							height={ height }
-							rowCount={ sites.length }
-							rowHeight={ this.heightCache.rowHeight }
-							rowRenderer={ this.siteRowRenderer }
-							scrollTop={ scrollTop }
-							width={ width }
-							ref={ this.handleListMounted }
-						/>
-					)}
-				</WindowScroller>
+				<InfiniteLoader
+					isRowLoaded={ this.isRowLoaded }
+					loadMoreRows={ this.loadMoreRows }
+					rowCount={ remoteTotalCount }
+				>
+				{ ( { onRowsRendered, registerChild } ) => (
+					<WindowScroller>
+						{ ( { height, scrollTop } ) => (
+							<List
+								autoHeight
+								height={ height }
+								rowCount={ remoteTotalCount }
+								rowHeight={ this.heightCache.rowHeight }
+								rowRenderer={ this.siteRowRenderer }
+								onRowsRendered={ onRowsRendered }
+								ref={ registerChild }
+								scrollTop={ scrollTop }
+								width={ width }
+							/>
+						)}
+					</WindowScroller>
+				) }
+				</InfiniteLoader>
 			</div>
 		);
 	}
