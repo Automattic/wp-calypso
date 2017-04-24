@@ -19,6 +19,7 @@ import {
 	getSiteDescription,
 	getSiteAuthorName
 } from 'reader/get-helpers';
+import { decodeEntities } from 'lib/formatting';
 
 function ReaderSubscriptionListItem( {
 	url,
@@ -31,12 +32,12 @@ function ReaderSubscriptionListItem( {
 	followSource,
 	isEmailBlocked,
 } ) {
-	const siteTitle = getSiteName( { feed, site } );
+	const siteTitle = decodeEntities( getSiteName( { feed, site } ) );
 	const siteAuthor = site && site.owner;
-	const siteExcerpt = getSiteDescription( { feed, site } );
+	const siteExcerpt = decodeEntities( getSiteDescription( { feed, site } ) );
 	// prefer a users name property
 	// if that doesn't exist settle for combining first and last name
-	const authorName = getSiteAuthorName( site );
+	const authorName = decodeEntities( getSiteAuthorName( site ) );
 	const siteIcon = get( site, 'icon.img' );
 	const feedIcon = get( feed, 'image' );
 	const streamUrl = getStreamUrl( feedId, siteId );
