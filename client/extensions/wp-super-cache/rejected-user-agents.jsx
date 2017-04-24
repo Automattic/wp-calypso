@@ -20,6 +20,7 @@ const RejectedUserAgents = ( {
 		wp_rejected_user_agent,
 	},
 	handleChange,
+	handleSubmitForm,
 	isRequesting,
 	translate,
 } ) => {
@@ -30,7 +31,7 @@ const RejectedUserAgents = ( {
 					compact
 					primary
 					disabled={ isRequesting }
-					type="submit">
+					onClick={ handleSubmitForm }>
 					{ translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>

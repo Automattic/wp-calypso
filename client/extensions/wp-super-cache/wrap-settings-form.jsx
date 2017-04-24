@@ -86,14 +86,19 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.updateFields( { [ name ]: isNaN( parsedValue ) ? value : parsedValue } );
 		};
 
-		handleToggle = name => () => {
-			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
-		};
-
 		handleAutosavingToggle = name => () => {
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] }, () => {
 				this.submitForm();
 			} );
+		};
+
+		handleToggle = name => () => {
+			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
+		};
+
+		handleSubmitForm = event => {
+			event.preventDefault();
+			this.submitForm();
 		};
 
 		submitForm = () => {
@@ -108,6 +113,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				handleChange: this.handleChange,
 				handleRadio: this.handleRadio,
 				handleSelect: this.handleSelect,
+				handleSubmitForm: this.handleSubmitForm,
 				handleToggle: this.handleToggle,
 			};
 
@@ -293,6 +299,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const boundActionCreators = bindActionCreators( {
 				saveSettings,
 			}, dispatch );
+
 			return {
 				...boundActionCreators,
 			};

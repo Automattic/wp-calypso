@@ -32,8 +32,9 @@ const AcceptedFilenames = ( {
 		wp_accepted_files,
 		wp_rejected_uri,
 	},
+	handleAutosavingToggle,
 	handleChange,
-	handleToggle,
+	handleSubmitForm,
 	isRequesting,
 	translate,
 } ) => {
@@ -44,7 +45,7 @@ const AcceptedFilenames = ( {
 					compact
 					primary
 					disabled={ isRequesting }
-					type="submit">
+					onClick={ handleSubmitForm }>
 					{ translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>
@@ -54,7 +55,7 @@ const AcceptedFilenames = ( {
 						<FormToggle
 							checked={ !! single }
 							disabled={ isRequesting }
-							onChange={ handleToggle( 'single' ) }>
+							onChange={ handleAutosavingToggle( 'single' ) }>
 							<span>
 								{ translate( 'Single Posts (is_single)' ) }
 							</span>
@@ -63,7 +64,7 @@ const AcceptedFilenames = ( {
 						<FormToggle
 							checked={ !! pages }
 							disabled={ isRequesting }
-							onChange={ handleToggle( 'pages' ) }>
+							onChange={ handleAutosavingToggle( 'pages' ) }>
 							<span>
 								{ translate( 'Pages (is_page)' ) }
 							</span>
@@ -72,7 +73,7 @@ const AcceptedFilenames = ( {
 						<FormToggle
 							checked={ !! frontpage }
 							disabled={ isRequesting }
-							onChange={ handleToggle( 'frontpage' ) }>
+							onChange={ handleAutosavingToggle( 'frontpage' ) }>
 							<span>
 								{ translate( 'Front Page (is_front_page)' ) }
 							</span>
@@ -81,7 +82,7 @@ const AcceptedFilenames = ( {
 						<FormToggle
 							checked={ !! home }
 							disabled={ isRequesting }
-							onChange={ handleToggle( 'home' ) }>
+							onChange={ handleAutosavingToggle( 'home' ) }>
 							<span>
 								{ translate( 'Home (is_home)' ) }
 							</span>
@@ -90,7 +91,7 @@ const AcceptedFilenames = ( {
 						<FormToggle
 							checked={ !! archives }
 							disabled={ isRequesting }
-							onChange={ handleToggle( 'archives' ) }>
+							onChange={ handleAutosavingToggle( 'archives' ) }>
 							<span>
 								{ translate( 'Archives (is_archive)' ) }
 							</span>
@@ -99,7 +100,7 @@ const AcceptedFilenames = ( {
 						<FormToggle
 							checked={ !! tag }
 							disabled={ isRequesting }
-							onChange={ handleToggle( 'tag' ) }>
+							onChange={ handleAutosavingToggle( 'tag' ) }>
 							<span>
 								{ translate( 'Tags (is_tag)' ) }
 							</span>
@@ -108,7 +109,7 @@ const AcceptedFilenames = ( {
 						<FormToggle
 							checked={ !! category }
 							disabled={ isRequesting }
-							onChange={ handleToggle( 'category' ) }>
+							onChange={ handleAutosavingToggle( 'category' ) }>
 							<span>
 								{ translate( 'Category (is_category)' ) }
 							</span>
@@ -117,7 +118,7 @@ const AcceptedFilenames = ( {
 						<FormToggle
 							checked={ !! feed }
 							disabled={ isRequesting }
-							onChange={ handleToggle( 'feed' ) }>
+							onChange={ handleAutosavingToggle( 'feed' ) }>
 							<span>
 								{ translate( 'Feeds (is_feed)' ) }
 							</span>
@@ -126,7 +127,7 @@ const AcceptedFilenames = ( {
 						<FormToggle
 							checked={ !! search }
 							disabled={ isRequesting }
-							onChange={ handleToggle( 'search' ) }>
+							onChange={ handleAutosavingToggle( 'search' ) }>
 							<span>
 								{ translate( 'Search Pages (is_search)' ) }
 							</span>
@@ -135,7 +136,7 @@ const AcceptedFilenames = ( {
 						<FormToggle
 							checked={ !! author }
 							disabled={ isRequesting }
-							onChange={ handleToggle( 'author' ) }>
+							onChange={ handleAutosavingToggle( 'author' ) }>
 							<span>
 								{ translate( 'Author Pages (is_author)' ) }
 							</span>

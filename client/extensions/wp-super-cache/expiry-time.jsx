@@ -31,10 +31,11 @@ const ExpiryTime = ( {
 		wp_cache_next_gc,
 		wp_cache_preload_on,
 	},
+	handleAutosavingToggle,
 	handleChange,
 	handleRadio,
 	handleSelect,
-	handleToggle,
+	handleSubmitForm,
 	isRequesting,
 	translate,
 } ) => {
@@ -146,7 +147,7 @@ const ExpiryTime = ( {
 					checked={ !! cache_gc_email_me }
 					disabled={ isRequesting }
 					id="cache_gc_email_me"
-					onChange={ handleToggle( 'cache_gc_email_me' ) }>
+					onChange={ handleAutosavingToggle( 'cache_gc_email_me' ) }>
 					<span>
 						{ translate( 'Email me when the garbage collection runs.' ) }
 					</span>
@@ -162,7 +163,7 @@ const ExpiryTime = ( {
 					compact
 					primary
 					disabled={ isRequesting }
-					type="submit">
+					onClick={ handleSubmitForm }>
 					{ translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>

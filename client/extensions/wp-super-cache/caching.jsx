@@ -22,8 +22,9 @@ const Caching = ( {
 		super_cache_enabled,
 		wp_cache_enabled,
 	},
+	handleAutosavingToggle,
 	handleRadio,
-	handleToggle,
+	handleSubmitForm,
 	isRequesting,
 	translate,
 } ) => {
@@ -34,7 +35,7 @@ const Caching = ( {
 					compact
 					primary
 					disabled={ isRequesting }
-					type="submit">
+					onClick={ handleSubmitForm }>
 					{ translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>
@@ -44,7 +45,7 @@ const Caching = ( {
 						<FormToggle
 							checked={ !! wp_cache_enabled }
 							disabled={ isRequesting }
-							onChange={ handleToggle( 'wp_cache_enabled' ) }>
+							onChange={ handleAutosavingToggle( 'wp_cache_enabled' ) }>
 							<span>
 								{ translate( 'Enable Page Caching' ) }
 							</span>

@@ -20,6 +20,7 @@ const CacheLocation = ( {
 		wp_cache_location,
 	},
 	handleChange,
+	handleSubmitForm,
 	isRequesting,
 	translate,
 } ) => {
@@ -30,7 +31,7 @@ const CacheLocation = ( {
 					compact
 					primary
 					disabled={ isRequesting }
-					type="submit">
+					onClick={ handleSubmitForm }>
 					{ translate( 'Save Settings' ) }
 				</Button>
 			</SectionHeader>
