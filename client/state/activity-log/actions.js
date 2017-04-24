@@ -143,13 +143,13 @@ export function rewindRestoreUpdateError( siteId, timestamp, error ) {
 
 // This generates a fake data set for hourly backups
 const fakebackups = () => {
-	const today = moment( new Date() ),
-		beginning = '2017-2-21 01:00:00',
+	const today = moment( new Date().getTime() ),
+		beginning = moment( new Date( '2017-2-21 01:00:00' ).getTime() ),
 		numHours = today.diff( beginning, 'hours' ),
 		backupLogs = [];
 
 	let i,
-		timeIncrement = today.toString();
+		timeIncrement = today.toDate().getTime();
 
 	for ( i = 0; i < numHours; i++ ) {
 		backupLogs.push(
@@ -161,7 +161,7 @@ const fakebackups = () => {
 				timestamp: timeIncrement
 			}
 		);
-		timeIncrement = moment( timeIncrement ).subtract( 1, 'h' ).toString();
+		timeIncrement = moment( timeIncrement ).subtract( 1, 'h' ).toDate().getTime();
 	}
 
 	return backupLogs;

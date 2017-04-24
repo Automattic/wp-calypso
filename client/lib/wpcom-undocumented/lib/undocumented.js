@@ -2345,12 +2345,12 @@ Undocumented.prototype.getActivityLog = function( siteId ) {
  * Initiate backup restore for a given site.
  *
  * @param  {int}    siteId    ID of the site to restore.
- * @param  {string} timestamp Time stamp that identifies the backup to restore.
+ * @param  {int} timestamp Time stamp that identifies the backup to restore.
  *
  * @return {object} Contains path as item.
  */
 Undocumented.prototype.requestRestore = function( siteId, timestamp ) {
-	return this.wpcom.req.get( {
+	return this.wpcom.req.post( {
 		path: `/activity-log/${ siteId }/rewind/${ timestamp }`
 	} );
 };
