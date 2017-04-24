@@ -40,6 +40,7 @@ const staticFiles = [
 
 const sections = sectionsModule.get();
 
+// TODO: Re-use (a modified version of) client/state/initial-state#getInitialServerState here
 function getInitialServerState( serializedServerState ) {
 	// Bootstrapped state from a server-render
 	const serverState = reducer( serializedServerState, { type: DESERIALIZE } );
