@@ -1,13 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import FormSecurity from 'my-sites/site-settings/form-security';
+import { getSelectedSite } from 'state/ui/selectors';
 import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 
@@ -24,7 +26,7 @@ const SiteSettingsSecurity = ( { site, translate } ) => {
 		);
 	}
 
-	if ( ! site.canManage() ) {
+	if ( ! site.canManage ) {
 		return (
 			<JetpackManageErrorPage
 				template="optInManage"
@@ -35,7 +37,7 @@ const SiteSettingsSecurity = ( { site, translate } ) => {
 		);
 	}
 
-	if ( ! site.versionCompare( '3.4', '>=' ) ) {
+	if ( ! site.hasMinimumJetpackVersion ) {
 		return (
 			<JetpackManageErrorPage
 				template="updateJetpack"
@@ -47,10 +49,20 @@ const SiteSettingsSecurity = ( { site, translate } ) => {
 
 	return (
 		<div>
-			<JetpackMonitor site={ site } />
+			<JetpackMonitor />
 			<FormSecurity />
 		</div>
 	);
 };
 
-export default localize( SiteSettingsSecurity );
+SiteSettingsSecurity.propTypes = {
+	site: PropTypes.object
+};
+
+export default connect(
+	state => {
+		return {
+			site: getSelectedSite( state )
+		};
+	}
+)( localize( SiteSettingsSecurity ) );
