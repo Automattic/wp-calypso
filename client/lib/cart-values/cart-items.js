@@ -218,9 +218,9 @@ function hasDomainCredit( cart ) {
  * Whether the cart has a registration with a specific TLD
  *
  * @param {Object} cart - cart as `CartValue` object
- * @param {string} tld - tld to look for, no leading dot
+ * @param {string} tld - TLD to look for, no leading dot
  *
- * @returns {Boolean} - Whether or not the cart contains a domain with that tld TLD
+ * @returns {Boolean} - Whether or not the cart contains a domain with that TLD
  */
 function hasTld( cart, tld ) {
 	return some( getDomainRegistrations( cart ), function( cartItem ) {
