@@ -44,6 +44,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js',
 	DCM_FLOODLIGHT_IFRAME_URL = 'https://6355556.fls.doubleclick.net/activityi',
 	LINKED_IN_SCRIPT_URL = 'https://snap.licdn.com/li.lms-analytics/insight.min.js',
+	MEDIA_WALLAH_URL = 'https://d3ir0rz7vxwgq5.cloudfront.net/mwData.min.js',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
@@ -100,6 +101,36 @@ if ( ! window.twq ) {
 
 if ( ! window._linkedin_data_partner_id ) {
 	window._linkedin_data_partner_id = TRACKING_IDS.linkedInPartnerId;
+}
+
+/**
+ * Initializes Media Wallah tracking.
+ * This is a rework of the obfuscated tracking code provided by Media Wallah.
+ */
+function initMediaWallah() {
+	const mwOptions = {
+		uid: '',
+		custom: '',
+		account_id: 1015,
+		customer_id: 1012,
+		tag_action: 'visit',
+		timeout: 100 // in milliseconds
+	};
+
+	window.setBrowserAttributeData();
+	let counter = 0;
+	const init = function() {
+		if ( window.mwDataReady() ) {
+			document.body.appendChild( window.mwPixel( mwOptions ) );
+		} else if ( counter === mwOptions.timeout ) {
+			clearTimeout( init );
+		} else {
+			setTimeout( init, 1 );
+			counter++;
+		}
+	};
+
+	window.addEventListener ? window.addEventListener( 'load', init, false ) : window.attachEvent( 'onload', init );
 }
 
 /**
@@ -164,20 +195,26 @@ function loadTrackingScripts( callback ) {
 		},
 		function( onComplete ) {
 			loadScript.loadScript( LINKED_IN_SCRIPT_URL, onComplete );
+		},
+		function( onComplete ) {
+			loadScript.loadScript( MEDIA_WALLAH_URL, onComplete );
 		}
 	], function( errors ) {
 		if ( ! some( errors ) ) {
-			// update Facebook's tracking global
+			// init Facebook's tracking global
 			window.fbq( 'init', TRACKING_IDS.facebookInit );
 
-			// update Bing's tracking global
+			// init Bing's tracking global
 			const bingConfig = {
 				ti: TRACKING_IDS.bingInit,
 				q: window.uetq
 			};
 
-			// update Twitter's tracking global
+			// init Twitter's tracking global
 			window.twq( 'init', TRACKING_IDS.twitterPixelId );
+
+			// init Media Wallah tracking
+			initMediaWallah();
 
 			if ( typeof UET !== 'undefined' ) {
 				// bing's script creates the UET global for us
