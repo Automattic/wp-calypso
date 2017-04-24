@@ -1787,8 +1787,8 @@ Undocumented.prototype.updateDns = function( domain, records, fn ) {
 	return this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
 };
 
-Undocumented.prototype.addDnsOffice = function( domain, token, callback ) {
-	return this.wpcom.req.post( '/domains/' + domain + '/dns/office/add', { token }, callback );
+Undocumented.prototype.applyDnsTemplate = function( domain, template, variables, callback ) {
+	return this.wpcom.req.post( '/domains/' + domain + '/dns/template/' + template, { variables }, callback );
 };
 
 Undocumented.prototype.fetchWapiDomainInfo = function( domainName, fn ) {
