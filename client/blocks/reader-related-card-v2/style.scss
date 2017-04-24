@@ -161,7 +161,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		&::after {
 			@include long-content-fade( $size: 25% );
 				bottom: 0;
-				height: 22px;
+				height: 23px;
 				top: inherit;
 				visibility: visible;
 		}
@@ -192,7 +192,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	&.has-excerpt {
 
 		.reader-related-card-v2__title {
-			margin-bottom: 10px;
+			margin-bottom: 9px;
 		}
 	}
 }
@@ -202,11 +202,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	padding-top: 11px;
 
 	.reader-related-card-v2__post {
-		max-height: 127px;
-
-		@include breakpoint( "<480px" ) {
-			max-height: 126px;
-		}
+		max-height: 104px;
 
 		&::after {
 			@include long-content-fade( $size: 30% );
@@ -230,14 +226,14 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		.has-thumbnail {
 
 			.reader-related-card-v2__post {
-				max-height: 128px;
+				max-height: 104px;
 
 				@media #{$reader-related-card-v2-breakpoint-medium} {
-					max-height: 127px;
+					max-height: 108px;
 				}
 
 				@media #{$reader-related-card-v2-breakpoint-small} {
-					max-height: 126px;
+					max-height: 104px;
 				}
 			}
 		}
@@ -283,18 +279,18 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			}
 
 			.reader-related-card-v2__post {
-				max-height: 127px;
+				max-height: 104px;
 
 				@media #{$reader-related-card-v2-breakpoint-medium} {
-					max-height: 153px;
+					max-height: 125px;
 				}
 
 				@media #{$reader-related-card-v2-breakpoint-small} {
-					max-height: 150px;
+					max-height: 130px;
 				}
 
 				@include breakpoint( "<480px" ) {
-					max-height: 140px;
+					max-height: 121px;
 				}
 			}
 		}
@@ -515,12 +511,12 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 .reader-related-card-v2__title {
 	font-size: 17px;
 	font-weight: 700;
-	line-height: 1.4;
+	line-height: 25px;
 
 	// Clamp to 2 lines on narrow viewports
 	@include breakpoint( "<660px" ) {
 		overflow: hidden;
-		max-height: 16px * 1.4 * 2;
+		max-height: 16px * 1.5 * 2;
 		word-wrap: break-word;
 
 		&::after {
