@@ -30,20 +30,6 @@ export default {
 		return site && site.options ? site.options.gmt_offset : null;
 	},
 
-	getDefaultPostFormat( site ) {
-		if ( ! site ) {
-			return;
-		}
-
-		if ( site.settings ) {
-			return site.settings.default_post_format;
-		}
-
-		if ( site.options ) {
-			return site.options.default_post_format;
-		}
-	},
-
 	getSiteFileModDisableReason( site, action = 'modifyFiles' ) {
 		if ( ! site || ! site.options || ! site.options.file_mod_disabled ) {
 			return;
