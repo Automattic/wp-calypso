@@ -38,21 +38,19 @@ function bumpStat( group, name ) {
 *
 * @param {object} element - React element to be rendered to html
 * @param {string} key - (optional) custom key
-* @return {object} context object with `renderedLayout` field populated
+* @return {string} The rendered Layout
 */
 export function render( element, key = JSON.stringify( element ) ) {
 	try {
 		const startTime = Date.now();
 		debug( 'cache access for key', key );
 
-		let context = markupCache.get( key );
-		if ( ! context ) {
+		let renderedLayout = markupCache.get( key );
+		if ( ! renderedLayout ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
 			debug( 'cache miss for key', key );
-			const renderedLayout = ReactDomServer.renderToString( element );
-			context = { renderedLayout };
-
-			markupCache.set( key, context );
+			renderedLayout = ReactDomServer.renderToString( element );
+			markupCache.set( key, renderedLayout );
 		}
 		const rtsTimeMs = Date.now() - startTime;
 		debug( 'Server render time (ms)', rtsTimeMs );
@@ -62,7 +60,7 @@ export function render( element, key = JSON.stringify( element ) ) {
 			bumpStat( 'calypso-ssr', 'over-100ms-rendertostring' );
 		}
 
-		return context;
+		return renderedLayout;
 	} catch ( ex ) {
 		if ( config( 'env' ) === 'development' ) {
 			throw ex;
@@ -81,8 +79,11 @@ export function serverRender( req, res ) {
 
 	if ( config.isEnabled( 'server-side-rendering' ) && context.layout && ! context.user ) {
 		// context.pathname doesn't include querystring, so it's a suitable cache key.
-		const key = context.pathname || JSON.stringify( context.layout );
-		Object.assign( context, render( context.layout, key ) );
+		let key = context.pathname || JSON.stringify( context.layout );
+		if ( req.error ) {
+			key = req.error.message;
+		}
+		context.renderedLayout = render( context.layout, key );
 	}
 
 	if ( context.store ) {

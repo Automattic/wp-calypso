@@ -17,7 +17,9 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 					route( err, req.context, next );
 				},
 				// We need 4 args so Express knows this is an error-handling middleware
+				// TODO: Ideally, there'd be a dedicated serverRenderError middleware in server/render
 				( err, req, res, next ) => { // eslint-disable-line no-unused-vars
+					req.error = err;
 					serverRender( req, res.status( err.status ) );
 				}
 			);
