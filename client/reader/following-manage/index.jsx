@@ -23,8 +23,8 @@ import SitesWindowScroller from './sites-window-scroller';
 
 class FollowingManage extends Component {
 	static propTypes = {
-		sitesQuery: React.PropTypes.string,
-		subsQuery: React.PropTypes.string,
+		sitesQuery: PropTypes.string,
+		subsQuery: PropTypes.string,
 	};
 
 	static defaultProps = {
