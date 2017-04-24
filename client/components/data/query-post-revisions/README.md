@@ -36,7 +36,7 @@ export default function PostRevisions( { revisions } ) {
 The site ID for which we request post revisions.
 
 
-### `siteId`
+### `postId`
 
 <table>
 	<tr><th>Type</th><td>Number</td></tr>
