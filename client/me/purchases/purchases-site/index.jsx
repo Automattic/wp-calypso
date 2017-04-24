@@ -9,13 +9,13 @@ import times from 'lodash/times';
 /**
  * Internal dependencies
  */
-import { getSite, isRequestingSites } from 'state/sites/selectors';
+import { getSite, isRequestingSite } from 'state/sites/selectors';
 import QuerySites from 'components/data/query-sites';
 import PurchaseItem from '../purchase-item';
 import PurchaseSiteHeader from './header';
 import PurchaseReconnectNotice from './reconnect-notice';
 
-const PurchasesSite = ( { isPlaceholder, site, siteId, purchases, name, domain, slug } ) => {
+const PurchasesSite = ( { hasLoadedSite, isPlaceholder, site, siteId, purchases, name, domain, slug } ) => {
 	let items;
 
 	if ( isPlaceholder ) {
@@ -42,7 +42,7 @@ const PurchasesSite = ( { isPlaceholder, site, siteId, purchases, name, domain, 
 
 			{ items }
 
-			{ ( ! isPlaceholder && ! site )
+			{ ( ! isPlaceholder && hasLoadedSite && ! site )
 				? <PurchaseReconnectNotice
 					name={ name }
 					domain={ domain } />
@@ -64,6 +64,6 @@ PurchasesSite.propTypes = {
 export default connect(
 	( state, { siteId } ) => ( {
 		site: getSite( state, siteId ),
-		hasLoadedSites: ! isRequestingSites( state ),
+		hasLoadedSite: ! isRequestingSite( state, siteId ),
 	} )
 )( PurchasesSite );
