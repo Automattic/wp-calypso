@@ -67,7 +67,10 @@ const ThemeSheet = React.createClass( {
 		screenshots: React.PropTypes.array,
 		price: React.PropTypes.string,
 		description: React.PropTypes.string,
-		descriptionLong: React.PropTypes.string,
+		descriptionLong: React.PropTypes.oneOfType( [
+			React.PropTypes.string,
+			React.PropTypes.bool // happens if no content: false
+		] ),
 		supportDocumentation: React.PropTypes.string,
 		download: React.PropTypes.string,
 		taxonomies: React.PropTypes.object,
