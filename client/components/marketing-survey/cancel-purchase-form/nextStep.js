@@ -1,10 +1,4 @@
-/**
- * Internal dependencies
- */
-import stepsForProductAndSurvey from './stepsForProductAndSurvey';
-
-export default function nextStep( currentStep, survey, product ) {
-	const steps = stepsForProductAndSurvey( survey, product );
+export default function nextStep( currentStep, steps ) {
 	const index = steps.indexOf( currentStep );
 
 	if ( index >= 0 && index < steps.length - 1 ) {

@@ -19,6 +19,7 @@ import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
 import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initialSurveyState';
 import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/isSurveyFilledIn';
+import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
 import nextStep from 'components/marketing-survey/cancel-purchase-form/nextStep';
 import previousStep from 'components/marketing-survey/cancel-purchase-form/previousStep';
 import {
@@ -116,7 +117,8 @@ class RemovePurchase extends Component {
 	changeSurveyStep = ( stepFunction ) => {
 		const { selectedPurchase } = this.props;
 		const { surveyStep, survey } = this.state;
-		const newStep = stepFunction( surveyStep, survey, selectedPurchase );
+		const steps = stepsForProductAndSurvey( survey, selectedPurchase );
+		const newStep = stepFunction( surveyStep, steps );
 		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
 		this.setState( { surveyStep: newStep } );
 	}
