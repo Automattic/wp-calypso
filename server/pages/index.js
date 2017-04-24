@@ -119,8 +119,8 @@ function getCurrentCommitShortChecksum() {
 }
 
 function getDefaultContext( request ) {
-	// context.path is set to req.url, see server/isomorphic-routing#getEnhancedContext()
-	const serializeCachedServerState = stateCache.get( request.url ) || {};
+	// context.pathname is set to request.path, see server/isomorphic-routing#getEnhancedContext()
+	const serializeCachedServerState = stateCache.get( request.path ) || {};
 	const cachedServerState = reducer( getInitialServerState( serializeCachedServerState ), { type: DESERIALIZE } );
 
 	const context = Object.assign( {}, request.context, {
