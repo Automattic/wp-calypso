@@ -19,8 +19,12 @@ import {
 	getSiteDescription,
 	getSiteAuthorName
 } from 'reader/get-helpers';
+import untrailingslashit from 'lib/route/untrailingslashit';
 
-const stripUrl = url => url.replace( 'https://', '' ).replace( 'http://', '' ).replace( /\/$/, '' );
+// Remove the starting https, www. and remove trailing slash.
+const stripUrl = url => untrailingslashit(
+	url.replace( /^https?:\/\/(www\.)?/, '' )
+);
 
 function ReaderSubscriptionListItem( {
 	url,
@@ -36,8 +40,6 @@ function ReaderSubscriptionListItem( {
 	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
 	const siteExcerpt = getSiteDescription( { feed, site } );
-	// prefer a users name property
-	// if that doesn't exist settle for combining first and last name
 	const authorName = getSiteAuthorName( site );
 	const siteIcon = get( site, 'icon.img' );
 	const feedIcon = get( feed, 'image' );
