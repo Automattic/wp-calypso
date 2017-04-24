@@ -20,6 +20,8 @@ import {
 	getSiteAuthorName
 } from 'reader/get-helpers';
 
+const stripUrl = url => url.replace( 'https://', '' ).replace( 'http://', '' ).replace( '/', '' );
+
 function ReaderSubscriptionListItem( {
 	url,
 	feedId,
@@ -71,6 +73,9 @@ function ReaderSubscriptionListItem( {
 						}
 					</span>
 				}
+			<div className="reader-subscription-list-item__site-url">
+				<a href={ siteUrl }> { siteUrl && stripUrl( siteUrl ) } </a>
+			</div>
 			</div>
 			<div className="reader-subscription-list-item__options">
 				<FollowButton siteUrl={ siteUrl } followSource={ followSource } />
