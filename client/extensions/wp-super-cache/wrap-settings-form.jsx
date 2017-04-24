@@ -96,6 +96,20 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
 		};
 
+		// Update a field that is stored as an array element.
+		setFieldArrayValue = ( name, index ) => event => {
+			const currentValue = this.props.fields[ name ];
+			const newValue = [
+				...currentValue.slice( 0, index ),
+				event.target.value,
+				...currentValue.slice( index + 1 ),
+			];
+
+			this.props.updateFields( {
+				[ name ]: newValue,
+			} );
+		};
+
 		handleSubmitForm = event => {
 			event.preventDefault();
 			this.submitForm();
@@ -115,6 +129,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				handleSelect: this.handleSelect,
 				handleSubmitForm: this.handleSubmitForm,
 				handleToggle: this.handleToggle,
+				setFieldArrayValue: this.setFieldArrayValue,
 			};
 
 			return (
