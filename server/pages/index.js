@@ -122,7 +122,7 @@ function getCurrentCommitShortChecksum() {
 function getDefaultContext( request ) {
 	// context.pathname is set to request.path, see server/isomorphic-routing#getEnhancedContext()
 	const serializeCachedServerState = stateCache.get( request.path ) || {};
-	const cachedServerState = getInitialServerState( serializeCachedServerState );
+	const initialServerState = getInitialServerState( serializeCachedServerState );
 
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
@@ -139,7 +139,7 @@ function getDefaultContext( request ) {
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
-		store: createReduxStore( cachedServerState )
+		store: createReduxStore( initialServerState )
 	} );
 
 	context.app = {
