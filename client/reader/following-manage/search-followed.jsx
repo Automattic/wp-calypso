@@ -12,7 +12,7 @@ import SearchCard from 'components/search-card';
 
 class FollowingManageSearchFollowed extends Component {
 	static propTypes = {
-		value: PropTypes.string,
+		initialValue: PropTypes.string,
 		onSearch: PropTypes.func,
 	}
 
@@ -31,8 +31,9 @@ class FollowingManageSearchFollowed extends Component {
 				additionalClasses="following-manage__search-followed-input"
 				placeholder={ this.props.translate( 'Search Followed Sites…' ) }
 				onSearch={ this.props.onSearch }
-				initialValue={ this.props.value }
+				initialValue={ this.props.initialValue }
 				delaySearch={ true }
+				delayTimeout={ 100 }
 				hideOpenIcon={ true } />
 		);
 	}
