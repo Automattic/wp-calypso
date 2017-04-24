@@ -4,7 +4,7 @@
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
-import pick from 'lodash/pick';
+import { isEmpty, pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -98,8 +98,11 @@ export function serverRender( req, res ) {
 		// Send state to client. Don't we need to serialize here?
 		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
 		// And cache on the server, too
-		const serverState = reducer( context.initialReduxState, { type: SERIALIZE } );
-		stateCache.set( context.pathname, serverState );
+		if ( isEmpty( context.query ) ) {
+			// Don't cache if we have query params
+			const serverState = reducer( context.initialReduxState, { type: SERIALIZE } );
+			stateCache.set( context.pathname, serverState );
+		}
 	}
 
 	context.head = { title, metas, links };

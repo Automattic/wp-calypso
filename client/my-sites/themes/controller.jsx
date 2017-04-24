@@ -99,11 +99,6 @@ export function fetchThemeData( context, next ) {
 		return next();
 	}
 
-	if ( ! isEmpty( context.query ) ) {
-		// Don't server-render URLs with query params
-		return next();
-	}
-
 	const siteId = 'wpcom';
 	const query = {
 		search: context.query.s,
