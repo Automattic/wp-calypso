@@ -632,20 +632,22 @@ function mediaButton( editor ) {
 
 		gallery = assign( {}, MediaConstants.GalleryDefaultAttrs, gallery.attrs.named );
 
-		gallery.items = [];
-
-		if ( gallery.ids ) {
-			gallery.items = gallery.ids.split( ',' ).map( ( id ) => {
+		gallery.items = ( gallery.ids || '' )
+			.split( ',' )
+			.reduce( ( memo, id ) => {
 				id = parseInt( id, 10 );
 
-				const media = MediaStore.get( selectedSite.ID, id );
-				if ( ! media ) {
-					MediaActions.fetch( selectedSite.ID, id );
+				if ( id > 0 ) {
+					const media = MediaStore.get( selectedSite.ID, id );
+					if ( ! media ) {
+						MediaActions.fetch( selectedSite.ID, id );
+					}
+
+					memo.push( assign( { ID: id }, media ) )
 				}
 
-				return assign( { ID: id }, media );
-			} );
-		}
+				return memo;
+			}, [] );
 
 		delete gallery.ids;
 
