@@ -41,28 +41,38 @@ describe( 'stepsForProductAndSurvey', function() {
 	describe( 'question one answer is "too hard"', function() {
 		const survey = { questionOneRadio: 'tooHard' };
 
-		it( 'should include happychat step if product is personal plan and abtest variant is show', function() {
+		it( 'should include happychat step if product is personal plan, abtest variant is show and happychat is available', function() {
 			const product = { product_slug: PLAN_PERSONAL };
 			abtests.chatOfferOnCancel = 'show';
-			expect( stepsForProductAndSurvey( survey, product ) ).to.deep.equal( [ INITIAL_STEP, HAPPYCHAT_STEP, FINAL_STEP ] );
+			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( [ INITIAL_STEP, HAPPYCHAT_STEP, FINAL_STEP ] );
 		} );
 
-		it( 'should not include happychat step if product is personal plan and abtest variant is show', function() {
+		it( 'should not include happychat step if product is personal plan but happychat is not available', function() {
+			const product = { product_slug: PLAN_PERSONAL };
+			expect( stepsForProductAndSurvey( survey, product, false ) ).to.deep.equal( [ INITIAL_STEP, FINAL_STEP ] );
+		} );
+
+		it( 'should not include happychat step if product is personal plan, happychat is available but abtest variant is hide', function() {
 			const product = { product_slug: PLAN_PERSONAL };
 			abtests.chatOfferOnCancel = 'hide';
-			expect( stepsForProductAndSurvey( survey, product ) ).to.deep.equal( [ INITIAL_STEP, FINAL_STEP ] );
+			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( [ INITIAL_STEP, FINAL_STEP ] );
 		} );
 
-		it( 'should include happychat step if product is premium plan and abtest is show', function() {
+		it( 'should include happychat step if product is premium plan, abtest is show and happychat is available', function() {
 			const product = { product_slug: PLAN_PREMIUM };
 			abtests.chatOfferOnCancel = 'show';
-			expect( stepsForProductAndSurvey( survey, product ) ).to.deep.equal( [ INITIAL_STEP, HAPPYCHAT_STEP, FINAL_STEP ] );
+			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( [ INITIAL_STEP, HAPPYCHAT_STEP, FINAL_STEP ] );
 		} );
 
-		it( 'should not include happychat step if product is premium plan and abtest is show', function() {
+		it( 'should not include happychat step if product is premium plan but happychat is not available', function() {
+			const product = { product_slug: PLAN_PREMIUM };
+			expect( stepsForProductAndSurvey( survey, product, false ) ).to.deep.equal( [ INITIAL_STEP, FINAL_STEP ] );
+		} );
+
+		it( 'should not include happychat step if product is premium plan, happychat is available but abtest is hide', function() {
 			const product = { product_slug: PLAN_PREMIUM };
 			abtests.chatOfferOnCancel = 'hide';
-			expect( stepsForProductAndSurvey( survey, product ) ).to.deep.equal( [ INITIAL_STEP, FINAL_STEP ] );
+			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal( [ INITIAL_STEP, FINAL_STEP ] );
 		} );
 
 		it( 'should include concierge step if product is business plan and abtest variant is showConciergeOffer', function() {

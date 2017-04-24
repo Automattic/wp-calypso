@@ -15,12 +15,12 @@ import {
 	FINAL_STEP,
 } from './steps';
 
-export default function stepsForProductAndSurvey( survey, product ) {
+export default function stepsForProductAndSurvey( survey, product, canChat ) {
 	if ( survey && survey.questionOneRadio === 'tooHard' ) {
 		if ( abtest( 'conciergeOfferOnCancel' ) === 'showConciergeOffer' && includesProduct( [ PLAN_BUSINESS ], product ) ) {
 			return [ INITIAL_STEP, CONCIERGE_STEP, FINAL_STEP ];
 		}
-		if ( abtest( 'chatOfferOnCancel' ) === 'show' && includesProduct( [ PLAN_PERSONAL, PLAN_PREMIUM ], product ) ) {
+		if ( canChat && abtest( 'chatOfferOnCancel' ) === 'show' && includesProduct( [ PLAN_PERSONAL, PLAN_PREMIUM ], product ) ) {
 			return [ INITIAL_STEP, HAPPYCHAT_STEP, FINAL_STEP ];
 		}
 	}
