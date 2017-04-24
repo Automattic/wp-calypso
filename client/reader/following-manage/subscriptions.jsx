@@ -28,11 +28,11 @@ class FollowingManageSubscriptions extends Component {
 
 	filterFollowsByQuery( query ) {
 		const { getFeed, getSite, follows } = this.props;
+		const phraseRe = new RegExp( escapeRegexp( query ), 'i' );
 
 		return follows.filter( follow => {
 			const feed = getFeed( follow.feed_ID ); // todo grab feed and site for current sub
 			const site = getSite( follow.site_ID );
-			const phraseRe = new RegExp( escapeRegexp( query ), 'i' );
 			const siteName = getSiteName( { feed, site } );
 			const siteUrl = getSiteUrl( { feed, site } );
 			const siteDescription = getSiteDescription( { feed, site } );
