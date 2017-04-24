@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -10,11 +11,44 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
+import ErrorMessage from 'account-recovery/components/account-recovery-error-message';
+
+import {
+	getAccountRecoveryResetUserData,
+	getAccountRecoveryResetSelectedMethod,
+	getAccountRecoveryValidationError,
+	getAccountRecoveryValidationKey,
+	isValidatingAccountRecoveryKey,
+} from 'state/selectors';
+
+import {
+	setValidationKey,
+	validateRequest,
+} from 'state/account-recovery/reset/actions';
 
 class ResetPasswordSmsForm extends Component {
+	submitValidationKey = ( event ) => {
+		const {
+			userData,
+			selectedMethod,
+			validationKey,
+		} = this.props;
+
+		this.props.validateRequest( userData, selectedMethod, validationKey );
+
+		event.preventDefault();
+	}
+
+	updateValidationKey = ( event ) => {
+		this.props.setValidationKey( event.target.value );
+	}
+
 	render() {
 		const {
 			translate,
+			isValidating,
+			error,
+			validationKey,
 		} = this.props;
 
 		return (
@@ -28,11 +62,19 @@ class ResetPasswordSmsForm extends Component {
 						{ components: { code: <code /> } } )
 					}
 				</p>
-				<FormTextInput className="reset-password-sms-form__validation-code-input" />
-				<FormButton className="reset-password-sms-form__submit-button">
-					{ translate( 'Continue' ) }
-				</FormButton>
-				<a href="#" className="reset-password-sms-form__no-sms-link">
+				<form onSubmit={ this.submitValidationKey }>
+					<FormTextInput
+						className="reset-password-sms-form__validation-code-input"
+						disabled={ isValidating }
+						value={ validationKey || '' }
+						onChange={ this.updateValidationKey }
+					/>
+					{ error && <ErrorMessage /> }
+					<FormButton className="reset-password-sms-form__submit-button" type="submit" disabled={ isValidating } >
+						{ translate( 'Continue' ) }
+					</FormButton>
+				</form>
+				<a href="/account-recovery/reset-password/" className="reset-password-sms-form__no-sms-link">
 					{ translate( 'No SMS?' ) }
 				</a>
 			</Card>
@@ -40,4 +82,16 @@ class ResetPasswordSmsForm extends Component {
 	}
 }
 
-export default localize( ResetPasswordSmsForm );
+export default connect(
+	( state ) => ( {
+		userData: getAccountRecoveryResetUserData( state ),
+		selectedMethod: getAccountRecoveryResetSelectedMethod( state ),
+		validationKey: getAccountRecoveryValidationKey( state ),
+		isValidating: isValidatingAccountRecoveryKey( state ),
+		error: getAccountRecoveryValidationError( state ),
+	} ),
+	{
+		setValidationKey,
+		validateRequest,
+	}
+)( localize( ResetPasswordSmsForm ) );

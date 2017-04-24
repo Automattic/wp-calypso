@@ -13,6 +13,7 @@ import Button from 'components/button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import ResetOptionSet from './reset-option-set';
+import ErrorMessage from 'account-recovery/components/account-recovery-error-message';
 
 import {
 	pickResetMethod,
@@ -118,18 +119,7 @@ export class ResetPasswordFormComponent extends Component {
 						/>
 					) ) }
 				</FormFieldset>
-				{
-					requestError && (
-					<p className="reset-password-form__error-message">
-						{ translate(
-							"We're having trouble connecting to our servers at the moment. " +
-							'Please try again later. If the problem persists, please {{a}}contact us{{/a}}.',
-							{ components: {
-								a: <a href="https://wordpress.com/wp-login.php?action=recovery" target="_blank" rel="noopener noreferrer" />
-							} }
-						) }
-					</p> )
-				}
+				{ requestError && <ErrorMessage /> }
 				<Button
 					className="reset-password-form__submit-button"
 					onClick={ this.submitForm }
