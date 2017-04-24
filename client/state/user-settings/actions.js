@@ -30,12 +30,14 @@ export const fetchUserSettings = () => ( {
 /**
  * Post settings to WordPress.com API at /me/settings endpoint
  *
- * @param {Object} settingsOverride - default settings object
+ * @param {Object} [settingsOverride] - default settings object
  * @return {Object} Action object
  */
-export const saveUserSettings = ( settingsOverride ) => ( {
+export const saveUserSettings = ( settingsOverride, onSuccess, onFailure ) => ( {
 	type: USER_SETTINGS_SAVE,
-	settingsOverride
+	settingsOverride,
+	onSuccess,
+	onFailure
 } );
 
 /**

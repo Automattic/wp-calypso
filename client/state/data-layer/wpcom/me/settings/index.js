@@ -56,7 +56,7 @@ export const storeFetchedUserSettings = ( { dispatch }, action, next, data ) => 
  * Post settings to WordPress.com API at /me/settings endpoint
  */
 export function saveUserSettings( { dispatch, getState }, action, next ) {
-	const { settingsOverride } = action;
+	const { settingsOverride, onSuccess, onFailure } = action;
 	const settings = settingsOverride || getUnsavedUserSettings( getState() );
 
 	if ( ! isEmpty( settings ) ) {
@@ -65,6 +65,8 @@ export function saveUserSettings( { dispatch, getState }, action, next ) {
 			method: 'POST',
 			path: '/me/settings',
 			body: settings,
+			onSuccess,
+			onFailure,
 		}, action ) );
 	}
 
