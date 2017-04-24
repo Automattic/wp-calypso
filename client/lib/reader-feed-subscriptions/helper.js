@@ -11,5 +11,5 @@ export function prepareSiteUrl( url ) {
 
 export function prepareComparableUrl( url ) {
 	const preparedUrl = prepareSiteUrl( url );
-	return preparedUrl && preparedUrl.replace( /^https?:\/\/(www\.)?/, '' ).toLowerCase();
+	return preparedUrl && preparedUrl.replace( /^https?:\/\//, '' ).toLowerCase();
 }
