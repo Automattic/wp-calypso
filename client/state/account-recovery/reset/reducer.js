@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { pick, stubTrue, stubFalse } from 'lodash';
+import { stubTrue, stubFalse } from 'lodash';
 
 /**
  * Internal dependencies
