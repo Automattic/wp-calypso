@@ -215,16 +215,6 @@ function hasDomainCredit( cart ) {
 }
 
 /**
- * Whether the cart has a registration with .nl TLD
- *
- * @param {Object} cart - cart as `CartValue` object
- * @returns {Boolean} - Whether or not the cart contains a .nl TLD
- */
-function hasNlTld( cart ) {
-	return hasTld( cart, 'nl' );
-}
-
-/**
  * Whether the cart has a registration with a specific TLD
  *
  * @param {Object} cart - cart as `CartValue` object
@@ -815,7 +805,6 @@ module.exports = {
 	hasFreeTrial,
 	hasGoogleApps,
 	hasTld,
-	hasNlTld,
 	hasOnlyFreeTrial,
 	hasOnlyProductsOf,
 	hasOnlyRenewalItems,
