@@ -121,7 +121,7 @@ function getCurrentCommitShortChecksum() {
 function getDefaultContext( request ) {
 	// context.pathname is set to request.path, see server/isomorphic-routing#getEnhancedContext()
 	const serializeCachedServerState = stateCache.get( request.path ) || {};
-	const cachedServerState = reducer( getInitialServerState( serializeCachedServerState ), { type: DESERIALIZE } );
+	const cachedServerState = getInitialServerState( serializeCachedServerState );
 
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
