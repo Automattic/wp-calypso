@@ -17,6 +17,7 @@ import { saveSettings } from './state/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getSettings,
+	isSavingSettings,
 	isRequestingSettings,
 } from './state/selectors';
 
@@ -144,6 +145,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 	const connectComponent = connect(
 		state => {
 			const siteId = getSelectedSiteId( state );
+			const isSaving = isSavingSettings( state, siteId );
 			const settings = Object.assign( {}, getSettings( state, siteId ), {
 				// Caching
 				wp_cache_enabled: true,
@@ -306,6 +308,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 			return {
 				isRequesting,
+				isSaving,
 				settings,
 				siteId,
 			};

@@ -31,6 +31,7 @@ const CdnTab = ( {
 	handleChange,
 	handleSubmitForm,
 	isRequesting,
+	isSaving,
 	siteUrl,
 	translate,
 } ) => {
@@ -40,9 +41,12 @@ const CdnTab = ( {
 				<Button
 					compact
 					primary
-					disabled={ isRequesting }
+					disabled={ isRequesting || isSaving }
 					onClick={ handleSubmitForm }>
-					{ translate( 'Save Settings' ) }
+					{ isSaving
+						? translate( 'Saving…' )
+						: translate( 'Save Settings' )
+					}
 				</Button>
 			</SectionHeader>
 
@@ -51,7 +55,7 @@ const CdnTab = ( {
 					<FormFieldset>
 						<FormToggle
 							checked={ !! ossdlcdn }
-							disabled={ isRequesting }
+							disabled={ isRequesting || isSaving }
 							onChange={ handleAutosavingToggle( 'ossdlcdn' ) }>
 							<span>
 								{ translate( 'Enable CDN Support' ) }
@@ -65,7 +69,7 @@ const CdnTab = ( {
 						</FormLabel>
 
 						<FormTextInput
-							disabled={ isRequesting }
+							disabled={ isRequesting || isSaving }
 							id="ossdl_off_cdn_url"
 							onChange={ handleChange( 'ossdl_off_cdn_url' ) }
 							value={ ossdl_off_cdn_url || '' } />
@@ -86,7 +90,7 @@ const CdnTab = ( {
 						</FormLabel>
 
 						<FormTextInput
-							disabled={ isRequesting }
+							disabled={ isRequesting || isSaving }
 							id="ossdl_off_include_dirs"
 							onChange={ handleChange( 'ossdl_off_include_dirs' ) }
 							value={ ossdl_off_include_dirs || '' } />
@@ -108,7 +112,7 @@ const CdnTab = ( {
 						</FormLabel>
 
 						<FormTextInput
-							disabled={ isRequesting }
+							disabled={ isRequesting || isSaving }
 							id="ossdl_off_exclude"
 							onChange={ handleChange( 'ossdl_off_exclude' ) }
 							value={ ossdl_off_exclude || '' } />
@@ -131,7 +135,7 @@ const CdnTab = ( {
 						</FormLabel>
 
 						<FormTextInput
-							disabled={ isRequesting }
+							disabled={ isRequesting || isSaving }
 							id="ossdl_cname"
 							onChange={ handleChange( 'ossdl_cname' ) }
 							value={ ossdl_cname || '' } />
@@ -162,7 +166,7 @@ const CdnTab = ( {
 					<FormFieldset>
 						<FormToggle
 							checked={ !! ossdl_https }
-							disabled={ isRequesting }
+							disabled={ isRequesting || isSaving }
 							onChange={ handleAutosavingToggle( 'ossdl_https' ) }>
 							<span>
 								{ translate( 'Skip https URLs to avoid "mixed content" errors' ) }

@@ -26,6 +26,7 @@ const Caching = ( {
 	handleRadio,
 	handleSubmitForm,
 	isRequesting,
+	isSaving,
 	translate,
 } ) => {
 	return (
@@ -34,9 +35,12 @@ const Caching = ( {
 				<Button
 					compact
 					primary
-					disabled={ isRequesting }
+					disabled={ isRequesting || isSaving }
 					onClick={ handleSubmitForm }>
-					{ translate( 'Save Settings' ) }
+					{ isSaving
+						? translate( 'Saving…' )
+						: translate( 'Save Settings' )
+					}
 				</Button>
 			</SectionHeader>
 			<Card>
@@ -44,7 +48,7 @@ const Caching = ( {
 					<FormFieldset>
 						<FormToggle
 							checked={ !! wp_cache_enabled }
-							disabled={ isRequesting }
+							disabled={ isRequesting || isSaving }
 							onChange={ handleAutosavingToggle( 'wp_cache_enabled' ) }>
 							<span>
 								{ translate( 'Enable Page Caching' ) }
@@ -56,7 +60,7 @@ const Caching = ( {
 						<FormLabel>
 							<FormRadio
 								checked={ '1' === super_cache_enabled }
-								disabled={ isRequesting }
+								disabled={ isRequesting || isSaving }
 								name="super_cache_enabled"
 								onChange={ handleRadio }
 								value="1" />
@@ -68,7 +72,7 @@ const Caching = ( {
 						<FormLabel>
 							<FormRadio
 								checked={ '2' === super_cache_enabled }
-								disabled={ isRequesting }
+								disabled={ isRequesting || isSaving }
 								name="super_cache_enabled"
 								onChange={ handleRadio }
 								value="2" />
@@ -85,7 +89,7 @@ const Caching = ( {
 						<FormLabel>
 							<FormRadio
 								checked={ '0' === super_cache_enabled }
-								disabled={ isRequesting }
+								disabled={ isRequesting || isSaving }
 								name="super_cache_enabled"
 								onChange={ handleRadio }
 								value="0" />

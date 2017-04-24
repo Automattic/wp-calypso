@@ -36,6 +36,7 @@ const Advanced = ( {
 	},
 	handleAutosavingToggle,
 	isRequesting,
+	isSaving,
 	translate,
 } ) => {
 	return (
@@ -48,7 +49,7 @@ const Advanced = ( {
 					<FormFieldset>
 						<FormToggle
 							checked={ !! wp_cache_mfunc_enabled }
-							disabled={ isRequesting || ( '1' === super_cache_enabled ) }
+							disabled={ isRequesting || isSaving || ( '1' === super_cache_enabled ) }
 							onChange={ handleAutosavingToggle( 'wp_cache_mfunc_enabled' ) }>
 							<span>
 								{ translate(
@@ -71,7 +72,7 @@ const Advanced = ( {
 
 						<FormToggle
 							checked={ !! wp_cache_mobile_enabled }
-							disabled={ isRequesting }
+							disabled={ isRequesting || isSaving }
 							onChange={ handleAutosavingToggle( 'wp_cache_mobile_enabled' ) }>
 							<span>
 								{ translate(
@@ -119,7 +120,7 @@ const Advanced = ( {
 
 						<FormToggle
 							checked={ !! wp_cache_disable_utf8 }
-							disabled={ isRequesting }
+							disabled={ isRequesting || isSaving }
 							onChange={ handleAutosavingToggle( 'wp_cache_disable_utf8' ) }>
 							<span>
 								{ translate(
@@ -131,7 +132,7 @@ const Advanced = ( {
 
 						<FormToggle
 							checked={ !! wp_cache_clear_on_post_edit }
-							disabled={ isRequesting }
+							disabled={ isRequesting || isSaving }
 							onChange={ handleAutosavingToggle( 'wp_cache_clear_on_post_edit' ) }>
 							<span>
 								{ translate( 'Clear all cache files when a post or page is published or updated.' ) }
@@ -140,7 +141,7 @@ const Advanced = ( {
 
 						<FormToggle
 							checked={ !! wp_cache_front_page_checks }
-							disabled={ isRequesting }
+							disabled={ isRequesting || isSaving }
 							onChange={ handleAutosavingToggle( 'wp_cache_front_page_checks' ) }>
 							<span>
 								{ translate(
@@ -154,7 +155,7 @@ const Advanced = ( {
 
 						<FormToggle
 							checked={ !! wp_cache_refresh_single_only }
-							disabled={ isRequesting }
+							disabled={ isRequesting || isSaving }
 							onChange={ handleAutosavingToggle( 'wp_cache_refresh_single_only' ) }>
 							<span>
 								{ translate( 'Only refresh current page when comments made.' ) }
@@ -163,7 +164,7 @@ const Advanced = ( {
 
 						<FormToggle
 							checked={ !! wp_supercache_cache_list }
-							disabled={ isRequesting }
+							disabled={ isRequesting || isSaving }
 							onChange={ handleAutosavingToggle( 'wp_supercache_cache_list' ) }>
 							<span>
 								{ translate( 'List the newest cached pages on this page.' ) }
@@ -173,7 +174,7 @@ const Advanced = ( {
 						{ ! wp_cache_disable_locking &&
 							<FormToggle
 								checked={ !! wp_cache_mutex_disabled }
-								disabled={ isRequesting }
+								disabled={ isRequesting || isSaving }
 								onChange={ handleAutosavingToggle( 'wp_cache_mutex_disabled' ) }>
 								<span>
 									{ translate( 'Coarse file locking. You do not need this as it will slow down your website.' ) }
@@ -183,7 +184,7 @@ const Advanced = ( {
 
 						<FormToggle
 							checked={ !! wp_super_cache_late_init }
-							disabled={ isRequesting }
+							disabled={ isRequesting || isSaving }
 							onChange={ handleAutosavingToggle( 'wp_super_cache_late_init' ) }>
 							<span>
 								{ translate(
@@ -194,7 +195,7 @@ const Advanced = ( {
 						{ !! _wp_using_ext_object_cache &&
 							<FormToggle
 								checked={ !! wp_cache_object_cache }
-								disabled={ isRequesting }
+								disabled={ isRequesting || isSaving }
 								onChange={ handleAutosavingToggle( 'wp_cache_object_cache' ) }>
 								<span>
 									{ translate( 'Use object cache to store cached files. (Experimental)' ) }

@@ -25,6 +25,7 @@ const EasyTab = ( {
 	handleAutosavingToggle,
 	handleToggle,
 	isRequesting,
+	isSaving,
 	site,
 	translate,
 } ) => {
@@ -44,7 +45,7 @@ const EasyTab = ( {
 				<form>
 					<FormToggle
 						checked={ is_cache_enabled }
-						disabled={ isRequesting }
+						disabled={ isRequesting || isSaving }
 						onChange={ handleAutosavingToggle( 'is_cache_enabled' ) }>
 						<span>
 							{ translate( 'Enable Page Caching' ) }

@@ -37,6 +37,7 @@ const ExpiryTime = ( {
 	handleSelect,
 	handleSubmitForm,
 	isRequesting,
+	isSaving,
 	translate,
 } ) => {
 	const renderCacheTimeout = () => {
@@ -48,7 +49,7 @@ const ExpiryTime = ( {
 
 				<FormTextInput
 					className="wp-super-cache__cache-timeout"
-					disabled={ isRequesting }
+					disabled={ isRequesting || isSaving }
 					onChange={ handleChange( 'cache_max_time' ) }
 					value={ cache_max_time || '' } />
 				{ translate( 'seconds' ) }
@@ -74,14 +75,14 @@ const ExpiryTime = ( {
 				<FormLabel>
 					<FormRadio
 						checked={ 'interval' === cache_schedule_type }
-						disabled={ isRequesting }
+						disabled={ isRequesting || isSaving }
 						name="cache_schedule_type"
 						onChange={ handleRadio }
 						value="interval" />
 					<span>
 						{ translate( 'Timer' ) }
 						<FormTextInput
-							disabled={ isRequesting || ( 'interval' !== cache_schedule_type ) }
+							disabled={ isRequesting || isSaving || ( 'interval' !== cache_schedule_type ) }
 							onChange={ handleChange( 'cache_time_interval' ) }
 							value={ cache_time_interval || '' } />
 						{ translate( 'seconds' ) }
@@ -94,14 +95,14 @@ const ExpiryTime = ( {
 				<FormLabel className="wp-super-cache__clock">
 					<FormRadio
 						checked={ 'time' === cache_schedule_type }
-						disabled={ isRequesting }
+						disabled={ isRequesting || isSaving }
 						name="cache_schedule_type"
 						onChange={ handleRadio }
 						value="time" />
 					<span>
 						{ translate( 'Clock' ) }
 						<FormTextInput
-							disabled={ isRequesting || ( 'time' !== cache_schedule_type ) }
+							disabled={ isRequesting || isSaving || ( 'time' !== cache_schedule_type ) }
 							onChange={ handleChange( 'cache_scheduled_time' ) }
 							value={ cache_scheduled_time || '' } />
 						{ translate( 'HH:MM' ) }
@@ -118,7 +119,7 @@ const ExpiryTime = ( {
 					</FormLabel>
 
 					<FormSelect
-						disabled={ isRequesting || ( 'time' !== cache_schedule_type ) }
+						disabled={ isRequesting || isSaving || ( 'time' !== cache_schedule_type ) }
 						id="cache_schedule_interval"
 						name="cache_schedule_interval"
 						onChange={ handleSelect }
@@ -145,7 +146,7 @@ const ExpiryTime = ( {
 
 				<FormToggle
 					checked={ !! cache_gc_email_me }
-					disabled={ isRequesting }
+					disabled={ isRequesting || isSaving }
 					id="cache_gc_email_me"
 					onChange={ handleAutosavingToggle( 'cache_gc_email_me' ) }>
 					<span>
@@ -162,9 +163,12 @@ const ExpiryTime = ( {
 				<Button
 					compact
 					primary
-					disabled={ isRequesting }
+					disabled={ isRequesting || isSaving }
 					onClick={ handleSubmitForm }>
-					{ translate( 'Save Settings' ) }
+					{ isSaving
+						? translate( 'Saving…' )
+						: translate( 'Save Settings' )
+					}
 				</Button>
 			</SectionHeader>
 			<Card>

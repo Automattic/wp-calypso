@@ -38,6 +38,7 @@ class DirectlyCachedFiles extends Component {
 			handleChange,
 			handleSubmitForm,
 			isRequesting,
+			isSaving,
 			setFieldArrayValue,
 			siteUrl,
 			translate
@@ -55,9 +56,12 @@ class DirectlyCachedFiles extends Component {
 					<Button
 						compact
 						primary
-						disabled={ isRequesting }
+						disabled={ isRequesting || isSaving }
 						onClick={ handleSubmitForm }>
-						{ translate( 'Save Settings' ) }
+						{ isSaving
+							? translate( 'Saving…' )
+							: translate( 'Save Settings' )
+						}
 					</Button>
 				</SectionHeader>
 				<Card className="wp-super-cache__directly-cached-files">
@@ -109,7 +113,7 @@ class DirectlyCachedFiles extends Component {
 							<form>
 								<FormFieldset>
 									<FormTextInput
-										disabled={ isRequesting }
+										disabled={ isRequesting || isSaving }
 										onChange={ handleChange( 'new_direct_page' ) }
 										onKeyDown={ this.onKeyDown }
 										ref="newDirectPage" />
@@ -128,7 +132,7 @@ class DirectlyCachedFiles extends Component {
 								{ wp_cache_direct_pages.map( ( page, index ) => (
 									<FormFieldset key={ index }>
 										<FormTextInput
-											disabled={ isRequesting }
+											disabled={ isRequesting || isSaving }
 											key={ index }
 											onChange={ setFieldArrayValue( 'wp_cache_direct_pages', index ) }
 											value={ page || '' } />
