@@ -632,16 +632,20 @@ function mediaButton( editor ) {
 
 		gallery = assign( {}, MediaConstants.GalleryDefaultAttrs, gallery.attrs.named );
 
-		gallery.items = gallery.ids.split( ',' ).map( ( id ) => {
-			id = parseInt( id, 10 );
+		gallery.items = [];
 
-			const media = MediaStore.get( selectedSite.ID, id );
-			if ( ! media ) {
-				MediaActions.fetch( selectedSite.ID, id );
-			}
+		if ( gallery.ids ) {
+			gallery.items = gallery.ids.split( ',' ).map( ( id ) => {
+				id = parseInt( id, 10 );
 
-			return assign( { ID: id }, media );
-		} );
+				const media = MediaStore.get( selectedSite.ID, id );
+				if ( ! media ) {
+					MediaActions.fetch( selectedSite.ID, id );
+				}
+
+				return assign( { ID: id }, media );
+			} );
+		}
 
 		delete gallery.ids;
 
@@ -664,7 +668,7 @@ function mediaButton( editor ) {
 			}
 		}, {
 			preserveFocus: true,
-			view: ModalViews.GALLERY
+			view: gallery.items.length ? ModalViews.GALLERY : ModalViews.LIST
 		} );
 	} );
 
