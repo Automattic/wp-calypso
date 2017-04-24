@@ -81,7 +81,7 @@ describe( '#fetchPostRevisions', () => {
 			query: {
 				apiNamespace: 'wp/v2',
 			},
-		} ) );
+		}, action ) );
 	} );
 } );
 
