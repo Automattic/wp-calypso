@@ -11,6 +11,7 @@ import {
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
 	PLAN_PERSONAL,
+	PLAN_JETPACK_BUSINESS,
 } from 'lib/plans/constants';
 import {
 	INITIAL_STEP,
@@ -68,6 +69,12 @@ describe( 'stepsForProductAndSurvey', function() {
 			const product = { product_slug: PLAN_BUSINESS };
 			abtests.conciergeOfferOnCancel = 'showConciergeOffer';
 			expect( stepsForProductAndSurvey( survey, product ) ).to.deep.equal( [ INITIAL_STEP, CONCIERGE_STEP, FINAL_STEP ] );
+		} );
+
+		it( 'should not include concierge step if product is jetpack business plan and abtest variant is showConciergeOffer', function() {
+			const product = { product_slug: PLAN_JETPACK_BUSINESS };
+			abtests.conciergeOfferOnCancel = 'showConciergeOffer';
+			expect( stepsForProductAndSurvey( survey, product ) ).to.deep.equal( [ INITIAL_STEP, FINAL_STEP ] );
 		} );
 
 		it( 'should not include concierge step if product is business plan and abtest variant is hideConciergeOffer', function() {
