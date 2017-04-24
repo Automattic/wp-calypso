@@ -43,9 +43,9 @@ class PurchasePlanDetails extends Component {
 			return null;
 		}
 
-		const headerText = translate( '%(plan)s Plan', {
+		const headerText = translate( '%(planName)s Plan', {
 			args: {
-				plan: getName( purchase )
+				planName: getName( purchase )
 			}
 		} );
 
