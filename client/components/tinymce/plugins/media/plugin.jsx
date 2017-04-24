@@ -643,7 +643,7 @@ function mediaButton( editor ) {
 						MediaActions.fetch( selectedSite.ID, id );
 					}
 
-					memo.push( assign( { ID: id }, media ) )
+					memo.push( assign( { ID: id }, media ) );
 				}
 
 				return memo;
