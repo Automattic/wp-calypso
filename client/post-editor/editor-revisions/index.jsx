@@ -6,6 +6,11 @@ import { localize } from 'i18n-calypso';
 import { partial } from 'lodash';
 import React, { PropTypes } from 'react';
 
+/**
+ * Internal dependencies
+ */
+import { CHILD_SIDEBAR_REVISIONS } from '../editor-sidebar/util';
+
 function EditorRevisions( { revisions = [], translate, toggleChildSidebar } ) {
 	if ( ! revisions || ! revisions.length ) {
 		return null;
@@ -15,7 +20,7 @@ function EditorRevisions( { revisions = [], translate, toggleChildSidebar } ) {
 		<button
 			className="editor-revisions"
 			title={ translate( 'Open list of revisions' ) }
-			onClick={ partial( toggleChildSidebar, 'revisions' ) }
+			onClick={ partial( toggleChildSidebar, CHILD_SIDEBAR_REVISIONS ) }
 		>
 			<Gridicon icon="history" size={ 18 } />
 			{ translate(

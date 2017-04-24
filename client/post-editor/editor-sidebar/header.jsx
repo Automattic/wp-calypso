@@ -10,11 +10,16 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
+import {
+	CHILD_SIDEBAR_NONE,
+	CHILD_SIDEBAR_REVISIONS,
+	ChildSidebarPropTypes,
+} from './util';
 
-function EditorSidebarHeader( { childSidebar = null, toggleSidebar, translate } ) {
+function EditorSidebarHeader( { childSidebar = CHILD_SIDEBAR_NONE, toggleSidebar, translate } ) {
 	return (
 		<div className="editor-sidebar__header">
-			{ childSidebar === 'revisions' && (
+			{ childSidebar === CHILD_SIDEBAR_REVISIONS && (
 				<span>
 					<Button
 						borderless
@@ -30,7 +35,7 @@ function EditorSidebarHeader( { childSidebar = null, toggleSidebar, translate } 
 				</span>
 			) }
 
-			{ childSidebar === null && (
+			{ childSidebar === CHILD_SIDEBAR_NONE && (
 				<EditorPostType isSettings />
 			) }
 
@@ -47,7 +52,7 @@ function EditorSidebarHeader( { childSidebar = null, toggleSidebar, translate } 
 }
 
 EditorSidebarHeader.propTypes = {
-	childSidebar: PropTypes.string,
+	childSidebar: ChildSidebarPropTypes,
 	toggleSidebar: PropTypes.func,
 	translate: PropTypes.func,
 };
