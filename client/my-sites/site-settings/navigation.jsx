@@ -1,9 +1,9 @@
 /**
  * External Dependencies
  */
-import React from 'react';
-import i18n from 'i18n-calypso';
-
+import React, { Component, PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
@@ -11,28 +11,30 @@ import config from 'config';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
+import { getSelectedSite } from 'state/ui/selectors';
 
-export default React.createClass( {
-	displayName: 'SiteSettingsNavigation',
+export class SiteSettingsNavigation extends Component {
 
-	propTypes: {
-		site: React.PropTypes.object.isRequired,
-		section: React.PropTypes.string
-	},
+	static propTypes = {
+		section: PropTypes.string,
+		// Connected props
+		site: PropTypes.object
+	};
 
 	getStrings() {
+		const { translate } = this.props;
 		return {
-			general: i18n.translate( 'General', { context: 'settings screen' } ),
-			writing: i18n.translate( 'Writing', { context: 'settings screen' } ),
-			discussion: i18n.translate( 'Discussion', { context: 'settings screen' } ),
-			traffic: i18n.translate( 'Traffic', { context: 'settings screen' } ),
-			security: i18n.translate( 'Security', { context: 'settings screen' } ),
-			'import': i18n.translate( 'Import', { context: 'settings screen' } ),
-			'export': i18n.translate( 'Export', { context: 'settings screen' } ),
+			general: translate( 'General', { context: 'settings screen' } ),
+			writing: translate( 'Writing', { context: 'settings screen' } ),
+			discussion: translate( 'Discussion', { context: 'settings screen' } ),
+			traffic: translate( 'Traffic', { context: 'settings screen' } ),
+			security: translate( 'Security', { context: 'settings screen' } ),
+			'import': translate( 'Import', { context: 'settings screen' } ),
+			'export': translate( 'Export', { context: 'settings screen' } ),
 		};
-	},
+	}
 
-	getImportPath() {
+	getImportPath = () => {
 		const { site } = this.props,
 			path = '/settings/import';
 
@@ -41,14 +43,14 @@ export default React.createClass( {
 		}
 
 		return [ path, site.slug ].join( '/' );
-	},
+	};
 
-	getExportPath() {
+	getExportPath = () => {
 		const { site } = this.props;
 		return site.jetpack
 			? `${ site.options.admin_url }export.php`
 			: `/settings/export/${ site.slug }`;
-	},
+	};
 
 	render() {
 		const { section, site } = this.props;
@@ -122,4 +124,10 @@ export default React.createClass( {
 			</SectionNav>
 		);
 	}
-} );
+}
+
+export default connect(
+	state => ( {
+		site: getSelectedSite( state )
+	} )
+)( localize( SiteSettingsNavigation ) );
