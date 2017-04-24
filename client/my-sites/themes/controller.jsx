@@ -3,7 +3,6 @@
  */
 import { compact, includes, isEmpty, startsWith } from 'lodash';
 import debugFactory from 'debug';
-import Lru from 'lru';
 import React from 'react';
 
 /**
@@ -15,17 +14,12 @@ import LoggedOutComponent from './logged-out';
 import Upload from 'my-sites/themes/theme-upload';
 import trackScrollPage from 'lib/track-scroll-page';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
-import { requestThemes, requestThemeFilters, receiveThemes, setBackPath } from 'state/themes/actions';
-import { getThemesForQuery, getThemesFoundForQuery } from 'state/themes/selectors';
+import { requestThemes, requestThemeFilters, setBackPath } from 'state/themes/actions';
+import { getThemesForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 import { getThemeFilters } from 'state/selectors';
 
 const debug = debugFactory( 'calypso:themes' );
-const HOUR_IN_MS = 3600000;
-const themesQueryCache = new Lru( {
-	max: 500,
-	maxAge: HOUR_IN_MS
-} );
 
 function getProps( context ) {
 	const { tier, filter, vertical, site_id: siteId } = context.params;
@@ -118,30 +112,14 @@ export function fetchThemeData( context, next ) {
 		page: 1,
 		number: DEFAULT_THEME_QUERY.number,
 	};
-	// context.pathname includes tier, filter, and verticals, but not the query string, so it's a suitable cacheKey
-	// However, we can't guarantee it's normalized -- filters can be in any order, resulting in multiple possible cacheKeys for
-	// the same sets of results.
-	const cacheKey = context.pathname;
 
-	const cachedData = themesQueryCache.get( cacheKey );
-	if ( cachedData ) {
-		debug( `found theme data in cache key=${ cacheKey }` );
-		context.store.dispatch( receiveThemes( cachedData.themes, siteId, query, cachedData.found ) );
-		context.renderCacheKey = cacheKey + cachedData.timestamp;
+	const themes = getThemesForQuery( context.store.getState(), siteId, query );
+	if ( themes ) {
+		debug( 'found theme data in cache' );
 		return next();
 	}
 
-	context.store.dispatch( requestThemes( siteId, query ) )
-		.then( () => {
-			const themes = getThemesForQuery( context.store.getState(), siteId, query );
-			const found = getThemesFoundForQuery( context.store.getState(), siteId, query );
-			const timestamp = Date.now();
-			themesQueryCache.set( cacheKey, { themes, found, timestamp } );
-			context.renderCacheKey = cacheKey + timestamp;
-			debug( `caching theme data key=${ cacheKey }` );
-			next();
-		} )
-		.catch( () => next() );
+	context.store.dispatch( requestThemes( siteId, query ) ).then( next ).catch( next );
 }
 
 export function fetchThemeFilters( context, next ) {
