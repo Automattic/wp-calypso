@@ -13,12 +13,18 @@ import { localize } from 'i18n-calypso';
 import { protectForm } from 'lib/protect-form';
 import trackForm from 'lib/track-form';
 import QuerySettings from './query-settings';
+import {
+	errorNotice,
+	removeNotice,
+	successNotice,
+} from 'state/notices/actions';
 import { saveSettings } from './state/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getSettings,
-	isSavingSettings,
 	isRequestingSettings,
+	isSavingSettings,
+	isSettingsSaveSuccessful,
 } from './state/selectors';
 
 const wrapSettingsForm = getFormSettings => SettingsForm => {
@@ -40,6 +46,20 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				! isEqual( prevProps.fields, this.props.fields )
 			) {
 				this.updateDirtyFields();
+			}
+
+			if ( ! this.props.isSaving && prevProps.isSaving ) {
+				if ( this.props.isSaveSuccessful ) {
+					this.props.successNotice(
+						this.props.translate( 'Settings saved!' ),
+						{ id: 'wpsc-settings-save' }
+					);
+				} else {
+					this.props.errorNotice(
+						this.props.translate( 'There was a problem saving your changes. Please try again.' ),
+						{ id: 'wpsc-settings-save' }
+					);
+				}
 			}
 		}
 
@@ -119,6 +139,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		submitForm = () => {
 			const { fields, siteId } = this.props;
 
+			this.props.removeNotice( 'wpsc-settings-save' );
 			this.props.saveSettings( siteId, fields );
 		};
 
@@ -146,6 +167,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		state => {
 			const siteId = getSelectedSiteId( state );
 			const isSaving = isSavingSettings( state, siteId );
+			const isSaveSuccessful = isSettingsSaveSuccessful( state, siteId );
 			const settings = Object.assign( {}, getSettings( state, siteId ), {
 				// Caching
 				wp_cache_enabled: true,
@@ -308,6 +330,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 			return {
 				isRequesting,
+				isSaveSuccessful,
 				isSaving,
 				settings,
 				siteId,
@@ -315,7 +338,10 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		},
 		dispatch => {
 			const boundActionCreators = bindActionCreators( {
+				errorNotice,
+				removeNotice,
 				saveSettings,
+				successNotice,
 			}, dispatch );
 
 			return {
