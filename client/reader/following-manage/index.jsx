@@ -87,9 +87,12 @@ class FollowingManage extends Component {
 		window.removeEventListener( 'resize', this.resizeListener );
 	}
 
+	fetchNextPage = offset => this.props.requestFeedSearch( this.props.sitesQuery, offset );
+
 	render() {
 		const { sitesQuery, subsQuery, translate, searchResults } = this.props;
 		const searchPlaceholderText = translate( 'Search millions of sites' );
+
 
 		return (
 			<ReaderMain className="following-manage">
@@ -120,9 +123,7 @@ class FollowingManage extends Component {
 					<SitesWindowScroller
 						sites={ searchResults }
 						width={ this.state.width }
-						fetchNextPage={
-							() => this.props.requestFeedSearch( sitesQuery, searchResults.length )
-						}
+						fetchNextPage={ this.fetchNextPage }
 						remoteTotalCount={ 200 }
 					/>
 				) }

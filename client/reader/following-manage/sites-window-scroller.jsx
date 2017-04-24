@@ -30,6 +30,12 @@ class SitesWindowScroller extends Component {
 
 	siteRowRenderer = ( { index, key, style, parent } ) => {
 		const site = this.props.sites[ index ];
+<<<<<<< HEAD
+=======
+		if ( ! site ) {
+			return null;
+		}
+>>>>>>> make work btr
 
 		return (
 			<CellMeasurer
@@ -66,7 +72,15 @@ class SitesWindowScroller extends Component {
 		return !! this.props.sites[ index ];
 	}
 
-	loadMoreRows = () => this.props.fetchNextPage && this.props.fetchNextPage();
+	// technically this function should return a promise that only resolves when the data is fetched.
+	// initially I had created a promise that would setInterval and see if the startIndex
+	// exists in sites, and if so the resolve. It was super hacky, and its muchs simpler to just fake that it instantly
+	// returns
+	// TODO: does a util function exist that return waitFor( thingToExistInStateTree )? that would be perfect.
+	loadMoreRows = ( { startIndex } ) => {
+		this.props.fetchNextPage && this.props.fetchNextPage( startIndex );
+		return Promise.resolve();
+	};
 
 	componentWillMount() {
 		window.addEventListener( 'resize', this.handleResize );
@@ -91,7 +105,7 @@ class SitesWindowScroller extends Component {
 							<List
 								autoHeight
 								height={ height }
-								rowCount={ remoteTotalCount }
+								rowCount={ this.props.remoteTotalCount }
 								rowHeight={ this.heightCache.rowHeight }
 								rowRenderer={ this.siteRowRenderer }
 								onRowsRendered={ onRowsRendered }
