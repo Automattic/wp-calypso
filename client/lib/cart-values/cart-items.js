@@ -221,8 +221,20 @@ function hasDomainCredit( cart ) {
  * @returns {Boolean} - Whether or not the cart contains a .nl TLD
  */
 function hasNlTld( cart ) {
+	return hasTld( cart, 'nl' );
+}
+
+/**
+ * Whether the cart has a registration with a specific TLD
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @param {string} tld - tld to look for, no leading dot
+ *
+ * @returns {Boolean} - Whether or not the cart contains a domain with that tld TLD
+ */
+function hasTld( cart, tld ) {
 	return some( getDomainRegistrations( cart ), function( cartItem ) {
-		return getDomainRegistrationTld( cartItem ) === '.nl';
+		return getDomainRegistrationTld( cartItem ) === '.' + tld;
 	} );
 }
 
@@ -802,6 +814,7 @@ module.exports = {
 	hasDomainRegistration,
 	hasFreeTrial,
 	hasGoogleApps,
+	hasTld,
 	hasNlTld,
 	hasOnlyFreeTrial,
 	hasOnlyProductsOf,
