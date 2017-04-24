@@ -315,9 +315,25 @@ export const SeoForm = React.createClass( {
 			updatedOptions.advanced_seo_front_page_description = this.state.frontPageMetaDescription;
 		}
 
+		// Replace empty arrays with empty strings to fix custom format deletion bug.
+		updatedOptions.advanced_seo_title_formats = this.prepareEmptyFormats( updatedOptions.advanced_seo_title_formats );
+
 		this.props.saveSiteSettings( siteId, updatedOptions );
 
 		this.trackSubmission();
+	},
+
+	// Empty arrays for title formats were not working properly with saveSiteSettings.
+	// We are replacing them with empty strings here to allow users to delete custom title formats.
+	prepareEmptyFormats( updatedTitleFormats ) {
+		const emptyFormatTypes = pickBy(
+			updatedTitleFormats,
+			( titleFormat ) => Array.isArray( titleFormat ) && titleFormat.length === 0
+		);
+
+		Object.keys( emptyFormatTypes ).forEach( ( type ) => emptyFormatTypes[ type ] = '' );
+
+		return Object.assign( {}, updatedTitleFormats, emptyFormatTypes );
 	},
 
 	trackSubmission() {
