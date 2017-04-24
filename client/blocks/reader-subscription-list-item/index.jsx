@@ -74,7 +74,7 @@ function ReaderSubscriptionListItem( {
 					</span>
 				}
 			<div className="reader-subscription-list-item__site-url">
-				<a href={ siteUrl }> { siteUrl && stripUrl( siteUrl ) } </a>
+				<a href={ siteUrl }> { siteUrl && prepareComparableUrl( siteUrl ) } </a>
 			</div>
 			</div>
 			<div className="reader-subscription-list-item__options">
