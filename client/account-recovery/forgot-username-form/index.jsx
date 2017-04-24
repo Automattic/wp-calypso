@@ -99,7 +99,9 @@ export class ForgotUsernameFormComponent extends Component {
 							className="forgot-username-form__first-name-input"
 							onChange={ this.firstNameUpdated }
 							value={ firstName }
-							disabled={ isRequesting } />
+							disabled={ isRequesting }
+							autoFocus
+						/>
 					</FormLabel>
 					<FormLabel>
 						{ translate( 'Last Name' ) }
