@@ -39,8 +39,8 @@ const Sso = ( {
 			<Card className="sso__card site-settings__security-settings">
 				<FormFieldset>
 					<div className="sso__info-link-container site-settings__info-link-container">
-						<InfoPopover position={ 'left' }>
-							<ExternalLink href={ 'https://jetpack.com/support/sso' } icon target="_blank">
+						<InfoPopover position="left">
+							<ExternalLink href="https://jetpack.com/support/sso" icon target="_blank">
 								{ translate( 'Learn more about WordPress.com Secure Sign On.' ) }
 							</ExternalLink>
 						</InfoPopover>

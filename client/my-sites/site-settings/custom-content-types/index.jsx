@@ -123,8 +123,8 @@ class CustomContentTypes extends Component {
 				<Card className="custom-content-types__card site-settings">
 					<FormFieldset>
 						<div className="custom-content-types__info-link-container site-settings__info-link-container">
-							<InfoPopover position={ 'left' }>
-								<ExternalLink href={ 'https://support.wordpress.com/custom-post-types/' } icon target="_blank">
+							<InfoPopover position="left">
+								<ExternalLink href="https://support.wordpress.com/custom-post-types/" icon target="_blank">
 									{ translate( 'Learn more about Custom Content Types.' ) }
 								</ExternalLink>
 							</InfoPopover>
