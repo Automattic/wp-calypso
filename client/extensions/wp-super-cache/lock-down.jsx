@@ -57,12 +57,13 @@ const LockDown = ( {
 							) }
 						</p>
 
-						<div className="wp-super-cache__lock-down-code-snippet">
+						<div className="wp-super-cache__lock-down-code-block">
 							<ClipboardButton
+								className="wp-super-cache__lock-down-code-block-button"
 								text={ lockdownCodeSnippet }>
 								<Gridicon icon="clipboard" />
 							</ClipboardButton>
-							<p>{ lockdownCodeSnippet }</p>
+							<p className="wp-super-cache__lock-down-code-block-snippet">{ lockdownCodeSnippet }</p>
 						</div>
 
 						<Notice isCompact={ true } status={ wp_lock_down ? 'is-warning' : 'is-info' } text={ !! wp_lock_down
