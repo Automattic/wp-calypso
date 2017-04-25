@@ -3,7 +3,13 @@
  */
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { flowRight, isEqual, omit, pick } from 'lodash';
+import {
+	flowRight,
+	isEqual,
+	keys,
+	omit,
+	pick,
+} from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -137,10 +143,14 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		};
 
 		submitForm = () => {
-			const { fields, siteId } = this.props;
+			const {
+				fields,
+				settingsFields,
+				siteId,
+			} = this.props;
 
 			this.props.removeNotice( 'wpsc-settings-save' );
-			this.props.saveSettings( siteId, fields );
+			this.props.saveSettings( siteId, pick( fields, settingsFields ) );
 		};
 
 		render() {
@@ -327,12 +337,34 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				preload_taxonomies: false,
 			} );
 			const isRequesting = isRequestingSettings( state, siteId ) && ! settings;
+			// Don't include read-only fields when saving.
+			const settingsFields = keys( omit( settings, [
+				'cache_compression_disabled',
+				'cache_direct_pages',
+				'cache_disable_locking',
+				'cache_mobile_browsers',
+				'cache_mobile_prefixes',
+				'cache_mod_rewrite',
+				'cache_next_gc',
+				'cache_readonly',
+				'cache_writable',
+				'generated',
+				'is_preload_enabled',
+				'is_preloading',
+				'lock_down',
+				'minimum_preload_interval',
+				'post_count',
+				'preload_refresh',
+				'supercache',
+				'wpcache',
+			] ) );
 
 			return {
 				isRequesting,
 				isSaveSuccessful,
 				isSaving,
 				settings,
+				settingsFields,
 				siteId,
 			};
 		},
