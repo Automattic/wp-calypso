@@ -15,6 +15,8 @@ import DocumentHead from 'components/data/document-head';
 import LostPasswordForm from 'account-recovery/lost-password-form';
 import ForgotUsernameForm from 'account-recovery/forgot-username-form';
 import ResetPasswordForm from 'account-recovery/reset-password-form';
+import ResetPasswordEmailForm from 'account-recovery/reset-password-email-form';
+import ResetPasswordSmsForm from 'account-reocvery/reset-password-sms-form';
 import { ACCOUNT_RECOVERY_STEPS as STEPS } from 'account-recovery/constants';
 import {
 	isAccountRecoveryResetOptionsReady,
@@ -35,7 +37,13 @@ const getPageInfo = ( translate, step ) => {
 			trackerTitle: 'Account Recovery > Reset Password',
 			documentHeadTitle: translate( 'Reset Password ‹ Account Recovery' ),
 		},
-
+		[ STEPS.RESET_PASSWORD_EMAIL ]: {
+			trackerTitle: 'Account Recovery > Reset Password Email',
+			documentHeadTitle: translate( 'Reset Password < Email' ),
+		},
+		[ STEPS.RESET_PASSWORD_SMS ]: {
+			documentHeadTitle: translate( 'Reset Password ‹ SMS Message' ),
+		},
 	};
 
 	return pageInfo[ step ];
@@ -57,6 +65,10 @@ const getForm = ( step ) => {
 			return <ForgotUsernameForm />;
 		case STEPS.RESET_PASSWORD:
 			return <ResetPasswordForm />;
+		case STEPS.RESET_PASSWORD_EMAIL:
+			return <ResetPasswordEmailForm />;
+		case STEPS.RESET_PASSWORD_SMS:
+			return <ResetPasswordSmsForm />;
 	}
 
 	return null;
