@@ -14,6 +14,7 @@ import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import Tooltip from 'components/tooltip';
+import config from 'config';
 
 class PeopleListSectionHeader extends Component {
 	static propTypes = {
@@ -42,6 +43,10 @@ class PeopleListSectionHeader extends Component {
 		this.setState( { addPeopleTooltip: false } );
 	}
 
+	shouldUseWPAdmin() {
+		return ! config.isEnabled( 'jetpack/invites' ) && get( this.props, 'site.jetpack' );
+	}
+
 	getAddLink() {
 		const siteSlug = get( this.props, 'site.slug' );
 		const isJetpack = get( this.props, 'site.jetpack' );
@@ -51,7 +56,7 @@ class PeopleListSectionHeader extends Component {
 			return false;
 		}
 
-		if ( isJetpack ) {
+		if ( this.shouldUseWPAdmin() ) {
 			return wpAdminUrl + 'user-new.php';
 		}
 
@@ -59,7 +64,7 @@ class PeopleListSectionHeader extends Component {
 	}
 
 	render() {
-		const { label, count, site, children, translate } = this.props;
+		const { label, count, children, translate } = this.props;
 		const siteLink = this.getAddLink();
 		const classes = classNames(
 			this.props.className,
@@ -77,7 +82,7 @@ class PeopleListSectionHeader extends Component {
 						<Button
 							compact
 							href={ siteLink }
-							target={ site && site.jetpack ? '_new' : null }
+							target={ this.shouldUseWPAdmin() ? '_new' : null }
 							className="people-list-section-header__add-button"
 							onMouseEnter={ this.showAddTooltip }
 							onMouseLeave={ this.hideAddTooltip }
