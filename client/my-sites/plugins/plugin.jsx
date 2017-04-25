@@ -211,7 +211,7 @@ const SinglePlugin = React.createClass( {
 					line={ this.translate( 'The plugin you are looking for doesn\'t exist.' ) }
 					actionURL={ actionUrl }
 					action={ action }
-					illustration="/calypso/images/drake/drake-404.svg" />
+					illustration="/calypso/images/illustrations/illustration-404.svg" />
 			</MainComponent>
 		);
 	},
