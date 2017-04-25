@@ -8,6 +8,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
+import ProductFormDetailsCard from './product-form-details-card';
 import ProductVariationTypesForm from './product-variation-types-form';
 import FormToggle from 'components/forms/form-toggle';
 
@@ -15,10 +16,12 @@ export default class ProductForm extends Component {
 
 	static propTypes = {
 		product: PropTypes.shape( {
-			id: PropTypes.number.isRequired,
-			name: PropTypes.string.isRequired,
+			id: PropTypes.isRequired,
 			type: PropTypes.string.isRequired,
-		} )
+			name: PropTypes.string,
+		} ),
+		editProduct: PropTypes.func.isRequired,
+		editProductAttribute: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {
@@ -48,6 +51,11 @@ export default class ProductForm extends Component {
 		);
 		return (
 			<div className="woocommerce products__form">
+				<ProductFormDetailsCard
+					product={ product }
+					editProduct={ this.props.editProduct }
+				/>
+
 				<FoldableCard
 					icon=""
 					expanded={ true }
