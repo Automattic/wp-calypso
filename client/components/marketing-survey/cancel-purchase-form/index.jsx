@@ -483,7 +483,7 @@ const CancelPurchaseForm = React.createClass( {
 						)
 					}
 				</p>
-				<HappychatButton>
+				<HappychatButton primary borderless={ false }>
 					{ translate( 'Start a Live chat' ) }
 				</HappychatButton>
 			</FormFieldset>
