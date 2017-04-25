@@ -968,7 +968,7 @@ describe( 'index', function() {
 <p>&nbsp;</p>
 <p class="wp-caption">caption</p>
 <p><img src="http://example.com/image.jpg"></p>
-<p><a href="http://wikipedia.org">Giraffes</a> are <br>great</p>
+<p align="left" style="text-align:right"><a href="http://wikipedia.org">Giraffes</a> are <br>great</p>
 <p></p>`, '<p>Giraffes are <br>great</p>', done );
 		} );
 
