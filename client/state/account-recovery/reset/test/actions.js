@@ -11,11 +11,11 @@ import {
 	requestResetSuccess,
 	requestResetError,
 	updatePasswordResetUserData,
-	pickResetMethod,
+	setResetMethod,
 } from '../actions';
 
 import {
-	ACCOUNT_RECOVERY_RESET_PICK_METHOD,
+	ACCOUNT_RECOVERY_RESET_SET_METHOD,
 	ACCOUNT_RECOVERY_RESET_REQUEST,
 	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
@@ -67,27 +67,26 @@ describe( '#requestResetError', () => {
 
 describe( '#requestReset', () => {
 	it( 'should return action ACCOUNT_RECOVERY_RESET_REQUET_RESET', () => {
-		const request = {
-			user: 'foo',
-			method: 'primary_email',
-		};
+		const userData = { user: 'foo' };
+		const method = 'primary_email';
 
-		const action = requestReset( request );
+		const action = requestReset( userData, method );
 
 		assert.deepEqual( action, {
 			type: ACCOUNT_RECOVERY_RESET_REQUEST,
-			request,
+			userData,
+			method,
 		} );
 	} );
 } );
 
-describe( '#pickResetMethod', () => {
-	it( 'should return action ACCOUNT_RECOVERY_RESET_PICK_METHOD', () => {
+describe( '#setResetMethod', () => {
+	it( 'should return action ACCOUNT_RECOVERY_RESET_SET_METHOD', () => {
 		const method = 'primary_email';
-		const action = pickResetMethod( method );
+		const action = setResetMethod( method );
 
 		assert.deepEqual( action, {
-			type: ACCOUNT_RECOVERY_RESET_PICK_METHOD,
+			type: ACCOUNT_RECOVERY_RESET_SET_METHOD,
 			method,
 		} );
 	} );
