@@ -2,7 +2,14 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { flowRight, isEqual, omit, pick } from 'lodash';
+import { bindActionCreators } from 'redux';
+import {
+	flowRight,
+	isEqual,
+	keys,
+	omit,
+	pick,
+} from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -12,10 +19,18 @@ import { localize } from 'i18n-calypso';
 import { protectForm } from 'lib/protect-form';
 import trackForm from 'lib/track-form';
 import QuerySettings from './query-settings';
+import {
+	errorNotice,
+	removeNotice,
+	successNotice,
+} from 'state/notices/actions';
+import { saveSettings } from './state/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getSettings,
 	isRequestingSettings,
+	isSavingSettings,
+	isSettingsSaveSuccessful,
 } from './state/selectors';
 
 const wrapSettingsForm = getFormSettings => SettingsForm => {
@@ -37,6 +52,20 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				! isEqual( prevProps.fields, this.props.fields )
 			) {
 				this.updateDirtyFields();
+			}
+
+			if ( ! this.props.isSaving && prevProps.isSaving ) {
+				if ( this.props.isSaveSuccessful ) {
+					this.props.successNotice(
+						this.props.translate( 'Settings saved!' ),
+						{ id: 'wpsc-settings-save' }
+					);
+				} else {
+					this.props.errorNotice(
+						this.props.translate( 'There was a problem saving your changes. Please try again.' ),
+						{ id: 'wpsc-settings-save' }
+					);
+				}
 			}
 		}
 
@@ -84,16 +113,55 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.updateFields( { [ name ]: isNaN( parsedValue ) ? value : parsedValue } );
 		};
 
+		handleAutosavingToggle = name => () => {
+			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] }, () => {
+				this.submitForm();
+			} );
+		};
+
 		handleToggle = name => () => {
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
 		};
 
+		// Update a field that is stored as an array element.
+		setFieldArrayValue = ( name, index ) => event => {
+			const currentValue = this.props.fields[ name ];
+			const newValue = [
+				...currentValue.slice( 0, index ),
+				event.target.value,
+				...currentValue.slice( index + 1 ),
+			];
+
+			this.props.updateFields( {
+				[ name ]: newValue,
+			} );
+		};
+
+		handleSubmitForm = event => {
+			event.preventDefault();
+			this.submitForm();
+		};
+
+		submitForm = () => {
+			const {
+				fields,
+				settingsFields,
+				siteId,
+			} = this.props;
+
+			this.props.removeNotice( 'wpsc-settings-save' );
+			this.props.saveSettings( siteId, pick( fields, settingsFields ) );
+		};
+
 		render() {
 			const utils = {
+				handleAutosavingToggle: this.handleAutosavingToggle,
 				handleChange: this.handleChange,
 				handleRadio: this.handleRadio,
 				handleSelect: this.handleSelect,
+				handleSubmitForm: this.handleSubmitForm,
 				handleToggle: this.handleToggle,
+				setFieldArrayValue: this.setFieldArrayValue,
 			};
 
 			return (
@@ -108,6 +176,8 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 	const connectComponent = connect(
 		state => {
 			const siteId = getSelectedSiteId( state );
+			const isSaving = isSavingSettings( state, siteId );
+			const isSaveSuccessful = isSettingsSaveSuccessful( state, siteId );
 			const settings = Object.assign( {}, getSettings( state, siteId ), {
 				// Caching
 				wp_cache_enabled: true,
@@ -267,13 +337,49 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				preload_taxonomies: false,
 			} );
 			const isRequesting = isRequestingSettings( state, siteId ) && ! settings;
+			// Don't include read-only fields when saving.
+			const settingsFields = keys( omit( settings, [
+				'cache_compression_disabled',
+				'cache_direct_pages',
+				'cache_disable_locking',
+				'cache_mobile_browsers',
+				'cache_mobile_prefixes',
+				'cache_mod_rewrite',
+				'cache_next_gc',
+				'cache_readonly',
+				'cache_writable',
+				'generated',
+				'is_preload_enabled',
+				'is_preloading',
+				'lock_down',
+				'minimum_preload_interval',
+				'post_count',
+				'preload_refresh',
+				'supercache',
+				'wpcache',
+			] ) );
 
 			return {
 				isRequesting,
+				isSaveSuccessful,
+				isSaving,
 				settings,
+				settingsFields,
 				siteId,
 			};
 		},
+		dispatch => {
+			const boundActionCreators = bindActionCreators( {
+				errorNotice,
+				removeNotice,
+				saveSettings,
+				successNotice,
+			}, dispatch );
+
+			return {
+				...boundActionCreators,
+			};
+		}
 	);
 
 	return flowRight(
