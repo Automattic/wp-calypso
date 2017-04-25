@@ -14,10 +14,13 @@ const getSiteSlugsForUpcomingTransactions = createSelector(
 	( state ) => {
 		const siteIds = uniq( map( getUpcomingBillingTransactions( state ), 'blog_id' ) )
 			.map( Number );
-		return siteIds.reduce( ( sites, siteId ) => ( {
-			...sites,
-			[ siteId ]: getSiteSlug( state, siteId ),
-		} ), {} );
+		return siteIds.reduce( ( sites, siteId ) => {
+			const result = { ...sites };
+			if ( siteId ) {
+				result[ siteId ] = getSiteSlug( state, siteId );
+			}
+			return result;
+		}, {} );
 	},
 	( state ) => [
 		getUpcomingBillingTransactions( state ),
