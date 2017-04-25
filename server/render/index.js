@@ -81,9 +81,9 @@ export function serverRender( req, res ) {
 		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
 	}
 
-	if ( config.isEnabled( 'server-side-rendering' ) && context.layout && ! context.user ) {
+	if ( config.isEnabled( 'server-side-rendering' ) && context.layout && ! context.user && isEmpty( context.query ) ) {
 		// context.pathname doesn't include querystring, so it's a suitable cache key.
-		let key = context.pathname || JSON.stringify( context.layout );
+		let key = context.pathname;
 		if ( req.error ) {
 			key = req.error.message;
 		}
