@@ -18,7 +18,7 @@ import {
 	HAPPYCHAT_FOCUS,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_RECONNECTING,
-	HAPPYCHAT_SEND_BROWSER_INFO,
+	HAPPYCHAT_SEND_USER_INFO,
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_AVAILABLE,
 	HAPPYCHAT_SET_CHAT_STATUS,
@@ -53,6 +53,6 @@ export const clearChatMessage = () => setChatMessage( '' );
 
 export const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
 
-export const sendBrowserInfo = siteUrl => ( { type: HAPPYCHAT_SEND_BROWSER_INFO, siteUrl } );
+export const sendUserInfo = siteUrl => ( { type: HAPPYCHAT_SEND_USER_INFO, siteUrl } );
 
 export const sendChatMessage = message => ( { type: HAPPYCHAT_SEND_MESSAGE, message } );
