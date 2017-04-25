@@ -24,6 +24,7 @@ import {
 	isAccountRecoveryResetOptionsReady,
 	isAccountRecoveryUserDataReady,
 	getAccountRecoveryResetSelectedMethod,
+	getAccountRecoveryValidationKey,
 } from 'state/selectors';
 
 const getPageInfo = ( translate, step ) => {
@@ -65,7 +66,12 @@ const getCurrentStep = ( props ) => {
 		isUserDataReady,
 		isResetOptionsReady,
 		selectedMethod,
+		validationKey,
 	} = props;
+
+	if ( validationKey ) {
+		return STEPS.RESET_PASSWORD_CONFIRM;
+	}
 
 	if ( selectedMethod ) {
 		if ( includes( [ 'primary_email', 'secondary_email' ], selectedMethod ) ) {
@@ -125,5 +131,6 @@ export default connect(
 		isResetOptionsReady: isAccountRecoveryResetOptionsReady( state ),
 		isUserDataReady: isAccountRecoveryUserDataReady( state ),
 		selectedMethod: getAccountRecoveryResetSelectedMethod( state ),
+		validationKey: getAccountRecoveryValidationKey( state ),
 	} )
 )( localize( AccountRecoveryRoot ) );

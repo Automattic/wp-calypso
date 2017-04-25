@@ -18,7 +18,6 @@ import {
 	getAccountRecoveryResetUserData,
 	getAccountRecoveryResetSelectedMethod,
 	getAccountRecoveryValidationError,
-	getAccountRecoveryValidationKey,
 	isValidatingAccountRecoveryKey,
 } from 'state/selectors';
 
@@ -29,20 +28,27 @@ import {
 } from 'state/account-recovery/reset/actions';
 
 class ResetPasswordSmsForm extends Component {
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			candidateKey: '',
+		};
+	}
+
 	submitValidationKey = ( event ) => {
 		const {
 			userData,
 			selectedMethod,
-			validationKey,
 		} = this.props;
 
-		this.props.validateRequest( userData, selectedMethod, validationKey );
+		this.props.validateRequest( userData, selectedMethod, this.state.candidateKey );
 
 		event.preventDefault();
 	}
 
 	updateValidationKey = ( event ) => {
-		this.props.setValidationKey( event.target.value );
+		this.setState( { candidateKey: event.target.value } );
 	}
 
 	render() {
@@ -50,7 +56,6 @@ class ResetPasswordSmsForm extends Component {
 			translate,
 			isValidating,
 			error,
-			validationKey,
 		} = this.props;
 
 		return (
@@ -68,8 +73,9 @@ class ResetPasswordSmsForm extends Component {
 					<FormTextInput
 						className="reset-password-sms-form__validation-code-input"
 						disabled={ isValidating }
-						value={ validationKey || '' }
+						value={ this.state.candidateKey }
 						onChange={ this.updateValidationKey }
+						autoFocus
 					/>
 					{ error && <ErrorMessage /> }
 					<FormButton className="reset-password-sms-form__submit-button" type="submit" disabled={ isValidating } >
@@ -88,7 +94,6 @@ export default connect(
 	( state ) => ( {
 		userData: getAccountRecoveryResetUserData( state ),
 		selectedMethod: getAccountRecoveryResetSelectedMethod( state ),
-		validationKey: getAccountRecoveryValidationKey( state ),
 		isValidating: isValidatingAccountRecoveryKey( state ),
 		error: getAccountRecoveryValidationError( state ),
 	} ),
