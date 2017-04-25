@@ -18,12 +18,14 @@ class LanguagePicker extends PureComponent {
 		valueKey: PropTypes.string,
 		value: PropTypes.any,
 		onChange: PropTypes.func,
+		onClick: PropTypes.func,
 	}
 
 	static defaultProps = {
 		languages: [],
 		valueKey: 'value',
 		onChange: noop,
+		onClick: noop,
 	}
 
 	constructor( props ) {
@@ -65,9 +67,14 @@ class LanguagePicker extends PureComponent {
 		} );
 	}
 
-	toggleOpen = () => {
+	toggleOpen() {
+		this.setState( { open: ! this.state.open } );
+	}
+
+	handleClick = ( event ) => {
 		if ( ! this.props.disabled ) {
-			this.setState( { open: ! this.state.open } );
+			this.props.onClick( event );
+			this.toggleOpen();
 		}
 	}
 
@@ -101,7 +108,7 @@ class LanguagePicker extends PureComponent {
 		const { disabled, translate } = this.props;
 
 		return (
-			<div className="language-picker" onClick={ this.toggleOpen } disabled={ disabled }>
+			<div className="language-picker" onClick={ this.handleClick } disabled={ disabled }>
 				<div className="language-picker__icon">
 					<div className="language-picker__icon-inner">
 						{ langCode }
