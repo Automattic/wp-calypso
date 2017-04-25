@@ -478,8 +478,11 @@ describe( 'utils', () => {
 				person: reducers,
 				count
 			} );
-			const state = nested( { person: { age: 22 } }, load );
-			expect( state ).to.eql( { person: { age: 22, height: 160 }, count: 1 } );
+			const valid = nested( { person: { age: 22 } }, load );
+			expect( valid ).to.eql( { person: { age: 22, height: 160 }, count: 1 } );
+
+			const invalid = nested( { person: { age: -5, height: 100 } }, load );
+			expect( invalid ).to.eql( { person: { age: 0, height: 160 }, count: 1 } );
 		} );
 
 		it( 'deeply nested reducers work', () => {
@@ -490,8 +493,11 @@ describe( 'utils', () => {
 				bob: nested,
 				count
 			} );
-			const state = veryNested( { bob: { person: { age: 22 } } }, load );
-			expect( state ).to.eql( { bob: { person: { age: 22, height: 160 } }, count: 1 } );
+			const valid = veryNested( { bob: { person: { age: 22 } } }, load );
+			expect( valid ).to.eql( { bob: { person: { age: 22, height: 160 } }, count: 1 } );
+
+			const invalid = veryNested( { bob: { person: { age: -5, height: 22 } } }, load );
+			expect( invalid ).to.eql( { bob: { person: { age: 0, height: 160 } }, count: 1 } );
 		} );
 	} );
 } );
