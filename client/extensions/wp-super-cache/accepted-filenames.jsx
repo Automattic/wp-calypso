@@ -60,7 +60,7 @@ const AcceptedFilenames = ( {
 						{ translate( 'Do not cache these page types.' ) }
 					</FormLabel>
 
-					<FormSettingExplanation className="wp-super-cache__condition-settings-explaination">
+					<FormSettingExplanation className="wp-super-cache__condition-settings-explanation">
 						{ translate(
 							' See the {{a}}Conditional Tags{{/a}} ' +
 							'documentation for a complete discussion on each type.',

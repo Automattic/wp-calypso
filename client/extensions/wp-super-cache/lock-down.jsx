@@ -44,7 +44,7 @@ const LockDown = ( {
 							</span>
 						</FormToggle>
 					</FormFieldset>
-					<FormSettingExplanation className="wp-super-cache__lock-down-explaination">
+					<FormSettingExplanation className="wp-super-cache__lock-down-explanation">
 						<p>
 							{ translate(
 								'When this is enabled, new comments on a post will not refresh the cached static files.'

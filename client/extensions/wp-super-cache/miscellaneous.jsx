@@ -33,7 +33,7 @@ const Miscellaneous = ( {
 	translate,
 } ) => {
 	return (
-		<div className="wp-super-cache__miscellaneous-section">
+		<div>
 			<SectionHeader
 				label={ translate( 'Miscellaneous' ) }>
 			</SectionHeader>
@@ -109,13 +109,18 @@ const Miscellaneous = ( {
 								) }
 							</span>
 							{ '1' === super_cache_enabled &&
-								<Notice isCompact={ true } status="is-error" text={ translate(
+								<Notice className="wp-super-cache__miscellaneous-304-notice"
+										isCompact={ true }
+										status="is-error"
+										text={ translate(
 									'304 browser caching is only supported when mod_rewrite caching ' +
 									'is not used.' ) }
 								/>
 							}
 							{ '1' !== super_cache_enabled &&
-								<Notice isCompact={ true } text={ translate(
+								<Notice className="wp-super-cache__miscellaneous-304-notice"
+										isCompact={ true }
+										text={ translate(
 									'304 support is disabled by default because some hosts have had problems with the ' +
 									'headers used in the past.' ) }
 								/>
