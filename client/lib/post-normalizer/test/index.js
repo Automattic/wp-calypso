@@ -963,7 +963,7 @@ describe( 'index', function() {
 			} );
 		}
 
-		it( 'strips empty elements and leading brs', function( done ) {
+		it( 'strips empty elements, leading brs, and styling attributes', function( done ) {
 			assertExcerptBecomes( `<br>
 <p>&nbsp;</p>
 <p class="wp-caption">caption</p>
