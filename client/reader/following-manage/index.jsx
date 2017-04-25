@@ -95,7 +95,7 @@ class FollowingManage extends Component {
 				<DocumentHead title={ 'Manage Following' } />
 				{ this.props.showBack && <HeaderBack /> }
 				{ searchResults.length === 0 && <QueryReaderFeedsSearch query={ sitesQuery } /> }
-				<h1 className="following-manage__header"> { translate( 'Follow Something New' ) } </h1>
+				<h1 className="following-manage__header">{ translate( 'Follow Something New' ) }</h1>
 				<div ref={ this.handleStreamMounted } />
 				<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<CompactCard className="following-manage__input-card">
