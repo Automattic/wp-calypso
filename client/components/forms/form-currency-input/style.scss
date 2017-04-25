@@ -1,0 +1,13 @@
+.form-currency-input {
+	-webkit-appearance: none;
+
+	&:not( :focus ) {
+		&.is-error {
+			border-color: $alert-red;
+		}
+
+		&.is-error:hover {
+			border-color: darken( $alert-red, 10 );
+		}
+	}
+}
