@@ -7,8 +7,10 @@ import { Set } from 'immutable';
 import {
 	get,
 	includes,
+	isArray,
 	isEqual,
 	isString,
+	mapValues,
 	omit,
 	overSome,
 	pickBy,
@@ -315,25 +317,17 @@ export const SeoForm = React.createClass( {
 			updatedOptions.advanced_seo_front_page_description = this.state.frontPageMetaDescription;
 		}
 
+		// Empty arrays for title formats were not working properly with saveSiteSettings.
+		// We are replacing them with empty strings here to allow users to delete custom title formats.
+		const prepareEmptyFormats = formats =>
+			mapValues( formats, format => isArray( format ) && 0 === format.length ? '' : format );
+
 		// Replace empty arrays with empty strings to fix custom format deletion bug.
-		updatedOptions.advanced_seo_title_formats = this.prepareEmptyFormats( updatedOptions.advanced_seo_title_formats );
+		updatedOptions.advanced_seo_title_formats = prepareEmptyFormats( updatedOptions.advanced_seo_title_formats );
 
 		this.props.saveSiteSettings( siteId, updatedOptions );
 
 		this.trackSubmission();
-	},
-
-	// Empty arrays for title formats were not working properly with saveSiteSettings.
-	// We are replacing them with empty strings here to allow users to delete custom title formats.
-	prepareEmptyFormats( updatedTitleFormats ) {
-		const emptyFormatTypes = pickBy(
-			updatedTitleFormats,
-			( titleFormat ) => Array.isArray( titleFormat ) && titleFormat.length === 0
-		);
-
-		Object.keys( emptyFormatTypes ).forEach( ( type ) => emptyFormatTypes[ type ] = '' );
-
-		return Object.assign( {}, updatedTitleFormats, emptyFormatTypes );
 	},
 
 	trackSubmission() {
