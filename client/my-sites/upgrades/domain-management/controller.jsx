@@ -19,7 +19,6 @@ import paths from 'my-sites/upgrades/paths';
 import ProductsList from 'lib/products-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import SiteRedirectData from 'components/data/domain-management/site-redirect';
-import SitesList from 'lib/sites-list';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -27,8 +26,7 @@ import TransferData from 'components/data/domain-management/transfer';
 import WhoisData from 'components/data/domain-management/whois';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 
-const productsList = new ProductsList(),
-	sites = new SitesList();
+const productsList = new ProductsList();
 
 const setTitle = function( title, pageContext ) {
 	pageContext.store.dispatch( setDocumentHeadTitle( title ) );
@@ -293,8 +291,12 @@ module.exports = {
 		);
 	},
 
-	domainManagementIndex() {
-		page.redirect( '/domains/manage' + ( sites.getSelectedSite() ? ( '/' + sites.getSelectedSite().slug ) : '' ) );
+	domainManagementIndex( pageContext ) {
+		const state = pageContext.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSiteSlug( state, siteId );
+
+		page.redirect( '/domains/manage' + ( siteSlug ? `/${ siteSlug }` : '' ) );
 	},
 
 	domainManagementTransfer( pageContext ) {
