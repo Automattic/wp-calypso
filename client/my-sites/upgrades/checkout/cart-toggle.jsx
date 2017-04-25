@@ -15,6 +15,10 @@ class CartToggle extends Component {
 		this.state = { isShowingCartOnMobile: false };
 	}
 
+	componentWillMount() {
+		showCartOnMobile( this.state.isShowingCartOnMobile );
+	}
+
 	toggleCartOnMobile = ( event ) => {
 		event.preventDefault();
 
