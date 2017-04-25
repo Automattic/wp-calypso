@@ -472,7 +472,7 @@ const ThemeSheet = React.createClass( {
 					<Button
 						primary={ true }
 						href={ '/themes/' }>
-						{ i18n.translate( 'See all themes' ) }
+						{ i18n.translate( 'See All Themes' ) }
 					</Button>
 				</Card>
 
