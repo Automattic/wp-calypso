@@ -10,6 +10,13 @@ import createSelector from 'lib/create-selector';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getUpcomingBillingTransactions } from 'state/selectors';
 
+/**
+ * Returns the slugs of all sites that are included in upcoming transactions, indexed by the site IDs.
+ * Sites that are not loaded yet are intentionally skipped.
+ *
+ * @param  {Object}   state   Global state tree
+ * @return {Object}           Site slugs, indexed by site ID
+ */
 const getSiteSlugsForUpcomingTransactions = createSelector(
 	( state ) => {
 		const siteIds = compact( uniq( map( getUpcomingBillingTransactions( state ), 'blog_id' ) ) )
