@@ -20,7 +20,21 @@
 
 .editor-revisions-list__revision {
 	border-top: 1px solid darken( $sidebar-bg-color, 5% );
-	padding: 1rem;
+
+	&.selected {
+		background: $blue-medium;
+
+		&, *, .button {
+			color: $white;
+		}
+	}
+
+	.button {
+		font-size: 13px;
+		padding: 1rem;
+		text-align: left;
+		width: 100%;
+	}
 }
 
 .editor-revisions-list__header {

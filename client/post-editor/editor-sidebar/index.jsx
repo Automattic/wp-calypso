@@ -26,6 +26,8 @@ export default class EditorSidebar extends Component {
 		onTrashingPost: PropTypes.func,
 		site: PropTypes.object,
 		type: PropTypes.string,
+		revisionId: PropTypes.number,
+		toggleRevision: PropTypes.func,
 		toggleSidebar: PropTypes.func,
 		setPostDate: PropTypes.func,
 	}
@@ -90,7 +92,12 @@ export default class EditorSidebar extends Component {
 					{
 						this.state.childSidebar === CHILD_SIDEBAR_NONE
 							? null
-							: <EditorRevisionsList siteId={ site.ID } postId={ post.ID } />
+							: <EditorRevisionsList
+								postId={ post.ID }
+								siteId={ site.ID }
+								revisionId={ this.props.revisionId }
+								toggleRevision={ this.props.toggleRevision }
+							/>
 					}
 				</div>
 			</div>

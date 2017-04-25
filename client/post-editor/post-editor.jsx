@@ -56,6 +56,7 @@ import { editedPostHasContent } from 'state/selectors';
 import EditorGroundControl from 'post-editor/editor-ground-control';
 import { isMobile } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
+import EditorDiffViewer from 'post-editor/editor-diff-viewer';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
@@ -86,7 +87,8 @@ export const PostEditor = React.createClass( {
 			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
-			isTitleFocused: false
+			isTitleFocused: false,
+			revisionId: null,
 		};
 	},
 
@@ -199,6 +201,12 @@ export const PostEditor = React.createClass( {
 		}
 	},
 
+	toggleRevision: function( revisionId ) {
+		this.setState( {
+			revisionId: revisionId === this.state.revisionId ? null : revisionId,
+		} );
+	},
+
 	render: function() {
 		const site = this.props.selectedSite || undefined;
 		const mode = this.getEditorMode();
@@ -279,6 +287,7 @@ export const PostEditor = React.createClass( {
 								<EditorTitle
 									onChange={ this.debouncedAutosave }
 									tabIndex={ 1 } />
+
 								{ this.state.post && isPage && site
 									? <EditorPageSlug
 										path={ this.state.post.URL && ( this.state.post.URL !== siteURL )
@@ -288,37 +297,57 @@ export const PostEditor = React.createClass( {
 										/>
 									: null
 								}
-								<SegmentedControl className="editor__switch-mode" compact={ true }>
-									<SegmentedControlItem
-										selected={ mode === 'tinymce' }
-										onClick={ this.switchEditorVisualMode }
-										title={ this.props.translate( 'Edit with a visual editor' ) }>
-										{ this.props.translate( 'Visual', { context: 'Editor writing mode' } ) }
-									</SegmentedControlItem>
-									<SegmentedControlItem
-										selected={ mode === 'html' }
-										onClick={ this.switchEditorHtmlMode }
-										title={ this.props.translate( 'Edit the raw HTML code' ) }>
-										HTML
-									</SegmentedControlItem>
-								</SegmentedControl>
+
+								{ this.state.revisionId === null && (
+									<SegmentedControl className="editor__switch-mode" compact={ true }>
+										<SegmentedControlItem
+											selected={ mode === 'tinymce' }
+											onClick={ this.switchEditorVisualMode }
+											title={ this.props.translate( 'Edit with a visual editor' ) }>
+											{ this.props.translate( 'Visual', { context: 'Editor writing mode' } ) }
+										</SegmentedControlItem>
+										<SegmentedControlItem
+											selected={ mode === 'html' }
+											onClick={ this.switchEditorHtmlMode }
+											title={ this.props.translate( 'Edit the raw HTML code' ) }>
+											HTML
+										</SegmentedControlItem>
+									</SegmentedControl>
+								) }
 							</div>
-							<hr className="editor__header-divider" />
-							<TinyMCE
-								ref={ this.storeEditor }
-								mode={ mode }
-								tabIndex={ 2 }
-								isNew={ this.state.isNew }
-								onSetContent={ this.debouncedSaveRawContent }
-								onInit={ this.onEditorInitialized }
-								onChange={ this.onEditorContentChange }
-								onKeyUp={ this.debouncedSaveRawContent }
-								onFocus={ this.onEditorFocus }
-								onTextEditorChange={ this.onEditorContentChange } />
+
+							{ this.state.revisionId !== null && (
+								<EditorDiffViewer
+									siteId={ site.ID }
+									postId={ this.state.post.ID }
+									revisionId={ this.state.revisionId }
+								/>
+							) }
+
+							<div className={ classNames(
+								'post-editor__tinymce-wrapper',
+								{ show: this.state.revisionId === null }
+							) }>
+								<hr className="editor__header-divider" />
+								<TinyMCE
+									ref={ this.storeEditor }
+									mode={ mode }
+									tabIndex={ 2 }
+									isNew={ this.state.isNew }
+									onSetContent={ this.debouncedSaveRawContent }
+									onInit={ this.onEditorInitialized }
+									onChange={ this.onEditorContentChange }
+									onKeyUp={ this.debouncedSaveRawContent }
+									onFocus={ this.onEditorFocus }
+									onTextEditorChange={ this.onEditorContentChange }
+								/>
+							</div>
 						</div>
 						<EditorWordCount />
 					</div>
 					<EditorSidebar
+						revisionId={ this.state.revisionId }
+						toggleRevision={ this.toggleRevision }
 						toggleSidebar={ this.toggleSidebar }
 						savedPost={ this.state.savedPost }
 						post={ this.state.post }
@@ -329,7 +358,7 @@ export const PostEditor = React.createClass( {
 						type={ this.props.type }
 						setPostDate={ this.setPostDate }
 						onSave={ this.onSave }
-						/>
+					/>
 					{ this.props.isSitePreviewable ?
 						<EditorPreview
 							showPreview={ this.state.showPreview }

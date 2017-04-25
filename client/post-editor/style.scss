@@ -160,6 +160,14 @@
 	}
 }
 
+.post-editor__tinymce-wrapper {
+	display: none;
+
+	&.show {
+		display: block;
+	}
+}
+
 .editor__header {
 	position: relative;
 	padding-bottom: 27px;

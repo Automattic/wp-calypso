@@ -4,16 +4,28 @@
 import { map, orderBy, random } from 'lodash';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import QueryPostRevisions from 'components/data/query-post-revisions';
 import EditorRevisionsListHeader from './header';
 import { getNormalizedPostRevisions } from 'state/posts/revisions/selectors';
 import PostTime from 'reader/post-time';
 
 class EditorRevisionsList extends Component {
+	constructor() {
+		super();
+		this.toggleRevision = this.toggleRevision.bind( this );
+	}
+
+	toggleRevision( event ) {
+		const revisionId = parseInt( event.currentTarget.dataset.revisionId, 10 );
+		this.props.toggleRevision( revisionId );
+	}
+
 	render() {
 		return (
 			<div>
@@ -28,29 +40,41 @@ class EditorRevisionsList extends Component {
 							deletions: FIXED_CHANGES[ random( 0, FIXED_CHANGES.length - 1 ) ],
 						};
 						return (
-							<li key={ revision.id } className="editor-revisions-list__revision">
-								<span className="editor-revisions-list__date">
-									<PostTime date={ revision.date } />
-								</span>
-								&nbsp;by&nbsp;
-								<span className="editor-revisions-list__author">
-									{ revision.author }
-								</span>
-								<br />
-
-								{ changes.additions > 0 && (
-									<span className="editor-revisions-list__additions">
-										{ changes.additions } words added
-									</span>
+							<li
+								className={ classNames(
+									'editor-revisions-list__revision',
+									{ selected: revision.id === this.props.revisionId }
 								) }
-
-								{ changes.additions > 0 && changes.deletions > 0 && ', ' }
-
-								{ changes.deletions > 0 && (
-									<span className="editor-revisions-list__deletions">
-										{ changes.deletions } words deleted
+								key={ revision.id }
+							>
+								<Button
+									borderless
+									data-revision-id={ revision.id }
+									onClick={ this.toggleRevision }
+								>
+									<span className="editor-revisions-list__date">
+										<PostTime date={ revision.date } />
 									</span>
-								) }
+									&nbsp;by&nbsp;
+									<span className="editor-revisions-list__author">
+										{ revision.author }
+									</span>
+									<br />
+
+									{ changes.additions > 0 && (
+										<span className="editor-revisions-list__additions">
+											{ changes.additions } words added
+										</span>
+									) }
+
+									{ changes.additions > 0 && changes.deletions > 0 && ', ' }
+
+									{ changes.deletions > 0 && (
+										<span className="editor-revisions-list__deletions">
+											{ changes.deletions } words deleted
+										</span>
+									) }
+								</Button>
 							</li>
 						);
 					} ) }
@@ -62,8 +86,10 @@ class EditorRevisionsList extends Component {
 
 EditorRevisionsList.propTypes = {
 	postId: PropTypes.number,
-	siteId: PropTypes.number,
+	revisionId: PropTypes.number,
 	revisions: PropTypes.array,
+	siteId: PropTypes.number,
+	toggleRevision: PropTypes.func,
 };
 
 export default connect(
