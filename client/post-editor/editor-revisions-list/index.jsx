@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { localize } from 'i18n-calypso';
 import { map, orderBy, random } from 'lodash';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
@@ -55,25 +56,32 @@ class EditorRevisionsList extends Component {
 									<span className="editor-revisions-list__date">
 										<PostTime date={ revision.date } />
 									</span>
-									&nbsp;by&nbsp;
+									&nbsp;
 									<span className="editor-revisions-list__author">
-										{ revision.author }
+										{ this.props.translate( 'by %(author)s', {
+											args: { author: revision.author },
+										} ) }
 									</span>
-									<br />
 
-									{ changes.additions > 0 && (
-										<span className="editor-revisions-list__additions">
-											{ changes.additions } words added
-										</span>
-									) }
+									<div className="editor-revisions-list__changes">
+										{ changes.additions > 0 && (
+											<span className="editor-revisions-list__additions">
+												{ this.props.translate( '%(changes)d words added', {
+													args: { changes: changes.additions },
+												} ) }
+											</span>
+										) }
 
-									{ changes.additions > 0 && changes.deletions > 0 && ', ' }
+										{ changes.additions > 0 && changes.deletions > 0 && ', ' }
 
-									{ changes.deletions > 0 && (
-										<span className="editor-revisions-list__deletions">
-											{ changes.deletions } words deleted
-										</span>
-									) }
+										{ changes.deletions > 0 && (
+											<span className="editor-revisions-list__deletions">
+												{ this.props.translate( '%(changes)d words removed', {
+													args: { changes: changes.deletions },
+												} ) }
+											</span>
+										) }
+									</div>
 								</Button>
 							</li>
 						);
@@ -90,6 +98,7 @@ EditorRevisionsList.propTypes = {
 	revisions: PropTypes.array,
 	siteId: PropTypes.number,
 	toggleRevision: PropTypes.func,
+	translate: PropTypes.func,
 };
 
 export default connect(
@@ -100,4 +109,4 @@ export default connect(
 			'desc'
 		),
 	} ),
-)( EditorRevisionsList );
+)( localize( EditorRevisionsList ) );
