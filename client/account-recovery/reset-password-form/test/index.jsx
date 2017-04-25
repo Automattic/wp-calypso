@@ -72,13 +72,25 @@ describe( 'ResetPasswordForm', () => {
 			const wrapper = mount(
 				<ResetPasswordFormComponent
 					resetOptions={ exampleResetOptions }
-					pickedMethod={ null }
 					translate={ identity }
 				/>
 			);
+			wrapper.setState( { selectedMethod: null } );
 
 			// Expect the button to be disabled
 			expect( wrapper.find( '.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
+		} );
+
+		it( 'should be enabled if a reset option is selected', function() {
+			const wrapper = mount(
+				<ResetPasswordFormComponent
+					resetOptions={ exampleResetOptions }
+					translate={ identity }
+				/>
+			);
+			wrapper.setState( { selectedMethod: 'primary_email' } );
+
+			expect( wrapper.find( '.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.not.be.ok;
 		} );
 
 		it( 'should be disabled when isRequesting is true.', function() {
