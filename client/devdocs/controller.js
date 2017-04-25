@@ -47,8 +47,8 @@ const devdocs = {
 	 */
 	devdocs: function( context ) {
 		function onSearchChange( searchTerm ) {
-			let query = context.query,
-				url = context.pathname;
+			const query = context.query;
+			let	pathname = context.pathname;
 
 			if ( searchTerm ) {
 				query.term = searchTerm;
@@ -59,10 +59,10 @@ const devdocs = {
 			const queryString = qs.stringify( query ).replace( /%20/g, '+' ).trim();
 
 			if ( queryString ) {
-				url += '?' + queryString;
+				pathname += '?' + queryString;
 			}
 
-			page.replace( url,
+			page.replace( pathname,
 				context.state,
 				false,
 				false );
