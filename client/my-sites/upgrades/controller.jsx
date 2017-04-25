@@ -103,7 +103,7 @@ module.exports = {
 
 	mapDomain: function( context ) {
 		var CartData = require( 'components/data/cart' ),
-			MapDomain = require( 'my-sites/upgrades/map-domain' ),
+			MapDomain = require( 'my-sites/upgrades/map-domain' ).default,
 			basePath = route.sectionify( context.path );
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
@@ -115,10 +115,7 @@ module.exports = {
 				<Main>
 					<CartData>
 						<MapDomain
-							store={ context.store }
-							productsList={ productsList }
-							initialQuery={ context.query.initialQuery }
-							sites={ sites } />
+							initialQuery={ context.query.initialQuery } />
 					</CartData>
 				</Main>
 			),
