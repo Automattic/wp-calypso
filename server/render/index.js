@@ -100,7 +100,7 @@ export function serverRender( req, res ) {
 			reduxSubtrees = reduxSubtrees.concat( [ 'ui', 'themes' ] );
 		}
 
-		// Send state to client. Don't we need to serialize here?
+		// Send state to client
 		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
 		// And cache on the server, too
 		if ( isEmpty( context.query ) ) {
