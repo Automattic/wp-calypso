@@ -27,6 +27,7 @@ describe( 'utils', () => {
 	let keyedReducer;
 	let reducer;
 	let withSchemaValidation;
+	let combineReducersWithPersistence;
 
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'lib/warn', noop );
@@ -36,6 +37,7 @@ describe( 'utils', () => {
 			extendAction,
 			keyedReducer,
 			withSchemaValidation,
+			combineReducersWithPersistence,
 		} = require( 'state/utils' ) );
 	} );
 
@@ -357,6 +359,7 @@ describe( 'utils', () => {
 
 	describe( '#withSchemaValidation', () => {
 		const load = { type: DESERIALIZE };
+		const write = { type: SERIALIZE };
 		const normal = { type: 'NORMAL' };
 		const schema = {
 			type: 'number',
@@ -367,6 +370,16 @@ describe( 'utils', () => {
 			'GROW' === action.type
 				? state + 1
 				: state;
+
+		it( 'should return initial state without a schema on SERIALIZE', () => {
+			const validated = withSchemaValidation( null, age );
+			expect( validated( 5, write ) ).to.equal( 0 );
+		} );
+
+		it( 'should return initial state without a schema on DESERIALIZE', () => {
+			const validated = withSchemaValidation( null, age );
+			expect( validated( 5, load ) ).to.equal( 0 );
+		} );
 
 		it( 'should invalidate DESERIALIZED state', () => {
 			const validated = withSchemaValidation( schema, age );
@@ -384,6 +397,76 @@ describe( 'utils', () => {
 			const validated = withSchemaValidation( schema, age );
 
 			expect( validated( 5, load ) ).to.equal( 5 );
+		} );
+
+		it( 'actions work as expected with schema', () => {
+			const validated = withSchemaValidation( schema, age );
+			expect( validated( 5, { type: 'GROW' } ) ).to.equal( 6 );
+		} );
+
+		it( 'actions work as expected without schema', () => {
+			const validated = withSchemaValidation( null, age );
+			expect( validated( 5, { type: 'GROW' } ) ).to.equal( 6 );
+		} );
+	} );
+
+	describe( '#combineReducersWithPersistence', () => {
+		const load = { type: DESERIALIZE };
+		const write = { type: SERIALIZE };
+		const grow = { type: 'GROW' };
+		const schema = {
+			type: 'number',
+			minimum: 0,
+		};
+
+		const age = ( state = 0, action ) =>
+			'GROW' === action.type
+				? state + 1
+				: state;
+		age.schema = schema;
+
+		const height = ( state = 160, action ) =>
+			'GROW' === action.type
+				? state + 1
+				: state;
+
+		let reducers;
+
+		beforeEach( () => {
+			reducers = combineReducersWithPersistence( {
+				age,
+				height
+			} );
+		} );
+
+		const appState = deepFreeze( {
+			age: 20,
+			height: 171
+		} );
+
+		it( 'should return initial state on init', () => {
+			const state = reducers( undefined, write );
+			expect( state ).to.eql( { age: 0, height: 160 } );
+		} );
+
+		it( 'should not persist height, because it is missing a schema', () => {
+			const state = reducers( appState, write );
+			expect( state ).to.eql( { age: 20, height: 160 } );
+		} );
+
+		it( 'should not load height, because it is missing a schema', () => {
+			const state = reducers( appState, load );
+			expect( state ).to.eql( { age: 20, height: 160 } );
+		} );
+
+		it( 'should validate age', () => {
+			const state = reducers( { age: -5 }, load );
+			expect( state ).to.eql( { age: 0, height: 160 } );
+		} );
+
+		it( 'actions work as expected', () => {
+			const state = reducers( appState, grow );
+			expect( state ).to.eql( { age: 21, height: 172 } );
 		} );
 	} );
 } );

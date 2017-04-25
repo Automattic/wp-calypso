@@ -2,7 +2,8 @@
  * External dependencies
  */
 import validator from 'is-my-json-valid';
-import { merge, flow, partialRight } from 'lodash';
+import { merge, flow, partialRight, reduce } from 'lodash';
+import { combineReducers } from 'redux';
 
 /**
  * Internal dependencies
@@ -260,7 +261,14 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
  * @returns {function} wrapped reducer handling validation on DESERIALIZE
  */
 export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => {
+	if ( SERIALIZE === action.type ) {
+		return schema ? reducer( state, action ) : reducer( undefined, { type: '@@calypso/INIT' } );
+	}
 	if ( DESERIALIZE === action.type ) {
+		if ( ! schema ) {
+			return reducer( undefined, { type: '@@calypso/INIT' } );
+		}
+
 		return state && isValidStateWithSchema( state, schema )
 			? state
 			: reducer( undefined, { type: '@@calypso/INIT' } );
@@ -268,3 +276,16 @@ export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => 
 
 	return reducer( state, action );
 };
+
+/**
+ * Returns a single reducing function, that ensures that persistence is opt-in.
+ * @param {object} reducers - object containing the reducers to merge
+ * @returns {function} - Returns the combined reducer function
+ */
+export function combineReducersWithPersistence( reducers ) {
+	const reducersWithPersistence = reduce( reducers, ( result, reducerWithSchema, key ) => {
+		const { schema } = reducerWithSchema;
+		return { ...result, [ key ]: withSchemaValidation( schema, reducerWithSchema ) };
+	}, {} );
+	return combineReducers( reducersWithPersistence );
+}
