@@ -473,7 +473,7 @@ describe( 'utils', () => {
 			expect( state ).to.eql( { age: 21, height: 172 } );
 		} );
 
-		it( 'nested reducers work', () => {
+		it( 'nested reducers work on load', () => {
 			const nested = combineReducersWithPersistence( {
 				person: reducers,
 				count
@@ -485,7 +485,19 @@ describe( 'utils', () => {
 			expect( invalid ).to.eql( { person: { age: 0, height: 160 }, count: 1 } );
 		} );
 
-		it( 'deeply nested reducers work', () => {
+		it( 'nested reducers work on persist', () => {
+			const nested = combineReducersWithPersistence( {
+				person: reducers,
+				count
+			} );
+			const valid = nested( { person: { age: 22 } }, write );
+			expect( valid ).to.eql( { person: { age: 22, height: 160 }, count: 1 } );
+
+			const invalid = nested( { person: { age: -5, height: 100 } }, write );
+			expect( invalid ).to.eql( { person: { age: -5, height: 160 }, count: 1 } );
+		} );
+
+		it( 'deeply nested reducers work on load', () => {
 			const nested = combineReducersWithPersistence( {
 				person: reducers
 			} );
@@ -493,11 +505,26 @@ describe( 'utils', () => {
 				bob: nested,
 				count
 			} );
-			const valid = veryNested( { bob: { person: { age: 22 } } }, load );
+			const valid = veryNested( { bob: { person: { age: 22 } }, count: 122 }, load );
 			expect( valid ).to.eql( { bob: { person: { age: 22, height: 160 } }, count: 1 } );
 
-			const invalid = veryNested( { bob: { person: { age: -5, height: 22 } } }, load );
+			const invalid = veryNested( { bob: { person: { age: -5, height: 22 } }, count: 123 }, load );
 			expect( invalid ).to.eql( { bob: { person: { age: 0, height: 160 } }, count: 1 } );
+		} );
+
+		it( 'deeply nested reducers work on persist', () => {
+			const nested = combineReducersWithPersistence( {
+				person: reducers
+			} );
+			const veryNested = combineReducersWithPersistence( {
+				bob: nested,
+				count
+			} );
+			const valid = veryNested( { bob: { person: { age: 22 } }, count: 122 }, write );
+			expect( valid ).to.eql( { bob: { person: { age: 22, height: 160 } }, count: 1 } );
+
+			const invalid = veryNested( { bob: { person: { age: -5, height: 22 } }, count: 123 }, write );
+			expect( invalid ).to.eql( { bob: { person: { age: -5, height: 160 } }, count: 1 } );
 		} );
 	} );
 } );
