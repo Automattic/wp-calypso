@@ -1,5 +1,6 @@
 export const transferStates = {
 	INQUIRING: 'inquiring',
+	FAILURE: 'failure',
 	START: 'start',
 	SETUP: 'setup',
 	CONFLICTS: 'conflicts',

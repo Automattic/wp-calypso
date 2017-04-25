@@ -25,7 +25,7 @@ import {
 export const status = ( state = null, action ) => get( {
 	[ ELIGIBILITY_UPDATE ]: state || transferStates.INQUIRING,
 	[ INITIATE ]: transferStates.START,
-	[ INITIATE_FAILURE ]: transferStates.INQUIRING,
+	[ INITIATE_FAILURE ]: transferStates.FAILURE,
 	[ SET_STATUS ]: action.status,
 	[ TRANSFER_UPDATE ]: 'complete' === action.status ? transferStates.COMPLETE : state,
 }, action.type, state );

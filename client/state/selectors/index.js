@@ -101,6 +101,7 @@ export isAccountRecoveryUserDataReady from './is-account-recovery-user-data-read
 export isActivatingJetpackJumpstart from './is-activating-jetpack-jumpstart';
 export isActivatingJetpackModule from './is-activating-jetpack-module';
 export isAutomatedTransferActive from './is-automated-transfer-active';
+export isAutomatedTransferFailed from './is-automated-transfer-failed';
 export isDeactivatingJetpackJumpstart from './is-deactivating-jetpack-jumpstart';
 export isDeactivatingJetpackModule from './is-deactivating-jetpack-module';
 export isDirectlyFailed from './is-directly-failed';
