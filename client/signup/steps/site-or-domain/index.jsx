@@ -10,6 +10,7 @@ import { cartItems } from 'lib/cart-values';
 import { tlds } from 'lib/domains/constants';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
+import Button from 'components/button';
 import Card from 'components/card';
 // TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
 import DomainImage from 'signup/steps/design-type-with-store/domain-image';
@@ -54,12 +55,14 @@ export default class SiteOrDomain extends Component {
 			{
 				type: 'page',
 				label: 'Start a new site',
-				image: <PageImage />
+				image: <PageImage />,
+				description: 'Choose a theme, customize, and launch your site. Free domain included with all plans.'
 			},
 			{
 				type: 'domain',
 				label: 'Just buy a domain',
-				image: <DomainImage />
+				image: <DomainImage />,
+				description: 'Show a "coming soon" notice on your domain. Add a site later.'
 			},
 		];
 	}
@@ -68,12 +71,21 @@ export default class SiteOrDomain extends Component {
 		return (
 			<div className="site-or-domain__choices">
 				{ this.getChoices().map( ( choice ) => (
-					<Card className="site-or-domain__choice" key={ choice.type }>
-						<a href="#" onClick={ ( event ) => this.handleClickChoice( event, choice.type ) }>
-							{ choice.image }
-							<h2>{ choice.label }</h2>
-						</a>
-					</Card>
+					<div className="site-or-domain__choice" key={ choice.type }>
+						<Card compact className="site-or-domain__choice-card">
+							<a className="site-or-domain__choice-link"
+								href="#"
+								onClick={ ( event ) => this.handleClickChoice( event, choice.type ) }>
+								{ choice.image }
+							</a>
+						</Card>
+						<Card compact className="site-or-domain__choice-card">
+							<div className="site-or-domain__choice-button">
+								<Button onClick={ ( event ) => this.handleClickChoice( event, choice.type ) }>{ choice.label }</Button>
+							</div>
+							<p>{ choice.description }</p>
+						</Card>
+					</div>
 				) ) }
 			</div>
 		);
@@ -146,6 +158,8 @@ export default class SiteOrDomain extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
+				headerText={ this.props.headerText }
+				subHeaderText={ this.props.subHeaderText }
 				fallbackHeaderText={ this.props.headerText }
 				fallbackSubHeaderText={ this.props.subHeaderText }
 				signupProgress={ this.props.signupProgress }

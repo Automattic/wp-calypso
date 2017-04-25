@@ -5,7 +5,6 @@
 }
 
 .site-or-domain__choice {
-	padding: 0;
 	margin: 10px;
 	min-width: 230px;
 	max-width: 330px;
@@ -30,4 +29,17 @@
 
 .site-or-domain__button {
 	text-align: center;
+}
+
+.site-or-domain__choice-button {
+	margin-bottom: 10px;
+	text-align: center;
+
+	.button {
+		text-transform: uppercase;
+	}
+}
+
+.site-or-domain__choice-card {
+	min-height: 170px;
 }
