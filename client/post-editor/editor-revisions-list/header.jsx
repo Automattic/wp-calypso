@@ -14,11 +14,11 @@ function EditorRevisionsListHeader( { restoreRevision, translate } ) {
 		<div className="editor-revisions-list__header">
 			<h3>{ translate( 'You\'re seeing the latest changes' ) }</h3>
 			<Button
-				className="editor-revisions-list__restore-revision"
+				className="editor-revisions-list__load-revision"
 				onClick={ restoreRevision }
 				compact={ true }
 			>
-				{ translate( 'Restore this revision' ) }
+				{ translate( 'Load revision' ) }
 			</Button>
 		</div>
 	);
