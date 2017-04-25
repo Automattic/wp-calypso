@@ -85,9 +85,7 @@ class JetpackConnectMain extends Component {
 		} );
 	}
 
-	dismissUrl() {
-		this.props.dismissUrl( this.state.currentUrl );
-	}
+	dismissUrl = () => this.props.dismissUrl( this.state.currentUrl );
 
 	isCurrentUrlFetched() {
 		return this.props.jetpackConnectSite &&
@@ -110,7 +108,7 @@ class JetpackConnectMain extends Component {
 		return untrailingslashit( url );
 	}
 
-	onURLChange() {
+	onURLChange = () => {
 		this.setState( { currentUrl: this.getCurrentUrl() } );
 		this.dismissUrl();
 	}
@@ -123,7 +121,7 @@ class JetpackConnectMain extends Component {
 		);
 	}
 
-	onURLEnter() {
+	onURLEnter = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
 			jetpack_url: this.state.currentUrl
 		} );
@@ -134,7 +132,7 @@ class JetpackConnectMain extends Component {
 		}
 	}
 
-	installJetpack() {
+	installJetpack = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_instructions_click', {
 			jetpack_funnel: this.state.currentUrl,
 			type: 'install_jetpack'
@@ -143,7 +141,7 @@ class JetpackConnectMain extends Component {
 		this.props.goToPluginInstall( this.state.currentUrl );
 	}
 
-	activateJetpack() {
+	activateJetpack = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_instructions_click', {
 			jetpack_funnel: this.state.currentUrl,
 			type: 'activate_jetpack'
@@ -236,9 +234,7 @@ class JetpackConnectMain extends Component {
 		return false;
 	}
 
-	handleOnClickTos() {
-		this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
-	}
+	handleOnClickTos = () => this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
 
 	getTexts() {
 		const {
