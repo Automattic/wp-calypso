@@ -25,8 +25,11 @@
 .following-manage__subscriptions-controls {
 	display: flex;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( "<960px" ) {
 		flex-wrap: wrap;
+	}
+
+	@include breakpoint( "<660px" ) {
 		margin: 0 15px;
 	}
 
@@ -34,12 +37,12 @@
 		margin-right: 10px;
 	}
 
-	.following-manage__subscriptions-heading {
+	.following-manage__subscriptions-header {
 		flex: 1;
-		font-weight: 700;
+		font-weight: 600;
 		padding-bottom: 15px;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( "<960px" ) {
 			flex: 0 0 auto;
 			width: 100%;
 		}
@@ -48,7 +51,7 @@
 	.following-manage__subscriptions-sort,
 	.following-manage__subscriptions-search {
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( "<960px" ) {
 			flex: 1;
 		}
 	}
@@ -58,7 +61,7 @@
 		font-size: 12px;
 		font-weight: normal;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( "<960px" ) {
 			width: 100%;
 		}
 	}
@@ -94,20 +97,30 @@
 		@include breakpoint( "<660px" ) {
 			display: none;
 		}
+
+		.gridicon.gridicons-ellipsis {
+			fill: lighten( $gray, 10% );
+			top: 0;
+		}
 	}
 }
 
 .following-manage__subscriptions-import-export-menu-item {
-	.reader-import-button__icon, .reader-export-button__icon {
+
+	.reader-import-button__icon,
+	.reader-export-button__icon {
 		vertical-align: middle;
 	}
 
-	&:hover {
-		.reader-import-button__icon, .reader-export-button__icon {
+	&:hover,
+	&:focus {
+		.reader-import-button__icon,
+		.reader-export-button__icon {
 			fill: $white;
 		}
 
-		.reader-import-button__label, .reader-export-button__label {
+		.reader-import-button__label,
+		.reader-export-button__label {
 			color: $white;
 		}
 	}
