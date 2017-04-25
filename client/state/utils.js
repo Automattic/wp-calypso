@@ -261,16 +261,20 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
  * @returns {function} wrapped reducer handling validation on DESERIALIZE
  */
 export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => {
+
+	const shouldDispatchAction = reducer.hasSchema || reducer.hasCustomHandler;
+
 	if ( SERIALIZE === action.type ) {
-		return schema || reducer.hasSchema ? reducer( state, action ) : reducer( undefined, { type: '@@calypso/INIT' } );
+		return schema || shouldDispatchAction ? reducer( state, action ) : reducer( undefined, { type: '@@calypso/INIT' } );
 	}
 	if ( DESERIALIZE === action.type ) {
-		if ( ! schema && ! reducer.hasSchema ) {
-			return reducer( undefined, { type: '@@calypso/INIT' } );
+
+		if ( shouldDispatchAction ) {
+			return reducer( state, action );
 		}
 
-		if ( ! schema && reducer.hasSchema ) {
-			return reducer( state, action );
+		if ( ! schema ) {
+			return reducer( undefined, { type: '@@calypso/INIT' } );
 		}
 
 		return state && isValidStateWithSchema( state, schema )

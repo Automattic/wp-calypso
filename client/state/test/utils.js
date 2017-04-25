@@ -28,6 +28,7 @@ describe( 'utils', () => {
 	let reducer;
 	let withSchemaValidation;
 	let combineReducersWithPersistence;
+	let isValidStateWithSchema;
 
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'lib/warn', noop );
@@ -38,6 +39,7 @@ describe( 'utils', () => {
 			keyedReducer,
 			withSchemaValidation,
 			combineReducersWithPersistence,
+			isValidStateWithSchema,
 		} = require( 'state/utils' ) );
 	} );
 
@@ -361,6 +363,7 @@ describe( 'utils', () => {
 		const load = { type: DESERIALIZE };
 		const write = { type: SERIALIZE };
 		const normal = { type: 'NORMAL' };
+		const grow = { type: 'GROW' };
 		const schema = {
 			type: 'number',
 			minimum: 0,
@@ -370,6 +373,23 @@ describe( 'utils', () => {
 			'GROW' === action.type
 				? state + 1
 				: state;
+
+		const date = ( state = new Date( 0 ), action ) => {
+			switch ( action.type ) {
+				case 'GROW':
+					return new Date( state.getTime() + 1 );
+				case SERIALIZE:
+					return state.getTime();
+				case DESERIALIZE:
+					if ( isValidStateWithSchema( state, schema ) ) {
+						return new Date( state );
+					}
+					return new Date( 0 );
+				default:
+					return state;
+			}
+		};
+		date.hasCustomHandler = true;
 
 		it( 'should return initial state without a schema on SERIALIZE', () => {
 			const validated = withSchemaValidation( null, age );
@@ -401,12 +421,20 @@ describe( 'utils', () => {
 
 		it( 'actions work as expected with schema', () => {
 			const validated = withSchemaValidation( schema, age );
-			expect( validated( 5, { type: 'GROW' } ) ).to.equal( 6 );
+			expect( validated( 5, grow ) ).to.equal( 6 );
 		} );
 
 		it( 'actions work as expected without schema', () => {
 			const validated = withSchemaValidation( null, age );
-			expect( validated( 5, { type: 'GROW' } ) ).to.equal( 6 );
+			expect( validated( 5, grow ) ).to.equal( 6 );
+		} );
+
+		it( 'supports reducers with custom handlers', () => {
+			const validated = withSchemaValidation( null, date );
+			expect( validated( 44, load ).getTime() ).to.equal( 44 );
+			expect( validated( -5, load ).getTime() ).to.equal( 0 );
+			expect( validated( new Date( 24 ), write ) ).to.equal( 24 );
+			expect( validated( new Date( 24 ), grow ).getTime() ).to.equal( 25 );
 		} );
 	} );
 
@@ -433,6 +461,23 @@ describe( 'utils', () => {
 			'GROW' === action.type
 				? state + 1
 				: state;
+
+		const date = ( state = new Date( 0 ), action ) => {
+			switch ( action.type ) {
+				case 'GROW':
+					return new Date( state.getTime() + 1 );
+				case SERIALIZE:
+					return state.getTime();
+				case DESERIALIZE:
+					if ( isValidStateWithSchema( state, schema ) ) {
+						return new Date( state );
+					}
+					return new Date( 0 );
+				default:
+					return state;
+			}
+		};
+		date.hasCustomHandler = true;
 
 		let reducers;
 
@@ -474,57 +519,77 @@ describe( 'utils', () => {
 		} );
 
 		it( 'nested reducers work on load', () => {
+			reducers = combineReducersWithPersistence( {
+				age,
+				height,
+				date
+			} );
 			const nested = combineReducersWithPersistence( {
 				person: reducers,
 				count
 			} );
-			const valid = nested( { person: { age: 22 } }, load );
-			expect( valid ).to.eql( { person: { age: 22, height: 160 }, count: 1 } );
+			const valid = nested( { person: { age: 22, date: 224 } }, load );
+			expect( valid ).to.eql( { person: { age: 22, height: 160, date: new Date( 224 ) }, count: 1 } );
 
-			const invalid = nested( { person: { age: -5, height: 100 } }, load );
-			expect( invalid ).to.eql( { person: { age: 0, height: 160 }, count: 1 } );
+			const invalid = nested( { person: { age: -5, height: 100, date: -5 } }, load );
+			expect( invalid ).to.eql( { person: { age: 0, height: 160, date: new Date( 0 ) }, count: 1 } );
 		} );
 
 		it( 'nested reducers work on persist', () => {
+			reducers = combineReducersWithPersistence( {
+				age,
+				height,
+				date
+			} );
 			const nested = combineReducersWithPersistence( {
 				person: reducers,
 				count
 			} );
-			const valid = nested( { person: { age: 22 } }, write );
-			expect( valid ).to.eql( { person: { age: 22, height: 160 }, count: 1 } );
+			const valid = nested( { person: { age: 22, date: new Date( 224 ) } }, write );
+			expect( valid ).to.eql( { person: { age: 22, height: 160, date: 224 }, count: 1 } );
 
-			const invalid = nested( { person: { age: -5, height: 100 } }, write );
-			expect( invalid ).to.eql( { person: { age: -5, height: 160 }, count: 1 } );
+			const invalid = nested( { person: { age: -5, height: 100, date: new Date( -500 ) } }, write );
+			expect( invalid ).to.eql( { person: { age: -5, height: 160, date: -500 }, count: 1 } );
 		} );
 
 		it( 'deeply nested reducers work on load', () => {
+			reducers = combineReducersWithPersistence( {
+				age,
+				height,
+				date
+			} );
 			const nested = combineReducersWithPersistence( {
-				person: reducers
+				person: reducers,
 			} );
 			const veryNested = combineReducersWithPersistence( {
 				bob: nested,
 				count
 			} );
-			const valid = veryNested( { bob: { person: { age: 22 } }, count: 122 }, load );
-			expect( valid ).to.eql( { bob: { person: { age: 22, height: 160 } }, count: 1 } );
+			const valid = veryNested( { bob: { person: { age: 22, date: 224 } }, count: 122 }, load );
+			expect( valid ).to.eql( { bob: { person: { age: 22, height: 160, date: new Date( 224 ) } }, count: 1 } );
 
-			const invalid = veryNested( { bob: { person: { age: -5, height: 22 } }, count: 123 }, load );
-			expect( invalid ).to.eql( { bob: { person: { age: 0, height: 160 } }, count: 1 } );
+			const invalid = veryNested( { bob: { person: { age: -5, height: 22, date: -500 } }, count: 123 }, load );
+			expect( invalid ).to.eql( { bob: { person: { age: 0, height: 160, date: new Date( 0 ) } }, count: 1 } );
 		} );
 
 		it( 'deeply nested reducers work on persist', () => {
+			reducers = combineReducersWithPersistence( {
+				age,
+				height,
+				date
+			} );
 			const nested = combineReducersWithPersistence( {
-				person: reducers
+				person: reducers,
 			} );
 			const veryNested = combineReducersWithPersistence( {
 				bob: nested,
 				count
 			} );
-			const valid = veryNested( { bob: { person: { age: 22 } }, count: 122 }, write );
-			expect( valid ).to.eql( { bob: { person: { age: 22, height: 160 } }, count: 1 } );
+			const valid = veryNested( { bob: { person: { age: 22, date: new Date( 234 ) } }, count: 122 }, write );
+			expect( valid ).to.eql( { bob: { person: { age: 22, height: 160, date: 234 } }, count: 1 } );
 
-			const invalid = veryNested( { bob: { person: { age: -5, height: 22 } }, count: 123 }, write );
-			expect( invalid ).to.eql( { bob: { person: { age: -5, height: 160 } }, count: 1 } );
+			const invalid = veryNested( { bob: { person: { age: -5, height: 22, date: new Date( -5 ) } }, count: 123 }, write );
+			expect( invalid ).to.eql( { bob: { person: { age: -5, height: 160, date: -5 } }, count: 1 } );
 		} );
 	} );
 } );
