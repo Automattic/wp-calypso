@@ -22,7 +22,11 @@ import { SERIALIZE } from 'state/action-types';
 import stateCache from 'state-cache';
 
 const debug = debugFactory( 'calypso:server-render' );
-const markupCache = new Lru( { max: 3000 } );
+const HOUR_IN_MS = 3600000;
+const markupCache = new Lru( {
+	max: 3000,
+	maxAge: HOUR_IN_MS
+} );
 
 function bumpStat( group, name ) {
 	const statUrl = `http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_${ group }=${ name }&t=${ Math.random() }`;
