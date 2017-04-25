@@ -278,7 +278,7 @@ export function getFilter( term ) {
  */
 export function prependFilterKeys( terms ) {
 	if ( terms ) {
-		return terms.split( ',' ).map( getFilter ).join( ' ' ) + ' ';
+		return terms.split( /[+\s]/ ).map( getFilter ).join( ' ' ) + ' ';
 	}
 	return '';
 }
@@ -325,7 +325,7 @@ export function getSortedFilterTerms( input ) {
 	const matches = input.match( FILTER_REGEX_GLOBAL );
 	if ( matches ) {
 		const terms = matches.filter( filterIsValid ).map( getTerm );
-		return sortFilterTerms( terms ).join( ',' );
+		return sortFilterTerms( terms ).join( '+' );
 	}
 	return '';
 }
