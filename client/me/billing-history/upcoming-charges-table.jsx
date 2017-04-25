@@ -10,25 +10,25 @@ import { localize } from 'i18n-calypso';
  */
 import purchasesPaths from 'me/purchases/paths';
 import TransactionsTable from './transactions-table';
-import { getSitesForUpcomingTransactions } from 'state/selectors';
+import { getSiteSlugsForUpcomingTransactions } from 'state/selectors';
 
 class UpcomingChargesTable extends Component {
 	static propTypes = {
 		// Computed props
-		sites: PropTypes.object.isRequired,
+		siteSlugs: PropTypes.object.isRequired,
 	}
 
 	renderTransaction = ( transaction ) => {
 		const { translate } = this.props;
-		const site = this.props.sites[ Number( transaction.blog_id ) ];
+		const siteSlug = this.props.siteSlugs[ Number( transaction.blog_id ) ];
 
-		if ( ! site ) {
+		if ( ! siteSlug ) {
 			return null;
 		}
 
 		return (
 			<div className="billing-history__transaction-links">
-				<a href={ purchasesPaths.managePurchase( site.slug, transaction.id ) }>
+				<a href={ purchasesPaths.managePurchase( siteSlug, transaction.id ) }>
 					{ translate( 'Manage Purchase' ) }
 				</a>
 			</div>
@@ -58,6 +58,6 @@ class UpcomingChargesTable extends Component {
 
 export default connect(
 	( state ) => ( {
-		sites: getSitesForUpcomingTransactions( state ),
+		siteSlugs: getSiteSlugsForUpcomingTransactions( state ),
 	} )
 )( localize( UpcomingChargesTable ) );

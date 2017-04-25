@@ -7,16 +7,16 @@ import { map, uniq } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { getSite } from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import { getUpcomingBillingTransactions } from 'state/selectors';
 
-const getSitesForUpcomingTransactions = createSelector(
+const getSiteSlugsForUpcomingTransactions = createSelector(
 	( state ) => {
 		const siteIds = uniq( map( getUpcomingBillingTransactions( state ), 'blog_id' ) )
 			.map( Number );
 		return siteIds.reduce( ( sites, siteId ) => ( {
 			...sites,
-			[ siteId ]: getSite( state, siteId ),
+			[ siteId ]: getSiteSlug( state, siteId ),
 		} ), {} );
 	},
 	( state ) => [
@@ -25,4 +25,4 @@ const getSitesForUpcomingTransactions = createSelector(
 	]
 );
 
-export default getSitesForUpcomingTransactions;
+export default getSiteSlugsForUpcomingTransactions;
