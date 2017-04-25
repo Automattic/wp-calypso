@@ -1,7 +1,7 @@
 .checkout {
 	position: relative;
 
-	.payment-box {
+	.checkout__payment-box-container {
 		margin-bottom: 0;
 		padding: 0;
 		width: 100%;
@@ -124,9 +124,12 @@
 		}
 	}
 
+	.payment-box {
+		padding: 0;
+	}
+
 	.payment-box__content {
 		min-height: 140px;
-		margin-top: 10px;
 	}
 
 	h5 {
@@ -142,7 +145,7 @@
 		}
 	}
 
-	.box-padding {
+	.checkout__box-padding {
 		padding: 16px 8px;
 
 		@include breakpoint( ">660px" ) {
@@ -208,6 +211,10 @@
 
 	.form-button {
 		margin-top: 20px;
+
+		@include breakpoint( "<660px" ) {
+			margin-bottom: 20px;
+		}
 	}
 
 	// Payment Boxes
@@ -217,7 +224,6 @@
 		color: darken( $gray, 10% );
 		margin: 16px 0;
 		padding: 0;
-		text-align: center;
 
 		@include breakpoint( ">660px" ) {
 			padding: 0;
@@ -244,8 +250,11 @@
 	}
 
 	.cart-coupon {
+		cursor: pointer;
 		display: none;
-		margin: 16px 0;
+		font-size: 14px;
+		margin: 5px 0 0;
+		padding: 10px 0;
 
 		// On larger screens, users can use the coupon functionality present on the sidebar
 		@include breakpoint( "<660px" ) {
@@ -262,7 +271,6 @@
 	.payment-box-actions {
 		margin: 20px -30px 0px -30px;
 		padding: 20px 30px 0 30px;
-		border-top: 1px solid lighten( $gray, 30% );
 		@include clear-fix;
 	}
 
@@ -368,6 +376,18 @@
 						right: 18px;
 				}
 			}
+		}
+	}
+
+	.checkout__summary-toggle {
+		cursor: pointer;
+		display: block;
+		font-size: 14px;
+		padding: 10px;
+		text-align: center;
+
+		@include breakpoint( ">660px" ) {
+			display: none;
 		}
 	}
 
@@ -789,11 +809,6 @@
 }
 
 // If there's no sidebar, we don't show the cart on the checkout page.
-@include breakpoint( "<660px" ) {
-	.secondary-cart {
-		display: none;
-	}
-}
 
 @include breakpoint( ">660px" ) {
 	.pay-button {
@@ -809,9 +824,11 @@
 	display: block;
 	clear: both;
 	font-size: 12px;
+	padding-bottom: 5px;
 
 	@include breakpoint( "<660px" ) {
-		margin: 20px 0 0 0;
+		border-bottom: 1px solid lighten( $gray, 30% );
+		margin: 10px 0 0 0;
 		text-align: center;
 	}
 

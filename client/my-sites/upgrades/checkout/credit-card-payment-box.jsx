@@ -22,6 +22,7 @@ import PaymentChatButton from './payment-chat-button';
 import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import ProgressBar from 'components/progress-bar';
+import CartToggle from './cart-toggle';
 
 var CreditCardPaymentBox = React.createClass( {
 	getInitialState: function() {
@@ -113,6 +114,10 @@ var CreditCardPaymentBox = React.createClass( {
 					: null
 				}
 
+				<CartCoupon cart={ cart } />
+
+				<CartToggle />
+
 				{
 					showPaymentChatButton &&
 					<PaymentChatButton
@@ -158,8 +163,6 @@ var CreditCardPaymentBox = React.createClass( {
 
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) } />
-
-				<CartCoupon cart={ cart } />
 
 				{ this.paymentBoxActions() }
 			</form>

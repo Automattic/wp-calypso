@@ -1,21 +1,23 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import {
+	some,
+} from 'lodash';
 
 /**
  * Internal dependencies
  */
-var PayButton = require( './pay-button' ),
-	PaymentBox = require( './payment-box' ),
-	TermsOfService = require( './terms-of-service' );
-
+import PayButton from './pay-button';
+import PaymentBox from './payment-box';
+import TermsOfService from './terms-of-service';
 import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/upgrades/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
-import { some } from 'lodash';
+import CartToggle from './cart-toggle';
 
 var CreditsPaymentBox = React.createClass( {
 	content: function() {
@@ -48,8 +50,6 @@ var CreditsPaymentBox = React.createClass( {
 
 				<TermsOfService />
 
-				<CartCoupon cart={ cart } />
-
 				<div className="payment-box-actions">
 					<PayButton
 						cart={ this.props.cart }
@@ -62,6 +62,10 @@ var CreditsPaymentBox = React.createClass( {
 							transactionStep={ transactionStep } />
 					}
 				</div>
+
+				<CartCoupon cart={ cart } />
+
+				<CartToggle />
 			</form>
 		);
 	},
