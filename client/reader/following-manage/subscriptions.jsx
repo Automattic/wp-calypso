@@ -85,6 +85,7 @@ class FollowingManageSubscriptions extends Component {
 							sites={ filteredFollows }
 							width={ width }
 							remoteTotalCount={ followsCount }
+							isFiltering={ !! query }
 						/>
 					}
 				</div>

@@ -21,6 +21,7 @@ class SitesWindowScroller extends Component {
 		sites: PropTypes.array.isRequired,
 		fetchNextPage: PropTypes.func,
 		remoteTotalCount: PropTypes.number.isRequired,
+		isFiltering: PropTypes.bool,
 	};
 
 	heightCache = new CellMeasurerCache( {
@@ -90,7 +91,12 @@ class SitesWindowScroller extends Component {
 	}
 
 	render() {
-		const { width, remoteTotalCount } = this.props;
+		const { sites, width, remoteTotalCount } = this.props;
+		// if filtering a list, then use the rowCount from the given list
+		// react-virtualized doesn't track the underlying data, so this will make sure it updates when the list does.
+		const listRowCount = this.props.isFiltering
+			? sites.length
+			: remoteTotalCount;
 
 		return (
 			<div className="following-manage__sites-window-scroller">
@@ -105,7 +111,7 @@ class SitesWindowScroller extends Component {
 							<List
 								autoHeight
 								height={ height }
-								rowCount={ this.props.remoteTotalCount }
+								rowCount={ listRowCount }
 								rowHeight={ this.heightCache.rowHeight }
 								rowRenderer={ this.siteRowRenderer }
 								onRowsRendered={ onRowsRendered }

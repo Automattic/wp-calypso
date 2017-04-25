@@ -93,7 +93,6 @@ class FollowingManage extends Component {
 		const { sitesQuery, subsQuery, translate, searchResults } = this.props;
 		const searchPlaceholderText = translate( 'Search millions of sites' );
 
-
 		return (
 			<ReaderMain className="following-manage">
 				<DocumentHead title={ 'Manage Following' } />
@@ -118,7 +117,12 @@ class FollowingManage extends Component {
 						</SearchInput>
 					</CompactCard>
 				</div>
-				{ ! sitesQuery && <FollowingManageSubscriptions width={ this.state.width } query={ subsQuery } /> }
+				{ ! sitesQuery && (
+					<FollowingManageSubscriptions
+						width={ this.state.width }
+						query={ subsQuery }
+					/>
+				) }
 				{ !! sitesQuery && (
 					<SitesWindowScroller
 						sites={ searchResults }
