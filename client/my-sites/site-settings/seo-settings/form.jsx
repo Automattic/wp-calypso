@@ -317,13 +317,13 @@ export const SeoForm = React.createClass( {
 			updatedOptions.advanced_seo_front_page_description = this.state.frontPageMetaDescription;
 		}
 
-		// Empty arrays for title formats were not working properly with saveSiteSettings.
-		// We are replacing them with empty strings here to allow users to delete custom title formats.
-		const prepareEmptyFormats = formats =>
-			mapValues( formats, format => isArray( format ) && 0 === format.length ? '' : format );
-
-		// Replace empty arrays with empty strings to fix custom format deletion bug.
-		updatedOptions.advanced_seo_title_formats = prepareEmptyFormats( updatedOptions.advanced_seo_title_formats );
+		// Since the absence of data indicates that there are no changes in the network request
+		// we need to send an indicator that we specifically want to clear the format
+		// We will pass an empty string in this case.
+		updatedOptions.advanced_seo_title_formats = mapValues(
+			updatedOptions.advanced_seo_title_formats,
+			format => isArray( format ) && 0 === format.length ? '' : format,
+		);
 
 		this.props.saveSiteSettings( siteId, updatedOptions );
 
