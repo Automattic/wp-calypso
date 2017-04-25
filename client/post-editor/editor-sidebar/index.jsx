@@ -90,7 +90,7 @@ export default class EditorSidebar extends Component {
 					{
 						this.state.childSidebar === CHILD_SIDEBAR_NONE
 							? null
-							: <EditorRevisionsList />
+							: <EditorRevisionsList siteId={ site.ID } postId={ post.ID } />
 					}
 				</div>
 			</div>

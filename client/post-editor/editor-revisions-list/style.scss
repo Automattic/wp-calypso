@@ -3,7 +3,7 @@
 }
 
 .editor-revisions-list__additions {
-	color: $alert-green;
+	color: $blue-medium;
 }
 
 .editor-revisions-list__deletions {
@@ -16,11 +16,16 @@
 	border-top: 1px solid darken( $sidebar-bg-color, 5% );
 	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 	font-size: 13px;
+}
+
+.editor-revisions-list__revision {
+	border-top: 1px solid darken( $sidebar-bg-color, 5% );
 	padding: 1rem;
 }
 
 .editor-revisions-list__header {
 	margin-bottom: 10px;
+	padding: 1rem;
 }
 
 .editor-revisions-list__restore-revision {
