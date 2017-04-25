@@ -16,8 +16,9 @@ const getSiteSlugsForUpcomingTransactions = createSelector(
 			.map( Number );
 		return siteIds.reduce( ( sites, siteId ) => {
 			const result = { ...sites };
-			if ( siteId ) {
-				result[ siteId ] = getSiteSlug( state, siteId );
+			const slug = getSiteSlug( state, siteId );
+			if ( slug ) {
+				result[ siteId ] = slug;
 			}
 			return result;
 		}, {} );
