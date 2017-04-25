@@ -15,6 +15,7 @@ import DocsComponent from './main';
 import { login } from 'lib/paths';
 import SingleDocComponent from './doc';
 import DesignAssetsComponent from './design';
+import ComponentDetail from './design/component-detail';
 import Blocks from './design/blocks';
 import DocsSelectors from './docs-selectors';
 import Typography from './design/typography';
@@ -95,7 +96,15 @@ const devdocs = {
 	// UI components
 	design: function( context ) {
 		renderWithReduxStore(
-			React.createElement( DesignAssetsComponent, {
+			React.createElement( DesignAssetsComponent ),
+			'primary',
+			context.store
+		);
+	},
+
+	componentDetail: function( context ) {
+		renderWithReduxStore(
+			React.createElement( ComponentDetail, {
 				component: context.params.component
 			} ),
 			'primary',
