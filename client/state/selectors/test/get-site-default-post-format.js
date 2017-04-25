@@ -13,9 +13,6 @@ describe( 'getSiteDefaultPostFormat()', () => {
 
 	it( 'should return default post format for a known site', () => {
 		const state = {
-			siteSettings: {
-				items: {},
-			},
 			sites: {
 				items: {
 					[ siteId ]: {
@@ -55,9 +52,6 @@ describe( 'getSiteDefaultPostFormat()', () => {
 
 	it( 'should return standard if post format is set to 0', () => {
 		const state = {
-			siteSettings: {
-				items: {},
-			},
 			sites: {
 				items: {
 					[ siteId ]: {
@@ -74,9 +68,6 @@ describe( 'getSiteDefaultPostFormat()', () => {
 
 	it( 'should return standard if post format is missing for a known site', () => {
 		const state = {
-			siteSettings: {
-				items: {},
-			},
 			sites: {
 				items: {
 					[ siteId ]: {
@@ -93,9 +84,6 @@ describe( 'getSiteDefaultPostFormat()', () => {
 
 	it( 'should return null for an unknown site', () => {
 		const state = {
-			siteSettings: {
-				items: {},
-			},
 			sites: {
 				items: {
 					77203074: {
