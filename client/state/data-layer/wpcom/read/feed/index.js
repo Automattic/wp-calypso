@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { map, identity } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { READER_FEED_SEARCH_REQUEST } from 'state/action-types';
@@ -27,7 +32,7 @@ export function initiateFeedSearch( store, action, next ) {
 }
 
 export function receiveFeeds( store, action, next, apiResponse ) {
-	const feeds = apiResponse.feeds;
+	const feeds = map( apiResponse.feeds, identity );
 
 	store.dispatch(
 		receiveFeedSearch( action.payload.query, feeds )
