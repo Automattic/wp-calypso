@@ -4,7 +4,7 @@
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
-import pick from 'lodash/pick';
+import { isEmpty, pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -17,9 +17,16 @@ import {
 	getDocumentHeadMeta,
 	getDocumentHeadLink
 } from 'state/document-head/selectors';
+import { reducer } from 'state';
+import { SERIALIZE } from 'state/action-types';
+import stateCache from 'state-cache';
 
 const debug = debugFactory( 'calypso:server-render' );
-const markupCache = new Lru( { max: 3000 } );
+const HOUR_IN_MS = 3600000;
+const markupCache = new Lru( {
+	max: 3000,
+	maxAge: HOUR_IN_MS
+} );
 
 function bumpStat( group, name ) {
 	const statUrl = `http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_${ group }=${ name }&t=${ Math.random() }`;
@@ -35,21 +42,19 @@ function bumpStat( group, name ) {
 *
 * @param {object} element - React element to be rendered to html
 * @param {string} key - (optional) custom key
-* @return {object} context object with `renderedLayout` field populated
+* @return {string} The rendered Layout
 */
 export function render( element, key = JSON.stringify( element ) ) {
 	try {
 		const startTime = Date.now();
 		debug( 'cache access for key', key );
 
-		let context = markupCache.get( key );
-		if ( ! context ) {
+		let renderedLayout = markupCache.get( key );
+		if ( ! renderedLayout ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
 			debug( 'cache miss for key', key );
-			const renderedLayout = ReactDomServer.renderToString( element );
-			context = { renderedLayout };
-
-			markupCache.set( key, context );
+			renderedLayout = ReactDomServer.renderToString( element );
+			markupCache.set( key, renderedLayout );
 		}
 		const rtsTimeMs = Date.now() - startTime;
 		debug( 'Server render time (ms)', rtsTimeMs );
@@ -59,7 +64,7 @@ export function render( element, key = JSON.stringify( element ) ) {
 			bumpStat( 'calypso-ssr', 'over-100ms-rendertostring' );
 		}
 
-		return context;
+		return renderedLayout;
 	} catch ( ex ) {
 		if ( config( 'env' ) === 'development' ) {
 			throw ex;
@@ -76,9 +81,13 @@ export function serverRender( req, res ) {
 		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
 	}
 
-	if ( config.isEnabled( 'server-side-rendering' ) && context.layout && ! context.user ) {
-		const key = context.renderCacheKey || JSON.stringify( context.layout );
-		Object.assign( context, render( context.layout, key ) );
+	if ( config.isEnabled( 'server-side-rendering' ) && context.layout && ! context.user && isEmpty( context.query ) ) {
+		// context.pathname doesn't include querystring, so it's a suitable cache key.
+		let key = context.pathname;
+		if ( req.error ) {
+			key = req.error.message;
+		}
+		context.renderedLayout = render( context.layout, key );
 	}
 
 	if ( context.store ) {
@@ -91,7 +100,14 @@ export function serverRender( req, res ) {
 			reduxSubtrees = reduxSubtrees.concat( [ 'ui', 'themes' ] );
 		}
 
+		// Send state to client
 		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
+		// And cache on the server, too
+		if ( isEmpty( context.query ) ) {
+			// Don't cache if we have query params
+			const serverState = reducer( context.initialReduxState, { type: SERIALIZE } );
+			stateCache.set( context.pathname, serverState );
+		}
 	}
 
 	context.head = { title, metas, links };
