@@ -13,13 +13,13 @@ import qs from 'qs';
  */
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
-import HeaderBack from 'reader/header-back';
 import SearchInput from 'components/search';
 import ReaderMain from 'components/reader-main';
 import { getReaderFeedsForQuery } from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import FollowingManageSubscriptions from './subscriptions';
 import SitesWindowScroller from './sites-window-scroller';
+import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 
 class FollowingManage extends Component {
 	static propTypes = {
@@ -93,9 +93,11 @@ class FollowingManage extends Component {
 		return (
 			<ReaderMain className="following-manage">
 				<DocumentHead title={ 'Manage Following' } />
-				{ this.props.showBack && <HeaderBack /> }
+				<MobileBackToSidebar>
+					<h1>{ translate( 'Manage Followed Sites' ) }</h1>
+				</MobileBackToSidebar>
 				{ searchResults.length === 0 && <QueryReaderFeedsSearch query={ sitesQuery } /> }
-				<h1 className="following-manage__header">{ translate( 'Follow Something New' ) }</h1>
+				<h2 className="following-manage__header">{ translate( 'Follow Something New' ) }</h2>
 				<div ref={ this.handleStreamMounted } />
 				<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<CompactCard className="following-manage__input-card">
