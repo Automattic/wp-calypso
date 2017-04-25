@@ -148,6 +148,7 @@ export isSiteCustomizable from './is-site-customizable';
 export isSiteOnFreePlan from './is-site-on-free-plan';
 export isSiteSupportingImageEditor from './is-site-supporting-image-editor';
 export isSiteUpgradeable from './is-site-upgradeable';
+export isSiteVip from './is-site-vip';
 export isTransientMedia from './is-transient-media';
 export isTracking from './is-tracking';
 export isTwoStepEnabled from './is-two-step-enabled';

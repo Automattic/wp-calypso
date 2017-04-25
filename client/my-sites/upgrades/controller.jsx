@@ -15,6 +15,7 @@ import analytics from 'lib/analytics';
 import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
 import Main from 'components/main';
+import MapDomain from 'my-sites/upgrades/map-domain';
 import upgradesActions from 'lib/upgrades/actions';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
@@ -103,7 +104,6 @@ module.exports = {
 
 	mapDomain: function( context ) {
 		var CartData = require( 'components/data/cart' ),
-			MapDomain = require( 'my-sites/upgrades/map-domain' ),
 			basePath = route.sectionify( context.path );
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
@@ -117,8 +117,7 @@ module.exports = {
 						<MapDomain
 							store={ context.store }
 							productsList={ productsList }
-							initialQuery={ context.query.initialQuery }
-							sites={ sites } />
+							initialQuery={ context.query.initialQuery } />
 					</CartData>
 				</Main>
 			),

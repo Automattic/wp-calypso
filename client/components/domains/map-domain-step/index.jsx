@@ -16,6 +16,7 @@ import DomainRegistrationSuggestion from 'components/domains/domain-registration
 import DomainProductPrice from 'components/domains/domain-product-price';
 import analyticsMixin from 'lib/mixins/analytics';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import Notice from 'components/notice';
 
 const MapDomainStep = React.createClass( {
@@ -188,4 +189,9 @@ const MapDomainStep = React.createClass( {
 	},
 } );
 
-module.exports = connect( state => ( { currentUser: getCurrentUser( state ) } ) )( localize( MapDomainStep ) );
+module.exports = connect( state => (
+	{
+		currentUser: getCurrentUser( state ),
+		selectedSite: getSelectedSite( state ),
+	}
+) )( localize( MapDomainStep ) );
