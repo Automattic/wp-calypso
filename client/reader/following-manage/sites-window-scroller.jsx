@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { List, WindowScroller, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
+import { debounce, defer } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -50,6 +51,22 @@ class SitesWindowScroller extends Component {
 		);
 	};
 
+	handleListMounted = list => {
+		this.listRef = list;
+	}
+
+	handleResize = debounce( () => {
+		this.heightCache.clearAll();
+		defer( () => this.listRef && this.listRef.recomputeRowHeights( 0 ) );
+	}, 50, { trailing: true } );
+
+	componentWillMount() {
+		window.addEventListener( 'resize', this.handleResize );
+	}
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.handleResize );
+	}
+
 	render() {
 		const { sites, width } = this.props;
 
@@ -65,6 +82,7 @@ class SitesWindowScroller extends Component {
 							rowRenderer={ this.siteRowRenderer }
 							scrollTop={ scrollTop }
 							width={ width }
+							ref={ this.handleListMounted }
 						/>
 					)}
 				</WindowScroller>
