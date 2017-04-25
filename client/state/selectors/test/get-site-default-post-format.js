@@ -13,6 +13,9 @@ describe( 'getSiteDefaultPostFormat()', () => {
 
 	it( 'should return default post format for a known site', () => {
 		const state = {
+			siteSettings: {
+				items: {},
+			},
 			sites: {
 				items: {
 					[ siteId ]: {
@@ -27,8 +30,34 @@ describe( 'getSiteDefaultPostFormat()', () => {
 		expect( output ).to.eql( 'image' );
 	} );
 
+	it( 'should prioritize default post format from settings', () => {
+		const state = {
+			siteSettings: {
+				items: {
+					[ siteId ]: {
+						default_post_format: 'aside',
+					},
+				},
+			},
+			sites: {
+				items: {
+					[ siteId ]: {
+						options: {
+							default_post_format: 'image',
+						}
+					},
+				}
+			}
+		};
+		const output = getSiteDefaultPostFormat( state, siteId );
+		expect( output ).to.eql( 'aside' );
+	} );
+
 	it( 'should return standard if post format is set to 0', () => {
 		const state = {
+			siteSettings: {
+				items: {},
+			},
 			sites: {
 				items: {
 					[ siteId ]: {
@@ -45,6 +74,9 @@ describe( 'getSiteDefaultPostFormat()', () => {
 
 	it( 'should return standard if post format is missing for a known site', () => {
 		const state = {
+			siteSettings: {
+				items: {},
+			},
 			sites: {
 				items: {
 					[ siteId ]: {
@@ -61,6 +93,9 @@ describe( 'getSiteDefaultPostFormat()', () => {
 
 	it( 'should return null for an unknown site', () => {
 		const state = {
+			siteSettings: {
+				items: {},
+			},
 			sites: {
 				items: {
 					77203074: {

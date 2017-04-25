@@ -1,7 +1,13 @@
 /**
+ * External
+ */
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { getRawSite, getSiteOption } from 'state/sites/selectors';
+import { getSiteSettings } from 'state/site-settings/selectors';
 
 /**
  * Returns the default post format of a site.
@@ -17,7 +23,11 @@ export default function getSiteDefaultPostFormat( state, siteId ) {
 		return null;
 	}
 
-	let defaultPostFormat = getSiteOption( state, siteId, 'default_post_format' );
+	let defaultPostFormat = get( getSiteSettings( state, siteId ), 'default_post_format' );
+	if ( ! defaultPostFormat ) {
+		defaultPostFormat = getSiteOption( state, siteId, 'default_post_format' );
+	}
+
 	if ( ! defaultPostFormat || defaultPostFormat === '0' ) {
 		defaultPostFormat = 'standard';
 	}
