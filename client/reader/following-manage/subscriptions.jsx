@@ -15,6 +15,8 @@ import FollowingManageSortControls from './sort-controls';
 import FollowingManageSearchFollowed from './search-followed';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import ReaderImportButton from 'blocks/reader-import-button';
+import ReaderExportButton from 'blocks/reader-export-button';
 
 class FollowingManageSubscriptions extends Component {
 	static propTypes = {
@@ -41,9 +43,13 @@ class FollowingManageSubscriptions extends Component {
 						<FollowingManageSearchFollowed />
 					</div>
 					<div className="following-manage__subscriptions-import-export">
-						<EllipsisMenu toggleTitle={ translate( 'More' ) }>
-							<PopoverMenuItem icon="cloud-upload">{ translate( 'Import' ) }</PopoverMenuItem>
-							<PopoverMenuItem icon="cloud-download">{ translate( 'Export' ) }</PopoverMenuItem>
+						<EllipsisMenu toggleTitle={ translate( 'More' ) } position="bottom">
+							<PopoverMenuItem className="following-manage__subscriptions-import-export-menu-item">
+								<ReaderImportButton />
+							</PopoverMenuItem>
+							<PopoverMenuItem className="following-manage__subscriptions-import-export-menu-item">
+								<ReaderExportButton />
+							</PopoverMenuItem>
 						</EllipsisMenu>
 					</div>
 				</div>
