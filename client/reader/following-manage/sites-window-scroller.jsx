@@ -85,17 +85,13 @@ class SitesWindowScroller extends Component {
 	componentWillMount() {
 		window.addEventListener( 'resize', this.handleResize );
 	}
+
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.handleResize );
 	}
 
 	render() {
-		const { forceRefresh, width, remoteTotalCount } = this.props;
-
-		if ( forceRefresh ) {
-			this.clearListCaches();
-		}
-
+		const { sites, width, remoteTotalCount, forceRefresh } = this.props;
 		return (
 			<div className="following-manage__sites-window-scroller">
 				<InfiniteLoader
@@ -109,7 +105,7 @@ class SitesWindowScroller extends Component {
 							<List
 								autoHeight
 								height={ height }
-								rowCount={ remoteTotalCount }
+								rowCount={ forceRefresh ? sites.length : remoteTotalCount }
 								rowHeight={ this.heightCache.rowHeight }
 								rowRenderer={ this.siteRowRenderer }
 								onRowsRendered={ onRowsRendered }

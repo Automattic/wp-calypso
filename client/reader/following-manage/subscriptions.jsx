@@ -27,7 +27,9 @@ class FollowingManageSubscriptions extends Component {
 	static propTypes = {
 		follows: PropTypes.array.isRequired,
 		doSearch: PropTypes.func.isRequired,
+		query: PropTypes.string,
 	};
+	state = { forceRefresh: false };
 
 	filterFollowsByQuery( query ) {
 		const { getFeed, getSite, follows } = this.props;
@@ -45,6 +47,11 @@ class FollowingManageSubscriptions extends Component {
 				`${ follow.URL }${ siteName }${ siteUrl }${ siteDescription }${ siteAuthor }`
 			).search( phraseRe ) !== -1;
 		} );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		const forceRefresh = ( nextProps.query !== this.props.query );
+		this.setState( { forceRefresh } );
 	}
 
 	render() {
@@ -85,7 +92,7 @@ class FollowingManageSubscriptions extends Component {
 							sites={ filteredFollows }
 							width={ width }
 							remoteTotalCount={ followsCount }
-							isFiltering={ !! query }
+							forceRefresh={ this.state.forceRefresh }
 						/>
 					}
 				</div>
