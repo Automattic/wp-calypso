@@ -19,9 +19,24 @@ import {
 	subscribeToNewCommentEmail,
 	unsubscribeToNewCommentEmail,
 } from '../actions';
-import { items } from '../reducer';
+import { items, itemsCount } from '../reducer';
 
 describe( 'reducer', () => {
+	describe( '#itemsCount()', () => {
+		it( 'should default to 0', () => {
+			const state = itemsCount( undefined, {} );
+			expect( state ).to.eql( 0 );
+		} );
+
+		it( 'should get set to whatever is in the payload', () => {
+			const state = itemsCount( undefined, {
+				type: READER_FOLLOWS_RECEIVE,
+				payload: { totalCount: 20 },
+			} );
+			expect( state ).eql( 20 );
+		} );
+	} );
+
 	describe( '#items()', () => {
 		it( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
@@ -63,7 +78,7 @@ describe( 'reducer', () => {
 			];
 			const state = items( original, {
 				type: READER_FOLLOWS_RECEIVE,
-				payload: { follows: incomingFollows, followCount: 20 }
+				payload: { follows: incomingFollows }
 			} );
 
 			// Updated follow
@@ -75,8 +90,6 @@ describe( 'reducer', () => {
 			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).to.eql(
 				{ is_following: true, blog_ID: 126, URL: 'https://postcardsfromthereader.wordpress.com' }
 			);
-
-			expect( state.itemsCount ).eql( 20 );
 		} );
 
 		it( 'should update when passed new post subscription info', () => {
