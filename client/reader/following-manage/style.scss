@@ -1,3 +1,12 @@
+.following-manage__header {
+	font-weight: 600;
+	margin: 14px 0 14px 14px;
+
+	@include breakpoint( ">660px" ) {
+		margin: 36px 0 20px;
+	}
+}
+
 .following-manage__search-new {
 	margin: 0;
 }
