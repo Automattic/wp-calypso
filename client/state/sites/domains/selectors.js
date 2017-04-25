@@ -65,12 +65,14 @@ export function getDecoratedSiteDomains( state, siteId ) {
 		return {
 			...domain,
 
-			// Add registration moment from registrationDate
+			autoRenewalMoment: domain.autoRenewalDate
+				? moment( domain.autoRenewalDate )
+				: null,
+
 			registrationMoment: domain.registrationDate
 				? moment( domain.registrationDate )
 				: null,
 
-			// Add expiration moment from expiry
 			expirationMoment: domain.expiry
 				? moment( domain.expiry )
 				: null

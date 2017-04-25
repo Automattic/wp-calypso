@@ -32,7 +32,7 @@ describe( 'assembler', () => {
 			wpcom_domain: true
 		} ),
 		redirectDomainObject = {
-			autoRenewalDate: undefined,
+			autoRenewalMoment: undefined,
 			currentUserCanManage: undefined,
 			expirationMoment: undefined,
 			expired: undefined,

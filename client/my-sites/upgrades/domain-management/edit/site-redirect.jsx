@@ -20,12 +20,12 @@ const SiteRedirect = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
 	getAutoRenewalOrExpirationDate() {
-		const { domain, moment, translate } = this.props;
+		const { domain, translate } = this.props;
 
 		if ( domain.isAutoRenewing ) {
 			return (
 				<Property label={ translate( 'Redirect renews on' ) }>
-					{ moment( domain.autoRenewalDate ).format( 'LL' ) }
+					{ domain.autoRenewalMoment.format( 'LL' ) }
 				</Property>
 			);
 		}

@@ -59,6 +59,17 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#decorateSiteDomains()', () => {
+		it( 'should return decorated site domains with autoRenewalMoment', () => {
+			const state = getStateInstance(),
+				domains = getDomainsBySiteId( state, firstSiteId );
+
+			const decoratedDomains = getDecoratedSiteDomains( state, firstSiteId );
+
+			const domainAutoRenewalMoment = moment( domains[ 0 ].autoRenewalDate );
+
+			expect( decoratedDomains[ 0 ].autoRenewalMoment.date() ).to.equal( domainAutoRenewalMoment.date() );
+		} );
+
 		it( 'should return decorated site domains with registrationMoment', () => {
 			const state = getStateInstance(),
 				domains = getDomainsBySiteId( state, firstSiteId );
