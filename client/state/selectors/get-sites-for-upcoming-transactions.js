@@ -19,7 +19,10 @@ const getSitesForUpcomingTransactions = createSelector(
 			[ siteId ]: getSite( state, siteId ),
 		} ), {} );
 	},
-	( state ) => getUpcomingBillingTransactions( state )
+	( state ) => [
+		getUpcomingBillingTransactions( state ),
+		state.sites.items,
+	]
 );
 
 export default getSitesForUpcomingTransactions;
