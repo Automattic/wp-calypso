@@ -1,37 +1,38 @@
 /**
  * External dependencies
  */
-const React = require( 'react' );
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-const analyticsMixin = require( 'lib/mixins/analytics' ),
-	Card = require( 'components/card/compact' ),
-	Header = require( './card/header' ),
-	Property = require( './card/property' ),
-	SubscriptionSettings = require( './card/subscription-settings' ),
-	VerticalNav = require( 'components/vertical-nav' ),
-	VerticalNavItem = require( 'components/vertical-nav/item' ),
-	paths = require( 'my-sites/upgrades/paths' );
+import analyticsMixin from 'lib/mixins/analytics';
+import Card from 'components/card/compact';
+import Header from './card/header';
+import Property from './card/property';
+import SubscriptionSettings from './card/subscription-settings';
+import VerticalNav from 'components/vertical-nav';
+import VerticalNavItem from 'components/vertical-nav/item';
+import paths from 'my-sites/upgrades/paths';
 
 const SiteRedirect = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
 	getAutoRenewalOrExpirationDate() {
-		const domain = this.props.domain;
+		const { domain, moment, translate } = this.props;
 
 		if ( domain.isAutoRenewing ) {
 			return (
-				<Property label={ this.translate( 'Redirect renews on' ) }>
-					{ domain.autoRenewalDate }
+				<Property label={ translate( 'Redirect renews on' ) }>
+					{ moment( domain.autoRenewalDate ).format( 'LL' ) }
 				</Property>
 			);
 		}
 
 		return (
-			<Property label={ this.translate( 'Redirect expires on' ) }>
-				{ domain.expirationMoment.format( 'MMMM D, YYYY' ) }
+			<Property label={ translate( 'Redirect expires on' ) }>
+				{ domain.expirationMoment.format( 'LL' ) }
 			</Property>
 		);
 	},
@@ -47,8 +48,8 @@ const SiteRedirect = React.createClass( {
 					<Header { ...this.props } />
 
 					<Card>
-						<Property label={ this.translate( 'Type', { context: 'A type of domain.' } ) }>
-							{ this.translate( 'Site Redirect' ) }
+						<Property label={ this.props.translate( 'Type', { context: 'A type of domain.' } ) }>
+							{ this.props.translate( 'Site Redirect' ) }
 						</Property>
 
 						{ this.getAutoRenewalOrExpirationDate() }
@@ -68,10 +69,10 @@ const SiteRedirect = React.createClass( {
 	siteRedirectNavItem() {
 		return (
 			<VerticalNavItem path={ paths.domainManagementRedirectSettings( this.props.selectedSite.slug, this.props.domain.name ) }>
-				{ this.translate( 'Redirect Settings' ) }
+				{ this.props.translate( 'Redirect Settings' ) }
 			</VerticalNavItem>
 		);
 	}
 } );
 
-module.exports = SiteRedirect;
+export default localize( SiteRedirect );

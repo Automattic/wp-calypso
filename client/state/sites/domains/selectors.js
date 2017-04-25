@@ -67,7 +67,7 @@ export function getDecoratedSiteDomains( state, siteId ) {
 
 			// Add registration moment from registrationDate
 			registrationMoment: domain.registrationDate
-				? moment( domain.registrationDate, 'MMMM D, YYYY', 'en' ).locale( false )
+				? moment( domain.registrationDate )
 				: null,
 
 			// Add expiration moment from expiry

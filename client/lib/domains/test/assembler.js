@@ -34,7 +34,7 @@ describe( 'assembler', () => {
 		redirectDomainObject = {
 			autoRenewalDate: undefined,
 			currentUserCanManage: undefined,
-			expirationMoment: null,
+			expirationMoment: undefined,
 			expired: undefined,
 			expirySoon: undefined,
 			googleAppsSubscription: undefined,
@@ -48,7 +48,6 @@ describe( 'assembler', () => {
 			privateDomain: undefined,
 			pendingTransfer: undefined,
 			registrar: undefined,
-			registrationDate: undefined,
 			registrationMoment: undefined,
 			type: domainTypes.SITE_REDIRECT,
 			hasZone: undefined,

@@ -65,9 +65,7 @@ describe( 'selectors', () => {
 
 			const decoratedDomains = getDecoratedSiteDomains( state, firstSiteId );
 
-			const domainRegistrationMoment = moment(
-				domains[ 0 ].registrationDate, 'MMMM D, YYYY', 'en'
-			).locale( false );
+			const domainRegistrationMoment = moment( domains[ 0 ].registrationDate );
 
 			expect( decoratedDomains[ 0 ].registrationMoment.date() ).to.equal( domainRegistrationMoment.date() );
 		} );
