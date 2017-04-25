@@ -28,20 +28,16 @@ class PeopleListSectionHeader extends Component {
 		isFollower: false
 	};
 
-	constructor() {
-		super();
+	constructor( props ) {
+		super( props );
 		this.state = {
 			addPeopleTooltip: false
 		};
 	}
 
-	showAddTooltip() {
-		this.setState( { addPeopleTooltip: true } );
-	}
+	showAddTooltip = () => this.setState( { addPeopleTooltip: true } );
 
-	hideAddTooltip() {
-		this.setState( { addPeopleTooltip: false } );
-	}
+	hideAddTooltip = () => this.setState( { addPeopleTooltip: false } );
 
 	shouldUseWPAdmin() {
 		return ! config.isEnabled( 'jetpack/invites' ) && get( this.props, 'site.jetpack' );
