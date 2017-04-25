@@ -9,6 +9,7 @@ import i18n from 'i18n-calypso';
  */
 import Card from 'components/card';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
+import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextArea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
@@ -54,8 +55,8 @@ export default class ProductFormDetailsCard extends Component {
 		const __ = i18n.translate;
 		return (
 			<Card className="products__product-form-details">
-				<div>
-					<FormLabel className="products__product-form-featured">
+				<div className="products__product-form-details-featured">
+					<FormLabel>
 						{ __( 'Featured' ) }
 						<CompactFormToggle
 							onChange={ this.toggleFeatured }
@@ -63,15 +64,20 @@ export default class ProductFormDetailsCard extends Component {
 						/>
 					</FormLabel>
 				</div>
-				<div>
-					<FormLabel className="products__product-form-name">
-						<span>{ __( 'Product name' ) }</span>
-						<FormTextInput value={ product.name || '' } onChange={ this.setName } />
-					</FormLabel>
-					<FormLabel className="products__product-form-description">
-						<span>{ __( 'Description' ) }</span>
-						<FormTextArea value={ product.description || '' } onChange={ this.setDescription } />
-					</FormLabel>
+				<div className="products__product-form-details-wrapper">
+					<div className="products__product-form-details-images">
+
+					</div>
+					<div className="products__product-form-details-basic">
+						<FormFieldSet>
+							<FormLabel htmlFor="name">{ __( 'Product name' ) }</FormLabel>
+							<FormTextInput name="name" value={ product.name || '' } onChange={ this.setName } />
+						</FormFieldSet>
+						<FormFieldSet className="products__product-form-details-basic-description">
+							<FormLabel htmlFor="description">{ __( 'Description' ) }</FormLabel>
+							<FormTextArea name="description" value={ product.description || '' } onChange={ this.setDescription } />
+						</FormFieldSet>
+					</div>
 				</div>
 			</Card>
 		);
