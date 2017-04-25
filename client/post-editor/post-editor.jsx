@@ -207,6 +207,10 @@ export const PostEditor = React.createClass( {
 		} );
 	},
 
+	loadRevision: function( revisionId = this.state.revisionId ) {
+		console.log( `loading revision ${ revisionId } ` );
+	},
+
 	render: function() {
 		const site = this.props.selectedSite || undefined;
 		const mode = this.getEditorMode();
@@ -346,6 +350,7 @@ export const PostEditor = React.createClass( {
 						<EditorWordCount />
 					</div>
 					<EditorSidebar
+						loadRevision={ this.loadRevision }
 						revisionId={ this.state.revisionId }
 						toggleRevision={ this.toggleRevision }
 						toggleSidebar={ this.toggleSidebar }

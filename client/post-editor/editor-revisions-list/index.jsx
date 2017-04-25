@@ -19,7 +19,7 @@ class EditorRevisionsList extends PureComponent {
 		return (
 			<div>
 				<QueryPostRevisions siteId={ this.props.siteId } postId={ this.props.postId } />
-				<EditorRevisionsListHeader />
+				<EditorRevisionsListHeader loadRevision={ this.props.loadRevision } />
 				<ul className="editor-revisions-list__list">
 					{ map( this.props.revisions, revision => {
 						return (
@@ -44,6 +44,7 @@ class EditorRevisionsList extends PureComponent {
 }
 
 EditorRevisionsList.propTypes = {
+	loadRevision: PropTypes.func,
 	postId: PropTypes.number,
 	revisionId: PropTypes.number,
 	revisions: PropTypes.array,
