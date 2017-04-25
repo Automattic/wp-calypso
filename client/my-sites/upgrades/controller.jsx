@@ -12,7 +12,6 @@ import { get, isEmpty } from 'lodash';
  * Internal Dependencies
  */
 import analytics from 'lib/analytics';
-import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
 import Main from 'components/main';
 import upgradesActions from 'lib/upgrades/actions';
@@ -31,7 +30,6 @@ import { getCurrentUser } from 'state/current-user/selectors';
 /**
  * Module variables
  */
-const sites = sitesFactory();
 const productsList = productsFactory();
 
 module.exports = {
