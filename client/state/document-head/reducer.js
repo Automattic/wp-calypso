@@ -6,62 +6,34 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
+import { createReducer } from 'state/utils';
 import {
 	DOCUMENT_HEAD_LINK_ADD,
 	DOCUMENT_HEAD_META_ADD,
 	DOCUMENT_HEAD_TITLE_SET,
 	DOCUMENT_HEAD_UNREAD_COUNT_SET,
-	SERIALIZE,
-	DESERIALIZE
 } from 'state/action-types';
+import { titleSchema, unreadCountSchema, linkSchema, metaSchema } from './schema';
 
-export function title( state = '', action ) {
-	switch ( action.type ) {
-		case DOCUMENT_HEAD_TITLE_SET:
-			return action.title;
-	}
+export const title = createReducer( '', {
+	[ DOCUMENT_HEAD_TITLE_SET ]: ( state, action ) => ( action.title )
+}, titleSchema );
 
-	return state;
-}
+export const unreadCount = createReducer( 0, {
+	[ DOCUMENT_HEAD_UNREAD_COUNT_SET ]: ( state, action ) => ( action.count )
+}, unreadCountSchema );
 
-export function unreadCount( state = 0, action ) {
-	switch ( action.type ) {
-		case DOCUMENT_HEAD_UNREAD_COUNT_SET:
-			return action.count;
-	}
+export const meta = createReducer( [ { property: 'og:site_name', content: 'WordPress.com' } ], {
+	[ DOCUMENT_HEAD_META_ADD ]: ( state, action ) => ( [ ...state, action.meta ] )
+}, metaSchema );
 
-	return state;
-}
+export const link = createReducer( [], {
+	[ DOCUMENT_HEAD_LINK_ADD ]: ( state, action ) => ( [ ...state, action.link ] )
+}, linkSchema );
 
-export function meta( state = [ { property: 'og:site_name', content: 'WordPress.com' } ], action ) {
-	switch ( action.type ) {
-		case DOCUMENT_HEAD_META_ADD:
-			return [ ...state, action.meta ];
-	}
-
-	return state;
-}
-
-export function link( state = [], action ) {
-	switch ( action.type ) {
-		case DOCUMENT_HEAD_LINK_ADD:
-			return [ ...state, action.link ];
-	}
-
-	return state;
-}
-
-const reducer = combineReducers( {
+export default combineReducers( {
 	link,
 	meta,
 	title,
 	unreadCount
 } );
-
-export default function( state, action ) {
-	if ( SERIALIZE === action.type || DESERIALIZE === action.type ) {
-		return {};
-	}
-
-	return reducer( state, action );
-}
