@@ -24,6 +24,7 @@ import {
 import {
 	setValidationKey,
 	validateRequest,
+	unsetResetMethod,
 } from 'state/account-recovery/reset/actions';
 
 class ResetPasswordSmsForm extends Component {
@@ -74,7 +75,7 @@ class ResetPasswordSmsForm extends Component {
 						{ translate( 'Continue' ) }
 					</FormButton>
 				</form>
-				<a href="/account-recovery/reset-password/" className="reset-password-sms-form__no-sms-link">
+				<a href="#" className="reset-password-sms-form__no-sms-link" onClick={ this.props.unsetResetMethod }>
 					{ translate( 'No SMS?' ) }
 				</a>
 			</Card>
@@ -93,5 +94,6 @@ export default connect(
 	{
 		setValidationKey,
 		validateRequest,
+		unsetResetMethod,
 	}
 )( localize( ResetPasswordSmsForm ) );
