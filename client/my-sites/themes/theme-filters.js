@@ -273,7 +273,7 @@ export function getFilter( term ) {
  * For array of terms recreate full search string in
  * "taxonomy:term taxonomy:term" search-box format.
  *
- * @param {Array} terms - the terms slugs
+ * @param {string} terms - space or + separated list of filter terms
  * @return {string}     - complete taxonomy:term filter string, or empty string if term is not valid
  */
 export function prependFilterKeys( terms ) {
