@@ -1,32 +1,20 @@
 /**
  * External dependencies
  */
-import { localize } from 'i18n-calypso';
-import { map, orderBy, random } from 'lodash';
-import React, { Component, PropTypes } from 'react';
+import { map, orderBy } from 'lodash';
+import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import QueryPostRevisions from 'components/data/query-post-revisions';
 import EditorRevisionsListHeader from './header';
 import { getNormalizedPostRevisions } from 'state/posts/revisions/selectors';
-import PostTime from 'reader/post-time';
+import EditorRevisionsListItem from './item';
 
-class EditorRevisionsList extends Component {
-	constructor() {
-		super();
-		this.toggleRevision = this.toggleRevision.bind( this );
-	}
-
-	toggleRevision( event ) {
-		const revisionId = parseInt( event.currentTarget.dataset.revisionId, 10 );
-		this.props.toggleRevision( revisionId );
-	}
-
+class EditorRevisionsList extends PureComponent {
 	render() {
 		return (
 			<div>
@@ -34,12 +22,6 @@ class EditorRevisionsList extends Component {
 				<EditorRevisionsListHeader />
 				<ul className="editor-revisions-list__list">
 					{ map( this.props.revisions, revision => {
-						// NOTE: Used to randomly fill the second line of the revisions list
-						const FIXED_CHANGES = [ 0, 12, 24, 100, 200, 1023, 4020, 10450 ];
-						const changes = {
-							additions: FIXED_CHANGES[ random( 0, FIXED_CHANGES.length - 1 ) ],
-							deletions: FIXED_CHANGES[ random( 0, FIXED_CHANGES.length - 1 ) ],
-						};
 						return (
 							<li
 								className={ classNames(
@@ -48,41 +30,10 @@ class EditorRevisionsList extends Component {
 								) }
 								key={ revision.id }
 							>
-								<Button
-									borderless
-									data-revision-id={ revision.id }
-									onClick={ this.toggleRevision }
-								>
-									<span className="editor-revisions-list__date">
-										<PostTime date={ revision.date } />
-									</span>
-									&nbsp;
-									<span className="editor-revisions-list__author">
-										{ this.props.translate( 'by %(author)s', {
-											args: { author: revision.author },
-										} ) }
-									</span>
-
-									<div className="editor-revisions-list__changes">
-										{ changes.additions > 0 && (
-											<span className="editor-revisions-list__additions">
-												{ this.props.translate( '%(changes)d words added', {
-													args: { changes: changes.additions },
-												} ) }
-											</span>
-										) }
-
-										{ changes.additions > 0 && changes.deletions > 0 && ', ' }
-
-										{ changes.deletions > 0 && (
-											<span className="editor-revisions-list__deletions">
-												{ this.props.translate( '%(changes)d words removed', {
-													args: { changes: changes.deletions },
-												} ) }
-											</span>
-										) }
-									</div>
-								</Button>
+								<EditorRevisionsListItem
+									revision={ revision }
+									toggleRevision={ this.props.toggleRevision }
+								/>
 							</li>
 						);
 					} ) }
@@ -98,7 +49,6 @@ EditorRevisionsList.propTypes = {
 	revisions: PropTypes.array,
 	siteId: PropTypes.number,
 	toggleRevision: PropTypes.func,
-	translate: PropTypes.func,
 };
 
 export default connect(
@@ -109,4 +59,4 @@ export default connect(
 			'desc'
 		),
 	} ),
-)( localize( EditorRevisionsList ) );
+)( EditorRevisionsList );
