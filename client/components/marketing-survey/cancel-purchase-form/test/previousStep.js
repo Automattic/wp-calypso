@@ -11,12 +11,12 @@ import previousStep from '../previousStep';
 describe( 'previousStep', function() {
 	const steps = [ 'a', 'b', 'c' ];
 
-	it( 'should return false if current step is unknown', function() {
-		expect( previousStep( 'unknown', steps ) ).to.equal( false );
+	it( 'should return initial step if current step is unknown', function() {
+		expect( previousStep( 'unknown', steps ) ).to.equal( 'a' );
 	} );
 
-	it( 'should return false if current step is initial step', function() {
-		expect( previousStep( 'a', steps ) ).to.equal( false );
+	it( 'should return initial step if current step is initial step', function() {
+		expect( previousStep( 'a', steps ) ).to.equal( 'a' );
 	} );
 
 	it( 'should return previous step current step is subsequent step', function() {

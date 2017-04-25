@@ -5,5 +5,5 @@ export default function nextStep( currentStep, steps ) {
 		return steps[ index + 1 ];
 	}
 
-	return false;
+	return steps[ steps.length - 1 ];
 }
