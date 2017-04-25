@@ -429,6 +429,10 @@ describe( 'utils', () => {
 			'GROW' === action.type
 				? state + 1
 				: state;
+		const count = ( state = 1, action ) =>
+			'GROW' === action.type
+				? state + 1
+				: state;
 
 		let reducers;
 
@@ -467,6 +471,27 @@ describe( 'utils', () => {
 		it( 'actions work as expected', () => {
 			const state = reducers( appState, grow );
 			expect( state ).to.eql( { age: 21, height: 172 } );
+		} );
+
+		it( 'nested reducers work', () => {
+			const nested = combineReducersWithPersistence( {
+				person: reducers,
+				count
+			} );
+			const state = nested( { person: { age: 22 } }, load );
+			expect( state ).to.eql( { person: { age: 22, height: 160 }, count: 1 } );
+		} );
+
+		it( 'deeply nested reducers work', () => {
+			const nested = combineReducersWithPersistence( {
+				person: reducers
+			} );
+			const veryNested = combineReducersWithPersistence( {
+				bob: nested,
+				count
+			} );
+			const state = veryNested( { bob: { person: { age: 22 } } }, load );
+			expect( state ).to.eql( { bob: { person: { age: 22, height: 160 } }, count: 1 } );
 		} );
 	} );
 } );
