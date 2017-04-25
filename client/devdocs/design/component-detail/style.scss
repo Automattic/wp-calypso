@@ -1,0 +1,22 @@
+
+.component-detail {
+
+}
+
+.component-detail__title {
+  margin-bottom: 20px;
+  color: $gray-dark;
+  font-family: $serif;
+  font-size: 38px;
+  font-weight: bold;
+}
+
+.component-detail__example {
+  margin-bottom: 20px;
+}
+
+.component-detail__tree {
+  max-height: 270px;
+  overflow: scroll;
+  border: solid 1px #ddd;
+}
