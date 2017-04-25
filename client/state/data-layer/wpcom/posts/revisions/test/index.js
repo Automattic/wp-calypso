@@ -28,8 +28,8 @@ const successfulPostRevisionsResponse = [
 		date: '2017-04-20T12:14:40',
 		date_gmt: '2017-04-20T12:14:40',
 		id: 11,
-		modified: '2017-04-21T12:14:40',
-		modified_gmt: '2017-04-21T12:14:40',
+		modified: '2017-04-21T12:14:50',
+		modified_gmt: '2017-04-21T12:14:50',
 		parent: 10,
 		title: {
 			rendered: 'Sed nobis ab earum',
@@ -46,11 +46,9 @@ const successfulPostRevisionsResponse = [
 const normalizedPostRevisions = [
 	{
 		author: 1,
-		date: '2017-04-20T12:14:40',
-		date_gmt: '2017-04-20T12:14:40',
+		date: '2017-04-20T12:14:40Z',
 		id: 11,
-		modified: '2017-04-21T12:14:40',
-		modified_gmt: '2017-04-21T12:14:40',
+		modified: '2017-04-21T12:14:50Z',
 		parent: 10,
 		title: 'Sed nobis ab earum',
 		content: '<p>Lorem ipsum</p>',
@@ -59,10 +57,38 @@ const normalizedPostRevisions = [
 ];
 
 describe( '#normalizeRevision', () => {
+	it( 'should keep UTC dates formatted with a timezone marker (`Z`)', () => {
+		expect( normalizeRevision( {
+			date: '2017-04-20T12:14:40',
+			date_gmt: '2017-04-20T12:14:40',
+			modified: '2017-04-20T12:14:50',
+			modified_gmt: '2017-04-20T12:14:50',
+		} ) ).to.eql( {
+			date: '2017-04-20T12:14:40Z',
+			modified: '2017-04-20T12:14:50Z',
+		} );
+	} );
+
 	it( 'should only keep the rendered version of `title`, `content` and `excerpt`', () => {
-		expect(
-			map( successfulPostRevisionsResponse, normalizeRevision )
-		).to.eql( normalizedPostRevisions );
+		expect( normalizeRevision( {
+			title: {
+				rendered: 'Sed nobis ab earum',
+			},
+			content: {
+				rendered: '<p>Lorem ipsum</p>',
+			},
+			excerpt: {
+				rendered: '',
+			},
+		} ) ).to.eql( {
+			title: 'Sed nobis ab earum',
+			content: '<p>Lorem ipsum</p>',
+			excerpt: '',
+		} );
+	} );
+
+	it( 'should not have any additional property', () => {
+		expect( map( successfulPostRevisionsResponse, normalizeRevision ) ).to.eql( normalizedPostRevisions );
 	} );
 } );
 

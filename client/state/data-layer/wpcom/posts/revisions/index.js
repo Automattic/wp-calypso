@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { flow, map } from 'lodash';
+import { flow, map, omit } from 'lodash';
+import mapKeys from 'lodash/fp/mapKeys';
 import mapValues from 'lodash/fp/mapValues';
 import pick from 'lodash/fp/pick';
 
@@ -31,10 +32,15 @@ export function normalizeRevision( revision ) {
 	}
 
 	return {
-		...revision,
+		...omit( revision, [ 'title', 'content', 'excerpt', 'date', 'date_gmt', 'modified', 'modified_gmt' ] ),
 		...flow(
 			pick( [ 'title', 'content', 'excerpt' ] ),
 			mapValues( ( val = {} ) => val.rendered )
+		)( revision ),
+		...flow(
+			pick( [ 'date_gmt', 'modified_gmt' ] ),
+			mapValues( val => `${ val }Z` ),
+			mapKeys( key => key.slice( 0, -'_gmt'.length ) )
 		)( revision )
 	};
 }
