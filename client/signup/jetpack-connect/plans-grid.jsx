@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -10,8 +10,7 @@ import Main from 'components/main';
 import StepHeader from '../step-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 
-export default React.createClass( {
-	displayName: 'JetpackPlansGrid',
+export default class JetpackPlansGrid extends Component {
 
 	renderConnectHeader() {
 		let headerText = this.translate( 'Your site is now connected!' );
@@ -35,7 +34,7 @@ export default React.createClass( {
 				step={ 1 }
 				steps={ 3 } />
 		);
-	},
+	}
 
 	render() {
 		const defaultJetpackSite = { jetpack: true, plan: {}, isUpgradeable: () => true };
@@ -58,4 +57,4 @@ export default React.createClass( {
 			</Main>
 		);
 	}
-} );
+}
