@@ -22,19 +22,14 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	helpers = require( './helpers' ),
 	analytics = require( 'lib/analytics' ),
 	utils = require( 'lib/posts/utils' ),
-	classNames = require( 'classnames' ),
-	config = require( 'config' );
+	classNames = require( 'classnames' );
 
 import MenuSeparator from 'components/popover/menu-separator';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
 import {
 	isFrontPage,
 	isPostsPage,
 } from 'state/pages/selectors';
-import { setFrontPage } from 'state/sites/actions';
-import { userCan } from 'lib/site/utils';
-import { updateSitesList } from './helpers';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getPreviewURL } from 'lib/posts/utils';
@@ -112,32 +107,6 @@ const Page = React.createClass( {
 		return ( this.props.site && this.props.site.domain ) || '...';
 	},
 
-	setAsHomepage: function() {
-		this.setState( { showPageActions: false } );
-		this.props.setFrontPage( this.props.page.site_ID, this.props.page.ID, updateSitesList );
-	},
-
-	getSetAsHomepageItem: function() {
-		if ( ! this.props.selectedSiteId ) {
-			return null;
-		}
-
-		const isPublished = this.props.page.status === 'publish';
-
-		if ( ! isPublished || this.props.isFrontPage ||
-			! config.isEnabled( 'manage/pages/set-homepage' ) ||
-			! userCan( 'edit_theme_options', this.props.site ) ) {
-			return null;
-		}
-
-		return (
-			<PopoverMenuItem onClick={ this.setAsHomepage }>
-				<Gridicon icon="house" size={ 18 } />
-				{ this.translate( 'Set as Homepage' ) }
-			</PopoverMenuItem>
-		);
-	},
-
 	viewPage: function( event ) {
 		event.preventDefault();
 		const { isPreviewable, previewURL } = this.props;
@@ -211,19 +180,9 @@ const Page = React.createClass( {
 			return null;
 		}
 
-		if ( config.isEnabled( 'manage/pages/set-homepage' ) ) {
-			return ( <div className="page__popover-more-info">{
-				this.translate( 'This page is set as your site\'s homepage' )
-			}</div> );
-		} else {
-			return ( <div className="page__popover-more-info">{
-				this.translate( 'Currently set as {{link}}Front Page{{/link}}', {
-					components: {
-						link: <a target="_blank" rel="noopener noreferrer" href={ this.props.site.options.admin_url + 'options-reading.php' } />
-					}
-				} )
-			}</div> );
-		}
+		return ( <div className="page__popover-more-info">{
+			this.translate( 'This page is set as your site\'s homepage' )
+		}</div> );
 	},
 
 	getPublishItem: function() {
@@ -354,7 +313,6 @@ const Page = React.createClass( {
 			depthIndicator = '— ';
 		}
 
-		const setAsHomepageItem = this.getSetAsHomepageItem();
 		const viewItem = this.getViewItem();
 		const publishItem = this.getPublishItem();
 		const editItem = this.getEditItem();
@@ -362,21 +320,17 @@ const Page = React.createClass( {
 		const sendToTrashItem = this.getSendToTrashItem();
 		const copyItem = this.getCopyItem();
 		const moreInfoItem = this.popoverMoreInfo();
-		const hasSeparatedItems = (
+		const hasMenuItems = (
 			viewItem || publishItem || editItem ||
 			restoreItem || sendToTrashItem || moreInfoItem
 		);
-		const hasPopoverItems = setAsHomepageItem || hasSeparatedItems;
-		const setHomepageMenuSeparator = ( setAsHomepageItem && hasSeparatedItems ) ? <MenuSeparator /> : null;
-		const popoverMenu = hasPopoverItems ? (
+		const popoverMenu = hasMenuItems ? (
 			<PopoverMenu
 				isVisible={ this.state.showPageActions }
 				onClose={ this.togglePageActions }
 				position={ 'bottom left' }
 				context={ this.refs && this.refs.popoverMenuButton }
 			>
-				{ setAsHomepageItem }
-				{ setHomepageMenuSeparator }
 				{ viewItem }
 				{ publishItem }
 				{ editItem }
@@ -386,7 +340,7 @@ const Page = React.createClass( {
 				{ moreInfoItem }
 			</PopoverMenu>
 		) : null;
-		const ellipsisGridicon = hasPopoverItems ? (
+		const ellipsisGridicon = hasMenuItems ? (
 			<Gridicon
 			icon="ellipsis"
 			className={ classNames( {
@@ -458,7 +412,6 @@ const Page = React.createClass( {
 export default connect(
 	( state, props ) => {
 		return {
-			selectedSiteId: getSelectedSiteId( state ),
 			hasStaticFrontPage: hasStaticFrontPage( state, props.page.site_ID ),
 			isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID ),
 			isPostsPage: isPostsPage( state, props.page.site_ID, props.page.ID ),
@@ -467,7 +420,6 @@ export default connect(
 		};
 	},
 	( dispatch ) => bindActionCreators( {
-		setFrontPage,
 		setPreviewUrl,
 		setLayoutFocus
 	}, dispatch )

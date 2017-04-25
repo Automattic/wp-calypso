@@ -10,7 +10,6 @@ import deepFreeze from 'deep-freeze';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	MEDIA_DELETE,
-	SITE_FRONT_PAGE_SET_SUCCESS,
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
 	SITE_RECEIVE,
@@ -336,40 +335,6 @@ describe( 'reducer', () => {
 					}
 				}
 			} );
-		} );
-
-		it( 'should update properties when the front page is changed', () => {
-			const original = deepFreeze( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', options: { show_on_front: 'posts', page_on_front: 0 } }
-			} );
-			const state = items( original, {
-				type: SITE_FRONT_PAGE_SET_SUCCESS,
-				siteId: 2916284,
-				updatedOptions: {
-					show_on_front: 'page',
-					page_on_front: 1,
-				}
-			} );
-
-			expect( state ).to.eql( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', options: { show_on_front: 'page', page_on_front: 1 } }
-			} );
-		} );
-
-		it( 'should do nothing when site is not loaded and the front page is changed', () => {
-			const original = deepFreeze( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', options: { show_on_front: 'posts', page_on_front: 0 } }
-			} );
-			const state = items( original, {
-				type: SITE_FRONT_PAGE_SET_SUCCESS,
-				siteId: 77203074,
-				updatedOptions: {
-					show_on_front: 'page',
-					page_on_front: 1,
-				}
-			} );
-
-			expect( state ).to.eql( original );
 		} );
 
 		it( 'should return same state when site settings updated but not site icon', () => {

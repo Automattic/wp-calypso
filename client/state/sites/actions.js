@@ -4,9 +4,6 @@
 import wpcom from 'lib/wp';
 import {
 	SITE_DELETE_RECEIVE,
-	SITE_FRONT_PAGE_SET,
-	SITE_FRONT_PAGE_SET_FAILURE,
-	SITE_FRONT_PAGE_SET_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -17,10 +14,6 @@ import {
 	SITES_REQUEST_FAILURE,
 	SITES_UPDATE
 } from 'state/action-types';
-import {
-	bumpStat,
-	recordTracksEvent,
-} from 'state/analytics/actions';
 import { omit } from 'lodash';
 
 /**
@@ -126,66 +119,6 @@ export function requestSite( siteId ) {
 			dispatch( {
 				type: SITE_REQUEST_FAILURE,
 				siteId,
-				error
-			} );
-		} );
-	};
-}
-
-export function setFrontPage( siteId, pageId, successCallback ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: SITE_FRONT_PAGE_SET,
-			siteId,
-			pageId
-		} );
-
-		const isSettingBlogPostsAsFrontPage = pageId === 0;
-
-		const requestData = {
-			is_page_on_front: ! isSettingBlogPostsAsFrontPage,
-			page_on_front_id: pageId,
-		};
-
-		if ( isSettingBlogPostsAsFrontPage ) {
-			requestData.page_for_posts_id = 0;
-		}
-
-		return wpcom.undocumented().setSiteHomepageSettings( siteId, requestData ).then( ( response ) => {
-			const updatedOptions = {
-				page_on_front: parseInt( response.page_on_front_id, 10 ),
-				show_on_front: response.is_page_on_front ? 'page' : 'posts',
-			};
-
-			if ( 0 === response.page_for_posts_id || response.page_for_posts_id ) {
-				updatedOptions.page_for_posts = parseInt( response.page_for_posts_id, 10 );
-			}
-
-			// This gives us a means to fix the `SitesList` cache outside of actions
-			// @todo Remove this when `SitesList` is Reduxified
-			if ( 'function' === typeof( successCallback ) ) {
-				successCallback( {
-					siteId,
-					updatedOptions,
-				} );
-			}
-
-			dispatch( recordTracksEvent( 'calypso_front_page_set', {
-				siteId,
-				pageId,
-			} ) );
-			dispatch( bumpStat( 'calypso_front_page_set', 'success' ) );
-			dispatch( {
-				type: SITE_FRONT_PAGE_SET_SUCCESS,
-				siteId,
-				updatedOptions,
-			} );
-		} ).catch( ( error ) => {
-			dispatch( bumpStat( 'calypso_front_page_set', 'failure' ) );
-			dispatch( {
-				type: SITE_FRONT_PAGE_SET_FAILURE,
-				siteId,
-				pageId,
 				error
 			} );
 		} );

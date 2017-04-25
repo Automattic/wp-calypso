@@ -19,7 +19,6 @@ import sharingButtons from './sharing-buttons/reducer';
 import mediaStorage from './media-storage/reducer';
 import {
 	MEDIA_DELETE,
-	SITE_FRONT_PAGE_SET_SUCCESS,
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
 	SITE_RECEIVE,
@@ -56,21 +55,6 @@ const VALID_SITE_KEYS = Object.keys( sitesSchema.patternProperties[ '^\\d+$' ].p
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
-		case SITE_FRONT_PAGE_SET_SUCCESS: {
-			const { siteId, updatedOptions } = action;
-			const site = state[ siteId ];
-			if ( ! site ) {
-				break;
-			}
-
-			return {
-				...state,
-				[ siteId ]: merge( {}, site, {
-					options: updatedOptions,
-				} )
-			};
-		}
-
 		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
 			const prevSite = state[ action.siteId ];
 			if ( prevSite ) {
