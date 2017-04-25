@@ -331,7 +331,7 @@ class PlanFeatures extends Component {
 
 	renderFeatureItem( feature, index ) {
 		const description = feature.getDescription
-					? feature.getDescription( abtest )
+					? feature.getDescription( abtest, this.props.domainName )
 					: null;
 		return (
 			<PlanFeaturesItem

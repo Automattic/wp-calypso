@@ -439,10 +439,20 @@ export const FEATURES_LIST = {
 	[ FEATURE_CUSTOM_DOMAIN ]: {
 		getSlug: () => FEATURE_CUSTOM_DOMAIN,
 		getTitle: () => i18n.translate( 'Custom Domain Name' ),
-		getDescription: () => i18n.translate(
-			'Get a free custom domain name (example.com) with this plan ' +
-			'to use for your website.'
-		)
+		getDescription: ( abtest, domainName ) => {
+			if ( domainName ) {
+				return i18n.translate(
+					'Your domain (%s) is included with this plan.', {
+						args: domainName
+					}
+				);
+			}
+
+			return i18n.translate(
+				'Get a free custom domain name (example.com) with this plan ' +
+				'to use for your website.'
+			);
+		}
 	},
 
 	[ FEATURE_JETPACK_ESSENTIAL ]: {

@@ -67,6 +67,10 @@ class PlansStep extends Component {
 		goToNextStep();
 	}
 
+	getDomainName() {
+		return this.props.signupDependencies.domainItem && this.props.signupDependencies.domainItem.meta;
+	}
+
 	plansFeaturesList() {
 		const {	hideFreePlan, selectedSite } = this.props;
 
@@ -81,6 +85,7 @@ class PlansStep extends Component {
 					onUpgradeClick={ this.onSelectPlan }
 					showFAQ={ false }
 					displayJetpackPlans={ false }
+					domainName={ this.getDomainName() }
 				/>
 			</div>
 		);
