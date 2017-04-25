@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import debugModule from 'debug';
@@ -9,6 +9,8 @@ import get from 'lodash/get';
 import map from 'lodash/map';
 import Gridicon from 'gridicons';
 import cookie from 'cookie';
+import flowRight from 'lodash/flowRight';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -44,18 +46,15 @@ import EmailVerificationGate from 'components/email-verification/email-verificat
  */
 const debug = debugModule( 'calypso:jetpack-connect:sso' );
 
-const JetpackSSOForm = React.createClass( {
-	displayName: 'JetpackSSOForm',
+class JetpackSSOForm extends Component {
 
-	getInitialState() {
-		return {
-			showTermsDialog: false
-		};
-	},
+	state = {
+		showTermsDialog: false
+	};
 
 	componentWillMount() {
 		this.maybeValidateSSO();
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.maybeValidateSSO( nextProps );
@@ -71,9 +70,9 @@ const JetpackSSOForm = React.createClass( {
 			debug( 'Redirecting to: ' + redirect );
 			window.location.href = redirect;
 		}
-	},
+	}
 
-	onApproveSSO( event ) {
+	onApproveSSO = ( event ) => {
 		event.preventDefault();
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_log_in_button_click' );
 
@@ -87,39 +86,39 @@ const JetpackSSOForm = React.createClass( {
 
 		debug( 'Approving sso' );
 		this.props.authorizeSSO( siteId, ssoNonce, siteUrl );
-	},
+	}
 
-	onCancelClick( event ) {
+	onCancelClick = ( event ) => {
 		debug( 'Clicked return to site link' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_return_to_site_link_click' );
 		this.returnToSiteFallback( event );
-	},
+	}
 
-	onTryAgainClick( event ) {
+	onTryAgainClick = ( event ) => {
 		debug( 'Clicked try again link' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_try_again_link_click' );
 		this.returnToSiteFallback( event );
-	},
+	}
 
-	onClickSignInDifferentUser() {
+	onClickSignInDifferentUser = () => {
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_sign_in_different_user_link_click' );
-	},
+	}
 
-	onClickSharedDetailsModal( event ) {
+	onClickSharedDetailsModal = ( event ) => {
 		event.preventDefault();
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_shared_details_link_click' );
 		this.setState( {
 			showTermsDialog: true
 		} );
-	},
+	}
 
-	closeTermsDialog() {
+	closeTermsDialog = () => {
 		this.setState( {
 			showTermsDialog: false
 		} );
-	},
+	}
 
-	returnToSiteFallback( event ) {
+	returnToSiteFallback = ( event ) => {
 		// If, for some reason, the API request failed and we do not have the admin URL,
 		// then fallback to the user's last location.
 		if ( ! get( this.props, 'blogDetails.admin_url' ) ) {
@@ -127,17 +126,17 @@ const JetpackSSOForm = React.createClass( {
 			event.preventDefault();
 			window.history.back();
 		}
-	},
+	}
 
 	isButtonDisabled() {
 		const user = this.props.userModule.get();
 		const { nonceValid, isAuthorizing, isValidating, ssoUrl, authorizationError } = this.props;
 		return !! ( ! nonceValid || isAuthorizing || isValidating || ssoUrl || authorizationError || ! user.email_verified );
-	},
+	}
 
 	getSignInLink() {
 		return login( { legacy: true, redirectTo: window.location.href } );
-	},
+	}
 
 	maybeValidateSSO( props = this.props ) {
 		const { ssoNonce, siteId, nonceValid, isAuthorizing, isValidating } = props;
@@ -145,10 +144,14 @@ const JetpackSSOForm = React.createClass( {
 		if ( ssoNonce && siteId && 'undefined' === typeof nonceValid && ! isAuthorizing && ! isValidating ) {
 			this.props.validateSSONonce( siteId, ssoNonce );
 		}
-	},
+	}
 
 	maybeRenderErrorNotice() {
-		const { authorizationError, nonceValid } = this.props;
+		const {
+			authorizationError,
+			nonceValid,
+			translate,
+		} = this.props;
 
 		if ( ! authorizationError && false !== nonceValid ) {
 			return null;
@@ -157,16 +160,16 @@ const JetpackSSOForm = React.createClass( {
 		return (
 			<Notice
 				status="is-error"
-				text={ this.translate( 'Oops, something went wrong.' ) }
+				text={ translate( 'Oops, something went wrong.' ) }
 				showDismiss={ false }>
 				<NoticeAction
 					href={ get( this.props, 'blogDetails.admin_url', '#' ) }
 					onClick={ this.onTryAgainClick }>
-					{ this.translate( 'Try again' ) }
+					{ translate( 'Try again' ) }
 				</NoticeAction>
 			</Notice>
 		);
-	},
+	}
 
 	renderSiteCard() {
 		const { blogDetails } = this.props;
@@ -190,61 +193,64 @@ const JetpackSSOForm = React.createClass( {
 				{ site }
 			</CompactCard>
 		);
-	},
+	}
 
 	getSharedDetailLabel( key ) {
+		const { translate } = this.props;
 		switch ( key ) {
 			case 'ID':
-				key = this.translate( 'User ID', { context: 'User Field' } );
+				key = translate( 'User ID', { context: 'User Field' } );
 				break;
 			case 'login':
-				key = this.translate( 'Login', { context: 'User Field' } );
+				key = translate( 'Login', { context: 'User Field' } );
 				break;
 			case 'email':
-				key = this.translate( 'Email', { context: 'User Field' } );
+				key = translate( 'Email', { context: 'User Field' } );
 				break;
 			case 'url':
-				key = this.translate( 'URL', { context: 'User Field' } );
+				key = translate( 'URL', { context: 'User Field' } );
 				break;
 			case 'first_name':
-				key = this.translate( 'First Name', { context: 'User Field' } );
+				key = translate( 'First Name', { context: 'User Field' } );
 				break;
 			case 'last_name':
-				key = this.translate( 'Last Name', { context: 'User Field' } );
+				key = translate( 'Last Name', { context: 'User Field' } );
 				break;
 			case 'display_name':
-				key = this.translate( 'Display Name', { context: 'User Field' } );
+				key = translate( 'Display Name', { context: 'User Field' } );
 				break;
 			case 'description':
-				key = this.translate( 'Description', { context: 'User Field' } );
+				key = translate( 'Description', { context: 'User Field' } );
 				break;
 			case 'two_step_enabled':
-				key = this.translate( 'Two-Step Authentication', { context: 'User Field' } );
+				key = translate( 'Two-Step Authentication', { context: 'User Field' } );
 				break;
 			case 'external_user_id':
-				key = this.translate( 'External User ID', { context: 'User Field' } );
+				key = translate( 'External User ID', { context: 'User Field' } );
 				break;
 		}
 
 		return key;
-	},
+	}
 
 	getSharedDetailValue( key, value ) {
+		const { translate } = this.props;
 		if ( 'two_step_enabled' === key && value !== '' ) {
 			value = ( true === value )
-				? this.translate( 'Enabled' )
-				: this.translate( 'Disabled' );
+				? translate( 'Enabled' )
+				: translate( 'Disabled' );
 		}
 
 		return decodeEntities( value );
-	},
+	}
 
 	getReturnToSiteText() {
+		const { translate } = this.props;
 		const text = (
 			<span className="jetpack-connect__sso-return-to-site">
 				<Gridicon icon="arrow-left" size={ 18 } />
 				{
-					this.translate( 'Return to %(siteName)s', {
+					translate( 'Return to %(siteName)s', {
 						args: {
 							siteName: get( this.props, 'blogDetails.title' )
 						}
@@ -254,10 +260,11 @@ const JetpackSSOForm = React.createClass( {
 		);
 
 		return this.maybeWrapWithPlaceholder( text );
-	},
+	}
 
 	getTOSText() {
-		const text = this.translate(
+		const { translate } = this.props;
+		const text = translate(
 			'By logging in you agree to {{detailsLink}}share details{{/detailsLink}} between WordPress.com and %(siteName)s.',
 			{
 				components: {
@@ -276,10 +283,11 @@ const JetpackSSOForm = React.createClass( {
 		);
 
 		return this.maybeWrapWithPlaceholder( text );
-	},
+	}
 
 	getSubHeaderText() {
-		const text = this.translate(
+		const { translate } = this.props;
+		const text = translate(
 			'To use Single Sign-On, WordPress.com needs to be able to connect to your account on %(siteName)s.', {
 				args: {
 					siteName: get( this.props, 'blogDetails.title' )
@@ -287,7 +295,7 @@ const JetpackSSOForm = React.createClass( {
 			}
 		);
 		return this.maybeWrapWithPlaceholder( text );
-	},
+	}
 
 	maybeWrapWithPlaceholder( input ) {
 		const title = get( this.props, 'blogDetails.title' );
@@ -300,7 +308,7 @@ const JetpackSSOForm = React.createClass( {
 				{ input }
 			</span>
 		);
-	},
+	}
 
 	renderSharedDetailsList() {
 		const expectedSharedDetails = {
@@ -335,13 +343,14 @@ const JetpackSSOForm = React.createClass( {
 				</tbody>
 			</table>
 		);
-	},
+	}
 
 	renderSharedDetailsDialog() {
+		const { translate } = this.props;
 		const buttons = [
 			{
 				action: 'close',
-				label: this.translate( 'Got it', { context: 'Used in a button. Similar phrase would be, "I understand".' } )
+				label: translate( 'Got it', { context: 'Used in a button. Similar phrase would be, "I understand".' } )
 			}
 		];
 
@@ -354,7 +363,7 @@ const JetpackSSOForm = React.createClass( {
 				<div className="jetpack-connect__sso-terms-dialog-content">
 					<p className="jetpack-connect__sso-shared-details-intro">
 						{
-							this.translate(
+							translate(
 								'When you approve logging in with WordPress.com, we will send the following details to your site.'
 							)
 						}
@@ -364,17 +373,18 @@ const JetpackSSOForm = React.createClass( {
 				</div>
 			</Dialog>
 		);
-	},
+	}
 
 	renderBadPathArgsError() {
+		const { translate } = this.props;
 		return (
 			<Main>
 				<EmptyContent
 					illustration="/calypso/images/drake/drake-whoops.svg"
-					title={ this.translate(
+					title={ translate(
 						'Oops, this URL should not be accessed directly'
 					) }
-					line={ this.translate(
+					line={ translate(
 						'Please click the {{em}}Log in with WordPress.com button{{/em}} on your Jetpack site.',
 						{
 							components: {
@@ -382,16 +392,21 @@ const JetpackSSOForm = React.createClass( {
 							}
 						}
 					) }
-					action={ this.translate( 'Read Single Sign-On Documentation' ) }
+					action={ translate( 'Read Single Sign-On Documentation' ) }
 					actionURL="https://jetpack.com/support/sso/"
 				/>
 			</Main>
 		);
-	},
+	}
 
 	render() {
 		const user = this.props.userModule.get();
-		const { ssoNonce, siteId, validationError } = this.props;
+		const {
+			ssoNonce,
+			siteId,
+			validationError,
+			translate,
+		} = this.props;
 
 		if ( ! ssoNonce || ! siteId || validationError ) {
 			return this.renderBadPathArgsError();
@@ -401,21 +416,21 @@ const JetpackSSOForm = React.createClass( {
 			<MainWrapper>
 				<div className="jetpack-connect__sso">
 					<StepHeader
-						headerText={ this.translate( 'Connect with WordPress.com' ) }
+						headerText={ translate( 'Connect with WordPress.com' ) }
 						subHeaderText={ this.getSubHeaderText() }
 					/>
 
 					{ this.renderSiteCard() }
 
 					<EmailVerificationGate
-						noticeText={ this.translate( 'You must verify your email to sign in with WordPress.com.' ) }
+						noticeText={ translate( 'You must verify your email to sign in with WordPress.com.' ) }
 						noticeStatus="is-info">
 						<Card>
 							{ user.email_verified && this.maybeRenderErrorNotice() }
 								<div className="jetpack-connect__sso-user-profile">
 									<Gravatar user={ user } size={ 120 } imgSize={ 400 } />
 									<h3 className="jetpack-connect__sso-log-in-as">
-										{ this.translate(
+										{ translate(
 											'Log in as {{strong}}%s{{/strong}}',
 											{
 												args: user.display_name,
@@ -439,7 +454,7 @@ const JetpackSSOForm = React.createClass( {
 										primary
 										onClick={ this.onApproveSSO }
 										disabled={ this.isButtonDisabled() }>
-										{ this.translate( 'Log in' ) }
+										{ translate( 'Log in' ) }
 									</Button>
 								</LoggedOutFormFooter>
 						</Card>
@@ -447,7 +462,7 @@ const JetpackSSOForm = React.createClass( {
 
 					<LoggedOutFormLinks>
 						<LoggedOutFormLinkItem href={ this.getSignInLink() } onClick={ this.onClickSignInDifferentUser }>
-							{ this.translate( 'Sign in as a different user' ) }
+							{ translate( 'Sign in as a different user' ) }
 						</LoggedOutFormLinkItem>
 						<LoggedOutFormLinkItem
 							rel="external"
@@ -463,9 +478,9 @@ const JetpackSSOForm = React.createClass( {
 			</MainWrapper>
 		);
 	}
-} );
+}
 
-export default connect(
+const connectComponent = connect(
 	state => {
 		const jetpackSSO = getSSO( state );
 		return {
@@ -483,4 +498,9 @@ export default connect(
 		authorizeSSO,
 		validateSSONonce
 	}, dispatch )
+);
+
+export default flowRight(
+	connectComponent,
+	localize
 )( JetpackSSOForm );
