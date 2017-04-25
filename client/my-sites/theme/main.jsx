@@ -67,11 +67,15 @@ const ThemeSheet = React.createClass( {
 		screenshots: React.PropTypes.array,
 		price: React.PropTypes.string,
 		description: React.PropTypes.string,
-		descriptionLong: React.PropTypes.string,
+		descriptionLong: React.PropTypes.oneOfType( [
+			React.PropTypes.string,
+			React.PropTypes.bool // happens if no content: false
+		] ),
 		supportDocumentation: React.PropTypes.string,
 		download: React.PropTypes.string,
 		taxonomies: React.PropTypes.object,
 		stylesheet: React.PropTypes.string,
+		retired: React.PropTypes.bool,
 		// Connected props
 		isLoggedIn: React.PropTypes.bool,
 		isActive: React.PropTypes.bool,
@@ -194,15 +198,11 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderScreenshot() {
-		let screenshot;
-		if ( ! this.props.isWpcomTheme ) {
-			screenshot = this.props.screenshot;
-		} else {
-			screenshot = this.getFullLengthScreenshot();
-		}
-		const img = screenshot && <img className="theme__sheet-img" src={ screenshot + '?w=680' } />;
+		const { demo_uri, retired, isWpcomTheme } = this.props;
+		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
+		const img = screenshotFull && <img className="theme__sheet-img" src={ screenshotFull + '?w=680' } />;
 
-		if ( this.props.demo_uri ) {
+		if ( demo_uri && ! retired ) {
 			return (
 				<div className="theme__sheet-screenshot is-active" onClick={ this.previewAction }>
 					{ this.renderPreviewButton() }
@@ -248,11 +248,19 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderSectionContent( section ) {
-		return {
+		const activeSection = {
 			'': this.renderOverviewTab(),
 			setup: this.renderSetupTab(),
 			support: this.renderSupportTab(),
 		}[ section ];
+
+		return (
+			<div className="theme__sheet-content">
+				{ this.renderSectionNav( section ) }
+				{ activeSection }
+				<div className="theme__sheet-footer-line"><Gridicon icon="my-sites" /></div>
+			</div>
+		);
 	},
 
 	renderDescription() {
@@ -450,6 +458,29 @@ const ThemeSheet = React.createClass( {
 		return <ThemesRelatedCard currentTheme={ this.props.id } />;
 	},
 
+	renderRetired() {
+		return (
+			<div className="theme__sheet-content">
+				<Card className="theme__retired-theme-message">
+					<Gridicon icon="cross-circle" size={ 48 } />
+					<div className="theme__retired-theme-message-details">
+						<div className="theme__retired-theme-message-details-title">{ i18n.translate( 'This theme is retired' ) }</div>
+						<div>
+							{ i18n.translate( 'We invite you to try out a newer theme; start by browsing our WordPress theme directory.' ) }
+						</div>
+					</div>
+					<Button
+						primary={ true }
+						href={ '/themes/' }>
+						{ i18n.translate( 'See All Themes' ) }
+					</Button>
+				</Card>
+
+				<div className="theme__sheet-footer-line"><Gridicon icon="my-sites" /></div>
+			</div>
+		);
+	},
+
 	renderPrice() {
 		let price = this.props.price;
 		if ( ! this.isLoaded() || this.props.isActive || this.props.isPurchased ) {
@@ -478,7 +509,7 @@ const ThemeSheet = React.createClass( {
 
 	renderSheet() {
 		const section = this.validateSection( this.props.section );
-		const { siteId } = this.props;
+		const { siteId, retired } = this.props;
 
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteId ? '/:site_id' : '' }`;
 		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteId ? ' > Site' : '' }`;
@@ -521,15 +552,12 @@ const ThemeSheet = React.createClass( {
 				<HeaderCake className="theme__sheet-action-bar"
 					backHref={ this.props.backPath }
 					backText={ i18n.translate( 'All Themes' ) }>
-					{ this.renderButton() }
+					{ ! retired && this.renderButton() }
 				</HeaderCake>
 				<div className="theme__sheet-columns">
 					<div className="theme__sheet-column-left">
-						<div className="theme__sheet-content">
-							{ this.renderSectionNav( section ) }
-							{ this.renderSectionContent( section ) }
-							<div className="theme__sheet-footer-line"><Gridicon icon="my-sites" /></div>
-						</div>
+						{ ! retired && this.renderSectionContent( section ) }
+						{ retired && this.renderRetired() }
 					</div>
 					<div className="theme__sheet-column-right">
 						{ this.renderScreenshot() }

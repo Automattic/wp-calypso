@@ -425,6 +425,40 @@
 	}
 }
 
+.theme__retired-theme-message {
+	display: flex;
+	align-items: center;
+	margin-bottom: 40px;
+
+	@include breakpoint( "<960px" ) {
+		flex-wrap: wrap;
+	}
+
+	.gridicon {
+		color: lighten( $gray, 20% );
+		flex: 0 0 auto;
+	}
+
+	.button {
+		flex: 0 0 auto;
+
+		@include breakpoint( "<960px" ) {
+			flex: 1 1 100%;
+			margin-top: 20px;
+			text-align: center;
+		}
+	}
+}
+
+.theme__retired-theme-message-details {
+	flex: 1 1 20px;
+	padding: 0 20px;
+
+	.theme__retired-theme-message-details-title {
+		font-size: 20px;
+	}
+}
+
 .theme__sheet-footer-line {
 	color: lighten( $gray, 20% );
 	border-top: 1px solid lighten( $gray, 20% );
