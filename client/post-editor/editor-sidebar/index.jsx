@@ -14,7 +14,7 @@ import EditorSidebarHeader from './header';
 import SidebarFooter from 'layout/sidebar/footer';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import EditorDeletePost from 'post-editor/editor-delete-post';
-import { CHILD_SIDEBAR_NONE } from './util';
+import { CHILD_SIDEBAR_NONE, CHILD_SIDEBAR_REVISIONS } from './util';
 
 export default class EditorSidebar extends Component {
 	static propTypes = {
@@ -41,6 +41,13 @@ export default class EditorSidebar extends Component {
 	}
 
 	toggleChildSidebar( childSidebar ) {
+		if (
+			this.state.childSidebar === CHILD_SIDEBAR_REVISIONS &&
+			this.state.childSidebar !== childSidebar
+		) {
+			this.props.toggleRevision( null );
+		}
+
 		this.setState( { childSidebar } );
 	}
 
