@@ -268,7 +268,6 @@ export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => 
 		return schema || shouldDispatchAction ? reducer( state, action ) : reducer( undefined, { type: '@@calypso/INIT' } );
 	}
 	if ( DESERIALIZE === action.type ) {
-
 		if ( shouldDispatchAction ) {
 			return reducer( state, action );
 		}
@@ -294,7 +293,7 @@ export function combineReducersWithPersistence( reducers ) {
 	let hasSchema = false;
 	const reducersWithPersistence = reduce( reducers, ( result, reducerWithSchema, key ) => {
 		const { schema } = reducerWithSchema;
-		hasSchema = hasSchema || !! schema || reducerWithSchema.hasSchema;
+		hasSchema = hasSchema || !! schema || reducerWithSchema.hasSchema || reducerWithSchema.hasCustomHandler;
 		return { ...result, [ key ]: withSchemaValidation( schema, reducerWithSchema ) };
 	}, {} );
 	const combined = combineReducers( reducersWithPersistence );

@@ -591,5 +591,24 @@ describe( 'utils', () => {
 			const invalid = veryNested( { bob: { person: { age: -5, height: 22, date: new Date( -5 ) } }, count: 123 }, write );
 			expect( invalid ).to.eql( { bob: { person: { age: -5, height: 160, date: -5 } }, count: 1 } );
 		} );
+
+		it( 'deeply nested reducers work with reducer with a custom handler', () => {
+			reducers = combineReducersWithPersistence( {
+				height,
+				date
+			} );
+			const nested = combineReducersWithPersistence( {
+				person: reducers,
+			} );
+			const veryNested = combineReducersWithPersistence( {
+				bob: nested,
+				count
+			} );
+			const valid = veryNested( { bob: { person: { date: new Date( 234 ) } }, count: 122 }, write );
+			expect( valid ).to.eql( { bob: { person: { height: 160, date: 234 } }, count: 1 } );
+
+			const invalid = veryNested( { bob: { person: { height: 22, date: new Date( -5 ) } }, count: 123 }, write );
+			expect( invalid ).to.eql( { bob: { person: { height: 160, date: -5 } }, count: 1 } );
+		} );
 	} );
 } );
