@@ -97,7 +97,7 @@ export function recordTrack( eventName, eventProperties ) {
 	}
 
 	if ( location === 'topic_page' && ! eventProperties.hasOwnProperty( 'tag' ) ) {
-		const tag = window.location.pathname.split( '/tag/' ).pop();
+		const tag = decodeURIComponent( window.location.pathname.split( '/tag/' ).pop() );
 		eventProperties = Object.assign( { tag: tag }, eventProperties );
 	}
 
