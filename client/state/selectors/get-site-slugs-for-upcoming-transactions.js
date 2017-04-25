@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { map, uniq } from 'lodash';
+import { compact, map, uniq } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,7 +12,7 @@ import { getUpcomingBillingTransactions } from 'state/selectors';
 
 const getSiteSlugsForUpcomingTransactions = createSelector(
 	( state ) => {
-		const siteIds = uniq( map( getUpcomingBillingTransactions( state ), 'blog_id' ) )
+		const siteIds = compact( uniq( map( getUpcomingBillingTransactions( state ), 'blog_id' ) ) )
 			.map( Number );
 		return siteIds.reduce( ( sites, siteId ) => {
 			const result = { ...sites };
