@@ -52,9 +52,10 @@ export const requestResetError = ( error ) => ( {
 	error,
 } );
 
-export const requestReset = ( request ) => ( {
+export const requestReset = ( userData, method ) => ( {
 	type: ACCOUNT_RECOVERY_RESET_REQUEST,
-	request,
+	userData,
+	method,
 } );
 
 export const validateRequest = ( userData, method, key ) => ( {
@@ -90,7 +91,7 @@ export const requestResetPassword = ( userData, method, key, password ) => ( {
 	password,
 } );
 
-export const pickResetMethod = ( method ) => ( {
+export const setResetMethod = ( method ) => ( {
 	type: ACCOUNT_RECOVERY_RESET_PICK_METHOD,
 	method,
 } );
