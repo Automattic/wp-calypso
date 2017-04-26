@@ -16,6 +16,7 @@ import titlecase from 'to-title-case';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { savePreference } from 'state/preferences/actions';
+import { getSite } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import AsyncLoad from 'components/async-load';
@@ -97,7 +98,7 @@ module.exports = {
 		}
 	},
 
-	insights: function( context, next ) {
+	insights: function( context ) {
 		const FollowList = require( 'lib/follow-list' );
 		let siteId = context.params.site_id;
 		const basePath = route.sectionify( context.path );
@@ -106,23 +107,8 @@ module.exports = {
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
 
-		let site = sites.getSite( siteId );
-		if ( ! site ) {
-			site = sites.getSite( parseInt( siteId, 10 ) );
-		}
+		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? ( site.ID || 0 ) : 0;
-
-		// Check for a siteId and sites
-		if ( 0 === siteId ) {
-			if ( 0 === sites.data.length ) {
-				sites.once( 'change', function() {
-					page( context.path );
-				} );
-			} else {
-				// site is not in the user's site list
-				next();
-			}
-		}
 
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
@@ -189,10 +175,7 @@ module.exports = {
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
 
-		let currentSite = sites.getSite( siteId );
-		if ( ! currentSite ) {
-			currentSite = sites.getSite( parseInt( siteId, 10 ) );
-		}
+		const currentSite = getSite( context.store.getState(), siteId );
 		siteId = currentSite ? ( currentSite.ID || 0 ) : 0;
 
 		const activeFilter = find( filters, ( filter ) => {
@@ -202,16 +185,6 @@ module.exports = {
 		if ( ! activeFilter ) {
 			next();
 		} else {
-			if ( 0 === siteId ) {
-				if ( 0 === sites.data.length ) {
-					sites.once( 'change', function() {
-						page( context.path );
-					} );
-				} else {
-					next();
-				}
-			}
-
 			if ( currentSite && currentSite.domain ) {
 				// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 				context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
@@ -284,26 +257,16 @@ module.exports = {
 		let momentSiteZone = i18n.moment();
 		const basePath = route.sectionify( context.path );
 
-		let site = sites.getSite( siteId );
-		if ( ! site ) {
-			site = sites.getSite( parseInt( siteId, 10 ) );
-		}
+		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? ( site.ID || 0 ) : 0;
 
 		const activeFilter = find( filters, ( filter ) => {
 			return context.pathname === filter.path || ( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) );
 		} );
 
-		// if we have a siteFragment, but no siteId, wait for the sites list
 		if ( siteFragment && 0 === siteId ) {
-			if ( 0 === sites.data.length ) {
-				sites.once( 'change', function() {
-					page( context.path );
-				} );
-			} else {
-				// site is not in the user's site list
-				window.location = '/stats';
-			}
+			// site is not in the user's site list
+			window.location = '/stats';
 		} else if ( ! activeFilter || -1 === validModules.indexOf( context.params.module ) ) {
 			next();
 		} else {
@@ -354,21 +317,11 @@ module.exports = {
 		const pathParts = context.path.split( '/' );
 		const postOrPage = pathParts[ 2 ] === 'post' ? 'post' : 'page';
 
-		let site = sites.getSite( siteId );
-		if ( ! site ) {
-			site = sites.getSite( parseInt( siteId, 10 ) );
-		}
+		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? ( site.ID || 0 ) : 0;
 
 		if ( 0 === siteId ) {
-			if ( 0 === sites.data.length ) {
-				sites.once( 'change', function() {
-					page( context.path );
-				} );
-			} else {
-				// site is not in the user's site list
-				window.location = '/stats';
-			}
+			window.location = '/stats';
 		} else {
 			analytics.pageView.record( '/stats/' + postOrPage + '/:post_id/:site',
 				analyticsPageTitle + ' > Single ' + titlecase( postOrPage ) );
@@ -393,24 +346,14 @@ module.exports = {
 		const followList = new FollowList();
 		const basePath = route.sectionify( context.path );
 
-		let site = sites.getSite( siteId );
-		if ( ! site ) {
-			site = sites.getSite( parseInt( siteId, 10 ) );
-		}
+		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? ( site.ID || 0 ) : 0;
 
 		const siteDomain = ( site && ( typeof site.slug !== 'undefined' ) )
 			? site.slug : route.getSiteFragment( context.path );
 
 		if ( 0 === siteId ) {
-			if ( 0 === sites.data.length ) {
-				sites.once( 'change', function() {
-					page( context.path );
-				} );
-			} else {
-				// site is not in the user's site list
-				window.location = '/stats';
-			}
+			window.location = '/stats';
 		} else {
 			pageNum = parseInt( pageNum, 10 );
 
