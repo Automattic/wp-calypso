@@ -11,7 +11,7 @@ import { get } from 'lodash';
  * @return {Boolean} Whether settings are being requested
  */
 export function isRequestingSettings( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'requesting', siteId ], false );
+	return get( state, [ 'extensions', 'wpSuperCache', 'settings', 'requesting', siteId ], false );
 }
 
 /**
@@ -22,7 +22,7 @@ export function isRequestingSettings( state, siteId ) {
  * @return {Boolean} Whether settings are being saved
  */
 export function isSavingSettings( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'saveStatus', siteId, 'saving' ], false );
+	return get( state, [ 'extensions', 'wpSuperCache', 'settings', 'saveStatus', siteId, 'saving' ], false );
 }
 
 /**
@@ -44,7 +44,7 @@ export function isSettingsSaveSuccessful( state, siteId ) {
  * @return {Object} Settings
  */
 export function getSettings( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'items', siteId ], null );
+	return get( state, [ 'extensions', 'wpSuperCache', 'settings', 'items', siteId ], null );
 }
 
 /**
@@ -55,5 +55,5 @@ export function getSettings( state, siteId ) {
  * @return {String}  Save request status (pending, success or error)
  */
 export function getSettingsSaveStatus( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'saveStatus', siteId, 'status' ] );
+	return get( state, [ 'extensions', 'wpSuperCache', 'settings', 'saveStatus', siteId, 'status' ] );
 }
