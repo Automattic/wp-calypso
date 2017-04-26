@@ -61,7 +61,7 @@ const getCurrentStep = ( props ) => {
 	} = props;
 
 	if ( selectedMethod ) {
-		if ( includes( selectedMethod, '_email' ) ) {
+		if ( includes( [ 'primary_email', 'secondary_email' ], selectedMethod ) ) {
 			return STEPS.RESET_PASSWORD_EMAIL;
 		}
 
