@@ -16,6 +16,7 @@ import {
 	DISCUSSIONS_ITEM_LIKE_REQUEST,
 	DISCUSSIONS_ITEM_LIKE_REQUEST_FAILURE,
 	DISCUSSIONS_ITEM_LIKE_REQUEST_SUCCESS,
+	DISCUSSIONS_ITEM_REMOVE,
 	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST,
 	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_FAILURE,
 	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_SUCCESS,
@@ -32,6 +33,7 @@ import {
 	unlikePostComment,
 	changeCommentStatus,
 	editPostComment,
+	removePostComment,
 } from '../actions';
 
 const PUBLIC_API = 'https://public-api.wordpress.com:443';
@@ -310,6 +312,18 @@ describe( 'actions', () => {
 						error: sandbox.match( { message: 'foo' } )
 					} );
 				} );
+		} );
+	} );
+
+	describe( '#removePostComment()', () => {
+		it( 'should return a remove item action', () => {
+			const action = removePostComment( SITE_ID, POST_ID, COMMENT_ID);
+			expect( action ).to.eql( {
+				type: DISCUSSIONS_ITEM_REMOVE,
+				siteId: SITE_ID,
+				postId: POST_ID,
+				commentId: COMMENT_ID
+			} );
 		} );
 	} );
 } );
