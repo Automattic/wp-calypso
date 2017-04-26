@@ -253,7 +253,7 @@ const PluginMeta = React.createClass( {
 		if ( selectedSite && this.isUnsupportedPluginForAT() && ( ! selectedSite.jetpack || automatedTransferSite ) ) {
 			return (
 				<Notice
-					text={ this.translate( 'Incompatible plugin: WordPress.com already provides this feature.' ) }
+					text={ this.translate( 'Incompatible plugin: This plugin is not supported on WordPress.com.' ) }
 					status="is-warning"
 					showDismiss={ false }
 				>
