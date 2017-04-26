@@ -26,26 +26,28 @@ import {
 } from 'state/selectors';
 
 const getPageInfo = ( translate, step ) => {
+	const concatHeadTitle = ( parentTitle, childTitle ) => ( parentTitle + ' ‹ ' + childTitle );
+
 	const pageInfo = {
 		[ STEPS.LOST_PASSWORD ]: {
 			trackerTitle: 'Account Recovery > Lost Password',
-			documentHeadTitle: translate( 'Lost Password ‹ Account Recovery' ),
+			documentHeadTitle: concatHeadTitle( translate( 'Lost Password' ), translate( 'Account Recovery' ) ),
 		},
 		[ STEPS.FORGOT_USERNAME ]: {
 			trackerTitle: 'Account Recovery > Forgot Username',
-			documentHeadTitle: translate( 'Forgot Username ‹ Account Recovery' ),
+			documentHeadTitle: concatHeadTitle( translate( 'Forgot Username' ), translate( 'Account Recovery' ) ),
 		},
 		[ STEPS.RESET_PASSWORD ]: {
 			trackerTitle: 'Account Recovery > Reset Password',
-			documentHeadTitle: translate( 'Reset Password ‹ Account Recovery' ),
+			documentHeadTitle: concatHeadTitle( translate( 'Reset Password' ), translate( 'Account Recovery' ) ),
 		},
 		[ STEPS.RESET_PASSWORD_EMAIL ]: {
 			trackerTitle: 'Account Recovery > Reset Password Email',
-			documentHeadTitle: translate( 'Reset Password < Email' ),
+			documentHeadTitle: concatHeadTitle( translate( 'Reset Password' ), translate( 'Email' ) ),
 		},
 		[ STEPS.RESET_PASSWORD_SMS ]: {
 			trackerTitle: 'Account Recovery > Reset Password Sms',
-			documentHeadTitle: translate( 'Reset Password ‹ SMS Message' ),
+			documentHeadTitle: concatHeadTitle( translate( 'Reset Password ' ), translate( 'SMS Message' ) ),
 		},
 	};
 
