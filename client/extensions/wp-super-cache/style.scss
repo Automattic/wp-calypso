@@ -129,3 +129,42 @@
 	text-align: center;
 	display: inline-block;
 }
+
+.wp-super-cache__cache-type-fieldset {
+	margin-left: 40px;
+	margin-bottom: 0;
+	margin-top: -10px;
+}
+
+.wp-super-cache__miscellaneous-304-notice {
+	margin-bottom: 5px;
+}
+
+.wp-super-cache__condition-settings-explanation {
+	margin-bottom: 20px;
+}
+
+.wp-super-cache__lock-down-container,
+.wp-super-cache__cdn-fieldsets {
+	margin-left: 40px;
+}
+
+.wp-super-cache__lock-down-explanation,
+.wp-super-cache__lock-down-code-block {
+	margin-bottom: 1.5em;
+}
+
+.wp-super-cache__lock-down-code-block {
+	@extend %form-field;
+	overflow: hidden;
+}
+
+.wp-super-cache__main  .wp-super-cache__lock-down-code-block-snippet {
+	font-family: monospace, serif;
+	display: block;
+}
+
+.wp-super-cache__main  .wp-super-cache__lock-down-code-block-button {
+	margin-right: 0;
+	float: right;
+}

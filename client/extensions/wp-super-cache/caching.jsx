@@ -56,7 +56,7 @@ const Caching = ( {
 						</FormToggle>
 					</FormFieldset>
 
-					<FormFieldset>
+					<FormFieldset className="wp-super-cache__cache-type-fieldset">
 						<FormLabel>
 							<FormRadio
 								checked={ '1' === super_cache_enabled }

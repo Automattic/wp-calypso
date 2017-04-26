@@ -10,9 +10,9 @@ import { pick } from 'lodash';
 import Card from 'components/card';
 import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
+import Notice from 'components/notice';
 import WrapSettingsForm from './wrap-settings-form';
 
 const Miscellaneous = ( {
@@ -109,23 +109,21 @@ const Miscellaneous = ( {
 								) }
 							</span>
 							{ '1' === super_cache_enabled &&
-								<FormSettingExplanation>
-									{ translate(
-										'{{strong}}Warning! 304 browser caching is only supported when mod_rewrite caching ' +
-										'is not used.{{/strong}}',
-										{
-											components: { strong: <strong /> }
-										}
-									) }
-								</FormSettingExplanation>
+								<Notice className="wp-super-cache__miscellaneous-304-notice"
+										isCompact={ true }
+										status="is-error"
+										text={ translate(
+									'304 browser caching is only supported when mod_rewrite caching ' +
+									'is not used.' ) }
+								/>
 							}
 							{ '1' !== super_cache_enabled &&
-								<FormSettingExplanation>
-									{ translate(
-										'304 support is disabled by default because some hosts have had problems with the ' +
-										'headers used in the past.'
-									) }
-								</FormSettingExplanation>
+								<Notice className="wp-super-cache__miscellaneous-304-notice"
+										isCompact={ true }
+										text={ translate(
+									'304 support is disabled by default because some hosts have had problems with the ' +
+									'headers used in the past.' ) }
+								/>
 							}
 						</FormToggle>
 

@@ -18,7 +18,6 @@ import WrapSettingsForm from './wrap-settings-form';
 const Advanced = ( {
 	fields: {
 		_wp_using_ext_object_cache,
-		cache_page_secret,
 		super_cache_enabled,
 		wp_cache_clear_on_post_edit,
 		wp_cache_disable_locking,
@@ -203,18 +202,6 @@ const Advanced = ( {
 							</FormToggle>
 						}
 					</FormFieldset>
-
-					<p>
-						{ translate(
-							'{{strong}}DO NOT CACHE PAGE{{/strong}} secret key: ',
-							{
-								components: { strong: <strong /> }
-							}
-						) }
-						<a href="">
-							{ cache_page_secret || '' }
-						</a>
-					</p>
 				</form>
 			</Card>
 		</div>
@@ -224,7 +211,6 @@ const Advanced = ( {
 const getFormSettings = settings => {
 	return pick( settings, [
 		'_wp_using_ext_object_cache',
-		'cache_page_secret',
 		'super_cache_enabled',
 		'wp_cache_clear_on_post_edit',
 		'wp_cache_disable_locking',
