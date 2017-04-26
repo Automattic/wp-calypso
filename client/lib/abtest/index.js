@@ -104,7 +104,20 @@ ABTest.prototype.init = function( name ) {
 	this.defaultVariation = testConfig.defaultVariation;
 	this.variationNames = variationNames;
 	this.experimentId = name + '_' + variationDatestamp;
-	this.allowAnyLocale = testConfig.localeTargets === 'any';
+
+	this.localeTarget = 'en';
+	this.localeTargetExclude = false;
+
+	if ( testConfig.localeTargets ) {
+		if ( testConfig.localeTargets === 'any' ) {
+			this.localeTarget = false;
+		} else if ( testConfig.localeTargets === 'not-en' ) {
+			this.localeTargetExclude = true;
+		} else {
+			this.localeTarget = testConfig.localeTargets;
+		}
+	}
+
 	this.allowExistingUsers = testConfig.allowExistingUsers === true;
 };
 
@@ -141,28 +154,34 @@ ABTest.prototype.isEligibleForAbTest = function() {
 	const clientLanguage = client.language || client.userLanguage || 'en';
 	const clientLanguagesPrimary = ( client.languages && client.languages.length ) ? client.languages[ 0 ] : 'en';
 	const localeFromSession = i18n.getLocaleSlug() || 'en';
-	const englishMatcher = /^en-?/i;
 
 	if ( ! store.enabled ) {
 		debug( '%s: Local storage is not enabled', this.experimentId );
 		return false;
 	}
 
-	if ( ! this.allowAnyLocale ) {
-		if ( isUserSignedIn() && user.get().localeSlug !== 'en' ) {
-			debug( '%s: User has a non-English locale', this.experimentId );
-			return false;
+	if ( this.localeTarget ) {
+		const localeMatcher = new RegExp( '^' + this.localeTarget + '-?', 'i' );
+		let isTargetLocale = true;
+
+		if ( isUserSignedIn() && user.get().localeSlug !== this.localeTarget ) {
+			debug( '%s: User has a %s locale', this.experimentId, this.localeTarget );
+			isTargetLocale = false;
 		}
-		if ( ! isUserSignedIn() && ! clientLanguage.match( englishMatcher ) ) {
-			debug( '%s: Logged-out user has a non-English navigator.language preference', this.experimentId );
-			return false;
+		if ( ! isUserSignedIn() && ! clientLanguage.match( localeMatcher ) ) {
+			debug( '%s: Logged-out user has a %s navigator.language preference', this.experimentId, this.localeTarget );
+			isTargetLocale = false;
 		}
-		if ( ! isUserSignedIn() && ! clientLanguagesPrimary.match( englishMatcher ) ) {
-			debug( '%s: Logged-out user has a non-English navigator.languages primary preference', this.experimentId );
-			return false;
+		if ( ! isUserSignedIn() && ! clientLanguagesPrimary.match( localeMatcher ) ) {
+			debug( '%s: Logged-out user has a %s navigator.languages primary preference', this.experimentId, this.localeTarget );
+			isTargetLocale = false;
 		}
-		if ( ! isUserSignedIn() && ! localeFromSession.match( englishMatcher ) ) {
-			debug( '%s: Logged-out user has a non-English locale in session', this.experimentId );
+		if ( ! isUserSignedIn() && ! localeFromSession.match( localeMatcher ) ) {
+			debug( '%s: Logged-out user has the %s locale in session', this.experimentId, this.localeTarget );
+			isTargetLocale = false;
+		}
+
+		if ( ( this.localeTargetExclude && isTargetLocale ) || ( ! this.localeTargetExclude && ! isTargetLocale ) ) {
 			return false;
 		}
 	}

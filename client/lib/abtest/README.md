@@ -32,7 +32,8 @@ You should include the following information:
 
 There are also several optional configuration settings available:
 
-* `allowAnyLocale` - Relaxes the locale restraint on the A/B test, allowing users of any locale to be allocated to a test.  Don't forget: this means strings will need to be translated.
+* `targetLocales` - By default, tests only run on users where the locale is set to English. You can also run for all locales by setting `targetLocales` to `any`, for all non English locales by setting it to `not-en`, or for a specific locale by setting the value to the locale slug, i.e: `targetLocales: 'de'`
+Don't forget: any test that runs for locales other than English means strings will need to be translated.
 
 Next, in your code, import the `abtest` method from the `abtest` module:
 
@@ -108,8 +109,6 @@ To account for this, the A/B test module is smart enough to know that if the use
 ## Dealing with ineligible users
 
 By default, users are only included in the test if their locale is set to English (`en`), the current date is on or after the datestamp you set, they have not participated in a test with the same name in the past, and they registered on or after the date that the test started.
-
-The locale restriction can be relaxed by adding `allowAnyLocale: true` to the test configuration.
 
 In cases where the user is ineligible, the `abtest` function will return the value for `defaultVariation` value that you specify in the config file. This value should be one of the variations contained in `variations`.
 
