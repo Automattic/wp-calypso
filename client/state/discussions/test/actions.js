@@ -317,7 +317,7 @@ describe( 'actions', () => {
 
 	describe( '#removePostComment()', () => {
 		it( 'should return a remove item action', () => {
-			const action = removePostComment( SITE_ID, POST_ID, COMMENT_ID);
+			const action = removePostComment( SITE_ID, POST_ID, COMMENT_ID );
 			expect( action ).to.eql( {
 				type: DISCUSSIONS_ITEM_REMOVE,
 				siteId: SITE_ID,
