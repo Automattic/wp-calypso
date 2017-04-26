@@ -42,6 +42,14 @@ module.exports = {
 		},
 		defaultVariation: 'hideSurveyStep',
 	},
+	signupThemeStepCopyChanges: {
+		datestamp: '20170420',
+		variations: {
+			original: 20,
+			modified: 80,
+		},
+		defaultVariation: 'original',
+	},
 	conciergeOfferOnCancel: {
 		datestamp: '20170410',
 		variations: {
