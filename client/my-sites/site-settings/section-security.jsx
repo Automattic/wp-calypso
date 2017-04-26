@@ -9,12 +9,13 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import FormSecurity from 'my-sites/site-settings/form-security';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 
-const SiteSettingsSecurity = ( { site, translate } ) => {
-	if ( ! site.jetpack ) {
+const SiteSettingsSecurity = ( { site, siteId, siteIsJetpack, translate } ) => {
+	if ( ! siteIsJetpack ) {
 		return (
 			<JetpackManageErrorPage
 				action={ translate( 'Manage general settings for %(site)s', { args: { site: site.name } } ) }
@@ -32,7 +33,7 @@ const SiteSettingsSecurity = ( { site, translate } ) => {
 				template="optInManage"
 				title= { translate( 'Looking to manage this site\'s security settings?' ) }
 				section="security-settings"
-				siteId={ site.ID }
+				siteId={ siteId }
 			/>
 		);
 	}
@@ -41,7 +42,7 @@ const SiteSettingsSecurity = ( { site, translate } ) => {
 		return (
 			<JetpackManageErrorPage
 				template="updateJetpack"
-				siteId={ site.ID }
+				siteId={ siteId }
 				version="3.4"
 			/>
 		);
@@ -56,13 +57,19 @@ const SiteSettingsSecurity = ( { site, translate } ) => {
 };
 
 SiteSettingsSecurity.propTypes = {
-	site: PropTypes.object
+	site: PropTypes.object,
+	siteId: PropTypes.number,
+	siteIsJetpack: PropTypes.bool,
 };
 
 export default connect(
 	state => {
+		const site = getSelectedSite( state );
+		const siteId = getSelectedSiteId( state );
 		return {
-			site: getSelectedSite( state )
+			site,
+			siteId,
+			siteIsJetpack: isJetpackSite( state, siteId )
 		};
 	}
 )( localize( SiteSettingsSecurity ) );
