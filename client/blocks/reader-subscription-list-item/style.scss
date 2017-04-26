@@ -203,3 +203,7 @@
 .reader-subscription-list-item__email-popout-wrapper .segmented-control__link {
 	background: $white;
 }
+
+.reader-subscription-list-item__site-url, .reader-subscription-list-item__site-url a {
+	color: $gray;
+}
