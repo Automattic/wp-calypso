@@ -389,7 +389,7 @@ describe( 'utils', () => {
 					return state;
 			}
 		};
-		date.hasCustomHandler = true;
+		date.hasCustomPersistence = true;
 
 		it( 'should return initial state without a schema on SERIALIZE', () => {
 			const validated = withSchemaValidation( null, age );
@@ -477,7 +477,7 @@ describe( 'utils', () => {
 					return state;
 			}
 		};
-		date.hasCustomHandler = true;
+		date.hasCustomPersistence = true;
 
 		let reducers;
 
