@@ -352,13 +352,14 @@ export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => 
  * @returns {function} - Returns the combined reducer function
  */
 export function combineReducersWithPersistence( reducers ) {
-	let hasSchema = false;
-	const reducersWithPersistence = reduce( reducers, ( result, reducerWithSchema, key ) => {
-		const { schema } = reducerWithSchema;
-		hasSchema = hasSchema || !! schema || reducerWithSchema.hasSchema || reducerWithSchema.hasCustomPersistence;
-		return { ...result, [ key ]: withSchemaValidation( schema, reducerWithSchema ) };
-	}, {} );
-	const combined = combineReducers( reducersWithPersistence );
-	combined.hasSchema = hasSchema;
+	const [ validatedReducers, validatedReducersHasSchema ] = reduce( reducers, ( [ validated, hasSchema ], next, key ) => {
+		const { schema } = next;
+		return [
+			{ ...validated, [ key ]: withSchemaValidation( schema, next ) },
+			hasSchema || !! schema || next.hasSchema || next.hasCustomPersistence
+		];
+	}, [ {}, false ] );
+	const combined = combineReducers( validatedReducers );
+	combined.hasSchema = validatedReducersHasSchema;
 	return combined;
 }
