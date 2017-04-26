@@ -3,6 +3,7 @@
  */
 import assert from 'assert';
 import sinon from 'sinon';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,7 +27,8 @@ describe( 'mapped-domain', () => {
 				name: 'neverexpires.com',
 				expirationMoment: null
 			},
-			settingPrimaryDomain: false
+			settingPrimaryDomain: false,
+			translate: identity
 		};
 	} );
 
@@ -41,7 +43,7 @@ describe( 'mapped-domain', () => {
 
 		const ReactClass = require( 'react/lib/ReactClass' );
 		ReactClass.injection.injectMixin( require( 'i18n-calypso' ).mixin );
-		MappedDomain = require( '../mapped-domain.jsx' );
+		MappedDomain = require( '../mapped-domain.jsx' ).MappedDomain;
 	} );
 
 	it( 'should render when props.domain.expirationMoment is null', () => {

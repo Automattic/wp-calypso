@@ -117,4 +117,5 @@ const MappedDomain = React.createClass( {
 	}
 } );
 
+export { MappedDomain };
 export default localize( MappedDomain );
