@@ -75,7 +75,6 @@ describe( 'ResetPasswordForm', () => {
 					translate={ identity }
 				/>
 			);
-			wrapper.setState( { selectedMethod: null } );
 
 			// Expect the button to be disabled
 			expect( wrapper.find( '.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
