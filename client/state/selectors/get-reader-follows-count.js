@@ -1,3 +1,8 @@
+/**
+ * External dependencies
+ */
+import { size, filter } from 'lodash';
+
 /*
  * Get the count of follows a user has
  *
@@ -6,7 +11,7 @@
  */
 const getReaderFollowsCount = state => Math.max(
 	state.reader.follows.itemsCount,
-	Object.keys( state.reader.follows.items ).length,
+	size( filter( state.reader.follows.items, { is_following: true } ) ),
 );
 
 export default getReaderFollowsCount;

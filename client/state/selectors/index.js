@@ -30,7 +30,6 @@ export getAccountRecoveryValidationError from './get-account-recovery-validation
 export getBlockedSites from './get-blocked-sites';
 export getBillingTransactions from './get-billing-transactions';
 export getCurrentUserPaymentMethods from './get-current-user-payment-methods';
-export getFollowCount from './get-follow-count';
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';
 export getJetpackConnectionStatus from './get-jetpack-connection-status';
 export getJetpackJumpstartStatus from './get-jetpack-jumpstart-status';
