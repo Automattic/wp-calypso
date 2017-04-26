@@ -4,7 +4,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
+import { identity, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -18,8 +18,7 @@ import {
 	getPrimarySiteId,
 } from 'state/selectors';
 
-class SitesDropdown extends PureComponent {
-
+export class SitesDropdown extends PureComponent {
 	static propTypes = {
 		selectedSiteId: React.PropTypes.number,
 		showAllSites: React.PropTypes.bool,
@@ -30,6 +29,7 @@ class SitesDropdown extends PureComponent {
 	}
 
 	static defaultProps = {
+		getSite: identity,
 		showAllSites: false,
 		onClose: noop,
 		onSiteSelect: noop,
