@@ -45,6 +45,7 @@ import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
+import { activateModule } from 'state/jetpack/modules/actions';
 
 /**
  * Module variables
@@ -81,7 +82,8 @@ const InvitePeople = React.createClass( {
 			getTokenStatus: () => {},
 			errorToDisplay: false,
 			errors: {},
-			success: []
+			success: [],
+			ssoEnabled: false
 		} );
 	},
 
@@ -306,6 +308,11 @@ const InvitePeople = React.createClass( {
 		);
 	},
 
+	enableSSO() {
+		this.setState( { ssoEnabled: true } );
+		this.props.activateModule( this.props.siteId, 'sso' );
+	},
+
 	renderInviteForm() {
 		const {
 			site,
@@ -314,6 +321,9 @@ const InvitePeople = React.createClass( {
 			isJetpack,
 			isSSOActive
 		} = this.props;
+
+		const { ssoEnabled } = this.state;
+
 		const inviteForm = (
 			<Card>
 				<EmailVerificationGate>
@@ -406,14 +416,14 @@ const InvitePeople = React.createClass( {
 					</FeatureExample>
 				</div>
 			);
-		} else if ( ! isSSOActive ) {
+		} else if ( ! isSSOActive && ! ssoEnabled ) {
 			return (
 				<div className="invite-people__action-required">
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
 						text={ translate( 'Inviting users requires WordPress.com sign in' ) }>
-						<NoticeAction href={ `/settings/security/${ site.slug }` }>
+						<NoticeAction onClick={ this.enableSSO }>
 							{ translate( 'Enable' ) }
 						</NoticeAction>
 					</Notice>
@@ -463,5 +473,5 @@ export default connect(
 			isJetpack: isJetpackSite( state, siteId )
 		};
 	},
-	dispatch => bindActionCreators( { sendInvites }, dispatch )
+	dispatch => bindActionCreators( { sendInvites, activateModule }, dispatch )
 )( localize( InvitePeople ) );
