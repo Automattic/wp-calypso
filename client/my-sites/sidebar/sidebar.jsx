@@ -349,7 +349,11 @@ export class MySitesSidebar extends Component {
 		let usersLink = '/people/team' + this.props.siteSuffix;
 		let addPeopleLink = '/people/new' + this.props.siteSuffix;
 
-		if ( site && ! canUserListUsers ) {
+		if ( ! site ) {
+			return null;
+		}
+
+		if ( ! canUserListUsers ) {
 			return null;
 		}
 
