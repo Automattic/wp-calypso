@@ -18,7 +18,7 @@ import { localize } from 'i18n-calypso';
  */
 import { protectForm } from 'lib/protect-form';
 import trackForm from 'lib/track-form';
-import QuerySettings from './query-settings';
+import QuerySettings from './data/query-settings';
 import {
 	errorNotice,
 	removeNotice,
