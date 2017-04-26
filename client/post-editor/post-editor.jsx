@@ -283,55 +283,49 @@ export const PostEditor = React.createClass( {
 									type={ this.props.type }
 								/>
 							</div>
-							<FeaturedImage
-								site={ site }
-								post={ this.state.post }
-								maxWidth={ 1462 } />
-							<div className="editor__header">
-								<EditorTitle
-									onChange={ this.debouncedAutosave }
-									tabIndex={ 1 } />
 
-								{ this.state.post && isPage && site
-									? <EditorPageSlug
-										path={ this.state.post.URL && ( this.state.post.URL !== siteURL )
-											? utils.getPagePath( this.state.post )
-											: siteURL
-										}
+							<div className={ classNames(
+								'editor__content',
+								{ show: this.state.revisionId === null }
+							) }>
+								<FeaturedImage
+									site={ site }
+									post={ this.state.post }
+									maxWidth={ 1462 }
+								/>
+								<div className="editor__header">
+									<EditorTitle
+										onChange={ this.debouncedAutosave }
+										tabIndex={ 1 }
+									/>
+
+									{ this.state.post && isPage && site
+										? <EditorPageSlug
+											path={ this.state.post.URL && ( this.state.post.URL !== siteURL )
+												? utils.getPagePath( this.state.post )
+												: siteURL
+											}
 										/>
-									: null
-								}
+										: null
+									}
 
-								{ this.state.revisionId === null && (
 									<SegmentedControl className="editor__switch-mode" compact={ true }>
 										<SegmentedControlItem
 											selected={ mode === 'tinymce' }
 											onClick={ this.switchEditorVisualMode }
-											title={ this.props.translate( 'Edit with a visual editor' ) }>
+											title={ this.props.translate( 'Edit with a visual editor' ) }
+										>
 											{ this.props.translate( 'Visual', { context: 'Editor writing mode' } ) }
 										</SegmentedControlItem>
 										<SegmentedControlItem
 											selected={ mode === 'html' }
 											onClick={ this.switchEditorHtmlMode }
-											title={ this.props.translate( 'Edit the raw HTML code' ) }>
+											title={ this.props.translate( 'Edit the raw HTML code' ) }
+										>
 											HTML
 										</SegmentedControlItem>
 									</SegmentedControl>
-								) }
-							</div>
-
-							{ this.state.revisionId !== null && (
-								<EditorDiffViewer
-									siteId={ site.ID }
-									postId={ this.state.post.ID }
-									revisionId={ this.state.revisionId }
-								/>
-							) }
-
-							<div className={ classNames(
-								'post-editor__tinymce-wrapper',
-								{ show: this.state.revisionId === null }
-							) }>
+								</div>
 								<hr className="editor__header-divider" />
 								<TinyMCE
 									ref={ this.storeEditor }
@@ -346,6 +340,14 @@ export const PostEditor = React.createClass( {
 									onTextEditorChange={ this.onEditorContentChange }
 								/>
 							</div>
+
+							{ this.state.revisionId !== null && (
+								<EditorDiffViewer
+									siteId={ site.ID }
+									postId={ this.state.post.ID }
+									revisionId={ this.state.revisionId }
+								/>
+							) }
 						</div>
 						<EditorWordCount />
 					</div>
