@@ -30,8 +30,8 @@ import { isHttps, withoutHttp, addQueryArgs, urlToSlug } from 'lib/url';
 import createSelector from 'lib/create-selector';
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import versionCompare from 'lib/version-compare';
+import getComputedAttributes from 'lib/site/computed-attributes';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
-import { getSiteDefaultPostFormat } from 'state/selectors';
 
 /**
  * Returns a raw site object by its ID.
@@ -82,33 +82,17 @@ export const getSite = createSelector(
 
 		return {
 			...site,
+			...getComputedAttributes( site ),
 			...getJetpackComputedAttributes( state, siteId ),
 			hasConflict: isSiteConflicting( state, siteId ),
 			title: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			domain: getSiteDomain( state, siteId ),
-			is_previewable: isSitePreviewable( state, siteId ),
-			options: computeSiteOptions( state, siteId ),
+			is_previewable: isSitePreviewable( state, siteId )
 		};
 	},
 	( state ) => state.sites.items
 );
-
-export function computeSiteOptions( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site ) {
-		return null;
-	}
-
-	const isWpcomMappedDomain = getSiteOption( state, siteId, 'is_mapped_domain' ) && ! isJetpackSite( state, siteId );
-	const wpcomUrl = withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
-
-	return {
-		...site.options,
-		...isWpcomMappedDomain && { wpcom_url: wpcomUrl },
-		default_post_format: getSiteDefaultPostFormat( state, siteId ),
-	};
-}
 
 export function getJetpackComputedAttributes( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {

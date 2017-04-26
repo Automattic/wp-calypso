@@ -58,6 +58,7 @@ describe( 'getVisibleSites()', () => {
 				domain: 'example.com',
 				slug: 'example.com',
 				hasConflict: false,
+				is_customizable: false,
 				is_previewable: false,
 				options: {
 					default_post_format: 'standard',
