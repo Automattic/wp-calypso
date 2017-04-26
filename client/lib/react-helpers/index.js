@@ -4,6 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
+import Stylizer, { insertCss } from './stylizer';
 
 /**
  * Internal dependencies
@@ -35,7 +36,11 @@ export function renderWithReduxStore( reactElement, domContainer, reduxStore ) {
 			: domContainer;
 
 	return ReactDom.render(
-		React.createElement( ReduxProvider, { store: reduxStore }, reactElement ),
+		<ReduxProvider store={ reduxStore }>
+			<Stylizer onInsertCss={ insertCss }>
+				{ reactElement }
+			</Stylizer>
+		</ReduxProvider>,
 		domContainerNode
 	);
 }

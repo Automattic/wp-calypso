@@ -21,6 +21,8 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class='is-desktop' + ( isFluidWidth ?
 				link(rel='stylesheet', href=urls['style-debug.css'])
 			else
 				link(rel='stylesheet', href=urls['style.css'])
+		style(type='text/css' id='critical-path-css')
+			!= Array.from( css ).join( '' )
 
 		if config
 			script(type='text/javascript')!= config
