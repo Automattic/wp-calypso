@@ -148,7 +148,7 @@ export function redirectSearchAndType( { res, params: { site, search, tier } } 
 export function redirectFilterAndType( { res, params: { site, filter, tier } } ) {
 	let parts;
 	if ( filter ) {
-		parts = [ tier, 'filter', filter.replace( '+', ',' ), site ]; // The Atlas Showcase used plusses, we use commas
+		parts = [ tier, 'filter', filter, site ];
 	} else {
 		parts = [ tier, site ];
 	}
