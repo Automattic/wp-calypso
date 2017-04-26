@@ -4,12 +4,9 @@
 import wpcom from 'lib/wp';
 import {
 	DISCUSSIONS_COUNTS_UPDATE,
-	DISCUSSIONS_REQUEST,
-	DISCUSSIONS_REQUEST_SUCCESS,
-	DISCUSSIONS_REQUEST_FAILURE,
-	DISCUSSIONS_ITEM_EDIT_REQUEST,
-	DISCUSSIONS_ITEM_EDIT_REQUEST_SUCCESS,
-	DISCUSSIONS_ITEM_EDIT_REQUEST_FAILURE,
+	DISCUSSIONS_ITEM_EDIT_CONTENT_REQUEST,
+	DISCUSSIONS_ITEM_EDIT_CONTENT_REQUEST_FAILURE,
+	DISCUSSIONS_ITEM_EDIT_CONTENT_REQUEST_SUCCESS,
 	DISCUSSIONS_ITEM_LIKE_REQUEST,
 	DISCUSSIONS_ITEM_LIKE_REQUEST_FAILURE,
 	DISCUSSIONS_ITEM_LIKE_REQUEST_SUCCESS,
@@ -20,6 +17,9 @@ import {
 	DISCUSSIONS_ITEM_UNLIKE_REQUEST,
 	DISCUSSIONS_ITEM_UNLIKE_REQUEST_FAILURE,
 	DISCUSSIONS_ITEM_UNLIKE_REQUEST_SUCCESS,
+	DISCUSSIONS_REQUEST,
+	DISCUSSIONS_REQUEST_FAILURE,
+	DISCUSSIONS_REQUEST_SUCCESS,
 } from '../action-types';
 
 const DEFAULT_STATUS = 'all';
@@ -213,10 +213,15 @@ export function removePostComment( siteId, postId, commentId ) {
  */
 export function editPostComment( siteId, postId, commentId, content ) {
 	return dispatch => {
-		dispatch( {
-			type: DISCUSSIONS_ITEM_EDIT_REQUEST,
+		const payload = {
 			siteId,
 			postId,
+			commentId
+		};
+
+		dispatch( {
+			type: DISCUSSIONS_ITEM_EDIT_CONTENT_REQUEST,
+			...payload,
 			content
 		} );
 
@@ -224,17 +229,18 @@ export function editPostComment( siteId, postId, commentId, content ) {
 			.comment( commentId )
 			.update( { content } )
 			.then( result => dispatch( {
-				type: DISCUSSIONS_ITEM_EDIT_REQUEST_SUCCESS,
+				type: DISCUSSIONS_ITEM_EDIT_CONTENT_REQUEST_SUCCESS,
 				siteId,
 				postId,
 				commentId,
 				content: result.content
 			} ) )
 			.catch( error => dispatch( {
-				type: DISCUSSIONS_ITEM_EDIT_REQUEST_FAILURE,
+				type: DISCUSSIONS_ITEM_EDIT_CONTENT_REQUEST_FAILURE,
 				siteId,
 				postId,
 				commentId,
+				content,
 				error
 			} ) );
 	};
