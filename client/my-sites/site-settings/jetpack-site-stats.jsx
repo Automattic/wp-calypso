@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
  */
 import Gridicon from 'gridicons';
 import FoldableCard from 'components/foldable-card';
+import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
@@ -171,6 +172,10 @@ class JetpackSiteStats extends Component {
 						}
 					</FormFieldset>
 				</FoldableCard>
+
+				<CompactCard href={ '/stats/day/' + siteId }>
+					{ translate( 'View your stats' ) }
+				</CompactCard>
 			</div>
 		);
 	}
