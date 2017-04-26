@@ -10,6 +10,9 @@ import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	DISCUSSIONS_COUNTS_UPDATE,
+	DISCUSSIONS_ITEM_EDIT_CONTENT_REQUEST,
+	DISCUSSIONS_ITEM_EDIT_CONTENT_REQUEST_FAILURE,
+	DISCUSSIONS_ITEM_EDIT_CONTENT_REQUEST_SUCCESS,
 	DISCUSSIONS_ITEM_LIKE_REQUEST,
 	DISCUSSIONS_ITEM_LIKE_REQUEST_FAILURE,
 	DISCUSSIONS_ITEM_LIKE_REQUEST_SUCCESS,
@@ -28,6 +31,7 @@ import {
 	likePostComment,
 	unlikePostComment,
 	changeCommentStatus,
+	editPostComment,
 } from '../actions';
 
 const PUBLIC_API = 'https://public-api.wordpress.com:443';
@@ -255,6 +259,54 @@ describe( 'actions', () => {
 						type: DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_FAILURE,
 						...payload,
 						status: 'all',
+						error: sandbox.match( { message: 'foo' } )
+					} );
+				} );
+		} );
+	} );
+
+	describe( '#editPostComment()', () => {
+		useNock( nock => {
+			nock( PUBLIC_API )
+				.persist()
+				.post( `/rest/v1.1/sites/${ SITE_ID }/comments/${ COMMENT_ID }`, { content: 'lorem ipsum' } )
+				.reply( 200, { content: 'lorem ipsum' } )
+				.post( `/rest/v1.1/sites/${ SITE_ID }/comments/${ COMMENT_ID }`, { content: '' } )
+				.reply( 403, { error: 'foo', message: 'foo' } );
+		} );
+
+		const payload = {
+			siteId: SITE_ID,
+			postId: POST_ID,
+			commentId: COMMENT_ID,
+			content: 'lorem ipsum'
+		};
+
+		it( 'should dispatch fetch action', () => {
+			editPostComment( SITE_ID, POST_ID, COMMENT_ID, 'lorem ipsum' )( spy );
+			expect( spy ).to.have.been.calledWithMatch( {
+				type: DISCUSSIONS_ITEM_EDIT_CONTENT_REQUEST,
+				...payload
+			} );
+		} );
+
+		it( 'should dispatch success action when request completes', () => {
+			return editPostComment( SITE_ID, POST_ID, COMMENT_ID, 'lorem ipsum' )( spy )
+				.then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: DISCUSSIONS_ITEM_EDIT_CONTENT_REQUEST_SUCCESS,
+						...payload
+					} );
+				} );
+		} );
+
+		it( 'should dispatch fail action when request fails', () => {
+			return editPostComment( SITE_ID, POST_ID, COMMENT_ID, '' )( spy )
+				.then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: DISCUSSIONS_ITEM_EDIT_CONTENT_REQUEST_FAILURE,
+						...payload,
+						content: '',
 						error: sandbox.match( { message: 'foo' } )
 					} );
 				} );
