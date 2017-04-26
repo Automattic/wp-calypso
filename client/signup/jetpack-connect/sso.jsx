@@ -9,6 +9,8 @@ import get from 'lodash/get';
 import map from 'lodash/map';
 import Gridicon from 'gridicons';
 import cookie from 'cookie';
+import { flowRight } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -157,12 +159,12 @@ const JetpackSSOForm = React.createClass( {
 		return (
 			<Notice
 				status="is-error"
-				text={ this.translate( 'Oops, something went wrong.' ) }
+				text={ this.props.translate( 'Oops, something went wrong.' ) }
 				showDismiss={ false }>
 				<NoticeAction
 					href={ get( this.props, 'blogDetails.admin_url', '#' ) }
 					onClick={ this.onTryAgainClick }>
-					{ this.translate( 'Try again' ) }
+					{ this.props.translate( 'Try again' ) }
 				</NoticeAction>
 			</Notice>
 		);
@@ -195,34 +197,34 @@ const JetpackSSOForm = React.createClass( {
 	getSharedDetailLabel( key ) {
 		switch ( key ) {
 			case 'ID':
-				key = this.translate( 'User ID', { context: 'User Field' } );
+				key = this.props.translate( 'User ID', { context: 'User Field' } );
 				break;
 			case 'login':
-				key = this.translate( 'Login', { context: 'User Field' } );
+				key = this.props.translate( 'Login', { context: 'User Field' } );
 				break;
 			case 'email':
-				key = this.translate( 'Email', { context: 'User Field' } );
+				key = this.props.translate( 'Email', { context: 'User Field' } );
 				break;
 			case 'url':
-				key = this.translate( 'URL', { context: 'User Field' } );
+				key = this.props.translate( 'URL', { context: 'User Field' } );
 				break;
 			case 'first_name':
-				key = this.translate( 'First Name', { context: 'User Field' } );
+				key = this.props.translate( 'First Name', { context: 'User Field' } );
 				break;
 			case 'last_name':
-				key = this.translate( 'Last Name', { context: 'User Field' } );
+				key = this.props.translate( 'Last Name', { context: 'User Field' } );
 				break;
 			case 'display_name':
-				key = this.translate( 'Display Name', { context: 'User Field' } );
+				key = this.props.translate( 'Display Name', { context: 'User Field' } );
 				break;
 			case 'description':
-				key = this.translate( 'Description', { context: 'User Field' } );
+				key = this.props.translate( 'Description', { context: 'User Field' } );
 				break;
 			case 'two_step_enabled':
-				key = this.translate( 'Two-Step Authentication', { context: 'User Field' } );
+				key = this.props.translate( 'Two-Step Authentication', { context: 'User Field' } );
 				break;
 			case 'external_user_id':
-				key = this.translate( 'External User ID', { context: 'User Field' } );
+				key = this.props.translate( 'External User ID', { context: 'User Field' } );
 				break;
 		}
 
@@ -232,8 +234,8 @@ const JetpackSSOForm = React.createClass( {
 	getSharedDetailValue( key, value ) {
 		if ( 'two_step_enabled' === key && value !== '' ) {
 			value = ( true === value )
-				? this.translate( 'Enabled' )
-				: this.translate( 'Disabled' );
+				? this.props.translate( 'Enabled' )
+				: this.props.translate( 'Disabled' );
 		}
 
 		return decodeEntities( value );
@@ -244,7 +246,7 @@ const JetpackSSOForm = React.createClass( {
 			<span className="jetpack-connect__sso-return-to-site">
 				<Gridicon icon="arrow-left" size={ 18 } />
 				{
-					this.translate( 'Return to %(siteName)s', {
+					this.props.translate( 'Return to %(siteName)s', {
 						args: {
 							siteName: get( this.props, 'blogDetails.title' )
 						}
@@ -257,7 +259,7 @@ const JetpackSSOForm = React.createClass( {
 	},
 
 	getTOSText() {
-		const text = this.translate(
+		const text = this.props.translate(
 			'By logging in you agree to {{detailsLink}}share details{{/detailsLink}} between WordPress.com and %(siteName)s.',
 			{
 				components: {
@@ -279,7 +281,7 @@ const JetpackSSOForm = React.createClass( {
 	},
 
 	getSubHeaderText() {
-		const text = this.translate(
+		const text = this.props.translate(
 			'To use Single Sign-On, WordPress.com needs to be able to connect to your account on %(siteName)s.', {
 				args: {
 					siteName: get( this.props, 'blogDetails.title' )
@@ -341,7 +343,7 @@ const JetpackSSOForm = React.createClass( {
 		const buttons = [
 			{
 				action: 'close',
-				label: this.translate( 'Got it', { context: 'Used in a button. Similar phrase would be, "I understand".' } )
+				label: this.props.translate( 'Got it', { context: 'Used in a button. Similar phrase would be, "I understand".' } )
 			}
 		];
 
@@ -354,7 +356,7 @@ const JetpackSSOForm = React.createClass( {
 				<div className="jetpack-connect__sso-terms-dialog-content">
 					<p className="jetpack-connect__sso-shared-details-intro">
 						{
-							this.translate(
+							this.props.translate(
 								'When you approve logging in with WordPress.com, we will send the following details to your site.'
 							)
 						}
@@ -371,10 +373,10 @@ const JetpackSSOForm = React.createClass( {
 			<Main>
 				<EmptyContent
 					illustration="/calypso/images/drake/drake-whoops.svg"
-					title={ this.translate(
+					title={ this.props.translate(
 						'Oops, this URL should not be accessed directly'
 					) }
-					line={ this.translate(
+					line={ this.props.translate(
 						'Please click the {{em}}Log in with WordPress.com button{{/em}} on your Jetpack site.',
 						{
 							components: {
@@ -382,7 +384,7 @@ const JetpackSSOForm = React.createClass( {
 							}
 						}
 					) }
-					action={ this.translate( 'Read Single Sign-On Documentation' ) }
+					action={ this.props.translate( 'Read Single Sign-On Documentation' ) }
 					actionURL="https://jetpack.com/support/sso/"
 				/>
 			</Main>
@@ -401,21 +403,21 @@ const JetpackSSOForm = React.createClass( {
 			<MainWrapper>
 				<div className="jetpack-connect__sso">
 					<StepHeader
-						headerText={ this.translate( 'Connect with WordPress.com' ) }
+						headerText={ this.props.translate( 'Connect with WordPress.com' ) }
 						subHeaderText={ this.getSubHeaderText() }
 					/>
 
 					{ this.renderSiteCard() }
 
 					<EmailVerificationGate
-						noticeText={ this.translate( 'You must verify your email to sign in with WordPress.com.' ) }
+						noticeText={ this.props.translate( 'You must verify your email to sign in with WordPress.com.' ) }
 						noticeStatus="is-info">
 						<Card>
 							{ user.email_verified && this.maybeRenderErrorNotice() }
 								<div className="jetpack-connect__sso-user-profile">
 									<Gravatar user={ user } size={ 120 } imgSize={ 400 } />
 									<h3 className="jetpack-connect__sso-log-in-as">
-										{ this.translate(
+										{ this.props.translate(
 											'Log in as {{strong}}%s{{/strong}}',
 											{
 												args: user.display_name,
@@ -439,7 +441,7 @@ const JetpackSSOForm = React.createClass( {
 										primary
 										onClick={ this.onApproveSSO }
 										disabled={ this.isButtonDisabled() }>
-										{ this.translate( 'Log in' ) }
+										{ this.props.translate( 'Log in' ) }
 									</Button>
 								</LoggedOutFormFooter>
 						</Card>
@@ -447,7 +449,7 @@ const JetpackSSOForm = React.createClass( {
 
 					<LoggedOutFormLinks>
 						<LoggedOutFormLinkItem href={ this.getSignInLink() } onClick={ this.onClickSignInDifferentUser }>
-							{ this.translate( 'Sign in as a different user' ) }
+							{ this.props.translate( 'Sign in as a different user' ) }
 						</LoggedOutFormLinkItem>
 						<LoggedOutFormLinkItem
 							rel="external"
@@ -465,7 +467,7 @@ const JetpackSSOForm = React.createClass( {
 	}
 } );
 
-export default connect(
+const connectComponent = connect(
 	state => {
 		const jetpackSSO = getSSO( state );
 		return {
@@ -483,4 +485,9 @@ export default connect(
 		authorizeSSO,
 		validateSSONonce
 	}, dispatch )
+);
+
+export default flowRight(
+	connectComponent,
+	localize
 )( JetpackSSOForm );

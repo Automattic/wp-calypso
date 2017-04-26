@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,18 +15,18 @@ export default React.createClass( {
 	displayName: 'JetpackPlansGrid',
 
 	renderConnectHeader() {
-		let headerText = this.translate( 'Your site is now connected!' );
-		let subheaderText = this.translate( 'Now pick a plan that\'s right for you.' );
+		let headerText = i18n.translate( 'Your site is now connected!' );
+		let subheaderText = i18n.translate( 'Now pick a plan that\'s right for you.' );
 		if ( this.props.showFirst ) {
-			headerText = this.translate( 'You are moments away from connecting your site' );
+			headerText = i18n.translate( 'You are moments away from connecting your site' );
 		}
 		if ( this.props.isLanding ) {
-			headerText = this.translate( 'Pick a plan that\'s right for you.' );
+			headerText = i18n.translate( 'Pick a plan that\'s right for you.' );
 			subheaderText = '';
 
 			if ( this.props.landingType === 'vaultpress' ) {
-				headerText = this.translate( 'Select your VaultPress plan.' );
-				subheaderText = this.translate( 'VaultPress backup and security plans are now cheaper as part of Jetpack.' );
+				headerText = i18n.translate( 'Select your VaultPress plan.' );
+				subheaderText = i18n.translate( 'VaultPress backup and security plans are now cheaper as part of Jetpack.' );
 			}
 		}
 		return (

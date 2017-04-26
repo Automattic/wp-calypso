@@ -5,6 +5,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Gridicon from 'gridicons';
+import { flowRight } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -244,36 +246,36 @@ const JetpackConnectMain = React.createClass( {
 
 		if ( type === 'pro' || selectedPlan === 'jetpack_business' || selectedPlan === 'jetpack_business_monthly' ) {
 			return {
-				headerTitle: this.translate( 'Get Jetpack Professional' ),
-				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
+				headerTitle: this.props.translate( 'Get Jetpack Professional' ),
+				headerSubtitle: this.props.translate( 'To start securing and backing up your site, first install Jetpack, ' +
 					'then purchase and activate your plan.' ),
 			};
 		}
 		if ( type === 'premium' || selectedPlan === 'jetpack_premium' || selectedPlan === 'jetpack_premium_monthly' ) {
 			return {
-				headerTitle: this.translate( 'Get Jetpack Premium' ),
-				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
+				headerTitle: this.props.translate( 'Get Jetpack Premium' ),
+				headerSubtitle: this.props.translate( 'To start securing and backing up your site, first install Jetpack, ' +
 					'then purchase and activate your plan.' ),
 			};
 		}
 		if ( type === 'personal' || selectedPlan === 'jetpack_personal' || selectedPlan === 'jetpack_personal_monthly' ) {
 			return {
-				headerTitle: this.translate( 'Get Jetpack Personal' ),
-				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
+				headerTitle: this.props.translate( 'Get Jetpack Personal' ),
+				headerSubtitle: this.props.translate( 'To start securing and backing up your site, first install Jetpack, ' +
 					'then purchase and activate your plan.' ),
 			};
 		}
 
 		if ( type === 'install' ) {
 			return {
-				headerTitle: this.translate( 'Install Jetpack' ),
-				headerSubtitle: this.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect ' +
+				headerTitle: this.props.translate( 'Install Jetpack' ),
+				headerSubtitle: this.props.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect ' +
 					'to your self-hosted WordPress site.' ),
 			};
 		}
 		return {
-			headerTitle: this.translate( 'Connect a self-hosted WordPress' ),
-			headerSubtitle: this.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect to ' +
+			headerTitle: this.props.translate( 'Connect a self-hosted WordPress' ),
+			headerSubtitle: this.props.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect to ' +
 				'your self-hosted WordPress site.' ),
 		};
 	},
@@ -288,9 +290,9 @@ const JetpackConnectMain = React.createClass( {
 	getInstructionsData( status ) {
 		return {
 			headerTitle: ( 'notJetpack' === status )
-				? this.translate( 'Ready for installation' )
-				: this.translate( 'Ready for activation' ),
-			headerSubtitle: this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ),
+				? this.props.translate( 'Ready for installation' )
+				: this.props.translate( 'Ready for activation' ),
+			headerSubtitle: this.props.translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ),
 			steps: ( 'notJetpack' === status )
 				? [ 'installJetpack', 'activateJetpackAfterInstall', 'connectJetpackAfterInstall' ]
 				: [ 'activateJetpack', 'connectJetpack' ],
@@ -298,8 +300,8 @@ const JetpackConnectMain = React.createClass( {
 				? this.installJetpack
 				: this.activateJetpack,
 			buttonText: ( 'notJetpack' === status )
-				? this.translate( 'Install Jetpack' )
-				: this.translate( 'Activate Jetpack' )
+				? this.props.translate( 'Install Jetpack' )
+				: this.props.translate( 'Activate Jetpack' )
 		};
 	},
 
@@ -307,11 +309,13 @@ const JetpackConnectMain = React.createClass( {
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">
-					{ this.translate( 'Install Jetpack manually' ) }
+					{ this.props.translate( 'Install Jetpack manually' ) }
 				</LoggedOutFormLinkItem>
 				{ this.isInstall()
 					? null
-					: <LoggedOutFormLinkItem href="/start">{ this.translate( 'Start a new site on WordPress.com' ) }</LoggedOutFormLinkItem>
+					: <LoggedOutFormLinkItem href="/start">
+						{ this.props.translate( 'Start a new site on WordPress.com' ) }
+					</LoggedOutFormLinkItem>
 				}
 				<HelpButton />
 			</LoggedOutFormLinks>
@@ -373,7 +377,7 @@ const JetpackConnectMain = React.createClass( {
 	renderNotJetpackButton() {
 		return (
 			<a className="jetpack-connect__no-jetpack-button" href="#" onClick={ this.confirmJetpackNotInstalled }>
-				{ this.translate( 'Don\'t have jetpack installed?' ) }
+				{ this.props.translate( 'Don\'t have jetpack installed?' ) }
 			</a>
 		);
 	},
@@ -382,7 +386,7 @@ const JetpackConnectMain = React.createClass( {
 		return (
 			<Button compact borderless className="jetpack-connect__back-button" onClick={ this.dismissUrl }>
 				<Gridicon icon="arrow-left" size={ 18 } />
-				{ this.translate( 'Back' ) }
+				{ this.props.translate( 'Back' ) }
 			</Button>
 		);
 	},
@@ -442,7 +446,7 @@ const JetpackConnectMain = React.createClass( {
 	}
 } );
 
-export default connect(
+const connectComponent = connect(
 	state => {
 		const getJetpackSite = ( url ) => {
 			return getJetpackSiteByUrl( state, url );
@@ -465,4 +469,8 @@ export default connect(
 		goToPluginInstall,
 		goToPluginActivation
 	}, dispatch )
+);
+export default flowRight(
+	connectComponent,
+	localize
 )( JetpackConnectMain );
