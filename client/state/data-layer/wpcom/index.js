@@ -6,6 +6,7 @@ import accountRecovery from './account-recovery';
 import activityLog from './activity-log';
 import comments from './comments';
 import gravatarUpload from './gravatar-upload';
+import logstash from './logstash';
 import me from './me';
 import plans from './plans';
 import posts from './posts';
@@ -22,6 +23,7 @@ export const handlers = mergeHandlers(
 	activityLog,
 	comments,
 	gravatarUpload,
+	logstash,
 	me,
 	plans,
 	posts,
