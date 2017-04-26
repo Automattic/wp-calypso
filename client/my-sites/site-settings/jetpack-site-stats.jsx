@@ -174,7 +174,7 @@ class JetpackSiteStats extends Component {
 				</FoldableCard>
 
 				<CompactCard href={ '/stats/day/' + siteId }>
-					{ translate( 'View your stats' ) }
+					{ translate( 'View your site stats' ) }
 				</CompactCard>
 			</div>
 		);
