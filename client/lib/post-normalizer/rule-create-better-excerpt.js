@@ -68,7 +68,10 @@ export function formatExcerpt( content ) {
 
 	// remove styles for all p's that remain
 	toArray( dom.querySelectorAll( 'p' ) )
-		.forEach( element => element.removeAttribute( 'style' ) );
+		.forEach( element => {
+			element.removeAttribute( 'style' );
+			element.removeAttribute( 'align' );
+		} );
 
 	stripLeadingBreaklines( dom );
 
