@@ -15,8 +15,8 @@ import {
 	DISCUSSIONS_ITEM_LIKE_REQUEST_SUCCESS,
 	DISCUSSIONS_ITEM_REMOVE,
 	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST,
-	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_SUCCESS,
 	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_FAILURE,
+	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_SUCCESS,
 	DISCUSSIONS_ITEM_UNLIKE_REQUEST,
 	DISCUSSIONS_ITEM_UNLIKE_REQUEST_FAILURE,
 	DISCUSSIONS_ITEM_UNLIKE_REQUEST_SUCCESS,
@@ -33,11 +33,15 @@ const DEFAULT_STATUS = 'all';
  */
 export function requestPostComments( siteId, postId, status = DEFAULT_STATUS ) {
 	return dispatch => {
-		dispatch( {
-			type: DISCUSSIONS_REQUEST,
+		const payload = {
 			siteId,
 			postId,
 			status
+		};
+
+		dispatch( {
+			type: DISCUSSIONS_REQUEST,
+			...payload
 		} );
 
 		return wpcom.site( siteId )
@@ -47,25 +51,19 @@ export function requestPostComments( siteId, postId, status = DEFAULT_STATUS ) {
 			.then( ( { comments, found } ) => {
 				dispatch( {
 					type: DISCUSSIONS_REQUEST_SUCCESS,
-					siteId,
-					postId,
-					comments,
-					status
+					...payload,
+					comments
 				} );
 
 				dispatch( {
 					type: DISCUSSIONS_COUNTS_UPDATE,
-					siteId,
-					postId,
-					status,
+					...payload,
 					found
 				} );
 			} )
 			.catch( error => dispatch( {
 				type: DISCUSSIONS_REQUEST_FAILURE,
-				siteId,
-				postId,
-				status,
+				...payload,
 				error
 			} ) );
 	};
@@ -81,12 +79,16 @@ export function requestPostComments( siteId, postId, status = DEFAULT_STATUS ) {
  */
 export function likePostComment( siteId, postId, commentId, source = 'reader' ) {
 	return dispatch => {
-		dispatch( {
-			type: DISCUSSIONS_ITEM_LIKE_REQUEST,
+		const payload = {
 			siteId,
 			postId,
 			commentId,
 			source
+		};
+
+		dispatch( {
+			type: DISCUSSIONS_ITEM_LIKE_REQUEST,
+			...payload
 		} );
 
 		return wpcom.site( siteId )
@@ -95,19 +97,13 @@ export function likePostComment( siteId, postId, commentId, source = 'reader' ) 
 			.add( { source } )
 			.then( result => dispatch( {
 				type: DISCUSSIONS_ITEM_LIKE_REQUEST_SUCCESS,
-				siteId,
-				postId,
-				commentId,
-				source,
+				...payload,
 				iLike: result.i_like,
 				likeCount: result.like_count
 			} ) )
 			.catch( error => dispatch( {
 				type: DISCUSSIONS_ITEM_LIKE_REQUEST_FAILURE,
-				siteId,
-				postId,
-				commentId,
-				source,
+				...payload,
 				error
 			} ) );
 	};
@@ -123,12 +119,16 @@ export function likePostComment( siteId, postId, commentId, source = 'reader' ) 
  */
 export function unlikePostComment( siteId, postId, commentId, source = 'reader' ) {
 	return ( dispatch ) => {
-		dispatch( {
-			type: DISCUSSIONS_ITEM_UNLIKE_REQUEST,
+		const payload = {
 			siteId,
 			postId,
 			commentId,
 			source
+		};
+
+		dispatch( {
+			type: DISCUSSIONS_ITEM_UNLIKE_REQUEST,
+			...payload
 		} );
 
 		return wpcom.site( siteId )
@@ -137,31 +137,38 @@ export function unlikePostComment( siteId, postId, commentId, source = 'reader' 
 			.del( { source } )
 			.then( result => dispatch( {
 				type: DISCUSSIONS_ITEM_UNLIKE_REQUEST_SUCCESS,
-				siteId,
-				postId,
-				commentId,
-				source,
+				...payload,
 				iLike: result.i_like,
 				likeCount: result.like_count,
 			} ) )
 			.catch( error => dispatch( {
 				type: DISCUSSIONS_ITEM_UNLIKE_REQUEST_FAILURE,
-				siteId,
-				postId,
-				commentId,
-				source,
+				...payload,
 				error
 			} ) );
 	};
 }
 
+/***
+ * Creates a thunk that changes a comment status
+ * @param {Number} siteId site identifier
+ * @param {Number} postId post identifier
+ * @param {Number} commentId comment identifier
+ * @param {String} status status filter.
+ * @returns {Function} thunk that unlikes a comment
+ */
 export function changeCommentStatus( siteId, postId, commentId, status ) {
 	return dispatch => {
-		dispatch( {
-			type: DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST,
+		const payload = {
 			siteId,
 			postId,
-			commentId
+			commentId,
+			status
+		};
+
+		dispatch( {
+			type: DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST,
+			...payload
 		} );
 
 		return wpcom.site( siteId )
@@ -169,17 +176,13 @@ export function changeCommentStatus( siteId, postId, commentId, status ) {
 			.update( { status } )
 			.then( result => dispatch( {
 				type: DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_SUCCESS,
-				siteId,
-				postId,
-				commentId,
+				...payload,
 				status: result.status
 			} ) )
 			.catch( error => dispatch( {
 				type: DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_FAILURE,
-				siteId,
-				postId,
-				commentId,
-				error,
+				...payload,
+				error
 			} ) );
 	};
 }
