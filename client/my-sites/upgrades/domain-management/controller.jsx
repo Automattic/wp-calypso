@@ -19,8 +19,7 @@ import paths from 'my-sites/upgrades/paths';
 import ProductsList from 'lib/products-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import SiteRedirectData from 'components/data/domain-management/site-redirect';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import TransferData from 'components/data/domain-management/transfer';
 import WhoisData from 'components/data/domain-management/whois';
@@ -293,8 +292,7 @@ export default {
 
 	domainManagementIndex( pageContext ) {
 		const state = pageContext.store.getState();
-		const siteId = getSelectedSiteId( state );
-		const siteSlug = getSiteSlug( state, siteId );
+		const siteSlug = getSelectedSiteSlug( state );
 
 		page.redirect( '/domains/manage' + ( siteSlug ? `/${ siteSlug }` : '' ) );
 	},
@@ -319,7 +317,7 @@ export default {
 		const siteId = getSelectedSiteId( state );
 		const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
 		if ( isAutomatedTransfer ) {
-			const siteSlug = getSiteSlug( state, siteId );
+			const siteSlug = getSelectedSiteSlug( state );
 			page.redirect( `/domains/manage/${ siteSlug }` );
 			return;
 		}
