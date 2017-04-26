@@ -51,10 +51,6 @@ class ResetPasswordConfirmForm extends Component {
 		this.setState( { newPassword: event.target.value } );
 	}
 
-	fuck = ( event ) => {
-		event.preventDefault();
-	}
-
 	render() {
 		const {
 			translate,
