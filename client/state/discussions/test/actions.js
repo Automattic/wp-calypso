@@ -13,17 +13,21 @@ import {
 	DISCUSSIONS_ITEM_LIKE_REQUEST,
 	DISCUSSIONS_ITEM_LIKE_REQUEST_FAILURE,
 	DISCUSSIONS_ITEM_LIKE_REQUEST_SUCCESS,
-	DISCUSSIONS_REQUEST,
-	DISCUSSIONS_REQUEST_FAILURE,
-	DISCUSSIONS_REQUEST_SUCCESS,
+	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST,
+	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_FAILURE,
+	DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_SUCCESS,
 	DISCUSSIONS_ITEM_UNLIKE_REQUEST,
 	DISCUSSIONS_ITEM_UNLIKE_REQUEST_FAILURE,
 	DISCUSSIONS_ITEM_UNLIKE_REQUEST_SUCCESS,
+	DISCUSSIONS_REQUEST,
+	DISCUSSIONS_REQUEST_FAILURE,
+	DISCUSSIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
 import {
 	requestPostComments,
 	likePostComment,
 	unlikePostComment,
+	changeCommentStatus,
 } from '../actions';
 
 const PUBLIC_API = 'https://public-api.wordpress.com:443';
@@ -48,10 +52,7 @@ describe( 'actions', () => {
 				.reply( 200, { comments: [], found: 4 } )
 				.get( `/rest/v1.1/sites/${ SITE_ID }/posts/${ POST_ID }/replies/` )
 				.query( { status: 'foo' } )
-				.reply( 403, {
-					error: 'foo',
-					message: 'foo'
-				} );
+				.reply( 403, { error: 'foo', message: 'foo' } );
 		} );
 
 		const payload = {
@@ -107,16 +108,12 @@ describe( 'actions', () => {
 		useNock( nock => {
 			nock( PUBLIC_API )
 				.persist()
-				.post( `/rest/v1.1/sites/${ SITE_ID }/comments/${ COMMENT_ID }/likes/new`, {
-					source: 'reader'
-				} )
+				.post( `/rest/v1.1/sites/${ SITE_ID }/comments/${ COMMENT_ID }/likes/new`, { source: 'reader' } )
 				.reply( 200, {
 					i_like: true,
 					like_count: 5
 				} )
-				.post( `/rest/v1.1/sites/${ SITE_ID }/comments/${ COMMENT_ID }/likes/new`, {
-					source: 'foo'
-				} )
+				.post( `/rest/v1.1/sites/${ SITE_ID }/comments/${ COMMENT_ID }/likes/new`, { source: 'foo' } )
 				.reply( 403, { error: 'foo', message: 'foo' } );
 		} );
 
@@ -210,6 +207,54 @@ describe( 'actions', () => {
 						type: DISCUSSIONS_ITEM_UNLIKE_REQUEST_FAILURE,
 						...payload,
 						source: 'foo',
+						error: sandbox.match( { message: 'foo' } )
+					} );
+				} );
+		} );
+	} );
+
+	describe( '#changeCommentStatus()', () => {
+		useNock( nock => {
+			nock( PUBLIC_API )
+				.persist()
+				.post( `/rest/v1.1/sites/${ SITE_ID }/comments/${ COMMENT_ID }`, { status: 'approved' } )
+				.reply( 200, { status: 'approved' } )
+				.post( `/rest/v1.1/sites/${ SITE_ID }/comments/${ COMMENT_ID }`, { status: 'all' } )
+				.reply( 403, { error: 'foo', message: 'foo' } );
+		} );
+
+		const payload = {
+			siteId: SITE_ID,
+			postId: POST_ID,
+			commentId: COMMENT_ID,
+			status: 'approved'
+		};
+
+		it( 'should dispatch fetch action', () => {
+			changeCommentStatus( SITE_ID, POST_ID, COMMENT_ID, 'approved' )( spy );
+			expect( spy ).to.have.been.calledWithMatch( {
+				type: DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST,
+				...payload
+			} );
+		} );
+
+		it( 'should dispatch success action when request completes', () => {
+			return changeCommentStatus( SITE_ID, POST_ID, COMMENT_ID, 'approved' )( spy )
+				.then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_SUCCESS,
+						...payload
+					} );
+				} );
+		} );
+
+		it( 'should dispatch fail action when request fails', () => {
+			return changeCommentStatus( SITE_ID, POST_ID, COMMENT_ID, 'all' )( spy )
+				.then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_FAILURE,
+						...payload,
+						status: 'all',
 						error: sandbox.match( { message: 'foo' } )
 					} );
 				} );
