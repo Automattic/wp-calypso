@@ -101,9 +101,7 @@ export class MapDomain extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.selectedSiteId !== this.props.selectedSiteId ) {
-			this.checkSiteIsUpgradeable( nextProps );
-		}
+		this.checkSiteIsUpgradeable( nextProps );
 	}
 
 	checkSiteIsUpgradeable( props ) {
