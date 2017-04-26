@@ -13,6 +13,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
+import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 
@@ -46,9 +47,11 @@ class DirectlyCachedFiles extends Component {
 		const {
 			cache_direct_pages = [],
 			cache_path,
-			cache_readonly,
-			cache_writable,
 		} = fields;
+		const notices = pick( this.props.notices, [
+			'cache_readonly',
+			'cache_writable',
+		] );
 
 		return (
 			<div>
@@ -65,30 +68,20 @@ class DirectlyCachedFiles extends Component {
 					</Button>
 				</SectionHeader>
 				<Card className="wp-super-cache__directly-cached-files">
-					{ cache_readonly &&
-					<p>
-					{ translate(
-						'{{strong}}Warning!{{/strong}} You must make %(cache_path)s writable to enable this feature. ' +
-						'As this is a security risk, please make it read-only after your page is generated.',
-						{
-							args: { cache_path: cache_path },
-							components: { strong: <strong /> },
-						}
-					) }
-					</p>
+					{ notices && notices.cache_readonly && notices.cache_readonly.message &&
+					<Notice
+						showDismiss={ false }
+						status={ notices.cache_readonly.type ? `is-${ notices.cache_readonly.type }` : 'is-info' }
+						text={ notices.cache_readonly.message || '' } />
 					}
-					{ cache_writable &&
-					<p>
-					{ translate(
-						'{{strong}}Warning!{{/strong}} %(cache_path)s is writable. Please make it readonly ' +
-						'after your page is generated as this is a security risk.',
-						{
-							args: { cache_path: cache_path },
-							components: { strong: <strong /> },
-						}
-					) }
-					</p>
+
+					{ notices && notices.cache_writable && notices.cache_writable.message &&
+					<Notice
+						showDismiss={ false }
+						status={ notices.cache_writable.type ? `is-${ notices.cache_writable.type }` : 'is-info' }
+						text={ notices.cache_writable.message || '' } />
 					}
+
 					<p>
 						{ translate(
 							'Directly cached files are files created directly off %(cache_path)s where your blog lives. This ' +
@@ -98,7 +91,7 @@ class DirectlyCachedFiles extends Component {
 							}
 						) }
 					</p>
-						{ ! cache_readonly &&
+						{ notices && ! notices.cache_readonly &&
 						<div>
 							<p>
 								{ translate(
@@ -159,8 +152,6 @@ const getFormSettings = settings => {
 	return pick( settings, [
 		'cache_direct_pages',
 		'cache_path',
-		'cache_readonly',
-		'cache_writable',
 	] );
 };
 
