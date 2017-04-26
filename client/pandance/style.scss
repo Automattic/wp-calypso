@@ -187,3 +187,9 @@ p {
 .image-editor__buttons {
 	display: none;
 }
+
+.gm-style {
+	> div:first-child {
+		pointer-events: none;
+	}
+}
