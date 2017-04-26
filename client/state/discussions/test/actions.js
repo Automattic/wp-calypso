@@ -15,11 +15,15 @@ import {
 	DISCUSSIONS_ITEM_LIKE_REQUEST_SUCCESS,
 	DISCUSSIONS_REQUEST,
 	DISCUSSIONS_REQUEST_FAILURE,
-	DISCUSSIONS_REQUEST_SUCCESS
+	DISCUSSIONS_REQUEST_SUCCESS,
+	DISCUSSIONS_ITEM_UNLIKE_REQUEST,
+	DISCUSSIONS_ITEM_UNLIKE_REQUEST_FAILURE,
+	DISCUSSIONS_ITEM_UNLIKE_REQUEST_SUCCESS,
 } from 'state/action-types';
 import {
 	requestPostComments,
 	likePostComment,
+	unlikePostComment,
 } from '../actions';
 
 const PUBLIC_API = 'https://public-api.wordpress.com:443';
@@ -50,13 +54,17 @@ describe( 'actions', () => {
 				} );
 		} );
 
+		const payload = {
+			siteId: SITE_ID,
+			postId: POST_ID,
+			status: 'all'
+		};
+
 		it( 'should dispatch fetch action', () => {
 			requestPostComments( SITE_ID, POST_ID )( spy );
 			expect( spy ).to.have.been.calledWithMatch( {
 				type: DISCUSSIONS_REQUEST,
-				siteId: SITE_ID,
-				postId: POST_ID,
-				status: 'all'
+				...payload
 			} );
 		} );
 
@@ -65,8 +73,7 @@ describe( 'actions', () => {
 				.then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: DISCUSSIONS_REQUEST_SUCCESS,
-						siteId: SITE_ID,
-						postId: POST_ID,
+						...payload,
 						comments: []
 					} );
 				} );
@@ -77,8 +84,7 @@ describe( 'actions', () => {
 				.then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: DISCUSSIONS_COUNTS_UPDATE,
-						siteId: SITE_ID,
-						postId: POST_ID,
+						...payload,
 						found: 4
 					} );
 				} );
@@ -89,8 +95,7 @@ describe( 'actions', () => {
 				.then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: DISCUSSIONS_REQUEST_FAILURE,
-						siteId: SITE_ID,
-						postId: POST_ID,
+						...payload,
 						status: 'foo',
 						error: sandbox.match( { message: 'foo' } )
 					} );
@@ -115,13 +120,18 @@ describe( 'actions', () => {
 				.reply( 403, { error: 'foo', message: 'foo' } );
 		} );
 
+		const payload = {
+			siteId: SITE_ID,
+			postId: POST_ID,
+			commentId: COMMENT_ID,
+			source: 'reader'
+		};
+
 		it( 'should dispatch fetch action', () => {
 			likePostComment( SITE_ID, POST_ID, COMMENT_ID )( spy );
 			expect( spy ).to.have.been.calledWithMatch( {
 				type: DISCUSSIONS_ITEM_LIKE_REQUEST,
-				siteId: SITE_ID,
-				postId: POST_ID,
-				commentId: COMMENT_ID
+				...payload
 			} );
 		} );
 
@@ -130,9 +140,7 @@ describe( 'actions', () => {
 				.then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: DISCUSSIONS_ITEM_LIKE_REQUEST_SUCCESS,
-						siteId: SITE_ID,
-						postId: POST_ID,
-						commentId: COMMENT_ID,
+						...payload,
 						iLike: true,
 						likeCount: 5
 					} );
@@ -144,9 +152,64 @@ describe( 'actions', () => {
 				.then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: DISCUSSIONS_ITEM_LIKE_REQUEST_FAILURE,
-						siteId: SITE_ID,
-						postId: POST_ID,
-						commentId: COMMENT_ID,
+						...payload,
+						source: 'foo',
+						error: sandbox.match( { message: 'foo' } )
+					} );
+				} );
+		} );
+	} );
+
+	describe( '#unlikePostComment()', () => {
+		useNock( nock => {
+			nock( PUBLIC_API )
+				.persist()
+				.post( `/rest/v1.1/sites/${ SITE_ID }/comments/${ COMMENT_ID }/likes/mine/delete` )
+				.query( { source: 'reader' } )
+				.reply( 200, {
+					success: true,
+					i_like: false,
+					like_count: 5
+				} )
+				.post( `/rest/v1.1/sites/${ SITE_ID }/comments/${ COMMENT_ID }/likes/mine/delete` )
+				.query( { source: 'foo' } )
+				.reply( 403, { error: 'foo', message: 'foo' } );
+		} );
+
+		const payload = {
+			siteId: SITE_ID,
+			postId: POST_ID,
+			commentId: COMMENT_ID,
+			source: 'reader'
+		};
+
+		it( 'should dispatch fetch action', () => {
+			unlikePostComment( SITE_ID, POST_ID, COMMENT_ID )( spy );
+			expect( spy ).to.have.been.calledWithMatch( {
+				type: DISCUSSIONS_ITEM_UNLIKE_REQUEST,
+				...payload
+			} );
+		} );
+
+		it( 'should dispatch success action when request completes', () => {
+			return unlikePostComment( SITE_ID, POST_ID, COMMENT_ID )( spy )
+				.then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: DISCUSSIONS_ITEM_UNLIKE_REQUEST_SUCCESS,
+						...payload,
+						iLike: false,
+						likeCount: 5
+					} );
+				} );
+		} );
+
+		it( 'should dispatch fail action when request fails', () => {
+			return unlikePostComment( SITE_ID, POST_ID, COMMENT_ID, 'foo' )( spy )
+				.then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: DISCUSSIONS_ITEM_UNLIKE_REQUEST_FAILURE,
+						...payload,
+						source: 'foo',
 						error: sandbox.match( { message: 'foo' } )
 					} );
 				} );
