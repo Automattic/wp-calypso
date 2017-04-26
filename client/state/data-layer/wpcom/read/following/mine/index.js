@@ -7,6 +7,9 @@ import { map, omitBy, isArray, isUndefined } from 'lodash';
 /**
  * Internal dependencies
  */
+import { mergeHandlers } from 'state/data-layer/utils';
+import followingNew from './new';
+import followingDelete from './delete';
 import {
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_PAGE,
@@ -114,7 +117,13 @@ export function receiveError( store ) {
 	);
 }
 
-export default {
+const followingMine = {
 	[ READER_FOLLOWS_SYNC_START ]: [ syncReaderFollows ],
 	[ READER_FOLLOWS_SYNC_PAGE ]: [ dispatchRequest( requestPage, receivePage, receiveError ) ],
 };
+
+export default mergeHandlers(
+	followingMine,
+	followingNew,
+	followingDelete,
+);
