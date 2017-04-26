@@ -57,14 +57,3 @@ export function getSettings( state, siteId ) {
 export function getSettingsSaveStatus( state, siteId ) {
 	return get( state, [ 'extensions', 'wpSuperCache', 'saveStatus', siteId, 'status' ] );
 }
-
-/**
- * Returns the error returned by the last settings save request.
- *
- * @param  {Object}  state Global state tree
- * @param  {Number}  siteId Site ID
- * @return {String}  Request error
- */
-export function getSettingsSaveError( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'saveStatus', siteId, 'error' ], false );
-}

@@ -16,7 +16,7 @@ import {
 	WP_SUPER_CACHE_SAVE_SETTINGS,
 	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
-} from '../action-types';
+} from '../../action-types';
 import {
 	SERIALIZE,
 	DESERIALIZE,

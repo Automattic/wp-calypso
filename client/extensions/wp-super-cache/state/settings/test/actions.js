@@ -17,7 +17,7 @@ import {
 	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 	WP_SUPER_CACHE_UPDATE_SETTINGS,
-} from '../action-types';
+} from '../../action-types';
 import {
 	receiveSettings,
 	requestSettings,

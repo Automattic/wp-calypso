@@ -12,7 +12,6 @@ import {
 	isSettingsSaveSuccessful,
 	getSettings,
 	getSettingsSaveStatus,
-	getSettingsSaveError,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -275,53 +274,6 @@ describe( 'selectors', () => {
 			const status = getSettingsSaveStatus( state, primarySiteId );
 
 			expect( status ).to.eql( 'pending' );
-		} );
-	} );
-
-	describe( 'getSettingsSaveError()', () => {
-		it( 'should return false if the site is not attached', () => {
-			const state = {
-				extensions: {
-					wpSuperCache: {
-						saveStatus: {
-							[ primarySiteId ]: { saving: true, status: 'pending', error: false }
-						}
-					}
-				}
-			};
-			const error = getSettingsSaveError( state, secondarySiteId );
-
-			expect( error ).to.be.false;
-		} );
-
-		it( 'should return false if the last save request has no error', () => {
-			const state = {
-				extensions: {
-					wpSuperCache: {
-						saveStatus: {
-							[ primarySiteId ]: { saving: false, status: 'success', error: false }
-						}
-					}
-				}
-			};
-			const error = getSettingsSaveError( state, primarySiteId );
-
-			expect( error ).to.be.false;
-		} );
-
-		it( 'should return the error if the save request status has an error', () => {
-			const state = {
-				extensions: {
-					wpSuperCache: {
-						saveStatus: {
-							[ primarySiteId ]: { saving: false, status: 'error', error: 'my error' }
-						}
-					}
-				}
-			};
-			const error = getSettingsSaveError( state, primarySiteId );
-
-			expect( error ).to.eql( 'my error' );
 		} );
 	} );
 } );

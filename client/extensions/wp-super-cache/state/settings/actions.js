@@ -11,7 +11,7 @@ import {
 	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 	WP_SUPER_CACHE_UPDATE_SETTINGS,
-} from './action-types';
+} from '../action-types';
 
 /**
  * Returns an action object to be used in signalling that settings have been received.
