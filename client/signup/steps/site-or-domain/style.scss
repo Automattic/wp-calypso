@@ -40,6 +40,12 @@
 	}
 }
 
-.site-or-domain__choice-card {
+.site-or-domain__choice-image {
+	display: flex;
+	align-items: center;
+	min-height: 170px;
+}
+
+.site-or-domain__choice-text {
 	min-height: 170px;
 }

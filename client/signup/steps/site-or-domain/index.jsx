@@ -14,7 +14,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 // TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
 import DomainImage from 'signup/steps/design-type-with-store/domain-image';
-import PageImage from 'signup/steps/design-type-with-store/page-image';
+import NewSiteImage from 'signup/steps/design-type-with-store/new-site-image';
 import { externalRedirect } from 'lib/route/path';
 import NavigationLink from 'signup/navigation-link';
 
@@ -54,8 +54,8 @@ export default class SiteOrDomain extends Component {
 		return [
 			{
 				type: 'page',
-				label: 'Start a new site',
-				image: <PageImage />,
+				label: 'New site',
+				image: <NewSiteImage />,
 				description: 'Choose a theme, customize, and launch your site. Free domain included with all plans.'
 			},
 			{
@@ -72,14 +72,14 @@ export default class SiteOrDomain extends Component {
 			<div className="site-or-domain__choices">
 				{ this.getChoices().map( ( choice ) => (
 					<div className="site-or-domain__choice" key={ choice.type }>
-						<Card compact className="site-or-domain__choice-card">
+						<Card compact className="site-or-domain__choice-image">
 							<a className="site-or-domain__choice-link"
 								href="#"
 								onClick={ ( event ) => this.handleClickChoice( event, choice.type ) }>
 								{ choice.image }
 							</a>
 						</Card>
-						<Card compact className="site-or-domain__choice-card">
+						<Card compact className="site-or-domain__choice-text">
 							<div className="site-or-domain__choice-button">
 								<Button onClick={ ( event ) => this.handleClickChoice( event, choice.type ) }>{ choice.label }</Button>
 							</div>
