@@ -47,7 +47,7 @@ const getPageInfo = ( translate, step ) => {
 		},
 		[ STEPS.RESET_PASSWORD_SMS ]: {
 			trackerTitle: 'Account Recovery > Reset Password Sms',
-			documentHeadTitle: concatHeadTitle( translate( 'Reset Password ' ), translate( 'SMS Message' ) ),
+			documentHeadTitle: concatHeadTitle( translate( 'Reset Password' ), translate( 'SMS Message' ) ),
 		},
 	};
 
