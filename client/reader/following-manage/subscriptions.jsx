@@ -14,11 +14,14 @@ import ReaderExportButton from 'blocks/reader-export-button';
 import SitesWindowScroller from './sites-window-scroller';
 import QueryReaderFollows from 'components/data/query-reader-follows';
 import FollowingManageSearchFollowed from './search-followed';
+import FollowingManageSortControls from './sort-controls';
 import { getFeed as getReaderFeed } from 'state/reader/feeds/selectors';
 import { getSite as getReaderSite } from 'state/reader/sites/selectors';
 import { getReaderFollows } from 'state/selectors';
 import UrlSearch from 'lib/url-search';
 import { getSiteName, getSiteUrl, getSiteDescription, getSiteAuthorName } from 'reader/get-helpers';
+import EllipsisMenu from 'components/ellipsis-menu';
+import PopoverMenuItem from 'components/popover/menu-item';
 
 class FollowingManageSubscriptions extends Component {
 	static propTypes = {
@@ -52,21 +55,35 @@ class FollowingManageSubscriptions extends Component {
 			<div className="following-manage__subscriptions">
 				<QueryReaderFollows />
 				<div className="following-manage__subscriptions-controls">
-					{
-						translate( '%(num)s Followed Sites', {
-							args: { num: follows.length }
-						} )
-					}
-					<ReaderImportButton />
-					<ReaderExportButton />
-					<FollowingManageSearchFollowed onSearch={ this.props.doSearch } initialValue={ query } />
+					<h1 className="following-manage__subscriptions-header">
+						{
+							translate( '%(num)s Followed Sites', {
+								args: { num: follows.length }
+							} )
+						}
+						</h1>
+					<div className="following-manage__subscriptions-sort">
+						<FollowingManageSortControls />
+					</div>
+					<div className="following-manage__subscriptions-search">
+						<FollowingManageSearchFollowed onSearch={ this.props.doSearch } initialValue={ query } />
+					</div>
+					<div className="following-manage__subscriptions-import-export">
+						<EllipsisMenu toggleTitle={ translate( 'More' ) } position="bottom">
+							<PopoverMenuItem className="following-manage__subscriptions-import-export-menu-item">
+								<ReaderImportButton />
+							</PopoverMenuItem>
+							<PopoverMenuItem className="following-manage__subscriptions-import-export-menu-item">
+								<ReaderExportButton />
+							</PopoverMenuItem>
+						</EllipsisMenu>
+					</div>
 				</div>
 				<div className="following-manage__subscriptions-list">
 					{ follows &&
 						<SitesWindowScroller
 							sites={ filteredFollows }
-							width={ width }
-						/>
+							width={ width } />
 					}
 				</div>
 			</div>
