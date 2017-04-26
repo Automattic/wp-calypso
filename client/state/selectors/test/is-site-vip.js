@@ -24,7 +24,7 @@ describe( 'isSiteVip()', () => {
 		expect( isVip ).to.be.false;
 	} );
 
-	it( 'returns false if is_vip property of the site does not exist', () => {
+	it( 'returns null if is_vip property of the site does not exist', () => {
 		const isVip = isSiteVip( { sites: { items: { 5: {} } } }, 5 );
 		expect( isVip ).to.be.null;
 	} );
