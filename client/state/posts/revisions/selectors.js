@@ -19,3 +19,12 @@ export const getNormalizedPostRevisions = createSelector(
 	},
 	( state ) => [ state.posts.revisions.revisions ]
 );
+
+export const getNormalizedPostRevision = createSelector(
+	( state, siteId, postId, revisionId ) => {
+		return normalizePostForDisplay(
+			get( state.posts.revisions.revisions, [ siteId, postId, revisionId ] )
+		);
+	},
+	( state ) => [ state.posts.revisions.revisions ]
+);
