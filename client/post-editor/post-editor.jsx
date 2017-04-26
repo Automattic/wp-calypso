@@ -35,7 +35,7 @@ const actions = require( 'lib/posts/actions' ),
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
-import { receivePost, savePostSuccess } from 'state/posts/actions';
+import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { hasBrokenSiteUserConnection } from 'state/selectors';
@@ -60,6 +60,7 @@ import EditorDiffViewer from 'post-editor/editor-diff-viewer';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
+		editPost: React.PropTypes.func,
 		siteId: React.PropTypes.number,
 		preferences: React.PropTypes.object,
 		setEditorModePreference: React.PropTypes.func,
@@ -86,7 +87,7 @@ export const PostEditor = React.createClass( {
 			notice: null,
 			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
-			isLoadingAutosave: false,
+			isLoadingRevision: false,
 			isTitleFocused: false,
 			revisionId: null,
 		};
@@ -208,7 +209,12 @@ export const PostEditor = React.createClass( {
 	},
 
 	loadRevision: function( revisionId = this.state.revisionId ) {
-		console.log( `loading revision ${ revisionId } ` );
+		this.setState( { revisionId: null } );
+		this.restoreRevision( {
+			content: `test ${ revisionId }`,
+			excerpt: `test ${ revisionId }`,
+			title: `test ${ revisionId }`,
+		} );
 	},
 
 	render: function() {
@@ -407,19 +413,21 @@ export const PostEditor = React.createClass( {
 	},
 
 	restoreAutosave: function() {
-		var edits,
-			autosaveData = this.state.post.meta.data.autosave;
+		this.setState( { showAutosaveDialog: false } );
+		this.restoreRevision( this.state.post.meta.data.autosave );
+	},
 
-		this.setState( { showAutosaveDialog: false, isLoadingAutosave: true } );
-
-		edits = {
-			title: autosaveData.title,
-			excerpt: autosaveData.excerpt,
-			content: autosaveData.content
-		};
-
+	restoreRevision: function( revision ) {
+		this.setState( { isLoadingRevision: true } );
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.edit( edits );
+		actions.edit( {
+			content: revision.content,
+			excerpt: revision.excerpt,
+			title: revision.title,
+		} );
+		this.props.editPost( this.props.siteId, this.props.postId, {
+			title: revision.title,
+		} );
 	},
 
 	closeAutosaveDialog: function() {
@@ -454,12 +462,12 @@ export const PostEditor = React.createClass( {
 				page.redirect( utils.getEditURL( post, site ) );
 			}
 			this.setState( postEditState, function() {
-				if ( this.editor && ( didLoad || this.state.isLoadingAutosave ) ) {
+				if ( this.editor && ( didLoad || this.state.isLoadingRevision ) ) {
 					this.editor.setEditorContent( this.state.post.content, { initial: true } );
 				}
 
-				if ( this.state.isLoadingAutosave ) {
-					this.setState( { isLoadingAutosave: false } );
+				if ( this.state.isLoadingRevision ) {
+					this.setState( { isLoadingRevision: false } );
 				}
 			} );
 		}
@@ -880,6 +888,7 @@ export default connect(
 	},
 	( dispatch ) => {
 		return bindActionCreators( {
+			editPost,
 			setEditorLastDraft,
 			resetEditorLastDraft,
 			receivePost,
