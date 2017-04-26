@@ -73,13 +73,17 @@ const PluginMeta = React.createClass( {
 	},
 
 	displayBanner() {
-		if ( this.props.plugin && this.props.plugin.banners && ( this.props.plugin.banners.high || this.props.plugin.banners.low ) ) {
-			return <div className="plugin-meta__banner">
-					<div
-						className="plugin-meta__banner-image"
-						style={ { backgroundImage: `url(${ this.props.plugin.banners.high || this.props.plugin.banners.low })` } } />
-				</div>;
-		}
+		const lowBanner = get( this.props, [ 'plugin', 'banners', 'low' ], '' );
+		const highBanner = get( this.props, [ 'plugin', 'banners', 'high' ], '' );
+
+		return (
+			<div className="plugin-meta__banner">
+				<div
+					className="plugin-meta__banner-image"
+					style={ { backgroundImage: `url(${ highBanner || lowBanner })` } }
+				/>
+			</div>
+		);
 	},
 
 	hasBusinessPlan() {
