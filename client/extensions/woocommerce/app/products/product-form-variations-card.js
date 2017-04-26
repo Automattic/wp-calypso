@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import i18n from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,7 +11,7 @@ import FoldableCard from 'components/foldable-card';
 import ProductVariationTypesForm from './product-variation-types-form';
 import FormToggle from 'components/forms/form-toggle';
 
-export default class ProductFormVariationCard extends Component {
+class ProductFormVariationCard extends Component {
 
 	static propTypes = {
 		product: PropTypes.shape( {
@@ -40,11 +40,11 @@ export default class ProductFormVariationCard extends Component {
 	}
 
 	render() {
-		const { product } = this.props;
-		const variationToggleDescription = i18n.translate(
+		const { product, translate } = this.props;
+		const variationToggleDescription = translate(
 			'%(productName)s has variations, for example size and color.', {
 				args: {
-					productName: product && product.name || i18n.translate( 'This product' )
+					productName: ( product && product.name ) || translate( 'This product' )
 				}
 			}
 		);
@@ -52,7 +52,7 @@ export default class ProductFormVariationCard extends Component {
 		return (
 			<FoldableCard
 				icon=""
-				expanded={ true }
+				expanded
 				className="products__variation-card"
 				header={ ( <FormToggle onChange={ this.handleToggle } checked={ this.state.isVariableProduct }>
 					{ variationToggleDescription }
@@ -66,3 +66,5 @@ export default class ProductFormVariationCard extends Component {
 		);
 	}
 }
+
+export default localize( ProductFormVariationCard );
