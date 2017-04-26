@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight, partialRight, pick } from 'lodash';
@@ -39,7 +39,6 @@ const SiteSettingsTraffic = ( {
 	trackEvent,
 	translate,
 	updateFields,
-	upgradeToBusiness
 } ) => (
 	<Main className="traffic__main site-settings">
 		<DocumentHead title={ translate( 'Site Settings' ) } />
@@ -75,7 +74,7 @@ const SiteSettingsTraffic = ( {
 		}
 		<AnalyticsSettings />
 		<SeoSettingsHelpCard />
-		<SeoSettingsMain upgradeToBusiness={ upgradeToBusiness } />
+		<SeoSettingsMain />
 		<Sitemaps
 			isSavingSettings={ isSavingSettings }
 			isRequestingSettings={ isRequestingSettings }
@@ -83,10 +82,6 @@ const SiteSettingsTraffic = ( {
 		/>
 	</Main>
 );
-
-SiteSettingsTraffic.propTypes = {
-	upgradeToBusiness: PropTypes.func.isRequired,
-};
 
 const connectComponent = connect(
 	( state ) => {
