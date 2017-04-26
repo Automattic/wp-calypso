@@ -268,13 +268,13 @@ export class MySitesSidebar extends Component {
 	}
 
 	plan() {
-		if ( ! this.props.siteId ) {
+		const { site, siteId, canUserManageOptions } = this.props;
+
+		if ( ! siteId || ! site ) {
 			return null;
 		}
 
-		const { site, canUserManageOptions } = this.props;
-
-		if ( site && ! canUserManageOptions ) {
+		if ( ! canUserManageOptions ) {
 			return null;
 		}
 
