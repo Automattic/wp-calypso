@@ -222,18 +222,6 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
-.plan-features__header-checkmark {
-	position: absolute;
-	top: 0;
-	right: -3px;
-	transform: translate( 25%, -25% );
-	fill: $alert-green;
-
-	@include breakpoint( "<1280px" ) {
-		display: none;
-	}
-}
-
 .plan-features__header-text {
 	flex: 1;
 	padding: 6px 0 0 0;
