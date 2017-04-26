@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
@@ -75,9 +76,9 @@ class ResetPasswordSmsForm extends Component {
 						{ translate( 'Continue' ) }
 					</FormButton>
 				</form>
-				<a href="#" className="reset-password-sms-form__no-sms-link" onClick={ this.props.unsetResetMethod }>
+				<Button borderless={ true } className="reset-password-sms-form__no-sms-link" onClick={ this.props.unsetResetMethod }>
 					{ translate( 'No SMS?' ) }
-				</a>
+				</Button>
 			</Card>
 		);
 	}
