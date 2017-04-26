@@ -291,10 +291,17 @@ class JetpackConnectMain extends Component {
 	}
 
 	isInstall() {
-		return this.props.type === 'install' ||
-			this.props.type === 'pro' ||
-			this.props.type === 'premium' ||
-			this.props.type === 'personal';
+		/*
+		 * FIXME: `return ! this.props.type` should be sufficient
+		 * I'm avoiding significantly changing this implementation
+		 * until propTypes have been around for a while.
+		 */
+		return [
+			'install',
+			'pro',
+			'premium',
+			'personal',
+		].includes( this.props.type );
 	}
 
 	getInstructionsData( status ) {
