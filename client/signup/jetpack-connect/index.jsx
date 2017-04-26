@@ -110,7 +110,6 @@ class JetpackConnectMain extends Component {
 		}
 
 		if ( this.state.waitingForSites && ! this.props.isRequestingSites ) {
-			// FIXME: Can this be improved?
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { waitingForSites: false } );
 			this.checkUrl( this.state.currentUrl );
