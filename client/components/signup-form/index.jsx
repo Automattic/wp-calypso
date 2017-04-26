@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { map, forEach, head, includes, isEmpty, keys } from 'lodash';
+import { map, forEach, head, includes, keys } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -112,13 +112,6 @@ class SignupForm extends Component {
 		const stateWithFilledUsername = this.autoFillUsername( initialState );
 
 		this.setState( { form: stateWithFilledUsername } );
-	}
-
-	componentDidMount() {
-		// If we initialized the form with an email, we need to validate the email
-		if ( this.props.email ) {
-			this.handleBlur();
-		}
 	}
 
 	sanitizeEmail( email ) {
@@ -318,7 +311,7 @@ class SignupForm extends Component {
 				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'email' ) }>
 					<FormLabel htmlFor="email">{ this.props.translate( 'Your email address' ) }</FormLabel>
 					<FormTextInput
-						autoFocus={ isEmpty( this.props.email ) && ! this.props.isSocialSignupEnabled }
+						autoFocus={ ! this.props.isSocialSignupEnabled }
 						autoCapitalize="off"
 						autoCorrect="off"
 						className="signup-form__input"
@@ -337,7 +330,6 @@ class SignupForm extends Component {
 				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'username' ) }>
 					<FormLabel htmlFor="username">{ this.props.translate( 'Choose a username' ) }</FormLabel>
 					<FormTextInput
-						autoFocus={ ! isEmpty( this.props.email ) }
 						autoCapitalize="off"
 						autoCorrect="off"
 						className="signup-form__input"
