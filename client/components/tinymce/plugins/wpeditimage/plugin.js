@@ -19,6 +19,14 @@ function wpEditImage( editor ) {
 		return !! ( editor.dom.getAttrib( node, 'data-mce-placeholder' ) || editor.dom.getAttrib( node, 'data-mce-object' ) );
 	}
 
+	editor.addButton( 'wp_img_edit', {
+		tooltip: 'Edit',
+		icon: 'dashicon dashicons-edit',
+		onclick: function() {
+			console.log('wp_img_edit button clicked.');
+		}
+	});
+
 	editor.addButton( 'wp_img_remove', {
 		tooltip: 'Remove',
 		icon: 'dashicon dashicons-trash',
@@ -69,6 +77,7 @@ function wpEditImage( editor ) {
 			'wpcom_img_size_decrease',
 			'wpcom_img_size_increase',
 			'wp_img_caption', // See plugins/media
+			'wp_img_edit', // TODO: make ref here
 			'wp_img_advanced', // See plugins/media/advanced
 			'wp_img_remove'
 		] );
