@@ -17,7 +17,7 @@ import { decodeEntities } from 'lib/formatting';
  * @returns {string} the site url
  */
 export const getSiteUrl = ( { feed, site, post } = {} ) => {
-	const siteUrl = ( !! site ) && site.URL;
+	const siteUrl = ( !! site ) && ( site.URL || site.domain );
 	const feedUrl = ( !! feed ) && feed.URL;
 	const postUrl = ( !! post ) && post.site_URL;
 
