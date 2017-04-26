@@ -385,7 +385,7 @@ const InvitePeople = React.createClass( {
 		);
 
 		// Return early for WPCOM or needs verification
-		if ( ! isJetpack || needsVerification ) {
+		if ( ! site || ! isJetpack || needsVerification ) {
 			return inviteForm;
 		}
 
