@@ -1,11 +1,7 @@
 /**
  * External Dependencies
  */
-import forEach from 'lodash/forEach';
-
-/**
- * Internal Dependencies
- */
+import { forEach } from 'lodash';
 
 export default function removeContentStyles( post, dom ) {
 	if ( ! dom ) {
@@ -18,7 +14,7 @@ export default function removeContentStyles( post, dom ) {
 	}
 
 	// remove most style attributes
-	let styled = dom.querySelectorAll( '[style]' );
+	const styled = dom.querySelectorAll( '[style]' );
 	forEach( styled, function( element ) {
 		element.removeAttribute( 'style' );
 	} );
@@ -26,6 +22,13 @@ export default function removeContentStyles( post, dom ) {
 	// remove all style elements
 	forEach( dom.querySelectorAll( 'style' ), function( element ) {
 		element.parentNode && element.parentNode.removeChild( element );
+	} );
+
+	// remove align from non images
+	forEach( dom.querySelectorAll( '[align]' ), element => {
+		if ( element.tagName !== 'IMG' ) {
+			element.removeAttribute( 'align' );
+		}
 	} );
 
 	return post;
