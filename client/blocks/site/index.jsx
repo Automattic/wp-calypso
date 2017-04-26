@@ -121,6 +121,11 @@ export default React.createClass( {
 									<Gridicon icon="block" size={ 14 } />
 								</span>
 							}
+							{ site.options && site.options.is_domain_only &&
+								<span className="site__badge">
+									<Gridicon icon="domains" size={ 14 } />
+								</span>
+							}
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 							{ site.title }
 						</div>
