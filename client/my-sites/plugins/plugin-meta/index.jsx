@@ -193,7 +193,7 @@ const PluginMeta = React.createClass( {
 		} );
 	},
 
-	isUnsupportedPlugin() {
+	isUnsupportedPluginForAT() {
 		const { plugin } = this.props;
 
 		// Pressable prevents installation of some plugins, so we need to disable AT for them.
@@ -204,6 +204,10 @@ const PluginMeta = React.createClass( {
 			'wp-rocket',
 			'wp-super-cache',
 			'bwp-minify',
+			'wordpress-database-reset',
+			'wordpress-reset',
+			'wp-reset',
+			'advanced-reset-wp',
 		];
 
 		return includes( unsupportedPlugins, plugin.slug );
@@ -212,13 +216,13 @@ const PluginMeta = React.createClass( {
 	isWpcomInstallDisabled() {
 		const { isTransfering } = this.props;
 
-		return ! this.hasBusinessPlan() || this.isUnsupportedPlugin() || isTransfering;
+		return ! this.hasBusinessPlan() || this.isUnsupportedPluginForAT() || isTransfering;
 	},
 
 	isJetpackInstallDisabled() {
 		const { automatedTransferSite } = this.props;
 
-		return automatedTransferSite && this.isUnsupportedPlugin();
+		return automatedTransferSite && this.isUnsupportedPluginForAT();
 	},
 
 	getInstallButton() {
@@ -246,7 +250,7 @@ const PluginMeta = React.createClass( {
 	maybeDisplayUnsupportedNotice() {
 		const { selectedSite, automatedTransferSite } = this.props;
 
-		if ( selectedSite && this.isUnsupportedPlugin() && ( ! selectedSite.jetpack || automatedTransferSite ) ) {
+		if ( selectedSite && this.isUnsupportedPluginForAT() && ( ! selectedSite.jetpack || automatedTransferSite ) ) {
 			return (
 				<Notice
 					text={ this.translate( 'Incompatible plugin: WordPress.com already provides this feature.' ) }
