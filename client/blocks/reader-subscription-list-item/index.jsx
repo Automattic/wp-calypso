@@ -18,6 +18,7 @@ import {
 	getSiteDescription,
 	getSiteAuthorName,
 	getFeedUrl,
+	getSiteUrl,
 } from 'reader/get-helpers';
 import untrailingslashit from 'lib/route/untrailingslashit';
 
@@ -45,6 +46,7 @@ function ReaderSubscriptionListItem( {
 	const feedIcon = get( feed, 'image' );
 	const streamUrl = getStreamUrl( feedId, siteId );
 	const feedUrl = url || getFeedUrl( { feed, site } );
+	const siteUrl = getSiteUrl( { feed, site } );
 	const isFollowing = ( site && site.is_following ) || ( feed && feed.is_following );
 
 	return (
@@ -77,7 +79,9 @@ function ReaderSubscriptionListItem( {
 				}
 			{ siteUrl && (
 				<div className="reader-subscription-list-item__site-url">
-					<a href={ siteUrl }> { stripUrl( siteUrl ) } </a>
+					<a href={ siteUrl } target="_blank" rel="noopener noreferrer">
+						{ stripUrl( siteUrl ) }
+					</a>
 				</div>
 			) }
 			</div>
