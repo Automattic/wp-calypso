@@ -10,15 +10,13 @@ import { localize } from 'i18n-calypso';
  */
 import Item from './item';
 import config from 'config';
-import { login } from 'lib/paths';
 
 function getLoginUrl() {
-	const params = {};
+	let loginUrl = config( 'login_url' );
 	if ( typeof window !== 'undefined' ) {
-		params.redirectTo = window.location.href;
+		loginUrl += `?redirect_to=${ encodeURIComponent( window.location.href ) }`;
 	}
-
-	return login( params );
+	return loginUrl;
 }
 
 const MasterbarLoggedOut = ( { title, sectionName, translate } ) => (
