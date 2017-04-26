@@ -3,6 +3,7 @@
  */
 import {
 	canCurrentUser,
+	isDomainOnlySite,
 	isMappedDomainSite,
 	isSiteOnFreePlan,
 	isUserRegistrationDaysWithinRange,
@@ -18,11 +19,12 @@ import {
  */
 const eligibleForFreeToPaidUpsell = ( state, siteId, moment ) => {
 	const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+	const siteisDomainOnlySite = isDomainOnlySite( state, siteId );
 	const siteHasMappedDomain = isMappedDomainSite( state, siteId );
 	const siteIsOnFreePlan = isSiteOnFreePlan( state, siteId );
 	const registrationDaysIsWithinRange = isUserRegistrationDaysWithinRange( state, moment, 0, 180 );
 
-	return userCanManageOptions && ! siteHasMappedDomain && siteIsOnFreePlan && registrationDaysIsWithinRange;
+	return userCanManageOptions && ! siteisDomainOnlySite && ! siteHasMappedDomain && siteIsOnFreePlan && registrationDaysIsWithinRange;
 };
 
 export default eligibleForFreeToPaidUpsell;
