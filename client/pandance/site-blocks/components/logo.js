@@ -23,7 +23,7 @@ class ImageEditorExample extends Component {
 
 		this.state = {
 			media: {
-				URL: 'https://cldup.com/mA_hqNVj0w.jpg'
+				URL: ''
 			}
 		};
 	}
@@ -68,6 +68,7 @@ class ImageEditorExample extends Component {
 
 		return (
 			<div className="wrapper">
+				<h2>Let's get your logo.</h2>
 				<div style={ {
 					marginBottom: '20px'
 				} }>
@@ -75,7 +76,7 @@ class ImageEditorExample extends Component {
 					<input type="file" id="devdocs-example-image-editor-file-input" />
 				</div>
 
-				<div style={ { height: '40vh' } }>
+				<div style={ { height: '30vh' } }>
 					<ImageEditor
 						siteId={ primarySiteId }
 						media={ this.state.media }

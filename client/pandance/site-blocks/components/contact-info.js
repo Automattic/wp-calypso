@@ -21,7 +21,8 @@ export const ContactInfo = props => <div className="contact-info section">
 	</Card>
 </div>;
 
-export const EditContactInfo = prop => <div>
+export const EditContactInfo = prop => <div className="wrapper">
+	<h2>Let us know your address so that we can display a map on your site.</h2>
 	<FormFieldset>
 		<FormLabel>Address</FormLabel>
 		<FormTextArea placeholder="5 Awesome Rd, Peterstown, 202020 GRT!" onChange={(event) => { something = event.target.value; } }></FormTextArea>

@@ -167,3 +167,23 @@ p {
 		text-align: right;
 	}
 }
+
+.image-editor__content {
+	background: transparent;
+
+	.is-placeholder {
+		display: none;
+	}
+}
+
+.image-editor__canvas-container {
+	    border: 1px solid #c8d7e1;
+}
+
+.image-editor__toolbar-button {
+	color: #2e4453;
+}
+
+.image-editor__buttons {
+	display: none;
+}

@@ -16,6 +16,7 @@ import Button from 'components/button';
 import { enterBusinessName, enterBusinessDescription } from 'state/pandance/actions';
 
 export const BusinessInfo  = props => <div className="wrapper">
+	<h2>Tell us about your business.</h2>
 	<FormFieldset>
 		<FormLabel>What is the name of your business?</FormLabel>
 		<FormTextInput value={ props.business.name }

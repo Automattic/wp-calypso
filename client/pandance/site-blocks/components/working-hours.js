@@ -52,6 +52,7 @@ export const WorkingHours = props => <div className="hours section">
 </div>;
 
 export const EditWorkingHours = props => <div className="wrapper">
+	<h2>What are your hours?</h2>
 	{
 		[ 'Monday', 'Tuesday',  'Wednesday',  'Thursday', 'Friday',  'Saturday',  'Sunday' ]
 			.map( day => <FormFieldset>

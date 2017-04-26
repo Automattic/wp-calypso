@@ -19,7 +19,8 @@ export const SocialMedia = props => <div>
 	</Card>
 </div>;
 
-export const EditSocialMedia = props => <div>
+export const EditSocialMedia = props => <div className="wrapper">
+	<h2>Tell us how to find you on social media.</h2>
 	{
 		[ 'Facebook', 'Twitter', 'Instagram' ]
 			.map( socialNetwork => <FormFieldset>
