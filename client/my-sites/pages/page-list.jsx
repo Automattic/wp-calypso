@@ -228,7 +228,7 @@ var Pages = React.createClass( {
 			const status = this.props.status || 'published';
 
 			if ( site && status === 'published' ) {
-				rows.push(
+				rows.unshift(
 					<BlogPostsPage
 						key="blog-posts-page"
 						site={ site }

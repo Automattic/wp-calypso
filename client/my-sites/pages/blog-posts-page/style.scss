@@ -1,6 +1,7 @@
 .blog-posts-page {
 	display: flex;
 	align-items: center;
+	margin-bottom: 20px;
 }
 
 .blog-posts-page__home-badge {
@@ -29,10 +30,12 @@
 }
 
 .blog-posts-page__title {
-	display: inline;
+	font-size: 16px;
+	line-height: 24px;
 	color: $gray-dark;
-	font-weight: 500;
-	font-family: $serif;
+	padding-bottom: 10px;
+
+	display: inline;
 	margin-right: 33px;
 }
 
@@ -40,4 +43,8 @@
 	color: $gray;
 	font-size: 12px;
 	margin: 0 33px 0 0;
+
+	.gridicon {
+		padding-right: 5px;
+	}
 }
