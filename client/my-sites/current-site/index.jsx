@@ -136,12 +136,19 @@ class CurrentSite extends Component {
 					</span>
 				}
 				{ selectedSite
-					? <Site
-						site={ selectedSite }
-						homeLink={ true }
-						externalLink={ true }
-						onSelect={ this.previewSite }
-						tipTarget="site-card-preview" />
+					? <div>
+						<Site site={ selectedSite } />
+						<a
+							href={ selectedSite.URL }
+							onClick={ this.previewSite }
+							className="current-site__view-site"
+						>
+							<span className="current-site__view-site-text">
+								{ translate( 'View Site' ) }
+							</span>
+							<Gridicon icon="arrow-right" />
+						</a>
+					</div>
 					: <AllSites />
 				}
 				{ ! isJetpack && this.getDomainWarnings() }

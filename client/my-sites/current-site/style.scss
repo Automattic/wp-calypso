@@ -42,6 +42,37 @@
 	}
 }
 
+.current-site__view-site {
+	display: flex;
+	border-top: 1px solid darken( $sidebar-bg-color, 5% );
+	flex: 1 0 auto;
+	padding: 8px 16px;
+
+	.gridicon {
+		fill: $gray;
+	}
+
+	&:hover,
+	&:focus {
+		background-color: $gray-light;
+
+		.current-site__view-site-text {
+			color: $blue-medium;
+		}
+		.gridicon {
+			fill: $blue-medium;
+		}
+	}
+}
+
+.current-site__view-site-text {
+	display: flex;
+	align-self: center;
+	width: 100%;
+	color: $gray-dark;
+	font-size: 13px;
+}
+
 .current-site__switch-sites {
 	background: $sidebar-bg-color;
 	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
