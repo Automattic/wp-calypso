@@ -12,8 +12,10 @@ import { getNormalizedPostRevision } from 'state/posts/revisions/selectors';
 class EditorDiffViewer extends PureComponent {
 	render() {
 		return (
-			<div>
-				<h3>{ this.props.revision.title }</h3>
+			<div className="editor-diff-viewer">
+				<h3 className="editor-diff-viewer__title">
+					{ this.props.revision.title }
+				</h3>
 				{ this.props.revision.content }
 			</div>
 		);
