@@ -386,7 +386,7 @@
 	margin-top: 3px;
 }
 
-.site-settings__foldable-card + .card.is-compact {
+.site-settings__foldable-card + .card.is-compact:last-child {
 	margin-top: -16px;
 	margin-bottom: 16px;
 }
