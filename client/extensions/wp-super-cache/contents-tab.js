@@ -19,26 +19,14 @@ const ContentsTab = ( {
 		generated,
 		supercache,
 		wpcache,
-		wp_cache_object_cache,
 	},
 	isMultisite,
 	translate,
 } ) => {
-	const wpCacheCachedCount = wpcache && wpcache.cached_list ? wpcache.cached_list.length : 0;
-	const wpCacheExpiredCount = wpcache && wpcache.expired_list ? wpcache.expired_list.length : 0;
-	const supercacheCachedCount = supercache && supercache.cached_list ? supercache.cached_list.length : 0;
-	const supercacheExpiredCount = supercache && supercache.expired_list ? supercache.expired_list.length : 0;
-
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Cache Contents' ) } />
 			<Card compact>
-			{ wp_cache_object_cache &&
-				<p>
-					{ translate( 'Object cache in use. No cache listing available.' ) }
-				</p>
-			}
-			{ ! wp_cache_object_cache &&
 				<div>
 				{ wpcache &&
 					<div className="wp-super-cache__cache-stat">
@@ -51,10 +39,10 @@ const ContentsTab = ( {
 							) }
 						</span>
 						<span className="wp-super-cache__cache-stat-item">
-							{ `${ wpCacheCachedCount } Cached Pages` }
+							{ `${ wpcache && wpcache.cached || 0 } Cached Pages` }
 						</span>
 						<span className="wp-super-cache__cache-stat-item">
-							{ `${ wpCacheExpiredCount } Expired Pages` }
+							{ `${ wpcache && wpcache.expired || 0 } Expired Pages` }
 						</span>
 					</div>
 				}
@@ -70,10 +58,10 @@ const ContentsTab = ( {
 							) }
 						</span>
 						<span className="wp-super-cache__cache-stat-item">
-							{ `${ supercacheCachedCount } Cached Pages` }
+							{ `${ supercache && supercache.cached || 0 } Cached Pages` }
 						</span>
 						<span className="wp-super-cache__cache-stat-item">
-							{ `${ supercacheExpiredCount } Expired Pages` }
+							{ `${ supercache && supercache.expired || 0 } Expired Pages` }
 						</span>
 					</div>
 				}
@@ -92,10 +80,8 @@ const ContentsTab = ( {
 						{ translate( 'Regenerate Cache Stats' ) }
 					</Button>
 				</div>
-			}
 			</Card>
 
-		{ ! wp_cache_object_cache &&
 			<div>
 			{ wpcache && wpcache.cached_list &&
 				<CachedFiles header="Fresh WP-Cached Files" files={ wpcache.cached_list } />
@@ -113,10 +99,9 @@ const ContentsTab = ( {
 				<CachedFiles header="Stale Super Cached Files" files={ supercache.expired_list } />
 			}
 			</div>
-		}
 
 			<Card>
-				{ !! cache_max_time &&
+				{ cache_max_time &&
 					<p>
 						{ translate(
 							'Expired files are files older than %(cache_max_time)d seconds. They are still used by ' +
@@ -152,10 +137,9 @@ const getFormSettings = settings => {
 	] );
 	const otherSettings = pick( settings, [
 		'cache_max_time',
-		'wp_cache_object_cache',
 	] );
 
-	return Object.assign( {}, cacheStats, otherSettings );
+	return { ...cacheStats, ...otherSettings };
 };
 
 export default WrapSettingsForm( getFormSettings )( ContentsTab );

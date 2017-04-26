@@ -20,6 +20,7 @@ import WrapSettingsForm from './wrap-settings-form';
 
 const AcceptedFilenames = ( {
 	fields: {
+		accepted_files,
 		archives,
 		author,
 		category,
@@ -27,11 +28,10 @@ const AcceptedFilenames = ( {
 		frontpage,
 		home,
 		pages,
+		rejected_uri,
 		search,
 		single,
 		tag,
-		wp_accepted_files,
-		wp_rejected_uri,
 	},
 	handleAutosavingToggle,
 	handleChange,
@@ -176,8 +176,8 @@ const AcceptedFilenames = ( {
 						</FormLabel>
 						<FormTextarea
 							disabled={ isRequesting || isSaving }
-							onChange={ handleChange( 'wp_rejected_uri' ) }
-							value={ wp_rejected_uri || '' } />
+							onChange={ handleChange( 'rejected_uri' ) }
+							value={ rejected_uri || '' } />
 						<FormSettingExplanation>
 							{ translate(
 								'Add here strings (not a filename) that forces a page not to be cached. For example, ' +
@@ -194,8 +194,8 @@ const AcceptedFilenames = ( {
 						</FormLabel>
 						<FormTextarea
 							disabled={ isRequesting || isSaving }
-							onChange={ handleChange( 'wp_accepted_files' ) }
-							value={ wp_accepted_files || '' } />
+							onChange={ handleChange( 'accepted_files' ) }
+							value={ accepted_files || '' } />
 						<FormSettingExplanation>
 							{ translate(
 								'Add here those filenames that can be cached, even if they match one of the rejected ' +
@@ -211,10 +211,10 @@ const AcceptedFilenames = ( {
 
 const getFormSettings = settings => {
 	const textSettings = pick( settings, [
-		'wp_accepted_files',
-		'wp_rejected_uri',
+		'accepted_files',
+		'rejected_uri',
 	] );
-	const wpCachePages = pick( settings.wp_cache_pages, [
+	const pages = pick( settings.pages, [
 		'archives',
 		'author',
 		'category',
@@ -227,7 +227,7 @@ const getFormSettings = settings => {
 		'tag',
 	] );
 
-	return Object.assign( {}, textSettings, wpCachePages );
+	return { ...textSettings, ...pages };
 };
 
 export default WrapSettingsForm( getFormSettings )( AcceptedFilenames );
