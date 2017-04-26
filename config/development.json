@@ -152,7 +152,7 @@
 		"upgrades/presale-chat": true,
 		"webpack/persistent-caching": false,
 		"woocommerce/extension-dashboard": true,
-		"woocommerce/extension-stats": true,
+		"woocommerce/extension-stats": false,
 		"wp-login": true
 	}
 }
