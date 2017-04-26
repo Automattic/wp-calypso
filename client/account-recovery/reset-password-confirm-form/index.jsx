@@ -71,6 +71,7 @@ class ResetPasswordConfirmForm extends Component {
 						className="reset-password-confirm-form__password-input-field"
 						id="password"
 						onChange={ this.updateNewPassword }
+						value={ newPassword }
 						autoFocus
 					/>
 					<FormButton
