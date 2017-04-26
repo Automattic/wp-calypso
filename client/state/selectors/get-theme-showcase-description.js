@@ -9,10 +9,14 @@ import { get, includes } from 'lodash';
 import { findThemeFilterTerm, getThemeFilterTerm } from './';
 
 export default function getThemeShowcaseDescription( state, { filter, tier, vertical } = {} ) {
-	// If we have a vertical, use its description
-	const description = get( getThemeFilterTerm( state, 'subject', vertical ), 'description' );
-	if ( description ) {
-		return description;
+	if ( vertical ) {
+		const description = get( getThemeFilterTerm( state, 'subject', vertical ), 'description' );
+		if ( description ) {
+			return description;
+		}
+		return `Discover ${ vertical } WordPress Themes on the WordPress.com Showcase. ` +
+		'Here you can browse and find the best WordPress designs available on ' +
+		'WordPress.com to discover the one that is just right for you.';
 	}
 
 	// If we have *one* filter, use its description
@@ -21,6 +25,9 @@ export default function getThemeShowcaseDescription( state, { filter, tier, ver
 		if ( filterDescription ) {
 			return filterDescription;
 		}
+		return `Discover WordPress Themes supporting ${ filter } on the WordPress.com Showcase. ` +
+		'Here you can browse and find the best WordPress designs available on WordPress.com ' +
+		'to discover the one that is just right for you.';
 	}
 
 	if ( tier === 'free' ) {
