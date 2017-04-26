@@ -5,7 +5,6 @@ import React, { Component, PropTypes } from 'react';
 import noop from 'lodash/noop';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
@@ -58,9 +57,11 @@ class PlanFeaturesHeader extends Component {
 				{
 					newPlan && <Ribbon>{ translate( 'New' ) }</Ribbon>
 				}
+				{
+					current && <Ribbon>{ translate( 'Your Plan' ) }</Ribbon>
+				}
 				<div className="plan-features__header-figure" >
 					<PlanIcon plan={ planType } />
-					{ current && <Gridicon icon="checkmark-circle" className="plan-features__header-checkmark" /> }
 				</div>
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
