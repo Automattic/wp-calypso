@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { flowRight } from 'lodash';
@@ -47,6 +47,19 @@ import {
 const MINIMUM_JETPACK_VERSION = '3.9.6';
 
 class JetpackConnectMain extends Component {
+	static propTypes = {
+		locale: PropTypes.string,
+		path: PropTypes.string,
+		type: PropTypes.oneOf( [
+			'install',
+			'pro',
+			'premium',
+			'personal',
+			false,
+		] ),
+		url: PropTypes.string,
+	};
+
 	state = {
 		currentUrl: '',
 		waitingForSites: false,
