@@ -88,7 +88,7 @@ class CancelPurchaseButton extends Component {
 	changeSurveyStep = ( stepFunction ) => {
 		const { purchase, isChatAvailable, isChatActive } = this.props;
 		const { surveyStep, survey } = this.state;
-		const steps = stepsForProductAndSurvey( survey, purchase, isChatAvailable && isChatActive );
+		const steps = stepsForProductAndSurvey( survey, purchase, isChatAvailable || isChatActive );
 		const newStep = stepFunction( surveyStep, steps );
 		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
 		this.setState( { surveyStep: newStep } );
