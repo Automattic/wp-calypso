@@ -202,7 +202,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	padding-top: 11px;
 
 	.reader-related-card-v2__post {
-		max-height: 104px;
+		max-height: 206px;
 
 		&::after {
 			@include long-content-fade( $size: 30% );
@@ -226,7 +226,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		.has-thumbnail {
 
 			.reader-related-card-v2__post {
-				max-height: 104px;
+				max-height: 106px;
 
 				@media #{$reader-related-card-v2-breakpoint-medium} {
 					max-height: 108px;
@@ -254,10 +254,14 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		margin-top: 40px;
 
 		.reader-related-card-v2__post {
-			max-height: 110px;
+			max-height: 206px;
 
-			@include breakpoint( "<960px" ) {
-				max-height: 109px;
+			@media #{$reader-related-card-v2-breakpoint-medium} {
+				max-height: 108px;
+			}
+
+			@media #{$reader-related-card-v2-breakpoint-small} {
+				max-height: 108px;
 			}
 
 			@include breakpoint( "<480px" ) {
