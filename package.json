@@ -151,7 +151,8 @@
     "test-server:watch": "nodemon -e js,jsx --exec npm run test-server",
     "test-test:watch": "nodemon -e js,jsx --exec npm run test-test",
     "lint": "bin/run-lint .",
-    "css-lint": "stylelint 'client/**/*.scss' --syntax scss"
+    "css-lint": "stylelint 'client/**/*.scss' --syntax scss",
+    "credits": "node ./bin/generate-credits"
   },
   "devDependencies": {
     "5to6-codemod": "git://github.com/jsnmoon/5to6-codemod#v1.8.0",
@@ -180,6 +181,7 @@
     "mocha": "3.1.0",
     "mocha-junit-reporter": "1.12.0",
     "mockery": "1.7.0",
+    "nlf": "1.4.3",
     "nock": "8.0.0",
     "nodemon": "1.4.1",
     "react-addons-test-utils": "15.4.0",
