@@ -20,7 +20,7 @@ const response = {
 		{
 			blog_id: 19096129,
 			feed_id: 185124,
-			blog_title: 'Bente Haarstad Photography',
+			blog_title: 'Bente Haarstad Photography&amp;',
 			blog_url: 'http:\/\/bentehaarstad.wordpress.com',
 		},
 		{
@@ -81,12 +81,13 @@ describe( 'recommended sites', () => {
 			expect( fromApi( undefined ) ).eql( [] );
 			expect( fromApi( new Error( 'this is an error' ) ) ).eql( [] );
 		} );
-		it( 'should extract only what we care about from the api response', () => {
+
+		it( 'should extract only what we care about from the api response. and decode entities', () => {
 			const expected = [
 				{
 					blogId: 19096129,
 					feedId: 185124,
-					title: 'Bente Haarstad Photography',
+					title: 'Bente Haarstad Photography&',
 					url: 'http:\/\/bentehaarstad.wordpress.com',
 				},
 				{
