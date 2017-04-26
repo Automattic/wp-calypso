@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -15,18 +15,17 @@ import JetpackExampleConnect from './example-components/jetpack-connect';
 
 const NEW_INSTRUCTIONS_JETPACK_VERSION = '4.2.0';
 
-export default React.createClass( {
-	displayName: 'JetpackInstallStep',
+export default class JetpackInstallStep extends Component {
 
 	confirmJetpackInstalled( event ) {
 		event.preventDefault();
 		this.props.confirmJetpackInstallStatus( true );
-	},
+	}
 
 	confirmJetpackNotInstalled( event ) {
 		event.preventDefault();
 		this.props.confirmJetpackInstallStatus( false );
-	},
+	}
 
 	renderAlreadyHaveJetpackButton() {
 		return (
@@ -34,7 +33,7 @@ export default React.createClass( {
 				{ preventWidows( this.translate( 'Already have Jetpack installed?' ) ) }
 			</a>
 		);
-	},
+	}
 
 	renderNotJetpackButton() {
 		return (
@@ -42,7 +41,7 @@ export default React.createClass( {
 				{ preventWidows( this.translate( 'Don\'t have Jetpack installed?' ) ) }
 			</a>
 		);
-	},
+	}
 
 	getStep( stepName ) {
 		const isLegacyVersion = (
@@ -91,7 +90,7 @@ export default React.createClass( {
 			}
 		};
 		return steps[ stepName ];
-	},
+	}
 
 	render() {
 		const step = this.getStep( this.props.stepName );
@@ -110,4 +109,4 @@ export default React.createClass( {
 			</Card>
 		);
 	}
-} );
+}

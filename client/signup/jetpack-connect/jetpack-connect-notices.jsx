@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 
 /**
  * Internal dependencies
@@ -9,13 +9,12 @@ import React, { PropTypes } from 'react';
 import Notice from 'components/notice';
 import { urlToSlug } from 'lib/url';
 
-export default React.createClass( {
-	displayName: 'JetpackConnectNotices',
+export default class JetpackConnectNotices extends Component {
 
-	propTypes: {
+	static propTypes = {
 		noticeType: PropTypes.string,
 		siteUrl: PropTypes.string
-	},
+	};
 
 	getNoticeValues() {
 		const noticeValues = {
@@ -119,7 +118,7 @@ export default React.createClass( {
 		}
 
 		return;
-	},
+	}
 
 	render() {
 		const urlSlug = this.props.url ? urlToSlug( this.props.url ) : '';
@@ -133,4 +132,4 @@ export default React.createClass( {
 		}
 		return null;
 	}
-} );
+}

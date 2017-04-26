@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import debugModule from 'debug';
@@ -44,18 +44,15 @@ import EmailVerificationGate from 'components/email-verification/email-verificat
  */
 const debug = debugModule( 'calypso:jetpack-connect:sso' );
 
-const JetpackSSOForm = React.createClass( {
-	displayName: 'JetpackSSOForm',
+class JetpackSSOForm extends Component {
 
-	getInitialState() {
-		return {
-			showTermsDialog: false
-		};
-	},
+	state = {
+		showTermsDialog: false
+	};
 
 	componentWillMount() {
 		this.maybeValidateSSO();
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.maybeValidateSSO( nextProps );
@@ -71,7 +68,7 @@ const JetpackSSOForm = React.createClass( {
 			debug( 'Redirecting to: ' + redirect );
 			window.location.href = redirect;
 		}
-	},
+	}
 
 	onApproveSSO( event ) {
 		event.preventDefault();
@@ -87,23 +84,23 @@ const JetpackSSOForm = React.createClass( {
 
 		debug( 'Approving sso' );
 		this.props.authorizeSSO( siteId, ssoNonce, siteUrl );
-	},
+	}
 
 	onCancelClick( event ) {
 		debug( 'Clicked return to site link' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_return_to_site_link_click' );
 		this.returnToSiteFallback( event );
-	},
+	}
 
 	onTryAgainClick( event ) {
 		debug( 'Clicked try again link' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_try_again_link_click' );
 		this.returnToSiteFallback( event );
-	},
+	}
 
 	onClickSignInDifferentUser() {
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_sign_in_different_user_link_click' );
-	},
+	}
 
 	onClickSharedDetailsModal( event ) {
 		event.preventDefault();
@@ -111,13 +108,13 @@ const JetpackSSOForm = React.createClass( {
 		this.setState( {
 			showTermsDialog: true
 		} );
-	},
+	}
 
 	closeTermsDialog() {
 		this.setState( {
 			showTermsDialog: false
 		} );
-	},
+	}
 
 	returnToSiteFallback( event ) {
 		// If, for some reason, the API request failed and we do not have the admin URL,
@@ -127,17 +124,17 @@ const JetpackSSOForm = React.createClass( {
 			event.preventDefault();
 			window.history.back();
 		}
-	},
+	}
 
 	isButtonDisabled() {
 		const user = this.props.userModule.get();
 		const { nonceValid, isAuthorizing, isValidating, ssoUrl, authorizationError } = this.props;
 		return !! ( ! nonceValid || isAuthorizing || isValidating || ssoUrl || authorizationError || ! user.email_verified );
-	},
+	}
 
 	getSignInLink() {
 		return login( { legacy: true, redirectTo: window.location.href } );
-	},
+	}
 
 	maybeValidateSSO( props = this.props ) {
 		const { ssoNonce, siteId, nonceValid, isAuthorizing, isValidating } = props;
@@ -145,7 +142,7 @@ const JetpackSSOForm = React.createClass( {
 		if ( ssoNonce && siteId && 'undefined' === typeof nonceValid && ! isAuthorizing && ! isValidating ) {
 			this.props.validateSSONonce( siteId, ssoNonce );
 		}
-	},
+	}
 
 	maybeRenderErrorNotice() {
 		const { authorizationError, nonceValid } = this.props;
@@ -166,7 +163,7 @@ const JetpackSSOForm = React.createClass( {
 				</NoticeAction>
 			</Notice>
 		);
-	},
+	}
 
 	renderSiteCard() {
 		const { blogDetails } = this.props;
@@ -190,7 +187,7 @@ const JetpackSSOForm = React.createClass( {
 				{ site }
 			</CompactCard>
 		);
-	},
+	}
 
 	getSharedDetailLabel( key ) {
 		switch ( key ) {
@@ -227,7 +224,7 @@ const JetpackSSOForm = React.createClass( {
 		}
 
 		return key;
-	},
+	}
 
 	getSharedDetailValue( key, value ) {
 		if ( 'two_step_enabled' === key && value !== '' ) {
@@ -237,7 +234,7 @@ const JetpackSSOForm = React.createClass( {
 		}
 
 		return decodeEntities( value );
-	},
+	}
 
 	getReturnToSiteText() {
 		const text = (
@@ -254,7 +251,7 @@ const JetpackSSOForm = React.createClass( {
 		);
 
 		return this.maybeWrapWithPlaceholder( text );
-	},
+	}
 
 	getTOSText() {
 		const text = this.translate(
@@ -276,7 +273,7 @@ const JetpackSSOForm = React.createClass( {
 		);
 
 		return this.maybeWrapWithPlaceholder( text );
-	},
+	}
 
 	getSubHeaderText() {
 		const text = this.translate(
@@ -287,7 +284,7 @@ const JetpackSSOForm = React.createClass( {
 			}
 		);
 		return this.maybeWrapWithPlaceholder( text );
-	},
+	}
 
 	maybeWrapWithPlaceholder( input ) {
 		const title = get( this.props, 'blogDetails.title' );
@@ -300,7 +297,7 @@ const JetpackSSOForm = React.createClass( {
 				{ input }
 			</span>
 		);
-	},
+	}
 
 	renderSharedDetailsList() {
 		const expectedSharedDetails = {
@@ -335,7 +332,7 @@ const JetpackSSOForm = React.createClass( {
 				</tbody>
 			</table>
 		);
-	},
+	}
 
 	renderSharedDetailsDialog() {
 		const buttons = [
@@ -364,7 +361,7 @@ const JetpackSSOForm = React.createClass( {
 				</div>
 			</Dialog>
 		);
-	},
+	}
 
 	renderBadPathArgsError() {
 		return (
@@ -387,7 +384,7 @@ const JetpackSSOForm = React.createClass( {
 				/>
 			</Main>
 		);
-	},
+	}
 
 	render() {
 		const user = this.props.userModule.get();
@@ -463,7 +460,7 @@ const JetpackSSOForm = React.createClass( {
 			</MainWrapper>
 		);
 	}
-} );
+}
 
 export default connect(
 	state => {
