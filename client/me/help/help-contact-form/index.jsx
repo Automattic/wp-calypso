@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import PureRenderMixin from 'react-pure-render/mixin';
-import { isEqual, find } from 'lodash';
+import { debounce, isEqual, find } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -24,6 +24,13 @@ import SitesDropdown from 'components/sites-dropdown';
 import ChatClosureNotice from '../chat-closure-notice';
 import { selectSiteId } from 'state/help/actions';
 import { getHelpSelectedSite } from 'state/help/selectors';
+import wpcomLib from 'lib/wp';
+import HelpResults from 'me/help/help-results';
+
+/**
+ * Module variables
+ */
+const wpcom = wpcomLib.undocumented();
 
 export const HelpContactForm = React.createClass( {
 	mixins: [ LinkedStateMixin, PureRenderMixin ],
@@ -73,7 +80,12 @@ export const HelpContactForm = React.createClass( {
 			howYouFeel: 'unspecified',
 			message: '',
 			subject: '',
+			qanda: [],
 		};
+	},
+
+	componentDidMount() {
+		this.debouncedQandA = debounce( this.doQandASearch, 500 );
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -84,7 +96,10 @@ export const HelpContactForm = React.createClass( {
 		this.setState( nextProps.valueLink.value );
 	},
 
-	componentDidUpdate() {
+	componentDidUpdate( prevProps, prevState ) {
+		if ( prevState.subject !== this.state.subject || prevState.message !== this.state.message ) {
+			this.debouncedQandA();
+		}
 		this.props.valueLink.requestChange( this.state );
 	},
 
@@ -97,6 +112,13 @@ export const HelpContactForm = React.createClass( {
 		if ( tracksEvent ) {
 			analytics.tracks.recordEvent( tracksEvent, { selected_option: selectedOption } );
 		}
+	},
+
+	doQandASearch() {
+		const query = this.state.subject + ' ' + this.state.message;
+		wpcom.getQandA( query )
+			.then( qanda => this.setState( { qanda } ) )
+			.catch( () => this.setState( { qanda: [] } ) );
 	},
 
 	/**
@@ -257,6 +279,13 @@ export const HelpContactForm = React.createClass( {
 						{ translate( 'Note: Support is only available in English at the moment.' ) }
 					</strong>
 				) }
+
+				<HelpResults
+					header={ translate( 'Do you want the answer to any of these questions?' ) }
+					helpLinks={ this.state.qanda }
+					iconTypeDescription="book"
+				/>
+
 				<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>{ buttonLabel }</FormButton>
 			</div>
 		);

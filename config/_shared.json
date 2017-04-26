@@ -29,6 +29,7 @@
 	"olark": {},
 	"port": false,
 	"happychat_url": "https://happychat.io/customer",
+	"happychat_support_blog": "en.support.wordpress.com",
 	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
 	"facebook_app_id": "611241942420191",
 	"support_locales": [ "en", "es", "pt-br" ],
