@@ -303,7 +303,7 @@ export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => 
  *         : state
  * const schema = { type: 'number', minimum: 0 };
  *
- * ageReducer.schema = schema;
+ * age.schema = schema;
  *
  * const combinedReducer = combineReducersWithPersistence( {
  *     age,
@@ -351,8 +351,6 @@ export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => 
  * @param {object} reducers - object containing the reducers to merge
  * @returns {function} - Returns the combined reducer function
  */
-
-//
 export function combineReducersWithPersistence( reducers ) {
 	let hasSchema = false;
 	const reducersWithPersistence = reduce( reducers, ( result, reducerWithSchema, key ) => {
