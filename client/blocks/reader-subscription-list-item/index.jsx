@@ -15,9 +15,9 @@ import { getStreamUrl } from 'reader/route';
 import EmailSettings from './email-settings';
 import {
 	getSiteName,
-	getSiteUrl,
 	getSiteDescription,
-	getSiteAuthorName
+	getSiteAuthorName,
+	getFeedUrl,
 } from 'reader/get-helpers';
 import untrailingslashit from 'lib/route/untrailingslashit';
 
@@ -44,7 +44,7 @@ function ReaderSubscriptionListItem( {
 	const siteIcon = get( site, 'icon.img' );
 	const feedIcon = get( feed, 'image' );
 	const streamUrl = getStreamUrl( feedId, siteId );
-	const siteUrl = url || getSiteUrl( { feed, site } );
+	const feedUrl = url || getFeedUrl( { feed, site } );
 	const isFollowing = ( site && site.is_following ) || ( feed && feed.is_following );
 
 	return (
@@ -82,7 +82,7 @@ function ReaderSubscriptionListItem( {
 			) }
 			</div>
 			<div className="reader-subscription-list-item__options">
-				<FollowButton siteUrl={ siteUrl } followSource={ followSource } />
+				<FollowButton siteUrl={ feedUrl } followSource={ followSource } />
 				{ isFollowing && ! isEmailBlocked && <EmailSettings siteId={ siteId } /> }
 			</div>
 		</div>
