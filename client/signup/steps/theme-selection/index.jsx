@@ -16,7 +16,7 @@ import StepWrapper from 'signup/step-wrapper';
 import Button from 'components/button';
 import { themes } from 'lib/signup/themes-data';
 import { abtest } from 'lib/abtest';
-
+import { getCurrentUser } from 'state/current-user/selectors';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 
 class ThemeSelectionStep extends Component {
@@ -59,7 +59,8 @@ class ThemeSelectionStep extends Component {
 			<SignupThemesList
 				surveyQuestion={ this.props.chosenSurveyVertical }
 				designType={ this.props.designType || this.props.signupDependencies.designType }
-				handleScreenshotClick={ this.pickTheme } />
+				handleScreenshotClick={ this.pickTheme }
+			/>
 		);
 	}
 
@@ -80,7 +81,7 @@ class ThemeSelectionStep extends Component {
 			{ context: 'Themes step subheader in Signup' }
 		);
 
-		if ( abtest( 'signupThemeStepCopyChanges' ) === 'modified' ) {
+		if ( abtest( 'signupThemeStepCopyChanges' ) === 'modified' && this.props.currentUser == null ) {
 			let siteType = this.props.signupDependencies.designType;
 
 			switch ( siteType ) {
@@ -113,15 +114,15 @@ class ThemeSelectionStep extends Component {
 				stepContent={ this.renderThemesList() }
 				defaultDependencies={ defaultDependencies }
 				headerButton={ this.renderJetpackButton() }
-				{ ...this.props } />
+				{ ...this.props }
+			/>
 		);
 	}
 }
 
 export default connect(
-	( state ) => {
-		return {
-			chosenSurveyVertical: getSurveyVertical( state )
-		};
-	}
+	( state ) => ( {
+		chosenSurveyVertical: getSurveyVertical( state ),
+		currentUser: getCurrentUser( state )
+	} )
 )( localize( ThemeSelectionStep ) );
