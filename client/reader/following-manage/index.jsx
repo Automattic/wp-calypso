@@ -106,7 +106,7 @@ class FollowingManage extends Component {
 				<MobileBackToSidebar>
 					<h1>{ translate( 'Manage Followed Sites' ) }</h1>
 				</MobileBackToSidebar>
-				{ searchResults === null && <QueryReaderFeedsSearch query={ sitesQuery } /> }
+				{ ! searchResults && <QueryReaderFeedsSearch query={ sitesQuery } /> }
 				<h2 className="following-manage__header">{ translate( 'Follow Something New' ) }</h2>
 				<div ref={ this.handleStreamMounted } />
 				<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
