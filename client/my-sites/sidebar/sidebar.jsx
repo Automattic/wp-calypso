@@ -268,9 +268,9 @@ export class MySitesSidebar extends Component {
 	}
 
 	plan() {
-		const { site, siteId, canUserManageOptions } = this.props;
+		const { site, canUserManageOptions } = this.props;
 
-		if ( ! siteId || ! site ) {
+		if ( ! site ) {
 			return null;
 		}
 
@@ -281,10 +281,7 @@ export class MySitesSidebar extends Component {
 		let planLink = '/plans' + this.props.siteSuffix;
 
 		// Show plan details for upgraded sites
-		if (
-			site &&
-			( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) )
-		) {
+		if ( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) ) {
 			planLink = '/plans/my-plan' + this.props.siteSuffix;
 		}
 
