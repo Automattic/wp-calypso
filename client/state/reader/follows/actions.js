@@ -23,6 +23,26 @@ import {
  */
 const debug = debugModule( 'calypso:redux:reader-follows' );
 
+export function follow( { url, blogId, feedId } ) {
+	// we can follow by url, blogId, or feedId
+	return {
+		type: READER_FOLLOW,
+		payload: {
+			url,
+			blogId,
+			feedId
+		}
+	};
+}
+
+export function unfollow( feedId ) {
+	// we can always unfollow by feed id
+	return {
+		type: READER_UNFOLLOW,
+		payload: feedId
+	};
+}
+
 /**
  * Returns an action object to signal that a URL has been followed.
  *

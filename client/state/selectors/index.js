@@ -114,6 +114,7 @@ export isEligibleForDomainToPaidPlanUpsell from './is-eligible-for-domain-to-pai
 export isFetchingJetpackModules from './is-fetching-jetpack-modules';
 export isFetchingMagicLoginAuth from './is-fetching-magic-login-auth';
 export isFetchingMagicLoginEmail from './is-fetching-magic-login-email';
+export isFollowing from './is-following';
 export isHiddenSite from './is-hidden-site';
 export isJetpackModuleActive from './is-jetpack-module-active';
 export isJetpackModuleUnavailableInDevelopmentMode from './is-jetpack-module-unavailable-in-development-mode';
