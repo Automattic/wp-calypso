@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import Gridicon from 'gridicons';
 import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -48,7 +47,6 @@ import {
 const MINIMUM_JETPACK_VERSION = '3.9.6';
 
 class JetpackConnectMain extends Component {
-
 	state = {
 		currentUrl: '',
 		waitingForSites: false,
@@ -85,7 +83,33 @@ class JetpackConnectMain extends Component {
 		} );
 	}
 
+	componentDidUpdate() {
+		if ( this.getStatus() === 'notConnectedJetpack' &&
+			this.isCurrentUrlFetched() &&
+			! this.props.jetpackConnectSite.isRedirecting
+		) {
+			return this.props.goToRemoteAuth( this.state.currentUrl );
+		}
+		if ( this.getStatus() === 'alreadyOwned' &&
+			! this.props.jetpackConnectSite.isRedirecting
+		) {
+			return this.props.goToPlans( this.state.currentUrl );
+		}
+
+		if ( this.state.waitingForSites && ! this.props.isRequestingSites ) {
+			// FIXME: Can this be improved?
+			// eslint-disable-next-line react/no-did-update-set-state
+			this.setState( { waitingForSites: false } );
+			this.checkUrl( this.state.currentUrl );
+		}
+	}
+
 	dismissUrl = () => this.props.dismissUrl( this.state.currentUrl );
+
+	onURLChange = () => {
+		this.setState( { currentUrl: this.getCurrentUrl() } );
+		this.dismissUrl();
+	}
 
 	isCurrentUrlFetched() {
 		return this.props.jetpackConnectSite &&
@@ -106,11 +130,6 @@ class JetpackConnectMain extends Component {
 			url = 'http://' + url;
 		}
 		return untrailingslashit( url );
-	}
-
-	onURLChange = () => {
-		this.setState( { currentUrl: this.getCurrentUrl() } );
-		this.dismissUrl();
 	}
 
 	checkUrl( url ) {
@@ -155,27 +174,6 @@ class JetpackConnectMain extends Component {
 			this.props.jetpackConnectSite.data &&
 			this.isCurrentUrlFetched() &&
 			this.props.jetpackConnectSite.data[ propName ];
-	}
-
-	componentDidUpdate() {
-		if ( this.getStatus() === 'notConnectedJetpack' &&
-			this.isCurrentUrlFetched() &&
-			! this.props.jetpackConnectSite.isRedirecting
-		) {
-			return this.props.goToRemoteAuth( this.state.currentUrl );
-		}
-		if ( this.getStatus() === 'alreadyOwned' &&
-			! this.props.jetpackConnectSite.isRedirecting
-		) {
-			return this.props.goToPlans( this.state.currentUrl );
-		}
-
-		if ( this.state.waitingForSites && ! this.props.isRequestingSites ) {
-			// FIXME: Can this be improved?
-			// eslint-disable-next-line react/no-did-update-set-state
-			this.setState( { waitingForSites: false } );
-			this.checkUrl( this.state.currentUrl );
-		}
 	}
 
 	isRedirecting() {
@@ -448,19 +446,13 @@ class JetpackConnectMain extends Component {
 }
 
 const connectComponent = connect(
-	state => {
-		const getJetpackSite = ( url ) => {
-			return getJetpackSiteByUrl( state, url );
-		};
-
-		return {
-			jetpackConnectSite: getConnectingSite( state ),
-			getJetpackSiteByUrl: getJetpackSite,
-			isRequestingSites: isRequestingSites( state ),
-			selectedPlan: getGlobalSelectedPlan( state )
-		};
-	},
-	dispatch => bindActionCreators( {
+	state => ( {
+		jetpackConnectSite: getConnectingSite( state ),
+		getJetpackSiteByUrl: ( url ) => getJetpackSiteByUrl( state, url ),
+		isRequestingSites: isRequestingSites( state ),
+		selectedPlan: getGlobalSelectedPlan( state )
+	} ),
+	{
 		confirmJetpackInstallStatus,
 		recordTracksEvent,
 		checkUrl,
@@ -469,7 +461,7 @@ const connectComponent = connect(
 		goToPlans,
 		goToPluginInstall,
 		goToPluginActivation
-	}, dispatch )
+	}
 );
 
 export default flowRight(
