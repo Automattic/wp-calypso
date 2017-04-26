@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, map } from 'lodash';
+import { get, identity, values } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
@@ -9,22 +9,23 @@ import createSelector from 'lib/create-selector';
  */
 import { normalizePostForDisplay } from '../utils';
 
-export const getNormalizedPostRevisions = createSelector(
-	( state, siteId, postId ) => {
-		const normalizedRevisions = map(
-			get( state.posts.revisions.revisions, [ siteId, postId ], [] ),
-			normalizePostForDisplay
-		);
-		return normalizedRevisions;
-	},
+export const normalizeForDisplay = normalizePostForDisplay;
+export const normalizeForEditing = identity;
+
+export const getPostRevisions = createSelector(
+	( state, siteId, postId ) => values( get(
+		state.posts.revisions.revisions,
+		[ siteId, postId ],
+		[]
+	) ),
 	( state ) => [ state.posts.revisions.revisions ]
 );
 
-export const getNormalizedPostRevision = createSelector(
-	( state, siteId, postId, revisionId ) => {
-		return normalizePostForDisplay(
-			get( state.posts.revisions.revisions, [ siteId, postId, revisionId ] )
-		);
-	},
+export const getPostRevision = createSelector(
+	( state, siteId, postId, revisionId ) => get(
+		state.posts.revisions.revisions,
+		[ siteId, postId, revisionId ],
+		null
+	),
 	( state ) => [ state.posts.revisions.revisions ]
 );

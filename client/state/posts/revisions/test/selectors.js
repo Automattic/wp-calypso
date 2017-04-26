@@ -7,26 +7,24 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	getNormalizedPostRevision,
-	getNormalizedPostRevisions,
+	getPostRevision,
+	getPostRevisions,
 } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( 'getNormalizedPostRevision', () => {
-		it( 'should return an empty array if there is no revision in the state for `siteId, postId`', () => {
-			const postRevision = getNormalizedPostRevision( {
+	describe( 'getPostRevision', () => {
+		it( 'should return `null` if there is no revision in the state for `siteId, postId`', () => {
+			expect( getPostRevision( {
 				posts: {
 					revisions: {
 						revisions: {},
 					},
 				},
-			}, 12345678, 10, 10 );
-
-			expect( postRevision ).to.be.null;
+			}, 12345678, 10, 10 ) ).to.be.null;
 		} );
 
-		it( 'should return a normalized post revision', () => {
-			const postRevisions = getNormalizedPostRevision( {
+		it( 'should return a post revision', () => {
+			expect( getPostRevision( {
 				posts: {
 					revisions: {
 						revisions: {
@@ -41,30 +39,26 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-			}, 12345678, 10, 11 );
-
-			expect( postRevisions ).to.eql( {
+			}, 12345678, 10, 11 ) ).to.eql( {
 				id: 11,
-				title: 'Badman ',
+				title: 'Badman <img onerror= />',
 			} );
 		} );
 	} );
 
-	describe( 'getNormalizedPostRevisions', () => {
+	describe( 'getPostRevisions', () => {
 		it( 'should return an empty array if there is no revision in the state for `siteId, postId`', () => {
-			const postRevisions = getNormalizedPostRevisions( {
+			expect( getPostRevisions( {
 				posts: {
 					revisions: {
 						revisions: {},
 					},
 				},
-			}, 12345678, 10 );
-
-			expect( postRevisions ).to.eql( [] );
+			}, 12345678, 10 ) ).to.eql( [] );
 		} );
 
-		it( 'should return an array of normalized post revisions', () => {
-			const postRevisions = getNormalizedPostRevisions( {
+		it( 'should return an array of post revisions', () => {
+			expect( getPostRevisions( {
 				posts: {
 					revisions: {
 						revisions: {
@@ -79,12 +73,10 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-			}, 12345678, 10 );
-
-			expect( postRevisions ).to.eql( [
+			}, 12345678, 10 ) ).to.eql( [
 				{
 					id: 11,
-					title: 'Badman ',
+					title: 'Badman <img onerror= />',
 				},
 			] );
 		} );

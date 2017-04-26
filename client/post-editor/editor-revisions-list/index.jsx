@@ -11,32 +11,44 @@ import classNames from 'classnames';
  */
 import QueryPostRevisions from 'components/data/query-post-revisions';
 import EditorRevisionsListHeader from './header';
-import { getNormalizedPostRevisions } from 'state/posts/revisions/selectors';
+import {
+	getPostRevision,
+	getPostRevisions,
+	normalizeForDisplay,
+	normalizeForEditing,
+} from 'state/posts/revisions/selectors';
 import EditorRevisionsListItem from './item';
 
 class EditorRevisionsList extends PureComponent {
+	constructor() {
+		super();
+		this.loadRevision = this.loadRevision.bind( this );
+	}
+
+	loadRevision() {
+		this.props.loadRevision( this.props.selectedRevision );
+	}
+
 	render() {
 		return (
 			<div>
 				<QueryPostRevisions siteId={ this.props.siteId } postId={ this.props.postId } />
-				<EditorRevisionsListHeader loadRevision={ this.props.loadRevision } />
+				<EditorRevisionsListHeader loadRevision={ this.loadRevision } />
 				<ul className="editor-revisions-list__list">
-					{ map( this.props.revisions, revision => {
-						return (
-							<li
-								className={ classNames(
-									'editor-revisions-list__revision',
-									{ selected: revision.id === this.props.revisionId }
-								) }
-								key={ revision.id }
-							>
-								<EditorRevisionsListItem
-									revision={ revision }
-									toggleRevision={ this.props.toggleRevision }
-								/>
-							</li>
-						);
-					} ) }
+					{ map( this.props.revisions, revision => (
+						<li
+							className={ classNames(
+								'editor-revisions-list__revision',
+								{ selected: revision.id === this.props.revisionId }
+							) }
+							key={ revision.id }
+						>
+							<EditorRevisionsListItem
+								revision={ revision }
+								toggleRevision={ this.props.toggleRevision }
+							/>
+						</li>
+					) ) }
 				</ul>
 			</div>
 		);
@@ -48,6 +60,7 @@ EditorRevisionsList.propTypes = {
 	postId: PropTypes.number,
 	revisionId: PropTypes.number,
 	revisions: PropTypes.array,
+	selectedRevision: PropTypes.object,
 	siteId: PropTypes.number,
 	toggleRevision: PropTypes.func,
 };
@@ -55,9 +68,17 @@ EditorRevisionsList.propTypes = {
 export default connect(
 	( state, ownProps ) => ( {
 		revisions: orderBy(
-			getNormalizedPostRevisions( state, ownProps.siteId, ownProps.postId ),
+			map(
+				getPostRevisions( state, ownProps.siteId, ownProps.postId ),
+				normalizeForDisplay
+			),
 			'date',
 			'desc'
+		),
+		selectedRevision: normalizeForEditing(
+			getPostRevision(
+				state, ownProps.siteId, ownProps.postId, ownProps.revisionId
+			)
 		),
 	} ),
 )( EditorRevisionsList );

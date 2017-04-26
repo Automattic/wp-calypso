@@ -7,7 +7,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getNormalizedPostRevision } from 'state/posts/revisions/selectors';
+import {
+	getPostRevision,
+	normalizeForDisplay,
+} from 'state/posts/revisions/selectors';
 
 class EditorDiffViewer extends PureComponent {
 	render() {
@@ -31,6 +34,6 @@ EditorDiffViewer.propTypes = {
 
 export default connect(
 	( state, ownProps ) => ( {
-		revision: getNormalizedPostRevision( state, ownProps.siteId, ownProps.postId, ownProps.revisionId ),
+		revision: normalizeForDisplay( getPostRevision( state, ownProps.siteId, ownProps.postId, ownProps.revisionId ) ),
 	} )
 )( EditorDiffViewer );

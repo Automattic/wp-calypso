@@ -208,12 +208,12 @@ export const PostEditor = React.createClass( {
 		} );
 	},
 
-	loadRevision: function( revisionId = this.state.revisionId ) {
+	loadRevision: function( revision ) {
 		this.setState( { revisionId: null } );
 		this.restoreRevision( {
-			content: `test ${ revisionId }`,
-			excerpt: `test ${ revisionId }`,
-			title: `test ${ revisionId }`,
+			content: revision.content,
+			excerpt: revision.excerpt,
+			title: revision.title,
 		} );
 	},
 
