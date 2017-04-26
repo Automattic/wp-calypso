@@ -35,7 +35,7 @@ const ResetPasswordEmailSent = ( props ) => {
 			<p>
 				{ translate( "If you haven't received it, please check your spam or junk folder." ) }
 			</p>
-			<Button borderless={ true } onClick={ props.clearResetMethod }>{ translate( "Didn't receive it?" ) }</Button>
+			<Button onClick={ props.clearResetMethod } borderless>{ translate( "Didn't receive it?" ) }</Button>
 		</Card>
 	);
 };

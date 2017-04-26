@@ -76,7 +76,7 @@ class ResetPasswordSmsForm extends Component {
 						{ translate( 'Continue' ) }
 					</FormButton>
 				</form>
-				<Button borderless={ true } className="reset-password-sms-form__no-sms-link" onClick={ this.props.clearResetMethod }>
+				<Button className="reset-password-sms-form__no-sms-link" onClick={ this.props.clearResetMethod } borderless>
 					{ translate( 'No SMS?' ) }
 				</Button>
 			</Card>
