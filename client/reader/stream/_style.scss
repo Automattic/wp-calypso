@@ -619,7 +619,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	.reader-related-card-v2__post {
-		max-height: 206px;
+		max-height: 208px;
 
 		@media #{$reader-related-card-v2-breakpoint-medium} {
 			max-height: 107px;

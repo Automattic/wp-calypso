@@ -533,7 +533,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	// Clamp to 3 lines on larger viewports
 	@include breakpoint( ">660px" ) {
 		overflow: hidden;
-		max-height: 16px * 1.5 * 3;
+		max-height: 16px * 1.6 * 3;
 		word-wrap: break-word;
 
 		&::after {
