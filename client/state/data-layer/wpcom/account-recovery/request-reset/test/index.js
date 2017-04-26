@@ -33,25 +33,29 @@ describe( 'handleRequestReset()', () => {
 				.reply( 200, { success: true } )
 		) );
 
-		it( 'should dispatch SUCCESS action on success', () => {
+		it( 'should dispatch SUCCESS action on success', ( done ) => {
 			const dispatch = sinon.spy( ( action ) => {
 				if ( action.type === ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS ) {
 					assert.isTrue( dispatch.calledWith( {
 						type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
 					} ) );
+
+					done();
 				}
 			} );
 
 			handleRequestReset( { dispatch }, { userData, method }, noop );
 		} );
 
-		it( 'should dispatch SET_METHOD action on success', () => {
+		it( 'should dispatch SET_METHOD action on success', ( done ) => {
 			const dispatch = sinon.spy( ( action ) => {
 				if ( action.type === ACCOUNT_RECOVERY_RESET_SET_METHOD ) {
 					assert.isTrue( dispatch.calledWith( {
 						type: ACCOUNT_RECOVERY_RESET_SET_METHOD,
 						method,
 					} ) );
+
+					done();
 				}
 			} );
 
