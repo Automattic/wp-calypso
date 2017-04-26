@@ -41,7 +41,7 @@ export class Blocks extends React.Component {
 	}
 
 	render() {
-		return <div>
+		return <div className="options wrapper">
 			<h2>Choose a few things to get your site started.</h2>
 			<p>We will help you start a site so you can tell the world about your business right away. This is just the start of your online presence, you can add to it later.</p>
 				{
@@ -52,7 +52,9 @@ export class Blocks extends React.Component {
 						onBlockToggle={ this.boundOnBlockToggle } />
 					)
 				}
-			<Button primary={ true } onClick={ () => page( '/pandance/info' ) }>Continue</Button>
+			<div className="button-container">
+				<Button primary={ true } onClick={ () => page( '/pandance/info' ) }>Continue</Button>
+			</div>
 		</div>;
 	}
 }

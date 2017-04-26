@@ -17,16 +17,41 @@ import { enterBusinessName, enterBusinessDescription } from 'state/pandance/acti
 export const WorkingHours = props => <div className="hours section">
 	<Card>
 		<h3 className="section-title">Hours</h3>
-		<dl>
-			<dt>Monday – Friday</dt>
-			<dd>11AM—7PM</dd>
-			<dt>Saturday and Sunday</dt>
-			<dd>Closed</dd>
-		</dl>
+		<table className="hours-table">
+			<tr>
+				<td>Monday</td>
+				<td>11AM—7PM</td>
+			</tr>
+			<tr>
+				<td>Tuesday</td>
+				<td>11AM—7PM</td>
+			</tr>
+			<tr>
+				<td>Wednesday</td>
+				<td>11AM—7PM</td>
+			</tr>
+			<tr>
+				<td>Thursday</td>
+				<td>11AM—7PM</td>
+			</tr>
+			<tr>
+				<td>Friday</td>
+				<td>11AM—7PM</td>
+			</tr>
+			<tr>
+				<td>Saturday</td>
+				<td>11AM—7PM</td>
+			</tr>
+			<tr>
+				<td>Sunday</td>
+				<td>Closed</td>
+			</tr>
+		</table>
+
 	</Card>
 </div>;
 
-export const EditWorkingHours = props => <div>
+export const EditWorkingHours = props => <div className="wrapper">
 	{
 		[ 'Monday', 'Tuesday',  'Wednesday',  'Thursday', 'Friday',  'Saturday',  'Sunday' ]
 			.map( day => <FormFieldset>

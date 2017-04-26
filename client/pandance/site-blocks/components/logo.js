@@ -67,7 +67,7 @@ class ImageEditorExample extends Component {
 		} = this.props;
 
 		return (
-			<div>
+			<div className="wrapper">
 				<div style={ {
 					marginBottom: '20px'
 				} }>

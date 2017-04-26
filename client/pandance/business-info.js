@@ -15,7 +15,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import Button from 'components/button';
 import { enterBusinessName, enterBusinessDescription } from 'state/pandance/actions';
 
-export const BusinessInfo  = props => <div>
+export const BusinessInfo  = props => <div className="wrapper">
 	<FormFieldset>
 		<FormLabel>What is the name of your business?</FormLabel>
 		<FormTextInput value={ props.business.name }
@@ -28,7 +28,9 @@ export const BusinessInfo  = props => <div>
 					   onChange={ event => props.enterBusinessDescription( event.target.value ) } />
 	</FormFieldset>
 
-	<Button primary={ true } onClick={ () => page( '/pandance/content-preview' ) }>Create Site</Button>
+	<div className="button-container">
+		<Button primary={ true } onClick={ () => page( '/pandance/content-preview' ) }>Create Site</Button>
+	</div>
 </div>;
 
 export default connect( ( state, props ) => ( {

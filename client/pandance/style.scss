@@ -32,14 +32,67 @@ p {
 .content-preview {
 	margin-left: -15px;
 	margin-right: -15px;
+	margin-top: -15px
 }
 
 .message {
+	background: #f3f6f8;
 	padding: 15px;
 }
 
+.message-inside {
+	margin: auto;
+	max-width: 800px;
+
+	@include breakpoint( ">660px" ) {
+		display: flex;
+		align-items: center;
+
+		.button {
+			margin-left: 20px;
+		}
+	}
+}
+
+.button-container {
+	padding: 10px 0 0;
+	text-align: right;
+}
+
+.layout__content {
+	padding-top: 47px;
+}
+
+.wrapper {
+	margin: 30px auto 0;
+	max-width: 600px;
+
+	> {
+		h2, p {
+			text-align: center;
+		}
+	}	
+}
 
 /* Blocks */
+
+.content-container {
+	border: 10px solid #333;
+
+	@include breakpoint( ">660px" ) {
+		border-width: 20px;
+	}
+}
+
+.options .card {
+	cursor: pointer;
+
+	@include breakpoint( ">660px" ) {
+		display: inline-block;
+    	width: 46%;
+    	margin: 2%;
+	}
+}
 
 .content-preview .card {
 	box-shadow: none;
@@ -55,6 +108,7 @@ p {
 .section-title {
 	font-size: 18px;
 	font-weight: bold;
+	text-transform: uppercase;
 	@include breakpoint( ">660px" ) {
 		font-size: 24px;
 	}
@@ -66,7 +120,7 @@ p {
 	background-size: cover;
 	display: flex;
 	justify-content: center;
-	min-height: 250px;
+	min-height: 350px;
 
 	@include breakpoint( ">660px" ) {
 		min-height: 600px;
@@ -74,9 +128,12 @@ p {
 }
 
 .site-title {
+	border-bottom: 3px solid #f0b849;
 	color: #fff;
-	font-size: 24px;
+	font-size: 32px;
 	font-weight: bold;
+	text-align: center;
+	text-shadow: 2px 2px 2px rgba(0,0,0, 0.25);
 
 	@include breakpoint( ">660px" ) {
 		font-size: 48px;
@@ -86,13 +143,27 @@ p {
 
 .hours {
 	text-align: center;
-
-	.card {
-		background: #000;
-		color: #fff;
-	}
 }
 
 .contact-info {
 	text-align: center;
+
+	.card {
+		background: #333;
+		color: #fff;
+	}
+
+	pre {
+		color: #000;
+
+	}
+}
+
+.hours-table {
+	margin: auto;
+	max-width: 350px;
+
+	td:last-child {
+		text-align: right;
+	}
 }

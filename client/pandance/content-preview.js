@@ -30,16 +30,19 @@ PreviewBlock.props = {
 
 export const ContentPreview = props => <div className="content-preview">
 	<div className="message">
-		<p>Here is a preview of your site with the things you wanted to see on it. Take a look, then lets get a bit more info from you to make it your own.</p>
-		<p><Button primary={ true } onClick={ () => page( '/pandance/customize' ) }>Customize</Button></p>
+		<div className="message-inside">
+			<p>Here is a preview of your site with the things you wanted to see on it. Take a look, then lets get a bit more info from you to make it your own.</p>
+			<p><Button primary={ true } onClick={ () => page( '/pandance/customize' ) }>Customize</Button></p>
+		</div>
 	</div>
+	<div className="content-container">
 	{
 		SITE_BLOCKS
 			.filter( block => props.selected.includes( block.id ) )
 			.map( block => <PreviewBlock id={ block.id } />
 		)
 	}
-	<Button primary={ true } onClick={ () => page( '/pandance/customize' ) }>Customize</Button>
+	</div>
 </div>;
 
 export default connect( ( state, props ) => ( {

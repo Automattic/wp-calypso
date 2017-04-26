@@ -29,9 +29,11 @@ export default props => {
 
 	return <div>
 		<EditComponent next={ next }/>
+		<div className="button-container">
 		<Button
 			primary={ true }
 			onClick={ next }
 		>Continue</Button>
+		</div>
 	</div>
 }

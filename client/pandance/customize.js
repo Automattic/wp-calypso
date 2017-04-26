@@ -33,6 +33,7 @@ export default props => <div>
 			.map( block => <CustomizeBlock id={ block.id } />
 			)
 	}
-
-	<Button primary={ true } onClick={ () => page( '/pandance/blocks' ) }>Save</Button>
+	<div className="button-container">
+		<Button primary={ true } onClick={ () => page( '/pandance/blocks' ) }>Save</Button>
+	</div>
 </div>;
