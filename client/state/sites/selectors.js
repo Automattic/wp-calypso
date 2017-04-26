@@ -85,9 +85,6 @@ export const getSite = createSelector(
 			...getComputedAttributes( site ),
 			...getJetpackComputedAttributes( state, siteId ),
 			hasConflict: isSiteConflicting( state, siteId ),
-			title: getSiteTitle( state, siteId ),
-			slug: getSiteSlug( state, siteId ),
-			domain: getSiteDomain( state, siteId ),
 			is_previewable: isSitePreviewable( state, siteId )
 		};
 	},
