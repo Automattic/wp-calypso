@@ -44,8 +44,9 @@ import versionCompare from 'lib/version-compare';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import { isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
+import { isActivatingJetpackModule, isJetpackModuleActive } from 'state/selectors';
 
 /**
  * Module variables
@@ -82,8 +83,7 @@ const InvitePeople = React.createClass( {
 			getTokenStatus: () => {},
 			errorToDisplay: false,
 			errors: {},
-			success: [],
-			ssoEnabled: false
+			success: []
 		} );
 	},
 
@@ -309,7 +309,6 @@ const InvitePeople = React.createClass( {
 	},
 
 	enableSSO() {
-		this.setState( { ssoEnabled: true } );
 		this.props.activateModule( this.props.siteId, 'sso' );
 	},
 
@@ -319,10 +318,8 @@ const InvitePeople = React.createClass( {
 			translate,
 			needsVerification,
 			isJetpack,
-			isSSOActive
+			showSSONotice
 		} = this.props;
-
-		const { ssoEnabled } = this.state;
 
 		const inviteForm = (
 			<Card>
@@ -416,7 +413,7 @@ const InvitePeople = React.createClass( {
 					</FeatureExample>
 				</div>
 			);
-		} else if ( ! isSSOActive && ! ssoEnabled ) {
+		} else if ( showSSONotice ) {
 			return (
 				<div className="invite-people__action-required">
 					<Notice
@@ -466,10 +463,13 @@ const InvitePeople = React.createClass( {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const activating = isActivatingJetpackModule( state, siteId, 'sso' );
+		const active = isJetpackModuleActive( state, siteId, 'sso' );
+
 		return {
 			siteId,
 			needsVerification: ! isCurrentUserEmailVerified( state ),
-			isSSOActive: isJetpackModuleActive( state, siteId, 'sso' ),
+			showSSONotice: !! ( activating || active ),
 			isJetpack: isJetpackSite( state, siteId )
 		};
 	},
