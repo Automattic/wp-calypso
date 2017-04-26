@@ -96,7 +96,7 @@ export const setResetMethod = ( method ) => ( {
 	method,
 } );
 
-export const unsetResetMethod = () => setResetMethod( null );
+export const clearResetMethod = () => setResetMethod( null );
 
 export const setValidationKey = ( key ) => ( {
 	type: ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY,

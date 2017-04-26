@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import { unsetResetMethod } from 'state/account-recovery/reset/actions';
+import { clearResetMethod } from 'state/account-recovery/reset/actions';
 
 const ResetPasswordEmailSent = ( props ) => {
 	const {
@@ -35,9 +35,9 @@ const ResetPasswordEmailSent = ( props ) => {
 			<p>
 				{ translate( "If you haven't received it, please check your spam or junk folder." ) }
 			</p>
-			<Button borderless={ true } onClick={ props.unsetResetMethod }>{ translate( "Didn't receive it?" ) }</Button>
+			<Button borderless={ true } onClick={ props.clearResetMethod }>{ translate( "Didn't receive it?" ) }</Button>
 		</Card>
 	);
 };
 
-export default connect( null, { unsetResetMethod } )( localize( ResetPasswordEmailSent ) );
+export default connect( null, { clearResetMethod } )( localize( ResetPasswordEmailSent ) );
