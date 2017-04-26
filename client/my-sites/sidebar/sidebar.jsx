@@ -268,23 +268,20 @@ export class MySitesSidebar extends Component {
 	}
 
 	plan() {
-		if ( ! this.props.siteId ) {
+		const { site, canUserManageOptions } = this.props;
+
+		if ( ! site ) {
 			return null;
 		}
 
-		const { site, canUserManageOptions } = this.props;
-
-		if ( site && ! canUserManageOptions ) {
+		if ( ! canUserManageOptions ) {
 			return null;
 		}
 
 		let planLink = '/plans' + this.props.siteSuffix;
 
 		// Show plan details for upgraded sites
-		if (
-			site &&
-			( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) )
-		) {
+		if ( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) ) {
 			planLink = '/plans/my-plan' + this.props.siteSuffix;
 		}
 
@@ -352,11 +349,11 @@ export class MySitesSidebar extends Component {
 		let usersLink = '/people/team' + this.props.siteSuffix;
 		let addPeopleLink = '/people/new' + this.props.siteSuffix;
 
-		if ( site && ! canUserListUsers ) {
+		if ( ! site ) {
 			return null;
 		}
 
-		if ( ! this.props.siteId ) {
+		if ( ! canUserListUsers ) {
 			return null;
 		}
 
