@@ -11,6 +11,7 @@ import { includes, kebabCase } from 'lodash';
  * Internal dependencies
  */
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import AccountPasswordData from 'lib/account-password-data';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import LostPasswordForm from 'account-recovery/lost-password-form';
@@ -117,7 +118,13 @@ const getForm = ( step ) => {
 		case STEPS.RESET_PASSWORD_SMS:
 			return <ResetPasswordSmsForm />;
 		case STEPS.RESET_PASSWORD_CONFIRM:
-			return <ResetPasswordConfirmForm />;
+			const generateStrongPassword = () => ( AccountPasswordData.generate() );
+
+			return (
+				<ResetPasswordConfirmForm
+					generateStrongPassword={ generateStrongPassword }
+				/>
+			);
 		case STEPS.RESET_PASSWORD_SUCCEEDED:
 			return <ResetPasswordSucceeded />;
 		case STEPS.VALIDATE_RESET_CODE:
