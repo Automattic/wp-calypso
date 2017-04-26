@@ -119,17 +119,6 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
-	view() {
-		const { site } = this.props;
-		return site
-			? <SidebarItem
-				icon="house"
-				link={ site.URL }
-				label={ this.props.translate( 'View Site' ) }
-				onNavigate={ this.onPreviewSite } />
-			: null;
-	}
-
 	stats() {
 		const { siteId, canUserViewStats } = this.props;
 
@@ -523,7 +512,6 @@ export class MySitesSidebar extends Component {
 			<div>
 				<SidebarMenu>
 					<ul>
-						{ this.view() }
 						{ this.stats() }
 						{ this.plan() }
 					</ul>
