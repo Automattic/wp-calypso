@@ -90,7 +90,7 @@ class FollowingManage extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const forceRefresh = nextProps.sitesQuery !== this.props.sitesQueryy;
+		const forceRefresh = nextProps.sitesQuery !== this.props.sitesQuery;
 		this.setState( { forceRefresh } );
 	}
 
