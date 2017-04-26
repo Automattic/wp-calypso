@@ -1,4 +1,4 @@
-export const settingsSchema = {
+export const itemsSchema = {
 	type: 'object',
 	additionalProperties: false,
 	patternProperties: {

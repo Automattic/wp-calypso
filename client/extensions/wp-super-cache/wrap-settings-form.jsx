@@ -24,14 +24,14 @@ import {
 	removeNotice,
 	successNotice,
 } from 'state/notices/actions';
-import { saveSettings } from './state/actions';
+import { saveSettings } from './state/settings/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getSettings,
 	isRequestingSettings,
 	isSavingSettings,
 	isSettingsSaveSuccessful,
-} from './state/selectors';
+} from './state/settings/selectors';
 
 const wrapSettingsForm = getFormSettings => SettingsForm => {
 	class WrappedSettingsForm extends Component {

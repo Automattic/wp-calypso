@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSettings } from './state/selectors';
-import { requestSettings } from './state/actions';
+import { isRequestingSettings } from './state/settings/selectors';
+import { requestSettings } from './state/settings/actions';
 
 class QuerySettings extends Component {
 	componentWillMount() {
