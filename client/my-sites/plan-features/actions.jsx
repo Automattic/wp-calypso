@@ -43,7 +43,7 @@ const PlanFeaturesActions = ( {
 		upgradeButton = (
 			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
 				<Gridicon size={ 18 } icon="checkmark" />
-				{ canPurchase ? translate( 'Your plan' ) : translate( 'Current plan' ) }
+				{ canPurchase ? translate( 'Manage your plan' ) : translate( 'View plan' ) }
 			</Button>
 		);
 	} else if ( available || isPlaceholder ) {
