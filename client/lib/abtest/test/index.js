@@ -40,7 +40,7 @@ describe( 'abtest', () => {
 					show: 50
 				},
 				defaultVariation: 'hide',
-				allowAnyLocale: true
+				localeTargets: 'any',
 			},
 			mockedTestAllowExisting: {
 				datestamp: '20160627',

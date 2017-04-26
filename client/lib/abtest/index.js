@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { includes, keys, reduce, some } from 'lodash';
+import { includes, keys, reduce, some, map } from 'lodash';
 import store from 'store';
 import i18n from 'i18n-calypso';
 
@@ -11,6 +11,7 @@ import i18n from 'i18n-calypso';
  */
 import activeTests from 'lib/abtest/active-tests';
 import analytics from 'lib/analytics';
+import config from 'config';
 import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 
@@ -87,6 +88,13 @@ ABTest.prototype.init = function( name ) {
 		throw new Error( 'A default variation is specified for ' + name + ' but it is not part of the variations' );
 	}
 
+	const languageSlugs = map( config( 'languages' ), 'langSlug' );
+	const localeTargets = [ 'not-en', 'any' ].concat( languageSlugs );
+
+	if ( testConfig.localeTargets && ! includes( localeTargets, testConfig.localeTargets ) ) {
+		throw new Error( 'localeTargets can by "any", "not-en" or any single locale slug.' );
+	}
+
 	const variationDatestamp = testConfig.datestamp;
 
 	this.name = name;
@@ -96,7 +104,7 @@ ABTest.prototype.init = function( name ) {
 	this.defaultVariation = testConfig.defaultVariation;
 	this.variationNames = variationNames;
 	this.experimentId = name + '_' + variationDatestamp;
-	this.allowAnyLocale = testConfig.allowAnyLocale === true;
+	this.allowAnyLocale = testConfig.localeTargets === 'any';
 	this.allowExistingUsers = testConfig.allowExistingUsers === true;
 };
 
