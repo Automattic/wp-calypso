@@ -188,7 +188,7 @@ export function changeCommentStatus( siteId, postId, commentId, status ) {
 }
 
 /***
- * Creates a remove comment action for a siteId, postId, commentId
+ * Creates a remove comment action for a siteId, postId and commentId
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
  * @param {Number|String} commentId comment identifier to remove
