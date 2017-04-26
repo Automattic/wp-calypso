@@ -48,7 +48,8 @@ describe( 'recommended sites', () => {
 			expect( dispatch ).to.have.been.calledWith(
 				http( {
 					method: 'GET',
-					path: `/read/recommendations/sites?number=4&offset=0&seed=${ seed }`,
+					path: '/read/recommendations/sites',
+					query: { number: 4, offset: 0, seed, posts_per_site: 0 },
 					apiVersion: '1.2',
 					onSuccess: action,
 					onFailure: action,

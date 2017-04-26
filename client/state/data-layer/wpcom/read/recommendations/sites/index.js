@@ -18,7 +18,8 @@ export function requestRecommendedSites( { dispatch }, action, next ) {
 	const { seed = 1, number = 10, offset = 0 } = action.payload;
 	dispatch( http( {
 		method: 'GET',
-		path: `/read/recommendations/sites?number=${ number }&offset=${ offset }&seed=${ seed }`,
+		path: '/read/recommendations/sites',
+		query: { number, offset, seed, posts_per_site: 0 },
 		apiVersion: '1.2',
 		onSuccess: action,
 		onFailure: action,
@@ -26,8 +27,6 @@ export function requestRecommendedSites( { dispatch }, action, next ) {
 	next( action );
 }
 
-// TODO: should we be grabbing url from the post object (feed_URL).
-// the current one seems fishy
 export const fromApi = response => {
 	if ( ! response ) {
 		return [];
