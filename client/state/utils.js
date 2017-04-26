@@ -285,10 +285,74 @@ export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => 
 };
 
 /**
- * Returns a single reducing function, that ensures that persistence is opt-in.
+ * Returns a single reducing function that ensures that persistence is opt-in.
+ * If you don't need state to be stored, simply use this method instead of
+ * combineReducers from redux. This function uses the same interface.
+ *
+ * To mark that a reducer's state should be persisted, add the related JSON
+ * schema as a property on the reducer.
+ *
+ * @example
+ * const age = ( state = 0, action ) =>
+ *     GROW === action.type
+ *         ? state + 1
+ *         : state
+ * const height = ( state = 150, action ) =>
+ *     GROW === action.type
+ *         ? state + 1
+ *         : state
+ * const schema = { type: 'number', minimum: 0 };
+ *
+ * ageReducer.schema = schema;
+ *
+ * const combinedReducer = combineReducersWithPersistence( {
+ *     age,
+ *     height
+ * } );
+ *
+ * combinedReducer( { age: -5, height: -5 } ), { type: DESERIALIZE } ); // { age: 0, height: 150 };
+ * combinedReducer( { age: -5, height: 123 } ), { type: DESERIALIZE } ); // { age: 0, height: 150 };
+ * combinedReducer( { age:  6, height: 123 } ), { type: DESERIALIZE } ); // { age: 6, height: 150 };
+ * combinedReducer( { age:  6, height: 123 } ), { type: SERIALIZE } ); // { age: 6, height: 150 };
+ * combinedReducer( { age:  6, height: 123 } ), { type: GROW } ); // { age: 7, height: 124 };
+ *
+ * If the reducer explicitly handles the SERIALIZE and DESERIALZE actions, set
+ * the hasCustomPersistence property to true on the reducer.
+ *
+ * @example
+ * const date = ( state = new Date( 0 ), action ) => {
+ * 	switch ( action.type ) {
+ * 		case 'GROW':
+ * 			return new Date( state.getTime() + 1 );
+ * 		case SERIALIZE:
+ * 			return state.getTime();
+ * 		case DESERIALIZE:
+ * 			if ( isValidStateWithSchema( state, schema ) ) {
+ * 				return new Date( state );
+ * 			}
+ * 			return new Date( 0 );
+ * 		default:
+ * 			return state;
+ * 	}
+ * };
+ * date.hasCustomPersistence = true;
+ *
+ * const combinedReducer = combineReducersWithPersistence( {
+ *     date,
+ *     height
+ * } );
+ *
+ * combinedReducer( { date: -5, height: -5 } ), { type: DESERIALIZE } ); // { date: new Date( 0 ), height: 150 };
+ * combinedReducer( { date: -5, height: 123 } ), { type: DESERIALIZE } ); // { date: new Date( 0 ), height: 150 };
+ * combinedReducer( { date:  6, height: 123 } ), { type: DESERIALIZE } ); // { date: new Date( 6 ), height: 150 };
+ * combinedReducer( { date: new Date( 6 ), height: 123 } ), { type: SERIALIZE } ); // { date: 6, height: 150 };
+ * combinedReducer( { date: new Date( 6 ), height: 123 } ), { type: GROW } ); // { date: new Date( 7 ), height: 124 };
+ *
  * @param {object} reducers - object containing the reducers to merge
  * @returns {function} - Returns the combined reducer function
  */
+
+//
 export function combineReducersWithPersistence( reducers ) {
 	let hasSchema = false;
 	const reducersWithPersistence = reduce( reducers, ( result, reducerWithSchema, key ) => {
