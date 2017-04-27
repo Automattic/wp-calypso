@@ -336,9 +336,10 @@ const Page = React.createClass( {
 		const restoreItem = this.getRestoreItem();
 		const sendToTrashItem = this.getSendToTrashItem();
 		const copyItem = this.getCopyItem();
+		const statsItem = this.getStatsItem();
 		const moreInfoItem = this.popoverMoreInfo();
 		const hasMenuItems = (
-			viewItem || publishItem || editItem ||
+			viewItem || publishItem || editItem || statsItem ||
 			restoreItem || sendToTrashItem || moreInfoItem
 		);
 		const popoverMenu = hasMenuItems ? (
@@ -351,6 +352,7 @@ const Page = React.createClass( {
 				{ viewItem }
 				{ publishItem }
 				{ editItem }
+				{ statsItem }
 				{ copyItem }
 				{ restoreItem }
 				{ sendToTrashItem }
