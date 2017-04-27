@@ -417,7 +417,7 @@ export function getThemeHelpUrl( state, themeId, siteId ) {
  * @return {?String}         Theme purchase URL
  */
 export function getThemePurchaseUrl( state, themeId, siteId ) {
-	if ( isJetpackSite( state, siteId ) || ! isThemePremium( state, themeId ) ) {
+	if ( ! isThemePremium( state, themeId ) ) {
 		return null;
 	}
 
