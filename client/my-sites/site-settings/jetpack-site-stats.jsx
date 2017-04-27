@@ -21,7 +21,7 @@ import ExternalLink from 'components/external-link';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import QuerySiteRoles from 'components/data/query-site-roles';
 import { getStatsPathForTab } from 'lib/route/path';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteRoles } from 'state/site-roles/selectors';
 import {
 	isJetpackModuleActive,
@@ -102,6 +102,7 @@ class JetpackSiteStats extends Component {
 		const {
 			siteId,
 			siteRoles,
+			siteSlug,
 			translate
 		} = this.props;
 		const header = (
@@ -174,7 +175,7 @@ class JetpackSiteStats extends Component {
 					</FormFieldset>
 				</FoldableCard>
 
-				<CompactCard href={ getStatsPathForTab( 'day', siteId ) }>
+				<CompactCard href={ getStatsPathForTab( 'day', siteSlug ) }>
 					{ translate( 'View your site stats' ) }
 				</CompactCard>
 			</div>
@@ -190,6 +191,7 @@ export default connect(
 
 		return {
 			siteId,
+			siteSlug: getSelectedSiteSlug( state, siteId ),
 			statsModuleActive: !! isJetpackModuleActive( state, siteId, 'stats' ),
 			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 			siteRoles: getSiteRoles( state, siteId ),
