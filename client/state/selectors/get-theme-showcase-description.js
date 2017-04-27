@@ -20,7 +20,7 @@ export default function getThemeShowcaseDescription( state, { filter, tier, ver
 	}
 
 	// If we have *one* filter, use its description
-	if ( filter && ! includes( filter, ',' ) ) {
+	if ( filter && ! includes( filter, '+' ) ) {
 		const filterDescription = get( findThemeFilterTerm( state, filter ), 'description' );
 		if ( filterDescription ) {
 			return filterDescription;
