@@ -229,17 +229,23 @@ const Page = React.createClass( {
 
 		if ( this.props.page.status !== 'trash' ) {
 			return (
-				<PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusTrash }>
-					<Gridicon icon="trash" size={ 18 } />
-					{ this.translate( 'Trash' ) }
-				</PopoverMenuItem>
+				<div>
+					<MenuSeparator />
+					<PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusTrash }>
+						<Gridicon icon="trash" size={ 18 } />
+						{ this.translate( 'Trash' ) }
+					</PopoverMenuItem>
+				</div>
 			);
 		} else {
 			return (
-				<PopoverMenuItem className="page__delete-item" onClick={ this.updateStatusDelete }>
-					<Gridicon icon="trash" size={ 18 } />
-					{ this.translate( 'Delete' ) }
-				</PopoverMenuItem>
+				<div>
+					<MenuSeparator />
+					<PopoverMenuItem className="page__delete-item" onClick={ this.updateStatusDelete }>
+						<Gridicon icon="trash" size={ 18 } />
+						{ this.translate( 'Delete' ) }
+					</PopoverMenuItem>
+				</div>
 			);
 		}
 	},
