@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import Gridicon from 'gridicons';
 import { isEmpty, get, pick } from 'lodash';
 
@@ -18,6 +18,25 @@ import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 
 class EasyTab extends Component {
+	static propTypes = {
+		cacheTestResults: PropTypes.object,
+		fields: PropTypes.object,
+		handleAutosavingToggle: PropTypes.func.isRequired,
+		isRequesting: PropTypes.bool,
+		isSaving: PropTypes.bool,
+		site: PropTypes.object.isRequired,
+		siteId: PropTypes.number.isRequired,
+		testCache: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		cacheTestResults: {},
+		fields: {},
+		isRequesting: true,
+		isSaving: false,
+	};
+
 	state = {
 		httpOnly: true,
 	}
