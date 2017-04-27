@@ -336,7 +336,7 @@ const Page = React.createClass( {
 			canEdit = utils.userCan( 'edit_post', this.props.page ),
 			depthIndicator;
 
-		if ( page.parent ) {
+		if ( ! this.props.hierarchical && page.parent ) {
 			depthIndicator = '— ';
 		}
 
@@ -380,8 +380,28 @@ const Page = React.createClass( {
 			ref="popoverMenuButton" />
 		) : null;
 
+		const cardClasses = {
+			page: true,
+			'is-indented': this.props.hierarchical && this.props.hierarchyLevel > 0,
+		};
+
+		const hierarchyIndentClasses = {
+			'page__hierarchy-indent': true,
+			'is-indented': cardClasses[ 'is-indented' ],
+		};
+
+		if ( cardClasses[ 'is-indented' ] ) {
+			cardClasses[ 'is-indented-level-' + this.props.hierarchyLevel ] = true;
+			hierarchyIndentClasses[ 'is-indented-level-' + this.props.hierarchyLevel ] = true;
+		}
+
+		const hierarchyIndent = cardClasses[ 'is-indented' ] && (
+			<div className={ classNames( hierarchyIndentClasses ) } ></div>
+		);
+
 		return (
-			<CompactCard className="page">
+			<CompactCard className={ classNames( cardClasses ) } >
+				{ hierarchyIndent }
 				{ this.props.multisite ? <SiteIcon site={ site } size={ 34 } /> : null }
 				<a className="page__title"
 					href={ canEdit ? helpers.editLinkForPage( page, site ) : page.URL }
