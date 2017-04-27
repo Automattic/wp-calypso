@@ -20,6 +20,7 @@ import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import QuerySiteRoles from 'components/data/query-site-roles';
+import { getStatsPathForTab } from 'lib/route/path';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteRoles } from 'state/site-roles/selectors';
 import {
@@ -173,7 +174,7 @@ class JetpackSiteStats extends Component {
 					</FormFieldset>
 				</FoldableCard>
 
-				<CompactCard href={ '/stats/day/' + siteId }>
+				<CompactCard href={ getStatsPathForTab( 'day', siteId ) }>
 					{ translate( 'View your site stats' ) }
 				</CompactCard>
 			</div>
