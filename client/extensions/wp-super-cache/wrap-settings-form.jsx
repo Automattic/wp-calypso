@@ -27,6 +27,7 @@ import {
 import { testCache } from './state/cache-test/actions';
 import {
 	errorNotice,
+	infoNotice,
 	removeNotice,
 	successNotice,
 } from 'state/notices/actions';
@@ -78,6 +79,8 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 					);
 				}
 			}
+
+			this.showCacheTestNotice( prevProps );
 		}
 
 		updateDirtyFields() {
@@ -107,6 +110,39 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 		handleChange = field => event => {
 			this.props.updateFields( { [ field ]: event.target.value } );
+		};
+
+		showCacheTestNotice = ( prevProps ) => {
+			const {
+				isTesting,
+				isTestSuccessful,
+				site,
+				translate,
+			} = this.props;
+
+			if ( isTesting && ! prevProps.isTesting ) {
+				this.props.removeNotice( 'wpsc-settings-save' );
+				this.props.infoNotice(
+					translate( 'Testing cache on %(site)s.', { args: { site: site && site.title } } ),
+					{ id: 'wpsc-cache-test' }
+				);
+
+				return;
+			}
+
+			if ( ! isTesting && prevProps.isTesting ) {
+				if ( isTestSuccessful ) {
+					this.props.successNotice(
+						translate( 'Cache test completed successfully on %(site)s.', { args: { site: site && site.title } } ),
+						{ id: 'wpsc-cache-test' }
+					);
+				} else {
+					this.props.errorNotice(
+						translate( 'There was a problem testing the cache. Please try again.' ),
+						{ id: 'wpsc-cache-test' }
+					);
+				}
+			}
 		};
 
 		handleRadio = event => {
@@ -161,6 +197,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			} = this.props;
 
 			this.props.removeNotice( 'wpsc-settings-save' );
+			this.props.removeNotice( 'wpsc-cache-test' );
 			this.props.saveSettings( siteId, pick( fields, settingsFields ) );
 		};
 
@@ -256,6 +293,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		dispatch => {
 			const boundActionCreators = bindActionCreators( {
 				errorNotice,
+				infoNotice,
 				removeNotice,
 				saveSettings,
 				successNotice,
