@@ -354,7 +354,8 @@
 		padding: 24px;
 	}
 
-	.site-settings__info-link-container {
+	.composing__module-settings .site-settings__info-link-container,
+	.protect__module-settings .site-settings__info-link-container {
 		margin-right: -36px;
 		height: 0;
 	}
