@@ -151,6 +151,11 @@ describe( 'abtest', () => {
 					abtest( 'mockedTest' );
 					expect( setSpy ).to.have.been.calledOnce;
 				} );
+				it( 'should call store.set for new users with English-Canada settings', () => {
+					mockedUser.localeSlug = 'en-ca';
+					abtest( 'mockedTest' );
+					expect( setSpy ).to.have.been.calledOnce;
+				} );
 				it( 'should return default and skip store.set for new users with non-English settings', () => {
 					mockedUser.localeSlug = 'de';
 					expect( abtest( 'mockedTest' ) ).to.equal( 'hide' );

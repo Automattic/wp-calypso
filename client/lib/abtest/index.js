@@ -164,7 +164,7 @@ ABTest.prototype.isEligibleForAbTest = function() {
 		const localeMatcher = new RegExp( '^' + this.localeTarget + '-?', 'i' );
 		let isTargetLocale = true;
 
-		if ( isUserSignedIn() && user.get().localeSlug !== this.localeTarget ) {
+		if ( isUserSignedIn() && ! user.get().localeSlug.match( localeMatcher ) ) {
 			debug( '%s: User has a %s locale', this.experimentId, this.localeTarget );
 			isTargetLocale = false;
 		}
