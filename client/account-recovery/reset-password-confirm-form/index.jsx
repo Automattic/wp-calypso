@@ -48,7 +48,7 @@ class ResetPasswordConfirmForm extends Component {
 							}
 						) }
 					</p>
-					<FormButton className="reset-password-confirm-form__button submit" type="submit" primary>
+					<FormButton className="reset-password-confirm-form__button submit" type="submit">
 						{ translate( 'Reset Password' ) }
 					</FormButton>
 				</form>
