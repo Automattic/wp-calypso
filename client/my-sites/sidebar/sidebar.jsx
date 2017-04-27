@@ -201,7 +201,7 @@ export class MySitesSidebar extends Component {
 		}
 
 		if ( ! config.isEnabled( 'manage/plugins' ) ) {
-			if ( ! this.props.siteId ) {
+			if ( ! site ) {
 				return null;
 			}
 
@@ -442,7 +442,7 @@ export class MySitesSidebar extends Component {
 		const cutOffDate = new Date( '2015-09-07' );
 
 		// VIP sites should always show a WP Admin link regardless of the current user.
-		if ( site.is_vip ) {
+		if ( site && site.is_vip ) {
 			return true;
 		}
 
