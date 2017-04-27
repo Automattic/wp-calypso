@@ -44,43 +44,11 @@
 	position: relative;
 		top: -40px;
 
-	@media #{$reader-related-card-v2-breakpoint-medium} {
-		flex-direction: row;
-		top: 0;
-		width: 100%;
-	}
-
-	@media #{$reader-related-card-v2-breakpoint-small} {
-		flex-direction: row;
-		top: 0;
-		width: 100%;
-	}
-
 	.reader-recommended-sites__recommended-post-dismiss {
 		height: 30px;
 
 		.button {
 			float: right;
-
-			@media #{$reader-related-card-v2-breakpoint-medium} {
-				float: none;
-			}
-
-			@media #{$reader-related-card-v2-breakpoint-small} {
-				float: none;
-			}
-		}
-
-		@media #{$reader-related-card-v2-breakpoint-medium} {
-			float: left;
-			position: relative;
-			width: 20px;
-		}
-
-		@media #{$reader-related-card-v2-breakpoint-small} {
-			float: left;
-			position: relative;
-			width: 20px;
 		}
 
 		.gridicon {
@@ -88,14 +56,6 @@
 			width: 14px;
 			height: 14px;
 			top: -3px;
-
-			@media #{$reader-related-card-v2-breakpoint-medium} {
-				top: -10px;
-			}
-
-			@media #{$reader-related-card-v2-breakpoint-small} {
-				top: -10px;
-			}
 		}
 	}
 
