@@ -33,6 +33,13 @@
 		}
 	}
 
+	&:not( .selected ):hover .button {
+		// FIXME: Maybe the accordion color scheme should be moved upstream
+		// into `_colors.scss`?
+		background: $accordion-background-hover;
+		color: $blue-medium;
+	}
+
 	.button {
 		font-size: 13px;
 		padding: 1rem;
