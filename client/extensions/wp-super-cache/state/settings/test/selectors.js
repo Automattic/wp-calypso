@@ -34,8 +34,10 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						requesting: {
-							[ primarySiteId ]: true,
+						settings: {
+							requesting: {
+								[ primarySiteId ]: true,
+							}
 						}
 					}
 				}
@@ -49,8 +51,10 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						requesting: {
-							[ primarySiteId ]: false,
+						settings: {
+							requesting: {
+								[ primarySiteId ]: false,
+							}
 						}
 					}
 				}
@@ -64,8 +68,10 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						requesting: {
-							[ primarySiteId ]: true,
+						settings: {
+							requesting: {
+								[ primarySiteId ]: true,
+							}
 						}
 					}
 				}
@@ -81,8 +87,10 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						saveStatus: {
-							[ primarySiteId ]: { saving: true, status: 'pending' }
+						settings: {
+							saveStatus: {
+								[ primarySiteId ]: { saving: true, status: 'pending' }
+							}
 						}
 					}
 				}
@@ -96,8 +104,10 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						saveStatus: {
-							[ primarySiteId ]: { saving: false, status: 'success' }
+						settings: {
+							saveStatus: {
+								[ primarySiteId ]: { saving: false, status: 'success' }
+							}
 						}
 					}
 				}
@@ -111,8 +121,10 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						saveStatus: {
-							[ primarySiteId ]: { saving: true, status: 'pending' }
+						settings: {
+							saveStatus: {
+								[ primarySiteId ]: { saving: true, status: 'pending' }
+							}
 						}
 					}
 				}
@@ -128,8 +140,10 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						saveStatus: {
-							[ primarySiteId ]: { saving: true, status: 'pending' }
+						settings: {
+							saveStatus: {
+								[ primarySiteId ]: { saving: true, status: 'pending' }
+							}
 						}
 					}
 				}
@@ -143,8 +157,10 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						saveStatus: {
-							[ primarySiteId ]: { saving: false, status: 'success' }
+						settings: {
+							saveStatus: {
+								[ primarySiteId ]: { saving: false, status: 'success' }
+							}
 						}
 					}
 				}
@@ -158,8 +174,10 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						saveStatus: {
-							[ primarySiteId ]: { saving: false, status: 'error' }
+						settings: {
+							saveStatus: {
+								[ primarySiteId ]: { saving: false, status: 'error' }
+							}
 						}
 					}
 				}
@@ -188,8 +206,10 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						items: {
-							[ primarySiteId ]: primarySettings,
+						settings: {
+							items: {
+								[ primarySiteId ]: primarySettings,
+							}
 						}
 					}
 				}
@@ -203,8 +223,10 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						items: {
-							[ primarySiteId ]: primarySettings,
+						settings: {
+							items: {
+								[ primarySiteId ]: primarySettings,
+							}
 						}
 					}
 				}
@@ -220,8 +242,10 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						saveStatus: {
-							[ primarySiteId ]: { saving: true, status: 'pending' }
+						settings: {
+							saveStatus: {
+								[ primarySiteId ]: { saving: true, status: 'pending' }
+							}
 						}
 					}
 				}
@@ -235,8 +259,10 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						saveStatus: {
-							[ primarySiteId ]: { saving: false, status: 'success' }
+						settings: {
+							saveStatus: {
+								[ primarySiteId ]: { saving: false, status: 'success' }
+							}
 						}
 					}
 				}
@@ -250,8 +276,10 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						saveStatus: {
-							[ primarySiteId ]: { saving: false, status: 'error' }
+						settings: {
+							saveStatus: {
+								[ primarySiteId ]: { saving: false, status: 'error' }
+							}
 						}
 					}
 				}
@@ -265,8 +293,10 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						saveStatus: {
-							[ primarySiteId ]: { saving: true, status: 'pending' }
+						settings: {
+							saveStatus: {
+								[ primarySiteId ]: { saving: true, status: 'pending' }
+							}
 						}
 					}
 				}
