@@ -24,6 +24,7 @@ import { ACCOUNT_RECOVERY_STEPS as STEPS } from 'account-recovery/constants';
 import {
 	isAccountRecoveryResetOptionsReady,
 	isAccountRecoveryUserDataReady,
+	isAccountRecoveryResetPasswordSucceeded,
 	getAccountRecoveryResetSelectedMethod,
 	getAccountRecoveryValidationKey,
 } from 'state/selectors';
@@ -70,9 +71,14 @@ const getCurrentStep = ( props ) => {
 		firstStep,
 		isUserDataReady,
 		isResetOptionsReady,
+		isResetPasswordSucceeded,
 		selectedMethod,
 		validationKey,
 	} = props;
+
+	if ( isResetPasswordSucceeded ) {
+		return STEPS.RESET_PASSWORD_SUCCEEDED;
+	}
 
 	if ( validationKey ) {
 		return STEPS.RESET_PASSWORD_CONFIRM;
@@ -137,6 +143,7 @@ export default connect(
 	( state ) => ( {
 		isResetOptionsReady: isAccountRecoveryResetOptionsReady( state ),
 		isUserDataReady: isAccountRecoveryUserDataReady( state ),
+		isResetPasswordSucceeded: isAccountRecoveryResetPasswordSucceeded( state ),
 		selectedMethod: getAccountRecoveryResetSelectedMethod( state ),
 		validationKey: getAccountRecoveryValidationKey( state ),
 	} )
