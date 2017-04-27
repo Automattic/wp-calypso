@@ -53,7 +53,7 @@ const getPageInfo = ( translate, step ) => {
 		},
 		[ STEPS.RESET_PASSWORD_CONFIRM ]: {
 			trackerTitle: 'Account Recovery > New Password',
-			documentHeadTitle: translate( 'Reset Password < New Password' ),
+			documentHeadTitle: concatHeadTitle( translate( 'Reset Password' ), translate( 'New Password' ) ),
 		},
 	};
 
