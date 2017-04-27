@@ -13,7 +13,7 @@ import AccordionStatus from './status';
 
 export default class Accordion extends Component {
 	static propTypes = {
-		isExpanded: PropTypes.bool,
+		initialExpanded: PropTypes.bool,
 		onToggle: PropTypes.func,
 		title: PropTypes.string.isRequired,
 		subtitle: PropTypes.string,
@@ -22,7 +22,7 @@ export default class Accordion extends Component {
 	};
 
 	static defaultProps = {
-		isExpanded: false,
+		initialExpanded: false,
 		onToggle: noop
 	};
 
@@ -30,7 +30,7 @@ export default class Accordion extends Component {
 		super( ...arguments );
 
 		this.state = {
-			isExpanded: props.isExpanded
+			isExpanded: props.initialExpanded
 		};
 	}
 
@@ -44,9 +44,9 @@ export default class Accordion extends Component {
 		this.setExpandedStatus( ! this.state.isExpanded );
 	};
 
-	setExpandedStatus = ( expandedStatus ) => {
-		this.setState( { isExpanded: expandedStatus } );
-		this.props.onToggle( expandedStatus );
+	setExpandedStatus = ( isExpanded ) => {
+		this.setState( { isExpanded } );
+		this.props.onToggle( isExpanded );
 	};
 
 	render() {
