@@ -7,6 +7,7 @@ import { get, find, isNumber } from 'lodash';
  * Internal dependencies
  */
 import { getVariation } from '../../../variations/selectors';
+import { getProduct } from '../../../products/selectors';
 
 function getVariationEditsStateForProduct( state, productId ) {
 	const woocommerce = state.extensions.woocommerce;
@@ -57,4 +58,22 @@ export function getCurrentlyEditingVariation( state, productId ) {
 	const { currentlyEditingId } = edits;
 
 	return getVariationWithLocalEdits( state, productId, currentlyEditingId );
+}
+
+/**
+ * Gets variation IDs for a product, including new ones being edited in the UI.
+ *
+ * @param {Object} state Global state tree
+ * @param {any} productId The id of the product (or { index: # } )
+ * @return {Array} Array of variation IDs.
+ */
+export function getProductVariationIdsWithLocalEdits( state, productId ) {
+	const edits = getVariationEditsStateForProduct( state, productId );
+	const product = isNumber( productId ) && getProduct( state, productId );
+	const createIds = get( edits, 'creates', [] ).map( ( v ) => v.id );
+	const existingIds = product && product.variations || [];
+
+	return ( ( existingIds.length > 0 || createIds.length > 0 ) &&
+		[ ...existingIds, ...createIds ] ) ||
+		undefined;
 }

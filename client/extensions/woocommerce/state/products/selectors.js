@@ -8,6 +8,12 @@
  */
 export function getProduct( state, productId ) {
 	// TODO: Add fetched product data.
-	return productId === 1 && { id: productId } || undefined;
+	switch ( productId ) {
+		case 1:
+			return { id: productId };
+		case 2:
+			return { id: productId, variations: [ 3 ] };
+		default:
+			undefined;
+	}
 }
-
