@@ -13,13 +13,15 @@ class EditorRevisionsListHeader extends PureComponent {
 	render() {
 		return (
 			<div className="editor-revisions-list__header">
-				<h3>{ this.props.translate( 'You\'re seeing the latest changes' ) }</h3>
+				<h3>
+					{ this.props.translate( 'You\'re seeing a past revision' ) }
+				</h3>
 				<Button
 					className="editor-revisions-list__load-revision"
 					onClick={ this.props.loadRevision }
 					compact={ true }
 				>
-					{ this.props.translate( 'Load revision' ) }
+					{ this.props.translate( 'Load revision in the editor' ) }
 				</Button>
 			</div>
 		);
