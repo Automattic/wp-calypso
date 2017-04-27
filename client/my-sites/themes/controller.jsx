@@ -13,7 +13,6 @@ import MultiSiteComponent from 'my-sites/themes/multi-site';
 import LoggedOutComponent from './logged-out';
 import Upload from 'my-sites/themes/theme-upload';
 import trackScrollPage from 'lib/track-scroll-page';
-import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 import { requestThemes, requestThemeFilters, setBackPath } from 'state/themes/actions';
 import { getThemesForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
@@ -106,7 +105,7 @@ export function fetchThemeData( context, next ) {
 		tier: context.params.tier,
 		filter: compact( [ context.params.filter, context.params.vertical ] ).join( ',' ),
 		page: 1,
-		number: DEFAULT_THEME_QUERY.number,
+		number: 500, // We want to server-render as many themes as possible for SEO.
 	};
 
 	const themes = getThemesForQuery( context.store.getState(), siteId, query );
