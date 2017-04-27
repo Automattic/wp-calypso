@@ -415,6 +415,28 @@ function mediaButton( editor ) {
 		}
 	} );
 
+	editor.addButton( 'wp_img_edit', {
+		tooltip: 'Edit',
+		icon: 'dashicon dashicons-edit',
+		onclick: function() {
+			const siteId = 125351479;
+			const node = editor.selection.getNode();
+			const m = node.className.match( /wp-image-(\d+)/ );
+			const imageId = m && parseInt( m[ 1 ] );
+			const image = MediaStore.get( siteId, imageId );
+
+			// Cause edit modal to show...
+			const selectedSite = getSelectedSiteFromState();
+			if ( selectedSite ) {
+				MediaActions.clearValidationErrors( selectedSite.ID );
+				renderModal( {
+					visible: true
+				} );
+				MediaActions.setLibrarySelectedItems( selectedSite.ID, [ image ] );
+			}
+		}
+	} );
+
 	editor.addButton( 'wp_img_caption', {
 		tooltip: i18n.translate( 'Caption', { context: 'verb' } ),
 		icon: 'dashicon dashicons-admin-comments',
