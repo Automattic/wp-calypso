@@ -15,6 +15,7 @@ import Card from 'components/card';
 import DomainImage from 'signup/steps/design-type-with-store/domain-image';
 import PageImage from 'signup/steps/design-type-with-store/page-image';
 import { externalRedirect } from 'lib/route/path';
+import NavigationLink from 'signup/navigation-link';
 
 export default class SiteOrDomain extends Component {
 	componentWillMount() {
@@ -65,15 +66,29 @@ export default class SiteOrDomain extends Component {
 
 	renderChoices() {
 		return (
-			<div className="site-or-domain__choices">
-				{ this.getChoices().map( ( choice ) => (
-					<Card className="site-or-domain__choice" key={ choice.type }>
-						<a href="#" onClick={ ( event ) => this.handleClickChoice( event, choice.type ) }>
-							{ choice.image }
-							<h2>{ choice.label }</h2>
-						</a>
-					</Card>
-				) ) }
+			<div>
+				<div className="site-or-domain__choices">
+					{ this.getChoices().map( ( choice ) => (
+						<Card className="site-or-domain__choice" key={ choice.type }>
+							<a href="#" onClick={ ( event ) => this.handleClickChoice( event, choice.type ) }>
+								{ choice.image }
+								<h2>{ choice.label }</h2>
+							</a>
+						</Card>
+					) ) }
+				</div>
+				{ /* Hacky way to add back link to /domains */ }
+				<div className="site-or-domain__button">
+					<NavigationLink
+						direction="back"
+						flowName={ this.props.flowName }
+						positionInFlow={ 1 }
+						stepName={ this.props.stepName }
+						stepSectionName={ this.props.stepSectionName }
+						backUrl="https://wordpress.com/domains"
+						signupProgress={ this.props.signupProgress }
+					/>
+				</div>
 			</div>
 		);
 	}
