@@ -23,7 +23,7 @@ export default class ReaderRecommendedSitesExample extends PureComponent {
 		return (
 			<Card>
 				<ReaderRecommendedSites
-					sites={ sites }
+					sites={ [ sites.longreads, sites.wordpress ] }
 				/>
 			</Card>
 		);

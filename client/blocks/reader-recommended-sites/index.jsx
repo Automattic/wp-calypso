@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import { recordAction, recordTrack } from 'reader/stats';
 import Button from 'components/button';
-import { requestSiteBlock } from 'state/reader/blockSite/actions';
+import { requestSiteBlock } from 'state/reader/site-blocks/actions';
 // TODO no need for presentational component here. maybe just have it be a connected component in blocks
 // is there a pattern for having things with the same name in blocks/components and blocks being the connected version?
 import ConnectedSubscriptionListItem from 'reader/following-manage/connected-subscription-list-item';
@@ -50,7 +50,8 @@ export class RecommendedSites extends React.PureComponent {
 					{
 						map(
 							sites,
-							( siteId, index ) => {
+							( site, index ) => {
+								const siteId = site.siteId;
 								return ( <li className="reader-recommended-sites__site-list-item" key={ `site-rec-${ siteId }` }>
 									<div className="reader-recommended-sites__recommended-post-dismiss">
 										<Button borderless
