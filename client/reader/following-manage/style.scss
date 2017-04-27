@@ -48,6 +48,21 @@
 		}
 	}
 
+	.following-manage__subscriptions-sort {
+		position: relative;
+
+		&::before {
+
+			@include breakpoint( "<960px" ) {
+
+				@include long-content-fade( $size: 20% );
+				height: 30px;
+				right: 30px;
+				top: 1px;
+			}
+		}
+	}
+
 	.following-manage__subscriptions-sort,
 	.following-manage__subscriptions-search {
 
