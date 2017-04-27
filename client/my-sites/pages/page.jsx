@@ -275,6 +275,10 @@ const Page = React.createClass( {
 	},
 
 	getStatsItem: function() {
+		if ( this.props.page.status !== 'publish' ) {
+			return null;
+		}
+
 		return (
 			<PopoverMenuItem onClick={ this.statsPage }>
 				<Gridicon icon="stats" size={ 18 } />
