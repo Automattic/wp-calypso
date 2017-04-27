@@ -359,13 +359,6 @@ Undocumented.prototype.scheduleJetpackFullysync = function( siteId, fn ) {
 	return this.wpcom.req.post( { path: endpointPath }, {}, fn );
 };
 
-Undocumented.prototype.activateManage = function( siteId, state, secret ) {
-	debug( '/jetpack-blogs/:site_id:/activate-manage query' );
-	const endpointUrl = '/jetpack-blogs/' + siteId + '/activate-manage';
-	const params = { state, secret };
-	return this.wpcom.req.post( { path: endpointUrl }, params );
-};
-
 Undocumented.prototype.invitesList = function( siteId, number, offset, fn ) {
 	debug( '/sites/:site_id:/invites query' );
 	return this.wpcom.req.get( '/sites/' + siteId + '/invites', {
