@@ -10,8 +10,8 @@ import { connect } from 'react-redux';
  */
 import Banner from 'components/banner';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite, isCurrentSitePlan } from 'state/sites/selectors';
-import { PLAN_FREE, PLAN_PERSONAL, FEATURE_NO_ADS } from 'lib/plans/constants';
+import { getSite } from 'state/sites/selectors';
+import { PLAN_PERSONAL, FEATURE_NO_ADS } from 'lib/plans/constants';
 import { getPlan } from 'lib/plans';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import {
@@ -22,13 +22,12 @@ import {
 } from 'state/sites/plans/selectors';
 import QuerySitePlans from 'components/data/query-site-plans';
 import formatCurrency from 'lib/format-currency';
-import { canCurrentUser } from 'state/selectors';
+import { eligibleForDomainToPaidPlanUpsell } from 'state/selectors';
 
 class DomainToPlanNudge extends Component {
-
 	static propTypes = {
+		isEligible: PropTypes.bool,
 		discountedRawPrice: PropTypes.number,
-		hasFreePlan: PropTypes.bool,
 		productId: PropTypes.number,
 		productSlug: PropTypes.string,
 		rawDiscount: PropTypes.number,
@@ -43,19 +42,14 @@ class DomainToPlanNudge extends Component {
 
 	isSiteEligible() {
 		const {
-			canManage,
-			hasFreePlan,
+			isEligible,
 			rawPrice,
-			site,
 			sitePlans,
 		} = this.props;
 
 		return sitePlans.hasLoadedFromServer &&
-			canManage &&      //can manage site
 			rawPrice &&       //plans info has loaded
-			site &&           //site exists
-			site.wpcom_url && //has a mapped domain
-			hasFreePlan;      //has a free wpcom plan
+			isEligible;      // meets criteria for nudge
 	}
 
 	renderDomainToPlanNudge() {
@@ -77,7 +71,7 @@ class DomainToPlanNudge extends Component {
 					} )
 				}
 				event="domain_to_personal_nudge" //actually cta_name
-				dismissPreferenceName="domain-to-plan-nudge"
+				dismissPreferenceName="domain-to-plan-nudge2"
 				feature={ FEATURE_NO_ADS }
 				href={ `/checkout/${ siteId }/personal` }
 				list={
@@ -96,6 +90,7 @@ class DomainToPlanNudge extends Component {
 
 	render() {
 		const { siteId } = this.props;
+
 		return (
 			<div className="domain-to-plan-nudge">
 				<QuerySitePlans siteId={ siteId } />
@@ -112,13 +107,8 @@ export default connect(
 			productId = getPlan( PLAN_PERSONAL ).getProductId();
 
 		return {
-			canManage: canCurrentUser( state, siteId, 'manage_options' ),
+			isEligible: eligibleForDomainToPaidPlanUpsell( state, siteId, ),
 			discountedRawPrice: getPlanDiscountedRawPrice( state, siteId, productSlug ),
-			hasFreePlan: isCurrentSitePlan(
-				state,
-				siteId,
-				getPlan( PLAN_FREE ).getProductId()
-			),
 			productId,
 			productSlug,
 			rawDiscount: getPlanRawDiscount( state, siteId, productSlug ) || 0,
