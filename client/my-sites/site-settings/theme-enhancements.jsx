@@ -12,6 +12,9 @@ import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormLegend from 'components/forms/form-legend';
+import FormLabel from 'components/forms/form-label';
+import FormRadio from 'components/forms/form-radio';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
@@ -28,6 +31,7 @@ class ThemeEnhancements extends Component {
 	static propTypes = {
 		onSubmitForm: PropTypes.func.isRequired,
 		handleAutosavingToggle: PropTypes.func.isRequired,
+		handleAutosavingRadio: PropTypes.func.isRequired,
 		isSavingSettings: PropTypes.bool,
 		isRequestingSettings: PropTypes.bool,
 		fields: PropTypes.object,
@@ -55,16 +59,31 @@ class ThemeEnhancements extends Component {
 		);
 	}
 
+	renderRadio( name, value, label ) {
+		const { fields, handleAutosavingRadio } = this.props;
+		return (
+			<FormLabel>
+				<FormRadio
+					name={ name }
+					value={ value }
+					checked={ value === fields[ name ] }
+					onChange={ handleAutosavingRadio( name, value ) }
+					disabled={ this.isFormPending() }
+				/>
+				<span>{ label }</span>
+			</FormLabel>
+		);
+	}
+
 	renderInfiniteScrollSettings() {
-		const {
-			selectedSiteId,
-			infiniteScrollModuleActive,
-			translate
-		} = this.props;
-		const formPending = this.isFormPending();
+		const { translate } = this.props;
 
 		return (
 			<FormFieldset>
+				<FormLegend>
+					{ translate( 'Infinite Scroll' ) }
+				</FormLegend>
+
 				<div className="theme-enhancements__info-link-container site-settings__info-link-container">
 					<InfoPopover position={ 'left' }>
 						<ExternalLink href={ 'https://jetpack.com/support/infinite-scroll' } icon target="_blank">
@@ -73,25 +92,21 @@ class ThemeEnhancements extends Component {
 					</InfoPopover>
 				</div>
 
-				<JetpackModuleToggle
-					siteId={ selectedSiteId }
-					moduleSlug="infinite-scroll"
-					label={ translate( 'Add support for infinite scroll to your theme' ) }
-					disabled={ formPending }
-					/>
-
-				<div className="theme-enhancements__module-settings site-settings__child-settings">
-					{
-						this.renderToggle( 'infinite_scroll', ! infiniteScrollModuleActive, translate(
-							'Scroll infinitely (Shows 7 posts on each load)'
-						) )
-					}
-					{
-						this.renderToggle( 'infinite_scroll_google_analytics', ! infiniteScrollModuleActive, translate(
-							'Track each infinite Scroll post load as a page view in Google Analytics'
-						) )
-					}
-				</div>
+				{
+					this.renderRadio( 'infinite_scroll', 'default', translate(
+						'Load more posts using the default theme behavior'
+					) )
+				}
+				{
+					this.renderRadio( 'infinite_scroll', 'button', translate(
+						'Load more posts in page with a button'
+					) )
+				}
+				{
+					this.renderRadio( 'infinite_scroll', 'scroll', translate(
+						'Load more posts as the reader scrolls down'
+					) )
+				}
 			</FormFieldset>
 		);
 	}

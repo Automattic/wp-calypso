@@ -19,6 +19,18 @@ export const normalizeSettings = ( settings ) => {
 				const whitelist = get( settings[ key ], [ 'local' ], [] );
 				memo[ key ] = whitelist.join( '\n' );
 				break;
+			case 'infinite-scroll':
+				break;
+			case 'infinite_scroll':
+				if ( settings[ 'infinite-scroll' ] !== undefined ) {
+					if ( settings[ 'infinite-scroll' ] ) {
+						memo[ key ] = settings[ key ] ? 'scroll' : 'button';
+					} else {
+						memo[ key ] = 'default';
+					}
+					memo[ 'infinite-scroll' ] = settings[ 'infinite-scroll' ];
+				}
+				break;
 			default:
 				memo[ key ] = settings[ key ];
 		}
@@ -38,6 +50,16 @@ export const sanitizeSettings = ( settings ) => {
 		switch ( key ) {
 			case 'post_by_email_address':
 				break;
+			case 'infinite-scroll':
+				break;
+			case 'infinite_scroll':
+				if ( settings[ key ] === 'default' ) {
+					memo[ 'infinite-scroll' ] = false;
+				} else {
+					memo[ 'infinite-scroll' ] = true;
+					memo[ key ] = settings[ key ] === 'scroll';
+				}
+				break;
 			default:
 				memo[ key ] = settings[ key ];
 		}
@@ -54,10 +76,6 @@ export const sanitizeSettings = ( settings ) => {
  */
 export const filterSettingsByActiveModules = ( settings ) => {
 	const moduleSettingsList = {
-		'infinite-scroll': [
-			'infinite_scroll',
-			'infinite_scroll_google_analytics',
-		],
 		minileven: [
 			'wp_mobile_excerpt',
 			'wp_mobile_featured_images',

@@ -55,6 +55,7 @@ class SiteSettingsFormWriting extends Component {
 			handleSelect,
 			handleToggle,
 			handleAutosavingToggle,
+			handleAutosavingRadio,
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
@@ -137,6 +138,7 @@ class SiteSettingsFormWriting extends Component {
 							<ThemeEnhancements
 								onSubmitForm={ this.props.handleSubmitForm }
 								handleAutosavingToggle={ handleAutosavingToggle }
+								handleAutosavingRadio={ handleAutosavingRadio }
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
 								fields={ fields }
@@ -194,7 +196,6 @@ const getFormSettings = settings => {
 		'jetpack_portfolio',
 		'infinite-scroll',
 		'infinite_scroll',
-		'infinite_scroll_google_analytics',
 		'minileven',
 		'wp_mobile_excerpt',
 		'wp_mobile_featured_images',
