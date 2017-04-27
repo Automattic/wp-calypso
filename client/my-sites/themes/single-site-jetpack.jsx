@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { pickBy } from 'lodash';
+import { pickBy, get } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -16,6 +16,13 @@ import JetpackReferrerMessage from './jetpack-referrer-message';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
 import { connectOptions } from './theme-options';
+import Banner from 'components/banner';
+import {
+	PLAN_JETPACK_FREE,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PREMIUM,
+} from 'lib/plans/constants';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
@@ -59,7 +66,9 @@ const ConnectedSingleSiteJetpack = connectOptions(
 			search,
 			siteId,
 			vertical,
-			tier
+			tier,
+			translate,
+			currentPlanSlug
 		} = props;
 		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
@@ -86,6 +95,15 @@ const ConnectedSingleSiteJetpack = connectOptions(
 			<div>
 				<SidebarNavigation />
 				<CurrentTheme siteId={ siteId } />
+				{ ( currentPlanSlug === PLAN_JETPACK_FREE || currentPlanSlug === PLAN_JETPACK_PERSONAL ) && <Banner
+					plan={ PLAN_JETPACK_PREMIUM }
+					title={ translate( 'Access all our premium themes with our Premium and Business plans!' ) }
+					description={
+						translate( 'Get advanced customization, more storage space, and video support along with all your new themes.' )
+					}
+					event="themes_plans_free_personal"
+				/>
+				}
 				<ThemeShowcase { ...props }
 					siteId={ siteId }
 					emptyContent={ showWpcomThemesList ? <div /> : null } >
@@ -143,6 +161,7 @@ export default connect(
 			const wpcomThemesCount = getThemesFoundForQuery( state, 'wpcom', wpcomQuery );
 			emptyContent = ( ! siteThemesCount && ! wpcomThemesCount ) ? null : <div />;
 		}
+		const currentPlan = getCurrentPlan( state, siteId );
 		return {
 			canManage: canJetpackSiteManage( state, siteId ),
 			hasJetpackThemes: hasJetpackSiteJetpackThemes( state, siteId ),
@@ -150,6 +169,7 @@ export default connect(
 			showWpcomThemesList,
 			emptyContent,
 			isMultisite,
+			currentPlanSlug: get( currentPlan, 'productSlug', null )
 		};
 	}
 )( ConnectedSingleSiteJetpack );
