@@ -28,6 +28,7 @@ class FollowingManageSubscriptions extends Component {
 		follows: PropTypes.array.isRequired,
 		doSearch: PropTypes.func.isRequired,
 		query: PropTypes.string,
+		sort: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
 	};
 	state = { forceRefresh: false };
 
@@ -55,7 +56,7 @@ class FollowingManageSubscriptions extends Component {
 	}
 
 	render() {
-		const { follows, width, translate, query, followsCount } = this.props;
+		const { follows, width, translate, query, followsCount, sort } = this.props;
 		const filteredFollows = this.filterFollowsByQuery( query );
 
 		return (
@@ -70,7 +71,7 @@ class FollowingManageSubscriptions extends Component {
 						}
 						</h1>
 					<div className="following-manage__subscriptions-sort">
-						<FollowingManageSortControls />
+						<FollowingManageSortControls sortOrder={ sort } />
 					</div>
 					<div className="following-manage__subscriptions-search">
 						<FollowingManageSearchFollowed onSearch={ this.props.doSearch } initialValue={ query } />
