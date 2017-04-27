@@ -2,12 +2,15 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
+import { clearResetMethod } from 'state/account-recovery/reset/actions';
 
 const ResetPasswordEmailSent = ( props ) => {
 	const {
@@ -32,13 +35,9 @@ const ResetPasswordEmailSent = ( props ) => {
 			<p>
 				{ translate( "If you haven't received it, please check your spam or junk folder." ) }
 			</p>
-			<a href="#">{ translate( "Didn't receive it?" ) }</a>
+			<Button onClick={ props.clearResetMethod } borderless>{ translate( "Didn't receive it?" ) }</Button>
 		</Card>
 	);
 };
 
-ResetPasswordEmailSent.defaultProps = {
-	email: 'test@example.com', // TODO: Remove this default prop once this component is connected
-};
-
-export default localize( ResetPasswordEmailSent );
+export default connect( null, { clearResetMethod } )( localize( ResetPasswordEmailSent ) );
