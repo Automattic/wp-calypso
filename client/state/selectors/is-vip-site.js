@@ -14,7 +14,7 @@ import { getRawSite } from 'state/sites/selectors';
  */
 export default function isVipSite( state, siteId ) {
 	const site = getRawSite( state, siteId );
-	if ( ! site || typeof site.is_vip === 'undefined' ) {
+	if ( ! site || ! site.hasOwnProperty( 'is_vip' ) ) {
 		return null;
 	}
 
