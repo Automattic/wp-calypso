@@ -177,10 +177,8 @@ test: config-test package
 	@DESKTOP_APP_PATH=$(BUILD_DIR)/desktop $(ELECTRON_TEST) --inline-diffs --timeout 15000 build/desktop/desktop-test.js
 
 test-osx: osx
-	@rm -rf ./release/WordPress.com-darwin-x64-unpacked
-	@$(NPM_BIN)/asar e ./release/WordPress.com-darwin-x64/WordPress.com.app/Contents/Resources/app.asar ./release/WordPress.com-darwin-x64-unpacked
-	@mkdir ./release/WordPress.com-darwin-x64-unpacked/node_modules/electron-mocha
-	@cp -R ./node_modules/electron-mocha ./release/WordPress.com-darwin-x64-unpacked/node_modules/
-	@NODE_PATH=./release/WordPress.com-darwin-x64-unpackaged/node_modules ELECTRON_PATH=$(NPM_BIN)/electron ./release/WordPress.com-darwin-x64-unpacked/node_modules/electron-mocha/bin/electron-mocha --inline-diffs --timeout 5000 ./resource/test/osx.js
+	@mkdir -p ./release/WordPress.com-darwin-x64/node_modules/electron-mocha
+	@cp -R ./node_modules/electron-mocha ./release/WordPress.com-darwin-x64/node_modules/
+	@DESKTOP_APP_PATH=$(BUILD_DIR)/desktop NODE_PATH=./release/WordPress.com-darwin-x64-unpackaged/node_modules ELECTRON_PATH=$(NPM_BIN)/electron ./release/WordPress.com-darwin-x64/node_modules/electron-mocha/bin/electron-mocha --inline-diffs --timeout 5000 ./resource/test/osx.js
 
 .PHONY: run test
