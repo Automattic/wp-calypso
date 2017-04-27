@@ -12,6 +12,7 @@ import {
 	omit,
 	reduce,
 } from 'lodash';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -32,6 +33,8 @@ import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 // Cannot convert to ES6 import
 const wpcom = require( 'lib/wp' ).undocumented(),
 	countriesList = countriesListForDomainRegistrations();
+
+const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 
 export default React.createClass( {
 	displayName: 'DomainDetailsForm',
