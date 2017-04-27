@@ -19,6 +19,34 @@
 	margin-top: -15px;
 }
 
+.wp-super-cache__cache-test-results {
+	list-style: none;
+	margin: 0;
+}
+
+.wp-super-cache__cache-test-results-label {
+	display: inline-block;
+	font-weight: bold;
+	margin-top: 1.5em;
+}
+
+.wp-super-cache__cache-test-results-item {
+	padding: 5px 0;
+}
+
+.wp-super-cache__cache-test-results-icon {
+	margin-left: 5px;
+	vertical-align: bottom;
+
+	&.gridicons-checkmark-circle {
+		color: $alert-green;
+	}
+
+	&.gridicons-cross-circle {
+		color: $alert-red;
+	}
+}
+
 // Advanced Tab
 .wp-super-cache__cache-timeout.form-text-input {
 	width: 100px;

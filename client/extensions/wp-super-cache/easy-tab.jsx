@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { get, pick } from 'lodash';
+import Gridicon from 'gridicons';
+import { isEmpty, get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,24 +22,25 @@ class EasyTab extends Component {
 		httpOnly: true,
 	}
 
-	handleHttpOnlyChange = () => {
-		this.setState( { httpOnly: ! this.state.httpOnly } );
-	}
+	handleHttpOnlyChange = () => this.setState( { httpOnly: ! this.state.httpOnly } );
+
+	testCache = () => this.props.testCache( this.props.siteId, this.state.httpOnly );
 
 	render() {
 		const {
-			fields,
+			cacheTestResults: {
+				attempts = {},
+			},
+			fields: {
+				cache_mod_rewrite,
+				is_cache_enabled,
+			},
 			handleAutosavingToggle,
 			isRequesting,
 			isSaving,
 			site,
 			translate,
 		} = this.props;
-		const {
-			cache_mod_rewrite,
-			is_cache_enabled,
-		} = fields;
-
 		const enableCacheNotice = translate(
 			'PHP caching is enabled but Supercache mod_rewrite rules were ' +
 			'detected. Cached files will be served using those rules. If your site is working ok, ' +
@@ -54,7 +56,7 @@ class EasyTab extends Component {
 				<Card>
 					<form>
 						<FormToggle
-							checked={ is_cache_enabled }
+							checked={ !! is_cache_enabled }
 							disabled={ isRequesting || isSaving }
 							onChange={ handleAutosavingToggle( 'is_cache_enabled' ) }>
 							<span>
@@ -90,9 +92,42 @@ class EasyTab extends Component {
 								</form>
 							}
 
-							<Button compact>
+							<Button
+								compact
+								onClick={ this.testCache }>
 								{ translate( 'Test Cache' ) }
 							</Button>
+
+							{ ! isEmpty( attempts ) &&
+							<div>
+								<span className="wp-super-cache__cache-test-results-label">
+									{ translate( 'Results' ) }
+								</span>
+								<ul className="wp-super-cache__cache-test-results">
+									{ Object.keys( attempts ).map( ( key ) => (
+										<li className="wp-super-cache__cache-test-results-item" key={ key }>
+											{ key === 'prime'
+												? translate( 'Fetching %(url)s to prime cache',
+													{
+														args: { url: site && site.URL }
+													} )
+												: translate( 'Fetching %(key)s copy of %(url)s',
+													{
+														args: {
+															key: key,
+															url: site && site.URL,
+														}
+													} )
+											}
+											<Gridicon
+												className="wp-super-cache__cache-test-results-icon"
+												icon={ get( attempts[ key ], 'status' ) === 'OK' ? 'checkmark-circle' : 'cross-circle' }
+												size={ 24 } />
+										</li>
+									) ) }
+								</ul>
+							</div>
+							}
 						</Card>
 					</div>
 				}
