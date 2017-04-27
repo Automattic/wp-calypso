@@ -59,7 +59,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 			search,
 			siteId,
 			vertical,
-			wpcomTier
+			tier
 		} = props;
 		const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
@@ -99,7 +99,7 @@ const ConnectedSingleSiteJetpack = connectOptions(
 								defaultOption={ 'activate' }
 								secondaryOption={ 'tryandcustomize' }
 								search={ search }
-								tier={ wpcomTier }
+								tier={ tier }
 								filter={ filter }
 								vertical={ vertical }
 								siteId={ siteId /* This is for the options in the '...' menu only */ }

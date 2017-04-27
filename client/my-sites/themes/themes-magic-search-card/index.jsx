@@ -230,7 +230,7 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 
 	render() {
-		const { isJetpack, translate, filters } = this.props;
+		const { translate, filters } = this.props;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 
 		const tiers = [
@@ -295,7 +295,7 @@ class ThemesMagicSearchCard extends React.Component {
 								/>
 							</div>
 						}
-						{ isPremiumThemesEnabled && ! isJetpack &&
+						{ isPremiumThemesEnabled &&
 							<SegmentedControl
 								initialSelected={ this.props.tier }
 								options={ tiers }
