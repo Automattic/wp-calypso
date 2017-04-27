@@ -343,6 +343,8 @@ export const PostEditor = React.createClass( {
 									onFocus={ this.onEditorFocus }
 									onTextEditorChange={ this.onEditorContentChange }
 								/>
+
+								<EditorWordCount />
 							</div>
 
 							{ this.state.selectedRevisionId !== null && (
@@ -353,7 +355,6 @@ export const PostEditor = React.createClass( {
 								/>
 							) }
 						</div>
-						<EditorWordCount />
 					</div>
 					<EditorSidebar
 						loadRevision={ this.loadRevision }
