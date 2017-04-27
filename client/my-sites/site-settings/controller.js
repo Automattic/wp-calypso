@@ -16,34 +16,31 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import { sectionify } from 'lib/route/path';
 import SiteSettingsComponent from 'my-sites/site-settings/main';
-import sitesFactory from 'lib/sites-list';
 import StartOver from './start-over';
 import ThemeSetup from './theme-setup';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import titlecase from 'to-title-case';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { canCurrentUser } from 'state/selectors';
+import { canCurrentUser, isVipSite } from 'state/selectors';
 import ImportSettings from './section-import';
 import ExportSettings from './section-export';
+import { SITES_ONCE_CHANGED } from 'state/action-types';
 
-/**
- * Module vars
- */
-const sites = sitesFactory();
+function canDeleteSite( state, siteId ) {
+	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 
-function canDeleteSite( site ) {
-	if ( ! site.capabilities || ! site.capabilities.manage_options ) {
+	if ( ! siteId || ! canManageOptions ) {
 		// Current user doesn't have manage options to delete the site
 		return false;
 	}
 
-	// Current user can't delete a jetpack site
-	if ( site.jetpack ) {
+	if ( isJetpackSite( state, siteId ) ) {
+		// Current user can't delete a jetpack site
 		return false;
 	}
 
-	if ( site.is_vip ) {
+	if ( isVipSite( state, siteId ) ) {
 		// Current user can't delete a VIP site
 		return false;
 	}
@@ -114,31 +111,53 @@ module.exports = {
 	},
 
 	deleteSite( context ) {
-		let site = sites.getSelectedSite();
+		const { dispatch, getState } = context.store;
+		const siteSlug = getSelectedSiteSlug( getState() );
+		const siteId = getSelectedSiteId( getState() );
 
-		if ( sites.initialized ) {
-			if ( ! canDeleteSite( site ) ) {
-				return page( '/settings/general/' + site.slug );
+		const redirectIfCantDelete = () => {
+			if ( ! canDeleteSite( getState(), getSelectedSite( getState() ) ) ) {
+				return page( '/settings/general/' + getSelectedSiteSlug( getState() ) );
 			}
-		} else {
-			sites.once( 'change', function() {
-				site = sites.getSelectedSite();
-				if ( ! canDeleteSite( site ) ) {
-					return page( '/settings/general/' + site.slug );
-				}
+		};
+
+		if ( siteId && ! canDeleteSite( getState(), siteId ) ) {
+			return page( '/settings/general/' + siteSlug );
+		}
+		if ( ! siteId ) {
+			dispatch( {
+				type: SITES_ONCE_CHANGED,
+				listener: redirectIfCantDelete
 			} );
 		}
 
 		renderPage(
 			context,
-			<DeleteSite sites={ sites } path={ context.path } />
+			<DeleteSite path={ context.path } />
 		);
 	},
 
 	startOver( context ) {
-		const site = getSelectedSite( context.store.getState() );
-		if ( site && ! canDeleteSite( site ) ) {
-			return page( '/settings/general/' + site.slug );
+		const { getState, dispatch } = context.store;
+		const state = getState();
+		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSelectedSiteSlug( state );
+
+		const redirectIfCantDelete = () => {
+			if ( ! canDeleteSite( getState(), getSelectedSiteId( getState() ) ) ) {
+				return page( '/settings/general/' + getSelectedSiteSlug( getState() ) );
+			}
+		};
+
+		if ( siteId && ! canDeleteSite( state, siteId ) ) {
+			return page( '/settings/general/' + siteSlug );
+		}
+
+		if ( ! siteId ) {
+			dispatch( {
+				type: SITES_ONCE_CHANGED,
+				listener: redirectIfCantDelete
+			} );
 		}
 
 		renderPage(
