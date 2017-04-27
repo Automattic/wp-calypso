@@ -420,21 +420,21 @@ function mediaButton( editor ) {
 		icon: 'dashicon dashicons-edit',
 		onclick: function() {
 			const selectedSite = getSelectedSiteFromState();
-			const node = editor.selection.getNode();
-			const m = node.className.match( /wp-image-(\d+)/ );
-			const imageId = m && parseInt( m[ 1 ], 10 );
-			const image = MediaStore.get( selectedSite.ID, imageId );
-
-			// Cause edit modal to show...
 			if ( ! selectedSite ) {
 				return;
 			}
 
-			MediaActions.clearValidationErrors( selectedSite.ID );
+			const siteId = selectedSite.ID;
+			const node = editor.selection.getNode();
+			const m = node.className.match( /wp-image-(\d+)/ );
+			const imageId = m && parseInt( m[ 1 ], 10 );
+			const image = MediaStore.get( siteId, imageId );
+
+			MediaActions.clearValidationErrors( siteId );
 			renderModal( {
 				visible: true
 			} );
-			MediaActions.setLibrarySelectedItems( selectedSite.ID, [ image ] );
+			MediaActions.setLibrarySelectedItems( siteId, [ image ] );
 		}
 	} );
 
