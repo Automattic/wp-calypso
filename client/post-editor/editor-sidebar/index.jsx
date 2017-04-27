@@ -35,10 +35,16 @@ export default class EditorSidebar extends Component {
 
 	constructor() {
 		super();
+		this.loadRevision = this.loadRevision.bind( this );
 		this.toggleChildSidebar = this.toggleChildSidebar.bind( this );
 		this.state = {
 			childSidebar: CHILD_SIDEBAR_NONE,
 		};
+	}
+
+	loadRevision( revision ) {
+		this.toggleChildSidebar( CHILD_SIDEBAR_NONE );
+		this.props.loadRevision( revision );
 	}
 
 	toggleChildSidebar( childSidebar ) {
@@ -103,7 +109,7 @@ export default class EditorSidebar extends Component {
 							: <EditorRevisionsList
 								postId={ post.ID }
 								siteId={ site.ID }
-								loadRevision={ this.props.loadRevision }
+								loadRevision={ this.loadRevision }
 								selectedRevisionId={ this.props.selectedRevisionId }
 								toggleRevision={ this.props.toggleRevision }
 							/>
