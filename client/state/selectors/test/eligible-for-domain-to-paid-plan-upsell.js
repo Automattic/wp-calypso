@@ -31,7 +31,7 @@ describe( 'eligibleForDomainToPaidPlanUpsell', () => {
 	} );
 
 	before( () => {
-		eligibleForDomainToPaidPlanUpsell = require( '../eligible-for-domain-to-paid-plan-nudge' );
+		eligibleForDomainToPaidPlanUpsell = require( '../eligible-for-domain-to-paid-plan-upsell' );
 	} );
 
 	const meetAllConditions = () => {
