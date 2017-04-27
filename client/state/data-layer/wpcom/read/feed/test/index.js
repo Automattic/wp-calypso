@@ -41,7 +41,7 @@ describe( 'wpcom-api', () => {
 					method: 'GET',
 					path: '/read/feed',
 					apiVersion: '1.1',
-					query: { q: query },
+					query: { q: query, offset: 0 },
 					onSuccess: action,
 					onFailure: action,
 				} ) );

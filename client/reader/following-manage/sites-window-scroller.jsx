@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { List, WindowScroller, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
+import { List, WindowScroller, CellMeasurerCache, CellMeasurer, InfiniteLoader } from 'react-virtualized';
 import { debounce, defer } from 'lodash';
 
 /**
@@ -19,6 +19,9 @@ import ConnectedSubscriptionListItem from './connected-subscription-list-item';
 class SitesWindowScroller extends Component {
 	static propTypes = {
 		sites: PropTypes.array.isRequired,
+		fetchNextPage: PropTypes.func,
+		remoteTotalCount: PropTypes.number.isRequired,
+		forceRefresh: PropTypes.bool,
 	};
 
 	heightCache = new CellMeasurerCache( {
@@ -28,6 +31,9 @@ class SitesWindowScroller extends Component {
 
 	siteRowRenderer = ( { index, key, style, parent } ) => {
 		const site = this.props.sites[ index ];
+		if ( ! site ) {
+			return null;
+		}
 
 		return (
 			<CellMeasurer
@@ -55,37 +61,62 @@ class SitesWindowScroller extends Component {
 		this.listRef = list;
 	}
 
-	handleResize = debounce( () => {
+	handleResize = debounce( () => this.clearListCaches(), 50 );
+
+	clearListCaches = () => {
 		this.heightCache.clearAll();
 		defer( () => this.listRef && this.listRef.recomputeRowHeights( 0 ) );
-	}, 50, { trailing: true } );
+	}
+
+	isRowLoaded = ( { index } ) => {
+		return !! this.props.sites[ index ];
+	}
+
+	// technically this function should return a promise that only resolves when the data is fetched.
+	// initially I had created a promise that would setInterval and see if the startIndex
+	// exists in sites, and if so the resolve. It was super hacky, and its muchs simpler to just fake that it instantly
+	// returns
+	// TODO: does a util function exist that return waitFor( thingToExistInStateTree )? that would be perfect.
+	loadMoreRows = ( { startIndex } ) => {
+		this.props.fetchNextPage && this.props.fetchNextPage( startIndex );
+		return Promise.resolve();
+	};
 
 	componentWillMount() {
 		window.addEventListener( 'resize', this.handleResize );
 	}
+
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.handleResize );
 	}
 
 	render() {
-		const { sites, width } = this.props;
-
+		const { sites, width, remoteTotalCount, forceRefresh } = this.props;
 		return (
 			<div className="following-manage__sites-window-scroller">
-				<WindowScroller>
-					{ ( { height, scrollTop } ) => (
-						<List
-							autoHeight
-							height={ height }
-							rowCount={ sites.length }
-							rowHeight={ this.heightCache.rowHeight }
-							rowRenderer={ this.siteRowRenderer }
-							scrollTop={ scrollTop }
-							width={ width }
-							ref={ this.handleListMounted }
-						/>
-					)}
-				</WindowScroller>
+				<InfiniteLoader
+					isRowLoaded={ this.isRowLoaded }
+					loadMoreRows={ this.loadMoreRows }
+					rowCount={ remoteTotalCount }
+				>
+				{ ( { onRowsRendered, registerChild } ) => (
+					<WindowScroller>
+						{ ( { height, scrollTop } ) => (
+							<List
+								autoHeight
+								height={ height }
+								rowCount={ forceRefresh ? sites.length : remoteTotalCount }
+								rowHeight={ this.heightCache.rowHeight }
+								rowRenderer={ this.siteRowRenderer }
+								onRowsRendered={ onRowsRendered }
+								ref={ registerChild }
+								scrollTop={ scrollTop }
+								width={ width }
+							/>
+						)}
+					</WindowScroller>
+				) }
+				</InfiniteLoader>
 			</div>
 		);
 	}

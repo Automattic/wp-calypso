@@ -30,7 +30,6 @@ export getAccountRecoveryValidationError from './get-account-recovery-validation
 export getBlockedSites from './get-blocked-sites';
 export getBillingTransactions from './get-billing-transactions';
 export getCurrentUserPaymentMethods from './get-current-user-payment-methods';
-export getFollowCount from './get-follow-count';
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';
 export getJetpackConnectionStatus from './get-jetpack-connection-status';
 export getJetpackJumpstartStatus from './get-jetpack-jumpstart-status';
@@ -65,6 +64,7 @@ export getReaderFeedsForQuery from './get-reader-feeds-for-query';
 export getReaderFollowedTags from './get-reader-followed-tags';
 export getReaderFollowForBlog from './get-reader-follow-for-blog';
 export getReaderFollows from './get-reader-follows';
+export getReaderFollowsCount from './get-reader-follows-count';
 export getReaderTags from './get-reader-tags';
 export getReaderTeams from './get-reader-teams';
 export getSharingButtons from './get-sharing-buttons';

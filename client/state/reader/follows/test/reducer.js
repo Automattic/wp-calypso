@@ -19,9 +19,24 @@ import {
 	subscribeToNewCommentEmail,
 	unsubscribeToNewCommentEmail,
 } from '../actions';
-import { items } from '../reducer';
+import { items, itemsCount } from '../reducer';
 
 describe( 'reducer', () => {
+	describe( '#itemsCount()', () => {
+		it( 'should default to 0', () => {
+			const state = itemsCount( undefined, {} );
+			expect( state ).to.eql( 0 );
+		} );
+
+		it( 'should get set to whatever is in the payload', () => {
+			const state = itemsCount( undefined, {
+				type: READER_FOLLOWS_RECEIVE,
+				payload: { totalCount: 20 },
+			} );
+			expect( state ).eql( 20 );
+		} );
+	} );
+
 	describe( '#items()', () => {
 		it( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
