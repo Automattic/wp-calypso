@@ -4,6 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import {
+	bind,
 	camelCase,
 	deburr,
 	head,
@@ -318,24 +319,41 @@ export default React.createClass( {
 	},
 
 	renderDetailsForm() {
-		const needsOnlyGoogleAppsDetails = this.needsOnlyGoogleAppsDetails();
+		const needsOnlyGoogleAppsFields = this.needsOnlyGoogleAppsDetails();
+		const fields = needsOnlyGoogleAppsFields
+			? [ 'name', 'country', 'postcode' ]
+			: [ 'name', 'organization', 'email', 'phone', 'country',
+				this.needsFax() ? 'fax' : '',
+				'address', 'city', 'state', 'postcode' ];
 
 		return (
 			<form>
-				{ this.renderNameFields() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderOrganizationField() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderEmailField() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderPhoneField() }
-				{ this.renderCountryField() }
-				{ ! needsOnlyGoogleAppsDetails && this.needsFax() && this.renderFaxField() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderAddressFields() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderCityField() }
-				{ ! needsOnlyGoogleAppsDetails && this.renderStateField() }
-				{ this.renderPostalCodeField() }
-
+				{ map( fields, this.renderField, this ) }
 				{ this.renderSubmitButton() }
 			</form>
 		);
+	},
+
+	renderField( fieldName ) {
+		const renderFunctionsByFieldName = {
+			name: this.renderNameFields,
+			organization: this.renderOrganizationField,
+			email: this.renderEmailField,
+			phone: this.renderPhoneField,
+			country: this.renderCountryField,
+			fax: this.renderFaxField,
+			address: this.renderAddressFields,
+			city: this.renderCityField,
+			state: this.renderStateField,
+			postcode: this.renderPostalCodeField,
+		};
+
+		if ( ! renderFunctionsByFieldName[ fieldName ] ) {
+			fieldName && debug( 'Unrecognized field: ' + fieldName );
+			return null;
+		}
+
+		return bind( renderFunctionsByFieldName[ fieldName ], this )();
 	},
 
 	handleCheckboxChange() {
