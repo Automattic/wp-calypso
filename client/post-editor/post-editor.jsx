@@ -89,7 +89,7 @@ export const PostEditor = React.createClass( {
 			showAutosaveDialog: true,
 			isLoadingRevision: false,
 			isTitleFocused: false,
-			revisionId: null,
+			selectedRevisionId: null,
 		};
 	},
 
@@ -204,12 +204,12 @@ export const PostEditor = React.createClass( {
 
 	toggleRevision: function( revisionId ) {
 		this.setState( {
-			revisionId: revisionId === this.state.revisionId ? null : revisionId,
+			selectedRevisionId: revisionId === this.state.selectedRevisionId ? null : revisionId,
 		} );
 	},
 
 	loadRevision: function( revision ) {
-		this.setState( { revisionId: null } );
+		this.setState( { selectedRevisionId: null } );
 		this.restoreRevision( {
 			content: revision.content,
 			excerpt: revision.excerpt,
@@ -292,7 +292,7 @@ export const PostEditor = React.createClass( {
 
 							<div className={ classNames(
 								'editor__content',
-								{ show: this.state.revisionId === null }
+								{ show: this.state.selectedRevisionId === null }
 							) }>
 								<FeaturedImage
 									site={ site }
@@ -347,11 +347,11 @@ export const PostEditor = React.createClass( {
 								/>
 							</div>
 
-							{ this.state.revisionId !== null && (
+							{ this.state.selectedRevisionId !== null && (
 								<EditorDiffViewer
 									siteId={ site.ID }
 									postId={ this.state.post.ID }
-									revisionId={ this.state.revisionId }
+									selectedRevisionId={ this.state.selectedRevisionId }
 								/>
 							) }
 						</div>
@@ -359,7 +359,7 @@ export const PostEditor = React.createClass( {
 					</div>
 					<EditorSidebar
 						loadRevision={ this.loadRevision }
-						revisionId={ this.state.revisionId }
+						selectedRevisionId={ this.state.selectedRevisionId }
 						toggleRevision={ this.toggleRevision }
 						toggleSidebar={ this.toggleSidebar }
 						savedPost={ this.state.savedPost }

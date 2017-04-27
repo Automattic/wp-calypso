@@ -28,12 +28,12 @@ class EditorDiffViewer extends PureComponent {
 EditorDiffViewer.propTypes = {
 	postId: PropTypes.number,
 	revision: PropTypes.object,
-	revisionId: PropTypes.number,
+	selectedRevisionId: PropTypes.number,
 	siteId: PropTypes.number,
 };
 
 export default connect(
 	( state, ownProps ) => ( {
-		revision: normalizeForDisplay( getPostRevision( state, ownProps.siteId, ownProps.postId, ownProps.revisionId ) ),
+		revision: normalizeForDisplay( getPostRevision( state, ownProps.siteId, ownProps.postId, ownProps.selectedRevisionId ) ),
 	} )
 )( EditorDiffViewer );

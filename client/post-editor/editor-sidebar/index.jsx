@@ -27,7 +27,7 @@ export default class EditorSidebar extends Component {
 		site: PropTypes.object,
 		type: PropTypes.string,
 		loadRevision: PropTypes.func,
-		revisionId: PropTypes.number,
+		selectedRevisionId: PropTypes.number,
 		toggleRevision: PropTypes.func,
 		toggleSidebar: PropTypes.func,
 		setPostDate: PropTypes.func,
@@ -104,7 +104,7 @@ export default class EditorSidebar extends Component {
 								postId={ post.ID }
 								siteId={ site.ID }
 								loadRevision={ this.props.loadRevision }
-								revisionId={ this.props.revisionId }
+								selectedRevisionId={ this.props.selectedRevisionId }
 								toggleRevision={ this.props.toggleRevision }
 							/>
 					}

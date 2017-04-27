@@ -39,7 +39,7 @@ class EditorRevisionsList extends PureComponent {
 						<li
 							className={ classNames(
 								'editor-revisions-list__revision',
-								{ selected: revision.id === this.props.revisionId }
+								{ selected: revision.id === this.props.selectedRevisionId }
 							) }
 							key={ revision.id }
 						>
@@ -58,9 +58,9 @@ class EditorRevisionsList extends PureComponent {
 EditorRevisionsList.propTypes = {
 	loadRevision: PropTypes.func,
 	postId: PropTypes.number,
-	revisionId: PropTypes.number,
 	revisions: PropTypes.array,
 	selectedRevision: PropTypes.object,
+	selectedRevisionId: PropTypes.number,
 	siteId: PropTypes.number,
 	toggleRevision: PropTypes.func,
 };
@@ -77,7 +77,7 @@ export default connect(
 		),
 		selectedRevision: normalizeForEditing(
 			getPostRevision(
-				state, ownProps.siteId, ownProps.postId, ownProps.revisionId
+				state, ownProps.siteId, ownProps.postId, ownProps.selectedRevisionId
 			)
 		),
 	} ),
