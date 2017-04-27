@@ -4,10 +4,15 @@
 
 .login__form-userdata {
 	label {
+		color: #2e4453;
 		display: block;
-		line-height: 2em;
+		font-size: 14px;
+		line-height: 1.5;
 		font-weight: 500;
-		padding-bottom: 8px;
+		margin-bottom: 5px;
+	}
+	input{
+		margin-bottom: 20px;
 	}
 }
 
@@ -26,9 +31,25 @@
 }
 
 .login__form-remember-me {
-	margin: 5px 0 15px;
+	margin-bottom: 20px;
 
 	input {
 		margin-right: 10px;
+	}
+	label{
+		font-size: 14px;
+	}
+}
+
+.wp-login__footer{
+	a{
+		font-size: 14px;
+
+		&:hover{
+			color: #00aadc;
+		}
+	}
+	.gridicon{
+		vertical-align: text-bottom;
 	}
 }
