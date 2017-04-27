@@ -419,14 +419,13 @@ function mediaButton( editor ) {
 		tooltip: i18n.translate( 'Edit', { context: 'verb' } ),
 		icon: 'dashicon dashicons-edit',
 		onclick: function() {
-			const siteId = 125351479;
+			const selectedSite = getSelectedSiteFromState();
 			const node = editor.selection.getNode();
 			const m = node.className.match( /wp-image-(\d+)/ );
-			const imageId = m && parseInt( m[ 1 ] );
-			const image = MediaStore.get( siteId, imageId );
+			const imageId = m && parseInt( m[ 1 ], 10 );
+			const image = MediaStore.get( selectedSite.ID, imageId );
 
 			// Cause edit modal to show...
-			const selectedSite = getSelectedSiteFromState();
 			if ( selectedSite ) {
 				MediaActions.clearValidationErrors( selectedSite.ID );
 				renderModal( {
