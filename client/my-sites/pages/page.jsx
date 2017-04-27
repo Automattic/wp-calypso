@@ -270,6 +270,19 @@ const Page = React.createClass( {
 		);
 	},
 
+	statsPage: function() {
+		page( helpers.statsLinkForPage( this.props.page, this.props.site ) );
+	},
+
+	getStatsItem: function() {
+		return (
+			<PopoverMenuItem onClick={ this.statsPage }>
+				<Gridicon icon="stats" size={ 18 } />
+				{ this.translate( 'Stats' ) }
+			</PopoverMenuItem>
+		);
+	},
+
 	editPage: function() {
 		this.analyticsEvents.editPage();
 		page( helpers.editLinkForPage( this.props.page, this.props.site ) );
