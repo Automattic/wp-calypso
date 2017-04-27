@@ -26,7 +26,7 @@ class FollowingManage extends Component {
 	static propTypes = {
 		sitesQuery: PropTypes.string,
 		subsQuery: PropTypes.string,
-		subsSort: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
+		subsSortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
 		translate: PropTypes.func,
 	};
 
@@ -34,7 +34,7 @@ class FollowingManage extends Component {
 		subsQuery: '',
 		sitesQuery: '',
 		forceRefresh: false,
-		subsSort: 'date-followed',
+		subsSortOrder: 'date-followed',
 	}
 
 	state = { width: 800 };
@@ -99,7 +99,7 @@ class FollowingManage extends Component {
 	fetchNextPage = offset => this.props.requestFeedSearch( this.props.sitesQuery, offset );
 
 	render() {
-		const { sitesQuery, subsQuery, subsSort, translate, searchResults } = this.props;
+		const { sitesQuery, subsQuery, subsSortOrder, translate, searchResults } = this.props;
 		const searchPlaceholderText = translate( 'Search millions of sites' );
 
 		return (
@@ -130,7 +130,7 @@ class FollowingManage extends Component {
 					<FollowingManageSubscriptions
 						width={ this.state.width }
 						query={ subsQuery }
-						sort={ subsSort }
+						sortOrder={ subsSortOrder }
 					/>
 				) }
 				{ ( !! sitesQuery && searchResults && (
