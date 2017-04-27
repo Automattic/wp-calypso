@@ -4,7 +4,7 @@
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
-import { isEmpty, pick } from 'lodash';
+import { isEmpty, pick, omit } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -80,8 +80,8 @@ export function serverRender( req, res ) {
 	if ( context.lang !== config( 'i18n_default_locale_slug' ) ) {
 		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
 	}
-
-	if ( config.isEnabled( 'server-side-rendering' ) && context.layout && ! context.user && isEmpty( context.query ) ) {
+	const query = omit( context.query, 'page' );
+	if ( config.isEnabled( 'server-side-rendering' ) && context.layout && ! context.user && isEmpty( query ) ) {
 		// context.pathname doesn't include querystring, so it's a suitable cache key.
 		let key = context.pathname;
 		if ( req.error ) {
@@ -103,7 +103,7 @@ export function serverRender( req, res ) {
 		// Send state to client
 		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
 		// And cache on the server, too
-		if ( isEmpty( context.query ) ) {
+		if ( isEmpty( query ) ) {
 			// Don't cache if we have query params
 			const serverState = reducer( context.initialReduxState, { type: SERIALIZE } );
 			stateCache.set( context.pathname, serverState );

@@ -83,7 +83,7 @@ export function multiSite( context, next ) {
 }
 
 export function loggedOut( context, next ) {
-	if ( context.isServerSide && ! isEmpty( context.query ) ) {
+	if ( context.isServerSide && ! isEmpty( context.query.s ) ) {
 		// Don't server-render URLs with query params
 		return next();
 	}
@@ -99,12 +99,14 @@ export function fetchThemeData( context, next ) {
 		return next();
 	}
 
+	const page = context.query.page;
+
 	const siteId = 'wpcom';
 	const query = {
 		search: context.query.s,
 		tier: context.params.tier,
 		filter: compact( [ context.params.filter, context.params.vertical ] ).join( ',' ),
-		page: 1,
+		page: page ? page : 1,
 		number: DEFAULT_THEME_QUERY.number,
 	};
 
