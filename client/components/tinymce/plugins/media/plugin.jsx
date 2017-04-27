@@ -416,7 +416,7 @@ function mediaButton( editor ) {
 	} );
 
 	editor.addButton( 'wp_img_edit', {
-		tooltip: 'Edit',
+		tooltip: i18n.translate( 'Edit', { context: 'verb' } ),
 		icon: 'dashicon dashicons-edit',
 		onclick: function() {
 			const siteId = 125351479;
