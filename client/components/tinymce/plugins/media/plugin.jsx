@@ -426,13 +426,15 @@ function mediaButton( editor ) {
 			const image = MediaStore.get( selectedSite.ID, imageId );
 
 			// Cause edit modal to show...
-			if ( selectedSite ) {
-				MediaActions.clearValidationErrors( selectedSite.ID );
-				renderModal( {
-					visible: true
-				} );
-				MediaActions.setLibrarySelectedItems( selectedSite.ID, [ image ] );
+			if ( ! selectedSite ) {
+				return;
 			}
+
+			MediaActions.clearValidationErrors( selectedSite.ID );
+			renderModal( {
+				visible: true
+			} );
+			MediaActions.setLibrarySelectedItems( selectedSite.ID, [ image ] );
 		}
 	} );
 
