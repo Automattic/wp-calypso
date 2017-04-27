@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import escapeRegexp from 'escape-string-regexp';
+import { reverse, sortBy, trimStart } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -22,6 +23,7 @@ import UrlSearch from 'lib/url-search';
 import { getSiteName, getSiteUrl, getSiteDescription, getSiteAuthorName } from 'reader/get-helpers';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import { formatUrlForDisplay, getFeedTitle } from 'reader/lib/feed-display-helper';
 
 class FollowingManageSubscriptions extends Component {
 	static propTypes = {
@@ -50,6 +52,21 @@ class FollowingManageSubscriptions extends Component {
 		} );
 	}
 
+	sortFollows( follows, sortOrder ) {
+		const { getFeed, getSite } = this.props;
+
+		if ( sortOrder === 'alpha' ) {
+			return sortBy( follows, follow => {
+				const feed = getFeed( follow.feed_ID );
+				const site = getSite( follow.site_ID );
+				const displayUrl = formatUrlForDisplay( follow.URL );
+				return trimStart( getFeedTitle( site, feed, displayUrl ).toLowerCase() );
+			} );
+		}
+
+		return reverse( sortBy( follows, [ 'date_subscribed' ] ) );
+	}
+
 	componentWillReceiveProps( nextProps ) {
 		const forceRefresh = ( nextProps.query !== this.props.query );
 		this.setState( { forceRefresh } );
@@ -58,6 +75,7 @@ class FollowingManageSubscriptions extends Component {
 	render() {
 		const { follows, width, translate, query, followsCount, sort } = this.props;
 		const filteredFollows = this.filterFollowsByQuery( query );
+		const sortedFollows = this.sortFollows( filteredFollows, sort );
 
 		return (
 			<div className="following-manage__subscriptions">
@@ -90,7 +108,7 @@ class FollowingManageSubscriptions extends Component {
 				<div className="following-manage__subscriptions-list">
 					{ follows &&
 						<SitesWindowScroller
-							sites={ filteredFollows }
+							sites={ sortedFollows }
 							width={ width }
 							remoteTotalCount={ followsCount }
 							forceRefresh={ this.state.forceRefresh }
