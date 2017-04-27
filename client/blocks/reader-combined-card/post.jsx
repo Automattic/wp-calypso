@@ -21,6 +21,7 @@ import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 import * as stats from 'reader/stats';
 import ReaderCombinedCardPostPlaceholder from 'blocks/reader-combined-card/placeholders/post';
+import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 
 class ReaderCombinedCardPost extends React.Component {
 	static propTypes = {
@@ -76,7 +77,7 @@ class ReaderCombinedCardPost extends React.Component {
 			return <ReaderCombinedCardPostPlaceholder />;
 		}
 
-		const hasAuthorName = has( post, 'author.name' );
+		const hasAuthorName = has( post, 'author.name' ) && ! isAuthorNameBlacklisted( post.author.name );
 		let featuredAsset = null;
 		if ( post.canonical_media && post.canonical_media.mediaType === 'video' ) {
 			featuredAsset = <ReaderFeaturedVideo { ...post.canonical_media } videoEmbed={ post.canonical_media } allowPlaying={ false } />;
