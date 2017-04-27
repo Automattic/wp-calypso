@@ -96,6 +96,15 @@ export default class SiteOrDomain extends Component {
 		);
 	}
 
+	renderScreen() {
+		return (
+			<div>
+				{ this.renderChoices() }
+				{ this.renderBackLink() }
+			</div>
+		);
+	}
+
 	handleClickChoice( event, designType ) {
 		event.preventDefault();
 
@@ -140,7 +149,7 @@ export default class SiteOrDomain extends Component {
 				fallbackHeaderText={ this.props.headerText }
 				fallbackSubHeaderText={ this.props.subHeaderText }
 				signupProgress={ this.props.signupProgress }
-				stepContent={ this.renderChoices() } />
+				stepContent={ this.renderScreen() } />
 		);
 	}
 }
