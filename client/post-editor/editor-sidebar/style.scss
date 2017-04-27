@@ -119,4 +119,13 @@
 	padding: 0;
 	font-size: 13px;
 	line-height: inherit;
+
+	// Needed for extra specificity over .button style
+	&.button {
+		color: $gray-dark;
+
+		&:hover {
+			color: $blue-medium;
+		}
+	}
 }
