@@ -69,6 +69,9 @@ const Page = React.createClass( {
 		},
 		viewPage: function() {
 			recordEvent( 'Clicked View Page' );
+		},
+		statsPage: function() {
+			recordEvent( 'Clicked Stats Page' );
 		}
 	},
 
@@ -271,6 +274,7 @@ const Page = React.createClass( {
 	},
 
 	statsPage: function() {
+		this.analyticsEvents.statsPage();
 		page( helpers.statsLinkForPage( this.props.page, this.props.site ) );
 	},
 
