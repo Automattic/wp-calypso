@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import Button from 'components/button';
 import Card from 'components/card';
 import SITE_BLOCKS from './site-blocks';
+import Header from './site-blocks/components/header';
 
 const PreviewBlock = props => {
 	console.log( SITE_BLOCKS, props );
@@ -36,6 +37,7 @@ export const ContentPreview = props => <div className="content-preview">
 		</div>
 	</div>
 	<div className="content-container">
+		<Header />
 	{
 		SITE_BLOCKS
 			.filter( block => props.selected.includes( block.id ) )

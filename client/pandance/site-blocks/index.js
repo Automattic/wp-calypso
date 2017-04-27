@@ -4,7 +4,6 @@ import { WorkingHours, EditWorkingHours } from './components/working-hours';
 import { SocialMedia, EditSocialMedia } from './components/social-media';
 import { ContactInfo, EditContactInfo } from './components/contact-info';
 import Map from './components/map';
-import Header from './components/header';
 
 export default [
 	{
@@ -15,33 +14,28 @@ export default [
 	},
 	{
 		id: 2,
-		name: 'Header',
-		component: Header
-	},
-	{
-		id: 3,
 		name: 'Working hours',
 		component: WorkingHours,
 		editComponent: EditWorkingHours,
 	},
 	{
-		id: 4,
+		id: 3,
 		name: 'Contact Info',
 		component: ContactInfo,
 		editComponent: EditContactInfo,
 	},
 	{
-		id: 5,
+		id: 4,
 		name: 'Map',
 		component: Map
 	},
 	{
-		id: 6,
+		id: 5,
 		name: 'Contact Form',
 		component: ContactForm
 	},
 	{
-		id: 7,
+		id: 6,
 		name: 'Social Media',
 		component: SocialMedia,
 		editComponent: EditSocialMedia
