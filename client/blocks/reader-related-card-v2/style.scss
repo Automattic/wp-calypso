@@ -141,6 +141,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 	.reader-related-card-v2__meta {
 		display: flex;
+		height: 38px;
 		margin-bottom: 13px;
 		z-index: z-index( '.reader-related-card-v2.card', '.reader-related-card-v2__meta' );
 		width: 100%;
@@ -487,7 +488,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-related-card-v2__featured-image {
 	border: 1px solid lighten( $gray, 30% );
-	min-height: 80px;
+	min-height: 90px;
 
 	@media #{$reader-related-card-v2-breakpoint-small} {
 		flex: 1;
