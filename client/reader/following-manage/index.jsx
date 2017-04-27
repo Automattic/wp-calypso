@@ -26,6 +26,7 @@ class FollowingManage extends Component {
 	static propTypes = {
 		sitesQuery: PropTypes.string,
 		subsQuery: PropTypes.string,
+		subsSort: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
 		translate: PropTypes.func,
 	};
 
