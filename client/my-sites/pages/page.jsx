@@ -353,9 +353,9 @@ const Page = React.createClass( {
 				position={ 'bottom left' }
 				context={ this.refs && this.refs.popoverMenuButton }
 			>
-				{ viewItem }
-				{ publishItem }
 				{ editItem }
+				{ publishItem }
+				{ viewItem }
 				{ statsItem }
 				{ copyItem }
 				{ restoreItem }
