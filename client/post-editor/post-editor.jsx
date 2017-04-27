@@ -202,10 +202,8 @@ export const PostEditor = React.createClass( {
 		}
 	},
 
-	toggleRevision: function( revisionId ) {
-		this.setState( {
-			selectedRevisionId: revisionId === this.state.selectedRevisionId ? null : revisionId,
-		} );
+	toggleRevision: function( selectedRevisionId ) {
+		this.setState( { selectedRevisionId } );
 	},
 
 	loadRevision: function( revision ) {
