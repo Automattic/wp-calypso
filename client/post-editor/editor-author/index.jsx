@@ -41,11 +41,13 @@ export class EditorAuthor extends Component {
 		const name = author.display_name || author.name;
 		const Wrapper = this.userCanAssignAuthor() ? AuthorSelector : 'div';
 		const popoverPosition = touchDetect.hasTouch() ? 'bottom right' : 'bottom left';
-		const wrapperProps = this.userCanAssignAuthor() && {
-			siteId: post.site_ID,
-			onSelect: this.onSelect,
-			popoverPosition,
-		};
+		const wrapperProps = this.userCanAssignAuthor()
+			? {
+				siteId: post.site_ID,
+				onSelect: this.onSelect,
+				popoverPosition,
+			}
+			: {};
 
 		return (
 			<div className="editor-author">
