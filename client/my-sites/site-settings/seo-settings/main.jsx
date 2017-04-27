@@ -15,7 +15,6 @@ import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import SeoForm from './form';
 
 export class SeoSettings extends Component {
-
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.purchasesError ) {
 			notices.error( nextProps.purchasesError );
@@ -23,20 +22,19 @@ export class SeoSettings extends Component {
 	}
 
 	render() {
-		const { site, siteId, upgradeToBusiness } = this.props;
+		const { site, siteId } = this.props;
 
 		return (
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
-				{ site && <SeoForm { ...{ site, upgradeToBusiness } } /> }
+				{ site && <SeoForm site={ site } /> }
 			</div>
 		);
 	}
 }
 
 SeoSettings.propTypes = {
-	upgradeToBusiness: PropTypes.func,
 	section: PropTypes.string,
 	//connected
 	hasLoadedSitePurchasesFromServer: PropTypes.bool,
