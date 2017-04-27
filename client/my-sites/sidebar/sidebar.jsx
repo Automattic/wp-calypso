@@ -463,7 +463,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	getAddNewSiteUrl() {
-		if ( this.props.sites.getJetpack().length ||
+		if ( this.props.hasJetpackSites ||
 			abtest( 'newSiteWithJetpack' ) === 'showNewJetpackSite' ) {
 			return '/jetpack/new/?ref=calypso-selector';
 		}
