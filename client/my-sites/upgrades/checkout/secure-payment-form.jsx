@@ -248,7 +248,7 @@ const SecurePaymentForm = React.createClass( {
 		if ( this.state.visiblePaymentBox === null ) {
 			return (
 				<EmptyContent
-					illustration="/calypso/images/drake/drake-500.svg"
+					illustration="/calypso/images/illustrations/illustration-500.svg"
 					title={ this.translate( 'Checkout is not available' ) }
 					line={ this.translate( "We're hard at work on the issue. Please check back shortly." ) }
 					action={ this.translate( 'Back to Plans' ) }
