@@ -69,6 +69,9 @@ const Page = React.createClass( {
 		},
 		viewPage: function() {
 			recordEvent( 'Clicked View Page' );
+		},
+		statsPage: function() {
+			recordEvent( 'Clicked Stats Page' );
 		}
 	},
 
@@ -226,17 +229,23 @@ const Page = React.createClass( {
 
 		if ( this.props.page.status !== 'trash' ) {
 			return (
-				<PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusTrash }>
-					<Gridicon icon="trash" size={ 18 } />
-					{ this.translate( 'Trash' ) }
-				</PopoverMenuItem>
+				<div>
+					<MenuSeparator />
+					<PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusTrash }>
+						<Gridicon icon="trash" size={ 18 } />
+						{ this.translate( 'Trash' ) }
+					</PopoverMenuItem>
+				</div>
 			);
 		} else {
 			return (
-				<PopoverMenuItem className="page__delete-item" onClick={ this.updateStatusDelete }>
-					<Gridicon icon="trash" size={ 18 } />
-					{ this.translate( 'Delete' ) }
-				</PopoverMenuItem>
+				<div>
+					<MenuSeparator />
+					<PopoverMenuItem className="page__delete-item" onClick={ this.updateStatusDelete }>
+						<Gridicon icon="trash" size={ 18 } />
+						{ this.translate( 'Delete' ) }
+					</PopoverMenuItem>
+				</div>
 			);
 		}
 	},
@@ -266,6 +275,24 @@ const Page = React.createClass( {
 			<PopoverMenuItem onClick={ this.updateStatusRestore }>
 				<Gridicon icon="undo" size={ 18 } />
 				{ this.translate( 'Restore' ) }
+			</PopoverMenuItem>
+		);
+	},
+
+	statsPage: function() {
+		this.analyticsEvents.statsPage();
+		page( helpers.statsLinkForPage( this.props.page, this.props.site ) );
+	},
+
+	getStatsItem: function() {
+		if ( this.props.page.status !== 'publish' ) {
+			return null;
+		}
+
+		return (
+			<PopoverMenuItem onClick={ this.statsPage }>
+				<Gridicon icon="stats" size={ 18 } />
+				{ this.translate( 'Stats' ) }
 			</PopoverMenuItem>
 		);
 	},
@@ -319,9 +346,10 @@ const Page = React.createClass( {
 		const restoreItem = this.getRestoreItem();
 		const sendToTrashItem = this.getSendToTrashItem();
 		const copyItem = this.getCopyItem();
+		const statsItem = this.getStatsItem();
 		const moreInfoItem = this.popoverMoreInfo();
 		const hasMenuItems = (
-			viewItem || publishItem || editItem ||
+			viewItem || publishItem || editItem || statsItem ||
 			restoreItem || sendToTrashItem || moreInfoItem
 		);
 		const popoverMenu = hasMenuItems ? (
@@ -331,9 +359,10 @@ const Page = React.createClass( {
 				position={ 'bottom left' }
 				context={ this.refs && this.refs.popoverMenuButton }
 			>
-				{ viewItem }
-				{ publishItem }
 				{ editItem }
+				{ publishItem }
+				{ viewItem }
+				{ statsItem }
 				{ copyItem }
 				{ restoreItem }
 				{ sendToTrashItem }
