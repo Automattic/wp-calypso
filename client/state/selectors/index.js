@@ -19,6 +19,7 @@ export canCurrentUser from './can-current-user';
 export countPostLikes from './count-post-likes';
 export editedPostHasContent from './edited-post-has-content';
 export eligibleForFreeToPaidUpsell from './eligible-for-free-to-paid-upsell';
+export eligibleForDomainToPaidPlanUpsell from './eligible-for-domain-to-paid-plan-upsell';
 export getAccountRecoveryResetOptions from './get-account-recovery-reset-options';
 export findThemeFilterTerm from './find-theme-filter-term';
 export getAccountRecoveryResetSelectedMethod from './get-account-recovery-reset-selected-method';
