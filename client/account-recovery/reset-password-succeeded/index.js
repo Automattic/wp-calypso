@@ -1,24 +1,37 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import config from 'config';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import WordPressLogo from 'components/wordpress-logo';
+import Button from 'components/button';
 
-const ResetPasswordSucceeded = ( props ) => {
-	const { translate } = props;
+class ResetPasswordSucceeded extends Component {
+	redirectToLoginPage = () => {
+		page.redirect( config( 'login_url' ) );
+	}
 
-	return (
-		<Card>
-			<p>{ translate( 'Congratulations! Your password has been reset.' ) }</p>
-			<a href={ config( 'login_url' ) }>{ translate( 'Log in' ) }</a>
-		</Card>
-	);
-};
+	render() {
+		const { translate } = this.props;
+
+		return (
+			<div className="reset-password-succeeded">
+				<WordPressLogo size={ 120 } />
+				<p className="reset-password-succeeded__description">
+					{ translate( 'Congratulations! Your password has been reset.' ) }
+				</p>
+				<Button className="reset-password-succeeded__login-button" onClick={ this.redirectToLoginPage } primary>
+					{ translate( 'Log in' ) }
+				</Button>
+			</div>
+		);
+	}
+}
 
 export default localize( ResetPasswordSucceeded );

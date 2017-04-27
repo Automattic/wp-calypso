@@ -1,0 +1,21 @@
+.reset-password-succeeded {
+	margin: 0 auto;
+	max-width: 500px;
+}
+
+.reset-password-succeeded .wordpress-logo {
+	display: block;
+	margin: 0 auto;
+	fill: $gray;
+}
+
+.reset-password-succeeded__description {
+	padding: 16px;
+	text-align: center;
+	font-size: 1.2em;
+}
+
+.reset-password-succeeded__login-button {
+	display: block;
+	margin: 0 auto;
+}
