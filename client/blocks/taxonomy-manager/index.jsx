@@ -93,6 +93,7 @@ export class TaxonomyManager extends Component {
 					onClose={ this.closeTermFormDialog }
 					taxonomy={ this.props.taxonomy }
 					postType={ this.props.postType }
+					searchTerm={ search }
 					term={ this.state.selectedTerm }
 					showDescriptionInput
 				/>
