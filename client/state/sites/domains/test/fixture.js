@@ -17,7 +17,7 @@ export const SITE_ID_SECOND = 77203074;
 
 // testing primary-domain
 export const DOMAIN_PRIMARY = {
-	autoRenewalDate: 'February 7, 2017',
+	autoRenewalDate: '2017-02-07T00:00:00+00:00',
 	autoRenewing: true,
 	blogId: SITE_ID_FIRST,
 	canSetAsPrimary: true,
@@ -44,7 +44,7 @@ export const DOMAIN_PRIMARY = {
 	isPrimary: true,
 	isPrivate: false,
 	registrar: '',
-	registrationDate: 'March 9, 2016',
+	registrationDate: '2016-03-09T00:00:00+00:00',
 	type: 'MAPPED',
 	isWPCOMDomain: false
 };
@@ -87,7 +87,7 @@ export const DOMAIN_NOT_PRIMARY = {
 export const ERROR_MESSAGE_RESPONSE = 'There was a problem fetching site domains. Please try again later or contact support.';
 
 export const REST_API_SITE_DOMAIN_FIRST = {
-	auto_renewal_date: 'February 7, 2017',
+	auto_renewal_date: '2017-02-07T00:00:00+00:00',
 	auto_renewing: 1,
 	blog_id: SITE_ID_FIRST,
 	can_set_as_primary: true,
@@ -113,7 +113,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	primary_domain: true,
 	private_domain: false,
 	registrar: '',
-	registration_date: 'March 9, 2016',
+	registration_date: '2016-03-09T00:00:00+00:00',
 	type: 'mapping',
 	wpcom_domain: false
 };
