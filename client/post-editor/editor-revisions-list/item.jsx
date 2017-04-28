@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
+import { isObject } from 'lodash';
 import React, { PureComponent, PropTypes } from 'react';
 
 /**
@@ -35,9 +36,11 @@ class EditorRevisionsListItem extends PureComponent {
 				</span>
 				&nbsp;
 				<span className="editor-revisions-list__author">
-					{ this.props.translate( 'by %(author)s', {
-						args: { author: this.props.revision.author },
-					} ) }
+					{ isObject( this.props.revision.author ) && (
+						this.props.translate( 'by %(author)s', {
+							args: { author: this.props.revision.author.display_name },
+						} )
+					) }
 				</span>
 
 				<div className="editor-revisions-list__changes">
