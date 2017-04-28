@@ -228,6 +228,7 @@ $plan-features-sidebar-width: 272px;
 	right: -3px;
 	transform: translate( 25%, -25% );
 	fill: $alert-green;
+	overflow: visible;
 
 	@include breakpoint( "<1280px" ) {
 		display: none;
