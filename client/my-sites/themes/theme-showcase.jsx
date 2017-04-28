@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { includes, pickBy } from 'lodash';
+import { pickBy } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -39,13 +39,6 @@ function getThemeShowcaseTitle( tier ) {
 	return titles[ tier ];
 }
 
-function getThemeShowcaseCanonicalUrl( tier ) {
-	if ( includes( [ 'free', 'premium' ], tier ) ) {
-		return 'https://wordpress.com/themes/' + tier;
-	}
-	return 'https://wordpress.com/themes';
-}
-
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
 	portfolio: { icon: 'custom-post-type', order: 2 },
@@ -71,6 +64,7 @@ const ThemeShowcase = React.createClass( {
 		emptyContent: PropTypes.element,
 		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
 		search: PropTypes.string,
+		pathName: PropTypes.string,
 		// Connected props
 		options: PropTypes.objectOf( optionShape ),
 		defaultOption: optionShape,
@@ -147,15 +141,20 @@ const ThemeShowcase = React.createClass( {
 			translate,
 			siteSlug,
 			vertical,
-			isLoggedIn
+			isLoggedIn,
+			pathName,
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
+		const canonicalUrl = 'https://wordpress.com' + pathName;
+
 		const metas = [
 			{ name: 'description', property: 'og:description', content: this.props.description },
-			{ property: 'og:url', content: getThemeShowcaseCanonicalUrl( tier ) },
+			{ property: 'og:url', content: canonicalUrl },
 			{ property: 'og:type', content: 'website' }
 		];
+
+		const links = [ { rel: 'canonical', href: canonicalUrl } ];
 
 		const headerIcons = [ {
 			label: 'new',
@@ -178,7 +177,7 @@ const ThemeShowcase = React.createClass( {
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<Main className="themes">
-				<DocumentHead title={ getThemeShowcaseTitle( tier ) } meta={ metas } />
+				<DocumentHead title={ getThemeShowcaseTitle( tier ) } meta={ metas } link={ links } />
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle } />
 				{ ! isLoggedIn && (
 					<SubMasterbarNav

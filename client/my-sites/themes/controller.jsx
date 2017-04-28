@@ -45,6 +45,7 @@ function getProps( context ) {
 		analyticsPageTitle,
 		analyticsPath: basePath,
 		search: context.query.s,
+		pathName: context.pathname,
 		trackScrollPage: boundTrackScrollPage
 	};
 }
