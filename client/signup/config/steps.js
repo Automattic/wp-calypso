@@ -148,8 +148,8 @@ export default {
 		stepName: 'site-or-domain',
 		apiRequestFunction: stepActions.createSiteOrDomain,
 		props: {
-			headerText: i18n.translate( 'Choose how you want to use your domain' ),
-			subHeaderText: i18n.translate( "Don't worry you can easily add a site later if you're not ready" )
+			headerText: i18n.translate( 'Choose how you want to use your domain.' ),
+			subHeaderText: i18n.translate( "Don't worry you can easily add a site later if you're not ready." )
 		},
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
 		delayApiRequestUntilComplete: true
