@@ -24,7 +24,10 @@ import {
 	getSelectedSite,
 	getSelectedSiteId,
 } from 'state/ui/selectors';
-import { testCache } from './state/cache/actions';
+import {
+	deleteCache,
+	testCache,
+} from './state/cache/actions';
 import {
 	errorNotice,
 	removeNotice,
@@ -33,7 +36,9 @@ import {
 import { saveSettings } from './state/settings/actions';
 import {
 	getCacheTestResults,
+	isCacheDeleteSuccessful,
 	isCacheTestSuccessful,
+	isDeletingCache,
 	isTestingCache,
 } from './state/cache/selectors';
 import { getNotices } from './state/notices/selectors';
@@ -264,12 +269,16 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				'supercache',
 				'wpcache',
 			] ) );
+			const isDeleting = isDeletingCache( state, siteId );
+			const isDeleteSuccessful = isCacheDeleteSuccessful( state, siteId );
 			const isTesting = isTestingCache( state, siteId );
 			const isTestSuccessful = isCacheTestSuccessful( state, siteId );
 			const cacheTestResults = getCacheTestResults( state, siteId );
 
 			return {
 				cacheTestResults,
+				isDeleteSuccessful,
+				isDeleting,
 				isRequesting,
 				isSaveSuccessful,
 				isSaving,
@@ -284,6 +293,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		},
 		dispatch => {
 			const boundActionCreators = bindActionCreators( {
+				deleteCache,
 				errorNotice,
 				removeNotice,
 				saveSettings,
