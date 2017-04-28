@@ -123,7 +123,7 @@ const webpackConfig = {
 };
 
 if ( ! config.isEnabled( 'desktop' ) ) {
-	webpackConfig.plugins.push( new webpack.NormalModuleReplacementPlugin( /^lib\/desktop$/, 'lodash/noop' ) );
+	webpackConfig.plugins.push( new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' ) );
 }
 
 if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
