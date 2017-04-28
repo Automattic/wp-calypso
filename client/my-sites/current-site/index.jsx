@@ -29,6 +29,7 @@ import { getSelectedOrAllSites } from 'state/selectors';
 class CurrentSite extends Component {
 	static propTypes = {
 		isJetpack: React.PropTypes.bool,
+		isPreviewShowing: React.PropTypes.bool,
 		siteCount: React.PropTypes.number.isRequired,
 		setLayoutFocus: React.PropTypes.func.isRequired,
 		selectedSiteId: React.PropTypes.number,
@@ -141,12 +142,12 @@ class CurrentSite extends Component {
 						<a
 							href={ selectedSite.URL }
 							onClick={ this.previewSite }
-							className="current-site__view-site"
+							className={ `current-site__view-site${ this.props.isPreviewShowing ? ' selected' : '' }` }
 						>
+							<Gridicon icon="computer" />
 							<span className="current-site__view-site-text">
-								{ translate( 'View Site' ) }
+								{ translate( 'Site Preview' ) }
 							</span>
-							<Gridicon icon="arrow-right" />
 						</a>
 					</div>
 					: <AllSites />
