@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import escapeRegexp from 'escape-string-regexp';
 import { reverse, sortBy, trimStart } from 'lodash';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -24,6 +25,7 @@ import { getSiteName, getSiteUrl, getSiteDescription, getSiteAuthorName } from '
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { formatUrlForDisplay, getFeedTitle } from 'reader/lib/feed-display-helper';
+import { addQueryArgs } from 'lib/url';
 
 class FollowingManageSubscriptions extends Component {
 	static propTypes = {
@@ -67,8 +69,15 @@ class FollowingManageSubscriptions extends Component {
 		return reverse( sortBy( follows, [ 'date_subscribed' ] ) );
 	}
 
+	handleSortChange = ( sort ) => {
+		page.replace( addQueryArgs( { sort }, window.location.pathname + window.location.search ) );
+	};
+
 	componentWillReceiveProps( nextProps ) {
-		const forceRefresh = ( nextProps.query !== this.props.query );
+		const forceRefresh = (
+			( nextProps.query !== this.props.query ) ||
+			( nextProps.sortOrder !== this.props.sortOrder )
+		);
 		this.setState( { forceRefresh } );
 	}
 
@@ -89,7 +98,10 @@ class FollowingManageSubscriptions extends Component {
 						}
 						</h1>
 					<div className="following-manage__subscriptions-sort">
-						<FollowingManageSortControls sortOrder={ sortOrder } />
+						<FollowingManageSortControls
+							sortOrder={ sortOrder }
+							onSortChange={ this.handleSortChange }
+						/>
 					</div>
 					<div className="following-manage__subscriptions-search">
 						<FollowingManageSearchFollowed onSearch={ this.props.doSearch } initialValue={ query } />
