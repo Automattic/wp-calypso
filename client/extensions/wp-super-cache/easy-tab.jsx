@@ -40,9 +40,18 @@ class EasyTab extends Component {
 	state = {
 		httpOnly: true,
 		isBusy: false,
+		isDeleting: false,
+		isDeletingAll: false,
 	}
 
 	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isDeleting && ! nextProps.isDeleting ) {
+			this.setState( {
+				isDeleting: false,
+				isDeletingAll: false,
+			} );
+		}
+
 		if ( ! this.props.isTesting && nextProps.isTesting ) {
 			this.setState( { isBusy: true } );
 			return;
@@ -54,6 +63,16 @@ class EasyTab extends Component {
 	}
 
 	handleHttpOnlyChange = () => this.setState( { httpOnly: ! this.state.httpOnly } );
+
+	deleteCache = () => {
+		this.setState( { isDeleting: true } );
+		this.props.deleteCache( this.props.siteId, false );
+	}
+
+	deleteAllCaches = () => {
+		this.setState( { isDeletingAll: true } );
+		this.props.deleteCache( this.props.siteId, true );
+	}
 
 	testCache = () => this.props.testCache( this.props.siteId, this.state.httpOnly );
 
@@ -67,6 +86,7 @@ class EasyTab extends Component {
 				is_cache_enabled,
 			},
 			handleAutosavingToggle,
+			isDeleting,
 			isRequesting,
 			isSaving,
 			isTesting,
@@ -175,11 +195,21 @@ class EasyTab extends Component {
 						) }
 					</p>
 					<div>
-						<Button compact>
+						<Button
+							compact
+							busy={ this.state.isDeleting }
+							disabled={ isDeleting }
+							name="wp_delete_cache"
+							onClick={ this.deleteCache }>
 							{ translate( 'Delete Cache' ) }
 						</Button>
 						{ site.jetpack && site.is_multisite &&
-							<Button compact>
+							<Button
+								compact
+								busy={ this.state.isDeletingAll }
+								disabled={ isDeleting }
+								name="wp_delete_all_cache"
+								onClick={ this.deleteAllCaches }>
 								{ translate( 'Delete Cache On All Blogs' ) }
 							</Button>
 						}
