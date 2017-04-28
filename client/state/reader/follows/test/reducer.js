@@ -8,8 +8,8 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	READER_FOLLOW,
-	READER_UNFOLLOW,
+	READER_RECORD_FOLLOW,
+	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_RECEIVE,
 } from 'state/action-types';
 import {
@@ -49,7 +49,7 @@ describe( 'reducer', () => {
 				'dailypost.wordpress.com': { is_following: true },
 			} );
 			const state = items( original, {
-				type: READER_FOLLOW,
+				type: READER_RECORD_FOLLOW,
 				payload: { url: 'http://data.blog' },
 			} );
 			expect( state[ 'data.blog' ] ).to.eql( { is_following: true } );
@@ -61,7 +61,7 @@ describe( 'reducer', () => {
 				'dailypost.wordpress.com': { blog_ID: 124, is_following: true },
 			} );
 			const state = items( original, {
-				type: READER_UNFOLLOW,
+				type: READER_RECORD_UNFOLLOW,
 				payload: { url: 'http://discover.wordpress.com' }
 			} );
 			expect( state[ 'discover.wordpress.com' ] ).to.eql( { blog_ID: 123, is_following: false } );

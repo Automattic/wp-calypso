@@ -17,13 +17,13 @@ describe( 'is-following', () => {
 					'example.com': {
 						feed_ID: 1,
 						blog_ID: 2,
-						URL: 'https://example.com/feed',
+						feed_URL: 'https://example.com/feed',
 						is_following: true,
 					},
 					'badexample.com': {
 						feed_ID: 10,
 						blog_ID: 20,
-						URL: 'https://badexample.com/feed',
+						feed_URL: 'https://badexample.com/feed',
 						is_following: false,
 					}
 				}

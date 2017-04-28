@@ -9,8 +9,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	READER_FOLLOW,
-	READER_UNFOLLOW,
+	READER_RECORD_FOLLOW,
+	READER_RECORD_UNFOLLOW,
 } from 'state/action-types';
 
 describe( 'actions', () => {
@@ -41,7 +41,7 @@ describe( 'actions', () => {
 		it( 'should dispatch an action when a URL is followed', () => {
 			recordFollow( 'http://discover.wordpress.com' )( dispatchSpy );
 			expect( dispatchSpy ).to.have.been.calledWith( {
-				type: READER_FOLLOW,
+				type: READER_RECORD_FOLLOW,
 				payload: { url: 'http://discover.wordpress.com' },
 			} );
 		} );
@@ -51,7 +51,7 @@ describe( 'actions', () => {
 		it( 'should dispatch an action when a URL is unfollowed', () => {
 			recordUnfollow( 'http://discover.wordpress.com' )( dispatchSpy );
 			expect( dispatchSpy ).to.have.been.calledWith( {
-				type: READER_UNFOLLOW,
+				type: READER_RECORD_UNFOLLOW,
 				payload: { url: 'http://discover.wordpress.com' }
 			} );
 		} );
