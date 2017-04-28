@@ -85,10 +85,9 @@ export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSit
 		return <RelatedPostCardPlaceholder />;
 	}
 
-	const featuredImage = post.canonical_image;
 	const postLink = getPostUrl( post );
 	const classes = classnames( 'reader-related-card-v2', {
-		'has-thumbnail': !! featuredImage,
+		'has-thumbnail': !! post.canonical_media,
 		'has-excerpt': post.excerpt && post.excerpt.length > 1
 	} );
 	const postClickTracker = partial( onPostClick, post );
@@ -127,7 +126,7 @@ export function RelatedPostCard( { post, site, siteId, onPostClick = noop, onSit
 				<div className="reader-related-card-v2__site-info">
 					<h1 className="reader-related-card-v2__title">{ post.title }</h1>
 					<div className="reader-related-card-v2__excerpt post-excerpt">
-						{ featuredImage ? post.short_excerpt : post.better_excerpt_no_html }
+						{ !! post.canonical_media ? post.short_excerpt : post.better_excerpt_no_html }
 					</div>
 				</div>
 			</a>
