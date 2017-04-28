@@ -30,7 +30,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 		defaultOption: OPTION_SHAPE,
 		secondaryOption: OPTION_SHAPE,
 		// Will be prepended to site slug for a redirect on selection
-		sourcePath: PropTypes.string.isRequired,
+		pathName: PropTypes.string.isRequired,
 	},
 
 	getInitialState() {
@@ -43,9 +43,15 @@ const ThemesSiteSelectorModal = React.createClass( {
 	trackAndCallAction( site ) {
 		const action = this.state.selectedOption.action;
 		const themeId = this.state.selectedThemeId;
+		const { search } = this.props;
+
+		let redirectTarget = this.props.pathName + '/' + site.slug;
+		if ( search ) {
+			redirectTarget += '?s=' + search;
+		}
 
 		trackClick( 'site selector', this.props.name );
-		page( this.props.sourcePath + '/' + site.slug );
+		page( redirectTarget );
 
 		/**
 		 * Since this implies a route change, defer it in case other state

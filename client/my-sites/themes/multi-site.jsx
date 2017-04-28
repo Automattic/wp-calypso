@@ -15,7 +15,7 @@ const MultiSiteThemeShowcase = connectOptions(
 	( props ) => (
 		<div>
 			<SidebarNavigation />
-			<ThemesSiteSelectorModal { ...props } sourcePath="/themes">
+			<ThemesSiteSelectorModal { ...props }>
 				<ThemeShowcase
 					source="showcase"
 					showUploadButton={ false } />
