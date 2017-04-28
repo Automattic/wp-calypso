@@ -11,7 +11,7 @@ import { getSiteDefaultPostFormat } from '../';
 describe( 'getSiteDefaultPostFormat()', () => {
 	const siteId = 2916284;
 
-	it( 'should return default post format for a known site', () => {
+	it( 'should return default post format for a known site when settings have not been fetched', () => {
 		const state = {
 			sites: {
 				items: {
@@ -27,7 +27,24 @@ describe( 'getSiteDefaultPostFormat()', () => {
 		expect( output ).to.eql( 'image' );
 	} );
 
-	it( 'should prioritize default post format from settings', () => {
+	it( 'should return default post format when settings have been fetched and site is unknown', () => {
+		const state = {
+			siteSettings: {
+				items: {
+					[ siteId ]: {
+						default_post_format: 'aside',
+					},
+				},
+			},
+			sites: {
+				items: {}
+			}
+		};
+		const output = getSiteDefaultPostFormat( state, siteId );
+		expect( output ).to.eql( 'aside' );
+	} );
+
+	it( 'should prioritize default post format from settings over post format from sites', () => {
 		const state = {
 			siteSettings: {
 				items: {
@@ -66,6 +83,22 @@ describe( 'getSiteDefaultPostFormat()', () => {
 		expect( output ).to.eql( 'standard' );
 	} );
 
+	it( 'should return standard if post format is set to an empty string', () => {
+		const state = {
+			sites: {
+				items: {
+					[ siteId ]: {
+						options: {
+							default_post_format: '',
+						}
+					},
+				}
+			}
+		};
+		const output = getSiteDefaultPostFormat( state, siteId );
+		expect( output ).to.eql( 'standard' );
+	} );
+
 	it( 'should return standard if post format is missing for a known site', () => {
 		const state = {
 			sites: {
@@ -82,7 +115,26 @@ describe( 'getSiteDefaultPostFormat()', () => {
 		expect( output ).to.eql( 'standard' );
 	} );
 
-	it( 'should return null for an unknown site', () => {
+	it( 'should return standard if settings are fetched, but post format option is missing', () => {
+		const state = {
+			siteSettings: {
+				items: {
+					[ siteId ]: {
+						options: {
+							some_option: 'example',
+						}
+					},
+				},
+			},
+			sites: {
+				items: {}
+			}
+		};
+		const output = getSiteDefaultPostFormat( state, siteId );
+		expect( output ).to.eql( 'standard' );
+	} );
+
+	it( 'should return null for an unknown site when settings have not been fetched', () => {
 		const state = {
 			sites: {
 				items: {

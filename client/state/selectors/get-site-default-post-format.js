@@ -18,12 +18,12 @@ import { getSiteSettings } from 'state/site-settings/selectors';
  * @return {?String}           The default post format of that site
  */
 export default function getSiteDefaultPostFormat( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site ) {
+	const siteSettings = getSiteSettings( state, siteId );
+	if ( ! siteSettings && ! getRawSite( state, siteId ) ) {
 		return null;
 	}
 
-	let defaultPostFormat = get( getSiteSettings( state, siteId ), 'default_post_format' );
+	let defaultPostFormat = get( siteSettings, 'default_post_format' );
 	if ( ! defaultPostFormat ) {
 		defaultPostFormat = getSiteOption( state, siteId, 'default_post_format' );
 	}
