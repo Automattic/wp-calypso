@@ -20,6 +20,9 @@ import {
 	receivePostRevisionsFailure,
 	requestPostRevisions,
 } from 'state/posts/revisions/actions';
+import {
+	requestUsers,
+} from 'state/users/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 const successfulPostRevisionsResponse = [
@@ -119,9 +122,10 @@ describe( '#receiveSuccess', () => {
 
 		receiveSuccess( { dispatch }, action, next, successfulPostRevisionsResponse );
 
-		expect( dispatch ).to.have.been.calledTwice;
+		expect( dispatch ).to.have.been.called.exactly( 3 );
 		expect( dispatch ).to.have.been.calledWith( receivePostRevisionsSuccess( 12345678, 10 ) );
 		expect( dispatch ).to.have.been.calledWith( receivePostRevisions( 12345678, 10, normalizedPostRevisions ) );
+		expect( dispatch ).to.have.been.calledWith( requestUsers( 12345678, [ 1 ] ) );
 	} );
 } );
 
