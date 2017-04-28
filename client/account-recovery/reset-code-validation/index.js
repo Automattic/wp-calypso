@@ -71,25 +71,19 @@ class ResetPasswordEmailValidation extends Component {
 		}
 	}
 
-	renderValidating = () => (
-		<p className="reset-code-validation__text-validating">{ this.props.translate( 'Validating' ) }</p>
-	)
-
 	renderErrorMsg = ( error ) => (
-		<p className="reset-code-validation__text-error">
-			{ error.message ? this.props.translate( "We've encountered an error: " ) + error.message
-				: this.props.translate( "We've failed to validate with the given URL." ) }
-		</p>
+		<Card className="reset-code-validation__content">
+			<p className="reset-code-validation__text-error">
+				{ error.message ? this.props.translate( "We've encountered an error: " ) + error.message
+					: this.props.translate( "We've failed to validate with the given URL." ) }
+			</p>
+		</Card>
 	)
 
 	render = () => {
 		const { error } = this.props;
 
-		return (
-			<Card className="reset-code-validation__content">
-				{ error ? this.renderErrorMsg( error ) : this.renderValidating() }
-			</Card>
-		);
+		return error ? this.renderErrorMsg( error ) : null;
 	}
 }
 
