@@ -96,7 +96,7 @@ describe( '#normalizeRevision', () => {
 } );
 
 describe( '#fetchPostRevisions', () => {
-	it( 'should dispatch HTTP request to tag endpoint', () => {
+	it( 'should dispatch HTTP request to post revisions endpoint', () => {
 		const action = requestPostRevisions( 12345678, 10 );
 		const dispatch = sinon.spy();
 		const next = sinon.spy();
