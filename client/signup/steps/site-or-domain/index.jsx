@@ -10,8 +10,7 @@ import { cartItems } from 'lib/cart-values';
 import { tlds } from 'lib/domains/constants';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import Button from 'components/button';
-import Card from 'components/card';
+import SiteOrDomainChoice from './choice';
 // TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
 import DomainImage from 'signup/steps/design-type-with-store/domain-image';
 import NewSiteImage from 'signup/steps/design-type-with-store/new-site-image';
@@ -71,17 +70,7 @@ export default class SiteOrDomain extends Component {
 		return (
 			<div className="site-or-domain__choices">
 				{ this.getChoices().map( ( choice ) => (
-					<div className="site-or-domain__choice" key={ choice.type }>
-						<Card compact className="site-or-domain__choice-image">
-							{ choice.image }
-						</Card>
-						<Card compact className="site-or-domain__choice-text">
-							<div className="site-or-domain__choice-button">
-								<Button onClick={ ( event ) => this.handleClickChoice( event, choice.type ) }>{ choice.label }</Button>
-							</div>
-							<p>{ choice.description }</p>
-						</Card>
-					</div>
+					<SiteOrDomainChoice choice={ choice } handleClickChoice={ this.handleClickChoice } />
 				) ) }
 			</div>
 		);
@@ -113,9 +102,7 @@ export default class SiteOrDomain extends Component {
 		);
 	}
 
-	handleClickChoice( event, designType ) {
-		event.preventDefault();
-
+	handleClickChoice = ( designType ) => {
 		const {
 			stepName,
 			goToStep,
