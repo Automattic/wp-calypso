@@ -85,19 +85,17 @@
 
 .manage-purchase__header {
 	overflow: auto;
-	border-width: 0 0 2px;
-	border-style: solid;
 
 	.is-personal & {
-		border-color: $alert-yellow;
+		border-bottom: 2px solid $alert-yellow;
 	}
 
 	.is-premium & {
-		border-color: $alert-green;
+		border-bottom: 2px solid $alert-green;
 	}
 
 	.is-business & {
-		border-color: $alert-purple;
+		border-bottom: 2px solid $alert-purple;
 	}
 }
 
