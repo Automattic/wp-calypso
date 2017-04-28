@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -11,60 +11,52 @@ import FoldableCard from 'components/foldable-card';
 import ProductVariationTypesForm from './product-variation-types-form';
 import FormToggle from 'components/forms/form-toggle';
 
-class ProductFormVariationCard extends Component {
-
-	static propTypes = {
-		product: PropTypes.shape( {
-			id: PropTypes.isRequired,
-			type: PropTypes.string.isRequired,
-			name: PropTypes.string,
-		} ),
-		editProduct: PropTypes.func.isRequired,
-		editProductAttribute: PropTypes.func.isRequired,
+const ProductFormVariationsCard = ( { product, editProduct, translate, editProductAttribute } ) => {
+	const handleToggle = () => {
+		if ( 'variable' !== product.type ) {
+			editProduct( product, { type: 'variable' } );
+		} else {
+			// TODO: Don't clear out all attributes when implementing "additional details" (non variation attributes).
+			editProduct( product, { type: 'simple', attributes: null } );
+		}
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			isVariableProduct: props.product && 'variable' === props.product.type ? true : false,
-		};
-
-		this.handleToggle = this.handleToggle.bind( this );
-	}
-
-	handleToggle() {
-		this.setState( ( prevState ) => ( {
-			isVariableProduct: ! prevState.isVariableProduct,
-		} ) );
-	}
-
-	render() {
-		const { product, translate } = this.props;
-		const variationToggleDescription = translate(
-			'%(productName)s has variations, for example size and color.', {
-				args: {
-					productName: ( product && product.name ) || translate( 'This product' )
-				}
+	const variationToggleDescription = translate(
+		'%(productName)s has variations, for example size and color.', {
+			args: {
+				productName: ( product && product.name ) || translate( 'This product' )
 			}
-		);
+		}
+	);
 
-		return (
-			<FoldableCard
-				icon=""
-				expanded
-				className="products__variation-card"
-				header={ ( <FormToggle onChange={ this.handleToggle } checked={ this.state.isVariableProduct }>
-					{ variationToggleDescription }
-				</FormToggle>
-				) }
-			>
-				{ this.state.isVariableProduct && (
-					<ProductVariationTypesForm />
-				) }
-			</FoldableCard>
-		);
-	}
-}
+	return (
+		<FoldableCard
+			icon=""
+			expanded
+			className="products__variation-card"
+			header={ ( <FormToggle onChange={ handleToggle } checked={ 'variable' === product.type }>
+				{ variationToggleDescription }
+			</FormToggle>
+			) }
+		>
+			{ 'variable' === product.type && (
+				<ProductVariationTypesForm
+					product={ product }
+					editProductAttribute={ editProductAttribute }
+				/>
+			) }
+		</FoldableCard>
+	);
+};
 
-export default localize( ProductFormVariationCard );
+ProductFormVariationsCard.propTypes = {
+	product: PropTypes.shape( {
+		id: PropTypes.isRequired,
+		type: PropTypes.string.isRequired,
+		name: PropTypes.string,
+	} ),
+	editProduct: PropTypes.func.isRequired,
+	editProductAttribute: PropTypes.func.isRequired,
+};
+
+export default localize( ProductFormVariationsCard );

@@ -17,6 +17,10 @@
 		margin-bottom: 16px;
 	}
 
+	.form-label {
+		margin-bottom: 16px;
+	}
+
 	.foldable-card.products__variation-card .foldable-card__content {
 		padding: 0;
 		border: 0;
@@ -52,6 +56,10 @@
 		flex: 1;
 		@include breakpoint( ">960px" ) {
 			margin-right: 32px;
+		}
+
+		&:last-child {
+			margin-right: 0;
 		}
 
 		&:last-child {
