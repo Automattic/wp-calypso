@@ -21,7 +21,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { NOTICE_CREATE } from 'state/action-types';
 
 const feeds = freeze( [
-	{ blog_ID: 'IM A BLOG' },
+	{ blog_ID: 'IM A BLOG', subscribe_URL: 'feedUrl' },
 ] );
 
 const query = 'okapis r us';
@@ -69,7 +69,11 @@ describe( 'wpcom-api', () => {
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith(
-					receiveFeedSearch( query, feeds )
+					receiveFeedSearch( query, [ {
+						blog_ID: 'IM A BLOG',
+						feed_URL: 'feedUrl',
+						subscribe_URL: 'feedUrl',
+					} ] )
 				);
 			} );
 		} );
