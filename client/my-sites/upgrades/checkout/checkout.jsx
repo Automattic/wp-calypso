@@ -74,6 +74,10 @@ const Checkout = React.createClass( {
 			return;
 		}
 
+		if ( this.props.cart.hasLoadedFromServer ) {
+			this.trackPageView();
+		}
+
 		if ( this.props.cart.hasLoadedFromServer && this.props.product ) {
 			this.addProductToCart();
 		}
@@ -85,12 +89,6 @@ const Checkout = React.createClass( {
 	componentWillReceiveProps: function( nextProps ) {
 		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer && this.props.product ) {
 			this.addProductToCart();
-		}
-
-		// Note that `hasPendingServerUpdates` will go from `null` to `false` on NUX checkout
-		// and from `true` to `false` on post-NUX checkout
-		if ( this.props.cart.hasPendingServerUpdates !== false && nextProps.cart.hasPendingServerUpdates === false ) {
-			this.trackPageView( nextProps );
 		}
 	},
 
