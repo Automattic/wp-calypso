@@ -36,12 +36,6 @@ export default class Accordion extends Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.isExpanded !== nextProps.isExpanded ) {
-			this.setExpandedStatus( nextProps.isExpanded );
-		}
-	}
-
 	toggleExpanded = () => {
 		this.setExpandedStatus( ! this.state.isExpanded );
 	};
