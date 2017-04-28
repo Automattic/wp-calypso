@@ -292,6 +292,25 @@ class ManagePurchase extends Component {
 		return null;
 	}
 
+	renderPlanDescription() {
+		const purchase = getPurchase( this.props );
+		if ( ! isPlan( purchase ) ) {
+			return null;
+		}
+
+		const { plan, selectedSite } = this.props;
+		return (
+			<div className="manage-purchase__content">
+				<span className="manage-purchase__description">
+					{ plan.getDescription() }
+				</span>
+				<span className="manage-purchase__settings-link">
+					<ProductLink selectedPurchase={ purchase } selectedSite={ selectedSite } />
+				</span>
+			</div>
+		);
+	}
+
 	renderPlaceholder() {
 		return (
 			<div>
@@ -319,7 +338,7 @@ class ManagePurchase extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const { plan, selectedSiteId, selectedSite, selectedPurchase } = this.props;
+		const { selectedSiteId, selectedSite, selectedPurchase } = this.props;
 		const purchase = getPurchase( this.props );
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
@@ -346,17 +365,7 @@ class ManagePurchase extends Component {
 							<PlanPrice rawPrice={ purchase.amount } currencyCode={ purchase.currencyCode } />
 						</div>
 					</header>
-					<div className="manage-purchase__content">
-						<span className="manage-purchase__description">
-							{ isPlan( purchase )
-								? plan.getDescription()
-								: null
-							}
-						</span>
-						<span className="manage-purchase__settings-link">
-							<ProductLink selectedPurchase={ purchase } selectedSite={ selectedSite } />
-						</span>
-					</div>
+					{ this.renderPlanDescription() }
 
 					<PurchaseMeta purchaseId={ selectedPurchase.id } />
 
@@ -414,13 +423,14 @@ class ManagePurchase extends Component {
 export default connect(
 	( state, props ) => {
 		const selectedPurchase = getByPurchaseId( state, props.purchaseId );
+		const isPurchasePlan = selectedPurchase && isPlan( selectedPurchase );
 		return {
 			hasLoadedSites: ! isRequestingSites( state ),
 			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 			selectedPurchase,
 			selectedSite: getSelectedSiteSelector( state ),
 			selectedSiteId: getSelectedSiteId( state ),
-			plan: selectedPurchase && applyTestFiltersToPlansList( selectedPurchase.productSlug, abtest ),
+			plan: isPurchasePlan && applyTestFiltersToPlansList( selectedPurchase.productSlug, abtest ),
 		};
 	}
 )( localize( ManagePurchase ) );
