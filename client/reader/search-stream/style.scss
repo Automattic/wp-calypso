@@ -11,7 +11,7 @@
 .search-stream__fixed-area-separator {
 	margin-top: 31px;
 	margin-bottom: 0;
-	background: #c8d7e1;
+	background: lighten( $gray, 20% );
 }
 
 .is-reader-page .search-stream .reader-post-card.card {
@@ -21,9 +21,13 @@
 .is-reader-page .search-stream__fixed-area {
 	background-color: $white;
 	position: fixed;
-	top: 0px;
-	padding-top: 77px;
+	top: 0;
+	padding-top: 47px;
 	z-index: 20;
+
+	@include breakpoint( ">660px" ) {
+		padding-top: 77px;
+	}
 }
 
 // Custom breakpoints needed to match Related Posts
@@ -34,7 +38,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 .is-reader-page .search-stream .reader__content {
 	display: flex;
 	flex-flow: wrap;
-	margin-top: 80px;
+	margin-top: 100px;
 
 	@include breakpoint( ">660px" ) {
 		margin-top: 133px;
