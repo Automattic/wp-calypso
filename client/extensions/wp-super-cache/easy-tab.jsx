@@ -39,6 +39,18 @@ class EasyTab extends Component {
 
 	state = {
 		httpOnly: true,
+		isBusy: false,
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( ! this.props.isTesting && nextProps.isTesting ) {
+			this.setState( { isBusy: true } );
+			return;
+		}
+
+		if ( this.props.isTesting && ! nextProps.isTesting ) {
+			this.setState( { isBusy: false } );
+		}
 	}
 
 	handleHttpOnlyChange = () => this.setState( { httpOnly: ! this.state.httpOnly } );
@@ -113,6 +125,7 @@ class EasyTab extends Component {
 
 							<Button
 								compact
+								busy={ this.state.isBusy }
 								onClick={ this.testCache }>
 								{ translate( 'Test Cache' ) }
 							</Button>
