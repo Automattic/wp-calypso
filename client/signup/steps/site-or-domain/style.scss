@@ -32,7 +32,6 @@
 }
 
 .site-or-domain__choice-button {
-	margin-bottom: 1.5em;
 	text-align: center;
 
 	.button {
@@ -41,11 +40,28 @@
 }
 
 .site-or-domain__choice-image {
-	display: flex;
-	align-items: center;
-	min-height: 170px;
+	display: none;
 }
 
-.site-or-domain__choice-text {
-	min-height: 185px;
+@include breakpoint( ">480px" ) {
+	.site-or-domain__choice-button {
+		margin-bottom: 1.5em;
+	}
+
+	.site-or-domain__choice-image {
+		display: flex;
+		align-items: center;
+		min-height: 170px;
+	}
+
+	.site-or-domain__choice-text {
+		min-height: 185px;
+	}
+}
+
+@include breakpoint( "<480px" ) {
+	.site-or-domain__choice-text {
+		display: flex;
+		flex-direction: column-reverse;
+	}
 }
