@@ -19,7 +19,7 @@ export default React.createClass( {
 	displayName: 'Input',
 
 	getDefaultProps() {
-		return { autoFocus: false, autoComplete: 'on' };
+		return { autoFocus: false, autoComplete: 'on', notices: [] };
 	},
 
 	componentDidMount() {
@@ -76,6 +76,7 @@ export default React.createClass( {
 		return (
 			<div className={ classes }>
 				<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
+				{ this.props.notices }
 				<FormTextInput
 					placeholder={ this.props.placeholder ? this.props.placeholder : this.props.label }
 					id={ this.props.name }
