@@ -77,7 +77,7 @@ class ResetPasswordSmsForm extends Component {
 						onChange={ this.updateValidationKey }
 						autoFocus
 					/>
-					{ error && <ErrorMessage /> }
+					{ error && <ErrorMessage error={ error } /> }
 					<FormButton className="reset-password-sms-form__submit-button" type="submit" disabled={ isValidating } >
 						{ translate( 'Continue' ) }
 					</FormButton>
