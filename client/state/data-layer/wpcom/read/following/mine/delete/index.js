@@ -13,14 +13,14 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 import { follow } from 'state/reader/follows/actions';
 
-export function requestUnfollow( { dispatch }, action, next ) {
-	const { payload: { url } } = action;
+export function requestUnfollow( { dispatch, getState }, action, next ) {
+	const { payload: { feedUrl } } = action;
 	dispatch( http( {
 		method: 'POST',
 		path: '/read/following/mine/delete',
 		apiVersion: '1.1',
-		query: {
-			url, // should we support subId here?
+		body: {
+			url: feedUrl,
 			source: config( 'readerFollowingSource' )
 		},
 		onSuccess: action,
@@ -33,7 +33,7 @@ export function receiveUnfollow( store, action, next, response ) {
 	if ( ! ( response && response.subscribed ) ) {
 		next( action );
 	} else {
-		next( follow( action.payload ) );
+		next( follow( action.payload.feedUrl ) );
 	}
 }
 
@@ -43,7 +43,7 @@ export function unfollowError( { dispatch }, action, next ) {
 			translate( 'Sorry, there was a problem following that site. Please try again.' )
 		)
 	);
-	next( follow( action.payload ) );
+	next( follow( action.payload.feedUrl ) );
 }
 
 export default {

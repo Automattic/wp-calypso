@@ -13,15 +13,17 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 import { extendAction } from 'state/utils';
 import { unfollow } from 'state/reader/follows/actions';
+import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine';
 
 export function requestFollow( { dispatch }, action, next ) {
-	const { payload: { url } } = action;
+	const { payload: { feedUrl } } = action;
+
 	dispatch( http( {
 		method: 'POST',
 		path: '/read/following/mine/new',
 		apiVersion: '1.1',
-		query: {
-			url,
+		body: {
+			url: feedUrl,
 			source: config( 'readerFollowingSource' )
 		},
 		onSuccess: action,
@@ -36,13 +38,13 @@ export function receiveFollow( store, action, next, response ) {
 		if ( response.subscription ) {
 			actionToDispatch = extendAction( action, {
 				payload: {
-					subscription: response.subscription
+					subscription: subscriptionFromApi( response.subscription )
 				}
 			} );
 		}
 		next( actionToDispatch );
 	} else {
-		next( unfollow( action.payload ) );
+		next( unfollow( action.payload.feedUrl ) );
 	}
 }
 
@@ -52,7 +54,7 @@ export function followError( { dispatch }, action, next ) {
 			translate( 'Sorry, there was a problem following that site. Please try again.' )
 		)
 	);
-	next( unfollow( action.payload ) );
+	next( unfollow( action.payload.feedUrl ) );
 }
 
 export default {

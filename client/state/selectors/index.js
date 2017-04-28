@@ -62,6 +62,7 @@ export getRawOffsets from './get-raw-offsets';
 export getReaderFeedsForQuery from './get-reader-feeds-for-query';
 export getReaderFollowedTags from './get-reader-followed-tags';
 export getReaderFollowForBlog from './get-reader-follow-for-blog';
+export getReaderFollowForFeed from './get-reader-follow-for-feed';
 export getReaderFollows from './get-reader-follows';
 export getReaderFollowsCount from './get-reader-follows-count';
 export getReaderTags from './get-reader-tags';
