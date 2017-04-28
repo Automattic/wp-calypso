@@ -104,6 +104,11 @@ class RemovePurchase extends Component {
 		} );
 	}
 
+	chatInitiated = () => {
+		this.recordEvent( 'calypso_purchases_cancel_form_chat_initiated' );
+		this.closeDialog();
+	}
+
 	openDialog = ( event ) => {
 		this.recordEvent( 'calypso_purchases_cancel_form_start' );
 		event.preventDefault();
@@ -352,6 +357,7 @@ class RemovePurchase extends Component {
 					isVisible={ this.state.isDialogVisible }
 					onClose={ this.closeDialog }>
 					<CancelPurchaseForm
+						chatInitiated={ this.chatInitiated }
 						productName={ getName( selectedPurchase ) }
 						surveyStep={ this.state.surveyStep }
 						showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }

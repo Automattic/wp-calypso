@@ -33,7 +33,8 @@ const CancelPurchaseForm = React.createClass( {
 		showSurvey: React.PropTypes.bool.isRequired,
 		defaultContent: React.PropTypes.node.isRequired,
 		onInputChange: React.PropTypes.func.isRequired,
-		isJetpack: React.PropTypes.bool.isRequired
+		isJetpack: React.PropTypes.bool.isRequired,
+		chatInitiated: React.PropTypes.func.isRequired,
 	},
 
 	getInitialState() {
@@ -468,7 +469,7 @@ const CancelPurchaseForm = React.createClass( {
 	},
 
 	renderLiveChat() {
-		const { productName, translate } = this.props;
+		const { chatInitiated, productName, translate } = this.props;
 		return (
 			<FormFieldset>
 				<p>
@@ -483,7 +484,7 @@ const CancelPurchaseForm = React.createClass( {
 						)
 					}
 				</p>
-				<HappychatButton primary borderless={ false }>
+				<HappychatButton primary borderless={ false } onClick={ chatInitiated }>
 					{ translate( 'Start a Live chat' ) }
 				</HappychatButton>
 			</FormFieldset>

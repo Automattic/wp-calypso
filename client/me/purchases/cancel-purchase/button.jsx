@@ -85,6 +85,11 @@ class CancelPurchaseButton extends Component {
 		} );
 	}
 
+	chatInitiated = () => {
+		this.recordEvent( 'calypso_purchases_cancel_form_chat_initiated' );
+		this.closeDialog();
+	}
+
 	changeSurveyStep = ( stepFunction ) => {
 		const { purchase, isChatAvailable, isChatActive } = this.props;
 		const { surveyStep, survey } = this.state;
@@ -160,6 +165,7 @@ class CancelPurchaseButton extends Component {
 				onClose={ this.closeDialog }
 				className="cancel-purchase__button-warning-dialog">
 				<CancelPurchaseForm
+					chatInitiated={ this.chatInitiated }
 					productName={ getName( purchase ) }
 					surveyStep={ this.state.surveyStep }
 					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
