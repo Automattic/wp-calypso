@@ -51,7 +51,6 @@ const purchase = config.isEnabled( 'upgrades/checkout' )
 		hideForTheme: ( state, themeId, siteId ) => (
 			! getCurrentUser( state ) ||
 			hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ) ||
-			isJetpackSite( state, siteId ) ||
 			! isThemePremium( state, themeId ) ||
 			isThemeActive( state, themeId, siteId ) ||
 			isPremiumThemeAvailable( state, themeId, siteId )
@@ -66,10 +65,10 @@ const activate = {
 	action: activateAction,
 	hideForTheme: ( state, themeId, siteId ) => (
 		! getCurrentUser( state ) ||
-		( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ||
+		( isJetpackSiteMultiSite( state, siteId ) ) ||
 		isThemeActive( state, themeId, siteId ) ||
 		( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
-		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
+		( ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
 	)
 };
 
@@ -106,14 +105,14 @@ const tryandcustomize = {
 	hideForTheme: ( state, themeId, siteId ) => (
 		! getCurrentUser( state ) ||
 		( siteId && ( ! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
-		( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ) ) ||
+		( isJetpackSiteMultiSite( state, siteId ) ) ) ) ||
 		isThemeActive( state, themeId, siteId ) || (
 			isThemePremium( state, themeId ) &&
 			// In theory, we shouldn't need the isJetpackSite() check. In practice, Redux state required for isPremiumThemeAvailable
 			// is less readily available since it needs to be fetched using the `QuerySitePlans` component.
 			( isJetpackSite( state, siteId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) )
 		) ||
-		( isJetpackSite( state, siteId ) && ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
+		( ! isThemeAvailableOnJetpackSite( state, themeId, siteId ) )
 	)
 };
 
