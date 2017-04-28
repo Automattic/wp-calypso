@@ -180,7 +180,7 @@ class PurchaseMeta extends Component {
 
 		if ( isIncludedWithPlan( purchase ) ) {
 			return (
-				<span className="manage-purchase__content manage-purchase__detail">
+				<span className="manage-purchase__detail">
 					{ translate( 'Included with plan' ) }
 				</span>
 			);
@@ -200,7 +200,7 @@ class PurchaseMeta extends Component {
 			}
 
 			return (
-				<span className="manage-purchase__content manage-purchase__detail">
+				<span className="manage-purchase__detail">
 					<PaymentLogo type={ paymentLogoType( purchase ) } />
 					{ paymentInfo }
 				</span>
@@ -208,7 +208,7 @@ class PurchaseMeta extends Component {
 		}
 
 		return (
-			<span className="manage-purchase__content manage-purchase__detail">
+			<span className="manage-purchase__detail">
 				{ translate( 'None' ) }
 			</span>
 		);
@@ -224,7 +224,7 @@ class PurchaseMeta extends Component {
 
 		const paymentDetails = (
 			<span>
-				<em className="manage-purchase__content manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
+				<em className="manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
 				{ this.renderPaymentInfo() }
 			</span>
 		);
@@ -280,8 +280,8 @@ class PurchaseMeta extends Component {
 
 		return (
 			<li>
-				<em className="manage-purchase__content manage-purchase__detail-label">{ translate( 'Owner' ) }</em>
-				<span className="manage-purchase__content manage-purchase__detail">
+				<em className="manage-purchase__detail-label">{ translate( 'Owner' ) }</em>
+				<span className="manage-purchase__detail">
 					<UserItem user={ { ...owner, name: owner.display_name } } />
 				</span>
 			</li>
@@ -315,12 +315,12 @@ class PurchaseMeta extends Component {
 				<ul className="manage-purchase__meta">
 					{ this.renderOwner() }
 					<li>
-						<em className="manage-purchase__content manage-purchase__detail-label">{ translate( 'Price' ) }</em>
-						<span className="manage-purchase__content manage-purchase__detail">{ this.renderPrice() }</span>
+						<em className="manage-purchase__detail-label">{ translate( 'Price' ) }</em>
+						<span className="manage-purchase__detail">{ this.renderPrice() }</span>
 					</li>
 					<li>
-						<em className="manage-purchase__content manage-purchase__detail-label">{ this.renderRenewsOrExpiresOnLabel() }</em>
-						<span className="manage-purchase__content manage-purchase__detail">{ this.renderRenewsOrExpiresOn() }</span>
+						<em className="manage-purchase__detail-label">{ this.renderRenewsOrExpiresOnLabel() }</em>
+						<span className="manage-purchase__detail">{ this.renderRenewsOrExpiresOn() }</span>
 					</li>
 					{ this.renderPaymentDetails() }
 				</ul>

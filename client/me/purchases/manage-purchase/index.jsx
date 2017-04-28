@@ -10,7 +10,9 @@ import React, { Component } from 'react';
 /**
  * Internal Dependencies
  */
+import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
+import { applyTestFiltersToPlansList } from 'lib/plans';
 import Button from 'components/button';
 import Card from 'components/card';
 import { cartItems } from 'lib/cart-values';
@@ -29,7 +31,6 @@ import {
 	isRenewal,
 	isRenewing,
 	isSubscription,
-	purchaseType,
 } from 'lib/purchases';
 import {
 	canEditPaymentDetails,
@@ -45,14 +46,24 @@ import {
 	getSelectedSite as getSelectedSiteSelector,
 	getSelectedSiteId,
 } from 'state/ui/selectors';
+import Gridicon from 'gridicons';
 import HeaderCake from 'components/header-cake';
-import { isDomainRegistration } from 'lib/products-values';
+import {
+	isPersonal,
+	isPremium,
+	isBusiness,
+	isPlan,
+	isDomainProduct,
+	isDomainRegistration
+} from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
-import PurchasePlanDetails from './plan-details';
+import PlanIcon from 'components/plans/plan-icon';
+import PlanPrice from 'my-sites/plan-price';
 import ProductLink from 'me/purchases/product-link';
 import PurchaseMeta from './purchase-meta';
 import PurchaseNotice from './notices';
+import PurchasePlanDetails from './plan-details';
 import PurchaseSiteHeader from '../purchases-site/header';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import RemovePurchase from '../remove-purchase';
@@ -260,6 +271,27 @@ class ManagePurchase extends Component {
 		);
 	}
 
+	renderPlanIcon() {
+		const purchase = getPurchase( this.props );
+		if ( isPlan( purchase ) ) {
+			return (
+				<div className="manage-purchase__plan-icon">
+					<PlanIcon plan={ purchase.productSlug } />
+				</div>
+			);
+		}
+
+		if ( isDomainProduct( purchase ) ) {
+			return (
+				<div className="manage-purchase__plan-icon">
+					<Gridicon icon="domains" size={ 54 } />
+				</div>
+			);
+		}
+
+		return null;
+	}
+
 	renderPlaceholder() {
 		return (
 			<div>
@@ -287,35 +319,46 @@ class ManagePurchase extends Component {
 			return this.renderPlaceholder();
 		}
 
+		const { plan, selectedSiteId, selectedSite, selectedPurchase } = this.props;
 		const purchase = getPurchase( this.props );
 		const classes = classNames( 'manage-purchase__info', {
-			'is-expired': purchase && isExpired( purchase )
+			'is-expired': purchase && isExpired( purchase ),
+			'is-personal': isPersonal( purchase ),
+			'is-premium': isPremium( purchase ),
+			'is-business': isBusiness( purchase ),
 		} );
-		const purchaseTypeSeparator = purchaseType( purchase ) ? '|' : '';
-		const purchaseTypeText = purchaseType( purchase );
 		const siteName = purchase.siteName;
 		const siteDomain = purchase.domain;
 
 		return (
 			<div>
 				<PurchaseSiteHeader
-					siteId={ this.props.selectedSiteId }
+					siteId={ selectedSiteId }
 					name={ siteName }
 					domain={ siteDomain } />
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
-						<strong className="manage-purchase__content manage-purchase__title">
+						{ this.renderPlanIcon() }
+						<h2 className="manage-purchase__title">
 							{ getName( purchase ) }
-						</strong>
-						<span className="manage-purchase__content manage-purchase__subtitle">
-							{ purchaseTypeText } { purchaseTypeSeparator } { siteName ? siteName : siteDomain }
-						</span>
-						<span className="manage-purchase__content manage-purchase__settings-link">
-							<ProductLink selectedPurchase={ purchase } selectedSite={ this.props.selectedSite } />
-						</span>
+						</h2>
+						<div className="manage-purchase__price">
+							<PlanPrice rawPrice={ purchase.amount } currencyCode={ purchase.currencyCode } />
+						</div>
 					</header>
+					<div className="manage-purchase__content">
+						<span className="manage-purchase__description">
+							{ isPlan( purchase )
+								? plan.getDescription()
+								: null
+							}
+						</span>
+						<span className="manage-purchase__settings-link">
+							<ProductLink selectedPurchase={ purchase } selectedSite={ selectedSite } />
+						</span>
+					</div>
 
-					<PurchaseMeta purchaseId={ this.props.selectedPurchase.id } />
+					<PurchaseMeta purchaseId={ selectedPurchase.id } />
 
 					{ this.renderRenewButton() }
 				</Card>
@@ -329,8 +372,8 @@ class ManagePurchase extends Component {
 				<RemovePurchase
 					hasLoadedSites={ this.props.hasLoadedSites }
 					hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
-					selectedSite={ this.props.selectedSite }
-					selectedPurchase={ this.props.selectedPurchase }
+					selectedSite={ selectedSite }
+					selectedPurchase={ selectedPurchase }
 				/>
 			</div>
 		);
@@ -369,11 +412,15 @@ class ManagePurchase extends Component {
 }
 
 export default connect(
-	( state, props ) => ( {
-		hasLoadedSites: ! isRequestingSites( state ),
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
-		selectedSite: getSelectedSiteSelector( state ),
-		selectedSiteId: getSelectedSiteId( state ),
-	} )
+	( state, props ) => {
+		const selectedPurchase = getByPurchaseId( state, props.purchaseId );
+		return {
+			hasLoadedSites: ! isRequestingSites( state ),
+			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+			selectedPurchase,
+			selectedSite: getSelectedSiteSelector( state ),
+			selectedSiteId: getSelectedSiteId( state ),
+			plan: selectedPurchase && applyTestFiltersToPlansList( selectedPurchase.productSlug, abtest ),
+		};
+	}
 )( localize( ManagePurchase ) );
