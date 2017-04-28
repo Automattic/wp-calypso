@@ -34,13 +34,13 @@ const updateCommentLike = ( state, { commentId, iLike, likeCount } ) => ( {
 export const items = keyedReducer( 'siteId', createReducer( {}, {
 	[ DISCUSSIONS_ITEM_EDIT_CONTENT_REQUEST_SUCCESS ]: ( state, { commentId, content } ) => ( {
 		...state,
-		...keyBy( [ { ...state[ commentId ], content } ], 'ID' )
+		...{ [ commentId ]: { ...state[ commentId ], content } }
 	} ),
 	[ DISCUSSIONS_ITEM_LIKE_REQUEST_SUCCESS ]: updateCommentLike,
 	[ DISCUSSIONS_ITEM_UNLIKE_REQUEST_SUCCESS ]: updateCommentLike,
 	[ DISCUSSIONS_ITEM_STATUS_UPDATE_REQUEST_SUCCESS ]: ( state, { commentId, status } ) => ( {
 		...state,
-		...keyBy( [ { ...state[ commentId ], status } ], 'ID' )
+		...{ [ commentId ]: { ...state[ commentId ], status } }
 	} ),
 	[ DISCUSSIONS_ITEM_REMOVE ]: ( state, { commentId } ) => assign( {}, omit( state, commentId ) ),
 	[ DISCUSSIONS_REQUEST ]: identity,
