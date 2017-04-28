@@ -26,7 +26,6 @@ import {
 const debug = debugModule( 'calypso:redux:reader-follows' );
 
 export function follow( feedUrl ) {
-	// we can follow by url, blogId, or feedId
 	return {
 		type: READER_FOLLOW,
 		payload: { feedUrl }
@@ -34,7 +33,6 @@ export function follow( feedUrl ) {
 }
 
 export function unfollow( feedUrl ) {
-	// we can always unfollow by feed id
 	return {
 		type: READER_UNFOLLOW,
 		payload: { feedUrl }
