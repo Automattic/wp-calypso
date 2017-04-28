@@ -21,8 +21,12 @@ export const Notice = React.createClass( {
 	},
 
 	propTypes: {
-		// we should validate the allowed statuses
-		status: PropTypes.string,
+		status: PropTypes.oneOf( [
+			'is-info',
+			'is-success',
+			'is-error',
+			'is-warning',
+		] ),
 		showDismiss: PropTypes.bool,
 		isCompact: PropTypes.bool,
 		duration: React.PropTypes.number,
