@@ -92,7 +92,7 @@ const TagStream = React.createClass( {
 		recordAction( isFollowing ? 'unfollowed_topic' : 'followed_topic' );
 		recordGaEvent( isFollowing ? 'Clicked Unfollow Topic' : 'Clicked Follow Topic', decodedTag );
 		recordTrack( isFollowing ? 'calypso_reader_reader_tag_unfollowed' : 'calypso_reader_reader_tag_followed', {
-			decodedTag
+			tag: decodedTag
 		} );
 	},
 
