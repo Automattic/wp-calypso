@@ -1,0 +1,13 @@
+.reset-code-validation__content {
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+.reset-code-validation__text-validating {
+	text-align: center;
+}
+
+.reset-code-validation__text-error {
+	text-align: center;
+	color: $alert-red;
+}
