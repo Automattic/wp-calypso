@@ -8,12 +8,16 @@ import { expect } from 'chai';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
+	WP_SUPER_CACHE_DELETE_CACHE,
+	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
+	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
 	WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
 	WP_SUPER_CACHE_TEST_CACHE,
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../../action-types';
 import {
+	deleteCache,
 	receiveResults,
 	testCache,
 } from '../actions';
@@ -92,6 +96,46 @@ describe( 'actions', () => {
 			return testCache( failedSiteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_TEST_CACHE_FAILURE,
+					siteId: failedSiteId,
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#deleteCache()', () => {
+		useNock( nock => {
+			nock( 'https://public-api.wordpress.com' )
+				.persist()
+				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
+				.query( { path: '/wp-super-cache/v1/cache' } )
+				.reply( 200, { wp_delete_cache: true } )
+				.post( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/` )
+				.query( { path: '/wp-super-cache/v1/cache' } )
+				.reply( 403 );
+		} );
+
+		it( 'should dispatch test cache action when thunk triggered', () => {
+			deleteCache( siteId, false )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: WP_SUPER_CACHE_DELETE_CACHE,
+				siteId,
+			} );
+		} );
+
+		it( 'should dispatch request success action when request completes', () => {
+			return deleteCache( siteId, false )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
+					siteId,
+				} );
+			} );
+		} );
+
+		it( 'should dispatch fail action when request fails', () => {
+			return deleteCache( failedSiteId, false )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 					siteId: failedSiteId,
 				} );
 			} );
