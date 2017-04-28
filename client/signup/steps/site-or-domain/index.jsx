@@ -73,11 +73,7 @@ export default class SiteOrDomain extends Component {
 				{ this.getChoices().map( ( choice ) => (
 					<div className="site-or-domain__choice" key={ choice.type }>
 						<Card compact className="site-or-domain__choice-image">
-							<a className="site-or-domain__choice-link"
-								href="#"
-								onClick={ ( event ) => this.handleClickChoice( event, choice.type ) }>
-								{ choice.image }
-							</a>
+							{ choice.image }
 						</Card>
 						<Card compact className="site-or-domain__choice-text">
 							<div className="site-or-domain__choice-button">
