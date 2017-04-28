@@ -15,7 +15,6 @@ import Card from 'components/card';
 import {
 	updatePasswordResetUserData,
 	setResetMethod,
-	setValidationKey,
 	validateRequest,
 	validateRequestError,
 } from 'state/account-recovery/reset/actions';
@@ -102,7 +101,6 @@ export default connect(
 	{
 		updatePasswordResetUserData,
 		setResetMethod,
-		setValidationKey,
 		validateRequest,
 		validateRequestError,
 	}
