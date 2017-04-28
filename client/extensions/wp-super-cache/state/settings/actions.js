@@ -76,7 +76,9 @@ export const saveSettings = ( siteId, settings ) => {
 			siteId,
 		} );
 
-		return wp.req.post( { path: `/jetpack-blogs/${ siteId }/rest-api/` }, {}, { path: '/wp-super-cache/v1/settings', ...settings } )
+		return wp.req.post(
+			{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
+			{ path: '/wp-super-cache/v1/settings', body: JSON.stringify( settings ), json: true } )
 			.then( () => {
 				dispatch( updateSettings( siteId, settings ) );
 				dispatch( {
