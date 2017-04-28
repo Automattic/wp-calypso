@@ -150,12 +150,14 @@ describe( 'get follow subscriptions', () => {
 					ID: 12345,
 					blog_ID: 122463145,
 					URL: 'http://readerpostcards.wordpress.com',
+					feed_URL: 'http://readerpostcards.wordpress.com',
 					date_subscribed: Date.parse( '2017-01-12T03:55:45+00:00' ),
 				},
 				{
 					ID: 123456,
 					blog_ID: 64146350,
 					URL: 'https://fivethirtyeight.com/',
+					feed_URL: 'https://fivethirtyeight.com/',
 					date_subscribed: Date.parse( '2016-01-12T03:55:45+00:00' ),
 				}
 			];

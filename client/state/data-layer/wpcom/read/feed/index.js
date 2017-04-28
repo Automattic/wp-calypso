@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { map, identity } from 'lodash';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,7 +32,10 @@ export function initiateFeedSearch( store, action, next ) {
 }
 
 export function receiveFeeds( store, action, next, apiResponse ) {
-	const feeds = map( apiResponse.feeds, identity );
+	const feeds = map( apiResponse.feeds, feed => ( {
+		...feed,
+		feed_URL: feed.subscribe_URL,
+	} ) );
 
 	store.dispatch(
 		receiveFeedSearch( action.payload.query, feeds )

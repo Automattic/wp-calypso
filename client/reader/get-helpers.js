@@ -11,15 +11,31 @@ import { trim } from 'lodash';
 import { decodeEntities } from 'lib/formatting';
 
 /**
- * Given a feed, site, or post: return the url. return false if one could not be found.
+ * Given a feed, site, or post: return the site url. return false if one could not be found.
  *
  * @param {*} options - an object containing a feed, site, and post. all optional.
  * @returns {string} the site url
  */
 export const getSiteUrl = ( { feed, site, post } = {} ) => {
-	const siteUrl = ( !! site ) && ( site.URL );
-	const feedUrl = ( !! feed ) && ( feed.URL || feed.feed_URL );
-	const postUrl = ( !! post ) && ( post.site_URL || post.feed_URL );
+	const siteUrl = ( !! site ) && ( site.URL || site.domain );
+	const feedUrl = ( !! feed ) && feed.URL;
+	const postUrl = ( !! post ) && post.site_URL;
+
+	return siteUrl || feedUrl || postUrl;
+};
+
+/**
+ * Given a feed, site, or post: return the feed url. return false if one could not be found.
+ * The feed url is different from the site url in that it is unique per feed. A single siteUrl may
+ * be home to many feeds
+ *
+ * @param {*} options - an object containing a feed, site, and post. all optional.
+ * @returns {string} the site url
+ */
+export const getFeedUrl = ( { feed, site, post } = {} ) => {
+	const siteUrl = ( !! site ) && site.feed_URL;
+	const feedUrl = ( !! feed ) && ( feed.feed_URL || feed.URL );
+	const postUrl = ( !! post ) && post.feed_URL;
 
 	return siteUrl || feedUrl || postUrl;
 };

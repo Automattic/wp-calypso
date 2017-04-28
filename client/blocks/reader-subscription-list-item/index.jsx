@@ -15,9 +15,10 @@ import { getStreamUrl } from 'reader/route';
 import EmailSettings from './email-settings';
 import {
 	getSiteName,
-	getSiteUrl,
 	getSiteDescription,
-	getSiteAuthorName
+	getSiteAuthorName,
+	getFeedUrl,
+	getSiteUrl,
 } from 'reader/get-helpers';
 import untrailingslashit from 'lib/route/untrailingslashit';
 
@@ -44,7 +45,8 @@ function ReaderSubscriptionListItem( {
 	const siteIcon = get( site, 'icon.img' );
 	const feedIcon = get( feed, 'image' );
 	const streamUrl = getStreamUrl( feedId, siteId );
-	const siteUrl = url || getSiteUrl( { feed, site } );
+	const feedUrl = url || getFeedUrl( { feed, site } );
+	const siteUrl = getSiteUrl( { feed, site } );
 	const isFollowing = ( site && site.is_following ) || ( feed && feed.is_following );
 
 	return (
@@ -77,12 +79,14 @@ function ReaderSubscriptionListItem( {
 				}
 			{ siteUrl && (
 				<div className="reader-subscription-list-item__site-url">
-					<a href={ siteUrl }> { stripUrl( siteUrl ) } </a>
+					<a href={ siteUrl } target="_blank" rel="noopener noreferrer">
+						{ stripUrl( siteUrl ) }
+					</a>
 				</div>
 			) }
 			</div>
 			<div className="reader-subscription-list-item__options">
-				<FollowButton siteUrl={ siteUrl } followSource={ followSource } />
+				<FollowButton siteUrl={ feedUrl } followSource={ followSource } />
 				{ isFollowing && ! isEmailBlocked && <EmailSettings siteId={ siteId } /> }
 			</div>
 		</div>
