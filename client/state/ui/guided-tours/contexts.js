@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { ANALYTICS_EVENT_RECORD, EDITOR_PASTE_EVENT } from 'state/action-types';
@@ -113,7 +118,7 @@ export const hasAnalyticsEventFired = eventName => state => {
  * @return {Boolean} True if selected site can be previewed, false otherwise.
  */
 export const isSelectedSitePreviewable = state =>
-	getSelectedSite( state ) && getSelectedSite( state ).is_previewable;
+	get( getSelectedSite( state ), 'is_previewable', false );
 
 /**
  * Returns true if the current user can run customizer for the selected site
