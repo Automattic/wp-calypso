@@ -30,6 +30,8 @@ import FormButton from 'components/forms/form-button';
 import { countries } from 'components/phone-input/data';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 // Cannot convert to ES6 import
 const wpcom = require( 'lib/wp' ).undocumented(),
@@ -284,10 +286,34 @@ export default React.createClass( {
 	},
 
 	renderAddressFields() {
+		const frNotice = ( <Notice
+			status="is-info"
+			showDismiss={ false }
+			text={  "registrants must be a resident of the European Union, Switzerland, Norway, Iceland or Liechtenstein and must provide their place and date of birth in the OpenSRS Order Notes." }
+			icon="globe"
+			isCompact={ true }>
+			<NoticeAction href="#">
+				{ "Add As Additional Address" }
+			</NoticeAction>
+		</Notice> );
+		const deNotice = ( <Notice
+			status="is-info"
+			showDismiss={ false }
+			text="example.de requires an address in Germany"
+			icon="globe"
+			isCompact={ true }>
+			<NoticeAction href="#">
+				{ "Add As Additional Address" }
+			</NoticeAction>
+		</Notice> );
+
 		return (
 			<div>
-				<Input label={ this.translate( 'Address' ) } maxLength={ 40 } { ...this.getFieldProps( 'address-1' ) }/>
-
+				<Input
+					label={ this.translate( 'Address' ) }
+					maxLength={ 40 }
+					{ ...this.getFieldProps( 'address-1' ) }
+					notices={ [ frNotice, deNotice ] } />
 				<HiddenInput
 					label={ this.translate( 'Address Line 2' ) }
 					text={ this.translate( '+ Add Address Line 2' ) }
