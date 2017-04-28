@@ -69,6 +69,7 @@ class EasyTab extends Component {
 			handleAutosavingToggle,
 			isRequesting,
 			isSaving,
+			isTesting,
 			site,
 			translate,
 		} = this.props;
@@ -126,6 +127,7 @@ class EasyTab extends Component {
 							<Button
 								compact
 								busy={ this.state.isBusy }
+								disabled={ isTesting }
 								onClick={ this.testCache }>
 								{ translate( 'Test Cache' ) }
 							</Button>
