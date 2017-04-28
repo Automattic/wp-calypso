@@ -19,7 +19,7 @@ import Notice from 'components/notice';
 
 const LockDown = ( {
 	fields: {
-		lock_down,
+		cache_lock_down,
 	},
 	handleAutosavingToggle,
 	isRequesting,
@@ -33,14 +33,14 @@ const LockDown = ( {
 
 	return (
 		<div>
-			<SectionHeader label="Lock Down" />
+			<SectionHeader label={ translate( 'Lock Down' ) } />
 			<Card>
 				<form>
 					<FormFieldset>
 						<FormToggle
-							checked={ !! lock_down }
+							checked={ !! cache_lock_down }
 							disabled={ isRequesting || isSaving }
-							onChange={ handleAutosavingToggle( 'lock_down' ) }>
+							onChange={ handleAutosavingToggle( 'cache_lock_down' ) }>
 							<span>
 								{ translate( 'Enable lock down to prepare your server for an expected spike in traffic.' ) }
 							</span>
@@ -73,8 +73,8 @@ const LockDown = ( {
 						<Notice
 							isCompact={ true }
 							className="wp-super-cache__lock-down-notice"
-							status={ lock_down ? 'is-warning' : 'is-info' }
-							text={ lock_down
+							status={ cache_lock_down ? 'is-warning' : 'is-info' }
+							text={ cache_lock_down
 								? translate( 'WordPress is locked down. Super Cache static files will not be deleted ' +
 									'when new comments are made.' )
 								: translate( 'WordPress is not locked down. New comments will refresh Super Cache ' +
@@ -90,7 +90,7 @@ const LockDown = ( {
 
 const getFormSettings = settings => {
 	return pick( settings, [
-		'lock_down',
+		'cache_lock_down',
 	] );
 };
 

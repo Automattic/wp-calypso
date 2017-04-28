@@ -232,9 +232,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				// Rejected User Agents
 				rejected_user_agent: 'bot\nia_archive\nslurp\ncrawl\nspider\nYandex',
 
-				// Lock Down
-				lock_down: false,
-
 				// Directly Cached Files
 				cache_direct_pages: [
 					'/about/',
