@@ -4,7 +4,7 @@
 
 .login__form-userdata {
 	label {
-		color: #2e4453;
+		color: $gray-dark;
 		display: block;
 		font-size: 14px;
 		line-height: 1.5;
@@ -46,7 +46,7 @@
 		font-size: 14px;
 
 		&:hover{
-			color: #00aadc;
+			color: $blue-medium;
 		}
 	}
 	.gridicon{
