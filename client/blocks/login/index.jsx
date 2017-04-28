@@ -119,24 +119,26 @@ export class Login extends Component {
 				<form onSubmit={ this.onSubmitForm }>
 					<Card className="login__form">
 						<div className="login__form-userdata">
-							<label className="login__form-userdata-username">
+							<label htmlFor="usernameOrEmail" className="login__form-userdata-username">
 								{ this.props.translate( 'Username or Email Address' ) }
-								<FormTextInput
-									className="login__form-userdata-username-input"
-									onChange={ this.onChangeField }
-									name="usernameOrEmail"
-									value={ this.state.usernameOrEmail }
-									{ ...isDisabled } />
 							</label>
-							<label className="login__form-userdata-username">
+							<FormTextInput
+								className="login__form-userdata-username-input"
+								onChange={ this.onChangeField }
+								id="usernameOrEmail"
+								name="usernameOrEmail"
+								value={ this.state.usernameOrEmail }
+								{ ...isDisabled } />
+							<label htmlFor="password" className="login__form-userdata-username">
 								{ this.props.translate( 'Password' ) }
-								<FormPasswordInput
-									className="login__form-userdata-username-password"
-									onChange={ this.onChangeField }
-									name="password"
-									value={ this.state.password }
-									{ ...isDisabled } />
 							</label>
+							<FormPasswordInput
+								className="login__form-userdata-username-password"
+								onChange={ this.onChangeField }
+								id="password"
+								name="password"
+								value={ this.state.password }
+								{ ...isDisabled } />
 						</div>
 						<div className="login__form-remember-me">
 							<label>
@@ -145,7 +147,7 @@ export class Login extends Component {
 									checked={ this.state.rememberme }
 									onChange={ this.onChangeRememberMe }
 									{ ...isDisabled } />
-								{ this.props.translate( 'Stay logged in' ) }
+								<span>{ this.props.translate( 'Stay logged in' ) }</span>
 							</label>
 						</div>
 						<div className="login__form-action">
