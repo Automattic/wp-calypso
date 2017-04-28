@@ -14,13 +14,13 @@ import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import Stream from 'reader/stream';
 import EmptyContent from './empty';
-import HeaderBack from 'reader/header-back';
 import SearchInput from 'components/search';
 import { recordAction, recordTrack } from 'reader/stats';
 import SuggestionProvider from './suggestion-provider';
 import Suggestion from './suggestion';
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
 import { SEARCH_RESULTS, } from 'reader/follow-button/follow-sources';
+import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 
 class SearchStream extends Component {
 	static propTypes = {
@@ -126,7 +126,7 @@ class SearchStream extends Component {
 	}
 
 	render() {
-		const { query, suggestions } = this.props;
+		const { query, suggestions, translate } = this.props;
 		const emptyContent = <EmptyContent query={ query } />;
 		const sortOrder = this.props.postsStore && this.props.postsStore.sortOrder;
 		const transformStreamItems = ( ! query || query === '' )
@@ -176,9 +176,12 @@ class SearchStream extends Component {
 				transformStreamItems={ transformStreamItems }
 			>
 				{ this.props.showBack && <HeaderBack /> }
-				<DocumentHead title={ documentTitle } />
 				<div ref={ this.handleStreamMounted } />
 				<div className="search-stream__fixed-area" ref={ this.handleSearchBoxMounted }>
+				<DocumentHead title={ documentTitle } />
+				<MobileBackToSidebar>
+					<h1>{ translate( 'Search' ) }</h1>
+				</MobileBackToSidebar>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
 							onSearch={ this.updateQuery }
