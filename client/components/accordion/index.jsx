@@ -14,6 +14,7 @@ import AccordionStatus from './status';
 export default class Accordion extends Component {
 	static propTypes = {
 		initialExpanded: PropTypes.bool,
+		temporaryExpand: PropTypes.bool,
 		onToggle: PropTypes.func,
 		title: PropTypes.string.isRequired,
 		subtitle: PropTypes.string,
@@ -23,7 +24,8 @@ export default class Accordion extends Component {
 
 	static defaultProps = {
 		initialExpanded: false,
-		onToggle: noop
+		temporaryExpand: false,
+		onToggle: noop,
 	};
 
 	constructor( props ) {
@@ -52,7 +54,7 @@ export default class Accordion extends Component {
 	render() {
 		const { className, icon, title, subtitle, status, children } = this.props;
 		const classes = classNames( 'accordion', className, {
-			'is-expanded': this.state.isExpanded,
+			'is-expanded': this.state.isExpanded || this.props.temporaryExpand,
 			'has-icon': !! icon,
 			'has-subtitle': !! subtitle,
 			'has-status': !! status
