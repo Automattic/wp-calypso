@@ -15,6 +15,7 @@ describe( 'eligibleForFreeToPaidUpsell', () => {
 	const siteId = 'siteId';
 
 	let canCurrentUser;
+	let isDomainOnlySite;
 	let isMappedDomainSite;
 	let isSiteOnFreePlan;
 	let isUserRegistrationDaysWithinRange;
@@ -22,12 +23,14 @@ describe( 'eligibleForFreeToPaidUpsell', () => {
 
 	useMockery( mockery => {
 		canCurrentUser = stub();
+		isDomainOnlySite = stub();
 		isMappedDomainSite = stub();
 		isSiteOnFreePlan = stub();
 		isUserRegistrationDaysWithinRange = stub();
 
 		mockery.registerMock( 'state/selectors/', {
 			canCurrentUser,
+			isDomainOnlySite,
 			isMappedDomainSite,
 			isSiteOnFreePlan,
 			isUserRegistrationDaysWithinRange
@@ -40,6 +43,7 @@ describe( 'eligibleForFreeToPaidUpsell', () => {
 
 	const meetAllConditions = () => {
 		canCurrentUser.withArgs( state, siteId, 'manage_options' ).returns( true );
+		isDomainOnlySite.withArgs( state, siteId ).returns( false );
 		isMappedDomainSite.withArgs( state, siteId ).returns( false );
 		isSiteOnFreePlan.withArgs( state, siteId ).returns( true );
 		isUserRegistrationDaysWithinRange.withArgs( state, moment, 0, 180 ).returns( true );
@@ -48,6 +52,12 @@ describe( 'eligibleForFreeToPaidUpsell', () => {
 	it( 'should return false when user can not manage options', () => {
 		meetAllConditions();
 		canCurrentUser.withArgs( state, siteId, 'manage_options' ).returns( false );
+		expect( eligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.false;
+	} );
+
+	it( 'should return false when domain only site', () => {
+		meetAllConditions();
+		isDomainOnlySite.withArgs( state, siteId ).returns( true );
 		expect( eligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.false;
 	} );
 
