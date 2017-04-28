@@ -1,18 +1,17 @@
 export default function isSurveyFilledIn( survey ) {
 	const answeredBothQuestions = survey.questionOneRadio && survey.questionTwoRadio;
-	let needsText = false;
 
 	if ( ! answeredBothQuestions ) {
 		return false;
 	}
 
 	if ( survey.questionOneRadio === 'anotherReasonOne' && survey.questionOneText === '' ) {
-		needsText = true;
+		return false;
 	}
 
 	if ( survey.questionTwoRadio === 'anotherReasonTwo' && survey.questionTwoText === '' ) {
-		needsText = true;
+		return false;
 	}
 
-	return ! needsText;
+	return true;
 }
