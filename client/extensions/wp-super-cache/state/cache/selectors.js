@@ -11,7 +11,7 @@ import { get } from 'lodash';
  * @return {Boolean} Whether the cache is being tested
  */
 export function isTestingCache( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'cacheTest', 'testStatus', siteId, 'testing' ], false );
+	return get( state, [ 'extensions', 'wpSuperCache', 'cache', 'testStatus', siteId, 'testing' ], false );
 }
 
 /**
@@ -33,7 +33,7 @@ export function isCacheTestSuccessful( state, siteId ) {
  * @return {String}  Cache test request status (pending, success or error)
  */
 export function getCacheTestStatus( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'cacheTest', 'testStatus', siteId, 'status' ] );
+	return get( state, [ 'extensions', 'wpSuperCache', 'cache', 'testStatus', siteId, 'status' ] );
 }
 
 /**
@@ -44,5 +44,5 @@ export function getCacheTestStatus( state, siteId ) {
  * @return {Object} Cache test results
  */
 export function getCacheTestResults( state, siteId ) {
-	return get( state, [ 'extensions', 'wpSuperCache', 'cacheTest', 'items', siteId ] );
+	return get( state, [ 'extensions', 'wpSuperCache', 'cache', 'items', siteId ] );
 }

@@ -24,7 +24,7 @@ import {
 	getSelectedSite,
 	getSelectedSiteId,
 } from 'state/ui/selectors';
-import { testCache } from './state/cache-test/actions';
+import { testCache } from './state/cache/actions';
 import {
 	errorNotice,
 	removeNotice,
@@ -35,7 +35,7 @@ import {
 	getCacheTestResults,
 	isCacheTestSuccessful,
 	isTestingCache,
-} from './state/cache-test/selectors';
+} from './state/cache/selectors';
 import { getNotices } from './state/notices/selectors';
 import {
 	getSettings,

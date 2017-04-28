@@ -22,7 +22,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						cacheTest: {
+						cache: {
 							testStatus: {
 								[ primarySiteId ]: { testing: true, status: 'pending' }
 							}
@@ -39,7 +39,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						cacheTest: {
+						cache: {
 							testStatus: {
 								[ primarySiteId ]: { testing: false, status: 'success' }
 							}
@@ -56,7 +56,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						cacheTest: {
+						cache: {
 							testStatus: {
 								[ primarySiteId ]: { testing: true, status: 'pending' }
 							}
@@ -75,7 +75,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						cacheTest: {
+						cache: {
 							testStatus: {
 								[ primarySiteId ]: { testing: true, status: 'pending' }
 							}
@@ -92,7 +92,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						cacheTest: {
+						cache: {
 							testStatus: {
 								[ primarySiteId ]: { testing: false, status: 'success' }
 							}
@@ -109,7 +109,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						cacheTest: {
+						cache: {
 							testStatus: {
 								[ primarySiteId ]: { testing: false, status: 'error' }
 							}
@@ -147,7 +147,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						cacheTest: {
+						cache: {
 							items: {
 								[ primarySiteId ]: primaryResults,
 							}
@@ -164,7 +164,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						cacheTest: {
+						cache: {
 							items: {
 								[ primarySiteId ]: primaryResults,
 							}
@@ -183,7 +183,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						cacheTest: {
+						cache: {
 							testStatus: {
 								[ primarySiteId ]: { testing: true, status: 'pending' }
 							}
@@ -200,7 +200,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						cacheTest: {
+						cache: {
 							testStatus: {
 								[ primarySiteId ]: { testing: false, status: 'success' }
 							}
@@ -217,7 +217,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						cacheTest: {
+						cache: {
 							testStatus: {
 								[ primarySiteId ]: { testing: false, status: 'error' }
 							}
@@ -234,7 +234,7 @@ describe( 'selectors', () => {
 			const state = {
 				extensions: {
 					wpSuperCache: {
-						cacheTest: {
+						cache: {
 							testStatus: {
 								[ primarySiteId ]: { testing: true, status: 'pending' }
 							}
