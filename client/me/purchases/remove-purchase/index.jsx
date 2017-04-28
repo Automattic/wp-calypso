@@ -13,16 +13,29 @@ import { get } from 'lodash';
  */
 import wpcom from 'lib/wp';
 import config from 'config';
-import { abtest } from 'lib/abtest';
 import CompactCard from 'components/card/compact';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
+import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
+import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initialSurveyState';
+import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/isSurveyFilledIn';
+import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
+import nextStep from 'components/marketing-survey/cancel-purchase-form/nextStep';
+import previousStep from 'components/marketing-survey/cancel-purchase-form/previousStep';
+import {
+	INITIAL_STEP,
+	FINAL_STEP,
+} from 'components/marketing-survey/cancel-purchase-form/steps';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
-import { getPurchase, isDataLoading, enrichedSurveyData } from '../utils';
-import { isDomainRegistration, isPlan, isGoogleApps, isJetpackPlan, isBusiness } from 'lib/products-values';
+import { getPurchase, isDataLoading } from '../utils';
+import { isDomainRegistration, isPlan, isGoogleApps, isJetpackPlan } from 'lib/products-values';
 import notices from 'notices';
 import purchasePaths from '../paths';
 import { removePurchase } from 'state/purchases/actions';
+import {
+	isHappychatAvailable,
+	isHappychatChatActive,
+} from 'state/happychat/selectors';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import userFactory from 'lib/user';
 import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
@@ -58,12 +71,8 @@ class RemovePurchase extends Component {
 	state = {
 		isDialogVisible: false,
 		isRemoving: false,
-		surveyStep: 1,
-		finalStep: 2,
-		survey: {
-			questionOneRadio: null,
-			questionTwoRadio: null
-		}
+		surveyStep: INITIAL_STEP,
+		survey: initialSurveyState()
 	}
 
 	recordChatEvent( eventAction ) {
@@ -90,12 +99,14 @@ class RemovePurchase extends Component {
 		this.recordEvent( 'calypso_purchases_cancel_form_close' );
 		this.setState( {
 			isDialogVisible: false,
-			surveyStep: 1,
-			survey: {
-				questionOneRadio: null,
-				questionTwoRadio: null
-			}
+			surveyStep: INITIAL_STEP,
+			survey: initialSurveyState()
 		} );
+	}
+
+	chatInitiated = () => {
+		this.recordEvent( 'calypso_purchases_cancel_form_chat_initiated' );
+		this.closeDialog();
 	}
 
 	openDialog = ( event ) => {
@@ -112,49 +123,27 @@ class RemovePurchase extends Component {
 		this.setState( { isDialogVisible: false } );
 	}
 
-	recordSurveyStepChange = ( currentStep, nextStep, finalStep ) => {
-		if ( nextStep === 1 ) {
-			this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: 'initial_step' } );
-		} else if ( nextStep === 2 && finalStep === 3 ) {
-			this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: 'concierge_step' } );
-		} else {
-			this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: 'cancellation_step' } );
-		}
+	changeSurveyStep = ( stepFunction ) => {
+		const { selectedPurchase, isChatAvailable, isChatActive } = this.props;
+		const { surveyStep, survey } = this.state;
+		const steps = stepsForProductAndSurvey( survey, selectedPurchase, isChatAvailable || isChatActive );
+		const newStep = stepFunction( surveyStep, steps );
+		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
+		this.setState( { surveyStep: newStep } );
 	}
 
-	changeSurveyStep = ( direction ) => {
-		const purchase = getPurchase( this.props );
-		let newStep, finalStep;
-
-		if ( purchase && isBusiness( purchase ) &&
-			this.state.survey.questionOneRadio === 'tooHard' &&
-			abtest( 'conciergeOfferOnCancel' ) === 'showConciergeOffer'
-		) {
-			finalStep = 3;
-			this.setState( { finalStep: finalStep } );
-
-			switch ( this.state.surveyStep ) {
-				case 1:
-					newStep = 2;
-					break;
-				case 2:
-					newStep = direction === 'previous' ? 1 : 3;
-					break;
-				case 3:
-					newStep = 2;
-					break;
-				default:
-					newStep = 1;
-					break;
-			}
-		} else {
-			finalStep = 2;
-			newStep = this.state.surveyStep === 1 ? 2 : 1;
-			this.setState( { finalStep: finalStep } );
+	clickNext = () => {
+		if ( this.state.isRemoving || ! isSurveyFilledIn( this.state.survey ) ) {
+			return;
 		}
+		this.changeSurveyStep( nextStep );
+	}
 
-		this.recordSurveyStepChange( this.state.surveyStep, newStep, finalStep );
-		this.setState( { surveyStep: newStep } );
+	clickPrevious = () => {
+		if ( this.state.isRemoving ) {
+			return;
+		}
+		this.changeSurveyStep( previousStep );
 	}
 
 	onSurveyChange = ( update ) => {
@@ -317,48 +306,43 @@ class RemovePurchase extends Component {
 	}
 
 	renderPlanDialogs = () => {
-		const { translate } = this.props;
+		const { selectedPurchase, translate } = this.props;
 		const buttons = {
-				cancel: {
-					action: 'cancel',
-					disabled: this.state.isRemoving,
-					label: translate( "No, I'll Keep It" )
-				},
-				next: {
-					action: 'next',
-					disabled: this.state.isRemoving ||
-						this.state.survey.questionOneRadio === null ||
-						this.state.survey.questionTwoRadio === null ||
-						( this.state.survey.questionOneRadio === 'anotherReasonOne' && this.state.survey.questionOneText === '' ) ||
-						( this.state.survey.questionTwoRadio === 'anotherReasonTwo' && this.state.survey.questionTwoText === '' ),
-					label: translate( 'Next Step' ),
-					onClick: this.changeSurveyStep
-				},
-				prev: {
-					action: 'prev',
-					disabled: this.state.isRemoving,
-					label: translate( 'Previous Step' ),
-					onClick: this.changeSurveyStep.bind( null, 'previous' )
-				},
-				remove: {
-					action: 'remove',
-					disabled: this.state.isRemoving,
-					isPrimary: true,
-					label: translate( 'Yes, Remove Now' ),
-					onClick: this.removePurchase
-				}
+			cancel: {
+				action: 'cancel',
+				disabled: this.state.isRemoving,
+				label: translate( "No, I'll Keep It" )
 			},
-			inFinalStep = ( this.state.surveyStep === this.state.finalStep );
+			next: {
+				action: 'next',
+				disabled: this.state.isRemoving || ! isSurveyFilledIn( this.state.survey ),
+				label: translate( 'Next Step' ),
+				onClick: this.clickNext
+			},
+			prev: {
+				action: 'prev',
+				disabled: this.state.isRemoving,
+				label: translate( 'Previous Step' ),
+				onClick: this.clickPrevious
+			},
+			remove: {
+				action: 'remove',
+				disabled: this.state.isRemoving,
+				isPrimary: true,
+				label: translate( 'Yes, Remove Now' ),
+				onClick: this.removePurchase
+			}
+		};
 
 		let buttonsArr;
 		if ( ! config.isEnabled( 'upgrades/removal-survey' ) ) {
 			buttonsArr = [ buttons.cancel, buttons.remove ];
-		} else if ( inFinalStep ) {
+		} else if ( this.state.surveyStep === FINAL_STEP ) {
 			buttonsArr = [ buttons.cancel, buttons.prev, buttons.remove ];
 		} else {
-			buttonsArr = this.state.surveyStep === 2
-				? [ buttons.cancel, buttons.prev, buttons.next ]
-				: [ buttons.cancel, buttons.next ];
+			buttonsArr = this.state.surveyStep === INITIAL_STEP
+				? [ buttons.cancel, buttons.next ]
+				: [ buttons.cancel, buttons.prev, buttons.next ];
 		}
 
 		if ( config.isEnabled( 'upgrades/precancellation-chat' ) ) {
@@ -373,12 +357,13 @@ class RemovePurchase extends Component {
 					isVisible={ this.state.isDialogVisible }
 					onClose={ this.closeDialog }>
 					<CancelPurchaseForm
+						chatInitiated={ this.chatInitiated }
+						productName={ getName( selectedPurchase ) }
 						surveyStep={ this.state.surveyStep }
-						finalStep={ this.state.finalStep }
 						showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
 						defaultContent={ this.renderPlanDialogsText() }
 						onInputChange={ this.onSurveyChange }
-						isJetpack={ isJetpackPlan( getPurchase( this.props ) ) }
+						isJetpack={ isJetpackPlan( selectedPurchase ) }
 					/>
 				</Dialog>
 			</div>
@@ -454,6 +439,8 @@ class RemovePurchase extends Component {
 export default connect(
 	( state, { selectedSite } ) => ( {
 		isDomainOnlySite: isDomainOnly( state, selectedSite && selectedSite.ID ),
+		isChatAvailable: isHappychatAvailable( state ),
+		isChatActive: isHappychatChatActive( state ),
 	} ),
 	{
 		receiveDeletedSite,

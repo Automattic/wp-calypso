@@ -62,7 +62,7 @@ class HappychatButton extends Component {
 	}
 
 	render() {
-		const { translate, children, className, borderless, hasUnread, isChatAvailable, isChatActive } = this.props;
+		const { translate, children, className, primary, borderless, hasUnread, isChatAvailable, isChatActive } = this.props;
 		const showButton = isChatAvailable || isChatActive;
 		const classes = classnames( 'happychat__button', className, {
 			'has-unread': hasUnread
@@ -75,6 +75,7 @@ class HappychatButton extends Component {
 		return (
 			<Button
 				className={ classes }
+				primary={ primary }
 				borderless={ borderless }
 				onClick={ this.onClick }
 				title={ translate( 'Support Chat' ) }>

@@ -18,16 +18,23 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
+import HappychatButton from 'components/happychat/button';
+import {
+	INITIAL_STEP,
+	CONCIERGE_STEP,
+	HAPPYCHAT_STEP,
+} from './steps';
 
 const CancelPurchaseForm = React.createClass( {
 	propTypes: {
+		productName: React.PropTypes.string.isRequired,
 		translate: React.PropTypes.func,
-		surveyStep: React.PropTypes.number.isRequired,
-		finalStep: React.PropTypes.number.isRequired,
+		surveyStep: React.PropTypes.string.isRequired,
 		showSurvey: React.PropTypes.bool.isRequired,
 		defaultContent: React.PropTypes.node.isRequired,
 		onInputChange: React.PropTypes.func.isRequired,
-		isJetpack: React.PropTypes.bool.isRequired
+		isJetpack: React.PropTypes.bool.isRequired,
+		chatInitiated: React.PropTypes.func.isRequired,
 	},
 
 	getInitialState() {
@@ -461,10 +468,33 @@ const CancelPurchaseForm = React.createClass( {
 		);
 	},
 
+	renderLiveChat() {
+		const { chatInitiated, productName, translate } = this.props;
+		return (
+			<FormFieldset>
+				<p>
+					{
+						translate(
+							'As a %(productName)s user, you have instant access to our team of Happiness ' +
+							'Engineers who can answer your questions and get your site up and running ' +
+							'just as you like! Click the button below to start a chat now.',
+							{
+								args: { productName }
+							}
+						)
+					}
+				</p>
+				<HappychatButton primary borderless={ false } onClick={ chatInitiated }>
+					{ translate( 'Start a Live chat' ) }
+				</HappychatButton>
+			</FormFieldset>
+		);
+	},
+
 	render() {
 		const { translate } = this.props;
 		if ( this.props.showSurvey ) {
-			if ( this.props.surveyStep === 1 ) {
+			if ( this.props.surveyStep === INITIAL_STEP ) {
 				return (
 					<div>
 						<FormSectionHeading>
@@ -480,13 +510,24 @@ const CancelPurchaseForm = React.createClass( {
 			}
 
 			// Render concierge offer if appropriate
-			if ( this.props.surveyStep === 2 && this.props.finalStep === 3 ) {
+			if ( this.props.surveyStep === CONCIERGE_STEP ) {
 				return (
 					<div>
 						<FormSectionHeading>
 							{ translate( 'Let us help you setup your site!' ) }
 						</FormSectionHeading>
 						{ this.renderConciergeOffer() }
+					</div>
+				);
+			}
+
+			if ( this.props.surveyStep === HAPPYCHAT_STEP ) {
+				return (
+					<div>
+						<FormSectionHeading>
+							{ translate( 'How can we help?' ) }
+						</FormSectionHeading>
+						{ this.renderLiveChat() }
 					</div>
 				);
 			}
