@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import tinyMCE from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
@@ -91,6 +92,7 @@ export const PostEditor = React.createClass( {
 			isSaving: false,
 			isPublishing: false,
 			notice: null,
+			selectedText: null,
 			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
 			isLoadingAutosave: false,
@@ -231,6 +233,21 @@ export const PostEditor = React.createClass( {
 		}
 	},
 
+	getSelectedText: function() {
+		const selectedText = tinyMCE.activeEditor.selection.getContent() || null;
+		if ( this.state.selectedText !== selectedText ) {
+			this.setState( { selectedText: selectedText || null } );
+		}
+	},
+
+	onEditorKeyUp: function( event ) {
+		if ( event.code === 'AltLeft' || 'AltRight' ) {
+			this.getSelectedText();
+		}
+
+		this.debouncedSaveRawContent();
+	},
+
 	render: function() {
 		const site = this.props.selectedSite || undefined;
 		const mode = this.getEditorMode();
@@ -363,11 +380,15 @@ export const PostEditor = React.createClass( {
 								onSetContent={ this.debouncedSaveRawContent }
 								onInit={ this.onEditorInitialized }
 								onChange={ this.onEditorContentChange }
-								onKeyUp={ this.debouncedSaveRawContent }
+								onKeyUp={ this.onEditorKeyUp }
 								onFocus={ this.onEditorFocus }
+								onMouseUp={ this.getSelectedText }
+								onBlur={ this.getSelectedText }
 								onTextEditorChange={ this.onEditorContentChange } />
 						</div>
-						<EditorWordCount />
+						<EditorWordCount
+							selectedText={ this.state.selectedText }
+						/>
 					</div>
 					<EditorSidebar
 						toggleSidebar={ this.toggleSidebar }
@@ -951,6 +972,10 @@ export const PostEditor = React.createClass( {
 
 		if ( mode === 'html' ) {
 			this.editor.setEditorContent( content );
+
+			if ( this.state.selectedText ) {
+				this.getSelectedText();
+			}
 		}
 
 		this.props.setEditorModePreference( mode );
