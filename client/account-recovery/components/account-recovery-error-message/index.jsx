@@ -14,7 +14,8 @@ class AccountRecoveryErrorMessage extends Component {
 
 		switch ( error.name ) {
 			case 'RestInvalidKeyError':
-				return translate( "We've failed to validate with the given code. Please double check if the code is correct." );
+				return translate( "We've failed to validate with the given code. " +
+					'Please double check if the code is correct.' );
 		}
 
 		return translate(
