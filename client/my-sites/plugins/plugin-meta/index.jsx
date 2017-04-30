@@ -209,6 +209,7 @@ const PluginMeta = React.createClass( {
 			'wordpress-reset',
 			'wp-reset',
 			'advanced-reset-wp',
+			'advanced-wp-reset',
 		];
 
 		return includes( unsupportedPlugins, plugin.slug );
