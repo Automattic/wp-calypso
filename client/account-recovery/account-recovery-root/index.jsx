@@ -18,11 +18,13 @@ import ForgotUsernameForm from 'account-recovery/forgot-username-form';
 import ResetPasswordForm from 'account-recovery/reset-password-form';
 import ResetPasswordEmailForm from 'account-recovery/reset-password-email-form';
 import ResetPasswordSmsForm from 'account-recovery/reset-password-sms-form';
+import ResetPasswordConfirmForm from 'account-recovery/reset-password-confirm-form';
 import { ACCOUNT_RECOVERY_STEPS as STEPS } from 'account-recovery/constants';
 import {
 	isAccountRecoveryResetOptionsReady,
 	isAccountRecoveryUserDataReady,
 	getAccountRecoveryResetSelectedMethod,
+	getAccountRecoveryValidationKey,
 } from 'state/selectors';
 
 const getPageInfo = ( translate, step ) => {
@@ -49,6 +51,10 @@ const getPageInfo = ( translate, step ) => {
 			trackerTitle: 'Account Recovery > Reset Password Sms',
 			documentHeadTitle: concatHeadTitle( translate( 'Reset Password' ), translate( 'SMS Message' ) ),
 		},
+		[ STEPS.RESET_PASSWORD_CONFIRM ]: {
+			trackerTitle: 'Account Recovery > New Password',
+			documentHeadTitle: concatHeadTitle( translate( 'Reset Password' ), translate( 'New Password' ) ),
+		},
 	};
 
 	return pageInfo[ step ];
@@ -60,7 +66,12 @@ const getCurrentStep = ( props ) => {
 		isUserDataReady,
 		isResetOptionsReady,
 		selectedMethod,
+		validationKey,
 	} = props;
+
+	if ( validationKey ) {
+		return STEPS.RESET_PASSWORD_CONFIRM;
+	}
 
 	if ( selectedMethod ) {
 		if ( includes( [ 'primary_email', 'secondary_email' ], selectedMethod ) ) {
@@ -89,6 +100,8 @@ const getForm = ( step ) => {
 			return <ResetPasswordEmailForm />;
 		case STEPS.RESET_PASSWORD_SMS:
 			return <ResetPasswordSmsForm />;
+		case STEPS.RESET_PASSWORD_CONFIRM:
+			return <ResetPasswordConfirmForm />;
 	}
 
 	return null;
@@ -118,5 +131,6 @@ export default connect(
 		isResetOptionsReady: isAccountRecoveryResetOptionsReady( state ),
 		isUserDataReady: isAccountRecoveryUserDataReady( state ),
 		selectedMethod: getAccountRecoveryResetSelectedMethod( state ),
+		validationKey: getAccountRecoveryValidationKey( state ),
 	} )
 )( localize( AccountRecoveryRoot ) );

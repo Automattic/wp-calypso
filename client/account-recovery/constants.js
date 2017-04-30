@@ -4,4 +4,5 @@ export const ACCOUNT_RECOVERY_STEPS = {
 	RESET_PASSWORD: 'resetPassword',
 	RESET_PASSWORD_EMAIL: 'resetPasswordEmail',
 	RESET_PASSWORD_SMS: 'resetPasswordSms',
+	RESET_PASSWORD_CONFIRM: 'resetPasswordConfirm',
 };
