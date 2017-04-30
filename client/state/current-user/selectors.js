@@ -44,16 +44,6 @@ export function getCurrentUserLocale( state ) {
 }
 
 /**
- * Returns the geo location of the current user, based happychat session initiation (on ip)
- *
- * @param  {Object}  state  Global state tree
- * @return {?String}        Current user geo location
- */
-export function getCurrentUserGeoLocation( state ) {
-	return state.currentUser.geoLocation || null;
-}
-
-/**
  * Returns the currency code for the current user.
  *
  * @param  {Object}  state  Global state tree

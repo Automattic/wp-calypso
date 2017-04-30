@@ -12,7 +12,6 @@ import {
 	getCurrentUserLocale,
 	getCurrentUserDate,
 	isValidCapability,
-	getCurrentUserGeoLocation,
 	getCurrentUserCurrencyCode,
 	getCurrentUserEmail,
 } from '../selectors';
@@ -202,27 +201,6 @@ describe( 'selectors', () => {
 				}
 			} );
 			expect( selected ).to.equal( 'USD' );
-		} );
-	} );
-
-	describe( 'getCurrentUserGeoLocation', () => {
-		it( 'should return null if geoLocation is not set', () => {
-			const selected = getCurrentUserGeoLocation( {
-				currentUser: {
-					geoLocation: null
-				}
-			} );
-			expect( selected ).to.equal( null );
-		} );
-		it( 'should return value if geoLocation is set', () => {
-			const selected = getCurrentUserGeoLocation( {
-				currentUser: {
-					geoLocation: {
-						city: 'Timisoara'
-					}
-				}
-			} );
-			expect( selected.city ).to.equal( 'Timisoara' );
 		} );
 	} );
 

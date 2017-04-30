@@ -123,8 +123,7 @@ describe( 'middleware', () => {
 
 	describe( 'HAPPYCHAT_SEND_USER_INFO action', () => {
 		const state = {
-			currentUser: {
-				id: '2',
+			happychat: {
 				geoLocation: {
 					city: 'Timisoara'
 				}
@@ -138,7 +137,7 @@ describe( 'middleware', () => {
 			sendInfo( connection, { getState }, action );
 
 			expect( connection.info ).to.have.been.calledOnce;
-			expect( connection.info.firstCall.args[ 0 ].text ).to.include( state.currentUser.geoLocation.city );
+			expect( connection.info.firstCall.args[ 0 ].text ).to.include( state.happychat.geoLocation.city );
 		} );
 	} );
 

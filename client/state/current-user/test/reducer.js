@@ -10,7 +10,6 @@ import deepFreeze from 'deep-freeze';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	CURRENT_USER_ID_SET,
-	CURRENT_USER_GEO_LOCATION_SET,
 	DESERIALIZE,
 	PLANS_RECEIVE,
 	SERIALIZE,
@@ -19,7 +18,7 @@ import {
 	SITES_RECEIVE,
 	SITES_UPDATE
 } from 'state/action-types';
-import reducer, { id, capabilities, geoLocation, currencyCode } from '../reducer';
+import reducer, { id, capabilities, currencyCode } from '../reducer';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {
@@ -31,7 +30,6 @@ describe( 'reducer', () => {
 			'id',
 			'currencyCode',
 			'capabilities',
-			'geoLocation',
 			'flags',
 			'gravatarStatus'
 		] );
@@ -83,31 +81,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.equal( 73705554 );
-		} );
-	} );
-
-	describe( '#geoLocation()', () => {
-		it( 'should default to null', () => {
-			const state = geoLocation( undefined, {} );
-
-			expect( state ).to.be.null;
-		} );
-
-		it( 'should set the current user geolocation', () => {
-			const state = geoLocation( null, {
-				type: CURRENT_USER_GEO_LOCATION_SET,
-				geoLocation: { city: 'Timisoara' }
-			} );
-
-			expect( state ).to.eql( { city: 'Timisoara' } );
-		} );
-
-		it( 'returns valid geolocation', () => {
-			const state = geoLocation( { city: 'Timisoara' }, {
-				type: DESERIALIZE
-			} );
-
-			expect( state ).to.eql( { city: 'Timisoara' } );
 		} );
 	} );
 

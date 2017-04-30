@@ -10,7 +10,6 @@ import { get, isEqual, reduce } from 'lodash';
 import {
 	CURRENT_USER_ID_SET,
 	CURRENT_USER_FLAGS_RECEIVE,
-	CURRENT_USER_GEO_LOCATION_SET,
 	DESERIALIZE,
 	SITE_RECEIVE,
 	SITE_PLANS_FETCH_COMPLETED,
@@ -19,7 +18,7 @@ import {
 	PLANS_RECEIVE
 } from 'state/action-types';
 import { createReducer, isValidStateWithSchema } from 'state/utils';
-import { idSchema, geoLocationSchema, capabilitiesSchema, currencyCodeSchema, flagsSchema } from './schema';
+import { idSchema, capabilitiesSchema, currencyCodeSchema, flagsSchema } from './schema';
 import gravatarStatus from './gravatar-status/reducer';
 
 /**
@@ -32,17 +31,6 @@ import gravatarStatus from './gravatar-status/reducer';
 export const id = createReducer( null, {
 	[ CURRENT_USER_ID_SET ]: ( state, action ) => action.userId
 }, idSchema );
-
-/**
- * Tracks the current user geo location.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export const geoLocation = createReducer( null, {
-	[ CURRENT_USER_GEO_LOCATION_SET ]: ( state, action ) => action.geoLocation
-}, geoLocationSchema );
 
 export const flags = createReducer( [], {
 	[ CURRENT_USER_FLAGS_RECEIVE ]: ( state, action ) => action.flags
@@ -110,7 +98,6 @@ export function capabilities( state = {}, action ) {
 
 export default combineReducers( {
 	id,
-	geoLocation,
 	currencyCode,
 	capabilities,
 	flags,

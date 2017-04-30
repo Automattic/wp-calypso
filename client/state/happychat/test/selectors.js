@@ -11,6 +11,7 @@ import {
 	getLostFocusTimestamp,
 	hasUnreadMessages,
 	wasHappychatRecentlyActive,
+	getGeoLocation,
 } from '../selectors';
 
 const TIME_SECOND = 1000;
@@ -104,6 +105,27 @@ describe( 'selectors', () => {
 				}
 			};
 			expect( hasUnreadMessages( state ) ).to.be.true;
+		} );
+	} );
+
+	describe( 'getGeoLocation', () => {
+		it( 'should return null if geoLocation is not set', () => {
+			const selected = getGeoLocation( {
+				happychat: {
+					geoLocation: null
+				}
+			} );
+			expect( selected ).to.equal( null );
+		} );
+		it( 'should return value if geoLocation is set', () => {
+			const selected = getGeoLocation( {
+				happychat: {
+					geoLocation: {
+						city: 'Timisoara'
+					}
+				}
+			} );
+			expect( selected.city ).to.equal( 'Timisoara' );
 		} );
 	} );
 } );

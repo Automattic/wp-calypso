@@ -28,21 +28,20 @@ import {
 	setHappychatAvailable,
 	setHappychatChatStatus,
 	setReconnecting,
+	setGeoLocation,
 } from './actions';
 import {
 	getHappychatTranscriptTimestamp,
 	isHappychatConnectionUninitialized,
 	wasHappychatRecentlyActive,
 	isHappychatClientConnected,
-	isHappychatChatAssigned
+	isHappychatChatAssigned,
+	getGeoLocation,
 } from './selectors';
 import {
 	getCurrentUser,
-	getCurrentUserGeoLocation,
 	getCurrentUserLocale,
 } from 'state/current-user/selectors';
-
-import { setCurrentUserGeoLocation } from 'state/current-user/actions';
 
 const debug = require( 'debug' )( 'calypso:happychat:actions' );
 
@@ -105,7 +104,7 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 	return startSession()
 		.then( ( { session_id, geo_location } ) => {
 			if ( geo_location && geo_location.country_long && geo_location.city ) {
-				dispatch( setCurrentUserGeoLocation( geo_location ) );
+				dispatch( setGeoLocation( geo_location ) );
 			}
 
 			return sign( { user, session_id } );
@@ -146,7 +145,7 @@ export const sendInfo = ( connection, { getState }, siteUrl ) => {
 
 	// Geo location
 	const state = getState();
-	const geoLocation = getCurrentUserGeoLocation( state );
+	const geoLocation = getGeoLocation( state );
 	const userLocation = ( null !== geoLocation ) ? `\nLocation: ${ geoLocation.city }, ${ geoLocation.country_long }` : '';
 
 	const msg = {

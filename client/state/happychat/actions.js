@@ -25,6 +25,7 @@ import {
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
+	HAPPYCHAT_SET_GEO_LOCATION,
 } from 'state/action-types';
 
 export const setHappychatChatStatus = status => ( {
@@ -56,3 +57,17 @@ export const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, even
 export const sendUserInfo = siteUrl => ( { type: HAPPYCHAT_SEND_USER_INFO, siteUrl } );
 
 export const sendChatMessage = message => ( { type: HAPPYCHAT_SEND_MESSAGE, message } );
+
+/**
+ * Returns an action object to be used in signalling that the current user geo location
+ * has been set.
+ *
+ * @param  {Object} geoLocation Geo location information based on ip
+ * @return {Object}        Action object
+ */
+export function setGeoLocation( geoLocation ) {
+	return {
+		type: HAPPYCHAT_SET_GEO_LOCATION,
+		geoLocation
+	};
+}

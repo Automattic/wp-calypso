@@ -7,16 +7,6 @@ export const currencyCodeSchema = {
 	type: [ 'string', 'null' ]
 };
 
-export const geoLocationSchema = {
-	type: [ 'object', 'null' ],
-	properties: {
-		city: { type: 'string' },
-		country_long: { type: 'string' },
-		country_short: { type: 'string' },
-		region: { type: 'string' },
-	}
-};
-
 export const capabilitiesSchema = {
 	type: 'object',
 	additionalProperties: false,
