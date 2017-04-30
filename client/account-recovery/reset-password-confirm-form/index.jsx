@@ -101,7 +101,6 @@ class ResetPasswordConfirmForm extends Component {
 						className="reset-password-confirm-form__button submit"
 						type="submit"
 						disabled={ isRequesting || ! newPassword }
-						primary
 					>
 						{ translate( 'Reset Password' ) }
 					</FormButton>
