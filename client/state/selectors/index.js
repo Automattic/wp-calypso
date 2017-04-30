@@ -28,6 +28,7 @@ export getAccountRecoveryValidationKey from './get-account-recovery-validation-k
 export getAccountRecoveryValidationError from './get-account-recovery-validation-error';
 export getBlockedSites from './get-blocked-sites';
 export getBillingTransactions from './get-billing-transactions';
+export getComment from './get-comment';
 export getCurrentUserPaymentMethods from './get-current-user-payment-methods';
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';
 export getJetpackConnectionStatus from './get-jetpack-connection-status';
@@ -57,6 +58,7 @@ export getPastBillingTransaction from './get-past-billing-transaction';
 export getPastBillingTransactions from './get-past-billing-transactions';
 export getPosterUploadProgress from './get-poster-upload-progress';
 export getPosterUrl from './get-poster-url';
+export getPostComments from './get-post-comments';
 export getPostLikes from './get-post-likes';
 export getPrimarySiteId from './get-primary-site-id';
 export getRawOffsets from './get-raw-offsets';
