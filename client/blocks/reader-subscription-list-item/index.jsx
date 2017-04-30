@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { trim, isEmpty, get } from 'lodash';
+import { isEmpty, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,7 +13,19 @@ import ReaderAvatar from 'blocks/reader-avatar';
 import FollowButton from 'reader/follow-button';
 import { getStreamUrl } from 'reader/route';
 import EmailSettings from './email-settings';
-import { getSiteName, getSiteUrl } from 'reader/get-helpers';
+import {
+	getSiteName,
+	getSiteDescription,
+	getSiteAuthorName,
+	getFeedUrl,
+	getSiteUrl,
+} from 'reader/get-helpers';
+import untrailingslashit from 'lib/route/untrailingslashit';
+
+// Remove the starting https, www. and remove trailing slash.
+const stripUrl = url => untrailingslashit(
+	url.replace( /^https?:\/\/(www\.)?/, '' )
+);
 
 function ReaderSubscriptionListItem( {
 	url,
@@ -28,15 +40,13 @@ function ReaderSubscriptionListItem( {
 } ) {
 	const siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
-	const siteExcerpt = ( site && site.description ) || ( feed && feed.description );
-	// prefer a users name property
-	// if that doesn't exist settle for combining first and last name
-	const authorName = siteAuthor && ( siteAuthor.name ||
-		trim( `${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }` ) );
+	const siteExcerpt = getSiteDescription( { feed, site } );
+	const authorName = getSiteAuthorName( site );
 	const siteIcon = get( site, 'icon.img' );
 	const feedIcon = get( feed, 'image' );
 	const streamUrl = getStreamUrl( feedId, siteId );
-	const siteUrl = url || getSiteUrl( { feed, site } );
+	const feedUrl = url || getFeedUrl( { feed, site } );
+	const siteUrl = getSiteUrl( { feed, site } );
 	const isFollowing = ( site && site.is_following ) || ( feed && feed.is_following );
 
 	return (
@@ -67,9 +77,16 @@ function ReaderSubscriptionListItem( {
 						}
 					</span>
 				}
+			{ siteUrl && (
+				<div className="reader-subscription-list-item__site-url">
+					<a href={ siteUrl } target="_blank" rel="noopener noreferrer">
+						{ stripUrl( siteUrl ) }
+					</a>
+				</div>
+			) }
 			</div>
 			<div className="reader-subscription-list-item__options">
-				<FollowButton siteUrl={ siteUrl } followSource={ followSource } />
+				<FollowButton siteUrl={ feedUrl } followSource={ followSource } />
 				{ isFollowing && ! isEmailBlocked && <EmailSettings siteId={ siteId } /> }
 			</div>
 		</div>

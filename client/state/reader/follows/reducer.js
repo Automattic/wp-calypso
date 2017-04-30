@@ -109,6 +109,15 @@ export const items = createReducer( {}, {
 	[ READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, action ) => updatePostSubscription( state, action ),
 } );
 
+export const itemsCount = createReducer( 0, {
+	[ READER_FOLLOWS_RECEIVE ]: ( state, action ) => {
+		return !! action.payload.totalCount
+			? action.payload.totalCount
+			: state;
+	}
+} );
+
 export default combineReducers( {
-	items
+	items,
+	itemsCount,
 } );

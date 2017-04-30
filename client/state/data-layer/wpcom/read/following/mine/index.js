@@ -40,6 +40,7 @@ export const subscriptionsFromApi = apiResponse => {
 		return omitBy( {
 			ID: Number( subscription.ID ),
 			URL: subscription.URL,
+			feed_URL: subscription.URL,
 			blog_ID: toValidId( subscription.blog_ID ),
 			feed_ID: toValidId( subscription.feed_ID ),
 			date_subscribed: Date.parse( subscription.date_subscribed ),
@@ -92,7 +93,10 @@ export function receivePage( store, action, next, apiResponse ) {
 	const { page, number } = apiResponse;
 
 	store.dispatch(
-		receiveFollowsAction( subscriptionsFromApi( apiResponse ) )
+		receiveFollowsAction( {
+			follows: subscriptionsFromApi( apiResponse ),
+			totalCount: apiResponse.total_subscriptions,
+		} )
 	);
 
 	// Fetch the next page of subscriptions where applicable

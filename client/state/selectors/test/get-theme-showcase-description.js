@@ -20,9 +20,11 @@ describe( 'getThemeShowcaseDescription()', () => {
 		expect( description ).to.equal( 'Whether you\'re minimalist at heart, like keeping things clean, or just want to focus — ...' );
 	} );
 
-	it( 'should fall back to the tier description for an unknown vertical', () => {
+	it( 'should fall back to generic vertical description for an unknown vertical', () => {
 		const description = getThemeShowcaseDescription( state, { vertical: 'blahg', tier: 'free' } );
-		expect( description ).to.equal( 'Discover Free WordPress Themes on the WordPress.com Theme Showcase.' );
+		expect( description ).to.equal( 'Discover blahg WordPress Themes on the WordPress.com Showcase. \
+Here you can browse and find the best WordPress designs available on \
+WordPress.com to discover the one that is just right for you.' );
 	} );
 
 	it( 'should return the generic Theme Showcase description if no additional args are provided', () => {

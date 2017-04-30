@@ -11,6 +11,7 @@ import Gravatar from 'components/gravatar';
 import SiteIcon from 'blocks/site-icon';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
+import safeImageUrl from 'lib/safe-image-url';
 
 const ReaderAvatar = ( {
 		author,
@@ -29,16 +30,19 @@ const ReaderAvatar = ( {
 		feedIcon = null;
 	}
 
-	if ( siteIcon ) {
+	const safeSiteIcon = safeImageUrl( siteIcon );
+	const safeFeedIcon = safeImageUrl( feedIcon );
+
+	if ( safeSiteIcon ) {
 		fakeSite = {
 			icon: {
-				img: siteIcon
+				img: safeSiteIcon
 			}
 		};
-	} else if ( feedIcon ) {
+	} else if ( safeFeedIcon ) {
 		fakeSite = {
 			icon: {
-				img: feedIcon
+				img: safeFeedIcon
 			}
 		};
 	}

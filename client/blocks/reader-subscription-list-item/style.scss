@@ -79,14 +79,6 @@
 	}
 }
 
-.following-manage__subscriptions-list .following-manage__sites-window-scroller > div {
-	border-bottom: 1px solid lighten( $gray, 30% );
-
-	&:last-child {
-		border: 0;
-	}
-}
-
 .reader-subscription-list-item .follow-button {
 	border: 0;
 	padding: 0;
@@ -210,4 +202,8 @@
 
 .reader-subscription-list-item__email-popout-wrapper .segmented-control__link {
 	background: $white;
+}
+
+.reader-subscription-list-item__site-url, .reader-subscription-list-item__site-url a {
+	color: $gray;
 }

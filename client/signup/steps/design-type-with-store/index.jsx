@@ -19,6 +19,7 @@ import BlogImage from './blog-image';
 import PageImage from './page-image';
 import GridImage from './grid-image';
 import StoreImage from './store-image';
+import { abtest } from 'lib/abtest';
 
 class DesignTypeWithStoreStep extends Component {
 	constructor( props ) {
@@ -166,6 +167,10 @@ class DesignTypeWithStoreStep extends Component {
 
 		if ( this.state.showStore ) {
 			return translate( 'Create your WordPress Store' );
+		}
+
+		if ( abtest( 'signupSurveyStep' ) === 'showSurveyStep' ) {
+			return 'We\'re excited to hear more about your project.';
 		}
 
 		return translate( 'Hello! Let’s create your new site.' );

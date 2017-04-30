@@ -9,9 +9,6 @@ import { expect } from 'chai';
  */
 import useNock from 'test/helpers/use-nock';
 import {
-	SITE_FRONT_PAGE_SET,
-	SITE_FRONT_PAGE_SET_FAILURE,
-	SITE_FRONT_PAGE_SET_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -27,8 +24,7 @@ import {
 	receiveSites,
 	receiveSiteUpdates,
 	requestSites,
-	requestSite,
-	setFrontPage
+	requestSite
 } from '../actions';
 
 import { useSandbox } from 'test/helpers/use-sinon';
@@ -190,60 +186,6 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_REQUEST_FAILURE,
 					siteId: 77203074,
-					error: match( { message: 'User cannot access this private blog.' } )
-				} );
-			} );
-		} );
-	} );
-
-	describe( 'setFrontPage()', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.post( '/rest/v1.1/sites/2916284/homepage', {
-					is_page_on_front: true,
-					page_on_front_id: 1
-				} )
-				.reply( 200, {
-					is_page_on_front: true,
-					page_on_front_id: 1
-				} )
-				.post( '/rest/v1.1/sites/77203074/homepage' )
-				.reply( 403, {
-					error: 'authorization_required',
-					message: 'User cannot access this private blog.'
-				} );
-		} );
-
-		it( 'should dispatch set action when thunk triggered', () => {
-			setFrontPage( 2916284, 1 )( spy );
-
-			expect( spy ).to.have.been.calledWith( {
-				type: SITE_FRONT_PAGE_SET,
-				siteId: 2916284,
-				pageId: 1
-			} );
-		} );
-
-		it( 'should dispatch request success action when request completes', () => {
-			return setFrontPage( 2916284, 1 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: SITE_FRONT_PAGE_SET_SUCCESS,
-					siteId: 2916284,
-					updatedOptions: {
-						page_on_front: 1,
-						show_on_front: 'page',
-					}
-				} );
-			} );
-		} );
-
-		it( 'should dispatch fail action when request fails', () => {
-			return setFrontPage( 77203074, 1 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: SITE_FRONT_PAGE_SET_FAILURE,
-					siteId: 77203074,
-					pageId: 1,
 					error: match( { message: 'User cannot access this private blog.' } )
 				} );
 			} );

@@ -27,6 +27,7 @@ import { NOTICE_CREATE } from 'state/action-types';
 const successfulApiResponse = freeze( {
 	number: 2,
 	page: 1,
+	total_subscriptions: 2,
 	subscriptions: [
 		{
 			ID: '12345',
@@ -105,7 +106,10 @@ describe( 'get follow subscriptions', () => {
 			expect( dispatch ).to.have.been.calledWith( requestPageAction( 1 ) );
 			expect( dispatch ).to.have.been.calledWith( requestPageAction( 2 ) );
 			expect( dispatch ).to.have.been.calledWith(
-				receiveFollowsAction( subscriptionsFromApi( successfulApiResponse ) )
+				receiveFollowsAction( {
+					follows: subscriptionsFromApi( successfulApiResponse ),
+					totalCount: successfulApiResponse.total_subscriptions,
+				} )
 			);
 		} );
 	} );
@@ -146,12 +150,14 @@ describe( 'get follow subscriptions', () => {
 					ID: 12345,
 					blog_ID: 122463145,
 					URL: 'http://readerpostcards.wordpress.com',
+					feed_URL: 'http://readerpostcards.wordpress.com',
 					date_subscribed: Date.parse( '2017-01-12T03:55:45+00:00' ),
 				},
 				{
 					ID: 123456,
 					blog_ID: 64146350,
 					URL: 'https://fivethirtyeight.com/',
+					feed_URL: 'https://fivethirtyeight.com/',
 					date_subscribed: Date.parse( '2016-01-12T03:55:45+00:00' ),
 				}
 			];

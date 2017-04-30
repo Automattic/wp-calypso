@@ -5,7 +5,7 @@ import page from 'page';
 import ReactDom from 'react-dom';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { uniq, startsWith } from 'lodash';
+import { uniq, some, startsWith } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -165,11 +165,18 @@ function isPathAllowedForDomainOnlySite( path, domainName ) {
 	].map( pathFactory => pathFactory( domainName, domainName ) );
 
 	const otherPaths = [
-		`/checkout/${ domainName }`
-	];
+			`/checkout/${ domainName }`
+		],
+		startsWithPaths = [
+			'/checkout/thank-you',
+			`/me/purchases/${ domainName }`
+		];
 
-	return [ ...domainManagementPaths, ...otherPaths ].indexOf( path ) > -1 ||
-		startsWith( path, '/checkout/thank-you' );
+	if ( some( startsWithPaths, startsWithPath => startsWith( path, startsWithPath ) ) ) {
+		return true;
+	}
+
+	return [ ...domainManagementPaths, ...otherPaths ].indexOf( path ) > -1;
 }
 
 function onSelectedSiteAvailable( context ) {

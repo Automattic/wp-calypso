@@ -185,7 +185,7 @@ export default React.createClass( {
 	},
 
 	needsFax() {
-		return formState.getFieldValue( this.state.form, 'countryCode' ) === 'NL' && cartItems.hasNlTld( this.props.cart );
+		return formState.getFieldValue( this.state.form, 'countryCode' ) === 'NL' && cartItems.hasTld( this.props.cart, 'nl' );
 	},
 
 	allDomainRegistrationsHavePrivacy() {

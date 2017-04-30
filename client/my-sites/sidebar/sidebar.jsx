@@ -30,7 +30,7 @@ import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { canCurrentUser, getMenusUrl, getPrimarySiteId, getSites, isDomainOnlySite } from 'state/selectors';
+import { canCurrentUser, getPrimarySiteId, getSites, isDomainOnlySite } from 'state/selectors';
 import {
 	getCustomizerUrl,
 	getSite,
@@ -191,24 +191,6 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
-	menus() {
-		const { menusUrl } = this.props;
-		if ( ! menusUrl ) {
-			return null;
-		}
-
-		return (
-			<SidebarItem
-				tipTarget="menus"
-				label={ this.props.translate( 'Menus' ) }
-				className={ this.itemLinkClass( '/menus', 'menus' ) }
-				link={ menusUrl }
-				onNavigate={ this.onNavigate }
-				icon="menus"
-				preloadSectionName="menus" />
-		);
-	}
-
 	plugins() {
 		const { site } = this.props;
 		let pluginsLink = '/plugins' + this.props.siteSuffix;
@@ -219,7 +201,7 @@ export class MySitesSidebar extends Component {
 		}
 
 		if ( ! config.isEnabled( 'manage/plugins' ) ) {
-			if ( ! this.props.siteId ) {
+			if ( ! site ) {
 				return null;
 			}
 
@@ -286,23 +268,20 @@ export class MySitesSidebar extends Component {
 	}
 
 	plan() {
-		if ( ! this.props.siteId ) {
+		const { site, canUserManageOptions } = this.props;
+
+		if ( ! site ) {
 			return null;
 		}
 
-		const { site, canUserManageOptions } = this.props;
-
-		if ( site && ! canUserManageOptions ) {
+		if ( ! canUserManageOptions ) {
 			return null;
 		}
 
 		let planLink = '/plans' + this.props.siteSuffix;
 
 		// Show plan details for upgraded sites
-		if (
-			site &&
-			( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) )
-		) {
+		if ( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) ) {
 			planLink = '/plans/my-plan' + this.props.siteSuffix;
 		}
 
@@ -370,11 +349,11 @@ export class MySitesSidebar extends Component {
 		let usersLink = '/people/team' + this.props.siteSuffix;
 		let addPeopleLink = '/people/new' + this.props.siteSuffix;
 
-		if ( site && ! canUserListUsers ) {
+		if ( ! site ) {
 			return null;
 		}
 
-		if ( ! this.props.siteId ) {
+		if ( ! canUserListUsers ) {
 			return null;
 		}
 
@@ -463,7 +442,7 @@ export class MySitesSidebar extends Component {
 		const cutOffDate = new Date( '2015-09-07' );
 
 		// VIP sites should always show a WP Admin link regardless of the current user.
-		if ( site.is_vip ) {
+		if ( site && site.is_vip ) {
 			return true;
 		}
 
@@ -484,7 +463,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	getAddNewSiteUrl() {
-		if ( this.props.sites.getJetpack().length ||
+		if ( this.props.hasJetpackSites ||
 			abtest( 'newSiteWithJetpack' ) === 'showNewJetpackSite' ) {
 			return '/jetpack/new/?ref=calypso-selector';
 		}
@@ -524,7 +503,6 @@ export class MySitesSidebar extends Component {
 		}
 
 		const publish = !! this.publish(),
-			appearance = ( !! this.themes() || !! this.menus() ),
 			configuration = ( !! this.sharing() || !! this.users() || !! this.siteSettings() || !! this.plugins() || !! this.upgrades() );
 
 		return (
@@ -544,12 +522,11 @@ export class MySitesSidebar extends Component {
 					: null
 				}
 
-				{ appearance
+				{ !! this.themes()
 					? <SidebarMenu>
 						<SidebarHeading>{ this.props.translate( 'Personalize' ) }</SidebarHeading>
 						<ul>
 							{ this.themes() }
-							{ this.menus() }
 						</ul>
 					</SidebarMenu>
 					: null
@@ -627,7 +604,6 @@ function mapStateToProps( state ) {
 		isJetpack,
 		isSharingEnabledOnJetpackSite,
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
-		menusUrl: getMenusUrl( state, siteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',

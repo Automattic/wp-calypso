@@ -359,13 +359,6 @@ Undocumented.prototype.scheduleJetpackFullysync = function( siteId, fn ) {
 	return this.wpcom.req.post( { path: endpointPath }, {}, fn );
 };
 
-Undocumented.prototype.activateManage = function( siteId, state, secret ) {
-	debug( '/jetpack-blogs/:site_id:/activate-manage query' );
-	const endpointUrl = '/jetpack-blogs/' + siteId + '/activate-manage';
-	const params = { state, secret };
-	return this.wpcom.req.post( { path: endpointUrl }, params );
-};
-
 Undocumented.prototype.invitesList = function( siteId, number, offset, fn ) {
 	debug( '/sites/:site_id:/invites query' );
 	return this.wpcom.req.get( '/sites/' + siteId + '/invites', {
@@ -1787,8 +1780,8 @@ Undocumented.prototype.updateDns = function( domain, records, fn ) {
 	return this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
 };
 
-Undocumented.prototype.addDnsOffice = function( domain, token, callback ) {
-	return this.wpcom.req.post( '/domains/' + domain + '/dns/office/add', { token }, callback );
+Undocumented.prototype.applyDnsTemplate = function( domain, template, variables, callback ) {
+	return this.wpcom.req.post( '/domains/' + domain + '/dns/template/' + template, { variables }, callback );
 };
 
 Undocumented.prototype.fetchWapiDomainInfo = function( domainName, fn ) {
@@ -2260,23 +2253,6 @@ Undocumented.prototype.wordAdsApprove = function( siteId ) {
 Undocumented.prototype.getWordadsStatus = function( siteId, fn ) {
 	debug( '/sites/:site:/wordads/status' );
 	return this.wpcom.req.get( '/sites/' + siteId + '/wordads/status', fn );
-};
-
-/**
- * Set site homepage settings
- *
- * @param    {int|string}    siteId     the ID of the site
- * @param    {object}        data       the POST request body data
- * @param    {Function}      fn         the callback function
- * @returns  {Promise}
- */
-Undocumented.prototype.setSiteHomepageSettings = function( siteId, data, fn ) {
-	debug( '/sites/:site:/homepage' );
-
-	return this.wpcom.req.post( {
-			path: '/sites/' + siteId + '/homepage',
-			body: data
-		}, fn );
 };
 
 /**

@@ -6,7 +6,7 @@ import noop from 'lodash/noop';
 import some from 'lodash/some';
 import assign from 'lodash/assign';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:ad-tracking' );
+const debug = debugFactory( 'calypso:analytics:ad-tracking' );
 import { clone, cloneDeep } from 'lodash';
 import cookie from 'cookie';
 import { v4 as uuid } from 'uuid';
@@ -18,6 +18,7 @@ import loadScript from 'lib/load-script';
 import config from 'config';
 import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
+import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
 
 /**
  * Module variables
@@ -234,49 +235,18 @@ function loadTrackingScripts( callback ) {
 }
 
 /**
- * Whether we're allowed to track the current page for retargeting.
+ * Returns whether ad tracking is allowed.
  *
- * We disable retargetinig on certain pages/URLs in order to protect our users' privacy.
+ * This function returns false if:
+ *
+ * 1. 'ad-tracking' is disabled
+ * 2. `Do Not Track` is enabled
+ * 3. `document.location.href` may contain personally identifiable information
  *
  * @returns {Boolean}
  */
-function isRetargetAllowed() {
-	// If this list catches things that are not necessarily forbidden we're ok with
-	// a little bit of approximation as long as we do catch the ones that we have to.
-	// We need to be quite aggressive with how we filter candiate pages as failing
-	// to protect our users' privacy puts us in breach of our own TOS and our
-	// retargeting partners' TOS. We also see personally identifiable information in
-	// unexpected places like email addresses in users' posts URLs and titles for
-	// various (accidental or not) reasons. We also pass PII to URLs like
-	// `wordpress.com/jetpack/connect` etc.
-	const forbiddenPatterns = [
-		'@',
-		'%40',
-		'first=',
-		'last=',
-		'email=',
-		'email_address=',
-		'user_email=',
-		'address-1=',
-		'country-code=',
-		'phone=',
-		'last-name=',
-		'first-name=',
-		'wordpress.com/jetpack/connect',
-		'wordpress.com/error-report',
-	];
-
-	const href = document.location.href;
-
-	for ( const pattern of forbiddenPatterns ) {
-		if ( href.indexOf( pattern ) !== -1 ) {
-			debug( 'isRetargetAllowed(): no' );
-			return false;
-		}
-	}
-
-	debug( 'isRetargetAllowed(): yes' );
-	return true;
+function isAdTrackingAllowed() {
+	return config.isEnabled( 'ad-tracking' ) && ! doNotTrack() && ! isPiiUrl();
 }
 
 /**
@@ -285,7 +255,7 @@ function isRetargetAllowed() {
  * @returns {void}
  */
 function retarget() {
-	if ( ! isRetargetAllowed() ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -359,11 +329,7 @@ function trackCustomAdWordsRemarketingEvent( properties ) {
  * A generic function that we can export and call to track plans page views with our ad partners
  */
 function retargetViewPlans() {
-	if ( ! isRetargetAllowed() ) {
-		return;
-	}
-
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -377,7 +343,7 @@ function retargetViewPlans() {
  * @returns {void}
  */
 function recordAddToCart( cartItem ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -418,7 +384,7 @@ function recordViewCheckout( cart ) {
  * @returns {void}
  */
 function recordOrder( cart, orderId ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -453,7 +419,7 @@ function recordOrder( cart, orderId ) {
  * @returns {void}
  */
 function recordProduct( product, orderId ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -585,7 +551,7 @@ function recordProduct( product, orderId ) {
  * @param {Number} orderId - the order id
  */
 function recordOrderInAtlas( cart, orderId ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -619,7 +585,7 @@ function recordOrderInAtlas( cart, orderId ) {
  * @returns {void}
  */
 function recordOrderInFloodlight( cart, orderId ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -644,7 +610,7 @@ function recordOrderInFloodlight( cart, orderId ) {
  * @returns {void}
  */
 function recordAliasInFloodlight() {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -664,7 +630,7 @@ function recordAliasInFloodlight() {
  * @returns {void}
  */
 function recordSignupStartInFloodlight() {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -684,7 +650,7 @@ function recordSignupStartInFloodlight() {
  * @returns {void}
  */
 function recordSignupCompletionInFloodlight() {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -705,7 +671,7 @@ function recordSignupCompletionInFloodlight() {
  * @returns {void}
  */
 function recordPageViewInFloodlight( urlPath ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -792,7 +758,7 @@ function tracksAnonymousUserId() {
  * @returns {void}
  */
 function recordParamsInFloodlight( params ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -845,7 +811,7 @@ function floodlightCacheBuster() {
  * @returns {void}
  */
 function recordOrderInCriteo( cart, orderId ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -863,7 +829,7 @@ function recordOrderInCriteo( cart, orderId ) {
  * @returns {void}
  */
 function recordViewCheckoutInCriteo( cart ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -894,7 +860,7 @@ function cartToCriteoItems( cart ) {
  * Records in Criteo that the visitor viewed the plans page
  */
 function recordPlansViewInCriteo() {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -912,7 +878,7 @@ function recordPlansViewInCriteo() {
  * @returns {void}
  */
 function recordInCriteo( eventName, eventProps ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -968,7 +934,7 @@ function criteoSiteType() {
  * @returns {void}
  */
 function recordOrderInGoogleAnalytics( cart, orderId ) {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
 
@@ -1042,9 +1008,7 @@ module.exports = {
 	retarget: function( context, next ) {
 		const nextFunction = typeof next === 'function' ? next : noop;
 
-		if ( config.isEnabled( 'ad-tracking' ) ) {
-			retarget();
-		}
+		retarget();
 
 		nextFunction();
 	},
@@ -1053,6 +1017,7 @@ module.exports = {
 
 	recordAliasInFloodlight,
 	recordPageViewInFloodlight,
+
 	recordAddToCart,
 	recordViewCheckout,
 	recordOrder,

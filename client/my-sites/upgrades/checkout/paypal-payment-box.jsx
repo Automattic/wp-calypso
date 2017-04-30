@@ -24,6 +24,7 @@ import CartCoupon from 'my-sites/upgrades/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
+import CartToggle from './cart-toggle';
 
 module.exports = React.createClass( {
 	displayName: 'PaypalPaymentBox',
@@ -170,8 +171,6 @@ module.exports = React.createClass( {
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( this.props.cart ) } />
 
-				<CartCoupon cart={ this.props.cart } />
-
 				<div className="payment-box-actions">
 					<div className="pay-button">
 						<button type="submit" className="button is-primary button-pay" disabled={ this.state.formDisabled }>
@@ -195,6 +194,10 @@ module.exports = React.createClass( {
 							cart={ this.props.cart } />
 					}
 				</div>
+
+				<CartCoupon cart={ this.props.cart } />
+
+				<CartToggle />
 			</form>
 		);
 	},

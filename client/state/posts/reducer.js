@@ -31,6 +31,7 @@ import {
 } from 'state/action-types';
 import counts from './counts/reducer';
 import likes from './likes/reducer';
+import revisions from './revisions/reducer';
 import {
 	getSerializedPostsQuery,
 	isTermsEqual,
@@ -315,4 +316,5 @@ export default combineReducers( {
 	queries,
 	edits,
 	likes,
+	revisions,
 } );

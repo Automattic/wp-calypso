@@ -19,12 +19,15 @@ import WrapSettingsForm from './wrap-settings-form';
 
 const Caching = ( {
 	fields: {
-		super_cache_enabled,
-		wp_cache_enabled,
+		cache_mod_rewrite,
+		is_cache_enabled,
+		is_super_cache_enabled,
 	},
+	handleAutosavingToggle,
 	handleRadio,
-	handleToggle,
+	handleSubmitForm,
 	isRequesting,
+	isSaving,
 	translate,
 } ) => {
 	return (
@@ -33,30 +36,33 @@ const Caching = ( {
 				<Button
 					compact
 					primary
-					disabled={ isRequesting }
-					type="submit">
-					{ translate( 'Save Settings' ) }
+					disabled={ isRequesting || isSaving }
+					onClick={ handleSubmitForm }>
+					{ isSaving
+						? translate( 'Saving…' )
+						: translate( 'Save Settings' )
+					}
 				</Button>
 			</SectionHeader>
 			<Card>
 				<form>
 					<FormFieldset>
 						<FormToggle
-							checked={ !! wp_cache_enabled }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'wp_cache_enabled' ) }>
+							checked={ !! is_cache_enabled }
+							disabled={ isRequesting || isSaving }
+							onChange={ handleAutosavingToggle( 'is_cache_enabled' ) }>
 							<span>
 								{ translate( 'Enable Page Caching' ) }
 							</span>
 						</FormToggle>
 					</FormFieldset>
 
-					<FormFieldset>
+					<FormFieldset className="wp-super-cache__cache-type-fieldset">
 						<FormLabel>
 							<FormRadio
-								checked={ '1' === super_cache_enabled }
-								disabled={ isRequesting }
-								name="super_cache_enabled"
+								checked={ !! is_super_cache_enabled && !! cache_mod_rewrite }
+								disabled={ isRequesting || isSaving }
+								name="is_super_cache_enabled"
 								onChange={ handleRadio }
 								value="1" />
 							<span>
@@ -66,9 +72,9 @@ const Caching = ( {
 
 						<FormLabel>
 							<FormRadio
-								checked={ '2' === super_cache_enabled }
-								disabled={ isRequesting }
-								name="super_cache_enabled"
+								checked={ ! cache_mod_rewrite }
+								disabled={ isRequesting || isSaving }
+								name="is_super_cache_enabled"
 								onChange={ handleRadio }
 								value="2" />
 							<span>
@@ -83,9 +89,9 @@ const Caching = ( {
 
 						<FormLabel>
 							<FormRadio
-								checked={ '0' === super_cache_enabled }
-								disabled={ isRequesting }
-								name="super_cache_enabled"
+								checked={ ! is_super_cache_enabled }
+								disabled={ isRequesting || isSaving }
+								name="is_super_cache_enabled"
 								onChange={ handleRadio }
 								value="0" />
 							<span>
@@ -110,8 +116,9 @@ const Caching = ( {
 
 const getFormSettings = settings => {
 	return pick( settings, [
-		'super_cache_enabled',
-		'wp_cache_enabled',
+		'cache_mod_rewrite',
+		'is_cache_enabled',
+		'is_super_cache_enabled',
 	] );
 };
 

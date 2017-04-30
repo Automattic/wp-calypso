@@ -15,6 +15,7 @@ import Card from 'components/card';
 import DomainImage from 'signup/steps/design-type-with-store/domain-image';
 import PageImage from 'signup/steps/design-type-with-store/page-image';
 import { externalRedirect } from 'lib/route/path';
+import NavigationLink from 'signup/navigation-link';
 
 export default class SiteOrDomain extends Component {
 	componentWillMount() {
@@ -78,6 +79,32 @@ export default class SiteOrDomain extends Component {
 		);
 	}
 
+	renderBackLink() {
+		// Hacky way to add back link to /domains
+		return (
+			<div className="site-or-domain__button">
+				<NavigationLink
+					direction="back"
+					flowName={ this.props.flowName }
+					positionInFlow={ 1 }
+					stepName={ this.props.stepName }
+					stepSectionName={ this.props.stepSectionName }
+					backUrl="https://wordpress.com/domains"
+					signupProgress={ this.props.signupProgress }
+				/>
+			</div>
+		);
+	}
+
+	renderScreen() {
+		return (
+			<div>
+				{ this.renderChoices() }
+				{ this.renderBackLink() }
+			</div>
+		);
+	}
+
 	handleClickChoice( event, designType ) {
 		event.preventDefault();
 
@@ -122,7 +149,7 @@ export default class SiteOrDomain extends Component {
 				fallbackHeaderText={ this.props.headerText }
 				fallbackSubHeaderText={ this.props.subHeaderText }
 				signupProgress={ this.props.signupProgress }
-				stepContent={ this.renderChoices() } />
+				stepContent={ this.renderScreen() } />
 		);
 	}
 }

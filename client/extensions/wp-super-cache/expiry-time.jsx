@@ -24,18 +24,20 @@ const ExpiryTime = ( {
 	fields: {
 		cache_gc_email_me,
 		cache_max_time,
+		cache_next_gc,
 		cache_schedule_interval,
 		cache_schedule_type,
 		cache_scheduled_time,
 		cache_time_interval,
-		wp_cache_next_gc,
-		wp_cache_preload_on,
+		preload_on,
 	},
+	handleAutosavingToggle,
 	handleChange,
 	handleRadio,
 	handleSelect,
-	handleToggle,
+	handleSubmitForm,
 	isRequesting,
+	isSaving,
 	translate,
 } ) => {
 	const renderCacheTimeout = () => {
@@ -47,7 +49,7 @@ const ExpiryTime = ( {
 
 				<FormTextInput
 					className="wp-super-cache__cache-timeout"
-					disabled={ isRequesting }
+					disabled={ isRequesting || isSaving }
 					onChange={ handleChange( 'cache_max_time' ) }
 					value={ cache_max_time || '' } />
 				{ translate( 'seconds' ) }
@@ -73,14 +75,14 @@ const ExpiryTime = ( {
 				<FormLabel>
 					<FormRadio
 						checked={ 'interval' === cache_schedule_type }
-						disabled={ isRequesting }
+						disabled={ isRequesting || isSaving }
 						name="cache_schedule_type"
 						onChange={ handleRadio }
 						value="interval" />
 					<span>
 						{ translate( 'Timer' ) }
 						<FormTextInput
-							disabled={ isRequesting || ( 'interval' !== cache_schedule_type ) }
+							disabled={ isRequesting || isSaving || ( 'interval' !== cache_schedule_type ) }
 							onChange={ handleChange( 'cache_time_interval' ) }
 							value={ cache_time_interval || '' } />
 						{ translate( 'seconds' ) }
@@ -93,14 +95,14 @@ const ExpiryTime = ( {
 				<FormLabel className="wp-super-cache__clock">
 					<FormRadio
 						checked={ 'time' === cache_schedule_type }
-						disabled={ isRequesting }
+						disabled={ isRequesting || isSaving }
 						name="cache_schedule_type"
 						onChange={ handleRadio }
 						value="time" />
 					<span>
 						{ translate( 'Clock' ) }
 						<FormTextInput
-							disabled={ isRequesting || ( 'time' !== cache_schedule_type ) }
+							disabled={ isRequesting || isSaving || ( 'time' !== cache_schedule_type ) }
 							onChange={ handleChange( 'cache_scheduled_time' ) }
 							value={ cache_scheduled_time || '' } />
 						{ translate( 'HH:MM' ) }
@@ -117,7 +119,7 @@ const ExpiryTime = ( {
 					</FormLabel>
 
 					<FormSelect
-						disabled={ isRequesting || ( 'time' !== cache_schedule_type ) }
+						disabled={ isRequesting || isSaving || ( 'time' !== cache_schedule_type ) }
 						id="cache_schedule_interval"
 						name="cache_schedule_interval"
 						onChange={ handleSelect }
@@ -144,9 +146,9 @@ const ExpiryTime = ( {
 
 				<FormToggle
 					checked={ !! cache_gc_email_me }
-					disabled={ isRequesting }
+					disabled={ isRequesting || isSaving }
 					id="cache_gc_email_me"
-					onChange={ handleToggle( 'cache_gc_email_me' ) }>
+					onChange={ handleAutosavingToggle( 'cache_gc_email_me' ) }>
 					<span>
 						{ translate( 'Email me when the garbage collection runs.' ) }
 					</span>
@@ -155,29 +157,40 @@ const ExpiryTime = ( {
 		);
 	};
 
+	const formatUnixTimestamp = ( timestamp ) => {
+		if ( ! timestamp ) {
+			return;
+		}
+
+		return moment.unix( timestamp ).utc().format( 'YYYY-MM-DD H:mm:ss' );
+	};
+
 	return (
 		<div>
 			<SectionHeader label={ translate( 'Expiry Time & Garbage Collection' ) }>
 				<Button
 					compact
 					primary
-					disabled={ isRequesting }
-					type="submit">
-					{ translate( 'Save Settings' ) }
+					disabled={ isRequesting || isSaving }
+					onClick={ handleSubmitForm }>
+					{ isSaving
+						? translate( 'Saving…' )
+						: translate( 'Save Settings' )
+					}
 				</Button>
 			</SectionHeader>
 			<Card>
 				<p>
-					{ translate( 'UTC time is ' ) + moment().utc().format( 'YYYY-MM-DD h:mm:ss' ) }
+					{ translate( 'UTC time is ' ) + moment().utc().format( 'YYYY-MM-DD H:mm:ss' ) }
 					<br />
-					{ translate( 'Local time is ' ) + moment().format( 'YYYY-MM-DD h:mm:ss' ) }
+					{ translate( 'Local time is ' ) + moment().format( 'YYYY-MM-DD H:mm:ss' ) }
 				</p>
-				{ wp_cache_next_gc &&
+				{ cache_next_gc &&
 					<p>
-						{ translate( 'Next scheduled garbage collection will be at ' ) + wp_cache_next_gc }
+						{ translate( 'Next scheduled garbage collection will be at ' ) + `${ formatUnixTimestamp( cache_next_gc ) } UTC` }
 					</p>
 				}
-				{ wp_cache_preload_on &&
+				{ preload_on &&
 					<p>
 						{ translate(
 							'Warning! {{strong}}PRELOAD MODE{{/strong}} activated. Supercache files will not be ' +
@@ -202,12 +215,12 @@ const getFormSettings = settings => {
 	return pick( settings, [
 		'cache_gc_email_me',
 		'cache_max_time',
+		'cache_next_gc',
 		'cache_schedule_interval',
 		'cache_schedule_type',
 		'cache_scheduled_time',
 		'cache_time_interval',
-		'wp_cache_next_gc',
-		'wp_cache_preload_on',
+		'preload_on',
 	] );
 };
 

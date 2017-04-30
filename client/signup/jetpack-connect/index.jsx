@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import Gridicon from 'gridicons';
+import { flowRight } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -45,8 +46,25 @@ import {
  */
 const MINIMUM_JETPACK_VERSION = '3.9.6';
 
-const JetpackConnectMain = React.createClass( {
-	displayName: 'JetpackConnectSiteURLStep',
+class JetpackConnectMain extends Component {
+	static propTypes = {
+		locale: PropTypes.string,
+		path: PropTypes.string,
+		type: PropTypes.oneOf( [
+			'install',
+			'pro',
+			'premium',
+			'personal',
+			false,
+		] ),
+		url: PropTypes.string,
+	};
+
+	state = {
+		currentUrl: '',
+		waitingForSites: false,
+		initialUrl: null,
+	};
 
 	componentWillMount() {
 		if ( this.props.url ) {
@@ -57,7 +75,7 @@ const JetpackConnectMain = React.createClass( {
 			this.setState( { currentUrl: untrailingslashit( url ), initialUrl: url } );
 			this.checkUrl( url );
 		}
-	},
+	}
 
 	componentDidMount() {
 		let from = 'direct';
@@ -76,89 +94,7 @@ const JetpackConnectMain = React.createClass( {
 		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
 			jpc_from: from
 		} );
-	},
-
-	getInitialState() {
-		return {
-			currentUrl: '',
-			waitingForSites: false,
-			initialUrl: null
-		};
-	},
-
-	dismissUrl() {
-		this.props.dismissUrl( this.state.currentUrl );
-	},
-
-	isCurrentUrlFetched() {
-		return this.props.jetpackConnectSite &&
-			this.state.currentUrl === this.props.jetpackConnectSite.url &&
-			this.props.jetpackConnectSite.isFetched;
-	},
-
-	isCurrentUrlFetching() {
-		return this.state.currentUrl !== '' &&
-			this.props.jetpackConnectSite &&
-			this.state.currentUrl === this.props.jetpackConnectSite.url &&
-			this.props.jetpackConnectSite.isFetching;
-	},
-
-	getCurrentUrl() {
-		let url = this.refs.siteUrlInputRef.state.value.toLowerCase();
-		if ( url && url.substr( 0, 4 ) !== 'http' ) {
-			url = 'http://' + url;
-		}
-		return untrailingslashit( url );
-	},
-
-	onURLChange() {
-		this.setState( { currentUrl: this.getCurrentUrl() } );
-		this.dismissUrl();
-	},
-
-	checkUrl( url ) {
-		return this.props.checkUrl(
-			url,
-			!! this.props.getJetpackSiteByUrl( url ),
-			this.props.type
-		);
-	},
-
-	onURLEnter() {
-		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
-			jetpack_url: this.state.currentUrl
-		} );
-		if ( this.props.isRequestingSites ) {
-			this.setState( { waitingForSites: true } );
-		} else {
-			this.checkUrl( this.state.currentUrl );
-		}
-	},
-
-	installJetpack() {
-		this.props.recordTracksEvent( 'calypso_jpc_instructions_click', {
-			jetpack_funnel: this.state.currentUrl,
-			type: 'install_jetpack'
-		} );
-
-		this.props.goToPluginInstall( this.state.currentUrl );
-	},
-
-	activateJetpack() {
-		this.props.recordTracksEvent( 'calypso_jpc_instructions_click', {
-			jetpack_funnel: this.state.currentUrl,
-			type: 'activate_jetpack'
-		} );
-		this.props.goToPluginActivation( this.state.currentUrl );
-	},
-
-	checkProperty( propName ) {
-		return this.state.currentUrl &&
-			this.props.jetpackConnectSite &&
-			this.props.jetpackConnectSite.data &&
-			this.isCurrentUrlFetched() &&
-			this.props.jetpackConnectSite.data[ propName ];
-	},
+	}
 
 	componentDidUpdate() {
 		if ( this.getStatus() === 'notConnectedJetpack' &&
@@ -174,16 +110,89 @@ const JetpackConnectMain = React.createClass( {
 		}
 
 		if ( this.state.waitingForSites && ! this.props.isRequestingSites ) {
+			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { waitingForSites: false } );
 			this.checkUrl( this.state.currentUrl );
 		}
-	},
+	}
+
+	dismissUrl = () => this.props.dismissUrl( this.state.currentUrl );
+
+	onURLChange = () => {
+		this.setState( { currentUrl: this.getCurrentUrl() } );
+		this.dismissUrl();
+	}
+
+	isCurrentUrlFetched() {
+		return this.props.jetpackConnectSite &&
+			this.state.currentUrl === this.props.jetpackConnectSite.url &&
+			this.props.jetpackConnectSite.isFetched;
+	}
+
+	isCurrentUrlFetching() {
+		return this.state.currentUrl !== '' &&
+			this.props.jetpackConnectSite &&
+			this.state.currentUrl === this.props.jetpackConnectSite.url &&
+			this.props.jetpackConnectSite.isFetching;
+	}
+
+	getCurrentUrl() {
+		let url = this.refs.siteUrlInputRef.state.value.toLowerCase();
+		if ( url && url.substr( 0, 4 ) !== 'http' ) {
+			url = 'http://' + url;
+		}
+		return untrailingslashit( url );
+	}
+
+	checkUrl( url ) {
+		return this.props.checkUrl(
+			url,
+			!! this.props.getJetpackSiteByUrl( url ),
+			this.props.type
+		);
+	}
+
+	onURLEnter = () => {
+		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
+			jetpack_url: this.state.currentUrl
+		} );
+		if ( this.props.isRequestingSites ) {
+			this.setState( { waitingForSites: true } );
+		} else {
+			this.checkUrl( this.state.currentUrl );
+		}
+	}
+
+	installJetpack = () => {
+		this.props.recordTracksEvent( 'calypso_jpc_instructions_click', {
+			jetpack_funnel: this.state.currentUrl,
+			type: 'install_jetpack'
+		} );
+
+		this.props.goToPluginInstall( this.state.currentUrl );
+	}
+
+	activateJetpack = () => {
+		this.props.recordTracksEvent( 'calypso_jpc_instructions_click', {
+			jetpack_funnel: this.state.currentUrl,
+			type: 'activate_jetpack'
+		} );
+		this.props.goToPluginActivation( this.state.currentUrl );
+	}
+
+	checkProperty( propName ) {
+		return this.state.currentUrl &&
+			this.props.jetpackConnectSite &&
+			this.props.jetpackConnectSite.data &&
+			this.isCurrentUrlFetched() &&
+			this.props.jetpackConnectSite.data[ propName ];
+	}
 
 	isRedirecting() {
 		return this.props.jetpackConnectSite &&
 			this.props.jetpackConnectSite.isRedirecting &&
 			this.isCurrentUrlFetched();
-	},
+	}
 
 	getStatus() {
 		if ( this.state.currentUrl === '' ) {
@@ -233,64 +242,74 @@ const JetpackConnectMain = React.createClass( {
 		}
 
 		return false;
-	},
+	}
 
-	handleOnClickTos() {
-		this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
-	},
+	handleOnClickTos = () => this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
 
 	getTexts() {
-		const { type, selectedPlan } = this.props;
+		const {
+			type,
+			selectedPlan,
+			translate,
+		} = this.props;
 
 		if ( type === 'pro' || selectedPlan === 'jetpack_business' || selectedPlan === 'jetpack_business_monthly' ) {
 			return {
-				headerTitle: this.translate( 'Get Jetpack Professional' ),
-				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
+				headerTitle: translate( 'Get Jetpack Professional' ),
+				headerSubtitle: translate( 'To start securing and backing up your site, first install Jetpack, ' +
 					'then purchase and activate your plan.' ),
 			};
 		}
 		if ( type === 'premium' || selectedPlan === 'jetpack_premium' || selectedPlan === 'jetpack_premium_monthly' ) {
 			return {
-				headerTitle: this.translate( 'Get Jetpack Premium' ),
-				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
+				headerTitle: translate( 'Get Jetpack Premium' ),
+				headerSubtitle: translate( 'To start securing and backing up your site, first install Jetpack, ' +
 					'then purchase and activate your plan.' ),
 			};
 		}
 		if ( type === 'personal' || selectedPlan === 'jetpack_personal' || selectedPlan === 'jetpack_personal_monthly' ) {
 			return {
-				headerTitle: this.translate( 'Get Jetpack Personal' ),
-				headerSubtitle: this.translate( 'To start securing and backing up your site, first install Jetpack, ' +
+				headerTitle: translate( 'Get Jetpack Personal' ),
+				headerSubtitle: translate( 'To start securing and backing up your site, first install Jetpack, ' +
 					'then purchase and activate your plan.' ),
 			};
 		}
 
 		if ( type === 'install' ) {
 			return {
-				headerTitle: this.translate( 'Install Jetpack' ),
-				headerSubtitle: this.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect ' +
+				headerTitle: translate( 'Install Jetpack' ),
+				headerSubtitle: translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect ' +
 					'to your self-hosted WordPress site.' ),
 			};
 		}
 		return {
-			headerTitle: this.translate( 'Connect a self-hosted WordPress' ),
-			headerSubtitle: this.translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect to ' +
+			headerTitle: translate( 'Connect a self-hosted WordPress' ),
+			headerSubtitle: translate( 'We\'ll be installing the Jetpack plugin so WordPress.com can connect to ' +
 				'your self-hosted WordPress site.' ),
 		};
-	},
+	}
 
 	isInstall() {
-		return this.props.type === 'install' ||
-			this.props.type === 'pro' ||
-			this.props.type === 'premium' ||
-			this.props.type === 'personal';
-	},
+		/*
+		 * FIXME: `return ! this.props.type` should be sufficient
+		 * I'm avoiding significantly changing this implementation
+		 * until propTypes have been around for a while.
+		 */
+		return [
+			'install',
+			'pro',
+			'premium',
+			'personal',
+		].includes( this.props.type );
+	}
 
 	getInstructionsData( status ) {
+		const { translate } = this.props;
 		return {
 			headerTitle: ( 'notJetpack' === status )
-				? this.translate( 'Ready for installation' )
-				: this.translate( 'Ready for activation' ),
-			headerSubtitle: this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ),
+				? translate( 'Ready for installation' )
+				: translate( 'Ready for activation' ),
+			headerSubtitle: translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ),
 			steps: ( 'notJetpack' === status )
 				? [ 'installJetpack', 'activateJetpackAfterInstall', 'connectJetpackAfterInstall' ]
 				: [ 'activateJetpack', 'connectJetpack' ],
@@ -298,25 +317,26 @@ const JetpackConnectMain = React.createClass( {
 				? this.installJetpack
 				: this.activateJetpack,
 			buttonText: ( 'notJetpack' === status )
-				? this.translate( 'Install Jetpack' )
-				: this.translate( 'Activate Jetpack' )
+				? translate( 'Install Jetpack' )
+				: translate( 'Activate Jetpack' )
 		};
-	},
+	}
 
 	renderFooter() {
+		const { translate } = this.props;
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">
-					{ this.translate( 'Install Jetpack manually' ) }
+					{ translate( 'Install Jetpack manually' ) }
 				</LoggedOutFormLinkItem>
 				{ this.isInstall()
 					? null
-					: <LoggedOutFormLinkItem href="/start">{ this.translate( 'Start a new site on WordPress.com' ) }</LoggedOutFormLinkItem>
+					: <LoggedOutFormLinkItem href="/start">{ translate( 'Start a new site on WordPress.com' ) }</LoggedOutFormLinkItem>
 				}
 				<HelpButton />
 			</LoggedOutFormLinks>
 		);
-	},
+	}
 
 	renderSiteInput( status ) {
 		return (
@@ -337,7 +357,7 @@ const JetpackConnectMain = React.createClass( {
 					isInstall={ this.isInstall() } />
 			</Card>
 		);
-	},
+	}
 
 	renderLocaleSuggestions() {
 		if ( this.props.userModule.get() || ! this.props.locale ) {
@@ -347,7 +367,7 @@ const JetpackConnectMain = React.createClass( {
 		return (
 			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 		);
-	},
+	}
 
 	renderSiteEntry() {
 		const status = this.getStatus();
@@ -368,24 +388,26 @@ const JetpackConnectMain = React.createClass( {
 				</div>
 			</MainWrapper>
 		);
-	},
+	}
 
 	renderNotJetpackButton() {
+		const { translate } = this.props;
 		return (
 			<a className="jetpack-connect__no-jetpack-button" href="#" onClick={ this.confirmJetpackNotInstalled }>
-				{ this.translate( 'Don\'t have jetpack installed?' ) }
+				{ translate( 'Don\'t have jetpack installed?' ) }
 			</a>
 		);
-	},
+	}
 
 	renderBackButton() {
+		const { translate } = this.props;
 		return (
 			<Button compact borderless className="jetpack-connect__back-button" onClick={ this.dismissUrl }>
 				<Gridicon icon="arrow-left" size={ 18 } />
-				{ this.translate( 'Back' ) }
+				{ translate( 'Back' ) }
 			</Button>
 		);
-	},
+	}
 
 	renderInstructions( instructionsData ) {
 		const jetpackVersion = this.checkProperty( 'jetpackVersion' ),
@@ -428,7 +450,7 @@ const JetpackConnectMain = React.createClass( {
 				</LoggedOutFormLinks>
 			</MainWrapper>
 		);
-	},
+	}
 
 	render() {
 		const status = this.getStatus();
@@ -440,22 +462,16 @@ const JetpackConnectMain = React.createClass( {
 		}
 		return this.renderSiteEntry();
 	}
-} );
+}
 
-export default connect(
-	state => {
-		const getJetpackSite = ( url ) => {
-			return getJetpackSiteByUrl( state, url );
-		};
-
-		return {
-			jetpackConnectSite: getConnectingSite( state ),
-			getJetpackSiteByUrl: getJetpackSite,
-			isRequestingSites: isRequestingSites( state ),
-			selectedPlan: getGlobalSelectedPlan( state )
-		};
-	},
-	dispatch => bindActionCreators( {
+const connectComponent = connect(
+	state => ( {
+		jetpackConnectSite: getConnectingSite( state ),
+		getJetpackSiteByUrl: ( url ) => getJetpackSiteByUrl( state, url ),
+		isRequestingSites: isRequestingSites( state ),
+		selectedPlan: getGlobalSelectedPlan( state )
+	} ),
+	{
 		confirmJetpackInstallStatus,
 		recordTracksEvent,
 		checkUrl,
@@ -464,5 +480,10 @@ export default connect(
 		goToPlans,
 		goToPluginInstall,
 		goToPluginActivation
-	}, dispatch )
+	}
+);
+
+export default flowRight(
+	connectComponent,
+	localize
 )( JetpackConnectMain );

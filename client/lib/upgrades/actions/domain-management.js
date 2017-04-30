@@ -290,11 +290,11 @@ function deleteDns( domainName, record, onComplete ) {
 	} );
 }
 
-function addDnsOffice( domainName, token, onComplete ) {
-	wpcom.addDnsOffice( domainName, token, ( error, data ) => {
+function applyDnsTemplate( domainName, template, variables, onComplete ) {
+	wpcom.applyDnsTemplate( domainName, template, variables, ( error, data ) => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.DNS_ADD_OFFICE_COMPLETED,
+				type: ActionTypes.DNS_APPLY_TEMPLATE_COMPLETED,
 				records: data && data.records,
 				domainName
 			} );
@@ -564,8 +564,8 @@ function declineTransfer( domainName, onComplete ) {
 export {
 	acceptTransfer,
 	addDns,
-	addDnsOffice,
 	addEmailForwarding,
+	applyDnsTemplate,
 	closeSiteRedirectNotice,
 	declineTransfer,
 	deleteDns,

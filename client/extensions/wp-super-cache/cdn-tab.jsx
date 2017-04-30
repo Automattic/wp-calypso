@@ -27,9 +27,11 @@ const CdnTab = ( {
 		ossdl_off_include_dirs,
 		ossdlcdn,
 	},
+	handleAutosavingToggle,
 	handleChange,
-	handleToggle,
+	handleSubmitForm,
 	isRequesting,
+	isSaving,
 	siteUrl,
 	translate,
 } ) => {
@@ -39,9 +41,12 @@ const CdnTab = ( {
 				<Button
 					compact
 					primary
-					disabled={ isRequesting }
-					type="submit">
-					{ translate( 'Save Settings' ) }
+					disabled={ isRequesting || isSaving }
+					onClick={ handleSubmitForm }>
+					{ isSaving
+						? translate( 'Saving…' )
+						: translate( 'Save Settings' )
+					}
 				</Button>
 			</SectionHeader>
 
@@ -50,124 +55,205 @@ const CdnTab = ( {
 					<FormFieldset>
 						<FormToggle
 							checked={ !! ossdlcdn }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'ossdlcdn' ) }>
+							disabled={ isRequesting || isSaving }
+							onChange={ handleAutosavingToggle( 'ossdlcdn' ) }>
 							<span>
 								{ translate( 'Enable CDN Support' ) }
 							</span>
 						</FormToggle>
 					</FormFieldset>
 
-					<FormFieldset>
-						<FormLabel htmlFor="ossdl_off_cdn_url">
-							{ translate( 'Off-site URL' ) }
-						</FormLabel>
+					<div className="wp-super-cache__cdn-fieldsets">
+						<FormFieldset>
+							<FormLabel htmlFor="ossdl_off_cdn_url">
+								{ translate( 'Off-site URL' ) }
+							</FormLabel>
 
-						<FormTextInput
-							disabled={ isRequesting }
-							id="ossdl_off_cdn_url"
-							onChange={ handleChange( 'ossdl_off_cdn_url' ) }
-							value={ ossdl_off_cdn_url || '' } />
+							<FormTextInput
+								disabled={ isRequesting || isSaving }
+								id="ossdl_off_cdn_url"
+								onChange={ handleChange( 'ossdl_off_cdn_url' ) }
+								value={ ossdl_off_cdn_url || '' } />
 
-						<FormSettingExplanation>
-							{ translate(
-								'The new URL to be used in place of %(url)s for rewriting. No trailing / please.',
-								{
-									args: { url: siteUrl },
-								}
-							) }
-						</FormSettingExplanation>
-					</FormFieldset>
-
-					<FormFieldset>
-						<FormLabel htmlFor="ossdl_off_include_dirs">
-							{ translate( 'Include directories' ) }
-						</FormLabel>
-
-						<FormTextInput
-							disabled={ isRequesting }
-							id="ossdl_off_include_dirs"
-							onChange={ handleChange( 'ossdl_off_include_dirs' ) }
-							value={ ossdl_off_include_dirs || '' } />
-
-						<FormSettingExplanation>
-							{ translate(
-								'Directories to include in static file matching. Use a comma as the delimiter. Default is ' +
-								'{{code}}wp-content, wp-includes{{/code}}, which will be enforced if this field is left empty.',
-								{
-									components: { code: <code /> }
-								}
-							) }
-						</FormSettingExplanation>
-					</FormFieldset>
-
-					<FormFieldset>
-						<FormLabel htmlFor="ossdl_off_exclude">
-							{ translate( 'Exclude if substring' ) }
-						</FormLabel>
-
-						<FormTextInput
-							disabled={ isRequesting }
-							id="ossdl_off_exclude"
-							onChange={ handleChange( 'ossdl_off_exclude' ) }
-							value={ ossdl_off_exclude || '' } />
-
-						<FormSettingExplanation>
-							{ translate(
-								'Excludes something from being rewritten if one of the above strings is found in the match. ' +
-								'Use a comma as the delimiter like this, {{code}}.php, .flv, .do{{/code}}, and always ' +
-								'include {{code}}.php{{/code}} (default).',
-								{
-									components: { code: <code /> }
-								}
-							) }
-						</FormSettingExplanation>
-					</FormFieldset>
-
-					<FormFieldset>
-						<FormLabel htmlFor="ossdl_cname">
-							{ translate( 'Additional CNAMES' ) }
-						</FormLabel>
-
-						<FormTextInput
-							disabled={ isRequesting }
-							id="ossdl_cname"
-							onChange={ handleChange( 'ossdl_cname' ) }
-							value={ ossdl_cname || '' } />
-
-						<FormSettingExplanation>
-							{ translate(
-								'These {{a}}CNAMES{{/a}} will be used in place of %(url)s for rewriting (in addition to the ' +
-								'off-site URL above). Use a comma as the delimiter. For pages with a large number of static files, ' +
-								'this can improve browser performance. CNAMEs may also need to be configured on your CDN.',
-								{
-									args: {
-										url: siteUrl,
-									},
-									components: {
-										a: (
-											<ExternalLink
-												icon={ true }
-												target="_blank"
-												href="http://en.wikipedia.org/wiki/CNAME_record"
-											/>
-										),
+							<FormSettingExplanation>
+								{ translate(
+									'The new URL to be used in place of %(url)s for rewriting. No trailing / please.',
+									{
+										args: { url: siteUrl },
 									}
-								}
-							) }
-						</FormSettingExplanation>
-					</FormFieldset>
+								) }
+							</FormSettingExplanation>
+						</FormFieldset>
 
-					<FormFieldset>
-						<FormToggle
-							checked={ !! ossdl_https }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'ossdl_https' ) }>
+						<FormFieldset>
+							<FormLabel htmlFor="ossdl_off_include_dirs">
+								{ translate( 'Include directories' ) }
+							</FormLabel>
+
+							<FormTextInput
+								disabled={ isRequesting || isSaving }
+								id="ossdl_off_include_dirs"
+								onChange={ handleChange( 'ossdl_off_include_dirs' ) }
+								value={ ossdl_off_include_dirs || '' } />
+
+							<FormSettingExplanation>
+								{ translate(
+									'Directories to include in static file matching. Use a comma as the delimiter. Default is ' +
+									'{{code}}wp-content, wp-includes{{/code}}, which will be enforced if this field is left empty.',
+									{
+										components: { code: <code /> }
+									}
+								) }
+							</FormSettingExplanation>
+						</FormFieldset>
+
+						<FormFieldset>
+							<FormLabel htmlFor="ossdl_off_exclude">
+								{ translate( 'Exclude if substring' ) }
+							</FormLabel>
+
+							<FormTextInput
+								disabled={ isRequesting || isSaving }
+								id="ossdl_off_exclude"
+								onChange={ handleChange( 'ossdl_off_exclude' ) }
+								value={ ossdl_off_exclude || '' } />
+
+							<FormSettingExplanation>
+								{ translate(
+									'Excludes something from being rewritten if one of the above strings is found in the match. ' +
+									'Use a comma as the delimiter like this, {{code}}.php, .flv, .do{{/code}}, and always ' +
+									'include {{code}}.php{{/code}} (default).',
+									{
+										components: { code: <code /> }
+									}
+								) }
+							</FormSettingExplanation>
+						</FormFieldset>
+
+						<FormFieldset>
+							<FormLabel htmlFor="ossdl_cname">
+								{ translate( 'Additional CNAMES' ) }
+							</FormLabel>
+
+							<FormTextInput
+								disabled={ isRequesting || isSaving }
+								id="ossdl_cname"
+								onChange={ handleChange( 'ossdl_cname' ) }
+								value={ ossdl_cname || '' } />
+
+							<FormSettingExplanation>
+								{ translate(
+									'These {{a}}CNAMES{{/a}} will be used in place of %(url)s for rewriting (in addition to the ' +
+									'off-site URL above). Use a comma as the delimiter. For pages with a large number of static files, ' +
+									'this can improve browser performance. CNAMEs may also need to be configured on your CDN.',
+									{
+										args: {
+											url: siteUrl,
+										},
+										components: {
+											a: (
+												<ExternalLink
+													icon={ true }
+													target="_blank"
+													href="http://en.wikipedia.org/wiki/CNAME_record"
+												/>
+											),
+										},
+									}
+								) }
+							</FormSettingExplanation>
+						</FormFieldset>
+
+						<FormFieldset>
+							<FormLabel htmlFor="ossdl_off_include_dirs">
+								{ translate( 'Include directories' ) }
+							</FormLabel>
+
+							<FormTextInput
+								disabled={ isRequesting }
+								id="ossdl_off_include_dirs"
+								onChange={ handleChange( 'ossdl_off_include_dirs' ) }
+								value={ ossdl_off_include_dirs || '' } />
+
+							<FormSettingExplanation>
+								{ translate(
+									'Directories to include in static file matching. Use a comma as the delimiter. Default is ' +
+									'{{code}}wp-content, wp-includes{{/code}}, which will be enforced if this field is left empty.',
+									{
+										components: { code: <code /> }
+									}
+								) }
+							</FormSettingExplanation>
+						</FormFieldset>
+
+						<FormFieldset>
+							<FormLabel htmlFor="ossdl_off_exclude">
+								{ translate( 'Exclude if substring' ) }
+							</FormLabel>
+
+							<FormTextInput
+								disabled={ isRequesting }
+								id="ossdl_off_exclude"
+								onChange={ handleChange( 'ossdl_off_exclude' ) }
+								value={ ossdl_off_exclude || '' } />
+
+							<FormSettingExplanation>
+								{ translate(
+									'Excludes something from being rewritten if one of the above strings is found in the match. ' +
+									'Use a comma as the delimiter like this, {{code}}.php, .flv, .do{{/code}}, and always ' +
+									'include {{code}}.php{{/code}} (default).',
+									{
+										components: { code: <code /> }
+									}
+								) }
+							</FormSettingExplanation>
+						</FormFieldset>
+
+						<FormFieldset>
+							<FormLabel htmlFor="ossdl_cname">
+								{ translate( 'Additional CNAMES' ) }
+							</FormLabel>
+
+							<FormTextInput
+								disabled={ isRequesting }
+								id="ossdl_cname"
+								onChange={ handleChange( 'ossdl_cname' ) }
+								value={ ossdl_cname || '' } />
+
+							<FormSettingExplanation>
+								{ translate(
+									'These {{a}}CNAMES{{/a}} will be used in place of %(url)s for rewriting (in addition to the ' +
+									'off-site URL above). Use a comma as the delimiter. For pages with a large number of static ' +
+									'files, this can improve browser performance. CNAMEs may also need to be configured on your CDN.',
+									{
+										args: {
+											url: siteUrl,
+										},
+										components: {
+											a: (
+												<ExternalLink
+													icon={ true }
+													target="_blank"
+													href="http://en.wikipedia.org/wiki/CNAME_record"
+												/>
+											),
+										}
+									}
+								) }
+							</FormSettingExplanation>
+						</FormFieldset>
+
+						<FormFieldset>
+							<FormToggle
+								checked={ !! ossdl_https }
+								disabled={ isRequesting || isSaving }
+								onChange={ handleAutosavingToggle( 'ossdl_https' ) }>
 							<span>
 								{ translate( 'Skip https URLs to avoid "mixed content" errors' ) }
 							</span>
-						</FormToggle>
-					</FormFieldset>
+							</FormToggle>
+						</FormFieldset>
+					</div>
 				</form>
 			</Card>
 		</div>

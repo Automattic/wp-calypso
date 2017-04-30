@@ -24,6 +24,7 @@ import StickyPanel from 'components/sticky-panel';
 import config from 'config';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
+import { isPluginActive } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class StatsSite extends Component {
@@ -109,7 +110,10 @@ class StatsSite extends Component {
 			<Main wideLayout={ true }>
 				<StatsFirstView />
 				<SidebarNavigation />
-				<StatsNavigation section={ period } />
+				<StatsNavigation
+					{ ...this.props }
+					section={ period }
+				/>
 				<div id="my-stats-content">
 					<ChartTabs
 						barClick={ this.barClick }
@@ -193,9 +197,12 @@ class StatsSite extends Component {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
 		return {
-			isJetpack: isJetpackSite( state, siteId ),
+			isJetpack,
 			hasPodcasts: getSiteOption( state, siteId, 'podcasting_archive' ),
+			isWooConnect: isJetpack && isPluginActive( state, siteId, 'woocommerce' ),
+			siteId,
 			slug: getSelectedSiteSlug( state )
 		};
 	},

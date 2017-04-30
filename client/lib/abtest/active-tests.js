@@ -42,6 +42,14 @@ module.exports = {
 		},
 		defaultVariation: 'hideSurveyStep',
 	},
+	signupThemeStepCopyChanges: {
+		datestamp: '20170420',
+		variations: {
+			original: 20,
+			modified: 80,
+		},
+		defaultVariation: 'original',
+	},
 	conciergeOfferOnCancel: {
 		datestamp: '20170410',
 		variations: {
@@ -66,5 +74,13 @@ module.exports = {
 			onlyDotComSites: 90,
 		},
 		defaultVariation: 'onlyDotComSites',
+	},
+	chatOfferOnCancel: {
+		datestamp: '20170421',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'show',
 	},
 };

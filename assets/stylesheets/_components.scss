@@ -12,8 +12,8 @@
 @import 'account-recovery/forgot-username-form/style';
 @import 'account-recovery/lost-password-form/style';
 @import 'account-recovery/reset-password-form/style';
-@import 'account-recovery/reset-password/reset-password-sms-form/style';
-@import 'account-recovery/reset-password/reset-password-email-form/style';
+@import 'account-recovery/reset-password-sms-form/style';
+@import 'account-recovery/reset-password-email-form/style';
 @import 'account-recovery/reset-password/reset-password-confirm-form/style';
 @import 'account-recovery/reset-password/transaction-id-form/style';
 @import 'account-recovery/style';
@@ -100,6 +100,7 @@
 @import 'components/forms/counted-textarea/style';
 @import 'components/forms/form-button/style';
 @import 'components/forms/form-buttons-bar/style';
+@import 'components/forms/form-currency-input/style';
 @import 'components/forms/form-fieldset/style';
 @import 'components/forms/form-input-validation/style';
 @import 'components/forms/form-label/style';
@@ -385,7 +386,6 @@
 @import 'my-sites/theme/themes-related-card/style';
 @import 'my-sites/themes/current-theme/style';
 @import 'my-sites/themes/style';
-@import 'my-sites/themes/themes-search-card/style';
 @import 'my-sites/themes/themes-magic-search-card/style';
 @import 'my-sites/themes/theme-upload/style';
 @import 'my-sites/themes/themes-selection-header/style';

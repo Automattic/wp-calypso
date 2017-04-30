@@ -22,11 +22,13 @@ React components used on the server will be rendered to HTML by being passed to 
 
 ### Caching
 
-Because it is necessary to serve the redux state along with a server-rendered page, we use two levels of cache on the server: one to store raw query data, from which we can generate and serve redux state, and one to store rendered layouts.
+Because it is necessary to serve the redux state along with a server-rendered page, we use two levels of cache on the server: one to store the redux state, and one to store rendered layouts.
 
 ##### Data Cache
 
-Caching data is currently left to the controller for a [given](../client/my-sites/themes/controller.jsx) [section](../client/my-sites/theme/controller.jsx). Request timestamps are used to force expiration.
+At render time, the Redux state is [serialized and cached](../server/render/index.js), using the current path as the cache key, unless there is a query string, in which case we don't cache.
+
+This means that all data that was fetched to render a given page is available the next time the corresponding route is hit. A section controller thus only needs to check if the required data is available (using selectors), and dispatch the corresponding fetching action if it isn't; see the [themes controller](../client/my-sites/themes/controller.jsx) for an example.
 
 ##### Render Cache
 

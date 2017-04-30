@@ -45,6 +45,7 @@ import {
 } from 'state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
+	getSiteSettings,
 	getSiteSettingsSaveError,
 } from 'state/site-settings/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -61,6 +62,7 @@ import {
 import { hasFeature } from 'state/sites/plans/selectors';
 import { FEATURE_ADVANCED_SEO, PLAN_BUSINESS } from 'lib/plans/constants';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import QuerySiteSettings from 'components/data/query-site-settings';
 import {
 	requestSiteSettings,
 	saveSiteSettings
@@ -378,15 +380,13 @@ export const SeoForm = React.createClass( {
 			showAdvancedSeo,
 			showWebsiteMeta,
 			site,
+			siteSettings,
 			isFetchingSite,
 			isSeoToolsActive,
 			isVerificationToolsActive,
 			translate,
 		} = this.props;
 		const {
-			settings: {
-				blog_public = 1
-			} = {},
 			slug = '',
 			URL: siteUrl = '',
 		} = site;
@@ -403,14 +403,13 @@ export const SeoForm = React.createClass( {
 
 		let { googleCode, bingCode, pinterestCode, yandexCode } = this.state;
 
-		const isSitePrivate = parseInt( blog_public, 10 ) !== 1;
+		const isSitePrivate = siteSettings && parseInt( siteSettings.blog_public, 10 ) !== 1;
 		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsSeo;
 		const isDisabled = isSitePrivate || isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
 		const isSeoDisabled = isDisabled || isSeoToolsActive === false;
 		const isVerificationDisabled = isDisabled || isVerificationToolsActive === false;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
-		const sitemapUrl = `${ siteUrl }/sitemap.xml`;
 		const generalTabUrl = getGeneralTabUrl( slug );
 		const jetpackUpdateUrl = getJetpackPluginUrl( slug );
 		const placeholderTagContent = '1234';
@@ -447,6 +446,7 @@ export const SeoForm = React.createClass( {
 		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<div>
+				<QuerySiteSettings siteId={ siteId } />
 				{
 					siteIsJetpack &&
 					<QueryJetpackModules siteId={ siteId } />
@@ -711,20 +711,6 @@ export const SeoForm = React.createClass( {
 								onChange={ this.changeYandexCode } />
 							{ hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
-						<FormFieldset>
-							<FormLabel htmlFor="seo_sitemap">{ translate( 'XML Sitemap' ) }</FormLabel>
-							<ExternalLink
-								className="seo-settings__seo-sitemap"
-								icon={ true }
-								href={ sitemapUrl }
-								target="_blank"
-							>
-								{ sitemapUrl }
-							</ExternalLink>
-							<FormSettingExplanation>
-								{ translate( 'Your site\'s sitemap is automatically sent to all major search engines for indexing.' ) }
-							</FormSettingExplanation>
-						</FormFieldset>
 					</Card>
 				</form>
 				<WebPreview
@@ -756,6 +742,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		siteIsJetpack,
 		selectedSite: getSelectedSite( state ),
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
+		siteSettings: getSiteSettings( state, siteId ),
 		showAdvancedSeo: isAdvancedSeoEligible && isAdvancedSeoSupported,
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
 		jetpackManagementUrl,

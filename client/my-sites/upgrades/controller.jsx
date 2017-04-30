@@ -12,7 +12,6 @@ import { get, isEmpty } from 'lodash';
  * Internal Dependencies
  */
 import analytics from 'lib/analytics';
-import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
 import Main from 'components/main';
 import upgradesActions from 'lib/upgrades/actions';
@@ -31,7 +30,6 @@ import { getCurrentUser } from 'state/current-user/selectors';
 /**
  * Module variables
  */
-const sites = sitesFactory();
 const productsList = productsFactory();
 
 module.exports = {
@@ -103,7 +101,7 @@ module.exports = {
 
 	mapDomain: function( context ) {
 		var CartData = require( 'components/data/cart' ),
-			MapDomain = require( 'my-sites/upgrades/map-domain' ),
+			MapDomain = require( 'my-sites/upgrades/map-domain' ).default,
 			basePath = route.sectionify( context.path );
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
@@ -115,10 +113,7 @@ module.exports = {
 				<Main>
 					<CartData>
 						<MapDomain
-							store={ context.store }
-							productsList={ productsList }
-							initialQuery={ context.query.initialQuery }
-							sites={ sites } />
+							initialQuery={ context.query.initialQuery } />
 					</CartData>
 				</Main>
 			),

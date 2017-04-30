@@ -48,7 +48,7 @@ const connectSite = Component => {
 			let site = !! siteId ? getSite( state, siteId ) : undefined;
 
 			if ( feed && ! siteId ) {
-				siteId = feed.blog_ID !== 0 && feed.blog_ID;
+				siteId = feed.blog_ID !== 0 ? feed.blog_ID : undefined;
 				site = !! siteId ? getSite( state, feed.blog_ID ) : undefined;
 			}
 			if ( site && ! feedId ) {

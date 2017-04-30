@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -69,7 +70,7 @@ const MasterbarLoggedIn = React.createClass( {
 	},
 
 	render() {
-		const { domainOnlySite, siteSlug } = this.props,
+		const { domainOnlySite, siteSlug, translate } = this.props,
 			mySitesUrl = domainOnlySite
 				? domainManagementList( siteSlug )
 				: getStatsPathForTab( 'day', siteSlug );
@@ -82,12 +83,12 @@ const MasterbarLoggedIn = React.createClass( {
 					icon={ this.wordpressIcon() }
 					onClick={ this.clickMySites }
 					isActive={ this.isActive( 'sites' ) }
-					tooltip={ this.translate( 'View a list of your sites and access their dashboards', { textOnly: true } ) }
+					tooltip={ translate( 'View a list of your sites and access their dashboards', { textOnly: true } ) }
 					preloadSection={ () => preload( domainOnlySite ? 'upgrades' : 'stats' ) }
 				>
 					{ this.props.user.get().visible_site_count > 1
-						? this.translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
-						: this.translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } )
+						? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
+						: translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } )
 					}
 				</Item>
 				<Item
@@ -97,33 +98,35 @@ const MasterbarLoggedIn = React.createClass( {
 					icon="reader"
 					onClick={ this.clickReader }
 					isActive={ this.isActive( 'reader' ) }
-					tooltip={ this.translate( 'Read the blogs and topics you follow', { textOnly: true } ) }
+					tooltip={ translate( 'Read the blogs and topics you follow', { textOnly: true } ) }
 					preloadSection={ () => preload( 'reader' ) }
 				>
-					{ this.translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
 				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
-				<Publish
-					sites={ this.props.sites }
-					user={ this.props.user }
-					isActive={ this.isActive( 'post' ) }
-					className="masterbar__item-new"
-					tooltip={ this.translate( 'Create a New Post', { textOnly: true } ) }
-				>
-					{ this.translate( 'Write' ) }
-				</Publish>
+				{ ! domainOnlySite &&
+					<Publish
+						sites={ this.props.sites }
+						user={ this.props.user }
+						isActive={ this.isActive( 'post' ) }
+						className="masterbar__item-new"
+						tooltip={ translate( 'Create a New Post', { textOnly: true } ) }
+					>
+						{ translate( 'Write' ) }
+					</Publish>
+				}
 				<Item
 					tipTarget="me"
 					url="/me"
 					icon="user-circle"
 					isActive={ this.isActive( 'me' ) }
 					className="masterbar__item-me"
-					tooltip={ this.translate( 'Update your profile, personal settings, and more', { textOnly: true } ) }
+					tooltip={ translate( 'Update your profile, personal settings, and more', { textOnly: true } ) }
 					preloadSection={ () => preload( 'me' ) }
 				>
 					<Gravatar user={ this.props.user.get() } alt="Me" size={ 18 } />
 					<span className="masterbar__item-me-label">
-						{ this.translate( 'Me', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
+						{ translate( 'Me', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
 					</span>
 				</Item>
 				<Notifications
@@ -131,9 +134,11 @@ const MasterbarLoggedIn = React.createClass( {
 					onClick={ this.clickNotifications }
 					isActive={ this.isActive( 'notifications' ) }
 					className="masterbar__item-notifications"
-					tooltip={ this.translate( 'Manage your notifications', { textOnly: true } ) }
+					tooltip={ translate( 'Manage your notifications', { textOnly: true } ) }
 				>
-					<span className="masterbar__item-notifications-label">{ this.translate( 'Notifications', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }</span>
+					<span className="masterbar__item-notifications-label">
+						{ translate( 'Notifications', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+					</span>
 				</Notifications>
 			</Masterbar>
 		);
@@ -168,4 +173,4 @@ export default connect( ( state, { sites } ) => {
 		siteSlug,
 		domainOnlySite
 	};
-}, { setNextLayoutFocus }, null, { pure: false } )( MasterbarLoggedIn );
+}, { setNextLayoutFocus }, null, { pure: false } )( localize( MasterbarLoggedIn ) );

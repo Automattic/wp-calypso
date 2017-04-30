@@ -13,12 +13,14 @@ import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextarea from 'components/forms/form-textarea';
+import FormLabel from 'components/forms/form-label';
 import FormToggle from 'components/forms/form-toggle/compact';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 
 const AcceptedFilenames = ( {
 	fields: {
+		accepted_files,
 		archives,
 		author,
 		category,
@@ -26,15 +28,16 @@ const AcceptedFilenames = ( {
 		frontpage,
 		home,
 		pages,
+		rejected_uri,
 		search,
 		single,
 		tag,
-		wp_accepted_files,
-		wp_rejected_uri,
 	},
+	handleAutosavingToggle,
 	handleChange,
-	handleToggle,
+	handleSubmitForm,
 	isRequesting,
+	isSaving,
 	translate,
 } ) => {
 	return (
@@ -43,18 +46,43 @@ const AcceptedFilenames = ( {
 				<Button
 					compact
 					primary
-					disabled={ isRequesting }
-					type="submit">
-					{ translate( 'Save Settings' ) }
+					disabled={ isRequesting || isSaving }
+					onClick={ handleSubmitForm }>
+					{ isSaving
+						? translate( 'Saving…' )
+						: translate( 'Save Settings' )
+					}
 				</Button>
 			</SectionHeader>
 			<Card>
 				<form>
+					<FormLabel>
+						{ translate( 'Do not cache these page types.' ) }
+					</FormLabel>
+
+					<FormSettingExplanation className="wp-super-cache__condition-settings-explanation">
+						{ translate(
+							' See the {{a}}Conditional Tags{{/a}} ' +
+							'documentation for a complete discussion on each type.',
+							{
+								components: {
+									a: (
+										<ExternalLink
+											icon={ true }
+											target="_blank"
+											href="http://codex.wordpress.org/Conditional_Tags"
+										/>
+									),
+								}
+							}
+						) }
+					</FormSettingExplanation>
+
 					<FormFieldset>
 						<FormToggle
 							checked={ !! single }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'single' ) }>
+							disabled={ isRequesting || isSaving }
+							onChange={ handleAutosavingToggle( 'single' ) }>
 							<span>
 								{ translate( 'Single Posts (is_single)' ) }
 							</span>
@@ -62,8 +90,8 @@ const AcceptedFilenames = ( {
 
 						<FormToggle
 							checked={ !! pages }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'pages' ) }>
+							disabled={ isRequesting || isSaving }
+							onChange={ handleAutosavingToggle( 'pages' ) }>
 							<span>
 								{ translate( 'Pages (is_page)' ) }
 							</span>
@@ -71,8 +99,8 @@ const AcceptedFilenames = ( {
 
 						<FormToggle
 							checked={ !! frontpage }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'frontpage' ) }>
+							disabled={ isRequesting || isSaving }
+							onChange={ handleAutosavingToggle( 'frontpage' ) }>
 							<span>
 								{ translate( 'Front Page (is_front_page)' ) }
 							</span>
@@ -80,8 +108,8 @@ const AcceptedFilenames = ( {
 
 						<FormToggle
 							checked={ !! home }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'home' ) }>
+							disabled={ isRequesting || isSaving }
+							onChange={ handleAutosavingToggle( 'home' ) }>
 							<span>
 								{ translate( 'Home (is_home)' ) }
 							</span>
@@ -89,8 +117,8 @@ const AcceptedFilenames = ( {
 
 						<FormToggle
 							checked={ !! archives }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'archives' ) }>
+							disabled={ isRequesting || isSaving }
+							onChange={ handleAutosavingToggle( 'archives' ) }>
 							<span>
 								{ translate( 'Archives (is_archive)' ) }
 							</span>
@@ -98,8 +126,8 @@ const AcceptedFilenames = ( {
 
 						<FormToggle
 							checked={ !! tag }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'tag' ) }>
+							disabled={ isRequesting || isSaving }
+							onChange={ handleAutosavingToggle( 'tag' ) }>
 							<span>
 								{ translate( 'Tags (is_tag)' ) }
 							</span>
@@ -107,8 +135,8 @@ const AcceptedFilenames = ( {
 
 						<FormToggle
 							checked={ !! category }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'category' ) }>
+							disabled={ isRequesting || isSaving }
+							onChange={ handleAutosavingToggle( 'category' ) }>
 							<span>
 								{ translate( 'Category (is_category)' ) }
 							</span>
@@ -116,8 +144,8 @@ const AcceptedFilenames = ( {
 
 						<FormToggle
 							checked={ !! feed }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'feed' ) }>
+							disabled={ isRequesting || isSaving }
+							onChange={ handleAutosavingToggle( 'feed' ) }>
 							<span>
 								{ translate( 'Feeds (is_feed)' ) }
 							</span>
@@ -125,8 +153,8 @@ const AcceptedFilenames = ( {
 
 						<FormToggle
 							checked={ !! search }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'search' ) }>
+							disabled={ isRequesting || isSaving }
+							onChange={ handleAutosavingToggle( 'search' ) }>
 							<span>
 								{ translate( 'Search Pages (is_search)' ) }
 							</span>
@@ -134,36 +162,22 @@ const AcceptedFilenames = ( {
 
 						<FormToggle
 							checked={ !! author }
-							disabled={ isRequesting }
-							onChange={ handleToggle( 'author' ) }>
+							disabled={ isRequesting || isSaving }
+							onChange={ handleAutosavingToggle( 'author' ) }>
 							<span>
 								{ translate( 'Author Pages (is_author)' ) }
 							</span>
 						</FormToggle>
-						<FormSettingExplanation>
-							{ translate(
-								'Do not cache these page types. See the {{a}}Conditional Tags{{/a}} ' +
-								'documentation for a complete discussion on each type.',
-								{
-									components: {
-										a: (
-											<ExternalLink
-												icon={ true }
-												target="_blank"
-												href="http://codex.wordpress.org/Conditional_Tags"
-											/>
-										),
-									}
-								}
-							) }
-						</FormSettingExplanation>
 					</FormFieldset>
 
 					<FormFieldset>
+						<FormLabel>
+							{ translate( 'Do not cache pages that contain the following strings:' ) }
+						</FormLabel>
 						<FormTextarea
-							disabled={ isRequesting }
-							onChange={ handleChange( 'wp_rejected_uri' ) }
-							value={ wp_rejected_uri || '' } />
+							disabled={ isRequesting || isSaving }
+							onChange={ handleChange( 'rejected_uri' ) }
+							value={ rejected_uri || '' } />
 						<FormSettingExplanation>
 							{ translate(
 								'Add here strings (not a filename) that forces a page not to be cached. For example, ' +
@@ -175,10 +189,13 @@ const AcceptedFilenames = ( {
 					</FormFieldset>
 
 					<FormFieldset>
+						<FormLabel>
+							{ translate( 'Whitelisted filenames:' ) }
+						</FormLabel>
 						<FormTextarea
-							disabled={ isRequesting }
-							onChange={ handleChange( 'wp_accepted_files' ) }
-							value={ wp_accepted_files || '' } />
+							disabled={ isRequesting || isSaving }
+							onChange={ handleChange( 'accepted_files' ) }
+							value={ accepted_files || '' } />
 						<FormSettingExplanation>
 							{ translate(
 								'Add here those filenames that can be cached, even if they match one of the rejected ' +
@@ -194,10 +211,10 @@ const AcceptedFilenames = ( {
 
 const getFormSettings = settings => {
 	const textSettings = pick( settings, [
-		'wp_accepted_files',
-		'wp_rejected_uri',
+		'accepted_files',
+		'rejected_uri',
 	] );
-	const wpCachePages = pick( settings.wp_cache_pages, [
+	const pages = pick( settings.pages, [
 		'archives',
 		'author',
 		'category',
@@ -210,7 +227,7 @@ const getFormSettings = settings => {
 		'tag',
 	] );
 
-	return Object.assign( {}, textSettings, wpCachePages );
+	return { ...textSettings, ...pages };
 };
 
 export default WrapSettingsForm( getFormSettings )( AcceptedFilenames );

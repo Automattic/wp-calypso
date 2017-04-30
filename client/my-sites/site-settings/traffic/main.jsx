@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight, partialRight, pick } from 'lodash';
@@ -20,6 +20,7 @@ import JetpackSiteStats from 'my-sites/site-settings/jetpack-site-stats';
 import RelatedPosts from 'my-sites/site-settings/related-posts';
 import AmpJetpack from 'my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'my-sites/site-settings/amp/wpcom';
+import Sitemaps from 'my-sites/site-settings/sitemaps';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
@@ -38,7 +39,6 @@ const SiteSettingsTraffic = ( {
 	trackEvent,
 	translate,
 	updateFields,
-	upgradeToBusiness
 } ) => (
 	<Main className="traffic__main site-settings">
 		<DocumentHead title={ translate( 'Site Settings' ) } />
@@ -74,13 +74,14 @@ const SiteSettingsTraffic = ( {
 		}
 		<AnalyticsSettings />
 		<SeoSettingsHelpCard />
-		<SeoSettingsMain upgradeToBusiness={ upgradeToBusiness } />
+		<SeoSettingsMain />
+		<Sitemaps
+			isSavingSettings={ isSavingSettings }
+			isRequestingSettings={ isRequestingSettings }
+			fields={ fields }
+		/>
 	</Main>
 );
-
-SiteSettingsTraffic.propTypes = {
-	upgradeToBusiness: PropTypes.func.isRequired,
-};
 
 const connectComponent = connect(
 	( state ) => {
@@ -109,6 +110,7 @@ const getFormSettings = partialRight( pick, [
 	'jetpack_relatedposts_show_thumbnails',
 	'amp_is_supported',
 	'amp_is_enabled',
+	'blog_public',
 ] );
 
 export default flowRight(

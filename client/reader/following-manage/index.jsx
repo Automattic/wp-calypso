@@ -13,18 +13,28 @@ import qs from 'qs';
  */
 import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
-import HeaderBack from 'reader/header-back';
 import SearchInput from 'components/search';
 import ReaderMain from 'components/reader-main';
 import { getReaderFeedsForQuery } from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import FollowingManageSubscriptions from './subscriptions';
 import SitesWindowScroller from './sites-window-scroller';
+import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
+import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 
 class FollowingManage extends Component {
 	static propTypes = {
-		query: PropTypes.string,
+		sitesQuery: PropTypes.string,
+		subsQuery: PropTypes.string,
+		translate: PropTypes.func,
 	};
+
+	static defaultProps = {
+		subsQuery: '',
+		sitesQuery: '',
+		forceRefresh: false,
+	}
+
 	state = { width: 800 };
 
 	// TODO make this common between our different search pages?
@@ -79,16 +89,25 @@ class FollowingManage extends Component {
 		window.removeEventListener( 'resize', this.resizeListener );
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		const forceRefresh = nextProps.sitesQuery !== this.props.sitesQuery;
+		this.setState( { forceRefresh } );
+	}
+
+	fetchNextPage = offset => this.props.requestFeedSearch( this.props.sitesQuery, offset );
+
 	render() {
-		const { query, translate, searchResults } = this.props;
+		const { sitesQuery, subsQuery, translate, searchResults } = this.props;
 		const searchPlaceholderText = translate( 'Search millions of sites' );
 
 		return (
 			<ReaderMain className="following-manage">
 				<DocumentHead title={ 'Manage Following' } />
-				{ this.props.showBack && <HeaderBack /> }
-				{ searchResults.length === 0 && <QueryReaderFeedsSearch query={ query } /> }
-				<h1 className="following-manage__header"> { translate( 'Follow Something New' ) } </h1>
+				<MobileBackToSidebar>
+					<h1>{ translate( 'Manage Followed Sites' ) }</h1>
+				</MobileBackToSidebar>
+				{ ! searchResults && <QueryReaderFeedsSearch query={ sitesQuery } /> }
+				<h2 className="following-manage__header">{ translate( 'Follow Something New' ) }</h2>
 				<div ref={ this.handleStreamMounted } />
 				<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
 					<CompactCard className="following-manage__input-card">
@@ -100,13 +119,29 @@ class FollowingManage extends Component {
 							delayTimeout={ 500 }
 							placeholder={ searchPlaceholderText }
 							additionalClasses="following-manage__search-new"
-							initialValue={ query }
-							value={ query }>
+							initialValue={ sitesQuery }
+							value={ sitesQuery }>
 						</SearchInput>
 					</CompactCard>
 				</div>
-				{ ! query && <FollowingManageSubscriptions width={ this.state.width } /> }
-				{ !! query && <SitesWindowScroller sites={ searchResults } width={ this.state.width } /> }
+				{ ! sitesQuery && (
+					<FollowingManageSubscriptions
+						width={ this.state.width }
+						query={ subsQuery }
+					/>
+				) }
+				{ ( !! sitesQuery && searchResults && (
+					!! ( searchResults.length > 0 )
+					? <SitesWindowScroller
+							sites={ searchResults }
+							width={ this.state.width }
+							fetchNextPage={ this.fetchNextPage }
+							remoteTotalCount={ 200 }
+							forceRefresh={ this.state.forceRefresh }
+						/>
+						: <p> { translate( 'There were no site results for your query.' ) } </p>
+					)
+				) }
 			</ReaderMain>
 		);
 	}
@@ -114,6 +149,7 @@ class FollowingManage extends Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		searchResults: getReaderFeedsForQuery( state, ownProps.query ) || [],
+		searchResults: getReaderFeedsForQuery( state, ownProps.sitesQuery ),
 	} ),
+	{ requestFeedSearch }
 )( localize( FollowingManage ) );
