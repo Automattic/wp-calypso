@@ -20,6 +20,7 @@ import {
 import { createReducer, isValidStateWithSchema } from 'state/utils';
 import { idSchema, capabilitiesSchema, currencyCodeSchema, flagsSchema } from './schema';
 import gravatarStatus from './gravatar-status/reducer';
+import emailVerification from './email-verification/reducer';
 
 /**
  * Tracks the current user ID.
@@ -101,5 +102,6 @@ export default combineReducers( {
 	currencyCode,
 	capabilities,
 	flags,
-	gravatarStatus
+	gravatarStatus,
+	emailVerification,
 } );
