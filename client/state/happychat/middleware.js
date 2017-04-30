@@ -15,6 +15,7 @@ import {
 	HAPPYCHAT_SEND_MESSAGE,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
+	HELP_SELECTED_SITE,
 	ROUTE_SET,
 } from 'state/action-types';
 import {
@@ -39,6 +40,7 @@ import {
 	getCurrentUser,
 	getCurrentUserLocale,
 } from 'state/current-user/selectors';
+import { getGroups } from 'lib/happychat';
 
 const debug = require( 'debug' )( 'calypso:happychat:actions' );
 
@@ -76,6 +78,7 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 
 	const user = getCurrentUser( state );
 	const locale = getCurrentUserLocale( state );
+	const groups = getGroups( state );
 
 	// Notify that a new connection is being established
 	dispatch( setConnecting() );
@@ -100,8 +103,16 @@ export const connectChat = ( connection, { getState, dispatch } ) => {
 	// create new session id and get signed identity data for authenticating
 	return startSession()
 		.then( ( { session_id } ) => sign( { user, session_id } ) )
-		.then( ( { jwt } ) => connection.open( user.ID, jwt, locale ) )
+		.then( ( { jwt } ) => connection.open( user.ID, jwt, locale, groups ) )
 		.catch( e => debug( 'failed to start happychat session', e, e.stack ) );
+};
+
+export const updateChatPreferences = ( connection, { getState }, siteId ) => {
+	const state = getState();
+	const locale = getCurrentUserLocale( state );
+	const groups = getGroups( state, siteId );
+
+	connection.preferences( locale, groups );
 };
 
 export const requestTranscript = ( connection, { getState, dispatch } ) => {
@@ -170,6 +181,10 @@ export default function( connection = null ) {
 
 			case HAPPYCHAT_INITIALIZE:
 				connectIfRecentlyActive( connection, store );
+				break;
+
+			case HELP_SELECTED_SITE:
+				updateChatPreferences( connection, store, action.siteId );
 				break;
 
 			case HAPPYCHAT_SEND_BROWSER_INFO:

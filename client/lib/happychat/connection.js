@@ -13,7 +13,7 @@ const debug = require( 'debug' )( 'calypso:happychat:connection' );
 
 class Connection extends EventEmitter {
 
-	open( user_id, token, locale ) {
+	open( signer_user_id, jwt, locale, groups ) {
 		if ( ! this.openSocket ) {
 			this.openSocket = new Promise( resolve => {
 				const url = config( 'happychat_url' );
@@ -25,7 +25,7 @@ class Connection extends EventEmitter {
 						resolve( socket );
 					} )
 					.on( 'token', handler => {
-						handler( { signer_user_id: user_id, jwt: token, locale } );
+						handler( { signer_user_id, jwt, locale, groups } );
 					} )
 					.on( 'unauthorized', () => {
 						socket.close();
@@ -78,6 +78,18 @@ class Connection extends EventEmitter {
 				meta: { forOperator: true, event_type: 'customer-event' }
 			} ),
 			e => debug( 'failed to send message', e )
+		);
+	}
+
+	/**
+	 * Update chat preferences (locale and groups)
+	 * @param {string} locale representing the user selected locale
+	 * @param {array} groups of string happychat groups (wp.com, jpop) based on the site selected
+	 */
+	preferences( locale, groups ) {
+		this.openSocket.then(
+			socket => socket.emit( 'preferences', { locale, groups } ),
+			e => debug( 'failed to send preferences', e )
 		);
 	}
 
