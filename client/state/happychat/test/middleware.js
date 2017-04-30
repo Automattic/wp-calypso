@@ -30,6 +30,7 @@ import middleware, {
 	connectIfRecentlyActive,
 	requestTranscript,
 	sendRouteSetEventMessage,
+	updateChatPreferences,
 } from '../middleware';
 import * as selectors from '../selectors';
 import {
@@ -226,6 +227,27 @@ describe( 'middleware', () => {
 						...response,
 					} );
 				} );
+		} );
+	} );
+
+	describe( 'HELP_SELECTED_SITE action', () => {
+		it( 'should send the locale and groups through the connection and send a preferences signal', () => {
+			const state = {
+				currentUser: {
+					locale: 'en',
+				},
+				sites: {
+					items: {
+						1: { ID: 1 }
+					}
+				}
+			};
+			const getState = () => state;
+			const connection = {
+				preferences: stub(),
+			};
+			updateChatPreferences( connection, { getState }, 1 );
+			expect( connection.preferences ).to.have.been.called;
 		} );
 	} );
 
