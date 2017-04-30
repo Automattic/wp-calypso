@@ -23,7 +23,9 @@ import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
 import siteList from 'lib/sites-list';
 import ChatClosureNotice from '../chat-closure-notice';
+import QuerySites from 'components/data/query-sites';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { selectSiteId } from 'state/help/actions';
 
 /**
  * Module variables
@@ -109,6 +111,7 @@ export const HelpContactForm = React.createClass( {
 	setSite( siteSlug ) {
 		const site = sites.getSite( siteSlug );
 		this.setState( { siteId: site.ID } );
+		this.props.onChangeSite( site.ID );
 	},
 
 	trackClickStats( selectionName, selectedOption ) {
@@ -222,6 +225,7 @@ export const HelpContactForm = React.createClass( {
 
 		return (
 			<div className="help-contact-form">
+				<QuerySites allSites />
 				<ChatClosureNotice
 					reason="eoy-holidays"
 					from="2016-12-24T00:00:00Z"
@@ -279,4 +283,12 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( HelpContactForm ) );
+const mapDispatchToProps = ( dispatch ) => {
+	return {
+		onChangeSite( siteId ) {
+			dispatch( selectSiteId( siteId ) );
+		}
+	};
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpContactForm ) );
