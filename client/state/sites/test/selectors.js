@@ -10,6 +10,7 @@ import { expect } from 'chai';
 import config from 'config';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
+	getRawSite,
 	getSite,
 	computeSiteOptions,
 	getSiteCollisions,
@@ -64,6 +65,34 @@ describe( 'selectors', () => {
 	beforeEach( () => {
 		getSite.memoizedSelector.cache.clear();
 		getSiteCollisions.memoizedSelector.cache.clear();
+	} );
+
+	describe( '#getRawSite()', () => {
+		it( 'it should return null if there is no such site', () => {
+			const rawSite = getRawSite( {
+				sites: {
+					items: {}
+				}
+			}, 77203199 );
+
+			expect( rawSite ).to.be.null;
+		} );
+
+		it( 'it should return the raw site object for site with that ID', () => {
+			const site = {
+				ID: 77203199,
+				URL: 'https://example.com'
+			};
+			const rawSite = getRawSite( {
+				sites: {
+					items: {
+						77203199: site,
+					}
+				}
+			}, 77203199 );
+
+			expect( rawSite ).to.eql( site );
+		} );
 	} );
 
 	describe( '#getSite()', () => {
