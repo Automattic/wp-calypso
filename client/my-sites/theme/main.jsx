@@ -583,8 +583,7 @@ const ConnectedThemeSheet = connectOptions(
 		}
 
 		return (
-			<ThemesSiteSelectorModal { ...props }
-				sourcePath={ `/theme/${ props.id }${ props.section ? '/' + props.section : '' }` }>
+			<ThemesSiteSelectorModal { ...props }>
 				<ThemeSheet />
 			</ThemesSiteSelectorModal>
 		);
