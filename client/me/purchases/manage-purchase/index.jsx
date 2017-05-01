@@ -317,10 +317,14 @@ class ManagePurchase extends Component {
 				<PurchaseSiteHeader isPlaceholder />
 				<Card className="manage-purchase__info is-placeholder">
 					<header className="manage-purchase__header">
-						<strong className="manage-purchase__content manage-purchase__title" />
-						<span className="manage-purchase__content manage-purchase__subtitle" />
-						<span className="manage-purchase__content manage-purchase__settings-link" />
+						<div className="manage-purchase__plan-icon" />
+						<strong className="manage-purchase__title" />
+						<span className="manage-purchase__subtitle" />
 					</header>
+					<div className="manage-purchase__content">
+						<span className="manage-purchase__description" />
+						<span className="manage-purchase__settings-link" />
+					</div>
 
 					<PurchaseMeta purchaseId={ false } />
 				</Card>

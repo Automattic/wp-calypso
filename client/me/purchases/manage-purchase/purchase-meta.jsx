@@ -294,8 +294,8 @@ class PurchaseMeta extends Component {
 				{
 					times( 4, ( i ) => (
 						<li key={ i }>
-							<em className="manage-purchase__content manage-purchase__detail-label" />
-							<span className="manage-purchase__content manage-purchase__detail" />
+							<em className="manage-purchase__detail-label" />
+							<span className="manage-purchase__detail" />
 						</li>
 					) )
 				}
