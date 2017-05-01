@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -50,8 +51,8 @@ class BlogPostsPage extends React.Component {
 		if ( isStaticHomePageWithNoPostsPage ) {
 			return (
 				<span>
-					<Gridicon size={ 12 } icon="not-visible" />
-					{ this.props.translate( 'Not in use.' ) }
+					<Gridicon size={ 12 } icon="not-visible" className="blog-posts-page__not-used-icon" />
+					{ this.props.translate( 'Not in use.' ) + ' ' }
 					{
 						this.props.translate( '"%(pageTitle)s" is the front page.', {
 							args: {
@@ -66,6 +67,7 @@ class BlogPostsPage extends React.Component {
 		if ( isCurrentlySetAsHomepage ) {
 			return (
 				<span>
+					<Gridicon size={ 12 } icon="house" className="blog-posts-page__front-page-icon" />
 					{ translate( 'Front page is showing your latest posts.' ) }
 				</span>
 			);
@@ -91,12 +93,18 @@ class BlogPostsPage extends React.Component {
 
 		return (
 			<Card href={ this.getPostsPageLink( { isStaticHomePageWithNoPostsPage, isCurrentlySetAsHomepage } ) }
-				target="_blank" rel="noopener noreferrer" className="blog-posts-page">
+				target="_blank" rel="noopener noreferrer" className="blog-posts-page" >
 				<div className="blog-posts-page__details">
-					<div className="blog-posts-page__title">
+					<div className={ classNames( {
+						'blog-posts-page__title': true,
+						'is-disabled': isStaticHomePageWithNoPostsPage,
+					} ) } >
 						{ translate( 'Blog Posts' ) }
 					</div>
-					<div className="blog-posts-page__info">
+					<div className={ classNames( {
+						'blog-posts-page__info': true,
+						'is-disabled': isStaticHomePageWithNoPostsPage,
+					} ) } >
 						{ this.renderPostsPageInfo( { isStaticHomePageWithNoPostsPage, isCurrentlySetAsHomepage } ) }
 					</div>
 				</div>
