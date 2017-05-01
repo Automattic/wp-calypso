@@ -332,9 +332,8 @@ export const items = createReducer( defaultState, {
 	[DESERIALIZE]: state => fromJS( state )
 } );
 ```
-If your reducer state is already a plain object, you may choose to omit `SERIALIZE` and `DESERIALIZE` handlers, or 
-simply define them as returning the current state. However, please note that the subtree can still see errors from 
-changing data shapes, as described below.
+If your reducer state is already a plain object, the `SERIALIZE` and `DESERIALIZE` handlers are not needed.
+However, please note that the subtree can still see errors from changing data shapes, as described below.
 
 #### Problem: Data shapes change over time ( [#3101](https://github.com/Automattic/wp-calypso/pull/3101) )
 
@@ -380,6 +379,7 @@ export const itemsSchema = {
 
 A JSON Schema must be provided if the subtree chooses to persist state. If we find that our persisted data doesn't
 match our described data shape, we should throw it out and rebuild that section of the tree with our default state.
+
 When using `createReducer` util you can pass a schema as a third param and all that will be handled for you.
 ```javascript
 export const items = createReducer( defaultState, {
@@ -387,9 +387,9 @@ export const items = createReducer( defaultState, {
 }, itemsSchema );
 ```
 
-When you are not satisfied with the default handling you are also encouraged to implement your own `SERIALIZE` and
-`DESERIALIZE` action handlers in your reducers to customize data persistence. Always consider using schema to avoid
-errors when data shape changes. 
+If you are not satisfied with the default handling possible to implement your own `SERIALIZE` and
+`DESERIALIZE` action handlers in your reducers to customize data persistence. Always use a schema with your custom 
+handlers to avoid data shape errors. 
 
 ### Not persisting data
 
@@ -403,5 +403,37 @@ data is never going to be persisted and always regenerated with default value. I
 export const connectionState = createReducer( 'CHECKING', {
 	[CONNECTION_LOST]: () => 'OFFLINE',
 	[CONNECTION_RESTORED]: () => 'ONLINE'
+} );
+```
+
+### Opt-in to Persistence ( [#13359](https://github.com/Automattic/wp-calypso/pull/13359) )
+
+Currently reducers are persisted by default if no handlers are given for SERIALIZE and DESERIALIZE. This is a major 
+problem since many people may not realize that this is happening, and we can run into the data shape errors as 
+noted above.
+
+In the **future** we can opt-in to persistence by adding a schema as a property on the reducer. We do this by combining 
+all of our reducers using `combineReducersWithPersistence` at every level of the tree instead of [combineReducers](http://redux.js.org/docs/api/combineReducers.html).
+Each reducer is then wrapped with `withSchemaValidation` which returns a wrapped reducer that validates on `DESERIALZE` 
+if a schema is present and returns initial state on both `SERIALIZE` and `DESERIALZE` if a schema is not present.
+
+Usage looks like:
+```javascript
+age.schema = ageSchema;
+return combineReducersWithPersistence( {
+    age,
+    height,
+} );
+```
+
+For a reducer that has custom handlers (needs to perform transforms), we assume the reducer is checking the schema already, 
+on `DESERIALIZE` so all we need to do is set a boolean bit on the reducer, to ensure that we don't return initial state
+incorrectly from the default handling provided by `withSchemaValidation`.
+```javascript
+date.hasCustomPersistence = true;
+return combineReducersWithPersistence( {
+    age,
+    height,
+    date,
 } );
 ```
