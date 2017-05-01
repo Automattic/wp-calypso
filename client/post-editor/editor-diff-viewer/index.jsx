@@ -16,9 +16,9 @@ class EditorDiffViewer extends PureComponent {
 	render() {
 		return (
 			<div className="editor-diff-viewer">
-				<h3 className="editor-diff-viewer__title">
+				<h1 className="editor-diff-viewer__title">
 					{ this.props.revision.title }
-				</h3>
+				</h1>
 				{ this.props.revision.content }
 			</div>
 		);
