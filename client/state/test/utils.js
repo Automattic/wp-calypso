@@ -611,6 +611,32 @@ describe( 'utils', () => {
 			const invalid = veryNested( { bob: { person: { height: 22, date: new Date( -5 ) } }, count: 123 }, write );
 			expect( invalid ).to.eql( { bob: { person: { height: 160, date: -5 } }, count: 1 } );
 		} );
+
+		it( 'uses the provided validation from withSchemaValidation', () => {
+			reducers = combineReducersWithPersistence( {
+				height: withSchemaValidation( schema, height ),
+				count
+			} );
+
+			const valid = reducers( { height: 22, count: 44 }, write );
+			expect( valid ).to.eql( { height: 22, count: 1 } );
+
+			const invalid = reducers( { height: -1, count: 44 }, load );
+			expect( invalid ).to.eql( { height: 160, count: 1 } );
+		} );
+
+		it( 'uses the provided validation from createReducer', () => {
+			reducers = combineReducersWithPersistence( {
+				height: createReducer( 160, {}, schema ),
+				count
+			} );
+
+			const valid = reducers( { height: 22, count: 44 }, write );
+			expect( valid ).to.eql( { height: 22, count: 1 } );
+
+			const invalid = reducers( { height: -1, count: 44 }, load );
+			expect( invalid ).to.eql( { height: 160, count: 1 } );
+		} );
 	} );
 
 	describe( '#withoutPersistence', () => {
