@@ -387,7 +387,7 @@ export const items = createReducer( defaultState, {
 }, itemsSchema );
 ```
 
-If you are not satisfied with the default handling possible to implement your own `SERIALIZE` and
+If you are not satisfied with the default handling, it is possible to implement your own `SERIALIZE` and
 `DESERIALIZE` action handlers in your reducers to customize data persistence. Always use a schema with your custom 
 handlers to avoid data shape errors. 
 
