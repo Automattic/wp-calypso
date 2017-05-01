@@ -5,8 +5,6 @@
 	font-size: 28px;
 	color: $gray-dark;
 	font-weight: 600;
-	resize: none;
-	-ms-overflow-y: hidden !important;
 
 	@include breakpoint( '>480px' ) {
 		font-size: 32px;
