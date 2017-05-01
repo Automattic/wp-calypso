@@ -256,7 +256,8 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
  * age( -5, { type: DESERIALIZE } ) === 0
  * age( 23, { type: DESERIALIZE } ) === 23
  *
- * If no schema is provided, the reducer will return initial state on SERIALIZE.
+ * If no schema is provided, the reducer will return initial state on SERIALIZE
+ * and DESERIALIZE
  *
  * @example
  * const schema = { type: 'number', minimum: 0 }
@@ -265,14 +266,14 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
  * ageReducer( -5, { type: SERIALIZE } ) === -5
  * age( -5, { type: SERIALIZE } ) === 0
  * age( 23, { type: SERIALIZE } ) === 0
+ * age( 23, { type: DESERIALIZE } ) === 0
  *
  * @param {object} schema JSON-schema description of state
  * @param {function} reducer normal reducer from ( state, action ) to new state
  * @returns {function} wrapped reducer handling validation on DESERIALIZE and
- * returns initial state if no schema is provided on SERIALIZE.
+ * returns initial state if no schema is provided on SERIALIZE and DESERIALIZE.
  */
 export const withSchemaValidation = ( schema, reducer ) => ( state, action ) => {
-
 	const shouldDispatchAction = reducer.hasSchema || reducer.hasCustomPersistence;
 
 	if ( SERIALIZE === action.type ) {
