@@ -24,7 +24,7 @@
 	top: 0;
 	padding-top: 47px;
 	z-index: 20;
-	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements aliasing in Safari
+	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
 
 	@include breakpoint( ">660px" ) {
 		padding-top: 77px;
