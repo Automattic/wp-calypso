@@ -27,6 +27,7 @@ import {
 	getSiteOption,
 	isRequestingSites,
 	isRequestingSite,
+	getSeoTitleFormats,
 	getSiteBySlug,
 	getSiteByUrl,
 	getSitePlan,
@@ -915,6 +916,76 @@ describe( 'selectors', () => {
 			}, 2916284 );
 
 			expect( isRequesting ).to.be.false;
+		} );
+	} );
+
+	describe( 'getSeoTitleFormats()', () => {
+		it( 'should return an empty object for an unknown site', () => {
+			const seoTitleFormats = getSeoTitleFormats( {
+				sites: {
+					items: {}
+				}
+			}, 2916284 );
+
+			expect( seoTitleFormats ).to.eql( {} );
+		} );
+
+		it( 'should return an empty object when unavailable for a known site', () => {
+			const seoTitleFormats = getSeoTitleFormats( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {}
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( seoTitleFormats ).to.eql( {} );
+		} );
+
+		it( 'should return seo title formats by type if available', () => {
+			const seoTitleFormats = getSeoTitleFormats( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									archives: [],
+									front_page: [
+										{
+											type: 'string',
+											value: 'Site Title',
+										}
+									],
+									groups: [],
+									pages: [],
+									posts: [],
+								}
+							}
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( seoTitleFormats ).to.eql( {
+				archives: [],
+				frontPage: [
+					{
+						type: 'string',
+						value: 'Site Title',
+					}
+				],
+				groups: [],
+				pages: [],
+				posts: [],
+			} );
 		} );
 	} );
 
