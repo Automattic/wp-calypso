@@ -160,14 +160,6 @@ class PlansFeaturesMain extends Component {
 				/>
 
 				<FAQItem
-					question={ translate( 'Can I migrate my subscription to a different site?' ) }
-					answer={ translate(
-						'Absolutely. You are always free to activate your premium services on a different' +
-						' WordPress site.'
-					) }
-				/>
-
-				<FAQItem
 					question={ translate( 'What is the cancellation policy?' ) }
 					answer={ translate(
 						'You can request a cancellation within 30 days of purchase and receive a full refund.'
