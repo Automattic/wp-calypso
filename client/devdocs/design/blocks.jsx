@@ -65,6 +65,7 @@ import ReaderExportButton from 'blocks/reader-export-button/docs/example';
 import ReaderImportButton from 'blocks/reader-import-button/docs/example';
 import SharingPreviewPane from 'blocks/sharing-preview-pane/docs/example';
 import ReaderShare from 'blocks/reader-share/docs/example';
+import Login from 'blocks/login/docs/example';
 
 export default React.createClass( {
 
@@ -112,6 +113,7 @@ export default React.createClass( {
 					<HappinessSupport />
 					<ImageEditor />
 					<LikeButtons />
+					<Login />
 					<PostEditButton />
 					<PlanStorage />
 					<PostSchedule />
