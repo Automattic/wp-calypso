@@ -42,6 +42,13 @@ if ( desktopEnabled ) {
 	desktop = require( 'lib/desktop' );
 }
 
+/*
+ * Queue of functions waiting to be called once (and only once) when sites data
+ * arrives (SITES_RECEIVE). Aims to reduce dependencies on ´lib/sites-list` by
+ * providing an alternative to `sites.once()`.
+ */
+let sitesListeners = [];
+
 /**
  * Sets the selectedSite and siteCount for lib/analytics. This is used to
  * populate extra fields on tracks analytics calls.
@@ -111,20 +118,25 @@ const updateSelectedSiteForDesktop = ( dispatch, action, getState ) => {
 	desktop.setSelectedSite( selectedSite );
 };
 
-/*
- * Here be dragons.
+/**
+ * Registers a listener function to be fired once there are changes to sites
+ * state.
+ *
+ * @param {function} dispatch - redux dispatch function
+ * @param {object}   action   - the dispatched action
  */
-let _queue = [];
-
-const receiveSitesChangeListener = ( dispatch, { listener } ) => {
+const receiveSitesChangeListener = ( dispatch, action ) => {
 	debug( 'receiveSitesChangeListener' );
-	_queue.push( listener );
+	sitesListeners.push( action.listener );
 };
 
+/**
+ * Calls all functions registered as listeners of site-state changes.
+ */
 const fireChangeListeners = () => {
-	debug( 'firing', _queue.length, 'emitters' );
-	_queue.forEach( ( listener ) => listener() );
-	_queue = [];
+	debug( 'firing', sitesListeners.length, 'emitters' );
+	sitesListeners.forEach( ( listener ) => listener() );
+	sitesListeners = [];
 };
 
 const handler = ( dispatch, action, getState ) => {
