@@ -47,7 +47,7 @@ class EditorRevisionsList extends PureComponent {
 					{ map( this.props.revisions, revision => {
 						const itemClasses = classNames(
 							'editor-revisions-list__revision',
-							{ selected: revision.id === this.props.selectedRevisionId }
+							{ 'is-selected': revision.id === this.props.selectedRevisionId }
 						);
 						return (
 							<li className={ itemClasses } key={ revision.id }>

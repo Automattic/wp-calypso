@@ -25,7 +25,7 @@
 .editor-revisions-list__revision {
 	border-top: 1px solid darken( $sidebar-bg-color, 5% );
 
-	&.selected {
+	&.is-selected {
 		background: $blue-medium;
 
 		&, *, .button {
@@ -33,7 +33,7 @@
 		}
 	}
 
-	&:not( .selected ):hover .button {
+	&:not( .is-selected ):hover .button {
 		// FIXME: Maybe the accordion color scheme should be moved upstream
 		// into `_colors.scss`?
 		background: $accordion-background-hover;
