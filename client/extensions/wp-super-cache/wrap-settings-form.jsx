@@ -224,14 +224,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const settings = Object.assign( {}, getSettings( state, siteId ), {
 				// Miscellaneous
 				cache_compression_disabled: false,
-
-				// Directly Cached Files
-				cache_direct_pages: [
-					'/about/',
-					'/home/',
-				],
-				cache_readonly: false,
-				cache_writable: false,
 			} );
 			const isRequesting = isRequestingSettings( state, siteId ) && ! settings;
 			// Don't include read-only fields when saving.
