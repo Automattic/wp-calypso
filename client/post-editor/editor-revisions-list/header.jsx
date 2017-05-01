@@ -14,7 +14,7 @@ class EditorRevisionsListHeader extends PureComponent {
 		return (
 			<div className="editor-revisions-list__header">
 				<h3>
-					{ this.props.translate( 'You\'re seeing a past revision' ) }
+					{ this.props.translate( "You're seeing a past revision" ) }
 				</h3>
 				<Button
 					className="editor-revisions-list__load-revision"
