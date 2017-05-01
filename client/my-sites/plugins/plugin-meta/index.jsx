@@ -10,6 +10,7 @@ import get from 'lodash/get';
 import { includes } from 'lodash';
 import { isEmpty } from 'lodash';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -104,7 +105,7 @@ const PluginMeta = React.createClass( {
 				<div className="plugin-meta__actions">
 					<div className="plugin-item__count">
 						{
-							this.translate( 'Sites {{count/}}',
+							this.props.translate( 'Sites {{count/}}',
 								{
 									components: {
 										count: <Count count={ this.props.sites.length } />
@@ -129,7 +130,7 @@ const PluginMeta = React.createClass( {
 			return (
 				<div className="plugin-meta__actions">
 					<Button className="plugin-meta__active" compact borderless>
-						<Gridicon icon="checkmark" />{ this.translate( 'Active' ) }
+						<Gridicon icon="checkmark" />{ this.props.translate( 'Active' ) }
 					</Button>
 				</div>
 			);
@@ -186,14 +187,14 @@ const PluginMeta = React.createClass( {
 			</ExternalLink>
 		);
 
-		return this.translate( 'By {{linkToAuthor/}}', {
+		return this.props.translate( 'By {{linkToAuthor/}}', {
 			components: {
 				linkToAuthor
 			}
 		} );
 	},
 
-	isUnsupportedPlugin() {
+	isUnsupportedPluginForAT() {
 		const { plugin } = this.props;
 
 		// Pressable prevents installation of some plugins, so we need to disable AT for them.
@@ -204,6 +205,11 @@ const PluginMeta = React.createClass( {
 			'wp-rocket',
 			'wp-super-cache',
 			'bwp-minify',
+			'wordpress-database-reset',
+			'wordpress-reset',
+			'wp-reset',
+			'advanced-reset-wp',
+			'advanced-wp-reset',
 		];
 
 		return includes( unsupportedPlugins, plugin.slug );
@@ -212,13 +218,13 @@ const PluginMeta = React.createClass( {
 	isWpcomInstallDisabled() {
 		const { isTransfering } = this.props;
 
-		return ! this.hasBusinessPlan() || this.isUnsupportedPlugin() || isTransfering;
+		return ! this.hasBusinessPlan() || this.isUnsupportedPluginForAT() || isTransfering;
 	},
 
 	isJetpackInstallDisabled() {
 		const { automatedTransferSite } = this.props;
 
-		return automatedTransferSite && this.isUnsupportedPlugin();
+		return automatedTransferSite && this.isUnsupportedPluginForAT();
 	},
 
 	getInstallButton() {
@@ -246,15 +252,15 @@ const PluginMeta = React.createClass( {
 	maybeDisplayUnsupportedNotice() {
 		const { selectedSite, automatedTransferSite } = this.props;
 
-		if ( selectedSite && this.isUnsupportedPlugin() && ( ! selectedSite.jetpack || automatedTransferSite ) ) {
+		if ( selectedSite && this.isUnsupportedPluginForAT() && ( ! selectedSite.jetpack || automatedTransferSite ) ) {
 			return (
 				<Notice
-					text={ this.translate( 'Incompatible plugin: WordPress.com already provides this feature.' ) }
+					text={ this.props.translate( 'Incompatible plugin: This plugin is not supported on WordPress.com.' ) }
 					status="is-warning"
 					showDismiss={ false }
 				>
 					<NoticeAction href="https://support.wordpress.com/incompatible-plugins/">
-						{ this.translate( 'More info' ) }
+						{ this.props.translate( 'More info' ) }
 					</NoticeAction>
 				</Notice>
 			);
@@ -274,7 +280,7 @@ const PluginMeta = React.createClass( {
 		if ( this.isOutOfDate() && newVersions.length === 0 ) {
 			return <Notice
 				className="plugin-meta__version-notice"
-				text={ this.translate( 'This plugin hasn\'t been updated in over 2 years. It may no longer be maintained or ' +
+				text={ this.props.translate( 'This plugin hasn\'t been updated in over 2 years. It may no longer be maintained or ' +
 					'supported and may have compatibility issues when used with more recent versions of WordPress' ) }
 				status="is-warning"
 				showDismiss={ false } />;
@@ -482,8 +488,8 @@ const PluginMeta = React.createClass( {
 					<div className="plugin-meta__upgrade_nudge">
 						<UpgradeNudge
 							feature={ FEATURE_UPLOAD_PLUGINS }
-							title={ this.translate( 'Upgrade to the Business plan to install plugins.' ) }
-							message={ this.translate( 'Upgrade to the Business plan to install plugins.' ) }
+							title={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
+							message={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
 							event={ 'calypso_plugins_page_upgrade_nudge' }
 						/>
 					</div>
@@ -507,4 +513,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps )( PluginMeta );
+export default connect( mapStateToProps )( localize( PluginMeta ) );
