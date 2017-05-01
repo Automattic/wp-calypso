@@ -44,20 +44,20 @@ class EditorRevisionsList extends PureComponent {
 				<QueryPostRevisions siteId={ this.props.siteId } postId={ this.props.postId } />
 				<EditorRevisionsListHeader loadRevision={ this.loadRevision } />
 				<ul className="editor-revisions-list__list">
-					{ map( this.props.revisions, revision => (
-						<li
-							className={ classNames(
-								'editor-revisions-list__revision',
-								{ selected: revision.id === this.props.selectedRevisionId }
-							) }
-							key={ revision.id }
-						>
-							<EditorRevisionsListItem
-								revision={ revision }
-								toggleRevision={ this.props.toggleRevision }
-							/>
-						</li>
-					) ) }
+					{ map( this.props.revisions, revision => {
+						const itemClasses = classNames(
+							'editor-revisions-list__revision',
+							{ selected: revision.id === this.props.selectedRevisionId }
+						);
+						return (
+							<li className={ itemClasses } key={ revision.id }>
+								<EditorRevisionsListItem
+									revision={ revision }
+									toggleRevision={ this.props.toggleRevision }
+								/>
+							</li>
+						);
+					} ) }
 				</ul>
 			</div>
 		);
