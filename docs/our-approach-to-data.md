@@ -398,7 +398,7 @@ values are persisted we will not be able to reliably tell when the application i
 
 If persisting state causes application errors, opting out of persistence is straightforward: in the `createReducer` util
 provide only the default state value as a first param and don't provide a schema as a third param. Behind the scenes 
-data is never going to be persisted and always regenerated with default value. In this example, it happens to be `'CHECKING'`
+data is never going to be persisted and is always regenerated with default value. In this example, it happens to be `'CHECKING'`
 ```javascript
 export const connectionState = createReducer( 'CHECKING', {
 	[CONNECTION_LOST]: () => 'OFFLINE',
@@ -408,7 +408,7 @@ export const connectionState = createReducer( 'CHECKING', {
 
 ### Opt-in to Persistence ( [#13359](https://github.com/Automattic/wp-calypso/pull/13359) )
 
-Currently reducers are persisted by default if no handlers are given for SERIALIZE and DESERIALIZE. This is a major 
+Currently reducers are persisted by default if no handlers are given for `SERIALIZE` and `DESERIALIZE`. This is a major 
 problem since many people may not realize that this is happening, and we can run into the data shape errors as 
 noted above.
 
@@ -417,7 +417,15 @@ all of our reducers using `combineReducersWithPersistence` at every level of the
 Each reducer is then wrapped with `withSchemaValidation` which returns a wrapped reducer that validates on `DESERIALZE` 
 if a schema is present and returns initial state on both `SERIALIZE` and `DESERIALZE` if a schema is not present.
 
-Usage looks like:
+To opt-out of persistence we just combine the plain reducers.
+```javascript
+return combineReducersWithPersistence( {
+    age,
+    height,
+} );
+```
+
+To persist, we add the schema as a property on the reducer:
 ```javascript
 age.schema = ageSchema;
 return combineReducersWithPersistence( {
