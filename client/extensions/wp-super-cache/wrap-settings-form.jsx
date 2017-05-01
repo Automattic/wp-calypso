@@ -225,9 +225,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				// Miscellaneous
 				cache_compression_disabled: false,
 
-				// Accepted Filenames & Rejected URIs
-				accepted_files: 'wp-comments-popup.php',
-
 				// Directly Cached Files
 				cache_direct_pages: [
 					'/about/',

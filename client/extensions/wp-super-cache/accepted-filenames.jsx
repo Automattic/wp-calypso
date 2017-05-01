@@ -20,9 +20,9 @@ import WrapSettingsForm from './wrap-settings-form';
 
 const AcceptedFilenames = ( {
 	fields: {
-		accepted_files,
 		archives,
 		author,
+		cache_acceptable_files,
 		cache_rejected_uri,
 		category,
 		feed,
@@ -194,8 +194,8 @@ const AcceptedFilenames = ( {
 						</FormLabel>
 						<FormTextarea
 							disabled={ isRequesting || isSaving }
-							onChange={ handleChange( 'accepted_files' ) }
-							value={ accepted_files || '' } />
+							onChange={ handleChange( 'cache_acceptable_files' ) }
+							value={ cache_acceptable_files && cache_acceptable_files.join( '\n' ) } />
 						<FormSettingExplanation>
 							{ translate(
 								'Add here those filenames that can be cached, even if they match one of the rejected ' +
@@ -211,7 +211,7 @@ const AcceptedFilenames = ( {
 
 const getFormSettings = settings => {
 	const textSettings = pick( settings, [
-		'accepted_files',
+		'cache_acceptable_files',
 		'cache_rejected_uri',
 	] );
 	const pages = pick( settings.pages, [
