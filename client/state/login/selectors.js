@@ -50,7 +50,6 @@ export const isTwoFactorEnabled = ( state ) => {
 	}
 
 	return (
-		twoFactorAuth &&
 		twoFactorAuth.two_step_id !== '' &&
 		twoFactorAuth.two_step_nonce !== ''
 	);
