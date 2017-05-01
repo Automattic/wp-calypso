@@ -32,7 +32,7 @@ function main() {
 		} );
 
 	if ( fileList.length === 0 ) {
-		process.stderr.write( 'You must pass a list of files to process (try "make server/devdocs/components-usage-stats.js"' );
+		process.stderr.write( 'You must pass a list of files to process (try "npm run build-devcods:components-usage-stats"' );
 		process.exit( 1 );
 	}
 

@@ -23,7 +23,7 @@ function main() {
 		} );
 
 	if( fileList.length === 0 ) {
-		process.stderr.write( 'You must pass a list of files to process (try "make server/devdocs/search-index.js"' );
+		process.stderr.write( 'You must pass a list of files to process (try "npm run build-devdocs:index"' );
 		process.exit( 1 );
 	}
 
