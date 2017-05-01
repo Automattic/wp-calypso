@@ -19,6 +19,8 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	mapStatus = require( 'lib/route' ).mapPostStatus,
 	sortPagesHierarchically = require( './helpers' ).sortPagesHierarchically;
 
+import BlogPostsPage from './blog-posts-page';
+
 var PageList = React.createClass( {
 
 	mixins: [ PureRenderMixin ],
@@ -235,12 +237,13 @@ var Pages = React.createClass( {
 
 		return (
 			<div id="pages" className="page-list">
+				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
 				{ rows }
 			</div>
 		);
 	},
 
-	renderChronological: function( { pages } ) {
+	renderChronological: function( { pages, site } ) {
 		if ( ! this.props.search ) {
 			// we're listing in reverse chrono. use the markers.
 			pages = this._insertTimeMarkers( pages );
@@ -262,8 +265,13 @@ var Pages = React.createClass( {
 			this.addLoadingRows( rows, 1 );
 		}
 
+		const blogPostsPage = ( site && status === 'published' ) && (
+			<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
+		);
+
 		return (
 			<div id="pages" className="page-list">
+				{ blogPostsPage }
 				{ rows }
 				{ this.props.lastPage && pages.length ? <div className="infinite-scroll-end" /> : null }
 			</div>

@@ -10,57 +10,97 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import { getSiteFrontPageType, getSitePostsPage } from 'state/sites/selectors';
+import Card from 'components/card';
+import {
+	getSiteFrontPageType,
+	getSitePostsPage,
+	getSiteFrontPage,
+} from 'state/sites/selectors';
 
 class BlogPostsPage extends React.Component {
 
 	static propTypes = {
 		site: React.PropTypes.object,
+		pages: React.PropTypes.array,
 	}
 
 	static defaultProps = {
 		translate: identity,
 	}
 
-	state = {
-		showPageActions: false,
+	getPageProperty( { pageId, property } ) {
+		return this.props.pages.filter( page => page.ID === pageId ).map( page => page[ property ] ).shift();
 	}
 
-	togglePageActions = () => {
-		this.setState( { showPageActions: ! this.state.showPageActions } );
+	getPostsPageLink( { isStaticHomePageWithNoPostsPage, isCurrentlySetAsHomepage } ) {
+		if ( isStaticHomePageWithNoPostsPage ) {
+			return null;
+		}
+
+		if ( ! isCurrentlySetAsHomepage ) {
+			return this.getPageProperty( { pageId: this.props.postsPage, property: 'URL' } );
+		}
+
+		return this.props.site.URL;
+	}
+
+	renderPostsPageInfo( { isStaticHomePageWithNoPostsPage, isCurrentlySetAsHomepage } ) {
+		const { translate } = this.props;
+
+		if ( isStaticHomePageWithNoPostsPage ) {
+			return (
+				<span>
+					<Gridicon size={ 12 } icon="not-visible" />
+					{ this.props.translate( 'Not in use.' ) }
+					{
+						this.props.translate( '"%(pageTitle)s" is the front page.', {
+							args: {
+								pageTitle: this.getPageProperty( { pageId: this.props.frontPage, property: 'title' } ),
+							}
+						} )
+					}
+				</span>
+			);
+		}
+
+		if ( isCurrentlySetAsHomepage ) {
+			return (
+				<span>
+					{ translate( 'Front page is showing your latest posts.' ) }
+				</span>
+			);
+		}
+
+		return (
+			<span>
+				{
+					translate( '"%(pageTitle)s" page is showing your latest posts.', {
+						args: {
+							pageTitle: this.getPageProperty( { pageId: this.props.postsPage, property: 'title' } ),
+						}
+					} )
+				}
+			</span>
+		);
 	}
 
 	render() {
 		const { translate } = this.props;
-
 		const isStaticHomePageWithNoPostsPage = this.props.frontPageType === 'page' && ! this.props.postsPage;
 		const isCurrentlySetAsHomepage = this.props.frontPageType === 'posts';
-		const shouldShow = this.props.isFrontPage || isStaticHomePageWithNoPostsPage;
-
-		if ( ! shouldShow ) {
-			return null;
-		}
 
 		return (
-			<CompactCard className="blog-posts-page">
-				{ isStaticHomePageWithNoPostsPage &&
-					<div className="blog-posts-page__not-used-badge">{ translate( 'Not Used' ) }</div> }
-				{ isCurrentlySetAsHomepage &&
-					<Gridicon icon="house" size={ 18 } className="blog-posts-page__home-badge" /> }
+			<Card href={ this.getPostsPageLink( { isStaticHomePageWithNoPostsPage, isCurrentlySetAsHomepage } ) }
+				target="_blank" rel="noopener noreferrer" className="blog-posts-page">
 				<div className="blog-posts-page__details">
 					<div className="blog-posts-page__title">
 						{ translate( 'Blog Posts' ) }
 					</div>
 					<div className="blog-posts-page__info">
-						{
-							isCurrentlySetAsHomepage
-							? translate( 'Your latest posts, shown on homepage' )
-							: translate( 'Your latest posts' )
-						}
+						{ this.renderPostsPageInfo( { isStaticHomePageWithNoPostsPage, isCurrentlySetAsHomepage } ) }
 					</div>
 				</div>
-			</CompactCard>
+			</Card>
 		);
 	}
 }
@@ -70,7 +110,8 @@ export default connect(
 		return {
 			frontPageType: getSiteFrontPageType( state, props.site.ID ),
 			isFrontPage: getSiteFrontPageType( state, props.site.ID ) === 'posts',
-			postsPage: getSitePostsPage( state, props.site.ID )
+			postsPage: getSitePostsPage( state, props.site.ID ),
+			frontPage: getSiteFrontPage( state, props.site.ID ),
 		};
 	}
 )( localize( BlogPostsPage ) );
