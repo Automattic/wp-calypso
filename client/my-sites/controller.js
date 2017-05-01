@@ -17,7 +17,7 @@ import {
 	getSite,
 	isJetpackModuleActive,
 	isJetpackSite,
-	isRequestingSite,
+	isRequestingSites,
 } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import {
@@ -266,7 +266,6 @@ module.exports = {
 	siteSelection( context, next ) {
 		const { getState, dispatch } = getStore( context );
 		const siteFragment = context.params.site || route.getSiteFragment( context.path );
-		const siteID = getSiteId( getState(), siteFragment );
 		const basePath = route.sectionify( context.path );
 		const currentUser = user.get();
 		const hasOneSite = currentUser.visible_site_count === 1;
@@ -316,10 +315,9 @@ module.exports = {
 			return next();
 		}
 
-		// If there's a valid site from the url path
-		// set site visibility to just that site on the picker
-		dispatch( setSelectedSiteId( siteID ) );
-		if ( siteID ) {
+		const siteId = getSiteId( getState(), siteFragment );
+		if ( siteId ) {
+			dispatch( setSelectedSiteId( siteId ) );
 			const selectionComplete = onSelectedSiteAvailable( context );
 
 			// if there was a redirect, we should terminate processing of next routes
@@ -328,17 +326,19 @@ module.exports = {
 				return;
 			}
 		} else {
-			// if sites has fresh data and siteID is invalid
+			// if sites has fresh data and siteId is invalid
 			// redirect to allSitesPath
-			if ( ! isRequestingSite( getState(), siteID ) ) {
+			if ( ! isRequestingSites( getState() ) ) {
 				return page.redirect( allSitesPath );
 			}
 
 			let waitingNotice;
+			let freshSiteId;
 			const selectOnSitesChange = () => {
-				// if sites have loaded, but siteID is invalid, redirect to allSitesPath
-				dispatch( setSelectedSiteId( siteID ) );
-				if ( getSite( getState(), siteID ) ) {
+				// if sites have loaded, but siteId is invalid, redirect to allSitesPath
+				freshSiteId = getSiteId( getState(), siteFragment );
+				dispatch( setSelectedSiteId( freshSiteId ) );
+				if ( getSite( getState(), freshSiteId ) ) {
 					onSelectedSiteAvailable( context );
 					if ( waitingNotice ) {
 						notices.removeNotice( waitingNotice );
