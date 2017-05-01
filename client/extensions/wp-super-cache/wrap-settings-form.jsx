@@ -229,9 +229,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				accepted_files: 'wp-comments-popup.php',
 				rejected_uri: 'wp-.*\.php',
 
-				// Rejected User Agents
-				rejected_user_agent: 'bot\nia_archive\nslurp\ncrawl\nspider\nYandex',
-
 				// Directly Cached Files
 				cache_direct_pages: [
 					'/about/',
