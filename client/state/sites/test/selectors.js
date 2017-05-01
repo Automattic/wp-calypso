@@ -24,6 +24,7 @@ import {
 	getSiteTitle,
 	getSiteThemeShowcasePath,
 	isSitePreviewable,
+	getSiteOption,
 	isRequestingSites,
 	isRequestingSite,
 	getSiteBySlug,
@@ -793,6 +794,69 @@ describe( 'selectors', () => {
 
 				expect( isPreviewable ).to.be.true;
 			} );
+		} );
+	} );
+
+	describe( 'getSiteOption()', () => {
+		it( 'should return null if site is not known', () => {
+			const siteOption = getSiteOption( {
+				sites: {
+					items: {}
+				}
+			}, 77203199, 'example_option' );
+
+			expect( siteOption ).to.be.null;
+		} );
+
+		it( 'should return null if the options are not known for that site', () => {
+			const siteOption = getSiteOption( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+						}
+					}
+				}
+			}, 77203199, 'example_option' );
+
+			expect( siteOption ).to.be.null;
+		} );
+
+		it( 'should return undefined if the option is not known for that site', () => {
+			const siteOption = getSiteOption( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							options: {
+								unmapped_url: 'https://example.wordpress.com'
+							}
+						}
+					}
+				}
+			}, 77203199, 'example_option' );
+
+			expect( siteOption ).to.be.undefined;
+		} );
+
+		it( 'should return the option value if the option is known for that site', () => {
+			const siteOption = getSiteOption( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							options: {
+								example_option: 'example value'
+							}
+						}
+					}
+				}
+			}, 77203199, 'example_option' );
+
+			expect( siteOption ).to.eql( 'example value' );
 		} );
 	} );
 
