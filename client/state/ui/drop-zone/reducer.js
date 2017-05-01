@@ -13,7 +13,7 @@ import {
 
 import { createReducer } from 'state/utils';
 
-// Can be improved with `keyedReducer` instead of state spread.
+// TODO(biskobe) - Can be improved with `keyedReducer` instead of state spread.
 const isVisible = createReducer( {},
 	{
 		[ DROPZONE_SHOW ]: ( state, { dropZoneName } ) => ( {
