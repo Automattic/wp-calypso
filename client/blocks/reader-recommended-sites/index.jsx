@@ -53,7 +53,7 @@ export class RecommendedSites extends React.PureComponent {
 							( site, index ) => {
 								const siteId = site.siteId;
 								return ( <li className="reader-recommended-sites__site-list-item" key={ `site-rec-${ siteId }` }>
-									<div className="reader-recommended-sites__recommended-post-dismiss">
+									<div className="reader-recommended-sites__recommended-site-dismiss">
 										<Button borderless
 											title={ this.props.translate( 'Dismiss this recommendation' ) }
 											onClick={ partial( this.handleSiteDismiss, siteId, index ) }
