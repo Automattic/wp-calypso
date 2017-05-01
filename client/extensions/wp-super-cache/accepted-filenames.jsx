@@ -23,12 +23,12 @@ const AcceptedFilenames = ( {
 		accepted_files,
 		archives,
 		author,
+		cache_rejected_uri,
 		category,
 		feed,
 		frontpage,
 		home,
 		pages,
-		rejected_uri,
 		search,
 		single,
 		tag,
@@ -176,8 +176,8 @@ const AcceptedFilenames = ( {
 						</FormLabel>
 						<FormTextarea
 							disabled={ isRequesting || isSaving }
-							onChange={ handleChange( 'rejected_uri' ) }
-							value={ rejected_uri || '' } />
+							onChange={ handleChange( 'cache_rejected_uri' ) }
+							value={ cache_rejected_uri && cache_rejected_uri.join( '\n' ) } />
 						<FormSettingExplanation>
 							{ translate(
 								'Add here strings (not a filename) that forces a page not to be cached. For example, ' +
@@ -212,7 +212,7 @@ const AcceptedFilenames = ( {
 const getFormSettings = settings => {
 	const textSettings = pick( settings, [
 		'accepted_files',
-		'rejected_uri',
+		'cache_rejected_uri',
 	] );
 	const pages = pick( settings.pages, [
 		'archives',
