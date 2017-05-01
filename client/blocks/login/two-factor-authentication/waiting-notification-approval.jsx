@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -47,4 +46,4 @@ class WaitingTwoFactorNotificationApproval extends Component {
 	}
 }
 
-export default connect( null, {} )( localize( WaitingTwoFactorNotificationApproval ) );
+export default localize( WaitingTwoFactorNotificationApproval );
