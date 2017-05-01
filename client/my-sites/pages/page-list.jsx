@@ -197,50 +197,68 @@ var Pages = React.createClass( {
 		}
 	},
 
-	render: function() {
-		var pages = this.props.posts,
-			rows = [];
+	renderLoading: function() {
+		const rows = [];
+		this.addLoadingRows( rows, 1 );
 
-		// pages have loaded, sites have loaded, and we have a site instance or are viewing all-sites
-		if ( pages.length && this.props.sites.initialized ) {
-			const site = this.props.sites.getSelectedSite();
-			const status = this.props.status || 'published';
+		return (
+			<div id="pages" className="page-list">
+				{ rows }
+			</div>
+		);
+	},
 
-			// @TODO check if it is the first and last page (means there are fewer than 100)
-			if ( site && status === 'published' && ! this.props.search && this.props.lastPage ) {
-				pages = sortPagesHierarchically( pages );
+	renderPagesList: function( { pages } ) {
+		const site = this.props.sites.getSelectedSite();
+		const status = this.props.status || 'published';
 
-				rows = pages.map( function( page ) {
-					return (
-						<Page key={ 'page-' + page.global_ID } page={ page } site={ site }
-							multisite={ false } hierarchical={ true } hierarchyLevel={ page.indentLevel || 0 } />
-					);
-				}, this );
-			} else {
-				if ( ! this.props.search ) {
-					// we're listing in reverse chrono. use the markers.
-					pages = this._insertTimeMarkers( pages );
-				}
-				rows = pages.map( function( page ) {
-					if ( ! ( 'site_ID' in page ) ) {
-						return page;
-					}
-					// Get the site the page belongs to
-					const pageSite = this.props.sites.getSite( page.site_ID );
+		// Pages only display hierarchically for published pages on single-sites when
+		// there are 100 or fewer pages and no more pages to load (last page).
+		// Pages are not displayed hierarchically for search.
+		if ( site && status === 'published' &&
+			this.props.lastPage && pages.length <= 100 &&
+			! this.props.search ) {
+			return this.renderHierarchical( { pages, site } );
+		}
 
-					// Render each page
-					return (
-						<Page key={ 'page-' + page.global_ID } page={ page } site={ pageSite } multisite={ this.props.siteID === false } />
-					);
-				}, this );
+		return this.renderChronological( { pages, site } );
+	},
 
-				if ( this.props.loading ) {
-					this.addLoadingRows( rows, 1 );
-				}
+	renderHierarchical: function( { pages, site } ) {
+		pages = sortPagesHierarchically( pages );
+		const rows = pages.map( function( page ) {
+			return (
+				<Page key={ 'page-' + page.global_ID } page={ page } site={ site }
+					multisite={ false } hierarchical={ true } hierarchyLevel={ page.indentLevel || 0 } />
+			);
+		}, this );
+
+		return (
+			<div id="pages" className="page-list">
+				{ rows }
+			</div>
+		);
+	},
+
+	renderChronological: function( { pages } ) {
+		if ( ! this.props.search ) {
+			// we're listing in reverse chrono. use the markers.
+			pages = this._insertTimeMarkers( pages );
+		}
+		const rows = pages.map( function( page ) {
+			if ( ! ( 'site_ID' in page ) ) {
+				return page;
 			}
-		} else if ( ( ! this.props.loading ) && this.props.sites.initialized ) {
-			rows.push( <div key="page-list-no-results">{ this.getNoContentMessage() }</div> );
-		} else {
+			// Get the site the page belongs to
+			const site = this.props.sites.getSite( page.site_ID );
+
+			// Render each page
+			return (
+				<Page key={ 'page-' + page.global_ID } page={ page } site={ site } multisite={ this.props.siteID === false } />
+			);
+		}, this );
+
+		if ( this.props.loading ) {
 			this.addLoadingRows( rows, 1 );
 		}
 
@@ -250,7 +268,30 @@ var Pages = React.createClass( {
 				{ this.props.lastPage && pages.length ? <div className="infinite-scroll-end" /> : null }
 			</div>
 		);
-	}
+	},
+
+	renderNoContent: function() {
+		return (
+			<div id="pages" className="page-list">
+				<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
+			</div>
+		);
+	},
+
+	render: function() {
+		const pages = this.props.posts;
+
+		if ( pages.length && this.props.sites.initialized ) {
+			return this.renderPagesList( { pages } );
+		}
+
+		if ( ( ! this.props.loading ) && this.props.sites.initialized ) {
+			return this.renderNoContent();
+		}
+
+		return this.renderLoading();
+	},
+
 } );
 
 module.exports = PageList;
