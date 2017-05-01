@@ -1,14 +1,21 @@
 /**
+ * External dependencies
+ */
+import { find, isEqual } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_EDIT_PRODUCT_VARIATION,
+	WOOCOMMERCE_UPDATE_PRODUCT_VARIATIONS
 } from '../../../action-types';
 import { nextBucketIndex, getBucket } from '../../helpers';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_EDIT_PRODUCT_VARIATION ]: editProductVariationAction,
+	[ WOOCOMMERCE_UPDATE_PRODUCT_VARIATIONS ]: updateProductVariationsAction,
 } );
 
 function editProductVariationAction( edits, action ) {
@@ -73,4 +80,62 @@ function editProductVariation( array, variation, data ) {
 	}
 
 	return _array;
+}
+
+function updateProductVariationsAction( edits, action ) {
+	const { product, existingVariations, variations } = action.payload;
+
+	let productEdits = null;
+	const prevEdits = edits || [];
+	const _edits = prevEdits.map( ( edit ) => {
+		if ( product.id === edit.productId ) {
+			productEdits = edit;
+		}
+		return edit;
+	} );
+	let creates = productEdits && productEdits.creates || [];
+
+	// Add new variations that do not exist yet.
+	variations.forEach( ( variation ) => {
+		if (
+			! find( creates, ( variationCreate ) => variationEqual( variation, variationCreate ) ) &&
+			! find( existingVariations, ( existingVariation ) => variationEqual( variation, existingVariation ) )
+		) {
+			creates.push( { id: nextBucketIndex( creates ), attributes: variation.attributes } );
+		}
+	} );
+
+	// Drop invalid variations from creates.
+	creates = creates.filter( ( variationCreate ) => {
+		if ( ! find( variations, ( variation ) => variationEqual( variationCreate, variation ) ) ) {
+			return false;
+		}
+		return true;
+	} );
+
+	// TODO Delete (or mark invisible) variations that already exist but are no longer valid via the API, using existingVariations.
+
+	if ( null === productEdits ) {
+		_edits.push( {
+			productId: product.id,
+			creates
+		} );
+		return _edits;
+	}
+
+	return _edits.map( ( edit ) => {
+		if ( product.id === edit.productId ) {
+			return {
+				...productEdits,
+				creates
+			};
+		}
+		return edit;
+	} );
+}
+
+function variationEqual( variation, variation2 ) {
+	const attributes = variation && variation.attributes || [];
+	const attributes2 = variation2 && variation2.attributes || [];
+	return isEqual( attributes, attributes2 );
 }

@@ -10,6 +10,7 @@ import reducer from '../edits-reducer';
 
 import {
 	editProductVariation,
+	updateProductVariations,
 } from '../actions';
 
 describe( 'edits-reducer', () => {
@@ -133,5 +134,55 @@ describe( 'edits-reducer', () => {
 		} );
 
 		expect( _edits1.currentlyEditingId ).to.eql( variation1.id );
+	} );
+
+	describe( 'updateProductVariations', () => {
+		it( 'should add variations that do not exist yet to "creates"', () => {
+			const product = { id: 48 };
+			const attributes = [ { name: 'Color', option: 'Blue' } ];
+			const edits1 = reducer( undefined, updateProductVariations( product, null, [ { attributes } ] ) );
+
+			expect( edits1[ 0 ].creates[ 0 ] ).to.eql( { id: { index: 0 }, attributes } );
+		} );
+
+		it( 'should remove invalid variations from "creates"', () => {
+			const product = { id: 48 };
+			const attributes = [ { name: 'Color', option: 'Blue' } ];
+			const edits1 = reducer( undefined, updateProductVariations( product, null, [ { attributes } ] ) );
+
+			const smallAttributes = [ { name: 'Color', option: 'Blue' }, { name: 'Size', option: 'Small' } ];
+			const mediumAttributes = [ { name: 'Color', option: 'Blue' }, { name: 'Size', option: 'Medium' } ];
+			const variations = [ { attributes: smallAttributes }, { attributes: mediumAttributes } ];
+
+			const edits2 = reducer( edits1, updateProductVariations( product, edits1[ 0 ].creates, variations ) );
+
+			expect( edits2[ 0 ].creates.length ).to.eql( 2 );
+			expect( edits2[ 0 ].creates[ 0 ] ).to.eql( { id: { index: 1 }, attributes: smallAttributes } );
+			expect( edits2[ 0 ].creates[ 1 ] ).to.eql( { id: { index: 2 }, attributes: mediumAttributes } );
+		} );
+
+		it( 'should preserve variations that are still valid', () => {
+			const product = { id: { index: 0 } };
+			const blueSmallAttributes = [ { name: 'Color', option: 'Blue' }, { name: 'Size', option: 'Small' } ];
+			const blueMediumAttributes = [ { name: 'Color', option: 'Blue' }, { name: 'Size', option: 'Medium' } ];
+			const blueVariations = [ { attributes: blueSmallAttributes }, { attributes: blueMediumAttributes } ];
+
+			const edits1 = reducer( undefined, updateProductVariations( product, null, blueVariations ) );
+
+			const blueMediumVariation = edits1[ 0 ].creates[ 1 ];
+			const edits2 = reducer( edits1, editProductVariation( product, blueMediumVariation, { regular_price: '2.99' } ) );
+
+			const redSmallAttributes = [ { name: 'Color', option: 'Red' }, { name: 'Size', option: 'Small' } ];
+			const redMediumAttributes = [ { name: 'Color', option: 'Red' }, { name: 'Size', option: 'Medium' } ];
+			const allVariations = [
+				{ attributes: redSmallAttributes }, { attributes: redMediumAttributes },
+				{ attributes: blueSmallAttributes }, { attributes: blueMediumAttributes },
+			];
+
+			const edits3 = reducer( edits2, updateProductVariations( product, edits2[ 0 ].creates, allVariations ) );
+
+			expect( edits3[ 0 ].creates.length ).to.eql( 4 );
+			expect( edits3[ 0 ].creates[ 1 ] ).to.eql( { id: { index: 1 }, attributes: blueMediumAttributes, regular_price: '2.99' } );
+		} );
 	} );
 } );
