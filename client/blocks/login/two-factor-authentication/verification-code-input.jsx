@@ -62,10 +62,8 @@ class VerificationCodeInput extends Component {
 	render() {
 		const { translate } = this.props;
 		const isError = !! this.state.error;
-		let errorText = this.state.error;
-		if ( isError ) {
-			errorText = translate( 'Invalid verification code' );
-		}
+		const errorText = isError && translate( 'Invalid verification code' );
+
 		return (
 			<div>
 				<form onSubmit={ this.onCodeSubmit }>
@@ -83,7 +81,7 @@ class VerificationCodeInput extends Component {
 								className={ classNames( { 'is-error': isError } ) }
 								name="twoStepCode" />
 							{ isError && (
-								<FormInputValidation isError={ isError } text={ errorText } />
+								<FormInputValidation isError text={ errorText } />
 							) }
 						</FormFieldset>
 						<FormButtonsBar>
