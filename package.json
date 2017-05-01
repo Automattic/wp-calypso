@@ -163,7 +163,7 @@
     "build-desktop": "run-p build-server build-css",
     "postbuild-desktop": "npm run bundle",
     "build-devdocs:components-usage-stats": "npm run env -- node server/devdocs/bin/generate-components-usage-stats.js \"client/**/*.js\" \"client/**/*.jsx\" \"!**/docs/**\" \"!**/test/**\" \"!**/docs-example/**\"",
-    "build-devdocs:index": "npm run env -- node server/devdocs/bin/generate-devdocs-index \"**/*.md\" \".github/**.md\" \"!build/**\" \"!node_modules/**\" \"!public/**\"",
+    "build-devdocs:index": "npm run env -- node server/devdocs/bin/generate-devdocs-index \"\\**/*.md\" \".github/\\**.md\" \"!build/\\**\" \"!node_modules/\\**\" \"!public/\\**\"",
     "build-devdocs:proptypes-index": "npm run env -- node server/devdocs/bin/generate-proptypes-index.js \"client/**/index.js\" \"client/**/index.jsx\" \"client/**/example.jsx\" \"!**/test/**\"",
     "build-docker": "docker build -t wp-calypso .",
     "prebuild-server": "mkdirp build",
