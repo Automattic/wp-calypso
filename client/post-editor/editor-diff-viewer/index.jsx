@@ -34,6 +34,8 @@ EditorDiffViewer.propTypes = {
 
 export default connect(
 	( state, ownProps ) => ( {
-		revision: normalizeForDisplay( getPostRevision( state, ownProps.siteId, ownProps.postId, ownProps.selectedRevisionId ) ),
+		revision: normalizeForDisplay(
+			getPostRevision( state, ownProps.siteId, ownProps.postId, ownProps.selectedRevisionId )
+		),
 	} )
 )( EditorDiffViewer );
