@@ -332,8 +332,9 @@ export const items = createReducer( defaultState, {
 	[DESERIALIZE]: state => fromJS( state )
 } );
 ```
-If your reducer state is already a plain object, the `SERIALIZE` and `DESERIALIZE` handlers are not needed.
-However, please note that the subtree can still see errors from changing data shapes, as described below.
+If your reducer state can be serialized by the browser without additional work (eg a plain object, string or boolean), 
+the `SERIALIZE` and `DESERIALIZE` handlers are not needed. However, please note that the subtree can still see errors 
+from changing data shapes, as described below.
 
 #### Problem: Data shapes change over time ( [#3101](https://github.com/Automattic/wp-calypso/pull/3101) )
 
@@ -417,7 +418,7 @@ all of our reducers using `combineReducersWithPersistence` at every level of the
 Each reducer is then wrapped with `withSchemaValidation` which returns a wrapped reducer that validates on `DESERIALZE` 
 if a schema is present and returns initial state on both `SERIALIZE` and `DESERIALZE` if a schema is not present.
 
-To opt-out of persistence we just combine the plain reducers.
+To opt-out of persistence we combine the reducers without any attached schema.
 ```javascript
 return combineReducersWithPersistence( {
     age,
