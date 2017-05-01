@@ -21,7 +21,7 @@ class Login extends Component {
 	};
 
 	state = {
-		usernamePasswordValid: false,
+		hasSubmittedValidCredentials: false,
 		rememberMe: false,
 	};
 
@@ -35,7 +35,7 @@ class Login extends Component {
 			} );
 		} else {
 			this.setState( {
-				usernamePasswordValid: true,
+				hasSubmittedValidCredentials: true,
 				rememberMe,
 			} );
 		}
@@ -53,10 +53,10 @@ class Login extends Component {
 
 		const {
 			rememberMe,
-			usernamePasswordValid,
+			hasSubmittedValidCredentials,
 		} = this.state;
 
-		if ( twoFactorEnabled && usernamePasswordValid ) {
+		if ( twoFactorEnabled && hasSubmittedValidCredentials ) {
 			return (
 				<TwoFactorAuthentication
 					rememberMe={ rememberMe }
