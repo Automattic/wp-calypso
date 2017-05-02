@@ -412,19 +412,16 @@ const analytics = {
 		}
 	},
 
-	identifyUser: function( newUserId = '', newUserName = '' ) {
+	identifyUser: function() {
 		const anonymousUserId = this.tracks.anonymousUserId();
 
 		// Don't identify the user if we don't have one
-		if ( ( _user && _user.initialized ) || ( newUserId && newUserName ) ) {
+		if ( _user && _user.initialized ) {
 			if ( anonymousUserId ) {
 				recordAliasInFloodlight();
 			}
 
-			const userId = newUserId || _user.get().ID;
-			const userName = newUserName || _user.get().username;
-
-			window._tkq.push( [ 'identifyUser', userId, userName ] );
+			window._tkq.push( [ 'identifyUser', _user.get().ID, _user.get().username ] );
 		}
 	},
 

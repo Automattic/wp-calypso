@@ -269,30 +269,6 @@ module.exports = {
 					// Fire after a new user registers.
 					analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
 					analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
-
-					/**
-					 * Auto login the user when it has been created.
-					 */
-					user.clear();
-					user.fetching = false;
-
-					user.on( 'change', () => {
-						const newLoggedUser = user.get();
-
-						if ( newLoggedUser && newLoggedUser.ID ) {
-							analytics.identifyUser( newLoggedUser.ID, newLoggedUser.username );
-						} else {
-							/**
-							 * The user fetching is a bit fragile and sometimes it requires to do a double-fetch.
-							 */
-							user.clear();
-							user.fetching = false;
-							user.fetch();
-						}
-					} );
-
-					// Force fetch the user details
-					user.fetch();
 				}
 
 				callback( errors, assign( {}, { username: userData.username }, bearerToken ) );
