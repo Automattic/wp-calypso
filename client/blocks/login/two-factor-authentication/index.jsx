@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import VerificationCodeInput from './verification-code-input';
+import VerificationCodeForm from './verification-code-form';
 import WaitingTwoFactorNotificationApproval from './waiting-notification-approval';
 import { getTwoFactorNotificationSent } from 'state/login/selectors';
 import { localize } from 'i18n-calypso';
@@ -29,7 +29,7 @@ class Login2FA extends Component {
 		}
 
 		return (
-			<VerificationCodeInput rememberMe={ rememberMe } onSuccess={ onSuccess } />
+			<VerificationCodeForm rememberMe={ rememberMe } onSuccess={ onSuccess } />
 		);
 	}
 }

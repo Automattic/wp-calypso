@@ -23,7 +23,7 @@ import {
 	getTwoFactorAuthNonce,
 } from 'state/login/selectors';
 
-class VerificationCodeInput extends Component {
+class VerificationCodeForm extends Component {
 	static propTypes = {
 		rememberMe: PropTypes.bool.isRequired,
 		twoStepId: PropTypes.string.isRequired,
@@ -36,12 +36,6 @@ class VerificationCodeInput extends Component {
 	};
 
 	onChangeField = ( event ) => {
-		if ( event.target.type === 'checkbox' ) {
-			this.setState( {
-				[ event.target.name ]: event.target.checked
-			} );
-			return;
-		}
 		// Reset the error state if the user updates the field after an error coming
 		// from the state
 		this.setState( {
@@ -114,4 +108,4 @@ export default connect(
 	{
 		loginUserWithTwoFactorVerificationCode,
 	}
-)( localize( VerificationCodeInput ) );
+)( localize( VerificationCodeForm ) );
