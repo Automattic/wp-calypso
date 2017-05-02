@@ -3,23 +3,18 @@
  */
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
-import isFunction from 'lodash/isFunction';
+import { isFunction, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 class MasterbarItem extends Component {
-	constructor() {
-		super();
-		this._preloaded = false;
-		this.preload = this.preload.bind( this );
-	}
+	_preloaded = false;
 
-	preload() {
+	preload = () => {
 		if ( ! this._preloaded && isFunction( this.props.preloadSection ) ) {
 			this._preloaded = true;
 			this.props.preloadSection();
 		}
-	}
+	};
 
 	render() {
 		const itemClasses = classNames( 'masterbar__item', this.props.className, {
@@ -35,11 +30,10 @@ class MasterbarItem extends Component {
 					className={ itemClasses }
 					onTouchStart={ this.preload }
 					onMouseEnter={ this.preload }>
-					{ !! this.props.icon && <Gridicon icon={ this.props.icon } size={ 24 } />
-					}
-					<span className="masterbar__item-content">{
-						this.props.children
-					}</span>
+					{ !! this.props.icon && <Gridicon icon={ this.props.icon } size={ 24 } /> }
+					<span className="masterbar__item-content">
+						{ this.props.children }
+					</span>
 				</div>
 			);
 		}
@@ -53,12 +47,10 @@ class MasterbarItem extends Component {
 				className={ itemClasses }
 				onTouchStart={ this.preload }
 				onMouseEnter={ this.preload }>
-				{ !! this.props.icon &&
-				<Gridicon icon={ this.props.icon } size={ 24 } />
-				}
-				<span className="masterbar__item-content">{
-					this.props.children
-				}</span>
+				{ !! this.props.icon && <Gridicon icon={ this.props.icon } size={ 24 } /> }
+				<span className="masterbar__item-content">
+					{ this.props.children }
+				</span>
 			</a>
 		);
 	}

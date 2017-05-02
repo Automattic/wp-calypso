@@ -15,19 +15,10 @@ import store from 'store';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class MasterbarItemNotifications extends Component {
-	constructor() {
-		super();
-
-		this.checkToggleNotes = this.checkToggleNotes.bind( this );
-		this.toggleNotesFrame = this.toggleNotesFrame.bind( this );
-		this.getNotificationLinkDomNode = this.getNotificationLinkDomNode.bind( this );
-		this.setNotesIndicator = this.setNotesIndicator.bind( this );
-
-		this.state = {
-			isShowingPopover: false,
-			animationState: 0,
-		};
-	}
+	state = {
+		isShowingPopover: false,
+		animationState: 0,
+	};
 
 	componentWillReceiveProps() {
 		this.user = this.props.user.get();
@@ -37,7 +28,7 @@ class MasterbarItemNotifications extends Component {
 		} );
 	}
 
-	checkToggleNotes( event, forceToggle ) {
+	checkToggleNotes = ( event, forceToggle ) => {
 		const target = event ? event.target : false;
 		const notificationNode = this.getNotificationLinkDomNode();
 
@@ -48,9 +39,9 @@ class MasterbarItemNotifications extends Component {
 		if ( this.state.isShowingPopover || forceToggle === true ) {
 			this.toggleNotesFrame( event );
 		}
-	}
+	};
 
-	toggleNotesFrame( event ) {
+	toggleNotesFrame = ( event ) => {
 		if ( event ) {
 			event.preventDefault && event.preventDefault();
 			event.stopPropagation && event.stopPropagation();
@@ -72,11 +63,11 @@ class MasterbarItemNotifications extends Component {
 				window.focus();
 			}
 		} );
-	}
+	};
 
-	getNotificationLinkDomNode() {
+	getNotificationLinkDomNode =() => {
 		return ReactDom.findDOMNode( this.refs.notificationLink );
-	}
+	};
 
 	/**
 	 * Uses the passed number of unseen notifications
@@ -86,7 +77,7 @@ class MasterbarItemNotifications extends Component {
 	 *
 	 * @param {Number} currentUnseenCount Number of reported unseen notifications
 	 */
-	setNotesIndicator( currentUnseenCount ) {
+	setNotesIndicator = ( currentUnseenCount ) => {
 		const existingUnseenCount = store.get( 'wpnotes_unseen_count' );
 		let newAnimationState = this.state.animationState;
 
@@ -105,7 +96,7 @@ class MasterbarItemNotifications extends Component {
 			newNote: ( currentUnseenCount > 0 ),
 			animationState: newAnimationState
 		} );
-	}
+	};
 
 	render() {
 		const classes = classNames( this.props.className, {
