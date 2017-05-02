@@ -93,7 +93,7 @@ const EditorWordCount = React.createClass( {
 
 		return (
 			<div className="editor-word-count">
-				<span className="editor-word-count__is-selected-text">{ this.getSelectedTextCount() }</span>
+				<span className="editor-word-count__is-selected-text"><strong>{ this.getSelectedTextCount() }</strong></span>
 				{ this.props.translate(
 					'%d word',
 					'%d words',

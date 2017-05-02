@@ -23,5 +23,5 @@
 }
 
 .editor-word-count__is-selected-text {
-	color: $gray-text;
+	color: darken( $gray, 10% );
 }
