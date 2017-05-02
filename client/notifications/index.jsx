@@ -77,7 +77,6 @@ export class Notifications extends Component {
 	componentWillReceiveProps( nextProps ) {
 		// tell the iframe if we're changing visible status
 		if ( nextProps.visible !== this.props.visible ) {
-			this.postMessage( { action: 'togglePanel', showing: nextProps.visible } );
 			this.setState( { shownOnce: true, widescreen: false } );
 		}
 	}
@@ -150,9 +149,6 @@ export class Notifications extends Component {
 		}
 
 		switch ( data.action ) {
-			case 'togglePanel':
-				return this.props.checkToggle();
-
 			case 'widescreen':
 				return this.setState( { widescreen: data.widescreen } );
 		}
@@ -238,6 +234,7 @@ export class Notifications extends Component {
 					isVisible={ this.state.isVisible }
 					locale={ localeSlug }
 					onRender={ this.indicateRender }
+					onTogglePanel={ this.props.checkToggle }
 					wpcom={ wpcom }
 				/>
 			</div>
