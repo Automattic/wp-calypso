@@ -238,7 +238,15 @@ const Signup = React.createClass( {
 		if ( userIsLoggedIn ) {
 			// deferred in case the user is logged in and the redirect triggers a dispatch
 			defer( function() {
-				page( destination );
+				/**
+				 * The destination URL is not always inside Calypso.
+				 * For these cases make sure that a proper redirect is issued.
+				 */
+				if ( /^https?:\/\// ) {
+					window.location.href = destination;
+				} else {
+					page( destination );
+				}
 			}.bind( this ) );
 		}
 
