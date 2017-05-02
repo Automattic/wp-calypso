@@ -82,5 +82,6 @@ module.exports = {
 			hide: 50,
 		},
 		defaultVariation: 'show',
+		allowExistingUsers: true,
 	},
 };
