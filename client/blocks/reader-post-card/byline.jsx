@@ -19,6 +19,7 @@ import {
 } from 'reader/stats';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import { getStreamUrl } from 'reader/route';
+import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 import ReaderAuthorLink from 'blocks/reader-author-link';
 import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
 
@@ -73,7 +74,7 @@ class PostByline extends React.Component {
 		const siteName = getSiteName( { site, feed, post } );
 		const hasAuthorName = has( post, 'author.name' );
 		const hasMatchingAuthorAndSiteNames = hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
-		const shouldDisplayAuthor = ! isDiscoverPost && hasAuthorName && ( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
+		const shouldDisplayAuthor = ! isDiscoverPost && hasAuthorName && ! isAuthorNameBlacklisted( post.author.name ) && ( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
@@ -93,25 +94,24 @@ class PostByline extends React.Component {
 					siteUrl={ streamUrl }
 					isCompact={ true } />
 				<div className="reader-post-card__byline-details">
-					<div className="reader-post-card__byline-author-site">
-						{ shouldDisplayAuthor &&
-						<ReaderAuthorLink
-							className="reader-post-card__link"
-							author={ post.author }
-							siteUrl={ streamUrl }
-							post={ post }>
-							{ post.author.name }
-						</ReaderAuthorLink>
-						}
-						{ shouldDisplayAuthor && showSiteName && ', ' }
-						{ showSiteName && <ReaderSiteStreamLink
-							className="reader-post-card__site reader-post-card__link"
-							feedId={ feedId }
-							siteId={ siteId }
-							post={ post }>
-							{ siteName }
-						</ReaderSiteStreamLink> }
-					</div>
+					{ shouldDisplayAuthor && <div className="reader-post-card__byline-author-site">
+							<ReaderAuthorLink
+								className="reader-post-card__link"
+								author={ post.author }
+								siteUrl={ streamUrl }
+								post={ post }>
+								{ post.author.name }
+							</ReaderAuthorLink>
+							{ showSiteName && ', ' }
+							{ showSiteName && <ReaderSiteStreamLink
+								className="reader-post-card__site reader-post-card__link"
+								feedId={ feedId }
+								siteId={ siteId }
+								post={ post }>
+								{ siteName }
+							</ReaderSiteStreamLink> }
+						</div>
+					}
 					<div className="reader-post-card__timestamp-and-tag">
 						{ post.date && post.URL &&
 							<span className="reader-post-card__timestamp">
