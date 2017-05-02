@@ -25,7 +25,7 @@ class TagStreamHeader extends React.Component {
 
 	static propTypes = {
 		isPlaceholder: React.PropTypes.bool,
-		tag: React.PropTypes.string,
+		encodedTagSlug: React.PropTypes.string,
 		showFollow: React.PropTypes.bool,
 		following: React.PropTypes.bool,
 		onFollowToggle: React.PropTypes.func,
@@ -42,7 +42,6 @@ class TagStreamHeader extends React.Component {
 	}
 
 	state = {
-		tag: this.props.tag,
 		tagImages: this.props.tagImages,
 		chosenTagImage: this.pickTagImage()
 	};
