@@ -11,8 +11,9 @@ import { connect } from 'react-redux';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 import { getCurrentlyEditingProduct } from '../../state/ui/products/selectors';
+import { getProductCategories } from '../../state/wc-api/product-categories/selectors';
 import { editProduct, editProductAttribute } from '../../state/ui/products/actions';
-import { getProductCategories } from '../../state/wc-api/product-categories/actions';
+import { getProductCategories as fetchProductCategories } from '../../state/wc-api/product-categories/actions';
 import ProductForm from './product-form';
 
 class ProductCreate extends React.Component {
@@ -22,11 +23,11 @@ class ProductCreate extends React.Component {
 			id: PropTypes.isRequired,
 			type: PropTypes.string.isRequired,
 		} ),
-		dispatchGetProductCategories: PropTypes.func.isRequired,
+		dispatchFetchProductCategories: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {
-		const { product, siteId, dispatchGetProductCategories } = this.props;
+		const { product, siteId } = this.props;
 
 		if ( ! product ) {
 			this.props.editProduct( null, {
@@ -34,7 +35,7 @@ class ProductCreate extends React.Component {
 			} );
 		}
 
-		dispatchGetProductCategories( siteId );
+		this.props.dispatchFetchProductCategories( siteId );
 	}
 
 	componentWillUnmount() {
@@ -42,11 +43,12 @@ class ProductCreate extends React.Component {
 	}
 
 	render() {
-		const { product } = this.props;
+		const { product, productCategories } = this.props;
 
 		return (
 			<ProductForm
 				product={ product || { type: 'simple' } }
+				productCategories={ productCategories }
 				editProduct={ this.props.editProduct }
 				editProductAttribute={ this.props.editProductAttribute }
 			/>
@@ -57,10 +59,12 @@ class ProductCreate extends React.Component {
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
 	const product = getCurrentlyEditingProduct( state );
+	const productCategories = getProductCategories( state, siteId );
 
 	return {
 		siteId,
 		product,
+		productCategories,
 	};
 }
 
@@ -69,7 +73,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			editProduct,
 			editProductAttribute,
-			dispatchGetProductCategories: getProductCategories,
+			dispatchFetchProductCategories: fetchProductCategories,
 		},
 		dispatch
 	);
