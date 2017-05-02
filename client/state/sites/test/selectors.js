@@ -42,6 +42,7 @@ import {
 	canJetpackSiteManage,
 	canJetpackSiteUpdateFiles,
 	canJetpackSiteAutoUpdateFiles,
+	canJetpackSiteAutoUpdateCore,
 	hasJetpackSiteJetpackThemes,
 	hasJetpackSiteJetpackThemesExtendedFeatures,
 	isJetpackSiteSecondaryNetworkSite,
@@ -2327,6 +2328,44 @@ describe( 'selectors', () => {
 
 			const canAutoUpdateFiles = canJetpackSiteAutoUpdateFiles( state, siteId );
 			expect( canAutoUpdateFiles ).to.equal( false );
+		} );
+	} );
+
+	describe( '#canJetpackSiteAutoUpdateCore()', () => {
+		it( 'it should return `true` if the `file_mod_disabled` option does not contain `automatic_updater_disabled`', () => {
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					is_multisite: false,
+					jetpack: true,
+					options: {
+						file_mod_disabled: [],
+						jetpack_version: '3.4'
+					}
+				}
+			} );
+
+			const canAutoUpdateCore = canJetpackSiteAutoUpdateCore( state, siteId );
+			expect( canAutoUpdateCore ).to.equal( true );
+		} );
+
+		it( 'it should return `false` if the `file_mod_disabled` option contains `automatic_updater_disabled`', () => {
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					is_multisite: false,
+					jetpack: true,
+					options: {
+						file_mod_disabled: [ 'automatic_updater_disabled' ],
+						jetpack_version: '3.4'
+					}
+				}
+			} );
+
+			const canAutoUpdateCore = canJetpackSiteAutoUpdateCore( state, siteId );
+			expect( canAutoUpdateCore ).to.equal( false );
 		} );
 	} );
 
