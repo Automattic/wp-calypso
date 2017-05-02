@@ -9,10 +9,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
-import FormToggle from 'components/forms/form-toggle';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 class AmpWpcom extends Component {
@@ -52,37 +52,33 @@ class AmpWpcom extends Component {
 			},
 			isRequestingSettings,
 			isSavingSettings,
+			siteSlug,
 			translate
 		} = this.props;
 
 		const isDisabled = isRequestingSettings || isSavingSettings;
-		const isCustomizeDisabled = isDisabled || ! ampIsEnabled;
+		const isCustomizeEnabled = ! isDisabled && ampIsEnabled;
 
 		if ( ! ampIsSupported ) {
 			return null;
 		}
 
 		return (
-			<div className="amp__main site-settings__amp">
-				<SectionHeader label={ translate( 'AMP' ) }>
-					<Button
-						compact
-						disabled={ isCustomizeDisabled }
-						onClick={ this.handleCustomize }>
-						{ translate( 'Edit Design' ) }
-					</Button>
-					<FormToggle
-						checked={ ampIsEnabled }
-						onChange={ this.handleToggle }
+			<div className="amp__main site-settings__traffic-settings">
+				<SectionHeader label={ translate( 'Accelerated Mobile Pages (AMP)' ) } />
+
+				<CompactCard className="amp__explanation site-settings__amp-explanation">
+					<CompactFormToggle
+						checked={ !! ampIsEnabled }
 						disabled={ isDisabled }
-					/>
-				</SectionHeader>
-				<Card className="amp__explanation site-settings__amp-explanation">
-					<p>
+						onChange={ this.handleToggle }
+					>
+						{ translate( 'Improve the loading speed of your site on phones and tablets' ) }
+					</CompactFormToggle>
+					<FormSettingExplanation isIndented>
 						{ translate(
-							'Your WordPress.com site supports {{a}}Accelerated Mobile Pages (AMP){{/a}}, ' +
-							'a new Google-led initiative that dramatically improves loading speeds ' +
-							'on phones and tablets. {{a}}Learn More{{/a}}.',
+							'Your WordPress.com site supports the use of {{a}}Accelerated Mobile Pages{{/a}}, ' +
+							'a Google-led initiative that dramatically speeds up loading times on mobile devices.',
 							{
 								components: {
 									a: <a
@@ -91,8 +87,15 @@ class AmpWpcom extends Component {
 								}
 							}
 						) }
-					</p>
-				</Card>
+					</FormSettingExplanation>
+				</CompactCard>
+
+				{
+					isCustomizeEnabled &&
+					<CompactCard href={ '/customize/amp/' + siteSlug }>
+						{ translate( 'Edit the design of your Accelerated Mobile Pages' ) }
+					</CompactCard>
+				}
 			</div>
 		);
 	}
