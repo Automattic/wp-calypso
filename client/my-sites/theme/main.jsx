@@ -273,8 +273,18 @@ const ThemeSheet = React.createClass( {
 		return <div>{ this.props.description }</div>;
 	},
 
+	renderNextTheme() {
+		const { next, siteSlug } = this.props;
+		const sitePart = siteSlug ? `/${ siteSlug }` : '';
+
+		const nextThemeHref = `/theme/${ next }${ sitePart }`;
+		return <SectionHeader
+			href={ nextThemeHref }
+			label={ i18n.translate( 'Next theme' ) } />;
+	},
+
 	renderOverviewTab() {
-		const { isWpcomTheme, download, next } = this.props;
+		const { isWpcomTheme, download } = this.props;
 
 		return (
 			<div>
@@ -284,11 +294,7 @@ const ThemeSheet = React.createClass( {
 				{ this.renderFeaturesCard() }
 				{ download && <ThemeDownloadCard href={ download } /> }
 				{ isWpcomTheme && this.renderRelatedThemes() }
-				{ isWpcomTheme &&
-					<SectionHeader
-						href={ next }
-						label={ i18n.translate( 'Next theme' ) }
-					/> }
+				{ isWpcomTheme && this.renderNextTheme() }
 			</div>
 		);
 	},
