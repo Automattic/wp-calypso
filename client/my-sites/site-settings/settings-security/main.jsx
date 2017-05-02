@@ -8,6 +8,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import Main from 'components/main';
+import DocumentHead from 'components/data/document-head';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import FormSecurity from 'my-sites/site-settings/form-security';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -15,6 +19,10 @@ import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 
 const SiteSettingsSecurity = ( { site, siteId, siteIsJetpack, translate } ) => {
+	if ( ! site ) {
+		return <div className="settings-security__loading wpcom-site__logo noticon noticon-wordpress" />;
+	}
+
 	if ( ! siteIsJetpack ) {
 		return (
 			<JetpackManageErrorPage
@@ -49,10 +57,13 @@ const SiteSettingsSecurity = ( { site, siteId, siteIsJetpack, translate } ) => {
 	}
 
 	return (
-		<div>
+		<Main className="settings-security__main site-settings">
+			<DocumentHead title={ translate( 'Site Settings' ) } />
+			<SidebarNavigation />
+			<SiteSettingsNavigation site={ site } section="security" />
 			<JetpackMonitor />
 			<FormSecurity />
-		</div>
+		</Main>
 	);
 };
 

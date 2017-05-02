@@ -115,6 +115,13 @@ const sections = [
 		group: 'sites'
 	},
 	{
+		name: 'settings-security',
+		paths: [ '/settings/security' ],
+		module: 'my-sites/site-settings/settings-security',
+		secondary: true,
+		group: 'sites'
+	},
+	{
 		name: 'settings',
 		paths: [ '/settings' ],
 		module: 'my-sites/site-settings',
