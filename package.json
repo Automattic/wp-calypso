@@ -146,6 +146,7 @@
   "scripts": {
     "test": "npm run test-client && npm run test-server && npm run test-test",
     "test-client": "NODE_ENV=test NODE_PATH=test:client TEST_ROOT=client test/runner.js",
+    "test-desktop": "npm test --prefix desktop/",
     "test-server": "NODE_ENV=test NODE_PATH=test:server:client TEST_ROOT=server test/runner.js",
     "test-test": "NODE_ENV=test NODE_PATH=test:client TEST_ROOT=test test/runner.js",
     "test-client:watch": "nodemon -e js,jsx --exec npm run test-client",
