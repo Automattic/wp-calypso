@@ -68,6 +68,7 @@ module.exports = React.createClass( {
 				autoupdate: true,
 			},
 			isAutoManaged: false,
+			hasUpdate: () => false,
 		}
 	},
 
