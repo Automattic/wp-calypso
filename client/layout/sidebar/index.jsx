@@ -14,7 +14,7 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		let hasRegions = this.props.children.some( el => el.type === SidebarRegion );
+		const hasRegions = React.Children.toArray( this.props.children ).some( el => el.type === SidebarRegion );
 
 		return (
 			<ul className={ classNames( 'sidebar', this.props.className, { 'has-regions': hasRegions } ) } onClick={ this.props.onClick } data-tip-target="sidebar">
