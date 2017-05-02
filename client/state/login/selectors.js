@@ -26,14 +26,14 @@ export const getTwoFactorAuthNonce = ( state ) => {
 };
 
 /**
- * Retrieve the type for the two factor authentication process.
+ * Retrieve the type of notification sent for the two factor authentication process.
  * Returns null if there is no such information yet, or user does not have 2FA enabled.
  *
  * @param  {Object}   state  Global state tree
- * @return {?String}         The type of 2FA enabled. enum: 'code', 'sms', 'push'.
+ * @return {?String}         The type of 2FA notification. enum: 'sms', 'push', 'none'.
  */
-export const getTwoFactorAuthType = ( state ) => {
-	return get( state, [ 'login', 'twoFactorAuth', 'two_step_type' ], null );
+export const getTwoFactorNotificationSent = ( state ) => {
+	return get( state, [ 'login', 'twoFactorAuth', 'two_step_notification_sent' ], null );
 };
 
 /**

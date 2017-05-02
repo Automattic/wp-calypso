@@ -9,20 +9,20 @@ import { connect } from 'react-redux';
  */
 import VerificationCodeInput from './verification-code-input';
 import WaitingTwoFactorNotificationApproval from './waiting-notification-approval';
-import { getTwoFactorAuthType } from 'state/login/selectors';
+import { getTwoFactorNotificationSent } from 'state/login/selectors';
 import { localize } from 'i18n-calypso';
 
 class Login2FA extends Component {
 	static propTypes = {
 		onSuccess: PropTypes.func.isRequired,
 		rememberMe: PropTypes.bool.isRequired,
-		twoFactorAuthType: PropTypes.string.isRequired,
+		twoFactorNotificationSent: PropTypes.string.isRequired,
 	};
 
 	render() {
-		const { twoFactorAuthType, onSuccess, rememberMe } = this.props;
+		const { twoFactorNotificationSent, onSuccess, rememberMe } = this.props;
 
-		if ( twoFactorAuthType === 'push' ) {
+		if ( twoFactorNotificationSent === 'push' ) {
 			return (
 				<WaitingTwoFactorNotificationApproval onSuccess={ onSuccess } />
 			);
@@ -35,5 +35,5 @@ class Login2FA extends Component {
 }
 
 export default connect( ( state ) => ( {
-	twoFactorAuthType: getTwoFactorAuthType( state ),
+	twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 } ) )( localize( Login2FA ) );
