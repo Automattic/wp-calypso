@@ -13,7 +13,7 @@ import PlansFeaturesMain from 'my-sites/plans-features-main';
 
 class JetpackPlansGrid extends Component {
 	static propTypes = {
-		basePlansPath: PropTypes.string.isRequired,
+		basePlansPath: PropTypes.string,
 		hideFreePlan: PropTypes.bool,
 		intervalType: PropTypes.string,
 		isLanding: PropTypes.bool,
