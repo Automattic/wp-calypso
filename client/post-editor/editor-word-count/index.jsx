@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,9 +17,7 @@ import { countWords } from 'lib/text-utils';
  */
 const user = userModule();
 
-export default React.createClass( {
-	displayName: 'EditorWordCount',
-
+const EditorWordCount = React.createClass( {
 	propTypes: {
 		selectedText: React.PropTypes.string
 	},
@@ -49,6 +48,28 @@ export default React.createClass( {
 		} );
 	},
 
+	getSelectedTextCount() {
+		const selectedText = textUtils.countWords( this.props.selectedText );
+
+		if ( ! selectedText ) {
+			return null;
+		}
+
+		return (
+			this.props.translate(
+				'%(selectedText)s word selected %(separator)s',
+				'%(selectedText)s words selected %(separator)s',
+				{
+					count: selectedText,
+					args: {
+						selectedText: selectedText,
+						separator: '/ ',
+					},
+				}
+			)
+		);
+	},
+
 	render() {
 		const currentUser = user.get();
 		const localeSlug = currentUser && currentUser.localeSlug || 'en';
@@ -68,15 +89,12 @@ export default React.createClass( {
 				return null;
 		}
 
-<<<<<<< HEAD
-		const wordCount = countWords( this.state.rawContent );
-=======
 		const wordCount = textUtils.countWords( ( this.props.selectedText || this.state.rawContent ) );
->>>>>>> Editor: Show word count when text is selected in Editor
 
 		return (
 			<div className="editor-word-count">
-				{ this.translate(
+				<span className="editor-word-count__is-selected-text">{ this.getSelectedTextCount() }</span>
+				{ this.props.translate(
 					'%d word',
 					'%d words',
 					{
@@ -88,3 +106,5 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default localize( EditorWordCount );
