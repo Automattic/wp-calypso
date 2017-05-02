@@ -74,7 +74,10 @@ class PostByline extends React.Component {
 		const siteName = getSiteName( { site, feed, post } );
 		const hasAuthorName = has( post, 'author.name' );
 		const hasMatchingAuthorAndSiteNames = hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
-		const shouldDisplayAuthor = ! isDiscoverPost && hasAuthorName && ! isAuthorNameBlacklisted( post.author.name ) && ( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
+		const shouldDisplayAuthor = ! isDiscoverPost &&
+			hasAuthorName &&
+			! isAuthorNameBlacklisted( post.author.name ) &&
+			( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
