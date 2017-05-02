@@ -222,7 +222,8 @@ export class Notifications extends Component {
 				} ) }
 			>
 				<NotificationsPanel
-					isVisible={ this.props.visible }
+					isShowing={ true }
+					isVisible={ true }
 					locale={ localeSlug }
 					wpcom={ wpcom }
 				/>
