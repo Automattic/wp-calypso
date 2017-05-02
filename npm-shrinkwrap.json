@@ -12,10 +12,6 @@
           "version": "0.9.11",
           "dev": true
         },
-        "lodash": {
-          "version": "4.17.4",
-          "dev": true
-        },
         "recast": {
           "version": "0.12.3",
           "dev": true
@@ -58,7 +54,7 @@
       "version": "0.8.1"
     },
     "ajv": {
-      "version": "4.11.7"
+      "version": "4.11.8"
     },
     "ajv-keywords": {
       "version": "1.5.1",
@@ -592,7 +588,7 @@
       "version": "1.2.1"
     },
     "bl": {
-      "version": "1.2.0",
+      "version": "1.2.1",
       "dependencies": {
         "readable-stream": {
           "version": "2.2.9"
@@ -703,7 +699,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000660"
+      "version": "1.0.30000664"
     },
     "caseless": {
       "version": "0.12.0"
@@ -1684,7 +1680,7 @@
       }
     },
     "extend": {
-      "version": "3.0.0"
+      "version": "3.0.1"
     },
     "extglob": {
       "version": "0.3.2"
@@ -1742,7 +1738,7 @@
       "dev": true
     },
     "filename-regex": {
-      "version": "2.0.0"
+      "version": "2.0.1"
     },
     "filesize": {
       "version": "3.2.1"
@@ -1789,7 +1785,7 @@
       "dev": true
     },
     "flow-parser": {
-      "version": "0.44.0",
+      "version": "0.45.0",
       "dev": true
     },
     "flux": {
@@ -1887,7 +1883,7 @@
       "version": "2.1.4"
     },
     "getpass": {
-      "version": "0.1.6",
+      "version": "0.1.7",
       "dependencies": {
         "assert-plus": {
           "version": "1.0.0"
@@ -2117,7 +2113,7 @@
       "version": "1.1.8"
     },
     "ignore": {
-      "version": "3.2.7",
+      "version": "3.3.0",
       "dev": true
     },
     "immediate": {
@@ -2588,7 +2584,7 @@
       "version": "1.6.2"
     },
     "kind-of": {
-      "version": "3.1.0"
+      "version": "3.2.0"
     },
     "klaw": {
       "version": "1.3.1"
@@ -2659,7 +2655,7 @@
       "version": "1.4.3"
     },
     "lodash": {
-      "version": "4.15.0"
+      "version": "4.17.4"
     },
     "lodash-deep": {
       "version": "1.5.3",
@@ -2950,7 +2946,7 @@
       "version": "1.6.3"
     },
     "node-gyp": {
-      "version": "3.6.0",
+      "version": "3.6.1",
       "dependencies": {
         "minimatch": {
           "version": "3.0.3"
@@ -3322,7 +3318,7 @@
       "version": "0.1.7"
     },
     "process": {
-      "version": "0.11.9"
+      "version": "0.11.10"
     },
     "process-nextick-args": {
       "version": "1.0.7"
@@ -3591,7 +3587,7 @@
       }
     },
     "regenerator-runtime": {
-      "version": "0.10.3"
+      "version": "0.10.5"
     },
     "regenerator-transform": {
       "version": "0.9.11"
@@ -3791,22 +3787,30 @@
       "version": "1.11.1"
     },
     "sass-graph": {
-      "version": "2.1.2",
+      "version": "2.2.2",
       "dependencies": {
+        "camelcase": {
+          "version": "3.0.0"
+        },
         "cliui": {
           "version": "3.2.0"
         },
-        "window-size": {
-          "version": "0.2.0"
-        },
         "yargs": {
-          "version": "4.8.1"
+          "version": "6.6.0"
         }
       }
     },
     "sax": {
       "version": "1.2.2",
       "dev": true
+    },
+    "scss-tokenizer": {
+      "version": "0.2.1",
+      "dependencies": {
+        "source-map": {
+          "version": "0.4.4"
+        }
+      }
     },
     "seed-random": {
       "version": "2.2.0"
@@ -4339,7 +4343,7 @@
       }
     },
     "to-fast-properties": {
-      "version": "1.0.2"
+      "version": "1.0.3"
     },
     "to-no-case": {
       "version": "1.0.2"
@@ -4618,7 +4622,7 @@
           "dev": true
         },
         "filesize": {
-          "version": "3.5.6",
+          "version": "3.5.9",
           "dev": true
         },
         "finalhandler": {
@@ -4641,10 +4645,6 @@
         },
         "ipaddr.js": {
           "version": "1.3.0",
-          "dev": true
-        },
-        "lodash": {
-          "version": "4.17.4",
           "dev": true
         },
         "merge-descriptors": {
@@ -4752,7 +4752,7 @@
           "dev": true
         },
         "filesize": {
-          "version": "3.5.6",
+          "version": "3.5.9",
           "dev": true
         },
         "isarray": {
@@ -4932,7 +4932,7 @@
       "dev": true
     },
     "write-file-atomic": {
-      "version": "1.3.3",
+      "version": "1.3.4",
       "dev": true
     },
     "write-file-stdout": {
@@ -4985,7 +4985,7 @@
       "version": "3.10.0"
     },
     "yargs-parser": {
-      "version": "2.4.1",
+      "version": "4.2.1",
       "dependencies": {
         "camelcase": {
           "version": "3.0.0"
