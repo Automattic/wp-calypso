@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -14,24 +14,28 @@ import Notifications from 'notifications';
 import store from 'store';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-const MasterbarItemNotifications = React.createClass( {
-	propTypes: {
-		user: React.PropTypes.object.isRequired,
-		isActive: React.PropTypes.bool,
-		className: React.PropTypes.string,
-		onClick: React.PropTypes.func,
-		tooltip: React.PropTypes.string,
-	},
+class MasterbarItemNotifications extends Component {
+	constructor() {
+		super();
 
-	getInitialState() {
-		const user = this.props.user.get();
+		this.checkToggleNotes = this.checkToggleNotes.bind( this );
+		this.toggleNotesFrame = this.toggleNotesFrame.bind( this );
+		this.getNotificationLinkDomNode = this.getNotificationLinkDomNode.bind( this );
+		this.setNotesIndicator = this.setNotesIndicator.bind( this );
 
-		return {
+		this.state = {
 			isShowingPopover: false,
-			newNote: user && user.has_unseen_notes,
 			animationState: 0,
 		};
-	},
+	}
+
+	componentWillReceiveProps() {
+		this.user = this.props.user.get();
+
+		this.setState( {
+			newNote: this.user && this.user.has_unseen_notes,
+		} );
+	}
 
 	checkToggleNotes( event, forceToggle ) {
 		const target = event ? event.target : false;
@@ -44,7 +48,7 @@ const MasterbarItemNotifications = React.createClass( {
 		if ( this.state.isShowingPopover || forceToggle === true ) {
 			this.toggleNotesFrame( event );
 		}
-	},
+	}
 
 	toggleNotesFrame( event ) {
 		if ( event ) {
@@ -68,11 +72,11 @@ const MasterbarItemNotifications = React.createClass( {
 				window.focus();
 			}
 		} );
-	},
+	}
 
 	getNotificationLinkDomNode() {
 		return ReactDom.findDOMNode( this.refs.notificationLink );
-	},
+	}
 
 	/**
 	 * Uses the passed number of unseen notifications
@@ -101,7 +105,7 @@ const MasterbarItemNotifications = React.createClass( {
 			newNote: ( currentUnseenCount > 0 ),
 			animationState: newAnimationState
 		} );
-	},
+	}
 
 	render() {
 		const classes = classNames( this.props.className, {
@@ -117,6 +121,7 @@ const MasterbarItemNotifications = React.createClass( {
 				icon="bell"
 				onClick={ this.toggleNotesFrame }
 				isActive={ this.props.isActive }
+				isNotesItem={ true }
 				tooltip={ this.props.tooltip }
 				className={ classes }
 			>
@@ -128,11 +133,20 @@ const MasterbarItemNotifications = React.createClass( {
 				<Notifications
 					visible={ this.state.isShowingPopover }
 					checkToggle={ this.checkToggleNotes }
-					setIndicator={ this.setNotesIndicator } />
+					setIndicator={ this.setNotesIndicator }
+				/>
 			</MasterbarItem>
 		);
 	}
-} );
+}
+
+MasterbarItemNotifications.propTypes = {
+	user: React.PropTypes.object.isRequired,
+	isActive: React.PropTypes.bool,
+	className: React.PropTypes.string,
+	onClick: React.PropTypes.func,
+	tooltip: React.PropTypes.string,
+};
 
 const mapDispatchToProps = dispatch => ( {
 	recordOpening: unread_notifications => dispatch( recordTracksEvent( 'calypso_notification_open', { unread_notifications } ) )
