@@ -22,8 +22,12 @@ class EasyTab extends Component {
 		cacheTestResults: PropTypes.object,
 		fields: PropTypes.object,
 		handleAutosavingToggle: PropTypes.func.isRequired,
+		handleDeleteCache: PropTypes.func.isRequired,
+		handleTestCache: PropTypes.func.isRequired,
+		isDeleting: PropTypes.bool,
 		isRequesting: PropTypes.bool,
 		isSaving: PropTypes.bool,
+		isTesting: PropTypes.bool,
 		site: PropTypes.object.isRequired,
 		siteId: PropTypes.number.isRequired,
 		testCache: PropTypes.func.isRequired,
@@ -33,8 +37,10 @@ class EasyTab extends Component {
 	static defaultProps = {
 		cacheTestResults: {},
 		fields: {},
+		isDeleting: false,
 		isRequesting: true,
 		isSaving: false,
+		isTesting: false,
 	};
 
 	state = {
@@ -66,15 +72,15 @@ class EasyTab extends Component {
 
 	deleteCache = () => {
 		this.setState( { isDeleting: true } );
-		this.props.deleteCache( this.props.siteId, false );
+		this.props.handleDeleteCache( false );
 	}
 
 	deleteAllCaches = () => {
 		this.setState( { isDeletingAll: true } );
-		this.props.deleteCache( this.props.siteId, true );
+		this.props.handleDeleteCache( true );
 	}
 
-	testCache = () => this.props.testCache( this.props.siteId, this.state.httpOnly );
+	testCache = () => this.props.handleTestCache( this.state.httpOnly );
 
 	render() {
 		const {

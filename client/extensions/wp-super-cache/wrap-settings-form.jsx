@@ -165,6 +165,11 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			}
 		};
 
+		removeCacheNotices = () => {
+			this.props.removeNotice( 'wpsc-cache-delete' );
+			this.props.removeNotice( 'wpsc-cache-test' );
+		}
+
 		handleChange = field => event => {
 			this.props.updateFields( { [ field ]: event.target.value } );
 		};
@@ -220,19 +225,30 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				siteId,
 			} = this.props;
 
+			this.removeCacheNotices();
 			this.props.removeNotice( 'wpsc-settings-save' );
-			this.props.removeNotice( 'wpsc-cache-delete' );
-			this.props.removeNotice( 'wpsc-cache-test' );
 			this.props.saveSettings( siteId, pick( fields, settingsFields ) );
 		};
+
+		handleDeleteCache = allCaches => {
+			this.removeCacheNotices();
+			this.props.deleteCache( this.props.siteId, allCaches );
+		}
+
+		handleTestCache = httpOnly => {
+			this.removeCacheNotices();
+			this.props.testCache( this.props.siteId, httpOnly );
+		}
 
 		render() {
 			const utils = {
 				handleAutosavingToggle: this.handleAutosavingToggle,
 				handleChange: this.handleChange,
+				handleDeleteCache: this.handleDeleteCache,
 				handleRadio: this.handleRadio,
 				handleSelect: this.handleSelect,
 				handleSubmitForm: this.handleSubmitForm,
+				handleTestCache: this.handleTestCache,
 				handleToggle: this.handleToggle,
 				setFieldArrayValue: this.setFieldArrayValue,
 			};
