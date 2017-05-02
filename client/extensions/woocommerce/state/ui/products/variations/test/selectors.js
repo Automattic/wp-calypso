@@ -11,6 +11,7 @@ import {
 	getVariationEdits,
 	getVariationWithLocalEdits,
 	getCurrentlyEditingVariation,
+	getProductVariationIdsWithLocalEdits,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -22,7 +23,10 @@ describe( 'selectors', () => {
 				woocommerce: {
 					products: [
 						// TODO: After the product API code is in, add more fields here.
-						{ id: 2 },
+						{
+							id: 2,
+							variations: [ 3 ],
+						}
 					],
 					variations: [
 						// TODO: After the variation API code is in, add more fields here.
@@ -126,6 +130,23 @@ describe( 'selectors', () => {
 			set( uiVariations, 'edits[0].currentlyEditingId', newVariation.id );
 
 			expect( getCurrentlyEditingVariation( state, 2 ) ).to.eql( newVariation );
+		} );
+	} );
+
+	describe( 'getProductVariationIdsWithLocalEdits', () => {
+		it( 'should return undefined if no product is found for productId', () => {
+			expect( getProductVariationIdsWithLocalEdits( state, 4 ) ).to.not.exist;
+		} );
+		it( 'should get just fetched ids for a product with no new variation "creates"', () => {
+			expect( getProductVariationIdsWithLocalEdits( state, 2 ) ).to.eql( [ 3 ] );
+		} );
+		it( 'should get both fetched ids and index for a new variation in "creates"', () => {
+			const newVariation = { id: { index: 0 }, name: 'New Variation' };
+			const uiVariations = state.extensions.woocommerce.ui.products.variations;
+			set( uiVariations, 'edits[0].productId', 2 );
+			set( uiVariations, 'edits[0].creates', [ newVariation ] );
+
+			expect( getProductVariationIdsWithLocalEdits( state, 2 ) ).to.eql( [ 3, { index: 0 } ] );
 		} );
 	} );
 } );
