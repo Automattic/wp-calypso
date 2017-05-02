@@ -91,6 +91,7 @@ export class SiteSettingsNavigation extends Component {
 
 					<NavItem
 						path={ `/settings/traffic/${ site.slug }` }
+						preloadSectionName="settings-traffic"
 						selected={ section === 'traffic' }
 					>
 						{ strings.traffic }
