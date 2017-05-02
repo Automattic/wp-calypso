@@ -94,7 +94,10 @@ const webpackConfig = {
 	resolve: {
 		extensions: [ '', '.json', '.js', '.jsx' ],
 		root: [ path.join( __dirname, 'server' ), path.join( __dirname, 'client' ), __dirname ],
-		modulesDirectories: [ 'node_modules' ]
+		modulesDirectories: [
+			'node_modules',
+			path.join( __dirname, 'desktop', 'node_modules' ),
+		]
 	},
 	node: {
 		// Tell webpack we want to supply absolute paths for server code,
