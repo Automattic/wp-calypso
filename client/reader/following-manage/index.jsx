@@ -151,7 +151,7 @@ class FollowingManage extends Component {
 						forceRefresh={ this.state.forceRefresh }
 					/>
 				) }
-				{ ! ( !! sitesQuery && this.state.showMoreResults ) && (
+				{ ! ( !! sitesQuery && showMoreResults ) && (
 					<FollowingManageSubscriptions
 						width={ this.state.width }
 						query={ subsQuery }
