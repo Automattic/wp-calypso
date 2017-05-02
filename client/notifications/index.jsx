@@ -53,7 +53,7 @@ const parseJson = input => {
  * Returns whether or not the browser session
  * is currently visible to the user
  *
- * @returns {boolean}
+ * @returns {boolean} is the browser session visible
  */
 const getIsVisible = () => {
 	if ( ! document ) {
@@ -131,6 +131,8 @@ export class Notifications extends Component {
 
 	handleVisibilityChange = () => this.setState( { isVisible: getIsVisible() } );
 
+	indicateRender = ( { unseen } ) => this.props.setIndicator( unseen );
+
 	receiveMessage = event => {
 		// Receives messages from the notifications widget
 		if ( event.origin !== widgetDomain ) {
@@ -148,12 +150,6 @@ export class Notifications extends Component {
 		}
 
 		switch ( data.action ) {
-			case 'render':
-				return this.props.setIndicator( data.num_new );
-
-			case 'renderAllSeen':
-				return this.props.setIndicator( 0 );
-
 			case 'togglePanel':
 				return this.props.checkToggle();
 
@@ -241,6 +237,7 @@ export class Notifications extends Component {
 					isShowing={ this.props.visible }
 					isVisible={ this.state.isVisible }
 					locale={ localeSlug }
+					onRender={ this.indicateRender }
 					wpcom={ wpcom }
 				/>
 			</div>
