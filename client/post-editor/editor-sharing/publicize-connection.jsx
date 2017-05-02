@@ -21,7 +21,8 @@ export default React.createClass( {
 	propTypes: {
 		post: PropTypes.object,
 		connection: PropTypes.object,
-		onRefresh: PropTypes.func
+		onRefresh: PropTypes.func,
+		label: PropTypes.string
 	},
 
 	getDefaultProps() {
@@ -79,7 +80,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { connection } = this.props;
+		const { connection, label } = this.props;
 
 		return (
 			<div className="editor-sharing__publicize-connection">
@@ -88,7 +89,7 @@ export default React.createClass( {
 						checked={ ! this.isConnectionSkipped() }
 						disabled={ this.isDisabled() }
 						onChange={ this.onChange } />
-					<span>{ connection && connection.external_display }</span>
+					<span data-e2e-service={ label }>{ connection && connection.external_display }</span>
 				</label>
 				{ this.renderBrokenConnection() }
 			</div>
