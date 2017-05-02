@@ -140,6 +140,7 @@ export isRequestingSharingButtons from './is-requesting-sharing-buttons';
 export isRequestingSiteConnectionStatus from './is-requesting-site-connection-status';
 export isRequestingSiteMonitorSettings from './is-requesting-site-monitor-settings';
 export isRequestingTimezones from './is-requesting-timezones';
+export isRtl from './is-rtl';
 export isSavingSharingButtons from './is-saving-sharing-buttons';
 export isSendingBillingReceiptEmail from './is-sending-billing-receipt-email';
 export isSharingButtonsSaveSuccessful from './is-sharing-buttons-save-successful';
