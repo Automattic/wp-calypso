@@ -7,7 +7,7 @@
  */
 
 const fs = require( 'fs' );
-const shrinkwrap = require( __dirname + '/../npm-shrinkwrap.json' );
+const shrinkwrap = require( '../npm-shrinkwrap.json' );
 
 function isGitDep( rep ) {
 	return /^git/.test( rep );

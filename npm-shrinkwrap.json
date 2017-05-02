@@ -832,7 +832,7 @@
       "dev": true
     },
     "check-node-version": {
-      "version": "2.0.1",
+      "version": "2.1.0",
       "dependencies": {
         "minimist": {
           "version": "1.2.0"
@@ -1107,14 +1107,6 @@
         "minimist": {
           "version": "1.2.0",
           "dev": true
-        },
-        "pinkie": {
-          "version": "2.0.4",
-          "dev": true
-        },
-        "pinkie-promise": {
-          "version": "2.0.1",
-          "dev": true
         }
       }
     },
@@ -1275,14 +1267,6 @@
       "dependencies": {
         "globby": {
           "version": "5.0.0",
-          "dev": true
-        },
-        "pinkie": {
-          "version": "2.0.4",
-          "dev": true
-        },
-        "pinkie-promise": {
-          "version": "2.0.1",
           "dev": true
         }
       }
@@ -1985,12 +1969,6 @@
       "dependencies": {
         "path-exists": {
           "version": "2.1.0"
-        },
-        "pinkie": {
-          "version": "2.0.4"
-        },
-        "pinkie-promise": {
-          "version": "2.0.1"
         }
       }
     },
@@ -2146,12 +2124,7 @@
       "version": "9.17.0"
     },
     "globby": {
-      "version": "3.0.1",
-      "dependencies": {
-        "glob": {
-          "version": "5.0.15"
-        }
-      }
+      "version": "6.1.0"
     },
     "globjoin": {
       "version": "0.1.4",
@@ -2409,15 +2382,6 @@
         },
         "commander": {
           "version": "2.9.0"
-        },
-        "globby": {
-          "version": "6.1.0"
-        },
-        "pinkie": {
-          "version": "2.0.4"
-        },
-        "pinkie-promise": {
-          "version": "2.0.1"
         }
       }
     },
@@ -3258,15 +3222,7 @@
       "version": "3.0.2"
     },
     "load-json-file": {
-      "version": "1.1.0",
-      "dependencies": {
-        "pinkie": {
-          "version": "2.0.4"
-        },
-        "pinkie-promise": {
-          "version": "2.0.1"
-        }
-      }
+      "version": "1.1.0"
     },
     "loader-utils": {
       "version": "0.2.17",
@@ -3534,20 +3490,8 @@
       "version": "1.2.0",
       "dev": true,
       "dependencies": {
-        "globby": {
-          "version": "6.1.0",
-          "dev": true
-        },
         "minimist": {
           "version": "1.2.0",
-          "dev": true
-        },
-        "pinkie": {
-          "version": "2.0.4",
-          "dev": true
-        },
-        "pinkie-promise": {
-          "version": "2.0.1",
           "dev": true
         }
       }
@@ -3883,8 +3827,7 @@
       "version": "1.0.11"
     },
     "object.assign": {
-      "version": "4.0.4",
-      "dev": true
+      "version": "4.0.4"
     },
     "object.omit": {
       "version": "2.0.1"
@@ -4025,15 +3968,7 @@
       "version": "0.1.7"
     },
     "path-type": {
-      "version": "1.1.0",
-      "dependencies": {
-        "pinkie": {
-          "version": "2.0.4"
-        },
-        "pinkie-promise": {
-          "version": "2.0.1"
-        }
-      }
+      "version": "1.1.0"
     },
     "pause-stream": {
       "version": "0.0.11"
@@ -4059,10 +3994,10 @@
       "version": "2.3.0"
     },
     "pinkie": {
-      "version": "1.0.0"
+      "version": "2.0.4"
     },
     "pinkie-promise": {
-      "version": "1.0.0"
+      "version": "2.0.1"
     },
     "pipetteur": {
       "version": "2.0.3",
@@ -4093,7 +4028,21 @@
       }
     },
     "postcss-cli": {
-      "version": "2.5.1"
+      "version": "2.5.1",
+      "dependencies": {
+        "glob": {
+          "version": "5.0.15"
+        },
+        "globby": {
+          "version": "3.0.1"
+        },
+        "pinkie": {
+          "version": "1.0.0"
+        },
+        "pinkie-promise": {
+          "version": "1.0.0"
+        }
+      }
     },
     "postcss-less": {
       "version": "0.14.0",
@@ -4395,14 +4344,6 @@
       "version": "3.1.0",
       "dev": true,
       "dependencies": {
-        "pinkie": {
-          "version": "2.0.4",
-          "dev": true
-        },
-        "pinkie-promise": {
-          "version": "2.0.1",
-          "dev": true
-        },
         "readable-stream": {
           "version": "2.2.9",
           "dev": true
@@ -5134,14 +5075,6 @@
         },
         "htmlparser2": {
           "version": "3.9.2",
-          "dev": true
-        },
-        "pinkie": {
-          "version": "2.0.4",
-          "dev": true
-        },
-        "pinkie-promise": {
-          "version": "2.0.1",
           "dev": true
         },
         "readable-stream": {
