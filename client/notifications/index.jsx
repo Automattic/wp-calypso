@@ -51,6 +51,7 @@ const parseJson = input => {
 
 export class Notifications extends Component {
 	state = {
+		isVisible: document && document.visibilityState === 'visible',
 		shownOnce: false,
 		widescreen: false,
 	};
@@ -110,10 +111,7 @@ export class Notifications extends Component {
 		}
 	};
 
-	handleVisibilityChange = () => this.postMessage( {
-		action: 'toggleVisibility',
-		hidden: !! document.hidden,
-	} );
+	handleVisibilityChange = () => this.setState( { isVisible: document.visibilityState === 'visible' } );
 
 	receiveMessage = event => {
 		// Receives messages from the notifications widget
@@ -222,8 +220,8 @@ export class Notifications extends Component {
 				} ) }
 			>
 				<NotificationsPanel
-					isShowing={ true }
-					isVisible={ true }
+					isShowing={ this.props.visible }
+					isVisible={ this.state.isVisible }
 					locale={ localeSlug }
 					wpcom={ wpcom }
 				/>
