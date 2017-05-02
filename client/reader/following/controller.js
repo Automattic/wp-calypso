@@ -46,6 +46,7 @@ const exported = {
 		const mcKey = 'following_manage';
 		const sitesQuery = context.query.q;
 		const subsQuery = context.query.s;
+		const subsSortOrder = context.query.sort;
 
 		setPageTitle( context, i18n.translate( 'Manage Followed Sites' ) );
 
@@ -58,6 +59,7 @@ const exported = {
 				initialFollowUrl={ context.query.follow }
 				sitesQuery={ sitesQuery }
 				subsQuery={ subsQuery }
+				subsSortOrder={ subsSortOrder }
 				context={ context }
 				userSettings={ userSettings }
 			/>,

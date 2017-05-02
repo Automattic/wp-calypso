@@ -38,6 +38,8 @@
 	}
 
 	.following-manage__subscriptions-header {
+		align-items: center;
+		display: flex;
 		flex: 1;
 		font-weight: 600;
 		padding-bottom: 15px;
@@ -45,6 +47,21 @@
 		@include breakpoint( "<960px" ) {
 			flex: 0 0 auto;
 			width: 100%;
+		}
+	}
+
+	.following-manage__subscriptions-sort {
+		position: relative;
+
+		&::before {
+
+			@include breakpoint( "<960px" ) {
+
+				@include long-content-fade( $size: 20% );
+				height: 30px;
+				right: 30px;
+				top: 1px;
+			}
 		}
 	}
 
@@ -60,9 +77,10 @@
 		color: darken( $gray, 10% );
 		font-size: 12px;
 		font-weight: normal;
+		width: 100%;
 
-		@include breakpoint( "<960px" ) {
-			width: 100%;
+		@include breakpoint( ">960px" ) {
+			min-width: 200px;
 		}
 	}
 
@@ -131,7 +149,10 @@
 }
 
 .following-manage__search-followed-input {
-	min-width: 200px;
+
+	@include breakpoint( ">960px" ) {
+		min-width: 200px;
+	}
 }
 
 .following-manage__sites-window-scroller-row-wrapper {

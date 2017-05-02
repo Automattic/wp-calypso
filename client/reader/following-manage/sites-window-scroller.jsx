@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { List, WindowScroller, CellMeasurerCache, CellMeasurer, InfiniteLoader } from 'react-virtualized';
-import { debounce, defer } from 'lodash';
+import { debounce } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -57,15 +57,16 @@ class SitesWindowScroller extends Component {
 		);
 	};
 
-	handleListMounted = list => {
+	handleListMounted = registerChild => list => {
 		this.listRef = list;
+		registerChild( list ); // InfiniteLoader also wants a ref
 	}
 
 	handleResize = debounce( () => this.clearListCaches(), 50 );
 
 	clearListCaches = () => {
 		this.heightCache.clearAll();
-		defer( () => this.listRef && this.listRef.recomputeRowHeights( 0 ) );
+		this.listRef && this.listRef.forceUpdateGrid();
 	}
 
 	isRowLoaded = ( { index } ) => {
@@ -82,6 +83,12 @@ class SitesWindowScroller extends Component {
 		return Promise.resolve();
 	};
 
+	componentDidUpdate() {
+		if ( this.props.forceRefresh ) {
+			this.clearListCaches();
+		}
+	}
+
 	componentWillMount() {
 		window.addEventListener( 'resize', this.handleResize );
 	}
@@ -91,7 +98,7 @@ class SitesWindowScroller extends Component {
 	}
 
 	render() {
-		const { sites, width, remoteTotalCount, forceRefresh } = this.props;
+		const { width, remoteTotalCount } = this.props;
 		return (
 			<div className="following-manage__sites-window-scroller">
 				<InfiniteLoader
@@ -105,11 +112,11 @@ class SitesWindowScroller extends Component {
 							<List
 								autoHeight
 								height={ height }
-								rowCount={ forceRefresh ? sites.length : remoteTotalCount }
+								rowCount={ remoteTotalCount }
 								rowHeight={ this.heightCache.rowHeight }
 								rowRenderer={ this.siteRowRenderer }
 								onRowsRendered={ onRowsRendered }
-								ref={ registerChild }
+								ref={ this.handleListMounted( registerChild ) }
 								scrollTop={ scrollTop }
 								width={ width }
 							/>
