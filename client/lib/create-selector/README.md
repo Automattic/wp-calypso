@@ -28,6 +28,13 @@ const sitePosts = getSitePosts( state, siteId );
 
 This result would only be calculated once, so long as `state.posts` remains the same.
 
+`createSelectorPerKey` accept the same parameters as `createSelector`.
+The difference is how it invalidate the cache and as the name suggest it is per-key and not per-selector.
+
+For example, the stats module have state section that stores all the different stats types keyed by a query. This function allows the dependent data function to return a very specific sub-tree of the state and if that sub-tree changes only the current cache key (3rd parameter) will be invalidated. In the stats case when authors stats changes only it will be invalidated while posts stats will still be served from the cache.
+
+Please note the effect might be higher memory usage because invalid cache keys will not be reevaluated until they are requested, which might never happen.
+
 ## FAQ
 
 ### What is a memoized selector?
