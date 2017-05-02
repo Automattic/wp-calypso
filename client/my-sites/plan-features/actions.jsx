@@ -5,7 +5,6 @@ import { localize } from 'i18n-calypso';
 import noop from 'lodash/noop';
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -42,7 +41,6 @@ const PlanFeaturesActions = ( {
 	if ( current && ! isInSignup ) {
 		upgradeButton = (
 			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
-				<Gridicon size={ 18 } icon="checkmark" />
 				{ canPurchase ? translate( 'Manage Plan' ) : translate( 'View Plan' ) }
 			</Button>
 		);
