@@ -274,7 +274,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderOverviewTab() {
-		const { isWpcomTheme, download } = this.props;
+		const { isWpcomTheme, download, next } = this.props;
 
 		return (
 			<div>
@@ -284,6 +284,11 @@ const ThemeSheet = React.createClass( {
 				{ this.renderFeaturesCard() }
 				{ download && <ThemeDownloadCard href={ download } /> }
 				{ isWpcomTheme && this.renderRelatedThemes() }
+				{ isWpcomTheme &&
+					<SectionHeader
+						href={ next }
+						label={ i18n.translate( 'Next theme' ) }
+					/> }
 			</div>
 		);
 	},
