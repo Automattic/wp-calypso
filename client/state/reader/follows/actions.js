@@ -9,6 +9,7 @@ import debugModule from 'debug';
 import {
 	READER_FOLLOW,
 	READER_UNFOLLOW,
+	READER_UPDATE_FOLLOW,
 	READER_RECORD_FOLLOW,
 	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_RECEIVE,
@@ -25,17 +26,33 @@ import {
  */
 const debug = debugModule( 'calypso:redux:reader-follows' );
 
+/**
+ * Follow a feed URL
+ * @param  {string} feedUrl      The feed URL
+ * @return {[type]}              [description]
+ */
 export function follow( feedUrl ) {
-	return {
+	const action = {
 		type: READER_FOLLOW,
 		payload: { feedUrl }
 	};
+	return action;
 }
 
 export function unfollow( feedUrl ) {
 	return {
 		type: READER_UNFOLLOW,
 		payload: { feedUrl }
+	};
+}
+
+export function updateFollow( feedUrl, followInfo ) {
+	return {
+		type: READER_UPDATE_FOLLOW,
+		payload: {
+			feedUrl,
+			follow: followInfo
+		}
 	};
 }
 

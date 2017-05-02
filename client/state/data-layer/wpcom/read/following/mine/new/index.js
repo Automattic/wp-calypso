@@ -11,8 +11,7 @@ import { READER_FOLLOW } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
-import { extendAction } from 'state/utils';
-import { unfollow } from 'state/reader/follows/actions';
+import { updateFollow, unfollow } from 'state/reader/follows/actions';
 import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine';
 
 export function requestFollow( { dispatch }, action, next ) {
@@ -34,17 +33,9 @@ export function requestFollow( { dispatch }, action, next ) {
 
 export function receiveFollow( store, action, next, response ) {
 	if ( response && response.subscribed ) {
-		let actionToDispatch = action;
-		if ( response.subscription ) {
-			actionToDispatch = extendAction( action, {
-				payload: {
-					subscription: subscriptionFromApi( response.subscription )
-				}
-			} );
-		}
-		next( actionToDispatch );
+		next( updateFollow( action.payload.feedUrl, subscriptionFromApi( response.subscription ) ) );
 	} else {
-		next( unfollow( action.payload.feedUrl ) );
+		followError( store, action, next );
 	}
 }
 

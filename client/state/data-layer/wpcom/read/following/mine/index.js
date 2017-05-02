@@ -34,7 +34,7 @@ export const isValidApiResponse = apiResponse => {
 	return hasSubscriptions;
 };
 
-export const subscriptionFromApi = subscription => omitBy( {
+export const subscriptionFromApi = subscription => subscription && omitBy( {
 	ID: Number( subscription.ID ),
 	URL: subscription.URL,
 	feed_URL: subscription.URL,
