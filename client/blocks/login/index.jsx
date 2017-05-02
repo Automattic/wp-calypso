@@ -7,8 +7,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { createFormAndSubmit } from 'lib/form';
 import LoginForm from './login-form';
 import TwoFactorAuthentication from './two-factor-authentication';
 import { isTwoFactorEnabled } from 'state/login/selectors';
@@ -25,14 +23,9 @@ class Login extends Component {
 		rememberMe: false,
 	};
 
-	handleValidUsernamePassword = ( { usernameOrEmail, password, rememberMe } ) => {
+	handleValidUsernamePassword = ( { rememberMe } ) => {
 		if ( ! this.props.twoFactorEnabled ) {
-			createFormAndSubmit( config( 'login_url' ), {
-				log: usernameOrEmail,
-				pwd: password,
-				redirect_to: this.props.redirectLocation || window.location.origin,
-				rememberme: rememberMe ? 1 : 0,
-			} );
+			window.location.href = this.props.redirectLocation || window.location.origin;
 		} else {
 			this.setState( {
 				hasSubmittedValidCredentials: true,
