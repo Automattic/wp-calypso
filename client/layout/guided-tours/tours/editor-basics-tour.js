@@ -29,24 +29,21 @@ export const EditorBasicsTour = makeTour(
 		name="editorBasicsTour"
 		version="20170321"
 		path="/post/"
-		when={ and(
-			isDesktop,
-			isNewUser,
-			) }
-		>
+		when={ and( isDesktop, isNewUser ) }
+	>
 		<Step
 			name="init"
 			arrow="top-left"
 			target=".editor-title"
 			placement="below"
 			style={ { animationDelay: '5s', } }
-			>
+		>
 			<p>
 				Welcome to the editor! Add a title here.
 			</p>
 			<ButtonRow>
 				<Next step="write">Continue</Next>
-				<Quit>Quit</Quit>
+				<Quit />
 			</ButtonRow>
 		</Step>
 		<Step
@@ -55,7 +52,7 @@ export const EditorBasicsTour = makeTour(
 			target=".mce-toolbar-grp.mce-container"
 			placement="below"
 			style={ { marginTop: '40px' } }
-			>
+		>
 			<p>
 				Write your post in the content area.
 			</p>
@@ -65,7 +62,7 @@ export const EditorBasicsTour = makeTour(
 				/>
 			<ButtonRow>
 				<Next step="add-image">Continue</Next>
-				<Quit>Quit</Quit>
+				<Quit />
 			</ButtonRow>
 		</Step>
 		<Step
@@ -73,8 +70,8 @@ export const EditorBasicsTour = makeTour(
 			arrow="top-left"
 			target=".mce-wpcom-insert-menu button"
 			placement="below"
-			style={ { marginLeft: '-10px', minWidth: '240px' } }
-			>
+			style={ { marginLeft: '-10px' } }
+		>
 			<p>
 				{
 					translate( 'Click the {{icon/}} to add images.', {
@@ -95,7 +92,7 @@ export const EditorBasicsTour = makeTour(
 			target=".editor-ground-control__toggle-sidebar"
 			placement="beside"
 			style={ { marginTop: '-9px' } }
-			>
+		>
 			<p>
 				Find additional settings in the sidebar — such as tags, categories, and the featured image.
 			</p>
@@ -110,8 +107,8 @@ export const EditorBasicsTour = makeTour(
 
 			</p>
 			<ButtonRow>
-				<Next step="publish">Continue</Next>
-				<Quit>Quit</Quit>
+				<Next step="publish" />
+				<Quit />
 			</ButtonRow>
 		</Step>
 		<Step
@@ -120,11 +117,11 @@ export const EditorBasicsTour = makeTour(
 			target=".editor-ground-control__publish-combo"
 			placement="beside"
 			style={ { marginTop: '-17px' } }
-			>
+		>
 			<p>
 				{
 					translate( 'Your changes are saved automatically. ' +
-									'Click {{strong}}Publish{{/strong}} to share your work with the world!',
+							'Click {{strong}}Publish{{/strong}} to share your work with the world!',
 						{
 							components: {
 								strong: <strong />,
