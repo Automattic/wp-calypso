@@ -17,7 +17,7 @@ import reducer, {
 	isRequesting,
 	requestError,
 	requestSuccess,
-	twoFactorAuth
+	twoFactorAuth,
 } from '../reducer';
 
 describe( 'reducer', () => {

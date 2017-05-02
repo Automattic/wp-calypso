@@ -29,7 +29,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( id ).to.eql( 123456 );
+			expect( id ).to.equal( 123456 );
 		} );
 	} );
 
@@ -49,7 +49,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( nonce ).to.eql( 'abcdef123456' );
+			expect( nonce ).to.equal( 'abcdef123456' );
 		} );
 	} );
 
