@@ -97,7 +97,7 @@ class PostByline extends React.Component {
 					siteUrl={ streamUrl }
 					isCompact={ true } />
 				<div className="reader-post-card__byline-details">
-					{ shouldDisplayAuthor && <div className="reader-post-card__byline-author-site">
+					{ ( shouldDisplayAuthor || showSiteName ) && <div className="reader-post-card__byline-author-site">
 							<ReaderAuthorLink
 								className="reader-post-card__link"
 								author={ post.author }
