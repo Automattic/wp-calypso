@@ -40,10 +40,10 @@ export const EditorBasicsTour = makeTour(
 			style={ { animationDelay: '5s', } }
 		>
 			<p>
-				Welcome to the editor! Add a title here.
+				{ translate( 'Welcome to the editor! Add a title here.' ) }
 			</p>
 			<ButtonRow>
-				<Next step="write">Continue</Next>
+				<Next step="write" />
 				<Quit />
 			</ButtonRow>
 		</Step>
@@ -55,14 +55,14 @@ export const EditorBasicsTour = makeTour(
 			style={ { marginTop: '40px' } }
 		>
 			<p>
-				Write your post in the content area.
+				{ translate( 'Write your post in the content area.' ) }
 			</p>
 			<img
 				src="https://en-support.files.wordpress.com/2017/03/editor-content-area_360.gif"
 				style={ { marginBottom: '10px', border: '3px solid #00AADC', borderRadius: '4px' } }
 				/>
 			<ButtonRow>
-				<Next step="add-image">Continue</Next>
+				<Next step="add-image" />
 				<Quit />
 			</ButtonRow>
 		</Step>
@@ -83,8 +83,8 @@ export const EditorBasicsTour = makeTour(
 				}
 			</p>
 			<ButtonRow>
-				<Next step="sidebar-options">Continue</Next>
-				<Quit>Quit</Quit>
+				<Next step="sidebar-options" />
+				<Quit />
 			</ButtonRow>
 		</Step>
 		<Step
@@ -95,7 +95,7 @@ export const EditorBasicsTour = makeTour(
 			style={ { marginTop: '-9px' } }
 		>
 			<p>
-				Add tags, categories, and a featured image from the sidebar.
+				{ translate( 'Add tags, categories, and a featured image from the sidebar.' ) }
 			</p>
 			<p>
 				{
@@ -131,7 +131,9 @@ export const EditorBasicsTour = makeTour(
 				}
 			</p>
 			<ButtonRow>
-				<Quit primary>Got it, I'm ready to write!</Quit>
+				<Quit primary>
+					{ translate( "Got it, I'm ready to write!" ) }
+				</Quit>
 			</ButtonRow>
 			<Link href="https://learn.wordpress.com/get-published/">
 				{ translate( 'Learn more about publishing content.' ) }
