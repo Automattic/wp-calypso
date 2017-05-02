@@ -28,6 +28,7 @@ import {
 	isRequestingSites,
 	isRequestingSite,
 	getSeoTitleFormats,
+	getSeoTitle,
 	getSiteBySlug,
 	getSiteByUrl,
 	getSitePlan,
@@ -986,6 +987,480 @@ describe( 'selectors', () => {
 				pages: [],
 				posts: [],
 			} );
+		} );
+	} );
+
+	describe( 'getSeoTitle()', () => {
+		it( 'should return an empty string when there is no site ID in data', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {}
+				}
+			}, 'frontPage', {} );
+
+			expect( seoTitle ).to.eql( '' );
+		} );
+
+		it( 'should convert site name and tagline for front page title type', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									front_page: [
+										{
+											value: 'siteName',
+										},
+										{
+											type: 'string',
+											value: ' | ',
+										},
+										{
+											value: 'tagline',
+										},
+									],
+								}
+							}
+						}
+					}
+				}
+			}, 'frontPage', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				}
+			} );
+
+			expect( seoTitle ).to.eql( 'Site Title | Site Tagline' );
+		} );
+
+		it( 'should default to site name for front page title type if no other title is set', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									front_page: [],
+								}
+							}
+						}
+					}
+				}
+			}, 'frontPage', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				}
+			} );
+
+			expect( seoTitle ).to.eql( 'Site Title' );
+		} );
+
+		it( 'should convert site name, tagline and post title for posts title type', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									posts: [
+										{
+											value: 'siteName',
+										},
+										{
+											type: 'string',
+											value: ' | ',
+										},
+										{
+											value: 'tagline',
+										},
+										{
+											type: 'string',
+											value: ' > ',
+										},
+										{
+											value: 'postTitle',
+										},
+									],
+								}
+							}
+						}
+					}
+				}
+			}, 'posts', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				post: {
+					title: 'Post Title',
+				}
+			} );
+
+			expect( seoTitle ).to.eql( 'Site Title | Site Tagline > Post Title' );
+		} );
+
+		it( 'should default to post title for posts title type if no other title is set', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									posts: [],
+								}
+							}
+						}
+					}
+				}
+			}, 'posts', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				post: {
+					title: 'Post Title',
+				}
+			} );
+
+			expect( seoTitle ).to.eql( 'Post Title' );
+		} );
+
+		it( 'should return empty string as post title for posts title type if post title is missing', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									posts: [],
+								}
+							}
+						}
+					}
+				}
+			}, 'posts', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				post: {}
+			} );
+
+			expect( seoTitle ).to.eql( '' );
+		} );
+
+		it( 'should convert site name, tagline and page title for pages title type', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									pages: [
+										{
+											value: 'siteName',
+										},
+										{
+											type: 'string',
+											value: ' | ',
+										},
+										{
+											value: 'tagline',
+										},
+										{
+											type: 'string',
+											value: ' > ',
+										},
+										{
+											value: 'pageTitle',
+										},
+									],
+								}
+							}
+						}
+					}
+				}
+			}, 'pages', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				post: {
+					title: 'Page Title',
+				}
+			} );
+
+			expect( seoTitle ).to.eql( 'Site Title | Site Tagline > Page Title' );
+		} );
+
+		it( 'should default to empty string for pages title type if no other title is set', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									pages: [],
+								}
+							}
+						}
+					}
+				}
+			}, 'pages', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				post: {
+					title: 'Page Title',
+				}
+			} );
+
+			expect( seoTitle ).to.eql( '' );
+		} );
+
+		it( 'should return empty string as page title for pages title type if page title is missing', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									pages: [],
+								}
+							}
+						}
+					}
+				}
+			}, 'pages', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				post: {}
+			} );
+
+			expect( seoTitle ).to.eql( '' );
+		} );
+
+		it( 'should convert site name, tagline and group name for groups title type', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									groups: [
+										{
+											value: 'siteName',
+										},
+										{
+											type: 'string',
+											value: ' | ',
+										},
+										{
+											value: 'tagline',
+										},
+										{
+											type: 'string',
+											value: ' > ',
+										},
+										{
+											value: 'groupTitle',
+										},
+									],
+								}
+							}
+						}
+					}
+				}
+			}, 'groups', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				tag: 'Tag Name',
+			} );
+
+			expect( seoTitle ).to.eql( 'Site Title | Site Tagline > Tag Name' );
+		} );
+
+		it( 'should default to empty string for groups title type if no other title is set', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									groups: [],
+								}
+							}
+						}
+					}
+				}
+			}, 'groups', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				}
+			} );
+
+			expect( seoTitle ).to.eql( '' );
+		} );
+
+		it( 'should convert site name, tagline and date for archives title type', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									archives: [
+										{
+											value: 'siteName',
+										},
+										{
+											type: 'string',
+											value: ' | ',
+										},
+										{
+											value: 'tagline',
+										},
+										{
+											type: 'string',
+											value: ' > ',
+										},
+										{
+											value: 'date',
+										},
+									],
+								}
+							}
+						}
+					}
+				}
+			}, 'archives', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				date: 'January 2000',
+			} );
+
+			expect( seoTitle ).to.eql( 'Site Title | Site Tagline > January 2000' );
+		} );
+
+		it( 'should default to empty string for archives title type if no other title is set', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {
+									archives: [],
+								}
+							}
+						}
+					}
+				}
+			}, 'archives', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+			} );
+
+			expect( seoTitle ).to.eql( '' );
+		} );
+
+		it( 'should default to post title for a misc title type', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {}
+							}
+						}
+					}
+				}
+			}, 'exampleType', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+				post: {
+					title: 'Post Title'
+				}
+			} );
+
+			expect( seoTitle ).to.eql( 'Post Title' );
+		} );
+
+		it( 'should default to site name for a misc title type if post title is missing', () => {
+			const seoTitle = getSeoTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							URL: 'https://example.com',
+							options: {
+								advanced_seo_title_formats: {}
+							}
+						}
+					}
+				}
+			}, 'exampleType', {
+				site: {
+					ID: 2916284,
+					name: 'Site Title',
+					description: 'Site Tagline',
+				},
+			} );
+
+			expect( seoTitle ).to.eql( 'Site Title' );
 		} );
 	} );
 
