@@ -205,5 +205,5 @@
 }
 
 .reader-subscription-list-item__site-url, .reader-subscription-list-item__site-url a {
-	color: $gray;
+	color: 	darken( $gray, 30% );
 }

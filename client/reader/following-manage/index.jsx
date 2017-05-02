@@ -18,9 +18,10 @@ import ReaderMain from 'components/reader-main';
 import { getReaderFeedsForQuery } from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import FollowingManageSubscriptions from './subscriptions';
-import SitesWindowScroller from './sites-window-scroller';
+import FollowingManageSearchFeedsResults from './feed-search-results';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import { requestFeedSearch } from 'state/reader/feed-searches/actions';
+import { addQueryArgs } from 'lib/url';
 
 class FollowingManage extends Component {
 	static propTypes = {
@@ -28,16 +29,21 @@ class FollowingManage extends Component {
 		subsQuery: PropTypes.string,
 		subsSortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
 		translate: PropTypes.func,
+		showMoreResults: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		subsQuery: '',
 		sitesQuery: '',
+		showMoreResults: false,
 		forceRefresh: false,
 		subsSortOrder: 'date-followed',
 	}
 
-	state = { width: 800 };
+	state = {
+		width: 800,
+		forceRefresh: false,
+	};
 
 	// TODO make this common between our different search pages?
 	updateQuery = ( newValue ) => {
@@ -55,6 +61,11 @@ class FollowingManage extends Component {
 			}
 			page.replace( searchUrl );
 		}
+	}
+
+	handleSearchClosed = () => {
+		this.scrollToTop();
+		this.setState( { showMoreResults: false } );
 	}
 
 	scrollToTop = () => {
@@ -98,8 +109,12 @@ class FollowingManage extends Component {
 
 	fetchNextPage = offset => this.props.requestFeedSearch( this.props.sitesQuery, offset );
 
+	handleShowMoreClicked = () => {
+		page.replace( addQueryArgs( { showMoreResults: true }, window.location.pathname + window.location.search ) );
+	}
+
 	render() {
-		const { sitesQuery, subsQuery, subsSortOrder, translate, searchResults } = this.props;
+		const { sitesQuery, subsQuery, subsSortOrder, translate, searchResults, showMoreResults } = this.props;
 		const searchPlaceholderText = translate( 'Search millions of sites' );
 
 		return (
@@ -115,7 +130,7 @@ class FollowingManage extends Component {
 					<CompactCard className="following-manage__input-card">
 						<SearchInput
 							onSearch={ this.updateQuery }
-							onSearchClose={ this.scrollToTop }
+							onSearchClose={ this.handleSearchClosed }
 							autoFocus={ this.props.autoFocusInput }
 							delaySearch={ true }
 							delayTimeout={ 500 }
@@ -126,24 +141,22 @@ class FollowingManage extends Component {
 						</SearchInput>
 					</CompactCard>
 				</div>
-				{ ! sitesQuery && (
+				{ !! sitesQuery && (
+					<FollowingManageSearchFeedsResults
+						searchResults={ searchResults }
+						showMoreResults={ showMoreResults }
+						showMoreResultsClicked={ this.handleShowMoreClicked }
+						width={ this.state.width }
+						fetchNextPage={ this.fetchNextPage }
+						forceRefresh={ this.state.forceRefresh }
+					/>
+				) }
+				{ ! ( !! sitesQuery && this.state.showMoreResults ) && (
 					<FollowingManageSubscriptions
 						width={ this.state.width }
 						query={ subsQuery }
 						sortOrder={ subsSortOrder }
 					/>
-				) }
-				{ ( !! sitesQuery && searchResults && (
-					!! ( searchResults.length > 0 )
-					? <SitesWindowScroller
-							sites={ searchResults }
-							width={ this.state.width }
-							fetchNextPage={ this.fetchNextPage }
-							remoteTotalCount={ 200 }
-							forceRefresh={ this.state.forceRefresh }
-						/>
-						: <p> { translate( 'There were no site results for your query.' ) } </p>
-					)
 				) }
 			</ReaderMain>
 		);
