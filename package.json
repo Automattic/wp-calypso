@@ -9,6 +9,9 @@
     "url": "https://github.com/Automattic/wp-calypso.git"
   },
   "main": "index.js",
+  "optionalDependencies": {
+    "appdmg": "0.4.5"
+  },
   "dependencies": {
     "async": "0.9.0",
     "atob": "1.1.2",
@@ -26,6 +29,7 @@
     "babel-plugin-transform-react-jsx": "6.8.0",
     "babel-plugin-transform-runtime": "6.9.0",
     "babel-preset-es2015": "6.9.0",
+    "babel-preset-react": "6.3.13",
     "babel-preset-stage-2": "6.5.0",
     "babel-register": "6.9.0",
     "blob": "0.0.4",
@@ -91,6 +95,7 @@
     "percentage-regex": "3.0.0",
     "phone": "git+https://github.com/Automattic/node-phone.git#1.0.8",
     "photon": "2.0.0",
+    "portscanner": "^1.0.0",
     "postcss-cli": "2.5.1",
     "prismjs": "^1.6.0",
     "q": "1.0.1",
@@ -120,6 +125,7 @@
     "source-map": "0.1.39",
     "source-map-loader": "0.1.5",
     "source-map-support": "0.3.2",
+    "spellchecker": "^3.2.3",
     "store": "1.3.16",
     "striptags": "2.1.1",
     "superagent": "2.1.0",
@@ -155,10 +161,16 @@
     "css-lint": "stylelint 'client/**/*.scss' --syntax scss"
   },
   "devDependencies": {
+    "asar": "0.11.0",
     "babel-eslint": "6.1.2",
     "chai": "3.5.0",
     "chai-enzyme": "0.5.2",
     "deep-freeze": "0.0.1",
+    "electron": "1.3.5",
+    "electron-builder": "2.8.4",
+    "electron-mocha": "2.1.0",
+    "electron-packager": "7.0.2",
+    "electron-rebuild": "1.2.1",
     "enzyme": "2.4.1",
     "esformatter": "0.7.3",
     "esformatter-braces": "1.2.1",
@@ -174,10 +186,13 @@
     "glob": "7.0.3",
     "lodash-deep": "1.5.3",
     "md5-file": "3.1.0",
+    "minimist": "1.2.0",
     "mixedindentlint": "1.1.1",
+    "mkdirp": "0.5.1",
     "mocha": "3.1.0",
     "mocha-junit-reporter": "1.12.0",
     "mockery": "1.7.0",
+    "mv": "2.1.1",
     "nock": "8.0.0",
     "nodemon": "1.4.1",
     "react-addons-test-utils": "15.4.0",
@@ -189,6 +204,7 @@
     "socket.io": "1.4.5",
     "stylelint": "^6.5.1",
     "supertest": "2.0.0",
+    "unzip": "0.1.11",
     "webpack-bundle-analyzer": "2.2.1",
     "webpack-dashboard": "0.2.0",
     "webpack-dev-server": "1.11.0"
