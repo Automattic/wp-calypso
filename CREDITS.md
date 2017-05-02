@@ -1428,3 +1428,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
+
+<span id="electron"></span>
+
+### [Electron](https://electron.atom.io)  
+Source: https://github.com/electron/electron/  
+License: https://github.com/electron/electron/blob/master/LICENSE  
+
+<span id="chromium"></span>
+
+### [Chromium](https://www.chromium.org/Home)  
+Source: https://chromium.googlesource.com/chromium/src  
+License: https://chromium.googlesource.com/chromium/src/+/master/LICENSE  
