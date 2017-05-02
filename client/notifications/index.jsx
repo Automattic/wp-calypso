@@ -49,9 +49,27 @@ const parseJson = input => {
 	}
 };
 
+/**
+ * Returns whether or not the browser session
+ * is currently visible to the user
+ *
+ * @returns {boolean}
+ */
+const getIsVisible = () => {
+	if ( ! document ) {
+		return true;
+	}
+
+	if ( ! document.visibilityState ) {
+		return true;
+	}
+
+	return document.visibilityState === 'visible';
+};
+
 export class Notifications extends Component {
 	state = {
-		isVisible: ( document && document.visibilityState === 'visible' ) || true,
+		isVisible: getIsVisible(),
 		shownOnce: false,
 		widescreen: false,
 	};
@@ -111,7 +129,7 @@ export class Notifications extends Component {
 		}
 	};
 
-	handleVisibilityChange = () => this.setState( { isVisible: document.visibilityState === 'visible' } );
+	handleVisibilityChange = () => this.setState( { isVisible: getIsVisible() } );
 
 	receiveMessage = event => {
 		// Receives messages from the notifications widget
