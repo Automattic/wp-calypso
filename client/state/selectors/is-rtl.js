@@ -4,7 +4,7 @@
 import { getCurrentUser } from 'state/current-user/selectors';
 
 /**
- * Returns the isRtl value for the current user.
+ * Returns whether the current uses right-to-left directionality.
  *
  * @param  {Object}   state      Global state tree
  * @return {?Boolean}            Current user is rtl
