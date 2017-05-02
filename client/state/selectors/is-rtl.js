@@ -11,7 +11,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
  */
 export default function isRtl( state ) {
 	const currentUser = getCurrentUser( state );
-	if ( currentUser && 'isRTL' in currentUser ) {
+	if ( currentUser && currentUser.hasOwnProperty( 'isRTL' ) ) {
 		return currentUser.isRTL;
 	}
 	return null;
