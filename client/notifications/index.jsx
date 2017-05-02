@@ -26,7 +26,7 @@ import analytics from 'lib/analytics';
 import config from 'config';
 import userLib from 'lib/user';
 
-import NotificationsPanel from './notifications-panel/src/Notifications';
+import NotificationsPanel from 'notifications-panel';
 
 /**
  * Module variables
