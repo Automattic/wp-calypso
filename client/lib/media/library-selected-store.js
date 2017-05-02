@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var map = require( 'lodash/map' );
+const map = require( 'lodash/map' );
+const compact = require( 'lodash/compact' );
 
 /**
  * Internal dependencies
@@ -84,9 +85,14 @@ MediaLibrarySelectedStore.getAll = function( siteId ) {
 		return [];
 	}
 
-	return MediaLibrarySelectedStore._media[ siteId ].map( function( itemId ) {
-		return MediaStore.get( siteId, itemId );
-	} );
+	// Avoid keeping invalid items in the selected list.
+	return compact( MediaLibrarySelectedStore._media[ siteId ].map( function( itemId ) {
+		const item = MediaStore.get( siteId, itemId );
+		if ( ! ( item && item.guid ) ) {
+			return;
+		}
+		return item;
+	} ) );
 };
 
 MediaLibrarySelectedStore.dispatchToken = Dispatcher.register( function( payload ) {
