@@ -32,6 +32,7 @@ import {
 	getSiteBySlug,
 	getSiteByUrl,
 	getSitePlan,
+	getSitePlanSlug,
 	isCurrentSitePlan,
 	isCurrentPlanPaid,
 	getSiteFrontPage,
@@ -1641,6 +1642,36 @@ describe( 'selectors', () => {
 				free_trial: false,
 				expired: false
 			} );
+		} );
+	} );
+
+	describe( 'getSitePlanSlug()', () => {
+		it( 'should return undefined if the plan slug is not known', () => {
+			const planSlug = getSitePlanSlug( {
+				sites: {
+					items: {}
+				}
+			}, 77203074 );
+
+			expect( planSlug ).to.be.undefined;
+		} );
+
+		it( 'should return the plan slug if it is known', () => {
+			const planSlug = getSitePlanSlug( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							plan: {
+								product_id: 1234,
+								product_slug: 'fake-plan',
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( planSlug ).to.eql( 'fake-plan' );
 		} );
 	} );
 
