@@ -48,7 +48,8 @@ const MasterbarItemNotifications = React.createClass( {
 
 	toggleNotesFrame( event ) {
 		if ( event ) {
-			event.preventDefault();
+			event.preventDefault && event.preventDefault();
+			event.stopPropagation && event.stopPropagation();
 		}
 
 		this.setState( {

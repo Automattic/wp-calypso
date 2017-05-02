@@ -230,7 +230,7 @@ export class Notifications extends Component {
 				} ) }
 			>
 				<NotificationsPanel
-					isShowing={ this.props.visible }
+					isShowing={ true }
 					isVisible={ this.state.isVisible }
 					locale={ localeSlug }
 					onRender={ this.indicateRender }
