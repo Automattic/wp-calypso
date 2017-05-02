@@ -3,7 +3,6 @@
  */
 import { translate } from 'i18n-calypso';
 import { map, omitBy, isArray, isUndefined } from 'lodash';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -41,7 +40,7 @@ export const subscriptionFromApi = subscription => omitBy( {
 	feed_URL: subscription.URL,
 	blog_ID: toValidId( subscription.blog_ID ),
 	feed_ID: toValidId( subscription.feed_ID ),
-	date_subscribed: moment( subscription.date_subscribed ),
+	date_subscribed: Date.parse( subscription.date_subscribed ),
 	delivery_methods: subscription.delivery_methods,
 	is_owner: subscription.is_owner,
 }, isUndefined );
