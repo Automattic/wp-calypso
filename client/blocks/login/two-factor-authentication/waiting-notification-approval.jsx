@@ -10,7 +10,7 @@ import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 
 const WaitingTwoFactorNotificationApproval = ( { translate } ) => (
-	<form onSubmit={ this.onSubmitForm }>
+	<form>
 		<Card className="two-factor-authentication__push-notification-screen is-compact">
 			<p>
 				{ translate( 'We just sent a push notification to your WordPress mobile app. ' +
