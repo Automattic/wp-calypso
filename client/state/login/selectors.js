@@ -11,7 +11,7 @@ import { get } from 'lodash';
  * @return {?Number}         The user ID.
  */
 export const getTwoFactorAuthId = ( state ) => {
-	return get( state, [ 'login', 'twoFactorAuth', 'two_step_id' ], null );
+	return get( state, 'login.twoFactorAuth.two_step_id', null );
 };
 
 /**
@@ -22,7 +22,7 @@ export const getTwoFactorAuthId = ( state ) => {
  * @return {?String}         The nonce.
  */
 export const getTwoFactorAuthNonce = ( state ) => {
-	return get( state, [ 'login', 'twoFactorAuth', 'two_step_nonce' ], null );
+	return get( state, 'login.twoFactorAuth.two_step_nonce', null );
 };
 
 /**
@@ -33,7 +33,7 @@ export const getTwoFactorAuthNonce = ( state ) => {
  * @return {?String}         The type of 2FA notification. enum: 'sms', 'push', 'none'.
  */
 export const getTwoFactorNotificationSent = ( state ) => {
-	return get( state, [ 'login', 'twoFactorAuth', 'two_step_notification_sent' ], null );
+	return get( state, 'login.twoFactorAuth.two_step_notification_sent', null );
 };
 
 /**
@@ -44,7 +44,7 @@ export const getTwoFactorNotificationSent = ( state ) => {
  * @return {?Boolean}        Whether 2FA is enabled
  */
 export const isTwoFactorEnabled = ( state ) => {
-	const twoFactorAuth = get( state, [ 'login', 'twoFactorAuth' ] );
+	const twoFactorAuth = get( state, 'login.twoFactorAuth' );
 	if ( ! twoFactorAuth ) {
 		return null;
 	}
