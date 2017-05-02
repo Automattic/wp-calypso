@@ -85,6 +85,7 @@
     "morgan": "1.2.0",
     "ms": "0.7.1",
     "node-sass": "3.7.0",
+		"notifications-panel": "git+https://github.com/Automattic/notifications-panel.git",
     "numeral": "2.0.4",
     "page": "1.6.4",
     "percentage-regex": "3.0.0",
