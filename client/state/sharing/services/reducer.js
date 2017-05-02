@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -12,6 +7,7 @@ import {
 	KEYRING_SERVICES_REQUEST_FAILURE,
 	KEYRING_SERVICES_REQUEST_SUCCESS,
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { itemSchema } from './schema';
 import { createReducer } from 'state/utils';
 
@@ -27,7 +23,7 @@ export const isFetching = createReducer( false, {
 	[ KEYRING_SERVICES_REQUEST_FAILURE ]: () => false
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	isFetching,
 	items,
 } );

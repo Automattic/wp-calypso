@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { pick, omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { plans } from './plans/reducer';
+import { combineReducersWithPersistence } from 'state/utils';
 import connection from './connection/reducer';
 import domains from './domains/reducer';
 import guidedTransfer from './guided-transfer/reducer';
@@ -263,7 +263,7 @@ export const deleting = keyedReducer( 'siteId', createReducer( {}, {
 	[ SITE_DELETE_SUCCESS ]: stubFalse
 } ) );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	connection,
 	deleting,
 	domains,

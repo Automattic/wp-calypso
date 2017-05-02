@@ -1,7 +1,6 @@
 /**
 * External dependencies
 */
-import { combineReducers } from 'redux';
 import forEach from 'lodash/forEach';
 
 /**
@@ -18,6 +17,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { pluginInstructionSchema } from './schema';
 import { isValidStateWithSchema } from 'state/utils';
 
@@ -160,7 +160,7 @@ function pluginStatus( state, action ) {
 	}
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	isRequesting,
 	hasRequested,
 	plugins

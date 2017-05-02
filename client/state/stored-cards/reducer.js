@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -17,6 +12,7 @@ import {
 	STORED_CARDS_DELETE_COMPLETED,
 	STORED_CARDS_DELETE_FAILED
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { createReducer } from 'state/utils';
 import { storedCardsSchema } from './schema';
 
@@ -110,7 +106,7 @@ export const isDeleting = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	hasLoadedFromServer,
 	isDeleting,
 	isFetching,

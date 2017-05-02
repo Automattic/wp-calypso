@@ -1,12 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence } from 'state/utils';
 import {
 	TIMEZONES_RECEIVE,
 	TIMEZONES_REQUEST,
@@ -34,7 +30,7 @@ export const isRequesting = ( state = false, { type } ) => (
 	type === TIMEZONES_REQUEST
 );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	rawOffsets,
 	labels,
 	byContinents,

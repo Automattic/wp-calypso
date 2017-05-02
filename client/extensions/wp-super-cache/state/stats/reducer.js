@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence } from 'state/utils';
 import { statsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_DELETE_FILE,
@@ -96,7 +96,7 @@ const items = createReducer( {}, {
 	},
 }, statsSchema );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	deleting,
 	generateStatus,
 	items,

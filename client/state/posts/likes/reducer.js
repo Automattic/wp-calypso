@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { merge } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import itemsSchema from './schema';
+import { combineReducersWithPersistence } from 'state/utils';
 import { createReducer } from 'state/utils';
 import {
 	POST_LIKES_RECEIVE,
@@ -62,7 +62,7 @@ export const items = createReducer( {}, {
 	}
 }, itemsSchema );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	requesting,
 	items
 } );

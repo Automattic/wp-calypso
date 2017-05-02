@@ -6,7 +6,6 @@ import union from 'lodash/union';
 import mapValues from 'lodash/mapValues';
 import without from 'lodash/without';
 import omit from 'lodash/omit';
-import { combineReducers } from 'redux';
 
 /**
  * Internal dependencies
@@ -21,6 +20,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { getSerializedQuery, normalizeFollower } from 'state/followers/utils';
 import { FOLLOWERS_PER_PAGE } from 'state/followers/constants';
 
@@ -106,7 +106,7 @@ export function removeFromSiteRequests( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	queries,
 	queryRequests,

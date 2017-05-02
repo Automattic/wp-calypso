@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -18,7 +13,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-
+import { combineReducersWithPersistence } from 'state/utils';
 import { isValidStateWithSchema } from 'state/utils';
 import { itemsSchema } from './schema';
 
@@ -138,7 +133,7 @@ export const errors = ( state = {}, { type, siteId, error } ) => {
 	return state;
 };
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	requesting,
 	errors

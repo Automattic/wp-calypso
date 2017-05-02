@@ -1,12 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
 	PAGE_TEMPLATES_RECEIVE,
@@ -50,7 +46,7 @@ export const items = createReducer( {}, {
 	}
 }, itemsSchema );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	requesting,
 	items
 } );

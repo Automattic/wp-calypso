@@ -1,12 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence } from 'state/utils';
 import {
 	WP_SUPER_CACHE_DELETE_CACHE,
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
@@ -73,7 +69,7 @@ const items = createReducer( {}, {
 	[ WP_SUPER_CACHE_TEST_CACHE_SUCCESS ]: ( state, { siteId, data } ) => ( { ...state, [ siteId ]: data } ),
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	deleteStatus,
 	items,
 	testing,

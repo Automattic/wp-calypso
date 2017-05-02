@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { omit } from 'lodash';
 
 /**
@@ -15,6 +14,7 @@ import {
 	PREFERENCES_FETCH_FAILURE,
 	PREFERENCES_SAVE_SUCCESS
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { remoteValuesSchema } from './schema';
 import { createReducer } from 'state/utils';
 
@@ -64,7 +64,7 @@ const lastFetchedTimestamp = createReducer( false, {
 	[ PREFERENCES_FETCH_SUCCESS ]: () => Date.now(),
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	localValues,
 	remoteValues,
 	fetching,

@@ -1,12 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import suggestions from './suggestions/reducer';
+import { combineReducersWithPersistence } from 'state/utils';
 import {
 	USER_RECEIVE,
 	DESERIALIZE,
@@ -35,7 +31,7 @@ export function items( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	suggestions,
 } );

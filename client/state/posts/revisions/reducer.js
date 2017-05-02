@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { keyBy, merge } from 'lodash';
 
 /**
@@ -15,6 +14,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
@@ -50,7 +50,7 @@ export function revisions( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	requesting,
 	revisions,
 } );

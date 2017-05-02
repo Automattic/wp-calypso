@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import eligibility from './eligibility/reducer';
+import { combineReducersWithPersistence } from 'state/utils';
 import {
 	keyedReducer,
 	withSchemaValidation,
@@ -30,7 +30,7 @@ export const status = ( state = null, action ) => get( {
 	[ TRANSFER_UPDATE ]: 'complete' === action.status ? transferStates.COMPLETE : state,
 }, action.type, state );
 
-export const siteReducer = combineReducers( {
+export const siteReducer = combineReducersWithPersistence( {
 	eligibility,
 	status,
 } );

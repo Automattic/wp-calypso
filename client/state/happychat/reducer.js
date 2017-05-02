@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import {
 	concat,
 	filter,
@@ -33,6 +32,7 @@ import {
 	HAPPYCHAT_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_SET_GEO_LOCATION,
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import {
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
 } from './selectors';
@@ -279,7 +279,7 @@ export const lostFocusAt = ( state = null, action ) => {
 	return state;
 };
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	chatStatus,
 	connectionError,
 	connectionStatus,

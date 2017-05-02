@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -13,6 +8,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 
 export const initialReceiptState = {
 	data: null,
@@ -62,6 +58,6 @@ export function items( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items
 } );

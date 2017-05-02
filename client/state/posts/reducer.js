@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { get, set, omit, omitBy, isEqual, reduce, merge, findKey, mapValues, mapKeys } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import PostQueryManager from 'lib/query-manager/post';
+import { combineReducersWithPersistence } from 'state/utils';
 import {
 	EDITOR_START,
 	EDITOR_STOP,
@@ -308,7 +308,7 @@ export function edits( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	counts,
 	items,
 	siteRequests,

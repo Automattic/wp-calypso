@@ -1,7 +1,6 @@
 /**
  * External Dependencies
  */
-import { combineReducers } from 'redux';
 import { assign, keyBy, map, omit, omitBy, reduce, trim } from 'lodash';
 
 /**
@@ -15,7 +14,7 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 } from 'state/action-types';
-
+import { combineReducersWithPersistence } from 'state/utils';
 import { createReducer, isValidStateWithSchema } from 'state/utils';
 import { readerSitesSchema } from './schema';
 import { withoutHttp } from 'lib/url';
@@ -143,7 +142,7 @@ export const lastFetched = createReducer(
 	}
 );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	queuedRequests,
 	lastFetched,

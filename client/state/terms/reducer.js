@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import mapValues from 'lodash/mapValues';
 import merge from 'lodash/merge';
 
@@ -17,6 +16,7 @@ import {
 	TERMS_REQUEST_SUCCESS,
 	SERIALIZE
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import TermQueryManager from 'lib/query-manager/term';
 import { isValidStateWithSchema, createReducer } from 'state/utils';
 import { getSerializedTermsQuery } from './utils';
@@ -116,7 +116,7 @@ export const queries = createReducer( {}, {
 	}
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	queries,
 	queryRequests
 } );

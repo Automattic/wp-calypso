@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { forEach, get, merge, pickBy } from 'lodash';
 
 /**
@@ -21,6 +20,7 @@ import {
 	JETPACK_SETTINGS_RECEIVE,
 	JETPACK_SETTINGS_UPDATE_SUCCESS,
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { createReducer } from 'state/utils';
 
 const createItemsReducer = ( active ) => {
@@ -122,7 +122,7 @@ export const requests = createReducer( {}, {
 	[ JETPACK_MODULES_REQUEST_SUCCESS ]: createModuleListRequestReducer( false )
 } );
 
-export const reducer = combineReducers( {
+export const reducer = combineReducersWithPersistence( {
 	items,
 	requests
 } );

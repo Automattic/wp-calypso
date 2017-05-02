@@ -7,7 +7,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import { combineReducers } from 'redux';
+import { combineReducersWithPersistence } from 'state/utils';
 
 function updatePluginState( state = {}, pluginSlug, attributes ) {
 	return Object.assign( {},
@@ -48,7 +48,7 @@ export function items( state = {}, action ) {
 	}
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	fetchingItems
 } );

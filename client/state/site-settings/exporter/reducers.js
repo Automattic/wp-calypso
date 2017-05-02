@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -20,7 +15,7 @@ import {
 	EXPORT_STARTED,
 	EXPORT_FAILURE
 } from 'state/action-types';
-
+import { combineReducersWithPersistence } from 'state/utils';
 import { States } from './constants';
 
 export function selectedPostType( state = null, action ) {
@@ -165,7 +160,7 @@ export function downloadURL( state = null, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	selectedPostType,
 	selectedAdvancedSettings,
 	exportingState,

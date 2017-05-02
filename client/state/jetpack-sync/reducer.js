@@ -1,7 +1,6 @@
 /**
  * External dependencis
  */
-import { combineReducers } from 'redux';
 import { pick, get } from 'lodash';
 
 /**
@@ -17,6 +16,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { getExpectedResponseKeys } from './utils';
 
 export function fullSyncRequest( state = {}, action ) {
@@ -105,7 +105,7 @@ export function syncStatus( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	syncStatus,
 	fullSyncRequest
 } );

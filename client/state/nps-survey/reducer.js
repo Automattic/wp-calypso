@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -16,6 +11,7 @@ import {
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_FAILURE,
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_SUCCESS,
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { createReducer } from 'state/utils';
 import {
 	NOT_SUBMITTED,
@@ -56,7 +52,7 @@ export const score = createReducer( null, {
 	},
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	isSessionEligible,
 	wasShownThisSession,
 	surveyState,

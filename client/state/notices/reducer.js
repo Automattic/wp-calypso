@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import omit from 'lodash/omit';
 import reduce from 'lodash/reduce';
 
@@ -13,6 +12,7 @@ import {
 	NOTICE_REMOVE,
 	ROUTE_SET
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { createReducer } from 'state/utils';
 
 export const items = createReducer( {}, {
@@ -51,6 +51,6 @@ export const items = createReducer( {}, {
 	}
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items
 } );

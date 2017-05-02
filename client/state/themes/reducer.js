@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { mapValues, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ThemeQueryManager from 'lib/query-manager/theme';
+import { combineReducersWithPersistence } from 'state/utils';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -390,7 +390,7 @@ export const themeFilters = createReducer( {}, {
 	[ THEME_FILTERS_ADD ]: ( state, { filters } ) => ( filters )
 }, themeFiltersSchema );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	queries,
 	queryRequests,
 	queryRequestErrors,

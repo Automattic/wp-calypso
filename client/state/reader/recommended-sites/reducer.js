@@ -2,13 +2,16 @@
  * External dependencies
  */
 import { uniqBy } from 'lodash';
-import { combineReducers } from 'redux';
 
 /**
  * Internal dependencies
  */
 import { READER_RECOMMENDED_SITES_RECEIVE } from 'state/action-types';
-import { createReducer, keyedReducer } from 'state/utils';
+import {
+	createReducer,
+	keyedReducer,
+	combineReducersWithPersistence
+} from 'state/utils';
 
 /**
  * Tracks mappings between randomization seeds and site recs.
@@ -42,7 +45,7 @@ export const pagingOffset = keyedReducer(
 	} )
 );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	pagingOffset,
 } );

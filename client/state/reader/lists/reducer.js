@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import keyBy from 'lodash/keyBy';
 import map from 'lodash/map';
 import union from 'lodash/union';
@@ -31,6 +30,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { itemsSchema, subscriptionsSchema, updatedListsSchema, errorsSchema } from './schema';
 import { isValidStateWithSchema } from 'state/utils';
 
@@ -237,7 +237,7 @@ export function missingLists( state = [], action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	subscribedLists,
 	updatedLists,

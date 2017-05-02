@@ -1,15 +1,10 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
 	SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET,
 } from 'state/action-types';
-
+import { combineReducersWithPersistence } from 'state/utils';
 import { createReducer } from 'state/utils';
 import { suggestedUsernameSchema } from './schema';
 
@@ -22,7 +17,7 @@ const suggestedUsername = createReducer( '',
 	suggestedUsernameSchema
 );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	suggestedUsername
 } );
 

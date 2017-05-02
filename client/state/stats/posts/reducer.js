@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { get, merge } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { isValidStateWithSchema } from 'state/utils';
+import { combineReducersWithPersistence } from 'state/utils';
 import { items as itemSchemas } from './schema';
 import {
 	SERIALIZE,
@@ -80,7 +80,7 @@ export function items( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	requesting,
 	items
 } );

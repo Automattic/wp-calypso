@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -14,6 +9,7 @@ import {
 	DESERIALIZE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { createReducer } from 'state/utils';
 import editor from './editor/reducer';
 import dropZone from './drop-zone/reducer';
@@ -88,7 +84,7 @@ export const isNotificationsOpen = function( state = false, { type } ) {
 	return state;
 };
 
-const reducer = combineReducers( {
+const reducer = combineReducersWithPersistence( {
 	section,
 	isLoading,
 	layoutFocus,

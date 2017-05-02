@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import merge from 'lodash/merge';
 import keyBy from 'lodash/keyBy';
 
@@ -16,6 +15,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { isValidStateWithSchema } from 'state/utils';
 import { itemsSchema } from './schema';
 
@@ -75,7 +75,7 @@ export function items( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	requesting,
 	items
 } );

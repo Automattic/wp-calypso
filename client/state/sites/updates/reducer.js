@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { isEmpty, merge, stubFalse, stubTrue } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { createReducer, keyedReducer } from 'state/utils';
+import { combineReducersWithPersistence } from 'state/utils';
 
 import {
 	SITE_RECEIVE,
@@ -73,7 +73,7 @@ export const errors = keyedReducer( 'siteId', createReducer( undefined, {
 	[ SITE_UPDATES_REQUEST_FAILURE ]: stubTrue,
 } ) );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	requesting,
 	wordpressUpdateStatus,

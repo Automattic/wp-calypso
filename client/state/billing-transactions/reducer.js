@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -15,6 +10,7 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { billingTransactionsSchema } from './schema';
 import { createReducer } from 'state/utils';
 
@@ -58,7 +54,7 @@ export const sendingReceiptEmail = createReducer( {}, {
 	[ BILLING_RECEIPT_EMAIL_SEND_SUCCESS ]: ( state, { receiptId } ) => ( { ...state, [ receiptId ]: false } ),
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	requesting,
 	sendingReceiptEmail,

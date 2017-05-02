@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -11,6 +6,7 @@ import {
 	PRODUCTS_LIST_REQUEST,
 	PRODUCTS_LIST_REQUEST_FAILURE,
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { productsListSchema } from './schema';
 import { createReducer } from 'state/utils';
 
@@ -26,7 +22,7 @@ export const isFetching = createReducer( false, {
 	[ PRODUCTS_LIST_REQUEST_FAILURE ]: () => false
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	isFetching,
 	items,
 } );

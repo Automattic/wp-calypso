@@ -1,13 +1,12 @@
 /**
  * External Dependencies
  */
-
-import { combineReducers } from 'redux';
 import uniqBy from 'lodash/uniqBy';
 
 /**
  * Internal Dependencies
  */
+import { combineReducersWithPersistence } from 'state/utils';
 import {
 	GOOGLE_APPS_USERS_FETCH,
 	GOOGLE_APPS_USERS_FETCH_COMPLETED,
@@ -41,7 +40,7 @@ export function loaded( state = false, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	loaded
 } );

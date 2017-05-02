@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence } from 'state/utils';
 import {
 	THEME_UPLOAD_START,
 	THEME_UPLOAD_SUCCESS,
@@ -116,7 +116,7 @@ export const inProgress = createReducer( {}, {
 	} ),
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	uploadedThemeId,
 	uploadError,
 	progressLoaded,

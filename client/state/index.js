@@ -2,11 +2,12 @@
  * External dependencies
  */
 import thunkMiddleware from 'redux-thunk';
-import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 
 /**
  * Internal dependencies
  */
+import { combineReducersWithPersistence } from 'state/utils';
 import analyticsTracking from './analytics/reducer';
 import sitesSync from './sites/enhancer';
 import noticesMiddleware from './notices/middleware';
@@ -70,7 +71,7 @@ import config from 'config';
  */
 
 // Consolidate the extension reducers under 'extensions' for namespacing.
-const extensions = combineReducers( extensionsModule.reducers() );
+const extensions = combineReducersWithPersistence( extensionsModule.reducers() );
 
 const reducers = {
 	analyticsTracking,
@@ -128,7 +129,7 @@ const reducers = {
 	wordads,
 };
 
-export const reducer = combineReducers( reducers );
+export const reducer = combineReducersWithPersistence( reducers );
 
 /**
  * @typedef {Object} ReduxStore

@@ -1,15 +1,12 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
 	DROPZONE_SHOW,
 	DROPZONE_HIDE
 } from 'state/action-types';
+
+import { combineReducersWithPersistence } from 'state/utils';
 
 import { createReducer } from 'state/utils';
 
@@ -27,6 +24,6 @@ const isVisible = createReducer( {},
 	}
 );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	isVisible,
 } );

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { keyBy, omit, without } from 'lodash';
 
 /**
@@ -16,6 +15,7 @@ import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { itemSchema } from './schema';
 import { createReducer } from 'state/utils';
 
@@ -46,7 +46,7 @@ export const items = createReducer( {}, {
 	},
 }, itemSchema );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	isFetching,
 	items,
 } );

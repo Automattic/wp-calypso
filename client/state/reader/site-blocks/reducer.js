@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -14,6 +9,8 @@ import {
 	READER_SITE_UNBLOCK_REQUEST_FAILURE,
 	READER_SITE_UNBLOCK_REQUEST_SUCCESS,
 } from 'state/action-types';
+
+import { combineReducersWithPersistence } from 'state/utils';
 import { createReducer, keyedReducer } from 'state/utils';
 
 /**
@@ -34,6 +31,6 @@ export const items = keyedReducer(
 	)
 );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 } );

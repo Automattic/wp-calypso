@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -19,6 +14,7 @@ import {
 	IMAGE_EDITOR_STATE_RESET_ALL,
 	IMAGE_EDITOR_IMAGE_HAS_LOADED
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { createReducer } from 'state/utils';
 import { AspectRatios } from './constants';
 
@@ -181,7 +177,7 @@ export function aspectRatio( state = AspectRatios.FREE, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	hasChanges,
 	fileInfo,
 	transform,

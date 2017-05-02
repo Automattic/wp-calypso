@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import pick from 'lodash/pick';
 
 /**
@@ -15,6 +14,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { itemsSchema } from './schema';
 import { isValidStateWithSchema } from 'state/utils';
 
@@ -66,7 +66,7 @@ export function fetchingItems( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	fetchingItems
 } );

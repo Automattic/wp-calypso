@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import keyBy from 'lodash/keyBy';
 
 /**
  * Internal dependencies
  */
 import { isValidStateWithSchema } from 'state/utils';
+import { combineReducersWithPersistence } from 'state/utils';
 import * as schema from './schema';
 import taxonomies from './taxonomies/reducer';
 import {
@@ -71,7 +71,7 @@ export function items( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	requesting,
 	items,
 	taxonomies

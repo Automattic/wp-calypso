@@ -2,8 +2,6 @@
  * External dependencies
  */
 import Immutable from 'immutable';
-import { combineReducers } from 'redux';
-
 /**
  * Internal dependencies
  */
@@ -23,6 +21,7 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 } from '../action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import {
 	getCommentParentKey,
 	updateExistingIn
@@ -192,7 +191,7 @@ export function totalCommentsCount( state = Immutable.Map(), action ) {
 	return state;
 }
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	requests,
 	totalCommentsCount

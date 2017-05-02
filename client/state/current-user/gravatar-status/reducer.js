@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -12,6 +7,7 @@ import {
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { createReducer } from 'state/utils';
 
 export const isUploading = createReducer( false, {
@@ -28,7 +24,7 @@ export const tempImage = createReducer( {}, {
 	}
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	isUploading,
 	tempImage
 } );

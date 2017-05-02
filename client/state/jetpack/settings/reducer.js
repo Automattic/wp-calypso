@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { mapValues, merge } from 'lodash';
 
 /**
@@ -22,6 +21,7 @@ import {
 	JETPACK_SETTINGS_UPDATE_SUCCESS,
 	JETPACK_SETTINGS_UPDATE_FAILURE
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { createReducer } from 'state/utils';
 import { normalizeSettings } from './utils';
 
@@ -134,7 +134,7 @@ export const saveRequests = createReducer( {}, {
 	} )
 } );
 
-export const reducer = combineReducers( {
+export const reducer = combineReducersWithPersistence( {
 	items,
 	requests,
 	saveRequests

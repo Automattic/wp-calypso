@@ -1,12 +1,8 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
+import { combineReducersWithPersistence } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_RECEIVE_NOTICES,
@@ -39,7 +35,7 @@ const items = createReducer( {}, {
 	[ WP_SUPER_CACHE_RECEIVE_NOTICES ]: ( state, action ) => ( { ...state, [ action.siteId ]: action.notices } ),
 }, itemsSchema );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	items,
 	requesting,
 } );

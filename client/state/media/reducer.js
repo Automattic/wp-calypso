@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import { combineReducers } from 'redux';
 import { omit } from 'lodash';
-
 /**
  * Internal dependencies
  */
@@ -17,6 +15,7 @@ import {
 	MEDIA_REQUEST_SUCCESS,
 	MEDIA_REQUESTING
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { createReducer } from 'state/utils';
 import MediaQueryManager from 'lib/query-manager/media';
 
@@ -112,7 +111,7 @@ export const mediaItemRequests = createReducer( {}, {
 	}
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	queries,
 	queryRequests,
 	mediaItemRequests

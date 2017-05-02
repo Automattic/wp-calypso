@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { combineReducers } from 'redux';
-
-/**
  * Internal dependencies
  */
 import {
@@ -15,6 +10,7 @@ import {
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
 } from 'state/action-types';
+import { combineReducersWithPersistence } from 'state/utils';
 import { guidedTransferStatusSchema } from './schema';
 import { createReducer } from 'state/utils';
 
@@ -65,7 +61,7 @@ export const isSaving = createReducer( {}, {
 		( { ...state, [ action.siteId ]: false } ),
 } );
 
-export default combineReducers( {
+export default combineReducersWithPersistence( {
 	error,
 	isFetching,
 	isSaving,
