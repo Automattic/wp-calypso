@@ -42,7 +42,10 @@ describe( 'getSites()', () => {
 						}
 					}
 				}
-			}
+			},
+			siteSettings: {
+				items: {},
+			},
 		};
 		const sites = getSites( state );
 		expect( sites ).to.have.length( 2 );

@@ -94,7 +94,10 @@ describe( 'selectors', () => {
 							}
 						}
 					}
-				}
+				},
+				siteSettings: {
+					items: {},
+				},
 			}, 2916284 );
 
 			expect( site ).to.eql( {
@@ -138,7 +141,10 @@ describe( 'selectors', () => {
 							}
 						}
 					}
-				}
+				},
+				siteSettings: {
+					items: {},
+				},
 			}, 2916284 );
 
 			expect( siteOptions ).to.eql( {
@@ -162,7 +168,10 @@ describe( 'selectors', () => {
 							}
 						}
 					}
-				}
+				},
+				siteSettings: {
+					items: {},
+				},
 			}, 2916284 );
 
 			expect( siteOptions ).to.eql( {
@@ -258,7 +267,10 @@ describe( 'selectors', () => {
 					items: {
 						77203074: { ID: 77203074, URL: 'https://example.wordpress.com', single_user_site: true }
 					}
-				}
+				},
+				siteSettings: {
+					items: {},
+				},
 			}, 77203074 );
 
 			expect( singleUserSite ).to.be.true;
@@ -270,7 +282,10 @@ describe( 'selectors', () => {
 					items: {
 						77203074: { ID: 77203074, URL: 'https://example.wordpress.com', single_user_site: false }
 					}
-				}
+				},
+				siteSettings: {
+					items: {},
+				},
 			}, 77203074 );
 
 			expect( singleUserSite ).to.be.false;

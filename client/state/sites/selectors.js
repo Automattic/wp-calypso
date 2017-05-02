@@ -31,6 +31,7 @@ import createSelector from 'lib/create-selector';
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import versionCompare from 'lib/version-compare';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
+import { getSiteDefaultPostFormat } from 'state/selectors';
 
 /**
  * Returns a raw site object by its ID.
@@ -83,16 +84,10 @@ export function computeSiteOptions( state, siteId ) {
 	const isWpcomMappedDomain = getSiteOption( state, siteId, 'is_mapped_domain' ) && ! isJetpackSite( state, siteId );
 	const wpcomUrl = withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
 
-	// The 'standard' post format is saved as an option of '0'
-	let defaultPostFormat = getSiteOption( state, siteId, 'default_post_format' );
-	if ( ! defaultPostFormat || defaultPostFormat === '0' ) {
-		defaultPostFormat = 'standard';
-	}
-
 	return {
 		...site.options,
 		...isWpcomMappedDomain && { wpcom_url: wpcomUrl },
-		default_post_format: defaultPostFormat
+		default_post_format: getSiteDefaultPostFormat( state, siteId ),
 	};
 }
 

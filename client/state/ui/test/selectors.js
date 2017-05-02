@@ -37,6 +37,9 @@ describe( 'selectors', () => {
 						2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'https://example.com' }
 					}
 				},
+				siteSettings: {
+					items: {},
+				},
 				ui: {
 					selectedSiteId: 2916284
 				}
