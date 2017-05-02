@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, keys, merge, noop } from 'lodash';
+import { isEmpty, isUndefined, keys, merge, noop, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,7 +29,11 @@ function fromApi( apiResponse ) {
 
 	// Some keys in the `decodedValues` can be undefined, and _.merge will ignore them,
 	// while Object.assign or object spread operator wouldn't.
-	return merge( {}, apiResponse, decodedValues );
+	return merge(
+		{},
+		omitBy( apiResponse, isUndefined ),
+		omitBy( decodedValues, isUndefined )
+	);
 }
 
 /*
