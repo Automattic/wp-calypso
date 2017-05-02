@@ -122,7 +122,7 @@ class FollowingManageSubscriptions extends Component {
 						<SitesWindowScroller
 							sites={ sortedFollows }
 							width={ width }
-							remoteTotalCount={ followsCount }
+							remoteTotalCount={ sortedFollows.length }
 							forceRefresh={ this.state.forceRefresh }
 						/>
 					}
