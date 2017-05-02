@@ -35,11 +35,11 @@
 
 	&.wpnc__main .wpnc__single-view {
 			left: inherit;
-			max-width: 400px;
+			width: 400px;
 
 			@media screen and (max-width: 799px) {
 		    left: 0;
-				max-width: none;
+				width: auto;
 		  }
 	}
 
