@@ -278,7 +278,6 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			// Don't include read-only fields when saving.
 			const settingsFields = keys( omit( settings, [
 				'cache_direct_pages',
-				'cache_disable_locking',
 				'cache_mobile_browsers',
 				'cache_mobile_prefixes',
 				'cache_mod_rewrite',
