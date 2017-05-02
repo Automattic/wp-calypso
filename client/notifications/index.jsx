@@ -51,7 +51,7 @@ const parseJson = input => {
 
 export class Notifications extends Component {
 	state = {
-		isVisible: document && document.visibilityState === 'visible',
+		isVisible: ( document && document.visibilityState === 'visible' ) || true,
 		shownOnce: false,
 		widescreen: false,
 	};
