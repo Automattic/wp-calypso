@@ -18,6 +18,7 @@ import {
 	ButtonRow,
 	Next,
 	Quit,
+	Link,
 } from 'layout/guided-tours/config-elements';
 import {
 	isNewUser,
@@ -94,7 +95,7 @@ export const EditorBasicsTour = makeTour(
 			style={ { marginTop: '-9px' } }
 		>
 			<p>
-				Find additional settings in the sidebar — such as tags, categories, and the featured image.
+				Add tags, categories, and a featured image from the sidebar.
 			</p>
 			<p>
 				{
@@ -132,6 +133,9 @@ export const EditorBasicsTour = makeTour(
 			<ButtonRow>
 				<Quit primary>Got it, I'm ready to write!</Quit>
 			</ButtonRow>
+			<Link href="https://learn.wordpress.com/get-published/">
+				{ translate( 'Learn more about publishing content.' ) }
+			</Link>
 		</Step>
 	</Tour>
 );
