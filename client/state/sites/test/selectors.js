@@ -56,6 +56,7 @@ import {
 	getSiteAdminUrl,
 	getCustomizerUrl,
 	getJetpackComputedAttributes,
+	hasDefaultSiteTitle,
 	siteSupportsJetpackSettingsUi
 } from '../selectors';
 
@@ -3273,6 +3274,66 @@ describe( 'selectors', () => {
 			}, 77203074 );
 
 			expect( supportsJetpackSettingsUI ).to.be.true;
+		} );
+	} );
+
+	describe( 'hasDefaultSiteTitle()', () => {
+		it( 'should return null if the site is not known', () => {
+			const hasDefaultTitle = hasDefaultSiteTitle( {
+				sites: {
+					items: {}
+				}
+			}, 77203074 );
+
+			expect( hasDefaultTitle ).to.be.null;
+		} );
+
+		it( 'should return true if the site title is "Site Title"', () => {
+			const hasDefaultTitle = hasDefaultSiteTitle( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'example.wordpress.com',
+							name: 'Site Title',
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( hasDefaultTitle ).to.be.true;
+		} );
+
+		it( 'should return true if the site title is equal to the site slug', () => {
+			const hasDefaultTitle = hasDefaultSiteTitle( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'example.wordpress.com',
+							name: 'example.wordpress.com',
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( hasDefaultTitle ).to.be.true;
+		} );
+
+		it( 'should return false if the site title is any other title', () => {
+			const hasDefaultTitle = hasDefaultSiteTitle( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'example.wordpress.com',
+							name: 'Example Site Name',
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( hasDefaultTitle ).to.be.false;
 		} );
 	} );
 
