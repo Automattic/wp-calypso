@@ -11,3 +11,24 @@
 	@import 'app/products/product-form';
 	@import 'components/form-dimensions-input/style';
 }
+
+.store-sidebar__sidebar {
+	.store-sidebar__ground-control {
+		align-items: center;
+		border-bottom: 1px solid darken( $sidebar-bg-color, 10% );
+		display: flex;
+		width: 100%;
+	}
+
+	.store-sidebar__ground-control-back {
+		flex: 0 0 auto;
+		margin-left: 7px;
+		margin-right: 7px;
+	}
+
+	.store-sidebar__ground-control-site {
+		border-left: 1px solid darken( $sidebar-bg-color, 10% );
+		display: inline-block;
+		flex-grow: 1;
+	}
+}

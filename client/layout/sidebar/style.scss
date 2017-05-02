@@ -329,6 +329,10 @@ form.sidebar__button {
 	}
 }
 
+.sidebar .sidebar__separator {
+	border-bottom: 1px solid darken( $sidebar-bg-color, 10% );
+}
+
 .sidebar .sidebar__footer {
 	align-items: center;
 	padding: 0;
