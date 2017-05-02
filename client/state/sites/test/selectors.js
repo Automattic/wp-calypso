@@ -45,6 +45,7 @@ import {
 	canJetpackSiteAutoUpdateCore,
 	hasJetpackSiteJetpackThemes,
 	hasJetpackSiteJetpackThemesExtendedFeatures,
+	isJetpackSiteMultiSite,
 	isJetpackSiteSecondaryNetworkSite,
 	verifyJetpackModulesActive,
 	getJetpackSiteRemoteManagementUrl,
@@ -2513,6 +2514,66 @@ describe( 'selectors', () => {
 
 			const hasThemesExtendedFeatures = hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId );
 			expect( hasThemesExtendedFeatures ).to.be.true;
+		} );
+	} );
+
+	describe( 'isJetpackSiteMultiSite()', () => {
+		it( 'should return null if the site is not known', () => {
+			const isMultisite = isJetpackSiteMultiSite( {
+				sites: {
+					items: {}
+				}
+			}, 2916284 );
+
+			expect( isMultisite ).to.be.null;
+		} );
+
+		it( 'should return null if the site is not a Jetpack site', () => {
+			const isMultisite = isJetpackSiteMultiSite( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							jetpack: false,
+							is_multisite: true,
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( isMultisite ).to.be.null;
+		} );
+
+		it( 'should return true if the site is a Jetpack multisite', () => {
+			const isMultisite = isJetpackSiteMultiSite( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							jetpack: true,
+							is_multisite: true,
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( isMultisite ).to.be.true;
+		} );
+
+		it( 'should return false if the site is a Jetpack single site', () => {
+			const isMultisite = isJetpackSiteMultiSite( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							jetpack: true,
+							is_multisite: false,
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( isMultisite ).to.be.false;
 		} );
 	} );
 
