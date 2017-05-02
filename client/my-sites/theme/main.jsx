@@ -103,6 +103,10 @@ const ThemeSheet = React.createClass( {
 	},
 
 	componentDidMount() {
+		this.scrollToTop();
+	},
+
+	scrollToTop() {
 		window.scroll( 0, 0 );
 	},
 
@@ -280,7 +284,8 @@ const ThemeSheet = React.createClass( {
 		const nextThemeHref = `/theme/${ next }${ sitePart }`;
 		return <SectionHeader
 			href={ nextThemeHref }
-			label={ i18n.translate( 'Next theme' ) } />;
+			label={ i18n.translate( 'Next theme' ) }
+			onClick={ this.scrollToTop } />;
 	},
 
 	renderOverviewTab() {
