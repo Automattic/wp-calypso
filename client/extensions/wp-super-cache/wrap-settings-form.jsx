@@ -21,12 +21,21 @@ import trackForm from 'lib/track-form';
 import QueryNotices from './data/query-notices';
 import QuerySettings from './data/query-settings';
 import {
+	getSelectedSite,
+	getSelectedSiteId,
+} from 'state/ui/selectors';
+import { testCache } from './state/cache/actions';
+import {
 	errorNotice,
 	removeNotice,
 	successNotice,
 } from 'state/notices/actions';
 import { saveSettings } from './state/settings/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	getCacheTestResults,
+	isCacheTestSuccessful,
+	isTestingCache,
+} from './state/cache/selectors';
 import { getNotices } from './state/notices/selectors';
 import {
 	getSettings,
@@ -69,6 +78,8 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 					);
 				}
 			}
+
+			this.showCacheTestNotice( prevProps );
 		}
 
 		updateDirtyFields() {
@@ -98,6 +109,32 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 		handleChange = field => event => {
 			this.props.updateFields( { [ field ]: event.target.value } );
+		};
+
+		showCacheTestNotice = ( prevProps ) => {
+			if ( this.props.isTesting || ! prevProps.isTesting ) {
+				return;
+			}
+
+			const {
+				isTestSuccessful,
+				site,
+				translate,
+			} = this.props;
+
+			this.props.removeNotice( 'wpsc-settings-save' );
+
+			if ( isTestSuccessful ) {
+				this.props.successNotice(
+					translate( 'Cache test completed successfully on %(site)s.', { args: { site: site && site.title } } ),
+					{ id: 'wpsc-cache-test' }
+				);
+			} else {
+				this.props.errorNotice(
+					translate( 'There was a problem testing the cache. Please try again.' ),
+					{ id: 'wpsc-cache-test' }
+				);
+			}
 		};
 
 		handleRadio = event => {
@@ -152,6 +189,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			} = this.props;
 
 			this.props.removeNotice( 'wpsc-settings-save' );
+			this.props.removeNotice( 'wpsc-cache-test' );
 			this.props.saveSettings( siteId, pick( fields, settingsFields ) );
 		};
 
@@ -178,6 +216,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 
 	const connectComponent = connect(
 		state => {
+			const site = getSelectedSite( state ) || {};
 			const siteId = getSelectedSiteId( state );
 			const isSaving = isSavingSettings( state, siteId );
 			const isSaveSuccessful = isSettingsSaveSuccessful( state, siteId );
@@ -225,14 +264,21 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				'supercache',
 				'wpcache',
 			] ) );
+			const isTesting = isTestingCache( state, siteId );
+			const isTestSuccessful = isCacheTestSuccessful( state, siteId );
+			const cacheTestResults = getCacheTestResults( state, siteId );
 
 			return {
+				cacheTestResults,
 				isRequesting,
 				isSaveSuccessful,
 				isSaving,
+				isTesting,
+				isTestSuccessful,
 				notices,
 				settings,
 				settingsFields,
+				site,
 				siteId,
 			};
 		},
@@ -242,6 +288,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				removeNotice,
 				saveSettings,
 				successNotice,
+				testCache,
 			}, dispatch );
 
 			return {
