@@ -71,7 +71,7 @@ class DomainToPlanNudge extends Component {
 					} )
 				}
 				event="domain_to_personal_nudge" //actually cta_name
-				dismissPreferenceName="domain-to-plan-nudge2"
+				dismissPreferenceName="domain-to-plan-nudge"
 				feature={ FEATURE_NO_ADS }
 				href={ `/checkout/${ siteId }/personal` }
 				list={
