@@ -14,11 +14,10 @@ import useMockery from 'test/helpers/use-mockery';
 describe( 'DomainToPaidPlanNotice', function() {
 	const translate = stub();
 	const abtests = [];
-	const abtest = ( test ) => abtests[ test ];
 	let DomainToPaidPlanNotice;
 
 	useMockery( ( mockery ) => {
-		mockery.registerMock( 'lib/abtest', abtest );
+		mockery.registerMock( 'lib/abtest', { abtest: ( test ) => abtests[ test ] } );
 	} );
 
 	before( () => {

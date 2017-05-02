@@ -12,7 +12,7 @@ import {
 /**
  * Internal dependencies
  */
-import abtest from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 import { eligibleForDomainToPaidPlanUpsell } from 'state/selectors';
 
 export class DomainToPaidPlanNotice extends Component {
