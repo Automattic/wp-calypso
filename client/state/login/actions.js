@@ -77,27 +77,24 @@ export const loginUser = ( usernameOrEmail, password ) => dispatch => {
 /**
  * Attempt to login a user when a two factor verification code is sent.
  *
- * @param  {Number}    two_step_id    Id of the user trying to log in.
+ * @param  {Number}    user_id        Id of the user trying to log in.
  * @param  {String}    two_step_code  Verification code for the user.
  * @param  {String}    two_step_nonce Nonce generated for verification code submission.
- * @param  {Boolean}   remember       Flag for remembering the user for a while after logging in.
+ * @param  {Boolean}   remember_me       Flag for remembering the user for a while after logging in.
  * @return {Function}                 Action thunk to trigger the login process.
  */
-export const loginUserWithTwoFactorVerificationCode = ( two_step_id, two_step_code, two_step_nonce, remember ) => {
-	return () => {
-		return request.post( config( 'login_url_xhr' ) )
-			.set( 'Content-Type', 'application/x-www-form-urlencoded' )
-			.accept( 'application/json' )
-			.send( {
-				two_step_id,
-				two_step_code,
-				two_step_nonce,
-				remember,
-				client_id: config( 'wpcom_signup_id' ),
-				client_secret: config( 'wpcom_signup_key' ),
-			} ).catch( ( error ) => {
-				const errorMessage = getMessageFromHTTPError( error );
-				return Promise.reject( errorMessage );
-			} );
-	};
+export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, two_step_nonce, remember_me ) => {
+	return request.post( config( 'two_step_authentication_xhr' ) )
+		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
+		.accept( 'application/json' )
+		.send( {
+			user_id,
+			two_step_code,
+			two_step_nonce,
+			remember_me,
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} )
+		.then( () => { /* TODO: Handle successful request */ } )
+		.catch( () => { /* TODO: Handle error */ } );
 };

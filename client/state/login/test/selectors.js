@@ -7,24 +7,24 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	getTwoFactorAuthId,
+	getTwoFactorUserId,
 	getTwoFactorAuthNonce,
 	isTwoFactorEnabled,
 } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( 'getTwoFactorAuthId()', () => {
+	describe( 'getTwoFactorUserId()', () => {
 		it( 'should return null if there is no information yet', () => {
-			const id = getTwoFactorAuthId( undefined );
+			const id = getTwoFactorUserId( undefined );
 
 			expect( id ).to.be.null;
 		} );
 
 		it( 'should return the two factor auth ID if there is such', () => {
-			const id = getTwoFactorAuthId( {
+			const id = getTwoFactorUserId( {
 				login: {
 					twoFactorAuth: {
-						two_step_id: 123456,
+						user_id: 123456,
 					}
 				}
 			} );
@@ -35,7 +35,7 @@ describe( 'selectors', () => {
 
 	describe( 'getTwoFactorAuthNonce()', () => {
 		it( 'should return null if there is no information yet', () => {
-			const id = getTwoFactorAuthId( undefined );
+			const id = getTwoFactorUserId( undefined );
 
 			expect( id ).to.be.null;
 		} );
@@ -64,7 +64,7 @@ describe( 'selectors', () => {
 			const twoFactorEnabled = isTwoFactorEnabled( {
 				login: {
 					twoFactorAuth: {
-						two_step_id: 123456,
+						user_id: 123456,
 						two_step_nonce: 'abcdef123456',
 						result: true,
 					}
@@ -78,7 +78,7 @@ describe( 'selectors', () => {
 			const twoFactorEnabled = isTwoFactorEnabled( {
 				login: {
 					twoFactorAuth: {
-						two_step_id: '',
+						user_id: '',
 						two_step_nonce: '',
 						result: true,
 					}
@@ -92,7 +92,7 @@ describe( 'selectors', () => {
 			const twoFactorEnabled = isTwoFactorEnabled( {
 				login: {
 					twoFactorAuth: {
-						two_step_id: '',
+						user_id: '',
 						two_step_nonce: '',
 						result: false,
 					}

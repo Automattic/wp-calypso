@@ -10,8 +10,8 @@ import { get } from 'lodash';
  * @param  {Object}   state  Global state tree
  * @return {?Number}         The user ID.
  */
-export const getTwoFactorAuthId = ( state ) => {
-	return get( state, 'login.twoFactorAuth.two_step_id', null );
+export const getTwoFactorUserId = ( state ) => {
+	return get( state, 'login.twoFactorAuth.user_id', null );
 };
 
 /**

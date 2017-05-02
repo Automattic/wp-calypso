@@ -19,14 +19,14 @@ import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import { loginUserWithTwoFactorVerificationCode } from 'state/login/actions';
 import {
-	getTwoFactorAuthId,
+	getTwoFactorUserId,
 	getTwoFactorAuthNonce,
 } from 'state/login/selectors';
 
 class VerificationCodeForm extends Component {
 	static propTypes = {
 		rememberMe: PropTypes.bool.isRequired,
-		twoStepId: PropTypes.string.isRequired,
+		userId: PropTypes.number.isRequired,
 		twoStepNonce: PropTypes.string.isRequired,
 	};
 
@@ -45,10 +45,10 @@ class VerificationCodeForm extends Component {
 	};
 
 	onCodeSubmit = ( event ) => {
-		const { twoStepId, twoStepNonce, rememberMe } = this.props;
+		const { userId, twoStepNonce, rememberMe } = this.props;
 		const { twoStepCode } = this.state;
 		event.preventDefault();
-		this.props.loginUserWithTwoFactorVerificationCode( twoStepId, twoStepCode, twoStepNonce, rememberMe ).then( () => {
+		this.props.loginUserWithTwoFactorVerificationCode( userId, twoStepCode, twoStepNonce, rememberMe ).then( () => {
 			this.props.onSuccess( this.state );
 		} );
 	};
@@ -102,7 +102,7 @@ class VerificationCodeForm extends Component {
 
 export default connect(
 	( state ) => ( {
-		twoStepId: getTwoFactorAuthId( state ),
+		userId: getTwoFactorUserId( state ),
 		twoStepNonce: getTwoFactorAuthNonce( state ),
 	} ),
 	{
