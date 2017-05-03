@@ -28,7 +28,7 @@ import { isDesktop } from 'lib/viewport';
 export const EditorBasicsTour = makeTour(
 	<Tour
 		name="editorBasicsTour"
-		version="20170321"
+		version="20170503"
 		path="/post/"
 		when={ and( isDesktop, isNewUser ) }
 	>
