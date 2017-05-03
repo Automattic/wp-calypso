@@ -199,6 +199,10 @@ class JetpackConnectMain extends Component {
 			return false;
 		}
 
+		if ( this.checkProperty( 'isJetpackConnected' ) ) {
+			return 'alreadyConnected';
+		}
+
 		if ( this.checkProperty( 'userOwnsSite' ) ) {
 			return 'alreadyOwned';
 		}
@@ -236,9 +240,6 @@ class JetpackConnectMain extends Component {
 		}
 		if ( ! this.checkProperty( 'isJetpackConnected' ) ) {
 			return 'notConnectedJetpack';
-		}
-		if ( this.checkProperty( 'isJetpackConnected' ) ) {
-			return 'alreadyConnected';
 		}
 
 		return false;
