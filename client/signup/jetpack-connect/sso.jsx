@@ -9,7 +9,6 @@ import get from 'lodash/get';
 import map from 'lodash/map';
 import Gridicon from 'gridicons';
 import cookie from 'cookie';
-import flowRight from 'lodash/flowRight';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -480,7 +479,7 @@ class JetpackSSOForm extends Component {
 	}
 }
 
-const connectComponent = connect(
+export default connect(
 	state => {
 		const jetpackSSO = getSSO( state );
 		return {
@@ -498,9 +497,4 @@ const connectComponent = connect(
 		authorizeSSO,
 		validateSSONonce
 	}, dispatch )
-);
-
-export default flowRight(
-	connectComponent,
-	localize
-)( JetpackSSOForm );
+)( localize( JetpackSSOForm ) );
