@@ -1,36 +1,48 @@
-// http://stackoverflow.com/questions/12303989/cartesian-product-of-multiple-arrays-in-javascript
-const f = ( a, b ) => [].concat( ...a.map( c => b.map( d => [].concat( c, d ) ) ) );
-const cartesian = ( a, b, ...c ) => b ? cartesian( f( a, b ), ...c ) : a;
-
 /**
  * Generates variation objects based on a product's attributes.
  *
  * @param {Object} product Product object.
  * @return {Array} Array of variation objects.
  */
-export default function generateVariations( product ) {
-	const { attributes } = product;
-	const variationTypeOptions = [];
-	const variationTypeNames = [];
-	const variationTypes = (
+export default function generateVariations( { attributes } ) {
+	const variationTypes = [];
+	const variationAttributes = (
 		attributes &&
 		attributes.filter( attribute => attribute.variation && attribute.name && attribute.options.length > 0 )
 	) || [];
 
-	variationTypes.forEach( function( variationType ) {
-		variationTypeOptions.push( variationType.options );
-		variationTypeNames.push( variationType.name );
+	variationAttributes.forEach( function( attribute ) {
+		variationTypes.push( attribute.options.map( function( option ) {
+			return {
+				name: attribute.name,
+				option,
+			};
+		} ) );
 	} );
 
-	const combinations = cartesian( ...variationTypeOptions );
-	return combinations && combinations.map( function( combination ) {
-		return {
-			attributes: Array.isArray( combination ) && combination.map( function( option, i ) {
-				return {
-					name: variationTypeNames[ i ],
-					option,
-				};
-			} ) || [ { name: variationTypeNames[ 0 ], option: combination } ],
-		};
-	} ) || [];
+	return cartesian( ...variationTypes ).map( function( combination ) {
+		return { attributes: combination };
+	} );
+}
+
+// http://stackoverflow.com/a/29585704
+function cartesian( ...arrays ) {
+	let i, j, l, m;
+	const o = [];
+
+	if ( ! arrays || arrays.length === 0 ) {
+		return arrays;
+	}
+	const array1 = arrays.splice( 0, 1 )[ 0 ];
+	arrays = cartesian( ...arrays );
+	for ( i = 0, l = array1.length; i < l; i++ ) {
+		if ( arrays && arrays.length ) {
+			for ( j = 0, m = arrays.length; j < m; j++ ) {
+				o.push( [ array1[ i ] ].concat( arrays[ j ] ) );
+			}
+		} else {
+			o.push( [ array1[ i ] ] );
+		}
+	}
+	return o;
 }
