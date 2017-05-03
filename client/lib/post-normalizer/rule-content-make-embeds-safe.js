@@ -19,6 +19,7 @@ function doesNotNeedSandbox( iframe ) {
 		'kickstarter.com',
 		'soundcloud.com',
 		'embed.ted.com',
+		'player.twitch.tv',
 	];
 
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;

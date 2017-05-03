@@ -143,6 +143,7 @@ export function iframeIsWhitelisted( iframe ) {
 		'players.brightcove.net',
 		'embed.ted.com',
 		'fast.wistia.net',
+		'player.twitch.tv',
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
