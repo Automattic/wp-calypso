@@ -102,8 +102,18 @@ const ThemeSheet = React.createClass( {
 		};
 	},
 
-	componentDidMount() {
+	scrollToTop() {
 		window.scroll( 0, 0 );
+	},
+
+	componentDidMount() {
+		this.scrollToTop();
+	},
+
+	componentWillUpdate( nextProps ) {
+		if ( nextProps.id !== this.props.id ) {
+			this.scrollToTop();
+		}
 	},
 
 	isLoaded() {
