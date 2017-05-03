@@ -12,7 +12,7 @@ import {
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isEligibleForDomainToPaidPlanUpsell } from 'state/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -57,6 +57,7 @@ export class DomainToPaidPlanNotice extends Component {
 
 const mapStateToProps = ( state ) => {
 	return {
+		site: getSelectedSite( state ),
 		eligible: isEligibleForDomainToPaidPlanUpsell( state, getSelectedSiteId( state ) ),
 	};
 };
