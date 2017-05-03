@@ -219,13 +219,19 @@ $autobar-height: 20px;
 
 .masterbar__item-notifications {
 	margin-right: 12px;
+	cursor: pointer;
 
 	@include breakpoint( "<480px" ) {
 		margin-right: 0;
 	}
 
+	.gridicon {
+		cursor: pointer;
+	}
+
 	.gridicon + .masterbar__item-content {
 		padding: 0;
+		cursor: default;
 
 		@include breakpoint( "<480px" ) {
 			display: block;
