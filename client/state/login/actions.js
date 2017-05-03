@@ -13,6 +13,9 @@ import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
+	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
+	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 const loginErrorMessages = {
@@ -86,7 +89,9 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
  * @param  {Boolean}   remember_me       Flag for remembering the user for a while after logging in.
  * @return {Function}                 Action thunk to trigger the login process.
  */
-export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, two_step_nonce, remember_me ) => {
+export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, two_step_nonce, remember_me ) => dispatch => {
+	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
+
 	return request.post( config( 'two_step_authentication_xhr' ) )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
@@ -99,6 +104,13 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
-		.then( () => { /* TODO: Handle successful request */ } )
-		.catch( () => { /* TODO: Handle error */ } );
+		.then( () => {
+			dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
+		} )
+		.catch( ( { response } ) => {
+			dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
+				error: response.body.data.errors[ 0 ]
+			} );
+		} );
 };

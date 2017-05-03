@@ -21,6 +21,8 @@ import { loginUserWithTwoFactorVerificationCode } from 'state/login/actions';
 import {
 	getTwoFactorUserId,
 	getTwoFactorAuthNonce,
+	getTwoFactorAuthRequestError,
+	isRequestingTwoFactorAuth,
 } from 'state/login/selectors';
 
 class VerificationCodeForm extends Component {
@@ -57,9 +59,8 @@ class VerificationCodeForm extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
-		const isError = !! this.state.error;
-		const errorText = isError && translate( 'Invalid verification code' );
+		const { translate, twoFactorAuthRequestError } = this.props;
+		const isError = !! twoFactorAuthRequestError;
 
 		return (
 			<div>
@@ -78,11 +79,15 @@ class VerificationCodeForm extends Component {
 								className={ classNames( { 'is-error': isError } ) }
 								name="twoStepCode" />
 							{ isError && (
-								<FormInputValidation isError text={ errorText } />
+								<FormInputValidation isError text={ translate( 'Invalid verification code' ) } />
 							) }
 						</FormFieldset>
 						<FormButtonsBar>
-							<FormButton onClick={ this.onSubmit } primary>{ translate( 'Log in' ) }</FormButton>
+							<FormButton
+								onClick={ this.onSubmit }
+								primary
+								disabled={ this.props.isRequestingTwoFactorAuth }
+							>{ translate( 'Log in' ) }</FormButton>
 						</FormButtonsBar>
 					</Card>
 				</form>
@@ -105,6 +110,8 @@ class VerificationCodeForm extends Component {
 
 export default connect(
 	( state ) => ( {
+		isRequestingTwoFactorAuth: isRequestingTwoFactorAuth( state ),
+		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
 		userId: getTwoFactorUserId( state ),
 		twoStepNonce: getTwoFactorAuthNonce( state ),
 	} )
