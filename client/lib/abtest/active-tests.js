@@ -45,8 +45,8 @@ module.exports = {
 	signupThemeStepCopyChanges: {
 		datestamp: '20170420',
 		variations: {
-			original: 20,
-			modified: 80,
+			original: 50,
+			modified: 50,
 		},
 		defaultVariation: 'original',
 	},
