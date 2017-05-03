@@ -4,7 +4,7 @@
 // eg: node bin/get-circle-string-artifact-url | xargs curl
 
 const https = require('https');
-const path = '/api/v1/project/Automattic/wp-calypso/latest/artifacts?branch=master&filter=successful&circle-token=' + process.env.CIRCLE_CI_TOKEN;
+const path = '/api/v1/project/Automattic/wp-calypso/latest/artifacts?branch=master&filter=successful';
 
 const options = {
 	host: 'circleci.com',
