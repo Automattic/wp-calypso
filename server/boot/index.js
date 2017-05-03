@@ -8,7 +8,7 @@ var path = require( 'path' ),
 	morgan = require( 'morgan' ),
 	pages = require( 'pages' );
 
-var calypsoPath = path.resolve( __dirname, '..', '..' );
+const calypsoPath = path.resolve( __dirname, '..', '..' );
 
 /**
  * Returns the server HTTP request handler "app".
