@@ -18,12 +18,12 @@ export default function( state = initialState, action ) {
 	const { siteId } = payload || {};
 	const handler = handlers[ type ];
 
-	if ( handler ) {
-		// Necessary to ensure this data is not persisted.
-		if ( type === SERIALIZE || type === DESERIALIZE ) {
-			return initialState;
-		}
+	// Necessary to ensure this data is not persisted.
+	if ( type === SERIALIZE || type === DESERIALIZE ) {
+		return initialState;
+	}
 
+	if ( handler ) {
 		if ( ! siteId ) {
 			throw new TypeError( `Action ${ type } handled by reducer, but no siteId set on action.` );
 		}
