@@ -25,7 +25,7 @@ class Login extends Component {
 
 	handleValidUsernamePassword = ( { rememberMe } ) => {
 		if ( ! this.props.twoFactorEnabled ) {
-			window.location.href = this.props.redirectLocation || window.location.origin;
+			this.rebootAfterLogin();
 		} else {
 			this.setState( {
 				hasSubmittedValidCredentials: true,
@@ -34,8 +34,8 @@ class Login extends Component {
 		}
 	};
 
-	handleValid2FACode = () => {
-		// TODO: submit the form to /wp-login with the 2FA code
+	rebootAfterLogin = () => {
+		window.location.href = this.props.redirectLocation || window.location.origin;
 	};
 
 	renderContent() {
@@ -53,7 +53,7 @@ class Login extends Component {
 			return (
 				<TwoFactorAuthentication
 					rememberMe={ rememberMe }
-					onSuccess={ this.handleValid2FACode } />
+					onSuccess={ this.rebootAfterLogin } />
 			);
 		}
 
