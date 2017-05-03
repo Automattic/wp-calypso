@@ -20,7 +20,7 @@ export default class InfoPopover extends Component {
 		gaEventCategory: PropTypes.string,
 		popoverName: PropTypes.string,
 		ignoreContext: PropTypes.shape( {
-			getDOMNode: PropTypes.function
+			getDOMNode: PropTypes.func
 		} ),
 	};
 
