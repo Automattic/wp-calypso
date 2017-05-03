@@ -5,6 +5,11 @@ InfoPopover
 
 ### `InfoPopover` Properties
 
+#### `autoRtl { bool } - default: true`
+
+Defines if the Popover should automatically be adjusted for right-to-left contexts.
+`autoRtl={ true }` will swap `right` and `left` position props in RTL context.
+
 #### `position`
 
 The `position` property can be one of the following values:
