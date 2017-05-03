@@ -110,7 +110,8 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
 		.catch( ( { response } ) => {
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
-				error: response.body.data.errors[ 0 ]
+				error: response.body.data.errors[ 0 ],
+				twoStepNonce: response.body.data.two_step_nonce
 			} );
 		} );
 };

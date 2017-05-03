@@ -258,6 +258,23 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
+		it( 'should reset the `two_step_nonce` value when a two factor authentication request fails and returns a new nonce', () => {
+			const data = {
+				two_step_id: 12345678,
+				two_step_nonce: 'abcdefgh1234',
+			};
+
+			const state = twoFactorAuth( data, {
+				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
+				twoStepNonce: 'foo'
+			} );
+
+			expect( state ).to.eql( {
+				two_step_id: 12345678,
+				two_step_nonce: 'foo'
+			} );
+		} );
+
 		it( 'should not persist state', () => {
 			const state = twoFactorAuth( true, {
 				type: SERIALIZE

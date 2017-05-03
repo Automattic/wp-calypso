@@ -39,6 +39,9 @@ export const requestSuccess = createReducer( null, {
 export const twoFactorAuth = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
 	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => data || null,
+	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE ]: ( state, { twoStepNonce } ) => Object.assign( {}, state, {
+		two_step_nonce: twoStepNonce
+	} ),
 	[ LOGIN_REQUEST_FAILURE ]: () => null
 } );
 
