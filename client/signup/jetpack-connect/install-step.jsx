@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -18,11 +19,16 @@ const NEW_INSTRUCTIONS_JETPACK_VERSION = '4.2.0';
 
 class JetpackInstallStep extends Component {
 	static propTypes = {
-		currentUrl: PropTypes.string.isRequired,
 		confirmJetpackInstallStatus: PropTypes.func.isRequired,
-		jetpackVersion: PropTypes.string,
-		onClick: PropTypes.func.isRequired,
+		currentUrl: PropTypes.string,
 		isInstall: PropTypes.bool.isRequired,
+		jetpackVersion: PropTypes.string,
+		onClick: PropTypes.func,
+	};
+
+	static defaultProps = {
+		currentUrl: '',
+		onClick: noop,
 	};
 
 	confirmJetpackInstalled = ( event ) => {
