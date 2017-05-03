@@ -28,12 +28,23 @@ class MasterbarItemNotifications extends Component {
 		animationState: 0,
 	};
 
-	componentWillReceiveProps() {
+	componentWillReceiveProps( nextProps ) {
 		this.user = this.props.user.get();
 
 		this.setState( {
 			newNote: this.user && this.user.has_unseen_notes,
 		} );
+
+		if ( ! this.props.isShowing && nextProps.isShowing ) {
+			this.props.recordOpening( store.get( 'wpnotes_unseen_count' ) );
+			this.setNotesIndicator( 0 );
+		}
+
+		// focus on main window if we just closed the notes panel
+		if ( this.props.isShowing && ! nextProps.isShowing ) {
+			this.getNotificationLinkDomNode().blur();
+			window.focus();
+		}
 	}
 
 	checkToggleNotes = ( event, forceToggle ) => {
@@ -44,7 +55,7 @@ class MasterbarItemNotifications extends Component {
 			return;
 		}
 
-		if ( this.state.isShowingPopover || forceToggle === true ) {
+		if ( this.props.isShowing || forceToggle === true ) {
 			this.toggleNotesFrame( event );
 		}
 	};
@@ -55,22 +66,7 @@ class MasterbarItemNotifications extends Component {
 			event.stopPropagation && event.stopPropagation();
 		}
 
-		this.setState( {
-			isShowingPopover: ! this.state.isShowingPopover
-		}, () => {
-			this.props.onClick( this.state.isShowingPopover );
-
-			if ( this.state.isShowingPopover ) {
-				this.props.recordOpening( store.get( 'wpnotes_unseen_count' ) );
-				this.setNotesIndicator( 0 );
-			}
-
-			// focus on main window if we just closed the notes panel
-			if ( ! this.state.isShowingPopover ) {
-				this.getNotificationLinkDomNode().blur();
-				window.focus();
-			}
-		} );
+		this.props.onClick();
 	};
 
 	getNotificationLinkDomNode = () => {
@@ -108,7 +104,7 @@ class MasterbarItemNotifications extends Component {
 
 	render() {
 		const classes = classNames( this.props.className, {
-			'is-active': this.state.isShowingPopover,
+			'is-active': this.props.isShowing,
 			'has-unread': this.state.newNote,
 			'is-initial-load': this.state.animationState === -1,
 		} );
@@ -130,7 +126,7 @@ class MasterbarItemNotifications extends Component {
 					key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) }
 				/>
 				<Notifications
-					visible={ this.state.isShowingPopover }
+					isShowing={ this.props.isShowing }
 					checkToggle={ this.checkToggleNotes }
 					setIndicator={ this.setNotesIndicator }
 				/>
