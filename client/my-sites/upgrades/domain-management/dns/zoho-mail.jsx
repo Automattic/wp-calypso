@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, replace } from 'lodash';
+import { isEmpty } from 'lodash';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -18,7 +18,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import notices from 'notices';
 import * as upgradesActions from 'lib/upgrades/actions';
 
-class Office365 extends Component {
+class ZohoMail extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = { token: '', submitting: false };
@@ -36,15 +36,14 @@ class Office365 extends Component {
 		const { domain, translate } = this.props,
 			variables = {
 				token: this.state.token,
-				domain,
-				mxdata: replace( domain, '.', '-' ) + '.mail.protection.outlook.com.'
+				domain
 			};
 
-		upgradesActions.applyDnsTemplate( domain, dnsTemplates.MICROSOFT_OFFICE365, variables, ( error ) => {
+		upgradesActions.applyDnsTemplate( domain, dnsTemplates.ZOHO_MAIL, variables, ( error ) => {
 			if ( error ) {
 				notices.error( error.message || translate( 'The DNS records have not been added.' ) );
 			} else {
-				notices.success( translate( 'All DNS records that Office 365 needs have been added.' ), {
+				notices.success( translate( 'All DNS records that Zoho Mail needs have been added.' ), {
 					duration: 5000
 				} );
 			}
@@ -54,19 +53,19 @@ class Office365 extends Component {
 	}
 
 	render() {
-		const isDataValid = this.state.token.match( /^MS=ms\d{4,20}$/ ),
+		const isDataValid = this.state.token.match( /^zb\w+$/ ),
 			{ translate } = this.props;
 
 		return (
 			<form className="dns__template-form">
 				<div className="dns__form-content">
 					<FormFieldset>
-						<FormLabel>{ translate( 'Office 365 Verification Token - from the TXT record verification' ) }</FormLabel>
+						<FormLabel>{ translate( 'Zoho Mail CNAME zb code' ) }</FormLabel>
 						<FormTextInput
 							name="token"
 							isError={ ! isEmpty( this.state.token ) && ! isDataValid }
 							onChange={ this.onChange }
-							placeholder="MS=ms..." />
+							placeholder="zb..." />
 						{ this.state.token && ! isDataValid &&
 						<FormInputValidation text={ translate( 'Invalid Token' ) } isError={ true } /> }
 					</FormFieldset>
@@ -75,7 +74,7 @@ class Office365 extends Component {
 						<FormButton
 							disabled={ ! isDataValid || this.state.submitting }
 							onClick={ this.onAddDnsRecords }>
-							{ translate( 'Set up Office 365' ) }
+							{ translate( 'Set up Zoho Mail' ) }
 						</FormButton>
 					</FormFooter>
 				</div>
@@ -84,4 +83,4 @@ class Office365 extends Component {
 	}
 }
 
-export default localize( Office365 );
+export default localize( ZohoMail );

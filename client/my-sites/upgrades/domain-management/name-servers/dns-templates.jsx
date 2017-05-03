@@ -10,7 +10,9 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import DnsTemplateButton from './dns-template-button';
+import GSuite from '../dns/g-suite';
 import Office365 from '../dns/office-365';
+import ZohoMail from '../dns/zoho-mail';
 
 class DnsTemplates extends Component {
 	constructor( props ) {
@@ -18,7 +20,9 @@ class DnsTemplates extends Component {
 		this.state = {
 			currentComponentName: null,
 			templates: [
-				{ name: 'Office 365', Component: Office365 }
+				{ name: 'G Suite', Component: GSuite },
+				{ name: 'Office 365', Component: Office365 },
+				{ name: 'Zoho Mail', Component: ZohoMail }
 			]
 		};
 	}
