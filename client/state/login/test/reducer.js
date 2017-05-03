@@ -11,13 +11,18 @@ import {
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
+	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
+	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
+	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
 } from 'state/action-types';
 import reducer, {
 	isRequesting,
+	isRequestingTwoFactorAuth,
 	requestError,
 	requestSuccess,
 	twoFactorAuth,
+	twoFactorAuthRequestError,
 } from '../reducer';
 
 describe( 'reducer', () => {
@@ -28,103 +33,143 @@ describe( 'reducer', () => {
 			'requestError',
 			'requestSuccess',
 			'twoFactorAuth',
+			'isRequestingTwoFactorAuth',
+			'twoFactorAuthRequestError',
 		] );
 	} );
 
-	describe( 'isRequesting', () => {
-		it( 'should default to a false', () => {
-			const state = isRequesting( undefined, {} );
+	const isRequestingReducers = [
+		{
+			name: 'isRequesting',
+			func: isRequesting,
+			loadingAction: LOGIN_REQUEST,
+			failureAction: LOGIN_REQUEST_FAILURE,
+			successAction: LOGIN_REQUEST_SUCCESS,
+		},
+		{
+			name: 'isRequestingTwoFactorAuth',
+			func: isRequestingTwoFactorAuth,
+			loadingAction: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
+			failureAction: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
+			successAction: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
+		},
+	];
 
-			expect( state ).to.be.false;
-		} );
+	isRequestingReducers.forEach( currentReducer => {
+		describe( `${ currentReducer.name }`, () => {
+			it( 'should default to a false', () => {
+				const state = currentReducer.func( undefined, {} );
 
-		it( 'should set isRequesting to true value if a request is initiated', () => {
-			const state = isRequesting( undefined, {
-				type: LOGIN_REQUEST,
+				expect( state ).to.be.false;
 			} );
 
-			expect( state ).to.be.true;
-		} );
+			it( `should set ${ currentReducer.name } to true value if a request is initiated`, () => {
+				const state = currentReducer.func( undefined, {
+					type: currentReducer.loadingAction,
+				} );
 
-		it( 'should set isRequesting to false value if a request was unsuccessful', () => {
-			const state = isRequesting( undefined, {
-				type: LOGIN_REQUEST_FAILURE,
+				expect( state ).to.be.true;
 			} );
 
-			expect( state ).to.be.false;
-		} );
+			it( `should set ${ currentReducer.name } to false value if a request was unsuccessful`, () => {
+				const state = currentReducer.func( undefined, {
+					type: currentReducer.failureAction,
+				} );
 
-		it( 'should set isRequesting to false value if a request was successful', () => {
-			const state = isRequesting( undefined, {
-				type: LOGIN_REQUEST_SUCCESS,
+				expect( state ).to.be.false;
 			} );
 
-			expect( state ).to.be.false;
-		} );
+			it( `should set ${ currentReducer.name } to false value if a request was successful`, () => {
+				const state = currentReducer.func( undefined, {
+					type: currentReducer.successAction,
+				} );
 
-		it( 'should not persist state', () => {
-			const state = isRequesting( true, {
-				type: SERIALIZE
+				expect( state ).to.be.false;
 			} );
 
-			expect( state ).to.be.false;
-		} );
+			it( 'should not persist state', () => {
+				const state = currentReducer.func( true, {
+					type: SERIALIZE
+				} );
 
-		it( 'should not load persisted state', () => {
-			const state = isRequesting( true, {
-				type: DESERIALIZE
+				expect( state ).to.be.false;
 			} );
 
-			expect( state ).to.be.false;
+			it( 'should not load persisted state', () => {
+				const state = currentReducer.func( true, {
+					type: DESERIALIZE
+				} );
+
+				expect( state ).to.be.false;
+			} );
 		} );
 	} );
 
-	describe( 'requestError', () => {
-		it( 'should default to a null', () => {
-			const state = requestError( undefined, {} );
+	const requestErrorReducers = [
+		{
+			name: 'requestError',
+			func: requestError,
+			loadingAction: LOGIN_REQUEST,
+			failureAction: LOGIN_REQUEST_FAILURE,
+			successAction: LOGIN_REQUEST_SUCCESS,
+		},
+		{
+			name: 'twoFactorAuthRequestError',
+			func: twoFactorAuthRequestError,
+			loadingAction: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
+			failureAction: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
+			successAction: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
+		},
+	];
 
-			expect( state ).to.be.null;
-		} );
+	requestErrorReducers.forEach( currentReducer => {
+		describe( `${ currentReducer.name }`, () => {
+			it( 'should default to a null', () => {
+				const state = currentReducer.func( undefined, {} );
 
-		it( 'should set requestError to null value if a request is initiated', () => {
-			const state = requestError( 'some error', {
-				type: LOGIN_REQUEST,
+				expect( state ).to.be.null;
 			} );
 
-			expect( state ).to.be.null;
-		} );
+			it( `should set ${ currentReducer.name } to null value if a request is initiated`, () => {
+				const state = currentReducer.func( 'some error', {
+					type: currentReducer.loadingAction,
+				} );
 
-		it( 'should set requestError to null value if a request was successful', () => {
-			const state = requestError( 'some error', {
-				type: LOGIN_REQUEST_SUCCESS,
+				expect( state ).to.be.null;
 			} );
 
-			expect( state ).to.be.null;
-		} );
+			it( `should set ${ currentReducer.name } to null value if a request was successful`, () => {
+				const state = currentReducer.func( 'some error', {
+					type: currentReducer.successAction,
+				} );
 
-		it( 'should store the error in requestError if a request is unsuccessful', () => {
-			const state = requestError( 'some error', {
-				type: LOGIN_REQUEST_FAILURE,
-				error: 'another error'
+				expect( state ).to.be.null;
 			} );
 
-			expect( state ).to.eql( 'another error' );
-		} );
+			it( `should store the error in ${ currentReducer.name } if a request is unsuccessful`, () => {
+				const state = currentReducer.func( 'some error', {
+					type: currentReducer.failureAction,
+					error: 'another error'
+				} );
 
-		it( 'should not persist state', () => {
-			const state = requestError( 'some error', {
-				type: SERIALIZE
+				expect( state ).to.eql( 'another error' );
 			} );
 
-			expect( state ).to.be.null;
-		} );
+			it( 'should not persist state', () => {
+				const state = currentReducer.func( 'some error', {
+					type: SERIALIZE
+				} );
 
-		it( 'should not load persisted state', () => {
-			const state = requestError( 'some error', {
-				type: DESERIALIZE
+				expect( state ).to.be.null;
 			} );
 
-			expect( state ).to.be.null;
+			it( 'should not load persisted state', () => {
+				const state = currentReducer.func( 'some error', {
+					type: DESERIALIZE
+				} );
+
+				expect( state ).to.be.null;
+			} );
 		} );
 	} );
 
