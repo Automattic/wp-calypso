@@ -7,16 +7,16 @@ import {
 } from '../../action-types';
 
 export default {
-	[ WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES ]: productCategoriesGet,
-	[ WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS ]: productCategoriesGetSuccess,
+	[ WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES ]: fetchProductCategories,
+	[ WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS ]: fetchProductCategoriesSuccess,
 };
 
-function productCategoriesGet( siteData ) {
+function fetchProductCategories( siteData ) {
 	// TODO: Update stats in the tree to show that this request is pending.
 	return siteData;
 }
 
-function productCategoriesGetSuccess( siteData, action ) {
+function fetchProductCategoriesSuccess( siteData, action ) {
 	const { data } = action.payload;
 
 	return { ...siteData, productCategories: data };

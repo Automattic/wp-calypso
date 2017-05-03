@@ -31,6 +31,15 @@ export function fetchProductCategories( siteId ) {
 }
 
 export function fetchProductCategoriesSuccess( siteId, data ) {
+	if ( ! isValidCategoriesArray( data ) ) {
+		const originalAction = {
+			type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
+			payload: { siteId }
+		};
+
+		return error( siteId, originalAction, { message: 'Invalid Categories Array', data } );
+	}
+
 	return {
 		type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
 		payload: {
@@ -38,5 +47,24 @@ export function fetchProductCategoriesSuccess( siteId, data ) {
 			data,
 		}
 	};
+}
+
+function isValidCategoriesArray( categories ) {
+	for ( let i = 0; i < categories.length; i++ ) {
+		if ( ! isValidProductCategory( categories[ i ] ) ) {
+			// Short-circuit the loop and return now.
+			return false;
+		}
+	}
+	return true;
+}
+
+function isValidProductCategory( category ) {
+	return (
+		category &&
+		category.id && ( typeof category.id ) === 'number' &&
+		category.name && ( typeof category.name ) === 'string' &&
+		category.slug && ( typeof category.slug ) === 'string'
+	);
 }
 
