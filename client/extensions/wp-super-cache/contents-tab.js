@@ -14,6 +14,30 @@ import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 
 class ContentsTab extends Component {
+	state = {
+		isDeleting: false,
+		isDeletingAll: false,
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isDeleting && ! nextProps.isDeleting ) {
+			this.setState( {
+				isDeleting: false,
+				isDeletingAll: false,
+			} );
+		}
+	}
+
+	deleteCache = () => {
+		this.setState( { isDeleting: true } );
+		this.props.handleDeleteCache( false );
+	}
+
+	deleteAllCaches = () => {
+		this.setState( { isDeletingAll: true } );
+		this.props.handleDeleteCache( true );
+	}
+
 	render() {
 		const {
 			fields: {
@@ -22,6 +46,7 @@ class ContentsTab extends Component {
 				supercache,
 				wpcache,
 			},
+			isDeleting,
 			isMultisite,
 			translate,
 		} = this.props;
@@ -119,11 +144,19 @@ class ContentsTab extends Component {
 						<Button compact primary>
 							{ translate( 'Delete Expired' ) }
 						</Button>
-						<Button compact>
+						<Button
+							compact
+							busy={ this.state.isDeleting }
+							disabled={ isDeleting }
+							onClick={ this.deleteCache }>
 							{ translate( 'Delete Cache' ) }
 						</Button>
 						{ isMultisite &&
-							<Button compact>
+							<Button
+								compact
+								busy={ this.state.isDeletingAll }
+								disabled={ isDeleting }
+								onClick={ this.deleteAllCaches }>
 								{ translate( 'Delete Cache On All Blogs' ) }
 							</Button>
 						}
