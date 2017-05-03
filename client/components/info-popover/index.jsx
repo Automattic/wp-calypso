@@ -37,6 +37,25 @@ export default class InfoPopover extends Component {
 
 	state = { showPopover: false };
 
+	_onClick = ( event ) => {
+		event.preventDefault();
+		this.setState( {
+			showPopover: ! this.state.showPopover },
+			this._recordStats
+		);
+	}
+
+	_onClose = () => this.setState( { showPopover: false }, this._recordStats );
+
+	_recordStats = () => {
+		const { gaEventCategory, popoverName } = this.props;
+
+		if ( gaEventCategory && popoverName ) {
+			const dialogState = this.state.showPopover ? ' Opened' : ' Closed';
+			analytics.ga.recordEvent( gaEventCategory, 'InfoPopover: ' + popoverName + dialogState );
+		}
+	}
+
 	render() {
 		return (
 			<span
@@ -67,24 +86,5 @@ export default class InfoPopover extends Component {
 				</Popover>
 			</span>
 		);
-	}
-
-	_onClick = ( event ) => {
-		event.preventDefault();
-		this.setState( {
-			showPopover: ! this.state.showPopover },
-			this._recordStats
-		);
-	}
-
-	_onClose = () => this.setState( { showPopover: false }, this._recordStats );
-
-	_recordStats = () => {
-		const { gaEventCategory, popoverName } = this.props;
-
-		if ( gaEventCategory && popoverName ) {
-			const dialogState = this.state.showPopover ? ' Opened' : ' Closed';
-			analytics.ga.recordEvent( gaEventCategory, 'InfoPopover: ' + popoverName + dialogState );
-		}
 	}
 }
