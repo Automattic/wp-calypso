@@ -18,6 +18,7 @@ import classNames from 'classnames';
 import debugFactory from 'debug';
 import wpcom from 'lib/wp';
 import { get } from 'lodash';
+import NotificationsPanel from 'notifications-panel';
 
 /**
  * Internal dependencies
@@ -25,8 +26,6 @@ import { get } from 'lodash';
 import analytics from 'lib/analytics';
 import config from 'config';
 import userLib from 'lib/user';
-
-import NotificationsPanel from 'notifications-panel';
 
 /**
  * Module variables

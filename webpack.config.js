@@ -4,8 +4,7 @@
  * External dependencies
  */
 const webpack = require( 'webpack' ),
-	path = require( 'path' )
-	fs = require( 'fs' );
+	path = require( 'path' );
 
 /**
  * Internal dependencies
@@ -161,10 +160,7 @@ if ( calypsoEnv === 'desktop' ) {
 
 const jsLoader = {
 	test: /\.jsx?$/,
-	include: [
-		path.resolve( './client' ),
-		fs.realpathSync( './node_modules/notifications-panel' )
-	],
+	exclude: /node_modules/,
 	loader: 'babel',
 	query: {
 		cacheDirectory: './.babel-cache',
