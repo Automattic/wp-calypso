@@ -48,6 +48,7 @@ export const loginUser = ( usernameOrEmail, password ) => dispatch => {
 	} );
 
 	return request.post( config( 'login_url_xhr' ) )
+		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
