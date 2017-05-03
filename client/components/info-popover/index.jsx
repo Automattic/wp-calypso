@@ -13,15 +13,15 @@ import analytics from 'lib/analytics';
 
 export default class InfoPopover extends Component {
 	static propTypes = {
-		id: PropTypes.string,
-		position: PropTypes.string,
 		className: PropTypes.string,
-		rootClassName: PropTypes.string,
 		gaEventCategory: PropTypes.string,
-		popoverName: PropTypes.string,
+		id: PropTypes.string,
 		ignoreContext: PropTypes.shape( {
 			getDOMNode: PropTypes.func
 		} ),
+		popoverName: PropTypes.string,
+		position: PropTypes.string,
+		rootClassName: PropTypes.string,
 	};
 
 	static defaultProps = { position: 'bottom' };
