@@ -23,9 +23,9 @@ https.get( options, ( response ) => {
 
 	response.on( 'end', () => {
 		const artifacts = JSON.parse( body );
-		const artifact = artifacts.filter( ( artifact ) => artifact.pretty_path === '$CIRCLE_ARTIFACTS/translate/calypso-strings.pot' ).shift();
+		const artifact = artifacts.filter( ( artifact ) => artifact.pretty_path.match( /\/calypso-strings\.pot$/ ) ).shift();
 		if( ! artifact ) {
-			console.error( 'failed to get latest build artifact information from circle ci', artifacts );
+			console.error( 'failed to find pot in circle ci', artifacts );
 			process.exit( 1 );
 		}
 		console.log( artifact.url );
