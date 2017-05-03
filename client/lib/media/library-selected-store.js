@@ -87,11 +87,7 @@ MediaLibrarySelectedStore.getAll = function( siteId ) {
 
 	// Avoid keeping invalid items in the selected list.
 	return compact( MediaLibrarySelectedStore._media[ siteId ].map( function( itemId ) {
-		const item = MediaStore.get( siteId, itemId );
-		if ( ! ( item && item.guid ) ) {
-			return;
-		}
-		return item;
+		return MediaStore.get( siteId, itemId );
 	} ) );
 };
 
