@@ -23,10 +23,6 @@ export class QueryThemeFilters extends Component {
 	}
 }
 
-export const mapDispatchToProps = ( {
-	requestThemeFilters,
-} );
-
 export default connect(
 	null, { requestThemeFilters }
 )( QueryThemeFilters );
