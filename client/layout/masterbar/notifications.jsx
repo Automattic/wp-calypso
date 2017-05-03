@@ -65,7 +65,7 @@ class MasterbarItemNotifications extends Component {
 		} );
 	};
 
-	getNotificationLinkDomNode =() => {
+	getNotificationLinkDomNode = () => {
 		return ReactDom.findDOMNode( this.refs.notificationLink );
 	};
 
