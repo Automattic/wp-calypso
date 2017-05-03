@@ -4,14 +4,14 @@
 import wp from 'lib/wp';
 import { error } from '../actions';
 import {
-	WOOCOMMERCE_API_PRODUCT_CATEGORIES_GET,
-	WOOCOMMERCE_API_PRODUCT_CATEGORIES_GET_SUCCESS,
+	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
+	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
 } from '../../action-types';
 
-export function getProductCategories( siteId ) {
+export function fetchProductCategories( siteId ) {
 	return ( dispatch ) => {
 		const getAction = {
-			type: WOOCOMMERCE_API_PRODUCT_CATEGORIES_GET,
+			type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
 			payload: { siteId },
 		};
 
@@ -22,7 +22,7 @@ export function getProductCategories( siteId ) {
 
 		return wp.req.get( { path: jpPath }, { path: apiPath } )
 			.then( ( { data } ) => {
-				dispatch( getProductCategoriesSuccess( siteId, data ) );
+				dispatch( fetchProductCategoriesSuccess( siteId, data ) );
 			} )
 			.catch( err => {
 				dispatch( error( siteId, getAction, err ) );
@@ -30,9 +30,9 @@ export function getProductCategories( siteId ) {
 	};
 }
 
-export function getProductCategoriesSuccess( siteId, data ) {
+export function fetchProductCategoriesSuccess( siteId, data ) {
 	return {
-		type: WOOCOMMERCE_API_PRODUCT_CATEGORIES_GET_SUCCESS,
+		type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
 		payload: {
 			siteId,
 			data,

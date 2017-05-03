@@ -8,19 +8,19 @@ import { expect } from 'chai';
  */
 import handlers from '../reducer';
 import {
-	WOOCOMMERCE_API_PRODUCT_CATEGORIES_GET,
-	WOOCOMMERCE_API_PRODUCT_CATEGORIES_GET_SUCCESS,
+	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES,
+	WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS,
 } from '../../../action-types';
-import { getProductCategoriesSuccess } from '../actions';
+import { fetchProductCategoriesSuccess } from '../actions';
 
 describe( 'productCategoriesGet', () => {
 	it( 'should not change any state', () => {
 		const siteData = {};
-		const handler = handlers[ WOOCOMMERCE_API_PRODUCT_CATEGORIES_GET ];
+		const handler = handlers[ WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES ];
 
 		expect( handler ).to.exist;
 
-		const newSiteData = handler( siteData, { type: WOOCOMMERCE_API_PRODUCT_CATEGORIES_GET, siteId: 123 } );
+		const newSiteData = handler( siteData, { type: WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES, siteId: 123 } );
 		expect( newSiteData ).to.equal( siteData );
 	} );
 } );
@@ -28,7 +28,7 @@ describe( 'productCategoriesGet', () => {
 describe( 'productCategoriesGetSuccess', () => {
 	it( 'should store data from the action', () => {
 		const siteData = {};
-		const handler = handlers[ WOOCOMMERCE_API_PRODUCT_CATEGORIES_GET_SUCCESS ];
+		const handler = handlers[ WOOCOMMERCE_API_FETCH_PRODUCT_CATEGORIES_SUCCESS ];
 
 		expect( handler ).to.exist;
 
@@ -36,7 +36,7 @@ describe( 'productCategoriesGetSuccess', () => {
 			{ name: 'cat1' },
 			{ name: 'cat2' },
 		];
-		const newSiteData = handler( siteData, getProductCategoriesSuccess( 123, categories ) );
+		const newSiteData = handler( siteData, fetchProductCategoriesSuccess( 123, categories ) );
 		expect( newSiteData ).to.exist;
 		expect( newSiteData.productCategories ).to.equal( categories );
 	} );
