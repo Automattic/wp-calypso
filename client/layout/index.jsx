@@ -32,6 +32,8 @@ var AsyncLoad = require( 'components/async-load' ),
 	Layout,
 	SupportUser;
 
+import { isNotificationsPanelOpen } from 'state/selectors';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
 import { isHappychatOpen } from 'state/ui/happychat/selectors';
@@ -39,6 +41,9 @@ import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
+// import Notifications from 'notifications';
+import NotificationsPanel from '../notifications/notifications-panel/src/Notifications';
+import wpcom from 'lib/wp';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -142,6 +147,19 @@ Layout = React.createClass( {
 
 		return (
 			<div className={ sectionClass }>
+				<div id="wpnc-panel"
+					className={ classnames( 'wide', 'wpnc__main', {
+						'wpnt-open': this.props.notificationsPanelIsOpen,
+						'wpnt-closed': ! this.props.notificationsPanelIsOpen,
+					} ) }>
+					<NotificationsPanel
+						isShowing={ true }
+						isVisible={ true }
+						locale={ this.props.currentUserLocale }
+						onRender={ () => console.log( 'onRender' ) }
+						onTogglePanel={ () => console.log( 'onTogglePanel' ) }
+						wpcom={ wpcom } />
+				</div>
 				<DocumentHead />
 				<QueryPreferences />
 				{ <GuidedTours /> }
@@ -181,7 +199,9 @@ export default connect(
 			hasSidebar: hasSidebar( state ),
 			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
-			chatIsOpen: isHappychatOpen( state )
+			chatIsOpen: isHappychatOpen( state ),
+			notificationsPanelIsOpen: isNotificationsPanelOpen( state ),
+			currentUserLocale: getCurrentUserLocale( state )
 		};
 	}
 )( Layout );

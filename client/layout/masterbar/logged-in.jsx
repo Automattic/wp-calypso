@@ -18,6 +18,7 @@ import config from 'config';
 import { preload } from 'sections-preload';
 import ResumeEditing from 'my-sites/resume-editing';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { toggleNotificationsPanel } from 'state/ui/notifications/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route/path';
@@ -32,6 +33,7 @@ const MasterbarLoggedIn = React.createClass( {
 		sites: React.PropTypes.object,
 		section: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
 		setNextLayoutFocus: React.PropTypes.func.isRequired,
+		toggleNotificationsPanel: React.PropTypes.func.isRequired,
 		siteSlug: React.PropTypes.string,
 	},
 
@@ -51,7 +53,8 @@ const MasterbarLoggedIn = React.createClass( {
 	},
 
 	clickNotifications() {
-		this.setState( { showNotifications: ! this.state.showNotifications } );
+		// this.setState( { showNotifications: ! this.state.showNotifications } );
+		this.props.toggleNotificationsPanel();
 	},
 
 	isActive( section ) {
@@ -172,4 +175,4 @@ export default connect( ( state, { sites } ) => {
 		siteSlug,
 		domainOnlySite
 	};
-}, { setNextLayoutFocus }, null, { pure: false } )( localize( MasterbarLoggedIn ) );
+}, { setNextLayoutFocus, toggleNotificationsPanel }, null, { pure: false } )( localize( MasterbarLoggedIn ) );

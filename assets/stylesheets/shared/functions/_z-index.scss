@@ -152,7 +152,8 @@ $z-layers: (
 		'.fullscreen-fader': 200000,
 		'.guided-tours__overlay': 200050,
 		'.guided-tours__step': 201000,
-		'#habla_window_div.habla_window_div_base': 99999999 //olark
+		'#habla_window_div.habla_window_div_base': 99999999, //olark,
+		'#wpnc-panel': 2
 	),
 	'.ribbon': (
 		'.ribbon__title::before': -1,
