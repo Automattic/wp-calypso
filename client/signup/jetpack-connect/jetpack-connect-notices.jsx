@@ -14,7 +14,7 @@ import { urlToSlug } from 'lib/url';
 class JetpackConnectNotices extends Component {
 	static propTypes = {
 		noticeType: PropTypes.string,
-		siteUrl: PropTypes.string
+		url: PropTypes.string
 	}
 
 	getNoticeValues() {
@@ -130,8 +130,7 @@ class JetpackConnectNotices extends Component {
 	}
 
 	render() {
-		const urlSlug = this.props.url ? urlToSlug( this.props.url ) : '';
-		const values = this.getNoticeValues( urlSlug );
+		const values = this.getNoticeValues();
 		if ( values ) {
 			return (
 				<div className="jetpack-connect__notices-container">
