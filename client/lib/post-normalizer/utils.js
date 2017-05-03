@@ -144,6 +144,7 @@ export function iframeIsWhitelisted( iframe ) {
 		'embed.ted.com',
 		'fast.wistia.net',
 		'player.twitch.tv',
+		'archive.org',
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
