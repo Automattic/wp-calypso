@@ -15,6 +15,14 @@ import store from 'store';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class MasterbarItemNotifications extends Component {
+	static propTypes = {
+		user: React.PropTypes.object.isRequired,
+		isActive: React.PropTypes.bool,
+		className: React.PropTypes.string,
+		onClick: React.PropTypes.func,
+		tooltip: React.PropTypes.string,
+	};
+
 	state = {
 		isShowingPopover: false,
 		animationState: 0,
@@ -111,7 +119,7 @@ class MasterbarItemNotifications extends Component {
 				icon="bell"
 				onClick={ this.toggleNotesFrame }
 				isActive={ this.props.isActive }
-				isNotesItem={ true }
+				renderAsAnchor={ false }
 				tooltip={ this.props.tooltip }
 				className={ classes }
 			>
@@ -129,14 +137,6 @@ class MasterbarItemNotifications extends Component {
 		);
 	}
 }
-
-MasterbarItemNotifications.propTypes = {
-	user: React.PropTypes.object.isRequired,
-	isActive: React.PropTypes.bool,
-	className: React.PropTypes.string,
-	onClick: React.PropTypes.func,
-	tooltip: React.PropTypes.string,
-};
 
 const mapDispatchToProps = dispatch => ( {
 	recordOpening: unread_notifications => dispatch( recordTracksEvent( 'calypso_notification_open', { unread_notifications } ) )

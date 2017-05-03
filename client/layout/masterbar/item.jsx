@@ -7,6 +7,23 @@ import { isFunction, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 class MasterbarItem extends Component {
+	static propTypes = {
+		url: React.PropTypes.string,
+		onClick: React.PropTypes.func,
+		tooltip: React.PropTypes.string,
+		icon: React.PropTypes.string,
+		className: React.PropTypes.string,
+		isActive: React.PropTypes.bool,
+		renderAsAnchor: React.PropTypes.bool,
+		preloadSection: React.PropTypes.func
+	};
+
+	static defaultProps = {
+		icon: '',
+		onClick: noop,
+		renderAsAnchor: true
+	};
+
 	_preloaded = false;
 
 	preload = () => {
@@ -21,27 +38,12 @@ class MasterbarItem extends Component {
 			'is-active': this.props.isActive,
 		} );
 
-		if ( this.props.isNotesItem ) {
-			return (
-				<div
-					data-tip-target={ this.props.tipTarget }
-					onClick={ this.props.onClick }
-					title={ this.props.tooltip }
-					className={ itemClasses }
-					onTouchStart={ this.preload }
-					onMouseEnter={ this.preload }>
-					{ !! this.props.icon && <Gridicon icon={ this.props.icon } size={ 24 } /> }
-					<span className="masterbar__item-content">
-						{ this.props.children }
-					</span>
-				</div>
-			);
-		}
+		const Tag = this.props.renderAsAnchor ? 'a' : 'div';
 
 		return (
-			<a
+			<Tag
 				data-tip-target={ this.props.tipTarget }
-				href={ this.props.url }
+				href={ this.props.renderAsAnchor ? this.props.url : undefined }
 				onClick={ this.props.onClick }
 				title={ this.props.tooltip }
 				className={ itemClasses }
@@ -51,25 +53,9 @@ class MasterbarItem extends Component {
 				<span className="masterbar__item-content">
 					{ this.props.children }
 				</span>
-			</a>
+			</Tag>
 		);
 	}
 }
-
-MasterbarItem.propTypes = {
-	url: React.PropTypes.string,
-	onClick: React.PropTypes.func,
-	tooltip: React.PropTypes.string,
-	icon: React.PropTypes.string,
-	className: React.PropTypes.string,
-	isActive: React.PropTypes.bool,
-	isNotesItem: React.PropTypes.bool,
-	preloadSection: React.PropTypes.func
-};
-
-MasterbarItem.defaultProps = {
-	icon: '',
-	onClick: noop
-};
 
 export default MasterbarItem;
