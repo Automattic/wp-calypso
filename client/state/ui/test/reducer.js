@@ -32,6 +32,7 @@ describe( 'reducer', () => {
 			'actionLog',
 			'happychat',
 			'mediaModal',
+			'notifications',
 			'themeSetup',
 			'npsSurveyNotice',
 		] );

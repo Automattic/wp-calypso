@@ -25,6 +25,7 @@ import layoutFocus from './layout-focus/reducer';
 import preview from './preview/reducer';
 import happychat from './happychat/reducer';
 import mediaModal from './media-modal/reducer';
+import notifications from './notifications/reducer';
 import themeSetup from './theme-setup/reducers';
 import npsSurveyNotice from './nps-survey-notice/reducer';
 
@@ -91,6 +92,7 @@ const reducer = combineReducers( {
 	actionLog,
 	happychat,
 	mediaModal,
+	notifications,
 	themeSetup,
 	npsSurveyNotice,
 } );
