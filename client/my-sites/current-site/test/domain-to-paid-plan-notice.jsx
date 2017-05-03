@@ -13,6 +13,7 @@ import useMockery from 'test/helpers/use-mockery';
 
 describe( 'DomainToPaidPlanNotice', function() {
 	const translate = stub();
+	const site = { ID: 12345, slug: 'site_slug' };
 	const abtests = [];
 	let DomainToPaidPlanNotice;
 
@@ -29,29 +30,27 @@ describe( 'DomainToPaidPlanNotice', function() {
 		translate.returns( 'translated content' );
 	} );
 
+	it( 'should render null when there is no site', function() {
+		const wrapper = shallow( <DomainToPaidPlanNotice /> );
+
+		expect( wrapper.type() ).to.equal( null );
+	} );
+
 	it( 'should render null when ineligible', function() {
-		const wrapper = shallow( <DomainToPaidPlanNotice eligible={ false } /> );
+		const wrapper = shallow( <DomainToPaidPlanNotice site={ site } /> );
 
 		expect( wrapper.type() ).to.equal( null );
 	} );
 
 	it( 'should render null when a/b test variant is skip', function() {
 		abtests.domainToPaidPlanUpsellNudge = 'skip';
-		const wrapper = shallow( <DomainToPaidPlanNotice eligible /> );
+		const wrapper = shallow( <DomainToPaidPlanNotice site={ site } eligible /> );
 
 		expect( wrapper.type() ).to.equal( null );
 	} );
 
-	it( 'should default to noop for translation', function() {
-		const wrapper = shallow( <DomainToPaidPlanNotice eligible /> );
-
-		expect( wrapper.find( 'p' ).props().children ).to.equal( undefined );
-	} );
-
-	it( 'should render translated content', function() {
-		const wrapper = shallow( <DomainToPaidPlanNotice eligible translate={ translate }></DomainToPaidPlanNotice> );
-
-		expect( wrapper.find( 'p' ).props().children ).to.equal( 'translated content' );
-		expect( translate ).to.have.been.calledWith( 'content' );
+	it( 'should render component when a/b test variant is show', function() {
+		const wrapper = shallow( <DomainToPaidPlanNotice site={ site } eligible /> );
+		expect( wrapper.type().displayName ).to.equal( 'Localized(Notice)' );
 	} );
 } );
