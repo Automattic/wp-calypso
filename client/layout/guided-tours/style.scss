@@ -1,5 +1,6 @@
 .guided-tours__step {
 	position: fixed;
+	width: calc( 100% - 10px );
 	max-width: 410px;
 	z-index: z-index( 'root', '.guided-tours__step' );
 	background: darken( $gray, 52 );
@@ -48,7 +49,6 @@
 	animation-timing-function: ease-out;
 	animation-delay: 2s;
 	animation-fill-mode: both;
-	width: calc( 100% - 10px );
 }
 
 .guided-tours__step-finish {
