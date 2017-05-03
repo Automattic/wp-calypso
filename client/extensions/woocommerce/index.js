@@ -15,6 +15,7 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import ProductCreate from './app/products/product-create';
 import Dashboard from './app/dashboard';
 import SettingsPayments from './app/settings/payments';
+import Shipping from './app/shipping';
 import StatsController from './app/stats/controller';
 import StoreSidebar from './store-sidebar';
 
@@ -117,7 +118,7 @@ const getStorePages = () => {
 			path: '/store/settings/:site/payments',
 		},
 		{
-			container: Dashboard, // TODO use Dashboard as a placeholder until this page becomes available
+			container: Shipping,
 			configKey: 'woocommerce/extension-settings-shipping',
 			path: '/store/settings/:site/shipping',
 		},
