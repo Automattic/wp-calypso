@@ -48,6 +48,7 @@
 		"guided-tours/design-showcase-welcome": true,
 		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,
+		"guided-tours/editor-basics-tour": true,
 		"help": true,
 		"help/courses": true,
 		"jetpack/invites": true,
