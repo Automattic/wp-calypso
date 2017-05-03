@@ -84,4 +84,12 @@ module.exports = {
 		defaultVariation: 'show',
 		allowExistingUsers: true,
 	},
+	domainToPaidPlanUpsellNudge: {
+		datestamp: '20170429',
+		variations: {
+			skip: 50,
+			show: 50,
+		},
+		defaultVariation: 'skip',
+	},
 };

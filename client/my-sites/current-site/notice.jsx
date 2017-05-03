@@ -15,7 +15,7 @@ import paths from 'my-sites/upgrades/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import {
 	canCurrentUser,
-	eligibleForFreeToPaidUpsell,
+	isEligibleForFreeToPaidUpsell,
 } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -24,6 +24,7 @@ import {
 	isFinished as isJetpackPluginsFinished
 } from 'state/plugins/premium/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
 
 const SiteNotice = React.createClass( {
 	propTypes: {
@@ -82,7 +83,7 @@ const SiteNotice = React.createClass( {
 	},
 
 	freeToPaidPlanNotice() {
-		if ( ! this.props.eligibleForFreeToPaidUpsell ) {
+		if ( ! this.props.isEligibleForFreeToPaidUpsell ) {
 			return null;
 		}
 		const eventName = 'calypso_upgrade_nudge_impression';
@@ -131,6 +132,7 @@ const SiteNotice = React.createClass( {
 				{ this.domainCreditNotice() }
 				{ this.jetpackPluginsSetupNotice() }
 				{ this.freeToPaidPlanNotice() }
+				<DomainToPaidPlanNotice />
 			</div>
 		);
 	}
@@ -139,7 +141,7 @@ const SiteNotice = React.createClass( {
 export default connect( ( state, ownProps ) => {
 	const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
 	return {
-		eligibleForFreeToPaidUpsell: eligibleForFreeToPaidUpsell( state, siteId, i18n.moment() ),
+		isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId, i18n.moment() ),
 		hasDomainCredit: hasDomainCredit( state, siteId ),
 		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		pausedJetpackPluginsSetup: isJetpackPluginsStarted( state, siteId ) && ! isJetpackPluginsFinished( state, siteId )
