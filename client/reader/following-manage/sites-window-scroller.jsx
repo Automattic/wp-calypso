@@ -26,7 +26,7 @@ class SitesWindowScroller extends Component {
 
 	heightCache = new CellMeasurerCache( {
 		fixedWidth: true,
-		minHeight: 50,
+		minHeight: 70,
 	} );
 
 	siteRowRenderer = ( { index, key, style, parent } ) => {

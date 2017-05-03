@@ -21,6 +21,37 @@
 	padding-top: 10px;
 }
 
+// Load more results
+.following-manage__show-more {
+	border-top: 1px solid lighten( $gray, 20% );
+	display: flex;
+	justify-content: center;
+	margin-top: 10px;
+}
+
+.following-manage__show-more-button.button {
+	border-top: 0;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	color: $gray;
+	font-size: 11px;
+	padding: 2px 9px 6px 11px;
+	position: relative;
+		top: -1px;
+
+	.gridicon.gridicons-chevron-down {
+		height: 14px;
+		left: -4px;
+		top: 3px;
+		width: 14px;
+	}
+
+	&:hover {
+		color: darken( $gray, 10% );
+		cursor: pointer;
+	}
+}
+
 // Subscription controls
 .following-manage__subscriptions-controls {
 	display: flex;
@@ -74,7 +105,7 @@
 	}
 
 	.following-manage__subscriptions-sort .following-manage__sort-controls {
-		color: darken( $gray, 10% );
+		color: $gray;
 		font-size: 12px;
 		font-weight: normal;
 		width: 100%;
