@@ -42,11 +42,11 @@ const Controller = {
 
 export default function() {
 	if ( config.isEnabled( 'woocommerce/extension-dashboard' ) ) {
-		page( '/store/:site?', siteSelection, navigation, Controller.dashboard );
-		page( '/store/:site?/products/add', siteSelection, navigation, Controller.addProduct );
+		page( '/store/:site', siteSelection, navigation, Controller.dashboard );
+		page( '/store/products/:site/add', siteSelection, navigation, Controller.addProduct );
 	}
 
 	if ( config.isEnabled( 'woocommerce/extension-stats' ) ) {
-		page( '/store/stats/:site?', siteSelection, navigation, Controller.stats );
+		page( '/store/stats/:site', siteSelection, navigation, Controller.stats );
 	}
 }
