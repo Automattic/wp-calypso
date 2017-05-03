@@ -85,6 +85,7 @@ export const loginUser = ( usernameOrEmail, password ) => dispatch => {
  */
 export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, two_step_nonce, remember_me ) => {
 	return request.post( config( 'two_step_authentication_xhr' ) )
+		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
