@@ -7,18 +7,18 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import {
-	WOOCOMMERCE_API_ERROR,
-	WOOCOMMERCE_API_ERROR_CLEAR,
+	WOOCOMMERCE_API_SET_ERROR,
+	WOOCOMMERCE_API_CLEAR_ERROR,
 } from '../action-types';
 
 const debug = debugFactory( 'woocommerce:wc-api:error' );
 
 export default {
-	[ WOOCOMMERCE_API_ERROR ]: apiError,
-	[ WOOCOMMERCE_API_ERROR_CLEAR ]: clearApiError,
+	[ WOOCOMMERCE_API_SET_ERROR ]: setApiError,
+	[ WOOCOMMERCE_API_CLEAR_ERROR ]: clearApiError,
 };
 
-function apiError( siteState, action ) {
+function setApiError( siteState, action ) {
 	const { data, originalAction, time } = action.payload;
 	const newError = { data, originalAction, time };
 
