@@ -24,6 +24,7 @@ import {
 	isFinished as isJetpackPluginsFinished
 } from 'state/plugins/premium/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
 
 const SiteNotice = React.createClass( {
 	propTypes: {
@@ -131,6 +132,7 @@ const SiteNotice = React.createClass( {
 				{ this.domainCreditNotice() }
 				{ this.jetpackPluginsSetupNotice() }
 				{ this.freeToPaidPlanNotice() }
+				<DomainToPaidPlanNotice site={ site } />
 			</div>
 		);
 	}
