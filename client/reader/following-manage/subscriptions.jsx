@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import escapeRegexp from 'escape-string-regexp';
-import { noop, reverse, sortBy, trimStart } from 'lodash';
+import { reverse, sortBy, trimStart } from 'lodash';
 import page from 'page';
 
 /**
@@ -35,8 +35,6 @@ class FollowingManageSubscriptions extends Component {
 		sortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
 		windowScrollerRef: PropTypes.func,
 	};
-
-	defaultProps = { windowScrollerRef: noop }
 
 	state = { forceRefresh: false };
 
