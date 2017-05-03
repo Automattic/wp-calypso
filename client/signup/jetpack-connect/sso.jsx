@@ -44,7 +44,7 @@ import EmailVerificationGate from 'components/email-verification/email-verificat
  */
 const debug = debugModule( 'calypso:jetpack-connect:sso' );
 
-class JetpackSSOForm extends Component {
+class JetpackSsoForm extends Component {
 	state = {
 		showTermsDialog: false
 	};
@@ -495,4 +495,4 @@ export default connect(
 		authorizeSSO,
 		validateSSONonce
 	}, dispatch )
-)( localize( JetpackSSOForm ) );
+)( localize( JetpackSsoForm ) );
