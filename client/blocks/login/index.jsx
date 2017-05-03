@@ -10,12 +10,19 @@ import { connect } from 'react-redux';
 import config from 'config';
 import { createFormAndSubmit } from 'lib/form';
 import LoginForm from './login-form';
+import TwoFactorAuthentication from './two-factor-authentication';
+import { isTwoFactorEnabled } from 'state/login/selectors';
 
 class Login extends Component {
 	static propTypes = {
 		title: PropTypes.string,
 		redirectLocation: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
+	};
+
+	state = {
+		hasSubmittedValidCredentials: false,
+		rememberMe: false,
 	};
 
 	handleValidUsernamePassword = ( { usernameOrEmail, password, rememberMe } ) => {
@@ -26,6 +33,11 @@ class Login extends Component {
 				redirect_to: this.props.redirectLocation || window.location.origin,
 				rememberme: rememberMe ? 1 : 0,
 			} );
+		} else {
+			this.setState( {
+				hasSubmittedValidCredentials: true,
+				rememberMe,
+			} );
 		}
 	};
 
@@ -33,15 +45,21 @@ class Login extends Component {
 		// TODO: submit the form to /wp-login with the 2FA code
 	};
 
-	render() {
+	renderContent() {
 		const {
 			title,
 			twoFactorEnabled,
 		} = this.props;
 
-		if ( twoFactorEnabled ) {
+		const {
+			rememberMe,
+			hasSubmittedValidCredentials,
+		} = this.state;
+
+		if ( twoFactorEnabled && hasSubmittedValidCredentials ) {
 			return (
-				<div
+				<TwoFactorAuthentication
+					rememberMe={ rememberMe }
 					onSuccess={ this.handleValid2FACode } />
 			);
 		}
@@ -52,10 +70,18 @@ class Login extends Component {
 				onSuccess={ this.handleValidUsernamePassword } />
 		);
 	}
+
+	render() {
+		return (
+			<div>
+				{ this.renderContent() }
+			</div>
+		);
+	}
 }
 
 export default connect(
-	() => ( {
-		twoFactorEnabled: false
+	( state ) => ( {
+		twoFactorEnabled: isTwoFactorEnabled( state )
 	} ),
 )( Login );

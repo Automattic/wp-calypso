@@ -24,6 +24,7 @@
 	"jetpack_min_version": false,
 	"login_url": false,
 	"login_url_xhr": "https://wordpress.com/wp-login.php?action=login-endpoint",
+	"two_step_authentication_xhr": "https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint",
 	"logout_url": false,
 	"mc_analytics_enabled": false,
 	"oauth_client_id": false,
