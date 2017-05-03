@@ -94,14 +94,15 @@ endif
 # Packagers
 package: build-if-changed
 	@echo "Bundling app and server"
-	@rm -rf $(BUILD_DIR)/desktop $(BUILD_DIR)/public $(BUILD_DIR)/server $(BUILD_DIR)/config
+	@rm -rf $(BUILD_DIR)/desktop $(BUILD_DIR)/public $(BUILD_DIR)/client $(BUILD_DIR)/server $(BUILD_DIR)/config
 	@NODE_PATH=../server$(ENV_PATH_SEP)../client $(WEBPACK_BIN) --config $(THIS_DIR)/webpack.config.js
 	@echo "Copying Calypso client and public files"
 	@sed -e 's/build\///' $(THIS_DIR)/package.json >$(BUILD_DIR)/package.json
-	@mkdir -p $(BUILD_DIR)/public $(BUILD_DIR)/server $(BUILD_DIR)/config $(BUILD_DIR)/desktop
+	@mkdir -p $(BUILD_DIR)/public $(BUILD_DIR)/client $(BUILD_DIR)/server $(BUILD_DIR)/config $(BUILD_DIR)/desktop
 	@cp -R $(THIS_DIR)/public_desktop $(BUILD_DIR)/desktop
 	@cp -R $(CALYPSO_DIR)/public $(BUILD_DIR)
 	@cp -R $(CALYPSO_DIR)/server/pages $(BUILD_DIR)/server
+	@cp -R $(CALYPSO_DIR)/client/extensions $(BUILD_DIR)/client
 	@if [ -f $(CALYPSO_DIR)/config/secrets.json ]; then cp $(CALYPSO_DIR)/config/secrets.json $(BUILD_DIR)/config/secrets.json; else cp $(CALYPSO_DIR)/config/empty-secrets.json $(BUILD_DIR)/config/secrets.json; fi;
 	@cp $(CALYPSO_DIR)/config/_shared.json $(BUILD_DIR)/config/
 	@cp $(CALYPSO_DIR)/config/desktop.json $(BUILD_DIR)/config/
