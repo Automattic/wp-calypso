@@ -7,9 +7,11 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	getTwoFactorAuthRequestError,
 	getTwoFactorUserId,
 	getTwoFactorAuthNonce,
 	isTwoFactorEnabled,
+	isRequestingTwoFactorAuth,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -50,6 +52,50 @@ describe( 'selectors', () => {
 			} );
 
 			expect( nonce ).to.equal( 'abcdef123456' );
+		} );
+	} );
+
+	describe( 'isRequestingTwoFactorAuth', () => {
+		it( 'should return false by default', () => {
+			expect( isRequestingTwoFactorAuth( undefined ) ).to.be.false;
+		} );
+
+		it( 'should return true if the request is in progress', () => {
+			expect( isRequestingTwoFactorAuth( {
+				login: {
+					isRequestingTwoFactorAuth: true
+				}
+			} ) ).to.be.true;
+		} );
+
+		it( 'should return false if the request is not in progress', () => {
+			expect( isRequestingTwoFactorAuth( {
+				login: {
+					isRequestingTwoFactorAuth: false
+				}
+			} ) ).to.be.false;
+		} );
+	} );
+
+	describe( 'getTwoFactorAuthRequestError', () => {
+		it( 'should return null by default', () => {
+			expect( getTwoFactorAuthRequestError( undefined ) ).to.be.null;
+		} );
+
+		it( 'should return null if there is no error', () => {
+			expect( getTwoFactorAuthRequestError( {
+				login: {
+					twoFactorAuthRequestError: null
+				}
+			} ) ).to.be.null;
+		} );
+
+		it( 'should return an error for the request if there is an error', () => {
+			expect( getTwoFactorAuthRequestError( {
+				login: {
+					twoFactorAuthRequestError: 'some error'
+				}
+			} ) ).to.equal( 'some error' );
 		} );
 	} );
 
