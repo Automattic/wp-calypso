@@ -52,7 +52,7 @@ const FollowingManageSearchFeedsResults = ( {
 						onClick={ showMoreResultsClicked }
 						className="following-manage__show-more-button button">
 							<Gridicon icon="chevron-down" />
-							Show more
+							{ translate( 'Show more' ) }
 					</Button>
 				</div>
 			</div>
