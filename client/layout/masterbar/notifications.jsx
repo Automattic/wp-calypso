@@ -137,7 +137,6 @@ class MasterbarItemNotifications extends Component {
 					icon="bell"
 					onClick={ this.toggleNotesFrame }
 					isActive={ this.props.isActive }
-					renderAsAnchor={ false }
 					tooltip={ this.props.tooltip }
 					className={ classes }
 				>
