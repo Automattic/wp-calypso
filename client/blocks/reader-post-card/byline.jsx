@@ -98,14 +98,16 @@ class PostByline extends React.Component {
 					isCompact={ true } />
 				<div className="reader-post-card__byline-details">
 					{ ( shouldDisplayAuthor || showSiteName ) && <div className="reader-post-card__byline-author-site">
-							<ReaderAuthorLink
-								className="reader-post-card__link"
-								author={ post.author }
-								siteUrl={ streamUrl }
-								post={ post }>
-								{ post.author.name }
-							</ReaderAuthorLink>
-							{ showSiteName && ', ' }
+							{ shouldDisplayAuthor &&
+								<ReaderAuthorLink
+									className="reader-post-card__link"
+									author={ post.author }
+									siteUrl={ streamUrl }
+									post={ post }>
+									{ post.author.name }
+								</ReaderAuthorLink>
+							}
+							{ ( shouldDisplayAuthor && showSiteName ) ? ', ' : '' }
 							{ showSiteName && <ReaderSiteStreamLink
 								className="reader-post-card__site reader-post-card__link"
 								feedId={ feedId }
