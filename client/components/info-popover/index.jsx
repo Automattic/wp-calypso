@@ -37,17 +37,17 @@ export default class InfoPopover extends Component {
 
 	state = { showPopover: false };
 
-	_onClick = ( event ) => {
+	handleClick = ( event ) => {
 		event.preventDefault();
 		this.setState( {
 			showPopover: ! this.state.showPopover },
-			this._recordStats
+			this.recordStats
 		);
 	}
 
-	_onClose = () => this.setState( { showPopover: false }, this._recordStats );
+	handleClose = () => this.setState( { showPopover: false }, this.recordStats );
 
-	_recordStats = () => {
+	recordStats = () => {
 		const { gaEventCategory, popoverName } = this.props;
 
 		if ( gaEventCategory && popoverName ) {
@@ -59,7 +59,7 @@ export default class InfoPopover extends Component {
 	render() {
 		return (
 			<span
-				onClick={ this._onClick }
+				onClick={ this.handleClick }
 				ref="infoPopover"
 				className={ classNames(
 					'info-popover',
@@ -74,7 +74,7 @@ export default class InfoPopover extends Component {
 					context={ this.refs && this.refs.infoPopover }
 					ignoreContext={ this.props.ignoreContext }
 					position={ this.props.position }
-					onClose={ this._onClose }
+					onClose={ this.handleClose }
 					className={ classNames(
 							'popover',
 							'info-popover__tooltip',
