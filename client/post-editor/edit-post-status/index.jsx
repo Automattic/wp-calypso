@@ -100,10 +100,12 @@ class EditPostStatus extends Component {
 	};
 
 	render() {
-		let isSticky, isPublished, isPending, canPublish, isScheduled;
+		let isSticky, isPublished, isPending, canPublish, isScheduled, isPrivate, isPasswordProtected;
 		const { translate } = this.props;
 
 		if ( this.props.post ) {
+			isPasswordProtected = postUtils.getVisibility( this.props.post ) === 'password';
+			isPrivate = postUtils.isPrivate( this.props.post );
 			isSticky = this.props.post.sticky;
 			isPending = postUtils.isPending( this.props.post );
 			isPublished = postUtils.isPublished( this.props.savedPost );
@@ -142,7 +144,7 @@ class EditPostStatus extends Component {
 					{ this.renderTZTooltop() }
 					{ this.renderPostSchedulePopover() }
 				</span>
-				{ this.props.type === 'post' &&
+				{ this.props.type === 'post' && ! isPrivate && ! isPasswordProtected &&
 					<label className="edit-post-status__sticky">
 						<span className="edit-post-status__label-text">
 							{ translate( 'Stick to the front page' ) }
