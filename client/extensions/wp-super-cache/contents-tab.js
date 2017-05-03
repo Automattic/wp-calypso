@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { pick } from 'lodash';
 
 /**
@@ -14,6 +14,20 @@ import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
 
 class ContentsTab extends Component {
+	static propTypes = {
+		fields: PropTypes.object,
+		handleDeleteCache: PropTypes.func.isRequired,
+		isDeleting: PropTypes.bool,
+		isMultisite: PropTypes.bool,
+		translate: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		fields: {},
+		isDeleting: false,
+		isMultisite: false,
+	};
+
 	state = {
 		isDeleting: false,
 		isDeletingAll: false,
