@@ -76,7 +76,7 @@ export class Notifications extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		// tell the iframe if we're changing visible status
-		if ( nextProps.visible !== this.props.visible ) {
+		if ( nextProps.isShowing !== this.props.isShowing ) {
 			this.setState( { shownOnce: true, widescreen: false } );
 		}
 	}
@@ -225,8 +225,8 @@ export class Notifications extends Component {
 			<div
 				id="wpnc-panel"
 				className={ classNames( 'wide', 'wpnc__main', {
-					'wpnt-open': this.props.visible,
-					'wpnt-closed': ! this.props.visible,
+					'wpnt-open': this.props.isShowing,
+					'wpnt-closed': ! this.props.isShowing,
 				} ) }
 			>
 				<NotificationsPanel

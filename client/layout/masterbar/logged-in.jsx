@@ -51,9 +51,7 @@ const MasterbarLoggedIn = React.createClass( {
 	},
 
 	clickNotifications() {
-		this.setState( {
-			showNotifications: ! this.state.showNotifications
-		} );
+		this.setState( { showNotifications: ! this.state.showNotifications } );
 	},
 
 	isActive( section ) {
@@ -132,6 +130,7 @@ const MasterbarLoggedIn = React.createClass( {
 				<Notifications
 					user={ this.props.user }
 					onClick={ this.clickNotifications }
+					isShowing={ this.state.showNotifications }
 					isActive={ this.isActive( 'notifications' ) }
 					className="masterbar__item-notifications"
 					tooltip={ translate( 'Manage your notifications', { textOnly: true } ) }
