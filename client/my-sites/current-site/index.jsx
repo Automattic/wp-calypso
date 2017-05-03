@@ -144,10 +144,10 @@ class CurrentSite extends Component {
 							onClick={ this.previewSite }
 							className={ `current-site__view-site${ this.props.isPreviewShowing ? ' selected' : '' }` }
 						>
-							<Gridicon icon="computer" />
 							<span className="current-site__view-site-text">
 								{ translate( 'Site Preview' ) }
 							</span>
+							<Gridicon icon="computer" />
 						</a>
 					</div>
 					: <AllSites />
