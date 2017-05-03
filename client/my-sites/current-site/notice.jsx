@@ -132,7 +132,7 @@ const SiteNotice = React.createClass( {
 				{ this.domainCreditNotice() }
 				{ this.jetpackPluginsSetupNotice() }
 				{ this.freeToPaidPlanNotice() }
-				<DomainToPaidPlanNotice site={ site } />
+				<DomainToPaidPlanNotice />
 			</div>
 		);
 	}

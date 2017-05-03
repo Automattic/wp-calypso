@@ -5,7 +5,6 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import {
-	get,
 	noop,
 } from 'lodash';
 
@@ -13,6 +12,7 @@ import {
  * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { eligibleForDomainToPaidPlanUpsell } from 'state/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -55,10 +55,9 @@ export class DomainToPaidPlanNotice extends Component {
 	}
 }
 
-const mapStateToProps = ( state, props ) => {
-	const siteId = get( props, 'site.ID' );
+const mapStateToProps = ( state ) => {
 	return {
-		eligible: eligibleForDomainToPaidPlanUpsell( state, siteId ),
+		eligible: eligibleForDomainToPaidPlanUpsell( state, getSelectedSiteId( state ) ),
 	};
 };
 const mapDispatchToProps = { recordTracksEvent };
