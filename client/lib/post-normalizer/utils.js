@@ -141,6 +141,7 @@ export function iframeIsWhitelisted( iframe ) {
 		'google.com',
 		'mixcloud.com',
 		'players.brightcove.net',
+		'embed.ted.com',
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
