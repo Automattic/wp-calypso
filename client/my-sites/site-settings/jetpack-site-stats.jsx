@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
  */
 import Gridicon from 'gridicons';
 import FoldableCard from 'components/foldable-card';
+import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
@@ -19,7 +20,8 @@ import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import QuerySiteRoles from 'components/data/query-site-roles';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getStatsPathForTab } from 'lib/route/path';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteRoles } from 'state/site-roles/selectors';
 import {
 	isJetpackModuleActive,
@@ -100,6 +102,7 @@ class JetpackSiteStats extends Component {
 		const {
 			siteId,
 			siteRoles,
+			siteSlug,
 			translate
 		} = this.props;
 		const header = (
@@ -171,6 +174,10 @@ class JetpackSiteStats extends Component {
 						}
 					</FormFieldset>
 				</FoldableCard>
+
+				<CompactCard href={ getStatsPathForTab( 'day', siteSlug ) }>
+					{ translate( 'View your site stats' ) }
+				</CompactCard>
 			</div>
 		);
 	}
@@ -184,6 +191,7 @@ export default connect(
 
 		return {
 			siteId,
+			siteSlug: getSelectedSiteSlug( state, siteId ),
 			statsModuleActive: !! isJetpackModuleActive( state, siteId, 'stats' ),
 			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 			siteRoles: getSiteRoles( state, siteId ),
