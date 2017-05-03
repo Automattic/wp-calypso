@@ -103,6 +103,7 @@
 
 	@include breakpoint( "<960px" ) {
 		position: relative;
+		margin-top: 0;
 		top: 0;
 		width: 100%;
 		height: 75vw; // force proportions
@@ -154,7 +155,8 @@
 	}
 
 	@include breakpoint( "<960px" ) {
-		top: 90%;
+		top: auto;
+		bottom: -10px;
 		left: 0;
 		right: 0;
 
