@@ -20,7 +20,16 @@ export default class InfoPopover extends Component {
 			getDOMNode: PropTypes.func
 		} ),
 		popoverName: PropTypes.string,
-		position: PropTypes.string,
+		position: PropTypes.oneOf( [
+			'top',
+			'top right',
+			'right',
+			'bottom right',
+			'bottom',
+			'bottom left',
+			'left',
+			'top left',
+		] ),
 		rootClassName: PropTypes.string,
 	};
 
