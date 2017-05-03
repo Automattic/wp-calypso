@@ -9,7 +9,7 @@ import { stub } from 'sinon';
  */
 import useMockery from 'test/helpers/use-mockery';
 
-describe( 'eligibleForFreeToPaidUpsell', () => {
+describe( 'isEligibleForFreeToPaidUpsell', () => {
 	const state = 'state';
 	const moment = 'moment';
 	const siteId = 'siteId';
@@ -18,7 +18,7 @@ describe( 'eligibleForFreeToPaidUpsell', () => {
 	let isMappedDomainSite;
 	let isSiteOnFreePlan;
 	let isUserRegistrationDaysWithinRange;
-	let eligibleForFreeToPaidUpsell;
+	let isEligibleForFreeToPaidUpsell;
 
 	useMockery( mockery => {
 		canCurrentUser = stub();
@@ -35,7 +35,7 @@ describe( 'eligibleForFreeToPaidUpsell', () => {
 	} );
 
 	before( () => {
-		eligibleForFreeToPaidUpsell = require( '../eligible-for-free-to-paid-upsell' );
+		isEligibleForFreeToPaidUpsell = require( '../is-eligible-for-free-to-paid-upsell' );
 	} );
 
 	const meetAllConditions = () => {
@@ -48,29 +48,29 @@ describe( 'eligibleForFreeToPaidUpsell', () => {
 	it( 'should return false when user can not manage options', () => {
 		meetAllConditions();
 		canCurrentUser.withArgs( state, siteId, 'manage_options' ).returns( false );
-		expect( eligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.false;
+		expect( isEligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.false;
 	} );
 
 	it( 'should return false when site has mapped domain', () => {
 		meetAllConditions();
 		isMappedDomainSite.withArgs( state, siteId ).returns( true );
-		expect( eligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.false;
+		expect( isEligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.false;
 	} );
 
 	it( 'should return false when site is not on a free plan', () => {
 		meetAllConditions();
 		isSiteOnFreePlan.withArgs( state, siteId ).returns( false );
-		expect( eligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.false;
+		expect( isEligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.false;
 	} );
 
 	it( 'should return false when user registration days is not within range', () => {
 		meetAllConditions();
 		isUserRegistrationDaysWithinRange.withArgs( state, moment, 0, 180 ).returns( false );
-		expect( eligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.false;
+		expect( isEligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.false;
 	} );
 
 	it( 'should return true when all conditions are met', () => {
 		meetAllConditions();
-		expect( eligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.true;
+		expect( isEligibleForFreeToPaidUpsell( state, siteId, moment ) ).to.be.true;
 	} );
 } );

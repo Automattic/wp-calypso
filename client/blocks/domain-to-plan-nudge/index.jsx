@@ -22,7 +22,7 @@ import {
 } from 'state/sites/plans/selectors';
 import QuerySitePlans from 'components/data/query-site-plans';
 import formatCurrency from 'lib/format-currency';
-import { eligibleForDomainToPaidPlanUpsell } from 'state/selectors';
+import { isEligibleForDomainToPaidPlanUpsell } from 'state/selectors';
 
 class DomainToPlanNudge extends Component {
 	static propTypes = {
@@ -107,7 +107,7 @@ export default connect(
 			productId = getPlan( PLAN_PERSONAL ).getProductId();
 
 		return {
-			isEligible: eligibleForDomainToPaidPlanUpsell( state, siteId, ),
+			isEligible: isEligibleForDomainToPaidPlanUpsell( state, siteId, ),
 			discountedRawPrice: getPlanDiscountedRawPrice( state, siteId, productSlug ),
 			productId,
 			productSlug,

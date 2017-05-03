@@ -14,7 +14,7 @@ import {
  * @param {Number} siteId Site ID
  * @return {?Boolean} True if the user can participate in the domain to paid plan upsell
  */
-const eligibleForDomainToPaidPlanUpsell = ( state, siteId ) => {
+const isEligibleForDomainToPaidPlanUpsell = ( state, siteId ) => {
 	const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 	const siteIsOnFreePlan = isSiteOnFreePlan( state, siteId );
 	const siteHasMappedDomain = isMappedDomainSite( state, siteId );
@@ -22,4 +22,4 @@ const eligibleForDomainToPaidPlanUpsell = ( state, siteId ) => {
 	return userCanManageOptions && siteHasMappedDomain && siteIsOnFreePlan;
 };
 
-export default eligibleForDomainToPaidPlanUpsell;
+export default isEligibleForDomainToPaidPlanUpsell;
