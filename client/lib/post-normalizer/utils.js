@@ -142,6 +142,7 @@ export function iframeIsWhitelisted( iframe ) {
 		'mixcloud.com',
 		'players.brightcove.net',
 		'embed.ted.com',
+		'fast.wistia.net',
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
