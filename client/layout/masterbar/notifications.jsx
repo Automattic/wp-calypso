@@ -34,8 +34,28 @@ class MasterbarItemNotifications extends Component {
 		animationState: 0,
 	};
 
-	componentWillReceiveProps() {
+	componentWillReceiveProps( nextProps ) {
+		const {
+			isNotificationsOpen: isOpen,
+			recordOpening,
+		} = nextProps;
+
+		const toggledOpen = ! isOpen;
+
 		this.user = this.props.user.get();
+
+		if ( ! this.props.isNotificationsOpen && isOpen ) {
+			recordOpening( {
+				unread_notifications: store.get( 'wpnotes_unseen_count' ) )
+			} );
+			this.setNotesIndicator( 0 );
+		}
+
+		// focus on main window if we just closed the notes panel
+		if ( this.props.isNotificationsOpen && ! iOpen ) {
+			this.getNotificationLinkDomNode().blur();
+			window.focus();
+		}
 
 		this.setState( {
 			newNote: this.user && this.user.has_unseen_notes,
@@ -62,30 +82,12 @@ class MasterbarItemNotifications extends Component {
 		}
 
 		const {
-			toggleNotificationsPanel: togglePanel,
-			isNotificationsOpen: isOpen,
 			onClick,
-			recordOpening,
+			toggleNotificationsPanel: togglePanel,
 		} = this.props;
 
-		const toggledOpen = ! isOpen;
-
 		togglePanel();
-
 		onClick( toggledOpen );
-
-		if ( toggledOpen ) {
-			recordOpening( {
-				unread_notifications: store.get( 'wpnotes_unseen_count' )
-			} );
-			this.setNotesIndicator( 0 );
-		}
-
-		// focus on main window if we just closed the notes panel
-		if ( ! toggledOpen ) {
-			this.getNotificationLinkDomNode().blur();
-			window.focus();
-		}
 	};
 
 	getNotificationLinkDomNode = () => {
