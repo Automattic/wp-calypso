@@ -121,6 +121,7 @@ export isJetpackSettingsSaveFailure from './is-jetpack-settings-save-failure';
 export isJetpackSiteInDevelopmentMode from './is-jetpack-site-in-development-mode';
 export isJetpackSiteInStagingMode from './is-jetpack-site-in-staging-mode';
 export isMappedDomainSite from './is-mapped-domain-site';
+export isNotificationsPanelOpen from './is-notifications-panel-open';
 export isPendingEmailChange from './is-pending-email-change';
 export isPluginActive from './is-plugin-active';
 export isPrivateSite from './is-private-site';
