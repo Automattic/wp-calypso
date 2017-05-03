@@ -15,7 +15,7 @@ export class QueryThemeFilters extends Component {
 	}
 
 	componentWillMount() {
-		requestThemeFilters();
+		this.props.requestThemeFilters();
 	}
 
 	render() {
