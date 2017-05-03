@@ -96,7 +96,7 @@ class ResetPasswordConfirmForm extends Component {
 							}
 						) }
 					</p>
-					{ error && <ErrorMessage /> }
+					{ error && <ErrorMessage error={ error } /> }
 					<FormButton
 						className="reset-password-confirm-form__button submit"
 						type="submit"
