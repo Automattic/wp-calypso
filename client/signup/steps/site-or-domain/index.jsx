@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,6 +13,7 @@ import { tlds } from 'lib/domains/constants';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import SiteOrDomainChoice from './choice';
+import { getCurrentUserId } from 'state/current-user/selectors';
 // TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
 import DomainImage from 'signup/steps/design-type-with-store/domain-image';
 import NewSiteImage from 'signup/steps/design-type-with-store/new-site-image';
@@ -53,20 +55,35 @@ class SiteOrDomain extends Component {
 	getChoices() {
 		const { translate } = this.props;
 
-		return [
+		const choices = [
 			{
 				type: 'page',
 				label: translate( 'New site' ),
 				image: <NewSiteImage />,
 				description: translate( 'Choose a theme, customize, and launch your site. Free domain included with all plans.' )
-			},
+			}
+		];
+
+		if ( this.props.isLoggedIn ) {
+			choices.push(
+				{
+					type: 'existing-site',
+					label: 'Link to an existing site',
+					image: <NewSiteImage />
+				}
+			);
+		}
+
+		choices.push(
 			{
 				type: 'domain',
 				label: translate( 'Just buy a domain' ),
 				image: <DomainImage />,
 				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' )
-			},
-		];
+			}
+		);
+
+		return choices;
 	}
 
 	renderChoices() {
@@ -158,4 +175,10 @@ class SiteOrDomain extends Component {
 	}
 }
 
-export default localize( SiteOrDomain );
+export default connect(
+	( state ) => {
+		return {
+			isLoggedIn: !! getCurrentUserId( state )
+		};
+	}
+)( localize( SiteOrDomain ) );
