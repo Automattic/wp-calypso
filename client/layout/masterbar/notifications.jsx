@@ -10,7 +10,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import MasterbarItem from './item';
-import Notifications from 'notifications';
+// import Notifications from 'notifications';
 import store from 'store';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -122,15 +122,17 @@ const MasterbarItemNotifications = React.createClass( {
 					className="masterbar__notifications-bubble"
 					key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) }
 				/>
-				<Notifications
-					isShowing={ this.props.isShowing }
-					checkToggle={ this.checkToggleNotes }
-					setIndicator={ this.setNotesIndicator }
-				/>
 			</MasterbarItem>
 		);
 	}
 } );
+
+/*
+<Notifications
+	visible={ this.state.isShowingPopover }
+	checkToggle={ this.checkToggleNotes }
+	setIndicator={ this.setNotesIndicator } />
+*/
 
 const mapDispatchToProps = dispatch => ( {
 	recordOpening: unread_notifications => dispatch( recordTracksEvent( 'calypso_notification_open', { unread_notifications } ) )
