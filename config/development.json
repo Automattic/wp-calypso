@@ -152,6 +152,15 @@
 		"upgrades/presale-chat": true,
 		"webpack/persistent-caching": false,
 		"woocommerce/extension-dashboard": true,
+		"woocommerce/extension-extensions": true,
+		"woocommerce/extension-orders": true,
+		"woocommerce/extension-products": true,
+		"woocommerce/extension-products-import": true,
+		"woocommerce/extension-promotions": true,
+		"woocommerce/extension-settings": true,
+		"woocommerce/extension-settings-checkout": true,
+		"woocommerce/extension-settings-shipping": true,
+		"woocommerce/extension-settings-tax": true,
 		"woocommerce/extension-stats": false,
 		"wp-login": true
 	}

@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -12,9 +13,13 @@ import SectionHeader from 'components/section-header';
 
 export default class Dashboard extends Component {
 
+	static propTypes = {
+		className: PropTypes.string,
+	};
+
 	render() {
 		return (
-			<Main className="woocommerce dashboard">
+			<Main className={ classNames( 'dashboard', this.props.className ) }>
 				<SectionHeader label="WooCommerce Store" />
 				<Card>
 					<p>This is the start of something great!</p>

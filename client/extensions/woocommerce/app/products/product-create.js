@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -13,6 +13,9 @@ import { editProduct, editProductAttribute } from '../../state/ui/products/actio
 import ProductForm from './product-form';
 
 class ProductCreate extends Component {
+	static propTypes = {
+		className: PropTypes.string,
+	};
 
 	componentDidMount() {
 		const { product } = this.props;
@@ -29,10 +32,11 @@ class ProductCreate extends Component {
 	}
 
 	render() {
-		const { product } = this.props;
+		const { product, className } = this.props;
 
 		return (
 			<ProductForm
+				className={ className }
 				product={ product || { type: 'simple' } }
 				editProduct={ this.props.editProduct }
 				editProductAttribute={ this.props.editProductAttribute }
