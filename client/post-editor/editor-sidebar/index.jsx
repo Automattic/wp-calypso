@@ -95,12 +95,6 @@ export default class EditorSidebar extends Component {
 						onSave={ onSave }
 						toggleChildSidebar={ this.toggleChildSidebar }
 					/>
-					<SidebarFooter>
-						<EditorDeletePost
-							post={ post }
-							onTrashingPost={ onTrashingPost }
-						/>
-					</SidebarFooter>
 				</div>
 				<div className="editor-sidebar__child">
 					{
@@ -115,6 +109,14 @@ export default class EditorSidebar extends Component {
 							/>
 					}
 				</div>
+				<SidebarFooter>
+					{ this.state.childSidebar === CHILD_SIDEBAR_NONE && (
+						<EditorDeletePost
+							post={ post }
+							onTrashingPost={ onTrashingPost }
+						/>
+					) }
+				</SidebarFooter>
 			</div>
 		);
 	}
