@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, isEqual } from 'lodash';
+import { find, isEqual, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -9,13 +9,15 @@ import { find, isEqual } from 'lodash';
 import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_EDIT_PRODUCT_VARIATION,
-	WOOCOMMERCE_UPDATE_PRODUCT_VARIATIONS
+	WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE,
 } from '../../../action-types';
-import { nextBucketIndex, getBucket } from '../../helpers';
+import { getBucket } from '../../helpers';
+import { editProductAttribute } from '../edits-reducer';
+import generateVariations from '../../../../lib/generate-variations';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_EDIT_PRODUCT_VARIATION ]: editProductVariationAction,
-	[ WOOCOMMERCE_UPDATE_PRODUCT_VARIATIONS ]: updateProductVariationsAction,
+	[ WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE ]: editProductVariationsAction,
 } );
 
 function editProductVariationAction( edits, action ) {
@@ -29,7 +31,7 @@ function editProductVariationAction( edits, action ) {
 	const _edits = prevEdits.map( ( productEdits ) => {
 		if ( productId === productEdits.productId ) {
 			found = true;
-			const variationId = variation && variation.id || nextBucketIndex( productEdits[ bucket ] );
+			const variationId = variation && variation.id || { index: Number( uniqueId() ) };
 			const _variation = variation || { id: variationId };
 			const _array = editProductVariation( productEdits[ bucket ], _variation, data );
 			return {
@@ -44,7 +46,7 @@ function editProductVariationAction( edits, action ) {
 
 	if ( ! found ) {
 		// product not in edits, so add it now.
-		const variationId = variation && variation.id || nextBucketIndex( prevEdits[ bucket ] );
+		const variationId = variation && variation.id || { index: Number( uniqueId() ) };
 		const _variation = variation || { id: variationId };
 
 		const _array = editProductVariation( null, _variation, data );
@@ -82,38 +84,22 @@ function editProductVariation( array, variation, data ) {
 	return _array;
 }
 
-function updateProductVariationsAction( edits, action ) {
-	const { product, existingVariations, variations } = action.payload;
-
-	let productEdits = null;
+function editProductVariationsAction( edits, action ) {
 	const prevEdits = edits || [];
+	const { product, attribute, data } = action.payload;
+	const attributes = editProductAttribute( product.attributes, attribute, data );
+	const variations = generateVariations( { ...product, attributes } );
+	let productEdits = null;
+
+	// Look for an existing product edits first.
 	const _edits = prevEdits.map( ( edit ) => {
 		if ( product.id === edit.productId ) {
 			productEdits = edit;
 		}
 		return edit;
 	} );
-	let creates = productEdits && productEdits.creates || [];
 
-	// Add new variations that do not exist yet.
-	variations.forEach( ( variation ) => {
-		if (
-			! find( creates, ( variationCreate ) => variationEqual( variation, variationCreate ) ) &&
-			! find( existingVariations, ( existingVariation ) => variationEqual( variation, existingVariation ) )
-		) {
-			creates.push( { id: nextBucketIndex( creates ), attributes: variation.attributes } );
-		}
-	} );
-
-	// Drop invalid variations from creates.
-	creates = creates.filter( ( variationCreate ) => {
-		if ( ! find( variations, ( variation ) => variationEqual( variationCreate, variation ) ) ) {
-			return false;
-		}
-		return true;
-	} );
-
-	// TODO Delete (or mark invisible) variations that already exist but are no longer valid via the API, using existingVariations.
+	const creates = editProductVariations( productEdits, variations );
 
 	if ( null === productEdits ) {
 		_edits.push( {
@@ -134,8 +120,25 @@ function updateProductVariationsAction( edits, action ) {
 	} );
 }
 
-function variationEqual( variation, variation2 ) {
-	const attributes = variation && variation.attributes || [];
-	const attributes2 = variation2 && variation2.attributes || [];
-	return isEqual( attributes, attributes2 );
+// TODO Check against a product's existing variations (retrieved from the API) and deal with those in the checks below.
+function editProductVariations( productEdits, variations ) {
+	const creates = productEdits && productEdits.creates || [];
+	// Add new variations that do not exist yet.
+	variations.forEach( ( variation ) => {
+		if ( ! find( creates, ( variationCreate ) => isEqual( variation.attributes, variationCreate.attributes ) ) ) {
+			creates.push( {
+				id: { index: Number( uniqueId() ) },
+				attributes: variation.attributes,
+				visible: true,
+			} );
+		}
+	} );
+
+	// Remove variations that are no longer valid.
+	return creates.filter( ( variationCreate ) => {
+		if ( ! find( variations, ( variation ) => isEqual( variationCreate.attributes, variation.attributes ) ) ) {
+			return false;
+		}
+		return true;
+	} );
 }
