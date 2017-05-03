@@ -145,6 +145,7 @@ export function iframeIsWhitelisted( iframe ) {
 		'fast.wistia.net',
 		'player.twitch.tv',
 		'archive.org',
+		'codepen.io',
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
