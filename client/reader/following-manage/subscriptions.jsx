@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import escapeRegexp from 'escape-string-regexp';
-import { reverse, sortBy, trimStart } from 'lodash';
+import { noop, reverse, sortBy, trimStart } from 'lodash';
 import page from 'page';
 
 /**
@@ -33,7 +33,11 @@ class FollowingManageSubscriptions extends Component {
 		doSearch: PropTypes.func.isRequired,
 		query: PropTypes.string,
 		sortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
+		windowScrollerRef: PropTypes.func,
 	};
+
+	defaultProps = { windowScrollerRef: noop }
+
 	state = { forceRefresh: false };
 
 	filterFollowsByQuery( query ) {
@@ -124,6 +128,7 @@ class FollowingManageSubscriptions extends Component {
 							width={ width }
 							remoteTotalCount={ sortedFollows.length }
 							forceRefresh={ this.state.forceRefresh }
+							windowScrollerRef={ this.props.windowScrollerRef }
 						/>
 					}
 				</div>
