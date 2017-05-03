@@ -22,8 +22,12 @@ class EasyTab extends Component {
 		cacheTestResults: PropTypes.object,
 		fields: PropTypes.object,
 		handleAutosavingToggle: PropTypes.func.isRequired,
+		handleDeleteCache: PropTypes.func.isRequired,
+		handleTestCache: PropTypes.func.isRequired,
+		isDeleting: PropTypes.bool,
 		isRequesting: PropTypes.bool,
 		isSaving: PropTypes.bool,
+		isTesting: PropTypes.bool,
 		site: PropTypes.object.isRequired,
 		siteId: PropTypes.number.isRequired,
 		testCache: PropTypes.func.isRequired,
@@ -33,16 +37,27 @@ class EasyTab extends Component {
 	static defaultProps = {
 		cacheTestResults: {},
 		fields: {},
+		isDeleting: false,
 		isRequesting: true,
 		isSaving: false,
+		isTesting: false,
 	};
 
 	state = {
 		httpOnly: true,
 		isBusy: false,
+		isDeleting: false,
+		isDeletingAll: false,
 	}
 
 	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isDeleting && ! nextProps.isDeleting ) {
+			this.setState( {
+				isDeleting: false,
+				isDeletingAll: false,
+			} );
+		}
+
 		if ( ! this.props.isTesting && nextProps.isTesting ) {
 			this.setState( { isBusy: true } );
 			return;
@@ -55,7 +70,17 @@ class EasyTab extends Component {
 
 	handleHttpOnlyChange = () => this.setState( { httpOnly: ! this.state.httpOnly } );
 
-	testCache = () => this.props.testCache( this.props.siteId, this.state.httpOnly );
+	deleteCache = () => {
+		this.setState( { isDeleting: true } );
+		this.props.handleDeleteCache( false );
+	}
+
+	deleteAllCaches = () => {
+		this.setState( { isDeletingAll: true } );
+		this.props.handleDeleteCache( true );
+	}
+
+	testCache = () => this.props.handleTestCache( this.state.httpOnly );
 
 	render() {
 		const {
@@ -67,6 +92,7 @@ class EasyTab extends Component {
 				is_cache_enabled,
 			},
 			handleAutosavingToggle,
+			isDeleting,
 			isRequesting,
 			isSaving,
 			isTesting,
@@ -175,11 +201,21 @@ class EasyTab extends Component {
 						) }
 					</p>
 					<div>
-						<Button compact>
+						<Button
+							compact
+							busy={ this.state.isDeleting }
+							disabled={ isDeleting }
+							name="wp_delete_cache"
+							onClick={ this.deleteCache }>
 							{ translate( 'Delete Cache' ) }
 						</Button>
 						{ site.jetpack && site.is_multisite &&
-							<Button compact>
+							<Button
+								compact
+								busy={ this.state.isDeletingAll }
+								disabled={ isDeleting }
+								name="wp_delete_all_cache"
+								onClick={ this.deleteAllCaches }>
 								{ translate( 'Delete Cache On All Blogs' ) }
 							</Button>
 						}

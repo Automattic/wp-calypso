@@ -3,6 +3,9 @@
  */
 import wp from 'lib/wp';
 import {
+	WP_SUPER_CACHE_DELETE_CACHE,
+	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
+	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
 	WP_SUPER_CACHE_RECEIVE_TEST_CACHE_RESULTS,
 	WP_SUPER_CACHE_TEST_CACHE,
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
@@ -44,6 +47,37 @@ export const testCache = ( siteId, httpOnly ) => {
 			.catch( () => {
 				dispatch( {
 					type: WP_SUPER_CACHE_TEST_CACHE_FAILURE,
+					siteId,
+				} );
+			} );
+	};
+};
+
+/*
+ * Deletes the cache for a site.
+ *
+ * @param  {Number} siteId Site ID
+ * @returns {Function} Action thunk that deletes the cache for a given site
+ */
+export const deleteCache = ( siteId, deleteAll ) => {
+	return ( dispatch ) => {
+		dispatch( {
+			type: WP_SUPER_CACHE_DELETE_CACHE,
+			siteId,
+		} );
+
+		return wp.req.post(
+			{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
+			{ path: '/wp-super-cache/v1/cache', body: JSON.stringify( { all: deleteAll } ), json: true } )
+			.then( () => {
+				dispatch( {
+					type: WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
+					siteId,
+				} );
+			} )
+			.catch( () => {
+				dispatch( {
+					type: WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 					siteId,
 				} );
 			} );
