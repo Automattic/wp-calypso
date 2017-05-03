@@ -27,7 +27,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import EditorVisibility from 'post-editor/editor-visibility';
 
-class EditPostStatus extends Component {
+export class EditPostStatus extends Component {
 
 	static propTypes = {
 		moment: PropTypes.func,
