@@ -22,6 +22,14 @@ export default function transformer(file, api) {
         j.identifier('translate')
       )
     ) );
+    if (thisTranslateInstances.size()) {
+      j(createClassInstance).replaceWith( () => (
+        j.callExpression(
+          j.identifier('localize'),
+          [ createClassInstance.value ]
+        )
+      ));
+    }
   } );
 
   return root
