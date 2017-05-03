@@ -71,7 +71,7 @@ export const EditorBasicsTour = makeTour(
 			arrow="top-left"
 			target=".mce-wpcom-insert-menu button"
 			placement="below"
-			style={ { marginLeft: '-10px' } }
+			style={ { marginLeft: '-10px', zIndex: 'auto' } }
 		>
 			<p>
 				{
