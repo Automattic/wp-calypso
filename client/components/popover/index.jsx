@@ -3,6 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import classNames from 'classnames';
 import clickOutside from 'click-outside';
@@ -15,12 +16,12 @@ import RootChild from 'components/root-child';
 import {
 	bindWindowListeners,
 	unbindWindowListeners,
-
 	suggested as suggestPosition,
 	constrainLeft,
 	isElement as isDOMElement,
 	offset
 } from './util';
+import { isRtl as isRtlSelector } from 'state/selectors';
 
 /**
  * Module variables
@@ -32,10 +33,12 @@ const __popovers = new Set();
 class Popover extends Component {
 	static propTypes = {
 		autoPosition: PropTypes.bool,
+		autoRtl: PropTypes.bool,
 		className: PropTypes.string,
 		closeOnEsc: PropTypes.bool,
 		id: PropTypes.string,
 		ignoreContext: PropTypes.shape( { getDOMNode: React.PropTypes.function } ),
+		isRtl: PropTypes.bool,
 		isVisible: PropTypes.bool,
 		position: PropTypes.oneOf( [
 			'top',
@@ -55,8 +58,10 @@ class Popover extends Component {
 
 	static defaultProps = {
 		autoPosition: true,
+		autoRtl: true,
 		className: '',
 		closeOnEsc: true,
+		isRtl: false,
 		isVisible: false,
 		position: 'top',
 		showDelay: 0,
@@ -269,6 +274,42 @@ class Popover extends Component {
 	}
 
 	/**
+	 * Adjusts positition swapping left and right values
+	 * when right-to-left directionality is found.
+	 *
+	 * @param  {String} position Original position
+	 * @return {String}          Adjusted position
+	 */
+	adjustRtlPosition( position ) {
+		if ( this.props.isRtl ) {
+			switch ( position ) {
+				case 'top right':
+				case 'right top':
+					return 'top left';
+
+				case 'right':
+					return 'left';
+
+				case 'bottom right':
+				case 'right bottom':
+					return 'bottom left';
+
+				case 'bottom left':
+				case 'left bottom':
+					return 'bottom right';
+
+				case 'left':
+					return 'right';
+
+				case 'top left':
+				case 'left top':
+					return 'top right';
+			}
+		}
+		return position;
+	}
+
+	/**
 	 * Computes the position of the Popover in function
 	 * of its main container and the target.
 	 *
@@ -289,10 +330,15 @@ class Popover extends Component {
 
 		let suggestedPosition = position;
 
-		this.debug( 'position: %o', position );
+		this.debug( 'position: %o', suggestedPosition );
+
+		if ( this.props.autoRtl ) {
+			suggestedPosition = this.adjustRtlPosition( suggestedPosition );
+			this.debug( 'RTL adjusted position: %o', suggestedPosition );
+		}
 
 		if ( this.props.autoPosition ) {
-			suggestedPosition = suggestPosition( position, domContainer, domContext );
+			suggestedPosition = suggestPosition( suggestedPosition, domContainer, domContext );
 			this.debug( 'suggested position: %o', suggestedPosition );
 		}
 
@@ -413,4 +459,6 @@ class Popover extends Component {
 	}
 }
 
-export default Popover;
+export default connect( ( state ) => ( {
+	isRtl: isRtlSelector( state ),
+} ) )( Popover );
