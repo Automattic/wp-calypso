@@ -1,4 +1,5 @@
 .search-stream__intro {
+
 	@include breakpoint( "<660px" ) {
 		margin-left: 16px;
 	}
@@ -96,7 +97,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		max-height: 208px;
 
 		@media #{$reader-related-card-v2-breakpoint-medium} {
-			max-height: 206px;
+			max-height: 105px;
 		}
 
 		@include breakpoint( "<660px" ) {
@@ -125,10 +126,14 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 				max-height: 104px;
 			}
 		}
+
+		.reader-related-card-v2__meta {
+			margin-bottom: 18px;
+		}
 	}
 
 	.reader-related-card-v2__featured-image {
-		margin: 0 0 17px;
+		margin: 0 0 14px;
 	}
 
 	.reader-related-card-v2__meta {
