@@ -131,27 +131,28 @@ class MasterbarItemNotifications extends Component {
 		} );
 
 		return (
-			<MasterbarItem
-				ref="notificationLink"
-				url="/notifications"
-				icon="bell"
-				onClick={ this.toggleNotesFrame }
-				isActive={ this.props.isActive }
-				renderAsAnchor={ false }
-				tooltip={ this.props.tooltip }
-				className={ classes }
-			>
-				{ this.props.children }
-				<span
-					className="masterbar__notifications-bubble"
-					key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) }
-				/>
+			<div ref="notificationLink">
+				<MasterbarItem
+					url="/notifications"
+					icon="bell"
+					onClick={ this.toggleNotesFrame }
+					isActive={ this.props.isActive }
+					renderAsAnchor={ false }
+					tooltip={ this.props.tooltip }
+					className={ classes }
+				>
+					{ this.props.children }
+					<span
+						className="masterbar__notifications-bubble"
+						key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) }
+					/>
+				</MasterbarItem>
 				<Notifications
 					visible={ this.props.isNotificationsOpen }
 					checkToggle={ this.checkToggleNotes }
 					setIndicator={ this.setNotesIndicator }
 				/>
-			</MasterbarItem>
+			</div>
 		);
 	}
 }
