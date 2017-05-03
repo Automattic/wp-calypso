@@ -146,6 +146,7 @@ export function iframeIsWhitelisted( iframe ) {
 		'player.twitch.tv',
 		'archive.org',
 		'codepen.io',
+		'www.audiomack.com',
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
