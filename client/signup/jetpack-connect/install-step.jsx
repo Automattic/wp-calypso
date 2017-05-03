@@ -17,7 +17,6 @@ import JetpackExampleConnect from './example-components/jetpack-connect';
 const NEW_INSTRUCTIONS_JETPACK_VERSION = '4.2.0';
 
 class JetpackInstallStep extends Component {
-
 	static propTypes = {
 		currentUrl: PropTypes.string.isRequired,
 		confirmJetpackInstallStatus: PropTypes.func.isRequired,
