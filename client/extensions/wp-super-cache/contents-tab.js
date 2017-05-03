@@ -17,6 +17,7 @@ class ContentsTab extends Component {
 	state = {
 		isDeleting: false,
 		isDeletingAll: false,
+		isDeletingExpired: false,
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -24,18 +25,24 @@ class ContentsTab extends Component {
 			this.setState( {
 				isDeleting: false,
 				isDeletingAll: false,
+				isDeletingExpired: false,
 			} );
 		}
 	}
 
 	deleteCache = () => {
 		this.setState( { isDeleting: true } );
-		this.props.handleDeleteCache( false );
+		this.props.handleDeleteCache( false, false );
+	}
+
+	deleteExpiredCache = () => {
+		this.setState( { isDeletingExpired: true } );
+		this.props.handleDeleteCache( false, true );
 	}
 
 	deleteAllCaches = () => {
 		this.setState( { isDeletingAll: true } );
-		this.props.handleDeleteCache( true );
+		this.props.handleDeleteCache( true, false );
 	}
 
 	render() {
@@ -141,7 +148,12 @@ class ContentsTab extends Component {
 						</p>
 					}
 					<div>
-						<Button compact primary>
+						<Button
+							compact
+							primary
+							busy={ this.state.isDeletingExpired }
+							disabled={ isDeleting }
+							onClick={ this.deleteExpiredCache }>
 							{ translate( 'Delete Expired' ) }
 						</Button>
 						<Button

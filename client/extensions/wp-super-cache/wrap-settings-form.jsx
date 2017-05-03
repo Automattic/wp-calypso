@@ -230,9 +230,9 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.saveSettings( siteId, pick( fields, settingsFields ) );
 		};
 
-		handleDeleteCache = allCaches => {
+		handleDeleteCache = ( deleteAll, deleteExpired ) => {
 			this.removeCacheNotices();
-			this.props.deleteCache( this.props.siteId, allCaches );
+			this.props.deleteCache( this.props.siteId, deleteAll, deleteExpired );
 		}
 
 		handleTestCache = httpOnly => {
