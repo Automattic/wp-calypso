@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-const map = require( 'lodash/map' );
-const compact = require( 'lodash/compact' );
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -86,9 +85,12 @@ MediaLibrarySelectedStore.getAll = function( siteId ) {
 	}
 
 	// Avoid keeping invalid items in the selected list.
-	return compact( MediaLibrarySelectedStore._media[ siteId ].map( function( itemId ) {
-		return MediaStore.get( siteId, itemId );
-	} ) );
+	return (
+		MediaLibrarySelectedStore
+			._media[ siteId ]
+			.map( itemId => MediaStore.get( siteId, itemId ) )
+			.filter( Boolean )
+	);
 };
 
 MediaLibrarySelectedStore.dispatchToken = Dispatcher.register( function( payload ) {
