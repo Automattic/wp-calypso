@@ -47,6 +47,7 @@ import NoticeAction from 'components/notice/notice-action';
 import { isJetpackSite } from 'state/sites/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
 import { isActivatingJetpackModule, isJetpackModuleActive } from 'state/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 /**
  * Module variables
@@ -397,13 +398,13 @@ const InvitePeople = React.createClass( {
 		}
 
 		const jetpackVersion = get( site, 'options.jetpack_version', 0 );
-		if ( versionCompare( jetpackVersion, '4.9-alpha', '<' ) ) {
+		if ( ! this.props.isSiteAutomatedTransfer && versionCompare( jetpackVersion, '5.0', '<' ) ) {
 			return (
 				<div className="invite-people__action-required">
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
-						text={ translate( 'Inviting users requires Jetpack 4.9 or higher' ) }>
+						text={ translate( 'Inviting users requires Jetpack 5.0 or higher' ) }>
 						<NoticeAction href={ `/plugins/jetpack/${ site.slug }` }>
 							{ translate( 'Update' ) }
 						</NoticeAction>
@@ -470,7 +471,8 @@ export default connect(
 			siteId,
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			showSSONotice: !! ( activating || active ),
-			isJetpack: isJetpackSite( state, siteId )
+			isJetpack: isJetpackSite( state, siteId ),
+			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 		};
 	},
 	dispatch => bindActionCreators( { sendInvites, activateModule }, dispatch )

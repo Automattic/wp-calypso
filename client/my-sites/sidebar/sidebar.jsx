@@ -361,7 +361,7 @@ export class MySitesSidebar extends Component {
 			usersLink = site.options.admin_url + 'users.php';
 		}
 
-		if ( ! config.isEnabled( 'jetpack/invites' ) && site.options && this.props.isJetpack ) {
+		if ( ! config.isEnabled( 'jetpack/invites' ) && ! this.props.isSiteAutomatedTransfer && site.options && this.props.isJetpack ) {
 			addPeopleLink = site.options.admin_url + 'user-new.php';
 		}
 

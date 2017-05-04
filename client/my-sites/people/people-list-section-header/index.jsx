@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import get from 'lodash/get';
 import Gridicon from 'gridicons';
@@ -15,13 +16,16 @@ import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import Tooltip from 'components/tooltip';
 import config from 'config';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 class PeopleListSectionHeader extends Component {
 	static propTypes = {
 		label: PropTypes.string.isRequired,
 		count: PropTypes.number,
 		isFollower: PropTypes.bool,
-		site: PropTypes.object
+		site: PropTypes.object,
+		isSiteAutomatedTransfer: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -100,4 +104,11 @@ class PeopleListSectionHeader extends Component {
 	}
 }
 
-export default localize( PeopleListSectionHeader );
+const mapStateToProps = ( state ) => {
+	const selectedSiteId = getSelectedSiteId( state );
+	return {
+		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
+	};
+};
+
+export default connect( mapStateToProps )( localize( PeopleListSectionHeader ) );

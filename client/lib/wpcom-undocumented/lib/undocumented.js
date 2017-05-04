@@ -374,9 +374,7 @@ Undocumented.prototype.getInvite = function( siteId, inviteKey, fn ) {
 
 Undocumented.prototype.acceptInvite = function( invite, fn ) {
 	debug( '/sites/:site_id:/invites/:inviteKey:/accept query' );
-	const apiVersion = config.isEnabled( 'jetpack/invites' )
-		? '1.2'
-		: '1.1';
+	const apiVersion = '1.2';
 
 	return this.wpcom.req.get( '/sites/' + invite.site.ID + '/invites/' + invite.inviteKey + '/accept', {
 		activate: invite.activationKey,
