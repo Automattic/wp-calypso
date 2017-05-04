@@ -72,12 +72,12 @@ class EasyTab extends Component {
 
 	deleteCache = () => {
 		this.setState( { isDeleting: true } );
-		this.props.handleDeleteCache( false );
+		this.props.handleDeleteCache( false, false );
 	}
 
 	deleteAllCaches = () => {
 		this.setState( { isDeletingAll: true } );
-		this.props.handleDeleteCache( true );
+		this.props.handleDeleteCache( true, false );
 	}
 
 	testCache = () => this.props.handleTestCache( this.state.httpOnly );

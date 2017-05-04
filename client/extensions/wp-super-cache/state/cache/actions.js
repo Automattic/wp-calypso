@@ -57,9 +57,11 @@ export const testCache = ( siteId, httpOnly ) => {
  * Deletes the cache for a site.
  *
  * @param  {Number} siteId Site ID
+ * @param  {Number} deleteAll Whether all caches should be deleted
+ * @param  {Number} deleteExpired Whether the expired files should be deleted
  * @returns {Function} Action thunk that deletes the cache for a given site
  */
-export const deleteCache = ( siteId, deleteAll ) => {
+export const deleteCache = ( siteId, deleteAll, deleteExpired ) => {
 	return ( dispatch ) => {
 		dispatch( {
 			type: WP_SUPER_CACHE_DELETE_CACHE,
@@ -68,7 +70,7 @@ export const deleteCache = ( siteId, deleteAll ) => {
 
 		return wp.req.post(
 			{ path: `/jetpack-blogs/${ siteId }/rest-api/` },
-			{ path: '/wp-super-cache/v1/cache', body: JSON.stringify( { all: deleteAll } ), json: true } )
+			{ path: '/wp-super-cache/v1/cache', body: JSON.stringify( { all: deleteAll, expired: deleteExpired } ), json: true } )
 			.then( () => {
 				dispatch( {
 					type: WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
