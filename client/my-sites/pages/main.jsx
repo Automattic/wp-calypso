@@ -40,7 +40,7 @@ class PagesMain extends React.Component {
 	};
 
 	componentWillMount() {
-		this._setWarning( this.props.siteId );
+		this._setWarning( this.props.site );
 	}
 
 	componentDidMount() {
@@ -48,7 +48,7 @@ class PagesMain extends React.Component {
 	}
 
 	componentWillUpdate() {
-		this._setWarning( this.props.siteId );
+		this._setWarning( this.props.site );
 	}
 
 	render() {
