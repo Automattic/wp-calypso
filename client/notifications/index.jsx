@@ -26,8 +26,16 @@ import { get } from 'lodash';
 import analytics from 'lib/analytics';
 import config from 'config';
 import userLib from 'lib/user';
-import { isNotificationsPanelOpen } from 'state/selectors';
-import { toggleNotificationsPanel } from 'state/ui/notifications/actions';
+import store from 'store';
+import {
+	getNotificationsAnimationState,
+	hasCurrentUserUnseenNotifications,
+	isNotificationsPanelOpen,
+} from 'state/selectors';
+import {
+	setNotificationsIndicator,
+	toggleNotificationsPanel
+} from 'state/ui/notifications/actions';
 
 import NotificationsPanel from './notifications-panel/src/Notifications';
 
@@ -84,6 +92,29 @@ export class Notifications extends Component {
 		}
 	}
 
+	// componentWillReceiveProps( nextProps ) {
+	// 	this.user = this.props.user.get();
+	//
+	// 	let newNote = this.user && this.user.has_unseen_notes;
+	// 	// // this.setState( {
+	// 	// // 	newNote: this.user && this.user.has_unseen_notes,
+	// 	// // } );
+	//
+	// 	if ( ! this.props.notificationsPanelIsOpen && nextProps.notificationsPanelIsOpen ) {
+	// 		this.props.recordOpening( store.get( 'wpnotes_unseen_count' ) );
+	// 		newNote = 0;
+	// 	}
+	//
+	// 	this.setNotesIndicator( 0 );
+	// 	// this.props.setNotificationsIndicator( 0, newNote );
+	//
+	// 	// focus on main window if we just closed the notes panel
+	// 	if ( this.props.notificationsPanelIsOpen && ! nextProps.notificationsPanelIsOpen ) {
+	// 		// this.getNotificationLinkDomNode().blur();
+	// 		window.focus();
+	// 	}
+	// }
+
 	componentDidMount() {
 		window.addEventListener( 'message', this.receiveMessage );
 		window.addEventListener( 'mousedown', this.checkToggleNotes );
@@ -133,7 +164,31 @@ export class Notifications extends Component {
 
 	handleVisibilityChange = () => this.setState( { isVisible: getIsVisible() } );
 
-	indicateRender = ( { unseen } ) => this.props.setIndicator( unseen );
+	/**
+	 * Uses the passed number of unseen notifications
+	 * and the locally-stored cache of that value to
+	 * determine what state the notifications indicator
+	 * should be in: on, off, or animate-to-on
+	 *
+	 * @param {Number} currentUnseenCount Number of reported unseen notifications
+	 */
+	setNotesIndicator = ( { unseen } ) => {
+		const existingUnseenCount = store.get( 'wpnotes_unseen_count' );
+		let newAnimationState = this.props.animationState;
+
+		if ( 0 === unseen ) {
+			// If we don't have new notes at load-time, remove the `-1` "init" status
+			newAnimationState = 0;
+		} else if ( unseen > existingUnseenCount ) {
+			// Animate the indicator bubble by swapping CSS classes through the animation state
+			// Note that we could have an animation state of `-1` indicating the initial load
+			newAnimationState = ( 1 - Math.abs( this.props.animationState ) );
+		}
+
+		store.set( 'wpnotes_unseen_count', unseen );
+
+		this.props.setNotificationsIndicator( newAnimationState, unseen > 0 );
+	};
 
 	receiveMessage = event => {
 		// Receives messages from the notifications widget
@@ -261,7 +316,7 @@ export class Notifications extends Component {
 					isShowing={ this.props.notificationsPanelIsOpen }
 					isVisible={ this.state.isVisible }
 					locale={ localeSlug }
-					onRender={ this.indicateRender }
+					onRender={ this.setNotesIndicator }
 					wpcom={ wpcom }
 				/>
 			</div>
@@ -271,7 +326,12 @@ export class Notifications extends Component {
 
 export default connect(
 	state => ( {
-		notificationsPanelIsOpen: isNotificationsPanelOpen( state )
+		hasUnseenNotifications: hasCurrentUserUnseenNotifications( state ),
+		notificationsPanelIsOpen: isNotificationsPanelOpen( state ),
+		animationState: getNotificationsAnimationState( state ),
 	} ),
-	{ toggleNotificationsPanel }
+	{
+		setNotificationsIndicator,
+		toggleNotificationsPanel
+	}
 )( Notifications );

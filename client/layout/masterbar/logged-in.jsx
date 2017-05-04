@@ -125,9 +125,7 @@ const MasterbarLoggedIn = React.createClass( {
 				</Item>
 				<Notifications
 					getNotificationsLink={ this.props.getNotificationsLink }
-					user={ this.props.user }
 					onClick={ this.clickNotifications }
-					isShowing={ this.props.notificationsPanelIsOpen }
 					isActive={ this.isActive( 'notifications' ) }
 					className="masterbar__item-notifications"
 					tooltip={ translate( 'Manage your notifications', { textOnly: true } ) }
