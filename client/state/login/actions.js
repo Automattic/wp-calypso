@@ -20,9 +20,11 @@ import {
 
 const loginErrorMessages = {
 	empty_password: translate( 'The password field is empty.' ),
+	empty_two_step_code: translate( 'The verification code field is empty.' ),
 	empty_username: translate( 'The username field is empty.' ),
-	invalid_username: translate( 'Invalid username or password.' ),
 	incorrect_password: translate( 'Invalid username or password.' ),
+	invalid_two_step_code: translate( 'Invalid verification code.' ),
+	invalid_username: translate( 'Invalid username or password.' ),
 	unknown: translate( 'Invalid username or password.' ),
 	account_unactivated: translate( 'This account has not been activated. Please check your email for an activation link.' )
 };
@@ -113,13 +115,15 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
 		.then( () => {
 			dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
 		} )
-		.catch( ( { response } ) => {
+		.catch( ( error ) => {
+			const errorMessage = getMessageFromHTTPError( error );
+
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
-				error: response.body.data.errors[ 0 ],
-				twoStepNonce: response.body.data.two_step_nonce
+				error: errorMessage,
+				twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
 			} );
 
-			return Promise.reject();
+			return Promise.reject( errorMessage );
 		} );
 };

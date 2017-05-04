@@ -34,16 +34,12 @@ class VerificationCodeForm extends Component {
 	};
 
 	state = {
-		twoStepCode: '',
-		error: null
+		twoStepCode: ''
 	};
 
 	onChangeField = ( event ) => {
-		// Reset the error state if the user updates the field after an error coming
-		// from the state
 		this.setState( {
 			[ event.target.name ]: event.target.value,
-			error: null
 		} );
 	};
 
@@ -70,18 +66,22 @@ class VerificationCodeForm extends Component {
 							{ translate( 'Please enter the verification code generated' +
 								' by your Authenticator mobile application.' ) }
 						</p>
+
 						<FormFieldset>
 							<FormLabel htmlFor="twoStepCode">
 								{ translate( 'Verification Code' ) }
 							</FormLabel>
+
 							<FormTextInput
 								onChange={ this.onChangeField }
 								className={ classNames( { 'is-error': isError } ) }
 								name="twoStepCode" />
+
 							{ isError && (
-								<FormInputValidation isError text={ translate( 'Invalid verification code' ) } />
+								<FormInputValidation isError text={ twoFactorAuthRequestError } />
 							) }
 						</FormFieldset>
+
 						<FormButtonsBar>
 							<FormButton
 								onClick={ this.onSubmit }
@@ -91,6 +91,7 @@ class VerificationCodeForm extends Component {
 						</FormButtonsBar>
 					</Card>
 				</form>
+
 				<p>
 					<ExternalLink
 						icon={ true }
@@ -99,7 +100,9 @@ class VerificationCodeForm extends Component {
 						{ translate( 'Help' ) }
 					</ExternalLink>
 				</p>
+
 				<hr />
+
 				<p>
 					<a href="#">{ translate( 'Send recovery code via text' ) }</a>
 				</p>
