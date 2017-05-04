@@ -31,7 +31,13 @@ function getMessageFromHTTPError( error ) {
 	const errorKeys = get( error, 'response.body.data.errors' );
 
 	if ( errorKeys ) {
-		return errorKeys.map( errorKey => loginErrorMessages[ errorKey ] ).join( ' ' );
+		return errorKeys.map( errorKey => {
+			if ( errorKey in loginErrorMessages ) {
+				return loginErrorMessages[ errorKey ];
+			}
+
+			return errorKey;
+		} ).join( ' ' );
 	}
 
 	return get( error, 'response.body.data', error.message );
