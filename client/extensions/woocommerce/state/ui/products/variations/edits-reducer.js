@@ -17,7 +17,7 @@ import generateVariations from '../../../../lib/generate-variations';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_EDIT_PRODUCT_VARIATION ]: editProductVariationAction,
-	[ WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE ]: editProductVariationsAction,
+	[ WOOCOMMERCE_EDIT_PRODUCT_ATTRIBUTE ]: editProductAttributeAction,
 } );
 
 function editProductVariationAction( edits, action ) {
@@ -84,7 +84,7 @@ function editProductVariation( array, variation, data ) {
 	return _array;
 }
 
-function editProductVariationsAction( edits, action ) {
+function editProductAttributeAction( edits, action ) {
 	const prevEdits = edits || [];
 	const { product, attribute, data } = action.payload;
 	const attributes = editProductAttribute( product.attributes, attribute, data );
@@ -92,7 +92,7 @@ function editProductVariationsAction( edits, action ) {
 	let productEdits = null;
 
 	// Look for an existing product edits first.
-	const _edits = prevEdits.map( ( edit ) => {
+	edits = prevEdits.map( ( edit ) => {
 		if ( product.id === edit.productId ) {
 			productEdits = edit;
 		}
@@ -102,14 +102,14 @@ function editProductVariationsAction( edits, action ) {
 	const creates = editProductVariations( productEdits, variations );
 
 	if ( null === productEdits ) {
-		_edits.push( {
+		edits.push( {
 			productId: product.id,
 			creates
 		} );
-		return _edits;
+		return edits;
 	}
 
-	return _edits.map( ( edit ) => {
+	return edits.map( ( edit ) => {
 		if ( product.id === edit.productId ) {
 			return {
 				...productEdits,
@@ -122,7 +122,12 @@ function editProductVariationsAction( edits, action ) {
 
 // TODO Check against a product's existing variations (retrieved from the API) and deal with those in the checks below.
 function editProductVariations( productEdits, variations ) {
-	const creates = productEdits && productEdits.creates || [];
+	// Adds the default "all variations" variation, which expects an empty attributes array.
+	const creates = productEdits && productEdits.creates || [ {
+		id: { index: Number( uniqueId() ) },
+		attributes: [],
+	} ];
+
 	// Add new variations that do not exist yet.
 	variations.forEach( ( variation ) => {
 		if ( ! find( creates, ( variationCreate ) => isEqual( variation.attributes, variationCreate.attributes ) ) ) {
@@ -136,7 +141,8 @@ function editProductVariations( productEdits, variations ) {
 
 	// Remove variations that are no longer valid.
 	return creates.filter( ( variationCreate ) => {
-		if ( ! find( variations, ( variation ) => isEqual( variationCreate.attributes, variation.attributes ) ) ) {
+		if ( variationCreate.attributes.length &&
+			! find( variations, ( variation ) => isEqual( variationCreate.attributes, variation.attributes ) ) ) {
 			return false;
 		}
 		return true;
