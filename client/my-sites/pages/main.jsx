@@ -2,13 +2,13 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
