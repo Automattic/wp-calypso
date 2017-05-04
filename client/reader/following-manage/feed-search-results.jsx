@@ -45,19 +45,20 @@ const FollowingManageSearchFeedsResults = ( {
 				/>
 			)
 		);
+
 		return (
 			<div className="following-manage__search-results">
 				{ resultsToShow }
-				{ searchResultsCount > 3 && (
-					<div className="following-manage__show-more">
+				<div className="following-manage__show-more">
+					{ searchResultsCount > 3 && (
 						<Button compact icon
 							onClick={ showMoreResultsClicked }
 							className="following-manage__show-more-button button">
 								<Gridicon icon="chevron-down" />
 								{ translate( 'Show more' ) }
 						</Button>
-					</div>
-				) }
+					) }
+				</div>
 			</div>
 		);
 	}
