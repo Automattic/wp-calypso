@@ -26,7 +26,7 @@ export { setSection } from './shared.js';
 const user = userFactory();
 const sites = sitesFactory();
 
-export const ReduxWrappedLayout = ( { store, primary, secondary } ) => (
+export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => (
 	<ReduxProvider store={ store }>
 		{ getCurrentUser( store.getState() )
 			? <Layout primary={ primary }
@@ -36,8 +36,11 @@ export const ReduxWrappedLayout = ( { store, primary, secondary } ) => (
 				nuxWelcome={ nuxWelcome }
 				translatorInvitation={ translatorInvitation }
 			/>
-			: <LayoutLoggedOut primary={ primary }
-				secondary={ secondary } />
+			: <LayoutLoggedOut
+				primary={ primary }
+				secondary={ secondary }
+				redirectUri={ redirectUri }
+			/>
 		}
 	</ReduxProvider>
 );
