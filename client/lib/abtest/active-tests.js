@@ -16,15 +16,6 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
-	automatedTransfer2: {
-		datestamp: '20170316',
-		variations: {
-			enabled: 100,
-			disabled: 0
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: false
-	},
 	jetpackNoMonthly: {
 		datestamp: '20170410',
 		variations: {
