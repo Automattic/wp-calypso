@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import i18n from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -16,6 +16,19 @@ import Spinner from 'components/spinner';
 import untrailingslashit from 'lib/route/untrailingslashit';
 
 class JetpackConnectSiteURLInput extends Component {
+	static propTypes = {
+		handleOnClickTos: PropTypes.func,
+		isError: PropTypes.oneOfType( [
+			PropTypes.string,
+			PropTypes.bool,
+		] ),
+		isFetching: PropTypes.bool,
+		isInstall: PropTypes.bool,
+		onChange: PropTypes.func,
+		onClick: PropTypes.func,
+		url: PropTypes.string,
+	};
+
 	constructor() {
 		super();
 		this.onChange = this.onChange.bind( this );
