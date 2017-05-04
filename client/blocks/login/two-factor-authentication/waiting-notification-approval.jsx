@@ -1,15 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import { connect } from 'react-redux';
+import React, { PropTypes } from 'react';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
+import { getTwoFactorSupportedAuthTypes } from 'state/login/selectors';
 
-const WaitingTwoFactorNotificationApproval = ( { translate } ) => (
+const WaitingTwoFactorNotificationApproval = ( { supportedAuthTypes, translate } ) => (
 	<form>
 		<Card className="two-factor-authentication__push-notification-screen is-compact">
 			<p>
@@ -28,9 +30,11 @@ const WaitingTwoFactorNotificationApproval = ( { translate } ) => (
 			<p>
 				{ translate( 'Or, continue to your account using:' ) }
 			</p>
-			<p>
-				<a href="#">{ translate( 'A recovery code via text' ) }</a>
-			</p>
+			{ supportedAuthTypes.indexOf( 'sms' ) > -1 && (
+				<p>
+					<a href="#">{ translate( 'A recovery code via text' ) }</a>
+				</p>
+			) }
 			<p>
 				<a href="#">{ translate( 'An Authenticator application' ) }</a>
 			</p>
@@ -38,4 +42,13 @@ const WaitingTwoFactorNotificationApproval = ( { translate } ) => (
 	</form>
 );
 
-export default localize( WaitingTwoFactorNotificationApproval );
+WaitingTwoFactorNotificationApproval.propTypes = {
+	supportedAuthTypes: PropTypes.array.isRequired,
+	translate: PropTypes.func.isRequired,
+};
+
+export default connect(
+	( state ) => ( {
+		supportedAuthTypes: getTwoFactorSupportedAuthTypes( state ),
+	} )
+)( localize( WaitingTwoFactorNotificationApproval ) );
