@@ -11,7 +11,7 @@ import { READER_FOLLOW } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
-import { updateFollow, unfollow } from 'state/reader/follows/actions';
+import { follow, unfollow } from 'state/reader/follows/actions';
 import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine';
 
 export function requestFollow( { dispatch }, action, next ) {
@@ -33,7 +33,12 @@ export function requestFollow( { dispatch }, action, next ) {
 
 export function receiveFollow( store, action, next, response ) {
 	if ( response && response.subscribed ) {
-		next( updateFollow( action.payload.feedUrl, subscriptionFromApi( response.subscription ) ) );
+		next(
+			follow(
+				action.payload.feedUrl,
+				subscriptionFromApi( response.subscription )
+			)
+		);
 	} else {
 		followError( store, action, next );
 	}

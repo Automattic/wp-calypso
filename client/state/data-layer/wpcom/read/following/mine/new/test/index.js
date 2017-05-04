@@ -9,7 +9,7 @@ import { spy } from 'sinon';
  */
 import { NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { follow, updateFollow, unfollow } from 'state/reader/follows/actions';
+import { follow, unfollow } from 'state/reader/follows/actions';
 import { requestFollow, receiveFollow, followError } from '../';
 
 describe( 'requestFollow', () => {
@@ -51,7 +51,7 @@ describe( 'receiveFollow', () => {
 			}
 		};
 		receiveFollow( { dispatch }, action, next, response );
-		expect( next ).to.be.calledWith( updateFollow(
+		expect( next ).to.be.calledWith( follow(
 			'http://example.com',
 			{
 				ID: 1,
@@ -76,7 +76,7 @@ describe( 'receiveFollow', () => {
 
 		receiveFollow( { dispatch }, action, next, response );
 		expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
-		expect( next ) .to.be.calledWith( unfollow( 'http://example.com' ) );
+		expect( next ).to.be.calledWith( unfollow( 'http://example.com' ) );
 	} );
 } );
 

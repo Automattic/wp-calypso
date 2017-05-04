@@ -10,7 +10,6 @@ import { find, get, isEqual, merge, reduce } from 'lodash';
 import {
 	READER_FOLLOW,
 	READER_UNFOLLOW,
-	READER_UPDATE_FOLLOW,
 	READER_RECORD_FOLLOW,
 	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_RECEIVE,
@@ -89,22 +88,8 @@ export const items = createReducer( {}, {
 			[ urlKey ]: merge(
 				{ feed_URL: action.payload.feedUrl },
 				state[ urlKey ],
+				action.payload.follow,
 				{ is_following: true }
-			)
-		};
-	},
-	[ READER_UPDATE_FOLLOW ]: ( state, action ) => {
-		const urlKey = prepareComparableUrl( action.payload.feedUrl );
-		const currentfollow = state[ urlKey ];
-		if ( ! currentfollow ) {
-			return state;
-		}
-		return {
-			...state,
-			[ urlKey ]: merge(
-				{},
-				currentfollow,
-				action.payload.follow
 			)
 		};
 	},
