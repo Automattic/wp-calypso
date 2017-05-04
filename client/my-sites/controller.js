@@ -37,6 +37,7 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import {
 	getPrimarySiteId,
 	getSiteId,
+	getSites,
 	getVisibleSites,
 	isDomainOnlySite,
 } from 'state/selectors';
@@ -303,6 +304,11 @@ module.exports = {
 		// If the user has only one site, redirect to the single site
 		// context instead of rendering the all-site views.
 		if ( hasOneSite && ! siteFragment ) {
+			const hasInitialized = getSites( getState() ).length;
+			if ( hasInitialized ) {
+				redirectToPrimary();
+				return;
+			}
 			dispatch( {
 				type: SITES_ONCE_CHANGED,
 				listener: redirectToPrimary,
