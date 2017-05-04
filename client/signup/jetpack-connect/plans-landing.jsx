@@ -34,7 +34,7 @@ class PlansLanding extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_store_plan', {
 			plan: cartItem ? cartItem.product_slug : 'free'
 		} );
-		this.props.selectPlanInAdvance(	cartItem ? cartItem.product_slug : 'free', '*', );
+		this.props.selectPlanInAdvance( cartItem ? cartItem.product_slug : 'free', '*' );
 
 		setTimeout( () => {
 			page.redirect( CALYPSO_JETPACK_CONNECT );
