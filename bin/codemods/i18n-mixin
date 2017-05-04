@@ -5,7 +5,7 @@
   React.createClass instance with a `localize()` higher-order component.
 
 	How to use:
-	./bin/codemods/i18n-translate path-to-transform/
+	./bin/codemods/i18n-mixin path-to-transform/
 */
 
 /**
@@ -28,7 +28,7 @@ if ( args.length === 0 ) {
 
 const binArgs = [
 	// jscodeshift options
-	'--transform=bin/codemods/i18n-translate-to-localize.js',
+	'--transform=bin/codemods/i18n-mixin-to-localize.js',
 	...config.jscodeshiftArgs,
 
 	// Recast options via 5to6
