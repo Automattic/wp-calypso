@@ -143,6 +143,7 @@ const ThemeShowcase = React.createClass( {
 
 		const metas = [
 			{ name: 'description', property: 'og:description', content: this.props.description },
+			{ property: 'og:title', content: title },
 			{ property: 'og:url', content: canonicalUrl },
 			{ property: 'og:type', content: 'website' }
 		];
