@@ -101,6 +101,22 @@ export class LanguagePicker extends PureComponent {
 		);
 	}
 
+	renderModal( selectedLanguageSlug ) {
+		if ( ! this.state.open ) {
+			return null;
+		}
+
+		return (
+			<LanguagePickerModal
+				isVisible
+				languages={ this.props.languages }
+				onClose={ this.handleClose }
+				onSelected={ this.selectLanguage }
+				selected={ selectedLanguageSlug }
+			/>
+		);
+	}
+
 	render() {
 		const language = this.state.selectedLanguage;
 		if ( ! language ) {
@@ -126,13 +142,7 @@ export class LanguagePicker extends PureComponent {
 						<div className="language-picker__name-change">{ translate( 'Change' ) }</div>
 					</div>
 				</div>
-				<LanguagePickerModal
-					isVisible={ this.state.open }
-					languages={ this.props.languages }
-					onClose={ this.handleClose }
-					onSelected={ this.selectLanguage }
-					selected={ language.langSlug }
-				/>
+				{ this.renderModal( language.langSlug ) }
 				<QueryLanguageNames />
 			</div>
 		);
