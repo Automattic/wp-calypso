@@ -15,7 +15,6 @@
  */
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import debugFactory from 'debug';
 import wpcom from 'lib/wp';
 import { get } from 'lodash';
 
@@ -26,28 +25,12 @@ import analytics from 'lib/analytics';
 import config from 'config';
 import userLib from 'lib/user';
 
-import NotificationsPanel from './notifications-panel/src/Notifications';
+import NotificationsPanel, { refreshNotes } from './notifications-panel/src/Notifications';
 
 /**
  * Module variables
  */
-const debug = debugFactory( 'notifications:wrapper' );
 const user = userLib();
-const widgetDomain = 'https://widgets.wp.com';
-
-/**
- * Attempts to parse a JSON string
- *
- * @param {String} input possibly JSON data
- * @returns {*} parsed data on success and `null` on failure
- */
-const parseJson = input => {
-	try {
-		return JSON.parse( input );
-	} catch ( e ) {
-		return null;
-	}
-};
 
 /**
  * Returns whether or not the browser session
@@ -70,19 +53,9 @@ const getIsVisible = () => {
 export class Notifications extends Component {
 	state = {
 		isVisible: getIsVisible(),
-		shownOnce: false,
-		widescreen: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
-		// tell the iframe if we're changing visible status
-		if ( nextProps.isShowing !== this.props.isShowing ) {
-			this.setState( { shownOnce: true, widescreen: false } );
-		}
-	}
-
 	componentDidMount() {
-		window.addEventListener( 'message', this.receiveMessage );
 		window.addEventListener( 'mousedown', this.props.checkToggle );
 		window.addEventListener( 'touchstart', this.props.checkToggle );
 		window.addEventListener( 'keydown', this.handleKeyPress );
@@ -98,7 +71,6 @@ export class Notifications extends Component {
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'message', this.receiveMessage );
 		window.removeEventListener( 'mousedown', this.props.checkToggle );
 		window.removeEventListener( 'touchstart', this.props.checkToggle );
 		window.removeEventListener( 'keydown', this.handleKeyPress );
@@ -132,34 +104,6 @@ export class Notifications extends Component {
 
 	indicateRender = ( { unseen } ) => this.props.setIndicator( unseen );
 
-	receiveMessage = event => {
-		// Receives messages from the notifications widget
-		if ( event.origin !== widgetDomain ) {
-			return;
-		}
-
-		const data = 'string' === typeof event.data
-			? parseJson( event.data )
-			: event.data;
-
-		// silently ignore messages which don't belong here
-		// they probably are bound for another event handler
-		if ( ! data || data.type !== 'notesIframeMessage' ) {
-			return;
-		}
-
-		switch ( data.action ) {
-			case 'widescreen':
-				return this.setState( { widescreen: data.widescreen } );
-		}
-
-		throw new TypeError(
-			'Cannot handles message received from notifications client\n' +
-			`Action type unknown: ${ data.action }\n` +
-			`Received message: ${ data }`
-		);
-	};
-
 	receiveServiceWorkerMessage = event => {
 		// Receives messages from the service worker
 		// Older Firefox versions (pre v48) set event.origin to "" for service worker messages
@@ -178,10 +122,7 @@ export class Notifications extends Component {
 				this.props.checkToggle();
 				// ... and toggles when the 2nd parameter is true
 				this.props.checkToggle( null, true );
-				// force refresh the panel
-				this.postMessage( { action: 'refreshNotes' } );
-
-				return;
+				return refreshNotes();
 
 			case 'trackClick':
 				analytics.tracks.recordEvent( 'calypso_web_push_notification_clicked', {
@@ -191,21 +132,6 @@ export class Notifications extends Component {
 
 				return;
 		}
-	};
-
-	/**
-	 * Sends a message to the notifications client
-	 *
-	 * @param {!Object} message data to send
-	 * @param {!String} message.action name of action for notes app to dispatch
-	 */
-	postMessage = message => {
-		const data = JSON.stringify( {
-			...message,
-			type: 'notesIframeMessage',
-		} );
-
-		debug( data );
 	};
 
 	postServiceWorkerMessage = message => {
