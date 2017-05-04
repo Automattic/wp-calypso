@@ -11,8 +11,8 @@ module.exports = {
 	signupPlansCallToAction: {
 		datestamp: '20170403',
 		variations: {
-			original: 50,
-			modified: 50,
+			original: 0,
+			modified: 100, // Setting to 100% until strings are translated
 		},
 		defaultVariation: 'original',
 	},
