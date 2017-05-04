@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
@@ -10,7 +9,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import MasterbarItem from './item';
-import Notifications from 'notifications';
 import store from 'store';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -42,23 +40,10 @@ class MasterbarItemNotifications extends Component {
 
 		// focus on main window if we just closed the notes panel
 		if ( this.props.isShowing && ! nextProps.isShowing ) {
-			this.getNotificationLinkDomNode().blur();
+			// this.getNotificationLinkDomNode().blur();
 			window.focus();
 		}
 	}
-
-	checkToggleNotes = ( event, forceToggle ) => {
-		const target = event ? event.target : false;
-		const notificationNode = this.getNotificationLinkDomNode();
-
-		if ( target && notificationNode.contains( target ) ) {
-			return;
-		}
-
-		if ( this.props.isShowing || forceToggle === true ) {
-			this.toggleNotesFrame( event );
-		}
-	};
 
 	toggleNotesFrame = ( event ) => {
 		if ( event ) {
@@ -67,10 +52,6 @@ class MasterbarItemNotifications extends Component {
 		}
 
 		this.props.onClick();
-	};
-
-	getNotificationLinkDomNode = () => {
-		return ReactDom.findDOMNode( this.refs.notificationLink );
 	};
 
 	/**
@@ -110,7 +91,7 @@ class MasterbarItemNotifications extends Component {
 		} );
 
 		return (
-			<div ref="notificationLink">
+			<div ref={ this.props.getNotificationsLink }>
 				<MasterbarItem
 					url="/notifications"
 					icon="bell"
@@ -126,15 +107,11 @@ class MasterbarItemNotifications extends Component {
 						key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) }
 					/>
 				</MasterbarItem>
-				<Notifications
-					isShowing={ this.props.isShowing }
-					checkToggle={ this.checkToggleNotes }
-					setIndicator={ this.setNotesIndicator }
-				/>
 			</div>
 		);
 	}
 }
+
 
 const mapDispatchToProps = dispatch => ( {
 	recordOpening: unread_notifications => dispatch( recordTracksEvent( 'calypso_notification_open', { unread_notifications } ) )

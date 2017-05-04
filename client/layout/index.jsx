@@ -38,6 +38,7 @@ import { isHappychatOpen } from 'state/ui/happychat/selectors';
 import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
+import Notifications from 'notifications';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
@@ -87,6 +88,7 @@ Layout = React.createClass( {
 
 		return (
 			<MasterbarLoggedIn
+				getNotificationsLink={ this.setNotificationsLink }
 				user={ this.props.user }
 				section={ this.props.section.group }
 				sites={ this.props.sites } />
@@ -124,6 +126,14 @@ Layout = React.createClass( {
 		}
 	},
 
+	setNotificationsLink: function( notificationsLink ) {
+		this.notificationsLink = notificationsLink;
+	},
+
+	getNotificationsLink: function() {
+		return this.notificationsLink;
+	},
+
 	render: function() {
 		const sectionClass = classnames(
 				'layout',
@@ -144,6 +154,7 @@ Layout = React.createClass( {
 			<div className={ sectionClass }>
 				<DocumentHead />
 				<QueryPreferences />
+				<Notifications getNotificationsLink={ this.getNotificationsLink } />
 				{ <GuidedTours /> }
 				{ config.isEnabled( 'nps-survey/notice' ) && <NpsSurveyNotice /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
@@ -181,7 +192,7 @@ export default connect(
 			hasSidebar: hasSidebar( state ),
 			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
-			chatIsOpen: isHappychatOpen( state )
+			chatIsOpen: isHappychatOpen( state ),
 		};
 	}
 )( Layout );

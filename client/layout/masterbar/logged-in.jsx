@@ -18,6 +18,8 @@ import config from 'config';
 import { preload } from 'sections-preload';
 import ResumeEditing from 'my-sites/resume-editing';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { toggleNotificationsPanel } from 'state/ui/notifications/actions';
+import { isNotificationsPanelOpen } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route/path';
@@ -32,14 +34,8 @@ const MasterbarLoggedIn = React.createClass( {
 		sites: React.PropTypes.object,
 		section: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
 		setNextLayoutFocus: React.PropTypes.func.isRequired,
+		toggleNotificationsPanel: React.PropTypes.func.isRequired,
 		siteSlug: React.PropTypes.string,
-	},
-
-	getInitialState() {
-		return {
-			// whether we show the notifications panel
-			showNotifications: false,
-		};
 	},
 
 	clickMySites() {
@@ -51,11 +47,11 @@ const MasterbarLoggedIn = React.createClass( {
 	},
 
 	clickNotifications() {
-		this.setState( { showNotifications: ! this.state.showNotifications } );
+		this.props.toggleNotificationsPanel();
 	},
 
 	isActive( section ) {
-		return section === this.props.section && ! this.state.showNotifications;
+		return section === this.props.section && ! this.props.notificationsPanelIsOpen;
 	},
 
 	wordpressIcon() {
@@ -128,9 +124,10 @@ const MasterbarLoggedIn = React.createClass( {
 					</span>
 				</Item>
 				<Notifications
+					getNotificationsLink={ this.props.getNotificationsLink }
 					user={ this.props.user }
 					onClick={ this.clickNotifications }
-					isShowing={ this.state.showNotifications }
+					isShowing={ this.props.notificationsPanelIsOpen }
 					isActive={ this.isActive( 'notifications' ) }
 					className="masterbar__item-notifications"
 					tooltip={ translate( 'Manage your notifications', { textOnly: true } ) }
@@ -145,7 +142,7 @@ const MasterbarLoggedIn = React.createClass( {
 } );
 
 // TODO: make this pure when sites can be retrieved from the Redux state
-export default connect( ( state, { sites } ) => {
+const mapStateToProps = ( state, { sites } ) => {
 	let siteId = getSelectedSiteId( state );
 
 	if ( ! siteId ) {
@@ -170,6 +167,12 @@ export default connect( ( state, { sites } ) => {
 
 	return {
 		siteSlug,
-		domainOnlySite
+		domainOnlySite,
+		notificationsPanelIsOpen: isNotificationsPanelOpen( state )
 	};
-}, { setNextLayoutFocus }, null, { pure: false } )( localize( MasterbarLoggedIn ) );
+};
+
+export default connect( mapStateToProps, {
+	setNextLayoutFocus,
+	toggleNotificationsPanel
+}, null, { pure: false } )( localize( MasterbarLoggedIn ) );
