@@ -20,20 +20,18 @@ class FollowersCount extends Component {
 	render() {
 		const { slug, followers, translate, siteId } = this.props;
 
-		if ( ! followers ) {
-			return null;
-		}
-
 		return (
 			<div className="followers-count">
 				{ siteId && <QuerySiteStats statType="stats" siteId={ siteId } /> }
-				<Button
-					borderless
-					href={ '/people/followers/' + slug }
-					title={ translate( 'Total of WordPress and Email Followers' ) }
-					>
-					{ translate( 'Followers' ) } <Count count={ followers } />
-				</Button>
+				{ followers &&
+					<Button
+						borderless
+						href={ '/people/followers/' + slug }
+						title={ translate( 'Total of WordPress and Email Followers' ) }
+						>
+						{ translate( 'Followers' ) } <Count count={ followers } />
+					</Button>
+				}
 			</div>
 		);
 	}
@@ -46,5 +44,6 @@ export default connect( ( state ) => {
 	return {
 		slug: getSiteSlug( state, siteId ),
 		followers: get( data, 'followersBlog' ),
+		siteId,
 	};
 } )( localize( FollowersCount ) );
