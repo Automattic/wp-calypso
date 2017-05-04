@@ -10,7 +10,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { abtest } from 'lib/abtest';
 
 const PlanFeaturesActions = ( {
 	canPurchase,
@@ -33,7 +32,7 @@ const PlanFeaturesActions = ( {
 		'plan-features__actions-button',
 		{
 			'is-current': current,
-			'is-primary': ( primaryUpgrade && ! isPlaceholder ) || ( isPopular && abtest( 'signupPlansCallToAction' ) === 'modified' )
+			'is-primary': ( primaryUpgrade && ! isPlaceholder ) || ( isPopular )
 		},
 		className
 	);
@@ -51,8 +50,12 @@ const PlanFeaturesActions = ( {
 		if ( isLandingPage ) {
 			buttonText = translate( 'Select', { context: 'button' } );
 		}
-		if ( isInSignup && ( abtest( 'signupPlansCallToAction' ) === 'modified' ) ) {
-			buttonText = 'Start with ' + planName;
+		if ( isInSignup ) {
+			buttonText = translate( 'Start with %(plan)s', {
+				args: {
+					plan: planName
+				}
+			} );
 		}
 
 		upgradeButton = (
