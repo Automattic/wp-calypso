@@ -4,7 +4,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -66,14 +65,8 @@ export default connect(
 			calypsoStartedConnection: true
 		};
 	},
-	( dispatch ) => {
-		return Object.assign( {},
-			bindActionCreators( { selectPlanInAdvance }, dispatch ),
-			{
-				recordTracksEvent( eventName, props ) {
-					dispatch( recordTracksEvent( eventName, props ) );
-				}
-			}
-		);
+	{
+		recordTracksEvent,
+		selectPlanInAdvance,
 	}
 )( PlansLanding );
