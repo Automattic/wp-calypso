@@ -50,7 +50,6 @@ class PlansLanding extends Component {
 			<div>
 				<QueryPlans />
 				<PlansGrid { ...this.props }
-					sitePlans={ {} }
 					calypsoStartedConnection={ true }
 					onSelect={ this.storeSelectedPlan }
 					basePlansPath={ this.props.basePlansPath } />
