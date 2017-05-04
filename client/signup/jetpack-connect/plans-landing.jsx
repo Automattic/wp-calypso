@@ -17,7 +17,6 @@ import QueryPlans from 'components/data/query-plans';
 const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';
 
 class PlansLanding extends Component {
-
 	static propTypes = {
 		basePlansPath: PropTypes.string,
 		intervalType: PropTypes.string,
