@@ -15,7 +15,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import Spinner from 'components/spinner';
 import untrailingslashit from 'lib/route/untrailingslashit';
 
-
 class JetpackConnectSiteURLInput extends Component {
 	constructor() {
 		super();
