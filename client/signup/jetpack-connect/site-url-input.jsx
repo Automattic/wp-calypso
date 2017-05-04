@@ -123,8 +123,9 @@ class JetpackConnectSiteURLInput extends Component {
 						icon="globe" />
 					<FormTextInput { ...textInputProps } />
 					{ this.props.isFetching
-						? ( <Spinner duration={ 30 } /> )
-						: null }
+						? <Spinner duration={ 30 } />
+						: null
+					}
 				</div>
 				<Card className="jetpack-connect__connect-button-card">
 					{ this.renderTermsOfServiceLink() }
