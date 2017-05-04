@@ -323,4 +323,4 @@ const mapState = state => {
 	};
 };
 
-module.exports = connect( mapState )( PageList );
+export default connect( mapState )( PageList );
