@@ -12,6 +12,7 @@ import {
 	PREVIEW_IS_SHOWING,
 	SERIALIZE,
 	DESERIALIZE,
+	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
 import editor from './editor/reducer';
@@ -74,6 +75,19 @@ export const isPreviewShowing = createReducer( false, {
 		isShowing !== undefined ? isShowing : state,
 } );
 
+/**
+ * Tracks if the notifications panel should be shown
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export const isNotificationsOpen = function( state = false, { type } ) {
+	if ( type === NOTIFICATIONS_PANEL_TOGGLE ) {
+		return ! state;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	section,
 	isLoading,
@@ -93,6 +107,7 @@ const reducer = combineReducers( {
 	mediaModal,
 	themeSetup,
 	npsSurveyNotice,
+	isNotificationsOpen,
 } );
 
 export default function( state, action ) {

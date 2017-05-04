@@ -9,9 +9,10 @@ import { expect } from 'chai';
 import {
 	SELECTED_SITE_SET,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
+	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'state/action-types';
-import reducer, { selectedSiteId } from '../reducer';
+import reducer, { selectedSiteId, isNotificationsOpen } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
@@ -34,6 +35,7 @@ describe( 'reducer', () => {
 			'mediaModal',
 			'themeSetup',
 			'npsSurveyNotice',
+			'isNotificationsOpen',
 		] );
 	} );
 
@@ -76,6 +78,27 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.null;
+		} );
+	} );
+
+	describe( '#isNotificationsOpen()', () => {
+		it( 'should default to false', () => {
+			const state = isNotificationsOpen( undefined, {} );
+			expect( state ).to.equal( false );
+		} );
+
+		it( 'should toggle open when closed', () => {
+			const state = isNotificationsOpen( false, {
+				type: NOTIFICATIONS_PANEL_TOGGLE,
+			} );
+			expect( state ).to.equal( true );
+		} );
+
+		it( 'should toggle close when open', () => {
+			const state = isNotificationsOpen( true, {
+				type: NOTIFICATIONS_PANEL_TOGGLE,
+			} );
+			expect( state ).to.equal( false );
 		} );
 	} );
 } );
