@@ -3,7 +3,7 @@ Development Workflow
 
 ## Build
 
-Running `make run` will build all the code and continuously watch the front-end JS and CSS/Sass for changes and rebuild accordingly.
+Running `npm start` will build all the code and continuously watch the front-end JS and CSS/Sass for changes and rebuild accordingly.
 
 ## Tests
 
@@ -23,7 +23,7 @@ The [test/README.md](../test/README.md) file documents how to create new tests, 
 
 ## Errors and Warnings
 
-Errors and warning appear in the normal places – the terminal where you ran `make run` and the JavaScript console in the browser. If something isn’t going the way you expected it, look at those places first.
+Errors and warning appear in the normal places – the terminal where you ran `npm start` and the JavaScript console in the browser. If something isn’t going the way you expected it, look at those places first.
 
 ## Debugging
 
@@ -39,16 +39,16 @@ You can also limit the debugging to a particular scope:
 localStorage.setItem( 'debug', 'calypso:*' );
 ```
 
-The `node` server uses the `DEBUG` environment variable instead of `localStorage`. `make run` will pass along its environment, so you can turn on all debug messages with:
+The `node` server uses the `DEBUG` environment variable instead of `localStorage`. `npm start` will pass along its environment, so you can turn on all debug messages with:
 
 ```bash
-DEBUG=* make run
+DEBUG=* npm start
 ```
 
 or limit it as before with:
 
 ```bash
-DEBUG=calypso:* make run
+DEBUG=calypso:* npm start
 ```
 
 ## Monitoring builds and tests
@@ -68,7 +68,7 @@ One such tool is [AnyBar](https://github.com/tonsky/AnyBar) (_macOS only_), a ve
 - Obtain this [handler shell script](https://gist.github.com/mcsf/56911ae03c6d87ec61429cefc7707cb7/)
 - Optionally, place the script somewhere memorable and make it executable: `chmod +x ~/bin/anybar-calypso`
 - From now on, pipe your Calypso commands through it:
-  * `make run | anybar-calypso`
+  * `npm start | anybar-calypso`
   * `npm run test-client:watch client/my-component | anybar-calypso`
 - Feel free to tweak the script and share improvements with the Calypso project
 

@@ -14,7 +14,7 @@ If we ever need to add non-test files to a `test` folder, we should put them in 
 
 ### How to run single test runner
 
-Executing `make test` from the root folder will run all test suites.
+Executing `npm test` from the root folder will run all test suites.
 Behind the scenes we maintain 3 test runners. This is because each folder (`client`, `server` & `test`) has a different `NODE_PATH` path.
 
 We have also an npm run script for each folder: `npm run test-client`, `npm run test-server` and `npm run test-test`.
