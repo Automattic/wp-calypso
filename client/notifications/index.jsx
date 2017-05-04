@@ -14,6 +14,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import wpcom from 'lib/wp';
@@ -25,6 +26,8 @@ import { get } from 'lodash';
 import analytics from 'lib/analytics';
 import config from 'config';
 import userLib from 'lib/user';
+import { isNotificationsPanelOpen } from 'state/selectors';
+import { toggleNotificationsPanel } from 'state/ui/notifications/actions';
 
 import NotificationsPanel from './notifications-panel/src/Notifications';
 
@@ -76,15 +79,15 @@ export class Notifications extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		// tell the iframe if we're changing visible status
-		if ( nextProps.isShowing !== this.props.isShowing ) {
+		if ( nextProps.notificationsPanelIsOpen !== this.props.notificationsPanelIsOpen ) {
 			this.setState( { shownOnce: true, widescreen: false } );
 		}
 	}
 
 	componentDidMount() {
 		window.addEventListener( 'message', this.receiveMessage );
-		window.addEventListener( 'mousedown', this.props.checkToggle );
-		window.addEventListener( 'touchstart', this.props.checkToggle );
+		window.addEventListener( 'mousedown', this.checkToggleNotes );
+		window.addEventListener( 'touchstart', this.checkToggleNotes );
 		window.addEventListener( 'keydown', this.handleKeyPress );
 
 		if ( typeof document.hidden !== 'undefined' ) {
@@ -99,8 +102,8 @@ export class Notifications extends Component {
 
 	componentWillUnmount() {
 		window.removeEventListener( 'message', this.receiveMessage );
-		window.removeEventListener( 'mousedown', this.props.checkToggle );
-		window.removeEventListener( 'touchstart', this.props.checkToggle );
+		window.removeEventListener( 'mousedown', this.checkToggleNotes );
+		window.removeEventListener( 'touchstart', this.checkToggleNotes );
 		window.removeEventListener( 'keydown', this.handleKeyPress );
 
 		if ( typeof document.hidden !== 'undefined' ) {
@@ -124,7 +127,7 @@ export class Notifications extends Component {
 		if ( 78 === event.keyCode ) {
 			event.stopPropagation();
 			event.preventDefault();
-			this.props.checkToggle( null, true );
+			this.checkToggleNotes( null, true );
 		}
 	};
 
@@ -175,9 +178,9 @@ export class Notifications extends Component {
 		switch ( event.data.action ) {
 			case 'openPanel':
 				// checktoggle closes panel with no parameters
-				this.props.checkToggle();
+				this.checkToggleNotes();
 				// ... and toggles when the 2nd parameter is true
-				this.props.checkToggle( null, true );
+				this.checkToggleNotes( null, true );
 				// force refresh the panel
 				this.postMessage( { action: 'refreshNotes' } );
 
@@ -218,23 +221,47 @@ export class Notifications extends Component {
 		);
 	};
 
+	checkToggleNotes = ( event, forceToggle ) => {
+		const target = event ? event.target : false;
+		const notificationLinkNode = this.props.getNotificationsLink();
+
+		if ( target && ( notificationLinkNode.contains( target ) || this.notificationsPanelNode.contains( target ) ) ) {
+			return;
+		}
+
+		if ( this.props.notificationsPanelIsOpen || forceToggle === true ) {
+			this.toggleNotesFrame( event );
+		}
+	};
+
+	toggleNotesFrame = ( event ) => {
+		if ( event ) {
+			event.preventDefault && event.preventDefault();
+			event.stopPropagation && event.stopPropagation();
+		}
+
+		this.props.toggleNotificationsPanel();
+	};
+
+	getNotificationsNode = node => this.notificationsPanelNode = node;
+
 	render() {
 		const localeSlug = get( user.get(), 'localeSlug', config( 'i18n_default_locale_slug' ) );
 
 		return (
 			<div
+				ref={ this.getNotificationsNode }
 				id="wpnc-panel"
 				className={ classNames( 'wide', 'wpnc__main', {
-					'wpnt-open': this.props.isShowing,
-					'wpnt-closed': ! this.props.isShowing,
+					'wpnt-open': this.props.notificationsPanelIsOpen,
+					'wpnt-closed': ! this.props.notificationsPanelIsOpen,
 				} ) }
 			>
 				<NotificationsPanel
-					isShowing={ this.props.isShowing || true }
+					isShowing={ this.props.notificationsPanelIsOpen }
 					isVisible={ this.state.isVisible }
 					locale={ localeSlug }
 					onRender={ this.indicateRender }
-					onTogglePanel={ this.props.checkToggle }
 					wpcom={ wpcom }
 				/>
 			</div>
@@ -242,4 +269,9 @@ export class Notifications extends Component {
 	}
 }
 
-export default Notifications;
+export default connect(
+	state => ( {
+		notificationsPanelIsOpen: isNotificationsPanelOpen( state )
+	} ),
+	{ toggleNotificationsPanel }
+)( Notifications );
