@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, isUndefined, keys, merge, noop, omitBy } from 'lodash';
+import { isEmpty, isUndefined, keys, noop, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,19 +21,14 @@ import {
  * that the REST API returns already HTML-encoded
  */
 function fromApi( apiResponse ) {
-	const decodedValues = {
+	// Missing properties in apiResponse lead to undefined values, so remove them with omitBy
+	const decodedValues = omitBy( {
 		display_name: apiResponse.display_name && decodeEntities( apiResponse.display_name ),
 		description: apiResponse.description && decodeEntities( apiResponse.description ),
 		user_URL: apiResponse.user_URL && decodeEntities( apiResponse.user_URL )
-	};
+	}, isUndefined );
 
-	// Some keys in the `decodedValues` can be undefined, and _.merge will ignore them,
-	// while Object.assign or object spread operator wouldn't.
-	return merge(
-		{},
-		omitBy( apiResponse, isUndefined ),
-		omitBy( decodedValues, isUndefined )
-	);
+	return { ...apiResponse, ...decodedValues };
 }
 
 /*
