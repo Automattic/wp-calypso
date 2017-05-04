@@ -23,8 +23,6 @@ class EditorRevisionsListItem extends PureComponent {
 	}
 
 	render() {
-		// FIXME: compute real changes
-		const changes = { additions: 10, deletions: 10 };
 		return (
 			<Button
 				borderless
@@ -44,20 +42,20 @@ class EditorRevisionsListItem extends PureComponent {
 				</span>
 
 				<div className="editor-revisions-list__changes">
-					{ changes.additions > 0 && (
+					{ this.props.revision.changes.added > 0 && (
 						<span className="editor-revisions-list__additions">
 							{ this.props.translate( '%(changes)d words added', {
-								args: { changes: changes.additions },
+								args: { changes: this.props.revision.changes.added },
 							} ) }
 						</span>
 					) }
 
-					{ changes.additions > 0 && changes.deletions > 0 && ', ' }
+					{ this.props.revision.changes.added > 0 && this.props.revision.changes.removed > 0 && ', ' }
 
-					{ changes.deletions > 0 && (
+					{ this.props.revision.changes.removed > 0 && (
 						<span className="editor-revisions-list__deletions">
 							{ this.props.translate( '%(changes)d words removed', {
-								args: { changes: changes.deletions },
+								args: { changes: this.props.revision.changes.removed },
 							} ) }
 						</span>
 					) }
