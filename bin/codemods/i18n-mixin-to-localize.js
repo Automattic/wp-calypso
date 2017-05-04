@@ -29,7 +29,26 @@ export default function transformer(file, api) {
           [ createClassInstance.value ]
         )
       ));
-      root.find(j.ImportDeclaration).at(0).insertBefore('import { localize } from \'i18n-calypso\';');
+
+      const i18nCalypsoImports = root.find(j.ImportDeclaration, {
+        source: { value: 'i18n-calypso' }
+      })
+      if ( i18nCalypsoImports.size() ) {
+        const i18nCalypsoImport = i18nCalypsoImports.get();
+        const localizeImport = j(i18nCalypsoImport).find(j.ImportSpecifier, {
+          local: {
+            type: 'Identifier',
+            name: 'localize'
+          }
+        });
+        if ( ! localizeImport.size() ) {
+          i18nCalypsoImport.value.specifiers.push( j.importSpecifier(
+            j.identifier('localize')
+          ));
+        }
+      } else {
+        root.find(j.ImportDeclaration).at(0).insertAfter('import { localize } from \'i18n-calypso\';');
+      }
     }
   } );
 
