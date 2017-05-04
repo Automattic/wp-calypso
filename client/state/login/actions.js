@@ -113,5 +113,7 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
 				error: response.body.data.errors[ 0 ],
 				twoStepNonce: response.body.data.two_step_nonce
 			} );
+
+			return Promise.reject();
 		} );
 };
