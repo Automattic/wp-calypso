@@ -43,6 +43,7 @@ import {
 	recordPageView
 } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import { getCanonicalTheme } from 'state/themes/selectors';
 import {
 	getSelectedSite as getSelectedSiteSelector,
 	getSelectedSiteId,
@@ -67,6 +68,7 @@ import PurchaseMeta from './purchase-meta';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
 import PurchaseSiteHeader from '../purchases-site/header';
+import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import RemovePurchase from '../remove-purchase';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -304,15 +306,19 @@ class ManagePurchase extends Component {
 
 	renderPlanDescription() {
 		const purchase = getPurchase( this.props );
-		const { plan, selectedSite } = this.props;
+		const { plan, selectedSite, theme } = this.props;
+
+		let description = purchaseType( purchase );
+		if ( isPlan( purchase ) ) {
+			description = plan.getDescription();
+		} else if ( isTheme( purchase ) && theme ) {
+			description = theme.description;
+		}
 
 		return (
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">
-					{ ( isPlan( purchase ) )
-						? plan.getDescription()
-						: purchaseType( purchase )
-					}
+					{ description }
 				</span>
 				<span className="manage-purchase__settings-link">
 					<ProductLink selectedPurchase={ purchase } selectedSite={ selectedSite } />
@@ -406,7 +412,7 @@ class ManagePurchase extends Component {
 		if ( ! this.isDataValid() ) {
 			return null;
 		}
-		const { selectedSite, selectedPurchase } = this.props;
+		const { selectedSite, selectedSiteId, selectedPurchase, isPurchaseTheme } = this.props;
 		const classes = 'manage-purchase';
 
 		let editCardDetailsPath = false;
@@ -417,6 +423,7 @@ class ManagePurchase extends Component {
 		return (
 			<span>
 				<QueryUserPurchases userId={ user.get().ID } />
+				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ selectedSiteId } themeId={ selectedPurchase.meta } /> }
 				<Main className={ classes }>
 					<HeaderCake onClick={ goToList }>
 						{ titles.managePurchase }
@@ -437,14 +444,18 @@ class ManagePurchase extends Component {
 export default connect(
 	( state, props ) => {
 		const selectedPurchase = getByPurchaseId( state, props.purchaseId );
+		const selectedSiteId = getSelectedSiteId( state );
 		const isPurchasePlan = selectedPurchase && isPlan( selectedPurchase );
+		const isPurchaseTheme = selectedPurchase && isTheme( selectedPurchase );
 		return {
 			hasLoadedSites: ! isRequestingSites( state ),
 			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 			selectedPurchase,
+			selectedSiteId,
 			selectedSite: getSelectedSiteSelector( state ),
-			selectedSiteId: getSelectedSiteId( state ),
 			plan: isPurchasePlan && applyTestFiltersToPlansList( selectedPurchase.productSlug, abtest ),
+			isPurchaseTheme,
+			theme: isPurchaseTheme && getCanonicalTheme( state, selectedSiteId, selectedPurchase.meta ),
 		};
 	}
 )( localize( ManagePurchase ) );
