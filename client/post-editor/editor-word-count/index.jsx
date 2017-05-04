@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -17,38 +16,34 @@ import { countWords } from 'lib/text-utils';
  */
 const user = userModule();
 
-const EditorWordCount = React.createClass( {
-	propTypes: {
+class EditorWordCount extends PureComponent {
+	static propTypes = {
 		selectedText: React.PropTypes.string
-	},
+	};
 
-	mixins: [ PureRenderMixin ],
-
-	getInitialState() {
-		return {
-			rawContent: ''
-		};
-	},
+	state = {
+		rawContent: ''
+	};
 
 	componentWillMount() {
 		PostEditStore.on( 'rawContentChange', this.onRawContentChange );
-	},
+	}
 
 	componentDidMount() {
 		this.onRawContentChange();
-	},
+	}
 
 	componentWillUnmount() {
 		PostEditStore.removeListener( 'rawContentChange', this.onRawContentChange );
-	},
+	}
 
-	onRawContentChange() {
+	onRawContentChange = () => {
 		this.setState( {
 			rawContent: PostEditStore.getRawContent()
 		} );
-	},
+	}
 
-	getSelectedTextCount() {
+	getSelectedTextCount = () => {
 		const selectedText = textUtils.countWords( this.props.selectedText );
 
 		if ( ! selectedText ) {
@@ -68,7 +63,7 @@ const EditorWordCount = React.createClass( {
 				}
 			)
 		);
-	},
+	}
 
 	render() {
 		const currentUser = user.get();
@@ -105,6 +100,6 @@ const EditorWordCount = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default localize( EditorWordCount );
