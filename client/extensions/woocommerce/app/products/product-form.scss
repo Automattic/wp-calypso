@@ -92,3 +92,27 @@
 		margin-left: 16px;
 	}
 }
+
+.products__product-form-variation-table {
+	border-spacing: 20px 10px;
+	border-collapse: collapse;
+
+	.products__product-form-variation-all-row {
+		background: $gray;
+	}
+
+	th, td {
+		padding: 10px;
+	}
+
+	/* TODO: remove placeholder styles once implemented */
+	.products__product-form-variation-image {
+		background: $gray-light;
+		height: 40px;
+		width: 40px;
+		margin-bottom: 16px;
+		@include breakpoint( ">960px" ) {
+			margin-bottom: 0;
+		}
+	}
+}
