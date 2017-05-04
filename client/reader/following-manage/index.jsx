@@ -72,13 +72,9 @@ class FollowingManage extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	handleStreamMounted = ( ref ) => {
-		this.streamRef = ref;
-	}
-
-	handleSearchBoxMounted = ( ref ) => {
-		this.searchBoxRef = ref;
-	}
+	handleStreamMounted = ref => this.streamRef = ref;
+	handleSearchBoxMounted = ref => this.searchBoxRef = ref;
+	handleWindowScrollerMounted = ref => this.windowScrollerRef = ref;
 
 	resizeSearchBox = () => {
 		if ( this.searchBoxRef && this.streamRef ) {
@@ -96,10 +92,19 @@ class FollowingManage extends Component {
 			debounce( this.resizeSearchBox, 50 )
 		);
 		this.resizeSearchBox();
+
+		// this is a total hack. In React-Virtualized you need to tell a WindowScroller when the things
+		// above it has moved with a call to updatePosision().  Our issue is we don't have a good moment
+		// where we know that the content above the WindowScroller has settled down and so instead the solution
+		// here is to call updatePosition in a regular interval. the call takes about 0.1ms from empirical testing.
+		this.updatePosition = setInterval( () => {
+			this.windowScrollerRef && this.windowScrollerRef.updatePosition();
+		}, 300 );
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.resizeListener );
+		clearInterval( this.windowScrollerRef );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -156,6 +161,7 @@ class FollowingManage extends Component {
 						width={ this.state.width }
 						query={ subsQuery }
 						sortOrder={ subsSortOrder }
+						windowScrollerRef={ this.handleWindowScrollerMounted }
 					/>
 				) }
 			</ReaderMain>

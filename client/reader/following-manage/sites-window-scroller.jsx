@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { List, WindowScroller, CellMeasurerCache, CellMeasurer, InfiniteLoader } from 'react-virtualized';
-import { debounce } from 'lodash';
+import { debounce, noop } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -22,7 +22,9 @@ class SitesWindowScroller extends Component {
 		fetchNextPage: PropTypes.func,
 		remoteTotalCount: PropTypes.number.isRequired,
 		forceRefresh: PropTypes.bool,
+		windowScrollerRef: PropTypes.func,
 	};
+	defaultProps = { windowScrollerRef: noop }
 
 	heightCache = new CellMeasurerCache( {
 		fixedWidth: true,
@@ -107,7 +109,7 @@ class SitesWindowScroller extends Component {
 					rowCount={ remoteTotalCount }
 				>
 				{ ( { onRowsRendered, registerChild } ) => (
-					<WindowScroller>
+					<WindowScroller ref={ this.props.windowScrollerRef }>
 						{ ( { height, scrollTop } ) => (
 							<List
 								autoHeight
