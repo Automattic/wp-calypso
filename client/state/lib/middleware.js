@@ -90,7 +90,9 @@ const updatedSelectedSiteForKeyboardShortcuts = ( dispatch, action, getState ) =
  * @param {function} getState - redux getState function
  */
 const updateNotificationsOpenForKeyboardShortcuts = ( dispatch, action, getState ) => {
-	keyboardShortcuts.setNotificationsOpen( isNotificationsOpen( getState() ) );
+	// flip the state here, since the reducer hasn't had a chance to update yet
+	const toggledState = ! isNotificationsOpen( getState() );
+	keyboardShortcuts.setNotificationsOpen( toggledState );
 };
 
 /**
@@ -114,10 +116,7 @@ const handler = ( dispatch, action, getState ) => {
 		//when the notifications panel is open keyboard events should not fire.
 		case NOTIFICATIONS_PANEL_TOGGLE:
 			if ( keyBoardShortcutsEnabled ) {
-				// Wait a tick for the reducer to update the state tree
-				setTimeout( () => {
-					updateNotificationsOpenForKeyboardShortcuts( dispatch, action, getState );
-				}, 0 );
+				updateNotificationsOpenForKeyboardShortcuts( dispatch, action, getState );
 			}
 			return;
 
