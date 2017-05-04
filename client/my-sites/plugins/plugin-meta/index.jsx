@@ -317,12 +317,13 @@ class PluginMeta extends Component {
 						className="plugin-meta__version-notice"
 						showDismiss={ false }
 						icon="sync"
-						text={ i18n.translate( 'A new version is available.' ) }>
+						text={ i18n.translate(
+							'Version %(newPluginVersion)s is available',
+							{ args: { newPluginVersion: newVersions[ 0 ].newVersion } }
+						) }>
 						<NoticeAction onClick={ this.handlePluginUpdatesSingleSite }>
 							{
-								i18n.translate( 'Update to %(newPluginVersion)s',
-									{ args: { newPluginVersion: newVersions[ 0 ].newVersion } }
-								)
+								i18n.translate( 'Update' )
 							}
 						</NoticeAction>
 					</Notice>
