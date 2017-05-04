@@ -20,7 +20,6 @@ class PlansLanding extends Component {
 		basePlansPath: PropTypes.string,
 		intervalType: PropTypes.string,
 		landingType: PropTypes.string,
-		sitePlans: PropTypes.object.isRequired,
 		sites: PropTypes.object,
 	};
 
@@ -51,6 +50,8 @@ class PlansLanding extends Component {
 			<div>
 				<QueryPlans />
 				<PlansGrid { ...this.props }
+					sitePlans={ {} }
+					calypsoStartedConnection={ true }
 					onSelect={ this.storeSelectedPlan }
 					basePlansPath={ this.props.basePlansPath } />
 			</div>
@@ -58,15 +59,7 @@ class PlansLanding extends Component {
 	}
 }
 
-export default connect(
-	() => {
-		return {
-			sitePlans: {},
-			calypsoStartedConnection: true
-		};
-	},
-	{
-		recordTracksEvent,
-		selectPlanInAdvance,
-	}
-)( PlansLanding );
+export default connect( null, {
+	recordTracksEvent,
+	selectPlanInAdvance,
+} )( PlansLanding );
