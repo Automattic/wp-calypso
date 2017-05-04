@@ -18,6 +18,10 @@ import {
 	unsubscribeToNewPostEmail,
 	subscribeToNewCommentEmail,
 	unsubscribeToNewCommentEmail,
+	follow,
+	unfollow,
+	updateFollow,
+
 } from '../actions';
 import { items, itemsCount } from '../reducer';
 
@@ -414,6 +418,127 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, unsubscribeToNewCommentEmail( 456 ) );
 			expect( state ).to.equal( original );
+		} );
+	} );
+
+	describe( 'follow', () => {
+		it( 'should mark an existing feed as followed and leave the rest alone', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: false,
+					blog_ID: 123
+				}
+			} );
+
+			const state = items( original, follow( 'http://example.com' ) );
+			expect( state ).to.eql( {
+				'example.com': {
+					is_following: true,
+					feed_URL: 'http://example.com',
+					blog_ID: 123
+				}
+			} );
+		} );
+
+		it( 'should create a new entry for a new follow', () => {
+			const state = items( {}, follow( 'http://example.com' ) );
+			expect( state ).to.eql( {
+				'example.com': {
+					feed_URL: 'http://example.com',
+					is_following: true
+				}
+			} );
+		} );
+	} );
+
+	describe( 'unfollow', () => {
+		it( 'should mark an existing follow as unfollowed', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					feed_URL: 'http://example.com',
+					blog_ID: 123
+				}
+			} );
+
+			const state = items( original, unfollow( 'http://example.com' ) );
+			expect( state ).to.eql( {
+				'example.com': {
+					is_following: false,
+					feed_URL: 'http://example.com',
+					blog_ID: 123
+				}
+			} );
+		} );
+
+		it( 'should return the original state when already unfollowed', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: false,
+					feed_URL: 'http://example.com',
+					blog_ID: 123
+				}
+			} );
+
+			const state = items( original, unfollow( 'http://example.com' ) );
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should return the same state for an item that does not exit', () => {
+			const original = deepFreeze( {} );
+			const state = items( original, unfollow( 'http://example.com' ) );
+			expect( state ).to.equal( original );
+		} );	} );
+
+	describe( 'updateFollow', () => {
+		it( 'should do nothing for a follow that does not exist', () => {
+			const original = deepFreeze( { } );
+			const state = items(
+				original,
+				updateFollow(
+					'http://example.com',
+					{ hi: 'there' }
+				)
+			);
+			expect( state ).to.equal( original );
+		} );
+
+		it( 'should update an existing subscription', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					feed_URL: 'http://example.com',
+					blog_ID: 123
+				}
+			} );
+
+			const subscriptionInfo = {
+				ID: 25,
+				blog_ID: 10,
+				feed_ID: 20,
+				feed_URL: 'http://example.com', // what should we do if the feed_URL doesn't match the feedUrl on the action??
+				delivery_methods: {
+					email: {
+						send_posts: true
+					}
+				},
+			};
+
+			const state = items( original, updateFollow( 'http://example.com', subscriptionInfo ) );
+			expect( state ).to.eql( {
+				'example.com': {
+					ID: 25,
+					is_following: true,
+					feed_URL: 'http://example.com',
+					blog_ID: 10,
+					feed_ID: 20,
+					delivery_methods: {
+						email: {
+							send_posts: true
+						}
+					}
+				}
+			} );
 		} );
 	} );
 } );

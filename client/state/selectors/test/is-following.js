@@ -14,13 +14,13 @@ describe( 'is-following', () => {
 		reader: {
 			follows: {
 				items: {
-					'example.com': {
+					'example.com/feed': {
 						feed_ID: 1,
 						blog_ID: 2,
 						feed_URL: 'https://example.com/feed',
 						is_following: true,
 					},
-					'badexample.com': {
+					'badexample.com/feed': {
 						feed_ID: 10,
 						blog_ID: 20,
 						feed_URL: 'https://badexample.com/feed',
