@@ -28,8 +28,8 @@ const TagStream = React.createClass( {
 	_isMounted: false,
 
 	propTypes: {
-		encodedTagSlug: React.PropTypes.string, // the tag slug encoded
-		decodedTagSlug: React.PropTypes.string, // decoded tag slug
+		encodedTagSlug: React.PropTypes.string,
+		decodedTagSlug: React.PropTypes.string,
 	},
 
 	getInitialState() {
