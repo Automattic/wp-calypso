@@ -5,20 +5,9 @@
 	margin: 16px -16px -16px;
 	padding: 16px;
 	border-top: 1px solid darken( $sidebar-bg-color, 5% );
-
-	&:visited {
-		color: $gray-text;
-	}
-
-	&:hover,
-	&:focus {
-		color: $gray-dark;
-		outline: none;
-
-		.gridicon {
-			color: $gray-dark;
-		}
-	}
+	width: calc(100% + 32px);
+	text-align: left;
+	cursor: pointer;
 
 	.gridicon {
 		color: $gray-text;

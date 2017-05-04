@@ -160,6 +160,14 @@
 	}
 }
 
+.editor__content {
+	display: none;
+
+	&.show {
+		display: block;
+	}
+}
+
 .editor__header {
 	position: relative;
 	padding-bottom: 27px;

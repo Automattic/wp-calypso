@@ -35,7 +35,7 @@ const actions = require( 'lib/posts/actions' ),
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
-import { receivePost, savePostSuccess } from 'state/posts/actions';
+import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { hasBrokenSiteUserConnection } from 'state/selectors';
@@ -56,9 +56,11 @@ import { editedPostHasContent } from 'state/selectors';
 import EditorGroundControl from 'post-editor/editor-ground-control';
 import { isMobile } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
+import EditorDiffViewer from 'post-editor/editor-diff-viewer';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
+		editPost: React.PropTypes.func,
 		siteId: React.PropTypes.number,
 		preferences: React.PropTypes.object,
 		setEditorModePreference: React.PropTypes.func,
@@ -85,8 +87,9 @@ export const PostEditor = React.createClass( {
 			notice: null,
 			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
-			isLoadingAutosave: false,
-			isTitleFocused: false
+			isLoadingRevision: false,
+			isTitleFocused: false,
+			selectedRevisionId: null,
 		};
 	},
 
@@ -199,6 +202,19 @@ export const PostEditor = React.createClass( {
 		}
 	},
 
+	toggleRevision: function( selectedRevisionId ) {
+		this.setState( { selectedRevisionId } );
+	},
+
+	loadRevision: function( revision ) {
+		this.setState( { selectedRevisionId: null } );
+		this.restoreRevision( {
+			content: revision.content,
+			excerpt: revision.excerpt,
+			title: revision.title,
+		} );
+	},
+
 	render: function() {
 		const site = this.props.selectedSite || undefined;
 		const mode = this.getEditorMode();
@@ -271,54 +287,79 @@ export const PostEditor = React.createClass( {
 									type={ this.props.type }
 								/>
 							</div>
-							<FeaturedImage
-								site={ site }
-								post={ this.state.post }
-								maxWidth={ 1462 } />
-							<div className="editor__header">
-								<EditorTitle
-									onChange={ this.debouncedAutosave }
-									tabIndex={ 1 } />
-								{ this.state.post && isPage && site
-									? <EditorPageSlug
-										path={ this.state.post.URL && ( this.state.post.URL !== siteURL )
-											? utils.getPagePath( this.state.post )
-											: siteURL
-										}
+
+							<div className={ classNames(
+								'editor__content',
+								{ show: this.state.selectedRevisionId === null }
+							) }>
+								<FeaturedImage
+									site={ site }
+									post={ this.state.post }
+									maxWidth={ 1462 }
+								/>
+								<div className="editor__header">
+									<EditorTitle
+										onChange={ this.debouncedAutosave }
+										tabIndex={ 1 }
+									/>
+
+									{ this.state.post && isPage && site
+										? <EditorPageSlug
+											path={ this.state.post.URL && ( this.state.post.URL !== siteURL )
+												? utils.getPagePath( this.state.post )
+												: siteURL
+											}
 										/>
-									: null
-								}
-								<SegmentedControl className="editor__switch-mode" compact={ true }>
-									<SegmentedControlItem
-										selected={ mode === 'tinymce' }
-										onClick={ this.switchEditorVisualMode }
-										title={ this.props.translate( 'Edit with a visual editor' ) }>
-										{ this.props.translate( 'Visual', { context: 'Editor writing mode' } ) }
-									</SegmentedControlItem>
-									<SegmentedControlItem
-										selected={ mode === 'html' }
-										onClick={ this.switchEditorHtmlMode }
-										title={ this.props.translate( 'Edit the raw HTML code' ) }>
-										HTML
-									</SegmentedControlItem>
-								</SegmentedControl>
+										: null
+									}
+
+									<SegmentedControl className="editor__switch-mode" compact={ true }>
+										<SegmentedControlItem
+											selected={ mode === 'tinymce' }
+											onClick={ this.switchEditorVisualMode }
+											title={ this.props.translate( 'Edit with a visual editor' ) }
+										>
+											{ this.props.translate( 'Visual', { context: 'Editor writing mode' } ) }
+										</SegmentedControlItem>
+										<SegmentedControlItem
+											selected={ mode === 'html' }
+											onClick={ this.switchEditorHtmlMode }
+											title={ this.props.translate( 'Edit the raw HTML code' ) }
+										>
+											HTML
+										</SegmentedControlItem>
+									</SegmentedControl>
+								</div>
+								<hr className="editor__header-divider" />
+								<TinyMCE
+									ref={ this.storeEditor }
+									mode={ mode }
+									tabIndex={ 2 }
+									isNew={ this.state.isNew }
+									onSetContent={ this.debouncedSaveRawContent }
+									onInit={ this.onEditorInitialized }
+									onChange={ this.onEditorContentChange }
+									onKeyUp={ this.debouncedSaveRawContent }
+									onFocus={ this.onEditorFocus }
+									onTextEditorChange={ this.onEditorContentChange }
+								/>
+
+								<EditorWordCount />
 							</div>
-							<hr className="editor__header-divider" />
-							<TinyMCE
-								ref={ this.storeEditor }
-								mode={ mode }
-								tabIndex={ 2 }
-								isNew={ this.state.isNew }
-								onSetContent={ this.debouncedSaveRawContent }
-								onInit={ this.onEditorInitialized }
-								onChange={ this.onEditorContentChange }
-								onKeyUp={ this.debouncedSaveRawContent }
-								onFocus={ this.onEditorFocus }
-								onTextEditorChange={ this.onEditorContentChange } />
+
+							{ this.state.selectedRevisionId !== null && (
+								<EditorDiffViewer
+									siteId={ site.ID }
+									postId={ this.state.post.ID }
+									selectedRevisionId={ this.state.selectedRevisionId }
+								/>
+							) }
 						</div>
-						<EditorWordCount />
 					</div>
 					<EditorSidebar
+						loadRevision={ this.loadRevision }
+						selectedRevisionId={ this.state.selectedRevisionId }
+						toggleRevision={ this.toggleRevision }
 						toggleSidebar={ this.toggleSidebar }
 						savedPost={ this.state.savedPost }
 						post={ this.state.post }
@@ -329,7 +370,7 @@ export const PostEditor = React.createClass( {
 						type={ this.props.type }
 						setPostDate={ this.setPostDate }
 						onSave={ this.onSave }
-						/>
+					/>
 					{ this.props.isSitePreviewable ?
 						<EditorPreview
 							showPreview={ this.state.showPreview }
@@ -371,19 +412,21 @@ export const PostEditor = React.createClass( {
 	},
 
 	restoreAutosave: function() {
-		var edits,
-			autosaveData = this.state.post.meta.data.autosave;
+		this.setState( { showAutosaveDialog: false } );
+		this.restoreRevision( this.state.post.meta.data.autosave );
+	},
 
-		this.setState( { showAutosaveDialog: false, isLoadingAutosave: true } );
-
-		edits = {
-			title: autosaveData.title,
-			excerpt: autosaveData.excerpt,
-			content: autosaveData.content
-		};
-
+	restoreRevision: function( revision ) {
+		this.setState( { isLoadingRevision: true } );
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.edit( edits );
+		actions.edit( {
+			content: revision.content,
+			excerpt: revision.excerpt,
+			title: revision.title,
+		} );
+		this.props.editPost( this.props.siteId, this.props.postId, {
+			title: revision.title,
+		} );
 	},
 
 	closeAutosaveDialog: function() {
@@ -418,12 +461,12 @@ export const PostEditor = React.createClass( {
 				page.redirect( utils.getEditURL( post, site ) );
 			}
 			this.setState( postEditState, function() {
-				if ( this.editor && ( didLoad || this.state.isLoadingAutosave ) ) {
+				if ( this.editor && ( didLoad || this.state.isLoadingRevision ) ) {
 					this.editor.setEditorContent( this.state.post.content, { initial: true } );
 				}
 
-				if ( this.state.isLoadingAutosave ) {
-					this.setState( { isLoadingAutosave: false } );
+				if ( this.state.isLoadingRevision ) {
+					this.setState( { isLoadingRevision: false } );
 				}
 			} );
 		}
@@ -844,6 +887,7 @@ export default connect(
 	},
 	( dispatch ) => {
 		return bindActionCreators( {
+			editPost,
 			setEditorLastDraft,
 			resetEditorLastDraft,
 			receivePost,

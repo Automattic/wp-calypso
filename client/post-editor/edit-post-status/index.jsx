@@ -41,6 +41,7 @@ class EditPostStatus extends Component {
 		postDate: PropTypes.string,
 		onPrivatePublish: PropTypes.func,
 		status: PropTypes.string,
+		toggleChildSidebar: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -185,6 +186,7 @@ class EditPostStatus extends Component {
 				<Revisions
 					revisions={ this.props.post && this.props.post.revisions }
 					adminUrl={ adminUrl }
+					toggleChildSidebar={ this.props.toggleChildSidebar }
 				/>
 			</div>
 		);

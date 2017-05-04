@@ -1,0 +1,59 @@
+.editor-revisions-list__date {
+	font-weight: bold;
+}
+
+.editor-revisions-list__changes {
+	font-size: 11px;
+}
+
+.editor-revisions-list__additions {
+	color: $blue-medium;
+}
+
+.editor-revisions-list__deletions {
+	color: $alert-red;
+}
+
+.editor-revisions-list__list,
+.editor-revisions-list__header {
+	background: $white;
+	border-top: 1px solid darken( $sidebar-bg-color, 5% );
+	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
+	font-size: 13px;
+}
+
+.editor-revisions-list__revision {
+	border-top: 1px solid darken( $sidebar-bg-color, 5% );
+
+	&.is-selected {
+		background: $blue-medium;
+
+		&, *, .button {
+			color: $white;
+		}
+	}
+
+	&:not( .is-selected ):hover .button {
+		// FIXME: Maybe the accordion color scheme should be moved upstream
+		// into `_colors.scss`?
+		background: $accordion-background-hover;
+		color: $blue-medium;
+	}
+
+	.button {
+		font-size: 13px;
+		padding: 1rem;
+		text-align: left;
+		width: 100%;
+	}
+}
+
+.editor-revisions-list__header {
+	margin-bottom: 10px;
+	padding: 1rem;
+}
+
+.editor-revisions-list__load-revision {
+	margin-top: 5px;
+	width: 100%;
+}
