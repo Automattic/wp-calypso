@@ -7,7 +7,6 @@ const debug = require( 'debug' )( 'desktop:app-instance' );
 /**
  * Internal dependencies
  */
-const config = require( 'lib/config' );
 const platform = require( 'lib/platform' );
 
 function AppInstance() {
@@ -23,9 +22,7 @@ AppInstance.prototype.anotherInstanceStarted = function() {
 };
 
 AppInstance.prototype.isSingleInstance = function() {
-	let shouldQuit;
-
-	shouldQuit = app.makeSingleInstance( this.anotherInstanceStarted.bind( this ) );
+	const shouldQuit = app.makeSingleInstance( this.anotherInstanceStarted.bind( this ) );
 
 	if ( shouldQuit ) {
 		debug( 'App is already running, quitting' );

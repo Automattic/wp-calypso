@@ -29,7 +29,7 @@ ManualUpdater.prototype.ping = function() {
 		response.on( 'end', function() {
 			if ( body ) {
 				try {
-					let update = JSON.parse( body );
+					const update = JSON.parse( body );
 
 					that.onAvailable( update );
 				} catch ( e ) {

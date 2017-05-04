@@ -16,7 +16,7 @@ const APPS_DIRECTORY = '/Applications';
 function isPinned() {
 	if ( Platform.isOSX() ) {
 		try {
-			let cmd = "defaults read com.apple.dock persistent-apps | grep 'WordPress.com'";
+			const cmd = "defaults read com.apple.dock persistent-apps | grep 'WordPress.com'";
 
 			exec( cmd, {} );
 			return true;
@@ -42,12 +42,12 @@ function isFirstRun() {
 
 module.exports = {
 	getDetails: function() {
-		let details = {
+		const details = {
 			pinned: isPinned(),
 			platform: Platform.getPlatformString(),
 			installed: isInstalled(),
 			firstRun: isFirstRun()
-		}
+		};
 
 		debug( 'System details: ', details );
 		return details;

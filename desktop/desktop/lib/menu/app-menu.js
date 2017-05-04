@@ -19,7 +19,7 @@ const debugMenu = require( './debug-menu' );
 const debugEnabled = Settings.getSettingGroup( Config.debug.enabled_by_default, 'debug' );
 
 module.exports = function( app, mainWindow ) {
-	let menuItems = [
+	const menuItems = [
 		{
 			label: 'Preferences...',
 			accelerator: 'CmdOrCtrl+,',
@@ -72,7 +72,7 @@ module.exports = function( app, mainWindow ) {
 		);
 
 		if ( platform.isOSX() === false ) {
-			menuItems.splice( 1, 0, debugMenu[0], debugMenu[1] );
+			menuItems.splice( 1, 0, debugMenu[ 0 ], debugMenu[ 1 ] );
 		}
 	}
 

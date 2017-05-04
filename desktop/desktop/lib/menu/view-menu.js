@@ -28,7 +28,7 @@ menuItems.push(
 			const focusedWindow = BrowserWindow.getFocusedWindow();
 
 			if ( focusedWindow ) {
-				let toggle = !focusedWindow.isFullScreen();
+				const toggle = ! focusedWindow.isFullScreen();
 
 				focusedWindow.setFullScreen( toggle );
 			}

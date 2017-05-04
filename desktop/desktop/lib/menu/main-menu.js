@@ -9,7 +9,7 @@ const helpMenu = require( './help-menu' );
 const platform = require( 'lib/platform' );
 
 module.exports = function( app, mainWindow ) {
-	let menu = [
+	const menu = [
 		{
 			label: platform.isOSX() ? 'WordPress.com' : 'File',
 			submenu: appMenu( app, mainWindow )

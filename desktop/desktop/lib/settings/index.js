@@ -23,8 +23,9 @@ Settings.prototype._getAll = function() {
 };
 
 Settings.prototype.isDebug = function() {
-	if ( typeof this._getAll().debug !== 'undefined' )
+	if ( typeof this._getAll().debug !== 'undefined' ) {
 		return this._getAll().debug;
+	}
 	return Config.debug.enabled_by_default;
 };
 
@@ -34,13 +35,13 @@ Settings.prototype.isDebug = function() {
  * If no default setting then fall back to false
  */
 Settings.prototype.getSetting = function( setting ) {
-	const value = this._getAll()[setting];
+	const value = this._getAll()[ setting ];
 	const debug = require( 'debug' )( 'desktop:settings' );
 
 	if ( typeof value === 'undefined' ) {
-		if ( typeof Config.default_settings[setting] !== 'undefined' ) {
-			debug( 'Get default setting for ' + setting + ' = ' + Config.default_settings[setting] );
-			return Config.default_settings[setting];
+		if ( typeof Config.default_settings[ setting ] !== 'undefined' ) {
+			debug( 'Get default setting for ' + setting + ' = ' + Config.default_settings[ setting ] );
+			return Config.default_settings[ setting ];
 		}
 
 		debug( 'Get setting with no defaults for ' + setting );
@@ -59,20 +60,20 @@ Settings.prototype.getSettingGroup = function( existing, group, values ) {
 
 	debug( 'Get settings for ' + group + ' = ' + values );
 
-	if ( typeof this._getAll()[group] !== 'undefined' ) {
+	if ( typeof this._getAll()[ group ] !== 'undefined' ) {
 		if ( values instanceof Array ) {
 			for ( let x = 0; x < values.length; x++ ) {
-				let value = values[x];
+				const value = values[ x ];
 
-				existing[value] = this._getAll()[group][value];
+				existing[ value ] = this._getAll()[ group ][ value ];
 			}
 		} else {
-			return this._getAll()[group];
+			return this._getAll()[ group ];
 		}
 	}
 
 	return existing;
-}
+};
 
 Settings.prototype.saveSetting = function( group, groupData ) {
 	this.settings = settingsFile.save( group, groupData );

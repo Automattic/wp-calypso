@@ -74,8 +74,8 @@ module.exports = function( mainWindow ) {
 
 				mainWindow.webContents.session.setProxy( 'direct://', function() {
 					mainWindow.loadURL( FAILED_FILE + '#' + errorCode );
-				} )
-			};
+				} );
+			}
 		}
 	} );
 };

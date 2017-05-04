@@ -22,12 +22,16 @@ function promptForRestart( title, message ) {
 
 module.exports = function() {
 	ipc.on( 'preferences-changed', function( event, arg ) {
-		let name = arg.name;
+		const name = arg.name;
 
 		if ( 'proxy-type' === name ) {
 			promptForRestart( 'Proxy changed', 'You have changed the proxy settings.' );
 		} else if ( 'spellcheck-enabled' === name ) {
-			promptForRestart( ( arg.value ? 'Spellchecker enabled' : 'Spellchecker disabled' ), 'You have changed the spellchecker settings.' );
+			promptForRestart( (
+				arg.value
+					? 'Spellchecker enabled'
+					: 'Spellchecker disabled'
+			), 'You have changed the spellchecker settings.' );
 		}
 
 		Settings.saveSetting( name, arg.value );

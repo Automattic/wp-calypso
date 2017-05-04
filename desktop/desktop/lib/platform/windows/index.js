@@ -25,7 +25,7 @@ const TRAY_NOTIFICATION = '-tray-icon-notification.ico';
 
 function WindowsPlatform( mainWindow ) {
 	this.window = mainWindow;
-	this.trayMenu = Menu.buildFromTemplate( windowsTrayMenu( this.restore.bind( this ) ) )
+	this.trayMenu = Menu.buildFromTemplate( windowsTrayMenu( this.restore.bind( this ) ) );
 	this.tray = new Tray( this.getIcon( TRAY_NO_NOTIFICATION ) );
 
 	this.tray.setToolTip( 'WordPress.com' );

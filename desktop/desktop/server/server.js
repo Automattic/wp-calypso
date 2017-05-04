@@ -3,11 +3,13 @@
  */
 const portscanner = require( 'portscanner' );
 const debug = require( 'debug' )( 'desktop:server' );
+const http = require( 'http' );
 
 /**
  * Internal dependencies
  */
 const Config = require( 'lib/config' );
+const boot = require( 'boot' );
 
 function showFailure( app ) {
 	const dialog = require( 'electron' ).dialog;
@@ -24,9 +26,7 @@ function showFailure( app ) {
 }
 
 function startServer( running_cb ) {
-	var boot = require( 'boot' );
-	var http = require( 'http' );
-	var server = http.createServer( boot() );
+	const server = http.createServer( boot() );
 
 	debug( 'Server created, binding to ' + Config.server_port );
 

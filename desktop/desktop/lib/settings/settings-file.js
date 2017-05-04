@@ -48,7 +48,7 @@ module.exports = {
 		let data = {};
 
 		try {
-			if ( !fs.existsSync( settingsFile ) ) {
+			if ( ! fs.existsSync( settingsFile ) ) {
 				createSettingsFile( settingsFile );
 			}
 
@@ -58,7 +58,7 @@ module.exports = {
 			debug( 'Read settings from ' + settingsFile, data.toString( 'utf-8' ) );
 
 			data = JSON.parse( data );
-			data[group] = groupData;
+			data[ group ] = groupData;
 
 			debug( 'Updating settings: ' + group, groupData );
 			fs.writeFileSync( settingsFile, JSON.stringify( data ) );
@@ -72,4 +72,4 @@ module.exports = {
 	isFirstRun: function() {
 		return firstRun;
 	}
-}
+};

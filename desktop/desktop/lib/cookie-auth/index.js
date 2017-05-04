@@ -14,10 +14,9 @@ const events = require( 'events' );
 const noop = function() {};
 
 function authorize( username, token ) {
-	var responder = new events.EventEmitter();
-	var body = 'log=' + username;
-	var options = url.parse( 'https://wordpress.com/wp-login.php' );
-	var req;
+	const responder = new events.EventEmitter();
+	const body = 'log=' + username;
+	const options = url.parse( 'https://wordpress.com/wp-login.php' );
 
 	responder.username = username;
 
@@ -28,73 +27,80 @@ function authorize( username, token ) {
 		'Content-Length': body.length
 	};
 
-	req = https.request( options, function( res ) {
-		var responseBody = '';
+	https
+		.request( options, function( res ) {
+			let responseBody = '';
 
-		responder.emit( 'response', res );
+			responder.emit( 'response', res );
 
-		res.on( 'data', function( data ) {
-			responseBody += data;
-		} );
+			res.on( 'data', function( data ) {
+				responseBody += data;
+			} );
 
-		res.on( 'end', function() {
-			responder.emit( 'body', responseBody );
-		} );
-	} );
-	req.end( body );
+			res.on( 'end', function() {
+				responder.emit( 'body', responseBody );
+			} );
+		} )
+		.end( body );
+
 	return responder;
 }
 
 function parseCookie( cookieStr ) {
-	var cookie = {};
+	const cookie = {};
 	// split, the first is key/value, the rest are settings
-	var parts = cookieStr.split( '; ' ).map( function( v ) {
+	const parts = cookieStr.split( '; ' ).map( function( v ) {
 		return v.split( '=' );
 	} );
-	var value;
 
 	if ( parts.length === 0 ) {
 		return cookie;
 	}
 
-	value = parts.shift();
+	const value = parts.shift();
 
 	if ( value.length === 2 ) {
-		cookie.name = value[0];
-		cookie.value = value[1];
+		cookie.name = value[ 0 ];
+		cookie.value = value[ 1 ];
 	} else {
 		parts.unshift( value );
 	}
 
 	return parts.reduce( function( collect, pair ) {
-		var val = true;
+		let val = true;
+
 		if ( pair.length === 2 ) {
-			val = pair[1];
+			val = pair[ 1 ];
 		}
-		collect[pair[0]] = val;
+
+		collect[ pair[ 0 ] ] = val;
+
 		return cookie;
 	}, cookie );
 }
 
 function setSessionCookies( window, onComplete ) {
 	return function( response ) {
-		var cookieHeaders = response.headers['set-cookie'];
-		var count = 0;
-		if ( !Array.isArray( cookieHeaders ) ) {
-			cookieHeaders = [cookieHeaders];
+		let cookieHeaders = response.headers[ 'set-cookie' ];
+		let count = 0;
+
+		if ( ! Array.isArray( cookieHeaders ) ) {
+			cookieHeaders = [ cookieHeaders ];
 		}
 
 		count = cookieHeaders.length;
 
 		cookieHeaders.map( parseCookie ).forEach( function( cookie ) {
-			cookie.url = 'https://wordpress.com/'
+			cookie.url = 'https://wordpress.com/';
+
 			if ( cookie.httponly ) {
 				cookie.session = true;
 			}
+
 			window.webContents.session.cookies.set( cookie, function() {
-				count --;
-				if ( count === 0 ) {
-					if ( onComplete ) onComplete();
+				count--;
+				if ( count === 0 && onComplete ) {
+					onComplete();
 				}
 			} );
 		} );
@@ -102,7 +108,8 @@ function setSessionCookies( window, onComplete ) {
 }
 
 function auth( window, onAuthorized ) {
-	var userData, currentRequest;
+	let userData;
+	let currentRequest;
 
 	ipc.on( 'user-auth', function( event, user, token ) {
 		if ( user && user.data ) {
@@ -120,8 +127,8 @@ function auth( window, onAuthorized ) {
 				}
 
 				cookies.forEach( function( cookie ) {
-					var domain = cookie.domain;
-					var cookieUrl = 'https://' + ( domain.indexOf( '.' ) === 0 ? domain.slice( 1 ) : domain ) + cookie.path;
+					const domain = cookie.domain;
+					const cookieUrl = 'https://' + ( domain.indexOf( '.' ) === 0 ? domain.slice( 1 ) : domain ) + cookie.path;
 
 					window.webContents.session.cookies.remove( cookieUrl, cookie.name, noop );
 				} );
