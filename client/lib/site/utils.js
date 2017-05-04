@@ -123,10 +123,6 @@ export default {
 		return false;
 	},
 
-	isJetpack( site ) {
-		return site && site.jetpack;
-	},
-
 	/**
 	 * Checks whether a site has a custom mapped URL.
 	 * @param  {Object}   site Site object
