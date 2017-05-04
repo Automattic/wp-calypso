@@ -24,11 +24,6 @@ class PlansLanding extends Component {
 		landingType: PropTypes.string,
 	};
 
-	static defaultProps = {
-		intervalType: 'yearly',
-		siteSlug: '*',
-	};
-
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_landing_view', {
 			jpc_from: this.props.landingType
