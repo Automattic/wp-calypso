@@ -64,7 +64,7 @@ class PluginItem extends Component {
 		} ),
 		hasAllNoManageSites: PropTypes.bool,
 		hasUpdate: PropTypes.func,
-	}
+	};
 
 	static defaultProps = {
 		allowedActions: {
