@@ -49,18 +49,18 @@ class JetpackConnectSiteURLInput extends Component {
 		this.refs.siteUrl.refs.textField.focus();
 	}
 
-	onChange = ( event ) => {
+	handleChange = ( event ) => {
 		this.setState( {
 			value: untrailingslashit( event.target.value ),
 			shownValue: event.target.value
 		}, this.props.onChange );
 	};
 
-	onClick = () => this.props.onClick( this.state.value );
+	handleClick = () => this.props.onClick( this.state.value );
 
 	handleKeyPress = ( event ) => {
 		if ( 13 === event.keyCode ) {
-			this.onClick();
+			this.handleClick();
 		}
 	};
 
@@ -105,7 +105,7 @@ class JetpackConnectSiteURLInput extends Component {
 			id: 'siteUrl',
 			autoCapitalize: 'off',
 			autoFocus: 'autofocus',
-			onChange: this.onChange,
+			onChange: this.handleChange,
 			disabled: this.props.isFetching,
 			placeholder: i18n.translate( 'http://www.yoursite.com' ),
 			onKeyUp: this.handleKeyPress,
@@ -128,7 +128,7 @@ class JetpackConnectSiteURLInput extends Component {
 					{ this.renderTermsOfServiceLink() }
 					<Button primary
 						disabled={ ( ! this.state.value || this.props.isFetching || hasError ) }
-						onClick={ this.onClick }>{ this.renderButtonLabel() }</Button>
+						onClick={ this.handleClick }>{ this.renderButtonLabel() }</Button>
 				</Card>
 			</div>
 		);
