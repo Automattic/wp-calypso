@@ -39,20 +39,23 @@ function getMessageFromHTTPError( error ) {
  *
  * @param  {String}    usernameOrEmail    Username or email of the user.
  * @param  {String}    password           Password of the user.
+ * @param  {Boolean}   rememberMe         Whether to persist the logged in state of the user..
  * @return {Function}                     Action thunk to trigger the login process.
  */
-export const loginUser = ( usernameOrEmail, password ) => dispatch => {
+export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch => {
 	dispatch( {
 		type: LOGIN_REQUEST,
 		usernameOrEmail
 	} );
 
 	return request.post( config( 'login_url_xhr' ) )
+		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
 		.accept( 'application/json' )
 		.send( {
 			username: usernameOrEmail,
 			password,
+			remember_me: rememberMe,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} ).then( ( response ) => {

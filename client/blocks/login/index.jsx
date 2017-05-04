@@ -7,8 +7,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { createFormAndSubmit } from 'lib/form';
 import LoginForm from './login-form';
 import TwoFactorAuthentication from './two-factor-authentication';
 import { isTwoFactorEnabled } from 'state/login/selectors';
@@ -25,14 +23,9 @@ class Login extends Component {
 		rememberMe: false,
 	};
 
-	handleValidUsernamePassword = ( { usernameOrEmail, password, rememberMe } ) => {
+	handleValidUsernamePassword = ( { rememberMe } ) => {
 		if ( ! this.props.twoFactorEnabled ) {
-			createFormAndSubmit( config( 'login_url' ), {
-				log: usernameOrEmail,
-				pwd: password,
-				redirect_to: this.props.redirectLocation || window.location.origin,
-				rememberme: rememberMe ? 1 : 0,
-			} );
+			this.rebootAfterLogin();
 		} else {
 			this.setState( {
 				hasSubmittedValidCredentials: true,
@@ -41,8 +34,8 @@ class Login extends Component {
 		}
 	};
 
-	handleValid2FACode = () => {
-		// TODO: submit the form to /wp-login with the 2FA code
+	rebootAfterLogin = () => {
+		window.location.href = this.props.redirectLocation || window.location.origin;
 	};
 
 	renderContent() {
@@ -60,7 +53,7 @@ class Login extends Component {
 			return (
 				<TwoFactorAuthentication
 					rememberMe={ rememberMe }
-					onSuccess={ this.handleValid2FACode } />
+					onSuccess={ this.rebootAfterLogin } />
 			);
 		}
 

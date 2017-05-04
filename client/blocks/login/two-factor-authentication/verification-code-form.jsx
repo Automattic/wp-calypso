@@ -25,9 +25,10 @@ import {
 
 class VerificationCodeForm extends Component {
 	static propTypes = {
+		onSuccess: PropTypes.func.isRequired,
 		rememberMe: PropTypes.bool.isRequired,
-		userId: PropTypes.number.isRequired,
 		twoStepNonce: PropTypes.string.isRequired,
+		userId: PropTypes.number.isRequired,
 	};
 
 	state = {
@@ -45,11 +46,13 @@ class VerificationCodeForm extends Component {
 	};
 
 	onCodeSubmit = ( event ) => {
+		event.preventDefault();
+
 		const { userId, twoStepNonce, rememberMe } = this.props;
 		const { twoStepCode } = this.state;
-		event.preventDefault();
-		this.props.loginUserWithTwoFactorVerificationCode( userId, twoStepCode, twoStepNonce, rememberMe ).then( () => {
-			this.props.onSuccess( this.state );
+
+		loginUserWithTwoFactorVerificationCode( userId, twoStepCode, twoStepNonce, rememberMe ).then( () => {
+			this.props.onSuccess();
 		} );
 	};
 
@@ -104,8 +107,5 @@ export default connect(
 	( state ) => ( {
 		userId: getTwoFactorUserId( state ),
 		twoStepNonce: getTwoFactorAuthNonce( state ),
-	} ),
-	{
-		loginUserWithTwoFactorVerificationCode,
-	}
+	} )
 )( localize( VerificationCodeForm ) );

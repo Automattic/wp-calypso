@@ -66,7 +66,7 @@ export class LoginForm extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_submit' );
 
-		this.props.loginUser( this.state.usernameOrEmail, this.state.password ).then( () => {
+		this.props.loginUser( this.state.usernameOrEmail, this.state.password, this.state.rememberMe ).then( () => {
 			this.props.recordTracksEvent( 'calypso_login_block_login_success' );
 			this.dismissNotice();
 			this.props.onSuccess( this.state );
