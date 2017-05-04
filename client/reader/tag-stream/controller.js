@@ -38,8 +38,8 @@ const exported = {
 			<AsyncLoad require="reader/tag-stream/main"
 				key={ 'tag-' + encodedTag }
 				postsStore={ tagStore }
-				tag={ encodedTag }
-				decodedTag={ tagSlug }
+				encodedTagSlug={ encodedTag }
+				decodedTagSlug={ tagSlug }
 				trackScrollPage={ trackScrollPage.bind(
 					null,
 					basePath,
