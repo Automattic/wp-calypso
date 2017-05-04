@@ -29,12 +29,12 @@ class JetpackConnectSiteURLInput extends Component {
 		url: PropTypes.string,
 	};
 
-	componentWillMount() {
-		if ( this.props.url ) {
-			this.setState( { value: untrailingslashit( this.props.url ), shownValue: this.props.url } );
-		} else {
-			this.setState( { value: '', shownValue: '' } );
-		}
+	constructor( props ) {
+		super( props );
+
+		this.state = this.props.url
+			? { value: untrailingslashit( this.props.url ), shownValue: this.props.url }
+			: { value: '', shownValue: '' };
 	}
 
 	componentDidUpdate() {
