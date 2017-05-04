@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import i18n from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
 /**
@@ -65,23 +65,24 @@ class JetpackConnectSiteURLInput extends Component {
 	};
 
 	renderButtonLabel() {
+		const { translate } = this.props;
 		if ( ! this.props.isFetching ) {
 			if ( ! this.props.isInstall ) {
-				return i18n.translate( 'Connect Now' );
+				return translate( 'Connect Now' );
 			}
-			return i18n.translate( 'Start Installation' );
+			return translate( 'Start Installation' );
 		}
-		return i18n.translate( 'Connecting…' );
+		return translate( 'Connecting…' );
 	}
 
 	getTermsOfServiceUrl() {
-		return 'https://' + i18n.getLocaleSlug() + '.wordpress.com/tos/';
+		return 'https://' + getLocaleSlug() + '.wordpress.com/tos/';
 	}
 
 	renderTermsOfServiceLink() {
 		return (
 			<p className="jetpack-connect__tos-link">{
-				i18n.translate(
+				this.props.translate(
 					'By connecting your site you agree to our fascinating {{a}}Terms of Service{{/a}}.',
 					{
 						components: {
@@ -99,6 +100,7 @@ class JetpackConnectSiteURLInput extends Component {
 	}
 
 	render() {
+		const { translate } = this.props;
 		const hasError = this.props.isError && ( 'notExists' !== this.props.isError );
 		const textInputProps = {
 			ref: 'siteUrl',
@@ -107,14 +109,14 @@ class JetpackConnectSiteURLInput extends Component {
 			autoFocus: 'autofocus',
 			onChange: this.handleChange,
 			disabled: this.props.isFetching,
-			placeholder: i18n.translate( 'http://www.yoursite.com' ),
+			placeholder: translate( 'http://www.yoursite.com' ),
 			onKeyUp: this.handleKeyPress,
 			value: this.state.shownValue || ''
 		};
 
 		return (
 			<div>
-				<FormLabel htmlFor="siteUrl">{ i18n.translate( 'Site Address' ) }</FormLabel>
+				<FormLabel htmlFor="siteUrl">{ translate( 'Site Address' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon
 						size={ 24 }
@@ -135,4 +137,4 @@ class JetpackConnectSiteURLInput extends Component {
 	}
 }
 
-export default JetpackConnectSiteURLInput;
+export default localize( JetpackConnectSiteURLInput );
