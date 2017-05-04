@@ -6,6 +6,7 @@ import {
 	ROUTE_SET,
 	SECTION_SET,
 	PREVIEW_IS_SHOWING,
+	NOTIFICATIONS_PANEL_TOGGLE
 } from 'state/action-types';
 
 /**
@@ -65,3 +66,14 @@ export function setPreviewShowing( isShowing ) {
 		isShowing,
 	};
 }
+
+/**
+ * Sets ui state to toggle the notifications panel
+ *
+ * @returns {Object} An action object
+ */
+export const toggleNotificationsPanel = () => {
+	return {
+		type: NOTIFICATIONS_PANEL_TOGGLE
+	};
+};
