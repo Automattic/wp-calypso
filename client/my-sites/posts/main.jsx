@@ -149,6 +149,7 @@ export default connect(
 		};
 
 		return {
+			siteID: siteId,
 			drafts: getSitePostsForQueryIgnoringPage( state, siteId, draftsQuery ),
 			draftCount: getAllPostCount( state, siteId, 'post', 'draft' ),
 			draftsQuery,
