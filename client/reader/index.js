@@ -66,6 +66,10 @@ export default function() {
 			prettyRedirects,
 			sidebar,
 			blogListing );
+
+		// Old full post view
+		page( '/read/post/feed/:feed_id/:post_id', legacyRedirects );
+		page( '/read/post/id/:blog_id/:post_id', legacyRedirects );
 	}
 
 	// Automattic Employee Posts
