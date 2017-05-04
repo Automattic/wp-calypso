@@ -29,13 +29,6 @@ class JetpackConnectSiteURLInput extends Component {
 		url: PropTypes.string,
 	};
 
-	constructor() {
-		super();
-		this.onChange = this.onChange.bind( this );
-		this.onClick = this.onClick.bind( this );
-		this.handleKeyPress = this.handleKeyPress.bind( this );
-	}
-
 	componentWillMount() {
 		if ( this.props.url ) {
 			this.setState( { value: untrailingslashit( this.props.url ), shownValue: this.props.url } );
@@ -56,16 +49,14 @@ class JetpackConnectSiteURLInput extends Component {
 		this.refs.siteUrl.refs.textField.focus();
 	}
 
-	onChange( event ) {
+	onChange = ( event ) => {
 		this.setState( {
 			value: untrailingslashit( event.target.value ),
 			shownValue: event.target.value
 		}, this.props.onChange );
-	}
+	};
 
-	onClick() {
-		this.props.onClick( this.state.value );
-	}
+	onClick = () => this.props.onClick( this.state.value );
 
 	renderButtonLabel() {
 		if ( ! this.props.isFetching ) {
@@ -77,11 +68,11 @@ class JetpackConnectSiteURLInput extends Component {
 		return i18n.translate( 'Connecting…' );
 	}
 
-	handleKeyPress( event ) {
+	handleKeyPress = ( event ) => {
 		if ( 13 === event.keyCode ) {
 			this.onClick();
 		}
-	}
+	};
 
 	getTermsOfServiceUrl() {
 		return 'https://' + i18n.getLocaleSlug() + '.wordpress.com/tos/';
