@@ -23,7 +23,7 @@ const exported = {
 				.toLowerCase()
 				.replace( /\s+/g, '-' )
 				.replace( /-{2,}/g, '-' ),
-			encodedTag = encodeURIComponent( tagSlug ).toLowerCase(),
+			encodedTag = tagSlug.toLowerCase(),
 			tagStore = feedStreamFactory( 'tag:' + tagSlug ),
 			mcKey = 'topic';
 
