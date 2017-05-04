@@ -26,6 +26,7 @@ import {
 	getTwoFactorSupportedAuthTypes,
 } from 'state/login/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { sendSmsCode } from 'state/login/actions';
 
 class VerificationCodeForm extends Component {
 	static propTypes = {
@@ -61,6 +62,14 @@ class VerificationCodeForm extends Component {
 				error_message: errorMessage
 			} );
 		} );
+	};
+
+	sendSmsCode = ( event ) => {
+		event.preventDefault();
+
+		const { userId, twoStepNonce } = this.props;
+
+		this.props.sendSmsCode( userId, twoStepNonce );
 	};
 
 	render() {
@@ -136,5 +145,6 @@ export default connect(
 	{
 		loginUserWithTwoFactorVerificationCode,
 		recordTracksEvent,
+		sendSmsCode,
 	}
 )( localize( VerificationCodeForm ) );
