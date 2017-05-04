@@ -1,13 +1,13 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
+let React = require( 'react' ),
 	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
+let sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
 	analytics = require( 'lib/analytics' ),
 	titlecase = require( 'to-title-case' ),
@@ -16,10 +16,10 @@ var sites = require( 'lib/sites-list' )(),
 
 import { renderWithReduxStore } from 'lib/react-helpers';
 
-var controller = {
+const controller = {
 
 	pages: function( context ) {
-		var Pages = require( 'my-sites/pages/main' ),
+		let Pages = require( 'my-sites/pages/main' ),
 			siteID = route.getSiteFragment( context.path ),
 			status = context.params.status,
 			search = context.query.s,
@@ -47,7 +47,6 @@ var controller = {
 		renderWithReduxStore(
 			React.createElement( Pages, {
 				context: context,
-				siteID: siteID,
 				status: status,
 				sites: sites,
 				search: search,
