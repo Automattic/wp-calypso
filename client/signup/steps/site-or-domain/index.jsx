@@ -14,6 +14,7 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import SiteOrDomainChoice from './choice';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import { getSites } from 'state/selectors';
 // TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
 import DomainImage from 'signup/steps/design-type-with-store/domain-image';
 import NewSiteImage from 'signup/steps/design-type-with-store/new-site-image';
@@ -137,6 +138,17 @@ class SiteOrDomain extends Component {
 		const tld = domain.split( '.' ).slice( 1 ).join( '.' );
 		const domainItem = cartItems.domainRegistration( { productSlug: tlds[ tld ], domain } );
 
+		if ( designType === 'existing-site' ) {
+			SignupActions.submitSignupStep( {
+				stepName,
+				designType,
+				domainItem,
+				isPurchasingItem: true,
+			}, [], { domainItem } );
+			goToNextStep();
+			return;
+		}
+
 		SignupActions.submitSignupStep( {
 			stepName,
 			domainItem,
@@ -149,13 +161,15 @@ class SiteOrDomain extends Component {
 		if ( designType === 'domain' ) {
 			// we can skip the next two steps in the `domain-first` flow if the
 			// user is only purchasing a domain
+			SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true }, [], {} );
 			SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], {
 				themeSlugWithRepo: 'pub/twentysixteen'
 			} );
 			SignupActions.submitSignupStep( { stepName: 'plans', wasSkipped: true }, [], { cartItem: null, privacyItem: null } );
 			goToStep( 'user' );
 		} else {
-			goToNextStep();
+			SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true }, [], {} );
+			goToStep( 'themes' );
 		}
 	};
 
@@ -178,6 +192,7 @@ class SiteOrDomain extends Component {
 export default connect(
 	( state ) => {
 		return {
+			sites: getSites( state ),
 			isLoggedIn: !! getCurrentUserId( state )
 		};
 	}

@@ -210,7 +210,7 @@ const flows = {
 
 if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
 	flows[ 'domain-first' ] = {
-		steps: [ 'site-or-domain', 'themes', 'plans', 'user' ],
+		steps: [ 'site-or-domain', 'site-picker', 'themes', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'An experimental approach for WordPress.com/domains',
 		disallowResume: true,

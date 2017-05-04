@@ -9,6 +9,7 @@ import pick from 'lodash/pick';
 import async from 'async';
 import { parse as parseURL } from 'url';
 import { startsWith } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -45,11 +46,25 @@ function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		};
 
 		SignupCart.createCart( cartKey, [ domainItem ], error => callback( error, providedDependencies ) );
-	} else {
+	} else if ( designType === 'page' ) {
 		createSiteWithCart( ( errors, providedDependencies ) => {
 			callback( errors, pick( providedDependencies, [ 'siteId', 'siteSlug', 'themeSlugWithRepo', 'domainItem' ] ) );
 		}, dependencies, data, reduxStore );
 	}
+}
+
+function linkExistingSite( callback, dependencies, data ) {
+	const { siteId, siteSlug } = data;
+
+	const providedDependencies = {
+		siteId,
+		siteSlug,
+	};
+
+	SignupCart.createCart( siteId, dependencies, error => {
+		callback( error, providedDependencies );
+		page.redirect( `/checkout/${ siteSlug }` );
+	} );
 }
 
 function createSiteWithCart( callback, dependencies, {
@@ -247,6 +262,8 @@ module.exports = {
 	createSiteOrDomain,
 
 	createSiteWithCart,
+
+	linkExistingSite,
 
 	addPlanToCart( callback, { siteId }, { cartItem, privacyItem } ) {
 		if ( isEmpty( cartItem ) ) {

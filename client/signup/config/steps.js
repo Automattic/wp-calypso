@@ -142,7 +142,7 @@ export default {
 		providesDependencies: [ 'themeSlugWithRepo' ]
 	},
 
-	// Currently, this step explicitly submits other steps to skip them, and
+	// Currently, these two steps explicitly submit other steps to skip them, and
 	// should not be used outside of the `domain-first` flow.
 	'site-or-domain': {
 		stepName: 'site-or-domain',
@@ -152,6 +152,16 @@ export default {
 			subHeaderText: i18n.translate( "Don't worry you can easily add a site later if you're not ready." )
 		},
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
+		delayApiRequestUntilComplete: true
+	},
+	'site-picker': {
+		stepName: 'site-picker',
+		apiRequestFunction: stepActions.linkExistingSite,
+		props: {
+			headerText: i18n.translate( 'Choose your site?' ),
+		},
+		providesDependencies: [ 'siteId', 'siteSlug' ],
+		dependencies: [ 'domainItem', 'cartItem', 'privacyItem' ],
 		delayApiRequestUntilComplete: true
 	},
 };
