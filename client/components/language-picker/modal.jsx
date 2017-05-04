@@ -254,12 +254,6 @@ class LanguagePickerModal extends PureComponent {
 	render() {
 		const { isVisible, translate } = this.props;
 
-		if ( ! isVisible ) {
-			// Render nothing at all if the modal is not visible
-			// <Dialog isVisible={ false }> still renders a lot of useless elements
-			return null;
-		}
-
 		const buttons = [
 			{
 				action: 'cancel',
@@ -275,7 +269,7 @@ class LanguagePickerModal extends PureComponent {
 
 		return (
 			<Dialog
-				isVisible
+				isVisible={ isVisible }
 				buttons={ buttons }
 				onClose={ this.handleClose }
 				additionalClassNames="language-picker__modal"
