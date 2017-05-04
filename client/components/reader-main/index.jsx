@@ -25,11 +25,10 @@ export default class ReaderMain extends React.Component {
 	}
 
 	render() {
-		let { children, ...props } = this.props;
-		children = React.Children.toArray( children );
-		children.push( <SyncReaderFollows key="syncReaderFollows" /> );
+		const { children, ...props } = this.props;
 		return (
 			<Main { ...props }>
+				<SyncReaderFollows key="syncReaderFollows" />
 				{ children }
 			</Main>
 		);
