@@ -25,20 +25,11 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
 import { isATEnabled } from 'lib/automated-transfer';
-import { getThemeShowcaseDescription } from 'state/selectors';
+import { getThemeShowcaseDescription, getThemeShowcaseTitle } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
-
-function getThemeShowcaseTitle( tier ) {
-	const titles = {
-		'': 'WordPress Themes',
-		free: 'Free WordPress Themes',
-		premium: 'Premium WordPress Themes',
-	};
-	return titles[ tier ];
-}
 
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
@@ -144,6 +135,7 @@ const ThemeShowcase = React.createClass( {
 			vertical,
 			isLoggedIn,
 			pathName,
+			title,
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
@@ -178,7 +170,7 @@ const ThemeShowcase = React.createClass( {
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<Main className="themes">
-				<DocumentHead title={ getThemeShowcaseTitle( tier ) } meta={ metas } link={ links } />
+				<DocumentHead title={ title } meta={ metas } link={ links } />
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle } />
 				{ ! isLoggedIn && (
 					<SubMasterbarNav
@@ -247,6 +239,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	siteSlug: getSiteSlug( state, siteId ),
 	isJetpack: isJetpackSite( state, siteId ),
 	description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
+	title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
 } );
 
 const mapDispatchToProps = {
