@@ -29,6 +29,7 @@ export default function transformer(file, api) {
           [ createClassInstance.value ]
         )
       ));
+      root.find(j.ImportDeclaration).at(0).insertBefore('import { localize } from \'i18n-calypso\';');
     }
   } );
 
