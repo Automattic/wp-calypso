@@ -16,3 +16,12 @@
 	max-width: 700px;
 	width: 100%;
 }
+
+.editor-diff-viewer__additions {
+	background: #e9f9fe;
+}
+
+.editor-diff-viewer__deletions {
+	color: #c83240;
+	text-decoration: line-through;
+}

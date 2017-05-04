@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { map } from 'lodash';
 import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
@@ -9,6 +11,7 @@ import { connect } from 'react-redux';
  */
 import {
 	getPostRevision,
+	getPostRevisionChanges,
 	normalizeForDisplay,
 } from 'state/posts/revisions/selectors';
 
@@ -19,13 +22,24 @@ class EditorDiffViewer extends PureComponent {
 				<h1 className="editor-diff-viewer__title">
 					{ this.props.revision.title }
 				</h1>
-				{ this.props.revision.content }
+				{ map( this.props.contentChanges, ( change, changeIndex ) => {
+					const changeClassNames = classNames( {
+						'editor-diff-viewer__additions': change.added,
+						'editor-diff-viewer__deletions': change.removed,
+					} );
+					return (
+						<span key={ changeIndex } className={ changeClassNames }>
+							{ change.value }
+						</span>
+					);
+				} ) }
 			</div>
 		);
 	}
 }
 
 EditorDiffViewer.propTypes = {
+	contentChanges: PropTypes.array,
 	postId: PropTypes.number,
 	revision: PropTypes.object,
 	selectedRevisionId: PropTypes.number,
@@ -34,6 +48,7 @@ EditorDiffViewer.propTypes = {
 
 export default connect(
 	( state, ownProps ) => ( {
+		contentChanges: getPostRevisionChanges( state, ownProps.siteId, ownProps.postId, ownProps.selectedRevisionId ),
 		revision: normalizeForDisplay(
 			getPostRevision( state, ownProps.siteId, ownProps.postId, ownProps.selectedRevisionId )
 		),
