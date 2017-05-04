@@ -1,5 +1,3 @@
-'use strict';
-
 const pkg = require( '../../../package.json' );
 let config = require( '../../config.json' );
 

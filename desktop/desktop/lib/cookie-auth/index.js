@@ -1,5 +1,3 @@
-'use strict';
-
 /* eslint no-multi-spaces: [2, { exceptions: { "VariableDeclarator": true } }] */
 
 /**

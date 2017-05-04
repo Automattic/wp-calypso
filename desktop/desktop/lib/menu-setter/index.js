@@ -1,5 +1,3 @@
-'use strict';
-
 function setMenuAttribute( menu, attr, enabled ) {
 	if ( typeof menu[attr] !== 'undefined' && menu[attr] ) {
 		menu.enabled = enabled;

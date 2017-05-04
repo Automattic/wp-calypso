@@ -1,5 +1,6 @@
-'use strict';
-
+/**
+ * External dependencies
+ */
 const BrowserWindow = require( 'electron' ).BrowserWindow;
 
 /**

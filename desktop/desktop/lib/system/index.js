@@ -1,9 +1,6 @@
-'use strict';
-
 /**
  * External Dependencies
  */
-
 const Platform = require( 'lib/platform' );
 const exec = require( 'child_process' ).execSync;
 const debug = require( 'debug' )( 'desktop:system' );
