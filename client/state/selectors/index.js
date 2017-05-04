@@ -105,6 +105,7 @@ export isAutomatedTransferActive from './is-automated-transfer-active';
 export isAutomatedTransferFailed from './is-automated-transfer-failed';
 export isDeactivatingJetpackJumpstart from './is-deactivating-jetpack-jumpstart';
 export isDeactivatingJetpackModule from './is-deactivating-jetpack-module';
+export isDeletingSite from './is-deleting-site';
 export isDirectlyFailed from './is-directly-failed';
 export isDirectlyReady from './is-directly-ready';
 export isDirectlyUninitialized from './is-directly-uninitialized';
