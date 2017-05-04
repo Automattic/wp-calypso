@@ -10,6 +10,7 @@ THIS_DIR := $(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 
 NPM ?= $(NODE) $(shell which npm)
 NPM_BIN = $(shell npm bin)
+ROOT_NPM_BIN ?= $(shell cd .. && npm bin)
 
 RED=`tput setaf 1`
 RESET=`tput sgr0`
@@ -30,6 +31,7 @@ CALYPSO_JS := $(CALYPSO_DIR)/public/build.js
 CALYPSO_CHANGES_STD := `find "$(CALYPSO_DIR)" -newer "$(CALYPSO_JS)" \( -name "*.js" -o -name "*.jsx" -o -name "*.json" -o -name "*.scss" \) -type f -print -quit | grep -v .m. | wc -l`
 CALYPSO_BRANCH = $(shell git --git-dir ../.git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 WEBPACK_BIN := $(NPM_BIN)/webpack
+LINT_BIN := $(ROOT_NPM_BIN)/eslint
 
 # sets to 1 if NPM version is >= 3
 NPMGTE3 := $(shell expr `npm -v | cut -f1 -d.` \>= 3)
@@ -168,7 +170,7 @@ package_modules: package.json
 	@touch release/node_modules
 
 lint: node_modules/eslint node_modules/eslint-plugin-react node_modules/babel-eslint
-	@$(NPM_BIN)/eslint ./desktop/
+	@$(LINT_BIN) ./desktop/
 
 eslint: lint
 
