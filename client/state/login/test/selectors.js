@@ -10,6 +10,7 @@ import {
 	getTwoFactorAuthRequestError,
 	getTwoFactorUserId,
 	getTwoFactorAuthNonce,
+	getTwoFactorSupportedAuthTypes,
 	isTwoFactorEnabled,
 	isRequestingTwoFactorAuth,
 } from '../selectors';
@@ -146,6 +147,24 @@ describe( 'selectors', () => {
 			} );
 
 			expect( twoFactorEnabled ).to.be.false;
+		} );
+	} );
+
+	describe( 'getTwoFactorSupportedAuthTypes', () => {
+		it( 'should return null if there is no information yet', () => {
+			expect( getTwoFactorSupportedAuthTypes( undefined ) ).to.be.null;
+		} );
+
+		it( 'should return the supported auth types if they exist in state', () => {
+			const authTypes = getTwoFactorSupportedAuthTypes( {
+				login: {
+					twoFactorAuth: {
+						two_step_supported_auth_types: [ 'authenticator', 'sms' ],
+					}
+				}
+			} );
+
+			expect( authTypes ).to.eql( [ 'authenticator', 'sms' ] );
 		} );
 	} );
 } );

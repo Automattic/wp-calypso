@@ -74,3 +74,14 @@ export const isRequestingTwoFactorAuth = ( state ) => {
 export const getTwoFactorAuthRequestError = ( state ) => {
 	return get( state, 'login.twoFactorAuthRequestError', null );
 };
+
+/**
+ * Retrieves the supported auth types for the current login.
+ * Returns null if there is no such information yet.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?Array}          The supported auth types (of `authenticator`, `sms`, `push` ).
+ */
+export const getTwoFactorSupportedAuthTypes = ( state ) => {
+	return get( state, 'login.twoFactorAuth.two_step_supported_auth_types', null );
+};

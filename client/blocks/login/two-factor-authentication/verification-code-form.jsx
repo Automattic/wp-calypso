@@ -115,7 +115,7 @@ class VerificationCodeForm extends Component {
 				<hr />
 
 				<p>
-					<a href="#">{ translate( 'Send recovery code via text' ) }</a>
+					<a href="#" onClick={ this.sendSmsCode }>{ translate( 'Send recovery code via text' ) }</a>
 				</p>
 			</div>
 		);
