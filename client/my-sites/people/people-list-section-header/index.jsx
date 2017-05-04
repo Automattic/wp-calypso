@@ -44,7 +44,7 @@ class PeopleListSectionHeader extends Component {
 	hideAddTooltip = () => this.setState( { addPeopleTooltip: false } );
 
 	shouldUseWPAdmin() {
-		return ! config.isEnabled( 'jetpack/invites' ) && get( this.props, 'site.jetpack' );
+		return ! config.isEnabled( 'jetpack/invites' ) && get( this.props, 'site.jetpack' ) && ! this.props.isSiteAutomatedTransfer;
 	}
 
 	getAddLink() {
