@@ -31,6 +31,7 @@ import {
 	isRenewal,
 	isRenewing,
 	isSubscription,
+	purchaseType,
 } from 'lib/purchases';
 import {
 	canEditPaymentDetails,
@@ -303,15 +304,15 @@ class ManagePurchase extends Component {
 
 	renderPlanDescription() {
 		const purchase = getPurchase( this.props );
-		if ( ! isPlan( purchase ) ) {
-			return null;
-		}
-
 		const { plan, selectedSite } = this.props;
+
 		return (
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">
-					{ plan.getDescription() }
+					{ ( isPlan( purchase ) )
+						? plan.getDescription()
+						: purchaseType( purchase )
+					}
 				</span>
 				<span className="manage-purchase__settings-link">
 					<ProductLink selectedPurchase={ purchase } selectedSite={ selectedSite } />

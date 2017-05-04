@@ -102,6 +102,7 @@
 
 .manage-purchase__header {
 	overflow: auto;
+	border-bottom: 2px solid $blue-medium;
 
 	.is-personal & {
 		border-bottom: 2px solid $alert-yellow;
