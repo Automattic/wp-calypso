@@ -26,10 +26,24 @@ import {
 const debug = debugModule( 'calypso:redux:reader-follows' );
 
 /**
+ * Extended information about a reader follow
+ * @typedef {Object} follow
+ * @property {number} ID
+ * @property {string} URL The URL being followed. Usually a feed.
+ * @property {string} feed_URL Same as URL
+ * @property {number} blog_ID The blog ID. Optional.
+ * @property {number} feed_ID The feed ID
+ * @property {number} date_subscribed The date subscribed. Seconds since epoch.
+ * @property {boolean} is_owner Is the current user the owner of this site
+ * @property {Object} delivery_methods
+ *
+ */
+
+/**
  * Follow a feed URL
  * @param  {string} feedUrl      The feed URL
- * @param {object} follow			A subscription, optional
- * @return {object}              The action
+ * @param {Follow} followInfo		A subscription, optional
+ * @return {Object}              The action
  */
 export function follow( feedUrl, followInfo ) {
 	const action = {
