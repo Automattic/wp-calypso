@@ -99,7 +99,7 @@ class FollowingManage extends Component {
 		// here is to call updatePosition in a regular interval. the call takes about 0.1ms from empirical testing.
 		this.updatePosition = setInterval( () => {
 			this.windowScrollerRef && this.windowScrollerRef.updatePosition();
-		}, 100 );
+		}, 300 );
 	}
 
 	componentWillUnmount() {
