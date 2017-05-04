@@ -58,6 +58,12 @@ class JetpackConnectSiteURLInput extends Component {
 
 	onClick = () => this.props.onClick( this.state.value );
 
+	handleKeyPress = ( event ) => {
+		if ( 13 === event.keyCode ) {
+			this.onClick();
+		}
+	};
+
 	renderButtonLabel() {
 		if ( ! this.props.isFetching ) {
 			if ( ! this.props.isInstall ) {
@@ -67,12 +73,6 @@ class JetpackConnectSiteURLInput extends Component {
 		}
 		return i18n.translate( 'Connecting…' );
 	}
-
-	handleKeyPress = ( event ) => {
-		if ( 13 === event.keyCode ) {
-			this.onClick();
-		}
-	};
 
 	getTermsOfServiceUrl() {
 		return 'https://' + i18n.getLocaleSlug() + '.wordpress.com/tos/';
