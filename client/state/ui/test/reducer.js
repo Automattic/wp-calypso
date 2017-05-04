@@ -94,7 +94,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( true );
 		} );
 
-		it( 'should toggle close when open', () => {
+		it( 'should toggle closed when open', () => {
 			const state = isNotificationsOpen( true, {
 				type: NOTIFICATIONS_PANEL_TOGGLE,
 			} );

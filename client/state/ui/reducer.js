@@ -76,7 +76,7 @@ export const isPreviewShowing = createReducer( false, {
 } );
 
 /**
- * Tracks if the notifications panel should be shown
+ * Tracks if the notifications panel is open
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
