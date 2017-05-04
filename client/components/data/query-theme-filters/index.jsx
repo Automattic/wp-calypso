@@ -14,7 +14,7 @@ export class QueryThemeFilters extends Component {
 		requestThemeFilters: PropTypes.func.isRequired,
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.props.requestThemeFilters();
 	}
 
