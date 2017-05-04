@@ -24,10 +24,13 @@ import {
 	getTwoFactorAuthRequestError,
 	isRequestingTwoFactorAuth,
 } from 'state/login/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class VerificationCodeForm extends Component {
 	static propTypes = {
+		loginUserWithTwoFactorVerificationCode: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 		rememberMe: PropTypes.bool.isRequired,
 		twoStepNonce: PropTypes.string.isRequired,
 		userId: PropTypes.number.isRequired,
@@ -51,6 +54,10 @@ class VerificationCodeForm extends Component {
 
 		this.props.loginUserWithTwoFactorVerificationCode( userId, twoStepCode, twoStepNonce, rememberMe ).then( () => {
 			this.props.onSuccess();
+		} ).catch( ( errorMessage ) => {
+			this.props.recordTracksEvent( 'calypso_two_factor_verification_code_failure', {
+				error_message: errorMessage
+			} );
 		} );
 	};
 
@@ -120,5 +127,6 @@ export default connect(
 	} ),
 	{
 		loginUserWithTwoFactorVerificationCode,
+		recordTracksEvent,
 	}
 )( localize( VerificationCodeForm ) );
