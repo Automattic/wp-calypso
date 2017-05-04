@@ -15,7 +15,7 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import ProductCreate from './app/products/product-create';
 import Dashboard from './app/dashboard';
 import SettingsPayments from './app/settings/payments';
-import Shipping from './app/shipping';
+import Shipping from './app/settings/shipping';
 import StatsController from './app/stats/controller';
 import StoreSidebar from './store-sidebar';
 
