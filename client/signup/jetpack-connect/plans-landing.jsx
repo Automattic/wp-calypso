@@ -18,9 +18,10 @@ const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';
 class PlansLanding extends Component {
 	static propTypes = {
 		basePlansPath: PropTypes.string,
+		hideFreePlan: PropTypes.bool,
 		intervalType: PropTypes.string,
+		isLanding: PropTypes.bool,
 		landingType: PropTypes.string,
-		sites: PropTypes.object,
 	};
 
 	static defaultProps = {
