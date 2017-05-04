@@ -24,7 +24,6 @@ class MasterbarItemNotifications extends Component {
 		user: React.PropTypes.object.isRequired,
 		isActive: React.PropTypes.bool,
 		className: React.PropTypes.string,
-		onClick: React.PropTypes.func,
 		tooltip: React.PropTypes.string,
 		//connected
 		isNotificationsOpen: React.PropTypes.bool,
@@ -40,19 +39,17 @@ class MasterbarItemNotifications extends Component {
 			recordOpening,
 		} = nextProps;
 
-		const toggledOpen = ! isOpen;
-
 		this.user = this.props.user.get();
 
 		if ( ! this.props.isNotificationsOpen && isOpen ) {
 			recordOpening( {
-				unread_notifications: store.get( 'wpnotes_unseen_count' ) )
+				unread_notifications: store.get( 'wpnotes_unseen_count' )
 			} );
 			this.setNotesIndicator( 0 );
 		}
 
 		// focus on main window if we just closed the notes panel
-		if ( this.props.isNotificationsOpen && ! iOpen ) {
+		if ( this.props.isNotificationsOpen && ! isOpen ) {
 			this.getNotificationLinkDomNode().blur();
 			window.focus();
 		}
@@ -81,13 +78,7 @@ class MasterbarItemNotifications extends Component {
 			event.stopPropagation && event.stopPropagation();
 		}
 
-		const {
-			onClick,
-			toggleNotificationsPanel: togglePanel,
-		} = this.props;
-
-		togglePanel();
-		onClick( toggledOpen );
+		this.props.toggleNotificationsPanel();
 	};
 
 	getNotificationLinkDomNode = () => {
@@ -147,7 +138,7 @@ class MasterbarItemNotifications extends Component {
 					/>
 				</MasterbarItem>
 				<Notifications
-					visible={ this.props.isNotificationsOpen }
+					isShowing={ this.props.isNotificationsOpen }
 					checkToggle={ this.checkToggleNotes }
 					setIndicator={ this.setNotesIndicator }
 				/>

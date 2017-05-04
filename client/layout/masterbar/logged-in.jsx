@@ -17,6 +17,7 @@ import Gravatar from 'components/gravatar';
 import config from 'config';
 import { preload } from 'sections-preload';
 import ResumeEditing from 'my-sites/resume-editing';
+import { isNotificationsOpen } from 'state/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -35,13 +36,6 @@ const MasterbarLoggedIn = React.createClass( {
 		siteSlug: React.PropTypes.string,
 	},
 
-	getInitialState() {
-		return {
-			// whether we show the notifications panel
-			showNotifications: false,
-		};
-	},
-
 	clickMySites() {
 		this.props.setNextLayoutFocus( 'sidebar' );
 	},
@@ -50,12 +44,8 @@ const MasterbarLoggedIn = React.createClass( {
 		this.props.setNextLayoutFocus( 'content' );
 	},
 
-	clickNotifications() {
-		this.setState( { showNotifications: ! this.state.showNotifications } );
-	},
-
 	isActive( section ) {
-		return section === this.props.section && ! this.state.showNotifications;
+		return section === this.props.section && ! this.props.isNotificationsShowing;
 	},
 
 	wordpressIcon() {
@@ -129,8 +119,7 @@ const MasterbarLoggedIn = React.createClass( {
 				</Item>
 				<Notifications
 					user={ this.props.user }
-					onClick={ this.clickNotifications }
-					isShowing={ this.state.showNotifications }
+					isShowing={ this.props.isNotificationsShowing }
 					isActive={ this.isActive( 'notifications' ) }
 					className="masterbar__item-notifications"
 					tooltip={ translate( 'Manage your notifications', { textOnly: true } ) }
@@ -169,6 +158,7 @@ export default connect( ( state, { sites } ) => {
 	}
 
 	return {
+		isNotificationsShowing: isNotificationsOpen( state ),
 		siteSlug,
 		domainOnlySite
 	};
