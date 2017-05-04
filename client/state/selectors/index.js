@@ -39,6 +39,7 @@ export getJetpackSetting from './get-jetpack-setting';
 export getJetpackSettings from './get-jetpack-settings';
 export getJetpackSettingsSaveError from './get-jetpack-settings-save-error';
 export getJetpackSettingsSaveRequestStatus from './get-jetpack-settings-save-request-status';
+export getReaderFollowsLastSyncTime from './get-reader-follows-last-sync-time';
 export getMagicLoginCurrentView from './get-magic-login-current-view';
 export getMagicLoginEmailAddressFormInput from './get-magic-login-email-address-form-input';
 export getMagicLoginEmailAddressFormInputIsValid from './get-magic-login-email-address-form-input-is-valid';

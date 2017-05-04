@@ -7,6 +7,7 @@ import React from 'react';
  * Internal Dependencies
  */
 import Main from 'components/main';
+import SyncReaderFollows from 'components/data/sync-reader-follows';
 
 /**
  * A specialization of `Main` that adds a class to the body of the document
@@ -24,6 +25,13 @@ export default class ReaderMain extends React.Component {
 	}
 
 	render() {
-		return ( <Main { ...this.props } /> );
+		let { children, ...props } = this.props;
+		children = React.Children.toArray( children );
+		children.push( <SyncReaderFollows key="syncReaderFollows" /> );
+		return (
+			<Main { ...props }>
+				{ children }
+			</Main>
+		);
 	}
 }

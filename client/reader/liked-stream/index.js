@@ -11,7 +11,6 @@ import {
 } from './controller';
 import {
 	preloadReaderBundle,
-	loadSubscriptions,
 	initAbTests,
 	updateLastRoute,
 	sidebar,
@@ -20,7 +19,6 @@ import {
 export default function() {
 	page( '/activities/likes',
 		preloadReaderBundle,
-		loadSubscriptions,
 		initAbTests,
 		updateLastRoute,
 		sidebar,

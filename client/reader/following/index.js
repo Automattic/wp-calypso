@@ -11,7 +11,6 @@ import {
 	followingManage,
 } from './controller';
 import {
-	loadSubscriptions,
 	initAbTests,
 	updateLastRoute,
 	sidebar,
@@ -19,7 +18,7 @@ import {
 import config from 'config';
 
 export default function() {
-	page( '/following/*', loadSubscriptions, initAbTests );
+	page( '/following/*', initAbTests );
 	page( '/following/edit', updateLastRoute, sidebar, followingEdit );
 	if ( config.isEnabled( 'reader/following-manage-refresh' ) ) {
 		page( '/following/manage', updateLastRoute, sidebar, followingManage );
