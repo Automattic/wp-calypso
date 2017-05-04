@@ -37,7 +37,8 @@ var PageList = React.createClass( {
 		context: React.PropTypes.object,
 		search: React.PropTypes.string,
 		hasSites: React.PropTypes.bool.isRequired,
-		siteID: React.PropTypes.any
+		site: React.PropTypes.object,
+		siteId: React.PropTypes.any
 	},
 
 	render: function() {
@@ -45,7 +46,7 @@ var PageList = React.createClass( {
 			<PostListFetcher
 				type="page"
 				number={ 100 }
-				siteID={ this.props.siteID }
+				siteID={ this.props.siteId }
 				status={ mapStatus( this.props.status ) }
 				search={ this.props.search }>
 				<Pages
@@ -69,7 +70,7 @@ var Pages = React.createClass( {
 		page: React.PropTypes.number.isRequired,
 		posts: React.PropTypes.array.isRequired,
 		search: React.PropTypes.string,
-		siteID: React.PropTypes.any,
+		siteId: React.PropTypes.any,
 		hasSites: React.PropTypes.bool.isRequired,
 		trackScrollPage: React.PropTypes.func.isRequired,
 		hasRecentError: React.PropTypes.bool.isRequired
@@ -143,7 +144,7 @@ var Pages = React.createClass( {
 		} else {
 			const { site, siteId } = this.props;
 			const sitePart = site && site.slug || siteId;
-			newPageLink = this.props.siteID ? '/page/' + sitePart : '/page';
+			newPageLink = this.props.siteId ? '/page/' + sitePart : '/page';
 
 			if ( this.props.hasRecentError ) {
 				attributes = {
@@ -318,7 +319,7 @@ const mapState = state => {
 	return {
 		hasSites: ! isEmpty( state.sites.items ),
 		site: getSelectedSite( state ),
-		siteID: getSelectedSiteId( state ),
+		siteId: getSelectedSiteId( state ),
 	};
 };
 
