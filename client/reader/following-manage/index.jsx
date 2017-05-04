@@ -15,7 +15,7 @@ import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
 import ReaderMain from 'components/reader-main';
-import { getReaderFeedsForQuery } from 'state/selectors';
+import { getReaderFeedsForQuery, getReaderFeedsCountForQuery } from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import FollowingManageSubscriptions from './subscriptions';
 import FollowingManageSearchFeedsResults from './feed-search-results';
@@ -119,7 +119,15 @@ class FollowingManage extends Component {
 	}
 
 	render() {
-		const { sitesQuery, subsQuery, subsSortOrder, translate, searchResults, showMoreResults } = this.props;
+		const {
+			sitesQuery,
+			subsQuery,
+			subsSortOrder,
+			translate,
+			searchResults,
+			searchResultsCount,
+			showMoreResults
+		} = this.props;
 		const searchPlaceholderText = translate( 'Search millions of sites' );
 
 		return (
@@ -154,6 +162,7 @@ class FollowingManage extends Component {
 						width={ this.state.width }
 						fetchNextPage={ this.fetchNextPage }
 						forceRefresh={ this.state.forceRefresh }
+						searchResultsCount={ searchResultsCount }
 					/>
 				) }
 				{ ! ( !! sitesQuery && showMoreResults ) && (
@@ -172,6 +181,7 @@ class FollowingManage extends Component {
 export default connect(
 	( state, ownProps ) => ( {
 		searchResults: getReaderFeedsForQuery( state, ownProps.sitesQuery ),
+		searchResultsCount: getReaderFeedsCountForQuery( state, ownProps.sitesQuery ),
 	} ),
 	{ requestFeedSearch }
 )( localize( FollowingManage ) );

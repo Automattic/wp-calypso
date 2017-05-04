@@ -21,6 +21,7 @@ const FollowingManageSearchFeedsResults = ( {
 	width,
 	fetchNextPage,
 	forceRefresh,
+	searchResultsCount,
 } ) => {
 	if ( ! searchResults ) {
 		return null; // todo: add placeholder
@@ -47,14 +48,16 @@ const FollowingManageSearchFeedsResults = ( {
 		return (
 			<div className="following-manage__search-results">
 				{ resultsToShow }
-				<div className="following-manage__show-more">
-					<Button compact icon
-						onClick={ showMoreResultsClicked }
-						className="following-manage__show-more-button button">
-							<Gridicon icon="chevron-down" />
-							{ translate( 'Show more' ) }
-					</Button>
-				</div>
+				{ searchResultsCount > 3 && (
+					<div className="following-manage__show-more">
+						<Button compact icon
+							onClick={ showMoreResultsClicked }
+							className="following-manage__show-more-button button">
+								<Gridicon icon="chevron-down" />
+								{ translate( 'Show more' ) }
+						</Button>
+					</div>
+				) }
 			</div>
 		);
 	}
@@ -65,7 +68,7 @@ const FollowingManageSearchFeedsResults = ( {
 				sites={ searchResults }
 				width={ width }
 				fetchNextPage={ fetchNextPage }
-				remoteTotalCount={ 200 }
+				remoteTotalCount={ searchResultsCount }
 				forceRefresh={ forceRefresh }
 			/>
 		</div>
