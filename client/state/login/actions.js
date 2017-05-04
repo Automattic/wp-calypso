@@ -16,6 +16,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 const loginErrorMessages = {
@@ -126,4 +127,30 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
 
 			return Promise.reject( errorMessage );
 		} );
+};
+
+/**
+ * Sends a two factor authentication recovery code to the given user.
+ *
+ * @param  {Number}    userId        Id of the user trying to log in.
+ * @param  {String}    twoStepNonce  Nonce generated for verification code submission.
+ * @return {Function}                Action thunk to trigger the request.
+ */
+export const sendSmsCode = ( userId, twoStepNonce ) => dispatch => {
+	return request.post( 'https://wordpress.com/wp-login.php?action=send-sms-code-endpoint' )
+		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
+		.accept( 'application/json' )
+		.send( {
+			user_id: userId,
+			two_step_nonce: twoStepNonce,
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} )
+		.then( ( response ) => {
+			dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+				twoStepNonce: get( response, 'body.data.two_step_nonce' ),
+			} );
+		} )
+		.catch( () => { /* TODO: Handle error */ } );
 };

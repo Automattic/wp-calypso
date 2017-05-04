@@ -15,6 +15,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 } from 'state/action-types';
 import reducer, {
 	isRequesting,
@@ -348,6 +349,23 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.null;
+		} );
+
+		it( 'should reset the "two_step_nonce" value when a two factor authentication SMS code request returns new nonce', () => {
+			const data = {
+				two_step_id: 12345678,
+				two_step_nonce: 'abcdefgh1234',
+			};
+
+			const state = twoFactorAuth( data, {
+				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
+				twoStepNonce: 'foo'
+			} );
+
+			expect( state ).to.eql( {
+				two_step_id: 12345678,
+				two_step_nonce: 'foo'
+			} );
 		} );
 	} );
 } );
