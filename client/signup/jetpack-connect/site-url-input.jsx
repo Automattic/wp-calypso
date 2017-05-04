@@ -102,17 +102,6 @@ class JetpackConnectSiteURLInput extends Component {
 	render() {
 		const { translate } = this.props;
 		const hasError = this.props.isError && ( 'notExists' !== this.props.isError );
-		const textInputProps = {
-			ref: 'siteUrl',
-			id: 'siteUrl',
-			autoCapitalize: 'off',
-			autoFocus: 'autofocus',
-			onChange: this.handleChange,
-			disabled: this.props.isFetching,
-			placeholder: translate( 'http://www.yoursite.com' ),
-			onKeyUp: this.handleKeyPress,
-			value: this.state.shownValue || ''
-		};
 
 		return (
 			<div>
@@ -121,7 +110,17 @@ class JetpackConnectSiteURLInput extends Component {
 					<Gridicon
 						size={ 24 }
 						icon="globe" />
-					<FormTextInput { ...textInputProps } />
+					<FormTextInput
+						ref="siteUrl"
+						id="siteUrl"
+						autoCapitalize="off"
+						autoFocus="autofocus"
+						onChange={ this.handleChange }
+						disabled={ this.props.isFetching }
+						placeholder={ translate( 'http://www.yoursite.com' ) }
+						onKeyUp={ this.handleKeyPress }
+						value={ this.state.shownValue || '' }
+					/>
 					{ this.props.isFetching
 						? <Spinner duration={ 30 } />
 						: null
