@@ -29,13 +29,21 @@ class EditorRevisionsList extends PureComponent {
 		this.props.loadRevision( this.props.selectedRevision );
 	}
 
-	componentWillMount() {
+	trySelectingRevision() {
 		if (
 			this.props.selectedRevisionId === null &&
 			this.props.revisions.length > 0
 		) {
 			this.props.toggleRevision( this.props.revisions[ 0 ].id );
 		}
+	}
+
+	componentWillMount() {
+		this.trySelectingRevision();
+	}
+
+	componentDidUpdate() {
+		this.trySelectingRevision();
 	}
 
 	render() {
