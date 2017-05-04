@@ -53,7 +53,7 @@ class VerificationCodeForm extends Component {
 		const { userId, twoStepNonce, rememberMe } = this.props;
 		const { twoStepCode } = this.state;
 
-		loginUserWithTwoFactorVerificationCode( userId, twoStepCode, twoStepNonce, rememberMe ).then( () => {
+		this.props.loginUserWithTwoFactorVerificationCode( userId, twoStepCode, twoStepNonce, rememberMe ).then( () => {
 			this.props.onSuccess();
 		} );
 	};
@@ -114,5 +114,8 @@ export default connect(
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
 		userId: getTwoFactorUserId( state ),
 		twoStepNonce: getTwoFactorAuthNonce( state ),
-	} )
+	} ),
+	{
+		loginUserWithTwoFactorVerificationCode,
+	}
 )( localize( VerificationCodeForm ) );
