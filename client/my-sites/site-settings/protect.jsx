@@ -113,8 +113,8 @@ class Protect extends Component {
 				<FormFieldset>
 					<div className="protect__module-settings site-settings__child-settings">
 						<div className="protect__info-link-container site-settings__info-link-container">
-							<InfoPopover position={ 'left' }>
-								<ExternalLink href={ 'https://jetpack.com/support/protect' } target="_blank">
+							<InfoPopover position="left">
+								<ExternalLink href="https://jetpack.com/support/protect" target="_blank">
 									{ translate( 'Learn more about Jetpack protect' ) }
 								</ExternalLink>
 							</InfoPopover>

@@ -132,8 +132,8 @@ class SiteSettingsFormJetpackMonitor extends Component {
 
 				<Card className="jetpack-monitor-settings">
 					<div className="site-settings__info-link-container">
-						<InfoPopover position={ 'left' }>
-							<ExternalLink href={ 'https://jetpack.com/support/monitor/' } icon target="_blank">
+						<InfoPopover position="left">
+							<ExternalLink href="https://jetpack.com/support/monitor/" icon target="_blank">
 								{ translate( 'Learn more about Monitor.' ) }
 							</ExternalLink>
 						</InfoPopover>
