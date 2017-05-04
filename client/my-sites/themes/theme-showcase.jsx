@@ -29,6 +29,7 @@ import { getThemeShowcaseDescription } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import ThemesSearchCard from './themes-magic-search-card';
+import QueryThemeFilters from 'components/data/query-theme-filters';
 
 function getThemeShowcaseTitle( tier ) {
 	const titles = {
@@ -186,6 +187,7 @@ const ThemeShowcase = React.createClass( {
 						uri={ `/themes${ verticalSection }` } />
 				)}
 				<div className="themes__content">
+					<QueryThemeFilters />
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ prependFilterKeys( filter ) + search }
