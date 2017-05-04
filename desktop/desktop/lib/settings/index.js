@@ -33,6 +33,8 @@ Settings.prototype.isDebug = function() {
  * Get a single setting value
  * If no setting is present then fall back to the `default_settings`
  * If no default setting then fall back to false
+ * @param {String} setting A key to access a corresponding settings value
+ * @return {*} The value of a setting || default setting || false
  */
 Settings.prototype.getSetting = function( setting ) {
 	const value = this._getAll()[ setting ];
@@ -54,6 +56,10 @@ Settings.prototype.getSetting = function( setting ) {
 
 /**
  * Get a group of settings
+ * @param {{}} existing default values to use
+ * @param {String} group a settings group name
+ * @param {Array} values optional array of values to override
+ * @returns {{}} A group of matched settings || existing values
  */
 Settings.prototype.getSettingGroup = function( existing, group, values ) {
 	const debug = require( 'debug' )( 'desktop:settings' );

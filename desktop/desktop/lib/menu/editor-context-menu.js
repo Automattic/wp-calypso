@@ -58,7 +58,8 @@ function defineTerm() {
 
 /**
  * Builds a context menu suitable for showing in a text editor.
- * @return {Menu}
+ * @param {{}} selection Holds data relating to a selected word or phrase
+ * @return {Menu} Electron.Menu instance
  */
 const buildEditorContextMenu = function( selection ) {
 	if ( typeof selection === 'undefined' ) {
