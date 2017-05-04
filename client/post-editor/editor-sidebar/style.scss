@@ -76,9 +76,10 @@
 	flex-direction: column;
 	position: absolute;
 	top: 47px;
-	bottom: 0;
+	bottom: 47px;
 	width: 100%;
 	transition: all 150ms cubic-bezier(0.075, 0.82, 0.165, 1);
+	overflow-y: auto;
 
 	.focus-child & {
 		transform: translateX( - ( $sidebar-width-max + 1 ) );

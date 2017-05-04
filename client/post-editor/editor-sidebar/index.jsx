@@ -12,6 +12,7 @@ import EditorDrawer from 'post-editor/editor-drawer';
 import EditorRevisionsList from 'post-editor/editor-revisions-list';
 import EditorSidebarHeader from './header';
 import SidebarFooter from 'layout/sidebar/footer';
+import SidebarRegion from 'layout/sidebar/region';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import EditorDeletePost from 'post-editor/editor-delete-post';
 import { CHILD_SIDEBAR_NONE, CHILD_SIDEBAR_REVISIONS } from './util';
@@ -83,7 +84,7 @@ export default class EditorSidebar extends Component {
 					site={ site }
 					type={ type }
 				/>
-				<div className="editor-sidebar__parent">
+				<SidebarRegion className="editor-sidebar__parent">
 					<EditorDrawer
 						site={ site }
 						savedPost={ savedPost }
@@ -95,8 +96,8 @@ export default class EditorSidebar extends Component {
 						onSave={ onSave }
 						toggleChildSidebar={ this.toggleChildSidebar }
 					/>
-				</div>
-				<div className="editor-sidebar__child">
+				</SidebarRegion>
+				<SidebarRegion className="editor-sidebar__child">
 					{
 						this.state.childSidebar === CHILD_SIDEBAR_NONE
 							? null
@@ -108,7 +109,7 @@ export default class EditorSidebar extends Component {
 								toggleRevision={ this.props.toggleRevision }
 							/>
 					}
-				</div>
+				</SidebarRegion>
 				<SidebarFooter>
 					{ this.state.childSidebar === CHILD_SIDEBAR_NONE && (
 						<EditorDeletePost
