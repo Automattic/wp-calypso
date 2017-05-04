@@ -19,7 +19,6 @@ import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
 import Count from 'components/count';
 import Notice from 'components/notice';
 import PluginNotices from 'lib/plugins/notices';
-import analytics from 'lib/analytics';
 
 function checkPropsChange( nextProps, propArr ) {
 	let i;
@@ -95,10 +94,6 @@ class PluginItem extends Component {
 			return true;
 		}
 		return false;
-	}
-
-	recordEvent( eventAction ) {
-		analytics.ga.recordEvent( 'Plugins', eventAction, 'Plugin Name', this.props.plugin.slug );
 	}
 
 	ago( date ) {
