@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
-import React from 'react';
 import { bindActionCreators } from 'redux';
 
 /**
@@ -16,28 +16,26 @@ import QueryPlans from 'components/data/query-plans';
 
 const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';
 
-const PlansLanding = React.createClass( {
+class PlansLanding extends Component {
 
-	propTypes: {
+	static propTypes = {
 		sites: React.PropTypes.object,
 		sitePlans: React.PropTypes.object.isRequired,
 		intervalType: React.PropTypes.string
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			intervalType: 'yearly',
-			siteSlug: '*'
-		};
-	},
+	static defaultProps = {
+		intervalType: 'yearly',
+		siteSlug: '*',
+	};
 
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_landing_view', {
 			jpc_from: this.props.landingType
 		} );
-	},
+	}
 
-	storeSelectedPlan( cartItem ) {
+	storeSelectedPlan = ( cartItem ) => {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_store_plan', {
 			plan: cartItem ? cartItem.product_slug : 'free'
 		} );
@@ -46,7 +44,7 @@ const PlansLanding = React.createClass( {
 		setTimeout( () => {
 			page.redirect( CALYPSO_JETPACK_CONNECT );
 		}, 25 );
-	},
+	}
 
 	render() {
 		return (
@@ -58,7 +56,7 @@ const PlansLanding = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect(
 	() => {
