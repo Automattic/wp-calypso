@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import { get, identity, map, partial } from 'lodash';
+import { findIndex, get, identity, isUndefined, map, omitBy, orderBy, partial } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
  * Internal dependencies
  */
 import { normalizePostForDisplay } from '../utils';
+import { diffWords } from 'lib/text-utils';
 
 export const normalizeForDisplay = normalizePostForDisplay;
 export const normalizeForEditing = identity;
@@ -42,4 +43,25 @@ export const getPostRevision = createSelector(
 		get( state.posts.revisions.revisions, [ siteId, postId, revisionId ], null )
 	),
 	( state ) => [ state.posts.revisions.revisions, state.users.items ]
+);
+
+export const getPostRevisionChanges = createSelector(
+	( state, siteId, postId, revisionId ) => {
+		const orderedRevisions = orderBy(
+			getPostRevisions( state, siteId, postId ),
+			'date', 'desc',
+		);
+		const revisionIndex = findIndex( orderedRevisions, { id: revisionId } );
+		if ( revisionIndex === -1 ) {
+			return [];
+		}
+		return map(
+			diffWords(
+				get( orderedRevisions, [ revisionIndex + 1, 'content' ], '' ),
+				orderedRevisions[ revisionIndex ].content
+			),
+			change => omitBy( change, isUndefined )
+		);
+	},
+	( state ) => [ state.posts.revisions.revisions ],
 );
