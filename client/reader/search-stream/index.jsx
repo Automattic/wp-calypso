@@ -190,8 +190,8 @@ class SearchStream extends Component {
 							delaySearch={ true }
 							delayTimeout={ 500 }
 							placeholder={ searchPlaceholderText }
-							initialValue={ query }
-							value={ query }>
+							initialValue={ query || '' }
+							value={ query || '' }>
 						</SearchInput>
 						{ query &&
 							<SegmentedControl compact
