@@ -46,13 +46,26 @@ class PlansLanding extends Component {
 	}
 
 	render() {
+		const {
+			basePlansPath,
+			hideFreePlan,
+			intervalType,
+			isLanding,
+			landingType,
+		} = this.props;
 		return (
 			<div>
 				<QueryPlans />
-				<PlansGrid { ...this.props }
+
+				<PlansGrid
+					basePlansPath={ basePlansPath }
 					calypsoStartedConnection={ true }
+					hideFreePlan={ hideFreePlan }
+					intervalType={ intervalType }
+					isLanding={ isLanding }
+					landingType={ landingType }
 					onSelect={ this.storeSelectedPlan }
-					basePlansPath={ this.props.basePlansPath } />
+				/>
 			</div>
 		);
 	}
