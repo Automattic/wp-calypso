@@ -122,11 +122,16 @@
 	width: 56px;
 	float: left;
 
-	.gridicons-domains {
+	.gridicon {
+		box-sizing: border-box;
 		padding: 4px;
 		border-radius: 50%;
 		background: $blue-medium;
 		fill: $white;
+	}
+
+	.gridicons-themes {
+		border-radius: 8px;
 	}
 }
 

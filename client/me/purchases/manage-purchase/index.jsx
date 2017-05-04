@@ -54,7 +54,8 @@ import {
 	isBusiness,
 	isPlan,
 	isDomainProduct,
-	isDomainRegistration
+	isDomainRegistration,
+	isTheme,
 } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
@@ -285,6 +286,14 @@ class ManagePurchase extends Component {
 			return (
 				<div className="manage-purchase__plan-icon">
 					<Gridicon icon="domains" size={ 54 } />
+				</div>
+			);
+		}
+
+		if ( isTheme( purchase ) ) {
+			return (
+				<div className="manage-purchase__plan-icon">
+					<Gridicon icon="themes" size={ 54 } />
 				</div>
 			);
 		}
