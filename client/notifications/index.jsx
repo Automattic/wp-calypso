@@ -25,7 +25,7 @@ import analytics from 'lib/analytics';
 import config from 'config';
 import userLib from 'lib/user';
 
-import NotificationsPanel, { refreshNotes } from './notifications-panel/src/Notifications';
+import NotificationsPanel, { refreshNotes } from 'notifications-panel';
 
 /**
  * Module variables
