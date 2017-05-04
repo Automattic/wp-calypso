@@ -10,7 +10,7 @@ import qs from 'qs';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import EmptyContent from 'components/empty-content';
 
 import {
 	updatePasswordResetUserData,
@@ -44,14 +44,6 @@ class ResetPasswordEmailValidation extends Component {
 			key,
 		} = this.parseQueryArgs();
 
-		if ( ! user || ! method || ! key ) {
-			this.props.validateRequestError( {
-				message: this.props.translate( 'The validation URL is incomplete.' ),
-			} );
-
-			return;
-		}
-
 		this.props.validateRequest( { user }, method, key );
 	}
 
@@ -71,20 +63,19 @@ class ResetPasswordEmailValidation extends Component {
 		}
 	}
 
-	renderErrorMsg = ( error ) => (
-		<Card className="reset-code-validation__content">
-			<p className="reset-code-validation__text-error">
-				{ error.message ? this.props.translate( "We've encountered an error: " ) + error.message
-					: this.props.translate( "We've failed to validate with the given URL." ) }
-			</p>
-		</Card>
-	)
+	renderErrorMsg = () => {
+		const { translate } = this.props;
 
-	render = () => {
-		const { error } = this.props;
-
-		return error ? this.renderErrorMsg( error ) : null;
+		return (
+			<EmptyContent
+				title={ translate( 'Oops, something went wrong.' ) }
+				line={ translate( "We've failed to validate using the given link. " +
+							'Please try to request a new one or try the other methods.' ) }
+			/>
+		);
 	}
+
+	render = () => ( this.props.error ? this.renderErrorMsg() : null )
 }
 
 export default connect(
