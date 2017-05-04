@@ -7,6 +7,7 @@ import { spy } from 'sinon';
 /**
  * Internal Dependencies
  */
+import { NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { follow, updateFollow, unfollow } from 'state/reader/follows/actions';
 import { requestFollow, receiveFollow, followError } from '../';
@@ -74,7 +75,7 @@ describe( 'receiveFollow', () => {
 		};
 
 		receiveFollow( { dispatch }, action, next, response );
-		expect( dispatch ).to.be.calledWithMatch( { type: 'NOTICE_CREATE' } );
+		expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
 		expect( next ) .to.be.calledWith( unfollow( 'http://example.com' ) );
 	} );
 } );
@@ -86,7 +87,7 @@ describe( 'followError', () => {
 		const action = follow( 'http://example.com' );
 
 		followError( { dispatch }, action, next );
-		expect( dispatch ).to.be.calledWithMatch( { type: 'NOTICE_CREATE' } );
+		expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
 		expect( next ) .to.be.calledWith( unfollow( 'http://example.com' ) );
 	} );
 } );

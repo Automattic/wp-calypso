@@ -95,30 +95,30 @@ export const items = createReducer( {}, {
 	},
 	[ READER_UPDATE_FOLLOW ]: ( state, action ) => {
 		const urlKey = prepareComparableUrl( action.payload.feedUrl );
-		const currentState = state[ urlKey ];
-		if ( ! currentState ) {
+		const currentfollow = state[ urlKey ];
+		if ( ! currentfollow ) {
 			return state;
 		}
 		return {
 			...state,
 			[ urlKey ]: merge(
 				{},
-				currentState,
+				currentfollow,
 				action.payload.follow
 			)
 		};
 	},
 	[ READER_UNFOLLOW ]: ( state, action ) => {
 		const urlKey = prepareComparableUrl( action.payload.feedUrl );
-		const current = state[ urlKey ];
-		if ( ! ( current && current.is_following ) ) {
+		const currentFollow = state[ urlKey ];
+		if ( ! ( currentFollow && currentFollow.is_following ) ) {
 			return state;
 		}
 		return {
 			...state,
 			[ urlKey ]: merge(
 				{},
-				state[ urlKey ],
+				currentFollow,
 				{ is_following: false }
 			)
 		};

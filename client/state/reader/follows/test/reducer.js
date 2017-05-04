@@ -422,7 +422,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'follow', () => {
-		it( 'should mark an existing feed as followed and leave the rest alone', () => {
+		it( 'should mark an existing feed as followed, add in a feed_URL if missing, and leave the rest alone', () => {
 			const original = deepFreeze( {
 				'example.com': {
 					is_following: false,
@@ -484,7 +484,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( original );
 		} );
 
-		it( 'should return the same state for an item that does not exit', () => {
+		it( 'should return the same state for an item that does not exist', () => {
 			const original = deepFreeze( {} );
 			const state = items( original, unfollow( 'http://example.com' ) );
 			expect( state ).to.equal( original );
@@ -527,16 +527,8 @@ describe( 'reducer', () => {
 			const state = items( original, updateFollow( 'http://example.com', subscriptionInfo ) );
 			expect( state ).to.eql( {
 				'example.com': {
-					ID: 25,
+					...subscriptionInfo,
 					is_following: true,
-					feed_URL: 'http://example.com',
-					blog_ID: 10,
-					feed_ID: 20,
-					delivery_methods: {
-						email: {
-							send_posts: true
-						}
-					}
 				}
 			} );
 		} );

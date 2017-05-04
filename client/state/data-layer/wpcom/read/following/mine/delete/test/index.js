@@ -7,6 +7,7 @@ import { spy } from 'sinon';
 /**
  * Internal Dependencies
  */
+import { NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { follow, unfollow } from 'state/reader/follows/actions';
 import { requestUnfollow, receiveUnfollow, unfollowError } from '../';
@@ -44,7 +45,7 @@ describe( 'receiveUnfollow', () => {
 		expect( next ).to.be.calledWith( action );
 	} );
 
-	it( 'should dispatch an error notice when subscribed is true', () => {
+	it( 'should dispatch an error notice and refollow when subscribed is true', () => {
 		const dispatch = spy();
 		const next = spy();
 		const action = unfollow( 'http://example.com' );
@@ -53,7 +54,7 @@ describe( 'receiveUnfollow', () => {
 		};
 
 		receiveUnfollow( { dispatch }, action, next, response );
-		expect( dispatch ).to.be.calledWithMatch( { type: 'NOTICE_CREATE' } );
+		expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
 		expect( next ) .to.be.calledWith( follow( 'http://example.com' ) );
 	} );
 } );
@@ -65,7 +66,7 @@ describe( 'followError', () => {
 		const action = unfollow( 'http://example.com' );
 
 		unfollowError( { dispatch }, action, next );
-		expect( dispatch ).to.be.calledWithMatch( { type: 'NOTICE_CREATE' } );
+		expect( dispatch ).to.be.calledWithMatch( { type: NOTICE_CREATE } );
 		expect( next ) .to.be.calledWith( follow( 'http://example.com' ) );
 	} );
 } );
