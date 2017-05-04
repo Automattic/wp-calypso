@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { bindActionCreators } from 'redux';
@@ -19,9 +19,11 @@ const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';
 class PlansLanding extends Component {
 
 	static propTypes = {
-		sites: React.PropTypes.object,
-		sitePlans: React.PropTypes.object.isRequired,
-		intervalType: React.PropTypes.string
+		basePlansPath: PropTypes.string,
+		intervalType: PropTypes.string,
+		landingType: PropTypes.string,
+		sitePlans: PropTypes.object.isRequired,
+		sites: PropTypes.object,
 	};
 
 	static defaultProps = {
