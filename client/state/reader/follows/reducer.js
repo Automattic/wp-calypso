@@ -10,6 +10,8 @@ import { find, get, isEqual, merge, reduce } from 'lodash';
 import {
 	READER_FOLLOW,
 	READER_UNFOLLOW,
+	READER_RECORD_FOLLOW,
+	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_RECEIVE,
 	READER_SUBSCRIBE_TO_NEW_POST_EMAIL,
 	READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL,
@@ -64,26 +66,46 @@ function updatePostSubscription( state, { payload, type } ) {
 	};
 }
 
-/**
- * Tracks all known list objects, indexed by list ID.
- *
- * @param  {Array} state  Current state
- * @param  {Object} action Action payload
- * @return {Array}        Updated state
- */
 export const items = createReducer( {}, {
-	[ READER_FOLLOW ]: ( state, action ) => {
+	[ READER_RECORD_FOLLOW ]: ( state, action ) => {
 		const urlKey = prepareComparableUrl( action.payload.url );
 		return {
 			...state,
 			[ urlKey ]: merge( {}, state[ urlKey ], { is_following: true } ),
 		};
 	},
-	[ READER_UNFOLLOW ]: ( state, action ) => {
+	[ READER_RECORD_UNFOLLOW ]: ( state, action ) => {
 		const urlKey = prepareComparableUrl( action.payload.url );
 		return {
 			...state,
 			[ urlKey ]: merge( {}, state[ urlKey ], { is_following: false } ),
+		};
+	},
+	[ READER_FOLLOW ]: ( state, action ) => {
+		const urlKey = prepareComparableUrl( action.payload.feedUrl );
+		return {
+			...state,
+			[ urlKey ]: merge(
+				{ feed_URL: action.payload.feedUrl },
+				state[ urlKey ],
+				action.payload.follow,
+				{ is_following: true }
+			)
+		};
+	},
+	[ READER_UNFOLLOW ]: ( state, action ) => {
+		const urlKey = prepareComparableUrl( action.payload.feedUrl );
+		const currentFollow = state[ urlKey ];
+		if ( ! ( currentFollow && currentFollow.is_following ) ) {
+			return state;
+		}
+		return {
+			...state,
+			[ urlKey ]: merge(
+				{},
+				currentFollow,
+				{ is_following: false }
+			)
 		};
 	},
 	[ READER_FOLLOWS_RECEIVE ]: ( state, action ) => {

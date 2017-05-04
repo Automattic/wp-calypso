@@ -7,6 +7,9 @@ import { map, omitBy, isArray, isUndefined } from 'lodash';
 /**
  * Internal dependencies
  */
+import { mergeHandlers } from 'state/data-layer/utils';
+import followingNew from './new';
+import followingDelete from './delete';
 import {
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_PAGE,
@@ -31,23 +34,22 @@ export const isValidApiResponse = apiResponse => {
 	return hasSubscriptions;
 };
 
+export const subscriptionFromApi = subscription => subscription && omitBy( {
+	ID: Number( subscription.ID ),
+	URL: subscription.URL,
+	feed_URL: subscription.URL,
+	blog_ID: toValidId( subscription.blog_ID ),
+	feed_ID: toValidId( subscription.feed_ID ),
+	date_subscribed: Date.parse( subscription.date_subscribed ),
+	delivery_methods: subscription.delivery_methods,
+	is_owner: subscription.is_owner,
+}, isUndefined );
+
 export const subscriptionsFromApi = apiResponse => {
 	if ( ! isValidApiResponse( apiResponse ) ) {
 		return [];
 	}
-
-	return map( apiResponse.subscriptions, subscription => {
-		return omitBy( {
-			ID: Number( subscription.ID ),
-			URL: subscription.URL,
-			feed_URL: subscription.URL,
-			blog_ID: toValidId( subscription.blog_ID ),
-			feed_ID: toValidId( subscription.feed_ID ),
-			date_subscribed: Date.parse( subscription.date_subscribed ),
-			delivery_methods: subscription.delivery_methods,
-			is_owner: subscription.is_owner,
-		}, isUndefined );
-	} );
+	return map( apiResponse.subscriptions, subscriptionFromApi );
 };
 
 let syncingFollows = false;
@@ -114,7 +116,13 @@ export function receiveError( store ) {
 	);
 }
 
-export default {
+const followingMine = {
 	[ READER_FOLLOWS_SYNC_START ]: [ syncReaderFollows ],
 	[ READER_FOLLOWS_SYNC_PAGE ]: [ dispatchRequest( requestPage, receivePage, receiveError ) ],
 };
+
+export default mergeHandlers(
+	followingMine,
+	followingNew,
+	followingDelete,
+);

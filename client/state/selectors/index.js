@@ -62,6 +62,7 @@ export getRawOffsets from './get-raw-offsets';
 export getReaderFeedsForQuery from './get-reader-feeds-for-query';
 export getReaderFollowedTags from './get-reader-followed-tags';
 export getReaderFollowForBlog from './get-reader-follow-for-blog';
+export getReaderFollowForFeed from './get-reader-follow-for-feed';
 export getReaderFollows from './get-reader-follows';
 export getReaderFollowsCount from './get-reader-follows-count';
 export getReaderTags from './get-reader-tags';
@@ -114,6 +115,7 @@ export isEligibleForDomainToPaidPlanUpsell from './is-eligible-for-domain-to-pai
 export isFetchingJetpackModules from './is-fetching-jetpack-modules';
 export isFetchingMagicLoginAuth from './is-fetching-magic-login-auth';
 export isFetchingMagicLoginEmail from './is-fetching-magic-login-email';
+export isFollowing from './is-following';
 export isHiddenSite from './is-hidden-site';
 export isJetpackModuleActive from './is-jetpack-module-active';
 export isJetpackModuleUnavailableInDevelopmentMode from './is-jetpack-module-unavailable-in-development-mode';
