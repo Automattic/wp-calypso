@@ -129,11 +129,9 @@ class PagesMain extends React.Component {
 	}
 }
 
-const mapState = state => {
-	return {
-		site: getSelectedSite( state ),
-		siteId: getSelectedSiteId( state ),
-	};
-};
+const mapState = ( state ) => ( {
+	site: getSelectedSite( state ),
+	siteId: getSelectedSiteId( state ),
+} );
 
 export default connect( mapState )( localize( urlSearch( PagesMain ) ) );
