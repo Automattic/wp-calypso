@@ -67,6 +67,10 @@ class VerificationCodeForm extends Component {
 
 		return (
 			<div>
+				<div className="two-factor-authentication__header">
+					{ translate( '2-Step Verification' ) }
+				</div>
+
 				<form onSubmit={ this.onCodeSubmit }>
 					<Card>
 						<p>

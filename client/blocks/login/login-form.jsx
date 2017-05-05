@@ -102,9 +102,7 @@ export class LoginForm extends Component {
 				{ this.renderNotices() }
 
 				<div className="login__form-header">
-					<div className="login__form-header-title">
-						{ this.props.title }
-					</div>
+					{ this.props.title }
 				</div>
 
 				<form onSubmit={ this.onSubmitForm }>
@@ -113,6 +111,7 @@ export class LoginForm extends Component {
 							<label htmlFor="usernameOrEmail" className="login__form-userdata-username">
 								{ this.props.translate( 'Username or Email Address' ) }
 							</label>
+
 							<FormTextInput
 								className="login__form-userdata-username-input"
 								onChange={ this.onChangeField }
@@ -120,9 +119,11 @@ export class LoginForm extends Component {
 								name="usernameOrEmail"
 								value={ this.state.usernameOrEmail }
 								{ ...isDisabled } />
+
 							<label htmlFor="password" className="login__form-userdata-username">
 								{ this.props.translate( 'Password' ) }
 							</label>
+
 							<FormPasswordInput
 								className="login__form-userdata-username-password"
 								onChange={ this.onChangeField }
@@ -131,6 +132,7 @@ export class LoginForm extends Component {
 								value={ this.state.password }
 								{ ...isDisabled } />
 						</div>
+
 						<div className="login__form-remember-me">
 							<label>
 								<FormCheckbox
@@ -141,6 +143,7 @@ export class LoginForm extends Component {
 								<span>{ this.props.translate( 'Stay logged in' ) }</span>
 							</label>
 						</div>
+
 						<div className="login__form-action">
 							<FormsButton primary { ...isDisabled }>
 								{ this.props.translate( 'Log in' ) }
