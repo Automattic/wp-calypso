@@ -54,3 +54,23 @@ export const isTwoFactorEnabled = ( state ) => {
 		twoFactorAuth.two_step_nonce !== ''
 	);
 };
+
+/**
+ * Determines whether a request to authenticate 2FA is being made.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {Boolean}         Whether a request to authenticate 2FA is being made.
+ */
+export const isRequestingTwoFactorAuth = ( state ) => {
+	return get( state, 'login.isRequestingTwoFactorAuth', false );
+};
+
+/**
+ * Returns the error for a request to authenticate 2FA.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         Error for the request.
+ */
+export const getTwoFactorAuthRequestError = ( state ) => {
+	return get( state, 'login.twoFactorAuthRequestError', null );
+};

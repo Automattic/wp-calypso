@@ -24,9 +24,11 @@
 	}
 }
 
-.login__form-header-title {
+.login__form-header,
+.two-factor-authentication__header {
 	font-size: 22px;
-	margin-bottom: 16px;
+	margin-bottom: 24px;
+	margin-top: 16px;
 	text-align: center;
 }
 

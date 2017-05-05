@@ -21,27 +21,28 @@ import { loginUserWithTwoFactorVerificationCode } from 'state/login/actions';
 import {
 	getTwoFactorUserId,
 	getTwoFactorAuthNonce,
+	getTwoFactorAuthRequestError,
+	isRequestingTwoFactorAuth,
 } from 'state/login/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class VerificationCodeForm extends Component {
 	static propTypes = {
+		loginUserWithTwoFactorVerificationCode: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 		rememberMe: PropTypes.bool.isRequired,
 		twoStepNonce: PropTypes.string.isRequired,
 		userId: PropTypes.number.isRequired,
 	};
 
 	state = {
-		twoStepCode: '',
-		error: null
+		twoStepCode: ''
 	};
 
 	onChangeField = ( event ) => {
-		// Reset the error state if the user updates the field after an error coming
-		// from the state
 		this.setState( {
 			[ event.target.name ]: event.target.value,
-			error: null
 		} );
 	};
 
@@ -51,41 +52,57 @@ class VerificationCodeForm extends Component {
 		const { userId, twoStepNonce, rememberMe } = this.props;
 		const { twoStepCode } = this.state;
 
-		loginUserWithTwoFactorVerificationCode( userId, twoStepCode, twoStepNonce, rememberMe ).then( () => {
+		this.props.loginUserWithTwoFactorVerificationCode( userId, twoStepCode, twoStepNonce, rememberMe ).then( () => {
 			this.props.onSuccess();
+		} ).catch( ( errorMessage ) => {
+			this.props.recordTracksEvent( 'calypso_two_factor_verification_code_failure', {
+				error_message: errorMessage
+			} );
 		} );
 	};
 
 	render() {
-		const { translate } = this.props;
-		const isError = !! this.state.error;
-		const errorText = isError && translate( 'Invalid verification code' );
+		const { translate, twoFactorAuthRequestError } = this.props;
+		const isError = !! twoFactorAuthRequestError;
 
 		return (
 			<div>
+				<div className="two-factor-authentication__header">
+					{ translate( '2-Step Verification' ) }
+				</div>
+
 				<form onSubmit={ this.onCodeSubmit }>
 					<Card>
 						<p>
 							{ translate( 'Please enter the verification code generated' +
 								' by your Authenticator mobile application.' ) }
 						</p>
+
 						<FormFieldset>
 							<FormLabel htmlFor="twoStepCode">
 								{ translate( 'Verification Code' ) }
 							</FormLabel>
+
 							<FormTextInput
 								onChange={ this.onChangeField }
 								className={ classNames( { 'is-error': isError } ) }
 								name="twoStepCode" />
+
 							{ isError && (
-								<FormInputValidation isError text={ errorText } />
+								<FormInputValidation isError text={ twoFactorAuthRequestError } />
 							) }
 						</FormFieldset>
+
 						<FormButtonsBar>
-							<FormButton onClick={ this.onSubmit } primary>{ translate( 'Log in' ) }</FormButton>
+							<FormButton
+								onClick={ this.onSubmit }
+								primary
+								disabled={ this.props.isRequestingTwoFactorAuth }
+							>{ translate( 'Log in' ) }</FormButton>
 						</FormButtonsBar>
 					</Card>
 				</form>
+
 				<p>
 					<ExternalLink
 						icon={ true }
@@ -94,7 +111,9 @@ class VerificationCodeForm extends Component {
 						{ translate( 'Help' ) }
 					</ExternalLink>
 				</p>
+
 				<hr />
+
 				<p>
 					<a href="#">{ translate( 'Send recovery code via text' ) }</a>
 				</p>
@@ -105,7 +124,13 @@ class VerificationCodeForm extends Component {
 
 export default connect(
 	( state ) => ( {
+		isRequestingTwoFactorAuth: isRequestingTwoFactorAuth( state ),
+		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
 		userId: getTwoFactorUserId( state ),
 		twoStepNonce: getTwoFactorAuthNonce( state ),
-	} )
+	} ),
+	{
+		loginUserWithTwoFactorVerificationCode,
+		recordTracksEvent,
+	}
 )( localize( VerificationCodeForm ) );

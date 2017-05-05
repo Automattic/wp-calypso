@@ -13,13 +13,18 @@ import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
+	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
+	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 const loginErrorMessages = {
 	empty_password: translate( 'The password field is empty.' ),
+	empty_two_step_code: translate( 'The verification code field is empty.' ),
 	empty_username: translate( 'The username field is empty.' ),
-	invalid_username: translate( 'Invalid username or password.' ),
 	incorrect_password: translate( 'Invalid username or password.' ),
+	invalid_two_step_code: translate( 'Invalid verification code.' ),
+	invalid_username: translate( 'Invalid username or password.' ),
 	unknown: translate( 'Invalid username or password.' ),
 	account_unactivated: translate( 'This account has not been activated. Please check your email for an activation link.' )
 };
@@ -28,7 +33,13 @@ function getMessageFromHTTPError( error ) {
 	const errorKeys = get( error, 'response.body.data.errors' );
 
 	if ( errorKeys ) {
-		return errorKeys.map( errorKey => loginErrorMessages[ errorKey ] ).join( ' ' );
+		return errorKeys.map( errorKey => {
+			if ( errorKey in loginErrorMessages ) {
+				return loginErrorMessages[ errorKey ];
+			}
+
+			return errorKey;
+		} ).join( ' ' );
 	}
 
 	return get( error, 'response.body.data', error.message );
@@ -86,7 +97,9 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
  * @param  {Boolean}   remember_me       Flag for remembering the user for a while after logging in.
  * @return {Function}                 Action thunk to trigger the login process.
  */
-export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, two_step_nonce, remember_me ) => {
+export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, two_step_nonce, remember_me ) => dispatch => {
+	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
+
 	return request.post( config( 'two_step_authentication_xhr' ) )
 		.withCredentials()
 		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
@@ -99,6 +112,18 @@ export const loginUserWithTwoFactorVerificationCode = ( user_id, two_step_code, 
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
-		.then( () => { /* TODO: Handle successful request */ } )
-		.catch( () => { /* TODO: Handle error */ } );
+		.then( () => {
+			dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
+		} )
+		.catch( ( error ) => {
+			const errorMessage = getMessageFromHTTPError( error );
+
+			dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
+				error: errorMessage,
+				twoStepNonce: get( error, 'response.body.data.two_step_nonce' )
+			} );
+
+			return Promise.reject( errorMessage );
+		} );
 };
