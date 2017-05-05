@@ -340,7 +340,7 @@ describe( 'middleware', () => {
 			getState.returns( unconnectedState );
 			sendAnalyticsLogEvent( connection, { getState }, { meta: { analytics: analyticsMeta } } );
 
-			expect( connection.sendLog ).not.to.have.beenCalled;
+			expect( connection.sendLog ).not.to.have.been.called;
 		} );
 
 		it( 'should only send log events if the Happychat connection is assigned', () => {
@@ -350,7 +350,7 @@ describe( 'middleware', () => {
 			getState.returns( unassignedState );
 			sendAnalyticsLogEvent( connection, { getState }, { meta: { analytics: analyticsMeta } } );
 
-			expect( connection.sendLog ).not.to.have.beenCalled;
+			expect( connection.sendLog ).not.to.have.been.called;
 		} );
 	} );
 } );
