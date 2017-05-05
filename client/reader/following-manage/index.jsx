@@ -134,6 +134,10 @@ class FollowingManage extends Component {
 		const searchPlaceholderText = translate( 'Search millions of sites' );
 		const showExistingSubscriptions = ! ( !! sitesQuery && showMoreResults );
 		const isSitesQueryUrl = isUrl( sitesQuery );
+		let sitesQueryWithoutProtocol;
+		if ( isSitesQueryUrl ) {
+			sitesQueryWithoutProtocol = stripUrlProtocol( sitesQuery );
+		}
 
 		return (
 			<ReaderMain className="following-manage">
@@ -162,7 +166,8 @@ class FollowingManage extends Component {
 					{ isSitesQueryUrl && (
 						<div className="following-manage__url-follow">
 							<FollowButton
-								followLabel={ translate( 'Follow %s', { args: stripUrlProtocol( sitesQuery ) } ) }
+								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
+								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
 								siteUrl={ prependUrlProtocol( sitesQuery ) }
 								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT } />
 						</div>
