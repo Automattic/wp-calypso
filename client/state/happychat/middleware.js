@@ -1,14 +1,18 @@
 /**
  * External dependencies
  */
-import isEmpty from 'lodash/isEmpty';
-import throttle from 'lodash/throttle';
+import {
+	has,
+	isEmpty,
+	throttle
+} from 'lodash';
 
 /**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
 import {
+	ANALYTICS_EVENT_RECORD,
 	HAPPYCHAT_CONNECT,
 	HAPPYCHAT_INITIALIZE,
 	HAPPYCHAT_SEND_BROWSER_INFO,
@@ -155,6 +159,20 @@ export const sendRouteSetEventMessage = ( connection, { getState }, action ) =>{
 	}
 };
 
+export const sendAnalyticsLogEvent = ( connection, { getState }, { meta: { analytics: analyticsMeta } } ) => {
+	const state = getState();
+	analyticsMeta.forEach( ( { type, payload: { service, name } } ) => {
+		if (
+			isHappychatClientConnected( state ) &&
+			isHappychatChatAssigned( state ) &&
+			type === ANALYTICS_EVENT_RECORD &&
+			service === 'tracks'
+		) {
+			connection.sendLog( name );
+		}
+	} );
+};
+
 export default function( connection = null ) {
 	// Allow a connection object to be specified for
 	// testing. If blank, use a real connection.
@@ -163,6 +181,10 @@ export default function( connection = null ) {
 	}
 
 	return store => next => action => {
+		if ( has( action, 'meta.analytics' ) ) {
+			sendAnalyticsLogEvent( connection, store, action );
+		}
+
 		switch ( action.type ) {
 			case HAPPYCHAT_CONNECT:
 				connectChat( connection, store );
