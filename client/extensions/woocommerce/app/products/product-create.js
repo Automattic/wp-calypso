@@ -18,6 +18,7 @@ import { editProductVariation } from '../../state/ui/products/variations/actions
 import { fetchProductCategories } from '../../state/wc-api/product-categories/actions';
 import { getProductCategories } from '../../state/wc-api/product-categories/selectors';
 import ProductForm from './product-form';
+import ProductHeader from './product-header';
 
 class ProductCreate extends React.Component {
 	static propTypes = {
@@ -55,11 +56,28 @@ class ProductCreate extends React.Component {
 		// TODO: Remove the product we added here from the edit state.
 	}
 
+	onTrash = () => {
+		// TODO: Add action dispatch to trash this product.
+	}
+
+	onDuplicate = () => {
+		// TODO: Add action dispatch to duplicate this product.
+	}
+
+	onSave = () => {
+		// TODO: Add action dispatch to save this product.
+	}
+
 	render() {
 		const { product, className, variations, productCategories } = this.props;
 
 		return (
 			<Main className={ className }>
+				<ProductHeader
+					onTrash={ this.onTrash }
+					onDuplicate={ this.onDuplicate }
+					onSave={ this.onSave }
+				/>
 				<ProductForm
 					product={ product || { type: 'simple' } }
 					variations={ variations }
