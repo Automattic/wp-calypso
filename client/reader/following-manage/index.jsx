@@ -7,6 +7,7 @@ import { trim, debounce } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import qs from 'qs';
+import url from 'url';
 
 /**
  * Internal Dependencies
@@ -22,6 +23,8 @@ import FollowingManageSearchFeedsResults from './feed-search-results';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 import { addQueryArgs } from 'lib/url';
+import FollowButton from 'reader/follow-button';
+import { READER_FOLLOWING_MANAGE_URL_INPUT } from 'reader/follow-button/follow-sources';
 
 class FollowingManage extends Component {
 	static propTypes = {
@@ -118,6 +121,32 @@ class FollowingManage extends Component {
 		page.replace( addQueryArgs( { showMoreResults: true }, window.location.pathname + window.location.search ) );
 	}
 
+	isUrl( sitesQuery ) {
+		let parsedUrl = url.parse( sitesQuery );
+
+		// Make sure the query has a protocol - hostname ends up blank otherwise
+		if ( ! parsedUrl.protocol ) {
+			parsedUrl = url.parse( 'http://' + sitesQuery );
+		}
+
+		if ( ! parsedUrl.hostname || parsedUrl.hostname.indexOf( '.' ) === -1 ) {
+			return false;
+		}
+
+		// Check for a valid-looking TLD
+		if ( parsedUrl.hostname.lastIndexOf( '.' ) > ( parsedUrl.hostname.length - 3 ) ) {
+			return false;
+		}
+
+		// Make sure the hostname has at least two parts separated by a dot
+		const hostnameParts = parsedUrl.hostname.split( '.' ).filter( Boolean );
+		if ( hostnameParts.length < 2 ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	render() {
 		const {
 			sitesQuery,
@@ -129,6 +158,8 @@ class FollowingManage extends Component {
 			showMoreResults
 		} = this.props;
 		const searchPlaceholderText = translate( 'Search millions of sites' );
+		const showExistingSubscriptions = ! ( !! sitesQuery && showMoreResults );
+		const isSitesQueryUrl = this.isUrl( sitesQuery );
 
 		return (
 			<ReaderMain className="following-manage">
@@ -136,7 +167,7 @@ class FollowingManage extends Component {
 				<MobileBackToSidebar>
 					<h1>{ translate( 'Manage Followed Sites' ) }</h1>
 				</MobileBackToSidebar>
-				{ ! searchResults && <QueryReaderFeedsSearch query={ sitesQuery } /> }
+				{ ! searchResults && ! isSitesQueryUrl && <QueryReaderFeedsSearch query={ sitesQuery } /> }
 				<h2 className="following-manage__header">{ translate( 'Follow Something New' ) }</h2>
 				<div ref={ this.handleStreamMounted } />
 				<div className="following-manage__fixed-area" ref={ this.handleSearchBoxMounted }>
@@ -154,7 +185,7 @@ class FollowingManage extends Component {
 						</SearchInput>
 					</CompactCard>
 				</div>
-				{ !! sitesQuery && (
+				{ !! sitesQuery && ! isSitesQueryUrl && (
 					<FollowingManageSearchFeedsResults
 						searchResults={ searchResults }
 						showMoreResults={ showMoreResults }
@@ -165,7 +196,15 @@ class FollowingManage extends Component {
 						searchResultsCount={ searchResultsCount }
 					/>
 				) }
-				{ ! ( !! sitesQuery && showMoreResults ) && (
+				{ isSitesQueryUrl && (
+					<div className="following-manage__url-follow">
+						<FollowButton
+							followLabel={ translate( 'Follow %s', { args: sitesQuery } ) }
+							siteUrl={ sitesQuery }
+							followSource={ READER_FOLLOWING_MANAGE_URL_INPUT } />
+					</div>
+				) }
+				{ showExistingSubscriptions && (
 					<FollowingManageSubscriptions
 						width={ this.state.width }
 						query={ subsQuery }
