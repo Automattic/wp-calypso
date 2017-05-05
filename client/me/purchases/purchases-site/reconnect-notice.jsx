@@ -9,6 +9,7 @@ import React, { Component } from 'react';
  */
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import support from 'lib/url/support';
 
 class PurchaseReconnectNotice extends Component {
 	static propTypes = {
@@ -17,19 +18,27 @@ class PurchaseReconnectNotice extends Component {
 	}
 
 	render() {
-		const { translate, name, domain } = this.props;
+		const { translate, name, isJetpack } = this.props;
+		let text = translate( 'You are no longer a user on %(site)s and cannot manage this purchase.', {
+			args: {
+				site: name,
+			}
+		} );
+		if ( isJetpack ) {
+			text = translate( '%(site)s has been disconnected from WordPress.com.', {
+				args: {
+					site: name,
+				}
+			} );
+		}
 
 		return (
 			<Notice
 				showDismiss={ false }
 				status="is-error"
-				text={ translate( '%(site)s has been disconnected from WordPress.com.', {
-					args: {
-						site: name,
-					}
-				} ) }>
-				<NoticeAction href={ `/jetpack/connect?url=${ domain }` }>
-					{ translate( 'Reconnect' ) }
+				text={ text }>
+				<NoticeAction href={ isJetpack ? support.JETPACK_CONTACT_SUPPORT : support.CALYPSO_CONTACT }>
+					{ translate( 'Contact Support' ) }
 				</NoticeAction>
 			</Notice>
 		);

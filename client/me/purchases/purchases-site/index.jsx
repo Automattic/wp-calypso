@@ -5,11 +5,13 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import React from 'react';
 import times from 'lodash/times';
+import some from 'lodash/some';
 
 /**
  * Internal dependencies
  */
 import { getSite, isRequestingSite } from 'state/sites/selectors';
+import { isJetpackPlan } from 'lib/products-values';
 import QuerySites from 'components/data/query-sites';
 import PurchaseItem from '../purchase-item';
 import PurchaseSiteHeader from './header';
@@ -32,6 +34,8 @@ const PurchasesSite = ( { hasLoadedSite, isPlaceholder, site, siteId, purchases,
 		) );
 	}
 
+	const isJetpack = some( purchases, purchase => isJetpackPlan( purchase ) );
+
 	return (
 		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
 			<QuerySites siteId={ siteId } />
@@ -45,6 +49,7 @@ const PurchasesSite = ( { hasLoadedSite, isPlaceholder, site, siteId, purchases,
 
 			{ ( ! isPlaceholder && hasLoadedSite && ! site )
 				? <PurchaseReconnectNotice
+					isJetpack={ isJetpack }
 					name={ name }
 					domain={ domain } />
 				: null
