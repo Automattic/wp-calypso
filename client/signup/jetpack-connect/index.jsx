@@ -350,7 +350,7 @@ class JetpackConnectMain extends Component {
 					url={ this.state.initialUrl }
 					onTosClick={ this.handleOnClickTos }
 					onChange={ this.onURLChange }
-					onClick={ this.onURLEnter }
+					onSubmit={ this.onURLEnter }
 					onDismissClick={ this.onDismissClick }
 					isError={ this.getStatus() }
 					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() || this.state.waitingForSites }

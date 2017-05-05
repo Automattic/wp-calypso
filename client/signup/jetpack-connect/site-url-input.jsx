@@ -25,7 +25,7 @@ class JetpackConnectSiteUrlInput extends Component {
 		isFetching: PropTypes.bool,
 		isInstall: PropTypes.bool,
 		onChange: PropTypes.func,
-		onClick: PropTypes.func,
+		onSubmit: PropTypes.func,
 		url: PropTypes.string,
 	};
 
@@ -52,11 +52,11 @@ class JetpackConnectSiteUrlInput extends Component {
 		}, this.props.onChange );
 	};
 
-	handleClick = () => this.props.onClick( this.state.value );
+	handleSubmit = () => this.props.onSubmit( this.state.value );
 
 	handleKeyPress = ( event ) => {
 		if ( 13 === event.keyCode ) {
-			this.handleClick();
+			this.handleSubmit();
 		}
 	};
 
@@ -126,7 +126,7 @@ class JetpackConnectSiteUrlInput extends Component {
 					{ this.renderTermsOfServiceLink() }
 					<Button primary
 						disabled={ ( ! this.state.value || this.props.isFetching || hasError ) }
-						onClick={ this.handleClick }>{ this.renderButtonLabel() }</Button>
+						onClick={ this.handleSubmit }>{ this.renderButtonLabel() }</Button>
 				</Card>
 			</div>
 		);
