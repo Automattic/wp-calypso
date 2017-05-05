@@ -233,6 +233,9 @@ export const PostEditor = React.createClass( {
 			excerpt: revision.excerpt,
 			title: revision.title,
 		} );
+		if ( viewport.isWithinBreakpoint( '<660px' ) ) {
+			this.props.setLayoutFocus( 'content' );
+		}
 	},
 
 	render: function() {
