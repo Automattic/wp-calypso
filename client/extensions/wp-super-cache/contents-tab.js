@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { get, isEmpty, pick } from 'lodash';
+import { connect } from 'react-redux';
+import { flowRight, get, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,6 +13,12 @@ import CachedFiles from './cached-files';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { generateStats } from './state/stats/actions';
+import {
+	getStats,
+	isGeneratingStats,
+} from './state/stats/selectors';
 
 class ContentsTab extends Component {
 	static propTypes = {
@@ -59,16 +66,21 @@ class ContentsTab extends Component {
 		this.props.handleDeleteCache( true, false );
 	}
 
+	generateStats = () => this.props.generateStats( this.props.siteId );
+
 	render() {
 		const {
 			fields: {
 				cache_max_time,
+			},
+			isDeleting,
+			isGenerating,
+			isMultisite,
+			stats: {
 				generated,
 				supercache,
 				wpcache,
 			},
-			isDeleting,
-			isMultisite,
 			translate,
 		} = this.props;
 
@@ -125,7 +137,10 @@ class ContentsTab extends Component {
 							) }
 						</p>
 					}
-						<Button compact>
+						<Button
+							compact
+							disabled={ isGenerating }
+							onClick={ this.generateStats }>
 							{ translate( 'Regenerate Cache Stats' ) }
 						</Button>
 					</div>
@@ -193,17 +208,27 @@ class ContentsTab extends Component {
 	}
 }
 
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const stats = getStats( state, siteId );
+		const isGenerating = isGeneratingStats( state, siteId ) && ! stats;
+
+		return {
+			isGenerating,
+			stats,
+		};
+	},
+	{ generateStats },
+);
+
 const getFormSettings = settings => {
-	const cacheStats = pick( settings.cache_stats, [
-		'generated',
-		'supercache',
-		'wpcache',
-	] );
-	const otherSettings = pick( settings, [
+	return pick( settings, [
 		'cache_max_time',
 	] );
-
-	return { ...cacheStats, ...otherSettings };
 };
 
-export default WrapSettingsForm( getFormSettings )( ContentsTab );
+export default flowRight(
+	connectComponent,
+	WrapSettingsForm( getFormSettings )
+)( ContentsTab );
