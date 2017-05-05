@@ -159,7 +159,7 @@ export const sendRouteSetEventMessage = ( connection, { getState }, action ) =>{
 	}
 };
 
-export const sendAnalytics = ( connection, { getState }, { meta: { analytics: analyticsMeta } } ) => {
+export const sendAnalyticsLogEvent = ( connection, { getState }, { meta: { analytics: analyticsMeta } } ) => {
 	const state = getState();
 	analyticsMeta.forEach( ( { type, payload: { service, name } } ) => {
 		if (
@@ -182,7 +182,7 @@ export default function( connection = null ) {
 
 	return store => next => action => {
 		if ( has( action, 'meta.analytics' ) ) {
-			sendAnalytics( connection, store, action );
+			sendAnalyticsLogEvent( connection, store, action );
 		}
 
 		switch ( action.type ) {
