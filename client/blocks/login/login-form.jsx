@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -9,6 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormsButton from 'components/forms/form-button';
+import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
@@ -84,6 +86,8 @@ export class LoginForm extends Component {
 			isDisabled.disabled = true;
 		}
 
+		const { requestError } = this.props;
+
 		return (
 			<div>
 				{ this.renderNotices() }
@@ -100,24 +104,40 @@ export class LoginForm extends Component {
 							</label>
 
 							<FormTextInput
-								className="login__form-userdata-username-input"
+								className={
+									classNames( 'login__form-userdata-username-input', {
+										'is-error': requestError && requestError.field === 'usernameOrEmail'
+									} )
+								}
 								onChange={ this.onChangeField }
 								id="usernameOrEmail"
 								name="usernameOrEmail"
 								value={ this.state.usernameOrEmail }
 								{ ...isDisabled } />
 
+							{ requestError && requestError.field === 'usernameOrEmail' && (
+								<FormInputValidation isError text={ requestError.message } />
+							) }
+
 							<label htmlFor="password" className="login__form-userdata-username">
 								{ this.props.translate( 'Password' ) }
 							</label>
 
 							<FormPasswordInput
-								className="login__form-userdata-username-password"
+								className={
+									classNames( 'login__form-userdata-username-password', {
+										'is-error': requestError && requestError.field === 'password'
+									} )
+								}
 								onChange={ this.onChangeField }
 								id="password"
 								name="password"
 								value={ this.state.password }
 								{ ...isDisabled } />
+
+							{ requestError && requestError.field === 'password' && (
+								<FormInputValidation isError text={ requestError.message } />
+							) }
 						</div>
 
 						<div className="login__form-remember-me">

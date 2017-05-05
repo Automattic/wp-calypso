@@ -91,7 +91,7 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 			} );
 		} ).catch( ( error ) => {
 			const message = getMessageFromHTTPError( error );
-			const field = loginErrorFields[ error ];
+			const field = loginErrorFields[ get( error, 'response.body.data.errors', [] )[ 0 ] ];
 
 			dispatch( {
 				type: LOGIN_REQUEST_FAILURE,
