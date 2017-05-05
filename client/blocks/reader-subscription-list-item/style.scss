@@ -61,12 +61,10 @@
 }
 
 .reader-subscription-list-item .gravatar {
-	background: lighten( $gray, 30% ); // ### Temporary
 	float: left;
 	margin: 2px 8px 0 0;
 	height: 32px;
 	min-height: 32px;
-	width: 32px;
 	min-width: 32px;
 }
 
