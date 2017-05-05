@@ -25,6 +25,7 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	classNames = require( 'classnames' );
 
 import MenuSeparator from 'components/popover/menu-separator';
+import PageCardInfo from './page-card-info';
 import { hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
 import {
 	isFrontPage,
@@ -403,19 +404,23 @@ const Page = React.createClass( {
 			<CompactCard className={ classNames( cardClasses ) } >
 				{ hierarchyIndent }
 				{ this.props.multisite ? <SiteIcon site={ site } size={ 34 } /> : null }
-				<a className="page__title"
-					href={ canEdit ? helpers.editLinkForPage( page, site ) : page.URL }
-					title={ canEdit ?
-						this.translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } ) :
-						this.translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } ) }
-					onClick={ this.analyticsEvents.pageTitle }
-					>
-					{ depthIndicator }
-					{ this.props.isFrontPage ? <Gridicon icon="house" size={ 18 } /> : null }
-					{ title }
-				</a>
-				{ this.props.isPostsPage ? <div className="page__posts-page">{ this.translate( 'Your latest posts' ) }</div> : null }
-				{ this.props.multisite ? <span className="page__site-url">{ this.getSiteDomain() }</span> : null }
+				<div className="page__main">
+					<a className="page__title"
+						href={ canEdit ? helpers.editLinkForPage( page, site ) : page.URL }
+						title={ canEdit ?
+							this.translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } ) :
+							this.translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } ) }
+						onClick={ this.analyticsEvents.pageTitle }
+						>
+						{ depthIndicator }
+						{ title }
+					</a>
+					<PageCardInfo
+						page={ page }
+						showTimestamp={ this.props.hierarchical }
+						siteUrl={ this.props.multisite && this.getSiteDomain() }
+					/>
+				</div>
 				{ ellipsisGridicon }
 				{ popoverMenu }
 				<ReactCSSTransitionGroup

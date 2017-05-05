@@ -16,7 +16,7 @@
 .blog-posts-page__title {
 	display: inline;
 	color: $gray-dark;
-	font-weight: 500;
+	font-weight: bold;
 	font-family: $serif;
 	margin-right: 33px;
 
@@ -26,7 +26,7 @@
 }
 
 .blog-posts-page__info {
-	color: $gray;
+	color: $gray-text-min;
 	font-size: 12px;
 	margin: 0 33px 0 0;
 
