@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -11,6 +11,16 @@ import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 
 class CacheStats extends Component {
+	static propTypes = {
+		files: PropTypes.array,
+		header: PropTypes.string,
+		translate: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		files: [],
+	};
+
 	getAge = ( { lower_age, upper_age } ) => {
 		if ( lower_age && upper_age ) {
 			return `${ lower_age } - ${ upper_age }`;
@@ -34,7 +44,7 @@ class CacheStats extends Component {
 			<FoldableCard
 				compact
 				className="wp-super-cache__foldable-card"
-				header={ header }>
+				header={ header || '' }>
 				<table className="wp-super-cache__stats">
 					<thead>
 						<tr className="wp-super-cache__stats-header-row">
@@ -45,7 +55,7 @@ class CacheStats extends Component {
 						</tr>
 					</thead>
 					<tbody>
-						{ files && files.map( ( file, index ) =>
+						{ files.map( ( file, index ) =>
 						<tr className="wp-super-cache__stat" key={ index }>
 							<td className="wp-super-cache__stat-dir">{ file.dir }</td>
 							<td>{ file.files }</td>
