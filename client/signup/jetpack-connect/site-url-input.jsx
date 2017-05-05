@@ -29,13 +29,9 @@ class JetpackConnectSiteUrlInput extends Component {
 		url: PropTypes.string,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = this.props.url
-			? { value: untrailingslashit( this.props.url ), shownValue: this.props.url }
-			: { value: '', shownValue: '' };
-	}
+	state = this.props.url
+		? { value: untrailingslashit( this.props.url ), shownValue: this.props.url }
+		: { value: '', shownValue: '' };
 
 	componentDidUpdate() {
 		if ( ! this.props.isError ) {
