@@ -76,13 +76,11 @@ class ContentsTab extends Component {
 			isDeleting,
 			isGenerating,
 			isMultisite,
-			stats: {
-				generated,
-				supercache,
-				wpcache,
-			},
+			stats,
 			translate,
 		} = this.props;
+		const supercache = ( get( stats, 'supercache', {} ) );
+		const wpcache = ( get( stats, 'wpcache', {} ) );
 
 		return (
 			<div>
@@ -132,7 +130,7 @@ class ContentsTab extends Component {
 							{ translate(
 								'Cache stats last generated: %(generated)d minutes ago.',
 								{
-									args: { generated: generated || 0 },
+									args: { generated: ( get( stats, 'generated', 0 ) ) },
 								}
 							) }
 						</p>
