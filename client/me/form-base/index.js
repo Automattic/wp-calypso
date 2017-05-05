@@ -34,9 +34,7 @@ module.exports = {
 
 	getInitialState: function() {
 		return {
-			redirect: false,
 			submittingForm: false,
-			changingUsername: false,
 			usernameAction: 'new',
 			showNotice: false,
 		};
@@ -77,14 +75,6 @@ module.exports = {
 				}
 			} else {
 				this.props.markSaved && this.props.markSaved();
-
-				if ( this.state && this.state.redirect ) {
-					// Sometimes changes in settings require a url refresh to update the UI.
-					// For example when the user changes the language.
-					window.location = this.state.redirect + '?updated=success';
-					return;
-				}
-
 				this.setState( { showNotice: true } );
 				this.showNotice();
 				debug( 'Settings saved successfully ' + JSON.stringify( response ) );
