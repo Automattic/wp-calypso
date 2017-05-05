@@ -159,15 +159,33 @@ export const sendRouteSetEventMessage = ( connection, { getState }, action ) =>{
 	}
 };
 
+export const getEventMessageFromTracksData = ( { name, properties } ) => {
+	switch ( name ) {
+		case 'calypso_add_new_wordpress_click':
+			return 'Clicked "Add new site" button';
+		case 'calypso_themeshowcase_theme_activate':
+			return `Changed theme from "${ properties.previous_theme }" to "${ properties.theme }"`;
+	}
+	return null;
+};
+
 export const sendAnalyticsLogEvent = ( connection, { getState }, { meta: { analytics: analyticsMeta } } ) => {
 	const state = getState();
-	analyticsMeta.forEach( ( { type, payload: { service, name } } ) => {
+	analyticsMeta.forEach( ( { type, payload: { service, name, properties } } ) => {
 		if (
 			isHappychatClientConnected( state ) &&
 			isHappychatChatAssigned( state ) &&
 			type === ANALYTICS_EVENT_RECORD &&
 			service === 'tracks'
 		) {
+			// Check if this event should generate a timeline event, and send it if so
+			const eventMessage = getEventMessageFromTracksData( { name, properties } );
+			if ( eventMessage ) {
+				// Once we want these events to appear in production we should change this to sendEvent
+				connection.sendStagingEvent( eventMessage );
+			}
+
+			// Always send a log for every tracks event
 			connection.sendLog( name );
 		}
 	} );
