@@ -5,7 +5,7 @@ import config from 'config';
 import userFactory from 'lib/user';
 import { makeLayout } from 'controller';
 import { makeNavigation, siteSelection, makeSites } from 'my-sites/controller';
-import { singleSite, multiSite, loggedOut, upload } from './controller';
+import { loggedIn, loggedOut, upload } from './controller';
 import { getSubjects } from './theme-filters';
 import validateFilters from './validate-filters';
 
@@ -24,20 +24,12 @@ export default function( router ) {
 				);
 			}
 			router(
-				`/themes/:vertical(${ verticals })?/:tier(free|premium)?`,
-				siteSelection, multiSite, makeNavigation, makeLayout
+				`/themes/:vertical(${ verticals })?/:tier(free|premium)?/:site_id?`,
+				siteSelection, loggedIn, makeNavigation, makeLayout
 			);
 			router(
-				`/themes/:vertical(${ verticals })?/:tier(free|premium)?/:site_id`,
-				siteSelection, singleSite, makeNavigation, makeLayout
-			);
-			router(
-				`/themes/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`,
-				validateFilters, siteSelection, multiSite, makeNavigation, makeLayout
-			);
-			router(
-				`/themes/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter/:site_id`,
-				validateFilters, siteSelection, singleSite, makeNavigation, makeLayout
+				`/themes/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter/:site_id?`,
+				validateFilters, siteSelection, loggedIn, makeNavigation, makeLayout
 			);
 		} else {
 			router( `/themes/:vertical(${ verticals })?/:tier(free|premium)?`, loggedOut, makeLayout );
