@@ -16,40 +16,38 @@ import {
 	ChildSidebarPropTypes,
 } from './util';
 
-function EditorSidebarHeader( { childSidebar = CHILD_SIDEBAR_NONE, toggleSidebar, translate } ) {
-	return (
-		<div className="editor-sidebar__header">
-			{ childSidebar === CHILD_SIDEBAR_REVISIONS && (
+const EditorSidebarHeader = ( { childSidebar = CHILD_SIDEBAR_NONE, toggleSidebar, translate } ) => (
+	<div className="editor-sidebar__header">
+		{ childSidebar === CHILD_SIDEBAR_REVISIONS && (
+			<span>
+				<Button
+					borderless
+					className="editor-sidebar__parent-title"
+					onClick={ toggleSidebar }
+					title={ translate( 'Close sidebar' ) }
+				>
+					<EditorPostType isSettings />
+				</Button>
 				<span>
-					<Button
-						borderless
-						className="editor-sidebar__parent-title"
-						onClick={ toggleSidebar }
-						title={ translate( 'Close sidebar' ) }
-					>
-						<EditorPostType isSettings />
-					</Button>
-					<span>
-						→ { translate( 'Revisions' ) }
-					</span>
+					→ { translate( 'Revisions' ) }
 				</span>
-			) }
+			</span>
+		) }
 
-			{ childSidebar === CHILD_SIDEBAR_NONE && (
-				<EditorPostType isSettings />
-			) }
+		{ childSidebar === CHILD_SIDEBAR_NONE && (
+			<EditorPostType isSettings />
+		) }
 
-			<Button
-				compact borderless
-				className="editor-sidebar__back"
-				onClick={ toggleSidebar }
-				title={ translate( 'Close sidebar' ) }
-			>
-				<Gridicon icon="cross" />
-			</Button>
-		</div>
-	);
-}
+		<Button
+			compact borderless
+			className="editor-sidebar__back"
+			onClick={ toggleSidebar }
+			title={ translate( 'Close sidebar' ) }
+		>
+			<Gridicon icon="cross" />
+		</Button>
+	</div>
+);
 
 EditorSidebarHeader.propTypes = {
 	childSidebar: ChildSidebarPropTypes,

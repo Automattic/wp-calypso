@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import { get, map } from 'lodash';
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -15,28 +15,24 @@ import {
 	normalizeForDisplay,
 } from 'state/posts/revisions/selectors';
 
-class EditorDiffViewer extends PureComponent {
-	render() {
-		return (
-			<div className="editor-diff-viewer">
-				<h1 className="editor-diff-viewer__title">
-					{ get( this.props.revision, 'title' ) }
-				</h1>
-				{ map( this.props.contentChanges, ( change, changeIndex ) => {
-					const changeClassNames = classNames( {
-						'editor-diff-viewer__additions': change.added,
-						'editor-diff-viewer__deletions': change.removed,
-					} );
-					return (
-						<span key={ changeIndex } className={ changeClassNames }>
-							{ change.value }
-						</span>
-					);
-				} ) }
-			</div>
-		);
-	}
-}
+const EditorDiffViewer = ( { contentChanges, revision } ) => (
+	<div className="editor-diff-viewer">
+		<h1 className="editor-diff-viewer__title">
+			{ get( revision, 'title' ) }
+		</h1>
+		{ map( contentChanges, ( change, changeIndex ) => {
+			const changeClassNames = classNames( {
+				'editor-diff-viewer__additions': change.added,
+				'editor-diff-viewer__deletions': change.removed,
+			} );
+			return (
+				<span key={ changeIndex } className={ changeClassNames }>
+					{ change.value }
+				</span>
+			);
+		} ) }
+	</div>
+);
 
 EditorDiffViewer.propTypes = {
 	contentChanges: PropTypes.array,
