@@ -60,23 +60,20 @@ class JetpackConnectMain extends Component {
 		url: PropTypes.string,
 	};
 
-	state = {
-		currentUrl: '',
-		shownUrl: '',
-		waitingForSites: false,
-	};
+	state = this.props.url
+		? {
+			currentUrl: this.cleanUrl( this.props.url ),
+			shownUrl: this.props.url,
+			waitingForSites: false
+		} : {
+			currentUrl: '',
+			shownUrl: '',
+			waitingForSites: false
+		};
 
 	componentWillMount() {
 		if ( this.props.url ) {
-			let url = this.props.url;
-			if ( url && url.substr( 0, 4 ) !== 'http' ) {
-				url = 'http://' + url;
-			}
-			this.setState( {
-				currentUrl: untrailingslashit( url ),
-				shownUrl: url,
-			} );
-			this.checkUrl( url );
+			this.checkUrl( this.cleanUrl( this.props.url ) );
 		}
 	}
 
@@ -134,7 +131,7 @@ class JetpackConnectMain extends Component {
 			this.props.jetpackConnectSite.isFetching;
 	}
 
-	handlePushUrl = ( url ) => {
+	handleUpdateUrl = ( url ) => {
 		this.setState( {
 			currentUrl: this.cleanUrl( url ),
 			shownUrl: url,
@@ -355,7 +352,7 @@ class JetpackConnectMain extends Component {
 				<SiteUrlInput
 					url={ this.state.shownUrl }
 					onTosClick={ this.handleOnClickTos }
-					onPushValue={ this.handlePushUrl }
+					onPushValue={ this.handleUpdateUrl }
 					onSubmit={ this.onUrlSubmit }
 					onDismissClick={ this.onDismissClick }
 					isError={ this.getStatus() }
