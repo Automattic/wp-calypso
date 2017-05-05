@@ -86,7 +86,7 @@ class ProductFormVariationRow extends React.Component {
 						<FormCheckbox checked={ variation.visible } onChange={ this.toggleVisible } />
 					) }
 				</td>
-				<td>
+				<td className="products__all-variations">
 					{ ! allVariationsRow && (
 						<div className="products__product-form-variation-image"></div>
 					) }
@@ -98,15 +98,17 @@ class ProductFormVariationRow extends React.Component {
 						name="price"
 						value={ variation.regular_price || '' }
 						onChange={ this.setPrice }
+						size="4"
 					/>
 				</td>
-				<td>
+				<td className="products__product-dimensions-input">
 					<FormTextInput
 						name="length"
 						placeholder={ translate( 'L' ) }
 						type="number"
 						value={ dimensions.length || '' }
 						onChange={ this.setDimension }
+						className="products__product-dimensions-length"
 					/>
 					<FormTextInput
 						name="width"
@@ -114,6 +116,7 @@ class ProductFormVariationRow extends React.Component {
 						type="number"
 						value={ dimensions.width || '' }
 						onChange={ this.setDimension }
+						className="products__product-dimensions-width"
 					/>
 					<FormTextInputWithAffixes
 						name="height"
@@ -122,6 +125,7 @@ class ProductFormVariationRow extends React.Component {
 						type="number"
 						value={ dimensions.height || '' }
 						onChange={ this.setDimension }
+						className="products__product-dimensions-height"
 					/>
 				</td>
 				<td>
@@ -131,6 +135,7 @@ class ProductFormVariationRow extends React.Component {
 						suffix="g"
 						value={ variation.weight || '' }
 						onChange={ this.setWeight }
+						size="4"
 					/>
 				</td>
 				<td>
