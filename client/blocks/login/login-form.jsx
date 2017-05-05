@@ -24,7 +24,7 @@ export class LoginForm extends Component {
 		loginError: PropTypes.string,
 		loginUser: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
-		requestError: PropTypes.string,
+		requestError: PropTypes.object,
 		title: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
@@ -65,9 +65,6 @@ export class LoginForm extends Component {
 			this.props.recordTracksEvent( 'calypso_login_block_login_failure', {
 				error_message: errorMessage
 			} );
-			this.setState( {
-				errorMessage
-			} );
 		} );
 	};
 
@@ -75,7 +72,7 @@ export class LoginForm extends Component {
 		if ( this.props.requestError ) {
 			return (
 				<Notice status="is-error"
-					text={ this.props.requestError }
+					text={ this.props.requestError.message }
 				/>
 			);
 		}

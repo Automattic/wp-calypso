@@ -113,7 +113,7 @@ export const isRequesting = ( state ) => {
  * Returns the error for a login request.
  *
  * @param  {Object}   state  Global state tree
- * @return {?String}         Error for the request.
+ * @return {?Object}         Error for the request.
  */
 export const getRequestError = ( state ) => {
 	return get( state, 'login.requestError', null );

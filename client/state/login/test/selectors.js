@@ -95,12 +95,12 @@ describe( 'selectors', () => {
 			} ) ).to.be.null;
 		} );
 
-		it( 'should return an error for the request if there is an error', () => {
+		it( 'should return an error object for the request if there is an error', () => {
 			expect( getRequestError( {
 				login: {
-					requestError: 'some error'
+					requestError: { message: 'some error' }
 				}
-			} ) ).to.equal( 'some error' );
+			} ) ).to.eql( { message: 'some error' } );
 		} );
 	} );
 

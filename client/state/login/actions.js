@@ -32,6 +32,17 @@ const loginErrorMessages = {
 	sms_recovery_code_throttled: translate( 'You can only request a recovery code via SMS once per minute. Please wait and try again.' ),
 };
 
+const loginErrorFields = {
+	empty_password: 'password',
+	empty_two_step_code: 'twoStepCode',
+	empty_username: 'usernameOrEmail',
+	incorrect_password: 'password',
+	invalid_two_step_code: 'twoStepCode',
+	invalid_username: 'usernameOrEmail',
+	unknown: 'global',
+	account_unactivated: 'global',
+};
+
 function getMessageFromHTTPError( error ) {
 	const errorKeys = get( error, 'response.body.data.errors' );
 
@@ -79,15 +90,16 @@ export const loginUser = ( usernameOrEmail, password, rememberMe ) => dispatch =
 				data: response.body && response.body.data,
 			} );
 		} ).catch( ( error ) => {
-			const errorMessage = getMessageFromHTTPError( error );
+			const message = getMessageFromHTTPError( error );
+			const field = loginErrorFields[ error ];
 
 			dispatch( {
 				type: LOGIN_REQUEST_FAILURE,
 				usernameOrEmail,
-				error: errorMessage,
+				error: { message, field },
 			} );
 
-			return Promise.reject( errorMessage );
+			return Promise.reject( message );
 		} );
 };
 
