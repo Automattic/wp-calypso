@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import Spinner from 'components/spinner';
-import untrailingslashit from 'lib/route/untrailingslashit';
 
 class JetpackConnectSiteUrlInput extends Component {
 	static propTypes = {
@@ -24,14 +24,15 @@ class JetpackConnectSiteUrlInput extends Component {
 		] ),
 		isFetching: PropTypes.bool,
 		isInstall: PropTypes.bool,
-		onChange: PropTypes.func,
+		onPushValue: PropTypes.func,
 		onSubmit: PropTypes.func,
 		url: PropTypes.string,
 	};
 
-	state = this.props.url
-		? { value: untrailingslashit( this.props.url ), shownValue: this.props.url }
-		: { value: '', shownValue: '' };
+	static defaultProps = {
+		onPushValue: noop,
+		url: '',
+	};
 
 	componentDidUpdate() {
 		if ( ! this.props.isError ) {
@@ -46,13 +47,10 @@ class JetpackConnectSiteUrlInput extends Component {
 	}
 
 	handleChange = ( event ) => {
-		this.setState( {
-			value: untrailingslashit( event.target.value ),
-			shownValue: event.target.value
-		}, this.props.onChange );
+		this.props.onPushValue( event.target.value );
 	};
 
-	handleSubmit = () => this.props.onSubmit( this.state.value );
+	handleSubmit = () => this.props.onSubmit();
 
 	handleKeyPress = ( event ) => {
 		if ( 13 === event.keyCode ) {
@@ -115,7 +113,7 @@ class JetpackConnectSiteUrlInput extends Component {
 						disabled={ this.props.isFetching }
 						placeholder={ translate( 'http://www.yoursite.com' ) }
 						onKeyUp={ this.handleKeyPress }
-						value={ this.state.shownValue || '' }
+						value={ this.props.url }
 					/>
 					{ this.props.isFetching
 						? <Spinner duration={ 30 } />
@@ -125,7 +123,7 @@ class JetpackConnectSiteUrlInput extends Component {
 				<Card className="jetpack-connect__connect-button-card">
 					{ this.renderTermsOfServiceLink() }
 					<Button primary
-						disabled={ ( ! this.state.value || this.props.isFetching || hasError ) }
+						disabled={ ( ! this.props.url || this.props.isFetching || hasError ) }
 						onClick={ this.handleSubmit }>{ this.renderButtonLabel() }</Button>
 				</Card>
 			</div>
