@@ -25,3 +25,7 @@
 .editor-word-count__is-selected-text {
 	color: darken( $gray, 10% );
 }
+
+.editor-word-count__separator {
+	color: lighten( $gray, 10% );
+}

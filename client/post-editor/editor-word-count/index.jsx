@@ -52,14 +52,17 @@ class EditorWordCount extends PureComponent {
 
 		return (
 			this.props.translate(
-				'%(selectedText)s word selected %(separator)s',
-				'%(selectedText)s words selected %(separator)s',
+				'%(selectedText)s word selected {{span}}%(separator)s{{/span}}',
+				'%(selectedText)s words selected {{span}}%(separator)s{{/span}}',
 				{
 					count: selectedText,
 					args: {
 						selectedText: selectedText,
 						separator: '/ ',
 					},
+					components: {
+						span: <span className="editor-word-count__separator" />
+					}
 				}
 			)
 		);
