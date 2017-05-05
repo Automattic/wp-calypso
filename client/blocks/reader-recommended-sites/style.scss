@@ -71,7 +71,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		top: 0;
 	}
 
-	@include breakpoint( "<480px" ) {
+	@media #{$reader-related-card-v2-breakpoint-small} {
 		flex-direction: row;
 		flex: 0;
 		top: 0;
@@ -116,7 +116,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			margin-right: 15px;
 		}
 
-		@include breakpoint( "<480px" ) {
+		@media #{$reader-related-card-v2-breakpoint-small} {
 			margin-right: 0;
 		}
 	}
@@ -128,7 +128,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			margin-left: 15px;
 		}
 
-		@include breakpoint( "<480px" ) {
+		@media #{$reader-related-card-v2-breakpoint-small} {
 			margin-left: 0;
 		}
 	}
