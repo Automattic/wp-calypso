@@ -1,30 +1,24 @@
 /**
  * Internal dependencies
  */
-import {
-	PLAN_BUSINESS,
-	PLAN_PREMIUM,
-	PLAN_PERSONAL,
-} from 'lib/plans/constants';
+import * as plans from 'lib/plans/constants';
 import { includesProduct } from 'lib/products-values';
 import { abtest } from 'lib/abtest';
-import {
-	INITIAL_STEP,
-	CONCIERGE_STEP,
-	HAPPYCHAT_STEP,
-	FINAL_STEP,
-} from './steps';
+import * as steps from './steps';
+
+const CONCIERGE_PLANS = [ plans.PLAN_BUSINESS ];
+const HAPPYCHAT_PLANS = [ plans.PLAN_PERSONAL, plans.PLAN_PREMIUM ];
 
 export default function stepsForProductAndSurvey( survey, product, canChat ) {
 	if ( survey && survey.questionOneRadio === 'tooHard' ) {
-		if ( includesProduct( [ PLAN_BUSINESS ], product ) ) {
-			return [ INITIAL_STEP, CONCIERGE_STEP, FINAL_STEP ];
+		if ( includesProduct( CONCIERGE_PLANS, product ) ) {
+			return [ steps.INITIAL_STEP, steps.CONCIERGE_STEP, steps.FINAL_STEP ];
 		}
 
-		if ( canChat && includesProduct( [ PLAN_PERSONAL, PLAN_PREMIUM ], product ) && abtest( 'chatOfferOnCancel' ) === 'show' ) {
-			return [ INITIAL_STEP, HAPPYCHAT_STEP, FINAL_STEP ];
+		if ( canChat && includesProduct( HAPPYCHAT_PLANS, product ) && abtest( 'chatOfferOnCancel' ) === 'show' ) {
+			return [ steps.INITIAL_STEP, steps.HAPPYCHAT_STEP, steps.FINAL_STEP ];
 		}
 	}
 
-	return [ INITIAL_STEP, FINAL_STEP ];
+	return [ steps.INITIAL_STEP, steps.FINAL_STEP ];
 }
