@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { map } from 'lodash';
+import { cloneDeep, forEach, map } from 'lodash';
 import sinon from 'sinon';
 
 /**
@@ -122,9 +122,14 @@ describe( '#receiveSuccess', () => {
 
 		receiveSuccess( { dispatch }, action, next, successfulPostRevisionsResponse );
 
+		const expectedRevisions = cloneDeep( normalizedPostRevisions );
+		forEach( expectedRevisions, revision => {
+			revision.changes = { added: 0, removed: 0 };
+		} );
+
 		expect( dispatch ).to.have.been.called.exactly( 3 );
 		expect( dispatch ).to.have.been.calledWith( receivePostRevisionsSuccess( 12345678, 10 ) );
-		expect( dispatch ).to.have.been.calledWith( receivePostRevisions( 12345678, 10, normalizedPostRevisions ) );
+		expect( dispatch ).to.have.been.calledWith( receivePostRevisions( 12345678, 10, expectedRevisions ) );
 		expect( dispatch ).to.have.been.calledWith( requestUsers( 12345678, [ 1 ] ) );
 	} );
 } );
