@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { map } from 'lodash';
+import { get, map } from 'lodash';
 import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
@@ -20,7 +20,7 @@ class EditorDiffViewer extends PureComponent {
 		return (
 			<div className="editor-diff-viewer">
 				<h1 className="editor-diff-viewer__title">
-					{ this.props.revision.title }
+					{ get( this.props.revision, 'title' ) }
 				</h1>
 				{ map( this.props.contentChanges, ( change, changeIndex ) => {
 					const changeClassNames = classNames( {

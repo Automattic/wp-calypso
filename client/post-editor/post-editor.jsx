@@ -57,6 +57,7 @@ import EditorGroundControl from 'post-editor/editor-ground-control';
 import viewport, { isMobile } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
 import EditorDiffViewer from 'post-editor/editor-diff-viewer';
+import { CHILD_SIDEBAR_NONE, CHILD_SIDEBAR_REVISIONS } from 'post-editor/editor-sidebar/util';
 
 export const PostEditor = React.createClass( {
 	propTypes: {
@@ -90,6 +91,7 @@ export const PostEditor = React.createClass( {
 			isLoadingRevision: false,
 			isTitleFocused: false,
 			selectedRevisionId: null,
+			childSidebar: CHILD_SIDEBAR_NONE,
 		};
 	},
 
@@ -202,14 +204,29 @@ export const PostEditor = React.createClass( {
 		}
 	},
 
+	toggleChildSidebar: function( childSidebar ) {
+		if (
+			this.state.childSidebar === CHILD_SIDEBAR_REVISIONS &&
+			this.state.childSidebar !== childSidebar
+		) {
+			this.toggleRevision( null );
+		}
+
+		this.setState( { childSidebar } );
+	},
+
 	toggleRevision: function( selectedRevisionId ) {
 		this.setState( { selectedRevisionId } );
-		if ( viewport.isWithinBreakpoint( '<660px' ) ) {
+		if (
+			selectedRevisionId !== null &&
+			viewport.isWithinBreakpoint( '<660px' )
+		) {
 			this.props.setLayoutFocus( 'content' );
 		}
 	},
 
 	loadRevision: function( revision ) {
+		this.toggleChildSidebar( CHILD_SIDEBAR_NONE );
 		this.setState( { selectedRevisionId: null } );
 		this.restoreRevision( {
 			content: revision.content,
@@ -262,7 +279,7 @@ export const PostEditor = React.createClass( {
 						type={ this.props.type }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 						allPostsUrl={ this.getAllPostsUrl() }
-						selectedRevisionId={ this.state.selectedRevisionId }
+						childSidebar={ this.state.childSidebar }
 					/>
 					<div className="post-editor__content">
 						<div className="editor">
@@ -294,7 +311,7 @@ export const PostEditor = React.createClass( {
 
 							<div className={ classNames(
 								'editor__content',
-								{ show: this.state.selectedRevisionId === null }
+								{ show: this.state.childSidebar === CHILD_SIDEBAR_NONE }
 							) }>
 								<FeaturedImage
 									site={ site }
@@ -351,7 +368,7 @@ export const PostEditor = React.createClass( {
 								<EditorWordCount />
 							</div>
 
-							{ this.state.selectedRevisionId !== null && (
+							{ this.state.childSidebar === CHILD_SIDEBAR_REVISIONS && (
 								<EditorDiffViewer
 									siteId={ site.ID }
 									postId={ this.state.post.ID }
@@ -361,9 +378,11 @@ export const PostEditor = React.createClass( {
 						</div>
 					</div>
 					<EditorSidebar
+						childSidebar={ this.state.childSidebar }
 						loadRevision={ this.loadRevision }
 						selectedRevisionId={ this.state.selectedRevisionId }
 						toggleRevision={ this.toggleRevision }
+						toggleChildSidebar={ this.toggleChildSidebar }
 						toggleSidebar={ this.toggleSidebar }
 						savedPost={ this.state.savedPost }
 						post={ this.state.post }

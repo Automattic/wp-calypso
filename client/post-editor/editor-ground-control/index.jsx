@@ -23,6 +23,7 @@ import AsyncLoad from 'components/async-load';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
+import { CHILD_SIDEBAR_REVISIONS, ChildSidebarPropTypes } from 'post-editor/editor-sidebar/util';
 
 export default React.createClass( {
 	displayName: 'EditorGroundControl',
@@ -46,7 +47,7 @@ export default React.createClass( {
 		userUtils: React.PropTypes.object,
 		toggleSidebar: React.PropTypes.func,
 		type: React.PropTypes.string,
-		selectedRevisionId: React.PropTypes.number,
+		childSidebar: ChildSidebarPropTypes,
 	},
 
 	mixins: [ PureRenderMixin ],
@@ -66,7 +67,6 @@ export default React.createClass( {
 			user: null,
 			userUtils: null,
 			setPostDate: noop,
-			selectedRevisionId: null,
 		};
 	},
 
@@ -349,7 +349,7 @@ export default React.createClass( {
 						className="editor-ground-control__toggle-sidebar"
 						onClick={ this.props.toggleSidebar }
 					>
-						<Gridicon icon={ this.props.selectedRevisionId === null ? 'cog' : 'history' } />
+						<Gridicon icon={ this.props.childSidebar === CHILD_SIDEBAR_REVISIONS ? 'history' : 'cog' } />
 						<span className="editor-ground-control__button-label"> <EditorPostType isSettings /></span>
 					</Button>
 					<div className="editor-ground-control__publish-combo">

@@ -15,9 +15,11 @@ import SidebarFooter from 'layout/sidebar/footer';
 import SidebarRegion from 'layout/sidebar/region';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import EditorDeletePost from 'post-editor/editor-delete-post';
-import { CHILD_SIDEBAR_NONE, CHILD_SIDEBAR_REVISIONS } from './util';
+import { CHILD_SIDEBAR_NONE, ChildSidebarPropTypes } from './util';
 
 export default class EditorSidebar extends Component {
+	// TODO: functional component
+
 	static propTypes = {
 		savedPost: PropTypes.object,
 		post: PropTypes.object,
@@ -27,54 +29,31 @@ export default class EditorSidebar extends Component {
 		onTrashingPost: PropTypes.func,
 		site: PropTypes.object,
 		type: PropTypes.string,
+		childSidebar: ChildSidebarPropTypes,
 		loadRevision: PropTypes.func,
 		selectedRevisionId: PropTypes.number,
 		toggleRevision: PropTypes.func,
+		toggleChildSidebar: PropTypes.func,
 		toggleSidebar: PropTypes.func,
 		setPostDate: PropTypes.func,
-	}
-
-	constructor() {
-		super();
-		this.loadRevision = this.loadRevision.bind( this );
-		this.toggleChildSidebar = this.toggleChildSidebar.bind( this );
-		this.state = {
-			childSidebar: CHILD_SIDEBAR_NONE,
-		};
-	}
-
-	loadRevision( revision ) {
-		this.toggleChildSidebar( CHILD_SIDEBAR_NONE );
-		this.props.loadRevision( revision );
-	}
-
-	toggleChildSidebar( childSidebar ) {
-		if (
-			this.state.childSidebar === CHILD_SIDEBAR_REVISIONS &&
-			this.state.childSidebar !== childSidebar
-		) {
-			this.props.toggleRevision( null );
-		}
-
-		this.setState( { childSidebar } );
 	}
 
 	render() {
 		const { toggleSidebar, isNew, onTrashingPost, onPublish, onSave, post, savedPost, site, type, setPostDate } = this.props;
 
-		const headerToggleSidebar = this.state.childSidebar === CHILD_SIDEBAR_NONE
+		const headerToggleSidebar = this.props.childSidebar === CHILD_SIDEBAR_NONE
 			? toggleSidebar
-			: partial( this.toggleChildSidebar, CHILD_SIDEBAR_NONE );
+			: partial( this.props.toggleChildSidebar, CHILD_SIDEBAR_NONE );
 
 		const sidebarClassNames = classNames(
 			'post-editor__sidebar',
-			{ 'focus-child': this.state.childSidebar !== CHILD_SIDEBAR_NONE }
+			{ 'focus-child': this.props.childSidebar !== CHILD_SIDEBAR_NONE }
 		);
 
 		return (
 			<div className={ sidebarClassNames }>
 				<EditorSidebarHeader
-					childSidebar={ this.state.childSidebar }
+					childSidebar={ this.props.childSidebar }
 					toggleSidebar={ headerToggleSidebar }
 				/>
 				<EditorActionBar
@@ -94,24 +73,24 @@ export default class EditorSidebar extends Component {
 						setPostDate={ setPostDate }
 						onPrivatePublish={ onPublish }
 						onSave={ onSave }
-						toggleChildSidebar={ this.toggleChildSidebar }
+						toggleChildSidebar={ this.props.toggleChildSidebar }
 					/>
 				</SidebarRegion>
 				<SidebarRegion className="editor-sidebar__child">
 					{
-						this.state.childSidebar === CHILD_SIDEBAR_NONE
+						this.props.childSidebar === CHILD_SIDEBAR_NONE
 							? null
 							: <EditorRevisionsList
 								postId={ post.ID }
 								siteId={ site.ID }
-								loadRevision={ this.loadRevision }
+								loadRevision={ this.props.loadRevision }
 								selectedRevisionId={ this.props.selectedRevisionId }
 								toggleRevision={ this.props.toggleRevision }
 							/>
 					}
 				</SidebarRegion>
 				<SidebarFooter>
-					{ this.state.childSidebar === CHILD_SIDEBAR_NONE && (
+					{ this.props.childSidebar === CHILD_SIDEBAR_NONE && (
 						<EditorDeletePost
 							post={ post }
 							onTrashingPost={ onTrashingPost }
