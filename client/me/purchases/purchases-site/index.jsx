@@ -27,6 +27,7 @@ const PurchasesSite = ( { hasLoadedSite, isPlaceholder, site, siteId, purchases,
 			<PurchaseItem
 				key={ purchase.id }
 				slug={ slug }
+				isDisconnectedSite={ ! site }
 				purchase={ purchase } />
 		) );
 	}

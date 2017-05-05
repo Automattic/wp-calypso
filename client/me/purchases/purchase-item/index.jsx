@@ -104,7 +104,7 @@ class PurchaseItem extends Component {
 	}
 
 	render() {
-		const { isPlaceholder, purchase } = this.props;
+		const { isPlaceholder, isDisconnectedSite, purchase } = this.props;
 		const classes = classNames( 'purchase-item',
 			{ 'is-expired': purchase && 'expired' === purchase.expiryStatus },
 			{ 'is-placeholder': isPlaceholder },
@@ -149,9 +149,12 @@ class PurchaseItem extends Component {
 		let props;
 		if ( ! isPlaceholder ) {
 			props = {
-				href: paths.managePurchase( this.props.slug, this.props.purchase.id ),
 				onClick: this.scrollToTop
 			};
+
+			if ( ! isDisconnectedSite ) {
+				props.href = paths.managePurchase( this.props.slug, this.props.purchase.id );
+			}
 		}
 
 		return (
@@ -164,6 +167,7 @@ class PurchaseItem extends Component {
 
 PurchaseItem.propTypes = {
 	isPlaceholder: React.PropTypes.bool,
+	isDisconnectedSite: React.PropTypes.bool,
 	purchase: React.PropTypes.object,
 	slug: React.PropTypes.string
 };
