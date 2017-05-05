@@ -61,6 +61,11 @@ class SitePicker extends Component {
 	renderScreen() {
 		return (
 			<SiteSelector
+				filter={
+					function( site ) {
+						return ! site.jetpack;
+					}
+				}
 				sites={ sites }
 				onSiteSelect={ this.handleSiteSelect }
 			/>

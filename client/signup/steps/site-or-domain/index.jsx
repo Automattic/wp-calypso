@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -68,8 +69,9 @@ class SiteOrDomain extends Component {
 			choices.push(
 				{
 					type: 'existing-site',
-					label: 'Link to an existing site',
-					image: <NewSiteImage />
+					label: translate( 'Existing WordPress.com site' ),
+					image: <NewSiteImage />,
+					description: translate( 'Use with a site you already started. Free domain included with all plans.' )
 				}
 			);
 		}
