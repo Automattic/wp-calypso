@@ -13,7 +13,13 @@ import {
 	ACTIVITY_LOG_FETCH_SUCCESS,
 	RESTORE_REQUEST,
 	RESTORE_REQUEST_SUCCESS,
-	RESTORE_REQUEST_FAILED
+	RESTORE_REQUEST_FAILED,
+	REWIND_ACTIVATE_REQUEST,
+	REWIND_ACTIVATE_SUCCESS,
+	REWIND_ACTIVATE_FAILED,
+	REWIND_DEACTIVATE_REQUEST,
+	REWIND_DEACTIVATE_SUCCESS,
+	REWIND_DEACTIVATE_FAILED
 } from 'state/action-types';
 
 export function requests( state = {}, action ) {
@@ -55,6 +61,41 @@ export function requests( state = {}, action ) {
 					isRestoring: ''
 				}
 			} );
+		case REWIND_ACTIVATE_REQUEST:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: Object.assign(
+					{},
+					get( state, [ action.siteId ], {} ),
+					{ isActivatingRewind: true }
+				)
+			} );
+		case REWIND_DEACTIVATE_REQUEST:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: Object.assign(
+					{},
+					get( state, [ action.siteId ], {} ),
+					{ isDeactivatingRewind: true }
+				)
+			} );
+		case REWIND_ACTIVATE_SUCCESS:
+		case REWIND_ACTIVATE_FAILED:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: Object.assign(
+					{},
+					get( state, [ action.siteId ], {} ),
+					{ isActivatingRewind: false }
+				)
+			} );
+		case REWIND_DEACTIVATE_SUCCESS:
+		case REWIND_DEACTIVATE_FAILED:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: Object.assign(
+					{},
+					get( state, [ action.siteId ], {} ),
+					{ isDeactivatingRewind: false }
+				)
+			} );
+
 	}
 	return state;
 }

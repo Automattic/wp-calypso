@@ -51,3 +51,35 @@ export function isAnythingRestoring( state, siteId ) {
 	return !! get( state.activityLog.requests, [ siteId, 'isRestoring' ], false );
 }
 
+/**
+ * Returns true while a Rewind is being activated/deactivated
+ *
+ * @param  {Object}  state     Global state tree
+ * @param  {Number}  siteId    The ID of the site we're activating/deactivating.
+ * @return {Boolean}           Whether the site is being toggled.
+ */
+export function isTogglingRewind( state, siteId ) {
+	return !! get( state.activityLog.requests, [ siteId, 'isTogglingRewind' ], false );
+}
+
+/**
+ * Returns true while a Rewind is being activated
+ *
+ * @param  {Object}  state     Global state tree
+ * @param  {Number}  siteId    The ID of the site we're activating.
+ * @return {Boolean}           Whether the site is being activated.
+ */
+export function isActivatingRewind( state, siteId ) {
+	return !! get( state.activityLog.requests, [ siteId, 'isActivatingRewind' ], false );
+}
+
+/**
+ * Returns true while a Rewind is being deactivated
+ *
+ * @param  {Object}  state     Global state tree
+ * @param  {Number}  siteId    The ID of the site we're deactivating.
+ * @return {Boolean}           Whether the site is being deactivated.
+ */
+export function isDeactivatingRewind( state, siteId ) {
+	return !! get( state.activityLog.requests, [ siteId, 'isDeactivatingRewind' ], false );
+}

@@ -167,7 +167,6 @@ const fakebackups = () => {
 	return backupLogs;
 };
 
-
 export function getActivityLogData( siteId ) {
 	// const logs = [
 	// 	{
@@ -345,4 +344,3 @@ export function getActivityLogData( siteId ) {
 		// 	} );
 	};
 }
-

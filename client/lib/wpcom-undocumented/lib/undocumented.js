@@ -2326,12 +2326,38 @@ Undocumented.prototype.transferStatus = function( siteId, transferId ) {
 };
 
 /**
+ * Activate Jetpack Rewind
+ *
+ * @param  {int} siteId.
+ *
+ * @return {Promise} Promise for handling result
+ */
+Undocumented.prototype.rewindActivate = function( siteId ) {
+	return this.wpcom.req.post( {
+		path: `/activity-log/${ siteId }/rewind/activate`
+	} );
+};
+
+/**
+ * Deactivate Jetpack Rewind
+ *
+ * @param  {int} siteId.
+ *
+ * @return {Promise} Promise for handling result
+ */
+Undocumented.prototype.rewindDeactivate = function( siteId ) {
+	return this.wpcom.req.post( {
+		path: `/activity-log/${ siteId }/rewind/deactivate`
+	} );
+};
+
+/**
  * Fetch the Activity Log data for a given site.
  *
  * @param {int} siteId -- the ID of the site being transferred
  *
  */
-Undocumented.prototype.getActivityLog = function( siteId ) {
+Undocumented.prototype.rewindGetActivityLog = function( siteId ) {
 	// debug( '/sites/:site_id:/sync/status query' );
 
 	// @todo make this query an actual endpoint for activity log
@@ -2349,7 +2375,7 @@ Undocumented.prototype.getActivityLog = function( siteId ) {
  *
  * @return {object} Contains path as item.
  */
-Undocumented.prototype.requestRestore = function( siteId, timestamp ) {
+Undocumented.prototype.rewindRequestRestore = function( siteId, timestamp ) {
 	return this.wpcom.req.post( {
 		path: `/activity-log/${ siteId }/rewind/${ timestamp }`
 	} );
