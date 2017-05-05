@@ -523,7 +523,7 @@ const ThemeSheet = React.createClass( {
 				href={ getUrl ? getUrl( this.props.id ) : null }
 				onClick={ this.onButtonClick }>
 				{ this.isLoaded() ? label : placeholder }
-				{ this.renderPrice() }
+				{ this.props.isWpcomTheme && this.renderPrice() }
 			</Button>
 		);
 	},
