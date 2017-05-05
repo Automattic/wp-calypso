@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import SiteSelector from 'components/site-selector';
 import StepWrapper from 'signup/step-wrapper';
 import { getSites } from 'state/selectors';
@@ -60,15 +61,17 @@ class SitePicker extends Component {
 
 	renderScreen() {
 		return (
-			<SiteSelector
-				filter={
-					function( site ) {
-						return ! site.jetpack;
+			<Card className="site-picker__wrapper">
+				<SiteSelector
+					filter={
+						function( site ) {
+							return ! site.jetpack;
+						}
 					}
-				}
-				sites={ sites }
-				onSiteSelect={ this.handleSiteSelect }
-			/>
+					sites={ sites }
+					onSiteSelect={ this.handleSiteSelect }
+				/>
+			</Card>
 		);
 	}
 
