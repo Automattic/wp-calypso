@@ -165,6 +165,8 @@ export const getEventMessageFromTracksData = ( { name, properties } ) => {
 			return 'Clicked "Add new site" button';
 		case 'calypso_themeshowcase_theme_activate':
 			return `Changed theme from "${ properties.previous_theme }" to "${ properties.theme }"`;
+		case 'calypso_editor_featured_image_upload':
+			return 'Changed the featured image on the current post';
 	}
 	return null;
 };
