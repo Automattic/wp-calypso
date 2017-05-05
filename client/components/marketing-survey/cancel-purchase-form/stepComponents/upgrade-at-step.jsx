@@ -36,7 +36,12 @@ export class UpgradeATStep extends Component {
 						{
 							translate(
 								'Did you know that you can now use third-party plugins and themes on the WordPress.com Business plan? ' +
-								'Claim a 25% discount when you upgrade your site today - enter the code BIZC25 at checkout.'
+								'Claim a 25% discount when you upgrade your site today - {{b}}enter the code BIZC25 at checkout{{/b}}.',
+								{
+									components: {
+										b: <strong />
+									}
+								}
 							)
 						}
 					</p>
