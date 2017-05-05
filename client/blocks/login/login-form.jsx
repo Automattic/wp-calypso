@@ -16,14 +16,17 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { loginUser } from 'state/login/actions';
 import Notice from 'components/notice';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { isRequesting, getRequestError } from 'state/login/selectors';
 
 export class LoginForm extends Component {
 	static propTypes = {
-		loginUser: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired,
+		isRequesting: PropTypes.bool.isRequired,
 		loginError: PropTypes.string,
+		loginUser: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
+		requestError: PropTypes.string,
 		title: PropTypes.string,
+		translate: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -34,14 +37,6 @@ export class LoginForm extends Component {
 		usernameOrEmail: '',
 		password: '',
 		rememberMe: false,
-		submitting: false,
-		errorMessage: '',
-	};
-
-	dismissNotice = () => {
-		this.setState( {
-			errorMessage: ''
-		} );
 	};
 
 	onChangeField = ( event ) => {
@@ -60,40 +55,35 @@ export class LoginForm extends Component {
 
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
-		this.setState( {
-			submitting: true
-		} );
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_submit' );
 
 		this.props.loginUser( this.state.usernameOrEmail, this.state.password, this.state.rememberMe ).then( () => {
 			this.props.recordTracksEvent( 'calypso_login_block_login_success' );
-			this.dismissNotice();
 			this.props.onSuccess( this.state );
 		} ).catch( errorMessage => {
 			this.props.recordTracksEvent( 'calypso_login_block_login_failure', {
 				error_message: errorMessage
 			} );
 			this.setState( {
-				submitting: false,
 				errorMessage
 			} );
 		} );
 	};
 
 	renderNotices() {
-		if ( this.state.errorMessage ) {
+		if ( this.props.requestError ) {
 			return (
 				<Notice status="is-error"
-					text={ this.state.errorMessage }
-					onDismissClick={ this.dismissNotice } />
+					text={ this.props.requestError }
+				/>
 			);
 		}
 	}
 
 	render() {
 		const isDisabled = {};
-		if ( this.state.submitting ) {
+		if ( this.props.isRequesting ) {
 			isDisabled.disabled = true;
 		}
 
@@ -157,7 +147,10 @@ export class LoginForm extends Component {
 }
 
 export default connect(
-	null,
+	( state ) => ( {
+		isRequesting: isRequesting( state ),
+		requestError: getRequestError( state ),
+	} ),
 	{
 		loginUser,
 		recordTracksEvent
