@@ -7,7 +7,6 @@ import { trim, debounce } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import qs from 'qs';
-import url from 'url';
 
 /**
  * Internal Dependencies
@@ -25,6 +24,7 @@ import { requestFeedSearch } from 'state/reader/feed-searches/actions';
 import { addQueryArgs } from 'lib/url';
 import FollowButton from 'reader/follow-button';
 import { READER_FOLLOWING_MANAGE_URL_INPUT } from 'reader/follow-button/follow-sources';
+import { isUrl, prependUrlProtocol, stripUrlProtocol } from './url-helper';
 
 class FollowingManage extends Component {
 	static propTypes = {
@@ -121,32 +121,6 @@ class FollowingManage extends Component {
 		page.replace( addQueryArgs( { showMoreResults: true }, window.location.pathname + window.location.search ) );
 	}
 
-	isUrl( sitesQuery ) {
-		let parsedUrl = url.parse( sitesQuery );
-
-		// Make sure the query has a protocol - hostname ends up blank otherwise
-		if ( ! parsedUrl.protocol ) {
-			parsedUrl = url.parse( 'http://' + sitesQuery );
-		}
-
-		if ( ! parsedUrl.hostname || parsedUrl.hostname.indexOf( '.' ) === -1 ) {
-			return false;
-		}
-
-		// Check for a valid-looking TLD
-		if ( parsedUrl.hostname.lastIndexOf( '.' ) > ( parsedUrl.hostname.length - 3 ) ) {
-			return false;
-		}
-
-		// Make sure the hostname has at least two parts separated by a dot
-		const hostnameParts = parsedUrl.hostname.split( '.' ).filter( Boolean );
-		if ( hostnameParts.length < 2 ) {
-			return false;
-		}
-
-		return true;
-	}
-
 	render() {
 		const {
 			sitesQuery,
@@ -159,7 +133,7 @@ class FollowingManage extends Component {
 		} = this.props;
 		const searchPlaceholderText = translate( 'Search millions of sites' );
 		const showExistingSubscriptions = ! ( !! sitesQuery && showMoreResults );
-		const isSitesQueryUrl = this.isUrl( sitesQuery );
+		const isSitesQueryUrl = isUrl( sitesQuery );
 
 		return (
 			<ReaderMain className="following-manage">
@@ -188,8 +162,8 @@ class FollowingManage extends Component {
 					{ isSitesQueryUrl && (
 						<div className="following-manage__url-follow">
 							<FollowButton
-								followLabel={ translate( 'Follow %s', { args: sitesQuery } ) }
-								siteUrl={ sitesQuery }
+								followLabel={ translate( 'Follow %s', { args: stripUrlProtocol( sitesQuery ) } ) }
+								siteUrl={ prependUrlProtocol( sitesQuery ) }
 								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT } />
 						</div>
 					) }
