@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import { filter, get } from 'lodash';
+import { filter, get, reverse } from 'lodash';
 
 /**
  * Internal dependencies
@@ -97,24 +97,15 @@ class PlansFeaturesMain extends Component {
 			);
 		}
 
-		let signupPlans = [
+		const signupPlans = [
 			hideFreePlan ? null : PLAN_FREE,
 			isPersonalPlanEnabled ? PLAN_PERSONAL : null,
 			PLAN_PREMIUM,
 			PLAN_BUSINESS
 		];
 
-		if ( abtest( 'signupPlansReorderTest' ) === 'modified' ) {
-			signupPlans = [
-				PLAN_BUSINESS,
-				PLAN_PREMIUM,
-				isPersonalPlanEnabled ? PLAN_PERSONAL : null,
-				hideFreePlan ? null : PLAN_FREE,
-			];
-		}
-
 		const plans = filter(
-			signupPlans,
+			abtest( 'signupPlansReorderTest' ) === 'modified' ? reverse( signupPlans ) : signupPlans,
 			value => !! value
 		);
 
