@@ -54,7 +54,7 @@ import Site from 'blocks/site';
 import StatusLabel from 'post-editor/editor-status-label';
 import { editedPostHasContent } from 'state/selectors';
 import EditorGroundControl from 'post-editor/editor-ground-control';
-import { isMobile } from 'lib/viewport';
+import viewport, { isMobile } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
 import EditorDiffViewer from 'post-editor/editor-diff-viewer';
 
@@ -204,6 +204,9 @@ export const PostEditor = React.createClass( {
 
 	toggleRevision: function( selectedRevisionId ) {
 		this.setState( { selectedRevisionId } );
+		if ( viewport.isWithinBreakpoint( '<660px' ) ) {
+			this.props.setLayoutFocus( 'content' );
+		}
 	},
 
 	loadRevision: function( revision ) {

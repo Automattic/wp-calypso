@@ -18,6 +18,7 @@ import {
 	normalizeForEditing,
 } from 'state/posts/revisions/selectors';
 import EditorRevisionsListItem from './item';
+import viewport from 'lib/viewport';
 
 class EditorRevisionsList extends PureComponent {
 	constructor() {
@@ -32,7 +33,8 @@ class EditorRevisionsList extends PureComponent {
 	trySelectingRevision() {
 		if (
 			this.props.selectedRevisionId === null &&
-			this.props.revisions.length > 0
+			this.props.revisions.length > 0 &&
+			viewport.isWithinBreakpoint( '>660px' )
 		) {
 			this.props.toggleRevision( this.props.revisions[ 0 ].id );
 		}

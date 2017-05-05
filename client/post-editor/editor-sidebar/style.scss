@@ -36,18 +36,22 @@
 }
 
 .editor-sidebar__header {
+	align-items: center;
 	background: lighten( $gray, 30% );
-	display: none;
-	font-size: 13px;
 	color: $gray-dark;
+	display: flex;
+	flex-shrink: 0;
+	font-size: 13px;
 	font-weight: 500;
+	justify-content: space-between;
+	padding: 11px 15px 11px 16px;
 
-	@include breakpoint( ">660px" ) {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		flex-shrink: 0;
-		padding: 11px 15px 11px 16px;
+	@include breakpoint( '<660px' ) {
+		display: none;
+
+		.focus-child & {
+			display: flex;
+		}
 	}
 }
 
