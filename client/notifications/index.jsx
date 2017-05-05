@@ -160,7 +160,6 @@ export class Notifications extends Component {
 					isVisible={ this.state.isVisible }
 					locale={ localeSlug }
 					onRender={ this.indicateRender }
-					onTogglePanel={ this.props.checkToggle }
 					wpcom={ wpcom }
 				/>
 			</div>
