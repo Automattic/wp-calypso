@@ -488,9 +488,9 @@ const CancelPurchaseForm = React.createClass( {
 	},
 
 	render() {
-		const { translate } = this.props;
-		if ( this.props.showSurvey ) {
-			if ( this.props.surveyStep === steps.INITIAL_STEP ) {
+		const { translate, showSurvey, surveyStep } = this.props;
+		if ( showSurvey ) {
+			if ( surveyStep === steps.INITIAL_STEP ) {
 				return (
 					<div>
 						<FormSectionHeading>
@@ -506,7 +506,7 @@ const CancelPurchaseForm = React.createClass( {
 			}
 
 			// Render concierge offer if appropriate
-			if ( this.props.surveyStep === steps.CONCIERGE_STEP ) {
+			if ( surveyStep === steps.CONCIERGE_STEP ) {
 				return (
 					<div>
 						<FormSectionHeading>
@@ -517,7 +517,7 @@ const CancelPurchaseForm = React.createClass( {
 				);
 			}
 
-			if ( this.props.surveyStep === steps.HAPPYCHAT_STEP ) {
+			if ( surveyStep === steps.HAPPYCHAT_STEP ) {
 				return (
 					<div>
 						<FormSectionHeading>
