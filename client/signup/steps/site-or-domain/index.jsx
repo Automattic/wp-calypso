@@ -140,17 +140,6 @@ class SiteOrDomain extends Component {
 		const tld = domain.split( '.' ).slice( 1 ).join( '.' );
 		const domainItem = cartItems.domainRegistration( { productSlug: tlds[ tld ], domain } );
 
-		if ( designType === 'existing-site' ) {
-			SignupActions.submitSignupStep( {
-				stepName,
-				designType,
-				domainItem,
-				isPurchasingItem: true,
-			}, [], { domainItem } );
-			goToNextStep();
-			return;
-		}
-
 		SignupActions.submitSignupStep( {
 			stepName,
 			domainItem,
@@ -169,6 +158,8 @@ class SiteOrDomain extends Component {
 			} );
 			SignupActions.submitSignupStep( { stepName: 'plans', wasSkipped: true }, [], { cartItem: null, privacyItem: null } );
 			goToStep( 'user' );
+		} else if ( designType === 'existing-site' ) {
+			goToNextStep();
 		} else {
 			SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true }, [], {} );
 			goToStep( 'themes' );
