@@ -20,16 +20,15 @@ import cartStore from 'lib/cart/store';
 import { isNotificationsOpen } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
+import keyboardShortcuts from 'lib/keyboard-shortcuts';
 
 /**
  * Module variables
  */
-const keyBoardShortcutsEnabled = config.isEnabled( 'keyboard-shortcuts' );
-let keyboardShortcuts;
+const globalKeyBoardShortcutsEnabled = config.isEnabled( 'keyboard-shortcuts' );
 let globalKeyboardShortcuts;
 
-if ( keyBoardShortcutsEnabled ) {
-	keyboardShortcuts = require( 'lib/keyboard-shortcuts' );
+if ( globalKeyBoardShortcutsEnabled ) {
 	globalKeyboardShortcuts = require( 'lib/keyboard-shortcuts/global' )();
 }
 
@@ -115,10 +114,7 @@ const handler = ( dispatch, action, getState ) => {
 
 		//when the notifications panel is open keyboard events should not fire.
 		case NOTIFICATIONS_PANEL_TOGGLE:
-			if ( keyBoardShortcutsEnabled ) {
-				updateNotificationsOpenForKeyboardShortcuts( dispatch, action, getState );
-			}
-			return;
+			return updateNotificationsOpenForKeyboardShortcuts( dispatch, action, getState );
 
 		case SELECTED_SITE_SET:
 		case SITE_RECEIVE:
@@ -127,7 +123,7 @@ const handler = ( dispatch, action, getState ) => {
 			// Wait a tick for the reducer to update the state tree
 			setTimeout( () => {
 				updateSelectedSiteForCart( dispatch, action, getState );
-				if ( keyBoardShortcutsEnabled ) {
+				if ( globalKeyBoardShortcutsEnabled ) {
 					updatedSelectedSiteForKeyboardShortcuts( dispatch, action, getState );
 				}
 				if ( desktopEnabled ) {

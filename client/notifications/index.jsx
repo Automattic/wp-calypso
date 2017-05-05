@@ -98,6 +98,12 @@ export class Notifications extends Component {
 			event.preventDefault();
 			this.props.checkToggle( null, true );
 		}
+
+		if ( 27 === event.keyCode && this.props.isShowing ) {
+			event.stopPropagation();
+			event.preventDefault();
+			this.props.checkToggle( null, true );
+		}
 	};
 
 	handleVisibilityChange = () => this.setState( { isVisible: getIsVisible() } );
@@ -156,11 +162,10 @@ export class Notifications extends Component {
 				} ) }
 			>
 				<NotificationsPanel
-					isShowing={ this.props.isShowing || true }
+					isShowing={ this.props.isShowing }
 					isVisible={ this.state.isVisible }
 					locale={ localeSlug }
 					onRender={ this.indicateRender }
-					onTogglePanel={ this.props.checkToggle }
 					wpcom={ wpcom }
 				/>
 			</div>

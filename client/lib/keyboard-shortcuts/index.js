@@ -113,7 +113,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 			keys = keys.join( '+' );
 			keymaster( keys, function( event, handler ) {
 				// if the notifications panel is open, do not handle any presses besides `n` to toggle the panel
-				if ( self.isNotificationsOpen && self._getKey( event ) !== 'n' ) {
+				if ( self.isNotificationsOpen && ( self._getKey( event ) !== 'n' && event.keyCode !== 27 ) ) {
 					return;
 				}
 
