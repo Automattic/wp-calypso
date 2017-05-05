@@ -209,7 +209,14 @@ function configure( site, plugin, dispatch ) {
 	}
 
 	const saveOption = () => {
-		return site.setOption( { option_name: option, option_value: optionValue }, ( error, data ) => {
+		const query = {
+			option_name: option,
+			option_value: optionValue,
+			site_option: false,
+			is_array: false,
+		};
+
+		return wpcom.undocumented().site( site.ID ).setOption( query, ( error, data ) => {
 			if ( ( ! error ) && ( 'vaultpress' === plugin.slug ) && versionCompare( plugin.version, '1.8.3', '>' ) ) {
 				const response = JSON.parse( data.option_value );
 				if ( 'response' === response.action && 'broken' === response.status ) {
@@ -238,7 +245,7 @@ function configure( site, plugin, dispatch ) {
 		return saveOption();
 	}
 
-	return site.getOption( { option_name: option }, ( getError, getData ) => {
+	return wpcom.undocumented().site( site.ID ).getOption( { option_name: option }, ( getError, getData ) => {
 		if ( get( getData, 'option_value' ) === optionValue ) {
 			// Already registered with this key
 			dispatch( {
