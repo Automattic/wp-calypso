@@ -303,9 +303,14 @@ describe( 'middleware', () => {
 		useSandbox( sandbox => {
 			connection = {
 				sendLog: sandbox.stub(),
+				sendStagingEvent: sandbox.stub(),
 			};
 
-			getState = sandbox.stub().returns( assignedState );
+			getState = sandbox.stub();
+		} );
+
+		beforeEach( () => {
+			getState.returns( assignedState );
 		} );
 
 		it( 'should ignore non-tracks analytics recordings', () => {
@@ -316,7 +321,8 @@ describe( 'middleware', () => {
 			];
 			sendAnalyticsLogEvent( connection, { getState }, { meta: { analytics: analyticsMeta } } );
 
-			expect( connection.sendLog ).not.to.have.beenCalled;
+			expect( connection.sendLog ).not.to.have.been.called;
+			expect( connection.sendStagingEvent ).not.to.have.been.called;
 		} );
 
 		it( 'should send log events for all listed tracks events', () => {
@@ -341,6 +347,7 @@ describe( 'middleware', () => {
 			sendAnalyticsLogEvent( connection, { getState }, { meta: { analytics: analyticsMeta } } );
 
 			expect( connection.sendLog ).not.to.have.been.called;
+			expect( connection.sendStagingEvent ).not.to.have.been.called;
 		} );
 
 		it( 'should only send log events if the Happychat connection is assigned', () => {
@@ -351,6 +358,21 @@ describe( 'middleware', () => {
 			sendAnalyticsLogEvent( connection, { getState }, { meta: { analytics: analyticsMeta } } );
 
 			expect( connection.sendLog ).not.to.have.been.called;
+			expect( connection.sendStagingEvent ).not.to.have.been.called;
+		} );
+
+		it( 'should only send a timeline event for whitelisted tracks events', () => {
+			const analyticsMeta = [
+				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'calypso_add_new_wordpress_click' } },
+				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'abc' } },
+				{ type: ANALYTICS_EVENT_RECORD, payload: {
+					service: 'tracks', name: 'calypso_themeshowcase_theme_activate', properties: {}
+				} },
+				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'def' } },
+			];
+			sendAnalyticsLogEvent( connection, { getState }, { meta: { analytics: analyticsMeta } } );
+
+			expect( connection.sendStagingEvent.callCount ).to.equal( 2 );
 		} );
 	} );
 } );
