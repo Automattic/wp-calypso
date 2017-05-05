@@ -2377,7 +2377,7 @@ Undocumented.prototype.rewindGetActivityLog = function( siteId ) {
  */
 Undocumented.prototype.rewindRequestRestore = function( siteId, timestamp ) {
 	return this.wpcom.req.post( {
-		path: `/activity-log/${ siteId }/rewind/${ timestamp }`
+		path: `/activity-log/${ siteId }/rewind/to/${ timestamp }`
 	} );
 };
 
