@@ -20,6 +20,8 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
 import HappychatButton from 'components/happychat/button';
 import * as steps from './steps';
+import BusinessATStep from './stepComponents/business-at-step';
+import UpgradeATStep from './stepComponents/upgrade-at-step';
 
 const CancelPurchaseForm = React.createClass( {
 	propTypes: {
@@ -526,6 +528,14 @@ const CancelPurchaseForm = React.createClass( {
 						{ this.renderLiveChat() }
 					</div>
 				);
+			}
+
+			if ( surveyStep === steps.BUSINESS_AT_STEP ) {
+				return <BusinessATStep />;
+			}
+
+			if ( surveyStep === steps.UPGRADE_AT_STEP ) {
+				return <UpgradeATStep />;
 			}
 
 			// Render cancellation step
