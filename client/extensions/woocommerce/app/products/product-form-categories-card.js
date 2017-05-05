@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import { find, pick, compact } from 'lodash';
+import { find, pick, compact, escape, unescape } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,13 +12,14 @@ import Card from 'components/card';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import TokenField from 'components/token-field';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 const ProductFormCategoriesCard = (
 	{ product, productCategories, editProduct, translate }
 ) => {
 	const handleChange = ( categoryNames ) => {
 		const newCategories = compact( categoryNames.map( ( name ) => {
-			const category = find( productCategories, { name } );
+			const category = find( productCategories, { name: escape( name ) } );
 
 			if ( ! category ) {
 				// TODO: Add new product category to edit state.
@@ -36,9 +37,9 @@ const ProductFormCategoriesCard = (
 	const selectedCategories = product.categories || [];
 	const selectedCategoryNames = compact( selectedCategories.map( ( c ) => {
 		const category = find( productCategories, { id: c.id } );
-		return category && category.name || undefined;
+		return category && unescape( category.name ) || undefined;
 	} ) );
-	const productCategoryNames = productCategories.map( c => c.name );
+	const productCategoryNames = productCategories.map( c => unescape( c.name ) );
 
 	return (
 		<Card className="products__categories-card">
@@ -51,8 +52,10 @@ const ProductFormCategoriesCard = (
 					suggestions={ productCategoryNames }
 					onChange={ handleChange }
 				/>
+				<FormSettingExplanation>
+					{ translate( 'Add a category so this product is easy to find.' ) }
+				</FormSettingExplanation>
 			</FormFieldSet>
-			<span className="products__categories-hint">{ translate( 'Add a category so this product is easy to find.' ) }</span>
 		</Card>
 	);
 };

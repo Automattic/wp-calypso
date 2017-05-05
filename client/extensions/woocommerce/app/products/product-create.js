@@ -13,7 +13,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentlyEditingProduct } from '../../state/ui/products/selectors';
 import { getProductCategories } from '../../state/wc-api/product-categories/selectors';
 import { editProduct, editProductAttribute } from '../../state/ui/products/actions';
-import { getProductCategories as fetchProductCategories } from '../../state/wc-api/product-categories/actions';
+import { fetchProductCategories } from '../../state/wc-api/product-categories/actions';
 import ProductForm from './product-form';
 
 class ProductCreate extends React.Component {
@@ -21,9 +21,10 @@ class ProductCreate extends React.Component {
 		siteId: PropTypes.number.isRequired,
 		product: PropTypes.shape( {
 			id: PropTypes.isRequired,
-			type: PropTypes.string.isRequired,
 		} ),
-		dispatchFetchProductCategories: PropTypes.func.isRequired,
+		fetchProductCategories: PropTypes.func.isRequired,
+		editProduct: PropTypes.func.isRequired,
+		editProductAttribute: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {
@@ -35,7 +36,7 @@ class ProductCreate extends React.Component {
 			} );
 		}
 
-		this.props.dispatchFetchProductCategories( siteId );
+		this.props.fetchProductCategories( siteId );
 	}
 
 	componentWillUnmount() {
@@ -73,7 +74,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			editProduct,
 			editProductAttribute,
-			dispatchFetchProductCategories: fetchProductCategories,
+			fetchProductCategories,
 		},
 		dispatch
 	);
