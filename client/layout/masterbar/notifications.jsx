@@ -24,7 +24,6 @@ class MasterbarItemNotifications extends Component {
 		user: React.PropTypes.object.isRequired,
 		isActive: React.PropTypes.bool,
 		className: React.PropTypes.string,
-		onClick: React.PropTypes.func,
 		tooltip: React.PropTypes.string,
 		//connected
 		isNotificationsOpen: React.PropTypes.bool,
@@ -34,8 +33,26 @@ class MasterbarItemNotifications extends Component {
 		animationState: 0,
 	};
 
-	componentWillReceiveProps() {
+	componentWillReceiveProps( nextProps ) {
+		const {
+			isNotificationsOpen: isOpen,
+			recordOpening,
+		} = nextProps;
+
 		this.user = this.props.user.get();
+
+		if ( ! this.props.isNotificationsOpen && isOpen ) {
+			recordOpening( {
+				unread_notifications: store.get( 'wpnotes_unseen_count' )
+			} );
+			this.setNotesIndicator( 0 );
+		}
+
+		// focus on main window if we just closed the notes panel
+		if ( this.props.isNotificationsOpen && ! isOpen ) {
+			this.getNotificationLinkDomNode().blur();
+			window.focus();
+		}
 
 		this.setState( {
 			newNote: this.user && this.user.has_unseen_notes,
@@ -57,34 +74,11 @@ class MasterbarItemNotifications extends Component {
 
 	toggleNotesFrame = ( event ) => {
 		if ( event ) {
-			event.preventDefault();
+			event.preventDefault && event.preventDefault();
+			event.stopPropagation && event.stopPropagation();
 		}
 
-		const {
-			toggleNotificationsPanel: togglePanel,
-			isNotificationsOpen: isOpen,
-			onClick,
-			recordOpening,
-		} = this.props;
-
-		const toggledOpen = ! isOpen;
-
-		togglePanel();
-
-		onClick( toggledOpen );
-
-		if ( toggledOpen ) {
-			recordOpening( {
-				unread_notifications: store.get( 'wpnotes_unseen_count' )
-			} );
-			this.setNotesIndicator( 0 );
-		}
-
-		// focus on main window if we just closed the notes panel
-		if ( ! toggledOpen ) {
-			this.getNotificationLinkDomNode().blur();
-			window.focus();
-		}
+		this.props.toggleNotificationsPanel();
 	};
 
 	getNotificationLinkDomNode = () => {
@@ -128,27 +122,27 @@ class MasterbarItemNotifications extends Component {
 		} );
 
 		return (
-			<MasterbarItem
-				ref="notificationLink"
-				url="/notifications"
-				icon="bell"
-				onClick={ this.toggleNotesFrame }
-				isActive={ this.props.isActive }
-				renderAsAnchor={ false }
-				tooltip={ this.props.tooltip }
-				className={ classes }
-			>
-				{ this.props.children }
-				<span
-					className="masterbar__notifications-bubble"
-					key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) }
-				/>
+			<div ref="notificationLink">
+				<MasterbarItem
+					url="/notifications"
+					icon="bell"
+					onClick={ this.toggleNotesFrame }
+					isActive={ this.props.isActive }
+					tooltip={ this.props.tooltip }
+					className={ classes }
+				>
+					{ this.props.children }
+					<span
+						className="masterbar__notifications-bubble"
+						key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) }
+					/>
+				</MasterbarItem>
 				<Notifications
-					visible={ this.props.isNotificationsOpen }
+					isShowing={ this.props.isNotificationsOpen }
 					checkToggle={ this.checkToggleNotes }
 					setIndicator={ this.setNotesIndicator }
 				/>
-			</MasterbarItem>
+			</div>
 		);
 	}
 }

@@ -96,7 +96,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 			keymaster( keys[ 1 ], function( event, handler ) {
 				// if the notifications panel is open, do not handle any sequences
 				if ( self.isNotificationsOpen ) {
-					return false;
+					return;
 				}
 
 				if ( self.lastKey === keys[ 0 ] && self.lastKeyTime > Date.now() - self.timeLimit ) {
@@ -114,7 +114,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 			keymaster( keys, function( event, handler ) {
 				// if the notifications panel is open, do not handle any presses besides `n` to toggle the panel
 				if ( self.isNotificationsOpen && self._getKey( event ) !== 'n' ) {
-					return false;
+					return;
 				}
 
 				var keyValue;

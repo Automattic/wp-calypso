@@ -14,14 +14,12 @@ class MasterbarItem extends Component {
 		icon: React.PropTypes.string,
 		className: React.PropTypes.string,
 		isActive: React.PropTypes.bool,
-		renderAsAnchor: React.PropTypes.bool,
 		preloadSection: React.PropTypes.func
 	};
 
 	static defaultProps = {
 		icon: '',
-		onClick: noop,
-		renderAsAnchor: true
+		onClick: noop
 	};
 
 	_preloaded = false;
@@ -38,12 +36,10 @@ class MasterbarItem extends Component {
 			'is-active': this.props.isActive,
 		} );
 
-		const Tag = this.props.renderAsAnchor ? 'a' : 'div';
-
 		return (
-			<Tag
+			<a
 				data-tip-target={ this.props.tipTarget }
-				href={ this.props.renderAsAnchor ? this.props.url : undefined }
+				href={ this.props.url }
 				onClick={ this.props.onClick }
 				title={ this.props.tooltip }
 				className={ itemClasses }
@@ -53,7 +49,7 @@ class MasterbarItem extends Component {
 				<span className="masterbar__item-content">
 					{ this.props.children }
 				</span>
-			</Tag>
+			</a>
 		);
 	}
 }
