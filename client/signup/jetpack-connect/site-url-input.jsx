@@ -15,7 +15,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import Spinner from 'components/spinner';
 import untrailingslashit from 'lib/route/untrailingslashit';
 
-class JetpackConnectSiteURLInput extends Component {
+class JetpackConnectSiteUrlInput extends Component {
 	static propTypes = {
 		handleOnClickTos: PropTypes.func,
 		isError: PropTypes.oneOfType( [
@@ -137,4 +137,4 @@ class JetpackConnectSiteURLInput extends Component {
 	}
 }
 
-export default localize( JetpackConnectSiteURLInput );
+export default localize( JetpackConnectSiteUrlInput );

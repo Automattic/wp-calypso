@@ -15,7 +15,7 @@ import Card from 'components/card';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import JetpackConnectNotices from './jetpack-connect-notices';
-import SiteURLInput from './site-url-input';
+import SiteUrlInput from './site-url-input';
 import {
 	getGlobalSelectedPlan,
 	getConnectingSite,
@@ -346,7 +346,7 @@ class JetpackConnectMain extends Component {
 					: null
 				}
 
-				<SiteURLInput ref="siteUrlInputRef"
+				<SiteUrlInput ref="siteUrlInputRef"
 					url={ this.state.initialUrl }
 					onTosClick={ this.handleOnClickTos }
 					onChange={ this.onURLChange }
