@@ -9,7 +9,7 @@ import { flowRight, get, isEmpty, pick } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import CachedFiles from './cached-files';
+import CacheStats from './cache-stats';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import WrapSettingsForm from './wrap-settings-form';
@@ -148,19 +148,19 @@ class ContentsTab extends Component {
 
 				<div>
 				{ ! isEmpty( get( wpcache, 'cached_list' ) ) &&
-					<CachedFiles header="Fresh WP-Cached Files" files={ wpcache.cached_list } />
+					<CacheStats header="Fresh WP-Cached Files" files={ wpcache.cached_list } />
 				}
 
 				{ ! isEmpty( get( wpcache, 'expired_list' ) ) &&
-					<CachedFiles header="Stale WP-Cached Files" files={ wpcache.expired_list } />
+					<CacheStats header="Stale WP-Cached Files" files={ wpcache.expired_list } />
 				}
 
 				{ ! isEmpty( get( supercache, 'cached_list' ) ) &&
-					<CachedFiles header="Fresh Super Cached Files" files={ supercache.cached_list } />
+					<CacheStats header="Fresh Super Cached Files" files={ supercache.cached_list } />
 				}
 
 				{ ! isEmpty( get( supercache, 'expired_list' ) ) &&
-					<CachedFiles header="Stale Super Cached Files" files={ supercache.expired_list } />
+					<CacheStats header="Stale Super Cached Files" files={ supercache.expired_list } />
 				}
 				</div>
 
