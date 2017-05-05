@@ -87,7 +87,7 @@ class Connection extends EventEmitter {
 				text: message,
 				id: uuid(),
 				type: 'log',
-				meta: { forOperator: true }
+				meta: { forOperator: true, event_type: 'log' }
 			} ),
 			e => debug( 'failed to send message', e )
 		);
