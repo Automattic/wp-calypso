@@ -253,7 +253,6 @@ export const PostEditor = React.createClass( {
 							<EditorActionBar
 								isNew={ this.state.isNew }
 								onPrivatePublish={ this.onPublish }
-								post={ this.state.post }
 								savedPost={ this.state.savedPost }
 								site={ site }
 								type={ this.props.type }

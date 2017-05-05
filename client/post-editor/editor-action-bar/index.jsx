@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,28 +15,29 @@ import Tooltip from 'components/tooltip';
 import Button from 'components/button';
 import EditorActionBarViewLabel from './view-label';
 import EditorStatusLabel from 'post-editor/editor-status-label';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPost } from 'state/posts/selectors';
 
-export default React.createClass( {
+class EditorActionBar extends Component {
 
-	displayName: 'EditorActionBar',
-
-	propTypes: {
+	static propTypes = {
 		isNew: React.PropTypes.bool,
 		onPrivatePublish: React.PropTypes.func,
 		post: React.PropTypes.object,
 		savedPost: React.PropTypes.object,
 		site: React.PropTypes.object,
 		type: React.PropTypes.string
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			viewLinkTooltip: false
-		};
-	},
+	state = {
+		viewLinkTooltip: false
+	};
 
 	render() {
 		const multiUserSite = this.props.site && ! this.props.site.single_user_site;
+		const isPasswordProtected = utils.getVisibility( this.props.post ) === 'password';
+		const isPrivate = utils.isPrivate( this.props.post );
 
 		return (
 			<div className="editor-action-bar">
@@ -56,7 +58,10 @@ export default React.createClass( {
 					}
 				</div>
 				<div className="editor-action-bar__cell is-right">
-					{ this.props.post && this.props.type === 'post' && <EditorSticky /> }
+					{ this.props.post && this.props.type === 'post' &&
+						! isPasswordProtected && ! isPrivate &&
+						<EditorSticky />
+					}
 					{ utils.isPublished( this.props.savedPost ) && (
 						<Button
 							href={ this.props.savedPost.URL }
@@ -82,4 +87,18 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const post = getEditedPost( state, siteId, postId );
+
+		return {
+			siteId,
+			postId,
+			post
+		};
+	},
+)( EditorActionBar );
