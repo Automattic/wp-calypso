@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, isNumber } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,7 +12,7 @@ import { get } from 'lodash';
 import Button from 'components/button';
 import Count from 'components/count';
 import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 
@@ -23,7 +23,7 @@ class FollowersCount extends Component {
 		return (
 			<div className="followers-count">
 				{ siteId && <QuerySiteStats statType="stats" siteId={ siteId } /> }
-				{ followers &&
+				{ isNumber( followers ) &&
 					<Button
 						borderless
 						href={ '/people/followers/' + slug }
@@ -38,12 +38,14 @@ class FollowersCount extends Component {
 }
 
 export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
+	const siteId = get( site, 'ID' );
 	const data = getSiteStatsNormalizedData( state, siteId, 'stats' );
+	const siteFollowers = get( site, 'subscribers_count' );
 
 	return {
 		slug: getSiteSlug( state, siteId ),
-		followers: get( data, 'followersBlog' ),
+		followers: get( data, 'followersBlog', siteFollowers ),
 		siteId,
 	};
 } )( localize( FollowersCount ) );
