@@ -35,6 +35,8 @@ import LoginBlock from 'blocks/login';
 import RequestLoginEmailForm from '../magic-login/request-login-email-form';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import GlobalNotices from 'components/global-notices';
+import notices from 'notices';
 
 class Login extends React.Component {
 	onClickEnterPasswordInstead = event => {
@@ -138,6 +140,9 @@ class Login extends React.Component {
 		return (
 			<Main className="wp-login">
 				<PageViewTracker path="/login" title="Login" />
+
+				<GlobalNotices id="notices" notices={ notices.list } />
+
 				{ this.magicLoginMainContent() || (
 					<div>
 						<div className="wp-login__container">

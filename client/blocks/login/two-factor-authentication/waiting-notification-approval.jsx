@@ -15,9 +15,11 @@ import {
 	getTwoFactorSupportedAuthTypes,
 } from 'state/login/selectors';
 import { sendSmsCode } from 'state/login/actions';
+import { successNotice } from 'state/notices/actions';
 
 class WaitingTwoFactorNotificationApproval extends Component {
 	static propTypes = {
+		successNotice: PropTypes.func.isRequired,
 		supportedAuthTypes: PropTypes.array.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
@@ -25,9 +27,11 @@ class WaitingTwoFactorNotificationApproval extends Component {
 	sendSmsCode = ( event ) => {
 		event.preventDefault();
 
-		const { userId, twoStepNonce } = this.props;
+		const { userId, twoStepNonce, translate } = this.props;
 
-		this.props.sendSmsCode( userId, twoStepNonce );
+		this.props.sendSmsCode( userId, twoStepNonce ).then( () => {
+			this.props.successNotice( translate( 'Recovery code has been sent.' ) );
+		} );
 	};
 
 	render() {
@@ -74,5 +78,6 @@ export default connect(
 	} ),
 	{
 		sendSmsCode,
+		successNotice,
 	}
 )( localize( WaitingTwoFactorNotificationApproval ) );
