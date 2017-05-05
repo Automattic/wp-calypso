@@ -184,6 +184,15 @@ class FollowingManage extends Component {
 							value={ sitesQuery }>
 						</SearchInput>
 					</CompactCard>
+
+					{ isSitesQueryUrl && (
+						<div className="following-manage__url-follow">
+							<FollowButton
+								followLabel={ translate( 'Follow %s', { args: sitesQuery } ) }
+								siteUrl={ sitesQuery }
+								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT } />
+						</div>
+					) }
 				</div>
 				{ !! sitesQuery && ! isSitesQueryUrl && (
 					<FollowingManageSearchFeedsResults
@@ -195,14 +204,6 @@ class FollowingManage extends Component {
 						forceRefresh={ this.state.forceRefresh }
 						searchResultsCount={ searchResultsCount }
 					/>
-				) }
-				{ isSitesQueryUrl && (
-					<div className="following-manage__url-follow">
-						<FollowButton
-							followLabel={ translate( 'Follow %s', { args: sitesQuery } ) }
-							siteUrl={ sitesQuery }
-							followSource={ READER_FOLLOWING_MANAGE_URL_INPUT } />
-					</div>
 				) }
 				{ showExistingSubscriptions && (
 					<FollowingManageSubscriptions
