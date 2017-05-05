@@ -73,7 +73,15 @@ const webpackConfig = {
 					'css-loader?camelCase=dashes&importLoaders=1',
 					'sass-loader'
 				]
-			}
+			},
+			{
+				test: /\/client\/components\/vertical-nav.+index\.jsx$/,
+				loaders: [
+					'imports?style=./style.scss,withStyles=isomorphic-style-loader/lib/withStyles',
+					'exports?default=withStyles.default( style )( exports.default )'
+				]
+			},
+
 		]
 	},
 	resolve: {

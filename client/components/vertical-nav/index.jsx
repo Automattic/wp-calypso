@@ -2,12 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-
-/**
- * Internal dependencies
- */
-import style from './style';
 
 const VerticalNav = React.createClass( {
 	render() {
@@ -18,5 +12,4 @@ const VerticalNav = React.createClass( {
 		);
 	}
 } );
-
-export default withStyles( style )( VerticalNav );
+export default VerticalNav;
