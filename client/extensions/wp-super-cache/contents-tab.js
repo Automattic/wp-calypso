@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { pick } from 'lodash';
+import { get, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -132,19 +132,19 @@ class ContentsTab extends Component {
 				</Card>
 
 				<div>
-				{ wpcache && wpcache.cached_list &&
+				{ ! isEmpty( get( wpcache, 'cached_list' ) ) &&
 					<CachedFiles header="Fresh WP-Cached Files" files={ wpcache.cached_list } />
 				}
 
-				{ wpcache && wpcache.expired_list &&
+				{ ! isEmpty( get( wpcache, 'expired_list' ) ) &&
 					<CachedFiles header="Stale WP-Cached Files" files={ wpcache.expired_list } />
 				}
 
-				{ supercache && supercache.cached_list &&
+				{ ! isEmpty( get( supercache, 'cached_list' ) ) &&
 					<CachedFiles header="Fresh Super Cached Files" files={ supercache.cached_list } />
 				}
 
-				{ supercache && supercache.expired_list &&
+				{ ! isEmpty( get( supercache, 'expired_list' ) ) &&
 					<CachedFiles header="Stale Super Cached Files" files={ supercache.expired_list } />
 				}
 				</div>
