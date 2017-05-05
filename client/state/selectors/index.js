@@ -60,6 +60,7 @@ export getPostLikes from './get-post-likes';
 export getPrimarySiteId from './get-primary-site-id';
 export getRawOffsets from './get-raw-offsets';
 export getReaderFeedsForQuery from './get-reader-feeds-for-query';
+export getReaderFeedsCountForQuery from './get-reader-feeds-count-for-query';
 export getReaderFollowedTags from './get-reader-followed-tags';
 export getReaderFollowForBlog from './get-reader-follow-for-blog';
 export getReaderFollowForFeed from './get-reader-follow-for-feed';

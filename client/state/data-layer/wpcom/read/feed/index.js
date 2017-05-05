@@ -37,8 +37,9 @@ export function receiveFeeds( store, action, next, apiResponse ) {
 		feed_URL: feed.subscribe_URL,
 	} ) );
 
+	const total = apiResponse.total > 200 ? 200 : apiResponse.total;
 	store.dispatch(
-		receiveFeedSearch( action.payload.query, feeds )
+		receiveFeedSearch( action.payload.query, feeds, total )
 	);
 }
 
