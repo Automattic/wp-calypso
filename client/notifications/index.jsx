@@ -98,6 +98,12 @@ export class Notifications extends Component {
 			event.preventDefault();
 			this.props.checkToggle( null, true );
 		}
+
+		if ( 27 === event.keyCode && this.props.isShowing ) {
+			event.stopPropagation();
+			event.preventDefault();
+			this.props.checkToggle( null, true );
+		}
 	};
 
 	handleVisibilityChange = () => this.setState( { isVisible: getIsVisible() } );
