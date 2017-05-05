@@ -45,7 +45,8 @@ export default React.createClass( {
 		user: React.PropTypes.object,
 		userUtils: React.PropTypes.object,
 		toggleSidebar: React.PropTypes.func,
-		type: React.PropTypes.string
+		type: React.PropTypes.string,
+		selectedRevisionId: React.PropTypes.number,
 	},
 
 	mixins: [ PureRenderMixin ],
@@ -64,7 +65,8 @@ export default React.createClass( {
 			site: {},
 			user: null,
 			userUtils: null,
-			setPostDate: noop
+			setPostDate: noop,
+			selectedRevisionId: null,
 		};
 	},
 
@@ -347,7 +349,8 @@ export default React.createClass( {
 						className="editor-ground-control__toggle-sidebar"
 						onClick={ this.props.toggleSidebar }
 					>
-						<Gridicon icon="cog" /> <span className="editor-ground-control__button-label"><EditorPostType isSettings /></span>
+						<Gridicon icon={ this.props.selectedRevisionId === null ? 'cog' : 'history' } />
+						<span className="editor-ground-control__button-label"> <EditorPostType isSettings /></span>
 					</Button>
 					<div className="editor-ground-control__publish-combo">
 						<EditorPublishButton

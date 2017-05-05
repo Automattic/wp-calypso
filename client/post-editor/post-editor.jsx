@@ -259,6 +259,7 @@ export const PostEditor = React.createClass( {
 						type={ this.props.type }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 						allPostsUrl={ this.getAllPostsUrl() }
+						selectedRevisionId={ this.state.selectedRevisionId }
 					/>
 					<div className="post-editor__content">
 						<div className="editor">
