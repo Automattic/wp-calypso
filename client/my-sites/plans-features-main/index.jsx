@@ -41,7 +41,8 @@ class PlansFeaturesMain extends Component {
 			isLandingPage,
 			basePlansPath,
 			selectedFeature,
-			displayJetpackPlans
+			displayJetpackPlans,
+			domainName
 		} = this.props;
 
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
@@ -66,6 +67,7 @@ class PlansFeaturesMain extends Component {
 						basePlansPath={ basePlansPath }
 						intervalType={ intervalType }
 						site={ site }
+						domainName={ domainName }
 					/>
 				</div>
 			);
@@ -92,6 +94,7 @@ class PlansFeaturesMain extends Component {
 						basePlansPath={ basePlansPath }
 						intervalType={ intervalType }
 						site={ site }
+						domainName={ domainName }
 					/>
 				</div>
 			);
@@ -120,6 +123,7 @@ class PlansFeaturesMain extends Component {
 					selectedFeature={ selectedFeature }
 					intervalType={ intervalType }
 					site={ site }
+					domainName={ domainName }
 				/>
 			</div>
 		);
