@@ -3,7 +3,6 @@
  */
 import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -15,7 +14,14 @@ import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affi
 import FormDimensionsInput from '../../components/form-dimensions-input';
 import formattedVariationName from '../../lib/formatted-variation-name';
 
-const ProductFormVariationsRow = ( { product, variation, manageStock, editProductVariation } ) => {
+const ProductFormVariationsRow = ( {
+	product,
+	variation,
+	editProductVariation,
+	onShowDialog,
+	translate,
+	manageStock,
+} ) => {
 	// TODO: Consildate the following set/toggle functions with a helper (along with the form-details functions).
 	const setPrice = ( e ) => {
 		editProductVariation( product, variation, { regular_price: e.target.value } );
@@ -42,6 +48,10 @@ const ProductFormVariationsRow = ( { product, variation, manageStock, editProduc
 		editProductVariation( product, variation, { manage_stock: ! variation.manage_stock } );
 	};
 
+	const showDialog = () => {
+		onShowDialog( variation.id );
+	};
+
 	// A variation with empty attributes is a 'fallback variation'.
 	// We use this for the "All variations" row in the table, as defaults for the other variations.
 	const fallbackRow = ! variation.attributes.length;
@@ -55,14 +65,18 @@ const ProductFormVariationsRow = ( { product, variation, manageStock, editProduc
 				) }
 			</td>
 			<td className="products__product-id">
-				<div className="products__product-name-thumb">
-					{ ! fallbackRow && (
+				{ ! fallbackRow && (
+					<div className="products__product-name-thumb">
 						<div className="products__product-form-variation-image"></div>
-					) }
-					<div className="products__product-name">
-						{ formattedVariationName( variation, 'All variations' ) }
+						<span className="products__product-name products__variation-settings-link" onClick={ showDialog }>
+							{ formattedVariationName( variation ) }
+						</span>
 					</div>
-				</div>
+				) || (
+					<div className="products__product-name">
+						{ translate( 'All variations' ) }
+					</div>
+				) }
 			</td>
 			<td>
 				<FormCurrencyInput
@@ -109,11 +123,6 @@ const ProductFormVariationsRow = ( { product, variation, manageStock, editProduc
 						/>
 					) }
 				</div>
-			</td>
-			<td>
-				{ ! fallbackRow && (
-					<Gridicon icon="cog" />
-				) }
 			</td>
 		</tr>
 	);
