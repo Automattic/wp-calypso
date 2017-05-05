@@ -16,12 +16,13 @@ import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { loginUser } from 'state/login/actions';
-import Notice from 'components/notice';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isRequesting, getRequestError } from 'state/login/selectors';
+import { errorNotice } from 'state/notices/actions';
 
 export class LoginForm extends Component {
 	static propTypes = {
+		errorNotice: PropTypes.func.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
 		loginError: PropTypes.string,
 		loginUser: PropTypes.func.isRequired,
@@ -63,22 +64,16 @@ export class LoginForm extends Component {
 		this.props.loginUser( this.state.usernameOrEmail, this.state.password, this.state.rememberMe ).then( () => {
 			this.props.recordTracksEvent( 'calypso_login_block_login_success' );
 			this.props.onSuccess( this.state );
-		} ).catch( errorMessage => {
+		} ).catch( error => {
 			this.props.recordTracksEvent( 'calypso_login_block_login_failure', {
-				error_message: errorMessage
+				error_message: error.message
 			} );
+
+			if ( error.field === 'global' ) {
+				this.props.errorNotice( error.message );
+			}
 		} );
 	};
-
-	renderNotices() {
-		if ( this.props.requestError ) {
-			return (
-				<Notice status="is-error"
-					text={ this.props.requestError.message }
-				/>
-			);
-		}
-	}
 
 	render() {
 		const isDisabled = {};
@@ -90,8 +85,6 @@ export class LoginForm extends Component {
 
 		return (
 			<div>
-				{ this.renderNotices() }
-
 				<div className="login__form-header">
 					{ this.props.title }
 				</div>
@@ -169,7 +162,8 @@ export default connect(
 		requestError: getRequestError( state ),
 	} ),
 	{
+		errorNotice,
 		loginUser,
-		recordTracksEvent
+		recordTracksEvent,
 	}
 )( localize( LoginForm ) );
