@@ -14,7 +14,6 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import SiteOrDomainChoice from './choice';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSites } from 'state/selectors';
 // TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
 import DomainImage from 'signup/steps/design-type-with-store/domain-image';
 import NewSiteImage from 'signup/steps/design-type-with-store/new-site-image';
@@ -192,7 +191,6 @@ class SiteOrDomain extends Component {
 export default connect(
 	( state ) => {
 		return {
-			sites: getSites( state ),
 			isLoggedIn: !! getCurrentUserId( state )
 		};
 	}
