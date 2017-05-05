@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
 import assign from 'lodash/assign';
 import defer from 'lodash/defer';
 import isEmpty from 'lodash/isEmpty';
@@ -25,6 +26,11 @@ import {
 
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
+
+import { getSiteId } from 'state/selectors';
+import { requestSites } from 'state/sites/actions';
+
+const debug = debugFactory( 'calypso:signup:step-actions' );
 
 function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { designType, domainItem } = data;
@@ -108,9 +114,9 @@ function createSiteWithCart( callback, dependencies, {
 		if ( ! user.get() && isFreeThemePreselected ) {
 			setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
 		} else if ( user.get() && isFreeThemePreselected ) {
-			fetchSitesAndUser( siteSlug, setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ) );
+			fetchSitesAndUser( siteSlug, setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ), reduxStore );
 		} else if ( user.get() ) {
-			fetchSitesAndUser( siteSlug, addToCartAndProceed );
+			fetchSitesAndUser( siteSlug, addToCartAndProceed, reduxStore );
 		} else {
 			addToCartAndProceed();
 		}
@@ -132,7 +138,21 @@ function fetchSitesUntilSiteAppears( siteSlug, callback ) {
 	defer( sites.fetch.bind( sites ) );
 }
 
-function fetchSitesAndUser( siteSlug, onComplete ) {
+function fetchReduxSite( siteSlug, { dispatch, getState }, callback ) {
+	if ( getSiteId( getState(), siteSlug ) ) {
+		debug( 'fetchReduxSite: found new site' );
+		callback();
+		return;
+	}
+
+	// Have to manually call the thunk in order to access the promise on which
+	// to call `then`.
+	debug( 'fetchReduxSite: requesting all sites', siteSlug );
+	requestSites()( dispatch ).then( () =>
+		fetchReduxSite( siteSlug, { dispatch, getState }, callback ) );
+}
+
+function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
 	async.parallel( [
 		callback => {
 			fetchSitesUntilSiteAppears( siteSlug, callback );
@@ -140,7 +160,12 @@ function fetchSitesAndUser( siteSlug, onComplete ) {
 		callback => {
 			user.once( 'change', callback );
 			user.fetch();
-		}
+		},
+		callback => {
+			reduxStore
+				? fetchReduxSite( siteSlug, reduxStore, callback )
+				: callback();
+		},
 	], onComplete );
 }
 
