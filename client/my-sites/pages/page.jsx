@@ -8,7 +8,10 @@ var React = require( 'react' ),
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { includes } from 'lodash';
+import {
+	get,
+	includes,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -473,8 +476,8 @@ const Page = React.createClass( {
 
 export default connect(
 	( state, props ) => {
-		const site = getSite( state, props.page.site_ID ) || {};
-		const siteSlugOrId = site.slug || site.ID || null;
+		const site = getSite( state, props.page.site_ID );
+		const siteSlugOrId = get( site, 'slug' ) || get( site, 'ID', null );
 
 		return {
 			hasStaticFrontPage: hasStaticFrontPage( state, props.page.site_ID ),
