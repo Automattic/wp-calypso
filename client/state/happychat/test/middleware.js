@@ -365,7 +365,9 @@ describe( 'middleware', () => {
 			const analyticsMeta = [
 				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'calypso_add_new_wordpress_click' } },
 				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'abc' } },
-				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'calypso_themeshowcase_theme_activate', properties: {} } },
+				{ type: ANALYTICS_EVENT_RECORD, payload: {
+					service: 'tracks', name: 'calypso_themeshowcase_theme_activate', properties: {}
+				} },
 				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'def' } },
 			];
 			sendAnalyticsLogEvent( connection, { getState }, { meta: { analytics: analyticsMeta } } );
