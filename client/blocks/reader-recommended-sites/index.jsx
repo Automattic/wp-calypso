@@ -44,7 +44,7 @@ export class RecommendedSites extends React.PureComponent {
 		return (
 			<div className="reader-recommended-sites">
 				<h1 className="reader-recommended-sites__header">
-					<Gridicon icon="thumbs-up" size={ 18 } />&nbsp;{ this.props.translate( 'Recommended Sites' ) }
+					<Gridicon icon="thumbs-up" size={ 18 } />{ this.props.translate( 'Recommended Sites' ) }
 				</h1>
 				<ul className="reader-recommended-sites__list">
 					{
@@ -58,7 +58,7 @@ export class RecommendedSites extends React.PureComponent {
 											title={ this.props.translate( 'Dismiss this recommendation' ) }
 											onClick={ partial( this.handleSiteDismiss, siteId, index ) }
 										>
-											<Gridicon icon="cross" size={ 12 } />
+											<Gridicon icon="cross" size={ 18 } />
 										</Button>
 									</div>
 									<ConnectedSubscriptionListItem siteId={ siteId } />

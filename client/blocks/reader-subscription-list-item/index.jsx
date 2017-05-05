@@ -78,11 +78,14 @@ function ReaderSubscriptionListItem( {
 					</span>
 				}
 			{ siteUrl && (
-				<div className="reader-subscription-list-item__site-url">
-					<a href={ siteUrl } target="_blank" rel="noopener noreferrer">
-						{ stripUrl( siteUrl ) }
-					</a>
-				</div>
+				<a
+					href={ siteUrl }
+					target="_blank"
+					rel="noopener noreferrer"
+					className="reader-subscription-list-item__site-url"
+				>
+					{ stripUrl( siteUrl ) }
+				</a>
 			) }
 			</div>
 			<div className="reader-subscription-list-item__options">

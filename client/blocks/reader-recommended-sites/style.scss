@@ -1,3 +1,12 @@
+// Custom breakpoints needed to match Related Posts
+
+$reader-related-card-v2-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
+$reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
+
+.design.main {
+	padding: 0; // ### Temporary
+}
+
 .reader-recommended-sites {
 	border-bottom: 1px solid lighten( $gray, 20% );
 	padding-bottom: 12px;
@@ -28,21 +37,49 @@
 .reader-recommended-sites__list {
 	display: flex;
 	flex-direction: row;
-	margin: 0 0 -30px;
+	margin: 0;
 	padding: 0;
+
+	@media #{$reader-related-card-v2-breakpoint-medium} {
+		flex-direction: column;
+	}
 
 	@include breakpoint( "<660px" ) {
 		flex-direction: row;
-		margin: 0 0 -30px;
+		flex: 0;
+	}
+
+	@media #{$reader-related-card-v2-breakpoint-small} {
+		flex-direction: column;
+		flex: 0;
 	}
 }
 
 .reader-recommended-sites__site-list-item {
+	border: 1px solid red;
+	display: flex;
+	flex: 1 1 0;
+	flex-direction: column;
 	list-style-type: none;
-	position: relative;
-	width: 50%;
+	min-width: 0;
 	position: relative;
 		top: -40px;
+
+	@media #{$reader-related-card-v2-breakpoint-medium} {
+		flex-direction: row;
+		flex: 0;
+		top: 0;
+	}
+
+	@include breakpoint( "<480px" ) {
+		flex-direction: row;
+		flex: 0;
+		top: 0;
+	}
+
+	:nth-child(2) {
+		flex: 1 1 0;
+	}
 
 	.reader-recommended-sites__recommended-site-dismiss {
 		height: 30px;
@@ -51,11 +88,24 @@
 			float: right;
 		}
 
-		.gridicon {
+		.button.is-borderless .gridicon,
+		.gridicon,
+		.gridicons-cross {
 			fill: lighten( $gray, 10% );
 			width: 14px;
 			height: 14px;
-			top: -3px;
+			top: -8px;
+		}
+	}
+
+	.reader-subscription-list-item {
+		padding: 5px 0;
+
+		.follow-button .follow-button__label {
+
+			@include breakpoint( "<960px" ) {
+				display: none;
+			}
 		}
 	}
 
@@ -65,6 +115,10 @@
 		@include breakpoint( ">660px" ) {
 			margin-right: 15px;
 		}
+
+		@include breakpoint( "<480px" ) {
+			margin-right: 0;
+		}
 	}
 
 	&:last-child {
@@ -72,6 +126,18 @@
 
 		@include breakpoint( ">660px" ) {
 			margin-left: 15px;
+		}
+
+		@include breakpoint( "<480px" ) {
+			margin-left: 0;
+		}
+	}
+
+	&:first-child,
+	&:last-child {
+
+		@media #{$reader-related-card-v2-breakpoint-medium} {
+			margin: 0;
 		}
 	}
 }

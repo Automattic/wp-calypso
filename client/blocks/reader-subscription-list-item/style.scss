@@ -30,14 +30,14 @@
 
 .reader-subscription-list-item__site-excerpt {
 	display: block;
-	max-height: 16px * 1.3;
+	max-height: 16px * 2.8;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	position: relative;
 	width: 100%;
 
-	@include breakpoint( "<660px" ) {
-		max-height: 16px * 2.8;
+	@include breakpoint( ">660px" ) {
+		max-height: 16px * 1.4;
 	}
 
 	&::after{
@@ -61,6 +61,7 @@
 }
 
 .reader-subscription-list-item .gravatar {
+	background: lighten( $gray, 30% ); // ### Temporary
 	float: left;
 	margin: 2px 8px 0 0;
 	height: 32px;
@@ -204,6 +205,8 @@
 	background: $white;
 }
 
-.reader-subscription-list-item__site-url, .reader-subscription-list-item__site-url a {
-	color: 	darken( $gray, 30% );
+.reader-subscription-list-item__site-url,
+.reader-subscription-list-item__site-url:visited {
+	color: lighten( $gray, 10% );
+	display: block;
 }
