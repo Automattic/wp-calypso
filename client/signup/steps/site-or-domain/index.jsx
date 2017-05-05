@@ -18,6 +18,7 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 // TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
 import DomainImage from 'signup/steps/design-type-with-store/domain-image';
 import NewSiteImage from 'signup/steps/design-type-with-store/new-site-image';
+import ExistingSite from 'signup/steps/design-type-with-store/existing-site';
 import { externalRedirect } from 'lib/route/path';
 import NavigationLink from 'signup/navigation-link';
 
@@ -70,7 +71,7 @@ class SiteOrDomain extends Component {
 				{
 					type: 'existing-site',
 					label: translate( 'Existing WordPress.com site' ),
-					image: <NewSiteImage />,
+					image: <ExistingSite />,
 					description: translate( 'Use with a site you already started. Free domain included with all plans.' )
 				}
 			);
