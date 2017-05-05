@@ -168,7 +168,7 @@ export const sendAnalyticsLogEvent = ( connection, { getState }, { meta: { analy
 			type === ANALYTICS_EVENT_RECORD &&
 			service === 'tracks'
 		) {
-			connection.sendLog( `${ name }` );
+			connection.sendLog( name );
 		}
 	} );
 };
