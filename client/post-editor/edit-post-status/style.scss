@@ -3,16 +3,13 @@
 	align-content: center;
 	display: flex;
 	justify-content: space-between;
+	margin-bottom: 8px;
 
 	.gridicon {
 		margin-top: 2px;
 		margin-left: 4px;
 		vertical-align: top;
 	}
-}
-
-.edit-post-status__pending-review {
-	margin-top: 8px;
 }
 
 .edit-post-status__label-text {
