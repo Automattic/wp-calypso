@@ -118,7 +118,7 @@ class JetpackConnectMain extends Component {
 
 	dismissUrl = () => this.props.dismissUrl( this.state.currentUrl );
 
-	onURLChange = () => {
+	onUrlChange = () => {
 		this.setState( { currentUrl: this.getCurrentUrl() } );
 		this.dismissUrl();
 	}
@@ -152,7 +152,7 @@ class JetpackConnectMain extends Component {
 		);
 	}
 
-	onURLEnter = () => {
+	onUrlSubmit = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
 			jetpack_url: this.state.currentUrl
 		} );
@@ -349,8 +349,8 @@ class JetpackConnectMain extends Component {
 				<SiteUrlInput ref="siteUrlInputRef"
 					url={ this.state.initialUrl }
 					onTosClick={ this.handleOnClickTos }
-					onChange={ this.onURLChange }
-					onSubmit={ this.onURLEnter }
+					onChange={ this.onUrlChange }
+					onSubmit={ this.onUrlSubmit }
 					onDismissClick={ this.onDismissClick }
 					isError={ this.getStatus() }
 					isFetching={ this.isCurrentUrlFetching() || this.isRedirecting() || this.state.waitingForSites }
