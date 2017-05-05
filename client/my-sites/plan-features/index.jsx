@@ -48,8 +48,21 @@ import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 import { abtest } from 'lib/abtest';
+import Button from 'components/button'; //For signupPlansPageSimplification
 
 class PlanFeatures extends Component {
+	constructor( props ) {
+		super( props );
+		this.handleShowFeatureButtonClick = this.handleShowFeatureButtonClick.bind( this );
+		this.state = {
+			showFeatures: true,
+		};
+	}
+
+	toggleClass() {
+		const currentState = this.state.showFeatures;
+		this.setState( { showFeatures: ! currentState } );
+	}
 
 	render() {
 		const { planProperties } = this.props;
@@ -81,9 +94,44 @@ class PlanFeatures extends Component {
 							</tr>
 						</tbody>
 					</table>
+					{ this.renderShowFeaturesButton() }
 				</div>
 			</div>
 		);
+	}
+
+	renderShowFeaturesButton() {
+		if ( abtest( 'signupPlansPageSimplification' ) !== 'modified' ) {
+			return null;
+		}
+
+		const buttonClass = 'is-borderless';
+		const featuresHiddenClass = classNames( {
+			'plan-features__hide': abtest( 'signupPlansPageSimplification' ) === 'modified' && this.state.showFeatures,
+		} );
+
+		const featuresVisibleClass = classNames( {
+			'plan-features__hide': abtest( 'signupPlansPageSimplification' ) === 'modified' && ! this.state.showFeatures,
+		} );
+
+		return (
+			<div className={ 'plan-features__toggle-container' }>
+				<Button
+					className={ buttonClass }
+					onClick={ this.handleShowFeatureButtonClick }>
+					<span className={ featuresVisibleClass }>
+						Show features
+					</span>
+					<span className={ featuresHiddenClass }>
+						Hide features
+					</span>
+				</Button>
+			</div>
+		);
+	}
+
+	handleShowFeatureButtonClick() {
+		this.toggleClass();
 	}
 
 	renderUpgradeDisabledNotice() {
@@ -320,9 +368,13 @@ class PlanFeatures extends Component {
 
 	renderPlanFeatureRows() {
 		const longestFeatures = this.getLongestFeaturesList();
+		const classes = classNames( 'plan-features__row', {
+			'plan-features__hide': abtest( 'signupPlansPageSimplification' ) === 'modified' && this.state.showFeatures,
+		} );
+
 		return map( longestFeatures, ( featureKey, rowIndex ) => {
 			return (
-				<tr key={ rowIndex } className="plan-features__row">
+				<tr key={ rowIndex } className={ classes }>
 					{ this.renderPlanFeatureColumns( rowIndex ) }
 				</tr>
 			);
@@ -395,7 +447,9 @@ class PlanFeatures extends Component {
 			const classes = classNames(
 				'plan-features__table-item',
 				'has-border-bottom',
-				'is-bottom-buttons'
+				'is-bottom-buttons', {
+					'plan-features__hide': abtest( 'signupPlansPageSimplification' ) === 'modified' && this.state.showFeatures,
+				}
 			);
 			return (
 				<td key={ planName } className={ classes }>

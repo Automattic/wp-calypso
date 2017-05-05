@@ -427,3 +427,16 @@ $plan-features-sidebar-width: 272px;
 	display: inline-block;
 	margin-left: 10px;
  }
+
+/* For signupPlansPageSimplification a/b test */
+
+.plan-features__hide {
+	display: none;
+}
+
+.plan-features__toggle-container {
+	text-align: center;
+	margin-top: -0.5em;
+}
+
+/* End signupPlansPageSimplification a/b test */
