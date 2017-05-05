@@ -101,49 +101,73 @@
 	padding: 24px;
 }
 
-.wp-super-cache__contents-list {
-	padding: 0;
-	margin: 0 0 .5em;
-	list-style-type: none;
+.wp-super-cache__stats {
+	border-collapse: collapse;
+	margin: 0;
 }
 
-.wp-super-cache__contents-list-legend {
-	padding-top: .5em;
-	margin-bottom: 0;
-}
-
-.wp-super-cache__contents-list-legend .wp-super-cache__contents-list-item-value,
-.wp-super-cache__contents-list-legend .wp-super-cache__contents-list-item-label {
+.wp-super-cache__stats-header-row {
 	color: $gray;
-	font-weight: bold;
 }
 
-.wp-super-cache__contents-list-item {
+.wp-super-cache__stats-header-column {
+	padding: 8px 12px;
+
+	&:first-child {
+		padding-left: 0;
+	}
+
+	&:last-child {
+		padding-right: 0;
+	}
+}
+
+.wp-super-cache__stat {
+	border-bottom: 1px solid lighten( $gray, 30% );
+	color: $gray-dark;
 	font-size: 14px;
-	line-height: 28px;
-	margin-bottom: 5px;
+	height: 30px;
+
+	&:last-child {
+		border-bottom: none;
+	}
 }
 
-.wp-super-cache__contents-list-item-right {
-	float: right;
+.wp-super-cache__stat td {
+	padding: 16px 12px;
+	vertical-align: middle;
+
+	&:first-child {
+		padding-left: 0;
+	}
+
+	&:last-child {
+		padding-right: 0;
+	}
 }
 
-.wp-super-cache__contents-list-item-label {
-	display: block;
-	overflow: hidden;
-	word-break: break-all;
+.wp-super-cache__stat-dir {
+	max-width: 140px;
+	overflow-wrap: break-word;
+
+	@include breakpoint( ">960px" ) {
+		max-width: none;
+		overflow-wrap: normal;
+	}
 }
 
-.wp-super-cache__contents-list-item-value {
-	display: inline-block;
-	min-width: 44px;
-	margin: 0 1em 0 0;
+.wp-super-cache__stat-age {
+	@include breakpoint( ">960px" ) {
+		width: 100%;
+	}
+}
+
+.wp-super-cache__stat-action {
 	text-align: right;
 }
 
-.wp-super-cache__contents-list-item-action {
-	display: inline-block;
-	width: 60px;
+.wp-super-cache__stat-action .button {
+	margin-right: 0;
 }
 
 // Preload Tab

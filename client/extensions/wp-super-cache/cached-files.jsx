@@ -16,44 +16,34 @@ const CachedFiles = ( {
 	translate,
 } ) => {
 	return (
-		<FoldableCard compact
+		<FoldableCard
+			compact
 			className="wp-super-cache__foldable-card"
 			header={ header }>
-			<ul className="wp-super-cache__contents-list wp-super-cache__contents-list-legend">
-				<li className="wp-super-cache__contents-list-item">
-					<span className="wp-super-cache__contents-list-item-right">
-						<span className="wp-super-cache__contents-list-item-value">
-							{ translate( 'Age' ) }
-						</span>
-						<span className="wp-super-cache__contents-list-item-action"></span>
-					</span>
-					<span className="wp-super-cache__contents-list-item-label">
-						{ translate( 'URI' ) }
-					</span>
-				</li>
-			</ul>
-
-			<ul className="wp-super-cache__contents-list">
-			{ files && files.map( ( file ) =>
-				<li className="wp-super-cache__contents-list-item" key={ file.uri }>
-					<span className="wp-super-cache__contents-list-item-right">
-						<span className="wp-super-cache__contents-list-item-value">
-							{ file.age }
-						</span>
-						<span className="wp-super-cache__contents-list-item-action">
+			<table className="wp-super-cache__stats">
+				<thead>
+					<tr className="wp-super-cache__stats-header-row">
+						<th className="wp-super-cache__stats-header-column">{ translate( 'URI' ) }</th>
+						<th className="wp-super-cache__stats-header-column">{ translate( 'Files' ) }</th>
+						<th className="wp-super-cache__stats-header-column">{ translate( 'Age' ) }</th>
+						<th className="wp-super-cache__stats-header-column"></th>
+					</tr>
+				</thead>
+				<tbody>
+					{ files && files.map( ( file, index ) =>
+					<tr className="wp-super-cache__stat" key={ index }>
+						<td className="wp-super-cache__stat-dir">{ file.dir }</td>
+						<td>{ file.files }</td>
+						<td className="wp-super-cache__stat-age">{ `${ file.lower_age } - ${ file.upper_age }` }</td>
+						<td className="wp-super-cache__stat-action">
 							<Button compact>
 								{ translate( 'Delete' ) }
 							</Button>
-						</span>
-					</span>
-					<span className="wp-super-cache__contents-list-item-label">
-						<a href={ `http://${ file.uri }` }>
-							{ file.uri }
-						</a>
-					</span>
-				</li>
-			) }
-			</ul>
+						</td>
+					</tr>
+				) }
+				</tbody>
+			</table>
 		</FoldableCard>
 	);
 };
