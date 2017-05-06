@@ -182,9 +182,11 @@ export const sendRouteSetEventMessage = ( connection, { getState }, action ) =>{
 };
 
 export const getEventMessageFromActionData = ( action ) => {
+	// Below we've stubbed in the actions we think we'll care about, so that we can
+	// start incrementally adding messages for them.
 	switch ( action.type ) {
 		case COMMENTS_CHANGE_STATUS_SUCESS:
-			return `Changed a comment status to "${ action.status }"`;
+			return `Changed a comment's status to "${ action.status }"`;
 		case EXPORT_COMPLETE:
 			return null;
 		case EXPORT_FAILURE:
@@ -205,12 +207,12 @@ export const getEventMessageFromActionData = ( action ) => {
 			return null;
 		case PLUGIN_SETUP_ACTIVATE:
 			return null;
-		case POST_DELETE:
-			return null;																									//
+		case POST_DELETE:	// This bizarrely doesn't seem to trigger when you delete a post
+			return null;
 		case POST_SAVE_SUCCESS:
 			return `Saved post "${ action.savedPost.title }" ${ action.savedPost.short_URL }`;
-		case POST_RESTORE:
-			return null;																									//
+		case POST_RESTORE:	// This doesn't trigger when you're asked to restore a post from a more recent autosave version
+			return null;
 		case PUBLICIZE_CONNECTION_CREATE:
 			return null;
 		case PUBLICIZE_CONNECTION_CREATE_FAILURE:
