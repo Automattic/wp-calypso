@@ -21,7 +21,7 @@ import { getSurveyVertical } from 'state/signup/steps/survey/selectors.js';
 import analyticsMixin from 'lib/mixins/analytics';
 import signupUtils from 'signup/utils';
 import { getUsernameSuggestion } from 'lib/signup/step-actions';
-import { recordRegisterDomainEvent } from 'state/analytics/actions';
+import { recordAddDomainButtonClick } from 'state/domains/actions';
 
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
@@ -79,7 +79,7 @@ const DomainsStep = React.createClass( {
 			suggestion
 		};
 
-		this.props.recordRegisterDomainEvent( 'addDomainButtonClick', suggestion.domain_name, 'signup' );
+		this.props.recordAddDomainButtonClick( suggestion.domain_name, 'signup' );
 
 		SignupActions.saveSignupStep( stepData );
 
@@ -267,6 +267,6 @@ module.exports = connect(
 		surveyVertical: getSurveyVertical( state ),
 	} ),
 	{
-		recordRegisterDomainEvent,
+		recordAddDomainButtonClick,
 	}
 )( DomainsStep );

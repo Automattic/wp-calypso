@@ -23,7 +23,7 @@ import { currentUserHasFlag } from 'state/current-user/selectors';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
-import { recordRegisterDomainEvent } from 'state/analytics/actions';
+import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state/domains/actions';
 
 class DomainSearch extends Component {
 	static propTypes = {
@@ -75,7 +75,8 @@ class DomainSearch extends Component {
 	}
 
 	addDomain( suggestion ) {
-		this.props.recordRegisterDomainEvent( 'addDomainButtonClick', suggestion.domain_name, 'domains' );
+		this.props.recordAddDomainButtonClick( suggestion.domain_name, 'domains' );
+
 		const items = [
 			cartItems.domainRegistration( { domain: suggestion.domain_name, productSlug: suggestion.product_slug } )
 		];
@@ -91,7 +92,7 @@ class DomainSearch extends Component {
 	}
 
 	removeDomain( suggestion ) {
-		this.props.recordRegisterDomainEvent( 'removeDomainButtonClick', suggestion.domain_name );
+		this.props.recordRemoveDomainButtonClick( suggestion.domain_name );
 		upgradesActions.removeDomainFromCart( suggestion );
 	}
 
@@ -157,6 +158,7 @@ export default connect(
 		productsList: state.productsList.items,
 	} ),
 	{
-		recordRegisterDomainEvent,
+		recordAddDomainButtonClick,
+		recordRemoveDomainButtonClick,
 	}
 )( localize( DomainSearch ) );

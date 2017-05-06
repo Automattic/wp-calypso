@@ -101,36 +101,3 @@ export const recordPageView = ( url, title, service ) => ( {
 
 export const recordGooglePageView = ( url, title ) =>
 	recordPageView( url, title, 'ga' );
-
-export const recordRegisterDomainEvent = ( eventType, ...args ) => ( dispatch ) => {
-	const registerDomainEventHandlers = {
-		addDomainButtonClick: ( domainName, section ) => {
-			dispatch( recordGoogleEvent(
-				'Domain Search',
-				'Clicked "Add" Button on a Domain Registration',
-				'Domain Name',
-				domainName
-			) );
-
-			dispatch( recordTracksEvent( 'calypso_domain_search_add_button_click', {
-				domain_name: domainName,
-				section,
-			} ) );
-		},
-
-		removeDomainButtonClick: ( domainName ) => {
-			dispatch( recordGoogleEvent(
-				'Domain Search',
-				'Clicked "Remove" Button on a Domain Registration',
-				'Domain Name',
-				domainName
-			) );
-
-			dispatch( recordTracksEvent( 'calypso_domain_remove_button_click', {
-				domain_name: domainName,
-			} ) );
-		},
-	};
-
-	registerDomainEventHandlers[ eventType ]( ...args );
-};
