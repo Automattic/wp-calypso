@@ -17,6 +17,7 @@ import { getProductVariationsWithLocalEdits } from '../../state/ui/products/vari
 import { editProductVariation } from '../../state/ui/products/variations/actions';
 import { fetchProductCategories } from '../../state/wc-api/product-categories/actions';
 import { getProductCategories } from '../../state/wc-api/product-categories/selectors';
+import { createProduct } from '../../state/wc-api/products/actions';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
 
@@ -62,6 +63,8 @@ class ProductCreate extends React.Component {
 
 	onSave = () => {
 		// TODO: Add action dispatch to save this product.
+		const { siteId, product } = this.props;
+		this.props.createProduct( siteId, product );
 	}
 
 	render() {
@@ -103,6 +106,7 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			createProduct,
 			editProduct,
 			editProductAttribute,
 			editProductVariation,
