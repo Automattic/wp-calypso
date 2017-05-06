@@ -113,7 +113,7 @@ export const recordRegisterDomainEvent = ( eventType, ...args ) => ( dispatch ) 
 			) );
 
 			dispatch( recordTracksEvent( 'calypso_domain_search_add_button_click', {
-				domainName,
+				domain_name: domainName,
 				section,
 			} ) );
 		},
@@ -127,7 +127,7 @@ export const recordRegisterDomainEvent = ( eventType, ...args ) => ( dispatch ) 
 			) );
 
 			dispatch( recordTracksEvent( 'calypso_domain_remove_button_click', {
-				domainName,
+				domain_name: domainName,
 			} ) );
 		},
 	};
