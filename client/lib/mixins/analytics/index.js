@@ -235,20 +235,6 @@ const EVENTS = {
 				section
 			} );
 		},
-
-		addDomainButtonClick( domainName, section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Add" Button on a Domain Registration in Map Domain Step',
-				'Domain Name',
-				domainName
-			);
-
-			analytics.tracks.recordEvent( 'calypso_map_domain_step_add_domain_click', {
-				domain_name: domainName,
-				section
-			} );
-		}
 	},
 
 	siteRedirect: {

@@ -20,6 +20,19 @@ export const recordAddDomainButtonClick = ( domainName, section ) => composeAnal
 	} ),
 );
 
+export const recordAddDomainButtonClickInMapDomain = ( domainName, section ) => composeAnalytics(
+	recordGoogleEvent(
+		'Domain Search',
+		'Clicked "Add" Button on a Domain Registration in Map Domain Step',
+		'Domain Name',
+		domainName
+	),
+	recordTracksEvent( 'calypso_map_domain_step_add_domain_click', {
+		domain_name: domainName,
+		section
+	} ),
+);
+
 export const recordRemoveDomainButtonClick = ( domainName ) => composeAnalytics(
 	recordGoogleEvent(
 		'Domain Search',
