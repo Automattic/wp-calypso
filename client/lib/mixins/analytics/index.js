@@ -47,29 +47,6 @@ const EVENTS = {
 		}
 	},
 	registerDomain: {
-		addDomainButtonClick( domainName, section ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Add" Button on a Domain Registration',
-				'Domain Name',
-				domainName
-			);
-
-			analytics.tracks.recordEvent( 'calypso_domain_search_add_button_click', {
-				domain_name: domainName,
-				section
-			} );
-		},
-
-		removeDomainButtonClick( domainName ) {
-			analytics.ga.recordEvent(
-				'Domain Search',
-				'Clicked "Remove" Button on a Domain Registration',
-				'Domain Name',
-				domainName
-			);
-		},
-
 		mapDomainButtonClick( section ) {
 			analytics.ga.recordEvent(
 				'Domain Search',
