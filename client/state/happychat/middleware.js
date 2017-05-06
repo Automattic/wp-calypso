@@ -167,6 +167,8 @@ export const getEventMessageFromTracksData = ( { name, properties } ) => {
 			return `Changed theme from "${ properties.previous_theme }" to "${ properties.theme }"`;
 		case 'calypso_editor_featured_image_upload':
 			return 'Changed the featured image on the current post';
+		case 'calypso_map_domain_step_add_domain_click':
+			return `Add "${ properties.domain_name }" to the cart in the "Map a domain" step`;
 	}
 	return null;
 };
