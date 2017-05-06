@@ -2,9 +2,9 @@
  * Internal dependencies
  */
 import {
-	recordTracksEvent,
-	recordGoogleEvent,
 	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
 } from 'state/analytics/actions';
 
 export const recordAddDomainButtonClick = ( domainName, section ) => composeAnalytics(
