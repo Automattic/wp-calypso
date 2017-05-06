@@ -163,6 +163,10 @@ export const getEventMessageFromTracksData = ( { name, properties } ) => {
 	switch ( name ) {
 		case 'calypso_add_new_wordpress_click':
 			return 'Clicked "Add new site" button';
+		case 'calypso_domain_search_add_button_click':
+			return `Clicked "Add" button to add domain "${ properties.domain_name }"`;
+		case 'calypso_domain_remove_button_click':
+			return `Clicked "Remove" button to remove domain "${ properties.domain_name }"`;
 		case 'calypso_themeshowcase_theme_activate':
 			return `Changed theme from "${ properties.previous_theme }" to "${ properties.theme }"`;
 		case 'calypso_editor_featured_image_upload':
