@@ -188,11 +188,11 @@ export const getEventMessageFromActionData = ( action ) => {
 		case COMMENTS_CHANGE_STATUS_SUCESS:
 			return `Changed a comment's status to "${ action.status }"`;
 		case EXPORT_COMPLETE:
-			return `Export completed.`;
+			return 'Export completed';
 		case EXPORT_FAILURE:
-			return `Export failed: ${action.error.message}`;
+			return `Export failed: ${ action.error.message }`;
 		case EXPORT_STARTED:
-			return `Started an export.`;
+			return 'Started an export';
 		case HAPPYCHAT_BLUR:
 			return 'Stopped looking at Happychat';
 		case HAPPYCHAT_FOCUS:
