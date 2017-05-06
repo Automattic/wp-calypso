@@ -19,13 +19,11 @@ import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import Main from 'components/main';
 import upgradesActions from 'lib/upgrades/actions';
 import cartItems from 'lib/cart-values/cart-items';
-import analyticsMixin from 'lib/mixins/analytics';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
-
-const analytics = analyticsMixin( 'registerDomain' );
+import { recordRegisterDomainEvent } from 'state/analytics/actions';
 
 class DomainSearch extends Component {
 	static propTypes = {
@@ -77,7 +75,7 @@ class DomainSearch extends Component {
 	}
 
 	addDomain( suggestion ) {
-		analytics.recordEvent( 'addDomainButtonClick', suggestion.domain_name, 'domains' );
+		this.props.recordRegisterDomainEvent( 'addDomainButtonClick', suggestion.domain_name, 'domains' );
 		const items = [
 			cartItems.domainRegistration( { domain: suggestion.domain_name, productSlug: suggestion.product_slug } )
 		];
@@ -93,7 +91,7 @@ class DomainSearch extends Component {
 	}
 
 	removeDomain( suggestion ) {
-		analytics.recordEvent( 'removeDomainButtonClick', suggestion.domain_name );
+		this.props.recordRegisterDomainEvent( 'removeDomainButtonClick', suggestion.domain_name );
 		upgradesActions.removeDomainFromCart( suggestion );
 	}
 
@@ -157,5 +155,8 @@ export default connect(
 		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 		isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
 		productsList: state.productsList.items,
-	} )
+	} ),
+	{
+		recordRegisterDomainEvent,
+	}
 )( localize( DomainSearch ) );
