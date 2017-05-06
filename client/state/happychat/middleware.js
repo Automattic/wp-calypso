@@ -188,20 +188,20 @@ export const getEventMessageFromActionData = ( action ) => {
 		case COMMENTS_CHANGE_STATUS_SUCESS:
 			return `Changed a comment's status to "${ action.status }"`;
 		case EXPORT_COMPLETE:
-			return null;
+			return `Export completed.`;
 		case EXPORT_FAILURE:
-			return null;
+			return `Export failed: ${action.error.message}`;
 		case EXPORT_STARTED:
-			return null;
+			return `Started an export.`;
 		case HAPPYCHAT_BLUR:
 			return 'Stopped looking at Happychat';
 		case HAPPYCHAT_FOCUS:
 			return 'Started looking at Happychat';
-		case IMPORTS_IMPORT_START:
+		case IMPORTS_IMPORT_START:	// This one seems not to fire at all.
 			return null;
 		case JETPACK_CONNECT_AUTHORIZE:
 			return null;
-		case MEDIA_DELETE:
+		case MEDIA_DELETE:	// This one seems not to fire at all.
 			return null;
 		case PLUGIN_ACTIVATE_REQUEST:
 			return null;
