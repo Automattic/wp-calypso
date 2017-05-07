@@ -207,7 +207,7 @@ export const getEventMessageFromActionData = ( action ) => {
 		case PUBLICIZE_CONNECTION_CREATE:
 			return `Connected ${ action.connection.label } sharing`;
 		case PUBLICIZE_CONNECTION_DELETE:
-			return `Disonnected ${ action.connection.label } sharing`;
+			return `Disconnected ${ action.connection.label } sharing`;
 		case PURCHASE_REMOVE_COMPLETED:
 			return null;
 		case SITE_SETTINGS_SAVE_SUCCESS:
