@@ -100,7 +100,7 @@ export const errors = ( state = {}, action ) => {
 	return state;
 };
 
-export default combineReducers( {
+export const domains = combineReducers( {
 	items,
 	requesting,
 	errors
