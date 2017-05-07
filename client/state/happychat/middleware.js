@@ -20,6 +20,23 @@ import {
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_TRANSCRIPT_REQUEST,
 	ROUTE_SET,
+
+	COMMENTS_CHANGE_STATUS_SUCESS,
+	EXPORT_COMPLETE,
+	EXPORT_FAILURE,
+	EXPORT_STARTED,
+	HAPPYCHAT_BLUR,
+	HAPPYCHAT_FOCUS,
+	IMPORTS_IMPORT_START,
+	JETPACK_CONNECT_AUTHORIZE,
+	MEDIA_DELETE,
+	PLUGIN_ACTIVATE_REQUEST,
+	PLUGIN_SETUP_ACTIVATE,
+	POST_SAVE_SUCCESS,
+	PUBLICIZE_CONNECTION_CREATE,
+	PUBLICIZE_CONNECTION_CREATE_FAILURE,
+	PURCHASE_REMOVE_COMPLETED,
+	SITE_SETTINGS_SAVE_SUCCESS,
 } from 'state/action-types';
 import {
 	receiveChatEvent,
@@ -159,6 +176,46 @@ export const sendRouteSetEventMessage = ( connection, { getState }, action ) =>{
 	}
 };
 
+export const getEventMessageFromActionData = ( action ) => {
+	// Below we've stubbed in the actions we think we'll care about, so that we can
+	// start incrementally adding messages for them.
+	switch ( action.type ) {
+		case COMMENTS_CHANGE_STATUS_SUCESS:
+			return `Changed a comment's status to "${ action.status }"`;
+		case EXPORT_COMPLETE:
+			return 'Export completed';
+		case EXPORT_FAILURE:
+			return `Export failed: ${ action.error.message }`;
+		case EXPORT_STARTED:
+			return 'Started an export';
+		case HAPPYCHAT_BLUR:
+			return 'Stopped looking at Happychat';
+		case HAPPYCHAT_FOCUS:
+			return 'Started looking at Happychat';
+		case IMPORTS_IMPORT_START:	// This one seems not to fire at all.
+			return null;
+		case JETPACK_CONNECT_AUTHORIZE:
+			return null;
+		case MEDIA_DELETE:	// This one seems not to fire at all.
+			return null;
+		case PLUGIN_ACTIVATE_REQUEST:
+			return null;
+		case PLUGIN_SETUP_ACTIVATE:
+			return null;
+		case POST_SAVE_SUCCESS:
+			return `Saved post "${ action.savedPost.title }" ${ action.savedPost.short_URL }`;
+		case PUBLICIZE_CONNECTION_CREATE:
+			return null;
+		case PUBLICIZE_CONNECTION_CREATE_FAILURE:
+			return null;
+		case PURCHASE_REMOVE_COMPLETED:
+			return null;
+		case SITE_SETTINGS_SAVE_SUCCESS:
+			return 'Saved site settings';
+	}
+	return null;
+};
+
 export const getEventMessageFromTracksData = ( { name, properties } ) => {
 	switch ( name ) {
 		case 'calypso_add_new_wordpress_click':
@@ -177,12 +234,9 @@ export const getEventMessageFromTracksData = ( { name, properties } ) => {
 	return null;
 };
 
-export const sendAnalyticsLogEvent = ( connection, { getState }, { meta: { analytics: analyticsMeta } } ) => {
-	const state = getState();
+export const sendAnalyticsLogEvent = ( connection, { meta: { analytics: analyticsMeta } } ) => {
 	analyticsMeta.forEach( ( { type, payload: { service, name, properties } } ) => {
 		if (
-			isHappychatClientConnected( state ) &&
-			isHappychatChatAssigned( state ) &&
 			type === ANALYTICS_EVENT_RECORD &&
 			service === 'tracks'
 		) {
@@ -199,6 +253,27 @@ export const sendAnalyticsLogEvent = ( connection, { getState }, { meta: { analy
 	} );
 };
 
+export const sendActionLogsAndEvents = ( connection, { getState }, action ) => {
+	const state = getState();
+
+	// If there's not an active Happychat session, do nothing
+	if ( ! isHappychatClientConnected( state ) || ! isHappychatChatAssigned( state ) ) {
+		return;
+	}
+
+	// If there's analytics metadata attached to this action, send analytics events
+	if ( has( action, 'meta.analytics' ) ) {
+		sendAnalyticsLogEvent( connection, action );
+	}
+
+	// Check if this action should generate a timeline event, and send it if so
+	const eventMessage = getEventMessageFromActionData( action );
+	if ( eventMessage ) {
+		// Once we want these events to appear in production we should change this to sendEvent
+		connection.sendStagingEvent( eventMessage );
+	}
+};
+
 export default function( connection = null ) {
 	// Allow a connection object to be specified for
 	// testing. If blank, use a real connection.
@@ -207,9 +282,8 @@ export default function( connection = null ) {
 	}
 
 	return store => next => action => {
-		if ( has( action, 'meta.analytics' ) ) {
-			sendAnalyticsLogEvent( connection, store, action );
-		}
+		// Send any relevant log/event data from this action to Happychat
+		sendActionLogsAndEvents( connection, store, action );
 
 		switch ( action.type ) {
 			case HAPPYCHAT_CONNECT:
