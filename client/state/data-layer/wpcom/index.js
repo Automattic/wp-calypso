@@ -11,6 +11,7 @@ import sites from './sites';
 import timezones from './timezones';
 import themeFilters from './theme-filters';
 import videos from './videos';
+import login2fa from './login-2fa';
 
 export const handlers = mergeHandlers(
 	accountRecovery,
@@ -22,6 +23,7 @@ export const handlers = mergeHandlers(
 	timezones,
 	themeFilters,
 	videos,
+	login2fa
 );
 
 export default handlers;

@@ -36,6 +36,13 @@ export const getTwoFactorNotificationSent = ( state ) => {
 	return get( state, 'login.twoFactorAuth.two_step_notification_sent', null );
 };
 
+export const getTwoFactorPushToken = state => get( state, 'login.twoFactorAuth.push_web_token', null );
+
+export const getTwoFactorRememberMe = state => get( state, 'login.twoFactorAuth.remember_me', null );
+
+export const getTwoFactorPushPollInProgress = state => get( state, 'login.twoFactorAuthPushPoll.inProgress', false );
+export const getTwoFactorPushPollSuccess = state => get( state, 'login.twoFactorAuthPushPoll.success', false );
+
 /**
  * True if two factor authentication is enabled for the logging in user.
  * False if not, null if the information is not available yet.
