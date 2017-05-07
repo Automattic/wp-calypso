@@ -32,16 +32,11 @@ import {
 	MEDIA_DELETE,
 	PLUGIN_ACTIVATE_REQUEST,
 	PLUGIN_SETUP_ACTIVATE,
-	POST_DELETE,
 	POST_SAVE_SUCCESS,
-	POST_RESTORE,
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_CREATE_FAILURE,
 	PURCHASE_REMOVE_COMPLETED,
-	SEO_TITLE_SET,
 	SITE_SETTINGS_SAVE_SUCCESS,
-	STORED_CARDS_ADD_COMPLETED,
-	STORED_CARDS_DELETE_COMPLETED,
 } from 'state/action-types';
 import {
 	receiveChatEvent,
@@ -207,26 +202,16 @@ export const getEventMessageFromActionData = ( action ) => {
 			return null;
 		case PLUGIN_SETUP_ACTIVATE:
 			return null;
-		case POST_DELETE:	// This bizarrely doesn't seem to trigger when you delete a post
-			return null;
 		case POST_SAVE_SUCCESS:
 			return `Saved post "${ action.savedPost.title }" ${ action.savedPost.short_URL }`;
-		case POST_RESTORE:	// This doesn't trigger when you're asked to restore a post from a more recent autosave version
-			return null;
 		case PUBLICIZE_CONNECTION_CREATE:
 			return null;
 		case PUBLICIZE_CONNECTION_CREATE_FAILURE:
 			return null;
 		case PURCHASE_REMOVE_COMPLETED:
 			return null;
-		case SEO_TITLE_SET:
-			return null;
 		case SITE_SETTINGS_SAVE_SUCCESS:
 			return 'Saved site settings';
-		case STORED_CARDS_ADD_COMPLETED:
-			return null;
-		case STORED_CARDS_DELETE_COMPLETED:
-			return null;
 	}
 	return null;
 };
