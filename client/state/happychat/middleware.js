@@ -256,7 +256,7 @@ export const sendActionLogsAndEvents = ( connection, { getState }, action ) => {
 
 	// If there's not an active Happychat session, do nothing
 	if ( ! isHappychatClientConnected( state ) || ! isHappychatChatAssigned( state ) ) {
-		return false;
+		return;
 	}
 
 	// If there's analytics metadata attached to this action, send analytics events
