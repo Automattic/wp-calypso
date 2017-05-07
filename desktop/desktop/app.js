@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Internal dependencies
  */
@@ -38,4 +36,4 @@ module.exports = function( finished_cb ) {
 			finished_cb( mainWindow );
 		}
 	} );
-}
+};

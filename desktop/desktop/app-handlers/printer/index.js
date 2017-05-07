@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * External Dependencies
  */
@@ -26,4 +24,4 @@ module.exports = function() {
 			printer = null;
 		} );
 	} );
-}
+};

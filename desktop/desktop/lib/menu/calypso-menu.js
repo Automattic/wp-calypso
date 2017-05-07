@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Internal dependencies
  */
@@ -60,4 +58,4 @@ module.exports = function( mainWindow, status ) {
 			}
 		}
 	];
-}
+};

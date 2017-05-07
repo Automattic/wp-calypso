@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * External Dependencies
  */
@@ -28,4 +26,4 @@ module.exports = function( mainWindow ) {
 			state.logout();
 		}
 	} );
-}
+};

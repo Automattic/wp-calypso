@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Internal dependencies
  */
@@ -7,7 +5,7 @@ const calypsoMenu = require( './calypso-menu' );
 const platform = require( 'lib/platform' );
 
 module.exports = function( mainWindow ) {
-	let menu = calypsoMenu( mainWindow ).concat(
+	const menu = calypsoMenu( mainWindow ).concat(
 		{
 			type: 'separator'
 		},
@@ -28,5 +26,5 @@ module.exports = function( mainWindow ) {
 		menu.push( { label: 'Bring All to Front', role: 'front' } );
 	}
 
-	return menu
+	return menu;
 };

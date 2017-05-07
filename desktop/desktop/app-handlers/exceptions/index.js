@@ -1,4 +1,4 @@
-'use strict';
+/*eslint no-process-exit: 0 no-console: 0 */
 
 /**
  * External Dependencies

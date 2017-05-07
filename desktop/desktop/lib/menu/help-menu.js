@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ const platform = require( 'lib/platform' );
 const WindowManager = require( 'lib/window-manager' );
 const state = require( 'lib/state' );
 
-let menuItems = [];
+const menuItems = [];
 
 if ( platform.isWindows() || platform.isLinux() ) {
 	menuItems.push( {
@@ -53,4 +51,4 @@ module.exports = function( mainWindow ) {
 			}
 		},
 	] );
-}
+};

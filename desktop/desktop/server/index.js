@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * External Dependencies
  */
@@ -24,11 +22,12 @@ const System = require( 'lib/system' );
 /**
  * Module variables
  */
-var mainWindow = null;
+let mainWindow = null;
 
 function showAppWindow() {
 	let appUrl = Config.server_url + ':' + Config.server_port;
-	let lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
+	const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
+
 	if ( lastLocation && isValidLastLocation( lastLocation ) ) {
 		appUrl += lastLocation;
 	}
@@ -48,12 +47,15 @@ function showAppWindow() {
 		const ipc = electron.ipcMain;
 		ipc.on( 'mce-contextmenu', function( ev ) {
 			mainWindow.send( 'mce-contextmenu', ev );
-		});
-
+		} );
 	} );
 
 	mainWindow.webContents.session.webRequest.onBeforeRequest( function( details, callback ) {
-		if ( details.resourceType === 'script' && details.url.startsWith( 'http://' ) && ! details.url.startsWith( Config.server_url + ':' + Config.server_port + '/' ) ) {
+		if (
+			details.resourceType === 'script' &&
+			details.url.startsWith( 'http://' ) &&
+			! details.url.startsWith( Config.server_url + ':' + Config.server_port + '/' )
+		) {
 			debug( 'Redirecting http request ' + details.url + ' to ' + details.url.replace( 'http', 'https' ) );
 			callback( { redirectURL: details.url.replace( 'http', 'https' ) } );
 		} else {
@@ -65,8 +67,8 @@ function showAppWindow() {
 	//mainWindow.openDevTools();
 
 	mainWindow.on( 'close', function() {
-		let currentURL = mainWindow.webContents.getURL();
-		let parsedURL = url.parse( currentURL );
+		const currentURL = mainWindow.webContents.getURL();
+		const parsedURL = url.parse( currentURL );
 		if ( isValidLastLocation( parsedURL.pathname ) ) {
 			Settings.saveSetting( settingConstants.LAST_LOCATION, parsedURL.pathname );
 		}
@@ -96,7 +98,7 @@ function isValidLastLocation( loc ) {
 		'/start'         // Don't attempt to resume the signup flow
 	];
 
-	for ( let s of invalids ) {
+	for ( const s of invalids ) {
 		if ( loc.startsWith( s ) ) {
 			return false;
 		}

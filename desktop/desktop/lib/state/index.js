@@ -1,9 +1,6 @@
-'use strict';
-
 /**
  * Module variables
  */
-
 let state = false;
 
 function State() {

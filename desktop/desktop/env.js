@@ -1,12 +1,9 @@
-'use strict';
-
 /**
  * External Dependencies
  */
 const path = require( 'path' );
 const app = require( 'electron' ).app;
 const fs = require( 'fs' );
-const dialog = require( 'electron' ).dialog;
 
 /**
  * Internal dependencies
@@ -23,7 +20,7 @@ require( './app-handlers/exceptions' )();
 /**
  * Module variables
  */
-var apppath;
+let apppath;
 
 if ( process.env.DESKTOP_APP_PATH ) {
 	apppath = process.env.DESKTOP_APP_PATH;

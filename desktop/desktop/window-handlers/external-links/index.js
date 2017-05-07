@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * External Dependencies
  */
@@ -37,7 +35,7 @@ function openInBrowser( event, url ) {
 module.exports = function( webContents ) {
 	webContents.on( 'will-navigate', function( event, url ) {
 		for ( let x = 0; x < DONT_INTERCEPT.length; x++ ) {
-			if ( url.match( DONT_INTERCEPT[x] ) ) {
+			if ( url.match( DONT_INTERCEPT[ x ] ) ) {
 				return;
 			}
 		}
@@ -48,7 +46,7 @@ module.exports = function( webContents ) {
 
 	webContents.on( 'new-window', function( event, url, frameName, disposition, options ) {
 		for ( let x = 0; x < DONT_OPEN_IN_BROWSER.length; x++ ) {
-			if ( url.match( DONT_OPEN_IN_BROWSER[x] ) ) {
+			if ( url.match( DONT_OPEN_IN_BROWSER[ x ] ) ) {
 				debug( 'Open in new window for ' + url );
 
 				// When we do open another Electron window make it a bit smaller so we know it's there

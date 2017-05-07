@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * External Dependencies
  */
@@ -25,7 +23,7 @@ function LinuxPlatform( mainWindow ) {
 		app.quit();
 	} );
 
-	mainWindow.on( 'close', function( ev ) {
+	mainWindow.on( 'close', function() {
 		app.quit();
 	} );
 }
@@ -36,9 +34,9 @@ LinuxPlatform.prototype.restore = function() {
 	}
 
 	this.window.show();
-}
+};
 
-LinuxPlatform.prototype.showNotificationsBadge = function( count, bounceEnabled ) {
+LinuxPlatform.prototype.showNotificationsBadge = function() {
 	// no op
 };
 
@@ -46,7 +44,7 @@ LinuxPlatform.prototype.clearNotificationsBadge = function() {
 	// no op
 };
 
-LinuxPlatform.prototype.setDockMenu = function( enabled ) {
+LinuxPlatform.prototype.setDockMenu = function() {
 	// no op
 };
 

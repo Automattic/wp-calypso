@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * External Dependencies
  */
@@ -27,7 +25,7 @@ module.exports = {
 		const logfile = fs.createWriteStream( LOGNAME, { flags: 'a' } );
 
 		for ( let x = 0; x < args.length; x++ ) {
-			logfile.write( args[x] + require( 'os' ).EOL );
+			logfile.write( args[ x ] + require( 'os' ).EOL );
 		}
 	}
 };

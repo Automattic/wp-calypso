@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * External Dependencies
  */
@@ -16,10 +14,10 @@ const Platform = require( 'lib/platform' );
 /**
  * Module variables
  */
-var unreadNotificationCount = 0;
+let unreadNotificationCount = 0;
 
 function updateNotificationBadge( badgeEnabled ) {
-	var bounceEnabled = Settings.getSetting( 'notification-bounce' );
+	const bounceEnabled = Settings.getSetting( 'notification-bounce' );
 
 	debug( 'Updating notification badge - badge enabled=' + badgeEnabled + ' bounce enabled=' + bounceEnabled );
 
