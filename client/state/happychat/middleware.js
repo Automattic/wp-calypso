@@ -34,7 +34,7 @@ import {
 	PLUGIN_SETUP_ACTIVATE,
 	POST_SAVE_SUCCESS,
 	PUBLICIZE_CONNECTION_CREATE,
-	PUBLICIZE_CONNECTION_CREATE_FAILURE,
+	PUBLICIZE_CONNECTION_DELETE,
 	PURCHASE_REMOVE_COMPLETED,
 	SITE_SETTINGS_SAVE_SUCCESS,
 } from 'state/action-types';
@@ -205,9 +205,9 @@ export const getEventMessageFromActionData = ( action ) => {
 		case POST_SAVE_SUCCESS:
 			return `Saved post "${ action.savedPost.title }" ${ action.savedPost.short_URL }`;
 		case PUBLICIZE_CONNECTION_CREATE:
-			return null;
-		case PUBLICIZE_CONNECTION_CREATE_FAILURE:
-			return null;
+			return `Connected ${ action.connection.label } sharing`;
+		case PUBLICIZE_CONNECTION_DELETE:
+			return `Disconnected ${ action.connection.label } sharing`;
 		case PURCHASE_REMOVE_COMPLETED:
 			return null;
 		case SITE_SETTINGS_SAVE_SUCCESS:
